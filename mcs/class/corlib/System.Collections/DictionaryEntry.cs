@@ -17,11 +17,12 @@ namespace System.Collections {
 		private object key;
 		private object val;
 
-		public DictionaryEntry (object k, object value) {
-			if (k == null)
-				throw new ArgumentNullException ("k");
+		public DictionaryEntry (object key, object value)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
 			
-			key = k;
+			this.key = key;
 			val = value;
 		}
 		

@@ -1,5 +1,5 @@
 //
-// System.Collections.CaseInsensitiveHashCodeProvider
+// System.Collections.CaseInsensitiveHashCodeProvider.cs
 //
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
@@ -28,7 +28,7 @@ namespace System.Collections {
 			culture = CultureInfo.CurrentCulture;
 		}
 
-		public CaseInsensitiveHashCodeProvider (bool invariant)
+		private CaseInsensitiveHashCodeProvider (bool invariant)
 		{
 			// leave culture == null
 		}

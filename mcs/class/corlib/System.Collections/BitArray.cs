@@ -17,27 +17,27 @@ namespace System.Collections {
 		int _version = 0;
 
 #region Constructors
-		public BitArray (BitArray orig)
-		{
-			if (orig == null)
-				throw new ArgumentNullException ("orig");
-
-			_length = orig._length;
-			_array = new int [(_length + 31) / 32];
-
-			Array.Copy(orig._array, _array, _array.Length);
-		}
-
-		public BitArray (bool [] bits)
+		public BitArray (BitArray bits)
 		{
 			if (bits == null)
 				throw new ArgumentNullException ("bits");
+
+			_length = bits._length;
+			_array = new int [(_length + 31) / 32];
+
+			Array.Copy(bits._array, _array, _array.Length);
+		}
+
+		public BitArray (bool [] values)
+		{
+			if (values == null)
+				throw new ArgumentNullException ("values");
 	    
-			_length = bits.Length;
+			_length = values.Length;
 			_array = new int [(_length + 31) / 32];
 			
-			for (int i = 0; i < bits.Length; i++)
-				this [i] = bits [i];
+			for (int i = 0; i < values.Length; i++)
+				this [i] = values [i];
 		}
 
 		public BitArray (byte [] bytes)
@@ -52,29 +52,29 @@ namespace System.Collections {
 				setByte (i, bytes [i]);
 		}
 		
-		public BitArray (int [] words)
+		public BitArray (int [] values)
 		{
-			if (words == null)
-				throw new ArgumentNullException ("words");
+			if (values == null)
+				throw new ArgumentNullException ("values");
 						
-			int arrlen = words.Length;
+			int arrlen = values.Length;
 			_length = arrlen*32;
 			_array = new int [arrlen];
-			Array.Copy (words, _array, arrlen);
+			Array.Copy (values, _array, arrlen);
 		}
 		
-		public BitArray (int capacity)
+		public BitArray (int length)
 		{
-			if (capacity < 0)
-				throw new ArgumentOutOfRangeException ("capacity");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length");
 			
-			_length = capacity;
+			_length = length;
 			_array = new int [(_length + 31) / 32];
 		}
 
-		public BitArray (int capacity, bool value) : this (capacity)
+		public BitArray (int length, bool defaultValue) : this (length)
 		{
-			if (value) {
+			if (defaultValue) {
 				for (int i = 0; i < _array.Length; i++)
 				_array[i] = ~0;
 			}
@@ -223,37 +223,37 @@ namespace System.Collections {
 			return this;
 		}
 		
-		public BitArray And (BitArray operand)
+		public BitArray And (BitArray value)
 		{
-			checkOperand (operand);
+			checkOperand (value);
 			
 			int ints = (_length + 31) / 32;
 			for (int i = 0; i < ints; i++)
-				_array [i] &= operand._array [i];
+				_array [i] &= value._array [i];
 			
 			_version++;
 			return this;
 		}
 		
-		public BitArray Or (BitArray operand)
+		public BitArray Or (BitArray value)
 		{
-			checkOperand (operand);
+			checkOperand (value);
 
 			int ints = (_length + 31) / 32;
 			for (int i = 0; i < ints; i++)
-				_array [i] |= operand._array [i];
+				_array [i] |= value._array [i];
 			
 			_version++;
 			return this;
 		}
 
-		public BitArray Xor (BitArray operand)
+		public BitArray Xor (BitArray value)
 		{
-			checkOperand (operand);
+			checkOperand (value);
 
 			int ints = (_length + 31) / 32;
 			for (int i = 0; i < ints; i++)
-				_array [i] ^= operand._array [i];
+				_array [i] ^= value._array [i];
 
 			_version++;
 			return this;

@@ -1,5 +1,5 @@
 // 
-// System.Collections.SortedList
+// System.Collections.SortedList.cs
 // 
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
@@ -577,7 +577,7 @@ namespace System.Collections {
 		//
 
 
-		protected sealed class Enumerator : IDictionaryEnumerator,
+		private sealed class Enumerator : IDictionaryEnumerator,
 		                                    IEnumerator {
 
 			private SortedList host;
@@ -685,7 +685,7 @@ namespace System.Collections {
 		}
 
 
-		protected class ListKeys : IList, IEnumerable {
+		private class ListKeys : IList, IEnumerable {
 
 			private SortedList host;
 
@@ -805,7 +805,7 @@ namespace System.Collections {
 		}
 
 
-		protected class ListValues : IList, IEnumerable {
+		private class ListValues : IList, IEnumerable {
 
 			private SortedList host;
 
@@ -928,7 +928,7 @@ namespace System.Collections {
 
 		}
 
-		protected class SynchedSortedList : SortedList {
+		private class SynchedSortedList : SortedList {
 
 			private SortedList host;
 

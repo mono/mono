@@ -1,5 +1,5 @@
 //
-// System.Collections.Hashtable
+// System.Collections.Hashtable.cs
 //
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
@@ -721,7 +721,7 @@ namespace System.Collections {
 
 		public enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
 
-		protected sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
+		private sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
 
 			private Hashtable host;
 			private int stamp;
@@ -827,7 +827,7 @@ namespace System.Collections {
 
 
 
-		protected class HashKeys : ICollection, IEnumerable {
+		private class HashKeys : ICollection, IEnumerable {
 
 			private Hashtable host;
 
@@ -879,7 +879,7 @@ namespace System.Collections {
 		}
 
 
-		protected class HashValues : ICollection, IEnumerable {
+		private class HashValues : ICollection, IEnumerable {
 
 			private Hashtable host;
 
@@ -934,7 +934,7 @@ namespace System.Collections {
 
 
 		[Serializable]
-		protected class SynchedHashtable : Hashtable, IEnumerable {
+		private class SynchedHashtable : Hashtable, IEnumerable {
 
 			private Hashtable host;
 
