@@ -280,6 +280,7 @@ namespace Microsoft.VisualBasic {
 		public static System.String Hex (System.Object Number) {
 			// always start out by throwing an exception 
 			// if Number is null
+			long lval;
 			if (Number == null) {
 				throw new ArgumentNullException ("Number", 
 					"Value cannot be null");
@@ -316,17 +317,46 @@ namespace Microsoft.VisualBasic {
 				// empty is defined as returning 0
 				case TypeCode.Empty:
 					return "0";
+				case TypeCode.Single:
+					float fval = (float)Number;
+					lval = (long) Math.Round(fval);
+					if ((lval > Int32.MinValue) && (lval < Int32.MaxValue))
+               					return Hex ((int)lval); 	
 
+					return Hex(lval);
+				case TypeCode.Double:
+	 		            	double dval = (double)Number;
+            				if (dval > Int64.MaxValue || dval < Int64.MinValue)
+				                throw new OverflowException(
+				                  VBUtils.GetResourceString("Overflow_Int64"));	
+       				    	lval = (long) Math.Round(dval);
+			            	if ((lval > Int32.MinValue) && (lval < Int32.MaxValue))
+	      				          return Hex((int)lval);
+
+			            	return Hex(lval);
+        			
+				case TypeCode.Decimal:
+					Decimal big = new Decimal(Int64.MaxValue);
+					Decimal small = new Decimal(Int64.MinValue);
+					Decimal current = (Decimal)Number;
+
+			    	        if (current.CompareTo(big) > 0 || 
+						current.CompareTo(small) < 0)
+				                throw new OverflowException(
+				                    VBUtils.GetResourceString("Overflow_Int64"));
+
+			     	       lval = Decimal.ToInt64(current);
+			               if ((lval > Int32.MinValue) && (lval < Int32.MaxValue))
+				                return Hex((int)lval);
+
+			               return Hex(lval);
 				// we can't do any of these types
 				case TypeCode.Boolean:
 				case TypeCode.Char:
 				case TypeCode.DBNull:
 				case TypeCode.DateTime:
-				case TypeCode.Decimal:
-				case TypeCode.Double:
 				case TypeCode.Object:
 				case TypeCode.SByte:
-				case TypeCode.Single:
 				case TypeCode.UInt16:
 				case TypeCode.UInt32:
 				case TypeCode.UInt64:
@@ -380,7 +410,7 @@ namespace Microsoft.VisualBasic {
 				throw new ArgumentNullException("Number", 
 					"Value cannot be null");
 			}
-
+			long lval;
 			TypeCode TC = Type.GetTypeCode (Number.GetType ());
 
 			switch (TC) {
@@ -407,7 +437,39 @@ namespace Microsoft.VisualBasic {
 					return Oct ((int)Number);
 				case TypeCode.Int64:
 					return Oct ((long)Number);
+				case TypeCode.Single:
+					float fval = (float)Number;
+			                lval = (long) Math.Round(fval);
+			                if ((lval > Int32.MinValue) && (lval < Int32.MaxValue))
+				                return Oct((int)lval);
 
+			                return Oct(lval);	
+				case TypeCode.Double:
+					 double dval = (double)Number;
+			                 if (dval > Int64.MaxValue || dval < Int64.MinValue)
+				                throw new OverflowException(
+				                    VBUtils.GetResourceString("Overflow_Int64"));
+
+			                 lval = (long) Math.Round(dval);
+			                 if ((lval > Int32.MinValue) && (lval < Int32.MaxValue))
+				                return Oct((int)lval);
+
+			                return Oct(lval);
+				case TypeCode.Decimal:
+					Decimal big = new Decimal(Int64.MaxValue);
+					Decimal small = new Decimal(Int64.MinValue);
+			                Decimal current = (Decimal) Number;
+
+					if ((current.CompareTo(big) > 0) || 
+						(current.CompareTo(small) < 0))
+				                throw new OverflowException(
+				                    VBUtils.GetResourceString("Overflow_Int64"));
+            
+					lval = Decimal.ToInt64(current);
+					if ((lval > Int32.MinValue) && (lval < Int32.MaxValue))
+						return Oct((int)lval);
+
+					return Oct(lval);
 				// Empty is defined as returning 0
 				case TypeCode.Empty:
 					return "0";
@@ -417,11 +479,8 @@ namespace Microsoft.VisualBasic {
 				case TypeCode.Char:
 				case TypeCode.DBNull:
 				case TypeCode.DateTime:
-				case TypeCode.Decimal:
-				case TypeCode.Double:
 				case TypeCode.Object:
 				case TypeCode.SByte:
-				case TypeCode.Single:
 				case TypeCode.UInt16:
 				case TypeCode.UInt32:
 				case TypeCode.UInt64:

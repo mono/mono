@@ -1,3 +1,6 @@
+2004-06-15 Sachin Kumar <skumar1@novell.com>
+	* Conversion.cs: Implemented few type conversion methods
+
 2004-06-15 Anirban Bhattacharjee <banirban@novell.com>
 	* VBUtils.txt: Exception messages for Financial functions by Rob Tillie
 
