@@ -366,10 +366,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		{
 			CloseOpenAttributeAndElements ();
 
-			w.Flush ();
-			if (closeOutput) {
+			if (closeOutput)
 				w.Close ();
-			}
+			else if (ws != WriteState.Closed)
+				w.Flush ();
 			ws = WriteState.Closed;
 			openWriter = false;
 		}

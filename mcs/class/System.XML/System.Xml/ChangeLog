@@ -1,3 +1,8 @@
+2004-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Close() should not Flush() when the output is
+	  already closed. bug #65918 is fixed.
+
 2004-09-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : CloseOutput must be true by default.
