@@ -1,3 +1,8 @@
+2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (mono_alloc_special_static_data): Allow this to be
+	called during startup.
+
 2004-04-02  Martin Baulig  <martin@ximian.com>
 
 	* icall.c
