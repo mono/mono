@@ -1,3 +1,8 @@
+2004-09-12 Ben Maurer  <bmaurer@ximian.com>
+
+	* BinaryReader.cs: Use ReadByte when possible. Gives a tad
+	of perf, and fixes a bug reported on mono-patches-list
+
 2004-09-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* File.cs: Added Gettextification, provide a better error message

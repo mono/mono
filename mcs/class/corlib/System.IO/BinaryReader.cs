@@ -254,17 +254,17 @@ namespace System.IO {
 		}
 
 		public virtual bool ReadBoolean() {
-			FillBuffer(1);
-
 			// Return value:
 			//  true if the byte is non-zero; otherwise false.
-			return(m_buffer[0] != 0);
+			return ReadByte() != 0;
 		}
 
 		public virtual byte ReadByte() {
-			FillBuffer(1);
-
-			return(m_buffer[0]);
+			int val = m_stream.ReadByte ();
+			if (val != -1)
+				return (byte) val;
+			
+			throw new EndOfStreamException ();
 		}
 
 		public virtual byte[] ReadBytes(int count) {
@@ -406,9 +406,7 @@ namespace System.IO {
 
 		[CLSCompliant(false)]
 		public virtual sbyte ReadSByte() {
-			FillBuffer(1);
-
-			return((sbyte)m_buffer[0]);
+			return (sbyte) ReadByte ();
 		}
 
 		public virtual string ReadString() {
