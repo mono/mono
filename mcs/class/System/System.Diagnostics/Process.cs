@@ -681,11 +681,17 @@ namespace System.Diagnostics {
 			IntPtr stderr_rd, stderr_wr;
 			bool ret;
 			
-			if(startInfo.FileName == "") {
+			if(startInfo.FileName == null || startInfo.FileName == "") {
 				throw new InvalidOperationException("File name has not been set");
 			}
 			
 			proc_info.useShellExecute = startInfo.UseShellExecute;
+			if (proc_info.useShellExecute && (startInfo.RedirectStandardInput ||
+			    startInfo.RedirectStandardOutput || startInfo.RedirectStandardError)) {
+				throw new InvalidOperationException ("UseShellExecute must be false when " +
+								     "redirecting I/O.");
+			}
+
 			if (startInfo.HaveEnvVars) {
 				if (startInfo.UseShellExecute)
 					throw new InvalidOperationException ("UseShellExecute must be false in order " +
