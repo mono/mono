@@ -4,42 +4,62 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
+// Maintainer:
+//	 Michael Lambert, michaellambert@email.com
+//
 // (C) Ximian, Inc.  http://www.ximian.com
+//
+// Remarks:			Requires '/unsafe' compiler option.  This class uses void*,
+//					in overloaded constructors, conversion, and cast members in 
+//					the public interface.  Using pointers is not valid CLS and 
+//					the methods in question have been marked with  the 
+//					CLSCompliant attribute that avoid compiler warnings.
 //
 // FIXME: How do you specify a native int in C#?  I am going to have to do some figuring out
 //
+
 using System;
 using System.Runtime.Serialization;
 
-namespace System {
-	
-	public struct IntPtr : ISerializable {
+[
+    assembly: System.CLSCompliant(true)
+]
 
-		unsafe public void *value;
+namespace System {
+
+	[
+		CLSCompliant(true)
+	]
+	public unsafe struct IntPtr : ISerializable {
+
+		private void *value;
 
 		public static IntPtr Zero;
 
-		unsafe static IntPtr ()
+		static IntPtr ()
 		{
 			Zero.value = (void *) 0;
 		}
 		
-		unsafe public IntPtr (int i32)
+		public IntPtr (int i32)
 		{
 			value = (void *) i32;
 		}
 
-		unsafe public IntPtr (long i64)
+		public IntPtr (long i64)
 		{
 			value = (void *) i64;
 		}
 
+		[
+			CLSCompliant(false)
+		]
 		unsafe public IntPtr (void *ptr)
 		{
 			value = ptr;
 		}
 
-		unsafe public static int Size {
+		public static int Size {
 			get {
 				return sizeof (void *);
 			}
@@ -47,10 +67,13 @@ namespace System {
 
 		public void GetObjectData (SerializationInfo si, StreamingContext sc)
 		{
-			// FIXME: Implement me.
+			if( si == null )
+				throw new ArgumentNullException( "si" );
+        
+			si.AddValue("value", (long) value);
 		}
 
-		unsafe public override bool Equals (object o)
+		public override bool Equals (object o)
 		{
 			if (!(o is System.IntPtr))
 				return false;
@@ -58,27 +81,30 @@ namespace System {
 			return ((IntPtr) o).value == value;
 		}
 
-		unsafe public override int GetHashCode ()
+		public override int GetHashCode ()
 		{
 			return (int) value;
 		}
 
-		unsafe public int ToInt32 ()
+		public int ToInt32 ()
 		{
 			return (int) value;
 		}
 
-		unsafe public long ToInt64 ()
+		public long ToInt64 ()
 		{
 			return (long) value;
 		}
 
+		[
+			CLSCompliant(false)
+		]
 		unsafe public void *ToPointer ()
 		{
 			return value;
 		}
 
-		unsafe override public string ToString ()
+		override public string ToString ()
 		{
 			if (Size == 4)
 				return ((int) value).ToString ();
@@ -86,41 +112,47 @@ namespace System {
 				return ((long) value).ToString ();
 		}
 
-		unsafe public static bool operator == (IntPtr a, IntPtr b)
+		public static bool operator == (IntPtr a, IntPtr b)
 		{
 			return (a.value == b.value);
 		}
 
-		unsafe public static bool operator != (IntPtr a, IntPtr b)
+		public static bool operator != (IntPtr a, IntPtr b)
 		{
 			return (a.value != b.value);
 		}
 
-		unsafe public static explicit operator IntPtr (int value)
+		public static explicit operator IntPtr (int value)
 		{
 			return new IntPtr (value);
 		}
 
-		unsafe public static explicit operator IntPtr (long value)
+		public static explicit operator IntPtr (long value)
 		{
 			return new IntPtr (value);
 		}
 		
+		[
+			CLSCompliant(false)
+		]
 		unsafe public static explicit operator IntPtr (void *value)
 		{
 			return new IntPtr (value);
 		}
 
-		unsafe public static explicit operator int (IntPtr value)
+		public static explicit operator int (IntPtr value)
 		{
 			return (int) value.value;
 		}
 
-		unsafe public static explicit operator long (IntPtr value)
+		public static explicit operator long (IntPtr value)
 		{
 			return (long) value.value;
 		}
 
+		[
+			CLSCompliant(false)
+		]
 		unsafe public static explicit operator void * (IntPtr value)
 		{
 			return value.value;

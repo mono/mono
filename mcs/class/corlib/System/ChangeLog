@@ -1,8 +1,17 @@
 2001-08-23  Michael Lambert <michaellambert@email.com>
 
-    * UIntPtr.cs: Added
+	* IntPtr.cs: Optimized unsafe declaration, implemented GetObjectData, 
+	added CLSCompliant attribute
 
-    * common.src: Added UIntPtr.cs
+	* IAsyncResult.cs: Added
+
+	* common.src: Added IAsyncResult.cs
+
+2001-08-23  Michael Lambert <michaellambert@email.com>
+
+	* UIntPtr.cs: Added
+
+	* common.src: Added UIntPtr.cs
 
 2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
 
