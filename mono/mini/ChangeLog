@@ -1,4 +1,8 @@
 
+Wed Jan 28 14:04:58 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fixed buglet in initobj generic implementation for references.
+
 Fri Jan 23 16:10:44 EST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: make the version script conditional.
