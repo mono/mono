@@ -97,7 +97,8 @@ namespace System.Web.Services.Discovery {
 		{
 			XmlSchema doc = XmlSchema.Read (stream, null);
 			ClientProtocol.Documents.Add (Url, doc);
-			ClientProtocol.References.Add (this);
+			if (!ClientProtocol.References.Contains (Url))
+				ClientProtocol.References.Add (this);
 		}
                 
 		public override void WriteDocument (object document, Stream stream) 

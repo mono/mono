@@ -87,9 +87,11 @@ namespace System.Web.Services.Discovery {
 		{
 			DiscoveryDocument doc = DiscoveryDocument.Read (stream);
 			ClientProtocol.Documents.Add (Url, doc);
-			ClientProtocol.References.Add (this);
+			if (!ClientProtocol.References.Contains (Url))
+				ClientProtocol.References.Add (this);
+				
 			foreach (DiscoveryReference re in doc.References)
-				ClientProtocol.References.Add (re);
+				ClientProtocol.References.Add (re.Url, re);
 		}
 
 		public void ResolveAll () 

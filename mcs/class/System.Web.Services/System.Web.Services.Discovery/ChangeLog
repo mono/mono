@@ -1,3 +1,11 @@
+2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ContractReference.cs, DiscoveryDocumentReference.cs, SchemaReference.cs:
+      Little fixes.
+	* DiscoveryClientProtocol.cs: WriteAll(): Write files to the provided
+	  directory.
+	* DiscoveryReference.cs: Improved method FilenameFromUrl().
+
 2003-10-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ContractReference.cs, DiscoveryClientProtocol.cs, 

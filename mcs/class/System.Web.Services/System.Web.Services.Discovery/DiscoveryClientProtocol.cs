@@ -182,14 +182,18 @@ namespace System.Web.Services.Discovery {
 			
 			foreach (DiscoveryReference re in References.Values)
 			{
+				object doc = Documents [re.Url];
+				if (doc == null) continue;
+				
 				resfile.Results.Add (new DiscoveryClientResult (re.GetType(), re.Url, re.DefaultFilename));
 				
-				FileStream fs = new FileStream (re.DefaultFilename, FileMode.Create, FileAccess.Write);
-				re.WriteDocument (Documents [re.Url], fs);
+				string filepath = Path.Combine (directory, re.DefaultFilename);
+				FileStream fs = new FileStream (filepath, FileMode.Create, FileAccess.Write);
+				re.WriteDocument (doc, fs);
 				fs.Close ();
 			}
 			
-			StreamWriter sw = new StreamWriter (topLevelFilename);
+			StreamWriter sw = new StreamWriter (Path.Combine (directory, topLevelFilename));
 			XmlSerializer ser = new XmlSerializer (typeof (DiscoveryClientResultsFile));
 			ser.Serialize (sw, resfile);
 			sw.Close ();

@@ -99,7 +99,8 @@ namespace System.Web.Services.Discovery {
 		{
 			ServiceDescription wsdl = ServiceDescription.Read (stream);
 			ClientProtocol.Documents.Add (Url, wsdl);
-			ClientProtocol.References.Add (this);
+			if (!ClientProtocol.References.Contains (Url))
+				ClientProtocol.References.Add (this);
 		}
                 
         public override void WriteDocument (object document, Stream stream) 

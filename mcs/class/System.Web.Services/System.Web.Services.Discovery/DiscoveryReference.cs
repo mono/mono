@@ -60,7 +60,11 @@ namespace System.Web.Services.Discovery {
 			i = url.IndexOfAny (new char[] {'.','?','\\'});
 			if (i != -1) url = url.Substring (0,i);
 			
-			return url;
+			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+			for (int n=0; n<url.Length; n++)
+				if (Char.IsLetterOrDigit (url[n]) || url[n] == '_') sb.Append (url[n]);
+				
+			return sb.ToString ();
 		}
 		
 		public abstract object ReadDocument (Stream stream);
