@@ -901,7 +901,6 @@ namespace Mono.CSharp
 			string cmd, arg;
 			
 			get_cmd_arg (out cmd, out arg);
-			Console.WriteLine ("Command: " + cmd + " Args: [" + arg + "]");
 
 			switch (cmd){
 			case "line":
@@ -1087,6 +1086,7 @@ namespace Mono.CSharp
 							col++;
 						line++;
 						ref_line++;
+						col = 0;
 						continue;
 					} else if (d == '*'){
 						getChar ();
@@ -1100,8 +1100,8 @@ namespace Mono.CSharp
 							if (d == '\n'){
 								line++;
 								ref_line++;
+								col = 0;
 							}
-							col++;
 						}
 						continue;
 					}
@@ -1110,11 +1110,10 @@ namespace Mono.CSharp
 				/* For now, ignore pre-processor commands */
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
-				if (col == 1 && c == '#'){
+				if (col <= 1 && c == '#'){
 				start_again:
 					
 					bool cont = handle_preprocessing_directive ();
-					Console.WriteLine ("=> " + cont);
 
 					if (cont){
 						col = 0;
@@ -1123,7 +1122,6 @@ namespace Mono.CSharp
 					col = 1;
 
 					for (;(c = getChar ()) != -1; col++){
-						Console.WriteLine ("Consuming " + (char) c + " cl: " +col);
 						if (c == '\n'){
 							col = 0;
 							line++;
