@@ -1,4 +1,8 @@
 
+Thu May 1 19:40:37 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: one more check for null type in custom attrs.
+
 2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* reflection.c: avoid warning (comparison is always false due to limited
