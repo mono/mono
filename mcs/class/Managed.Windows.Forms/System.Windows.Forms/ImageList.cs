@@ -24,6 +24,10 @@
 //
 //
 // $Log: ImageList.cs,v $
+// Revision 1.5  2004/08/19 21:39:09  pbartok
+// - Added missing Draw() method
+// - Added missing RecreateHandle event
+//
 // Revision 1.4  2004/08/11 17:43:08  pbartok
 // - Removed disposing of the actual images when the list is disposed
 //
@@ -357,6 +361,11 @@ namespace System.Windows.Forms {
 			size = new Size(16, 16);
 			image_collection = new ImageCollection(this);
 		}
+
+		[MonoTODO]
+		public ImageList(System.ComponentModel.IContainer container) {
+			throw new NotImplementedException();
+		}
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
@@ -373,6 +382,7 @@ namespace System.Windows.Forms {
 		[MonoTODO("Determine if we support HBITMAP handles, this would involve XplatUI")]
 		public IntPtr Handle {
 			get {
+				if (RecreateHandle!=null) RecreateHandle(this, EventArgs.Empty);
 				return IntPtr.Zero;
 			}
 		}
@@ -430,6 +440,13 @@ namespace System.Windows.Forms {
 		}
 
 		public void Draw(Graphics g, int x, int y, int width, int height, int index) {
+			Image	i;
+
+			if ((index < 0) || (index >= this.Images.Count)) {
+				throw new ArgumentOutOfRangeException("index", index, "ImageList does not contain that many images");
+			}
+			i = this.Images[index];
+			g.DrawImage(i, 0, 0, i.Width, i.Height);
 		}
 
 		public override string ToString() {
@@ -445,5 +462,9 @@ namespace System.Windows.Forms {
 		}
 
 		#endregion	// Protected Instance Methods
+
+		#region Events
+		public event EventHandler RecreateHandle;
+		#endregion	// Events
 	}
 }
