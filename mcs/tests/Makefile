@@ -163,7 +163,9 @@ GENERIC_KNOWN_FAILURES = test-55
 # 
 # Tests the generics compiler, and excludes GENERIC_KNOWN_FAILURES from the build
 #
-test-generic:
+test-generic: test-generic-1 test-generic-2 test-generic-3
+
+test-generic-1:
 	sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
 	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
 

@@ -1,3 +1,9 @@
+2004-09-02  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (test-generic): Renamed to test-generic-1.
+	(test-generic): New target, runs test-generic-1, test-generic-2
+	and test-generic-3.
+
 2004-09-01  Marek Safar <marek.safar@seznam.cz>
 
 	* Makefile: Enabled test-286
