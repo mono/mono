@@ -809,6 +809,12 @@ type_spec_declaration
 class_declaration
 	: CLASS identifier EOL opt_inherits opt_implements
 	  {
+		// Module members are static by default, but Class *can't* be declared static
+		// so we must fix it, if mbas was the one actually responsible for this
+		// instead of triggering an error.
+		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
+			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
+	  
 		Class new_class;
 		string name;
 		
