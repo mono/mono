@@ -2,6 +2,7 @@
 
 	* library.make (HAVE_CS_TESTS, HAVE_VB_TESTS): Allow to be
 	overriden.  Useful if the tests sourcefile is generated.
+	(TEST_COMPILE, BTEST_COMPILE): Allow these to be customized too.
 
 	* platforms/win32.make (PLATFORM_TWEAK_CORLIB_SOURCES): Remove.
 

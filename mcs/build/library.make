@@ -195,6 +195,14 @@ ifndef LIBRARY_COMPILE
 LIBRARY_COMPILE = $(CSCOMPILE)
 endif
 
+ifndef TEST_COMPILE
+TEST_COMPILE = $(CSCOMPILE)
+endif
+
+ifndef BTEST_COMPILE
+BTEST_COMPILE = $(BASCOMPILE)
+endif
+
 # Fun with dependency tracking
 
 $(the_lib): $(makefrag) $(response)
@@ -218,7 +226,7 @@ endif
 ifdef HAVE_CS_TESTS
 
 $(test_lib): $(test_makefrag) $(test_dep) $(test_response) $(test_nunit_dep)
-	$(CSCOMPILE) /target:library /out:$@ $(test_flags) @$(test_response)
+	$(TEST_COMPILE) /target:library /out:$@ $(test_flags) @$(test_response)
 
 $(test_response): $(test_sourcefile)
 	@echo Creating $@ ...
@@ -239,7 +247,7 @@ endif
 ifdef HAVE_VB_TESTS
 
 $(btest_lib): $(btest_makefrag) $(test_dep) $(btest_response) $(test_nunit_dep)
-	$(BASCOMPILE) /target:library /out:$@ $(btest_flags) @$(btest_response)
+	$(BTEST_COMPILE) /target:library /out:$@ $(btest_flags) @$(btest_response)
 
 $(btest_response): $(btest_sourcefile)
 	@echo Creating $@ ...
