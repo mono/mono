@@ -131,10 +131,16 @@ set_signals()
 
 usage()
 {
-    fprintf(stderr, "usage: %s [-tvc] [-b file_prefix] filename\n", myname);
+    fprintf(stderr, "usage: %s [-tvcp] [-b file_prefix] filename\n", myname);
     exit(1);
 }
 
+void
+print_skel_dir(void)
+{
+    printf ("%s\n", SKEL_DIRECTORY);
+    exit (0);
+}
 
 getargs(argc, argv)
 int argc;
@@ -155,9 +161,9 @@ char *argv[];
 	    if (i + 1 < argc) usage();
 	    return;
 
-	case '-':
-	    ++i;
-	    goto no_more_options;
+        case '-':
+            ++i;
+            goto no_more_options;
 
 	case 'b':
 	    if (*++s)
@@ -168,9 +174,13 @@ char *argv[];
 		usage();
 	    continue;
 
-	case 't':
-	    tflag = 1;
-	    break;
+        case 't':
+            tflag = 1;
+            break;
+
+	case 'p':
+            print_skel_dir ();
+            break;
 
 	case 'c':
 	    csharp = 1;
@@ -200,6 +210,10 @@ char *argv[];
 	    case 'v':
 		vflag = 1;
 		break;
+
+            case 'p':
+                print_skel_dir ();
+                break;
 
             case 'c':
 		csharp = 1;

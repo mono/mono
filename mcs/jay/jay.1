@@ -39,7 +39,7 @@
 .SH NAME
 jay \- an LALR(1) parser generator for Java and C#
 .SH SYNOPSIS
-.B jay [ -tv ] [ -c ] [ -b
+.B jay [ -tv ] [ -c ] [ -p ] [ -b
 .I file_prefix
 .B ] [ -V
 .I yyValue
@@ -88,6 +88,20 @@ The
 option causes a human-readable description of the generated parser to
 be written to the file
 .IR y.output.
+.TP
+.B -p
+The
+.B -p
+option causes
+.I jay
+to print the directory in which its sample skeleton files are
+installed.  If a project wants to use the default skeleton file
+included with \fIjay\fR, it can use this option in a makefile to
+find the path to the 
+.I skeleton
+or
+.I skeleton.cs
+file included with the jay distribution.
 .RE
 .PP
 If the environment variable TMPDIR is set, the string denoted by

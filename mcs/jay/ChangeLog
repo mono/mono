@@ -1,5 +1,16 @@
 2003-05-16  Peter Williams  <peterw@ximian.com>
 
+	* main.c (print_skel_dir): New function called when jay is
+	passed '-p'; prints the directory where the default skeleton
+	files are installed ($(prefix)/share/jay).
+
+	* makefile (CFLAGS): Add a -DSKEL_DIRECTORY to support
+	print_skel_dir.
+
+	* jay.1: Document the -p parameter.
+
+2003-05-16  Peter Williams  <peterw@ximian.com>
+
 	* makefile (install): Call the install in makefile.gnu
 
 	* makefile.gnu (install): Actually install jay and its skeleton
