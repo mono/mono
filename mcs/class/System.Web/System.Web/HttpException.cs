@@ -5,11 +5,13 @@
 // 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //
 using System;
+using System.Text;
+//using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Web.Util;
 
 namespace System.Web
 {
-	[MonoTODO("This class contains a lot of windows specific methods, solve this.. :)")]
 	public class HttpException : ExternalException
 	{
 		int _HttpCode;
@@ -52,10 +54,16 @@ namespace System.Web
 			_HttpCode = iHttpCode;
 		}
 
-		[MonoTODO("Should get an correct html message depending on error type")]
+		[MonoTODO("Format messages")]
 		public string GetHtmlErrorMessage ()
 		{
-			throw new NotImplementedException ();
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("<html>\n<title>");
+			sb.Append (HttpUtility.HtmlEncode (Message));
+			sb.Append ("</title><body><h1>Error</h1>\n<pre>");
+			sb.Append (HttpUtility.HtmlEncode (ToString ()));
+			sb.Append ("</pre></body>\n</html>\n");
+			return sb.ToString ();
 		}
 
 		[MonoTODO("Check error type and Set the correct error code")]
@@ -64,10 +72,14 @@ namespace System.Web
 			return _HttpCode;
 		}
 
-		[MonoTODO("Get the last error code")]
-		public static HttpException CreateFromLastError (string Message)
+/*		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int GetLastError_internal ();*/
+
+		public static HttpException CreateFromLastError (string message)
 		{
-			return new HttpException (Message);
+			WebTrace.WriteLine ("CreateFromLastError");
+			//return new HttpException (message, GetLastError_internal ());
+			return new HttpException (message, 0);
 		}
 	}
 }

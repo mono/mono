@@ -1,5 +1,9 @@
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpException.cs: simple error output.
+
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs: style.
 	* HttpException.cs: style.
 	* HttpRuntime.cs: only flush the response if there are no errors.
