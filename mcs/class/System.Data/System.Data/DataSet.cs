@@ -32,7 +32,7 @@ namespace System.Data {
 		ISupportInitialize, ISerializable {
 
 		private string dataSetName;
-		private string _namespace;
+		private string _namespace = "";
 		private string prefix;
 		private bool caseSensitive;
 		private bool enforceConstraints = true;
@@ -354,6 +354,7 @@ namespace System.Data {
 
 		public void WriteXmlSchema(XmlWriter writer)
 		{
+			((XmlTextWriter)writer).Formatting = Formatting.Indented;
 			//Create a skeleton doc and then write the schema 
 			//proper which is common to the WriteXml method in schema mode
 			writer.WriteStartDocument();

@@ -1,5 +1,9 @@
 2002-12-28  Ville Palo <vi64pa@koti.soon.fi>
 
+	* DataSet.cs: Indentations to WriteXmlSchema () and one little fix
+	
+2002-12-28  Ville Palo <vi64pa@koti.soon.fi>
+
 	* DataSet.cs: Indentations to WriteXml ()
 	
 2002-12-27  Ville Palo <vi64pa@koti.soon.fi>
