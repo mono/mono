@@ -1,3 +1,8 @@
+2004-09-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Activator.cs: Make sure not to call .GetType on a
+	null argument. fixes 63852
+
 2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Array.cs (Clear): make this an icall.
