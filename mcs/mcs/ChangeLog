@@ -1,3 +1,7 @@
+2004-12-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Don't create a block for every variable.
+
 2004-12-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* location.cs: Provide extra information.
