@@ -173,7 +173,7 @@ namespace System.Xml.XPath
 			StringBuilder sb = new StringBuilder ();
 
 			char ch;
-			while ((ch = Peek ()) == '_' || ch == '-' || Char.IsLetterOrDigit (ch))
+			while ((ch = Peek ()) == '_' || ch == '-' || ch == '.' || Char.IsLetterOrDigit (ch))
 				sb.Append ((char) GetChar ());
 
 			String strToken = sb.ToString ();
@@ -342,10 +342,11 @@ namespace System.Xml.XPath
 						{
 							return ParseNumber ();
 						}
-						else
+						else if (Char.IsLetter (ch) || ch == '_')	 // NCName
 						{
 							return ParseIdentifier ();
 						}
+						break;
 					}
 			}
 			return Token.ERROR;

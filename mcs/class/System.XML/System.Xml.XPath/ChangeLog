@@ -1,5 +1,9 @@
 2003-03-07  Piers Haken  <piersh@friskit.com>
 
+	* Tokenizer.cs: allow '.'s in NCNames
+
+2003-03-07  Piers Haken  <piersh@friskit.com>
+
 	* Exression.cs:
 	* DefaultContext.cs:
 		fixed function argument resolution
