@@ -110,7 +110,7 @@ namespace System.Runtime.Remoting {
 				case "fIsMarshalled":
 					int status;
 					Object o = en.Value;
-					if (o.GetType().Equals(typeof(String)))
+					if (o is string)
 						status = ((IConvertible) o).ToInt32(null);
 					else
 						status = (int) o;
