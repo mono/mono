@@ -34,6 +34,7 @@ namespace System {
 	public sealed class AppDomain : MarshalByRefObject , _AppDomain , IEvidenceFactory {
 
 		IntPtr _mono_app_domain;
+		static string _process_guid;
 
 		// Evidence evidence;
 
@@ -552,6 +553,17 @@ namespace System {
 		// Returns the current context
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Context InternalGetDefaultContext ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern string InternalGetProcessGuid (string newguid);
+
+		internal static String GetProcessGuid ()
+		{
+			if (_process_guid == null) {
+				_process_guid = InternalGetProcessGuid (Guid.NewGuid().ToString ());
+			}
+			return _process_guid;
+		}
 
 		public static AppDomain CreateDomain (string friendlyName)
 		{
