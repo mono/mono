@@ -1,3 +1,7 @@
+2004-02-16 Marek Safar <marek.safar@seznam.cz>
+
+	* test-230.cs: test for module attributes.
+
 2004-02-13 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* 2test-6.cs, test-229.cs: some tests for foreach on
@@ -33,7 +37,7 @@
         * cls-test-0.cs, cls-test-1.cs, cls-test-2.cs, cls-test-3.cs,
           cls-test-5.cs, cls-test-6.cs, cls-test-7.cs, cls-test-10.cs,
           cls-test-11.cs, cls-test-14.cs, cls-test-15.cs, cls-test-16.cs:
-        New tests for CLS-compliant
+        New tests for CLS-compliance
         
 2004-01-03 Todd Berman  <tberman@gentoo.org>
 
