@@ -7,6 +7,17 @@
 
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* IntegerFormatter.cs: The - sign inside the "negative" section in
+	a multi-format string means `show the sign' only if it is the
+	first token, not `copy verbatim'.  In the other sections it means
+	`copy-verbatim'.
+
+	This makes things like:  (-34).ToString ("#;-#") show up as "-34"
+	instead of "--34".
+
+	The bad news is that this code needs to be rewritten to handle all
+	the formatting cases, see bug #71112 for details.
+
 	* Convert.cs (Convert.ToType): Throw an InvalidCastException if
 	the conversion is invalid, not ArgumentException, this fixes
 	another regression in our test suite.

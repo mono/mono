@@ -3491,7 +3491,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (InvalidCastException))]
 		public void ChangeTypeNullToValuetype ()
 		{
 			Convert.ChangeType (null, typeof (int));

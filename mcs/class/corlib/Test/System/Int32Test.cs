@@ -292,6 +292,18 @@ public class Int32Test : Assertion
 	}
 
 	[Test]
+	public void TestSections ()
+	{
+		int hundred = 100;
+		int neghund = -100;
+		
+		Assert ("#TS1",  hundred.ToString ("#;#") == "100");
+		Assert ("#TS2",  hundred.ToString ("-#;#") == "-100");
+		Assert ("#TS3",  neghund.ToString ("#;#") == "100");
+		Assert ("#TS3",  neghund.ToString ("#;-#") == "-100");
+	}
+	
+	[Test]
 	public void ToString_Defaults () 
 	{
 		Int32 i = 254;

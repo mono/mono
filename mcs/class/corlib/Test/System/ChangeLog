@@ -8,6 +8,10 @@
 
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* Int32Test.cs: Add a couple of new formatting tests.
+
+	* ConvertTest.cs: Updated the kind of exception thrown.
+
 	* BitConverterTest.cs: There is no exception thrown in .NET here.
 	Fixes an false negative.
 

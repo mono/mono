@@ -1806,6 +1806,7 @@ class FormatSection {
 	public int [] TokenTypes;
 	public bool HaveDot;
 	public bool HaveSci;
+	public bool NegSign;
 	public bool sciSignAlways = false;
 	public int sciDigits;
 	public int numCommas;
@@ -1822,6 +1823,8 @@ class FormatParse {
 	const int ESCAPE_SEQ = 7;
 	const int SCIENTIFIC = 8;
 	const int NEW_SECTION = 9;
+	const int NEGSIGN = 10;
+	
 	private FormatSection [] sections = new FormatSection[3];
 	private int nsections = 0;
 	private int pos; // Position in the format string
@@ -1839,8 +1842,9 @@ class FormatParse {
 		parseFormat (format);
 	}
 
-	private void FormatSci (char [] digits, ArrayList outputList, FormatSection sec)
+	private void FormatSci (char [] digits, ArrayList outputList, int section)
 	{
+		FormatSection sec = sections [section];
 		int tokidx = sec.ntokens - 1;
 
 		// Output everything until we get to the SCIENTIFIC
@@ -1868,17 +1872,18 @@ class FormatParse {
 		// Now format the rest
 		int digitIdx = 0;
 		if (sec.HaveDot)
-			FormatDot (digits, ref digitIdx, outputList, sec, tokidx, 0);
+			FormatDot (digits, ref digitIdx, outputList, section, tokidx, 0);
 		else
-			FormatPlain (digits, ref digitIdx, outputList, sec, tokidx, 0, sec.numCommas > 0);
+			FormatPlain (digits, ref digitIdx, outputList, section, tokidx, 0, sec.numCommas > 0);
 	}
 
 	private void FormatDot (char [] digits, ref int digitIdx, ArrayList outputList, 
-				FormatSection sec, int lastToken, int firstToken)
+				int section, int lastToken, int firstToken)
 	{
 		int tokidx = lastToken;
 		int type;
-
+		FormatSection sec = sections [section];
+		
 		while (tokidx >= firstToken) {
 			type = sec.TokenTypes [tokidx];
 			if (type == DOT || type == PH_NUMBER || type == PH_0)
@@ -1891,19 +1896,20 @@ class FormatParse {
 			int max = (postDotDigits.Length > digits.Length) ? digits.Length : postDotDigits.Length;
 			Array.Copy (digits, 0, postDotDigits, 0, max);
 			int postDotDigitsIdx = 0;
-			FormatPlain (postDotDigits, ref postDotDigitsIdx, outputList, sec, lastToken, tokidx, false);
+			FormatPlain (postDotDigits, ref postDotDigitsIdx, outputList, section, lastToken, tokidx, false);
 			tokidx--;
 			digitIdx += max;
-			FormatPlain (digits, ref digitIdx, outputList, sec, tokidx, 0, sec.numCommas > 0);
+			FormatPlain (digits, ref digitIdx, outputList, section, tokidx, 0, sec.numCommas > 0);
 		}
 	}
 
 	private void FormatPlain (char [] digits, ref int digitIdx, ArrayList outputList, 
-				FormatSection sec, int lastToken, int firstToken, bool insertComma)
+				int section, int lastToken, int firstToken, bool insertComma)
 	{
 		int tokidx = lastToken;
 		int type;
 		int leftMostZeroIdx = -1;
+		FormatSection sec = sections [section];
 
 		while (tokidx >= firstToken) {
 			type = sec.TokenTypes [tokidx];
@@ -1938,8 +1944,10 @@ class FormatParse {
 							group++;
 					}
 
-					if (sec.nph == 0 && isNegative)
-						outputList.Add (nfi.NegativeSign);
+					if (sec.nph == 0 && isNegative){
+						if ((nsections > 0 && sections [1].NegSign) || nsections == 0)
+							outputList.Add (nfi.NegativeSign);
+					}
 				}
 			} else {
 				outputList.Add ((string) sec.tokens [tokidx]);
@@ -2015,6 +2023,7 @@ class FormatParse {
 
 		FormatSection sec = sections [section];
 		digits = AdjustDigits (number.ToString (), sec);
+		
 		if (digits.Length == 1 && digits [0] == '0')
 			if (nsections > 2)
 				sec = sections [2]; // Format as a 0
@@ -2027,11 +2036,11 @@ class FormatParse {
 		Array.Reverse (digits);
 
 		if (sec.HaveSci)
-			FormatSci (digits, outputList, sec);
+			FormatSci (digits, outputList, section);
 		else if (sec.HaveDot)
-			FormatDot (digits, ref digitIdx, outputList, sec, sec.ntokens - 1, 0);
+			FormatDot (digits, ref digitIdx, outputList, section, sec.ntokens - 1, 0);
 		else
-			FormatPlain (digits, ref digitIdx, outputList, sec, sec.ntokens - 1, 0, sec.numCommas > 0);
+			FormatPlain (digits, ref digitIdx, outputList, section, sec.ntokens - 1, 0, sec.numCommas > 0);
 
 		string result = "";
 		for (int i = outputList.Count - 1; i >= 0; i--) {
@@ -2048,17 +2057,20 @@ class FormatParse {
 		int type = AS_IS;
 		int prevType = AS_IS;
 		string token;
+		bool tokens_seen = false;
 
 		sections[0] = new FormatSection();
 		while (pos < fmtlen) {
-
-			token = getNextToken (fmt_chars, fmtlen, out type);
+			token = getNextToken (fmt_chars, fmtlen, out type, nsections == 1 && !tokens_seen);
 			if (type == NEW_SECTION) {
 				nsections++;
 				if (nsections > 3)
 					break;
 				sections[nsections] = new FormatSection();
+				tokens_seen = false;
 			} else {
+				if (type != AS_IS)
+					tokens_seen = true;
 				prevType = AddToken (token, type, prevType);
 			}			
 		}
@@ -2129,6 +2141,10 @@ class FormatParse {
 				type = AS_IS;
 			}
 			break;
+
+		case NEGSIGN:
+			sec.NegSign = true;
+			break;
 		}
 
 		newTokens[sec.ntokens] = token;
@@ -2139,7 +2155,7 @@ class FormatParse {
 		return type;
 	}
 	
-	private string getNextToken (char [] fmt_chars, int fmtlen, out int type)
+	private string getNextToken (char [] fmt_chars, int fmtlen, out int type, bool negsection)
 	{
 		int curpos = pos;
 		string result = null;
@@ -2231,6 +2247,10 @@ class FormatParse {
 					pos = curpos;
 				}
 			}
+		}
+		else if (negsection && current == '-'){
+			type = NEGSIGN;
+			pos++;
 		}
 		else {
 			char [] format_spec = { '0', '#', ',', '.', '%', 'E', 'e', '"', '\'', '\\' };
