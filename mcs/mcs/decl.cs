@@ -1432,8 +1432,8 @@ namespace Mono.CSharp {
 						    !type.IsSubclassOf (TypeManager.multicast_delegate_type)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (-28, 
-								"The method '{0}' is marked virtual, but doesn't appear to have a slot." + 
-								"  It may be ignored during overload resolution", 
+								"The method '{0}' is marked 'override', but doesn't appear to override any virtual or abstract method:" + 
+								" it may be ignored during overload resolution", 
 								TypeManager.CSharpSignature (base_method));
 						}
 						goto skip;

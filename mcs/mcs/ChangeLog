@@ -1,5 +1,8 @@
 2005-03-29  Raja R Harinath  <rharinath@novell.com>
 
+	* decl.cs (MemberCache.AddMethods): Use C# terminology in warning.
+	Don't mention IL method attribute names.
+
 	Fix #47991.  Remove a TODO.
 	* statement.cs (Block.Toplevel): Make into a field.
 	(Block.Parameters): Move into ToplevelBlock.
