@@ -422,26 +422,18 @@ namespace_head		: D_NAMESPACE comp_name
 
 class_all		: class_head OPEN_BRACE class_decls CLOSE_BRACE
                           {
-                                codegen.CompleteClass ();
+                                codegen.EndTypeDef ();
                           }
 			;
 
 class_head 		: D_CLASS class_attr id typars_clause extends_clause
                           impl_clause
                           {
-                                if ($5 != null) {
-					codegen.AddClass ((TypeAttr) $2, (string) $3, 
-						((TypeRef)$5).Type as Class, null);
-				} else {
-					codegen.AddClass ((TypeAttr)$2, (string) $3, null);
-				}
-                                
-				ArrayList impl_list = (ArrayList) $6;
-				if (impl_list != null) {
-					foreach (TypeRef type_ref in impl_list)
-						codegen.CurrentClass.AddImplementedInterface (type_ref.Type as Class);
-				}
-                                
+                                codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 
+						$5 as IClassRef, $6 as ArrayList, null);
+
+                                /*
+                                // Lets not worry about generics for now :p
                                 if ($4 != null) {
                                         ArrayList typars_list = (ArrayList) $4;
                                         int index = 0;
@@ -451,6 +443,7 @@ class_head 		: D_CLASS class_attr id typars_clause extends_clause
                                                 codegen.CurrentClass.AddGenericParameter ((short) index++, type.Type, name);
                                         }
                                 }
+                                */
                           }
 			;
 
@@ -560,14 +553,13 @@ slashed_name		: comp_name
 
 class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
                           {
-                                Class klass = codegen.ExternTable.GetClass ((string) $2, (string)$4);
-                                $$ = new TypeRef (klass, (string) $4);
+                                ClassRef klass = codegen.ExternTable.GetClass ((string) $2, (string)$4);
+                                $$ = new ExternTypeRef (klass, (string) $4);
                           }
 			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET slashed_name
 			| slashed_name
                           {
-                                $$ = new TypeRef (codegen.ClassTable.GetReference ((string) $1, null),
-					(string) $1);
+                                $$ = new TypeRef ((string) $1, null);
                           }
 			;
 
@@ -601,11 +593,11 @@ type			: K_CLASS class_ref
                           }
 			| K_OBJECT
                           {
-                                $$ = new TypeRef (PrimitiveType.Object, "System.Object");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Object, "System.Object");
                           }
 			| K_STRING
                           {
-                                $$ = new TypeRef (PrimitiveType.String, "System.String");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.String, "System.String");
                           }
 			| K_VALUE K_CLASS class_ref
                           {
@@ -617,151 +609,117 @@ type			: K_CLASS class_ref
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
-                                TypeRef base_type = (TypeRef) $1;
-                                PEAPI.Type arr_type = new ZeroBasedArray (base_type.Type);
-                                $$ = new TypeRef (arr_type, base_type.FullName + "[]");
+                                ITypeRef base_type = (ITypeRef) $1;
+                                base_type.MakeArray ();
                           }
 			| type OPEN_BRACKET bounds CLOSE_BRACKET
                           {
-                                TypeRef base_type = (TypeRef) $1;
+                                ITypeRef base_type = (ITypeRef) $1;
                                 ArrayList bound_list = (ArrayList) $3;
-                                int dimen = bound_list.Count;
-                                int[] lower_array = new int[dimen];
-                                int[] size_array = new int[dimen];
-                                bool lower_set = false;
-                                bool size_set = false;
-                                bool prev_lower_set = true;
-                                bool prev_size_set = true;
-
-                                // TODO: There should probably be an error reported if
-                                // something like [3...,3...5] is done
-                                for (int i=0; i<dimen; i++) {
-                                        DictionaryEntry bound = (DictionaryEntry) bound_list[i];
-                                        
-                                        if (bound.Key != null && prev_lower_set) {
-                                                lower_array[i] = (int) bound.Key;
-                                                lower_set = true;
-                                        } else {
-                                                prev_lower_set = false;
-                                        }       
-                                        if (bound.Value != null && prev_size_set) {
-                                                size_array[i] = (int) bound.Value;
-                                                size_set = true;
-                                        } else {
-                                                prev_size_set = false;
-                                        }
-                                }
-                                if (lower_set && size_set) {
-                                        $$ = new BoundArray (base_type.Type,
-                                                (uint) dimen, lower_array, size_array);
-                                } else if (size_set) {
-                                        $$ = new BoundArray (base_type.Type,
-                                                (uint) dimen, size_array);
-                                } else {
-                                        $$ = new BoundArray (base_type.Type, (uint) dimen);
-                                }
+                                base_type.MakeBoundArray (bound_list);
                           }
 			| type AMPERSAND
                           {
-                                TypeRef base_type = $1 as TypeRef;
-                                PEAPI.Type ref_type = new ManagedPointer (base_type.Type);
-                                $$ = new TypeRef (ref_type, base_type.FullName + '&');
+                                ITypeRef base_type = (ITypeRef) $1;
+                                base_type.MakeManagedPointer ();
                           }
 			| type STAR
                           {
-                                TypeRef base_type = (TypeRef) $1;
-                                PEAPI.Type ptr_type = new UnmanagedPointer (base_type.Type);
-                                $$ = new TypeRef (ptr_type, base_type.FullName + '&');
+                                ITypeRef base_type = (ITypeRef) $1;
+                                base_type.MakeUnmanagedPointer ();
                           }
 			| type K_PINNED
                           {
-                                TypeRef type = (TypeRef) $1;
-                                type.Pinned = true;
+                                ITypeRef base_type = (ITypeRef) $1;
+                                base_type.MakePinned ();
                           }
 			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
                           {
-                                TypeRef base_type = (TypeRef) $1;
-                                TypeRef class_ref = (TypeRef) $4;
+                                /*
+                                ITypeRef base_type = (ITypeRef) $1;
+                                ITypeRef class_ref = (ITypeRef) $4;
 
                                 $$ = new CustomModifiedType (base_type.Type,
                                         CustomModifier.modreq, (Class) class_ref.Type);
+                                */
                           }
 			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
                           {
+                                /*
                                 TypeRef base_type = (TypeRef) $1;
                                 TypeRef class_ref = (TypeRef) $4;
 
                                 $$ = new CustomModifiedType (base_type.Type,
                                         CustomModifier.modopt, (Class) class_ref.Type);
+                                */
                           }
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
 			| K_TYPEDREF
                           {
-                                $$ = new TypeRef (PrimitiveType.TypedRef,
+                                $$ = new PrimitiveTypeRef (PrimitiveType.TypedRef,
                                         "System.TypedReference");
                           }
 			| K_CHAR
                           {
-                                $$ = new TypeRef (PrimitiveType.Char, "System.Char");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Char, "System.Char");
                           }
 			| K_VOID
                           {
-                                $$ = new TypeRef (PrimitiveType.Void, "System.Void");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Void, "System.Void");
                           }
 			| K_BOOL
                           {
-                                $$ = new TypeRef (PrimitiveType.Boolean, "System.Bool");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Boolean, "System.Bool");
                           }
 			| K_INT8
                           {
-                                $$ = new TypeRef (PrimitiveType.Int8, "System.Int8");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Int8, "System.Int8");
                           }
 			| K_INT16
                           {
-                                $$ = new TypeRef (PrimitiveType.Int16, "System.Int16");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Int16, "System.Int16");
                           }
 			| K_INT32
                           {
-                                $$ = new TypeRef (PrimitiveType.Int32, "System.Int32");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Int32, "System.Int32");
                           }
 			| K_INT64
                           {
-                                $$ = new TypeRef (PrimitiveType.Int64, "System.Int64");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Int64, "System.Int64");
                           }
 			| K_FLOAT32
                           {
-                                $$ = new TypeRef (PrimitiveType.Float32, "System.Float32");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Float32, "System.Float32");
                           }
 			| K_FLOAT64
                           {
-                                $$ = new TypeRef (PrimitiveType.Float64, "System.Float64");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Float64, "System.Float64");
                           }
 			| K_UNSIGNED K_INT8
                           {
-                                $$ = new TypeRef (PrimitiveType.UInt8, "System.UInt8");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt8, "System.UInt8");
                           }
 			| K_UNSIGNED K_INT16
                           {
-                                $$ = new TypeRef (PrimitiveType.UInt16, "System.UInt16");     
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt16, "System.UInt16");     
                           }
 			| K_UNSIGNED K_INT32
                           {
-                                $$ = new TypeRef (PrimitiveType.UInt32, "System.UInt32");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt32, "System.UInt32");
                           }
 			| K_UNSIGNED K_INT64
                           {
-                                $$ = new TypeRef (PrimitiveType.UInt64, "System.UInt64");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt64, "System.UInt64");
                           }
 			| K_NATIVE K_INT
                           {
                                 // TODO: Is this the proper full name
-                                $$ = new TypeRef (PrimitiveType.NativeInt, "System.IntPtr");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.NativeInt, "System.IntPtr");
                           }
                         
 			| K_NATIVE K_UNSIGNED K_INT
                           {
-                                // TODO: Is this the proper full name
-                                $$ = new TypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
                           }
                         | BANG int32
                           {
@@ -1037,18 +995,21 @@ variant_type		: /* EMPTY */
 
 field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
                           {
-                                FieldDef field_def = codegen.AddField ((FieldAttr) $3, 
-					(string) $5, (TypeRef) $4, null);
-                                codegen.AddField (0, "test_field", (TypeRef) $4, null);
+                                FieldDef field_def = new FieldDef((FieldAttr) $3, 
+					(string) $5, (ITypeRef) $4);
+                                codegen.AddFieldDef (field_def);
+                                
                                 if ($2 != null) {
                                         field_def.SetOffset ((uint) $2);
                                 }
+                                /*
                                 if ($6 != null) {
                                         field_def.AddDataValue ((DataConstant) $6);
                                 }
                                 if ($7 != null) {
                                         field_def.AddValue ((Constant) $7);
                                 }
+                                */
                           }
 			;
 
