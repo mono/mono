@@ -1,3 +1,7 @@
+2004-09-14 Marek Safar <marek.safar@seznam.cz>
+
+	* CSharpCodeGenerator.cs: Fix #65854
+
 2004-09-08  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* CSharpCodeGenerator.cs: Reverted change in GenerateArrayCreateExpression.

@@ -93,8 +93,12 @@ namespace Mono.CSharp
 			if ( initializers.Count > 0 ) {
 
 				OutputType( createType );
+
+				if (expression.CreateType.ArrayRank == 0) {
+					output.Write( "[]" );
+				}
 				
-				output.WriteLine( "[] {" );
+				output.WriteLine( " {" );
 				++Indent;
 				OutputExpressionList( initializers, true );
 				--Indent;
