@@ -9,3 +9,15 @@ System.ComponentModel.Design.Serialization/CodeDomSerializer.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializerException.cs
 System.ComponentModel.Design.Serialization/ICodeDomDesignerReload.cs
 System.Web.UI.Design/DataBindingHandler.cs
+System.Windows.Forms.Design/AnchorEditor.cs
+System.Windows.Forms.Design/AxImporter.cs
+System.Windows.Forms.Design/ComponentDocumentDesigner.cs
+System.Windows.Forms.Design/ComponentTray.cs
+System.Windows.Forms.Design/ControlDesigner.cs
+System.Windows.Forms.Design/DocumentDesigner.cs
+System.Windows.Forms.Design/FileNameEditor.cs
+System.Windows.Forms.Design/IMenuEditorService.cs
+System.Windows.Forms.Design/MenusCommands.cs
+System.Windows.Forms.Design/ParentControlDesigner.cs
+System.Windows.Forms.Design/ScrollableControlDesigner.cs
+System.Windows.Forms.Design/SelectionRules.cs

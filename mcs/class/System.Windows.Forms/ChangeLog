@@ -1,5 +1,19 @@
+2003-07-07  Martin Willemoes Hansen <mwh@sysrq.dk>
 
-Sat May 31 12:21:21 CEST 2003 Paolo Molaro <lupus@ximian.com>
+	* System.Windows.Forms.Design/AnchorEditor.cs
+	  System.Windows.Forms.Design/AxImporter.cs
+	  System.Windows.Forms.Design/ComponentDocumentDesigner.cs
+	  System.Windows.Forms.Design/ComponentTray.cs
+	  System.Windows.Forms.Design/ControlDesigner.cs
+	  System.Windows.Forms.Design/DocumentDesigner.cs
+	  System.Windows.Forms.Design/FileNameEditor.cs
+	  System.Windows.Forms.Design/IMenuEditorService.cs
+	  System.Windows.Forms.Design/MenusCommands.cs
+	  System.Windows.Forms.Design/ParentControlDesigner.cs
+	  System.Windows.Forms.Design/ScrollableControlDesigner.cs
+	  System.Windows.Forms.Design/SelectionRules.cs: Moved to System.Design assembly
+	
+2003-05-31  Paolo Molaro <lupus@ximian.com>
 
 	* System.Resources/ResXResourceReader.cs: get simple reading and error
 	checks working.

@@ -1,3 +1,19 @@
+2003-07-07  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* System.Windows.Forms.Design/AnchorEditor.cs
+	  System.Windows.Forms.Design/AxImporter.cs
+	  System.Windows.Forms.Design/ComponentDocumentDesigner.cs
+	  System.Windows.Forms.Design/ComponentTray.cs
+	  System.Windows.Forms.Design/ControlDesigner.cs
+	  System.Windows.Forms.Design/DocumentDesigner.cs
+	  System.Windows.Forms.Design/FileNameEditor.cs
+	  System.Windows.Forms.Design/IMenuEditorService.cs
+	  System.Windows.Forms.Design/MenusCommands.cs
+	  System.Windows.Forms.Design/ParentControlDesigner.cs
+	  System.Windows.Forms.Design/ScrollableControlDesigner.cs
+	  System.Windows.Forms.Design/SelectionRules.cs: Moved here 
+	  from System.Windows.Forms assembly
+
 2003-03-31  Alan Tam <Tam@SiuLung.com>
 
 	* System.Design.build: added reference to System.Windows.Forms
