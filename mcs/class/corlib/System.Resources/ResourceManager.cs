@@ -49,7 +49,9 @@ namespace System.Resources
 			
 			BaseNameField = resourceSource.FullName;
 			MainAssembly = resourceSource.Assembly;
-			resourceSetType = resourceSource;
+
+			/* Temporary workaround for bug 43567 */
+			resourceSetType = typeof(ResourceSet);
 			neutral_culture = GetNeutralResourcesLanguage(MainAssembly);
 		}
 		

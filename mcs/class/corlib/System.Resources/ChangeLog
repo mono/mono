@@ -1,3 +1,8 @@
+2003-09-07  Dick Porter  <dick@ximian.com>
+
+	* Temporary workaround for bug 43567, so that Npgsql at least
+	can run.
+
 2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ResourceManager.cs: fixed infinite loop when the resource is not
