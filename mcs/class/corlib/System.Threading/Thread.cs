@@ -167,7 +167,7 @@ namespace System.Threading
 		private extern static void Sleep_internal(int ms);
 
 		public static void Sleep(int millisecondsTimeout) {
-			if(millisecondsTimeout<0) {
+			if((millisecondsTimeout<0) && (millisecondsTimeout != Timeout.Infinite)) {
 				throw new ArgumentException("Negative timeout");
 			}
 			Thread thread=CurrentThread;

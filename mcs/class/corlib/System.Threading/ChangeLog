@@ -1,3 +1,7 @@
+2003-02-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs (Sleep): Timeout.Infinite is a value argument.
+
 2003-02-11  Dick Porter  <dick@ximian.com>
 
 	* Monitor.cs: Infinite wait is Infinite, not 0 ms
