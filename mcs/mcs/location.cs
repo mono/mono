@@ -25,6 +25,7 @@ namespace Mono.CSharp {
 		public readonly string Path;
 		public readonly int Index;
 		public ISymbolDocumentWriter SymbolDocument;
+		public bool HasLineDirective;
 
 		public SourceFile (string name, string path, int index)
 		{
@@ -146,8 +147,11 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public void DefineSymbolDocuments (SymbolWriter symwriter)
 		{
-			foreach (SourceFile file in source_list)
+			foreach (SourceFile file in source_list) {
+				if (file.HasLineDirective)
+					continue;
 				file.SymbolDocument = symwriter.DefineDocument (file.Path);
+			}
 		}
 		
 		public Location (int row)

@@ -2943,8 +2943,8 @@ namespace Mono.CSharp {
 
 			if ((sw != null) && (block != null) &&
 				!Location.IsNull (Location) &&
-				!Location.IsNull (block.EndLocation)) {
-
+				!Location.IsNull (block.EndLocation) &&
+				(Location.SymbolDocument != null)) {
 				sw.OpenMethod (container, ConstructorBuilder, Location, block.EndLocation);
 
 				generate_debugging = true;
@@ -3429,7 +3429,9 @@ namespace Mono.CSharp {
 				if (block == null) {
 					SymbolWriter sw = CodeGen.SymbolWriter;
 
-					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0)) {
+					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0) &&
+					    !Location.IsNull (Location) &&
+					    (Location.SymbolDocument != null)) {
 						sw.OpenMethod (container, MethodBuilder, Location, Location);
 						sw.CloseMethod ();
 					}
@@ -3478,7 +3480,8 @@ namespace Mono.CSharp {
 				SymbolWriter sw = CodeGen.SymbolWriter;
 
 				if ((sw != null) && !Location.IsNull (Location) &&
-				    !Location.IsNull (block.EndLocation)) {
+				    !Location.IsNull (block.EndLocation) &&
+				    (Location.SymbolDocument != null)) {
 					sw.OpenMethod (container, MethodBuilder, Location, block.EndLocation);
 
 					ec.EmitTopBlock (block, ParameterInfo, Location);

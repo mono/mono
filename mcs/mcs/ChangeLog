@@ -1,3 +1,11 @@
+2004-03-05  Martin Baulig  <martin@ximian.com>
+
+	* location.cs (SourceFile.HasLineDirective): New public field;
+	specifies whether the file contains or is referenced by a "#line"
+	directive.
+	(Location.DefineSymbolDocuments): Ignore source files which
+	either contain or are referenced by a "#line" directive.	
+
 2004-02-29  Ben Maurer <bmaurer@users.sourceforge.net>
 
 	* class.cs (Method.CheckBase): Avoid using FindMembers, we have
