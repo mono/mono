@@ -1,3 +1,8 @@
+2002-05-21  Nick Drochak  <ndrochak@gol.com>
+
+	* icall.c : Use different name for Math.Pow's icall.  Needed to check
+	parameters first in C#.
+
 Mon May 20 17:36:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, reflection.h: added icall to get info about an event.
