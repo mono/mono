@@ -1,6 +1,6 @@
 topdir = ../..
 
-TEST_DIR= Test
+#TEST_DIR= Test
 LIBRARY = $(topdir)/class/lib/System.Data.OracleClient.dll
 
 LIB_LIST = list

@@ -1,3 +1,7 @@
+2003-04-17  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile.gnu: The Test dir does not contain a unit test.
+
 2003-04-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* System.Data.OracleClient/OracleConnection.cs: Apply fix from
