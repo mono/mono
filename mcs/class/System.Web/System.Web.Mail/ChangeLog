@@ -1,3 +1,8 @@
+2004-08-26  Sanjay Gupta <gsanjay@novell.com>
+
+	* SmtpClient.cs: Added functionality to add RelatedBodyPart to 
+	MIME message.
+
 2004-08-25  Sanjay Gupta <gsanjay@novell.com>
 
 	* MailMessageWrapper.cs: Added NET_2_0 property and another missing 

@@ -179,9 +179,33 @@ namespace System.Web.Mail {
 	    smtp.WriteBoundary( boundary );
 
 #if NET_2_0
-		//TODO Write the related body parts here
-		//Also check if there are no attachments then 
-		//WriteFinalBoundary(boundary) else call WriteBoundary (boundary)
+		for (int i = 0; i < msg.RelatedBodyParts.Count; i++) {
+			RelatedBodyPart rbp = (RelatedBodyPart) msg.RelatedBodyParts [i];
+			FileInfo file = new FileInfo (rbp.Path);
+			MailHeader header = new MailHeader ();
+			header.ContentLocation = rbp.Path;
+			header.ContentType = String.Format ("application/octet-stream");
+			if (rbp.Name != null)
+				header.Data.Add ("Content-ID", rbp.Name);
+			
+			header.ContentTransferEncoding = "BASE64";
+			smtp.WriteHeader (header);
+			FileStream rbpStream = new FileStream (file.FullName, FileMode.Open);
+			IAttachmentEncoder rbpEncoder = new Base64AttachmentEncoder ();
+			rbpEncoder.EncodeStream (rbpStream, smtp.Stream);
+			rbpStream.Close();
+			smtp.WriteLine( "" );
+			
+			if (i < (msg.RelatedBodyParts.Count - 1)) {
+				smtp.WriteBoundary (boundary);
+			} else {
+				if (msg.Attachments.Count == 0)
+			   		 smtp.WriteFinalBoundary (boundary);
+				else
+			    		smtp.WriteBoundary (boundary);
+					
+			}						
+		}
 #endif	    
 	    // now start to write the attachments
 	    
@@ -231,7 +255,6 @@ namespace System.Web.Mail {
 		    smtp.WriteFinalBoundary( boundary );
 		}
 		    
-		
 	    }
 	       
 	}
