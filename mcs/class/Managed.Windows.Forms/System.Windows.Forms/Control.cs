@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.37 $
+// $Revision: 1.38 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.38  2004/08/20 23:38:54  ravindra
+// Made RightToLeft property virtual and removed a Console.WriteLine.
+//
 // Revision 1.37  2004/08/20 20:09:24  pbartok
 // - Added call to set window background color
 //
@@ -1075,7 +1078,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public RightToLeft RightToLeft {
+		public virtual RightToLeft RightToLeft {
 			get {
 				return right_to_left;
 			}
@@ -1666,7 +1669,6 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_MOUSEHOVER:	{
-Console.WriteLine("hover happening");
 					OnMouseHover(EventArgs.Empty);
 					break;
 				}
