@@ -363,13 +363,19 @@ namespace System
 				} else {
 					// support *nix and W32 styles
 					if (path.Length > 1 && path [1] == ':')
-						cachedLocalPath = Unescape (path.Replace ('/', '\\'));
+						cachedLocalPath = Unescape (path.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
 
+					// LAMESPEC: ok, now we cannot determine
+					// if such URI like "file://foo/bar" is
+					// Windows UNC or unix file path, so
+					// they should be handled differently.
 					else if (System.IO.Path.DirectorySeparatorChar == '\\')
 						cachedLocalPath = "\\\\" + Unescape (host + path.Replace ('/', '\\'));
-					else 
-						cachedLocalPath = "//" + Unescape (host + path);
+					else
+						cachedLocalPath = Unescape (path);
 				}
+				if (cachedLocalPath == String.Empty)
+					cachedLocalPath = Path.DirectorySeparatorChar.ToString ();
 				return cachedLocalPath;
 			} 
 		}
@@ -857,7 +863,6 @@ namespace System
 			isUnc = true;
 
 			uriString = uriString.TrimStart (new char [] {'\\'});
-			isUnc = true;
 			int pos = uriString.IndexOf ('\\');
 			if (pos > 0) {
 				path = uriString.Substring (pos);
@@ -893,20 +898,22 @@ namespace System
 			path = null;
 
 			if (uriString.StartsWith ("//")) {
-				// kind of Unix UNC
 				uriString = uriString.TrimStart (new char [] {'/'});
-				isUnc = true;
+				// Now we don't regard //foo/bar as "foo" host.
+				/* 
 				int pos = uriString.IndexOf ('/');
 				if (pos > 0) {
 					path = '/' + uriString.Substring (pos + 1);
 					host = uriString.Substring (0, pos);
-				} else { // "//server"
+				} else { // "///server"
 					host = uriString;
 					path = String.Empty;
 				}
+				*/
+				path = '/' + uriString;
 			}
 			if (path == null)
-				path = uriString; // FIXME: Should allow '\\' ?
+				path = uriString;
 		}
 
 		// this parse method is as relaxed as possible about the format

@@ -1,3 +1,11 @@
+2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Such ctor arg string that starts with "//" should be 
+	  regarded as a local file path that will be condensed to single "/",
+	  so handle such path differently under Windows and under *nix.
+	  Since '\\' is a valid path character on Unix, so we should not
+	  replace it with '/' in LocalPath.
+
 2004-06-17  Jackson Harper  <jackson@ximian.com>
 
 	* Uri.cs: Use invariant culture.
