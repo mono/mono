@@ -18,7 +18,7 @@ namespace System.ComponentModel {
 		
 		string name;	
 		string basename;
-		Type base;
+		Type baseType;
 		Type nametype;
 
 		public EditorAttribute()
@@ -35,13 +35,13 @@ namespace System.ComponentModel {
 		public EditorAttribute(string typeName, Type baseType)
 		{
 			name = typeName;
-			base = baseType;	
+			this.baseType = baseType;	
 		}
 
 		public EditorAttribute(Type type, Type baseType)
 		{
 			nametype = type;
-			base = baseType;
+			this.baseType = baseType;
 		}
 
 		public string EditorBaseTypeName {
@@ -67,17 +67,17 @@ namespace System.ComponentModel {
 		
 		public override bool Equals(object obj)
 		{
-			if (!(o is EditorAttribute))
+			if (!(obj is EditorAttribute))
 				return false;
-			return (((EditorAttribute) o).name == name) &&
-				(((EditorAttribute) o).basename == basename) &&
-				(((EditorAttribute) o).base == base) &&
-				(((EditorAttribute) o).nametype == nametype);
+			return (((EditorAttribute) obj).name == name) &&
+				(((EditorAttribute) obj).basename == basename) &&
+				(((EditorAttribute) obj).baseType == baseType) &&
+				(((EditorAttribute) obj).nametype == nametype);
 		}
 		
 		public override int GetHashCode()
 		{
-                        if (AttributeName == null)
+                        if (name == null)
 	                        return 0;
                         return name.GetHashCode ();
 		}

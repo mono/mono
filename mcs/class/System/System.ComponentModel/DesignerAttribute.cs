@@ -56,7 +56,7 @@ namespace System.ComponentModel {
 			{
 				get
 				{
-					return basetype;
+					return basetypename;
 				}
 			}
 
@@ -78,12 +78,12 @@ namespace System.ComponentModel {
 			
 			public override bool Equals(object obj)
 			{
-	                        if (!(o is DesignerAttribute))
+	                        if (!(obj is DesignerAttribute))
 	                                return false;
-	                        return (((DesignerAttribute) o).name == name) && 
-					(((DesignerAttribute) o).basetype == basetype) &&
-					(((DesignerAttribute) o).type == type) &&
-					(((DesignerAttribute) o).basetypename == basetypename);
+	                        return (((DesignerAttribute) obj).name == name) && 
+					(((DesignerAttribute) obj).basetype == basetype) &&
+					(((DesignerAttribute) obj).type == type) &&
+					(((DesignerAttribute) obj).basetypename == basetypename);
 			}				
 
 			public override int GetHashCode()

@@ -1,3 +1,8 @@
+2002-11-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DesignerAttribute.cs:
+	* EditorAttribute.cs: fixed the build.
+
 2002-11-19  Alejandro Sánchez Acosta <raciel@es.gnu.org>
 
 	* EditorAttribute: implemented.
