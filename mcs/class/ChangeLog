@@ -1,3 +1,9 @@
+2004-10-11  Duncan Mak  <duncan@ximian.com>
+
+        * Makefile: Move Microsoft.VisualBasic.dll to be built after
+        System.Windows.Forms.dll is built, because VB now requires SWF. This
+        fixes the build.
+
 2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: added System.Data.SqlXml.dll as a working target.

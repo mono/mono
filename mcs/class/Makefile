@@ -31,10 +31,10 @@ SUBDIRS = \
 	System.Data.OracleClient	\
 	$(MONO_POSIX)			\
 	Accessibility			\
-	Microsoft.VisualBasic		\
 	Microsoft.VisualC		\
 	Cscompmgd			\
 	System.Windows.Forms		\
+	Microsoft.VisualBasic		\        
 	System.Design			\
 	PEAPI				\
 	Npgsql				\
