@@ -1,5 +1,13 @@
 2004-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_string_encoding): New helper function.
+
+	* marshal.c (mono_marshal_get_native_wrapper): Use the new helper
+	function to determine which marshalling to use for strings. Fixes
+	#56965.
+
+	* marshal.c (mono_marshal_string_array_to_unicode): Fix warning.
+
 	* reflection.c (encode_marshal_blob): Add support for LPARRAY.
 
 2004-04-15  Bernie Solomon  <bernard@ugsolutions.com>
