@@ -467,6 +467,7 @@ System.Runtime.InteropServices/PreserveSigAttribute.cs
 System.Runtime.InteropServices/PrimaryInteropAssemblyAttribute.cs
 System.Runtime.InteropServices/SEHException.cs
 System.Runtime.InteropServices/ProgIdAttribute.cs
+System.Runtime.InteropServices/RuntimeEnvironment.cs
 System.Runtime.InteropServices/StructLayoutAttribute.cs
 System.Runtime.InteropServices/TYPEKIND.cs
 System.Runtime.InteropServices/TypeLibExporterFlags.cs
