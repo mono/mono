@@ -1,5 +1,6 @@
 2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* RegistryPermissionTest.cs: New. Unit tests for RegistryPermission.
 	* UrlIdentityPermissionTest.cs: Added a test for Copy an empty object
 	which results in a different behaviour in Fx 1.1 and 2.0.
 
