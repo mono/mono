@@ -1,5 +1,10 @@
 2004-06-11  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs:
+	(FieldBase.DoDefine, PropertyBase.DoDefine): Added error test CS0610.
+
+2004-06-11  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs (Attribute.GetValidTargets): Made public.
 
 	* class.cs: 

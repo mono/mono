@@ -4524,6 +4524,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
+				// "Field or property cannot be of type '{0}'";
+				Report.Error_T (610, Location, TypeManager.CSharpName (MemberType));
+				return false;
+			}
+
 			return true;
 		}
 
@@ -5002,6 +5008,12 @@ namespace Mono.CSharp {
 		{
 			if (!base.DoDefine (container))
 				return false;
+
+			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
+				// "Field or property cannot be of type '{0}'";
+				Report.Error_T (610, Location, TypeManager.CSharpName (MemberType));
+				return false;
+			}
 
 			ec = new EmitContext (container, Location, null, MemberType, ModFlags);
 

@@ -96,6 +96,7 @@ namespace Mono.CSharp {
  				case 0582: return "Conditional not valid on interface members";
 				case 0592: return "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.";
 				case 0601: return "The DllImport attribute must be specified on a method marked `static' and `extern'";
+				case 0610: return "Field or property cannot be of type '{0}'";
 				case 0619: return "'{0}' is obsolete: '{1}'";
 				case 0626: return "Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation";
  				case 0629: return "Conditional member '{0}' cannot implement interface member";
