@@ -560,12 +560,12 @@ slashed_name		: comp_name
 class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
                           {
                                 Class klass = codegen.ExternTable.GetClass ((string) $2, (string)$4);
-                                $$ = new ClassRef (klass, (string) $4);
+                                $$ = new TypeRef (klass, (string) $4);
                           }
 			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET slashed_name
 			| slashed_name
                           {
-                                $$ = new ClassRef (codegen.ClassTable.GetReference ((string) $1, null),
+                                $$ = new TypeRef (codegen.ClassTable.GetReference ((string) $1, null),
 					(string) $1);
                           }
 			;
