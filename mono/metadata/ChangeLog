@@ -1,5 +1,7 @@
 2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
 
+	* icall.c (ves_icall_System_Array_SetValue): check for null values.
+
 	* appdomain.c (mono_domain_transfer_object): impl. hack for Arrays
 	and String - but we will need generic marshalling support in the
 	future. 
