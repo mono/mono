@@ -12,13 +12,15 @@ namespace System.Data
 	/// <summary>
 	/// Gets the state of a DataRow object.
 	/// </summary>
+	[Flags]
+	[Serializable]
 	public enum DataRowState
 	{
-		Added,
-		Deleted,
-		Detached,
-		Modified,
-		Unchanged
+		Detached = 1,
+		Unchanged = 2,
+		Added = 4,
+		Deleted = 8,
+		Modified = 16
 	}
 
 }

@@ -14,61 +14,26 @@ namespace System.Data
 	/// </summary>
 	public interface IDBConnection
 	{
-		IDbTransaction BeginTransaction()
-		{
-		}
+		IDbTransaction BeginTransaction();
 
-		IDbTransaction BeginTransaction(IsolationLevel il)
-		{
-		}
+		IDbTransaction BeginTransaction(IsolationLevel il);
 
-		void ChangeDatabase(string databaseName)
-		{
-		}
+		void ChangeDatabase(string databaseName);
 
-		void Close()
-		{
-		}
+		void Close();
 
-		IDbCommand CreateCommand()
-		{
-		}
+		IDbCommand CreateCommand();
 
-		void Open()
-		{
-		}
+		void Open();
 
 
-		string ConnectionString
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		string ConnectionString{get; set;}
 
-		int ConnectionTimeout
-		{
-			get
-			{
-			}
-		}
+		int ConnectionTimeout{get;}
 
-		string Database
-		{
-			get
-			{
-			}
-		}
+		string Database{get;}
 
-		ConnectionState State
-		{
-			get
-			{
-			}
-		}
+		ConnectionState State{get;}
 
 	}
 }

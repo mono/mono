@@ -7,16 +7,19 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies how query command results are applied to the row being updated.
 	/// </summary>
+	[Serializable]
 	public enum UpdateRowSource
 	{
-		Both,
-		FirstReturnedRecord,
-		None,
-		OutputParameters
+		None = 0,
+		OutputParameters = 1,
+		FirstReturnedRecord = 2,
+		Both = 3
 	}
 }

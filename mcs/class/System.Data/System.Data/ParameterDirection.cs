@@ -7,16 +7,19 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies the type of a parameter within a query relative to the DataSet.
 	/// </summary>
+	[Serializable]
 	public enum ParameterDirection
 	{
-		Input,
-		InputOutput,
-		Output,
-		ReturnValue
+		Input = 1,
+		Output = 2,
+		InputOutput = 3,
+		ReturnValue = 6
 	}
 }

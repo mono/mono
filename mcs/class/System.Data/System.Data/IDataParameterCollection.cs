@@ -16,26 +16,12 @@ namespace System.Data
 	/// </summary>
 	public interface IDataParameterCollection : IList, ICollection, IEnumerable
 	{
-		void RemoveAt(string parameterName)
-		{
-		}
+		void RemoveAt(string parameterName);
 		
-		int IndexOf(string parameterName)
-		{
-		}
+		int IndexOf(string parameterName);
 		
-		bool Contains(string parameterName)
-		{
-		}
+		bool Contains(string parameterName);
 
-		object this[string parameterName]
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		object this[string parameterName]{get; set;}
 	}
 }

@@ -13,14 +13,16 @@ namespace System.Data
 	/// Describes the action taken on a DataRow.
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values.
 	/// </summary>
+	[Flags]
+	[Serializable]
 	public enum DataRowAction
 	{
-		Add,
-		Change,
-		Commit,
-		Delete,
-		Nothing,
-		Rollback
+		Nothing = 0,
+		Delete = 1,
+		Change = 2,
+		Rollback = 4,
+		Commit = 8,
+		Add = 16
 	}
 
 }

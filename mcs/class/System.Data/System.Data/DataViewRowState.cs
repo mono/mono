@@ -13,15 +13,17 @@ namespace System.Data
 	/// Describes the version of data in a DataRow.
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values.
 	/// </summary>
+	[Flags]
+	[Serializable]
 	public enum DataViewRowState
 	{
-		Added,
-		CurrentRows,
-		Deleted,
-		ModifiedCurrent,
-		ModifiedOriginal,
-		None,
-		OriginalRows,
-		Unchanged
+		None = 0,
+		Unchanged = 2,
+		Added = 4,
+		Deleted = 8,
+		ModifiedCurrent = 16,
+		CurrentRows = 22,
+		ModifiedOriginal = 32,
+		OriginalRows = 42
 	}
 }

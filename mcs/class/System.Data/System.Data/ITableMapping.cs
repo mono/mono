@@ -14,32 +14,10 @@ namespace System.Data
 	/// </summary>
 	public interface ITableMapping
 	{
-		
-		IColumnMappingCollection ColumnMappings
-		{
-			get
-			{
-			}
-		}
+		IColumnMappingCollection ColumnMappings{get;}
 
-		string DataSetTable
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		string DataSetTable{get; set;}
 
-		string SourceTable
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		string SourceTable{get; set;}
 	}
 }

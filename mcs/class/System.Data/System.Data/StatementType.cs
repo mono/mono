@@ -7,16 +7,19 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies the type of SQL query to be used by the OleDbRowUpdatedEventArgs, OleDbRowUpdatingEventArgs, SqlRowUpdatedEventArgs, or SqlRowUpdatingEventArgs class.
 	/// </summary>
+	[Serializable]
 	public enum StatementType
 	{
-		Delete,
-		Insert,
-		Select,
-		Update
+		Select = 0,
+		Insert = 1,
+		Update = 2,
+		Delete = 3
 	}
 }

@@ -7,16 +7,19 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies the action to take with regard to the current and remaining rows during an Update.
 	/// </summary>
+	[Serializable]
 	public enum UpdateStatus
 	{
-		Continue,
-		ErrorsOccurred,
-		SkipAllRemainingRows,
-		SkipCurrentRow
+		Continue = 0,
+		ErrorsOccurred = 1,
+		SkipCurrentRow = 2,
+		SkipAllRemainingRows = 3
 	}
 }

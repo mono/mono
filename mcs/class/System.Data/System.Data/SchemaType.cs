@@ -7,14 +7,17 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies how to handle existing schema mappings when performing a FillSchema operation.
 	/// </summary>
+	[Serializable]
 	public enum SchemaType
 	{
-		Mapped,
-		Source
+		Source = 1,
+		Mapped = 2
 	}
 }

@@ -12,6 +12,7 @@ namespace System.Data
 	/// <summary>
 	/// Represents the method that will handle the the ColumnChanging event.
 	/// </summary>
+	[Serializable]
 	public delegate void DataColumnChangeEventHandler(object sender, DataColumnChangeEventArgs e);
 
 }

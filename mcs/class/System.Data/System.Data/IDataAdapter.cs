@@ -14,49 +14,19 @@ namespace System.Data
 	/// </summary>
 	public interface IDataAdapter
 	{
-		int Fill(DataSet dataSet)
-		{
-		}
+		int Fill(DataSet dataSet);
 
-		DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType)
-		{
-		}
+		DataTable[] FillSchema(DataSet dataSet, SchemaType schemaType);
 
 		IDataParameter[] GetFillParameters();
 
-		int Update(DataSet dataSet)
-		{
-		}
+		int Update(DataSet dataSet);
 		
-		MissingMappingAction MissingMappingAction
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		MissingMappingAction MissingMappingAction{get;set;}
 
-		MissingSchemaAction MissingSchemaAction
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		MissingSchemaAction MissingSchemaAction{get;set;}
 
-		ITableMappingCollection TableMappings
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		ITableMappingCollection TableMappings{get;}
 
 
 	}

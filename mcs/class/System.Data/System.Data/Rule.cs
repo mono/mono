@@ -7,16 +7,19 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Indicates the action that occurs when a ForeignKeyConstraint is enforced.
 	/// </summary>
+	[Serializable]
 	public enum Rule
 	{
-		Cascade,
-		None,
-		SetDefault,
-		SetNull
+		None = 0,
+		Cascade = 1,
+		SetNull = 2,
+		SetDefault = 3
 	}
 }

@@ -16,34 +16,16 @@ namespace System.Data
 	/// </summary>
 	public interface ITableMappingCollection : IList, ICollection, IEnumerable
 	{
-		ITableMapping Add(string sourceTableName, string dataSetTableName)
-		{
-		}
+		ITableMapping Add(string sourceTableName, string dataSetTableName);
 		
-		bool Contains(string sourceTableName)
-		{
-		}
+		bool Contains(string sourceTableName);
 		
-		ITableMapping GetByDataSetTable(string dataSetTableName)
-		{
-		}
+		ITableMapping GetByDataSetTable(string dataSetTableName);
 		
-		int IndexOf(string sourceTableName)
-		{
-		}
+		int IndexOf(string sourceTableName);
 		
-		void RemoveAt(string sourceTableName)
-		{
-		}
+		void RemoveAt(string sourceTableName);
 		
-		object this[string index]
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		object this[string index]{get; set;}
 	}
 }

@@ -14,100 +14,33 @@ namespace System.Data
 	/// </summary>
 	public interface IDBCommand
 	{
-		void Cancel()
-		{
-		}
+		void Cancel();
 		
-		IDataParameter CreateParameter()
-		{
-		}
+		IDbDataParameter CreateParameter();
 		
-		int ExecuteNonQuery()
-		{
-		}
+		int ExecuteNonQuery();
 
-		IDataReader ExecuteReader()
-		{
-		}
+		IDataReader ExecuteReader();
 
-		IDataReader ExecuteReader(CommandBehavior behavior)
-		{
-		}
+		IDataReader ExecuteReader(CommandBehavior behavior);
 
-		object ExecuteScalar()
-		{
-		}
+		object ExecuteScalar();
 
-		void Prepare()
-		{
-		}
+		void Prepare();
 
 
-		string CommandText
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		string CommandText{get; set;}
 
-		int CommandTimeout
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		int CommandTimeout{get; set;}
 
-		CommandType CommandType
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		CommandType CommandType{get; set;}
 
-		IDbConnection Connection
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		IDbConnection Connection{get; set;}
 
-		IDataParameterCollection Parameters
-		{
-			get
-			{
-			}
-		}
+		IDataParameterCollection Parameters{get;}
 
-		IDbTransaction Transaction
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		IDbTransaction Transaction{get; set;}
 
-		UpdateRowSource UpdatedRowSource
-		{
-			get
-			{
-			}
-			set
-			{
-			}
-		}
+		UpdateRowSource UpdatedRowSource{get; set;}
 	}
 }

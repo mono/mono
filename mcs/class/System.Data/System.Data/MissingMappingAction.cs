@@ -7,15 +7,18 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Determines the action that occurs when a mapping is missing from a source table or a source column.
 	/// </summary>
+	[Serializable]
 	public enum MissingMappingAction
 	{
-		Error,
-		Ignore,
-		Passthrough
+		Passthrough = 1,
+		Ignore = 2,
+		Error = 3
 	}
 }

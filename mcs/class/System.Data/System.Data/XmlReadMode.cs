@@ -7,18 +7,21 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies how to read XML data and a relational schema into a DataSet.
 	/// </summary>
+	[Serializable]
 	public enum XmlReadMode
 	{
-		Auto,
-		DiffGram,
-		Fragment,
-		IgnoreSchema,
-		InferSchema,
-		ReadSchema
+		Auto = 0,
+		ReadSchema = 1,
+		IgnoreSchema = 2,
+		InferSchema = 3,
+		DiffGram = 4,
+		Fragment = 5
 	}
 }

@@ -7,16 +7,19 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies the action to take when adding data to the DataSet and the required DataTable or DataColumn is missing.
 	/// </summary>
+	[Serializable]
 	public enum MissingSchemaAction
 	{
-		Add,
-		AddWithKey,
-		Error,
-		Ignore
+		Add = 1,
+		Ignore = 2,
+		Error = 3,
+		AddWithKey = 4
 	}
 }

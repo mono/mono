@@ -7,16 +7,20 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies how a DataColumn is mapped.
 	/// </summary>
+	[Serializable]
 	public enum MappingType
 	{
-		Attribute,
-		Element,
-		Hidden,
-		SimpleContent
+		Element = 1,
+		Attribute = 2,
+		SimpleContent = 3,
+		Hidden = 4
+		
 	}
 }

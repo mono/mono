@@ -7,15 +7,18 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Use the members of this enumeration when setting the WriteMode parameter of the WriteXml method.
 	/// </summary>
+	[Serializable]
 	public enum XmlWriteMode
 	{
-		DiffGram,
-		IgnoreSchema,
-		WriteSchema
+		WriteSchema = 0,
+		IgnoreSchema = 1,
+		DiffGram = 2
 	}
 }

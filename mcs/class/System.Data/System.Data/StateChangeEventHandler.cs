@@ -12,6 +12,7 @@ namespace System.Data
 	/// <summary>
 	/// Represents the method that will handle the StateChange event.
 	/// </summary>
+	[Serializable]
 	public delegate void StateChangeEventHandler(object sender, StateChangeEventArgs e);
 
 }

@@ -14,20 +14,12 @@ namespace System.Data
 	/// </summary>
 	public interface IDbTransaction
 	{
+		void Commit();
 
-		void Commit()
-		{
-		}
-
-		void Rollback()
-		{
-		}
+		void Rollback();
 		
-		IsolationLevel IsolationLevel
-		{
-			get
-			{
-			}
-		}
+		IDbConnection Connection{get;}
+
+		IsolationLevel IsolationLevel{get;}
 	}	
 }

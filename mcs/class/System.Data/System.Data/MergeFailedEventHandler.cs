@@ -12,6 +12,7 @@ namespace System.Data
 	/// <summary>
 	/// Represents the method that will handle the MergeFailed event.
 	/// </summary>
+	[Serializable]
 	public delegate void MergeFailedEventHandler(object sender, MergeFailedEventArgs e);
 
 }

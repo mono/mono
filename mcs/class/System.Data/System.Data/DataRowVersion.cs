@@ -12,11 +12,12 @@ namespace System.Data
 	/// <summary>
 	/// Describes the version of a DataRow.
 	/// </summary>
+	[Serializable]
 	public enum DataRowVersion
 	{
-		Current,
-		Default,
-		Original,
-		Proposed
+		Original = 256,
+		Current = 512,
+		Proposed = 1024,
+		Default = 1536
 	}
 }

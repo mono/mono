@@ -7,15 +7,19 @@
 // (C) Chris Podurgiel
 //
 
-namespace System.Data
+using System;
+
+namespace mono.System.Data
 {
 	/// <summary>
 	/// Specifies how a command string is interpreted.
 	/// </summary>
+	[Serializable]
 	public enum CommandType
 	{
-		StoredProcedure,
-		TableDirect,
-		Text
+		Text = 1,
+		StoredProcedure = 4,
+		TableDirect = 512
+		
 	}
 }
