@@ -41,6 +41,9 @@ namespace System
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public class Exception : ISerializable 
+#if NET_2_0
+	, _Exception
+#endif
 	{
 		IntPtr [] trace_ips;
 		Exception inner_exception;

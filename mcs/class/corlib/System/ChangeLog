@@ -1,5 +1,9 @@
 2004-11-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Exception.cs: Implement _Exception under NET_2_0.
+
+	* Byte.cs SByte.cs UInt16.cs Int16.cs: Make these compile under csc 2.0.
+
 	* AccessViolationException.cs DataMisalignedException.cs OperationCanceledException.cs
 	NotCancelableException.cs TimeoutException.cs: New files.
 

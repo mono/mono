@@ -227,6 +227,7 @@ namespace System
 			try {
 				uint tmpResult;
 
+				result = 0;
 				if (!UInt32.TryParse (s, style, provider, out tmpResult))
 					return false;
 				if (tmpResult > Byte.MaxValue || tmpResult < Byte.MinValue)

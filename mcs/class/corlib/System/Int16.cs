@@ -205,6 +205,7 @@ namespace System {
 			try {
 				int tmpResult;
 
+				result = 0;
 				if (!Int32.TryParse (s, style, provider, out tmpResult))
 					return false;
 				if (tmpResult > Int16.MaxValue || tmpResult < Int16.MinValue)
