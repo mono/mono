@@ -1,3 +1,9 @@
+
+Mon Dec 20 12:19:37 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* object-internals.h, threads.c, domain.c: add accessors for
+	the MonoThread and MonoDomain tls keys.
+
 2004-12-18  Martin Baulig  <martin@ximian.com>
 
 	* class.c (inflate_generic_type): If we're inflating a generic
