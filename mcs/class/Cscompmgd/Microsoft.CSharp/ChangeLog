@@ -1,8 +1,12 @@
-2002-13-07 Jackson Harper <jackson@latitudegeo.com>
+2002-12-12 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler.cs: Partially implemented bugreport option, also only allow valid options now
+
+2002-12-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* Compiler.cs: Moved StreamWriter creation into a try block
 
-2002-13-07 Jackson Harper <jackson@latitudegeo.com>
+2002-12-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* Compiler.cs: Source text is now implemented so you can pass strings of C# code to be compiled
 

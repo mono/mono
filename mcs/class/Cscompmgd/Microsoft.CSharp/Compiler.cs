@@ -30,11 +30,20 @@ namespace Microsoft.CSharp {
 			
 			string[] temp_cs_files;
 			CompilerError[] errors;
-
+			string bugreport_path = null;	
+			StreamWriter bug_report = null;
+			
 			temp_cs_files = CreateCsFiles (sourceTexts, sourceTextNames);
 			
+			if (options != null)
+				bugreport_path = (string)options["bugreport"];	
+			
+			if (bugreport_path != null) {
+				bug_report = CreateBugReport (sourceTexts, sourceTextNames, bugreport_path);
+			}			
+
 			try {
-				errors = CompileFiles (temp_cs_files, target, imports, options);
+				errors = CompileFiles (temp_cs_files, target, imports, options, bug_report);
 			} catch {
 				throw;
 			} finally {
@@ -42,6 +51,8 @@ namespace Microsoft.CSharp {
 					FileInfo file = new FileInfo (temp_file);
 					file.Delete ();
 				}
+				if (bug_report != null)
+					bug_report.Close ();
 			}
 			
 			return errors;
@@ -52,7 +63,7 @@ namespace Microsoft.CSharp {
 		//
 
 		private static CompilerError[] CompileFiles (string[] cs_files,
-			string target, string[] imports, IDictionary options) 
+			string target, string[] imports, IDictionary options, StreamWriter bug_report) 
 		{
 			ArrayList error_list = new ArrayList ();
 			Process mcs = new Process ();
@@ -82,6 +93,11 @@ namespace Microsoft.CSharp {
 					error_list.Add (error);	
 			}
 			
+			if (bug_report != null) {
+				bug_report.WriteLine ("### Compiler Output");
+				bug_report.Write (mcs_output);
+			}
+
 			return (CompilerError[])error_list.ToArray (typeof(CompilerError));
 		}
 
@@ -152,6 +168,8 @@ namespace Microsoft.CSharp {
 			if (null != options) {
 				foreach (object option in options.Keys) {
 					object value = options[option];
+					if (!ValidOption ((string)option))
+						continue;
 					args.AppendFormat ("{0} ", OptionString (option,value));
 				}
 			}
@@ -182,6 +200,64 @@ namespace Microsoft.CSharp {
 
 			if (sourceTexts.Length <= 0 || sourceTextNames.Length <= 0)
 				throw new IndexOutOfRangeException ();
+		}
+
+		private static StreamWriter CreateBugReport (string[] source_texts, 
+			string[] source_names, string path)
+		{
+			StreamWriter bug_report = null;
+
+			try {
+				bug_report = new StreamWriter (path);
+				bug_report.WriteLine ("### C# Compiler Defect Report," + 
+					" created {0}", DateTime.Now);
+				// Compiler Version
+				// Runtime
+				// Operating System
+				// Username
+				for (int i=0; i<source_texts.Length; i++) {
+					bug_report.WriteLine ("### Source file: '{0}'",
+						source_names[i]);
+					bug_report.Write (source_texts[i]);
+				}
+			} catch {
+				if (bug_report != null)
+					bug_report.Close ();
+				throw;
+			}
+			
+			return bug_report;
+		}
+
+
+		private static bool ValidOption (string option)
+		{
+			switch (option) {
+				case "addmodule":
+				case "baseaddress":
+				case "checked":
+				case "d":
+				case "debug":
+				case "doc":
+				case "filealign":
+				case "incr":
+				case "lib":
+				case "linkres":
+				case "m":
+				case "nostdlib":
+				case "nowarn":
+				case "o":
+				case "r":
+				case "res":
+				case "target":
+				case "unsafe":
+				case "w":
+				case "warnaserror":
+				case "win32icon":
+				case "win32res":
+					return true;
+			}
+			return false;
 		}
 
 	}
