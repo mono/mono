@@ -93,7 +93,7 @@ namespace Mono.CSharp
 				"[{0:00}:{1:000}] {2}",
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
-		
+	       
 		static int tokenize_file (string input_file)
 		{
 			Stream input;
@@ -892,13 +892,13 @@ namespace Mono.CSharp
 			}
 			
 			RootContext.CodeGen.Save (output_file);
-			if (timestamps) {
+			if (timestamps)
 				ShowTime ("Saved output");
 
-				if (want_debugging_support) {
-					RootContext.CodeGen.SaveSymbols ();
+			if (want_debugging_support) {
+				RootContext.CodeGen.SaveSymbols ();
+				if (timestamps)
 					ShowTime ("Saved symbols");
-				}
 			}
 
 			if (Report.Errors > 0){
