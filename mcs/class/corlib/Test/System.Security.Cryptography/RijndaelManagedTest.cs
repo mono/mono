@@ -31,13 +31,13 @@ namespace MonoTests.System.Security.Cryptography {
 					   byte[] plaintext, byte[] expected) 
 		{
 	
-			if (((plaintext.Length*8) % encryptor.InputBlockSize) != 0) {
+			if ((plaintext.Length % encryptor.InputBlockSize) != 0) {
 				throw new ArgumentException("Must have complete blocks");
 			}
 	
 			byte[] ciphertext = new byte[plaintext.Length];
-			for (int i=0; i < plaintext.Length; i += encryptor.InputBlockSize / 8) {
-				encryptor.TransformBlock(plaintext, i, encryptor.InputBlockSize / 8, ciphertext, i);
+			for (int i=0; i < plaintext.Length; i += encryptor.InputBlockSize) {
+				encryptor.TransformBlock(plaintext, i, encryptor.InputBlockSize, ciphertext, i);
 			}
 	
 			for (int i=0; i<32; i++) {
@@ -45,8 +45,8 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 	
 			byte[] roundtrip = new byte[plaintext.Length];
-			for (int i=0; i < ciphertext.Length; i += decryptor.InputBlockSize / 8) {
-				decryptor.TransformBlock(ciphertext, i, decryptor.InputBlockSize / 8, roundtrip, i);
+			for (int i=0; i < ciphertext.Length; i += decryptor.InputBlockSize) {
+				decryptor.TransformBlock(ciphertext, i, decryptor.InputBlockSize, roundtrip, i);
 			}
 	
 			for (int i=0; i<32; i++) {

@@ -1,3 +1,8 @@
+2002-09-22  Andrew Birkett  <andy@nobugs.org>
+
+	* System.Security.Cryptography/RijndaelManagedTest.cs: BlockSize
+	measured in bytes, not bits.
+
 2002-09-19  Andrew Birkett  <andy@nobugs.org>
 
 	* System.Security.Cryptography/RijndaelManagedTest.cs: New test
