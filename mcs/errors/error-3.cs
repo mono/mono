@@ -17,9 +17,9 @@ struct A
 
 class X
 {
+	// CS0177
 	static void test1 (out A a)
 	{
-		// CS0165
 		a.a = 5;
 	}
 
@@ -48,7 +48,7 @@ class X
 	{
 		A a;
 
-		// CS0165
+		// CS0170
 		Console.WriteLine (a.a);
 	}
 
