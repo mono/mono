@@ -91,8 +91,12 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("obj");
 			if (binder == null)
 				binder = Binder.DefaultBinder;
-			object realval = binder.ChangeType (val, type, culture);
-			SetValueInternal (this, obj, realval);
+			if (val != null) {
+				val = binder.ChangeType (val, type, culture);
+				if (val == null)
+					throw new ArgumentException ("Object type cannot be converted to target type.", "val");
+			}
+			SetValueInternal (this, obj, val);
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2003-12-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoField.cs (SetValue): Throw an exception if the value cannot be
+	converted to the field's type. Fixes #52177.
+
 2003-12-11  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* AmbiguousMatchException.cs: Added serialization constructor.
