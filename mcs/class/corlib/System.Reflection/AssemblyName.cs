@@ -127,20 +127,26 @@ namespace System.Reflection {
 					return null;
 				StringBuilder fname = new StringBuilder ();
 				fname.Append (name);
-				fname.Append (", Version=");
-				fname.Append (Version.ToString ());
-				fname.Append (", Culture=");
-				if ((cultureinfo == null) || (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID))
-					fname.Append ("neutral");
-				else
-					fname.Append (cultureinfo.Name);
+				if (Version.ToString () != "0.0.0.0") {
+					fname.Append (", Version=");
+					fname.Append (Version.ToString ());
+				}
+				if (cultureinfo != null) {
+					fname.Append (", Culture=");
+					if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
+						fname.Append ("neutral");
+					else
+						fname.Append (cultureinfo.Name);
+				}
 				byte[] pub_tok = GetPublicKeyToken ();
-				if (pub_tok == null || pub_tok.Length == 0)
-					fname.Append (", PublicKeyToken=null");
-				else {
-					fname.Append (", PublicKeyToken=");
-					for (int i = 0; i < pub_tok.Length; i++)
-						fname.Append (pub_tok[i].ToString ("x2"));
+				if (pub_tok != null) {
+					if (pub_tok.Length == 0)
+						fname.Append (", PublicKeyToken=null");
+					else {
+						fname.Append (", PublicKeyToken=");
+						for (int i = 0; i < pub_tok.Length; i++)
+							fname.Append (pub_tok[i].ToString ("x2"));
+					}
 				}
 				return fname.ToString ();
 			}
