@@ -1,5 +1,5 @@
 //
-// System.Net.CredentialCache
+// System.Net.CredentialCache.cs
 //
 // Author:
 //   Lawrence Pit (loz@cable.a2000.nl)
@@ -11,7 +11,6 @@ using System.Runtime.Serialization;
 
 namespace System.Net 
 {
-	[Serializable]
 	public class CredentialCache : ICredentials, IEnumerable
 	{
 		// Fields

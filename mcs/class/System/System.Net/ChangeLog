@@ -1,3 +1,7 @@
+2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CredentialCache.cs: Removed undefined serializable attribute
+
 2003-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChunkStream.cs:
