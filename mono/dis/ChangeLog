@@ -1,3 +1,8 @@
+2004-09-21  Martin Baulig  <martin@ximian.com>
+
+	* main.c (main): If just a single assembly was specified, use the
+	runtime version it requires.
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* dump.c: Added new security actions added in 2.0: LinkDemandChoice,
