@@ -1,5 +1,7 @@
 2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* corlib_test.dll.sources: Added System/ModuleHandleTest.
+
 	* corlib.dll.sources: Added System/ModuleHandle.
 
 2004-09-14  Tim Coleman <tim@timcoleman.com>
