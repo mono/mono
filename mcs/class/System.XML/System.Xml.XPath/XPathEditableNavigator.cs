@@ -104,7 +104,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter CreateAttributes ();
 
 		public virtual XPathEditableNavigator CreateEditor ()
@@ -121,7 +120,6 @@ namespace System.Xml.XPath
 		}
 */
 
-		[MonoTODO ("No implementation as yet")]
 		public abstract bool DeleteCurrent ();
 
 		public virtual XmlWriter InsertAfter ()
@@ -155,7 +153,6 @@ namespace System.Xml.XPath
 			return InsertAfter (new XPathNavigatorReader (nav));
 		}
 
-		[MonoTODO ("No implementation as yet")]
 		public abstract XmlWriter InsertBefore ();
 
 		public virtual XPathEditableNavigator InsertBefore (string xmlFragments)
@@ -242,7 +239,6 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("No implementation as yet")]
 		public abstract void SetValue (object value);
 
 		[MonoTODO]

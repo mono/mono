@@ -824,8 +824,16 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public override object TypedValue {
 			get {
-				if (XmlType != null)
-					throw new NotImplementedException ();
+				switch (NodeType) {
+				case XPathNodeType.Element:
+				case XPathNodeType.Attribute:
+					if (XmlType == null)
+						break;
+					XmlSchemaDatatype dt = XmlType.Datatype;
+					if (dt == null)
+						break;
+					return dt.ParseValue (Value, NameTable, this as IXmlNamespaceResolver);
+				}
 				return Value;
 			}
 		}
@@ -884,7 +892,7 @@ namespace System.Xml.XPath
 		public override XmlSchemaType XmlType {
 			get {
 				if (SchemaInfo != null)
-					throw new NotImplementedException ();
+					return SchemaInfo.SchemaType;
 				return null;
 			}
 		}

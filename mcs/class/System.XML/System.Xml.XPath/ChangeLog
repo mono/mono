@@ -1,3 +1,9 @@
+2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs : TypedValue could be implemented.
+	* XPathEditableNavigator.cs : removed some MonoTODO since now there 
+	  are implementations.
+
 2004-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathAtomicValue.cs : All .ctor() are separeted from Init().
