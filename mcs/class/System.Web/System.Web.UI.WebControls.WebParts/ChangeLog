@@ -1,0 +1,12 @@
+2004-08-03 Sanjay Gupta <gsanjay@novell.com>
+
+	* ConnectionPointType.cs : Implemented enumeration.
+	* PartChromeState.cs : Implemented enumeration.
+	* PartChromeType.cs : Implemented enumeration.
+	* PersonalizationScope.cs : Implemented enumeration.
+	* WebPartExportMode.cs : Implemented enumeration.
+	* WebPartHelpMode.cs : Implemented enumeration.
+
+
+
+
