@@ -1,3 +1,9 @@
+2004-08-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* certmgr.cs: Added option '-m' to add certificates to the machine 
+	stores (default to user store). Added better handling for 
+	UnauthorizedAccessException (e.g. non-root access to machine store).
+
 2004-08-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Update version number for Mono 1.1.1 (HEAD ;).
