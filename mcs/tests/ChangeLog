@@ -1,3 +1,7 @@
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Enable test-269.
+
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Enable test-157.
