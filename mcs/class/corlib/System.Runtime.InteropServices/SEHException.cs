@@ -1,5 +1,5 @@
 //
-// System.Runtime.InteropServices
+// System.Runtime.InteropServices.SEHException.cs
 //
 // Authors:
 //    Gonzalo Paniagua Javier <gonzalo@ximian.com>
@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
+	[Serializable]
 	public class SEHException : ExternalException
 	{
 		public SEHException ()

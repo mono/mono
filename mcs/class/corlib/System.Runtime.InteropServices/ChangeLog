@@ -1,3 +1,60 @@
+2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* UCOMIBindCtx.cs: Added and implemented
+	* UCOMIConnectionPoint.cs: Added and implemented
+	* UCOMIConnectionPointContainer.cs: Added and implemented
+	* UCOMIEnumConnectionPoints.cs: Added and implemented
+	* UCOMIEnumConnections.cs: Added and implemented
+	* UCOMIEnumMoniker.cs: Added and implemented
+	* UCOMIEnumString.cs: Added and implemented
+	* UCOMIEnumVARIANT.cs: Added and implemented
+	* UCOMIMoniker.cs: Added and implemented
+	* UCOMIPersistFile.cs: Added and implemented
+	* UCOMIRunningObjectTable.cs: Added and implemented
+	* UCOMIStream.cs: Added and implemented
+
+	* UCOMTypeComp.cs: renamed
+	* UCOMTypeInfo.cs: renamed
+	* UCOMTypeLib.cs: renamed
+
+	* ITypeLibConverter.cs: Fixed interface signature
+
+	* ComSourceInterfacesAttribute.cs: Added and implemented
+	* IDispatchImplAttribute.cs: Added and implemented
+	* InvalidComObjectException.cs: Added and implemented
+	* InvalidOleVariantTypeException.cs: Added and implemented
+	* MarshalDirectiveException.cs: Added and implemented
+	* SafeArrayRankMismatchException.cs: Added and implemented
+	* SafeArrayTypeMismatchException.cs: Added and implemented
+	* SEHException.cs: Added attribute
+	* UnknownWrapper.cs: Added and implemented
+
+	* BIND_OPTS.cs:
+	* CONNECTDATA.cs:
+	* ELEMDESC.cs:
+	* FILETIME.cs:
+	* FUNCDESC.cs:
+	* IDLDESC.cs:
+	* PARAMDESC.cs:
+	* STATSTG.cs:
+	* TYPEATTR.cs:
+	* TYPEDESC.cs:
+	* TYPELIBATTR.cs:
+	* VARDESC.cs: Added and implemented
+
+	* CALLCONV.cs:
+	* FUNCFLAGS.cs:
+	* FUNCKIND.cs:
+	* IDispatchImplType.cs:
+	* IDLFLAG.cs:
+	* IMPLTYPEFLAGS.cs:
+	* LIBFLAGS.cs:
+	* PARAMFLAG.cs:
+	* SYSKIND.cs:
+	* TYPEFLAGS.cs: 
+	* TypeLibImporterFlags.cs:
+	* VARFLAGS.cs: Added and implemented
+
 2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ComCompatibleVersionAttribute.cs: Added and implemented

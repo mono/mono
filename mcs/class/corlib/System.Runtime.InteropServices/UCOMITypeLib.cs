@@ -18,6 +18,7 @@ namespace System.Runtime.InteropServices
 		void GetLibAttr( out IntPtr ppTLibAttr);
 		void GetTypeComp( out UCOMITypeComp ppTComp); 
 		void GetTypeInfo( int index, out UCOMITypeInfo ppTI);
+		int GetTypeInfoCount();
 		void GetTypeInfoOfGuid( ref Guid guid, out UCOMITypeInfo ppTInfo);
 		void GetTypeInfoType( int index, out TYPEKIND pTKind);
 		bool IsName( string szNameBuf, int lHashVal);
