@@ -1804,8 +1804,10 @@ indexer_declarator
 	: type THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $4;
-
-		if (pars.FixedParameters == null && pars.ArrayParameter == null){
+		if (pars.HasArglist) {
+			// "__arglist is not valid in this context"
+			Report.Error_T (1669, lexer.Location);
+		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
 
@@ -1815,7 +1817,10 @@ indexer_declarator
 	  {
 		Parameters pars = (Parameters) $6;
 
-		if (pars.FixedParameters == null && pars.ArrayParameter == null){
+		if (pars.HasArglist) {
+			// "__arglist is not valid in this context"
+			Report.Error_T (1669, lexer.Location);
+		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
 		$$ = new IndexerDeclaration ((Expression) $1, $2.ToString (), pars);

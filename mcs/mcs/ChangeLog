@@ -1,3 +1,7 @@
+2004-06-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Added error CS1669 test for indexers.
+
 2004-06-13  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in
