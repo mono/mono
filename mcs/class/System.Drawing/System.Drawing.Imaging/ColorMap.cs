@@ -15,19 +15,19 @@ namespace System.Drawing.Imaging {
 	public sealed class ColorMap {
 
 		// constructors
-		//[MonoTODO]
+		[MonoTODO]
 		public ColorMap() {
 			throw new NotImplementedException ();
 		}
 
 		// properties
-		//[MonoTODO]
+		[MonoTODO]
 		public Color NewColor {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public Color OldColor {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }

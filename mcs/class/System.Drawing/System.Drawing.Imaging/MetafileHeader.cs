@@ -13,93 +13,93 @@ namespace System.Drawing.Imaging {
 	public sealed class MetafileHeader {
 
 		// methods
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsDisplay() {
 			throw new NotImplementedException ();
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsEmf() {
 			throw new NotImplementedException ();
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsEmfOrEmfPlus() {
 			throw new NotImplementedException ();
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsEmfPlus() {
 			throw new NotImplementedException ();
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsEmfPlusDual() {
 			throw new NotImplementedException ();
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsEmfPlusOnly() {
 			throw new NotImplementedException ();
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsWmf() {
 			throw new NotImplementedException ();
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool IsWmfPlaceable() {
 			throw new NotImplementedException ();
 		}
 
 		// properties
-		//[MonoTODO]
+		[MonoTODO]
 		public Rectangle Bounds {
 			get { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public float DpiX {
 			get { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public float DpiY {
 			get { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int EmfPlusHeaderSize {
 			get { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public int LogicalDpiX {
 			get { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int LogicalDpiY {
 			get { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int MetafileSize {
 			get { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public MetafileType Type {
 			get { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public int Version {
 			get { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public MetaHeader WmfHeader {
 			get { throw new NotImplementedException (); }
 		}

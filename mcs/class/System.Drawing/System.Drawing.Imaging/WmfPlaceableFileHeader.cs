@@ -13,67 +13,67 @@ namespace System.Drawing.Imaging {
 	public sealed class WmfPlaceableFileHeader {
 
 		// constructors
-		//[MonoTODO]
+		[MonoTODO]
 		public WmfPlaceableFileHeader() {
 			throw new NotImplementedException ();
 		}
 
 		// properties
-		//[MonoTODO]
+		[MonoTODO]
 		public short BboxBottom {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short BboxLeft {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short BboxRight {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short BboxTop {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short Checksum {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short Hmf {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short Inch {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int Key {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int Reserved {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int Id {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }

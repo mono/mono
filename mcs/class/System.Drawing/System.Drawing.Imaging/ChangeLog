@@ -1,4 +1,17 @@
 2002-9-2  DennisHayes <dennish@raytek.com>
+
+* PropertyItem.cs t
+* MetaHeader.cs t
+* MetafileHeader.cs t
+* Metafile.cs t
+* ImageFormat.cs t
+* ImageCodecInfo.cs t
+* ColorMatrix.cs t
+* ColorMap.cs t
+* WmfPlaceableFileHeader.cs t
+* Added todos back
+
+2002-9-2  DennisHayes <dennish@raytek.com>
 	* checked in for Everaldo Canuto (everaldo.canuto@bol,com.br)
 	* BitmapData.cs
 	* ColorAdjustType.cs

@@ -13,49 +13,49 @@ namespace System.Drawing.Imaging {
 	public sealed class MetaHeader {
 
 		// constructors
-		//[MonoTODO]
+		[MonoTODO]
 		public MetaHeader() {
 			throw new NotImplementedException ();
 		}
 
 		// properties
-		//[MonoTODO]
+		[MonoTODO]
 		public short HeaderSize {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int MaxRecord {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short NoObjects {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public short NoParameters {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public int Size {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public short Type {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public short Version {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }

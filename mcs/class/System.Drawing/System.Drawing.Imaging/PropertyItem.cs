@@ -13,25 +13,25 @@ namespace System.Drawing.Imaging {
 	public sealed class PropertyItem {
 
 		// properties
-		//[MonoTODO]
+		[MonoTODO]
 		public int Id {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public int Len {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public short Type {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public byte[] Value {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
