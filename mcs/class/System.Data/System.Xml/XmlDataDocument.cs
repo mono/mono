@@ -23,6 +23,7 @@ using System.IO;
 using System.Text;
 using System.Xml.XPath;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Xml {
 
@@ -36,21 +37,31 @@ namespace System.Xml {
 		private int dataRowID = 1;
 		private ArrayList dataRowIDList = new ArrayList ();
 
+		// this is needed for inserting new row to datatable via xml
+		private Hashtable TempTable = new Hashtable ();
+
 		#endregion // Fields
 
 		#region Constructors
 
 		public XmlDataDocument() {
+
 			dataSet = new DataSet();
 			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataChanged);
 			//this.NodeChanging += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
-			//this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
 			this.NodeRemoved += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataChanged);
 		}
 
 		public XmlDataDocument(DataSet dataset) {
+
 			this.dataSet = dataset;
 			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			//this.NodeChanging += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
+			this.NodeRemoved += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataChanged);
 		}
 
 		#endregion // Constructors
@@ -119,7 +130,7 @@ namespace System.Xml {
 		public override string Name {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException();
+				return base.Name;
 			}
 		}
 
@@ -142,7 +153,7 @@ namespace System.Xml {
 
 		#region overloaded CreateElement methods
 
-		[MonoTODO]
+		[MonoTODO ("why this is override?")]
 		public override XmlElement CreateElement(string prefix,
 				string localName, string namespaceURI) 
 		{
@@ -151,7 +162,6 @@ namespace System.Xml {
 							     "or an empty string.");
 			string pref = prefix != null ? prefix : String.Empty;
 			return base.CreateElement (pref, localName, namespaceURI != null ? namespaceURI : String.Empty);
-
 		}
 
 		#endregion // overloaded CreateElement Methods
@@ -252,7 +262,11 @@ namespace System.Xml {
 		}
 
 		public override void Load(XmlReader reader) {
-			
+
+			// dont listen these events
+      			this.NodeInserted -= new XmlNodeChangedEventHandler (OnXmlDataChanged);		       
+			this.NodeInserting -= new XmlNodeChangedEventHandler (OnNodeInserting);
+
 			DataTable dt = null;
 
 			// For reading xml to XmlDocument
@@ -317,6 +331,9 @@ namespace System.Xml {
 			} while (reader.Read ());
 
 			base.Load (textReader);
+
+			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
+			this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataChanged);
 		}
 		
 		#endregion // overloaded Load methods
@@ -380,7 +397,7 @@ namespace System.Xml {
 			}
 
 			// Dont trig event again
-			row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			//row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
 			row [args.Node.Name] = null;
 
 			// if all columns are "nulled" we can remove the row. 
@@ -399,7 +416,57 @@ namespace System.Xml {
 				row.Delete ();
 			}
 
-			row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			//row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+		}
+
+		private void OnNodeInserting (object sender, XmlNodeChangedEventArgs args) {
+			
+			if (DataSet.EnforceConstraints) 
+				throw new InvalidOperationException (Locale.GetText ("Please set DataSet.EnforceConstraints == false " +
+										     "before trying to edit XmlDataDocument using " +
+										     "XML operations."));
+			
+		}
+		
+		private void OnNodeInserted (object sender, XmlNodeChangedEventArgs args)
+		{
+
+			// this is table element			
+			if (DataSet.Tables.Contains (args.NewParent.Name)) {
+
+				Hashtable ht = null;
+				if (TempTable.ContainsKey (args.NewParent.Name)) {
+
+					// if TempTable contains table name, get it and remove it from hashtable
+					// so we can later add it :)
+					ht = TempTable [args.NewParent.Name] as Hashtable;
+					TempTable.Remove (args.NewParent.Name);
+				}
+				else 
+					ht = new Hashtable ();
+
+				ht.Add (args.Node.Name, args.Node.InnerText);				
+				TempTable.Add (args.NewParent.Name, ht);
+			} 
+			else if (DataSet.Tables.Contains (args.Node.Name)) {
+				
+				// if nodes name is same as some table in the list is is time to 
+				// add row to datatable
+
+				DataTable dt = DataSet.Tables [args.Node.Name];
+				DataRow row = dt.NewRow ();
+				
+				Hashtable ht = TempTable [args.Node.Name] as Hashtable;
+
+				IDictionaryEnumerator enumerator = ht.GetEnumerator ();
+				while (enumerator.MoveNext ()) {
+					row [enumerator.Key.ToString ()] = enumerator.Value.ToString ();
+				}
+				
+				dt.RowChanged -= new DataRowChangeEventHandler (OnDataTableRowChanged);
+				DataSet.Tables [args.Node.Name].Rows.Add (row);
+				dt.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
+			} 
 		}
 
 		// this changed datatable values when some of xmldocument elements is changed
@@ -418,9 +485,9 @@ namespace System.Xml {
 					OnXmlRemoved (sender, args);
 					break;
 			        case XmlNodeChangedAction.Insert:
+					OnNodeInserted (sender, args);
 					break;
 			}
-					
 		}
 
 		[MonoTODO]
@@ -495,12 +562,13 @@ namespace System.Xml {
 			XmlElement element = CreateElement (args.Row.Table.TableName);
 			DocumentElement.AppendChild (element);
 			
-			XmlElement rowElement = null;
+			XmlElement rowElement = null;			
 			for (int i = 0; i < row.Table.Columns.Count; i++) {
-
+				//this.NodeInserted -= new XmlNodeChangedEventHandler (OnXmlDataChanged);
 				rowElement = CreateElement (row.Table.Columns [i].ToString ());
 				rowElement.InnerText = (string)row [i];
 				element.AppendChild (rowElement);
+				
 			}
 		}
 

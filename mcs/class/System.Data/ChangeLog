@@ -1,3 +1,8 @@
+2002-12-14  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Xml/XmlDataDocument.cs: Adding row via XmlDataDocument to
+	DataSet's datatable is now possible.
+	
 2002-12-11  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Xml/XmlDataDocument.cs: Implemented GetRowFromElement() and
