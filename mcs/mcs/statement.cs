@@ -5039,6 +5039,15 @@ namespace Mono.CSharp {
 					return false;
 			}
 
+			if ((mi.ReturnType == TypeManager.ienumerator_type) && (declaring == TypeManager.string_type))
+				//
+				// Apply the same optimization as MS: skip the GetEnumerator
+				// returning an IEnumerator, and use the one returning a 
+				// CharEnumerator instead. This allows us to avoid the 
+				// try-finally block and the boxing.
+				//
+				return false;
+
 			//
 			// Ok, we can access it, now make sure that we can do something
 			// with this `GetEnumerator'
@@ -5047,9 +5056,11 @@ namespace Mono.CSharp {
 			if (mi.ReturnType == TypeManager.ienumerator_type ||
 			    TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType) ||
 			    (!RootContext.StdLib && TypeManager.ImplementsInterface (mi.ReturnType, TypeManager.ienumerator_type))) {
-				hm.move_next = TypeManager.bool_movenext_void;
-				hm.get_current = TypeManager.object_getcurrent_void;
-				return true;
+				if (declaring != TypeManager.string_type) {
+					hm.move_next = TypeManager.bool_movenext_void;
+					hm.get_current = TypeManager.object_getcurrent_void;
+					return true;
+				}
 			}
 
 			//
@@ -5067,8 +5078,9 @@ namespace Mono.CSharp {
 
 			hm.element_type = hm.get_current.ReturnType;
 			hm.enumerator_type = return_type;
-			hm.is_disposable = TypeManager.ImplementsInterface (
-				hm.enumerator_type, TypeManager.idisposable_type);
+			hm.is_disposable = !hm.enumerator_type.IsSealed ||
+				TypeManager.ImplementsInterface (
+					hm.enumerator_type, TypeManager.idisposable_type);
 
 			return true;
 		}
