@@ -16,6 +16,7 @@ namespace Mono.Util.MonoDoc.Lib {
 
 		XmlTextReader xtr;
 		ArrayList types;
+		DocType document;
 
 		public DocParser (string xmlfile)
 		{
@@ -24,7 +25,13 @@ namespace Mono.Util.MonoDoc.Lib {
 			ParseDoc (xmlfile);
 			types.Sort ();
 		}
-		
+
+		public static DocType GetDoc (string xmlfile)
+		{
+			DocParser inst = new DocParser (xmlfile);
+			return inst.document;
+		}
+
 		public ArrayList DocTypes
 		{
 			get {return types;}
@@ -77,7 +84,9 @@ namespace Mono.Util.MonoDoc.Lib {
 			if (xtr.MoveToAttribute("namespace")) {
 				type.Namespace = xtr.Value;
 			}
+
 			ParseTypeBody (type);
+			document = type;
 			type.Sort ();
 			types.Add (type);
 		}
@@ -87,8 +96,7 @@ namespace Mono.Util.MonoDoc.Lib {
 			while(xtr.Read ()) {
 				DocMember member;
 				if (
-					xtr.NodeType != XmlNodeType.EndElement
-					&& xtr.Name == "class"
+					xtr.Name == "class"
 					|| xtr.Name == "structure"
 					|| xtr.Name == "interface"
 					|| xtr.Name == "enum"
@@ -124,6 +132,18 @@ namespace Mono.Util.MonoDoc.Lib {
 						member = new DocMember();
 						member.IsEvent = true;
 						type.AddEvent (ParseMember (member));
+						continue;
+					case "summary":
+						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
+							xtr.Read ();
+							type.Summary = xtr.Value;
+      					}
+						continue;
+					case "remarks":
+						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
+							xtr.Read ();
+							type.Remarks = xtr.Value;
+						}
 						continue;
 					default:
 						continue;

@@ -58,6 +58,11 @@ namespace Mono.Util.MonoDoc.Lib {
 			set {fullargs = value;}
 		}
 		
+		public string FullName
+		{
+			get {return name+" "+args;}
+		}
+		
 		public bool IsCtor
 		{
 			get {return isCtor;}

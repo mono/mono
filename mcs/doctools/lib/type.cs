@@ -11,7 +11,7 @@ namespace Mono.Util.MonoDoc.Lib {
 
 	public class DocType : IComparable {
 
-		string name, _namespace;
+		string name, _namespace, fileroot, language, summary, remarks;
 		bool isClass, isInterface, isEnum, isStructure, isDelegate, isNested = false;
 		ArrayList enums, ctors, dtors, methods, properties, fields, events;
 
@@ -114,6 +114,35 @@ namespace Mono.Util.MonoDoc.Lib {
 		public string FullName
 		{
 			get {return _namespace+"."+name;}
+		}
+		
+		public string FileRoot
+		{
+			get {return fileroot;}
+			set {fileroot = value;}
+		}
+
+		public string FilePath
+		{
+			get {return fileroot+"/"+language+"/"+_namespace+"/"+name+".xml";}
+		}
+
+		public string Language
+		{
+			get {return language;}
+			set {language = value;}
+		}
+		
+		public string Summary
+		{
+			get {return summary;}
+			set {summary = value;}
+		}
+
+		public string Remarks
+		{
+			get {return remarks;}
+			set {remarks = value;}
 		}
 
 		public bool IsInterface
