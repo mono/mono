@@ -1,3 +1,9 @@
+2004-08-16 Sachin Kumar <skumar1@novell.com>
+	* WithStatementC.vb:
+	* WithStatementC3.vb:
+	* WithStatementC4.vb:
+	* Test.Sources: included new tests
+
 2004-08-14 Bernie Solomon <bernard@ugsolutions.com>
 	* ForEachA.vb:
 	* Test.Sources: new test
