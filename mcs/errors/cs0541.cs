@@ -7,4 +7,7 @@ interface Interface: ICloneable {
         void ICloneable.Clone ();
 }
 
+class Test {
+	static void Main () {}
+}
 

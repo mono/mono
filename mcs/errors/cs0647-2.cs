@@ -6,3 +6,8 @@ using System.Security;
 using System.Security.Permissions;
 
 [assembly: SecurityPermission (SecurityAction.Demand, SkipVerification=true)]
+
+class Test
+{
+	static void Main () {}
+}

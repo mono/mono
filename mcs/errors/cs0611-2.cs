@@ -7,6 +7,8 @@ public class Sample {
                         return null;
                 }
         }
+
+		static void Main () {}
 }
 
 

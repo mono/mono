@@ -1,3 +1,10 @@
+2004-10-01  John Luke  <john.luke@gmail.com>
+
+	* *.cs: fix some incorrect tests by either addding a Main method,
+	or adding a -t:library compiler option.  Makes one test pass, and adds
+	19 to *-expect-wrong-error as they compile when they shouldn't
+	* *mcs-expect-*-error: update
+
 2004-10-01  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0122-5.cs, cs0122-6.cs: New tests.

@@ -7,5 +7,6 @@ abstract public class BaseClass {
 
 abstract class DerivedClass: BaseClass {
         public new void Foo () {}
+		public static void Main () {}
 }
 

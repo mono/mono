@@ -24,5 +24,7 @@ class ErrorClass: DerivedClass {
                 }
                 set { }
         }
+
+		static void Main () {}
 }
 

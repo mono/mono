@@ -13,4 +13,6 @@ class DerivedClass: BaseClass {
         protected override int get_Value () {
                 return 1;
         }
+
+		static void Main () {}
 }

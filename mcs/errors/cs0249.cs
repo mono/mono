@@ -3,5 +3,6 @@
 
 class Sample {
         protected override void Finalize() {}
+		static void Main () {}
 }
 

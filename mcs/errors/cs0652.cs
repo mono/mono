@@ -9,4 +9,6 @@ class X
                 if (b == 500)
                     return;
 	}
+
+	static void Main () {}
 }
