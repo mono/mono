@@ -1,3 +1,7 @@
+2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeChangedEventArgs.cs : not properly inherited from EventArgs.
+
 2004-05-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs : Fixed ToString(TimeSpan) that didn't handle Hour 

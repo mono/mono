@@ -5,7 +5,7 @@ namespace System.Xml
 	/// <summary>
 	/// Passed to delegates on document tree changes
 	/// </summary>
-	public class XmlNodeChangedEventArgs
+	public class XmlNodeChangedEventArgs : EventArgs
 	{
 		// Private data members
 		XmlNode _oldParent;
