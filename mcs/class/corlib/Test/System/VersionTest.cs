@@ -167,14 +167,9 @@ public class VersionTest : TestCase
 		Version v1 = new Version(1, 2);
 		bool exception;
 
-		try {
-			v1.CompareTo (null);
-			exception = false;
-		}
-		catch (ArgumentNullException) {
-			exception = true;
-		}
-		Assert ("A14", exception);
+		// LAMESPEC: Docs say this should throw a ArgumentNullException,
+		// but it simply works. Seems any version is subsequent to null
+		Assert ("A14:", v1.CompareTo (null) > 0);
 
 		try {
 			v1.CompareTo ("A string is not a version");

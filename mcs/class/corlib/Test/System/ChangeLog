@@ -1,5 +1,7 @@
 2002-03-06  Nick Drochak  <ndrochak@gol.com>
 
+	* VersionTest.cs: Fix for mscorlib behavior vs. docs. CompareTo(null)
+	is legal.
 	* UInt16Test.cs:
 	* UInt32Test.cs:
 	* UInt64Test.cs: Use NumberFormatInfo.InvariantInfo.CurrencySymbol
