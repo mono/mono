@@ -1,9 +1,9 @@
 DIRS =	corlib				\
 	System				\
 	System.XML			\
-	System.Drawing
+	System.Drawing			\
+	System.Data
 
-#	System.Data			\
 #	System.Web			\
 #	Microsoft.VisualBasic		\
 #	System.Configuration.Install
