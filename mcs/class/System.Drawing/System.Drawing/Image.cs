@@ -17,7 +17,7 @@ using System.Runtime.Serialization;
 //[Serializable]
 //[ComVisible(true)]
 
-public abstract class Image : MarshalByRefObject /*, ICloneable, IDisposable, ISerializable */ {
+public abstract class Image : MarshalByRefObject, IDisposable /*, ICloneable, ISerializable */ {
 
 	// constructor
 	public Image () {}
@@ -192,7 +192,12 @@ public abstract class Image : MarshalByRefObject /*, ICloneable, IDisposable, IS
 			throw new NotImplementedException ();
 		}
 	}
-	
+	[MonoTODO]
+	public void Dispose ()
+	{
+		throw new NotImplementedException ();
+	}
+
 }
 
 }

@@ -9,11 +9,11 @@ namespace System.Drawing {
 
 		public static Font FromHfont(IntPtr font)
 		{
-			return null;
-		}	
+			return new Font("Arial", (float)12.0, FontStyle.Regular);
+		}
 
-		public IntPtr ToHfont () { return (IntPtr) 0; }
-		
+		public IntPtr ToHfont () { return IntPtr.Zero; }
+
 		public Font(FontFamily family, float size, FontStyle style)
 		{
 		}
@@ -21,5 +21,6 @@ namespace System.Drawing {
 		public Font(string familyName, float size, FontStyle style)
 		{
 		}
+
 	}
 }

@@ -30,7 +30,7 @@ namespace System.Drawing
 
 		public static Brush ControlText {
 			get {
-				throw new NotImplementedException();
+				return new SolidBrush(Color.Black);
 			}
 		}
 

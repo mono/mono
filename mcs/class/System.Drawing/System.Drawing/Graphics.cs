@@ -27,6 +27,7 @@ namespace System.Drawing
 
 		private Graphics (IntPtr nativeGraphics)
 		{
+			hdc_ = nativeGraphics;
 		}
 
 		[MonoTODO]
@@ -62,7 +63,6 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -542,37 +542,37 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, PointF point)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -971,10 +971,12 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
+		IntPtr hdc_ = IntPtr.Zero;
 		[MonoTODO]
 		public static Graphics FromHdc (IntPtr hdc)
 		{
-			throw new NotImplementedException ();
+			Graphics result = new Graphics(hdc);
+			return result;
 		}
 
 		[MonoTODO]
@@ -1016,7 +1018,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public IntPtr GetHdc ()
 		{
-			throw new NotImplementedException ();
+			return hdc_;
 		}
 
 		[MonoTODO]
@@ -1154,7 +1156,6 @@ namespace System.Drawing
 		[MonoTODO]
 		public void ReleaseHdc (IntPtr hdc)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -1307,7 +1308,7 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
 			}
 		}
 
