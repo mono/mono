@@ -1,5 +1,10 @@
 2004-07-13  Martin Baulig  <martin@ximian.com>
 
+	* cs-tokenizer.cs (Tokenizer.parse_less_than): Allow array rank
+	specifiers being part of a type argument.
+
+2004-07-13  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (MemberAccess.ResolveAsTypeStep): Use the full `!'
 	name for generic types.
 

@@ -449,6 +449,14 @@ namespace Mono.CSharp
 				if (!parse_less_than ())
 					return false;
 				goto again;
+			} else if (the_token == Token.OPEN_BRACKET) {
+			rank_specifiers:
+				the_token = token ();
+				if (the_token == Token.CLOSE_BRACKET)
+					goto again;
+				else if (the_token == Token.COMMA)
+					goto rank_specifiers;
+				return false;
 			}
 
 			return false;
