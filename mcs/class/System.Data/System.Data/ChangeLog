@@ -1,3 +1,9 @@
+2002-11-19  Carlos Guzmán Álvarez <carlosga@telefonica.net>
+
+	* DataRow.cs: an object that is equal to null 
+	should be allowed to be set in this indexer too
+	to be like .NET
+
 2002-11-06  Daniel Morgan <danmorg@sc.rr.com>
 
 	* DataColumnPropertyDescriptor.cs: added file

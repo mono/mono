@@ -96,6 +96,7 @@ namespace System.Data {
 								
 			[MonoTODO]
 			set {
+				value = (value == null) ? DBNull.Value : value;		
 				bool objIsDBNull = value.Equals(DBNull.Value);
 				if (column == null)
 					throw new ArgumentNullException ();
