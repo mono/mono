@@ -210,6 +210,7 @@ iteration_stm [AST parent] returns [AST iter]
 	iter = null;
 	AST stm = null;
 	AST exprn = null;
+	AST [] exprs = null;
 }
 	: "do" stm = statement [parent] "while" OPEN_PARENS exprn = expr [parent] CLOSE_PARENS SEMI_COLON
 	  {
@@ -219,14 +220,23 @@ iteration_stm [AST parent] returns [AST iter]
 	  {
 		  iter = new While (parent, exprn, stm);
 	  }
-	| "for" OPEN_PARENS inside_for [parent] CLOSE_PARENS statement [null]
+	| "for" OPEN_PARENS exprs = inside_for [parent] CLOSE_PARENS stm = statement [parent]
+	  {
+		  iter = new For (parent, exprs, stm);
+
+	  }
 	;
 
-inside_for [AST parent]
-	// We must check the NoIn restriction
-	: (expr [parent] | ) SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
-	// We must keep a counter c, c tells us how many decls are
-	// done, in order to interrupt if c > 1 and we are inside a "in"
+inside_for [AST parent] returns [AST [] exprs]
+{
+	AST exp1, exp2, exp3;
+	exprs = null;
+	exp1 = exp2 = exp3 = null;
+}
+	: (exp1 = expr [parent] | ) SEMI_COLON (exp2 = expr [parent] | ) SEMI_COLON (exp3 = expr [parent] | )
+	  {
+		  exprs = new AST [] {exp1, exp2, exp3};
+	  }		  
 	| "var" (var_decl_list [null, null]
 		  ( SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
 		  | IN expr [parent]))
