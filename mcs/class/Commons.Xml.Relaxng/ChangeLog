@@ -1,3 +1,7 @@
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Makefile : added relaxng.rng as a resource.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (Commons.Xml.Relaxng.Rnc/RncParser.cs): Depend on jay/skeleton.cs.
