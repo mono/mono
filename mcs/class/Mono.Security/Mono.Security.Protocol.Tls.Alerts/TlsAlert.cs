@@ -29,13 +29,15 @@ namespace Mono.Security.Protocol.Tls.Alerts
 {
 	#region Enumerations
 
-	public enum TlsAlertLevel : byte
+	[Serializable]
+	internal enum TlsAlertLevel : byte
 	{
 		Warning = 1,
 		Fatal	= 2
 	}
 
-	public enum TlsAlertDescription : byte
+	[Serializable]
+	internal enum TlsAlertDescription : byte
 	{
 		CloseNotify				= 0,
 		UnexpectedMessage		= 10,
@@ -68,9 +70,9 @@ namespace Mono.Security.Protocol.Tls.Alerts
 	{
 		#region Fields
 
-		private TlsContext			context;
-		private TlsAlertLevel		level;
-		private TlsAlertDescription description;
+		private TlsContext				context;
+		private TlsAlertLevel			level;
+		private TlsAlertDescription		description;
 
 		#endregion
 
@@ -85,9 +87,10 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#region Constructors
 
-		public TlsAlert(TlsContext context,
-			TlsAlertLevel level,
-			TlsAlertDescription description) : base()
+		public TlsAlert(
+			TlsContext				context,
+			TlsAlertLevel			level,
+			TlsAlertDescription		description) : base()
 		{
 			this.context		= context;
 			this.level			= level;
@@ -104,19 +107,58 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
-		#region Constructors
+		#region Properties
+
+		public string Message
+		{
+			get { return TlsAlert.GetAlertMessage(this.description); }
+		}
+
+		public bool IsWarning
+		{
+			get
+			{
+				return this.level == TlsAlertLevel.Warning ? true : false;
+			}
+		}
+
+		public bool IsFatal
+		{
+			get
+			{
+				return this.level == TlsAlertLevel.Fatal ? true : false;
+			}
+		}
+
+		public bool IsCloseNotify
+		{
+			get
+			{
+				if (this.IsWarning &&
+					this.description == TlsAlertDescription.CloseNotify)
+				{
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		#endregion
+
+		#region Private Methods
 
 		private void fill()
 		{
-			Write((byte)level);
-			Write((byte)description);
+			this.Write((byte)level);
+			this.Write((byte)description);
 		}
 
 		#endregion
 
 		#region Static Methods
 
-		internal static string GetAlertMessage(TlsAlertDescription description)
+		public static string GetAlertMessage(TlsAlertDescription description)
 		{
 			#if (DEBUG)
 			switch (description)
@@ -194,80 +236,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 					return "";
 			}
 			#else
-			switch (description)
-			{
-				case TlsAlertDescription.AccessDenied:
-					return "Invalid message.";
-
-				case TlsAlertDescription.BadCertificate:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.BadRecordMAC:
-					return "Cryptographic failiure.";
-
-				case TlsAlertDescription.CertificateExpired:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.CertificateRevoked:
-					return "Handshake failiure.";
-					
-				case TlsAlertDescription.CertificateUnknown:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.CloseNotify:
-					return "Connection closed.";
-
-				case TlsAlertDescription.DecodeError:
-					return "Invalid message.";
-
-				case TlsAlertDescription.DecompressionFailiure:
-					return "Compression error.";
-
-				case TlsAlertDescription.DecryptError:
-					return "Cryptographic failiure.";
-
-				case TlsAlertDescription.DecryptionFailed:
-					return "Cryptographic failiure.";
-
-				case TlsAlertDescription.ExportRestriction:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.HandshakeFailiure:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.IlegalParameter:
-					return "Handshake failiure.";
-					
-				case TlsAlertDescription.InsuficientSecurity:
-					return "Handshake failiure.";
-					
-				case TlsAlertDescription.InternalError:
-					return "Fatal failiure.";
-
-				case TlsAlertDescription.NoRenegotiation:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.ProtocolVersion:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.RecordOverflow:
-					return "Incorrect message.";
-
-				case TlsAlertDescription.UnexpectedMessage:
-					return "Incorrect message.";
-
-				case TlsAlertDescription.UnknownCA:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.UnsupportedCertificate:
-					return "Handshake failiure.";
-
-				case TlsAlertDescription.UserCancelled:
-					return "Handshake cancelled by user.";
-
-				default:
-					return "";
-			}
+			return "The authentication or decryption has failed.";
 			#endif
 		}
 

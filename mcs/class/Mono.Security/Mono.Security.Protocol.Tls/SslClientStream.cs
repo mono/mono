@@ -33,7 +33,6 @@ using System.Threading;
 
 using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
-using Mono.Security.Protocol.Tls.Handshake.Client;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -57,12 +56,6 @@ namespace Mono.Security.Protocol.Tls
 
 	public class SslClientStream : Stream, IDisposable
 	{
-		#region Events
-
-		public event TlsWarningAlertEventHandler WarningAlert;
-
-		#endregion
-
 		#region Internal Events
 		
 		internal event CertificateValidationCallback	ServerCertValidation;
@@ -79,11 +72,12 @@ namespace Mono.Security.Protocol.Tls
 		private Stream							innerStream;
 		private BufferedStream					inputBuffer;
 		private TlsContext						context;
+		private ClientRecordProtocol			protocol;
 		private bool							ownsStream;
 		private bool							disposed;
 		private bool							checkCertRevocationStatus;
-		private string							read;
-		private string							write;
+		private object							read;
+		private object							write;
 
 		#endregion
 
@@ -210,7 +204,15 @@ namespace Mono.Security.Protocol.Tls
 		
 		public SecurityProtocolType SecurityProtocol 
 		{
-			get { return this.context.SecurityProtocol; }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.SecurityProtocol; 
+				}
+
+				return 0;
+			}
 		}
 		
 		public X509Certificate SelectedClientCertificate 
@@ -346,7 +348,7 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentNullException("targetHost is null or an empty string.");
 			}
 
-			this.context		= new TlsContext(
+			this.context = new TlsContext(
 				this,
 				securityProtocolType, 
 				targetHost, 
@@ -356,6 +358,7 @@ namespace Mono.Security.Protocol.Tls
 			this.ownsStream		= ownsStream;
 			this.read			= String.Empty;
 			this.write			= String.Empty;
+			this.protocol		= new ClientRecordProtocol(innerStream, context);
 		}
 
 		#endregion
@@ -389,7 +392,7 @@ namespace Mono.Security.Protocol.Tls
 						{
 							// Write close notify
 							TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
-							this.SendAlert(alert);
+							this.protocol.SendAlert(alert);
 						}
 
 						if (this.ownsStream)
@@ -450,80 +453,92 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
 			}
 
-			if (!this.context.HandshakeFinished)
+			lock (this)
 			{
-				this.doHandshake();	// Handshake negotiation
+				if (!this.context.HandshakeFinished)
+				{
+					this.doHandshake();	// Handshake negotiation
+				}
 			}
 
+			/*
 			if (!Monitor.TryEnter(this.read))
 			{
 				throw new InvalidOperationException("A read operation is already in progress.");
 			}
+			System.Threading.Monitor.Enter(this.read);
+			*/
 
 			IAsyncResult asyncResult;
 
-			try
+			lock (this.read)
 			{
-				System.Threading.Monitor.Enter(this.read);
-
-				// If actual buffer is full readed reset it
-				if (this.inputBuffer.Position == this.inputBuffer.Length &&
-					this.inputBuffer.Length > 0)
+				try
 				{
-					this.resetBuffer();
-				}
-
-				// Check if we have space in the middle buffer
-				// if not Read next TLS record and update the inputBuffer
-				while ((this.inputBuffer.Length - this.inputBuffer.Position) < count)
-				{
-					// Read next record and write it into the inputBuffer
-					long	position	= this.inputBuffer.Position;					
-					byte[]	record		= this.receiveRecord();
-					
-					if (record != null && record.Length > 0)
+					// If actual buffer is full readed reset it
+					if (this.inputBuffer.Position == this.inputBuffer.Length &&
+						this.inputBuffer.Length > 0)
 					{
-						// Write new data to the inputBuffer
-						this.inputBuffer.Seek(0, SeekOrigin.End);
-						this.inputBuffer.Write(record, 0, record.Length);
-
-						// Restore buffer position
-						this.inputBuffer.Seek(position, SeekOrigin.Begin);
+						this.resetBuffer();
 					}
-					else
+
+					if (!this.context.ConnectionEnd)
 					{
-						if (record == null)
+						// Check if we have space in the middle buffer
+						// if not Read next TLS record and update the inputBuffer
+						while ((this.inputBuffer.Length - this.inputBuffer.Position) < count)
 						{
-							break;
+							// Read next record and write it into the inputBuffer
+							long	position	= this.inputBuffer.Position;					
+							byte[]	record		= this.protocol.ReceiveRecord();
+					
+							if (record != null && record.Length > 0)
+							{
+								// Write new data to the inputBuffer
+								this.inputBuffer.Seek(0, SeekOrigin.End);
+								this.inputBuffer.Write(record, 0, record.Length);
+
+								// Restore buffer position
+								this.inputBuffer.Seek(position, SeekOrigin.Begin);
+							}
+							else
+							{
+								if (record == null)
+								{
+									break;
+								}
+							}
+
+							// TODO: Review if we need to check the Length
+							// property of the innerStream for other types
+							// of streams, to check that there are data available
+							// for read
+							if (this.innerStream is NetworkStream &&
+								!((NetworkStream)this.innerStream).DataAvailable)
+							{
+								break;
+							}
 						}
 					}
 
-					// TODO: Review if we need to check the Length
-					// property of the innerStream for other types
-					// of streams, to check that there are data available
-					// for read
-					if (this.innerStream is NetworkStream &&
-						!((NetworkStream)this.innerStream).DataAvailable)
-					{
-						break;
-					}
+					asyncResult = this.inputBuffer.BeginRead(
+						buffer, offset, count, callback, state);
 				}
-
-				asyncResult = this.inputBuffer.BeginRead(
-					buffer, offset, count, callback, state);
+				catch (TlsException ex)
+				{
+					throw new IOException("The authentication or decryption has failed.", ex);
+				}
+				catch (Exception ex)
+				{
+					throw new IOException("IO exception during read.", ex);
+				}
 			}
-			catch (TlsException ex)
-			{
-				throw new IOException("The authentication or decryption has failed.", ex);
-			}
-			catch (Exception ex)
-			{
-				throw new IOException("IO exception during read.", ex);
-			}
+			/*
 			finally
 			{
-				System.Threading.Monitor.Exit(this.read);
+				Monitor.Exit(this.read);
 			}
+			*/
 
 			return asyncResult;
 		}
@@ -558,42 +573,52 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
 			}
 
-			if (!this.context.HandshakeFinished)
+			lock (this)
 			{
-				// Start handshake negotiation
-				this.doHandshake();
+				if (!this.context.HandshakeFinished)
+				{
+					// Start handshake negotiation
+					this.doHandshake();
+				}
 			}
 
+			/*
 			if (!Monitor.TryEnter(this.write))
 			{
 				throw new InvalidOperationException("A write operation is already in progress.");
 			}
+			Monitor.Enter(this.write);
+			*/
 
 			IAsyncResult asyncResult;
 
-			try
+			lock (this.write)
 			{
-				Monitor.Enter(this.write);
-
-				// Send the buffer as a TLS record
-				byte[] record = this.encodeRecord(
-					TlsContentType.ApplicationData, buffer, offset, count);
+				try
+				{
+					// Send the buffer as a TLS record
+					byte[] record = this.protocol.EncodeRecord(
+						TlsContentType.ApplicationData, buffer, offset, count);
 				
-				asyncResult = this.innerStream.BeginWrite(
-					record, 0, record.Length, callback, state);
+					asyncResult = this.innerStream.BeginWrite(
+						record, 0, record.Length, callback, state);
+				}
+				catch (TlsException ex)
+				{
+					throw new IOException("The authentication or decryption has failed.", ex);
+				}
+				catch (Exception ex)
+				{
+					throw new IOException("IO exception during Write.", ex);
+				}
 			}
-			catch (TlsException ex)
-			{
-				throw new IOException("The authentication or decryption has failed.", ex);
-			}
-			catch (Exception ex)
-			{
-				throw new IOException("IO exception during Write.", ex);
-			}
+
+			/*
 			finally
 			{
 				Monitor.Exit(this.write);
-			}			
+			}
+			*/			
 
 			return asyncResult;
 		}
@@ -670,349 +695,12 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region Reveive Record Methods
-
-		private byte[] receiveRecord()
-		{
-			if (this.context.ConnectionEnd)
-			{
-				throw this.context.CreateException("The session is finished and it's no longer valid.");
-			}
-			
-			// Try to read the Record Content Type
-			int type = this.innerStream.ReadByte();
-
-			// There are no more data for read
-			if (type == -1)
-			{
-				return null;
-			}
-
-			TlsContentType	contentType	= (TlsContentType)type;
-			short			protocol	= this.ReadShort();
-			short			length		= this.ReadShort();
-			
-			// Read Record data
-			int		received	= 0;
-			byte[]	buffer		= new byte[length];
-			while (received != length)
-			{
-				received += this.innerStream.Read(
-					buffer, received, buffer.Length - received);
-			}
-
-			TlsStream message = new TlsStream(buffer);
-		
-			// Check that the message has a valid protocol version
-			if (protocol != this.context.Protocol)
-			{
-				throw this.context.CreateException("Invalid protocol version on message received from server");
-			}
-
-			// Decrypt message contents if needed
-			if (contentType == TlsContentType.Alert && length == 2)
-			{
-			}
-			else
-			{
-				if (this.context.IsActual &&
-					contentType != TlsContentType.ChangeCipherSpec)
-				{
-					message = this.decryptRecordFragment(
-						contentType, 
-						message.ToArray());
-				}
-			}
-
-			byte[] result = message.ToArray();
-
-			// Process record
-			switch (contentType)
-			{
-				case TlsContentType.Alert:
-					this.processAlert((TlsAlertLevel)message.ReadByte(),
-						(TlsAlertDescription)message.ReadByte());
-					break;
-
-				case TlsContentType.ChangeCipherSpec:
-					// Reset sequence numbers
-					this.context.ReadSequenceNumber = 0;
-					break;
-
-				case TlsContentType.ApplicationData:
-					break;
-
-				case TlsContentType.Handshake:
-					while (!message.EOF)
-					{
-						this.processHandshakeMessage(message);
-					}
-					// Update handshakes of current messages
-					this.context.HandshakeMessages.Write(message.ToArray());
-					break;
-
-				default:
-					throw this.context.CreateException("Unknown record received from server.");
-			}
-
-			return result;
-		}
-
-		#endregion
-
-		#region Send Record Methods
-
-		internal void SendAlert(TlsAlert alert)
-		{			
-			// Write record
-			this.sendRecord(TlsContentType.Alert, alert.ToArray());
-
-			// Update session
-			alert.Update();
-
-			// Reset message contents
-			alert.Reset();
-		}
-
-		private void sendChangeCipherSpec()
-		{
-			// Send Change Cipher Spec message
-			this.sendRecord(TlsContentType.ChangeCipherSpec, new byte[] {1});
-
-			// Reset sequence numbers
-			this.context.WriteSequenceNumber = 0;
-
-			// Make the pending state to be the current state
-			this.context.IsActual = true;
-
-			// Send Finished message
-			this.sendRecord(TlsHandshakeType.Finished);			
-		}
-
-		private void sendRecord(TlsHandshakeType type)
-		{
-			TlsHandshakeMessage msg = this.createClientHandshakeMessage(type);
-			
-			// Write record
-			this.sendRecord(msg.ContentType, msg.EncodeMessage());
-
-			// Update session
-			msg.Update();
-
-			// Reset message contents
-			msg.Reset();
-		}
-
-		private void sendRecord(TlsContentType contentType, byte[] recordData)
-		{
-			if (this.context.ConnectionEnd)
-			{
-				throw this.context.CreateException("The session is finished and it's no longer valid.");
-			}
-
-			byte[] record = this.encodeRecord(contentType, recordData);
-
-			this.innerStream.Write(record, 0, record.Length);
-		}
-
-		private byte[] encodeRecord(TlsContentType contentType, byte[] recordData)
-		{
-			return this.encodeRecord(
-				contentType,
-				recordData,
-				0,
-				recordData.Length);
-		}
-
-		private byte[] encodeRecord(
-			TlsContentType	contentType, 
-			byte[]			recordData,
-			int				offset,
-			int				count)
-		{
-			if (this.context.ConnectionEnd)
-			{
-				throw this.context.CreateException("The session is finished and it's no longer valid.");
-			}
-
-			TlsStream record = new TlsStream();
-
-			int	position = offset;
-
-			while (position < ( offset + count ))
-			{
-				short	fragmentLength = 0;
-				byte[]	fragment;
-
-				if ((count - position) > TlsContext.MAX_FRAGMENT_SIZE)
-				{
-					fragmentLength = TlsContext.MAX_FRAGMENT_SIZE;
-				}
-				else
-				{
-					fragmentLength = (short)(count - position);
-				}
-
-				// Fill the fragment data
-				fragment = new byte[fragmentLength];
-				Buffer.BlockCopy(recordData, position, fragment, 0, fragmentLength);
-
-				if (this.context.IsActual)
-				{
-					// Encrypt fragment
-					fragment = this.encryptRecordFragment(contentType, fragment);
-				}
-
-				// Write tls message
-				record.Write((byte)contentType);
-				record.Write(this.context.Protocol);
-				record.Write((short)fragment.Length);
-				record.Write(fragment);
-
-				// Update buffer position
-				position += fragmentLength;
-			}
-
-			return record.ToArray();
-		}
-		
-		#endregion
-
-		#region Cryptography Methods
-
-		private byte[] encryptRecordFragment(
-			TlsContentType	contentType, 
-			byte[]			fragment)
-		{
-			// Calculate message MAC
-			byte[] mac	= this.context.Cipher.ComputeClientRecordMAC(contentType, fragment);
-
-			// Encrypt the message
-			byte[] ecr = this.context.Cipher.EncryptRecord(fragment, mac);
-
-			// Set new IV
-			if (this.context.Cipher.CipherMode == CipherMode.CBC)
-			{
-				byte[] iv = new byte[this.context.Cipher.IvSize];
-				System.Array.Copy(ecr, ecr.Length - iv.Length, iv, 0, iv.Length);
-				this.context.Cipher.UpdateClientCipherIV(iv);
-			}
-
-			// Update sequence number
-			this.context.WriteSequenceNumber++;
-
-			return ecr;
-		}
-
-		private TlsStream decryptRecordFragment(
-			TlsContentType	contentType, 
-			byte[]			fragment)
-		{
-			byte[]	dcrFragment	= null;
-			byte[]	dcrMAC		= null;
-
-			// Decrypt message
-			this.context.Cipher.DecryptRecord(fragment, ref dcrFragment, ref dcrMAC);
-
-			// Set new IV
-			if (this.context.Cipher.CipherMode == CipherMode.CBC)
-			{
-				byte[] iv = new byte[this.context.Cipher.IvSize];
-				System.Array.Copy(fragment, fragment.Length - iv.Length, iv, 0, iv.Length);
-				this.context.Cipher.UpdateServerCipherIV(iv);
-			}
-			
-			// Check MAC code
-			byte[] mac = this.context.Cipher.ComputeServerRecordMAC(contentType, dcrFragment);
-
-			// Check that the mac is correct
-			if (mac.Length != dcrMAC.Length)
-			{
-				throw new TlsException("Invalid MAC received from server.");
-			}
-			for (int i = 0; i < mac.Length; i++)
-			{
-				if (mac[i] != dcrMAC[i])
-				{
-					throw new TlsException("Invalid MAC received from server.");
-				}
-			}
-
-			// Update sequence number
-			this.context.ReadSequenceNumber++;
-
-			return new TlsStream(dcrFragment);
-		}
-
-		#endregion
-
-		#region Handshake Processing Methods
-
-		private void processHandshakeMessage(TlsStream handMsg)
-		{
-			TlsHandshakeType	handshakeType	= (TlsHandshakeType)handMsg.ReadByte();
-			TlsHandshakeMessage	message			= null;
-
-			// Read message length
-			int length = handMsg.ReadInt24();
-
-			// Read message data
-			byte[] data = new byte[length];
-			handMsg.Read(data, 0, length);
-
-			// Create and process the server message
-			message = this.createServerHandshakeMessage(handshakeType, data);
-
-			// Update session
-			if (message != null)
-			{
-				message.Update();
-			}
-		}
-
-		private void processAlert(
-			TlsAlertLevel		alertLevel, 
-			TlsAlertDescription alertDesc)
-		{
-			switch (alertLevel)
-			{
-				case TlsAlertLevel.Fatal:
-					throw this.context.CreateException(alertLevel, alertDesc);					
-
-				case TlsAlertLevel.Warning:
-				default:
-				switch (alertDesc)
-				{
-					case TlsAlertDescription.CloseNotify:
-						this.context.ConnectionEnd = true;
-						break;
-
-					default:
-						this.RaiseWarningAlert(alertLevel, alertDesc);
-						break;
-				}
-				break;
-			}
-		}
-
-		#endregion
-
 		#region Misc Methods
 
 		private void resetBuffer()
 		{
 			this.inputBuffer.SetLength(0);
 			this.inputBuffer.Position = 0;
-		}
-
-		private short ReadShort()
-		{
-			byte[] b = new byte[2];
-			this.innerStream.Read(b, 0, b.Length);
-
-			short val = BitConverter.ToInt16(b, 0);
-
-			return System.Net.IPAddress.HostToNetworkOrder(val);
 		}
 
 		private void checkDisposed()
@@ -1050,27 +738,27 @@ namespace Mono.Security.Protocol.Tls
 
 		private void doHandshake()
 		{
-			// Obtain supported cipher suite collection
-			this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(context.SecurityProtocol);
+			// Obtain supported cipher suites
+			this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
 
 			// Send client hello
-			this.sendRecord(TlsHandshakeType.ClientHello);
+			this.protocol.SendRecord(TlsHandshakeType.ClientHello);
 
 			// Read server response
 			while (!this.context.HelloDone)
 			{
 				// Read next record
-				this.receiveRecord();
+				this.protocol.ReceiveRecord();
 			}
 			
 			// Send client certificate if requested
 			if (this.context.ServerSettings.CertificateRequest)
 			{
-				this.sendRecord(TlsHandshakeType.Certificate);
+				this.protocol.SendRecord(TlsHandshakeType.Certificate);
 			}
 
 			// Send Client Key Exchange
-			this.sendRecord(TlsHandshakeType.ClientKeyExchange);
+			this.protocol.SendRecord(TlsHandshakeType.ClientKeyExchange);
 
 			// Now initialize session cipher with the generated keys
 			this.context.Cipher.InitializeCipher();
@@ -1078,11 +766,11 @@ namespace Mono.Security.Protocol.Tls
 			// Send certificate verify if requested
 			if (this.context.ServerSettings.CertificateRequest)
 			{
-				this.sendRecord(TlsHandshakeType.CertificateVerify);
+				this.protocol.SendRecord(TlsHandshakeType.CertificateVerify);
 			}
 
 			// Send Cipher Spec protocol
-			this.sendChangeCipherSpec();			
+			this.protocol.SendChangeCipherSpec();			
 			
 			// Read record until server finished is received
 			while (!this.context.HandshakeFinished)
@@ -1090,81 +778,16 @@ namespace Mono.Security.Protocol.Tls
 				// If all goes well this will process messages:
 				// 		Change Cipher Spec
 				//		Server finished
-				this.receiveRecord();
+				this.protocol.ReceiveRecord();
 			}
 
 			// Clear Key Info
 			this.context.ClearKeyInfo();
 		}
-		
-		private TlsHandshakeMessage createClientHandshakeMessage(TlsHandshakeType type)
-		{
-			switch (type)
-			{
-				case TlsHandshakeType.ClientHello:
-					return new TlsClientHello(this.context);
-
-				case TlsHandshakeType.Certificate:
-					return new TlsClientCertificate(this.context);
-
-				case TlsHandshakeType.ClientKeyExchange:
-					return new TlsClientKeyExchange(this.context);
-
-				case TlsHandshakeType.CertificateVerify:
-					return new TlsClientCertificateVerify(this.context);
-
-				case TlsHandshakeType.Finished:
-					return new TlsClientFinished(this.context);
-
-				default:
-					throw new InvalidOperationException("Unknown client handshake message type: " + type.ToString() );
-			}
-		}
-
-		private TlsHandshakeMessage createServerHandshakeMessage(TlsHandshakeType type, byte[] buffer)
-		{
-			switch (type)
-			{
-				case TlsHandshakeType.HelloRequest:
-					this.sendRecord(TlsHandshakeType.ClientHello);
-					return null;
-
-				case TlsHandshakeType.ServerHello:
-					return new TlsServerHello(this.context, buffer);
-
-				case TlsHandshakeType.Certificate:
-					return new TlsServerCertificate(this.context, buffer);
-
-				case TlsHandshakeType.ServerKeyExchange:
-					return new TlsServerKeyExchange(this.context, buffer);
-
-				case TlsHandshakeType.CertificateRequest:
-					return new TlsServerCertificateRequest(this.context, buffer);
-
-				case TlsHandshakeType.ServerHelloDone:
-					return new TlsServerHelloDone(this.context, buffer);
-
-				case TlsHandshakeType.Finished:
-					return new TlsServerFinished(this.context, buffer);
-
-				default:
-					throw this.context.CreateException("Unknown server handshake message received ({0})", type.ToString());
-			}
-		}
 
 		#endregion
 
 		#region Event Methods
-
-		internal void RaiseWarningAlert(
-			TlsAlertLevel		level, 
-			TlsAlertDescription description)
-		{
-			if (WarningAlert != null)
-			{
-				WarningAlert(this, new TlsWarningAlertEventArgs(level, description));
-			}
-		}
 
 		internal bool RaiseServerCertificateValidation(
 			X509Certificate certificate, 
@@ -1175,7 +798,7 @@ namespace Mono.Security.Protocol.Tls
 				return this.ServerCertValidation(certificate, certificateErrors);
 			}
 
-			return false;
+			return certificateErrors != null && certificateErrors.Length == 0 ? true : false;
 		}
 
 		internal X509Certificate RaiseClientCertificateSelection(

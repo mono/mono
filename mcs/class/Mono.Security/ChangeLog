@@ -1,3 +1,43 @@
+2004-02-20 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls.Alerts/TlsWarningEventAgrs.cs:
+
+		- Removed no more needed file.
+
+	* Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs:
+
+		- Added 4 new properties:
+
+			* Message
+
+			* IsWarning
+
+			* IsFatal
+
+			* IsCloseNotify
+
+		- Return always the same message when working in release mode
+		(The authentication or decryption has failed.)
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Changes to the sync code.
+
+		- Record protocol stuff moved to the new classes.
+
+		- Removed Warning event.
+
+		- Added control over the CloseNotify Alert
+		to BeginRead method.
+
+		- Return true in the server certificate validation method
+		if there are no errors.
+
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+
+		- New classes for handle the SSL/TLS record protocol.
+
 2004-02-18 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
