@@ -1,3 +1,8 @@
+2004-07-14  Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Removed duplicate license header file from
+	all source files.
+
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: Changed lock to "new object()" and not 
