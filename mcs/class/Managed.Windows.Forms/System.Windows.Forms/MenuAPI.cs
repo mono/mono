@@ -43,8 +43,7 @@ namespace System.Windows.Forms
 		static ArrayList menu_list = new ArrayList ();		
 		const int SEPARATOR_HEIGHT = 5;
 		const int SM_CXBORDER = 1;
-		const int SM_CYBORDER = 1;
-		const int SM_CYMENU = 18;		// Minimum height of a menu
+		const int SM_CYBORDER = 1;		
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
     		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
@@ -244,8 +243,8 @@ namespace System.Windows.Forms
 				pnt.Y -= menu.Wnd.Height;
 			}
 
-			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);			
-			
+			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
+				
 			if (menu.menu.IsDirty) {				
 				menu.items.Clear ();
 				menu.menu.CreateItems ();
@@ -311,8 +310,8 @@ namespace System.Windows.Forms
 					x += item.rect.Width;
 				}
 	
-				if (item.rect.Height < SM_CYMENU - 1)
-					item.rect.Height = SM_CYMENU - 1;
+				if (item.rect.Height < ThemeEngine.Current.MenuHeight)
+					item.rect.Height = ThemeEngine.Current.MenuHeight;
 				}
 		}
 
@@ -429,33 +428,50 @@ namespace System.Windows.Forms
 					menu.Height = item.rect.Height + y;
 			}
 
-			menu.Width = width;
+			menu.Width = width;			
 			return menu.Height;
 		}
 
 		// Draws a menu bar in a Window
 		static public void DrawMenuBar (Graphics dc, IntPtr hMenu, Rectangle rect)
 		{
-			MENU menu = GetMenuFromID (hMenu);
-			Rectangle rect_menu = new Rectangle ();
+			MENU menu = GetMenuFromID (hMenu);			
+			Rectangle item_rect;
 
 			if (menu.Height == 0)
-				MenuBarCalcSize (dc, hMenu, rect_menu.Width);
-
-			rect.Height = menu.Height;
-			rect.Width = menu.Width;						
-
+				MenuBarCalcSize (dc, hMenu, rect.Width);								
+			
 			for (int i = 0; i < menu.items.Count; i++) {
 				MENUITEM it = (MENUITEM) menu.items[i];
+				item_rect = it.rect;
+				item_rect.X += rect.X;
+				item_rect.Y += rect.Y;
 				it.item.MenuHeight = menu.Height;
 				it.item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
-						it.rect, i, it.item.Status));
+						item_rect, i, it.item.Status));			
+				
 			}				
 		}
 
 		/*
 			Menu handeling API
 		*/
+		
+		static public Point ClientAreaPointToScreen (Control wnd, Point pnt)		
+		{
+			Point rslt;
+			pnt.Y -= ThemeEngine.Current.CaptionHeight;
+			rslt = wnd.PointToScreen (pnt);			
+			return rslt;
+		}
+		
+		static public Point ClientAreaPointToClient (Control wnd, Point pnt)		
+		{
+			Point rslt;			
+			rslt = wnd.PointToClient (pnt);			
+			rslt.Y += ThemeEngine.Current.CaptionHeight;
+			return rslt;
+		}	
 
 		static public MENUITEM FindItemByCoords (IntPtr hMenu, Point pt)
 		{
@@ -669,8 +685,7 @@ namespace System.Windows.Forms
 		{
 			MENU menu = GetMenuFromID (hMenu);
 			Point pnt = new Point (item.rect.X, item.rect.Y + item.rect.Height);
-			pnt = menu.Wnd.PointToScreen (pnt);
-
+			pnt = ClientAreaPointToScreen (menu.Wnd, pnt);
 			MenuAPI.SelectItem (hMenu, item, false, tracker);
 			HideSubPopups (tracker.hCurrentMenu);
 			tracker.hCurrentMenu = hMenu;
@@ -683,14 +698,18 @@ namespace System.Windows.Forms
 			MENU menu = GetMenuFromID (hMenu);
 
 			switch (eventype) {
-				case MenuMouseEvent.Down: {
+				case MenuMouseEvent.Down: {/* Coordinates in screen position*/
 
-					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
+					Point pnt = new Point (e.X, e.Y);
+					pnt = ClientAreaPointToClient (menu.Wnd, pnt);
+
+					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, pnt);
 
 					if (item != null) {
 						MENU top_menu = GetMenuFromID (tracker.hTopMenu);
 						
 						top_menu.bTracking = true;
+						//item.Y += ThemeEngine.Current.CaptionHeight;
 						MenuBarMove (hMenu, item, tracker);
 		
 						if (item != null) {
@@ -711,7 +730,8 @@ namespace System.Windows.Forms
 							break;
 
 						Point pnt = new Point (e.X, e.Y);
-						pnt = menu.Wnd.PointToClient (pnt);
+						//pnt = menu.Wnd.PointToClient (pnt);
+						pnt = ClientAreaPointToClient (menu.Wnd, pnt);
 
 						MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, pnt);
 

@@ -190,9 +190,10 @@ namespace System.Windows.Forms {
 		
 		
 			private void OnDrawMenu (Graphics dc) {
+								
 				if (owner.menu != null) {													
-					Rectangle rect = new Rectangle (0,0, Width, 0);			
-					MenuAPI.DrawMenuBar (dc, owner.menu.Handle, rect);
+					Rectangle rect = new Rectangle (0,0, Width, 0);								
+					MenuAPI.DrawMenuBar (dc, owner.menu.Handle, rect);				
 				}			
 			}
 			private void OnFormTextChanged(object sender, EventArgs e) {
@@ -464,8 +465,8 @@ namespace System.Windows.Forms {
 				return menu;
 			}
 
-			set {
-				if (menu != value) {
+			set {				
+				if (menu != value) {					
 					// To simulate the non-client are for menus we create a 
 					// new control as the 'client area' of our form.  This
 					// way, the origin stays 0,0 and we don't have to fiddle with
@@ -475,6 +476,8 @@ namespace System.Windows.Forms {
 
 					menu.SetForm (this);
 					MenuAPI.SetMenuBarWindow (menu.Handle, this);
+					
+					//TODO: Force Msg.WM_NCCALCSIZE
 
 					// Trigger calculations
 					OnResize(EventArgs.Empty);
@@ -920,13 +923,14 @@ namespace System.Windows.Forms {
 					}
 					return;
 				}
-#if notyet
+
 				// Menu drawing
 				case Msg.WM_NCLBUTTONDOWN: {
 					if (this.menu != null) {
+						int x = LowOrder ((int) m.LParam.ToInt32 ()) ;
+						int y = HighOrder ((int) m.LParam.ToInt32 ());						
 						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()) - 20, HighOrder ((int) m.LParam.ToInt32 ()), 
-							0));
+							mouse_clicks, x, y, 0));
 					}
 					base.WndProc(ref m);
 					return;
@@ -936,7 +940,7 @@ namespace System.Windows.Forms {
 					if (this.menu != null) {
 						menu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 							mouse_clicks, 
-							LowOrder ((int) m.LParam.ToInt32 ()) - 20, HighOrder ((int) m.LParam.ToInt32 ()), 
+							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 							0));
 					}
 					base.WndProc(ref m);
@@ -949,8 +953,8 @@ namespace System.Windows.Forms {
 						Rectangle	rect;
 
 						hdc = XplatUI.GetMenuDC(window.Handle, m.WParam);
-						rect = new Rectangle (0, 10, Width, 0);
-						MenuAPI.DrawMenuBar (hdc, menu.Handle, rect);
+						rect = new Rectangle (0, ThemeEngine.Current.CaptionHeight, Width, 0);
+						MenuAPI.DrawMenuBar (hdc, menu.Handle, rect);						
 						XplatUI.ReleaseMenuDC(window.Handle, hdc);
 					}
 					base.WndProc(ref m);
@@ -964,14 +968,14 @@ namespace System.Windows.Forms {
 					if ((menu != null) && (m.WParam == (IntPtr)1)) {
 						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 
-						// Adjust for menu
+						// Adjust for menu						
 						ncp.rgrc1.top += MenuAPI.MenuBarCalcSize(DeviceContext, menu.menu_handle, ClientSize.Width);
 						Marshal.StructureToPtr(ncp, m.LParam, true);
 					} 
 					DefWndProc(ref m);
 					break;
 				}
-#endif				
+
 				default: {
 					base.WndProc (ref m);
 					break;

@@ -1,3 +1,8 @@
+2005-02-16  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Form.cs: first Menu NC refactoring
+	* MenuAPI.cs: first Menu NC refactoring
+	
 2005-02-16  Peter Bartok  <pbartok@novell.com>
 
 	* ImeMode.cs: Added missing attributes
