@@ -1,3 +1,44 @@
+2002-07-25  Martin Baulig  <martin@gnome.org>
+
+	Made MethodCore derive from MemberBase to reuse the code from there.
+	MemberBase now also checks for attributes.
+
+	* class.cs (MethodCore): Derive from MemberBase, not MemberCore.
+	(MemberBase.GetMethodFlags): Moved here from class Method and marked
+	as virtual.
+	(MemberBase.DefineAccessor): Renamed to DefineMethod(), added
+	`CallingConventions cc' and `Attributes opt_attrs' arguments.
+	(MemberBase.ApplyAttributes): New virtual method; applies the
+	attributes to a method or accessor.
+	(MemberBase.ApplyObsoleteAttribute): New protected virtual method.
+	(MemberBase.ApplyConditionalAttribute): Likewise.
+	(MemberBase.ApplyDllImportAttribute): Likewise.
+	(MemberBase.CheckAbstractAndExternal): Likewise.
+	(MethodCore.ParameterTypes): This is now a property instead of a
+	method, it's initialized from DoDefineParameters().
+	(MethodCore.ParameterInfo): Removed the set accessor.
+	(MethodCore.DoDefineParameters): New protected virtual method to
+	initialize ParameterTypes and ParameterInfo.
+	(Method.GetReturnType): We can now simply return the MemberType.
+	(Method.GetMethodFlags): Override the MemberBase version and add
+	the conditional flags.
+	(Method.CheckBase): Moved some code from Define() here, call
+	DoDefineParameters() here.
+	(Method.Define): Use DoDefine() and DefineMethod() from MemberBase
+	here to avoid some larger code duplication.
+	(Property.Emit, Indexer.Emit): Call CheckAbstractAndExternal() to
+	ensure that abstract and external accessors don't declare a body.
+
+	* attribute.cs (Attribute.GetValidPieces): Make this actually work:
+	`System.Attribute.GetCustomAttributes (attr.Type)' does a recursive
+	lookup in the attribute's parent classes, so we need to abort as soon
+	as we found the first match.
+	(Attribute.Obsolete_GetObsoleteMessage): Return the empty string if
+	the attribute has no arguments.
+
+	* typemanager.cs (TypeManager.AddMethod): Now takes a MemberBase instead
+	of a Method.
+
 2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* cs-parser.jay: reverted previous patch.

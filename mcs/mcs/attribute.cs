@@ -328,8 +328,10 @@ namespace Mono.CSharp {
 				}
 					
 				foreach (System.Attribute tmp in attrs)
-					if (tmp is AttributeUsageAttribute) 
+					if (tmp is AttributeUsageAttribute) {
 						targets = ((AttributeUsageAttribute) tmp).ValidOn;
+						break;
+					}
 			} else
 				targets = a.Targets;
 
@@ -574,13 +576,13 @@ namespace Mono.CSharp {
 			//
 			// So we have an Obsolete, pull the data out.
 			//
-			if (Arguments == null || Arguments [0] == null){
-				Error_AttributeConstructorMismatch (Location);
-				return null;
-			}
+			if (Arguments == null || Arguments [0] == null)
+				return "";
 
 			ArrayList pos_args = (ArrayList) Arguments [0];
-			if ((pos_args.Count != 1) && (pos_args.Count != 2)){
+			if (pos_args.Count == 0)
+				return "";
+			else if (pos_args.Count > 2){
 				Error_AttributeConstructorMismatch (Location);
 				return null;
 			}

@@ -1673,45 +1673,36 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class MethodCore : MemberCore {
+	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
 		Block block;
 		
 		//
 		// Parameters, cached for semantic analysis.
 		//
-		InternalParameters parameter_info;
-		
-		public MethodCore (string name, Parameters parameters, Location l)
-			: base (name, l)
+		protected InternalParameters parameter_info;
+		protected Type [] parameter_types;
+
+		public MethodCore (Expression type, int mod, int allowed_mod, string name,
+				   Attributes attrs, Parameters parameters, Location loc)
+			: base (type, mod, allowed_mod, name, attrs, loc)
 		{
-			Name = name;
 			Parameters = parameters;
 		}
 		
 		//
 		//  Returns the System.Type array for the parameters of this method
 		//
-		Type [] parameter_types;
-		public Type [] ParameterTypes (TypeContainer parent)
-		{
-			if (Parameters == null)
-				return TypeManager.NoTypes;
-			
-			if (parameter_types == null)
-				parameter_types = Parameters.GetParameterInfo (parent);
-
-			return parameter_types;
+		public Type [] ParameterTypes {
+			get {
+				return parameter_types;
+			}
 		}
 
 		public InternalParameters ParameterInfo
 		{
 			get {
 				return parameter_info;
-			}
-
-			set {
-				parameter_info = value;
 			}
 		}
 		
@@ -1723,6 +1714,18 @@ namespace Mono.CSharp {
 			set {
 				block = value;
 			}
+		}
+
+		protected virtual bool DoDefineParameters (TypeContainer parent)
+		{
+			// Check if arguments were correct
+			parameter_types = Parameters.GetParameterInfo (parent);
+			if ((parameter_types == null) || !CheckParameters (parent, parameter_types))
+				return false;
+
+			parameter_info = new InternalParameters (parent, Parameters);
+
+			return true;
 		}
 
 		public CallingConventions GetCallingConvention (bool is_class)
@@ -1796,18 +1799,10 @@ namespace Mono.CSharp {
 	}
 	
 	public class Method : MethodCore {
-		public Expression ReturnType;
 		public MethodBuilder MethodBuilder;
-		public readonly Attributes OptAttributes;
-
-		MethodAttributes flags;
 
 		ArrayList conditionals;
-		string obsolete = null;
-		bool obsolete_error = false;
 
-		bool explicit_impl = false;
-		bool is_interface_method = false;
 		MethodInfo parent_method = null;
 
 		/// <summary>
@@ -1832,11 +1827,8 @@ namespace Mono.CSharp {
 		//
 		public Method (Expression return_type, int mod, string name, Parameters parameters,
 			       Attributes attrs, Location l)
-			: base (name, parameters, l)
+			: base (return_type, mod, AllowedModifiers, name, attrs, parameters, l)
 		{
-			ReturnType = return_type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
-			OptAttributes = attrs;
 			conditionals = new ArrayList ();
 		}
 
@@ -1845,14 +1837,9 @@ namespace Mono.CSharp {
 		// function.  Provides a nice cache.  (used between semantic analysis
 		// and actual code generation
 		//
-		Type type_return_type;
-		
 		public Type GetReturnType (TypeContainer parent)
 		{
-			if (type_return_type == null)
-				type_return_type = parent.ResolveType (ReturnType, false, Location);
-			
-			return type_return_type;
+			return MemberType;
 		}
 
                 void DuplicateEntryPoint (MethodInfo b, Location location)
@@ -1924,21 +1911,12 @@ namespace Mono.CSharp {
 		// This emits an error 619 / warning 618 if the method is obsolete.
 		// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
 		//
-		public TypeManager.MethodFlags GetMethodFlags (Location loc)
+		public override TypeManager.MethodFlags GetMethodFlags (Location loc)
 		{
-			TypeManager.MethodFlags flags = 0;
+			TypeManager.MethodFlags flags = base.GetMethodFlags (loc);
 
-			if (obsolete != null) {
-				if (obsolete_error) {
-					Report.Error (619, loc, "Method `" + Name +
-						      "' is obsolete: `" + obsolete + "'");
-					return TypeManager.MethodFlags.IsObsoleteError;
-				} else
-					Report.Warning (618, loc, "Method `" + Name +
-							"' is obsolete: `" + obsolete + "'");
-
-				flags |= TypeManager.MethodFlags.IsObsolete;
-			}
+			if (flags == TypeManager.MethodFlags.IsObsoleteError)
+				return flags;
 
 			if (ShouldIgnore (loc))
 				flags |= TypeManager.MethodFlags.ShouldIgnore;
@@ -1949,14 +1927,14 @@ namespace Mono.CSharp {
 		//
 		// Applies the `Conditional' attribute to the method.
 		//
-		bool ApplyConditionalAttribute (Attribute attr)
+		protected override bool ApplyConditionalAttribute (Attribute attr)
 		{
 			string condition = attr.Conditional_GetConditionName ();
 
 			if (condition == null)
 				return false;
 
-			if (ReturnType.Type != TypeManager.void_type) {
+			if (Type.Type != TypeManager.void_type) {
 				Report.Error (578, Location,
 					      "Conditional not valid on `" + Name + "' " +
 					      "because its return type is not void");
@@ -1970,14 +1948,14 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (explicit_impl) {
+			if (IsExplicitImpl) {
 				Report.Error (577, Location,
 					      "Conditional not valid on `" + Name + "' " +
 					      "because it is an explicit interface implementation");
 				return false;
 			}
 
-			if (is_interface_method) {
+			if (IsImplementing) {
 				Report.Error (623, Location,
 					      "Conditional not valid on `" + Name + "' " +
 					      "because it is an interface method");
@@ -1990,57 +1968,12 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Applies the `Obsolete' attribute to the method.
+		// Checks our base implementation if any
 		//
-		bool ApplyObsoleteAttribute (Attribute attr)
+		protected override bool CheckBase (TypeContainer parent)
 		{
-			if (obsolete != null) {
-				Report.Error (579, Location, "Duplicate `Obsolete' attribute");
-				return false;
-			}
-
-			obsolete = attr.Obsolete_GetObsoleteMessage (out obsolete_error);
-			return obsolete != null;
-		}
-
-		//
-		// Creates the type
-		//
-		public override bool Define (TypeContainer parent)
-		{
-			Type ret_type = GetReturnType (parent);
-			Type [] parameters = ParameterTypes (parent);
-			bool error = false;
-			Type iface_type = null;
-			string iface = "", short_name;
-			MethodInfo implementing = null;
-
-			// Check if the return type and arguments were correct
-			if (ret_type == null || parameters == null)
-				return false;
-			
-			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
-				return false;
-
-			flags = Modifiers.MethodAttr (ModFlags);
-
-			//
-			// verify accessibility
-			//
-			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
-				return false;
-
-			if (ret_type.IsPointer && !UnsafeOK (parent))
-				return false;
-			
-			foreach (Type partype in parameters){
-				if (!TypeContainer.AsAccessible (partype, ModFlags))
-					error = true;
-				if (partype.IsPointer && !UnsafeOK (parent))
-					error = true;
-			}
-
-			if (error)
+			// Check whether arguments were correct.
+			if (!DoDefineParameters (parent))
 				return false;
 
 			//
@@ -2051,7 +1984,7 @@ namespace Mono.CSharp {
 
 			// ptype is only null for System.Object while compiling corlib.
 			if (ptype != null){
-				MethodSignature ms = new MethodSignature (Name, null, parameters);
+				MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
 				MemberInfo [] mi, mi_static, mi_instance;
 
 				mi_static = TypeContainer.FindMembers (
@@ -2090,166 +2023,24 @@ namespace Mono.CSharp {
 			} else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
 
-			//
-			// If we implement an interface, extract the interface name.
-			//
-			if (Name.IndexOf (".") != -1){
-				int pos = Name.LastIndexOf (".");
-				iface = Name.Substring (0, pos);
+			return true;
+		}
 
-				iface_type = RootContext.LookupType (parent, iface, false, Location);
-				short_name = Name.Substring (pos + 1);
+		//
+		// Creates the type
+		//
+		public override bool Define (TypeContainer parent)
+		{
+			if (!DoDefine (parent))
+				return false;
 
-				if (iface_type == null)
-					return false;
+			CallingConventions cc = GetCallingConvention (parent is Class);
 
-				// Compute the full name that we need to export
-				Name = iface_type.FullName + "." + short_name;
-
-				if (!parent.VerifyImplements (iface_type, short_name, Name, Location))
-					return false;
-				
-				explicit_impl = true;
-			} else
-				short_name = Name;
-
-			//
-			// Check if we are an implementation of an interface method or
-			// a method
-			//
-			if (parent.Pending != null){
-				implementing = parent.Pending.IsInterfaceMethod (
-					iface_type, short_name, ret_type, parameters);
-
-				if (iface_type != null && implementing == null){
-					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, short_name);
-					return false;
-				}
-			}
-
-			//
-			// For implicit implementations, make sure we are public, for
-			// explicit implementations, make sure we are private.
-			//
-			if (implementing != null){
-				//
-				// Setting null inside this block will trigger a more
-				// verbose error reporting for missing interface implementations
-				//
-				// The "candidate" function has been flagged already
-				// but it wont get cleared
-				//
-				if (iface_type == null){
-					//
-					// We already catch different accessibility settings
-					// so we just need to check that we are not private
-					//
-					if ((ModFlags & Modifiers.PRIVATE) != 0)
-						implementing = null;
-
-					//
-					// Static is not allowed
-					//
-					if ((ModFlags & Modifiers.STATIC) != 0)
-						implementing = null;
-				} else {
-					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
-						implementing = null;
-					}
-				}
-			}
-			
-			//
-			// If implementing is still valid, set flags
-			//
-			if (implementing != null){
-				// Console.WriteLine ("Implementing for:" + (iface_type != null ? iface_type.FullName : "<null>") + " " + short_name);
-				
-				if (implementing.DeclaringType.IsInterface)
-					flags |= MethodAttributes.NewSlot;
-				
-				flags |=
-					MethodAttributes.Virtual |
-					MethodAttributes.HideBySig;
-
-				//
-				// clear the pending implementation flag
-				//
-				parent.Pending.ImplementMethod (
-					iface_type, short_name, ret_type, parameters, explicit_impl);
-
-				is_interface_method = true;
-				parent_method = implementing;
-			} 
-
-			Attribute dllimport_attr = null;
-			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
-				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-				 	if (asec.Attributes == null)
-						continue;
-					
-					foreach (Attribute a in asec.Attributes) {
-						if (a.Name == "Conditional") {
-							if (!ApplyConditionalAttribute (a))
-								return false;
-						} else if (a.Name == "Obsolete") {
-							if (!ApplyObsoleteAttribute (a))
-								return false;
-						} else if (a.Name.IndexOf ("DllImport") != -1) {
-							flags |= MethodAttributes.PinvokeImpl;
-							dllimport_attr = a;
-						}
-					}
-				}
-			}
-
-			//
-			// Finally, define the method
-			//
-
-			if ((flags & MethodAttributes.PinvokeImpl) != 0) {
-
-				if ((ModFlags & Modifiers.STATIC) == 0) {
-					Report.Error (601, Location, "The DllImport attribute must be specified on " +
-						      "a method marked 'static' and 'extern'.");
-					return false;
-				}
-				
-				EmitContext ec = new EmitContext (
-					parent, Location, null, GetReturnType (parent), ModFlags);
-				
-				MethodBuilder = dllimport_attr.DefinePInvokeMethod (
-					ec, parent.TypeBuilder,
-					Name, flags, ret_type, parameters);
-			} else {
-				MethodBuilder = parent.TypeBuilder.DefineMethod (
-					Name, flags,
-					GetCallingConvention (parent is Class),
-					ret_type, parameters);
-
-				if (implementing != null && explicit_impl)
-					parent.TypeBuilder.DefineMethodOverride (
-						MethodBuilder, implementing);
-			}
+			MethodBuilder = DefineMethod (parent, null, MemberType, ParameterTypes,
+						      ParameterInfo, cc, null, flags);
 
 			if (MethodBuilder == null)
 				return false;
-
-			//
-			// HACK because System.Reflection.Emit is lame
-			//
-			ParameterInfo = new InternalParameters (parent, Parameters);
-
-			if (!TypeManager.RegisterMethod (MethodBuilder, ParameterInfo,
-							 parameters)) {
-				Report.Error (
-					111, Location,
-					"Class `" + parent.Name + "' already contains a definition with " +
-					" the same return value and parameter types for method `" +
-					Name + "'");
-				return false;
-			}
 			
 			//
 			// This is used to track the Entry Point,
@@ -2269,8 +2060,6 @@ namespace Mono.CSharp {
                                 } else                                 	
                                	        Report28(MethodBuilder);
 			}
-
-			TypeManager.AddMethod (MethodBuilder, this);
 
 			return true;
 		}
@@ -2294,29 +2083,21 @@ namespace Mono.CSharp {
 				Attribute.ApplyAttributes (ec, MethodBuilder, this, OptAttributes, Location);
 			
 
-			LabelParameters (ec, ParameterTypes (parent), MethodBuilder);
+			LabelParameters (ec, ParameterTypes, MethodBuilder);
 			
 			//
 			// abstract or extern methods have no bodies
 			//
-			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
-				if (Block != null){
-					if ((ModFlags & Modifiers.ABSTRACT) != 0){
-						Report.Error (
-							500, "Abstract method `" +
-							TypeManager.CSharpSignature (MethodBuilder) +
-							"' can not have a body");
-					}
-				}
+			CheckAbstractAndExternal (MethodBuilder, Block, ModFlags);
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
-			}
 
 			//
 			// Handle destructors specially
 			//
 			// FIXME: This code generates buggy code
 			//
-			if (Name == "Finalize" && type_return_type == TypeManager.void_type)
+			if (Name == "Finalize" && MemberType == TypeManager.void_type)
 				EmitDestructor (ec);
 			else {
 				ISymbolWriter sw = CodeGen.SymbolWriter;
@@ -2468,7 +2249,7 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		public Attributes OptAttributes;
+		new public Attributes OptAttributes;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -2486,7 +2267,7 @@ namespace Mono.CSharp {
 		// my very own code has static constructors.
 		//
 		public Constructor (string name, Parameters args, ConstructorInitializer init, Location l)
-			: base (name, args, l)
+			: base (null, 0, AllowedModifiers, name, null, args, l)
 		{
 			Initializer = init;
 		}
@@ -2515,15 +2296,14 @@ namespace Mono.CSharp {
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
 
-			Type [] parameters = ParameterTypes (parent);
-
-			if (parameters == null)
+			// Check if arguments were correct.
+			if (!DoDefineParameters (parent))
 				return false;
-			
+
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ca |= MethodAttributes.Static;
 			else {
-				if (parent is Struct && parameters.Length == 0){
+				if (parent is Struct && ParameterTypes.Length == 0){
 					Report.Error (
 						568, Location, 
 						"Structs can not contain explicit parameterless " +
@@ -2533,19 +2313,13 @@ namespace Mono.CSharp {
 				ca |= MethodAttributes.Public | MethodAttributes.HideBySig;
 			}
 
-			foreach (Type partype in parameters)
-				if (!TypeContainer.AsAccessible (partype, ModFlags))
-					return false;
-
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
-				ca, GetCallingConvention (parent is Class), parameters);
+				ca, GetCallingConvention (parent is Class), ParameterTypes);
 
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			ParameterInfo = new InternalParameters (parent, Parameters);
-
-			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, parameters)) {
+			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, ParameterTypes)) {
 				Report.Error (
 					111, Location,
 					"Class `" +parent.Name+ "' already contains a definition with the " +
@@ -2580,7 +2354,7 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			LabelParameters (ec, ParameterTypes (parent), ConstructorBuilder);
+			LabelParameters (ec, ParameterTypes, ConstructorBuilder);
 			
 			//
 			// Classes can have base initializers and instance field initializers.
@@ -2639,6 +2413,13 @@ namespace Mono.CSharp {
 		public Type InterfaceType = null;
 
 		//
+		// Attributes.
+		//
+		Attribute dllimport_attribute = null;
+		string obsolete = null;
+		bool obsolete_error = false;
+
+		//
 		// The constructor is only exposed to our children
 		//
 		protected MemberBase (Expression type, int mod, int allowed_mod, string name,
@@ -2650,21 +2431,160 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		protected virtual MethodBuilder DefineAccessor (TypeContainer parent, string accessor_name,
-								Type return_type, Type [] parameter_types,
-								InternalParameters parameters,
-								MethodAttributes flags)
+		protected virtual bool ApplyAttributes (Attributes opt_attrs, int modifiers,
+							bool is_method, ref MethodAttributes flags)
+		{
+			if ((opt_attrs == null) || (opt_attrs.AttributeSections == null))
+				return true;
+
+			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+				if (asec.Attributes == null)
+					continue;
+					
+				foreach (Attribute a in asec.Attributes) {
+					if (a.Name == "Conditional") {
+						if (!ApplyConditionalAttribute (a))
+							return false;
+					} else if (a.Name == "Obsolete") {
+						if (!ApplyObsoleteAttribute (a))
+							return false;
+					} else if (a.Name.IndexOf ("DllImport") != -1) {
+						if (!is_method) {
+							a.Type = TypeManager.dllimport_type;
+							Attribute.Error_AttributeNotValidForElement (a, Location);
+							return false;
+						}
+						if (!ApplyDllImportAttribute (a, modifiers, ref flags))
+							return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		//
+		// Applies the `DllImport' attribute to the method.
+		//
+		protected virtual bool ApplyDllImportAttribute (Attribute a, int modifiers,
+								ref MethodAttributes flags)
+		{
+			const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
+			if ((modifiers & extern_static) != extern_static) {
+				Report.Error (601, Location,
+					      "The DllImport attribute must be specified on a method " +
+					      "marked `static' and `extern'.");
+				return false;
+			}
+
+			flags |= MethodAttributes.PinvokeImpl;
+			dllimport_attribute = a;
+			return true;
+		}
+
+		//
+		// Applies the `Obsolete' attribute to the method.
+		//
+		protected virtual bool ApplyObsoleteAttribute (Attribute a)
+		{
+			if (obsolete != null) {
+				Report.Error (579, Location, "Duplicate `Obsolete' attribute");
+				return false;
+			}
+
+			obsolete = a.Obsolete_GetObsoleteMessage (out obsolete_error);
+			return obsolete != null;
+		}
+
+		//
+		// Applies the `Conditional' attribute to the method.
+		//
+		protected virtual bool ApplyConditionalAttribute (Attribute a)
+		{
+			// The Conditional attribute is only valid on methods.
+			Attribute.Error_AttributeNotValidForElement (a, Location);
+			return false;
+		}
+
+		//
+		// Ensure that an extern or abstract method does not have a body.
+		//
+		protected virtual bool CheckAbstractAndExternal (MethodBuilder builder, Block block, int mod)
+		{
+			// Everything ok.
+			if (block == null)
+				return true;
+
+			//
+			// abstract or extern methods have no bodies.
+			//
+			if ((mod & Modifiers.ABSTRACT) != 0) {
+				Report.Error (
+					500, "Abstract method `" +
+					TypeManager.CSharpSignature (builder) +
+					"' can not have a body");
+				return false;
+			}
+
+			if ((mod & Modifiers.EXTERN) != 0) {
+				Report.Error (
+					179, "External method `" +
+					TypeManager.CSharpSignature (builder) +
+					"' can not have a body");
+				return false;
+			}
+
+			return true;
+		}
+
+		//
+		// Returns the TypeManager.MethodFlags for this method.
+		// This emits an error 619 / warning 618 if the method is obsolete.
+		// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
+		//
+		public virtual TypeManager.MethodFlags GetMethodFlags (Location loc)
+		{
+			TypeManager.MethodFlags flags = 0;
+
+			if (obsolete != null) {
+				if (obsolete_error) {
+					Report.Error (619, loc, "Method `" + Name +
+						      "' is obsolete: `" + obsolete + "'");
+					return TypeManager.MethodFlags.IsObsoleteError;
+				} else
+					Report.Warning (618, loc, "Method `" + Name +
+							"' is obsolete: `" + obsolete + "'");
+
+				flags |= TypeManager.MethodFlags.IsObsolete;
+			}
+
+			return flags;
+		}
+
+
+		protected virtual MethodBuilder DefineMethod (TypeContainer parent, string accessor_name,
+							      Type return_type, Type [] parameter_types,
+							      InternalParameters parameters,
+							      CallingConventions cc, Attributes opt_attrs,
+							      MethodAttributes flags)
 		{
 			MethodInfo implementing = null;
 			MethodBuilder builder = null;
 			string method_name, name, prefix;
+
+			if (opt_attrs != null)
+				if (!ApplyAttributes (opt_attrs, ModFlags, true, ref flags))
+					return null;
 
 			if (IsExplicitImpl)
 				prefix = InterfaceType.FullName + ".";
 			else
 				prefix = "";
 
-			name = accessor_name + "_" + ShortName;
+			if (accessor_name != null)
+				name = accessor_name + "_" + ShortName;
+			else
+				name = ShortName;
 			method_name = prefix + name;
 				
 			if (parent.Pending != null){
@@ -2741,9 +2661,26 @@ namespace Mono.CSharp {
 			//
 			// Create the MethodBuilder for the method
 			//
+			if ((flags & MethodAttributes.PinvokeImpl) != 0) {
+				if ((ModFlags & Modifiers.STATIC) == 0) {
+					Report.Error (601, Location,
+						      "The DllImport attribute must be specified on " +
+						      "a method marked 'static' and 'extern'.");
+					return null;
+				}
+				
+				EmitContext ec = new EmitContext (
+					parent, Location, null, return_type, ModFlags);
+				
+				builder = dllimport_attribute.DefinePInvokeMethod (
+					ec, parent.TypeBuilder, method_name, flags,
+					return_type, parameter_types);
+			} else
+				builder = parent.TypeBuilder.DefineMethod (
+					method_name, flags, cc, return_type, parameter_types);
 
-			builder = parent.TypeBuilder.DefineMethod (
-				method_name, flags, return_type, parameter_types);			
+			if (builder == null)
+				return null;
 
 			if (IsImplementing) {
 				//
@@ -2771,6 +2708,8 @@ namespace Mono.CSharp {
 					      "'get' method of property `" + Name + "'");
 				return null;
 			}
+
+			TypeManager.AddMethod (builder, this);
 
 			return builder;
 		}
@@ -2845,6 +2784,9 @@ namespace Mono.CSharp {
 				IsExplicitImpl = true;
 			} else
 				IsExplicitImpl = false;
+
+			if (!ApplyAttributes (OptAttributes, ModFlags, this is Method, ref flags))
+				return false;
 
 			return true;
 		}
@@ -3081,8 +3023,9 @@ namespace Mono.CSharp {
 				InternalParameters ip = new InternalParameters (
 					parent, Parameters.GetEmptyReadOnlyParameters ());
 
-				GetBuilder = DefineAccessor (
-					parent, "get", MemberType, parameters, ip, flags);
+				GetBuilder = DefineMethod (
+					parent, "get", MemberType, parameters, ip,
+					CallingConventions.Standard, Get.OptAttributes, flags);
 
 				if (GetBuilder == null)
 					return false;
@@ -3095,8 +3038,9 @@ namespace Mono.CSharp {
 				InternalParameters ip = new InternalParameters (
 					parent, new Parameters (parms, null, Location));
 
-				SetBuilder = DefineAccessor (
-					parent, "set", TypeManager.void_type, parameters, ip, flags);
+				SetBuilder = DefineMethod (
+					parent, "set", TypeManager.void_type, parameters,
+					ip, CallingConventions.Standard, Set.OptAttributes, flags);
 
 				if (SetBuilder == null)
 					return false;
@@ -3175,6 +3119,11 @@ namespace Mono.CSharp {
 			//
 			// abstract or extern properties have no bodies
 			//
+			if (Get != null)
+				CheckAbstractAndExternal (GetBuilder, Get.Block, ModFlags);
+			if (Set != null)
+				CheckAbstractAndExternal (SetBuilder, Set.Block, ModFlags);
+
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
 
@@ -3369,18 +3318,20 @@ namespace Mono.CSharp {
 				parent, new Parameters (parms, null, Location)); 
 
 			if (is_add) {
-				AddBuilder = DefineAccessor (
+				AddBuilder = DefineMethod (
 					parent, "add", TypeManager.void_type,
-					parameter_types, ip, flags);
+					parameter_types, ip, CallingConventions.Standard,
+					(Add != null) ? Add.OptAttributes : null, flags);
 
 				if (AddBuilder == null)
 					return false;
 
 				AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
 			} else {
-				RemoveBuilder = DefineAccessor (
+				RemoveBuilder = DefineMethod (
 					parent, "remove", TypeManager.void_type,
-					parameter_types, ip, flags);
+					parameter_types, ip, CallingConventions.Standard,
+					(Remove != null) ? Remove.OptAttributes : null, flags);
 
 				if (RemoveBuilder == null)
 					return false;
@@ -3572,8 +3523,9 @@ namespace Mono.CSharp {
 			if (Get != null){
                                 InternalParameters ip = new InternalParameters (parent, FormalParameters);
 
-				GetBuilder = DefineAccessor (
-					parent, "get", MemberType, parameters, ip, flags);
+				GetBuilder = DefineMethod (
+					parent, "get", MemberType, parameters, ip,
+					CallingConventions.Standard, Get.OptAttributes, flags);
 
 				if (GetBuilder == null)
 					return false;
@@ -3614,8 +3566,9 @@ namespace Mono.CSharp {
 				
 				InternalParameters ip = new InternalParameters (parent, set_formal_params);
 
-				SetBuilder = DefineAccessor (
-					parent, "set", TypeManager.void_type, set_pars, ip, flags);
+				SetBuilder = DefineMethod (
+					parent, "set", TypeManager.void_type, set_pars, ip,
+					CallingConventions.Standard, Set.OptAttributes, flags);
 
 				if (SetBuilder == null)
 					return false;
@@ -3689,6 +3642,11 @@ namespace Mono.CSharp {
 				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
 			if (Set != null)
 				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
+
+			if (Get != null)
+				CheckAbstractAndExternal (GetBuilder, Get.Block, ModFlags);
+			if (Set != null)
+				CheckAbstractAndExternal (SetBuilder, Set.Block, ModFlags);
 
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
@@ -3829,7 +3787,7 @@ namespace Mono.CSharp {
 			
 			OperatorMethodBuilder = OperatorMethod.MethodBuilder;
 
-			Type [] param_types = OperatorMethod.ParameterTypes (parent);
+			Type [] param_types = OperatorMethod.ParameterTypes;
 			Type declaring_type = OperatorMethodBuilder.DeclaringType;
 			Type return_type = OperatorMethod.GetReturnType (parent);
 			Type first_arg_type = param_types [0];

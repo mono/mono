@@ -57,7 +57,7 @@ mm:
 	mint $(MINTFLAGS) ./mcs.exe $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
 
 mcs-mono2.exe: cs-parser.cs $(COMPILER_SOURCES)
-	mono mcs.exe --timestamp -o mcs-mono2.exe -g $(COMPILER_SOURCES)
+	mono mcs.exe --fatal --timestamp -o mcs-mono2.exe -g $(COMPILER_SOURCES)
 
 monomcs: cs-parser.cs
 	mcs $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
