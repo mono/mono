@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.5  2004/08/07 23:32:26  jordi
+// throw exceptions of invalid enums values
+//
 // Revision 1.4  2004/08/06 23:18:06  pbartok
 // - Fixed some rounding issues with float/int
 //
@@ -164,13 +167,16 @@ namespace System.Windows.Forms
 		public Orientation Orientation {
 			get { return orientation; }
 			set {
+				if (!Enum.IsDefined (typeof (Orientation), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for Orientation", value));
+
 				/* Orientation can be changed once the control has been created*/
 				orientation = value;
 				
 				int old_witdh = Width;
 				Width = Height;
 				Height = old_witdh;
-				Invalidate(); 
+				Invalidate (); 
 			}
 		}
 
@@ -204,7 +210,13 @@ namespace System.Windows.Forms
 
 		public TickStyle TickStyle {
 			get { return tickStyle; }
-			set { tickStyle = value ;}
+			set { 
+				
+				if (!Enum.IsDefined (typeof (TickStyle), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for TickStyle", value));
+
+				tickStyle = value;
+			}
 		}
 
 
@@ -372,10 +384,6 @@ namespace System.Windows.Forms
     					Value = maximum;
     				else
     					Value = newPos;
-
-    			//Console.WriteLine ("UpdatePos: " + newPos + " ; " + Value);
-
-    			//Console.WriteLine ("event : {0} {1} {2}", Scroll != null, position, old);
 
     			if (orientation == Orientation.Horizontal) {
 				if (update_trumbpos)
@@ -549,7 +557,7 @@ namespace System.Windows.Forms
     		{
 			if (!Enabled) return;
     			
-    			//System.Console.WriteLine ("OnMouseWheel delta: " + e.Delta + " clicks:" + e.Clicks);
+  			System.Console.WriteLine ("OnMouseWheel delta: " + e.Delta + " clicks:" + e.Clicks);
     					
     		}
     		
