@@ -444,7 +444,7 @@ namespace System.Web {
 			int value = 0;
 			int end = length + offset;
 			for (int i = offset; i < end; i++)
-				value = (value << 4) + GetInt (bytes [offset]);
+				value = (value << 4) + GetInt (bytes [i]);
 
 			return (char) value;
 		}
@@ -474,10 +474,10 @@ namespace System.Web {
 							output.Append (GetChars (acc, e));
 							acc.SetLength (0);
 						}
-						output.Append (GetChar (bytes, offset + 2, 4));
+						output.Append (GetChar (bytes, i + 2, 4));
 						i += 5;
 					} else {
-						acc.WriteByte ((byte) GetChar (bytes, offset + 1, 2));
+						acc.WriteByte ((byte) GetChar (bytes, i + 1, 2));
 						i += 2;
 					}
 					continue;
