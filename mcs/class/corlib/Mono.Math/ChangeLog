@@ -1,3 +1,7 @@
+2004-04-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* BigInteger.cs: use readonly for prime array.
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: In sync with Mono.Security.dll version.
