@@ -25,6 +25,8 @@ namespace System.Windows.Forms {
 		//
 		// -- Public Methods
 		//
+
+		//Compact Framework
 		[MonoTODO]
 		public override bool Equals(object o) 
 		{
@@ -36,6 +38,7 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
                 
+		//Compact Framework
 		[MonoTODO]
 		public override int GetHashCode() 
 		{
@@ -43,10 +46,12 @@ namespace System.Windows.Forms {
 			return base.GetHashCode();
 		}
                 
+		//Compact Framework
 		//public Type GetType() {
 		//	throw new NotImplementedException ();
 		//}
                 
+		//Compact Framework
 		public static DialogResult Show(string text) 
 		{
 			return (DialogResult) 
@@ -61,6 +66,7 @@ namespace System.Windows.Forms {
 					       Win32.MB_OK);
 		}
                 
+		//Compact Framework
 		public static DialogResult Show (string text, string caption) 
 		{
 			return (DialogResult) 
@@ -111,6 +117,7 @@ namespace System.Windows.Forms {
 					       (uint) (mb | mi) );
 		}
                 
+		//Compact Framework
 		public static DialogResult Show (
 			string text, string caption, MessageBoxButtons mb, 
 			MessageBoxIcon mi, MessageBoxDefaultButton md) 
@@ -151,16 +158,19 @@ namespace System.Windows.Forms {
 					       (uint) (mb | mi | md | mo) );
 		}
 
+		//Compact Framework
 		[MonoTODO]                
 		public override string ToString () {
 			throw new NotImplementedException ();
 		}
 
+		//Compact Framework
 		[MonoTODO]                
 		~MessageBox () {
 			throw new NotImplementedException ();
 		}
 
+		//Compact Framework
 		[MonoTODO]                
 		protected object MemberWiseClone () {
 			throw new NotImplementedException ();

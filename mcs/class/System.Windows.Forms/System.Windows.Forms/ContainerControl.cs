@@ -31,6 +31,7 @@ namespace System.Windows.Forms {
 			set { throw new NotImplementedException (); }
 		}
 		
+		//Compact Framework
 		[MonoTODO]
 		// not ready for BindingContext
 		//public override BindingContext BindingContext {

@@ -121,7 +121,8 @@ namespace System.Windows.Forms {
 		{
 			messageFilters.Add (value);
 		}
-	
+
+		//Compact Framework	
 		public static void DoEvents () 
 		{
 			Win32.MSG msg = new Win32.MSG();
@@ -129,7 +130,8 @@ namespace System.Windows.Forms {
 			while (Win32.PeekMessageA (ref msg, (IntPtr) 0,  0, 0,
 						   Win32.PM_REMOVE) != 0);
 		}
-	
+
+		//Compact Framework	
 		public static void Exit () 
 		{
 			Win32.PostQuitMessage (0);
@@ -162,6 +164,7 @@ namespace System.Windows.Forms {
 			Win32.PostQuitMessage (0);
 		}
 
+		//Compact Framework
 		static public void Run ()
 		{
 			Win32.MSG msg = new Win32.MSG();
