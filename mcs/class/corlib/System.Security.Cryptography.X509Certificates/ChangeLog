@@ -1,0 +1,5 @@
+2002-11-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ChangeLog: New. First entry ;-)
+	* X509Certificates.cs: New. Almost complete - except 
+	CryptoAPI link, CreateFromSignedFile and some date issues.
