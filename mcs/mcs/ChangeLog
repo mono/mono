@@ -1,5 +1,12 @@
 2003-04-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* delegate.cs (NewDelegate.Resolve): Test whether an instance
+	method is being referenced in the method group from a static
+	context, and report error 120 if so.
+
+	* expression.cs, ecore.cs (Error_UnexpectedKind): New name for
+	Error118. 
+
 	* typemanager.cs: Add intermediate namespaces (if a namespace A.B
 	is created, we create the A namespace).
 

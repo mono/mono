@@ -564,15 +564,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (Arguments == null) {
-				Report.Error (-11, loc,
-					      "Delegate creation expression takes only one argument");
-				return null;
-			}
-
-			if (Arguments.Count != 1) {
-				Report.Error (-11, loc,
-					      "Delegate creation expression takes only one argument");
+			if (Arguments == null || Arguments.Count != 1) {
+				Report.Error (149, loc,
+					      "Method name expected");
 				return null;
 			}
 
@@ -646,10 +640,16 @@ namespace Mono.CSharp {
 				if (mg.InstanceExpression != null)
 					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
 				else {
-					if (!ec.IsStatic)
-						delegate_instance_expr = ec.This;
-					else
+					if (ec.IsStatic){
+						if (!delegate_method.IsStatic){
+							Report.Error (120, loc,
+								      "An object reference is required for the non-static method " +
+								      delegate_method.Name);
+							return null;
+						}
 						delegate_instance_expr = null;
+					} else
+						delegate_instance_expr = ec.This;
 				}
 
 				if (delegate_instance_expr != null)
@@ -663,8 +663,7 @@ namespace Mono.CSharp {
 			Type e_type = e.Type;
 
 			if (!TypeManager.IsDelegateType (e_type)) {
-				Report.Error (-12, loc, "Cannot create a delegate from something " +
-					      "not a delegate or a method.");
+				e.Error_UnexpectedKind ("method");
 				return null;
 			}
 

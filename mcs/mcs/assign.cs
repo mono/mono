@@ -282,7 +282,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
-				source.Error118 ("variable or value");
+				source.Error_UnexpectedKind ("variable or value");
 				return null;
 			} else if (source is MethodGroupExpr){
 				((MethodGroupExpr) source).ReportUsageError ();
