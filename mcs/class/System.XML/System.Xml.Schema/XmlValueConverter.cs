@@ -4,6 +4,9 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
+
+#if NET_2_0
+
 using System;
 
 namespace System.Xml.Schema
@@ -182,3 +185,5 @@ namespace System.Xml.Schema
 		public abstract bool ToString (string value);
 	}
 }
+
+#endif

@@ -1,5 +1,9 @@
 2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValueConverter.cs : missed NET_2_0.
+
+2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* IXmlSchemaInfo.cs,
 	  IXmlType.cs,
 	  XmlSchemaDatatypeVariety.cs,
