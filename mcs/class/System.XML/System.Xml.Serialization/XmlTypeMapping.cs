@@ -17,12 +17,26 @@ namespace System.Xml.Serialization
 	/// </summary>
 	public class XmlTypeMapping : XmlMapping
 	{
+		private string elementName;
+		private string ns;
 		private string typeFullName;
-	
-		public string TypeFullName {
-			get { 
-				return typeFullName; 
-			}
+		private string typeName;
+
+		public string ElementName  
+		{
+			get { return elementName; }
+		}
+		public string Namespace  
+		{
+			get { return ns; }
+		}
+		public string TypeFullName  
+		{
+			get { return typeFullName; }
+		}
+		public string TypeName  
+		{
+			get { return typeName; }
 		}
 	}
 }

@@ -33,5 +33,29 @@ namespace System.Xml.Serialization
 			return List.Add(attribute);
 		}
 
+		public bool Contains(XmlArrayItemAttribute attribute)
+		{
+			return List.Contains(attribute);
+		}
+
+		public void CopyTo(XmlArrayItemAttribute[] array, int index)
+		{
+			List.CopyTo(array, index);
+		}
+
+		public int IndexOf(XmlArrayItemAttribute attribute)
+		{
+			return List.IndexOf(attribute);
+		}
+
+		public void Insert(int index, XmlArrayItemAttribute attribute)
+		{
+			List.Insert(index, attribute);
+		}
+
+		public void Remove(XmlArrayItemAttribute attribute)
+		{
+			List.Remove(attribute);
+		}
 	}
 }

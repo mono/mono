@@ -21,24 +21,28 @@ namespace System.Xml.Serialization
 	{
 		private string attributeName;
 		private string dataType;
+		private Type type;
 		private XmlSchemaForm form;
 		private string ns;
 
 		public XmlAttributeAttribute ()
 		{
 		}
+
 		public XmlAttributeAttribute (string attributeName)
 		{
 			AttributeName = attributeName;
 		}
-		[MonoTODO]
+		
 		public XmlAttributeAttribute (Type type)
 		{
+			Type = type;
 		}
-		[MonoTODO]
+
 		public XmlAttributeAttribute (string attributeName, Type type)
 		{
 			AttributeName = attributeName;
+			Type = type;
 		}
 
 		public string AttributeName {
@@ -62,6 +66,7 @@ namespace System.Xml.Serialization
 				return form;
 			}
 			set {
+				if(Namespace != null)
 				form = value;
 			}
 		}
@@ -71,6 +76,18 @@ namespace System.Xml.Serialization
 			}
 			set {
 				ns = value;
+			}
+		}
+
+		public Type Type
+		{
+			get 
+			{
+				return type;
+			}
+			set 
+			{
+				type = value;
 			}
 		}
 

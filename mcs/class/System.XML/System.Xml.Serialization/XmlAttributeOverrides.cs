@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 
 namespace System.Xml.Serialization
 {
@@ -17,27 +18,42 @@ namespace System.Xml.Serialization
 	public class XmlAttributeOverrides
 	{
 		
-		public XmlAttributes this[Type type]
+		private Hashtable overrides;
+
+		public XmlAttributeOverrides ()
 		{
-			[MonoTODO]
-			get{ throw new NotImplementedException (); }
+			overrides = new Hashtable();
 		}
 
-		public XmlAttributes this[Type type, string member] 
+		public XmlAttributes this [Type type] 
 		{
-			[MonoTODO]
-			get{ throw new NotImplementedException (); }
+			get { return this [type, string.Empty];	}
 		}
 
-		[MonoTODO]
-		public void Add (Type type, XmlAttributes attributes)
+		public XmlAttributes this [Type type, string member]
 		{
-			throw new NotImplementedException ();
+			get 
+			{
+				return (XmlAttributes) overrides[GetKey(type,member)];
+			}
 		}
-		[MonoTODO]
-		public void Add( Type type, string member, XmlAttributes attributes)
+
+		public void Add (Type type, XmlAttributes attributes) 
 		{
-			throw new NotImplementedException ();
+			Add(type, string.Empty, attributes);
+		}
+
+		public void Add (Type type, string member, XmlAttributes attributes) 
+		{
+			if(overrides[GetKey(type, member)] != null)
+				throw new Exception("The attributes for the given type and Member already exist in the collection");
+			
+			overrides.Add(GetKey(type,member), attributes);
+		}
+
+		private TypeMember GetKey(Type type, string member)
+		{
+			return new TypeMember(type, member);
 		}
 
 	}

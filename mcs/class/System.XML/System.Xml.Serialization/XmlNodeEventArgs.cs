@@ -17,53 +17,66 @@ namespace System.Xml.Serialization
 	/// </summary>
 	public class XmlNodeEventArgs : EventArgs
 	{
-		[MonoTODO]
-		public int LineNumber {
-			get { 
-				throw new NotImplementedException(); 
-			}
+		private int linenumber;
+		private int lineposition ;
+		private string localname;
+		private string name;
+		private string nsuri;
+		private XmlNodeType nodetype;
+		private object source;
+		private string text;
+
+		internal XmlNodeEventArgs(int linenumber, int lineposition, string localname, string name, string nsuri,
+			XmlNodeType nodetype, object source, string text)
+		{
+			this.linenumber = linenumber;
+			this.lineposition = lineposition;
+			this.localname = localname;
+			this.name = name;
+			this.nsuri = nsuri;
+			this.nodetype = nodetype;
+			this.source = source;
+			this.text = text;
 		}
-		[MonoTODO]
-		public int LinePosition {
-			get { 
-				throw new NotImplementedException(); 
-			}
+
+		public int LineNumber 
+		{
+			get { return linenumber; } 
 		}
-		[MonoTODO]
-		public string LocalName {
-			get { 
-				throw new NotImplementedException(); 
-			}
+		
+		public int LinePosition 
+		{
+			get { return lineposition; } 
 		}
-		[MonoTODO]
-		public string Name {
-			get { 
-				throw new NotImplementedException(); 
-			}
+
+		public string LocalName
+		{
+			get { return localname; } 
 		}
-		[MonoTODO]
-		public string NamespaceURI {
-			get { 
-				throw new NotImplementedException(); 
-			}
+
+		public string Name 
+		{
+			get { return name; } 
 		}
-		[MonoTODO]
-		public XmlNodeType NodeType {
-			get { 
-				throw new NotImplementedException(); 
-			}
+
+		public string NamespaceURI
+		{
+			get { return nsuri; } 
 		}
-		[MonoTODO]
-		public object ObjectBeingDeserialized {
-			get { 
-				throw new NotImplementedException(); 
-			}
+
+		public XmlNodeType NodeType
+		{
+			get { return nodetype; } 
 		}
-		[MonoTODO]
-		public string Text {
-			get { 
-				throw new NotImplementedException(); 
-			}
+
+		public object ObjectBeingDeserialized 
+		{
+			get { return source; } 
+		}
+
+		public string Text
+		{
+			get { return text; } 
 		}
 	}
 }

@@ -30,5 +30,25 @@ namespace System.Xml.Serialization
 		{
 			return List.Add (attribute);
 		}
+
+		public bool Contains(XmlElementAttribute attribute)
+		{
+			return List.Contains(attribute);	
+		}
+
+		public int IndexOf(XmlElementAttribute attribute)
+		{
+			return List.IndexOf(attribute);
+		}
+
+		public void Insert(int index, XmlElementAttribute attribute)
+		{
+			List.Insert(index, attribute);
+		}
+
+		public void Remove(XmlElementAttribute attribute)
+		{
+			List.Remove(attribute);
+		}
 	}
 }

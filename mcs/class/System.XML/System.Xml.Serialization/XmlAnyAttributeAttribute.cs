@@ -24,7 +24,5 @@ namespace System.Xml.Serialization
 		{
 		
 		}
-
-		//public virtual object TypeId {get;}
 	}
 }

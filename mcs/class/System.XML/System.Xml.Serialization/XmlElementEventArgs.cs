@@ -17,21 +17,37 @@ namespace System.Xml.Serialization
 	/// </summary>
 	public class XmlElementEventArgs : EventArgs
 	{
-		[MonoTODO]
-		public XmlElement Element { 
-			get{ throw new NotImplementedException(); }
+		private XmlElement attr;
+		private int lineNumber;
+		private int linePosition;
+		private object obj;
+
+		internal XmlElementEventArgs(XmlElement attr, int lineNum, int linePos, object source)
+		{
+			this.attr		= attr;
+			this.lineNumber = lineNum;
+			this.linePosition = linePos;
+			this.obj		= source;
 		}
-		[MonoTODO]
-		public int LineNumber {
-			get{ throw new NotImplementedException(); }
+
+		public XmlElement Element
+		{ 
+			get { return attr; }
 		}
-		[MonoTODO]
-		public int LinePosition {
-			get{ throw new NotImplementedException(); }
+
+		public int LineNumber 
+		{
+			get { return lineNumber; }
 		}
-		[MonoTODO]
-		public object ObjectBeingDeserialized {
-			get{ throw new NotImplementedException(); }
+		
+		public int LinePosition 
+		{
+			get { return linePosition; }
+		}
+		
+		public object ObjectBeingDeserialized 
+		{
+			get{ return obj; }
 		}
 	}
 }

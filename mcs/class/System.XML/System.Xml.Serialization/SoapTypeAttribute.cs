@@ -20,6 +20,7 @@ namespace System.Xml.Serialization
 	{
 		private string ns;
 		private string typeName;
+		private bool includeInSchema;
 
 		public SoapTypeAttribute ()
 		{
@@ -32,6 +33,12 @@ namespace System.Xml.Serialization
 		{
 			TypeName = typeName;
 			Namespace = ns;
+		}
+		
+		public bool IncludeInSchema 
+		{
+			get { return  includeInSchema; }
+			set { includeInSchema = value; }
 		}
 
 		public string Namespace {

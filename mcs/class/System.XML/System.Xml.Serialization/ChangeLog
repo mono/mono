@@ -1,0 +1,4 @@
+2002-06-20 Ajay kumar Dwivedi <adwiv@yahoo.com>
+
+	* Soap & XmlOverrides: Implemented using TypeMember as key with
+	  suggestions from Rafael.

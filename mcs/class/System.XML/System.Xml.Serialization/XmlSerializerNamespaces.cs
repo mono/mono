@@ -25,13 +25,14 @@ namespace System.Xml.Serialization
 			xmlQualifiedNames = new ArrayList ();
 		}
 
-		[MonoTODO]
 		public XmlSerializerNamespaces(XmlQualifiedName[] namespaces)
+			: this()
 		{
+			xmlQualifiedNames.AddRange(namespaces);
 		}
 
-		[MonoTODO]
 		public XmlSerializerNamespaces(XmlSerializerNamespaces namespaces)
+			: this(namespaces.ToArray())
 		{
 		}
 
@@ -42,7 +43,7 @@ namespace System.Xml.Serialization
 
 		public XmlQualifiedName[] ToArray ()
 		{
-			return (XmlQualifiedName[])xmlQualifiedNames.ToArray ();
+			return (XmlQualifiedName[]) xmlQualifiedNames.ToArray (typeof(XmlSerializerNamespaces) );
 		}
 
 		public int Count 

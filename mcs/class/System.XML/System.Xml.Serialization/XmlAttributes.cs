@@ -9,6 +9,7 @@
 
 using System.Reflection;
 using System;
+using System.ComponentModel;
 
 namespace System.Xml.Serialization
 {
@@ -39,10 +40,40 @@ namespace System.Xml.Serialization
 			xmlElements = new XmlElementAttributes ();
 		}
 
-		[MonoTODO]
 		public XmlAttributes (ICustomAttributeProvider provider)
 		{
-			throw new NotImplementedException ();
+			object[] attributes = provider.GetCustomAttributes(false);
+			foreach(object obj in attributes)
+			{
+				if(obj is XmlAnyAttributeAttribute)
+					xmlAnyAttribute = (XmlAnyAttributeAttribute) obj;
+				else if(obj is XmlAnyElementAttributes)
+					xmlAnyElements = (XmlAnyElementAttributes) obj;
+				else if(obj is XmlArrayAttribute)
+					xmlArray = (XmlArrayAttribute) obj;
+				else if(obj is XmlArrayItemAttributes)
+					xmlArrayItems = (XmlArrayItemAttributes) obj;
+				else if(obj is XmlAttributeAttribute)
+					xmlAttribute = (XmlAttributeAttribute) obj;
+				else if(obj is XmlChoiceIdentifierAttribute)
+					xmlChoiceIdentifier = (XmlChoiceIdentifierAttribute) obj;
+				else if(obj is DefaultValueAttribute)
+					xmlDefaultValue = obj;
+				else if(obj is XmlElementAttributes)
+					xmlElements = (XmlElementAttributes) obj;
+				else if(obj is XmlEnumAttribute)
+					xmlEnum = (XmlEnumAttribute) obj;
+				else if(obj is XmlIgnoreAttribute)
+					xmlIgnore = true;
+				else if(obj is XmlNamespaceDeclarationsAttribute)
+					xmlns = true;
+				else if(obj is XmlRootAttribute)
+					xmlRoot = (XmlRootAttribute) obj;
+				else if(obj is XmlTextAttribute)
+					xmlText = (XmlTextAttribute) obj;
+				else if(obj is XmlTypeAttribute)
+					xmlType = (XmlTypeAttribute) obj;
+			}
 		}
 
 		public XmlAnyAttributeAttribute XmlAnyAttribute {
@@ -147,6 +178,5 @@ namespace System.Xml.Serialization
 				xmlType = value;
 			}
 		}
-
 	}
 }
