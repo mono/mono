@@ -3,6 +3,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Windows.Forms", "Sys
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Windows.Forms.Design", "System.Windows.Forms.Design\System.Windows.Forms.Design.csproj", "{A38C110F-63F4-4B53-A67E-9A46681C768E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWFTest", "SWFTest\SWFTest.csproj", "{CC2EFED3-199D-48A1-BA05-A7093A6B4C07}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
@@ -20,6 +22,10 @@ Global
 		{A38C110F-63F4-4B53-A67E-9A46681C768E}.Debug.Build.0 = Debug|.NET
 		{A38C110F-63F4-4B53-A67E-9A46681C768E}.Release.ActiveCfg = Release|.NET
 		{A38C110F-63F4-4B53-A67E-9A46681C768E}.Release.Build.0 = Release|.NET
+		{CC2EFED3-199D-48A1-BA05-A7093A6B4C07}.Debug.ActiveCfg = Debug|.NET
+		{CC2EFED3-199D-48A1-BA05-A7093A6B4C07}.Debug.Build.0 = Debug|.NET
+		{CC2EFED3-199D-48A1-BA05-A7093A6B4C07}.Release.ActiveCfg = Release|.NET
+		{CC2EFED3-199D-48A1-BA05-A7093A6B4C07}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
