@@ -82,6 +82,12 @@ namespace Microsoft.Win32 {
 		}
 		
 		[MonoTODO]
+		public void DeleteSubKey(string subkey, bool shouldThrowWhenKeyMissing)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public void DeleteSubKeyTree(string subkey)
 		{
 			throw new NotImplementedException ();
@@ -89,6 +95,12 @@ namespace Microsoft.Win32 {
 
 		[MonoTODO]
 		public void DeleteValue(string value)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void DeleteValue(string value, bool shouldThrowWhenKeyMissing)
 		{
 			throw new NotImplementedException ();
 		}
