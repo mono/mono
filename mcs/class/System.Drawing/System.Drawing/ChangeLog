@@ -1,3 +1,15 @@
+2005-03-17  Peter Bartok  <pbartok@novell.com>
+
+	* gdipFunctions.cs: 
+	  - Changed P/Invoke signature for GdipLoadImageFromDelegate_linux()
+	    method, now includes a get header delegate
+	  - Added StreamGetHeaderImpl method, to allow libgdiplus to determine 
+	    the image type even on non-seekable streams
+	  - Fixed StreamGetBytesImpl to consider the bytes already retrieved
+	    via StreamGetHeaderImpl
+	* Image.cs: Fixed call to GdipLoadImageFromDelegate_linux() to include
+	  the new StreamGetHeader delegate
+
 2005-03-15 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Pen.cs: Fixes dispose method to allow to be called multiple times

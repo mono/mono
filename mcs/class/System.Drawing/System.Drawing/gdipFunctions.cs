@@ -1484,6 +1484,7 @@ namespace System.Drawing
 		//
 		// These are stuff that is unix-only
 		//
+		public delegate int StreamGetHeaderDelegate(IntPtr buf, int bufsz);
 		public delegate int StreamGetBytesDelegate (IntPtr buf, int bufsz, bool peek);
 		public delegate long StreamSeekDelegate (int offset, int whence);
 		public delegate int StreamPutBytesDelegate (IntPtr buf, int bufsz);
@@ -1494,50 +1495,114 @@ namespace System.Drawing
 		{
 			public Stream stream;
 			
+			private StreamGetHeaderDelegate sghd = null;
 			private StreamGetBytesDelegate sgbd = null;
 			private StreamSeekDelegate skd = null;
 			private StreamPutBytesDelegate spbd = null;
 			private StreamCloseDelegate scd = null;
 			private StreamSizeDelegate ssd = null;
+			private byte[]	start_buf;
+			private int	start_buf_pos;
+			private int	start_buf_len;
 			
 			public GdiPlusStreamHelper (Stream s) 
 			{ 
 				stream = s;
-				if (stream != null && stream.CanSeek) 
+				if (stream != null && stream.CanSeek) {
 					stream.Seek (0, SeekOrigin.Begin);
+				}
+			}
+
+			public int StreamGetHeaderImpl (IntPtr buf, int bufsz)  {
+				int	bytesRead;
+
+				start_buf = new byte[bufsz];
+
+				try {
+					bytesRead = stream.Read (start_buf, 0, bufsz);
+				} catch (IOException) {
+					return -1;
+				}
+
+				if (bytesRead > 0 && buf != IntPtr.Zero) {
+					Marshal.Copy (start_buf, 0, (IntPtr) (buf.ToInt64()), bytesRead);
+				}
+
+				start_buf_pos = 0;
+				start_buf_len = bytesRead;
+
+				return bytesRead;
+			}
+
+			public StreamGetHeaderDelegate GetHeaderDelegate {
+				get {
+					if (stream != null && stream.CanRead) {
+						if (sghd == null) {
+							sghd = new StreamGetHeaderDelegate (StreamGetHeaderImpl);
+						}
+						return sghd;
+					}
+					return null;
+				}
 			}
 
 			public int StreamGetBytesImpl (IntPtr buf, int bufsz, bool peek) 
 			{
-				if (buf == IntPtr.Zero && peek)
+				if (buf == IntPtr.Zero && peek) {
 					return -1;
+				}
 
 				byte[] managedBuf = new byte[bufsz];
-				int bytesReturn = 0;
 				int bytesRead = 0;
 				long streamPosition = 0;
-				
+
 				if (bufsz > 0) {
-					streamPosition = stream.Position;
-					try {
-						bytesRead = stream.Read (managedBuf, 0, bufsz);
-					} catch (IOException) {
-						return -1;
+					if (stream.CanSeek) {
+						streamPosition = stream.Position;
+					}
+					if (start_buf_len > 0) {
+						if (start_buf_len > bufsz) {
+							Array.Copy(start_buf, start_buf_pos, managedBuf, 0, bufsz);
+							start_buf_pos += bufsz;
+							start_buf_len -= bufsz;
+							bytesRead = bufsz;
+							bufsz = 0;
+						} else {
+							// this is easy
+							Array.Copy(start_buf, start_buf_pos, managedBuf, 0, start_buf_len);
+							bufsz -= start_buf_len;
+							bytesRead = start_buf_len;
+							start_buf_len = 0;
+						}
+					}
+
+					if (bufsz > 0) {
+						try {
+							bytesRead += stream.Read (managedBuf, bytesRead, bufsz);
+						} catch (IOException) {
+							return -1;
+						}
 					}
 			
 					if (bytesRead > 0 && buf != IntPtr.Zero) {
-						Marshal.Copy (managedBuf, 0, (IntPtr) (buf.ToInt64() + bytesReturn), bytesRead);
+						Marshal.Copy (managedBuf, 0, (IntPtr) (buf.ToInt64()), bytesRead);
 					}
 
-					if (peek) {
-						// If we are peeking bytes, then go back to original position before peeking
-						stream.Seek (streamPosition, SeekOrigin.Begin);
+					if (!stream.CanSeek && (bufsz == 10) && peek) {
+						// Special 'hack' to support peeking of the type for gdi+ on non-seekable streams
 					}
-			      
-					bytesReturn += bytesRead;
+				
+					if (peek) {
+						if (stream.CanSeek) {
+							// If we are peeking bytes, then go back to original position before peeking
+							stream.Seek (streamPosition, SeekOrigin.Begin);
+						} else {
+							throw new NotSupportedException();
+						}
+					}
 				}
 				
-				return bytesReturn;
+				return bytesRead;
 			}
 
 			public StreamGetBytesDelegate GetBytesDelegate {
@@ -1648,7 +1713,7 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFromXDrawable_linux (IntPtr drawable, IntPtr display, out IntPtr graphics);
 		
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
+		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetHeaderDelegate getHeader, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
 							StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, out IntPtr image);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
