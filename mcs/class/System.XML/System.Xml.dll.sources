@@ -222,6 +222,7 @@ System.Xml.Schema/XmlSchemaImport.cs
 System.Xml.Schema/XmlSchemaInclude.cs
 System.Xml.Schema/XmlSchemaInference.cs
 System.Xml.Schema/XmlSchemaInferenceException.cs
+System.Xml.Schema/XmlSchemaInfo.cs
 System.Xml.Schema/XmlSchemaKey.cs
 System.Xml.Schema/XmlSchemaKeyref.cs
 System.Xml.Schema/XmlSchemaLengthFacet.cs
