@@ -995,9 +995,11 @@ namespace System.Net
 							code == HttpStatusCode.ProxyAuthenticationRequired)) {
 					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
-						if (allowBuffering) {
+						if (InternalAllowBuffering) {
 							bodyBuffer = writeStream.WriteBuffer;
 							bodyBufferLength = writeStream.WriteBufferLength;
+							return true;
+						} else if (method != "PUT" && method != "POST") {
 							return true;
 						}
 						

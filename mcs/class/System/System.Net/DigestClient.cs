@@ -217,7 +217,6 @@ namespace System.Net
 		{
 			parser = new DigestHeaderParser (challenge);
 			if (!parser.Parse ()) {
-				Console.WriteLine ("Parser");
 				return false;
 			}
 
