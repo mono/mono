@@ -1,3 +1,8 @@
+2005-03-11 Manjula GHM <mmanjula@novell.com>
+           Sudharsan V <vsudharsan@novell.com>
+          * mb-parser.jay:
+              Fixes related to displaying correct line number,error message and handle End of blocks
+
 2005-03-11 Satya Sudha K <ksathyasudha@novell.com>
 	* expression.cs :
 			 Support for 'Nothing' with all operators.
