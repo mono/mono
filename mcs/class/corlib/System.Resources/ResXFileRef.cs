@@ -11,6 +11,7 @@ namespace System.Resources {
 	   public class ResXFileRef {
 
 			 public ResXFileRef (string fileName, string typeName) {}
+			 [MonoTODO]
 			 public override string ToString () { return ""; } // LAMESPEC, not specified.
 	   }
 }

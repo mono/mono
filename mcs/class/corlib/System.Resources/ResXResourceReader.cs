@@ -17,12 +17,10 @@ namespace System.Resources {
 			public void Close () {}
 			IDictionaryEnumerator IResourceReader.GetEnumerator () { return null; }
 			IEnumerator IEnumerable.GetEnumerator () { return null; }
-
-
-
-
-			// TODO:
+			[MonoTODO]
 			protected virtual void Dispose (bool disposing) {}
+
+			[MonoTODO]
 			public void Dispose () {}
 	   	}
 }

@@ -86,6 +86,7 @@ namespace System.Resources {
 				    return null;
 			 }
 
+			 [MonoTODO]
 			 public virtual string GetString (string name) {
 				    Object o = GetObject (name);
 				    if (o is string)
@@ -93,6 +94,7 @@ namespace System.Resources {
 				    return null;
 			 }
 
+	 		 [MonoTODO]
 			 public virtual string GetString (string name, bool ignoreCase) {
 				    return null;
 			 }

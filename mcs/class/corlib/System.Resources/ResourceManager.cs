@@ -48,6 +48,7 @@ namespace System.Resources {
 							 throw new ArgumentException ("Type must be derived from ResourceSet.");
 			 }
 
+			 [MonoTODO]
 			 public static ResourceManager CreateFileBasedResourceManager (string baseName,
 															   string resourceDir,
 															   Type usingResourceSet) {
@@ -65,6 +66,7 @@ namespace System.Resources {
 					get { return resourceSetType; }
 			 }
 			 
+			 [MonoTODO]
 			 public virtual ResourceSet GetResourceSet (CultureInfo culture,
 											    bool createIfNotExists,
 											    bool tryParents) {
@@ -109,6 +111,7 @@ namespace System.Resources {
 						  r.Close();
 			 }
 
+			 [MonoTODO]
 			 protected static CultureInfo GetNeutralResourcesLanguage (Assembly a) {
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is NeutralResourcesLanguageAttribute)
@@ -123,6 +126,7 @@ namespace System.Resources {
 				    return null;
 			 }
 
+			 [MonoTODO]
 			 public static Version GetSatelliteContractVersion (Assembly a) {
 
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {

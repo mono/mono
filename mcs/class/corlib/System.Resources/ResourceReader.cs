@@ -38,6 +38,7 @@ namespace System.Resources {
 				return ((IResourceReader) this).GetEnumerator();
 			 }
 
+			 [MonoTODO]
 			 public void Dispose () {}
 
 	   }
@@ -59,14 +60,17 @@ namespace System.Resources {
 				    get { return value; }
 			 }
 
+			 [MonoTODO]
 			 public object Current {
 				  get { return null; }
 			 }
 
+			 [MonoTODO]
 			 public bool MoveNext () {
 				  return false;
 			 }
 				
+			 [MonoTODO]
 			 public void Reset () { }
 	   }
 }
