@@ -1,3 +1,16 @@
+2004-10-18  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (FieldMember.Define): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+	(MemberBase.DoDefine): Likewise.
+
+	* expression.cs (New.DoResolve): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+	(ComposedCast.DoResolveAsTypeStep): Likewise.
+
+	* statement.cs (LocalInfo.Resolve): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+
 2004-10-17  John Luke  <john.luke@gmail.com>
 
 	* class.cs (Operator.GetSignatureForError): use CSharpName

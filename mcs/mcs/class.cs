@@ -4848,11 +4848,11 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = ExplicitInterfaceName.GetTypeExpression (Location);
-				expr = expr.ResolveAsTypeTerminal (ec, false);
-				if (expr == null)
+				TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
+				if (texpr == null)
 					return false;
 
-				InterfaceType = expr.Type;
+				InterfaceType = texpr.ResolveType (ec);
 
 				if (InterfaceType.IsClass) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
@@ -5118,12 +5118,12 @@ namespace Mono.CSharp {
 
 			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
-			Type = Type.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
 			ec.InUnsafe = old_unsafe;
-			if (Type == null)
+			if (texpr == null)
 				return false;
 
-			MemberType = Type.Type;
+			MemberType = texpr.ResolveType (ec);
 
 			if (!CheckBase ())
 				return false;
