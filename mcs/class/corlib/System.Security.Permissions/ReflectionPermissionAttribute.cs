@@ -42,7 +42,7 @@ namespace System.Security.Permissions
 		public bool ReflectionEmit
 		{
 			get { return reflectionEmit; }
-			set {  reflectionEmit = value; }
+			set { reflectionEmit = value; }
 		}  
 
 		public bool TypeInformation
@@ -50,7 +50,7 @@ namespace System.Security.Permissions
 			get { return typeInfo; }
 			set { typeInfo = value; }
 		}
-			 
+		
 		// Methods
 		[MonoTODO]
 		public override IPermission CreatePermission ()

@@ -37,6 +37,5 @@ namespace System
 			:base (message, innerException)
 			{
 			}
-		
 	}
 }

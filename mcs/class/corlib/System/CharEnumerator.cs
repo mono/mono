@@ -19,28 +19,28 @@ namespace System
 		
 		// Constructor
 		internal CharEnumerator (string s)
-		 {
+		{
 			 str = s;
 			 idx = -1;
 			 len = s.Length;
-		 }
+		}
 		
 		// Property
 		public char Current
 		{
-			get {
-				if (idx == -1)
-					throw new InvalidOperationException ("The position is not valid.");
-				
-				return str[idx];
+			get { if (idx == -1)
+				throw new InvalidOperationException ("The position is not valid.");
+
+			return str [idx];
 			}
 		}
 		
-		object IEnumerator.Current {
-			get {
-				if (idx == -1)
-					throw new InvalidOperationException ("The position is not valid");
-				return str [idx];
+		object IEnumerator.Current
+		{
+			get { if (idx == -1)
+				throw new InvalidOperationException ("The position is not valid");
+
+			return str [idx];
 			}
 		}
 		
@@ -70,6 +70,7 @@ namespace System
 		public void Reset ()
 		{
 			idx = -1;
+
 		}
 	}
 }
