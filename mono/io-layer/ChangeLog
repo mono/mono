@@ -1,3 +1,9 @@
+2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security.c: Removed GetUserName as glib g_get_user_name does a
+	better (portability) job. Added ImpersonateLoggedOnUser and
+	RevertToSelf.
+
 2004-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-mutex.h: move pthread_mutex_timedlock declaration to...
