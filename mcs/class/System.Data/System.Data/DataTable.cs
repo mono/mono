@@ -527,7 +527,7 @@ namespace System.Data
 		/// </summary>
 		public DataRow NewRow()
 		{
-			return this.NewRowFromBuilder (new DataRowBuilder (this, 0, 0);
+			return this.NewRowFromBuilder (new DataRowBuilder (this, 0, 0));
 		}
 
 		/// <summary>
