@@ -678,6 +678,7 @@ namespace Mono.Xml.Xsl.Functions {
 	class XsltKey : XPathFunction {
 		Expression arg0, arg1;
 		XmlNamespaceManager nsm;
+		XslKey key;
 		
 		public XsltKey (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
@@ -696,34 +697,37 @@ namespace Mono.Xml.Xsl.Functions {
 		{
 			ArrayList result = new ArrayList ();
 			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), nsm);
+			XsltCompiledContext ctx = iter.NamespaceManager as XsltCompiledContext;
+			if (key == null)
+				key = ctx.Processor.CompiledStyle.Style.FindKey (name);
+
 			object o = arg1.Evaluate (iter);
 			XPathNodeIterator it = o as XPathNodeIterator;
 			
 			if (it != null) {
 				while (it.MoveNext())
-					FindKeyMatch ((iter.NamespaceManager as XsltCompiledContext), name, it.Current.Value, result, iter.Current);
+					FindKeyMatch (ctx, it.Current.Value, result, iter.Current);
 			} else {
-				FindKeyMatch ((iter.NamespaceManager as XsltCompiledContext), name, XPathFunctions.ToString (o), result, iter.Current);
+				FindKeyMatch (ctx, XPathFunctions.ToString (o), result, iter.Current);
 			}
 			
 			return new EnumeratorIterator (result.GetEnumerator (), (iter.NamespaceManager as XsltCompiledContext));
 		}
 		
-		void FindKeyMatch (XsltCompiledContext xsltContext, QName name, string value, ArrayList result, XPathNavigator context)
+		void FindKeyMatch (XsltCompiledContext xsltContext, string value, ArrayList result, XPathNavigator context)
 		{
 			XPathNavigator searchDoc = context.Clone ();
 			searchDoc.MoveToRoot ();
-			XslKey key = xsltContext.Processor.CompiledStyle.Style.FindKey (name);
 			if (key != null) {
 				XPathNodeIterator desc = searchDoc.SelectDescendants (XPathNodeType.All, true);
 
 				while (desc.MoveNext ()) {
-					if (key.Matches (desc.Current, value))
+					if (key.Matches (desc.Current, xsltContext, value))
 						AddResult (result, desc.Current);
 					
 					if (desc.Current.MoveToFirstAttribute ()) {
 						do {
-							if (key.Matches (desc.Current, value))
+							if (key.Matches (desc.Current, xsltContext, value))
 								AddResult (result, desc.Current);	
 						} while (desc.Current.MoveToNextAttribute ());
 						

@@ -384,9 +384,12 @@ namespace Mono.Xml.Xsl {
 		
 		public override void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
-			if (p.CurrentNode.NodeType == XPathNodeType.Whitespace && !p.PreserveWhitespace ())
-				return;
-			p.Out.WriteString (p.CurrentNode.Value);
+			if (p.CurrentNode.NodeType == XPathNodeType.Whitespace) {
+				if (p.PreserveWhitespace ())
+					p.Out.WriteWhitespace (p.CurrentNode.Value);
+			}
+			else
+				p.Out.WriteString (p.CurrentNode.Value);
 		}
 	}
 }

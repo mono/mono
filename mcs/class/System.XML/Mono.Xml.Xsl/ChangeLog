@@ -1,5 +1,13 @@
 2003-12-16 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* Compiler.cs, XslTransformProcessor.cs :
+	  Use XmlValidatingReader to support id() for external stylesheets.
+	* XslKey.cs, XsltCompiledContext.cs :
+	  to evaluate MatchPattern and UsePattern, SetContext() is required.
+	* XslTemplate.cs : Forgot to commit. Change is below(12/16).
+
+2003-12-16 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* Emitter.cs, HtmlEmitter.cs, XmlWriterEmitter.cs :
 	  Added WriteWhitespace().
 	* GenericOutputter.cs, XslTemplate.cs : Call above.

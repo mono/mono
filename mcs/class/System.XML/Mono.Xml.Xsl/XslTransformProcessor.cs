@@ -102,8 +102,10 @@ namespace Mono.Xml.Xsl {
 			}
 
 			XmlReader rdr = new XmlTextReader (uri.ToString(), (Stream) resolver.GetEntity (uri, null, null));
-			result = new XPathDocument (rdr, XmlSpace.Preserve).CreateNavigator ();
-			rdr.Close ();
+			XmlValidatingReader xvr = new XmlValidatingReader (rdr);
+			xvr.ValidationType = ValidationType.None;
+			result = new XPathDocument (xvr, XmlSpace.Preserve).CreateNavigator ();
+			xvr.Close ();
 			
 			docCache [uri] = result.Clone ();
 			return result;

@@ -42,9 +42,10 @@ namespace Mono.Xml.Xsl {
 		public XPathExpression UsePattern { get { return usePattern; }}
 		public XPathExpression MatchPattern { get { return matchPattern; }}
 		
-		public bool Matches (XPathNavigator nav, string value)
+		public bool Matches (XPathNavigator nav, XmlNamespaceManager nsmgr, string value)
 		{
-			
+			MatchPattern.SetContext (nsmgr);
+			UsePattern.SetContext (nsmgr);
 			if (!nav.Matches (MatchPattern)) 
 				return false;
 			Debug.WriteLine ("? " + nav.Name);

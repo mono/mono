@@ -169,7 +169,10 @@ namespace Mono.Xml.Xsl {
 			using (Stream s = (Stream)res.GetEntity (absUri, null, typeof(Stream)))
 			{
 
-				XPathNavigator n = new XPathDocument (new XmlTextReader (absUri.ToString (), s), XmlSpace.Preserve).CreateNavigator ();
+				XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (absUri.ToString (), s));
+				vr.ValidationType = ValidationType.None;
+				XPathNavigator n = new XPathDocument (vr, XmlSpace.Preserve).CreateNavigator ();
+				vr.Close ();
 				n.MoveToFirstChild ();
 				do {
 					if (n.NodeType == XPathNodeType.Element)
