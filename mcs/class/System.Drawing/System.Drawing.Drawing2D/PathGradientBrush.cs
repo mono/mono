@@ -30,9 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
@@ -41,16 +39,6 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class PathGradientBrush : Brush
 	{
-		Blend blend;
-		Color centerColor;
-		PointF center;
-		PointF focus;
-		RectangleF rectangle;
-		Color [] surroundColors;
-		ColorBlend interpolationColors;
-		Matrix transform;
-		WrapMode wrapMode;
-		
 		internal PathGradientBrush (IntPtr native) : base (native)
 		{
 		}
@@ -58,9 +46,6 @@ namespace System.Drawing.Drawing2D
 		public PathGradientBrush (GraphicsPath path)
 		{
 			Status status = GDIPlus.GdipCreatePathGradientFromPath (path.NativeObject, out nativeObject);
-			GDIPlus.CheckStatus (status);
- 
-			status = GDIPlus.GdipGetPathGradientRect (nativeObject, out rectangle);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -76,19 +61,11 @@ namespace System.Drawing.Drawing2D
 		{
 			Status status = GDIPlus.GdipCreatePathGradientI (points, points.Length, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
-
-			Rectangle rect;
-			status = GDIPlus.GdipGetPathGradientRectI (nativeObject, out rect);
-			GDIPlus.CheckStatus (status);
-			rectangle = (RectangleF) rect;
 		}
 
 		public PathGradientBrush (PointF [] points, WrapMode wrapMode)
 		{
 			Status status = GDIPlus.GdipCreatePathGradient (points, points.Length, wrapMode, out nativeObject);
-			GDIPlus.CheckStatus (status);
-
-			status = GDIPlus.GdipGetPathGradientRect (nativeObject, out rectangle);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -96,105 +73,194 @@ namespace System.Drawing.Drawing2D
 
 		public Blend Blend {
 			get {
+				int count;
+				Status status = GDIPlus.GdipGetPathGradientBlendCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
+				float [] factors = new float [count];
+				float [] positions = new float [count];
+				status = GDIPlus.GdipGetPathGradientBlend (nativeObject, factors, positions, count);
+				GDIPlus.CheckStatus (status);
+
+				Blend blend = new Blend ();
+				blend.Factors = factors;
+				blend.Positions = positions;
+
 				return blend;
 			}
 			set {
-				Status status = GDIPlus.GdipSetPathGradientBlend (nativeObject, value.Factors, value.Positions, value.Factors.Length);
+				int count;
+				float [] factors = value.Factors;
+				float [] positions = value.Positions;
+				count = factors.Length;
+
+				if (count == 0 || positions.Length == 0)
+					throw new ArgumentException ("Invalid Blend object. It should have at least 2 elements in each of the factors and positions arrays.");
+
+				if (count != positions.Length)
+					throw new ArgumentException ("Invalid Blend object. It should contain the same number of factors and positions values.");
+
+				if (positions [0] != 0.0F)
+					throw new ArgumentException ("Invalid Blend object. The positions array must have 0.0 as its first element.");
+
+				if (positions [count - 1] != 1.0F)
+					throw new ArgumentException ("Invalid Blend object. The positions array must have 1.0 as its last element.");
+
+				Status status = GDIPlus.GdipSetPathGradientBlend (nativeObject, factors, positions, count);
 				GDIPlus.CheckStatus (status);
-				blend = value;
 			}
 		}
 
 		public Color CenterColor {
 			get {
-				return centerColor;
+				int centerColor;
+				Status status = GDIPlus.GdipGetPathGradientCenterColor (nativeObject, out centerColor);
+				GDIPlus.CheckStatus (status);
+				return Color.FromArgb (centerColor);
 			}
 			set {
 				Status status = GDIPlus.GdipSetPathGradientCenterColor (nativeObject, value.ToArgb ());
 				GDIPlus.CheckStatus (status);
-				centerColor = value;
 			}
 		}
 
 		public PointF CenterPoint {
 			get {
+				PointF center;
+				Status status = GDIPlus.GdipGetPathGradientCenterPoint (nativeObject, out center);
+				GDIPlus.CheckStatus (status);
+
 				return center;
 			}
 			set {
-				Status status = GDIPlus.GdipSetPathGradientCenterPoint (nativeObject, ref value);
+				PointF center = value;
+				Status status = GDIPlus.GdipSetPathGradientCenterPoint (nativeObject, ref center);
 				GDIPlus.CheckStatus (status);
-				center = value;
 			}
 		}
 
 		public PointF FocusScales {
 			get {
-				return focus;
+				float xScale;
+				float yScale;
+				Status status = GDIPlus.GdipGetPathGradientFocusScales (nativeObject, out xScale, out yScale);
+				GDIPlus.CheckStatus (status);
+
+				return new PointF (xScale, yScale);
 			}
 			set {
 				Status status = GDIPlus.GdipSetPathGradientFocusScales (nativeObject, value.X, value.Y);
 				GDIPlus.CheckStatus (status);
-				focus = value;
 			}
 		}
 
 		public ColorBlend InterpolationColors {
 			get {
+				int count;
+				Status status = GDIPlus.GdipGetPathGradientPresetBlendCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
+				int [] intcolors = new int [count];
+				float [] positions = new float [count];
+				status = GDIPlus.GdipGetPathGradientPresetBlend (nativeObject, intcolors, positions, count);
+				GDIPlus.CheckStatus (status);
+
+				ColorBlend interpolationColors = new ColorBlend ();
+				Color [] colors = new Color [count];
+				for (int i = 0; i < count; i++)
+					colors [i] = Color.FromArgb (intcolors [i]);
+				interpolationColors.Colors = colors;
+				interpolationColors.Positions = positions;
+
 				return interpolationColors;
 			}
 			set {
+				int count;
 				Color [] colors = value.Colors;
+				float [] positions = value.Positions;
+				count = colors.Length;
+
+				if (count == 0 || positions.Length == 0)
+					throw new ArgumentException ("Invalid ColorBlend object. It should have at least 2 elements in each of the colors and positions arrays.");
+
+				if (count != positions.Length)
+					throw new ArgumentException ("Invalid ColorBlend object. It should contain the same number of positions and color values.");
+
+				if (positions [0] != 0.0F)
+					throw new ArgumentException ("Invalid ColorBlend object. The positions array must have 0.0 as its first element.");
+
+				if (positions [count - 1] != 1.0F)
+					throw new ArgumentException ("Invalid ColorBlend object. The positions array must have 1.0 as its last element.");
+
 				int [] blend = new int [colors.Length];
 				for (int i = 0; i < colors.Length; i++)
 					blend [i] = colors [i].ToArgb ();
 
-				Status status = GDIPlus.GdipSetPathGradientPresetBlend (nativeObject, blend, value.Positions, blend.Length);
+				Status status = GDIPlus.GdipSetPathGradientPresetBlend (nativeObject, blend, positions, count);
 				GDIPlus.CheckStatus (status);
-				interpolationColors = value;
 			}
 		}
 
 		public RectangleF Rectangle {
 			get {
-				return rectangle;
+				RectangleF rect;
+				Status status = GDIPlus.GdipGetPathGradientRect (nativeObject, out rect);
+				GDIPlus.CheckStatus (status);
+
+				return rect;
 			}
 		}
 
 		public Color [] SurroundColors {
 			get {
-				return surroundColors;
+				int count;
+				Status status = GDIPlus.GdipGetPathGradientSurroundColorCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
+
+				int [] intcolors = new int [count];
+				status = GDIPlus.GdipGetPathGradientSurroundColorsWithCount (nativeObject, intcolors, ref count);
+				GDIPlus.CheckStatus (status);
+
+				Color [] colors = new Color [count];
+				for (int i = 0; i < count; i++)
+					colors [i] = Color.FromArgb (intcolors [i]);
+
+				return colors;
 			}
 			set {
-				int length = value.Length;
-				int [] colors = new int [length];
-				for (int i = 0; i < length; i++)
+				int count = value.Length;
+				int [] colors = new int [count];
+				for (int i = 0; i < count; i++)
 					colors [i] = value [i].ToArgb ();
 
-				Status status = GDIPlus.GdipSetPathGradientSurroundColorsWithCount (nativeObject, colors, ref length);
+				Status status = GDIPlus.GdipSetPathGradientSurroundColorsWithCount (nativeObject, colors, ref count);
 				GDIPlus.CheckStatus (status);
-				surroundColors = value;
 			}
 		}
 
 		public Matrix Transform {
 			get {
-				return transform;
+				Matrix matrix = new Matrix ();
+				Status status = GDIPlus.GdipGetPathGradientTransform (nativeObject, matrix.nativeMatrix);
+				GDIPlus.CheckStatus (status);
+
+				return matrix;
 			}
 			set {
 				Status status = GDIPlus.GdipSetPathGradientTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
-				transform = value;
 			}
 		}
 
 		public WrapMode WrapMode {
 			get {
+				WrapMode wrapMode;
+				Status status = GDIPlus.GdipGetPathGradientWrapMode (nativeObject, out wrapMode);
+				GDIPlus.CheckStatus (status);
+
 				return wrapMode;
 			}
 			set {
 				Status status = GDIPlus.GdipSetPathGradientWrapMode (nativeObject, value);
 				GDIPlus.CheckStatus (status);
-				wrapMode = value;
 			}
 		}
 
