@@ -11,12 +11,7 @@ We are designing a JIT compiler, so we have to consider two things:
 The current approach is to keep the JITer as simple as possible, and thus as
 fast as possible. The generated code quality will suffer from that.
 
-We do not map local variables to registers at the moment, and this makes the
-whole JIT much easier, for example we do not need to identify basic block
-boundaries or the lifetime of local variables, or select the variables which
-are worth to put into a register.
-
-Register allocation is thus done only inside the trees of the forest, and each
+Register allocation is first done inside the trees of the forest, and each
 tree can use the full set of registers. We simply split a tree if we get out of
 registers, for example the following tree:
 
@@ -55,6 +50,9 @@ stored in the MonoMethod structure. For each method we create a trampoline
 function. When called, this function does the JIT compilation and replaces the
 trampoline with the compiled method address.
 
+We should consider using the CACAO approach, they do not use a trampoline at
+all.
+
 Register Allocation:
 ====================
 
@@ -62,7 +60,6 @@ With lcc you can assign a fixed register to a tree before register
 allocation. For example this is needed by call, which return the value always
 in EAX on x86. The current implementation works without such system, due to
 special forest generation.
-
 
 X86 Register Allocation:
 ========================
@@ -91,24 +88,43 @@ be be a bit inefficient.
 The more performant solution is to allocate two 32bit registers for each 64bit
 value. We add a new non terminal to the monoburg grammar called long_reg. The
 register allocation routines takes care of this non terminal and allocates two
-registers for them.
+32 bit registers for them.
 
 
 Forest generation:
 ==================
 
-It seems that trees generated from the CIL language have some special
-properties, i.e. the trees already represents basic blocks, so there can be no
-branches to the inside of such a tree. All results of those trees are stored to
-memory.
+Consider the following code: 
 
-One idea was to drive the code generation directly from the CIL code, without
-generating an intermediate forest of trees. I think this is not possible,
-because you always have to gather some attributes and attach it to the
-instruction (for example the register allocation info). So I thing generating a
-tree is the right thing and that also works perfectly with monoburg. IMO we
-would not get any benefit from trying to feed monoburg directly with CIL
-instructions. 
+OPCODE:		STACK		LOCALS
+LDLOC.0		(5)		[5,0]
+LDC.1		(5,1)		[5,0]
+STLOC.0		(5)		[1,0]
+STLOC.1		()		[1,5]
+
+The current forest generation generates: 
+
+STLOC.0(LDC.1)
+STLOC.1(LDLOC.0)
+
+Which is wrong, since it stores the wrong value (1 instead of 5). Instead we
+must generate something like:
+
+STLOC.TMP(LDLOC.0)
+STLOC.0(LDC.1)
+STLOC.1(LDLOC.TMP)
+
+Where STLOC.TMP saves the value into a new temporary variable. 
+
+We also need a similar solution for basic block boundaries when the stack depth
+is not zero. We can simply save those values to new temporary values. Consider
+the following basic block with one instruction:
+
+LDLOC.1 
+This should generate a tree like: 
+
+STLOC.TMP(LDLOC.1) Please notice that an intelligent register allocator can
+still allocate registers for those new variables.
 
 DAG handling:
 =============
@@ -162,5 +178,5 @@ id transformed to:
 if (in_range (a, 0, N)) { for (i = 0; i < N; i++) a[i] = X; }  
 else for (i = 0; i < N; i++) { check_range (a, i); a [i] = X; }
 
-The else is only to keep original semantics (exception handling).
+The "else" is only to keep original semantics (exception handling).
 

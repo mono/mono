@@ -1,3 +1,8 @@
+2001-10-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_metadata_init): bug fix: always allocate
+	space for static class data
+
 2001-10-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_compute_relative_numbering): use relative
