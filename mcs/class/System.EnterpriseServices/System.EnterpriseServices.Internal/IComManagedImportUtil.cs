@@ -6,9 +6,11 @@
 // (C) Alejandro Sánchez Acosta
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.EnterpriseServices.Internal
 {
-	[Guid("")]
+	//[Guid("")]
 	public interface IComManagedImportUtil 
 	{
 		void GetComponentInfo (string assemblyPath, out string numComponents, out string componentInfo);

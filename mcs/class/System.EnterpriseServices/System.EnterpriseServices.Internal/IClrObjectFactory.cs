@@ -6,9 +6,11 @@
 // (C) Alejandro Sánchez Acosta
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.EnterpriseServices.Internal
 {
-	[Guid("")]
+	//[Guid("")]
 	public interface IClrObjectFactory
 	{
 		object CreateFromAssembly(string assembly, string type, string mode);

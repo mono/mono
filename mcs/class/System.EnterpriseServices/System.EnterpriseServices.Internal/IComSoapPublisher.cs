@@ -6,9 +6,11 @@
 // (C) Alejandro Sánchez Acosta
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.EnterpriseServices.Internal
 {
-	[Guid("")]
+	//[Guid("")]
 	public interface IComSoapPublisher
 	{
 		void CreateMailBox (string RootMailServer, string MailBox, out string SmtpName, out string Domain,
