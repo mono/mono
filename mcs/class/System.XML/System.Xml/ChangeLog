@@ -1,3 +1,8 @@
+2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs: when we get an unexpected EOF in ReadContent, set
+	the state before throwing the exception if depth > 0.
+
 2003-10-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentFragment.cs,

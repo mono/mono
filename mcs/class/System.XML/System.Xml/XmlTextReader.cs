@@ -1012,8 +1012,6 @@ namespace System.Xml
 					}
 					break;
 				case -1:
-					if (depth > 0)
-						throw new XmlException ("unexpected end of file. Current depth is " + depth);
 					readState = ReadState.EndOfFile;
 					SetProperties (
 						XmlNodeType.None, // nodeType
@@ -1022,6 +1020,9 @@ namespace System.Xml
 						(string) null, // value
 						true // clearAttributes
 					);
+					if (depth > 0)
+						throw new XmlException ("unexpected end of file. Current depth is " + depth);
+
 					return false;
 				default:
 					ReadText (true);
