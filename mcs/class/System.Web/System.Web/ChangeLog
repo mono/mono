@@ -1,3 +1,9 @@
+2004-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs:
+	* HttpRuntime.cs: implemented UnloadAppDomain and be ready for domain
+	unloading.
+
 2004-09-12 Ben Maurer  <bmaurer@ximian.com>
 
 	* HttpContext.cs: use CallContext. It is a little bit faster.
