@@ -80,7 +80,6 @@ namespace System.Windows.Forms {
 			if (cMax==cMin) {		// Achromatic
 				h=0;					// h undefined
 				s=0;
-				l=r;
 				return;
 			}
 

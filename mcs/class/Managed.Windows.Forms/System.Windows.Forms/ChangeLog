@@ -1,5 +1,11 @@
 2005-01-29  Peter Bartok  <pbartok@novell.com>
 
+	* ControlPaint.cs: Fixed luminace value returned on achromatic colors,
+	  this should also the calculations for ligher/darker
+	* Theme.cs: Fixed defaults for ScrollBar widths/heights
+
+2005-01-29  Peter Bartok  <pbartok@novell.com>
+
 	* ArrangeDirection.cs: Added
 	* ArrangeStartingPositon.cs: Added
 	* SystemInformation.cs: Implemented

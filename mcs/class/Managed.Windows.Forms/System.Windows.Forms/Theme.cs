@@ -289,19 +289,19 @@ namespace System.Windows.Forms
 
 		public virtual int HorizontalScrollBarArrowWidth {
 			get {
-				return 12;
+				return 16;
 			}
 		}
 
 		public virtual int HorizontalScrollBarHeight {
 			get {
-				return 12;
+				return 16;
 			}
 		}
 
 		public virtual int HorizontalScrollBarThumbWidth {
 			get {
-				return 12;
+				return 16;
 			}
 		}
 
@@ -361,19 +361,19 @@ namespace System.Windows.Forms
 
 		public virtual int VerticalScrollBarArrowHeight {
 			get {
-				return 12;
+				return 16;
 			}
 		}
 
 		public virtual int VerticalScrollBarThumbHeight {
 			get {
-				return 12;
+				return 16;
 			}
 		}
 
 		public virtual int VerticalScrollBarWidth {
 			get {
-				return 12;
+				return 16;
 			}
 		}
 		#region Principal Theme Methods
