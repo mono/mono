@@ -1,3 +1,7 @@
+2002-12-21  Nick Drochak  <ndrochak@gol.com>
+
+        * AllTests2.cs: Helper file for unit tests
+	
 2002-11-20  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RSAPKCS1SignatureDeformatterTest.cs: Removed patch from Nick - 
