@@ -1,4 +1,4 @@
-// cs-11.cs : Delegate creation expression takes only one argument
+// cs1501.cs : No overload for method `MyDelegate' takes `0' arguments
 // Line : 17
 
 public class Blah {

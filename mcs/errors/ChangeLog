@@ -1,5 +1,9 @@
 2004-04-29 Marek Safar <marek.safar@seznam.cz>
 
+	* cs-11.cs: Renamed to cs1501-5.cs.
+
+2004-04-29 Marek Safar <marek.safar@seznam.cz>
+
 	* cs0629.cs,
 	* cs1667-3.cs: 2 new error tests.
 
