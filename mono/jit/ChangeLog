@@ -1,6 +1,7 @@
 2002-05-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* linear-scan.c: linear scan reg. allocation and data flow analysis
+	use Paolo's great bitset implementation.
 
 	* jit.c (arch_allocate_var): add live range info
 	(mono_cfg_add_successor): create list of successors for basic

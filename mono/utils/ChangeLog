@@ -1,3 +1,6 @@
+2002-05-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monobitset.c: use memcmp instead of memcpy
 
 Thu May 9 17:23:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
