@@ -1,0 +1,107 @@
+//
+// System.Windows.Forms.DrawItemEventArgs
+//
+// Author:
+//   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//   Implemented by Richard Baumann <biochem333@nyc.rr.com>
+// (C) Ximian, Inc., 2002
+//
+
+using System;
+using System.Drawing;
+
+namespace System.Windows.Forms
+{
+	/// <summary>
+	///	Provides data for the DrawItem event.
+	/// </summary>
+	public class DrawItemEventArgs : EventArgs
+	{
+		//
+		//  --- Private Fields
+		//
+		private Color backColor;
+		private Rectangle bounds;
+		private Font font;
+		private Color foreColor;
+		private Graphics graphics;
+		private int index;
+		private DrawItemState state;
+
+		//
+		//  --- Constructors/Destructors
+		//
+		public DrawItemEventArgs(Graphics graphics, Font font, Rectangle bounds, int index, DrawItemState state) : base()
+		{
+			this.graphics = graphics;
+			this. font = font;
+			this. bounds = bounds;
+			this.index = index;
+			this.state = state;
+			foreColor = SystemColors.WindowText;
+			backColor = SystemColors.Window;
+			throw new NotImplementedException ();
+		}
+		public DrawItemEventArgs(Graphics graphics, Font font, Rectangle bounds, int index,
+		                          DrawItemState state, Color foreColor, Color backColor) : base()
+		{
+			this.graphics = graphics;
+			this. font = font;
+			this. bounds = bounds;
+			this.index = index;
+			this.state = state;
+			this.foreColor = foreColor;
+			this.backColor = backColor;
+		}
+
+		//
+		//  --- Public Methods
+		//
+		public virtual void DrawBackground()
+		{
+			SolidBrush temp = new SolidBrush(BackColor);
+			graphics.FillRectangle(temp,bounds);
+			temp.Dispose();
+		}
+		public virtual void DrawFocusRectangle()
+		{
+			if((DrawItemState.Focus == (DrawItemState.Focus & state)) && // check for focus
+			   (DrawItemState.NoFocusRect != (DrawItemState.NoFocusRect & state))) // check if this matters
+			{
+				ControlPaint.DrawFocusRectangle(graphics,bounds,foreColor,backColor);
+			}
+		}
+
+		//
+		//  --- Public Properties
+		//
+		public Color BackColor
+		{
+			get { return (DrawItemState.Select == (state & DrawItemState.Select)) ? SystemColors.Highlight : backColor; }
+		}
+		public Rectangle Bounds
+		{
+			get { return bounds; }
+		}
+		public Font Font
+		{
+			get { return font; }
+		}
+		public Color ForeColor
+		{
+			get { return (DrawItemState.Select == (state & DrawItemState.Select)) ? SystemColors.HighlightText : foreColor; }
+		}
+		public Graphics Graphics
+		{
+			get { return graphics; }
+		}
+		public int Index
+		{
+			get { return index; }
+		}
+		public DrawItemState State
+		{
+			get { return state; }
+		}
+	}
+}
