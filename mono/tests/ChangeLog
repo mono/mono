@@ -1,5 +1,7 @@
 2004-08-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* pinvoke16.cs: Merge this into pinvoke2.cs, and fix it.
+
 	* marshal9.cs: Clean up and expand custom marshalling tests.
 
 	* marshal10.cs: Merge this into marshal9.cs.
