@@ -1,5 +1,9 @@
 2005-01-19  Geoff Norton  <gnorton@customerdna.com>
 
+	* OSXStructs (WindowAttributes): Fixed csc complaints
+
+2005-01-19  Geoff Norton  <gnorton@customerdna.com>
+
 	* XplayUIOSX.cs:
 	  OSXStructs.cs: Initial refactor to move enums and consts into
 	  OSXStructs and use them in the driver for greater readability.
