@@ -18,8 +18,7 @@ namespace System.Xml
 
 		#region Constructors
 
-		protected internal XmlProcessingInstruction (string target, string data, XmlDocument doc)
-			: base(doc)
+		protected internal XmlProcessingInstruction (string target, string data, XmlDocument doc) : base(doc)
 		{
 			this.target = target;
 			this.data = data;
@@ -87,7 +86,7 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteProcessingInstruction(target, data);
+			w.WriteProcessingInstruction (target, data);
 		}
 
 		#endregion

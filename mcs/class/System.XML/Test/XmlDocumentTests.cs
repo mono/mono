@@ -48,9 +48,21 @@ namespace Ximian.Mono.Tests
 
 		public void TestLoadXMLComment()
 		{
+// XmlTextReader needs to throw this exception
+//			try {
+//				document.LoadXml("<!--foo-->");
+//				Fail("XmlException should have been thrown.");
+//			}
+//			catch (XmlException e) {
+//				AssertEquals("Exception message doesn't match.", "The root element is missing.", e.Message);
+//			}
+
 			document.LoadXml ("<foo><!--Comment--></foo>");
 			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Comment);
 			AssertEquals ("Comment", document.DocumentElement.FirstChild.Value);
+
+			document.LoadXml (@"<foo><!--bar--></foo>");
+			AssertEquals ("Incorrect target.", "bar", ((XmlComment)document.FirstChild.FirstChild).Data);
 		}
 
 		public void TestLoadXmlElementSingle ()
@@ -107,6 +119,23 @@ namespace Ximian.Mono.Tests
 			document.LoadXml (@"<?foo bar='baaz' quux='quuux'?><quuuux></quuuux>");
 			AssertEquals ("Incorrect target.", "foo", ((XmlProcessingInstruction)document.FirstChild).Target);
 			AssertEquals ("Incorrect data.", "bar='baaz' quux='quuux'", ((XmlProcessingInstruction)document.FirstChild).Data);
+		}
+
+		public void TestOuterXml ()
+		{
+			string xml;
+			
+			xml = "<root><![CDATA[foo]]></root>";
+			document.LoadXml (xml);
+			AssertEquals("XmlDocument with cdata OuterXml is incorrect.", xml, document.OuterXml);
+
+			xml = "<root><!--foo--></root>";
+			document.LoadXml (xml);
+			AssertEquals("XmlDocument with comment OuterXml is incorrect.", xml, document.OuterXml);
+
+			xml = "<root><?foo bar?></root>";
+			document.LoadXml (xml);
+			AssertEquals("XmlDocument with processing instruction OuterXml is incorrect.", xml, document.OuterXml);
 		}
 	}
 }

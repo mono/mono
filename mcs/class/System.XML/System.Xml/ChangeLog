@@ -1,4 +1,17 @@
-2002-03-14  Kral Ferch  <kral_ferch@hotmail.com>
+2002-03-17  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlCDataSection.cs: Formatting, Implementation for WriteTo.
+
+	* XmlComment.cs: Implementations for WriteTo and WriteContentTo.
+	
+	* XmlElement.cs: Fixed bug in WriteTo.
+	
+	* XmlProcessingInstruction.cs: Formatting.
+	
+	* XmlTextWriter.cs: Implementations for Close, WriteCData, WriteComment,
+	fixes for WriteEndElement, WriteProcessingInstruction.
+
+2002-03-17  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlDocument.cs: Implementations for WriteTo() and WriteContentTo(),
 	had Load() add PIs to the document, moved onXXX methods to alphabetical

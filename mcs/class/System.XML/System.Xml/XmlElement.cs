@@ -282,7 +282,7 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteStartElement(Value);
+			w.WriteStartElement(LocalName);
 
 			foreach(XmlNode attributeNode in Attributes)
 				attributeNode.WriteTo(w);

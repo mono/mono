@@ -15,52 +15,38 @@ namespace System.Xml
 	{
 		#region Constructors
 
-		protected internal XmlComment(string comment, XmlDocument doc) : base(comment, doc) { }
+		protected internal XmlComment (string comment, XmlDocument doc) : base(comment, doc) { }
 
 		#endregion
 
 		#region Properties
 
-		public override string LocalName
-		{
-			get {
-				return "#comment";
-			}
+		public override string LocalName {
+			get { return "#comment"; }
 		}
 
-		public override string Name
-		{
-			get {
-				return "#comment";
-			}
+		public override string Name {
+			get { return "#comment"; }
 		}
 
-		public override XmlNodeType NodeType
-		{
-			get {
-				return XmlNodeType.Comment;
-			}
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.Comment; }
 		}
 		
 		#endregion
 
 		#region Methods
 
-		public override XmlNode CloneNode(bool deep)
+		public override XmlNode CloneNode (bool deep)
 		{
 			return new XmlComment(Value, OwnerDocument);
 		}
 
-		[MonoTODO]
-		public override void WriteContentTo(XmlWriter w)
-		{
-			throw new NotImplementedException ();
-		}
+		public override void WriteContentTo (XmlWriter w) { }
 
-		[MonoTODO]
-		public override void WriteTo(XmlWriter w)
+		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			w.WriteComment (Data);
 		}
 
 		#endregion

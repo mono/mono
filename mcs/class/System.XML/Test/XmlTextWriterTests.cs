@@ -29,16 +29,80 @@ namespace Ximian.Mono.Tests
 			xtw = new XmlTextWriter (sw);
 		}
 
-		public void TestCData ()
+		public void TestCDataValid ()
 		{
 			xtw.WriteCData ("foo");
-			AssertEquals ("WriteCData had incorrect output.", sw.GetStringBuilder().ToString(), "<![CDATA[foo]]>");
+			AssertEquals ("WriteCData had incorrect output.", "<![CDATA[foo]]>", sw.GetStringBuilder().ToString());
 		}
 
-		public void TestComment ()
+		public void TestCDataInvalid ()
+		{
+			try {
+				xtw.WriteCData("foo]]>bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+		}
+
+		public void TestCloseOpenElements ()
+		{
+			xtw.WriteStartElement("foo");
+			xtw.WriteStartElement("bar");
+			xtw.WriteStartElement("baz");
+			xtw.Close();
+			AssertEquals ("Close didn't write out end elements properly.", "<foo><bar><baz /></bar></foo>",
+				sw.GetStringBuilder().ToString());
+		}
+
+		public void TestCloseWriteAfter ()
+		{
+			xtw.WriteElementString("foo", "bar");
+			xtw.Close();
+
+			try {
+				xtw.WriteCData ("foo");
+				Fail ("WriteCData after Close Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) {
+				AssertEquals ("InvalidOperationException message incorrect.", "The Writer is closed.", e.Message);
+			}
+
+			try {
+				xtw.WriteComment ("foo");
+				Fail ("WriteComment after Close Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) {
+				AssertEquals ("InvalidOperationException message incorrect.", "The Writer is closed.", e.Message);
+			}
+
+			try {
+				xtw.WriteProcessingInstruction ("foo", "bar");
+				Fail ("WriteProcessingInstruction after Close Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) {
+				AssertEquals ("InvalidOperationException message incorrect.", "The Writer is closed.", e.Message);
+			}
+		}
+
+		public void TestCommentValid ()
 		{
 			xtw.WriteComment ("foo");
 			AssertEquals ("WriteComment had incorrect output.", "<!--foo-->", sw.GetStringBuilder().ToString());
+		}
+
+		public void TestCommentInvalid ()
+		{
+			try {
+				xtw.WriteComment("foo-");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try {
+				xtw.WriteComment("foo-->bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
 		}
 
 		public void TestElementEmpty ()
@@ -52,6 +116,12 @@ namespace Ximian.Mono.Tests
 		{
 			xtw.WriteElementString ("foo", "bar");
 			AssertEquals ("WriteElementString has incorrect output.", "<foo>bar</foo>", sw.GetStringBuilder().ToString());
+		}
+
+		public void TestProcessingInstructionValid ()
+		{
+			xtw.WriteProcessingInstruction("foo", "bar");
+			AssertEquals ("WriteProcessingInstruction had incorrect output.", "<?foo bar?>", sw.GetStringBuilder().ToString());
 		}
 
 		public void TestProcessingInstructionInvalid ()

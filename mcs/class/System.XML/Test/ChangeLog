@@ -1,5 +1,13 @@
 2002-03-17  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlDocumentTests.cs: TestOuterXml.
+	
+	* XmlTextWriterTests.cs: Tests for CData, Close, Comment, Element,
+	and ProcessingInstruction.
+
+
+2002-03-17  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlDocumentTests.cs: More LoadXml tests.
 	
 	* XmlTextWriterTests.cs: Test for invalid Processing Instructions.

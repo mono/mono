@@ -104,13 +104,18 @@ namespace System.Xml
 		private void CheckOpenWriter ()
 		{
 			if (!openWriter) {
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("The Writer is closed.");
 			}
 		}
 
-		[MonoTODO("Need to close all open elements and close the underlying streams.")]
 		public override void Close ()
 		{
+			while (openElements.Count > 0) {
+				WriteEndElement();
+			}
+
+			w.Close();
+
 			openWriter = false;
 		}
 
@@ -149,6 +154,14 @@ namespace System.Xml
 
 		public override void WriteCData (string text)
 		{
+			if (text.IndexOf("]]>") > 0) 
+			{
+				throw new ArgumentException ();
+			}
+
+			CheckOpenWriter ();
+			CloseStartElement ();
+
 			w.Write("<![CDATA[{0}]]>", text);
 		}
 
@@ -166,7 +179,14 @@ namespace System.Xml
 
 		public override void WriteComment (string text)
 		{
-			w.Write("<!--{0}-->", text);
+			if ((text.EndsWith("-")) || (text.IndexOf("-->") > 0)) {
+				throw new ArgumentException ();
+			}
+
+			CheckOpenWriter ();
+			CloseStartElement ();
+
+			w.Write ("<!--{0}-->", text);
 		}
 
 		[MonoTODO]
@@ -190,10 +210,12 @@ namespace System.Xml
 		public override void WriteEndElement ()
 		{
 			if (openStartElement) {
-				w.Write(" />");
+				w.Write (" />");
+				openElements.Pop ();
+				openStartElement = false;
 			}
 			else {
-				w.Write("</{0}>", openElements.Pop());
+				w.Write ("</{0}>", openElements.Pop ());
 			}
 		}
 
@@ -224,10 +246,13 @@ namespace System.Xml
 		public override void WriteProcessingInstruction (string name, string text)
 		{
 			if ((name == null) || (name == string.Empty) || (name.IndexOf("?>") > 0) || (text.IndexOf("?>") > 0)) {
-				throw new ArgumentException();
+				throw new ArgumentException ();
 			}
 
-			w.Write("<?{0} {1}?>", name, text);
+			CheckOpenWriter ();
+			CloseStartElement ();
+
+			w.Write ("<?{0} {1}?>", name, text);
 		}
 
 		[MonoTODO]
@@ -269,19 +294,19 @@ namespace System.Xml
 		[MonoTODO("Not dealing with prefix and ns yet.")]
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
-			CheckOpenWriter();
-			CloseStartElement();
-			w.Write("<{0}", localName);
-			openElements.Push(localName);
+			CheckOpenWriter ();
+			CloseStartElement ();
+			w.Write ("<{0}", localName);
+			openElements.Push (localName);
 			openStartElement = true;
 		}
 
 		[MonoTODO("Haven't done any entity replacements yet.")]
 		public override void WriteString (string text)
 		{
-			CheckOpenWriter();
-			CloseStartElement();
-			w.Write(text);
+			CheckOpenWriter ();
+			CloseStartElement ();
+			w.Write (text);
 		}
 
 		[MonoTODO]
