@@ -1,4 +1,8 @@
 
+Fri Jan 3 20:18:51 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: fixed Namespace property for nested types.
+
 Fri Jan 3 16:18:27 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* MonoCustomAttrs.cs: create properly typed arrays when returning

@@ -494,7 +494,10 @@ namespace System
 			get {
 				MonoTypeInfo info;
 				get_type_info (_impl, out info);
-				return info.name_space;
+				if (info.nested_in == null)
+					return info.name_space;
+				else
+					return info.nested_in.Namespace;
 			}
 		}
 
