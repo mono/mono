@@ -224,10 +224,9 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			return new SqlParameter (ParameterName, SqlDbType, Size, Direction, IsNullable, Precision, Scale, SourceColumn, SourceVersion, Value);
 		}
 
 		internal string Prepare (string name)

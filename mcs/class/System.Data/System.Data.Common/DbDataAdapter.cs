@@ -24,7 +24,6 @@ namespace System.Data.Common
 
 		public const string DefaultSourceTableName = "Table";
 		const string DefaultSourceColumnName = "Column";
-		static readonly object EventFillError = new object ();
 
 		#endregion
 		
@@ -394,23 +393,19 @@ namespace System.Data.Common
 
 		protected virtual void OnFillError (FillErrorEventArgs value) 
 		{
-			FillErrorEventHandler handler = (FillErrorEventHandler) Events [EventFillError];
-			if (handler != null)
-				handler (this, value);
+			if (FillError != null)
+				FillError (this, value);
 		}
 
 		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
 		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
 		
-		#endregion
+		#endregion // Methods
 		
 		#region Events
 
-		public event FillErrorEventHandler FillError {
-			add { Events.AddHandler (EventFillError, value); }
-			remove { Events.RemoveHandler (EventFillError, value); }
-		}
+		public event FillErrorEventHandler FillError;
 
-		#endregion
+		#endregion // Events
 	}
 }

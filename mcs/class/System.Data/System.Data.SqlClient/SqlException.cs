@@ -15,6 +15,7 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace System.Data.SqlClient {
 	[Serializable]
@@ -44,14 +45,8 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		[MonoTODO]
 		public byte Class {
-			get { 
-				if(errors.Count == 0)
-					return 0; // FIXME: throw exception here?
-				else
-					return errors[0].Class;
-			}
+			get { return Errors [0].Class; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -59,88 +54,52 @@ namespace System.Data.SqlClient {
 			get { return errors; }
 		}
 
-		[MonoTODO]
 		public int LineNumber {
-			get { if(errors.Count == 0)
-					return 0; // FIXME: throw exception here?
-				return errors[0].LineNumber;
-			}
+			get { return Errors [0].LineNumber; }
 		}
 		
-		[MonoTODO]
 		public override string Message 	{
 			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else {
-					String msg = "";
-					int i = 0;
-					
-					for(i = 0; i < errors.Count - 1; i++) {
-						msg = msg + errors[i].Message + "\n";
-                                        }
-					msg = msg + errors[i].Message;
-
-					return msg;
+				StringBuilder result = new StringBuilder ();
+				foreach (SqlError error in Errors) {
+					if (result.Length > 0)
+						result.Append ('\n');
+					result.Append (error.Message);
 				}
+				return result.ToString ();
 			}
 		}
 		
-		[MonoTODO]
 		public int Number {
-			get { 
-				if(errors.Count == 0)
-					return 0; // FIXME: throw exception?
-				else
-					return errors[0].Number;
-			}
+			get { return Errors [0].Number; }
 		}
 		
-		[MonoTODO]
 		public string Procedure {
-			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else
-					return errors[0].Procedure;
-			}
+			get { return Errors [0].Procedure; }
 		}
 
-		[MonoTODO]
 		public string Server {
-			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else
-					return errors[0].Server;
-			}
+			get { return Errors [0].Server; }
 		}
 		
-		[MonoTODO]
 		public override string Source {
-			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else
-					return errors[0].Source;
-			}
+			get { return Errors [0].Source; }
 		}
 
-		[MonoTODO]
 		public byte State {
-			get { 
-				if(errors.Count == 0)
-					return 0; // FIXME: throw exception?
-				else
-					return errors[0].State;
-			}
+			get { return Errors [0].State; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
+		internal static SqlException FromTdsInternalException (TdsInternalException e)
+		{
+			return new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State);
+		}
+
+		[MonoTODO ("Determine how to serialize this class.")]
 		public override void GetObjectData (SerializationInfo si, StreamingContext context) 
 		{
 			throw new NotImplementedException ();

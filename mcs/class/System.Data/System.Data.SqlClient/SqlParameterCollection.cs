@@ -44,30 +44,18 @@ namespace System.Data.SqlClient {
 			get { return list.Count; }			  
 		}
 
-		object IList.this [int index] {
-			[MonoTODO]
-			get { 
-				return (SqlParameter) this[index];
-			}
-			
-			[MonoTODO]
-			set { 
-				this[index] = (SqlParameter) value;
-			}
-		}
-
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
 		public SqlParameter this [int index] {
-			get { return (SqlParameter) list[index]; }			  
-			set { list[index] = (SqlParameter) value; }			  
+			get { return (SqlParameter) list [index]; }			  
+			set { list [index] = (SqlParameter) value; }			  
 		}
 
 		object IDataParameterCollection.this [string parameterName] {
 			get { return this[parameterName]; }
 			set { 
-				CheckType(value);
-				this[parameterName] = (SqlParameter) value;
+				CheckType (value);
+				this [parameterName] = (SqlParameter) value;
 			}
 		}
 
@@ -87,21 +75,25 @@ namespace System.Data.SqlClient {
 			}			  
 		}
 
+		object IList.this [int index] {
+			get { return (SqlParameter) this [index]; }
+			set { this [index] = (SqlParameter) value; }
+		}
 
 		bool IList.IsFixedSize {
-			get { throw new NotImplementedException (); }			  
+			get { return list.IsFixedSize; }
 		}
 
 		bool IList.IsReadOnly {
-			get { throw new NotImplementedException (); }			  
+			get { return list.IsReadOnly; }
 		}
 
 		bool ICollection.IsSynchronized {
-			get { throw new NotImplementedException (); }			  
+			get { return list.IsSynchronized; }
 		}
 
 		object ICollection.SyncRoot {
-			get { throw new NotImplementedException (); }			  
+			get { return list.SyncRoot; }
 		}
 		
 		#endregion // Properties
@@ -148,7 +140,6 @@ namespace System.Data.SqlClient {
 			return Add(sqlparam);			
 		}
 
-		
 		public SqlParameter Add (string parameterName, SqlDbType sqlDbType, int size, string sourceColumn)
 		{
 			SqlParameter sqlparam = new SqlParameter ();
@@ -163,14 +154,12 @@ namespace System.Data.SqlClient {
 		{
 			list.Clear ();
 		}
-
 		
 		public bool Contains (object value)
 		{
 			CheckType (value);
 			return Contains (((SqlParameter) value).ParameterName);
 		}
-
 
 		public bool Contains (string value)
 		{
@@ -180,10 +169,9 @@ namespace System.Data.SqlClient {
 			return false;
 		}
 
-		[MonoTODO]
-		public void CopyTo(Array array,	int index)
+		public void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (array, index);
 		}
 
 		public IEnumerator GetEnumerator()
@@ -228,8 +216,8 @@ namespace System.Data.SqlClient {
 		/// </summary>
 		private void CheckType(object value)
 		{
-			if(!(value is SqlParameter))
-				throw new InvalidCastException("Only SQLParameter objects can be used.");
+			if (!(value is SqlParameter))
+				throw new InvalidCastException ("Only SQLParameter objects can be used.");
 		}
 
 		#endregion // Methods	

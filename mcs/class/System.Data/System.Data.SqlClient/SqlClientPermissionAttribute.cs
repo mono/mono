@@ -4,8 +4,10 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
@@ -19,17 +21,23 @@ namespace System.Data.SqlClient {
 	[Serializable]
 	public sealed class SqlClientPermissionAttribute : DBDataPermissionAttribute 
 	{
-		[MonoTODO]
-		public SqlClientPermissionAttribute(SecurityAction action) 
-			: base(action)
+		#region Constructors
+
+		public SqlClientPermissionAttribute (SecurityAction action) 
+			: base (action)
 		{
-			// FIXME: do constructor
 		}
+
+		#endregion // Constructors
+
+		#region Methods
 
 		[MonoTODO]
 		public override IPermission CreatePermission() 
 		{
 			throw new NotImplementedException ();
 		}
+
+		#endregion // Methods
 	}
 }

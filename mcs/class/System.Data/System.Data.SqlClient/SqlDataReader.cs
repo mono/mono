@@ -152,7 +152,7 @@ namespace System.Data.SqlClient {
 			return ((byte []) value).Length - dataIndex;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement GetChar")]
 		public char GetChar (int i)
 		{
 			throw new NotImplementedException ();
@@ -167,7 +167,7 @@ namespace System.Data.SqlClient {
 			return ((char []) value).Length - dataIndex;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement GetData")]
 		public IDataReader GetData (int i)
 		{
 			throw new NotImplementedException ();
@@ -228,10 +228,12 @@ namespace System.Data.SqlClient {
 			return (float) value;
 		}
 
-		[MonoTODO]
 		public Guid GetGuid (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is Guid))
+				throw new InvalidCastException ();
+			return (Guid) value;
 		}
 
 		public short GetInt16 (int i)
@@ -263,7 +265,7 @@ namespace System.Data.SqlClient {
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Make sure that ordinal is in fact zero-based.")]
 		public int GetOrdinal (string name)
 		{
 			foreach (DataRow schemaRow in schemaTable.Rows)
@@ -589,7 +591,7 @@ namespace System.Data.SqlClient {
 			return (string) value;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement GetSqlValue")]
 		public object GetSqlValue (int i)
 		{
 			object value = GetValue (i);
@@ -598,7 +600,7 @@ namespace System.Data.SqlClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement GetSqlValues")]
 		public int GetSqlValues (object[] values)
 		{
 			throw new NotImplementedException ();
@@ -624,7 +626,7 @@ namespace System.Data.SqlClient {
 			return (len > FieldCount ? len : FieldCount);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement Dispose().  Determine what must be disposed of.")]
 		void IDisposable.Dispose ()
 		{
 			throw new NotImplementedException ();

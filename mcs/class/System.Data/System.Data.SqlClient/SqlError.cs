@@ -88,15 +88,9 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			String toStr;
-			String stackTrace;
-			stackTrace = " <Stack Trace>";
-			// FIXME: generate the correct SQL error string
-			toStr = "SqlError:" + message + stackTrace;
-			return toStr;
+			return Message;
 		}
 
 		#endregion

@@ -24,6 +24,7 @@ using System.Text;
 using System.Xml;
 
 namespace System.Data.SqlClient {
+	[MonoTODO ("Implement the connection timeout (on the protocol side?)")]
 	[DefaultEvent ("InfoMessage")]
 	public sealed class SqlConnection : Component, IDbConnection, ICloneable	
 	{
@@ -60,9 +61,6 @@ namespace System.Data.SqlClient {
 
 		// The TDS object
 		ITds tds;
-
-		static readonly object EventSqlInfoMessage = new object ();
-		static readonly object EventStateChange = new object ();
 
 		#endregion // Fields
 
@@ -159,15 +157,8 @@ namespace System.Data.SqlClient {
 
 		#region Events
                 
-		public event SqlInfoMessageEventHandler InfoMessage {
-			add { Events.AddHandler (EventSqlInfoMessage, value); }
-			remove { Events.RemoveHandler (EventSqlInfoMessage, value); }
-		}
-
-		public event StateChangeEventHandler StateChange {
-			add { Events.AddHandler (EventStateChange, value); }
-			remove { Events.RemoveHandler (EventStateChange, value); }
-		}
+		public event SqlInfoMessageEventHandler InfoMessage;
+		public event StateChangeEventHandler StateChange;
 		
 		#endregion // Events
 
@@ -209,7 +200,26 @@ namespace System.Data.SqlClient {
 			if (transaction != null)
 				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
 
-			tds.ExecuteNonQuery (String.Format ("BEGIN TRANSACTION {0}", transactionName));
+			string isolevel = String.Empty;
+			switch (iso) {
+			case IsolationLevel.Chaos:
+				isolevel = "CHAOS";
+				break;
+			case IsolationLevel.ReadCommitted:
+				isolevel = "READ COMMITTED";
+				break;
+			case IsolationLevel.ReadUncommitted:
+				isolevel = "READ UNCOMMITTED";
+				break;
+			case IsolationLevel.RepeatableRead:
+				isolevel = "REPEATABLE READ";
+				break;
+			case IsolationLevel.Serializable:
+				isolevel = "SERIALIZABLE";
+				break;
+			}
+
+			tds.ExecuteNonQuery (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
 
 			transaction = new SqlTransaction (this, iso);
 			return transaction;
@@ -268,16 +278,15 @@ namespace System.Data.SqlClient {
 			Close ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not sure what this means at present.")]
 		public void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			return new SqlConnection (ConnectionString);
 		}
 
 		IDbTransaction IDbConnection.BeginTransaction ()
@@ -305,15 +314,20 @@ namespace System.Data.SqlClient {
 			if (connectionString == null)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
 
-			if (!pooling)
-				tds = new Tds70 (dataSource, port, packetSize);
-			else {
-				pool = (SqlConnectionPool) SqlConnectionPools [connectionString];
-				if (pool == null) {
-					pool = new SqlConnectionPool (dataSource, port, packetSize, minPoolSize, maxPoolSize);
-					SqlConnectionPools [connectionString] = pool;
+			try {
+				if (!pooling)
+					tds = new Tds70 (DataSource, port, PacketSize, ConnectionTimeout);
+				else {
+					pool = (SqlConnectionPool) SqlConnectionPools [connectionString];
+					if (pool == null) {
+						pool = new SqlConnectionPool (dataSource, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+						SqlConnectionPools [connectionString] = pool;
+					}
+					tds = pool.AllocateConnection ();
 				}
-				tds = pool.AllocateConnection ();
+			}
+			catch (TdsTimeoutException e) {
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
 
 			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);
@@ -514,16 +528,14 @@ namespace System.Data.SqlClient {
 
 		private void OnSqlInfoMessage (SqlInfoMessageEventArgs value)
 		{
-			SqlInfoMessageEventHandler handler = (SqlInfoMessageEventHandler) Events [EventSqlInfoMessage];
-			if (handler != null)
-				handler (this, value);
+			if (InfoMessage != null)
+				InfoMessage (this, value);
 		}
 
 		private void OnStateChange (StateChangeEventArgs value)
 		{
-			StateChangeEventHandler handler = (StateChangeEventHandler) Events [EventStateChange];
-			if (handler != null)
-				handler (this, value);
+			if (StateChange != null)
+				StateChange (this, value);
 		}
 
 		#endregion // Methods

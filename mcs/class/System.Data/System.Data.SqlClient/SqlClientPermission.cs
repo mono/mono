@@ -20,6 +20,8 @@ namespace System.Data.SqlClient {
 	[Serializable]
 	public sealed class SqlClientPermission : DBDataPermission 
 	{
+		#region Constructors
+
 		[MonoTODO]
 		public SqlClientPermission () 
 		{
@@ -37,6 +39,10 @@ namespace System.Data.SqlClient {
 		{ 
 			throw new NotImplementedException ();
 		}
+
+		#endregion // Constructors
+
+		#region Methods
 
 		[MonoTODO]
 		public override IPermission Copy () 
@@ -79,5 +85,7 @@ namespace System.Data.SqlClient {
 		{
 			throw new NotImplementedException ();
 		}
+
+		#endregion // Methods
 	}
 }

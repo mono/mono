@@ -26,9 +26,6 @@ namespace System.Data.SqlClient {
 		SqlCommand selectCommand;
 		SqlCommand updateCommand;
 
-		static readonly object EventRowUpdated = new object(); 
-		static readonly object EventRowUpdating = new object(); 
-
 		#endregion
 
 		#region Constructors
@@ -146,16 +143,14 @@ namespace System.Data.SqlClient {
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
-         		SqlRowUpdatedEventHandler handler = (SqlRowUpdatedEventHandler) Events[EventRowUpdated];
-			if ((handler != null) && (value is SqlRowUpdatedEventArgs))
-            			handler(this, (SqlRowUpdatedEventArgs) value);
+			if (RowUpdated != null)
+				RowUpdated (this, (SqlRowUpdatedEventArgs) value);
 		}
 
 		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
 		{
-         		SqlRowUpdatingEventHandler handler = (SqlRowUpdatingEventHandler) Events[EventRowUpdating];
-			if ((handler != null) && (value is SqlRowUpdatingEventArgs))
-            			handler(this, (SqlRowUpdatingEventArgs) value);
+			if (RowUpdating != null)
+				RowUpdating (this, (SqlRowUpdatingEventArgs) value);
 		}
 
 		#endregion // Methods
@@ -163,16 +158,10 @@ namespace System.Data.SqlClient {
 		#region Events and Delegates
 
 		[DataSysDescription ("Event triggered before every DataRow during Update.")]
-		public event SqlRowUpdatedEventHandler RowUpdated {
-			add { Events.AddHandler (EventRowUpdated, value); }
-			remove { Events.RemoveHandler (EventRowUpdated, value); }
-		}
+		public event SqlRowUpdatedEventHandler RowUpdated;
 
 		[DataSysDescription ("Event triggered after every DataRow during Update.")]
-		public event SqlRowUpdatingEventHandler RowUpdating {
-			add { Events.AddHandler (EventRowUpdating, value); }
-			remove { Events.RemoveHandler (EventRowUpdating, value); }
-		}
+		public event SqlRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates
 

@@ -23,6 +23,7 @@ namespace System.Data.SqlClient {
 		int minSize;
 		int packetSize;
 		int port;
+		int timeout;
 
 		string dataSource;
 
@@ -30,11 +31,12 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		public SqlConnectionPool (string dataSource, int port, int packetSize, int minSize, int maxSize)
+		public SqlConnectionPool (string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize)
 		{
 			this.dataSource = dataSource;
 			this.port = port;
 			this.packetSize = packetSize;
+			this.timeout = timeout;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
 		}
@@ -109,13 +111,13 @@ namespace System.Data.SqlClient {
 			return list.GetEnumerator ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Handle pool exhaustion.")]
 		public ITds AllocateConnection ()
 		{
 			// make sure we have the minimum count (really only useful the first time)
 			lock (list) {
 				for (int i = Count; i < minSize; i += 1)
-					Add (new Tds70 (dataSource, port, packetSize));
+					Add (new Tds70 (dataSource, port, packetSize, timeout));
 			}
 
 			// Try to obtain a lock
@@ -124,7 +126,7 @@ namespace System.Data.SqlClient {
 					return (ITds) o;
 
 			if (Count < maxSize) {
-				Tds tds = new Tds70 (dataSource, port, packetSize);
+				Tds tds = new Tds70 (dataSource, port, packetSize, timeout);
 				Monitor.Enter (tds);
 				Add (tds);
 				return tds;

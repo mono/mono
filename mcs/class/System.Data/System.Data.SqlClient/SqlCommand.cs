@@ -106,7 +106,11 @@ namespace System.Data.SqlClient {
 		[RefreshProperties (RefreshProperties.All)]
 		public CommandType CommandType	{
 			get { return commandType; }
-			set { commandType = value; }
+			set { 
+				if (value == CommandType.TableDirect)
+					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SqlClient Data Provider.");
+				commandType = value; 
+			}
 		}
 
 		[DefaultValue (null)]
@@ -136,7 +140,7 @@ namespace System.Data.SqlClient {
 		}
 
 		internal ITds Tds {
-			get { return connection.Tds; }
+			get { return Connection.Tds; }
 		}
 
 		IDbConnection IDbCommand.Connection {
@@ -202,9 +206,6 @@ namespace System.Data.SqlClient {
 			switch (commandType) {
 			case CommandType.Text :
 				sql += commandText;
-				break;
-			case CommandType.TableDirect :
-				sql += String.Format ("select * from {0}", commandText);
 				break;
 			default:
 				throw new InvalidOperationException ("The CommandType was invalid.");
@@ -322,18 +323,18 @@ namespace System.Data.SqlClient {
 
 		public void Cancel () 
 		{
-			if (connection == null || connection.Tds == null)
+			if (Connection == null || Connection.Tds == null)
 				return;
-			connection.Tds.Cancel ();
+			Connection.Tds.Cancel ();
 		}
 
 		internal void CloseDataReader (bool moreResults)
 		{
 			GetOutputParameters ();
-			connection.DataReader = null;
+			Connection.DataReader = null;
 
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
-				connection.Close ();
+				Connection.Close ();
 		}
 
 		public SqlParameter CreateParameter () 
@@ -350,7 +351,7 @@ namespace System.Data.SqlClient {
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
 			localParameters.Add ("@P1", SqlDbType.NVarChar, commandText.Length).Value = commandText;
 
-			connection.Tds.ExecuteQuery (BuildProcedureCall ("sp_procedure_params_rowset", localParameters));
+			Connection.Tds.ExecuteQuery (BuildProcedureCall ("sp_procedure_params_rowset", localParameters));
 			SqlDataReader reader = new SqlDataReader (this);
 			parameters.Clear ();
 			object[] dbValues = new object[reader.FieldCount];
@@ -365,7 +366,21 @@ namespace System.Data.SqlClient {
 		public int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
-			int result = connection.Tds.ExecuteNonQuery (BuildCommand ());
+			string sql = String.Empty;
+			int result = 0;
+
+			if (Parameters.Count > 0)
+				sql = BuildCommand ();
+			else
+				sql = CommandText;
+
+			try {
+				result = Connection.Tds.ExecuteNonQuery (sql, CommandTimeout);
+			}
+			catch (TdsTimeoutException e) {
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			}
+
 			GetOutputParameters ();
 			return result;
 		}
@@ -379,28 +394,32 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteReader");
 			this.behavior = behavior;
-			connection.Tds.ExecuteQuery (BuildCommand ());
-			connection.DataReader = new SqlDataReader (this);
 
-			return connection.DataReader;
+			try {
+				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+			}
+			catch (TdsTimeoutException e) {
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			}
+			
+			Connection.DataReader = new SqlDataReader (this);
+			return Connection.DataReader;
 		}
 
 		public object ExecuteScalar ()
 		{
 			ValidateCommand ("ExecuteScalar");
-			connection.Tds.ExecuteQuery (BuildCommand ());
+			try {
+				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+			}
+			catch (TdsTimeoutException e) {
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			}
 
-			bool moreResults = connection.Tds.NextResult ();
-
-			if (!moreResults)
+			if (!Connection.Tds.NextResult () || !Connection.Tds.NextRow ())
 				return null;
 
-			moreResults = connection.Tds.NextRow ();
-
-			if (!moreResults)
-				return null;
-
-			object result = connection.Tds.ColumnValues[0];
+			object result = Connection.Tds.ColumnValues [0];
 			CloseDataReader (true);
 			return result;
 		}
@@ -408,7 +427,13 @@ namespace System.Data.SqlClient {
 		public XmlReader ExecuteXmlReader ()
 		{
 			ValidateCommand ("ExecuteXmlReader");
-			connection.Tds.ExecuteQuery (BuildCommand ());
+
+			try {
+				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+			}
+			catch (TdsTimeoutException e) {
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			}
 
 			SqlDataReader dataReader = new SqlDataReader (this);
 			SqlXmlTextReader textReader = new SqlXmlTextReader (dataReader);
@@ -443,9 +468,9 @@ namespace System.Data.SqlClient {
 
 		private void GetOutputParameters ()
 		{
-			connection.Tds.SkipToEnd ();
+			Connection.Tds.SkipToEnd ();
 
-			IList list = connection.Tds.ColumnValues;
+			IList list = Connection.Tds.ColumnValues;
 
 			if (list != null && list.Count > 0) {
 				int index = 0;
@@ -462,7 +487,7 @@ namespace System.Data.SqlClient {
 
 		object ICloneable.Clone ()
 		{
-			return new SqlCommand (commandText, connection);
+			return new SqlCommand (commandText, Connection);
 		}
 
 		IDbDataParameter IDbCommand.CreateParameter ()
@@ -482,19 +507,18 @@ namespace System.Data.SqlClient {
 
 		void IDisposable.Dispose ()
 		{
-Console.WriteLine ("Disposing");
 			Dispose (true);
 		}
 
 		public void Prepare ()
 		{
 			ValidateCommand ("Prepare");
-			connection.Tds.ExecuteNonQuery (BuildPrepare ());
+			Connection.Tds.ExecuteNonQuery (BuildPrepare ());
 
-			if (connection.Tds.OutputParameters.Count == 0 || connection.Tds.OutputParameters[0] == null)
+			if (Connection.Tds.OutputParameters.Count == 0 || Connection.Tds.OutputParameters[0] == null)
 				throw new Exception ("Could not prepare the statement.");
 
-			preparedStatements [commandText] = ((int) connection.Tds.OutputParameters [0]).ToString ();
+			preparedStatements [commandText] = ((int) Connection.Tds.OutputParameters [0]).ToString ();
 		}
 
 		public void ResetCommandTimeout ()
@@ -504,17 +528,17 @@ Console.WriteLine ("Disposing");
 
 		private void ValidateCommand (string method)
 		{
-			if (connection == null)
+			if (Connection == null)
 				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", method));
-			if (connection.Transaction != null && transaction != connection.Transaction)
+			if (Connection.Transaction != null && transaction != Connection.Transaction)
 				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
-			if (connection.State != ConnectionState.Open)
+			if (Connection.State != ConnectionState.Open)
 				throw new InvalidOperationException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
 			if (commandText == String.Empty || commandText == null)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
-			if (connection.DataReader != null)
+			if (Connection.DataReader != null)
 				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
-			if (connection.XmlReader != null)
+			if (Connection.XmlReader != null)
 				throw new InvalidOperationException ("There is already an open XmlReader associated with this Connection which must be closed first.");
 		}
 

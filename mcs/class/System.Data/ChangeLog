@@ -1,3 +1,36 @@
+2002-11-09  Tim Coleman <tim@timcoleman.com>
+	* list:
+		Add new internal tds classes
+	* System.Data.Common/DbDataAdapter.cs:
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+		Change event calling system
+	* System.Data.SqlClient/SqlClientPermission.cs:
+	* System.Data.SqlClient/SqlClientPermissionAttribute.cs:
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Add comments
+	* System.Data.SqlClient/SqlCommand.cs:
+		Some changes to make consistent with .NET based on Sql server traces
+		Implement command timeout
+	* System.Data.SqlClient/SqlCommandBuilder.cs:
+		Make sure that we only build a command if key info found
+	* System.Data.SqlClient/SqlConnection.cs:
+		Change event calling system
+		Some changes to make consistent with .NET based on Sql server traces
+		Implement connection timeout
+	* System.Data.SqlClient/SqlConnectionPool.cs:
+		Implement connection timeout
+	* System.Data.SqlClient/SqlError.cs:
+		Implement ToString ()
+	* System.Data.SqlClient/SqlException.cs:
+		Mucho implementation and cleanup
+	* System.Data.SqlClient/SqlParameter.cs:
+		Implement Clone ()
+	* System.Data.SqlClient/SqlParameterCollection.cs:
+		Code cleanup
+	* System.Data.SqlClient/SqlTransaction.cs:
+		Move some of the transaction creation to SqlConnection to be consistent
+		with .NET SQL traces
+
 2002-11-08  Tim Coleman <tim@timcoleman.com>
 	* System.Data/DataRow.cs:
 	* System.Data/DataTable.cs:

@@ -1,5 +1,5 @@
 //
-// System.Data.Common.CommandBuilder.cs
+// System.Data.SqlClient.SqlCommandBuilder.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -141,13 +141,14 @@ namespace System.Data.SqlClient {
 			if (QuotedTableName == String.Empty)
 				return null;
 
+
 			CreateNewCommand (ref deleteCommand);
 
 			string command = String.Format ("DELETE FROM {0} ", QuotedTableName);
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder where = new StringBuilder ();
 			string dsColumnName = String.Empty;
-
+			bool keyFound = false;
 			int parmIndex = 1;
 
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
@@ -162,10 +163,16 @@ namespace System.Data.SqlClient {
 
 				if (!isKey) {
 					parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+
+					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+					if (row != null)
+						parameter.Value = row [dsColumnName, DataRowVersion.Current];
 					where.Append ("(");
 					where.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 					where.Append (" OR ");
 				}
+				else
+					keyFound = true;
 					
 				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
@@ -178,6 +185,8 @@ namespace System.Data.SqlClient {
 				if (!isKey)
 					where.Append (")");
 			}
+			if (!keyFound)
+				throw new InvalidOperationException ("Dynamic SQL generation for the DeleteCommand is not supported against a SelectCommand that does not return any key column information.");
 
 			// We're all done, so bring it on home
 			string sql = String.Format ("{0} WHERE ( {1} )", command, where.ToString ());
@@ -248,6 +257,7 @@ namespace System.Data.SqlClient {
 			StringBuilder where = new StringBuilder ();
 			int parmIndex = 1;
 			string dsColumnName = String.Empty;
+			bool keyFound = false;
 
 			// First, create the X=Y list for UPDATE
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
@@ -275,24 +285,34 @@ namespace System.Data.SqlClient {
 				bool isKey = (bool) schemaRow ["IsKey"];
 				SqlParameter parameter = null;
 
+
 				if (!isKey) {
 					parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+
+					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+					if (row != null)
+						parameter.Value = row [dsColumnName];
+
 					where.Append ("(");
 					where.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 					where.Append (" OR ");
 				}
+				else
+					keyFound = true;
 					
 				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
 				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 				if (row != null)
-					parameter.Value = row [dsColumnName, DataRowVersion.Current];
+					parameter.Value = row [dsColumnName];
 
 				where.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
 				if (!isKey)
 					where.Append (")");
 			}
+			if (!keyFound)
+				throw new InvalidOperationException ("Dynamic SQL generation for the UpdateCommand is not supported against a SelectCommand that does not return any key column information.");
 
 			// We're all done, so bring it on home
 			string sql = String.Format ("{0}{1} WHERE ( {2} )", command, columns.ToString (), where.ToString ());
@@ -315,9 +335,21 @@ namespace System.Data.SqlClient {
 			command.DeriveParameters ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Determine what should be disposed.")]
 		protected override void Dispose (bool disposing)
 		{
+			// Should dispose the commands, schema table, and should remove itself from the 
+			// message queues
+			if (disposing) {
+				if (insertCommand != null)
+					insertCommand.Dispose ();
+				if (deleteCommand != null)
+					deleteCommand.Dispose ();
+				if (updateCommand != null)
+					updateCommand.Dispose ();
+				if (dbSchemaTable != null)
+					dbSchemaTable.Dispose ();
+			}
 		}
 
 		public SqlCommand GetDeleteCommand ()
@@ -386,7 +418,7 @@ namespace System.Data.SqlClient {
 			return true;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Figure out what else needs to be cleaned up when we refresh.")]
 		public void RefreshSchema () 
 		{
 			tableName = String.Empty;
