@@ -22,9 +22,9 @@ namespace MonoTests.System.IO
                 
                 public void TestCtr ()
                 {
-                	FileStream stream = new FileStream ("testfilestream.tmp", FileMode.Create);
+                	FileStream stream = new FileStream ("testfilestream.tmp.1", FileMode.Create);
                 	stream.Close ();
-                	File.Delete ("testfilestream.tmp");
+                	File.Delete ("testfilestream.tmp.1");
                 	
                 }
                 
@@ -107,14 +107,14 @@ namespace MonoTests.System.IO
                 	FileStream stream;
                 	
                 	try {
-                		stream = new FileStream (".test.test.test", FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Inheritable);
+                		stream = new FileStream (".test.test.test.2", FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Inheritable);
                 		Fail ();
                 	} catch (Exception e) {
                 		AssertEquals ("test#01", typeof (ArgumentOutOfRangeException), e.GetType ());
                 	}
 
                 	try {
-                		stream = new FileStream (".test.test.test", FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Write);
+                		stream = new FileStream (".test.test.test.2", FileMode.CreateNew, FileAccess.Read, FileShare.None | FileShare.Write);
                 		Fail ();
                 	} catch (Exception e) {                		
                 		// FileMode.CreateNew && FileAccess.Read
@@ -122,14 +122,14 @@ namespace MonoTests.System.IO
                 	}
                 	
                 	try {
-                		stream = new FileStream (".test.test.test", FileMode.CreateNew, FileAccess.Read, FileShare.Inheritable | FileShare.ReadWrite);
+                		stream = new FileStream (".test.test.test.2", FileMode.CreateNew, FileAccess.Read, FileShare.Inheritable | FileShare.ReadWrite);
                 		Fail ();
                 	} catch (Exception e) {
                 		AssertEquals ("test#03", typeof (ArgumentOutOfRangeException), e.GetType ());
                 	}
                 	
                 	try {
-                		stream = new FileStream (".test.test.test", FileMode.Truncate, FileAccess.Read);
+                		stream = new FileStream (".test.test.test.2", FileMode.Truncate, FileAccess.Read);
                 		Fail ();
                 	} catch (Exception e) {
                 		// FileMode.Truncate && FileAccess.Read
@@ -145,7 +145,7 @@ namespace MonoTests.System.IO
                 	}
                 	
                 	try {
-                		stream = new FileStream (".test.test.test", FileMode.Truncate, FileAccess.Read, FileShare.ReadWrite, -1);
+                		stream = new FileStream (".test.test.test.2", FileMode.Truncate, FileAccess.Read, FileShare.ReadWrite, -1);
                 		Fail ();
                 	} catch (Exception e) {
                 		// FileMode.Truncate && FileAccess.Read
@@ -156,34 +156,56 @@ namespace MonoTests.System.IO
                 
                 public void TestDefaultProperties ()
                 {
-                	FileStream stream = new FileStream ("testfilestream.tmp", FileMode.Create);
+                	FileStream stream = new FileStream ("testfilestream.tmp.2", FileMode.Create);
                 	
                 	AssertEquals ("test#01", true, stream.CanRead);
                 	AssertEquals ("test#02", true, stream.CanSeek);
                 	AssertEquals ("test#03", true, stream.CanWrite);
                 	AssertEquals ("test#04", false, stream.IsAsync);
-                	AssertEquals ("test#05", true, stream.Name.EndsWith ("testfilestream.tmp"));
+                	AssertEquals ("test#05", true, stream.Name.EndsWith ("testfilestream.tmp.2"));
                 	AssertEquals ("test#06", 0, stream.Position);
                 	AssertEquals ("test#07", "System.IO.FileStream", stream.ToString());                	
                 	stream.Close ();
-                	File.Delete ("testfilestream.tmp");                	
+                	File.Delete ("testfilestream.tmp.2");
+
+                	stream = new FileStream ("testfilestream.tmp.2", FileMode.OpenOrCreate, FileAccess.Read);
+                	AssertEquals ("test#08", true, stream.CanRead);
+                	AssertEquals ("test#09", true, stream.CanSeek);
+                	AssertEquals ("test#10", false, stream.CanWrite);
+                	AssertEquals ("test#11", false, stream.IsAsync);
+                	AssertEquals ("test#12", true, stream.Name.EndsWith ("testfilestream.tmp.2"));
+                	AssertEquals ("test#13", 0, stream.Position);
+                	AssertEquals ("test#14", "System.IO.FileStream", stream.ToString());                	
+                	stream.Close ();
+                	
+               		stream = new FileStream ("testfilestream.tmp.2", FileMode.Truncate, FileAccess.Write, FileShare.ReadWrite);
+                	AssertEquals ("test#15", false, stream.CanRead);
+                	AssertEquals ("test#16", true, stream.CanSeek);
+                	AssertEquals ("test#17", true, stream.CanWrite);
+                	AssertEquals ("test#18", false, stream.IsAsync);
+                	AssertEquals ("test#19", true, stream.Name.EndsWith ("testfilestream.tmp.2"));
+                	AssertEquals ("test#20", 0, stream.Position);
+                	AssertEquals ("test#21", "System.IO.FileStream", stream.ToString());                	
+                	stream.Close ();
+                	File.Delete ("testfilestream.tmp.2");                	
+
                 }
                 
                 public void TestLock()
                 {
-                	if (File.Exists (".testFileStream.Test"))
-                		File.Delete (".testFileStream.Test");
+                	if (File.Exists (".testFileStream.Test.1"))
+                		File.Delete (".testFileStream.Test.1");
                 	
-                	FileStream stream = new FileStream (".testFileStream.Test", FileMode.CreateNew, FileAccess.ReadWrite);
+                	FileStream stream = new FileStream (".testFileStream.Test.1", FileMode.CreateNew, FileAccess.ReadWrite);
                 	                	
 	               	stream.Write (new Byte [] {0,1,2,3,4,5,6,7,8,9,10}, 0, 10);                              	
                 	stream.Close ();
 
-                	stream = new FileStream (".testFileStream.Test", FileMode.Open, FileAccess.ReadWrite);
+                	stream = new FileStream (".testFileStream.Test.1", FileMode.Open, FileAccess.ReadWrite);
                 	
                 	stream.Lock (0, 5);
                 	
-                	FileStream stream2 = new FileStream (".testFileStream.Test", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                	FileStream stream2 = new FileStream (".testFileStream.Test.1", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 	
                 	byte [] bytes = new byte [5];
                 	try {                		
@@ -217,10 +239,106 @@ namespace MonoTests.System.IO
                 	stream.Close ();
                 	stream2.Close ();
                 	
-                	if (File.Exists (".testFileStream.Test"))
-                		File.Delete (".testFileStream.Test");
+                	if (File.Exists (".testFileStream.Test.1"))
+                		File.Delete (".testFileStream.Test.1");
                 	                		
                 }
+
+                public void TestSeek ()
+                {
+                	if (File.Exists (".testFileStream.Test.2"))
+                		File.Delete (".testFileStream.Test.2");
+			
+			FileStream stream = new FileStream (".testFileStream.Test.2", FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+                	stream.Write (new byte[] {1, 2, 3, 4, 5, 6, 7, 8 , 9, 10}, 0, 10);
+                	
+                	stream.Seek (5, SeekOrigin.End);
+                	AssertEquals ("test#01", -1, stream.ReadByte ());
+
+                	stream.Seek (-5, SeekOrigin.End);
+                	AssertEquals ("test#02", 6, stream.ReadByte ());
+                	
+                	try {
+                		stream.Seek (-11, SeekOrigin.End);
+                		Fail ();
+                	} catch (Exception e) {
+                		AssertEquals ("test#03", typeof (IOException), e.GetType ());
+                	}
+                	
+                	stream.Seek (19, SeekOrigin.Begin);
+			AssertEquals ("test#04", -1, stream.ReadByte ());
+
+			stream.Seek (1, SeekOrigin.Begin);
+                	AssertEquals ("test#05", 2, stream.ReadByte ());
+                	
+			stream.Seek (3, SeekOrigin.Current);
+                	AssertEquals ("test#06", 6, stream.ReadByte ());                	
+
+			stream.Seek (-2, SeekOrigin.Current);
+                	AssertEquals ("test#07", 5, stream.ReadByte ());                	
+
+			stream.Flush ();
+                	stream.Close ();
+                	if (File.Exists (".testFileStream.Test.2"))
+                		File.Delete (".testFileStream.Test.2");
+                	
+                }
+                
+                public void TestClose ()
+                {
+                	if (File.Exists (".testFileStream.Test.3"))
+                		File.Delete (".testFileStream1.Test.3");
+                	
+                	FileStream stream = new FileStream (".testFileStream.Test.3", FileMode.CreateNew, FileAccess.ReadWrite);
+                	
+                	stream.Write (new byte [] {1, 2, 3, 4}, 0, 4);
+                	stream.ReadByte ();                	
+                	stream.Close ();
+
+			try {                	
+                		stream.ReadByte ();
+				Fail ();
+			} catch (Exception e) {
+				AssertEquals ("test#01", typeof (ObjectDisposedException), e.GetType ());
+			}
+			
+			try {                	
+                		stream.WriteByte (64);
+				Fail ();
+			} catch (Exception e) {
+				AssertEquals ("test#02", typeof (ObjectDisposedException), e.GetType ());
+			}
+			
+			try {                	
+                		stream.Flush ();
+				Fail ();
+			} catch (Exception e) {
+				AssertEquals ("test#03", typeof (ObjectDisposedException), e.GetType ());
+			}
+			
+			try { 
+				long l = stream.Length;
+				Fail ();
+			} catch (Exception e) {
+				AssertEquals ("test#04", typeof (ObjectDisposedException), e.GetType ());
+			}
+			
+			try { 
+				long l = stream.Position;
+				Fail ();
+			} catch (Exception e) {
+				AssertEquals ("test#05", typeof (ObjectDisposedException), e.GetType ());
+			}
+
+			AssertEquals ("test#06", false, stream.CanRead);
+                	AssertEquals ("test#07", false, stream.CanSeek);
+                	AssertEquals ("test#08", false, stream.CanWrite);                	
+                	AssertEquals ("test#09", true, stream.Name.EndsWith (".testFileStream.Test.3"));
+                	
+                	if (File.Exists (".testFileStream.Test.3"))
+                		File.Delete (".testFileStream.Test.3");
+                }
+
 
         }
 }

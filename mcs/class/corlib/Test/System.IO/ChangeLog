@@ -1,3 +1,7 @@
+2003-04-12  Ville Palo <vi64pa@kolumbus.fi>
+
+	* FileStreamTest.cs More tests.
+	
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileStreamTest.cs: File Added and some tests in it.
