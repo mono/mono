@@ -15,7 +15,7 @@ namespace Mono.Xml
 		{
 		}
 
-		public DTDValidatingReader (XmlReader reader,
+		internal DTDValidatingReader (XmlReader reader,
 			XmlValidatingReader validatingReader)
 		{
 			entityReaderStack = new Stack ();
@@ -33,7 +33,11 @@ namespace Mono.Xml
 			valueBuilder = new StringBuilder ();
 			idList = new ArrayList ();
 			missingIDReferences = new ArrayList ();
-			resolver = new XmlUrlResolver ();
+			XmlTextReader xtReader = reader as XmlTextReader;
+			if (xtReader != null)
+				resolver = xtReader.Resolver;
+			else
+				resolver = new XmlUrlResolver ();
 		}
 
 		Stack entityReaderStack;
@@ -74,6 +78,11 @@ namespace Mono.Xml
 
 		public DTDObjectModel DTD {
 			get { return dtd; }
+		}
+
+		public EntityHandling EntityHandling {
+			get { return currentEntityHandling; }
+			set { currentEntityHandling = value; }
 		}
 
 		public override void Close ()
@@ -296,7 +305,8 @@ namespace Mono.Xml
 				// Don't output the same errors so many times.
 				this.missingIDReferences.Clear ();
 			}
-			currentEntityHandling = validatingReader.EntityHandling;
+			if (validatingReader != null)
+				EntityHandling = validatingReader.EntityHandling;
 			return b;
 		}
 
@@ -1054,7 +1064,6 @@ namespace Mono.Xml
 				}
 				// As to this property, MS.NET seems ignorant of EntityHandling...
 				else if (NodeType == XmlNodeType.Attribute)// &&
-					// currentEntityHandling == EntityHandling.ExpandEntities)
 					return FilterNormalization (Name, attributeValues [currentAttribute]);
 				else if (consumedAttribute)
 					return FilterNormalization (Name, attributeValues [this.currentAttribute]);

@@ -358,11 +358,7 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			// FIXME: This breaks XmlElementTests.WriteToMakesNonsenseForDefaultNSChildren()
-//			if (NamespaceURI == String.Empty)
-//				w.WriteStartElement (LocalName);
-//			else
-				w.WriteStartElement (NamespaceURI == null || NamespaceURI.Length == 0 ? String.Empty : Prefix, LocalName, NamespaceURI);
+			w.WriteStartElement (NamespaceURI == null || NamespaceURI.Length == 0 ? String.Empty : Prefix, LocalName, NamespaceURI);
 
 			foreach(XmlAttribute attributeNode in Attributes)
 				if (attributeNode.Specified)

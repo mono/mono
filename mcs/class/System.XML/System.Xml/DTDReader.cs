@@ -1154,24 +1154,30 @@ namespace System.Xml
 			if(next < 0)
 				return unresolved;
 
-			while(next >= 0) {
+			while (next >= 0) {
 				if(pos < next)
 					resolved.Append (unresolved.Substring (pos, next - pos));// - 1);
 				int endPos = unresolved.IndexOf (';', next+1);
+				if (endPos < 0)
+					throw new XmlException (this as IXmlLineInfo, "Could not resolve entity reference since it did not end with character ';'.");
 				string entityName =
 					unresolved.Substring (next + 1, endPos - next - 1);
 				if(entityName [0] == '#') {
-					char c;
-					// character entity
-					if(entityName [1] == 'x') {
-						// hexadecimal
-						c = (char) int.Parse ("0" + entityName.Substring (2),
-							System.Globalization.NumberStyles.HexNumber);
-					} else {
-						// decimal
-						c = (char) int.Parse (entityName.Substring (1));
+					try {
+						char c;
+						// character entity
+						if(entityName [1] == 'x') {
+							// hexadecimal
+							c = (char) int.Parse ("0" + entityName.Substring (2),
+								System.Globalization.NumberStyles.HexNumber);
+						} else {
+							// decimal
+							c = (char) int.Parse (entityName.Substring (1));
+						}
+						resolved.Append (c);
+					} catch (FormatException) {
+						throw new XmlException (this as IXmlLineInfo, "Invalid character entity reference was found.");
 					}
-					resolved.Append (c);
 				} else {
 					char predefined = XmlChar.GetPredefinedEntity (entityName);
 					if (expandPredefined && predefined != 0)

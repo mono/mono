@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
+using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
@@ -151,6 +152,12 @@ namespace System.Xml
 		{
 			get { return parserContext.Encoding; }
 		}
+#if NET_1_2
+		[MonoTODO]
+		public EntityHandling EntityHandling {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 
 		public override bool EOF
 		{
@@ -161,6 +168,13 @@ namespace System.Xml
 					readState == ReadState.Closed;
 			}
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public override Evidence [] Evidences {
+			get { return base.Evidences; }
+		}
+#endif
 
 		public override bool HasValue
 		{
@@ -749,12 +763,23 @@ namespace System.Xml
 			throw new InvalidOperationException ("XmlTextReader cannot resolve external entities.");
 		}
 
+#if NET_1_2
+		[MonoTODO ("Implement for performance reason")]
+		public override void Skip ()
+		{
+			base.Skip ();
+		}
+#endif
 		#endregion
 
 		#region Internals
 		// Parsed DTD Objects
 		internal DTDObjectModel DTD {
 			get { return parserContext.Dtd; }
+		}
+
+		internal XmlResolver Resolver {
+			get { return resolver; }
 		}
 		#endregion
 

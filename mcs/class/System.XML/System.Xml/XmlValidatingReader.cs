@@ -25,7 +25,7 @@ namespace System.Xml {
 		XmlReader sourceReader;
 		XmlTextReader xmlTextReader;
 		XmlReader validatingReader;
-		XmlResolver resolver;
+		XmlResolver resolver; // Only used to non-XmlTextReader XmlReader
 		bool specifiedResolver;
 		ValidationType validationType;
 		XmlSchemaCollection schemas;
@@ -39,8 +39,10 @@ namespace System.Xml {
 
 		public XmlValidatingReader (XmlReader reader)
 		{
-			this.sourceReader = reader;
-			this.xmlTextReader = reader as XmlTextReader;
+			sourceReader = reader;
+			xmlTextReader = reader as XmlTextReader;
+			if (xmlTextReader == null)
+				resolver = new XmlUrlResolver ();
 			entityHandling = EntityHandling.ExpandEntities;
 			validationType = ValidationType.Auto;
 			schemas = new XmlSchemaCollection ();
@@ -98,7 +100,7 @@ namespace System.Xml {
 
 #if NET_1_2
 		[MonoTODO]
-		public virtual Evidence [] Evidences {
+		public override Evidence [] Evidences {
 			get { throw new NotImplementedException ();
 			}
 		}
@@ -222,6 +224,19 @@ namespace System.Xml {
 			}
 		}
 
+		internal XmlResolver Resolver {
+			get {
+				// This is special rule... MS.NET shares the
+				// XmlResolver between XmlTextReader and
+				// XmlValidatingReader, so we mimick that
+				// silly behavior here.
+				if (this.xmlTextReader != null)
+					return this.xmlTextReader.Resolver;
+				else
+					return resolver;
+			}
+		}
+
 		public XmlSchemaCollection Schemas {
 			get { return schemas; }
 		}
@@ -260,12 +275,14 @@ namespace System.Xml {
 		public XmlResolver XmlResolver {
 			set {
 				specifiedResolver = true;
-				resolver = value;
-				/*
+				if (xmlTextReader != null)
+					xmlTextReader.XmlResolver = value;
+				else
+					resolver = value;
+
 				XsdValidatingReader xsvr = validatingReader as XsdValidatingReader;
 				if (xsvr != null)
 					xsvr.XmlResolver = value;
-				*/
 				DTDValidatingReader dvr = validatingReader as DTDValidatingReader;
 				if (dvr != null)
 					dvr.XmlResolver = value;
@@ -376,8 +393,7 @@ namespace System.Xml {
 					goto case ValidationType.Schema; // might be specified by xsi:schemaLocation.
 				case ValidationType.DTD:
 					validatingReader = dtdReader = new DTDValidatingReader (sourceReader, this);
-					if (specifiedResolver)
-						dtdReader.XmlResolver = resolver;
+					dtdReader.XmlResolver = Resolver;
 					break;
 				case ValidationType.Schema:
 					dtdReader = new DTDValidatingReader (sourceReader, this);
@@ -385,9 +401,8 @@ namespace System.Xml {
 					foreach (XmlSchema schema in Schemas)
 						xsvr.Schemas.Add (schema);
 					validatingReader = xsvr;
-					if (specifiedResolver) {
-						dtdReader.XmlResolver = resolver;
-					}
+					xsvr.XmlResolver = Resolver;
+					dtdReader.XmlResolver = Resolver;
 					break;
 				case ValidationType.XDR:
 					throw new NotSupportedException ();

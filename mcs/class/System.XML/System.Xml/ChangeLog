@@ -1,3 +1,19 @@
+2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs :
+	  - DTDNode's BaseURI should not always refer to that of DTD's.
+	  - Use absolute URI's .ToString() instead of AbsolutePath.
+	* DTDReader.cs : Throw XmlException for illegal character references.
+	* DTDValidatingReader.cs :
+	  - Share XmlResolver when the actual reader is XmlTextReader.
+	    (MS's XmlValidatingReader and XmlTextReader do this.)
+	  - Added its own EntityHandling property.
+	* XmlValidatingReader.cs : Share XmlResolver with XmlTextReader.
+	* XmlReader.cs,
+	  XmlTextReader.cs : Added new NET_1_2 members.
+	* XmlElement.cs : Removed extra lines (caused by XmlTextWriter bugs).
+	* XmlEntityReference.cs : Forgot to add, the real fix by Boris.
+
 2004-01-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriter.cs, XmlTextWriter.cs :
@@ -18,6 +34,11 @@
 	  - WriteEndAttribute() should reject zero-length namespace for 
 	    non-default xmlns declarations.
 	  - LookupPrefix() should reject argument null and empty.
+
+	(added 2004-01-24 : forgot to mention more)
+	  - WriteAttributeString() w/o namespace should supply null, not ""
+	  - Added .NET 1.2 members.
+	  - Regard any name with "xml" prefix as in "namespace for XML".
 
 2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
 

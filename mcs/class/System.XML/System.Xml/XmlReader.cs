@@ -11,13 +11,19 @@
 // (C) 2003 Atsushi Enomoto
 //
 using System.IO;
+using System.Security.Policy;
 using System.Text;
 
 namespace System.Xml
 {
+#if NET_1_2
+	public abstract class XmlReader : IDisposable, IXmlDataEvidence
+#else
 	public abstract class XmlReader
+#endif
 	{
 		private StringBuilder readStringBuffer;
+		private Evidence [] evidences;
 
 		#region Constructor
 
@@ -41,6 +47,13 @@ namespace System.Xml
 		public abstract int Depth { get; }
 
 		public abstract bool EOF { get; }
+
+#if NET_1_2
+		[MonoTODO]
+		public virtual Evidence [] Evidences {
+			get { return evidences; }
+		}
+#endif
 
 		public virtual bool HasAttributes
 		{
@@ -89,6 +102,14 @@ namespace System.Xml
 		#region Methods
 
 		public abstract void Close ();
+
+#if NET_1_2
+		[MonoTODO]
+		public virtual void Dispose ()
+		{
+			Close ();
+		}
+#endif
 
 		public abstract string GetAttribute (int i);
 

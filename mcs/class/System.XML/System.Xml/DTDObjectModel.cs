@@ -490,7 +490,7 @@ namespace Mono.Xml
 		int lineNumber;
 		int linePosition;
 
-		public string BaseURI {
+		public virtual string BaseURI {
 			get { return baseURI; }
 			set { baseURI = value; }
 		}
@@ -518,7 +518,7 @@ namespace Mono.Xml
 		internal void SetRoot (DTDObjectModel root)
 		{
 			this.root = root;
-			if (BaseURI == null)
+			if (baseURI == null)
 				this.BaseURI = root.BaseURI;
 		}
 
@@ -759,6 +759,12 @@ namespace Mono.Xml
 		string publicId;
 		string systemId;
 		string literalValue;
+		bool isInvalid;
+
+		internal bool IsInvalid {
+			get { return isInvalid; }
+			set { isInvalid = value; }
+		}
 
 		public string Name {
 			get { return name; }
@@ -813,6 +819,9 @@ namespace Mono.Xml
 
 		public string EntityValue {
 			get {
+				if (this.IsInvalid)
+					return String.Empty;
+
 				if (PublicId == null && SystemId == null && LiteralEntityValue == null)
 					return String.Empty;
 
@@ -909,7 +918,7 @@ namespace Mono.Xml
 			if (resolver == null)
 				return String.Empty;
 
-			string baseUri = Root.BaseURI;
+			string baseUri = this.BaseURI;
 			if (baseUri == "")
 				baseUri = null;
 			Uri uri = resolver.ResolveUri (
@@ -923,7 +932,7 @@ namespace Mono.Xml
 			}
 			if (stream == null)
 				return String.Empty;
-			XmlTextReader extEntReader = new XmlTextReader (uri.AbsolutePath, stream, this.Root.NameTable);
+			XmlTextReader extEntReader = new XmlTextReader (uri.ToString (), stream, this.Root.NameTable);
 			extEntReader.SkipTextDeclaration ();
 			TextReader reader = extEntReader.GetRemainder ();
 			extEntReader.Close ();
