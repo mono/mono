@@ -23,7 +23,13 @@ namespace CIR {
 		//
 		public abstract bool Emit (EmitContext ec);
 
-		public static bool EmitBoolExpression (EmitContext ec, Expression e)
+		// <remarks>
+		//    Emits a bool expression.  Generates a jump to the `t' label if true
+		//    if defined, or to `f' if defined.
+		//
+		//    t and f can not be both non-null
+		// </remarks>
+		public static bool EmitBoolExpression (EmitContext ec, Expression e, Label l, bool isTrue)
 		{
 			e = e.Resolve (ec);
 
@@ -39,9 +45,33 @@ namespace CIR {
 					31, "Can not convert the expression to a boolean");
 				return false;
 			}
-			
-			e.Emit (ec);
 
+			bool invert = false;
+			if (e is Unary){
+				Unary u = (Unary) e;
+				
+				if (u.Oper == Unary.Operator.LogicalNot){
+					invert = true;
+
+					u.EmitLogicalNot (ec);
+				}
+			} 
+
+			if (!invert)
+				e.Emit (ec);
+
+			if (isTrue){
+				if (invert)
+					ec.ig.Emit (OpCodes.Brfalse, l);
+				else
+					ec.ig.Emit (OpCodes.Brtrue, l);
+			} else {
+				if (invert)
+					ec.ig.Emit (OpCodes.Brtrue, l);
+				else
+					ec.ig.Emit (OpCodes.Brfalse, l);
+			}
+			
 			return true;
 		}
 
@@ -81,10 +111,9 @@ namespace CIR {
 			Label end;
 			bool is_ret;
 			
-			if (!EmitBoolExpression (ec, Expr))
+			if (!EmitBoolExpression (ec, Expr, false_target, false))
 				return false;
 			
-			ig.Emit (OpCodes.Brfalse, false_target);
 			is_ret = TrueStatement.Emit (ec);
 
 			if (FalseStatement != null){
@@ -133,8 +162,7 @@ namespace CIR {
 			ig.MarkLabel (loop);
 			EmbeddedStatement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
-			EmitBoolExpression (ec, Expr);
-			ig.Emit (OpCodes.Brtrue, loop);
+			EmitBoolExpression (ec, Expr, loop, true);
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;
@@ -167,8 +195,7 @@ namespace CIR {
 			ec.InLoop = true;
 			
 			ig.MarkLabel (ec.LoopBegin);
-			EmitBoolExpression (ec, Expr);
-			ig.Emit (OpCodes.Brfalse, ec.LoopEnd);
+			EmitBoolExpression (ec, Expr, ec.LoopEnd, false);
 			Statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (ec.LoopEnd);
@@ -214,8 +241,7 @@ namespace CIR {
 			ec.InLoop = true;
 
 			ig.MarkLabel (loop);
-			EmitBoolExpression (ec, Test);
-			ig.Emit (OpCodes.Brfalse, ec.LoopEnd);
+			EmitBoolExpression (ec, Test, ec.LoopEnd, false);
 			Statement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
 			if (!(Increment is EmptyStatement))

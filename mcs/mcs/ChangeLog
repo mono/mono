@@ -1,3 +1,24 @@
+2001-11-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Handle operator== and operator!= for booleans.
+
+	(Conditioal.Reduce): Implement reducer for the ?: operator.
+
+	(Conditional.Resolve): Implement dead code elimination.
+
+	(Binary.Resolve): Catch string literals and return a new
+	concatenated string.
+
+	(Unary.Reduce): Implement reduction of unary expressions.
+
+	* ecore.cs: Split out the expression core handling here.
+
+	(Expression.Reduce): New method used to perform constant folding
+	and CSE.  This is needed to support constant-expressions. 
+	
+	* statement.cs (Statement.EmitBoolExpression): Pass true and false
+	targets, and optimize for !x.
+
 2001-11-04  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (Attribute::Resolve): Implement guts. Note that resolution

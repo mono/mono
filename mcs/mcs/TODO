@@ -1,8 +1,3 @@
-* Optimizations
-
-	Handle if (!x) converting to remove the `!' and instead of using
-	a brfalse use a brtrue to jump to the end.
-
 * Emitcontext
 
 	Do we really need to instanciate this variable all the time?
@@ -220,3 +215,27 @@
 
 	We need to make sure at *compile time* that the arguments in
 	the expression list of an array creation are always positive.
+
+* Fix the new parameter mess that we introduced to support ref/outo
+
+* Reducer and -Literal
+
+	Maybe we should never handle -Literal in Unary expressions and let
+	the reducer take care of it always?
+
+* Implement dead code elimination in statement.cs
+
+	It is pretty simple to implement dead code elimination in 
+	if/do/while
+
+* Implement short circuit evaluation.
+
+	Currently our and/or operations do not implement short circuit
+	evaluation.  
+
+* Foreach and arrays
+
+	Support foreach (T t in Array)
+
+	And optimize to deal with the array rather than getting the enumerator
+	out of it.

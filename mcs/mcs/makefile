@@ -16,6 +16,7 @@ COMPILER_SOURCES = \
 	constant.cs			\
 	decl.cs				\
 	enum.cs				\
+	ecore.cs			\
 	expression.cs 			\
 	gen-treedump.cs			\
 	genericparser.cs		\

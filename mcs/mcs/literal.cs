@@ -98,21 +98,21 @@ namespace CIR {
 	}
 
 	public class BoolLiteral : Literal {
-		bool val;
+		public readonly bool Value;
 		
 		public BoolLiteral (bool val)
 		{
-			this.val = val;
+			Value = val;
 		}
 
 		override public string AsString ()
 		{
-			return val ? "true" : "false";
+			return Value ? "true" : "false";
 		}
 
 		public override object GetValue ()
 		{
-			return (object) val;
+			return (object) Value;
 		}
 				
 		
@@ -125,7 +125,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (val)
+			if (Value)
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 			else
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
@@ -447,22 +447,22 @@ namespace CIR {
 	}
 
 	public class StringLiteral : Literal {
-		string s;
+		public readonly string Value;
 
 		public StringLiteral (string s)
 		{
-			this.s = s;
+			Value = s;
 		}
 
 		// FIXME: Escape the string.
 		override public string AsString ()
 		{
-			return "\"" + s + "\"";
+			return "\"" + Value + "\"";
 		}
 
 		public override object GetValue ()
 		{
-			return (object) s;
+			return (object) Value;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -474,7 +474,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldstr, s);
+			ec.ig.Emit (OpCodes.Ldstr, Value);
 		}
 	}
 }
