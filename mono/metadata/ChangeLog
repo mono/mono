@@ -1,3 +1,9 @@
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-manager.c|h: Added demandunmanaged method and 
+	suppressunmanagedcodesecurity class to MonoSecurityManager.
+	Renamed aptc class to allowpartiallytrustedcallers.
+
 2005-03-17  Martin Baulig  <martin@ximian.com>
 
 	* class.c (inflate_generic_type): Add MONO_TYPE_ARRAY.
