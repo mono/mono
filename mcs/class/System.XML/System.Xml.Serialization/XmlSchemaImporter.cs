@@ -426,7 +426,7 @@ namespace System.Xml.Serialization {
 			}
 			else if (CanBeIXmlSerializable (stype))
 			{
-				return GetTypeMapping (TypeTranslator.GetTypeData(typeof(object)));
+				return ImportXmlSerializableMapping (typeQName.Namespace);
 			}
 
 			// Register the map right now but do not build it,
@@ -1245,6 +1245,20 @@ namespace System.Xml.Serialization {
 			if (elem == null) return false;
 			if (elem.RefName != new XmlQualifiedName ("schema",XmlSchema.Namespace)) return false;
 			return (seq.Items[1] is XmlSchemaAny);
+		}
+		
+		XmlTypeMapping ImportXmlSerializableMapping (string ns)
+		{
+			XmlQualifiedName qname = new XmlQualifiedName ("System.Data.DataSet",ns);
+			XmlTypeMapping map = mappedTypes [qname] as XmlTypeMapping;
+			if (map != null) return map;
+			
+			TypeData typeData = new TypeData ("System.Data.DataSet", "System.Data.DataSet", "System.Data.DataSet", SchemaTypes.XmlSerializable, null);
+			map = new XmlTypeMapping ("System.Data.DataSet", "", typeData, "System.Data.DataSet", ns);
+			map.IncludeInSchema = true;
+			mappedTypes [qname] = map;
+			dataMappedTypes [typeData] = map;
+			return map;
 		}
 		
 		XmlTypeMapElementInfo CreateElementInfo (string ns, XmlTypeMapMember member, string name, TypeData typeData, bool isNillable, XmlSchemaForm form)

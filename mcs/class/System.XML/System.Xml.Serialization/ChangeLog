@@ -1,3 +1,8 @@
+2004-03-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlSchemaImporter.cs: Import IXmlSerializable types as DataSet, like in MS.NET.
+	  This fixes bug #55547.
+
 2004-03-13  David Sheldon <dave-mono@earth.li>
 
   * XmlSerializationWriter.cs: Implement WriteElementStringRaw with a
