@@ -145,8 +145,10 @@ namespace System.Data
 			if (table.PrimaryKey.Length == 0)
 				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
 			if (table.PrimaryKey.Length > 1)
-				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length + 
-							     " value(s) for the key being indexed, but received 1 value(s).");
+				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 1 value(s).");
+
+			if( key==null)
+                                throw new ArgumentException("Expecting 1 value(s) for the key being indexed, but received 0 value(s).");
 
 			string primColumnName = table.PrimaryKey [0].ColumnName;
 			Type coltype = null;
@@ -157,14 +159,7 @@ namespace System.Data
 				if (row.RowState != DataRowState.Deleted)
 				{
 					object primValue = row [primColumnName];
-					if (key == null) 
-					{
-						if (primValue == null)
-							return row;
-						else 
-							continue;
-					}
-				       
+									       
 					newKey = Convert.ChangeType (key, Type.GetTypeCode(primValue.GetType ()));
 
 					if (primValue.Equals (newKey))
