@@ -1,4 +1,8 @@
 
+Wed Apr 16 12:53:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: avoid O(n) allocation for variables.
+
 Tue Apr 15 19:13:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: handle items on the stack after inlining methods.
