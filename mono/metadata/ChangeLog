@@ -1,3 +1,8 @@
+
+Tue May 13 16:36:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: added mono_custom_attrs_free ().
+
 2003-05-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_array_class_get): always set the serializable flags
