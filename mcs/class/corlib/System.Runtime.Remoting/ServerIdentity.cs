@@ -95,11 +95,6 @@ namespace System.Runtime.Remoting
 
 		protected void DisposeServerObject()
 		{
-			if (_serverObject != null)
-			{
-				IDisposable disp = _serverObject as IDisposable;
-				if (disp != null) disp.Dispose ();
-			}
 			_serverObject = null;
 		}
 	}
