@@ -1,9 +1,22 @@
-2003-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+2003-08-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessSecurityAttributeTest.cs: New unit tests for abstract 
 	class CodeAccessSecurityAttribute.
 	* DataProtectionPermissionAttributeTest.cs: New unit tests for Fx 2.0
 	DataProtectionPermissionAttribute class.
+	* HostProtectionAttributeTest.cs: New unit tests for Fx 2.0
+	HostProtectionAttribute class.
+	* IsolatedStoragePermissionAttributeTest.cs: New unit tests for 
+	abstract class IsolatedStoragePermissionAttribute.
+	* KeyContainerPermissionAttributeTest.cs: New unit tests for Fx 2.0
+	KeyContainerPermissionAttribute class.
+	* SecurityAttributeTest.cs: New unit tests for abstract class
+	SecurityAttribute.
+	* SiteIdentityPermissionTest.cs: New unit tests for 
+	SiteIdentityPermission. Lacks tests for wilcards.
+
+2003-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* EnvironmentPermissionAttributeTest.cs: Added tests to check class's
 	attributes. Converted existing tests to NUnit 2.2 format. Fixed small
 	behaviour difference with Fx 2.0. 
@@ -12,12 +25,6 @@
 	* FileIOPermissionAttributeTest.cs: Added tests to check class's
 	attributes. Converted existing tests to NUnit 2.2 format. Added tests
 	for new Fx 2.0 properties.
-	* HostProtectionAttributeTest.cs: New unit tests for Fx 2.0
-	HostProtectionAttribute class.
-	* IsolatedStoragePermissionAttributeTest.cs: New unit tests for 
-	abstract class IsolatedStoragePermissionAttribute.
-	* KeyContainerPermissionAttributeTest.cs: New unit tests for Fx 2.0
-	KeyContainerPermissionAttribute class.
 	* PermissionSetAttributeTest.cs: Added tests to check class's
 	attributes. Converted existing tests to NUnit 2.2 format. Added tests
 	for new Fx 2.0 properties.
@@ -30,8 +37,6 @@
 	* RegistryPermissionAttributeTest.cs: Added tests to check class's
 	attributes. Converted existing tests to NUnit 2.2 format. Added tests
 	for new Fx 2.0 properties.
-	* SecurityAttributeTest.cs: New unit tests for abstract class
-	SecurityAttribute.
 	* SecurityPermissionAttributeTest.cs: Removed unrequired line.
 	* SiteIdentityPermissionAttributeTest.cs: Added tests to check class's
 	attributes. Converted existing tests to NUnit 2.2 format.
