@@ -84,7 +84,7 @@ namespace System {
 		//   Combines this MulticastDelegate with the Delegate `follow'.
 		//   This can combine MulticastDelegates and Delegates
 		// </summary>
-		//[MonoTODO]
+		[MonoTODO]
 		protected override Delegate CombineImpl (Delegate follow)
 		{
 			

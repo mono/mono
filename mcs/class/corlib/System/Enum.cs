@@ -27,7 +27,7 @@ namespace System {
 		}
 	};
 
-	//[MonoTODO]
+	[MonoTODO]
 	public abstract class Enum : ValueType, IComparable {
 
 		public static Array GetValues (Type enumType) {

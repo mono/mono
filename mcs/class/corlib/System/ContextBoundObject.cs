@@ -14,7 +14,7 @@ namespace System {
 	/// <summary>
 	///   Base class for all the context-bound classes
 	/// </summary>
-	//[MonoTODO]
+	[MonoTODO]
 	public abstract class ContextBoundObject {
 
 		protected ContextBoundObject ()
