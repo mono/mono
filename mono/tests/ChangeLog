@@ -1,3 +1,7 @@
+2004-04-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c pinvoke2.cs: Add test for unicode string array marshalling.
+
 2004-04-10  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* libtest.c: declare SetLastError on Windows
