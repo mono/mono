@@ -239,7 +239,11 @@ namespace MonoTests.System.Diagnostics {
 		public void IsSubset_Null ()
 		{
 			PerformanceCounterPermission pcp = new PerformanceCounterPermission (PermissionState.None);
+#if NET_2_0
+			Assert.IsTrue (pcp.IsSubsetOf (null), "null");
+#else
 			Assert.IsFalse (pcp.IsSubsetOf (null), "null");
+#endif
 		}
 
 		[Test]

@@ -1,3 +1,8 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventLogPermissionTest.cs: Now works on both Fx 1.1 / 2.0.
+	* PerformanceCounterPermissionTest.cs: Now works on both Fx 1.1 / 2.0.
+
 2005-01-18  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* DiagnosticsConfigurationHandlerTest.cs: .NET 1.1 requires that the value

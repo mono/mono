@@ -232,7 +232,11 @@ namespace MonoTests.System.Diagnostics {
 		public void IsSubset_Null ()
 		{
 			EventLogPermission elp = new EventLogPermission (PermissionState.None);
+#if NET_2_0
+			Assert.IsTrue (elp.IsSubsetOf (null), "null");
+#else
 			Assert.IsFalse (elp.IsSubsetOf (null), "null");
+#endif
 		}
 
 		[Test]
