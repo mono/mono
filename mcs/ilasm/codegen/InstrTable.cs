@@ -16,10 +16,12 @@ namespace Mono.ILASM {
 	public class InstrTable {
 
 		private static Hashtable op_table;
-		
+		private static Hashtable int_table;		
+
 		static InstrTable ()
 		{
 			CreateOpTable ();
+			CreateIntTable ();
 		}
 		
 		public static ILToken GetToken (string str)
@@ -27,9 +29,17 @@ namespace Mono.ILASM {
 			if (IsOp (str)) {
 				Op op = GetOp (str);
 				return new ILToken (Token.INSTR_NONE, op);
+			} else if (IsIntOp (str)) {
+				IntOp op = GetIntOp (str);
+				return new ILToken (Token.INSTR_I, op);
 			}
 
 			return null;
+		}
+
+		public static bool IsInstr (string str)
+		{
+			return (IsOp (str) || IsIntOp (str));
 		}
 
 		public static bool IsOp (string str)
@@ -37,9 +47,19 @@ namespace Mono.ILASM {
 			return op_table.Contains (str);
 		}
 		
+		public static bool IsIntOp (string str)
+		{
+			return int_table.Contains (str);
+		}
+
 		public static Op GetOp (string str)
 		{
 			return (Op) op_table[str];
+		}
+
+		public static IntOp GetIntOp (string str)
+		{
+			return (IntOp) int_table[str];
 		}
 
 		private static void CreateOpTable ()
@@ -183,6 +203,27 @@ namespace Mono.ILASM {
 			op_table["rethrow"] = Op.rethrow;
 			op_table["refanytype"] = Op.refanytype;
 
+		}
+
+		private static void CreateIntTable ()
+		{
+			int_table = new Hashtable ();
+			
+			int_table["ldarg.s"] = IntOp.ldarg_s;
+			int_table["ldarga.s"] = IntOp.ldarga_s;
+			int_table["starg.s"] = IntOp.starg_s;
+			int_table["ldloc.s"] = IntOp.ldloc_s;
+			int_table["ldloca.s"] = IntOp.ldloca_s;
+			int_table["stloc.s"] = IntOp.stloc_s;
+			int_table["ldc_i4.s"] = IntOp.ldc_i4_s;
+			int_table["ldc_i4"] = IntOp.ldc_i4;
+			int_table["ldarg"] = IntOp.ldarg;
+			int_table["ldarga"] = IntOp.ldarga;
+			int_table["starf"] = IntOp.starg;
+			int_table["ldloc"] = IntOp.ldloc;
+			int_table["ldloca"] = IntOp.ldloca;
+			int_table["stloc"] = IntOp.stloc;
+			int_table["unaligned"] =  IntOp.unaligned;
 		}
 
 	}

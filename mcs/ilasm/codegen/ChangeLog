@@ -1,3 +1,7 @@
+2003-03-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* InstrTable.cs: Add IntOps (instructions that take an integer param)
+
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* InstrTable.cs: Fix instructions that have dots in their name
