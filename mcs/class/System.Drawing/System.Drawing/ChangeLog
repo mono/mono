@@ -1,3 +1,8 @@
+2004-04-23  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* Commited patch from pcgod@gmx.net (Bnehamin Jemlich) for
+	serialization for Bitmaps.  (Bugzilla #52568)
+
 2004-04-23  Ravindra <rkumar@novell.com>
 
 	* RectangleConverter.cs: Fixed ConvertTo () method.

@@ -120,32 +120,6 @@ namespace System.Drawing {
 			nativeObject = imagePtr;
 		}
 
-		void InitFromStream (Stream stream)
-		{
-			if (Environment.OSVersion.Platform == (PlatformID) 128) {
-				// Unix, with libgdiplus
-				// We use a custom API for this, because there's no easy way
-				// to get the Stream down to libgdiplus.  So, we wrap the stream
-				// with a set of delegates.
-				GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
-				IntPtr imagePtr;
-
-				Status st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetBytesDelegate,
-										     sh.SeekDelegate,
-										     out imagePtr);
-				GDIPlus.CheckStatus (st);
-				nativeObject = imagePtr;
-			} else {
-				// this is MS-land
-				// FIXME
-				// We can't call the native gdip functions here, because they expect
-				// a COM IStream interface.  So, a hack is to create a tmp file, read
-				// the stream, and then load from the tmp file.
-				// This is an ugly hack.
-				throw new NotImplementedException ("Bitmap.InitFromStream (win32)");
-			}
-		}
-		
 		public Bitmap (Stream stream, bool useIcm)
 		{
 			InitFromStream (stream);
@@ -189,7 +163,7 @@ namespace System.Drawing {
 			
 		}
 
-		private Bitmap (SerializationInfo info, StreamingContext context)
+		private Bitmap (SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
 

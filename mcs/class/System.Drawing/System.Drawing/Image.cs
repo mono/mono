@@ -35,10 +35,17 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		colorPalette = new ColorPalette();
 	}
 	
-	[MonoTODO]	
 	private Image (SerializationInfo info, StreamingContext context)
 	{
-		
+		foreach (SerializationEntry serEnum in info) {
+			if (String.Compare(serEnum.Name, "Data", true) == 0) {
+				byte[] bytes = (byte[]) serEnum.Value;
+
+				if (bytes != null) {
+					InitFromStream(new MemoryStream(bytes));
+				}
+			}
+		}
 	}
 	
 	[MonoTODO]	
@@ -152,6 +159,32 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
 	{
 		return ((pixfmt & PixelFormat.Extended) != 0);
+	}
+
+	internal protected void InitFromStream (Stream stream)
+	{
+		if (Environment.OSVersion.Platform == (PlatformID) 128) {
+			// Unix, with libgdiplus
+			// We use a custom API for this, because there's no easy way
+			// to get the Stream down to libgdiplus.  So, we wrap the stream
+			// with a set of delegates.
+			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+			IntPtr imagePtr;
+
+			Status st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetBytesDelegate,
+										     sh.SeekDelegate,
+										     out imagePtr);
+			GDIPlus.CheckStatus (st);
+			nativeObject = imagePtr;
+		} else {
+			// this is MS-land
+			// FIXME
+			// We can't call the native gdip functions here, because they expect
+			// a COM IStream interface.  So, a hack is to create a tmp file, read
+			// the stream, and then load from the tmp file.
+			// This is an ugly hack.
+			throw new NotImplementedException ("Bitmap.InitFromStream (win32)");
+		}
 	}
 
 	// non-static	
