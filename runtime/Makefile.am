@@ -90,15 +90,17 @@ mcs-do-run-test-profiles: test-support-files
 
 if PLATFORM_WIN32
 cur_dir_cmd = cygpath -w -a .
+PLATFORM_PATH_SEPARATOR = ;
 else
 cur_dir_cmd = pwd
+PLATFORM_PATH_SEPARATOR = :
 endif
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
 mcs-compileall: mono-wrapper wrapper-config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ret=:; \
 	for profile in $(build_profiles); do \
-	  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PATH_SEPARATOR)$$save_MONO_PATH"; export MONO_PATH; \
+	  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; export MONO_PATH; \
 	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do \
 	    if ./mono-wrapper --compile-all $$i; then \
 	      echo $$i verified OK; \
