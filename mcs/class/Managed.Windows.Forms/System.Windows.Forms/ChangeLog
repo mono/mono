@@ -1,3 +1,8 @@
+2005-01-10  Jackson Harper  <jackson@ximian.com>
+
+	* SizeGrip.cs: New internal class that is used as a sizing
+	grip control...hence the name.
+
 2005-01-10  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs: Implemented proper TabIndex handling, now assigning

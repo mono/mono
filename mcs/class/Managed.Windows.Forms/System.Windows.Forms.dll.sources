@@ -208,6 +208,7 @@ System.Windows.Forms/ScrollEventArgs.cs
 System.Windows.Forms/ScrollEventHandler.cs
 System.Windows.Forms/ScrollEventType.cs
 System.Windows.Forms/Shortcut.cs
+System.Windows.Forms/SizeGrip.cs
 System.Windows.Forms/SizeGripStyle.cs
 System.Windows.Forms/SortOrder.cs
 System.Windows.Forms/Splitter.cs
