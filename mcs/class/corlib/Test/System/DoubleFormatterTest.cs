@@ -117,8 +117,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category("NotWorking")]
-		public void TestFormatStringsN1_BuggyOnMono ()
+		public void TestFormatStringsN1_Fixed ()
 		{
 			NumberFormatInfo NumberFormat;
 			
