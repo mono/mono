@@ -90,7 +90,13 @@ namespace System.Windows.Forms {
 		private static int		wm_state_maximized_vert;// X Atom
 		private static int		net_wm_state;		// X Atom
 		private static int		net_active_window;	// X Atom
-		private static int		net_wm_context_help;	// X Atom
+		private static int		wm_context_help;	// X Atom
+		private static int		net_system_tray_s;	// X Atom
+		private static int		net_system_tray;	// X Atom
+		private static int		net_systray_orientation;// X Atom
+		private static int		xembed;			// X Atom
+		private static int		xembed_info;		// X Atom
+		private static IntPtr		systray_manager_window;	// Window handle to the systray manager window
 		private static int		async_method;
 		private static int		post_message;		// X Atom send to generate a PostMessage event
 		private static IntPtr		default_colormap;	// X Colormap ID
@@ -327,6 +333,13 @@ namespace System.Windows.Forms {
 		#endregion	// Callbacks
 
 		#region	Helpers
+		private void GetSystrayManagerWindow() {
+			XGrabServer(DisplayHandle);
+			systray_manager_window = XGetSelectionOwner(DisplayHandle, (IntPtr)net_system_tray_s);
+			XUngrabServer(DisplayHandle);
+			XFlush(DisplayHandle);
+		}
+
 		private void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
 			XEvent	xev;
 
@@ -340,6 +353,21 @@ namespace System.Windows.Forms {
 			xev.ClientMessageEvent.ptr2 = l1;
 			xev.ClientMessageEvent.ptr3 = l2;
 			XSendEvent(DisplayHandle, root_window, false, EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask, ref xev);
+		}
+
+		private void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
+			XEvent	xev;
+
+			xev = new XEvent();
+			xev.ClientMessageEvent.type = XEventName.ClientMessage;
+			xev.ClientMessageEvent.send_event = true;
+			xev.ClientMessageEvent.window = window;
+			xev.ClientMessageEvent.message_type = message_type;
+			xev.ClientMessageEvent.format = 32;
+			xev.ClientMessageEvent.ptr1 = l0;
+			xev.ClientMessageEvent.ptr2 = l1;
+			xev.ClientMessageEvent.ptr3 = l2;
+			XSendEvent(DisplayHandle, window, false, EventMask.NoEventMask, ref xev);
 		}
 		#endregion	// Helpers
 
@@ -399,7 +427,13 @@ namespace System.Windows.Forms {
 				wm_no_taskbar=XInternAtom(display_handle, "_NET_WM_STATE_NO_TASKBAR", false);
 				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
 				wm_state_modal = XInternAtom(display_handle, "_NET_WM_STATE_MODAL", false);
+				wm_context_help = XInternAtom(display_handle, "_NET_WM_CONTEXT_HELP", false);
 				net_active_window = XInternAtom(display_handle, "_NET_ACTIVE_WINDOW", false);
+				net_system_tray_s = XInternAtom(display_handle, "_NET_SYSTEM_TRAY_S" + screen_num.ToString(), false);
+				net_system_tray = XInternAtom(display_handle, "_NET_SYSTEM_TRAY_OPCODE", false);
+				net_systray_orientation = XInternAtom (display_handle, "_NET_SYSTEM_TRAY_ORIENTATION", false);
+				xembed_info = XInternAtom (display_handle, "_XEMBED_INFO", false);
+				xembed = XInternAtom (display_handle, "_XEMBED", false);
 				wm_state_maximized_horz = XInternAtom(display_handle, "_NET_WM_STATE_MAXIMIZED_HORZ", false);
 				wm_state_maximized_vert = XInternAtom(display_handle, "_NET_WM_STATE_MAXIMIZED_VERT", false);
 
@@ -456,7 +490,7 @@ namespace System.Windows.Forms {
 			int			Width;
 			int			Height;
 			MotifWmHints		mwmHints;
-			IntPtr[]		atoms;
+			uint[]			atoms;
 			int			atom_count;
 			int			BorderWidth;
 			XSetWindowAttributes	attr;
@@ -571,15 +605,15 @@ namespace System.Windows.Forms {
 
 				XChangeProperty(DisplayHandle, WindowHandle, mwm_hints, mwm_hints, 32, PropertyMode.Replace, ref mwmHints, 5);
 
-				atoms = new IntPtr[8];
+				atoms = new uint[8];
 				atom_count = 0;
 
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-					atoms[atom_count++] = (IntPtr)wm_state_above;
-					atoms[atom_count++] = (IntPtr)wm_no_taskbar;
+					atoms[atom_count++] = (uint)wm_state_above;
+					atoms[atom_count++] = (uint)wm_no_taskbar;
 				}
 				// Should we use SendNetWMMessage here?
-				XChangeProperty(DisplayHandle, WindowHandle, net_wm_state, atom, 32, PropertyMode.Replace, ref atoms, atom_count);
+				XChangeProperty(DisplayHandle, WindowHandle, net_wm_state, atom, 32, PropertyMode.Replace, atoms, atom_count);
 
 				XSelectInput(DisplayHandle, WindowHandle, SelectInputMask);
 
@@ -588,7 +622,7 @@ namespace System.Windows.Forms {
 				}
 
 				atom_count = 0;
-				atoms[atom_count++] = (IntPtr)wm_delete_window;
+				atoms[atom_count++] = (uint)wm_delete_window;
 
 				#if notneeded
 				// This is better handled via the root_window property notification
@@ -599,7 +633,7 @@ namespace System.Windows.Forms {
 				#endif
 
 				if ((cp.ExStyle & (int)WindowStyles.WS_EX_CONTEXTHELP) != 0) {
-					atoms[atom_count++] = (IntPtr)net_wm_context_help;
+					atoms[atom_count++] = (uint)wm_context_help;
 				}
 
 				XSetWMProtocols(DisplayHandle, WindowHandle, atoms, atom_count);
@@ -714,7 +748,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
 			MotifWmHints		mwmHints;
-			IntPtr[]		atoms;
+			uint[]			atoms;
 			int			atom_count;
 
 			// Set the appropriate window manager hints
@@ -775,15 +809,15 @@ namespace System.Windows.Forms {
 
 			XChangeProperty(DisplayHandle, handle, mwm_hints, mwm_hints, 32, PropertyMode.Replace, ref mwmHints, 5);
 
-			atoms = new IntPtr[8];
+			atoms = new uint[8];
 			atom_count = 0;
 
 			if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
-				atoms[atom_count++] = (IntPtr)wm_state_above;
-				atoms[atom_count++] = (IntPtr)wm_no_taskbar;
+				atoms[atom_count++] = (uint)wm_state_above;
+				atoms[atom_count++] = (uint)wm_no_taskbar;
 			}
 			// Should we use SendNetWMMessage here?
-			XChangeProperty(DisplayHandle, handle, net_wm_state, atom, 32, PropertyMode.Replace, ref atoms, atom_count);
+			XChangeProperty(DisplayHandle, handle, net_wm_state, atom, 32, PropertyMode.Replace, atoms, atom_count);
 
 			XSelectInput(DisplayHandle, handle, SelectInputMask);
 		}
@@ -1352,6 +1386,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ConfigureNotify: {
+					//Console.WriteLine("Received ConfigureNotify: X:{0}, Y:{1}, Width:{2}, Height:{3}, Above:{4}, override:{5}", xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height, xevent.ConfigureEvent.above, xevent.ConfigureEvent.override_redirect);
 					msg.message=Msg.WM_WINDOWPOSCHANGED;
 					msg.wParam=IntPtr.Zero;
 					msg.lParam=IntPtr.Zero;
@@ -2094,7 +2129,52 @@ namespace System.Windows.Forms {
 			XFreeGC(DisplayHandle, gc);
 		}
 
+		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
+			GetSystrayManagerWindow();
 
+			if (systray_manager_window != IntPtr.Zero) {
+				uint[]		atoms;
+				XSizeHints	size_hints;
+
+				size_hints = new XSizeHints();
+
+				size_hints.flags = (IntPtr)(XSizeHintsFlags.PMinSize | XSizeHintsFlags.PMaxSize | XSizeHintsFlags.PBaseSize);
+				size_hints.min_width = icon.Width;
+				size_hints.min_height = icon.Height;
+
+				size_hints.max_width = icon.Width;
+				size_hints.max_height = icon.Height;
+
+				size_hints.base_width = icon.Width;
+				size_hints.base_height = icon.Height;
+				XSetWMNormalHints(DisplayHandle, hwnd, ref size_hints);
+
+				atoms = new uint[2];
+				atoms[0] = 1;	// Version 1
+				atoms[1] = 0;	// We're not mapped
+
+				// This line cost me 3 days...
+				//XChangeProperty(DisplayHandle, hwnd, xembed_info, xembed_info, 32, PropertyMode.Replace, atoms, 2);
+
+				// Make sure the window exists
+				XSync(DisplayHandle, hwnd);
+
+				SendNetClientMessage(systray_manager_window, (IntPtr)net_system_tray, IntPtr.Zero, (IntPtr)SystrayRequest.SYSTEM_TRAY_REQUEST_DOCK, hwnd);
+				return true;
+			}
+			return false;
+		}
+
+		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon) {
+			// nothing to do, all done inside NotifyIcon
+			return true;
+		}	
+
+		internal override void SystrayRemove(IntPtr hwnd) {
+			XUnmapWindow(DisplayHandle, hwnd);
+			SetParent(hwnd, FosterParent);
+			// The caller can now re-dock it later...
+		}
 
 		// Santa's little helper
 		static void Where() 
@@ -2184,7 +2264,7 @@ namespace System.Windows.Forms {
 		internal extern static int XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
 
 		[DllImport ("libX11", EntryPoint="XSetWMProtocols")]
-		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, IntPtr[] protocols, int count);
+		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, uint[] protocols, int count);
 
 		[DllImport ("libX11", EntryPoint="XGrabPointer")]
 		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, uint cursor, uint timestamp);
@@ -2248,13 +2328,10 @@ namespace System.Windows.Forms {
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int type, int format, PropertyMode  mode, ref MotifWmHints data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, ref IntPtr[] atoms, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, Atom format, int type, PropertyMode  mode, uint[] atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, ref IntPtr[] atoms, int nelements);
-
-		[DllImport ("libX11", EntryPoint="XChangeProperty")]
-		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, IntPtr data, int nelements);
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, uint[] atoms, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);
@@ -2319,6 +2396,24 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XBlackPixel")]
 		internal extern static IntPtr XBlackPixel(IntPtr display, int screen_no);
+
+		[DllImport ("libX11", EntryPoint="XGrabServer")]
+		internal extern static void XGrabServer(IntPtr display);
+
+		[DllImport ("libX11", EntryPoint="XUngrabServer")]
+		internal extern static void XUngrabServer(IntPtr display);
+
+		[DllImport ("libX11", EntryPoint="XGetSelectionOwner")]
+		internal extern static IntPtr XGetSelectionOwner(IntPtr display, IntPtr selection);
+
+		[DllImport ("libX11", EntryPoint="XSetWMNormalHints")]
+		internal extern static void XSetWMNormalHints(IntPtr display, IntPtr window, ref XSizeHints hints);
+
+		[DllImport ("libX11", EntryPoint="XSetWMHints")]
+		internal extern static void XSetWMHints(IntPtr display, IntPtr window, ref XWMHints wmhints);
+
+		[DllImport ("libX11", EntryPoint="XSync")]
+		internal extern static void XSync(IntPtr display, IntPtr window);
 		#endregion
 	}
 }

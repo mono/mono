@@ -166,6 +166,10 @@ namespace System.Windows.Forms {
 
 		internal abstract bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent);
 
+		internal abstract bool SystrayAdd(IntPtr hwnd, string tip, Icon icon);
+		internal abstract bool SystrayChange(IntPtr hwnd, string tip, Icon icon);
+		internal abstract void SystrayRemove(IntPtr hwnd);
+
 		// System information
 
 		internal abstract int KeyboardSpeed { get; } 

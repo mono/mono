@@ -1,3 +1,16 @@
+2005-01-26  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs: Added Systray methods
+	* XplatUIWin32.cs: Implemented SystrayAdd(), SystrayChange() 
+	  and SystrayRemove() methods
+	* XplatUIOSX.cs: Stubbed Systray methods
+	* XplatUIX11.cs:
+	  - Implemented SystrayAdd(), SystrayChange() and SystrayRemove() 
+	    methods
+	  - Fixed broken XChangeProperty calls (marshalling messed up things)
+	* X11Structs.cs: Added enums and structs required for Size hinting
+	* NotifyIcon.cs: Added & implemented
+
 2005-01-26  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Space vertically layed out tabs properly.

@@ -1,3 +1,7 @@
+2005-01-26  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.Sources: Added NotifyIcon.cs
+
 2005-01-16  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.Sources: Added AccessibleEvents.cs

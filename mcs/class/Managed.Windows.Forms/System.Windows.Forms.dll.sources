@@ -184,6 +184,7 @@ System.Windows.Forms/NavigateEventHandler.cs
 System.Windows.Forms/NumericUpDown.cs
 System.Windows.Forms/NodeLabelEditEventArgs.cs
 System.Windows.Forms/NodeLabelEditEventHandler.cs
+System.Windows.Forms/NotifyIcon.cs
 System.Windows.Forms/OpenFileDialog.cs
 System.Windows.Forms/OpenTreeNodeEnumerator.cs
 System.Windows.Forms/Orientation.cs

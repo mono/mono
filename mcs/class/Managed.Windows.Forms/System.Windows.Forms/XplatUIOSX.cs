@@ -1372,6 +1372,21 @@ DEBUG THIS:
 			}
 		}
 
+		[MonoTODO]
+		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon) {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		internal override void SystrayRemove(IntPtr hwnd) {
+			throw new NotImplementedException();
+		}
+
 		internal void CheckError (int result, string error) {
 			if (result != 0)
 				throw new Exception ("XplatUIOSX.cs::" + error + "() Carbon subsystem threw an error: " + result);

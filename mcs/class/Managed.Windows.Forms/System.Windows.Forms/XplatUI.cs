@@ -372,14 +372,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool clear) {
+		internal static void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool clear) {
 			driver.ScrollWindow(hwnd, rectangle, XAmount, YAmount, clear);
 		}
 
-		public static void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
+		internal static void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
 			driver.ScrollWindow(hwnd, XAmount, YAmount, clear);
 		}
-		
+
+		internal static bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
+			return driver.SystrayAdd(hwnd, tip, icon);
+		}
+
+		internal static void SystrayChange(IntPtr hwnd, string tip, Icon icon) {
+			driver.SystrayChange(hwnd, tip, icon);
+		}
+
+		internal static void SystrayRemove(IntPtr hwnd) {
+			driver.SystrayRemove(hwnd);
+		}
+
+
 		// Santa's little helper
 		internal static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());

@@ -421,6 +421,32 @@ namespace System.Windows.Forms {
 			SM_MEDIACENTER          	= 87,
 			SM_CMETRICS             	= 88
 		}
+
+		// We'll only support _WIN32_IE < 0x0500 for now
+		internal enum NotifyIconMessage {
+			NIM_ADD				= 0x00000000,
+			NIM_MODIFY			= 0x00000001,
+			NIM_DELETE			= 0x00000002,
+		}
+
+		[Flags]
+		internal enum NotifyIconFlags {
+			NIF_MESSAGE			= 0x00000001,
+			NIF_ICON			= 0x00000002,
+			NIF_TIP				= 0x00000004,
+		}
+
+		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+		internal struct NOTIFYICONDATA {
+			internal uint			cbSize;
+			internal IntPtr			hWnd;
+			internal uint			uID;
+			internal NotifyIconFlags	uFlags;
+			internal uint			uCallbackMessage;
+			internal IntPtr			hIcon;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
+			internal string			szTip;
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -1283,6 +1309,69 @@ if (c != null) {
 			Win32ScrollWindowEx(hwnd, XAmount, YAmount, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, clear ? (ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE) : ScrollWindowExFlags.SW_NONE);
 		}
 
+		internal override bool SystrayAdd(IntPtr hwnd, string tip, Icon icon) {
+			NOTIFYICONDATA	nid;
+
+			nid = new NOTIFYICONDATA();
+
+			nid.cbSize = (uint)Marshal.SizeOf(nid);
+			nid.hIcon = icon.Handle;
+			nid.hWnd = hwnd;
+			nid.uID = 1;
+			nid.uCallbackMessage = (uint)Msg.WM_USER;
+			nid.uFlags = NotifyIconFlags.NIF_MESSAGE;
+
+			if (tip != null) {	 
+				nid.szTip = tip;
+				nid.uFlags |= NotifyIconFlags.NIF_TIP;
+			}
+
+			if (icon != null) {
+				nid.hIcon = icon.Handle;
+				nid.uFlags |= NotifyIconFlags.NIF_ICON;
+			}
+
+			return Win32Shell_NotifyIcon(NotifyIconMessage.NIM_ADD, ref nid);
+		}
+
+		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon) {
+			NOTIFYICONDATA	nid;
+
+			nid = new NOTIFYICONDATA();
+
+			nid.cbSize = (uint)Marshal.SizeOf(nid);
+			nid.hIcon = icon.Handle;
+			nid.hWnd = hwnd;
+			nid.uID = 1;
+			nid.uCallbackMessage = (uint)Msg.WM_USER;
+			nid.uFlags = NotifyIconFlags.NIF_MESSAGE;
+
+			if (tip != null) {
+				nid.szTip = tip;
+				nid.uFlags |= NotifyIconFlags.NIF_TIP;
+			}
+
+			if (icon != null) {
+				nid.hIcon = icon.Handle;
+				nid.uFlags |= NotifyIconFlags.NIF_ICON;
+			}
+
+			return Win32Shell_NotifyIcon(NotifyIconMessage.NIM_MODIFY, ref nid);
+		}
+
+		internal override void SystrayRemove(IntPtr hwnd) {
+			NOTIFYICONDATA	nid;
+
+			nid = new NOTIFYICONDATA();
+
+			nid.cbSize = (uint)Marshal.SizeOf(nid);
+			nid.hWnd = hwnd;
+			nid.uID = 1;
+			nid.uFlags = 0;
+
+			Win32Shell_NotifyIcon(NotifyIconMessage.NIM_DELETE, ref nid);
+		}
+
 
 		internal override int KeyboardSpeed {
 			get {
@@ -1531,6 +1620,9 @@ if (c != null) {
 
 		[DllImport ("user32.dll", EntryPoint="GetSystemMetrics", CallingConvention=CallingConvention.StdCall)]
 		private extern static int Win32GetSystemMetrics(SystemMetrics nIndex);
+
+		[DllImport ("shell32.dll", EntryPoint="Shell_NotifyIconW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32Shell_NotifyIcon(NotifyIconMessage dwMessage, ref NOTIFYICONDATA lpData);
 		#endregion
 	}
 }
