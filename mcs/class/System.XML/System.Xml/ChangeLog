@@ -1,5 +1,10 @@
 2004-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlValidatingReader.cs : Replaced XmlSchemaCollection with
+	  XmlSchemaSet. Added Settings property override
+
+2004-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DTDReader.cs : Replacing XmlSchemaDatatype .FromName(string) with
 	  .FromName(string, string) [going to remove former one; it is not
 	  good to support xdt:blah datatypes].

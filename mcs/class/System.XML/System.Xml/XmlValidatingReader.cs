@@ -41,6 +41,7 @@ using Mono.Xml.Schema;
 namespace System.Xml
 {
 #if NET_2_0
+	[Obsolete]
 	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver
 #else
 	public class XmlValidatingReader : XmlReader, IXmlLineInfo
@@ -56,7 +57,8 @@ namespace System.Xml
 		XmlResolver resolver; // Only used to non-XmlTextReader XmlReader
 		bool specifiedResolver;
 		ValidationType validationType;
-		XmlSchemaCollection schemas;
+		// for 2.0: Now it is obsolete. It is allocated only when it is required
+		XmlSchemaSet schemas;
 		DTDValidatingReader dtdReader;
 		IHasXmlSchemaInfo schemaInfo;
 		StringBuilder storedCharacters;
@@ -73,7 +75,7 @@ namespace System.Xml
 				resolver = new XmlUrlResolver ();
 			entityHandling = EntityHandling.ExpandEntities;
 			validationType = ValidationType.Auto;
-			schemas = new XmlSchemaCollection ();
+			schemas = new XmlSchemaSet ();
 			storedCharacters = new StringBuilder ();
 		}
 
@@ -129,8 +131,7 @@ namespace System.Xml
 #if NET_2_0
 		[MonoTODO]
 		public override Evidence Evidence {
-			get { throw new NotImplementedException ();
-			}
+			get { return validatingReader == null ? sourceReader.Evidence : validatingReader.Evidence; }
 		}
 #endif
 
@@ -280,17 +281,26 @@ namespace System.Xml
 		}
 
 		public XmlSchemaCollection Schemas {
-			get { return schemas; }
+			get {
+				return schemas.SchemaCollection;
+			}
 		}
 
 		internal void SetSchemas (XmlSchemaSet schemas)
 		{
-			this.schemas = schemas.SchemaCollection;
+			this.schemas = schemas;
 		}
 
 		public object SchemaType {
 			get { return schemaInfo.SchemaType; }
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override XmlReaderSettings Settings {
+			get { return validatingReader == null ? sourceReader.Settings : validatingReader.Settings; }
+		}
+#endif
 
 		[MonoTODO ("We decided not to support XDR schema that spec is obsolete.")]
 		public ValidationType ValidationType {
@@ -483,8 +493,7 @@ namespace System.Xml
 				case ValidationType.Schema:
 					dtdReader = new DTDValidatingReader (sourceReader, this);
 					XsdValidatingReader xsvr = new XsdValidatingReader (dtdReader, this);
-					foreach (XmlSchema schema in Schemas)
-						xsvr.Schemas.Add (schema);
+					xsvr.Schemas = Schemas.SchemaSet;
 					validatingReader = xsvr;
 					xsvr.XmlResolver = Resolver;
 					dtdReader.XmlResolver = Resolver;
