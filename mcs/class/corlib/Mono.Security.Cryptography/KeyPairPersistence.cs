@@ -8,7 +8,9 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
@@ -48,8 +50,10 @@ namespace Mono.Security.Cryptography {
 	/* NOTES
 	 * 
 	 * - There's NO confidentiality / integrity built in this
-	 * persistance mechanism. You better protect your directories
-	 * ACL correctly!
+	 * persistance mechanism. The container directories (both user and
+	 * machine) are created with restrited ACL. The ACL is also checked
+	 * when a key is accessed (so totally public keys won't be used).
+	 * see /mono/mono/metadata/security.c for implementation
 	 * 
 	 * - As we do not use CSP we limit ourselves to provider types (not 
 	 * names). This means that for a same type and container type, but 
@@ -65,13 +69,7 @@ namespace Mono.Security.Cryptography {
 	 * 
 	 * - You CAN'T changes properties of the keypair once it's been
 	 * created (saved). You must remove the container than save it 
-	 * back. This is the same behaviour as windows.
-	 */
-
-	/* TODO
-	 * 
-	 * - Where do we store the machine keys ?
-	 * - zeroize _keyvalue before setting to null !!!
+	 * back. This is the same behaviour as CSP under Windows.
 	 */
 
 #if INSIDE_CORLIB
@@ -80,9 +78,12 @@ namespace Mono.Security.Cryptography {
 	public 
 #endif
 	class KeyPairPersistence {
-
-		private static bool _pathExists = false; // check at 1st use
-		private static string _path;
+	
+		private static bool _userPathExists = false; // check at 1st use
+		private static string _userPath;
+		
+		private static bool _machinePathExists = false; // check at 1st use
+		private static string _machinePath;
 
 		private CspParameters _params;
 		private string _keyvalue;
@@ -92,20 +93,17 @@ namespace Mono.Security.Cryptography {
 		// constructors
 
 		public KeyPairPersistence (CspParameters parameters) 
-			: this (parameters, null) {}
+			: this (parameters, null)
+		{
+		}
 
-		public KeyPairPersistence (CspParameters parameters, string keypair) 
+		public KeyPairPersistence (CspParameters parameters, string keyPair) 
 		{
 			if (parameters == null)
 				throw new ArgumentNullException ("parameters");
 
 			_params = Copy (parameters);
-			_keyvalue = keypair;
-		}
-
-		~KeyPairPersistence () 
-		{
-			Clear ();
+			_keyvalue = keyPair;
 		}
 
 		// properties
@@ -113,11 +111,15 @@ namespace Mono.Security.Cryptography {
 		public string Filename {
 			get { 
 				if (_filename == null) {
-					_filename = String.Format ("[{0}][{1}][{2}].xml", 
+					_filename = String.Format (CultureInfo.InvariantCulture,
+						"[{0}][{1}][{2}].xml", 
 						_params.ProviderType, 
 						this.ContainerName, 
 						_params.KeyNumber);
-					_filename = System.IO.Path.Combine (Path, _filename);
+					if (UseMachineKeyStore)
+						_filename = Path.Combine (MachinePath, _filename);
+					else
+						_filename = Path.Combine (UserPath, _filename);
 				}
 				return _filename; 
 			}
@@ -138,27 +140,15 @@ namespace Mono.Security.Cryptography {
 
 		// methods
 
-		public void Clear () 
-		{
-			Zeroize (ref _keyvalue);
-		}
-
 		public bool Load () 
 		{
 			// see NOTES
-			new FileIOPermission (FileIOPermissionAccess.Read, Path).Assert ();
+			new FileIOPermission (FileIOPermissionAccess.Read, this.Filename).Assert ();
 
 			bool result = File.Exists (this.Filename);
 			if (result) {
-				string xml = null;
-				try {
-					using (StreamReader sr = File.OpenText (this.Filename)) {
-						xml = sr.ReadToEnd ();
-					}
-					FromXml (xml);
-				}
-				finally {
-					Zeroize (ref xml);
+				using (StreamReader sr = File.OpenText (this.Filename)) {
+					FromXml (sr.ReadToEnd ());
 				}
 			}
 			return result;
@@ -167,49 +157,189 @@ namespace Mono.Security.Cryptography {
 		public void Save () 
 		{
 			// see NOTES
-			new FileIOPermission (FileIOPermissionAccess.Write, Path).Assert ();
+			new FileIOPermission (FileIOPermissionAccess.Write, this.Filename).Assert ();
 
 			using (FileStream fs = File.Open (this.Filename, FileMode.Create)) {
 				StreamWriter sw = new StreamWriter (fs, Encoding.UTF8);
 				sw.Write (this.ToXml ());
 				sw.Close ();
 			}
+			// apply protection to newly created files
+			if (UseMachineKeyStore)
+				ProtectMachine (Filename);
+			else
+				ProtectUser (Filename);
 		}
 
 		public void Remove () 
 		{
 			// see NOTES
-			new FileIOPermission (FileIOPermissionAccess.Write, Path).Assert ();
+			new FileIOPermission (FileIOPermissionAccess.Write, this.Filename).Assert ();
 
-			Clear ();
 			File.Delete (this.Filename);
 			// it's now possible to change the keypair un the container
 		}
 
-		// private stuff
+		// private static stuff
 
-		private static string Path {
+		private static string UserPath {
 			get {
-				if (_path == null) {
+				if ((_userPath == null) || (!_userPathExists)) {
 					lock (typeof (KeyPairPersistence)) {
-						// TODO ? where to put machine key pairs ?
-						_path = System.IO.Path.Combine (
+						_userPath = Path.Combine (
 							Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
 							".mono");
-						_path = System.IO.Path.Combine (_path, "keypairs");
+						_userPath = Path.Combine (_userPath, "keypairs");
 
-						if (!_pathExists) {
-							_pathExists = Directory.Exists (_path);
-							if (!_pathExists) {
-								Directory.CreateDirectory (_path);
+						_userPathExists = Directory.Exists (_userPath);
+						if (!_userPathExists) {
+							try {
+								Directory.CreateDirectory (_userPath);
+								ProtectUser (_userPath);
+								_userPathExists = true;
+							}
+							catch (Exception e) {
+								throw new CryptographicException ("Could not create key store.", e);
 							}
 						}
 					}
 				}
-				return _path;
+				// is it properly protected ?
+				if (!IsUserProtected (_userPath)) {
+					throw new CryptographicException ("Improperly protected key pairs.");
+				}
+				return _userPath;
 			}
 		}
 
+		private static string MachinePath {
+			get {
+				if ((_machinePath == null) || (!_machinePathExists)) {
+					lock (typeof (KeyPairPersistence)) {
+						_machinePath = Path.Combine (
+							Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
+							".mono");
+						_machinePath = Path.Combine (_machinePath, "keypairs");
+
+						_machinePathExists = Directory.Exists (_machinePath);
+						if (!_machinePathExists) {
+							try {
+								Directory.CreateDirectory (_machinePath);
+								ProtectMachine (_machinePath);
+								_machinePathExists = true;
+							}
+							catch (Exception e) {
+								throw new CryptographicException ("Could not create key store.", e);
+							}
+						}
+					}
+				}
+				// is it properly protected ?
+				if (!IsMachineProtected (_machinePath)) {
+					throw new CryptographicException ("Improperly protected key pairs.");
+				}
+				return _machinePath;
+			}
+		}
+
+#if INSIDE_CORLIB
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern bool _CanSecure (string root);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern bool _ProtectUser (string path);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern bool _ProtectMachine (string path);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern bool _IsUserProtected (string path);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern bool _IsMachineProtected (string path);
+#else
+		// Mono.Security.dll assembly can't use the internal 
+		// call (and still run with other runtimes)
+
+		// Note: Class is only available in Mono.Security.dll as
+		// a management helper (e.g. build a GUI app)
+
+		internal static bool _CanSecure (string root) 
+		{
+			return true;
+		}
+
+		internal static bool _ProtectUser (string path)
+		{
+			return true;
+		}
+
+		internal static bool _ProtectMachine (string path)
+		{
+			return true;
+		}
+
+		internal static bool _IsUserProtected (string path)
+		{
+			return true;
+		}
+
+		internal static bool _IsMachineProtected (string path)
+		{
+			return true;
+		}
+#endif
+		// private stuff
+
+		private static bool CanSecure (string path) 
+		{
+			// we assume POSIX filesystems can always be secured
+			if ((int) Environment.OSVersion.Platform == 128)
+				return true;
+			// while we ask the runtime for Windows OS
+			return _CanSecure (Path.GetPathRoot (path));
+		}
+
+		private static bool ProtectUser (string path)
+		{
+			// we cannot protect on some filsystem (like FAT)
+			if (CanSecure (path)) {
+				return _ProtectUser (path);
+			}
+			// but Mono still needs to run on them :(
+			return true;
+		}
+
+		private static bool ProtectMachine (string path)
+		{
+			// we cannot protect on some filsystem (like FAT)
+			if (CanSecure (path)) {
+				return _ProtectMachine (path);
+			}
+			// but Mono still needs to run on them :(
+			return true;
+		}
+
+		private static bool IsUserProtected (string path)
+		{
+			// we cannot protect on some filsystem (like FAT)
+			if (CanSecure (path)) {
+				return _IsUserProtected (path);
+			}
+			// but Mono still needs to run on them :(
+			return true;
+		}
+
+		private static bool IsMachineProtected (string path)
+		{
+			// we cannot protect on some filsystem (like FAT)
+			if (CanSecure (path)) {
+				return _IsMachineProtected (path);
+			}
+			// but Mono still needs to run on them :(
+			return true;
+		}
+		
 		private bool CanChange {
 			get { return (_keyvalue == null); }
 		}
@@ -229,7 +359,7 @@ namespace Mono.Security.Cryptography {
 						// easy to spot
 						_container = "default";
 					}
-					else if ((_params.KeyContainerName == null) || (_params.KeyContainerName == String.Empty)) {
+					else if ((_params.KeyContainerName == null) || (_params.KeyContainerName.Length == 0)) {
 						_container = Guid.NewGuid ().ToString ();
 					}
 					else {
@@ -276,7 +406,7 @@ namespace Mono.Security.Cryptography {
 			// keypair is a XML string (requiring parsing)
 			StringBuilder xml = new StringBuilder ();
 			xml.AppendFormat ("<KeyPair>{0}\t<Properties>{0}\t\t<Provider ", Environment.NewLine);
-			if ((_params.ProviderName != null) && (_params.ProviderName != String.Empty)) {
+			if ((_params.ProviderName != null) && (_params.ProviderName.Length != 0)) {
 				xml.AppendFormat ("Name=\"{0}\" ", _params.ProviderName);
 			}
 			xml.AppendFormat ("Type=\"{0}\" />{1}\t\t<Container ", _params.ProviderType, Environment.NewLine);
@@ -286,16 +416,6 @@ namespace Mono.Security.Cryptography {
 			}
 			xml.AppendFormat (">{1}\t\t{0}{1}\t</KeyValue>{1}</KeyPair>{1}", this.KeyValue, Environment.NewLine);
 			return xml.ToString ();
-		}
-
-		private void Zeroize (ref string s) 
-		{
-			if (s != null) {
-				// TODO - zeroize the private information ?
-				// how can we track how it was used by other objects (copies?)
-				// and/or reverting to unsafe code ?
-				s = null;
-			}
 		}
 	}
 }

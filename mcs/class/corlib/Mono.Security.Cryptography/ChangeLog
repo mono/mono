@@ -1,3 +1,8 @@
+2004-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistence.cs: Completed key pair protection for both
+	Linux and Windows (protection done by runtime).
+
 2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* PKCS1.cs: Use BitConverterLE
