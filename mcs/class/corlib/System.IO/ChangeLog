@@ -1,3 +1,8 @@
+2003-02-21  Dick Porter  <dick@ximian.com>
+
+	* FileStream.cs: Use locks around buffer manipulations.  Fixes bug
+	32344
+
 2003-02-18  Dick Porter  <dick@ximian.com>
 
 	* FileStream.cs: Make FileMode.Append work, and check for Seeking
