@@ -1,3 +1,8 @@
+2004-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathAtomicValue.cs : missing Init() definition for float and string;
+	  latter one resulted in infinite loop in Init(object,XmlSchemaType).
+
 2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathNavigator.cs : TypedValue could be implemented.

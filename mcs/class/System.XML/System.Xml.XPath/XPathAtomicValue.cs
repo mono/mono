@@ -146,6 +146,11 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public XPathAtomicValue (float value, XmlSchemaType xmlType)
 		{
+			Init (value, xmlType);
+		}
+		
+		private void Init (float value, XmlSchemaType xmlType)
+		{
 			if (xmlType == null)
 				throw new ArgumentNullException ("xmlType");
 			xmlTypeCode = XmlTypeCode.Float;
@@ -155,6 +160,11 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public XPathAtomicValue (string value, XmlSchemaType xmlType)
+		{
+			Init (value, xmlType);
+		}
+		
+		public void Init (string value, XmlSchemaType xmlType)
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
@@ -215,7 +225,8 @@ namespace System.Xml.XPath
 					Init (((IList) col) [0], xmlType);
 				else {
 					IEnumerator en = col.GetEnumerator ();
-					en.MoveNext ();
+					if (!en.MoveNext ())
+						return;
 					if (en.Current is DictionaryEntry)
 						Init (((DictionaryEntry) en.Current).Value, xmlType);
 					else
