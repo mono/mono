@@ -33,7 +33,7 @@ namespace System.Data
 		string rowFilter = "";
 		string sort = "";
 		DataViewRowState rowState;
-		DataRowView[] rowCache = null;
+		DataRowView[] rowCache = new DataRowView[0];
 		
 		
 		bool allowNew = true; 
@@ -566,7 +566,7 @@ namespace System.Data
 		{
 			// TODO: what really happens?
 			Close ();
-			rowCache = null;
+			rowCache = new DataRowView[0];
 			Open ();
 			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1 ));
 		}

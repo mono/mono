@@ -1,3 +1,8 @@
+2004-12-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* DataView.cs: Patch from Marc Haisenko that ensures that rowCache
+	is never null.
+
 2004-11-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomDataClassGenerator.cs : generated foreign key constraint
