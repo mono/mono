@@ -4773,9 +4773,8 @@ namespace Mono.CSharp {
 					if (implementing == null){
 						Report.Error (539, method.Location,
 							      "'{0}' in explicit interface declaration is not an interface", method_name);
-					return false;
-				}
-					method_name = member.InterfaceType.FullName + "." + name;
+						return false;
+					}
 				}
 			}
 
