@@ -73,8 +73,11 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public void DefineEnum (object parent_builder)
+		public Type DefineEnum (object parent_builder)
 		{
+			if (TypeBuilder != null)
+				return TypeBuilder;
+			
 			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
 
 			UnderlyingType = RootContext.TypeManager.LookupType (BaseType);
@@ -90,7 +93,7 @@ namespace Mono.CSharp {
 				Report.Error (1008, Location,
 					      "Type byte, sbyte, short, ushort, int, uint, " +
 					      "long, or ulong expected");
-				return;
+				return null;
 			}
 
 			if (parent_builder is ModuleBuilder) {
@@ -121,7 +124,7 @@ namespace Mono.CSharp {
 
 			RootContext.TypeManager.AddEnumType (Name, TypeBuilder, this);
 
-			return;
+			return TypeBuilder;
 		}
 
 	        bool IsValidEnumConstant (Expression e)
@@ -262,7 +265,7 @@ namespace Mono.CSharp {
 				if (val == null) {
 					Report.Error (-12, loc, "Definition is circular.");
 					return null;
-				}	
+				}
 
 				if (IsValidEnumConstant (val)) {
 					c = (Constant) val;

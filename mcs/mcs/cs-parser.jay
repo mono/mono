@@ -1619,7 +1619,9 @@ enum_declaration
 
 		e.Namespace = current_namespace;
 
-		CheckDef (current_container.AddEnum (e), name);
+		CheckDef (current_container.AddEnum (e), full_name);
+		RootContext.Tree.RecordEnum (full_name, e);
+
 	  }
 	;
 

@@ -742,7 +742,7 @@ namespace Mono.CSharp {
 
 			error = false;
 			name = MakeFQN (ns, name);
-
+			
 			t  = RootContext.TypeManager.LookupType (name);
 			if (t != null)
 				return t;
@@ -752,6 +752,20 @@ namespace Mono.CSharp {
 			else 
 				parent = (Struct) RootContext.Tree.Structs [name];
 
+			if (parent == null) {
+				Enum en = null;
+				
+				if (RootContext.Tree.Enums != null)
+					en = (Enum) RootContext.Tree.Enums [name];
+				
+				if (en != null) {
+					t = en.DefineEnum (builder);
+					
+					if (t != null)
+						return t;
+				}
+			}
+			
 			if (parent != null){
 				t = parent.DefineType (builder);
 				if (t == null){
@@ -924,7 +938,7 @@ namespace Mono.CSharp {
 					string detail = "";
 					
 					if (t.IsValueType)
-						detail = " (a class can not inherit from a struct)";
+						detail = " (a class can not inherit from a struct/enum)";
 							
 					Report.Error (509, "class `"+ Name +
 						      "': Cannot inherit from sealed class `"+

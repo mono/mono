@@ -1,3 +1,15 @@
+2002-03-05  Ravi Pratap  <ravi@ximian.com>
+
+	* tree.cs (RecordEnum): Add. We now keep track of enums too.
+
+	* class.cs (LookupInterfaceOrClass): Check against the list of recorded
+	Enums since those are types too. 
+
+	* cs-parser.jay (enum_declaration): Record enums as we parse them.
+	
+	* enum.cs (DefineEnum): Return if the TypeBuilder has already been defined 
+	thanks to a call during the lookup process.
+
 2002-03-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Foreach): Lots of work to accomodate a particular

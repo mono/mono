@@ -53,6 +53,11 @@ namespace Mono.CSharp
 		// </summary>
 		Hashtable namespaces;
 
+		// <summary>
+		//  Keeps track of enums defined
+		// </summary>
+		Hashtable enums;
+		
 		public Tree ()
 		{
 			root_types = new TypeContainer (null, "", new Location (-1));
@@ -81,6 +86,14 @@ namespace Mono.CSharp
 				classes = new Hashtable ();
 
 			classes.Add (name, c);
+		}
+
+		public void RecordEnum (string name, Enum e)
+		{
+			if (enums == null)
+				enums = new Hashtable ();
+
+			enums.Add (name, e);
 		}
 
 		public Namespace RecordNamespace (Namespace parent, string file, string name)
@@ -133,6 +146,12 @@ namespace Mono.CSharp
 		public Hashtable Namespaces {
 			get {
 				return namespaces;
+			}
+		}
+
+		public Hashtable Enums {
+			get {
+				return enums;
 			}
 		}
 	}
