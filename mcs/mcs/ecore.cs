@@ -2973,7 +2973,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		MethodInfo FindAccessor (Type invocation_type, bool is_set)
+		void FindAccessors (Type invocation_type)
 		{
 			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 				BindingFlags.Static | BindingFlags.Instance |
@@ -2990,37 +2990,25 @@ namespace Mono.CSharp {
 
 				if (group.Length != 1)
 					// Oooops, can this ever happen ?
-					return null;
+					return;
 
 				PropertyInfo pi = (PropertyInfo) group [0];
 
-				MethodInfo get = pi.GetGetMethod (true);
-				MethodInfo set = pi.GetSetMethod (true);
+				if (getter == null)
+					getter = pi.GetGetMethod (true);;
 
-				if (is_set) {
-					if (set != null)
-						return set;
-				} else {
-					if (get != null)
-						return get;
-				}
+				if (setter == null)
+					setter = pi.GetSetMethod (true);;
 
-				MethodInfo accessor = get != null ? get : set;
-				if (accessor == null)
-					continue;
-				if ((accessor.Attributes & MethodAttributes.NewSlot) != 0)
-					break;
+				MethodInfo accessor = getter != null ? getter : setter;
+
+				if (!accessor.IsVirtual)
+					return;
 			}
-
-			return null;
 		}
 
-		MethodInfo GetAccessor (Type invocation_type, bool is_set)
+		bool IsAccessorAccessible (Type invocation_type, MethodInfo mi)
 		{
-			MethodInfo mi = FindAccessor (invocation_type, is_set);
-			if (mi == null)
-				return null;
-
 			MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
 
 			//
@@ -3029,48 +3017,41 @@ namespace Mono.CSharp {
 			if (ma == MethodAttributes.Private) {
 				Type declaring_type = mi.DeclaringType;
 					
-				if (invocation_type != declaring_type){
-					if (TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
-						return mi;
-					else
-						return null;
-				} else
-					return mi;
+				if (invocation_type != declaring_type)
+					return TypeManager.IsSubclassOrNestedChildOf (invocation_type, declaring_type);
+
+				return true;
 			}
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
 			// same assembly.  
 			//
 			if (ma == MethodAttributes.FamANDAssem){
-				if (mi.DeclaringType.Assembly != invocation_type.Assembly)
-					return null;
-				else
-					return mi;
+				return (mi.DeclaringType.Assembly != invocation_type.Assembly);
 			}
 
 			// Assembly and FamORAssem succeed if we're in the same assembly.
 			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
 				if (mi.DeclaringType.Assembly == invocation_type.Assembly)
-					return mi;
+					return true;
 			}
 
 			// We already know that we aren't in the same assembly.
 			if (ma == MethodAttributes.Assembly)
-				return null;
+				return false;
 
 			// Family and FamANDAssem require that we derive.
 			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
 				if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
-					return null;
-				else {
-					if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
-						must_do_cs1540_check = true;
+					return false;
 
-					return mi;
-				}
+				if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
+					must_do_cs1540_check = true;
+
+				return true;
 			}
 
-			return mi;
+			return true;
 		}
 
 		//
@@ -3079,17 +3060,14 @@ namespace Mono.CSharp {
 		//
 		void ResolveAccessors (EmitContext ec)
 		{
-			getter = GetAccessor (ec.ContainerType, false);
-			if ((getter != null) && getter.IsStatic)
-				is_static = true;
+			FindAccessors (ec.ContainerType);
 
-			setter = GetAccessor (ec.ContainerType, true);
-			if ((setter != null) && setter.IsStatic)
-				is_static = true;
-
-			if (setter == null && getter == null){
+			if (setter != null && !IsAccessorAccessible (ec.ContainerType, setter) ||
+				getter != null && !IsAccessorAccessible (ec.ContainerType, getter)) {
 				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", PropertyInfo.Name);
 			}
+
+			is_static = getter != null ? getter.IsStatic : setter.IsStatic;
 		}
 
 		bool InstanceResolve (EmitContext ec)
