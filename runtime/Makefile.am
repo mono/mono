@@ -45,6 +45,7 @@ $(monobins_DATA):
 	browsercaps-updater.exe) d=tools/browsercaps-updater    ;; \
 	gacutil.exe)		 d=tools/gacutil		;; \
 	gmcs.exe)                d=gmcs				;; \
+	sn.exe)                  d=tools/sn                     ;; \
 	esac; \
 	f=$(mcs_topdir)/$$d/$@; \
 	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
