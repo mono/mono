@@ -19,6 +19,7 @@
 				<excludes name="Test/**"/>
 				<excludes name="Linux/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
 		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
@@ -41,6 +42,7 @@
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
+				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
@@ -58,6 +60,7 @@
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
 		<!-- NUnit can only run under windows right now, so build for windows
@@ -83,6 +86,7 @@
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
+				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
