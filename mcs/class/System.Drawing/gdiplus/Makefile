@@ -27,7 +27,12 @@ local_objs = bitmap.o \
 	gdip_win32.o
 
 
-all-local: $(gdiplus)
+all-local: 
+	(if pkg-config --modversion cairo; then \
+		make guilibrary; \
+	else \
+		echo WARNING: Skipping gdiplus library compilation; \
+	fi)
 
 clean-local:
 	rm -f *.o
@@ -36,9 +41,13 @@ clean-local:
 
 install-local: all-local
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
-	$(INSTALL_LIB) $(gdiplus) $(DESTDIR)$(prefix)/lib
+	if test -f $(gdiplus); then \
+		$(INSTALL_LIB) $(gdiplus) $(DESTDIR)$(prefix)/lib \
+	fi
 
 dist-local: dist-default
+
+guilibrary: $(gdiplus)
 
 $(gdiplus) : $(local_sources:.c=.o) 
 	gcc -shared -Wl,-soname,libgdiplus.dll.so -o $(gdiplus) $(local_objs) $(LOCAL_LDFLAGS)
