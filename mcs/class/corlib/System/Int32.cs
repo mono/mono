@@ -18,6 +18,7 @@ namespace System {
 		public const int MaxValue = 0x7fffffff;
 		public const int MinValue = -2147483648;
 		
+		// This field is looked up by name in the runtime
 		internal int m_value;
 
 		public int CompareTo (object v)
