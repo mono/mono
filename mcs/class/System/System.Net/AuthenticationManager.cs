@@ -24,6 +24,7 @@ namespace System.Net {
 			}
 		}
 
+		[MonoTODO]
 		public static Authorization PreAuthenticate (WebRequest request,
 							     ICredentials credentials)
 		{
@@ -39,11 +40,13 @@ namespace System.Net {
 			modules.Add (authenticationModule);
 		}
 
+		[MonoTODO]
 		public static void Unregister (IAuthenticationModule authenticationModule)
 		{
 			// FIXME: implement
 		}
 
+		[MonoTODO]
 		public static void Unregister (string authenticationScheme)
 		{
 			// FIXME: implement

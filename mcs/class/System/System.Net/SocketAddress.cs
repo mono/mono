@@ -36,6 +36,7 @@ namespace System.Net {
 			}
 		}
 
+		[MonoTODO]
 		public byte this [ int offset ] {
 			get {
 				// FIXME; Unimplemented.

@@ -108,7 +108,8 @@ namespace System.Net {
                         child.Start();
                         return requestResult;
 		}
-		
+
+		[MonoTODO]
 		public static IAsyncResult BeginResolve(string hostName,
 	                                        AsyncCallback requestCallback,
 						object stateObject) {
@@ -119,7 +120,8 @@ namespace System.Net {
 		public static IPHostEntry EndGetHostByName(IAsyncResult asyncResult) {
 			return ((DnsAsyncResult)asyncResult).Worker.Result;
 		}
-		
+
+		[MonoTODO]
 		public static IPHostEntry EndResolve(IAsyncResult asyncResult) {
 			// TODO
 			throw new NotImplementedException();
@@ -142,6 +144,7 @@ namespace System.Net {
 		/// <param name=address>
 		/// IP address in network byte order (e.g. Big-Endian).
 		/// </param>
+		[MonoTODO]
 		private static IPHostEntry GetHostByAddress(long address) {
 			short length = 4;
 			if (address > uint.MaxValue)
@@ -174,7 +177,8 @@ namespace System.Net {
 		
 		[DllImport("cygwin1", EntryPoint="gethostbyname")]
 		private static extern IntPtr _GetHostByName(string hostName);
-		
+
+		[MonoTODO]
 		public static IPHostEntry GetHostByName(string hostName) {
 			if (hostName == null)
 				throw new ArgumentNullException();
