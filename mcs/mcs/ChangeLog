@@ -1,3 +1,8 @@
+2002-09-16  Nick Drochak  <ndrochak@gol.com>
+
+	* parameter.cs: Fix compile error.  Cannot reference static member
+	from an instance object.  Is this an mcs bug?
+
 2002-09-14  Martin Baulig  <martin@gnome.org>
 
 	* decl.cs (MemberCache.SetupCacheForInterface): Don't add an interface

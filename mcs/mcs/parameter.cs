@@ -86,7 +86,7 @@ namespace Mono.CSharp {
 		
 		public ParameterAttributes Attributes {
 			get {
-				int flags = ((int) ModFlags) & ~((int) ModFlags.ISBYREF);
+				int flags = ((int) ModFlags) & ~((int) Parameter.Modifier.ISBYREF);
 				switch ((Modifier) flags) {
 				case Modifier.NONE:
 					return ParameterAttributes.None;
