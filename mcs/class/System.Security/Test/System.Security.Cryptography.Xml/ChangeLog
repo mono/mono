@@ -1,3 +1,8 @@
+2003-03-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* KeyInfoNameTest.cs: Better naming.
+	* KeyInfoRetrievalMethodTest.cs: Splitted a test.
+
 2003-02-19  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* All: Updated tests for NUnit2. Some big tests where splited in 

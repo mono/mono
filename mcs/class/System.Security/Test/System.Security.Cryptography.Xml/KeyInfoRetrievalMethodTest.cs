@@ -20,14 +20,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	public class KeyInfoRetrievalMethodTest {
 
 		[Test]
+		public void TestNewEmptyKeyNode () 
+		{
+			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
+			Assertion.AssertEquals ("Empty", "<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+		}
+
+		[Test]
 		public void TestNewKeyNode () 
 		{
 			string uri = "http://www.go-mono.com/";
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
-
-			// verify empty XML
-			Assertion.AssertEquals ("Empty", "<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
-
 			uri1.Uri = uri;
 			XmlElement xel = uri1.GetXml ();
 

@@ -30,8 +30,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoName name2 = new KeyInfoName ();
 			name2.LoadXml (xel);
 
-			Assertion.AssertEquals ("name1==name2", (name1.GetXml ().OuterXml), (name2.GetXml ().OuterXml));
 			Assertion.AssertEquals ("newKeyValue==value", newKeyValue, name1.Value);
+			Assertion.AssertEquals ("name1==name2", (name1.GetXml ().OuterXml), (name2.GetXml ().OuterXml));
 		}
 
 		[Test]
@@ -41,11 +41,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (value);
 
-			KeyInfoName name1 = new KeyInfoName ();
-			name1.LoadXml (doc.DocumentElement);
-
-			string s = (name1.GetXml ().OuterXml);
-			Assertion.AssertEquals ("Name", value, s);
+			KeyInfoName name = new KeyInfoName ();
+			name.LoadXml (doc.DocumentElement);
+			Assertion.AssertEquals ("import.Name", "Mono::", name.Value);
+			Assertion.AssertEquals ("import.GetXml", value, name.GetXml ().OuterXml);
 		}
 
 		[Test]
@@ -56,8 +55,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (bad);
 
-			KeyInfoName name1 = new KeyInfoName ();
-			name1.LoadXml (null);
+			KeyInfoName name = new KeyInfoName ();
+			name.LoadXml (null);
 		}
 
 		[Test]
@@ -67,9 +66,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (bad);
 
-			KeyInfoName name1 = new KeyInfoName ();
-			name1.LoadXml (doc.DocumentElement);
-			Assertion.AssertEquals("invalid", "<KeyName xmlns=\"http://www.w3.org/2000/09/xmldsig#\"></KeyName>", (name1.GetXml ().OuterXml));
+			KeyInfoName name = new KeyInfoName ();
+			name.LoadXml (doc.DocumentElement);
+			Assertion.AssertEquals ("invalid.Name", "", name.Value);
+			Assertion.AssertEquals ("invalid.GetXml", "<KeyName xmlns=\"http://www.w3.org/2000/09/xmldsig#\"></KeyName>", (name.GetXml ().OuterXml));
 		}
 	}
 }
