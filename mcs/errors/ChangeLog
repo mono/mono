@@ -1,5 +1,9 @@
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
+	* error-3.cs: Added testcase for CS0188.
+
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
 	* error-4.cs: Renamed to cs1502-2.cs.
 
 2003-05-18  Martin Baulig  <martin@ximian.com>

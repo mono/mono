@@ -15,6 +15,22 @@ struct A
 	}
 }
 
+struct B
+{
+	public int a;
+
+	public B (int foo)
+	{
+		// CS0188
+		Test ();
+	}
+
+	public void Test ()
+	{
+		Console.WriteLine (a);
+	}
+}
+
 class X
 {
 	// CS0177
