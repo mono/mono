@@ -14,7 +14,7 @@
 
 .namespace Mono.ILASM.Tests {
 
-        .class public Test_11<int32 name_a_a_1, int32 name_a_a_a_2> extends [mscorlib]System.Object {
+        .class public Test_11<T> extends [mscorlib]System.Object {
                	
 	}
 

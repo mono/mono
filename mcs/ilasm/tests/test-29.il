@@ -14,16 +14,11 @@
 
 .namespace Mono.ILASM.Tests {
 
-        .class public Driver extends [mscorlib]System.Object {
-
-               .method public static void test ()
-               {
-                        nop
-               }
-        }
-        
+           
         .class public Test_29<T> extends [mscorlib]System.Object {
-
+        
+               .constraint !0 is class [mscorlib]System.Collections.IList
+               
                .method void meth<T> () {
 
                }
