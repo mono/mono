@@ -45,6 +45,10 @@ Test cases listed by Category:
 
   test-155.cs test-156.cs
 
+* Attributes
+
+  test-157.cs
+
 Test cases listed by Number:
 ============================
 
@@ -97,6 +101,10 @@ Nested interfaces.
 test-156.cs
 -----------
 Check whether base types are at least as accessible than the current type.
+
+test-157.cs
+-----------
+Attributes.
 
 verify-1.cs
 -----------
