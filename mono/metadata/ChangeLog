@@ -1,3 +1,12 @@
+2003-02-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c metadata.h (mono_metadata_nesting_typedef): changed to
+	iterate over the NESTEDCLASS table using a linear search since the
+	table is not guaranteed to be sorted by the secondary key.
+
+	* class.c (mono_class_create_from_typedef): fixed up call to
+	mono_metadata_nesting_typedef.
+	
 2003-02-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_string_to_byvalstr): clear the memory as
