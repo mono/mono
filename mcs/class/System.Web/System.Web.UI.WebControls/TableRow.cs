@@ -44,11 +44,12 @@ namespace System.Web.UI.WebControls
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get {
-				object o = ViewState ["HorizontalAlign"];
-				return (o == null) ? HorizontalAlign.NotSet : (HorizontalAlign) o;
+				if (!ControlStyleCreated)
+					return HorizontalAlign.NotSet;
+				return ((TableItemStyle)ControlStyle).HorizontalAlign;			
 			}
 
-			set { ViewState ["HorizontalAlign"] = value; }
+			set { ((TableItemStyle)ControlStyle).HorizontalAlign = value; }
 		}
 
 		[DefaultValue (typeof (VerticalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
@@ -56,11 +57,12 @@ namespace System.Web.UI.WebControls
 		public virtual VerticalAlign VerticalAlign
 		{
 			get {
-				object o = ViewState ["VerticalAlign"];
-				return (o == null) ? VerticalAlign.NotSet : (VerticalAlign) o;
+				if (!ControlStyleCreated)
+					return VerticalAlign.NotSet;
+				return ((TableItemStyle)ControlStyle).VerticalAlign;			
 			}
 
-			set { ViewState ["VerticalAlign"] = value; }
+			set { ((TableItemStyle)ControlStyle).VerticalAlign = value; }
 		}
 
 		protected override Style CreateControlStyle ()

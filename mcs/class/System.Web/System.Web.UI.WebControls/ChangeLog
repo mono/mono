@@ -1,4 +1,9 @@
 2003-12-10  Alon Gazit <along@mainsoft.com>
+	* TableRow.cs: Change the implementation of the properties 
+	HorizontalAlign and  VerticalAlign. The current implementation      
+	has no influence on the rendered Html.
+
+2003-12-10  Alon Gazit <along@mainsoft.com>
 	* TableItemStyle.cs: Add setting of The WRAP flag in the Wrap
 	property's set method.
 	
