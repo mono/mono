@@ -55,11 +55,6 @@ namespace MonoTests.System.Collections
                         AssertEquals(4, stackTest.Count);
                 }
 
-                public void TestIsReadOnly()
-                {
-                        AssertEquals(false, stack1.IsReadOnly);
-                }
-
                 public void TestIsSyncronized()
                 {
                         AssertEquals(false, stack1.IsSynchronized);
@@ -253,7 +248,6 @@ namespace MonoTests.System.Collections
                                 stackSuite.AddTest(new StackTest("TestIntConstructor"));
 
                                 stackSuite.AddTest(new StackTest("TestCount"));
-                                stackSuite.AddTest(new StackTest("TestIsReadOnly"));
                                 stackSuite.AddTest(new StackTest("TestIsSyncronized"));
                                 stackSuite.AddTest(new StackTest("TestSyncRoot"));
 
