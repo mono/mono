@@ -1,3 +1,9 @@
+2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* daemon.c: only call getdtablesize () once.
+	* processes.c: wait 500 ms to check if execve failed and throw the same
+	exception as MS on failure. Fixes bug #32809.
+
 2004-03-17  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* io.c (async_notifier): use "union sigval" rather
