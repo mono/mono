@@ -177,7 +177,8 @@ namespace System.IO
 			exists = MonoIO.ExistsFile (path, out error);
 			if (error != MonoIOError.ERROR_SUCCESS &&
 			    error != MonoIOError.ERROR_FILE_NOT_FOUND &&
-			    error != MonoIOError.ERROR_PATH_NOT_FOUND) {
+			    error != MonoIOError.ERROR_PATH_NOT_FOUND &&
+			    error != MonoIOError.ERROR_INVALID_NAME) {
 				throw MonoIO.GetException (path, error);
 			}
 			

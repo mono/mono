@@ -1,3 +1,7 @@
+2005-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileTest.cs: test for invalid characters in file names.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DirectoryCas.cs: New. Very limited permission tests for Directory.
