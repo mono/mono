@@ -1,3 +1,7 @@
+2003-07-28  Nick Drochak <ndrochak@gol.com>
+
+	* Makefile: added test-local target. Fixes build problem.
+
 2003-07-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: added install-local target.
