@@ -61,6 +61,12 @@ namespace System.Runtime.Serialization
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
+			if (!type.IsSerializable) {
+				string msg = String.Format ("Type {0} in assembly {1} is not marked as serializable.",
+							    type, type.Assembly.FullName);
+				throw new SerializationException (msg);
+			}
+
 			//FIXME: context?
 			ArrayList fields = new ArrayList ();
 			Type t = type;

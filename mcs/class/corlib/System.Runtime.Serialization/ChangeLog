@@ -1,3 +1,7 @@
+2003-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormatterServices.cs: patch from Jean Marc that fixes bug #42742.
+
 2003-02-18  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ObjectManager.cs: Corrected a problem with arrays of structs. Elements where
