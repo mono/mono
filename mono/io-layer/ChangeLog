@@ -1,3 +1,26 @@
+2002-03-26  Dick Porter  <dick@ximian.com>
+
+	* types.h: Implement the large integer struct
+
+	* timefuncs.h:
+	* timefuncs.c: Dummy functions that don't yet implement
+	QueryPerformanceCounter() and QueryPerformanceFrequency()
+
+	* threads.h:
+	* threads.c: Implement SleepEx()
+
+	* system.h:
+	* system.c: Beginnings of GetSystemInfo()
+
+	* mono-mutex.c (pthread_mutex_timedlock): Fix a ms/ns conversion
+	thinko
+
+	* context.h:
+	* context.c: Dummy function that doesnt yet implement
+	GetThreadContext()
+
+	* atomic.h: 
+	* atomic.c: Interlocked functions
 
 Mon Mar 25 13:01:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
