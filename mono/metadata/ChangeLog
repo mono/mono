@@ -1,3 +1,8 @@
+2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (mono_domain_assembly_search): Avoid matching dynamic
+	assemblies here. Fixes #69020.
+
 2004-11-05  Geoff Norton  <gnorton@customerdna.com>
 
 	* reflection.c (build_compressed_metadata): Fix the previous patch for
