@@ -41,6 +41,7 @@ namespace System.Reflection.Emit {
 		uint flags;
 		PEFileKinds pekind = PEFileKinds.Dll;
 		bool delay_sign;
+		uint access;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
@@ -53,6 +54,7 @@ namespace System.Reflection.Emit {
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access) {
 			name = n.Name;
 			dir = directory;
+			this.access = (uint)access;
 			basic_init (this);
 		}
 
@@ -267,6 +269,12 @@ namespace System.Reflection.Emit {
 
 		internal int GetToken (SignatureHelper helper) {
 			return getToken (this, helper);
+		}
+
+		internal bool IsSave {
+			get {
+				return access != (uint)AssemblyBuilderAccess.Run;
+			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

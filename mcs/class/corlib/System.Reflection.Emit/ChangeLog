@@ -1,3 +1,8 @@
+2003-03-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs: Added 'access' member, which is needed by the
+	runtime.
+
 2003-03-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ILGenerator.cs: Implemented ThrowException.
