@@ -2168,23 +2168,29 @@ delegate_declaration
 	;
 	
 opt_evt_handler
-	: /* empty */
-	  { 	$$ = null; }
-	| HANDLES qualified_identifier
+	: /* empty */		{ 	$$ = null; }
+	  | HANDLES evt_handler		{ 	$$ = $2; }
+    ;
+
+evt_handler
+	: qualified_identifier
 	  {
-		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
+		$$ = (Expression) DecomposeQI ((string)$1, lexer.Location);	
 	  }
-	|
-	  HANDLES base_access
+	| base_access
 	  {
-		$$ = $2;
+		$$ = $1;
 	  }
-	/*| HANDLES MYBASE DOT qualified_identifier
+	| ME DOT qualified_identifier
+	  {
+		$$ = (Expression) DecomposeQI ((string)$3, lexer.Location);	
+	  }
+	/*| MYBASE DOT qualified_identifier
 	  {
 	  	// FIXME: this is blatantly wrong and crash-prone
 		$$ = (Expression) DecomposeQI ("MyBase." + (string)$4, lexer.Location);
 	  }*/
-	;	
+	;
 
 constructor_declaration
 	: SUB NEW opt_params logical_end_of_line
@@ -2350,13 +2356,13 @@ statement :
 		  current_block.AddStatement ((Statement) $1);
 	    } 
 	  | labeled_statement 
-	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
+	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF evt_handler
 	    {
-	   	  AddHandler ((Expression) $2, (string) $5);
+	   		AddHandler ((Expression) $2, (Expression) $5);
 	    }
-	  | REMOVEHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
+	  | REMOVEHANDLER prefixed_unary_expression COMMA ADDRESSOF evt_handler
 		{
-	   	  RemoveHandler ((Expression) $2, (string) $5);
+	   	  RemoveHandler ((Expression) $2, (Expression) $5);
 	    }
 	  | RAISEEVENT identifier opt_raise_event_args  //OPEN_PARENS opt_argument_list CLOSE_PARENS
 	    {
@@ -4741,9 +4747,9 @@ Block end_block ()
 	return (res);
 }
 
-private void AddHandler (Expression evt_definition, string handler_name)
+private void AddHandler (Expression evt_definition, Expression handler_exp)
 {
-	AddHandler (current_block, evt_definition, handler_name);
+	AddHandler (current_block, evt_definition, handler_exp);
 }
 
 void CheckAttributeTarget (string a)
@@ -4760,13 +4766,38 @@ void CheckAttributeTarget (string a)
 	}
 }
 
-private void AddHandler (Block b, Expression evt_id, string handler_name)
+private void AddHandler (Block b, Expression evt_id, Expression handles_exp)
 {
    	Location loc = lexer.Location;
-   	string evt_target = evt_id.ToString();
-   	evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
-   	Statement s = (Statement) new AddHandler (evt_id, DecomposeQI(handler_name, loc), DecomposeQI(evt_target, loc), loc);
-   	b.AddStatement (s);
+   	if (handles_exp is MemberAccess) {
+		string evt_def = ((MemberAccess)handles_exp).ToString();
+		string evt_target = evt_id.ToString();
+   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+		
+		Statement addhnd = (Statement) new AddHandler (evt_id, 
+							DecomposeQI(evt_def, loc), 
+							DecomposeQI(evt_target, loc), loc);
+
+		b.AddStatement (addhnd);
+	} else if (handles_exp is SimpleName) {
+		string evt_def = ((SimpleName)handles_exp).ToString();
+		string evt_target = evt_id.ToString();
+   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+		
+		Statement addhnd = (Statement) new AddHandler (evt_id, 
+							DecomposeQI(evt_def, loc), 
+							DecomposeQI(evt_target, loc), loc);
+
+		b.AddStatement (addhnd);
+
+	} else if (handles_exp is BaseAccess) {
+		string evt_def = ((BaseAccess) handles_exp).member;
+		Statement addhnd = (Statement) new AddHandler (evt_id, 
+									DecomposeQI(evt_def, loc), 
+									handles_exp, loc);	
+									
+		b.AddStatement (addhnd);
+	}
 }
 
 private void RaiseEvent (string evt_name, ArrayList args)
@@ -4778,13 +4809,43 @@ private void RaiseEvent (string evt_name, ArrayList args)
    	current_block.AddStatement (s);	
 }
 
-private void RemoveHandler (Block b, Expression evt_definition, string handler_name)
+private void RemoveHandler (Block b, Expression evt_definition, Expression handler_exp)
 {
-	Location loc = lexer.Location;
-   	string evt_target = evt_definition.ToString();
-   	evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
-   	Statement s = (Statement) new RemoveHandler (evt_definition, DecomposeQI(handler_name, loc), DecomposeQI(evt_target, loc), loc);
-   	b.AddStatement (s);
+   	Location loc = lexer.Location;
+   	if (handler_exp is MemberAccess) {
+		string evt_def = ((MemberAccess)handler_exp).ToString();
+		string evt_target = evt_definition.ToString();
+   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+		
+		Statement s = (Statement) new RemoveHandler (
+								evt_definition, 
+								DecomposeQI(evt_def, loc), 
+								DecomposeQI(evt_target, loc), loc);
+
+		b.AddStatement (s);
+		
+	} else if (handler_exp is SimpleName) {
+		string evt_def = ((SimpleName)handler_exp).ToString();
+		string evt_target = evt_definition.ToString();
+   		evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+		
+		Statement s = (Statement) new RemoveHandler (
+								evt_definition, 
+								DecomposeQI(evt_def, loc), 
+								DecomposeQI(evt_target, loc), loc);
+								
+		b.AddStatement (s);
+
+	} else if (handler_exp is BaseAccess) {
+		string evt_def = ((BaseAccess) handler_exp).member;
+		
+		Statement s = (Statement) new RemoveHandler (
+								evt_definition, 
+								DecomposeQI(evt_def, loc), 
+								handler_exp , loc);
+									
+		b.AddStatement (s);
+	}
 }
 
 // <summary>
@@ -4804,9 +4865,9 @@ string GetQualifiedIdentifier (Expression expr)
 	
 }
 
-private void RemoveHandler (Expression evt_definition, string handler_name)
+private void RemoveHandler (Expression evt_definition, Expression handler_exp)
 {
-	RemoveHandler (current_block, evt_definition, handler_name);
+	RemoveHandler (current_block, evt_definition, handler_exp);
 }
 
 private ConstructorInitializer CheckConstructorInitializer (ref ArrayList s)
