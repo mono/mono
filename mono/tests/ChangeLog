@@ -1,3 +1,9 @@
+2005-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* libtest.c (mono_test_return_vtype): Fill in a value in the 'd2'
+	field too.
+	* pinvoke2.cs (test_0_return_vtype): Update.
+
 2005-01-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c pinvoke2.cs pinvoke3.cs: Add tests for unmanaged->managed
