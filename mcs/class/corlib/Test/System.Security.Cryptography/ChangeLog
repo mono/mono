@@ -1,3 +1,8 @@
+2002-09-23  Andrew Birkett  <andy@nobugs.org>
+
+	* RijndaelManagedTest.cs: Fixed initialization order problem 
+	to match MS behaviour.
+
 2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MD5Test.cs: new test from Eduardo García Cebollero (kiwnix@yahoo.es).

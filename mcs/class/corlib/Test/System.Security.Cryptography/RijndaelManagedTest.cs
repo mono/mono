@@ -66,13 +66,13 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 	
 			RijndaelManaged r = new RijndaelManaged();
-	
-			r.Key = new byte[16];
+			byte[] key = new byte[16];	
 	
 			for (int i=0; i < 16; i++) r.Key[i] = 0;
 			r.BlockSize = 128;
 			r.Mode = CipherMode.CBC;
 			r.Padding = PaddingMode.Zeros;
+			r.Key = key;
 	
 			byte[] expected = { 
 				0x66, 0xe9, 0x4b, 0xd4, 0xef, 0x8a, 0x2c, 0x3b, 
@@ -80,7 +80,7 @@ namespace MonoTests.System.Security.Cryptography {
 				0xf7, 0x95, 0xbd, 0x4a, 0x52, 0xe2, 0x9e, 0xd7, 
 				0x13, 0xd3, 0x13, 0xfa, 0x20, 0xe9, 0x8d, 0xbc };
 	
-			CheckCBC(r.CreateEncryptor(r.Key, iv), r.CreateDecryptor(r.Key, iv), plaintext, expected);
+			CheckCBC(r.CreateEncryptor(key, iv), r.CreateDecryptor(key, iv), plaintext, expected);
 		}
 	
 		public void TestCBC_1() {
@@ -94,19 +94,21 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 	
 			RijndaelManaged r = new RijndaelManaged();
-			r.Key = new byte[16];
-			for (byte i=0; i < 16; i++) r.Key[i] = i;
+			byte[] key = new byte[16];
+			for (byte i=0; i < 16; i++) key[i] = 0;
+
+			r.Key = key;
 			r.BlockSize = 128;
 			r.Mode = CipherMode.CBC;
 			r.Padding = PaddingMode.Zeros;
 	
 			byte[] expected = { 
-				0xa, 0x94, 0xb, 0xb5, 0x41, 0x6e, 0xf0, 0x45, 
-				0xf1, 0xc3, 0x94, 0x58, 0xc6, 0x53, 0xea, 0x5a, 
-				0xae, 0xe7, 0x1e, 0xa5, 0x41, 0xd7, 0xae, 0x4b, 
-				0xeb, 0x60, 0xbe, 0xcc, 0x59, 0x3f, 0xb6, 0x63 };
+				0x7a, 0xca, 0x0f, 0xd9, 0xbc, 0xd6, 0xec, 0x7c, 
+				0x9f, 0x97, 0x46, 0x66, 0x16, 0xe6, 0xa2, 0x82, 
+				0x66, 0xc5, 0x84, 0x17, 0x1d, 0x3c, 0x20, 0x53, 
+				0x6f, 0x0a, 0x09, 0xdc, 0x4d, 0x1e, 0x45, 0x3b };
 	
-			CheckCBC(r.CreateEncryptor(r.Key, iv), r.CreateDecryptor(r.Key, iv), plaintext, expected);
+			CheckCBC(r.CreateEncryptor(key, iv), r.CreateDecryptor(key, iv), plaintext, expected);
 		}
 	
 		public void CheckECBRoundtrip(ICryptoTransform encryptor, ICryptoTransform decryptor, 
