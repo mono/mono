@@ -2226,6 +2226,9 @@ prop_attr 		: /* EMPTY */
                           {
                                 $$ = (FeatureAttr) $1 | FeatureAttr.Specialname;
                           }
+                        | prop_attr K_INSTANCE
+                          {
+                          }
 			;
 
 prop_decls		: /* EMPTY */
@@ -2532,7 +2535,13 @@ hexbytes		: hexbyte
 			;
 
 truefalse		: K_TRUE
+                          {
+                                $$ = true;
+                          }
 			| K_FALSE
+                          {
+                                $$ = false;
+                          }
 			;
 
 id			: ID
