@@ -14,5 +14,11 @@ namespace Microsoft.JScript
 
 		public static void JScriptImport (string name, VsaEngine engine)
 		{}
+
+
+		public override object Visit (Visitor v, object args)
+		{
+			return v.VisitImport (this, args);
+		}
 	}
 }

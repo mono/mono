@@ -16,5 +16,11 @@ namespace Microsoft.JScript
 		{
 			throw new NotImplementedException ();
 		}
+
+
+		public override object Visit (Visitor v, object args)
+		{
+			return v.VisitWith (this, args);
+		}
 	}
 }

@@ -12,5 +12,11 @@ namespace Microsoft.JScript
 	{
 		public static void JScriptPackage (string rootName, VsaEngine engine)
 		{}
+
+
+		public override object Visit (Visitor v, object args)
+		{	
+			return v.VisitPackage (this, args);
+		}
 	}
 }
