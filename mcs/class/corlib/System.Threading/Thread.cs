@@ -44,6 +44,7 @@ namespace System.Threading
 		private IntPtr jit_data;
 		private IntPtr lock_data;
 		private IntPtr appdomain_refs;
+		private bool interruption_requested;
 		#endregion
 
 		private ThreadStart threadstart;
@@ -196,9 +197,6 @@ namespace System.Threading
 
 		public static void ResetAbort()
 		{
-			Thread thread=CurrentThread;
-
-			thread.clr_state(ThreadState.AbortRequested);
 			ResetAbort_internal();
 		}
 		
@@ -423,12 +421,10 @@ namespace System.Threading
 		private extern void Abort_internal (object stateInfo);
 
 		public void Abort() {
-			set_state(ThreadState.AbortRequested);
 			Abort_internal (null);
 		}
 
 		public void Abort(object stateInfo) {
-			set_state(ThreadState.AbortRequested);
 			Abort_internal(stateInfo);
 		}
 		
@@ -500,10 +496,18 @@ namespace System.Threading
 			throw new NotImplementedException ();
 		}
 #endif
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void Resume_internal();
+
 		public void Resume () 
 		{
-			throw new NotImplementedException ();
+			if ((state & ThreadState.Unstarted) != 0 || !IsAlive || 
+				((state & ThreadState.Suspended) == 0 && (state & ThreadState.SuspendRequested) == 0)) 
+			{
+				throw new ThreadStateException("Thread has not been started, or is dead");
+			}
+			
+			Resume_internal ();
 		}
 
 		[MonoTODO]
@@ -542,16 +546,14 @@ namespace System.Threading
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void Suspend_internal();
+
 		public void Suspend() {
 			if((state & ThreadState.Unstarted) != 0 || !IsAlive) {
 				throw new ThreadStateException("Thread has not been started, or is dead");
 			}
-
-			set_state(ThreadState.SuspendRequested);
-			// FIXME - somehow let the interpreter know that
-			// this thread should now suspend
-			Console.WriteLine ("WARNING: Thread.Suspend () partially implemented");
+			Suspend_internal ();
 		}
 
 		// Closes the system thread handle
@@ -560,7 +562,8 @@ namespace System.Threading
 
 		~Thread() {
 			// Free up the handle
-			Thread_free_internal(system_thread_handle);
+			if (system_thread_handle != (IntPtr) 0)
+				Thread_free_internal(system_thread_handle);
 		}
 
 		private void set_state(ThreadState set) {
@@ -575,6 +578,7 @@ namespace System.Threading
 		}
 
 #if NET_1_1
+		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern public static byte VolatileRead (ref byte address);
 		

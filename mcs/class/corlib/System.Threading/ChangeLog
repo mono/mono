@@ -1,3 +1,8 @@
+2004-05-19  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Thread.cs: Some fixes in Abort. Implemented Suspend and Resume.
+	  Added internal interruption_requested field.
+
 2004-05-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompressedStack.cs: Added an internal constructor so a default one
