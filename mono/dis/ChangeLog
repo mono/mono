@@ -1,4 +1,8 @@
 
+Tue Feb 12 14:33:53 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: make all the indexes printed starting from 1.
+
 Fri Feb 8 19:28:31 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* get.c: don't abort if a methodref is not found, usa alternative way
