@@ -1,3 +1,9 @@
+2004-08-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlElement.cs : XmlAttributeCollection doesn't have to be created
+	  every time until the actual use. This sometimes optimizes
+	  attribute-less XML performance siginificantly.
+
 2004-08-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlAttribute.cs : some property getters threw NullReferenceException

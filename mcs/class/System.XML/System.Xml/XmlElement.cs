@@ -80,7 +80,7 @@ namespace System.Xml
 				this.namespaceURI = doc.NameTable.Add (namespaceURI);
 			}
 
-			attributes = new XmlAttributeCollection (this);
+//			attributes = new XmlAttributeCollection (this);
 
 			if(doc.DocumentType != null)
 			{
@@ -90,7 +90,7 @@ namespace System.Xml
 						DTDAttributeDefinition def = attlist [i];
 						if (def.DefaultValue != null) {
 							SetAttribute (def.Name, def.DefaultValue);
-							attributes [def.Name].SetDefault ();
+							Attributes [def.Name].SetDefault ();
 						}
 					}
 				}
@@ -102,11 +102,15 @@ namespace System.Xml
 		#region Properties
 
 		public override XmlAttributeCollection Attributes {
-			get { return attributes; }
+			get {
+				if (attributes == null)
+					attributes = new XmlAttributeCollection (this);
+				return attributes;
+			}
 		}
 
 		public virtual bool HasAttributes {
-			get { return attributes.Count > 0; }
+			get { return attributes != null && attributes.Count > 0; }
 		}
 
 		public override string InnerText {
@@ -299,36 +303,48 @@ namespace System.Xml
 
 		public virtual void RemoveAllAttributes ()
 		{
-			attributes.RemoveAll ();
+			if (attributes != null)
+				attributes.RemoveAll ();
 		}
 
 		public virtual void RemoveAttribute (string name)
 		{
-			XmlAttribute attr = attributes.GetNamedItem (name) as XmlAttribute;
+			if (attributes == null)
+				return;
+			XmlAttribute attr = Attributes.GetNamedItem (name) as XmlAttribute;
 			if (attr != null)
-				attributes.Remove(attr);
+				Attributes.Remove(attr);
 		}
 
 		public virtual void RemoveAttribute (string localName, string namespaceURI)
 		{
+			if (attributes == null)
+				return;
+
 			XmlAttribute attr = attributes.GetNamedItem(localName, namespaceURI) as XmlAttribute;
 			if (attr != null)
-				attributes.Remove(attr);
+				Attributes.Remove(attr);
 		}
 
 		public virtual XmlNode RemoveAttributeAt (int i)
 		{
-			return attributes.RemoveAt (i);
+			if (attributes == null || attributes.Count <= i)
+				return null;
+			return Attributes.RemoveAt (i);
 		}
 
 		public virtual XmlAttribute RemoveAttributeNode (XmlAttribute oldAttr)
 		{
-			return attributes.Remove(oldAttr);
+			if (attributes == null)
+				return null;
+			return Attributes.Remove (oldAttr);
 		}
 
 		public virtual XmlAttribute RemoveAttributeNode (string localName, string namespaceURI)
 		{
-			return attributes.Remove(attributes[localName, namespaceURI]);
+			if (attributes == null)
+				return null;
+			return Attributes.Remove (attributes [localName, namespaceURI]);
 		}
 
 		public virtual void SetAttribute (string name, string value)
@@ -340,11 +356,11 @@ namespace System.Xml
 
 		public virtual string SetAttribute (string localName, string namespaceURI, string value)
 		{
-			XmlAttribute attr = attributes [localName, namespaceURI];
+			XmlAttribute attr = Attributes [localName, namespaceURI];
 			if (attr == null) {
 				attr = OwnerDocument.CreateAttribute (localName, namespaceURI);
 				attr.Value = value;
-				attributes.SetNamedItem (attr);
+				Attributes.SetNamedItem (attr);
 			}
 			else
 				attr.Value = value;
