@@ -79,7 +79,13 @@ namespace Mono.CSharp {
 		{
 			ec.ig.Emit (OpCodes.Ldnull);
 		}
-		
+
+		public override bool IsDefaultValue {
+			get {
+				return true;
+			}
+		}
+
 		public override bool IsNegative {
 			get {
 				return false;

@@ -1,3 +1,18 @@
+2005-02-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (EmitFieldInitializers): Don't emit field initializer
+	for default values when optimilization is on.
+	
+	* constant.cs (Constant.IsDefaultValue): New property.
+	
+	* driver.cs: Add /optimize handling.
+	
+	* constant.cs,
+	* ecore.cs,
+	* literal.cs: Implement new IsDefaultValue property.
+	
+	* rootcontext.cs (Optimize): New field, holds /optimize option.
+
 2005-02-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix crasher in re-opened #72347.

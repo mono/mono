@@ -871,6 +871,14 @@ namespace Mono.CSharp {
 				if (a == null)
 					return false;
 
+				if (RootContext.Optimize) {
+					Constant c = e as Constant;
+					if (c != null) {
+						if (c.IsDefaultValue)
+							continue;
+					}
+				}
+
 				a.EmitStatement (ec);
 			}
 
