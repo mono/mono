@@ -1,3 +1,14 @@
+
+Mon Oct 1 20:43:57 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: implemented some of the Reflection internalcalls.
+	* image.c, image.h: start writing out the PE/COFF image.
+	* metadata.h, metadata.c: implement mono_metadata_encode_value ()
+	that does the reverse than decode_blob_size ().
+	* object.c: use mono_metadata_encode_value (). Move here
+	temporary implementation of mono_string_to_utf8 ().
+	* rawbuffer.c: make malloc_map static.
+
 Fri Sep 28 19:26:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c: fix type comparison for arrays.
