@@ -1,3 +1,7 @@
+2004-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltest.cs : several bugfixes.
+
 2004-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README, Makefile, xmltest.cs : Initial checkin.

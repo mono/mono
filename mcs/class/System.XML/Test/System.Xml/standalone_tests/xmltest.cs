@@ -63,8 +63,10 @@ public class Test
 					doc.RemoveAll ();
 					doc.Load (xtr);
 					Console.WriteLine ("Incorrectly wf: " + fi.FullName);
+				} catch (XmlException) {
+					// expected
 				} catch (Exception ex) {
-					Console.WriteLine ("Incorrectly invalid: " + fi.FullName + "\n" + ex.Message);
+					Console.WriteLine ("Unexpected Error: " + fi.FullName + "\n" + ex.Message);
 				}
 			}
 		}
@@ -72,7 +74,7 @@ public class Test
 
 	static void RunValidTest (string subdir, bool isSunTest)
 	{
-		string basePath = @"xml-test-suite/xmlconf/" + subdir + @"/invalid";
+		string basePath = @"xml-test-suite/xmlconf/" + subdir + @"/valid";
 		DirectoryInfo [] dirs = null;
 		if (isSunTest)
 			dirs =  new DirectoryInfo [] {new DirectoryInfo (basePath)};
@@ -93,6 +95,8 @@ public class Test
 					Console.WriteLine ("Incorrectly not-wf: " + fi.FullName + " " + ex.Message);
 				} catch (XmlSchemaException ex) {
 					Console.WriteLine ("Incorrectly invalid: " + fi.FullName + " " + ex.Message);
+				} catch (Exception ex) {
+					Console.WriteLine ("Unexpected Error: " + fi.FullName + "\n" + ex.Message);
 				}
 			}
 		}
@@ -132,7 +136,10 @@ public class Test
 					doc.RemoveAll ();
 					doc.Load (new XmlValidatingReader (xtr));
 					Console.WriteLine ("Incorrectly valid: " + fi.FullName);
+				} catch (XmlSchemaException) {
+					// expected
 				} catch (Exception ex) {
+					Console.WriteLine ("Unexpected Error: " + fi.FullName + "\n" + ex.Message);
 				}
 			}
 		}
