@@ -1,4 +1,7 @@
 2004-05-14 Umadevi S <sumadevi@novell.com>
+        * System.Data.dll.sources : Added OdbcInfoMessageEventArgs.cs, OdbcInfoMessageEventHandler.cs
+
+2004-05-14 Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources : Added OdbcPermission.cs,OdbcPermissionAttribute.cs
 
 2004-05-13  Umadevi S  <sumadevi@novell.com>

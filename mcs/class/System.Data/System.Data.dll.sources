@@ -238,6 +238,8 @@ System.Data.Odbc/OdbcRowUpdatingEventArgs.cs
 System.Data.Odbc/OdbcRowUpdatingEventHandler.cs
 System.Data.Odbc/OdbcPermissionAttribute.cs
 System.Data.Odbc/OdbcPermission.cs
+System.Data.Odbc/OdbcInfoMessageEventArgs.cs 
+System.Data.Odbc/OdbcInfoMessageEventHandler.cs
 System.Data.Sql/DataAccessKind.cs
 System.Data.Sql/Format.cs
 System.Data.Sql/IBinarySerialize.cs
