@@ -1,3 +1,12 @@
+2004-11-06  Jambunathan K  <kjambunathan@novell.com>
+	* attribute.cs: Removed the redundant AttributeSection class and
+	moved it's functionality to Attributes class. 
+	* class.cs: 
+	* mb-parser.jay: 
+	* module.cs: Replaced references to AttributeSection with the equivalent constructs.
+	* rootcontext.cs: Removed the following unused methods
+	AddGlobalAttribute and AddGlobalAttributeSection.
+
 2004-11-03 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Trivial fix for bug #68985
 

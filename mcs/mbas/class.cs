@@ -2957,32 +2957,27 @@ namespace Mono.MonoBASIC {
 
 		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method)
 		{
-			if ((opt_attrs == null) || (opt_attrs.AttributeSections == null))
+			if ((opt_attrs == null) || (opt_attrs.Attrs == null))
 				return true;
 
-			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-				if (asec.Attributes == null)
-					continue;
-					
-				foreach (Attribute a in asec.Attributes) {
-					if (a.Name == "Conditional") {
-						if (!ApplyConditionalAttribute (a))
-							return false;
-					} else if (a.Name == "Obsolete") {
-						if (!ApplyObsoleteAttribute (a))
-							return false;
-					} else if (a.Name.IndexOf ("DllImport") != -1) {
-						if (!is_method) {
-							a.Type = TypeManager.dllimport_type;
-							Attribute.Error_AttributeNotValidForElement (a, Location);
-							return false;
-						}
-						if (!ApplyDllImportAttribute (a))
-							return false;
+			foreach (Attribute a in opt_attrs.Attrs) {
+				if (a.Name == "Conditional") {
+					if (!ApplyConditionalAttribute (a))
+						return false;
+				} else if (a.Name == "Obsolete") {
+					if (!ApplyObsoleteAttribute (a))
+						return false;
+				} else if (a.Name.IndexOf ("DllImport") != -1) {
+					if (!is_method) {
+						a.Type = TypeManager.dllimport_type;
+						Attribute.Error_AttributeNotValidForElement (a, Location);
+						return false;
 					}
+					if (!ApplyDllImportAttribute (a))
+						return false;
 				}
 			}
-
+			
 			return true;
 		}
 

@@ -900,8 +900,7 @@ attribute_section
 				}
 			}
 
-	 		AttributeSection sect = new AttributeSection (null, (ArrayList) $2);
-			$$ = new Attributes (sect, lexer.Location);
+			$$ = new Attributes ((ArrayList) $2);
 		}
  	  }
  	; 
@@ -930,7 +929,7 @@ attribute_list
  			attrs.Add ($3);
   		}
 
- 		$$ = $1;
+ 		$$ = attrs;
  	  }	
  	;
 
@@ -947,7 +946,7 @@ attribute
 			Report.Error (32015, (Location) $2, "Expecting Assembly or Module attribute specifiers");
 		else {
 			expecting_local_attribs = true;
-	 		$$ = new Mono.MonoBASIC.Attribute ((string) $1, (ArrayList) $3, (Location) $2);
+	 		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $2);
 		}
  	   }
 	  | attribute_target_specifier 
@@ -979,7 +978,7 @@ attribute
 		}			
 
 		expecting_global_attribs = true;
-		$$ = new Mono.MonoBASIC.Attribute ((string) $4, (ArrayList) $6, (Location) $5);
+		$$ = new Attribute (attribute_target, (string) $4, (ArrayList) $6, (Location) $5);
 	    }	
  	;
 

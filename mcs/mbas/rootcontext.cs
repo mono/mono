@@ -844,35 +844,5 @@ namespace Mono.MonoBASIC {
 			return fb;
 		}
 
-		//
-		// Adds a global attribute that was declared in `container', 
-		// the attribute is in `attr', and it was defined at `loc'
-		//
-		static public void AddGlobalAttribute (TypeContainer container,
-						       AttributeSection attr, Location loc)
-		{
-			Namespace ns = container.Namespace;
-			Attributes a = (Attributes) global_attributes [ns];
-
-			if (a == null)
-				global_attributes [ns] = new Attributes (attr, loc);
-			else
-				a.AddAttribute (attr);
-		}
-		
-		//
-		// Adds a global attribute that was declared in `container', 
-		// the attribute is in `attr', and it was defined at `loc'
-		//
-		static public void AddGlobalAttributeSection (TypeContainer container, AttributeSection attr)
-		{
-			Namespace ns = container.Namespace;
-			Attributes a = (Attributes) global_attributes [ns];
-
-			if (a == null)
-				global_attributes [ns] = new Attributes (attr, Location.Null);
-			else
-				a.AddAttributeSection (attr);
-		}		
 	}
 }

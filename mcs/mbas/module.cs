@@ -24,11 +24,10 @@ namespace Mono.MonoBASIC
 			Mono.MonoBASIC.Attribute specialAttr = new Mono.MonoBASIC.Attribute(attributeName, args, loc);
 			ArrayList al = new ArrayList();
 			al.Add(specialAttr);
-			AttributeSection asec = new AttributeSection(null, al);
 			if (attrs == null)
-				attrs = new Attributes(asec, loc);
+				attrs = new Attributes(al);
 			else
-				attrs.AddAttribute(asec);
+				attrs.AddAttributes(al);
 		}
 	}
 	

@@ -21,6 +21,7 @@ using System.Text;
 namespace Mono.MonoBASIC {
 
 	public class Attribute {
+		public readonly string ExplicitTarget;
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
@@ -41,12 +42,17 @@ namespace Mono.MonoBASIC {
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
-		
+
 		public Attribute (string name, ArrayList args, Location loc)
 		{
 			Name = name;
 			Arguments = args;
 			Location = loc;
+		}
+		
+		public Attribute (string target, string name, ArrayList args, Location loc) 
+		{
+			ExplicitTarget = target;
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -518,50 +524,43 @@ namespace Mono.MonoBASIC {
 		{
 			if (opt_attrs == null)
 				return null;
-			if (opt_attrs.AttributeSections == null)
-				return null;
 
-			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-				if (asec.Attributes == null)
+			foreach (Attribute a in opt_attrs.Attrs) {
+				if (a.ResolveType (ec) == null)
+					return null;
+					
+				if (a.Type != TypeManager.indexer_name_type)
 					continue;
 
-				foreach (Attribute a in asec.Attributes){
-					if (a.ResolveType (ec) == null)
-						return null;
-					
-					if (a.Type != TypeManager.indexer_name_type)
-						continue;
-
-					//
-					// So we have found an IndexerName, pull the data out.
-					//
-					if (a.Arguments == null || a.Arguments [0] == null){
-						Error_AttributeConstructorMismatch (a.Location);
-						return null;
-					}
-					ArrayList pos_args = (ArrayList) a.Arguments [0];
-					if (pos_args.Count == 0){
-						Error_AttributeConstructorMismatch (a.Location);
-						return null;
-					}
-					
-					Argument arg = (Argument) pos_args [0];
-					if (!arg.Resolve (ec, a.Location))
-						return null;
-					
-					Expression e = arg.Expr;
-					if (!(e is StringConstant)){
-						Error_AttributeConstructorMismatch (a.Location);
-						return null;
-					}
-
-					//
-					// Remove the attribute from the list
-					//
-					asec.Attributes.Remove (a);
-
-					return (((StringConstant) e).Value);
+				//
+				// So we have found an IndexerName, pull the data out.
+				//
+				if (a.Arguments == null || a.Arguments [0] == null){
+					Error_AttributeConstructorMismatch (a.Location);
+					return null;
 				}
+				ArrayList pos_args = (ArrayList) a.Arguments [0];
+				if (pos_args.Count == 0){
+					Error_AttributeConstructorMismatch (a.Location);
+					return null;
+				}
+					
+				Argument arg = (Argument) pos_args [0];
+				if (!arg.Resolve (ec, a.Location))
+					return null;
+					
+				Expression e = arg.Expr;
+				if (!(e is StringConstant)){
+					Error_AttributeConstructorMismatch (a.Location);
+					return null;
+				}
+
+				//
+				// Remove the attribute from the list
+				//
+				opt_attrs.Attrs.Remove (a);
+
+				return (((StringConstant) e).Value);
 			}
 			return null;
 		}
@@ -640,123 +639,82 @@ namespace Mono.MonoBASIC {
 		{
 			if (opt_attrs == null)
 				return;
-			if (opt_attrs.AttributeSections == null)
-				return;
 
-			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-				if (asec.Attributes == null)
+			foreach (Attribute a in opt_attrs.Attrs) {
+				CustomAttributeBuilder cb = a.Resolve (ec);
+
+				if (cb == null)
 					continue;
 
-				if (asec.Target == "assembly" && !(builder is AssemblyBuilder))
-					continue;
-				
-				foreach (Attribute a in asec.Attributes) {
-					CustomAttributeBuilder cb = a.Resolve (ec);
-
-					if (cb == null)
-						continue;
-
-					if (!(kind is TypeContainer))
-						if (!CheckAttribute (a, kind)) {
+				if (!(kind is TypeContainer))
+					if (!CheckAttribute (a, kind)) {
 							Error_AttributeNotValidForElement (a, loc);
 							return;
-						}
+					}
 
-					if (kind is Method || kind is Operator /*|| kind is InterfaceMethod*/ ||
-					    kind is Accessor) {
-						if (a.Type == TypeManager.methodimpl_attr_type) {
-							if (a.ImplOptions == MethodImplOptions.InternalCall)
-								((MethodBuilder) builder).
-								SetImplementationFlags (
-									MethodImplAttributes.InternalCall |
-									MethodImplAttributes.Runtime);
-						} else if (a.Type != TypeManager.dllimport_type){
+				if (kind is Method || kind is Operator ||kind is Accessor) {
+					if (a.Type == TypeManager.methodimpl_attr_type) {
+						if (a.ImplOptions == MethodImplOptions.InternalCall)
+								((MethodBuilder) builder).SetImplementationFlags (MethodImplAttributes.InternalCall |	MethodImplAttributes.Runtime);
+					} else if (a.Type != TypeManager.dllimport_type){
 							((MethodBuilder) builder).SetCustomAttribute (cb);
-						}
-					} else if (kind is Constructor) {
+					}
+				} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Field) {
+				} else if (kind is Field) {
 						((FieldBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Property || kind is Indexer /*||
-						   kind is InterfaceProperty || kind is InterfaceIndexer*/) {
+				} else if (kind is Property || kind is Indexer) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Event /*|| kind is InterfaceEvent*/) {
+				} else if (kind is Event) {
 						((MyEventBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is ParameterBuilder) {
-
-						if (a.Type == TypeManager.marshal_as_attr_type) {
-							UnmanagedMarshal marshal =
-								UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+				} else if (kind is ParameterBuilder) {
+					if (a.Type == TypeManager.marshal_as_attr_type) {
+						UnmanagedMarshal marshal = UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+						((ParameterBuilder) builder).SetMarshal (marshal);
+					} else 
+						((ParameterBuilder) builder).SetCustomAttribute (cb);
+				} else if (kind is Enum) {
+					((TypeBuilder) builder).SetCustomAttribute (cb); 
+				} else if (kind is TypeContainer) {
+					TypeContainer tc = (TypeContainer) kind;
+						
+					if (a.UsageAttr) {
+						tc.Targets = a.Targets;
+						tc.AllowMultiple = a.AllowMultiple;
+						tc.Inherited = a.Inherited;
 							
-							((ParameterBuilder) builder).SetMarshal (marshal);
-						} else 
-							((ParameterBuilder) builder).SetCustomAttribute (cb);
-						
-					} else if (kind is Enum) {
-						((TypeBuilder) builder).SetCustomAttribute (cb); 
-
-					} else if (kind is TypeContainer) {
-						TypeContainer tc = (TypeContainer) kind;
-						
-						if (a.UsageAttr) {
-							tc.Targets = a.Targets;
-							tc.AllowMultiple = a.AllowMultiple;
-							tc.Inherited = a.Inherited;
-							
-						} else if (a.Type == TypeManager.default_member_type) {
-							if (tc.Indexers != null) {
-								Report.Error (646, loc,
-								      "Cannot specify the DefaultMember attribute on" +
-								      " a type containing an indexer");
-								return;
-							}
-
-						} else {
-							if (!CheckAttribute (a, kind)) {
-								Error_AttributeNotValidForElement (a, loc);
-								return;
-							}
-						}
-
-						try {
-							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException) {
-							Report.Warning (
-								-21, loc,
-						"The CharSet named property on StructLayout\n"+
-						"\tdoes not work correctly on Microsoft.NET\n"+
-						"\tYou might want to remove the CharSet declaration\n"+
-						"\tor compile using the Mono runtime instead of the\n"+
-						"\tMicrosoft .NET runtime");
-						}
-						
-					} else if (kind is Interface) {
-						Interface iface = (Interface) kind;
-
-					/*	if ((a.Type == TypeManager.default_member_type) &&
-						    (iface.InterfaceIndexers != null)) {
-							Report.Error (
-								646, loc,
-								"Cannot specify the DefaultMember attribute on" +
-								" a type containing an indexer");
+					} else if (a.Type == TypeManager.default_member_type) {
+						if (tc.Indexers != null) {
+							Report.Error (646, loc, "Cannot specify the DefaultMember attribute on" + " a type containing an indexer");
 							return;
-						}*/
-
+						}
+					} else {
 						if (!CheckAttribute (a, kind)) {
 							Error_AttributeNotValidForElement (a, loc);
-							return;
+								return;
 						}
+					}
 
+					try {
 						((TypeBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is AssemblyBuilder){
-						((AssemblyBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is ModuleBuilder) {
-						((ModuleBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is FieldBuilder) {
-						((FieldBuilder) builder).SetCustomAttribute (cb);
-					} else
-						throw new Exception ("Unknown kind: " + kind);
-				}
+					} catch (System.ArgumentException) {
+						Report.Warning (-21, loc, 	"The CharSet named property on StructLayout\n"+"\tdoes not work correctly on Microsoft.NET\n"+"\tYou might want to remove the CharSet declaration\n"+"\tor compile using the Mono runtime instead of the\n"+"\tMicrosoft .NET runtime");
+					}
+				} else if (kind is Interface) {
+					Interface iface = (Interface) kind;
+					if (!CheckAttribute (a, kind)) {
+						Error_AttributeNotValidForElement (a, loc);
+						return;
+					}
+					((TypeBuilder) builder).SetCustomAttribute (cb);
+				} else if (kind is AssemblyBuilder){
+					((AssemblyBuilder) builder).SetCustomAttribute (cb);
+				} else if (kind is ModuleBuilder) {
+					((ModuleBuilder) builder).SetCustomAttribute (cb);
+				} else if (kind is FieldBuilder) {
+					((FieldBuilder) builder).SetCustomAttribute (cb);
+				} else
+					throw new Exception ("Unknown kind: " + kind);
 			}
 		}
 
@@ -876,50 +834,32 @@ namespace Mono.MonoBASIC {
 		}			
 	}
 	
-	public class AttributeSection {
-		
-		public readonly string    Target;
-		public readonly ArrayList Attributes;
-		
-		public AttributeSection (string target, ArrayList attrs)
-		{
-			Target = target;
-			Attributes = attrs;
-		}
-		
-	}
-
 	public class Attributes {
-		public ArrayList AttributeSections;
+		public ArrayList Attrs;
 		public Location Location;
-
-		public Attributes (AttributeSection a, Location loc)
-		{
-			AttributeSections = new ArrayList ();
-			AttributeSections.Add (a);
-
-		}
-
-		public void AddAttribute (AttributeSection a)
-		{
-			if (a != null)
-				AttributeSections.Add (a);
-		}
 		
-		public void AddAttributeSection (AttributeSection a)
+		public Attributes (Attribute a)
 		{
-			if (a != null && !AttributeSections.Contains (a))
-				AttributeSections.Add (a);
+			Attrs = new ArrayList ();
+			Attrs.Add (a);
 		}
-		
+
+		public Attributes (ArrayList attrs)
+		{
+			Attrs = attrs;
+		}
+
+		public void AddAttributes (ArrayList attrs)
+		{
+			Attrs.AddRange (attrs);
+		}
+
 		public bool Contains (Type t)
 		{
-			foreach (AttributeSection attr_section in AttributeSections){
-				foreach (Attribute a in attr_section.Attributes){
+			foreach (Attribute a in Attrs){
 					if (a.Type == t)
 						return true;
 				}
-			}
 			return false;
 		}			
 	}
