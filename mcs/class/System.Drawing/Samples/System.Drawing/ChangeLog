@@ -1,3 +1,9 @@
+2004-04-24  Ravindra  <rkumar@novell.com>
+
+	* pie.cs: Added a case to clear the graphics surface
+	and fill it with a background color. Fixing
+	Graphics.Clear(color) method.
+
 2004-04-07  Ravindra  <rkumar@novell.com>
 	* TextureWrapModes.cs: Use PNG, instead of BMP.
 

@@ -14,12 +14,15 @@ using System.Drawing.Drawing2D;
 public class graphicsUI
 {	
 	
-	public static void Main( ) 
+	public static void Main ()
 	{
 
 		Bitmap bmp = new Bitmap (300, 300);
-		Graphics dc = Graphics.FromImage (bmp);        
-		
+		Graphics dc = Graphics.FromImage (bmp);
+
+		// Clears and set the background color to red
+		dc.Clear (Color.Red);
+
 		SolidBrush blueBrush = new SolidBrush (Color.Blue);
 		SolidBrush redBrush = new SolidBrush (Color.Red);
 		SolidBrush yellowBrush = new SolidBrush (Color.Yellow);
