@@ -196,7 +196,9 @@ namespace System.Windows.Forms {
 		internal override void GetDisplaySize(out Size size) {
 			XWindowAttributes	attributes=new XWindowAttributes();
 
-			XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
+			lock (this) {
+				XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
+			}
 
 			size = new Size(attributes.width, attributes.height);
 		}
@@ -322,7 +324,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
-			XSetWindowBackground(DisplayHandle, handle, (uint)(color.ToArgb() & 0x00ffffff));
+			lock (this) {
+				XSetWindowBackground(DisplayHandle, handle, (uint)(color.ToArgb() & 0x00ffffff));
+			}
 		}
 
 		[MonoTODO("Add support for internal table of windows/DCs for looking up paint area and cleanup")]
@@ -357,7 +361,9 @@ namespace System.Windows.Forms {
 			if (height < 1) {
 				height = 1;
 			}
-			XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
+			lock (this) {
+				XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
+			}
 			return;
 		}
 
@@ -892,8 +898,10 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
 
-			XSendEvent (DisplayHandle, IntPtr.Zero, false, EventMask.ExposureMask, ref xevent);
-			XFlush (DisplayHandle);
+			lock (this) {
+				XSendEvent (DisplayHandle, IntPtr.Zero, false, EventMask.ExposureMask, ref xevent);
+				XFlush (DisplayHandle);
+			}
 		}
 
 		// Santa's little helper
