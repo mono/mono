@@ -48,7 +48,7 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 	
-		[MonoTODO]
+		//[MonoTODO]
 		// Registry key not yet defined (this should be interesting)
 		//public static RegistryKey CommonAppDataRegistry {
 		//	get { throw new NotImplementedException (); }

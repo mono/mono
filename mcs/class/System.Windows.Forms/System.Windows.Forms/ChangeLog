@@ -1,3 +1,34 @@
+  2002-10-24  DennisHayes <dennish@raytek.com>	
+
+	* AccessibleObject.cs
+	* Application.cs
+	* AssemblyInfo.cs
+	* BaseCollection.cs
+	* BindingContext.cs
+	* BindingManagerBase.cs
+	* BindingsCollection.cs
+	* ContainerControl.cs
+	* Control.cs
+	* Font.cs
+	* Form.cs
+	* IAccessible.cs
+	* InputLanguageCollection.cs
+	* Label.cs
+	* MessageBox.cs
+	* PropertyTabChangedEventArgs.cs
+	* ScrollableControl.cs
+	* Win32.cs
+	* WINELib.csproj
+	* WINELib.csproj.user
+	* winelib.sln
+
+	* Changes to get winelib version running with more methods uncommented out.
+	* Especialy trying to get CE compliance.
+
+2002-10-22  DennisHayes <dennish@raytek.com>
+	* Miguel moved files from WINELIB to here
+	* See ochagelog for details
+
 2002-10-13  DennisHayes <dennish@raytek.com>
 
 	*Application.cs

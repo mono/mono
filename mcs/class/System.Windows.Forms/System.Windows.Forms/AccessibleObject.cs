@@ -76,9 +76,9 @@ namespace System.Windows.Forms {
 		/// </remarks>
 		
 		public override int GetHashCode () {
-			unchecked{//FIXME Add out proprities to the hash
+			//unchecked{//FIXME Add out proprities to the hash
 				return base.GetHashCode();
-			}
+			//}
 		}
 
 		/// <summary>

@@ -18,8 +18,25 @@
     namespace System.Windows.Forms {
     
     	public class Form : ContainerControl  {
-    
-    		public Form () : base ()
+			DialogResult dialogResult;
+			Size maximumSize;
+			Size minimizeSize;
+
+			// Temperary varibles that may be replaced
+			// with win32 functions
+
+			// owner draw 
+			private bool controlBox;
+			private bool minimizeBox;
+			private bool maximizeBox;
+			private bool helpButton;
+			//end owner draw
+			
+			FormBorderStyle formBorderStyle;
+
+			// End of temperay varibles
+
+			public Form () : base ()
     		{
     		}
     		
@@ -112,14 +129,22 @@
     			}
     		}
     
-  		//Compact Framework
+  			//Compact Framework
+			//FIXME: 
+			// In .NET this can be changed at any time.
+			// In WIN32 this is fixed when the window is created.
+			// In WIN32 to change this after the window is created,
+			// like in .NET, we must draw the caption bar our self.
+			// In the mean time, just set/return a bool.
+			// This might be the start of the drawing
     		[MonoTODO]
     		public bool ControlBox {
     			get {
-    				throw new NotImplementedException ();
+    				return controlBox;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				controlBox = value;
+					//force paint
     			}
     		}
     
@@ -143,49 +168,48 @@
     			}
     		}
     
-  		//Compact Framework
+  			//Compact Framework
     		[MonoTODO]
     		public DialogResult DialogResult {
     			get {
-    				throw new NotImplementedException ();
+    				return dialogResult;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				dialogResult = value;
     			}
     		}
     
-  		//Compact Framework
+  			//Compact Framework
     		[MonoTODO]
     		public FormBorderStyle FormBorderStyle {
     			get {
-    				throw new NotImplementedException ();
+    				return formBorderStyle;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				formBorderStyle = value;
     			}
     		}
     
     		[MonoTODO]
     		public bool HelpButton {
     			get {
-    				throw new NotImplementedException ();
+    				return helpButton;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				helpButton = value;
     			}
     		}
     
-  		//Compact Framework
-  		//[MonoTODO]
-    		// Icon class not yet stubbed/implemented
-    		//public Icon Icon {
-    		//	 get {
-    		//		 throw new NotImplementedException ();
-    		//	 }
-    		//	 set {
-    		//		 throw new NotImplementedException ();
-    		//	 }
-    		//}
+	  		//Compact Framework
+  			//[MonoTODO]
+    		public Icon Icon {
+    			 get {
+    				 throw new NotImplementedException ();
+    			 }
+    			 set {
+    				 throw new NotImplementedException ();
+    			 }
+    		}
     
     		[MonoTODO]
     		public bool IsMidiChild {
@@ -217,24 +241,24 @@
     			}
     		}
     
-  		//Compact Framework
+	  		//Compact Framework
     		[MonoTODO]
     		public bool MaximizeBox {
     			get {
-    				throw new NotImplementedException ();
+    				return maximizeBox;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				maximizeBox = value;
     			}
     		}
     
     		[MonoTODO]
     		public Size MaximumSize {
     			get {
-    				throw new NotImplementedException ();
+    				return maximumSize;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				maximumSize = value;
     			}
     		}
     
@@ -258,8 +282,8 @@
     			}
     		}
     
- 		//Compact Framework
- 		//[MonoTODO]
+ 			//Compact Framework
+ 			//[MonoTODO]
     		//public MainMenu Menu {
     		//	get {
     		//		throw new NotImplementedException ();
@@ -269,31 +293,31 @@
     		//	}
     		//}
     
-    		[MonoTODO]
+    		//[MonoTODO]
     		//public MainMenu MergedMenu {
     		//	get {
     		//		throw new NotImplementedException ();
     		//	}
     		//}
     
-  		//Compact Framework
+  			//Compact Framework
     		[MonoTODO]
     		public bool MinimizeBox {
     			get {
-    				throw new NotImplementedException ();
+    				return minimizeBox;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				minimizeBox = value;
     			}
     		}
     
     		[MonoTODO]
     		public Size MinimumSize {
     			get {
-    				throw new NotImplementedException ();
+    				return maximumSize;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				maximumSize = value;
     			}
     		}
     
@@ -402,12 +426,24 @@
     		}
     
     
-  		//Compact Framework
+	  		//Compact Framework
     		[MonoTODO]
     		public FormWindowState WindowState {
     			get {
-    				throw new NotImplementedException ();
-    			}
+					Win32.WINDOWPLACEMENT placement = new Win32.WINDOWPLACEMENT();
+
+    				//bool ReturnValue = Win32.GetWindowPlacement(Handle, ref placement ) ;
+					//if(placement.showCmd == SW_MINIMIZE){
+					//	return FormWindowState.Minimized;
+					//}
+					//if(placement.showCmd == SW_MAXIMIZE){
+					//	return FormWindowState.Maximized;
+					//}
+					return FormWindowState.Normal;
+					//Other options such as hide are possible in win32, but not in this part of .NET
+					// also this may not work because it looks like showCmd is for setting, and might not be set
+					// by win32 in a get.
+				}
     			set {
     				throw new NotImplementedException ();
     			}
@@ -426,7 +462,7 @@
     			throw new NotImplementedException ();
     		}
     
-  		//Compact Framework
+	  		//Compact Framework
     		public void Close ()
     		{
     			Win32.CloseWindow (Handle);
@@ -442,19 +478,18 @@
     		//		throw new NotImplementedException ();
     		//}		 [MonoTODO]
     
-    		public override bool Equals (object o)
-    		{
-    			throw new NotImplementedException ();
-    		}
+    		//public override bool Equals (object o)
+    		//{
+    		//	throw new NotImplementedException ();
+    		//}
     
     
-    		[MonoTODO]
-    		public override int GetHashCode () {
-    			//FIXME add our proprities
-    			return base.GetHashCode ();
-    		}
+    		//[MonoTODO]
+    		//public override int GetHashCode () {
+    		//	return base.GetHashCode ();
+    		//}
     
-    		[MonoTODO]
+    		//[MonoTODO]
     		// Font class not implemented or stubbed
      		//public static SizeF GetAutoScaleSize(Font font)
      		//{
@@ -471,16 +506,16 @@
     		//		throw new NotImplementedException ();
     		//}
     
-    		[MonoTODO]
+     		//public void PerformLayout()
+    		//{
+    		//		throw new NotImplementedException ();
+    		//}
+    
+   			[MonoTODO]
     		public void LayoutMdi (MdiLayout value)
     		{
     			throw new NotImplementedException ();
     		}
-    
-    		//public void PerformLayout()
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
     
     		[MonoTODO]
     		public void RemoveOwnedForm (Form ownedForm)
@@ -516,131 +551,49 @@
     					    Win32.SWP_NOZORDER));
     		}
     
-    		public new void Show ()
-    		{
-    			Win32.ShowWindow (Handle, (int) Win32.SW_SHOW);
-    		}
+    		//inherited from control
+			//public new void Show ()
+    		//{
+    		//	Win32.ShowWindow (Handle, (int) Win32.SW_SHOW);
+    		//}
     
     		[MonoTODO]
     		public DialogResult ShowDialog ()
     		{
-    			throw new NotImplementedException ();
-    		}
+				Win32.ShowWindow (Handle, (int) Win32.SW_SHOW);
+				return new DialogResult();
+			}
     
-  		//Compact Framework
+  			//Compact Framework
     		[MonoTODO]
     		public override string ToString ()
     		{
-    			throw new NotImplementedException ();
+    			return base.ToString();
     		}
     
     		//  --- Public Events
     		
-    		public event EventHandler Activated; //{
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event EventHandler Activated;
     		
     		public event EventHandler Closed;
     		 
-  		//Compact Framework
+  			//Compact Framework
     		// CancelEventHandler not yet implemented/stubbed
     		//public event CancelEventHandler Closing;
     		
-    		public event EventHandler Deactivate; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event InputLanguageChangedEventHandler InputLanguageChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event InputLanguageChangingEventHandler InputLanguageChanging; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-  		//Compact Framework
-    		public event EventHandler  Load; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event EventHandler  MaximizedBoundsChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event EventHandler MaximumSizeChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event EventHandler  MdiChildActivate; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event EventHandler  MenuComplete; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event EventHandler  MenuStart; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
-    		public event EventHandler  MinimumSizedChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event EventHandler Deactivate;
+    		public event InputLanguageChangedEventHandler InputLanguageChanged;
+    		public event InputLanguageChangingEventHandler InputLanguageChanging;
+
+			//Compact Framework
+    		public event EventHandler  Load;
+    		
+			public event EventHandler  MaximizedBoundsChanged;
+    		public event EventHandler MaximumSizeChanged;
+    		public event EventHandler  MdiChildActivate;
+    		public event EventHandler  MenuComplete;
+    		public event EventHandler  MenuStart;
+    		public event EventHandler  MinimumSizedChanged;
     
     		
     		//  --- Protected Properties
@@ -663,16 +616,16 @@
     		//}
     
     		//[MonoTODO]
- 		//public new Size Size {
- 		//	get {
- 		//		throw new NotImplementedException ();
- 		//	}
- 		//	set {
- 		//		throw new NotImplementedException ();
- 		//	}
- 		//}
+ 			//public new Size Size {
+ 			//	get {
+ 			//		throw new NotImplementedException ();
+ 			//	}
+ 			//	set {
+ 			//		throw new NotImplementedException ();
+ 			//	}
+ 			//}
  
- 		[MonoTODO]
+ 			[MonoTODO]
     		protected Rectangle MaximizedBounds {
     			get {
     				throw new NotImplementedException ();
@@ -715,15 +668,15 @@
     		//		throw new NotImplementedException ();
     		//}
     
-  		//Compact Framework
+  			//Compact Framework
     		protected virtual void OnClosed (EventArgs e)
     		{
     			if (Closed != null)
     				Closed (this, e);
     		}
     
-  		//Compact Framework
-    		[MonoTODO]
+	  		//Compact Framework
+    		//[MonoTODO]
     		// CancelEventArgs not yet stubbed/implemented
     		//protected virtual void  OnClosing(CancelEventArgs e)
     		//{
@@ -765,7 +718,7 @@
     				InputLanguageChanging (this, e);
     		}
     
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnLoad (EventArgs e)
     		{
     			if (Load != null)
@@ -807,13 +760,13 @@
     
     		}
     
- 		//Compact Framework
+	 		//Compact Framework
     		protected override void  OnPaint (PaintEventArgs e)
     		{
     			base.OnPaint (e);
     		}
     
- 		//Compact Framework
+ 			//Compact Framework
     		protected override void  OnResize (EventArgs e)
     		{
     			base.OnResize (e);
@@ -824,7 +777,7 @@
     			base.OnStyleChanged (e);
     		}
     
- 		//Compact Framework
+ 			//Compact Framework
     		protected override void  OnTextChanged (EventArgs e)
     		{
     			base.OnTextChanged (e);
@@ -835,7 +788,7 @@
     			base.OnVisibleChanged (e);
     		}
     
- 		protected override bool ProcessCmdKey (
+ 			protected override bool ProcessCmdKey (
  			ref Message msg, Keys keyData)
     		{
     			return base.ProcessCmdKey (ref msg, keyData);
@@ -861,11 +814,6 @@
     			base.ScaleCore (x, y);
     		}
     
-    		//public void Select(bool b1, bool b2)
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-    
     		protected override void SetBoundsCore (
     			int x, int y,  int width, int height,  
     			BoundsSpecified specified)
@@ -883,7 +831,12 @@
     			base.SetVisibleCore (value);
     		}
     
-    		//protected void UpdateBounds()
+     		//public void Select(bool b1, bool b2)
+    		//{
+    		//		throw new NotImplementedException ();
+    		//}
+    
+   			//protected void UpdateBounds()
     		//{
     		//		throw new NotImplementedException ();
     		//}
@@ -893,31 +846,31 @@
     			base.WndProc (ref m);
     
     			switch (m.Msg) {
-    			case Win32.WM_CLOSE:
+    			case (int)Win32.WM_CLOSE:
     				EventArgs closeArgs = new EventArgs();
     				OnClosed (closeArgs);
     				break;
     				//case ?:
     				//OnCreateControl()
     				//break;
-    			case Win32.WM_FONTCHANGE:
+    			case (int)Win32.WM_FONTCHANGE:
     				EventArgs fontChangedArgs = new EventArgs();
     				OnFontChanged (fontChangedArgs);
     				break;
-    			case Win32.WM_CREATE:
+    			case (int)Win32.WM_CREATE:
     				EventArgs handleCreatedArgs = new EventArgs(); 
     				OnHandleCreated (handleCreatedArgs);
     				break;
-    			case Win32.WM_DESTROY:
+    			case (int)Win32.WM_DESTROY:
     				EventArgs destroyArgs = new EventArgs();
     				OnHandleDestroyed (destroyArgs);
     				break;
-    			case Win32.WM_INPUTLANGCHANGE:
+    			case (int)Win32.WM_INPUTLANGCHANGE:
     				//InputLanguageChangedEventArgs ilChangedArgs =
     				//	new InputLanguageChangedEventArgs();
     				//OnInputLanguageChanged (ilChangedArgs);
     				break;
-    			case Win32.WM_INPUTLANGCHANGEREQUEST:
+    			case (int)Win32.WM_INPUTLANGCHANGEREQUEST:
     				//InputLanguageChangingEventArgs ilChangingArgs =
     				//	new InputLanguageChangingEventArgs();
     				//OnInputLanguagedChanging (ilChangingArgs);
@@ -934,37 +887,37 @@
     				// case ?:
     				// OnMaximumSizedChanged(EventArgs e)
     				//break;
-    			case Win32.WM_MDIACTIVATE:
+    			case (int)Win32.WM_MDIACTIVATE:
     				EventArgs mdiActivateArgs = new EventArgs();
     				OnMdiChildActivate (mdiActivateArgs);
     				break;
-    			case Win32.WM_EXITMENULOOP:
+    			case (int)Win32.WM_EXITMENULOOP:
     				EventArgs menuCompleteArgs = new EventArgs();
     				OnMenuComplete (menuCompleteArgs);
     				break;
-    			case Win32.WM_ENTERMENULOOP:
+    			case (int)Win32.WM_ENTERMENULOOP:
     				EventArgs enterMenuLoopArgs = new EventArgs();
     				OnMenuStart (enterMenuLoopArgs);
     				break;
     				// case ?:
     				// OnMinimumSizeChanged(EventArgs e)
     				// break;
-    			case Win32.WM_PAINT:
+    			case (int)Win32.WM_PAINT:
     				//PaintEventArgs paintArgs = new PaintEventArgs();
     				//OnPaint (paintArgs);
     				break;
-    			case Win32.WM_SIZE:
+    			case (int)Win32.WM_SIZE:
     				EventArgs resizeArgs = new EventArgs();
     				OnResize (resizeArgs);
     				break;
     				//case ?:
     				//OnStyleChanged(EventArgs e)
     				//break;
-    			case Win32.WM_SETTEXT:
+    			case (int)Win32.WM_SETTEXT:
     				EventArgs textChangedArgs = new EventArgs();
     				OnTextChanged (textChangedArgs);
     				break;
-    			case Win32.WM_SHOWWINDOW:
+    			case (int)Win32.WM_SHOWWINDOW:
     				EventArgs visibleChangedArgs = new EventArgs();
     				OnVisibleChanged (visibleChangedArgs);
     				break;
@@ -987,9 +940,9 @@
     		// TODO: implement support classes and derive from 
     		// proper classes
     		// FIXME: use this or the one defined on Control?
- 		public class  ControlCollectionX : 
- 		System.Windows.Forms.Control.ControlCollection 
- 		/*,ICollection*/ {
+ 			public class  ControlCollectionX : 
+ 			System.Windows.Forms.Control.ControlCollection 
+ 			/*,ICollection*/ {
     
     			//  --- Constructor
     			// base class not defined (yet!)

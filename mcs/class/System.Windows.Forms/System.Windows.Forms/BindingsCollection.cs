@@ -16,9 +16,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents a collection of Binding objects for a control.
 	///
-	/// ToDo note:
-	///  - most methods are not implemented
-	///  - those few that are implemented need checking
 	/// </summary>
 	
 	[MonoTODO]
@@ -31,18 +28,13 @@ namespace System.Windows.Forms {
 		#endregion
 
 		// --- public and protected Properties ---
-		[MonoTODO]
-//		//FIXME
-		public virtual int Count {
+		public override int Count {
 			get {
-				throw new NotImplementedException ();
-				//return base.Count;
+				return base.Count;
 			}
 		}
 		
-		[MonoTODO]
 		public Binding this[int index] {
-			// CHECKME:
 			get {
 				return (Binding)(base.List[index]);
 			}
@@ -50,13 +42,10 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override ArrayList List {
-			// CHECKME:
 			get {
 				return base.List;
  }
 		}
-		
-		
 		
 		// --- public Methods ---
 		// following internal methods are (will) not be stubbed out:
@@ -69,10 +58,8 @@ namespace System.Windows.Forms {
 		// cause the CollectionChanged event to occur, similarily as Clear.
 		// Would be nice if someone checked the exact event behavior of .NET implementation.
 		
-		[MonoTODO]
 		protected internal void Add(Binding binding) 
 		{
-			// CHECKME:
 			base.List.Add(binding);
 			OnCollectionChanged(new CollectionChangeEventArgs(
 				CollectionChangeAction.Add,
@@ -80,10 +67,8 @@ namespace System.Windows.Forms {
 			));
 		}
 		
-		[MonoTODO]
 		protected internal void Clear() 
 		{
-			// CHECKME:
 			base.List.Clear();
 			OnCollectionChanged(new CollectionChangeEventArgs(
 				CollectionChangeAction.Refresh,
@@ -91,18 +76,14 @@ namespace System.Windows.Forms {
 			));
 		}
 
-		[MonoTODO]
 		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent) 
 		{
-			// CHECKME:
 			if (CollectionChanged != null)
 				CollectionChanged(this, ccevent);
 		}
 
-		[MonoTODO]
 		protected internal void Remove(Binding binding) 
 		{
-			// CHECKME:
 			base.List.Remove(binding);
 			OnCollectionChanged(new CollectionChangeEventArgs(
 				CollectionChangeAction.Remove,
@@ -110,10 +91,8 @@ namespace System.Windows.Forms {
 			));
 		}
 
-		[MonoTODO]
 		protected internal void RemoveAt(int index) 
 		{
-			// CHECKME:
 			base.List.RemoveAt(index);
 			OnCollectionChanged(new CollectionChangeEventArgs(
 				CollectionChangeAction.Remove,
@@ -123,9 +102,8 @@ namespace System.Windows.Forms {
 		
 		protected internal bool ShouldSerializeMyAll() 
 		{
-			throw new NotImplementedException ();
-			//if (this.Count>0) return true;
-			//else return false;
+			if (this.Count>0) return true;
+			else return false;
 		}
 		
 		// public events

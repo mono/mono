@@ -23,62 +23,56 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	public class BaseCollection : MarshalByRefObject, ICollection, IEnumerable {
 
-//		ArrayList list;
-//		
-//		
-//		// --- Constructor ---
-//		public BaseCollection()
-//		{
-//			this.list=null;
-//		}
+		ArrayList list;
+		
+		
+		// --- Constructor ---
+		public BaseCollection()
+		{
+			this.list = null;
+		}
 
 
 
 		// --- public and protected Properties ---
-		//virtual 
-		int ICollection.Count {
+//		public virtual int ICollection.Count {
+		public virtual int Count {
 			get {
-				throw new NotImplementedException ();
-				//return list.Count; 
+				return list.Count; 
 			}
 		}
 		
 		public bool IsReadOnly {
+			//always false as per spec.
 			get { return false; }
 		}
 		
 		[MonoTODO]
 		public bool IsSynchronized {
-			// FIXME: should return true if object is synchronized
+			//always false as per spec.
 			get { return false; }
 		}
 		
 		protected virtual ArrayList List {
 			get { 
-				throw new NotImplementedException ();
-				//return list; 
+				return list; 
 			}
 		}
 		
 		[MonoTODO]
 		public object SyncRoot {
-			// FIXME: should return object that can be used with the C# lock keyword
 			get { return this; }
 		}
-		
-		
 		
 		// --- public Methods ---
 		public void CopyTo (Array ar, int index) 
 		{
-			throw new NotImplementedException ();
-			//list.CopyTo(ar, index);
+			list.CopyTo(ar, index);
 		}
 		
 		public IEnumerator GetEnumerator() 
 		{
-			throw new NotImplementedException ();
-			//return list.GetEnumerator();
+			return list.GetEnumerator();
 		}
 		
 	}

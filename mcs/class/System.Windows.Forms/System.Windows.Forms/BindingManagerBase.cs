@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Collections;
 
 namespace System.Windows.Forms {
-
+	//Compact Framework. Everything execpt suspend and resume binding needed for CE.
 	[MonoTODO]
 	public abstract class BindingManagerBase {
 
@@ -24,9 +24,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public BindingManagerBase ()
 		{
-			throw new NotImplementedException ();
 		}
-
 		
 		//
 		// --- Fields
@@ -57,8 +55,6 @@ namespace System.Windows.Forms {
 			get;
 			set;
 		}
-
-
 
 		//
 		// --- Methods
@@ -102,7 +98,6 @@ namespace System.Windows.Forms {
 		public abstract void RemoveAt(int index);
 
 		public abstract void ResumeBinding();
-
 		public abstract void SuspendBinding();
 
 		protected abstract void UpdateIsBinding();
@@ -110,16 +105,8 @@ namespace System.Windows.Forms {
 
 		//
 		// --- Public Events
-		[MonoTODO]
-		public event EventHandler CurrentChanged {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
-		}
 
-		[MonoTODO]
-		public event EventHandler PositionChanged {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
-		}
+		public event EventHandler CurrentChanged;
+		public event EventHandler PositionChanged;
 	}
 }

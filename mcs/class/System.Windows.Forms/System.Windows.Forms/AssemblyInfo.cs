@@ -1,6 +1,3 @@
-// Used for Visual Studio only.
-// This file has nothing to do with System.Windows.Forms
-
 using System.Reflection;
 using System.Runtime.CompilerServices;
 

@@ -16,11 +16,12 @@ namespace System.Windows.Forms {
 		/// Manages the collection of BindingManagerBase objects for any object that inherits from the Control class.
 		/// </summary>
 
+		//private 
 		// --- Constructor
 		[MonoTODO]
 		public BindingContext ()
 		{
-			throw new NotImplementedException ();
+			//
 		}
 
 

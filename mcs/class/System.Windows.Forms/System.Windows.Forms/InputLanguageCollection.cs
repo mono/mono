@@ -50,10 +50,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		[MonoTODO]
 		public override int GetHashCode() {
@@ -66,5 +62,9 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
- }
+ 		//public static bool Equals(object o1, object o2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+}
 }

@@ -81,8 +81,32 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		//
+		//  --- Public Methods
+		//
+
+		//
+		//  --- Protected Properties
+		//
+
+		protected override CreateParams CreateParams {
+			get {
+				return base.CreateParams;
+			}
+		}
+
 		[MonoTODO]
-		public override ISite Site {
+		protected bool HScroll {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		protected bool VScroll {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -92,8 +116,45 @@ namespace System.Windows.Forms {
 		}
 
 		//
-		//  --- Public Methods
+		//  --- Protected Methods
 		//
+		[MonoTODO]
+		protected virtual void AdjustFormScrollbars (
+			bool displayScrollbars)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnLayout (LayoutEventArgs e) {
+			base.OnLayout (e);
+		}
+
+		protected override void OnMouseWheel (MouseEventArgs e) {
+			base.OnMouseWheel (e);
+		}
+
+		protected override void OnVisibleChanged (EventArgs e) {
+			base.OnVisibleChanged (e);
+		}
+
+		protected override void ScaleCore (float dx, float dy) {
+			base.ScaleCore (dx, dy);
+		}
+
+		protected override void WndProc (ref Message m) {
+			base.WndProc (ref m);
+		}
+		
+
+		//[MonoTODO]
+		//public override ISite Site {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		//public IAsyncResult BeginInvoke(Delegate del)
 		//{
 		//	throw new NotImplementedException ();
@@ -107,22 +168,22 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
-		public override bool Equals (object o)
-		{
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public override bool Equals (object o)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//public static bool Equals(object o1, object o2)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
-		public override int GetHashCode () {
-			//FIXME add our proprities
-			return base.GetHashCode ();
-		}
+		//[MonoTODO]
+		//public override int GetHashCode () {
+		//	//FIXME add our proprities
+		//	return base.GetHashCode ();
+		//}
 
 		//public void Invalidate()
 		//{
@@ -196,67 +257,10 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-
-		//
-		//  --- Protected Properties
-		//
-
-		protected override CreateParams CreateParams {
-			get {
-				return base.CreateParams;
-			}
-		}
-
-		[MonoTODO]
-		protected bool HScroll {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		protected bool VScroll {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		//
-		//  --- Protected Methods
-		//
-		[MonoTODO]
-		protected virtual void AdjustFormScrollbars (
-			bool displayScrollbars)
-		{
-			throw new NotImplementedException ();
-		}
-
 		//protected override void Dispose(bool disposing)
 		//{
 		//	throw new NotImplementedException ();
 		//}
-
-		protected override void OnLayout (LayoutEventArgs e)
-		{
-			base.OnLayout (e);
-		}
-
-		protected override void OnMouseWheel (MouseEventArgs e)
-		{
-			base.OnMouseWheel (e);
-		}
-
-		protected override void OnVisibleChanged (EventArgs e)
-		{
-			base.OnVisibleChanged (e);
-		}
-
 		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
 		//{
 		//	throw new NotImplementedException ();
@@ -269,12 +273,6 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-
-		protected override void ScaleCore (float dx, float dy)
-		{
-			base.ScaleCore (dx, dy);
-		}
-
 		//protected void UpdateBounds()
 		//{
 		//	throw new NotImplementedException ();
@@ -287,12 +285,6 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-
-		protected override void WndProc (ref Message m)
-		{
-			base.WndProc (ref m);
-		}
-		
 		/// ScrollableControl.DockPaddingEdges
 		/// Determines the border padding for docked controls.
 		public class DockPaddingEdges : ICloneable {

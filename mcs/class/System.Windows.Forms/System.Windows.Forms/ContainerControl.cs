@@ -32,7 +32,7 @@ namespace System.Windows.Forms {
 		}
 		
 		//Compact Framework
-		[MonoTODO]
+		//[MonoTODO]
 		// not ready for BindingContext
 		//public override BindingContext BindingContext {
 		//	get { throw new NotImplementedException (); }
@@ -64,7 +64,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		// not memeber?
 		//bool IContainerControl.ActivateControl(Control control) 
 		//{

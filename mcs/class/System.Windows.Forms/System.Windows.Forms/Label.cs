@@ -39,7 +39,23 @@
     		//
     		public Label () : base ()
     		{
-    
+				// Defaults in the Spec
+				autoSize = false;
+				borderStyle = BorderStyle.None;
+
+				//Defaults not in the spec
+				Image backgroundImage;
+				Image image;
+				ContentAlignment imageAlign;
+				ImeMode defaultImeMode;
+				bool renderTransparent;
+				FlatStyle flatStyle;
+				int preferredHeight;
+				int preferredWidth;
+				bool tabStop;
+				ContentAlignment textAlign;
+				bool useMnemonic;
+
     		}
     		
     		//
@@ -241,32 +257,18 @@
     		}
     
   		//Compact Framework
-    		[MonoTODO]
     		public override string ToString()
     		{
-    			throw new NotImplementedException ();
+				//FIXME: add name of lable, as well as text. would adding base.ToString work?
+    			return "Label: " + base.Text;
     		}
     
     		//
     		//  --- Public Events
     		// 
     		public event EventHandler AutoSizeChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    
+   
     		public event EventHandler TextAlignChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
     
     		//
     		//  --- Protected Methods
@@ -278,11 +280,11 @@
     			throw new NotImplementedException ();
     		}
     
-    //  		[MonoTODO]
-    //  		protected  override AccessibleObject CreateAccessibilityInstance()
-    //  		{
-    //  			throw new NotImplementedException ();
-    //  		}
+      		[MonoTODO]
+      		protected  override AccessibleObject CreateAccessibilityInstance()
+      		{
+      			throw new NotImplementedException ();
+      		}
     
     		protected new virtual void Dispose()
     		{

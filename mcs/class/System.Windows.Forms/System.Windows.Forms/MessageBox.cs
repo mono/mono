@@ -26,30 +26,6 @@ namespace System.Windows.Forms {
 		// -- Public Methods
 		//
 
-		//Compact Framework
-		[MonoTODO]
-		public override bool Equals(object o) 
-		{
-			throw new NotImplementedException ();
-		}
-                
-		//public static bool Equals(object o1, object o2) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
-                
-		//Compact Framework
-		[MonoTODO]
-		public override int GetHashCode() 
-		{
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-                
-		//Compact Framework
-		//public Type GetType() {
-		//	throw new NotImplementedException ();
-		//}
                 
 		//Compact Framework
 		public static DialogResult Show(string text) 
@@ -105,7 +81,7 @@ namespace System.Windows.Forms {
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, 
-					       (uint) (mb | mi) );
+					       (uint) ((uint)mb | (uint)mi) );
 		}
                 
 		public static DialogResult Show (
@@ -114,7 +90,7 @@ namespace System.Windows.Forms {
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA (w.Handle, text, caption, 
-					       (uint) (mb | mi) );
+					       (uint) ((uint)mb |(uint) mi) );
 		}
                 
 		//Compact Framework
@@ -124,7 +100,7 @@ namespace System.Windows.Forms {
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, 
-					       (uint) (mb | mi | md) );
+					       (uint) ((uint)mb | (uint)mi | (uint)md) );
 
 		}
                 
@@ -135,7 +111,7 @@ namespace System.Windows.Forms {
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA (w.Handle, text, caption, 
-					       (uint) (mb | mi | md) );
+					       (uint) ((uint)mb | (uint)mi | (uint)md) );
 		}
                 
 		public static DialogResult 
@@ -145,7 +121,7 @@ namespace System.Windows.Forms {
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, 
-					       (uint) (mb | mi | md | mo) );
+					       (uint) ((uint)mb | (uint)mi | (uint)md |(uint) mo) );
 		}
                 
 		public static DialogResult Show (
@@ -155,25 +131,60 @@ namespace System.Windows.Forms {
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA (w.Handle, text, caption, 
-					       (uint) (mb | mi | md | mo) );
+					       (uint) ((uint)mb | (uint)mi | (uint)md | (uint)mo) );
 		}
+		//Compact Framework
+		//Inherited
+		///// <summary>
+		/////	Equals Method
+		///// </summary>
+		/////
+		///// <remarks>
+		/////	Checks equivalence of this MessageBox and another object.
+		///// </remarks>
+		//
+		//public override bool Equals (object obj) {
+		//	if (!(obj is MessageBox))
+		//		return false;
+		//
+		//	return (this == (MessageBox) obj);
+		//}                
+
+                
+		//Compact Framework
+		//Inherited
+		//[MonoTODO]
+		//public override int GetHashCode() 
+		//{
+		//	//FIXME add our proprities
+		//	return base.GetHashCode();
+		//}
+                
+		//Compact Framework
+		//Inherited
+		//public Type GetType() {
+		//	throw new NotImplementedException ();
+		//}
 
 		//Compact Framework
-		[MonoTODO]                
-		public override string ToString () {
-			throw new NotImplementedException ();
-		}
+		//Inherited
+		//[MonoTODO]                
+		//public override string ToString () {
+		//	throw new NotImplementedException ();
+		//}
+
+		//Inherited
+		//Compact Framework
+		//[MonoTODO]                
+		//~MessageBox () {
+		//	//Release any resources
+		//}
 
 		//Compact Framework
-		[MonoTODO]                
-		~MessageBox () {
-			throw new NotImplementedException ();
-		}
-
-		//Compact Framework
-		[MonoTODO]                
-		protected object MemberWiseClone () {
-			throw new NotImplementedException ();
-		}
+		//Inherited
+		//[MonoTODO]                
+		//protected object MemberWiseClone () {
+		//	throw new NotImplementedException ();
+		//}
 	}
 }

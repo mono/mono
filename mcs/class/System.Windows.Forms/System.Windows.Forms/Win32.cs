@@ -9,7 +9,7 @@
 //
 
 using System.Runtime.InteropServices;
-
+using System.Drawing;
 namespace System.Windows.Forms {
 
 	// holder for DLL Win32 DllImports 
@@ -28,7 +28,17 @@ namespace System.Windows.Forms {
 			public long right; 
 			public long bottom;
 		}
- 
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct WINDOWPLACEMENT { 
+			public uint  length; 
+			public uint  flags; 
+			public uint  showCmd; 
+			public POINT ptMinPosition; 
+			public POINT ptMaxPosition; 
+			public RECT  rcNormalPosition; 
+		}
+
 		[StructLayout(LayoutKind.Sequential)]
 		public struct MSG {
 			public IntPtr   hwnd;
@@ -65,6 +75,24 @@ namespace System.Windows.Forms {
 			int cbWndExtra, IntPtr hInstance, IntPtr hIcon,
 			IntPtr hCursor,	IntPtr hbrBackground,
 			string lpszMenuName, string lpszClassName);
+
+		#region Added by Dennis hayes 10-20-2002
+		//correct?
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall,
+			    CharSet = CharSet.Auto)]
+		public static extern uint SendMessage(
+			IntPtr hWnd, uint Msg,
+			IntPtr wParam, IntPtr lParam);
+
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		public static extern bool GetWindowPlacement(
+			IntPtr hWnd,
+			ref  WINDOWPLACEMENT  lpwndpl  // position data
+			);
+		#endregion
 
 		[DllImport ("user32.dll", 
 			    CallingConvention = CallingConvention.StdCall,
@@ -136,6 +164,7 @@ namespace System.Windows.Forms {
 			    CharSet = CharSet.Auto)]
 		public static extern int MessageBoxA (
 			IntPtr hWnd, string pText, string pCaption, uint uType);
+
 		[DllImport ("user32.dll", 
 			    CallingConvention = CallingConvention.StdCall, 
 			    CharSet = CharSet.Auto)]
@@ -645,34 +674,35 @@ namespace System.Windows.Forms {
 		public const int HWND_MESSAGE = -3;
 
 		// Static Control Styles
-		public const int SS_LEFT             = 0x00000000L;
-		public const int SS_CENTER           = 0x00000001L;
-		public const int SS_RIGHT            = 0x00000002L;
-		public const int SS_ICON             = 0x00000003L;
-		public const int SS_BLACKRECT        = 0x00000004L;
-		public const int SS_GRAYRECT         = 0x00000005L;
-		public const int SS_WHITERECT        = 0x00000006L;
-		public const int SS_BLACKFRAME       = 0x00000007L;
-		public const int SS_GRAYFRAME        = 0x00000008L;
-		public const int SS_WHITEFRAME       = 0x00000009L;
+		public const uint SS_LEFT             = 0x00000000;
+		public const int SS_CENTER           = 0x00000001;
+		public const int SS_RIGHT            = 0x00000002;
+		public const int SS_ICON             = 0x00000003;
+		public const int SS_BLACKRECT        = 0x00000004;
+		public const int SS_GRAYRECT         = 0x00000005;
+		public const int SS_WHITERECT        = 0x00000006;
+		public const int SS_BLACKFRAME       = 0x00000007;
+		public const int SS_GRAYFRAME        = 0x00000008;
+		public const int SS_WHITEFRAME       = 0x00000009;
 
-		public const int SS_SIMPLE           = 0x0000000BL;
-		public const int SS_LEFTNOWORDWRAP   = 0x0000000CL;
+		public const int SS_SIMPLE           = 0x0000000B;
+		public const int SS_LEFTNOWORDWRAP   = 0x0000000C;
 		
-		public const int SS_OWNERDRAW        = 0x0000000DL;
-		public const int SS_BITMAP           = 0x0000000EL;
-		public const int SS_ENHMETAFILE      = 0x0000000FL;
+		public const int SS_OWNERDRAW        = 0x0000000D;
+		public const int SS_BITMAP           = 0x0000000E;
+		public const int SS_ENHMETAFILE      = 0x0000000F;
 
-		public const int SS_ETCHEDHORZ       = 0x00000010L;
-		public const int SS_ETCHEDVERT       = 0x00000011L;
-		public const int SS_ETCHEDFRAME      = 0x00000012L;
-		public const int SS_TYPEMASK         = 0x0000001FL;
+		public const int SS_ETCHEDHORZ       = 0x00000010;
+		public const int SS_ETCHEDVERT       = 0x00000011;
+		public const int SS_ETCHEDFRAME      = 0x00000012;
+		public const int SS_TYPEMASK         = 0x0000001F;
 		
-		public const int SS_NOPREFIX         = 0x00000080L;
-		public const int SS_NOTIFY           = 0x00000100L;
-		public const int SS_CENTERIMAGE      = 0x00000200L;
-		public const int SS_RIGHTJUST        = 0x00000400L;
-		public const int SS_REALSIZEIMAGE    = 0x00000800L;
-		public const int SS_SUNKEN           = 0x00001000L;
+		public const int SS_NOPREFIX         = 0x00000080;
+		public const int SS_NOTIFY           = 0x00000100;
+		public const int SS_CENTERIMAGE      = 0x00000200;
+		public const int SS_RIGHTJUST        = 0x00000400;
+		public const int SS_REALSIZEIMAGE    = 0x00000800;
+		public const int SS_SUNKEN           = 0x00001000;
 	}
+
 }

@@ -76,7 +76,7 @@
     
     		// --- Constructors ---
     
- 		//Compact Framework //only Control()
+	 		//Compact Framework //only Control()
     		public Control ()
     		{
     			CreateControlsInstance ();
@@ -219,7 +219,7 @@
     			}
     		}
     		
-  		//Compact Framework
+	  		//Compact Framework
     		public virtual Color BackColor {
     			get {
     				if (IsHandleCreated) {
@@ -264,14 +264,14 @@
     		//	}
     		//}
     		
- 		//Compact Framework
+	 		//Compact Framework
     		public int Bottom {
     			get {
     				return Top + Height;
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public Rectangle Bounds {
     			get {
     				if (IsHandleCreated) {
@@ -315,7 +315,7 @@
     			}
     		}
     		
- 		//Compact Framework
+	 		//Compact Framework
     		public bool Capture {
     			get {
     				if (IsHandleCreated) {
@@ -350,7 +350,7 @@
     			}
     		}
     		
- 		//Compact Framework
+	 		//Compact Framework
     		public Rectangle ClientRectangle {
     			get {
     				if (IsHandleCreated) {
@@ -368,23 +368,32 @@
     			}
     		}
     		
- 		//Compact Framework
-    		[MonoTODO]
-    		public Size ClientSize {
-    			get {
-    				// FIXME: use GetSystemMetrics and/or
-    				// GetClientRect here?
-    				throw new NotImplementedException ();
-    			}
-    			set {
-    				throw new NotImplementedException ();
-    			}
-    		}
+	 		//Compact Framework
+			[MonoTODO]
+			public Size ClientSize {
+				get {
+					if (IsHandleCreated) {
+						Win32.RECT rect = new Win32.RECT();
+						Win32.GetClientRect (Handle, ref rect);
+						return new Size (
+							(int) rect.right, 
+							(int) rect.bottom);
+					}
+					// FIXME: is the correct return value for
+					// window who's handle is not created
+					return new Size (0, 0);
+				}
+				set {
+					//How do set this???
+					throw new NotImplementedException ();
+				}
+			}
     		
     		[MonoTODO]
     		public string CompanyName {
     			get {
-    				throw new NotImplementedException ();
+					//Better than throwing an execption
+    				return "Comapny Name";
     			}
     		}
     		
@@ -399,7 +408,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		//[MonoTODO]
     		//public virtual ContextMenu ContextMenu {
     		//	get {
@@ -458,14 +467,14 @@
     			}
     		}
     		
-  		//Compact Framework
-    		//[MonoTODO]
-    		// waiting for BindingContext
-    		//public ControlBindingsCollection DataBindings {
-    		//	get {
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//}
+	  		//Compact Framework
+    		[MonoTODO]
+    		// waiting for BindingContext; should be stubbed now
+    		public ControlBindingsCollection DataBindings {
+    			get {
+    				throw new NotImplementedException ();
+    			}
+    		}
     		
     		public static Color DefaultBackColor {
     			get {
@@ -488,24 +497,20 @@
     		
     		public static Color DefaultForeColor {
     			get {
-    				// FIXME: use GetSystemMetrics?
-    				//return SystemColors.ControlText;
-    				throw new NotImplementedException ();
+    				return SystemColors.ControlText;
     			}
     		}
     		
     		protected virtual ImeMode DefaultImeMode {
     			get {
-    				//return ImeMode.Inherit;
-    				throw new NotImplementedException ();
+    				return ImeMode.Inherit;
     			}
     		}
     		
-    		[MonoTODO]
     		protected virtual Size DefaultSize {
     			get {
-    				// FIXME: use GetSystemMetrics?
-    				throw new NotImplementedException ();
+					//Default label size, this should be correct.
+    				return new Size(100,23);
     			}
     		}
     		
@@ -531,7 +536,7 @@
     			}
     		}
     
-  		//Compact Framework
+	  		//Compact Framework
     		public virtual bool Enabled {
     			get {
     				return Win32.IsWindowEnabled (Handle);
@@ -541,26 +546,27 @@
     			}
     		}
     		
-  		//Compact Framework
+  			//Compact Framework
     		public virtual bool Focused {
     			get {
     				return ContainsFocus;
     			}
     		}
     		
-  		//Compact Framework
-    		// [MonoTODO]
-    		//public virtual Font Font {
-    			// CHECKME:
-    		//	get {
-    				//return font;
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//	set {
-    				//font=value;
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//}
+  			//Compact Framework
+    		public virtual Font Font {
+				get {
+					throw new NotImplementedException ();
+					//uint ReturnValue = Win32.SendMessage(Handle, Win32.WM_GETFONT, IntPtr.Zero, IntPtr.Zero);
+					//if(ReturnValue != 0)throw new Exception("Could not get Font",null);
+					//return Handle;
+				}
+    			set {
+					throw new NotImplementedException ();
+					//uint ReturnValue = Win32.SendMessage(Handle, Win32.WM_SETFONT, value, (IntPtr)1 );
+					//if(ReturnValue != 0)throw new Exception("Could not set Font",null);
+				}
+    		}
     		
     		[MonoTODO]
     		protected int FontHeight {
@@ -572,7 +578,7 @@
     			}
     		}
     		
-  		//Compact Framework
+  			//Compact Framework
     		public virtual Color ForeColor {
     			get {
     				return foreColor;
@@ -590,7 +596,7 @@
     			}
     		}
     		
-  		//Compact Framework
+  			//Compact Framework
     		public int Height {
     			get {
     				if (IsHandleCreated) {
@@ -642,39 +648,39 @@
     			}
     		}
     		
-  		//Compact Framework
-    		public int Left {
-    			get {
-    				if (IsHandleCreated) {
-    					// FIXME: GetWindowPos
- 					return 0;
- 				} else return bounds.X;
- 			}
- 			set {
- 				bounds.X = value;
+  			//Compact Framework
+			public int Left {
+				get {
+					if (IsHandleCreated) {
+						// FIXME: GetWindowPos
+						return 0;
+					} else return bounds.X;
+				}
+				set {
+					bounds.X = value;
  
- 				if (IsHandleCreated) {
- 					// FIXME: SetWindowPos
- 				}
- 			}
- 		}
+					if (IsHandleCreated) {
+						// FIXME: SetWindowPos
+					}
+				}
+			}
  		
- 		//Compact Framework
-    		public Point Location {
-    			// CHECKME:
-    			get {
-    				return new Point (Top, Left);
-    			}
-    			set {
-    				bounds.X = value.X;
-    				bounds.Y = value.Y;
+ 			//Compact Framework
+			public Point Location {
+				// CHECKME:
+				get {
+					return new Point (Top, Left);
+				}
+				set {
+					bounds.X = value.X;
+					bounds.Y = value.Y;
     
-    				if (IsHandleCreated) {
-    					// FIXME: SetWindowPos
-    				}
+					if (IsHandleCreated) {
+						// FIXME: SetWindowPos
+					}
     
-    			}
-    		}
+				}
+			}
     		
     		[MonoTODO]
     		public static Keys ModifierKeys {
@@ -683,7 +689,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public static MouseButtons MouseButtons {
     			get {
@@ -692,7 +698,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public static Point MousePosition {
     			get {
     				Win32.POINT point = new Win32.POINT();
@@ -711,7 +717,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public Control Parent {
     			get {
     				return parent;
@@ -775,7 +781,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public int Right {
     			get {
     				return Left + Width;
@@ -817,7 +823,7 @@
     			}
     		}
     		
-  		//Compact Framework
+  			//Compact Framework
     		[MonoTODO]
     		public Size Size {
     			get {
@@ -858,7 +864,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public virtual string Text {
     			get {
     				if (IsHandleCreated) {
@@ -866,7 +872,10 @@
     					int length = Win32.GetWindowTextLengthA (Handle);
     					Win32.GetWindowTextA (Handle, ref text, length);
     					return text;
-    				} else return text;
+    				} 
+					else{
+						return text;
+					}
     			}
     			set {
     				text = value;
@@ -876,7 +885,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public int Top {
     			get {
     				if (IsHandleCreated) {
@@ -900,7 +909,7 @@
     			}
     		}
     
-  		//Compact Framework
+  			//Compact Framework
     		public bool Visible {
     			get {
     				throw new NotImplementedException ();
@@ -915,7 +924,7 @@
     			}
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public int Width {
     			get {
     				if (IsHandleCreated) {
@@ -947,7 +956,7 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public void BringToFront () 
     		{
@@ -964,11 +973,10 @@
     			CreateHandle ();
     		}
     
-    		//[MonoTODO]
-    		//AccessibleObject not ready
-    		//protected virtual AccessibleObject CreateAccessibilityInstance() {
-    		//	throw new NotImplementedException ();
-    		//}
+    		[MonoTODO]
+    		protected virtual AccessibleObject CreateAccessibilityInstance() {
+    			throw new NotImplementedException ();
+    		}
     		
     		protected virtual ControlCollection CreateControlsInstance ()
     		{
@@ -976,7 +984,7 @@
     			return childControls;
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public Graphics CreateGraphics () 
     		{
@@ -1022,7 +1030,7 @@
     			throw new NotImplementedException ();
     		}
     	
- 		//Compact Framework
+ 			//Compact Framework
     		public bool Focus () 
     		{
     			if (Win32.SetFocus (Handle) != (IntPtr) 0)
@@ -1072,7 +1080,7 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public void Hide ()
      		{
     			if (IsHandleCreated)
@@ -1085,12 +1093,13 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public void Invalidate () 
     		{
     			if (IsHandleCreated) {
-    				Win32.RECT rect = (Win32.RECT) null;
-    				Win32.InvalidateRect (Handle, ref rect, true);
+					//FIXME: 
+    				//Win32.RECT rect = (Win32.RECT) null;
+    				//Win32.InvalidateRect (Handle, ref rect, true);
     			}
     		}
     		
@@ -1100,7 +1109,7 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public void Invalidate (Rectangle rc) 
     		{
     			if (IsHandleCreated) {
@@ -1211,7 +1220,7 @@
     				ChangeUICues (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnClick (EventArgs e)
     		{
     			if (Click != null)
@@ -1284,7 +1293,7 @@
     				DragOver (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnEnabledChanged (EventArgs e)
     		{
     			if (EnabledChanged != null)
@@ -1315,7 +1324,7 @@
     				GiveFeedback (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnGotFocus (EventArgs e) 
     		{
     			if (GotFocus != null)
@@ -1364,21 +1373,21 @@
     				Invalidated (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnKeyDown (KeyEventArgs e) 
     		{
     			if (KeyDown != null)
     				KeyDown (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnKeyPress (KeyPressEventArgs e) 
     		{
     			if (KeyPress != null)
     				KeyPress (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnKeyUp (KeyEventArgs e) 
     		{
     			if (KeyUp != null)
@@ -1404,14 +1413,14 @@
     				LocationChanged (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnLostFocus (EventArgs e) 
     		{
     			if (LostFocus != null)
     				LostFocus (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnMouseDown (MouseEventArgs e) 
     		{
     			if (MouseDown != null)
@@ -1436,14 +1445,14 @@
     				MouseLeave (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnMouseMove (MouseEventArgs e) 
     		{
     			if (MouseMove != null)
     				MouseMove (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnMouseUp (MouseEventArgs e) 
     		{
     			if (MouseUp != null)
@@ -1467,14 +1476,14 @@
     
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnPaint (PaintEventArgs e) 
     		{
     			if (Paint != null)
     				Paint (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnPaintBackground (PaintEventArgs e) 
     		{
     
@@ -1500,7 +1509,7 @@
     				BindingContextChanged (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnParentChanged (EventArgs e) 
     		{
     			if (ParentChanged != null)
@@ -1545,7 +1554,7 @@
     				QueryContinueDrag (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnResize (EventArgs e) 
     		{
     			if (Resize != null)
@@ -1588,14 +1597,14 @@
     				TabStopChanged (this, e);
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		protected virtual void OnTextChanged (EventArgs e) 
     		{
     			if (TextChanged != null)
     				TextChanged (this, e);
     		}
     
-    		[MonoTODO] // this doesn't seem to be documented
+    		//[MonoTODO] // this doesn't seem to be documented
     // 		protected virtual void OnTextAlignChanged (EventArgs e) {
     // 			TextAlignChanged (this, e);
     // 		}
@@ -1606,7 +1615,7 @@
     				Validated (this, e);
     		}
     		
-    		[MonoTODO]
+    		//[MonoTODO]
     		// CancelEventArgs not ready
     		//protected virtual void OnValidating(CancelEventArgs e) 
     		//{
@@ -1635,14 +1644,14 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public Point PointToClient (Point p) 
     		{
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public Point PointToScreen (Point p) 
     		{
@@ -1707,14 +1716,14 @@
     
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public Rectangle RectangleToClient (Rectangle r) 
     		{
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public Rectangle RectangleToScreen (Rectangle r) 
     		{
@@ -1728,11 +1737,11 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public virtual void Refresh () 
     		{
-    			Win32.RECT rect = (Win32.RECT) null;
-    			Win32.InvalidateRect (Handle, ref rect, true);
+    			//Win32.RECT rect = (Win32.RECT) null;
+    			//Win32.InvalidateRect (Handle, ref rect, true);
     			Win32.UpdateWindow (Handle);
     		}
     		
@@ -1870,7 +1879,7 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		[MonoTODO]
     		public void SendToBack () 
     		{
@@ -1930,7 +1939,7 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public void Show () 
     		{
     			Win32.ShowWindow (Handle, Win32.SW_SHOW);
@@ -1942,7 +1951,7 @@
     			throw new NotImplementedException ();
     		}
     		
- 		//Compact Framework
+ 			//Compact Framework
     		public void Update () 
     		{
     			Win32.UpdateWindow (Handle);
@@ -2034,16 +2043,17 @@
     		{
     			EventArgs eventArgs = new EventArgs ();
     			// FIXME: paintEventArgs is not being created properly
-    			PaintEventArgs paintEventArgs = new PaintEventArgs (
-    				new Graphics(), new Rectangle());
+				// FIXME: Graphics does not have a public constructor, you must get one from .NET
+    			//PaintEventArgs paintEventArgs = new PaintEventArgs (
+    			//	new Graphics(), new Rectangle());
     
     			switch (m.Msg) {
     
-    			case Win32.WM_CREATE:
+    			case (int)Win32.WM_CREATE:
     				Console.WriteLine ("WM_CREATE");
     				OnHandleCreated (eventArgs);
     				break;
-    			case Win32.WM_LBUTTONDBLCLK:
+    			case (int)Win32.WM_LBUTTONDBLCLK:
     				OnDoubleClick (eventArgs);
     				break;
     				// OnDragDrop
@@ -2051,44 +2061,44 @@
     				// OnDragLeave
     				// OnDragOver
     				// OnQueryContinueDrag
-    			case Win32.WM_ENABLE:
+    			case (int)Win32.WM_ENABLE:
     				OnEnabledChanged (eventArgs);
     				break;
-    			case Win32.WM_SETFOCUS:
+    			case (int)Win32.WM_SETFOCUS:
     				OnEnter (eventArgs);
     				OnGotFocus (eventArgs);
     				break;
-    			case Win32.WM_FONTCHANGE:
+    			case (int)Win32.WM_FONTCHANGE:
     				OnFontChanged (eventArgs);
     				break;
-    			case Win32.WM_DESTROY:
+    			case (int)Win32.WM_DESTROY:
     				OnHandleDestroyed (eventArgs);
     				break;
-    			case Win32.WM_HELP:
+    			case (int)Win32.WM_HELP:
     				// FIXME:
     				//OnHelpRequested (eventArgs);
     				break;
-    			case Win32.WM_KEYDOWN:
+    			case (int)Win32.WM_KEYDOWN:
     				// FIXME:
     				// OnKeyDown (eventArgs);
     				break;
-    			case Win32.WM_CHAR:
+    			case (int)Win32.WM_CHAR:
     				// FIXME:
     				// OnKeyPress (eventArgs);
     				break;
-    			case Win32.WM_KEYUP:
+    			case (int)Win32.WM_KEYUP:
     				// FIXME:
     				// OnKeyUp (eventArgs);
     				break;
-    			case Win32.WM_KILLFOCUS:
+    			case (int)Win32.WM_KILLFOCUS:
     				OnLeave (eventArgs);
     				OnLostFocus (eventArgs);
     				break;
-    			case Win32.WM_LBUTTONDOWN:
+    			case (int)Win32.WM_LBUTTONDOWN:
     				// FIXME:
     				// OnMouseDown (eventArgs);
     				break;
-    			case Win32.WM_MOUSEACTIVATE:
+    			case (int)Win32.WM_MOUSEACTIVATE:
     				OnMouseEnter (eventArgs);
     				break;
     			case Win32.WM_MOUSEHOVER: // called by TrackMouseEvent
@@ -2097,42 +2107,42 @@
     			case Win32.WM_MOUSELEAVE: // called by TrackMouseEvent
     				OnMouseLeave (eventArgs);
     				break;
-    			case Win32.WM_MOUSEMOVE:
+    			case (int)Win32.WM_MOUSEMOVE:
     				// FIXME:
     				// OnMouseMove (eventArgs);
     				break;
-    			case Win32.WM_LBUTTONUP:
+    			case (int)Win32.WM_LBUTTONUP:
     				// FIXME:
     				// OnMouseUp (eventArgs);
     				break;
-    			case Win32.WM_MOUSEWHEEL:
+    			case (int)Win32.WM_MOUSEWHEEL:
     				// FIXME:
     				// OnMouseWheel (eventArgs);
     				break;
-    			case Win32.WM_MOVE:
+    			case (int)Win32.WM_MOVE:
     				OnMove (eventArgs);
     				break;
-    			case Win32.WM_NOTIFY:
+    			case (int)Win32.WM_NOTIFY:
     				// FIXME: get NM_CLICKED msg from pnmh
     				// OnClick (eventArgs);
     				// OnNotifyMessage (eventArgs);
-    			case Win32.WM_PAINT:
-    				OnPaint (paintEventArgs);
+    			case (int)Win32.WM_PAINT:
+    				//OnPaint (paintEventArgs);
     				break;
-    			case Win32.WM_SIZE:
+    			case (int)Win32.WM_SIZE:
     				OnResize (eventArgs);
     				OnSizeChanged (eventArgs);
     				break;
-    			case Win32.WM_STYLECHANGED:
+    			case (int)Win32.WM_STYLECHANGED:
     				OnStyleChanged (eventArgs);
     				break;
-    			case Win32.WM_SYSCOLORCHANGE:
+    			case (int)Win32.WM_SYSCOLORCHANGE:
     				OnSystemColorsChanged (eventArgs);
     				break;
-    			case Win32.WM_SETTEXT:
+    			case (int)Win32.WM_SETTEXT:
     				OnTextChanged (eventArgs);
     				break;
-    			case Win32.WM_SHOWWINDOW:
+    			case (int)Win32.WM_SHOWWINDOW:
     				OnVisibleChanged (eventArgs);
     				break;
     // 			default:
@@ -2142,527 +2152,103 @@
     		}
     
     		/// --- Control: events ---
-    		public event EventHandler BackColorChanged;// {
-    //			add {
-    //				throw new NotImplementedException ();
-    //			}
-    //			remove {
-    //				throw new NotImplementedException ();
-    //			}
-    //		}
+    		public event EventHandler BackColorChanged;
+    		public event EventHandler BackgroundImageChanged;
+    		public event EventHandler BindingContextChanged;
+    		public event EventHandler CausesValidationChanged;
+    		public event UICuesEventHandler ChangeUICues;
     		
-    		public event EventHandler BackgroundImageChanged; //{
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler BindingContextChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler CausesValidationChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event UICuesEventHandler ChangeUICues; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event EventHandler Click; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
+ 			//Compact Framework
+    		public event EventHandler Click;
+     		
     		public event EventHandler ContextMenuChanged;
+    		public event ControlEventHandler ControlAdded;
+    		public event ControlEventHandler ControlRemoved;
+    		public event EventHandler CursorChanged;
+    		public event EventHandler DockChanged;
+    		public event EventHandler DoubleClick;
+    		public event DragEventHandler DragDrop;
+    		public event DragEventHandler DragEnter;
+    		public event EventHandler DragLeave;
+    		public event DragEventHandler DragOver;
+
+			//Compact Framework
+    		public event EventHandler EnabledChanged;
     		
-    		public event ControlEventHandler ControlAdded;	// {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event EventHandler Enter;
+    		public event EventHandler FontChanged;
+    		public event EventHandler ForeColorChanged;
+    		public event GiveFeedbackEventHandler GiveFeedback;
+   		
+ 			//Compact Framework
+    		public event EventHandler GotFocus;
     		
-    		public event ControlEventHandler ControlRemoved; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event EventHandler HandleCreated;
+    		public event EventHandler HandleDestroyed;
+    		public event HelpEventHandler HelpRequested;
+    		public event EventHandler ImeModeChanged;
+    		public event InvalidateEventHandler Invalidated;
     		
-    		public event EventHandler CursorChanged;	// {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event KeyEventHandler KeyDown;
     		
-    		public event EventHandler DockChanged;	// {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event KeyPressEventHandler KeyPress;
     		
-    		public event EventHandler DoubleClick; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event KeyEventHandler KeyUp;
     		
-    		public event DragEventHandler DragDrop; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event LayoutEventHandler Layout;
+    		public event EventHandler Leave;
+    		public event EventHandler LocationChanged;
     		
-    		public event DragEventHandler DragEnter; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event EventHandler LostFocus;
+
+			//Compact Framework
+    		public event MouseEventHandler MouseDown;
     		
-    		public event EventHandler DragLeave; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event EventHandler MouseEnter;
+    		public event EventHandler MouseHover;
+    		public event EventHandler MouseLeave;
     		
-    		public event DragEventHandler DragOver; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event MouseEventHandler MouseMove;
     		
- 		//Compact Framework
-    		public event EventHandler EnabledChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event MouseEventHandler MouseUp;
     		
-    		public event EventHandler Enter; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event MouseEventHandler MouseWheel;
+    		public event EventHandler Move;
     		
-    		public event EventHandler FontChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event PaintEventHandler Paint;
     		
-    		public event EventHandler ForeColorChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event EventHandler ParentChanged;
     		
-    		public event GiveFeedbackEventHandler GiveFeedback; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp;
+    		public event QueryContinueDragEventHandler QueryContinueDrag;
     		
- 		//Compact Framework
-    		public event EventHandler GotFocus; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event EventHandler Resize;
     		
-    		public event EventHandler HandleCreated; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event EventHandler RightToLeftChanged;
+    		public event EventHandler SizeChanged;
+    		public event EventHandler StyleChanged;
+    		public event EventHandler SystemColorsChanged;
+    		public event EventHandler TabIndexChanged;
+    		public event EventHandler TabStopChanged;
     		
-    		public event EventHandler HandleDestroyed; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+ 			//Compact Framework
+    		public event EventHandler TextChanged;
     		
-    		public event HelpEventHandler HelpRequested; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler ImeModeChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event InvalidateEventHandler Invalidated; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event KeyEventHandler KeyDown; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event KeyPressEventHandler KeyPress; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event KeyEventHandler KeyUp; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event LayoutEventHandler Layout; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler Leave; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler LocationChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event EventHandler LostFocus; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event MouseEventHandler MouseDown; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler MouseEnter; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler MouseHover; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler MouseLeave; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event MouseEventHandler MouseMove; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event MouseEventHandler MouseUp; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event MouseEventHandler MouseWheel; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler Move; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event PaintEventHandler Paint; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event EventHandler ParentChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event QueryContinueDragEventHandler QueryContinueDrag; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event EventHandler Resize; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler RightToLeftChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler SizeChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler StyleChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler SystemColorsChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler TabIndexChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler TabStopChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
- 		//Compact Framework
-    		public event EventHandler TextChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		public event EventHandler Validated; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
-    		
-    		[MonoTODO]
+    		public event EventHandler Validated;
+    		//[MonoTODO]
     		// CancelEventHandler not yet defined
     		//public event CancelEventHandler Validating {
-    		//	add {
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//	remove {
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//}
     		
-    		public event EventHandler VisibleChanged; // {
-    // 			add {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 			remove {
-    // 				throw new NotImplementedException ();
-    // 			}
-    // 		}
+    		public event EventHandler VisibleChanged;
     		
     		/// --- IWin32Window properties
     		public IntPtr Handle {
@@ -2706,8 +2292,8 @@
     			throw new NotImplementedException ();
     		}
     		
-    		[MonoTODO]
-    		public object Invoke (Delegate method,object[] args) 
+    		//[MonoTODO]
+    		public object Invoke (Delegate method, object[] args) 
     		{
     			throw new NotImplementedException ();
     		}
@@ -2716,7 +2302,7 @@
     		/// <summary>
     		/// Provides information about a control that can be used by an accessibility application.
     		/// </summary>
-    		public class ControlAccessibleObject /*: AccessibleObject*/ {
+    		public class ControlAccessibleObject : AccessibleObject {
     			// AccessibleObject not ready to be base class
     			/// --- ControlAccessibleObject.constructor ---
     			[MonoTODO]
@@ -2728,14 +2314,14 @@
     			
     			/// --- ControlAccessibleObject Properties ---
     			[MonoTODO]
-    // 			public override string DefaultAction {
-    // 				get { throw new NotImplementedException (); }
-    // 			}
+     			public override string DefaultAction {
+     				get { throw new NotImplementedException (); }
+     			}
     			
     			[MonoTODO]
-    // 			public override string Description {
-    // 				get { throw new NotImplementedException (); }
-    // 			}
+    			public override string Description {
+     				get { throw new NotImplementedException (); }
+     			}
     			
     			[MonoTODO]
     			public IntPtr Handle {
@@ -2744,20 +2330,20 @@
     			}
     			
     			[MonoTODO]
-    // 			public override string Help {
-    // 				get { throw new NotImplementedException (); }
-    // 			}
+     			public override string Help {
+     				get { throw new NotImplementedException (); }
+     			}
     			
     			[MonoTODO]
-    // 			public override string KeyboardShortcut {
-    // 				get { throw new NotImplementedException (); }
-    // 			}
+     			public override string KeyboardShortcut {
+     				get { throw new NotImplementedException (); }
+     			}
     			
     			[MonoTODO]
-    // 			public override string Name {
-    // 				get { throw new NotImplementedException (); }
-    // 				set { throw new NotImplementedException (); }
-    // 			}
+     			public override string Name {
+     				get { throw new NotImplementedException (); }
+     				set { throw new NotImplementedException (); }
+     			}
     			
     			[MonoTODO]
     			public Control Owner {
@@ -2765,17 +2351,17 @@
     			}
     			
     			[MonoTODO]
-    // 			public override AccessibleRole Role {
-    // 				get { throw new NotImplementedException (); }
-    // 			}
+     			public override AccessibleRole Role {
+     				get { throw new NotImplementedException (); }
+     			}
     			
     			
     			/// --- ControlAccessibleObject Methods ---
     			[MonoTODO]
-    // 			public override int GetHelpTopic(out string fileName) 
-    // 			{
-    // 				throw new NotImplementedException ();
-    // 			}
+     			public override int GetHelpTopic(out string fileName) 
+     			{
+     				throw new NotImplementedException ();
+     			}
     			
     			[MonoTODO]
     			public void NotifyClients (AccessibleEvents accEvent) 
