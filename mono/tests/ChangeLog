@@ -1,3 +1,7 @@
+2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain-unload.cs: Disable nondeterministic async unloading test.
+
 2004-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* delegate.cs: Add test for unboxing and delegates.
