@@ -159,19 +159,17 @@ namespace System.Reflection {
 
 			if (info.ReferencedAssembly != null)
 				return info.ReferencedAssembly.GetManifestResourceStream (name);
+			if (info.FileName != null) {
+				string filename = Path.Combine (Path.GetDirectoryName (Location),
+											info.FileName);
+				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+			}
 
 			object data = GetManifestResourceInternal (name);
-			string filename = data as string;
 			if (data == null)
 				return null;
-			if (filename != null) {
-				if ((info.ResourceLocation & ResourceLocation.Embedded) != 0)
-					throw new NotImplementedException ("Reading from modules is not implemented");
-				else
-					return new FileStream (filename, FileMode.Open, FileAccess.Read);
-			} else {
+			else
 				return new MemoryStream ((byte[])data, false);
-			}
 		}
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)

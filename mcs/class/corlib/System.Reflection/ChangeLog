@@ -1,3 +1,9 @@
+2003-05-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Assembly.cs (GetManifestResourceStream): Moved handling of 
+	linked resources into managed code using the newly implemented
+	GetManifestResourceInfo () method.
+
 2003-05-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs: Implemented IsResource.
