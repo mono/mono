@@ -1,3 +1,11 @@
+
+Wed Feb 27 12:23:00 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c: exit with 1 on error.
+	* class.c: we already have the name in MonoClassField.
+	* image.c, image.h, metadata.c, pedump.c: use directly a pointer in
+	MonoStreamHeader instead of an offset of image->raw_metadata.
+
 2002-02-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* appdomain.c (mono_init): Be even more descriptive about the error.
