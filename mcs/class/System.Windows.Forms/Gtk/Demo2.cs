@@ -1,9 +1,9 @@
-//		
-//			System.Windows.Forms Demo2 app
 //
-//			Author: 
-//						Joel Basson		(jstrike@mweb.co.za)
+// System.Windows.Forms Demo2 app
 //
+//Authors: 
+//    Joel Basson (jstrike@mweb.co.za)
+//    Philip Van Hoof (me@freax.org)
 //
 
 using System;
@@ -14,8 +14,8 @@ namespace demo2
 {
 	
 	public class GtkForm : System.Windows.Forms.Form
-  	{
-	    	private Button button1 = new Button(); 
+	{
+		private Button button1 = new Button(); 
 		private Button button2 = new Button();
 		private ColorDialog color1 = new ColorDialog();
 		private ComboBox combo1 = new ComboBox();
@@ -74,11 +74,10 @@ namespace demo2
 			this.Menu = mainMenu1;
 		}
 
-    	public GtkForm()
-    	{
-    	   	InitializeWidgets();
-
-    	}
+		public GtkForm()
+		{
+			InitializeWidgets();
+		}
 
 		private void button1_Click(object sender, EventArgs e){ 
 			color1.ShowDialog();			
@@ -94,10 +93,10 @@ namespace demo2
 		}
 		
 		private void menuItem4_Click(object sender, EventArgs e){
-    			MessageBox.Show("You clicked Start");
-  		}
+			MessageBox.Show("You clicked Start");
+		}
 
-	 }
+	}
 	
 	public class GtkMain
 	{
