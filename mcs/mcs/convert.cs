@@ -1213,7 +1213,7 @@ namespace Mono.CSharp {
 				//
 				// Possibly, we need to create a different 0 literal before passing
 				// to EnumConstant
-				//n
+				//
 				if (underlying == TypeManager.int64_type)
 					e = new LongLiteral (0);
 				else if (underlying == TypeManager.uint64_type)

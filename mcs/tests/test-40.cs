@@ -29,6 +29,9 @@ public class Blah {
 
 	enum Compute { two = AA.b + B.y }
 	
+	// The constant assignment follows a different path		
+	const Bar bar_assignment = 0;
+	
 	public static int Main ()
 	{
 		byte b = (byte) MyEnum.Foo;
