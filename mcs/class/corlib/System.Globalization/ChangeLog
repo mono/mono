@@ -1,3 +1,10 @@
+2004-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NumberFormatInfo.cs : All GetXXXGroupSizes() should not return
+	  internal array. Return clone as MS.NET does.
+
+	  There still looks somewhere breaking CurrentInfo.
+
 2004-04-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CompareInfo.cs, CultureInfo.cs, NumberFormatInfo.cs, TextInfo.cs:

@@ -355,7 +355,7 @@ namespace System.Globalization {
 
 		public int[] CurrencyGroupSizes {
 			get {
-				return currencyGroupSizes;
+				return (int []) currencyGroupSizes.Clone ();
 			}
 			
 			set {
@@ -580,7 +580,7 @@ namespace System.Globalization {
 
 		public int[] NumberGroupSizes {
 			get {
-				return numberGroupSizes;
+				return (int []) numberGroupSizes.Clone ();
 			}
 			
 			set {
@@ -686,7 +686,7 @@ namespace System.Globalization {
 
 		public int[] PercentGroupSizes {
 			get {
-				return percentGroupSizes;
+				return (int []) percentGroupSizes.Clone ();
 			}
 			
 			set {
@@ -698,6 +698,8 @@ namespace System.Globalization {
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
+if (this == CultureInfo.CurrentCulture.NumberFormat)
+throw new Exception ("HERE the value was modified");
 				// All elements except last need to be in range 1 - 9, last can be 0.
 				int last = value.Length - 1;
 
