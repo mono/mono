@@ -1,3 +1,15 @@
+2005-01-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ServicePointManagerTest.cs: Add a TearDown method; add setup/teardown
+	  logic to (1) record ServicePointManager.MaxServicePointIdleTime, and 
+	  (2) set this to 10 milliseconds in setup.  Why?  Because when running the
+	  full regression tests, the default timeout of 15 minutes applied, causing
+	  the ServicePointManager to be "full" when ServicePointTest is executed.
+	  This causes ServicePointTest to generate a failure, as it isn't able to
+	  add as many ServicePoints as it expects.  Worse, this failure isn't
+	  apparent if you run ServicePointTest individually; it only occurs if it
+	  executes *after* ServicePointManagerTest.  Yay Heisenbugs.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebPermissionAttributeTest.cs: Removed a test for 1.1 as we delay 

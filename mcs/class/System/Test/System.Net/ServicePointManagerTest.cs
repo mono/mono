@@ -24,13 +24,22 @@ public class ServicePointManagerTest : Assertion
 	private Uri googleUri;
 	private Uri yahooUri;
 	private Uri apacheUri;
+	private int maxIdle;
 	
 	[SetUp]
         public void GetReady () 
 	{
+		maxIdle = ServicePointManager.MaxServicePointIdleTime;
+		ServicePointManager.MaxServicePointIdleTime = 10;
 		googleUri = new Uri ("http://www.google.com");
 		yahooUri = new Uri ("http://www.yahoo.com");
 		apacheUri = new Uri ("http://www.apache.org");
+	}
+
+	[TearDown]
+	public void Finish ()
+	{
+		ServicePointManager.MaxServicePointIdleTime = maxIdle;
 	}
 
         [Test, ExpectedException (typeof (InvalidOperationException))]
