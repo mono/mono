@@ -31,7 +31,7 @@ namespace System.Data.OleDb
 		
 		public OleDbConnection ()
 		{
-			libgda.gda_init ("System.Data.OleDb", "1.0", 0, null);
+			libgda.gda_init ("System.Data.OleDb", "1.0", 0, new string [0]);
 			gdaConnection = IntPtr.Zero;
 			connectionTimeout = 15;
 			connectionString = null;
@@ -39,7 +39,7 @@ namespace System.Data.OleDb
 
 		public OleDbConnection (string connectionString) : this ()
 		{
-			connectionString = connectionString;
+			this.connectionString = connectionString;
 		}
 
 		#endregion // Constructors
@@ -190,8 +190,7 @@ namespace System.Data.OleDb
 
 		public void Open ()
 		{
-			if (gdaConnection != IntPtr.Zero ||
-			    libgda.gda_connection_is_open (gdaConnection))
+			if (State == ConnectionState.Open)
 				throw new InvalidOperationException ();
 
 			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,

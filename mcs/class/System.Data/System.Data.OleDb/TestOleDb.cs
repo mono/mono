@@ -19,13 +19,19 @@ namespace System.Data.OleDb.Test
 			OleDbCommand cmd = new OleDbCommand (sql, m_cnc);
 		}
 
+		void Close ()
+		{
+			m_cnc.Close ();
+		}
+
 		static void Main (string[] args)
 		{
 			try {
 				TestOleDb test = new TestOleDb ();
 				test.TestDataReader ();
+				test.Close ();
 			} catch (Exception e) {
-				Console.Write ("An error has occured");
+				Console.WriteLine ("An error has occured: {0}", e.ToString ());
 			}
 		}
 	}
