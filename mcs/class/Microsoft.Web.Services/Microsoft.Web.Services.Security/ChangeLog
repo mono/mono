@@ -1,3 +1,11 @@
+2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Nonce.cs: Added new internal constructor.
+	* Security.cs: Fixed Tokens.
+	* SecurityOutputFilter.cs: Implemented support for Tokens.
+	* UsernameToken.cs: Completed GetXml/LoadXml. Still missing 
+	authentication/signature key.
+
 2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* EncryptedKey.cs: Fixed typo.

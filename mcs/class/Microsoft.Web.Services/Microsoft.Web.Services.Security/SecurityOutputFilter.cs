@@ -6,16 +6,9 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
+using System.Xml;
 
 namespace Microsoft.Web.Services.Security {
 
@@ -23,11 +16,22 @@ namespace Microsoft.Web.Services.Security {
 
 		public SecurityOutputFilter () {}
 
+		[MonoTODO ("ExtendedSecurity")]
 		public override void ProcessMessage (SoapEnvelope envelope) 
 		{
 			if (envelope == null)
 				throw new ArgumentNullException ("envelope");
-			// TODO
+
+			if (envelope.Context.Security.Tokens.Count > 0) {
+				XmlNode xn = envelope.CreateElement (WSSecurity.Prefix, WSSecurity.ElementNames.Security, WSSecurity.NamespaceURI);
+				XmlAttribute xa = envelope.CreateAttribute (Soap.Prefix, Soap.AttributeNames.MustUnderstand, Soap.NamespaceURI);
+				xn.Attributes.Append (xa);
+				envelope.Header.AppendChild (xn);
+
+				foreach (SecurityToken st in envelope.Context.Security.Tokens) {
+					xn.AppendChild (st.GetXml (envelope));
+				}
+			}
 		}
 	}
 }

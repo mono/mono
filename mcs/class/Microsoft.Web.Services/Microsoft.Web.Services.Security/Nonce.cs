@@ -6,19 +6,12 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
 using System.Security.Cryptography;
 using System.Xml;
 using Microsoft.Web.Services;
+
 #if !WSE1
 using Microsoft.Web.Services.Xml;
 #endif
@@ -28,6 +21,8 @@ namespace Microsoft.Web.Services.Security {
 	// References:
 	// a.	Web Services Security Addendum, Version 1.0, August 18, 2002
 	//	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnglobspec/html/ws-security.asp
+	// b.	Understanding WS-Security
+	//	http://msdn.microsoft.com/webservices/building/frameworkandstudio/default.aspx?pull=/library/en-us/dnwssecur/html/understw.asp
 
 	public class Nonce : IXmlElement {
 
@@ -35,12 +30,16 @@ namespace Microsoft.Web.Services.Security {
 
 		internal Nonce () 
 		{
-			nonce = new byte [16]; // FIXME ???
+			nonce = new byte [16]; // see reference b.
 			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
 			rng.GetBytes (nonce);
 		}
 
-		// default to Base64 if no EncodingType attribute is specified
+		internal Nonce (XmlElement element)
+		{
+			LoadXml (element);
+		}
+
 		public string Value {
 			get { return Convert.ToBase64String (nonce); }
 		}
@@ -63,7 +62,7 @@ namespace Microsoft.Web.Services.Security {
 		public void LoadXml (XmlElement element) 
 		{
 			if ((element.LocalName != WSSecurity.ElementNames.Nonce) || (element.NamespaceURI != WSSecurity.NamespaceURI))
-				throw new System.ArgumentException ("invalid LocalName or NamespaceURI");
+				throw new ArgumentException ("invalid LocalName or NamespaceURI");
 
 			XmlAttribute xa = element.Attributes [WSSecurity.AttributeNames.EncodingType, WSSecurity.NamespaceURI];
 			if ((xa == null) || (xa.Value == "Base64Binary")) {

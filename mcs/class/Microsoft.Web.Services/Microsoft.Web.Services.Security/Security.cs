@@ -6,14 +6,6 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
 using System.Web.Services.Protocols;
@@ -32,6 +24,8 @@ namespace Microsoft.Web.Services.Security {
 		private SecurityElementCollection elems;
 		private SecurityTokenCollection tokens;
 
+		internal Security () {}
+
 		public Security (string actor) 
 		{
 			if (actor == null)
@@ -49,9 +43,14 @@ namespace Microsoft.Web.Services.Security {
 		}
 
 		public SecurityTokenCollection Tokens {
-			get { return tokens; }
+			get { 
+				if (tokens == null)
+					tokens = new SecurityTokenCollection ();
+				return tokens; 
+			}
 		}
 
+		[MonoTODO]
 		public XmlElement GetXml (XmlDocument document) 
 		{
 			if (document == null)
