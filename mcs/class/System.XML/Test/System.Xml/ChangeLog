@@ -1,3 +1,9 @@
+2004-06-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlUrlResolverTests.cs : Unlike MS.NET, we treats Unix absolute file
+	  URI file:///usr/local/src as correct file path. MS.NET is not aware
+	  of such format and parses as "host = usr, path = /local/src".
+
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriterTests.cs : Added indentation testcase (it might now

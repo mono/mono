@@ -36,7 +36,10 @@ namespace MonoTests.System.Xml
 		public void FileUri2 ()
 		{
 			AssertEquals ("file://usr/local/src", resolver.ResolveUri (new Uri ("file://usr/local/src"), null).ToString ());
-			AssertEquals ("file://usr/local/src", resolver.ResolveUri (new Uri ("file:///usr/local/src"), null).ToString ());
+			// MS.NET returns the Uri.ToString() as 
+			// file://usr/local/src, but it is apparently 
+			// incorrect in the context of Unix path.
+			AssertEquals ("file:///usr/local/src", resolver.ResolveUri (new Uri ("file:///usr/local/src"), null).ToString ());
 		}
 
 		[Test]
