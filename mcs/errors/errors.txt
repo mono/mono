@@ -22,3 +22,10 @@ numbers to match the Microsoft numbers:
 
 -7      Internal compiler error/library error: no default constructor
 	for a built-in type.  Ie, decimal (int 32)
+
+-8	User-defined conversion cannot convert from or to object type.
+
+-9	User-defined conversion cannot convert from or to an interface type.
+
+-10	User-defined conversion cannot convert between types that derive 
+	from each other.
