@@ -35,11 +35,10 @@ namespace CIR {
 		ArrayList bases;
 		int mod_flags;
 		
-		ArrayList defined_method_list;
-		ArrayList defined_indexer_list;
-		
-		Hashtable defined_events;
-		Hashtable defined_properties;
+		ArrayList defined_method;
+		ArrayList defined_indexer;
+		ArrayList defined_events;
+		ArrayList defined_properties;
 
 		TypeContainer parent;
 		
@@ -74,10 +73,10 @@ namespace CIR {
 					return AdditionResult.NameExists;
 			} 
 
-			if (defined_method_list == null)
-				defined_method_list = new ArrayList ();
+			if (defined_method == null)
+				defined_method = new ArrayList ();
 
-			defined_method_list.Add (imethod);
+			defined_method.Add (imethod);
 			if (value == null)
 				DefineName (name, imethod);
 			
@@ -95,9 +94,9 @@ namespace CIR {
 			DefineName (name, iprop);
 
 			if (defined_properties == null)
-				defined_properties = new Hashtable ();
+				defined_properties = new ArrayList ();
 
-			defined_properties.Add (name, iprop);
+			defined_properties.Add (iprop);
 			return AdditionResult.Success;
 		}
 
@@ -112,34 +111,34 @@ namespace CIR {
 			DefineName (name, ievent);
 
 			if (defined_events == null)
-				defined_events = new Hashtable ();
+				defined_events = new ArrayList ();
 
-			defined_events.Add (name, ievent);
+			defined_events.Add (ievent);
 			return AdditionResult.Success;
 		}
 
 		public bool AddIndexer (InterfaceIndexer iindexer)
 		{
-			if (defined_indexer_list == null)
-				defined_indexer_list = new ArrayList ();
+			if (defined_indexer == null)
+				defined_indexer = new ArrayList ();
 			
-			defined_indexer_list.Add (iindexer);
+			defined_indexer.Add (iindexer);
 			return true;
 		}
 		
 		public ArrayList InterfaceMethods {
 			get {
-				return defined_method_list;
+				return defined_method;
 			}
 		}
 
-		public Hashtable InterfaceProperties {
+		public ArrayList InterfaceProperties {
 			get {
 				return defined_properties;
 			}
 		}
 
-		public Hashtable InterfaceEvents {
+		public ArrayList InterfaceEvents {
 			get {
 				return defined_events;
 			}
@@ -147,7 +146,7 @@ namespace CIR {
 
 		public ArrayList InterfaceIndexers {
 			get {
-				return defined_indexer_list;
+				return defined_indexer;
 			}
 		}
 
@@ -331,8 +330,8 @@ namespace CIR {
 			Hashtable methods = new Hashtable ();
 
 			
-			if (defined_method_list != null){
-				foreach (InterfaceMethod im in defined_method_list){
+			if (defined_method != null){
+				foreach (InterfaceMethod im in defined_method){
 					string sig = im.GetSignature (parent);
 					
 					//
@@ -362,22 +361,22 @@ namespace CIR {
 			if (!SemanticAnalysis ())
 				return;
 
-			if (defined_method_list != null){
-				foreach (InterfaceMethod im in defined_method_list)
+			if (defined_method != null){
+				foreach (InterfaceMethod im in defined_method)
 					PopulateMethod (im);
 			}
 
 			if (defined_properties != null){
-				foreach (DictionaryEntry de in defined_properties)
-					PopulateProperty ((InterfaceProperty) de.Value);
+				foreach (InterfaceProperty ip in defined_properties)
+					PopulateProperty (ip);
 			}
 
 			if (defined_events != null)
-				foreach (DictionaryEntry de in defined_events)
-					PopulateEvent ((InterfaceEvent) de.Value);
+				foreach (InterfaceEvent ie in defined_events)
+					PopulateEvent (ie);
 
-			if (defined_indexer_list != null)
-				foreach (InterfaceIndexer ii in defined_indexer_list)
+			if (defined_indexer != null)
+				foreach (InterfaceIndexer ii in defined_indexer)
 					PopulateIndexer (ii);
 		}
 	}

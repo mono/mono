@@ -45,14 +45,14 @@ namespace CIR {
 
 		public FieldAttributes FieldAttr {
 			get {
-				return FieldAttributes.Literal | Modifiers.Map (mod_flags) ;
+				return FieldAttributes.Literal | Modifiers.FieldAttr (mod_flags) ;
 			}
 		}
 
 		// <summary>
 		//   Defines the constant in the @parent
 		// </summary>
-		public void MakeConstant (RootContext rc, TypeContainer parent)
+		public void EmitConstant (RootContext rc, TypeContainer parent)
 		{
 			FieldBuilder fb;
 			TypeCode tc;

@@ -578,7 +578,7 @@ namespace CIR {
 				foreach (DictionaryEntry de in classes){
 					TypeContainer tc = (TypeContainer) de.Value;
 
-					tc.Populate (this);
+					tc.Populate ();
 				}
 			}
 		}

@@ -847,9 +847,7 @@ namespace Generator {
 		void GenerateTypeContainerData (TypeContainer tc)
 		{
 			if (tc.Constants != null){
-				foreach (DictionaryEntry cde in tc.Constants){
-					Constant c = tc.GetConstant ((string) cde.Key);
-
+				foreach (Constant c in tc.Constants){
 					space ();
 
 					output ("const " + c.ConstantType + " " + c.Name + " = " +
@@ -860,38 +858,27 @@ namespace Generator {
 			}
 
 			if (tc.Enums != null){
-				foreach (DictionaryEntry ede in tc.Enums){
-					CIR.Enum e = (CIR.Enum) ede.Value;
-
+				foreach (CIR.Enum e in tc.Enums)
 					GenerateEnum (e);
-				}
 			}
 
 			if (tc.Fields != null){
-				foreach (DictionaryEntry de in tc.Fields){
-					Field f = (Field) de.Value;
-
+				foreach (Field f in tc.Fields)
 					GenerateField (f);
-				}
 				newline ();
 			}
 
 			if (tc.Constructors != null){
-				foreach (DictionaryEntry de in tc.Constructors){
-					Constructor c = (Constructor) de.Value;
-
+				foreach (Constructor c in tc.Constructors)
 					GenerateConstructor (c);
-				}
+
 				newline ();
 					
 			}
 
 			if (tc.Properties != null){
-				foreach (DictionaryEntry de in tc.Properties){
-					Property prop = (Property) de.Value;
-
+				foreach (Property prop in tc.Properties)
 					GenerateProperty (prop);
-				}
 			}
 			
 			GenerateFromTypes (tc);

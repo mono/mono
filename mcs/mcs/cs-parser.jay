@@ -1091,7 +1091,9 @@ constructor_declarator
 	  {
 		ConstructorInitializer i = null;
 
-		if ($5 != null)
+		if ($5 == null)
+			i = new ConstructorBaseInitializer (null);
+		else 
 			i = (ConstructorInitializer) $5;
 
 		$$ = new Constructor ((string) $1, (Parameters) $3, i);
@@ -1449,7 +1451,7 @@ invocation_expression
 	; 
 
 opt_argument_list
-	: /* empty */		{ $$ = new ArrayList (); }
+	: /* empty */		{ $$ = null; }
 	| argument_list
 	;
 

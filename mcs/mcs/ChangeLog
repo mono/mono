@@ -1,3 +1,39 @@
+2001-08-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer::Populate): Drop RootContext from the
+	argument. 
+
+	(Constructor::CallingConvention): Returns the calling convention.
+	(Constructor::ParameterTypes): Returns the constructor parameter
+	types. 
+	
+	(TypeContainer::AddConstructor): Keep track of default constructor
+	and the default static constructor.
+
+	(Constructor::) Another class that starts using `public readonly'
+	instead of properties. 
+
+	(Constructor::IsDefault): Whether this is a default constructor. 
+
+	(Field::) use readonly public fields instead of properties also.
+
+	(TypeContainer::TypeAttr, TypeContainer::AddConstructor): Keep
+	track of static constructors;  If none is used, turn on
+	BeforeFieldInit in the TypeAttributes. 
+
+	* cs-parser.jay (opt_argument_list): now the return can be null
+	for the cases where there are no arguments. 
+
+	(constructor_declarator): If there is no implicit `base' or
+	`this', then invoke the default parent constructor. 
+	
+	* modifiers.cs (MethodAttr): New static function maps a set of
+	modifiers flags into a MethodAttributes enum
+	(FieldAttr): renamed from `Map'.  So now we have FieldAttr,
+	MethodAttr, TypeAttr to represent the various mappings where the
+	modifiers are used.
+	(FieldAttr): Map also `readonly' to `FieldAttributes.InitOnly' 	
+
 2001-08-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* parameter.cs (GetParameterInfo): Fix bug where there would be no

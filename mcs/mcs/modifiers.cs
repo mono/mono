@@ -74,7 +74,7 @@ namespace CIR {
 			return t;
 		}
 
-		public static FieldAttributes Map (int mod_flags)
+		public static FieldAttributes FieldAttr (int mod_flags)
 		{
 			FieldAttributes fa = 0;
 
@@ -84,8 +84,30 @@ namespace CIR {
 				fa |= FieldAttributes.Private;
 			if ((mod_flags & Modifiers.STATIC) != 0)
 				fa |= FieldAttributes.Static;
+			if ((mod_flags & Modifiers.READONLY) != 0)
+				fa |= FieldAttributes.InitOnly;
 
 			return fa;
+		}
+
+		public static MethodAttributes MethodAttr (int mod_flags)
+		{
+			MethodAttributes ma = 0;
+
+			if ((mod_flags & Modifiers.PUBLIC) != 0)
+				ma |= MethodAttributes.Public;
+			if ((mod_flags & Modifiers.PRIVATE) != 0)
+				ma |= MethodAttributes.Private;
+			if ((mod_flags & Modifiers.STATIC) != 0)
+				ma |= MethodAttributes.Static;
+			if ((mod_flags & Modifiers.ABSTRACT) != 0)
+				ma |= MethodAttributes.Abstract;
+			if ((mod_flags & Modifiers.SEALED) != 0)
+				ma |= MethodAttributes.Final;
+			if ((mod_flags & Modifiers.VIRTUAL) != 0)
+				ma |= MethodAttributes.Virtual;
+
+			return ma;
 		}
 		
 		// <summary>

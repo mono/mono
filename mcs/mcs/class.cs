@@ -7,26 +7,59 @@
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
-// TODO:
-//
-//    a. Maybe keep a list of defined names in the order they
-//       appeared, so we can walk things in this way to present
-//       the users with errors in that order?
 //
 
 using System.Collections;
 using System.Reflection;
+using System.Reflection.Emit;
 using System;
 
 namespace CIR {
 	
 	public class TypeContainer : DeclSpace {
 		protected int mod_flags;
-		Hashtable types, fields, properties;
-		Hashtable enums, constants, interfaces, method_groups;
 
-		ArrayList constructor_list;
+		// Holds a list of classes and structures
+		ArrayList types;
 
+		// Holds the list of properties
+		ArrayList properties;
+
+		// Holds the list of enumerations
+		ArrayList enums;
+
+		// Holds the list of constructors
+		ArrayList constructors;
+
+		// Holds the list of fields
+		ArrayList fields;
+
+		// Holds a list of fields that have initializers
+		ArrayList initialized_fields;
+
+		// Holds a list of static fields that have initializers
+		ArrayList initialized_static_fields;
+
+		// Holds the list of constants
+		ArrayList constants;
+
+		// Holds the list of
+		ArrayList interfaces;
+
+		// Holds the method groups.
+		Hashtable method_groups;
+
+		//
+		// Pointers to the default constructor and the default static constructor
+		//
+		Constructor default_constructor;
+		Constructor default_static_constructor;
+		
+		//
+		// Whether we have seen a static constructor for this class or not
+		//
+		bool have_static_constructor = false;
+		
 		//
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
@@ -50,7 +83,7 @@ namespace CIR {
 		public TypeContainer (RootContext rc, TypeContainer parent, string name) : base (name)
 		{
 			string n;
-			types = new Hashtable ();
+			types = new ArrayList ();
 			this.parent = parent;
 			RootContext = rc;
 
@@ -75,9 +108,9 @@ namespace CIR {
 				return res;
 			
 			if (constants == null)
-				constants = new Hashtable ();
+				constants = new ArrayList ();
 
-			constants.Add (name, constant);
+			constants.Add (constant);
 			DefineName (name, constant);
 
 			return AdditionResult.Success;
@@ -92,9 +125,9 @@ namespace CIR {
 				return res;
 
 			if (enums == null)
-				enums = new Hashtable ();
+				enums = new ArrayList ();
 
-			enums.Add (name, e);
+			enums.Add (e);
 			DefineName (name, e);
 
 			return AdditionResult.Success;
@@ -110,7 +143,7 @@ namespace CIR {
 				return res;
 
 			DefineName (name, c);
-			types.Add (name, c);
+			types.Add (c);
 
 			return AdditionResult.Success;
 		}
@@ -124,7 +157,7 @@ namespace CIR {
 				return res;
 
 			DefineName (name, s);
-			types.Add (name, s);
+			types.Add (s);
 
 			return AdditionResult.Success;
 		}
@@ -162,10 +195,22 @@ namespace CIR {
 			if (c.Name != Basename)
 				return AdditionResult.NotAConstructor;
 			
-			if (constructor_list == null)
-				constructor_list = new ArrayList ();
+			if (constructors == null)
+				constructors = new ArrayList ();
 
-			constructor_list.Add (c);
+			constructors.Add (c);
+
+			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
+			
+			if (is_static)
+				have_static_constructor = true;
+
+			if (c.IsDefault ()){
+				if (is_static)
+					default_static_constructor = c;
+				else
+					default_constructor = c;
+			}
 			
 			return AdditionResult.Success;
 		}
@@ -179,8 +224,8 @@ namespace CIR {
 				return res;
 			
 			if (interfaces == null)
-				interfaces = new Hashtable ();
-			interfaces.Add (name, iface);
+				interfaces = new ArrayList ();
+			interfaces.Add (iface);
 			DefineName (name, iface);
 			
 			return AdditionResult.Success;
@@ -195,9 +240,29 @@ namespace CIR {
 				return res;
 
 			if (fields == null)
-				fields = new Hashtable ();
+				fields = new ArrayList ();
 
-			fields.Add (name, field);
+			fields.Add (field);
+			if (field.Initializer != null){
+				if ((field.ModFlags & Modifiers.STATIC) != 0){
+					if (initialized_static_fields == null)
+						initialized_static_fields = new ArrayList ();
+
+					initialized_static_fields.Add (field);
+
+					//
+					// We have not seen a static constructor,
+					// but we will provide static initialization of fields
+					//
+					have_static_constructor = true;
+				} else {
+					if (initialized_fields == null)
+						initialized_fields = new ArrayList ();
+				
+					initialized_fields.Add (field);
+				}
+			}
+			
 			DefineName (name, field);
 			return AdditionResult.Success;
 		}
@@ -211,16 +276,12 @@ namespace CIR {
 				return res;
 
 			if (properties == null)
-				properties = new Hashtable ();
+				properties = new ArrayList ();
 
-			properties.Add (name, prop);
+			properties.Add (prop);
 			DefineName (name, prop);
 
 			return AdditionResult.Success;
-		}
-		
-		public Constant GetConstant (string name) {
-			return (Constant) constants [name];
 		}
 		
 		public TypeContainer Parent {
@@ -229,7 +290,7 @@ namespace CIR {
 			}
 		}
 
-		public Hashtable Types {
+		public ArrayList Types {
 			get {
 				return types;
 			}
@@ -241,13 +302,13 @@ namespace CIR {
 			}
 		}
 
-		public Hashtable Constants {
+		public ArrayList Constants {
 			get {
 				return constants;
 			}
 		}
 
-		public Hashtable Interfaces {
+		public ArrayList Interfaces {
 			get {
 				return interfaces;
 			}
@@ -275,25 +336,25 @@ namespace CIR {
 			}
 		}
 
-		public Hashtable Fields {
+		public ArrayList Fields {
 			get {
 				return fields;
 			}
 		}
 
-		public Hashtable Constructors {
+		public ArrayList Constructors {
 			get {
 				return null; // constructors;
 			}
 		}
 
-		public Hashtable Properties {
+		public ArrayList Properties {
 			get {
 				return properties;
 			}
 		}
 
-		public Hashtable Enums {
+		public ArrayList Enums {
 			get {
 				return enums;
 			}
@@ -359,22 +420,126 @@ namespace CIR {
 					else
 						x |= TypeAttributes.NestedPrivate;
 				}
+
+				//
+				// If we have static constructors, the runtime needs to
+				// initialize the class, otherwise we can optimize
+				// the case.
+				//
+				if (!have_static_constructor)
+					x |= TypeAttributes.BeforeFieldInit;
 				return x;
 			}
+		}
+
+		void EmitField (Field f)
+		{
+			Type t = LookupType (f.Type, false);
+
+			if (t == null)
+				return;
+			
+			TypeBuilder.DefineField (f.Name, t, Modifiers.FieldAttr (f.ModFlags));
+		}
+
+		//
+		// Emits the class field initializers
+		//
+		void EmitStaticFieldInitializers (ConstructorBuilder cb)
+		{
+			// FIXME: Implement
+		}
+
+		//
+		// Emits the instance field initializers
+		//
+		void EmitFieldInitializers (ConstructorBuilder cb)
+		{
+			// FIXME: Implement
+		}
+
+		//
+		// Emits a constructor
+		//
+		void EmitConstructor (Constructor c)
+		{
+			ConstructorBuilder cb;
+			MethodAttributes ca = (MethodAttributes.RTSpecialName |
+					       MethodAttributes.SpecialName);
+			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
+			
+			if (is_static)
+				ca |= MethodAttributes.Static;
+
+			ca |= Modifiers.MethodAttr (c.ModFlags);
+
+			cb = TypeBuilder.DefineConstructor (
+				ca, c.CallingConvention, c.ParameterTypes (this));
+			
+			if (is_static){
+				if (initialized_static_fields != null)
+					EmitStaticFieldInitializers (cb);
+			} else {
+				if (initialized_fields != null)
+					EmitFieldInitializers (cb);
+			}
+		}
+
+		//
+		// This function is used to emit instance and static constructors
+		// when the user did not provide one.
+		// 
+		void EmitDefaultConstructor (bool is_static)
+		{
+			ConstructorBuilder cb;
+			MethodAttributes ca = (MethodAttributes.RTSpecialName |
+					       MethodAttributes.SpecialName);
+
+			if (is_static)
+				ca |= MethodAttributes.Static;
+			
+			//
+			// Default constructors provided by the compiler should be `protected'
+			// if the class is abstract, otherwise it is public
+			//
+			if ((mod_flags & Modifiers.ABSTRACT) != 0)
+				ca |= MethodAttributes.Family;
+			else
+				ca |= MethodAttributes.Public;
+			
+			cb = TypeBuilder.DefineDefaultConstructor (ca);
+
+			if (is_static)
+				EmitStaticFieldInitializers (cb);
+			else
+				EmitFieldInitializers (cb);
 		}
 
 		//
 		// Populates our TypeBuilder with fields and methods
 		//
-		public void Populate (RootContext rc)
+		public void Populate ()
 		{
 			if (Constants != null){
-				foreach (DictionaryEntry cde in Constants){
-					Constant c = (Constant) cde.Value;
-
-					c.MakeConstant (rc, this);
-				}
+				foreach (Constant c in Constants)
+					c.EmitConstant (RootContext, this);
 			}
+
+			if (Fields != null){
+				foreach (Field f in Fields)
+					EmitField (f);
+			}
+
+			if (Constructors != null){
+				foreach (Constructor c in Constructors)
+					EmitConstructor (c);
+			}
+
+			if (default_constructor == null)
+				EmitDefaultConstructor (false);
+
+			if (initialized_static_fields != null && default_static_constructor == null)
+				EmitDefaultConstructor (true);
 		}
 
 		public delegate void ExamineType (TypeContainer container, object cback_data);
@@ -384,9 +549,7 @@ namespace CIR {
 			if (root == null)
 				return;
 
-			foreach (DictionaryEntry de in root.Types){
-				TypeContainer type = (TypeContainer) de.Value;
-
+			foreach (TypeContainer type in root.Types){
 				visit (type, cback_data);
 				WalkTypesAt (type, visit, cback_data);
 			}
@@ -555,10 +718,10 @@ namespace CIR {
 	}
 
 	public class Field {
-		string type;
-		Object expr_or_array_init;
-		string name;
-		int modifiers;
+		public readonly string Type;
+		public readonly Object Initializer;
+		public readonly string Name;
+		public readonly int    ModFlags;
 		
 		// <summary>
 		//   Modifiers allowed in a class declaration
@@ -574,34 +737,10 @@ namespace CIR {
 
 		public Field (string type, int mod, string name, Object expr_or_array_init)
 		{
-			this.type = type;
-			this.modifiers = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
-			this.name = name;
-			this.expr_or_array_init = expr_or_array_init;
-		}
-
-		public string Type {
-			get {
-				return type;
-			}
-		}
-
-		public object Initializer {
-			get {
-				return expr_or_array_init;
-			}
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
-		public int ModFlags {
-			get {
-				return modifiers;
-			}
+			Type = type;
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
+			Name = name;
+			Initializer = expr_or_array_init;
 		}
 	}
 
@@ -633,9 +772,9 @@ namespace CIR {
 	}
 	
 	public class Constructor {
-		ConstructorInitializer init;
-		string name;
-		Parameters args;
+		public readonly ConstructorInitializer Initializer;
+		public readonly Parameters Parameters;
+		public readonly string Name;
 		Block block;
 		int mod_flags;
 
@@ -653,32 +792,33 @@ namespace CIR {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		
 		public Constructor (string name, Parameters args, ConstructorInitializer init)
 		{
-			this.name = name;
-			this.args = args;
-			this.init = init;
+			Name = name;
+			Parameters = args;
+			Initializer = init;
 		}
 
-		public string Name {
+		//
+		// Returns true if this is a default constructor
+		//
+		public bool IsDefault ()
+		{
+			return  (Parameters == null) &&
+				(Initializer is ConstructorBaseInitializer) &&
+				(Initializer.Arguments == null);
+		}
+
+		public int ModFlags {
 			get {
-				return name;
+				return mod_flags;
+			}
+
+			set {
+				mod_flags = value;
 			}
 		}
-
-		public ConstructorInitializer Initializer {
-			get {
-				return init;
-			}
-		}
-
-		public Parameters Parameters {
-			get {
-				return args;
-			}
-		}
-
+		
 		public Block Block {
 			get {
 				return block;
@@ -689,14 +829,27 @@ namespace CIR {
 			}
 		}
 
-		public int ModFlags {
+		public CallingConventions CallingConvention {
 			get {
-				return mod_flags;
-			}
+				CallingConventions cc = 0;
+				
+				if (Parameters.ArrayParameter != null)
+					cc |= CallingConventions.VarArgs;
+				else
+					cc |= CallingConventions.Standard;
 
-			set {
-				mod_flags = Modifiers.Check (AllowedModifiers, value, 0);
+				if ((ModFlags & Modifiers.STATIC) != 0)
+					cc |= CallingConventions.HasThis;
+
+				// FIXME: How is `ExplicitThis' used in C#?
+				
+				return cc;
 			}
+		}
+
+		public Type [] ParameterTypes (TypeContainer tc)
+		{
+			return Parameters.GetParameterInfo (tc);
 		}
 	}
 

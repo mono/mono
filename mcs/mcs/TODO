@@ -1,3 +1,5 @@
+* Handle duplicate methods and constructors in semantic analysis
+
 * Ordering
 
 	First define methods and operator overloads.
