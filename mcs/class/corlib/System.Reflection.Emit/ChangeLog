@@ -1,3 +1,8 @@
+2004-12-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* TypeBuilder.cs (CreateType): Creating a type twice does not
+	throw in msft.
+
 2004-11-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs: Check that all types inside the module are created.

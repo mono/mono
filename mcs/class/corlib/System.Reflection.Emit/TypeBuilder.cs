@@ -623,7 +623,8 @@ namespace System.Reflection.Emit {
 		
 		public Type CreateType() {
 			/* handle nesting_type */
-			check_not_created ();
+			if (created != null)
+				return created;
 
 			// Fire TypeResolve events for fields whose type is an unfinished
 			// value type.
