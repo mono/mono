@@ -1,5 +1,10 @@
 2004-02-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNode.cs : ChildNodes should not create XmlNodeListChildren
+	  every time. This fix heavily improved performance.
+
+2004-02-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttributeCollection.cs : set owner element as parent on removal
 	  events (though they are not "parent" in infoset or dom context)
 	* XmlElement.cs : Don't remove attributes twice (raises extraneous

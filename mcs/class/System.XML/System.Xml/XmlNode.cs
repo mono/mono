@@ -25,6 +25,7 @@ namespace System.Xml
 		XmlNode parentNode;
 		StringBuilder tmpBuilder;
 		XmlLinkedNode lastLinkedChild;
+		XmlNodeListChildren childNodes;
 
 		#endregion
 
@@ -53,7 +54,9 @@ namespace System.Xml
 
 		public virtual XmlNodeList ChildNodes {
 			get {
-				return new XmlNodeListChildren (this);
+				if (childNodes == null)
+					childNodes = new XmlNodeListChildren (this);
+				return childNodes;
 			}
 		}
 
