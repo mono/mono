@@ -20,6 +20,7 @@ COMPILER_SOURCES = \
 	enum.cs				\
 	ecore.cs			\
 	expression.cs 			\
+	flowanalysis.cs			\
 	genericparser.cs		\
 	interface.cs			\
 	iterators.cs			\
@@ -35,8 +36,7 @@ COMPILER_SOURCES = \
 	support.cs			\
 	typemanager.cs			\
 	symbolwriter.cs			\
-	tree.cs				\
-	flowanalysis.cs
+	tree.cs
 
 all_sources = $(COMPILER_SOURCES) cs-parser.cs
 
