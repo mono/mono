@@ -319,3 +319,4 @@ System.Text.RegularExpressions/cache.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
+Microsoft.CSharp/CompilerError.cs
