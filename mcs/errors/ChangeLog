@@ -1,3 +1,8 @@
+2004-09-07  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0571-3.cs, CS0571-3-lib.cs: New tests for #59980.
+	* Makefile: Update list of dlls.
+
 2004-09-03 Marek Safar <marek.safar@seznam.cz>
 
 	* 8 new error tests.
