@@ -1,3 +1,7 @@
+2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c inssel-amd64.brg: Optimizations.
+
 2004-08-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Optimize lmf saving a bit.
