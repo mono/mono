@@ -1,3 +1,35 @@
+2004-05-20  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+
+        NpgsqlAsciiRow.cs,
+        NpgsqlBackEndKeyData.cs,
+        NpgsqlBinaryRow.cs,
+        NpgsqlCommand.cs,
+        NpgsqlConnectedState.cs,
+        NpgsqlConnection.cs,
+        NpgsqlConnection.resx,
+        NpgsqlConnector.cs,
+        NpgsqlConnectorPool.cs,
+        NpgsqlError.cs,
+        NpgsqlMediator.cs,
+        NpgsqlMessageTypes.cs,
+        NpgsqlPasswordPacket.cs,
+        NpgsqlQuery.cs,
+        NpgsqlRowDescription.cs,
+        NpgsqlStartupPacket.cs,
+        NpgsqlState.cs,
+        PGUtil.cs,
+        NpgsqlTypes/NpgsqlTypesHelper.cs : - store protocol version as an enum, keep numbers as protocol specific
+        - split more protocol handlers between version 2 and version 3
+        - split MessageTypes class on ver2/ver3 and add remaining types for ver3        - removed handlers for deprecated protocol message types
+        - store BackendKeyData in its own member on Mediator
+        - Store ParameterStatus objects in a key map on Mediator
+        - Get backend version now from the Mediator if possible
+        - Rewrite parsers for server version and connection string
+        - Store server version numericially (in a new class ServerVersion)
+        - As usual, lots of code cleanup/commenting/etc.
+
+        Thanks very much Glen Parker (glenebob@nwlink.com) for this patch.
+
 2004-05-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (%.resources): Use INTERNAL_RESGEN.
