@@ -489,10 +489,18 @@ namespace Mono.CSharp {
 				gc = pd.GenericConstraints (pos);
 				Type mparam = mb.GetGenericArguments () [pos];
 
-				if (((constraints != null) && (gc == null)) ||
-				    ((constraints == null) && (gc != null)) ||
-				    ((constraints != null) &&
-				     !constraints.CheckInterfaceMethod (ec, gc))) {
+				bool ok = true;
+				if (constraints != null) {
+					if (gc == null)
+						ok = false;
+					else if (!constraints.CheckInterfaceMethod (ec, gc))
+						ok = false;
+				} else {
+					if (!is_override && (gc != null))
+						ok = false;
+				}
+
+				if (!ok) {
 					Report.SymbolRelatedToPreviousError (implementing);
 
 					Report.Error (

@@ -1,5 +1,10 @@
 2004-09-09  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeParameter.DefineType): Added support for
+	explicit interface methods.
+
+2004-09-09  Martin Baulig  <martin@ximian.com>
+
 	* README.Changes: New document.  Started to list important changes
 	between MCS and GMCS here.
 
