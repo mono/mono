@@ -1,3 +1,7 @@
+2003-07-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Added the new files to the build.
+
 2003-06-09  Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 	* Added FormalParameterList, Statement, VariableDeclaration, 
 	VariableStatement and Visitor files to the unix.args.
