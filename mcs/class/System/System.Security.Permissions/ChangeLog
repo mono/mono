@@ -1,0 +1,4 @@
+2003-07-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ChangeLog: Added
+	* ResourcePermissionBaseEntry.cs: Implemented
