@@ -663,6 +663,28 @@ namespace System
 			return CultureInfo.CurrentCulture.CompareInfo.LastIndexOf (this, value, startIndex, count);
 		}
 
+#if NET_2_0
+		public bool Contains (String value)
+		{
+			return IndexOf (value) != -1;
+		}
+
+		public static bool IsNullOrEmpty (String value)
+		{
+			return (value == null) || (value.Length == 0);
+		}
+
+		public string Remove (int startIndex)
+		{
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "StartIndex can not be less than zero");
+			if (startIndex >= this.length)
+				throw new ArgumentOutOfRangeException ("startIndex", "StartIndex must be less than the length of the string");
+
+			return Remove (startIndex, this.length - startIndex);
+		}
+#endif
+
 		public String PadLeft (int totalWidth)
 		{
 			return PadLeft (totalWidth, ' ');

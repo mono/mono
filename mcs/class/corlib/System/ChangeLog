@@ -1,3 +1,7 @@
+2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* String.cs: Add some 2.0 methods.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Activator.cs: Now use the supplied evidences when loading 
