@@ -1,0 +1,8 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New.
+	* OraclePermission.cs: Adapted to work for both Fx 1.1 and 2.0. Fx 1.1
+	version isn't complete (as anyway it requires FullTrust on MS 
+	implementation) but DO NOT throw exceptions (for the security engine).
+	* OraclePermissionAttribute.cs: Implemented CreatePermission. Adapted
+	to work for both Fx 1.1 and 2.0.

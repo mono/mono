@@ -7,21 +7,62 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient
 //
-// Author: Tim Coleman <tim@timcoleman.com>
+// Authors:
+//	Tim Coleman <tim@timcoleman.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Licensed under the MIT/X11 License.
 //
 
-using System;
+using System.Collections;
+using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.OracleClient {
+
+#if NET_2_0
 	[Serializable]
-	public sealed class OraclePermission : CodeAccessPermission, IUnrestrictedPermission
-	{
+	[MonoTODO ("Current MS implementation of Data Provider requires FullTrust")]
+	public sealed class OraclePermission : DBDataPermission {
+
+		public OraclePermission (PermissionState state)
+			: base (state)
+		{
+		}
+
+		// required for Copy method
+		internal OraclePermission (DBDataPermission permission)
+			: base (permission)
+		{
+		}
+
+		// easier (and common) permission creation from attribute class
+		internal OraclePermission (DBDataPermissionAttribute attribute)
+			: base (attribute)
+		{
+		}
+
+		[MonoTODO ("overridden for what ? additional validations ???")]
+		protected override void AddConnectionString (string connectionString, string restrictions, 
+			KeyRestrictionBehavior behavior, Hashtable synonyms, bool useFirstKeyValue)
+		{
+			base.AddConnectionString (connectionString, restrictions, behavior, synonyms, useFirstKeyValue);
+		}
+
+		public override IPermission Copy ()
+		{
+			return new OraclePermission (this);
+		}
+	}
+#else
+	[Serializable]
+	[MonoTODO ("Current MS implementation of Data Provider requires FullTrust")]
+	public sealed class OraclePermission : CodeAccessPermission, IUnrestrictedPermission {
+
 		#region Fields
 
 		bool allowBlankPassword;
@@ -36,6 +77,18 @@ namespace System.Data.OracleClient {
 			this.state = state;
 		}
 
+		// easier (and common) permission creation from attribute class
+		internal OraclePermission (OraclePermissionAttribute attribute)
+		{
+			if (attribute.Unrestricted) {
+				state = PermissionState.Unrestricted;
+			}
+			else {
+				state = PermissionState.None;
+				allowBlankPassword = attribute.AllowBlankPassword;
+			}
+		}
+
 		#endregion // Constructors
 
 		#region Properties
@@ -43,11 +96,6 @@ namespace System.Data.OracleClient {
 		public bool AllowBlankPassword {
 			get { return allowBlankPassword; }
 			set { allowBlankPassword = value; }
-		}
-
-		internal PermissionState State {
-			get { return state; }
-			set { state = value; }
 		}
 
 		#endregion // Properties
@@ -58,49 +106,47 @@ namespace System.Data.OracleClient {
 		{
 			OraclePermission copy = (OraclePermission) Activator.CreateInstance (this.GetType ());
 			copy.AllowBlankPassword = allowBlankPassword;
-			copy.State = state;
+			copy.state = state;
 			return copy;
 		}
+
+		// Note: No exception are thrown here to help the security runtime performance
 
 		[MonoTODO]
 		public override void FromXml (SecurityElement securityElement)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public override IPermission Intersect (IPermission target)
 		{
-			if (target != null && !(target is OraclePermission))
-				throw new ArgumentException ();
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[MonoTODO]
 		public override bool IsSubsetOf (IPermission target)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public bool IsUnrestricted ()
 		{
-			return (State == PermissionState.Unrestricted);
+			return (state == PermissionState.Unrestricted);
 		}
 
 		[MonoTODO]
 		public override SecurityElement ToXml ()
 		{
-			throw new NotImplementedException ();
+			return new SecurityElement ("IPermission");
 		}
 
 		[MonoTODO]
 		public override IPermission Union (IPermission target)
 		{
-			if (target != null && !(target is OraclePermission))
-				throw new ArgumentException ();
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		#endregion // Methods
 	}
+#endif
 }
