@@ -1,4 +1,8 @@
 
+Mon Dec 24 17:23:45 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix ldc.i8.
+
 Thu Dec 20 20:09:48 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix delegate method invocation to handle both

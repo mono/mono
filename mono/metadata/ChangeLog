@@ -1,4 +1,12 @@
 
+Mon Dec 24 17:18:10 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix array init with rank > 1. FindMembers
+	loops in parent class as well.
+	* image.c: do not insert nested types in name cache.
+	* reflection.c: warning fix.
+	* reflection.h: add override method (for interface impl).
+
 Mon Dec 24 16:16:56 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c: fix customattr decoding.
