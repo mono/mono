@@ -1,5 +1,5 @@
 //
-// System.Drawing.Rectangle.cs
+// System.Drawing.RectangleF.cs
 //
 // Author:
 //   Mike Kestner (mkestner@speakeasy.net)
@@ -11,59 +11,37 @@ using System;
 
 namespace System.Drawing {
 	
-	public struct Rectangle { 
+	public struct RectangleF { 
 		
 		// Private position and size fields.
-		private Point loc;
-		private Size sz;
+		private PointF loc;
+		private SizeF sz;
 
 		/// <summary>
 		///	Empty Shared Field
 		/// </summary>
 		///
 		/// <remarks>
-		///	An uninitialized Rectangle Structure.
+		///	An uninitialized RectangleF Structure.
 		/// </remarks>
 		
-		public static readonly Rectangle Empty;
+		public static readonly RectangleF Empty;
 
-		/// <summary>
-		///	Ceiling Shared Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Produces a Rectangle structure from a RectangleF 
-		///	structure by taking the ceiling of the X, Y, Width,
-		///	and Height properties.
-		/// </remarks>
-		
-		public static Rectangle Ceiling (RectangleF value)
-		{
-			int x, y, w, h;
-			checked {
-				x = (int) Math.Ceiling (value.X);
-				y = (int) Math.Ceiling (value.Y);
-				w = (int) Math.Ceiling (value.Width);
-				h = (int) Math.Ceiling (value.Height);
-			}
-
-			return new Rectangle (x, y, w, h);
-		}
 
 		/// <summary>
 		///	FromLTRB Shared Method
 		/// </summary>
 		///
 		/// <remarks>
-		///	Produces a Rectangle structure from left, top, right,
+		///	Produces a RectangleF structure from left, top, right,
 		///	and bottom coordinates.
 		/// </remarks>
 		
-		public static Rectangle FromLTRB (int left, int top,
-						  int right, int bottom)
+		public static RectangleF FromLTRB (float left, float top,
+						   float right, float bottom)
 		{
-			return new Rectangle (left, top, right - left,
-					      bottom - top);
+			return new RectangleF (left, top, right - left,
+					       bottom - top);
 		}
 
 		/// <summary>
@@ -71,15 +49,16 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Produces a new Rectangle by inflating an existing 
-		///	Rectangle by the specified coordinate values.
+		///	Produces a new RectangleF by inflating an existing 
+		///	RectangleF by the specified coordinate values.
 		/// </remarks>
 		
-		public static Rectangle Inflate (Rectangle rect, int x, int y)
+		public static RectangleF Inflate (RectangleF r, 
+						  float x, float y)
 		{
-			Rectangle r = new Rectangle (rect.Location, rect.Size);
-			r.Inflate (x, y);
-			return r;
+			RectangleF ir = new RectangleF (r.Location, r.Size);
+			ir.Inflate (x, y);
+			return ir;
 		}
 
 		/// <summary>
@@ -87,12 +66,12 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Inflates the Rectangle by a specified width and height.
+		///	Inflates the RectangleF by a specified width and height.
 		/// </remarks>
 		
-		public void Inflate (int width, int height)
+		public void Inflate (float width, float height)
 		{
-			Inflate (new Size (width, height));
+			Inflate (new SizeF (width, height));
 		}
 
 		/// <summary>
@@ -100,13 +79,13 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Inflates the Rectangle by a specified Size.
+		///	Inflates the RectangleF by a specified Size.
 		/// </remarks>
 		
-		public void Inflate (Size sz)
+		public void Inflate (SizeF sz)
 		{
-			loc -= sz;
-			Size ds = new Size (sz.Width * 2, sz.Height * 2);
+			Offset(sz.Width, sz.Height);
+			SizeF ds = new SizeF (sz.Width * 2, sz.Height * 2);
 			this.sz += ds;
 		}
 
@@ -115,13 +94,14 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Produces a new Rectangle by intersecting 2 existing 
-		///	Rectangles. Returns null if there is no	intersection.
+		///	Produces a new RectangleF by intersecting 2 existing 
+		///	RectangleFs. Returns null if there is no intersection.
 		/// </remarks>
 		
-		public static Rectangle Intersect (Rectangle r1, Rectangle r2)
+		public static RectangleF Intersect (RectangleF r1, 
+						    RectangleF r2)
 		{
-			Rectangle r = new Rectangle (r1.Location, r1.Size);
+			RectangleF r = new RectangleF (r1.Location, r1.Size);
 			r.Intersect (r2);
 			return r;
 		}
@@ -131,15 +111,15 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Replaces the Rectangle with the intersection of itself
-		///	and another Rectangle.
+		///	Replaces the RectangleF with the intersection of itself
+		///	and another RectangleF.
 		/// </remarks>
 		
-		public void Intersect (Rectangle r)
+		public void Intersect (RectangleF r)
 		{
 			if (!IntersectsWith (r)) {
-				loc = Point.Empty;
-				sz = Size.Empty;
+				loc = PointF.Empty;
+				sz = SizeF.Empty;
 			}
 
 			X = Math.Max (Left, r.Left);
@@ -149,61 +129,15 @@ namespace System.Drawing {
 		}
 
 		/// <summary>
-		///	Round Shared Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Produces a Rectangle structure from a RectangleF by
-		///	rounding the X, Y, Width, and Height properties.
-		/// </remarks>
-		
-		public static Rectangle Round (RectangleF value)
-		{
-			int x, y, w, h;
-			checked {
-				x = (int) Math.Round (value.X);
-				y = (int) Math.Round (value.Y);
-				w = (int) Math.Round (value.Width);
-				h = (int) Math.Round (value.Height);
-			}
-
-			return new Rectangle (x, y, w, h);
-		}
-
-		/// <summary>
-		///	Truncate Shared Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Produces a Rectangle structure from a RectangleF by
-		///	truncating the X, Y, Width, and Height properties.
-		/// </remarks>
-		
-		// LAMESPEC: Should this be floor, or a pure cast to int?
-
-		public static Rectangle Truncate (RectangleF value)
-		{
-			int x, y, w, h;
-			checked {
-				x = (int) value.X;
-				y = (int) value.Y;
-				w = (int) value.Width;
-				h = (int) value.Height;
-			}
-
-			return new Rectangle (x, y, w, h);
-		}
-
-		/// <summary>
 		///	Union Shared Method
 		/// </summary>
 		///
 		/// <remarks>
-		///	Produces a new Rectangle from the union of 2 existing 
-		///	Rectangles.
+		///	Produces a new RectangleF from the union of 2 existing 
+		///	RectangleFs.
 		/// </remarks>
 		
-		public static Rectangle Union (Rectangle r1, Rectangle r2)
+		public static RectangleF Union (RectangleF r1, RectangleF r2)
 		{
 			return FromLTRB (Math.Min (r1.Left, r2.Left),
 					 Math.Min (r1.Top, r2.Top),
@@ -216,12 +150,12 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Compares two Rectangle objects. The return value is
+		///	Compares two RectangleF objects. The return value is
 		///	based on the equivalence of the Location and Size 
-		///	properties of the two Rectangles.
+		///	properties of the two RectangleFs.
 		/// </remarks>
 
-		public static bool operator == (Rectangle r1, Rectangle r2)
+		public static bool operator == (RectangleF r1, RectangleF r2)
 		{
 			return ((r1.Location == r2.Location) && 
 				(r1.Size == r2.Size));
@@ -232,15 +166,28 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Compares two Rectangle objects. The return value is
+		///	Compares two RectangleF objects. The return value is
 		///	based on the equivalence of the Location and Size 
-		///	properties of the two Rectangles.
+		///	properties of the two RectangleFs.
 		/// </remarks>
 
-		public static bool operator != (Rectangle r1, Rectangle r2)
+		public static bool operator != (RectangleF r1, RectangleF r2)
 		{
 			return ((r1.Location != r2.Location) || 
 				(r1.Size != r2.Size));
+		}
+		
+		/// <summary>
+		///	Rectangle to RectangleF Conversion
+		/// </summary>
+		///
+		/// <remarks>
+		///	Converts a Rectangle object to a RectangleF.
+		/// </remarks>
+
+		public static implicit operator RectangleF (Rectangle r)
+		{
+			return new RectangleF (r.Location, r.Size);
 		}
 		
 
@@ -249,32 +196,32 @@ namespace System.Drawing {
 		// -----------------------
 
 		/// <summary>
-		///	Rectangle Constructor
+		///	RectangleF Constructor
 		/// </summary>
 		///
 		/// <remarks>
-		///	Creates a Rectangle from Point and Size values.
+		///	Creates a RectangleF from PointF and SizeF values.
 		/// </remarks>
 		
-		public Rectangle (Point loc, Size sz)
+		public RectangleF (PointF loc, SizeF sz)
 		{
 			this.loc = loc;
 			this.sz = sz;
 		}
 
 		/// <summary>
-		///	Rectangle Constructor
+		///	RectangleF Constructor
 		/// </summary>
 		///
 		/// <remarks>
-		///	Creates a Rectangle from a specified x,y location and
+		///	Creates a RectangleF from a specified x,y location and
 		///	width and height values.
 		/// </remarks>
 		
-		public Rectangle (int x, int y, int width, int height)
+		public RectangleF (float x, float y, float width, float height)
 		{
-			loc = new Point (x, y);
-			sz = new Size (width, height);
+			loc = new PointF (x, y);
+			sz = new SizeF (width, height);
 		}
 
 
@@ -284,11 +231,11 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The Y coordinate of the bottom edge of the Rectangle.
+		///	The Y coordinate of the bottom edge of the RectangleF.
 		///	Read only.
 		/// </remarks>
 		
-		public int Bottom {
+		public float Bottom {
 			get {
 				return Y + Height;
 			}
@@ -299,10 +246,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The Height of the Rectangle.
+		///	The Height of the RectangleF.
 		/// </remarks>
 		
-		public int Height {
+		public float Height {
 			get {
 				return sz.Height;
 			}
@@ -330,11 +277,11 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The X coordinate of the left edge of the Rectangle.
+		///	The X coordinate of the left edge of the RectangleF.
 		///	Read only.
 		/// </remarks>
 		
-		public int Left {
+		public float Left {
 			get {
 				return X;
 			}
@@ -345,10 +292,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The Location of the top-left corner of the Rectangle.
+		///	The Location of the top-left corner of the RectangleF.
 		/// </remarks>
 		
-		public Point Location {
+		public PointF Location {
 			get {
 				return loc;
 			}
@@ -362,11 +309,11 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The X coordinate of the right edge of the Rectangle.
+		///	The X coordinate of the right edge of the RectangleF.
 		///	Read only.
 		/// </remarks>
 		
-		public int Right {
+		public float Right {
 			get {
 				return X + Width;
 			}
@@ -377,10 +324,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The Size of the Rectangle.
+		///	The Size of the RectangleF.
 		/// </remarks>
 		
-		public Size Size {
+		public SizeF Size {
 			get {
 				return sz;
 			}
@@ -394,11 +341,11 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The Y coordinate of the top edge of the Rectangle.
+		///	The Y coordinate of the top edge of the RectangleF.
 		///	Read only.
 		/// </remarks>
 		
-		public int Top {
+		public float Top {
 			get {
 				return Y;
 			}
@@ -409,10 +356,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The Width of the Rectangle.
+		///	The Width of the RectangleF.
 		/// </remarks>
 		
-		public int Width {
+		public float Width {
 			get {
 				return sz.Width;
 			}
@@ -426,10 +373,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The X coordinate of the Rectangle.
+		///	The X coordinate of the RectangleF.
 		/// </remarks>
 		
-		public int X {
+		public float X {
 			get {
 				return loc.X;
 			}
@@ -443,10 +390,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	The Y coordinate of the Rectangle.
+		///	The Y coordinate of the RectangleF.
 		/// </remarks>
 		
-		public int Y {
+		public float Y {
 			get {
 				return loc.Y;
 			}
@@ -460,10 +407,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Checks if an x,y coordinate lies within this Rectangle.
+		///	Checks if an x,y coordinate lies within this RectangleF.
 		/// </remarks>
 		
-		public bool Contains (int x, int y)
+		public bool Contains (float x, float y)
 		{
 			return ((x >= Left) && (x <= Right) && 
 				(y >= Top) && (y <= Bottom));
@@ -474,10 +421,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Checks if a Point lies within this Rectangle.
+		///	Checks if a Point lies within this RectangleF.
 		/// </remarks>
 		
-		public bool Contains (Point pt)
+		public bool Contains (PointF pt)
 		{
 			return Contains (pt.X, pt.Y);
 		}
@@ -487,11 +434,11 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Checks if a Rectangle lies entirely within this 
-		///	Rectangle.
+		///	Checks if a RectangleF lies entirely within this 
+		///	RectangleF.
 		/// </remarks>
 		
-		public bool Contains (Rectangle rect)
+		public bool Contains (RectangleF rect)
 		{
 			return (rect == Intersect (this, rect));
 		}
@@ -501,15 +448,15 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Checks equivalence of this Rectangle and another object.
+		///	Checks equivalence of this RectangleF and an object.
 		/// </remarks>
 		
 		public override bool Equals (object o)
 		{
-			if (!(o is Rectangle))
+			if (!(o is RectangleF))
 				return false;
 
-			return (this == (Rectangle) o);
+			return (this == (RectangleF) o);
 		}
 
 		/// <summary>
@@ -530,10 +477,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Checks if a Rectangle intersects with this one.
+		///	Checks if a RectangleF intersects with this one.
 		/// </remarks>
-		
-		public bool IntersectsWith (Rectangle r)
+
+		public bool IntersectsWith (RectangleF r)
 		{
 			return !((Left > r.Right) || (Right < r.Left) ||
 			    (Top > r.Bottom) || (Bottom < r.Top));
@@ -544,10 +491,10 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Moves the Rectangle a specified distance.
+		///	Moves the RectangleF a specified distance.
 		/// </remarks>
 
-		public void Offset (int dx, int dy)
+		public void Offset (float dx, float dy)
 		{
 			X += dx;
 			Y += dy;
@@ -558,12 +505,12 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Moves the Rectangle a specified distance.
+		///	Moves the RectangleF a specified distance.
 		/// </remarks>
 
-		public void Offset (Point pt)
+		public void Offset (PointF pt)
 		{
-			loc.Offset(pt.X, pt.Y);
+			Offset(pt.X, pt.Y);
 		}
 		
 		/// <summary>
@@ -571,7 +518,7 @@ namespace System.Drawing {
 		/// </summary>
 		///
 		/// <remarks>
-		///	Formats the Rectangle as a string in (x,y,w,h) notation.
+		///	Formats the RectangleF in (x,y,w,h) notation.
 		/// </remarks>
 		
 		public override string ToString ()
