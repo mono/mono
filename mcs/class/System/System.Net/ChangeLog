@@ -1,3 +1,8 @@
+2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* WebExceptionStatus.cs: Restyled, Added .Net 1.1 members
+	* SecurityProtocolType.cs: Added and implemented
+
 2003-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: fixed redirects when they target another host.
