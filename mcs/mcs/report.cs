@@ -174,7 +174,7 @@ namespace Mono.CSharp {
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)
 		{
-			related_symbols.Add (String.Format ("{0}: ('{1}' name of symbol related to previous ", loc, symbol));
+			related_symbols.Add (String.Format ("{0}: '{1}' (name of symbol related to previous ", loc, symbol));
 		}
 
 		static public void RealError (string msg)
@@ -183,7 +183,7 @@ namespace Mono.CSharp {
 			Console.WriteLine (msg);
 
 			foreach (string s in related_symbols)
-				Console.WriteLine (s);
+				Console.WriteLine (s + "error)");
 			related_symbols.Clear ();
 
 			if (Stacktrace)
@@ -236,7 +236,7 @@ namespace Mono.CSharp {
 				Warnings++;
 
 				foreach (string s in related_symbols)
-					Console.WriteLine (s);
+					Console.WriteLine (s + "warning)");
 				related_symbols.Clear ();
 
 				Check (code);

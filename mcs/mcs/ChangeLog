@@ -1,3 +1,22 @@
+2004-09-03  Raja R Harinath  <rharinath@novell.com>
+
+	* expression.cs (BetterConversion): Don't allow either conversion 
+	to be null.  Remove redundant implicit conversion test when 'q ==
+	null' -- when this function is invoked, we already know that the
+	implicit conversion exists.
+	(BetterFunction): Assume that 'best' is non-null.  Remove
+	redundant reimplementation of IsApplicable when 'best' is null.
+	(IsParamsMethodApplicable, IsApplicable): Add new parameter for
+	number of arguments.
+	(IsAncestralType): Extract from OverloadResolve.
+	(OverloadResolve): Make robust to the MethodGroupExpr being
+	unsorted.  Implement all the logic of Section 14.5.5.1, and
+	support overloading of methods from multiple applicable types.
+	Clean up logic somewhat.  Don't pass null methods to BetterFunction.
+
+	* report.cs (SymbolRelatedToPreviousError): Cleanup output.
+	(RealError, Warning): Append type of report to related symbol.
+
 2004-09-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* enum.cs: Fixed CLS-Compliance checks for enum members.

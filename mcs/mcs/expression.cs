@@ -4148,6 +4148,9 @@ namespace Mono.CSharp {
 				throw new Exception ("Expression of type " + a.Expr +
                                                      " does not resolve its type");
 
+			if (p == null || q == null)
+				throw new InternalErrorException ("BetterConversion Got a null conversion");
+
 			//
 			// This is a special case since csc behaves this way.
 			//
@@ -4168,16 +4171,15 @@ namespace Mono.CSharp {
                         // I can't find this anywhere in the spec but we can interpret this
                         // to mean that null can be of any type you wish in such a context
                         //
-                        if (p != null && q != null) {
-                                if (argument_expr is NullLiteral &&
-                                    !p.IsValueType &&
-                                    q == TypeManager.object_type)
-                                        return 1;
-                                else if (argument_expr is NullLiteral &&
-                                         !q.IsValueType &&
-                                         p == TypeManager.object_type)
-                                        return 0;
-                        }
+			if (argument_expr is NullLiteral &&
+			    !p.IsValueType &&
+			    q == TypeManager.object_type)
+				return 1;
+			else if (argument_expr is NullLiteral &&
+				 !q.IsValueType &&
+				 p == TypeManager.object_type)
+				return 0;
+
                                 
 			if (p == q)
 				return 0;
@@ -4187,15 +4189,6 @@ namespace Mono.CSharp {
 
 			if (argument_type == q)
 				return 0;
-
-			if (q == null) {
-				Expression tmp = Convert.ImplicitConversion (ec, argument_expr, p, loc);
-				
-				if (tmp != null)
-					return 1;
-				else
-					return 0;
-			}
 
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
@@ -4234,20 +4227,13 @@ namespace Mono.CSharp {
 		///     0 if candidate ain't better
 		///     1 if candidate is better than the current best match
 		/// </remarks>
-		static int BetterFunction (EmitContext ec, ArrayList args,
+		static int BetterFunction (EmitContext ec, ArrayList args, int argument_count,
 					   MethodBase candidate, bool candidate_params,
                                            MethodBase best, bool best_params,
 					   Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
-			ParameterData best_pd;
-			int argument_count;
-		
-			if (args == null)
-				argument_count = 0;
-			else
-				argument_count = args.Count;
-
+			ParameterData best_pd = GetParameterData (best);
 			int cand_count = candidate_pd.Count;
 			
 			//
@@ -4272,42 +4258,13 @@ namespace Mono.CSharp {
 			// Trim (); is better than Trim (params char[] chars);
                         //
 			if (cand_count == 0 && argument_count == 0)
-				return best == null || best_params ? 1 : 0;
+				return best_params ? 1 : 0;
 
 			if ((candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS) &&
 			    (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.ARGLIST))
 				if (cand_count != argument_count)
 					return 0;
 
-			if (best == null) {
-				int x = 0;
-
-				if (argument_count == 0 && cand_count == 1 &&
-				    candidate_pd.ParameterModifier (cand_count - 1) == Parameter.Modifier.PARAMS)
-					return 1;
-				
-				for (int j = 0; j < argument_count; ++j) {
-
-					Argument a = (Argument) args [j];
-					Type t = candidate_pd.ParameterType (j);
-
-					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-						if (candidate_params)
-							t = TypeManager.GetElementType (t);
-
-					x = BetterConversion (ec, a, t, null, loc);
-					
-					if (x <= 0)
-						break;
-				}
-
-				if (x > 0)
-					return 1;
-				else
-					return 0;
-			}
-
-			best_pd = GetParameterData (best);
 
 			int rating1 = 0, rating2 = 0;
 			
@@ -4435,16 +4392,9 @@ namespace Mono.CSharp {
 		///   Determines if the candidate method, if a params method, is applicable
 		///   in its expanded form to the given set of arguments
 		/// </summary>
-		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments,
+		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, int arg_count,
 						      MethodBase candidate, bool do_varargs)
 		{
-			int arg_count;
-			
-			if (arguments == null)
-				arg_count = 0;
-			else
-				arg_count = arguments.Count;
-			
 			ParameterData pd = GetParameterData (candidate);
 
 			int pd_count = pd.Count;
@@ -4528,16 +4478,8 @@ namespace Mono.CSharp {
 		///   Determines if the candidate method is applicable (section 14.4.2.1)
 		///   to the given set of arguments
 		/// </summary>
-		static bool IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
+		static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count, MethodBase candidate)
 		{
-			int arg_count;
-
-			if (arguments == null)
-				arg_count = 0;
-			else
-				arg_count = arguments.Count;
-
-
 			ParameterData pd = GetParameterData (candidate);
 
 			if (arg_count != pd.Count)
@@ -4578,6 +4520,13 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		static private bool IsAncestralType (Type first_type, Type second_type)
+		{
+			return first_type != second_type &&
+				(second_type.IsSubclassOf (first_type) ||
+				 TypeManager.ImplementsInterface (second_type, first_type));
+		}
 		
 		/// <summary>
 		///   Find the Applicable Function Members (7.4.2.1)
@@ -4599,8 +4548,9 @@ namespace Mono.CSharp {
 							  ArrayList Arguments, Location loc)
 		{
 			MethodBase method = null;
+			bool method_params = false;
 			Type applicable_type = null;
-			int argument_count;
+			int argument_count = 0;
 			ArrayList candidates = new ArrayList ();
 
                         //
@@ -4612,22 +4562,18 @@ namespace Mono.CSharp {
                         //
                         Hashtable candidate_to_form = null;
 
+			if (Arguments != null)
+				argument_count = Arguments.Count;
 
-                        //
-                        // First we construct the set of applicable methods
-                        //
-                        // We start at the top of the type hierarchy and
-                        // go down to find applicable methods
-                        //
-                        applicable_type = me.DeclaringType;
-                        
-                        if (me.Name == "Invoke" && TypeManager.IsDelegateType (applicable_type)) {
+                        if (me.Name == "Invoke" && TypeManager.IsDelegateType (me.DeclaringType)) {
                                 Error_InvokeOnDelegate (loc);
                                 return null;
                         }
 
-                        bool found_applicable = false;
-
+                        //
+                        // First we construct the set of applicable methods
+                        //
+			bool is_sorted = true;
 			foreach (MethodBase candidate in me.Methods){
                                 Type decl_type = candidate.DeclaringType;
 
@@ -4635,87 +4581,55 @@ namespace Mono.CSharp {
                                 // If we have already found an applicable method
                                 // we eliminate all base types (Section 14.5.5.1)
                                 //
-                                if (decl_type != applicable_type &&
-                                    (applicable_type.IsSubclassOf (decl_type) ||
-                                     TypeManager.ImplementsInterface (applicable_type, decl_type)) &&
-                                    found_applicable)
-                                                continue;
+                                if (applicable_type != null && IsAncestralType (decl_type, applicable_type))
+					continue;
 
-
+				//
 				// Check if candidate is applicable (section 14.4.2.1)
-				if (IsApplicable (ec, Arguments, candidate)) {
-                                        // Candidate is applicable in normal form
-                                        candidates.Add (candidate);
-                                        applicable_type = candidate.DeclaringType;
-                                        found_applicable = true;
-                                } else if (IsParamsMethodApplicable (ec, Arguments, candidate, false)) {
+				//   Is candidate applicable in normal form?
+				//
+				bool is_applicable = IsApplicable (ec, Arguments, argument_count, candidate);
+
+				if (!is_applicable &&
+				    (IsParamsMethodApplicable (ec, Arguments, argument_count, candidate, false) ||
+				     IsParamsMethodApplicable (ec, Arguments, argument_count, candidate, true))) {
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
-					
-					// Candidate is applicable in expanded form
-					candidates.Add (candidate);
-					applicable_type = candidate.DeclaringType;
-					found_applicable = true; 
 					candidate_to_form [candidate] = candidate;
-                                } else if (IsParamsMethodApplicable (ec, Arguments, candidate, true)) {
-					if (candidate_to_form == null)
-						candidate_to_form = new PtrHashtable ();
-					
 					// Candidate is applicable in expanded form
-					candidates.Add (candidate);
-					applicable_type = candidate.DeclaringType;
-					found_applicable = true; 
-					candidate_to_form [candidate] = candidate;
+					is_applicable = true;
+				}
+
+				if (!is_applicable)
+					continue;
+
+				candidates.Add (candidate);
+
+				if (applicable_type == null)
+					applicable_type = decl_type;
+				else if (applicable_type != decl_type) {
+					is_sorted = false;
+					if (IsAncestralType (applicable_type, decl_type))
+						applicable_type = decl_type;
 				}
 			}
-                        
 
-                        //
-                        // Now we actually find the best method
-                        //
 			int candidate_top = candidates.Count;
-			for (int ix = 0; ix < candidate_top; ix++){
-				MethodBase candidate = (MethodBase) candidates [ix];
 
-                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-                                bool method_params = false;
-
-                                if (method != null)
-                                        method_params = candidate_to_form != null && candidate_to_form.Contains (method);
-                                
-                                int x = BetterFunction (ec, Arguments,
-                                                        candidate, cand_params,
-                                                        method, method_params,
-                                                        loc);
-                                
-                                if (x == 0)
-                                        continue;
-                                
-                                method = candidate;
-                        }
-
-			if (Arguments == null)
-				argument_count = 0;
-			else
-				argument_count = Arguments.Count;
-			
-
-			if (method == null) {
+			if (candidate_top == 0) {
 				//
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
 				//
 				for (int i = 0; i < me.Methods.Length; ++i) {
-
 					MethodBase c = (MethodBase) me.Methods [i];
 					ParameterData pd = GetParameterData (c);
 
-					if (pd.Count != argument_count)
-						continue;
-
-					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
-							       null, loc);
-                                        break;
+					if (pd.Count == argument_count) {
+						VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
+								       null, loc);
+						break;
+					}
 				}
 
                                 if (!Location.IsNull (loc)) {
@@ -4729,43 +4643,101 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (!is_sorted) {
+				//
+				// At this point, applicable_type is _one_ of the most derived types
+				// in the set of types containing the methods in this MethodGroup.
+				// Filter the candidates so that they only contain methods from the
+				// most derived types.
+				//
+
+				int finalized = 0; // Number of finalized candidates
+
+				do {
+					// Invariant: applicable_type is a most derived type
+
+					// We'll try to complete Section 14.5.5.1 for 'applicable_type' by 
+					// eliminating all it's base types.  At the same time, we'll also move
+					// every unrelated type to the end of the array, and pick the next
+					// 'applicable_type'.
+
+					Type next_applicable_type = null;
+					int j = finalized; // where to put the next finalized candidate
+					int k = finalized; // where to put the next undiscarded candidate
+					for (int i = finalized; i < candidate_top; ++i) {
+						Type decl_type = ((MethodBase) candidates[i]).DeclaringType;
+
+						if (decl_type == applicable_type) {
+							candidates[k++] = candidates[j];
+							candidates[j++] = candidates[i];
+							continue;
+						}
+
+						if (IsAncestralType (decl_type, applicable_type))
+							continue;
+
+						if (next_applicable_type != null &&
+						    IsAncestralType (decl_type, next_applicable_type))
+							continue;
+
+						candidates[k++] = candidates[i];
+
+						if (next_applicable_type == null ||
+						    IsAncestralType (next_applicable_type, decl_type))
+							next_applicable_type = decl_type;
+					}
+
+					applicable_type = next_applicable_type;
+					finalized = j;
+					candidate_top = k;
+				} while (applicable_type != null);
+			}
+
+                        //
+                        // Now we actually find the best method
+                        //
+
+			method = (MethodBase) candidates[0];
+			method_params = candidate_to_form != null && candidate_to_form.Contains (method);
+			for (int ix = 1; ix < candidate_top; ix++){
+				MethodBase candidate = (MethodBase) candidates [ix];
+				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
+                                
+				if (BetterFunction (ec, Arguments, argument_count, 
+						    candidate, cand_params,
+						    method, method_params, loc) != 0) {
+					method = candidate;
+					method_params = cand_params;
+				}
+			}
+
 			//
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
-                        bool best_params = candidate_to_form != null && candidate_to_form.Contains (method);
-
+			bool ambiguous = false;
 			for (int ix = 0; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
 
                                 if (candidate == method)
                                         continue;
-                                               
-				//
-				// If a normal method is applicable in
-				// the sense that it has the same
-				// number of arguments, then the
-				// expanded params method is never
-				// applicable so we debar the params
-				// method.
-				//
-                                // if ((IsParamsMethodApplicable (ec, Arguments, candidate) &&
-//                                      IsApplicable (ec, Arguments, method)))
-//                                         continue;
-                                
-                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-				int x = BetterFunction (ec, Arguments,
-                                                        method, best_params,
-                                                        candidate, cand_params,
-							loc);
 
-				if (x != 1) {
- 					Report.Error (
- 						121, loc,
- 						"Ambiguous call when selecting function due to implicit casts");
-					return null;
- 				}
+                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
+				if (BetterFunction (ec, Arguments, argument_count,
+						    method, method_params,
+						    candidate, cand_params,
+						    loc) != 1) {
+					Report.SymbolRelatedToPreviousError (candidate);
+					ambiguous = true;
+				}
 			}
+
+			if (ambiguous) {
+				Report.SymbolRelatedToPreviousError (method);
+				Report.Error (121, loc, "Ambiguous call when selecting function due to implicit casts");					
+				return null;
+			}
+
 
 			//
 			// And now check if the arguments are all
@@ -4774,7 +4746,7 @@ namespace Mono.CSharp {
 			// all right
 			//
                         if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
-                                                    best_params, null, loc))
+                                                    method_params, null, loc))
 				return null;
 
 			return method;
