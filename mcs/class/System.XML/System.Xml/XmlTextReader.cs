@@ -11,20 +11,17 @@
 // FIXME:
 //   This can only parse basic XML: elements, attributes, processing
 //   instructions, and comments are OK but there's no support for
-//   entity/character references or namespaces yet.
+//   namespaces yet.
 //
-//   It barfs on DOCTYPE declarations and CDATA sections.
+//   It barfs on DOCTYPE declarations.
 //
 //   There's also no checking being done for either well-formedness
 //   or validity.
 //
 //   ParserContext and NameTables aren't being used yet.
 //
-//   The XmlTextReader-specific properties and methods have yet to
-//   be added or implemented.
-//
 //   Some thought needs to be given to performance. There's too many
-//   strings and string builders being allocated.
+//   strings being allocated.
 //
 //   None of the MoveTo methods have been implemented yet.
 //
@@ -42,7 +39,7 @@ using System.Text;
 
 namespace System.Xml
 {
-	public class XmlTextReader : XmlReader
+	public class XmlTextReader : XmlReader, IXmlLineInfo
 	{
 		// constructors
 
@@ -167,7 +164,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO: implement me.
+				// XmlTextReaders don't resolve entities.
 				return false;
 			}
 		}
@@ -177,7 +174,16 @@ namespace System.Xml
 			get
 			{
 				// TODO: implement me.
-				return 0;
+				return depth > 0 ? depth : 0;
+			}
+		}
+
+		public Encoding Encoding
+		{
+			get
+			{
+				// TODO: implement me.
+				return null;
 			}
 		}
 
@@ -203,7 +209,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO: implement me.
+				// XmlTextReader does not expand default attributes.
 				return false;
 			}
 		}
@@ -242,6 +248,24 @@ namespace System.Xml
 			}
 		}
 
+		public int LineNumber
+		{
+			get
+			{
+				// TODO: implement me.
+				return 0;
+			}
+		}
+
+		public int LinePosition
+		{
+			get
+			{
+				// TODO: implement me.
+				return 0;
+			}
+		}
+
 		public override string LocalName
 		{
 			get
@@ -256,6 +280,20 @@ namespace System.Xml
 			get
 			{
 				return name;
+			}
+		}
+
+		public bool Namespaces
+		{
+			get
+			{
+				// TODO: implement me.
+				return false;
+			}
+
+			set
+			{
+				// TODO: implement me.
 			}
 		}
 
@@ -282,6 +320,20 @@ namespace System.Xml
 			get
 			{
 				return nodeType;
+			}
+		}
+
+		public bool Normalization
+		{
+			get
+			{
+				// TODO: implement me.
+				return false;
+			}
+
+			set
+			{
+				// TODO: implement me.
 			}
 		}
 
@@ -319,12 +371,34 @@ namespace System.Xml
 			}
 		}
 
+		public WhitespaceHandling WhitespaceHandling
+		{
+			get
+			{
+				// TODO: implement me.
+				return WhitespaceHandling.All;
+			}
+
+			set
+			{
+				// TODO: implement me.
+			}
+		}
+
 		public override string XmlLang
 		{
 			get
 			{
 				// TODO: implement me.
 				return null;
+			}
+		}
+
+		public XmlResolver XmlResolver
+		{
+			set
+			{
+				// TODO: implement me.
 			}
 		}
 
@@ -361,6 +435,19 @@ namespace System.Xml
 		{
 			// TODO: implement me.
 			return null;
+		}
+
+		public TextReader GetRemainder()
+		{
+			// TODO: implement me.
+			return null;
+		}
+
+		// Why does this use explicit interface implementation?
+		bool IXmlLineInfo.HasLineInfo()
+		{
+			// TODO: implement me.
+			return false;
 		}
 
 		public override string LookupNamespace(string prefix)
@@ -423,6 +510,24 @@ namespace System.Xml
 			return false;
 		}
 
+		public int ReadBase64(byte[] buffer, int offset, int length)
+		{
+			// TODO: implement me.
+			return 0;
+		}
+
+		public int ReadBinHex(byte[] buffer, int offset, int length)
+		{
+			// TODO: implement me.
+			return 0;
+		}
+
+		public int ReadChars(char[] buffer, int offset, int length)
+		{
+			// TODO: implement me.
+			return 0;
+		}
+
 		public override string ReadInnerXml()
 		{
 			// TODO: implement me.
@@ -443,7 +548,8 @@ namespace System.Xml
 
 		public override void ResolveEntity()
 		{
-			// TODO: implement me.
+			// XmlTextReaders don't resolve entities.
+			throw new InvalidOperationException("XmlTextReaders don't resolve entities.");
 		}
 
 		// privates
@@ -451,21 +557,51 @@ namespace System.Xml
 		private TextReader reader;
 		private ReadState readState;
 
+		private int depth;
+		private bool depthDown;
+
 		private XmlNodeType nodeType;
 		private string name;
 		private bool isEmptyElement;
 		private string value;
 		private Hashtable attributes;
 
+		private bool returnEntityReference;
+		private string entityReferenceName;
+
+		private char[] nameBuffer;
+		private int nameLength;
+		private int nameCapacity;
+		private const int initialNameCapacity = 256;
+
+		private char[] valueBuffer;
+		private int valueLength;
+		private int valueCapacity;
+		private const int initialValueCapacity = 8192;
+
 		private void Init()
 		{
 			readState = ReadState.Initial;
+
+			depth = -1;
+			depthDown = false;
 
 			nodeType = XmlNodeType.None;
 			name = String.Empty;
 			isEmptyElement = false;
 			value = String.Empty;
 			attributes = new Hashtable();
+
+			returnEntityReference = false;
+			entityReferenceName = String.Empty;
+
+			nameBuffer = new char[initialNameCapacity];
+			nameLength = 0;
+			nameCapacity = initialNameCapacity;
+
+			valueBuffer = new char[initialValueCapacity];
+			valueLength = 0;
+			valueCapacity = initialValueCapacity;
 		}
 
 		// Use this method rather than setting the properties
@@ -498,7 +634,20 @@ namespace System.Xml
 
 		private void ClearAttributes()
 		{
-			attributes.Clear();
+			if (attributes.Count > 0)
+			{
+				attributes.Clear();
+			}
+		}
+
+		private int PeekChar()
+		{
+			return reader.Peek();
+		}
+
+		private int ReadChar()
+		{
+			return reader.Read();
 		}
 
 		// This should really keep track of some state so
@@ -508,49 +657,77 @@ namespace System.Xml
 		{
 			bool more = false;
 
-			switch (reader.Peek())
+			if (depthDown)
 			{
-			case '<':
-				reader.Read();
-				ReadTag();
+				--depth;
+			}
+
+			if (returnEntityReference)
+			{
+				++depth;
+				SetEntityReferenceProperties();
 				more = true;
-				break;
-			case -1:
-				readState = ReadState.EndOfFile;
-				SetProperties(
-					XmlNodeType.None, // nodeType
-					String.Empty, // name
-					false, // isEmptyElement
-					String.Empty, // value
-					true // clearAttributes
-				);
-				more = false;
-				break;
-			default:
-				ReadText();
-				more = true;
-				break;
+			}
+			else
+			{
+				switch (PeekChar())
+				{
+				case '<':
+					ReadChar();
+					ReadTag();
+					more = true;
+					break;
+				case -1:
+					readState = ReadState.EndOfFile;
+					SetProperties(
+						XmlNodeType.None, // nodeType
+						String.Empty, // name
+						false, // isEmptyElement
+						String.Empty, // value
+						true // clearAttributes
+					);
+					more = false;
+					break;
+				default:
+					ReadText();
+					more = true;
+					break;
+				}
 			}
 
 			return more;
 		}
 
+		private void SetEntityReferenceProperties()
+		{
+			SetProperties(
+				XmlNodeType.EntityReference, // nodeType
+				entityReferenceName, // name
+				false, // isEmptyElement
+				String.Empty, // value
+				true // clearAttributes
+			);
+
+			returnEntityReference = false;
+			entityReferenceName = String.Empty;
+		}
+
 		// The leading '<' has already been consumed.
 		private void ReadTag()
 		{
-			switch (reader.Peek())
+			switch (PeekChar())
 			{
 			case '/':
-				reader.Read();
+				ReadChar();
 				ReadEndTag();
 				break;
 			case '?':
-				reader.Read();
+				ReadChar();
 				ReadProcessingInstruction();
 				break;
 			case '!':
-				reader.Read();
-				ReadComment();
+				ReadChar();
+				ReadDeclaration();
 				break;
 			default:
 				ReadStartTag();
@@ -568,18 +745,21 @@ namespace System.Xml
 
 			ClearAttributes();
 
-			if (XmlChar.IsFirstNameChar(reader.Peek()))
+			if (XmlChar.IsFirstNameChar(PeekChar()))
 			{
 				ReadAttributes();
 			}
 
-			if (reader.Peek() == '/')
+			if (PeekChar() == '/')
 			{
-				reader.Read();
+				ReadChar();
 				isEmptyElement = true;
+				depthDown = true;
 			}
 
 			Expect('>');
+
+			++depth;
 
 			SetProperties(
 				XmlNodeType.Element, // nodeType
@@ -598,6 +778,8 @@ namespace System.Xml
 			SkipWhitespace();
 			Expect('>');
 
+			--depth;
+
 			SetProperties(
 				XmlNodeType.EndElement, // nodeType
 				name, // name
@@ -607,25 +789,232 @@ namespace System.Xml
 			);
 		}
 
+		private void AppendNameChar(int ch)
+		{
+			CheckNameCapacity();
+			nameBuffer[nameLength++] = (char)ch;
+		}
+
+		private void CheckNameCapacity()
+		{
+			if (nameLength == nameCapacity)
+			{
+				nameCapacity = nameCapacity * 2;
+				char[] oldNameBuffer = nameBuffer;
+				nameBuffer = new char[nameCapacity];
+				Array.Copy(oldNameBuffer, nameBuffer, nameLength);
+			}
+		}
+
+		private string CreateNameString()
+		{
+			return new String(nameBuffer, 0, nameLength);
+		}
+
+		private void AppendValueChar(int ch)
+		{
+			CheckValueCapacity();
+			valueBuffer[valueLength++] = (char)ch;
+		}
+
+		private void CheckValueCapacity()
+		{
+			if (valueLength == valueCapacity)
+			{
+				valueCapacity = valueCapacity * 2;
+				char[] oldValueBuffer = valueBuffer;
+				valueBuffer = new char[valueCapacity];
+				Array.Copy(oldValueBuffer, valueBuffer, valueLength);
+			}
+		}
+
+		private string CreateValueString()
+		{
+			return new String(valueBuffer, 0, valueLength);
+		}
+
 		// The reader is positioned on the first character
 		// of the text.
 		private void ReadText()
 		{
-			StringBuilder text = new StringBuilder();
-			text.Append((char)reader.Read());
+			valueLength = 0;
 
-			while (reader.Peek() != '<' && reader.Peek() != -1)
+			int ch = PeekChar();
+
+			while (ch != '<' && ch != -1)
 			{
-				text.Append((char)reader.Read());
+				if (ch == '&')
+				{
+					ReadChar();
+
+					if (ReadReference(false))
+					{
+						break;
+					}
+				}
+				else
+				{
+					AppendValueChar(ReadChar());
+				}
+
+				ch = PeekChar();
 			}
 
-			SetProperties(
-				XmlNodeType.Text, // nodeType
-				String.Empty, // name
-				false, // isEmptyElement
-				text.ToString(), // value
-				true // clearAttributes
-			);
+			if (returnEntityReference && valueLength == 0)
+			{
+				++depth;
+				SetEntityReferenceProperties();
+			}
+			else
+			{
+				if (depth >= 0)
+				{
+					++depth;
+					depthDown = true;
+				}
+
+				SetProperties(
+					XmlNodeType.Text, // nodeType
+					String.Empty, // name
+					false, // isEmptyElement
+					CreateValueString(), // value
+					true // clearAttributes
+				);
+			}
+		}
+
+		// The leading '&' has already been consumed.
+		// Returns true if the entity reference isn't a simple
+		// character reference or one of the predefined entities.
+		// This allows the ReadText method to break so that the
+		// next call to Read will return the EntityReference node.
+		private bool ReadReference(bool ignoreEntityReferences)
+		{
+			if (PeekChar() == '#')
+			{
+				ReadChar();
+				ReadCharacterReference();
+			}
+			else
+			{
+				ReadEntityReference(ignoreEntityReferences);
+			}
+
+			return returnEntityReference;
+		}
+
+		private void ReadCharacterReference()
+		{
+			int value = 0;
+
+			if (PeekChar() == 'x')
+			{
+				ReadChar();
+
+				while (PeekChar() != ';' && PeekChar() != -1)
+				{
+					int ch = ReadChar();
+
+					if (ch >= '0' && ch <= '9')
+					{
+						value = (value << 4) + ch - '0';
+					}
+					else if (ch >= 'A' && ch <= 'F')
+					{
+						value = (value << 4) + ch - 'A' + 10;
+					}
+					else if (ch >= 'a' && ch <= 'f')
+					{
+						value = (value << 4) + ch - 'a' + 10;
+					}
+					else
+					{
+						throw new Exception(
+							String.Format(
+								"invalid hexadecimal digit: {0} (#x{1:X})",
+								(char)ch,
+								ch));
+					}
+				}
+			}
+			else
+			{
+				while (PeekChar() != ';' && PeekChar() != -1)
+				{
+					int ch = ReadChar();
+
+					if (ch >= '0' && ch <= '9')
+					{
+						value = value * 10 + ch - '0';
+					}
+					else
+					{
+						throw new Exception(
+							String.Format(
+								"invalid decimal digit: {0} (#x{1:X})",
+								(char)ch,
+								ch));
+					}
+				}
+			}
+
+			ReadChar(); // ';'
+
+			AppendValueChar(value);
+		}
+
+		private void ReadEntityReference(bool ignoreEntityReferences)
+		{
+			nameLength = 0;
+
+			int ch = PeekChar();
+
+			while (ch != ';' && ch != -1)
+			{
+				AppendNameChar(ReadChar());
+				ch = PeekChar();
+			}
+
+			Expect(';');
+
+			string name = CreateNameString();
+
+			switch (name)
+			{
+				case "lt":
+					AppendValueChar('<');
+					break;
+				case "gt":
+					AppendValueChar('>');
+					break;
+				case "amp":
+					AppendValueChar('&');
+					break;
+				case "apos":
+					AppendValueChar('\'');
+					break;
+				case "quot":
+					AppendValueChar('"');
+					break;
+				default:
+					if (ignoreEntityReferences)
+					{
+						AppendValueChar('&');
+
+						foreach (char ch2 in name)
+						{
+							AppendValueChar(ch2);
+						}
+
+						AppendValueChar(';');
+					}
+					else
+					{
+						returnEntityReference = true;
+						entityReferenceName = name;
+					}
+					break;
+			}
 		}
 
 		// The reader is positioned on the first character of
@@ -643,39 +1032,43 @@ namespace System.Xml
 
 				AddAttribute(name, value);
 			}
-			while (reader.Peek() != '/' && reader.Peek() != '>' && reader.Peek() != -1);
+			while (PeekChar() != '/' && PeekChar() != '>' && PeekChar() != -1);
 		}
 
 		// The reader is positioned on the quote character.
 		private string ReadAttribute()
 		{
-			int quoteChar = reader.Read();
+			int quoteChar = ReadChar();
 
 			if (quoteChar != '\'' && quoteChar != '\"')
 			{
 				throw new Exception("an attribute value was not quoted");
 			}
 
-			StringBuilder valueBuilder = new StringBuilder();
+			valueLength = 0;
 
-			while (reader.Peek() != quoteChar)
+			while (PeekChar() != quoteChar)
 			{
-				int ch = reader.Read();
+				int ch = ReadChar();
 
 				switch (ch)
 				{
 				case '<':
 					throw new Exception("attribute values cannot contain '<'");
+				case '&':
+					ReadReference(true);
+					break;
 				case -1:
 					throw new Exception("unexpected end of file in an attribute value");
+				default:
+					AppendValueChar(ch);
+					break;
 				}
-
-				valueBuilder.Append((char)ch);
 			}
 
-			reader.Read();
+			ReadChar(); // quoteChar
 
-			return valueBuilder.ToString();
+			return CreateValueString();
 		}
 
 		// The reader is positioned on the first character
@@ -685,64 +1078,128 @@ namespace System.Xml
 			string target = ReadName();
 			SkipWhitespace();
 
-			StringBuilder valueBuilder = new StringBuilder();
+			valueLength = 0;
 
-			while (reader.Peek() != -1)
+			while (PeekChar() != -1)
 			{
-				int ch = reader.Read();
+				int ch = ReadChar();
 
-				if (ch == '?' && reader.Peek() == '>')
+				if (ch == '?' && PeekChar() == '>')
 				{
-					reader.Read();
+					ReadChar();
 					break;
 				}
 
-				valueBuilder.Append((char)ch);
+				AppendValueChar((char)ch);
 			}
 
 			SetProperties(
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement
-				valueBuilder.ToString(), // value
+				CreateValueString(), // value
 				true // clearAttributes
 			);
 		}
 
 		// The reader is positioned on the first character after
 		// the leading '<!'.
+		private void ReadDeclaration()
+		{
+			int ch = PeekChar();
+
+			switch (ch)
+			{
+			case '-':
+				Expect('-');
+				Expect('-');
+				ReadComment();
+				break;
+			case '[':
+				ReadChar();
+				Expect('C');
+				Expect('D');
+				Expect('A');
+				Expect('T');
+				Expect('A');
+				Expect('[');
+				ReadCDATA();
+				break;
+			}
+		}
+
+		// The reader is positioned on the first character after
+		// the leading '<!--'.
 		private void ReadComment()
 		{
-			Expect('-');
-			Expect('-');
+			valueLength = 0;
 
-			StringBuilder valueBuilder = new StringBuilder();
-
-			while (reader.Peek() != -1)
+			while (PeekChar() != -1)
 			{
-				int ch = reader.Read();
+				int ch = ReadChar();
 
-				if (ch == '-' && reader.Peek() == '-')
+				if (ch == '-' && PeekChar() == '-')
 				{
-					reader.Read();
+					ReadChar();
 
-					if (reader.Peek() != '>')
+					if (PeekChar() != '>')
 					{
 						throw new Exception("comments cannot contain '--'");
 					}
 
-					reader.Read();
+					ReadChar();
 					break;
 				}
 
-				valueBuilder.Append((char)ch);
+				AppendValueChar((char)ch);
 			}
 
 			SetProperties(
 				XmlNodeType.Comment, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				valueBuilder.ToString(), // value
+				CreateValueString(), // value
+				true // clearAttributes
+			);
+		}
+
+		// The reader is positioned on the first character after
+		// the leading '<![CDATA['.
+		private void ReadCDATA()
+		{
+			valueLength = 0;
+
+			while (PeekChar() != -1)
+			{
+				int ch = ReadChar();
+
+				if (ch == ']' && PeekChar() == ']')
+				{
+					ch = ReadChar(); // ']'
+
+					if (PeekChar() == '>')
+					{
+						ReadChar(); // '>'
+						break;
+					}
+					else
+					{
+						AppendValueChar(']');
+						AppendValueChar(']');
+						ch = ReadChar();
+					}
+				}
+
+				AppendValueChar((char)ch);
+			}
+
+			++depth;
+
+			SetProperties(
+				XmlNodeType.CDATA, // nodeType
+				String.Empty, // name
+				false, // isEmptyElement
+				CreateValueString(), // value
 				true // clearAttributes
 			);
 		}
@@ -751,28 +1208,28 @@ namespace System.Xml
 		// of the name.
 		private string ReadName()
 		{
-			if (!XmlChar.IsFirstNameChar(reader.Peek()))
+			if (!XmlChar.IsFirstNameChar(PeekChar()))
 			{
 				throw new Exception("a name did not start with a legal character");
 			}
 
-			StringBuilder nameBuilder = new StringBuilder();
+			nameLength = 0;
 
-			nameBuilder.Append((char)reader.Read());
+			AppendNameChar(ReadChar());
 
-			while (XmlChar.IsNameChar(reader.Peek()))
+			while (XmlChar.IsNameChar(PeekChar()))
 			{
-				nameBuilder.Append((char)reader.Read());
+				AppendNameChar(ReadChar());
 			}
 
-			return nameBuilder.ToString();
+			return CreateNameString();
 		}
 
 		// Read the next character and compare it against the
 		// specified character.
 		private void Expect(int expected)
 		{
-			int ch = reader.Read();
+			int ch = ReadChar();
 
 			if (ch != expected)
 			{
@@ -788,9 +1245,9 @@ namespace System.Xml
 		// Does not consume the first non-whitespace character.
 		private void SkipWhitespace()
 		{
-			while (XmlChar.IsWhitespace(reader.Peek()))
+			while (XmlChar.IsWhitespace(PeekChar()))
 			{
-				reader.Read();
+				ReadChar();
 			}
 		}
 	}

@@ -8,8 +8,6 @@
 // (C) 2001 Jason Diamond  http://injektilo.org/
 //
 
-using System;
-
 namespace System.Xml
 {
 	internal class XmlChar

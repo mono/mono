@@ -35,6 +35,23 @@ public class Driver
 			Console.WriteLine("  AttributeCount = {0}", xmlReader.AttributeCount);
 			Console.WriteLine("  HasValue = {0}", xmlReader.HasValue);
 			Console.WriteLine("  Value = {0}", xmlReader.Value);
+			Console.WriteLine("  Depth = {0}", xmlReader.Depth);
+
+			if (xmlReader.HasAttributes)
+			{
+				while (xmlReader.MoveToNextAttribute())
+				{
+					Console.WriteLine("    AttributeName = {0}", xmlReader.Name);
+					Console.WriteLine("    AttributeValue = {0}", xmlReader.Value);
+
+					while (xmlReader.ReadAttributeValue())
+					{
+						Console.WriteLine("      AttributeValueNodeType = {0}", xmlReader.NodeType);
+						Console.WriteLine("      AttributeValueName = {0}", xmlReader.Name);
+						Console.WriteLine("      AttributeValueValue = {0}", xmlReader.Value);
+					}
+				}
+			}
 		}
 	}
 }

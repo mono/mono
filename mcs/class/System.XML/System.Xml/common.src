@@ -1,9 +1,12 @@
+IXmlLineInfo.cs
 ReadState.cs
+WhitespaceHandling.cs
 XmlChar.cs
-XmlNameTable.cs
 XmlNamespaceManager.cs
+XmlNameTable.cs
 XmlNodeType.cs
 XmlParserContext.cs
 XmlReader.cs
+XmlResolver.cs
 XmlSpace.cs
 XmlTextReader.cs
