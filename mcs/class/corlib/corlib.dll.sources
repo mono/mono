@@ -891,6 +891,7 @@ System.Security.Cryptography/SHA384.cs
 System.Security.Cryptography/SHA384Managed.cs
 System.Security.Cryptography/SHA512.cs
 System.Security.Cryptography/SHA512Managed.cs
+System.Security.Cryptography/SHAConstants.cs
 System.Security.Cryptography/SignatureDescription.cs
 System.Security.Cryptography/SymmetricAlgorithm.cs
 System.Security.Cryptography/ToBase64Transform.cs

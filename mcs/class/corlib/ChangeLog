@@ -1,6 +1,7 @@
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added Base64Constants to the build.
+	Added SHAConstants to the build.
 
 2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
