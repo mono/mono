@@ -103,9 +103,9 @@ CLEANFILES = wrapper-config
 wrapper-config: ../data/config Makefile
 	d=`cd ../support && pwd`; \
 	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@
-	if test -z "$(libgdiplus_topdir)"; then :; else \
+	if test -z "$(libgdiplus_loc)"; then :; else \
 	  mv $@ $@t; \
-	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="'"$(libgdiplus_topdir)/src/libgdiplus.la"'" />,' $@t > $@; \
+	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@; \
 	  rm -f $@t; \
 	fi
 
