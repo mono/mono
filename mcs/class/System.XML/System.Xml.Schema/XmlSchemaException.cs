@@ -18,7 +18,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObject sourceObj;
 		private string sourceUri;
 
-		[MonoTODO ("sourceObj needs to be serialized")
+		[MonoTODO ("sourceObj needs to be serialized")]
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -69,7 +69,7 @@ namespace System.Xml.Schema
 		}
 
 		// Methods
-		[MonoTODO ("sourceObj needs to be serialized")
+		[MonoTODO ("sourceObj needs to be serialized")]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
