@@ -14,5 +14,6 @@ namespace System.Drawing.Drawing2D {
 	/// </summary>
 	public sealed class GraphicsState {
 		//All members inherited
+		internal Matrix matrix;
 	}
 }
