@@ -24,7 +24,6 @@ $(monobins_DATA):
 	@case "$@" in \
 	mcs.exe)                 d=mcs                          ;; \
 	mbas.exe)                d=mbas                         ;; \
-	secutil.exe)             d=tools/security               ;; \
 	monoresgen.exe)          d=monoresgen                   ;; \
 	ilasm.exe)               d=ilasm                        ;; \
 	cilc.exe)                d=tools/cilc                   ;; \
@@ -40,12 +39,13 @@ $(monobins_DATA):
 	MakeCert.exe)            d=tools/security               ;; \
 	cert2spc.exe)            d=tools/security               ;; \
 	certmgr.exe)             d=tools/security               ;; \
+	secutil.exe)             d=tools/security               ;; \
 	setreg.exe)              d=tools/security               ;; \
+	sn.exe)                  d=tools/security               ;; \
 	monop.exe)               d=tools/monop                  ;; \
 	browsercaps-updater.exe) d=tools/browsercaps-updater    ;; \
 	gacutil.exe)		 d=tools/gacutil		;; \
 	gmcs.exe)                d=gmcs				;; \
-	sn.exe)                  d=tools/sn                     ;; \
 	esac; \
 	f=$(mcs_topdir)/$$d/$@; \
 	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
