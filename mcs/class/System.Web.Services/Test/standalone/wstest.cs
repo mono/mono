@@ -647,7 +647,7 @@ public class Driver
 		
 		XmlDocument result = new XmlDocument ();
 		XmlElement res = result.CreateElement ("test-results");
-		res.SetAttribute ("name", "wsdl tests");
+		res.SetAttribute ("name", "wsdl-tests");
 		res.SetAttribute ("date", DateTime.Now.ToShortDateString ());
 		res.SetAttribute ("time", DateTime.Now.ToShortTimeString ());
 		result.AppendChild (res);
