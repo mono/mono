@@ -20,24 +20,25 @@ namespace MonoTests.System {
                         get 
                         {
                                 TestSuite suite =  new TestSuite();
+                                suite.AddTest(ArrayTest.Suite);
+				suite.AddTest(BooleanTest.Suite);
+                                suite.AddTest(ByteTest.Suite);
+                                suite.AddTest(CharTest.Suite);
                                 suite.AddTest(ConsoleTest.Suite);
 				suite.AddTest(EnumTest.Suite);
-                                suite.AddTest(ArrayTest.Suite);
-                                suite.AddTest(CharTest.Suite);
-                                suite.AddTest(ByteTest.Suite);
 				suite.AddTest(GuidTest.Suite);
-                                suite.AddTest(SByteTest.Suite);
                                 suite.AddTest(Int16Test.Suite);
                                 suite.AddTest(Int32Test.Suite);
                                 suite.AddTest(Int64Test.Suite);
+                                suite.AddTest(ObjectTest.Suite);
+                                suite.AddTest(RandomTest.Suite);
+                                suite.AddTest(ResolveEventArgsTest.Suite);
+                                suite.AddTest(SByteTest.Suite);
+				suite.AddTest(StringTest.Suite);
 				suite.AddTest(TimeSpanTest.Suite);
 				suite.AddTest(UInt16Test.Suite);
                                 suite.AddTest(UInt32Test.Suite);
                                 suite.AddTest(UInt64Test.Suite);
-                                suite.AddTest(RandomTest.Suite);
-                                suite.AddTest(ResolveEventArgsTest.Suite);
-				suite.AddTest(StringTest.Suite);
-				suite.AddTest(BooleanTest.Suite);
 				return suite;
                         }
                 }
