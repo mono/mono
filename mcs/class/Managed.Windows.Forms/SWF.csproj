@@ -84,12 +84,12 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "AccessibleEvents.cs"
+                    RelPath = "Assembly\Consts.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Assembly\Consts.cs"
+                    RelPath = "System.Windows.Forms\AccessibleEvents.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -865,6 +865,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Orientation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\OSXStructs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
