@@ -1066,22 +1066,18 @@ namespace CIR {
 			case Operator.PreIncrement:
 			case Operator.PreDecrement:
 				if (expr.ExprClass == ExprClass.Variable){
-					if (expr_type == TypeManager.decimal_type){
-						throw new Exception ("FIXME: Add pre inc/dec for decimals");
-					} else {
-						//
-						// Resolve already verified that it is an "incrementable"
-						// 
-						expr.Emit (ec);
-						ig.Emit (OpCodes.Ldc_I4_1);
-						
-						if (oper == Operator.PreDecrement)
-							ig.Emit (OpCodes.Sub);
-						else
-							ig.Emit (OpCodes.Add);
-						ig.Emit (OpCodes.Dup);
-						((LValue) expr).Store (ig);
-					} 
+					//
+					// Resolve already verified that it is an "incrementable"
+					// 
+					expr.Emit (ec);
+					ig.Emit (OpCodes.Ldc_I4_1);
+					
+					if (oper == Operator.PreDecrement)
+						ig.Emit (OpCodes.Sub);
+					else
+						ig.Emit (OpCodes.Add);
+					ig.Emit (OpCodes.Dup);
+					((LValue) expr).Store (ig);
 				} else {
 					throw new Exception ("Handle Indexers and Properties here");
 				}
@@ -1090,22 +1086,18 @@ namespace CIR {
 			case Operator.PostIncrement:
 			case Operator.PostDecrement:
 				if (expr.ExprClass == ExprClass.Variable){
-					if (expr_type == TypeManager.decimal_type){
-						throw new Exception ("FIXME: Add pre inc/dec for decimals");
-					} else {
-						//
-						// Resolve already verified that it is an "incrementable"
-						// 
-						expr.Emit (ec);
-						ig.Emit (OpCodes.Dup);
-						ig.Emit (OpCodes.Ldc_I4_1);
-						
-						if (oper == Operator.PostDecrement)
-							ig.Emit (OpCodes.Sub);
-						else
-							ig.Emit (OpCodes.Add);
-						((LValue) expr).Store (ig);
-					} 
+					//
+					// Resolve already verified that it is an "incrementable"
+					// 
+					expr.Emit (ec);
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldc_I4_1);
+					
+					if (oper == Operator.PostDecrement)
+						ig.Emit (OpCodes.Sub);
+					else
+						ig.Emit (OpCodes.Add);
+					((LValue) expr).Store (ig);
 				} else {
 					throw new Exception ("Handle Indexers and Properties here");
 				}

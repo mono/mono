@@ -1,5 +1,7 @@
 2001-09-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Unary::Emit): Remove some dead code.
+
 	* cs-parser.jay: Update operator constants.
 
 	* parameter.cs (Parameters::GetParameterInfo): Hook up VerifyArgs
