@@ -4,9 +4,9 @@
 *
 * Author:  Gaurav Vaish
 * Maintainer: gvaish@iitk.ac.in
-* Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+* Contact: <gvaish@iitk.ac.in>
 * Implementation: yes
-* Status:  80%
+* Status:  100%
 *
 * (C) Gaurav Vaish (2001)
 */
@@ -127,7 +127,6 @@ namespace System.Web.UI.WebControls
 		
 		protected override Style CreateControlStyle()
 		{
-			// I have to return a TableStyle
 			return new TableStyle(ViewState);
 		}
 		
@@ -145,7 +144,6 @@ namespace System.Web.UI.WebControls
 				{
 					if(Items[i].Selected)
 					{
-						// register each selected with the ID
 						checkBoxRepeater.ID = i.ToString(NumberFormatInfo.InvariantInfo);
 						Page.RegisterRequiresPostBack(checkBoxRepeater);
 					}
@@ -153,10 +151,31 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[MonoTODO]
 		protected override void Render(HtmlTextWriter writer)
 		{
-			throw new NotImplementedException();
+			RepeatInfo ri = new RepeatInfo();
+			checkBoxRepeater.TabIndex = TabIndex;
+			bool dirtyFlag = false;
+			int  tTabIndex = TabIndex;
+			Style s = (ControlStyleCreated ? ControlStyle : null);
+			if(TabIndex > 0)
+			{
+				if(!ViewState.IsItemDirty("TabIndex"))
+					dirtyFlag = true;
+				TabIndex = 0;
+			}
+			ri.RepeatColumns = RepeatColumns;
+			ri.RepeatLayout  = RepeatLayout;
+			ri.RepeatDirection = RepeatDirection;
+			ri.RenderRepeater(writer, this, s, this);
+			if(tTabIndex > 0)
+			{
+				TabInde = tTabIndex;
+			}
+			if(dirtyFlag)
+			{
+				ViewState.SetItemDirty("TabIndex", false);
+			}
 		}
 		
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
@@ -178,10 +197,9 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 		
-		[MonoTODO]
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
-			throw new NotImplementedException();
+			OnSelectedIndexChanged(EventArgs.Empty);
 		}
 		
 		bool IRepeatInfoUser.HasFooter
@@ -216,7 +234,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		// I don't need this
 		Style IRepeatInfoUser.GetItemStyle(ListItemType itemType, int repeatIndex)
 		{
 			return null;

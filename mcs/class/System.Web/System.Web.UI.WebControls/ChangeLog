@@ -1,3 +1,9 @@
+2002-01-07      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* CheckBoxList.cs             - Completed
+	* ButtonColumn.cs             - Completed
+	* Button.cs                   - Completed
+
 2001-12-28      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* HyperLink.cs                - Completed
@@ -9,7 +15,6 @@
 	* LinkButtonControlBuilder.cs - Completed
 	* Literal.cs                  - Completed
 	* LieteralControlBuilder.cs   - Completed
-
 	* FontUnit.cs                 - Completed
 
 
@@ -31,7 +36,7 @@
 
 2001-12-20	Gaurav Vaish <gvaish@iitk.ac.in>
 
-	FontInfo.cs                 - Completed revamp. Completed
+	FontInfo.cs                 - Complete revamp. Completed
 
 2001-12-19	Gaurav Vaish <gvaish@iitk.ac.in>
 

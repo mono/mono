@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  20%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -22,23 +22,88 @@ namespace System.Web.UI.WebControls
 	{
 		private PropertyDescriptor textFieldDescriptor;
 		
-		public ButtonColumn()
+		public ButtonColumn(): base()
 		{
-			Initialize();
 		}
 
 		public override void Initialize()
 		{
-			base.Initialize();
+			Initialize();
 			textFieldDescriptor = null;
 		}
 		
-		[MonoTODO]
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
 			InitializeCell(cell, columnIndex, itemType);
-			//TODO: I also have to do some column specific work
-			throw new NotImplementedException();
+			if(Enum.IsDefined(ListItemType, itemType) && itemType != ListItemType.Footer)
+			{
+				WebControl toDisplay = null;
+				if(ButtonType == ButtonColumnType.PushButton)
+				{
+					Button b = new Button();
+					b.Text = Text;
+					b.CommandName = CommandName;
+					b.CausesValidation = false;
+					toDisplay = b;
+				} else
+				{
+					LinkButton lb = new LinkButton();
+					lb.Text = Text;
+					lb.CommandName = CommandName;
+					lb.CausesValidation = false;
+					toDisplay = lb;
+				}
+				if(DataTextField.Length > 0)
+				{
+					toDisplay.DataBinding += new EventHandler(OnDataBindButtonColumn);
+				}
+				cell.Controls.Add(toDisplay);
+			}
+		}
+		
+		private void OnDataBindButtonColumn(object sender, EventArgs e)
+		{
+			Control ctrl = (Control)sender;
+			object item = ((DataGridItem)ctrl.NamingContainer).DataItem;
+			if(textFieldDescriptor == null)
+			{
+				textFieldDescriptor = TypeDescriptor.GetProperties(item).Find(DataTextField, true);
+				if(textFieldDescriptor == null && !DesignMode)
+					throw new HttpException(HttpRuntime.FormatResourceString("Field_Not_Found", DataTextField));
+			}
+			string text;
+			if(textFieldDescriptor != null)
+			{
+				text = FormatDataTextValue(textFieldDescriptor.GetValue(item));
+			} else
+			{
+				text = "Sample_DataBound_Text";
+			}
+			if(ctrl is LinkButton)
+			{
+				((LinkButton)ctrl).Text = text;
+			}
+			else
+			{
+				((Button)ctrl).Text = text;
+			}
+		}
+		
+		protected virtual string FormatDataTextValue(object dataTextValue)
+		{
+			string retVal = null;
+			if(dataTextValue != null)
+			{
+				if(DataTextFormatString.Length > 0)
+				{
+					retVal = String.Format(dataTextValue, DataTextFormatString);
+				}
+				else
+				{
+					retVal = dataTextValue.ToString();
+				}
+			}
+			return retVal;
 		}
 		
 		public virtual ButtonColumnType ButtonType
@@ -117,14 +182,5 @@ namespace System.Web.UI.WebControls
 				ViewState["Text"] = value;
 			}
 		}
-		
-		[MonoTODO]
-		protected virtual string FormatDataTextValue(object dataTextValue)
-		{
-			// TODO: The LOST WORLD! :))
-			throw new NotImplementedException();
-			return String.Empty;
-		}
-		
 	}
 }

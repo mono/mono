@@ -12,12 +12,12 @@ All Classes, Interfaces, Structures, Delegates and Enumerations
 * BaseDataList
 & BaseValidator
 & BoundColumn
-& Button
-& ButtonColumn
+* Button
+* ButtonColumn
 & Calendar
 * CalendarDay
 * CheckBox
-& CheckBoxList
+* CheckBoxList
 * CommandEventArgs
 & CompareValidator
 CustomValidator

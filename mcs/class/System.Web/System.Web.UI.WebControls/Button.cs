@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  20%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -25,12 +25,10 @@ namespace System.Web.UI.WebControls
 
 		//private EventHandlerList ehList;
 
-		public Button()
+		public Button(): base(HtmlTextWriterTag.Button)
 		{
-			// TODO: Initialization
 		}
 
-		[Bindable(true)]
 		public bool CausesValidation
 		{
 			get
@@ -42,17 +40,14 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				//causesValidation = value;
 				ViewState["CausesValidation"] = value;
 			}
 		}
 
-		[Bindable(true)]
 		public string CommandArgument
 		{
 			get
 			{
-				//return commandArgument;
 				string ca = (string) ViewState["CommandArgument"];
 				if(ca!=null)
 					return ca;
@@ -60,7 +55,6 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				//commandArgument = value;
 				ViewState["CommandArgument"] = value;
 			}
 		}
@@ -80,12 +74,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[
-			Bindable(true),
-			DefaultValueAttribute("")
-		]
-		//[WebSysDescriptionAttribute("Button_Text")]
-		//[WebCategoryAttribute("Appearance")]
 		public string Text
 		{
 			get
@@ -147,9 +135,6 @@ namespace System.Web.UI.WebControls
 		
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
-			/* Will have to see what work needs to be done before I actually call OnClick
-			 * Basically I have to see what is to be done with the string argument
-			*/
 			if(CausesValidation)
 			{
 				Page.Validate();
@@ -158,23 +143,17 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[MonoTODO]
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			//??
 			writer.AddAttribute(HtmlTextWriterAttribute.Type,"submit");
 			writer.AddAttribute(HtmlTextWriterAttribute.Name,base.UniqueID);
 			writer.AddAttribute(HtmlTextWriterAttribute.Value,Text);
-			if(Page!=null)
+			if(Page!=null && CausesValidation && Page.Validators.Count > 0)
 			{
-				if(CausesValidation)
-				{
-					//Page.Validators.Count
-					//writer.AddAttribute(HtmlTextWriterAttribute.OnClick, <<The validationcode>>);
-					writer.AddAttribute("language","javascript");
-				}
+				writer.AddAttribute(System.Web.UI.HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent());
+				writer.AddAttribute("language", "javascript");
 			}
-			throw new NotImplementedException();
+			AddAttributesToRender(writer);
 		}
 		
 		protected override void RenderContents(HtmlTextWriter writer)
