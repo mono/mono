@@ -43,6 +43,7 @@ namespace System.Security.Permissions {
 
 		public override IPermission CreatePermission ()
 		{
+// FIXME: should be "unrestricted aware" but MS version isn't in Fx 2.0 beta 1
 			return (IPermission) new GacIdentityPermission ();
 		}
 	}

@@ -1,3 +1,9 @@
+2004-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GacIdentityPermission.cs: Update to use the common template. Now 
+	pass all unit tests.
+	* GacIdentityPermissionAttribute.cs: Added FIXME comment.
+
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameIdentityPermission.cs: Update to use the common template.

@@ -28,14 +28,14 @@
 
 #if NET_2_0
 
-using System;
 using System.Globalization;
-using System.Security;
 
 namespace System.Security.Permissions {
 
 	[Serializable]
 	public sealed class GacIdentityPermission : CodeAccessPermission, IBuiltInPermission {
+
+		private const int version = 1;
 
 		public GacIdentityPermission ()
 		{
@@ -43,16 +43,8 @@ namespace System.Security.Permissions {
 
 		public GacIdentityPermission (PermissionState state)
 		{
-			switch (state) {
-				case PermissionState.None:
-					break;
-				case PermissionState.Unrestricted:
-					throw new ArgumentException (Locale.GetText (
-						"unrestricted not allowed"));
-				default:
-					throw new ArgumentException (Locale.GetText (
-						"invalid state"));
-			}
+			// false == do not allow Unrestricted for Identity Permissions
+			CheckPermissionState (state, false);
 		}
 
 		public override IPermission Copy ()
@@ -62,60 +54,36 @@ namespace System.Security.Permissions {
 
 		public override IPermission Intersect (IPermission target)
 		{
-			if (target == null)
+			GacIdentityPermission gip = Cast (target);
+			if (gip == null)
 				return null;
-			if (!(target is GacIdentityPermission)) {
-				throw new ArgumentException (Locale.GetText (
-					"Invalid permission"));
-			}
+
 			return Copy ();
 		}
 
 		public override bool IsSubsetOf (IPermission target)
 		{
-			if (target == null)
-				return false;
-
-			if (!(target is GacIdentityPermission)) {
-				throw new ArgumentException (Locale.GetText (
-					"Invalid permission"));
-			}
-
-			return true;
+			GacIdentityPermission gip = Cast (target);
+			return (gip != null);
 		}
 
 		public override IPermission Union (IPermission target)
 		{
-			if (target == null)
-				return Copy ();
-
-			if (!(target is GacIdentityPermission)) {
-				throw new ArgumentException (Locale.GetText (
-					"Invalid permission"));
-			}
-
+			GacIdentityPermission gip = Cast (target);
 			return Copy ();
 		}
 
 		public override void FromXml (SecurityElement esd)
 		{
-			if (esd == null)
-				throw new ArgumentException ("esd");
-
-			if (esd.Attribute ("version") != "1") {
-				throw new ArgumentException (Locale.GetText (
-					"version attributte is wrong"));
-			}
-
-			// ??? check class name ???
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 		}
 
 		public override SecurityElement ToXml ()
 		{
-			SecurityElement se = new SecurityElement ("IPermission");
-			Type t = GetType ();
-			se.AddAttribute ("class", t.FullName + ", " + t.Module.Assembly.FullName);
-			se.AddAttribute ("version", "1");
+			SecurityElement se = Element (version);
 			return se;
 		}
 
@@ -123,7 +91,22 @@ namespace System.Security.Permissions {
 
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return -1; // TODO
+			return (int) BuiltInToken.GacIdentity;
+		}
+
+		// helpers
+
+		private GacIdentityPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			GacIdentityPermission uip = (target as GacIdentityPermission);
+			if (uip == null) {
+				ThrowInvalidPermission (target, typeof (GacIdentityPermission));
+			}
+
+			return uip;
 		}
 	}
 }
