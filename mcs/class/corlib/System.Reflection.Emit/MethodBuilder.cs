@@ -37,6 +37,7 @@ namespace System.Reflection.Emit {
 		private CallingConvention native_cc;
 		private CallingConventions call_conv;
 		private bool init_locals = true;
+		private	TypeBuilder.MonoGenericParam[] generic_params;
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
 			this.name = name;
@@ -233,6 +234,37 @@ namespace System.Reflection.Emit {
 		private Exception NotSupported () {
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
+
+#if GENERICS
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static Type define_generic_parameter (MethodBuilder tb, TypeBuilder.MonoGenericParam param);
+		
+		public Type DefineGenericParameter (string name, Type[] constraints)
+		{
+			TypeBuilder.MonoGenericParam gparam = new TypeBuilder.MonoGenericParam (name, constraints);
+
+			if (generic_params != null) {
+				TypeBuilder.MonoGenericParam[] new_generic_params = new TypeBuilder.MonoGenericParam [generic_params.Length+1];
+				System.Array.Copy (generic_params, new_generic_params, generic_params.Length);
+				new_generic_params [generic_params.Length] = gparam;
+				generic_params = new_generic_params;
+			} else {
+				generic_params = new TypeBuilder.MonoGenericParam [1];
+				generic_params [0] = gparam;
+			}
+
+			return define_generic_parameter (this, gparam);
+		}
+
+		public void SetGenericMethodSignature (Type return_type, Type[] parameter_types)
+		{
+			RejectIfCreated ();
+
+			this.rtype = return_type;
+			this.parameters = new Type [parameter_types.Length];
+			System.Array.Copy (parameter_types, this.parameters, parameter_types.Length);
+		}
+#endif
 	}
 }
 

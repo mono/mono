@@ -1,12 +1,14 @@
+2003-10-13  Martin Baulig  <martin@ximian.com>
+
+	* MethodBuilder.cs (MethodBuilder): Added
+	`TypeBuilder.MonoGenericParam[] generic_params' field.
+	(DefineGenericParameter, SetGenericMethodSignature): New public methods.
+
+	* TypeBuilder.cs (DefineGenericMethod): New public method.
+
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* OpCode.cs: Fix Value property. Fixes #49328.
-
-2003-10-10  Martin Baulig  <martin@ximian.com>
-
-	* TypeBuilder.cs (TypeBuilder.MonoGenericParam): Added `index' field.
-	(TypeBuilder.DefineGenericParameter): Added overloaded version
-	taking an `int index' argument for generic methods.
 
 2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
