@@ -544,11 +544,6 @@ namespace Npgsql
 
             CheckNotification();
 
-            //ArrayList results = connection.Mediator.Data;
-
-            //Object result = null;	// Result of the ExecuteScalar().
-
-
             // Now get the results.
             // Only the first column of the first row must be returned.
 
@@ -558,16 +553,15 @@ namespace Npgsql
 
             // First data is the RowDescription object.
             // Check all resultsets as insert commands could have been sent along
-            // with resultset queries. The insert commands return null, so, if 
-            // we find one, skip to next resultset. If no resultset is found, return null
-            // as per specification.
+            // with resultset queries. The insert commands return null and and some queries
+            // may return empty resultsets, so, if we find one of these, skip to next resultset. 
+            // If no resultset is found, return null as per specification.
             
             NpgsqlAsciiRow ascii_row = null;
-            foreach( Object rs in resultSets )
+            foreach( NpgsqlResultSet nrs in resultSets )
             {
-                if( rs != null )
+                if( (nrs != null) && (nrs.Count > 0) )
                 {
-                    NpgsqlResultSet nrs = (NpgsqlResultSet) rs;
                     ascii_row = (NpgsqlAsciiRow) nrs[0];
                     return ascii_row[0];
                 }
@@ -591,13 +585,6 @@ namespace Npgsql
 
             if (!connection.SupportsPrepare)
                 return;	// Do nothing.
-
-
-
-            // [TODO] Finish method implementation.
-            //throw new NotImplementedException();
-
-            //NpgsqlCommand command = new NpgsqlCommand("prepare plan1 as " + GetCommandText(), connection );
 
             if (connection.BackendProtocolVersion == ProtocolVersion.Version2)
             {

@@ -1,4 +1,11 @@
 
+2004-02-28  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* Npgsql/NpgsqlConnector.cs: Added support for connection encoding.
+	* Npgsql/NpgsqlConnection.cs: Better handling of connection encoding.
+	* Npgsql/NpgsqlCommand.cs: Fixed an Invalid Index error when executing ExecuteScalar() method with an empty resultset. Thanks Lynn A. Roth for the fix. This fixes bug 687 in gborg.
+
+
 2004-02-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
 	* Npgsql/NpgsqlDataReader.cs: Fixed a OutOfBoundsException when trying to access an element after have read all elements. Now it throws an InvalidOperationException.

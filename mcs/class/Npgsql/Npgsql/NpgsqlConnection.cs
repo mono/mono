@@ -426,8 +426,18 @@ namespace Npgsql
                         _serverVersion = (String) command.ExecuteScalar();
                     }
                     
+                    // Adjust client encoding. 
+                
+                    NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
+                    String clientEncoding = (String)commandEncoding.ExecuteScalar();
+    
+                    if (clientEncoding.Equals("UNICODE"))
+                      connection_encoding = Encoding.UTF8;
+                  
+                    
                     Connector.ServerVersion = ServerVersion;
                     Connector.BackendProtocolVersion = BackendProtocolVersion;
+                    Connector.Encoding = connection_encoding;
                     
                 }
                                 
@@ -437,18 +447,14 @@ namespace Npgsql
                 connection_state = ConnectionState.Open;
                 ServerVersion = Connector.ServerVersion;
                 BackendProtocolVersion = Connector.BackendProtocolVersion;
+                Encoding = Connector.Encoding;
+                
                 CurrentState = NpgsqlReadyState.Instance;
                 
                 ProcessServerVersion();
                 _oidToNameMapping = NpgsqlTypesHelper.LoadTypesMapping(this);
                 
-                // Adjust client encoding. 
                 
-                NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
-                String serverEncoding = (String)commandEncoding.ExecuteScalar();
-
-                if (serverEncoding.Equals("UNICODE"))
-                  connection_encoding = Encoding.UTF8;
                 
 
             }
@@ -755,6 +761,11 @@ namespace Npgsql
             get
             {
                 return connection_encoding;
+            }
+            
+            set
+            {
+                connection_encoding = value;
             }
         }
 

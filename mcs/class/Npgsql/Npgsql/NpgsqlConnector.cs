@@ -26,6 +26,7 @@
 using System;
 using System.Net.Sockets;
 using System.IO;
+using System.Text;
 
 namespace Npgsql
 {
@@ -52,6 +53,9 @@ namespace Npgsql
         private String _serverVersion;
         
         private Int32 _backendProtocolVersion;
+        
+        private Encoding _encoding;
+        
         
         private Boolean _isInitialized;
         
@@ -95,6 +99,19 @@ namespace Npgsql
             set
             {
                 _serverVersion = value;
+            }
+        }
+        
+        internal Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            
+            set
+            {
+                _encoding = value;
             }
         }
         
