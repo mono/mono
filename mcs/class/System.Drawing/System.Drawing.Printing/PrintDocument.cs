@@ -16,7 +16,6 @@ namespace System.Drawing.Printing
 {
 	[DefaultEvent ("PrintPage"), DefaultProperty ("DocumentName")]
 	[ToolboxItemFilter ("System.Drawing.Printing", ToolboxItemFilterType.Allow)]
-	[DesignerCategory ("Component")]
 	public class PrintDocument : System.ComponentModel.Component
 	{
 		private PageSettings defaultpagesettings;
