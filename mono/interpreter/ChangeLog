@@ -1,3 +1,8 @@
+2003-08-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c: Use mono_field_from_token () in the appropriate places.
+	This simplifies the code and also fixes #48051.
+
 2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (main): Fix the order of initialization calls so it maches 
