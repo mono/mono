@@ -35,7 +35,10 @@ using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Protocol.Tls;
 
 using NpgsqlTypes;
+
+#if !__MonoCS__
 using Npgsql.Design;
+#endif
 
 namespace Npgsql
 {
@@ -56,7 +59,10 @@ namespace Npgsql
     /// This class represents a connection to a
     /// PostgreSQL server.
     /// </summary>
+    #if !__MonoCS__
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlConnection))]
+    #endif
+    
     public sealed class NpgsqlConnection : Component, IDbConnection, ICloneable
     {
         // Logging related values
@@ -151,9 +157,13 @@ namespace Npgsql
         /// the database name, and other parameters needed to establish
         /// the initial connection. The default value is an empty string.
         /// </value>
+        
+        #if !__MonoCS__
         [RefreshProperties(RefreshProperties.All), DefaultValue(""), RecommendedAsConfigurable(true)]
         [NpgsqlSysDescription("Description_ConnectionString", typeof(NpgsqlConnection)), Category("Data")]
         [Editor(typeof(ConnectionStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        #endif
+        
         public String ConnectionString {
             get
             {
@@ -208,7 +218,11 @@ namespace Npgsql
         /// before terminating the attempt and generating an error.
         /// </summary>
         /// <value>The time (in seconds) to wait for a connection to open. The default value is 15 seconds.</value>
+        
+        #if !__MonoCS__
         [NpgsqlSysDescription("Description_ConnectionTimeout", typeof(NpgsqlConnection))]
+        #endif
+        
         public Int32 ConnectionTimeout {
             get
             {
@@ -221,7 +235,10 @@ namespace Npgsql
         /// </summary>
         /// <value>The name of the current database or the name of the database to be
         /// used after a connection is opened. The default value is the empty string.</value>
+        #if !__MonoCS__
         [NpgsqlSysDescription("Description_Database", typeof(NpgsqlConnection))]
+        #endif
+        
         public String Database {
             get
             {

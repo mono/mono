@@ -41,11 +41,6 @@ Npgsql/NpgsqlState.cs
 Npgsql/NpgsqlSync.cs
 Npgsql/NpgsqlTransaction.cs
 Npgsql/PGUtil.cs
-Npgsql/Design/ConnectionStringEditor.cs
-Npgsql/Design/ConnectionStringEditorForm.cs
-Npgsql/Design/NpgsqlParameterConverter.cs
-Npgsql/Design/NpgsqlParametersEditor.cs
-Npgsql/Design/NpgsqlSysDescriptionAttribute.cs
 NpgsqlTypes/FastPath.cs
 NpgsqlTypes/FastPathArg.cs
 NpgsqlTypes/LargeObject.cs

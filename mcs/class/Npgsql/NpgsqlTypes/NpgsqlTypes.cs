@@ -32,7 +32,6 @@ using System.Net;
 using System.Text;
 using System.IO;
 using System.Resources;
-using System.Drawing;
 
 namespace NpgsqlTypes
 {

@@ -28,7 +28,10 @@ using System;
 using System.Data;
 using System.ComponentModel;
 using NpgsqlTypes;
+
+#if !__MonoCS__
 using Npgsql.Design;
+#endif
 
 
 namespace Npgsql
@@ -36,7 +39,10 @@ namespace Npgsql
     ///<summary>
     /// This class represents a parameter to a command that will be sent to server
     ///</summary>
+    #if !__MonoCS__
     [TypeConverter(typeof(NpgsqlParameterConverter))]
+    #endif
+    
     public sealed class NpgsqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
     {
 
@@ -377,7 +383,11 @@ namespace Npgsql
         /// Gets or sets a value indicating whether the parameter accepts null values.
         /// </summary>
         /// <value><b>true</b> if null values are accepted; otherwise, <b>false</b>. The default is <b>false</b>.</value>
+        
+        #if !__MonoCS__
         [EditorBrowsable(EditorBrowsableState.Advanced), Browsable(false), DefaultValue(false), DesignOnly(true)]
+        #endif
+        
         public Boolean IsNullable
         {
             get

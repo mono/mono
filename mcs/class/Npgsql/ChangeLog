@@ -1,3 +1,12 @@
+2005-01-23  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
+        * NpgsqlTypes/NpgsqlTypes.cs,
+        Npgsql.dll.sources,
+        Npgsql/NpgsqlParameter.cs,
+        Npgsql/NpgsqlConnection.cs,
+        Npgsql/NpgsqlCommand.cs,
+        Npgsql/NpgsqlParameterCollection.cs,
+        Makefile: Removed System.Drawing, System.Windows.Forms and System.Design dependency.
+        * NpgsqlTypes/NpgsqlTypesHelper.cs: Added patch for gborg 1121. Thanks regmaster (regmaster at gmx dot li) and torben (torben-spam-npsql at nehmer dot net) for patch.
 
 2005-01-21  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
         * NpgsqlTypes/NpgsqlDbType.cs,

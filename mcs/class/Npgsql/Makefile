@@ -7,8 +7,7 @@ LIBRARY = Npgsql.dll
 LIBRARY_SNK = Npgsql/Npgsql.snk
 
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
-		/r:System.Data.dll /r:System.Drawing.dll \
-		/r:System.Windows.Forms.dll /r:System.Design.dll \
+		/r:System.Data.dll  \
 		/r:Mono.Security.dll \
 		@Npgsql.dll.resources
 
