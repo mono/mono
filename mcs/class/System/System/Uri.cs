@@ -289,12 +289,12 @@ namespace System
 				
 				// support *nix and W32 styles
 				if (path.Length > 1 && path [1] == ':')
-					return path.Replace ('/', '\\');
+					return Unescape (path.Replace ('/', '\\'));
 					
 				if (System.IO.Path.DirectorySeparatorChar == '\\')
-					return "\\\\" + host + path.Replace ('/', '\\');
+					return "\\\\" + Unescape (host + path.Replace ('/', '\\'));
 				else 
-					return "/" + host + path;
+					return "/" + Unescape (host + path);
 			} 
 		}
 

@@ -1,3 +1,8 @@
+2003-02-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* Uri.cs (LocalPath): Local path should return un-escaped
+	strings.  Patch from tum@veridicus.com (Thong (Tum) Nguyen)
+
 2002-09-16  Duncan Mak  <duncan@ximian.com>
 
 	* Uri.cs (GetObjectData):
