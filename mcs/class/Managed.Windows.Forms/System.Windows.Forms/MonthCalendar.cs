@@ -101,7 +101,8 @@ namespace System.Windows.Forms {
 
 		public MonthCalendar () {
 			// set up the control painting
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.UserPaint, true);
+			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
 			
 			// mouse down timer
 			timer = new Timer ();
@@ -164,19 +165,22 @@ namespace System.Windows.Forms {
 			SetUpContextMenu ();
 
 			// event handlers
+			LostFocus += new EventHandler (LostFocusHandler);
 			timer.Tick += new EventHandler (TimerHandler);
 			MouseMove += new MouseEventHandler (MouseMoveHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);
 			KeyDown += new KeyEventHandler (KeyDownHandler);
 			MouseUp += new MouseEventHandler (MouseUpHandler);
 			KeyUp += new KeyEventHandler (KeyUpHandler);
-			Paint += new PaintEventHandler (PaintHandler);
-			
+			// this replaces paint so call the control version
+			((Control)this).Paint += new PaintEventHandler (PaintHandler);
 		}
 		
+		// called when this control is added to date time picker
 		public MonthCalendar (DateTimePicker owner) : this () {	
-			this.owner = owner;		
-			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+			this.owner = owner;
+			this.is_visible = false;
+			this.Size = this.DefaultSize;
 		}
 
 		#endregion	// Public Constructors
@@ -650,7 +654,7 @@ namespace System.Windows.Forms {
 		protected override CreateParams CreateParams {
 			get {
 				if (this.owner == null) {
-					return base.CreateParams;
+					return base.CreateParams;					
 				} else {
 					CreateParams cp = base.CreateParams;					
 					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
@@ -1053,10 +1057,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler ImeModeChanged;
 
-		[MonoTODO("Fire Paint event")]
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint;
 
 		[MonoTODO("Fire TextChanged event")]
 		[Browsable(false)]
@@ -1485,6 +1488,16 @@ namespace System.Windows.Forms {
 			this.is_date_clicked = false;
 		}
 		
+		// need when in windowed mode
+		private void LostFocusHandler (object sender, EventArgs e) 
+		{
+			if (this.owner != null) {
+				if (this.Visible) {
+					this.owner.HideMonthCalendar ();
+				}
+			}
+		}
+		
 		// occurs when mouse moves around control, used for selection
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
 			HitTestInfo hti = this.HitTest (e.X, e.Y);
@@ -1496,7 +1509,13 @@ namespace System.Windows.Forms {
 					hti.HitArea == HitArea.Date)
 				{
 					DoDateMouseDown (hti);
-					click_state [0] = true;
+					if (owner == null) {
+						click_state [0] = true;
+					} else {
+						click_state [0] = false;
+						click_state [1] = false;
+						click_state [2] = false;
+					}
 				}
 				
 			}
@@ -1530,7 +1549,14 @@ namespace System.Windows.Forms {
 				case HitArea.PrevMonthDate:
 				case HitArea.NextMonthDate:
 					DoDateMouseDown (hti);
-					click_state [0] = true;
+					// leave clicked state blank if drop down window
+					if (owner == null) {
+						click_state [0] = true;
+					} else {
+						click_state [0] = false;
+						click_state [1] = false;
+						click_state [2] = false;
+					}
 					break;
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
@@ -1680,6 +1706,12 @@ namespace System.Windows.Forms {
 
 			Draw (pe.ClipRectangle);
 			pe.Graphics.DrawImage (ImageBuffer, 0, 0);
+			
+			// fire the new paint handler
+			if (this.Paint != null) 
+			{
+				this.Paint (sender, pe);
+			}
 		}
 		
 		// returns the region of the control that needs to be redrawn 

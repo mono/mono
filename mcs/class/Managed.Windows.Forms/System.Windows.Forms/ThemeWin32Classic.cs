@@ -1223,7 +1223,7 @@ namespace System.Windows.Forms
 			// cache local copies of Marshal-by-ref internal members (gets around error CS0197)
 			Size calendar_spacing = (Size)((object)mc.calendar_spacing);
 			Size date_cell_size = (Size)((object)mc.date_cell_size);
-
+			
 			// draw the singlecalendars
 			int x_offset = 1;
 			int y_offset = 1;
@@ -1324,6 +1324,30 @@ namespace System.Windows.Forms
 						calendar_spacing.Height);
 					if (i < mc.CalendarDimensions.Height && i > 0 && clip_rectangle.IntersectsWith (rect)) {
 						dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), rect);
+					}
+				}
+			}
+			
+			// draw the drop down border if need
+			if (mc.owner != null) {
+				Rectangle bounds = mc.ClientRectangle;
+				if (clip_rectangle.Contains (mc.Location)) {
+					// find out if top or left line to draw
+					if(clip_rectangle.Contains (new Point (bounds.Left, bounds.Bottom))) {
+					
+						dc.DrawLine (SystemPens.ControlText, bounds.X, bounds.Y, bounds.X, bounds.Bottom-1);
+					}
+					if(clip_rectangle.Contains (new Point (bounds.Right, bounds.Y))) {
+						dc.DrawLine (SystemPens.ControlText, bounds.X, bounds.Y, bounds.Right-1, bounds.Y);
+					}
+				}
+				if (clip_rectangle.Contains (new Point(bounds.Right, bounds.Bottom))) {
+					// find out if bottom or right line to draw
+					if(clip_rectangle.Contains (new Point (bounds.Left, bounds.Bottom))) {
+						dc.DrawLine (SystemPens.ControlText, bounds.X, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1);
+					}
+					if(clip_rectangle.Contains (new Point (bounds.Right, bounds.Y))) {
+						dc.DrawLine (SystemPens.ControlText, bounds.Right-1, bounds.Y, bounds.Right-1, bounds.Bottom-1);
 					}
 				}
 			}

@@ -26,8 +26,8 @@
 //		- implement custom formatting of the date time value
 //		- implement any behaviour associate with UseUpDown (painting, key and mouse)
 //		- implement key processing and responding
-//		- fix Popup and PopDown month calendar
-//		- wire in events from monthcalendar
+//		- fix MonthCalendar Popdown on form move
+//		- wire in all events from monthcalendar
 
 
 using System;
@@ -85,7 +85,7 @@ namespace System.Windows.Forms {
 			month_calendar.TitleForeColor = DefaultTitleForeColor;
 			month_calendar.TrailingForeColor = DefaultTrailingForeColor;
 			month_calendar.Visible = false;
-			Controls.Add (month_calendar);		
+
 			
 			// initialise other variables
 			is_checked = false;
@@ -102,9 +102,12 @@ namespace System.Windows.Forms {
 			up_down_width = 10;
 			is_drop_down_visible = false;
 			
-			MouseDown += new MouseEventHandler (MouseDownHandler);
+			month_calendar.DateSelected += new DateRangeEventHandler (MonthCalendarDateSelectedHandler);
 			KeyPress += new KeyPressEventHandler (KeyPressHandler);
+			LostFocus += new EventHandler (LostFocusHandler);
+			MouseDown += new MouseEventHandler (MouseDownHandler);			
 			Paint += new PaintEventHandler (PaintHandler);
+			
 		}
 		
 		#endregion
@@ -548,20 +551,100 @@ namespace System.Windows.Forms {
 		
 		#region internal / private methods
 		
+		[MonoTODO("Fix Dropdown location when System.Windows.Forms.Screen gets added")]
+		private Point CalculateDropDownLocation (Rectangle parent_control_rect, Size child_size, bool align_left)
+		{
+			// default bottom left
+			Point location = new Point(parent_control_rect.Left + 5, parent_control_rect.Bottom);
+			// now adjust the alignment
+			if (!align_left) {
+				location.X = parent_control_rect.Right - child_size.Width;				
+			}
+			
+			Point screen_location = PointToScreen (location);
+// TODO: enable this part when screen comes into the classes
+/*			
+			Rectangle working_area = Screen.FromControl(this).WorkingArea;
+			// now adjust if off the right side of the screen			
+			if (screen_location.X < working_area.X) {
+				screen_location.X = working_area.X;
+			}  
+			// now adjust if it should be displayed above control
+			if (screen_location.Y + child_size.Height > working_area.Bottom) {
+				screen_location.Y -= (parent_control_rect.Height + child_size.Height);
+			}
+*/
+			return screen_location;
+		}
+		
+		// actually draw this control
+		internal void Draw (Rectangle clip_rect)
+		{			
+			ThemeEngine.Current.DrawDateTimePicker(DeviceContext, clip_rect, this);
+		}			
+		
 		// drop the calendar down
 		internal void DropDownMonthCalendar ()
 		{
-			month_calendar.Location = PointToScreen (
-				new Point (
-					ClientRectangle.Right,
-					ClientRectangle.Bottom));
-// TODO: for some reason the month_calendar is not popping up
-System.Console.WriteLine("before show " + month_calendar.Visible + month_calendar.Bounds);						
+			// ensure the right date is set for the month_calendar
+			month_calendar.SetDate (this.date_value);
+			// get a rectangle that has the dimensions of the text area,
+			// but the height of the dtp control.
+			Rectangle align_area = this.date_area_rect;
+			align_area.Y = this.ClientRectangle.Y;
+			align_area.Height = this.ClientRectangle.Height;
+			
+			// establish the month calendar's location
+			month_calendar.Location = CalculateDropDownLocation (
+				align_area,
+				month_calendar.Size,
+				(this.DropDownAlign == LeftRightAlignment.Left));
+			
 			month_calendar.Show ();
-			month_calendar.Refresh ();
-System.Console.WriteLine("after show " + month_calendar.Visible);
+			month_calendar.Focus ();
+			
+			// fire any registered events
+			if (this.DropDown != null) {
+				this.DropDown (this, EventArgs.Empty);
+			}
 		}
 		
+		// hide the month calendar
+		internal void HideMonthCalendar () 
+		{
+			this.is_drop_down_visible = false;
+    		Invalidate (drop_down_arrow_rect);
+    		if (month_calendar.Visible) {
+    			month_calendar.Hide ();
+    		}
+    	}
+
+		// raised by any key down events
+		private void KeyPressHandler (object sender, KeyPressEventArgs e) {
+			switch (e.KeyChar) {
+				default:
+					break;
+			}
+			e.Handled = true;
+		}
+		
+		// if we lose focus and the drop down is up, then close it
+		private void LostFocusHandler (object sender, EventArgs e) 
+		{
+			if (is_drop_down_visible && !month_calendar.Focused) {
+				this.HideMonthCalendar ();				
+			}			
+		}
+		
+		// fired when a user clicks on the month calendar to select a date
+		private void MonthCalendarDateSelectedHandler (object sender, DateRangeEventArgs e)
+		{
+			this.Value = e.Start.Date.Add (this.Value.TimeOfDay);
+			this.HideMonthCalendar ();	
+			this.Focus ();		
+			System.Console.WriteLine("MonthCalendarDateSelectedHandler");
+		} 
+
 		// to check if the mouse has come down on this control
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
@@ -573,24 +656,16 @@ System.Console.WriteLine("after show " + month_calendar.Visible);
 					is_drop_down_visible = true;
 					Invalidate (drop_down_arrow_rect);
 					DropDownMonthCalendar ();
-    			}
+    			} else {
+    				// mouse down on this control anywhere else collapses it
+    				if (is_drop_down_visible) {
+    				System.Console.WriteLine("hiding cause of mouse down");
+    					HideMonthCalendar ();
+    				}
+    			} 
     		}
 		}
-
-		// raised by any key down events
-		private void KeyPressHandler (object sender, KeyPressEventArgs e) {
-			switch (e.KeyChar) {
-				default:
-					break;
-			}
-			e.Handled = true;
-		}
 		
-		// actually draw this control
-		internal void Draw (Rectangle clip_rect)
-		{			
-			ThemeEngine.Current.DrawDateTimePicker(DeviceContext, clip_rect, this);
-		}
 		
 		// paint this control now
 		private void PaintHandler (object sender, PaintEventArgs pe) {
