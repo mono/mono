@@ -99,7 +99,7 @@ namespace System.Security.Cryptography {
 				throw new ObjectDisposedException ("TransformFinalBlock");
 			if (inputBuffer == null)
 				throw new ArgumentNullException ("inputBuffer");
-			if (inputCount != this.InputBlockSize)
+			if (inputCount > this.InputBlockSize)
 				throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid input length"));
 			
 			return InternalTransformFinalBlock (inputBuffer, inputOffset, inputCount);
