@@ -1,3 +1,8 @@
+2004-11-11  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_setup_vtable): In an explicit interface
+	implementation, the method name now includes the arity.
+
 2004-11-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_array_full_copy): Fix warning.
