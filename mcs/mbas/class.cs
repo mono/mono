@@ -274,7 +274,7 @@ namespace Mono.MonoBASIC {
 				return AdditionResult.NotAConstructor;
 
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
-			
+
 			if (is_static){
 				have_static_constructor = true;
 				if (default_static_constructor != null){
@@ -585,7 +585,7 @@ namespace Mono.MonoBASIC {
 			Constructor c;
 			int mods = 0;
 
-			c = new Constructor (Basename, Parameters.EmptyReadOnlyParameters,
+			c = new Constructor ("New", Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (
 						     null, Parameters.EmptyReadOnlyParameters,
 						     Location.Null),
@@ -1053,7 +1053,7 @@ namespace Mono.MonoBASIC {
 
 			if (this is Class){
 				if (instance_constructors == null){
-					if (default_constructor == null)
+					if (default_constructor == null) 
 						DefineDefaultConstructor (false);
 				}
 
@@ -2032,8 +2032,7 @@ namespace Mono.MonoBASIC {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE |
 			Modifiers.ABSTRACT |
-			Modifiers.SEALED |
-			Modifiers.UNSAFE;
+			Modifiers.SEALED ;
 		
 		public Class (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (parent, name, l)
@@ -3441,6 +3440,7 @@ namespace Mono.MonoBASIC {
 
 			return init_expr;
 		}
+
 	}
 
 	//
@@ -3663,6 +3663,7 @@ namespace Mono.MonoBASIC {
 			else
 				props = null;
 
+
 			//
 			// If we have something on the base.
 			if (props != null && props.Count > 0){
@@ -3688,8 +3689,8 @@ namespace Mono.MonoBASIC {
 					return false;
 				}
 			} else {
-				if ((ModFlags & Modifiers.NEW) != 0)
-					WarningNotHiding (parent);
+				/*if ((ModFlags & Modifiers.NEW) != 0)
+					WarningNotHiding (parent);*/
 				
 				if ((ModFlags & Modifiers.OVERRIDE) != 0){
 					if (this is Indexer)
@@ -3741,7 +3742,8 @@ namespace Mono.MonoBASIC {
 			Modifiers.VIRTUAL |
 			Modifiers.DEFAULT |
 			Modifiers.READONLY |
-			Modifiers.WRITEONLY ;
+			Modifiers.WRITEONLY |
+			Modifiers.SHADOWS;
 
 		string set_parameter_name;
 		Parameters get_params;

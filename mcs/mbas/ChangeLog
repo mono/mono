@@ -1,3 +1,7 @@
+2004-03-25 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: bug fixing - creating default constructor when no constructor is specified
+	Few modifiers are changed to align with Vb
+
 2004/03/22  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* typemanager.cs :  being more carefull with null arguments in some places, 
 						null checking in GetPertinentStandardModules() loop
@@ -5,6 +9,10 @@
 	* ecore.cs : Dealing with finding more than a pertinent standard module having a global member
 	* testmbas/WriteOk.vb : Exercising correct standard module resolution
     NOTE: Almost there for Bug #52067 - just the semi-qualified case isn't working 
+
+2004-03-23 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: handled implicit static modifier for module members in const
+	* const.cs: changed supported modifiers
 
 2004-03-23 Anirban Bhattacharjee <banirban@novell.com>
 	* modifiers.cs: Return name of the modifiers' changed to vb specific
