@@ -1,0 +1,13 @@
+2003-11-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AlgorithmIdentifier.cs: New. Class to encapsulate PKCS7 AlgorithmIdentifier.
+	* CryptographicAttribute.cs: Basic class for attributes.
+	* KeyAgreeKeyChoice.cs: New. Enumeration for key agreement.
+	* Pkcs9Attribute.cs: New. Base class for Pkcs#9 attributes.
+	* Pkcs9DocumentDescription.cs: New. Pkcs#9 DocumentDescription attribute.
+	* Pkcs9DocumentName.cs: New. Pkcs#9 DocumentName attribute.
+	* Pkcs9SigningTime.cs: New. Pkcs#9 SigningTime attribute.
+	* RecipientInfoType.cs: New. Enumeration for RecipientInfo.
+	* RecipientSubType.cs: New. Enumeration for RecipientInfo.
+	* SubjectIdentifierOrKeyType.cs: New. Enumeration for SubjectIdentifier.
+	* SubjectIdentifierType.cs: New. Enumeration for SubjectIdentifier.
