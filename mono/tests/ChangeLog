@@ -1,3 +1,8 @@
+2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* delegate7.cs: Convert it to use the test driver + add regression test
+	for #50366.
+
 2003-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c pinvoke2.cs: Add tests for [In,Out] marshalling of arrays.
