@@ -189,6 +189,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Consts.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ContainerControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
