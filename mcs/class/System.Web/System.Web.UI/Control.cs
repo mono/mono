@@ -3,82 +3,12 @@
 //
 // Authors:
 //   Bob Smith <bob@thestuff.net>
-//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Bob Smith
-// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
 //
-
-/*
- * Maintainer: bob@thestuff.net, gvaish@iitk.ac.in
- * (C) Bob Smith, Gaurav Vaish
- */
-
-//notes: view state only tracks changes after OnInit method is executed for the page request. You can read from it at any time, but cant write to it during rendering.
-//even more notes: view state info in trackviewstate method description. read later.
-//Ok, enough notes: what the heck is different between enable view state, and track view state.
-//Well, maybe not. How does the ViewState know when to track changes? Does it look at the property
-//on the owning control, or does it have a method/property of its own that gets called?
-// I think this last question is solved in the Interface for it. Look into this.
-
-//cycle:
-//init is called when control is first created.
-//load view state ic called right after init to populate the view state.
-//loadpostdata is called if ipostbackdatahandler is implemented.
-//load is called when control is loaded into a page
-//raisepostdatachangedevent if ipostbackdatahandler is implemented.
-//raisepostbackevent if ipostbackeventhandler is implemented.
-//prerender is called when the server is about to render its page object
-//SaveViewState is called.
-//Unload then dispose it apears. :)
-
-//Naming Container MUST have some methods. What are they? No clue. Help? (updated: the doc says that it's just a marker interface)
-
-//read this later. http://gotdotnet.com/quickstart/aspplus/
-//This to: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguidnf/html/cpconattributesdesign-timesupport.asp
-//http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguidnf/html/cpcontracefunctionality.asp
-
-// Isnt life grand? :)
-// See the undocumented methods? Gota love um. ;)
-// ASP.test4_aspx.Page_Load(Object Sender, EventArgs e) in \\genfs2\www24\bobsmith11\test4.aspx:6
-// System.Web.UI.Control.OnLoad(EventArgs e) +67
-// System.Web.UI.Control.LoadRecursive() +73
-// System.Web.UI.Page.ProcessRequestMain() +394
-
-// ASP.test4_aspx.Page_Unload(Object Sender, EventArgs e) in \\genfs2\www24\bobsmith11\test4.aspx:6
-// System.EventHandler.Invoke(Object sender, EventArgs e) +0
-// System.Web.UI.Control.OnUnload(EventArgs e) +67
-// System.Web.UI.Control.UnloadRecursive(Boolean dispose) +78
-// System.Web.UI.Page.ProcessRequest() +194
-// System.Web.UI.Page.ProcessRequest(HttpContext context) +18
-// System.Web.CallHandlerExecutionStep.Execute() +179
-// System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously) +87
-
-
-// ASP.test4_aspx.Page_Unload(Object Sender, EventArgs e) in \\genfs2\www24\bobsmith11\test4.aspx:6
-// System.Web.UI.Control.OnUnload(EventArgs e) +67
-// System.Web.UI.Control.UnloadRecursive(Boolean dispose) +78
-// System.Web.UI.Page.ProcessRequest()
-
-// ASP.test4_aspx.Page_Kill(Object Sender, EventArgs e) in \\genfs2\www24\bobsmith11\test4.aspx:6
-// System.Web.UI.Control.OnPreRender(EventArgs e) +67
-// System.Web.UI.Control.PreRenderRecursiveInternal() +61
-// System.Web.UI.Page.ProcessRequestMain() +753
-
-// ASP.test4_aspx.OnInit(EventArgs e) in \\genfs2\www24\bobsmith11\test4.aspx:6
-// System.Web.UI.Control.InitRecursive(Control namingContainer) +202
-// System.Web.UI.Page.ProcessRequestMain() +120
-
-// ASP.test4_aspx.SaveViewState() in \\genfs2\www24\bobsmith11\test4.aspx:12
-// System.Web.UI.Control.SaveViewStateRecursive() +51
-// System.Web.UI.Page.SavePageViewState() +174
-// System.Web.UI.Page.ProcessRequestMain() +861
-
-// ASP.test_aspx.LoadViewState(Object t) +28
-// System.Web.UI.Control.LoadViewStateRecursive(Object savedState) +125
-// System.Web.UI.Page.LoadPageViewState() +182
-// System.Web.UI.Page.ProcessRequestMain() +256
 
 using System;
 using System.Collections;
@@ -302,10 +232,8 @@ namespace System.Web.UI
 
 		[DefaultValue (true), Bindable (true), WebCategory ("FIXME")]
 		[WebSysDescription ("Visiblity state of the control.")]
-                public virtual bool Visible
-                {
-                        get
-                        {
+                public virtual bool Visible {
+                        get {
 				if (_visible == false)
 					return false;
 
@@ -314,11 +242,15 @@ namespace System.Web.UI
 
                                 return true;
                         }
-                        set
-                        {
+
+                        set {
+				if (value != _visible)
+					ViewState ["Visible"] = value;
+
                                 _visible = value;
                         }
                 }
+
                 protected bool ChildControlsCreated //DIT
                 {
                         get
@@ -560,10 +492,14 @@ namespace System.Web.UI
 
                 protected virtual void LoadViewState(object savedState)
                 {
-			if (savedState != null)
+			if (savedState != null) {
 				ViewState.LoadViewState (savedState);
+				object o = ViewState ["Visible"];
+				if (o != null)
+					_visible = (bool) o;
+			}
                 }
-                
+
 		[MonoTODO("Secure?")]
                 protected string MapPathSecure(string virtualPath)
                 {

@@ -1,3 +1,8 @@
+2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: patch by yaronshkop@hotmail.com (Yaron Shkop) that fixes
+	bug #47866.
+
 2003-08-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs: handle Unit and FonrUnit as special cases as they
