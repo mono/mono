@@ -7,13 +7,17 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("MonoBASIC Compiler")]
-[assembly: AssemblyDescription("Compiler for MonoBASIC language, which is a superset of Visual Basic.NET, targetting Mono")]
+[assembly: AssemblyDescription("This is a compiler for the MonoBASIC language, \nwhich is a superset of Visual Basic.NET")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
 [assembly: AssemblyCopyright("(c)2002 Rafael Teixeira")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
+
+[assembly: Mono.GetOptions.Author("Ravi Pratap")]
+[assembly: Mono.GetOptions.Author("Miguel de Icaza")]
+[assembly: Mono.GetOptions.Author("Rafael Teixeira")]
 
 //
 // Version information for an assembly consists of the following four values:

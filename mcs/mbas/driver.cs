@@ -136,14 +136,7 @@ Options:
 
 		static void About ()
 		{
-			Console.WriteLine (
-				"The MonoBASIC compiler is (C) 2002 Rafael Teixeira\n\n" +
-				"The compiler source code is released under the terms of the GNU GPL\n\n" +
-
-				"For more information on Mono, visit the project Web site\n" +
-				"   http://www.go-mono.com\n\n" +
-
-				"The compiler was written by Rafael Teixeira and Miguel de Icaza and Ravi Pratap");
+			Options.ShowAbout();
 		}
 		
 		static void error (string msg)
@@ -156,8 +149,21 @@ Options:
 			Console.WriteLine (msg);
 		}
 		
+		private static Mono.GetOptions.OptionList Options;
+
+		private static bool SetVerboseParsing(object nothing)
+		{
+			GenericParser.yacc_verbose_flag = true;
+			return true;
+		}
+
 		public static int Main (string[] args)
 		{
+			Options = new Mono.GetOptions.OptionList("The compiler source code is released under the terms of the GNU GPL\n\n" +
+				"For more information on Mono, visit the project Web site\n" +
+				"   http://www.go-mono.com" , "mbas [options] source-files");
+			Options.AddAbout(' ',"about", "About the MonoBASIC compiler");
+			Options.AddBooleanSwitch ('v',"verbose", "Verbose parsing (for debugging the parser)", false, new Mono.GetOptions.OptionFound(SetVerboseParsing) );
 			MainDriver(args);	
 			return (error_count + Report.Errors) != 0 ? 1 : 0;
 		}
@@ -444,6 +450,9 @@ Options:
 			// path.
 			//
 			link_paths.Add (GetSystemDir ());
+
+			Options.ProcessArgs(args);
+			return; 
 
 			int argc = args.Length;
 			for (i = 0; i < argc; i++){
@@ -854,15 +863,15 @@ Options:
 			
 			RootContext.CloseTypes ();
 
-			PEFileKinds k = PEFileKinds.ConsoleApplication;
-				
-			if (target == Target.Library || target == Target.Module)
-				k = PEFileKinds.Dll;
-			else if (target == Target.Exe)
-				k = PEFileKinds.ConsoleApplication;
-			else if (target == Target.WinExe)
-				k = PEFileKinds.WindowApplication;
-
+//			PEFileKinds k = PEFileKinds.ConsoleApplication;
+//				
+//			if (target == Target.Library || target == Target.Module)
+//				k = PEFileKinds.Dll;
+//			else if (target == Target.Exe)
+//				k = PEFileKinds.ConsoleApplication;
+//			else if (target == Target.WinExe)
+//				k = PEFileKinds.WindowApplication;
+//
 //			if (target == Target.Exe || target == Target.WinExe){
 //				MethodInfo ep = RootContext.EntryPoint;
 //

@@ -1,3 +1,6 @@
+2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged expression.cs from mcs/mcs
+
 2002-06-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* corrected Module.TypeAttr property getter in module.cs
 	

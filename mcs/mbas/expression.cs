@@ -12,7 +12,6 @@
 namespace Mono.CSharp {
 	using System;
 	using System.Collections;
-	using System.Diagnostics;
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Text;
@@ -429,15 +428,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				//
-				// This construct is needed because dynamic types
-				// are not known by Type.GetType, so we have to try then to use
-				// ModuleBuilder.GetType.
-				//
 				string ptr_type_name = Expr.Type.FullName + "*";
-				type = Type.GetType (ptr_type_name);
-				if (type == null)
-					type = CodeGen.ModuleBuilder.GetType (ptr_type_name);
+				type = TypeManager.LookupType (ptr_type_name);
 				
 				return this;
 			}
@@ -3863,16 +3855,24 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public static void EmitCall (EmitContext ec, bool is_base,
 					     bool is_static, Expression instance_expr,
-					     MethodBase method, ArrayList Arguments)
+					     MethodBase method, ArrayList Arguments, Location loc)
 		{
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
 
 			Type decl_type = method.DeclaringType;
-			
-			if (RootContext.DisableTrace && decl_type == TypeManager.trace_type)
-				return;
-			if (RootContext.DisableDebug && decl_type == TypeManager.debug_type)
+
+			//
+			// This checks the `ConditionalAttribute' on the method, and the
+			// ObsoleteAttribute
+			//
+			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method);
+			if ((flags & TypeManager.MethodFlags.IsObsolete) != 0){
+				Report.Warning (
+					612, loc, "`" + TypeManager.CSharpSignature (method)+
+					"' is obsolete");
+			}
+			if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 				return;
 			
 			if (!is_static){
@@ -3942,7 +3942,8 @@ namespace Mono.CSharp {
 		{
 			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
 
-			EmitCall (ec, is_base, method.IsStatic, mg.InstanceExpression, method, Arguments);
+			EmitCall (
+				ec, is_base, method.IsStatic, mg.InstanceExpression, method, Arguments, loc);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
@@ -5949,7 +5950,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, get, ea.Arguments);
+			Invocation.EmitCall (ec, false, false, ea.Expr, get, ea.Arguments, ea.loc);
 		}
 
 		//
@@ -5959,7 +5960,7 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, set, set_arguments);
+			Invocation.EmitCall (ec, false, false, ea.Expr, set, set_arguments, ea.loc);
 		}
 	}
 
