@@ -345,10 +345,12 @@ namespace System.Web.UI.WebControls
 			base.OnUnload(e);
 		}
 
-		[MonoTODO("What_do_I_have_to_do")]
+		[MonoTODO("Damn_This_Is_Really_Frustrating___by_Gaurav")]
 		protected void RegisterValidatorCommonScript()
 		{
-			// Keep going
+			if(Page.IsClientScriptBlockRegistered("ValidatorIncludeScript"))
+				return;
+			
 			//throw new NotImplementedException();
 		}
 
@@ -385,7 +387,8 @@ namespace System.Web.UI.WebControls
 
 				ValidatorDisplay dis = Display;
 				if (RenderUplevel) {
-					//FIXME: by now, don't do client-side validation
+					//FIXME: as of now, don't do client-side validation
+					throw new NotImplementedException();
 				}
 				
 				if (!valid) {
@@ -407,4 +410,3 @@ namespace System.Web.UI.WebControls
 		protected abstract bool EvaluateIsValid();
 	}
 }
-
