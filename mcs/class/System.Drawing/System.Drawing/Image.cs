@@ -631,6 +631,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public void Dispose ()
 	{
 		Dispose (true);
+		System.GC.SuppressFinalize (this);
 	}
 
 	~Image ()
@@ -649,9 +650,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	protected virtual void Dispose (bool disposing)
 	{
-		if (nativeObject != (IntPtr) 0){
+		if (nativeObject != IntPtr.Zero){
 			DisposeResources ();
-			nativeObject=IntPtr.Zero;
+			nativeObject = IntPtr.Zero;
 		}
 	}
 	
