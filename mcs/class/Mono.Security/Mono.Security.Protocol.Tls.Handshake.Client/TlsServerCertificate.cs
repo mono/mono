@@ -99,7 +99,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 #warning Correct validation needs to be made using a certificate chain
 
 			// Restrict validation to the first certificate
-			this.validateCertificate(certificates[0]);
+			// this.validateCertificate(certificates[0]);
 		}
 
 		#endregion
