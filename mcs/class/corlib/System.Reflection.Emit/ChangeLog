@@ -1,3 +1,9 @@
+2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: Don't call GetCurrentDirectory if building an 
+	assembly that will never be serialized to disk (because CAS may not
+	allow disk access but still allow generating a in-memory assembly).
+
 2005-03-24  Miguel de Icaza  <miguel@novell.com>
 
 	* DynamicMethod.cs (CreateDelegate): Add second overload based on

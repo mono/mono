@@ -120,13 +120,17 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
 		
-		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal) {
+		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal)
+		{
 			name = n.Name;
-			if (directory == null || directory == String.Empty)
-				dir = Directory.GetCurrentDirectory ();
-			else
-				dir = directory;
 			this.access = (uint)access;
+
+			// don't call GetCurrentDirectory for Run-only builders (CAS may not like that)
+			if (IsSave && (directory == null || directory == String.Empty)) {
+				dir = Directory.GetCurrentDirectory ();
+			} else {
+				dir = directory;
+			}
 
 			/* Set defaults from n */
 			if (n.CultureInfo != null) {
