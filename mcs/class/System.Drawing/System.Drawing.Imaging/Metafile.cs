@@ -1,7 +1,7 @@
 //
-// Metafile.cs
+// System.Drawing.Imaging.Metafile.cs
 //
-// (C) 2002 Christian Meyer
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Christian Meyer
 // eMail: Christian.Meyer@cs.tum.edu
 //

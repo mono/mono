@@ -1,8 +1,13 @@
+2002-04-27  Christian Meyer  <Christian.Meyer@cs.tum.edu>
+
+	* Metafile.cs: Copyright now holds Ximian.
+
+2002-04-21  Dennis Hayes <dennish@raytek.com>
+
+	* corrected emum values.
+
 2002-04-14  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 
 	* ChangeLog: created.
 	* Metafile.cs: Added. Wrote some ctors. No impl done, yet.
-2002-04-21 Dennis Hayes <dennish@raytek.com>
-
-	* corrected emum values.
 
