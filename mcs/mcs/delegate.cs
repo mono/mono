@@ -422,7 +422,7 @@ namespace Mono.CSharp {
 		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb,
 						       Location loc)
 		{
-			ParameterData pd = Invocation.GetParameterData (mb);
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			int pd_count = pd.Count;
 
@@ -430,7 +430,7 @@ namespace Mono.CSharp {
 			if (invoke_mb == null)
 				return null;
 
-			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
+			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 			if (invoke_pd.Count != pd_count)
 				return null;
@@ -497,7 +497,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
-			ParameterData pd = Invocation.GetParameterData (mb);
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			int pd_count = pd.Count;
 
@@ -553,7 +553,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
-			ParameterData pd = Invocation.GetParameterData (mb);
+			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			Expression probe_ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
@@ -564,7 +564,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase probe_mb = ((MethodGroupExpr) probe_ml).Methods [0];
-			ParameterData probe_pd = Invocation.GetParameterData (probe_mb);
+			ParameterData probe_pd = TypeManager.GetParameterData (probe_mb);
 			
 			if (((MethodInfo) mb).ReturnType != ((MethodInfo) probe_mb).ReturnType)
 				return false;
@@ -715,7 +715,7 @@ namespace Mono.CSharp {
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
 			MethodBase method = ((MethodGroupExpr) invoke_method).Methods [0];
-			ParameterData param = Invocation.GetParameterData (method);
+			ParameterData param = TypeManager.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 			
 			Report.Error (123, loc, "Method '" + method_desc + "' does not " +
@@ -769,7 +769,7 @@ namespace Mono.CSharp {
 			// Check safe/unsafe of the delegate
 			//
 			if (!ec.InUnsafe){
-				ParameterData param = Invocation.GetParameterData (delegate_method);
+				ParameterData param = TypeManager.GetParameterData (delegate_method);
 				int count = param.Count;
 				
 				for (int i = 0; i < count; i++){

@@ -242,10 +242,9 @@ public class TypeManager {
 	static Hashtable indexer_arguments;
 
 	// <remarks>
-	//   Maybe `method_arguments' should be replaced and only
-	//   method_internal_params should be kept?
+	//   Maps a MethodBase to its ParameterData (either InternalParameters or ReflectionParameters)
 	// <remarks>
-	static Hashtable method_internal_params;
+	static Hashtable method_params;
 
 	// <remarks>
 	//  Keeps track of methods
@@ -277,7 +276,7 @@ public class TypeManager {
 		builder_to_ifaces = null;
 		method_arguments = null;
 		indexer_arguments = null;
-		method_internal_params = null;
+		method_params = null;
 		builder_to_method = null;
 		
 		fields = null;
@@ -376,7 +375,7 @@ public class TypeManager {
 		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
-		method_internal_params = new PtrHashtable ();
+		method_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
@@ -908,7 +907,7 @@ public class TypeManager {
 
 		MethodBase mb = pb.GetSetMethod (true) != null ? pb.GetSetMethod (true) : pb.GetGetMethod (true);
 		string signature = GetFullNameSignature (mb);
-		string arg = TypeManager.LookupParametersByBuilder (mb).ParameterDesc (0);
+		string arg = GetParameterData (mb).ParameterDesc (0);
 		return String.Format ("{0}.this[{1}]", signature.Substring (0, signature.LastIndexOf ('.')), arg);
 	}
 
@@ -919,14 +918,7 @@ public class TypeManager {
 	{
 		StringBuilder sig = new StringBuilder ("(");
 
-		//
-		// FIXME: We should really have a single function to do
-		// everything instead of the following 5 line pattern
-		//
-		ParameterData iparams = LookupParametersByBuilder (mb);
-
-		if (iparams == null)
-			iparams = new ReflectionParameters (mb);
+		ParameterData iparams = GetParameterData (mb);
 
 		// Is property
 		if (mb.IsSpecialName && iparams.Count == 0 && !mb.IsConstructor)
@@ -1731,18 +1723,20 @@ public class TypeManager {
 			args = NoTypes;
 				
 		method_arguments.Add (mb, args);
-		method_internal_params.Add (mb, ip);
+		method_params.Add (mb, ip);
 	}
 	
-	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
+	static public ParameterData GetParameterData (MethodBase mb)
 	{
-		if (! (mb is ConstructorBuilder || mb is MethodBuilder))
-			return null;
-		
-		if (method_internal_params.Contains (mb))
-			return (InternalParameters) method_internal_params [mb];
-		else
-			throw new Exception ("Argument for Method not registered" + mb);
+		object pd = method_params [mb];
+		if (pd == null) {
+			if (mb is MethodBuilder || mb is ConstructorBuilder)
+				throw new InternalErrorException ("Argument for Method not registered" + mb);
+
+			method_params [mb] = pd = new ReflectionParameters (mb);
+		}
+
+		return (ParameterData) pd;
 	}
 
 	/// <summary>

@@ -765,7 +765,7 @@ namespace Mono.CSharp {
 			//
 			Type source_type = source.Type;
 			foreach (MethodBase mb in me.Methods){
-				ParameterData pd = Invocation.GetParameterData (mb);
+				ParameterData pd = TypeManager.GetParameterData (mb);
 				Type param_type = pd.ParameterType (0);
 
 				if (param_type == source_type)
@@ -1023,7 +1023,7 @@ namespace Mono.CSharp {
 
 			
 			foreach (MethodBase mb in union.Methods){
-				ParameterData pd = Invocation.GetParameterData (mb);
+				ParameterData pd = TypeManager.GetParameterData (mb);
 				MethodInfo mi = (MethodInfo) mb;
 				
 				if (pd.ParameterType (0) == most_specific_source &&

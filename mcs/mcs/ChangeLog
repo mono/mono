@@ -1,3 +1,16 @@
+2005-02-09  Raja R Harinath  <rharinath@novell.com>
+
+	Combine two near-redundant caches.
+	* typemanager.cs (method_params): Rename from method_internal_params.
+	(TypeManager.GetParameterData): New.  Replace
+	Invocation.GetParameterData.
+	(TypeManager.LookupParametersByBuilder): Remove.
+	* expression.cs (Invocation.method_parameter_cache): Remove.
+	(Invocation.GetParameterData): Remove.
+	Update to changes.
+	* anonymous.cs, attribute.cs, convert.cs, delegate.cs:
+	Update to changes.
+
 2005-02-08  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #72015.

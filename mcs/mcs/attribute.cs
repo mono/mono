@@ -542,7 +542,7 @@ namespace Mono.CSharp {
 			// of type object
 			//
 
-			ParameterData pd = Invocation.GetParameterData (constructor);
+			ParameterData pd = TypeManager.GetParameterData (constructor);
 
 			int last_real_param = pd.Count;
 			if (pd.HasParams) {
