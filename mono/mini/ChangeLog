@@ -1,3 +1,8 @@
+2004-11-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Set %al to the number of
+	used SSE registers on pinvoke calls. Fixes #69774.
+
 2004-11-23  Geoff Norton  <gnorton@customerdna.com>
 
 	* inssel-ppc.brg, mini-ppc.c: Use mono_class_from_mono_type instead of
