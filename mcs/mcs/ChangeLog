@@ -1,5 +1,27 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
+	* location.cs (SourceFile): New public sealed class.  This
+	contains the name and an index which is used in the location's token.
+	(Location): Reserve an appropriate number of bits in the token for
+	the source file instead of walking over that list, this gives us a
+	really huge performance improvement when compiling with debugging.
+
+	* driver.cs (Driver.parse, Driver.tokenize_file): Take a
+	`SourceFile' argument instead of a string.
+	(Driver.ProcessFile): Add all the files via Location.AddFile(),
+	but don't parse/tokenize here, we need to generate the list of all
+	source files before we do that.
+	(Driver.ProcessFiles): New static function.  Parses/tokenizes all
+	the files.
+
+	* cs-parser.jay (CSharpParser): Take a `SourceFile' argument
+	instead of a string.
+
+	* cs-tokenizer.cs (Tokenizer): Take `SourceFile' argument instead
+	of a string.
+
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
 	* cs-tokenizer.cs (Tokenizer.PreProcessLine): Also reset the
 	filename on `#line default'.
 
