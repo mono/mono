@@ -1215,14 +1215,9 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return XPathResultType.Any; }}
 		public override XPathResultType GetReturnType (BaseIterator iter)
 		{
-			IXsltContextVariable var = null;
-			XsltContext context = iter.NamespaceManager as XsltContext;
-			if (context != null)
-				var = context.ResolveVariable (_name.Namespace, _name.Name);
-			if (var == null)
-				throw new XPathException ("variable "+_name.ToString ()+" not found");
-			return var.VariableType;
+			return XPathResultType.Any;
 		}
+		
 		public override object Evaluate (BaseIterator iter)
 		{
 			IXsltContextVariable var = null;
@@ -1331,15 +1326,9 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return XPathResultType.Any; }}
 		public override XPathResultType GetReturnType (BaseIterator iter)
 		{
-			IXsltContextFunction func = null;
-			XsltContext context = iter.NamespaceManager as XsltContext;
-			if (context != null)
-				func = context.ResolveFunction (_name.Namespace, _name.Name, GetArgTypes (iter));
-
-			if (func == null)
-				throw new XPathException ("function "+_name.ToString ()+" not found");
-			return func.ReturnType;
+			return XPathResultType.Any;
 		}
+		
 		private XPathResultType [] GetArgTypes (BaseIterator iter)
 		{
 			// TODO: can we cache these? what if the types depend on the nsm?
