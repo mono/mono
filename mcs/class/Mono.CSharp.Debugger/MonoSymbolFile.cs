@@ -316,7 +316,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		// Stream stream;
+		Assembly assembly;
 		BinaryReader reader;
 		Hashtable method_hash;
 		Hashtable source_file_hash;
@@ -324,8 +324,10 @@ namespace Mono.CSharp.Debugger
 		Hashtable method_name_hash;
 		Hashtable source_name_hash;
 
-		protected MonoSymbolFile (Stream stream)
+		protected MonoSymbolFile (Assembly assembly, Stream stream)
 		{
+			this.assembly = assembly;
+
 			reader = new BinaryReader (stream);
 
 			try {
@@ -348,7 +350,11 @@ namespace Mono.CSharp.Debugger
 			if (stream == null)
 				return null;
 
-			return new MonoSymbolFile (stream);
+			return new MonoSymbolFile (assembly, stream);
+		}
+
+		public Assembly Assembly {
+			get { return assembly; }
 		}
 
 		public int SourceCount {

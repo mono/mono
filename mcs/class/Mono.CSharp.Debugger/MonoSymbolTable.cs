@@ -388,6 +388,9 @@ namespace Mono.CSharp.Debugger
 		public readonly int[] ParamTypeIndices;
 		public readonly int[] LocalTypeIndices;
 		public readonly LocalVariableEntry[] Locals;
+		public readonly Type[] LocalTypes;
+
+		public readonly MonoSymbolFile SymbolFile;
 
 		public static int Size
 		{
@@ -404,8 +407,13 @@ namespace Mono.CSharp.Debugger
 			get { return full_name; }
 		}
 
+		public MethodBase MethodBase {
+			get { return SymbolFile.Assembly.MonoDebugger_GetMethod (Token); }
+		}
+
 		internal MethodEntry (MonoSymbolFile file, BinaryReader reader, int index)
 		{
+			this.SymbolFile = file;
 			this.index = index;
 			SourceFileIndex = reader.ReadInt32 ();
 			Token = reader.ReadInt32 ();
@@ -444,9 +452,15 @@ namespace Mono.CSharp.Debugger
 				reader.BaseStream.Position = LocalVariableTableOffset;
 
 				Locals = new LocalVariableEntry [NumLocals];
+				LocalTypes = new Type [NumLocals];
 
-				for (int i = 0; i < NumLocals; i++)
+				Assembly ass = file.Assembly;
+
+				for (int i = 0; i < NumLocals; i++) {
 					Locals [i] = new LocalVariableEntry (reader);
+					LocalTypes [i] = ass.MonoDebugger_GetLocalTypeFromSignature (
+						Locals [i].Signature);
+				}
 
 				reader.BaseStream.Position = old_pos;
 			}
@@ -471,6 +485,7 @@ namespace Mono.CSharp.Debugger
 				      int token, LocalVariableEntry[] locals, LineNumberEntry[] lines,
 				      int start_row, int end_row, int namespace_id)
 		{
+			this.SymbolFile = file;
 			index = file.GetNextMethodIndex ();
 
 			Token = token;

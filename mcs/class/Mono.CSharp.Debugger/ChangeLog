@@ -1,5 +1,12 @@
 2003-02-18  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolFile.cs (MonoSymbolFile.Assembly): New public property.
+
+	* MonoSymbolTable.cs (MethodEntry.MethodBase): New public property.
+	(MethodEntry.LocalTypes): New public variable.
+
+2003-02-18  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolFile.cs (MethodEntry.ThisTypeIndex): Renamed to
 	ClassTypeIndex; provide this for all methods so we can get the
 	class of static methods.
