@@ -9,6 +9,7 @@ System/AllTests.cs
 System/ArrayTest.cs
 System/BitConverterTest.cs
 System/BooleanTest.cs
+System/BufferTest.cs
 System/ByteTest.cs
 System/CharTest.cs
 System/ConsoleTest.cs
