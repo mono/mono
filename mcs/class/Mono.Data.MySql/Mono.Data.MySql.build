@@ -20,6 +20,25 @@
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
+				<excludes name="Mono.Data.MySql/Test.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlClientPermission.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlClientPermissionAttribute.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlCommandBuilder.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlDataAdapter.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlDataReader.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlError.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlErrorCollection.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlException.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlInfoMessageEventArgs.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlInfoMessageEventHandler.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlParameter.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlParameterCollection.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlRowUpdatedEventArgs.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlRowUpdatedEventHandler.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlRowUpdatingEventArgs.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlRowUpdatingEventHandler.cs"/>
+				<excludes name="Mono.Data.MySql/MySqlTransaction.cs"/>
+				
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
@@ -30,6 +49,7 @@
 		</csc>
 		<copy file="../lib/System.Data.dll" tofile="Test/System.Data.dll"/>
 		<copy file="../lib/Mono.Data.MySql.dll" tofile="Test/Mono.Data.MySql.dll"/>
+		<copy file="../lib/Mono.Data.MySql.dll" tofile="Mono.Data.MySql/Mono.Data.MySql.dll"/>
 	</target>
 	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>

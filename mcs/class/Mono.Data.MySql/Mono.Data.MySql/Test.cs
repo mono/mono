@@ -21,6 +21,11 @@
 // at http://www.opensource.org/licenses/mit-license.html
 //
 
+// define MYSQL_CANDO_QUERY if the runtime can do a query
+// define MYSQL_CANDO_THREADS if the runtime can use mysql_thread_* functions
+//#define MYSQL_CANDO_QUERY
+//#define MYSQL_CANDO_THREADS
+
 using System;
 using System.Runtime.InteropServices;
 using Mono.Data.MySql;
@@ -52,52 +57,109 @@ using Mono.Data.MySql;
 ///</remarks>
 public class Test {
 	[STAThread]
-	public static void Main() {
-		string myDb = "mysql";
+	public static int Main() {
+		Console.WriteLine("Test for MySQL C# Bindings started...");
+		Console.Out.Flush();
+
+		string myDb = "test";
 		string myStmt = "SELECT * FROM db";
+		string insertStmt = "INSERT INTO SOMETABLE (TID,TDESC,AINT) VALUES ('MySQL','Mono.Data',12)";
 
+		Console.WriteLine("MySql Init...");
+		Console.Out.Flush();
 		IntPtr db = MySql.Init(IntPtr.Zero);
-		if (db == IntPtr.Zero)
-			throw new ApplicationException("?Init failed");
-
-		IntPtr conn = MySql.Connect(db, null, null, null, null, MySql.Port,
-			null, (uint)0);
-		if (conn == IntPtr.Zero) {
-			Console.WriteLine("?Connect failed, "+MySql.Error(db));
-			return;
+		if (db == IntPtr.Zero) {
+			Console.WriteLine("Error: Init failed.");
+			Console.Out.Flush();
+			return 1;
 		}
 
+		Console.WriteLine("MySql Connection...");
+		Console.Out.Flush();
+		IntPtr conn = MySql.Connect(db, "", "", "", "", MySql.Port,
+			"", (uint)0);
+		//IntPtr conn = MySql.mysql_connect(db, null, null, null, null, MySql.Port,
+		//	null, (uint)0);
+		if (conn == IntPtr.Zero) {
+			Console.WriteLine("Error: Connect failed.");
+			Console.Out.Flush();
+			Console.WriteLine("MySql Error: " + MySql.Error(db));
+			Console.Out.Flush();
+			return 1;
+		}
+
+		Console.WriteLine("MySql Selecting Database: " + myDb + "...");
+		Console.Out.Flush();
 		int sdb = MySql.SelectDb(db, myDb);
 		if (sdb != 0) {
-			Console.WriteLine("?Can't select the "+myDb+" database ,"
-				+ MySql.Error(db));
-			return;
+			Console.WriteLine("Error: Can not select the "+myDb+" database.");
+			Console.Out.Flush();
+			Console.WriteLine("MySql Error: " + MySql.Error(db));
+			Console.Out.Flush();
+			return 1;
 		}
 
+		Console.WriteLine("Insert SQL:  "+insertStmt);
+		Console.Out.Flush();
+		int rcq = MySql.Query(db, insertStmt);
+		if (rcq != 0) {
+			Console.WriteLine("Couldn't execute ["+insertStmt+"] on server.");
+			Console.Out.Flush();
+			Console.WriteLine("MySql Error: " + MySql.Error(db));
+			Console.Out.Flush();
+			return 1;
+		}
+		
+#if MYSQL_CANDO_QUERY
+		Console.WriteLine("Query:  "+myStmt);
+		Console.Out.Flush();
 		int rcq = MySql.Query(db, myStmt);
 		if (rcq != 0) {
-			Console.WriteLine("?Couldn't execute ["+myStmt+"] on server, "
-				+ MySql.Error(db));
-			return;
+			Console.WriteLine("?Couldn't execute ["+myStmt+"] on server.");
+			Console.Out.Flush();
+			Console.WriteLine("MySql Error: " + MySql.Error(db));
+			Console.Out.Flush();
+			return 1;
 		}
-		Console.WriteLine("Query:  "+myStmt);
+		
+		Console.WriteLine("Process Results...");
+		Console.Out.Flush();
 		procResults(db);
 
 		Console.WriteLine("==== Diagnostic info  ====");
+		Console.Out.Flush();
 		Console.WriteLine("Client info: "+MySql.GetClientInfo());
 		Console.WriteLine("Host info: "+MySql.GetHostInfo(db));
 		Console.WriteLine("Server info: "+MySql.GetServerInfo(db));
+		Console.Out.Flush();
 
+		Console.WriteLine("List Processes...");
+		Console.Out.Flush();
 		listProcesses(db);
+		Console.WriteLine("List Tables...");
+		Console.Out.Flush();
 		listTables(db);
+#endif // MYSQL_CANDO_QUERY
 
+		Console.WriteLine("MySql Stat...");
+		Console.Out.Flush();
 		Console.WriteLine(MySql.Stat(db));
 
+		Console.WriteLine("MySql Close...");
+		Console.Out.Flush();
 		MySql.Close(db);
+#if MYSQL_CANDO_THREADS
+		Console.WriteLine("MySql Thread End...");
+		Console.Out.Flush();
 		MySql.ThreadEnd();
+#endif // MYSQL_CANDO_THREADS
 		Console.WriteLine("Exiting...");
+		Console.Out.Flush();
+
+		return 0;
 	}
 
+#if MYSQL_CANDO_QUERY
 	static void procResults(IntPtr db) {
 		IntPtr res = MySql.StoreResult(db);
 		int numRows = MySql.NumRows(res);
@@ -177,5 +239,5 @@ public class Test {
 		}
 		MySql.FreeResult(res);
 	}
-
+#endif // MYSQL_CANDO_QUERY
 }
