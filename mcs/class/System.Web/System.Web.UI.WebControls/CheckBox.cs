@@ -27,7 +27,7 @@ namespace System.Web.UI.WebControls
 		
 		public CheckBox()
 		{
-			//
+			base(HtmlTextWriterTag.Input);
 		}
 		
 		public virtual bool AutoPostBack

@@ -2,6 +2,8 @@
 2001-11-30
 		Gaurav Vaish <gvaish@iitk.ac.in>
 	CheckBox.cs                - Completed
+	ListControl.cs             - Initial Implementation
+	CheckBoxList.cs            - Started with it, but first needed ListControl. Left it.
 
 2001-11-29
 		Gaurav Vaish <gvaish@iitk.ac.in>
