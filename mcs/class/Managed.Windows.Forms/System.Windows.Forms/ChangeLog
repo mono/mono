@@ -1,5 +1,9 @@
 2004-11-24  John BouAntoun <jba-mono@optusnet.com.au>
 
+	* MonthCalendar.cs: Add TitleMonth ContextMenu handling
+
+2004-11-24  John BouAntoun <jba-mono@optusnet.com.au>
+
 	* ContainerControl.cs: correct accidental check in of local changes
 
 2004-11-24  John BouAntoun <jba-mono@optusnet.com.au>

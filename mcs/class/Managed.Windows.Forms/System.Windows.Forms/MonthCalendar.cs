@@ -60,6 +60,7 @@ namespace System.Windows.Forms {
 		DateTime 		today_date;
 		bool 			today_date_set;
 		Color 			trailing_fore_color;
+		ContextMenu		menu;
 
 		// internal variables used
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
@@ -75,7 +76,8 @@ namespace System.Windows.Forms {
 		internal bool			is_previous_clicked;
 		internal bool			is_next_clicked;
 		internal bool 			is_shift_pressed;
-		internal DateTime		shift_select_start_date;			
+		internal DateTime		shift_select_start_date;
+		private Point			month_title_click_location;
 		
 		#endregion	// Local variables
 
@@ -126,6 +128,9 @@ namespace System.Windows.Forms {
 			is_next_clicked = false;
 			is_shift_pressed = false;
 			shift_select_start_date = now;
+			month_title_click_location = Point.Empty;
+
+			SetUpContextMenu ();
 
 			// event handlers
 			MouseDown += new MouseEventHandler (MouseDownHandler);
@@ -997,6 +1002,16 @@ namespace System.Windows.Forms {
 			return start.AddDays ((7 * 6)-1);
 		}
 
+		// initialise the context menu
+		private void SetUpContextMenu () {
+			menu = new ContextMenu ();
+			for (int i=0; i < 12; i++) {
+				MenuItem menu_item = new MenuItem ( new DateTime (2000, i+1, 1).ToString ("MMMM"));
+				menu_item.Click += new EventHandler (MenuItemClickHandler);
+				menu.MenuItems.Add (menu_item);
+			}
+		}
+
 		// returns the first date of the month
 		private DateTime GetFirstDateInMonth (DateTime date) {
 			return new DateTime (date.Year, date.Month, 1);
@@ -1133,6 +1148,52 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// called when context menu is clicked
+		private void MenuItemClickHandler (object sender, EventArgs e) {
+			MenuItem item = sender as MenuItem;
+			if (item != null && month_title_click_location != Point.Empty) {
+				// establish which month we want to move to
+				if (item.Parent == null) {
+					return;
+				}
+				int new_month = item.Parent.MenuItems.IndexOf (item) + 1;
+				if (new_month == 0) {
+					return;
+				}
+				// okay let's establish which calendar was hit
+				Size month_size = this.SingleMonthSize;
+				for (int i=0; i < CalendarDimensions.Height; i++) {
+					for (int j=0; j < CalendarDimensions.Width; j++) {
+						int month_index = (i * CalendarDimensions.Width) + j;
+						Rectangle month_rect = new Rectangle ( new Point (0, 0), month_size);
+						if (j == 0) {
+							month_rect.X = this.ClientRectangle.X + 1;
+						} else {
+							month_rect.X = this.ClientRectangle.X + 1 + ((j)*(month_size.Width+calendar_spacing.Width));
+						}
+						if (i == 0) {
+							month_rect.Y = this.ClientRectangle.Y + 1;
+						} else {
+							month_rect.Y = this.ClientRectangle.Y + 1 + ((i)*(month_size.Height+calendar_spacing.Height));
+						}
+						// see if the point is inside
+						if (month_rect.Contains (month_title_click_location)) {
+							DateTime clicked_month = CurrentMonth.AddMonths (month_index);
+							// get the month that we want to move to
+							int month_offset = new_month - clicked_month.Month;
+							
+							// move forward however more months we need to
+							this.CurrentMonth = this.CurrentMonth.AddMonths (month_offset);
+							break;
+						}
+					}
+				}
+
+				// clear the point
+				month_title_click_location = Point.Empty;
+			}
+		}
+
 		// to check if the mouse has come down on this control
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
@@ -1160,12 +1221,12 @@ namespace System.Windows.Forms {
 					break;
 				case HitArea.NextMonthDate:
 					SetItemClick(hti);
-					this.SelectionRange = new SelectionRange (clicked_date, clicked_date);					
+					this.SelectionRange = new SelectionRange (clicked_date, clicked_date);
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case HitArea.TitleMonth:
-					//TODO: show the month context menu
-					System.Console.WriteLine ("//TODO: show the month context menu");
+					month_title_click_location = hti.Point;
+					menu.Show (this, hti.Point);		
 					break;
 				case HitArea.TitleYear:
 					//TODO: show the year spin control
