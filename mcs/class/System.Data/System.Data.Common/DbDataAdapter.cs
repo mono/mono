@@ -719,14 +719,14 @@ namespace System.Data.Common {
 				if (command == null)
 					useCommandBuilder = true;
 
-				RowUpdatingEventArgs args = CreateRowUpdatingEvent (row, command, statementType, tableMapping);
-				OnRowUpdating (args);
+				RowUpdatingEventArgs updatingArgs = CreateRowUpdatingEvent (row, command, statementType, tableMapping);
+				OnRowUpdating (updatingArgs);
 
-				if (args.Status == UpdateStatus.ErrorsOccurred)
-					throw (args.Errors);
+				if (updatingArgs.Status == UpdateStatus.ErrorsOccurred)
+					throw (updatingArgs.Errors);
 
-				if (command == null && args.Command != null)
-					command = args.Command;
+				if (command == null && updatingArgs.Command != null)
+					command = updatingArgs.Command;
 				else if (command == null)
 					throw new InvalidOperationException (String.Format ("Update requires a valid {0}Command when passed a DataRow collection with modified rows.", commandName));
 
@@ -766,18 +766,22 @@ namespace System.Data.Common {
                                         // update the current row, if the update command returns any resultset
                                         // ignore other than the first record.
                                         DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
-                                        if (reader.Read ()){
-                                                DataTable retSchema = reader.GetSchemaTable ();
-                                                foreach (DataRow dr in retSchema.Rows) {
-                                                        string columnName = dr ["ColumnName"].ToString ();
-                                                        string dstColumnName = columnName;
-                                                        if (columnMappings != null &&
-                                                            columnMappings.Contains(columnName))
-                                                                dstColumnName = columnMappings [dstColumnName].DataSetColumn;
-                                                        try {
-                                                                row [dstColumnName] = reader [columnName];
-                                                        }catch (Exception) {} // column is not available here
+
+                                        if (command.UpdatedRowSource == UpdateRowSource.Both ||
+                                            command.UpdatedRowSource == UpdateRowSource.FirstReturnedRecord) {
+                                                if (reader.Read ()){
+                                                        DataTable retSchema = reader.GetSchemaTable ();
+                                                        foreach (DataRow dr in retSchema.Rows) {
+                                                                string columnName = dr ["ColumnName"].ToString ();
+                                                                string dstColumnName = columnName;
+                                                                if (columnMappings != null &&
+                                                                    columnMappings.Contains(columnName))
+                                                                        dstColumnName = columnMappings [dstColumnName].DataSetColumn;
+                                                                try {
+                                                                        row [dstColumnName] = reader [columnName];
+                                                                }catch (Exception) {} // column is not available here
                                                         
+                                                        }
                                                 }
                                         }
 
@@ -790,22 +794,39 @@ namespace System.Data.Common {
                                                                                  commandName +"Command affected 0 records.");
 					updateCount += tmp;
                                         
-                                        // Update output parameters to row values
-                                        foreach (IDataParameter parameter in command.Parameters) {
+                                        if (command.UpdatedRowSource == UpdateRowSource.Both ||
+                                            command.UpdatedRowSource == UpdateRowSource.OutputParameters) {
+                                                // Update output parameters to row values
+                                                foreach (IDataParameter parameter in command.Parameters) {
 
-                                                if (parameter.Direction != ParameterDirection.InputOutput
-                                                    && parameter.Direction != ParameterDirection.Output
-                                                    && parameter.Direction != ParameterDirection.ReturnValue)
-                                                        continue;
+                                                        if (parameter.Direction != ParameterDirection.InputOutput
+                                                            && parameter.Direction != ParameterDirection.Output
+                                                            && parameter.Direction != ParameterDirection.ReturnValue)
+                                                                continue;
 
-                                                string dsColumnName = parameter.SourceColumn;
-                                                if (columnMappings != null &&
-                                                    columnMappings.Contains(parameter.SourceColumn))
-                                                        dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
-                                                row [dsColumnName] = parameter.Value;
+                                                        string dsColumnName = parameter.SourceColumn;
+                                                        if (columnMappings != null &&
+                                                            columnMappings.Contains(parameter.SourceColumn))
+                                                                dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
+                                                        row [dsColumnName] = parameter.Value;
+                                                }
                                         }
+                                        
 
-					OnRowUpdated (CreateRowUpdatedEvent (row, command, statementType, tableMapping));
+                                        RowUpdatedEventArgs updatedArgs = CreateRowUpdatedEvent(row, command, statementType, tableMapping);
+                                        OnRowUpdated(updatedArgs);
+                                        switch(updatedArgs.Status) {
+                                        case UpdateStatus.Continue:
+                                                row.AcceptChanges();
+                                                break;
+                                        case UpdateStatus.ErrorsOccurred:
+                                                throw(updatedArgs.Errors);
+                                        case UpdateStatus.SkipCurrentRow:
+                                                continue;
+                                        case UpdateStatus.SkipAllRemainingRows:
+                                                row.AcceptChanges ();
+                                                return updateCount;
+                                        }
 					row.AcceptChanges ();
 				}
 				catch (Exception e)

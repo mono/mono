@@ -1,3 +1,12 @@
+2005-03-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbDataAdapter.cs: Update (): update the rows based on the
+	UpdateRowSource property. Process further based on the
+	RowUpdatedEvent handler argument's Status property.
+
+	Fixes bug #73587. Thanks to mono@rankweg.ch (Ingo Bauersachs) for
+	bug report and patch.
+
 2005-03-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ConnectionStringsSectionHandler.cs: Added. configuration section
