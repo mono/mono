@@ -1,4 +1,10 @@
 
+Mon Jun 21 19:03:18 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* aot.c: patch from Patrick Beard to make the output assembly
+	more correct for the MacOSX assembler. Small tweak to
+	generate sane images on Linux/PPC, too.
+
 Fri Jun 18 18:24:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini.h, mini-ppc.c: handle varargs methods with a special
