@@ -12,7 +12,10 @@ namespace System.Xml.Xsl
 	public abstract class XsltContext : XmlNamespaceManager
 	{
 		#region Constructors
-		public XsltContext () {}
+		public XsltContext ()
+			: base (new NameTable ())
+		{
+		}
 
 		public XsltContext (NameTable table)
 			: base (table)

@@ -1,3 +1,7 @@
+2004-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltContext.cs : Supply NameTable to base ctor().
+
 2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltException.cs, XsltCompileException.cs : They had used 
