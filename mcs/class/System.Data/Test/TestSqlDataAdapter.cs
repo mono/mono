@@ -2,8 +2,6 @@
 // TestSqlDataAdapter - tests SqlDataAdapter, DbDataAdapter, DataSet, DataTable,
 //                      DataRow, and DataRowCollection by retrieving data
 //
-// Note: it currently causes an NotImplementException for SqlCommand::NextResult()
-//
 // Authors:
 //      Tim Coleman <tim@timcoleman.com>
 //      Daniel Morgan <danmorg@sc.rr.com>

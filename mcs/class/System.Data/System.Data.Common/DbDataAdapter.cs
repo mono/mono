@@ -154,8 +154,9 @@ namespace System.Data.Common
 					if (!TableMappings.Contains (tableMapping))
 						TableMappings.Add (tableMapping);
 
-					if ((bool)(schemaRow["IsKey"]))
-						primaryKey.Add (table.Columns[columnName]);	
+					if ((schemaRow["IsKey"]).Equals(DBNull.Value) == false)
+						if ((bool)(schemaRow["IsKey"]))
+							primaryKey.Add (table.Columns[columnName]);	
 				}
 
 				if (MissingSchemaAction == MissingSchemaAction.AddWithKey && primaryKey.Count > 0)

@@ -1,5 +1,15 @@
 2002-05-26  Daniel Morgan <danmorg@sc.rr.com>
 
+	* System.Data/DataRow.cs
+	* System.Data.Common/DbDataAdapter.cs: fix to
+	get Test/TestSqlDataAdapter.cs to work again
+	
+	* Test/TestSqlDataAdapter.cs: removed comment
+	about SqlDataReader:NextResult() not being implemented; it
+	bas been implemented
+
+2002-05-26  Daniel Morgan <danmorg@sc.rr.com>
+
 	* System.Data/DataRow.cs: modified
 	support setting of DBNull.Value
 	using the Item indexer this[DataColumn]

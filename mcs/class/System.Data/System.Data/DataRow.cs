@@ -94,9 +94,12 @@ namespace System.Data
 				int columnIndex = table.Columns.IndexOf (column);
 				if (columnIndex == -1)
 					throw new ArgumentException ();
-				if(column.DataType != value.GetType ())
+				if(column.DataType != value.GetType ()) {
 					if(objIsDBNull == true && column.AllowDBNull == false)
 						throw new InvalidCastException ();
+					else if(objIsDBNull == false)
+						throw new InvalidCastException ();
+				}
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
