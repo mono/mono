@@ -1,5 +1,5 @@
 //
-// System.Data.Common.DbDataAdapter.cs
+// System.Data.Common.RowUpdatedEventArgs.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
