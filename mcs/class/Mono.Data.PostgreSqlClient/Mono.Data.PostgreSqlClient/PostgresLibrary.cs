@@ -192,14 +192,14 @@ namespace Mono.Data.PostgreSqlClient {
 		//		PQnoticeProcessor proc, void *arg);
 
 		[DllImport("pq")]
-		public static extern int PQescapeString (string to,
-                        string from, int length);
+		public static extern uint PQescapeString (out string to,
+                        string from, uint length);
 		// size_t PQescapeString(char *to, 
                 //      const char *from, size_t length);
 
 		[DllImport("pq")]
-		public static extern string PQescapeBytea (string bintext,
-                        int binlen, IntPtr bytealen);
+		public static extern byte[] PQescapeBytea (byte[] bintext,
+                        uint binlen, uint bytealen);
 		// unsigned char *PQescapeBytea(unsigned char *bintext, 
                 //      size_t binlen, size_t *bytealen);
 

@@ -108,6 +108,21 @@ namespace Mono.Data.PostgreSqlClient {
 			return new PgSqlParameter ();
 		}
 
+		public uint EscapeString (string to, string from, uint length) {
+			uint result = PostgresLibrary.PQescapeString (out to, from, length);
+			return result;
+		}
+
+		public byte[] EscapeByteArray (byte[] bintext, uint binlen, 
+			uint bytealen) {
+
+			byte[] result;
+			result = PostgresLibrary.PQescapeBytea (bintext,
+					binlen, bytealen);
+
+			return result;
+		}
+
 		public int ExecuteNonQuery () {	
 			IntPtr pgResult; // PGresult
 			int rowsAffected = -1;

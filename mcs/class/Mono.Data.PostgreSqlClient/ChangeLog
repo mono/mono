@@ -1,3 +1,11 @@
+2002-12-06  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.PostgreSqlClient/PgSqlCommand.cs: added
+	public methods EscapeString() and EscapeByteArray()
+	
+	* Mono.Data.PostgreSqlClient/PostgresLibrary.cs: updated
+	DllImport functions PQescapeString() and PQescapeBytea()
+	
 2002-11-26  Daniel Morgan <danmorg@sc.rr.com>
 
 	* list: changed the name of the files beginning 
