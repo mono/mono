@@ -1,3 +1,7 @@
+2004-02-03  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoGenericInst.GetInterfaces): Override this.
+
 2004-01-25  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs: Honor BindingFlags.DeclaredOnly.

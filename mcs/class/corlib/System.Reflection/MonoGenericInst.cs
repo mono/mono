@@ -99,6 +99,14 @@ namespace System.Reflection
 			get { return parent != null ? parent : generic_type.BaseType; }
 		}
 
+		public override Type[] GetInterfaces ()
+		{
+			if (interfaces != null)
+				return interfaces;
+			else
+				return Type.EmptyTypes;
+		}
+
 		protected override bool IsValueTypeImpl ()
 		{
 			if (BaseType == null)
