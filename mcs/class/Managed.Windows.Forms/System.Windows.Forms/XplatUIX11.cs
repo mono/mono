@@ -343,7 +343,6 @@ namespace System.Windows.Forms {
 					data.Dispose ();
 					handle_data [handle] = null;
 				}
-				XDestroyWindow(DisplayHandle, handle);
 			}
 		}
 
@@ -878,15 +877,15 @@ namespace System.Windows.Forms {
 					break;
 				}
 
-                        case XEventName.TimerNotify: {
-                                xevent.TimerNotifyEvent.handler (this, EventArgs.Empty);
-                                break;
-                        }
-                        	
-			default: {
-				msg.message = Msg.WM_NULL;
-				break;
-			}
+				case XEventName.TimerNotify: {
+					xevent.TimerNotifyEvent.handler (this, EventArgs.Empty);
+					break;
+				}
+		                        
+				default: {
+					msg.message = Msg.WM_NULL;
+					break;
+				}
 			}
 
 			NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
