@@ -1,5 +1,10 @@
 2004-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* SiteMap.cs: don't lock on Type.
+	* CapabilitiesLoader.cs: avoid 2 locks when loading data.
+
+2004-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpRequest.cs: patch by Dennis Gervalle that fixes PhysicalPath in
 	presence of rewriting.
 
