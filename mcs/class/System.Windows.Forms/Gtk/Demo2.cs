@@ -25,12 +25,27 @@ namespace demo2
 		private MenuItem menuItem3 = new MenuItem();
 		private MenuItem menuItem4 = new MenuItem();
 		private MenuItem menuItem5 = new MenuItem();
+
+ 		private ListBox lb = new ListBox();
+
 		private StatusBar statusBar1 = new StatusBar();
 		private StatusBar statusBar2 = new StatusBar();
 		private StatusBar statusBar3 = new StatusBar();
 
 		private void InitializeWidgets()
 		{
+			button1.Location = new Point(100, 28);
+			button1.Name = "button1";
+			button1.Size = new Size(128, 44);
+			button1.Text = "Color";
+			button1.Click += new EventHandler(this.button1_Click);    
+
+		//ivate StatusBar statusBar1 = new StatusBar();
+		//ivate StatusBar statusBar2 = new StatusBar();
+		//ivate StatusBar statusBar3 = new StatusBar();
+
+		//private void InitializeWidgets()
+		//{
 			this.statusBar1.Location = new System.Drawing.Point(0, 251);
 			this.statusBar1.Name = "statusBar1";
 			this.statusBar1.Size = new System.Drawing.Size(292, 22);
@@ -54,14 +69,26 @@ namespace demo2
 			button1.Size = new Size(128, 44);
 			button1.Text = "Color";
 			button1.Click += new EventHandler(this.button1_Click);    
+
 		 	button1.Enabled = true;
+
+
+			button2.Location = new Point(100, 80);
+			button2.Name = "button2";
+			button2.Size = new Size(128, 44);
+			button2.Text = "Add to ComboBox";
+			button2.Click += new EventHandler(this.button2_Click);    
 
 			button2.Location = new Point(150, 80);
 			button2.Name = "button2";
 			button2.Size = new Size(128, 44);
 			button2.Text = "Add to ComboBox";
 			button2.Click += new EventHandler(this.button2_Click);    
+
 		 	button2.Enabled = true;
+
+			this.lb.Location = new System.Drawing.Point(280, 28);
+			this.lb.Size = new System.Drawing.Size(200, 200);
 
 			menuItem1.Text = "File";
 			menuItem2.Text = "Exit";
@@ -78,7 +105,7 @@ namespace demo2
 			mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {menuItem1,
 							    menuItem3});
     
-			combo1.Location = new Point(150, 150);
+			combo1.Location = new Point(100, 150);
 			this.combo1.Items.AddRange(new object[] {"Item 1",
 				"Item 2",
 				"Item 3",
@@ -89,9 +116,11 @@ namespace demo2
 									    this.button1,
 									    this.button2,
 									    this.color1,
+									    this.lb,
 									    this.combo1, 
 									    this.statusBar1,
 									    this.statusBar2});
+
 
 			this.Size = new Size(512, 250);
 			this.Menu = mainMenu1;
@@ -110,8 +139,16 @@ namespace demo2
 
 		private void button2_Click(object sender, EventArgs e){ 
 			combo1.BeginUpdate();
+
+			for (int i = 1; i < 5; i++) {
+				combo1.Items.Add("Joel");
+				lb.Items.Add("MyItems");
+			}
+			combo1.EndUpdate();	
+
 			for (int i = 1; i < 5; i++) {combo1.Items.Add("Joel");}
 			combo1.EndUpdate();	
+
   		}
 		private void  menuItem2_Click (object sender, EventArgs e){
 			MessageBox.Show("You clicked Exit");

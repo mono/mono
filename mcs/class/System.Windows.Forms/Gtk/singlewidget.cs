@@ -17,7 +17,7 @@ namespace singlewidget
 	public class GtkForm : System.Windows.Forms.Form
 	{
 		private HScrollBar hScrollBar1 = new HScrollBar();
-
+		
 		private void InitializeWidgets()
 		{
 
@@ -27,11 +27,10 @@ namespace singlewidget
 			this.hScrollBar1.Name = "hScrollBar1";
 			this.hScrollBar1.Size = new System.Drawing.Size(360, 24);
 
-
 			this.Controls.AddRange(new System.Windows.Forms.Control[] { 
 						this.hScrollBar1 });
 
-			this.Size = new Size(512, 250);
+			this.Size = new Size(512, 512);
 		}
 
 		public GtkForm()

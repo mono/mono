@@ -55,7 +55,7 @@ namespace System.Windows.Forms{
 		private void CreateMenuBar (){
 			
 			mb = new Gtk.MenuBar ();
-			
+		
 		}
 
 	}

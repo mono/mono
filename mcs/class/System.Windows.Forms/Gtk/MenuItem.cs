@@ -57,10 +57,10 @@ namespace System.Windows.Forms{
 			}
 			set{
 				text2 = value; 
-				if (text == null){
+				//if (text == null){
 					text = value.Replace("&", "_");
 					CreateMenuItem();
-				}	
+				//}	
 			}
 		}	
 		
@@ -69,6 +69,7 @@ namespace System.Windows.Forms{
 				file_item = new Gtk.MenuItem(text);	
 				ConnectToClick();
 				file_item.Show();
+				Console.WriteLine(text);
 			}
 			else{
 			CreateCheckMenu();	
@@ -80,10 +81,10 @@ namespace System.Windows.Forms{
 				return this.shortcut;
 			}
 			set{
-				if (this.shortcut != value) {
+				//if (this.shortcut != value) {
 					this.shortcut = value;
 					ShortcutHelper.AddShortcutToWidget (file_item, new Gtk.AccelGroup(), this.shortcut, "activate");
-				}
+				//}
 			}
 		}
 		
@@ -123,7 +124,7 @@ namespace System.Windows.Forms{
 		{
 			this.file_item.Activated += new EventHandler (OnClick);
 		}
-
+		
 		
 	}
 

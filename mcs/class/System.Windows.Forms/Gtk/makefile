@@ -57,9 +57,12 @@ SOURCES = \
 	DrawItemState.cs \
 	MouseButtons.cs \
 	DockStyle.cs \
-	LayoutEventArgs.cs 
-
+	ListControl.cs	\
+	ListBox.cs	\
+	LayoutEventArgs.cs	\
+	
 all: demo.exe Demo2.exe Form1.exe StatusBarDemo.exe
+
 
 demo.exe: demo.cs System.Windows.Forms.dll
 	$(CSC) demo.cs -r System.Windows.Forms.dll -r System.Drawing 

@@ -455,5 +455,14 @@ namespace System.Windows.Forms {
 		protected virtual Size DefaultSize {
 			get { return new Size ( 100, 100 ); }
 		}
+		
+		public event EventHandler BindingContextChanged;
+		
+		protected virtual void OnBindingContextChanged (EventArgs e)
+    		{
+    			if (BindingContextChanged != null)
+    				BindingContextChanged (this, e);
+    		}
+		
 	}
 }
