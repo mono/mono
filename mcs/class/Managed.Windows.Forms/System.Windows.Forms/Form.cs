@@ -1150,6 +1150,7 @@ namespace System.Windows.Forms {
 		}
 
 		// LAMESPEC - Not documented that Form overrides ProcessDialogChar; class-status showed
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override bool ProcessDialogChar(char charCode) {
 			return base.ProcessDialogChar (charCode);
 		}

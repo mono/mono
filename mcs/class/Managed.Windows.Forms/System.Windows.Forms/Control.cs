@@ -62,6 +62,7 @@ namespace System.Windows.Forms
 		internal string			name;			// for object naming
 
 		// State
+		private bool			create_handled;		// true if OnCreateControl has been sent
 		internal bool			has_focus;		// true if control has focus
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_entered;		// is the mouse inside the control?
@@ -527,6 +528,7 @@ namespace System.Windows.Forms
 			prev_size = Size.Empty;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
+			create_handled = false;
 			is_visible = true;
 			is_captured = false;
 			is_disposed = false;
@@ -2036,18 +2038,19 @@ namespace System.Windows.Forms
 				CreateHandle();
 			}
 
-			for (int i=0; i<child_controls.Count; i++) {
-				if (!child_controls[i].IsHandleCreated) {
-					child_controls[i].CreateHandle();
-				}
+			if (!create_handled) {
+				create_handled = true;
+				OnCreateControl();
 			}
 
-			OnCreateControl();
+			for (int i=0; i<child_controls.Count; i++) {
+				child_controls[i].CreateControl();
+			}
 		}
 
 		public Graphics CreateGraphics() {
 			if (!IsHandleCreated) {
-				this.CreateHandle();
+				this.CreateControl();
 			}
 			return Graphics.FromHwnd(this.window.Handle);
 		}
@@ -2510,7 +2513,7 @@ namespace System.Windows.Forms
 
 		public void Show() {
 			if (!IsHandleCreated) {
-				this.CreateHandle();
+				this.CreateControl();
 			}
 
 			this.Visible=true;
@@ -2555,11 +2558,6 @@ namespace System.Windows.Forms
 			if (window==null) {
 				window = new ControlNativeWindow(this);
 				window.CreateHandle(CreateParams);
-
-				// window is only null if the handle is created for the first time; make sure OnCreateControl is triggered
-				// This also causes our children to be created ona CreateHandle call, which shouldn't really be a problem 
-				// but may not match MS
-				CreateControl();
 
 				// Find out where the window manager placed us
 				UpdateBounds();
@@ -2776,7 +2774,7 @@ namespace System.Windows.Forms
 					((Control)child.Current).RecreateHandle();
 				}
 			} else {
-				CreateHandle();
+				CreateControl();
 			}
 
 			is_recreating = false;
@@ -3029,6 +3027,8 @@ namespace System.Windows.Forms
 					}
 				} else {
 					this.CreateBuffers(bounds.Width, bounds.Height);
+
+					CreateControl();
 				}
 
 				if (value == false && parent != null) {
@@ -3810,7 +3810,7 @@ namespace System.Windows.Forms
 			} else {
 				if (!is_disposed) {
 					if (!this.IsHandleCreated) {
-						this.CreateHandle();
+						this.CreateControl();
 					}
 					PerformLayout();
 				}

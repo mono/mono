@@ -5,6 +5,14 @@
 
 2005-03-11  Peter Bartok  <pbartok@novell.com>
 
+	* Control.cs: Changed OnCreateControl behaviour based on a suggestion
+	  from Jonathan Gilbert; should fix bug #73606
+	* XplatUIX11.cs: Fixed NC Mouse message coordinates, they need to be
+	  in Screen coordinates. Thanks, Jordi.
+	* Form.cs: Added missing attribute
+
+2005-03-11  Peter Bartok  <pbartok@novell.com>
+
 	* Form.cs:
 	  - Rudimentary Mdi support
 	  - Removed outdated FormParent code

@@ -1953,21 +1953,36 @@ namespace System.Windows.Forms {
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
 							MouseState |= MouseButtons.Left;
-							msg.message = client ? Msg.WM_LBUTTONDOWN : Msg.WM_NCLBUTTONDOWN;
+							if (client) {
+								msg.message = Msg.WM_LBUTTONDOWN;
+							} else {
+								msg.message = Msg.WM_NCLBUTTONDOWN;
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 2: {
 							MouseState |= MouseButtons.Middle;
-							msg.message = client ? Msg.WM_MBUTTONDOWN : Msg.WM_NCMBUTTONDOWN;
+							if (client) {
+								msg.message = Msg.WM_MBUTTONDOWN;
+							} else {
+								msg.message = Msg.WM_NCMBUTTONDOWN;
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 3: {
 							MouseState |= MouseButtons.Right;
-							msg.message = client ? Msg.WM_RBUTTONDOWN : Msg.WM_NCRBUTTONDOWN;
+							if (client) {
+								msg.message = Msg.WM_RBUTTONDOWN;
+							} else {
+								msg.message = Msg.WM_NCRBUTTONDOWN;
+								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
