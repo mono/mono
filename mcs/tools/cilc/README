@@ -15,7 +15,7 @@ pending tasks.
 For a demonstration, see Test.cs and demo.c to get an idea of what's going on.
 Then run:
 
-$ make test
+$ make run-test-local
 $ cd generated
 $ ./demo
 

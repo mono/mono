@@ -7,6 +7,7 @@
 	Report ignored types, warn on potentially incorrect code generation.
 	More conflict avoidance.
 	Cleaned up warnings.
+	* README: Update test instructions.
 
 2004-12-06  Alp Toker  <alp@atoker.com>
 
