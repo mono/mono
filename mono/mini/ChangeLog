@@ -1,5 +1,8 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ops.h inssel-amd64.brg cpu-amd64.md mini-amd64.c: Implement
+	some Interlocked functions as inline ops.
+
 	* mini.c (move_basic_block_to_end): Fix bug in last patch.
 
 	* mini.h (MonoBasicBlock): Reorganize fields a bit.
