@@ -87,6 +87,19 @@ namespace TestSystemDataSqlClient {
 			dropCommand.ExecuteNonQuery ();
 		}
 
+		static object CallStoredProcedure (IDbConnection cnc) {
+				 
+			IDbCommand callStoredProcCommand = cnc.CreateCommand ();
+			object data;
+
+			callStoredProcCommand.CommandText =
+				"select version()";
+							
+			data = callStoredProcCommand.ExecuteScalar ();
+
+			return data;
+		}
+
 		static void InsertData (IDbConnection cnc) {		
 
 			IDbCommand insertCommand = cnc.CreateCommand();
@@ -317,6 +330,11 @@ namespace TestSystemDataSqlClient {
 				}
 				reader.Close();
 				Console.WriteLine ("Rows: " + nRows);		
+
+				// Call a Stored Procedure named Version()
+				Console.WriteLine("\t\tCalling stored procedure version()");
+				object obj = CallStoredProcedure(cnc);
+				Console.WriteLine("Result: " + obj);
 
 				/* Clean up */
 				Console.WriteLine ("Clean up...");

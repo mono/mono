@@ -1,5 +1,12 @@
 2002-05-11  Daniel Morgan <danmorg@sc.rr.com>
 
+	* Test/PostgresTest.cs: added call to PostgreSQL stored procedure
+	version() which returns the version of the PostgreSQL DBMS you
+	are connected to.  This works and I did not realize it.  Thanks
+	goes to Gonzalo.
+
+2002-05-11  Daniel Morgan <danmorg@sc.rr.com>
+
 	* AllTests.cs: needed a using for System.Data and System.Data.SqlClient,
 	changed SqlTypes.AllTests.Suite to System.Data.SqlTypes.AllTests.Suite
 	
