@@ -1,4 +1,4 @@
-// cs0619.cs: 'Obsolete.MethodError()' is obsolete: 'Do not use it'
+// cs0619.cs: 'Obsolete.Error' is obsolete: 'Do not use it'
 // Line: 15
 
 class Obsolete {
