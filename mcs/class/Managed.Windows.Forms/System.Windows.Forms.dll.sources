@@ -95,4 +95,7 @@ System.Windows.Forms/XplatUIWin32.cs
 System.Windows.Forms/XplatUIX11.cs
 System.Windows.Forms/VScrollBar.cs
 System.Windows.Forms/HScrollBar.cs
+System.Windows.Forms/TrackBar.cs
+System.Windows.Forms/Orientation.cs
+System.Windows.Forms/TickStyle.cs
 
