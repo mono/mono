@@ -1,3 +1,8 @@
+2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPEndPoint.cs: modifications to constructors according to the
+	specifications (suggested by Lawrence Pit).
+
 2002-04-15  Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* IPEndPoint.cs: Fixed build breaker.

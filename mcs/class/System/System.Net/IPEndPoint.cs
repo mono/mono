@@ -18,24 +18,15 @@ namespace System.Net {
 		
 		public IPEndPoint (IPAddress address, int port)
 		{
-			if(port<MinPort || port>MaxPort) {
-				throw new ArgumentException("Invalid port");
-			}
-			
+			if (address == null)
+				throw new ArgumentNullException ("Value cannot be null");
+
 			Address = address;
 			Port = port;
 		}
 		
-		public IPEndPoint (long iaddr, int port)
+		public IPEndPoint (long iaddr, int port) : this (new IPAddress (iaddr), port)
 		{
-			if(port<MinPort || port>MaxPort) {
-				throw new ArgumentException("Invalid port");
-			}
-			
-			IPAddress address = new IPAddress (iaddr);
-			
-			Address = address;
-			Port = port;
 		}
 
 		private IPAddress address;
@@ -61,6 +52,10 @@ namespace System.Net {
 			}
 			set {
 				// LAMESPEC: no mention of sanity checking
+				// PS: MS controls the range when setting the value
+				if (value < MinPort || value > MaxPort)
+					throw new ArgumentOutOfRangeException ("Invalid port");
+			
 				port = value;
 			}
 		}
