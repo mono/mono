@@ -33,9 +33,9 @@ namespace Mono.Util {
 		{
 			Console.Write (
 				"docstub -l <lang> -d <directory> -a <assembly>\n\n" +
-				"   -d || /-d || --dir       <directory>             The directory to write the xml files to.\n" +
-				"   -a || /-a || --assembly  <assembly>              Specifies the target assembly to load and parse.\n" +
-				"   -l || /-l || --language  <two-letter ISO code>   Specifies the language encoding.\n\n");
+				"   -d || --dir       <directory>             The directory to write the xml files to.\n" +
+				"   -a || --assembly  <assembly>              Specifies the target assembly to load and parse.\n" +
+				"   -l || --language  <two-letter ISO code>   Specifies the language encoding.\n\n");
 		}
 
 		public static void Main(string[] args)
@@ -43,7 +43,7 @@ namespace Mono.Util {
 			DocStub stub = new DocStub(args);
 		}
 
-		public DocStub(string [] args)
+		public DocStub(string[] args)
 		{
 			assembly_file = null;
 			directory = null;
@@ -53,32 +53,27 @@ namespace Mono.Util {
 
 				string arg = args[i];
 
-				// The "/" switch is there for wine users, like me ;-)
-				if(arg.StartsWith("-") || arg.StartsWith("/")) {
+				if(arg.StartsWith("-")) {
 
 					switch(arg) {
 
-
-					case "-d": case "/-d": case "--directory":
+					case "-d": case "--directory":
 						if((i + 1) >= argc) {
-
 							Usage();
 							return;
 						}
 						directory = args[++i];
 						continue;
 
-					case "-a": case "/-a": case "--assembly":
+					case "-a": case "--assembly":
 						if((i + 1) >= argc) {
-
 							Usage();
 							return;
 						}
 						assembly_file = args[++i];
 						continue;
-					case "-l": case "/-l": case "--language":
+					case "-l": case "--language":
 						if((i + 1) >= argc) {
-
 							Usage();
 							return;
 						}
@@ -93,17 +88,14 @@ namespace Mono.Util {
 			}
 
 			if(assembly_file == null) {
-
 				Usage();
 				return;
 			} else if(directory == null) {
-
 				Usage();
 				return;
 			}
 
 			if (!Directory.Exists(directory) && directory != null) {
-
                 Directory.CreateDirectory(directory);
             }
 
@@ -115,11 +107,9 @@ namespace Mono.Util {
 		private void MakeXml()
 		{
 			try {
-
 				assembly = LoadAssembly(Path.GetFullPath(assembly_file));
 			}
 			catch (Exception e) {
-
 				Console.WriteLine(e.Message);
 			}
 			Write();
@@ -128,18 +118,17 @@ namespace Mono.Util {
 		private void Write()
 		{
 			foreach(Module module in assembly.GetModules()) {
-
 				WriteNamespaces(module);
 			}
 		}
 
 		private void WriteNamespaces(Module module)
 		{
-			Type[] types = module.GetTypes();
+			Type[] types = GetMyTypes(module);
 			StringCollection namespaceNames = GetNamespaceNames(types);
-			XmlTextWriter dummy = new XmlTextWriter(".temp.xml", null);
-			foreach (string namespaceName in namespaceNames) {
+			XmlTextWriter dummy = new XmlTextWriter("temp.xml", new UTF8Encoding());
 
+			foreach (string namespaceName in namespaceNames) {
 				currentNamespace = namespaceName;
 				WriteClasses(dummy, types);
 				WriteInterfaces(dummy, types);
@@ -149,17 +138,17 @@ namespace Mono.Util {
 			}
 
             dummy.Close();
-			File.Delete(".temp.xml");
+			File.Delete("temp.xml");
 		}
 
 		private XmlTextWriter StartDocument()
 		{
 			if (!Directory.Exists(directory+"/"+currentNamespace) && directory != null) {
-
                 Directory.CreateDirectory(directory+"/"+currentNamespace);
             }
+
 			string filename = directory+"/"+currentNamespace+"/"+docname+".xml";
-   			XmlTextWriter writer = new XmlTextWriter (filename, null);
+   			XmlTextWriter writer = new XmlTextWriter (filename, new UTF8Encoding());
 			writer.Formatting = Formatting.Indented;
 			writer.Indentation=4;
 			writer.WriteStartDocument();
@@ -191,15 +180,11 @@ namespace Mono.Util {
 		private StringCollection GetNamespaceNames(Type[] types)
 		{
 			StringCollection namespaceNames = new StringCollection();
-
 			foreach (Type type in types) {
-
-				if (namespaceNames.Contains(type.Namespace) == false) {
-
+				if (!namespaceNames.Contains(type.Namespace)) {
 					namespaceNames.Add(type.Namespace);
 				}
 			}
-
 			return namespaceNames;
 		}
 
@@ -240,7 +225,6 @@ namespace Mono.Util {
 		public static Assembly LoadAssembly(string filename)
 		{
 			if (!File.Exists(filename)) {
-
 				throw new ApplicationException("can't find assembly " + filename);
 			}
 
@@ -252,9 +236,33 @@ namespace Mono.Util {
 			return Assembly.Load(buffer);
 		}
 
+		private Type[] GetMyTypes(Module module)
+		{
+			int i = 0;
+			Type[] temp = module.GetTypes();
+			ArrayList list = new ArrayList();
+			foreach (Type type in temp) {
+				if (MustDocumentType(type)) {
+     				list.Add(type);
+				}
+			}
+			Type[] types = new Type[list.Count];
+			foreach (Type type in list) {
+				types[i++] = type;
+			}
+			return types;
+		}
+
 		private bool MustDocumentType(Type type)
 		{
-			return (type.IsPublic || type.IsNestedPublic);
+			if (type != null) {
+				return ((type.IsPublic ||
+						type.IsNestedPublic) &&
+						!type.FullName.Equals("Driver") &&
+						!type.FullName.Equals("Profile"));
+			} else {
+				return false;
+			}
 		}
 
 		private bool MustDocumentMethod(MethodBase method)
@@ -287,9 +295,7 @@ namespace Mono.Util {
 		private void WriteClasses(XmlTextWriter writer, Type[] types)
 		{
 			foreach (Type type in types) {
-
-				if (type.IsClass && !IsDelegate(type) && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
-
+				if (type.IsClass && !IsDelegate(type) && type.Namespace.Equals(currentNamespace)) {
 					classname = type.FullName;
 					docname = type.Name;
 					if (!nested) {
@@ -308,7 +314,7 @@ namespace Mono.Util {
 		{
   			foreach (Type type in types) {
 
-				if (type.IsInterface && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+				if (type.IsInterface && type.Namespace.Equals(currentNamespace)) {
 
 					classname = type.FullName;
 					docname = type.Name;
@@ -328,7 +334,7 @@ namespace Mono.Util {
 		{
 			foreach (Type type in types) {
 
-				if (type.IsValueType && !type.IsEnum && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+				if (type.IsValueType && !type.IsEnum && type.Namespace.Equals(currentNamespace)) {
 
 					classname = type.FullName;
 					docname = type.Name;
@@ -348,7 +354,7 @@ namespace Mono.Util {
 		{
 			foreach (Type type in types) {
 
-				if (type.IsClass && IsDelegate(type) && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+				if (type.IsClass && IsDelegate(type) && type.Namespace.Equals(currentNamespace)) {
 
 					classname = type.FullName;
 					docname = type.Name;
@@ -368,7 +374,7 @@ namespace Mono.Util {
 		{
 			foreach (Type type in types) {
 
-				if (type.IsEnum && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+				if (type.IsEnum && type.Namespace.Equals(currentNamespace)) {
 
 					classname = type.FullName;
 					docname = type.Name;
@@ -417,7 +423,6 @@ namespace Mono.Util {
 		// Writes XML documenting an interface.
 		private void WriteInterface(XmlTextWriter writer, Type type)
 		{
-			Type[] types = type.GetNestedTypes();
 			AssemblyName assemblyName = assembly.GetName();
 
 			writer.WriteStartElement("interface");
@@ -431,7 +436,6 @@ namespace Mono.Util {
 		// Writes XML documenting a delegate.
 		private void WriteDelegate(XmlTextWriter writer, Type type)
 		{
-			Type[] types = type.GetNestedTypes();
 			AssemblyName assemblyName = assembly.GetName();
 
 			writer.WriteStartElement("delegate");
@@ -439,9 +443,6 @@ namespace Mono.Util {
 			writer.WriteAttributeString("assembly", assemblyName.Name);
 			writer.WriteElementString("summary","TODO");
 			writer.WriteElementString("remarks","TODO");
-
-			//param
-
 			writer.WriteEndElement();
 		}
 
@@ -620,7 +621,6 @@ namespace Mono.Util {
 
 				WriteParameter(writer, parameter);
 			}
-
 
 			writer.WriteEndElement();
 		}
