@@ -1,3 +1,8 @@
+2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ExpressionBuilderContext.cs:
+	* ExpressionBuilder.cs: implemented.
+
 2005-02-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: don't fail on <tbody runat=server>. Fixes bug #71856.
