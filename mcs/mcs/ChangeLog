@@ -1,3 +1,10 @@
+2003-09-19  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCache.SetupCacheForInterface): Take a
+	`MemberCache parent' argument.  Normally, an interface doesn't
+	have a parent type except System.Object, but we use this in gmcs
+	for generic type parameters.
+
 2003-09-18  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeHandle.ctor): Set `IsInterface' solely based
