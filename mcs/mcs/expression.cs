@@ -2686,6 +2686,9 @@ namespace Mono.CSharp {
 		{
 			expr = expr.Resolve (ec);
 
+			if (expr == null)
+				return null;
+			
 			if (expr.Type != TypeManager.bool_type)
 				expr = Expression.ConvertImplicitRequired (
 					ec, expr, TypeManager.bool_type, loc);
@@ -2693,7 +2696,7 @@ namespace Mono.CSharp {
 			trueExpr = trueExpr.Resolve (ec);
 			falseExpr = falseExpr.Resolve (ec);
 
-			if (expr == null || trueExpr == null || falseExpr == null)
+			if (trueExpr == null || falseExpr == null)
 				return null;
 
 			eclass = ExprClass.Value;

@@ -1,3 +1,8 @@
+2002-08-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Conditional): If we can not resolve the
+	expression, return, do not crash.
+
 2002-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* cs-tokenizer.cs:
