@@ -1,3 +1,14 @@
+2003-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c:
+	(Select_internal): allow NULLs, don't create arrays if not needed.
+	Coupled with Socket.cs changes.
+
+	* threadpool.c:
+	(mono_thread_pool_add): use GC_MALLOC to allocate the ASyncCall and
+	register a finalizer for it that will close the semaphore handle. This
+	fixes the leak and make Lupus' test run with > 4080 loops.
+
 2003-05-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_struct_to_ptr): added fixes from

@@ -1,3 +1,11 @@
+2003-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c: added some debugging code. Call GC_gcollect
+	before creating a new handle. It makes Lupus' test run smoother and
+	faster (from 62 to 83 request per second). Notice that calling
+	GC_finalizer_notifier if needed (GC_should_invoke_finalizer ()) does
+	not improve nor degrade the performance, so i don't do it.
+
 2003-05-02  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: Rearrange closesocket() and socket_close_private(),
