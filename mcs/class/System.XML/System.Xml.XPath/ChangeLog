@@ -1,3 +1,9 @@
+2002-07-12  Piers Haken <piersh@friskit.com>
+
+	* Iterator.cs: PredicateIterator: handle numeric predicates
+	* Parser.jay: add some debugging support: yyparseDebug
+	* Tokenizer.cs: cleanup, include '-' chars in identifier tokens
+
 2002-06-29  Piers Haken <piersh@friskit.com>
 
 	* Expression.cs:

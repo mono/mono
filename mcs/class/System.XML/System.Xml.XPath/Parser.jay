@@ -15,6 +15,10 @@ namespace Mono.Xml.XPath
 {
 	public class XPathParser
 	{
+		internal object yyparseDebug (Tokenizer tok)
+		{
+			return yyparse (tok, new yydebug.yyDebugSimple ());
+		}
 
 %}
 

@@ -55,11 +55,6 @@ namespace System.Xml.XPath
 				m_mapTokens.Add (rgTokenMap [i + 1], rgTokenMap [i]);
 		}
 
-/*		public Tokenizer (StreamReader input)
-		{
-			m_input = input;
-			SkipWhitespace ();
-		}*/
 		public Tokenizer (string strInput)
 		{
 			m_rgchInput = strInput.ToCharArray ();
@@ -73,7 +68,6 @@ namespace System.Xml.XPath
 			if (m_ich >= m_cch)
 				return -1;
 			return m_rgchInput [m_ich];
-			//return m_input.Peek ();
 		}
 
 		private int GetChar ()
@@ -81,7 +75,6 @@ namespace System.Xml.XPath
 			if (m_ich >= m_cch)
 				return -1;
 			return m_rgchInput [m_ich++];
-			//return m_input.Read ();
 		}
 
 		private void SkipWhitespace ()
@@ -133,7 +126,7 @@ namespace System.Xml.XPath
 			while (true)
 			{
 				int ch = Peek ();
-				if (ch == '_' ||
+				if (ch == '_' || ch == '-' ||
 						(ch >= 'a' && ch <= 'z') ||
 						(ch >= 'A' && ch <= 'Z'))
 				{
@@ -172,8 +165,6 @@ namespace System.Xml.XPath
 
 		int ParseToken ()
 		{
-//			while (IsWhitespace (Peek ()))
-//				GetChar ();
 			switch (Peek ())
 			{
 				case -1:

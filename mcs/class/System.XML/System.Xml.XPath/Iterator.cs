@@ -525,7 +525,16 @@ namespace System.Xml.XPath
 				bool fTrue = true;
 				foreach (Expression pred in _preds)
 				{
-					if (!pred.EvaluateBoolean ((BaseIterator) _iter.Clone ()))
+					object result = pred.Evaluate ((BaseIterator) _iter.Clone ());
+					if (result is double)
+					{
+						if ((double) result != _iter.CurrentPosition)
+						{
+							fTrue = false;
+							break;
+						}
+					}
+					else if (!XPathFunctions.ToBoolean (result))
 					{
 						fTrue = false;
 						break;
