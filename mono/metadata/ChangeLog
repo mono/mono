@@ -1,4 +1,8 @@
 
+Wed Jun 12 16:30:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, marshal.c marshal.h: more Marshal class implementation.
+
 Tue Jun 11 17:29:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fix call convention.
