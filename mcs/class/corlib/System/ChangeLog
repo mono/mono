@@ -1,3 +1,13 @@
+2005-01-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* DateTime.cs: Return immediately if useutc is set to true, there
+	is no need to do the extra computation (which also happened to
+	create a new DateTime using the `use_localtime' constructor, which
+	lead to the erroneous date returns when using 'u' or `U'
+	formats).   
+
+	Fixes another bug in the regression test suite.
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* AppDomain.cs: Fix the DefaultDomain property to return the root 
