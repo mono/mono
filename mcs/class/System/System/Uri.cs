@@ -711,6 +711,9 @@ namespace System
 					break;
 			}
 
+			if (pos == len)
+				throw new UriFormatException ("The format of the URI could not be determined.");
+				
 			// 2 scheme
 			if (c == ':') {				
 				if (pos == 1) {
@@ -773,8 +776,7 @@ namespace System
 				string portStr = uriString.Remove (0, pos + 1);
 				if (portStr.Length > 1 && portStr [portStr.Length - 1] != ']') {
 					try {
-						port = Int32.Parse (portStr);
-						new System.Net.IPEndPoint (0, port);  // test validity port
+						port = (int) UInt32.Parse (portStr);
 						uriString = uriString.Substring (0, pos);
 					} catch (Exception) {
 						throw new UriFormatException ("Invalid URI: invalid port number");
@@ -787,12 +789,14 @@ namespace System
 			
 			// 4 authority
 			host = uriString;
-			if (host.Length > 1 && host [0] == '[' && host [host.Length - 1] == ']') 
+			if (host.Length > 1 && host [0] == '[' && host [host.Length - 1] == ']') {
 				try {
 					host = "[" + IPv6Address.Parse (host).ToString () + "]";
 				} catch (Exception) {
 					throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
 				}
+			}
+
 			if (host.Length == 2 && host [1] == ':') {
 				// windows filepath
 				path = host + path;
