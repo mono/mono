@@ -34,7 +34,11 @@ namespace System.Windows.Forms {
 		private bool showRootLines;
 		private ImageList imageList;
 		private bool sorted;
+		private TreeNode selectedNode;
+		private TreeNode dummyNode;
+
 		const int DefaultIndent = 19;
+		
 		//
 		//  --- Public Constructors
 		//
@@ -56,6 +60,9 @@ namespace System.Windows.Forms {
 			imageIndex = 0;
 			imageList = null;
 			indent = DefaultIndent;
+			selectedNode = null;
+
+			dummyNode = new TreeNode( RootHandle, this );
 		}
 		
 		// --- Public Properties
@@ -227,7 +234,7 @@ namespace System.Windows.Forms {
 		public TreeNodeCollection Nodes {
 			get {
 				if ( nodes == null )
-					nodes = new TreeNodeCollection ( null, this );
+					nodes = new TreeNodeCollection ( dummyNode );
 				return nodes;
 			}
 		}
@@ -265,13 +272,17 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public TreeNode SelectedNode {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( IsHandleCreated ) {
+					int hitem = Win32.SendMessage ( Handle, (int) TreeViewMessages.TVM_GETNEXTITEM, (int)TreeViewItemSelFlags.TVGN_CARET, 0 );
+					selectedNode = TreeNode.FromHandle ( this, (IntPtr) hitem );
+				}
+				return selectedNode;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				selectedNode = value;
+				if ( IsHandleCreated )
+					selectItem ( selectedNode != null ? selectedNode.Handle : IntPtr.Zero );
 			}
 		}
 
@@ -324,6 +335,8 @@ namespace System.Windows.Forms {
 			get { return sorted; }
 			set {
 				sorted = value;
+				if ( IsHandleCreated && sorted )
+					sortTree ( );
 			}
 		}
 
@@ -455,7 +468,6 @@ namespace System.Windows.Forms {
 		{
 			initCommonControlsLibrary ( );
 			base.CreateHandle();
-			makeTree ( );
 		}
 
 
@@ -520,6 +532,8 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.OnHandleCreated(e);
+
+			makeTree ( );
 			
 			setImageList ( );
 			if ( BackColor != Control.DefaultBackColor )
@@ -528,6 +542,8 @@ namespace System.Windows.Forms {
 				setForeColor ( );
 			if ( Indent != DefaultIndent )
 				setIndent ( );
+			if ( selectedNode != null )
+				selectItem ( selectedNode.Handle );
 		}
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e)
@@ -574,14 +590,8 @@ namespace System.Windows.Forms {
 
 		internal void makeTree ( )
 		{
-			IntPtr parent = IntPtr.Zero;
-			unchecked {
-				int intPtr = ( int ) TreeViewItemInsertPosition.TVI_ROOT;
-				parent = (IntPtr) intPtr;
-			}
-
 			foreach ( TreeNode node in Nodes )
-				node.makeTree ( parent );
+				node.makeTree ( RootHandle );
 		}
 
 		private void setBackColor ( )
@@ -620,5 +630,27 @@ namespace System.Windows.Forms {
 		{
 			Win32.SendMessage ( Handle , (int)TreeViewMessages.TVM_SETINDENT, Indent, 0 ) ;
 		}
+
+		private void selectItem ( IntPtr handle )
+		{
+			Win32.SendMessage ( Handle , (int)TreeViewMessages.TVM_SELECTITEM, (int)TreeViewItemSelFlags.TVGN_CARET, handle.ToInt32 ( ) ) ;
+		}
+
+		internal static IntPtr RootHandle {
+			get {
+				int rootHandle = 0;
+				unchecked {
+					rootHandle = (int) TreeViewItemInsertPosition.TVI_ROOT;
+				}
+				return ( IntPtr ) rootHandle;
+			}
+		}
+
+		private void sortTree ( )
+		{
+			int res = Win32.SendMessage ( Handle, (int)TreeViewMessages.TVM_SORTCHILDREN, 0, RootHandle.ToInt32 ( ) );
+			foreach ( TreeNode node in Nodes )
+				node.sortNode ( );
+		}		
 	}
 }

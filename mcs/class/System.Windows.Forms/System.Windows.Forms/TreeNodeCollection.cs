@@ -22,11 +22,10 @@ namespace System.Windows.Forms {
 		private ArrayList list;
 		private TreeView  treeView;
 
-		internal TreeNodeCollection ( TreeNode owner, TreeView  treeView )
+		internal TreeNodeCollection ( TreeNode owner )
 		{
 			list = new ArrayList();
 			this.owner = owner;
-			this.treeView = treeView;
 		}
 		
 		public int Count {
@@ -63,8 +62,13 @@ namespace System.Windows.Forms {
 				throw new ArgumentException("Object already has a parent.", "node");
 
 			node.setParent( owner );
-			node.setTreeView ( treeView );
+
 			int index = list.Add( node );
+
+			TreeView tree = owner.TreeView;
+			if ( tree != null && tree.IsHandleCreated )
+				node.createNode ( );
+
 			return 	index;		
 		}
 
@@ -224,6 +228,11 @@ namespace System.Windows.Forms {
 		}
 		void ICollection.CopyTo(Array array, int index){
 			//FIXME:
+		}
+
+		internal TreeView TreeView {
+			get { return treeView; }
+			set { treeView = value;}
 		}
 		// End Of ICollection
 	}

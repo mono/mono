@@ -1297,6 +1297,20 @@ namespace System.Windows.Forms{
 	}
 	#endregion
 
+	public enum TreeViewItemSelFlags : int {
+		TVGN_ROOT               = 0x0000,
+		TVGN_NEXT               = 0x0001,
+		TVGN_PREVIOUS           = 0x0002,
+		TVGN_PARENT             = 0x0003,
+		TVGN_CHILD              = 0x0004,
+		TVGN_FIRSTVISIBLE       = 0x0005,
+		TVGN_NEXTVISIBLE        = 0x0006,
+		TVGN_PREVIOUSVISIBLE    = 0x0007,
+		TVGN_DROPHILITE         = 0x0008,
+		TVGN_CARET              = 0x0009,
+		TVGN_LASTVISIBLE        = 0x000A
+	}
+
 	#region ListViewItem flags
 	public enum ListViewItemFlags {
 		LVIF_TEXT               = 0x0001,
