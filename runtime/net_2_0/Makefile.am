@@ -10,6 +10,12 @@ else
 mono_runtime = $(top_builddir)/mono/interpreter/mint
 endif
 
+if PLATFORM_WIN32
+MONO_CSHARP_DEBUGGER =
+else
+MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
+endif
+
 gac_assemblies_list = \
 	Accessibility					\
 	ByteFX.Data					\
@@ -27,7 +33,7 @@ gac_assemblies_list = \
 	Microsoft.VisualC				\
 	Microsoft.Vsa					\
 	Mono.Cairo					\
-	Mono.CSharp.Debugger				\
+	$(MONO_CSHARP_DEBUGGER)				\
 	Mono.Data.SybaseClient				\
 	Mono.Data.SqliteClient				\
 	Mono.Data.TdsClient				\
