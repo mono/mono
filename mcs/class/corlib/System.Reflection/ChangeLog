@@ -1,3 +1,8 @@
+2004-08-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* Assembly.cs: Made _minimum, _optional, _refuse fields internal.
+	To be reusable by AssemblyBuilder.
+
 2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Fixed some exceptions in NET_1_1 and added some 2.0

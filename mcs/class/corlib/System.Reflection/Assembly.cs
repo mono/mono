@@ -56,9 +56,9 @@ namespace System.Reflection {
 
 		private ResolveEventHolder resolve_event_holder;
 		private Evidence _evidence;
-		private PermissionSet _minimum;		// for SecurityAction.RequestMinimum
-		private PermissionSet _optional;	// for SecurityAction.RequestOptional
-		private PermissionSet _refuse;		// for SecurityAction.RequestRefuse
+		internal PermissionSet _minimum;		// for SecurityAction.RequestMinimum
+		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
+		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
 		private PermissionSet _denied;		// for the resolved assembly denied permissions
 		

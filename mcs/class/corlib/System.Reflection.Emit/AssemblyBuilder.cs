@@ -110,7 +110,6 @@ namespace System.Reflection.Emit {
 		bool created;
 		bool is_module_only;
 		private Mono.Security.StrongName sn;
-		PermissionSet required_perm, optional_perm, refused_perm;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -215,9 +214,9 @@ namespace System.Reflection.Emit {
 			if (created)
 				throw new InvalidOperationException ("Assembly was already saved.");
 
-			required_perm = required;
-			optional_perm = optional;
-			refused_perm = refused;
+			_minimum = required;
+			_optional = optional;
+			_refuse = refused;
 		}
 
 		internal void EmbedResourceFile (string name, string fileName)
