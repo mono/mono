@@ -1,5 +1,8 @@
 2004-02-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini-x86.c mini-ppc.c mini-sparc.c linear-scan.c: 
+	Make the cost of allocating a variable to a register arch dependent.
+
 	* basic-calls.cs: Fix compilation of tests.
 	
 	* mini.h mini.c tramp-x86.c mini-x86.c: Add mono_running_on_valgrind ()
