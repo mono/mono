@@ -26,15 +26,13 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum DataControlRowState
-        {
+namespace System.Web.UI.WebControls {
+        public enum DataControlRowState {
                 Normal = 0,
-				Alternate = 1,
-				Selected = 2,
-				Edit = 4,
-				Insert = 8
+		Alternate = 1,
+		Selected = 2,
+		Edit = 4,
+		Insert = 8
         }
 }
 #endif

@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum ImageFieldMode
-        {
+namespace System.Web.UI.WebControls {
+        public enum ImageFieldMode {
                 ImageData = 0,
-				ImageUrl = 1		
+		ImageUrl = 1		
         }
 }
 #endif

@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum FormViewMode
-        {
+namespace System.Web.UI.WebControls {
+        public enum FormViewMode {
                 ReadOnly = 0,
-				Edit = 1,
-				Insert = 2		
+		Edit = 1,
+		Insert = 2		
         }
 }
 #endif

@@ -26,16 +26,14 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum DataControlRowType
-        {
+namespace System.Web.UI.WebControls {
+        public enum DataControlRowType {
                 Header = 0,
-				Footer = 1,
-				DataRow = 2,
-				Seperator = 3,
-				Pager = 4,
-				EmptyDataRow = 5				
+		Footer = 1,
+		DataRow = 2,
+		Seperator = 3,
+		Pager = 4,
+		EmptyDataRow = 5				
         }
 }
 #endif

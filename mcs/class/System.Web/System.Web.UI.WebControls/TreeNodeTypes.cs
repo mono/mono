@@ -26,16 +26,13 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum TreeNodeTypes
-        {
+namespace System.Web.UI.WebControls {
+        public enum TreeNodeTypes {
                 None = 0,
-				Root = 1,
-				Parent = 2,
-				Leaf = 4,
-				All = 7
-				
+		Root = 1,
+		Parent = 2,
+		Leaf = 4,
+		All = 7				
         }
 }
 #endif

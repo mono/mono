@@ -28,9 +28,8 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls{
-	public enum AutoCompleteType
-	{
+namespace System.Web.UI.WebControls {
+	public enum AutoCompleteType {
 		None = 0,
 		Disabled = 1,
 		Cellular = 2,

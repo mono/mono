@@ -26,14 +26,12 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum SiteMapNodeItemType
-        {
+namespace System.Web.UI.WebControls {
+        public enum SiteMapNodeItemType {
                 Root = 0,
-				Parent = 1,
-				Current = 2,
-				PathSeparator = 3
+		Parent = 1,
+		Current = 2,
+		PathSeparator = 3
         }
 }
 #endif

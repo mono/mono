@@ -26,14 +26,12 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum PagerButtons
-        {
+namespace System.Web.UI.WebControls {
+        public enum PagerButtons {
                 NextPrevious = 0,
-				Numeric = 1,
-				NextPreviousFirstLast = 2,
-				NumericFirstLast = 3
+		Numeric = 1,
+		NextPreviousFirstLast = 2,
+		NumericFirstLast = 3
         }
 }
 #endif

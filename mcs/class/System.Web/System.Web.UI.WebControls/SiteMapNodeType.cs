@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum SiteMapNodeType
-        {
+namespace System.Web.UI.WebControls {
+        public enum SiteMapNodeType {
                 Root = 0,
-				Parent = 1,
-				Current = 2,				
+		Parent = 1,
+		Current = 2,				
         }
 }
 #endif

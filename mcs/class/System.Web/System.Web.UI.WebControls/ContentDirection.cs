@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum ContentDirection
-        {
+namespace System.Web.UI.WebControls {
+        public enum ContentDirection {
                 NotSet = 0,
-				LeftToRight = 1,
-				RightToLeft = 2
-        }
+		LeftToRight = 1,
+		RightToLeft = 2
+	}
 }
 #endif

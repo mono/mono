@@ -28,9 +28,8 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls{
-	public enum AdType
-	{
+namespace System.Web.UI.WebControls {
+	public enum AdType {
 		Banner = 0,
 		Popup = 1,
 		Popunder = 2

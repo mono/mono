@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum TableHeaderScope
-        {
+namespace System.Web.UI.WebControls {
+        public enum TableHeaderScope {
                 NotSet = 0,
-				Row = 1,
-				Column = 2		
+		Row = 1,
+		Column = 2		
         }
 }
 #endif

@@ -26,14 +26,12 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum TreeNodeSelectAction
-        {
+namespace System.Web.UI.WebControls {
+        public enum TreeNodeSelectAction {
                 Select = 0,
-				Expand = 1,
-				SelectExpand = 2,
-				None = 3				
+		Expand = 1,
+		SelectExpand = 2,
+		None = 3				
         }
 }
 #endif

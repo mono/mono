@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum DynamicImageParameterMode
-        {
+namespace System.Web.UI.WebControls {
+        public enum DynamicImageParameterMode {
                 ImageGenerationStorage = 0,
-				QueryString = 1		
+		QueryString = 1		
         }
 }
 #endif

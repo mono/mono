@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum SortDirection
-        {
+namespace System.Web.UI.WebControls {
+        public enum SortDirection {
                 Ascending = 0,
-				Descending = 1		
+		Descending = 1		
         }
 }
 #endif

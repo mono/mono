@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum TableViewMode
-        {
+namespace System.Web.UI.WebControls {
+        public enum TableViewMode {
                 Summary = 0,
-				Details = 1		
+		Details = 1		
         }
 }
 #endif

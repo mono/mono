@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum LogoutAction
-        {
+namespace System.Web.UI.WebControls {
+        public enum LogoutAction {
                 Refresh = 0,
-				Redirect = 1,
-				RedirectToLoginPage = 2		
+		Redirect = 1,
+		RedirectToLoginPage = 2		
         }
 }
 #endif

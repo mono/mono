@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum PathDirection
-        {
+namespace System.Web.UI.WebControls {
+        public enum PathDirection {
                 RootToCurrent = 0,
-				CurrentToRoot = 1
+		CurrentToRoot = 1
         }
 }
 #endif

@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum LiteralMode
-        {
+namespace System.Web.UI.WebControls {
+        public enum LiteralMode {
                 Transform = 0,
-				PassThrough = 1,
-				Encode = 2		
+		PassThrough = 1,
+		Encode = 2		
         }
 }
 #endif

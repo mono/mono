@@ -26,15 +26,13 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum ScrollBars
-        {
+namespace System.Web.UI.WebControls {
+        public enum ScrollBars {
                 None = 0,
-				Horizontal = 1,
-				Vertical = 2,
-				Both = 3,
-				Auto = 4
+		Horizontal = 1,
+		Vertical = 2,
+		Both = 3,
+		Auto = 4
         }
 }
 #endif

@@ -26,15 +26,13 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls
-{
-        public enum TableCaptionAlign
-        {
+namespace System.Web.UI.WebControls {
+        public enum TableCaptionAlign {
                 NotSet = 0,
-				Top = 1,
-				Bottom = 2,
-				Left = 3,
-				Right = 4		
+		Top = 1,
+		Bottom = 2,
+		Left = 3,
+		Right = 4		
         }
 }
 #endif
