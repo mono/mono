@@ -319,20 +319,26 @@ namespace System.Xml
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {			
+			if (NodeType == XmlNodeType.Document ||
+			    NodeType == XmlNodeType.Element ||
+			    NodeType == XmlNodeType.Attribute ||
+			    NodeType == XmlNodeType.DocumentFragment) {			
 				if (IsReadOnly)
 					throw new ArgumentException ("The specified node is readonly.");
 
 				if (newChild.OwnerDocument != ownerDoc)
 					throw new ArgumentException ("Can't append a node created by another document.");
 
-				if(refChild != null) {
-					if(newChild.OwnerDocument != refChild.OwnerDocument)
+				if (refChild != null && newChild.OwnerDocument != refChild.OwnerDocument)
 						throw new ArgumentException ("argument nodes are on the different documents.");
 
-				}
-				if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement || newChild is XmlCharacterData || newChild is XmlEntityReference))
+				if (refChild != null && this == ownerDoc &&
+				    ownerDoc.DocumentElement != null &&
+				    (newChild is XmlElement ||
+				     newChild is XmlCharacterData ||
+				     newChild is XmlEntityReference))
 					throw new XmlException ("cannot insert this node to this position.");
+
 				// checking validity finished. then appending...
 
 				ownerDoc.onNodeInserting (newChild, this);
@@ -402,11 +408,11 @@ namespace System.Xml
 
 		public virtual void RemoveAll ()
 		{
-			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
-
-			ownerDoc.onNodeRemoving (this, this.ParentNode);
-			LastLinkedChild = null;
-			ownerDoc.onNodeRemoved (this, this.ParentNode);
+			XmlNode next = null;
+			for (XmlNode node = FirstChild; node != null; node = next) {
+				next = node.NextSibling;
+				RemoveChild (node);
+			}
 		}
 
 		public virtual XmlNode RemoveChild (XmlNode oldChild)

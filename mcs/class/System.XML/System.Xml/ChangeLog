@@ -1,3 +1,12 @@
+2002-11-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlNode.cs:
+	(AppendChild): readded refChild != null condition before throwing
+	"cannot insert this node in this position" exception. There's probably
+	a better solution. Fixes #34191.
+	(RemoveAll): changed following Atsushi instructions.
+	
+
 2002-11-13  Duncan Mak  <duncan@ximian.com>
 
 	* XmlElement.cs (IsEmpty): A temporary check-in to keep gtk-sharp
