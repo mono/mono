@@ -1,3 +1,21 @@
+2004-12-02  Duncan Mak  <duncan@ximian.com>
+
+	* ecore.cs (PropertyExpr.IsAccessorAccessible): Moved to
+	Expression class.
+	(Expression.IsAccessorAccessible): Moved from the PropertyExpr to
+	here as a static method. Take an additional bool out parameter
+	`must_do_cs1540_check' for signaling to InstanceResolve.
+	(PropertyExpr.InstanceResolve): Removed the `must_do_cs1540_check'
+	member field from PropertyExpr class and made it an argument of
+	the method instead.
+	(EventExpr.InstanceResolve): Copied from PropertyExpr, removed the
+	check for MarshalByRefObject, and report CS0122 instead of CS1540.
+	(EventExpr.DoResolve): Call IsAccessorAccessible on `add_accessor'
+	and `remove_accessor' as well as InstanceResolve: report CS0122
+	where applicable.
+
+	Fixes #70129.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	Fix test-327.cs, test-328.cs, and put in early infrastructure

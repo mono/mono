@@ -207,6 +207,55 @@ namespace Mono.CSharp {
 			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
 		}
 
+		public static bool IsAccessorAccessible (Type invocation_type, MethodInfo mi, out bool must_do_cs1540_check)
+		{
+			MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+			must_do_cs1540_check = false; // by default we do not check for this
+
+			//
+			// If only accessible to the current class or children
+			//
+			if (ma == MethodAttributes.Private) {
+				Type declaring_type = mi.DeclaringType;
+					
+				if (invocation_type != declaring_type)
+					return TypeManager.IsSubclassOrNestedChildOf (invocation_type, declaring_type);
+
+				return true;
+			}
+			//
+			// FamAndAssem requires that we not only derivate, but we are on the
+			// same assembly.  
+			//
+			if (ma == MethodAttributes.FamANDAssem){
+				return (mi.DeclaringType.Assembly != invocation_type.Assembly);
+			}
+
+			// Assembly and FamORAssem succeed if we're in the same assembly.
+			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
+				if (mi.DeclaringType.Assembly == invocation_type.Assembly)
+					return true;
+			}
+
+			// We already know that we aren't in the same assembly.
+			if (ma == MethodAttributes.Assembly)
+				return false;
+
+			// Family and FamANDAssem require that we derive.
+			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
+				if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+					return false;
+
+				if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
+					must_do_cs1540_check = true;
+
+				return true;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		///   Performs semantic analysis on the Expression
 		/// </summary>
@@ -2941,7 +2990,6 @@ namespace Mono.CSharp {
 		public bool IsBase;
 		MethodInfo getter, setter;
 		bool is_static;
-		bool must_do_cs1540_check;
 		
 		Expression instance_expr;
 		LocalTemporary temp;
@@ -3042,53 +3090,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool IsAccessorAccessible (Type invocation_type, MethodInfo mi)
-		{
-			MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
-
-			//
-			// If only accessible to the current class or children
-			//
-			if (ma == MethodAttributes.Private) {
-				Type declaring_type = mi.DeclaringType;
-					
-				if (invocation_type != declaring_type)
-					return TypeManager.IsSubclassOrNestedChildOf (invocation_type, declaring_type);
-
-				return true;
-			}
-			//
-			// FamAndAssem requires that we not only derivate, but we are on the
-			// same assembly.  
-			//
-			if (ma == MethodAttributes.FamANDAssem){
-				return (mi.DeclaringType.Assembly != invocation_type.Assembly);
-			}
-
-			// Assembly and FamORAssem succeed if we're in the same assembly.
-			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
-				if (mi.DeclaringType.Assembly == invocation_type.Assembly)
-					return true;
-			}
-
-			// We already know that we aren't in the same assembly.
-			if (ma == MethodAttributes.Assembly)
-				return false;
-
-			// Family and FamANDAssem require that we derive.
-			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
-				if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
-					return false;
-
-				if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
-					must_do_cs1540_check = true;
-
-				return true;
-			}
-
-			return true;
-		}
-
 		//
 		// We also perform the permission checking here, as the PropertyInfo does not
 		// hold the information for the accessibility of its setter/getter
@@ -3100,7 +3101,7 @@ namespace Mono.CSharp {
 			is_static = getter != null ? getter.IsStatic : setter.IsStatic;
 		}
 
-		bool InstanceResolve (EmitContext ec)
+		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
 		{
 			if ((instance_expr == null) && ec.IsStatic && !is_static) {
 				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
@@ -3161,12 +3162,13 @@ namespace Mono.CSharp {
 				return null;
 			} 
 
-			if (!IsAccessorAccessible (ec.ContainerType, getter)) {
+			bool must_do_cs1540_check;
+			if (!IsAccessorAccessible (ec.ContainerType, getter, out must_do_cs1540_check)) {
 				Report.Error (122, loc, "'{0}.get' is inaccessible due to its protection level", PropertyInfo.Name);
 				return null;
 			}
 			
-			if (!InstanceResolve (ec))
+			if (!InstanceResolve (ec, must_do_cs1540_check))
 				return null;
 
 			//
@@ -3208,12 +3210,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!IsAccessorAccessible (ec.ContainerType, setter)) {
+			bool must_do_cs1540_check;
+			if (!IsAccessorAccessible (ec.ContainerType, setter, out must_do_cs1540_check)) {
 				Report.Error (122, loc, "'{0}.set' is inaccessible due to its protection level", PropertyInfo.Name);
 				return null;
 			}
 			
-			if (!InstanceResolve (ec))
+			if (!InstanceResolve (ec, must_do_cs1540_check))
 				return null;
 			
 			//
@@ -3399,6 +3402,36 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
+		{
+			if ((instance_expr == null) && ec.IsStatic && !is_static) {
+				SimpleName.Error_ObjectRefRequired (ec, loc, EventInfo.Name);
+				return false;
+			}
+
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return false;
+			}
+
+			//
+			// This is using the same mechanism as the CS1540 check in PropertyExpr.
+			// However, in the Event case, we reported a CS0122 instead.
+			//
+			if (must_do_cs1540_check && (instance_expr != null)) {
+				if ((instance_expr.Type != ec.ContainerType) &&
+					ec.ContainerType.IsSubclassOf (instance_expr.Type)) {
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+						DeclaringType.Name + "." + EventInfo.Name);
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (instance_expr != null) {
@@ -3407,9 +3440,20 @@ namespace Mono.CSharp {
 					return null;
 			}
 
+			bool must_do_cs1540_check;
+			if (!(IsAccessorAccessible (ec.ContainerType, add_accessor, out must_do_cs1540_check)
+				    && IsAccessorAccessible (ec.ContainerType, remove_accessor, out must_do_cs1540_check))) {
+				
+                               Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+                                               DeclaringType.Name + "." + EventInfo.Name);
+                               return null;
+			}
+
+			if (!InstanceResolve (ec, must_do_cs1540_check))
+				return null;
 			
 			return this;
-		}
+		}		
 
 		public override void Emit (EmitContext ec)
 		{
