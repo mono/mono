@@ -1,5 +1,5 @@
 //
-// System.Runtime.ConstrainedExecution.CriticalFinalizerObject class
+// System.Runtime.ConstrainedExecution.ReliabilityContractAttribute.cs
 //
 // Author:
 //    Duncan Mak (duncan@ximian.com)
@@ -27,18 +27,40 @@
 //
 
 #if NET_2_0
+
+using System.Runtime.InteropServices;
+
 namespace System.Runtime.ConstrainedExecution
 {
-        public abstract class CriticalFinalizerObject
+	[AttributeUsage ((AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct |
+		AttributeTargets.Constructor | AttributeTargets.Method), Inherited=false)]
+	[ComVisible (false)]
+        public sealed class ReliabilityContractAttribute : Attribute
         {
-                protected CriticalFinalizerObject ()
+                Consistency consistency;
+                CER cer;
+                
+                public ReliabilityContractAttribute ()
                 {
                 }
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
-		~CriticalFinalizerObject ()
-		{
-		}
+                public ReliabilityContractAttribute (Consistency consistency, CER cer)
+                {
+                        this.consistency = consistency;
+                        this.cer = cer;
+                }
+
+                public CER CER {
+                        get { return cer; }
+			set { cer = value; }
+                }
+
+                public Consistency ConsistencyGuarantee {
+
+                        get { return consistency; }
+
+                        set { consistency = value; }
+                }
         }
 }
 #endif

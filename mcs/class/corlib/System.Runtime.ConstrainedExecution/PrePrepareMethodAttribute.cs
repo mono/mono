@@ -1,5 +1,5 @@
 //
-// System.Runtime.ConstrainedExecution.CriticalFinalizerObject class
+// System.Runtime.ConstrainedExecution.PrePrepareMethodAttribute.cs
 //
 // Author:
 //    Duncan Mak (duncan@ximian.com)
@@ -27,18 +27,19 @@
 //
 
 #if NET_2_0
+
+using System.Runtime.InteropServices;
+
 namespace System.Runtime.ConstrainedExecution
 {
-        public abstract class CriticalFinalizerObject
+	[AttributeUsage ((AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct |
+		AttributeTargets.Constructor | AttributeTargets.Method), Inherited=false)]
+	[ComVisible (false)]
+        public sealed class PrePrepareMethodAttribute : Attribute
         {
-                protected CriticalFinalizerObject ()
+                public PrePrepareMethodAttribute ()
                 {
                 }
-
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
-		~CriticalFinalizerObject ()
-		{
-		}
         }
 }
 #endif

@@ -1,5 +1,5 @@
 //
-// System.Runtime.ConstrainedExecution.CriticalFinalizerObject class
+// System.Runtime.ConstrainedExecution.Consistency.cs
 //
 // Author:
 //    Duncan Mak (duncan@ximian.com)
@@ -27,18 +27,19 @@
 //
 
 #if NET_2_0
+
+using System.Runtime.InteropServices;
+
 namespace System.Runtime.ConstrainedExecution
 {
-        public abstract class CriticalFinalizerObject
+	[Serializable]
+	[ComVisible (false)]
+        public enum Consistency
         {
-                protected CriticalFinalizerObject ()
-                {
-                }
-
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
-		~CriticalFinalizerObject ()
-		{
-		}
+                MayCorruptAppDomain = 1,
+                MayCorruptInstance = 2, 
+                MayCorruptProcess = 0,
+                WillNotCorruptState = 3
         }
 }
 #endif
