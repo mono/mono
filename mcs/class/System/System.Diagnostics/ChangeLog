@@ -1,3 +1,9 @@
+2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* EventLog.cs: Implementation handling
+	* EventLogImpl.cs: Added, contains an platform independent empty implementation
+	for EventLog
+
 2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AlphabeticalEnumConverter.cs: Added

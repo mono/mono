@@ -14,9 +14,8 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 
-namespace System.Diagnostics {
-
-	[MonoTODO("This class is just stubbed out")]
+namespace System.Diagnostics 
+{
 	[DefaultEvent ("EntryWritten"), InstallerType (typeof (EventLogInstaller))]
 	[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, typeof (IDesigner))]
 	public class EventLog : Component, ISupportInitialize 
@@ -25,12 +24,18 @@ namespace System.Diagnostics {
 		private string source;
 		private string logName;
 		private string machineName;
+		private bool doRaiseEvents = false;
+		private ISynchronizeInvoke synchronizingObject = null;
 
-		public EventLog() : this ("")
+		private EventLogImpl Impl;
+
+		public EventLog()
+			: this ("")
 		{
 		}
 
-		public EventLog(string logName) : this (logName, "")
+		public EventLog(string logName)
+			: this (logName, ".")
 		{
 		}
 
@@ -39,30 +44,35 @@ namespace System.Diagnostics {
 		{
 		}
 
-		public EventLog(string logName, string machineName, 
-			string source)
+		public EventLog(string logName, string machineName, string source)
 		{
 			this.source = source;
 			this.machineName = machineName;
 			this.logName = logName;
+
+			this.Impl = new EventLogImpl (this);
+			EventLogImpl.EntryWritten += new EntryWrittenEventHandler (EntryWrittenHandler);
 		}
 
-		[MonoTODO]
+		private void EntryWrittenHandler (object sender, EntryWrittenEventArgs e)
+		{
+			if (doRaiseEvents)
+				OnEntryWritten (e.Entry);
+		}
+
 		[Browsable (false), DefaultValue (false)]
 		[MonitoringDescription ("If enabled raises event when a log is written.")]
 		public bool EnableRaisingEvents {
-			get {return false;}
-			set {/* ignore */}
+			get {return doRaiseEvents;}
+			set {doRaiseEvents = value;}
 		}
 
-		[MonoTODO]
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The entries in the log.")]
 		public EventLogEntryCollection Entries {
-			get {return null;}
+			get {return Impl.Entries;}
 		}
 
-		[MonoTODO]
 		[ReadOnly (true), DefaultValue (""), RecommendedAsConfigurable (true)]
 		[TypeConverter ("System.Diagnostics.Design.LogConverter, " + Consts.AssemblySystem_Design)]
 		[MonitoringDescription ("Name of the log that is read and written.")]
@@ -71,53 +81,46 @@ namespace System.Diagnostics {
 			set {logName = value;}
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		public string LogDisplayName {
-			get {return "";}
+			get {return Impl.LogDisplayName;}
 		}
 
-		[MonoTODO]
 		[ReadOnly (true), DefaultValue ("."), RecommendedAsConfigurable (true)]
 		[MonitoringDescription ("Name of the machine that this log get written to.")]
 		public string MachineName {
 			get {return machineName;}
-			set {/* ignore */}
+			set {machineName = value;}
 		}
 
-		[MonoTODO]
 		[ReadOnly (true), DefaultValue (""), RecommendedAsConfigurable (true)]
 		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[MonitoringDescription ("The application name that writes the log.")]
 		public string Source {
 			get {return source;}
-			set {/* ignore */}
+			set {source = value;}
 		}
 
-		[MonoTODO]
 		[Browsable (false), DefaultValue (null)]
 		[MonitoringDescription ("An object that synchronizes event handler calls.")]
 		public ISynchronizeInvoke SynchronizingObject {
-			get {return null;}
-			set {/* ignore */}
+			get {return synchronizingObject;}
+			set {synchronizingObject = value;}
 		}
 
-		[MonoTODO]
 		public void BeginInit()
 		{
-			throw new NotImplementedException ();
+			Impl.BeginInit();
 		}
 
-		[MonoTODO]
 		public void Clear()
 		{
-			throw new NotImplementedException ();
+			Impl.Clear();
 		}
 
-		[MonoTODO]
 		public void Close()
 		{
-			throw new NotImplementedException ();
+			Impl.Close();
 		}
 
 		public static void CreateEventSource(string source, string logName)
@@ -125,12 +128,11 @@ namespace System.Diagnostics {
 			CreateEventSource (source, logName, ".");
 		}
 
-		[MonoTODO]
 		public static void CreateEventSource(string source, 
 			string logName, 
 			string machineName)
 		{
-			throw new NotImplementedException ();
+			EventLogImpl.CreateEventSource (source, logName, machineName);
 		}
 
 		public static void Delete(string logName)
@@ -138,10 +140,9 @@ namespace System.Diagnostics {
 			Delete (logName, ".");
 		}
 
-		[MonoTODO]
 		public static void Delete(string logName, string machineName)
 		{
-			throw new NotImplementedException ();
+			EventLogImpl.Delete (logName, machineName);
 		}
 
 		public static void DeleteEventSource(string source)
@@ -149,23 +150,20 @@ namespace System.Diagnostics {
 			DeleteEventSource (source, ".");
 		}
 
-		[MonoTODO]
 		public static void DeleteEventSource(string source, 
 			string machineName)
 		{
-			throw new NotImplementedException ();
+			EventLogImpl.DeleteEventSource (source, machineName);
 		}
 
-		[MonoTODO]
 		protected override void Dispose(bool disposing)
 		{
-			throw new NotImplementedException ();
+			Impl.Dispose (disposing);
 		}
 
-		[MonoTODO]
 		public void EndInit()
 		{
-			throw new NotImplementedException ();
+			Impl.EndInit();
 		}
 
 		public static bool Exists(string logName)
@@ -173,10 +171,9 @@ namespace System.Diagnostics {
 			return Exists (logName, ".");
 		}
 
-		[MonoTODO]
 		public static bool Exists(string logName, string machineName)
 		{
-			throw new NotImplementedException ();
+			return EventLogImpl.Exists (logName, machineName);
 		}
 
 		public static EventLog[] GetEventLogs()
@@ -184,17 +181,15 @@ namespace System.Diagnostics {
 			return GetEventLogs (".");
 		}
 
-		[MonoTODO]
 		public static EventLog[] GetEventLogs(string machineName)
 		{
-			throw new NotImplementedException ();
+			return EventLogImpl.GetEventLogs (machineName);
 		}
 
-		[MonoTODO]
 		public static string LogNameFromSourceName(string source, 
 			string machineName)
 		{
-			throw new NotImplementedException ();
+			return EventLogImpl.LogNameFromSourceName (source, machineName);
 		}
 
 		public static bool SourceExists(string source)
@@ -202,10 +197,9 @@ namespace System.Diagnostics {
 			return SourceExists (source, ".");
 		}
 
-		[MonoTODO]
 		public static bool SourceExists(string source, string machineName)
 		{
-			throw new NotImplementedException ();
+			return EventLogImpl.SourceExists (source, machineName);
 		}
 
 		public void WriteEntry(string message)
@@ -231,12 +225,11 @@ namespace System.Diagnostics {
 			WriteEntry (message, type, eventID, category, null);
 		}
 
-		[MonoTODO]
 		public void WriteEntry(string message, EventLogEntryType type, 
 			int eventID,
 			short category, byte[] rawData)
 		{
-			throw new NotImplementedException ();
+			Impl.WriteEntry (message, type, eventID, category, rawData);
 		}
 
 		public static void WriteEntry(string source, string message)
@@ -262,12 +255,11 @@ namespace System.Diagnostics {
 			WriteEntry (source, message, EventLogEntryType.Information, eventID, category, null);
 		}
 
-		[MonoTODO]
 		public static void WriteEntry(string source, string message, 
 			EventLogEntryType type, int eventID, short category, 
 			byte[] rawData)
 		{
-			throw new NotImplementedException ();
+			EventLogImpl.WriteEntry (source, message, type, eventID, category, rawData);
 		}
 
 		internal void OnEntryWritten (EventLogEntry newEntry)
@@ -276,7 +268,7 @@ namespace System.Diagnostics {
 				EntryWritten (this, new EntryWrittenEventArgs (newEntry));
 		}
 
-		[MonitoringDescription ("Raised for each eventlog entry written.")]
+		[MonitoringDescription ("Raised for each EventLog entry written.")]
 		public event EntryWrittenEventHandler EntryWritten;
 	}
 }
