@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls
 			if (AccessKey.Length > 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
 
-			if (TabIndex > 0)
+			if (TabIndex != 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Tabindex,
 						     TabIndex.ToString (NumberFormatInfo.InvariantInfo));
 
