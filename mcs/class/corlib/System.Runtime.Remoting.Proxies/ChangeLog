@@ -1,3 +1,9 @@
+2003-08-24  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* RealProxy.cs, RemotingProxy.cs: move the LogicalCallContext
+	setup/restoration into RealProxy's PrivateInvoke, so that custom
+	RealProxy's get a LogicalCallContext.
+
 2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingProxy.cs: On invoke, set the LogicalCallContext of the message.

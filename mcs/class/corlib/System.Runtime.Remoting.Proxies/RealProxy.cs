@@ -86,7 +86,13 @@ namespace System.Runtime.Remoting.Proxies
 		internal static object PrivateInvoke (RealProxy rp, IMessage msg, out Exception exc,
 						      out object [] out_args)
 		{
+			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
+			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext();
+
 			IMethodReturnMessage res_msg = (IMethodReturnMessage)rp.Invoke (msg);
+
+			if (res_msg.LogicalCallContext != null)
+				CallContext.SetCurrentCallContext (res_msg.LogicalCallContext);
 
 			exc = res_msg.Exception;
 			out_args = res_msg.OutArgs;
