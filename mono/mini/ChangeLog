@@ -1,3 +1,8 @@
+
+Thu May 13 11:41:49 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c: rewrote the generic trampoline code.
+
 2004-05-11	Patrik Torstensson
 
 	* mini-x86.c: optimize long shl/shr asm code (one less branch)
