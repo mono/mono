@@ -77,18 +77,15 @@ namespace System.Net
 
 				if(hostEntry == null) {
 					status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
-						WebExceptionStatus.NameResolutionFailure;
-				}
-				else {
+								    WebExceptionStatus.NameResolutionFailure;
+				} else {
 					foreach(IPAddress address in hostEntry.AddressList) {
 						socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
 						try {
 							socket.Connect (new IPEndPoint(address, sPoint.Address.Port));
 							status = WebExceptionStatus.Success;
 							break;
-						} 
-						catch (SocketException) {
+						} catch (SocketException) {
 							socket.Close();
 							status = WebExceptionStatus.ConnectFailure;
 						}

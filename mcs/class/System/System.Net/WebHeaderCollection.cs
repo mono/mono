@@ -121,13 +121,13 @@ namespace System.Net
 		protected void AddWithoutValidate (string headerName, string headerValue)
 		{
 			if (!IsHeaderName (headerName))
-				throw new ArgumentException ("invalid header name");
+				throw new ArgumentException ("invalid header name: " + headerName, "headerName");
 			if (headerValue == null)
 				headerValue = String.Empty;
 			else
 				headerValue = headerValue.Trim ();
 			if (!IsHeaderValue (headerValue))
-				throw new ArgumentException ("invalid header value");
+				throw new ArgumentException ("invalid header value: " + headerValue, "headerValue");
 			base.Add (headerName, headerValue);			
 		}
 		

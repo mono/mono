@@ -112,7 +112,7 @@ namespace System.Net
 		}
 
 		public bool WantMore {
-			get { return (chunkRead != chunkSize); }
+			get { return (chunkRead != chunkSize || chunkSize != 0); }
 		}
 		
 		public bool EOF {

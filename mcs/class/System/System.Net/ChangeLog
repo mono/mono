@@ -1,8 +1,22 @@
+2003-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChunkStream.cs:
+	(WantMore): true if we've not received the last chunk yet. Fixes
+	bug #45463. Thanks to Miguel for tracking this down and providing a
+	test case.
+	
+	* WebConnection.cs: removed bogus ^M's.
+	
+	* WebHeaderCollection.cs: provide more info when the header or value is
+	wrong.
+
 2003-07-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ChunkStream.cs: Removed unused members
-	* IPAddress.cs: Removed unused exception variable, fixes compiler warning
-	* WebConnection.cs: Removed unused exception variables, fixes compiler warnings
+	* IPAddress.cs: Removed unused exception variable, fixes compiler
+	warning.
+	* WebConnection.cs: Removed unused exception variables, fixes compiler
+	warnings.
 
 2003-07-14  Lluis Sanchez Gual <lluis@ximian.com>
 
