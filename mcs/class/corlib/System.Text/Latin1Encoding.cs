@@ -271,13 +271,11 @@ internal class Latin1Encoding : Encoding
 					throw new ArgumentOutOfRangeException
 						("count", _("ArgRange_Array"));
 				}
-				String s = String.NewString(count);
 				int posn = 0;
 				while(count-- > 0)
 				{
-					s.SetChar(posn++, (char)(bytes[index++]));
 				}
-				return s;
+				return null;
 			}
 	public override String GetString(byte[] bytes)
 			{
@@ -287,13 +285,7 @@ internal class Latin1Encoding : Encoding
 				}
 				int count = bytes.Length;
 				int posn = 0;
-				String s = String.NewString(count);
-				while(count-- > 0)
-				{
-					s.SetChar(posn, (char)(bytes[posn]));
-					++posn;
-				}
-				return s;
+				return null;
 			}
 
 #if !ECMA_COMPAT
