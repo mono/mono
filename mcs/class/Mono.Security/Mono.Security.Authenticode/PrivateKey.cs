@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -36,7 +37,13 @@ namespace Mono.Security.Authenticode {
 
 		public PrivateKey (byte[] data, string password) 
 		{
-			Decode (data, password);
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			if (!Decode (data, password)) {
+				throw new CryptographicException (
+					Locale.GetText ("Invalid data and/or password"));
+			}
 		}
 
 		public bool Encrypted {
@@ -109,7 +116,7 @@ namespace Mono.Security.Authenticode {
 				}
 				catch (CryptographicException) {
 					weak = true;
-					// second change using weak crypto
+					// second chance using weak crypto
 					Buffer.BlockCopy (pvk, 24 + saltlen, keypair, 0, keylen);
 					// truncate the key to 40 bits
 					Array.Clear (key, 5, 11);
@@ -141,6 +148,9 @@ namespace Mono.Security.Authenticode {
 
 		public void Save (string filename, string password) 
 		{
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
+
 			byte[] blob = null;
 			FileStream fs = File.Open (filename, FileMode.Create, FileAccess.Write);
 			try {
@@ -206,13 +216,16 @@ namespace Mono.Security.Authenticode {
 
 		static public PrivateKey CreateFromFile (string filename, string password) 
 		{
-			FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-			byte[] pvk = new byte [fs.Length];
-			fs.Read (pvk, 0, pvk.Length);
-			fs.Close ();
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
 
+			byte[] pvk = null;				
+			using (FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				pvk = new byte [fs.Length];
+				fs.Read (pvk, 0, pvk.Length);
+				fs.Close ();
+			}
 			return new PrivateKey (pvk, password);
 		}
-
 	}
 }

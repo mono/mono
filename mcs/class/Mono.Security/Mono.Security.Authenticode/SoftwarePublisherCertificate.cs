@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 
 using Mono.Security;
@@ -34,9 +35,10 @@ namespace Mono.Security.Authenticode {
 				throw new ArgumentNullException ("data");
 
 			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (data);
-			if (ci.ContentType != PKCS7.Oid.signedData)
-				throw new ArgumentException ("Unsupported ContentType");
-
+			if (ci.ContentType != PKCS7.Oid.signedData) {
+				throw new ArgumentException (
+					Locale.GetText ("Unsupported ContentType"));
+			}
 			pkcs7 = new PKCS7.SignedData (ci.Content);
 		}
 
@@ -57,6 +59,9 @@ namespace Mono.Security.Authenticode {
 
 		static public SoftwarePublisherCertificate CreateFromFile (string filename) 
 		{
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
+
 			byte[] data = null;
 			using (FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 				data = new byte [fs.Length];
