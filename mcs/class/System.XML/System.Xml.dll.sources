@@ -176,6 +176,7 @@ System.Xml.Xsl/XsltCompileException.cs
 System.Xml.Xsl/XsltContext.cs
 System.Xml.Xsl/XsltException.cs
 System.Xml.Schema/BuiltInDatatype.cs
+System.Xml.Schema/CustomSerializer.cs
 System.Xml.Schema/SchemaDataValueType.cs
 System.Xml.Schema/ValidationEventArgs.cs
 System.Xml.Schema/XmlSchema.cs
