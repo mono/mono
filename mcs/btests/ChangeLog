@@ -1,3 +1,16 @@
+2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
+	* Override_dll.vb:
+	* Override_exe.vb:
+		New test cases to test Overriding functions across assemblies
+	* Delegate_dll.vb:
+	* Delegate_exe.vb:
+		New test cases to check delegates invoking functions across assemblies
+	* Makefile: Added new dll names to the dependency list
+
+2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
+	* EventG.vb: New test case
+	* EventH.vb: New test case
+
 2004-08-17 Sachin Kumar <skumar1@novell.com>
 	* AssignmentStatements1.vb:
 	* AssignmentStatements2.vb:
@@ -101,6 +114,11 @@
 	* ShiftOperatorsC1.vb:
 	* ShiftOperatorsC2.vb:
 	* Test.Sources: Included newly added tests
+
+2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
+	* InheritanceJ.vb: New test case
+	* InheritanceA.vb: made corrections 
+	* InterfaceC.vb: Enhanced
 
 2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
 	* InterfaceH.vb: New test case
