@@ -5,13 +5,67 @@ using System.Globalization;
 
 namespace MonoTests.System
 {
+	public class RunArrayTest : ArrayTest
+	{
+		protected override void RunTest ()
+		{
+			TestIsFixedSize ();
+			TestIsReadOnly ();
+			TestIsSynchronized ();
+			TestLength ();
+			TestRank ();
+			TestBinarySearch1 ();
+			TestBinarySearch2 ();
+			TestClear ();
+			TestClone ();
+			TestCopy ();
+			TestCopy2 ();
+			TestCopyTo ();
+			TestCreateInstance ();
+			TestGetEnumerator ();
+			TestGetLength ();
+			TestGetLowerBound ();
+			TestGetUpperBound ();
+			TestGetValue1 ();
+			TestGetValue2 ();
+			TestGetValue3 ();
+			TestGetValueN ();
+			TestIndexOf1 ();
+			TestIndexOf2 ();
+			TestIndexOf3 ();
+			TestLastIndexOf1 ();
+			TestLastIndexOf2 ();
+			TestLastIndexOf3 ();
+			TestReverse ();
+			TestSetValue1 ();
+			TestSetValue2 ();
+			TestSetValue3 ();
+			TestSetValueN ();
+			TestSort ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
 	public class RunBitConverterTest : BitConverterTest
 	{
 		protected override void RunTest ()
 		{
-			try { TestIsLittleEndian (); } catch { }
-			try { TestDouble (); } catch { }
-			try { TestChar (); } catch { }
+			TestIsLittleEndian ();
+			TestSingle ();
+			TestDouble ();
+			TestBool ();
+			TestChar ();
+			TestInt16 ();
+			TestUInt16 ();
+			TestInt32 ();
+			TestUInt32 ();
+			TestInt64 ();
+			TestUInt64 ();
+			TestToString ();
+
 		}
 	}
 }
@@ -22,14 +76,15 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestStrings (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestGetType (); } catch { }
-			try { TestGetTypeCode (); } catch { }
-			try { TestParse (); } catch { }
-			try { TestToString (); } catch { }
+			TestStrings ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestGetType ();
+			TestGetTypeCode ();
+			TestParse ();
+			TestToString ();
+
 		}
 	}
 }
@@ -40,12 +95,46 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestMinMax (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestParse (); } catch { }
-			try { TestToString (); } catch { }
+			TestMinMax ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestParse ();
+			TestToString ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
+	public class RunCharTest : CharTest
+	{
+		protected override void RunTest ()
+		{
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashValue ();
+			TestGetNumericValue ();
+			TestGetUnicodeCategory ();
+			TestIsControl ();
+			TestIsDigit ();
+			TestIsLetter ();
+			TestIsLetterOrDigit ();
+			TestIsLower ();
+			TestIsNumber ();
+			TestIsPunctuation ();
+			TestIsSeparator ();
+			TestIsSurrogate ();
+			TestIsSymbol ();
+			TestIsUpper ();
+			TestIsWhiteSpace ();
+			TestParse ();
+			TestToLower ();
+			TestToUpper ();
+			TestToString ();
+			TestGetTypeCode ();
+
 		}
 	}
 }
@@ -56,19 +145,89 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestError (); } catch { }
-			try { TestIn (); } catch { }
-			try { TestOut (); } catch { }
-			try { TestOpenStandardError (); } catch { }
-			try { TestOpenStandardInput (); } catch { }
-			try { TestOpenStandardOutput (); } catch { }
-			try { TestRead (); } catch { }
-			try { TestReadLine (); } catch { }
-			try { TestSetError (); } catch { }
-			try { TestSetIn (); } catch { }
-			try { TestSetOut (); } catch { }
-			try { TestWrite (); } catch { }
-			try { TestWriteLine (); } catch { }
+			TestError ();
+			TestIn ();
+			TestOut ();
+			TestOpenStandardError ();
+			TestOpenStandardInput ();
+			TestOpenStandardOutput ();
+			TestRead ();
+			TestReadLine ();
+			TestSetError ();
+			TestSetIn ();
+			TestSetOut ();
+			TestWrite ();
+			TestWriteLine ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
+	public class RunEnumTest : EnumTest
+	{
+		protected override void RunTest ()
+		{
+			TestCompareTo ();
+			TestEquals ();
+			TestFormat ();
+			TestGetHashCode ();
+			TestGetNames ();
+			TestGetTypeCode ();
+			TestGetUnderlyingType ();
+			TestGetValues ();
+			TestIsDefined ();
+			TestParse1 ();
+			TestParse2 ();
+			TestToObject ();
+			TestToString ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
+	public class RunDecimalTest : DecimalTest
+	{
+		protected override void RunTest ()
+		{
+			TestToString ();
+			TestCurrencyPattern ();
+			TestNumberNegativePattern ();
+			TestPercentPattern ();
+			TestParse ();
+			TestConstants ();
+			TestConstructInt32 ();
+			TestConstructUInt32 ();
+			TestConstructInt64 ();
+			TestConstructUInt64 ();
+			TestConstructSingle ();
+			TestConstructSingleRounding ();
+			TestConstructDouble ();
+			TestConstructDoubleRound ();
+			TestNegate ();
+			TestPartConstruct ();
+			TestFloorTruncate ();
+			TestRound ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
+	public class RunDecimalTest2 : DecimalTest2
+	{
+		protected override void RunTest ()
+		{
+			TestCompare ();
+			TestRemainder ();
+			TestAdd ();
+			TestMult ();
+			TestDiv ();
+
 		}
 	}
 }
@@ -79,19 +238,37 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestCtor1 (); } catch { }
-			try { TestCtor2 (); } catch { }
-			try { TestCtor4 (); } catch { }
-			try { TestCtor5 (); } catch { }
-			try { TestEmpty (); } catch { }
-			try { TestNewGuid (); } catch { }
-			try { TestEqualityOp (); } catch { }
-			try { TestInequalityOp (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestToByteArray (); } catch { }
-			try { TestToString (); } catch { }
+			TestCtor1 ();
+			TestCtor2 ();
+			TestCtor4 ();
+			TestCtor5 ();
+			TestEmpty ();
+			TestNewGuid ();
+			TestEqualityOp ();
+			TestInequalityOp ();
+			TestEquals ();
+			TestCompareTo ();
+			TestGetHashCode ();
+			TestToByteArray ();
+			TestToString ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
+	public class RunInt16Test : Int16Test
+	{
+		protected override void RunTest ()
+		{
+			TestMinMax ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestParse ();
+			TestToString ();
+
 		}
 	}
 }
@@ -102,13 +279,36 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestMinMax (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestParse (); } catch { }
-			try { TestToString (); } catch { }
-			try { TestCustomToString (); } catch { }
+			TestMinMax ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestParse ();
+			TestToString ();
+			TestCustomToString ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
+	public class RunInt64Test : Int64Test
+	{
+		protected override void RunTest ()
+		{
+			TestMinMax ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestRoundTripGeneral ();
+			TestRoundTripHex ();
+			TestParseNull ();
+			TestParse ();
+			TestToString ();
+			TestUserCurrency ();
+			TestUserPercent ();
+
 		}
 	}
 }
@@ -119,13 +319,14 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestCtor (); } catch { }
-			try { TestEquals1 (); } catch { }
-			try { TestEquals2 (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestGetType (); } catch { }
-			try { TestReferenceEquals (); } catch { }
-			try { TestToString (); } catch { }
+			TestCtor ();
+			TestEquals1 ();
+			TestEquals2 ();
+			TestGetHashCode ();
+			TestGetType ();
+			TestReferenceEquals ();
+			TestToString ();
+
 		}
 	}
 }
@@ -136,7 +337,8 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestTheWholeThing (); } catch { }
+			TestTheWholeThing ();
+
 		}
 	}
 }
@@ -147,42 +349,43 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestLength (); } catch { }
-			try { TestCompare (); } catch { }
-			try { TestCompareOrdinal (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestConcat (); } catch { }
-			try { TestCopy (); } catch { }
-			try { TestCopyTo (); } catch { }
-			try { TestEndsWith (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestFormat (); } catch { }
-			try { TestGetEnumerator (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestGetType (); } catch { }
-			try { TestGetTypeCode (); } catch { }
-			try { TestIndexOf (); } catch { }
-			try { TestIndexOfAny (); } catch { }
-			try { TestInsert (); } catch { }
-			try { TestIntern (); } catch { }
-			try { TestIsInterned (); } catch { }
-			try { TestJoin (); } catch { }
-			try { TestLastIndexOf (); } catch { }
-			try { TestLastIndexOfAny (); } catch { }
-			try { TestPadLeft (); } catch { }
-			try { TestPadRight (); } catch { }
-			try { TestRemove (); } catch { }
-			try { TestReplace (); } catch { }
-			try { TestSplit (); } catch { }
-			try { TestStartsWith (); } catch { }
-			try { TestSubstring (); } catch { }
-			try { TestToCharArray (); } catch { }
-			try { TestToLower (); } catch { }
-			try { TestToString (); } catch { }
-			try { TestToUpper (); } catch { }
-			try { TestTrim (); } catch { }
-			try { TestTrimEnd (); } catch { }
-			try { TestTrimStart (); } catch { }
+			TestLength ();
+			TestCompare ();
+			TestCompareOrdinal ();
+			TestCompareTo ();
+			TestConcat ();
+			TestCopy ();
+			TestCopyTo ();
+			TestEndsWith ();
+			TestEquals ();
+			TestFormat ();
+			TestGetEnumerator ();
+			TestGetHashCode ();
+			TestGetType ();
+			TestGetTypeCode ();
+			TestIndexOf ();
+			TestIndexOfAny ();
+			TestInsert ();
+			TestIntern ();
+			TestIsInterned ();
+			TestJoin ();
+			TestLastIndexOf ();
+			TestLastIndexOfAny ();
+			TestPadLeft ();
+			TestPadRight ();
+			TestRemove ();
+			TestReplace ();
+			TestSplit ();
+			TestStartsWith ();
+			TestSubstring ();
+			TestToCharArray ();
+			TestToLower ();
+			TestToString ();
+			TestToUpper ();
+			TestTrim ();
+			TestTrimEnd ();
+			TestTrimStart ();
+
 		}
 	}
 }
@@ -193,17 +396,18 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestCtors (); } catch { }
-			try { TestProperties (); } catch { }
-			try { TestAdd (); } catch { }
-			try { TestCompare (); } catch { }
-			try { TestNegateAndDuration (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestFromXXXX (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestParse (); } catch { }
-			try { TestSubstract (); } catch { }
-			try { TestToString (); } catch { }
+			TestCtors ();
+			TestProperties ();
+			TestAdd ();
+			TestCompare ();
+			TestNegateAndDuration ();
+			TestEquals ();
+			TestFromXXXX ();
+			TestGetHashCode ();
+			TestParse ();
+			TestSubstract ();
+			TestToString ();
+
 		}
 	}
 }
@@ -214,12 +418,30 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestMinMax (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestParse (); } catch { }
-			try { TestToString (); } catch { }
+			TestMinMax ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestParse ();
+			TestToString ();
+
+		}
+	}
+}
+
+namespace MonoTests.System
+{
+	public class RunUInt32Test : UInt32Test
+	{
+		protected override void RunTest ()
+		{
+			TestMinMax ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestParse ();
+			TestToString ();
+
 		}
 	}
 }
@@ -230,12 +452,13 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestMinMax (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestGetHashCode (); } catch { }
-			try { TestParse (); } catch { }
-			try { TestToString (); } catch { }
+			TestMinMax ();
+			TestCompareTo ();
+			TestEquals ();
+			TestGetHashCode ();
+			TestParse ();
+			TestToString ();
+
 		}
 	}
 }
@@ -246,16 +469,17 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestPublicFields (); } catch { }
-			try { TestCompareTo (); } catch { }
-			try { TestEquals (); } catch { }
-			try { TestTypeCode (); } catch { }
-			try { TestIsInfinity (); } catch { }
-			try { TestIsNan (); } catch { }
-			try { TestIsNegativeInfinity (); } catch { }
-			try { TestIsPositiveInfinity (); } catch { }
-			try { TestParse (); } catch { }
-			try { TestToString (); } catch { }
+			TestPublicFields ();
+			TestCompareTo ();
+			TestEquals ();
+			TestTypeCode ();
+			TestIsInfinity ();
+			TestIsNan ();
+			TestIsNegativeInfinity ();
+			TestIsPositiveInfinity ();
+			TestParse ();
+			TestToString ();
+
 		}
 	}
 }
@@ -266,7 +490,8 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestCtors (); } catch { }
+			TestCtors ();
+
 		}
 	}
 }
@@ -277,10 +502,11 @@ namespace MonoTests.System
 	{
 		protected override void RunTest ()
 		{
-			try { TestCtors (); } catch { }
-			try { TestToString (); } catch { }
-			try { TestParseExact (); } catch { }
-			try { TestParse (); } catch { }
+			TestCtors ();
+			TestToString ();
+			TestParseExact ();
+			TestParse ();
+
 		}
 	}
 }
@@ -291,17 +517,25 @@ namespace MonoTests
 	{
 		public static void AddAllTests (TestSuite suite)
 		{
+			suite.AddTest (new MonoTests.System.RunArrayTest ());
 			suite.AddTest (new MonoTests.System.RunBitConverterTest ());
 			suite.AddTest (new MonoTests.System.RunBooleanTest ());
 			suite.AddTest (new MonoTests.System.RunByteTest ());
+			suite.AddTest (new MonoTests.System.RunCharTest ());
 			suite.AddTest (new MonoTests.System.RunConsoleTest ());
+			suite.AddTest (new MonoTests.System.RunEnumTest ());
+			suite.AddTest (new MonoTests.System.RunDecimalTest ());
+			suite.AddTest (new MonoTests.System.RunDecimalTest2 ());
 			suite.AddTest (new MonoTests.System.RunGuidTest ());
+			suite.AddTest (new MonoTests.System.RunInt16Test ());
 			suite.AddTest (new MonoTests.System.RunInt32Test ());
+			suite.AddTest (new MonoTests.System.RunInt64Test ());
 			suite.AddTest (new MonoTests.System.RunObjectTest ());
 			suite.AddTest (new MonoTests.System.RunResolveEventArgsTest ());
 			suite.AddTest (new MonoTests.System.RunStringTest ());
 			suite.AddTest (new MonoTests.System.RunTimeSpanTest ());
 			suite.AddTest (new MonoTests.System.RunUInt16Test ());
+			suite.AddTest (new MonoTests.System.RunUInt32Test ());
 			suite.AddTest (new MonoTests.System.RunUInt64Test ());
 			suite.AddTest (new MonoTests.System.RunDoubleTest ());
 			suite.AddTest (new MonoTests.System.RunTimeZoneTest ());
