@@ -1,3 +1,7 @@
+2003-12-03  Jackson Harper <jackson@ximian.com>
+
+	* UrlUtils.cs: Some methods for working with session ids in urls.
+	
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebEncoding.cs: use the Default encoding when the globalization

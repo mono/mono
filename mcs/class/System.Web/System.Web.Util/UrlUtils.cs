@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Web.SessionState;
 
 namespace System.Web.Util
 {
@@ -283,6 +284,43 @@ namespace System.Web.Util
 				baseDir = "/";
 			}
 			return baseDir;
+		}
+
+		public static string GetFile (string url)
+		{
+			if(url == null)
+				return null;
+			if(url.Length == 0)
+				return String.Empty;
+			url.Replace ('\\', '/');
+
+			string file = url;
+			int last = url.LastIndexOf ('/');
+			if (last > 0)
+				file = url.Substring (last);
+			return file;
+		}
+
+		public static string InsertSessionId (string id, string path)
+		{
+			return Reduce (GetDirectory (path) + "/(" + id + ")/" + GetFile (path));
+		}
+
+		public static string GetSessionId (string path)
+		{
+			int len = path.Length;
+			if ((len < SessionId.IdLength + 2) || (path [len - 1] != ')') ||
+			    (path [len - SessionId.IdLength - 2] != '('))
+				return null;
+
+			return path.Substring (len - SessionId.IdLength - 1, SessionId.IdLength);
+		}
+
+		public static string RemoveSessionId (string base_path, string file_path)
+		{
+			int len = base_path.Length;
+			return Reduce (base_path.Substring (0, len - SessionId.IdLength - 2) + "/" +
+					GetFile (file_path));
 		}
 		
 		public static string ResolveVirtualPathFromAppAbsolute (string path)
