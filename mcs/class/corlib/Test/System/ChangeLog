@@ -1,3 +1,8 @@
+2004-01-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DateTimeTest.cs: Modified X509Certificate test to use 
+	ToUniversalTime ().
+
 2004-01-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DateTimeTest.cs: Added a new unit test (X509Certificate) to better

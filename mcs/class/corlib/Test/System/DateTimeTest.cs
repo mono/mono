@@ -649,9 +649,9 @@ public class DateTimeTest : Assertion
 	public void X509Certificate () 
 	{
 		// if this test fails then *ALL* or *MOST* X509Certificate tests will also fails
-		AssertEquals ("yyyyMMddHHmmssZ", "03/12/1996 13:38:47", DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null).ToString ());
+		AssertEquals ("yyyyMMddHHmmssZ", "03/12/1996 18:38:47", DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null).ToUniversalTime ().ToString ());
 		// technically this is invalid (PKIX) because of the missing seconds but it exists so...
-		AssertEquals ("yyMMddHHmmZ", "02/23/1996 14:15:00", DateTime.ParseExact ("9602231915Z", "yyMMddHHmmZ", null).ToString ());
+		AssertEquals ("yyMMddHHmmZ", "02/23/1996 19:15:00", DateTime.ParseExact ("9602231915Z", "yyMMddHHmmZ", null).ToUniversalTime ().ToString ());
 	}
 }
 
