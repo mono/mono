@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.30 $
+// $Revision: 1.31 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.31  2004/08/17 20:25:28  pbartok
+// - Fixed broken handling of default window sizes
+//
 // Revision 1.30  2004/08/16 21:47:11  pbartok
 // - Added handling of WM_MOUSE_ENTER & WM_MOUSE_LEAVE to
 //   support OnMouseEnter/Leave()
@@ -462,11 +465,18 @@ namespace System.Windows.Forms
 		
 		#region Public Constructors
 		public Control() {
+			Rectangle	client_rect;
+
 			creator_thread = Thread.CurrentThread;
 			controls = new Hashtable();
 			child_controls = CreateControlsInstance();
-			bounds = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
+			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
+			XplatUI.CalculateWindowRect(IntPtr.Zero, ref client_rect, CreateParams.Style, false, out bounds);
+			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) == 0) {
+				bounds.X=-1;
+				bounds.Y=-1;
+			}
 			prev_size = Size.Empty;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
