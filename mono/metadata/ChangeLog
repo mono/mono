@@ -1,4 +1,9 @@
 
+Tue Aug 6 11:20:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: ensure enums have always the correct instance size.
+	* unicode.c: remove wrong assert.
+
 Mon Aug 5 19:30:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: fix mem corruption issue.
