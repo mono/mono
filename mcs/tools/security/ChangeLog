@@ -1,3 +1,9 @@
+2004-12-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* permview.cs: Now "works" (including /DECL) with .NET 2.0 when 
+	compiled for NET_2_0, however Nov CTP has a bug and report all 
+	security actions as LinkDemand.
+
 2004-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Added permview to the build.

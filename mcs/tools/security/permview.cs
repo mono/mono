@@ -24,6 +24,12 @@ namespace Mono.Tools {
 	// that this won't work under MS runtime. Hopefully this will change
 	// with Fx 2.0 and Mono's PermView 2.0 should be working on both runtime.
 
+	// Notes:
+	// * Oct CTP started to return declarative security attributes with 
+	//   GetCustomAttributes, so this wont work with beta1 or previous 2.0 CTP
+	// * Nov CTP (and probably Oct CTP too) is bugged and always report 
+	//   LinkDemand as the SecurityAction
+
 	class PermView {
 
 		static private void Help () 
@@ -52,6 +58,20 @@ namespace Mono.Tools {
 			tw.WriteLine ();
 		}
 
+#if NET_2_0
+		static PermissionSet GetPermissionSet (SecurityAttribute sa)
+		{
+			PermissionSet ps = null;
+			if (sa is PermissionSetAttribute) {
+				ps = (sa as PermissionSetAttribute).CreatePermissionSet ();
+			} else {
+				ps = new PermissionSet (PermissionState.None);
+				IPermission p = sa.CreatePermission ();
+				ps.AddPermission (p);
+			}
+			return ps;
+		}
+#else
 		static PermissionSet GetPermissionSet (Assembly a, string name)
 		{
 			FieldInfo fi = typeof (Assembly).GetField (name, BindingFlags.Instance | BindingFlags.NonPublic);
@@ -59,9 +79,38 @@ namespace Mono.Tools {
 				throw new NotSupportedException ("Wrong runtime ?");
 			return (PermissionSet) fi.GetValue (a);
 		}
+#endif
 
 		static bool ProcessAssemblyOnly (TextWriter tw, Assembly a) 
 		{
+#if NET_2_0
+			// This should work for all 2.0 runtime - unless we hit a bug :-(
+			object[] attrs = a.GetCustomAttributes (false);
+			foreach (object attr in attrs) {
+				if (attr is SecurityAttribute) {
+					SecurityAttribute sa = (attr as SecurityAttribute);
+					switch (sa.Action) {
+					case SecurityAction.RequestMinimum:
+						ShowPermissionSet (tw, "Minimum Permission Set:", GetPermissionSet (sa));
+						break;
+					case SecurityAction.RequestOptional:
+						ShowPermissionSet (tw, "Optional Permission Set:", GetPermissionSet (sa));
+						break;
+					case SecurityAction.RequestRefuse:
+						ShowPermissionSet (tw, "Refused Permission Set:", GetPermissionSet (sa));
+						break;
+					default:
+						// Bug in VS.NET 2005 Nov CTP - Evrything action is a LinkDemand
+						string msg = String.Format ("ERROR {0} Permission Set:", sa.Action);
+						ShowPermissionSet (tw, msg, GetPermissionSet (sa));
+						break;
+					}
+				}
+			}
+#else
+			// Note: This will only work using the Mono runtime as we P/Invoke
+			// into Mono's corlib to get the required informations.
+
 			Type t = typeof (Assembly);
 
 			// Minimum, Optional and Refuse permission set are only evaluated
@@ -75,7 +124,7 @@ namespace Mono.Tools {
 			ShowPermissionSet (tw, "Minimal Permission Set:", GetPermissionSet (a, "_minimum"));
 			ShowPermissionSet (tw, "Optional Permission Set:", GetPermissionSet (a, "_optional"));
 			ShowPermissionSet (tw, "Refused Permission Set:", GetPermissionSet (a, "_refuse"));
-
+#endif
 			return true;
 		}
 
@@ -89,11 +138,6 @@ namespace Mono.Tools {
 			SecurityAction.Assert,
 			SecurityAction.Deny,
 			SecurityAction.PermitOnly,
-#if NET_2_0
-			SecurityAction.LinkDemandChoice,
-			SecurityAction.InheritanceDemandChoice,
-			SecurityAction.DemandChoice,
-#endif
 		};
 
 		static MethodInfo method_getdeclsec;
@@ -106,17 +150,29 @@ namespace Mono.Tools {
 			}
 			return (PermissionSet) method_getdeclsec.Invoke (mi, new object [1] { action });
 		}
-
+*/
 		static void ProcessMethod (TextWriter tw, MethodInfo mi) 
 		{
+			// no need to process methods without security informations
 			if ((mi.Attributes & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity) {
-				foreach (SecurityAction action in actions) {
+#if NET_2_0
+				object[] attrs = mi.GetCustomAttributes (false);
+				foreach (object attr in attrs) {
+					if (attr is SecurityAttribute) {
+						SecurityAttribute sa = (attr as SecurityAttribute);
+						tw.WriteLine ("Method {0} {1} Permission Set", mi, sa.Action);
+						ShowPermissionSet (tw, null, GetPermissionSet (sa));
+					}
+				}
+#else
+/*				foreach (SecurityAction action in actions) {
 					PermissionSet ps = GetDeclarativeSecurity (mi, action);
 					if (ps != null) {
 						tw.WriteLine ("Method {0} {1} Permission Set", mi, action);
 						ShowPermissionSet (tw, null, ps);
 					}
-				}
+				}*/
+#endif
 			}
 		}
 
@@ -125,19 +181,40 @@ namespace Mono.Tools {
 
 		static void ProcessType (TextWriter tw, Type t) 
 		{
+			// no need to process types without security informations
 			if ((t.Attributes & TypeAttributes.HasSecurity) == TypeAttributes.HasSecurity) {
+#if NET_2_0
+				object[] attrs = t.GetCustomAttributes (false);
+				foreach (object attr in attrs) {
+					if (attr is SecurityAttribute) {
+						SecurityAttribute sa = (attr as SecurityAttribute);
+						tw.WriteLine ("Class {0} {1} Permission Set", t, sa.Action);
+						ShowPermissionSet (tw, null, GetPermissionSet (sa));
+					}
+				}
+#else
 				tw.WriteLine ("Class {0} 'SecurityAction' Permission Set", t);
 				// SecurityAction
 				ShowPermissionSet (tw, null, null);
+#endif
 			}
-			// Methods
-			foreach (MethodInfo mi in t.GetMethods (flags)) {
-				ProcessMethod (tw, mi);
-			}
-		}*/
+		}
 
 		static bool ProcessAssemblyComplete (TextWriter tw, Assembly a) 
 		{
+#if NET_2_0
+			string header = "Assembly {0} Permission Set";
+			object [] attrs = a.GetCustomAttributes (false);
+			foreach (object attr in attrs) {
+				if (attr is SecurityAttribute) {
+					SecurityAttribute sa = (attr as SecurityAttribute);
+					// Bug in VS.NET 2005 Nov CTP - Evrything action is a LinkDemand
+					ShowPermissionSet (tw, String.Format (header, sa.Action.ToString ()), GetPermissionSet (sa));
+				}
+			}
+#else
+			tw.WriteLine ("Currently unsupported");
+			return false;
 /*			Type t = typeof (Assembly);
 			FieldInfo fi = t.GetField ("_minimum", BindingFlags.Instance | BindingFlags.NonPublic);
 			if (fi == null)
@@ -158,16 +235,17 @@ namespace Mono.Tools {
 				return false;
 			ps = (PermissionSet) fi.GetValue (a);
 			if (ps != null)
-				ShowPermissionSet (tw, "Assembly RequestRefuse Permission Set:", ps);
-
-			Type[] types = a.GetTypes ();
+				ShowPermissionSet (tw, "Assembly RequestRefuse Permission Set:", ps);*/
+#endif
+			Type [] types = a.GetTypes ();
 			foreach (Type type in types) {
 				ProcessType (tw, type);
+				foreach (MethodInfo mi in type.GetMethods (flags)) {
+					ProcessMethod (tw, mi);
+				}
 			}
-			return true; */
 
-			tw.WriteLine ("Currently unsupported");
-			return false;
+			return true;
 		}
 
 		static TextWriter ProcessOptions (string[] args)
@@ -215,7 +293,7 @@ namespace Mono.Tools {
 					return 0;
 
 				string assemblyName = args [args.Length - 1];
-				Assembly a = Assembly.LoadFile (assemblyName);
+				Assembly a = Assembly.LoadFile (Path.GetFullPath (assemblyName));
 				if (a != null) {
 					bool complete = (declarative ?
 						ProcessAssemblyComplete (tw, a) :
@@ -233,6 +311,7 @@ namespace Mono.Tools {
 			catch (Exception e) {
 				Console.Error.WriteLine ("Error: " + e.ToString ());
 				Help ();
+				return 3;
 			}
 			return 0;
 		}
