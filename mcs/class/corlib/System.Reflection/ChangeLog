@@ -1,5 +1,7 @@
 2004-02-12  Martin Baulig  <martin@ximian.com>
 
+	* MonoGenericInst.cs (MonoInflatedField): Removed.
+
 	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): Removed.
 
 2004-02-08  Martin Baulig  <martin@ximian.com>

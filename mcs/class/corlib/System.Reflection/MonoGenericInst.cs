@@ -281,25 +281,6 @@ namespace System.Reflection
 		}
 	}
 
-	internal class MonoInflatedField : MonoField
-	{
-		private readonly IntPtr dhandle;
-		private readonly MonoGenericInst declaring_type;
-		private readonly MonoGenericInst reflected_type;
-
-		public override Type DeclaringType {
-			get {
-				return declaring_type != null ? declaring_type : base.DeclaringType;
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				return reflected_type != null ? reflected_type : base.ReflectedType;
-			}
-		}
-	}
-
 	internal class MonoGenericParam : MonoType
 	{
 		private object refobj;
