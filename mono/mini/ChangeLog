@@ -1,3 +1,12 @@
+2004-01-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ssa.c (mono_ssa_rename_vars): Allocate new_stack on the heap to
+	avoid stack overflow.
+	(replace_usage): Avoid uninitialized variable warnings.
+
+	* mini.c (mono_method_to_ir): Avoid disabling SSA for array operations
+	and taking the address of valuetype variables.
+
 2004-01-03  Patrik Torstensson
 
 	* mini-x86.c: renamed fpflags to flags in RegTrack, going to be used
