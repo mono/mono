@@ -1,3 +1,9 @@
+2002-07-11  Jason Diamond  <jason@injektilo.org>
+
+	* SelectNodesTests.cs: Added.
+
+	* AllTests.cs: Added SelectNodesTests to suite.
+
 2002-07-11  Piers Haken <piersh@friskit.com>
 
 	* XmlElementTests.cs: added TestCreateElement3WithNullNamespace

@@ -251,6 +251,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlNodeArrayList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlNodeChangedAction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -464,7 +469,37 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.XPath\XPathScanner.cs"
+                    RelPath = "System.Xml.Xsl\IXsltContextFunction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\IXsltContextVariable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XsltArgumentList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XsltCompileException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XsltContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XsltException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Xsl\XslTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
