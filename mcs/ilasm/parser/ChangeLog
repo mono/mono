@@ -1,5 +1,9 @@
 2003-12-10  Jackson Harper <jackson@ximian.com>
 
+	* ILParser.jay: Add COMP_NAME token.
+	
+2003-12-10  Jackson Harper <jackson@ximian.com>
+
 	* ILParser.jay: vtable fixups can be int32s
 	
 2003-11-18  Jackson Harper <jackson@ximian.com>
