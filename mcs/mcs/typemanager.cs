@@ -1403,8 +1403,8 @@ public class TypeManager {
 	}
 
         //
-        // Do the right thing when returning the element type of
-        // an array type based on whether we 
+        // Do the right thing when returning the element type of an
+        // array type based on whether we are compiling corlib or not
         //
         public static Type GetElementType (Type t)
         {
