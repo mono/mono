@@ -80,7 +80,7 @@ namespace System.Runtime.Remoting.Channels {
 				// check if there are *out* parameters
 				foreach(ParameterInfo paramInfo in _methodCallParameters) {
 					
-					if(paramInfo.ParameterType.IsByRef) {
+					if(paramInfo.ParameterType.IsByRef || paramInfo.IsOut) {
 						int index = Array.IndexOf(soapMsg.ParamNames, paramInfo.Name);
 						nbOutParams++;
 						object outParam = soapMsg.ParamValues[index];

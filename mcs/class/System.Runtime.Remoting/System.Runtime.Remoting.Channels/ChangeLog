@@ -1,3 +1,8 @@
+2003-09-25  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapMessageFormatter.cs: Consider parameters with Out flag when collectiong
+	  out parameters.
+
 2003-08-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapClientFormatterSink.cs: Fixed a some bugs to make async calls work.
