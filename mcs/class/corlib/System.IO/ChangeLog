@@ -1,3 +1,8 @@
+2005-03-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* BinaryReader.cs, BinaryWriter.cs: Read/write dobules, floats and
+	decimals in little endian format.
+
 2005-03-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoIO.cs:

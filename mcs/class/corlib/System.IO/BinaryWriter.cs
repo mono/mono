@@ -31,6 +31,7 @@
 using System;
 using System.Text;
 using System.Globalization;
+using Mono.Security;
 
 namespace System.IO {
 	[Serializable]
@@ -170,20 +171,34 @@ namespace System.IO {
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
 			byte* value_ptr = (byte *)&value;
-			for (int i = 0; i < 16; i++) {
-
-				/*
-				 * decimal in stream is lo32, mi32, hi32, ss32
-				 * but its internal structure si ss32, hi32, lo32, mi32
-				 */
-				if (i < 4) 
-					buffer [i + 12] = value_ptr [i];
-				else if (i < 8)
-					buffer [i + 4] = value_ptr [i];
-				else if (i < 12)
-					buffer [i - 8] = value_ptr [i];
-				else 
-					buffer [i - 8] = value_ptr [i];
+			
+			/*
+			 * decimal in stream is lo32, mi32, hi32, ss32
+			 * but its internal structure si ss32, hi32, lo32, mi32
+			 */
+				 
+			if (BitConverter.IsLittleEndian) {
+				for (int i = 0; i < 16; i++) {
+					if (i < 4) 
+						buffer [i + 12] = value_ptr [i];
+					else if (i < 8)
+						buffer [i + 4] = value_ptr [i];
+					else if (i < 12)
+						buffer [i - 8] = value_ptr [i];
+					else 
+						buffer [i - 8] = value_ptr [i];
+				}
+			} else {
+				for (int i = 0; i < 16; i++) {
+					if (i < 4) 
+						buffer [15 - i] = value_ptr [i];
+					else if (i < 8)
+						buffer [15 - i] = value_ptr [i];
+					else if (i < 12)
+						buffer [11 - i] = value_ptr [i];
+					else 
+						buffer [19 - i] = value_ptr [i];
+				}
 			}
 
 			OutStream.Write(buffer, 0, 16);
@@ -194,7 +209,7 @@ namespace System.IO {
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
-			OutStream.Write(BitConverter.GetBytes(value), 0, 8);
+			OutStream.Write(BitConverterLE.GetBytes(value), 0, 8);
 		}
 		
 		public virtual void Write(short value) {
@@ -244,7 +259,7 @@ namespace System.IO {
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
-			OutStream.Write(BitConverter.GetBytes(value), 0, 4);
+			OutStream.Write(BitConverterLE.GetBytes(value), 0, 4);
 		}
 
 		byte [] stringBuffer;

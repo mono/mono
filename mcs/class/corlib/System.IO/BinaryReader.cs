@@ -32,6 +32,7 @@
 using System;
 using System.Text;
 using System.Globalization;
+using Mono.Security;
 
 namespace System.IO {
 	public class BinaryReader : IDisposable {
@@ -348,29 +349,47 @@ namespace System.IO {
 
 			decimal ret;
 			byte* ret_ptr = (byte *)&ret;
-			for (int i = 0; i < 16; i++) {
-			  
-				/*
-				 * internal representation of decimal is 
-				 * ss32, hi32, lo32, mi32, 
-				 * but in stream it is 
-				 * lo32, mi32, hi32, ss32
-				 * So we have to rerange this int32 values
-				 */			  
-			  
-			        if (i < 4) {
-				        // lo 8 - 12			  
-				        ret_ptr [i + 8] = m_buffer [i];
-				} else if (i < 8) {
-				        // mid 12 - 16
-				        ret_ptr [i + 8] = m_buffer [i];
-				} else if (i < 12) {
-				        // hi 4 - 8
-				        ret_ptr [i - 4] = m_buffer [i];
-				} else if (i < 16) {
-				        // ss 0 - 4
-				        ret_ptr [i - 12] = m_buffer [i];
-				}				
+			
+			/*
+			 * internal representation of decimal is 
+			 * ss32, hi32, lo32, mi32, 
+			 * but in stream it is 
+			 * lo32, mi32, hi32, ss32
+			 * So we have to rerange this int32 values
+			 */			  
+		  
+			if (BitConverter.IsLittleEndian) {
+				for (int i = 0; i < 16; i++) {
+					if (i < 4) {
+					        // lo 8 - 12			  
+					        ret_ptr [i + 8] = m_buffer [i];
+					} else if (i < 8) {
+					        // mid 12 - 16
+					        ret_ptr [i + 8] = m_buffer [i];
+					} else if (i < 12) {
+					        // hi 4 - 8
+					        ret_ptr [i - 4] = m_buffer [i];
+					} else if (i < 16) {
+					        // ss 0 - 4
+					        ret_ptr [i - 12] = m_buffer [i];
+					}				
+				}
+			} else {
+				for (int i = 0; i < 16; i++) {
+					if (i < 4) {
+					        // lo 8 - 12			  
+					        ret_ptr [11 - i] = m_buffer [i];
+					} else if (i < 8) {
+					        // mid 12 - 16
+					        ret_ptr [19 - i] = m_buffer [i];
+					} else if (i < 12) {
+					        // hi 4 - 8
+					        ret_ptr [15 - i] = m_buffer [i];
+					} else if (i < 16) {
+					        // ss 0 - 4
+					        ret_ptr [15 - i] = m_buffer [i];
+					}				
+				}
 			}
 
 			return ret;
@@ -379,7 +398,7 @@ namespace System.IO {
 		public virtual double ReadDouble() {
 			FillBuffer(8);
 
-			return(BitConverter.ToDouble(m_buffer, 0));
+			return(BitConverterLE.ToDouble(m_buffer, 0));
 		}
 
 		public virtual short ReadInt16() {
@@ -433,7 +452,7 @@ namespace System.IO {
 		public virtual float ReadSingle() {
 			FillBuffer(4);
 
-			return(BitConverter.ToSingle(m_buffer, 0));
+			return(BitConverterLE.ToSingle(m_buffer, 0));
 		}
 
 		[CLSCompliant(false)]
