@@ -210,7 +210,7 @@ namespace System.Data {
 							throw new ArgumentException ();
 					}
 				}
-				if (rowState == DataRowState.Detached && proposed == null)
+				if (rowState == DataRowState.Detached && version == DataRowVersion.Default && proposed == null)
 					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				
 				throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
@@ -1025,7 +1025,11 @@ namespace System.Data {
 				// if so: FIXME ;)
 				
 				if ((rowState & DataRowState.Added) > 0)
+				{
 					_table.Rows.RemoveInternal (this);
+					// if row was in Added state we move it to Detached.
+					DetachRow();
+				}
 			}
 		}
 
@@ -1180,21 +1184,21 @@ namespace System.Data {
 				{
 					tmp = new object[current.Length + 1];
 					Array.Copy (current, tmp, current.Length);
-					tmp[tmp.Length - 1] = DBNull.Value;
+					tmp[tmp.Length - 1] = SetColumnValue(null, tmp.Length - 1);
 					current = tmp;
 				}
 				if (proposed != null)
 				{
 					tmp = new object[proposed.Length + 1];
 					Array.Copy (proposed, tmp, proposed.Length);
-					tmp[tmp.Length - 1] = DBNull.Value;
+					tmp[tmp.Length - 1] = SetColumnValue(null, tmp.Length - 1);
 					proposed = tmp;
 				}
 				if(original != null)
 				{
 					tmp = new object[original.Length + 1];
 					Array.Copy (original, tmp, original.Length);
-					tmp[tmp.Length - 1] = DBNull.Value;
+					tmp[tmp.Length - 1] = SetColumnValue(null, tmp.Length - 1);
 					original = tmp;
 				}
 

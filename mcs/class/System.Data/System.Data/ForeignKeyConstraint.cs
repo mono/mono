@@ -114,54 +114,41 @@ namespace System.Data {
 			DataTable ptable = parentColumns[0].Table;
 			DataTable ctable = childColumns[0].Table;
 	
-			
-			foreach (DataColumn pc in parentColumns)
+			for (int i = 0; i < parentColumns.Length; i++)
 			{
+				DataColumn pc = parentColumns[i];
+				DataColumn cc = childColumns[i];
 				//not null check
 				if (null == pc.Table) 
-				{
 					throw new ArgumentException("All columns must belong to a table." + 
-							" ColumnName: " + pc.ColumnName + " does not belong to a table.");
-				}
+						" ColumnName: " + pc.ColumnName + " does not belong to a table.");
 				
 				//All columns must belong to the same table
 				if (ptable != pc.Table)
 					throw new InvalidConstraintException("Parent columns must all belong to the same table.");
 				
-				foreach (DataColumn cc in childColumns)
+				//not null check
+				if (null == cc.Table) 
+					throw new ArgumentException("All columns must belong to a table." + 
+						" ColumnName: " + pc.ColumnName + " does not belong to a table.");
+
+				//All columns must belong to the same table.
+				if (ctable != cc.Table)
+					throw new InvalidConstraintException("Child columns must all belong to the same table.");
+				
+				//Can't be the same column
+				if (pc == cc)
+					throw new InvalidOperationException("Parent and child columns can't be the same column.");
+
+				if (! pc.DataType.Equals(cc.DataType))
 				{
-					//not null
-					if (null == pc.Table) 
-					{
-						throw new ArgumentException("All columns must belong to a table." + 
-							" ColumnName: " + pc.ColumnName + " does not belong to a table.");
-					}
-			
-					//All columns must belong to the same table.
-					if (ctable != cc.Table)
-						throw new InvalidConstraintException("Child columns must all belong to the same table.");
-						
-						
-					//Can't be the same column
-					if (pc == cc)
-						throw new InvalidOperationException("Parent and child columns can't be the same column.");
-
-					foreach (DataColumn c2 in childColumns) {
-						if (!Object.ReferenceEquals (c2.Table, cc.Table))
-								throw new ArgumentException ("Cannot create a Key from Columns thath belong to different tables.");
-						
-					}
-
-					if (! pc.DataType.Equals(cc.DataType))
-					{
-						//LAMESPEC: spec says throw InvalidConstraintException
-						//		implementation throws InvalidOperationException
-						throw new ArgumentException("Parent column is not type compatible with it's child"
-								+ " column.");
-					}
-				}	
+					//LAMESPEC: spec says throw InvalidConstraintException
+					//		implementation throws InvalidOperationException
+					throw new ArgumentException("Parent column is not type compatible with it's child"
+						+ " column.");
+				}
+					
 			}
-			
 			
 			//Same dataset.  If both are null it's ok
 			if (ptable.DataSet != ctable.DataSet)
@@ -171,9 +158,7 @@ namespace System.Data {
 				throw new InvalidOperationException("Parent column and child column must belong to" + 
 						" tables that belong to the same DataSet.");
 						
-			}
-
-			
+			}	
 		}
 		
 
@@ -383,10 +368,15 @@ namespace System.Data {
 
 			if (Table.DataSet == null || RelatedTable.DataSet == null) return; //	
 				
-			//TODO:
-			//check for orphaned children
-			//check for...
-			
+			try
+			{
+				foreach (DataRow row in Table.Rows)
+					AssertConstraint(row);
+			}
+			catch (InvalidConstraintException)
+			{
+				throw new ArgumentException("This constraint cannot be enabled as not all values have corresponding parent values.");
+			}
 		}
 		
 		[MonoTODO]

@@ -112,7 +112,7 @@ namespace System.Data
 			// we act according to the missingschemaaction param.
 			int tmp = targetSet.Tables.IndexOf(tableName);
 			// we need to check if it is equals names
-			if (tmp != -1 && !targetSet.Tables[tmp].Equals(tableName))
+			if (tmp != -1 && !targetSet.Tables[tmp].TableName.Equals(tableName))
 				tmp = -1;
 			if (tmp == -1)
 			{

@@ -373,6 +373,9 @@ namespace System.Data {
 			set {
 				//TODO: validation of the expression
 				expression = value;  //Check?
+
+				//Check the validate expression of ExpressionElement with string
+				expression = System.Data.ExpressionElement.ValidateExpression(expression);
 				
 				if (expression != string.Empty)
 					ReadOnly = true;

@@ -22,15 +22,16 @@ using System.Xml.XPath;
 using System.Collections;
 using System.Globalization;
 
-namespace System.Data {
+namespace System.Data 
+{
 
-        internal class XmlDataLoader
+	internal class XmlDataLoader
 	{
 	
-	        private DataSet DSet;
+		private DataSet DSet;
 		Hashtable DiffGrRows = new Hashtable ();
 
-	        public XmlDataLoader (DataSet set) 
+		public XmlDataLoader (DataSet set) 
 		{
 			DSet = set;
 		}
@@ -39,7 +40,8 @@ namespace System.Data {
 		{
 			XmlReadMode Result = XmlReadMode.Auto;
 
-			switch (mode) {
+			switch (mode) 
+			{
 
 				case XmlReadMode.Fragment:
 					break;
@@ -68,65 +70,33 @@ namespace System.Data {
 		[MonoTODO]
 		private void ReadModeInferSchema (XmlReader reader)
 		{
-			// root element is DataSets name
-			reader.MoveToContent ();
+			// first load an XmlDocument from the reader.
+			XmlDocument doc = new XmlDocument();
+			doc.Load(reader);
 
-			DSet.DataSetName = reader.LocalName;
+			// set EnforceConstraint to false - we do not want any validation during 
+			// load time.
+			bool origEnforceConstraint = DSet.EnforceConstraints;
+			DSet.EnforceConstraints = false;
+			
+			// first element is the DataSet.
+			XmlElement elem = doc.DocumentElement;
+			DSet.DataSetName = elem.LocalName;
 
-			// And now comes tables
-			while (reader.Read ()) {
+			// get the Namespace of the DataSet.
+			if (elem.HasAttribute("xmlns"))
+				DSet.Namespace = elem.Attributes["xmlns"].Value;
 
-				// skip possible inline-schema
-				if (String.Compare (reader.LocalName, "schema", true) == 0 && reader.NodeType == XmlNodeType.Element) {
-					while (reader.Read () && (reader.NodeType != XmlNodeType.EndElement 
-								  || String.Compare (reader.LocalName, "schema", true) != 0));
-				}
+			// The childs are tables.
+			XmlNodeList nList = elem.ChildNodes;
 
-
-				if (reader.NodeType == XmlNodeType.Element) {
-					
-					string datatablename = reader.LocalName;
-					DataTable table;
-					bool NewTable = false;
-
-					if (!DSet.Tables.Contains (datatablename)) {
-						table = new DataTable (reader.LocalName);
-						DSet.Tables.Add (table);
-						NewTable = true;
-					}
-					else {
-						table = DSet.Tables [datatablename];
-					}
-
-					Hashtable rowValue = new Hashtable ();
-
-					while (reader.Read () && (reader.NodeType != XmlNodeType.EndElement 
-								  || reader.LocalName != datatablename))
-					{
-						if (reader.NodeType == XmlNodeType.Element) {
-
-							string dataColumnName = reader.LocalName;
-							if (NewTable)
-								table.Columns.Add (dataColumnName);
-
-							// FIXME: exception?
-							if (!reader.Read ())
-								return;
-
-							rowValue.Add (dataColumnName, reader.Value);
-						}
-					}
-					
-					DataRow row = table.NewRow ();
-					
-					IDictionaryEnumerator enumerator = rowValue.GetEnumerator ();
-					while (enumerator.MoveNext ()) {
-						row [enumerator.Key.ToString ()] = enumerator.Value.ToString ();
-					}
-
-					table.Rows.Add (row);
-				}
-			}			
+			for (int i = 0; i < nList.Count; i++)
+			{
+				XmlNode node = nList[i];
+				AddRowToTable(node, null);
+			}
+			// set the EnforceConstraints to original value;
+			DSet.EnforceConstraints = origEnforceConstraint;
 		}
 
 		// Read Xmldocument. XmlReadMode.ReadSchema and XmlReadMode.IgnoreSchema
@@ -176,20 +146,24 @@ namespace System.Data {
 		
 		private void ReadColumns (XmlReader reader, DataRow row, DataTable table, string TableName)
 		{
-			do {
-				if (reader.NodeType == XmlNodeType.Element) {
+			do 
+			{
+				if (reader.NodeType == XmlNodeType.Element) 
+				{
 					DataColumn col = table.Columns [reader.LocalName];
-					if (col != null) {
+					if (col != null) 
+					{
 						reader.Read ();
 						row [col] = StringToObject (col.DataType, reader.Value);
 					}
 				}
-				else {
+				else 
+				{
 					reader.Read ();
 				}
 				
 			} while (table.TableName != reader.LocalName 
-				 || reader.NodeType != XmlNodeType.EndElement);
+				|| reader.NodeType != XmlNodeType.EndElement);
 		}
 
 		internal static object StringToObject (Type type, string value)
@@ -220,6 +194,103 @@ namespace System.Data {
 			return Convert.ChangeType (value, type);
 		}
 
+		private void AddRowToTable(XmlNode tableNode, DataColumn relationColumn)
+		{
+			Hashtable rowValue = new Hashtable();
+			DataTable table;
+			
+			// Check if the table exists in the DataSet. If not create one.
+			if (DSet.Tables.Contains(tableNode.LocalName))
+				table = DSet.Tables[tableNode.LocalName];
+			else
+			{
+				table = new DataTable(tableNode.LocalName);
+				DSet.Tables.Add(table);
+			}
+			
+			// Get the child nodes of the table. Any child can be one of the following tow:
+			// 1. DataTable - if there was a relation with another table..
+			// 2. DataColumn - column of the current table.
+			XmlNodeList childList = tableNode.ChildNodes;
+			for (int i = 0; i < childList.Count; i++)
+			{
+				XmlNode childNode = childList[i];
+				
+				// The child node is a table if:
+				// 1. He has attributes it means that it is a table OR
+				// 2. He has more then one child nodes. Columns has only one child node
+				// which is a Text node type that has the column value.
+				if (childNode.ChildNodes.Count > 1 || childNode.Attributes.Count > 0)
+				{
+					// We need to create new column for the relation between the current
+					// table and the new table we found (the child table).
+					string newRelationColumnName = table.TableName + "_Id";
+					if (!table.Columns.Contains(newRelationColumnName))
+					{
+						DataColumn newRelationColumn = new DataColumn(newRelationColumnName, typeof(int));
+						newRelationColumn.AutoIncrement = true;
+						table.Columns.Add(newRelationColumn);
+					}
+					// Add a row to the new table we found.
+					AddRowToTable(childNode, table.Columns[newRelationColumnName]);
+				}
+				else //Child node is a column.
+				{
+					if (!table.Columns.Contains(childNode.LocalName))
+						table.Columns.Add(childNode.LocalName);
+					
+					rowValue.Add(childNode.LocalName, childNode.FirstChild.Value);
+				}
+			}
+
+			// Column can be attribute of the table element.
+			XmlAttributeCollection aCollection = tableNode.Attributes;
+			for (int i = 0; i < aCollection.Count; i++)
+			{
+				XmlAttribute attr = aCollection[i];
+				//the atrribute can be the namespace.
+				if (attr.Prefix.Equals("xmlns"))
+					table.Namespace = attr.Value;
+				else // the attribute is a column.
+				{
+					if (!table.Columns.Contains(attr.LocalName))
+						table.Columns.Add(attr.LocalName);
+					table.Columns[attr.LocalName].Namespace = table.Namespace;
+
+					rowValue.Add(attr.LocalName, attr.Value);
+				}
+			}
+
+			// If the current table is a child table we need to add a new column for the relation
+			// and add a new relation to the DataSet.
+			if (relationColumn != null)
+			{
+				if (!table.Columns.Contains(relationColumn.ColumnName))
+				{
+					DataColumn dc = new DataColumn(relationColumn.ColumnName, typeof(int));
+					dc.AutoIncrement = true;
+					table.Columns.Add(dc);
+					DSet.Relations.Add(relationColumn, dc);
+				}
+			}
+
+			// Create new row and add all values to the row.
+			// then add it to the table.
+			DataRow row = table.NewRow ();
+					
+			IDictionaryEnumerator enumerator = rowValue.GetEnumerator ();
+			while (enumerator.MoveNext ()) 
+			{
+				row [enumerator.Key.ToString ()] = enumerator.Value.ToString ();
+			}
+
+			table.Rows.Add (row);
+			
+		}
+
 		#endregion // Private helper methods
+
+		
 	}
+
 }

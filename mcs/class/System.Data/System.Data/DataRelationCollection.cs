@@ -46,9 +46,8 @@ namespace System.Data {
 			public override DataRelation this [string name]
 			{
 				get {
-					foreach (DataRelation dataRelation in List)
-						if (dataRelation.RelationName == name) return dataRelation;
-					return null;
+					int index = IndexOf (name, true);
+					return index < 0 ? null : (DataRelation) list[index];
 				}
 			}
 
@@ -398,15 +397,21 @@ namespace System.Data {
 				//TODO: Issue a good exception message.
 				throw new ArgumentNullException();
 			}
-			else if(List.IndexOf(relation) != -1)
+			if(List.IndexOf(relation) != -1)
 			{
 				//TODO: Issue a good exception message.
 				throw new ArgumentException();
 			}
-			else if(List.Contains(relation.RelationName))
+
+			// check if the collection has a relation with the same name.
+			int tmp = IndexOf(relation.RelationName);
+			// if we found a relation with same name we have to check
+			// that it is the same case.
+			// indexof can return a table with different case letters.
+			if (tmp != -1)
 			{
-				//TODO: Issue a good exception message.
-				throw new DuplicateNameException("A Relation named " + relation.RelationName + " already belongs to this DataSet.");
+				if(relation.RelationName == this[tmp].RelationName)
+					throw new DuplicateNameException("A DataRelation named '" + relation.RelationName + "' already belongs to this DataSet.");
 			}
 			List.Add(relation);
 		}
@@ -434,7 +439,7 @@ namespace System.Data {
 
 		public virtual bool Contains(string name)
 		{
-			return IndexOf(name) != -1;
+			return (-1 != IndexOf (name, false));
 		}
 
 		private CollectionChangeEventArgs CreateCollectionChangeEvent (CollectionChangeAction action)
@@ -451,7 +456,28 @@ namespace System.Data {
 
 		public virtual int IndexOf(string relationName)
 		{
-			return List.IndexOf(this[relationName]);
+			return IndexOf(relationName, false);
+		}
+
+		private int IndexOf (string name, bool error)
+		{
+			int count = 0, match = -1;
+			for (int i = 0; i < list.Count; i++)
+			{
+				String name2 = ((DataRelation) list[i]).RelationName;
+				if (String.Compare (name, name2, true) == 0)
+				{
+					if (String.Compare (name, name2, false) == 0)
+						return i;
+					match = i;
+					count++;
+				}
+			}
+			if (count == 1)
+				return match;
+			if (count > 1 && error)
+				throw new ArgumentException ("There is no match for the name in the same case and there are multiple matches in different case.");
+			return -1;
 		}
 
 		protected virtual void OnCollectionChanged (CollectionChangeEventArgs ccevent)

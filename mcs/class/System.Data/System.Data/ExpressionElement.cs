@@ -17,17 +17,17 @@ using System.Reflection;
 
 using System.Collections;
 
-namespace System.Data 
+namespace System.Data
 {
 	/// <summary>
 	/// The main element which includes whole expression
 	/// </summary>
-	internal class ExpressionMainElement : ExpressionElement 
+	internal class ExpressionMainElement : ExpressionElement
 	{
 		
 		
 
-		public ExpressionMainElement (string s) 
+		public ExpressionMainElement (string s)
 		{
 			s = ExpressionElement.ValidateExpression (s);
 			ParseExpression (s);
@@ -55,7 +55,7 @@ namespace System.Data
 	/// <summary>
 	///  Class for =
 	/// </summary>
-	internal class ExpressionEquals : ExpressionElement 
+	internal class ExpressionEquals : ExpressionElement
 	{	
 
 		public ExpressionEquals (string exp1, string exp2) 
@@ -79,7 +79,7 @@ namespace System.Data
 	/// <summary>
 	///  Class for <
 	/// </summary>
-	internal class ExpressionLessThan : ExpressionElement 
+	internal class ExpressionLessThan : ExpressionElement
 	{	
 
 		public ExpressionLessThan (string exp1, string exp2) 
@@ -103,7 +103,7 @@ namespace System.Data
 	/// <summary>
 	///  Class for <=
 	/// </summary>
-	internal class ExpressionLessThanOrEqual : ExpressionElement 
+	internal class ExpressionLessThanOrEqual : ExpressionElement
 	{	
 
 		public ExpressionLessThanOrEqual (string exp1, string exp2) 
@@ -127,7 +127,7 @@ namespace System.Data
 	/// <summary>
 	///  Class for >
 	/// </summary>
-	internal class ExpressionGreaterThan : ExpressionElement 
+	internal class ExpressionGreaterThan : ExpressionElement
 	{	
 
 		public ExpressionGreaterThan (string exp1, string exp2) 
@@ -151,7 +151,7 @@ namespace System.Data
 	/// <summary>
 	///  Class for >=
 	/// </summary>
-	internal class ExpressionGreaterThanOrEqual : ExpressionElement 
+	internal class ExpressionGreaterThanOrEqual : ExpressionElement
 	{	
 
 		public ExpressionGreaterThanOrEqual (string exp1, string exp2) 
@@ -175,7 +175,7 @@ namespace System.Data
 	/// <summary>
 	///  Class for <>
 	/// </summary>
-	internal class ExpressionUnequals : ExpressionElement 
+	internal class ExpressionUnequals : ExpressionElement
 	{	
 
 		public ExpressionUnequals (string exp1, string exp2) 
@@ -200,7 +200,7 @@ namespace System.Data
 	/// <summary>
 	///  Class for LIKE-operator
 	/// </summary>
-	internal class ExpressionLike : ExpressionElement 
+	internal class ExpressionLike : ExpressionElement
 	{	
 
 		public ExpressionLike (string exp1, string exp2) 
@@ -285,9 +285,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for OR
 	/// </summary>
-	internal class ExpressionOr : ExpressionElement 
+	internal class ExpressionOr : ExpressionElement
 	{        	        	
-		public ExpressionOr (string exp1, string exp2) 
+		public ExpressionOr (string exp1, string exp2)
 		{
 			ParseExpression (exp1);
 			ParseExpression (exp2);
@@ -308,9 +308,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for AND
 	/// </summary>
-	internal class ExpressionAnd : ExpressionElement 
+	internal class ExpressionAnd : ExpressionElement
 	{        	        	
-		public ExpressionAnd (string exp1, string exp2) 
+		public ExpressionAnd (string exp1, string exp2)
 		{
 			ParseExpression (exp1);
 			ParseExpression (exp2);
@@ -342,9 +342,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for +
 	/// </summary>
-	internal class ExpressionAddition : ExpressionElement 
+	internal class ExpressionAddition : ExpressionElement
 	{
-		public ExpressionAddition (string exp1, string exp2) 
+		public ExpressionAddition (string exp1, string exp2)
 		{        		
 			this.exp1 = exp1;
 			this.exp2 = exp2;
@@ -352,7 +352,7 @@ namespace System.Data
 			ParseExpression (exp2);
 		}
         	
-		public override Type ResultType (DataRow Row) 
+		public override Type ResultType (DataRow Row)
 		{
 			Type ResultType = typeof (string);
 			ExpressionElement exp1Temp = ((ExpressionElement)Elements [0]);
@@ -415,7 +415,7 @@ namespace System.Data
 
 
 		// This method is shouldnt never invoked
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
@@ -424,9 +424,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for -
 	/// </summary>
-	internal class ExpressionSubtraction : ExpressionElement 
+	internal class ExpressionSubtraction : ExpressionElement
 	{
-		public ExpressionSubtraction (string exp1, string exp2) 
+		public ExpressionSubtraction (string exp1, string exp2)
 		{        		
 			this.exp1 = exp1;
 			this.exp2 = exp2;
@@ -440,7 +440,7 @@ namespace System.Data
 		}
         	
 		// This method is shouldnt never invoked
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
@@ -488,9 +488,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for *
 	/// </summary>
-	internal class ExpressionMultiply : ExpressionElement 
+	internal class ExpressionMultiply : ExpressionElement
 	{
-		public ExpressionMultiply (string exp1, string exp2) 
+		public ExpressionMultiply (string exp1, string exp2)
 		{        		
 			this.exp1 = exp1;
 			this.exp2 = exp2;
@@ -498,7 +498,7 @@ namespace System.Data
 			ParseExpression (exp2);
 		}
         	
-		public override Type ResultType (DataRow Row) 
+		public override Type ResultType (DataRow Row)
 		{
 			Type ResultType = null;
 			ExpressionElement E1 = ((ExpressionElement)Elements [0]);
@@ -524,7 +524,7 @@ namespace System.Data
 			return CalculateResult (Row);
 		}
         	
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
@@ -570,9 +570,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for *
 	/// </summary>
-	internal class ExpressionDivide : ExpressionElement 
+	internal class ExpressionDivide : ExpressionElement
 	{
-		public ExpressionDivide (string exp1, string exp2) 
+		public ExpressionDivide (string exp1, string exp2)
 		{        		
 			this.exp1 = exp1;
 			this.exp2 = exp2;
@@ -586,7 +586,7 @@ namespace System.Data
 		}
         	
 		// This method is shouldnt never invoked
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
@@ -634,9 +634,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for *
 	/// </summary>
-	internal class ExpressionModulus : ExpressionElement 
+	internal class ExpressionModulus : ExpressionElement
 	{
-		public ExpressionModulus (string exp1, string exp2) 
+		public ExpressionModulus (string exp1, string exp2)
 		{        		
 			this.exp1 = exp1;
 			this.exp2 = exp2;
@@ -650,7 +650,7 @@ namespace System.Data
 		}
         	
 		// This method is shouldnt never invoked
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
@@ -699,39 +699,39 @@ namespace System.Data
 	// _____A_G_G_R_E_G_A_T_E_S_____
 	//
 
-	internal class ExpressionAggregate : ExpressionElement 
+	internal class ExpressionAggregate : ExpressionElement
 	{
         	
-		public ExpressionAggregate() 
+		public ExpressionAggregate()
 		{
 		}
 
-		public ExpressionAggregate(string s) 
+		public ExpressionAggregate(string s)
 		{
 			s = ExpressionElement.ValidateExpression (s);
 			ParseExpression (s);
 		}
 
         	
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
 
-		public override object Result(DataRow Row) 
+		public override object Result(DataRow Row)
 		{
 			DataRow[] rows = new DataRow[Row.Table.Rows.Count];
 			Row.Table.Rows.CopyTo(rows, 0);
 			return ((ExpressionAggregate)Elements[0]).Result(rows);
 		}
 
-		public virtual object Result(DataRow[] rows) 
+		public virtual object Result(DataRow[] rows)
 		{
 			return ((ExpressionAggregate)Elements[0]).Result(rows);
 		}
 
 
-		protected virtual void ParseParameters (string s) 
+		protected virtual void ParseParameters (string s)
 		{
 			string stemp = s.ToLower ();
 			bool inString = false;
@@ -756,8 +756,7 @@ namespace System.Data
 					parentheses--;
 
 				if ((s [i] == ',' ||  s [i] == ')') && !inString && parentheses == -1) 
-				{ 
-					// Parameter changed
+				{ // Parameter changed
 
 					if (p1 == null) 
 					{
@@ -778,14 +777,14 @@ namespace System.Data
 	/// <summary>
 	///  Class for Sum (column_Name)
 	/// </summary
-	internal class ExpressionSum : ExpressionAggregate 
+	internal class ExpressionSum : ExpressionAggregate
 	{
-		public ExpressionSum (string exp1) 
+		public ExpressionSum (string exp1)
 		{
 			ParseParameters (exp1);
 		}
 
-		public override object Result(DataRow[] rows) 
+		public override object Result(DataRow[] rows)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			object value1 = E1.Result (rows[0]);
@@ -846,14 +845,14 @@ namespace System.Data
 	/// <summary>
 	///  Class for Avg (column_Name)
 	/// </summary
-	internal class ExpressionAvg : ExpressionAggregate 
+	internal class ExpressionAvg : ExpressionAggregate
 	{
-		public ExpressionAvg (string exp1) 
+		public ExpressionAvg (string exp1)
 		{
 			ParseParameters (exp1);
 		}
 
-		public override object Result(DataRow[] rows) 
+		public override object Result(DataRow[] rows)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			object value1 = E1.Result (rows[0]);
@@ -921,7 +920,7 @@ namespace System.Data
 		/// <summary>
 		///  This is used from ExpressionStdDev for evaluating avg.
 		/// </summary>
-		public ExpressionAvg (ExpressionElement E) 
+		public ExpressionAvg (ExpressionElement E)
 		{
 			Elements.Add (E);
 		}
@@ -931,14 +930,14 @@ namespace System.Data
 	/// <summary>
 	///  Class for Min (column_Name)
 	/// </summary
-	internal class ExpressionMin : ExpressionAggregate 
+	internal class ExpressionMin : ExpressionAggregate
 	{
-		public ExpressionMin (string exp1) 
+		public ExpressionMin (string exp1)
 		{
 			ParseParameters (exp1);
 		}
 
-		public override object Result(DataRow[] rows) 
+		public override object Result(DataRow[] rows)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			object value1 = E1.Result (rows[0]);
@@ -950,7 +949,7 @@ namespace System.Data
 				
 				Type t1 = null;
 				// This should be optimized somehow
-				for (int i = 0; i < rows.Length; i++) 
+				for (int i = 0; i < rows.Length; i++)
 				{
 				       
 					// TODO: other types and exceptions
@@ -984,14 +983,14 @@ namespace System.Data
 	/// <summary>
 	///  Class for Max (column_Name)
 	/// </summary
-	internal class ExpressionMax : ExpressionAggregate 
+	internal class ExpressionMax : ExpressionAggregate
 	{
-		public ExpressionMax (string exp1) 
+		public ExpressionMax (string exp1)
 		{
 			ParseParameters (exp1);
 		}
 
-		public override object Result(DataRow[] rows) 
+		public override object Result(DataRow[] rows)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			object value1 = E1.Result (rows[0]);
@@ -1038,14 +1037,14 @@ namespace System.Data
 	/// <summary>
 	///  Class for count (column)
 	/// </summary>
-	internal class ExpressionCount : ExpressionAggregate 
+	internal class ExpressionCount : ExpressionAggregate
 	{
-		public ExpressionCount (string exp1) 
+		public ExpressionCount (string exp1)
 		{
 			ParseParameters (exp1);
 		}
 		
-		public override object Result(DataRow[] rows) 
+		public override object Result(DataRow[] rows)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			int count = 0;
@@ -1075,14 +1074,14 @@ namespace System.Data
 	/// <summary>
 	///  Class for StdDev (column)
 	/// </summary>
-	internal class ExpressionStdev : ExpressionAggregate 
+	internal class ExpressionStdev : ExpressionAggregate
 	{
-		public ExpressionStdev (string exp1) 
+		public ExpressionStdev (string exp1)
 		{		
 			ParseParameters (exp1);
 		}
 
-		public override object Result(DataRow[] rows) 
+		public override object Result(DataRow[] rows)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			ExpressionAvg Avg = new ExpressionAvg (E1);
@@ -1098,7 +1097,7 @@ namespace System.Data
 			if (E1 is ExpressionSingleElement) 
 			{
 
-				for (int i = 0; i <rows.Length; i++) 
+				for (int i = 0; i <rows.Length; i++)
 				{
 					// (value - avg)Â²
 					object v = E1.Result (rows[i]);
@@ -1131,14 +1130,14 @@ namespace System.Data
 	/// <summary>
 	///  Class for Var (column)
 	/// </summary>
-	internal class ExpressionVar : ExpressionAggregate 
+	internal class ExpressionVar : ExpressionAggregate
 	{
-		public ExpressionVar (string exp1) 
+		public ExpressionVar (string exp1)
 		{
 			ParseParameters (exp1);
 		}
 
-		public override object Result(DataRow[] rows) 
+		public override object Result(DataRow[] rows)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			ExpressionAvg Avg = new ExpressionAvg (E1);
@@ -1154,7 +1153,7 @@ namespace System.Data
 			if (E1 is ExpressionSingleElement) 
 			{
 
-				for (int i = 0; i < rows.Length; i++) 
+				for (int i = 0; i < rows.Length; i++)
 				{
 
 				       
@@ -1192,9 +1191,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for len (string) function
 	/// </summary>
-	internal class ExpressionLen : ExpressionElement 
+	internal class ExpressionLen : ExpressionElement
 	{
-		public ExpressionLen (string exp1) 
+		public ExpressionLen (string exp1)
 		{        		
 			_ResultType = typeof (int);
 			ParseParameters (exp1);
@@ -1208,12 +1207,12 @@ namespace System.Data
 			return value1.ToString ().Length;
 		}
         	
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
 
-		public void ParseParameters (string s) 
+		public void ParseParameters (string s)
 		{
 			string stemp = s.ToLower ();
 			bool inString = false;
@@ -1237,8 +1236,7 @@ namespace System.Data
 					parentheses--;
 
 				if ((s [i] == ',' ||  s [i] == ')') && !inString && parentheses == -1) 
-				{ 
-					// Parameter changed
+				{ // Parameter changed
 
 					if (p1 == null) 
 					{
@@ -1258,9 +1256,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for iif (exp1, truepart, falsepart) function
 	/// </summary>
-	internal class ExpressionIif : ExpressionElement 
+	internal class ExpressionIif : ExpressionElement
 	{
-		public ExpressionIif (string exp) 
+		public ExpressionIif (string exp)
 		{       
 			ParseParameters (exp);
 		}
@@ -1278,12 +1276,12 @@ namespace System.Data
 		}
         	
 		// This method is shouldnt never invoked
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
 
-		public override Type ResultType (DataRow Row) 
+		public override Type ResultType (DataRow Row)
 		{						
 			ExpressionElement E1 = ((ExpressionElement)Elements [0]);
 			ExpressionElement E2 = ((ExpressionElement)Elements [1]);
@@ -1298,7 +1296,7 @@ namespace System.Data
 		/// <summary>
 		///  Parses expressions in parameters (exp, truepart, falsepart)
 		/// </summary>
-		private void ParseParameters (string s) 
+		private void ParseParameters (string s)
 		{
 			bool inString = false;
 			string stemp = s.ToLower ();
@@ -1326,8 +1324,7 @@ namespace System.Data
 
 				if ((s [i] == ',' && !inString && parentheses == 0) || 
 					(s [i] == ')' && i == (s.Length -1))) 
-				{ 
-					// Parameter changed
+				{ // Parameter changed
 
 					if (p1 == null) 
 					{
@@ -1367,9 +1364,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for isnull (expression, returnvalue) function
 	/// </summary>
-	internal class ExpressionIsNull : ExpressionElement 
+	internal class ExpressionIsNull : ExpressionElement
 	{
-		public ExpressionIsNull (string exp) 
+		public ExpressionIsNull (string exp)
 		{        		
 			ParseParameters (exp);
 		}
@@ -1387,7 +1384,7 @@ namespace System.Data
 				return R1;
 		}
 
-		public override Type ResultType (DataRow Row) 
+		public override Type ResultType (DataRow Row)
 		{
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			ExpressionElement E2 = (ExpressionElement)Elements [1];
@@ -1403,7 +1400,7 @@ namespace System.Data
 		/// <summary>
 		///  IsNull function does not return boolean value, so throw exception
 		/// </summary>
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
@@ -1411,7 +1408,7 @@ namespace System.Data
 		/// <summary>
 		///  Parses parameters of function and invoke ParseExpression methods
 		/// </summary>
-		private void ParseParameters (string s) 
+		private void ParseParameters (string s)
 		{
 			bool inString = false;
 			string stemp = s.ToLower ();
@@ -1439,8 +1436,7 @@ namespace System.Data
 
 				if ((s [i] == ',' && !inString && parentheses == 0) || 
 					(s [i] == ')' && i == (s.Length -1))) 
-				{ 
-					// Parameter changed
+				{ // Parameter changed
 
 					if (p1 == null) 
 					{
@@ -1472,9 +1468,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for Substring (expression, start, length) function
 	/// </summary>
-	internal class ExpressionSubstring : ExpressionElement 
+	internal class ExpressionSubstring : ExpressionElement
 	{
-		public ExpressionSubstring (string exp) 
+		public ExpressionSubstring (string exp)
 		{        		
 			ParseParameters (exp);
 			_ResultType = typeof (string);
@@ -1524,7 +1520,7 @@ namespace System.Data
 		/// <summary>
 		///  IsNull function does not return boolean value, so throw exception
 		/// </summary>
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}
@@ -1532,7 +1528,7 @@ namespace System.Data
 		/// <summary>
 		///  Parses parameters of function and invoke ParseExpression methods
 		/// </summary>
-		private void ParseParameters (string s) 
+		private void ParseParameters (string s)
 		{
 			bool inString = false;
 			string stemp = s.ToLower ();
@@ -1562,8 +1558,7 @@ namespace System.Data
 
 				if ((s [i] == ',' && !inString && parentheses == 0) || 
 					(s [i] == ')' && i == (s.Length -1))) 
-				{ 
-					// Parameter changed
+				{ // Parameter changed
 
 					if (p1 == null) 
 					{
@@ -1603,9 +1598,9 @@ namespace System.Data
 	/// <summary>
 	///  Class for In (exp, exp, exp, ...) function
 	/// </summary>
-	internal class ExpressionIn : ExpressionElement 
+	internal class ExpressionIn : ExpressionElement
 	{
-		public ExpressionIn (string exp1, string exp2) 
+		public ExpressionIn (string exp1, string exp2)
 		{       
 			ParseExpression(exp1);
 			ParseParameters (exp2);
@@ -1619,7 +1614,7 @@ namespace System.Data
 			ExpressionElement E;
 			ExpressionElement columnElement = (ExpressionElement)Elements [0];
 
-			for (int i = 1; i < Elements.Count; i++) 
+			for (int i = 1; i < Elements.Count; i++)
 			{
 				E = (ExpressionElement)Elements [i];
 				if(ExpressionElement.Compare (columnElement, E, Row) == 0)
@@ -1631,7 +1626,7 @@ namespace System.Data
 		/// <summary>
 		///  Parses parameters of function and invoke ParseExpression methods
 		/// </summary>
-		private void ParseParameters (string s) 
+		private void ParseParameters (string s)
 		{
 			bool inString = false;
 			ArrayList parameters = new ArrayList();
@@ -1671,11 +1666,11 @@ namespace System.Data
 	/// <summary>
 	///  Class for just one element for example string, int, ...
 	/// </summary>
-	internal class ExpressionSingleElement : ExpressionElement 
+	internal class ExpressionSingleElement : ExpressionElement
 	{        	
 		private object Element = null;
         	
-		public ExpressionSingleElement (string s) 
+		public ExpressionSingleElement (string s)
 		{
 			// TODO: Every type should be checked
 			if (s.StartsWith ("'") && s.EndsWith ("'")) 
@@ -1708,7 +1703,7 @@ namespace System.Data
 			}				
 		}
 
-		public override object Result (DataRow Row) 
+		public override object Result (DataRow Row)
 		{
 			object Result = null;
 			if (ResultType (Row) == typeof (DataColumn)) 
@@ -1716,7 +1711,7 @@ namespace System.Data
 				
 				if (!Row.Table.Columns.Contains (Element.ToString ()))
 					throw new EvaluateException ("Column name '" + Element.ToString () + "' not found.");
-				else 
+				else
 				{
 					DataRowVersion rowVersion = DataRowVersion.Default;
 					// if this row is deleted we get the original version, or else we get an exception.
@@ -1731,7 +1726,7 @@ namespace System.Data
 			return Result;
 		}
         	
-		public override bool Test (DataRow Row) 
+		public override bool Test (DataRow Row)
 		{
 			throw new EvaluateException ();
 		}		
@@ -1740,7 +1735,7 @@ namespace System.Data
 	/// <summary>
 	///  Parent class of all the elements of expression
 	/// </summary>
-	internal abstract class ExpressionElement 
+	internal abstract class ExpressionElement
 	{        
 		enum OP {OPERATOR, OPERAND};
 		enum OPERATOR_TYPE {SYMBOLIC, LITERAL, UNDEFINED};
@@ -1766,12 +1761,12 @@ namespace System.Data
 
 		public virtual object Result (DataRow Row) {return null;}
                 
-		public virtual Type ResultType (DataRow Row) 
+		public virtual Type ResultType (DataRow Row)
 		{
 			return _ResultType;
 		}
 
-		protected object CalculateResult (DataRow Row) 
+		protected object CalculateResult (DataRow Row)
 		{
 			ExpressionElement E1 = ((ExpressionElement)Elements [0]);
 			ExpressionElement E2 = ((ExpressionElement)Elements [1]);
@@ -1803,7 +1798,7 @@ namespace System.Data
 			
 			return Result; 
 		}
-		protected virtual object Calculate (object value1, object value2, Type TempType) 
+		protected virtual object Calculate (object value1, object value2, Type TempType)
 		{
 			return null;
 		}
@@ -1812,7 +1807,7 @@ namespace System.Data
 		///  static method for comparing two ExpressionElement. This is used in =, <, >, <>, <=, >= elements.
 		///  If elements are equal returns 0, if E1 is less that E2, return -1 else if E1 is greater 1 
 		/// </summary>
-		protected static int Compare (ExpressionElement E1, ExpressionElement E2, DataRow Row) 
+		protected static int Compare (ExpressionElement E1, ExpressionElement E2, DataRow Row)
 		{ 
 			int ReturnValue = 0;
 
@@ -1867,7 +1862,7 @@ namespace System.Data
 		///  Checks syntax of expression and throws exception if needed.
 		///  Also removes whitespaces between operator elements for example: age < = 64 --> age <= 64
 		/// </summary>
-		internal static string ValidateExpression (string s) 
+		internal static string ValidateExpression (string s)
 		{			
 			//
 			// TODO: find out nice way to do this. This is NOT nice way :-P
@@ -1941,25 +1936,28 @@ namespace System.Data
 					}
 					else if (operatorType == OPERATOR_TYPE.SYMBOLIC) 
 					{
+						
+						//Checking for operators following one another
+						if ((strOperator == " +" || strOperator == " -" || strOperator == " %" || strOperator ==" *") &&
+							(c == '=' || c== '<' || c== '>'))
+								throw new SyntaxErrorException (
+									"The operator " + strOperator + c + " is not valid");
 
-						if (c != '<' && c != '=' && c != '>' && c != ' ') 
-						{
+						// this is COPY-PASTE
+						op = OP.OPERAND;
+						if (!newExp.EndsWith (" ") && !strOperator.StartsWith (" ")) 
+							strOperator = " " + strOperator;
+
+						newExp += strOperator;
+
+						if (Char.IsDigit (c))
+							isDigit = true;
 							
-							// this is COPY-PASTE
-							op = OP.OPERAND;
-							if (!newExp.EndsWith (" ") && !strOperator.StartsWith (" ")) 
-								strOperator = " " + strOperator;
+						strOperand = c.ToString ();
+						
+						strOperator = "";
+						continue;
 
-							newExp += strOperator;
-
-							if (Char.IsDigit (c))
-								isDigit = true;
-								
-							strOperand = c.ToString ();
-							
-							strOperator = "";
-							continue;
-						}
 					}
 
 					if (operatorType == OPERATOR_TYPE.LITERAL && c == ' ') 
@@ -2002,7 +2000,7 @@ namespace System.Data
 		///  Finds and creates Expression elements.
 		///  This presumes that expression is valid.
 		/// </summary>
-		protected void ParseExpression (string s) 
+		protected void ParseExpression (string s)
 		{	
 			//
 			// TODO/FIXME: IMHO, this should be done with different kind of parsing:
@@ -2191,7 +2189,7 @@ namespace System.Data
 		// These methods are temporary for now
 		//
 
-		private bool FindOrElement (string s, ref string s1, ref string s2) 
+		private bool FindOrElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf("or");
@@ -2237,7 +2235,7 @@ namespace System.Data
 			return false;
 		}
 		
-		private bool FindAndElement (string s, ref string s1, ref string s2) 
+		private bool FindAndElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf("and");
@@ -2284,7 +2282,7 @@ namespace System.Data
 			return false;
 		}
 
-		private bool FindLikeElement (string s, ref string s1, ref string s2) 
+		private bool FindLikeElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf("like");
@@ -2331,7 +2329,7 @@ namespace System.Data
 			return false;
 		}
 
-		private bool FindEqualElement (string s, ref string s1, ref string s2) 
+		private bool FindEqualElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("=");
@@ -2370,7 +2368,7 @@ namespace System.Data
 			return false;
 		}
 
-		private bool FindUnequalElement (string s, ref string s1, ref string s2) 
+		private bool FindUnequalElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("<>");
@@ -2409,7 +2407,7 @@ namespace System.Data
 		}
 
 
-		private bool FindLessThanElement (string s, ref string s1, ref string s2) 
+		private bool FindLessThanElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("<");
@@ -2447,7 +2445,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindLessThanOrEqualElement (string s, ref string s1, ref string s2) 
+		private bool FindLessThanOrEqualElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("<=");
@@ -2480,7 +2478,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindGreaterThanElement (string s, ref string s1, ref string s2) 
+		private bool FindGreaterThanElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf (">");
@@ -2517,7 +2515,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindGreaterThanOrEqualElement (string s, ref string s1, ref string s2) 
+		private bool FindGreaterThanOrEqualElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf (">=");
@@ -2553,7 +2551,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindAdditionElement (string s, ref string s1, ref string s2) 
+		private bool FindAdditionElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("+");
@@ -2590,7 +2588,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindSubtractElement (string s, ref string s1, ref string s2) 
+		private bool FindSubtractElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("-");
@@ -2639,7 +2637,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindMultiplyElement (string s, ref string s1, ref string s2) 
+		private bool FindMultiplyElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("*");
@@ -2677,7 +2675,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindDivideElement (string s, ref string s1, ref string s2) 
+		private bool FindDivideElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("/");
@@ -2715,7 +2713,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindModulusElement (string s, ref string s1, ref string s2) 
+		private bool FindModulusElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("%");
@@ -2750,7 +2748,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindAggregateElement (string s, AGGREGATE aggregate) 
+		private bool FindAggregateElement (string s, AGGREGATE aggregate)
 		{
 			string agg = null;
 
@@ -2812,7 +2810,7 @@ namespace System.Data
 
 		}
 		
-		private bool FindSumElement (string s) 
+		private bool FindSumElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("sum");
@@ -2842,7 +2840,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindAvgElement (string s) 
+		private bool FindAvgElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("avg");
@@ -2871,7 +2869,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindMinElement (string s) 
+		private bool FindMinElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("min");
@@ -2900,7 +2898,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindMaxElement (string s) 
+		private bool FindMaxElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("max");
@@ -2929,7 +2927,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindCountElement (string s) 
+		private bool FindCountElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("count");
@@ -2958,7 +2956,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindStdevElement (string s) 
+		private bool FindStdevElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("stdev");
@@ -2987,7 +2985,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindVarElement (string s) 
+		private bool FindVarElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("var");
@@ -3016,7 +3014,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindLenElement (string s) 
+		private bool FindLenElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("len");
@@ -3046,7 +3044,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindIifElement (string s) 
+		private bool FindIifElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("iif");
@@ -3075,7 +3073,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindIsNullElement (string s) 
+		private bool FindIsNullElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("isnull");
@@ -3104,7 +3102,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindSubstringElement (string s) 
+		private bool FindSubstringElement (string s)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("substring");
@@ -3133,7 +3131,7 @@ namespace System.Data
 			return false;			
 		}
 
-		private bool FindInElement (string s, ref string s1, ref string s2) 
+		private bool FindInElement (string s, ref string s1, ref string s2)
 		{
 			string stemp = s.ToLower ();
 			int indexOf = stemp.IndexOf ("in");
@@ -3190,56 +3188,56 @@ namespace System.Data
 			Elements.Add (new ExpressionOr (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateAndElement (string s1, string s2, string inside) 
+		private void CreateAndElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionAnd (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateLikeElement (string s1, string s2, string inside) 
+		private void CreateLikeElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionLike (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateInElement (string s1, string s2, string inside) 
+		private void CreateInElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionIn (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateEqualsElement (string s1, string s2, string inside) 
+		private void CreateEqualsElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionEquals (s1.Trim (), s2.Trim ()));			
 		}
 
-		private void CreateUnequalsElement (string s1, string s2, string inside) 
+		private void CreateUnequalsElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionUnequals (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateLessThanElement (string s1, string s2, string inside) 
+		private void CreateLessThanElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionLessThan (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateLessThanOrEqualElement (string s1, string s2, string inside) 
+		private void CreateLessThanOrEqualElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionLessThanOrEqual (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateGreaterThanElement (string s1, string s2, string inside) 
+		private void CreateGreaterThanElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionGreaterThan (s1.Trim (), s2.Trim ()));
 		}
 
 
-		private void CreateGreaterThanOrEqualElement (string s1, string s2, string inside) 
+		private void CreateGreaterThanOrEqualElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionGreaterThanOrEqual (s1.Trim (), s2.Trim ()));
@@ -3251,25 +3249,25 @@ namespace System.Data
 			Elements.Add (new ExpressionAddition (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateSubtractionElement (string s1, string s2,  string inside) 
+		private void CreateSubtractionElement (string s1, string s2,  string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);			
 			Elements.Add (new ExpressionSubtraction (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateMultiplyElement (string s1, string s2, string inside) 
+		private void CreateMultiplyElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionMultiply (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateDivideElement (string s1, string s2, string inside) 
+		private void CreateDivideElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionDivide (s1.Trim (), s2.Trim ()));
 		}
 
-		private void CreateModulusElement (string s1, string s2, string inside) 
+		private void CreateModulusElement (string s1, string s2, string inside)
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionModulus (s1.Trim (), s2.Trim ()));
@@ -3279,7 +3277,7 @@ namespace System.Data
 
 		#region Little helppers
 
-		private void CheckParenthesis (string inside, ref string s1, ref string s2) 
+		private void CheckParenthesis (string inside, ref string s1, ref string s2)
 		{
 			if (s1 == string.Empty && inside != string.Empty)
 				s1 = inside;
@@ -3310,7 +3308,7 @@ namespace System.Data
 		/// <summary>
 		///  Checks is the element part of column table
 		/// </summary>
-		private bool IsPartOfColumnName (string s, int indexOf) 
+		private bool IsPartOfColumnName (string s, int indexOf)
 		{
 			for (int i = indexOf; i >= 0; i--) 
 			{
@@ -3333,7 +3331,7 @@ namespace System.Data
 		/// <summary>
 		///  Checks are element part of function
 		/// </summary>
-		private bool IsPartOfFunction (string s, int indexOf) 
+		private bool IsPartOfFunction (string s, int indexOf)
 		{
 
 			// 
