@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.3  2004/08/04 20:11:24  pbartok
+// - Added Invalidate handling
+//
 // Revision 1.2  2004/08/03 23:09:02  jordi
 // fixes spelling mistake
 //
@@ -111,7 +114,7 @@ namespace System.Windows.Forms {
 		internal abstract void SetWindowPos(IntPtr handle, Rectangle rc);
 		internal abstract void SetWindowPos(IntPtr handle, int x, int y, int width, int height);
 		internal abstract void Activate(IntPtr handle);
-		internal abstract void Invalidate(IntPtr handle, Rectangle rc);
+		internal abstract void Invalidate(IntPtr handle, Rectangle rc, bool clear);
 		internal abstract IntPtr DefWndProc(ref Message msg);
 		internal abstract void HandleException(Exception e);
 		internal abstract void DoEvents();

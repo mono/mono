@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.8  2004/08/04 20:11:24  pbartok
+// - Added Invalidate handling
+//
 // Revision 1.7  2004/07/27 10:38:17  jordi
 // changes to be able to run winforms samples
 //
@@ -1178,7 +1181,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			XplatUI.Invalidate(Handle, rc);
+			XplatUI.Invalidate(Handle, rc, false);
 
 			if (invalidateChildren) {
 				for (int i=0; i<num_of_children; i++) children[i].Invalidate();

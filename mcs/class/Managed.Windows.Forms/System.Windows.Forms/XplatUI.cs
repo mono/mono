@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.2  2004/08/04 20:11:24  pbartok
+// - Added Invalidate handling
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -210,8 +213,8 @@ namespace System.Windows.Forms {
 			driver.SetWindowPos(handle, x, y, width, height);
 		}
 
-		internal static void Invalidate(IntPtr handle, Rectangle rc) {
-			driver.Invalidate(handle, rc);
+		internal static void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
+			driver.Invalidate(handle, rc, clear);
 		}
 
 		internal static void Activate(IntPtr handle) {

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.3  2004/08/04 20:11:24  pbartok
+// - Added Invalidate handling
+//
 // Revision 1.2  2004/07/21 16:19:17  jordi
 // LinkLabel control implementation
 //
@@ -418,8 +421,15 @@ namespace System.Windows.Forms {
 			return;
 		}
 
-		internal override void Invalidate(IntPtr handle, Rectangle rc) {
-			Console.WriteLine("#region #line");
+		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
+			RECT rect;
+
+			rect.left=rc.Left;
+			rect.top=rc.Top;
+			rect.right=rc.Right;
+			rect.bottom=rc.Bottom;
+Console.WriteLine("Invalidating window");
+			Win32InvalidateRect(handle, ref rect, clear);
 			return;
 		}
 
@@ -562,6 +572,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="MessageBoxA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32MessageBox(IntPtr hParent, string pText, string pCaption, uint uType);
+
+		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32InvalidateRect(IntPtr hWnd, ref RECT lpRect, bool bErase);
 		#endregion
 
 	}

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.2  2004/08/04 20:11:24  pbartok
+// - Added Invalidate handling
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -239,7 +242,7 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 			return;
 		}
 
-		internal override void Invalidate(IntPtr handle, Rectangle rc) {
+		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
 			Console.WriteLine("XplatUIX11.Invalidate");
 			return;
 		}
