@@ -1,3 +1,8 @@
+2005-02-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* class-internals.h: Little reminder for the future.
+
+	* debug-helpers.c: Fix up wrapper_type_names
 
 Wed Feb 9 19:34:29 CET 2005 Paolo Molaro <lupus@ximian.com>
 
