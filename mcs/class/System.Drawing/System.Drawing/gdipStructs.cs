@@ -124,5 +124,13 @@ namespace System.Drawing
 			
     		}
 	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct GdipEncoderParameter {
+		internal Guid guid;
+		internal uint numberOfValues;
+		internal EncoderParameterValueType type;
+		internal IntPtr value;
+	}
 }
 

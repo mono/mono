@@ -901,7 +901,7 @@ namespace System.Drawing
 		internal static extern Status GdipGetEncoderParameterListSize ( IntPtr image, ref Guid encoder, out uint size );
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetEncoderParameterList ( IntPtr image, IntPtr encoder, uint size, out IntPtr buffer );
+		internal static extern Status GdipGetEncoderParameterList ( IntPtr image, ref Guid encoder, uint size, IntPtr buffer );
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipImageGetFrameCount (IntPtr image, ref Guid guidDimension, out int count );
@@ -1479,7 +1479,7 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetBytesDelegate getBytes, StreamSeekDelegate doSeek, out IntPtr image);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamPutBytesDelegate putBytes, byte[] encoderClsID, IntPtr encoderParameters ); // clsid should be Guid
+		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamPutBytesDelegate putBytes, ref Guid encoderClsID, IntPtr encoderParameters );
 		
 #endregion      
 	}               

@@ -1,3 +1,16 @@
+2004-05-14  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* EncoderParameters.cs: Added ToNativePtr() method to marshal
+	struct correctly to a native struct.  Resulting data should be
+	FreeHGlobal'd when finished.
+
+	* EncoderParameter.cs: Changed data storage to correspond to
+	native code layout (so we can pass these structs directly to
+	native code).  Also changed layout to match native layout.
+
+	* EncoderParameterValueType.cs: force EncoderParameterValueType to
+	be Int32
+
 2004-05-13 Jordi Mas i Hernadez <jordi@ximian.com>
 
 	* ColorMatrix.cs:Make private data private 

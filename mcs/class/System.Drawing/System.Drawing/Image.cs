@@ -204,10 +204,29 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return source;
 	}
 	
-	[MonoTODO]	
-	public EncoderParameters GetEncoderParameterList(Guid encoder)
+	public EncoderParameters GetEncoderParameterList(Guid format)
 	{
-		throw new NotImplementedException ();
+		Status status;
+		uint sz;
+
+		status = GDIPlus.GdipGetEncoderParameterListSize (nativeObject, ref format, out sz);
+		GDIPlus.CheckStatus (status);
+
+		IntPtr rawEPList = Marshal.AllocHGlobal ((int) sz);
+		EncoderParameters eps;
+
+		try {
+			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref format, sz, rawEPList);
+			eps = EncoderParameters.FromNativePtr (rawEPList);
+			GDIPlus.CheckStatus (status);
+		} catch {
+			Marshal.FreeHGlobal (rawEPList);
+			throw;
+		}
+
+		Marshal.FreeHGlobal (rawEPList);
+
+		return eps;
 	}
 	
 	public int GetFrameCount(FrameDimension dimension)
@@ -260,31 +279,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		GDIPlus.CheckStatus (status);				
 	}
 
-	public void Save (string filename)
+	internal ImageCodecInfo findEncoderForFormat (ImageFormat format)
 	{
-		Save (filename, RawFormat);
-	}
-
-	public void Save (Stream stream, ImageFormat format)
-	{
-		Status st;
-		if (Environment.OSVersion.Platform == (PlatformID) 128) {
-			byte[] g = format.Guid.ToByteArray();
-			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
-			st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.PutBytesDelegate, g, IntPtr.Zero);
-
-		} else {
-			throw new NotImplementedException ("Image.Save(Stream) (win32)");
-		}
-		GDIPlus.CheckStatus (st);
-	}
-
-	public void Save(string filename, ImageFormat format) 
-	{
-		Status st;		
-		ImageCodecInfo[] encoders =  ImageCodecInfo.GetImageEncoders();			
+		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();			
 		ImageCodecInfo encoder = null;
-		Guid guid;
 		
 		if (format.Guid.Equals (ImageFormat.MemoryBmp.Guid))
 			format = ImageFormat.Bmp;
@@ -296,38 +294,71 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 				break;
 			}			
 		}
-		
+
+		return encoder;
+	}
+
+	public void Save (string filename)
+	{
+		Save (filename, RawFormat);
+	}
+
+	public void Save(string filename, ImageFormat format) 
+	{
+		ImageCodecInfo encoder = findEncoderForFormat (format);
+
 		if (encoder == null)
-			throw new ArgumentException ("No coded available for format:" + format.Guid);		
-		
-		guid = encoder.Clsid;
-		st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, IntPtr.Zero);				
-		GDIPlus.CheckStatus (st);
-	}
-	
-	internal void setGDIPalette() 
-	{
-		IntPtr gdipalette;
+			throw new ArgumentException ("No codec available for format:" + format.Guid);
 
-		gdipalette = colorPalette.getGDIPalette ();
-		Status st = GDIPlus.GdipSetImagePalette (NativeObject, gdipalette);
-		Marshal.FreeHGlobal (gdipalette);
-
-		GDIPlus.CheckStatus (st);
+		Save (filename, encoder, null);
 	}
 
-	[MonoTODO ("Ignoring EncoderParameters")]
-	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
-	{
-		Save (stream, new ImageFormat (encoder.FormatID));
-	}
-	
-	[MonoTODO ("Ignoring EncoderParameters")]	
 	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
-		Save (filename, new ImageFormat (encoder.FormatID));
+		Status st;
+		Guid guid = encoder.Clsid;
+
+		if (encoderParams == null) {
+			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, IntPtr.Zero);
+		} else {
+			IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+			st = GDIPlus.GdipSaveImageToFile (nativeObject, filename, ref guid, nativeEncoderParams);
+			Marshal.FreeHGlobal (nativeEncoderParams);
+		}
+
+		GDIPlus.CheckStatus (st);
 	}
-	
+
+	public void Save (Stream stream, ImageFormat format)
+	{
+		ImageCodecInfo encoder = findEncoderForFormat (format);
+
+		if (encoder == null)
+			throw new ArgumentException ("No codec available for format:" + format.Guid);
+
+		Save (stream, encoder, null);
+	}
+
+	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
+	{
+		Status st;
+		Guid guid = encoder.Clsid;
+
+		if (Environment.OSVersion.Platform == (PlatformID) 128) {
+			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+			if (encoderParams == null) {
+				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.PutBytesDelegate, ref guid, IntPtr.Zero);
+			} else {
+				IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.PutBytesDelegate, ref guid, nativeEncoderParams);
+				Marshal.FreeHGlobal (nativeEncoderParams);
+			}
+		} else {
+			throw new NotImplementedException ("Image.Save(Stream) (win32)");
+		}
+		GDIPlus.CheckStatus (st);
+	}
+
 	[MonoTODO]	
 	public void SaveAdd(EncoderParameters encoderParams)
 	{
