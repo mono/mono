@@ -1,4 +1,8 @@
 
+Mon May 24 12:49:45 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: enable loop optimizations by default.
+
 Mon May 24 11:13:46 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c: fix calc of max loop size when aligning loops start.
