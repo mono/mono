@@ -1,3 +1,8 @@
+2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* System.XML_linux_test.args: Get rid of CRLFs which break the
+	linux build.
+
 2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* System.XML_linux_test.args: added XmlUrlResolverTests.cs.
