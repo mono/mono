@@ -4,6 +4,7 @@
 // Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -15,6 +16,8 @@ namespace System
 	[Serializable]
 	public class NotFiniteNumberException : ArithmeticException
 	{
+		const int Result = unchecked ((int)0x80131528);
+
 		double offending_number;
 
 		// Constructors
@@ -26,22 +29,27 @@ namespace System
 		public NotFiniteNumberException (double offending_number)
 		{
 			this.offending_number = offending_number;
+			HResult = Result;
 		}
 
 		public NotFiniteNumberException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		public NotFiniteNumberException (string message, double offending_number)
+			: base (message)
 		{
 			this.offending_number = offending_number;
+			HResult = Result;
 		}
 
 		public NotFiniteNumberException (string message, double offending_number, Exception inner)
 			: base (message, inner)
 		{
 			this.offending_number = offending_number;
+			HResult = Result;
 		}
 
 		protected NotFiniteNumberException (SerializationInfo info, StreamingContext context)

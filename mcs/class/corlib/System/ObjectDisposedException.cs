@@ -15,6 +15,8 @@ namespace System
 	[Serializable]
 	public class ObjectDisposedException : InvalidOperationException
 	{
+		// Does not override the HResult from InvalidOperationException
+
 		private string obj_name;
 		private string msg;
 

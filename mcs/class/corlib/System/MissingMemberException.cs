@@ -1,7 +1,9 @@
 //
 // System.MissingMemberException.cs
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Authors:
+//   Duncan Mak (duncan@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc. http://www.ximian.com
 //
@@ -13,6 +15,8 @@ namespace System
 	[Serializable]
 	public class MissingMemberException : MemberAccessException
 	{
+		const int Result = unchecked ((int)0x80131512);
+
 		// Fields
 		protected string ClassName;
 		protected string MemberName;
@@ -21,16 +25,19 @@ namespace System
 		public MissingMemberException ()
 			: base (Locale.GetText ("Cannot find the requested class member."))
 		{
+			HResult = Result;
 		}
 
 		public MissingMemberException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		public MissingMemberException (string message, Exception inner)
 			: base (message, inner)
 		{
+			HResult = Result;
 		}
 
 		protected MissingMemberException (SerializationInfo info, StreamingContext context)
@@ -45,6 +52,7 @@ namespace System
 		{
 			ClassName = className;
 			MemberName = memberName;
+			HResult = Result;
 		}
 
 		// Methods
@@ -60,8 +68,9 @@ namespace System
 			get {
 				if (ClassName == null)
 					return base.Message;
-				else
-					return "Member " + ClassName + "." + MemberName + " not found.";
+
+				String msg = Locale.GetText ("Member {0}.{1} not found.");
+				return String.Format (msg, ClassName, MemberName);
 			}
 		}
 	}

@@ -1,8 +1,9 @@
 //	
 // System.MissingFieldException.cs
 //
-// Author:
+// Authors:
 //   Duncan Mak (duncan@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // 2002 (C) Ximian, Inc. http://www.ximian.com
 //
@@ -14,15 +15,19 @@ namespace System
 	[Serializable]
 	public class MissingFieldException : MissingMemberException
 	{
+		const int Result = unchecked ((int)0x80131511);
+
 		// Constructors
 		public MissingFieldException ()
 			: base (Locale.GetText ("Cannot find requested field."))
 		{
+			HResult = Result;
 		}
 
 		public MissingFieldException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		protected MissingFieldException (SerializationInfo info, StreamingContext context)
@@ -33,11 +38,13 @@ namespace System
 		public MissingFieldException (string message, Exception innerException)
 			: base (message, innerException)
 		{
+			HResult = Result;
 		}
 
 		public MissingFieldException (string className, string fieldName)
 			: base (className, fieldName)
 		{
+			HResult = Result;
 		}
 
 		public override string Message {
@@ -45,7 +52,8 @@ namespace System
 				if (ClassName == null)
 					return base.Message;
 
-				return "Field " + ClassName + "." + MemberName + " not found.";
+				String msg = Locale.GetText ("Field {0}.{1} not found.");
+				return String.Format (msg, ClassName, MemberName);
 			}
 		}
 	}

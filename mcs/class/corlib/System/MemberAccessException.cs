@@ -12,14 +12,18 @@ namespace System
 	[Serializable]
 	public class MemberAccessException : SystemException
 	{
+		const int Result = unchecked ((int)0x8013151A);
+
 		public MemberAccessException ()
 			: base (Locale.GetText ("Cannot access a class member."))
 		{
+			HResult = Result;
 		}
 
 		public MemberAccessException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		protected MemberAccessException (SerializationInfo info, StreamingContext context)
@@ -30,6 +34,7 @@ namespace System
 		public MemberAccessException (string message, Exception inner)
 			: base (message, inner)
 		{
+			HResult = Result;
 		}
 	}
 }

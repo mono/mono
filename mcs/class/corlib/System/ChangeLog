@@ -1,5 +1,26 @@
 2004-03-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* FieldAccessException.cs
+	* FormatException.cs
+	* InvalidCastException.cs
+	* InvalidOperationException.cs
+	* MemberAccessException.cs
+	* MethodAccessException.cs
+	* MissingFieldException.cs: Locale strings
+	* MissingMemberException.cs: Locale strings
+	* MissingMethodException.cs: Locale strings
+	* NotFiniteNumberException.cs
+	* NotImplementedException.cs
+	* NotSupportedException.cs
+	* NullReferenceException.cs
+	* ObjectDisposedException.cs
+	* OutOfMemoryException.cs
+	* OverflowExceptionException.cs
+	* PlatformNotSupportedException.cs
+	* RankException.cs: Added missing HResult overrides
+
+2004-03-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* RuntimeTypeHandle.cs
 	* RuntimeMethodHandle.cs
 	* RuntimeFieldHandle.cs: Implemented serialization (partially untested)
