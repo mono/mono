@@ -1441,25 +1441,19 @@ namespace System {
 			return res;
 		}
 
-		[MonoTODO]
-		public bool ToBoolean (IFormatProvider provider)
+		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToBoolean (this);
 		}
 		
-		[MonoTODO]
-		public byte ToByte (IFormatProvider provider)
+		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToByte (this);
 		}
 		
-		[MonoTODO]
-		public char ToChar (IFormatProvider provider)
+		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToChar (this);
 		}
 
 		public char[] ToCharArray ()
@@ -1482,47 +1476,34 @@ namespace System {
 			return chars;
 		}
 
-		[MonoTODO]
-		public DateTime ToDateTime (IFormatProvider provider)
+		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			// return new DateTime (0);
-			throw new NotImplementedException ();
+			return Convert.ToDateTime (this);
 		}
 
-		[MonoTODO]
-		public decimal ToDecimal (IFormatProvider provider)
+		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToDecimal (this);
 		}
 
-		[MonoTODO]
-		public double ToDouble (IFormatProvider provider)
+		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToDouble (this);
 		}
 
-		[MonoTODO]
-		public short ToInt16 (IFormatProvider provider)
+		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToInt16 (this);
 		}
 
-		[MonoTODO]
-		public int ToInt32 (IFormatProvider provider)
+		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToInt32 (this);
 		}
 
-		[MonoTODO]
-		public long ToInt64 (IFormatProvider provider)
+		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToInt64 (this);
 		}
 
 		public string ToLower ()
@@ -1546,18 +1527,15 @@ namespace System {
 
 		}
 
-		[CLSCompliant(false)][MonoTODO]
-		public sbyte ToSByte (IFormatProvider provider)
+		[CLSCompliant(false)]
+		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToSByte (this);
 		}
 
-		[MonoTODO]
-		public float ToSingle (IFormatProvider provider)
+		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToSingle (this);
 		}
 
 		public override string ToString ()
@@ -1565,39 +1543,32 @@ namespace System {
 			return this;
 		}
 
-		[MonoTODO]
-		public string ToString (IFormatProvider format)
+		string IConvertible.ToString (IFormatProvider format)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return this;
 		}
 
-		[MonoTODO]
-		public object ToType (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToType (this, conversionType,  provider);
 		}
 
-		[CLSCompliant(false)][MonoTODO]
-		public ushort ToUInt16 (IFormatProvider provider)
+		[CLSCompliant(false)]
+		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToUInt16 (this);
 		}
 
-		[CLSCompliant(false)][MonoTODO]
-		public uint ToUInt32 (IFormatProvider provider)
+		[CLSCompliant(false)]
+		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToUInt32 (this);
 		}
 
-		[CLSCompliant(false)][MonoTODO]
-		public ulong ToUInt64 (IFormatProvider provider)
+		[CLSCompliant(false)]
+		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			// FIXME: implement me
-			throw new NotImplementedException ();
+			return Convert.ToUInt64 (this);
 		}
 
 		public string ToUpper ()

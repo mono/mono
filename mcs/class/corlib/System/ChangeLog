@@ -1,3 +1,7 @@
+2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* String.cs: impl. IConvertible interface
+
 2002-02-18  Duco Fijma <duco@lorentz.xs4all.nl>
 	* Guid.cs: actual implementation for Guid.Guid(string) Ctor
 
