@@ -1,5 +1,9 @@
 2003-01-31  David Sheldon      <dave-mono@earth.li>
 
+  *  FromBase64Transform.cs: Removed needless catch and rethrow.
+
+2003-01-31  David Sheldon      <dave-mono@earth.li>
+
   * FromBase64Transform.cs: Fixes to what happens if a character in the
    input stream is not in the lookup table. IndexOutOfRangeException was 
    wrong.

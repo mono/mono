@@ -238,12 +238,7 @@ namespace System.Security.Cryptography {
 				Array.Copy (src, srcOff, tmpBuff, accPtr, n);
 				accPtr = count & 3;
 				Array.Copy (src, srcOff + (n - accPtr), accumulator, 0, accPtr);
-				try {
-					res = DoTransform (tmpBuff, 0, count & (~3), outputBuffer, outputOffset) ;
-				}
-				catch (System.FormatException e) {
-					throw e; 
-				}
+				res = DoTransform (tmpBuff, 0, count & (~3), outputBuffer, outputOffset) ;
 			}
 
 
