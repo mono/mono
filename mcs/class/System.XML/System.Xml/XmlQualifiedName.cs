@@ -6,6 +6,8 @@
 // (C) Ximian, Inc.
 //
 
+using System;
+
 namespace System.Xml
 {
 	public class XmlQualifiedName
@@ -33,17 +35,17 @@ namespace System.Xml
 		[MonoTODO] public static readonly XmlQualifiedName Empty = new XmlQualifiedName ();
 		
 		private string name;
-		private string namespace;
+		private string ns;
 		
-		public XmlQualifiedName (string name) {}
-
 		// Properties
 		public bool IsEmpty
 		{
-			if ((name == String.Empty) && (ns == String.Empty))
-				return true;
-			else
-				return false;
+			get {
+				if ((name == String.Empty) && (ns == String.Empty))
+					return true;
+				else
+					return false;
+			}
 		}
 
 		public string Name
@@ -53,26 +55,26 @@ namespace System.Xml
 
 		public string Namespace
 		{
-			get { return namespace; }
+			get { return ns; }
 		}
 
 		// Methods
 		public override bool Equals (object other)
 		{
-			if ((this.Name == other.Name) && (this.Namespace == other.Namespace))
+			if (this == other)
 				return true;
 			else
 				return false;
 		}
 
-		public override int GetHashCode ();
+		[MonoTODO] public override int GetHashCode () { return 42; }
 
 		public override string ToString ()
 		{
 			return ns + ":" + name;
 		}
 
-		public override string ToString (string name, string ns)
+		public static string ToString (string name, string ns)
 		{
 			if (ns == null)
 				return name;

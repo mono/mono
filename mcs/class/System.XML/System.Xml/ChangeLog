@@ -1,0 +1,7 @@
+2002-02-23  Nick Drochak <ndrochak@gol.com>
+
+	* ChangeLog: Add the change log to this directory
+
+	* XmlQualifiedName.cs: Fixed compile errors so it would build. Still has
+	MonoTODO's
+
