@@ -2,9 +2,29 @@
 // DSASignatureDeformatterTest.cs - NUnit Test Cases for DSASignatureDeformatter
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -14,159 +34,145 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-public class DSASignatureDeformatterTest : TestCase {
+[TestFixture]
+public class DSASignatureDeformatterTest {
 	protected DSASignatureDeformatter def;
 	protected static DSA dsa;
 	protected static RSA rsa;
 
-	protected override void SetUp () 
+	static byte[] hash = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13 };
+	static byte[] sign = { 0x50, 0xd2, 0xb0, 0x8b, 0xcd, 0x5e, 0xb2, 0xc2, 0x35, 0x82, 0xd3, 0x76, 0x07, 0x79, 0xbb, 0x55, 0x98, 0x72, 0x43, 0xe8,
+			       0x74, 0xc9, 0x35, 0xf8, 0xc9, 0xbd, 0x69, 0x2f, 0x08, 0x34, 0xfa, 0x5a, 0x59, 0x23, 0x2a, 0x85, 0x7b, 0xa3, 0xb3, 0x82 };
+
+	[TestFixtureSetUp]
+	public void FixtureSetUp () 
+	{
+		// key generation is VERY long so one time is enough
+		dsa = DSA.Create ();
+		rsa = RSA.Create ();
+	}
+
+	[SetUp]
+	public void SetUp () 
 	{
 		def = new DSASignatureDeformatter ();
-		// key generation is VERY long so one time is enough
-		if (dsa == null)
-			dsa = DSA.Create ();
-		if (rsa == null)
-			rsa = RSA.Create ();
 	}
 
-	protected override void TearDown () {}
-
-	public void TestConstructors () 
+	[Test]
+	public void Constructor_Empty () 
 	{
-		// empty constructor
 		DSASignatureDeformatter def = new DSASignatureDeformatter ();
-		AssertNotNull ("DSASignatureDeformatter()", def);
-		// AsymmetricAlgorithm constructor (with null)
-		def = new DSASignatureDeformatter (null);
-		AssertNotNull ("DSASignatureDeformatter(null)", def);
-		// AsymmetricAlgorithm constructor (with DSA)
-		def = new DSASignatureDeformatter (dsa);
-		AssertNotNull ("DSASignatureDeformatter(dsa)", def);
-		// AsymmetricAlgorithm constructor (with RSA)
-		try {
-			def = new DSASignatureDeformatter (rsa);
-			Fail ("Expected InvalidCastException but got none");
-		}
-		catch (InvalidCastException) {
-			// this is expected
-		}
-		catch (Exception e) {
-			Fail ("Expected InvalidCastException but got " + e.ToString ());
-		}
+		Assert.IsNotNull (def);
 	}
 
-	// Method is documented as unused so...
-	public void TestSetHash () 
+	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public void Constructor_Null ()
 	{
-		// null is ok
-		try {
-			def.SetHashAlgorithm (null);
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
-		// SHA1
-		try {
-			def.SetHashAlgorithm ("SHA1");
-		}
-		catch (Exception e) {
-			Fail ("Unexpected exception: " + e.ToString ());
-		}
-		// MD5 (bad)
-		try {
-			def.SetHashAlgorithm ("MD5");
-		}
-		catch (CryptographicUnexpectedOperationException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected CryptographicUnexpectedOperationException but got " + e.ToString ());
-		}
+		DSASignatureDeformatter def = new DSASignatureDeformatter (null);
+		Assert.IsNotNull (def);
 	}
 
-	public void TestSetKey () 
+	[Test]
+	public void Constructor_DSA ()
 	{
-		// here null is ok 
-		try {
-			def.SetKey (null);
-		}
-		catch (Exception e) {
-			Fail ("Unexpected exception: " + e.ToString ());
-		}
-		// RSA (bad)
-		try {
-			def.SetKey (rsa);
-			Fail ("Expected InvalidCastException but got none");
-		}
-		catch (InvalidCastException) {
-			// do nothing, this is what we expect 
-		}
-		catch (Exception e) {
-			Fail ("Expected InvalidCastException but got: " + e.ToString ());
-		}
-		// DSA
-		try {
-			def.SetKey (dsa);
-		}
-		catch (Exception e) {
-			Fail ("Unexpected exception: " + e.ToString ());
-		}
+		DSASignatureDeformatter def = new DSASignatureDeformatter (dsa);
+		Assert.IsNotNull (def);
 	}
 
-	public void TestVerify () 
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void Constructor_RSA ()
 	{
-		byte[] hash = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13 };
-		byte[] sign = { 0x50, 0xd2, 0xb0, 0x8b, 0xcd, 0x5e, 0xb2, 0xc2, 0x35, 0x82, 0xd3, 0x76, 0x07, 0x79, 0xbb, 0x55, 0x98, 0x72, 0x43, 0xe8,
-				      0x74, 0xc9, 0x35, 0xf8, 0xc9, 0xbd, 0x69, 0x2f, 0x08, 0x34, 0xfa, 0x5a, 0x59, 0x23, 0x2a, 0x85, 0x7b, 0xa3, 0xb3, 0x82 };
-		bool ok = false;
-		try {
-			ok = def.VerifySignature (hash, sign);
-		}
-		catch (CryptographicUnexpectedOperationException) {
-			// do nothing, this is what we expect 
-		}
-		catch (Exception e) {
-			Fail ("Expected CryptographicUnexpectedOperationException but got " + e.ToString ());
-		}
+		DSASignatureDeformatter def = new DSASignatureDeformatter (rsa);
+	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void SetHash_Null ()
+	{
+		def.SetHashAlgorithm (null);
+	}
+
+	[Test]
+	public void SetHash_SHA1 ()
+	{
+		def.SetHashAlgorithm ("SHA1");
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void SetHash_MD5 ()
+	{
+		def.SetHashAlgorithm ("MD5");
+	}
+
+	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public void SetKey_Null () 
+	{
+		def.SetKey (null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void SetKey_RSA ()
+	{
+		def.SetKey (rsa);
+	}
+
+	[Test]
+	public void SetKey_DSA ()
+	{
+		def.SetKey (dsa);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void Verify_NoKeyPair () 
+	{
+		def.VerifySignature (hash, sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Verify_NullSignature ()
+	{
 		dsa.ImportParameters (AllTests.GetKey (false));
 		def.SetKey (dsa);
+		def.VerifySignature (hash, null);
+	}
 
-		// missing signature
-		try {
-			ok = def.VerifySignature (hash, null);
-			Fail ("Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect 
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Verify_NullHash ()
+	{
+		dsa.ImportParameters (AllTests.GetKey (false));
+		def.SetKey (dsa);
+		byte[] s = null; // overloaded method
+		def.VerifySignature (s, sign);
+	}
 
-		// missing hash
-		try {
-			byte[] s = null; // overloaded method
-			ok = def.VerifySignature (s, sign);
-			Fail ("Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect 
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
+	[Test]
+	public void Verify ()
+	{
+		dsa.ImportParameters (AllTests.GetKey (false));
+		def.SetKey (dsa);
+		Assert.IsTrue (def.VerifySignature (hash, sign));
+	}
 
-		ok = def.VerifySignature (hash, sign);
-		Assert ("verified signature", ok);
-
+	[Test]
+	public void Verify_Bad ()
+	{
+		dsa.ImportParameters (AllTests.GetKey (false));
+		def.SetKey (dsa);
 		byte[] badSign = { 0x49, 0xd2, 0xb0, 0x8b, 0xcd, 0x5e, 0xb2, 0xc2, 0x35, 0x82, 0xd3, 0x76, 0x07, 0x79, 0xbb, 0x55, 0x98, 0x72, 0x43, 0xe8,
-					 0x74, 0xc9, 0x35, 0xf8, 0xc9, 0xbd, 0x69, 0x2f, 0x08, 0x34, 0xfa, 0x5a, 0x59, 0x23, 0x2a, 0x85, 0x7b, 0xa3, 0xb3, 0x82 };
-		ok = def.VerifySignature (hash, badSign);
-		Assert ("didn't verified bad signature", !ok);
+				   0x74, 0xc9, 0x35, 0xf8, 0xc9, 0xbd, 0x69, 0x2f, 0x08, 0x34, 0xfa, 0x5a, 0x59, 0x23, 0x2a, 0x85, 0x7b, 0xa3, 0xb3, 0x82 };
+		Assert.IsFalse (def.VerifySignature (hash, badSign));
 	}
 }
 

@@ -3,9 +3,29 @@
 //	http://www.esat.kuleuven.ac.be/~bosselae/ripemd160.html
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 #if NET_2_0
@@ -387,9 +407,8 @@ namespace MonoTests.System.Security.Cryptography {
 
 		public void HMACRIPEMD160_d (string testName, HMACRIPEMD160 hmac, byte[] input, byte[] result) 
 		{
-			byte[] output = hmac.TransformFinalBlock (input, 0, input.Length);
-			AssertEquals (testName + ".d.1", input, output);
-			AssertEquals (testName + ".d.2", result, hmac.Hash);
+			hmac.TransformFinalBlock (input, 0, input.Length);
+			AssertEquals (testName + ".d", result, hmac.Hash);
 			// required or next operation will still return old hash
 			hmac.Initialize ();
 		}
@@ -399,9 +418,8 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] copy = new byte [input.Length];
 			for (int i=0; i < input.Length - 1; i++)
 				hmac.TransformBlock (input, i, 1, copy, i);
-			byte[] output = hmac.TransformFinalBlock (input, input.Length - 1, 1);
-			AssertEquals (testName + ".e.1", input [input.Length - 1], output [0]);
-			AssertEquals (testName + ".e.2", result, hmac.Hash);
+			hmac.TransformFinalBlock (input, input.Length - 1, 1);
+			AssertEquals (testName + ".e", result, hmac.Hash);
 			// required or next operation will still return old hash
 			hmac.Initialize ();
 		}

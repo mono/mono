@@ -5,7 +5,26 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -29,17 +48,22 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	private bool machineKeyStore;
 
+	[TestFixtureSetUp]
+	public void FixtureSetUp () 
+	{
+		disposed = new DSACryptoServiceProvider (minKeySize);
+		// FX 2.0 beta 1 bug - we must use the key before clearing it
+		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=dc970a7f-b82f-45e5-9d37-fb0ed72e6b41
+		int ks = disposed.KeySize;
+		disposed.Clear ();
+		// do not generate a new keypair for each test
+		smallDsa = new DSACryptoServiceProvider (minKeySize);
+	}
+
 	[SetUp]
 	public void Setup () 
 	{
 		machineKeyStore = DSACryptoServiceProvider.UseMachineKeyStore;
-		if (disposed == null) {
-			disposed = new DSACryptoServiceProvider (minKeySize);
-			disposed.Clear ();
-		}
-		// do not generate a new keypair for each test
-		if (smallDsa == null)
-			smallDsa = new DSACryptoServiceProvider (minKeySize);
 	}
 
 	[TearDown]
@@ -75,6 +99,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 		// test default key size
 		AssertEquals ("DSA ConstructorEmpty", 1024, dsa.KeySize);
 		Assert ("PersistKeyInCsp", !dsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !dsa.PublicOnly);
+#endif
 	}
 
 	[Test]
@@ -84,6 +111,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 		// test default key size
 		AssertEquals ("DSA ConstructorKeySize", minKeySize, dsa.KeySize);
 		Assert ("PersistKeyInCsp", !dsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !dsa.PublicOnly);
+#endif
 	}
 
 	[Test]
@@ -95,6 +125,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 		// test default key size
 		AssertEquals ("DSA ConstructorCspParameters", 1024, dsa.KeySize);
 		Assert ("PersistKeyInCsp", dsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !dsa.PublicOnly);
+#endif
 	}
 
 	[Test]
@@ -104,17 +137,23 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa = new DSACryptoServiceProvider (minKeySize, csp);
 		AssertEquals ("DSA ConstructorCspParameters", minKeySize, dsa.KeySize);
 		Assert ("PersistKeyInCsp", dsa.PersistKeyInCsp);
+#if NET_2_0
+		Assert ("PublicOnly", !dsa.PublicOnly);
+#endif
 	}
 
 	[Test]
 	[Ignore ("Much too long (with MS as Mono doesn't generates the keypair unless it need it)")]
-	public void KeyGeneration () 
+	public void KeyGeneration ()
 	{
 		// Test every valid key size
 		KeySizes LegalKeySize = dsa.LegalKeySizes [0];
 		for (int i = LegalKeySize.MinSize; i <= LegalKeySize.MaxSize; i += LegalKeySize.SkipSize) {
 			dsa = new DSACryptoServiceProvider (i);
 			AssertEquals ("DSA.KeySize", i, dsa.KeySize);
+#if NET_2_0
+			Assert ("PublicOnly", !dsa.PublicOnly);
+#endif
 		}
 	}
 
@@ -127,6 +166,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 			byte[] hash = new byte [20];
 			dsa.CreateSignature (hash);				// mono generates keypair here
 			AssertEquals ("AfterMonoKeyGeneration.KeySize", minKeySize, dsa.KeySize);
+#if NET_2_0
+			Assert ("PublicOnly", !dsa.PublicOnly);
+#endif
 		}
 		// here Dispose is called (with true)
 	}
@@ -275,7 +317,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+#if ! NET_2_0
 	[Ignore ("Running this test breaks all further DSA tests on MS runtime!")]
+#endif
 	public void VerifySignatureWithoutKey () 
 	{
 		byte[] hash = new byte [20];
@@ -285,12 +329,23 @@ public class DSACryptoServiceProviderTest : Assertion {
 		Assert ("VerifySignature(WithoutKey)", !smallDsa.VerifySignature (hash, sign));
 	}
 
+#if NET_2_0
+	[Test]
+	public void ImportDisposed ()
+	{
+		DSACryptoServiceProvider import = new DSACryptoServiceProvider (minKeySize);
+		import.Clear ();
+		import.ImportParameters (AllTests.GetKey (false));
+		// no exception from Fx 2.0 +
+	}
+#else
 	[Test]
 	[ExpectedException (typeof (ObjectDisposedException))]
 	public void ImportDisposed () 
 	{
 		disposed.ImportParameters (AllTests.GetKey (false));
 	}
+#endif
 
 	[Test]
 	[ExpectedException (typeof (ObjectDisposedException))]
@@ -331,7 +386,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	[Test]
 	[ExpectedException (typeof (CryptographicException))]
+#if ! NET_2_0
 	[Ignore ("MS runtime throws a System.ExecutionEngineException then exit the application")]
+#endif
 	public void DSAImportMissingY () 
 	{
 		DSAParameters input = AllTests.GetKey (false);
@@ -804,6 +861,156 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa = new DSACryptoServiceProvider (csp);
 
 		Assert ("UseMachineKeyStore", machineKeyPair != dsa.ToXmlString (true));
+	}
+#endif
+
+#if NET_2_0
+	[Test]
+	public void CspKeyContainerInfo_NewKeypair ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
+		Assert ("Accessible", !info.Accessible);
+		// info.Exportable throws a CryptographicException at this stage
+		Assert ("HardwareDevice", !info.HardwareDevice);
+		AssertNotNull ("KeyContainerName", info.KeyContainerName);
+		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
+		Assert ("MachineKeyStore", !info.MachineKeyStore);
+		// info.Protected throws a CryptographicException at this stage
+		AssertNotNull ("ProviderName", info.ProviderName);
+		AssertEquals ("ProviderType", 13, info.ProviderType);
+		Assert ("RandomlyGenerated", info.RandomlyGenerated);
+		Assert ("Removable", !info.Removable);
+		// info.UniqueKeyContainerName throws a CryptographicException at this stage
+	}
+
+	[Test]
+	public void CspKeyContainerInfo_ImportedKeypair ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		DSAParameters rsap = AllTests.GetKey (true);
+		dsa.ImportParameters (rsap);
+		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
+		Assert ("Accessible", info.Accessible);
+		Assert ("Exportable", info.Exportable);
+		Assert ("HardwareDevice", !info.HardwareDevice);
+		AssertNotNull ("KeyContainerName", info.KeyContainerName);
+		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
+		Assert ("MachineKeyStore", !info.MachineKeyStore);
+		Assert ("Protected", !info.Protected);
+		AssertNotNull ("ProviderName", info.ProviderName);
+		AssertEquals ("ProviderType", 13, info.ProviderType);
+		Assert ("RandomlyGenerated", info.RandomlyGenerated);
+		Assert ("Removable", !info.Removable);
+		AssertNotNull ("UniqueKeyContainerName", info.UniqueKeyContainerName);
+	}
+
+	[Test]
+	public void CspKeyContainerInfo_ImportedPublicKey ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		DSAParameters rsap = AllTests.GetKey (false);
+		dsa.ImportParameters (rsap);
+		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
+		Assert ("Accessible", !info.Accessible);
+		// info.Exportable throws a CryptographicException at this stage
+		Assert ("HardwareDevice", !info.HardwareDevice);
+		AssertNotNull ("KeyContainerName", info.KeyContainerName);
+		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
+		Assert ("MachineKeyStore", !info.MachineKeyStore);
+		// info.Protected throws a CryptographicException at this stage
+		AssertNotNull ("ProviderName", info.ProviderName);
+		AssertEquals ("ProviderType", 13, info.ProviderType);
+		Assert ("RandomlyGenerated", info.RandomlyGenerated);
+		Assert ("Removable", !info.Removable);
+		// info.UniqueKeyContainerName throws a CryptographicException at this stage
+	}
+
+	[Test]
+	public void ExportCspBlob_Full ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		DSAParameters dsap = AllTests.GetKey (true);
+		dsa.ImportParameters (dsap);
+
+		byte[] keypair = dsa.ExportCspBlob (true);
+		AssertEquals ("07-02-00-00-00-22-00-00-44-53-53-32-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-B1-2F-0A-F6-9A-A7-18-C1-2F-F0-B7-73-91-51-6D-9B-B5-B2-03-7C-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (keypair));
+	}
+
+	[Test]
+	public void ExportCspBlob_PublicOnly ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		DSAParameters dsap = AllTests.GetKey (true);
+		dsa.ImportParameters (dsap);
+
+		byte[] pubkey = dsa.ExportCspBlob (false);
+		AssertEquals ("06-02-00-00-00-22-00-00-44-53-53-31-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-BB-C7-03-89-C4-0B-66-86-80-D5-AA-34-E8-14-71-F9-29-BE-B9-EE-34-B1-5F-A2-C8-4D-CD-CF-0E-8E-A4-2E-D4-65-8C-27-FF-C1-41-26-F9-0E-E5-11-C9-CC-3E-45-87-EC-49-BA-7C-83-91-DE-70-E8-27-1C-47-EB-1D-E2-37-62-2F-AA-5B-30-80-8B-80-00-55-F4-64-C2-BE-5A-D3-54-4A-E7-0B-95-00-F4-BA-72-CD-F8-22-E6-30-4E-F6-BD-BE-3F-00-52-7F-E2-57-5F-C0-BE-82-C0-50-07-1C-7D-89-56-49-CE-28-52-8C-11-B1-D1-51-51-12-B2-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (pubkey));
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void ExportCspBlob_MissingPrivateKey ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		DSAParameters dsap = AllTests.GetKey (false);
+		dsa.ImportParameters (dsap);
+
+		dsa.ExportCspBlob (true);
+	}
+
+	[Test]
+	public void ExportCspBlob_MissingPrivateKey_PublicOnly ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		DSAParameters dsap = AllTests.GetKey (false);
+		dsa.ImportParameters (dsap);
+
+		byte[] pubkey = dsa.ExportCspBlob (false);
+		AssertEquals ("06-02-00-00-00-22-00-00-44-53-53-31-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-BB-C7-03-89-C4-0B-66-86-80-D5-AA-34-E8-14-71-F9-29-BE-B9-EE-34-B1-5F-A2-C8-4D-CD-CF-0E-8E-A4-2E-D4-65-8C-27-FF-C1-41-26-F9-0E-E5-11-C9-CC-3E-45-87-EC-49-BA-7C-83-91-DE-70-E8-27-1C-47-EB-1D-E2-37-62-2F-AA-5B-30-80-8B-80-00-55-F4-64-C2-BE-5A-D3-54-4A-E7-0B-95-00-F4-BA-72-CD-F8-22-E6-30-4E-F6-BD-BE-3F-00-52-7F-E2-57-5F-C0-BE-82-C0-50-07-1C-7D-89-56-49-CE-28-52-8C-11-B1-D1-51-51-12-B2-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (pubkey));
+	}
+
+	[Test]
+	public void ImportCspBlob_Keypair ()
+	{
+		byte[] blob = new byte [336] { 0x07, 0x02, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x44, 0x53, 0x53, 0x32, 0x00, 0x04, 0x00, 0x00, 0xD3, 0x7B, 0xC6, 0xED, 0x3F, 0x72, 0x44, 0xBD, 0x22, 0x7D, 0xF2, 0xD4, 0x62, 0xFE, 0x7C, 0xE3, 0x75, 0x8F, 0x9C, 0xDE, 0x69, 0xC0, 0x3A, 0x0C, 0xE6, 0x26, 0x5A, 0x46, 0x3D, 0xEF, 0x0D, 0x90, 0x20, 0xC6, 0xF6, 0x45, 0x7C, 0x73, 0xE8, 0xB9, 0x7D, 0x86, 0x27, 0xF7, 0x97, 0x76, 0xC8, 0x1C, 0x8E, 0x8B, 0xCE, 0x26, 0x93, 0xE6, 0x21, 0x53, 0x20, 0x93, 0x58, 0x25, 0x45, 0x1C, 0x46, 0x66, 0x17, 0x10, 0x98, 0x03, 0x96, 0xD0, 0xE5, 0xC8, 0x30, 0x80, 0x72, 0xB6, 0x49, 0xB3, 0x82, 0x95, 0xB3, 0x8D, 0x3A, 0xA5, 0xE5, 0x60, 0xC6, 0x42, 0x3A, 0x33, 0x70, 0x67, 0x30, 0xC5, 0x1C, 0x32, 0xD9, 0xEB, 0xCF, 0xC1, 0x36, 0xB3, 0xF3, 0x24, 0x07, 0x39, 0x86, 0x0D, 0xE9, 0x12, 0x80, 0x73, 0x26, 0xA7, 0x8C, 0x8B, 0x8A, 0x40, 0xAA, 0x51, 0x43, 0x8F, 0x20, 0xDE, 0xD2, 0x9C, 0xF3, 0xB3, 0x51, 0x73, 0x83, 0x62, 0xA0, 0x11, 0xC9, 0x50, 0x93, 0xE1, 0xF0, 0x64, 0xBE, 0xD0, 0x9E, 0xE0, 0x5B, 0x13, 0x47, 0xAA, 0x56, 0x65, 0x62, 0x47, 0xFD, 0x3A, 0x94, 0xB7, 0x1B, 0xE5, 0x35, 0x95, 0x86, 0x14, 0x64, 0xC0, 0xD6, 0x07, 0x96, 0x4C, 0x55, 0x1E, 0x0A, 0x4C, 0x10, 0xC2, 0xB5, 0xE6, 0xFB, 0x74, 0xF9, 0xA5, 0x72, 0xE0, 0x42, 0x96, 0x62, 0x0B, 0xEF, 0xB7, 0x52, 0x36, 0x7D, 0xE3, 0x01, 0x12, 0x85, 0xE6, 0xFE, 0x92, 0x75, 0x40, 0xC2, 0xA6, 0xD0, 0x9D, 0x16, 0x6F, 0xC1, 0xC7, 0xA7, 0xDF, 0x48, 0x80, 0xA2, 0x5D, 0xA0, 0xFD, 0x84, 0xBE, 0x06, 0xAC, 0xCB, 0x32, 0x22, 0x82, 0xD2, 0xD7, 0x7C, 0x69, 0xFC, 0xBC, 0x94, 0x78, 0x2B, 0x11, 0x5B, 0x1C, 0x1E, 0xAF, 0xDB, 0x7A, 0xAA, 0x31, 0xF3, 0xD8, 0x74, 0x84, 0x00, 0x3F, 0x9D, 0xB9, 0x4B, 0xB2, 0x68, 0x7E, 0xF4, 0x1B, 0xC2, 0x83, 0x73, 0x21, 0x78, 0x0F, 0xD5, 0x0F, 0xB0, 0xEB, 0x76, 0x41, 0xF1, 0x23, 0x7A, 0x6A, 0x78, 0xCC, 0x4F, 0x3D, 0xB1, 0x2F, 0x0A, 0xF6, 0x9A, 0xA7, 0x18, 0xC1, 0x2F, 0xF0, 0xB7, 0x73, 0x91, 0x51, 0x6D, 0x9B, 0xB5, 0xB2, 0x03, 0x7C, 0xE0, 0x00, 0x00, 0x00, 0x9B, 0xAF, 0x1B, 0xE9, 0xC1, 0xC7, 0x35, 0xF5, 0xE2, 0xEB, 0xC9, 0xEE, 0xF6, 0xBA, 0x25, 0x6D, 0x6F, 0x39, 0x83, 0xB9 };
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		dsa.ImportCspBlob (blob);
+
+		byte[] keypair = dsa.ExportCspBlob (true);
+		for (int i = 0; i < blob.Length; i++)
+			AssertEquals (i.ToString (), blob [i], keypair [i]);
+	}
+
+	[Test]
+	public void ExportCspBlob_PublicKey ()
+	{
+		byte[] blob = new byte [444] { 0x06, 0x02, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x44, 0x53, 0x53, 0x31, 0x00, 0x04, 0x00, 0x00, 0xD3, 0x7B, 0xC6, 0xED, 0x3F, 0x72, 0x44, 0xBD, 0x22, 0x7D, 0xF2, 0xD4, 0x62, 0xFE, 0x7C, 0xE3, 0x75, 0x8F, 0x9C, 0xDE, 0x69, 0xC0, 0x3A, 0x0C, 0xE6, 0x26, 0x5A, 0x46, 0x3D, 0xEF, 0x0D, 0x90, 0x20, 0xC6, 0xF6, 0x45, 0x7C, 0x73, 0xE8, 0xB9, 0x7D, 0x86, 0x27, 0xF7, 0x97, 0x76, 0xC8, 0x1C, 0x8E, 0x8B, 0xCE, 0x26, 0x93, 0xE6, 0x21, 0x53, 0x20, 0x93, 0x58, 0x25, 0x45, 0x1C, 0x46, 0x66, 0x17, 0x10, 0x98, 0x03, 0x96, 0xD0, 0xE5, 0xC8, 0x30, 0x80, 0x72, 0xB6, 0x49, 0xB3, 0x82, 0x95, 0xB3, 0x8D, 0x3A, 0xA5, 0xE5, 0x60, 0xC6, 0x42, 0x3A, 0x33, 0x70, 0x67, 0x30, 0xC5, 0x1C, 0x32, 0xD9, 0xEB, 0xCF, 0xC1, 0x36, 0xB3, 0xF3, 0x24, 0x07, 0x39, 0x86, 0x0D, 0xE9, 0x12, 0x80, 0x73, 0x26, 0xA7, 0x8C, 0x8B, 0x8A, 0x40, 0xAA, 0x51, 0x43, 0x8F, 0x20, 0xDE, 0xD2, 0x9C, 0xF3, 0xB3, 0x51, 0x73, 0x83, 0x62, 0xA0, 0x11, 0xC9, 0x50, 0x93, 0xE1, 0xF0, 0x64, 0xBE, 0xD0, 0x9E, 0xE0, 0x5B, 0x13, 0x47, 0xAA, 0x56, 0x65, 0x62, 0x47, 0xFD, 0x3A, 0x94, 0xB7, 0x1B, 0xE5, 0x35, 0x95, 0x86, 0x14, 0x64, 0xC0, 0xD6, 0x07, 0x96, 0x4C, 0x55, 0x1E, 0x0A, 0x4C, 0x10, 0xC2, 0xB5, 0xE6, 0xFB, 0x74, 0xF9, 0xA5, 0x72, 0xE0, 0x42, 0x96, 0x62, 0x0B, 0xEF, 0xB7, 0x52, 0x36, 0x7D, 0xE3, 0x01, 0x12, 0x85, 0xE6, 0xFE, 0x92, 0x75, 0x40, 0xC2, 0xA6, 0xD0, 0x9D, 0x16, 0x6F, 0xC1, 0xC7, 0xA7, 0xDF, 0x48, 0x80, 0xA2, 0x5D, 0xA0, 0xFD, 0x84, 0xBE, 0x06, 0xAC, 0xCB, 0x32, 0x22, 0x82, 0xD2, 0xD7, 0x7C, 0x69, 0xFC, 0xBC, 0x94, 0x78, 0x2B, 0x11, 0x5B, 0x1C, 0x1E, 0xAF, 0xDB, 0x7A, 0xAA, 0x31, 0xF3, 0xD8, 0x74, 0x84, 0x00, 0x3F, 0x9D, 0xB9, 0x4B, 0xB2, 0x68, 0x7E, 0xF4, 0x1B, 0xC2, 0x83, 0x73, 0x21, 0x78, 0x0F, 0xD5, 0x0F, 0xB0, 0xEB, 0x76, 0x41, 0xF1, 0x23, 0x7A, 0x6A, 0x78, 0xCC, 0x4F, 0x3D, 0xBB, 0xC7, 0x03, 0x89, 0xC4, 0x0B, 0x66, 0x86, 0x80, 0xD5, 0xAA, 0x34, 0xE8, 0x14, 0x71, 0xF9, 0x29, 0xBE, 0xB9, 0xEE, 0x34, 0xB1, 0x5F, 0xA2, 0xC8, 0x4D, 0xCD, 0xCF, 0x0E, 0x8E, 0xA4, 0x2E, 0xD4, 0x65, 0x8C, 0x27, 0xFF, 0xC1, 0x41, 0x26, 0xF9, 0x0E, 0xE5, 0x11, 0xC9, 0xCC, 0x3E, 0x45, 0x87, 0xEC, 0x49, 0xBA, 0x7C, 0x83, 0x91, 0xDE, 0x70, 0xE8, 0x27, 0x1C, 0x47, 0xEB, 0x1D, 0xE2, 0x37, 0x62, 0x2F, 0xAA, 0x5B, 0x30, 0x80, 0x8B, 0x80, 0x00, 0x55, 0xF4, 0x64, 0xC2, 0xBE, 0x5A, 0xD3, 0x54, 0x4A, 0xE7, 0x0B, 0x95, 0x00, 0xF4, 0xBA, 0x72, 0xCD, 0xF8, 0x22, 0xE6, 0x30, 0x4E, 0xF6, 0xBD, 0xBE, 0x3F, 0x00, 0x52, 0x7F, 0xE2, 0x57, 0x5F, 0xC0, 0xBE, 0x82, 0xC0, 0x50, 0x07, 0x1C, 0x7D, 0x89, 0x56, 0x49, 0xCE, 0x28, 0x52, 0x8C, 0x11, 0xB1, 0xD1, 0x51, 0x51, 0x12, 0xB2, 0xE0, 0x00, 0x00, 0x00, 0x9B, 0xAF, 0x1B, 0xE9, 0xC1, 0xC7, 0x35, 0xF5, 0xE2, 0xEB, 0xC9, 0xEE, 0xF6, 0xBA, 0x25, 0x6D, 0x6F, 0x39, 0x83, 0xB9 };
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		dsa.ImportCspBlob (blob);
+
+		byte[] pubkey = dsa.ExportCspBlob (false);
+		for (int i = 0; i < blob.Length; i++)
+			AssertEquals (i.ToString (), blob [i], pubkey [i]);
+	}
+
+	[Test]
+//	[ExpectedException (typeof (ArgumentNullException))]
+//	http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=2b7ff7d4-67db-43f0-8eba-20d962708140
+	[ExpectedException (typeof (NullReferenceException))]
+	public void ImportCspBlob_Null ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		dsa.ImportCspBlob (null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void ImportCspBlob_Bad ()
+	{
+		byte[] blob = new byte [148]; // valid size for public key
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		dsa.ImportCspBlob (blob);
 	}
 #endif
 }

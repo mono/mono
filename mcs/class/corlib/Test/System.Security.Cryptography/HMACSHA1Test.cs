@@ -5,7 +5,26 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell  http://www.novell.com
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -24,16 +43,16 @@ namespace MonoTests.System.Security.Cryptography {
 
 public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
-//	protected HMACSHA1 hash;
+	protected HMACSHA1 algo;
 
 	[Test]
 	public void Constructors () 
 	{
-		hash = new HMACSHA1 ();
+		algo = new HMACSHA1 ();
 		AssertNotNull ("HMACSHA1 ()", hash);
 
 		byte[] key = new byte [8];
-		hash = new HMACSHA1 (key);
+		algo = new HMACSHA1 (key);
 		AssertNotNull ("HMACSHA1 (key)", hash);
 	}
 
@@ -41,30 +60,30 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 	[ExpectedException (typeof (NullReferenceException))]
 	public void Constructor_Null () 
 	{
-		hash = new HMACSHA1 (null);
+		algo = new HMACSHA1 (null);
 	}
 
 	[Test]
 	public void Invariants () 
 	{
-		hash = new HMACSHA1 ();
-		AssertEquals ("HMACSHA1.CanReuseTransform", true, hash.CanReuseTransform);
-		AssertEquals ("HMACSHA1.CanTransformMultipleBlocks", true, hash.CanTransformMultipleBlocks);
-		AssertEquals ("HMACSHA1.HashName", "SHA1", (hash as HMACSHA1).HashName);
-		AssertEquals ("HMACSHA1.HashSize", 160, hash.HashSize);
-		AssertEquals ("HMACSHA1.InputBlockSize", 1, hash.InputBlockSize);
-		AssertEquals ("HMACSHA1.OutputBlockSize", 1, hash.OutputBlockSize);
-		AssertEquals ("HMACSHA1.ToString()", "System.Security.Cryptography.HMACSHA1", hash.ToString ()); 
+		algo = new HMACSHA1 ();
+		AssertEquals ("HMACSHA1.CanReuseTransform", true, algo.CanReuseTransform);
+		AssertEquals ("HMACSHA1.CanTransformMultipleBlocks", true, algo.CanTransformMultipleBlocks);
+		AssertEquals ("HMACSHA1.HashName", "SHA1", algo.HashName);
+		AssertEquals ("HMACSHA1.HashSize", 160, algo.HashSize);
+		AssertEquals ("HMACSHA1.InputBlockSize", 1, algo.InputBlockSize);
+		AssertEquals ("HMACSHA1.OutputBlockSize", 1, algo.OutputBlockSize);
+		AssertEquals ("HMACSHA1.ToString()", "System.Security.Cryptography.HMACSHA1", algo.ToString ()); 
 	}
 
-#if (NET_1_0 || NET_1_1)
-	// this is legal in .NET 1.2 because HMACSHA1 derives from HMAC
+#if ! NET_2_0
+	// this is legal in .NET 2.0 because HMACSHA1 derives from HMAC
 	[Test]
 	[ExpectedException (typeof (InvalidCastException))]
 	public void Exceptions () 
 	{
-		hash = new HMACSHA1 ();
-		(hash as HMACSHA1).HashName = "MD5";
+		algo = new HMACSHA1 ();
+		algo.HashName = "MD5";
 		byte[] data = Encoding.Default.GetBytes ("MD5");
 		byte[] hmac = hash.ComputeHash (data);
 		Fail ("Expected InvalidCastException but got none");
@@ -83,51 +102,46 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	public void CheckA (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		hash = new HMACSHA1 ();
-		(hash as HMACSHA1).Key = key;
-		byte[] hmac = hash.ComputeHash (data);
+		algo = new HMACSHA1 (key);
+		byte[] hmac = algo.ComputeHash (data);
 		AssertEquals (testName + "a1", result, hmac);
-		AssertEquals (testName + "a2", result, hash.Hash);
+		AssertEquals (testName + "a2", result, algo.Hash);
 	}
 
 	public void CheckB (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		hash = new HMACSHA1 ();
-		(hash as HMACSHA1).Key = key;
-		byte[] hmac = hash.ComputeHash (data, 0, data.Length);
+		algo = new HMACSHA1 (key);
+		byte[] hmac = algo.ComputeHash (data, 0, data.Length);
 		AssertEquals (testName + "b1", result, hmac);
-		AssertEquals (testName + "b2", result, hash.Hash);
+		AssertEquals (testName + "b2", result, algo.Hash);
 	}
 	
 	public void CheckC (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		hash = new HMACSHA1 ();
-		(hash as HMACSHA1).Key = key;
+		algo = new HMACSHA1 (key);
 		MemoryStream ms = new MemoryStream (data);
-		byte[] hmac = hash.ComputeHash (ms);
+		byte[] hmac = algo.ComputeHash (ms);
 		AssertEquals (testName + "c1", result, hmac);
-		AssertEquals (testName + "c2", result, hash.Hash);
+		AssertEquals (testName + "c2", result, algo.Hash);
 	}
 
 	public void CheckD (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		hash = new HMACSHA1 ();
-		(hash as HMACSHA1).Key = key;
+		algo = new HMACSHA1 (key);
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
-		hash.TransformFinalBlock (data, 0, data.Length);
-		AssertEquals (testName + "d", result, hash.Hash);
+		algo.TransformFinalBlock (data, 0, data.Length);
+		AssertEquals (testName + "d", result, algo.Hash);
 	}
 
 	public void CheckE (string testName, byte[] key, byte[] data, byte[] result) 
 	{
-		hash = new HMACSHA1 ();
-		(hash as HMACSHA1).Key = key;
+		algo = new HMACSHA1 (key);
 		byte[] copy = new byte [data.Length];
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 		for (int i=0; i < data.Length - 1; i++)
-			hash.TransformBlock (data, i, 1, copy, i);
-		hash.TransformFinalBlock (data, data.Length - 1, 1);
-		AssertEquals (testName + "e", result, hash.Hash);
+			algo.TransformBlock (data, i, 1, copy, i);
+		algo.TransformFinalBlock (data, data.Length - 1, 1);
+		AssertEquals (testName + "e", result, algo.Hash);
 	}
 
 	[Test]

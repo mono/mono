@@ -1,3 +1,58 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AllTests2.cs: Updated to NUnit 2.2 Assert.
+	* CipherModeTest.cs: New. Tests supported CipherMode for all 
+	SymmetricAlgorithm included in the framework (enum contains two more
+	modes that aren't implemented in any Fx version).
+	* CryptoConfigTest.cs: Ajusted new OID (for old names) in Fx 2.0.
+	* CryptoStreamTest.cs: Fixed different reported exception in Fx 2.0.
+	Fixed a bad test.
+	* CspProviderFlagsTest.cs: New. Test the values of the enum.
+	* DSACryptoServiceProviderTest.cs: Added new tests for new public 
+	properties and methods added in Fx 2.0. Duplicated test to import a
+	key pair into a disposed instance (works in Fx 2.0). Removed all
+	[Ignore]s in NET_2_0 as the MS class/runtime has been fixed.
+	* DSASignatureDeformatterTest.cs: Converted from NUnit 1 to 2.2. Fixed
+	different reported exception in Fx 2.0.
+	* DSASignatureFormatterTest.cs: Converted from NUnit 1 to 2.2. Fixed
+	different reported exception in Fx 2.0.
+	* HMACRIPEMD160Test.cs: Fixed tests using TransformFinalBlock.
+	* HMACSHA1Test.cs: Fixed tests so they work on both NET_1_1 and 
+	NET_2_0 profiles (as HMACSHA1 changed it's base class).
+	* HashAlgorithmTest.cs: Fixed different reported exception in Fx 2.0.
+	Removed [Ignore] in NET_2_0 as the MS class/runtime has been fixed.
+	* MACTripleDESTest.cs: Fixed tests so they work on both NET_1_1 and 
+	NET_2_0 profiles.
+	* PKCS1MaskGenerationMethodTest.cs: Removed [Ignore] in NET_2_0 as the
+	MS class has been fixed.
+	* PaddingModeTest.cs: Added new tests for the two new padding mode
+	introduced in Fx 2.0. Converted to NUnit 2.2.
+	* PasswordDeriveBytesTest.cs: Removed [ExpectedException] for 
+	StrangeBehaviour test as it is fixed in Fx 2.0.
+	* RC2Test.cs: Changed exception from CryptographicException to 
+	CryptographicUnexpectedOperationException for Fx 1.1/2.0.
+	* RIPEMD160Test.cs: Fixed tests using TransformFinalBlock.
+	* RSACryptoServiceProviderTest.cs: Added new tests for new public 
+	properties and methods added in Fx 2.0. Duplicated test to import a
+	key pair into a disposed instance (works in Fx 2.0). Duplicated test
+	to sign with a null OID (Fx 2.0 use SHA1 oid in this case).
+	* RSAOAEPKeyExchangeDeformatterTest.cs: Changed exception for a key
+	exchange with no key (to match Fx 2.0).
+	* RSAOAEPKeyExchangeFormatterTest.cs: Changed exception for a key
+	exchange with no key (to match Fx 2.0).
+	* RSAPKCS1KeyExchangeFormatterTest.cs: Changed exception for a key
+	exchange with no key (to match Fx 2.0). Removed [Ignore] in NET_2_0 as
+	the MS class/runtime has been fixed.
+	* RSAPKCS1SignatureDeformatterTest.cs: Null keys, in constructor or in
+	SetKey method, now throw an ArgumentNullException in Fx 2.0.
+	* RSAPKCS1SignatureFormatterTest.cs: Null keys, in constructor or in
+	SetKey method, now throw an ArgumentNullException in Fx 2.0.
+	* Rfc2898DeriveBytesTest.cs: Typecasted a null as a string.
+	* SymmetricAlgorithm2Test.cs: In Fx 2.0 an empty IV now throws a 
+	CryptographicException.
+	* ToBase64TransformTest.cs: Fixed different reported exception in Fx 2.0.
+	Removed [Ignore] in NET_2_0 as the MS class/runtime has been fixed.
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStreamTest.cs: Added two tests for bug #60573. One shows that

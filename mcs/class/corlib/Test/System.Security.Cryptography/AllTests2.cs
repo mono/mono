@@ -3,9 +3,29 @@
 //
 // Authors:
 //      Thomas Neidhart (tome@sbox.tugraz.at)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using System;
@@ -13,19 +33,17 @@ using System.Security.Cryptography;
 using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography {
-        /// <summary>
-        ///   Combines all available crypto unit tests into one test suite.
-        /// </summary>
-        public class AllTests {
+
+	public class AllTests {
         	// because most crypto stuff works with byte[] buffers
         	static public void AssertEquals (string msg, byte[] array1, byte[] array2)
         	{
         		if ((array1 == null) && (array2 == null))
         			return;
         		if (array1 == null)
-        			Assertion.Fail (msg + " -> First array is NULL");
+        			Assert.Fail (msg + " -> First array is NULL");
         		if (array2 == null)
-        			Assertion.Fail (msg + " -> Second array is NULL");
+        			Assert.Fail (msg + " -> Second array is NULL");
         
         		bool a = (array1.Length == array2.Length);
         		if (a) {
@@ -38,7 +56,7 @@ namespace MonoTests.System.Security.Cryptography {
         		}
         		msg += " -> Expected " + BitConverter.ToString (array1, 0);
         		msg += " is different than " + BitConverter.ToString (array2, 0);
-        		Assertion.Assert (msg, a);
+        		Assert.IsTrue (a, msg);
         	}
 
 		public static byte[] dsaG = { 0x3D, 0x4F, 0xCC, 0x78, 0x6A, 0x7A, 0x23, 0xF1, 0x41, 0x76, 0xEB, 0xB0, 0x0F, 0xD5, 0x0F, 0x78, 0x21, 0x73, 0x83, 0xC2, 0x1B, 0xF4, 0x7E, 0x68, 0xB2, 0x4B,

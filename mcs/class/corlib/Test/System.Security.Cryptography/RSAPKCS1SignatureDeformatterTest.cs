@@ -47,11 +47,18 @@ namespace MonoTests.System.Security.Cryptography {
 			fmt = new RSAPKCS1SignatureDeformatter ();
 			AssertNotNull ("RSAPKCS1SignatureDeformatter()", fmt);
 
-			fmt = new RSAPKCS1SignatureDeformatter (null);
-			AssertNotNull ("RSAPKCS1SignatureDeformatter(null)", fmt);
-
 			fmt = new RSAPKCS1SignatureDeformatter (rsa);
 			AssertNotNull ("RSAPKCS1SignatureDeformatter(rsa)", fmt);
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#endif
+		public void RSAConstructor_Null ()
+		{
+			RSAPKCS1SignatureDeformatter fmt = new RSAPKCS1SignatureDeformatter (null);
+			AssertNotNull ("RSAPKCS1SignatureDeformatter(null)", fmt);
 		}
 
 		[Test]
@@ -77,7 +84,10 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		public void SetNullKey () 
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#endif
+		public void SetNullKey ()
 		{
 			RSAPKCS1SignatureDeformatter fmt = new RSAPKCS1SignatureDeformatter ();
 			fmt.SetKey (null);

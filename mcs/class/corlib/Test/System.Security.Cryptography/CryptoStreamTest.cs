@@ -5,7 +5,26 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 /* WARNING * WARNING * WARNING * WARNING * WARNING * WARNING * WARNING *
@@ -297,7 +316,11 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+#if NET_2_0
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#else
 		[Ignore ("Test cause System.ExecutionEngineException on MS runtime")]
+#endif
 		public void Read_Disposed_Break () 
 		{
 			byte[] buffer = new byte [8];
@@ -391,7 +414,11 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+#if NET_2_0
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+#else
 		[Ignore ("Test cause System.ExecutionEngineException on MS runtime")]
+#endif
 		public void Write_Disposed () 
 		{
 			byte[] buffer = new byte [8];
@@ -1253,11 +1280,10 @@ namespace MonoTests.System.Security.Cryptography {
 			DES des = DES.Create ();
 			CryptoStream csd = new CryptoStream (debug, des.CreateDecryptor (key, iv), CryptoStreamMode.Write);
 
-			byte[] data = new byte [64];
+			byte[] data = new byte [64] { 0xE1, 0xB2, 0x46, 0xE5, 0xA7, 0xC7, 0x4C, 0xBC, 0xD5, 0xF0, 0x8E, 0x25, 0x3B, 0xFA, 0x23, 0x80, 0x03, 0x16, 0x18, 0x17, 0xA3, 0x59, 0xBA, 0xAC, 0xFC, 0x47, 0x57, 0x2A, 0xF9, 0x44, 0x07, 0x84, 0x20, 0x74, 0x06, 0x38, 0xC2, 0xF3, 0xA1, 0xCE, 0x8C, 0x73, 0xB1, 0xE3, 0x75, 0x03, 0x66, 0x89, 0xF0, 0x4E, 0x98, 0x68, 0xB1, 0xBD, 0x85, 0x25, 0xFF, 0x4B, 0x11, 0x74, 0xEF, 0x14, 0xC8, 0xE9 };
 			csd.Write (data, 0, 64);
 			AssertEquals ("Length", 56, debug.Length);
 			// last block is kept for later processing
-			csd.Close ();
 		}
 	}
 }

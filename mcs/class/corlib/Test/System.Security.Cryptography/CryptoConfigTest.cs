@@ -2,9 +2,29 @@
 // CryptoConfigTest.cs - NUnit Test Cases for CryptoConfig
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -234,6 +254,17 @@ public class CryptoConfigTest : Assertion {
 		MapNameToOID ("MD5", "1.2.840.113549.2.5");
 		MapNameToOID ("System.Security.Cryptography.MD5", "1.2.840.113549.2.5");
 		MapNameToOID ("System.Security.Cryptography.MD5CryptoServiceProvider", "1.2.840.113549.2.5");
+#if NET_2_0
+		MapNameToOID ("SHA256", "2.16.840.1.101.3.4.2.1");
+		MapNameToOID ("System.Security.Cryptography.SHA256", "2.16.840.1.101.3.4.2.1");
+		MapNameToOID ("System.Security.Cryptography.SHA256Managed", "2.16.840.1.101.3.4.2.1");
+		MapNameToOID ("SHA384", "2.16.840.1.101.3.4.2.2");
+		MapNameToOID ("System.Security.Cryptography.SHA384", "2.16.840.1.101.3.4.2.2");
+		MapNameToOID ("System.Security.Cryptography.SHA384Managed", "2.16.840.1.101.3.4.2.2");
+		MapNameToOID ("SHA512", "2.16.840.1.101.3.4.2.3");
+		MapNameToOID ("System.Security.Cryptography.SHA512", "2.16.840.1.101.3.4.2.3");
+		MapNameToOID ("System.Security.Cryptography.SHA512Managed", "2.16.840.1.101.3.4.2.3");
+#else
 		MapNameToOID ("SHA256", "2.16.840.1.101.3.4.1");
 //		MapNameToOID ("SHA-256", "2.16.840.1.101.3.4.1");
 		MapNameToOID ("System.Security.Cryptography.SHA256", "2.16.840.1.101.3.4.1");
@@ -246,21 +277,33 @@ public class CryptoConfigTest : Assertion {
 //		MapNameToOID ("SHA-512", "2.16.840.1.101.3.4.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512", "2.16.840.1.101.3.4.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512Managed", "2.16.840.1.101.3.4.3");
+#endif
 		// LAMESPEC: only documentated in ".NET Framework Security" book
 		MapNameToOID ("TripleDESKeyWrap", "1.2.840.113549.1.9.16.3.6");
-		// no OID defined ?
+#if NET_2_0
+		// new OID defined in Fx 2.0
+		MapNameToOID ("RSA", "1.2.840.113549.1.1.1");
+		MapNameToOID ("DSA", "1.2.840.10040.4.1");
+		MapNameToOID ("DES", "1.3.14.3.2.7");
+		MapNameToOID ("3DES", "1.2.840.113549.3.7");
+		MapNameToOID ("TripleDES", "1.2.840.113549.3.7");
+		MapNameToOID ("RC2", "1.2.840.113549.3.2");
+#else
+		// no OID defined before Fx 2.0
 		MapNameToOID ("RSA", null);
-		MapNameToOID ("System.Security.Cryptography.RSA", null);
-		MapNameToOID ("System.Security.Cryptography.AsymmetricAlgorithm", null);
 		MapNameToOID ("DSA", null);
-		MapNameToOID ("System.Security.Cryptography.DSA", null);
 		MapNameToOID ("DES", null);
-		MapNameToOID ("System.Security.Cryptography.DES", null);
 		MapNameToOID ("3DES", null);
 		MapNameToOID ("TripleDES", null);
+		MapNameToOID ("RC2", null);
+#endif
+		// no OID defined ?
+		MapNameToOID ("System.Security.Cryptography.RSA", null);
+		MapNameToOID ("System.Security.Cryptography.AsymmetricAlgorithm", null);
+		MapNameToOID ("System.Security.Cryptography.DSA", null);
+		MapNameToOID ("System.Security.Cryptography.DES", null);
 		MapNameToOID ("Triple DES", null);
 		MapNameToOID ("System.Security.Cryptography.TripleDES", null);
-		MapNameToOID ("RC2", null);
 		MapNameToOID ("System.Security.Cryptography.RC2", null);
 		MapNameToOID ("Rijndael", null);
 		MapNameToOID ("System.Security.Cryptography.Rijndael", null);
