@@ -143,6 +143,7 @@ namespace MonoTests.System.Threading {
 			public void TestMethod1()
 			{
 				sub_thread.Start();
+				Thread.Sleep (100);
 				sub_thread.Abort();
 			}
 		}
@@ -169,16 +170,16 @@ namespace MonoTests.System.Threading {
 			public void TestMethod1()
 			{
 				thread1.Start();
-				while (!thread1.IsAlive);
+				TestUtil.WaitForAlive (thread1, "wait1");
 				T1ON = true;
 				thread2.Start();
-				while (!thread2.IsAlive);
+				TestUtil.WaitForAlive (thread2, "wait2");
 				T2ON = true;
 				thread1.Abort();
-				while (thread1.IsAlive);
+				TestUtil.WaitForNotAlive (thread1, "wait3");
 				T1ON = false;
 				thread2.Abort();
-				while (thread2.IsAlive);
+				TestUtil.WaitForNotAlive (thread2, "wait4");
 				T2ON = false;
 			}
 			
@@ -252,7 +253,7 @@ namespace MonoTests.System.Threading {
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			ApartmentState before = TestThread.ApartmentState;
 			TestThread.Start();
-			while(!TestThread.IsAlive);
+			TestUtil.WaitForAlive (TestThread, "wait5");
 			ApartmentState after = TestThread.ApartmentState;
 			TestThread.Abort();
 			AssertEquals("#21 Apartment State Changed when not needed",before,after);
@@ -264,7 +265,7 @@ namespace MonoTests.System.Threading {
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			ApartmentState before = TestThread.ApartmentState;
 			TestThread.Start();
-			while(!TestThread.IsAlive);
+			TestUtil.WaitForAlive (TestThread, "wait6");
 			ApartmentState after = TestThread.ApartmentState;
 			TestThread.Abort();
 			AssertEquals("#31 Apartment State Changed when not needed: ",before,after);
@@ -274,44 +275,55 @@ namespace MonoTests.System.Threading {
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			TestThread.Priority=ThreadPriority.BelowNormal;
-			ThreadPriority after = TestThread.Priority;
-			TestThread.Start();
-			while(!TestThread.IsAlive);
-			ThreadPriority before = TestThread.Priority;
-			TestThread.Abort();
-			AssertEquals("#41 Unexpected Priority Change: ",before,after);
+			try {
+				TestThread.Priority=ThreadPriority.BelowNormal;
+				ThreadPriority after = TestThread.Priority;
+				TestThread.Start();
+				TestUtil.WaitForAlive (TestThread, "wait7");
+				ThreadPriority before = TestThread.Priority;
+				AssertEquals("#41 Unexpected Priority Change: ",before,after);
+			}
+			finally {
+				TestThread.Abort();
+			}
 		}
 
 		public void TestPriority2()
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			AssertEquals("#42 Incorrect Priority in New thread: ",ThreadPriority.Normal, TestThread.Priority);
-			TestThread.Start();
-			while(!TestThread.IsAlive);
-			AssertEquals("#43 Incorrect Priority in Started thread: ",ThreadPriority.Normal, TestThread.Priority);
-			TestThread.Abort();
+			try {
+				AssertEquals("#42 Incorrect Priority in New thread: ",ThreadPriority.Normal, TestThread.Priority);
+				TestThread.Start();
+				TestUtil.WaitForAlive (TestThread, "wait8");
+				AssertEquals("#43 Incorrect Priority in Started thread: ",ThreadPriority.Normal, TestThread.Priority);
+			}
+			finally {
+				TestThread.Abort();
+			}
 			AssertEquals("#44 Incorrect Priority in Aborted thread: ",ThreadPriority.Normal, TestThread.Priority);
 		}
 
 		public void TestPriority3()
 		{
-			
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			TestThread.Start();
-			TestThread.Priority = ThreadPriority.Lowest;
-			AssertEquals("#45A Incorrect Priority:",ThreadPriority.Lowest,TestThread.Priority);
-			TestThread.Priority = ThreadPriority.BelowNormal;
-			AssertEquals("#45B Incorrect Priority:",ThreadPriority.BelowNormal,TestThread.Priority);
-			TestThread.Priority = ThreadPriority.Normal;
-			AssertEquals("#45C Incorrect Priority:",ThreadPriority.Normal,TestThread.Priority);
-			TestThread.Priority = ThreadPriority.AboveNormal;
-			AssertEquals("#45D Incorrect Priority:",ThreadPriority.AboveNormal,TestThread.Priority);
-			TestThread.Priority = ThreadPriority.Highest;
-			AssertEquals("#45E Incorrect Priority:",ThreadPriority.Highest,TestThread.Priority);
-			TestThread.Abort();
+			try {
+				TestThread.Start();
+				TestThread.Priority = ThreadPriority.Lowest;
+				AssertEquals("#45A Incorrect Priority:",ThreadPriority.Lowest,TestThread.Priority);
+				TestThread.Priority = ThreadPriority.BelowNormal;
+				AssertEquals("#45B Incorrect Priority:",ThreadPriority.BelowNormal,TestThread.Priority);
+				TestThread.Priority = ThreadPriority.Normal;
+				AssertEquals("#45C Incorrect Priority:",ThreadPriority.Normal,TestThread.Priority);
+				TestThread.Priority = ThreadPriority.AboveNormal;
+				AssertEquals("#45D Incorrect Priority:",ThreadPriority.AboveNormal,TestThread.Priority);
+				TestThread.Priority = ThreadPriority.Highest;
+				AssertEquals("#45E Incorrect Priority:",ThreadPriority.Highest,TestThread.Priority);
+			}
+			finally {
+				TestThread.Abort();
+			}
 		}
 
 
@@ -319,11 +331,15 @@ namespace MonoTests.System.Threading {
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			TestThread.Start();
-			while(!TestThread.IsAlive);
-			bool state = TestThread.IsBackground;
-			TestThread.Abort();
-			Assert("#51 IsBackground not set at the default state: ",!(state));
+			try {
+				TestThread.Start();
+				TestUtil.WaitForAlive (TestThread, "wait9");
+				bool state = TestThread.IsBackground;
+				Assert("#51 IsBackground not set at the default state: ",!(state));
+			}
+			finally {
+				TestThread.Abort();
+			}
 		}
 
 		public void TestIsBackground2()
@@ -331,8 +347,12 @@ namespace MonoTests.System.Threading {
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			TestThread.IsBackground = true;
-			TestThread.Start();
-			TestThread.Abort();
+			try {
+				TestThread.Start();
+			}
+			finally {
+				TestThread.Abort();
+			}
 			Assert("#52 Is Background Changed ot Start ",TestThread.IsBackground);
 		}
 
@@ -341,14 +361,18 @@ namespace MonoTests.System.Threading {
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			TestThread.Start();
-			while(!TestThread.IsAlive);
-			string name = TestThread.Name;
-			AssertEquals("#61 Name set when mustn't be set: ", name, (string)null);
-			string newname = "Testing....";
-			TestThread.Name = newname;
-			AssertEquals("#62 Name not set when must be set: ",TestThread.Name,newname);
-			TestThread.Abort();
+			try {
+				TestThread.Start();
+				TestUtil.WaitForAlive (TestThread, "wait10");
+				string name = TestThread.Name;
+				AssertEquals("#61 Name set when mustn't be set: ", name, (string)null);
+				string newname = "Testing....";
+				TestThread.Name = newname;
+				AssertEquals("#62 Name not set when must be set: ",TestThread.Name,newname);
+			}
+			finally {
+				TestThread.Abort();
+			}
 		}
 
 		[Category("NotDotNet")]
@@ -356,15 +380,15 @@ namespace MonoTests.System.Threading {
 		{
 			C3Test  test1 = new C3Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod1));
-			try
-			{
+			try {
 				TestThread.Start();
-				while(!TestThread.IsAlive);
-				TestThread.Abort();
+				TestUtil.WaitForAlive (TestThread, "wait11");
 			}
-			catch(Exception e)
-			{
+			catch(Exception e) {
 				Fail("#71 Unexpected Exception" + e.Message);
+			}
+			finally {
+				TestThread.Abort();
 			}
 		}
 
@@ -372,14 +396,14 @@ namespace MonoTests.System.Threading {
 		{
 			C4Test test1 = new C4Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod1));
-			try
-			{
+			try {
 				TestThread.Start();
-				TestThread.Abort();
 			}
-			catch(Exception e)
-			{
+			catch(Exception e) {
 				Fail("#81 Unexpected Exception" + e.ToString());
+			}
+			finally {
+				TestThread.Abort();
 			}
 		}
 
@@ -412,12 +436,17 @@ namespace MonoTests.System.Threading {
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			AssertEquals("#101 Wrong Thread State",ThreadState.Unstarted,TestThread.ThreadState);
-			TestThread.Start();
-			//while(!TestThread.IsAlive); //In the MS Documentation this is not necessary
-										  //but in the MS SDK it is
-			Assert("#102 Wrong Thread State: " + TestThread.ThreadState.ToString(), TestThread.ThreadState == ThreadState.Running || (TestThread.ThreadState & ThreadState.Unstarted) != 0);
-			TestThread.Abort();
-			while(TestThread.IsAlive);
+			try {
+				TestThread.Start();
+				//while(!TestThread.IsAlive); //In the MS Documentation this is not necessary
+											  //but in the MS SDK it is
+				Assert("#102 Wrong Thread State: " + TestThread.ThreadState.ToString(), TestThread.ThreadState == ThreadState.Running || (TestThread.ThreadState & ThreadState.Unstarted) != 0);
+			}
+			finally {
+				TestThread.Abort();
+			}
+			
+			TestUtil.WaitForNotAlive (TestThread, "wait12");
 			// Docs say state will be Stopped, but Aborted happens sometimes (?)
 			Assert("#103 Wrong Thread State: " + TestThread.ThreadState.ToString(), (ThreadState.Stopped & TestThread.ThreadState) != 0 
 				|| (ThreadState.Aborted & TestThread.ThreadState) != 0);
@@ -429,8 +458,13 @@ namespace MonoTests.System.Threading {
 			// note: switching from PrincipalPolicy won't work inside the same thread
 			// because as soon as a Principal object is created the Policy doesn't matter anymore
 			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.NoPrincipal));
-			t.Start ();
-			t.Join ();
+			try {
+				t.Start ();
+				t.Join ();
+			}
+			catch {
+				t.Abort ();
+			}
 		}
 
 		[Test]
@@ -439,8 +473,13 @@ namespace MonoTests.System.Threading {
 			// note: switching from PrincipalPolicy won't work inside the same thread
 			// because as soon as a Principal object is created the Policy doesn't matter anymore
 			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.UnauthenticatedPrincipal));
-			t.Start ();
-			t.Join ();
+			try {
+				t.Start ();
+				t.Join ();
+			}
+			catch {
+				t.Abort ();
+			}
 		}
 
 		[Test]
@@ -449,8 +488,13 @@ namespace MonoTests.System.Threading {
 			// note: switching from PrincipalPolicy won't work inside the same thread
 			// because as soon as a Principal object is created the Policy doesn't matter anymore
 			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.WindowsPrincipal));
-			t.Start ();
-			t.Join ();
+			try {
+				t.Start ();
+				t.Join ();
+			}
+			catch {
+				t.Abort ();
+			}
 		}
 		
 		int counter = 0;
@@ -474,7 +518,7 @@ namespace MonoTests.System.Threading {
 			CheckIsRunning ("t5", t);
 			
 			t.Abort ();
-			while(t.IsAlive);
+			TestUtil.WaitForNotAlive (t, "wait13");
 			CheckIsNotRunning ("t6", t);
 		}
 		
@@ -547,6 +591,30 @@ namespace MonoTests.System.Threading {
 			while (true) {
 				counter++;
 				Thread.Sleep (1);
+			}
+		}
+	}
+	
+	public class TestUtil
+	{
+		public static void WaitForNotAlive (Thread t, string s)
+		{
+			WhileAlive (t, true, s);
+		}
+		
+		public static void WaitForAlive (Thread t, string s)
+		{
+			WhileAlive (t, false, s);
+		}
+		
+		public static void WhileAlive (Thread t, bool alive, string s)
+		{
+			DateTime ti = DateTime.Now;
+			while (t.IsAlive == alive) {
+				if ((DateTime.Now - ti).TotalSeconds > 10) {
+					if (alive) Assertion.Fail ("Timeout while waiting for not alive state. " + s);
+					else Assertion.Fail ("Timeout while waiting for alive state. " + s);
+				}
 			}
 		}
 	}

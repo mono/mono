@@ -1,3 +1,8 @@
+2004-09-22  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ThreadTest.cs, MutexTest.cs: Don't leave any thread alive, even if the
+	thread fails. Added a timeout to active waits.
+
 2004-08-25  Nick Drochak <ndrochak@ieee.com>
 
 	* ThreadTest.cs: Some tests hang on MS.NET so ignore them.

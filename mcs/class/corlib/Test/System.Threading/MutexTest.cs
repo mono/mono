@@ -129,9 +129,14 @@ namespace MonoTests.System.Threading
 			Mutex Sem = new Mutex(false);
 			ConcClassLoop class1 = new ConcClassLoop(1,Sem);
 			Thread thread1 = new Thread(new ThreadStart(class1.Loop));
-			thread1.Start();
-			while(thread1.IsAlive);
-			AssertEquals("#41 Mutex Worked InCorrecly:",100,class1.marker);
+			try {
+				thread1.Start();
+				TestUtil.WaitForNotAlive (thread1, "");
+				AssertEquals("#41 Mutex Worked InCorrecly:",100,class1.marker);
+			}
+			finally {
+				thread1.Abort ();
+			}
 		}
 
 		public void TestWaitAndFoget1()
@@ -141,12 +146,20 @@ namespace MonoTests.System.Threading
 			ConcClassLoop class2 = new ConcClassLoop(2,Sem);
 			Thread thread1 = new Thread(new ThreadStart(class1.WaitAndForget));
 			Thread thread2 = new Thread(new ThreadStart(class2.WaitAndForget));
-			thread1.Start();
-			while(thread1.IsAlive);
-			thread2.Start();
-			while(thread2.IsAlive);
-			AssertEquals("#51 The Mutex Has been Kept after end of the thread:",
-				class2.id,class2.marker);
+			
+			try {
+				thread1.Start();
+				TestUtil.WaitForNotAlive (thread1, "t1");
+	
+				thread2.Start();
+				TestUtil.WaitForNotAlive (thread2, "t2");
+			
+				AssertEquals("#51 The Mutex Has been Kept after end of the thread:", class2.id,class2.marker);
+			}
+			finally {
+				thread1.Abort ();
+				thread2.Abort ();
+			}
 		}
 
 		public void TestHandle()
