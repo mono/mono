@@ -6,8 +6,9 @@
 //   Wictor Wilén (decode/encode functions) (wictor@ibizkit.se)
 //
 using System;
-using System.Text;
+using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace System.Web {
    public sealed class HttpUtility {
@@ -53,25 +54,24 @@ namespace System.Web {
             return null;
          }
 
-         string dest = "";
+         StringBuilder dest = new StringBuilder ();
          long len = s.Length;
          string tmp = "";
 
-
-         for(int i = 0; i < len; i++) {
-            if(s[i] == '%') {
-               tmp = s[i+1].ToString ();
-               tmp += s[i+2];
-               dest += char.Parse(tmp);
+         for (int i = 0; i < len; i++) {
+            if (s [i] == '%' && i + 2 < len) {
+               tmp = s [i+1].ToString ();
+               tmp += s [i+2];
+               dest.Append ((char) Int32.Parse (tmp, NumberStyles.HexNumber));
+	       i += 2;
             } 
-            else if( s[i] == '+') {
-               dest += " ";
-            }
+            else if (s [i] == '+')
+               dest.Append (' ');
             else
-               dest += s[i];
-
+               dest.Append (s [i]);
          }
-         return dest;
+
+         return dest.ToString ();
       }
 
 
@@ -86,25 +86,26 @@ namespace System.Web {
             return null;
          }
 
-         string dest = "";
+         StringBuilder dest = new StringBuilder ();
          long len = s.Length;
          int h1, h2;
 
          for(int i = 0; i < len; i++) {
             if(s[i] == ' ') // space character is replaced with '+'
-               dest += "+";
-            else if ( _chars.IndexOf(s[i]) >= 0 ) {
+               dest.Append ('+');
+            else if ( _chars.IndexOf (s [i]) >= 0 ) {
                h1 = (int)s[i] % 16;
                h2 = (int)s[i] / 16;
-               dest += "%";
-               dest += _hex[h1].ToString();
-               dest += _hex[h2].ToString();
+               dest.Append ('%');
+               dest.Append (_hex [h1].ToString ());
+               dest.Append (_hex [h2].ToString ());
             }
             else
-               dest += s[i].ToString();
+               dest.Append (s [i]);
 
          }
-         return dest;
+
+         return dest.ToString ();
       }
    
       /// <summary>

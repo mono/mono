@@ -1,3 +1,15 @@
+2002-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs:
+	(Session): return null instead of throwing an exception.
+
+	* HttpRequest.cs:
+	(HttpMethod): return RequestType if not set.
+	(GetRawContent): return QueryString if we don't have a
+	HttpWorkerRequest.
+
+	* HttpUtility.cs: fixed Decode and Encode.
+
 2002-06-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs:

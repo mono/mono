@@ -30,7 +30,6 @@ public class Page : TemplateControl, IHttpHandler
 	private string _errorPage;
 	private ArrayList _fileDependencies;
 	private string _ID;
-	private bool _isPostBack;
 	private bool _isValid;
 	private HttpServerUtility _server;
 	private bool _smartNavigation = false;
@@ -45,6 +44,7 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _renderingForm;
 	private bool _hasForm;
 	private object _savedViewState;
+	private ArrayList _requiresPostBack;
 
 	#region Fields
 	 	protected const string postEventArgumentID = ""; //FIXME
@@ -54,6 +54,7 @@ public class Page : TemplateControl, IHttpHandler
 	#region Constructor
 	public Page ()
 	{
+		Page = this;
 	}
 
 	#endregion		
@@ -140,7 +141,9 @@ public class Page : TemplateControl, IHttpHandler
 
 	public bool IsPostBack
 	{
-		get { return _isPostBack; }
+		get {
+			return (Request.HttpMethod == "POST");
+		}
 	}
 
 	[MonoTODO]
@@ -264,16 +267,12 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
-		if (Session.IsNewSession)
-			return null;
-		
 		if (IsPostBack)
-			return _context.Request.Form; //FIXME: is this enough?
+			return _context.Request.Form;
 
-		throw new NotImplementedException ("GET method got to parse Request.QueryString");
+		return _context.Request.QueryString;
 	}
 	
 	[MonoTODO]
@@ -312,7 +311,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual int GetTypeHashCode ()
 	{
-		return this.GetHashCode ();
+		return GetHashCode ();
 	}
 
 	[MonoTODO]
@@ -364,8 +363,9 @@ public class Page : TemplateControl, IHttpHandler
 		_renderingForm = true;
 		_hasForm = true;
 		writer.WriteLine();
-		writer.Write("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"");
-		writer.WriteLine("1\" />"); //FIXME: should use a random secure value.
+		writer.Write("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
+		writer.WriteLine("value=\"{0}\" />", GetTypeHashCode ()); //FIXME: should use a random 
+									  // secure value.
 	}
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
@@ -384,30 +384,72 @@ public class Page : TemplateControl, IHttpHandler
 		InvokeEventMethod ("Page_Load", sender, e);
 	}
 
+	private void ProcessPostData ()
+	{
+		NameValueCollection data = DeterminePostBackMode ();
+		ArrayList _raisePostBack = new ArrayList ();
+
+		foreach (string id in data.AllKeys){
+			string value = data [id];
+			Control ctrl = FindControl (id);
+			if (ctrl != null){
+				IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
+				IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
+				if (pbdh != null) {
+					if (pbdh.LoadPostData (id, data) == true) {
+						pbdh.RaisePostDataChangedEvent ();
+						if (pbeh == null)
+							continue;
+						if (_requiresPostBack != null &&
+						    !(_requiresPostBack.Contains (ctrl)))
+								_raisePostBack.Add (pbeh);
+					}
+					continue;
+				}
+
+				if (pbeh != null)
+					pbeh.RaisePostBackEvent (null);
+			}
+		}
+
+		foreach (IPostBackEventHandler e in _raisePostBack)
+			e.RaisePostBackEvent (null);
+
+		if (_requiresPostBack != null)
+			foreach (IPostBackEventHandler e in _requiresPostBack)
+				e.RaisePostBackEvent (null);
+	}
+
+	private bool init_done;
 	public void ProcessRequest (HttpContext context)
 	{
-		FrameworkInitialize ();
-		// This 2 should depend on AutoEventWireUp in Page directive. Defaults to true.
-		Init += new EventHandler (_Page_Init);
-		Load += new EventHandler (_Page_Load);
+		if (!init_done){
+			init_done = true;
+			FrameworkInitialize ();
+			// This 2 should depend on AutoEventWireUp in Page directive. Defaults to true.
+			Init += new EventHandler (_Page_Init);
+			Load += new EventHandler (_Page_Load);
 
-		//-- Control execution lifecycle in the docs
-		OnInit (EventArgs.Empty);
+			//-- Control execution lifecycle in the docs
+			OnInit (EventArgs.Empty);
+		}
+		_hasForm = false;
+		_context = context;
 		//LoadViewState ();
 		//if (this is IPostBackDataHandler)
 		//	LoadPostData ();
+		if (IsPostBack)
+			ProcessPostData ();
+
 		OnLoad (EventArgs.Empty);
 		//if (this is IPostBackDataHandler)
 		//	RaisePostBackEvent ();
 		OnPreRender (EventArgs.Empty);
 
 		//--
-		_context = context;
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
-		foreach (Control ctrl in Controls){
-			ctrl.Page = this;
+		foreach (Control ctrl in Controls)
 			ctrl.RenderControl (output);
-		}
 	}
 
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)
@@ -445,11 +487,12 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
-	[MonoTODO]
 	public void RegisterRequiresPostBack (Control control)
 	{
-		// Don't throw the exception. keep going
-		//throw new NotImplementedException ();
+		if (_requiresPostBack == null)
+			_requiresPostBack = new ArrayList ();
+
+		_requiresPostBack.Add (control);
 	}
 
 	[MonoTODO]
@@ -494,6 +537,11 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual void Validate ()
 	{
+		if (_validators == null && _validators.Count == 0){
+			_isValid = true;
+			return;
+		}
+
 		bool all_valid = true;
 		foreach (IValidator v in _validators){
 			v.Validate ();

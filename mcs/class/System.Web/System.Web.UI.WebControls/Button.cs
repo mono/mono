@@ -30,7 +30,7 @@ namespace System.Web.UI.WebControls
 
 		//private EventHandlerList ehList;
 
-		public Button(): base(HtmlTextWriterTag.Button)
+		public Button(): base (HtmlTextWriterTag.Input)
 		{
 		}
 
@@ -138,32 +138,34 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
-			if(CausesValidation)
-			{
-				Page.Validate();
-				OnClick(new EventArgs());
-				OnCommand(new CommandEventArgs(CommandName, CommandArgument));
-			}
+			if (CausesValidation)
+				Page.Validate ();
+
+			OnClick (EventArgs.Empty);
+			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
 		}
 
-		protected override void AddAttributesToRender(HtmlTextWriter writer)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			writer.AddAttribute(HtmlTextWriterAttribute.Type,"submit");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name,base.UniqueID);
-			writer.AddAttribute(HtmlTextWriterAttribute.Value,Text);
-			if(Page!=null && CausesValidation && Page.Validators.Count > 0)
-			{
-				writer.AddAttribute(System.Web.UI.HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent(Page));
-				writer.AddAttribute("language", "javascript");
+			if (Page != null)
+				Page.VerifyRenderingInServerForm (this);
+
+			writer.AddAttribute (HtmlTextWriterAttribute.Type, "submit");
+			writer.AddAttribute (HtmlTextWriterAttribute.Name, base.UniqueID);
+			writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
+			if (Page != null && CausesValidation && Page.Validators.Count > 0) {
+				writer.AddAttribute (System.Web.UI.HtmlTextWriterAttribute.Onclick,
+						     Utils.GetClientValidatedEvent (Page));
+				writer.AddAttribute ("language", "javascript");
 			}
-			base.AddAttributesToRender(writer);
+			base.AddAttributesToRender (writer);
 		}
 
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
-			// Preventing subclasses to do anything
+			// Preventing base classes to do anything
 		}
 	}
 }

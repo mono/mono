@@ -62,7 +62,11 @@ namespace System.Web {
          _WorkerRequest = null;
          _sPathTranslated = Filename;
          _sRequestType = "GET";
-         _sHttpMethod = "GET";
+	 //
+	 // Commented out. It now gets its value from RequestType if we don't have a WorkerRequest
+	 // 
+         //_sHttpMethod = "GET";
+	 //
          _oUrl = new Uri(Url);
          _sPath = _oUrl.AbsolutePath;
 
@@ -215,7 +219,13 @@ namespace System.Web {
       private byte [] GetRawContent() {
          if (null == _arrRawContent) {
             if (null == _WorkerRequest) {
-               return null;
+		 if (QueryStringRaw == null)
+			 return null;
+		 char [] q = QueryStringRaw.ToCharArray ();
+		 _arrRawContent = new byte [q.Length];
+		 for (int i = 0; i < q.Length; i++)
+			 _arrRawContent [i] = (byte) q [i];
+		 return _arrRawContent;
             }
 
             // TODO: Check max length?
@@ -239,7 +249,7 @@ namespace System.Web {
                   _arrRawContent = arrTemp;
                }
             }
-         }
+         } 
 
          return _arrRawContent;
       }
@@ -433,7 +443,10 @@ namespace System.Web {
                }
                
                if (_sHttpMethod == null) {
-                  _sHttpMethod = "GET";
+		  if (RequestType != null)
+			_sHttpMethod = RequestType;
+		  else
+			_sHttpMethod = "GET";
                }
             }
 

@@ -1,3 +1,18 @@
+2002-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: reimplemented FindControls.
+
+	* Page.cs:
+	(.ctor): set the page for this control.
+	(IsPostBack): return valid value.
+	(DeterminePostBackMode): finished.
+	(OnFormRender): render __VIEWSTATE (uses GetTypeHashCode()).
+	(ProcessPostData): implemented. Raises change and postback events.
+	(ProcessRequest): changed to support reuse of the instance.
+	(RegisterRequiresPostBack): implemented.
+
+	* ValidatorCollection.cs: implemented all methods.
+
 2002-06-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs:

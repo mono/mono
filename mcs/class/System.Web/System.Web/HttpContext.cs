@@ -164,7 +164,7 @@ namespace System.Web {
       [MonoTODO("HttpSessionState Session")]
       public HttpSessionState Session {
          get {
-            throw new NotImplementedException();
+            return null;
          }
       }
 

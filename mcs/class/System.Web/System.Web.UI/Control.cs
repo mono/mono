@@ -329,7 +329,7 @@ namespace System.Web.UI
 				control._parent.Controls.Remove (control);
 
 			control._parent = this;
-			control._page = _page;
+			control._page = Page;
 
 			// Without this, DataBoundLiteralControl crashes in OnDataBound event.
 			Control namingContainer = NamingContainer;
@@ -375,8 +375,20 @@ namespace System.Web.UI
                 {
                         //TODO: I think there is Naming Container stuff here. Redo.
                         int i;
-                        for (i = pathOffset; i < _controls.Count; i++)
-                                if (_controls[i].ID == id) return _controls[i];
+			Control ctrl;
+                        for (i = pathOffset; i < _controls.Count; i++){
+				ctrl = _controls [i];
+				
+                                if (ctrl.ID == id)
+					return ctrl;
+
+				if (ctrl.Controls.Count > 0){
+					Control other = ctrl.FindControl (id);
+					if (other != null)
+						return other;
+				}
+				
+			}
                         return null;
                 }
 
