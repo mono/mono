@@ -1,3 +1,10 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: Now use BitConverterLE for explicit 
+	little-endian convertion.
+	* PrivateKey.cs: Now use BitConverterLE for explicit little-endian
+	convertion for PVK files.
+
 2004-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeFormatter.cs: Fixed spcSpOpusInfo attribute (it wasn't 

@@ -100,19 +100,19 @@ namespace Mono.Security.Authenticode {
 		private bool Decode (byte[] pvk, string password) 
 		{
 			// DWORD magic
-			if (BitConverter.ToUInt32 (pvk, 0) != magic)
+			if (BitConverterLE.ToUInt32 (pvk, 0) != magic)
 				return false;
 			// DWORD reserved
-			if (BitConverter.ToUInt32 (pvk, 4) != 0x0)
+			if (BitConverterLE.ToUInt32 (pvk, 4) != 0x0)
 				return false;
 			// DWORD keytype
-			keyType = BitConverter.ToInt32 (pvk, 8);
+			keyType = BitConverterLE.ToInt32 (pvk, 8);
 			// DWORD encrypted
-			encrypted = (BitConverter.ToUInt32 (pvk, 12) == 1);
+			encrypted = (BitConverterLE.ToUInt32 (pvk, 12) == 1);
 			// DWORD saltlen
-			int saltlen = BitConverter.ToInt32 (pvk, 16);
+			int saltlen = BitConverterLE.ToInt32 (pvk, 16);
 			// DWORD keylen
-			int keylen = BitConverter.ToInt32 (pvk, 20);
+			int keylen = BitConverterLE.ToInt32 (pvk, 20);
 			byte[] keypair = new byte [keylen];
 			Buffer.BlockCopy (pvk, 24 + saltlen, keypair, 0, keylen);
 			// read salt (if present)
@@ -174,20 +174,20 @@ namespace Mono.Security.Authenticode {
 			try {
 				// header
 				byte[] empty = new byte [4];
-				byte[] data = BitConverter.GetBytes (magic);
+				byte[] data = BitConverterLE.GetBytes (magic);
 				fs.Write (data, 0, 4);	// magic
 				fs.Write (empty, 0, 4);	// reserved
-				data = BitConverter.GetBytes (keyType);
+				data = BitConverterLE.GetBytes (keyType);
 				fs.Write (data, 0, 4);	// key type
 
 				encrypted = (password != null);
 				blob = CryptoConvert.ToCapiPrivateKeyBlob (rsa);
 				if (encrypted) {
-					data = BitConverter.GetBytes (1);
+					data = BitConverterLE.GetBytes (1);
 					fs.Write (data, 0, 4);	// encrypted
-					data = BitConverter.GetBytes (16);
+					data = BitConverterLE.GetBytes (16);
 					fs.Write (data, 0, 4);	// saltlen
-					data = BitConverter.GetBytes (blob.Length);
+					data = BitConverterLE.GetBytes (blob.Length);
 					fs.Write (data, 0, 4);		// keylen
 
 					byte[] salt = new byte [16];
@@ -214,7 +214,7 @@ namespace Mono.Security.Authenticode {
 				else {
 					fs.Write (empty, 0, 4);	// encrypted
 					fs.Write (empty, 0, 4);	// saltlen
-					data = BitConverter.GetBytes (blob.Length);
+					data = BitConverterLE.GetBytes (blob.Length);
 					fs.Write (data, 0, 4);		// keylen
 				}
 		

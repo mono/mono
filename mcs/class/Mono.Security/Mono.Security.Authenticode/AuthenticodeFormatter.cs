@@ -231,21 +231,21 @@ namespace Mono.Security.Authenticode {
 			}
 
 			// MZ - DOS header
-			if (BitConverter.ToUInt16 (file, 0) != 0x5A4D)
+			if (BitConverterLE.ToUInt16 (file, 0) != 0x5A4D)
 				return false;
 
 			// find offset of PE header
-			int peOffset = BitConverter.ToInt32 (file, 60);
+			int peOffset = BitConverterLE.ToInt32 (file, 60);
 			if (peOffset > file.Length)
 				return false;
 
 			// PE - NT header
-			if (BitConverter.ToUInt16 (file, peOffset) != 0x4550)
+			if (BitConverterLE.ToUInt16 (file, peOffset) != 0x4550)
 				return false;
 
 			// IMAGE_DIRECTORY_ENTRY_SECURITY
-			int dirSecurityOffset = BitConverter.ToInt32 (file, peOffset + 152);
-			int dirSecuritySize = BitConverter.ToInt32 (file, peOffset + 156);
+			int dirSecurityOffset = BitConverterLE.ToInt32 (file, peOffset + 152);
+			int dirSecuritySize = BitConverterLE.ToInt32 (file, peOffset + 156);
 
 			if (dirSecuritySize > 8) {
 				entry = new byte [dirSecuritySize - 8];
@@ -285,20 +285,19 @@ namespace Mono.Security.Authenticode {
 			authenticode = sign.ASN1;
 
 			byte[] asn = authenticode.GetBytes ();
-			// debug
-			if (Environment.GetEnvironmentVariable ("MONO_DEBUG") != null) {
-				using (FileStream fs = File.Open (fileName + ".sig", FileMode.Create, FileAccess.Write)) {
-					fs.Write (asn, 0, asn.Length);
-					fs.Close ();
-				}
+#if DEBUG
+			using (FileStream fs = File.Open (fileName + ".sig", FileMode.Create, FileAccess.Write)) {
+				fs.Write (asn, 0, asn.Length);
+				fs.Close ();
 			}
-
+#endif
+			// someday I may be sure enough to move this into DEBUG ;-)
 			File.Copy (fileName, fileName + ".bak", true);
 
 			using (FileStream fs = File.Open (fileName, FileMode.Create, FileAccess.Write)) {
 				int filesize = (dirSecurityOffset == 0) ? file.Length : dirSecurityOffset;
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
-				byte[] data = BitConverter.GetBytes (filesize);
+				byte[] data = BitConverterLE.GetBytes (filesize);
 				file [peOffset + 152] = data [0];
 				file [peOffset + 153] = data [1];
 				file [peOffset + 154] = data [2];
@@ -309,14 +308,14 @@ namespace Mono.Security.Authenticode {
 				if (addsize > 0)
 					addsize = 8 - addsize;
 				size += addsize;
-				data = BitConverter.GetBytes (size);		// header
+				data = BitConverterLE.GetBytes (size);		// header
 				file [peOffset + 156] = data [0];
 				file [peOffset + 157] = data [1];
 				file [peOffset + 158] = data [2];
 				file [peOffset + 159] = data [3];
 				fs.Write (file, 0, filesize);
 				fs.Write (data, 0, data.Length);		// length (again)
-				data = BitConverter.GetBytes (0x00020200);	// magic
+				data = BitConverterLE.GetBytes (0x00020200);	// magic
 				fs.Write (data, 0, data.Length);
 				fs.Write (asn, 0, asn.Length);
 				// fill up
