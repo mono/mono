@@ -526,6 +526,7 @@ namespace Mono.Xml
 				}
 				break;
 			}
+			constructingTextValue = null;
 			MoveToElement ();
 			return true;
 		}

@@ -1,5 +1,10 @@
 2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* DTDValidatingReader.cs : Fixed ReadContent() which may result in 
+	  invalid additional Text node.
+
+2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextWriter.cs : 
 	  On WriteProcessingInstruction(), ArgumentException() is expected ;-)
 
