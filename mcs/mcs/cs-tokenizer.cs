@@ -20,6 +20,7 @@ using System.Text;
 using System.Collections;
 using System.IO;
 using System.Globalization;
+using System.Reflection;
 
 namespace Mono.CSharp
 {
@@ -50,6 +51,29 @@ namespace Mono.CSharp
 		// after a token has been seen.
 		//
 		bool any_token_seen = false;
+		static Hashtable tokenValues;
+		
+		private static Hashtable TokenValueName
+		{
+			get {
+				if (tokenValues == null)
+					tokenValues = GetTokenValueNameHash ();
+
+				return tokenValues;
+			}
+		}
+
+		private static Hashtable GetTokenValueNameHash ()
+		{
+			Type t = typeof (Token);
+			FieldInfo [] fields = t.GetFields ();
+			Hashtable hash = new Hashtable ();
+			foreach (FieldInfo field in fields) {
+				if (field.IsLiteral && field.IsStatic && field.FieldType == typeof (int))
+					hash.Add (field.GetValue (null), field.Name);
+			}
+			return hash;
+		}
 		
 		//
 		// Returns a verbose representation of the current location
@@ -66,8 +90,15 @@ namespace Mono.CSharp
 				// return "Line:     "+line+" Col: "+col + "\n" +
 				//       "VirtLine: "+ref_line +
 				//       " Token: "+current_token + " " + det;
+				string current_token_name = TokenValueName [current_token] as string;
+				if (current_token_name == null)
+					current_token_name = current_token.ToString ();
 
-				return ref_name + " " + "(" + line + "," + col + "), Token:" + current_token + " " + det;
+				return String.Format ("{0} ({1},{2}), Token: {3} {4}", ref_name,
+										       line,
+										       col,
+										       current_token_name,
+										       det);
 			}
 		}
 
