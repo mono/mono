@@ -1,3 +1,7 @@
+2004-09-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathAtomicValueTests.cs : added.
+
 2004-03-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorTests.cs : Added PropertiesOnNamespace().
