@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.40 $
+// $Revision: 1.41 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.41  2004/10/05 16:15:30  jackson
+// Improve rendering of the radio button patch by John BouAntoun
+//
 // Revision 1.40  2004/10/05 09:04:31  ravindra
 // 	- Added DrawListView method and ListViewDefaultSize property.
 // 	- Changed ControlPaint method calls to CPDrawXXX wherever possible.
@@ -944,21 +947,69 @@ namespace System.Windows.Forms
 			sb=new SolidBrush(radio_button.BackColor);
 			dc.FillRectangle(sb, radio_button.ClientRectangle);
 			sb.Dispose();
-
-			if (radio_button.appearance!=Appearance.Button) {
-				ControlPaint.DrawRadioButton(dc, radiobutton_rectangle, state);
+			
+			// establish if we are rendering a flat style of some sort
+			if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
+				DrawFlatStyleRadioButton (dc, radiobutton_rectangle, radio_button);
 			} else {
-				ControlPaint.DrawButton(dc, text_rectangle, state);
+				// render as per normal
+				if (radio_button.appearance!=Appearance.Button) {
+					ControlPaint.DrawRadioButton (dc, radiobutton_rectangle, state);
+				} else {
+					ControlPaint.DrawButton (dc, text_rectangle, state);
+				}
 			}
+			
+			// wind32 compat - win32 seems to give the text a slight (3px) offset when rendering
+			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 3, text_rectangle.Y, Math.Max (text_rectangle.Width - 3, 0), text_rectangle.Height); 
 
 			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */
 			sb=new SolidBrush(radio_button.ForeColor);
-			dc.DrawString(radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);
+			dc.DrawString (radio_button.Text, radio_button.Font, sb, inner_text_rectangle, text_format);
 			sb.Dispose();
 
 			if (radio_button.Focused) {
 				ControlPaint.DrawFocusRectangle(dc, text_rectangle);
 			}
+		}
+
+		// renders a radio button with the Flat and Popup FlatStyle
+		private void DrawFlatStyleRadioButton (Graphics graphics, Rectangle rectangle, RadioButton radio_button)
+		{
+			int	lineWidth;
+			
+			// win32 compat fill in the background of the knob
+			graphics.FillPie (ResPool.GetSolidBrush (SystemColors.Window), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+			
+			// draw the outer flatstyle arcs
+			if (radio_button.FlatStyle == FlatStyle.Flat) {
+				graphics.DrawArc (ResPool.GetPen (SystemColors.ControlText), rectangle, 0, 359);
+			} else {
+				// must be a popup radio button
+				if (radio_button.is_entered) {
+					// draw the popup 3d button knob
+					graphics.DrawArc (SystemPens.ControlLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 0, 359);
+
+					graphics.DrawArc (SystemPens.ControlDark, rectangle, 135, 180);
+					graphics.DrawArc (SystemPens.ControlLightLight, rectangle, 315, 180);
+				} else {
+					// just draw lighter flatstyle outer circle
+					graphics.DrawArc (SystemPens.ControlDark, rectangle, 0, 359);
+				}
+			}
+
+			// draw the check
+			lineWidth = Math.Max (1, Math.Min(rectangle.Width, rectangle.Height)/3);
+			if (radio_button.Checked) {
+				SolidBrush buttonBrush;
+
+				if (!radio_button.Enabled) {
+					buttonBrush = (SolidBrush) SystemBrushes.ControlDark;
+				} else {
+					buttonBrush = (SolidBrush) SystemBrushes.ControlText;
+				}
+				graphics.FillPie (buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
+			}			
 		}
 
 		public override Size RadioButtonDefaultSize {
@@ -2979,9 +3030,11 @@ namespace System.Windows.Forms
 						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 					}
 				} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
-					Pen			penFatDark	= new Pen(ColorButtonShadow, 2);
-					Pen			penFatLight	= new Pen(SystemColors.ControlLight, 2);
+					Pen			penFatDark	= new Pen(ColorButtonShadow, 1);
+					Pen			penFatLight	= new Pen(SystemColors.ControlLight, 1);
 					int			lineWidth;
+
+					graphics.FillPie (ResPool.GetSolidBrush (SystemColors.Window), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
 
 					graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
 					graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
