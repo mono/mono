@@ -53,10 +53,10 @@ namespace System.Data.SqlClient {
 			SqlParameterCollection();
 
 		// SqlDataReader state data for ExecuteReader()
-		private SqlDataReader dataReader = null;
+		private SqlDataReader dataReader;
 		private string[] queries; 
 		private int currentQuery;
-		CommandBehavior cmdBehavior = CommandBehavior.Default;
+		CommandBehavior cmdBehavior;
 		
 		#endregion // Fields
 
@@ -256,6 +256,16 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		// since SqlCommand has resources so SqlDataReader
+		// can do Read() and NextResult(), need to free
+		// those resources.  Also, need to allow this SqlCommand
+		// and this SqlConnection to things again.
+		internal void CloseReader() {
+			conn.OpenReader = false;
+			dataReader = null;
+			queries = null;
+		}
+
 		[MonoTODO]
 		public object ExecuteScalar () {
 			IntPtr pgResult; // PGresult
@@ -341,6 +351,7 @@ namespace System.Data.SqlClient {
 
 				// close result set
 				PostgresLibrary.PQclear (pgResult);
+				pgResult = IntPtr.Zero;
 
 			}
 			else {

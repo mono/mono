@@ -74,10 +74,17 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public void Close() {
-			// close result set
-			PostgresLibrary.PQclear (pgResult);
 			open = false;
-			// TODO: change busy state on SqlConnection to not busy
+			
+			// free SqlDataReader resources in SqlCommand
+			// and allow SqlConnection to be used again
+			cmd.CloseReader();
+
+			// TODO: get parameters from result
+
+			// clear unmanaged PostgreSQL result set
+			PostgresLibrary.PQclear (pgResult);
+			pgResult = IntPtr.Zero;
 		}
 
 		[MonoTODO]

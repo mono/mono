@@ -1,3 +1,38 @@
+2002-05-18  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.build: took out all excluded
+	files except the ones in the Test directory
+	because all files compile now.  It does not
+	mean they all work or have implementations
+	though.
+	
+	* System.Data/DataRelationCollection.cs
+	* System.Data/DataTableRelationCollection.cs
+	* System.Data/InternalDataCollectionBase.cs
+	* System.Data.Common/DbDataPermission.cs
+	* System.Data.SqlClient/SqlInfoMessageEventArgs.cs
+	* System.Data.SqlClient/SqlClientPermission.cs
+	* System.Data.SqlClient/SqlClientPermissionAttribute.cs: changes
+	to get all System.Data* files to compile.
+	
+	* System.Data.SqlClient/SqlCommand.cs: started coding
+	to prevent SqlConnection and SqlCommand from doing
+	anyting while fetching data using SqlDataReader.  Also,
+	started coding to undo this prevention once the 
+	SqlDataReader is closed.
+	
+	* System.Data.SqlClient/SqlConnection.cs: get database server
+	version.  Started coding to prevent connection from 
+	doing anything while fetching data and undo once the reader 
+	is closed.  Include events SqlInfoMessage and StateChange.
+	
+	* System.Data.SqlClient/SqlDataReader.cs: start coding to
+	prevent connection and command from doing anything while
+	fetching data, and undo when closed.
+	
+	* Test/PostgresTest.cs: added test to get ServerVersion
+	property from SqlConnection
+
 2002-05-18  Tim Coleman <tim@timcoleman.com>
 	* System.Data/DataRow.cs: More implementation,
 	as well as boundary checks and small semantic

@@ -9,10 +9,10 @@
 //     DataConstraintCollection
 //
 // Author:
-//   Daniel Morgan
-//   Tim Coleman
+//   Daniel Morgan <danmorg@sc.rr.com>
+//   Tim Coleman <tim@timcoleman.com>
 //
-// (C) Ximian, Inc. 2002
+// (C) Copyright 2002 Daniel Morgan
 // (C) Copyright 2002 Tim Coleman
 //
 
@@ -33,7 +33,7 @@ namespace System.Data
 	{
 		#region Fields
 
-		protected ArrayList list;
+		protected ArrayList list = null;
 		protected bool readOnly = false;
 		protected bool synchronized = false; 
 

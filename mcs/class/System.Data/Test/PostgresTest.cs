@@ -336,6 +336,9 @@ namespace TestSystemDataSqlClient {
 				object obj = CallStoredProcedure(cnc);
 				Console.WriteLine("Result: " + obj);
 
+				Console.WriteLine("Database Server Version: " + 
+					((SqlConnection)cnc).ServerVersion);
+
 				/* Clean up */
 				Console.WriteLine ("Clean up...");
 				Console.WriteLine ("\t\tDrop table...");

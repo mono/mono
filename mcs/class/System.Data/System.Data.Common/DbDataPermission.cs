@@ -37,10 +37,7 @@ namespace System.Data.Common
 		}
 
 		public override IPermission Copy () {
-			DbDataPermission copy = new DbDataPermission (
-				permissionState, allowBlankPassword);
-
-			return copy;
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

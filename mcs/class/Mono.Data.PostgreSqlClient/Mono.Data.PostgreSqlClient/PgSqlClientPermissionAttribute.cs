@@ -26,28 +26,21 @@ namespace System.Data.SqlClient {
 		DBDataPermissionAttribute {
 
 		[MonoTODO]
-		[AttributeUsage(AttributeTargets.Assembly    | 
-			 AttributeTargets.Class       | 
-			 AttributeTargets.Struct      | 
-			 AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
-		[Serializable]
-		public SqlClientPermissionAttribute(SecurityAction action) {
+		public SqlClientPermissionAttribute(SecurityAction action) : 
+			base(action)
+		{
 			// FIXME: do constructor
 		}
 
-		[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-			 | AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
-		[Serializable]
+		[MonoTODO]
 		public override IPermission CreatePermission() {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		~SqlClientPermissionAttribute() {
-			// FIXME: destructor to release resources
-		}
+		//[MonoTODO]
+		//~SqlClientPermissionAttribute() {
+		//	// FIXME: destructor to release resources
+		//}
 	}
 
 }

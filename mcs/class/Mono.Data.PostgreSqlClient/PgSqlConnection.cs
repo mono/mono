@@ -90,9 +90,11 @@ namespace System.Data.SqlClient {
 		private ConnectionState conState = ConnectionState.Closed;
 		private bool dataReaderOpen = false;
 		// FIXME: if true, throw an exception if SqlConnection 
-		//        is used used for anything other than reading
+		//        is used for anything other than reading
 		//        data using SqlDataReader
 		
+		private string versionString = "Unknown";
+
 		#endregion // Fields
 
 		#region Constructors
@@ -264,11 +266,19 @@ namespace System.Data.SqlClient {
 			types = new PostgresTypes(this);
 			types.Load();
 
+			versionString = GetDatabaseServerVersion();
+
 			// set DATE style to YYYY/MM/DD
 			IntPtr pgResult = IntPtr.Zero;
 			pgResult = PostgresLibrary.PQexec (pgConn, "SET DATESTYLE TO 'ISO'");
 			PostgresLibrary.PQclear (pgResult);
 			pgResult = IntPtr.Zero;
+		}
+
+		private string GetDatabaseServerVersion() 
+		{
+			SqlCommand cmd = new SqlCommand("select version()",this);
+			return (string) cmd.ExecuteScalar();
 		}
 
 		private void CloseDataSource () {
@@ -489,56 +499,66 @@ namespace System.Data.SqlClient {
 
 		public string ServerVersion {
 			get { 
-				throw new NotImplementedException ();
+				return versionString;
 			}
 		}
 
+		#endregion // Public Properties
+
 		#region Internal Properties
 
+		// For System.Data.SqlClient classes
+		// to get the current transaction
+		// in progress - if any
 		internal SqlTransaction Transaction {
 			get {
 				return trans;
 			}
 		}
 
-		// this is for System.Data.SqlClient classes
-		// to get the Postgres connection
+		// For System.Data.SqlClient classes 
+		// to get the unmanaged PostgreSQL connection
 		internal IntPtr PostgresConnection {
 			get {
 				return pgConn;
 			}
 		}
 
+		// For System.Data.SqlClient classes
+		// to get the list PostgreSQL types
+		// so can look up based on OID to
+		// get the .NET System type.
 		internal ArrayList Types {
 			get {
 				return types.List;
 			}
 		}
 
+		// Used to prevent SqlConnection
+		// from doing anything while
+		// SqlDataReader is open
+		internal bool OpenReader {
+			get {
+				return dataReaderOpen;
+			}
+			set {
+				dataReaderOpen = value;
+			}
+		}
+
 		#endregion // Internal Properties
 
-		#endregion
-
-		#region Events and Delegates
+		#region Events
                 
-		// FIXME: the two events belong here
-		// however, i do not know about the delegates
-		// also, they are stubs for now
-		/*
-		public delegate void 
-		SqlInfoMessageEventHandler (object sender,	
-				SqlInfoMessageEventArgs e);
-
 		public event 
 		SqlInfoMessageEventHandler InfoMessage;
 
 		public event 
 		StateChangeEventHandler StateChange;
-		*/
-
+		
 		#endregion
 
-		#region Classes
+		#region Inner Classes
 
 		private class PostgresTypes {
 			// TODO: create hashtable for 

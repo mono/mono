@@ -40,11 +40,12 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public override string ToString() {
 			// representation of InfoMessage event
+			return "'ToString() for SqlInfoMessageEventArgs Not Implemented'";
 		}
 
-		[MonoTODO]
-		~SqlInfoMessageEventArgs() {
+		//[MonoTODO]
+		//~SqlInfoMessageEventArgs() {
 			// FIXME: destructor needs to release resources
-		}
+		//}
 	}
 }

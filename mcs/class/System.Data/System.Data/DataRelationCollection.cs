@@ -21,18 +21,16 @@ namespace System.Data
 	[Serializable]
 	public abstract class DataRelationCollection : InternalDataCollectionBase
 	{
+		private int defaultNameIndex;
 		private bool inTransition;
-		private int defaultNameIndex;		
-		private ArrayList relations = null;
 		
 		/// <summary>
 		/// Initializes a new instance of the DataRelationCollection class.
 		/// </summary>
-		internal DataRelationCollection()
+		internal DataRelationCollection() : base()
 		{
 			defaultNameIndex = 1;
 			inTransition = false;
-			relations = new ArrayList();
 		}
 
 		/// <summary>
@@ -54,10 +52,10 @@ namespace System.Data
 		[MonoTODO]
 		public void Add(DataRelation relation)
 		{
-			if(relation != null)
+			if(List != null)
 			{
 				//CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				relations.Add(relation);
+				List.Add(relation);
 				//OnCollectionChanged(e);
 			}
 			return;
@@ -95,7 +93,7 @@ namespace System.Data
 			
 			DataRelation dataRelation = new DataRelation("Relation" + defaultNameIndex.ToString(), parentColumn, childColumn);
 			//CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-			relations.Add(dataRelation);
+			List.Add(dataRelation);
 			//OnCollectionChanged(e);
 			defaultNameIndex++;
 			return dataRelation;
@@ -114,7 +112,7 @@ namespace System.Data
 		public virtual DataRelation Add(DataColumn[] parentColumns, DataColumn[] childColumns)
 		{
 			DataRelation dataRelation = new DataRelation("Relation" + defaultNameIndex.ToString(), parentColumns, childColumns);
-			relations.Add(dataRelation);
+			List.Add(dataRelation);
 			defaultNameIndex++;
 			return dataRelation;
 		}
@@ -141,7 +139,7 @@ namespace System.Data
 			}
 
 			DataRelation dataRelation = new DataRelation(name, parentColumn, childColumn);
-			relations.Add(dataRelation);
+			List.Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -163,7 +161,7 @@ namespace System.Data
 			}
 
 			DataRelation dataRelation = new DataRelation(name, parentColumns, childColumns);
-			relations.Add(dataRelation);
+			List.Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -190,7 +188,7 @@ namespace System.Data
 			}
 
 			DataRelation dataRelation = new DataRelation(name, parentColumn, childColumn, createConstraints);
-			relations.Add(dataRelation);
+			List.Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -215,7 +213,7 @@ namespace System.Data
 
 			DataRelation dataRelation = new DataRelation(name, parentColumns, childColumns, createConstraints);
 			AddCore(dataRelation);
-			relations.Add(dataRelation);
+			List.Add(dataRelation);
 			return dataRelation;
 		}
 		#endregion
@@ -232,12 +230,12 @@ namespace System.Data
 				//TODO: Issue a good exception message.
 				throw new ArgumentNullException();
 			}
-			else if(relations.IndexOf(relation) != -1)
+			else if(List.IndexOf(relation) != -1)
 			{
 				//TODO: Issue a good exception message.
 				throw new ArgumentException();
 			}
-			else if(relations.Contains(relation.RelationName))
+			else if(List.Contains(relation.RelationName))
 			{
 				//TODO: Issue a good exception message.
 				throw new DuplicateNameException("A Relation named " + relation.RelationName + " already belongs to this DataSet.");
@@ -288,12 +286,12 @@ namespace System.Data
 
 		public virtual int IndexOf(DataRelation relation)
 		{
-			return relations.IndexOf(relation);
+			return List.IndexOf(relation);
 		}
 
 		public virtual int IndexOf(string relationName)
 		{
-			return relations.IndexOf(this[relationName]);
+			return List.IndexOf(this[relationName]);
 		}
 
 		[MonoTODO]
@@ -304,18 +302,6 @@ namespace System.Data
 
 		[MonoTODO]
 		protected internal virtual void OnCollectionChanging(CollectionChangeEventArgs ccevent)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Remove(DataRelation relation)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Remove(string name)
 		{
 			throw new NotImplementedException ();
 		}
