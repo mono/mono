@@ -47,7 +47,7 @@ using System.Xml.Serialization;
 
 namespace Mono.Xml.XPath
 {
-	public class XPathEditableDocument : IXPathNavigable
+	internal class XPathEditableDocument : IXPathNavigable
 	{
 		/*
 		public static void Main ()
@@ -236,7 +236,7 @@ namespace Mono.Xml.XPath
 		}
 	}
 
-	public class XmlDocumentInsertionWriter : XmlWriter
+	internal class XmlDocumentInsertionWriter : XmlWriter
 	{
 		XmlNode current;
 		XmlNode previousSibling;
@@ -417,7 +417,7 @@ namespace Mono.Xml.XPath
 		}
 	}
 
-	public class XmlDocumentAttributeWriter : XmlWriter
+	internal class XmlDocumentAttributeWriter : XmlWriter
 	{
 		XmlElement element;
 		XPathEditableDocument document;
@@ -573,7 +573,7 @@ namespace Mono.Xml.XPath
 		}
 	}
 
-	public class Insertion
+	internal class Insertion
 	{
 		// AppendChild : last child / true
 		// InsertBefore : current node / false
@@ -584,21 +584,21 @@ namespace Mono.Xml.XPath
 		public bool Afterward;
 	}
 
-	public class Removal
+	internal class Removal
 	{
 		public XmlNode OwnerNode;
 		public XmlNode NextSibling;
 		public XmlNode RemovedNode;
 	}
 
-	public class AttributeUpdate
+	internal class AttributeUpdate
 	{
 		public XmlElement Element;
 		public XmlAttribute NewAttribute;
 		public XmlAttribute OldAttribute;
 	}
 
-	public class XmlDocumentEditableNavigator : XPathNavigator, IHasXmlNode
+	internal class XmlDocumentEditableNavigator : XPathNavigator, IHasXmlNode
 	{
 		static readonly bool isXmlDocumentNavigatorImpl;
 		

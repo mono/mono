@@ -1,3 +1,7 @@
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs : internalize classes.
+
 2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : fixed wrong recursion problem.
