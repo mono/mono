@@ -51,8 +51,6 @@ namespace System.Web.UI.WebControls {
 		
 		protected void OnParameterChanged ()
 		{
-			if (_owner != null)
-				_owner.ParameterChanged ();
 		}
 		
 		protected virtual void LoadViewState (object savedState)
@@ -101,9 +99,10 @@ namespace System.Web.UI.WebControls {
 			get { return this.IsTrackingViewState; }
 		}
 		
+		[MonoTODO]
 		public override string ToString ()
 		{
-			return Name;
+			return base.ToString ();
 		}
 		
 		public string DefaultValue {
@@ -206,12 +205,7 @@ namespace System.Web.UI.WebControls {
 			get { return isTrackingViewState; }
 		}
 		
-		private ParameterCollection _owner;
-
-		internal void SetOwnerCollection (ParameterCollection own)
-		{
-			_owner = own;
-		}
+	
 	}
 }
 #endif
