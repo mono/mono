@@ -10,6 +10,7 @@
 
 using System;
 using System.Configuration.Assemblies;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -150,7 +151,7 @@ namespace Mono.Security {
 						RSAParameters p = rsa.ExportParameters (true);
 						return ((p.D != null) && (p.P != null) && (p.Q != null));
 					}
-					catch {
+					catch (CryptographicException) {
 						return false;
 					}
 				}
@@ -197,28 +198,28 @@ namespace Mono.Security {
 					// Ok from here - Same structure as keypair - expect for public key
 					publicKey [12] = 0x06;		// PUBLICKEYBLOB
 					// we can copy this part
-					Array.Copy (keyPair, 1, publicKey, 13, publicKey.Length - 13);
+					Buffer.BlockCopy (keyPair, 1, publicKey, 13, publicKey.Length - 13);
 					// and make a small adjustment 
 					publicKey [23] = 0x31;		// (RSA1 not RSA2)
 				}
-				return publicKey;
+				return (byte[]) publicKey.Clone ();
 			}
 		}
 
 		public byte[] PublicKeyToken {
 			get {
-				if (keyToken != null)
-					return keyToken;
-				byte[] publicKey = PublicKey;
-				if (publicKey == null)
-					return null;
-                                HashAlgorithm ha = SHA1.Create (TokenAlgorithm);
-				byte[] hash = ha.ComputeHash (publicKey);
-				// we need the last 8 bytes in reverse order
-				keyToken = new byte [8];
-				Array.Copy (hash, (hash.Length - 8), keyToken, 0, 8);
-				Array.Reverse (keyToken, 0, 8);
-				return keyToken;
+				if (keyToken == null) {
+					byte[] publicKey = PublicKey;
+					if (publicKey == null)
+						return null;
+					HashAlgorithm ha = SHA1.Create (TokenAlgorithm);
+					byte[] hash = ha.ComputeHash (publicKey);
+					// we need the last 8 bytes in reverse order
+					keyToken = new byte [8];
+					Buffer.BlockCopy (hash, (hash.Length - 8), keyToken, 0, 8);
+					Array.Reverse (keyToken, 0, 8);
+				}
+				return (byte[]) keyToken.Clone ();
 			}
 		}
 
@@ -229,7 +230,7 @@ namespace Mono.Security {
 				return tokenAlgorithm; 
 			}
 			set {
-				string algo = value.ToUpper ();
+				string algo = value.ToUpper (CultureInfo.InvariantCulture);
 				if ((algo == "SHA1") || (algo == "MD5")) {
 					tokenAlgorithm = value;
 					InvalidateCache ();
@@ -373,15 +374,12 @@ namespace Mono.Security {
 		{
 			bool result = false;
 			StrongNameSignature sn;
-			FileStream fs = File.OpenRead (fileName);
-			try {
+			using (FileStream fs = File.OpenRead (fileName)) {
 				sn = StrongHash (fs, StrongNameOptions.Signature);
-				if (sn.Hash == null)
-					return false;
-			}
-			finally {
 				fs.Close ();
 			}
+			if (sn.Hash == null)
+				return false;
 
 			byte[] signature = null;
 			try {
@@ -390,18 +388,13 @@ namespace Mono.Security {
 				signature = sign.CreateSignature (sn.Hash);
 				Array.Reverse (signature);
 			}
-			catch {
+			catch (CryptographicException) {
 				return false;
 			}
 
-			try {
-				fs = File.OpenWrite (fileName);
+			using (FileStream fs = File.OpenWrite (fileName)) {
 				fs.Position = sn.SignaturePosition;
 				fs.Write (signature, 0, signature.Length);
-			}
-			catch {
-			}
-			finally {
 				fs.Close ();
 				result = true;
 			}
@@ -411,15 +404,12 @@ namespace Mono.Security {
 		public bool Verify (string fileName) 
 		{
 			StrongNameSignature sn;
-			FileStream fs = File.OpenRead (fileName);
-			try {
+			using (FileStream fs = File.OpenRead (fileName)) {
 				sn = StrongHash (fs, StrongNameOptions.Signature);
-				if (sn.Hash == null)
-					return false;
-			}
-			finally {
 				fs.Close ();
 			}
+			if (sn.Hash == null)
+				return false;
 
 			try {
 				AssemblyHashAlgorithm algorithm = AssemblyHashAlgorithm.SHA1;
@@ -427,7 +417,7 @@ namespace Mono.Security {
 					algorithm = AssemblyHashAlgorithm.MD5;
 				return Verify (rsa, algorithm, sn.Hash, sn.Signature);
 			}
-			catch {
+			catch (CryptographicException) {
 				// no exception allowed
 				return false;
 			}

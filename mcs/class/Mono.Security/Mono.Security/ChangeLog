@@ -1,3 +1,10 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: FxCop-ized. CLS compliance.
+	* ASN1Convert.cs: FxCop-ized. CLS compliance.
+	* PKCS7.cs: FxCop-ized. CLS compliance.
+ 	* StrongName: FxCop-ized. CLS compliance.
+
 2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Added SaveToFile for easier debugging. Patch from

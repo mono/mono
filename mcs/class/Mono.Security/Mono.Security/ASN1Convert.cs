@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -26,7 +27,11 @@ namespace Mono.Security {
 #else
 	public
 #endif
-	class ASN1Convert {
+	sealed class ASN1Convert {
+
+		private ASN1Convert ()
+		{
+		}
 
 		// RFC3280, section 4.2.1.5
 		// CAs conforming to this profile MUST always encode certificate
@@ -36,17 +41,19 @@ namespace Mono.Security {
 		{
 			if (dt.Year < 2050) {
 				// UTCTIME
-				return new ASN1 (0x17, Encoding.ASCII.GetBytes (dt.ToString ("yyMMddHHmmss") + "Z"));
+				return new ASN1 (0x17, Encoding.ASCII.GetBytes (
+					dt.ToString ("yyMMddHHmmss", CultureInfo.InvariantCulture) + "Z"));
 			}
 			else {
 				// GENERALIZEDTIME
-				return new ASN1 (0x18, Encoding.ASCII.GetBytes (dt.ToString ("yyyyMMddHHmmss") + "Z"));
+				return new ASN1 (0x18, Encoding.ASCII.GetBytes (
+					dt.ToString ("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + "Z"));
 			}
 		}
 
 		static public ASN1 FromInt32 (Int32 value) 
 		{
-			byte[] integer = BitConverter.GetBytes (value);
+			byte[] integer = BitConverterLE.GetBytes (value);
 			int x = 3;
 			while (integer [x] == 0x00)
 				x--;
@@ -63,22 +70,22 @@ namespace Mono.Security {
 			return asn1;
 		}
 
-		static public ASN1 FromOID (string oid) 
+		static public ASN1 FromOid (string oid) 
 		{
 			return new ASN1 (CryptoConfig.EncodeOID (oid));
 		}
 
-		static public ASN1 FromUnsignedBigInteger (byte[] integer) 
+		static public ASN1 FromUnsignedBigInteger (byte[] big) 
 		{
-			if (integer [0] == 0x00) {
+			if (big [0] == 0x00) {
 				// this first byte is added so we're sure it's an unsigned integer
 				// however we can't feed it into RSAParameters or DSAParameters
-				int length = integer.Length + 1;
+				int length = big.Length + 1;
 				byte[] uinteger = new byte [length];
-				Array.Copy (integer, 0, uinteger, 1, length);
-				integer = uinteger;
+				Buffer.BlockCopy (big, 0, uinteger, 1, length);
+				big = uinteger;
 			}
-			return new ASN1 (0x02, integer);
+			return new ASN1 (0x02, big);
 		}
 
 		static public int ToInt32 (ASN1 asn1) 
@@ -93,7 +100,7 @@ namespace Mono.Security {
 
 		// Convert a binary encoded OID to human readable string representation of 
 		// an OID (IETF style). Based on DUMPASN1.C from Peter Gutmann.
-		static public string ToOID (ASN1 asn1) 
+		static public string ToOid (ASN1 asn1) 
 		{
 			byte[] aOID = asn1.Value;
 			StringBuilder sb = new StringBuilder ();
@@ -105,15 +112,15 @@ namespace Mono.Security {
 				y += (byte) ((x - 2) * 40);
 				x = 2;
 			}
-			sb.Append (x.ToString ());
+			sb.Append (x.ToString (CultureInfo.InvariantCulture));
 			sb.Append (".");
-			sb.Append (y.ToString ());
+			sb.Append (y.ToString (CultureInfo.InvariantCulture));
 			ulong val = 0;
 			for (x = 1; x < aOID.Length; x++) {
 				val = ((val << 7) | ((byte) (aOID [x] & 0x7F)));
 				if ( !((aOID [x] & 0x80) == 0x80)) {
 					sb.Append (".");
-					sb.Append (val.ToString ());
+					sb.Append (val.ToString (CultureInfo.InvariantCulture));
 					val = 0;
 				}
 			}
@@ -131,7 +138,7 @@ namespace Mono.Security {
 					break;
 				case 13: 
 					// RFC3280: 4.1.2.5.1  UTCTime
-					int year = Convert.ToInt16 (t.Substring (0, 2));
+					int year = Convert.ToInt16 (t.Substring (0, 2), CultureInfo.InvariantCulture);
 					// Where YY is greater than or equal to 50, the 
 					// year SHALL be interpreted as 19YY; and 
 					// Where YY is less than 50, the year SHALL be 

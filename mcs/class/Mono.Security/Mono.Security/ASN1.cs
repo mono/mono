@@ -28,9 +28,9 @@ namespace Mono.Security {
 #endif
 	class ASN1 {
 
-		protected byte m_nTag;
-		protected byte[] m_aValue;
-		protected ArrayList elist;
+		private byte m_nTag;
+		private byte[] m_aValue;
+		private ArrayList elist;
 
 		public ASN1 () : this (0x00, null) {}
 
@@ -60,7 +60,7 @@ namespace Mono.Security {
 			}
 
 			m_aValue = new byte [nLength];
-			Array.Copy (data, (2 + nLenLength), m_aValue, 0, nLength);
+			Buffer.BlockCopy (data, (2 + nLenLength), m_aValue, 0, nLength);
 
 			if ((m_nTag & 0x20) == 0x20) {
 				int nStart = (2 + nLenLength);
@@ -118,12 +118,12 @@ namespace Mono.Security {
 			return CompareArray (this.GetBytes (), asn1);
 		}
 
-		public bool CompareValue (byte[] aValue) 
+		public bool CompareValue (byte[] value) 
 		{
-			return CompareArray (m_aValue, aValue);
+			return CompareArray (m_aValue, value);
 		}
 
-		public virtual ASN1 Add (ASN1 asn1) 
+		public ASN1 Add (ASN1 asn1) 
 		{
 			if (asn1 != null) {
 				if (elist == null)
@@ -151,7 +151,7 @@ namespace Mono.Security {
 				int pos = 0;
 				for (int i=0; i < elist.Count; i++) {
 					byte[] item = (byte[]) al[i];
-					Array.Copy (item, 0, val, pos, item.Length);
+					Buffer.BlockCopy (item, 0, val, pos, item.Length);
 					pos += item.Length;
 				}
 			}
@@ -165,13 +165,13 @@ namespace Mono.Security {
 				if (nLength > 127) {
 					if (nLength < 256) {
 						der = new byte [3 + nLength];
-						Array.Copy (val, 0, der, 3, nLength);
+						Buffer.BlockCopy (val, 0, der, 3, nLength);
 						nLengthLen += 0x81;
 						der[2] = (byte)(nLength);
 					}
 					else {
 						der = new byte [4 + nLength];
-						Array.Copy (val, 0, der, 4, nLength);
+						Buffer.BlockCopy (val, 0, der, 4, nLength);
 						nLengthLen += 0x82;
 						der[2] = (byte)(nLength / 256);
 						der[3] = (byte)(nLength % 256);
@@ -179,7 +179,7 @@ namespace Mono.Security {
 				}
 				else {
 					der = new byte [2 + nLength];
-					Array.Copy (val, 0, der, 2, nLength);
+					Buffer.BlockCopy (val, 0, der, 2, nLength);
 					nLengthLen = nLength;
 				}
 				if (m_aValue == null)
@@ -217,21 +217,21 @@ namespace Mono.Security {
 		}
 
 		// TLV : Tag - Length - Value
-		protected void DecodeTLV (byte[] asn1, ref int anPos, out byte anTag, out int anLength, out byte[] aValue) 
+		protected void DecodeTLV (byte[] asn1, ref int pos, out byte tag, out int length, out byte[] content) 
 		{
-			anTag = asn1 [anPos++];
-			anLength = asn1 [anPos++];
+			tag = asn1 [pos++];
+			length = asn1 [pos++];
 
 			// special case where L contains the Length of the Length + 0x80
-			if ((anLength & 0x80) == 0x80) {
-				int nLengthLen = anLength & 0x7F;
-				anLength = 0;
+			if ((length & 0x80) == 0x80) {
+				int nLengthLen = length & 0x7F;
+				length = 0;
 				for (int i = 0; i < nLengthLen; i++)
-					anLength = anLength * 256 + asn1 [anPos++];
+					length = length * 256 + asn1 [pos++];
 			}
 
-			aValue = new byte [anLength];
-			Array.Copy (asn1, anPos, aValue, 0, anLength);
+			content = new byte [length];
+			Buffer.BlockCopy (asn1, pos, content, 0, length);
 		}
 
 		public ASN1 this [int index] {
@@ -241,7 +241,7 @@ namespace Mono.Security {
 						return null;
 					return (ASN1) elist [index];
 				}
-				catch {
+				catch (ArgumentOutOfRangeException) {
 					return null;
 				}
 			}
@@ -259,7 +259,7 @@ namespace Mono.Security {
 				else
 					return null;
 			}
-			catch {
+			catch (ArgumentOutOfRangeException) {
 				return null;
 			}
 		}
