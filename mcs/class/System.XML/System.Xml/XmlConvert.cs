@@ -111,6 +111,7 @@ namespace System.Xml {
 			return Int64.Parse(s, CultureInfo.InvariantCulture);
 		}
 
+		[CLSCompliant (false)]
 		public static SByte ToSByte(string s)
 		{
 			return SByte.Parse(s, CultureInfo.InvariantCulture);
@@ -156,6 +157,7 @@ namespace System.Xml {
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
+		[CLSCompliant (false)]
 		public static string ToString(SByte value)
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
@@ -164,6 +166,8 @@ namespace System.Xml {
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
+
+		[CLSCompliant (false)]
 		public static string ToString(UInt64 value)
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
@@ -180,10 +184,14 @@ namespace System.Xml {
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
+
+		[CLSCompliant (false)]
 		public static string ToString(UInt32 value)
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
+
+		[CLSCompliant (false)]
 		public static string ToString(UInt16 value)
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
@@ -200,14 +208,20 @@ namespace System.Xml {
 		{
 			return TimeSpan.Parse(s);
 		}
+
+		[CLSCompliant (false)]
 		public static UInt16 ToUInt16(string s)
 		{
 			return UInt16.Parse(s, CultureInfo.InvariantCulture);
 		}
+
+		[CLSCompliant (false)]
 		public static UInt32 ToUInt32(string s)
 		{
 			return UInt32.Parse(s, CultureInfo.InvariantCulture);
 		}
+
+		[CLSCompliant (false)]
 		public static UInt64 ToUInt64(string s)
 		{
 			return UInt64.Parse(s, CultureInfo.InvariantCulture);
