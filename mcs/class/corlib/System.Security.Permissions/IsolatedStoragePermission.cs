@@ -1,12 +1,11 @@
 //
 // System.Security.Permissions.IsolatedStoragePermission.cs
 //
-// Piers Haken <piersh@friskit.com>
+// Authors:
+//	Piers Haken <piersh@friskit.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.			http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -29,15 +28,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
-using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[Serializable]
-	public abstract class IsolatedStoragePermission : CodeAccessPermission, IUnrestrictedPermission
-	{
+	public abstract class IsolatedStoragePermission : CodeAccessPermission, IUnrestrictedPermission	{
+
+		private const int version = 1;
+
 		internal long m_userQuota;
 		internal long m_machineQuota;
 		internal long m_expirationDays;
@@ -46,39 +45,31 @@ namespace System.Security.Permissions
 
 		public IsolatedStoragePermission (PermissionState state)
 		{
-			if (state == PermissionState.None)
-			{
-				m_userQuota = 0;
-				m_machineQuota = 0;
-				m_expirationDays = 0;
-				m_permanentData = false;
-				m_allowed = IsolatedStorageContainment.None;
-			}
-			else if (state == PermissionState.Unrestricted)
-			{
-				m_userQuota = Int64.MaxValue;
-				m_machineQuota = Int64.MaxValue;
-				m_expirationDays = Int64.MaxValue ;
-				m_permanentData = true;
-				m_allowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;
-			}
-			else
-			{
-				throw new ArgumentException("Invalid Permission state");
+			if (CheckPermissionState (state, true) == PermissionState.Unrestricted) {
+				UsageAllowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;
 			}
 		}
 
-		public long UserQuota
-		{
-			set { m_userQuota = value; }
+		public long UserQuota {
 			get { return m_userQuota; }
+			set { m_userQuota = value; }
 		}
 
-
-		public IsolatedStorageContainment UsageAllowed
-		{
-			set { m_allowed = value; }
+		public IsolatedStorageContainment UsageAllowed {
 			get { return m_allowed; }
+			set {
+				if (!Enum.IsDefined (typeof (IsolatedStorageContainment), value)) {
+					string msg = String.Format (Locale.GetText ("Invalid enum {0}"), value);
+					throw new ArgumentException (msg, "IsolatedStorageContainment");
+				}
+				m_allowed = value;
+				if (m_allowed == IsolatedStorageContainment.UnrestrictedIsolatedStorage) {
+					m_userQuota = Int64.MaxValue;
+					m_machineQuota = Int64.MaxValue;
+					m_expirationDays = Int64.MaxValue ;
+					m_permanentData = true;
+				}
+			}
 		}
 
 
@@ -89,39 +80,47 @@ namespace System.Security.Permissions
 
 		public override SecurityElement ToXml ()
 		{
-			SecurityElement e = new SecurityElement ("IPermission");
-			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
-			e.AddAttribute ("version", "1");
+			SecurityElement se = Element (version);
 
 			if (m_allowed == IsolatedStorageContainment.UnrestrictedIsolatedStorage)
-				e.AddAttribute ("Unrestricted", "true");
-
-			else if (m_allowed == IsolatedStorageContainment.None)
-				e.AddAttribute ("Allowed", "None");
+				se.AddAttribute ("Unrestricted", "true");
+			else
+				se.AddAttribute ("Allowed", m_allowed.ToString ());
 			
-			return e;
+			return se;
 		}
-
 
 		public override void FromXml (SecurityElement esd)
 		{
-			if (esd == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
-			
-			if (esd.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
-			if (esd.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
-			
-			if (esd.Attribute ("Unrestricted") == "true")
-				m_allowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;
+			m_userQuota = 0;
+			m_machineQuota = 0;
+			m_expirationDays = 0;
+			m_permanentData = false;
+			m_allowed = IsolatedStorageContainment.None;
 
-			else if (esd.Attribute ("Allowed") == "None")
-				m_allowed = IsolatedStorageContainment.None;
+			if (IsUnrestricted (esd)) {
+				UsageAllowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;
+			}
+			else {
+				string a = esd.Attribute ("Allowed");
+				if (a != null) {
+					UsageAllowed = (IsolatedStorageContainment) Enum.Parse (
+						typeof (IsolatedStorageContainment), a);
+				}
+			}
+		}
+
+		// helpers
+
+		internal bool IsEmpty ()
+		{
+			// should we include internals ? or just publics ?
+			return ((m_userQuota == 0) && (m_allowed == IsolatedStorageContainment.None));
 		}
 	}
 }

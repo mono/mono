@@ -1,5 +1,12 @@
 2004-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* IsolatedStorageContainment.cs: Added new enums values for NET_2_0.
+	* IsolatedStorageFilePermissionAttribute.cs: Removed unrequired using
+	clause.
+	* IsolatedStorageFilePermission.cs: Updated to use the common template.
+	Completed TODOs	and now pass all unit tests.
+	* IsolatedStoragePermission.cs: Updated to use the common template.
+	Completed TODOs	and now pass all unit tests.
 	* GacIdentityPermission.cs: Update to use the common template. Now 
 	pass all unit tests.
 	* GacIdentityPermissionAttribute.cs: Added FIXME comment.

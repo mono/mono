@@ -2,12 +2,9 @@
 // System.Security.Permissions.IsolatedStorageFilePermission.cs
 //
 // Author
-//	Sebastien Pouliot  <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies. http://www.motus.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,51 +27,122 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Permissions {
 
 	[Serializable]
 	public sealed class IsolatedStorageFilePermission : IsolatedStoragePermission, IBuiltInPermission {
 
+		private const int version = 1;
+
 		// Constructors
 
-		public IsolatedStorageFilePermission (PermissionState state) : base (state) {}
+		[MonoTODO ("usage/quota calculated from evidences/policy")]
+		public IsolatedStorageFilePermission (PermissionState state) : base (state)
+		{
+			if (!IsUnrestricted ()) {
+				// TODO
+			}
+		}
 
 		// Properties
 
 		// Methods
 
-		[MonoTODO]
 		public override IPermission Copy () 
 		{
 			IsolatedStorageFilePermission p = new IsolatedStorageFilePermission (PermissionState.None);
-			// TODO add stuff into p
+			p.m_userQuota = m_userQuota;
+			p.m_machineQuota = m_machineQuota;
+			p.m_expirationDays = m_expirationDays;
+			p.m_permanentData = m_permanentData;
+			p.m_allowed = m_allowed;
 			return p;
 		}
 
-		[MonoTODO]
 		public override IPermission Intersect (IPermission target) 
 		{
-			return null;
+			IsolatedStorageFilePermission isfp = Cast (target);
+			if (isfp == null)
+				return null;
+			if (IsEmpty () && isfp.IsEmpty ())
+				return null;
+
+			IsolatedStorageFilePermission p = new IsolatedStorageFilePermission (PermissionState.None);
+			p.m_userQuota = (m_userQuota < isfp.m_userQuota) ? m_userQuota : isfp.m_userQuota;
+			p.m_machineQuota = (m_machineQuota < isfp.m_machineQuota) ? m_machineQuota : isfp.m_machineQuota;
+			p.m_expirationDays = (m_expirationDays < isfp.m_expirationDays) ? m_expirationDays : isfp.m_expirationDays;
+			p.m_permanentData = (m_permanentData && isfp.m_permanentData);
+			// UsageAllowed == Unrestricted is a special case handled by the property
+			p.UsageAllowed = (m_allowed < isfp.m_allowed) ? m_allowed : isfp.m_allowed;
+			return p;
 		}
 
-		[MonoTODO]
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			return false;
+			IsolatedStorageFilePermission isfp = Cast (target);
+			if (isfp == null)
+				return IsEmpty ();
+			if (isfp.IsUnrestricted ())
+				return true;
+
+			if (m_userQuota > isfp.m_userQuota)
+				return false;
+			if (m_machineQuota > isfp.m_machineQuota)
+				return false;
+			if (m_expirationDays > isfp.m_expirationDays)
+				return false;
+			if (m_permanentData != isfp.m_permanentData)
+				return false;
+			if (m_allowed > isfp.m_allowed)
+				return false;
+			return true;
 		}
 
-		[MonoTODO]
 		public override IPermission Union (IPermission target)
 		{
-			return null;
+			IsolatedStorageFilePermission isfp = Cast (target);
+			if (isfp == null)
+				return Copy ();
+
+			IsolatedStorageFilePermission p = new IsolatedStorageFilePermission (PermissionState.None);
+			p.m_userQuota = (m_userQuota > isfp.m_userQuota) ? m_userQuota : isfp.m_userQuota;
+			p.m_machineQuota = (m_machineQuota > isfp.m_machineQuota) ? m_machineQuota : isfp.m_machineQuota;
+			p.m_expirationDays = (m_expirationDays > isfp.m_expirationDays) ? m_expirationDays : isfp.m_expirationDays;
+			p.m_permanentData = (m_permanentData || isfp.m_permanentData);
+			// UsageAllowed == Unrestricted is a special case handled by the property
+			p.UsageAllowed = (m_allowed > isfp.m_allowed) ? m_allowed : isfp.m_allowed;
+			return p;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override SecurityElement ToXml ()
+		{
+			SecurityElement se = base.ToXml ();
+			// TODO - something must have been added ???
+			return se;
+		}
+#endif
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 3;
+			return (int) BuiltInToken.IsolatedStorageFile;
+		}
+
+		// helpers
+
+		private IsolatedStorageFilePermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			IsolatedStorageFilePermission isfp = (target as IsolatedStorageFilePermission);
+			if (isfp == null) {
+				ThrowInvalidPermission (target, typeof (IsolatedStorageFilePermission));
+			}
+
+			return isfp;
 		}
 	}
 }

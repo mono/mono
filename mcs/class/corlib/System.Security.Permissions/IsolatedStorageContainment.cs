@@ -1,3 +1,4 @@
+//
 // IsolatedStorageContainment.cs
 //
 // This code was automatically generated from
@@ -8,8 +9,6 @@
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 namespace System.Security.Permissions {
 
 	[Serializable]
@@ -45,6 +43,12 @@ namespace System.Security.Permissions {
 		AssemblyIsolationByRoamingUser = 0x60,
 		AdministerIsolatedStorageByUser = 0x70,
 		UnrestrictedIsolatedStorage = 0xF0,
-	};
-
-} // System.Security.Permissions
+#if NET_2_0
+		ApplicationIsolationByUser = 0x25,
+		DomainIsolationByMachine = 0x30,
+		AssemblyIsolationByMachine = 0x40,
+		ApplicationIsolationByMachine = 0x45,
+		ApplicationIsolationByRoamingUser = 0x65,
+#endif
+	}
+}
