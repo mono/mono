@@ -1,5 +1,11 @@
 2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlQualifiedName.cs : fixed GetHashCode() to avoid null reference
+	* XmlTextReader.cs : fixed ReadAttributeValue() to handle 
+		entity reference, and some refactory.
+
+2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlUrlResolver.cs : WebClient.Credentials was not implemented yet.
 
 2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

@@ -267,7 +267,7 @@ namespace System.Xml
 		{
 			get {
 				if(NodeType == XmlNodeType.Attribute)
-					return ResolveAttributeValue(value);
+					return UnescapeAttributeValue(value);
 				else
 					return value;
 			}
@@ -313,13 +313,13 @@ namespace System.Xml
 			if (i > attributes.Count)
 				throw new ArgumentOutOfRangeException ("i is smaller than AttributeCount");
 			else
-				return ResolveAttributeValue (attributes [orderedAttributes [i]] as string);
+				return UnescapeAttributeValue (attributes [orderedAttributes [i]] as string);
 		}
 
 		public override string GetAttribute (string name)
 		{
 			return attributes.ContainsKey (name) ?
-				ResolveAttributeValue (attributes [name] as string) : String.Empty;
+				UnescapeAttributeValue (attributes [name] as string) : String.Empty;
 		}
 
 		public override string GetAttribute (string localName, string namespaceURI)
@@ -339,11 +339,11 @@ namespace System.Xml
 
 						if (namespaceURI == thisNamespaceURI)
 							return attributes.ContainsKey (thisName) ?
-								ResolveAttributeValue (attributes [thisName] as string) : String.Empty;
+								UnescapeAttributeValue (attributes [thisName] as string) : String.Empty;
 					}
 				} else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
 					return attributes.ContainsKey (thisName) ? 
-						ResolveAttributeValue (attributes [thisName] as string) : String.Empty;
+						UnescapeAttributeValue (attributes [thisName] as string) : String.Empty;
 			}
 
 			return String.Empty;
@@ -382,6 +382,7 @@ namespace System.Xml
 				value, // value
 				false // clearAttributes
 				);
+			attributeValuePos = 0;
 		}
 
 		public override bool MoveToAttribute (string name)
@@ -413,6 +414,7 @@ namespace System.Xml
 					value, // value
 					false // clearAttributes
 				);
+				attributeValuePos = 0;
 			}
 
 			return match;
@@ -461,6 +463,7 @@ namespace System.Xml
 					value, // value
 					false // clearAttributes
 				);
+				attributeValuePos = 0;
 				return true;
 			}
 
@@ -481,77 +484,81 @@ namespace System.Xml
 		[MonoTODO("This method should consider entity references")]
 		public override bool ReadAttributeValue ()
 		{
-			// reading attribute value phase now stopped
-			if(attributeStringCurrentPosition < 0 ||
-					attributeString.Length < attributeStringCurrentPosition) {
-				attributeStringCurrentPosition = 0;
-				attributeString = String.Empty;
+			// 'attributeString' holds real string value (without their
+			// quotation characters).
+			//
+			// 'attributeValuePos' holds current position
+			// of 'attributeString' while iterating ReadAttribute().
+			// It may be:
+			//   -1 if ReadAttributeValue() has already finished.
+			//    0 if ReadAttributeValue() ready to start reading.
+			//   >0 if ReadAttributeValue() already got 1 or more values
+			//
+			// local 'refPosition' holds the position on the 
+			// attributeString which may be used next time.
+
+			if (attributeValuePos < 0) {
+				SetProperties (XmlNodeType.None,
+					String.Empty,
+					false,
+					String.Empty,
+					false);
 				return false;
 			}
 
 			// If not started, then initialize attributeString when parsing is at start.
-			if(attributeStringCurrentPosition == 0)
+			if (attributeValuePos == 0)
 				attributeString =
 					value.Substring (1, value.Length - 2);
 
-			bool returnEntity = false;
+			bool returnEntityReference = false;
 			value = String.Empty;
-			int nextPosition = attributeString.IndexOf ('&',
-				attributeStringCurrentPosition);
+			int refPosition;
+			int loop = 0;
 
-			// if attribute string starts from '&' then it may be (unparsable) entity reference.
-			if(nextPosition == 0) {
-				string parsed = ReadAttributeValueEntityReference ();
-				if(parsed == null) {
-					// return entity (It is only this case to return entity reference.)
-					int endEntityPosition = attributeString.IndexOf (';',
-						attributeStringCurrentPosition);
-					SetProperties (XmlNodeType.EntityReference,
-						attributeString.Substring (attributeStringCurrentPosition + 1,
-						endEntityPosition - attributeStringCurrentPosition - 1),
-						false,
-						String.Empty,
-						false);
-					attributeStringCurrentPosition = endEntityPosition + 1;
-
-					return true;
-				}
-				else
-					value += parsed;
-			}
-
-			// Other case always set text node.
-			while(!returnEntity) {
-				nextPosition = attributeString.IndexOf ('&', attributeStringCurrentPosition);
-				if(nextPosition < 0) {
+			do {
+				refPosition = attributeString.IndexOf ('&', attributeValuePos);
+				if (refPosition < 0) {
 					// Reached to the end of value string.
-					value += attributeString.Substring (attributeStringCurrentPosition);
-					attributeStringCurrentPosition = -1;
+					value += attributeString.Substring (attributeValuePos);
+					attributeValuePos = -1;
 					break;
-				} else if(nextPosition == attributeStringCurrentPosition) {
-					string parsed = ReadAttributeValueEntityReference ();
-					if(parsed != null)
+				} else if (refPosition == attributeValuePos) {
+					string parsed = ReadAttributeValueReference ();
+					if (parsed != null)
 						value += parsed;
 					else {
 						// Found that an entity reference starts from this point.
-						// Then once stop to parse attribute value and then return text.
-						value += attributeString.Substring (attributeStringCurrentPosition,
-							nextPosition - attributeStringCurrentPosition);
+						// reset position to after '&'.
+						attributeValuePos = refPosition;
+						if (value.Length <= 0) {
+							int endNamePos = attributeString.IndexOf (";", attributeValuePos);
+							value = attributeString.Substring (attributeValuePos+1, endNamePos - attributeValuePos - 1);
+							attributeValuePos += value.Length + 2;
+							returnEntityReference = true;
+						}
 						break;
 					}
 				} else {
-					value += attributeString.Substring (attributeStringCurrentPosition,
-						nextPosition - attributeStringCurrentPosition);
-					attributeStringCurrentPosition = nextPosition;
+					value += attributeString.Substring (attributeValuePos,
+						refPosition - attributeValuePos);
+					attributeValuePos = refPosition;
 					continue;
 				}
-			}
+			} while (++loop > 0);
 
-			SetProperties(XmlNodeType.Text,
-				"#text",
-				false,
-				value,
-				false);
+			if (returnEntityReference)
+				SetProperties (XmlNodeType.EntityReference,
+					value,
+					false,
+					String.Empty,
+					false);
+			else
+				SetProperties (XmlNodeType.Text,
+					"#text",
+					false,
+					value,
+					false);
 
 			return true;
 		}
@@ -741,7 +748,7 @@ namespace System.Xml
 		private int peek_char;
 
 		private string attributeString = String.Empty;
-		private int attributeStringCurrentPosition;
+		private int attributeValuePos;
 
 		private void Init ()
 		{
@@ -1238,15 +1245,16 @@ namespace System.Xml
 				SkipWhitespace ();
 
 				if (name == "xmlns")
-					parserContext.NamespaceManager.AddNamespace (String.Empty, ResolveAttributeValue (value));
+					parserContext.NamespaceManager.AddNamespace (String.Empty, UnescapeAttributeValue (value));
 				else if (name.StartsWith ("xmlns:"))
-					parserContext.NamespaceManager.AddNamespace (name.Substring (6), ResolveAttributeValue (value));
+					parserContext.NamespaceManager.AddNamespace (name.Substring (6), UnescapeAttributeValue (value));
 
 				AddAttribute (name, value);
 			} while (PeekChar () != '/' && PeekChar () != '>' && PeekChar () != -1);
 		}
 
 		// The reader is positioned on the quote character.
+		// *Keeps quote char* to value to get_QuoteChar() correctly.
 		private string ReadAttribute ()
 		{
 			valueLength = 0;
@@ -1256,7 +1264,6 @@ namespace System.Xml
 			if (quoteChar != '\'' && quoteChar != '\"')
 				throw new XmlException ("an attribute value was not quoted");
 
-			// this keeps quote char to get QuoteChar property correctly.
 			AppendValueChar (quoteChar);
 
 			while (PeekChar () != quoteChar) {
@@ -1266,10 +1273,6 @@ namespace System.Xml
 				{
 				case '<':
 					throw new XmlException ("attribute values cannot contain '<'");
-// expansion of entity now should be done at ResolveAttributeValue() method
-//				case '&':
-//					ReadReference (true);
-//					break;
 				case -1:
 					throw new XmlException ("unexpected end of file in an attribute value");
 				default:
@@ -1667,14 +1670,14 @@ namespace System.Xml
 		}
 
 		// read entity reference from attribute string and if parsable then return the value.
-		private string ReadAttributeValueEntityReference ()
+		private string ReadAttributeValueReference ()
 		{
 			int endEntityPosition = attributeString.IndexOf(';',
-				attributeStringCurrentPosition);
-			string entityName = attributeString.Substring (attributeStringCurrentPosition + 1,
-				endEntityPosition - attributeStringCurrentPosition - 1);
+				attributeValuePos);
+			string entityName = attributeString.Substring (attributeValuePos + 1,
+				endEntityPosition - attributeValuePos - 1);
 
-			attributeStringCurrentPosition = endEntityPosition + 1;
+			attributeValuePos = endEntityPosition + 1;
 
 			if(entityName [0] == '#') {
 				char c;
@@ -1702,7 +1705,7 @@ namespace System.Xml
 			}
 		}
 
-		private string ResolveAttributeValue (string unresolved)
+		private string UnescapeAttributeValue (string unresolved)
 		{
 			if(unresolved == null) return null;
 			StringBuilder resolved = new StringBuilder();

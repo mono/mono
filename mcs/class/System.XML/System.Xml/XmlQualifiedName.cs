@@ -72,7 +72,8 @@ namespace System.Xml
 
 		public override int GetHashCode () 
 		{ 
-			return unchecked (name.GetHashCode() + ns.GetHashCode()); 
+			return ns != null ?
+				unchecked (name.GetHashCode () + ns.GetHashCode ()) : name.GetHashCode ();
 		}
 
 		public override string ToString ()
