@@ -131,6 +131,12 @@ namespace MonoTests.System.Data.SqlTypes
                         } catch(Exception e) {
                                 AssertEquals ("#D19", typeof (OverflowException), e.GetType ());
                         }
+
+			#if NET_2_0
+			 // Modulus ()
+                        AssertEquals ("#D20", (SqlInt64)36, SqlInt64.Modulus (Test164, Test64));
+                        AssertEquals ("#D21",  (SqlInt64)64, SqlInt64.Modulus (Test64, Test164));
+			#endif
                 }
 
 		[Test]

@@ -284,6 +284,20 @@ namespace MonoTests.System.Data.SqlTypes
 			AssertEquals ("Modulus function does not work correctly", z.Value, a % b);
 		}
 
+		#if NET_2_0
+		[Test]
+                public void Modulus () 
+                {
+                        int a = 50;
+                        int b = 7;
+                        SqlInt32 x = new SqlInt32 (a);
+                        SqlInt32 y = new SqlInt32 (b);
+                        SqlInt32 z = x % y;
+                        AssertEquals ("Modulus operator does not work correctly", z.Value, a % b);	                    z = SqlInt32.Modulus (x, y);
+                        AssertEquals ("Modulus function does not work correctly", z.Value, a % b);                  }
+                                                                                                    		    #endif		
+
+
 		[Test]
 		public void Multiply () 
 		{
