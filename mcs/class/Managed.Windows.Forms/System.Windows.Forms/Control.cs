@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.64 $
+// $Revision: 1.65 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.65  2004/09/22 18:01:28  jackson
+// Text is never null
+//
 // Revision 1.64  2004/09/16 23:44:19  pbartok
 // - Added SendToBack and BringToFront methods
 //
@@ -1540,6 +1543,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (value == null) {
+					value = String.Empty;
+				}
+
 				if (text!=value) {
 					text=value;
 					XplatUI.Text(Handle, text);
