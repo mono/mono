@@ -95,34 +95,13 @@ namespace NUnit.Util
 		/// </summary>
 		private string description;
 
+		private ArrayList categories = new ArrayList();
+
+		private bool isExplicit;
+
 		#endregion
 
 		#region Construction and Conversion
-
-		public UITestNode( string suiteName ) : this( suiteName, 0 ) { }
-
-		public UITestNode( string suiteName, int assemblyKey )
-		{
-			this.fullName = this.testName = suiteName;
-			this.assemblyKey = assemblyKey;
-			this.shouldRun = true;
-			this.isSuite = true;
-			this.testCaseCount = 0;
-			this.tests = new ArrayList();
-		}
-
-		public UITestNode( string pathName, string testName ) 
-			: this( pathName, testName, 0 ) { }
-
-		public UITestNode( string pathName, string testName, int assemblyKey ) 
-		{ 
-			this.fullName = pathName + "." + testName;
-			this.testName = testName;
-			this.assemblyKey = assemblyKey;
-			this.shouldRun = true;
-			this.isSuite = false;
-			this.testCaseCount = 1;
-		}
 
 		/// <summary>
 		/// Construct from a TestInfo interface, which might be
@@ -139,6 +118,15 @@ namespace NUnit.Util
 			shouldRun = test.ShouldRun;
 			ignoreReason = test.IgnoreReason;
 			description = test.Description;
+			isExplicit = test.IsExplicit;
+
+			if (test.Categories != null) 
+			{
+				categories.AddRange(test.Categories);
+			}
+
+			if ( test is UITestNode )
+				testCaseCount = 0;
 			
 			if ( test.IsSuite )
 			{
@@ -171,11 +159,11 @@ namespace NUnit.Util
 		{
 			if ( !Populated )
 			{
-				foreach( Test test in testSuite.Tests )
+				foreach( ITest test in testSuite.Tests )
 				{
 					UITestNode node = new UITestNode( test, true );
 					tests.Add( node );
-					testCaseCount += node.CountTestCases;
+					testCaseCount += node.CountTestCases();
 				}
 
 				testSuite = null;
@@ -268,19 +256,44 @@ namespace NUnit.Util
 			}
 		}
 
+		public bool IsExplicit
+		{
+			get { return isExplicit; }
+			set { isExplicit = value; }
+		}
+
+		public IList Categories 
+		{
+			get { return categories; }
+		}
+
+		public bool HasCategory( string name )
+		{
+			return categories != null && categories.Contains( name );
+		}
+
+		public bool HasCategory( IList names )
+		{
+			if ( categories == null )
+				return false;
+
+			foreach( string name in names )
+				if ( categories.Contains( name ) )
+					return true;
+
+			return false;
+		}
+
 		/// <summary>
 		/// Count of test cases in this test. If the suite
 		/// has never been populated, it will be done now.
 		/// </summary>
-		public int CountTestCases
+		public int CountTestCases()
 		{ 
-			get 
-			{ 
-				if ( !Populated )
-					PopulateTests();
+			if ( !Populated )
+				PopulateTests();
 
-				return testCaseCount; 
-			}
+			return testCaseCount; 
 		}
 
 		/// <summary>

@@ -45,6 +45,12 @@ namespace NUnit.Util
 		[Option(Description = "Suppress loading of last project")]
 		public bool noload;
 
+		[Option(Description = "Automatically run the loaded project")]
+		public bool run;
+
+		[Option(Description = "Fixture to test")]
+		public string fixture;
+
 		public GuiOptions(String[] args) : base(args) 
 		{}
 

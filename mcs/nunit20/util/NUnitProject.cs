@@ -33,7 +33,6 @@ using System.Xml;
 using System.Xml.Schema;
 using System.IO;
 using System.Threading;
-using NUnit.Framework;
 using NUnit.Core;
 
 namespace NUnit.Util
@@ -136,7 +135,9 @@ namespace NUnit.Util
 		// True if it's ours or one we can load
 		public static bool CanLoadAsProject( string path )
 		{
-			return false;
+			return	IsProjectFile( path ) ||
+					VSProject.IsProjectFile( path ) ||
+					VSProject.IsSolutionFile( path );
 		}
 
 		public static string GenerateProjectName()
@@ -173,6 +174,10 @@ namespace NUnit.Util
 				project.Load();
 				return project;
 			}
+			else if ( VSProject.IsProjectFile( path ) )
+				return NUnitProject.FromVSProject( path );
+			else if ( VSProject.IsSolutionFile( path ) )
+				return NUnitProject.FromVSSolution( path );
 			else
 				return NUnitProject.FromAssembly( path );
 			
@@ -239,6 +244,18 @@ namespace NUnit.Util
 			return project;
 		}
 
+		public static NUnitProject FromVSProject( string vsProjectPath )
+		{
+			NUnitProject project = new NUnitProject( Path.GetFullPath( vsProjectPath ) );
+
+			VSProject vsProject = new VSProject( vsProjectPath );
+			project.Add( vsProject );
+
+			project.isDirty = false;
+
+			return project;
+		}
+
 		public static NUnitProject FromVSSolution( string solutionPath )
 		{
 			NUnitProject project = new NUnitProject( Path.GetFullPath( solutionPath ) );
@@ -257,6 +274,8 @@ namespace NUnit.Util
 					string[] parts = line.Split( delims );
 					string vsProjectPath = Path.Combine( solutionDirectory, parts[2].Trim(trimchars) );
 					
+					if ( VSProject.IsProjectFile( vsProjectPath ) )
+						project.Add( new VSProject( vsProjectPath ) );
 				}
 
 				line = reader.ReadLine();
@@ -426,6 +445,22 @@ namespace NUnit.Util
 			}
 		}
 
+		public void Add( VSProject vsProject )
+		{
+			foreach( VSProjectConfig vsConfig in vsProject.Configs )
+			{
+				string name = vsConfig.Name;
+
+				if ( !this.Configs.Contains( name ) )
+					this.Configs.Add( name );
+
+				ProjectConfig config = this.Configs[name];
+
+				foreach ( string assembly in vsConfig.Assemblies )
+					config.Assemblies.Add( assembly );
+			}
+		}
+
 		public void Load()
 		{
 			XmlTextReader reader = new XmlTextReader( projectPath );
@@ -570,30 +605,6 @@ namespace NUnit.Util
 		{
 			this.ProjectPath = projectPath;
 			Save();
-		}
-
-		/// <summary>
-		/// Load tests for this project into a test domain
-		/// </summary>
-		public Test LoadTest( TestDomain testDomain )
-		{
-			return LoadTest( testDomain, null );
-		}
-
-		/// <summary>
-		/// Load tests for this project or for a particular fixture 
-		/// in the project into a test domain.
-		/// </summary>
-		public Test LoadTest( TestDomain testDomain, string testFixture )
-		{
-			if ( IsAssemblyWrapper )
-			{
-				return testDomain.LoadAssembly( ActiveConfig.Assemblies[0].FullPath, testFixture );
-			}
-			else
-			{
-				return testDomain.LoadAssemblies( ProjectPath, ActiveConfig.BasePath, ActiveConfig.ConfigurationFilePath, ActiveConfig.PrivateBinPath, ActiveConfig.TestAssemblies, testFixture );
-			}
 		}
 
 		#endregion

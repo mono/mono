@@ -281,39 +281,39 @@ namespace NUnit.Util
 		}
 
 		/// <summary>
-		/// Return an ArrayList with the absolute paths of all assemblies
+		/// Return a string array with the absolute paths of all assemblies
 		/// </summary>
-		public IList AbsolutePaths
+		public string[] AbsolutePaths
 		{
 			get
 			{
 				ArrayList paths = new ArrayList();
 				foreach( AssemblyListItem assembly in assemblies )
 					paths.Add( assembly.FullPath );
-				return paths;
+				return (string[])paths.ToArray( typeof(string) );
 			}
 		}
 
 		/// <summary>
-		/// Return an ArrayList with the relative paths of all
+		/// Return a string array with the relative paths of all
 		/// assemblies from the configuration BasePath.
 		/// </summary>
-		public IList RelativePaths
+		public string[] RelativePaths
 		{
 			get
 			{
 				ArrayList paths = new ArrayList();
 				foreach( AssemblyListItem assembly in Assemblies )
 					paths.Add( ProjectPath.RelativePath( BasePath, assembly.FullPath ) );
-				return paths;
+				return (string[])paths.ToArray( typeof(string) );
 			}
 		}
 
 		/// <summary>
-		/// Return an ArrayList with the absolute paths of all
+		/// Return a string array with the absolute paths of all
 		/// assemblies that have tests
 		/// </summary>
-		public IList TestAssemblies
+		public string[] TestAssemblies
 		{
 			get
 			{
@@ -321,7 +321,7 @@ namespace NUnit.Util
 				foreach( AssemblyListItem assembly in Assemblies )
 					if ( assembly.HasTests )
 						paths.Add( assembly.FullPath );
-				return paths;
+				return (string[])paths.ToArray( typeof(string) );
 			}
 		}
 

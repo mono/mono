@@ -80,11 +80,6 @@
                     HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
                 <Reference
-                    Name = "nunit.framework.dll"
-                    Project = "{83DD7E12-A705-4DBA-9D71-09C8973D9382}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "System.Windows.Forms"
                     AssemblyName = "System.Windows.Forms"
                     HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Windows.Forms.dll"
@@ -93,6 +88,16 @@
                     Name = "System.Drawing"
                     AssemblyName = "System.Drawing"
                     HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
+                />
+                <Reference
+                    Name = "nunit.core.dll"
+                    Project = "{EBD43A7F-AFCA-4281-BB53-5CDD91F966A3}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "nunit.framework.dll"
+                    Project = "{83DD7E12-A705-4DBA-9D71-09C8973D9382}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -125,6 +130,11 @@
                 />
                 <File
                     RelPath = "ConsoleOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ConsoleWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -204,12 +214,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ResultSummarizer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SettingsGroup.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "SettingsStorage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StackTraceFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SummaryVisitor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TestDomain.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -224,6 +254,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "TestExceptionHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TestLoader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -232,6 +267,10 @@
                     RelPath = "TestResultItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Transform.resx"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "UIHelper.cs"
@@ -260,6 +299,11 @@
                 />
                 <File
                     RelPath = "VSProjectConfigCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "XmlResultVisitor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

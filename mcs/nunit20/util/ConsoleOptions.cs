@@ -58,6 +58,21 @@ namespace NUnit.Util
 		[Option(Description = "Project configuration to load")]
 		public string config;
 
+		[Option(Short="out", Description = "File to receive test output")]
+		public string output;
+
+		[Option(Description = "File to receive test error output")]
+		public string err;
+
+		[Option(Description = "Label each test in stdOut")]
+		public bool labels = false;
+
+		[Option(Description = "List of categories to include")]
+		public string include;
+
+		[Option(Description = "List of categories to exclude")]
+		public string exclude;
+
 		private bool isInvalid = false; 
 
 		public ConsoleOptions(String[] args) : base(args) 
@@ -71,6 +86,8 @@ namespace NUnit.Util
 		public bool Validate()
 		{
 			if(isInvalid) return false; 
+
+			if(HasInclude && HasExclude) return false;
 
 			if(NoArgs) return true; 
 
@@ -102,7 +119,7 @@ namespace NUnit.Util
 			get 
 			{
 				return ParameterCount >= 1 && 
-					   ((fixture != null) && (fixture.Length > 0));
+					((fixture != null) && (fixture.Length > 0));
 			}
 		}
 
@@ -114,11 +131,65 @@ namespace NUnit.Util
 			}
 		}
 
+		public bool isOut
+		{
+			get 
+			{
+				return (output != null) && (output.Length != 0);
+			}
+		}
+
+		public bool isErr
+		{
+			get 
+			{
+				return (err != null) && (err.Length != 0);
+			}
+		}
+
 		public bool IsTransform 
 		{
 			get 
 			{
 				return (transform != null) && (transform.Length != 0);
+			}
+		}
+
+		public bool HasInclude 
+		{
+			get 
+			{
+				return include != null && include.Length != 0;
+			}
+		}
+
+		public bool HasExclude 
+		{
+			get 
+			{
+				return exclude != null && exclude.Length != 0;
+			}
+		}
+
+		public string[] IncludedCategories
+		{
+			get
+			{
+				if (HasInclude)
+					return include.Split( new char[] {';', ','});
+
+				return null;
+			}
+		}
+
+		public string[] ExcludedCategories
+		{
+			get
+			{
+				if (HasExclude)
+					return exclude.Split( new char[] {';', ','});
+
+				return null;
 			}
 		}
 
