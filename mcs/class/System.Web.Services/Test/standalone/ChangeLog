@@ -1,3 +1,7 @@
+2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* client/localhost/ConvDocLitWraTest.cs: Test Discover() method.
+
 2004-03-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* services.xml: More services.

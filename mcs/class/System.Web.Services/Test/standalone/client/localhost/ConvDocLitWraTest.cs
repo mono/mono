@@ -16,6 +16,11 @@ namespace ConvDocLitWraTests
 		public void TestService ()
 		{
 			ConverterService cs = new ConverterService ();
+			
+			// Test the Discover method.
+			cs.Url = "http://localhost:8080/ConvDocLitWra.asmx?disco";
+			cs.Discover ();
+			
 			cs.Login ("lluis");
 			cs.SetCurrencyRate ("EUR", 0.5);
 			AssertEquals ("#1", 0.5, cs.GetCurrencyRate ("EUR"));
