@@ -17,7 +17,7 @@ using System.EnterpriseServices;
 namespace MonoTests.System.Web.Services {
 
 	[TestFixture]
-	public class WebMethodAttributeTest {
+	public class WebMethodAttributeTest : Assertion {
 
 		[Test]
 		public void TestConstructors ()
@@ -25,12 +25,12 @@ namespace MonoTests.System.Web.Services {
 			WebMethodAttribute attribute;
 
 			attribute = new WebMethodAttribute ();
-			Assertion.AssertEquals (true, attribute.BufferResponse);
-			Assertion.AssertEquals (0, attribute.CacheDuration);
-			Assertion.AssertEquals (String.Empty, attribute.Description);
-			Assertion.AssertEquals (false, attribute.EnableSession);
-			Assertion.AssertEquals (String.Empty, attribute.MessageName);
-			Assertion.AssertEquals (TransactionOption.Disabled, attribute.TransactionOption);
+			AssertEquals (true, attribute.BufferResponse);
+			AssertEquals (0, attribute.CacheDuration);
+			AssertEquals (String.Empty, attribute.Description);
+			AssertEquals (false, attribute.EnableSession);
+			AssertEquals (String.Empty, attribute.MessageName);
+			AssertEquals (TransactionOption.Disabled, attribute.TransactionOption);
 		}
 	}
 }

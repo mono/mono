@@ -8,7 +8,7 @@ LIB_FLAGS =	\
 		-r $(topdir)/class/lib/System.dll \
 		-r $(topdir)/class/lib/System.Web.Services.dll \
 		-r $(topdir)/class/lib/System.EnterpriseServices.dll \
-	    -r $(topdir)/nunit20/NUnit.Framework.dll
+	    	-r $(topdir)/class/lib/NUnit.Framework.dll
 
 ifdef SUBDIR
 USE_SOURCE_RULES=1
@@ -26,4 +26,4 @@ test: $(LIBRARY) run_test
 .PHONY: run_test
 
 run_test:
-	-MONO_PATH=$(MONO_PATH) mono --debug $(NUNITCONSOLE) System.Web.Services_test.dll
+	-MONO_PATH=$(MONO_PATH) mono --debug $(NUNITCONSOLE) $(LIBRARY)
