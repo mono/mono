@@ -1,3 +1,8 @@
+2003-05-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* HttpWebRequest.cs (EndGetResponse): Do not throw exceptions on
+	InternalServerError (500)
+
 2003-05-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* HttpWebRequest.cs (Close): Move the code that accumulates the

@@ -509,7 +509,7 @@ namespace System.Net
 			asyncResponding = false;
 			if (webResponse != null) {
 				HttpStatusCode code = ((HttpWebResponse) webResponse).StatusCode;
-				if (code >= HttpStatusCode.MultipleChoices) {
+				if (code >= HttpStatusCode.MultipleChoices && code != HttpStatusCode.InternalServerError) {
 					string msg = String.Format ("The remote server returned an error: ({0}) {1}",
 						(int) code, code);
 					
