@@ -1,3 +1,18 @@
+2004-10-22  Daniel Morgan <danielmorgan@verizon.net>
+
+	* Mono.Data/.cvsignore
+	* Mono.Data/AssemblyInfo.cs
+	* Mono.Data/Makefile
+	* Mono.Data/Mono.Data.dll.sources: added files 
+	for build of Mono.Data.dll   
+	This assembly includes the ProviderFactory
+
+	* Makefile: added Mono.Data.dll to the build
+	* Mono.Data/app.config: added providers	and 
+	removed obsolete providers to app settings xml file
+	
+	* Mono.Data/test/Mono.Data.dll: delete
+
 2004-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : just remove System.Data.SqlXml.dll.

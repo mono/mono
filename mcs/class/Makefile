@@ -16,6 +16,7 @@ SUBDIRS = \
 	Mono.Data.Tds			\
 	System.Security			\
 	System.Data			\
+	Mono.Data			\
 	Mono.GetOptions			\
 	System.Web			\
 	System.Web.Services		\
