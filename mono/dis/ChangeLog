@@ -1,6 +1,6 @@
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
-	* get.c: New function to stringify function pointers.
+	* get.c/h: New function to stringify function pointers.
 	
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
