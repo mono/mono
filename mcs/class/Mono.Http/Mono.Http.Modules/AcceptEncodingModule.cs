@@ -38,7 +38,8 @@ namespace Mono.Http.Modules
 			if (config == null)
 				config = (AcceptEncodingConfig) app.Context.GetConfig (configSection);
 
-			config.SetFilter (response, request.Headers ["Accept-Encoding"]);
+			if (config != null)
+				config.SetFilter (response, request.Headers ["Accept-Encoding"]);
 		}
 	}
 }

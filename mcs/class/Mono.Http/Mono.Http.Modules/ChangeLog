@@ -1,3 +1,8 @@
+2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AcceptEncodingModule.cs: don't cause nullref if there's no
+	<mono.aspnet> section and the module is loaded.
+
 2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DigestAuthenticationModule.cs: introduces new overridable method
