@@ -1,5 +1,21 @@
 2004-04-20  Boris Kirzner <borisk@mainsoft.com>
 
+	* DataTable.cs : 
+	  - EndLoadData() : perfomance fix in case of null constraint violation
+	    during data load (also in DataRow.cs).
+	  - CaseSensitive : If DataTable belongs to DataSet it should always use
+	    DataSet.CaseSensitive untill explicitly changed.
+	  - CopyProperties() : do not try to copy ExtendedProperties if the collection is empty.
+	  
+	* DataRow.cs :
+	  - Pefromance fix in case of null constraint violation
+	    during data load (also in DataTable.cs).
+	  - CollectionChanged() : use correct column number after new DataColumn was added
+	    (differs in case some DataColumn was previosly removed).
+	  - EndEdit() - throw away  proposed values only after CheckChildRows() complete.
+
+2004-04-20  Boris Kirzner <borisk@mainsoft.com>
+
 	* DataColumnCollection.cs : Since unique constraint is added now
 	  in DataColumn.SetTable() the additional creation of constraint in 
 	  DataColumnCollection.Add() is redundant and causes exception - fixed.

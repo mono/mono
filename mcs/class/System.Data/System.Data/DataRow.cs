@@ -303,6 +303,9 @@ namespace System.Data {
 					{
 						//Constraint violations during data load is raise in DataTable EndLoad
 						this._nullConstraintViolation = true;
+						if (this.Table._duringDataLoad) {
+							this.Table._nullConstraintViolationDuringDataLoad = true;
+						}
 						_nullConstraintMessage = "Column '" + col.ColumnName + "' does not allow nulls.";
 					}
 
@@ -316,6 +319,9 @@ namespace System.Data {
 				{
 					//Constraint violations during data load is raise in DataTable EndLoad
 					this._nullConstraintViolation = true;
+					if (this.Table._duringDataLoad) {
+							this.Table._nullConstraintViolationDuringDataLoad = true;
+					}
 					_nullConstraintMessage = "Column '" + col.ColumnName + "' does not allow nulls.";
 				}
 				
@@ -726,12 +732,12 @@ namespace System.Data {
 				// current row state back.
 				object[] backup = current;
 				current = proposed;
-				proposed = null;
 				bool editing_backup = editing;
 				editing = false;
 				try {
 					// check all child rows.
 					CheckChildRows(DataRowAction.Change);
+					proposed = null;
 				}
 				catch (Exception ex) {
 					// if check child rows failed - rollback to previous state
@@ -1323,21 +1329,21 @@ namespace System.Data {
 				{
 					tmp = new object[current.Length + 1];
 					Array.Copy (current, tmp, current.Length);
-					tmp[tmp.Length - 1] = SetColumnValue(null, tmp.Length - 1);
+					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns.Count - 1);
 					current = tmp;
 				}
 				if (proposed != null)
 				{
 					tmp = new object[proposed.Length + 1];
 					Array.Copy (proposed, tmp, proposed.Length);
-					tmp[tmp.Length - 1] = SetColumnValue(null, tmp.Length - 1);
+					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns.Count - 1);
 					proposed = tmp;
 				}
 				if(original != null)
 				{
 					tmp = new object[original.Length + 1];
 					Array.Copy (original, tmp, original.Length);
-					tmp[tmp.Length - 1] = SetColumnValue(null, tmp.Length - 1);
+					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns.Count - 1);
 					original = tmp;
 				}
 

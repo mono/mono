@@ -59,6 +59,7 @@ namespace System.Data {
 		private bool _containsListCollection;
 		private string _encodedTableName;
 		internal bool _duringDataLoad;
+		internal bool _nullConstraintViolationDuringDataLoad;
 		private bool dataSetPrevEnforceConstraints;
 		private bool dataTablePrevEnforceConstraints;
 		private bool enforceConstraints = true;
@@ -154,7 +155,12 @@ namespace System.Data {
 		/// </summary>
 		[DataSysDescription ("Indicates whether comparing strings within the table is case sensitive.")]	
 		public bool CaseSensitive {
-			get { return _caseSensitive; }
+			get { 
+				if (_virginCaseSensitive && dataSet != null)
+					return dataSet.CaseSensitive; 
+				else
+					return _caseSensitive;
+				}
 			set {
 				if (_childRelations.Count > 0 || _parentRelations.Count > 0) {
 					throw new ArgumentException ("Cannot change CaseSensitive or Locale property. This change would lead to at least one DataRelation or Constraint to have different Locale or CaseSensitive settings between its related tables.");
@@ -531,8 +537,9 @@ namespace System.Data {
 
 			if (indx != null) { // lookup for a row in index			
 				rowsExist = (indx.FindSimple (values, false) != null);
-			}
-                       if(indx == null || rowsExist == false) { 
+			} 
+			
+			if(indx == null || rowsExist == false) { 
 				// no index or rowExist= false, we have to perform full-table scan
  				// check that there is a parent for this row.
 				foreach (DataRow thisRow in this.Rows) {
@@ -601,6 +608,7 @@ namespace System.Data {
 				//duringDataLoad is important to EndLoadData and
 				//for not throwing unexpected exceptions.
 				this._duringDataLoad = true;
+				this._nullConstraintViolationDuringDataLoad = false;
 			
 				if (this.dataSet != null)
 				{
@@ -718,11 +726,13 @@ namespace System.Data {
 			// Copy.DefaultView
 			// Copy.DesignMode
 			Copy.DisplayExpression = DisplayExpression;
-			//  Cannot copy extended properties directly as the property does not have a set accessor
-			Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
-			ExtendedProperties.Keys.CopyTo (tgtArray, 0);
-			for (int i=0; i < ExtendedProperties.Count; i++)
-				Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
+			if(ExtendedProperties.Count > 0) {
+				//  Cannot copy extended properties directly as the property does not have a set accessor
+				Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
+				ExtendedProperties.Keys.CopyTo (tgtArray, 0);
+				for (int i=0; i < ExtendedProperties.Count; i++)
+					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
+			}
 			Copy.Locale = Locale;
 			Copy.MinimumCapacity = MinimumCapacity;
 			Copy.Namespace = Namespace;
@@ -804,14 +814,12 @@ namespace System.Data {
 					//Getting back to the table's previous EnforceConstraint state
 					this.EnforceConstraints = this.dataTablePrevEnforceConstraints;
 				}
-				for (i=0 ; i<this.Rows.Count ; i++)
-				{
-					if (this.Rows[i]._nullConstraintViolation )
-					{
-						throw new ConstraintException ("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
-					}
-						
+
+				if(this._nullConstraintViolationDuringDataLoad) {
+					this._nullConstraintViolationDuringDataLoad = false;
+					throw new ConstraintException ("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
 				}
+
 				//Returning from loading mode, raising exceptions as usual
 				this._duringDataLoad = false;
 
