@@ -1,3 +1,9 @@
+2003-04-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ColorConverter.cs:
+	(ConvertFrom): return a system or named color if there's one that fits
+	teh values parsed with Color.FromArgb.
+
 2003-04-26  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs
 	* Brush.cs

@@ -61,7 +61,20 @@ public class ColorConverter : TypeConverter
 		int A = (int) (i & 0xFF000000) >> 24;
 		if (A == 0)
 			A = 255;
-		return Color.FromArgb (A, (i & 0x00FF0000) >> 16, (i & 0x00FF00) >> 8, (i & 0x0FF));
+
+		Color result = Color.FromArgb (A, (i & 0x00FF0000) >> 16, (i & 0x00FF00) >> 8, (i & 0x0FF));
+		// Look for a named or system color with those values
+		foreach (Color c in Color.NamedColors.Values) {
+			if (c.A == result.A && c.R == result.R && c.G == result.G && c.B == result.B)
+				return c;
+		}
+
+		foreach (Color c in Color.SystemColors.Values) {
+			if (c.A == result.A && c.R == result.R && c.G == result.G && c.B == result.B)
+				return c;
+		}
+
+		return result;
 	}
 
 	[MonoTODO]
