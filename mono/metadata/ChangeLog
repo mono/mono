@@ -1,3 +1,9 @@
+2003-03-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.c (mono_marshal_load_type_info): Fix buglet:  Noticed when
+	fixing a warning for a miss-used prototype, would have cause
+	random memory corruption.
+
 2003-03-07  Martin Baulig  <martin@ximian.com>
 
 	* marshal.c (mono_marshal_free_array): That "TESTFREE %p" was
