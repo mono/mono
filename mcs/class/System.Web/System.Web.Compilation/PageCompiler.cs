@@ -22,7 +22,25 @@ namespace System.Web.Compilation
 
 		public static Type CompilePageType (PageParser pageParser)
 		{
-			return TemplateFactory.GetTypeFromSource (pageParser.InputFile);
+			string sourceFile = GenerateSourceFile (pageParser.InputFile);
+			return TemplateFactory.GetTypeFromSource (sourceFile);
+		}
+
+		private static string GenerateSourceFile (string inputFile)
+		{
+			Stream input = File.OpenRead (inputFile);
+			AspParser parser = new AspParser (inputFile, input);
+			parser.parse ();
+			AspGenerator generator = new Generator (args [i], parser.Elements);
+			//FIXME: set properties here -> base type, interfaces,...
+			generator.ProcessElements ();
+			string code = generator.GetCode ().ReadToEnd ();
+			//FIXME: should get Tmp dir for this application
+			string csName = Path.GetTempFileName ();
+			StreamWriter output = File.OpenWrite (csName);
+			output.Write (code);
+			output.Close ();
+			return csName;
 		}
 	}
 }
