@@ -1,3 +1,8 @@
+2002-06-30  Nick Drochak  <ndrochak@gol.com>
+
+	* SortedList.cs: Many fixed. A lot of checking for null and throwing
+	exceptions.  A few logic bugs fixed as well
+
 2002-06-25   Nick Drochak  <ndrochak@gol.com>
 
 	* Queue.cs (CopyTo): Fix logic for copying the circular array.

@@ -9,7 +9,6 @@
 using System;
 using System.Collections;
 
-
 namespace System.Collections {
 
 	/// <summary>
@@ -71,7 +70,7 @@ namespace System.Collections {
 			if (d  ==  null)
 				throw new ArgumentNullException ("dictionary");
 
-			InitTable (d.Count);
+			InitTable (d.Count, true);
 			this.comparer = comparer;
 
 			IDictionaryEnumerator it = d.GetEnumerator ();
@@ -144,15 +143,21 @@ namespace System.Collections {
 
 		public virtual Object this [Object key] {
 			get {
+				if (key == null)
+					throw new ArgumentNullException();
 				return GetImpl (key);
 			}
 			set {
+				if (key == null)
+					throw new ArgumentNullException();
+				if (IsReadOnly)
+					throw new NotSupportedException("SortedList is Read Only.");
+				if (Find(key) < 0 && IsFixedSize)
+					throw new NotSupportedException("Key not found and SortedList is fixed size.");
+
 				PutImpl (key, value, true);
 			}
 		}
-
-
-
 
 		public virtual int Capacity {
 			get {
@@ -205,7 +210,14 @@ namespace System.Collections {
 
 		public virtual bool Contains (object key)
 		{
-			return (Find (key) >= 0);
+			if (null == key)
+				throw new ArgumentNullException();
+
+			try {
+				return (Find (key) >= 0);
+			} catch (Exception) {
+				throw new InvalidOperationException();
+			}
 		}
 
 
@@ -225,6 +237,19 @@ namespace System.Collections {
 
 		public virtual void CopyTo (Array array, int arrayIndex)
 		{
+			if (null == array)
+				throw new ArgumentNullException();
+
+			if (arrayIndex < 0)
+				throw new ArgumentOutOfRangeException();
+			
+			if (array.Rank > 1)
+				throw new ArgumentException("array is multi-dimensional");
+			if (arrayIndex >= array.Length)
+				throw new ArgumentNullException("arrayIndex is greater than or equal to array.Length");
+			if (Count > (array.Length - arrayIndex))
+				throw new ArgumentNullException("Not enough space in array from arrayIndex to end of array");
+
 			IDictionaryEnumerator it = GetEnumerator ();
 			int i = arrayIndex;
 
@@ -281,24 +306,33 @@ namespace System.Collections {
 			}
 		}
 
-
-
-
-
 		public virtual int IndexOfKey (object key)
 		{
-			int indx = Find (key);
+			if (null == key)
+				throw new ArgumentNullException();
+
+			int indx = 0;
+			try {
+				indx = Find (key);
+			} catch (Exception) {
+				throw new InvalidOperationException();
+			}
+
 			return (indx | (indx >> 31));
 		}
 
 
 		public virtual int IndexOfValue (object value)
 		{
+			if (null == value)
+				return -1;
+
 			Slot [] table = this.table;
 			int len = table.Length;
 
 			for (int i=0; i < len; i++) {
-				if (table[i].value.Equals (value)) {
+				object trial_value = table[i].value;
+				if ((null != trial_value) && (trial_value.Equals (value))) {
 					return i;
 				}
 			}
@@ -309,7 +343,14 @@ namespace System.Collections {
 
 		public virtual bool ContainsKey (object key)
 		{
-			return Contains (key);
+			if (null == key)
+				throw new ArgumentNullException();
+
+			try {
+				return Contains (key);   
+			} catch (Exception) {
+				throw new InvalidOperationException();
+			}
 		}
 
 
@@ -419,7 +460,6 @@ namespace System.Collections {
 			Slot [] table = this.table;
 			int freeIndx = Find (key);
 
-
 			if (freeIndx >= 0) {
 				if (!overwrite)
 					throw new ArgumentException("element already exists");
@@ -456,16 +496,18 @@ namespace System.Collections {
 				return null;
 		}
 
-
 		private void InitTable (int capacity)
 		{
+			InitTable (capacity, false);
+		}
+
+		private void InitTable (int capacity, bool force_size) {
 			int size = (capacity + 1) & (~1);
-			if (size < INITIAL_SIZE) size = INITIAL_SIZE;
+			if (!force_size && (size < INITIAL_SIZE)) size = INITIAL_SIZE;
 			this.table = new Slot [size];
 			this.inUse = 0;
 			this.modificationCount = 0;
 		}
-
 
 		private void  CopyToArray (Array arr, int i, 
 					   EnumeratorMode mode)
@@ -496,12 +538,11 @@ namespace System.Collections {
 				int guess = (left + right) >> 1;
 
 				int cmp = comparer.Compare (key, table[guess].key);
-
 				if (cmp == 0) return guess;
 
-				cmp &= ~Int32.MaxValue;
+				//cmp &= ~Int32.MaxValue;
 
-				if (cmp == 0) left = guess+1;
+				if (cmp >  0) left = guess+1;
 				else right = guess-1;
 			}
 
