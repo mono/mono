@@ -312,7 +312,7 @@ namespace Microsoft.VisualBasic
 					name = "String";
 					break;
 				default :
-					name = type.get_Name();
+					name = type.Name;
 					break;
 				}
 				

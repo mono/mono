@@ -1,3 +1,9 @@
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Information.cs: use Type.Name property instead of Type.get_Name()
+	accessor method.  This fixes the build on Windows (csc). Reported
+	as mcs bug #59980. 
+
 2004-06-10  Jambunathan K  <kjambunathan@novell.com>
 	* VBUtils.cs: Implemented more GetResourceString() methods
 	* Information.cs: Completed Information.Err
