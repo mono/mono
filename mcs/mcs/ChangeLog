@@ -1,3 +1,18 @@
+2002-06-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Property.Define): Only define the property if we are
+	not explicitly implementing a property from an interface.  Use the
+	correct name also for those properties (the same CSC uses,
+	although that is really not needed).
+
+	(Property.Emit): Do not emit attributes for explicitly implemented
+	properties, as there is no TypeBuilder.
+
+	(Indexer.Emit): ditto.
+
+	Hiding then means that we do not really *implement* a pending
+	implementation, which makes code fail.
+
 2002-06-22  Martin Baulig  <martin@gnome.org>
 
 	* ecore.cs (Expression.Constantify): Call TypeManager.TypeToCoreType() on

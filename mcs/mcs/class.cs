@@ -2551,6 +2551,11 @@ namespace Mono.CSharp {
 
 		bool explicit_impl;
 
+		//
+		// If true, the interface type we are explicitly implementing
+		//
+		Type explicit_iface_type = null;
+
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -2641,14 +2646,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool DefineMethod (TypeContainer parent, Type iface_type, string short_name,
-				   MethodAttributes flags, bool is_get)
+		bool DefineMethod (TypeContainer parent, string short_name,
+				   MethodAttributes flags, bool is_get, ref bool is_implementing)
 		{
 			Type [] parameters = TypeManager.NoTypes;
 			MethodInfo implementing = null;
 			Type fn_type;
-			string name;
+			string name, prefix;
 
+			if (explicit_impl)
+				prefix = explicit_iface_type.FullName + ".";
+			else
+				prefix = "";
+				
 			if (is_get){
 				fn_type = PropertyType;
 				name = "get_" + short_name;
@@ -2661,7 +2671,7 @@ namespace Mono.CSharp {
 
 			if (parent.Pending != null)
 				implementing = parent.Pending.IsInterfaceMethod (
-					iface_type, name, fn_type, parameters);
+					explicit_iface_type, name, fn_type, parameters);
 
 			//
 			// For implicit implementations, make sure we are public, for
@@ -2675,7 +2685,7 @@ namespace Mono.CSharp {
 				// The "candidate" function has been flagged already
 				// but it wont get cleared
 				//
-				if (iface_type == null){
+				if (explicit_iface_type == null){
 					//
 					// We already catch different accessibility settings
 					// so we just need to check that we are not private
@@ -2717,7 +2727,9 @@ namespace Mono.CSharp {
 				// clear the pending implemntation flag
 				//
 				parent.Pending.ImplementMethod (
-					iface_type, name, fn_type, parameters, explicit_impl);
+					explicit_iface_type, name, fn_type, parameters, explicit_impl);
+
+				is_implementing = true;
 			}
 
 			//
@@ -2730,8 +2742,7 @@ namespace Mono.CSharp {
 			
 			if (is_get){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
-					name, flags, PropertyType, null);
-				PropertyBuilder.SetGetMethod (GetBuilder);
+					prefix + name, flags, PropertyType, null);
 			
 				if (implementing != null)
 					parent.TypeBuilder.DefineMethodOverride (
@@ -2753,14 +2764,13 @@ namespace Mono.CSharp {
 				}
 			} else {
 				SetBuilder = parent.TypeBuilder.DefineMethod (
-					name, flags, null, parameters);
+					prefix + name, flags, null, parameters);
 				
 				if (implementing != null)
 					parent.TypeBuilder.DefineMethodOverride (
 						SetBuilder, implementing);
 				
 				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
-				PropertyBuilder.SetSetMethod (SetBuilder);
 
 				//
 				// HACK because System.Reflection.Emit is lame
@@ -2786,7 +2796,6 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
-			Type iface_type = null;
 			string short_name;
 			
 			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
@@ -2818,48 +2827,57 @@ namespace Mono.CSharp {
 				int pos = Name.LastIndexOf (".");
 				string iface = Name.Substring (0, pos);
 
-				iface_type = RootContext.LookupType (parent, iface, false, Location);
-				if (iface_type == null)
+				explicit_iface_type = RootContext.LookupType (parent, iface, false, Location);
+				if (explicit_iface_type == null)
 					return false;
 
 				short_name = Name.Substring (pos + 1);
 
 				// Compute the full name that we need to export.
-				Name = iface_type.FullName + "." + short_name;
+				Name = explicit_iface_type.FullName + "." + short_name;
 				explicit_impl = true;
 			} else {
 				explicit_impl = false;
 				short_name = Name;
 			}
 
-			// FIXME - PropertyAttributes.HasDefault ?
-
-			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
-				                       PropertyAttributes.SpecialName;
-		
-			PropertyBuilder = parent.TypeBuilder.DefineProperty (
-				Name, prop_attr, PropertyType, null);
-
+			bool is_implementing = false;
 			if (Get != null)
-				if (!DefineMethod (parent, iface_type, short_name, flags, true))
+				if (!DefineMethod (parent, short_name, flags, true, ref is_implementing))
 					return false;
 			
 			if (Set != null)
-				if (!DefineMethod (parent, iface_type, short_name, flags, false))
+				if (!DefineMethod (parent, short_name, flags, false, ref is_implementing))
 					return false;
-			
-			//
-			// HACK for the reasons exposed above
-			//
-			if (!TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder)) {
-				Report.Error (
-					111, Location,
-					"Class `" + parent.Name +
-					"' already contains a definition for the property `" +
-					Name + "'");
-				return false;
-			}
 
+			// FIXME - PropertyAttributes.HasDefault ?
+			
+			PropertyAttributes prop_attr =
+			PropertyAttributes.RTSpecialName |
+			PropertyAttributes.SpecialName;
+
+			if (!explicit_impl){
+				PropertyBuilder = parent.TypeBuilder.DefineProperty (
+					Name, prop_attr, PropertyType, null);
+				
+				if (Get != null)
+					PropertyBuilder.SetGetMethod (GetBuilder);
+				
+				if (Set != null)
+					PropertyBuilder.SetSetMethod (SetBuilder);
+
+				//
+				// HACK for the reasons exposed above
+				//
+				if (!TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder)) {
+					Report.Error (
+						111, Location,
+						"Class `" + parent.Name +
+						"' already contains a definition for the property `" +
+						Name + "'");
+					return false;
+				}
+			}
 			return true;
 		}
 		
@@ -2869,7 +2887,14 @@ namespace Mono.CSharp {
 			EmitContext ec;
 
 			ec = new EmitContext (tc, Location, null, PropertyType, ModFlags);
-			Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
+
+			//
+			// The PropertyBuilder can be null for explicit implementations, in that
+			// case, we do not actually emit the ".property", so there is nowhere to
+			// put the attribute
+			//
+			if (PropertyBuilder != null)
+				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
 			
 
 			//
@@ -3261,7 +3286,7 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		bool DefineMethod (TypeContainer parent, Type iface_type, 
+		bool DefineMethod (TypeContainer parent, Type explicit_iface_type, 
 				   Type ret_type, string name,
 				   Type [] parameters, MethodAttributes attr, bool is_get)
 		{
@@ -3270,7 +3295,7 @@ namespace Mono.CSharp {
 
 			if (parent.Pending != null)
 				implementing = parent.Pending.IsInterfaceMethod (
-					iface_type, name, ret_type, parameters);
+					explicit_iface_type, name, ret_type, parameters);
 
 			is_implementation = implementing != null;
 			
@@ -3282,7 +3307,7 @@ namespace Mono.CSharp {
 			// but it wont get cleared
 			//
 			if (implementing != null){
-				if (iface_type == null){
+				if (explicit_iface_type == null){
 					//
 					// We already catch different accessibility settings
 					// so we just need to check that we are not private
@@ -3321,7 +3346,7 @@ namespace Mono.CSharp {
 				// clear the pending implementing flag
 				//
 				parent.Pending.ImplementMethod (
-					iface_type, name, ret_type, parameters, true);
+					explicit_iface_type, name, ret_type, parameters, true);
 			}
 
 			//
@@ -3332,10 +3357,14 @@ namespace Mono.CSharp {
 			if (InterfaceType == null)
 				implementing = null;
 
+			string prefix;
+			if (explicit_iface_type == null)
+				prefix = "";
+			else
+				prefix = explicit_iface_type.FullName + ".";
+			
 			if (is_get){
-				string meth_name = "get_" + IndexerName;
-				if (iface_type != null)
- 					meth_name = iface_type + ".get_" + IndexerName;
+				string meth_name = prefix + "get_" + IndexerName;
 				
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					meth_name, attr, IndexerType, parameters);
@@ -3344,11 +3373,8 @@ namespace Mono.CSharp {
 					parent.TypeBuilder.DefineMethodOverride (
 						GetBuilder, implementing);
 			} else {
-				string meth_name = "set_" + IndexerName;
+				string meth_name = prefix + "set_" + IndexerName;
 
-				if (iface_type != null)
-					meth_name = iface_type + ".set_" + IndexerName;
-				
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 				        meth_name, attr, null, parameters);
 				if (implementing != null)
@@ -3396,11 +3422,11 @@ namespace Mono.CSharp {
 			if (error)
 				return false;
 			
-			Type iface_type = null;
+			Type explicit_iface_type = null;
 
 			if (InterfaceType != null){
-				iface_type = RootContext.LookupType (parent, InterfaceType, false, Location);
-				if (iface_type == null)
+				explicit_iface_type = RootContext.LookupType (parent, InterfaceType, false, Location);
+				if (explicit_iface_type == null)
 					return false;
 			} 
 
@@ -3416,7 +3442,7 @@ namespace Mono.CSharp {
 			
 			if (Get != null){
 				is_implementing = DefineMethod (
-					parent, iface_type, IndexerType, "get_" + IndexerName,
+					parent, explicit_iface_type, IndexerType, "get_" + IndexerName,
 					parameters, attr, true);
                                 InternalParameters pi = new InternalParameters (parent, FormalParameters);
 				if (!TypeManager.RegisterMethod (GetBuilder, pi, parameters)) {
@@ -3463,7 +3489,7 @@ namespace Mono.CSharp {
 				Parameters set_formal_params = new Parameters (tmp, null, Location);
 				
 				is_implementing = DefineMethod (
-					parent, iface_type, TypeManager.void_type,
+					parent, explicit_iface_type, TypeManager.void_type,
 					"set_" + IndexerName, set_pars, attr, false);
 
 				InternalParameters ip = new InternalParameters (parent, set_formal_params);
@@ -3515,13 +3541,14 @@ namespace Mono.CSharp {
 			if (!is_implementing){
 				PropertyBuilder = parent.TypeBuilder.DefineProperty (
 					IndexerName, prop_attr, IndexerType, parameters);
-				TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
 
 				if (GetBuilder != null)
 					PropertyBuilder.SetGetMethod (GetBuilder);
 
 				if (SetBuilder != null)
 					PropertyBuilder.SetSetMethod (SetBuilder);
+				
+				TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
 			}
 
 			return true;
@@ -3531,8 +3558,14 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig;
 
-			Attribute.ApplyAttributes (
-				ec, PropertyBuilder, this, OptAttributes, Location);
+			//
+			// The PropertyBuilder can be null for explicit implementations, in that
+			// case, we do not actually emit the ".property", so there is nowhere to
+			// put the attribute
+			//
+			if (PropertyBuilder != null)
+				Attribute.ApplyAttributes (
+					ec, PropertyBuilder, this, OptAttributes, Location);
 
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;

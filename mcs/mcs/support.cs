@@ -13,6 +13,7 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 using System.Reflection.Emit;
+using System.Globalization;
 
 namespace Mono.CSharp {
 
