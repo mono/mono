@@ -140,7 +140,6 @@ namespace System.Xml.Schema
 					XmlSchemaAppInfo appinfo = XmlSchemaAppInfo.Read(reader,h,out skip);
 					if(appinfo != null)
 						annotation.items.Add(appinfo);
-					expectedEnd = "appinfo";
 					continue;
 				}
 				if(reader.LocalName == "documentation")
@@ -148,7 +147,6 @@ namespace System.Xml.Schema
 					XmlSchemaDocumentation documentation = XmlSchemaDocumentation.Read(reader,h, out skip);
 					if(documentation != null)
 						annotation.items.Add(documentation);
-					expectedEnd = "documentation";
 					continue;
 				}
 				reader.RaiseInvalidElementError();
