@@ -468,19 +468,9 @@ namespace Mono.CSharp {
 			int top = args.Length;
 			ILGenerator ig = proxy.GetILGenerator ();
 
-			ig.Emit (OpCodes.Ldarg_0);
-			for (int i = 0; i < top; i++){
-				switch (i){
-				case 0:
-					ig.Emit (OpCodes.Ldarg_1); break;
-				case 1:
-					ig.Emit (OpCodes.Ldarg_2); break;
-				case 2:
-					ig.Emit (OpCodes.Ldarg_3); break;
-				default:
-					ig.Emit (OpCodes.Ldarg, i + 1); break;
-				}
-			}
+			for (int i = 0; i <= top; i++)
+				ParameterReference.EmitLdArg (ig, i);
+
 			ig.Emit (OpCodes.Call, base_method);
 			ig.Emit (OpCodes.Ret);
 
