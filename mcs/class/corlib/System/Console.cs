@@ -69,15 +69,15 @@ namespace System
 				encoding = Encoding.Default;
 			}
 
-			stderr = new StreamWriter (OpenStandardError (0), encoding); 
+			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), encoding); 
 			((StreamWriter)stderr).AutoFlush = true;
 			stderr = TextWriter.Synchronized (stderr, true);
 
-			stdout = new StreamWriter (OpenStandardOutput (0), encoding);
+			stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), encoding);
 			((StreamWriter)stdout).AutoFlush = true;
 			stdout = TextWriter.Synchronized (stdout, true);
 
-			stdin  = new StreamReader (OpenStandardInput (0), encoding);
+			stdin  = new UnexceptionalStreamReader (OpenStandardInput (0), encoding);
 			stdin = TextReader.Synchronized (stdin);
 		}
 

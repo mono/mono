@@ -1,3 +1,11 @@
+2004-09-19  Dick Porter  <dick@ximian.com>
+
+	* UnexceptionalStreamWriter.cs: 
+	* UnexceptionalStreamReader.cs: Wrappers around StreamWriter and
+	StreamReader that catch IOException.  Used by System.Console so
+	that graphical applications dont get IO errors when their
+	stdin/out/err vanishes (ie when they spew debug output.)
+
 2004-09-12 Ben Maurer  <bmaurer@ximian.com>
 
 	* BinaryReader.cs: Use ReadByte when possible. Gives a tad

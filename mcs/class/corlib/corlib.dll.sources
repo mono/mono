@@ -319,6 +319,8 @@ System.IO/StringReader.cs
 System.IO/StringWriter.cs
 System.IO/TextReader.cs
 System.IO/TextWriter.cs
+System.IO/UnexceptionalStreamReader.cs
+System.IO/UnexceptionalStreamWriter.cs
 System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
