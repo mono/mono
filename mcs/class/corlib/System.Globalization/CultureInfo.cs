@@ -538,7 +538,7 @@ namespace System.Globalization
 			/* DateTimeFormatInfo defaults to the invariant data */
 			dateTimeInfo=DateTimeFormatInfo.InvariantInfo;
 
-			textInfo=new TextInfo ();
+			textInfo=new TextInfo (this, cultureID);
 
 			m_name="";
 			displayname="Invariant Language (Invariant Country)";

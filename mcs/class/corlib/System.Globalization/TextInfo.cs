@@ -47,10 +47,6 @@ namespace System.Globalization {
 
 		[NonSerialized]
 		CultureInfo ci;
-		
-		internal TextInfo ()
-		{
-		}
 
 		internal TextInfo (CultureInfo ci, int lcid)
 		{
