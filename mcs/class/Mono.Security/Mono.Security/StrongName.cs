@@ -116,7 +116,7 @@ namespace Mono.Security {
 			}
 		}
 
-		public StrongName (RSA rsa) : base ()
+		public StrongName (RSA rsa)
 		{
 			if (rsa == null)
 				throw new ArgumentNullException ("rsa");
@@ -242,7 +242,7 @@ namespace Mono.Security {
 
 		public byte[] GetBytes () 
 		{
-			return CryptoConvert.ToCapiPrivateKeyBlob (rsa);
+			return CryptoConvert.ToCapiPrivateKeyBlob (RSA);
 		}
 
 		private UInt32 RVAtoPosition (UInt32 r, int sections, byte[] headers) 
@@ -409,21 +409,17 @@ namespace Mono.Security {
 				fs.Close ();
 			}
 			if (sn.Hash == null) {
-                                Console.WriteLine ("hash is null");
 				return false;
-                        }
+			}
 
 			try {
 				AssemblyHashAlgorithm algorithm = AssemblyHashAlgorithm.SHA1;
 				if (tokenAlgorithm == "MD5")
 					algorithm = AssemblyHashAlgorithm.MD5;
-				bool v = Verify (rsa, algorithm, sn.Hash, sn.Signature);
-                                Console.WriteLine ("returning v:   " + v);
-                                return v;
+				return Verify (rsa, algorithm, sn.Hash, sn.Signature);
 			}
-			catch (CryptographicException e) {
+			catch (CryptographicException) {
 				// no exception allowed
-                                Console.WriteLine ("exception:  " + e);
 				return false;
 			}
 		}

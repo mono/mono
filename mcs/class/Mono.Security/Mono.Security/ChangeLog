@@ -1,3 +1,11 @@
+2004-05-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1Convert.cs: Added better exceptions. Fixed bugs found by new
+	unit tests.
+	* StrongName.cs: Fixed GetBytes() when creating a new strongname. 
+	Removed	unrequired :base() from a constructor. Removed debugging 
+	Console.WriteLine.
+
 2004-05-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Fixed NullReferenceException in xmldsig standalone tests.
