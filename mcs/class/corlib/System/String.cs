@@ -926,7 +926,10 @@ namespace System {
 
 		public int LastIndexOf (char value)
 		{
-			for (int i = this.length; i >= 0; i--) {
+			int i = this.length;
+			if (i == 0)
+				return -1;
+			for (; i >= 0; i--) {
 				if (this.c_str[i] == value)
 					return i;
 			}

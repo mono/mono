@@ -1,4 +1,9 @@
 
+Tue Sep 25 16:46:43 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: don't access the string array out of bounds in LastIndexOf.
+	* Type.cs: fix return type of the Assembly property.
+
 Mon Sep 24 20:35:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: make Intern and IsIntern internalcalls.

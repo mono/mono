@@ -22,7 +22,7 @@ namespace System {
 		/// <summary>
 		///   The assembly where the type is defined.
 		/// </summary>
-		public abstract string Assembly {
+		public abstract Assembly Assembly {
 			get;
 		}
 
