@@ -1,3 +1,7 @@
+2004-06-23  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Check for WAIT_IO_COMPLETION return values.
+
 2004-06-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* appdomain.c: Removed the g_free on the public key token. Now copy 
