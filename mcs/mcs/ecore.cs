@@ -1794,9 +1794,9 @@ namespace Mono.CSharp {
 					e = new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type));
 				}
 				
-				e = ConvertImplicit (ec, e, target_type, loc);
-				if (e != null)
-					return e;
+				Expression t = ConvertImplicit (ec, e, target_type, loc);
+				if (t != null)
+					return t;
 				
 				return ConvertNumericExplicit (ec, e, target_type);
 			}
