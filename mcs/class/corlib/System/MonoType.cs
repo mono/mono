@@ -494,7 +494,7 @@ namespace System
 			UnitySerializationHolder.GetTypeData (this, info, context);
 		}
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_1_2
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type [] GetGenericArguments ();
 

@@ -38,7 +38,7 @@ namespace System.Reflection.Emit {
 		private CallingConvention native_cc;
 		private CallingConventions call_conv;
 		private bool init_locals = true;
-#if NET_2_0
+#if NET_2_0 | BOOTSTRAP_NET_2_0
 		private	GenericTypeParameterBuilder[] generic_params;
 #else
 		private Object generic_params; /* so offsets are the same */
@@ -306,7 +306,7 @@ namespace System.Reflection.Emit {
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-#if NET_2_0
+#if NET_2_0 | BOOTSTRAP_NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern MethodInfo BindGenericParameters (Type [] types);
 
