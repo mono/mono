@@ -19,7 +19,7 @@ using Mono.Posix;
 class MakeBundle {
 	static string output = "a.out";
 	static ArrayList link_paths = new ArrayList ();
-	static bool autodeps = true;
+	static bool autodeps = false;
 	static bool keeptemp = false;
 	
 	static int Main (string [] args)
@@ -56,6 +56,10 @@ class MakeBundle {
 
 			case "--nodeps":
 				autodeps = false;
+				break;
+
+			case "--deps":
+				autodeps = true;
 				break;
 
 			case "--keeptemp":
@@ -264,11 +268,12 @@ class MakeBundle {
 
 	static void Help ()
 	{
-		Console.WriteLine ("Usage is: mkbundle [options] -o output assembly1 [assembly2...]\n\n" +
+		Console.WriteLine ("Usage is: mkbundle [options] assembly1 [assembly2...]\n\n" +
 				   "Options:\n" + 
-				   "    -L path     Adds `path' to the search path for assemblies" +
-				   "    --nodeps    Turns off automatic dependency embedding" +
-				   "    --keeptemp  Keeps the temporary files");
+				   "    -L path     Adds `path' to the search path for assemblies\n" +
+				   "    --nodeps    Turns off automatic dependency embedding (default)\n" +
+				   "    --deps      Turns on automatic dependency embedding\n" +
+				   "    --keeptemp  Keeps the temporary files\n");
 	}
 
 	[DllImport ("libc")]
