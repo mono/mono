@@ -809,7 +809,7 @@ namespace System
 					// unix UNC (kind of)
 					isUnc = true;
 			} else {
-				if (uriString [0] != '\\' && uriString [0] != '/' && uriString.StartsWith ("file://"))
+				if (uriString [0] != '\\' && uriString [0] != '/' && !uriString.StartsWith ("file://"))
 					throw new UriFormatException ("Invalid URI: The format of the URI could not be determined.");
 				scheme = Uri.UriSchemeFile;
 				if (uriString.StartsWith ("\\\\")) {
