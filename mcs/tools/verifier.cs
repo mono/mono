@@ -532,11 +532,14 @@ namespace Mono.Verifier {
 				hook (types);
 				res = true;
 			} catch (ReflectionTypeLoadException rtle) {
+				// FIXME: Should we try to recover? Use loaded portion of types.
 				Type [] loaded = rtle.Types;
-				for (int i = 0; i < loaded.Length; i++) {
-					Verifier.log.Write ("fatal error",
-					                    String.Format ("Unable to load {0}, reason - {1}", loaded [i], rtle.LoaderExceptions [i]),
-					                    ImportanceLevel.LOW);
+				for (int i = 0, xCnt = 0; i < loaded.Length; i++) {
+					if (loaded [i] == null) {
+						Verifier.log.Write ("fatal error",
+						    String.Format ("Unable to load {0}, reason - {1}", loaded [i], rtle.LoaderExceptions [xCnt++]),
+						    ImportanceLevel.LOW);
+					}
 				}
 			} catch (FileNotFoundException fnfe) {
 					Verifier.log.Write ("fatal error", fnfe.ToString (), ImportanceLevel.LOW);
