@@ -8,6 +8,9 @@ INCLUDES = \
 	$(GLIB_CFLAGS) \
 	-I$(top_srcdir)
 
+LIBS = \
+	$(GLIB_LIBS)
+
 MPH_SOURCE = \
 	mph.h 		\
 	old-map.h 	\

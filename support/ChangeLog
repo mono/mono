@@ -1,4 +1,9 @@
-2004-11-30  Jonathan Pryor  <jonpryor@vt.edu>
+2004-12-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Add GLIB_LIBS to the LIBS line, since we require linking
+	  against glib-2.0 (to use g_assert()).
+
+2004-12-28  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* fstab.c: Added; wrap <fstab.h> functions: getfsent(3), getfsfile(3), 
 	  getfsspec(3).
