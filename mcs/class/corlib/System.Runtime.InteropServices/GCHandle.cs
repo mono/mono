@@ -1,6 +1,15 @@
+//
+// System.Runtime.InteropServices/GCHandle.cs
+//
+// Authors:
+//   Ajay kumar Dwivedi (adwiv@yahoo.com) ??
+//   Paolo Molaro (lupus@ximian.com)
+//
+
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
 namespace System.Runtime.InteropServices
 {
 	/// <summary>
@@ -9,9 +18,13 @@ namespace System.Runtime.InteropServices
 	public struct GCHandle 
 	{
 		// fields
-		private IntPtr handle;
-		private GCHandleType handleType;
+		private int handle;
 
+		private GCHandle(IntPtr h)
+		{
+			handle = (int)h;
+		}
+		
 		// Constructors
 		private GCHandle(object obj)
 			: this(obj, GCHandleType.Normal)
@@ -19,8 +32,7 @@ namespace System.Runtime.InteropServices
 
 		private GCHandle(object value, GCHandleType type)
 		{
-			handle = IntPtr.Zero;
-			handleType = type;
+			handle = GetTargetHandle (value, 0, type);
 		}
 
 		// Properties
@@ -29,7 +41,7 @@ namespace System.Runtime.InteropServices
 		{ 
 			get
 			{
-				return (handle != IntPtr.Zero);
+				return (handle != 0);
 			}
 		}
 
@@ -37,55 +49,60 @@ namespace System.Runtime.InteropServices
 		{ 
 			get
 			{
-				return GetTarget(handle);
+				return GetTarget (handle);
 			} 
 			set
 			{
-				SetTarget(handle,value);
+				handle = GetTargetHandle (value, handle, (GCHandleType)(-1));
 			} 
 		}
 
 		// Methods
 		public IntPtr AddrOfPinnedObject()
 		{
-			if(this.handleType == System.Runtime.InteropServices.GCHandleType.Pinned)
-			{
+			IntPtr res = GetAddrOfPinnedObject(handle);
+			if (res == IntPtr.Zero)
 				throw new InvalidOperationException("The handle is not of Pinned type");
-			}
-			return GetAddrOfPinnedObject();
+			return res;
 		}
 
 		public static System.Runtime.InteropServices.GCHandle Alloc(object value)
 		{
-			return new GCHandle(value);
+			return new GCHandle (value);
 		}
 
 		public static System.Runtime.InteropServices.GCHandle Alloc(object value, GCHandleType type)
 		{
-			return new GCHandle(value,type);
+			return new GCHandle (value,type);
 		}
 
 		public void Free()
 		{
 			FreeHandle(handle);
-			handle = IntPtr.Zero;
+			handle = 0;
 		}
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static explicit operator IntPtr(GCHandle value);
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static explicit operator GCHandle(IntPtr value);
+		
+		public static explicit operator IntPtr (GCHandle value)
+		{
+			return (IntPtr) value.handle;
+		}
+		
+		public static explicit operator GCHandle(IntPtr value)
+		{
+			return new GCHandle (value);
+		}
 
-		//TODO: Private Native Functions
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern object GetTarget(IntPtr pointer);
+		private extern static object GetTarget(int handle);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void SetTarget(IntPtr pointer,object obj);
+		private extern static int GetTargetHandle(object obj, int handle, GCHandleType type);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void FreeHandle(IntPtr pointer);
+		private extern static void FreeHandle(int handle);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern IntPtr GetAddrOfPinnedObject();
+		private extern static IntPtr GetAddrOfPinnedObject(int handle);
 	} 
 }
+

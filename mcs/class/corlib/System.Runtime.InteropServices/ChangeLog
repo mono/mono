@@ -1,4 +1,8 @@
 
+Tue Jun 4 18:05:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* GCHandle.cs: changed to fit spec and implementation needs.
+
 Tue May 14 16:35:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* CharSet.cs: added missing None enum item.
