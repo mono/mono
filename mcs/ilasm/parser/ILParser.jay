@@ -24,11 +24,12 @@ namespace Mono.ILASM {
                 private string pinvoke_mod;
                 private string pinvoke_meth;
                 private PEAPI.PInvokeAttr pinvoke_attr;
-                private StreamReader stream;
+                private ILTokenizer tokenizer;
                                 
-		public ILParser (CodeGen codegen, StreamReader stream) {
+		public ILParser (CodeGen codegen, ILTokenizer tokenizer)
+                {
 			this.codegen = codegen;
-                        this.stream = stream;
+                        this.tokenizer = tokenizer;
 		}
 
 		public CodeGen CodeGen {
@@ -1261,9 +1262,9 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           {
                                 $$ = new BoolConst ((bool) $3);
                           }
-			| K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS
+			| K_BYTEARRAY bytes_list
                           {
-                                $$ = new ByteArrConst ((byte[]) $3);
+                                $$ = new ByteArrConst ((byte[]) $2);
                           }
 			| comp_qstring
                           {
@@ -1335,14 +1336,14 @@ dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
                            //     DataDef def = codegen.CurrentTypeDef.GetDataDef ((string) $3);
                            //     $$ = new AddressConstant ((DataConstant) def.PeapiConstant);
                           }
-			| K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
+			| K_BYTEARRAY ASSIGN bytes_list
                           {
-                                $$ = new ByteArrConst ((byte[]) $4);
+                                $$ = new ByteArrConst ((byte[]) $3);
                           }
-			| K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS
+			| K_BYTEARRAY bytes_list
                           {
                                 // ******** THIS IS NOT IN THE SPECIFICATION ******** //
-                                $$ = new ByteArrConst ((byte[]) $3);
+                                $$ = new ByteArrConst ((byte[]) $2);
                           }
 			| K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS repeat_opt
                           {
@@ -1937,7 +1938,7 @@ instr			: INSTR_NONE
                                         break;
                                 }
                           }
-			| INSTR_R OPEN_PARENS bytes CLOSE_PARENS
+			| INSTR_R bytes_list
 			| INSTR_BRTARGET int32
                           {
 				LabelInfo target = codegen.CurrentMethodDef.AddLabel ((int) $2);
@@ -1980,17 +1981,15 @@ instr			: INSTR_NONE
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
                                         codegen.CurrentMethodDef.AddInstr (new LdstrInstr ((string) $2));
                           }
-			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS
-                          bytes CLOSE_PARENS
+			| INSTR_STRING K_BYTEARRAY ASSIGN bytes_list
                           {
-                                byte[] bs = (byte[]) $5;
+                                byte[] bs = (byte[]) $4;
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
                                         codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs));
                           }
-			| INSTR_STRING K_BYTEARRAY OPEN_PARENS bytes
-                          CLOSE_PARENS
+			| INSTR_STRING K_BYTEARRAY bytes_list
                           {
-                                byte[] bs = (byte[]) $4;
+                                byte[] bs = (byte[]) $3;
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
                                         codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs));
                           }
@@ -2257,15 +2256,15 @@ customattr_decl		: D_CUSTOM custom_type
                                 $$ = new CustomAttr ((IMethodRef) $2, null);
                           }
 			| D_CUSTOM custom_type ASSIGN comp_qstring
-			| D_CUSTOM custom_type ASSIGN OPEN_PARENS bytes CLOSE_PARENS
+			| D_CUSTOM custom_type ASSIGN bytes_list
                           {
                                 $$ = new CustomAttr ((IMethodRef) $2,
-                                        (byte[]) $5);
+                                        (byte[]) $4);
                           }
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN comp_qstring
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN
-			  OPEN_PARENS bytes CLOSE_PARENS
+			  bytes_list
 			;
 			
 custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_list CLOSE_PARENS
@@ -2299,7 +2298,7 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
 
 sec_decl		: D_PERMISSION sec_action type_spec OPEN_PARENS nameval_pairs CLOSE_PARENS
 			| D_PERMISSION sec_action type_spec
-			| D_PERMISSIONSET sec_action ASSIGN OPEN_PARENS bytes CLOSE_PARENS
+			| D_PERMISSIONSET sec_action ASSIGN bytes_list
 			;
 
 nameval_pairs		: nameval_pair 
@@ -2342,7 +2341,7 @@ module_head		: D_MODULE
 			;
 
 file_decl		: D_FILE file_attr comp_name file_entry D_HASH ASSIGN
-			  OPEN_PARENS bytes CLOSE_PARENS file_entry
+			  bytes_list file_entry
 			| D_FILE file_attr comp_name file_entry
 			;
 
@@ -2378,10 +2377,10 @@ assembly_decl		: D_HASH K_ALGORITHM int32
 			| asm_or_ref_decl
 			;
 
-asm_or_ref_decl		: D_PUBLICKEY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
+asm_or_ref_decl		: D_PUBLICKEY ASSIGN bytes_list
 			| D_VER int32 COLON int32 COLON int32 COLON int32 
 			| D_LOCALE comp_qstring
-			| D_LOCALE ASSIGN OPEN_PARENS bytes CLOSE_PARENS
+			| D_LOCALE ASSIGN bytes_list
 			| customattr_decl
 			;
 
@@ -2393,14 +2392,14 @@ assemblyref_head	: D_ASSEMBLY K_EXTERN slashed_name
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
 				asmb_name.Name = (string) $3;
-				codegen.ExternTable.AddAssembly ((string) $3, asmb_name);
+				codegen.BeginAssemblyRef ((string) $3, asmb_name);
                           }
 			| D_ASSEMBLY K_EXTERN slashed_name K_AS slashed_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
 				asmb_name.Name = (string) $3;
-				codegen.ExternTable.AddAssembly ((string) $5, asmb_name);
+				codegen.BeginAssemblyRef ((string) $5, asmb_name);
                           }
 			;
 
@@ -2408,9 +2407,29 @@ assemblyref_decls	: /* EMPTY */
 			| assemblyref_decls assemblyref_decl
 			;
 
-assemblyref_decl	: D_HASH ASSIGN OPEN_PARENS bytes CLOSE_PARENS
-			| asm_or_ref_decl
-			| D_PUBLICKEYTOKEN ASSIGN OPEN_PARENS bytes CLOSE_PARENS
+assemblyref_decl	: D_VER int32 COLON int32 COLON int32 COLON int32
+                          {
+                                codegen.CurrentAssemblyRef.SetVersion ((int) $2, (int) $3, (int) $4, (int) $5);
+                          }
+                        | D_PUBLICKEY ASSIGN bytes_list
+                          {
+                                codegen.CurrentAssemblyRef.SetPublicKey ((byte []) $3);
+                          }
+                        | D_PUBLICKEYTOKEN ASSIGN bytes_list
+                          {
+                                codegen.CurrentAssemblyRef.SetPublicKeyToken ((byte []) $3);
+                          }
+			| D_LOCALE comp_qstring
+                          {
+                                codegen.CurrentAssemblyRef.SetLocale ((string) $2);
+                          }
+			| D_LOCALE ASSIGN bytes_list
+			
+                        | D_HASH ASSIGN bytes_list
+                          {
+                                codegen.CurrentAssemblyRef.SetHash ((byte []) $3);
+                          }
+                        | customattr_decl
 			;
 
 exptype_all		: exptype_head OPEN_BRACE exptype_decls CLOSE_BRACE
@@ -2501,17 +2520,18 @@ float64			: FLOAT64
 			;
 
 hexbyte			: HEXBYTE       { }
-                        | INT64
-                          {
-                                long l = (long) $1;
-                                byte b = Byte.Parse (l.ToString (), NumberStyles.HexNumber);
-                                $$ = b;
-                          }
-                        | ID
-                          {
-                                $$ = Byte.Parse ((string) $1, NumberStyles.HexNumber);
-                          }
 			;
+
+bytes_list              : OPEN_PARENS
+                          {
+                                tokenizer.InByteArray = true;
+                          }
+                          bytes CLOSE_PARENS
+                          {
+                                $$ = $3;
+                                tokenizer.InByteArray = false;
+                          }
+                        ;
 
 bytes 			: /* EMPTY */   { $$ = new byte[0]; }
 			| hexbytes

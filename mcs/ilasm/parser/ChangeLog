@@ -1,3 +1,9 @@
+2004-04-01  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Set a flag in the tokenizer when parsing byte
+	arrays. Otherwise we can't tell WTF they are. Set assemblyref
+	attributes.
+	
 2004-03-28  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: Fix typo.
