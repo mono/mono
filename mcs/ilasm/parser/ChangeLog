@@ -1,3 +1,12 @@
+2003-05-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: INT_I8s are not int instructions, currently the
+	only INT_I8 instruction is ldc.i8 so this new code does more
+	checks then needed but is written in anticipation of some new long
+	instructions being found. Implement signature instructions, token
+	instructions, and signatures. Convert INT32s masquerading as
+	INT64s to Int64.
+		
 2003-05-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Same as below but with float64 ()

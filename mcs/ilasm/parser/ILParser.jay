@@ -1536,6 +1536,10 @@ slot_num                : OPEN_BRACKET int32 CLOSE_BRACKET
 
 type_spec		: class_ref
 			| OPEN_BRACKET comp_name CLOSE_BRACKET
+                          {
+                                // This is a reference to a global method in another
+                                // assembly. This is not supported in the MS version of ilasm
+                          }
 			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET
 			| type
 			;
@@ -1611,8 +1615,14 @@ instr			: INSTR_NONE
                           }
 			| INSTR_I8 int64
                           {
-                                codegen.CurrentMethodDef.AddInstr (new
-                                        IntInstr ((IntOp) $1, (int) $2));
+                                if ($1 is MiscInstr) {
+                                        switch ((MiscInstr) $1) {
+                                        case MiscInstr.ldc_i8:
+                                        codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1,
+                                                (long) $2));
+                                        break;
+                                        }
+                                }
                           }
 			| INSTR_R float64
                           {
@@ -1673,7 +1683,26 @@ instr			: INSTR_NONE
 			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_STRING K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS		// ****** ADDED
 			| INSTR_SIG call_conv type OPEN_PARENS sig_args CLOSE_PARENS
+                          {
+                                ArrayList arg_list = (ArrayList) $5;
+                                ITypeRef[] arg_array = null;
+
+                                if (arg_list != null)
+                                        arg_array = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+
+                                codegen.CurrentMethodDef.AddInstr (new CalliInstr ((CallConv) $1,
+                                        (ITypeRef) $3, arg_array));
+                          }     
 			| INSTR_TOK owner_type
+                          {
+                                if ((MiscInstr) $1 == MiscInstr.ldtoken) {
+                                        if ($2 is IMethodRef)
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IMethodRef) $2));
+                                        else
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IMethodRef) $2));
+                                                
+                                }
+                          }
 			| INSTR_SWITCH OPEN_PARENS labels CLOSE_PARENS
                           {
                                 codegen.CurrentMethodDef.AddInstr (new SwitchInstr ((ArrayList) $3,
@@ -1740,9 +1769,21 @@ owner_type		: type_spec
 			| member_ref
 			;
 
-member_ref		: K_METHOD member_ref
+member_ref		: K_METHOD method_ref
+                          {
+                                $$ = $1;
+                          }
 			| K_FIELD type type_spec DOUBLE_COLON id
+                          {
+                                ITypeRef owner = (ITypeRef) $3;
+
+                                $$ = owner.AsClassRef (codegen).GetFieldRef (
+                                        (ITypeRef) $2, (string) $5);
+                          }
 			| K_FIELD type id
+                          {
+                                $$ = new GlobalFieldRef ((ITypeRef) $2, (string) $3);
+                          }
 			;
 
 event_all		: event_head OPEN_BRACE event_decls CLOSE_BRACE
@@ -1984,6 +2025,9 @@ int32			: INT32
 
 int64		        : INT64
                         | INT32
+                          {
+                                $$ = Convert.ToInt64 ($1);
+                          }
 			;
 
 float64			: FLOAT64
