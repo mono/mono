@@ -41,7 +41,7 @@ namespace Cairo {
 				if (o == null){
 					return new Surface (p, false);
 				}
-				return (Surface) surfaces [p];
+				return (Surface) o;
 			}
 		}
 		
