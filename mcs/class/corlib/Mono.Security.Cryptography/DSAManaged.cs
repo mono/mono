@@ -47,7 +47,6 @@ namespace Mono.Security.Cryptography {
 
 		public DSAManaged (int dwKeySize)
 		{
-			rng = RandomNumberGenerator.Create ();
 			KeySizeValue = dwKeySize;
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
@@ -65,6 +64,8 @@ namespace Mono.Security.Cryptography {
 			GenerateParams (base.KeySize);
 			GenerateKeyPair ();
 			keypairGenerated = true;
+			if (KeyGenerated != null)
+				KeyGenerated (this);
 		}
 
 		// this part is quite fast
@@ -111,7 +112,7 @@ namespace Mono.Security.Cryptography {
 
 			while (!primesFound) {
 				do {
-					rng.GetBytes (seed);
+					Random.GetBytes (seed);
 					part1 = sha.ComputeHash (seed);
 					Array.Copy(seed, 0, part2, 0, seed.Length);
 
@@ -189,6 +190,14 @@ namespace Mono.Security.Cryptography {
 			return okJ;
 		}
 
+		private RandomNumberGenerator Random {
+			get { 
+				if (rng == null)
+					rng = RandomNumberGenerator.Create ();
+				return rng;
+			}
+		}
+
 		// overrides from DSA class
 
 		public override int KeySize {
@@ -203,6 +212,12 @@ namespace Mono.Security.Cryptography {
 
 		public override string KeyExchangeAlgorithm {
 			get { return null; }
+		}
+
+		// note: this property will exist in DSACryptoServiceProvider in
+		// version 1.2 of the framework
+		public bool PublicOnly {
+			get { return (x == null); }
 		}
 
 		public override string SignatureAlgorithm {
@@ -422,5 +437,9 @@ namespace Mono.Security.Cryptography {
 			// no need as they all are abstract before us
 			m_disposed = true;
 		}
+
+		public delegate void KeyGeneratedEventHandler (object sender);
+
+		public event KeyGeneratedEventHandler KeyGenerated;
 	}
 }

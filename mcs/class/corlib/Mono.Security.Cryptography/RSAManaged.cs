@@ -113,6 +113,9 @@ namespace Mono.Security.Cryptography {
 	
 			keypairGenerated = true;
 			isCRTpossible = true;
+
+			if (KeyGenerated != null)
+				KeyGenerated (this);
 		}
 		
 		// overrides from RSA class
@@ -128,6 +131,12 @@ namespace Mono.Security.Cryptography {
 		}
 		public override string KeyExchangeAlgorithm {
 			get { return "RSA-PKCS1-KeyEx"; }
+		}
+
+		// note: this property will exist in RSACryptoServiceProvider in
+		// version 1.2 of the framework
+		public bool PublicOnly {
+			get { return ((d == null) || (n == null)); }
 		}
 
 		public override string SignatureAlgorithm {
@@ -292,5 +301,9 @@ namespace Mono.Security.Cryptography {
 			// no need as they all are abstract before us
 			m_disposed = true;
 		}
+
+		public delegate void KeyGeneratedEventHandler (object sender);
+
+		public event KeyGeneratedEventHandler KeyGenerated;
 	}
 }

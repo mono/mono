@@ -1,5 +1,14 @@
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DSAManaged.cs: Added an event after key generation (so that
+	DSACryptoServiceProvider can persist the keypair if required). Added
+	PublicOnly property (like 1.2) so we do not have to catch an exception
+	to know if a private key is present or not. Added a Random property so
+	we do not always have to create a RNG instance (not always required).
+	* RSAManaged.cs: Added an event after key generation (so that
+	DSACryptoServiceProvider can persist the keypair if required). Added
+	PublicOnly property (like 1.2) so we do not have to catch an exception
+	to know if a private key is present or not.
 	* SymmetricTransform.cs: This class was split from S.S.C.
 	SymmetricAlgorithm.cs so it could be reused in Mono.Security 
 	assembly for other symmetric algorithms transforms.
