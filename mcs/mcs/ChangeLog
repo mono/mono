@@ -1,3 +1,13 @@
+2002-05-02  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (IsApplicable): Ensure that we add the "&" to
+	ref/out types before comparing it with the type of the argument.
+
+	(IsParamsMethodApplicable): Ditto.
+
+	(Argument.Type): Use TypeManager.LookupType instead of Type.GetType - 
+	silly me ;-)
+
 2002-05-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Add support for boolean static initializers.

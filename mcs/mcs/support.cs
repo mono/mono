@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
-		bool last_arg_is_params;
+		bool last_arg_is_params = false;
 		
 		public ReflectionParameters (ParameterInfo [] pi)
 		{
@@ -43,6 +43,7 @@ namespace Mono.CSharp {
 				
 				if (attrs.Length == 0)
 					return;
+
 				last_arg_is_params = true;
 			}
 		}
@@ -50,7 +51,7 @@ namespace Mono.CSharp {
 		public Type ParameterType (int pos)
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
-				return pi [pi.Length -1].ParameterType;
+				return pi [pi.Length - 1].ParameterType;
 			else 
 				return pi [pos].ParameterType;
 		}

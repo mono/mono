@@ -2806,7 +2806,7 @@ namespace Mono.CSharp {
 		public Type Type {
 			get {
 				if (ArgType == AType.Ref || ArgType == AType.Out)
-					return Type.GetType (expr.Type.ToString () + "&");
+					return TypeManager.LookupType (expr.Type.ToString () + "&");
 				else
 					return expr.Type;
 			}
@@ -3281,9 +3281,17 @@ namespace Mono.CSharp {
 							return false;
 										
 					if (a_mod == Parameter.Modifier.REF ||
-					    a_mod == Parameter.Modifier.OUT)
-						if (pd.ParameterType (i) != a.Type)
+					    a_mod == Parameter.Modifier.OUT) {
+						//
+						// Note that the ParameterType () does not return the appropriate
+						// modifier in the case of ref/out parameters so we take care
+						// of it ourselves
+						//
+						Type pt = TypeManager.LookupType (pd.ParameterType (i).ToString () + "&"); 
+						
+						if (pt != a.Type)
 							return false;
+					}
 				} else
 					return false;
 				
@@ -3320,7 +3328,7 @@ namespace Mono.CSharp {
 
 			if (arg_count != pd.Count)
 				return false;
-
+			
 			for (int i = arg_count; i > 0; ) {
 				i--;
 
@@ -3335,9 +3343,17 @@ namespace Mono.CSharp {
 							return false;
 					
 					if (a_mod == Parameter.Modifier.REF ||
-					    a_mod == Parameter.Modifier.OUT)
-						if (pd.ParameterType (i) != a.Type)
+					    a_mod == Parameter.Modifier.OUT) {
+						//
+						// Note that the ParameterType () does not return the appropriate
+						// modifier in the case of ref/out parameters so we take care
+						// of it ourselves
+						//
+						Type pt = TypeManager.LookupType (pd.ParameterType (i).ToString () + "&"); 
+
+						if (pt != a.Type)
 							return false;
+					}
 				} else
 					return false;
 			}
@@ -3382,7 +3398,6 @@ namespace Mono.CSharp {
 					continue;
 
 				candidates.Add (candidate);
-				
 				x = BetterFunction (ec, Arguments, candidate, method, false, loc);
 				
 				if (x == 0)
