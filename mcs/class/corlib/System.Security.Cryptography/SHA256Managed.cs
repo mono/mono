@@ -35,7 +35,7 @@ namespace System.Security.Cryptography {
 		private const int HASH_SIZE_BYTES  =  32;
 		private uint[] _H;
 		private uint[] K;
-		private uint count;
+		private ulong count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
 		private uint[] buff;
@@ -203,45 +203,43 @@ namespace System.Security.Cryptography {
 	
 		private void ProcessFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
-			byte[] fooBuffer;
-			int paddingSize;
-			int i;
-			uint size;
-
-			paddingSize = (int)(56 - (inputCount + count) % BLOCK_SIZE_BYTES);
+			ulong total = count + (ulong)inputCount;
+			int paddingSize = (56 - (int)(total % BLOCK_SIZE_BYTES));
 
 			if (paddingSize < 1)
 				paddingSize += BLOCK_SIZE_BYTES;
 
-			fooBuffer = new byte[inputCount+paddingSize+8];
+			byte[] fooBuffer = new byte[inputCount+paddingSize+8];
 
-			for (i=0; i<inputCount; i++) {
+			for (int i=0; i<inputCount; i++) {
 				fooBuffer[i] = inputBuffer[i+inputOffset];
 			}
 
 			fooBuffer[inputCount] = 0x80;
-			for (i=inputCount+1; i<inputCount+paddingSize; i++) {
+			for (int i=inputCount+1; i<inputCount+paddingSize; i++) {
 				fooBuffer[i] = 0x00;
 			}
 
-			size = (uint)(count+inputCount);
-			size *= 8;
-
-			fooBuffer[inputCount+paddingSize]   = 0x00;
-			fooBuffer[inputCount+paddingSize+1] = 0x00;
-			fooBuffer[inputCount+paddingSize+2] = 0x00;
-			fooBuffer[inputCount+paddingSize+3] = 0x00;
-
-			fooBuffer[inputCount+paddingSize+4] = (byte)((size) >> 24);
-			fooBuffer[inputCount+paddingSize+5] = (byte)((size) >> 16);
-			fooBuffer[inputCount+paddingSize+6] = (byte)((size) >>  8);
-			fooBuffer[inputCount+paddingSize+7] = (byte)((size) >>  0);
-
-			ProcessBlock(fooBuffer, 0);
+			// I deal in bytes. The algorithm deals in bits.
+			ulong size = total << 3;
+			AddLength (size, fooBuffer, inputCount+paddingSize);
+			ProcessBlock (fooBuffer, 0);
 
 			if (inputCount+paddingSize+8 == 128) {
 				ProcessBlock(fooBuffer, 64);
 			}
+		}
+
+		internal void AddLength (ulong length, byte[] buffer, int position)
+		{
+			buffer [position++] = (byte)(length >> 56);
+			buffer [position++] = (byte)(length >> 48);
+			buffer [position++] = (byte)(length >> 40);
+			buffer [position++] = (byte)(length >> 32);
+			buffer [position++] = (byte)(length >> 24);
+			buffer [position++] = (byte)(length >> 16);
+			buffer [position++] = (byte)(length >>  8);
+			buffer [position]   = (byte)(length);
 		}
 	}
 }
