@@ -1,3 +1,8 @@
+2004-08-21  Jackson Harper  <jackson@ximian.com>
+
+	* ImageAnimator.cs: Run animator as a background thread so we do
+	not hang on exit.
+
 2004-08-21  Ravindra  <rkumar@novell.com>
 
 	* gdipFunctions.cs: Modified exception message to include the case

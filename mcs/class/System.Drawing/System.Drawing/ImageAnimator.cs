@@ -109,6 +109,7 @@ namespace System.Drawing
 				WorkerThread WT = new WorkerThread(onFrameChangeHandler, evtArgs);
 				ThreadStart TS = new ThreadStart(WT.LoopHandler);	
 				Thread thread = new Thread(TS);
+				thread.IsBackground = true;
 				evtArgs.RunThread = thread;
 				ht.Add (img, evtArgs);
 				
