@@ -143,23 +143,41 @@ namespace Microsoft.JScript {
 
 		public static string ToString (object value, bool explicitOK)
 		{
-			if (value is String)
-				return (string) value;
-			else if (value is StringObject)
-				return ((StringObject) value).value;
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+
+			switch (tc) {
+			case TypeCode.String:
+			case TypeCode.Double:
+				return ic.ToString (null);
+			}
 			throw new NotImplementedException ();
 		}
 
 
 		public static string ToString (bool b)
 		{
-			throw new NotImplementedException ();
+			return b ? "true" : "false";
 		}
 
 
 		public static string ToString (double d)
 		{	
-			throw new NotImplementedException ();
-		}			
+			IConvertible ic = d as IConvertible;
+			return ic.ToString (null);
+		}
+
+		//
+		// Utility methods
+		//
+		internal static TypeCode GetTypeCode (object obj, IConvertible ic)
+		{
+			if (obj == null)
+				return TypeCode.Empty;
+			else if (ic == null)
+				return TypeCode.Object;
+			else 
+				return  ic.GetTypeCode ();
+		}
 	}
 }

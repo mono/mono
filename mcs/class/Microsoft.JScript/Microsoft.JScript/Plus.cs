@@ -41,10 +41,51 @@ namespace Microsoft.JScript {
 
 		public  object EvaluatePlus (object v1, object v2)
 		{
-			if (v1 is String && v2 is String)
-				return String.Concat (v1, v2);
-			else
-				return new object ();
+			IConvertible ic1 = v1 as IConvertible;
+			IConvertible ic2 = v2 as IConvertible;
+
+			TypeCode tc1 = Convert.GetTypeCode (v1, ic1);
+			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
+			
+			switch (tc1) {
+			case TypeCode.Double:
+				switch (tc2) {
+				case TypeCode.Boolean:
+				case TypeCode.Double:
+					return ic1.ToDouble (null) + ic2.ToDouble (null);
+
+				case TypeCode.String:
+					return ic1.ToString (null) + ic2.ToString (null);
+				}
+				break;
+
+			case TypeCode.String:
+				switch (tc2) {
+				case TypeCode.Boolean:
+					return ic1.ToString (null) + Convert.ToString (ic2.ToBoolean (null));
+
+				case TypeCode.Double:
+				case TypeCode.String:
+					return ic1.ToString (null) + ic2.ToString (null);
+				}
+				break;
+				
+			case TypeCode.Boolean:
+				switch (tc2) {
+				case TypeCode.Double:
+					return ic1.ToDouble (null) + ic2.ToDouble (null);
+
+				case TypeCode.String:
+					return Convert.ToString (ic1.ToBoolean (null)) + ic2.ToString (null);
+
+				case TypeCode.Boolean:
+					return ic1.ToInt32 (null) + ic2.ToInt32 (null);
+				}
+				break;
+			default:
+				return EvaluatePlus (v2, v1);
+			}
+			throw new NotImplementedException ();
 		}
 
 		public static object DoOp (object v1, object v2)

@@ -36,6 +36,21 @@ namespace Microsoft.JScript {
 
 		public static string JScriptTypeof (object value)
 		{
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+			
+			switch (tc) {
+			case TypeCode.Int32:
+			case TypeCode.Double:
+				return "number";
+
+			case TypeCode.String:
+				return "string";
+
+			default:
+				Console.WriteLine ("TypeOf, tc = {0}", tc);
+				break;
+			}
 			throw new NotImplementedException ();
 		}
 

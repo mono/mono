@@ -48,7 +48,42 @@ namespace Microsoft.JScript {
 
 		public bool EvaluateEquality (object v1, object v2)
 		{
-			return false;
+			IConvertible ic1 = v1 as IConvertible;
+			IConvertible ic2 = v2 as IConvertible;
+
+			TypeCode tc1 = Convert.GetTypeCode (v1, ic1);
+			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
+
+			switch (tc1) {
+			case TypeCode.Double:
+				switch (tc2) {
+				case TypeCode.Double:
+					return ic1.ToDouble (null) == ic2.ToDouble (null);
+				}
+				break;
+
+			case TypeCode.String:
+				switch (tc2) {
+				case TypeCode.String:
+					return ic1.ToString (null) == ic2.ToString (null);
+
+				case TypeCode.Double:
+					return ic1.ToDouble (null) == ic2.ToDouble (null);
+				}
+				break;
+
+			case TypeCode.Int32:
+				switch (tc2) {
+				case TypeCode.Double:
+					return ic1.ToDouble (null) == ic2.ToDouble (null);
+				}
+				break;
+
+			default:
+				Console.WriteLine ("Equality, tc1 = {0}, tc2 = {1}", tc1, tc2);
+				break;
+			}
+			throw new NotImplementedException ();			
 		}
 
 
