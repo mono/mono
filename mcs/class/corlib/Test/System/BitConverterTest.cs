@@ -561,6 +561,13 @@ public class BitConverterTest : Assertion {
 	}
 
 	[Test]
+	public void ToString_Empty ()
+	{
+		byte[] empty = new byte [0];
+		AssertEquals ("Empty", String.Empty, BitConverter.ToString (empty));
+	}
+
+	[Test]
 	public void ToBoolean () 
 	{
 		byte[] array = new byte [2] { 0x02, 0x00 };
