@@ -67,6 +67,10 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "System.Xml\ChangeLog"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "System.Xml\DomEncodingType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

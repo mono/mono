@@ -80,7 +80,7 @@ namespace System.Xml
 
 		public override XmlNode CloneNode(bool deep)
 		{
-			return new XmlProcessingInstruction(target, data, FOwnerDocument);
+			return new XmlProcessingInstruction(target, data, OwnerDocument);
 		}
 
 		[MonoTODO]

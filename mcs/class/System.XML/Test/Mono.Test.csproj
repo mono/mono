@@ -87,6 +87,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ChangeLog"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "NameTableTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

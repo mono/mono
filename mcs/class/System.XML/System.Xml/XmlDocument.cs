@@ -16,12 +16,15 @@ namespace System.Xml
 
 	public class XmlDocument : XmlNode
 	{
+		#region Fields
+
+		private XmlLinkedNode lastChild;
+
+		#endregion
+
 		#region Constructors
 
-		public XmlDocument () : base (null)
-		{
-			FOwnerDocument = this;
-		}
+		public XmlDocument () : base (null) { }
 
 		[MonoTODO]
 		protected internal XmlDocument (XmlImplementation imp) : base (null)
@@ -57,9 +60,7 @@ namespace System.Xml
 
 		[MonoTODO]
 		public override string BaseURI {
-			get {
-				throw new NotImplementedException();
-			}
+			get { throw new NotImplementedException(); }
 		}
 
 		public XmlElement DocumentElement {
@@ -78,82 +79,87 @@ namespace System.Xml
 
 		[MonoTODO]
 		public virtual XmlDocumentType DocumentType {
-			get {
-				throw new NotImplementedException();
-			}
+			get { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		public XmlImplementation Implementation {
-			get {
-				throw new NotImplementedException();
-			}
+			get { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		public override string InnerXml {
-			get {
-				throw new NotImplementedException();
-			}
-
-			set {
-				throw new NotImplementedException();
-			}
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		public override bool IsReadOnly {
-			get { 
-				return false; 
-			}
+			get { return false; }
 		}
 
-		public override string LocalName {
-			get { 
-				return "#document"; 
+		internal override XmlLinkedNode LastLinkedChild
+		{
+			get	{
+				return lastChild;
 			}
+			/// set'er Should only be called by XmlNode.AppendChild().
+			set 
+			{
+				// This is our special case for clearing out all children.
+				// XmlNode.RemoveAll() will call this method passing in
+				// a null node.
+				if (value == null)
+				{
+					// This should allow the GC to collect up our circular list
+					// that we no longer have a reference to.
+					lastChild = null;
+					return;
+				}
+
+				if (LastChild == null) 
+				{
+					lastChild = value;
+					LastLinkedChild.NextLinkedSibling = null;
+				}
+				
+				value.NextLinkedSibling = LastLinkedChild.NextLinkedSibling;
+				LastLinkedChild.NextLinkedSibling = value;
+
+				SetParentNode(this);
+			}
+		}
+		
+		public override string LocalName 
+		{
+			get { return "#document"; }
 		}
 
 		public override string Name {
-			get { 
-				return "#document"; 
-			}
+			get { return "#document"; }
 		}
 
 		[MonoTODO]
 		public XmlNameTable NameTable {
-			get {
-				throw new NotImplementedException();
-			}
+			get { throw new NotImplementedException(); }
 		}
 
 		public override XmlNodeType NodeType {
-			get { 
-				return XmlNodeType.Document; 
-			}
+			get { return XmlNodeType.Document; }
 		}
 
 		public override XmlDocument OwnerDocument {
-			get { 
-				return null; 
-			}
+			get { return null; }
 		}
 
 		[MonoTODO]
 		public bool PreserveWhitespace {
-			get {
-				throw new NotImplementedException();
-			}
-
-			set {
-				throw new NotImplementedException();
-			}
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
 		public XmlResolver XmlResolver {
-			set {
-				throw new NotImplementedException();
-			}
+			set { throw new NotImplementedException(); }
 		}
 
 		#endregion
@@ -194,7 +200,6 @@ namespace System.Xml
 			return CreateAttribute (prefix, localName, String.Empty);
 		}
 
-		[MonoTODO]
 		public virtual XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI)
 		{
 			return new XmlAttribute (prefix, localName, namespaceURI, this);

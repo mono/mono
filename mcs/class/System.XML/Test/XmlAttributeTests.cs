@@ -33,7 +33,7 @@ namespace Ximian.Mono.Tests
 
 		public void TestHasChildNodes()
 		{
-			Assert("Child nodes not allowed", attr.HasChildNodes);
+			Assert("Child nodes not allowed", attr.HasChildNodes == false);
 		}
 
 		public void TestName()

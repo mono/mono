@@ -48,7 +48,7 @@ namespace System.Xml
 
 		public override XmlNode CloneNode(bool deep)
 		{
-			return new XmlComment(Value, FOwnerDocument);
+			return new XmlComment(Value, OwnerDocument);
 		}
 
 		[MonoTODO]

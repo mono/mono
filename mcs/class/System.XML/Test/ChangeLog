@@ -1,3 +1,10 @@
+2002-03-06  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlAttributeTests.cs: Fixed bug in TestHasChildNodes test.
+	
+	* XmlDocumentTests.cs: Started work on some tests for invalid data in
+	various nodes created by the document.
+
 2002-03-02  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlDocumentTests.cs: New tests TestLoadProcessingInstruction(),

@@ -1,3 +1,18 @@
+2002-03-06  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlNode.cs: Rewrote this class from scratch with
+	MonoToDo attribs and NotImplementedExceptions.  Now defines an
+	internal LastLinkedNode property to aid the new implementation.
+	XmlNodes only have ref to owner doc and parent nodes now.
+	
+	* XmlLinkedNode.cs: Added NextLinkedSibling internal property
+	and ref to next sibling to support walking our circular child
+	node list.
+	
+	* XmlDocument.cs: Added ref to last child node and overrides
+	XmlNode's internal LastLinkedChild property to support walking
+	our circular child node list.
+	
 2002-03-02  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlProcessingInstructions.cs: Class was empty.  Implemented

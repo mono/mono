@@ -17,6 +17,62 @@ namespace Ximian.Mono.Tests
 			document = new XmlDocument ();
 		}
 
+		///////////////////////////////////////////////////////////////////////
+		//
+		//  Createxxx() tests.
+		//
+		///////////////////////////////////////////////////////////////////////
+		
+		public void TestCreateProcessingInstructionInvalid()
+		{
+			XmlProcessingInstruction processingInstruction;
+//			string outerXml;
+
+			// A newly created node should/shouldn't? have a parent or a documentelement?
+			// need to make a test to find out.
+
+
+			// Invalid contents doesn't fail on the create but will on methods
+			// like OuterXml.
+
+//			processingInstruction = null;
+//			processingInstruction = document.CreateProcessingInstruction("foo", "bar?>baz");
+//			Assert(processingInstruction != null);
+//			document.AppendChild(processingInstruction);
+//			try {
+//				outerXml = document.OuterXml;
+//				Fail("Should have thrown an ArgumentException.");
+//			} catch (ArgumentException) { }
+			
+
+			processingInstruction = null;
+			processingInstruction = document.CreateProcessingInstruction("foo", "bar?>baz");
+			Assert(processingInstruction != null);
+			
+			processingInstruction = null;
+			processingInstruction = document.CreateProcessingInstruction("XML", "bar");
+			Assert(processingInstruction != null);
+			
+			processingInstruction = null;
+			processingInstruction = document.CreateProcessingInstruction("xml", "bar");
+			Assert(processingInstruction != null);
+
+			try {
+				Fail("Should have thrown an Exception.");
+			}
+			catch (Exception e) {
+				string billy = e.Message;
+			}
+
+		}
+
+
+		///////////////////////////////////////////////////////////////////////
+		//
+		//  LoadXml(string) tests.
+		//
+		///////////////////////////////////////////////////////////////////////
+
 		public void TestLoadProcessingInstruction ()
 		{
 			document.LoadXml (@"<?foo bar='baaz' quux='quuux'?><quuuux></quuuux>");
@@ -26,15 +82,15 @@ namespace Ximian.Mono.Tests
 		public void TestLoadCDATA ()
 		{
 			document.LoadXml ("<foo><![CDATA[bar]]></foo>");
-			Assert (document.DocumentElement.ChildNodes [0].NodeType == XmlNodeType.CDATA);
-			AssertEquals ("bar", document.DocumentElement.ChildNodes [0].Value);
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.CDATA);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
 		}
 
 		public void TestLoadComment()
 		{
 			document.LoadXml ("<foo><!--Comment--></foo>");
-			Assert (document.DocumentElement.ChildNodes [0].NodeType == XmlNodeType.Comment);
-			AssertEquals ("Comment", document.DocumentElement.ChildNodes [0].Value);
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Comment);
+			AssertEquals ("Comment", document.DocumentElement.FirstChild.Value);
 		}
 
 		public void TestLoadXmlSingleElement ()
@@ -44,36 +100,36 @@ namespace Ximian.Mono.Tests
 			AssertNotNull (document.DocumentElement);
 
 			AssertSame (document.FirstChild, document.DocumentElement);
-			AssertSame (document.ChildNodes [0], document.DocumentElement);
+			AssertSame (document.FirstChild, document.DocumentElement);
 		}
 
 		public void TestLoadXmlExceptionClearsDocument ()
 		{
 			document.LoadXml ("<foo/>");
-			Assert (document.ChildNodes.Count > 0);
+			Assert (document.FirstChild != null);
 			
 			try {
 				document.LoadXml ("<123/>");
 				Fail ("An XmlException should have been thrown.");
 			} catch (XmlException) {}
 
-			Assert (document.ChildNodes.Count == 0);
+			Assert (document.FirstChild == null);
 		}
 
 		public void TestLoadXmlElementWithChildElement ()
 		{
 			document.LoadXml ("<foo><bar/></foo>");
-			Assert (document.ChildNodes.Count == 1);
-			Assert (document.ChildNodes [0].ChildNodes.Count == 1);
+//			Assert (document.ChildNodes.Count == 1);
+//			Assert (document.FirstChild.ChildNodes.Count == 1);
 			AssertEquals ("foo", document.DocumentElement.LocalName);
-			AssertEquals ("bar", document.DocumentElement.ChildNodes [0].LocalName);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.LocalName);
 		}
 
 		public void TestLoadXmlElementWithTextNode ()
 		{
 			document.LoadXml ("<foo>bar</foo>");
-			Assert (document.DocumentElement.ChildNodes [0].NodeType == XmlNodeType.Text);
-			AssertEquals ("bar", document.DocumentElement.ChildNodes [0].Value);
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Text);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
 		}
 
 		public void TestDocumentElement ()

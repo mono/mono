@@ -4,6 +4,8 @@ namespace System.Xml
 {
 	public abstract class XmlLinkedNode : XmlNode
 	{
+		XmlLinkedNode nextSibling;
+
 		#region Constructors
 
 		protected internal XmlLinkedNode(XmlDocument doc) : base(doc) { }
@@ -12,12 +14,22 @@ namespace System.Xml
 
 		#region Properties
 
-		[MonoTODO]
 		public override XmlNode NextSibling
 		{
 			get {
-				throw new NotImplementedException ();
+				if (Object.ReferenceEquals(nextSibling, ParentNode.LastLinkedChild.NextLinkedSibling) == false) {
+					return nextSibling;
+				}
+				else {
+					return null;
+				}
 			}
+		}
+
+		internal XmlLinkedNode NextLinkedSibling
+		{
+			get { return nextSibling; }
+			set { nextSibling = value; }
 		}
 
 		[MonoTODO]
@@ -29,5 +41,6 @@ namespace System.Xml
 		}
 
 		#endregion
+
 	}
 }

@@ -16,6 +16,7 @@ namespace System.Xml
 		#region Fields
 
 		private XmlAttributeCollection attributes;
+		private XmlLinkedNode lastChild;
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
@@ -86,7 +87,41 @@ namespace System.Xml
 			}
 		}
 
-		public override string LocalName {
+		internal override XmlLinkedNode LastLinkedChild
+		{
+			get	
+			{
+				return lastChild;
+			}
+			/// set'er Should only be called by XmlNode.AppendChild().
+			set 
+			{
+				// This is our special case for clearing out all children.
+				// XmlNode.RemoveAll() will call this method passing in
+				// a null node.
+				if (value == null)
+				{
+					// This should allow the GC to collect up our circular list
+					// that we no longer have a reference to.
+					lastChild = null;
+					return;
+				}
+
+				if (LastChild == null) 
+				{
+					lastChild = value;
+					LastLinkedChild.NextLinkedSibling = null;
+				}
+				
+				value.NextLinkedSibling = LastLinkedChild.NextLinkedSibling;
+				LastLinkedChild.NextLinkedSibling = value;
+
+				SetParentNode(this);
+			}
+		}
+		
+		public override string LocalName 
+		{
 			get { 
 				return localName; 
 			}
