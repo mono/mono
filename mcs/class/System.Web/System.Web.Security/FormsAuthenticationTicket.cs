@@ -35,7 +35,7 @@ namespace System.Web.Security
 			this.expiration = expiration;
 			this.isPersistent = isPersistent;
 			this.userData = userData;
-			//FIXME: cookiePath???
+			this.cookiePath = "/";
 		}
 
 		public FormsAuthenticationTicket (int version,
@@ -67,7 +67,7 @@ namespace System.Web.Security
 				expiration = issueDate.AddMinutes ((double) timeout);
 
 			this.userData = String.Empty;
-			//FIXME: cookiePath???
+			this.cookiePath = "/";
 		}
 
 		public string CookiePath
