@@ -1,3 +1,8 @@
+2004-12-02  Jackson Harper  <jackson@ximian.com>
+
+	* FieldDef.cs: Set the underlying type for data constants. This
+	fixes bug #70153.
+
 2004-08-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DebuggingInfo.cs : csc build fix (see bug #62230).

@@ -119,8 +119,12 @@ namespace Mono.ILASM {
                         if (offset_set)
                                 field_def.SetOffset (offset);
 
-                        if (value_set)
-                                field_def.AddValue (constant);
+			if (value_set) {
+				PEAPI.DataConstant dc = constant as PEAPI.DataConstant;
+				if (dc != null)
+					dc.Type = type.PeapiType;
+				field_def.AddValue (constant);
+			}
 
                         if (at_data_id != null) {
                                 PEAPI.DataConstant dc = code_gen.GetDataConst (at_data_id);
