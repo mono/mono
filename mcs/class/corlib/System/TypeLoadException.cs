@@ -20,28 +20,20 @@ namespace System {
 		private string msg;
 		private string type;
 
-                private string ClassName;
-                private string AssemblyName;
-                private string MessageArg;
-                private string ResourceID;
-                
                 // Constructors
 		public TypeLoadException ()
 			: base (Locale.GetText ("A type load exception has occurred."))
 		{
-			msg = Locale.GetText ("A type load exception has occured.");
 		}
 
 		public TypeLoadException (string message)
 			: base (message)
 		{
-			msg = message;
 		}
 
 		public TypeLoadException (string message, Exception inner)
 			: base (message, inner)
 		{
-			msg = message;
 		}
 
 		protected TypeLoadException (SerializationInfo info, StreamingContext context)
@@ -50,21 +42,29 @@ namespace System {
 			if (info == null)
 				throw new ArgumentNullException ("info is null.");
 
-                        ClassName = info.GetString ("TypeLoadClassName");
-                        AssemblyName = info.GetString ("TypeLoadAssemblyName");
-                        MessageArg = info.GetString ("MessageArg");
-                        ResourceID = info.GetString ("ResourceID");
+			type = info.GetString ("type");
 		}
 
 		// Properties
-		public override string Message
-		{
-			get { return msg; }
+		public override string Message {
+			get {
+				if (type == null)
+					return base.Message;
+
+				if (msg == null)
+					msg = "Cannot load type '" + type + "'";
+
+				return msg;
+			}
 		}
 
-		public string TypeName
-		{
-			get { return type; }
+		public string TypeName {
+			get { 
+				if (type == null)
+					return "";
+
+				return type;
+			}
 		}
 
 		// Methods
@@ -74,10 +74,7 @@ namespace System {
 				throw new ArgumentNullException ("info is null.");
 
 			base.GetObjectData (info, context);
-                        info.AddValue ("TypeLoadClassName", ClassName, typeof (string)); 
-                        info.AddValue ("TypeLoadAssemblyName", AssemblyName, typeof (string));
-                        info.AddValue ("TypeLoadMessageArg", MessageArg, typeof (string));
-                        info.AddValue ("TypeLoadResourceID", ResourceID);
+			info.AddValue ("type", type, typeof (string)); 
 		}
 	}
 }
