@@ -4,12 +4,13 @@ public class Blah {
 
 	enum Bar {
 		a = MyEnum.Foo,
-		b = A.c
+		b = A.c,
+		c = MyEnum.Bar
 	}
 	
 	public enum MyEnum : byte {
 		Foo = 254,
-		Bar
+		Bar = B.y
 	}
 
 	enum A {
@@ -53,6 +54,11 @@ public class Blah {
 		i = (int) Bar.b;
 
 		if (i != 2)
+			return 1;
+
+		j = (int) Bar.c;
+
+		if (j != 1)
 			return 1;
 
 		Console.WriteLine ("Enum emission test okay");
