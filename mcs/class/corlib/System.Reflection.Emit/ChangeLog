@@ -1,4 +1,9 @@
 
+Wed Jun 23 15:40:48 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: handle properly the case when SetParent() 
+	is called (requires an updated runtime, too bug#60474).
+
 Wed Jun 23 14:20:47 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* EnumBuilder.cs, TypeBuilder.cs: patch from Gert Driesen

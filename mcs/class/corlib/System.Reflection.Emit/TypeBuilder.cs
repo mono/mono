@@ -1257,6 +1257,8 @@ namespace System.Reflection.Emit {
 				throw not_after_created ();
 
 			parent = parentType;
+			// will just set the parent-related bits if called a second time
+			setup_internal_class (this);
 		}
 		internal int get_next_table_index (object obj, int table, bool inc) {
 			return pmodule.get_next_table_index (obj, table, inc);
