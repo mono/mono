@@ -34,7 +34,6 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-#if !NET_2_0
 	class Compiler
 	{
 		public string Language;
@@ -53,7 +52,7 @@ namespace System.Web.Configuration
 				"CompilerOptions: " + CompilerOptions + "\n";
 		}
 	}
-#else // NET_2_0
+#if false
 	public sealed class Compiler : ConfigurationElement
 	{
 		static ConfigurationPropertyCollection props;

@@ -129,11 +129,7 @@ namespace System.Web.Configuration
 			num_recompiles_before_app_restart = parent.num_recompiles_before_app_restart;
 			strict = parent.strict;
 			temp_directory = parent.temp_directory;
-#if !NET_2_0
 			compilers = new CompilerCollection (parent.compilers);
-#else
-			compilers = new CompilerCollection ();
-#endif
 			ArrayList p = parent.assemblies;
 			assembliesInBin = parent.assembliesInBin;
 			ICollection coll = (p == null) ? (ICollection) new object [0] : p;

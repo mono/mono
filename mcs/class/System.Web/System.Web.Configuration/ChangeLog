@@ -1,3 +1,12 @@
+2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilerCollection.cs:
+	* CompilationConfigurationHandler.cs:
+	* Compiler.cs:
+	* CompilationSection.cs:
+	* CompilationConfiguration.cs: reverted last patch and/or disable code
+	until the whole config system is migrated to 2.0. Fixes bug #73736.
+
 2005-03-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeSubDirectoriesCollection.cs:

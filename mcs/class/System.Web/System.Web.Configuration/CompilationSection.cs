@@ -75,8 +75,8 @@ namespace System.Web.Configuration
 			props.Add (batchTimeout);
 			codeSubDirectories = new ConfigurationProperty ("codeSubDirectories", typeof (CodeSubDirectoriesCollection), 0);
 			props.Add (codeSubDirectories);
-			compilers = new ConfigurationProperty ("compilers", typeof (CompilerCollection), 0);
-			props.Add (compilers);
+			//compilers = new ConfigurationProperty ("compilers", typeof (CompilerCollection), 0);
+			//props.Add (compilers);
 			debug = new ConfigurationProperty ("debug", boolType, false, boolTypeConv, null, 0);
 			props.Add (debug);
 			defaultLanguage = new ConfigurationProperty ("defaultLanguage", strType, "c#", strTypeConv, null, 0);
@@ -125,9 +125,11 @@ namespace System.Web.Configuration
 			get { return (CodeSubDirectoriesCollection) this [codeSubDirectories]; }
 		}
 
+		/*
 		public CompilerCollection Compilers {
 			get { return (CompilerCollection) this [compilers]; }
 		}
+		*/
 
 		public bool Debug {
 			get { return (bool) this [debug]; }

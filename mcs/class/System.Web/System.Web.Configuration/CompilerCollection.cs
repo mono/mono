@@ -34,7 +34,6 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-#if !NET_2_0
 	sealed class CompilerCollection
 	{
 		Hashtable compilers;
@@ -65,7 +64,7 @@ namespace System.Web.Configuration
 			}
 		}
 	}
-#else // NET_2_0
+#if false
 	public sealed class CompilerCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection props;

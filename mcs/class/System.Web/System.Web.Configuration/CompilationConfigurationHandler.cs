@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.Collections;
 using System.Configuration;
@@ -92,14 +91,11 @@ namespace System.Web.Configuration
 					ThrowException ("Unexpected element", child);
 
 				Compiler compiler = new Compiler ();
-#if !NET_2_0
-// Removing this for 2.0 is a hack until the whole config. system is migrated to 2.0
 				compiler.Language  = AttValue ("language", child);
 				compiler.Extension  = AttValue ("extension", child);
 				compiler.Type = AttValue ("type", child);
 				compiler.CompilerOptions = AttValue ("compilerOptions", child, true, true);
 				compiler.WarningLevel = AttUIntValue ("warningLevel", child, 0);
-#endif
 				config.Compilers [compiler.Language] = compiler;
 			}
 		}
