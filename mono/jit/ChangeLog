@@ -1,5 +1,7 @@
 2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_jit_cleanup): added more statistics
+
 	* invoke.c (arch_create_native_wrapper): special case EndInvoke -
 	we need to pass the MonoMethod pointer as first argument.
 

@@ -1,3 +1,7 @@
+2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_init): don't include vtable inside MonoClass
+	to save some memory, gather some statistics.
 
 Sat Apr 6 20:07:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
