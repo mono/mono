@@ -216,7 +216,7 @@ namespace System.Web.Compilation
 
 				id = tokenizer.Value;
 				if (!Eat ('>'))
-					OnError ("expecting '>'");
+					OnError ("expecting '>'. Got '" + id + "'");
 
 				tagtype = TagType.Close;
 				break;
@@ -249,7 +249,7 @@ namespace System.Web.Compilation
 				if (Eat ('/') && Eat ('>'))
 					tagtype = TagType.SelfClosing;
 				else if (!Eat ('>'))
-					OnError ("expecting '>'");
+					OnError ("expecting '>'. Got '" + tokenizer.Value + "'");
 
 				break;
 			default:

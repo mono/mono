@@ -142,6 +142,7 @@ namespace System.Web.Compilation
 					return item.Result;
 
 				CompilerParameters options = GetOptions (compiler.Parser.Assemblies);
+				options.IncludeDebugInformation = compiler.Parser.Debug;
 				results = compiler.Compiler.CompileAssemblyFromFile (options, file);
 				cache [file] = new CompilationCacheItem (results, compiler.Parser.Dependencies);
 			}

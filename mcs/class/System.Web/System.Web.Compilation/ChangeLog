@@ -1,3 +1,12 @@
+2003-07-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs: more useful error information,
+
+	* BaseCompiler.cs:
+	* CachingCompiler.cs: honor the debug="true" option.
+
+	* TemplateControlCompiler.cs: small fixes for templates.
+
 2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: made Compiler property virtual.

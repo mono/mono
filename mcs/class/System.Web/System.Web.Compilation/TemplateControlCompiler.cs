@@ -132,9 +132,10 @@ namespace System.Web.Compilation
 				mainClass.Members.Add (renderMethod);
 			}
 			
-			if (childrenAsProperties || isTemplate) {
+			if (childrenAsProperties || builder.ControlType == null) {
 				string typeString;
-				if (builder.isProperty && !isTemplate)
+				if (builder.ControlType != null && builder.isProperty &&
+				    !typeof (ITemplate).IsAssignableFrom (builder.ControlType))
 					typeString = builder.ControlType.FullName;
 				else 
 					typeString = "System.Web.UI.Control";
@@ -585,11 +586,16 @@ namespace System.Web.Compilation
 		{
 			EnsureID (builder);
 			bool isTemplate = (typeof (TemplateBuilder).IsAssignableFrom (builder.GetType ()));
-			if (!isTemplate)
+			if (!isTemplate && !inTemplate) {
 				CreateField (builder, true);
+			} else if (!isTemplate) {
+				builder.ID = builder.GetNextID (null);
+				CreateField (builder, false);
+			}
 
-			InitMethod (builder, isTemplate, childrenAsProperties || isTemplate);
-			CreateAssignStatementsFromAttributes (builder);
+			InitMethod (builder, isTemplate, childrenAsProperties);
+			if (builder.GetType () != typeof (TemplateBuilder))
+				CreateAssignStatementsFromAttributes (builder);
 
 			if (builder.Children != null && builder.Children.Count > 0) {
 				ArrayList templates = null;

@@ -153,6 +153,7 @@ namespace System.Web.Compilation
 			compiler = provider.CreateCompiler ();
 
 			BuildTree ();
+			compilerParameters.IncludeDebugInformation = parser.Debug;
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
 
