@@ -710,6 +710,7 @@ namespace System.Windows.Forms{
 		{
 			return (hi << 16) | (lo & 0x0000ffff);
 		}
+
 		#endregion
 
 		#region Mono win32 Fuinctions

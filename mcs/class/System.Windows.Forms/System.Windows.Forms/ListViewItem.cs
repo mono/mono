@@ -16,6 +16,7 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
+	[Serializable]
 	public class ListViewItem :  ICloneable, ISerializable {
 
 		//
@@ -59,6 +60,18 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public ListViewItem(string[] strings, int val,  Color color1, Color color2, Font font)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+	       	public ListViewItem (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
