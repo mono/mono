@@ -1,3 +1,14 @@
+2003-08-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-hash.h mono-hash.c (mono_g_hash_table_remap): New function used
+	to remap hashtable values during a copying collection. Not used at the
+	moment.
+	* mono-hash.c (g_hash_node_new): Restructured to avoid the global lock
+	in the common case.
+	* mono-hash.c (mono_g_hash_table_new_full): Enable the optimization of
+	the key function even if the client supplied g_direct_equal instead of
+	NULL.
+
 2003-08-22  Duncan Mak  <duncan@ximian.com>
 
 	* strtod.c: 64-bit related fixes from Laurent Morichetti
