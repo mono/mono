@@ -1,3 +1,10 @@
+2002-06-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs: implemented AppendFormat methods using
+	String.Format. Thanks Paolo!
+
+	This makes xsp generate correct C# output in linux :-). I still need
+	to do more testing, though.
 
 Mon Jun 3 12:58:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -457,35 +457,36 @@ namespace System.Text {
 			return Append( value.Substring( startIndex, count ).ToCharArray() );
 		}
 
-		[MonoTODO]
-		public StringBuilder AppendFormat( string format, object arg0 ) {
-			// TODO: Implement
-			return this;
+		public StringBuilder AppendFormat (string format, object arg0 )
+		{
+			string result = String.Format (format, arg0);
+			return Append (result);
 		}
 
-		[MonoTODO]
-		public StringBuilder AppendFormat( string format, params object[] args ) {
-			// TODO: Implement
-			return this;
+		public StringBuilder AppendFormat (string format, params object[] args )
+		{
+			string result = String.Format (format, args);
+			return Append (result);
 		}
 
-		[MonoTODO]
-		public StringBuilder AppendFormat( IFormatProvider provider, string format,
-			params object[] args ) {
-			// TODO: Implement
-			return this;
+		public StringBuilder AppendFormat (IFormatProvider provider,
+						   string format,
+						   params object[] args)
+		{
+			string result = String.Format (provider, format, args);
+			return Append (result);
 		}
 
-		[MonoTODO]
-		public StringBuilder AppendFormat( string format, object arg0, object arg1 ) {
-			// TODO: Implement;
-			return this;
+		public StringBuilder AppendFormat (string format, object arg0, object arg1 )
+		{
+			string result = String.Format (format, arg0, arg1);
+			return Append (result);
 		}
 
-		[MonoTODO]
-		public StringBuilder AppendFormat( string format, object arg0, object arg1, object arg2 ) {
-			// TODO Implement
-			return this;
+		public StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2 )
+		{
+			string result = String.Format (format, arg0, arg1, arg2);
+			return Append (result);
 		}
 
 		/*  The Insert Functions */
