@@ -1,3 +1,6 @@
+2004-02-24  Jordi Mas i Hernandez <jordi@ximian.com>
+	* font.cs: fixes, Clone, and ToString	
+	
 2004-02-21  Jordi Mas i Hernandez <jordi@ximian.com>
 	* gdipFunctions.cs: MeasureString 
 	* Graphics.cs : MeasureString

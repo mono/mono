@@ -106,8 +106,7 @@ namespace System.Drawing {
 			_gdiVerticalFont = isVertical;
 			
 			unitConversion(unit, GraphicsUnit.Point, emSize, out  _sizeInPoints);
-			Console.WriteLine("Size " + emSize +";" +   _sizeInPoints);
-			
+						
 			_bold = _italic = _strikeout = _underline = false;
 			
 			switch (style) {
@@ -141,19 +140,10 @@ namespace System.Drawing {
 
 		public Font(Font original, FontStyle style)
 		{
-			_bold = original.Bold;
-			_fontFamily = original.FontFamily;
-			_gdiCharSet = original.GdiCharSet;
-			_gdiVerticalFont = original.GdiVerticalFont;
-			_height = original.Height;
-			_italic = original.Italic;
-			_name = original.Name;
-			_size = original.Size;
-			_sizeInPoints = original.SizeInPoints;
-			_strikeout = original.Strikeout;
-			_underline = original.Underline;
-			_unit = original.Unit;
-			_style = style;
+			setProperties(original.FontFamily, original.Size, style, original.Unit, 
+				original.GdiCharSet, original.GdiVerticalFont);
+			
+			GDIPlus.GdipCreateFont(_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);					
 		}
 
 		public Font(FontFamily family, float emSize)
@@ -208,12 +198,11 @@ namespace System.Drawing {
 			setProperties(family, emSize, style, unit, charSet, isVertical);
 			
 			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);					
-		}
+		}		
 		
-		
-		object ICloneable.Clone()
+		public object Clone()
 		{
-			throw new NotImplementedException ();
+			return new Font(this, Style);
 		}
 		
 		internal IntPtr NativeObject{            
@@ -314,6 +303,12 @@ namespace System.Drawing {
 			get {
 				return _unit;
 			}
+		}
+		
+		public override System.String ToString()
+		{
+			return ("[Font: Name="+ _name +", Size="+ _size+", Style="+ _style  +", Units="+ _unit  +", GdiCharSet="+ _gdiCharSet
+				+", GdiVerticalFont="+ _gdiVerticalFont + "]");			
 		}
 	}
 }
