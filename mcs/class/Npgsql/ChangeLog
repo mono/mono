@@ -1,3 +1,7 @@
+2004-12-05  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
+
+	* Npgsql/NpgsqlCommand.cs: gborg 971 & 1068: Added support for ParameterDirection.Output and ParameterDirection.InputOutput parameters. Now you can use these types of parameters to get results. Thanks Ivan (ivan-sun1 at mail dot ru) and (teste at aslls dot ss) for heads up.
+
 2004-11-26  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (OTHER_RES): New.  List of .bmp files.

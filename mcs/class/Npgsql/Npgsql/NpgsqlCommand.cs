@@ -348,7 +348,10 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteNonQuery");
 
             ExecuteCommand();
-
+            
+            UpdateOutputParameters();
+            
+            
             // If nothing is returned, just return -1.
             if(Connector.Mediator.CompletedResponses.Count == 0)
             {
@@ -378,6 +381,40 @@ namespace Npgsql
                 return Int32.Parse(ret_string_tokens[ret_string_tokens.Length - 1]);
             else
                 return -1;
+        }
+        
+        
+        
+        private void UpdateOutputParameters()
+        {
+            // Check if there was some resultset returned. If so, put the result in output parameters.
+            
+            // Get ResultSets.
+            ArrayList resultSets = Connector.Mediator.ResultSets;
+            
+            if (resultSets.Count != 0)
+            {
+                NpgsqlResultSet nrs = (NpgsqlResultSet)resultSets[0];
+                                
+                if ((nrs != null) && (nrs.Count > 0))
+                {
+                    NpgsqlAsciiRow nar = (NpgsqlAsciiRow)nrs[0];
+                    
+                    Int32 i = 0;
+                    foreach (NpgsqlParameter p in Parameters)
+                    {
+                        if (((p.Direction == ParameterDirection.Output) ||
+                            (p.Direction == ParameterDirection.InputOutput)) && (i < nrs.RowDescription.NumFields ))
+                        {
+                            p.Value = nar[i];
+                            i++;
+                        }
+                    }
+                }
+                
+            }   
+            
+            
         }
 
         /// <summary>
@@ -638,6 +675,10 @@ namespace Npgsql
             {
                 NpgsqlParameter Param = parameters[i];
 
+                
+                if ((Param.Direction == ParameterDirection.Input) ||
+                    (Param.Direction == ParameterDirection.InputOutput))
+                
                 // FIXME DEBUG ONLY
                 // adding the '::<datatype>' on the end of a parameter is a highly
                 // questionable practice, but it is great for debugging!
@@ -700,10 +741,14 @@ namespace Npgsql
 
                 for (i = 0; i < parameters.Count; i++)
                 {
-                    //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
-                    parameterName = parameters[i].ParameterName;
-                    //textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
-                    parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1) + "::" + parameters[i].TypeInfo.Name);
+                    if ((parameters[i].Direction == ParameterDirection.Input) ||
+                    (parameters[i].Direction == ParameterDirection.InputOutput))
+                    {
+                        //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+                        parameterName = parameters[i].ParameterName;
+                        //textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
+                        parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1) + "::" + parameters[i].TypeInfo.Name);
+                    }
 
                 }
             }
@@ -740,12 +785,16 @@ namespace Npgsql
 
                 for (i = 0; i < parameters.Count; i++)
                 {
-                    //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
-                    parameterName = parameters[i].ParameterName;
-                    // The space in front of '$' fixes a parsing problem in 7.3 server
-                    // which gives errors of operator when finding the caracters '=$' in
-                    // prepare text
-                    textCommand = ReplaceParameterValue(textCommand, parameterName, " $" + (i+1));
+                    if ((parameters[i].Direction == ParameterDirection.Input) ||
+                    (parameters[i].Direction == ParameterDirection.InputOutput))
+                    {
+                        //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+                        parameterName = parameters[i].ParameterName;
+                        // The space in front of '$' fixes a parsing problem in 7.3 server
+                        // which gives errors of operator when finding the caracters '=$' in
+                        // prepare text
+                        textCommand = ReplaceParameterValue(textCommand, parameterName, " $" + (i+1));
+                    }
 
                 }
 
