@@ -1,3 +1,10 @@
+
+Fri Mar 29 16:09:54 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: kill some warnings. Check explicit interface method
+	implementation also without considering the namespace.
+	Load also literal strings in static class data.
+
 2002-03-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* assembly.c (default_assembly_name_resolver): Kill memory leak. 
