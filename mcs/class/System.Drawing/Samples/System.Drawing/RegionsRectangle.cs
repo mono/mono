@@ -32,7 +32,8 @@ public class Regions
 		int x = 0;
 		Rectangle rect1, rect2, rect3, rect4;		
 		Region rgn1, rgn2, rgn3, rgn4;
-		bool complement = true, exclude = true, union = true, xor = true, intersect = true;		
+				
+		bool complement = true, exclude = true, union = true, xor = true, intersect = true;
 		
 		SolidBrush whiteBrush = new SolidBrush (Color.White);				
 		
@@ -70,6 +71,7 @@ public class Regions
 		
 		/* Third */
 		if (intersect) {		
+			
 			Rectangle rect5 = new Rectangle (260, 30, 60, 80);		
 			Rectangle rect6 = new Rectangle (290, 40, 60, 80);		
 			Region rgn5 = new Region (rect5);
@@ -163,6 +165,7 @@ public class Regions
 		
 		/* Third */	
 		if (intersect) {				
+			
 			rect1 = new Rectangle (20+x, 180, 40, 50);		
 			rect2 = new Rectangle (50+x, 190, 40, 50);		
 			rect3 = new Rectangle (70+x, 210, 30, 50);		
@@ -174,12 +177,13 @@ public class Regions
 			dc.DrawRectangle (Pens.Red, rect2);
 			dc.DrawEllipse (Pens.Red, rect3);
 			
-			rgn1.Intersect (rgn2);
+			rgn1.Union (rgn2);
 			rgn1.Intersect (rgn3);
 			dc.FillRegion (Brushes.Blue, rgn1);		
 			dc.DrawRectangles (Pens.Yellow, rgn1.GetRegionScans (matrix));
 			dc.DrawString ("Intersect (" + rgn1.GetRegionScans (matrix).Length +")", fnt, whiteBrush, 270, 275);		
 			DumpRegion (rgn1);
+			
 		}
 		x += 110;
 		
@@ -196,7 +200,7 @@ public class Regions
 			dc.DrawRectangle (Pens.Red, rect2);
 			dc.DrawEllipse (Pens.Red, rect3);
 			
-			rgn1.Xor (rgn2);
+			rgn1.Union (rgn2);
 			rgn1.Xor (rgn3);
 			dc.FillRegion (Brushes.Blue, rgn1);		
 			dc.DrawRectangles (Pens.Yellow, rgn1.GetRegionScans (matrix));
@@ -273,8 +277,8 @@ public class Regions
 			dc.DrawEllipse (Pens.Red, rect3);
 			dc.DrawRectangle (Pens.Red, rect4);
 			
-			rgn1.Exclude (rgn2);
-			rgn1.Exclude (rgn3);
+			rgn1.Union (rgn2);
+			rgn1.Union (rgn3);
 			rgn1.Exclude (rgn4);
 			dc.FillRegion (Brushes.Blue, rgn1);		
 			dc.DrawRectangles (Pens.Yellow, rgn1.GetRegionScans (matrix));
@@ -284,6 +288,7 @@ public class Regions
 		
 		/* Third */				
 		if (intersect) {	
+
 			rect1 = new Rectangle (20+x, 330, 40, 50);		
 			rect2 = new Rectangle (50+x, 340, 40, 50);		
 			rect3 = new Rectangle (70+x, 360, 30, 50);		
@@ -298,13 +303,13 @@ public class Regions
 			dc.DrawEllipse (Pens.Red, rect3);
 			dc.DrawRectangle (Pens.Red, rect4);
 			
-			rgn1.Intersect (rgn2);
-			rgn1.Intersect (rgn3);
+			rgn1.Union (rgn2);
+			rgn1.Union (rgn3);
 			rgn1.Intersect (rgn4);
 			dc.FillRegion (Brushes.Blue, rgn1);		
 			dc.DrawRectangles (Pens.Yellow, rgn1.GetRegionScans (matrix));
 			dc.DrawString ("Intersect (" + rgn1.GetRegionScans (matrix).Length +")", fnt, whiteBrush, 250, 430);		
-			DumpRegion (rgn1);
+			DumpRegion (rgn1);		
 		}
 		x += 110;
 		
@@ -324,9 +329,10 @@ public class Regions
 			dc.DrawEllipse (Pens.Red, rect3);
 			dc.DrawRectangle (Pens.Red, rect4);		
 			
-			rgn1.Xor (rgn2);
+			rgn1.Union (rgn2);			
+			rgn3.Union (rgn4);
 			rgn1.Xor (rgn3);
-			rgn1.Xor (rgn4);
+			
 			dc.FillRegion(Brushes.Blue, rgn1);		
 			dc.DrawRectangles (Pens.Yellow, rgn1.GetRegionScans (matrix));
 			dc.DrawString ("Xor ("  + rgn1.GetRegionScans (matrix).Length +")", fnt, whiteBrush, 370, 430);		
