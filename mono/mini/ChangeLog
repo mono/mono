@@ -1,3 +1,8 @@
+2003-05-13  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_emit_call_args): set the cil_code for all arguments
+	if not already set.
+
 2003-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_output_basic_block): Handle negative zero
