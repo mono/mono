@@ -1,3 +1,9 @@
+2002-04-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* invoke.c (arch_create_native_wrapper): do not save LMF for Strings
+
+	* jit.c (check_inlining): better inlining support
+
 2002-04-19  Dan Lewis  <dihlewis@yahoo.co.uk>
 	
 	* x86.brg: LDLEN uses max_length instead of bounds[0]
