@@ -28,12 +28,12 @@ USE_MCS_FLAGS :=
 NEW_TEST_SOURCES_common = \
 	test-297 test-287 test-294 test-299 test-300 \
 	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309 test-310	\
-	a-call.cs	a-capture5.cs  a-instance.cs	  a-parameter2.cs			\
-	a-capture10.cs	a-capture6.cs  a-nested-anon2.cs  					\
-	a-capture1.cs	a-capture7.cs  a-nested-anon3.cs  a-parameter4.cs			\
-	a-capture2.cs	a-capture8.cs  a-nested-anon4.cs  a-parameter.cs			\
-	a-capture3.cs	a-capture9.cs  a-nested-anon.cs   a-simple2.cs				\
-	a-capture4.cs	a-event.cs     a-nested.cs	  a-simple.cs
+	a-call		a-capture5    a-instance	a-parameter2			\
+	a-capture10	a-capture6    a-nested-anon2  					\
+	a-capture1	a-capture7    a-nested-anon3    a-parameter4			\
+	a-capture2	a-capture8    a-nested-anon4  	a-parameter			\
+	a-capture3	a-capture9    a-nested-anonb   	a-simple2				\
+	a-capture4	a-event       a-nested		a-simple
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
