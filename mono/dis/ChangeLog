@@ -1,3 +1,8 @@
+2004-03-29  Jackson Harper  <jackson@ximian.com>
+
+	* main.c: Handle pinvoke info where there is not an impl_map
+	entry.
+	
 2004-03-27  Vladimir Vukicevic  <vladimir@pobox.com>
 
        * get.c (get_constant): output bool consts as bool(true) or
