@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.17  2004/08/25 21:35:18  jordi
+// more fixes to scrollbar
+//
 // Revision 1.16  2004/08/25 19:20:13  jordi
 // small bug fix regarding bar position
 //
@@ -121,6 +124,7 @@ namespace System.Windows.Forms
 		public new event EventHandler ForeColorChanged;
 		public new event EventHandler ImeModeChanged;
 		public new event MouseEventHandler MouseDown;
+		public new event MouseEventHandler MouseMove;
 		public new event MouseEventHandler MouseUp;
 		public new event PaintEventHandler Paint;
 		public event ScrollEventHandler Scroll;
@@ -145,6 +149,7 @@ namespace System.Windows.Forms
 			base.MouseDown += new MouseEventHandler (OnMouseDownSB); 
 			base.MouseUp += new MouseEventHandler (OnMouseUpSB);
 			base.MouseMove += new MouseEventHandler (OnMouseMoveSB);
+			base.Resize += new EventHandler (OnResizeSB);
 			base.TabStop = false;
 
 			if (ThemeEngine.Current.WriteToWindow == true)
@@ -191,14 +196,7 @@ namespace System.Windows.Forms
 
 		protected override CreateParams CreateParams 
 		{
-			get {
-				CreateParams createParams = base.CreateParams;
-				createParams.ClassName = XplatUI.DefaultClassName;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD |
-					WindowStyles.WS_VISIBLE);
-				return createParams;
-			}
+			get {	return base.CreateParams; }
 		}
 
 		protected override ImeMode DefaultImeMode 
@@ -453,26 +451,26 @@ namespace System.Windows.Forms
 
 			} else	{
 
-				if (Width < scrollbutton_width * 2)
-					thumb_size = 0;
-				else
-					if (Width < 70)
-						thumb_size = 8;
-					else
-						thumb_size = Width /10;
-
 				thumb_area.Y = 0;
 				thumb_area.X = scrollbutton_width;
 				thumb_area.Height = Height;
 				thumb_area.Width = Width - scrollbutton_width -  scrollbutton_width;
+
+				if (Width < scrollbutton_width * 2) 
+					thumb_size = 0;
+				else {
+					double per =  ((double)LargeChange / (double)((1 + Maximum - Minimum)));
+					thumb_size = 1 + (int) (thumb_area.Width * per);
+
+					if (thumb_size < thumb_min_size)
+						thumb_size = thumb_min_size;
+				}
 				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((Maximum - Minimum - LargeChange) + 1));
 			}
 		}
 
-    		protected override void OnResize (EventArgs e)
-    		{
-    			base.OnResize (e);
-
+    		private void OnResizeSB (Object o, EventArgs e)
+    		{ 
     			if (Width <= 0 || Height <= 0)
     				return;
 
@@ -559,8 +557,10 @@ namespace System.Windows.Forms
 				  // Console.WriteLine ("UpdateThumbPos: thumb_pos.Y {0} thumb_area.Y {1} pixel_per_pos {2}, new pos {3}, pixel {4}",
 			//	thumb_pos.Y, thumb_area.Y, pixel_per_pos, new_pos, pixel);
 
-			if (update_value)
-				UpdatePos ((int) new_pos, false);
+			
+
+			if (update_value) 
+				UpdatePos ((int) new_pos + Minimum, false);			
     		}
 
 		private void OnHoldClickTimer (Object source, EventArgs e)
@@ -600,21 +600,19 @@ namespace System.Windows.Forms
 
     				int pixel_pos;
 
-    				if (vert)
-    				 	pixel_pos = e.Y - (thumb_pixel_click_move - thumb_pos.Y);
-    				else
-    				 	pixel_pos = e.X - (thumb_pixel_click_move - thumb_pos.X);
-
-    				UpdateThumbPos (pixel_pos, true);
-
-    				if (vert)
-    					thumb_pixel_click_move = e.Y;
-    				else
-    					thumb_pixel_click_move = e.X;
-
-				//System.Console.WriteLine ("OnMouseMove thumb "+ e.Y
-				//	+ " clickpos " + thumb_pixel_click_move   + " pos:" + thumb_pos.Y);
-
+				if (vert) {					
+					pixel_pos = e.Y - (thumb_pixel_click_move - thumb_pos.Y);
+					thumb_pixel_click_move = e.Y;
+					UpdateThumbPos (pixel_pos, true);	
+					
+				}
+				else {
+					pixel_pos = e.X - (thumb_pixel_click_move - thumb_pos.X);
+					thumb_pixel_click_move = e.X;      
+					UpdateThumbPos (pixel_pos, true);	
+					
+				}
+				
 				Refresh ();
 			}
 
