@@ -48,17 +48,6 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 		}
 
-		private void ThrowIfNotElement (Compiler c)
-		{
-			switch (ParentType) {
-			case XPathNodeType.All:
-			case XPathNodeType.Element:
-					break;
-			default:
-					throw new XsltCompileException ("Cannot contain attribute from this parent node " + ParentType, null, c.Input);
-			}
-		}
-
 		protected override void Compile (Compiler c)
 		{
 			hasStack = (c.CurrentVariableScope == null);
@@ -79,8 +68,9 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslApplyTemplates (c));
 							break;
 						case "attribute":
-							ThrowIfNotElement (c);
-							content.Add (new XslAttribute (c));
+							if (ParentType == XPathNodeType.All
+								|| ParentType == XPathNodeType.Element)
+								content.Add (new XslAttribute (c));
 							break;
 						case "call-template":
 							content.Add (new XslCallTemplate (c));
@@ -89,7 +79,8 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslChoose (c));
 							break;
 						case "comment":
-							ThrowIfNotElement (c);
+							if (ParentType == XPathNodeType.All
+								|| ParentType == XPathNodeType.Element)
 							content.Add (new XslComment (c));
 							break;
 						case "copy":
@@ -99,8 +90,9 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslCopyOf (c));
 							break;
 						case "element":
-							ThrowIfNotElement (c);
-							content.Add (new XslElement (c));
+							if (ParentType == XPathNodeType.All
+								|| ParentType == XPathNodeType.Element)
+								content.Add (new XslElement (c));
 							break;
 						case "fallback":
 							content.Add (new XslFallback (c));
@@ -118,8 +110,9 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslNumber(c));
 							break;
 						case "processing-instruction":
-							ThrowIfNotElement (c);
-							content.Add (new XslProcessingInstruction(c));
+							if (ParentType == XPathNodeType.All
+								|| ParentType == XPathNodeType.Element)
+								content.Add (new XslProcessingInstruction(c));
 							break;
 						case "text":
 							content.Add (new XslText(c, false));
