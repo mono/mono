@@ -2,6 +2,7 @@
 
 	* marshal.c (mono_marshal_get_native_wrapper): started support for
 	custom marshalers.
+	(mono_delegate_to_ftnptr): consider marshalling specifications
 
 Tue Jun 3 11:17:02 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
