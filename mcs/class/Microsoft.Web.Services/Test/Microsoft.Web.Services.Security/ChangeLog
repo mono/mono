@@ -1,3 +1,7 @@
+2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509SecurityTokenTest.cs: New. New. Unit tests for X509SecurityToken.
+
 2003-09-16  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: New. Common methods to get DSA/RSA keypairs.
