@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.47 $
+// $Revision: 1.48 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.48  2004/08/23 19:55:08  pbartok
+// - Properly fixed Jordi's last fix
+// - Now uses Cursor's Position property instead of calling XplatUI directly
+//
 // Revision 1.47  2004/08/23 19:16:23  jordi
 // avoids null exception
 //
@@ -629,12 +633,8 @@ namespace System.Windows.Forms
 		}
 
 		public static Point MousePosition {
-			get {				
-				int x;
-				int y;
-
-				XplatUI.GetCursorPos (IntPtr.Zero, out x, out y);
-				return new Point (x, y);
+			get {
+				return Cursor.Position;
 			}
 		}
 		#endregion	// Public Static Properties
@@ -722,10 +722,9 @@ namespace System.Windows.Forms
 
 			set {
 				background_color=value;
-
-				if (this.window != null)
+				if (this.IsHandleCreated) {
 					XplatUI.SetWindowBackground(this.window.Handle, value);
-
+				}
 				Refresh();
 			}
 		}
