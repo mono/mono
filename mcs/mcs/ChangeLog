@@ -1,5 +1,8 @@
 2003-03-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* enum.cs (Enum.DefineType, Enum.IsValidEnumConstant): Also allow
+	char constants to be part of the enumeration.
+
 	* expression.cs (Conditional.DoResolve): Add support for operator
 	true. Implements the missing functionality from 14.12
 
