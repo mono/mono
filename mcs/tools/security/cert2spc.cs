@@ -10,9 +10,10 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
+//using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.Authenticode;
+using Mono.Security.X509;
 
 [assembly: AssemblyTitle("Mono Cert2Spc")]
 [assembly: AssemblyDescription("Transform a set of X.509 certificates and CRLs into an Authenticode(TM) \"Software Publisher Certificate\"")]
@@ -68,7 +69,7 @@ class Cert2Spc {
 			switch (Path.GetExtension (args[i]).ToLower ()) {
 				case ".cer":
 				case ".crt":
-					spc.Certificates.Add (X509Certificate.CreateFromCertFile (args[i]));
+					spc.Certificates.Add (new X509Certificate (GetFile (args[i])));
 					break;
 				case ".crl":
 					spc.CRLs.Add (GetFile (args[i]));

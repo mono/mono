@@ -1,3 +1,15 @@
+2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyInfo.cs: Updated version to 0.26.99 (all tools).
+	* cert2spc.cs: Updated to use Mono.Security.X509.
+	* chktrust.cs: Tool to validate Authenticode(tm) signatures on PE 
+	files (including assemblies).
+	* signcode.cs: Tool to sign and timestamp PE files using 
+	Authenticode(tm) compatible certificates.
+	* README: Updated to include a small tutorial on how to use
+	Authenticode(tm) to sign/verify assemblies.
+	* Makefile: Updated to build chktrust.exe and signcode.exe
+
 2003-07-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AssemblyInfo.cs: Updated version to 0.25.99 (all tools).
