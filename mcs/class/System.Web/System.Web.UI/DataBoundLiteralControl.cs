@@ -1,34 +1,54 @@
 //
 // System.Web.UI.DataBoundLiteralCOntrol.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+// 	Duncan Mak  (duncan@ximian.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
-using System.Web.UI;
+using System.Text;
 
 namespace System.Web.UI {
 
 	public sealed class DataBoundLiteralControl : Control
 	{
+		private string [] staticLiterals;
+		private string [] dataBoundLiterals;
+		
 		public DataBoundLiteralControl (int staticLiteralsCount,
-						int dataBOundLiteralCount)
+						int dataBoundLiteralCount)
 		{
+			staticLiterals = new string [staticLiteralsCount];
+			dataBoundLiterals = new string [dataBoundLiteralCount];
+			PreventAutoID ();
 		}
 
-		[MonoTODO]
 		public string Text {
-			get { return String.Empty; }
+			get {
+				StringBuilder text = new StringBuilder ();
+				int stLength = staticLiterals.Length;
+				int dbLength = dataBoundLiterals.Length;
+				int max = (stLength > dbLength) ? stLength : dbLength;
+				for (int i = 0; i < max; i++){
+					if (i < stLength)
+						text.Append (staticLiterals [i]);
+					if (i < dbLength)
+						text.Append (dataBoundLiterals [i]);
+				}
+
+				return text.ToString ();
+			}
 		}
 
-		[MonoTODO]
 		protected override ControlCollection CreateControlCollection ()
 		{
-			throw new NotImplementedException ();
+			return new EmptyControlCollection (this);
 		}
 
+		[MonoTODO]
 		protected override void LoadViewState (object savedState)
 		{
 			throw new NotImplementedException ();
@@ -36,9 +56,10 @@ namespace System.Web.UI {
 
 		protected override void Render (HtmlTextWriter output)
 		{
-			throw new NotImplementedException ();
+			output.Write (Text);
 		}
 
+		[MonoTODO]
 		protected override object SaveViewState ()
 		{
 			throw new NotImplementedException ();
@@ -46,12 +67,13 @@ namespace System.Web.UI {
 
 		public void SetDataBoundString (int index, string s)
 		{
-			throw new NotImplementedException ();
+			dataBoundLiterals [index] = s;
 		}
 
 		public void SetStaticString (int index, string s)
 		{
-			throw new NotImplementedException ();
+			staticLiterals [index] = s;
 		}
 	}
 }
+

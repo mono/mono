@@ -1,3 +1,17 @@
+2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(AddedControl): new function that is called whenever a control is
+	added to a collection of controls in a container. It sets the defaults
+	except for Page.
+	
+	* ControlCollection.cs: call AddedControl in Add/AddAt.
+
+	* DataBoundLiteralControl.cs: implemented constructor, Text, Render,
+	SetStaticString and SetDataBoundString.
+
+	* Page.cs: removed SetDefaults.
+
 2002-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompiledTemplateBuilder.cs: new file. Used in the code generated

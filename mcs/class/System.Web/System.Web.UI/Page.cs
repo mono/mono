@@ -378,22 +378,6 @@ public class Page : TemplateControl, IHttpHandler
 		InvokeEventMethod ("Page_Load", sender, e);
 	}
 
-	private int defaultNumberID;
-	private void SetDefaults (ControlCollection col)
-	{
-		foreach (Control ctrl in col){
-			/*
-			 * Assing a default ID for controls that don't have one.
-			 * This can happen for programatically added controls (see web_placeholder.aspx).
-			 */
-			if (ctrl.AutoID == true && ctrl.ID == null)
-				ctrl.ID = "_ctrl_" + defaultNumberID++;
-			//
-			ctrl.Page = this;
-			SetDefaults (ctrl.Controls);
-		}
-	}
-
 	public void ProcessRequest (HttpContext context)
 	{
 		FrameworkInitialize ();
@@ -414,13 +398,8 @@ public class Page : TemplateControl, IHttpHandler
 		//--
 		_context = context;
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
-		
 		foreach (Control ctrl in Controls){
-			// Assing Control.Page here. Controls should do the same before 
-			// rendering their children
 			ctrl.Page = this;
-			SetDefaults (ctrl.Controls);
-			//
 			ctrl.RenderControl (output);
 		}
 	}

@@ -56,6 +56,7 @@ namespace System.Web.UI {
 				throw new HttpException ();
 
 			list.Add (child);
+			owner.AddedControl (child, list.Count - 1);
 		}
 
 		public virtual void AddAt (int index, Control child)
@@ -69,10 +70,12 @@ namespace System.Web.UI {
 			if (IsReadOnly)
 				throw new HttpException ();
 
-			if (index == -1)
+			if (index == -1){
 				Add (child);
-			else
+			} else {
 				list [index] = child;
+				owner.AddedControl (child, index);
+			}
 		}
 
 		public virtual void Clear ()

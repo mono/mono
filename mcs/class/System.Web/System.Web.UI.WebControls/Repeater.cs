@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
+using System.Web.Utils;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
@@ -214,14 +215,93 @@ namespace System.Web.UI.WebControls
 			ClearChildViewState();
 		}
 
-		/// <summary>
-		/// Undocumented
-		/// </summary>
-		[MonoTODO]
-		protected void CreateControlHierarchy(bool useDataSource)
+		private RepeaterItem CreateItem (int itemIndex,
+				                 ListItemType itemType,
+						 bool dataBind,
+						 object dataItem)
 		{
-			//TODO: Fille me up
-			throw new NotImplementedException();
+			RepeaterItem repeaterItem = new RepeaterItem (itemIndex, itemType);
+			RepeaterItemEventArgs repeaterEventArgs = new RepeaterItemEventArgs (repeaterItem);
+			InstantiateItem (repeaterItem);
+			if (dataBind)
+				repeaterItem.DataItem = dataItem;
+			OnItemCreated (repeaterEventArgs);
+			Controls.Add (repeaterItem);
+			if (dataBind) {
+				repeaterItem.DataBind ();
+				OnItemDataBound (repeaterEventArgs);
+				repeaterItem.DataItem = null;
+			}
+			return repeaterItem;
+		}
+
+		private void InstantiateItem (RepeaterItem item)
+		{
+			ITemplate template;
+			switch (item.ItemType) {
+				case ListItemType.Header:
+					template = this.headerTemplate;
+					break;
+				case ListItemType.Footer:
+					template = this.footerTemplate;
+					break;
+				case ListItemType.Item:
+					template = this.itemTemplate;
+					break;
+				case ListItemType.AlternatingItem:
+					template = this.alternatingItemTemplate;
+					break;
+				case ListItemType.Separator:
+					template = this.separatorTemplate;
+					break;
+				default:
+					throw new HttpException ("Unknown ListItemType: " + item.ItemType);
+			}
+
+			template.InstantiateIn (item);
+		}
+
+		protected virtual void CreateControlHierarchy (bool useDataSource)
+		{
+			ArrayList itemList = new ArrayList ();
+			items = new RepeaterItemCollection (itemList);
+			IEnumerable ds = null;
+			if (useDataSource)
+				ds = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+
+			if (!useDataSource) {
+				int itemCount  = (int) ViewState [ITEMCOUNT];
+				if (itemCount != -1) 
+					ds = new ArrayList (itemCount);
+			}
+
+			if (ds == null)
+				return;
+
+			if (headerTemplate != null)
+				CreateItem (-1, ListItemType.Header, useDataSource, null);
+
+			bool even = true;
+			int index = 0;
+			foreach (object item in ds){
+				if (separatorTemplate != null && index > 0)
+					CreateItem (index - 1, ListItemType.Separator, useDataSource, null);
+
+				RepeaterItem repeaterItem;
+				ListItemType lType;
+				if (!even && alternatingItemTemplate != null)
+					lType = ListItemType.AlternatingItem;
+				else
+					lType = ListItemType.Item;
+					
+				repeaterItem = CreateItem (index, lType, useDataSource, item);
+				itemList.Add (repeaterItem);
+				index++;
+				even = !even;
+			}
+
+			if (footerTemplate != null)
+				CreateItem (-1, ListItemType.Footer, useDataSource, null);
 		}
 
 		protected override bool OnBubbleEvent(object sender, EventArgs e)
@@ -248,7 +328,8 @@ namespace System.Web.UI.WebControls
 		{
 			if(Events != null)
 			{
-				RepeaterCommandEventHandler rceh = (RepeaterCommandEventHandler)(((IDictionary) ViewState) [ItemCommandEvent]);
+				RepeaterCommandEventHandler rceh = (RepeaterCommandEventHandler) 
+									Events [ItemCommandEvent];
 				if(rceh != null)
 				{
 					rceh(this, e);
@@ -260,7 +341,8 @@ namespace System.Web.UI.WebControls
 		{
 			if(Events != null)
 			{
-				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(((IDictionary) ViewState) [ItemCreatedEvent]);
+				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler) 
+									Events [ItemCreatedEvent];
 				if(rceh != null)
 				{
 					rceh(this, e);
@@ -272,7 +354,8 @@ namespace System.Web.UI.WebControls
 		{
 			if(Events != null)
 			{
-				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(((IDictionary) ViewState) [ItemDataBoundEvent]);
+				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)
+									Events [ItemDataBoundEvent];
 				if(rceh != null)
 				{
 					rceh(this, e);

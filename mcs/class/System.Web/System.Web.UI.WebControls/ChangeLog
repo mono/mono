@@ -1,3 +1,13 @@
+2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Repeater.cs: implemented CreateControlHierarchy. Fixed some event
+	processing methods.
+
+2002-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RadioButtonList.cs: implemented IRepeatInfoUser.RenderItem.
+	* RepeatInfo.cs: implemented DoHorizontalRendering.
+
 2002-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.UI.WebControls/Repeater.cs:

@@ -320,6 +320,26 @@ namespace System.Web.UI
                                 return true;
                         }
                 }
+
+		private int defaultNumberID;
+		protected internal virtual void AddedControl (Control control, int index)
+		{
+			/* Ensure the control don't have more than 1 parent */
+			if (control._parent != null)
+				control._parent.Controls.Remove (control);
+
+			control._parent = this;
+			control._page = _page;
+
+			// Without this, DataBoundLiteralControl crashes in OnDataBound event.
+			Control namingContainer = NamingContainer;
+			if (namingContainer != null)
+				control._namingContainer = namingContainer;
+			
+			if (control.AutoID == true && control.ID == null)
+				control.ID = "_ctrl_" + defaultNumberID++;
+		}
+
                 protected virtual void AddParsedSubObject(object obj) //DIT
                 {
                         Control c = (Control)obj;
