@@ -798,7 +798,7 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.ADD || tt == Token.SUB) {
 					ts.GetToken ();
-					pn = new Binary (parent, pn, MulExpr (parent), JSToken.Plus);
+					pn = new Binary (parent, pn, MulExpr (parent), ToJSToken (tt));
 					continue;
 				}
 				break;
