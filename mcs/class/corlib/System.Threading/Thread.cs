@@ -48,15 +48,29 @@ namespace System.Threading
 			}
 		}
 
-		// Registers a new LocalDataStoreSlot with a thread key.
+		// Looks up the slot hash for the current thread
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void DataSlot_register(LocalDataStoreSlot slot);
-		
+		private extern static Hashtable SlotHash_lookup();
+
+		// Stores the slot hash for the current thread
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void SlotHash_store(Hashtable slothash);
+
+		private static Hashtable GetTLSSlotHash() {
+			Hashtable slothash=SlotHash_lookup();
+			if(slothash==null) {
+				// Not synchronised, because this is
+				// thread specific anyway.
+				slothash=new Hashtable();
+				SlotHash_store(slothash);
+			}
+
+			return(slothash);
+		}
+
 		public static LocalDataStoreSlot AllocateDataSlot() {
 			LocalDataStoreSlot slot = new LocalDataStoreSlot();
-			
-			DataSlot_register(slot);
-			
+
 			return(slot);
 		}
 
@@ -75,8 +89,6 @@ namespace System.Threading
 
 			datastorehash.Add(name, slot);
 			
-			DataSlot_register(slot);
-			
 			return(slot);
 		}
 
@@ -84,16 +96,13 @@ namespace System.Threading
 			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
 
 			if(slot!=null) {
-				// FIXME
+				datastorehash.Remove(slot);
 			}
 		}
 
-		// Retrieves an object from slot 'slot' in this thread
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static object DataSlot_retrieve(LocalDataStoreSlot slot);
-
 		public static object GetData(LocalDataStoreSlot slot) {
-			return(DataSlot_retrieve(slot));
+			Hashtable slothash=GetTLSSlotHash();
+			return(slothash[slot]);
 		}
 
 		public static AppDomain GetDomain() {
@@ -120,42 +129,25 @@ namespace System.Threading
 			// FIXME
 		}
 
-		// Stores 'data' into slot 'slot' in this thread
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void DataSlot_store(LocalDataStoreSlot slot, object data);
-		
-		public static void SetData(LocalDataStoreSlot slot, object data) {
-			DataSlot_store(slot, data);
+		public static void SetData(LocalDataStoreSlot slot,
+					   object data) {
+			Hashtable slothash=GetTLSSlotHash();
+			slothash.Add(slot, data);
 		}
 
-		// Returns milliseconds remaining (due to interrupted sleep)
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int Sleep_internal(int ms);
+		private extern static void Sleep_internal(int ms);
 
-		// Causes thread to give up its timeslice
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Schedule_internal();
-		
 		public static void Sleep(int millisecondsTimeout) {
 			if(millisecondsTimeout<0) {
 				throw new ArgumentException("Negative timeout");
 			}
-			if(millisecondsTimeout==0) {
-				// Schedule another thread
-				Schedule_internal();
-			} else {
-				Thread thread=CurrentThread;
+			Thread thread=CurrentThread;
 				
-				thread.set_state(ThreadState.WaitSleepJoin);
+			thread.set_state(ThreadState.WaitSleepJoin);
 				
-				int ms_remaining=Sleep_internal(millisecondsTimeout);
-				thread.clr_state(ThreadState.WaitSleepJoin);
-
-				if(ms_remaining>0) {
-					throw new ThreadInterruptedException("Thread interrupted while sleeping");
-				}
-			}
-			
+			Sleep_internal(millisecondsTimeout);
+			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 
 		public static void Sleep(TimeSpan timeout) {
@@ -163,30 +155,20 @@ namespace System.Threading
 			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
-			if(timeout.Milliseconds==0) {
-				// Schedule another thread
-				Schedule_internal();
-			} else {
-				Thread thread=CurrentThread;
+
+			Thread thread=CurrentThread;
 				
-				thread.set_state(ThreadState.WaitSleepJoin);
-				int ms_remaining=Sleep_internal(timeout.Milliseconds);
-				thread.clr_state(ThreadState.WaitSleepJoin);
-				
-				if(ms_remaining>0) {
-					throw new ThreadInterruptedException("Thread interrupted while sleeping");
-				}
-			}
+			thread.set_state(ThreadState.WaitSleepJoin);
+			Sleep_internal(timeout.Milliseconds);
+			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 
-		// stores a pthread_t, which is defined as unsigned long
-		// on my system.  I _think_ windows uses "unsigned int" for
-		// its thread handles, so that _should_ work too.
-		private UInt32 system_thread_handle;
+		// stores a thread handle
+		private IntPtr system_thread_handle;
 
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern UInt32 Thread_internal(ThreadStart start);
+		private extern IntPtr Thread_internal(ThreadStart start);
 
 		public Thread(ThreadStart start) {
 			if(start==null) {
@@ -308,7 +290,7 @@ namespace System.Threading
 		// The current thread joins with 'this'. Set ms to 0 to block
 		// until this actually exits.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern /* FIXME waiting for impl in mono_create trampoline bool*/ int Join_internal(int ms, UInt32 handle);
+		private extern bool Join_internal(int ms, IntPtr handle);
 		
 		public void Join() {
 			if((state & ThreadState.Unstarted) != 0) {
@@ -333,8 +315,8 @@ namespace System.Threading
 			Thread thread=CurrentThread;
 				
 			thread.set_state(ThreadState.WaitSleepJoin);
-			bool ret=(Join_internal(millisecondsTimeout,
-						system_thread_handle)==1);
+			bool ret=Join_internal(millisecondsTimeout,
+					       system_thread_handle);
 			thread.clr_state(ThreadState.WaitSleepJoin);
 
 			return(ret);
@@ -352,8 +334,8 @@ namespace System.Threading
 			Thread thread=CurrentThread;
 
 			thread.set_state(ThreadState.WaitSleepJoin);
-			bool ret=(Join_internal(timeout.Milliseconds,
-						system_thread_handle)==1);
+			bool ret=Join_internal(timeout.Milliseconds,
+					       system_thread_handle);
 			thread.clr_state(ThreadState.WaitSleepJoin);
 
 			return(ret);
@@ -365,7 +347,7 @@ namespace System.Threading
 
 		// Launches the thread
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void Start_internal(UInt32 handle);
+		private extern void Start_internal(IntPtr handle);
 		
 		public void Start() {
 			if((state & ThreadState.Unstarted) == 0) {

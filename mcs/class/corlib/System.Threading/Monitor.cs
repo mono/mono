@@ -13,10 +13,11 @@ namespace System.Threading
 {
 	public sealed class Monitor
 	{
-		// Grabs the mutex on object 'obj'
+		// Grabs the mutex on object 'obj', with a maximum
+		// wait time 'ms' but doesn't block - if it can't get
+		// the lock it returns false, true if it can
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Monitor_enter(object obj);
-		
+		private extern static bool Monitor_try_enter(object obj, int ms);
 		public static void Enter(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
@@ -25,7 +26,7 @@ namespace System.Threading
 			//	throw new ArgumentException("Value type");
 			//}
 
-			Monitor_enter(obj);
+			Monitor_try_enter(obj, Timeout.Infinite);
 		}
 
 		// Releases the mutex on object 'obj'
@@ -35,7 +36,7 @@ namespace System.Threading
 		// Checks whether the current thread currently owns
 		// the lock on object 'obj'
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static /*bool*/ int Monitor_test_owner(object obj);
+		private extern static bool Monitor_test_owner(object obj);
 		
 		public static void Exit(object obj) {
 			if(obj==null) {
@@ -45,7 +46,7 @@ namespace System.Threading
 			//	throw new ArgumentException("Value type");
 			//}
 
-			if(Monitor_test_owner(obj)==/*false*/0) {
+			if(Monitor_test_owner(obj)==false) {
 				throw new SynchronizationLockException("The current thread does not own the lock");
 			}
 			
@@ -59,13 +60,13 @@ namespace System.Threading
 
 		// Checks whether object 'obj' is currently synchronised
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static /*bool*/ int Monitor_test_synchronised(object obj);
+		private extern static bool Monitor_test_synchronised(object obj);
 
 		public static void Pulse(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
 			}
-			if(Monitor_test_synchronised(obj)==/*false*/0) {
+			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronised");
 			}
 
@@ -81,18 +82,12 @@ namespace System.Threading
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
 			}
-			if(Monitor_test_synchronised(obj)==/*false*/0) {
+			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronised");
 			}
 
 			Monitor_pulse_all(obj);
 		}
-
-		// Grabs the mutex on object 'obj', with a maximum
-		// wait time 'ms' but doesn't block - if it can't get
-		// the lock it returns false, true if it can
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static /*bool*/ int Monitor_try_enter(object obj, int ms);
 
 		public static bool TryEnter(object obj) {
 			if(obj==null) {
@@ -102,7 +97,7 @@ namespace System.Threading
 			//	throw new ArgumentException("Value type");
 			//}
 			
-			return((Monitor_try_enter(obj, 0)==1));
+			return(Monitor_try_enter(obj, 0));
 		}
 
 		public static bool TryEnter(object obj, int millisecondsTimeout) {
@@ -124,7 +119,7 @@ namespace System.Threading
 				throw new ArgumentException("millisecondsTimeout negative");
 			}
 			
-			return((Monitor_try_enter(obj, millisecondsTimeout)==1));
+			return(Monitor_try_enter(obj, millisecondsTimeout));
 		}
 
 		public static bool TryEnter(object obj, TimeSpan timeout) {
@@ -147,36 +142,36 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
 			
-			return((Monitor_try_enter(obj, timeout.Milliseconds)==1));
+			return(Monitor_try_enter(obj, timeout.Milliseconds));
 		}
 
 		// Waits for a signal on object 'obj' with maximum
 		// wait time 'ms'. Returns true if the object was
 		// signalled, false if it timed out
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static /*bool*/ int Monitor_wait(object obj, int ms);
+		private extern static bool Monitor_wait(object obj, int ms);
 
 		public static bool Wait(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
 			}
-			if(Monitor_test_synchronised(obj)==/*false*/0) {
+			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronised");
 			}
 
-			return((Monitor_wait(obj, 0)==1));
+			return(Monitor_wait(obj, 0));
 		}
 
 		public static bool Wait(object obj, int millisecondsTimeout) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
 			}
-			if(Monitor_test_synchronised(obj)==/*false*/0) {
+			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronised");
 			}
 			// LAMESPEC: no mention of timeout sanity checking
 
-			return((Monitor_wait(obj, millisecondsTimeout)==1));
+			return(Monitor_wait(obj, millisecondsTimeout));
 		}
 
 		public static bool Wait(object obj, TimeSpan timeout) {
@@ -187,11 +182,11 @@ namespace System.Threading
 			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
-			if(Monitor_test_synchronised(obj)==/*false*/0) {
+			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronised");
 			}
 
-			return((Monitor_wait(obj, timeout.Milliseconds)==1));
+			return(Monitor_wait(obj, timeout.Milliseconds));
 		}
 
 		public static bool Wait(object obj, int millisecondsTimeout, bool exitContext) {

@@ -1,3 +1,13 @@
+2001-11-26  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: DataSlot uses a single system TLS slot, and a
+	hashtable per thread.  Some minor changes to reflect the new
+	internal calls using the new IO library, and the newly-supported
+	bool returns from internal calls.
+
+	* Monitor.cs: Use bool returns from internal calls now they are
+	supported by the runtime.  Coalesce enter with the try_enter
+	internal call.
 
 Wed Nov 14 17:06:18 CET 2001 Paolo Molaro <lupus@ximian.com>
 
