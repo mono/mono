@@ -1,3 +1,8 @@
+2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ExpiresBuckets.cs: set _intPos when expanding the array. Fixes bug
+	52541. Patch by Jan Jaros (mono-bug@jerryweb.info).
+
 2003-11-21  Jackson Harper <jackson@ximian.com>
 
 	* OutputCacheModule.cs: Only cache a page if it has a 200 status

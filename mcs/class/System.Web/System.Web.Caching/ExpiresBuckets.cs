@@ -101,6 +101,7 @@ namespace System.Web.Caching
 				_arrEntries.CopyTo(newlist, 0);
 
 				// Set last element to point to the next new empty element
+				_intNext = oldsize;
 				newlist[oldsize - 1]._intNext = oldsize;
 
 				// Initialize positions for the rest of new elements.
@@ -347,6 +348,7 @@ namespace System.Web.Caching
 								objEntry._objEntry.ExpiresBucket = CacheEntry.NoBucketHash;
 								objEntry._objEntry.ExpiresIndex = CacheEntry.NoIndexInBucket;
 								objEntry._objEntry = null;
+								_arrEntries [intPos] = objEntry;
 							}
 							finally
 							{
