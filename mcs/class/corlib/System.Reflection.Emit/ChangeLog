@@ -1,3 +1,8 @@
+2004-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs: Reenable argument checking with MS.NET
+	compatibility tweaks.
+
 2004-03-23  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.GetEvents_internal): New internal

@@ -89,8 +89,6 @@ namespace System.Reflection.Emit {
 			if ((con.Attributes & MethodAttributes.Static) == MethodAttributes.Static ||
 					(con.Attributes & MethodAttributes.Private) == MethodAttributes.Private)
 				throw new ArgumentException ("Cannot have private or static constructor.");
-			/* 
-			   FIXME: Enabling this causes regressions
 
 			Type atype = ctor.DeclaringType;
 			int i;
@@ -103,7 +101,12 @@ namespace System.Reflection.Emit {
 				if (fieldValues [i] != null)
 					// IsEnum does not seem to work on TypeBuilders
 					if (!(fi.FieldType is TypeBuilder) && !fi.FieldType.IsEnum && !fi.FieldType.IsAssignableFrom (fieldValues [i].GetType ())) {
-						throw new ArgumentException ("Value of field '" + fi.Name + "' does not match field type: " + fi.FieldType);
+						//
+						// mcs allways uses object[] for array types and
+						// MS.NET allows this
+						//
+						if (!fi.FieldType.IsArray)
+							throw new ArgumentException ("Value of field '" + fi.Name + "' does not match field type: " + fi.FieldType);
 						}
 				i ++;
 			}
@@ -115,11 +118,10 @@ namespace System.Reflection.Emit {
 				Type t = pi.DeclaringType;
 				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
 					throw new ArgumentException ("Property '" + pi.Name + "' does not belong to the same class as the constructor");
-				// FIXME: Check enums and TypeBuilders as well
 				if (propertyValues [i] != null) {
-					// IsEnum does not seem to work on TypeBuilders
 					if (!(pi.PropertyType is TypeBuilder) && !pi.PropertyType.IsEnum && !pi.PropertyType.IsAssignableFrom (propertyValues [i].GetType ()))
-						throw new ArgumentException ("Value of property '" + pi.Name + "' does not match property type");
+						if (!pi.PropertyType.IsArray)
+							throw new ArgumentException ("Value of property '" + pi.Name + "' does not match property type: " + pi.PropertyType + " -> " + propertyValues [i]);
 				}
 				i ++;
 			}
@@ -129,13 +131,12 @@ namespace System.Reflection.Emit {
 				if (pi != null) {
 					Type paramType = pi.ParameterType;
 					if (constructorArgs [i] != null)
-						// IsEnum does not seem to work on TypeBuilders
 						if (!(paramType is TypeBuilder) && !paramType.IsEnum && !paramType.IsAssignableFrom (constructorArgs [i].GetType ()))
-							throw new ArgumentException ("Value of argument " + i + " does not match parameter type: " + paramType);
+							if (!paramType.IsArray)
+								throw new ArgumentException ("Value of argument " + i + " does not match parameter type: " + paramType + " -> " + constructorArgs [i]);
 				}
 				i ++;
 			}
-			*/
 				
 			data = GetBlob (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}
