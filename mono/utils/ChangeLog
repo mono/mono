@@ -1,3 +1,8 @@
+2004-06-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-sha1.c: Use gint32 for 32 types. Fixes random memory corruption
+	in SHA1Transform on 64 bit systems.
+
 2004-06-24  David Waite  <mass@akuma.org>
 
 	* monobitset.c: change to C90-style comments from C99/C++-style 
