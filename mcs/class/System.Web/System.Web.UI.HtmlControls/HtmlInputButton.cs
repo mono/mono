@@ -35,7 +35,9 @@ namespace System.Web.UI.HtmlControls{
 				string type = Type;
 				if (String.Compare (type, "button", true) == 0 || String.Compare (type, "submit", true) == 0) {
 					string script = Page.GetPostBackClientEvent (this, String.Empty);
-					if (script != null && Page.Validators.Count > 0){
+					if (script != null && 
+						((String.Compare (type, "button", true) == 0  && Events[EventServerClick] != null )|| 
+						 (String.Compare (type, "submit", true) == 0 && Page.Validators.Count > 0))){
 						AttributeCollection coll = Attributes;
 						if (coll ["language"] != null)
 							coll.Remove ("language");
