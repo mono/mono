@@ -13,7 +13,6 @@ using System.Globalization;
 
 namespace System.ComponentModel {
 
-[MonoTODO("Only has the minimal implementation needed to use ColorConverter")]
 public class TypeConverter
 {
 	public TypeConverter ()
@@ -270,6 +269,45 @@ public class TypeConverter
 		public object this [int index]
 		{
 			get { return ((IList) values) [index]; }
+		}
+	}
+
+	protected abstract class SimplePropertyDescriptor : PropertyDescriptor
+	{
+		private Type componentType;
+		private Type propertyType;
+		
+		public SimplePropertyDescriptor (Type componentType,
+						 string name,
+						 Type propertyType) :
+			this (componentType, name, propertyType, new Attribute [0])
+		{
+		}
+
+		public SimplePropertyDescriptor (Type componentType,
+						 string name,
+						 Type propertyType,
+						 Attribute [] attributes) : base (name, attributes)
+		{
+			this.componentType = componentType;
+			this.propertyType = propertyType;
+		}
+
+		public override Type ComponentType
+		{
+			get { return componentType; }
+		}
+
+		public override Type PropertyType
+		{
+			get { return propertyType; }
+		}
+
+		public override bool IsReadOnly
+		{
+			get {
+				return Attributes.Contains (ReadOnlyAttribute.Yes);
+			}
 		}
 	}
 }

@@ -1,3 +1,18 @@
+2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MemberDescriptor.cs: implemented Attributes and Category.
+
+	* PropertyDescriptor.cs: implemented Converter. Declared GetValue ().
+
+	* PropertyDescriptorCollection.cs: fixed indexers declaration.
+
+	* ReadOnlyAttribute.cs: GetHashCoder (), Equals (), IsDefault () and
+	fixed value for Yes.
+
+	* ToolboxItemAttribute.cs: fixed declaration of IsDefaultAttribute.
+
+	* TypeConverter.cs: added SimplePropertyDescriptor class.
+
 2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ToolboxItemAttribute.cs: New file.

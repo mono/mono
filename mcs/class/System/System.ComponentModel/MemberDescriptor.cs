@@ -12,6 +12,7 @@ namespace System.ComponentModel {
 	public abstract class MemberDescriptor {
 		string name;
 		Attribute [] attrs;
+		AttributeCollection attrCollection;
 		
 		protected MemberDescriptor (string name, Attribute [] attrs)
 		{
@@ -46,19 +47,18 @@ namespace System.ComponentModel {
 			}
 		}
 
-		// FIXME: Implement Attributes property
-		[MonoTODO ("Implement Attributes property too")]
+		public virtual AttributeCollection Attributes
+		{
+			get {
+				if (attrCollection == null)
+					attrCollection = new AttributeCollection (attrs);
+				return attrCollection;
+			}
+		}
+			
 		public virtual string Category {
 			get {
-				foreach (Attribute attr in attrs){
-
-
-
-					if (attr is CategoryAttribute){
-						return ((CategoryAttribute) attr).Category;
-					}
-				}
-				return "Misc";
+				return ((CategoryAttribute) Attributes [typeof (CategoryAttribute)]).Category;
 			}
 		}
 

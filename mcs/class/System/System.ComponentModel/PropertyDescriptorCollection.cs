@@ -209,18 +209,27 @@ namespace System.ComponentModel
 			}
 		}
 		
-		public object this [int key] {
+		[MonoTODO]
+		public virtual PropertyDescriptor this[string s] {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		object IList.this [int index] {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
+
 			[MonoTODO]
 			set {
 				throw new NotImplementedException ();
 			}
 		}
-		
-		public virtual PropertyDescriptor this[string s] {
+
+		[MonoTODO]
+		public virtual PropertyDescriptor this[int index] {
 			get {
 				throw new NotImplementedException ();
 			}

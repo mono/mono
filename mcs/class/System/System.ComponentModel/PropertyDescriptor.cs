@@ -31,12 +31,9 @@ namespace System.ComponentModel {
 
 		public abstract Type ComponentType { get; }
 
-		[MonoTODO]
 		public virtual TypeConverter Converter {
 			get {
-				// FIXME: Implement me.
-				
-				return null;
+				return TypeDescriptor.GetConverter (PropertyType);
 			}
 		}
 
@@ -110,5 +107,7 @@ namespace System.ComponentModel {
 
 			component_notifiers (component, e);
 		}
+
+		public abstract object GetValue (object component);
 	}
 }

@@ -18,7 +18,7 @@ namespace System.ComponentModel {
 		static ReadOnlyAttribute ()
 		{
 			No = new ReadOnlyAttribute (false);
-			Yes = new ReadOnlyAttribute (false);
+			Yes = new ReadOnlyAttribute (true);
 			Default = new ReadOnlyAttribute (false);
 		}
 		
@@ -32,5 +32,23 @@ namespace System.ComponentModel {
 				return read_only;
 			}
 		}
-	};
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			if (!(o is ReadOnlyAttribute))
+				return false;
+
+			return (((ReadOnlyAttribute) o).read_only == read_only);
+		}
+
+		public override bool IsDefaultAttribute ()
+		{
+			return Equals (Default);
+		}
+	}
 }

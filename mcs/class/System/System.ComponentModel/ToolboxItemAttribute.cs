@@ -73,7 +73,7 @@ namespace System.ComponentModel
 			return base.GetHashCode ();
 		}
 
-		public bool IsDefaultAttribute ()
+		public override bool IsDefaultAttribute ()
 		{
 			return Equals (Default);
 		}
