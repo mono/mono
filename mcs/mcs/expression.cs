@@ -5717,7 +5717,7 @@ namespace Mono.CSharp {
 	///   initialization data and the other which does not need dimensions
 	///   specified but where initialization data is mandatory.
 	/// </remarks>
-	public class ArrayCreation : ExpressionStatement {
+	public class ArrayCreation : Expression {
 		Expression requested_base_type;
 		ArrayList initializers;
 
@@ -6280,7 +6280,7 @@ namespace Mono.CSharp {
 		//
 		// Emits the initializers for the array
 		//
-		void EmitStaticInitializers (EmitContext ec, bool is_expression)
+		void EmitStaticInitializers (EmitContext ec)
 		{
 			//
 			// First, the static data
@@ -6292,8 +6292,7 @@ namespace Mono.CSharp {
 
 			fb = RootContext.MakeStaticData (data);
 
-			if (is_expression)
-				ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Dup);
 			ig.Emit (OpCodes.Ldtoken, fb);
 			ig.Emit (OpCodes.Call,
 				 TypeManager.void_initializearray_array_fieldhandle);
@@ -6305,7 +6304,7 @@ namespace Mono.CSharp {
 		//
 		// This always expect the top value on the stack to be the array
 		//
-		void EmitDynamicInitializers (EmitContext ec, bool is_expression)
+		void EmitDynamicInitializers (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			int dims = bounds.Count;
@@ -6352,8 +6351,7 @@ namespace Mono.CSharp {
 					    num_automatic_initializers <= max_automatic_initializers) {
 						Type etype = e.Type;
 						
-						if (is_expression || i != top - 1)
-							ig.Emit (OpCodes.Dup);
+						ig.Emit (OpCodes.Dup);
 
 						for (int idx = 0; idx < dims; idx++) 
 							IntConstant.EmitInt (ig, current_pos [idx]);
@@ -6416,7 +6414,7 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		void DoEmit (EmitContext ec, bool is_statement)
+		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -6440,21 +6438,11 @@ namespace Mono.CSharp {
 				// initialized. num_automatic_initializers will always be zero.  See
 				// CheckIndices.
 				if (num_automatic_initializers > max_automatic_initializers)
-					EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
+					EmitStaticInitializers (ec);
 				
 				if (dynamic_initializers)
-					EmitDynamicInitializers (ec, !is_statement);
+					EmitDynamicInitializers (ec);
 			}
-		}
-		
-		public override void Emit (EmitContext ec)
-		{
-			DoEmit (ec, false);
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			DoEmit (ec, true);
 		}
 
 		public object EncodeAsAttribute ()

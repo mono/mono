@@ -1,3 +1,9 @@
+2004-06-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs (ArrayCreationExpression): Make this just an
+	`expression'. It can't be a statement, so the code here was
+	dead.
+
 2004-06-02  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed #59072
