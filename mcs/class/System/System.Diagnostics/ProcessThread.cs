@@ -2,16 +2,34 @@
 // System.Diagnostics.ProcessThread.cs
 //
 // Authors:
-//	Dick Porter (dick@ximian.com)
+//   Dick Porter (dick@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.ComponentModel;
+using System.ComponentModel.Design;
 
-namespace System.Diagnostics {
-	public class ProcessThread : Component {
+namespace System.Diagnostics 
+{
+	[DesignerCategory ("Component")]
+	#if (NET_1_0)
+		[Designer ("System.Diagnostics.Design.ProcessThreadDesigner, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
+	#endif
+	#if (NET_1_1)
+    		[Designer ("System.Diagnostics.Design.ProcessThreadDesigner, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
+	#endif
+	public class ProcessThread : Component 
+	{
+
+		[MonoTODO ("Parse parameters")]
+		internal ProcessThread() 
+		{
+		}
+
 		[MonoTODO]
+		[MonitoringDescription ("The base priority of this thread.")]
 		public int BasePriority {
 			get {
 				return(0);
@@ -19,6 +37,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The current priority of this thread.")]
 		public int CurrentPriority {
 			get {
 				return(0);
@@ -26,6 +45,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The ID of this thread.")]
 		public int Id {
 			get {
 				return(0);
@@ -33,12 +53,14 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
 		int IdealProcessor {
 			set {
 			}
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("Thread gets a priority boot when interactively used by a user.")]
 		public bool PriorityBoostEnabled {
 			get {
 				return(false);
@@ -48,6 +70,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The priority level of this thread.")]
 		public ThreadPriorityLevel PriorityLevel {
 			get {
 				return(ThreadPriorityLevel.Idle);
@@ -57,6 +80,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The amount of CPU time used in privileged mode.")]
 		public TimeSpan PrivilegedProcessorTime {
 			get {
 				return(new TimeSpan(0));
@@ -64,12 +88,14 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[Browsable (false)]
 		IntPtr ProcessorAffinity {
 			set {
 			}
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The start address in memory of this thread.")]
 		public IntPtr StartAddress {
 			get {
 				return((IntPtr)0);
@@ -77,6 +103,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The time this thread was started.")]
 		public DateTime StartTime {
 			get {
 				return(new DateTime(0));
@@ -84,6 +111,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The current state of this thread.")]
 		public ThreadState ThreadState {
 			get {
 				return(ThreadState.Initialized);
@@ -91,6 +119,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The total amount of CPU time used.")]
 		public TimeSpan TotalProcessorTime {
 			get {
 				return(new TimeSpan(0));
@@ -98,6 +127,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The amount of CPU time used in user mode.")]
 		public TimeSpan UserProcessorTime {
 			get {
 				return(new TimeSpan(0));
@@ -105,6 +135,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[MonitoringDescription ("The reason why this thread is waiting.")]
 		public ThreadWaitReason WaitReason {
 			get {
 				return(ThreadWaitReason.Executive);

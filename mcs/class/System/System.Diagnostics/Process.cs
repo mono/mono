@@ -3,21 +3,33 @@
 //
 // Authors:
 //   Dick Porter (dick@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc.
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 using System.IO;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections;
 
 namespace System.Diagnostics {
-	public class Process : Component {
+	[DefaultEvent ("Exited"), DefaultProperty ("StartInfo"), DesignerCategory ("Component")]
+	#if (NET_1_0)
+		[Designer ("System.Diagnostics.Design.ProcessDesigner, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
+	#endif
+	#if (NET_1_1)
+    		[Designer ("System.Diagnostics.Design.ProcessDesigner, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
+	#endif
+	public class Process : Component 
+	{
 		[StructLayout(LayoutKind.Sequential)]
-		private struct ProcInfo {
+		private struct ProcInfo 
+		{
 			public IntPtr process_handle;
 			public IntPtr thread_handle;
 			public int pid;
@@ -38,6 +50,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("Base process priority.")]
 		public int BasePriority {
 			get {
 				return(0);
@@ -45,6 +59,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DefaultValue (false), Browsable (false)]
+		[MonitoringDescription ("Check for exiting of the process to raise the apropriate event.")]
 		public bool EnableRaisingEvents {
 			get {
 				return(false);
@@ -56,6 +72,8 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int ExitCode_internal(IntPtr handle);
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The exit code of the process.")]
 		public int ExitCode {
 			get {
 				return(ExitCode_internal(process_handle));
@@ -68,12 +86,16 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static long ExitTime_internal(IntPtr handle);
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The exit time of the process.")]
 		public DateTime ExitTime {
 			get {
 				return(DateTime.FromFileTime(ExitTime_internal(process_handle)));
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("Handle for this process.")]
 		public IntPtr Handle {
 			get {
 				return(process_handle);
@@ -81,12 +103,16 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("Handles for this process.")]
 		public int HandleCount {
 			get {
 				return(0);
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("Determines if the process is still running.")]
 		public bool HasExited {
 			get {
 				int exitcode=ExitCode;
@@ -100,6 +126,8 @@ namespace System.Diagnostics {
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("Process identifier.")]
 		public int Id {
 			get {
 				return(pid);
@@ -107,12 +135,16 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The name of the computer running the process.")]
 		public string MachineName {
 			get {
 				return("localhost");
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The main module of the process.")]
 		public ProcessModule MainModule {
 			get {
 				return(this.Modules[0]);
@@ -120,6 +152,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The handle of the main window of the process.")]
 		public IntPtr MainWindowHandle {
 			get {
 				return((IntPtr)0);
@@ -127,6 +161,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The title of the main window of the process.")]
 		public string MainWindowTitle {
 			get {
 				return("null");
@@ -139,6 +175,8 @@ namespace System.Diagnostics {
 		private extern static bool SetWorkingSet_internal(IntPtr handle, int min, int max, bool use_min);
 
 		/* LAMESPEC: why is this an IntPtr not a plain int? */
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The maximum working set for this process.")]
 		public IntPtr MaxWorkingSet {
 			get {
 				if(HasExited) {
@@ -166,6 +204,8 @@ namespace System.Diagnostics {
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The minimum working set for this process.")]
 		public IntPtr MinWorkingSet {
 			get {
 				if(HasExited) {
@@ -201,6 +241,8 @@ namespace System.Diagnostics {
 
 		private ProcessModuleCollection module_collection;
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The modules that are loaded as part of this process.")]
 		public ProcessModuleCollection Modules {
 			get {
 				if(module_collection==null) {
@@ -212,6 +254,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The number of bytes that are not pageable.")]
 		public int NonpagedSystemMemorySize {
 			get {
 				return(0);
@@ -219,6 +263,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The number of bytes that are paged.")]
 		public int PagedMemorySize {
 			get {
 				return(0);
@@ -226,6 +272,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of paged system memory in bytes.")]
 		public int PagedSystemMemorySize {
 			get {
 				return(0);
@@ -233,6 +281,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The maximum amount of paged memory used by this process.")]
 		public int PeakPagedMemorySize {
 			get {
 				return(0);
@@ -240,6 +290,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The maximum amount of virtual memory used by this process.")]
 		public int PeakVirtualMemorySize {
 			get {
 				return(0);
@@ -247,6 +299,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The maximum amount of system memory used by this process.")]
 		public int PeakWorkingSet {
 			get {
 				return(0);
@@ -254,6 +308,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("Process will be of higher priority while it is actively used.")]
 		public bool PriorityBoostEnabled {
 			get {
 				return(false);
@@ -263,6 +319,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The relative process priority.")]
 		public ProcessPriorityClass PriorityClass {
 			get {
 				return(ProcessPriorityClass.Normal);
@@ -272,6 +330,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of memory exclusively used by this process.")]
 		public int PrivateMemorySize {
 			get {
 				return(0);
@@ -279,6 +339,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of processing time spent is the OS core for this process.")]
 		public TimeSpan PrivilegedProcessorTime {
 			get {
 				return(new TimeSpan(0));
@@ -290,6 +352,8 @@ namespace System.Diagnostics {
 		
 		private string process_name=null;
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The name of this process.")]
 		public string ProcessName {
 			get {
 				if(process_name==null) {
@@ -320,6 +384,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("Allowed processor that can be used by this process.")]
 		public IntPtr ProcessorAffinity {
 			get {
 				return((IntPtr)0);
@@ -329,6 +395,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("Is this process responsive.")]
 		public bool Responding {
 			get {
 				return(false);
@@ -337,6 +405,8 @@ namespace System.Diagnostics {
 
 		private StreamReader error_stream=null;
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The standard error stream of this process.")]
 		public StreamReader StandardError {
 			get {
 				return(error_stream);
@@ -345,6 +415,8 @@ namespace System.Diagnostics {
 
 		private StreamWriter input_stream=null;
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The standard input stream of this process.")]
 		public StreamWriter StandardInput {
 			get {
 				return(input_stream);
@@ -353,6 +425,8 @@ namespace System.Diagnostics {
 
 		private StreamReader output_stream=null;
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The standard output stream of this process.")]
 		public StreamReader StandardOutput {
 			get {
 				return(output_stream);
@@ -361,6 +435,8 @@ namespace System.Diagnostics {
 
 		private ProcessStartInfo start_info=null;
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("Information for the start of this process.")]
 		public ProcessStartInfo StartInfo {
 			get {
 				if(start_info==null) {
@@ -384,6 +460,8 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static long StartTime_internal(IntPtr handle);
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The time this process started.")]
 		public DateTime StartTime {
 			get {
 				return(DateTime.FromFileTime(StartTime_internal(process_handle)));
@@ -391,6 +469,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The object that is used to synchronize event handler calls for this process.")]
 		public ISynchronizeInvoke SynchronizingObject {
 			get {
 				return(null);
@@ -400,6 +480,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[MonitoringDescription ("The number of threads of this process.")]
 		public ProcessThreadCollection Threads {
 			get {
 				return(null);
@@ -407,6 +489,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The total CPU time spent for this process.")]
 		public TimeSpan TotalProcessorTime {
 			get {
 				return(new TimeSpan(0));
@@ -414,6 +498,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The CPU time spent for this process in user mode.")]
 		public TimeSpan UserProcessorTime {
 			get {
 				return(new TimeSpan(0));
@@ -421,6 +507,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of virtual memory currently used for this process.")]
 		public int VirtualMemorySize {
 			get {
 				return(0);
@@ -428,6 +516,8 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The amount of physical memory currently used for this process.")]
 		public int WorkingSet {
 			get {
 				return(0);
@@ -691,7 +781,8 @@ namespace System.Diagnostics {
 			return(false);
 		}
 
-		[MonoTODO]
+		[Category ()]
+		[MonitoringDescription ("Raised when this process exits.")]
 		public event EventHandler Exited;
 
 		// Closes the system process handle
@@ -723,8 +814,10 @@ namespace System.Diagnostics {
 			base.Dispose (disposing);
 		}
 
-		[MonoTODO]
-		protected void OnExited() {
+		protected void OnExited() 
+		{
+			if (Exited != null)
+				Exited (this, EventArgs.Empty);
 		}
 	}
 }

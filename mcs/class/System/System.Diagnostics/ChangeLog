@@ -1,3 +1,17 @@
+2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CounterCreationData.cs: Added missing attributes
+	* CounterSample.cs: Implemented missing rest, fixed signature
+	* CounterSampleCalculator.cs: Added private constructor, redirected function
+	* Process.cs: Added attributes, added event mechanism
+	* ProcessModule.cs: Added missing attributes
+	* ProcessModuleCollection.cs: Redone using the already inherited-from ArrayList. Simplifies this a LOT
+	* ProcessStartInfo.cs: Added missing attributes, moved internal fields to the begining of the file, restyling
+	* ProcessThread.cs: Added missing attributes, added pseudo constructor
+	* ProcessThreadCollection.cs: Implemented
+	* PerformanceCounterPermission.cs: Fixed typo in class name
+	* PerformanceCounterPermissionAccess.cs: Added attributes, fixed wrong member
+	
 2003-03-19  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Implement HasExited, fixes bug 39267

@@ -3,13 +3,11 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002
+// (C) 2003 Andreas Nahr
 //
-
-using System;
-using System.Collections;
-using System.Diagnostics;
 
 namespace System.Diagnostics {
 
@@ -24,7 +22,7 @@ namespace System.Diagnostics {
 		private long counterTimeStamp;
 		private PerformanceCounterType counterType;
 
-		CounterSample (long rawValue, 
+		public CounterSample (long rawValue, 
 			long baseValue, 
 			long counterFrequency, 
 			long systemFrequency, 
@@ -37,7 +35,7 @@ namespace System.Diagnostics {
 		{
 		}
 
-		CounterSample (long rawValue, 
+		public CounterSample (long rawValue, 
 			long baseValue, 
 			long counterFrequency, 
 			long systemFrequency, 
@@ -93,18 +91,16 @@ namespace System.Diagnostics {
 			get {return timeStamp100nSec;}
 		}
 
-//		[MonoTODO("What's the algorithm?")]
-//		public static float Calculate (CounterSample counterSample)
-//		{
-//			throw new NotSupportedException ();
-//		}
-//
-//		[MonoTODO("What's the algorithm?")]
-//		public static float Calculate (CounterSample counterSample,
-//			CounterSample nextCounterSample)
-//		{
-//			throw new NotSupportedException ();
-//		}
+		public static float Calculate (CounterSample counterSample)
+		{
+			return CounterSampleCalculator.ComputeCounterValue (counterSample);
+		}
+
+		public static float Calculate (CounterSample counterSample,
+			CounterSample nextCounterSample)
+		{
+			return CounterSampleCalculator.ComputeCounterValue (counterSample, nextCounterSample);
+		}
 	}
 }
 

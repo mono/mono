@@ -2,55 +2,61 @@
 // System.Diagnostics.ProcessThreadCollection.cs
 //
 // Authors:
-//	Dick Porter (dick@ximian.com)
+//   Dick Porter (dick@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Collections;
 
-namespace System.Diagnostics {
-	public class ProcessThreadCollection : ReadOnlyCollectionBase {
-		[MonoTODO]
-		protected ProcessThreadCollection() {
+namespace System.Diagnostics 
+{
+	public class ProcessThreadCollection : ReadOnlyCollectionBase 
+	{
+		protected ProcessThreadCollection() 
+		{
 		}
 
-		[MonoTODO]
-		public ProcessThreadCollection(ProcessThread[] processThreads) {
+		public ProcessThreadCollection(ProcessThread[] processThreads) 
+		{
+			InnerList.AddRange (processThreads);
 		}
 		
-		[MonoTODO]
 		public ProcessThread this[int index] {
 			get {
-				return(null);
+				return (ProcessThread)InnerList[index];
 			}
 		}
 
-		[MonoTODO]
-		public int Add(ProcessThread thread) {
-			return(0);
+		public int Add(ProcessThread thread) 
+		{
+			return InnerList.Add (thread);
 		}
 
-		[MonoTODO]
-		public bool Contains(ProcessThread thread) {
-			return(false);
+		public bool Contains(ProcessThread thread) 
+		{
+			return InnerList.Contains (thread);
 		}
 
-		[MonoTODO]
-		public void CopyTo(ProcessThread[] array, int index) {
+		public void CopyTo(ProcessThread[] array, int index) 
+		{
+			InnerList.CopyTo (array, index);
 		}
 
-		[MonoTODO]
-		public int IndexOf(ProcessThread thread) {
-			return(0);
+		public int IndexOf(ProcessThread thread) 
+		{
+			return InnerList.IndexOf (thread);
 		}
 
-		[MonoTODO]
-		public void Insert(int index, ProcessThread thread) {
+		public void Insert(int index, ProcessThread thread) 
+		{
+			InnerList.Insert (index, thread);
 		}
 
-		[MonoTODO]
-		public void Remove(ProcessThread thread) {
+		public void Remove(ProcessThread thread) 
+		{
+			InnerList.Remove (thread);
 		}
 	}
 }

@@ -3,30 +3,33 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002
+// (C) 2003 Andreas Nahr
 //
 
 using System;
-using System.Collections;
-using System.Diagnostics;
 
 namespace System.Diagnostics {
 
 	public sealed class CounterSampleCalculator {
 
-//		[MonoTODO("What's the algorithm?")]
-//		public static float ComputeCounterValue (CounterSample newSample)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		[MonoTODO("What's the algorithm?")]
-//		public static float ComputeCounterValue (CounterSample oldSample,
-//			CounterSample newSample)
-//		{
-//			throw new NotImplementedException ();
-//		}
+		private CounterSampleCalculator ()
+		{
+		}
+
+		public static float ComputeCounterValue (CounterSample newSample)
+		{
+			return ComputeCounterValue (CounterSample.Empty, newSample);
+		}
+
+		[MonoTODO("What's the algorithm?")]
+		public static float ComputeCounterValue (CounterSample oldSample,
+			CounterSample newSample)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

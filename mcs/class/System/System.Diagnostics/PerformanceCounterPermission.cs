@@ -1,5 +1,5 @@
 //
-// System.Diagnostics.PerformaceCounterPermission.cs
+// System.Diagnostics.PerformanceCounterPermission.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -13,7 +13,7 @@ using System.Security.Permissions;
 
 namespace System.Diagnostics {
 
-	public class PerformaceCounterPermission : ResourcePermissionBase {
+	public class PerformanceCounterPermission : ResourcePermissionBase {
 
 //		public PerformaceCounterPermission ()
 //		{
