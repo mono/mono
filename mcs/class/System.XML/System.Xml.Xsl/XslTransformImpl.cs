@@ -25,7 +25,7 @@ namespace System.Xml.Xsl {
 
 		public virtual void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
 		{
-			Load (new XPathDocument (stylesheet).CreateNavigator (), resolver, evidence);
+			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), resolver, evidence);
 		}
 
 		public abstract void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence);	
