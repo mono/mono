@@ -1,3 +1,8 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainTest.cs: Removed tests for Activate and ActivateNewProcess
+	as the methods have been removed from fx 2.0.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ApplicationIdentityTest.cs: Changed NullReferenceException for

@@ -302,20 +302,6 @@ namespace MonoTests.System {
 
 #if NET_2_0
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Activate_Null ()
-		{
-			AppDomain.Activate (null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ActivateNewProcess_Null ()
-		{
-			AppDomain.ActivateNewProcess (null);
-		}
-
-		[Test]
 		public void ApplyPolicy ()
 		{
 			ad = AppDomain.CreateDomain ("ApplyPolicy");
