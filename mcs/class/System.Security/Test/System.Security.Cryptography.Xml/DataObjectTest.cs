@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell Inc.
 //
 
 using System;
@@ -28,6 +30,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			DataObject obj1 = new DataObject ();
 			Assert ("Data.Count==0", (obj1.Data.Count == 0));
+			AssertEquals ("Just constructed", "<Object xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (obj1.GetXml ().OuterXml));
 
 			obj1.Id = "id";
 			obj1.MimeType = "mime";
@@ -120,6 +123,51 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			obj1.LoadXml (doc.DocumentElement);
 			string s = (obj1.GetXml ().OuterXml);
 			AssertEquals ("DataObject Bad", value, s);
+		}
+
+		[Test]
+		public void GetXmlKeepDocument ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<Object xmlns='http://www.w3.org/2000/09/xmldsig#'>test</Object>");
+			DataObject obj = new DataObject ();
+			XmlElement el1 = obj.GetXml ();
+			obj.LoadXml (doc.DocumentElement);
+//			obj.Id = "hogehoge";
+			XmlElement el2 = obj.GetXml ();
+			AssertEquals ("Document is kept unless setting properties", doc, el2.OwnerDocument);
+		}
+
+		[Test]
+		public void PropertySetMakesDocumentDifferent ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<Object xmlns='http://www.w3.org/2000/09/xmldsig#'>test</Object>");
+			DataObject obj = new DataObject ();
+			XmlElement el1 = obj.GetXml ();
+			obj.LoadXml (doc.DocumentElement);
+			obj.Id = "hogehoge";
+			XmlElement el2 = obj.GetXml ();
+			Assert ("Document is not kept when properties are set", doc != el2.OwnerDocument);
+		}
+
+		[Test]
+		public void EnvelopedObject ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<envelope><Object xmlns:dsig='http://www.w3.org/2000/09/xmldsig#' xmlns='http://www.w3.org/2000/09/xmldsig#'>test</Object></envelope>");
+			DataObject obj = new DataObject ();
+			obj.LoadXml (doc.DocumentElement.FirstChild as XmlElement);
+			obj.Id = "hoge";
+			obj.MimeType = "application/octet-stream";
+			obj.Encoding = "euc-kr";
+			XmlElement el1 = obj.GetXml ();
+			AssertEquals ("<Object Id=\"hoge\" MimeType=\"application/octet-stream\" Encoding=\"euc-kr\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\">test</Object>", el1.OuterXml);
+			/* looks curious? but the element does not look to 
+			   be appended to the document.
+			   Just commented out since it is not fixed.
+			AssertEquals (String.Empty, el1.OwnerDocument.OuterXml);
+			*/
 		}
 	}
 }
