@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: Application.cs,v $
+// Revision 1.4  2004/08/23 22:45:19  pbartok
+// - Removed debug output
+// - Simplifications
+//
 // Revision 1.3  2004/08/23 22:09:29  pbartok
 // - Added handling of Idle event
 // - Added handling of form closing
@@ -260,6 +264,11 @@ namespace System.Windows.Forms {
 
 		public static void Run() {
 			MSG	msg = new MSG();
+			Form	form = null;
+
+			if (app_context != null) {
+				form = app_context.MainForm;
+			}
 
 			messageloop_started = true;
 
@@ -269,12 +278,12 @@ namespace System.Windows.Forms {
 					XplatUI.DispatchMessage(ref msg);
 
 					// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
-					if ((app_context != null) && app_context.MainForm.closing) {
+					if ((form != null) && form.closing) {
 						exiting = true;
 					}
 					continue;
 				} else if (Idle != null) {
-					Idle(null, EventArgs.Empty);
+					Idle(form, EventArgs.Empty);
 					continue;
 				}
 			}
@@ -284,14 +293,11 @@ namespace System.Windows.Forms {
 			if (ApplicationExit != null) {
 				ApplicationExit(null, EventArgs.Empty);
 			}
-			Console.WriteLine("Application.Run(): returning");
 		}
 
 		public static void Run(Form mainForm) {
 			mainForm.CreateControl();
 			Run(new ApplicationContext(mainForm));
-
-			Console.WriteLine("Application.Run(Form): returning");
 		}
 
 		public static void Run(ApplicationContext context) {
@@ -301,7 +307,6 @@ namespace System.Windows.Forms {
 				app_context.ThreadExit += new EventHandler(InternalExit);
 			}
 			Run();
-			Console.WriteLine("Application.Run(Context): returning");
 		}
 		#endregion	// Public Static Methods
 
