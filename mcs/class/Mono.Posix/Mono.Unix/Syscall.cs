@@ -838,7 +838,7 @@ namespace Mono.Unix {
 			Dirent d = (Dirent) obj;
 			return d.d_ino == d_ino && d.d_off == d_off &&
 				d.d_reclen == d_reclen && d.d_type == d_type &&
-				d.d_name == d.d_name;
+				d.d_name == d_name;
 		}
 
 		public override string ToString ()
@@ -925,8 +925,14 @@ namespace Mono.Unix {
 			Group g = (Group) obj;
 			if (g.gr_gid != gr_gid)
 				return false;
-			if (g.gr_gid == gr_gid && g.gr_name == g.gr_name &&
-				g.gr_passwd == g.gr_passwd && g.gr_mem.Length == gr_mem.Length) {
+			if (g.gr_gid == gr_gid && g.gr_name == gr_name &&
+				g.gr_passwd == gr_passwd) {
+				if (g.gr_mem == gr_mem)
+					return true;
+				if (g.gr_mem == null || gr_mem == null)
+					return false;
+				if (g.gr_mem.Length != gr_mem.Length)
+					return false;
 				for (int i = 0; i < gr_mem.Length; ++i)
 					if (gr_mem[i] != g.gr_mem[i])
 						return false;
@@ -989,8 +995,8 @@ namespace Mono.Unix {
 				return false;
 			Passwd p = (Passwd) obj;
 			return p.pw_uid == pw_uid && p.pw_gid == pw_gid && p.pw_name == pw_name && 
-				p.pw_passwd == pw_passwd && p.pw_gecos == p.pw_gecos && 
-				p.pw_dir == p.pw_dir && p.pw_shell == p.pw_shell;
+				p.pw_passwd == pw_passwd && p.pw_gecos == pw_gecos && 
+				p.pw_dir == pw_dir && p.pw_shell == pw_shell;
 		}
 
 		// Generate string in /etc/passwd format

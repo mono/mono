@@ -1,3 +1,13 @@
+2004-12-29  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: Fix Object.Equals implementations.
+	* UnixPath.cs: New & improved, with Testing!  GetRealPath() is changed so
+	  that it doesn't walk the entire path looking for symlinks, it just reads 
+	  the leaf.  GetCompletRealPath() walks the entire path resolving symlinks.
+	  GetCanonicalPath() added, which "cleans up" a path (removing extraneous
+	  "." and ".." entries).
+	* UnixSymbolicLinkInfo.cs: Rename ContentsLength -> MaxContentsSize.
+
 2004-12-28  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixFileSystemInfo.cs: Add a link(2) wrapper, CreateLink().  Strictly

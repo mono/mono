@@ -103,10 +103,7 @@ namespace Mono.Unix {
 		public static string GetFullPath (string path)
 		{
 			path = _GetFullPath (path);
-			string [] dirs;
-			int lastIndex;
-			GetPathComponents (path, out dirs, out lastIndex);
-			return string.Join ("/", dirs, 0, lastIndex);
+			return GetCanonicalPath (path);
 		}
 
 		private static string _GetFullPath (string path)
@@ -119,15 +116,25 @@ namespace Mono.Unix {
 			return path;
 		}
 
+		public static string GetCanonicalPath (string path)
+		{
+			string [] dirs;
+			int lastIndex;
+			GetPathComponents (path, out dirs, out lastIndex);
+			string end = string.Join ("/", dirs, 0, lastIndex);
+			return IsPathRooted (path) ? "/" + end : end;
+		}
+
 		private static void GetPathComponents (string path, 
 			out string[] components, out int lastIndex)
 		{
 			string [] dirs = path.Split (DirectorySeparatorChar);
 			int target = 0;
 			for (int i = 0; i < dirs.Length; ++i) {
-				if (dirs [i] == "." || (i != 0 && dirs [i] == string.Empty)) continue;
+				if (dirs [i] == "." || dirs [i] == string.Empty) continue;
 				else if (dirs [i] == "..") {
 					if (target != 0) --target;
+					else ++target;
 				}
 				else
 					dirs [target++] = dirs [i];
@@ -145,25 +152,32 @@ namespace Mono.Unix {
 			return "/";
 		}
 
-		public static string GetRealPath (string path)
+		public static string GetCompleteRealPath (string path)
 		{
-			path = _GetFullPath (path);
+			if (path == null)
+				throw new ArgumentNullException ("path");
 			string [] dirs;
 			int lastIndex;
 			GetPathComponents (path, out dirs, out lastIndex);
 			StringBuilder realPath = new StringBuilder ();
-			for (int i = 0; i < dirs.Length; ++i) {
+			if (dirs.Length > 0) {
+				string dir = IsPathRooted (path) ? "/" : "";
+				dir += dirs [0];
+				realPath.Append (GetRealPath (dir));
+			}
+			for (int i = 1; i < lastIndex; ++i) {
 				realPath.Append ("/").Append (dirs [i]);
-				string p = _GetRealPath (realPath.ToString());
+				string p = GetRealPath (realPath.ToString());
 				realPath.Remove (0, realPath.Length);
 				realPath.Append (p);
 			}
 			return realPath.ToString ();
 		}
 
-		private static string _GetRealPath (string path)
+		public static string GetRealPath (string path)
 		{
-			StringBuilder buf = new StringBuilder (1024);
+			StringBuilder buf = 
+				new StringBuilder (UnixSymbolicLinkInfo.MaxContentsSize);
 			int r;
 			do {
 				r = Syscall.readlink (path, buf);
@@ -178,8 +192,10 @@ namespace Mono.Unix {
 						break;
 					}
 				}
-				path = buf.ToString ();
-			} while (r == 0);
+				string name = buf.ToString (0, r);
+				path = GetDirectoryName (path) + DirectorySeparatorChar + name;
+				path = GetCanonicalPath (path);
+			} while (r >= 0);
 
 			return path;
 		}
