@@ -25,11 +25,20 @@ namespace System.Net {
 		// Don't change the name of this field without also
 		// changing socket-io.c in the runtime
 		private long address;
+		private AddressFamily _family = AddressFamily.InterNetwork;
+		private ushort[] _numbers = new ushort[8];	/// ip6 Stored in network order (as ip4)
+		private long _scopeId = 0;
 
 		public static readonly IPAddress Any = new IPAddress(0);
 		public static readonly IPAddress Broadcast = IPAddress.Parse ("255.255.255.255");
 		public static readonly IPAddress Loopback = IPAddress.Parse ("127.0.0.1");
 		public static readonly IPAddress None = IPAddress.Parse ("255.255.255.255");
+
+#if NET_1_1
+		public static readonly IPAddress IPv6Any = IPAddress.Parse ("::");
+		public static readonly IPAddress IPv6Loopback = IPAddress.Parse ("::1");
+		public static readonly IPAddress IPv6None = IPAddress.Parse ("::");
+#endif
 
 		private static short SwapShort (short number)
 		{
@@ -106,14 +115,56 @@ namespace System.Net {
 		/// </summary>
 		public IPAddress (long addr)
 		{
-			Address = addr;
+			address = addr;
 		}
+
+#if NET_1_1
+		public IPAddress(byte[] address) : this(address, 0)
+		{
+		}
+
+		public IPAddress(byte[] address, long scopeId)
+		{
+			if(address.Length != 16)
+				throw new ArgumentException("address");
+
+			Buffer.BlockCopy(address, 0, _numbers, 0, 16);
+			_family = AddressFamily.InterNetworkV6;
+			_scopeId = scopeId;
+		}
+
+		internal IPAddress(ushort[] address, long scopeId)
+		{
+			_numbers = address;
+
+			for(int i=0; i<8; i++)
+				_numbers[i] = (ushort)HostToNetworkOrder((short)_numbers[i]);
+
+			_family = AddressFamily.InterNetworkV6;
+			_scopeId = scopeId;
+		}
+#endif
 
 		public static IPAddress Parse (string ip)
 		{
+			IPAddress ret;
+
 			if (ip == null)
-				throw new ArgumentNullException ("null ip string");
+				throw new ArgumentNullException ("Value cannot be null.");
 				
+#if NET_1_1
+			if( (ret = ParseIPV4(ip)) == null)
+				if( (ret = ParseIPV6(ip)) == null)
+					throw new FormatException("An invalid IP address was specified.");
+#else
+			if( (ret = ParseIPV4(ip)) == null)
+					throw new FormatException("An invalid IP address was specified.");
+#endif
+			return ret;
+		}
+
+		private static IPAddress ParseIPV4 (string ip)
+		{
 			if (ip.Length == 0 || ip [0] == ' ')
 				return new IPAddress (0);
 				
@@ -121,14 +172,15 @@ namespace System.Net {
 			if (pos != -1)
 				ip = ip.Substring (0, pos);				
 			else if (ip [ip.Length - 1] == '.')
-				throw new FormatException ("An invalid IP address was specified");
+				return null;
 
 			string [] ips = ip.Split (new char [] {'.'});
 			if (ips.Length > 4)
-				throw new FormatException ("An invalid IP address was specified");
+				return null;
 			
 			// Make the number in network order
-			try {
+			try 
+			{
 				long a = 0;
 				byte val = 0;
 				for (int i = 0; i < ips.Length; i++) {
@@ -153,12 +205,31 @@ namespace System.Net {
 
 				return (new IPAddress (a));
 			} catch (Exception) {
-				throw new FormatException ("An invalid IP address was specified");
+				return null;
 			}
 		}
 		
-		public long Address {
+#if NET_1_1
+		private static IPAddress ParseIPV6 (string ip)
+		{
+			try 
+			{
+				IPv6Address newIPv6Address = IPv6Address.Parse(ip);
+				return new IPAddress(newIPv6Address.Address, newIPv6Address.ScopeId);
+			}
+			catch(Exception e) {
+				return null;
+			}
+		}
+
+		[Obsolete]
+#endif
+		public long Address 
+		{
 			get {
+				if(_family != AddressFamily.InterNetwork)
+					throw new Exception("The attempted operation is not supported for the type of object referenced");
+
 				return address;
 			}
 			set {
@@ -168,13 +239,51 @@ namespace System.Net {
 						"the address must be between 0 and 0xFFFFFFFF");
 				*/
 
+				if(_family != AddressFamily.InterNetwork)
+					throw new Exception("The attempted operation is not supported for the type of object referenced");
+
 				address = value;
 			}
 		}
 
-		public AddressFamily AddressFamily {
+#if NET_1_1
+		public long ScopeId {
 			get {
-				return(AddressFamily.InterNetwork);
+				if(_family != AddressFamily.InterNetworkV6)
+					throw new Exception("The attempted operation is not supported for the type of object referenced");
+
+				return _scopeId;
+			}
+			set {
+				if(_family != AddressFamily.InterNetworkV6)
+					throw new Exception("The attempted operation is not supported for the type of object referenced");
+
+				_scopeId = value;
+			}
+		}
+		public byte[] GetAddressBytes() 
+		{
+
+			if(_family == AddressFamily.InterNetworkV6)
+			{
+				byte[] addressBytes = new byte[16];
+				Buffer.BlockCopy(_numbers, 0, addressBytes, 0, 16);
+				return addressBytes;
+			}
+			else
+			{
+				return new byte[4] { (byte)(address & 0xFF),
+									   (byte)((address >> 8) & 0xFF),
+									   (byte)((address >> 16) & 0xFF),
+									   (byte)(address >> 24) }; 
+			}
+		}
+#endif
+
+		public AddressFamily AddressFamily 
+		{
+			get {
+				return _family;
 			}
 		}
 		
@@ -188,7 +297,16 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			return (addr.address & 0xFF) == 127;
+			if(addr._family == AddressFamily.InterNetwork)
+				return (addr.address & 0xFF) == 127;
+			else {
+				for(int i=0; i<6; i++) {
+					if(addr._numbers[i] != 0)
+						return false;
+				}
+
+				return NetworkToHostOrder((short)addr._numbers[7]) == 1;
+			}
 		}
 
 		/// <summary>
@@ -197,7 +315,17 @@ namespace System.Net {
 		/// </summary>
 		public override string ToString ()
 		{
-			return ToString (address);
+			if(_family == AddressFamily.InterNetwork)
+				return ToString (address);
+			else
+			{
+				ushort[] numbers = _numbers.Clone() as ushort[];
+
+				for(int i=0; i<numbers.Length; i++)
+					numbers[i] = (ushort)NetworkToHostOrder((short)numbers[i]);
+
+				return new IPv6Address(numbers).ToString();
+			}
 		}
 
 		/// <summary>
@@ -218,14 +346,41 @@ namespace System.Net {
 		public override bool Equals (object other)
 		{
 			if (other is System.Net.IPAddress){
-				return Address == ((System.Net.IPAddress) other).Address;
+				IPAddress otherAddr = other as IPAddress;
+
+				if(AddressFamily != otherAddr.AddressFamily)
+					return false;
+
+				if(AddressFamily == AddressFamily.InterNetwork)
+					return Address == otherAddr.Address;
+				else
+				{
+					ushort[] vals = otherAddr._numbers;
+
+					for(int i=0; i<8; i++)
+						if(_numbers[i] != vals[i])
+							return false;
+
+					return true;
+				}
 			}
 			return false;
 		}
 
 		public override int GetHashCode ()
 		{
-			return (int)Address;
+			if(_family == AddressFamily.InterNetwork)
+				return (int)Address;
+			else
+				return Hash (((((int) _numbers[0]) << 16) + _numbers [1]), 
+					((((int) _numbers [2]) << 16) + _numbers [3]),
+					((((int) _numbers [4]) << 16) + _numbers [5]),
+					((((int) _numbers [6]) << 16) + _numbers [7]));
+		}
+
+		private static int Hash (int i, int j, int k, int l) 
+		{
+			return i ^ (j << 13 | j >> 19) ^ (k << 26 | k >> 6) ^ (l << 7 | l >> 25);
 		}
 	}
 }

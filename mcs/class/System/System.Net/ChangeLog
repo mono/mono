@@ -1,5 +1,16 @@
 2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
 
+	* Dns.cs: Reworked indentation.
+	Added IPv6 support.
+	Added literal address checking in GetHostByAddress.
+	Changed Dns.Resolve behavior.
+	* IPAddress.cs:
+	* IPEndPoint.cs: Added IPv6 support.
+	* IPv6Address.cs: Added address compression.
+	* NetConfig.cs: Added configuration section. 	
+
+2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
+
 	* ServicePoint.cs: Removed Connect and GetEndPoint methods.
 	Removed reverse resolution when uri is literal IP address. 
 	* WebConnection.cs: IPv6 compatibility update: Try to connect

@@ -27,6 +27,7 @@ namespace System.Net {
 	internal class IPv6Address {
 		private ushort [] address;
 		private int prefixLength;
+		private long scopeId = 0;
 
 		public static readonly IPv6Address Loopback = IPv6Address.Parse ("::1");
 		public static readonly IPv6Address Unspecified = IPv6Address.Parse ("::");
@@ -49,6 +50,11 @@ namespace System.Net {
 			if (prefixLength < 0 || prefixLength > 128)
 				throw new ArgumentException ("prefixLength");
 			this.prefixLength = prefixLength;
+		}	
+	
+		public IPv6Address (ushort [] addr, int prefixLength, int scopeId) : this (addr, prefixLength)
+		{
+            this.scopeId = scopeId;
 		}		
 		
 		public static IPv6Address Parse (string ipString)
@@ -65,6 +71,7 @@ namespace System.Net {
 				throw new FormatException ("Not a valid IPv6 address");
 
 			int prefixLen = 0;
+			int scopeId = 0;
 			int pos = ipString.LastIndexOf ('/');
 			if (pos != -1) {
 				string prefix = ipString.Substring (pos + 1);
@@ -74,8 +81,20 @@ namespace System.Net {
 					prefixLen = -1;
 				}
 				if (prefixLen < 0 || prefixLen > 128)
-					throw new FormatException ("Not a valid prefix length");;
+					throw new FormatException ("Not a valid prefix length");
 				ipString = ipString.Substring (0, pos);
+			} else {
+				pos = ipString.LastIndexOf ('%');
+				if (pos != -1) {
+					string prefix = ipString.Substring (pos + 1);
+					try  {
+						scopeId = Int32.Parse (prefix);
+					} 
+					catch (Exception) {
+						scopeId = 0;
+					}
+					ipString = ipString.Substring (0, pos);
+				}			
 			}
 			
 			ushort [] addr = new ushort [8];			
@@ -164,7 +183,7 @@ namespace System.Net {
 					throw new FormatException ("Not a valid IPv6 address");
 			}
 			
-			return new IPv6Address (addr, prefixLen);
+			return new IPv6Address (addr, prefixLen, scopeId);
 		}
 		
 		public ushort [] Address {
@@ -175,6 +194,15 @@ namespace System.Net {
 			get { return this.prefixLength; }
 		}
 		
+		public long ScopeId {
+			get {
+				return scopeId;
+			}
+			set {
+				scopeId = value;
+			}
+		}
+
 		public ushort this [int index] {
 			get { return address [index]; }
 		}		
@@ -204,8 +232,8 @@ namespace System.Net {
 		{
 			for (int i = 0; i < 6; i++) 
 				if (address [i] != 0)
-					return false;			
-			return true;
+					return false;
+			return ( (IPAddress.NetworkToHostOrder(address[7]) << 16) | IPAddress.NetworkToHostOrder(address[6])) > 1;
 		}
 		
 		public bool IsIPv4Mapped ()
@@ -222,10 +250,65 @@ namespace System.Net {
 		/// </summary>
 		public override string ToString ()
 		{
+			bool bZeroUsed = false;
 			StringBuilder s = new StringBuilder ();
-			for (int i = 0; i < 7; i++)
-				s.Append (String.Format ("{0:X4}", address [i])).Append (':');
-			s.Append (String.Format ("{0:X4}", address [7]));
+
+
+			if(IsIPv4Compatible() || IsIPv4Mapped())
+			{
+				s.Append("::");
+
+				if(IsIPv4Mapped())
+					s.Append("ffff:");
+
+				s.Append(new IPAddress( IPAddress.NetworkToHostOrder(address[6]<<16) + IPAddress.NetworkToHostOrder(address[7])).ToString());
+
+				return s.ToString ();
+			}
+			else
+			{
+				int bestChStart = -1; // Best chain start
+				int bestChLen = 0; // Best chain length
+				int currChLen = 0; // Current chain length
+
+				// Looks for the longest zero chain
+				for (int i=0; i<8; i++)
+				{
+					if (address[i] != 0)
+					{
+						if ((currChLen > bestChLen) 
+							&& (currChLen > 1))
+						{
+							bestChLen = currChLen;
+							bestChStart = i - currChLen;
+						}
+						currChLen = 0;
+					}
+					else
+						currChLen++;
+				}
+				if ((currChLen > bestChLen) 
+					&& (currChLen > 1))
+				{
+					bestChLen = currChLen;
+					bestChStart = 8 - currChLen;
+				}
+
+				// makes the string
+				if (bestChStart == 0)
+					s.Append(":");
+				for (int i=0; i<8; i++)
+				{
+					if (i == bestChStart)
+					{
+						s.Append (":");
+						i += (bestChLen - 1);
+						continue;
+					}
+					s.AppendFormat("{0:x}", address [i]);
+					if (i < 7) s.Append (':');
+				}
+			}
 			return s.ToString ();
 		}
 
@@ -265,14 +348,14 @@ namespace System.Net {
 		public override int GetHashCode ()
 		{
 			return Hash (((((int) address [0]) << 16) + address [1]), 
-			             ((((int) address [2]) << 16) + address [3]),
-			             ((((int) address [4]) << 16) + address [5]),
-			             ((((int) address [6]) << 16) + address [7]));
+						((((int) address [2]) << 16) + address [3]),
+						((((int) address [4]) << 16) + address [5]),
+						((((int) address [6]) << 16) + address [7]));
 		}
 		
-	    	private static int Hash (int i, int j, int k, int l) 
-	    	{
-	    		return i ^ (j << 13 | j >> 19) ^ (k << 26 | k >> 6) ^ (l << 7 | l >> 25);
-    		}
+		private static int Hash (int i, int j, int k, int l) 
+		{
+			return i ^ (j << 13 | j >> 19) ^ (k << 26 | k >> 6) ^ (l << 7 | l >> 25);
+		}
 	}
 }

@@ -43,7 +43,7 @@ namespace System.Net {
 
 		public override AddressFamily AddressFamily {
 			get {
-				return AddressFamily.InterNetwork;
+				return address.AddressFamily;
 			}
 		}
 
@@ -74,38 +74,91 @@ namespace System.Net {
 				// port and address
 				return(null);
 			}
-			AddressFamily family=(AddressFamily)sockaddr[0];
-			if(family!=AddressFamily.InterNetwork) {
-				return(null);
-			}
-			
-			int port=(((int)sockaddr[2])<<8) + (int)sockaddr[3];
-			long address=(((long)sockaddr[7])<<24) +
-				(((long)sockaddr[6])<<16) +
-				(((long)sockaddr[5])<<8) +
-				(long)sockaddr[4];
 
-			IPEndPoint ipe = new IPEndPoint(address, port);
-			
+			AddressFamily family=(AddressFamily)sockaddr[0];
+			int port;
+
+			IPEndPoint ipe = null;
+			switch(family)
+			{
+				case AddressFamily.InterNetwork:
+					port = (((int)sockaddr[2])<<8) + (int)sockaddr[3];
+					long address=(((long)sockaddr[7])<<24) +
+						(((long)sockaddr[6])<<16) +
+						(((long)sockaddr[5])<<8) +
+						(long)sockaddr[4];
+
+					ipe = new IPEndPoint(address, port);
+					break;
+#if NET_1_1
+				case AddressFamily.InterNetworkV6:
+					port	= (((int)sockaddr[2])<<8) + (int)sockaddr[3];
+
+					/// maybe flowid ?
+					int unknown	= (int)sockaddr[4] +
+						(((int)sockaddr[5])<<8) +
+						(((int)sockaddr[6])<<16) +
+						(((int)sockaddr[7])<<24);
+
+					int scopeId	= (int)sockaddr[24] +
+						(((int)sockaddr[25])<<8) +
+						(((int)sockaddr[26])<<16) +
+						(((int)sockaddr[27])<<24);
+
+					ushort[] addressData = new ushort[8];
+					for(int i=0; i<8; i++)
+						addressData[i] = (ushort)((sockaddr[8+i*2] << 8) + sockaddr[8+i*2+1]);
+
+					ipe = new IPEndPoint (new IPAddress(addressData, scopeId), port);
+					break;
+#endif
+				default:
+					return null;
+			}
+
 			return(ipe);
 		}
 
 		public override SocketAddress Serialize() {
-			// .net produces a 16 byte buffer, even though
-			// only 8 bytes are used. I guess its just a
-			// holdover from struct sockaddr padding.
-			SocketAddress sockaddr = new SocketAddress(AddressFamily.InterNetwork, 16);
+			SocketAddress sockaddr = null;
 
-			// bytes 2 and 3 store the port, the rest
-			// stores the address
-			sockaddr [2] = (byte) ((port>>8) & 0xff);
-			sockaddr [3] = (byte) (port & 0xff);
+			switch (address.AddressFamily)
+			{
+				case AddressFamily.InterNetwork:
+					// .net produces a 16 byte buffer, even though
+					// only 8 bytes are used. I guess its just a
+					// holdover from struct sockaddr padding.
+					sockaddr = new SocketAddress(AddressFamily.InterNetwork, 16);
 
-			sockaddr [4] = (byte) (address.Address & 0xff);
-			sockaddr [5] = (byte) ((address.Address >> 8) & 0xff);
-			sockaddr [6] = (byte) ((address.Address >> 16) & 0xff);
-			sockaddr [7] = (byte) ((address.Address >> 24) & 0xff);
-			
+					// bytes 2 and 3 store the port, the rest
+					// stores the address
+					sockaddr [2] = (byte) ((port>>8) & 0xff);
+					sockaddr [3] = (byte) (port & 0xff);
+
+					sockaddr [4] = (byte) (address.Address & 0xff);
+					sockaddr [5] = (byte) ((address.Address >> 8) & 0xff);
+					sockaddr [6] = (byte) ((address.Address >> 16) & 0xff);
+					sockaddr [7] = (byte) ((address.Address >> 24) & 0xff);
+					break;
+#if NET_1_1
+				case AddressFamily.InterNetworkV6:
+					sockaddr = new SocketAddress(AddressFamily.InterNetworkV6, 28);
+
+					sockaddr [2] = (byte) ((port>>8) & 0xff);
+					sockaddr [3] = (byte) (port & 0xff);
+
+					byte[] addressBytes = address.GetAddressBytes();
+					for(int i=0; i<16; i++)
+						sockaddr[8+i] = addressBytes[i];
+					
+					sockaddr [24] = (byte) (address.ScopeId & 0xff);
+					sockaddr [25] = (byte) ((address.ScopeId >> 8) & 0xff);
+					sockaddr [26] = (byte) ((address.ScopeId >> 16) & 0xff);
+					sockaddr [27] = (byte) ((address.ScopeId >> 24) & 0xff);
+					break;
+#endif
+			}
+
 			return(sockaddr);
 		}
 
