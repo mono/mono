@@ -1,3 +1,7 @@
+2004-01-24  Duncan Mak  <duncan@ximian.com>
+
+	* GraphicsPath.cs (AddEllipse): Added.
+
 2004-01-19  Duncan Mak  <duncan@ximian.com>
 
 	* GraphicsPath.cs: Implemented. Still needs testing, though.

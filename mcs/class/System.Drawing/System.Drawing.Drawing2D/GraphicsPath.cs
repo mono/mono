@@ -179,6 +179,30 @@ namespace System.Drawing.Drawing2D
                 }
 
                 //
+                // AddEllipse
+                //
+                public void AddEllipse (RectangleF r)
+                {
+                        GDIPlus.GdipAddPathEllipse (nativePath, r.X, r.Y, r.Width, r.Height);
+                }
+                
+                public void AddEllipse (float x, float y, float width, float height)
+                {
+                        GDIPlus.GdipAddPathEllipse (nativePath, x, y, width, height);
+                }
+
+                public void AddEllipse (Rectangle r)
+                {
+                        GDIPlus.GdipAddPathEllipseI (nativePath, r.X, r.Y, r.Width, r.Height);
+                }
+                
+                public void AddEllipse (int x, int y, int width, int height)
+                {
+                        GDIPlus.GdipAddPathEllipseI (nativePath, x, y, width, height);
+                }
+                
+
+                //
                 // AddLine
                 //
                 public void AddLine (Point a, Point b)

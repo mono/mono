@@ -92,6 +92,8 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]
                 static internal extern Status GdipDrawLinesI (IntPtr graphics, IntPtr pen, Point [] points, int count);
                 [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawPath (IntPtr graphics, IntPtr pen, IntPtr path);
+                [DllImport ("gdiplus.dll")]
                 static internal extern Status GdipDrawPie (IntPtr graphics, IntPtr pen, float x, float y, float width, float height, float startAngle, float sweepAngle);
                 [DllImport ("gdiplus.dll")]
                 static internal extern Status GdipDrawPieI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height, float startAngle, float sweepAngle);
@@ -415,6 +417,8 @@ namespace System.Drawing {
                 internal static extern Status GdipAddPathRectangles (IntPtr path, RectangleF [] rects, int count);
                 [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathEllipse (IntPtr path, float x, float y, float width, float height);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipAddPathEllipseI (IntPtr path, int x, int y, int width, int height);
                 [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathPie (IntPtr path, float x, float y, float width, float height, float startAngle, float sweepAngle);
                 [DllImport ("gdiplus.dll")]                                                                

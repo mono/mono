@@ -565,10 +565,9 @@ namespace System.Drawing
 				throw new ArgumentException ("Error calling GDIPlus.GdipDrawLinesI:" +status);                                
 		}
 
-		[MonoTODO]
 		public void DrawPath (Pen pen, GraphicsPath path)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawPath (nativeObject, pen.nativeObject, path.nativePath);
 		}
 
 		[MonoTODO]

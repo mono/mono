@@ -1,3 +1,7 @@
+2004-01-24  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawPath): Implemented.
+
 2004-01-23  Ravindra  <rkumar@novell.com>
 
 	* Point.cs: ToString modified.

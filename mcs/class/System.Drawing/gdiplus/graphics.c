@@ -122,8 +122,7 @@ make_polygon (GpGraphics *graphics, GpPointF *points, int count)
 }
 
 static void
-make_polygon_from_integers (
-        GpGraphics *graphics, GpPoint *points, int count)
+make_polygon_from_integers (GpGraphics *graphics, GpPoint *points, int count)
 {
         int i;
         cairo_move_to (graphics->ct, points [0].X, points [0].Y);
@@ -587,6 +586,49 @@ GdipDrawLinesI (GpGraphics *graphics, GpPen *pen,
                 if (s != Ok) return s;
         }
 
+        return Ok;
+}
+
+GpStatus
+GdipDrawPath (GpGraphics *graphics, GpPen *pen, GpPath *path)
+{
+        int length = path->count;
+        int i;
+
+        gdip_pen_setup (graphics, pen);        
+        
+        for (i = 0; i < length; i ++) {
+                GpPointF pt = g_array_index (path->points, GpPointF, i);
+                byte type = g_array_index (path->types, byte, i);
+                GpPointF pts [3];
+                int idx = 0;
+                
+                switch (type) {
+                case PathPointTypeStart:
+                        cairo_move_to (graphics->ct, pt.X, pt.Y);
+
+                case PathPointTypeLine:
+                        cairo_line_to (graphics->ct, pt.X, pt.Y);
+
+                case PathPointTypeBezier:
+                        if (idx < 3) {
+                                pts [idx] = pt;
+                                idx ++;
+
+                        } else {
+                                cairo_curve_to (graphics->ct,
+                                                pts [0].X, pts [0].Y,
+                                                pts [1].X, pts [1].Y,
+                                                pts [2].X, pts [2].Y);
+                                idx = 0;
+                        }
+                default:
+                        return NotImplemented;
+                }
+        }
+
+        cairo_stroke (graphics->ct);
+        
         return Ok;
 }
 
