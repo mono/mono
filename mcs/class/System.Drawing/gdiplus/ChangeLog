@@ -1,3 +1,7 @@
+2004-01-13  Ravindra <rkumar@novell.com>
+
+	* pen.c: Initialized pen.matrix field to identity matrix.
+
 2004-01-10  Alexandre Pigolkine <pigolkine@gmx.de>
 	* bitmap.c 
 	* brush.c		cosmetic changes
