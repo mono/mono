@@ -1,3 +1,8 @@
+2004-11-08  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HttpPostProtocolReflector.cs: Avoid generating an empty part attribute.
+	  This was causing problems when importing the wsdl from MS Visual Studio.
+
 2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ProtocolImporter.cs, HttpSimpleProtocolImporter.cs,
