@@ -254,10 +254,10 @@ namespace System.Web.UI.WebControls
 			get { return (selectionBits == 0); }
 		}
 
-		private void AddColor (HtmlTextWriter writer, HtmlTextWriterStyle style, Color color)
+		private void AddColor (CssStyleCollection attributes, HtmlTextWriterStyle style, Color color)
 		{
 			if (!color.IsEmpty)
-				writer.AddStyleAttribute (style, ColorTranslator.ToHtml (color));
+				attributes.Add (style, ColorTranslator.ToHtml (color));
 		}
 
 		private static string StringArrayToString (string [] array, char separator)
@@ -283,52 +283,76 @@ namespace System.Web.UI.WebControls
 
 		public virtual void AddAttributesToRender (HtmlTextWriter writer, WebControl owner)
 		{
-			if (IsSet (BACKCOLOR))
-				AddColor (writer, HtmlTextWriterStyle.BackgroundColor, BackColor);
-
-			if (IsSet(BORDERCOLOR))
-				AddColor (writer, HtmlTextWriterStyle.BorderColor, BorderColor);
-
-			if (IsSet (FORECOLOR))
-				AddColor (writer, HtmlTextWriterStyle.Color, ForeColor);
-
 			if (IsSet (CSSCLASS)) {
 				string cssClass = (string) ViewState ["CssClass"];
 				if (cssClass.Length > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Class, cssClass);
 			}
 
+			CssStyleCollection ats = new CssStyleCollection ();
+#if NET_2_0
+			FillStyleAttributes (ats, owner);
+#else
+			FillAttributes (ats);
+#endif
+			foreach (string key in ats.Keys)
+				writer.AddStyleAttribute (key, ats [key]);
+		}
+
+#if NET_2_0
+		public CssStyleCollection FillStyleAttributes (IUrlResolutionService urlResolver)
+		{
+			CssStyleCollection ats = new CssStyleCollection ();
+			FillStyleAttributes (ats, urlResolver);
+			return ats;
+		}
+		protected virtual void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
+		{
+			FillAttributes (attributes);
+		}
+#endif
+
+		void FillAttributes (CssStyleCollection attributes)
+		{
+			if (IsSet (BACKCOLOR))
+				AddColor (attributes, HtmlTextWriterStyle.BackgroundColor, BackColor);
+
+			if (IsSet(BORDERCOLOR))
+				AddColor (attributes, HtmlTextWriterStyle.BorderColor, BorderColor);
+
+			if (IsSet (FORECOLOR))
+				AddColor (attributes, HtmlTextWriterStyle.Color, ForeColor);
+
 			if (!BorderWidth.IsEmpty) {
-				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth,
+				attributes.Add (HtmlTextWriterStyle.BorderWidth,
 						BorderWidth.ToString (CultureInfo.InvariantCulture));
 
 				if (BorderStyle != BorderStyle.NotSet) {
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle,
+					attributes.Add (HtmlTextWriterStyle.BorderStyle,
 							Enum.Format (typeof (BorderStyle), BorderStyle, "G"));
 				} else {
 					if (BorderWidth.Value != 0.0)
-						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle,
-									  "solid");
+						attributes.Add (HtmlTextWriterStyle.BorderStyle, "solid");
 				}
 			} else {
 				if (BorderStyle != BorderStyle.NotSet)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle,
+					attributes.Add (HtmlTextWriterStyle.BorderStyle,
 							Enum.Format (typeof (BorderStyle), BorderStyle, "G"));
 			}
 
 			if (Font.Names.Length > 0)
-				writer.AddStyleAttribute (HtmlTextWriterStyle.FontFamily,
+				attributes.Add (HtmlTextWriterStyle.FontFamily,
 							StringArrayToString (Font.Names, ','));
 
 			if (!Font.Size.IsEmpty)
-				writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize,
+				attributes.Add (HtmlTextWriterStyle.FontSize,
 							Font.Size.ToString (CultureInfo.InvariantCulture));
 
 			if (Font.Bold)
-				writer.AddStyleAttribute (HtmlTextWriterStyle.FontWeight, "bold");
+				attributes.Add (HtmlTextWriterStyle.FontWeight, "bold");
 
 			if (Font.Italic)
-				writer.AddStyleAttribute (HtmlTextWriterStyle.FontStyle, "italic");
+				attributes.Add (HtmlTextWriterStyle.FontStyle, "italic");
 
 			string textDecoration = String.Empty;
 			if (Font.Strikeout)
@@ -341,24 +365,24 @@ namespace System.Web.UI.WebControls
 				textDecoration += " overline";
 
 			if (textDecoration.Length > 0)
-				writer.AddStyleAttribute( HtmlTextWriterStyle.TextDecoration, textDecoration);
+				attributes.Add (HtmlTextWriterStyle.TextDecoration, textDecoration);
 
 			Unit u = Unit.Empty;
 			if (IsSet (HEIGHT)) {
 				u = (Unit) ViewState ["Height"];
 				if (!u.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.Height,
+					attributes.Add (HtmlTextWriterStyle.Height,
 								u.ToString (CultureInfo.InvariantCulture));
 			}
 
 			if (IsSet (WIDTH)) {
 				u = (Unit) ViewState ["Width"];
 				if (!u.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.Width,
+					attributes.Add (HtmlTextWriterStyle.Width,
 								u.ToString (CultureInfo.InvariantCulture));
 			}
 		}
-
+		
 		public virtual void CopyFrom (Style source)
 		{
 			if (source == null || source.IsEmpty)

@@ -6,43 +6,66 @@ function Menu_OverItem (menuId, itemId, parentId) {
 		subm.parentMenu = getSubMenu (menuId, parentId);
 	var item = getMenuItem (menuId, itemId);
 	
-	var offx; var offy;
-	if (subm.parentMenu != null) {
-		offx = parseInt (subm.parentMenu.style.left);
-		offy = parseInt (subm.parentMenu.style.top);
-	} else {
-		offx = offy = 0;
+	if (subm.firstShown != true) {
+		var offx; var offy;
+		if (subm.parentMenu != null) {
+			offx = parseInt (subm.parentMenu.style.left);
+			offy = parseInt (subm.parentMenu.style.top);
+		} else {
+			offx = offy = 0;
+		}
+		
+		if (menu.dho != null) offx += menu.dho;
+		if (menu.dvo != null) offy += menu.dvo;
+		
+		if (menu.vertical || parentId != null)
+			Menu_Reposition (item, subm, item.offsetWidth + offx, offy);
+		else
+			Menu_Reposition (item, subm, offx, item.offsetHeight + offy);
+		subm.firstShown = true;
 	}
 	
-	if (menu.vertical)
-		Menu_Reposition (item, subm, item.offsetWidth + offx, offy);
-	else
-		Menu_Reposition (item, subm, offx, item.offsetHeight + offy);
+	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
 }
 
 function Menu_OverLeafItem (menuId, parentId) {
-	Menu_ShowMenu (getSubMenu (menuId, parentId));
+	var menu = getMenu (menuId);
+	var subm = getSubMenu (menuId, parentId);
+	Menu_SetActive (menu, subm);
+	Menu_ShowMenu (subm);
+}
+
+function Menu_OverStaticLeafItem (menuId) {
+	var menu = getMenu (menuId);
+	Menu_SetActive (menu, null);
 }
 
 function Menu_OutItem (menuId, itemId) {
-	Menu_HideMenu (menuId, getSubMenu (menuId, itemId));
+	var menu = getMenu (menuId);
+	Menu_HideMenu (menu, getSubMenu (menuId, itemId), menu.disappearAfter);
 }
 
-function Menu_HideMenu (menuId, subm)
+function Menu_SetActive (menu, subm) {
+	if (menu.active != null && subm != menu.active)
+		Menu_HideMenu (menu, menu.active, 0);
+	menu.active = subm;
+}
+
+function Menu_HideMenu (menu, subm, time)
 {
-	var menu = getMenu (menuId);
 	if (subm.timer != null) clearTimeout (subm.timer);
-	subm.timer = setTimeout ("Menu_HideMenuCallback ('" + subm.id + "')", menu.disappearAfter);
+	if (time > 0) subm.timer = setTimeout ("Menu_HideMenuCallback ('" + subm.id + "')", time);
+	else Menu_HideMenuCallback (subm.id);
 	
 	if (subm.parentMenu != null)
-		Menu_HideMenu (menuId, subm.parentMenu);
+		Menu_HideMenu (menu, subm.parentMenu, time);
 }
 
 function Menu_HideMenuCallback (spanId)
 {
 	var subm = document.getElementById (spanId);
-	subm.style.display = "none";
+//	subm.style.display = "none";
 	subm.style.visibility = "hidden";
 }
 
@@ -51,7 +74,7 @@ function Menu_ShowMenu (subm)
 	if (subm.timer != null)
 		clearTimeout (subm.timer);
 		
-	subm.style.display = "block";
+//	subm.style.display = "block";
 	subm.style.visibility = "visible";
 
 	if (subm.parentMenu != null)

@@ -209,6 +209,20 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public string PopOutImageUrl {
+			get {
+				object o = ViewState ["PopOutImageUrl"];
+				if (o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["PopOutImageUrl"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
 		public string Target {
 			get {
 				object o = ViewState ["Target"];

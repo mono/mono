@@ -1,3 +1,12 @@
+2004-12-17 Lluis Sanchez Gual <lluis@novell.com>
+
+	* Style.cs: Generate styles using a CssStyleCollection, so the code can
+	be reused for the 2.0 FillStyleAttributes method.
+	* Menu.cs: Implemented more properties and events. Rendering is very
+	complete now.
+	* MenuItem.cs: Added PopOutImageUrl property.
+	* Menu.js: More work on submenu management.
+
 2004-12-10 Lluis Sanchez Gual <lluis@novell.com>
 
 	* Menu.cs: Implemented basic rendering. Added some missing properties.
