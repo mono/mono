@@ -1,3 +1,11 @@
+2004-12-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* CultureInfoEntry.cs (AppendTableRow): Stringify the
+	textinfoentry
+	* TextInfoEntry.cs: New file for textinfo data
+	* textinfo.xml: textinfo data
+	* Driver.cs: Harness all the stuff above
+	* Makefile.am: add new files
 
 Mon Aug 9 13:24:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
 

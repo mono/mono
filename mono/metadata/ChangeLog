@@ -1,3 +1,9 @@
+2004-12-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* culture-info.h (TextInfoEntry): New struct
+	* object-internals.h: sync with managed
+	* locales.c: fill the `text_info_data' field
+	* culture-info-tables.h: update
 
 Mon Dec 13 18:10:50 CET 2004 Paolo Molaro <lupus@ximian.com>
 

@@ -29,6 +29,7 @@ namespace Mono.Tools.LocaleBuilder {
                 public string SpecificLcid;
                 public DateTimeFormatEntry DateTimeFormatEntry;
                 public NumberFormatEntry NumberFormatEntry;
+                public TextInfoEntry TextInfoEntry;
                 public int [] CalendarData = new int [5];
                 public int DateTimeIndex;
                 public int NumberIndex;
@@ -65,14 +66,15 @@ namespace Mono.Tools.LocaleBuilder {
                                         "{6}, {7}, {8}, " +
                                         "{9}, {10}, " +
                                         "{11}, " +
-                                        "{12}, {13}",
+                                        "{12}, {13}, {14}",
                                         Lcid, ParentLcid, SpecificLcid,
                                         EncodeStringIdx (Name), EncodeStringIdx (IcuName), EncodeStringIdx (EnglishName),
                                         EncodeStringIdx (DisplayName), EncodeStringIdx (NativeName), EncodeStringIdx (Win3Lang),
                                         EncodeStringIdx (ISO3Lang), EncodeStringIdx (ISO2Lang),
                                         ValuesString (CalendarData),
                                         DateTimeFormatEntry == null ? -1 : DateTimeFormatEntry.Row,
-                                        NumberFormatEntry == null ? -1 : NumberFormatEntry.Row);
+                                        NumberFormatEntry == null ? -1 : NumberFormatEntry.Row,
+					TextInfoEntry.ToString ());
                         builder.Append ('}');
                 }
 

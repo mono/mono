@@ -9,6 +9,7 @@ locale_builder_sources = Driver.cs		\
 			 CultureInfoEntry.cs	\
 			 DateTimeFormatEntry.cs	\
 			 NumberFormatEntry.cs	\
+			 TextInfoEntry.cs	\
 			 Entry.cs
 
 supp_data_files = supp/ar_AE.xml supp/ar_EG.xml supp/ar_KW.xml supp/ar_MA.xml	\
@@ -19,7 +20,7 @@ supp_data_files = supp/ar_AE.xml supp/ar_EG.xml supp/ar_KW.xml supp/ar_MA.xml	\
 		 supp/ar_SY.xml supp/ar_BH.xml supp/en_CA.xml supp/ar_LY.xml	\
 		 supp/root.xml
 
-EXTRA_DIST = $(locale_builder_sources) $(supp_data_files) lcids.xml supplementalData.xml
+EXTRA_DIST = $(locale_builder_sources) $(supp_data_files) lcids.xml supplementalData.xml textinfo.xml
 
 locale-builder.exe: $(locale_builder_sources)
 	$(MCS) $(MCSFLAGS) /out:$@ $^

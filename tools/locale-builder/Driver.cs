@@ -852,6 +852,8 @@ namespace Mono.Tools.LocaleBuilder {
                         ci.ISO3Lang = iso3;
                         ci.Win3Lang = win;
                         ci.IcuName = icu;
+			
+			ci.TextInfoEntry = new TextInfoEntry (int.Parse (id.Substring (2), NumberStyles.HexNumber), GetXPathDocument ("textinfo.xml"));
 
                         return true;
 		}
