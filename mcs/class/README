@@ -6,24 +6,12 @@ divide the code based on the namespace they implement.
 In addition, each assembly directory contains a Test directory that holds the
 NUnit tests for that assembly. 
 
-The nant build file for an assembly creates two versions of the dll for that
-assembly. One version is a "full" dll.  The full dll contains (almost) all 
-of the classes, regardless of how complete the classes are. The name of this
-dll is the normal name you would expect, like "corlib.dll" or "System.dll".
-These full dll's are created in the /mcs/class/lib directory.
+We use a new build system which is described by various README files
+in mcs/build
 
-The other dll which is built is a "restricted" dll.  The restricted dll
-omits incomplete classes that would prevent the NUnit testrunner from actually
-running the tests. These restricted dll's are created in the Test directory
-of their respective assembly and named with a "_res" suffix.  So, for example,
-the NUnit-testable dll for corlib is /mcs/class/corlib/Test/corlib_res.dll.
-
-The final dll which is built is the one which houses the actual NUnit tests.
-This dll is built from all of the classes in the Test directory and below, and
-is named with a "_test" suffix. So, for example, the NUnit tests for corlib
-are in /mcs/class/corlib/Test/corlib_test.dll. This dll is also linked with 
-the restricted dll found in the same directory.
-
+The build process typically builds an assembly, but in some cases it
+also builds special versions of the assemblies intended to be used for
+testing.
 
 * Missing implementation bits
 
