@@ -515,4 +515,19 @@ public class X
         end:
 		x = y;
 	}
+
+	//
+	// Bug 46640
+	//
+	public static void test35 (int a, bool test)
+	{
+		switch (a) {
+		case 3:
+			if (test)
+				break;
+			return;
+		default:
+			return;
+		}
+	}
 }
