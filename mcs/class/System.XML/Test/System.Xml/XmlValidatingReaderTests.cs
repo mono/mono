@@ -306,6 +306,29 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void TestNonDeterministicContent ()
+		{
+			string intSubset = "<!ELEMENT root ((foo, bar)|(foo,baz))><!ELEMENT foo EMPTY><!ELEMENT bar EMPTY><!ELEMENT baz EMPTY>";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root><foo/><bar/></root>";
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			dvr = new XmlValidatingReader (xtr);
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// foo
+			dvr.Read ();	// bar
+			dvr.Read ();	// end root
+
+			xml = dtd + "<root><foo/><baz/></root>";
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			dvr = new XmlValidatingReader (xtr);
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// foo
+			dvr.Read ();	// end root
+		}
+
+		[Test]
 		public void TestAttributes ()
 		{
 			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA #REQUIRED bar CDATA #IMPLIED>";
@@ -318,7 +341,7 @@ namespace MonoTests.System.Xml
 				dvr.Read ();	// missing attributes
 				Fail ("should be failed.");
 			} catch (Exception ex) {
-				if (!ex.Message.StartsWith ("Required attribute foo"))
+				if (!ex.Message.StartsWith ("Required attribute root"))
 					throw ex;
 			}
 
@@ -344,33 +367,29 @@ namespace MonoTests.System.Xml
 				dvr.Read ();	// undeclared attribute baz
 				Fail ("should be failed.");
 			} catch (Exception ex) {
-				if (!ex.Message.StartsWith ("These attributes are"))
+				if (!ex.Message.StartsWith ("Attribute baz is not declared"))
 					throw ex;
 			}
 		}
 
 		[Test]
-		public void TestNonDeterministicContent ()
+		public void TestAttributeDefaultContribution ()
 		{
-			string intSubset = "<!ELEMENT root ((foo, bar)|(foo,baz))><!ELEMENT foo EMPTY><!ELEMENT bar EMPTY><!ELEMENT baz EMPTY>";
+			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml = dtd + "<root><foo/><bar/></root>";
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			dvr = new XmlValidatingReader (xtr);
+			string xml = dtd + "<root />";
+			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr.ValidationType = ValidationType.DTD;
 			dvr.Read ();	// DTD
-			dvr.Read ();	// root
-			dvr.Read ();	// foo
-			dvr.Read ();	// bar
-			dvr.Read ();	// end root
-
-			xml = dtd + "<root><foo/><baz/></root>";
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			dvr = new XmlValidatingReader (xtr);
-			dvr.Read ();	// DTD
-			dvr.Read ();	// root
-			dvr.Read ();	// foo
-			dvr.Read ();	// end root
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("foo-def", dvr.Value);
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("bar-def", dvr.Value);
 		}
-
 	}
 }

@@ -1,5 +1,10 @@
 2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlValidatingReaderTests.cs : added TestNonDeterministicContent() and
+	  TestAttributeDefaultContribution().
+
+2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlNodeReaderTests.cs : Fixed ReadInnerXmlWrongInit() for correct 
 	  ReadState check.
 	* ChangeLog was incorrectly added about above stuff.
