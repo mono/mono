@@ -1,3 +1,7 @@
+2005-01-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg: Allways convert CEE_CONV_OVF_I4 to a move on 64 bit platforms. Fixes #71236.
+
 2005-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_output_basic_block): Fix OP_ATOMIC_ADD_NEW_I4.
