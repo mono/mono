@@ -1,3 +1,9 @@
+2005-03-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStream.cs: Anonymize part of the path when exceptions are throw
+	by a FileStream is used for isolated storage. Throw a DirectoryNotFound
+	Exception for any FileMode not just CreateNew (see new unit tests).
+
 2005-03-09  Dick Porter  <dick@ximian.com>
 
 	* MonoIOError.cs: 
