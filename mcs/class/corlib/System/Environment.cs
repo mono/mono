@@ -204,14 +204,12 @@ namespace System
 		}
 
 		/// <summary>
-		/// Get the version of an assembly
+		/// Get the version of the common language runtime 
 		/// </summary>
 		[MonoTODO]
-		public static Version Version
-		{
-			get
-			{
-				return null;
+		public static Version Version {
+			get {
+				return new Version();
 			}
 		}
 
