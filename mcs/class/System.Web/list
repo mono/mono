@@ -81,7 +81,6 @@ System.Web.Compilation/ParseException.cs
 System.Web.Compilation/TagAttributes.cs
 System.Web.Compilation/TagType.cs
 System.Web.Compilation/TemplateControlCompiler.cs
-System.Web.Compilation/driver.cs
 System.Web.Configuration/AuthConfig.cs
 System.Web.Configuration/AuthenticationMode.cs
 System.Web.Configuration/ClientTargetSectionHandler.cs
