@@ -1,3 +1,9 @@
+
+Tue Apr 29 13:24:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: allow a null name if InvokeMember is called with
+	BindingFlags.CreateInstance set.
+
 2003-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Enum.cs: reverted my previous patch.

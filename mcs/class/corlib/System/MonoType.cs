@@ -288,15 +288,14 @@ namespace System
 						     ParameterModifier[] modifiers,
 						     CultureInfo culture, string[] namedParameters)
 		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
 
 			if ((invokeAttr & BindingFlags.CreateInstance) != 0) {
 				if ((invokeAttr & (BindingFlags.GetField |
 						BindingFlags.GetField | BindingFlags.GetProperty |
 						BindingFlags.SetProperty)) != 0)
 					throw new ArgumentException ("invokeAttr");
-			}
+			} else if (name == null)
+				throw new ArgumentNullException ("name");
 			if ((invokeAttr & BindingFlags.GetField) != 0 && (invokeAttr & BindingFlags.SetField) != 0)
 				throw new ArgumentException ("invokeAttr");
 			if ((invokeAttr & BindingFlags.GetProperty) != 0 && (invokeAttr & BindingFlags.SetProperty) != 0)
