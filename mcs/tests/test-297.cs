@@ -27,15 +27,15 @@ class T {
 			
 		}
                 
-		object[] ats = typeof(ConverterService).GetMethod("Login").GetCustomAttributes (typeof(MyAttribute), true);
-		MyAttribute at = (MyAttribute) ats[0];
-                if (at.Val != "a")
+		object[] ats = typeof(T).GetMethod("Login").GetCustomAttributes (typeof(My), true);
+		My at = (My) ats[0];
+                if (at.Val != AnEnum.a)
                     return 6;
                 
 		return 0;
 	}
         
-	[MyAttribute(Val=AnEnum.a)]
+	[My(1, Val=AnEnum.a)]
 	public void Login(string a)	{}        
 }
 
@@ -53,3 +53,4 @@ public enum AnEnum
 {
 	a,b,c
 }
+
