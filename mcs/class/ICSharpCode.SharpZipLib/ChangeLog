@@ -1,3 +1,8 @@
+2004-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIBRARY_SNK): Sign with SharpZipLib.key.  The library
+	is delay-signed according to ICSharpCode.SharpZipLib/AssemblyInfo.cs.
+
 2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Don't sign this assembly as it is fully signed during
