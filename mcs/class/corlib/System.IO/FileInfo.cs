@@ -81,7 +81,7 @@ namespace System.IO {
 		public long Length {
 			get {
 				if (!Exists)
-					throw new FileNotFoundException ("Could not find file \"" + OriginalPath + "\".");
+					throw new FileNotFoundException ("Could not find file \"" + OriginalPath + "\".", OriginalPath);
 
 				return stat.Length;
 			}

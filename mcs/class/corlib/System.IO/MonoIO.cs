@@ -63,7 +63,8 @@ namespace System.IO
 			// FIXME: add more exception mappings here
 			case MonoIOError.ERROR_FILE_NOT_FOUND:
 				message = String.Format ("Could not find file \"{0}\"", path);
-				return new FileNotFoundException (message);
+				return new FileNotFoundException (message,
+								  path);
 
 			case MonoIOError.ERROR_PATH_NOT_FOUND:
 				message = String.Format ("Could not find a part of the path \"{0}\"", path);
