@@ -44,12 +44,12 @@ namespace System
 		VarianceMask			= Covariant | Contravariant,
 
 		NoSpecialConstraint		= 0,
-		ReferenceTypeContraint		= 4,
+		ReferenceTypeConstraint		= 4,
 		ValueTypeConstraint		= 8,
 		DefaultConstructorConstraint	= 16,
 
 		SpecialConstraintMask		= 
-		ReferenceTypeContraint | ValueTypeConstraint | DefaultConstructorConstraint
+		ReferenceTypeConstraint | ValueTypeConstraint | DefaultConstructorConstraint
 	}
 }
 #endif
