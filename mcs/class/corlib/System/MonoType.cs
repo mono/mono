@@ -295,7 +295,7 @@ namespace System
 			if ((invokeAttr & BindingFlags.SetField) != 0 && ((args == null) || args.Length != 1))
 				throw new ArgumentException ("invokeAttr");
 			if ((namedParameters != null) && ((args == null) || args.Length < namedParameters.Length))
-				throw new ArgumentException ("namedParameters");
+				throw new ArgumentException ("namedParameters cannot be more than named arguments in number");
 
 			/* set some defaults if none are provided :-( */
 			if ((invokeAttr & (BindingFlags.Public|BindingFlags.NonPublic)) == 0)

@@ -748,6 +748,8 @@ namespace System
 					} else if (num < 3) {
 						year = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 					} else {
+						if(Char.IsDigit(s[4]))
+							throw new ArgumentOutOfRangeException ("year", "Valid " + "values are between 1 and 9999 inclusive");
 						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;
 					}
@@ -948,6 +950,16 @@ namespace System
 
 			if (ampm == 1)
 				hour = hour + 12;
+			
+			// For anything out of range 
+			// return false
+			if ( year < 1 || year > 9999 || 
+			month < 1 || month >12  ||
+			day < 1 || day > DaysInMonth(year, month) ||
+			hour < 0 || hour > 23 ||
+			minute < 0 || minute > 59 ||
+			second < 0 || second > 59 )
+				return false;
 
 			result = new DateTime (year, month, day, hour, minute, second, millisecond);
 
