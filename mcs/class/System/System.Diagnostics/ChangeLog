@@ -1,3 +1,7 @@
+2004-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: always pass the same arguments to the runtime.
+
 2004-09-07  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Throw documented exceptions when getting stdin,
