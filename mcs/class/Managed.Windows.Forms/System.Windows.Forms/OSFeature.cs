@@ -17,21 +17,47 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
+//	Peter Bartok	(pbartok@novell.com)
 //
-
+//
 
 // COMPLETE
 
-using System.Runtime.InteropServices;
-
 namespace System.Windows.Forms {
-	[ComVisible(true)]
-	public enum Appearance {
-		Normal		= 0,
-		Button		= 1
+	public class OSFeature : FeatureSupport {
+		#region Local Variables
+		private static OSFeature	feature = new OSFeature();
+		#endregion	// Local Variables
+
+		#region Protected Constructors
+		protected OSFeature() {
+			
+		}
+		#endregion	// Protected Constructors
+
+		#region Public Static Fields
+		public static readonly object LayeredWindows;
+		public static readonly object Themes;
+		#endregion	// Public Static Fields
+
+		#region Public Static Properties
+		public static OSFeature Feature {
+			get {
+				return  feature;
+			}
+		}
+		#endregion	// Public Static Properties
+
+		#region Public Instance Methods
+		public override Version GetVersionPresent(object feature) {
+			if (feature == Themes) {
+				return ThemeEngine.Current.Version;
+			}
+			return null;
+		}
+		#endregion	// Public Instance Methods
 	}
 }

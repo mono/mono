@@ -17,12 +17,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
+//	Peter Bartok	(pbartok@novell.com)
 //
-
+//
 
 // COMPLETE
 
@@ -30,8 +30,23 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[ComVisible(true)]
-	public enum Appearance {
-		Normal		= 0,
-		Button		= 1
+	public class NavigateEventArgs {
+		#region Local Variables
+		private bool	forward;
+		#endregion	// Local Variables
+
+		#region Public Constructors
+		public NavigateEventArgs(bool isForward) {
+			forward = isForward;
+		}
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		public bool Forward {
+			get {
+				return forward;
+			}
+		}
+		#endregion	// Public Instance Properties
 	}
 }

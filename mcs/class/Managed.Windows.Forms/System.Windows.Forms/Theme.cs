@@ -87,7 +87,12 @@ namespace System.Windows.Forms
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;		
 		internal SystemResPool ResPool = new SystemResPool ();
-	
+
+		/* OS Feature support */
+		public abstract Version Version {
+			get;
+		}
+
 		/* Default properties */		
 		public virtual Color ColorScrollbar {
 			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR);}

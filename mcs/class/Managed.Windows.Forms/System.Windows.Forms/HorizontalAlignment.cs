@@ -17,15 +17,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //      Jackson Harper (jackson@ximian.com)
 //
 
 
-namespace System.Windows.Forms {
+using System.Runtime.InteropServices;
 
+namespace System.Windows.Forms {
+	[ComVisible(true)]
 	public enum HorizontalAlignment {
 		Left,
 		Right,

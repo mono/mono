@@ -17,17 +17,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-// Aleksandar Dezelin	adezelin@beotel.net
+//	Aleksandar Dezelin	adezelin@beotel.net
 //
 
 using System;
+using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms
-{
-
+namespace System.Windows.Forms {
+	[ComVisible(true)]
 	public class SplitterEventArgs : EventArgs
 	{
 		#region Private fields

@@ -17,21 +17,71 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
+//	Peter Bartok	(pbartok@novell.com)
 //
-
+//
 
 // COMPLETE
 
-using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace System.Windows.Forms {
-	[ComVisible(true)]
-	public enum Appearance {
-		Normal		= 0,
-		Button		= 1
+	public sealed class AmbientProperties {
+		#region Local Variables
+		private Color	fore_color;
+		private Color	back_color;
+		private Font	font;
+		private Cursor	cursor;
+		#endregion	// Local Variables
+
+		#region Public Constructors
+		public AmbientProperties() {
+		}
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		public Color BackColor {
+			get {
+				return back_color;
+			}
+
+			set {
+				back_color = value;
+			}
+		}
+
+		public Cursor Cursor {
+			get {
+				return cursor;
+			}
+
+			set {
+				cursor = value;
+			}
+		}
+
+		public Font Font {
+			get {
+				return font;
+			}
+
+			set {
+				font = value;
+			}
+		}
+
+		public Color ForeColor {
+			get {
+				return fore_color;
+			}
+
+			set {
+				fore_color = value;
+			}
+		}
+		#endregion	// Public Instance Properties
 	}
 }

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 	public class BaseCollection : MarshalByRefObject, ICollection, IEnumerable {
@@ -40,24 +41,32 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int Count {
 			get {
 				return this.list.Count;
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public bool IsReadOnly {
 			get {
 				return false;
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public bool IsSynchronized {
 			get {
 				return false;
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public object SyncRoot {
 			get {
 				return this;

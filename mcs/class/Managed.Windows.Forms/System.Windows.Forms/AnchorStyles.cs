@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -26,10 +26,12 @@
 
 // COMPLETE
 
-namespace System.Windows.Forms {
+using System.ComponentModel;
 
+namespace System.Windows.Forms {
 	[Flags]
 	[Serializable]
+	[Editor("System.Windows.Forms.Design.AnchorEditor, System.Design", typeof(System.Drawing.Design.UITypeEditor))]
 	public enum AnchorStyles {
 		None	= 0x00000000,
 		Top	= 0x00000001,

@@ -36,6 +36,12 @@ namespace System.Windows.Forms
 
 	internal class ThemeWin32Classic : Theme
 	{		
+		public override Version Version {
+			get {
+				return new Version(0, 1, 0, 0);
+			}
+		}
+
 
 		/* Default colors for Win32 classic theme */
 		uint [] theme_colors = {							/* AARRGGBB */

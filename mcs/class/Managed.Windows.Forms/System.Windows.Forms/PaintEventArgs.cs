@@ -29,7 +29,7 @@
 using System.Drawing;
 
 namespace System.Windows.Forms {
-	public class PaintEventArgs : EventArgs {
+	public class PaintEventArgs : EventArgs, IDisposable {
 		private Graphics	graphics;
 		private Rectangle	clip_rectangle;
 

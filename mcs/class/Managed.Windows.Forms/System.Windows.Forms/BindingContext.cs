@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -29,6 +29,7 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
+	[DefaultEvent("CollectionChanged")]
 	public class BindingContext : ICollection, IEnumerable {
 		#region Public Constructors
 		public BindingContext() {

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -26,7 +26,10 @@
 
 // COMPLETE
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
+	[TypeConverter(typeof(ListBindingConverter))]
 	public class Binding {
 		internal string			property_name;
 		internal object			data_source;
@@ -56,6 +59,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue("")]
 		public Control Control {
 			get {
 				return this.control;
@@ -74,6 +78,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue("")]
 		public string PropertyName {
 			get {
 				return this.property_name;

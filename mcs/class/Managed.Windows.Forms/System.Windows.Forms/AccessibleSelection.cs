@@ -27,6 +27,7 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
+	[Flags]
 	public enum AccessibleSelection {
 		None		= 0x00000000,
 		TakeFocus	= 0x00000001,

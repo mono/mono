@@ -331,12 +331,6 @@ namespace System.Windows.Forms
 			UpdateAreas ();
     		}
 
-		/* Disable background painting to avoid flickering, since we do our painting*/
-		protected override void OnPaintBackground (PaintEventArgs pevent)
-    		{
-    			// None
-    		}
-
 		private void Draw ()
 		{
 			ThemeEngine.Current.DrawProgressBar (DeviceContext, this.ClientRectangle, this);
