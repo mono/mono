@@ -311,29 +311,6 @@ public class TypeManager {
 		system_valuetype_expr  = new TypeLookupExpression ("System.ValueType");
 	}
 
-	public static void ResolveExpressionTypes (EmitContext ec)
-	{
-		system_object_expr.ResolveType (ec);
-		system_string_expr.ResolveType (ec);
-		system_boolean_expr.ResolveType (ec);
-		system_decimal_expr.ResolveType (ec);
-		system_single_expr.ResolveType (ec);
-		system_double_expr.ResolveType (ec);
-		system_sbyte_expr.ResolveType (ec);
-		system_byte_expr.ResolveType (ec);
-		system_int16_expr.ResolveType (ec);
-		system_uint16_expr.ResolveType (ec);
-		system_int32_expr.ResolveType (ec);
-		system_uint32_expr.ResolveType (ec);
-		system_int64_expr.ResolveType (ec);
-		system_uint64_expr.ResolveType (ec);
-		system_char_expr.ResolveType (ec);
-		system_void_expr.ResolveType (ec);
-		system_asynccallback_expr.ResolveType (ec);
-		system_iasyncresult_expr.ResolveType (ec);
-		system_valuetype_expr.ResolveType (ec);
-	}
-
 	static TypeManager ()
 	{
 		assemblies = new Assembly [0];
@@ -1046,6 +1023,26 @@ public class TypeManager {
 				set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
 			}
 		}
+
+		system_object_expr.Type = object_type;
+		system_string_expr.Type = string_type;
+		system_boolean_expr.Type = bool_type;
+		system_decimal_expr.Type = decimal_type;
+		system_single_expr.Type = float_type;
+		system_double_expr.Type = double_type;
+		system_sbyte_expr.Type = sbyte_type;
+		system_byte_expr.Type = byte_type;
+		system_int16_expr.Type = short_type;
+		system_uint16_expr.Type = ushort_type;
+		system_int32_expr.Type = int32_type;
+		system_uint32_expr.Type = uint32_type;
+		system_int64_expr.Type = int64_type;
+		system_uint64_expr.Type = uint64_type;
+		system_char_expr.Type = char_type;
+		system_void_expr.Type = void_type;
+		system_asynccallback_expr.Type = asynccallback_type;
+		system_iasyncresult_expr.Type = iasyncresult_type;
+		system_valuetype_expr.Type = value_type;
 	}
 
 	//

@@ -1,3 +1,9 @@
+2003-11-10  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.ResolveExpressionTypes): Removed.
+	(TypeManager.InitCoreTypes): Initialize them here, but instead of
+	calling `ResolveType()' on them, directly assign their `Type'.
+
 2003-11-08  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.GetClassBases): Use TypeExpr's for the
