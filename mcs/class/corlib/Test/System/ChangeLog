@@ -1,3 +1,7 @@
+2004-01-31  David Sheldon  <dave-mono@earth.li>
+
+  * ConvertTest.cs: Added test for malformed Base64. Bug 52928 
+
 2004-01-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DateTimeTest.cs: Modified X509Certificate test to use 

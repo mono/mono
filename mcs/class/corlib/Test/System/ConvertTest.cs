@@ -2613,6 +2613,14 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		[ExpectedException (typeof (System.FormatException))]
+		public void TestInvalidBase64() {
+		  string brokenB64 = "AB~£";
+		  Convert.FromBase64String(brokenB64);
+		}
+
+		
 		public void TestToBase64CharArray() {
 			byte[] byteArr = {33, 127, 255, 109, 170, 54};
 			//						   0    1    2    3    4    5    6    7

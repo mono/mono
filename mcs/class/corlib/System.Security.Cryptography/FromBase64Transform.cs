@@ -136,6 +136,14 @@ namespace System.Security.Cryptography {
 		}
 
 
+		private byte [] lookupTable; 
+		private byte lookup(byte input) {
+		  byte ret;
+                  if ((input >= lookupTable.Length) || ((ret = lookupTable[input])==-1))
+		    throw new System.FormatException("Invalid character in a Base-64 string.");
+		  return ret;
+		}
+
 		private int DoTransform (byte [] inputBuffer,
 		                         int inputOffset,
 		                         int inputCount,
@@ -154,14 +162,14 @@ namespace System.Security.Cryptography {
 
 			if (inputBuffer[inputCount - 2] == (byte)'=') ++rem;
 
-			byte [] lookup = Base64Table.DecodeTable;
+			lookupTable = Base64Table.DecodeTable;
 			int b0,b1,b2,b3;
 
 			for (int i = 0; i < full; i++) {
-				b0 = lookup [inputBuffer [inputOffset++]];
-				b1 = lookup [inputBuffer [inputOffset++]];
-				b2 = lookup [inputBuffer [inputOffset++]];
-				b3 = lookup [inputBuffer [inputOffset++]];
+				b0 = lookup (inputBuffer [inputOffset++]);
+				b1 = lookup (inputBuffer [inputOffset++]);
+				b2 = lookup (inputBuffer [inputOffset++]);
+				b3 = lookup (inputBuffer [inputOffset++]);
 
 				outputBuffer [outputOffset++] = (byte) ((b0 << 2) | (b1 >> 4));
 				outputBuffer [outputOffset++] = (byte) ((b1 << 4) | (b2 >> 2));
@@ -174,16 +182,16 @@ namespace System.Security.Cryptography {
 			case 0:
 				break;
 			case 1:
-				b0 = lookup [inputBuffer [inputOffset++]];
-				b1 = lookup [inputBuffer [inputOffset++]];
-				b2 = lookup [inputBuffer [inputOffset++]];
+				b0 = lookup (inputBuffer [inputOffset++]);
+				b1 = lookup (inputBuffer [inputOffset++]);
+				b2 = lookup (inputBuffer [inputOffset++]);
 				outputBuffer [outputOffset++] = (byte) ((b0 << 2) | (b1 >> 4));
 				outputBuffer [outputOffset++] = (byte) ((b1 << 4) | (b2 >> 2));
 				res += 2;
 				break;
 			case 2:
-				b0 = lookup [inputBuffer [inputOffset++]];
-				b1 = lookup [inputBuffer [inputOffset++]];
+				b0 = lookup (inputBuffer [inputOffset++]);
+				b1 = lookup (inputBuffer [inputOffset++]);
 				outputBuffer [outputOffset++] = (byte) ((b0 << 2) | (b1 >> 4));
 				++res;
 				break;
@@ -230,7 +238,12 @@ namespace System.Security.Cryptography {
 				Array.Copy (src, srcOff, tmpBuff, accPtr, n);
 				accPtr = count & 3;
 				Array.Copy (src, srcOff + (n - accPtr), accumulator, 0, accPtr);
-				res = DoTransform (tmpBuff, 0, count & (~3), outputBuffer, outputOffset);
+				try {
+					res = DoTransform (tmpBuff, 0, count & (~3), outputBuffer, outputOffset) ;
+				}
+				catch (System.FormatException e) {
+					throw e; 
+				}
 			}
 
 
@@ -267,8 +280,14 @@ namespace System.Security.Cryptography {
 
 			Array.Copy (accumulator, 0, tmpBuf, 0, accPtr);
 			Array.Copy (src, srcOff, tmpBuf, accPtr, n);
-
-			int actLen = DoTransform (tmpBuf, 0, dataLen, res, 0);
+			
+			int actLen;
+			try {
+				actLen = DoTransform (tmpBuf, 0, dataLen, res, 0);
+			}
+			catch (System.FormatException e) {
+				throw e; 
+			}
 
 			accPtr = 0;
 
