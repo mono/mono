@@ -1,3 +1,11 @@
+2003-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs:
+        (Select): don't create arrays if not needed.
+        (Poll): call Select_internal directly.
+
+	Warning: you need an up to date runtime for this to work!
+
 2003-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UdpClient.cs: don't bind the socket unless .ctor (IPEndPoint) is used.

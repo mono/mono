@@ -276,33 +276,32 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException();
 			}
 
-			int read_count, write_count, err_count;
+			int read_count = 0, write_count = 0, err_count = 0;
+			Socket[] read_arr = null;
+			Socket[] write_arr = null;
+			Socket[] err_arr = null;
 
-			if(read_list!=null) {
+			if (read_list!=null)
 				read_count=read_list.Count;
-			} else {
-				read_count=0;
-			}
 
-			if(write_list!=null) {
+			if (read_count != 0)
+				read_arr=new Socket[read_count];
+
+			if (write_list!=null)
 				write_count=write_list.Count;
-			} else {
-				write_count=0;
-			}
 
-			if(err_list!=null) {
+			if (write_count != 0)
+				write_arr=new Socket[write_count];
+
+			if (err_list!=null)
 				err_count=err_list.Count;
-			} else {
-				err_count=0;
-			}
-			
-			Socket[] read_arr=new Socket[read_count];
-			Socket[] write_arr=new Socket[write_count];
-			Socket[] err_arr=new Socket[err_count];
 
+			if (err_count != 0)
+				err_arr=new Socket[err_count];
+			
 			int i;
 
-			if(read_list!=null) {
+			if (read_count != 0) {
 				i=0;
 				
 				foreach (Socket s in read_list) {
@@ -311,7 +310,7 @@ namespace System.Net.Sockets
 				}
 			}
 
-			if(write_list!=null) {
+			if (write_count != 0) {
 				i=0;
 				foreach (Socket s in write_list) {
 					write_arr[i]=s;
@@ -319,7 +318,7 @@ namespace System.Net.Sockets
 				}
 			}
 			
-			if(err_list!=null) {
+			if (err_count != 0) {
 				i=0;
 				foreach (Socket s in err_list) {
 					err_arr[i]=s;
@@ -706,29 +705,24 @@ namespace System.Net.Sockets
 		 * it seems to be just a simple wrapper around Select.
 		 */
 		public bool Poll(int time_us, SelectMode mode) {
-			ArrayList socketlist=new ArrayList(1);
+			Socket [] socketlist = new Socket []{this};
+			Socket [] n = null;
 
-			socketlist.Add(this);
-			
 			switch(mode) {
 			case SelectMode.SelectError:
-				Select(null, null, socketlist, time_us);
+				Select_internal (ref n, ref n, ref socketlist, time_us);
 				break;
 			case SelectMode.SelectRead:
-				Select(socketlist, null, null, time_us);
+				Select_internal (ref socketlist, ref n, ref n, time_us);
 				break;
 			case SelectMode.SelectWrite:
-				Select(null, socketlist, null, time_us);
+				Select_internal (ref n, ref socketlist, ref n, time_us);
 				break;
 			default:
 				throw new NotSupportedException();
 			}
 
-			if(socketlist.Contains(this)) {
-				return(true);
-			} else {
-				return(false);
-			}
+			return (socketlist.Length == 1);
 		}
 		
 		public int Receive(byte[] buf) {
