@@ -1,3 +1,22 @@
+2004-06-08  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_ModuleBuilder_getMethodToken): New icall.
+
+	* metadata.c (mono_metadata_parse_method_signature): When parsing
+	a MethodDef which has VarArgs, set sentinelpos.
+
+	* metadata.h (MonoMethodSignature): Make `sentinalpos' a signed
+	`gint16' since we're using -1 for non-varargs methods.
+
+	* reflection.c
+	(ReflectionMethodBuilder): Added `MonoArray *opt_types'.
+	(method_encode_signature): Added varargs support.
+	(method_builder_encode_signature): Likewise.
+	(mono_image_get_varargs_method_token): New static method.
+	(mono_image_create_method_token): New public method; this is
+	called via an icall instead of mono_image_create_token() when
+	calling a varargs method.	
+
 2004-06-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* locales.c: Fixed memory leak in Char.ToLower/ToUpper.
