@@ -1,56 +1,40 @@
 //
-// cs-tokenizer.cs: The Tokenizer for the C# compiler
+// MonoBASIC.Tokenizer.cs: The Tokenizer for the MonoBASIC compiler
 //
-// Author: Miguel de Icaza (miguel@gnu.org)
+// Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
+//	   
+// Based on cs-tokenizer.cs by Miguel de Icaza (miguel@gnu.org)
 //
 // Licensed under the terms of the GNU GPL
 //
-// (C) 2001 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2001 A Rafael D Teixeira
 //
 
 /*
   Todo:
 
-  Do something with the integer and float suffixes, pass full datatype?
-  Make sure we accept the proper Unicode ranges, per the spec.
-
-  * Error reporting.
-
-          I was returning Token.ERROR on errors and setting an
-          internal error string with the details, but it might make sense
-	  to just use exceptions.
-
-	  Change of mind: I think I want to keep returning errors *UNLESS* the
-	  parser is catching errors from the tokenizer (at that point, there is
-	  not really any reason to use exceptions) so that I can continue the
-	  parsing 
-
-  * IDEA
-
-          I think I have solved the problem.  The idea is to not even *bother*
-	  about handling data types a lot here (except for fitting data into
-	  the proper places), but let the upper layer handle it.
-
-	  Ie, treat LITERAL_CHARACTER, LITERAL_INTEGER, LITERAL_FLOAT, LITERAL_DOUBLE, and
-	  return then as `LITERAL_LITERAL' with maybe subdetail information
+  EVERYTHING
 
 */
 
-using System;
-using System.Text;
-using System.Collections;
-using System.IO;
-using System.Globalization;
 
-namespace CIR
+namespace Mono.Languages.MonoBASIC
 {
+	using System;
+	using System.Text;
+	using System.Collections;
+	using System.IO;
+	using System.Globalization;
+	using Mono.Languages.MonoBASIC;
+	using CIR;
+	
 	/// <summary>
-	///    Tokenizer for C# source code. 
+	///    Tokenizer for MonoBASIC source code. 
 	/// </summary>
-
+	
 	public class Tokenizer : yyParser.yyInput
 	{
-		StreamReader reader;
+		TextReader reader;
 		public string ref_name;
 		public int ref_line = 1;
 		public int line = 1;
@@ -58,9 +42,6 @@ namespace CIR
 		public int current_token;
 		bool handle_get_set = false;
 
-		//
-		// Returns a verbose representation of the current location
-		//
 		public string location {
 			get {
 				string det;
@@ -70,11 +51,9 @@ namespace CIR
 				else
 					det = "";
 				
-				// return "Line:     "+line+" Col: "+col + "\n" +
-				//       "VirtLine: "+ref_line +
-				//       " Token: "+current_token + " " + det;
-
-				return ref_name + " " + "(" + line + "," + col + "), Token:" + current_token + " " + det;
+				return "Line:     "+line+" Col: "+col + "\n" +
+				       "VirtLine: "+ref_line +
+				       " Token: "+current_token + " " + det;
 			}
 		}
 
@@ -129,85 +108,144 @@ namespace CIR
 		{
 			keywords = new Hashtable ();
 
-			keywords.Add ("abstract", Token.ABSTRACT);
+			keywords.Add ("addhandler", Token.ADDHANDLER);
+			keywords.Add ("addressof", Token.ADDRESSOF);
+			keywords.Add ("alias", Token.ALIAS);
+			keywords.Add ("and", Token.AND);
+			keywords.Add ("andalso", Token.ANDALSO);
+			keywords.Add ("ansi", Token.ANSI);
 			keywords.Add ("as", Token.AS);
-			keywords.Add ("add", Token.ADD);
-			keywords.Add ("base", Token.BASE);
-			keywords.Add ("bool", Token.BOOL);
-			keywords.Add ("break", Token.BREAK);
+			keywords.Add ("assembly", Token.ASSEMBLY);
+			keywords.Add ("auto", Token.AUTO);
+			keywords.Add ("boolean", Token.BOOLEAN);
+			keywords.Add ("byref", Token.BYREF);
 			keywords.Add ("byte", Token.BYTE);
+			keywords.Add ("byval", Token.BYVAL);
+			keywords.Add ("call", Token.CALL);
 			keywords.Add ("case", Token.CASE);
 			keywords.Add ("catch", Token.CATCH);
+			keywords.Add ("cbool", Token.CBOOL);
+			keywords.Add ("cbyte", Token.CBYTE);
+			keywords.Add ("cchar", Token.CCHAR);
+			keywords.Add ("cdate", Token.CDATE);
+			keywords.Add ("cdec", Token.CDEC);
+			keywords.Add ("cdbl", Token.CDBL);
 			keywords.Add ("char", Token.CHAR);
-			keywords.Add ("checked", Token.CHECKED);
+			keywords.Add ("cint", Token.CINT);
 			keywords.Add ("class", Token.CLASS);
+			keywords.Add ("clng", Token.CLNG);
+			keywords.Add ("cobj", Token.COBJ);
+			//keywords.Add ("compare", Token.COMPARE);
 			keywords.Add ("const", Token.CONST);
-			keywords.Add ("continue", Token.CONTINUE);
+			keywords.Add ("cshort", Token.CSHORT);
+			keywords.Add ("csng", Token.CSNG);
+			keywords.Add ("cstr", Token.CSTR);
+			keywords.Add ("ctype", Token.CTYPE);
+			keywords.Add ("date", Token.DATE);
 			keywords.Add ("decimal", Token.DECIMAL);
+			keywords.Add ("declare", Token.DECLARE);
 			keywords.Add ("default", Token.DEFAULT);
 			keywords.Add ("delegate", Token.DELEGATE);
+			keywords.Add ("dim", Token.DIM);
 			keywords.Add ("do", Token.DO);
 			keywords.Add ("double", Token.DOUBLE);
+			keywords.Add ("each", Token.EACH);
 			keywords.Add ("else", Token.ELSE);
+			keywords.Add ("elseif", Token.ELSEIF);
+			keywords.Add ("end", Token.END);
 			keywords.Add ("enum", Token.ENUM);
+			keywords.Add ("erase", Token.ERASE);
+			keywords.Add ("error", Token.ERROR);
 			keywords.Add ("event", Token.EVENT);
-			keywords.Add ("explicit", Token.EXPLICIT);
-			keywords.Add ("extern", Token.EXTERN);
+			keywords.Add ("exit", Token.EXIT);
+			//keywords.Add ("explicit", Token.EXPLICIT);
 			keywords.Add ("false", Token.FALSE);
 			keywords.Add ("finally", Token.FINALLY);
-			keywords.Add ("fixed", Token.FIXED);
-			keywords.Add ("float", Token.FLOAT);
 			keywords.Add ("for", Token.FOR);
-			keywords.Add ("foreach", Token.FOREACH);
-			keywords.Add ("goto", Token.GOTO);
+			keywords.Add ("friend", Token.FRIEND);
+			keywords.Add ("function", Token.FUNCTION);
 			keywords.Add ("get", Token.GET);
+			keywords.Add ("gettype", Token.GETTYPE);
+			keywords.Add ("goto", Token.GOTO);
+			keywords.Add ("handles", Token.HANDLES);
 			keywords.Add ("if", Token.IF);
-			keywords.Add ("implicit", Token.IMPLICIT);
+			keywords.Add ("implements", Token.IMPLEMENTS);
+			keywords.Add ("imports", Token.IMPORTS);
 			keywords.Add ("in", Token.IN);
-			keywords.Add ("int", Token.INT);
+			keywords.Add ("inherits", Token.INHERITS);
+			keywords.Add ("integer", Token.INTEGER);
 			keywords.Add ("interface", Token.INTERFACE);
-			keywords.Add ("internal", Token.INTERNAL);
 			keywords.Add ("is", Token.IS);
-			keywords.Add ("lock ", Token.LOCK );
+			keywords.Add ("let ", Token.LET );
+			keywords.Add ("lib ", Token.LIB );
+			keywords.Add ("like ", Token.LIKE );
 			keywords.Add ("long", Token.LONG);
+			keywords.Add ("loop", Token.LOOP);
+			keywords.Add ("me", Token.ME);
+			keywords.Add ("mod", Token.MOD);
+			keywords.Add ("module", Token.MODULE);
+			keywords.Add ("mustinherit", Token.MUSTINHERIT);
+			keywords.Add ("mustoverride", Token.MUSTOVERRIDE);
+			keywords.Add ("mybase", Token.MYBASE);
+			keywords.Add ("myclass", Token.MYCLASS);
 			keywords.Add ("namespace", Token.NAMESPACE);
 			keywords.Add ("new", Token.NEW);
-			keywords.Add ("null", Token.NULL);
+			keywords.Add ("next", Token.NEXT);
+			keywords.Add ("not", Token.NOT);
+			keywords.Add ("nothing", Token.NOTHING);
+			keywords.Add ("notinheritable", Token.NOTINHERITABLE);
+			keywords.Add ("notoverridable", Token.NOTOVERRIDABLE);
 			keywords.Add ("object", Token.OBJECT);
-			keywords.Add ("operator", Token.OPERATOR);
-			keywords.Add ("out", Token.OUT);
-			keywords.Add ("override", Token.OVERRIDE);
-			keywords.Add ("params", Token.PARAMS);
+			keywords.Add ("on", Token.ON);
+			keywords.Add ("option", Token.OPTION);
+			keywords.Add ("optional", Token.OPTIONAL);
+			keywords.Add ("or", Token.OR);
+			keywords.Add ("orelse", Token.ORELSE);
+			keywords.Add ("overloads", Token.OVERLOADS);
+			keywords.Add ("overridable", Token.OVERRIDABLE);
+			keywords.Add ("overrides", Token.OVERRIDES);
+			keywords.Add ("paramarray", Token.PARAM_ARRAY);
+			keywords.Add ("preserve", Token.PRESERVE);
 			keywords.Add ("private", Token.PRIVATE);
+			keywords.Add ("property", Token.PROPERTY);
 			keywords.Add ("protected", Token.PROTECTED);
 			keywords.Add ("public", Token.PUBLIC);
+			keywords.Add ("raiseevent", Token.RAISEEVENT);
 			keywords.Add ("readonly", Token.READONLY);
-			keywords.Add ("ref", Token.REF);
-			keywords.Add ("remove", Token.REMOVE);
+			keywords.Add ("redim", Token.REDIM);
+			keywords.Add ("rem", Token.REM);
+			keywords.Add ("removehandler", Token.REMOVEHANDLER);
+			keywords.Add ("resume", Token.RESUME);
 			keywords.Add ("return", Token.RETURN);
-			keywords.Add ("sbyte", Token.SBYTE);
-			keywords.Add ("sealed", Token.SEALED);
+			keywords.Add ("select", Token.SELECT);
 			keywords.Add ("set", Token.SET);
+			keywords.Add ("shadows", Token.SHADOWS);
+			keywords.Add ("shared", Token.SHARED);
 			keywords.Add ("short", Token.SHORT);
+			keywords.Add ("single", Token.SINGLE);
 			keywords.Add ("sizeof", Token.SIZEOF);
 			keywords.Add ("static", Token.STATIC);
+			keywords.Add ("step", Token.STEP);
+			keywords.Add ("stop", Token.STOP);
 			keywords.Add ("string", Token.STRING);
-			keywords.Add ("struct", Token.STRUCT);
-			keywords.Add ("switch", Token.SWITCH);
-			keywords.Add ("this", Token.THIS);
+			keywords.Add ("structure", Token.STRUCTURE);
+			keywords.Add ("sub", Token.SUB);
+			keywords.Add ("synclock", Token.SYNCLOCK);
+			keywords.Add ("then", Token.THEN);
 			keywords.Add ("throw", Token.THROW);
+			keywords.Add ("to", Token.TO);
 			keywords.Add ("true", Token.TRUE);
 			keywords.Add ("try", Token.TRY);
 			keywords.Add ("typeof", Token.TYPEOF);
-			keywords.Add ("uint", Token.UINT);
-			keywords.Add ("ulong", Token.ULONG);
-			keywords.Add ("unchecked", Token.UNCHECKED);
-			keywords.Add ("unsafe", Token.UNSAFE);
-			keywords.Add ("ushort", Token.USHORT);
-			keywords.Add ("using", Token.USING);
-			keywords.Add ("virtual", Token.VIRTUAL);
-			keywords.Add ("void", Token.VOID);
+			keywords.Add ("unicode", Token.UNICODE);
+			keywords.Add ("until", Token.UNTIL);
+			keywords.Add ("variant", Token.VARIANT);
+			keywords.Add ("when", Token.WHEN);
 			keywords.Add ("while", Token.WHILE);
+			keywords.Add ("with", Token.WITH);
+			keywords.Add ("withevents", Token.WITHEVENTS);
+			keywords.Add ("writeonly", Token.WRITEONLY);
+			keywords.Add ("xor", Token.XOR);
 		}
 
 		//
@@ -224,8 +262,8 @@ namespace CIR
 		bool is_keyword (string name)
 		{
 			bool res;
-			
-			res = keywords.Contains (name);
+
+			res = keywords.Contains(name.ToLower());
 			if ((name == "get" || name == "set") && handle_get_set == false)
 				return false;
 			return res;
@@ -233,21 +271,21 @@ namespace CIR
 
 		int getKeyword (string name)
 		{
-			return (int) (keywords [name]);
+			return (int) (keywords [name.ToLower()]);
 		}
-
+		
 		public Location Location {
 			get {
 				return new Location (ref_line);
 			}
 		}
 		
-		public Tokenizer (System.IO.Stream input, string fname)
+		public Tokenizer (System.IO.TextReader input, string fname)
 		{
 			this.ref_name = fname;
-			reader = new System.IO.StreamReader (input);
+			reader = input;
 			putback_char = -1;
-
+			
 			Location.Push (fname);
 		}
 
@@ -270,10 +308,6 @@ namespace CIR
 			doread = false;
 
 			switch (c){
-			case '{':
-				return Token.OPEN_BRACE;
-			case '}':
-				return Token.CLOSE_BRACE;
 			case '[':
 				return Token.OPEN_BRACKET;
 			case ']':
@@ -286,10 +320,6 @@ namespace CIR
 				return Token.COMMA;
 			case ':':
 				return Token.COLON;
-			case ';':
-				return Token.SEMICOLON;
-			case '~':
-				return Token.TILDE;
 			case '?':
 				return Token.INTERR;
 			}
@@ -307,54 +337,20 @@ namespace CIR
 				return t;
 			}
 			if (c == '-'){
-				if (d == '-')
-					t = Token.OP_DEC;
-				else if (d == '=')
+				if (d == '=')
 					t = Token.OP_SUB_ASSIGN;
-				else if (d == '>')
-					return Token.OP_PTR;
 				else
 					return Token.MINUS;
 				doread = true;
 				return t;
 			}
 
-			if (c == '!'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_NE;
-				}
-				return Token.BANG;
-			}
-
 			if (c == '='){
-				if (d == '='){
+				/*if (d == '='){
 					doread = true;
 					return Token.OP_EQ;
-				}
+				}*/
 				return Token.ASSIGN;
-			}
-
-			if (c == '&'){
-				if (d == '&'){
-					doread = true;
-					return Token.OP_AND;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_AND_ASSIGN;
-				}
-				return Token.BITWISE_AND;
-			}
-
-			if (c == '|'){
-				if (d == '|'){
-					doread = true;
-					return Token.OP_OR;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_OR_ASSIGN;
-				}
-				return Token.BITWISE_OR;
 			}
 
 			if (c == '*'){
@@ -373,33 +369,29 @@ namespace CIR
 				return Token.DIV;
 			}
 
-			if (c == '%'){
+			if (c == '\\'){
 				if (d == '='){
 					doread = true;
-					return Token.OP_MOD_ASSIGN;
+					return Token.OP_IDIV_ASSIGN;
 				}
-				return Token.PERCENT;
+				return Token.OP_IDIV;
 			}
 
 			if (c == '^'){
 				if (d == '='){
 					doread = true;
-					return Token.OP_XOR_ASSIGN;
+					return Token.OP_EXP_ASSIGN;
 				}
-				return Token.CARRET;
+				return Token.OP_EXP;
 			}
 
 			if (c == '<'){
-				if (d == '<'){
-					getChar ();
-					d = peekChar ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_LEFT_ASSIGN;
-					}
-					return Token.OP_SHIFT_LEFT;
-				} else if (d == '='){
+				if (d == '>')
+				{
+					doread = true;
+					return Token.OP_NE;
+				}
+				if (d == '='){
 					doread = true;
 					return Token.OP_LE;
 				}
@@ -407,16 +399,7 @@ namespace CIR
 			}
 
 			if (c == '>'){
-				if (d == '>'){
-					getChar ();
-					d = peekChar ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_RIGHT_ASSIGN;
-					}
-					return Token.OP_SHIFT_RIGHT;
-				} else if (d == '='){
+				if (d == '='){
 					doread = true;
 					return Token.OP_GE;
 				}
@@ -468,7 +451,7 @@ namespace CIR
 			
 			switch (c){
 			case 'F': case 'f':
-				t =  Token.LITERAL_FLOAT;
+				t =  Token.LITERAL_SINGLE;
 				break;
 			case 'D': case 'd':
 				t = Token.LITERAL_DOUBLE;
@@ -479,7 +462,7 @@ namespace CIR
 			default:
 				return Token.NONE;
 			}
-			//getChar ();
+			getChar ();
 			return t;
 		}
 
@@ -501,6 +484,7 @@ namespace CIR
 		{
 			string s = number.ToString ();
 
+			Console.WriteLine (s);
 			switch (t){
 			case Token.LITERAL_DECIMAL:
 				val = new System.Decimal ();
@@ -512,7 +496,7 @@ namespace CIR
 				val = System.Double.Parse (
 					s, styles, csharp_format_info);
 				break;
-			case Token.LITERAL_FLOAT:
+			case Token.LITERAL_SINGLE:
 				val = new System.Double ();
 				val = (float) System.Double.Parse (
 					s, styles, csharp_format_info);
@@ -541,27 +525,10 @@ namespace CIR
 
 			if (Char.IsDigit ((char)c)){
 				if (c == '0' && peekChar () == 'x' || peekChar () == 'X'){
-					ulong ul;
 					getChar ();
 					hex_digits (-1);
-
-					string s = number.ToString ();
-
-					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
-					if ((ul & 0xffffffff00000000) == 0){
-						uint ui = (uint) ul;
-						
-						if ((ui & 0x80000000) != 0)
-							val = ui;
-						else
-							val = (int) ui;
-					} else {
-						if ((ul & 0x8000000000000000) != 0)
-							val = ul;
-						else
-							val = (long) ul;
-					}
-
+					val = new System.Int32 ();
+					val = System.Int32.Parse (number.ToString (), NumberStyles.HexNumber);
 					return integer_type_suffix (peekChar ());
 				}
 				decimal_digits (c);
@@ -570,7 +537,7 @@ namespace CIR
 
 			//
 			// We need to handle the case of
-			// "1.1" vs "1.string" (LITERAL_FLOAT vs NUMBER DOT IDENTIFIER)
+			// "1.1" vs "1.string" (LITERAL_SINGLE vs NUMBER DOT IDENTIFIER)
 			//
 			if (c == '.'){
 				if (decimal_digits ('.')){
@@ -686,7 +653,7 @@ namespace CIR
 
 		public bool advance ()
 		{
-			return peekChar () != -1;
+			return current_token != Token.EOF ;
 		}
 
 		public Object Value {
@@ -703,6 +670,8 @@ namespace CIR
 		public int token ()
 		{
 			current_token = xtoken ();
+			if (current_token == 0) 
+				return Token.EOF;
 			return current_token;
 		}
 		
@@ -716,6 +685,31 @@ namespace CIR
 			val = null;
 			for (;(c = getChar ()) != -1; col++) {
 			
+				// Handle line comments.
+				if (c == '\''){
+					int d = getChar ();
+					while ((d = getChar ()) != -1 && (d != '\n'))
+						col++;
+					line++;
+					ref_line++;
+					col = 0;
+					if (current_token == Token.EOL) // if last token was also EOL keep skipping
+						continue;
+					return Token.EOL;
+				}
+
+				// Handle EOL.
+				if (c == '\n')
+				{
+					line++;
+					ref_line++;
+					col = 0;
+					if (current_token == Token.EOL) // if last token was also EOL keep skipping
+						continue;
+					return Token.EOL;
+				}
+				
+				// Handle identifiers
 				if (is_identifier_start_character ((char) c)){
 					System.Text.StringBuilder id = new System.Text.StringBuilder ();
 					string ids;
@@ -750,36 +744,6 @@ namespace CIR
 				
 				if (Char.IsDigit ((char) c))
 					return is_number (c);
-
-				// Handle double-slash comments.
-				if (c == '/'){
-					int d = peekChar ();
-				
-					if (d == '/'){
-						getChar ();
-						while ((d = getChar ()) != -1 && (d != '\n'))
-							col++;
-						line++;
-						ref_line++;
-						continue;
-					} else if (d == '*'){
-						getChar ();
-
-						while ((d = getChar ()) != -1){
-							if (d == '*' && peekChar () == '/'){
-								getChar ();
-								col++;
-								break;
-							}
-							if (d == '\n'){
-								line++;
-								ref_line++;
-							}
-							col++;
-						}
-						continue;
-					}
-				}
 
 				/* For now, ignore pre-processor commands */
 				if (col == 1 && c == '#'){
@@ -832,39 +796,8 @@ namespace CIR
 						s.Append ((char) c);
 					}
 				}
-
-				if (c == '\''){
-					c = getChar ();
-					if (c == '\''){
-						error_details = "CS1011: Empty character literal";
-						return Token.ERROR;
-					}
-					c = escape (c);
-					if (c == -1)
-						return Token.ERROR;
-					val = new System.Char ();
-					val = (char) c;
-					c = getChar ();
-					if (c != '\''){
-						error_details = "CS1012: Too many characters in character literal";
-						// Try to recover, read until newline or next "'"
-						while ((c = getChar ()) != -1){
-							if (c == '\n' || c == '\'')
-								break;
-							
-						}
-						return Token.ERROR;
-					}
-					return Token.LITERAL_CHARACTER;
-				}
-				
+			
 				// white space
-				if (c == '\n'){
-					line++;
-					ref_line++;
-					col = 0;
-					continue;
-				}
 				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r'){
 					if (c == '\t')
 						col = (((col + 8) / 8) * 8) - 1;
@@ -882,8 +815,10 @@ namespace CIR
 				return Token.ERROR;
 			}
 
+			if (current_token != Token.EOL) // if last token wasn´t EOL send it before EOF
+				return Token.EOL;
+			
 			return Token.EOF;
 		}
 	}
 }
-

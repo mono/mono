@@ -21,6 +21,7 @@ COMPILER_SOURCES = \
 	genericparser.cs		\
 	interface.cs			\
 	literal.cs			\
+	location.cs			\
 	modifiers.cs 			\
 	namespace.cs			\
 	parameter.cs			\
