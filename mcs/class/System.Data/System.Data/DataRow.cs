@@ -185,7 +185,7 @@ namespace System.Data
 						throw new ReadOnlyException ();
 					if (value[i] == null)
 					{
-						if (!table.Columns[i].AllowDbNull)
+						if (!table.Columns[i].AllowDBNull)
 							throw new NoNullAllowedException ();
 						continue;
 					}
