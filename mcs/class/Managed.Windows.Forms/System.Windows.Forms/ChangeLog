@@ -1,5 +1,10 @@
 2005-01-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* ControlPaint.cs, ThemeWin32Classic.cs
+		- Fixes DrawFocusRectangle
+
+2005-01-26  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* MenuAPI.cs: 
 		- MenuBar tracking only starts when item is first clicked 
 		- Fixes menu hidding for multiple subitems

@@ -3671,20 +3671,29 @@ namespace System.Windows.Forms
 		}
 				
 
-		public override void CPDrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
-			// make a rectange to trace around border of the button
-			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
+		public override void CPDrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) 
+		{			
+			Rectangle rect = rectangle;
+			Pen pen;
+			HatchBrush brush;
+				
+			if (backColor.GetBrightness () >= 0.5) {
+				foreColor = Color.Transparent;
+				backColor = Color.Black;
+				
+			} else {
+				backColor = Color.FromArgb (Math.Abs (backColor.R-255), Math.Abs (backColor.G-255), Math.Abs (backColor.B-255));
+				foreColor = Color.Black;
+			}
+						
+			brush = ResPool.GetHatchBrush (HatchStyle.Percent50, backColor, foreColor);
+			pen = new Pen (brush, 1);
+						
+			rect.Width--;
+			rect.Height--;			
 			
-			//Color			colorForeInverted;
-			Pen			pen;
-
- 			//colorForeInverted=Color.FromArgb(Math.Abs(foreColor.R-255), Math.Abs(foreColor.G-255), Math.Abs(foreColor.B-255));
-			//pen=new Pen(colorForeInverted, 1);
-			// MS seems to always use black
-			pen = ResPool.GetPen (Color.Black);
-			graphics.DrawRectangle(pen, trace_rectangle);
-			
-			DrawInnerFocusRectangle (graphics, Rectangle.Inflate (rectangle, -4, -4), backColor);
+			graphics.DrawRectangle (pen, rect);
+			pen.Dispose ();
 		}
 		
 		public override void CPDrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled) {

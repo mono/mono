@@ -314,7 +314,7 @@ namespace System.Windows.Forms {
 		}
 
 		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle) {
-			DrawFocusRectangle(graphics, rectangle, Color.White, Color.Black);
+			DrawFocusRectangle(graphics, rectangle, SystemColors.Control, SystemColors.ControlText);
 		}
 
 		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
