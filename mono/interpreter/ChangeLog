@@ -1,4 +1,8 @@
 
+Sun Sep 30 11:57:15 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: compiler and ANSI C portability fixes.
+
 Fri Sep 28 19:37:46 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: Implemented ldtoken, conv.ovf.i. Use MonoClass->byval_arg
