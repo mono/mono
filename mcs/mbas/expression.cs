@@ -1130,7 +1130,7 @@ namespace Mono.MonoBASIC {
 
 			if (TypeManager.IsValueType (probe_type)){
 				Report.Error (77, loc, "The as operator should be used with a reference type only (" +
-					      TypeManager.MonoBASIC_Name (probe_type) + " is a value type");
+					      TypeManager.MonoBASIC_Name (probe_type) + " is a value type)");
 				return null;
 			
 			}

@@ -1275,7 +1275,7 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsValueType (probe_type)){
 				Report.Error (77, loc, "The as operator should be used with a reference type only (" +
-					      TypeManager.CSharpName (probe_type) + " is a value type");
+					      TypeManager.CSharpName (probe_type) + " is a value type)");
 				return null;
 			
 			}

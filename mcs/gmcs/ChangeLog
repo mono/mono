@@ -1,3 +1,8 @@
+2004-01-04  David Sheldon <dave-mono@earth.li>
+
+  * expression.cs: Added matching ")" to error message for 
+  CS0077
+
 2003-12-19  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.IsEqualGenericType): New public
