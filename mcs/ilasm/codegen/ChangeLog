@@ -1,3 +1,10 @@
+2003-05-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* CalliInstr.cs: New file - The calli instruction
+	* Ldtoken.cs: New file - The ldtoken instruction
+	* InstrTable.cs: ldc.i8 is a TOKEN_I8 and should be given the
+	MiscToken.ldc_i8 value.
+		
 2003-05-18 Jackson Harper <jackson@latitudegeo.com>
 
 	* ExternMethodRef.cs: Accept and add calling conventions. Add
