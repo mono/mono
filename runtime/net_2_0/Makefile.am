@@ -27,6 +27,7 @@ gac_assemblies_list = \
 	I18N.Other					\
 	I18N.Rare					\
 	I18N.West					\
+	ICSharpCode.SharpZipLib				\
 	Microsoft.VisualBasic				\
 	Microsoft.VisualC				\
 	Microsoft.Vsa					\
