@@ -1,10 +1,8 @@
 CSC=mcs
 CSCFLAGS=/nologo /optimize /target:exe /r:System.dll /r:Mono.GetOptions.dll /out:mbas.exe 
 
-VERSION=0.13
-
 COMPILER_SOURCES = \
-      AssemblyInfo.cs   \
+    AssemblyInfo.cs   \
 	assign.cs		\
 	attribute.cs		\
 	cfold.cs		\
@@ -39,27 +37,14 @@ COMPILER_SOURCES = \
 
 all: mbas.exe
 
-parser: mb-parser.cs
-
 test: mbas.exe
-	./mbas @testmbas/filelist
+	mono mbas.exe --main WriteOK testmbas/WriteOK.vb
 
 mbas.exe: $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) $(COMPILER_SOURCES)
-
-docs: $(COMPILER_SOURCES)
-	$(CSC) $(CSCFLAGS) /doc:docs.xml /nowarn:1591 $(COMPILER_SOURCES)
-
-windows: all
-
-linux: all
-
-opt:
-	$(CSC) /nologo /optimize+ /r:System.dll /target:exe /out:mbas.exe $(COMPILER_SOURCES)
 
 clean:
 	rm -f mbas.exe y.output mbas.pdb *~ .*~ mb-parser.cs mbas.log response
 
 mb-parser.cs: mb-parser.jay
 	../jay/jay -ctv < ../jay/skeleton.cs mb-parser.jay > mb-parser.cs
-
