@@ -15,8 +15,12 @@ using System;
 using Microsoft.VisualBasic;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
+using System.Collections.Specialized;
+using System.Reflection;
+using System.Diagnostics;
+using System.IO;
 
-namespace MonoTests.Microsoft.VisualBasic
+namespace MonoTests.System.Microsoft.VisualBasic
 {
 	[TestFixture]
 	public class VBCodeProviderTest : Assertion {
@@ -38,21 +42,21 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public void LanguageOptions ()
+		public void LanguageOptionsTest ()
 		{
-			AssertEquals ("#JW20", System.CodeDom.Compiler.LanguageOptions.CaseInsensitive, MyVBCodeProvider.LanguageOptions);
+			AssertEquals ("#JW20", LanguageOptions.CaseInsensitive, MyVBCodeProvider.LanguageOptions);
 		}
 
 		[Test]
 		public void CreateCompiler()
 		{
 			// Prepare the compilation
-			System.Console.WriteLine("#J30.pre1 - CreateCompiler");
+			Console.WriteLine("#J30.pre1 - CreateCompiler");
 			ICodeCompiler MyVBCodeCompiler;
 			MyVBCodeCompiler = MyVBCodeProvider.CreateCompiler();
 			AssertNotNull ("#JW30 - CreateCompiler", MyVBCodeCompiler);
-			System.CodeDom.Compiler.CompilerResults MyVBCodeCompilerResults;
-			System.Console.WriteLine("#J30.post1 - CreateCompiler");
+			CompilerResults MyVBCodeCompilerResults;
+			Console.WriteLine("#J30.post1 - CreateCompiler");
 
 			CompilerParameters options = new CompilerParameters();
 			options.GenerateExecutable = true;
@@ -64,7 +68,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"public class TestModule" + Environment.NewLine + "public shared sub Main()" + Environment.NewLine + "System.Console.Write(\"Hello world!\")" + Environment.NewLine + "End Sub" + Environment.NewLine + "End Class" + Environment.NewLine);
 
 			// Analyse the compilation success/messages
-			System.Collections.Specialized.StringCollection MyOutput;
+			StringCollection MyOutput;
 			MyOutput = MyVBCodeCompilerResults.Output;
 			string MyOutStr = "";
 			foreach (string MyStr in MyOutput)
@@ -72,12 +76,12 @@ namespace MonoTests.Microsoft.VisualBasic
 				MyOutStr += MyStr + Environment.NewLine + Environment.NewLine;
 			}
 			if (MyOutStr != "")
-				System.Console.WriteLine ("Error compiling VB.NET Hello world test application" + Environment.NewLine + Environment.NewLine + MyOutStr);
+				Console.WriteLine ("Error compiling VB.NET Hello world test application" + Environment.NewLine + Environment.NewLine + MyOutStr);
 			AssertEquals ("#JW31 - Hello world compilation", 0, MyVBCodeCompilerResults.Errors.Count);
 
 			try
 			{
-				System.Reflection.Assembly MyAss = MyVBCodeCompilerResults.CompiledAssembly;
+				Assembly MyAss = MyVBCodeCompilerResults.CompiledAssembly;
 			}
 			catch (Exception ex)
 			{
@@ -86,7 +90,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 
 			// Execute the test app
-			System.Diagnostics.ProcessStartInfo NewProcInfo = new System.Diagnostics.ProcessStartInfo();
+			ProcessStartInfo NewProcInfo = new ProcessStartInfo();
 			NewProcInfo.FileName = MyVBCodeCompilerResults.CompiledAssembly.Location;
 			NewProcInfo.RedirectStandardOutput = true;
 			NewProcInfo.UseShellExecute = false;
@@ -94,7 +98,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			string TestAppOutput = "";
 			try
 			{
-				System.Diagnostics.Process MyProc = System.Diagnostics.Process.Start(NewProcInfo);
+				Process MyProc = Process.Start(NewProcInfo);
 				MyProc.WaitForExit();
 				TestAppOutput = MyProc.StandardOutput.ReadToEnd();
 				MyProc.Close();
@@ -109,7 +113,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			// Clean up
 			try
 			{
-				System.IO.File.Delete (NewProcInfo.FileName);
+				File.Delete (NewProcInfo.FileName);
 			}
 			catch {}
 		}
@@ -120,7 +124,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			ICodeGenerator MyVBCodeGen;
 			MyVBCodeGen = MyVBCodeProvider.CreateGenerator();
 			Assert ("#JW40 - CreateGenerator", (MyVBCodeGen != null));
-			AssertEquals ("#JW41", true, MyVBCodeGen.Supports (System.CodeDom.Compiler.GeneratorSupport.DeclareEnums));
+			AssertEquals ("#JW41", true, MyVBCodeGen.Supports (GeneratorSupport.DeclareEnums));
 		}
 
 		

@@ -1,3 +1,8 @@
+2003-12-11  Nick Drochak  <ndrochak@ieee.org>
+
+	* VBCodeProviderTest.cs: Fixed subtle namespace issues preventing
+	build with csc.
+
 2003-12-10  Jochen Wezel  <jwezel@compumaster.de>
 
         * VBCodeProviderTest.cs: moved into proper subdir
