@@ -68,7 +68,7 @@ namespace System.Drawing
 
 		Size iconSize;
 		IntPtr winHandle = IntPtr.Zero;
-		IconDir	iconDir;
+		IconDir	iconDir ;
 		ushort id;
 		IconImage [] imageData;
 			
@@ -98,7 +98,8 @@ namespace System.Drawing
 				throw new System.ArgumentException ("The argument 'stream' must be a picture that can be used as a Icon", "stream");
 			
 			BinaryReader reader = new BinaryReader (stream);
-            			
+            
+			//iconDir = new IconDir ();
 			iconDir.idReserved = reader.ReadUInt16();
 			if (iconDir.idReserved != 0) //must be 0
 				throw new System.ArgumentException ("Invalid Argument", "stream");
@@ -223,6 +224,10 @@ namespace System.Drawing
 		[MonoTODO ("Implement")]
 		public Icon (Type type, string resource)
 		{
+			using (Stream s = type.Assembly.GetManifestResourceStream (resource)) {
+				if (s == null)
+					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");				
+			}
 			throw new NotImplementedException ();
 		}
 
@@ -257,16 +262,115 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO ("Untested")]
 		public void Save (Stream outputStream)
 		{
-			throw new NotImplementedException ();
+			if (iconDir.idEntries!=null){
+				StreamWriter bw = new StreamWriter (outputStream);
+				//BinaryWriter bw = new BinaryWriter (outputStream);
+				//write icondir
+				bw.Write (iconDir.idReserved);
+				bw.Write (iconDir.idType);
+				ushort count = iconDir.idCount;
+				bw.Write (count);
+				
+				//now write iconDirEntries
+				for (int i=0; i<(int)count; i++){
+					IconDirEntry ide = iconDir.idEntries [i];
+					bw.Write (ide.width);
+					bw.Write (ide.height);
+					bw.Write (ide.colorCount);
+					bw.Write (ide.reserved);
+					bw.Write (ide.planes);
+					bw.Write (ide.bitCount);
+					bw.Write (ide.bytesInRes);
+					bw.Write (ide.imageOffset);
+				}
+				
+				//now write iconImage data
+				for (int i=0; i<(int)count; i++){
+					BitmapInfoHeader bih = imageData [i].iconHeader;
+					bw.Write (bih.biSize);
+					bw.Write (bih.biWidth);
+					bw.Write (bih.biHeight);
+					bw.Write (bih.biPlanes);
+					bw.Write (bih.biCompression);
+					bw.Write (bih.biSizeImage);
+					bw.Write (bih.biXPelsPerMeter);
+					bw.Write (bih.biYPelsPerMeter);
+					bw.Write (bih.biClrUsed);
+					bw.Write (bih.biClrImportant);
+
+					//now write color table
+					int colCount = imageData [i].iconColors.Length;
+					for (int j=0; j<colCount; j++)
+						bw.Write (imageData [i].iconColors [j]);
+
+					//now write XOR Mask
+					bw.Write (imageData [i].iconXOR);
+
+					//now write AND Mask
+					bw.Write (imageData [i].iconAND);
+				}
+			}
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO ("Untested")]
 		public Bitmap ToBitmap ()
 		{
-			throw new NotImplementedException ();
+			if (imageData!=null){
+				
+				//select active icon from the iconDirEntry
+                IconImage ii = imageData [this.id];
+				MemoryStream stream = new MemoryStream ();
+				BinaryWriter writer = new BinaryWriter (stream);
+				
+				//write bitmap file header
+				//start with writing signature
+				char [] sig = {'B', 'M'};
+				writer.Write (sig);
+				
+				//now write file size
+				//file size is bitmapfileheader + bitmapinfo + colorpalette + image bits
+				//size of bitmapfileheader is 14 bytes, bitmapinfo is 40 bytes
+				uint offSet = (uint)(14+40+ ii.iconColors.Length* 4);
+				uint fileSize = (uint) (offSet + ii.iconXOR.Length);
+				writer.Write (fileSize);
+				
+				//write reserved words
+				ushort reserved12 = 0;
+				writer.Write (reserved12);
+				writer.Write (reserved12);
+				
+				//write offset
+				writer.Write (offSet);
+				
+				//now write bitmapfile header
+				BitmapInfoHeader bih = ii.iconHeader;
+				writer.Write (bih.biSize);
+				writer.Write (bih.biWidth);
+				writer.Write (bih.biHeight/2);
+				writer.Write (bih.biPlanes);
+				writer.Write (bih.biCompression);
+				writer.Write (bih.biSizeImage);
+				writer.Write (bih.biXPelsPerMeter);
+				writer.Write (bih.biYPelsPerMeter);
+				writer.Write (bih.biClrUsed);
+				writer.Write (bih.biClrImportant);
+
+				//now write color table
+				int colCount = ii.iconColors.Length;
+				for (int j=0; j<colCount; j++)
+					writer.Write (ii.iconColors [j]);
+
+				//now write image bits
+				writer.Write (ii.iconXOR);
+
+				//create bitmap from stream and return
+				return new Bitmap (writer.BaseStream);
+			} else {
+					return new Bitmap (32, 32);
+			}
 		}
 
 		public override string ToString ()

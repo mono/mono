@@ -1,4 +1,7 @@
-2004-04-12  Sanjay Gupta <gsanjay@novell.com>
+2004-04-14  Sanjay Gupta <gsanjay@novell.com>
+	* Icon.cs: Implemented more missing bits
+
+2004-04-13  Sanjay Gupta <gsanjay@novell.com>
 	* Icon.cs: Implemented few more missing bits
 
 2004-04-12  Sanjay Gupta <gsanjay@novell.com>
