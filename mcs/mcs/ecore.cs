@@ -508,6 +508,9 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+
+		private static ArrayList almostMatchedMembers = new ArrayList (4);
+
 		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
 		//
@@ -552,8 +555,10 @@ namespace Mono.CSharp {
 						       string name, MemberTypes mt,
 						       BindingFlags bf, Location loc)
 		{
+			almostMatchedMembers.Clear ();
+
 			MemberInfo [] mi = TypeManager.MemberLookup (container_type, qualifier_type,
-								     queried_type, mt, bf, name);
+								     queried_type, mt, bf, name, almostMatchedMembers);
 
 			if (mi == null)
 				return null;
@@ -625,27 +630,50 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			e = MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
-					  name, mt, bf, loc);
+			e = MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type, name, mt, bf, loc);
 
-			if (e != null)
-				return e;
+			if (e == null && errors == Report.Errors)
+				// No errors were reported by MemberLookup, but there was an error.
+				MemberLookupFailed (ec, qualifier_type, queried_type, name, null, loc);
 
-			// Error has already been reported.
-			if (errors < Report.Errors)
-				return null;
-
-			MemberLookupFailed (ec, qualifier_type, queried_type, name, null, loc);
-			return null;
+			return e;
 		}
 
 		public static void MemberLookupFailed (EmitContext ec, Type qualifier_type,
 						       Type queried_type, string name,
 						       string class_name, Location loc)
 		{
+			if (almostMatchedMembers.Count != 0) {
+				if (qualifier_type == null) {
+					foreach (MemberInfo m in almostMatchedMembers)
+						Report.Error (38, loc, 
+							      "Cannot access non-static member `{0}' via nested type `{1}'", 
+							      TypeManager.GetFullNameSignature (m),
+							      TypeManager.CSharpName (ec.ContainerType));
+					return;
+				}
+
+				if (qualifier_type != ec.ContainerType) {
+					// Although a derived class can access protected members of
+					// its base class it cannot do so through an instance of the
+					// base class (CS1540).  If the qualifier_type is a parent of the
+					// ec.ContainerType and the lookup succeeds with the latter one,
+					// then we are in this situation.
+					foreach (MemberInfo m in almostMatchedMembers)
+						Report.Error (1540, loc, 
+							      "Cannot access protected member `{0}' via a qualifier of type `{1}';"
+							      + " the qualifier must be of type `{2}' (or derived from it)", 
+							      TypeManager.GetFullNameSignature (m),
+							      TypeManager.CSharpName (qualifier_type),
+							      TypeManager.CSharpName (ec.ContainerType));
+					return;
+				}
+				almostMatchedMembers.Clear ();
+			}
+
 			object lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
 								  AllMemberTypes, AllBindingFlags |
-								  BindingFlags.NonPublic, name);
+								  BindingFlags.NonPublic, name, null);
 
 			if (lookup == null) {
 				if (class_name != null)
@@ -656,31 +684,6 @@ namespace Mono.CSharp {
 						117, loc, "`" + queried_type + "' does not contain a " +
 						"definition for `" + name + "'");
 				return;
-			}
-
-			if ((qualifier_type != null) && (qualifier_type != ec.ContainerType) &&
-			    ec.ContainerType.IsSubclassOf (qualifier_type)) {
-				// Although a derived class can access protected members of
-				// its base class it cannot do so through an instance of the
-				// base class (CS1540).  If the qualifier_type is a parent of the
-				// ec.ContainerType and the lookup succeeds with the latter one,
-				// then we are in this situation.
-
-				lookup = TypeManager.MemberLookup (
-					ec.ContainerType, ec.ContainerType, ec.ContainerType,
-					AllMemberTypes, AllBindingFlags, name);
-
-				if (lookup != null) {
-					Report.Error (
-						1540, loc, "Cannot access protected member `" +
-						TypeManager.CSharpName (qualifier_type) + "." +
-						name + "' " + "via a qualifier of type `" +
-						TypeManager.CSharpName (qualifier_type) + "'; the " +
-						"qualifier must be of type `" +
-						TypeManager.CSharpName (ec.ContainerType) + "' " +
-						"(or derived from it)");
-					return;
-				}
 			}
 
 			if (qualifier_type != null)
@@ -2998,7 +3001,7 @@ namespace Mono.CSharp {
 			for (; current != null; current = current.BaseType) {
 				MemberInfo[] group = TypeManager.MemberLookup (
 					invocation_type, invocation_type, current,
-					MemberTypes.Property, flags, PropertyInfo.Name);
+					MemberTypes.Property, flags, PropertyInfo.Name, null);
 
 				if (group == null)
 					continue;

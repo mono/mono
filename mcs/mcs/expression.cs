@@ -5584,7 +5584,8 @@ namespace Mono.CSharp {
 				return this;
 			
 			Expression ml;
-			ml = MemberLookupFinal (ec, null, type, ".ctor",
+			// For member-lookup, treat 'new Foo (bar)' as call to 'foo.ctor (bar)', where 'foo' is of type 'Foo'.
+			ml = MemberLookupFinal (ec, type, type, ".ctor",
 						MemberTypes.Constructor,
 						AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
@@ -7755,7 +7756,7 @@ namespace Mono.CSharp {
 			MemberInfo [] mi = TypeManager.MemberLookup (
 				caller_type, caller_type, lookup_type, MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance |
-				BindingFlags.DeclaredOnly, p_name);
+				BindingFlags.DeclaredOnly, p_name, null);
 
 			if (mi == null || mi.Length == 0)
 				return null;

@@ -1,3 +1,18 @@
+2004-06-03  Raja R Harinath  <rharinath@novell.com>
+
+	Bug #50820.
+	* typemanager.cs (closure_private_ok, closure_invocation_type)
+	(closure_qualifier_type, closure_invocation_assembly)
+	(FilterWithClosure): Move to ...
+	(Closure): New internal nested class.
+	(Closure.CheckValidFamilyAccess): Split out from Closure.Filter.
+	(MemberLookup, RealMemberLookup): Add new almost_match parameter.
+	* ecore.cs (almostMatchedMembers): New variable to help report CS1540.
+	(MemberLookup, MemberLookupFailed): Use it.
+	* expression.cs (New.DoResolve): Treat the lookup for the
+	constructor as being qualified by the 'new'ed type.
+	(Indexers.GetIndexersForTypeOrInterface): Update.
+
 2004-06-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs
