@@ -1,7 +1,32 @@
+2002-02-01      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* TargetConverter.cs          - Completed
+	* TemplateColumn.cs           - Completed
+	* DataList.cs                 - Corrected the get-er methods for the *Style objects.
+	         Corrected the get/set-er methods for ViewState related objects.
+	         Addded support for properties:
+	           GridLines, HeaderStyle, HeaderTemplate, ItemStyle, ItemTemplate,
+	           RepeatColumns, RepeatDirection, RepeatLayout, SelectedIndex, SelectedItem,
+	           SelectedItemStyle, SelectedItemTemplate, SeparatorStyle, SeparatorItemTemplate.
+	         Events:
+	           CancelCommand, DeleteCommand, EditCommand, ItemCommand, ItemCreated,
+	           ItemDataBound, UpdateCommand.
+	         Methods:
+	           CreateControlStyle(), LoadViewState(object), SaveViewState(), TrackViewState
+	         Event handlers:
+	           OnBubbleEvent, OnCancelCommand, OnDeleteCommand, OnEditCommand, OnItemCommand,
+	           OnItemCreated, OnItemDataBound, OnUpdateCommand
+	         Added dummy methods for some undocumented methods:
+	           CreateControlHierarchy(bool), CreateItem(int, ListItemType),
+	           CreateItem(int, ListItemType, bool, object), PrepareControlHierarchy(),
+	           InitializeItem(DataListItem)
+
+
 2002-01-31      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* RepeaterInfo.cs             - Initial Implementation. Done all
 	                                except for RepeatDirection.Vertical
+	* TableStyle.cs               - Completed
 
 2002-01-30      Gaurav Vaish <gvaish@iitk.ac.in>
 
