@@ -20,7 +20,7 @@ class ErrorCS0079 {
 	}
 	
 	public static void Main () {
-		ErrorCS0079 error = new ErrorCS0077 ();
+		ErrorCS0079 error = new ErrorCS0079 ();
 		error.OnFoo += new Handler (error.Callback);
 		error.privateEvent ();
 	}
