@@ -17,7 +17,7 @@ namespace System.Web.Mail
 	/// </remarks>
 	public class SmtpMail
 	{
-		private static string smtpServer;
+		private static string smtpServer = "localhost";
 		
 		// Constructor		
 		private SmtpMail ()
