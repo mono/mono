@@ -1,3 +1,7 @@
+2004-12-02  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DrawItemState.cs: fixes wrong enum values
+
 2004-12-01  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Resize the hbar as well as the vbar on resize.

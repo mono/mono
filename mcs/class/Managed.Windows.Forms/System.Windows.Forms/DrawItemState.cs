@@ -27,9 +27,9 @@ namespace System.Windows.Forms {
 
 	[Flags]
 	public enum DrawItemState {
-		None,
-		Selected,
-		Grayed,
+		None = 0,
+		Selected = 1,
+		Grayed = 2,
 		Disabled = 4,
 		Checked = 8,
 		Focus = 16,
