@@ -263,6 +263,10 @@ while(defined ($vbFile = glob($FilePattern))) {
 	$RetVal = ValidateResults();
 	LogResults($RetVal);
     }
+
+    if($RetVal == 0) {
+	unlink($VBLogFile);
+    }
 }
 close TEST_RESULTS_FILE;
 
