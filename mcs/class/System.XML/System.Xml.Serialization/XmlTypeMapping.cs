@@ -22,6 +22,14 @@ namespace System.Xml.Serialization
 		private string typeFullName;
 		private string typeName;
 
+		internal XmlTypeMapping(string elementName, string ns, string typeFullName, string typeName)
+		{
+			this.elementName = elementName;
+			this.ns = ns;
+			this.typeFullName = typeFullName;
+			this.typeName = typeName;
+		}
+
 		public string ElementName  
 		{
 			get { return elementName; }

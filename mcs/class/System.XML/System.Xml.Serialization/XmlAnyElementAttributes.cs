@@ -56,6 +56,11 @@ namespace System.Xml.Serialization
 		{
 			List.Remove(attribute);
 		}
+
+		public void CopyTo(XmlAnyElementAttribute[] array,int index)
+		{
+			List.CopyTo(array, index);
+		}
 	}
 
 }

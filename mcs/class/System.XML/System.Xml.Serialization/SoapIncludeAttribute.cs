@@ -20,9 +20,6 @@ namespace System.Xml.Serialization
 	{
 		private Type type;
 
-		public SoapIncludeAttribute ()
-		{
-		}
 		public SoapIncludeAttribute( Type type) 
 		{
 			Type = type;

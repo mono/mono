@@ -23,6 +23,7 @@ namespace System.Xml.Serialization
 		private XmlSchemaForm form;
 		private bool isNullable;
 		private string ns;
+		private int order;
 
 		public XmlArrayAttribute()
 		{
@@ -76,6 +77,14 @@ namespace System.Xml.Serialization
 			{
 				ns = value;
 			}
+		}
+		/// <summary>
+		/// Specifies Order in which Memberswill be serialized as Elements.
+		/// </summary>
+		public int Order
+		{
+			get{ return  order; }
+			set{ order = value; }
 		}
 	}
 }

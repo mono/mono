@@ -19,6 +19,7 @@ namespace System.Xml.Serialization
 	public class XmlChoiceIdentifierAttribute : Attribute
 	{
 		private string memberName;
+		private int order;
 
 		public XmlChoiceIdentifierAttribute ()
 		{
@@ -35,6 +36,15 @@ namespace System.Xml.Serialization
 			set {
 				memberName = value;
 			}
+		}
+		
+		/// <summary>
+		/// Specifies Order in which Memberswill be serialized as Elements.
+		/// </summary>
+		public int Order
+		{
+			get{ return  order; }
+			set{ order = value; }
 		}
 
 	}

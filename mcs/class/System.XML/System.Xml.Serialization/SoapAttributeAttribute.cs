@@ -28,10 +28,10 @@ namespace System.Xml.Serialization
 
 		public SoapAttributeAttribute (string attrName) 
 		{
-			AttrName = attrName;
+			AttributeName = attrName;
 		}
 
-		public string AttrName {
+		public string AttributeName {
 			get	{
 				return attrName;
 			} 

@@ -25,6 +25,7 @@ namespace System.Xml.Serialization
 		private string ns;
 		private bool isNullable;
 		private Type type;
+		private int order;
 
 		public XmlElementAttribute ()
 		{	
@@ -90,6 +91,14 @@ namespace System.Xml.Serialization
 			set {
 				type = value;
 			}
+		}
+		/// <summary>
+		/// Specifies Order in which Memberswill be serialized as Elements.
+		/// </summary>
+		public int Order
+		{
+			get{ return  order; }
+			set{ order = value; }
 		}
 	}
 }

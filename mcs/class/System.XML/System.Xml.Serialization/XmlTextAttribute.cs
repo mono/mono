@@ -20,6 +20,7 @@ namespace System.Xml.Serialization
 	{
 		private string dataType;
 		private Type type;
+		private int order;
 
 		public XmlTextAttribute ()
 		{
@@ -46,6 +47,14 @@ namespace System.Xml.Serialization
 			set { 
 				type = value; 
 			}
+		}
+		/// <summary>
+		/// Specifies Order in which Memberswill be serialized as Elements.
+		/// </summary>
+		public int Order
+		{
+			get{ return  order; }
+			set{ order = value; }
 		}
 
 	}

@@ -1,3 +1,6 @@
+2002-06-27 Ajay kumar Dwivedi <adwiv@yahoo.com>
+	* XmlSerializer: Serialize() method Partially Implemented.
+
 2002-06-20 Ajay kumar Dwivedi <adwiv@yahoo.com>
 
 	* Soap & XmlOverrides: Implemented using TypeMember as key with
