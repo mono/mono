@@ -492,9 +492,11 @@ namespace Mono.Data.Tds.Protocol {
 				element = (columnSize != 0);
 				break;
 			case TdsColumnType.UniqueIdentifier :
-				if (comm.Peek () != 16) // If it's null, then what to do?
+				if (comm.Peek () != 16) { // If it's null, then what to do?
+					byte swallowed = comm.GetByte();	
+					element = DBNull.Value;
 					break;
-
+				}
 				len = comm.GetByte () & 0xff;
 				if (len > 0) {
 					byte[] guidBytes = comm.GetBytes (len, true);

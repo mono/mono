@@ -1,3 +1,8 @@
+2004-10-30 Umadevi S <sumadevi@novell.com>
+	* Tds.cs : GetColumnValue method: handling null guid values correctly.
+		This fixes bug #68804. 
+		Thanks for the patch /bug report by Aleksandar Dezelin
+
 2004-10-14 Umadevi S <sumadevi@novell.com>
 	* Tds.cs : GetTextValue method- handling zero length string correctly
 		This fixes bug #67916
