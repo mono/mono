@@ -1,3 +1,7 @@
+2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBase.cs (GetMethodFromHandle): Implement.
+
 2004-08-13  Marek Safar  <marek.safar@seznam.cz>
 
 	* Assembly.cs: Made _minimum, _optional, _refuse fields internal.
