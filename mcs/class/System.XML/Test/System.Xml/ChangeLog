@@ -1,5 +1,9 @@
 2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlTextReaderTests.cs : Oops, it was CRLF injected ;-)
+
+2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlReaderCommonTests.cs : Added ProhibitedMultipleAttributes().
 	  Fixed ReadAttributeValue(). Now I think it is MS.NET XmlTextReader
 	  which is rather buggy than their XmlNodeReader.
