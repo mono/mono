@@ -1,3 +1,8 @@
+2004-11-22  Ravindra  <rkumar@novell.com>
+
+	* Graphics.cs: Fixed null values handling in all overloads of
+	MeasureString method.
+
 2004-11-18  Ravindra  <rkumar@novell.com>
 
 	* gdipFunctions.cs: Removed the .so extension from a DllImport
