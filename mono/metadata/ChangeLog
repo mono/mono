@@ -1,3 +1,7 @@
+2004-11-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_method_get_header): Fix build for older glibs which does not define G_LIKELY.
+
 2004-11-12  Martin Baulig  <martin@localhost>
 
 	* reflection.c (mono_image_create_token): Allow generic method
