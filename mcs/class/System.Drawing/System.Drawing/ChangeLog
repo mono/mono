@@ -1,3 +1,6 @@
+2004-10-27 Jordi Mas i Hernandez <jordi@ximian.com>
+	* Font.cs: fixes bug 66533
+	
 2004-10-22 Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* Bitmap.cs, Font.cs FontFamily.cs Graphics.cs Region.cs

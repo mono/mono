@@ -155,8 +155,7 @@ namespace System.Drawing
 		{
 			OperatingSystem	osInfo = Environment.OSVersion;
 			IntPtr			newObject;
-			IntPtr			hdc;
-			IntPtr			oldFont;
+			IntPtr			hdc;			
 			FontStyle		newStyle = FontStyle.Regular;
 			float			newSize;
 			LOGFONTA		lf = new LOGFONTA ();
@@ -236,7 +235,15 @@ namespace System.Drawing
 
 		internal Font (IntPtr newFontObject, string familyName, FontStyle style, float size)
 		{
-			FontFamily fontFamily = new FontFamily (familyName);
+			FontFamily fontFamily;			
+			
+			try {
+				fontFamily = new FontFamily (familyName);
+			}
+			catch (Exception){
+				fontFamily = FontFamily.GenericSansSerif;
+			}
+			
 			setProperties (fontFamily, size, style, GraphicsUnit.Pixel, 0, false);
 			fontObject = newFontObject;
 		}
@@ -315,8 +322,15 @@ namespace System.Drawing
 		{
 			// NOTE: If family name is null, empty or invalid,
 			// MS creates Microsoft Sans Serif font.
-			Status status;
-			FontFamily family = new FontFamily (familyName);
+			Status status;			
+			FontFamily family;			
+			try {
+				family = new FontFamily (familyName);
+			}
+			catch (Exception){
+				family = FontFamily.GenericSansSerif;
+			}
+			
 			setProperties (family, emSize, style, unit, charSet, isVertical);				
 
 			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
