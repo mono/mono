@@ -1,3 +1,7 @@
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* PeerCred.cs: Get the unix socket peer credentials.
+
 2004-05-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* Syscall.cs: Do not let the runtime handle strings, as we do not

@@ -1,3 +1,8 @@
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Slight tweak to allow unknown objects to be returned
+	by GetSocketOption().
+
 2004-06-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: connect on non-blocking sockets returns EINPROGRESS. Fixes

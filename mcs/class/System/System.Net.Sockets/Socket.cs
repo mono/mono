@@ -1131,8 +1131,10 @@ namespace System.Net.Sockets
 			} else if (name==SocketOptionName.AddMembership ||
 				   name==SocketOptionName.DropMembership) {
 				return((MulticastOption)obj_val);
-			} else {
+			} else if (obj_val is int) {
 				return((int)obj_val);
+			} else {
+				return(obj_val);
 			}
 		}
 
