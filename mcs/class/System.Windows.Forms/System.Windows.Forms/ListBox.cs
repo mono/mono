@@ -23,7 +23,8 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public ListBox() {
-			
+			SubClassWndProc_ = true;
+			BorderStyle_ = BorderStyle.Fixed3D;
 		}
 
 		//
@@ -35,6 +36,10 @@ namespace System.Windows.Forms {
 		protected DrawMode DrawMode_ = DrawMode.Normal;
 		protected bool UseTabStops_ = false;
 		protected bool MultiColumn_ = false;
+		int selectedIndex = -1;
+		bool Sorted_ = false;
+		internal int prevSelectedIndex = -1;
+		BorderStyle	BorderStyle_;
 		
 		//
 		//	 --- Public Fields
@@ -70,6 +75,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public BorderStyle BorderStyle {
+			get {
+				return BorderStyle_;				
+			}
+			set {
+				if( BorderStyle_ != value) {
+					BorderStyle_ = value;
+					if( IsHandleCreated) {
+						
+					}
+				}
+			}
+		}
 		public bool MultiColumn {
 			get {
 				return MultiColumn_;
@@ -105,13 +123,26 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override int SelectedIndex {
 			get {
-				//FIXME:
-				throw new NotImplementedException ();
+				if( IsHandleCreated) {
+					return Win32.SendMessage(Handle, (int)ListBoxMessages.LB_GETCURSEL, 0, 0);
+				}
+				else {
+					return selectedIndex;
+				}
 			}
 			set {
-				//FIXME:
+				prevSelectedIndex = selectedIndex;
+				if( selectedIndex != value) {
+					//FIXME: set exception parameters
+					selectedIndex = value;
+					if( IsHandleCreated) {
+						Win32.SendMessage(Handle, (int)ListBoxMessages.LB_SETCURSEL, selectedIndex, 0);
+					}
+					OnSelectedIndexChanged(new EventArgs());
+				}
 			}
 		}
+		
 		[MonoTODO]
 		public ListBox.SelectedIndexCollection SelectedIndices {
 			get {
@@ -145,10 +176,18 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public bool Sorted {
 			get {
-				throw new NotImplementedException ();
+				return Sorted_;
 			}
 			set {
-				//FIXME:
+				if( Sorted_ != value){
+					Sorted_ = value;
+					if( Sorted_) {
+						object[] items = new object[Items.Count];
+						Items.CopyTo(items, 0);
+						Items.Clear();
+						Items.AddRange(items);
+					}
+				}
 			}
 		}
 		[MonoTODO]
@@ -294,7 +333,7 @@ namespace System.Windows.Forms {
 		public event DrawItemEventHandler DrawItem;
 		[MonoTODO]
 		public event MeasureItemEventHandler MeasureItem;
-
+		public event EventHandler SelectedIndexChanged;
 		//
 		//  --- Protected Properties
 		//
@@ -316,7 +355,7 @@ namespace System.Windows.Forms {
 					createParams.Width = Width;
 					createParams.Height = Height;
 					createParams.ClassStyle = 0;
-					createParams.ExStyle = 0;
+					createParams.ExStyle = (int)WindowExStyles.WS_EX_CLIENTEDGE;
 					createParams.Param = 0;
 					createParams.Parent = Parent.Handle;
 					createParams.Style = (int) (
@@ -354,27 +393,9 @@ namespace System.Windows.Forms {
 			}		
 		}
 
-		internal void SafeAddItemToListControl( object item) {
-			int res = Win32.SendMessage(Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
-		}
-		
-		internal void AddItemToListControl( object item) {
-			if( IsHandleCreated) {
-				SafeAddItemToListControl( item);	
-			}
-		}
-		
 		protected override void OnCreateControl ()
 		{
-			// Populate with Items
-			if( IsHandleCreated) {
-				foreach( object item in Items) {
-					SafeAddItemToListControl(item);	
-				}
-				if( ColumnWidth_ != 0) {
-					Win32.SendMessage( Handle, (int)ListBoxMessages.LB_SETCOLUMNWIDTH, ColumnWidth_, 0);
-				}
-			}
+			base.OnCreateControl();
 		}
 
 		[MonoTODO]
@@ -429,6 +450,10 @@ namespace System.Windows.Forms {
 					Win32.SendMessage(Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
 				}
 			}
+			if( ColumnWidth_ != 0 && MultiColumn_) {
+				Win32.SendMessage( Handle, (int)ListBoxMessages.LB_SETCOLUMNWIDTH, ColumnWidth_, 0);
+			}
+			
 		}
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) {
@@ -457,6 +482,9 @@ namespace System.Windows.Forms {
 		protected override void OnSelectedIndexChanged(EventArgs e) {
 			//FIXME:
 			base.OnSelectedIndexChanged(e);
+			if( SelectedIndexChanged != null) {
+				SelectedIndexChanged(this, e);
+			}
 		}
 
 		[MonoTODO]
@@ -507,6 +535,18 @@ namespace System.Windows.Forms {
 					OnDrawItem( args);
 					//Marshal.StructureToPtr(dis, m.LParam, false);
 					m.Result = (IntPtr)1;
+					}
+					break;
+				case Msg.WM_COMMAND: 
+					switch(m.HiWordWParam) {
+						case (uint)ListBoxNotifications.LBN_SELCHANGE:
+							SelectedIndex = Win32.SendMessage(Handle, (int)ListBoxMessages.LB_GETCURSEL, 0, 0);
+							m.Result = IntPtr.Zero;
+							CallControlWndProc(ref m);
+							break;
+						default:
+							CallControlWndProc(ref m);
+							break;
 					}
 					break;
 				default:
@@ -721,19 +761,31 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public int Add(object item) {
-				int result = -1;
-				if( item != null) {
-					result = items_.Add(item);
+				// FIXME: not optimal 
+				int idx = items_.Add(item);
+				if( owner_.Sorted) {
+					ListControl.ListControlComparer cic = new ListControl.ListControlComparer(owner_);
+					items_.Sort(cic);
+					idx = items_.BinarySearch(item,cic);
 					if( owner_.IsHandleCreated) {
-						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
+						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_INSERTSTRING, idx, owner_.getDisplayMemberOfObj(item));
 					}
 				}
-				return result;
+				else {
+					if( owner_.IsHandleCreated) {
+						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, owner_.getDisplayMemberOfObj(item));
+					}
+				}
+				return idx;
 			}
+			
 			[MonoTODO]
 			public void AddRange(object[] items) {
 				if( items != null) {
-					items_.AddRange(items);
+					// FIXME: not optimal 
+					foreach(object item in items) {
+						Add(item);
+					}
 				}
 			}
 			[MonoTODO]
@@ -743,14 +795,18 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void Clear() {
 				//FIXME:
+				items_.Clear();
+				if( owner_.IsHandleCreated) {
+					Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_RESETCONTENT, 0, 0);
+				}
 			}
 			[MonoTODO]
 			public bool Contains(object value) {
-				throw new NotImplementedException ();
+				return items_.Contains(value);
 			}
 			[MonoTODO]
 			public void CopyTo(object[] dest, int arrayIndex) {
-				//FIXME:
+				items_.CopyTo(dest, arrayIndex);
 			}
 			[MonoTODO]
 			public override bool Equals(object obj) {
@@ -776,11 +832,26 @@ namespace System.Windows.Forms {
 			}
 			[MonoTODO]
 			public void Remove(object val) {
-				//FIXME:
+				int pos = items_.IndexOf(val);
+				if( pos >= 0) {
+					RemoveAt(pos);
+				}
 			}
+			
+			internal virtual void OnItemRemovedAt( int index) {
+			}
+			
 			[MonoTODO]
 			public void RemoveAt(int index) {
-				//FIXME:
+				if( index < 0 || index >= items_.Count) {
+					//FIXME: set exception parameters
+					throw new ArgumentOutOfRangeException();
+				}
+				items_.RemoveAt(index);
+				if( owner_.IsHandleCreated) {
+					Win32.SendMessage( owner_.Handle, (int)ListBoxMessages.LB_DELETESTRING, index, 0); 
+				}
+				OnItemRemovedAt(index);
 			}
 			/// <summary>
 			/// IList Interface implmentation.

@@ -68,8 +68,55 @@ namespace System.Windows.Forms {
 			OnHandleChange ();
 		}
 
-		public virtual void CreateHandle (CreateParams cp) 		{			if( cp != null ) 			{				IntPtr createdHWnd = (IntPtr) 0;				Object lpParam = new Object();				if (!registeredClass) 				{					WNDCLASS wndClass = new WNDCLASS();					wndClass.style = (int) (CS_.CS_OWNDC|CS_.CS_VREDRAW | CS_.CS_HREDRAW);					wndClass.lpfnWndProc = GetWindowProc();					wndClass.cbClsExtra = 0;					wndClass.cbWndExtra = 0;					wndClass.hInstance = (IntPtr)0;					wndClass.hIcon = (IntPtr)0;					wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);					wndClass.hbrBackground = (IntPtr)((int)GSC_.COLOR_BTNFACE + 1);					wndClass.lpszMenuName = "";					wndClass.lpszClassName = "mono_native_window";
-					if (Win32.RegisterClass(ref wndClass) != 0) 					{						registeredClass = true;					} else 					{						windowHandle = (IntPtr)0;						return;					}				}				if (cp.Parent == IntPtr.Zero)					Console.WriteLine("par == null for cp with caption " + cp.Caption);				windowHandle = Win32.CreateWindowEx ( (uint) cp.ExStyle, cp.ClassName,					cp.Caption,(uint) cp.Style, cp.X, cp.Y, cp.Width, cp.Height,					(IntPtr) cp.Parent, (IntPtr) 0, (IntPtr) 0, ref lpParam);				if (windowHandle != (IntPtr) 0) 				{					windowCollection.Add (windowHandle, this);					if( (cp.Style & (int)WindowStyles.WS_CHILD) != 0) 					{						Win32.SetWindowLong(windowHandle, GetWindowLongFlag.GWL_ID, (int)windowHandle);					}				}				//debug				else 				{					System.Console.WriteLine("Cannot create window:" + Win32.FormatMessage(Win32.GetLastError()));				}			}		}
+		public virtual void CreateHandle (CreateParams cp) 
+		{
+			if( cp != null ) {
+				IntPtr createdHWnd = (IntPtr) 0;
+				Object lpParam = new Object();
+
+				if (!registeredClass) {
+					WNDCLASS wndClass = new WNDCLASS();
+
+					wndClass.style = (int) (CS_.CS_OWNDC |
+						CS_.CS_VREDRAW |
+						CS_.CS_HREDRAW);
+					wndClass.lpfnWndProc = GetWindowProc();
+					wndClass.cbClsExtra = 0;
+					wndClass.cbWndExtra = 0;
+					wndClass.hInstance = (IntPtr)0;
+					wndClass.hIcon = (IntPtr)0;
+					wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);
+					wndClass.hbrBackground = (IntPtr)((int)GetSysColorIndex.COLOR_BTNFACE + 1);
+					wndClass.lpszMenuName = "";
+					wndClass.lpszClassName = "mono_native_window";
+
+					if (Win32.RegisterClass(ref wndClass) != 0) {
+						registeredClass = true;
+					} else {
+						windowHandle = (IntPtr)0;
+						return;
+					}
+				}
+
+				windowHandle = Win32.CreateWindowEx (
+					(uint) cp.ExStyle, cp.ClassName,
+					cp.Caption,(uint) cp.Style,
+					cp.X, cp.Y, cp.Width, cp.Height,
+					(IntPtr) cp.Parent, (IntPtr) 0,
+					(IntPtr) 0, ref lpParam);
+
+				if (windowHandle != (IntPtr) 0) {
+					windowCollection.Add (windowHandle, this);
+					if( (cp.Style & (int)WindowStyles.WS_CHILD) != 0) {
+						Win32.SetWindowLong(windowHandle, GetWindowLongFlag.GWL_ID, (int)windowHandle);
+					}
+				}
+				//debug
+				else {
+					System.Console.WriteLine("Cannot create window {0}", Win32.FormatMessage(Win32.GetLastError()));
+				}
+			}
+		}
 
 		public void DefWndProc (ref Message m) 
 		{
@@ -133,6 +180,7 @@ namespace System.Windows.Forms {
  		static private IntPtr WndProc (
 			IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) 
 		{
+//			Console.WriteLine("NativeWindow.Message {0}", msg);
  			Message message = new Message ();
  			NativeWindow window = null;
 			// CHECKME: This try/catch is implemented to keep Message Handlers "Exception safe"

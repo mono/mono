@@ -297,7 +297,7 @@ namespace System.Windows.Forms {
 			rc.top = 0;
 			rc.right = rectangle.Width;
 			rc.bottom = rectangle.Height;
-			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, (uint)DrawFrameControl.DFCS_BUTTONCHECK);
+			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
 			g.ReleaseHdc(hdc);
 			g.Dispose();
 			graphics.DrawImage(bmp, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
@@ -346,12 +346,9 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawFocusRectangle(
-			Graphics graphics,
-			Rectangle rectangle,
-			Color foreColor,
-			Color backColor) {
-			//FIXME:
+		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
+			//FIXME: what to do with colors ?
+			DrawFocusRectangle( graphics, rectangle);			
 		}
 		
 		[MonoTODO]
@@ -511,14 +508,37 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawStringDisabled(
-			Graphics graphics,
-			string s,
-			Font font,
-			Color color,
-			RectangleF layoutRectangle,
-			StringFormat format) {
-			//FIXME:
+		public static void DrawStringDisabled(Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle, StringFormat format) {
+			Rectangle rect = new Rectangle((int)layoutRectangle.Left, (int)layoutRectangle.Top, (int)layoutRectangle.Width, (int)layoutRectangle.Height);
+			RECT rc = new RECT();
+			
+			rect.Offset(1,1);
+			rc.left = rect.Left;
+			rc.top = rect.Top;
+			rc.right = rect.Right;
+			rc.bottom = rect.Bottom;
+			
+			IntPtr hdc = graphics.GetHdc();
+			
+			int prevColor = Win32.SetTextColor(hdc, Win32.GetSysColor(GetSysColorIndex.COLOR_3DHILIGHT));
+			BackgroundMode prevBkMode = Win32.SetBkMode(hdc, BackgroundMode.TRANSPARENT);
+			IntPtr prevFont = Win32.SelectObject(hdc, font.ToHfont());
+			
+			Win32.DrawText(hdc, s, s.Length, ref rc, DrawTextFormatFlags.DT_CENTER | DrawTextFormatFlags.DT_VCENTER);
+			
+			rect.Offset(-1,-1);
+			rc.left = rect.Left;
+			rc.top = rect.Top;
+			rc.right = rect.Right;
+			rc.bottom = rect.Bottom;
+			Win32.SetTextColor(hdc, Win32.GetSysColor(GetSysColorIndex.COLOR_3DSHADOW));
+			Win32.DrawText(hdc, s, s.Length, ref rc, DrawTextFormatFlags.DT_CENTER | DrawTextFormatFlags.DT_VCENTER);
+			
+			Win32.SelectObject(hdc, prevFont);
+			Win32.SetBkMode(hdc, prevBkMode);
+			Win32.SetTextColor(hdc, prevColor);
+			
+			graphics.ReleaseHdc(hdc);
 		}
 		
 		[MonoTODO]

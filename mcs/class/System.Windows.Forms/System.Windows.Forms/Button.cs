@@ -43,7 +43,8 @@ namespace System.Windows.Forms {
 					if( window == null) {
 						window = new ControlNativeWindow (this);
 					}
-					Console.WriteLine("text = " + Text);					createParams.Caption = Text;
+
+					createParams.Caption = Text;
 					createParams.ClassName = "BUTTON";
 					createParams.X = Left;
 					createParams.Y = Top;
@@ -60,7 +61,7 @@ namespace System.Windows.Forms {
 					if(FlatStyle != FlatStyle.System) {
 						createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
 					}
-					createParams.Style |= (int)sysButtonStyles_;
+					createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle(TextAlign);
 					// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
 					// and this function is CreateParams, not CreateHandle
 					// window.CreateHandle (createParams);
@@ -83,7 +84,11 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		
-		[MonoTODO]		public void PerformClick() 		{			//FIXME:		}
+		[MonoTODO]
+		public void PerformClick() 
+		{
+			//FIXME:
+		}
 		
 		// --- Button methods for events ---
 		protected override void OnClick(EventArgs e) 
@@ -242,10 +247,13 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			StringFormat format = new StringFormat();
-			format.Alignment = horizontalAlign_;
-			format.LineAlignment = verticalAlign_;
-			paintOn.DrawString(Text, Font, SystemBrushes.ControlText, rc, format);
+			// DrawString does not paint _ under character, so we can use Win32 function call
+			if( Enabled) {
+				Win32.DrawText(paintOn, Text, Font, SystemColors.ControlText, rc, TextAlign);
+			}
+			else {
+				ControlPaint.DrawStringDisabled(paintOn, Text, Font, SystemColors.ControlText, rc, Win32.ContentAlignment2StringFormat(TextAlign));
+			}
 
 			if( (e.State & DrawItemState.Focus) != 0) {
 				// FIXME: Draw focus rectangle in different colors

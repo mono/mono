@@ -23,8 +23,9 @@ namespace System.Windows.Forms {
 		// private fields
 		private bool checkOnClick;
 		private bool threeDCheckBoxes;
-		private CheckedListBox.ObjectCollection Items_;
+		private CheckedListBox.CheckedIndexCollection CheckedIndices_;
 		
+		internal ArrayList checkedIndexCollection_ = new ArrayList();
 		
 		// --- Constructor ---
 		public CheckedListBox() : base() 
@@ -32,6 +33,7 @@ namespace System.Windows.Forms {
 			checkOnClick = false;
 			threeDCheckBoxes = true;
 			Items_ = new CheckedListBox.ObjectCollection(this);
+			CheckedIndices_ = new CheckedListBox.CheckedIndexCollection(this);
 			DrawMode_ = DrawMode.Normal;
 		}
 		
@@ -39,7 +41,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public CheckedListBox.CheckedIndexCollection CheckedIndices {
 			get {
-				throw new NotImplementedException (); }
+				return CheckedIndices_; 
+			}
 		}
 		
 		[MonoTODO]
@@ -95,7 +98,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public CheckedListBox.ObjectCollection Items {
 			get {
-				return Items_; 
+				return (CheckedListBox.ObjectCollection)Items_; 
 			}
 		}
 
@@ -127,7 +130,12 @@ namespace System.Windows.Forms {
 		
 		public bool ThreeDCheckBoxes {
 			get { return threeDCheckBoxes; }
-			set { threeDCheckBoxes=value; }
+			set { 
+				if( threeDCheckBoxes != value) {
+					threeDCheckBoxes = value; 
+					Invalidate();
+				}
+			}
 		}
 		
 		// --- CheckedListBox methods ---
@@ -150,13 +158,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public bool GetItemChecked(int index) 
 		{
-			throw new NotImplementedException ();
+			return CheckedIndices.Contains(index);
 		}
 		
 		[MonoTODO]
 		public CheckState GetItemCheckState(int index) 
 		{
-			throw new NotImplementedException ();
+			return CheckedIndices.Contains(index) ? CheckState.Checked : CheckState.Unchecked;
 		}
 		
 		// [event methods]
@@ -178,9 +186,33 @@ namespace System.Windows.Forms {
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			Rectangle checkRect = new Rectangle( e.Bounds.Left, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
-			Rectangle textRect = new Rectangle( checkRect.Right, e.Bounds.Top, e.Bounds.Width - checkRect.Width, e.Bounds.Height);
-			ControlPaint.DrawCheckBox(e.Graphics, checkRect, ButtonState.Normal);
-			e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
+			checkRect.Inflate(-1,-1);
+			Rectangle textRect = new Rectangle( checkRect.Right, e.Bounds.Top, e.Bounds.Width - checkRect.Width - 1, e.Bounds.Height);
+			
+			if( (e.State & DrawItemState.Selected) != 0) {
+				e.Graphics.FillRectangle(SystemBrushes.Highlight, textRect);
+				e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.HighlightText, textRect.X, textRect.Y);
+			}
+			else {
+				e.Graphics.FillRectangle(SystemBrushes.Window, textRect);
+				e.Graphics.DrawString(Items_[e.Index].ToString(), Font, SystemBrushes.ControlText, textRect.X, textRect.Y);
+			}
+		
+			ButtonState state = ButtonState.Normal;
+			if( !threeDCheckBoxes) {
+				state |= ButtonState.Flat;
+			}
+			
+			if( CheckedIndices.Contains(e.Index)) {
+				state |= ButtonState.Checked;
+			}
+			
+			ControlPaint.DrawCheckBox(e.Graphics, checkRect, state);
+			
+			if( 0 != (DrawItemState.Focus & e.State)) {
+				ControlPaint.DrawFocusRectangle(e.Graphics, textRect);
+			}
+			
 			//base.OnDrawItem(e);
 		}
 		
@@ -196,11 +228,6 @@ namespace System.Windows.Forms {
 		{
 			//FIXME
 			base.OnHandleCreated(e);
-			if( Items_ != null) {
-				foreach( object item in Items_) {
-					Win32.SendMessage(Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
-				}
-			}
 		}
 		
 		// only supports .NET framework, thus is not stubbed out
@@ -237,20 +264,76 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void SetItemChecked(int index,bool value) 
 		{
-			throw new NotImplementedException ();
+			SetItemCheckState(index, value ? CheckState.Checked : CheckState.Unchecked);
 		}
 		
 		[MonoTODO]
-		public void SetItemCheckState(int index,CheckState value) 
+		public void SetItemCheckState(int index, CheckState value) 
 		{
-			throw new NotImplementedException ();
+			if( index < 0 || index > Items.Count) {
+				// FIXME: Set exception properties
+				throw new ArgumentException();
+			}
+
+			bool invalidateControl = false;
+			
+			if( value == CheckState.Checked) {
+				if(!checkedIndexCollection_.Contains(index)) {
+					checkedIndexCollection_.Add(index);
+					invalidateControl = true;
+				}
+			}
+			else if( value == CheckState.Unchecked) {
+				if(checkedIndexCollection_.Contains(index)) {
+					checkedIndexCollection_.Remove(index);
+					invalidateControl = true;
+				}
+			}
+			else {
+			}
+			if( invalidateControl) {
+				// FIXME: Minimize repainting here, invalidate only part on the control ?
+				Invalidate();
+			}
+		}
+
+		internal void listboxSelChange()
+		{
+			int curSel = Win32.SendMessage(Handle, (int)ListBoxMessages.LB_GETCURSEL, 0, 0);
+			//Console.WriteLine("ListBoxNotifications.LBN_SELCHANGE. {0} item is active", curSel);
+			// CHECKME: the things work nice w/out call to control, but may be this will be needed.
+			//CallControlWndProc(ref m);
+			if(checkOnClick || prevSelectedIndex == curSel) {
+				SelectedIndex = curSel;
+				SetItemChecked(SelectedIndex, !CheckedIndices.Contains(SelectedIndex));
+			}
+			prevSelectedIndex = curSel;
 		}
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
 			//FIXME
-			base.WndProc(ref m);
+			switch (m.Msg) {
+				case Msg.WM_COMMAND: 
+					switch(m.HiWordWParam) {
+						case (uint)ListBoxNotifications.LBN_SELCHANGE:
+							listboxSelChange();
+							m.Result = IntPtr.Zero;
+							break;
+						case (uint)ListBoxNotifications.LBN_DBLCLK:
+							listboxSelChange();
+							m.Result = IntPtr.Zero;
+							break;
+						default:
+							base.WndProc(ref m);
+							break;
+					}
+					break;
+				default:
+					base.WndProc(ref m);
+					break;
+			}
 		}
 		
 		
@@ -269,43 +352,48 @@ namespace System.Windows.Forms {
 		/// </summary>
 		[MonoTODO]
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable {
+			CheckedListBox 		owner_;
 			
+			internal CheckedIndexCollection(CheckedListBox owner)
+			{
+				owner_ = owner;
+			}
 			
 			/// --- CheckedIndexCollection Properties ---
 			[MonoTODO]
 			public int Count {
-				get { throw new NotImplementedException (); }
+				get { return owner_.checkedIndexCollection_.Count; }
 			}
 			
 			[MonoTODO]
 			public bool IsReadOnly {
-				get { throw new NotImplementedException (); }
+				get { return owner_.checkedIndexCollection_.IsReadOnly; }
 			}
 			
 			[MonoTODO]
 			public int this[int index] {
-				get { throw new NotImplementedException (); }
+				get { return (int)owner_.checkedIndexCollection_[index]; }
 			}
 			
 			/// --- ICollection properties ---
 			bool IList.IsFixedSize {
-				[MonoTODO] get { throw new NotImplementedException (); }
+				[MonoTODO] get { throw new NotImplementedException(); }
 			}
 			
 			object IList.this[int index] {
 
-				[MonoTODO] get { throw new NotImplementedException (); }
-				[MonoTODO] set { throw new NotImplementedException (); }
+				[MonoTODO] get { throw new NotImplementedException(); }
+				[MonoTODO] set { ; }
 			}
 	
 			object ICollection.SyncRoot {
 
-				[MonoTODO] get { throw new NotImplementedException (); }
+				[MonoTODO] get { throw new NotImplementedException(); }
 			}
 	
 			bool ICollection.IsSynchronized {
 
-				[MonoTODO] get { throw new NotImplementedException (); }
+				[MonoTODO] get { throw new NotImplementedException(); }
 			}
 			
 		
@@ -314,25 +402,25 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public bool Contains(int index) 
 			{
-				throw new NotImplementedException ();
+				return owner_.checkedIndexCollection_.Contains(index);
 			}
 			
 			[MonoTODO]
 			public void CopyTo(Array dest,int index) 
 			{
-				throw new NotImplementedException ();
+				owner_.checkedIndexCollection_.CopyTo(dest, index);
 			}
 			
 			[MonoTODO]
 			public IEnumerator GetEnumerator() 
 			{
-				throw new NotImplementedException ();
+				return owner_.checkedIndexCollection_.GetEnumerator();
 			}
 			
 			[MonoTODO]
 			public int IndexOf(int index) 
 			{
-				throw new NotImplementedException ();
+				return owner_.checkedIndexCollection_.IndexOf(index);
 			}
 			
 			/// --- CheckedIndexCollection.IList methods ---
@@ -526,6 +614,12 @@ namespace System.Windows.Forms {
 			public int Add(object item,CheckState check) 
 			{
 				throw new NotImplementedException ();
+			}
+			
+			internal override void OnItemRemovedAt( int index) {
+				if(((CheckedListBox)owner_).checkedIndexCollection_.Contains(index)) {
+					((CheckedListBox)owner_).checkedIndexCollection_.Remove(index);
+				}
 			}
 		}
 		

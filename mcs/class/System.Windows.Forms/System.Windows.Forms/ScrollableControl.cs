@@ -100,7 +100,7 @@ namespace System.Windows.Forms {
 					wndClass.hInstance = (IntPtr)0;
 					wndClass.hIcon = (IntPtr)0;
 					wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);
-					wndClass.hbrBackground = (IntPtr)((int)GSC_.COLOR_BTNFACE + 1);
+					wndClass.hbrBackground = (IntPtr)((int)GetSysColorIndex.COLOR_BTNFACE + 1);
 					wndClass.lpszMenuName = "";
 					wndClass.lpszClassName = "mono_scrollable_control";
     

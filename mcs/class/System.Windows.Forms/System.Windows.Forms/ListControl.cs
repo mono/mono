@@ -8,6 +8,7 @@
 //
 using System;
 using System.Drawing;
+using System.Collections;
 using System.Reflection;
 
 namespace System.Windows.Forms {
@@ -45,6 +46,7 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+		
 		internal string getDisplayMemberOfObj( object obj) {
 			string objectString = String.Empty;
 			Type t = obj.GetType();
@@ -61,6 +63,18 @@ namespace System.Windows.Forms {
 			}
 			return objectString;
 		}
+		
+		internal class ListControlComparer : IComparer {
+			private ListControl owner_ = null;
+			public ListControlComparer(ListControl owner) {
+				owner_ = owner;
+			}
+
+			public int Compare(object x, object y) {
+				return owner_.getDisplayMemberOfObj(x).CompareTo(owner_.getDisplayMemberOfObj(y));
+			}
+		}
+		
 
 		[MonoTODO]
 		public abstract int SelectedIndex {get;set;}

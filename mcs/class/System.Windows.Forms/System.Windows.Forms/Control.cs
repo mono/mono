@@ -681,6 +681,7 @@
 						Win32.EnableWindow (Handle, value);
 						enabled = value;
 						// FIXME: Disable/enable all children here
+						Invalidate();
 					}
     			}
     		}

@@ -826,17 +826,6 @@ namespace System.Windows.Forms {
 				[MonoTODO] get { return collection_.IsSynchronized; }
 			}
 			
-			class ComboItemComparer : IComparer {
-				private ComboBox owner_ = null;
-				public ComboItemComparer(ComboBox owner) {
-					owner_ = owner;
-				}
-
-				public int Compare(object x, object y) {
-					return owner_.getDisplayMemberOfObj(x).CompareTo(owner_.getDisplayMemberOfObj(y));
-				}
-			}
-
 			/// --- methods ---
 			/// --- ObjectCollection Methods ---
 			/// Note: IList methods are stubbed out, otherwise IList interface cannot be implemented
@@ -845,7 +834,7 @@ namespace System.Windows.Forms {
 				// FIXME: not optimal 
 				int idx = collection_.Add(item);
 				if( owner_.Sorted) {
-					ComboItemComparer cic = new ComboItemComparer(owner_);
+					ListControl.ListControlComparer cic = new ListControl.ListControlComparer(owner_);
 					collection_.Sort(cic);
 					idx = collection_.BinarySearch(item,cic);
 					if( owner_.IsHandleCreated) {

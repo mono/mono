@@ -74,18 +74,32 @@ namespace System.Windows.Forms{
 			out int fileSystemFlags,
 			StringBuilder systemNameBuffer,
 			int systemNameBufferSize);
+		
 		[DllImport("kernel32.dll")]
 		internal static extern IntPtr LoadLibraryA(string filename);
-
-		[DllImport("kernel32.dll")]
-		internal static extern bool FreeLibrary( IntPtr handle );
-
-		[DllImport("kernel32.dll", EntryPoint="OutputDebugStringW")]		internal static extern void OutputDebugString(string message);
-		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,			 CharSet = CharSet.Auto)]		internal extern static uint GetLastError ();
 		
-		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,			 CharSet = CharSet.Auto, EntryPoint = "FormatMessageW")]		internal extern static uint  FormatMessage (			uint flags, IntPtr lpSource, uint messageId, uint languageId,			StringBuilder lpBuffer, int nSize, IntPtr Arguments);
+		[DllImport("kernel32.dll")]
+		internal static extern bool FreeLibrary(IntPtr handle);
+		
+		[DllImport("kernel32.dll", EntryPoint="OutputDebugStringW")]
+		internal static extern void OutputDebugString(string message);
+
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static uint GetLastError ();
+		
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto, EntryPoint = "FormatMessageW")]
+		internal extern static uint  FormatMessage (
+			uint flags, IntPtr lpSource,uint messageId, uint languageId,
+			StringBuilder lpBuffer, int nSize, IntPtr Arguments);
 				
-		internal static string FormatMessage(uint error) 		{			Console.WriteLine("error = " + error);			StringBuilder sb = new StringBuilder(2048);			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);			return sb.ToString();		}
+		internal static string FormatMessage(uint error) {
+			StringBuilder sb = new StringBuilder(2048);
+			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),
+				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
+			return sb.ToString();
+		}
 	#endregion
 	
 		#region Gdi32.dll functions
@@ -129,7 +143,7 @@ namespace System.Windows.Forms{
 		[DllImport("gdi32.dll")]
 		internal static extern IntPtr CreateSolidBrush(int crColor);
 		[DllImport("gdi32.dll")]
-		internal static extern int SetBkMode(IntPtr hDC, BackgroundMode mode);
+		internal static extern BackgroundMode SetBkMode(IntPtr hDC, BackgroundMode mode);
 		[DllImport("gdi32.dll")]
 		internal static extern int SetViewportOrgEx(IntPtr hdc,  int x, int y,  int param);
 		[DllImport("gdi32.dll")]
@@ -154,6 +168,7 @@ namespace System.Windows.Forms{
 		[DllImport("gdi32.dll")]
 		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
 			ExtTextOutFlags options, ref RECT rc, string str, int strLen, IntPtr distances);
+
 
 		[DllImport ("gdi32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
@@ -242,7 +257,8 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr PostMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="PostMessageA")]
 		internal static extern IntPtr PostMessage(IntPtr hWnd, Msg msg, int wParam, int lParam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="SetWindowsHookExW")]		internal static extern IntPtr SetWindowsHookEx(WindowsHookCodes hookid, HookProc pfnhook, IntPtr hinst, int threadid);
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="SetWindowsHookExW")]
+		internal static extern IntPtr SetWindowsHookEx(WindowsHookCodes hookid, HookProc pfnhook, IntPtr hinst, int threadid);
 		[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
 		internal static extern bool UnhookWindowsHookEx(IntPtr hhook);
 		[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
@@ -337,7 +353,8 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="GetClassNameW")]		internal static extern int GetClassName(IntPtr hWnd,  StringBuilder ClassName, int nMaxCount);
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="GetClassNameW")]
+		internal static extern int GetClassName(IntPtr hWnd,  StringBuilder ClassName, int nMaxCount);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="SetWindowLongA")]
 		internal static extern int SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, int dwNewLong);
@@ -412,7 +429,8 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="GetWindowLongA")]
 		static internal extern IntPtr GetWindowLong(IntPtr hWnd, GetWindowLongFlag flag);
 
-		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="SetPropW")]		static internal extern int SetProp(IntPtr hWnd, IntPtr atom, IntPtr hData);
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="SetPropW")]
+		static internal extern int SetProp(IntPtr hWnd, IntPtr atom, IntPtr hData);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="CallWindowProcA")]
 		static internal extern int CallWindowProc(IntPtr hOldProc, IntPtr hWnd, int message, int wParam, int lParam);
@@ -463,6 +481,8 @@ namespace System.Windows.Forms{
 		internal static extern int DrawFocusRect( IntPtr hdc, ref RECT rc);
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal static extern IntPtr WindowFromPoint( POINT pt);
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern int GetSysColor( GetSysColorIndex color);
 
 		#endregion
 
@@ -755,12 +775,12 @@ namespace System.Windows.Forms{
 			 CharSet = CharSet.Auto)]
 		internal extern static IntPtr SetActiveWindow (IntPtr hWnd);
 
-		[DllImport ("user32.dll", CallingConvention = 
+		[DllImport ("user32.dll", CallingConvention =
 			 CallingConvention.StdCall,
 			 CharSet = CharSet.Auto)]
 		internal extern static int CloseWindow (IntPtr hWnd);
 
-		[DllImport ("user32.dll", CallingConvention = 
+		[DllImport ("user32.dll", CallingConvention =
 			 CallingConvention.StdCall,
 			 CharSet = CharSet.Auto)]
 		internal extern static int SetWindowPos (
@@ -894,6 +914,129 @@ namespace System.Windows.Forms{
 					SetWindowPosFlags.SWP_NOACTIVATE | SetWindowPosFlags.SWP_FRAMECHANGED);
 			}
 		}
-	}
+		
+		internal static ButtonStyles ContentAlignment2SystemButtonStyle( ContentAlignment contentAlign) {
+			ButtonStyles sysButtonStyle = 0;
+			
+			if( contentAlign == ContentAlignment.BottomCenter ||
+				contentAlign == ContentAlignment.BottomLeft ||
+				contentAlign == ContentAlignment.BottomRight) {
+				sysButtonStyle |= ButtonStyles.BS_BOTTOM;
+			}
+			else if(contentAlign == ContentAlignment.TopCenter ||
+				contentAlign == ContentAlignment.TopLeft ||
+				contentAlign == ContentAlignment.TopRight) {
+				sysButtonStyle |= ButtonStyles.BS_TOP;
+			}
+			else {
+				sysButtonStyle |= ButtonStyles.BS_VCENTER;
+			}
 
+			if( contentAlign == ContentAlignment.BottomLeft ||
+				contentAlign == ContentAlignment.MiddleLeft ||
+				contentAlign == ContentAlignment.TopLeft) {
+				sysButtonStyle |= ButtonStyles.BS_LEFT;
+			}
+			else if(contentAlign == ContentAlignment.BottomRight ||
+				contentAlign == ContentAlignment.MiddleRight ||
+				contentAlign == ContentAlignment.TopRight) {
+				sysButtonStyle |= ButtonStyles.BS_RIGHT;
+			}
+			else {
+				sysButtonStyle |= ButtonStyles.BS_CENTER;
+			}
+			return sysButtonStyle;
+		}
+
+		internal static StringFormat ContentAlignment2StringFormat( ContentAlignment contentAlign) {
+			StringAlignment	alignment = 0;
+			StringAlignment	lineAlignment = 0;
+			
+			if( contentAlign == ContentAlignment.BottomCenter ||
+				contentAlign == ContentAlignment.BottomLeft ||
+				contentAlign == ContentAlignment.BottomRight) {
+				lineAlignment = StringAlignment.Far;
+			}
+			else if(contentAlign == ContentAlignment.TopCenter ||
+				contentAlign == ContentAlignment.TopLeft ||
+				contentAlign == ContentAlignment.TopRight) {
+				lineAlignment = StringAlignment.Near;
+			}
+			else {
+				lineAlignment = StringAlignment.Center;
+			}
+
+			if( contentAlign == ContentAlignment.BottomLeft ||
+				contentAlign == ContentAlignment.MiddleLeft ||
+				contentAlign == ContentAlignment.TopLeft) {
+				alignment = StringAlignment.Near;
+			}
+			else if(contentAlign == ContentAlignment.BottomRight ||
+				contentAlign == ContentAlignment.MiddleRight ||
+				contentAlign == ContentAlignment.TopRight) {
+				alignment = StringAlignment.Far;
+			}
+			else {
+				alignment = StringAlignment.Center;
+			}
+			StringFormat result = new StringFormat();
+			result.Alignment = alignment;
+			result.LineAlignment = lineAlignment;
+			return result;
+		}
+		
+		internal static DrawTextFormatFlags ContentAlignment2DrawTextFormat( ContentAlignment contentAlign) {
+			DrawTextFormatFlags format = 0;
+			
+			if( contentAlign == ContentAlignment.BottomCenter ||
+				contentAlign == ContentAlignment.BottomLeft ||
+				contentAlign == ContentAlignment.BottomRight) {
+				format |= DrawTextFormatFlags.DT_BOTTOM;
+			}
+			else if(contentAlign == ContentAlignment.TopCenter ||
+				contentAlign == ContentAlignment.TopLeft ||
+				contentAlign == ContentAlignment.TopRight) {
+				format |= DrawTextFormatFlags.DT_TOP;
+			}
+			else {
+				format |= DrawTextFormatFlags.DT_VCENTER;
+			}
+
+			if( contentAlign == ContentAlignment.BottomLeft ||
+				contentAlign == ContentAlignment.MiddleLeft ||
+				contentAlign == ContentAlignment.TopLeft) {
+				format |= DrawTextFormatFlags.DT_LEFT;
+			}
+			else if(contentAlign == ContentAlignment.BottomRight ||
+				contentAlign == ContentAlignment.MiddleRight ||
+				contentAlign == ContentAlignment.TopRight) {
+				format |= DrawTextFormatFlags.DT_RIGHT;
+			}
+			else {
+				format |= DrawTextFormatFlags.DT_CENTER;
+			}
+			return format;
+		}
+		
+		internal static void DrawText(Graphics paintOn, string text, Font font, Color color, Rectangle rect, ContentAlignment alignment) {
+
+			RECT rc = new RECT();
+			rc.left = rect.Left;
+			rc.top = rect.Top;
+			rc.right = rect.Right;
+			rc.bottom = rect.Bottom;
+			
+			IntPtr hdc = paintOn.GetHdc();
+			int prevColor = Win32.SetTextColor(hdc, RGB(color));
+			IntPtr prevFont = Win32.SelectObject(hdc, font.ToHfont());
+			BackgroundMode prevBkMode = Win32.SetBkMode(hdc, BackgroundMode.TRANSPARENT);
+			Win32.DrawText(hdc, text, text.Length, ref rc, 
+			       DrawTextFormatFlags.DT_SINGLELINE | Win32.ContentAlignment2DrawTextFormat(alignment));
+			Win32.SetBkMode(hdc, prevBkMode);
+			Win32.SelectObject(hdc, prevFont);
+			Win32.SetTextColor(hdc, prevColor);
+			paintOn.ReleaseHdc(hdc);
+		}
+		
+	}
 }

@@ -494,7 +494,9 @@
     
 	  		//Compact Framework
     		public void Close ()
-    		{    			Win32.DestroyWindow (Handle);    		}
+    		{
+    			Win32.DestroyWindow (Handle);
+    		}
     
    			[MonoTODO]
     		public void LayoutMdi (MdiLayout value)
@@ -581,10 +583,10 @@
     		[MonoTODO]
  			public new Size Size {
  				get {
- 					throw new NotImplementedException ();
+ 					return base.Size;
  				}
  				set {
-					//FIXME:
+ 					base.Size = value;
  				}
  			}
  
@@ -729,6 +731,7 @@
  			//Compact Framework
     		protected override void  OnResize (EventArgs e)
     		{
+
     			base.OnResize (e);
     		}
     

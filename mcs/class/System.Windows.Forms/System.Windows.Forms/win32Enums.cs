@@ -2130,7 +2130,7 @@ namespace System.Windows.Forms{
 		DEFAULT_GUI_FONT    =17
 	}
 
-	internal enum GSC_ {
+	internal enum GetSysColorIndex {
 		COLOR_SCROLLBAR         =0,
 		COLOR_BACKGROUND        =1,
 		COLOR_ACTIVECAPTION     =2,
@@ -2302,6 +2302,17 @@ namespace System.Windows.Forms{
 		LBS_NODATA            = 0x2000,
 		LBS_NOSEL             = 0x4000,
 		LBS_STANDARD          = 0x03 | WindowStyles.WS_VSCROLL | WindowStyles.WS_BORDER
+	}
+
+	internal enum ListBoxNotifications : int {
+		LB_OKAY             =0,
+		LB_ERR              =-1,
+		LBN_ERRSPACE        =-2,
+		LBN_SELCHANGE       =1,
+		LBN_DBLCLK          =2,
+		LBN_SELCANCEL       =3,
+		LBN_SETFOCUS        =4,
+		LBN_KILLFOCUS       =5
 	}
 
 	internal enum OwnerDrawTypes : int {

@@ -17,6 +17,7 @@ namespace System.Windows.Forms {
 	// </summary>
     public sealed class ImageList : Component {
 		internal ColorDepth colorDepth;
+    	ImageListStreamer ImageListStreamer_;
 		//
 		//  --- Constructor
 		//
@@ -30,7 +31,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ImageList(IContainer cont) : this()
 		{
-			
+			ImageListStreamer_ = new ImageListStreamer();		
 		}
 
 		//
@@ -82,10 +83,11 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ImageListStreamer ImageStream {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return ImageListStreamer_;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 

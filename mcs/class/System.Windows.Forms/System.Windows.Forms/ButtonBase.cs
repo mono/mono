@@ -31,9 +31,6 @@ namespace System.Windows.Forms {
 		bool isDefault;
 		CreateParams createParams;
 		Label label;
-		protected StringAlignment	horizontalAlign_;
-		protected StringAlignment	verticalAlign_;
-		internal ButtonStyles	sysButtonStyles_;
 
 //		
 //		// --- Constructor ---
@@ -44,16 +41,12 @@ namespace System.Windows.Forms {
 			imageAlign = ContentAlignment.MiddleCenter;
 			imageIndex = -1;
 			textAlign = ContentAlignment.MiddleCenter;
-			horizontalAlign_ = StringAlignment.Center;
-			verticalAlign_ = StringAlignment.Center;
-			sysButtonStyles_ = ButtonStyles.BS_CENTER | ButtonStyles.BS_VCENTER;
 			imeMode = ImeMode.Inherit;
 			isDefault = false;
 		}
 
 		// --- Properties ---
-		protected override CreateParams CreateParams 
-		{
+		protected override CreateParams CreateParams {
 			get { return createParams; }
 		}
 		
@@ -134,46 +127,12 @@ namespace System.Windows.Forms {
 			set { 
 				if( textAlign != value) {
 					textAlign = value;
-					sysButtonStyles_ = 0;
-					if( textAlign == ContentAlignment.BottomCenter ||
-						textAlign == ContentAlignment.BottomLeft ||
-						textAlign == ContentAlignment.BottomRight) {
-						verticalAlign_ = StringAlignment.Far;
-						sysButtonStyles_ |= ButtonStyles.BS_BOTTOM;
-					}
-					else if(textAlign == ContentAlignment.TopCenter ||
-						textAlign == ContentAlignment.TopLeft ||
-						textAlign == ContentAlignment.TopRight) {
-						verticalAlign_ = StringAlignment.Near;
-						sysButtonStyles_ |= ButtonStyles.BS_TOP;
-					}
-					else {
-						verticalAlign_ = StringAlignment.Center;
-						sysButtonStyles_ |= ButtonStyles.BS_VCENTER;
-					}
-
-					if( textAlign == ContentAlignment.BottomLeft ||
-						textAlign == ContentAlignment.MiddleLeft ||
-						textAlign == ContentAlignment.TopLeft) {
-						horizontalAlign_ = StringAlignment.Near;
-						sysButtonStyles_ |= ButtonStyles.BS_LEFT;
-					}
-					else if(textAlign == ContentAlignment.BottomRight ||
-						textAlign == ContentAlignment.MiddleRight ||
-						textAlign == ContentAlignment.TopRight) {
-						horizontalAlign_ = StringAlignment.Far;
-						sysButtonStyles_ |= ButtonStyles.BS_RIGHT;
-					}
-					else {
-						horizontalAlign_ = StringAlignment.Center;
-						sysButtonStyles_ |= ButtonStyles.BS_CENTER;
-					}
-
-					Win32.UpdateWindowStyle(Handle, (int)0xF00, (int)sysButtonStyles_);
+					Win32.UpdateWindowStyle(Handle, (int)0xF00, (int)Win32.ContentAlignment2SystemButtonStyle(textAlign));
 					Invalidate();
 				}
 			}
-		}
+		}
+
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected override void Dispose(bool);
@@ -264,6 +223,10 @@ namespace System.Windows.Forms {
 				case Msg.WM_COMMAND: {
 					switch(m.HiWordWParam) {
 						case (uint)ButtonNotification.BN_CLICKED:
+							OnClick(new ControlEventArgs(this));
+							CallControlWndProc(ref m);
+							break;
+						case (uint)ButtonNotification.BN_DOUBLECLICKED:
 							OnClick(new ControlEventArgs(this));
 							CallControlWndProc(ref m);
 							break;
