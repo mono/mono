@@ -1,3 +1,8 @@
+2004-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* codegen.cs: Fix bug #56621. It is now possible to use MCS on the MS
+	runtime to delay sign assemblies.
+
 2004-09-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Do not report the stack trace, this is barely

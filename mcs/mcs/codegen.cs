@@ -884,6 +884,37 @@ namespace Mono.CSharp {
 			is_cls_compliant = a.GetClsCompliantAttributeValue (null);
 		}
 
+		// fix bug #56621
+		private void SetPublicKey (AssemblyName an, byte[] strongNameBlob) 
+		{
+			try {
+				// check for possible ECMA key
+				if (strongNameBlob.Length == 16) {
+					// will be rejected if not "the" ECMA key
+					an.SetPublicKey (strongNameBlob);
+				}
+				else {
+					// take it, with or without, a private key
+					RSA rsa = CryptoConvert.FromCapiKeyBlob (strongNameBlob);
+					// and make sure we only feed the public part to Sys.Ref
+					byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
+					
+					// AssemblyName.SetPublicKey requires an additional header
+					byte[] publicKeyHeader = new byte [12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+
+					byte[] encodedPublicKey = new byte [12 + publickey.Length];
+					Buffer.BlockCopy (publicKeyHeader, 0, encodedPublicKey, 0, 12);
+					Buffer.BlockCopy (publickey, 0, encodedPublicKey, 12, publickey.Length);
+					an.SetPublicKey (encodedPublicKey);
+				}
+			}
+			catch (Exception) {
+				Report.Error (1548, "Could not strongname the assembly. File `" +
+					RootContext.StrongNameKeyFile + "' incorrectly encoded.");
+				Environment.Exit (1);
+			}
+		}
+
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
 			if (OptAttributes != null) {
@@ -964,25 +995,7 @@ namespace Mono.CSharp {
 
 					if (RootContext.StrongNameDelaySign) {
 						// delayed signing - DO NOT include private key
-						try {
-							// check for possible ECMA key
-							if (snkeypair.Length == 16) {
-								// will be rejected if not "the" ECMA key
-								an.KeyPair = new StrongNameKeyPair (snkeypair);
-							}
-							else {
-								// take it, with or without, a private key
-								RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
-								// and make sure we only feed the public part to Sys.Ref
-								byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
-								an.KeyPair = new StrongNameKeyPair (publickey);
-							}
-						}
-						catch (Exception) {
-							Report.Error (1548, "Could not strongname the assembly. File `" +
-								RootContext.StrongNameKeyFile + "' incorrectly encoded.");
-							Environment.Exit (1);
-						}
+						SetPublicKey (an, snkeypair);
 					}
 					else {
 						// no delay so we make sure we have the private key
