@@ -27,7 +27,8 @@ namespace System.Runtime.Remoting.Contexts
 		int _flag;
 		int _lockCount = 0;
 		
-		Mutex _mutex = new Mutex ();
+		Mutex _mutex = new Mutex (false);
+		Thread _ownerThread;
 		
 		public SynchronizationAttribute ()
 		: this (REQUIRES_NEW, false)
@@ -73,20 +74,22 @@ namespace System.Runtime.Remoting.Contexts
 					_mutex.WaitOne ();
 					lock (this)
 					{
-						if (_lockCount > 0)
+						_lockCount++;
+						if (_lockCount > 1)
 							ReleaseLock (); // Thread already had the lock
-						else
-							_lockCount++;
+							
+						_ownerThread = Thread.CurrentThread;
 					}
 				}
 				else
 				{
 					lock (this)
 					{
-						while (_lockCount > 0)
+						while (_lockCount > 0 && _ownerThread == Thread.CurrentThread)
 						{
 							_lockCount--;
 							_mutex.ReleaseMutex ();
+							_ownerThread = null;
 						}
 					}
 				}
@@ -99,6 +102,7 @@ namespace System.Runtime.Remoting.Contexts
 			
 			lock (this)
 			{
+				_ownerThread = Thread.CurrentThread;
 				_lockCount++;
 			}
 		}
@@ -107,17 +111,19 @@ namespace System.Runtime.Remoting.Contexts
 		{
 			lock (this)
 			{
-				if (_lockCount > 0) {
+				if (_lockCount > 0 && _ownerThread == Thread.CurrentThread) {
 					_lockCount--;
 					_mutex.ReleaseMutex ();
+					_ownerThread = null;
 				}
 			}
 		}
 		
 		public override void GetPropertiesForNewContext (IConstructionCallMessage ctorMsg)
 		{
-			if (_flag != NOT_SUPPORTED)
+			if (_flag != NOT_SUPPORTED) {
 				ctorMsg.ContextProperties.Add (this);
+			}
 		}
 		
 		public virtual IMessageSink GetClientContextSink (IMessageSink nextSink)

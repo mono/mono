@@ -1,3 +1,7 @@
+2003-12-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SynchronizationAttribute.cs: Several bug fixes.
+
 2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Context.cs: Added internal static_data field.
