@@ -1,3 +1,14 @@
+2001-11-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* mempool.c: Include string.h to kill warning.
+
+	* testjit.c: Add typecast to kill warning.
+
+	* x86.brg: Include string.h to eliminate warning.
+
+	* emit-x86.c (tree_allocate_regs): Fix arguments to g_warning to
+	kill warning.
+
 2001-11-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (enter_method): print out all method arguments

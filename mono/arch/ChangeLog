@@ -1,3 +1,6 @@
+2001-11-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* x86/tramp.c: Include stdlib to kill warning.
 
 Mon Oct 22 15:20:14 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

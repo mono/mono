@@ -1,3 +1,9 @@
+2001-11-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* monoburg.y: Include string.h, stdlib.h to kill warnings.
+
+	* sample.brg: Include string.h to remove warnings.
+
 2001-09-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c: add a macro MBALLOC_STATE to define the allocation 
