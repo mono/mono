@@ -141,7 +141,6 @@ namespace System.Diagnostics {
 		{
 			lock (lock_) {
 				foreach (TraceListener listener in Listeners) {
-Console.WriteLine("before decr. listener.IndentLevel={0}", listener.IndentLevel);
 					listener.IndentLevel--;
 				}
 			}
