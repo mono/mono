@@ -9,6 +9,13 @@ Tue Dec 21 17:43:06 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 2004-12-21  Ben Maurer  <bmaurer@ximian.com>
 
+	* iltests.il: New test for LDELEMA on an array of ref types.
+
+	* mini.c (CEE_LDELEMA): We need to emit OP_CHECK_ARRAY_TYPE for
+	all ldelema's on reftypes.
+	(check_call_signature): Remove the OP_CHECK_ARRAY_TYPE from here,
+	it was the wrong place to put it.
+
 	* mini-x86.c (mono_arch_output_basic_block): Just use ecx as the
 	register to pop to make this cleaner, at the request of Paolo.
 
