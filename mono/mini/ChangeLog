@@ -1,3 +1,11 @@
+2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* mini.c: In CEE_ISINST and CEE_CASTCLASS, if the type is an interface or
+	a MarshalByRef type, inline a method that performs the check, taking into
+	account that the object can be a proxy. Also implemented tow new opcodes:
+	CEE_MONO_CISINST and CEE_MONO_CCASTCLASS.
+	* inssel.brg: Implemented two new opcodes, mini-ops.h: OP_CISINST and 
+	OP_CCASTCLASS, which implement CEE_MONO_CISINST and CEE_MONO_CCASTCLASS.
 
 Tue Mar 2 17:23:48 CET 2004 Paolo Molaro <lupus@ximian.com>
 
