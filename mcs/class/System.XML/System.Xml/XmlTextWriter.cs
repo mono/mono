@@ -3,11 +3,10 @@
 //
 // Author:
 //   Kral Ferch <kral_ferch@hotmail.com>
+//   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //
 // (C) 2002 Kral Ferch
-//
-// [FIXME]
-// Document state should be considered.
+// (C) 2003 Atsushi Enomoto
 //
 
 using System;
@@ -616,12 +615,6 @@ namespace System.Xml
 			if ((prefix == "xmlns") && (ns != XmlnsNamespace))
 				throw new ArgumentException (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
-			// ignore non-namespaced node's prefix.
-			if (ns == null)
-				ns = String.Empty;
-			if (ns == String.Empty)
-				prefix = String.Empty;
-
 			CheckState ();
 
 			if (ws == WriteState.Content)
@@ -833,10 +826,22 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override void WriteSurrogateCharEntity (char lowChar, char highChar)
 		{
-			throw new NotImplementedException ();
+			if (lowChar < '\uDC00' || lowChar > '\uDFFF' ||
+				highChar < '\uD800' || highChar > '\uDBFF')
+				throw new ArgumentException ("Invalid (low, high) pair of characters was specified.");
+
+			CheckState ();
+
+			if (!openAttribute) {
+				IndentingOverriden = true;
+				CloseStartElement ();
+			}
+
+			w.Write ("&#x");
+			w.Write (((int) ((highChar - 0xD800) * 0x400 + (lowChar - 0xDC00) + 0x10000)).ToString ("x"));
+			w.Write (';');
 		}
 
 		public override void WriteWhitespace (string ws)

@@ -1,5 +1,10 @@
 2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlTextWriter.cs : Implemented WriteSurrogateCharEntity().
+	  Reverted my recent extraneous check in WriteStartAttribute().
+
+2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlNode.cs : GetNamespaceOfPrefix() should check Attributes existence.
 	  And it should throw ArgumentNullException.
 
