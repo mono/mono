@@ -50,7 +50,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public DialogResult ShowDialog() 
 		{
-			bool res = RunDialog ( Control.getOwnerWindow ( null ).Handle );
+			IntPtr handle;			
+			Control ctrl=Control.getOwnerWindow(null);
+						
+			if ((ctrl!=null) && (ctrl.Handle!=(IntPtr)null))
+				handle=ctrl.Handle;
+			else
+				handle = Win32.GetDesktopWindow();												
+			
+			bool res = RunDialog (handle);
 			return res ? DialogResult.OK : DialogResult.Cancel;
 		}
 		

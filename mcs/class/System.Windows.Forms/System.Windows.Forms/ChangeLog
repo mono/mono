@@ -1,3 +1,7 @@
+
+2003-10-14 Jordi Mas i Hernàndez <jmas@softcatala.org>
+	* Fixes CommonDialog.cs to work with windowless containers
+
 2003-09-03  Dennis Hayes <dennish@raytek.com>
 
 	* GridColumnStylesCollection.cs
