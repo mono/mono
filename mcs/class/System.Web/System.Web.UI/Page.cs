@@ -60,6 +60,7 @@ public class Page : TemplateControl, IHttpHandler
 	internal Hashtable submitStatements;
 	bool handleViewState;
 	string viewStateUserKey;
+	NameValueCollection _requestValueCollection;
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
@@ -689,6 +690,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	void InternalProcessRequest ()
 	{
+		_requestValueCollection = this.DeterminePostBackMode();
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
 		Trace.Write ("aspx.page", "End Init");
@@ -699,7 +701,7 @@ public class Page : TemplateControl, IHttpHandler
 			LoadPageViewState ();
 			Trace.Write ("aspx.page", "End LoadViewState");
 			Trace.Write ("aspx.page", "Begin ProcessPostData");
-			ProcessPostData (DeterminePostBackMode (), false);
+			ProcessPostData (_requestValueCollection, false);
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
 
@@ -753,7 +755,7 @@ public class Page : TemplateControl, IHttpHandler
 			return;
 		}
 
-		NameValueCollection postdata = DeterminePostBackMode ();
+		NameValueCollection postdata = _requestValueCollection;
 		if (postdata == null)
 			return;
 
@@ -884,7 +886,7 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual object LoadPageStateFromPersistenceMedium ()
 	{
-		NameValueCollection postdata = DeterminePostBackMode ();
+		NameValueCollection postdata = _requestValueCollection;
 		string view_state;
 		if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)
 			return null;
