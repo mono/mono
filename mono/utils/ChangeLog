@@ -1,3 +1,8 @@
+2005-01-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-codeman.c (new_codechunk): Initialize pagesize in the dynamic
+	case as well.
+
 2004-12-23  Ben Maurer  <bmaurer@ximian.com>
 
 	* strtod.c: add `cosnt' to some arrays to get them on shareable pages.
