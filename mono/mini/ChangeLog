@@ -1,3 +1,7 @@
+2004-11-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trace.c (get_spec): Allow tracing of classes without a namespace.
+
 2004-11-2  Geoff Norton  <gnorton@customerdna.com>
 
         * inssel-ppc.brg (OP_OUTARG_VT (CEE_LDOBJ (base))):
