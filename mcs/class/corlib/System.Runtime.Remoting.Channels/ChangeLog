@@ -1,3 +1,7 @@
+2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ChannelServices.cs: Catch errors when creating configured channels.
+
 2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ChannelServices.cs: Added support for creating channels from configuration

@@ -282,7 +282,15 @@ namespace System.Runtime.Remoting.Channels
 			if (ctor == null)
 				throw new RemotingException (type + " does not have a valid constructor");
 
-			IChannel ch = (IChannel) ctor.Invoke (parms);
+			IChannel ch;
+			try
+			{
+				ch = (IChannel) ctor.Invoke (parms);
+			}
+			catch (TargetInvocationException ex)
+			{
+				throw ex.InnerException;
+			}
 			
 			lock (registeredChannels.SyncRoot)
 			{
