@@ -371,8 +371,6 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetPathGradientRect (IntPtr brush, out RectangleF rect);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipGetPathGradientRectI (IntPtr brush, out Rectangle rect);
-		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetPathGradientSurroundColorCount (IntPtr brush, out int count);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetPathGradientSurroundColorsWithCount (IntPtr brush, int [] color, ref int count);
