@@ -464,7 +464,7 @@ namespace System.Net
 		}
 
 		public override bool CanRead {
-			get { return isRead && (contentLength == Int32.MaxValue || totalRead < contentLength); }
+			get { return isRead; }
 		}
 
 		public override bool CanWrite {
