@@ -18,7 +18,7 @@ namespace System.Runtime.Remoting.Channels {
 		public SoapClientFormatterSinkProvider(IDictionary properties,
 		                                       ICollection providerData)
 		{
-			_soapCore = new SoapCore (properties);
+			_soapCore = new SoapCore (this, properties);
 		}
 		
 		public virtual IClientChannelSinkProvider Next 

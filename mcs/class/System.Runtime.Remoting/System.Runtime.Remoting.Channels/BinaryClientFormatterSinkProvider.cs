@@ -24,7 +24,7 @@ namespace System.Runtime.Remoting.Channels
 		public BinaryClientFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
 		{
-			_binaryCore = new BinaryCore (properties);
+			_binaryCore = new BinaryCore (this, properties);
 		}
 
 		public IClientChannelSinkProvider Next

@@ -23,16 +23,27 @@ namespace System.Runtime.Remoting.Channels
 		
 		public static SoapCore DefaultInstance = new SoapCore (true, false);
 		
-		public SoapCore (IDictionary properties)
+		public SoapCore (object owner, IDictionary properties)
 		{
 			_includeVersions = true;
 			_strictBinding = false;
 			
-			object val = properties ["includeVersions"];
-			if (val != null) _includeVersions = Convert.ToBoolean (val);
-			
-			val = properties ["strictBinding"];
-			if (val != null) _strictBinding = Convert.ToBoolean (val);
+			foreach(DictionaryEntry property in properties)
+			{
+				switch((string)property.Key)
+				{
+					case "includeVersions": 
+						_includeVersions = Convert.ToBoolean (property.Value);
+						break;
+						
+					case "strictBinding":
+						_strictBinding = Convert.ToBoolean (property.Value);
+						break;
+						
+					default:
+						throw new RemotingException (owner.GetType().Name + " does not recognize '" + property.Key + "' configuration property");
+				}
+			}
 			
 			Init ();
 		}

@@ -21,16 +21,27 @@ namespace System.Runtime.Remoting.Channels
 		
 		public static BinaryCore DefaultInstance = new BinaryCore (true, false);
 		
-		public BinaryCore (IDictionary properties)
+		public BinaryCore (object owner, IDictionary properties)
 		{
 			bool includeVersions = true;
 			bool strictBinding = false;
 			
-			object val = properties ["includeVersions"];
-			if (val != null) includeVersions = Convert.ToBoolean (val);
-			
-			val = properties ["strictBinding"];
-			if (val != null) strictBinding = Convert.ToBoolean (val);
+			foreach(DictionaryEntry property in properties)
+			{
+				switch((string)property.Key)
+				{
+					case "includeVersions": 
+						includeVersions = Convert.ToBoolean (property.Value);
+						break;
+						
+					case "strictBinding":
+						strictBinding = Convert.ToBoolean (property.Value);
+						break;
+						
+					default:
+						throw new RemotingException (owner.GetType().Name + " does not recognize '" + property.Key + "' configuration property");
+				}
+			}
 			
 			Init (includeVersions, strictBinding);
 		}

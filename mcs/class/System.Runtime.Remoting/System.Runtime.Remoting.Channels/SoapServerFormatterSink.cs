@@ -80,6 +80,7 @@ namespace System.Runtime.Remoting.Channels {
 			_soapCore.Serializer.Serialize(stream, soapMessage, null);
 
 			if(stream is MemoryStream) stream.Position = 0;
+			sinkStack.AsyncProcessResponse (msg, responseHeaders, stream);
 		}
 
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,

@@ -1,3 +1,11 @@
+2003-11-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryClientFormatterSinkProvider.cs, BinaryServerFormatterSinkProvider.cs:
+	  SoapClientFormatterSinkProvider.cs, SoapServerFormatterSinkProvider.cs: Small fix.
+	* SoapServerFormatterSink.cs: Small fix in AsyncProcessResponse.
+	* BinaryCore.cs, SoapCore.cs: throw an exception if an unknown property
+	  is found.
+	
 2003-11-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryClientFormatterSink.cs, BinaryClientFormatterSinkProvider.cs,
