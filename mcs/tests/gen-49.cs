@@ -26,4 +26,16 @@ class X<T>
 
 	void C (int[,,] t)
 	{ }
+
+	void D (int x, T y)
+	{ }
+
+	void D (T x, long y)
+	{ }
+}
+
+class Foo
+{
+	static void Main ()
+	{ }
 }
