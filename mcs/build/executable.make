@@ -18,7 +18,7 @@ response = $(depsdir)/$(base_prog).response
 executable_CLEAN_FILES += $(response)
 endif
 
-makefrag = $(depsdir)/$(base_prog).makefrag
+makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
 pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 mdb = $(patsubst %.exe,%.mdb,$(PROGRAM))
 executable_CLEAN_FILES += $(makefrag) $(pdb) $(mdb)

@@ -1,3 +1,7 @@
+2004-11-30  Raja R Harinath  <rharinath@novell.com>
+
+	* executable.make (makefrag): Make profile-specific.
+
 2004-11-26  Martin Baulig  <martin@ximian.com>
 
 	* library.make (run-test-lib, run-test-ondotnet-lib): Added
