@@ -19,16 +19,19 @@ namespace Mono.Data.TdsClient {
 
 		TdsConnection connection;
 		IsolationLevel isolationLevel;
+		bool open;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public TdsTransaction (TdsConnection connection, IsolationLevel isolevel)
+		internal TdsTransaction (TdsConnection connection, IsolationLevel isolevel)
 		{
 			this.connection = connection;
 			this.isolationLevel = isolevel;
-			Begin ();
+
+			connection.Tds.BeginTransaction ();
+			open = true;
 		}
 
 		#endregion // Constructors
@@ -47,18 +50,20 @@ namespace Mono.Data.TdsClient {
 			get { return isolationLevel; }
 		}
 
+		public bool Open {	
+			get { return open; }
+		}
+
 		#endregion // Properties
 
                 #region Methods
 
-		private void Begin ()
-		{
-			connection.AllocateTds ().BeginTransaction ();
-		}
-
 		public void Commit ()
 		{
-			connection.AllocateTds ().CommitTransaction ();
+			if (!open)
+				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
+			connection.Tds.CommitTransaction ();
+			open = false;
 		}
 
                 object ICloneable.Clone()
@@ -66,15 +71,19 @@ namespace Mono.Data.TdsClient {
                         throw new NotImplementedException ();
                 }
 
-		[MonoTODO]
 		public void Rollback ()
 		{
-			connection.AllocateTds ().RollbackTransaction ();
+			if (!open)
+				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
+			connection.Tds.RollbackTransaction ();
+			open = false;
 		}
 
 		public void Save (string savePointName)
 		{
-			connection.AllocateTds ().SaveTransaction (savePointName);
+			if (!open)
+				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
+			connection.Tds.SaveTransaction (savePointName);
 		}
 
                 #endregion // Methods

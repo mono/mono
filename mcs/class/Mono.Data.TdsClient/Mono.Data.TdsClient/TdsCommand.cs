@@ -46,9 +46,9 @@ namespace Mono.Data.TdsClient {
 		public TdsCommand (string commandText, TdsConnection connection, TdsTransaction transaction)
 		{
 			this.commandText = commandText;
-			this.connection = connection;
 			this.transaction = transaction;
 			this.commandType = CommandType.Text;
+			this.connection = connection;
 		}
 
 		#endregion // Constructors
@@ -137,7 +137,7 @@ namespace Mono.Data.TdsClient {
 			if (commandText == String.Empty || commandText == null)
 				throw new TdsException ("The command text is not set.");
 
-			return connection.AllocateTds ().ExecuteNonQuery (FormatQuery (commandText, commandType));
+			return connection.Tds.ExecuteNonQuery (FormatQuery (commandText, commandType));
 		}
 
 		public TdsDataReader ExecuteReader ()
@@ -154,7 +154,7 @@ namespace Mono.Data.TdsClient {
 				throw new TdsException ("The connection is closed.");
 			if (commandText == String.Empty || commandText == null)
 				throw new TdsException ("The command text is not set.");
-			connection.AllocateTds ().SubmitProcedure (FormatQuery (commandText, commandType));
+			connection.Tds.SubmitProcedure (FormatQuery (commandText, commandType));
 			return null;
 		}
 

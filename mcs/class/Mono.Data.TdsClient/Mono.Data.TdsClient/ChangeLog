@@ -1,8 +1,20 @@
 2002-10-22  Tim Coleman (tim@timcoleman.com)
+	* TdsConnectionPool.cs:
+		New class added for pooling connections
 	* TdsCommand.cs:
-		Some implementation
+	* TdsTransaction.cs:
+		Some implementation, handling of
+		pooled connections and such.
+	* TdsConnection.cs:
+		Code cleanups, more implementation
+		Connection pooling (works!)
 	* TODOAttribute.cs:
 		Add this to this namespace
+	* TdsDataReader.cs:
+	* TdsErrorCollection.cs:
+	* TdsException.cs:
+	* TdsParameterCollection.cs:
+		Change the TODO attributes
 
 2002-10-21  Tim Coleman (tim@timcoleman.com)
 	* TdsConnection.cs:

@@ -22,18 +22,23 @@ namespace Mono.Data.TdsClient {
 		#region Fields
 
 		bool autoCommit = true;
-		string connectionString = String.Empty;
+		bool disablePooling = false;
+		string connectionString = null;
 		int connectionTimeout = 15;
 		string database;
 		IsolationLevel isolationLevel = IsolationLevel.ReadCommitted;
-		ConnectionState state = ConnectionState.Closed;
-
-		ArrayList tdsPool = null;
 		int minPoolSize;
 		int maxPoolSize;
+		ConnectionState state = ConnectionState.Closed;
 
 		TdsConnectionParameters parms = new TdsConnectionParameters ();
 		TdsTransaction transaction = null;
+
+		// This is the collection of connection pools available
+		static Hashtable pools = new Hashtable ();
+
+		// Our TDS object, the real workhorse
+		Tds tds = null;
 
 		#endregion // Fields
 
@@ -64,12 +69,10 @@ namespace Mono.Data.TdsClient {
 
 		public string Database {
 			get { return parms.Database; }
-			set { parms.Database = value; }
 		}
 
 		public string DataSource {
 			get { return parms.DataSource; }
-			set { parms.DataSource = value; }
 		}
 
 		public ConnectionState State {
@@ -78,57 +81,42 @@ namespace Mono.Data.TdsClient {
 		
 		public int ConnectionTimeout {
 			get { return connectionTimeout; }
-			set { connectionTimeout = value; }
 		}
 
 		public int PacketSize {
 			get { return parms.PacketSize; }
-			set { parms.PacketSize = value; }
 		}
 
 		public string User {
 			get { return parms.User; }
-			set { parms.User = value; }
 		}
 
 		public string Password {
 			get { return parms.Password; }
-			set { parms.Password = value; }
+		}
+
+		internal Tds Tds {
+			get { return tds; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		internal Tds AllocateTds ()
+		private static Tds AllocateTds (TdsConnectionParameters parms, string connectionString, bool disablePooling, int minPoolSize, int maxPoolSize)
 		{
-			Tds result;
+			if (disablePooling)
+				return new Tds (parms);
 
-			// Make sure we have at least the minimum pool size.
-			while (tdsPool.Count < minPoolSize)
-				tdsPool.Add (new TdsInstance (new Tds (parms)));
-
-			int index = FindAnAvailableTds ();
-			if (index == -1) {
-				// Make sure we don't exceed the maximum
-				if (tdsPool.Count > maxPoolSize)
-					throw new TdsException ("Connection pool has reached maximum size and cannot be expanded.");
-
-				Tds tmpTds = new Tds (parms);
-				TdsInstance tmp = new TdsInstance (tmpTds);
-				tdsPool.Add (tmp);
-				index = FindAnAvailableTds ();
+			TdsConnectionPool pool = (TdsConnectionPool) pools[connectionString];
+			if (pool == null) {
+				lock (pools) {
+					pool = new TdsConnectionPool (parms, minPoolSize, maxPoolSize);
+					pools[connectionString] = pool;
+				}
 			}
-			if (index == -1) 
-				throw new TdsException ("Internal error. Could not get a tds instance.");
 
-			if (((TdsInstance) tdsPool [index]).InUse) 
-				throw new TdsException ("Internal error. Tds instance already in use.");
-			((TdsInstance) tdsPool [index]).InUse = true;
-			result = ((TdsInstance) tdsPool [index]).Tds;
-			result.ChangeSettings (autoCommit, isolationLevel);
-
-			return result;
+			return pool.FindAnAvailableTds ();
 		}
 
 		public TdsTransaction BeginTransaction ()
@@ -138,8 +126,11 @@ namespace Mono.Data.TdsClient {
 
 		public TdsTransaction BeginTransaction (IsolationLevel il)
 		{
-			if (transaction != null)
+			if (state == ConnectionState.Closed)
+				throw new InvalidOperationException ("Invalid operation. The connection is closed.");
+			if (transaction != null && transaction.Open)
 				throw new InvalidOperationException ("TdsConnection does not support parallel transactions.");
+
 			transaction = new TdsTransaction (this, il);
 			return transaction;
 		}
@@ -149,27 +140,22 @@ namespace Mono.Data.TdsClient {
 			if (Database == databaseName)
 				return;
 
-			foreach (TdsInstance instance in tdsPool) {
-				lock (instance.Tds) {
-					instance.Tds.ChangeDatabase (databaseName);
-					/*
-					TdsCommand command = instance.Tds.Command;
-					object o = (command == null ? (object) instance.Tds : command);
-					lock (o) {
-						if (command != null)
-							command.SkipToEnd ();
-						instance.Tds.ChangeDatabase (databaseName);
-					}
-					*/
-				}
-			}
+			tds.ChangeDatabase (databaseName);
 		}
 
-		[MonoTODO]
 		public void Close ()
 		{
+			// rollback any open transactions
+			if (transaction.Open)
+				transaction.Rollback ();
+
+			// if we aren't pooling, just close the connection
+			// otherwise, just set the InUse flag to false
+			if (disablePooling)
+				tds.Close ();
+			else
+				tds.InUse = false;
 			this.state = ConnectionState.Closed;
-			throw new NotImplementedException ();
 		}
 
 		public TdsCommand CreateCommand ()
@@ -183,26 +169,6 @@ namespace Mono.Data.TdsClient {
                 {
                         throw new NotImplementedException ();
                 }
-
-		private int FindAnAvailableTds ()
-		{
-			for (int i = tdsPool.Count - 1; i >= 0; i --)
-				if (!((TdsInstance) tdsPool [i]).InUse)
-					return i;
-			return -1;
-		}
-
-		private void FreeTds (Tds tds)
-		{
-			int i = -1;
-			foreach (TdsInstance instance in tdsPool)
-				if (instance.Tds == tds) {
-					instance.InUse = false;
-					//tds.Command = null;
-					return;
-				}
-			throw new TdsException ("Tried to free a tds that wasn't in use.");
-		}
 
 		IDbTransaction IDbConnection.BeginTransaction ()
 		{
@@ -221,6 +187,8 @@ namespace Mono.Data.TdsClient {
 
 		public void Open ()
 		{
+			if (connectionString == null)
+				throw new InvalidOperationException ("The ConnectionString property has not been initialized.");
 			if (User == null)
 			{
 				throw new ArgumentException ();
@@ -230,14 +198,9 @@ namespace Mono.Data.TdsClient {
 				throw new ArgumentException ();
 			}
 
-			if (tdsPool == null)
-				tdsPool = new ArrayList ();
-
-			Tds tmpTds = AllocateTds ();
-			database = tmpTds.Database;
-			FreeTds (tmpTds);
-			tmpTds.Logon (parms);
-
+			tds = AllocateTds (parms, connectionString, disablePooling, minPoolSize, maxPoolSize);
+			tds.InUse = true;
+			tds.Logon (parms);
 			this.state = ConnectionState.Open;
 		}
 
@@ -293,7 +256,7 @@ namespace Mono.Data.TdsClient {
 				} 
 			}
 
-			if (this.ConnectionString == String.Empty)
+			if (this.ConnectionString == null)
 			{
 				SetDefaultConnectionParameters (parameters);
 			}
@@ -350,7 +313,7 @@ namespace Mono.Data.TdsClient {
 					break;
 				case "CONNECT TIMEOUT" :
 				case "CONNECTION TIMEOUT" :
-					this.ConnectionTimeout = Int32.Parse (value);
+					connectionTimeout = Int32.Parse (value);
 					break;
 				case "CONNECTION LIFETIME" :
 					break;
@@ -396,6 +359,7 @@ namespace Mono.Data.TdsClient {
 				case "PERSIST SECURITY INFO" :
 					break;
 				case "POOLING" :
+					disablePooling = (value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
 					break;
 				case "USER ID" :
 					parms.User = value;
@@ -407,40 +371,5 @@ namespace Mono.Data.TdsClient {
 			}
 		}
 		#endregion // Methods
-
-		private class TdsInstance 
-		{
-			#region Fields
-
-			bool inUse;
-			Tds tds;
-
-			#endregion // Fields 
-
-			#region Constructors
-
-			public TdsInstance (Tds tds) 
-			{
-				this.tds = tds;
-				this.inUse = false;
-			}
-
-			#endregion // Constructors
-
-			#region Properties
-
-			public bool InUse {
-				get { return inUse; }
-				set { inUse = value; }
-			}
-
-			public Tds Tds {
-				get { return tds; }
-				set { tds = value; }
-			}
-
-			#endregion // Properties
-		}
-
 	}
 }
