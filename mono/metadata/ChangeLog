@@ -1,3 +1,12 @@
+2004-02-18  Urs C Muff  <umuff@quark.com>
+
+	* debug-mono-symfile.c, mono-debug-debugger.c, mono-debug.c: Make
+	this work on PPC and other big-endian architectures.
+
+	* debug-mono-symfile.h: Prepended the names of all the `guint32'
+	fields with an underscore to make sure they're only accessed by
+	the read32() macro.
+
 2004-02-18  Martin Baulig  <martin@ximian.com>
 
 	* icall.c: Put the klass->refclass changes back for methods and
