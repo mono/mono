@@ -1390,6 +1390,12 @@ namespace Mono.CSharp {
 		{
 			child.Emit (ec);
 		}
+
+		public override bool IsNegative {
+			get {
+				return false;
+			}
+		}
 	}
 
 
@@ -1519,6 +1525,12 @@ namespace Mono.CSharp {
 		
 		public override bool IsZeroInteger {
 			get { return Child.IsZeroInteger; }
+		}
+
+		public override bool IsNegative {
+			get {
+				return Child.IsNegative;
+			}
 		}
 	}
 

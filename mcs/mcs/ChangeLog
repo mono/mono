@@ -1,3 +1,11 @@
+2004-09-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* constant.cs (Constant.IsNegative): New abstract property
+	IsNegative.
+
+	* expression.cs (ArrayAccess.DoResolve): Add warning 251.
+	(StackAlloc.DoResolve): Reused IsNegative.
+
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in
