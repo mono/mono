@@ -51,6 +51,11 @@ namespace Mono.ILASM {
                         Console.WriteLine (message);
                 }
 
+                public void Message (string message)
+                {
+                        Console.WriteLine (message);
+                }
+                
                 private string GetListing (string listing)
                 {
                         if (listing == null)

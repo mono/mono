@@ -1,3 +1,7 @@
+2004-06-24  Jackson Harper  <jackson@ximian.com>
+
+	* Report.cs: Add new mehtod for displaying messages.
+	
 2004-06-23  Jackson Harper  <jackson@ximian.com>
 
 	* Driver.cs: Use the same success message as MS.
