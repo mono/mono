@@ -1,3 +1,11 @@
+2003-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c:
+	(mini_cleanup): moved mono_runtime_cleanup call after the call to
+	mono_domain_finalize.
+	(mini_method_compile): use mono_method_profile* if the the option is
+	enabled.
+
 2003-04-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-x86.c (mono_arch_create_jit_trampoline): Subsitute synchronized

@@ -1,3 +1,14 @@
+2003-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* gc.c:
+	(internal_domain_finalize): moved into mono_domain_finalize. No need
+	to create another thread because the finalizers will be run in the
+	finalizer thread.
+	
+	(ves_icall_System_GC_WaitForPendingFinalizers): implemented.
+	(finalizer_notify): if shutting down, wait 2 seconds for the finalizers
+	to be run (MS does this too).
+
 2003-04-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_class_compute_gc_descriptor): Update comment.

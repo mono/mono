@@ -1,3 +1,9 @@
+2003-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* jit.c:
+	(mono_jit_cleanup): moved mono_runtime_cleanup call after the call to
+	mono_domain_finalize.
+
 2003-04-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* jit.c (check_inlining): honor the NOINLING atttribute.
