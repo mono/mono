@@ -632,15 +632,13 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		public static Process Start(string fileName) {
-			throw new NotImplementedException();
+                       return Start(new ProcessStartInfo(fileName));
 		}
 
-		[MonoTODO]
 		public static Process Start(string fileName,
 					    string arguments) {
-			throw new NotImplementedException();
+                       return Start(new ProcessStartInfo(fileName, arguments));
 		}
 
 		public override string ToString() {
