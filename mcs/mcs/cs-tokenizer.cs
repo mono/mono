@@ -1110,27 +1110,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		/// <summary>
-		/// Inspect next character if is same as expected
-		/// </summary>
-		public bool CheckNextToken (char expected_char)
-		{
-			for (int c = 0;(c = getChar ()) != -1; col++){
-				if (c == '\n'){
-					col = 0;
-					line++;
-					ref_line++;
-					continue;
-				} 
-				if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
-					continue;
-
-				putback (c);
-				return c == expected_char;
-			}
-			return false;
-		}
-
 		public int token ()
                 {
 			current_token = xtoken ();

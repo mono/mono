@@ -1,3 +1,7 @@
+2004-09-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Reverted 642 warning fix.
+
 2004-09-23  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #66615
@@ -9,8 +13,6 @@
 	* expression.cs (LocalVariableReference.DoResolveLValue):
 	Do not report warning 219 for out values.
 	(EmptyExpression.Null): New member to avoid extra allocations.
-
-	* rootcontext.cs: Warning 4 is back.
 
 2004-09-23  Marek Safar  <marek.safar@seznam.cz>
 
