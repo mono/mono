@@ -1,4 +1,8 @@
 
+Tue Aug 27 16:38:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, reflection.h: speedup System.MonoType.
+
 Tue Aug 27 16:37:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: allow null as the value of a string argument in
