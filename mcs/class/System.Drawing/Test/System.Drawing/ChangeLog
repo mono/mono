@@ -1,3 +1,8 @@
+2004-06-09  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestBitmap.cs, TestIcon.cs, TestIconConverter.cs: Removed
+	dependency on obsolete class, Assertion from NUnit.
+
 2004-05-27  Ravindra <rkumar@novell.com>
 
 	* TestRectangleConverter.cs: Ignored the test that is failing

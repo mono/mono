@@ -1,5 +1,5 @@
 //
-// Bitmap class testing unit
+// Icon class testing unit
 //
 // Author:
 //
@@ -15,7 +15,7 @@ using System.IO;
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]	
-	public class TestIcon : Assertion {
+	public class TestIcon {
 		
 		Icon icon;
 		Icon newIcon;
@@ -34,21 +34,21 @@ namespace MonoTests.System.Drawing{
 		public void TestConstructors ()
 		{
 			newIcon = new Icon (fs1, 48, 48);
-			AssertEquals ("C#1a", 48, newIcon.Height); 			
-			AssertEquals ("C#1b", 48, newIcon.Width);
+			Assert.AreEqual (48, newIcon.Height, "C#1a"); 			
+			Assert.AreEqual (48, newIcon.Width, "C#1b");
 
 			newIcon = new Icon (icon, 16, 16);
-			AssertEquals ("C#2a", 16, newIcon.Height); 			
-			AssertEquals ("C#2b", 16, newIcon.Width);
+			Assert.AreEqual (16, newIcon.Height, "C#2a"); 			
+			Assert.AreEqual (16, newIcon.Width, "C#2b");
 		}				
 
 		[Test]
 		public void TestProperties ()
 		{
-			AssertEquals ("P#1", 32, icon.Height);
-			AssertEquals ("P#2", 32, icon.Width);
-			AssertEquals ("P#3", 32, icon.Size.Width);
-			AssertEquals ("P#4", 32, icon.Size.Height);
+			Assert.AreEqual (32, icon.Height, "P#1");
+			Assert.AreEqual (32, icon.Width, "P#2");
+			Assert.AreEqual (32, icon.Size.Width, "P#3");
+			Assert.AreEqual (32, icon.Size.Height, "P#4");
 
 		}
 
@@ -56,17 +56,17 @@ namespace MonoTests.System.Drawing{
 		public void TestMethods ()
 		{
 			newIcon = (Icon) icon.Clone ();
-			AssertEquals ("M#1a", 32, newIcon.Height);
-			AssertEquals ("M#1b", 32, newIcon.Width);
+			Assert.AreEqual (32, newIcon.Height, "M#1a");
+			Assert.AreEqual (32, newIcon.Width, "M#1b");
 			
 			Bitmap bmp = icon.ToBitmap();
-			AssertEquals ("M#2a", 32, bmp.Height);
-			AssertEquals ("M#2b", 32, bmp.Width);
+			Assert.AreEqual (32, bmp.Height, "M#2a");
+			Assert.AreEqual (32, bmp.Width, "M#2b");
 			
 			fs = new FileStream ("newIcon.ico", FileMode.Create);
 			icon.Save (fs);
-
-			AssertEquals ("M#3", fs1.Length, fs.Length);			
+			
+			Assert.AreEqual (fs1.Length, fs.Length, "M#3");			
 		}
 
 		[TearDown]
