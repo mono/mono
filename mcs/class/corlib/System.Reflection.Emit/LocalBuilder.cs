@@ -26,7 +26,7 @@ namespace System.Reflection.Emit {
 		internal LocalBuilder (ModuleBuilder m, Type t)
 		{
 			this.module = m;
-			this.symbol_writer = module.GetSymbolWriter ();
+			this.symbol_writer = module.GetSymWriter ();
 			this.type = t;
 		}
 		public void SetLocalSymInfo (string lname, int startOffset, int endOffset)
