@@ -1,3 +1,7 @@
+2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h: Add SSE2 instructions.
+
 2004-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h (X86_IS_BYTE_REG): Redefine X86_IS_BYTE_REG
