@@ -6,7 +6,9 @@
 ./System.Runtime.Remoting.Channels/CommonTransportKeys.cs
 ./System.Runtime.Remoting.Channels/SoapClientFormatterSink.cs
 ./System.Runtime.Remoting.Channels/SoapServerFormatterSink.cs
+./System.Runtime.Remoting.Channels/SoapClientFormatterSinkProvider.cs
 ./System.Runtime.Remoting.Channels/SoapServerFormatterSinkProvider.cs
+./System.Runtime.Remoting.Channels/SoapMessageFormatter.cs
 ./System.Runtime.Remoting.Channels.Tcp/TcpChannel.cs
 ./System.Runtime.Remoting.Channels.Tcp/TcpClientChannel.cs
 ./System.Runtime.Remoting.Channels.Tcp/TcpMessageIO.cs
