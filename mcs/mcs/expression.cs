@@ -3152,7 +3152,7 @@ namespace Mono.CSharp {
 						// method might look at the type of this expression, see it is a
 						// string and emit a string [] when we want an object [];
 						
-						e = Convert.ImplicitConversion (ec, e, TypeManager.object_type, loc);
+						e = new EmptyCast (e, TypeManager.object_type);
 					}
 					operands [i] = new Argument (e, Argument.AType.Expression);
 				}
