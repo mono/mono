@@ -1,7 +1,7 @@
 All Classes, Interfaces, Structures, Delegates and Enumerations
 
 
-**: Attributes may have to be supplied to the classes. Some of the
+$$: Attributes may have to be supplied to the classes. Some of the
     attributes include DefaultPropertyAttribute, ToolboxItemAttribute,
     ParseChildrenAttribute (to be added to System.Web.UI) etc. Currently, I
     have not taken care of these aspects. They are to be handled later on.
@@ -96,10 +96,10 @@ TargetConverter
 TemplateColumn
 & TextBox
 * TextBoxControlBuilder
-UnitConverter
-ValidatedControlConverter
-ValidationSummary
-WebColorConverter
+* UnitConverter
+* ValidatedControlConverter
+& ValidationSummary
+& WebColorConverter
 & WebControl
 & Xml
 

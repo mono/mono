@@ -1,15 +1,20 @@
 2002-01-30      Gaurav Vaish <gvaish@iitk.ac.in>
 
+	* DropDownList.cs             - Completed
 	* ListItemCollection.cs       - Added method FindByValueInternal to
 	                                assist in the derived classes.
 	                                Discovered bug in FindByValue. Removed
-	* DropDownList.cs             - Completed
-	* RadioButtonList.cs          - Initial Implementation. All is done
-	                                except for the implementation of
-	                                method IRepeatInfoUser.RenderItem(...)
+	* UnitConverter.cs            - Completed
 	* PlaceHolder.cs              - What can be simpler than this?
 	* PlaceHolderControlBuilder.cs
 	                              - Uh! Damn cool one.
+	* RadioButtonList.cs          - Initial Implementation. All is done
+	                                except for the implementation of
+	                                method IRepeatInfoUser.RenderItem(...)
+	* ValidatedControlConverter.cs
+	  ^^^^^^^^^^^^^^^^^^^^^^^^^   - Looks complete. Doubtful though !!
+	* ValidationSummary.cs        - Initial Implementation.
+	* WebColorConverter.cs        - Initial Implementation
 
 2002-01-27      Gaurav Vaish <gvaish@iitk.ac.in>
 
