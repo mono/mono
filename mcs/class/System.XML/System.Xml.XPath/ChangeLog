@@ -1,5 +1,9 @@
 2003-07-25  Piers Haken	<piersh@friskit.com>
 
+	* Expression.cs: return clone of $var evaluation
+
+2003-07-26  Piers Haken	<piersh@friskit.com>
+
 	* Iterator.cs: add setter for NamespaceManager
 	* XPathNavigator.cs: propagate NamespaceManager from context on Evaluate
 	* Expression.cs: fix func/var exception strings

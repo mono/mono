@@ -935,7 +935,11 @@ namespace System.Xml.XPath
 			//	var = DefaultContext.ResolveVariable (_name.Namespace, _name.Name);
 			if (var == null)
 				throw new XPathException ("variable "+_name.ToString ()+" not found");
-			return var.Evaluate (context);
+			object objResult = var.Evaluate (context);
+			XPathNodeIterator iterResult = objResult as XPathNodeIterator;
+			if (iterResult != null)
+				return iterResult.Clone ();
+			return objResult;
 		}
 	}
 
