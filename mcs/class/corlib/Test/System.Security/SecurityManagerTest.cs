@@ -2,9 +2,29 @@
 // SecurityManagerTest.cs - NUnit Test Cases for SecurityManager
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -17,20 +37,77 @@ using System.Security.Policy;
 namespace MonoTests.System.Security {
 
 	[TestFixture]
-	public class SecurityManagerTest : Assertion {
+	public class SecurityManagerTest {
 
 		[Test]
 		public void IsGranted_Null ()
 		{
 			// null is always granted
-			Assert ("IsGranted_Null", SecurityManager.IsGranted (null));
+			Assert.IsTrue (SecurityManager.IsGranted (null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void LoadPolicyLevelFromFile_Null ()
+		{
+			SecurityManager.LoadPolicyLevelFromFile (null, PolicyLevelType.AppDomain);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void LoadPolicyLevelFromString_Null ()
+		{
+			SecurityManager.LoadPolicyLevelFromString (null, PolicyLevelType.AppDomain);
 		}
 
 		[Test]
 		public void PolicyHierarchy () 
 		{
 			IEnumerator e = SecurityManager.PolicyHierarchy ();
-			AssertNotNull ("PolicyHierarchy", e);
+			Assert.IsNotNull (e, "PolicyHierarchy");
+		}
+
+		[Test]
+		public void ResolvePolicy_Evidence_Null () 
+		{
+			Evidence e = null;
+			PermissionSet ps = SecurityManager.ResolvePolicy (e);
+			// no exception thrown
+			Assert.IsNotNull (ps);
+			Assert.IsFalse (ps.IsUnrestricted (), "IsUnrestricted");
+		}
+#if NET_2_0
+		[Test]
+		public void ResolvePolicy_Evidences_Null ()
+		{
+			Evidence[] e = null;
+			PermissionSet ps = SecurityManager.ResolvePolicy (e);
+			// no exception thrown
+			Assert.IsNotNull (ps);
+			Assert.IsFalse (ps.IsUnrestricted (), "IsUnrestricted");
+		}
+#endif
+		[Test]
+		[ExpectedException (typeof (PolicyException))]
+		public void ResolvePolicy_Evidence_AllNull ()
+		{
+			PermissionSet denied = null;
+			SecurityManager.ResolvePolicy (null, null, null, null, out denied);
+			// null is missing the Execution right
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ResolvePolicyGroups_Null ()
+		{
+			IEnumerator e = SecurityManager.ResolvePolicyGroups (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void SavePolicyLevel_Null ()
+		{
+			SecurityManager.SavePolicyLevel (null);
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2003-08-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManagerTest.cs: Added bunch of tests for null usage. 
+	Converted to NUnit 2.2.
+
 2003-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityElementTest.cs: SetUp is now public (required for new nunit).
