@@ -1,3 +1,7 @@
+2002-10-16  Nick Drochak  <ndrochak@gol.com>
+
+	* Enum.cs (Parse): Then fix the code so that it works too.
+
 2002-10-15  Nick Drochak  <ndrochak@gol.com>
 
 	* Enum.cs (Parse): Use unsigned casts to avoid compiler warnings.

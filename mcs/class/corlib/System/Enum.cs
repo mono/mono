@@ -253,17 +253,17 @@ namespace System {
 							case TypeCode.SByte:
 								// use the unsigned version in the cast to avoid 
 								// compiler warning
-								retVal |= (long)((byte)info.values.GetValue (i));
+								retVal |= (long)((byte)(SByte)info.values.GetValue (i));
 								break;
 							case TypeCode.Int16:
 								// use the unsigned version in the cast to avoid 
 								// compiler warning
-								retVal |= (long)((ushort)info.values.GetValue (i));
+								retVal |= (long)((ushort)(short)info.values.GetValue (i));
 								break;
 							case TypeCode.Int32:
 								// use the unsigned version in the cast to avoid 
 								// compiler warning
-								retVal |= (long)((uint)info.values.GetValue (i));
+								retVal |= (long)((uint)(int)info.values.GetValue (i));
 								break;
 							case TypeCode.Int64:
 								retVal |= (long)info.values.GetValue (i);
