@@ -58,7 +58,11 @@ namespace System.Data.Common {
 		}
 
 		public DataColumnMapping this [string sourceColumn] {
-			get { return (DataColumnMapping) sourceColumns[sourceColumn]; }
+			get {
+				if (!Contains(sourceColumn)) {
+					throw new IndexOutOfRangeException("DataColumnMappingCollection doesn't contains DataColumnMapping with SourceColumn 'field_int2'.");
+				}
+				return (DataColumnMapping) sourceColumns[sourceColumn]; }
 			set { this [list.IndexOf (sourceColumns[sourceColumn])] = value; }
 		}
 
