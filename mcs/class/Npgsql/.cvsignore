@@ -1,6 +1,7 @@
 *~
 .makefrag
 .response
-Npgsql_test*
-TestResult.xml
+*.dll
+*.mdb
+TestResult*.xml
 library-deps.stamp

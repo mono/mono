@@ -6,7 +6,7 @@ LIBRARY = Commons.Xml.Relaxng.dll
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 EXTRA_DISTFILES = \
-	Commons.Xml.Relaxng/RncParser.jay	\
+	Commons.Xml.Relaxng.Rnc/RncParser.jay	\
 	Test/ChangeLog		\
 	Test/XmlFiles/ChangeLog	\
 	Test/XmlFiles/SimpleElementPattern1.xml	\

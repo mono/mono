@@ -1,7 +1,7 @@
-
 .makefrag
 .response
-Commons.Xml.Relaxng_test*
-TestResult.xml
+*.dll
+*.mdb
+TestResult*.xml
 library-deps.stamp
 y.output

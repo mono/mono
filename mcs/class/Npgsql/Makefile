@@ -27,7 +27,8 @@ EXTRA_DISTFILES = \
 	STATUS.txt		\
 	TODO.txt		\
 	Npgsql/Npgsql.snk	\
-	Npgsql/Npgsql.xml
+	Npgsql/Npgsql.pub	\
+	$(RESX_RES:.resources=.resx)
 
 include ../../build/library.make
 
