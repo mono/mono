@@ -1,3 +1,15 @@
+2003-07-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* system_linux_test.args: added new tests in Microsoft.CSharp.
+
+	* Microsoft.CSharp/CodeGeneratorFromCompileUnitTest.cs:
+	* Microsoft.CSharp/CodeGeneratorFromExpressionTest.cs:
+	* Microsoft.CSharp/CodeGeneratorFromNamespaceTest.cs:
+	* Microsoft.CSharp/CodeGeneratorFromStatementTest.cs:
+	* Microsoft.CSharp/CodeGeneratorFromTypeTest.cs:
+	* Microsoft.CSharp/CodeGeneratorTestBase.cs: new tests from Erik LeBel
+	<eriklebel@yahoo.ca>.
+
 2002-12-08 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerTest.cs CompilerErrorTest.cs: Removed files

@@ -1,3 +1,9 @@
+Microsoft.CSharp/CodeGeneratorFromCompileUnitTest.cs
+Microsoft.CSharp/CodeGeneratorFromExpressionTest.cs
+Microsoft.CSharp/CodeGeneratorFromNamespaceTest.cs
+Microsoft.CSharp/CodeGeneratorFromStatementTest.cs
+Microsoft.CSharp/CodeGeneratorFromTypeTest.cs
+Microsoft.CSharp/CodeGeneratorTestBase.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
 System.Collections.Specialized/BasicOperationsTest.cs
@@ -28,4 +34,3 @@ System.Net.Sockets/TcpListenerTest.cs
 System.Text.RegularExpressions/PerlTest.cs
 System.Text.RegularExpressions/PerlTrials.cs
 System.Text.RegularExpressions/RegexTrial.cs
-
