@@ -1,3 +1,8 @@
+2004-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Updated to latest version. Fix issue with 
+	incomplete key pairs (#57941).
+
 2004-05-01  Todd Berman  <tberman@sevenl.net>
 
 	* driver.cs: Remove '.' from path_chars, now System.* loads properly
