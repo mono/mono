@@ -2700,7 +2700,29 @@ namespace Mono.CSharp {
 			    (Initializer == null))
 				Block.AddThisVariable (parent, Location);
 
-			ec.EmitTopBlock (Block, ParameterInfo, Location);
+			ISymbolWriter sw = CodeGen.SymbolWriter;
+
+			if ((sw != null) && (block != null) &&
+				!Location.IsNull (Location) &&
+				!Location.IsNull (block.EndLocation)) {
+
+				Location end = block.EndLocation;
+				MethodToken token = ConstructorBuilder.GetToken ();
+				sw.OpenMethod (new SymbolToken (token.Token));
+				// Avoid error if we don't support debugging for the platform
+				try {
+					sw.SetMethodSourceRange (Location.SymbolDocument,
+											 Location.Row, 0,
+											 end.SymbolDocument,
+											 end.Row, 0);
+				} catch (Exception) {
+				}
+
+				ec.EmitTopBlock (block, ParameterInfo, Location);
+
+				sw.CloseMethod ();
+			} else
+				ec.EmitTopBlock (block, ParameterInfo, Location);
 		}
 	}
 
