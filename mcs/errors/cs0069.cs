@@ -3,14 +3,10 @@
 
 using System;
 
-class ErrorCS0069 {
-	public delegate void FooHandler ();
-	public static void Main () {
-	}
-}
+public delegate void FooHandler ();
 
 interface IBar {
-	event OnFoo {
+	event FooHandler OnFoo {
 		add { }
 		remove { }
 	}

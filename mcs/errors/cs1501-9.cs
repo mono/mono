@@ -1,0 +1,4 @@
+using System;
+
+[assembly:CLSCompliant()]
+
