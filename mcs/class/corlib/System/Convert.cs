@@ -1603,24 +1603,33 @@ namespace System {
 
 		// ========== Conversion / Helper Fucntions ========== //
 
-		[MonoTODO]
-		public static object ChangeType( object value, Type conversionType) {
-			return value;
+		public static object ChangeType (object value, Type conversionType)
+		{
+			CultureInfo ci = CultureInfo.CurrentCulture;
+			NumberFormatInfo number = ci.NumberFormat;
+			return ToType (value, conversionType, number);
 		}
-		[MonoTODO]
-		public static object ChangeType( object value, TypeCode typeCode) {
-			return value;
+		
+		public static object ChangeType (object value, TypeCode typeCode)
+		{
+			CultureInfo ci = CultureInfo.CurrentCulture;
+			Type conversionType = conversionTable [(int)typeCode];
+			NumberFormatInfo number = ci.NumberFormat;
+			return ToType (value, conversionType, number);
 		}
-		[MonoTODO]
-		public static object ChangeType( object value, Type conversionType, IFormatProvider provider) {
-			return value;
+
+		public static object ChangeType (object value, Type conversionType, IFormatProvider provider)
+		{
+			return ToType (value, conversionType, provider);
 		}
-		[MonoTODO]
-		public static object ChangeType( object value, TypeCode typeCode, IFormatProvider provider) {
-			return value;
-		}
-	
-		// Lookup table for the conversion ToType method. Order
+		
+		public static object ChangeType (object value, TypeCode typeCode, IFormatProvider provider)
+		{
+			Type conversionType = conversionTable [(int)typeCode];
+			return ToType (value, conversionType, provider);
+		}	
+
+                // Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target
 		// type, and uses hardcoded array indexes.
 		private static Type[] conversionTable = {

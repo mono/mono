@@ -1,3 +1,6 @@
+2002-02-11  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs: Implemented the ChangeType () methods.
 
 Mon Feb 11 19:48:58 CET 2002 Paolo Molaro <lupus@ximian.com>
 
