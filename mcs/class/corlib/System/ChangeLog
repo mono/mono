@@ -1,3 +1,7 @@
+2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* String.cs: make ToLower (culture) and ToUpper (culture) use the
+	default ToLower and ToUpper and don't throw NotImplemented.
 
 Sat Jul 13 15:09:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -544,16 +544,18 @@ namespace System {
 			return InternalToLower();
 		}
 
+		[MonoTODO("By now, don't use culture info")]
 		public String ToLower(CultureInfo culture) {
-			throw new NotImplementedException();
+			return InternalToLower();
 		}
 
 		public String ToUpper() {
 			return InternalToUpper();
 		}
 
+		[MonoTODO("By now, don't use culture info")]
 		public String ToUpper(CultureInfo culture) {
-			throw new NotImplementedException();
+			return InternalToUpper();
 		}
 
 		public override String ToString() {
