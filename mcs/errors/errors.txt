@@ -113,3 +113,5 @@ the Microsoft C# compiler:
 	initialized.
 
 -213	This feature requires v2 support.
+
+-214    Generic class can not have attribute as its parent class
