@@ -1,5 +1,12 @@
 2002-04-04  Dan Lewis  <dihlewis@yahoo.co.uk>
 
+	* RegexRunner.cs, RegexRunnerFactory.cs: MS support classes. Stubs
+	added for completeness.
+
+	* regex.cs, match.cs, collections.cs: Serializable attribute.
+
+2002-04-04  Dan Lewis  <dihlewis@yahoo.co.uk>
+
 	* regex.cs: Added static Matches and IsMatch methods.
 
 2002-04-03  Dan Lewis  <dihlewis@yahoo.co.uk>

@@ -105,6 +105,7 @@ namespace System.Text.RegularExpressions {
 		}
 	}
 
+	[Serializable]
 	public class GroupCollection : RegexCollectionBase, ICollection, IEnumerable {
 		public Group this[int i] {
 			get { return (Group)list[i]; }
@@ -114,6 +115,7 @@ namespace System.Text.RegularExpressions {
 		}
 	}
 
+	[Serializable]
 	public class MatchCollection : RegexCollectionBase, ICollection, IEnumerable {
 		public virtual Match this[int i] {
 			get { return (Match)list[i]; }

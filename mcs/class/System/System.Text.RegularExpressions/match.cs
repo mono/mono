@@ -120,6 +120,7 @@ namespace System.Text.RegularExpressions {
 		private Capture previous;
 	}
 
+	[Serializable]
 	public class Group : Capture {
 		public static Group Synchronized (Group inner) {
 			return inner;	// is this enough?
@@ -147,6 +148,7 @@ namespace System.Text.RegularExpressions {
 		private CaptureCollection captures;
 	}
 
+	[Serializable]
 	public class Match : Group {
 		public static Match Empty {
 			get { return empty; }

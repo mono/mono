@@ -357,6 +357,7 @@ namespace System.Text.RegularExpressions {
 		private int group_count;
 	}
 
+	[Serializable]
 	public class RegexCompilationInfo {
 		public RegexCompilationInfo (string pattern, RegexOptions options, string name, string full_namespace, bool is_public) {
 			this.pattern = pattern;
