@@ -1,3 +1,9 @@
+2004-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SortedListTest.cs: Added new test when initial capacity is set to 0
+	(so it never returns to default, 16, when Capacity is set to 0) unless
+	Clear is called. Cleaned up unused SetUp/TearDown.
+
 2004-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ArrayListTest.cs: Added new test for null in BinarySearch.

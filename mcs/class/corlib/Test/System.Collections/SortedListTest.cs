@@ -21,24 +21,12 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Collections {
 
-
-/// <summary>SortedList test.</summary>
 [TestFixture]
 public class SortedListTest : Assertion {
 	protected SortedList sl1;
 	protected SortedList sl2;
 	protected SortedList emptysl;
 	protected const int icap=16;
-
-        [SetUp]
-	public  void SetUp() 
-	{
-	}
-
-        [TearDown]
-	public void TearDown() 
-	{
-	}
 
 	public void TestConstructor1() {
 		SortedList temp1 = new SortedList();
@@ -113,6 +101,24 @@ public class SortedListTest : Assertion {
 			temp1 = new SortedList(-12);
 			Fail ("sl.constructor-5: does not throw ArgumentOutOfRangeException, with negative values");
 		} catch (ArgumentOutOfRangeException) {}
+	}
+
+	[Test]
+	public void Constructor_Capacity () 
+	{
+		SortedList sl = new SortedList (0);
+		AssertEquals ("Capacity-Original", 0, sl.Capacity);
+		sl.Capacity = 0;
+		// doesn't reset to class default (16)
+		AssertEquals ("Capacity-Resetted", 0, sl.Capacity);
+
+		for (int i=1; i <= 16; i++) {
+			sl = new SortedList (i);
+			AssertEquals ("Capacity-Original" + i.ToString (), i, sl.Capacity);
+			sl.Capacity = 0;
+			// reset to class default (16)
+			AssertEquals ("Capacity-Resetted" + i.ToString (), 16, sl.Capacity);
+		}
 	}
 
         [Test]	
@@ -300,6 +306,32 @@ public class SortedListTest : Assertion {
 		sl1.Clear();
 		AssertEquals("sl.Clear: is not cleared", 0, sl1.Count);
 		AssertEquals("sl.Clear: capacity is altered", 16, sl1.Capacity);
+	}
+
+	[Test]
+	public void Clear_Capacity () 
+	{
+		// strangely Clear change the default capacity (while Capacity doesn't)
+		for (int i=0; i <= 16; i++) {
+			SortedList sl = new SortedList (i);
+			AssertEquals ("Capacity-Original" + i.ToString (), i, sl.Capacity);
+			sl.Clear ();
+			// reset to class default (16)
+			AssertEquals ("Capacity-Resetted" + i.ToString (), 16, sl.Capacity);
+		}
+	}
+
+	[Test]
+	public void Clear_Capacity_Reset () 
+	{
+		SortedList sl = new SortedList (0);
+		AssertEquals ("0", 0, sl.Capacity);
+		sl.Clear ();
+		// reset to class default (16)
+		AssertEquals ("Clear", 16, sl.Capacity);
+		sl.Capacity = 0;
+		AssertEquals ("Capacity", 16, sl.Capacity);
+		// note: we didn't return to 0 - so Clear cahnge the default capacity
 	}
 
         [Test]
