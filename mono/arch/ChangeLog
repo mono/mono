@@ -1,3 +1,6 @@
+2001-09-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86/x86-codegen.h (x86_breakpoint): added.
 
 Tue Sep 18 13:23:59 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
