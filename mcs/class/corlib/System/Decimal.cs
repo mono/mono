@@ -270,152 +270,104 @@ namespace System
             return Remainder(d1, d2);
         }
 
-        public static explicit operator byte(Decimal val)
-        {
-            ulong result;
+	private static ulong u64 (Decimal value) 
+	{
+		ulong result;
 
-            if (decimal2UInt64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
+		decimalFloorAndTrunc (ref value, 0);
+		if (decimal2UInt64 (ref value, out result) != 0) {
+			throw new System.OverflowException ();
+		}
+		return result;
+	}
 
-            if (result > Byte.MaxValue || result < Byte.MinValue) 
-            {
-                throw new System.OverflowException();
-            }
+	private static long s64 (Decimal value) 
+	{
+		long result;
 
-            return (byte) result;
+		decimalFloorAndTrunc (ref value, 0);
+		if (decimal2Int64 (ref value, out result) != 0) {
+			throw new System.OverflowException ();
+		}
+		return result;
+	}
+
+	public static explicit operator byte (Decimal val)
+	{
+		ulong result = u64 (val);
+// bug #59793 - http://bugzilla.ximian.com/show_bug.cgi?id=59793
+//		return checked ((byte) result);
+
+// manual alternative to bug #59793
+		if (result > Byte.MaxValue || result < Byte.MinValue) {
+			throw new System.OverflowException ();
+		}
+		return (byte) result;
+	}
+
+	[CLSCompliant (false)]
+	public static explicit operator sbyte (Decimal val)
+	{
+		long result = s64 (val);
+		return checked ((sbyte) result);
+	}
+
+	public static explicit operator char (Decimal val) 
+	{
+		ulong result = u64 (val);
+// bug #59793 - http://bugzilla.ximian.com/show_bug.cgi?id=59793
+//		return checked ((char) result);
+
+// manual alternative to bug #59793
+		if (result > Char.MaxValue || result < Char.MinValue) {
+			throw new System.OverflowException ();
+		}
+		return (char) result;
+	}
+
+	public static explicit operator short (Decimal val) 
+	{
+		long result = s64 (val);
+		return checked ((short) result);
+	}
+
+	[CLSCompliant (false)]
+	public static explicit operator ushort (Decimal val) 
+	{
+		ulong result = u64 (val);
+// bug #59793 - http://bugzilla.ximian.com/show_bug.cgi?id=59793
+//		return checked ((ushort) result);
+
+// manual alternative to bug #59793
+		if (result > UInt16.MaxValue || result < UInt16.MinValue) {
+			throw new System.OverflowException ();
+		}
+		return (ushort) result;
+	}
+
+	public static explicit operator int (Decimal val) 
+	{
+		long result = s64 (val);
+		return checked ((int) result);
+	}
+
+	[CLSCompliant(false)]
+	public static explicit operator uint (Decimal val) 
+	{
+		ulong result = u64 (val);
+		return checked ((uint) result);
+	}
+
+	public static explicit operator long (Decimal val) 
+	{
+		return s64 (val);
         }
 
 	[CLSCompliant(false)]
-        public static explicit operator sbyte(Decimal val) 
-        {
-            long result;
-
-            if (decimal2Int64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            if (result > SByte.MaxValue || result < SByte.MinValue) 
-            {
-                throw new System.OverflowException();
-            }
-
-            return (sbyte) result;
-        }
-
-        public static explicit operator char(Decimal val) 
-        {
-            ulong result;
-
-            if (decimal2UInt64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            if (result > Char.MaxValue || result < Char.MinValue) 
-            {
-                throw new System.OverflowException();
-            }
-
-            return (char) result;
-        }
-
-        public static explicit operator short(Decimal val) 
-        {
-            long result;
-
-            if (decimal2Int64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            if (result > Int16.MaxValue || result < Int16.MinValue) 
-            {
-                throw new System.OverflowException();
-            }
-
-            return (short) result;
-        }
-
-	[CLSCompliant(false)]
-        public static explicit operator ushort(Decimal val) 
-        {
-            ulong result;
-
-            if (decimal2UInt64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            if (result > UInt16.MaxValue || result < UInt16.MinValue) 
-            {
-                throw new System.OverflowException();
-            }
-
-            return (ushort) result;
-        }
-
-        public static explicit operator int(Decimal val) 
-        {
-            long result;
-
-            if (decimal2Int64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            if (result > Int32.MaxValue || result < Int32.MinValue) 
-            {
-                throw new System.OverflowException();
-            }
-
-            return (int) result;
-        }
-
-	[CLSCompliant(false)]
-        public static explicit operator uint(Decimal val) 
-        {
-            ulong result;
-
-            if (decimal2UInt64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            if (result > UInt32.MaxValue || result < UInt32.MinValue) 
-            {
-                throw new System.OverflowException();
-            }
-
-            return (uint) result;
-        }
-
-        public static explicit operator long(Decimal val) 
-        {
-            long result;
-
-            if (decimal2Int64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            return result;
-        }
-
-	[CLSCompliant(false)]
-        public static explicit operator ulong(Decimal val) 
-        {
-            ulong result;
-
-            if (decimal2UInt64(ref val, out result) != 0)
-            {
-                throw new System.OverflowException();
-            }
-
-            return result;
-        }
+	public static explicit operator ulong (Decimal val) 
+	{
+		return u64 (val);
+	}
 
         public static implicit operator Decimal(byte val) 
         {

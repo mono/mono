@@ -1,3 +1,8 @@
+2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Fixed cast to integer types to truncate (not round) the
+	value.
+
 2004-06-07  Duncan Mak  <duncan@ximian.com>
 
 	* Exception.cs (Source): This can return null.
