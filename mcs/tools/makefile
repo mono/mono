@@ -1,19 +1,19 @@
 CSC=csc.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 
-windows: verifier.exe CorCompare.exe EnumCheck IFaceDisco.exe
+windows: linux
 
-linux: verifier.exe CorCompare.exe EnumCheck.exe IFaceDisco.exe update
+linux: verifier.exe EnumCheck.exe IFaceDisco.exe CorCompare.exe update
 
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
 
-CorCompare.exe: CorCompare.cs
-	$(CSC) $(CSCFLAGS) CorCompare.cs XMLUtil.cs
+CorCompare.exe:
+	(cd corcompare; make CorCompare.exe)
 
 update: CorCompare.exe
-	./CorCompare.exe -x cormissing.xml ../class/lib/corlib_cmp.dll
-	./CorCompare.exe -t ../class/lib/corlib_cmp.dll > ../../mono/doc/pending-classes.in
+	./corcompare/CorCompare.exe -x cormissing.xml ../class/lib/corlib_cmp.dll
+	./corcompare/CorCompare.exe -t ../class/lib/corlib_cmp.dll > ../../mono/doc/pending-classes.in
 
 EnumCheck: EnumCheck.exe
 
@@ -24,6 +24,7 @@ IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSC) $(CSCFLAGS) /out:IFaceDisco.exe IFaceDisco.cs XMLUtil.cs
 
 clean:
+	(cd corcompare; make clean)
 	rm -f *.exe *.pdb *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in

@@ -1,3 +1,9 @@
+2002-02-22  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile: move corcompare to it's own directory to hold multiple
+	class files.  still makes old corcompare for now.  will remove that
+	soon.
+
 2002-02-18  Duncan Mak  <duncan@ximian.com>
 
 	* serialize.cs: When appropriate, changed Type.GetType calls to
