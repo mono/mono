@@ -1,5 +1,8 @@
 2002-05-13  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (OPT_BOOL): new. opt. for boolean variables - we simply
+	store them as 32 bit integers.
+
 	* exception.c (arch_handle_exception): EIP now points to the call
 	instruction, not to the instruction after the call. This fixes the
 	bug reported by Linus Upson (tests/exception8.cs)
