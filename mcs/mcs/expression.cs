@@ -5179,6 +5179,7 @@ namespace CIR {
 			//
 			// FIXME: Replace with something that works around S.R.E failure
 			//
+#if FIXME
 			attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
 
 			if (attr != null)
@@ -5187,7 +5188,7 @@ namespace CIR {
 				
 				return dma.MemberName;
 			}
-
+#endif
 			return "Item";
 		}
 
@@ -5276,8 +5277,8 @@ namespace CIR {
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
 					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
-			
-			if (ilist.setters != null && ilist.setters.Count > 0){
+
+			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
 				set_arguments = (ArrayList) ea.Arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
 
