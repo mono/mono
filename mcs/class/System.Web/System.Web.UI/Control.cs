@@ -46,6 +46,9 @@ namespace System.Web.UI
 	[Designer ("System.Web.UI.Design.ControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[DesignerSerializer ("Microsoft.VSDesigner.WebForms.ControlCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
         public class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
+#if NET_2_0
+        , IUrlResolutionService, IControlBuilderAccessor, IControlDesignerAccessor, IExpressionsAccessor
+#endif
         {
 		private static readonly object DataBindingEvent = new object();
 		private static readonly object DisposedEvent = new object();
@@ -1011,12 +1014,47 @@ namespace System.Web.UI
 			control._namingContainer = null;
 		}
 
-		#if NET_2_0
+#if NET_2_0
 		protected string GetWebResourceUrl (string resourceName)
 		{
 			return Page.GetWebResourceUrl (GetType(), resourceName); 
 		} 
 
-		#endif
+        	string IUrlResolutionService.ResolveClientUrl (string url)
+        	{
+            		throw new NotImplementedException ();               
+        	}
+
+        	ControlBuilder IControlBuilderAccessor.ControlBuilder { 
+            		get {throw new NotImplementedException (); }
+        	}
+
+        	IDictionary IControlDesignerAccessor.GetDesignModeState ()
+        	{
+            		throw new NotImplementedException ();               
+        	}
+		
+        	void IControlDesignerAccessor.SetDesignModeState (IDictionary designData)
+        	{
+            		throw new NotImplementedException ();               
+        	}
+
+		void IControlDesignerAccessor.SetOwnerControl (Control control)
+        	{
+            		throw new NotImplementedException ();               
+        	}
+		
+		IDictionary IControlDesignerAccessor.UserData { 
+            		get { throw new NotImplementedException (); }
+        	}
+       
+     		ExpressionBindingCollection IExpressionsAccessor.Expressions { 
+            		get { throw new NotImplementedException (); } 
+        	}
+		
+        	bool IExpressionsAccessor.HasExpressions { 
+            		get { throw new NotImplementedException (); } 
+        	}
+#endif
         }
 }

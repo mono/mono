@@ -1,3 +1,9 @@
+2004-09-03 Sanjay Gupta <gsanjay@novell.com>
+	
+	* Control.cs: Added new interfaces implemented in .Net 2.0. 
+	* ExpressionBinding.cs: Added new class.
+	* ExpressionBindingCollection.cs: Added new class.
+	
 2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LiteralControl.cs: stylized. This control has EnableViewState disabled
