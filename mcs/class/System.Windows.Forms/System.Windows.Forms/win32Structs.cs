@@ -122,7 +122,7 @@ namespace System.Windows.Forms
 	#endregion
 
 	#region NMHDR
-	[StructLayout(LayoutKind.Sequential)]
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	internal struct NMHDR
 	{
 		internal IntPtr hwndFrom;
@@ -867,5 +867,14 @@ namespace System.Windows.Forms
 		//internal string        pszFile; 	// FIXME: cannot be marshaled
 		internal IntPtr        pszFile; 
 	} 
+
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	internal struct NMTREEVIEW {
+		internal NMHDR     hdr;
+		internal uint      action;
+		internal TVITEM    itemOld;
+		internal TVITEM    itemNew;
+		internal POINT     ptDrag;
+	}
 }
 

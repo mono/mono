@@ -24,6 +24,7 @@ namespace System.Windows.Forms {
 		int                imageIndex;
 		int                selectedImageIndex;
 		bool               checked_;
+		bool               expanded;
 
 		[MonoTODO]
 		public TreeNode()
@@ -35,6 +36,7 @@ namespace System.Windows.Forms {
 			imageIndex = 0;
 			selectedImageIndex = 0;
 			checked_ = false;
+			expanded = false;
 		}
 
 		internal TreeNode ( IntPtr handle, TreeView tree ) : this ( )
@@ -304,7 +306,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Collapse()
 		{
-			//FIXME:
+			collapseImpl ( TreeView );
 		}
 		[MonoTODO]
 		public void EndEdit(bool cancel)
@@ -316,15 +318,15 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 		}
-		[MonoTODO]
+
 		public void Expand()
 		{
-			//FIXME:
+			expandImpl ( TreeView );
 		}
-		[MonoTODO]
+
 		public void ExpandAll()
 		{
-			//FIXME:
+			expandAllImpl ( TreeView );
 		}
 		[MonoTODO]
 		public static TreeNode FromHandle(TreeView tree, IntPtr handle)
@@ -372,8 +374,8 @@ namespace System.Windows.Forms {
 		internal void makeTree ( IntPtr parent, TreeView treeView )
 		{
 			if ( handle == IntPtr.Zero )
-				handle = insertNode ( parent, treeView );
-
+				insertNode ( parent, treeView );
+			
 			foreach ( TreeNode node in Nodes )
 				node.makeTree ( handle, treeView );
 		}
@@ -388,15 +390,15 @@ namespace System.Windows.Forms {
 				parentHandle = TreeView.RootHandle;
 
 			if ( parentHandle != IntPtr.Zero ) {
-				handle = insertNode ( parentHandle, treeView );
+				insertNode ( parentHandle, treeView );
 			}
 		}
 
-		internal IntPtr insertNode (  IntPtr parent, TreeView treeView )
+		internal void insertNode (  IntPtr parent, TreeView treeView )
 		{
 			TreeView tree = ( treeView != null ) ? treeView : TreeView;
 			if ( tree == null )
-				return IntPtr.Zero;
+				return;
 
 			TVINSERTSTRUCT insStruct = tree.insStruct;
 			insStruct.hParent = parent;
@@ -406,10 +408,16 @@ namespace System.Windows.Forms {
 				insStruct.hInsertAfter = (IntPtr) intPtr;
 			}
 
-			insStruct.item.mask = (uint) TreeViewItemFlags.TVIF_TEXT;
+			insStruct.item.mask = (uint) ( TreeViewItemFlags.TVIF_TEXT | TreeViewItemFlags.TVIF_STATE );
 			insStruct.item.pszText = Text;
 			insStruct.item.cchTextMax = Text.Length;
-			return (IntPtr) Win32.SendMessage ( TreeView.Handle , TreeViewMessages.TVM_INSERTITEMA, 0, ref insStruct );
+
+			if ( expanded ) {
+				insStruct.item.state = (int) TreeViewItemState.TVIS_EXPANDED;
+				insStruct.item.stateMask = (int) TreeViewItemState.TVIS_EXPANDED;
+			}
+
+			handle = (IntPtr) Win32.SendMessage ( TreeView.Handle , TreeViewMessages.TVM_INSERTITEMA, 0, ref insStruct );
 		}
 
 		private static TreeNode FromHandle ( TreeNodeCollection nodes, IntPtr handle )
@@ -444,5 +452,34 @@ namespace System.Windows.Forms {
 		private bool Created {
 			get { return handle != IntPtr.Zero; }
 		}
+
+		private void expandImpl ( TreeView tree )
+		{
+			if ( tree != null && tree.IsHandleCreated && Created )
+				Win32.SendMessage ( tree.Handle, (int)TreeViewMessages.TVM_EXPAND, (int) TreeViewItemExpansion.TVE_EXPAND, Handle.ToInt32() );
+			else
+				expanded = true;
+		}
+
+		internal void expandAllImpl ( TreeView tree )
+		{
+			expandImpl ( tree );
+			foreach ( TreeNode node in Nodes )
+				node.expandAllImpl ( tree );
+		}
+
+		internal void collapseImpl ( TreeView tree )
+		{
+			if ( tree != null && tree.IsHandleCreated && Created )
+				Win32.SendMessage ( tree.Handle, (int)TreeViewMessages.TVM_EXPAND, (int) TreeViewItemExpansion.TVE_COLLAPSE, Handle.ToInt32() );
+		}
+
+		internal void collapseAllImpl ( TreeView tree )
+		{
+			collapseImpl ( tree );
+			foreach ( TreeNode node in Nodes )
+				node.collapseAllImpl ( tree );
+		}
+		
 	}
 }

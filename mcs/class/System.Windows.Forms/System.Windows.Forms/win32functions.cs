@@ -1188,6 +1188,15 @@ namespace System.Windows.Forms{
 			}
 			return format;
 		}
+
+		internal static TreeViewAction uint2TreeViewAction( uint action )
+		{
+			if ( ( action & (uint)TreeViewItemExpansion.TVE_EXPAND ) != 0 )
+				return TreeViewAction.Expand;
+			if ( ( action & (uint)TreeViewItemExpansion.TVE_COLLAPSE ) != 0 )
+				return TreeViewAction.Collapse;
+			return TreeViewAction.Unknown;
+		}
 		
 		internal static void DrawText(Graphics paintOn, string text, Font font, Color color, Rectangle rect, ContentAlignment alignment) {
 

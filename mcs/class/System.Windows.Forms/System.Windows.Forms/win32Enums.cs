@@ -1772,7 +1772,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeViewNotifications
-	public enum TreeViewNotifications {
+	public enum TreeViewNotifications : int {
 		TVN_FIRST               =  -400, 
 		TVN_SELCHANGINGA        =(TVN_FIRST-1),
 		TVN_SELCHANGINGW        =(TVN_FIRST-50),

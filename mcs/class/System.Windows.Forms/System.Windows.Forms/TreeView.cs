@@ -10,6 +10,8 @@
 //
 using System.Drawing;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+
 
 namespace System.Windows.Forms {
 
@@ -73,6 +75,8 @@ namespace System.Windows.Forms {
 			scrollable = true;
 			pathSeparator = @"\";
 			updateLocked = false;
+
+			SubClassWndProc_ = true;
 
 			dummyNode = new TreeNode( RootHandle, this );
 
@@ -398,25 +402,27 @@ namespace System.Windows.Forms {
 		{
 			updateLocked = true;
 		}
-		[MonoTODO]
+
 		public void CollapseAll()
 		{
-			//FIXME:
+			foreach ( TreeNode node in Nodes )
+				node.collapseAllImpl ( this );
 		}
 		[MonoTODO]
 		public void EndUpdate()
 		{
 			updateLocked = false;
 		}
-		[MonoTODO]
+
 		public void ExpandAll()
 		{
-			//FIXME:
+			foreach ( TreeNode node in Nodes )
+				node.expandAllImpl ( this );
 		}
-		[MonoTODO]
+
 		public TreeNode GetNodeAt(Point pt)
 		{
-			throw new NotImplementedException ();
+			return GetNodeAt ( pt.X, pt.Y );
 		}
 		[MonoTODO]
 		public TreeNode GetNodeAt(int x, int y)
@@ -525,9 +531,10 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		[MonoTODO]
-		protected virtual void OnAfterExpand(TreeViewEventArgs e)
+		protected virtual void OnAfterExpand( TreeViewEventArgs e )
 		{
-			//FIXME:
+			if ( AfterExpand != null )
+				AfterExpand ( this, e );
 		}
 		[MonoTODO]
 		protected virtual void OnAfterLabelEdit(NodeLabelEditEventArgs e)
@@ -550,9 +557,10 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		[MonoTODO]
-		protected virtual void OnBeforeExpand(TreeViewCancelEventArgs e)
+		protected virtual void OnBeforeExpand( TreeViewCancelEventArgs e )
 		{
-			//FIXME:
+			if ( BeforeExpand != null )
+				BeforeExpand ( this, e );
 		}
 		[MonoTODO]
 		protected virtual void OnBeforeLabelEdit(NodeLabelEditEventArgs e)
@@ -615,8 +623,41 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
-		{
-			CallControlWndProc( ref m );
+		{/*
+			switch ( m.Msg ) {
+			case Msg.WM_NOTIFY:
+				NMTREEVIEW nmhdr = (NMTREEVIEW)Marshal.PtrToStructure ( m.LParam, typeof ( NMTREEVIEW ) );
+
+				switch ( nmhdr.hdr.code ) {
+				case (int) TreeViewNotifications.TVN_ITEMEXPANDINGA: {
+					TreeNode node = TreeNode.FromHandle ( this, nmhdr.itemNew.hItem );
+					if ( node != null ) {
+						TreeViewCancelEventArgs args = new TreeViewCancelEventArgs ( node, false, Win32.uint2TreeViewAction ( nmhdr.action ) );
+						OnBeforeExpand ( args );
+						if ( args.Cancel )
+							m.Result = (IntPtr) 1;
+					}
+				}
+				break;
+				case (int) TreeViewNotifications.TVN_ITEMEXPANDEDA: {
+					TreeNode node = TreeNode.FromHandle ( this, nmhdr.itemNew.hItem );
+					if ( node != null ) {
+						TreeViewEventArgs args = new TreeViewEventArgs ( node, Win32.uint2TreeViewAction ( nmhdr.action ) );
+						OnAfterExpand ( args );
+					}
+				}
+				break;
+				default:
+					CallControlWndProc( ref m );
+				break;
+				}
+				
+			break;
+			default:
+				CallControlWndProc( ref m );
+			break;
+			}*/
+			CallControlWndProc ( ref m );
 		}
 
 		private void initCommonControlsLibrary ( ) {
