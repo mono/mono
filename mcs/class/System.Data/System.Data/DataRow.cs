@@ -219,6 +219,18 @@ namespace System.Data {
 				throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
 			}
 		}
+		
+		internal void SetOriginalValue (string columnName, object val)
+		{
+			int columnIndex = _table.Columns.IndexOf (columnName);
+			DataColumn column = _table.Columns[columnIndex];
+			_table.ChangingDataColumn (this, column, val);
+				
+			if (original == null) original = new object [_table.Columns.Count];
+			val = SetColumnValue (val, columnIndex);
+			original[columnIndex] = val;
+			rowState = DataRowState.Modified;
+		}
 
 		/// <summary>
 		/// Gets or sets all of the values for this row through an array.

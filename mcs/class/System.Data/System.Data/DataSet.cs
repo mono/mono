@@ -412,24 +412,46 @@ namespace System.Data {
 				return null;
 			
 			DataSet copySet = Clone ();
+			Hashtable addedRows = new Hashtable ();
+
 			IEnumerator tableEnumerator = Tables.GetEnumerator ();
 			DataTable origTable;
 			DataTable copyTable;
 			while (tableEnumerator.MoveNext ()) {
 				origTable = (DataTable)tableEnumerator.Current;
 				copyTable = copySet.Tables[origTable.TableName];
+				
+				// Look for relations that have this table as child
+				IEnumerator relations = origTable.ParentRelations.GetEnumerator ();
 
 				IEnumerator rowEnumerator = origTable.Rows.GetEnumerator ();
 				while (rowEnumerator.MoveNext ()) {
 					DataRow row = (DataRow)rowEnumerator.Current;
-					if (row.IsRowChanged (rowStates)) {
-						DataRow newRow = copyTable.NewRow ();
-						copyTable.Rows.Add (newRow);
-						row.CopyValuesToRow (newRow);
-					}
+					
+					if (row.IsRowChanged (rowStates))
+						AddChangedRow (addedRows, copySet, copyTable, relations, row);
 				}
 			}
 			return copySet;
+		}
+		
+		void AddChangedRow (Hashtable addedRows, DataSet copySet, DataTable copyTable, IEnumerator relations, DataRow row)
+		{
+			if (addedRows.ContainsKey (row)) return;
+			
+			relations.Reset ();
+			while (relations.MoveNext ()) {
+				DataRow parentRow = row.GetParentRow ((DataRelation) relations.Current);
+				if (parentRow == null || addedRows.ContainsKey (parentRow)) continue;
+				DataTable parentCopyTable = copySet.Tables [parentRow.Table.TableName];
+				AddChangedRow (addedRows, copySet, parentCopyTable, parentRow.Table.ParentRelations.GetEnumerator (), parentRow);
+			}
+		
+			DataRow newRow = copyTable.NewRow ();
+			copyTable.Rows.Add (newRow);
+			row.CopyValuesToRow (newRow);
+			newRow.XmlRowID = row.XmlRowID;
+			addedRows.Add (row,row);
 		}
 
 #if NET_1_2
@@ -1067,7 +1089,9 @@ namespace System.Data {
 			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
 
 			foreach (DataRow row in rows) {
-				if (!row.HasVersion(version))
+				if (!row.HasVersion(version) || 
+				   (mode == XmlWriteMode.DiffGram && row.RowState == DataRowState.Unchanged 
+				      && version == DataRowVersion.Original))
 					continue;
 				
 				// First check are all the rows null. If they are we just write empty element
@@ -1183,6 +1207,32 @@ namespace System.Data {
 					break;					
 			};
 		}
+		
+		internal void WriteIndividualTableContent (XmlWriter writer, DataTable table, XmlWriteMode mode)
+		{
+			((XmlTextWriter)writer).Formatting = Formatting.Indented;
+
+			if (mode == XmlWriteMode.DiffGram) {
+				SetTableRowsID (table);
+				WriteDiffGramElement (writer);
+			}
+			
+			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
+			
+			WriteTable (writer, table, mode, DataRowVersion.Default);
+			
+			if (mode == XmlWriteMode.DiffGram) {
+				writer.WriteEndElement (); //DataSet name
+				if (HasChanges (DataRowState.Modified | DataRowState.Deleted)) {
+
+					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);	
+					WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "before");
+					WriteTable (writer, beforeDS.Tables [table.TableName], mode, DataRowVersion.Original);
+					writer.WriteEndElement ();
+				}
+			}
+			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
+		}
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
@@ -1190,6 +1240,11 @@ namespace System.Data {
 		}
 		
 		XmlSchema BuildSchema ()
+		{
+			return BuildSchema (Tables, Relations);
+		}
+		
+		internal XmlSchema BuildSchema (DataTableCollection tables, DataRelationCollection relations)
 		{
 			string constraintPrefix = "";
 			XmlSchema schema = new XmlSchema ();
@@ -1234,7 +1289,7 @@ namespace System.Data {
 			choice.MaxOccursString = XmlConstants.Unbounded;
 			
 			//Write out schema for each table in order
-			foreach (DataTable table in Tables) {		
+			foreach (DataTable table in tables) {		
 				bool isTopLevel = true;
 				foreach (DataRelation rel in table.ParentRelations) {
 					if (rel.Nested) {
@@ -1248,26 +1303,26 @@ namespace System.Data {
 				}
 			}
 			
-			AddConstraintsToSchema (elem, constraintPrefix);
+			AddConstraintsToSchema (elem, constraintPrefix, tables, relations);
 			return schema;
 		}
 		
 		// Add all constraints in all tables to the schema.
-		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix) 
+		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, DataRelationCollection relations) 
 		{
 			// first add all unique constraints.
-			Hashtable uniqueNames = AddUniqueConstraints (elem, constraintPrefix);
+			Hashtable uniqueNames = AddUniqueConstraints (elem, constraintPrefix, tables);
 			// Add all foriegn key constraints.
-			AddForeignKeys (uniqueNames, elem, constraintPrefix);
+			AddForeignKeys (uniqueNames, elem, constraintPrefix, relations);
 		}
 		
 		// Add unique constaraints to the schema.
 		// return hashtable with the names of all XmlSchemaUnique elements we created.
-		private Hashtable AddUniqueConstraints (XmlSchemaElement elem, string constraintPrefix)
+		private Hashtable AddUniqueConstraints (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables)
 		{
 			XmlDocument doc = new XmlDocument();
 			Hashtable uniqueNames = new Hashtable();
-			foreach (DataTable table in Tables) {
+			foreach (DataTable table in tables) {
 				
 				foreach (Constraint constaint in table.Constraints) {
 					
@@ -1314,10 +1369,12 @@ namespace System.Data {
 		}
 		
 		// Add the foriegn keys to the schema.
-		private void AddForeignKeys (Hashtable uniqueNames, XmlSchemaElement elem, string constraintPrefix)
+		private void AddForeignKeys (Hashtable uniqueNames, XmlSchemaElement elem, string constraintPrefix, DataRelationCollection relations)
 		{
+			if (relations == null) return;
+			
 			XmlDocument doc = new XmlDocument();
-			foreach (DataRelation rel in Relations) {
+			foreach (DataRelation rel in relations) {
 				
 				ArrayList attrs = new ArrayList ();
 				XmlAttribute attrib;

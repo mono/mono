@@ -1,3 +1,26 @@
+2004-02-04 Lluis Sanchez Gual <lluis@ximian.com>
+
+	* DataRow.cs: Added SetOriginalValue(), which is used to set the original
+	  value of a column.
+	* DataRowCollection.cs: In InsertAt(), perform the correct checks and
+	  attach the row.
+	* DataSet.cs: Fixed method GetChanges(): Parent rows of modified rows must
+	  also be added to the dataset.
+	  In WriteTable(), do not write unchanged rows when writing the original
+	  version of the table.
+	  Added WriteIndividualTableContent(), for writing the contents of a single
+	  table.
+	  Changed BuildSchema and related methods, so it can generate a schema for
+	  any set of tables, not just the tables of the dataset (needed for 
+	  single datatable serialization).
+	* DataTable.cs: Implemented serialization constructor and GetObjectData method.
+	  Also implemented some ReadXmlSchema methods.
+	* XmlDiffLoader.cs: Read and process the xml document directly from XmlReader,
+	  instead of loading the full dataset in an XmlDocument. It is faster and
+	  saves memory. Also fixed several problems when generating the changes.
+	* XmlSchemaMapper.cs: Support reading schemas for single tables (used by
+	  table serialization).
+
 2004-02-02 Eran Domb <erand@mainsoft.com>
 
 	* DataSet.cs : Add indentation to the xml serialization only if we create the XmlWriter.

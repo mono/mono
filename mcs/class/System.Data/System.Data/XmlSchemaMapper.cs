@@ -27,7 +27,8 @@ namespace System.Data {
 	{	
 	        #region Fields
 
-	        private DataSet DSet;
+		private DataSet DSet;
+		private DataTable table;
 		enum ElementType {ELEMENT_UNDEFINED, ELEMENT_TABLE, ELEMENT_COLUMN};
 		private Hashtable TypeCollection = new Hashtable ();
 		private Hashtable ElementCollection = new Hashtable ();
@@ -36,11 +37,16 @@ namespace System.Data {
 
 		#region Constructors
 
-	        public XmlSchemaMapper (DataSet dataset)
+		public XmlSchemaMapper (DataSet dataset)
 		{
 			DSet = dataset;
 		}
 
+		public XmlSchemaMapper (DataTable datatable)
+		{
+			table = datatable;
+		}
+		
 		#endregion // Constructors
 
 		#region Public methods
@@ -48,7 +54,7 @@ namespace System.Data {
 		public void Read (XmlReader Reader)
 		{
 			XmlSchema Schema = XmlSchema.Read (Reader, new ValidationEventHandler (OnXmlSchemaValidation));
-			DSet.Namespace = Schema.TargetNamespace;
+			if (DSet != null) DSet.Namespace = Schema.TargetNamespace;
 
 			// read items
 			foreach (XmlSchemaObject Item in Schema.Items)
@@ -114,13 +120,15 @@ namespace System.Data {
 			DataTable Table2 = null;
 
 			if (Attributes.Contains (XmlConstants.IsDataSet)) { // DataSet -elemt
-				if (String.Compare (Attributes [XmlConstants.IsDataSet].ToString (), "true", true) == 0)
+			
+				if (String.Compare (Attributes [XmlConstants.IsDataSet].ToString (), "true", true) == 0 && DSet != null)
 					DSet.DataSetName = Element.Name;
 
 				if (Attributes.Contains (XmlConstants.Locale)) {
-					DSet.Locale = new CultureInfo((String)Attributes [XmlConstants.Locale]);
+					CultureInfo cinfo = new CultureInfo((String)Attributes [XmlConstants.Locale]);
+					if (DSet != null) DSet.Locale = cinfo;
+					else table.Locale = cinfo;
 				}
-
 			}
 			else if (Element.SchemaTypeName != null && Element.SchemaTypeName.Namespace != XmlConstants.SchemaNamespace 
 				 && Element.SchemaTypeName.Name != String.Empty) {
@@ -129,6 +137,8 @@ namespace System.Data {
 				// If type is not standard type
 				//
 
+				if (DSet == null) throw new InvalidOperationException ("Schema not valid for a DataTable");
+				
 				DataTable TempTable = new DataTable (Element.Name);
 				DSet.Tables.Add (TempTable);
 				
@@ -172,12 +182,20 @@ namespace System.Data {
 		private void ReadTable (XmlSchemaElement Element)
 		{
 			DataTable TempTable = null;
+			
 			// Add the table to the DataSet only if it is not already in there.
-			if (!DSet.Tables.Contains(Element.Name)) {
+			if (DSet != null) {
+				if (DSet.Tables.Contains (Element.Name)) return;
 				TempTable = new DataTable (Element.Name);
 				DSet.Tables.Add (TempTable);
-				ReadXmlSchemaType (Element.SchemaType, TempTable);
-			}			
+			}
+			else {
+				if (table.TableName.Length != 0) 
+					throw new InvalidOperationException ("More than one table is defined in this schema");
+				table.TableName = Element.Name;
+				TempTable = table;
+			}
+			ReadXmlSchemaType (Element.SchemaType, TempTable);
 		}
 
 		private void ReadColumn (XmlSchemaElement Element, DataTable Table)
@@ -324,8 +342,8 @@ namespace System.Data {
 				TableName = TableName.Substring (3);
 			
 			DataColumn [] Columns;
-			if (DSet.Tables.Contains (TableName)) {
-				DataTable Table = DSet.Tables [TableName];
+			DataTable Table = GetTable (TableName);
+			if (Table != null) {
 				Columns = new DataColumn [Unique.Fields.Count];
 				int i = 0;
 				foreach (XmlSchemaXPath Field in Unique.Fields) {
@@ -362,6 +380,8 @@ namespace System.Data {
 		[MonoTODO()]
 		private void ReadXmlSchemaKeyref (XmlSchemaKeyref KeyRef, XmlSchemaObjectCollection collection) {
 			
+			if (DSet == null) return;	// Ignore relations for table-only schemas
+			
 			string TableName = KeyRef.Selector.XPath;
 			int index = TableName.IndexOf(':');
 			if (index != -1)
@@ -369,8 +389,8 @@ namespace System.Data {
 			else if (TableName.StartsWith (".//"))
 				TableName = TableName.Substring (3);
 			DataColumn [] Columns;
-			if (DSet.Tables.Contains (TableName)) {
-				DataTable Table = DSet.Tables [TableName];
+			DataTable Table = GetTable (TableName);
+			if (Table != null) {
 				Columns = new DataColumn [KeyRef.Fields.Count];
 				int i = 0;
 				foreach (XmlSchemaXPath Field in KeyRef.Fields) {
@@ -421,9 +441,9 @@ namespace System.Data {
 							tableName = tableName.Substring (3);
 						
 						// find the table in the dataset.
-						if (DSet.Tables.Contains(tableName)){
+						DataTable table = GetTable (tableName);
+						if (table != null){
 							
-							DataTable table = DSet.Tables[tableName];
 							string constraintName = unique.Name;
 							// find if there is an attribute with the constraint name
 							// if not use the XmlSchemaUnique name.
@@ -578,6 +598,16 @@ namespace System.Data {
 					ReadXmlSchemaSequence (Particle as XmlSchemaSequence, Table);
 				}
 			}				
+		}
+		
+		DataTable GetTable (string name)
+		{
+			if (DSet != null)
+				return DSet.Tables [name];
+			else if (name == table.TableName) 
+				return table;
+			else
+				throw new InvalidOperationException ("Schema not valid for table '" + table.TableName + "'");
 		}
 		
 		#endregion // TypeReaderHelppers

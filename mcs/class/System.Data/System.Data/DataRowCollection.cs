@@ -238,10 +238,24 @@ namespace System.Data
 			if (pos < 0)
 				throw new IndexOutOfRangeException ("The row insert position " + pos + " is invalid.");
 				
+			if (row.Table != this.table)
+				throw new ArgumentException ("This row already belongs to another table.");
+
+			if (list.IndexOf(row) != -1)
+				throw new ArgumentException ("This row already belongs to this table.");
+			
+			if ((table.DataSet == null || table.DataSet.EnforceConstraints) && !table._duringDataLoad)
+				// we have to check that the new row doesn't colide with existing row
+				ValidateDataRowInternal(row);
+				
 			if (pos >= list.Count)
 				list.Add (row);
 			else
 				list.Insert (pos, row);
+				
+			row.HasParentCollection = true;
+			row.AttachRow ();
+			row.Table.ChangedDataRow (row, DataRowAction.Add);
 		}
 
 		/// <summary>

@@ -22,6 +22,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace System.Data {
 	//[Designer]
@@ -106,9 +107,16 @@ namespace System.Data {
 		protected DataTable (SerializationInfo info, StreamingContext context)
 			: this () 
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			string schema = info.GetString ("XmlSchema");
+			string data = info.GetString ("XmlDiffGram");
+			
+			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
+			XmlTextReader xtr = new XmlTextReader(new StringReader (schema));
+			mapper.Read (xtr);
+			
+			XmlDiffLoader loader = new XmlDiffLoader (this);
+			xtr = new XmlTextReader(new StringReader (data));
+			loader.Load (xtr);
 		}
 
 #if NET_1_2
@@ -796,9 +804,30 @@ namespace System.Data {
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure 		
 		/// </summary>
-		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
+			DataSet dset;
+			if (dataSet != null)
+				dset = dataSet;
+			else {
+				dset = new DataSet ("tmpDataSet");
+				dset.Tables.Add (this);
+			}
+			
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter tw = new XmlTextWriter (sw);
+			dset.WriteIndividualTableContent (tw, this, XmlWriteMode.DiffGram);
+			tw.Close ();
+			
+			StringWriter sw2 = new StringWriter ();
+			DataTableCollection tables = new DataTableCollection (dset);
+			tables.Add (this);
+			XmlSchema schema = dset.BuildSchema (tables, null);
+			schema.Write (sw2);
+			sw2.Close ();
+			
+			info.AddValue ("XmlSchema", sw2.ToString(), typeof(string));
+			info.AddValue ("XmlDiffGram", sw.ToString(), typeof(string));
 		}
 
 #if NET_1_2
@@ -913,6 +942,8 @@ namespace System.Data {
 		{
 			return new DataRow (builder);
 		}
+		
+		
 
 #if NET_1_2
 		[MonoTODO]
@@ -921,28 +952,29 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void ReadXmlSchema (Stream stream)
 		{
-			throw new NotImplementedException ();
+			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
+			mapper.Read (new XmlTextReader(stream));
 		}
 
-		[MonoTODO]
 		public void ReadXmlSchema (TextReader reader)
 		{
-			throw new NotImplementedException ();
+			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
+			mapper.Read (new XmlTextReader(reader));
 		}
 
-		[MonoTODO]
 		public void ReadXmlSchema (string fileName)
 		{
-			throw new NotImplementedException ();
+			StreamReader reader = new StreamReader (fileName);
+			ReadXmlSchema (reader);
+			reader.Close ();
 		}
 
-		[MonoTODO]
 		public void ReadXmlSchema (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
+			mapper.Read (reader);
 		}
 #endif
 
