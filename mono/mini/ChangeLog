@@ -1,4 +1,9 @@
 
+Fri May 23 16:08:54 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: better register restoring code and profiling
+	support for tail calls.
+
 Fri May 23 15:30:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, driver.c: prepare for leaf methods optimization.
