@@ -931,6 +931,7 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 
 full_type
 	: type
+	| ID { $$ = $1; }
 	| assembly_name name1 { $$ = String.Format ("[{0}]{1}", $1, $2); }
 	;
 

@@ -1,5 +1,9 @@
 2003-02-09 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: full names can be short names too (for members)
+
+2003-02-09 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Use full names for calling instructions
 
 2003-02-08 Jackson Harper <jackson@latitudegeo.com>
