@@ -1,3 +1,10 @@
+2002-01-15  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Make the runtime's idea of infinite timeouts coincide
+	with the class library's
+
+	Fix a particularly egregious bug in mono_thread_cleanup(). That
+	code was so utterly bogus it must have been written on a Monday.
 
 Mon Jan 14 17:01:03 CET 2002 Paolo Molaro <lupus@ximian.com>
 
