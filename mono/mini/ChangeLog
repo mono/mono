@@ -1,5 +1,12 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c: Save some parts of the class state to the AOT file and use it
+	to recompute that state when a class is initialized.
+
+	* mini.c: Install AOT hooks into the runtime.
+
+	* mini.h: Bump AOT file format version.
+	
 	* mini.c (mono_method_to_ir): Initialize pointer type locals correctly.
 	Fixes #72148.
 
