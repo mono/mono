@@ -3089,11 +3089,6 @@ namespace Mono.CSharp {
 		{
 			FindAccessors (ec.ContainerType);
 
-			if (setter != null && !IsAccessorAccessible (ec.ContainerType, setter) ||
-				getter != null && !IsAccessorAccessible (ec.ContainerType, getter)) {
-				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", PropertyInfo.Name);
-			}
-
 			is_static = getter != null ? getter.IsStatic : setter.IsStatic;
 		}
 
@@ -3156,6 +3151,11 @@ namespace Mono.CSharp {
 				return null;
 			} 
 
+			if (!IsAccessorAccessible (ec.ContainerType, getter)) {
+				Report.Error (122, loc, "'{0}.get' is inaccessible due to its protection level", PropertyInfo.Name);
+				return null;
+			}
+			
 			if (!InstanceResolve (ec))
 				return null;
 
@@ -3198,6 +3198,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (!IsAccessorAccessible (ec.ContainerType, setter)) {
+				Report.Error (122, loc, "'{0}.set' is inaccessible due to its protection level", PropertyInfo.Name);
+				return null;
+			}
+			
 			if (!InstanceResolve (ec))
 				return null;
 			

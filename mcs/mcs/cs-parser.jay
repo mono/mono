@@ -1220,7 +1220,7 @@ opt_set_accessor_declaration
 	;
 
 get_accessor_declaration
-	: opt_attributes GET
+	: opt_attributes opt_modifiers GET
 	  {
 		// If this is not the case, then current_local_parameters has already
 		// been set in indexer_declaration
@@ -1232,14 +1232,14 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
 	;
 
 set_accessor_declaration
-	: opt_attributes SET 
+	: opt_attributes opt_modifiers SET 
 	  {
 		Parameter [] args;
 		Parameter implicit_value_parameter = new Parameter (
@@ -1269,7 +1269,7 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1834,7 +1834,7 @@ add_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes ADD error {
@@ -1858,7 +1858,7 @@ remove_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes REMOVE error {
@@ -4160,9 +4160,9 @@ public class InterfaceAccessorInfo {
                                       Attributes get_attrs, Attributes set_attrs, Location get_loc, Location set_loc)
         {
 		if (has_get)
-			Get = new Accessor (null, get_attrs, get_loc);
+			Get = new Accessor (null, 0, get_attrs, get_loc);
 		if (has_set)
-			Set = new Accessor (null, set_attrs, set_loc);
+			Set = new Accessor (null, 0, set_attrs, set_loc);
         }
 }
 

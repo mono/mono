@@ -591,7 +591,7 @@ namespace Mono.CSharp {
 					new FieldExpression (current_field), Location),
 				Location));
 
-			Accessor getter = new Accessor (get_block, null, Location);
+			Accessor getter = new Accessor (get_block, 0, null, Location);
 
 			Property current = new Property (
 				this, iterator_type_expr, 0,

@@ -5356,15 +5356,23 @@ namespace Mono.CSharp {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
+		public const int AllowedModifiers = 
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE;
+		
 		public ToplevelBlock Block;
 		public Attributes Attributes;
 		public Location Location;
+		public int ModFlags;
 		
-		public Accessor (ToplevelBlock b, Attributes attrs, Location loc)
+		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Location loc)
 		{
 			Block = b;
 			Attributes = attrs;
 			Location = loc;
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, 0, loc);
 		}
 	}
 
@@ -5561,7 +5569,9 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define(TypeContainer container)
 			{
-				method_data = new MethodData (method, method.ParameterInfo, method.ModFlags, method.flags, this);
+				base.Define (container);
+				
+				method_data = new MethodData (method, method.ParameterInfo, ModFlags, flags, this);
 
 				if (!method_data.Define (container))
 					return null;
@@ -5628,7 +5638,10 @@ namespace Mono.CSharp {
 			{
 				if (container.EmitContext == null)
 					throw new InternalErrorException ("SetMethod.Define called too early");
-				method_data = new MethodData (method, GetParameterInfo (container.EmitContext), method.ModFlags, method.flags, this);
+					
+				base.Define (container);
+				
+				method_data = new MethodData (method, GetParameterInfo (container.EmitContext), ModFlags, flags, this);
 
 				if (!method_data.Define (container))
 					return null;
@@ -5665,6 +5678,7 @@ namespace Mono.CSharp {
 		public abstract class PropertyMethod: AbstractPropertyEventMethod
 		{
 			protected readonly MethodCore method;
+			protected MethodAttributes flags;
 
 			public PropertyMethod (MethodCore method, string prefix)
 				: base (method, prefix)
@@ -5677,6 +5691,12 @@ namespace Mono.CSharp {
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
+				this.ModFlags = accessor.ModFlags;
+
+				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
+					Report.FeatureIsNotStandardized (Location, "accessor modifiers");
+					Environment.Exit (1);
+				}
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -5697,7 +5717,24 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public abstract MethodBuilder Define (TypeContainer container);
+			public virtual MethodBuilder Define (TypeContainer container)
+			{
+				//
+				// Check for custom access modifier
+				//
+                                if (ModFlags == 0) {
+                                        ModFlags = method.ModFlags;
+                                        flags = method.flags;
+                                } else {
+					CheckModifiers (container, ModFlags);
+					ModFlags |= (method.ModFlags & (~Modifiers.Accessibility));
+					flags = Modifiers.MethodAttr (ModFlags);
+					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
+				}
+
+				return null;
+
+			}
 
 			public override Type[] ParameterTypes {
 				get {
@@ -5722,6 +5759,29 @@ namespace Mono.CSharp {
 			{
 				return String.Concat (tc.Name, '.', method.Name);
 			}
+			
+			void CheckModifiers (TypeContainer container, int modflags)
+                        {
+                                int flags = 0;
+                                int mflags = method.ModFlags & Modifiers.Accessibility;
+
+                                if ((mflags & Modifiers.PUBLIC) != 0) {
+                                        flags |= Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
+                                }
+                                else if ((mflags & Modifiers.PROTECTED) != 0) {
+                                        if ((mflags & Modifiers.INTERNAL) != 0)
+                                                flags |= Modifiers.PROTECTED | Modifiers.INTERNAL;
+
+                                        flags |= Modifiers.PRIVATE;
+                                }
+                                else if ((mflags & Modifiers.INTERNAL) != 0)
+                                        flags |= Modifiers.PRIVATE;
+
+                                if ((mflags == modflags) || (modflags & (~flags)) != 0)
+                                        Report.Error (273, Location, "{0}: accessibility modifier must be more restrictive than the property or indexer",
+							GetSignatureForError (container));
+                        }
+
 		}
 
 
@@ -5771,6 +5831,23 @@ namespace Mono.CSharp {
 		{
 			if (!base.DoDefine ())
 				return false;
+
+			//
+			// Accessors modifiers check
+			//
+			if (Get.ModFlags != 0 && Set.ModFlags != 0) {
+				Report.Error (274, Location, "'{0}': cannot specify accessibility modifiers for both accessors of the property or indexer.",
+						GetSignatureForError ());
+				return false;
+			}
+
+			if ((Get.IsDummy || Set.IsDummy)
+					&& (Get.ModFlags != 0 || Set.ModFlags != 0) && (ModFlags & Modifiers.OVERRIDE) == 0) {
+				Report.Error (276, Location, 
+					"'{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor.",
+					GetSignatureForError ());
+				return false;
+			}
 
 			if (MemberType.IsAbstract && MemberType.IsSealed) {
 				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
@@ -5829,6 +5906,7 @@ namespace Mono.CSharp {
  			parent_ret_type = parent_property.PropertyType;
 			MethodInfo get_accessor = parent_property.GetGetMethod (true);
 			MethodInfo set_accessor = parent_property.GetSetMethod (true);
+			MethodAttributes get_accessor_access, set_accessor_access;
 
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (Get != null && !Get.IsDummy && get_accessor == null) {
@@ -5842,7 +5920,36 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			return get_accessor != null ? get_accessor : set_accessor;
+			//
+			// Check parent accessors access
+			//
+			get_accessor_access = set_accessor_access = 0;
+			if ((ModFlags & Modifiers.NEW) == 0) {
+				if (get_accessor != null) {
+					MethodAttributes get_flags = Modifiers.MethodAttr (Get.ModFlags != 0 ? Get.ModFlags : ModFlags);
+					get_accessor_access = (get_accessor.Attributes & MethodAttributes.MemberAccessMask);
+
+					if (!Get.IsDummy && (get_accessor_access) != 
+						(get_flags & MethodAttributes.MemberAccessMask))
+						Report.Error (507, Location, "'{0}' can't change the access modifiers when overriding inherited member '{1}'",
+								GetSignatureForError (), TypeManager.GetFullNameSignature (parent_property));
+				}
+
+				if (set_accessor != null)  {
+					MethodAttributes set_flags = Modifiers.MethodAttr (Set.ModFlags != 0 ? Set.ModFlags : ModFlags);
+					set_accessor_access = (set_accessor.Attributes & MethodAttributes.MemberAccessMask);
+
+					if (!Set.IsDummy & (set_accessor_access) !=
+						(set_flags & MethodAttributes.MemberAccessMask))
+						Report.Error (507, Location, "'{0}' can't change the access modifiers when overriding inherited member '{1}'",
+								GetSignatureForError (container), TypeManager.GetFullNameSignature (parent_property));
+				}
+			}
+
+			//
+			// Get the less restrictive access
+			//
+			return get_accessor_access > set_accessor_access ? get_accessor : set_accessor;
   		}
 
 		public override void Emit ()
