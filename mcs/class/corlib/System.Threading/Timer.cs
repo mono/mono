@@ -94,10 +94,18 @@ namespace System.Threading
 					wait.Set ();
 				}
 			}
+			
+			public void Dispose ()
+			{
+				lock (this) {
+					disposed = true;
+					Abort ();
+				}
+			}
 
 			public void Start ()
 			{
-				while (start_event.WaitOne ()) {
+				while (start_event.WaitOne () && !disposed) {
 					aborted = false;
 
 					if (dueTime == Timeout.Infinite)
@@ -226,10 +234,11 @@ namespace System.Threading
 		public void Dispose ()
 		{
 			if (t != null && t.IsAlive) {
-				t.Abort ();
+				if (t != Thread.CurrentThread)
+					t.Abort ();
 				t = null;
 			}
-			runner.Abort ();
+			runner.Dispose ();
 			runner = null;
 			GC.SuppressFinalize (this);
 		}
