@@ -79,17 +79,14 @@ namespace System.Security.Cryptography.Xml
 				doc.AppendChild (doc.ImportNode (n, true));
 			xsl.Load (doc);
 
-			Stream stream = null;
+			MemoryStream stream = null;
 
 			stream = new MemoryStream ();
 			// only possible output: Stream
 			xsl.Transform (inputDoc, null, stream);
 
-			CryptoStream cs = null;
-			if (stream != null)
-				cs = new CryptoStream (stream, new FromBase64Transform (), CryptoStreamMode.Read);
-			// note: there is no default are other types won't throw an exception
-			return cs;
+			stream.Seek (0, SeekOrigin.Begin);
+			return stream;
 		}
 
 		public override object GetOutput (Type type) 
