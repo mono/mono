@@ -1,3 +1,9 @@
+2004-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs : Added CheckValidity() and ValueType.
+	  For SetTypedValue(), throw NotSupportedException instead of
+	  NotImplementedException.
+
 2004-12-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathNavigator.cs :added MoveToFollowing(), ReplaceSelf() and

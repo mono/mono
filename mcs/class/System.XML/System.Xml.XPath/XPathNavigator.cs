@@ -599,10 +599,22 @@ namespace System.Xml.XPath
 
 #if NET_2_0
 
-		[MonoTODO]
 		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler)
 		{
-			throw new NotImplementedException ();
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.NameTable = NameTable;
+			settings.SetSchemas (schemas);
+			settings.ValidationEventHandler += handler;
+			settings.ValidationType = ValidationType.Schema;
+			try {
+				XmlReader r = XmlReader.Create (
+					ReadSubtree (), settings);
+				while (!r.EOF)
+					r.Read ();
+			} catch (XmlSchemaValidationException) {
+				return false;
+			}
+			return true;
 		}
 
 		public virtual XPathNavigator CreateNavigator ()
@@ -1011,7 +1023,13 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public override Type ValueType {
-			get { throw new NotImplementedException (); }
+			get {
+				return SchemaInfo != null &&
+					SchemaInfo.SchemaType != null &&
+					SchemaInfo.SchemaType.Datatype != null ?
+					SchemaInfo.SchemaType.Datatype.ValueType
+					: null;
+			}
 		}
 
 		[MonoTODO]
@@ -1237,7 +1255,7 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual void SetTypedValue (object value)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		public virtual void SetValue (string value)
