@@ -1,3 +1,7 @@
+2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* arrow_up.gif, arrow_down.gif: Added menu resources.
+
 2004-12-02  Lluis Sanchez Gual <lluis@novell.com>
 
 	* callback.js: Added callback script.
