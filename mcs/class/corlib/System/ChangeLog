@@ -1,3 +1,7 @@
+2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs: Implement AsReadOnly.
+
 2005-01-13  Geoff Norton  <gnorton@customerdna.com>
 
 	* Guid.cs: Fix endian issues (use Mono.Security.BitConverterLE).  Fixes

@@ -1383,7 +1383,9 @@ namespace System
 		[MonoTODO]
 		public static IList<T> AsReadOnly<T> (T[] array)
 		{
-			throw new NotImplementedException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			return new ReadOnlyArray <T> (array);
 		}
 		
 #if FIXME
@@ -1421,4 +1423,131 @@ namespace System
 		}		
 #endif
 	}
+
+
+#if NET_2_0
+		
+	internal struct ReadOnlyArrayEnumerator <T> : IEnumerator <T> {
+		const int NOT_STARTED = -2;
+			
+		// this MUST be -1, because we depend on it in move next.
+		// we just decr the size, so, 0 - 1 == FINISHED
+		const int FINISHED = -1;
+			
+		ReadOnlyArray <T> array;
+		int idx;
+			
+		internal ReadOnlyArrayEnumerator (ReadOnlyArray<T> array)
+		{
+			this.array = array;
+			idx = NOT_STARTED;
+		}
+			
+		public void Dispose ()
+		{
+			idx = NOT_STARTED;
+		}
+			
+		public bool MoveNext ()
+		{
+			if (idx == NOT_STARTED)
+				idx = array.Count;
+				
+			return idx != FINISHED && -- idx != FINISHED;
+		}
+			
+		public T Current {
+			get {
+				if (idx < 0)
+					throw new InvalidOperationException ();
+					
+				return array [array.Count - 1 - idx];
+			}
+		}
+	}
+
+	internal class ReadOnlyArray <T> : ICollection <T>, IList <T>, IEnumerable <T>
+	{
+		T[] arr;
+
+		internal ReadOnlyArray (T[] array) {
+			arr = array;
+		}
+
+		// ICollection<T> interface
+		public int Count {
+			get {
+				return arr.Length;
+			}
+		}
+
+		public bool IsReadOnly {
+			get {
+				return true;
+			}
+		}
+
+		public void Add (T item) {
+			throw new NotSupportedException ("Collection is read-only");
+		}
+
+		public bool Remove (T item) {
+			throw new NotSupportedException ("Collection is read-only");
+		}
+
+		public void Clear () {
+			throw new NotSupportedException ("Collection is read-only");
+		}
+
+		public void CopyTo (T[] array, int index) {
+			arr.CopyTo (array, index);
+		}
+
+		public bool Contains (T item) {
+			int length = arr.Length;
+			for (int i = 0; i < length; i++) {
+				if (arr [i] == item)
+					return true;
+			}
+			return false;
+		}
+
+		// IList<T> interface
+		public T this [int index] {
+			get {
+				if (unchecked ((uint) index) >= unchecked ((uint) arr.Length))
+					throw new ArgumentOutOfRangeException ("index");
+				return arr [index];
+			} 
+			set {
+				if (unchecked ((uint) index) >= unchecked ((uint) arr.Length))
+					throw new ArgumentOutOfRangeException ("index");
+				arr [index] = value;
+			}
+		}
+
+		public void Insert (int index, T item) {
+			throw new NotSupportedException ("Collection is read-only");
+		}
+
+		public void RemoveAt (int index) {
+			throw new NotSupportedException ("Collection is read-only");
+		}
+
+		public int IndexOf (T item) {
+			int length = arr.Length;
+			for (int i = 0; i < length; i++) {
+				if (arr [i] == item)
+					return i;
+			}
+			return -1;
+		}
+
+		// IEnumerable<T> interface
+		public IEnumerator<T> GetEnumerator () {
+			return new ReadOnlyArrayEnumerator <T> (this);
+		}
+	}
+
+#endif
 }
