@@ -4,7 +4,9 @@
 	synchronized (if the original was).
 	* QueueTest.cs: Added case where we try to get Current after the last
 	MoveNext. Added case to ensure that MoveNext always return false 
-	(after the first time).
+	(after the first time). Test for synchronized clones.
+	* SortedListTest.cs: Added cases for synchronized capacity and testing
+	the interface from the internal enumerator.
 
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 

@@ -137,9 +137,16 @@ public class SortedListTest : Assertion {
         public void TestCapacity2 ()
         {
                 SortedList list = new SortedList ();
-                list.Capacity = 5;
 
+                list.Capacity = 5;
                 AssertEquals (5, list.Capacity);
+
+		SortedList sync = SortedList.Synchronized (list);
+                AssertEquals (5, sync.Capacity);
+
+		list.Capacity = 20;
+                AssertEquals (20, list.Capacity);
+                AssertEquals (20, sync.Capacity);
         }
 
         [Test]
@@ -472,12 +479,17 @@ public class SortedListTest : Assertion {
 	}
 
         [Test]
-	public void TestGetEnumerator() {
+	public void GetEnumerator ()
+	{
 		SortedList sl1 = DefaultSL();
 		IDictionaryEnumerator e = sl1.GetEnumerator();
 		AssertNotNull("sl.GetEnumerator: does not return enumerator", e);
 		AssertEquals("sl.GetEnumerator: enumerator not working(1)",e.MoveNext(),true);
 		AssertNotNull("sl.GetEnumerator: enumerator not working(2)",e.Current);
+
+		Assert ("ICloneable", (e is ICloneable));
+		Assert ("IDictionaryEnumerator", (e is ICloneable));
+		Assert ("IEnumerator", (e is ICloneable));
 	}
 
         [Test]

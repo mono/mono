@@ -444,13 +444,20 @@ namespace MonoTests.System.Collections {
 			}
 		}
 
-		public void TestSynchronizedClone() 
+		[Test]
+		public void SynchronizedClone () 
 		{
-			SetUp();
-			Queue q1sync =Queue.Synchronized(q1);
-			AssertEquals("q1sync.IsSyncronized", true, q1sync.IsSynchronized); 
+			Queue q1sync = Queue.Synchronized (q1);
+			Assert ("q1sync.IsSyncronized", q1sync.IsSynchronized); 
+			AssertEquals ("q1sync.Count", q1.Count, q1sync.Count);
+
+			Queue q1syncsync = Queue.Synchronized (q1sync);
+			Assert ("q1syncsync must be synchronized too", q1syncsync.IsSynchronized);
+			AssertEquals ("q1syncsync.Count", q1.Count, q1syncsync.Count);
+
 			Queue q1syncclone = (Queue) q1sync.Clone();
-			AssertEquals("clone must be synchronized too", true, q1syncclone.IsSynchronized);
+			Assert ("clone must be synchronized too", q1syncclone.IsSynchronized);
+			AssertEquals ("q1syncclone.Count", q1.Count, q1syncclone.Count);
 		}
 	}
 }
