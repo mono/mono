@@ -1,4 +1,13 @@
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* System.Windows.Forms.Design/DocumentDesigner.cs:
+	stubbed
+	* System.Windows.Forms.Design/ParentControlDesigner.cs:
+	stubbed
+	* System.Windows.Forms.Design/ScrollableControlDesigner.cs:
+	stubbed
+
+2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 	
 	* System.Windows.Forms.Design/ControlDesigner.cs:
 	stubbed
