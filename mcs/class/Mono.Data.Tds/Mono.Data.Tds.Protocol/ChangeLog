@@ -1,3 +1,6 @@
+2004-08-09 Sureshkumar T <tsureshkumar@novell.com>
+	* Tds70.cs - Prepare Method stored procedure handle read problem fixed.
+
 2004-04-22  Sebastien Pouliot <sebastien@ximian.com> 
 
 	* Tds70.cs: Updated to match changes in Mono.Security.dll.
