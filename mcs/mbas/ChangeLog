@@ -1,4 +1,7 @@
 2004-10-11 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: More improvement in 'IF' statement
+
+2004-10-11 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: If statement is enabled to parse
 		following type of statement
 		If <condition> Then <statement> else <statement>
