@@ -55,22 +55,19 @@ namespace IBM.Data.DB2
 					StringBuilder outConnectStr = new StringBuilder(60);  // TODO: ????
 					short numOutCharsReturned;
 
-					sqlRet = DB2CLIWrapper.SQLDriverConnect(dbHandle, IntPtr.Zero,
+					sqlRet = DB2CLIWrapper.SQLDriverConnect(dbHandle, IntPtr.Zero, 
 						settings.ConnectionString,	(short)settings.ConnectionString.Length,
-						outConnectStr,				(short)outConnectStr.Length, out numOutCharsReturned,
+						outConnectStr,				(short)outConnectStr.Length, out numOutCharsReturned, 
 						DB2Constants.SQL_DRIVER_NOPROMPT /*SQL_DRIVER_COMPLETE*/);
-
 				}
 				else
 				{
-					sqlRet = DB2CLIWrapper.SQLConnect(dbHandle,
-						settings.DatabaseAlias,	(short)settings.DatabaseAlias.Length,
+					sqlRet = DB2CLIWrapper.SQLConnect(dbHandle, 
+						settings.DatabaseAlias,	(short)settings.DatabaseAlias.Length, 
 						settings.UserName,		(short)settings.UserName.Length,
 						settings.PassWord,		(short)settings.PassWord.Length);
 					DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_DBC, dbHandle, "Unable to connect to the database.", connection);
 				}
-
-
 
 				if((settings.Pool == null) || (settings.Pool.databaseProductName == null))
 				{
@@ -78,11 +75,8 @@ namespace IBM.Data.DB2
 					short stringLength;
 					sqlRet = DB2CLIWrapper.SQLGetInfo(dbHandle, /*SQL_DBMS_NAME*/17, sb, (short)(sb.Capacity / 2), out stringLength);
 					new DB2ErrorCollection(DB2Constants.SQL_HANDLE_DBC, dbHandle).ToString();
-
-
-
 					if(sqlRet == 0)
-						databaseProductName = sb.ToString();  //(0, Math.Min(sb.Capacity, stringLength / 2));
+						databaseProductName = sb.ToString(0, Math.Min(sb.Capacity, stringLength / 2));
 					sqlRet = DB2CLIWrapper.SQLGetInfo(dbHandle, /*SQL_DBMS_VER*/18, sb, (short)(sb.Capacity / 2), out stringLength);
 					if(sqlRet == 0)
 					{

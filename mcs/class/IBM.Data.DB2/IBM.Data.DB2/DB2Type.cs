@@ -32,4 +32,39 @@ namespace IBM.Data.DB2
 		RowId = 25,
 		XmlReader = 26,
 	}
+	public class DB2TypeConverter
+	{
+		public static Type GetManagedType(int sql_type)
+		{
+			switch(sql_type)
+			{
+				case DB2Constants.SQL_INTEGER:
+					return typeof(int);
+				case DB2Constants.SQL_SMALLINT:
+					return typeof(short);
+				case DB2Constants.SQL_BIGINT:
+					return typeof(long);
+				case DB2Constants.SQL_DOUBLE:
+					return typeof(double);
+				case DB2Constants.SQL_DECIMAL:
+					return typeof(decimal);
+				case DB2Constants.SQL_DATETIME:
+				case DB2Constants.SQL_TYPE_DATE:
+				case DB2Constants.SQL_TYPE_TIMESTAMP:
+					return typeof(DateTime);
+				case DB2Constants.SQL_TYPE_TIME:
+					return typeof(TimeSpan);
+				case DB2Constants.SQL_CHAR:
+				case DB2Constants.SQL_VARCHAR:
+				case DB2Constants.SQL_TYPE_CLOB:
+					return typeof(string);
+				case DB2Constants.SQL_TYPE_BLOB:
+				case DB2Constants.SQL_TYPE_BINARY:
+				case DB2Constants.SQL_LONGVARBINARY:
+				case DB2Constants.SQL_VARBINARY:
+					return typeof(byte[]);
+			}
+			throw new NotImplementedException("Unknown SQL type " + sql_type);
+		}
+	}
 }

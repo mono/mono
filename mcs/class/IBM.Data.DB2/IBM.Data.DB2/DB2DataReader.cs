@@ -28,7 +28,7 @@ namespace IBM.Data.DB2
 		internal DB2Command db2Comm; 
 		internal IntPtr hwndStmt;
 		private int recordsAffected;
-		private bool hasData;
+		private bool hasData = false;
 		private int fieldCount = -1;
 		private CommandBehavior behavior;
 		private bool hasRows;
@@ -259,7 +259,6 @@ namespace IBM.Data.DB2
 				baseschemaname = Marshal.PtrToStringUni(ptrCharacterAttribute);
 				DataRow r = _schemaTable.NewRow();
 				
-				
 				r["ColumnName"] = colname;
 				r["ColumnOrdinal"] = i - 1;
 				r["ColumnSize"] = colsize;
@@ -279,9 +278,7 @@ namespace IBM.Data.DB2
 				r["BaseTableName"] = basetablename;
 				r["BaseColumnName"] = basecolumnname;
 				
-				
 				_schemaTable.Rows.Add(r);
-				
 
 				if(!differentTablesUsed)
 				{

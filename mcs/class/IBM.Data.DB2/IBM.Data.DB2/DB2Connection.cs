@@ -9,7 +9,7 @@ namespace IBM.Data.DB2
 {
 
 	
-	public sealed class DB2Connection : System.ComponentModel.Component, IDbConnection, ICloneable
+	public class DB2Connection : System.ComponentModel.Component, IDbConnection, ICloneable
 	{
 		#region private data members
 
@@ -25,7 +25,9 @@ namespace IBM.Data.DB2
 		#region Constructors
 
 		public DB2Connection()
-		{	
+		{
+			connectionTimeout = 15;
+			
 		}
 		
 		public DB2Connection(string conString)
@@ -84,6 +86,7 @@ namespace IBM.Data.DB2
 		{
 			get
 			{   
+				//if ((long)dbHandle.ToPointer() == DB2Constants.SQL_NULL_HANDLE)
 				if (openConnection == null)
 					return ConnectionState.Closed;
 				return ConnectionState.Open;
@@ -246,6 +249,7 @@ namespace IBM.Data.DB2
 		#endregion
 		
 		#region Open
+
 		unsafe public void Open()
 		{
 			if(disposed)

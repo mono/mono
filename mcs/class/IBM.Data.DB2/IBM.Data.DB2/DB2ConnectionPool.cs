@@ -83,7 +83,6 @@ namespace IBM.Data.DB2
 				connectionsUsableOffset = 0;
 
 				connection = new DB2OpenConnection(connectionSettings, db2Conn);
-
 				connectionsOpen++;
 				connectionsInUse++;
 			}

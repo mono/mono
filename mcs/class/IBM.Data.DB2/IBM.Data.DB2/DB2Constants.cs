@@ -57,6 +57,12 @@ namespace IBM.Data.DB2
 		public const int  SQL_ATTR_MAX_ROWS		= 1;
 		public const int  SQL_ATTR_DEFERRED_PREPARE = 1277;
 
+		/*Used for batch operations*/
+		public const int  SQL_ATTR_PARAMSET_SIZE = 22;
+		public const int  SQL_ATTR_PARAM_STATUS_PTR = 20;
+		public const int  SQL_ATTR_PARAMS_PROCESSED_PTR = 21;
+		public const int SQL_ATTR_PARAM_BIND_TYPE	    = 18;
+
 		public const int  SQL_IS_POINTER        = -4;
 		public const int  SQL_IS_UINTEGER       = -5;
 		public const int  SQL_IS_INTEGER        = -6;
@@ -140,6 +146,8 @@ namespace IBM.Data.DB2
 		public const int  SQL_NO_NULLS			= 0;
 		public const int  SQL_NULLABLE			= 1;
 		public const int  SQL_NULLABLE_UNKNOWN	= 2;
+
+		public const int SQL_PARAM_BIND_BY_COLUMN    = 0;
 
 		/* Defines for SQLBindParameter and SQLProcedureColumns */
 		public const int SQL_PARAM_TYPE_UNKNOWN = 0;

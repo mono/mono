@@ -17,6 +17,7 @@ namespace IBM.Data.DB2
 		private DB2Transaction db2Trans;
 		private int commandTimeout = 30;
 		private bool prepared = false;
+		private bool binded = false;
 		private IntPtr hwndStmt = IntPtr.Zero;  //Our statement handle
 		private DB2ParameterCollection parameters = new DB2ParameterCollection();
 		private bool disposed = false;
@@ -34,13 +35,12 @@ namespace IBM.Data.DB2
 		{
 			hwndStmt = IntPtr.Zero;
 		}
-		public DB2Command(string commandStr)
+		public DB2Command(string commandStr):this()
 		{
 			commandText = commandStr;
-			hwndStmt = IntPtr.Zero;
 			
 		}
-		public DB2Command(string commandStr, DB2Connection con) :this()
+		public DB2Command(string commandStr, DB2Connection con) : this()
 		{
 			db2Conn = con;
 			commandText = commandStr;
@@ -396,6 +396,13 @@ namespace IBM.Data.DB2
 		{
 			short sqlRet;
 
+			if(prepared && binded)
+			{
+				sqlRet = DB2CLIWrapper.SQLExecute(hwndStmt);
+				DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_STMT, hwndStmt, "SQLExecute error.", db2Conn);
+				return;
+			}
+
 			if((db2Conn == null) || (db2Conn.State != ConnectionState.Open))
 				throw new InvalidOperationException("Prepare needs an open connection");
 			if((refDataReader != null) &&
@@ -418,7 +425,6 @@ namespace IBM.Data.DB2
 			}
 			if(previousBehavior != behavior)
 			{
-				
 				if(((previousBehavior ^ behavior) & CommandBehavior.SchemaOnly) != 0)
 				{
 					sqlRet = DB2CLIWrapper.SQLSetStmtAttr(hwndStmt, DB2Constants.SQL_ATTR_DEFERRED_PREPARE, 
@@ -428,7 +434,6 @@ namespace IBM.Data.DB2
 
 					previousBehavior = (previousBehavior & ~CommandBehavior.SchemaOnly) | (behavior & CommandBehavior.SchemaOnly);
 				}
-				
 				if(((previousBehavior ^ behavior) & CommandBehavior.SingleRow) != 0)
 				{
 					sqlRet = DB2CLIWrapper.SQLSetStmtAttr(hwndStmt, DB2Constants.SQL_ATTR_MAX_ROWS, 
@@ -451,17 +456,12 @@ namespace IBM.Data.DB2
 				DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_DBC, db2Conn.DBHandle, "Error setting isolation level.", db2Conn);
 			}
 
-			
+
 			if ((commandText == null) ||(commandText.Length == 0))
 				throw new InvalidOperationException("Command string is empty");
 				
 			if(CommandType.StoredProcedure == commandType && !commandText.StartsWith("CALL "))
-				commandText = "CALL " + commandText;
-			
-			//            if(!prepared)
-			//            {
-			//                Prepare();
-			//            }
+				commandText = "CALL " + commandText + " ()";
 			
 			if((behavior & CommandBehavior.SchemaOnly) != 0)
 			{
@@ -477,35 +477,9 @@ namespace IBM.Data.DB2
 					Marshal.FreeHGlobal(statementParametersMemory);
 					statementParametersMemory = IntPtr.Zero;
 				}
+
+				BindParams();
 				
-				if(parameters.Count > 0)
-				{
-					statementParametersMemorySize = 0;
-					for(int i = 0; i < parameters.Count; i++) 
-					{
-						DB2Parameter param = parameters[i];
-						param.CalculateRequiredmemory();
-						statementParametersMemorySize += param.requiredMemory + 8;
-					}
-					statementParametersMemory = Marshal.AllocHGlobal(statementParametersMemorySize);
-					int offset = 0;
-					
-					for(int i = 0; i < parameters.Count; i++) 
-					{
-						DB2Parameter param = parameters[i];
-						//param.internalBuffer = new IntPtr(statementParametersMemory.ToInt64() + offset);
-						int memSize = statementParametersMemory.ToInt32() + offset;
-						param.internalBuffer = Marshal.AllocHGlobal(memSize);
-						offset += param.requiredMemory;
-						//param.internalLengthBuffer = new IntPtr(statementParametersMemory.ToInt32() + offset);
-						param.internalLengthBuffer = Marshal.AllocHGlobal(4);
-						offset += 8;
-						
-						sqlRet = param.Bind(this.hwndStmt, (short)(i + 1));
-						DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_STMT, hwndStmt, "Error binding parameter in DB2Command: ", db2Conn);
-					}
-					
-				}
 				if (prepared)
 				{
 					sqlRet = DB2CLIWrapper.SQLExecute(hwndStmt);
@@ -602,11 +576,48 @@ namespace IBM.Data.DB2
 			IntPtr numParams = IntPtr.Zero;
 			sqlRet = DB2CLIWrapper.SQLPrepare(hwndStmt, commandText, commandText.Length);
 			DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_STMT, hwndStmt, "SQLPrepare error.", db2Conn);
-
+			
+			
 			statementOpen = true;
 			prepared=true;
 		}
 		#endregion
+
+		private string AddCallParam( string _cmString)
+		{
+			if(_cmString.IndexOf("()") != -1)
+			{
+				return _cmString.Replace("()","(?)");
+			}
+			return _cmString.Replace(")", ",?)");
+		}
+
+		private void BindParams()
+		{
+			if(parameters.Count > 0)
+			{
+				statementParametersMemorySize = 0;
+				int offset = 0;
+				short sqlRet;
+				for(int i = 0; i < parameters.Count; i++) 
+				{
+					if(commandType == CommandType.StoredProcedure)
+					{
+						commandText = AddCallParam(commandText);
+					}
+					DB2Parameter param = parameters[i];
+					param.CalculateRequiredmemory();
+					statementParametersMemorySize += param.requiredMemory + 8;
+					param.internalBuffer = Marshal.AllocHGlobal(param.requiredMemory);
+					offset += param.requiredMemory;
+					param.internalLengthBuffer = Marshal.AllocHGlobal(4);
+					Marshal.WriteInt32(param.internalLengthBuffer, param.requiredMemory);
+					sqlRet = param.Bind(this.hwndStmt, (short)(i + 1));
+					DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_STMT, hwndStmt, "Error binding parameter in DB2Command: ", db2Conn);
+				}
+				binded = true;
+			}
+		}
 
 		#region ICloneable Members
 
