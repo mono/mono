@@ -9,6 +9,9 @@
 
 #if NET_1_2
 
+using System.Collections;
+using System.Data.Mapping;
+
 namespace System.Data.ObjectSpaces
 {
         [MonoTODO]

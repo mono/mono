@@ -7,9 +7,11 @@
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
 //
 
-using System.Collections;
-
 #if NET_1_2
+
+using System.Collections;
+using System.Data;
+using System.Data.MappingSchema;
 
 namespace System.Data.ObjectSpaces
 {

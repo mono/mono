@@ -9,6 +9,8 @@
 
 #if NET_1_2
 
+using System.Data.MappingSchema;
+
 namespace System.Data.ObjectSpaces
 {
         public class DbObjectReader : ObjectReader
@@ -30,13 +32,13 @@ namespace System.Data.ObjectSpaces
                 }
                 
                 [MonoTODO]
-                public bool NextResult (Type type, MappingSchema mappingSchema)
+                public bool NextResult (Type type, MappingSchema map)
                 {
                         return false;       
                 }
 
                 [MonoTODO]
-                public bool NextResult (Type type, MappingSchema mappingSchema, ObjectContext context)
+                public bool NextResult (Type type, MappingSchema map, ObjectContext context)
                 {
                         return false;       
                 }

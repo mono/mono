@@ -7,9 +7,9 @@
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
 //
 
-using System.Runtime.Serialization;
-
 #if NET_1_2
+
+using System.Runtime.Serialization;
 
 namespace System.Data.ObjectSpaces
 {
