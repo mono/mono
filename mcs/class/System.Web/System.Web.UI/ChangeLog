@@ -1,3 +1,8 @@
+2003-08-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleHandlerFactory.cs: implemented GetHandler.
+	* WebHandlerParser.cs: new file that parses .ashx files.
+
 2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* PersistenceModeAttribute.cs: Fixed wrong AttributeUsage

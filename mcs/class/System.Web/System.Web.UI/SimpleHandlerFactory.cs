@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 
 using System.Web;
@@ -13,17 +13,19 @@ namespace System.Web.UI
 {
 	class SimpleHandlerFactory : IHttpHandlerFactory
 	{
-		[MonoTODO]
 		public virtual IHttpHandler GetHandler (HttpContext context,
 							string requestType,
 							string virtualPath,
 							string path)
 		{
-			// This should handle *.ashx files
-			throw new NotImplementedException ();
+			Type type = WebHandlerParser.GetCompiledType (context, virtualPath, path);
+			if (!(typeof (IHttpHandler).IsAssignableFrom (type)))
+				throw new HttpException ("Type does not implement IHttpHandler: " + type.FullName);
+
+			return Activator.CreateInstance (type) as IHttpHandler;
 		}
 
-		public virtual void ReleaseHandler (System.Web.IHttpHandler handler)
+		public virtual void ReleaseHandler (IHttpHandler handler)
 		{
 		}
 	}

@@ -237,6 +237,7 @@ System.Web.UI/UserControlControlBuilder.cs
 System.Web.UI/Utils.cs
 System.Web.UI/ValidationPropertyAttribute.cs
 System.Web.UI/ValidatorCollection.cs
+System.Web.UI/WebHandlerParser.cs
 System.Web.UI/WebServiceParser.cs
 System.Web.UI/ObjectTagBuilder.cs
 System.Web.UI/LosFormatter.cs

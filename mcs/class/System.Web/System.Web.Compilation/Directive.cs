@@ -94,6 +94,11 @@ namespace System.Web.Compilation
 			directivesHash.Add ("WEBSERVICE", valid_attributes);
 
 			valid_attributes = new Hashtable (provider, comparer);
+			// same attributes as webservice
+			foreach (string att in webservice_atts) valid_attributes.Add (att, null);
+			directivesHash.Add ("WEBHANDLER", valid_attributes);
+
+			valid_attributes = new Hashtable (provider, comparer);
 			foreach (string att in application_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("APPLICATION", valid_attributes);
 		}
