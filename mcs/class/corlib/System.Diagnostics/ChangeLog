@@ -1,3 +1,7 @@
+2002-06-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* StackFrame.cs: impl. constructors using a new internal call.
+
 2002-05-01  Duncan Mak  <duncan@ximian.com>
 
 	* DebuggableAttribute.cs: Added missing AttributeUsage attribute.

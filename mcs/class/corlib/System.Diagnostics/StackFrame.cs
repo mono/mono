@@ -3,19 +3,21 @@
 //
 // Author:
 //      Alexander Klyubin (klyubin@aqris.com)
+//      Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001
 //
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System.Diagnostics {
         /// <summary>
         ///   Stack frame.
-        ///   TODO: more information.
         /// </summary>
-		[Serializable]
+
+	[Serializable]
         public class StackFrame {
                 /// <value>
                 ///   Constant returned when the native or IL offset is unknown.
@@ -28,6 +30,12 @@ namespace System.Diagnostics {
                 /// </value>
                 private int ilOffset = OFFSET_UNKNOWN;
                 
+                /// <value>
+                ///   Offset from the start of the native code for the method
+                ///   being executed.
+                /// </value>
+                private int nativeOffset = OFFSET_UNKNOWN;
+
                 /// <value>
                 ///   Method associated with this stack frame.
                 /// </value>
@@ -47,14 +55,20 @@ namespace System.Diagnostics {
                 ///   Column number.
                 /// </value>
                 private int columnNumber;
-                                
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool get_frame_info (int skip, bool needFileInfo, out MethodBase method,
+						   out int iloffset, out int native_offset,
+						   out string file, out int line, out int column);
 
                 /// <summary>
                 ///   Initializes a new StackFrame object corresponding to the
                 ///   active stack frame.
                 /// </summary>
                 public StackFrame() {
-                        throw new NotImplementedException();
+			get_frame_info (2, false, out methodBase, out ilOffset,
+					out nativeOffset, out fileName, out lineNumber,
+					out columnNumber);			
                 }
                 
                 /// <summary>
@@ -65,9 +79,9 @@ namespace System.Diagnostics {
                 ///   TODO:
                 /// </param>
                 public StackFrame(bool needFileInfo) : this() {
-                        if (needFileInfo) {
-                                PopulateFileInfo();
-                        }
+			get_frame_info (2, needFileInfo, out methodBase, out ilOffset,
+					out nativeOffset, out fileName, out lineNumber,
+					out columnNumber);			
                 }
                 
                 /// <summary>
@@ -78,7 +92,9 @@ namespace System.Diagnostics {
                 ///   The number of frames up the stack to skip.
                 /// </param>
                 public StackFrame(int skipFrames) {
-                        throw new NotImplementedException();
+			get_frame_info (skipFrames + 2, false, out methodBase, out ilOffset,
+					out nativeOffset, out fileName, out lineNumber,
+					out columnNumber);			
                 }
                 
                 /// <summary>
@@ -91,11 +107,10 @@ namespace System.Diagnostics {
                 /// <param name="needFileInfo">
                 ///   TODO:
                 /// </param>
-                public StackFrame(int skipFrames, bool needFileInfo)
-                : this(skipFrames) {
-                        if (needFileInfo) {
-                                PopulateFileInfo();
-                        }
+                public StackFrame(int skipFrames, bool needFileInfo) {
+			get_frame_info (skipFrames + 2, needFileInfo, out methodBase, out ilOffset,
+					out nativeOffset, out fileName, out lineNumber,
+					out columnNumber);
                 }
                 
                 /// <summary>
@@ -213,7 +228,7 @@ namespace System.Diagnostics {
                 /// </returns>
                 public virtual int GetNativeOffset()
                 {
-                        throw new NotImplementedException();
+                        return nativeOffset;                        
                 }
                 
                 /// <summary>
@@ -302,15 +317,5 @@ namespace System.Diagnostics {
                                 return obj1.Equals(obj2);
                         }
                 }
-                
-                /// <summary>
-                ///   Populates file information for this frame.
-                /// </summary>
-		[MonoTODO]
-                private void PopulateFileInfo() {
-                        // TODO: Populate this.fileName, this.lineNumber and
-                        // this.columnNumber
-                        throw new NotImplementedException();
-                }
-        }
+         }
 }
