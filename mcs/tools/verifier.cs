@@ -145,6 +145,9 @@ namespace Mono.Verifier {
 
 	//--- Method collections
 
+	/// <summary>
+	/// Abstract collection of class' methods.
+	/// </summary>
 	public abstract class MethodCollectionBase : MemberCollection {
 
 
@@ -176,6 +179,9 @@ namespace Mono.Verifier {
 
 
 
+	/// <summary>
+	/// Collection of public instance methods of a class.
+	/// </summary>
 	public class PublicMethods : MethodCollectionBase {
 
 		public PublicMethods (Type type)
@@ -184,6 +190,9 @@ namespace Mono.Verifier {
 		}
 	}
 
+	/// <summary>
+	/// Collection of public static methods of a class.
+	/// </summary>
 	public class PublicStaticMethods : MethodCollectionBase {
 
 		public PublicStaticMethods (Type type)
@@ -192,6 +201,9 @@ namespace Mono.Verifier {
 		}
 	}
 
+	/// <summary>
+	/// Collection of non-public instance methods of a class.
+	/// </summary>
 	public class NonPublicMethods : MethodCollectionBase {
 
 		public NonPublicMethods (Type type)
@@ -200,6 +212,9 @@ namespace Mono.Verifier {
 		}
 	}
 
+	/// <summary>
+	/// Collection of non-public static methods of a class.
+	/// </summary>
 	public class NonPublicStaticMethods : MethodCollectionBase {
 
 		public NonPublicStaticMethods (Type type)
@@ -812,6 +827,12 @@ namespace Mono.Verifier {
 
 			foreach (DictionaryEntry c in asm1.classes) {
 				string className = c.Key as string;
+
+				if (Verifier.Excluded.Contains (className)) {
+					Verifier.Log.Write ("info", String.Format ("Ignoring class {0}.", className), ImportanceLevel.MEDIUM);
+					continue;
+				}
+
 				Verifier.Log.Write ("class", className);
 
 				ClassStuff class1 = c.Value as ClassStuff;
@@ -1225,8 +1246,39 @@ namespace Mono.Verifier {
 
 			if (!res) {
 				// TODO: convert flags into descriptive message.
-				Verifier.Log.Write ("error", "Types mismatch (0x" + eqFlags.ToString("X") + ").", ImportanceLevel.MEDIUM);
+				Verifier.Log.Write ("error", "Types mismatch (0x" + eqFlags.ToString("X") + ").", ImportanceLevel.HIGH);
 			}
+
+
+			bool ok;
+
+			ok = (type1.Attributes & TypeAttributes.BeforeFieldInit) ==
+			     (type2.Attributes & TypeAttributes.BeforeFieldInit);
+			if (!ok) {
+				Verifier.Log.Write ("error", "Types attributes mismatch: BeforeFieldInit.", ImportanceLevel.HIGH);
+			}
+			res &= ok;
+
+			ok = (type1.Attributes & TypeAttributes.ExplicitLayout) ==
+			     (type2.Attributes & TypeAttributes.ExplicitLayout);
+			if (!ok) {
+				Verifier.Log.Write ("error", "Types attributes mismatch: ExplicitLayout.", ImportanceLevel.HIGH);
+			}
+			res &= ok;
+
+			ok = (type1.Attributes & TypeAttributes.SequentialLayout) ==
+			     (type2.Attributes & TypeAttributes.SequentialLayout);
+			if (!ok) {
+				Verifier.Log.Write ("error", "Types attributes mismatch: SequentialLayout.", ImportanceLevel.HIGH);
+			}
+			res &= ok;
+
+			ok = (type1.Attributes & TypeAttributes.Serializable) ==
+			     (type2.Attributes & TypeAttributes.Serializable);
+			if (!ok) {
+				Verifier.Log.Write ("error", "Types attributes mismatch: Serializable.", ImportanceLevel.HIGH);
+			}
+			res &= ok;
 
 			return res;
 		}
@@ -1456,10 +1508,18 @@ namespace Mono.Verifier {
 
 	public class Verifier {
 
-		public static Log log = new Log ();
+		public static readonly Log log = new Log ();
 		public static bool stopOnError = false;
 		public static bool ignoreMissingTypes = true;
 		public static bool checkOptionalFlags = true;
+
+		private static readonly IList excluded;
+
+		static Verifier ()
+		{
+			excluded = new ArrayList ();
+			excluded.Add ("<PrivateImplementationDetails>");
+		}
 
 
 		private Verifier ()
@@ -1472,9 +1532,16 @@ namespace Mono.Verifier {
 			}
 		}
 
+		public static IList Excluded {
+			get {
+				return excluded;
+			}
+		}
 
 
-		public static void Main (String [] args) {
+
+		public static void Main (String [] args)
+		{
 			if (args.Length < 2) {
 				Console.WriteLine ("Usage: verifier assembly1 assembly2");
 			} else {
