@@ -1,3 +1,7 @@
+2005-01-24  Joerg Rosenkranz (joergr@voelcker.com)
+
+	* TypeDescriptorTests.cs: Added tests for bug #71444
+
 2005-01-19  Nick Drochak  <ndrochak@ieee.org>
 
 	* TypeDescriptorTests.cs: Add another test in GetComponentName() to check

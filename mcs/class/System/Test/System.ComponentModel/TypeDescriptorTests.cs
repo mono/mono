@@ -109,6 +109,25 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 	
+	public interface ITestInterface
+	{
+		void TestFunction ();
+	}
+	
+	public class TestClass
+	{
+		public TestClass()
+		{}
+			
+		void TestFunction ()
+		{}
+	}
+	
+	public struct TestStruct
+	{
+		public int TestVal;
+	}
+	
 	[TestFixture]
 	public class TypeDescriptorTests: Assertion
 	{
@@ -204,6 +223,16 @@ namespace MonoTests.System.ComponentModel
 			AssertEquals (typeof(GuidConverter), TypeDescriptor.GetConverter (typeof (Guid)).GetType());
 			AssertEquals (typeof(TimeSpanConverter), TypeDescriptor.GetConverter (typeof (TimeSpan)).GetType());
 			AssertEquals (typeof(CollectionConverter), TypeDescriptor.GetConverter (typeof (ICollection)).GetType());
+
+			// Tests from bug #71444
+			AssertEquals (typeof(CollectionConverter), TypeDescriptor.GetConverter (typeof (IDictionary)).GetType());
+			AssertEquals (typeof(ReferenceConverter), TypeDescriptor.GetConverter (typeof (ITestInterface)).GetType());
+			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (typeof (TestClass)).GetType());
+			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (typeof (TestStruct)).GetType());
+			
+			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (new TestClass ()).GetType());
+			AssertEquals (typeof(TypeConverter), TypeDescriptor.GetConverter (new TestStruct ()).GetType());
+			AssertEquals (typeof(CollectionConverter), TypeDescriptor.GetConverter (new Hashtable ()).GetType());
 		}
 		
 		[Test]
