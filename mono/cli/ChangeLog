@@ -1,3 +1,7 @@
+Sat Aug 18 12:42:26 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h: load also the methods when loading a class.
+
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.c (mono_object_clone): impl.

@@ -1,3 +1,17 @@
+
+Sat Aug 18 12:43:38 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c, interp.h: added support code to create exceptions.
+	Changed interncal calling convnetion over to MonoInvocation, to support
+	exceptions, walking the stack back and forward and passing the 'this'
+	pointer separately (remove the cludges required before to pass this on the
+	stack). Use alloca heavily for both local vars and a copy of the incoming 
+	arguments. Init local vars to zero.
+	Simplify stackval_from_data() and stackval_to_data() to only take a pointer
+	instead of pointer + offset.
+	Implement a few exceptions-related opcodes and the code to run finally, fault and
+	catch blocks as well as a stack trace if no handler is found.
+	
 2001-08-16  Alex Graveley  <alex@ximian.com>
 
 	* Makefile.am (mono_int_LDADD): Link with ../../libffi/libffi.a

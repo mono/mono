@@ -1,3 +1,8 @@
+
+Sat Aug 18 12:40:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: fix a couple of buglets and add x86_regp_emit().
+
 Wed Aug 8 15:30:05 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h, x86/test.c: added x86 code emitter with
