@@ -161,9 +161,17 @@ namespace System.Web.UI.WebControls
 				return null;
 
 			ArrayList retVal = new ArrayList (columns.Count);
-			foreach (IStateManager current in columns)
-				retVal.Add (current.SaveViewState ());
+			bool found = false;
+			foreach (IStateManager current in columns) {
+				object o = current.SaveViewState ();
+				retVal.Add (o);
+				if (o != null)
+					found = true;
+			}
 
+			if (!found)
+				return null;
+			
 			return retVal;
 		}
 

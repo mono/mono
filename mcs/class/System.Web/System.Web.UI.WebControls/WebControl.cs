@@ -426,18 +426,14 @@ namespace System.Web.UI.WebControls
 			if (savedState == null)
 				return;
 
-			Triplet saved = (Triplet) savedState;
+			Pair saved = (Pair) savedState;
 			base.LoadViewState (saved.First);
-			if (saved.Second != null ||
-			    ViewState [System.Web.UI.WebControls.Style.selectionBitString] != null)
-				ControlStyle.LoadViewState (saved.Second);
+			
+			if (ControlStyleCreated || ViewState [System.Web.UI.WebControls.Style.selectionBitString] != null)
+				ControlStyle.LoadViewState (null);
 
 			if (attributeState != null)
-				attributeState.LoadViewState (saved.Third);
-
-			object e = ViewState ["Enabled"];
-			if (e != null)
-				enabled = (bool) e;
+				attributeState.LoadViewState (saved.Second);
 		}
 
 		protected override void Render(HtmlTextWriter writer)
@@ -454,17 +450,18 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState()
 		{
-			object controlView = null;
 			if (ControlStyleCreated)
-				controlView = ControlStyle.SaveViewState ();
-
-			ViewState ["Enabled"] = enabled;
+				ControlStyle.SaveViewState ();
+			
 			object baseView = base.SaveViewState ();
 			object attrView = null;
 			if (attributeState != null)
 				attrView = attributeState.SaveViewState ();
+			
+			if (baseView == null && attrView == null)
+				return null;
 
-			return new Triplet (baseView, controlView, attrView);
+			return new Pair (baseView, attrView);
 		}
 
 		protected override void TrackViewState()

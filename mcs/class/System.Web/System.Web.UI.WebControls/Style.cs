@@ -451,7 +451,7 @@ namespace System.Web.UI.WebControls
 		protected internal virtual object SaveViewState ()
 		{
 			if (viewState != null) {
-				if (marked)
+				if (marked && IsSet (MARKED))
 					ViewState [selectionBitString] = selectionBits;
 
 				if (selfStateBag)

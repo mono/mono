@@ -780,8 +780,10 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState()
 		{
-			ViewState["_CalendarSelectedDates"] = (SelectedDates.Count > 0 ? selectedDates.GetDateList () : null);
-			object[] states = new object[11];
+			if (SelectedDates.Count > 0)
+				ViewState["_CalendarSelectedDates"] = selectedDates.GetDateList ();
+			
+			object[] states = new object [10];
 			states[0] = base.SaveViewState();
 			states[1] = (dayHeaderStyle == null ? null : dayHeaderStyle.SaveViewState());
 			states[2] = (dayStyle == null ? null : dayStyle.SaveViewState());

@@ -696,7 +696,12 @@ namespace System.Web.UI.WebControls
 			states[6] = (alternatingItemStyle == null ? null : alternatingItemStyle.SaveViewState());
 			states[7] = (selectedItemStyle == null ? null : selectedItemStyle.SaveViewState());
 			states[8] = (editItemStyle == null ? null : editItemStyle.SaveViewState());
-			return states;
+			
+			for (int i = 0; i < states.Length; i++) {
+				if (states [i] != null)
+					return states;
+			}
+			return null;
 		}
 
 		protected override void TrackViewState()

@@ -1,7 +1,29 @@
+2003-11-22 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Calendar.cs (SaveViewState):
+	    - We were allocating a 11 item array, we only used 10 items,
+	      so only allocate 10.
+	    - We only need to save the selected dates if there are any.
+	* DataGrid.cs (SaveViewState):
+	* DataGridColumn.cs (SaveViewState):
+	* DataGridColumnCollection.cs (SaveViewState):
+	    - Only return the array if there is anything in it
+	* Style.cs (SaveViewState):
+	    - Only save the bits if there were changes.
+	* WebControl.cs (SaveViewState), (LoadViewState):
+	    - Don't save Enabled into the viewstate here, we already
+	      do it in the property. This just caused *EVERY* control
+	      to have a non-null state, taking up lots of extra room
+	      in the ViewState.
+	    - The style will always be created with this control's
+	      viewstate, so the style will always return null for the
+	      viewstate. As such, we do not need to store it. We can
+	      also reduce the triplet to a pair because of this.
+
 2003-11-22  Jackson Harper <jackson@ximian.com>
 
 	* ValidationSummary.cs: Fix number of messages and message array computation.
-	
+
 2003-11-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Xml.cs: Corrected attribute

@@ -360,7 +360,12 @@ namespace System.Web.UI.WebControls
 			states[1] = (footerStyle == null ? null : footerStyle.SaveViewState());
 			states[2] = (headerStyle == null ? null : headerStyle.SaveViewState());
 			states[3] = (itemStyle == null ? null : itemStyle.SaveViewState());
-			return states;
+			
+			for (int i = 0; i < states.Length; i++) {
+				if (states [i] != null)
+					return states;
+			}
+			return null;
 		}
 
 		protected virtual void LoadViewState(object savedState)
