@@ -1,4 +1,4 @@
-// Compiler options: -r:System.XML
+// Compiler options: -r:System.Xml
 
 abstract class MethodWrapper
 {
