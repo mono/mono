@@ -18,7 +18,7 @@ namespace Mono.Xml.Xsl
 	/// <summary>
 	/// Emitetr, which emits result tree according to "text" output method.
 	/// </summary>
-	public class TextEmitter : Emitter 
+	internal class TextEmitter : Emitter 
 	{
 		TextWriter writer;
 			

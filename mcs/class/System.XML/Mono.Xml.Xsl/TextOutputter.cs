@@ -15,7 +15,7 @@ namespace Mono.Xml.Xsl {
 	/// <summary>
 	/// Outputter implementation for text output method.
 	/// </summary>
-	public class TextOutputter : Outputter {
+	internal class TextOutputter : Outputter {
 		private TextWriter _writer;
 		//Current output depth
 		private int _depth;		

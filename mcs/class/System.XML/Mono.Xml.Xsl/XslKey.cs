@@ -20,60 +20,140 @@ using System.Xml.Xsl;
 
 using QName = System.Xml.XmlQualifiedName;
 
-namespace Mono.Xml.Xsl {
-	public class XslKey {
+namespace Mono.Xml.Xsl
+{
+	public class XslKey
+	{
 		QName name;
-		XPathExpression usePattern;
-		XPathExpression matchPattern;
+		CompiledExpression usePattern;
+		CompiledExpression matchPattern;
+		Hashtable map;
+		Hashtable mappedDocuments;
 
 		public XslKey (Compiler c)
 		{
 			this.name = c.ParseQNameAttribute ("name");
-			
+
+			c.KeyCompilationMode = true;
 			usePattern = c.CompileExpression (c.GetAttribute ("use"));
 			if (usePattern == null)
 				usePattern = c.CompileExpression (".");
 
 			c.AssertAttribute ("match");
-			this.matchPattern = c.CompileExpression (c.GetAttribute ("match"));
+			string matchString = c.GetAttribute ("match");
+			this.matchPattern = c.CompileExpression (matchString);
+			c.KeyCompilationMode = false;
 		}
 
 		public QName Name { get { return name; }}
-		public XPathExpression UsePattern { get { return usePattern; }}
-		public XPathExpression MatchPattern { get { return matchPattern; }}
-		
+		internal CompiledExpression UsePattern { get { return usePattern; }}
+		internal CompiledExpression MatchPattern { get { return matchPattern; }}
+
+		internal void ClearKeyTable ()
+		{
+			if (map != null) {
+				map.Clear ();
+				map = null;
+			}
+			if (mappedDocuments != null) {
+				mappedDocuments.Clear ();
+				mappedDocuments = null;
+			}
+		}
+
+		internal void CollectTable (XPathNavigator doc)
+		{
+			XPathNavigator nav = doc.Clone ();
+			nav.MoveToRoot ();
+//			if (MatchPattern.ExpressionNode.IsAbsolutePath)
+//				CollectAbsoluteMatchNodes (nav);
+//			else
+				CollectRelativeMatchNodes (nav);
+		}
+
+		private void CollectAbsoluteMatchNodes (XPathNavigator nav)
+		{
+			XPathNodeIterator iter = nav.Select (MatchPattern);
+			while (iter.MoveNext ())
+				CollectIndex (iter.Current);
+		}
+
+		private void CollectRelativeMatchNodes (XPathNavigator nav)
+		{
+			do {
+				if (nav.NodeType != XPathNodeType.Root)
+					while (!nav.MoveToNext ())
+						if (!nav.MoveToParent ())
+							// finished
+							return;
+				do {
+					do {
+						if (nav.Matches (MatchPattern))
+							CollectIndex (nav);
+					} while (nav.MoveToFirstChild ());
+				} while (nav.MoveToNext ());
+			} while (nav.MoveToParent ());
+		}
+
+		private void CollectIndex (XPathNavigator nav)
+		{
+			XPathNavigator target = nav.Clone ();
+			XPathNodeIterator iter;
+			switch (UsePattern.ReturnType) {
+			case XPathResultType.NodeSet:
+				iter = nav.Select (UsePattern);
+				while (iter.MoveNext ())
+					AddIndex (iter.Current.Value, target);
+				break;
+			case XPathResultType.Any:
+				object o = nav.Evaluate (UsePattern);
+				iter = o as XPathNodeIterator;
+				if (iter != null) {
+					while (iter.MoveNext ())
+						AddIndex (iter.Current.Value, target);
+				}
+				else
+					AddIndex (nav.EvaluateString (UsePattern, null, null), target);
+				break;
+			default:
+				string key = nav.EvaluateString (UsePattern, null, null);
+				AddIndex (key, target);
+				break;
+			}
+		}
+
+		private void AddIndex (string key, XPathNavigator target)
+		{
+			ArrayList al = map [key] as ArrayList;
+			if (al == null) {
+				al = new ArrayList ();
+				map [key] = al;
+			}
+			al.Add (target);
+		}
+
 		public bool Matches (XPathNavigator nav, XmlNamespaceManager nsmgr, string value)
 		{
-			MatchPattern.SetContext (nsmgr);
-			UsePattern.SetContext (nsmgr);
-			if (!nav.Matches (MatchPattern)) 
-				return false;
-//			Debug.WriteLine ("? " + nav.Name);
-			switch (UsePattern.ReturnType)
-			{
-			case XPathResultType.NodeSet:
-				XPathNodeIterator matches = nav.Select (UsePattern);
-				while (matches.MoveNext ()) {
-					if (matches.Current.Value == value)
-						return true;
-				}
-				
-				return false;
-			case XPathResultType.Any:
-				
-				object o = nav.Evaluate (UsePattern);
-				if (o is XPathNodeIterator) {
-					XPathNodeIterator it = (XPathNodeIterator)o;
-					while (it.MoveNext ())
-						if (it.Current.Value == value)
-							return true;
-					return false;
-				} else {
-					return value == XPathFunctions.ToString (o);
-				}
-			default:
-				return value == nav.EvaluateString (UsePattern, null, null);
+			if (map == null) {
+				mappedDocuments = new Hashtable ();
+				map = new Hashtable ();
 			}
+			if (mappedDocuments [nav.BaseURI] == null) {
+				mappedDocuments.Add (nav.BaseURI, nav.BaseURI);
+				MatchPattern.SetContext (nsmgr);
+				UsePattern.SetContext (nsmgr);
+				CollectTable (nav);
+				MatchPattern.SetContext (null);
+				UsePattern.SetContext (null);
+			}
+			
+			ArrayList al = map [value] as ArrayList;
+			if (al == null)
+				return false;
+			for (int i = 0; i < al.Count; i++)
+				if (((XPathNavigator) al [i]).IsSamePosition (nav))
+					return true;
+			return false;
 		}
 	}
 }

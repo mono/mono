@@ -23,7 +23,7 @@ namespace Mono.Xml.Xsl
 	/// Implements attributes dublicate checking, nemaspace stuff and
 	/// choosing of right Emitter implementation.
 	/// </summary>
-	public class GenericOutputter : Outputter {	
+	internal class GenericOutputter : Outputter {	
 		private Hashtable _outputs;
 		//Current xsl:output 
 		private XslOutput _currentOutput;
@@ -109,7 +109,7 @@ namespace Mono.Xml.Xsl
 		{
 			XslOutput xslOutput = (XslOutput)_outputs [String.Empty];
 			switch (xslOutput.Method) {
-				case OutputMethod.Unknown: //TODO: handle xml vs html
+				case OutputMethod.Unknown:
 					if (localName != null && localName.ToLower () == "html" && ns == String.Empty)
 						goto case OutputMethod.HTML;
 					goto case OutputMethod.XML;
@@ -126,7 +126,7 @@ namespace Mono.Xml.Xsl
 					_emitter = new TextEmitter (pendingTextWriter);
 					break;
 				case OutputMethod.Custom:
-					throw new NotImplementedException ("Custom output method is not implemented yet.");
+					throw new NotSupportedException ("Custom output method is not supported in this version.");
 			}
 			pendingTextWriter = null;
 		}

@@ -102,7 +102,8 @@ namespace Mono.Xml.Xsl {
 
 		XslStylesheet rootStyle;
 		Hashtable outputs = new Hashtable ();
-				
+		bool keyCompilationMode;	
+	
 		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{
 			this.parser = new XPathParser (this);
@@ -135,7 +136,12 @@ namespace Mono.Xml.Xsl {
 			get { return msScripts; }
 		}
 
-		public Evidence Evidence {
+		public bool KeyCompilationMode {
+			get { return keyCompilationMode; }
+			set { keyCompilationMode = value; }
+		}
+
+		internal Evidence Evidence {
 			get { return evidence; }
 		}
 		
@@ -304,11 +310,11 @@ namespace Mono.Xml.Xsl {
 		}
 
 		internal XPathParser parser;
-		public XPathExpression CompileExpression (string expression)
+		internal CompiledExpression CompileExpression (string expression)
 		{
 			if (expression == null || expression == "") return null;
 
-			XPathExpression e = new CompiledExpression (parser.Compile (expression));
+			CompiledExpression e = new CompiledExpression (parser.Compile (expression), true);
 			
 			exprStore.AddExpression (e, this);
 			
@@ -489,7 +495,10 @@ namespace Mono.Xml.Xsl {
 				case "function-available": return new XsltFunctionAvailable (args, this);
 				case "generate-id": return new XsltGenerateId (args);
 				case "format-number": return new XsltFormatNumber (args, this);
-				case "key": return new XsltKey (args, this);
+				case "key":
+					if (KeyCompilationMode)
+						throw new XsltCompileException ("Cannot use key() function inside key definition.", null, this.Input);
+					return new XsltKey (args, this);
 				case "document": return new XsltDocument (args, this);
 			}
 			
@@ -708,7 +717,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 	
-	public class XslNameUtil
+	internal class XslNameUtil
 	{
 		public static QName [] FromListString (string names, XPathNavigator current)
 		{
@@ -771,7 +780,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 	
-	public class XPathNavigatorNsm : XmlNamespaceManager {
+	internal class XPathNavigatorNsm : XmlNamespaceManager {
 		XPathNavigator nsScope;
 		
 		public XPathNavigatorNsm (XPathNavigator n) : base () {

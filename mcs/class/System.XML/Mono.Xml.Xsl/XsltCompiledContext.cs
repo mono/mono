@@ -147,7 +147,11 @@ namespace Mono.Xml.Xsl {
 			return p.CompiledStyle.ResolveVariable (q);
 		}
 
-		public override int CompareDocument (string baseUri, string nextBaseUri) { throw new NotImplementedException (); }
+		public override int CompareDocument (string baseUri, string nextBaseUri) 
+		{
+			// it is implementation specific
+			return baseUri.GetHashCode ().CompareTo (nextBaseUri.GetHashCode ());
+		}
 
 		public override bool PreserveWhitespace (XPathNavigator nav) 
 		{

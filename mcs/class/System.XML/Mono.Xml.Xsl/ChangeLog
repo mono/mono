@@ -1,3 +1,18 @@
+2004-02-16 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslKey.cs : Now it collects key and matching nodes at the first
+	  evaluation time. After that, we can just get them from the table.
+	* Compiler.cs : Added KeyCompilationMode. It is used to prevent
+	  prohibited key() usage in "match" and "use" attributes in xsl:key.
+	  Modified accessibility of some classes.
+	* GenericOutputter.cs,
+	  HtmlEmitter.cs,
+	  TextEmitter.cs,
+	  TextOutputter.cs,
+	  XmlWriterEmitter.cs : made classes internal.
+	* XslOutput.cs : support line info for exception.
+	* XsltCompiledContext.cs : implemented CompareDocument() - so easily.
+
 2004-02-13 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsltCompiledContext.cs : fixed the length of context info array.

@@ -19,7 +19,7 @@ using System.Xml;
 
 namespace Mono.Xml.Xsl
 {
-	public class HtmlEmitter : Emitter
+	internal class HtmlEmitter : Emitter
 	{
 		TextWriter writer;
 		Stack elementNameStack;

@@ -146,23 +146,27 @@ namespace Mono.Xml.Xsl
 
 			if (att != String.Empty) {
 				switch (att) {
-					case "xml":
-						method = OutputMethod.XML;
-						break;
-					case "html":
-						method = OutputMethod.HTML;
-						break;
-					case "text":
-						method = OutputMethod.Text;
-						break;
-					default:
-						method = OutputMethod.Custom;
-						customMethod = XslNameUtil.FromString (att, nav);
-						if (customMethod.Namespace == String.Empty)
-							//TODO: how to get current line number and position?
-							throw new XsltCompileException(new ArgumentException("Invalid output method value: '" + att + 
-							"'. It must be either 'xml' or 'html' or 'text' or QName."), nav.BaseURI, 1, 1);
-						break;
+				case "xml":
+					method = OutputMethod.XML;
+					break;
+				case "html":
+					method = OutputMethod.HTML;
+					break;
+				case "text":
+					method = OutputMethod.Text;
+					break;
+				default:
+					method = OutputMethod.Custom;
+					customMethod = XslNameUtil.FromString (att, nav);
+					if (customMethod.Namespace == String.Empty) {
+						IXmlLineInfo li = nav as IXmlLineInfo;
+						throw new XsltCompileException (new ArgumentException ("Invalid output method value: '" + att + 
+							"'. It must be either 'xml' or 'html' or 'text' or QName."),
+							nav.BaseURI,
+							li != null ? li.LineNumber : 0,
+							li != null ? li.LinePosition : 0);
+					}
+					break;
 				}
 			}
 
