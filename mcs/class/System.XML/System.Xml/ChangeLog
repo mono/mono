@@ -1,3 +1,8 @@
+2004-06-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlInputStream.cs : Fixed encoding detection detected in xslt
+	  standalone tests. Removed extraneous code.
+
 2004-06-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Character range check is always done. It is only

@@ -109,15 +109,14 @@ namespace System.Xml
 				// try to get encoding name from XMLDecl.
 				if (bufLength >= 5 && Encoding.ASCII.GetString (buffer, 1, 4) == "?xml") {
 					bufPos += 4;
-					int loop = 0;
 					c = SkipWhitespace ();
 
 					// version. It is optional here.
 					if (c == 'v') {
-						while (loop++ >= 0 && c >= 0) {
-							ReadByteSpecial ();
+						while (c >= 0) {
 							c = ReadByteSpecial ();
 							if (c == '0') { // 0 of 1.0
+								ReadByteSpecial ();
 								break;
 							}
 						}
@@ -126,7 +125,7 @@ namespace System.Xml
 
 					if (c == 'e') {
 						int remaining = bufLength - bufPos;
-						if (remaining >= 7 && Encoding.ASCII.GetString(buffer, 0, 7) == "ncoding") {
+						if (remaining >= 7 && Encoding.ASCII.GetString(buffer, bufPos, 7) == "ncoding") {
 							bufPos += 7;
 							c = SkipWhitespace();
 							if (c != '=')
@@ -134,7 +133,7 @@ namespace System.Xml
 							c = SkipWhitespace ();
 							int quoteChar = c;
 							StringBuilder sb = new StringBuilder ();
-							while (loop++ >= 0) {
+							while (true) {
 								c = ReadByteSpecial ();
 								if (c == quoteChar)
 									break;
@@ -176,11 +175,10 @@ namespace System.Xml
 		}
 
 		// skips whitespace and returns misc char that was read from stream
-		private int SkipWhitespace ()	// ms may be null
+		private int SkipWhitespace ()
 		{
-			int loop = 0;
 			int c;
-			while (loop++ >= 0) { // defends infinite loop (expecting overflow)
+			while (true) {
 				c = ReadByteSpecial ();
 				switch (c) {
 				case '\r': goto case ' ';
