@@ -1,3 +1,22 @@
+
+Wed Nov 14 16:31:19 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* AppDomain.cs: rename dummy interface _AppDomain to AppDomain_Intf.
+	* Array.cs: fix Array.Copy.
+	* AssemblyLoadEventArgs.cs: rename field.
+	* CLSCompliantAttribute.cs: use correct name for the class.
+	* Char.cs: fix IsLetter.
+	* Console.cs, DateTime.cs, Decimal.cs, IConvertible.cs, Math.cs,
+	SByte.cs, UInt16.cs, UInt32.cs, UInt64.cs, UIntPtr.cs: CLSCompliant updates.
+	* Convert.cs: CLSCompliant updates, add ChangeType() methods.
+	* Delegate.cs: renamed target field to m_target.
+	* Enum.cs: added missing methods.
+	* MonoType.cs: add a constructor and some needed properties.
+	* Object.cs: implement GetType().
+	* String.cs: CLSCompliant updates. Fixes everywhere to remove the
+	ending 0 char.
+	* Type.cs: add missing methods/properties.
+
 2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
 
 	* AttributeUseage.cs: Should define AttributeUsageAttribute.

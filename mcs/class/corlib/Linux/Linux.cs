@@ -104,7 +104,7 @@ namespace System.PAL
 		{
 			get
 			{
-				return new char[] { '/', '\0' };
+				return new char[] { '\0' };
 			}
 		}
 

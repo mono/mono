@@ -19,8 +19,8 @@ namespace System.Security.Cryptography {
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  16;
 		private const int HASH_SIZE_BITS   = 128;
-		protected uint[] _H;
-		protected uint count;
+		[CLSCompliant(false)] protected uint[] _H;
+		[CLSCompliant(false)] protected uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
 	

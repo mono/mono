@@ -288,21 +288,39 @@ namespace System.Collections {
 		}
 
 		private class ArrayListEnumerator : IEnumerator {
-			// TODO: Constructor should take a snapshot
-			public ArrayListEnumerator(int index, int count){}
+			private object[] data;
+			private int idx;
+			private int start;
+			private int num;
 
-			// TODO: Implement these methods...
-			public object Current {get{return null;}}
-			public bool MoveNext(){return true;}
-			public void Reset(){}
+			public ArrayListEnumerator(int index, int count, object[] items) {
+				data = items;
+				start = index;
+				num = count;
+				idx = start - 1;
+			}
+
+			public object Current {
+				get {
+					return data [idx];
+				}
+			}
+			public bool MoveNext() {
+				if (++idx < start + num)
+					return true;
+				return false;
+			}
+			public void Reset() {
+				idx = start - 1;
+			}
 		}
 
 		public virtual IEnumerator GetEnumerator () {
-			return new ArrayListEnumerator(0, this.Count);
+			return new ArrayListEnumerator(0, this.Count, dataArray);
 		}
 
 		public virtual IEnumerator GetEnumerator (int index, int count) {
-			return new ArrayListEnumerator(index, count);
+			return new ArrayListEnumerator(index, count, dataArray);
 		}
 
 		public virtual ArrayList GetRange (int index, int count) {

@@ -10,7 +10,8 @@
 using System.Globalization;
 
 namespace System {
-	
+
+	[CLSCompliant(false)]
 	public struct SByte : IComparable, IFormattable { //, IConvertible {
 		public static Type Type = typeof (sbyte);
 

@@ -10,7 +10,8 @@
 using System.Globalization;
 
 namespace System {
-	
+
+	[CLSCompliant(false)]
 	public struct UInt16 : IComparable, IFormattable { //, IConvertible {
 		private static Type Type = typeof (ushort);
 

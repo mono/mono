@@ -12,10 +12,12 @@ namespace System.Threading
 {
 	public class Overlapped
 	{
+		[CLSCompliant(false)]
 		unsafe public static void Free(NativeOverlapped *nativeOverlappedPtr) {
 			// FIXME
 		}
 
+		[CLSCompliant(false)]
 		unsafe public static Overlapped Unpack(NativeOverlapped *nativeOverlappedPtr) {
 			// FIXME
 			return(new Overlapped());
@@ -69,11 +71,13 @@ namespace System.Threading
 			}
 		}
 
+		[CLSCompliant(false)]
 		unsafe public NativeOverlapped *Pack(IOCompletionCallback iocb) {
 			// FIXME
 			return(null);
 		}
 		
+		[CLSCompliant(false)]
 		unsafe public NativeOverlapped *UnsafePack(IOCompletionCallback iocb) {
 			// FIXME
 			return(null);

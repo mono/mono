@@ -152,11 +152,13 @@ namespace System {
 			stdout.Write (value);
 		}
 		
+		[CLSCompliant(false)]
                 public static void Write (uint value)
 		{
 			stdout.Write (value);
 		}
 		
+		[CLSCompliant(false)]
                 public static void Write (ulong value)
 		{
 			stdout.Write (value);
@@ -252,12 +254,14 @@ namespace System {
 			stdout.WriteLine();
 		}
 		
+		[CLSCompliant(false)]
                 public static void WriteLine (uint value)
 		{
 			stdout.Write (value);
 			stdout.WriteLine();
 		}
 		
+		[CLSCompliant(false)]
                 public static void WriteLine (ulong value)
 		{
 			stdout.Write (value);

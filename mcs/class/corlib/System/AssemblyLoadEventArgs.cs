@@ -14,18 +14,18 @@ namespace System
 {
 	public class AssemblyLoadEventArgs: EventArgs
 	{
-		protected Assembly loadedAssembly;
+		protected Assembly m_loadedAssembly;
 
 		public AssemblyLoadEventArgs(Assembly loadedAssembly)
 		{
-			this.loadedAssembly = loadedAssembly;
+			this.m_loadedAssembly = loadedAssembly;
 		}
 
 		public Assembly LoadedAssembly
 		{
 			get 
 			{
-				return loadedAssembly;
+				return m_loadedAssembly;
 			}
 		}
 	}

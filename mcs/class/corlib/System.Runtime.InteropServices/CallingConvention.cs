@@ -19,6 +19,10 @@ namespace System.Runtime.InteropServices {
 
 		/// <summary>
 		/// </summary>
+		Winapi = 1,
+
+		/// <summary>
+		/// </summary>
 		Cdecl = 2,
 
 		/// <summary>

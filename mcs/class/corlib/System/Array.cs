@@ -333,9 +333,9 @@ namespace System
 
 			for (int i = 0; i < length; i++) 
 			{
-				int index = source.GetLowerBound (0) + i;
+				int index = source.GetLowerBound (0) + i + source_idx;
 
-				dest.SetValue(source.GetValue(index), index);
+				dest.SetValue(source.GetValue(index), dest_idx + i + dest.GetLowerBound (0));
 			}
 			
 		}

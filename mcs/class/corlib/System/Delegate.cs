@@ -16,7 +16,7 @@ namespace System {
 
 	public abstract class Delegate : ICloneable, ISerializable {
 		protected Type target_type;
-		protected object target;
+		protected object m_target;
 		protected string method;
 		protected IntPtr method_ptr;
 
@@ -30,13 +30,13 @@ namespace System {
 
 			this.target_type = null;
 			this.method_ptr = IntPtr.Zero;
-			this.target = target;
+			this.m_target = target;
 			this.method = method;
 		}
 
 		protected Delegate (Type target_type, string method)
 		{
-			if (target == null)
+			if (m_target == null)
 				throw new ArgumentNullException ("Target type is null");
 
 			if (method == null)
@@ -44,7 +44,7 @@ namespace System {
 
 			this.target_type = target_type;
 			this.method_ptr = IntPtr.Zero;
-			this.target = null;
+			this.m_target = null;
 			this.method = method;
 		}
 
@@ -58,7 +58,7 @@ namespace System {
 
 		public object Target {
 			get {
-				return target;
+				return m_target;
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace System {
 			Delegate d = (Delegate) o;
 			
 			if ((d.target_type == target_type) &&
-			    (d.target == target) &&
+			    (d.m_target == m_target) &&
 			    (d.method == method))
 				return true;
 

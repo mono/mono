@@ -16,11 +16,11 @@ namespace System {
 	/// <remarks>
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.All)]
-	public class CLSCompliant: Attribute {
+	public class CLSCompliantAttribute : Attribute {
 
 		bool is_compliant;
 
-		public CLSCompliant(bool is_compliant)
+		public CLSCompliantAttribute (bool is_compliant)
 		{
 			this.is_compliant = is_compliant;
 		}

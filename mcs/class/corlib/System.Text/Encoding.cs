@@ -19,16 +19,16 @@ namespace System.Text {
                 private static UTF7Encoding utf7Encoding;
                 private static UTF8Encoding utf8Encoding;
 
-                private int codepage;
-                protected string bodyName;
-                protected string encodingName;
-                protected string headerName;
+                private int m_codepage;
+                protected string m_bodyName;
+                protected string m_encodingName;
+                protected string m_headerName;
 
                 protected Encoding() {
                 }
 
                 protected Encoding(int codepage) {
-                        this.codepage = codepage;
+                        this.m_codepage = codepage;
                 }
 
                 public static Encoding ASCII {
@@ -49,13 +49,13 @@ namespace System.Text {
 
                 public virtual string BodyName {
                         get {
-                                return bodyName;
+                                return m_bodyName;
                         }
                 }
 
                 public virtual int CodePage {
                         get {
-                                return codepage;
+                                return m_codepage;
                         }
                 }
 
@@ -67,13 +67,13 @@ namespace System.Text {
 
                 public virtual string EncodingName {
                         get {
-                                return encodingName;
+                                return m_encodingName;
                         }
                 }
 
                 public virtual string HeaderName {
                         get {
-                                return headerName;
+                                return m_headerName;
                         }
                 }
 

@@ -121,7 +121,7 @@ namespace System {
 		public static bool IsLetter (char c)
 		{
 			// TODO: Make me Unicode aware
-			return ((c >= 65) && (c <= 126));
+			return (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')));
 		}
 
 		public static bool IsLetter (string str, int index)

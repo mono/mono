@@ -15,12 +15,12 @@ namespace System
 	public class UnhandledExceptionEventArgs: EventArgs
 	{
 		protected object exception;
-		protected bool isTerminating;
+		protected bool m_isTerminating;
 
 		public UnhandledExceptionEventArgs(object exception, bool isTerminating)
 		{
 			this.exception = exception;
-			this.isTerminating = isTerminating;
+			this.m_isTerminating = isTerminating;
 		}
 
 		public object ExceptionObject
@@ -35,7 +35,7 @@ namespace System
 		{
 			get
 			{
-				return isTerminating;
+				return m_isTerminating;
 			}
 		}
 	}

@@ -385,6 +385,7 @@ namespace System.Text {
 			return Append( value.ToString().ToCharArray() );
 		}
 
+		[CLSCompliant(false)]
 		public StringBuilder Append( sbyte value ) {
 			return Append( value.ToString().ToCharArray() );
 		}
@@ -393,14 +394,17 @@ namespace System.Text {
 			return Append( value.ToString().ToCharArray() );
 		}
 
+		[CLSCompliant(false)]
 		public StringBuilder Append( ushort value ) {
 			return Append( value.ToString().ToCharArray() );
 		}	
 		
+		[CLSCompliant(false)]
 		public StringBuilder Append( uint value ) {
 			return Append( value.ToString().ToCharArray() );
 		}
 
+		[CLSCompliant(false)]
 		public StringBuilder Append( ulong value ) {
 			return Append( value.ToString().ToCharArray() );
 		}
@@ -544,7 +548,8 @@ namespace System.Text {
 		public StringBuilder Insert( int index, object value ) {
 			return Insert( index, value.ToString().ToCharArray() );
 		}
-
+		
+		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, sbyte value ) {
 			return Insert( index, value.ToString().ToCharArray() );
 		}
@@ -553,14 +558,17 @@ namespace System.Text {
 			return Insert( index, value.ToString().ToCharArray() );
 		}
 
+		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, ushort value ) {
 			return Insert( index, value.ToString().ToCharArray() );
 		}
 
+		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, uint value ) {
 			return Insert( index, value.ToString().ToCharArray() );
 		}
-
+		
+		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, ulong value ) {
 			return Insert( index, value.ToString().ToCharArray() );
 		}

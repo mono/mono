@@ -31,7 +31,7 @@ namespace System.Reflection.Emit {
 			this.type = type;
 			offset = -1;
 			typeb = tb;
-			table_idx = tb.module.assemblyb.get_next_table_index (0x04, true);
+			table_idx = tb.pmodule.assemblyb.get_next_table_index (0x04, true);
 		}
 
 		public override FieldAttributes Attributes {

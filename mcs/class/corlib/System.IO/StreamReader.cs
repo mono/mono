@@ -83,12 +83,16 @@ namespace System.IO {
 	
 		public override int Peek ()
 		{
-			return -1;
+			// FIXME: handle encoding....
+			int val = internalStream.ReadByte ();
+			if (val != -1)
+				internalStream.Seek (-1, SeekOrigin.Current);
+			return val;
 		}
 
 		public override int Read ()
 		{
-			return -1;
+			return internalStream.ReadByte ();
 		}
 
 		public override int Read (char[] buffer, int index, int count)

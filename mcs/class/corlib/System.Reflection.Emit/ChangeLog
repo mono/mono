@@ -1,3 +1,15 @@
+
+Wed Nov 14 17:01:45 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* ConstructorBuilder.cs: added missing stubs and some implementation.
+	* CustomAttributeBuilder.cs: added.
+	* EventBuilder.cs: added.
+	* FieldBuilder.cs: updates.
+	* MethodBuilder.cs: stuff to implement P/Invoke methods.
+	* ModuleBuilder.cs: added GetArrayMethod() stub.
+	* ParameterBuilder.cs, PropertyBuilder.cs: updates.
+	* TypeBuilder.cs: updates and stubs.
+
 2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
 
 	* TypeBuilder.cs: Added implementation for TypeHandle.

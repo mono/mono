@@ -32,35 +32,59 @@ namespace System.Globalization
 			_MaxDateTime = DateTime.MaxValue;
 			_MinDateTime = DateTime.MinValue;
 		}
+		[CLSCompliant(false)]
 		protected int _TwoDigitYearMax;
 
+		[CLSCompliant(false)]
 		protected static int[] _DaysInMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+		[CLSCompliant(false)]
 		protected static int[] _DaysInMonthLeap = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 		
 
 		// these can be overridden, for example using "new protected const int _MinYear = 1;"
+		[CLSCompliant(false)]
 		protected const int _MinYear = 1;
+		[CLSCompliant(false)]
 		protected const int _MaxYear = 9999;
+		[CLSCompliant(false)]
 		protected const int _MinDay = 0;
+		[CLSCompliant(false)]
 		protected const int _MinMonth = 1;
+		[CLSCompliant(false)]
 		protected const int _MaxMonth = 12;
+		[CLSCompliant(false)]
 		protected const int _MinHour = 0;
+		[CLSCompliant(false)]
 		protected const int _MaxHour = 23;
+		[CLSCompliant(false)]
 		protected const int _MinMinute = 0;
+		[CLSCompliant(false)]
 		protected const int _MaxMinute = 59;
+		[CLSCompliant(false)]
 		protected const int _MinSecond = 0;
+		[CLSCompliant(false)]
 		protected const int _MaxSecond = 59;
+		[CLSCompliant(false)]
 		protected const int _MinMillisecond = 0;
+		[CLSCompliant(false)]
 		protected const int _MaxMillisecond = 999;
 
+		[CLSCompliant(false)]
 		private const long _TicksPerMillisecond = 10000;
+		[CLSCompliant(false)]
 		private const long _TicksPerSecond = 10000000;
+		[CLSCompliant(false)]
 		private const long _TicksPerMinute = 600000000;
+		[CLSCompliant(false)]
 		private const long _TicksPerHour = 36000000000;
+		[CLSCompliant(false)]
 		private const long _TicksPerDay = 864000000000;
+		[CLSCompliant(false)]
 		private const long _TicksPerWeek = 6048000000000;
 
+		[CLSCompliant(false)]
 		protected DateTime _MaxDateTime;
+		[CLSCompliant(false)]
 		protected DateTime _MinDateTime;
 
 		

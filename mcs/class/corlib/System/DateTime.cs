@@ -679,6 +679,7 @@ namespace System
 			throw new InvalidCastException();
 		}
 
+		[CLSCompliant(false)]
 		public SByte ToSByte(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
@@ -698,12 +699,14 @@ namespace System
 		{
 			throw new InvalidCastException();
 		}
-
+		
+		[CLSCompliant(false)]
 		public UInt32 ToUInt32(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
+		[CLSCompliant(false)]
 		public UInt64 ToUInt64(IFormatProvider provider)
 		{
 			throw new InvalidCastException();

@@ -35,6 +35,7 @@ namespace System {
 		private int length;
 
 		// Constructors
+		[CLSCompliant(false)]
 		unsafe public String (char *value)
 		{
 			int i;
@@ -63,6 +64,7 @@ namespace System {
 				this.c_str[i] = value[i];
 		}
 
+		[CLSCompliant(false)]
 		unsafe public String (sbyte *value)
 		{
 			// FIXME: consider unicode?
@@ -91,6 +93,7 @@ namespace System {
 				this.c_str[i] = c;
 		}
 
+		[CLSCompliant(false)]
 		unsafe public String (char *value, int startIndex, int length)
 		{
 			int i;
@@ -123,6 +126,7 @@ namespace System {
 				this.c_str[i] = value[startIndex + i];
 		}
 
+		[CLSCompliant(false)]
 		unsafe public String (sbyte *value, int startIndex, int length)
 		{
 			// FIXME: consider unicode?
@@ -140,6 +144,7 @@ namespace System {
 				this.c_str[i] = (char) *(value + startIndex + i);
 		}
 
+		[CLSCompliant(false)]
 		unsafe public String (sbyte *value, int startIndex, int length, Encoding enc)
 		{
 			// FIXME: implement me
@@ -483,12 +488,11 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len + 1];
+			str = new char [len];
 			i = 0;
 			for (int j = 0; j < strings.Length; j++)
 				for (int k = 0; k < strings[j].Length; k++)
 					str[i++] = strings[j][k];
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -508,7 +512,7 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len + 1];
+			str = new char [len];
 			i = 0;
 			foreach (string value in values) {
 				if (value == null)
@@ -517,7 +521,6 @@ namespace System {
 				for (int j = 0; j < value.Length; j++)
 					str[i++] = value[j];
 			}
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -544,12 +547,11 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			concat = new char [len + 1];
+			concat = new char [len];
 			for (i = 0; i < str0.Length; i++)
 				concat[i] = str0[i];
 			for (j = 0 ; j < str1.Length; j++)
 				concat[i + j] = str1[j];
-			concat[len] = '\0';
 
 			return new String (concat);
 		}
@@ -579,14 +581,13 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			concat = new char [len + 1];
+			concat = new char [len];
 			for (i = 0; i < str0.Length; i++)
 				concat[i] = str0[i];
 			for (j = 0; j < str1.Length; j++)
 				concat[i + j] = str1[j];
 			for (k = 0; k < str2.Length; k++)
 				concat[i + j + k] = str2[k];
-			concat[len] = '\0';
 
 			return new String (concat);
 		}
@@ -609,7 +610,7 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			concat = new char [len + 1];
+			concat = new char [len];
 			for (i = 0; i < str0.Length; i++)
 				concat[i] = str0[i];
 			for (j = 0; j < str1.Length; j++)
@@ -618,7 +619,6 @@ namespace System {
 				concat[i + j + k] = str2[k];
 			for (l = 0; l < str3.Length; l++)
 				concat[i + j + k + l] = str3[l];
-			concat[len] = '\0';
 
 			return new String (concat);
 		}
@@ -854,14 +854,13 @@ namespace System {
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			str = new char [value.Length + this.length + 1];
+			str = new char [value.Length + this.length];
 			for (i = 0; i < startIndex; i++)
 				str[i] = this.c_str[i];
 			for (j = 0; j < value.Length; j++)
 				str[i + j] = value[j];
 			for ( ; i < this.length; i++)
 				str[i + j] = this.c_str[i];
-			str[i + j] = '\0';
 
 			return new String (str);
 		}
@@ -901,7 +900,7 @@ namespace System {
 			if (i == startIndex)
 				return String.Empty;
 
-			str = new char [len + 1];
+			str = new char [len];
 			for (i = 0; i < value[startIndex].Length; i++)
 				str[i] = value[startIndex][i];
 
@@ -914,7 +913,6 @@ namespace System {
 				for (k = 0; k < value[j].Length; k++)
 					str[i++] = value[j][k];
 			}
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1061,14 +1059,12 @@ namespace System {
 			if (totalWidth < 0)
 				throw new ArgumentException ();
 
-			str = new char [totalWidth > this.length ? totalWidth : this.length + 1];
+			str = new char [totalWidth > this.length ? totalWidth : this.length];
 			for (i = 0; i < totalWidth - this.length; i++)
 				str[i] = padChar;
 
 			for (j = 0; j < this.length; i++, j++)
 				str[i] = this.c_str[j];
-
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1086,14 +1082,12 @@ namespace System {
 			if (totalWidth < 0)
 				throw new ArgumentException ();
 
-			str = new char [totalWidth > this.length ? totalWidth : this.length + 1];
+			str = new char [totalWidth > this.length ? totalWidth : this.length];
 			for (i = 0; i < this.length; i++)
 				str[i] = this.c_str[i];
 
 			for ( ; i < str.Length; i++)
 				str[i] = padChar;
-
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1110,12 +1104,11 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len + 1];
+			str = new char [len];
 			for (i = 0; i < startIndex; i++)
 				str[i] = this.c_str[i];
 			for (j = i + count; j < this.length; j++)
 				str[i++] = this.c_str[j];
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1125,14 +1118,13 @@ namespace System {
 			char[] str;
 			int i;
 
-			str = new char [this.length + 1];
+			str = new char [this.length];
 			for (i = 0; i < this.length; i++) {
 				if (this.c_str[i] == oldChar)
 					str[i] = newChar;
 				else
 					str[i] = this.c_str[i];
 			}
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1157,14 +1149,13 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len + 1];
+			str = new char [len];
 			for (i = 0; i < index; i++)
 				str[i] = this.c_str[i];
 			for (j = 0; j < newValue.Length; j++)
 				str[i++] = newValue[j];
 			for (j = index + oldValue.Length; j < this.length; j++)
 				str[i++] = this.c_str[j];
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1217,10 +1208,9 @@ namespace System {
 					char[] str;
 					int i;
 
-					str = new char [len + 1];
+					str = new char [len];
 					for (i = 0; i < len; i++)
 						str[i] = this.c_str[index + i];
-					str[i] = '\0';
 
 					list.Add (new String (str));
 				}
@@ -1257,10 +1247,9 @@ namespace System {
 					char[] str;
 					int i;
 
-					str = new char [len + 1];
+					str = new char [len];
 					for (i = 0; i < len; i++)
 						str[i] = this.c_str[index + i];
-					str[i] = '\0';
 
 					list.Add (new String (str));
 				}
@@ -1272,10 +1261,9 @@ namespace System {
 				char[] str;
 				int i;
 
-				str = new char [this.length - index + 1];
+				str = new char [this.length - index];
 				for (i = index; i < this.length; i++)
 					str[i - index] = this.c_str[i];
-				str[i - index] = '\0';
 
 				list.Add (new String (str));
 			}
@@ -1321,7 +1309,7 @@ namespace System {
 			if (len == 0)
 				return String.Empty;
 
-			str = new char [len + 1];
+			str = new char [len];
 			for (i = startIndex; i < this.length; i++)
 				str[i - startIndex] = this.c_str[i];
 
@@ -1339,10 +1327,9 @@ namespace System {
 			if (length == 0)
 				return String.Empty;
 
-			str = new char [length + 1];
+			str = new char [length];
 			for (i = startIndex; i < startIndex + length; i++)
 				str[i - startIndex] = this.c_str[i];
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1378,11 +1365,9 @@ namespace System {
 			if (startIndex < 0 || length < 0 || startIndex + length > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			chars = new char [length + 1];
+			chars = new char [length];
 			for (i = startIndex; i < length; i++)
 				chars[i - startIndex] = this.c_str[i];
-
-			chars[length] = '\0';
 
 			return chars;
 		}
@@ -1429,10 +1414,9 @@ namespace System {
 			char[] str;
 			int i;
 
-			str = new char [this.length + 1];
+			str = new char [this.length];
 			for (i = 0; i < this.length; i++)
 				str[i] = Char.ToLower (this.c_str[i]);
-			str[i] = '\0';
 
 			return new String (str);
 		}
@@ -1443,6 +1427,7 @@ namespace System {
 			return null;
 		}
 
+		[CLSCompliant(false)]
 		public sbyte ToSByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
@@ -1472,18 +1457,21 @@ namespace System {
 			return null;
 		}
 
+		[CLSCompliant(false)]
 		public ushort ToUInt16 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
 		}
 
+		[CLSCompliant(false)]
 		public uint ToUInt32 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
 		}
 
+		[CLSCompliant(false)]
 		public ulong ToUInt64 (IFormatProvider provider)
 		{
 			// FIXME: implement me
@@ -1495,10 +1483,9 @@ namespace System {
 			char[] str;
 			int i;
 
-			str = new char [this.length + 1];
+			str = new char [this.length];
 			for (i = 0; i < this.length; i++)
 				str[i] = Char.ToUpper (this.c_str[i]);
-			str[i] = '\0';
 
 			return new String (str);
 		}

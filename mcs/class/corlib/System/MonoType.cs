@@ -11,6 +11,14 @@ namespace System
 {
 	internal class MonoType : Type
 	{
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void type_from_obj (MonoType type, Object obj);
+		
+		internal MonoType (Object obj) {
+			type_from_obj (this, obj);
+		}
+
 		public override Type[] GetInterfaces()
 		{
 			return null;
@@ -71,6 +79,18 @@ namespace System
 		}
 
 		public override string Name {
+			get {
+				return null;
+			}
+		}
+
+		public override string Namespace {
+			get {
+				return null;
+			}
+		}
+
+		public override Module Module {
 			get {
 				return null;
 			}

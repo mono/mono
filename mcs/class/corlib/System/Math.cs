@@ -13,6 +13,7 @@ using System.PAL;
 
 namespace System
 {
+	[CLSCompliant(false)]
         public sealed class Math
         {
                 public const double E = 2.7182818284590452354;

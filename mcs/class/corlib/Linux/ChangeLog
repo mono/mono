@@ -1,3 +1,8 @@
+
+Wed Nov 14 16:30:27 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Linux.cs: a '/' is a valid char in a file path.
+
 2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
 
 	* Linux.cs (GetCurrentDirectory): implemented

@@ -1,3 +1,9 @@
+
+Wed Nov 14 17:05:22 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Encoding.cs: renamed some fields.
+	* StringBuilder.cs: CLSCompliant updates.
+
 2001-10-29  Nick Drochak  <ndrochak@gol.com>
 
 	* StringBuilder.cs: Throw exceptions when constructor paramter(s) are

@@ -13,8 +13,9 @@ namespace System.Runtime.Serialization {
 
 	public sealed class SerializationInfo {
 		Type type;
-		IFormatterConverter converter;
+		[CLSCompliant(false)] IFormatterConverter converter;
 		
+		[CLSCompliant(false)]
 		public SerializationInfo (Type type, IFormatterConverter converter)
 		{
 			this.type = type;
@@ -48,19 +49,24 @@ namespace System.Runtime.Serialization {
 
 		//Public Instance Methods
 #region TODO: Implement these
+		[CLSCompliant(false)]
 		public void AddValue(string name, short value){}
+		[CLSCompliant(false)]
 	    public void AddValue(string name, UInt16 value){}
 	    public void AddValue(string name, int value){}
 	    public void AddValue(string name, byte value){}
 	    public void AddValue(string name, bool value){}
 	    public void AddValue(string name, char value){}
+	    [CLSCompliant(false)]
 	    public void AddValue(string name, SByte value){}
 	    public void AddValue(string name, double value){}
 	    public void AddValue(string name, Decimal value){}
 	    public void AddValue(string name, DateTime value){}
 	    public void AddValue(string name, float value){}
+	    [CLSCompliant(false)]
 	    public void AddValue(string name, UInt32 value){}
 	    public void AddValue(string name, long value){}
+	    [CLSCompliant(false)]
 	    public void AddValue(string name, UInt64 value){}
 	    public void AddValue(string name, object value){}
 	    public void AddValue(string name, object value, Type type){}
@@ -74,11 +80,15 @@ namespace System.Runtime.Serialization {
 	    public short GetInt16(string name){return 0;}
 	    public int GetInt32(string name){return 0;}
 	    public long GetInt64(string name){return 0;}
+	    [CLSCompliant(false)]
 	    public SByte GetSByte(string name){return new SByte();}
 	    public float GetSingle(string name){return 0;}
 	    public string GetString(string name){return "";}
+	    [CLSCompliant(false)]
 	    public UInt16 GetUInt16(string name){return 0;}
+	    [CLSCompliant(false)]
 	    public UInt32 GetUInt32(string name){return 0;}
+	    [CLSCompliant(false)]
 	    public UInt64 GetUInt64(string name){return 0;}
 	    public object GetValue(string name, Type type){return null;}
 		public void SetType(Type type){}

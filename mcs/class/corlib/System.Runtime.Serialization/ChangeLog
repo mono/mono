@@ -1,4 +1,8 @@
 
+Wed Nov 14 17:03:30 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* IFormatterConverter.cs, SerializationInfo.cs: CLSCompliant updates.
+
 Fri Nov 2 18:40:12 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* SerializationException.cs: implemented.

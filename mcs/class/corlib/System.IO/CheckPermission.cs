@@ -53,6 +53,7 @@ namespace System.IO
 		
 		public static void ModeAccess(FileMode mode, FileAccess access, string path, bool exists)
 		{
+			return;
 			// TODO: this logic isn't entirely complete and accurate, yet
 			if((mode & (FileMode.CreateNew | FileMode.Create)) != 0)
 			{

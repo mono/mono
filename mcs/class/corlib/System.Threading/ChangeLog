@@ -1,3 +1,8 @@
+
+Wed Nov 14 17:06:18 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Overlapped.cs, ThreadPool.cs, Timer.cs: CLSCompliant updates.
+
 2001-10-03  Dick Porter  <dick@ximian.com>
 
 	* Monitor.cs: Implemented all methods except the two Wait()

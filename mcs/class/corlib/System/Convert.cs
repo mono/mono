@@ -71,6 +71,7 @@ using System.Security.Cryptography;
 
 namespace System {
   
+	[CLSCompliant(false)]
 	public sealed class Convert {
 	
 		// ========== BASE 64 Conversions ========== //
@@ -1590,6 +1591,19 @@ namespace System {
 		}
 
 		// ========== Conversion / Helper Fucntions ========== //
+
+		public static object ChangeType( object value, Type conversionType) {
+			return null;
+		}
+		public static object ChangeType( object value, TypeCode typeCode) {
+			return null;
+		}
+		public static object ChangeType( object value, Type conversionType, IFormatProvider provider) {
+			return null;
+		}
+		public static object ChangeType( object value, TypeCode typeCode, IFormatProvider provider) {
+			return null;
+		}
 	
 		// Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target

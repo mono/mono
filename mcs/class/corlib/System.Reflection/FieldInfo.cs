@@ -36,6 +36,8 @@ namespace System.Reflection {
 		// FIXME
 		public bool IsStatic { get { return false; } }
 
+		public bool IsInitOnly {get { return false; } }
+
 		public virtual void SetValue( object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture) {
 		}
 		public void SetValue( object obj, object value) {

@@ -9,6 +9,7 @@
 //
 
 namespace System.Runtime.Serialization {
+	[CLSCompliant(false)]
 	public interface IFormatterConverter {
 		object Convert (object o, Type t);
 		object Convert (object o, TypeCode tc);

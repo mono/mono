@@ -137,9 +137,12 @@ namespace System.IO
 		public unsafe override int ReadByte ()
 		{
 			byte[] val = new byte[1];
+			int res = Read (val, 0, 1);
 			
-			if (Read (val, 0, 1) != 1)
+			if (res == -1)
 				throw new IOException();
+			if (res == 0)
+				return -1;
 			
 			return val[0];
 		}

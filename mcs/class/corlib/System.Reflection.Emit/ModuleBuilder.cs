@@ -66,5 +66,9 @@ namespace System.Reflection.Emit {
 			return DefineType (name, attr, parent, null);
 		}
 
+		public MethodInfo GetArrayMethod( Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
+			return null;
+		}
+
 	}
 }

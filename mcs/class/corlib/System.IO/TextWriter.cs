@@ -113,11 +113,13 @@ namespace System.IO {
 			// do nothing
 		}
 		
+		[CLSCompliant(false)]
                 public virtual void Write (uint value)
 		{
 			Write (value.ToString (internalFormatProvider));
 		}
 		
+		[CLSCompliant(false)]
                 public virtual void Write (ulong value)
 		{
 			Write (value.ToString (internalFormatProvider));
@@ -213,12 +215,14 @@ namespace System.IO {
 			WriteLine();
 		}
 		
+		[CLSCompliant(false)]
                 public virtual void WriteLine (uint value)
 		{
 			Write (value);
 			WriteLine();
 		}
 		
+		[CLSCompliant(false)]
                 public virtual void WriteLine (ulong value)
 		{
 			Write (value);

@@ -1,3 +1,9 @@
+
+Wed Nov 14 17:04:30 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* MD5CryptoServiceProvider.cs, SHA1CryptoServiceProvider.cs,
+	SHA256Managed.cs: CLSCompliant updates.
+
 2001-10-11  Thomas Neidhart <tome@sbox.tugraz.at>
 
 	* CryptoAPITransform.cs: Initial version

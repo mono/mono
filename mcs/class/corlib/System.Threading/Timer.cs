@@ -43,6 +43,7 @@ namespace System.Threading
 			// FIXME
 		}
 
+		[CLSCompliant(false)]
 		public Timer(TimerCallback callback, object state, uint dueTime, uint period) {
 			// FIXME
 		}
@@ -80,6 +81,7 @@ namespace System.Threading
 			return(false);
 		}
 
+		[CLSCompliant(false)]
 		public bool Change(uint dueTime, uint period) {
 			// FIXME
 			return(false);

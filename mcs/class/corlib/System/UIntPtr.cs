@@ -24,7 +24,7 @@ namespace System
 
 [
     StructLayout(LayoutKind.Auto),
-    CLSCompliant(true)
+    CLSCompliant(false)
 ]
 public unsafe struct UIntPtr : ISerializable
 {

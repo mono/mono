@@ -17,6 +17,19 @@ namespace System {
 		{
 			return false;
 		}
+		public override string ToString() {
+			return null;
+		}
+		public string ToString( IFormatProvider provider) {
+			return null;
+		}
+		public string ToString(String format) {
+			return null;
+		}
+		public string ToString(String format, IFormatProvider provider) {
+			return null;
+		}
+
 	}
 
 }

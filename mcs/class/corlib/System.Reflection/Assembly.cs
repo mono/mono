@@ -181,12 +181,12 @@ namespace System.Reflection {
 
 		public static Assembly Load(String assemblyString)
 		{
-			return null;
+			return LoadFrom (assemblyString, new Evidence());
 		}
 		
 		public static Assembly Load(String assemblyString, Evidence assemblySecurity)
 		{
-			return null;
+			return LoadFrom (assemblyString, assemblySecurity);
 		}
 
 		public static Assembly Load(AssemblyName assemblyRef)

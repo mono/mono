@@ -55,6 +55,7 @@ namespace System.Threading
 			return(null);
 		}
 
+		[CLSCompliant(false)]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			// FIXME
 			return(null);
@@ -80,6 +81,7 @@ namespace System.Threading
 			return(null);
 		}
 
+		[CLSCompliant(false)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			// FIXME
 			return(null);

@@ -30,6 +30,7 @@
 
 namespace System {
 
+    [CLSCompliant(false)]
     public interface IConvertible {
 	
 	TypeCode GetTypeCode ();

@@ -273,6 +273,7 @@ namespace System
             return (byte) result;
         }
 
+	[CLSCompliant(false)]
         public static explicit operator sbyte(Decimal val) 
         {
             long result;
@@ -324,6 +325,7 @@ namespace System
             return (short) result;
         }
 
+	[CLSCompliant(false)]
         public static explicit operator ushort(Decimal val) 
         {
             ulong result;
@@ -358,6 +360,7 @@ namespace System
             return (int) result;
         }
 
+	[CLSCompliant(false)]
         public static explicit operator uint(Decimal val) 
         {
             ulong result;
@@ -387,6 +390,7 @@ namespace System
             return result;
         }
 
+	[CLSCompliant(false)]
         public static explicit operator ulong(Decimal val) 
         {
             ulong result;
@@ -404,6 +408,7 @@ namespace System
             return new Decimal(val);
         }
 
+	[CLSCompliant(false)]
         public static implicit operator Decimal(sbyte val) 
         {
             return new Decimal(val);
@@ -414,6 +419,7 @@ namespace System
             return new Decimal(val);
         }
 
+	[CLSCompliant(false)]
         public static implicit operator Decimal(ushort val) 
         {
             return new Decimal(val);
@@ -429,6 +435,7 @@ namespace System
             return new Decimal(val);
         }
 
+	[CLSCompliant(false)]
         public static implicit operator Decimal(uint val) 
         {
             return new Decimal(val);
@@ -439,6 +446,7 @@ namespace System
             return new Decimal(val);
         }
 
+	[CLSCompliant(false)]
         public static implicit operator Decimal(ulong val) 
         {
             return new Decimal(val);

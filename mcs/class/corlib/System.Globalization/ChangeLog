@@ -1,3 +1,8 @@
+
+Wed Nov 14 16:47:07 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Calendar.cs: CLSCompliant updates.
+
 2001-11-04  Martin Weindel <martin.weindel@t-online.de>
         * NumberFormatInfo.cs: fixed minor bug in Clone with readonly flag
 

@@ -202,6 +202,9 @@ namespace System {
 			}
 		}
 
+		public abstract Module Module {get;}
+		public abstract string Namespace {get;}
+
 		public MethodInfo[] GetMethods ()
 		{
 			// FIXME
@@ -231,5 +234,18 @@ namespace System {
 			// FIXME
 			return null;
 		}
+
+		public virtual MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr, MemberFilter filter, object filterCriteria) {
+			return null;
+		}
+
+		public static TypeCode GetTypeCode( Type type) {
+			return TypeCode.Empty;
+		}
+
+		public override string ToString() {
+			return null;
+		}
+
 	}
 }

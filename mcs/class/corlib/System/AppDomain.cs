@@ -14,7 +14,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
 namespace System {
-	public interface _AppDomain {
+	public interface AppDomain_Intf {
 	}
 	public sealed class AppDomain /* : MarshalByRefObject , _AppDomain, IEvidenceFactory */ {
 

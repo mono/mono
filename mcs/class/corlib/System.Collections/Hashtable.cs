@@ -52,8 +52,42 @@ namespace System.Collections {
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
 
-		public static int [] primeTbl = {};
-
+		public static int [] primeTbl = {
+			11,
+			19,
+			37,
+			73,
+			109,
+			163,
+			251,
+			367,
+			557,
+			823,
+			1237,
+			1861,
+			2777,
+			4177,
+			6247,
+			9371,
+			14057,
+			21089,
+			31627,
+			47431,
+			71143,
+			106721,
+			160073,
+			240101,
+			360163,
+			540217,
+			810343,
+			1215497,
+			1823231,
+			2734867,
+			4102283,
+			6153409,
+			9230113,
+			13845163
+		};
 
 		// Class constructor
 
@@ -67,11 +101,11 @@ namespace System.Collections {
 			// particular implementation, probably the increment
 			// shouldn't be linear? Consider this as a hack
 			// or as a placeholder for future improvements.
-			int size = 0x2000/ALLOC_GRAIN;
+			/*int size = 0x2000/ALLOC_GRAIN;
 			primeTbl = new int [size];
 			for (int x = 53, i = 0;i<size;x+= ALLOC_GRAIN, i++) {
 				primeTbl [i] = CalcPrime (x);
-			}
+			}*/
 		}
 
 

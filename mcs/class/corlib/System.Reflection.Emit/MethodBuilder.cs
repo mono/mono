@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	public sealed class MethodBuilder : MethodInfo {
@@ -26,22 +27,37 @@ namespace System.Reflection.Emit {
 		private ILGenerator ilgen;
 		internal TypeBuilder type;
 		private ParameterBuilder[] pinfo;
+		private string pi_dll;
+		private string pi_entry;
+		private CharSet ncharset;
+		private CallingConvention native_cc;
+		private CallingConventions call_conv;
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
 			this.name = name;
 			this.attrs = attributes;
-			// call conv
+			this.call_conv = callingConvention;
 			this.rtype = returnType;
 			if (parameterTypes != null) {
 				this.parameters = new Type [parameterTypes.Length];
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}
 			type = tb;
-			table_idx = tb.module.assemblyb.get_next_table_index (0x06, true);
+			table_idx = tb.pmodule.assemblyb.get_next_table_index (0x06, true);
+		}
+
+		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, 
+			CallingConventions callingConvention, Type returnType, Type[] parameterTypes, 
+			String dllName, String entryName, CallingConvention nativeCConv, CharSet nativeCharset) 
+			: this (tb, name, attributes, callingConvention, returnType, parameterTypes) {
+			pi_dll = dllName;
+			pi_entry = entryName;
+			native_cc = nativeCConv;
+			ncharset = nativeCharset;
 		}
 		
 		public override Type ReturnType {get {return rtype;}}
-		public override Type ReflectedType {get {return null;}}
+		public override Type ReflectedType {get {return type;}}
 		public override Type DeclaringType {get {return type;}}
 		public override string Name {get {return name;}}
 		public override RuntimeMethodHandle MethodHandle {get {return mhandle;}}
@@ -100,6 +116,13 @@ namespace System.Reflection.Emit {
 		internal void fixup () {
 			if (ilgen != null)
 				ilgen.label_fixup ();
+		}
+
+		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		}
+		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+		}
+		public void SetImplementationFlags( MethodImplAttributes attributes) {
 		}
 	}
 }

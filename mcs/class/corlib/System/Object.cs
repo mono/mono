@@ -77,9 +77,7 @@ namespace System {
 			// TODO: This probably needs to be tied up
 			// with the Type system.  Private communications
 			// channel? 
-			// Type is abstract, so the following line won't cut it.
-			//return new Type ();
-			return null;
+			return new MonoType (this);
 		}
 
 		// <summary>
