@@ -1456,7 +1456,7 @@
     		{	
 			if ( Created ) {
 				e.Control.CreateControl ( );
-				e.Control.Visible = parent.Visible;
+				e.Control.Visible = Visible;
 			}
 
     			if (ControlAdded != null)
