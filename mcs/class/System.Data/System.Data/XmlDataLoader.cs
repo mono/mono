@@ -76,6 +76,29 @@ namespace System.Data
 			// load an XmlDocument from the reader.
 			XmlDocument doc = BuildXmlDocument(reader);
 
+			// treatment for .net compliancy :
+			// if xml representing dataset has exactly depth of 2 elements,
+			// than the root element actually represents datatable and not dataset
+			// so we add new root element to doc 
+			// in order to create an element representing dataset.
+			int rootNodeDepth = XmlNodeElementsDepth(doc.DocumentElement);
+			if (rootNodeDepth == 2) {
+				// new dataset name
+				String newDataSetName = "NewDataSet";
+				// create new document
+				XmlDocument newDoc = new XmlDocument();
+				// create element for dataset
+				XmlElement datasetElement = newDoc.CreateElement(newDataSetName);
+				// make the new created element to be the new doc root
+				newDoc.AppendChild(datasetElement);
+				// import all the elements from doc and insert them into new doc
+				XmlNode root = newDoc.ImportNode(doc.DocumentElement,true);
+				datasetElement.AppendChild(root);
+				doc = newDoc;
+				// update dataset name
+				DSet.DataSetName = newDataSetName;			
+			}
+
 			// set EnforceConstraint to false - we do not want any validation during 
 			// load time.
 			bool origEnforceConstraint = DSet.EnforceConstraints;
@@ -86,8 +109,12 @@ namespace System.Data
 
 			for (int i = 0; i < nList.Count; i++) {
 				XmlNode node = nList[i];
-				AddRowToTable(node, null, inferSchema);
+				// node represents a table onky if it is of type XmlNodeType.Element
+				if (node.NodeType == XmlNodeType.Element) {
+					AddRowToTable(node, null, inferSchema);
+				}
 			}
+
 			// set the EnforceConstraints to original value;
 			DSet.EnforceConstraints = origEnforceConstraint;
 		}
@@ -155,6 +182,24 @@ namespace System.Data
 			}
 			else
 				return;
+
+			// For elements that are inferred as tables and that contain text 
+			// but have no child elements, a new column named "TableName_Text" 
+			// is created for the text of each of the elements. 
+			// If an element is inferred as a table and has text, but also has child elements,
+			// the text is ignored.
+			// Note : if an element is inferred as a table and has text 
+			// and has no child elements, 
+			// but the repeated ements of this table have child elements, 
+			// then the text is ignored.
+			if(!HaveChildElements(tableNode) && HaveText(tableNode) &&
+				!IsRepeatedHaveChildNodes(tableNode)) {
+				string columnName = tableNode.Name + "_Text";
+				if (!table.Columns.Contains(columnName)) {
+					table.Columns.Add(columnName);
+				}
+				rowValue.Add(columnName, tableNode.InnerText);
+			}
 			
 			// Get the child nodes of the table. Any child can be one of the following tow:
 			// 1. DataTable - if there was a relation with another table..
@@ -162,13 +207,18 @@ namespace System.Data
 			XmlNodeList childList = tableNode.ChildNodes;
 			for (int i = 0; i < childList.Count; i++) {
 				XmlNode childNode = childList[i];
+
+				// we are looping through elements only
+				// Note : if an element is inferred as a table and has text, but also has child elements,
+				// the text is ignored.
+				if (childNode.NodeType != XmlNodeType.Element)
+					continue;
 				
-				// The child node is a table if:
-				// 1. He has attributes it means that it is a table OR
-				// 2. He has more then one child nodes. Columns has only one child node
-				// which is a Text node type that has the column value.
-				if (childNode.ChildNodes.Count > 1 || childNode.Attributes.Count > 0) {
-					
+				// Elements that have attributes are inferred as tables. 
+				// Elements that have child elements are inferred as tables. 
+				// Elements that repeat are inferred as a single table. 
+				if (IsInferedAsTable(childNode)) {
+					// child node infered as table
 					if (inferSchema) {
 						// We need to create new column for the relation between the current
 						// table and the new table we found (the child table).
@@ -187,7 +237,9 @@ namespace System.Data
 						AddRowToTable(childNode, null, inferSchema);
 					
 				}
-				else { //Child node is a column.
+				else {
+					// Elements that have no attributes or child elements, and do not repeat, 
+					// are inferred as columns.
 					object val = null;
 					if (childNode.FirstChild != null)
 						val = childNode.FirstChild.Value;
@@ -200,6 +252,7 @@ namespace System.Data
 						rowValue.Add(childNode.LocalName, val);
 					}
 				}
+						
 			}
 
 			// Column can be attribute of the table element.
@@ -264,6 +317,114 @@ namespace System.Data
 			// Add the DataSet element to the document.
 			doc.AppendChild(dataSetElement);
 			return doc;
+		}
+
+		// this method calculates the depth of child nodes tree
+		// and it counts nodes of type XmlNodeType.Element only
+		private static int XmlNodeElementsDepth(XmlNode node)
+		{
+			int maxDepth = -1;
+            if ((node != null)) {
+				if  ((node.HasChildNodes) && (node.FirstChild.NodeType == XmlNodeType.Element)) {
+					for (int i=0; i<node.ChildNodes.Count; i++) {
+						if (node.ChildNodes[i].NodeType == XmlNodeType.Element) {
+							int childDepth = XmlNodeElementsDepth(node.ChildNodes[i]);
+							maxDepth = (maxDepth < childDepth) ? childDepth : maxDepth;
+						}
+					}
+				}
+				else {
+					return 1;
+				}
+			}
+			else {
+				return -1;
+			}
+
+			return (maxDepth + 1);
+		}
+
+		private bool HaveChildElements(XmlNode node)
+		{
+			bool haveChildElements = true;
+			if(node.ChildNodes.Count > 0) {
+				foreach(XmlNode childNode in node.ChildNodes) {
+					if (childNode.NodeType != XmlNodeType.Element) {
+						haveChildElements = false;
+						break;
+					}
+				}
+			}
+			else {
+				haveChildElements = false;
+			}
+			return haveChildElements;
+		}
+
+		private bool HaveText(XmlNode node)
+		{
+			bool haveText = true;
+			if(node.ChildNodes.Count > 0) {
+				foreach(XmlNode childNode in node.ChildNodes) {
+					if (childNode.NodeType != XmlNodeType.Text) {
+						haveText = false;
+						break;
+					}
+				}
+			}
+			else {
+				haveText = false;
+			}
+			return haveText;
+		}
+
+		private bool IsRepeat(XmlNode node)
+		{
+			bool isRepeat = false;
+			if(node.ParentNode != null) {
+				foreach(XmlNode childNode in node.ParentNode.ChildNodes) {
+					if(childNode != node && childNode.Name == node.Name) {
+						isRepeat = true;
+						break;
+					}
+				}
+			}
+			return isRepeat;
+		}
+
+		private bool HaveAttributes(XmlNode node)
+		{
+			return (node.Attributes != null && node.Attributes.Count > 0);
+		}
+
+		private bool IsInferedAsTable(XmlNode node)
+		{
+			// Elements that have attributes are inferred as tables. 
+			// Elements that have child elements are inferred as tables. 
+			// Elements that repeat are inferred as a single table. 
+			return (HaveChildElements(node) || HaveAttributes(node) ||
+					IsRepeat(node));
+		}
+
+		/// <summary>
+		/// Returns true is any node that is repeated node for the node supplied
+		/// (i.e. is child node of node's parent, have the same name and is not the node itself)
+		/// have child elements
+		/// </summary>
+		private bool IsRepeatedHaveChildNodes(XmlNode node)
+		{
+			bool isRepeatedHaveChildElements = false;
+			if(node.ParentNode != null) {
+				foreach(XmlNode childNode in node.ParentNode.ChildNodes) {
+					if(childNode != node && childNode.Name == node.Name) {
+						if (HaveChildElements(childNode)) {
+							isRepeatedHaveChildElements = true;
+							break;
+						}
+					}
+				}
+			}
+			return isRepeatedHaveChildElements;
 		}
 
 		#endregion // Private helper methods

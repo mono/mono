@@ -1,5 +1,10 @@
 2004-03-04 Eran Domb <erand@mainsoft.com>
 
+	* XmlDataLoader.cs : Xml reading reviewed. Added support for additional xml formats as described
+	in MS.NET documentation (missing DataSet element etc).
+
+2004-03-04 Eran Domb <erand@mainsoft.com>
+
 	* Node.cs : Added.
 	* Index.cs : Rollback last changes.
 	
