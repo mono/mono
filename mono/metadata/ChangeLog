@@ -1,4 +1,9 @@
 
+Mon Apr 29 15:15:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, object.h: added mono_runtime_run_main () and
+	mono_runtime_get_main_args () for use in System.Environment.
+
 Mon Apr 29 13:45:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: fix thinko, enable actual finalization since the jit is now
