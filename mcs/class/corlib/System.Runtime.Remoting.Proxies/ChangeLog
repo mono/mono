@@ -1,3 +1,7 @@
+2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RemotingProxy.cs: On invoke, set the LogicalCallContext of the message.
+
 2003-07-28  Duncan Mak  <duncan@ximian.com>
 
 	* RealProxy.cs (GetProxiedType): Removed 'virtual' keyword.

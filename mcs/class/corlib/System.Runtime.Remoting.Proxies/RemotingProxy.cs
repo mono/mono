@@ -48,6 +48,8 @@ namespace System.Runtime.Remoting.Proxies
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) request;
 
+			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext ();
+
 			if (mMsg.MethodBase.IsConstructor)
 				return ActivateRemoteObject (mMsg);
 
