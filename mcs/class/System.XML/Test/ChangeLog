@@ -1,5 +1,15 @@
 2002-11-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* AllTests.cs : added XmlEntityReferenceTests
+	* XmlDocumentTests.cs : TestCloneNode, TestDocumentWithDoctypeDecl
+	* XmlDocumentFragmentTests.cs : TestSetInnerXml
+	* XmlEntityReferenceTests.cs : created
+	* XmlTextWriterTests.cs : TestWriteAttributes() bugfix (reusing ctx)
+	* XmlNodeTests.cs : bugfix TestInsertAfter(when refChild = null),
+		added TestPrependChild
+
+2002-11-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlAttributeTests.cs : TestSetInnerAndOuterXml
 	* XmlSignificantWhitespaceTests.cs : TestDataAndValue
 

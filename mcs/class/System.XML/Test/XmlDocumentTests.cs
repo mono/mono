@@ -811,39 +811,41 @@ namespace MonoTests.System.Xml
 			AssertNotNull(doc.DocumentElement);
 		}
 
-		public void TestDocumentWithDoctypeDecl()
+		public void TestDocumentWithDoctypeDecl ()
 		{
-			XmlDocument doc = new XmlDocument();
+			XmlDocument doc = new XmlDocument ();
 			try {
-				doc.LoadXml("<!DOCTYPE test><root />");
-			} catch(XmlException) {
-				Fail("#DoctypeDecl.OnlyName");
+				doc.LoadXml ("<!DOCTYPE test><root />");
+			} catch (XmlException) {
+				Fail ("#DoctypeDecl.OnlyName");
 			}
 			try 
 			{
-				doc.LoadXml("<!DOCTYPE test SYSTEM 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
-			} 
-			catch(XmlException) 
-			{
+				doc.LoadXml ("<!DOCTYPE test SYSTEM 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
+			} catch (XmlException) {
 				Fail("#DoctypeDecl.System");
 			}
-			try 
-			{
-				doc.LoadXml("<!DOCTYPE test PUBLIC '-//test' SYSTEM 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
-			} 
-			catch(XmlException) 
-			{
-				Fail("#DoctypeDecl.Public");
+			try {
+				doc.LoadXml ("<!DOCTYPE test PUBLIC '-//test' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><root />");
+			} catch (XmlException) {
+				Fail ("#DoctypeDecl.Public");
 			}
 			// Should this be commented out?
-//			try 
-//			{
-//				doc.LoadXml("<!DOCTYPE test [<!ELEMENT foo >]><root />");
-//			} 
-//			catch(XmlException) 
-//			{
+//			try {
+//				doc.LoadXml ("<!DOCTYPE test [<!ELEMENT foo >]><root />");
+//			} catch (XmlException) {
 //				Fail("#DoctypeDecl.ElementDecl");
 //			}
+		}
+
+		public void TestCloneNode ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<foo><bar /><baz hoge='fuga'>TEST Text</baz></foo>");
+			XmlDocument doc2 = (XmlDocument)doc.CloneNode (false);
+			AssertEquals ("ShallowCopy", 0, doc2.ChildNodes.Count);
+			doc2 = (XmlDocument)doc.CloneNode (true);
+			AssertEquals ("DeepCopy", "foo", doc2.DocumentElement.Name);
 		}
 	}
 }

@@ -24,7 +24,7 @@ namespace System.Xml
 		// Properties
 		[MonoTODO]
 		public override string BaseURI {
-			get { return null; }
+			get { throw new NotImplementedException (); }
 		}
 
 		public override bool IsReadOnly {
@@ -45,8 +45,9 @@ namespace System.Xml
 
 		public override string Value {
 			get { return null; } // always return null here.
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set {
+				throw new XmlException ("entity reference cannot be set value.");
+			}
 		}
 
 		// Methods
@@ -59,16 +60,16 @@ namespace System.Xml
 			return new XmlEntityReference ("", OwnerDocument);
 		}
 
-		[MonoTODO]
 		public override void WriteContentTo (XmlWriter w)
 		{
-			throw new NotImplementedException();
+			// nothing to write for this object.
 		}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException();
+			w.WriteRaw("&");
+			w.WriteName(Name);
+			w.WriteRaw(";");
 		}
 	}
 }

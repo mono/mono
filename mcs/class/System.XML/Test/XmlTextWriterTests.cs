@@ -924,6 +924,7 @@ namespace MonoTests.System.Xml
 			AssertEquals("#WriteAttributes.XmlDecl.1", "version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"", sw.ToString().Trim());
 
 			sb.Remove(0, sb.Length);	// init
+			ctx = new XmlParserContext(doc.NameTable, new XmlNamespaceManager(doc.NameTable), "", XmlSpace.Default);
 			xtr = new XmlTextReader("<?xml version='1.0'		 standalone='no'?><root a1='A' b2='B' c3='C'><foo><bar /></foo></root>", XmlNodeType.Document, ctx);
 			xtr.Read();	// read XMLDecl
 			wr.WriteAttributes(xtr, false);

@@ -35,19 +35,17 @@ namespace System.Xml
 
 		#region Properties
 
-		public virtual XmlAttributeCollection Attributes
-		{
+		public virtual XmlAttributeCollection Attributes {
 			get { return null; }
 		}
 
-		public virtual string BaseURI
-		{
+		public virtual string BaseURI {
 			get { return ParentNode.BaseURI; }
 		}
 
 		public virtual XmlNodeList ChildNodes {
 			get {
-				return new XmlNodeListChildren(this);
+				return new XmlNodeListChildren (this);
 			}
 		}
 
@@ -66,7 +64,7 @@ namespace System.Xml
 			get { return LastChild != null; }
 		}
 
-		[MonoTODO]
+		[MonoTODO("confirm whether this way is right for each not-overriden types.")]
 		public virtual string InnerText {
 			get {
 				StringBuilder builder = new StringBuilder ();
@@ -95,9 +93,9 @@ namespace System.Xml
 				StringWriter sw = new StringWriter ();
 				XmlTextWriter xtw = new XmlTextWriter (sw);
 
-				WriteContentTo(xtw);
+				WriteContentTo (xtw);
 
-				return sw.GetStringBuilder().ToString();
+				return sw.GetStringBuilder ().ToString ();
 			}
 
 			set { throw new NotImplementedException (); }
@@ -170,9 +168,9 @@ namespace System.Xml
 				StringWriter sw = new StringWriter ();
 				XmlTextWriter xtw = new XmlTextWriter (sw);
 
-				WriteTo(xtw);
+				WriteTo (xtw);
 
-				return sw.GetStringBuilder().ToString();
+				return sw.GetStringBuilder ().ToString ();
 			}
 		}
 
@@ -205,7 +203,7 @@ namespace System.Xml
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
 			// I assume that AppendChild(n) equals to InsertAfter(n, this.LastChild) or InsertBefore(n, null)
-			return InsertBefore(newChild, null);
+			return InsertBefore (newChild, null);
 
 			// Below are formerly used logic.
 /*			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
@@ -231,7 +229,7 @@ namespace System.Xml
 					for(int i=0; i<x; i++)
 					{
 						// When this logic became to remove children in order, then index will have never to increments.
-						XmlNode n = newChild.ChildNodes[0];
+						XmlNode n = newChild.ChildNodes [0];
 						this.AppendChild(n);	// recursively invokes events. (It is compatible with MS implementation.)
 					}
 				}
@@ -263,7 +261,7 @@ namespace System.Xml
 		public virtual XmlNode Clone ()
 		{
 			// By MS document, it is equivalent to CloneNode(true).
-			return this.CloneNode(true);
+			return this.CloneNode (true);
 		}
 
 		public abstract XmlNode CloneNode (bool deep);
@@ -271,28 +269,26 @@ namespace System.Xml
 		[MonoTODO]
 		public XPathNavigator CreateNavigator ()
 		{
-			return new XmlDocumentNavigator(this);
+			return new XmlDocumentNavigator (this);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			return new XmlNodeListChildren(this).GetEnumerator();
+			return new XmlNodeListChildren (this).GetEnumerator ();
 		}
 
-//		[MonoTODO]
+		[MonoTODO("performance problem.")]
 		public virtual string GetNamespaceOfPrefix (string prefix)
 		{
-			XmlNamespaceManager nsmgr = ConstructNamespaceManager();
-			return nsmgr.LookupNamespace(prefix);
-//			throw new NotImplementedException ();
+			XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
+			return nsmgr.LookupNamespace (prefix);
 		}
 
-//		[MonoTODO]
+		[MonoTODO("performance problem.")]
 		public virtual string GetPrefixOfNamespace (string namespaceURI)
 		{
-			XmlNamespaceManager nsmgr = ConstructNamespaceManager();
-			return nsmgr.LookupPrefix(namespaceURI);
-//			throw new NotImplementedException ();
+			XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
+			return nsmgr.LookupPrefix (namespaceURI);
 		}
 
 		object ICloneable.Clone ()
@@ -305,83 +301,75 @@ namespace System.Xml
 			return GetEnumerator ();
 		}
 
-		[MonoTODO]
 		public virtual XmlNode InsertAfter (XmlNode newChild, XmlNode refChild)
 		{
 			// I assume that insertAfter(n1, n2) equals to InsertBefore(n1, n2.PreviousSibling).
 
 			// I took this way because rather than calling InsertAfter() from InsertBefore()
 			//   because current implementation of 'NextSibling' looks faster than 'PreviousSibling'.
-			XmlNode argNode = (refChild == null) ? null : refChild.NextSibling;
-			return InsertBefore(newChild, argNode);
+			XmlNode argNode = null;
+			if(refChild != null)
+				argNode = refChild.NextSibling;
+			else if(ChildNodes.Count > 0)
+				argNode = FirstChild;
+			return InsertBefore (newChild, argNode);
 		}
 
-		[MonoTODO]
 		public virtual XmlNode InsertBefore (XmlNode newChild, XmlNode refChild)
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) 
-			{			
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {			
 				if (IsReadOnly)
 					throw new ArgumentException ("The specified node is readonly.");
 
 				if (newChild.OwnerDocument != ownerDoc)
 					throw new ArgumentException ("Can't append a node created by another document.");
 
-				if(refChild != null)
-				{
+				if(refChild != null) {
 					if(newChild.OwnerDocument != refChild.OwnerDocument)
 						throw new ArgumentException ("argument nodes are on the different documents.");
 
-					if(refChild == ownerDoc.DocumentElement && (newChild is XmlElement || newChild is XmlCharacterData || newChild is XmlEntityReference))
-						throw new XmlException("cannot insert this node to this position.");
 				}
+				if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement || newChild is XmlCharacterData || newChild is XmlEntityReference))
+					throw new XmlException ("cannot insert this node to this position.");
 				// checking validity finished. then appending...
 
 				ownerDoc.onNodeInserting (newChild, this);
 
 				if(newChild.ParentNode != null)
-					newChild.ParentNode.RemoveChild(newChild);
+					newChild.ParentNode.RemoveChild (newChild);
 
-				if(newChild.NodeType == XmlNodeType.DocumentFragment)
-				{
+				if(newChild.NodeType == XmlNodeType.DocumentFragment) {
 					int x = newChild.ChildNodes.Count;
-					for(int i=0; i<x; i++)
-					{
-						// When this logic became to remove children in order, then index will have never to increments.
-						XmlNode n = newChild.ChildNodes[0];
-						this.InsertBefore(n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
+					for(int i=0; i<x; i++) {
+						XmlNode n = newChild.ChildNodes [0];
+						this.InsertBefore (n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
 					}
 				}
-				else
-				{
+				else {
 					XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
 					XmlLinkedNode lastLinkedChild = LastLinkedChild;
 
 					newLinkedChild.parentNode = this;
 
-					if(refChild == null)
-					{
+					if(refChild == null) {
 						// append last, so:
 						// * set nextSibling of previous lastchild to newChild
 						// * set lastchild = newChild
 						// * set next of newChild to firstChild
-						if(LastLinkedChild != null)
-						{
+						if(LastLinkedChild != null) {
 							XmlLinkedNode formerFirst = FirstChild as XmlLinkedNode;
 							LastLinkedChild.NextLinkedSibling = newLinkedChild;
 							LastLinkedChild = newLinkedChild;
 							newLinkedChild.NextLinkedSibling = formerFirst;
 						}
-						else
-						{
+						else {
 							LastLinkedChild = newLinkedChild;
 							LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
 						}
 					}
-					else
-					{
+					else {
 						// append not last, so:
 						// * if newchild is first, then set next of lastchild is newChild.
 						//   otherwise, set next of previous sibling to newChild
@@ -398,7 +386,7 @@ namespace System.Xml
 				return newChild;
 			} 
 			else
-				throw new InvalidOperationException();
+				throw new InvalidOperationException ();
 		}
 
 		[MonoTODO]
@@ -407,10 +395,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XmlNode PrependChild (XmlNode newChild)
 		{
-			throw new NotImplementedException ();
+			return InsertAfter (newChild, null);
 		}
 
 		public virtual void RemoveAll ()
@@ -425,26 +412,25 @@ namespace System.Xml
 		public virtual XmlNode RemoveChild (XmlNode oldChild)
 		{
 			if(oldChild.ParentNode != this)
-				throw new XmlException("specified child is not child of this node.");
+				throw new XmlException ("specified child is not child of this node.");
 
 			OwnerDocument.onNodeRemoving (oldChild, oldChild.ParentNode);
 
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) 
-			{
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {
 				if (IsReadOnly)
-					throw new ArgumentException();
+					throw new ArgumentException ();
 
-				if (Object.ReferenceEquals(LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals(LastLinkedChild, oldChild))
+				if (Object.ReferenceEquals (LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals (LastLinkedChild, oldChild))
 					LastLinkedChild = null;
 				else {
 					XmlLinkedNode oldLinkedChild = (XmlLinkedNode)oldChild;
 					XmlLinkedNode beforeLinkedChild = LastLinkedChild;
 					
-					while (!Object.ReferenceEquals(beforeLinkedChild.NextLinkedSibling, LastLinkedChild) && !Object.ReferenceEquals(beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
+					while (!Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, LastLinkedChild) && !Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
 						beforeLinkedChild = beforeLinkedChild.NextLinkedSibling;
 
-					if (!Object.ReferenceEquals(beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
-						throw new ArgumentException();
+					if (!Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
+						throw new ArgumentException ();
 
 					beforeLinkedChild.NextLinkedSibling = oldLinkedChild.NextLinkedSibling;
 					oldLinkedChild.NextLinkedSibling = null;
@@ -456,7 +442,7 @@ namespace System.Xml
 				return oldChild;
 			} 
 			else
-				throw new ArgumentException();
+				throw new ArgumentException ();
 		}
 
 		[MonoTODO]
@@ -520,96 +506,92 @@ namespace System.Xml
 		public abstract void WriteTo (XmlWriter w);
 
 		// It parses with XmlReader and then construct DOM of the parsed contents.
-		internal void ConstructDOM(XmlReader xmlReader, XmlNode currentNode)
+		internal void ConstructDOM (XmlReader xmlReader, XmlNode currentNode)
 		{
 			// I am not confident whether this method should be placed in this class or not...
 			// Please verify its validity and then erase this comment;-)
 			XmlNode newNode;
 			XmlDocument doc = currentNode is XmlDocument ? (XmlDocument)currentNode : currentNode.OwnerDocument;
 			// Below are 'almost' copied from XmlDocument.Load(XmlReader xmlReader)
-			while (xmlReader.Read ()) 
-			{
-				switch (xmlReader.NodeType) 
-				{
-					case XmlNodeType.CDATA:
-						newNode = doc.CreateCDataSection(xmlReader.Value);
+			while (xmlReader.Read ()) {
+				switch (xmlReader.NodeType) {
+				case XmlNodeType.CDATA:
+					newNode = doc.CreateCDataSection (xmlReader.Value);
+					currentNode.AppendChild (newNode);
+					break;
+
+				case XmlNodeType.Comment:
+					newNode = doc.CreateComment (xmlReader.Value);
+					currentNode.AppendChild (newNode);
+					break;
+
+				case XmlNodeType.Element:
+					XmlElement element = doc.CreateElement (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
+					element.IsEmpty = xmlReader.IsEmptyElement;
+					currentNode.AppendChild (element);
+
+					// set the element's attributes.
+					while (xmlReader.MoveToNextAttribute ()) {
+						XmlAttribute attribute = doc.CreateAttribute (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
+						attribute.Value = xmlReader.Value;
+						element.SetAttributeNode (attribute);
+					}
+
+					xmlReader.MoveToElement ();
+
+					// if this element isn't empty, push it onto our "stack".
+					if (!xmlReader.IsEmptyElement)
+						currentNode = element;
+
+					break;
+
+				case XmlNodeType.EndElement:
+					currentNode = currentNode.ParentNode;
+					break;
+
+				case XmlNodeType.ProcessingInstruction:
+					newNode = doc.CreateProcessingInstruction (xmlReader.Name, xmlReader.Value);
+					currentNode.AppendChild (newNode);
+					break;
+
+				case XmlNodeType.Text:
+					newNode = doc.CreateTextNode (xmlReader.Value);
+					currentNode.AppendChild (newNode);
+					break;
+
+				case XmlNodeType.XmlDeclaration:
+					// empty strings are dummy, then gives over setting value contents to setter.
+					newNode = doc.CreateXmlDeclaration ("1.0" , String.Empty, String.Empty);
+					((XmlDeclaration)newNode).Value = xmlReader.Value;
+					this.AppendChild (newNode);
+					break;
+
+				case XmlNodeType.DocumentType:
+					XmlTextReader xmlTextReader = xmlReader as XmlTextReader;
+					if(xmlTextReader != null) {
+						XmlDocumentType dtdNode = doc.CreateDocumentType (xmlTextReader.Name, xmlTextReader.publicId, xmlTextReader.systemId, xmlTextReader.Value);
+						this.AppendChild (dtdNode);
+					}
+					else
+						throw new XmlException ("construction of DocumentType node from this XmlReader is not supported.");
+					break;
+
+				case XmlNodeType.EntityReference:
+					newNode = doc.CreateEntityReference (xmlReader.Name);
+					currentNode.AppendChild (newNode);
+					break;
+
+				case XmlNodeType.SignificantWhitespace:
+					newNode = doc.CreateSignificantWhitespace (xmlReader.Value);
+					currentNode.AppendChild (newNode);
+					break;
+
+				case XmlNodeType.Whitespace:
+					if(doc.PreserveWhitespace) {
+						newNode = doc.CreateWhitespace (xmlReader.Value);
 						currentNode.AppendChild (newNode);
-						break;
-
-					case XmlNodeType.Comment:
-						newNode = doc.CreateComment (xmlReader.Value);
-						currentNode.AppendChild (newNode);
-						break;
-
-					case XmlNodeType.Element:
-						XmlElement element = doc.CreateElement (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
-						currentNode.AppendChild (element);
-
-						// set the element's attributes.
-						while (xmlReader.MoveToNextAttribute ()) 
-						{
-							XmlAttribute attribute = doc.CreateAttribute (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
-							attribute.Value = xmlReader.Value;
-							element.SetAttributeNode (attribute);
-						}
-
-						xmlReader.MoveToElement ();
-
-						// if this element isn't empty, push it onto our "stack".
-						if (!xmlReader.IsEmptyElement)
-							currentNode = element;
-
-						break;
-
-					case XmlNodeType.EndElement:
-						currentNode = currentNode.ParentNode;
-						break;
-
-					case XmlNodeType.ProcessingInstruction:
-						newNode = doc.CreateProcessingInstruction (xmlReader.Name, xmlReader.Value);
-						currentNode.AppendChild (newNode);
-						break;
-
-					case XmlNodeType.Text:
-						newNode = doc.CreateTextNode (xmlReader.Value);
-						currentNode.AppendChild (newNode);
-						break;
-
-					case XmlNodeType.XmlDeclaration:
-						// empty strings are dummy, then gives over setting value contents to setter.
-						newNode = doc.CreateXmlDeclaration("1.0" , String.Empty, String.Empty);
-						((XmlDeclaration)newNode).Value = xmlReader.Value;
-						this.AppendChild(newNode);
-						break;
-
-					case XmlNodeType.DocumentType:
-						XmlTextReader xmlTextReader = xmlReader as XmlTextReader;
-						if(xmlTextReader != null)
-						{
-							XmlDocumentType dtdNode = doc.CreateDocumentType(xmlTextReader.Name, xmlTextReader.publicId, xmlTextReader.systemId, xmlTextReader.Value);
-							this.AppendChild(dtdNode);
-						}
-						else
-							throw new XmlException("construction of DocumentType node from this XmlReader is not supported.");
-						break;
-
-					case XmlNodeType.EntityReference:
-						newNode = doc.CreateEntityReference(xmlReader.Name);
-						currentNode.AppendChild(newNode);
-						break;
-
-					case XmlNodeType.SignificantWhitespace:
-						newNode = doc.CreateSignificantWhitespace(xmlReader.Value);
-						currentNode.AppendChild(newNode);
-						break;
-
-					case XmlNodeType.Whitespace:
-						if(doc.PreserveWhitespace)
-						{
-							newNode = doc.CreateWhitespace(xmlReader.Value);
-							currentNode.AppendChild(newNode);
-						}
-						break;
+					}
+					break;
 				}
 			}
 		}
@@ -617,34 +599,28 @@ namespace System.Xml
 		// It parses this and all the ancestor elements,
 		// find 'xmlns' declarations, stores and then return them.
 		// TODO: tests
-		internal XmlNamespaceManager ConstructNamespaceManager()
+		internal XmlNamespaceManager ConstructNamespaceManager ()
 		{
 			XmlDocument doc = this is XmlDocument ? (XmlDocument)this : this.OwnerDocument;
-			XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (doc.NameTable);
 			XmlElement el = null;
-			switch(this.NodeType)
-			{
-				case XmlNodeType.Attribute:
-					el = ((XmlAttribute)this).OwnerElement;
-					break;
-				case XmlNodeType.Element:
-					el = this as XmlElement;
-					break;
-				default:
-					el = this.ParentNode as XmlElement;
-					break;
+			switch(this.NodeType) {
+			case XmlNodeType.Attribute:
+				el = ((XmlAttribute)this).OwnerElement;
+				break;
+			case XmlNodeType.Element:
+				el = this as XmlElement;
+				break;
+			default:
+				el = this.ParentNode as XmlElement;
+				break;
 			}
 
-			while(el != null)
-			{			
-				foreach(XmlAttribute attr in el.Attributes)
-				{
-					if(attr.Prefix == "xmlns" || (attr.Name == "xmlns" && attr.Prefix == String.Empty))
-					{
-						if(nsmgr.LookupNamespace(attr.LocalName) == null )
-						{
-							nsmgr.AddNamespace(attr.LocalName, attr.Value);
-						}
+			while(el != null) {
+				foreach(XmlAttribute attr in el.Attributes) {
+					if(attr.Prefix == "xmlns" || (attr.Name == "xmlns" && attr.Prefix == String.Empty)) {
+						if(nsmgr.LookupNamespace (attr.LocalName) == null )
+							nsmgr.AddNamespace (attr.LocalName, attr.Value);
 					}
 				}
 				// When reached to document, then it will set null value :)

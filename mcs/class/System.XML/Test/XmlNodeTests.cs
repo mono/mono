@@ -134,10 +134,19 @@ namespace MonoTests.System.Xml
 			AssertEquals("InsertAfter.Next", "good_child", docelem.LastChild.PreviousSibling.Name);
 			try 
 			{
-				document.InsertBefore(document.CreateElement("BAD_MAN"), docelem);
-				Fail("#InsertBefore.BadPositionButNoError.1");
+				document.InsertAfter(document.CreateElement("BAD_MAN"), docelem);
+				Fail("#InsertAfter.BadPositionButNoError.1");
 			}
 			catch(XmlException) {}
+		}
+
+		public void TestPrependChild()
+		{
+			document = new XmlDocument();
+			document.LoadXml("<root><sub1 /><sub2 /></root>");
+			XmlElement docelem = document.DocumentElement;
+			docelem.PrependChild(document.CreateElement("prepender"));
+			AssertEquals("PrependChild", "prepender", docelem.FirstChild.Name);
 		}
 
 		public void saveTestRemoveAll ()

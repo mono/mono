@@ -18,65 +18,76 @@ namespace MonoTests.System.Xml
 		XmlDocument document;
 		XmlDocumentFragment fragment;
 		
-		public XmlDocumentFragmentTests(string name)
+		public XmlDocumentFragmentTests (string name)
 			: base (name)
 		{
 		}
 
-		protected override void SetUp()
+		protected override void SetUp ()
 		{
 		}
 
-		public void TestConstructor()
+		public void TestConstructor ()
 		{
-			XmlDocument d = new XmlDocument();
-			XmlDocumentFragment df = d.CreateDocumentFragment();
-			AssertEquals("#Constructor.NodeName", "#document-fragment", df.Name);
-			AssertEquals("#Constructor.NodeType", XmlNodeType.DocumentFragment, df.NodeType);
+			XmlDocument d = new XmlDocument ();
+			XmlDocumentFragment df = d.CreateDocumentFragment ();
+			AssertEquals ("#Constructor.NodeName", "#document-fragment", df.Name);
+			AssertEquals ("#Constructor.NodeType", XmlNodeType.DocumentFragment, df.NodeType);
 		}
 
-		public void TestAppendChildToFragment()
+		public void TestAppendChildToFragment ()
 		{
-			document = new XmlDocument();
-			fragment = document.CreateDocumentFragment();
-			document.LoadXml("<html><head></head><body></body></html>");
-			XmlElement el = document.CreateElement("p");
+			document = new XmlDocument ();
+			fragment = document.CreateDocumentFragment ();
+			document.LoadXml ("<html><head></head><body></body></html>");
+			XmlElement el = document.CreateElement ("p");
 			el.InnerXml = "Test Paragraph";
 
 			// appending element to fragment
-			fragment.AppendChild(el);
-			AssertNotNull("#AppendChildToFragment.Element", fragment.FirstChild);
-			AssertNotNull("#AppendChildToFragment.Element.Children", fragment.FirstChild.FirstChild);
-			AssertEquals("#AppendChildToFragment.Element.Child.Text", "Test Paragraph", fragment.FirstChild.FirstChild.Value);
+			fragment.AppendChild (el);
+			AssertNotNull ("#AppendChildToFragment.Element", fragment.FirstChild);
+			AssertNotNull ("#AppendChildToFragment.Element.Children", fragment.FirstChild.FirstChild);
+			AssertEquals ("#AppendChildToFragment.Element.Child.Text", "Test Paragraph", fragment.FirstChild.FirstChild.Value);
 		}
 
-		public void TestAppendFragmentToElement()
+		public void TestAppendFragmentToElement ()
 		{
-			document = new XmlDocument();
-			fragment = document.CreateDocumentFragment();
-			document.LoadXml("<html><head></head><body></body></html>");
+			document = new XmlDocument ();
+			fragment = document.CreateDocumentFragment ();
+			document.LoadXml ("<html><head></head><body></body></html>");
 			XmlElement body = document.DocumentElement.LastChild as XmlElement;
-			fragment.AppendChild(document.CreateElement("p"));
-			fragment.AppendChild(document.CreateElement("div"));
+			fragment.AppendChild (document.CreateElement ("p"));
+			fragment.AppendChild (document.CreateElement ("div"));
 
 			// appending fragment to element
-			body.AppendChild(fragment);
-			AssertNotNull("#AppendFragmentToElement.Exist", body.FirstChild);
-			AssertEquals("#AppendFragmentToElement.ChildIsElement", XmlNodeType.Element, body.FirstChild.NodeType);
-			AssertEquals("#AppendFragmentToElement.FirstChild", "p", body.FirstChild.Name);
-			AssertEquals("#AppendFragmentToElement.LastChild", "div", body.LastChild.Name);
+			body.AppendChild (fragment);
+			AssertNotNull ("#AppendFragmentToElement.Exist", body.FirstChild);
+			AssertEquals ("#AppendFragmentToElement.ChildIsElement", XmlNodeType.Element, body.FirstChild.NodeType);
+			AssertEquals ("#AppendFragmentToElement.FirstChild", "p", body.FirstChild.Name);
+			AssertEquals ("#AppendFragmentToElement.LastChild", "div", body.LastChild.Name);
 		}
 
-		public void TestGetInnerXml()
+		public void TestGetInnerXml ()
 		{
-			// this will be of TestWriteTo/TestWriteContentTo
+			// this will be also tests of TestWriteTo()/TestWriteContentTo()
 
-			document = new XmlDocument();
-			fragment = document.CreateDocumentFragment();
-			fragment.AppendChild(document.CreateElement("foo"));
-			fragment.AppendChild(document.CreateElement("bar"));
-			fragment.AppendChild(document.CreateElement("baz"));
-			AssertEquals("#Simple", "<foo /><bar /><baz />", fragment.InnerXml);
+			document = new XmlDocument ();
+			fragment = document.CreateDocumentFragment ();
+			fragment.AppendChild (document.CreateElement ("foo"));
+			fragment.AppendChild (document.CreateElement ("bar"));
+			fragment.AppendChild (document.CreateElement ("baz"));
+			AssertEquals ("#Simple", "<foo /><bar /><baz />", fragment.InnerXml);
+		}
+
+		public void TestSetInnerXml ()
+		{
+			document = new XmlDocument ();
+			fragment = document.CreateDocumentFragment ();
+			fragment.InnerXml = "<foo /><bar><child /></bar><baz />";
+			AssertEquals ("foo", fragment.FirstChild.Name);
+			AssertEquals ("bar", fragment.FirstChild.NextSibling.Name);
+			AssertEquals ("child", fragment.FirstChild.NextSibling.FirstChild.Name);
+			AssertEquals ("baz", fragment.LastChild.Name);
 		}
 	}
 }

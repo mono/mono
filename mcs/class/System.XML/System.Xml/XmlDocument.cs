@@ -7,9 +7,11 @@
 //   Jason Diamond <jason@injektilo.org>
 //   Miguel de Icaza (miguel@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2001 Daniel Weber
-// (C) 2002 Kral Ferch, Jason Diamond, Miguel de Icaza, Duncan Mak
+// (C) 2002 Kral Ferch, Jason Diamond, Miguel de Icaza, Duncan Mak,
+//   Atsushi Enomoto
 //
 
 using System;
@@ -30,33 +32,30 @@ namespace System.Xml
 		string baseURI = String.Empty;
 		XmlImplementation implementation;
 		bool preserveWhitespace = true;	// Its true initial value is false.
+		WeakReference conventionalXmlTextReader;
 
 		#endregion
 
 		#region Constructors
 
-		public XmlDocument () : base (null)
+		public XmlDocument () : this (null, null)
 		{
-			implementation = new XmlImplementation();
-			nameTable = implementation.internalNameTable;
-			AddDefaultNameTableKeys();
 		}
 
-		protected internal XmlDocument (XmlImplementation imp) : base (null)
+		protected internal XmlDocument (XmlImplementation imp) : this (imp, null)
 		{
-			implementation = imp;
-			nameTable = imp.internalNameTable;
-			AddDefaultNameTableKeys();
 		}
 
-		public XmlDocument (XmlNameTable nt) : base (null)
+		public XmlDocument (XmlNameTable nt) : this (null, nt)
 		{
-			implementation = new XmlImplementation();
-			implementation.internalNameTable = nt;
-			nameTable = nt;
-			AddDefaultNameTableKeys();
 		}
 
+		XmlDocument (XmlImplementation impl, XmlNameTable nt) : base (null)
+		{
+			implementation = (impl != null) ? impl : new XmlImplementation ();
+			nameTable = (nt != null) ? nt : implementation.internalNameTable;
+			AddDefaultNameTableKeys ();
+		}
 		#endregion
 
 		#region Events
@@ -80,6 +79,19 @@ namespace System.Xml
 		public override string BaseURI {
 			get {
 				return baseURI;
+			}
+		}
+
+		// Used to read 'InnerXml's for its descendants at any place.
+		internal XmlTextReader ConventionalParser {
+			get {
+				if(conventionalXmlTextReader == null)
+					conventionalXmlTextReader = new WeakReference (null);
+				if(!conventionalXmlTextReader.IsAlive) {
+					XmlTextReader reader = new XmlTextReader ((TextReader)null);
+					conventionalXmlTextReader.Target = reader;
+				}
+				return (XmlTextReader)conventionalXmlTextReader.Target;
 			}
 		}
 
@@ -117,7 +129,7 @@ namespace System.Xml
 				return base.InnerXml;
 			}
 			set {	// reason for overriding
-				this.LoadXml(value);
+				this.LoadXml (value);
 			}
 		}
 
@@ -169,17 +181,24 @@ namespace System.Xml
 
 		[MonoTODO]
 		public virtual XmlResolver XmlResolver {
-			set { throw new NotImplementedException(); }
+			set { throw new NotImplementedException (); }
 		}
 
 		#endregion
 
 		#region Methods
 
-		[MonoTODO]
+		[MonoTODO("Should BaseURI be cloned?")]
 		public override XmlNode CloneNode (bool deep)
 		{
-			throw new NotImplementedException ();
+			XmlDocument doc = implementation.CreateDocument ();
+			doc.PreserveWhitespace = PreserveWhitespace;	// required?
+			if(deep)
+			{
+				foreach(XmlNode n in ChildNodes)
+					doc.AppendChild (doc.ImportNode (n, deep));
+			}
+			return doc;
 		}
 
 		public XmlAttribute CreateAttribute (string name)
@@ -212,7 +231,7 @@ namespace System.Xml
 
 		public virtual XmlComment CreateComment (string data)
 		{
-			return new XmlComment(data, this);
+			return new XmlComment (data, this);
 		}
 
 		[MonoTODO]
@@ -223,7 +242,7 @@ namespace System.Xml
 
 		public virtual XmlDocumentFragment CreateDocumentFragment ()
 		{
-			return new XmlDocumentFragment(this);
+			return new XmlDocumentFragment (this);
 		}
 
 		public virtual XmlDocumentType CreateDocumentType (string name, string publicId,
@@ -260,10 +279,9 @@ namespace System.Xml
 			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this);
 		}
 
-		[MonoTODO]
 		public virtual XmlEntityReference CreateEntityReference (string name)
 		{
-			throw new NotImplementedException ();
+			return new XmlEntityReference (name, this);
 		}
 
 		[MonoTODO]
@@ -433,44 +451,44 @@ namespace System.Xml
 				case XmlNodeType.Attribute:
 					{
 						XmlAttribute src_att = node as XmlAttribute;
-						XmlAttribute dst_att = this.CreateAttribute(src_att.Prefix, src_att.LocalName, src_att.NamespaceURI);
+						XmlAttribute dst_att = this.CreateAttribute (src_att.Prefix, src_att.LocalName, src_att.NamespaceURI);
 						dst_att.Value = src_att.Value;	// always explicitly specified (whether source is specified or not)
 						return dst_att;
 					}
 
 				case XmlNodeType.CDATA:
-					return this.CreateCDataSection(node.Value);
+					return this.CreateCDataSection (node.Value);
 
 				case XmlNodeType.Comment:
-					return this.CreateComment(node.Value);
+					return this.CreateComment (node.Value);
 
 				case XmlNodeType.Document:
-					throw new XmlException("Document cannot be imported.");
+					throw new XmlException ("Document cannot be imported.");
 
 				case XmlNodeType.DocumentFragment:
 					{
-						XmlDocumentFragment df = this.CreateDocumentFragment();
+						XmlDocumentFragment df = this.CreateDocumentFragment ();
 						if(deep)
 						{
 							foreach(XmlNode n in node.ChildNodes)
 							{
-								df.AppendChild(this.ImportNode(n, deep));
+								df.AppendChild (this.ImportNode (n, deep));
 							}
 						}
 						return df;
 					}
 
 				case XmlNodeType.DocumentType:
-					throw new XmlException("DocumentType cannot be imported.");
+					throw new XmlException ("DocumentType cannot be imported.");
 
 				case XmlNodeType.Element:
 					{
 						XmlElement src = (XmlElement)node;
-						XmlElement dst = this.CreateElement(src.Prefix, src.LocalName, src.NamespaceURI);
+						XmlElement dst = this.CreateElement (src.Prefix, src.LocalName, src.NamespaceURI);
 						foreach(XmlAttribute attr in src.Attributes)
 						{
 							if(attr.Specified)	// copies only specified attributes
-								dst.SetAttributeNode((XmlAttribute)this.ImportNode(attr, deep));
+								dst.SetAttributeNode ((XmlAttribute)this.ImportNode (attr, deep));
 							if(DocumentType != null)
 							{
 								// TODO: create default attribute values
@@ -479,7 +497,7 @@ namespace System.Xml
 						if(deep)
 						{
 							foreach(XmlNode n in src.ChildNodes)
-								dst.AppendChild(this.ImportNode(n, deep));
+								dst.AppendChild (this.ImportNode (n, deep));
 						}
 						return dst;
 					}
@@ -492,10 +510,8 @@ namespace System.Xml
 				case XmlNodeType.Entity:
 					throw new NotImplementedException ();	// TODO
 
-				// [2002.10.14] CreateEntityReference not implemented.
 				case XmlNodeType.EntityReference:
-					throw new NotImplementedException("ImportNode of EntityReference not implemented mainly because CreateEntityReference was implemented in the meantime.");
-//					return this.CreateEntityReference(node.Name);
+					return this.CreateEntityReference (node.Name);
 
 				case XmlNodeType.None:
 					throw new XmlException ("Illegal ImportNode call for NodeType.None");
@@ -505,20 +521,20 @@ namespace System.Xml
 
 				case XmlNodeType.ProcessingInstruction:
 					XmlProcessingInstruction pi = node as XmlProcessingInstruction;
-					return this.CreateProcessingInstruction(pi.Target, pi.Data);
+					return this.CreateProcessingInstruction (pi.Target, pi.Data);
 
 				case XmlNodeType.SignificantWhitespace:
-					return this.CreateSignificantWhitespace(node.Value);
+					return this.CreateSignificantWhitespace (node.Value);
 
 				case XmlNodeType.Text:
-					return this.CreateTextNode(node.Value);
+					return this.CreateTextNode (node.Value);
 
 				case XmlNodeType.Whitespace:
-					return this.CreateWhitespace(node.Value);
+					return this.CreateWhitespace (node.Value);
 
 				case XmlNodeType.XmlDeclaration:
 					XmlDeclaration srcDecl = node as XmlDeclaration;
-					return this.CreateXmlDeclaration(srcDecl.Version, srcDecl.Encoding, srcDecl.Standalone);
+					return this.CreateXmlDeclaration (srcDecl.Version, srcDecl.Encoding, srcDecl.Standalone);
 
 				default:
 					throw new NotImplementedException ();
@@ -631,19 +647,15 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Verify what encoding is used by default;  Should use PreserveWhiteSpace")]
 		public virtual void Save(Stream outStream)
 		{
-			// To implementor: utf-8 is OK, at least for (ginga's) Japanese environment.
 			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, Encoding.UTF8);
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();
 		}
 
-		[MonoTODO ("Verify what encoding is used by default; Should use PreseveWhiteSpace")]
 		public virtual void Save (string filename)
 		{
-			// To implementor: utf-8 is OK, at least for (ginga's) Japanese environment.
 			XmlTextWriter xmlWriter = new XmlTextWriter (filename, Encoding.UTF8);
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();
@@ -657,7 +669,6 @@ namespace System.Xml
 			xmlWriter.Flush ();
 		}
 
-		[MonoTODO ("Should preserve white space if PreserveWhisspace is set")]
 		public virtual void Save (XmlWriter xmlWriter)
 		{
 			//
@@ -669,32 +680,36 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			foreach(XmlNode childNode in ChildNodes)
-				childNode.WriteTo(w);
+			foreach(XmlNode childNode in ChildNodes) {
+				childNode.WriteTo (w);
+				if(!PreserveWhitespace) {
+					w.WriteRaw ("\n");
+				}
+			}
 		}
 
 		public override void WriteTo (XmlWriter w)
 		{
-			WriteContentTo(w);
+			WriteContentTo (w);
 		}
 
-		private void AddDefaultNameTableKeys()
+		private void AddDefaultNameTableKeys ()
 		{
 			// The following keys are default of MS .NET Framework
-			nameTable.Add("#text");
-			nameTable.Add("xml");
-			nameTable.Add("xmlns");
-			nameTable.Add("#entity");
-			nameTable.Add("#document-fragment");
-			nameTable.Add("#comment");
-			nameTable.Add("space");
-			nameTable.Add("id");
-			nameTable.Add("#whitespace");
-			nameTable.Add("http://www.w3.org/2000/xmlns/");
-			nameTable.Add("#cdata-section");
-			nameTable.Add("lang");
-			nameTable.Add("#document");
-			nameTable.Add("#significant-whitespace");
+			nameTable.Add ("#text");
+			nameTable.Add ("xml");
+			nameTable.Add ("xmlns");
+			nameTable.Add ("#entity");
+			nameTable.Add ("#document-fragment");
+			nameTable.Add ("#comment");
+			nameTable.Add ("space");
+			nameTable.Add ("id");
+			nameTable.Add ("#whitespace");
+			nameTable.Add ("http://www.w3.org/2000/xmlns/");
+			nameTable.Add ("#cdata-section");
+			nameTable.Add ("lang");
+			nameTable.Add ("#document");
+			nameTable.Add ("#significant-whitespace");
 		}
 		#endregion
 	}

@@ -1,3 +1,16 @@
+2002-11-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs : unified all constructors, added ConventionalParser,
+		implemented CloneNode() and CreateEntityReference(),
+	* XmlEntityReference.cs : set_Value, WriteContentTo, WriteTo
+		set BaseURI to MonoTODO
+	* XmlNode.cs : implemented PrependChild, modified ConstructDOM,
+		bugfix InsertAfter (incorrect prepending) and InsertBefore
+		(more than one DocumentElements hadn't caused errors)
+	* XmlTextReader.cs : unified all constructors,
+		added internal SetReaderContext(), SetReaderFragment()
+		bugfix (syntax check of PUBLIC / getting internal subset)
+
 2002-11-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	XmlAttribute.cs : set_InnerText, set_InnerXml, some check for set_Prefix

@@ -47,115 +47,80 @@ namespace System.Xml
 		{
 		}
 
-		[MonoTODO]
 		public XmlTextReader (Stream input)
+			: this (new StreamReader (input))
 		{
-			// We can share some code in the constructors (at least for this one and next 2)
-			XmlNameTable nt = new NameTable ();
-			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
-			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
-			Init ();
-			reader = new StreamReader (input);
-			can_seek = input.CanSeek;
 		}
 
-		[MonoTODO]
 		public XmlTextReader (string url)
+			: this(url, new NameTable ())
 		{
-			XmlNameTable nt = new NameTable ();
-			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
-			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
-			Init ();
-			// StreamReader does not support url, only filepath;-)
-			reader = new StreamReader(url);
-			can_seek = reader.Peek () != -1;
 		}
 
-		[MonoTODO]
 		public XmlTextReader (TextReader input)
+			: this (input, new NameTable ())
 		{
-			XmlNameTable nt = new NameTable ();
-			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
-			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
-			Init ();
-			reader = input;
-			can_seek = input.Peek () != -1;
 		}
 
-		[MonoTODO]
 		protected XmlTextReader (XmlNameTable nt)
+			: this (String.Empty, null, XmlNodeType.None, null)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlTextReader (Stream input, XmlNameTable nt)
+			: this(new StreamReader (input), nt)
  		{
-			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
-			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
-			Init ();
-			reader = new StreamReader (input);
-			can_seek = input.CanSeek;
 		}
 
-		[MonoTODO]
 		public XmlTextReader (string url, Stream input)
+			: this (url, new StreamReader (input))
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlTextReader (string url, TextReader input)
+			: this (url, input, new NameTable ())
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Non-filename-url must be supported. Waiting for WebClient")]
 		public XmlTextReader (string url, XmlNameTable nt)
+			// : this(url, new StreamReader ((Stream)new XmlUrlResolver ().GetEntity (new Uri (url), null, typeof(Stream))), nt)
+			: this (url, new StreamReader (url), nt)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlTextReader (TextReader input, XmlNameTable nt)
+			: this(String.Empty, input, nt)
 		{
-			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
-			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
-			Init ();
-			reader = input;
-			can_seek = input.Peek () != -1;
 		}
 
-		[MonoTODO]
 		public XmlTextReader (Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
+			: this (String.Empty, new StreamReader (xmlFragment), fragType, context)
 		{
-			parserContext = context;
-			reader = new StreamReader(xmlFragment);
-			can_seek = xmlFragment.CanSeek;
-			Init();
-//			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlTextReader (string url, Stream input, XmlNameTable nt)
+			: this (url, new StreamReader (input), nt)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlTextReader (string url, TextReader input, XmlNameTable nt)
+			: this (url, input, XmlNodeType.Document, new XmlParserContext (nt, new XmlNamespaceManager (nt), null, XmlSpace.None))
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("TODO as same as private XmlTextReader(TextReader, XmlNodeType, XmlParserContext)")]
 		public XmlTextReader (string xmlFragment, XmlNodeType fragType, XmlParserContext context)
+			: this (String.Empty, new StringReader (xmlFragment), fragType, context)
 		{
-			//Waiting for Validating reader for fragType rules.
-			parserContext = context;
-			Init ();
-			reader = new StringReader(xmlFragment);
-			can_seek = true;
+		}
+
+		// TODO still remains as described at head of this file,
+		// but it might not be TODO of the constructors...
+		XmlTextReader (string url, TextReader fragment, XmlNodeType fragType, XmlParserContext context)
+		{
+			this.SetReaderContext(url, context);
+			this.SetReaderFragment(fragment, fragType);
 		}
 
 		#endregion
@@ -535,7 +500,7 @@ namespace System.Xml
 					endname = this.Name;
 				}
 
-				xmlBuffer.Replace(currentTag.ToString (), "");
+				xmlBuffer.Replace (currentTag.ToString (), "");
 				saveToXmlBuffer = false;
 				string InnerXml = xmlBuffer.ToString ();
 				xmlBuffer.Length = 0;
@@ -547,10 +512,10 @@ namespace System.Xml
 		public override string ReadOuterXml ()
 		{
 			if (NodeType == XmlNodeType.Attribute) {
-				return Name+"=\""+Value+"\"";
+				return Name + "=\"" + Value + "\"";
 			} else {
    				saveToXmlBuffer = true;
-				xmlBuffer.Append(currentTag.ToString ());
+				xmlBuffer.Append (currentTag.ToString ());
 				string startname = this.Name;
 				string endname = string.Empty;
 				readState = ReadState.Interactive;
@@ -642,6 +607,38 @@ namespace System.Xml
 
 		internal string publicId;
 		internal string systemId;
+
+		internal void SetReaderContext (string url, XmlParserContext context)
+		{
+			parserContext = context;
+			parserContext.BaseURI = url;
+			Init ();
+		}
+
+		internal void SetReaderFragment(TextReader fragment, XmlNodeType fragType)
+		{
+			this.reader = fragment;
+			can_seek = fragment != null && fragment.Peek () != -1;
+/*	for future use
+			switch(fragType)
+			{
+			case XmlNodeType.Attribute:	// attribute content
+				parserContext.InputState = XmlParserInputState.AttributeValue;
+				break;
+			case XmlNodeType.DocumentFragment:	// element content
+				parserContext.InputState = XmlParserInputState.Content;
+				break;
+			case XmlNodeType.Element:	// one element
+				parserContext.InputState = XmlParserInputState.StartTag;
+				break;
+			case XmlNodeType.Document:	// document content
+				parserContext.InputState = XmlParserInputState.Start;
+				break;
+			default:
+				throw new InvalidOperationException("setting this xml node type not allowed.");
+			}
+*/
+		}
 
 		private void Init ()
 		{
@@ -1201,6 +1198,13 @@ namespace System.Xml
 				AppendValueChar ((char)ch);
 			}
 
+/* for future use
+			if(target == "xml") && parserContext.InputState != XmlParserInputState.Start)
+				throw new XmlException("Xml declaration is not allowed here.");
+			else {
+				parserContext.InputState = XmlParserInputState.DTD; //for future use
+			}
+*/
 			SetProperties (
 				target == "xml" ?
 				XmlNodeType.XmlDeclaration :
@@ -1308,69 +1312,49 @@ namespace System.Xml
 			string doctypeName = null;
 			string publicId = String.Empty;
 			string systemId = String.Empty;
-			string internalSubset = String.Empty;
 
-			SkipWhitespace();
-			doctypeName = ReadName();
-			SkipWhitespace();
+			SkipWhitespace ();
+			doctypeName = ReadName ();
+			SkipWhitespace ();
 			xmlBuffer.Length = 0;
-			switch(PeekChar())
+			switch(PeekChar ())
 			{
 			case 'S':
-				systemId = ReadSystemLiteral();
+				systemId = ReadSystemLiteral (true);
 				break;
 			case 'P':
-/*
-				Expect("PUBLIC");
-				SkipWhitespace();
-				int quoteChar = ReadChar();
-				int c = 0;
-				while(c != quoteChar)
-				{
-					c = ReadChar();
-					if(c < 0)
-						throw new XmlException("Unexpected end of stream in ExternalID.");
-					if(c != quoteChar)
-					{
-						if(XmlChar.IsPubidChar(c)) xmlBuffer.Append((char)c);
-						else
-							throw new XmlException("character '" + (char)c + "' not allowed for PUBLIC ID");
-					}
-				}
-				publicId = xmlBuffer.ToString();
-				*/
-				publicId = ReadPubidLiteral();
-				SkipWhitespace();
-				systemId = ReadSystemLiteral();
+				publicId = ReadPubidLiteral ();
+				SkipWhitespace ();
+				systemId = ReadSystemLiteral (false);
 				break;
 			}
-			SkipWhitespace();
+			SkipWhitespace ();
 
 
-			if(PeekChar() == '[')
+			if(PeekChar () == '[')
 			{
 				// read markupdecl etc. or end of decl
-				ReadChar();
+				ReadChar ();
+				xmlBuffer.Length = 0;
 				saveToXmlBuffer = true;
-				do
-				{
-					ReadDTDInternalSubset();
+				do {
+					ReadDTDInternalSubset ();
 				} while(nodeType != XmlNodeType.None);
-				xmlBuffer.Remove(xmlBuffer.Length -1, 1);	// cut off ']'
+				xmlBuffer.Remove (xmlBuffer.Length - 1, 1);	// cut off ']'
 				saveToXmlBuffer = false;
 			}
 			// end of DOCTYPE decl.
-			SkipWhitespace();
-			Expect('>');
+			SkipWhitespace ();
+			Expect ('>');
 
-			internalSubset = xmlBuffer.ToString();
+			parserContext.InternalSubset = xmlBuffer.ToString ();
 
 			// set properties for <!DOCTYPE> node
 			SetProperties (
 				XmlNodeType.DocumentType, // nodeType
 				doctypeName, // name
 				false, // isEmptyElement
-				internalSubset, // value
+				parserContext.InternalSubset, // value
 				true // clearAttributes
 				);
 		}
@@ -1383,124 +1367,125 @@ namespace System.Xml
 		//	 (if None then ']' was found.)
 		private void ReadDTDInternalSubset()
 		{
-			SkipWhitespace();
-			switch(ReadChar())
+			SkipWhitespace ();
+			switch(ReadChar ())
 			{
 			case ']':
 				nodeType = XmlNodeType.None;
 				break;
 			case '%':
-				string peName = ReadName();
-				Expect(';');
+				string peName = ReadName ();
+				Expect (';');
 				nodeType = XmlNodeType.EntityReference;	// It's chating a bit;-)
 				break;
 			case '<':
-				switch(ReadChar())
+				switch(ReadChar ())
 				{
 				case '?':
-					ReadProcessingInstruction();
+					ReadProcessingInstruction ();
 					break;
 				case '!':
-					switch(ReadChar())
+					switch(ReadChar ())
 					{
 					case '-':
-						Expect('-');
-						ReadComment();
+						Expect ('-');
+						ReadComment ();
 						break;
 					case 'E':
-						switch(ReadChar())
+						switch(ReadChar ())
 						{
 						case 'N':
-							Expect("TITY");
-							ReadEntityDecl();
+							Expect ("TITY");
+							ReadEntityDecl ();
 							break;
 						case 'L':
-							Expect("EMENT");
-							ReadElementDecl();
+							Expect ("EMENT");
+							ReadElementDecl ();
 							break;
 						default:
-							throw new XmlException("Syntax Error after '<!E' (ELEMENT or ENTITY must be found)");
+							throw new XmlException ("Syntax Error after '<!E' (ELEMENT or ENTITY must be found)");
 						}
 						break;
 					case 'A':
-						Expect("TTLIST");
-						ReadAttListDecl();
+						Expect ("TTLIST");
+						ReadAttListDecl ();
 						break;
 					case 'N':
-						Expect("OTATION");
-						ReadNotationDecl();
+						Expect ("OTATION");
+						ReadNotationDecl ();
 						break;
 					default:
-						throw new XmlException("Syntax Error after '<!' characters.");
+						throw new XmlException ("Syntax Error after '<!' characters.");
 					}
 					break;
 				default:
-					throw new XmlException("Syntax Error after '<' character.");
+					throw new XmlException ("Syntax Error after '<' character.");
 				}
 				break;
 			default:
-				throw new XmlException("Syntax Error inside doctypedecl markup.");
+				throw new XmlException ("Syntax Error inside doctypedecl markup.");
 			}
 		}
 
 		// The reader is positioned on the head of the name.
 		private void ReadElementDecl()
 		{
-			while(ReadChar() != '>');
+			while(ReadChar () != '>');
 		}
 
 		private void ReadEntityDecl()
 		{
-			while(ReadChar() != '>');
+			while(ReadChar () != '>');
 		}
 
 		private void ReadAttListDecl()
 		{
-			while(ReadChar() != '>');
+			while(ReadChar () != '>');
 		}
 
 		private void ReadNotationDecl()
 		{
-			while(ReadChar() != '>');
+			while(ReadChar () != '>');
 		}
 		
 		// The reader is positioned on the first 'S' of "SYSTEM".
-		private string ReadSystemLiteral ()
+		private string ReadSystemLiteral (bool expectSYSTEM)
 		{
-			Expect("SYSTEM");
-			SkipWhitespace();
-			int quoteChar = ReadChar();	// apos or quot
+			if(expectSYSTEM)
+				Expect ("SYSTEM");
+			SkipWhitespace ();
+			int quoteChar = ReadChar ();	// apos or quot
 			xmlBuffer.Length = 0;
 			saveToXmlBuffer = true;
 			int c = 0;
-			while(c != quoteChar)
-			{
-				c = ReadChar();
-				if(c < 0) throw new XmlException("Unexpected end of stream in ExternalID.");
+			while(c != quoteChar) {
+				c = ReadChar ();
+				if(c < 0) throw new XmlException ("Unexpected end of stream in ExternalID.");
 			}
 			saveToXmlBuffer = false;
-			xmlBuffer.Remove(xmlBuffer.Length-1, 1);	// cut quoteChar
-			return xmlBuffer.ToString();
+			xmlBuffer.Remove (xmlBuffer.Length-1, 1);	// cut quoteChar
+			return xmlBuffer.ToString ();
 		}
 
 		private string ReadPubidLiteral()
 		{
-			Expect("PUBLIC");
-			SkipWhitespace();
-			int quoteChar = ReadChar();
+			Expect ("PUBLIC");
+			SkipWhitespace ();
+			int quoteChar = ReadChar ();
 			xmlBuffer.Length = 0;
 			saveToXmlBuffer = true;
 			int c = 0;
 			while(c != quoteChar)
 			{
-				c = ReadChar();
-				if(c < 0) throw new XmlException("Unexpected end of stream in ExternalID.");
-				if(c != quoteChar && !XmlChar.IsPubidChar(c))
+				c = ReadChar ();
+				if(c < 0) throw new XmlException ("Unexpected end of stream in ExternalID.");
+				if(c != quoteChar && !XmlChar.IsPubidChar (c))
 					throw new XmlException("character '" + (char)c + "' not allowed for PUBLIC ID");
 			}
-			xmlBuffer.Remove(xmlBuffer.Length-1, 1);	// cut quoteChar
+			ReadChar();	// skips quoteChar
+			xmlBuffer.Remove (xmlBuffer.Length-1, 1);	// cut quoteChar
 			saveToXmlBuffer = false;
-			return xmlBuffer.ToString();
+			return xmlBuffer.ToString ();
 		}
 
 		// The reader is positioned on the first character
@@ -1542,7 +1527,7 @@ namespace System.Xml
 		{
 			int len = expected.Length;
 			for(int i=0; i< len; i++)
-				Expect(expected[i]);
+				Expect (expected[i]);
 		}
 
 		// Does not consume the first non-whitespace character.
