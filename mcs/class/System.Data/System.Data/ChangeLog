@@ -1,3 +1,8 @@
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTable.cs : use new IExpression.EvalBoolean() to avoid extraneous
+	  boxing.
+
 2005-01-25  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTable.cs: ImportRow :Do not add to rows collection if the

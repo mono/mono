@@ -34,7 +34,7 @@ using System;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	internal class Literal : IExpression {
+	internal class Literal : BaseExpression {
 		object val;
 	
 		public Literal (object val)
@@ -42,7 +42,7 @@ namespace Mono.Data.SqlExpressions {
 			this.val = val;
 		}
 	
-		public object Eval (DataRow row)
+		public override object Eval (DataRow row)
 		{
 			return val;
 		}

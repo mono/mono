@@ -37,21 +37,30 @@ using System.Data;
 namespace Mono.Data.SqlExpressions {
 	internal interface IExpression {
 		object Eval (DataRow row);
+
+		bool EvalBoolean (DataRow row);
 	}
-	
+
+	internal abstract class BaseExpression : IExpression {
+		public abstract object Eval (DataRow row);
+
+		public virtual bool EvalBoolean (DataRow row)
+		{
+			return (bool) Eval (row);
+		}
+	}
+
 	// abstract base classes
-	internal abstract class UnaryExpression : IExpression {
+	internal abstract class UnaryExpression : BaseExpression {
 		protected IExpression expr;
 	
 		public UnaryExpression (IExpression e)
 		{
 			expr = e;
 		}
-		
-		abstract public object Eval (DataRow row);		
 	}
 	
-	internal abstract class BinaryExpression : IExpression {
+	internal abstract class BinaryExpression : BaseExpression {
 		protected IExpression expr1, expr2;
 	
 		protected BinaryExpression (IExpression e1, IExpression e2)
@@ -59,8 +68,6 @@ namespace Mono.Data.SqlExpressions {
 			expr1 = e1;
 			expr2 = e2;
 		}
-
-		abstract public object Eval (DataRow row);
 	}
 	
 	internal enum Operation {

@@ -41,7 +41,7 @@ namespace Mono.Data.SqlExpressions {
 		Child
 	}
 	
-	internal class ColumnReference : IExpression {
+	internal class ColumnReference : BaseExpression {
 		ReferencedTable refTable;
 		string relationName, columnName;
 
@@ -137,7 +137,7 @@ namespace Mono.Data.SqlExpressions {
 			throw new EvaluateException (String.Format ("Cannot handle data type found in column '{0}'.", columnName));			
 		}
 
-		public object Eval (DataRow row)
+		public override object Eval (DataRow row)
 		{
 			DataRow referencedRow = GetReferencedRow (row);
 			if (referencedRow == null)

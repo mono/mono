@@ -39,7 +39,7 @@ namespace Mono.Data.SqlExpressions {
 		Count, Sum, Min, Max, Avg, StDev, Var
 	}
 
-	internal class Aggregation : IExpression {
+	internal class Aggregation : BaseExpression {
 		bool cacheResults;
 		DataRow[] rows;
 		ColumnReference column;
@@ -56,7 +56,7 @@ namespace Mono.Data.SqlExpressions {
 			this.result = null;
 		}
 	
-		public object Eval (DataRow row)
+		public override object Eval (DataRow row)
 		{
 			//TODO: implement a better caching strategy and a mechanism for cache invalidation.
 			//for now only aggregation over the table owning 'row' (e.g. 'sum(parts)'

@@ -1,3 +1,9 @@
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs, ColumnReference.cs, BooleanExpression.cs,
+	  Aggregation.cs, Literal.cs : added EvalBoolean() to avoid extraneous
+	  boxing in RowFilter.
+
 2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Numeric.cs : Fixed ToSameType(). It should let conversion result to

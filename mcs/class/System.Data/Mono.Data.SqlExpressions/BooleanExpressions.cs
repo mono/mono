@@ -42,6 +42,11 @@ namespace Mono.Data.SqlExpressions {
 		{
 			return !((bool)expr.Eval (row));
 		}
+
+		override public bool EvalBoolean (DataRow row)
+		{
+			return !expr.EvalBoolean (row);
+		}
 	}
 	
 	internal class BoolOperation : BinaryOpExpression {
@@ -49,12 +54,16 @@ namespace Mono.Data.SqlExpressions {
 	
 		override public object Eval (DataRow row)
 		{
+			return EvalBoolean (row);
+		}
+
+		override public bool EvalBoolean (DataRow row)
+		{
 			if (op == Operation.OR)
-				return ((bool)expr1.Eval (row)) || ((bool)expr2.Eval (row));
+				return (expr1.EvalBoolean (row)) || (expr2.EvalBoolean (row));
 			if (op == Operation.AND)
-				return ((bool)expr1.Eval (row)) && ((bool)expr2.Eval (row));
-				
+				return (expr1.EvalBoolean (row)) && (expr2.EvalBoolean (row));
 			return false;
 		}
-	}	
+	}
 }

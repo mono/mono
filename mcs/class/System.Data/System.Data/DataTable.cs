@@ -1290,7 +1290,7 @@ namespace System.Data {
 			int recordStateFilter = GetRowStateFilter(recordStates);
 			foreach (DataRow row in Rows) {
 				if (((int)row.RowState & recordStateFilter) != 0) {
-					if (filter != null && !(bool)filter.Eval (row))
+					if (filter != null && !filter.EvalBoolean (row))
 						continue;
 					rowList.Add (row);
 				}
