@@ -25,6 +25,9 @@ namespace System {
 		
 		internal double value;
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		unsafe extern internal static void AssertEndianity (double *value);
+
 		public int CompareTo (object v)
 		{
 			if (v == null)

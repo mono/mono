@@ -408,6 +408,10 @@ namespace System.Reflection.Emit {
 		
 		public virtual void Emit (OpCode opcode, double val)
 		{
+			unsafe {
+				Double.AssertEndianity (&val);
+			}
+
 			byte[] s = System.BitConverter.GetBytes (val);
 			make_room (10);
 			ll_emit (opcode);

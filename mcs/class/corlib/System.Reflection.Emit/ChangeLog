@@ -1,3 +1,9 @@
+
+Sat Aug  2 13:04:55 BST 2003 Malte Hildingson <malte@amy.udd.htu.se>
+
+	* ILGenerator.cs: Emission of doubles now utilise the Double.AssertEndianity
+	icall to assert double word endianity on ARM.
+
 2003-07-25  Duncan Mak  <duncan@ximian.com>
 
 	* OpCodes.cs (Boxval): Marked with ObsoleteAttribute.

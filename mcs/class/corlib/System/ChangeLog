@@ -1,4 +1,8 @@
 
+Sat Aug  2 13:01:46 BST 2003 Malte Hildingson <malte@amy.udd.htu.se>
+
+	* Double.cs: added icall Double.AssertEndianity.
+
 Fri Aug 1 16:47:17 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs, MonoType.cs: implemented generic-specific methods.
