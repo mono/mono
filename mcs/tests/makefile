@@ -18,7 +18,7 @@ TEST_SOURCES = \
 	test-101 test-102 test-103 test-104 test-105 test-108 test-109 test-110\
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 	\
 	test-121 test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
-	test-131 test-134 test-135
+	test-131 test-134 test-135                            test-138
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2 unsafe-3
