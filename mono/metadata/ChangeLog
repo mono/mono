@@ -1,3 +1,7 @@
+2003-08-22 Lluis Sanchez <lluis@ximian.com>
+
+	* object.cs: Fixed bug #47785.
+
 2003-08-22 Jackson Harper <jackson@latitudegeo.com>
 
 	* string-icalls.c (StringReplace): If their are no occurances of
