@@ -781,7 +781,10 @@ _loop175_breakloop:				;
 		}
 		case '\'':
 		{
+			int _saveIndex = 0;
+			_saveIndex = text.Length;
 			match('\'');
+			text.Length = _saveIndex;
 			{    // ( ... )*
 				for (;;)
 				{
@@ -799,7 +802,9 @@ _loop175_breakloop:				;
 				}
 _loop178_breakloop:				;
 			}    // ( ... )*
+			_saveIndex = text.Length;
 			match('\'');
+			text.Length = _saveIndex;
 			break;
 		}
 		default:
