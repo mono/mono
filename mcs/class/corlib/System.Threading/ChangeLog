@@ -1,3 +1,9 @@
+
+Wed Feb 13 21:51:30 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: implement CurrentCulture property needed by
+	Convert.ChangeType() (used when compiling enums).
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* ManualResetEvent.cs: 

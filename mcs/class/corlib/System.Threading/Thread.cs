@@ -17,6 +17,9 @@ namespace System.Threading
 {
 	public sealed class Thread
 	{
+
+		private CultureInfo current_culture;
+
 		[MonoTODO]
 		public static Context CurrentContext {
 			get {
@@ -200,11 +203,13 @@ namespace System.Threading
 		[MonoTODO]
 		public CultureInfo CurrentCulture {
 			get {
-				// FIXME
-				return(null);
+				if (current_culture == null)
+					current_culture = new CultureInfo ("");
+				return current_culture;
 			}
 			
 			set {
+				current_culture = value;
 			}
 		}
 
