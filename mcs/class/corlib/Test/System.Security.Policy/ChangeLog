@@ -1,3 +1,8 @@
+2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ZoneTest.cs: Added test to check that NoZone isn't included in the 
+	permission XML (returned by CreateIdentityPermission).
+
 2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SiteTest.cs: Added tests for CreateFromUrl. Updated AllChars for the

@@ -149,6 +149,8 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("NoZone.Copy.Equals", z.Equals (zc));
 			IPermission p = z.CreateIdentityPermission (null);
 			AssertNotNull ("NoZone.CreateIdentityPermission", p);
+			// NoZone isn't added to the XML / string of permissions
+			Assert ("ToString!=NoZone", p.ToString ().IndexOf ("NoZone") < 0);
 
 			Assert ("NoZone.MyComputer.Equals", !z.Equals (new Zone (SecurityZone.MyComputer)));
 			Assert ("NoZone.Intranet.Equals", !z.Equals (new Zone (SecurityZone.Intranet)));
