@@ -1164,9 +1164,14 @@ namespace System.Data {
 						continue;
 					break;
 				case 2:
+					bool skip = false;
 					for (int i = 0; i < table.ParentRelations.Count; i++)
-						if (row.GetParentRow (table.ParentRelations [i]) != null)
+						if (row.GetParentRow (table.ParentRelations [i]) != null) {
+							skip = true;
 							continue;
+						}
+					if (skip)
+						continue;
 					break;
 				}
 
