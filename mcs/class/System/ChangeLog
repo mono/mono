@@ -1,5 +1,9 @@
 2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* System.dll.sources: AlphabeticalEnumConverter.cs, SRDescriptionAttribute.cs added
+
+2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* System.dll.sources: Assembly/Locale.cs added, Globalization.Locale.cs removed
 
 2003-07-18  Peter Williams  <peter@newton.cx>

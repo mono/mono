@@ -323,6 +323,7 @@ System.Configuration/IgnoreSectionHandler.cs
 System.Configuration/NameValueFileSectionHandler.cs
 System.Configuration/NameValueSectionHandler.cs
 System.Configuration/SingleTagSectionHandler.cs
+System.Diagnostics/AlphabeticalEnumConverter.cs
 System.Diagnostics/BooleanSwitch.cs
 System.Diagnostics/CounterCreationDataCollection.cs
 System.Diagnostics/CounterCreationData.cs
@@ -368,6 +369,7 @@ System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
+System.Diagnostics/SRDescriptionAttribute.cs
 System.Diagnostics/Switch.cs
 System.Diagnostics/TextWriterTraceListener.cs
 System.Diagnostics/ThreadPriorityLevel.cs
