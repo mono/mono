@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.15  2004/08/09 22:09:47  pbartok
+// - Added handling for middle and right mousebutton
+// - Added handling for mouse wheel
+// - Added handling for key state and mouse state and position
+// - Now properly generates WM_xBUTTONx messages and WM_MOUSEWHEEL messages
+//
 // Revision 1.14  2004/08/09 20:55:59  pbartok
 // - Removed Run method, was only required for initial development
 //
@@ -418,8 +424,24 @@ namespace System.Windows.Forms {
 			string	keys;
 			int	len;
 			msg.wParam = IntPtr.Zero;
-			
+
 			len = XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
+
+			if ((keysym==XKeySym.XK_Control_L) || (keysym==XKeySym.XK_Control_R)) {
+				if (xevent.type==XEventName.KeyPress) {
+					key_state |= Keys.Control;
+				} else {
+					key_state &= ~Keys.Control;
+				}
+			}
+
+			if ((keysym==XKeySym.XK_Shift_L) || (keysym==XKeySym.XK_Shift_R)) {
+				if (xevent.type==XEventName.KeyPress) {
+					key_state |= Keys.Shift;
+				} else {
+					key_state &= ~Keys.Shift;
+				}
+			}
 
 			if (len>0) /* String is not zero terminated*/
 				Marshal.WriteByte (buffer, len, 0);
@@ -445,12 +467,39 @@ namespace System.Windows.Forms {
 			msg.lParam = (IntPtr) 1;
 		}
 
+		private IntPtr GetMousewParam(int Delta) {
+			int	result = 0;
+
+			if ((mouse_state & MouseButtons.Left) != 0) {
+				result |= (int)MsgButtons.MK_LBUTTON;
+			}
+
+			if ((mouse_state & MouseButtons.Middle) != 0) {
+				result |= (int)MsgButtons.MK_MBUTTON;
+			}
+
+			if ((mouse_state & MouseButtons.Right) != 0) {
+				result |= (int)MsgButtons.MK_RBUTTON;
+			}
+
+			if ((key_state & Keys.Control) != 0) {
+				result |= (int)MsgButtons.MK_CONTROL;
+			}
+
+			if ((key_state & Keys.Shift) != 0) {
+				result |= (int)MsgButtons.MK_SHIFT;
+			}
+
+			result |= Delta << 16;
+
+			return (IntPtr)result;
+		}
+
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			XEvent	xevent = new XEvent();
 
 			XNextEvent(DisplayHandle, ref xevent);
 			msg.hwnd=xevent.AnyEvent.window;
-
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
 					msg.message = Msg.WM_KEYDOWN;
@@ -465,20 +514,92 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ButtonPress: {
-					msg.message=Msg.WM_LBUTTONDOWN;
+					switch(xevent.ButtonEvent.button) {
+						case 1: {
+							mouse_state=MouseButtons.Left;
+							msg.message=Msg.WM_LBUTTONDOWN;
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 2: {
+							mouse_state=MouseButtons.Middle;
+							msg.message=Msg.WM_MBUTTONDOWN;
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 3: {
+							mouse_state=MouseButtons.Right;
+							msg.message=Msg.WM_RBUTTONDOWN;
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 4: {
+							msg.message=Msg.WM_MOUSEWHEEL;
+							msg.wParam=GetMousewParam(120);
+							break;
+						}
+
+						case 5: {
+							msg.message=Msg.WM_MOUSEWHEEL;
+							msg.wParam=GetMousewParam(-120);
+							break;
+						}
+
+					}
+
 					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					mouse_position.X=xevent.ButtonEvent.x;
+					mouse_position.Y=xevent.ButtonEvent.y;
 					break;
 				}
 
 				case XEventName.ButtonRelease: {
-					msg.message=Msg.WM_LBUTTONUP;
+					switch(xevent.ButtonEvent.button) {
+						case 1: {
+							mouse_state=MouseButtons.Left;
+							msg.message=Msg.WM_LBUTTONUP;
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 2: {
+							mouse_state=MouseButtons.Middle;
+							msg.message=Msg.WM_MBUTTONUP;
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 3: {
+							mouse_state=MouseButtons.Right;
+							msg.message=Msg.WM_RBUTTONUP;
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 4: {
+							return true;
+						}
+
+						case 5: {
+							return true;
+						}
+					}
+
 					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					mouse_position.X=xevent.ButtonEvent.x;
+					mouse_position.Y=xevent.ButtonEvent.y;
 					break;
 				}
 
 				case XEventName.MotionNotify: {
 					msg.message=Msg.WM_MOUSEMOVE;
-					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					msg.wParam=GetMousewParam(0);
+					msg.lParam=(IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
+					mouse_position.X=xevent.MotionEvent.x;
+					mouse_position.Y=xevent.MotionEvent.y;
 					break;
 				}
 
