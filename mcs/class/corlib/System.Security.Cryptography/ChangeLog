@@ -5,6 +5,9 @@
 	* RC2CryptoServiceProvider.cs: Added globalization to exceptions. 
 	Fixed the KeySize must be equal with EffectiveKeySize to match MS 
 	implementation.
+	* Rijndael.cs: Source clean up.
+	* RijndaelManaged.cs: Moved XML comments to monodoc. Added 
+	globalization to exceptions. 
 	* RNGCryptoServiceProvider.cs: Removed TODO and documented them in
 	mono doc. Now call runtime when a seed is provided.
 	* RSA.cs: Added globalization to exceptions. Removed check for 

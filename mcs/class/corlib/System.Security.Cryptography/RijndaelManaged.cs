@@ -1,21 +1,18 @@
 //
 // System.Security.Cryptography.RijndaelManaged.cs
 //
-// Authors: Mark Crichton (crichton@gimp.org)
-//	    Andrew Birkett (andy@nobugs.org)
-//          Sebastien Pouliot (spouliot@motus.com)
+// Authors:
+//	Mark Crichton (crichton@gimp.org)
+//	Andrew Birkett (andy@nobugs.org)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using Mono.Security.Cryptography;
-
-/// <summary>
-/// Rijndael is a symmetric block cipher supporting block and key sizes
-/// of 128, 192 and 256 bits.  It has been chosen as the AES cipher.
-/// </summary>
 
 namespace System.Security.Cryptography {
 	
@@ -25,41 +22,20 @@ namespace System.Security.Cryptography {
 	
 	public sealed class RijndaelManaged : Rijndael {
 		
-		/// <summary>
-		/// RijndaelManaged constructor.
-		/// </summary>
-		public RijndaelManaged() {}
+		public RijndaelManaged ()
+		{
+		}
 		
-		/// <summary>
-		/// Generates a random IV for block feedback modes
-		/// </summary>
-		/// <remarks>
-		/// Method is inherited from SymmetricAlgorithm
-		/// </remarks>
-		public override void GenerateIV () 
+		public override void GenerateIV ()
 		{
 			IVValue = KeyBuilder.IV (BlockSizeValue >> 3);
 		}
 		
-		/// <summary>
-		/// Generates a random key for Rijndael.  Uses the current KeySize.
-		/// </summary>
-		/// <remarks>
-		/// Inherited method from base class SymmetricAlgorithm
-		/// </remarks>
-		public override void GenerateKey () 
+		public override void GenerateKey ()
 		{
 			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 		}
 		
-		/// <summary>
-		/// Creates a symmetric Rijndael decryptor object
-		/// </summary>
-		/// <remarks>
-		/// Inherited method from base class SymmetricAlgorithm
-		/// </remarks>
-		/// <param name='rgbKey'>Key for Rijndael</param>
-		/// <param name='rgbIV'>IV for chaining mode</param>
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
 			Key = rgbKey;
@@ -67,14 +43,6 @@ namespace System.Security.Cryptography {
 			return new RijndaelTransform (this, false, rgbKey, rgbIV);
 		}
 		
-		/// <summary>
-		/// Creates a symmetric Rijndael encryptor object
-		/// </summary>
-		/// <remarks>
-		/// Inherited method from base class SymmetricAlgorithm
-		/// </remarks>
-		/// <param name='rgbKey'>Key for Rijndael</param>
-		/// <param name='rgbIV'>IV for chaining mode</param>
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
 			Key = rgbKey;
@@ -111,14 +79,14 @@ namespace System.Security.Cryptography {
 		{
 			int keySize = algo.KeySize;
 			if (keySize != 128 && keySize != 192 && keySize != 256) 
-				throw new ArgumentException("Illegal key size");
+				throw new ArgumentException (Locale.GetText ("Illegal key size"));
 	
 			int blockSize = algo.BlockSize;
 			if (blockSize != 128 && blockSize != 192 && blockSize != 256) 
-				throw new ArgumentException("Illegal block size");
+				throw new ArgumentException (Locale.GetText ("Illegal block size"));
 	
 			if ((key.Length << 3) != keySize) 
-				throw new ArgumentException("Key size doesn't match key");
+				throw new ArgumentException (Locale.GetText ("Key size doesn't match key"));
 	
 			this.key = key;
 			this.Nb = (blockSize >> 5); // div 32
@@ -516,6 +484,5 @@ namespace System.Security.Cryptography {
 		0xA1, 0xA8, 0xB3, 0xBA, 0x85, 0x8C, 0x97, 0x9E, 0xE9, 0xE0, 0xFB, 0xF2, 0xCD, 0xC4, 0xDF, 0xD6, 
 		0x31, 0x38, 0x23, 0x2A, 0x15, 0x1C, 0x07, 0x0E, 0x79, 0x70, 0x6B, 0x62, 0x5D, 0x54, 0x4F, 0x46, 
 		};
-	
 	}
 }
