@@ -1,4 +1,8 @@
 
+Tue Sep 24 11:27:38 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* string-icalls.c: speedup IndexOf.
+
 Tue Sep 24 11:17:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: updates from Zoltan.2.Varga@nokia.com.
