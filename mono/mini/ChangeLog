@@ -1,3 +1,29 @@
+2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-x86.c (x86_class_init_trampoline): Avoid patching when running
+	under valgrind.
+
+	* mini-x86.c (mono_arch_local_regalloc): Do not allocate transient
+	memory from the memory pool.
+
+	* driver.c (main_thread_handler): Turn on all optimizations when
+	--aot is used.
+
+	* mini.c (mono_find_jit_opcode_emulation): Turn emul_opcode_hash into
+	an array for better performance.
+
+	* regalloc.c (mono_regstate_assign): Fix memory leak.
+
+	* debug-mini.c (mono_debug_serialize_debug_info): New function to
+	serialize the debug info.
+
+	* debug-mini.c (mono_debug_add_aot_method): New function to load the
+	debug info from the serialized representation.
+
+	* aot.c: Save debug info into the generated file and load it when 
+	loading a method.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump version number.
 
 Mon Dec 1 16:54:05 CET 2003 Paolo Molaro <lupus@ximian.com>
 
