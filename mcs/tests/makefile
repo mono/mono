@@ -11,7 +11,7 @@ TEST_SOURCES = \
 	test-31 test-32 test-33 test-34 test-35 test-36	test-37 	test-39 test-40 \
 	test-41 test-42 test-43 test-44 test-45 test-46 test-47 test-48 test-49 test-50 \
 	test-51 test-52	test-53 test-54 test-55 test-56 test-57		test-59 	\
-	test-61	test-62
+	test-61	test-62 test-63	test-64 test-65
 
 
 TEST_NOPASS = \
