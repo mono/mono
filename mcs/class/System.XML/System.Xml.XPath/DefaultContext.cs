@@ -428,7 +428,12 @@ namespace System.Xml.XPath
 		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String }; }}
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			return (double) ((string) args [0]).Length;
+			string str;
+			if (args.Length == 1)
+				str = (string) args [0];
+			else
+				str = docContext.Value;
+			return (double) str.Length;
 		}
 		public override string Name { get { return "string-length"; }}
 	}
@@ -441,9 +446,33 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			string str;
+			if (args.Length == 1)
+				str = (string) args [0];
+			else
+				str = docContext.Value;
+			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+			bool fSpace = false;
+			foreach (char ch in str)
+			{
+				if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n')
+				{
+					fSpace = true;
+				}
+				else
+				{
+					if (fSpace)
+					{
+						fSpace = false;
+						if (sb.Length > 0)
+							sb.Append (' ');
+					}
+					sb.Append (ch);
+				}
+			}
+			return sb.ToString ();
 		}
-		public override string Name { get { return "normalize-sace"; }}
+		public override string Name { get { return "normalize-space"; }}
 	}
 	internal class XPathFunctionTranslate : XPathFunction
 	{

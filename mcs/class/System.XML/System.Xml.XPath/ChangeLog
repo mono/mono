@@ -1,4 +1,10 @@
 2002-07-17  Piers Haken <piersh@friskit.com>
+	
+	* DefaultContext.cs: implement 'string-length()', 'normalize-space()'
+	* Parser.jay: remove redundant production
+	* Expression.cs: add switches for debugging under VS.NET
+
+2002-07-17  Piers Haken <piersh@friskit.com>
 
 	* Expression.cs: implement nodeset/nodeset comparisons (non-optimal)
 

@@ -15,7 +15,11 @@ using System.Xml.Xsl;
 
 namespace System.Xml.XPath
 {
+#if XPATH_DEBUG
+	internal class CompiledExpression : Test.Xml.XPath.XPathExpression
+#else
 	internal class CompiledExpression : XPathExpression
+#endif
 	{
 		protected XmlNamespaceManager _nsm;
 		protected Expression _expr;
@@ -29,7 +33,11 @@ namespace System.Xml.XPath
 			_nsm = other._nsm;
 			_expr = other._expr;
 		}
+#if XPATH_DEBUG
+		public override Test.Xml.XPath.XPathExpression Clone () { return new CompiledExpression (this); }
+#else
 		public override XPathExpression Clone () { return new CompiledExpression (this); }
+#endif
 
 		public override void SetContext (XmlNamespaceManager nsManager)
 		{

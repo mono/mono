@@ -10,6 +10,7 @@
 
 using System;
 using System.Xml.XPath;
+using Test.Xml.XPath;
 
 namespace Mono.Xml.XPath
 {
@@ -374,9 +375,6 @@ AxisName
 OptionalLiteral
 	: /* empty */
 	| LITERAL
-	{
-		$$ = $1;
-	}
 	;
 
 QName
