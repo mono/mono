@@ -1,3 +1,7 @@
+2004-04-02  Jackson Harper  <jackson@ximian.com>
+
+	* CodeGen.cs: Allow setting assembly info.
+	
 2004-04-01  Jackson Harper  <jackson@ximian.com>
 
 	* CodeGen.cs: Add a current assembly ref and methods to create/end

@@ -29,6 +29,15 @@ namespace Mono.ILASM {
                 private MethodDef current_methoddef;
                 private Stack typedef_stack;
 
+                private byte [] assembly_public_key;
+                private int assembly_major_version;
+                private int assembly_minor_version;
+                private int assembly_build_version;
+                private int assembly_revision_version;
+                private string assembly_locale;
+                private int assembly_hash_algorithm;
+                private ArrayList assembly_custom_attributes;
+                        
                 private TypeManager type_manager;
                 private ExternTable extern_table;
                 private Hashtable global_field_table;
@@ -224,6 +233,36 @@ namespace Mono.ILASM {
                         defcont_list.Add (typedef);
                 }
 
+                public void SetAssemblyPublicKey (byte [] public_key)
+                {
+                        assembly_public_key = public_key;
+                }
+
+                public void SetAssemblyVersion (int major, int minor, int build, int revision)
+                {
+                        assembly_major_version = major;
+                        assembly_minor_version = minor;
+                        assembly_build_version = build;
+                        assembly_revision_version = revision;
+                }
+
+                public void SetAssemblyLocale (string locale)
+                {
+                        assembly_locale = locale;
+                }
+
+                public void SetAssemblyHashAlgorithm (int algorithm)
+                {
+                        assembly_hash_algorithm = algorithm;
+                }
+
+                public void AddAssemblyCustomAttribute (CustomAttr attribute)
+                {
+                        if (assembly_custom_attributes == null)
+                                assembly_custom_attributes = new ArrayList ();
+                        assembly_custom_attributes.Add (attribute);
+                }
+
                 public void Write ()
                 {
                         FileStream out_stream = null;
@@ -250,6 +289,12 @@ namespace Mono.ILASM {
                                         pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
                                 if (cor_flags != -1)
                                         pefile.SetCorFlags (cor_flags);
+
+                                PEAPI.Assembly asmb = pefile.GetThisAssembly ();
+                                asmb.AddAssemblyInfo(assembly_major_version,
+                                                assembly_minor_version, assembly_build_version,
+                                                assembly_revision_version, assembly_public_key,
+                                                assembly_hash_algorithm, assembly_locale);
 
                                 pefile.WritePEFile ();
                         } catch {
