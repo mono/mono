@@ -176,9 +176,16 @@ namespace Mono.Tools.LocaleBuilder {
                         }
 		}
 
+		private XPathDocument GetXPathDocument (string path)
+		{
+			XmlTextReader xtr = new XmlTextReader (path);
+			xtr.XmlResolver = null;
+			return new XPathDocument (xtr);
+		}
+
                 private bool ParseLang (string lang)
 		{
-                        XPathDocument doc = new XPathDocument (Path.Combine ("langs", lang + ".xml"));
+                        XPathDocument doc = GetXPathDocument (Path.Combine ("langs", lang + ".xml"));
 			XPathNavigator nav = doc.CreateNavigator ();
                         CultureInfoEntry ci = new CultureInfoEntry ();
                         string lang_type, terr_type;
@@ -194,14 +201,14 @@ namespace Mono.Tools.LocaleBuilder {
 			if (!LookupLcids (ci))
                                 return false;
 
-                        doc = new XPathDocument (Path.Combine ("langs", Lang + ".xml"));
+                        doc = GetXPathDocument (Path.Combine ("langs", Lang + ".xml"));
 			nav = doc.CreateNavigator ();
 			ci.DisplayName = LookupFullName (ci, nav);
                         
 			if (Lang == "en") {
 				ci.EnglishName = ci.DisplayName;
 			} else {
-				doc = new XPathDocument (Path.Combine ("langs", Lang + ".xml"));
+				doc = GetXPathDocument (Path.Combine ("langs", Lang + ".xml"));
 				nav = doc.CreateNavigator ();
 				ci.EnglishName = LookupFullName (ci, nav);
 			}
@@ -209,7 +216,7 @@ namespace Mono.Tools.LocaleBuilder {
 			if (ci.Language == Lang) {
 				ci.NativeName = ci.DisplayName;
 			} else {
-				doc = new XPathDocument (Path.Combine ("langs", lang + ".xml"));
+				doc = GetXPathDocument (Path.Combine ("langs", lang + ".xml"));
 				nav = doc.CreateNavigator ();
 				ci.NativeName = LookupFullName (ci, nav);
 			}
@@ -243,7 +250,7 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private CultureInfoEntry LookupCulture (string locale)
 		{
-                        XPathDocument doc = new XPathDocument (Path.Combine ("locales", locale + ".xml"));
+                        XPathDocument doc = GetXPathDocument (Path.Combine ("locales", locale + ".xml"));
                         XPathNavigator nav = doc.CreateNavigator ();
 			CultureInfoEntry ci = new CultureInfoEntry ();
 			string supp;
@@ -267,32 +274,32 @@ namespace Mono.Tools.LocaleBuilder {
 			 * locale file. Values in each descending file can
 			 * overwrite previous values.
 			 */
-                        doc = new XPathDocument (Path.Combine ("langs", "root.xml"));
+                        doc = GetXPathDocument (Path.Combine ("langs", "root.xml"));
                         nav = doc.CreateNavigator ();
                         Lookup (nav, ci);
 
-                        doc = new XPathDocument (Path.Combine ("supp", "root.xml"));
+                        doc = GetXPathDocument (Path.Combine ("supp", "root.xml"));
                         nav = doc.CreateNavigator ();
                         Lookup (nav, ci);
 
-			doc = new XPathDocument (Path.Combine ("langs", ci.Language + ".xml"));
+			doc = GetXPathDocument (Path.Combine ("langs", ci.Language + ".xml"));
 			nav = doc.CreateNavigator ();
 			Lookup (nav, ci);
 
 			supp = Path.Combine ("supp", ci.Language + ".xml");
 			if (File.Exists (supp)) {
-				doc = new XPathDocument (supp);
+				doc = GetXPathDocument (supp);
 				nav = doc.CreateNavigator ();
 				Lookup (nav, ci);
 			}
 			
-			doc = new XPathDocument (Path.Combine ("locales", locale + ".xml"));
+			doc = GetXPathDocument (Path.Combine ("locales", locale + ".xml"));
 			nav = doc.CreateNavigator ();
 			Lookup (nav, ci);
 
 			supp = Path.Combine ("supp", locale + ".xml");
 			if (File.Exists (supp)) {
-				doc = new XPathDocument (supp);
+				doc = GetXPathDocument (supp);
 				nav = doc.CreateNavigator ();
 				Lookup (nav, ci);
 			}
@@ -308,7 +315,7 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private void LookupNames (CultureInfoEntry ci)
 		{
-			XPathDocument doc = new XPathDocument (Path.Combine ("langs", Lang + ".xml"));
+			XPathDocument doc = GetXPathDocument (Path.Combine ("langs", Lang + ".xml"));
 			XPathNavigator nav = doc.CreateNavigator ();
 
 			ci.DisplayName = LookupFullName (ci, nav);
@@ -316,7 +323,7 @@ namespace Mono.Tools.LocaleBuilder {
 			if (Lang == "en") {
 				ci.EnglishName = ci.DisplayName;
 			} else {
-				doc = new XPathDocument (Path.Combine ("langs", "en.xml"));
+				doc = GetXPathDocument (Path.Combine ("langs", "en.xml"));
 				nav = doc.CreateNavigator ();
 				ci.EnglishName = LookupFullName (ci, nav);
 			}
@@ -324,7 +331,7 @@ namespace Mono.Tools.LocaleBuilder {
 			if (ci.Language == Lang) {
 				ci.NativeName = ci.DisplayName;
 			} else {
-				doc = new XPathDocument (Path.Combine ("langs", ci.Language + ".xml"));
+				doc = GetXPathDocument (Path.Combine ("langs", ci.Language + ".xml"));
 				nav = doc.CreateNavigator ();
 				ci.NativeName = LookupFullName (ci, nav);
 			}
@@ -740,7 +747,7 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private bool LookupLcids (CultureInfoEntry ci)
 		{
-			XPathDocument doc = new XPathDocument ("lcids.xml");
+			XPathDocument doc = GetXPathDocument ("lcids.xml");
 			XPathNavigator nav = doc.CreateNavigator ();
 			string name = ci.Language;
 
@@ -798,7 +805,7 @@ namespace Mono.Tools.LocaleBuilder {
 
                 private void LookupCurrencyTypes ()
                 {
-                        XPathDocument doc = new XPathDocument ("supplementalData.xml");
+                        XPathDocument doc = GetXPathDocument ("supplementalData.xml");
 			XPathNavigator nav = doc.CreateNavigator ();
 
                         currency_types = new Hashtable ();

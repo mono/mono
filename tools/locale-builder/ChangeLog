@@ -1,5 +1,9 @@
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Driver.cs : Let's ignore DTD that takes most of the running time.
+
+2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Driver.cs : {3} is the almost default number for group digits.
 
 2004-05-26  Atsushi Enomoto  <atsushi@ximian.com>
