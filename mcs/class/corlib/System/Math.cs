@@ -347,27 +347,8 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
                 public extern static double Log10 (double x);
 
-		public static double Pow (double x, double y) {
-			if (Double.IsNaN (x) || Double.IsNaN (y))
-				return Double.NaN;
-			if (Double.IsNegativeInfinity (x))
-				if (((int)y & 1) == 1)
-					return Double.NegativeInfinity;
-				else
-					return Double.PositiveInfinity;
-			if (Double.IsPositiveInfinity (x))
-				if (Double.IsNegativeInfinity (y))
-					return 0;
-				else
-					return Double.PositiveInfinity;
-			if (Double.IsNegativeInfinity (y) || Double.IsPositiveInfinity (y))
-				return Double.NaN;
-			
-			return PowImpl (x, y);
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-                private extern static double PowImpl (double x, double y);
+                private extern static double Pow (double x, double y);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
                 public extern static double Sqrt (double x);

@@ -1,3 +1,9 @@
+2003-01-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* Math.cs: Remove Pow's implementation body as it was wrong.  The
+	C code does the right thing.  The code was trying to handle a
+	number of cases, and that was incorrect.
+
 2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CharEnumerator.cs: fix to Current by crainaj@hotmail.com. Closes
