@@ -1,3 +1,9 @@
+2004-05-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* mono-sha1.c: MacOS X defines "LITTLE_ENDIAN", you are supposed
+	to test against BYTE_ORDER, and this caused trouble.  We now use
+	G_BYTE_ORDER and G_LITTLE_ENDIAN.  This should fix the MacOS woes.
+
 2004-04-26  David Waite  <mass@akuma.org>
 
 	* mono-logger.h: remove comma from end of enumeration declaration
