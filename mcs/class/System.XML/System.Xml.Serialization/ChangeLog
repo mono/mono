@@ -1,3 +1,8 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlSerializationWriter.cs: changed signature of protected method
+	FromByteArrayBase64 to match MS.NET
+
 2004-06-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* MapCodeGenerator.cs, SoapCodeExporter.cs: Generate the same XmlInclude
