@@ -1,3 +1,8 @@
+2001-11-15  Ravi Pratap  <ravi@ximian.com>
+
+	* makefile : Update to include test-33 again. All tests
+	pass again !
+
 2001-11-13  Ravi Pratap  <ravi@ximian.com>
 
 	* test-7.cs : Re-write to make the tests more robust.
