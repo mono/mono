@@ -1208,7 +1208,7 @@ namespace Mono.CSharp {
 		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 							MemberFilter filter, object criteria)
 		{
-			ArrayList members = new ArrayList ();
+			ArrayList members = null;
 
 			int modflags = 0;
 			if ((bf & BindingFlags.Public) != 0)
@@ -1250,8 +1250,12 @@ namespace Mono.CSharp {
 							continue;
 
 						FieldBuilder fb = f.FieldBuilder;
-						if (fb != null && filter (fb, criteria) == true)
+						if (fb != null && filter (fb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (fb);
+						}
 					}
 				}
 
@@ -1266,8 +1270,12 @@ namespace Mono.CSharp {
 							continue;
 
 						FieldBuilder fb = con.FieldBuilder;
-						if (fb != null && filter (fb, criteria) == true)
+						if (fb != null && filter (fb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (fb);
+						}
 					}
 				}
 			}
@@ -1285,8 +1293,12 @@ namespace Mono.CSharp {
 						
 						MethodBuilder mb = m.MethodBuilder;
 
-						if (mb != null && filter (mb, criteria) == true)
+						if (mb != null && filter (mb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
                                                         members.Add (mb);
+						}
 					}
 				}
 
@@ -1301,8 +1313,12 @@ namespace Mono.CSharp {
 							continue;
 						
 						MethodBuilder ob = o.OperatorMethodBuilder;
-						if (ob != null && filter (ob, criteria) == true)
+						if (ob != null && filter (ob, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (ob);
+						}
 					}
 				}
 
@@ -1319,12 +1335,20 @@ namespace Mono.CSharp {
 						MethodBuilder b;
 
 						b = p.GetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
+						}
 
 						b = p.SetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
+						}
 					}
 				}
 				
@@ -1341,12 +1365,20 @@ namespace Mono.CSharp {
 						MethodBuilder b;
 
 						b = ix.GetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
+						}
 
 						b = ix.SetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
+						}
 					}
 				}
 			}
@@ -1363,8 +1395,12 @@ namespace Mono.CSharp {
 							continue;
 
 						MemberInfo eb = e.EventBuilder;
-						if (eb != null && filter (eb, criteria) == true)
+						if (eb != null && filter (eb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 						        members.Add (e.EventBuilder);
+						}
 					}
 				}
 			}
@@ -1382,6 +1418,9 @@ namespace Mono.CSharp {
 
 						MemberInfo pb = p.PropertyBuilder;
 						if (pb != null && filter (pb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (p.PropertyBuilder);
 						}
 					}
@@ -1399,6 +1438,9 @@ namespace Mono.CSharp {
 
 						MemberInfo ib = ix.PropertyBuilder;
 						if (ib != null && filter (ib, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (ix.PropertyBuilder);
 						}
 					}
@@ -1415,8 +1457,12 @@ namespace Mono.CSharp {
 							continue;
 
 						TypeBuilder tb = t.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
-								members.Add (tb);
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
+							members.Add (tb);
+						}
 					}
 				}
 
@@ -1429,8 +1475,12 @@ namespace Mono.CSharp {
 							continue;
 
 						TypeBuilder tb = en.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (tb);
+						}
 					}
 				}
 				
@@ -1443,8 +1493,12 @@ namespace Mono.CSharp {
 							continue;
 
 						TypeBuilder tb = d.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (tb);
+						}
 					}
 				}
 
@@ -1457,8 +1511,12 @@ namespace Mono.CSharp {
 							continue;
 
 						TypeBuilder tb = iface.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (tb);
+						}
 					}
 				}
 			}
@@ -1470,9 +1528,12 @@ namespace Mono.CSharp {
 						Constructor c = (Constructor) instance_constructors [i];
 						
 						ConstructorBuilder cb = c.ConstructorBuilder;
-						if (cb != null)
-							if (filter (cb, criteria) == true)
-								members.Add (cb);
+						if (cb != null && filter (cb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
+							members.Add (cb);
+						}
 					}
 				}
 
@@ -1480,9 +1541,12 @@ namespace Mono.CSharp {
 					ConstructorBuilder cb =
 						default_static_constructor.ConstructorBuilder;
 					
-					if (cb != null)
-					if (filter (cb, criteria) == true)
+					if (cb != null && filter (cb, criteria) == true) {
+						if (members == null)
+							members = new ArrayList ();
+						
 						members.Add (cb);
+					}
 				}
 			}
 
@@ -1491,12 +1555,20 @@ namespace Mono.CSharp {
 			//
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
 				MemberList list = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
-				members.AddRange (list);
+				if (list.Count > 0) {
+					if (members == null)
+						members = new ArrayList ();
+					
+					members.AddRange (list);
+				}
 			}
 
 			Timer.StopTimer (TimerType.TcFindMembers);
 
-			return new MemberList (members);
+			if (members == null)
+				return MemberList.Empty;
+			else
+				return new MemberList (members);
 		}
 
 		public override MemberCache MemberCache {

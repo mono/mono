@@ -1,3 +1,8 @@
+2003-12-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs (FindMembers): Allocate arraylists on demand. Most of the
+	time we are returning 0 members, so we save alot here.
+
 2003-12-11  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (UsageVector.MergeResult): Renamed this back to
