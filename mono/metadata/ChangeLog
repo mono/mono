@@ -1,5 +1,11 @@
 2004-10-21  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.c (mono_debugger_throw_exception): New
+	public method; this is called each time an exception is thrown and
+	allows the debugger to use exception catch points.
+
+2004-10-21  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.c (mono_debugger_handle_exception): Write
 	the stack pointer and the exception object in some struct and pass
 	that to the debugger.
