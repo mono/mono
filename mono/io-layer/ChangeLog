@@ -1,3 +1,10 @@
+2004-05-04  Dick Porter  <dick@ximian.com>
+
+	* daemon.c (read_message): Return FALSE on error so the GSource
+	callback itself can return FALSE.  Cures the infinite loop poll()
+	warning on MacosX.
+	* shared.c: Fix some daemon startup race conditions.
+
 2004-04-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* io.c (CopyFile): Use 32k buffers to copy the file instead of 2k,
