@@ -1,3 +1,9 @@
+2004-08-05  Sanjay Gupta <gsanjay@novell.com>
+
+	* IHttpSessionState.cs: 
+	* ISessionIDModule.cs:
+	* ISessionStateItemCollection.cs: Added new interfaces.
+
 2004-08-04  Sanjay Gupta <gsanjay@novell.com>
 
 	* SessionStateActionFlags.cs: Added enumeration.
