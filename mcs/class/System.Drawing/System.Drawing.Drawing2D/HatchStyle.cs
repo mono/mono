@@ -43,7 +43,7 @@ namespace System.Drawing.Drawing2D {
 		LightHorizontal = 25,
 		LightUpwardDiagonal = 19,
 		LightVertical = 24,
-		Max = SolidDiamond,
+		Max = 4,
 		Min = 0,
 		NarrowHorizontal = 27,
 		NarrowVertical = 26,

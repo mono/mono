@@ -1,3 +1,8 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DashCap.cs: fixed mismatches in enum field values
+	* HatchStyle.cs: fixes mismatches in enum field values
+
 2004-05-18  Ravindra  <rkumar@novell.com>
 
 	* CustomLineCap.cs: Added null checks and corrected Dispose method.

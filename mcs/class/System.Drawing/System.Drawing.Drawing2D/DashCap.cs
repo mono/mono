@@ -16,7 +16,7 @@ namespace System.Drawing.Drawing2D {
 	[Serializable]
 	public enum DashCap {
 		Flat,
-		Round,
-		Triangle
+		Round = 2,
+		Triangle = 3
 	}
 }
