@@ -70,6 +70,7 @@ namespace System.Web.Services.Description {
 			
 			MimeContentBinding mcb = new MimeContentBinding ();
 			mcb.Type = "application/x-www-form-urlencoded";
+			mcb.Part = null;
 			OperationBinding.Input.Extensions.Add (mcb);
 			return true;
 		}
