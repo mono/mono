@@ -1,0 +1,22 @@
+Disclaimer: The EcmaScript compiler currently is only working on Windows,
+because we need the JScript runtime support, that will be added in parallel but it's comming slowly.
+
+
+Build:
+
+* If you have antlr installed, you can build the lexer and parser with something like:  
+
+	- java -cp /my/antlr/class/path antlr.Tool jscript-lexer-parser.g
+	
+
+Then you can build the parser with something like:
+
+	csc /r:Microsoft.JScript.dll /r:antlr.runtime.dll /out:mjsc.exe *.cs
+
+
+The antlr.runtime.dll assembly can be obtained from the antlr-2.7.2 tarball, I'll try to put one available somewhere.
+
+
+Suggestions, comments and critics to: cesar@ciencias.unam.mx
+
+
