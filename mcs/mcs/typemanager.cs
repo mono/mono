@@ -1586,7 +1586,7 @@ public class TypeManager {
 
 			return (MethodInfo) pair.Second;
 		} else
-			return ei.GetAddMethod ();
+			return ei.GetRemoveMethod ();
 	}
 
 	static Hashtable priv_fields_events;
