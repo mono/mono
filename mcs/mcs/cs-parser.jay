@@ -1969,7 +1969,7 @@ invocation_expression
 	  {
 		if ($1 == null) {
 			Location l = lexer.Location;
-			Report.Error (1, l, "THIS IS CRAZY");
+			Report.Error (1, l, "Parse error");
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }

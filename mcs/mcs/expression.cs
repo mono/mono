@@ -3543,9 +3543,9 @@ namespace Mono.CSharp {
 			string ret_type = "";
 
 			if (mb is MethodInfo)
-				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType);
+				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType) + " ";
 			
-			StringBuilder sb = new StringBuilder (ret_type + " " + mb.Name);
+			StringBuilder sb = new StringBuilder (ret_type + mb.Name);
 			ParameterData pd = GetParameterData (mb);
 
 			int count = pd.Count;

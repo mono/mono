@@ -4261,7 +4261,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList ();
 
 			args.Add (arg);
-			Invocation.EmitCall (ec, false, IsStatic, instance_expr, Accessors [1], args, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, Accessors [1], args, loc);
 		}
 
 		override public void EmitStatement (EmitContext ec)
