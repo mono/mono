@@ -472,9 +472,36 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Report.Debug (64, "RESOLVE GENERIC MEMBER ACCESS", expr, expr.GetType ());
+			if (args.Resolve (ec) == false)
+				return null;
 
-			return expr;
+			Type[] atypes = args.Arguments;
+
+			ArrayList list = new ArrayList ();
+
+			foreach (MethodBase method in mg.Methods) {
+				MethodInfo mi = method as MethodInfo;
+				if (mi == null)
+					continue;
+
+				Type[] gen_params = mi.GetGenericArguments ();
+			
+				if (atypes.Length != gen_params.Length) {
+					Report.Error (-217, loc, "Generic method `{0}' takes {1} " +
+						      "type parameters, but specified {2}.", mi.Name,
+						      gen_params.Length, atypes.Length);
+					continue;
+				}
+
+				list.Add (mi.BindGenericParameters (args.Arguments));
+			}
+
+			MethodInfo[] methods = new MethodInfo [list.Count];
+			list.CopyTo (methods, 0);
+
+			MethodGroupExpr new_mg = new MethodGroupExpr (methods, mg.Location);
+			new_mg.InstanceExpression = mg.InstanceExpression;
+			return new_mg;
 		}
 	}
 }
