@@ -240,15 +240,18 @@ namespace System
 		}		
 		
 		// Properties
-		
+
 		public string AbsolutePath { 
 			get { return path; } 
 		}
 
 		public string AbsoluteUri { 
-			get { 
-				if (cachedAbsoluteUri == null)
-					cachedAbsoluteUri = GetLeftPart (UriPartial.Path) + query + fragment;
+			get {
+				if (cachedAbsoluteUri == null) {
+//					cachedAbsoluteUri = GetLeftPart (UriPartial.Path) + query + fragment;
+					string qf = IsFile ? query + fragment : EscapeString (query + fragment);
+					cachedAbsoluteUri = GetLeftPart (UriPartial.Path) + qf;
+				}
 				return cachedAbsoluteUri;
 			} 
 		}
@@ -665,10 +668,7 @@ namespace System
 		{
 			if (cachedToString != null) 
 				return cachedToString;
-			if (IsFile && !IsUnc)
-				cachedToString = Unescape (AbsoluteUri);
-			else
-				cachedToString = AbsoluteUri;
+			cachedToString = Unescape (AbsoluteUri);
 
 			return cachedToString;
 		}
@@ -756,7 +756,7 @@ namespace System
 					s.Append (HexUnescape (str, ref i));
 					i--;
 				} else
-					s.Append (c);					
+					s.Append (c);
 			}
 			return s.ToString ();
 		}
