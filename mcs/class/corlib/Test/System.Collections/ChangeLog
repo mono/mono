@@ -1,3 +1,7 @@
+2004-12-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HashtableTest.cs: Added test for bug #70570.
+
 2004-08-24 Nick Drochak <ndrochak@ieee.org>
 
 	* ComparerTest.cs: On MS.NET 1.1 Compare("a", "A") returns < 0.

@@ -526,9 +526,7 @@ public class HashtableTest : Assertion {
 		}
 	}
 
-	// TODO - GetObjectData
-	// TODO - OnDeserialization
-        [Test]
+	[Test]
 	public void TestSerialization () {
 		Random r = new Random();
 		string filename = "hashtable_" + r.Next(99999).ToString() + ".dat";
@@ -562,6 +560,21 @@ public class HashtableTest : Assertion {
 		result = true;
 
 		Assert("Binary Serialization Error", result);
+	}
+	
+	[Test]
+	public void TestSerialization2 () {
+		// Test from bug #70570
+		MemoryStream stream = new MemoryStream();
+		BinaryFormatter formatter = new BinaryFormatter();
+	
+		Hashtable table = new Hashtable();
+		table.Add (new Bug(), "Hello");
+
+		formatter.Serialize(stream, table);
+		stream.Position = 0;
+		table = (Hashtable) formatter.Deserialize(stream);
+		AssertEquals ("#1", 1, table.Count);
 	}
 
         [Test]        
@@ -796,4 +809,23 @@ public class HashtableTest : Assertion {
 		ht.GetObjectData (null, new StreamingContext ());
 	}
 }
+
+[Serializable]
+public class Bug :ISerializable {
+
+	[Serializable]
+	private sealed class InnerClassSerializationHelper : IObjectReference {
+		public object GetRealObject( StreamingContext context )
+		{
+			return new Bug();
+		}
+	};
+
+	void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context )
+	{
+		info.SetType( typeof(InnerClassSerializationHelper) );
+	}
+};
+
+
 }
