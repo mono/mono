@@ -1,7 +1,7 @@
 'Author:
 '   V. Sudharsan (vsudharsan@novell.com)
 '
-' (C) 2003 Ximian, Inc.
+' (C) 2005 Novell, Inc.
 
 REM LineNo: 19
 REM ExpectedWarning: BC40007

@@ -1,17 +1,10 @@
-Imports System
-Imports System.Console
-Module AssignmentStatements1
-   Sub main()
-
-	 Dim a As Single = 1.401298e-45 
-       Try
-       Dim o As Boolean=CBool(a)   
-       Console.WriteLine(o.GetType().ToString() & " = " & o)
-       Catch e As System.Exception
-
-WriteLine("Runtime Exception occured-->See Stack traces below.....")
-WriteLine ("Runtime exception-->" &e.GetType.Name)
-WriteLine(e)
-End Try
-    End Sub
+Module ExpConversionDoubletoBool
+	Sub Main()
+		Dim a As Long = -4.940656E-12
+		Dim b as Boolean
+		b = CBool(a)
+		if b <> True
+			Throw new System.Exception("Double to Boolean Conversion is not working properly. Expected True but got " &b)
+		End if	
+	End Sub
 End Module

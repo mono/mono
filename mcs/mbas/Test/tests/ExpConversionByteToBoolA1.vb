@@ -1,17 +1,10 @@
-Imports System
-Imports System.Console
-Module AssignmentStatements1
-   Sub main()
-
-	 Dim a As Byte = 254
-       Try
-       Dim o As Boolean=CBool(a)      'no exception
-       Console.WriteLine(o.GetType().ToString() & " = " & o)
-       Catch e As System.Exception
-
-WriteLine("Runtime Exception occured-->See Stack traces below.....")
-WriteLine ("Runtime exception-->" &e.GetType.Name)
-WriteLine(e)
-End Try
-    End Sub
+Module ExpConversionBytetoBool
+	Sub Main()
+		Dim a as Byte = 123 
+		Dim b as Boolean
+		b = CBool(a)
+		if b <> True
+			Throw new System.Exception("Byte to Bool Conversion is not working properly. Expected True but got " &b)
+		End if	
+	End Sub
 End Module

@@ -1,7 +1,7 @@
 'Author:
 '   V. Sudharsan (vsudharsan@novell.com)
 '
-' (C) 2003 Ximian, Inc.
+' (C) 2005 Novell, Inc.
 
 'Note That fun need not be present in base class to get shadowed
 Class A

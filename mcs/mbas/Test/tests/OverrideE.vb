@@ -1,7 +1,7 @@
 'Author:
 '   V. Sudharsan (vsudharsan@novell.com)
 '
-' (C) 2003 Ximian, Inc.
+' (C) 2005 Novell, Inc.
 
 'Checks if Default is working or not with Overrides...It works
 

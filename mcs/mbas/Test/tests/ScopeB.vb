@@ -1,7 +1,7 @@
 'Author:
 '   V. Sudharsan (vsudharsan@novell.com)
 '
-' (C) 2003 Ximian, Inc.
+' (C) 2005 Novell, Inc.
 
 'To check if the Inner class is accessed or the outer class is accessed... Inner class is accessed in this case 
 

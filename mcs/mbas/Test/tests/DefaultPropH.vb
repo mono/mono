@@ -1,7 +1,7 @@
 'Author:
 '   V. Sudharsan (vsudharsan@novell.com)
 '
-' (C) 2003 Ximian, Inc.
+' (C) 2005 Novell, Inc.
 
 Class Class2
    ' Define a local variable to store the property value.

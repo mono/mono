@@ -1,7 +1,7 @@
 'Author:
 '   V. Sudharsan (vsudharsan@novell.com)
 '
-' (C) 2003 Ximian, Inc.
+' (C) 2005 Novell, Inc.
 
 'VB.Net Accepts recognizes even keywords as qualifiers as long as they follow a period as given below. 
 

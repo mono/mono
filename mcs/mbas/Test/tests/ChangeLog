@@ -1,3 +1,9 @@
+2005-01-28  Satya Sudha K <ksathyasudha@novell.com>
+
+	* Added testcases for implicit and explicit numeric conversions
+	* Corrected the date and Copyright in some test files
+
+	These test cases are contributed by Sudharsan V <vsudharsan@novell.com>
 
 2005-01-13  Ritvik Mayank  <mritvik@novell.com>
 	

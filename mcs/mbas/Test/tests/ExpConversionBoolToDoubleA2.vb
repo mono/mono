@@ -1,17 +1,9 @@
-Imports System
-Imports System.Console
-Module AssignmentStatements1
-   Sub main()
-
-       Dim o As Boolean= False      
-       Try
-	 Dim a As Double = CDbl(o)
-       Console.WriteLine(a.GetType().ToString() & " = " & a)
-       Catch e As System.Exception
-
-WriteLine("Runtime Exception occured-->See Stack traces below.....")
-WriteLine ("Runtime exception-->" &e.GetType.Name)
-WriteLine(e)
-End Try
-    End Sub
+Module ExpConversionofBoolToDouble
+        Sub Main()
+                Dim a as Boolean = True
+                Dim b as Double = Cdbl(a)
+                if b <> -1 then
+                        Throw New System.Exception("Explicit Conversion of Bool(True) to Double has Failed. Expected -1, but got " & b)
+                End if
+        End Sub
 End Module

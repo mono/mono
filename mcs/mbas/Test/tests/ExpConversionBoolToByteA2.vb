@@ -1,17 +1,9 @@
-Imports System
-Imports System.Console
-Module AssignmentStatements1
-   Sub main()
-
-       Dim o As Boolean= False      
-       Try
-	 Dim a As Byte = CByte(o)
-       Console.WriteLine(a.GetType().ToString() & " = " & a)
-       Catch e As System.Exception
-
-WriteLine("Runtime Exception occured-->See Stack traces below.....")
-WriteLine ("Runtime exception-->" &e.GetType.Name)
-WriteLine(e)
-End Try
-    End Sub
+Module ExpConversionBoolToByte
+	Sub Main()
+		Dim a as Boolean = True
+		Dim b as Byte = CByte(a)
+		if b <> 255
+			Throw new System.Exception("Boolean to Byte Conversion failed. Expected 255 but got " & b)
+		End if	
+	End Sub
 End Module

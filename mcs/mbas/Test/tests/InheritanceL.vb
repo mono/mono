@@ -1,7 +1,7 @@
 'Author:
 '   V. Sudharsan (vsudharsan@novell.com)
 '
-' (C) 2003 Ximian, Inc.
+' (C) 2005 Novell, Inc.
 
 'Checking for NotInheritable class....
 'This insists that NonInheritable belongs only to the specific class.. not branches to its sub-classes

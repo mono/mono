@@ -1,17 +1,9 @@
-Imports System
-Imports System.Console
-Module AssignmentStatements1
-   Sub main()
-
-       Dim o As Boolean= False      
-       Try
-	 Dim a As Decimal = CDec(o)
-       Console.WriteLine(a.GetType().ToString() & " = " & a)
-       Catch e As System.Exception
-
-WriteLine("Runtime Exception occured-->See Stack traces below.....")
-WriteLine ("Runtime exception-->" &e.GetType.Name)
-WriteLine(e)
-End Try
-    End Sub
+Module ExpConversionofBoolToDecimal
+        Sub Main()
+                Dim a as Boolean = True
+                Dim b as Decimal = CDec(a)
+                if b <> -1 then
+                        Throw New System.Exception("Explicit Conversion of Bool(True) to Decimal has Failed. Expected -1, but got " & b)
+                End if
+        End Sub
 End Module
