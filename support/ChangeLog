@@ -1,3 +1,9 @@
+2004-12-21  Chris Toshok  <toshok@ximian.com>
+
+	* serial.c: initial import of System.IO.Ports pinvoke stuff.
+
+	* Makefile.am (MPH_SOURCE): add serial.c.
+
 2004-11-30  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mph.h: Use <glib.h>, not <glib/gtypes.h>, as the HP/UX compiler needs

@@ -20,6 +20,7 @@ MPH_SOURCE = \
 	map.c 		\
 	pwd.c 		\
 	old-map.c 	\
+	serial.c	\
 	stdio.c 	\
 	stdlib.c 	\
 	sys-mman.c 	\
