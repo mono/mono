@@ -2271,6 +2271,19 @@ namespace Mono.CSharp {
 
 					fe.InstanceExpression = t.DoResolve (ec);
 				}
+
+				FieldInfo fi = fe.FieldInfo;
+				
+				if (fi is FieldBuilder) {
+					Constant c = TypeManager.LookupConstant ((FieldBuilder) fi);
+					
+					if (c != null) {
+						object o = c.LookupConstantValue (ec);
+						Expression l = Literalize (o, fi.FieldType);
+						l = l.Resolve (ec);
+						return ((Literal) l);
+					}
+				}
 			} 				
 
 			if (ec.IsStatic)
@@ -2431,6 +2444,7 @@ namespace Mono.CSharp {
 					return null;
 				
 			}
+
 			return this;
 		}
 

@@ -232,6 +232,12 @@ namespace Mono.CSharp {
 			if (default_value != null)
 				return default_value;
 
+			if (!defined_names.Contains (name)) {
+				Report.Error (117, loc, "'"+ EnumName + "' does not contain a definition for '"
+					      + name + "'");
+				return null;
+			}
+
 			//
 			// So if the above doesn't happen, we have a member that is undefined
 			// We now proceed to define it 
@@ -255,8 +261,12 @@ namespace Mono.CSharp {
 				}
 				
 			} else {
+
+				Console.WriteLine (" Before --- " + name + " -> " + val);
 			
 				val = val.Resolve (ec);
+
+				Console.WriteLine (" After --- " + name + " -> " + val);
 				
 				if (val == null) {
 					Report.Error (-12, loc, "Definition is circular.");

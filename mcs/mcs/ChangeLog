@@ -1,3 +1,20 @@
+2001-12-02  Ravi Pratap  <ravi@ximian.com>
+
+	* constant.cs (EmitConstant): Make sure we resolve the associated expression
+	before trying to reduce it.
+
+	* typemanager.cs (RegisterConstant, LookupConstant): Implement.
+
+	* constant.cs (LookupConstantValue): Implement.
+
+	(EmitConstant): Use the above in emitting the constant.
+
+	* expression.cs (MemberAccess::ResolveMemberAccess): Handle constants
+	that are user-defined by doing a LookupConstantValue on them.
+
+	(SimpleName::DoResolve): When we have a FieldExpr, cope with constants
+	too, like above.
+
 2001-11-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (BaseAccess, BaseIndexer): Also split this out.
@@ -11,7 +28,7 @@
 
 	* expression.cs (Probe, Is, As): Split Probe in two classes Is and
 	As that share bits of the implementation.  Is returns a boolean,
-	while As returns the Type that is being probbed.
+	while As returns the Type that is being probed.
 
 2001-12-01  Ravi Pratap  <ravi@ximian.com>
 

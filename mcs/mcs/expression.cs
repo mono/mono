@@ -3731,6 +3731,17 @@ namespace Mono.CSharp {
 				FieldExpr fe = (FieldExpr) member_lookup;
 				FieldInfo fi = fe.FieldInfo;
 
+				if (fi is FieldBuilder) {
+					Constant c = TypeManager.LookupConstant ((FieldBuilder) fi);
+					
+					if (c != null) {
+						object o = c.LookupConstantValue (ec);
+						Expression l = Literalize (o, fi.FieldType);
+						l = l.Resolve (ec);
+						return ((Literal) l);
+					}
+				}
+
 				if (fi.IsLiteral) {
 					Type t = fi.FieldType;
 					Type decl_type = fi.DeclaringType;
@@ -3842,6 +3853,10 @@ namespace Mono.CSharp {
 				
 				if (en != null) {
 					object value = en.LookupEnumValue (ec, Identifier, loc);
+
+					if (value == null)
+						return null;
+					
 					Expression l = Literalize (value, en.UnderlyingType);
 					l = l.Resolve (ec);
 					return new EnumLiteral (l, expr_type);

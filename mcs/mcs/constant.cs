@@ -27,6 +27,8 @@ namespace Mono.CSharp {
 		Location Location;
 		public FieldBuilder FieldBuilder;
 
+		object ConstantValue = null;
+
 		public const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -96,7 +98,7 @@ namespace Mono.CSharp {
 
 			if (ptype != null) {
 				MemberInfo [] mi = TypeContainer.FindMembers (ptype, MemberTypes.Field, BindingFlags.Public,
-									   Type.FilterName, Name);
+									      Type.FilterName, Name);
 				
 				if (mi == null || mi.Length == 0)
 					if ((ModFlags & Modifiers.NEW) != 0)
@@ -106,7 +108,43 @@ namespace Mono.CSharp {
 				WarningNotHiding (parent);
 
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
+
+			TypeManager.RegisterConstant (FieldBuilder, this);
 		}
+
+		/// <summary>
+		///  Looks up the value of a constant field. Defines it if it hasn't
+		///  already been. Similar to LookupEnumValue in spirit.
+		/// </summary>
+		public object LookupConstantValue (EmitContext ec)
+		{
+			if (ConstantValue != null)
+				return ConstantValue;
+			
+			Expr = Expr.Resolve (ec);
+
+			if (Expr == null) {
+				Report.Error (150, Location, "A constant value is expected");
+				return null;
+			}
+			
+			Expr = Expression.Reduce (ec, Expr);
+
+			if (!(Expr is Literal)) {
+				Report.Error (150, Location, "A constant value is expected");
+				return null;
+			}
+
+			ConstantValue = ((Literal) Expr).GetValue ();
+			
+			FieldBuilder.SetConstant (ConstantValue);
+
+			if (!TypeManager.RegisterField (FieldBuilder, ConstantValue))
+				return null;
+
+			return ConstantValue;
+		}
+		
 		
 		/// <summary>
 		///  Emits the field value by evaluating the expression
@@ -117,19 +155,7 @@ namespace Mono.CSharp {
 				return;
 			
 			EmitContext ec = new EmitContext (parent, Location, null, type, ModFlags);
-
-			Expr = Expression.Reduce (ec, Expr);
-
-			if (!(Expr is Literal)) {
-				Report.Error (150, Location, "A constant value is expected");
-				return;
-			}
-
-			object val = ((Literal) Expr).GetValue ();
-
-			FieldBuilder.SetConstant (val);
-
-			TypeManager.RegisterField (FieldBuilder, val);
+			LookupConstantValue (ec);
 			
 			return;
 		}

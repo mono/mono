@@ -555,6 +555,28 @@ public class TypeManager {
 			return mb.MethodHandle.ToString ();
 	}
 
+	static Hashtable builder_to_constant;
+
+	public static void RegisterConstant (FieldBuilder fb, Constant c)
+	{
+		if (builder_to_constant == null)
+			builder_to_constant = new Hashtable ();
+
+		if (builder_to_constant.Contains (fb))
+			return;
+
+		builder_to_constant.Add (fb, c);
+	}
+
+	public static Constant LookupConstant (FieldBuilder fb)
+	{
+		if (builder_to_constant == null)
+			return null;
+		
+		return (Constant) builder_to_constant [fb];
+	}
+	
+
 	static Hashtable delegate_to_data;
 	
 	public static void RegisterDelegateData (Type del_type, DictionaryEntry de)
