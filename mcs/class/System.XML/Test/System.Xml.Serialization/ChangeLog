@@ -1,3 +1,9 @@
+2004-03-13  David Sheldon <dave-mono@earth.li>
+
+  * XmlReflectionImporterTests.cs: Switched the AssertEquals around 
+   the other way, so that the expecteed value was the first parameter. 
+   This makes the error messages you get out of it better.
+
 2004-03-12  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* DeserializeTests.cs: Added test for empty enum deserialization (bug #55509).
