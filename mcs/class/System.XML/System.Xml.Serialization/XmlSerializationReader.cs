@@ -474,22 +474,26 @@ namespace System.Xml.Serialization {
 
 			bool listComplete = true;
 
-			Reader.ReadStartElement ();
-			for (int n=0; n<count; n++)
-			{
-				Reader.MoveToContent ();
-				string refid = Reader.GetAttribute ("href");
-				string id;
-				object item = ReadReferencingElement (itemType, qn.Namespace, out id);
-				if (id == null) 
-					list.SetValue (item,n);
-				else
+			if (Reader.IsEmptyElement)
+				Reader.Skip ();
+			else {
+				Reader.ReadStartElement ();
+				for (int n=0; n<count; n++)
 				{
-					AddFixup (new CollectionItemFixup (list, n, id));
-					listComplete = false;
+					Reader.MoveToContent ();
+					string refid = Reader.GetAttribute ("href");
+					string id;
+					object item = ReadReferencingElement (itemType, qn.Namespace, out id);
+					if (id == null) 
+						list.SetValue (item,n);
+					else
+					{
+						AddFixup (new CollectionItemFixup (list, n, id));
+						listComplete = false;
+					}
 				}
+				Reader.ReadEndElement ();
 			}
-			Reader.ReadEndElement ();
 
 			resultList = list;
 			return listComplete;
