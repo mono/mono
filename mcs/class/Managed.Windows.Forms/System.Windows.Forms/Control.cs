@@ -29,9 +29,17 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.62 $
+// $Revision: 1.63 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.63  2004/09/11 03:50:00  pbartok
+// - Added DoDragDrop() [incomplete]
+// - Properly implemented 'Visible' handling
+// - Added SetVisibleCore()
+// - Implemented FindChildAtPoint()
+// - Implemented GetContainerControl()
+// - Implemented Hide()
+//
 // Revision 1.62  2004/09/11 01:28:11  pbartok
 // - Moved methods into their appropriate #regions
 // - Reordered methods within regions alphabetically
@@ -820,7 +828,6 @@ namespace System.Windows.Forms
 				
 		}
 
-
 		private bool Select(Control control) {
 			Control	parent;
 
@@ -1563,14 +1570,19 @@ namespace System.Windows.Forms
 
 		public bool Visible {
 			get {
-				return this.is_visible;
+				if (!is_visible) {
+					return false;
+				}
+
+				if (parent != null) {
+					return parent.Visible;
+				}
+
+				return true;
 			}
 
 			set {
-				if (value!=is_visible) {
-					is_visible=value;
-					XplatUI.SetVisible(Handle, value);
-				}
+				SetVisibleCore(value);
 			}
 		}
 
@@ -1772,11 +1784,44 @@ namespace System.Windows.Forms
 			return Graphics.FromHwnd(this.window.Handle);
 		}
 
+		[MonoTODO("Come up with cross platform drag-drop driver interface")]
+		public DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects) {
+			return DragDropEffects.None;
+		}
+
 		public object EndInvoke (IAsyncResult async_result) {
 			AsyncMethodResult result = (AsyncMethodResult) async_result;
 			return result.EndInvoke ();
 		}
 
+
+		public Control GetChildAtPoint(Point pt) {
+			// Microsoft's version of this function doesn't seem to work, so I can't check
+			// if we only consider children or also grandchildren, etc.
+			// I'm gonna say 'children only'
+			for (int i=0; i<child_controls.Count; i++) {
+				if (child_controls[i].Bounds.Contains(pt)) {
+					return child_controls[i];
+				}
+			}
+			return null;
+		}
+
+		public IContainerControl GetContainerControl() {
+			Control	current = this;
+
+			while (current!=null) {
+				if ((current.control_style & ControlStyles.ContainerControl)!=0) {
+					return (IContainerControl)current;
+				}
+				current = current.parent;
+			}
+			return null;
+		}
+
+		public void Hide() {
+			this.Visible = false;
+		}
 
 		public void Invalidate() {
 			Invalidate(ClientRectangle, false);
@@ -2250,7 +2295,35 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected virtual void SetVisibleCore(bool value) {
+			if (value!=is_visible) {
+				is_visible=value;
+				XplatUI.SetVisible(Handle, value);
+				OnVisibleChanged(EventArgs.Empty);
+				if (!is_visible) {
+					if (dc_mem != null) {
+						dc_mem.Dispose();
+						dc_mem = null;
+					}
 
+					if (bmp_mem != null) {
+						bmp_mem.Dispose();
+						bmp_mem = null;
+					}
+				} else {
+					this.CreateBuffers(bounds.Width, bounds.Height);
+				}
+
+				// FIXME - deal with focus
+
+				if (parent != null) {
+					parent.PerformLayout(this, "visible");
+				} else {
+					PerformLayout(this, "visible");
+				}
+			}
+		}
+	
 		protected void UpdateBounds() {
 			int	x;
 			int	y;
