@@ -373,6 +373,11 @@ namespace Mono.CSharp {
 
 		public void UsingAlias (string name, TypeName alias, Location loc)
 		{
+			if (DeclarationFound){
+				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
+				return;
+			}
+
 			if (aliases == null)
 				aliases = new Hashtable ();
 

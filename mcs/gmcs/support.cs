@@ -40,20 +40,24 @@ namespace Mono.CSharp {
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
 		bool last_arg_is_params = false;
+		bool is_varargs = false;
 		ParameterData gpd;
 
-		public ReflectionParameters (MethodBase method)
+		public ReflectionParameters (MethodBase mb)
 		{
 			object [] attrs;
 
-			this.pi = method.GetParameters ();
+			ParameterInfo [] pi = mb.GetParameters ();
+			is_varargs = (mb.CallingConvention & CallingConventions.VarArgs) != 0;
+
+			this.pi = pi;
 			int count = pi.Length-1;
 
 			if (count < 0)
 				return;
 
-			if (method.Mono_IsInflatedMethod) {
-				MethodInfo generic = method.GetGenericMethodDefinition ();
+			if (mb.Mono_IsInflatedMethod) {
+				MethodInfo generic = mb.GetGenericMethodDefinition ();
 				gpd = Invocation.GetParameterData (generic);
 
 				last_arg_is_params = gpd.HasArrayParameter;
@@ -78,6 +82,8 @@ namespace Mono.CSharp {
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
 				return pi [pi.Length - 1].ParameterType;
+			else if (is_varargs && pos >= pi.Length)
+				return TypeManager.runtime_argument_handle_type;
 			else {
 				Type t = pi [pos].ParameterType;
 
@@ -101,12 +107,17 @@ namespace Mono.CSharp {
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
 				return pi [pi.Length - 1].Name;
+			else if (is_varargs && pos >= pi.Length)
+				return "__arglist";
 			else 
 				return pi [pos].Name;
 		}
 
 		public string ParameterDesc (int pos)
 		{
+			if (is_varargs && pos >= pi.Length)
+				return "";			
+
 			StringBuilder sb = new StringBuilder ();
 
 			if (pi [pos].IsIn)
@@ -134,9 +145,10 @@ namespace Mono.CSharp {
 		{
 			int len = pi.Length;
 
-			if (pos >= len - 1)
-				if (last_arg_is_params)
+			if (last_arg_is_params && pos >= pi.Length - 1)
 					return Parameter.Modifier.PARAMS;
+			else if (is_varargs && pos >= pi.Length)
+				return Parameter.Modifier.ARGLIST;
 			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef){
@@ -151,7 +163,7 @@ namespace Mono.CSharp {
 
 		public int Count {
 			get {
-				return pi.Length;
+				return is_varargs ? pi.Length + 1 : pi.Length;
 			}
 		}
 
@@ -219,6 +231,8 @@ namespace Mono.CSharp {
 
 	public class InternalParameters : ParameterData {
 		Type [] param_types;
+		bool has_varargs;
+		int count;
 
 		public readonly Parameters Parameters;
 		
@@ -231,14 +245,17 @@ namespace Mono.CSharp {
 		public InternalParameters (DeclSpace ds, Parameters parameters)
 			: this (parameters.GetParameterInfo (ds), parameters)
 		{
+			has_varargs = parameters.HasArglist;
+
+			if (param_types == null)
+				count = 0;
+			else
+				count = param_types.Length;
 		}
 
 		public int Count {
 			get {
-				if (param_types == null)
-					return 0;
-
-				return param_types.Length;
+				return has_varargs ? count + 1 : count;
 			}
 		}
 
@@ -260,6 +277,9 @@ namespace Mono.CSharp {
 
 		public Type ParameterType (int pos)
 		{
+			if (has_varargs && pos >= count)
+				return TypeManager.runtime_argument_handle_type;
+
 			if (param_types == null)
 				return null;
 
@@ -276,11 +296,17 @@ namespace Mono.CSharp {
 
 		public string ParameterName (int pos)
 		{
+			if (has_varargs && pos >= count)
+				return "__arglist";
+
 			return GetParameter (pos).Name;
 		}
 
 		public string ParameterDesc (int pos)
 		{
+			if (has_varargs && pos >= count)
+				return "__arglist";
+
 			string tmp = String.Empty;
 			Parameter p = GetParameter (pos);
 
@@ -302,6 +328,9 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
+			if (has_varargs && pos >= count)
+				return Parameter.Modifier.ARGLIST;
+
 			Parameter.Modifier mod = GetParameter (pos).ModFlags;
 
 			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)

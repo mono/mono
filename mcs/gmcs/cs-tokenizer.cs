@@ -1,3 +1,4 @@
+// -*- coding: dos -*-
 //
 // cs-tokenizer.cs: The Tokenizer for the C# compiler
 //                  This also implements the preprocessor
@@ -218,6 +219,7 @@ namespace Mono.CSharp
 		{
 			keywords = new CharArrayHashtable [64];
 
+			AddKeyword ("__arglist", Token.ARGLIST);
 			AddKeyword ("abstract", Token.ABSTRACT);
 			AddKeyword ("as", Token.AS);
 			AddKeyword ("add", Token.ADD);
@@ -1793,7 +1795,7 @@ namespace Mono.CSharp
 			// Optimization: avoids doing the keyword lookup
 			// on uppercase letters and _
 			//
-			if (s >= 'a'){
+			if (s >= 'a' || s == '_'){
 				int keyword = GetKeyword (id_builder, pos);
 				if (keyword != -1 && !quoted)
 				return keyword;

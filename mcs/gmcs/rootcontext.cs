@@ -340,6 +340,7 @@ namespace Mono.CSharp {
 				"System.Char",    "System.Boolean",
 				"System.Decimal", "System.Void",
 				"System.RuntimeFieldHandle",
+				"System.RuntimeArgumentHandle",
 				"System.RuntimeTypeHandle",
 				"System.IntPtr",
 				"System.TypedReference",

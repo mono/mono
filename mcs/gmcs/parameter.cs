@@ -130,7 +130,8 @@ namespace Mono.CSharp {
 			OUT     = 2,
 			PARAMS  = 4,
 			// This is a flag which says that it's either REF or OUT.
-			ISBYREF = 8
+			ISBYREF = 8,
+			ARGLIST = 16
 		}
 
 		static string[] attribute_targets = new string [] { "param" };
@@ -285,6 +286,7 @@ namespace Mono.CSharp {
 	public class Parameters {
 		public Parameter [] FixedParameters;
 		public readonly Parameter ArrayParameter;
+		public readonly bool HasArglist;
 		string signature;
 		Type [] types;
 		Location loc;
@@ -295,6 +297,13 @@ namespace Mono.CSharp {
 		{
 			FixedParameters = fixed_parameters;
 			ArrayParameter  = array_parameter;
+			loc = l;
+		}
+
+		public Parameters (Parameter [] fixed_parameters, bool has_arglist, Location l)
+		{
+			FixedParameters = fixed_parameters;
+			HasArglist = has_arglist;
 			loc = l;
 		}
 
@@ -577,7 +586,9 @@ namespace Mono.CSharp {
 
 		public CallingConventions GetCallingConvention ()
 		{
-			// For now this is the only correc thing to do
+			if (HasArglist)
+				return CallingConventions.VarArgs;
+			else
 			return CallingConventions.Standard;
 		}
 

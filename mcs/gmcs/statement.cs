@@ -1097,7 +1097,8 @@ namespace Mono.CSharp {
 			BlockUsed = 4,
 			VariablesInitialized = 8,
 			HasRet = 16,
-			IsDestructor = 32	
+			IsDestructor = 32,
+			HasVarargs = 64	
 		}
 		Flags flags;
 
@@ -1113,6 +1114,18 @@ namespace Mono.CSharp {
 			}
 			set {
 				flags |= Flags.Unchecked;
+			}
+		}
+
+		public bool HasVarargs {
+			get {
+				if (Parent != null)
+					return Parent.HasVarargs;
+				else
+					return (flags & Flags.HasVarargs) != 0;
+			}
+			set {
+				flags |= Flags.HasVarargs;
 			}
 		}
 

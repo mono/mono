@@ -70,6 +70,7 @@ public class TypeManager {
 	static public Type intptr_type;
 	static public Type monitor_type;
 	static public Type runtime_field_handle_type;
+	static public Type runtime_argument_handle_type;
 	static public Type attribute_type;
 	static public Type attribute_usage_type;
 	static public Type dllimport_type;
@@ -581,6 +582,11 @@ public class TypeManager {
 		n [top] = a;
 		assemblies = n;
 	}
+
+        public static Assembly [] GetAssemblies ()
+        {
+                return assemblies;
+        }
 
 	/// <summary>
 	///  Registers a module builder to lookup types from
@@ -1114,6 +1120,7 @@ public class TypeManager {
 		type_type     = CoreLookupType ("System.Type");
 
 		runtime_field_handle_type = CoreLookupType ("System.RuntimeFieldHandle");
+		runtime_argument_handle_type = CoreLookupType ("System.RuntimeArgumentHandle");
 		runtime_helpers_type = CoreLookupType ("System.Runtime.CompilerServices.RuntimeHelpers");
 		default_member_type  = CoreLookupType ("System.Reflection.DefaultMemberAttribute");
 		runtime_handle_type  = CoreLookupType ("System.RuntimeTypeHandle");
