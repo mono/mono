@@ -32,7 +32,7 @@ namespace Mono.ILASM {
                                 Console.WriteLine ("Error while compiling.");
                                 return 1;
                         }
-                        Console.Write ("Compilation succeeded");
+                        Console.WriteLine ("Compilation succeeded");
                         return 0;
                 }
 
