@@ -23,11 +23,11 @@ namespace System.Reflection {
 
 		public virtual string FullName { get {return fullname;} }
 
-		public MethodInfo EntryPoint { get {return entrypoint;} }
+		public virtual MethodInfo EntryPoint { get {return entrypoint;} }
 
 		public virtual Evidence Evidence { get {return evidence;} }
 
-		public String Location { get {return location;} }
+		public virtual String Location { get {return location;} }
 
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
