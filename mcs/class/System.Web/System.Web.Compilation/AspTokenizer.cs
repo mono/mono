@@ -37,6 +37,8 @@ namespace System.Web.Compilation
 		bool hasPutBack;
 		bool verbatim;
 		bool have_value;
+		bool have_unget;
+		int unget_value;
 		string val;
 		
 		public AspTokenizer (TextReader reader)
@@ -88,9 +90,26 @@ namespace System.Web.Compilation
 			return (Char.IsLetterOrDigit (c) || c == '_' || c == '-');
 		}
 
+		void ungetc (int value)
+		{
+			have_unget = true;
+			unget_value = value;
+
+			// Only '/' passes through here now.
+			// If we ever let \n here, update 'line'
+			position--;
+			col--;
+		}
+		
 		int read_char ()
 		{
-			int c = sr.Read ();
+			int c;
+			if (have_unget) {
+				c = unget_value;
+				have_unget = false;
+			} else {
+				c = sr.Read ();
+			}
 
 			if (c == '\r' && sr.Peek () == '\n') {
 				c = sr.Read ();
@@ -132,7 +151,16 @@ namespace System.Web.Compilation
 				} else if (inServerTag && c == '>' && last == '%') {
 					inServerTag = false;
 				} else if (!inServerTag) {
-					if (!quoted && (c == '/' || c == '>' || Char.IsWhiteSpace ((char) c))) {
+					if (!quoted && c == '/') {
+						read_char ();
+						c = sr.Peek ();
+						if (c == -1) {
+							c = '/';
+						} else if (c == '>') {
+							ungetc ('/');
+							break;
+						}
+					} else if (!quoted && (c == '>' || Char.IsWhiteSpace ((char) c))) {
 						break;
 					} else if (quoted && c == quoteChar && last != '\\') {
 						read_char ();

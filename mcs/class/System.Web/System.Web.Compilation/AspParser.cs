@@ -253,19 +253,19 @@ namespace System.Web.Compilation
 					tokenizer.InTag = false;
 					id = "<" + tokenizer.Odds + tokenizer.Value;
 				} else {
-				id = tokenizer.Value;
-				try {
-					attributes = GetAttributes ();
-				} catch (Exception e) {
-					OnError (e.Message);
-					break;
-				}
-				
-				tagtype = TagType.Tag;
-				if (Eat ('/') && Eat ('>'))
-					tagtype = TagType.SelfClosing;
-				else if (!Eat ('>'))
-					OnError ("expecting '>'. Got '" + tokenizer.Value + "'");
+					id = tokenizer.Value;
+					try {
+						attributes = GetAttributes ();
+					} catch (Exception e) {
+						OnError (e.Message);
+						break;
+					}
+					
+					tagtype = TagType.Tag;
+					if (Eat ('/') && Eat ('>'))
+						tagtype = TagType.SelfClosing;
+					else if (!Eat ('>'))
+						OnError ("expecting '>'. Got '" + tokenizer.Value + "'");
 				}
 
 				break;
