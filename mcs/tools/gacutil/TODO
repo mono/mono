@@ -2,7 +2,4 @@ Items that need to be completed, in a relative scale of importance:
 
 1) Finish matching .net implementation.
 2) Checking for valid strong names before installing to gac. (spoulit)
-3) Proper uninstalling, right now it only works on a AssemblyName.Name 
-	basically, so any assemblies in the gac with that name will be removed.
-4) Code audit.
-5) Implement local assembly cache.
+3) Code audit.

@@ -64,9 +64,38 @@ namespace Mono.Tools
 				case "--un-install":
 					UninstallAssemblies (remainder_args);
 					break;
+				case "/il":
+				case "--install-from-list":
+					InstallAssembliesFromList (remainder_args);
+					break;
 				default:
 					ShowHelp (false);
 					break;
+			}
+		}
+
+		public void InstallAssembliesFromList (string[] args)
+		{
+			if (args.Length == 0) {
+				Console.WriteLine ("ERROR: need a file passed");
+				return;
+			}
+
+			if (!File.Exists (args[0])) {
+				Console.WriteLine ("ERROR: file '" + args[0] + "' does not exist");
+				return;
+			}
+
+			string[] perFile = args;
+
+			using (StreamReader s = File.OpenText (args[0])) {
+				string line;
+
+				while((line = s.ReadLine()) != null) {
+					Console.WriteLine (line);
+					perFile[0] = line;
+					InstallAssembly (perFile);
+				}
 			}
 		}
 
@@ -184,10 +213,14 @@ namespace Mono.Tools
 			if(args.Length == 2 && (args[1] == "/f" || args[1] == "--force"))
 				force = true;
 
-			
+		
+			Console.WriteLine (an.Version);
+		
 			string version_token = an.Version + "__" + GetStringToken (an.GetPublicKeyToken ());
 
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
+
+			Console.WriteLine (fullPath);
 
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
 				Hashtable assemInfo = GetAssemblyInfo (fullPath + "__AssemblyInfo__");

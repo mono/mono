@@ -1,3 +1,7 @@
+2003-11-16  Todd Berman  <tberman@gentoo.org>
+
+	* gacutil.cs: /il functionality
+
 2003-11-15  Todd Berman  <tberman@gentoo.org>
 	
 	* gacutil.cs: Added reference counting for installation and deletion.
