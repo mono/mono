@@ -1,3 +1,16 @@
+2002-10-31  Tim Coleman (tim@timcoleman.com)
+	* TdsSchemaInfo.cs:
+		Added because I can't really use SchemaInfo
+	* ITds.cs:
+	* Tds.cs :
+	* TdsPacketColumnInfoResult.cs :
+		ChangeDefinition of schema
+	* Tds42.cs :
+	* Tds50.cs :
+	* Tds70.cs :
+		Add new information to schema
+
+
 2002-10-30  Tim Coleman (tim@timcoleman.com)
 	* TdsColumnSchema.cs:
 		Ditch this in favor of System.Data.Common.SchemaInfo
