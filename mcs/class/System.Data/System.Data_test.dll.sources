@@ -37,6 +37,9 @@ System.Data.Common/DataTableMappingCollectionTest.cs
 System.Data.Common/DBDataPermissionAttributeTest.cs
 System.Data.Common/DBDataPermissionTest.cs
 System.Data.Odbc/OdbcPermissionAttributeTest.cs
+System.Data.Odbc/OdbcPermissionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
+System.Data.OleDb/OleDbPermissionTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs
 System.Data.SqlClient/SqlClientPermissionAttributeTest.cs
+System.Data.SqlClient/SqlClientPermissionTest.cs

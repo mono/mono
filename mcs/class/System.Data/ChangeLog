@@ -1,3 +1,8 @@
+2004-09-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Data_test.dll.sources: Added OdbcPermission, OleDbPermission 
+	and SqlClientPermission unit tests to the build.
+
 2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Data_test.dll.sources: Added DBDataPermission unit tests to
