@@ -95,7 +95,7 @@ namespace Mono.Tools.LocaleBuilder {
                          * writing to streams eventually.
                          */
                         using (StreamWriter writer = new StreamWriter (HeaderFileName, false, new UTF8Encoding (false, true))) {
-
+                                writer.NewLine = "\n";
                                 writer.WriteLine ();
                                 writer.WriteLine ("/* This is a generated file. Do not edit. See tools/locale-builder. */");
                                 writer.WriteLine ("#ifndef MONO_METADATA_CULTURE_INFO_TABLES");

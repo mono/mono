@@ -1,3 +1,7 @@
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* en.xml : fixed currency format.
+
 2004-10-06  Jackson Harper  <jackson@ximian.com>
 
 	* pt.xml: We need a space after R$. Is there a better way to do

@@ -1,3 +1,6 @@
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : fixed currency format for en-GB (and so on).
 
 Wed Feb 16 16:28:15 CET 2005 Paolo Molaro <lupus@ximian.com>
 
@@ -9063,7 +9066,7 @@ Wed Apr 2 18:37:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* marshal.c (mono_marshal_get_managed_wrapper): Added support for
 	object as return type.
 
-2003-03-22  Pedro Mart�nez Juli�  <yoros@wanadoo.es>
+2003-03-22  Pedro Mart?nez Juli?  <yoros@wanadoo.es>
 
 	* icall.c: Deleted "ToString" implementation for double and float
 	because they are full implemented in managed code.
@@ -9167,7 +9170,7 @@ Tue Mar 4 12:40:58 CET 2003 Paolo Molaro <lupus@ximian.com>
 	* object.h, threads.h: make include files compatible with C++
 	(patch by Jerome Laban <jlaban@wanadoo.fr>).
 
-2003-03-04  Pedro Mart�nez Juli�  <yoros@wanadoo.es>
+2003-03-04  Pedro Mart?nez Juli?  <yoros@wanadoo.es>
 
 	* icall.c: Erased ToString helper functions for Double and Single.
 	Now, that implementations ar all in managed code (Double and Single
@@ -9422,7 +9425,7 @@ Sun Feb 9 18:37:01 CET 2003 Paolo Molaro <lupus@ximian.com>
 	* object.c: fixed mono_object_get_virtual_method () for interfaces.
 	* verify.c: check for code that runs after the end of the method.
 
-2003-02-08  Pedro Mart�nez Juli�  <yoros@wanadoo.es>
+2003-02-08  Pedro Mart?nez Juli?  <yoros@wanadoo.es>
 
 	* icall.c: Added "System.Math::Floor", "System.Math::Round" and
 	"System.Math::Round2".

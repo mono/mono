@@ -1,3 +1,8 @@
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : set \n for writer's NewLine explicitly (otherwise it
+	  results in mixed line ending in culture-info-table.h).
+
 2004-12-13  Ben Maurer  <bmaurer@ximian.com>
 
 	* CultureInfoEntry.cs (AppendTableRow): Stringify the
