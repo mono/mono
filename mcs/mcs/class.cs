@@ -2027,7 +2027,7 @@ namespace Mono.CSharp {
 			// If implementing is still valid, set flags
 			//
 			if (implementing != null){
-				Console.WriteLine ("Implementing for:" + (iface_type != null ? iface_type.FullName : "<null>") + " " + short_name);
+				// Console.WriteLine ("Implementing for:" + (iface_type != null ? iface_type.FullName : "<null>") + " " + short_name);
 				
 				if (implementing.DeclaringType.IsInterface)
 					flags |= MethodAttributes.NewSlot;
