@@ -25,6 +25,7 @@ public class X
 		f = 8.53F;
 	}
 
+	// CS0177
 	public static void test3 (out float f)
 	{
 		try {
@@ -32,7 +33,6 @@ public class X
 		} catch {
 			return;
 		}
-		// CS0177
 	}
 
 	public static int test4 ()
