@@ -71,6 +71,8 @@ namespace Mono.CSharp.Debugger
 			}
 			ot.source_table_size = (int) bw.BaseStream.Position - ot.source_table_offset;
 
+			Hashtable source_table = new Hashtable ();
+
 			//
 			// Write line number table
 			//
@@ -162,15 +164,34 @@ namespace Mono.CSharp.Debugger
 			//
 			ot.method_count = methods.Count;
 			ot.method_table_offset = (int) bw.BaseStream.Position;
-			foreach (MethodEntry entry in methods)
+			for (int i = 0; i < methods.Count; i++) {
+				MethodEntry entry = (MethodEntry) methods [i];
+				SourceFileEntry source = (SourceFileEntry) source_table [entry.SourceFileOffset];
+				if (source == null) {
+					source = new SourceFileEntry (entry.SourceFile);
+					source_table.Add (entry.SourceFileOffset, source);
+				}
+
+				source.AddMethod (new MethodSourceEntry (
+					i, (int) bw.BaseStream.Position, entry.StartRow, entry.EndRow));
+
 				entry.Write (bw);
+			}
 			ot.method_table_size = (int) bw.BaseStream.Position -  ot.method_table_offset;
 
-			ot.type_count = last_type_index;
+			//
+			// Write source file table.
+			//
+			ot.source_file_count = source_table.Count;
+			ot.source_file_table_offset = (int) bw.BaseStream.Position;
+			foreach (SourceFileEntry source in source_table.Values)
+				source.Write (bw);
+			ot.source_file_table_size = (int) bw.BaseStream.Position - ot.source_file_table_offset;
 
 			//
 			// Write offset table
 			//
+			ot.type_count = last_type_index;
 			ot.total_file_size = (int) bw.BaseStream.Position;
 			bw.Seek ((int) offset_table_offset, SeekOrigin.Begin);
 			ot.Write (bw);

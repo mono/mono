@@ -1,3 +1,8 @@
+2002-10-13  Martin Baulig  <martin@gnome.org>
+
+	* MonoSymbolTable.cs: Set version number to 27.  Added a source
+	file table which is used to search a method by source file + line number.
+
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
 	* MonoSymbolTable.cs: Set version number to 26.  Removed all the dynamic

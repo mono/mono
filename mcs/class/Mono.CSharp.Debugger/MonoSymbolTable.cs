@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 26;
+		public const int  Version = 27;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int total_file_size;
@@ -31,6 +31,9 @@ namespace Mono.CSharp.Debugger
 		public int line_number_table_size;
 		public int local_variable_table_offset;
 		public int local_variable_table_size;
+		public int source_file_table_offset;
+		public int source_file_table_size;
+		public int source_file_count;
 		public int type_count;
 		public int type_index_table_offset;
 		public int type_index_table_size;
@@ -47,6 +50,9 @@ namespace Mono.CSharp.Debugger
 			line_number_table_size = reader.ReadInt32 ();
 			local_variable_table_offset = reader.ReadInt32 ();
 			local_variable_table_size = reader.ReadInt32 ();
+			source_file_table_offset = reader.ReadInt32 ();
+			source_file_table_size = reader.ReadInt32 ();
+			source_file_count = reader.ReadInt32 ();
 			type_count = reader.ReadInt32 ();
 			type_index_table_offset = reader.ReadInt32 ();
 			type_index_table_size = reader.ReadInt32 ();
@@ -64,6 +70,9 @@ namespace Mono.CSharp.Debugger
 			bw.Write (line_number_table_size);
 			bw.Write (local_variable_table_offset);
 			bw.Write (local_variable_table_size);
+			bw.Write (source_file_table_offset);
+			bw.Write (source_file_table_size);
+			bw.Write (source_file_count);
 			bw.Write (type_count);
 			bw.Write (type_index_table_offset);
 			bw.Write (type_index_table_size);
@@ -139,6 +148,107 @@ namespace Mono.CSharp.Debugger
 		public override string ToString ()
 		{
 			return String.Format ("[LocalVariable {0}:{1}]", Name, Attributes);
+		}
+	}
+
+	public class SourceFileEntry
+	{
+		public readonly string SourceFile;
+		public readonly MethodSourceEntry[] Methods = null;
+
+		ArrayList methods;
+		int count;
+
+		internal SourceFileEntry (string source_file)
+		{
+			this.SourceFile = source_file;
+			this.methods = new ArrayList ();
+			this.count = 0;
+		}
+
+		internal void AddMethod (MethodSourceEntry method)
+		{
+			methods.Add (method);
+			count++;
+		}
+
+		internal void Write (BinaryWriter bw)
+		{
+			byte[] name = Encoding.UTF8.GetBytes (SourceFile);
+			bw.Write ((int) name.Length);
+			bw.Write (name);
+
+			methods.Sort ();
+			bw.Write (methods.Count);
+			foreach (MethodSourceEntry method in methods)
+				method.Write (bw);
+		}
+
+		public SourceFileEntry (IMonoBinaryReader reader)
+		{
+			int name_length = reader.ReadInt32 ();
+			byte[] name = reader.ReadBuffer (name_length);
+			SourceFile = Encoding.UTF8.GetString (name);
+
+			count = reader.ReadInt32 ();
+			Methods = new MethodSourceEntry [count];
+			for (int i = 0; i < count; i++)
+				Methods [i] = new MethodSourceEntry (reader);
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("SourceFileEntry ({0}:{1})", SourceFile, count);
+		}
+	}
+
+	public class MethodSourceEntry : IComparable
+	{
+		public readonly int Index;
+		public readonly int FileOffset;
+		public readonly int StartRow;
+		public readonly int EndRow;
+
+		public MethodSourceEntry (int index, int file_offset, int start, int end)
+		{
+			this.Index = index;
+			this.FileOffset = file_offset;
+			this.StartRow = start;
+			this.EndRow = end;
+		}
+
+		public MethodSourceEntry (IMonoBinaryReader reader)
+		{
+			Index = reader.ReadInt32 ();
+			FileOffset = reader.ReadInt32 ();
+			StartRow = reader.ReadInt32 ();
+			EndRow = reader.ReadInt32 ();
+		}
+
+		internal void Write (BinaryWriter bw)
+		{
+			bw.Write (Index);
+			bw.Write (FileOffset);
+			bw.Write (StartRow);
+			bw.Write (EndRow);
+		}
+
+		public int CompareTo (object obj)
+		{
+			MethodSourceEntry method = (MethodSourceEntry) obj;
+
+			if (method.StartRow < StartRow)
+				return -1;
+			else if (method.StartRow > StartRow)
+				return 1;
+			else
+				return 0;
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("MethodSourceEntry ({0}:{1}:{2}:{3})",
+					      Index, FileOffset, StartRow, EndRow);
 		}
 	}
 
