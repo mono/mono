@@ -1,3 +1,8 @@
+2004-11-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs, XslTransformProcessor.cs :
+	  when creating XmlTextReader, reuse XmlNameTable.
+
 2004-11-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Compiler.cs : Changes that reflects CompiledExpression changes.

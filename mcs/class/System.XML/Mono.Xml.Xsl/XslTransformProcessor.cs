@@ -130,7 +130,7 @@ namespace Mono.Xml.Xsl {
 
 			XmlReader rdr = null;
 			try {
-				rdr = new XmlTextReader (uri.ToString(), (Stream) resolver.GetEntity (uri, null, null));
+				rdr = new XmlTextReader (uri.ToString(), (Stream) resolver.GetEntity (uri, null, null), root.NameTable);
 				XmlValidatingReader xvr = new XmlValidatingReader (rdr);
 				xvr.ValidationType = ValidationType.None;
 				result = new XPathDocument (xvr, XmlSpace.Preserve).CreateNavigator ();

@@ -198,7 +198,7 @@ namespace Mono.Xml.Xsl
 			using (Stream s = (Stream)res.GetEntity (absUri, null, typeof(Stream)))
 			{
 
-				XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (absUri.ToString (), s));
+				XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (absUri.ToString (), s, nsMgr.NameTable));
 				vr.ValidationType = ValidationType.None;
 				XPathNavigator n = new XPathDocument (vr, XmlSpace.Preserve).CreateNavigator ();
 				vr.Close ();
