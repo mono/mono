@@ -40,6 +40,8 @@ all clean:
 install: all
 	mkdir -p $(prefix)/lib/
 	$(INSTALL) -m 644 lib/*.dll $(prefix)/lib/
+	$(INSTALL) -m 444 lib/*.dbg $(prefix)/lib/
+
 
 test: all
 	@for i in $(DIRS) ; do \
