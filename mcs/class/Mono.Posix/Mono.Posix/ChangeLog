@@ -1,3 +1,8 @@
+2004-01-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Syscall.cs: moved assembly attribute and added unsafe block to fix
+	the build on windows.
+
 2003-11-11  Wojciech Polak <polak@gnu.org
 
 	* Syscall.cs: Applied patch from Wojciech Polak <polak@gnu.org> to

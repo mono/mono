@@ -34,10 +34,10 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
+[assembly:Mono.Posix.IncludeAttribute (new string [] {"sys/types.h", "sys/stat.h", "sys/wait.h", "unistd.h", "fcntl.h"},
+				       new string [] {"_GNU_SOURCE"})]
 namespace Mono.Posix {
 
-	[assembly:Mono.Posix.IncludeAttribute (new string [] {"sys/types.h", "sys/stat.h", "sys/wait.h", "unistd.h", "fcntl.h"},
-					       new string [] {"_GNU_SOURCE"})]
 	[Map][Flags]
 	public enum OpenFlags {
 		//
@@ -163,7 +163,9 @@ namespace Mono.Posix {
 		
 		public static int waitpid (int pid, WaitOptions options)
 		{
-			return syscall_waitpid (pid, null, map_Mono_Posix_WaitOptions (options));
+			unsafe {
+				return syscall_waitpid (pid, null, map_Mono_Posix_WaitOptions (options));
+			}
 		}
 
 		[DllImport ("MonoPosixHelper", EntryPoint="wifexited")]
