@@ -1,3 +1,8 @@
+2004-06-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* LogicalMethodInfo.cs: Don't crash in GetCustomAttribute if the requested
+	  attribute is not found.
+
 2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* HttpSoapWebServiceHandler.cs: Removed unused variables.

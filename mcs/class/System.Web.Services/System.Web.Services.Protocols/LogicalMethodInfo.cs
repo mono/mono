@@ -347,7 +347,7 @@ namespace System.Web.Services.Protocols {
 
 		public object GetCustomAttribute (Type type)
 		{
-			return method_info.GetCustomAttributes (type, true) [0];
+			return Attribute.GetCustomAttribute (method_info, type, true);
 		}
 
 		public object[] GetCustomAttributes (Type type)
