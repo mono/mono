@@ -1021,13 +1021,20 @@ unsigned GC_fail_count = 0;
 			/* How many consecutive GC/expansion failures?	*/
 			/* Reset by GC_allochblk.			*/
 
+static word last_fo_entries = 0;
+static word last_words_finalized = 0;
+
 GC_bool GC_collect_or_expand(needed_blocks, ignore_off_page)
 word needed_blocks;
 GC_bool ignore_off_page;
 {
     if (!GC_incremental && !GC_dont_gc &&
-	(GC_dont_expand && GC_words_allocd > 0 || GC_should_collect())) {
+	(GC_dont_expand && GC_words_allocd > 0 
+	|| (GC_fo_entries > (last_fo_entries + 500) && (last_words_finalized  || GC_words_finalized))
+	|| GC_should_collect())) {
       GC_gcollect_inner();
+      last_fo_entries = GC_fo_entries;
+      last_words_finalized = GC_words_finalized;
     } else {
       word blocks_to_get = GC_heapsize/(HBLKSIZE*GC_free_space_divisor)
       			   + needed_blocks;
