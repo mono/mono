@@ -39,7 +39,6 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
 	internal class XslComment : XslCompiledElement {
-		bool disableOutputEscaping = false;
 		XslOperation value;
 		
 		public XslComment (Compiler c) : base (c) {}

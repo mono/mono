@@ -178,8 +178,6 @@ namespace Mono.Xml.Xsl.Operations {
 	}
 	
 	internal class XslGlobalParam : XslGlobalVariable {
-		bool overriden;
-		object paramVal;
 		
 		public XslGlobalParam (Compiler c) : base (c) {}
 			
@@ -221,8 +219,6 @@ namespace Mono.Xml.Xsl.Operations {
 	}
 	
 	internal class XslLocalParam : XslLocalVariable {
-		bool overriden;
-		object paramVal;
 		
 		public XslLocalParam (Compiler c) : base (c) {}
 		

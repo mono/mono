@@ -38,7 +38,6 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
 	internal class XslApplyImports : XslCompiledElement {
-		ArrayList withParams;
 		public XslApplyImports (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{

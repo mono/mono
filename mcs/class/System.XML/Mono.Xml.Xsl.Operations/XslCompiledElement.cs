@@ -41,8 +41,6 @@ using QName = System.Xml.XmlQualifiedName;
 namespace Mono.Xml.Xsl.Operations {
 
 	internal abstract class XslCompiledElement : XslOperation {
-		bool hasStack;
-		int stackSize;
 		int lineNumber;
 		int linePosition;
 		XPathNodeType parentType;

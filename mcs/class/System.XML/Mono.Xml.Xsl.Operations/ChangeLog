@@ -1,3 +1,10 @@
+2004-11-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslVariable.cs,
+	  XslComment.cs 
+	  XslApplyImports.cs,
+	  XslCompiledElement.cs : removed unused field.
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslNumber.cs : Globalization. Removed unused code.
