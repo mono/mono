@@ -1,3 +1,7 @@
+2004-09-05  Marek Safar <marek.safar@seznam.cz>
+
+	* Dictionary.cs: Added new file (no implementation).
+
 2004-09-03  Carlos Alberto Cortez <carlos@unixmexico.org>
 
 	* Collection.cs: Small improvements related to
