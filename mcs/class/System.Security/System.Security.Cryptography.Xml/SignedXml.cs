@@ -29,12 +29,11 @@ namespace System.Security.Cryptography.Xml {
 		private IEnumerator pkEnumerator;
 		private XmlElement signatureElement;
 		private Hashtable hashes;
-#if NET_1_0
-		private XmlResolver xmlResolver = new XmlUrlResolver ();
+		// FIXME: enable it after CAS implementation
+#if false //NET_1_1
+		private XmlResolver xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), new Evidence ());
 #else
-		// FIXME: later
 		private XmlResolver xmlResolver = new XmlUrlResolver ();
-//		private XmlResolver xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), new Evidence ());
 #endif
 		private ArrayList manifests;
 
@@ -139,7 +138,7 @@ namespace System.Security.Cryptography.Xml {
 				return ms;
 			}
 			else if (obj == null) {
-				throw new NotImplementedException ("Should not occur. Transform is " + t + ".");
+				throw new NotImplementedException ("This should not occur. Transform is " + t + ".");
 			}
 			else {
 				// e.g. XmlDsigXPathTransform returns XmlNodeList
@@ -218,15 +217,6 @@ namespace System.Security.Cryptography.Xml {
 						if ("#" + obj.Id == r.Uri) {
 							XmlElement xel = obj.GetXml ();
 							doc.LoadXml (xel.OuterXml);
-							/*
-							foreach (XmlAttribute attr in xel.SelectNodes ("namespace::*")) {
-								if (attr.LocalName == "xml")
-									continue;
-								if (attr.OwnerElement == xel)
-									continue;
-								doc.DocumentElement.SetAttributeNode (doc.ImportNode (attr, true) as XmlAttribute);
-							}
-							*/
 							FixupNamespaceNodes (xel, doc.DocumentElement);
 							break;
 						}
@@ -617,7 +607,7 @@ namespace System.Security.Cryptography.Xml {
 			signature.LoadXml (value);
 		}
 
-#if ! NET_1_0
+#if NET_1_1
 		[MonoTODO("property not (yet) used in class")]
 		[ComVisible(false)]
 		public XmlResolver Resolver {

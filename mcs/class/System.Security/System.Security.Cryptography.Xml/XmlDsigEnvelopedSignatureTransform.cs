@@ -16,7 +16,6 @@ using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
 
-	[MonoTODO]
 	public class XmlDsigEnvelopedSignatureTransform : Transform {
 
 		private Type[] input;
@@ -81,7 +80,7 @@ namespace System.Security.Cryptography.Xml {
 			if (inputObj is Stream) {
 				doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;
-#if ! NET_1_0
+#if NET_1_1
 				doc.XmlResolver = GetResolver ();
 #endif
 				doc.Load (inputObj as Stream);
@@ -147,7 +146,6 @@ namespace System.Security.Cryptography.Xml {
 			// NO CHANGE
 		}
 
-		[MonoTODO ("test")]
 		public override void LoadInput (object obj) 
 		{
 			inputObj = obj;

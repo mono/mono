@@ -72,19 +72,29 @@ namespace System.Security.Cryptography.Xml
 
 		public override object GetOutput () 
 		{
+			XmlResolver resolver = GetResolver ();
+
 			XslTransform xsl = new XslTransform ();
 			XmlDocument doc = new XmlDocument ();
-#if ! NET_1_0
-			doc.XmlResolver = GetResolver ();
+#if NET_1_1
+			doc.XmlResolver = resolver;
 #endif
 			foreach (XmlNode n in xnl)
 				doc.AppendChild (doc.ImportNode (n, true));
+#if NET_1_1
+			xsl.Load (doc, resolver);
+#else
 			xsl.Load (doc);
+#endif
 
-			MemoryStream stream = null;
+			if (inputDoc == null)
+				throw new NullReferenceException ("Load input document before transformation.");
 
-			stream = new MemoryStream ();
+			MemoryStream stream = new MemoryStream ();
 			// only possible output: Stream
+#if NET_1_1
+			xsl.XmlResolver = resolver;
+#endif
 			xsl.Transform (inputDoc, null, stream);
 
 			stream.Seek (0, SeekOrigin.Begin);
@@ -110,6 +120,9 @@ namespace System.Security.Cryptography.Xml
 			// possible input: Stream, XmlDocument, and XmlNodeList
 			if (obj is Stream) {
 				inputDoc = new XmlDocument ();
+#if NET_1_1
+				inputDoc.XmlResolver = GetResolver ();
+#endif
 				inputDoc.Load (obj as Stream);
 			}
 			else if (obj is XmlDocument) {
@@ -117,6 +130,9 @@ namespace System.Security.Cryptography.Xml
 			}
 			else if (obj is XmlNodeList) {
 				inputDoc = new XmlDocument ();
+#if NET_1_1
+				inputDoc.XmlResolver = GetResolver ();
+#endif
 				XmlNodeList nl = (XmlNodeList) obj;
 				for (int i = 0; i < nl.Count; i++)
 					inputDoc.AppendChild (inputDoc.ImportNode (nl [i], true));

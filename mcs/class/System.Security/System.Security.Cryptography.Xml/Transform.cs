@@ -3,12 +3,14 @@
 //
 // Author:
 //	Sebastien Pouliot <sebastien@ximian.com>
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
@@ -16,8 +18,17 @@ namespace System.Security.Cryptography.Xml {
 	public abstract class Transform {
 
 		private string algo;
+		private XmlResolver xmlResolver;
 
-		public Transform () {}
+		public Transform ()
+		{
+		// FIXME: enable it after CAS implementation
+#if false // NET_1_1
+			xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), (Evidence) new Evidence ());
+#else
+			xmlResolver = new XmlUrlResolver ();
+#endif
+		}
 
 		public string Algorithm {
 			get { return algo; }
@@ -41,6 +52,7 @@ namespace System.Security.Cryptography.Xml {
 		public XmlElement GetXml () 
 		{
 			XmlDocument document = new XmlDocument ();
+			document.XmlResolver = GetResolver ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Transform, XmlSignature.NamespaceURI);
 			xel.SetAttribute (XmlSignature.AttributeNames.Algorithm, algo);
 			XmlNodeList xnl = this.GetInnerXml ();
@@ -57,17 +69,15 @@ namespace System.Security.Cryptography.Xml {
 
 		public abstract void LoadInput (object obj);
 
-#if ! NET_1_0
-		private XmlResolver xmlResolver;
-
-		[ComVisible(false)]
-		public XmlResolver Resolver {
-			set { xmlResolver = value; }
-		}
-		
 		internal XmlResolver GetResolver ()
 		{
 			return xmlResolver;
+		}
+
+#if NET_1_1
+		[ComVisible(false)]
+		public XmlResolver Resolver {
+			set { xmlResolver = value; }
 		}
 #endif
 	}

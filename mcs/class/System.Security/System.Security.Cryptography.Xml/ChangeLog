@@ -1,3 +1,15 @@
+2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SignedXml.cs,
+	  Transform.cs : code cleanup. #if !NET_1_0 -> #if NET_1_1.
+	* XmlDsigBase64Transform.cs : Should not output the content of the
+	  selected element nodes. Put text content only those text nodes are
+	  in the node list.
+	* XmlDsigEnvelopedSignatureTransform.cs : removed MonoTODO.
+	* XmlDsigXsltTransform.cs : Use XmlResolver to load document and
+	  to transform. Throw null reference exception explicitly when
+	  the input was not loaded.
+
 2004-04-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlDsigEnvelopedSignatureTransform.cs, XmlDsigXPathTransform.cs,
