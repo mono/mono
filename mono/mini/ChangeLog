@@ -1,3 +1,8 @@
+2004-11-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-sparc.md mini-sparc.c (long_conv_to_ovf_i): Fill missing delay slot.
+	Fixes #69929.
+
 2004-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Disable inlining for methods containing
