@@ -54,15 +54,15 @@ namespace MonoTests.System
 			while (sr.Peek () > 0) {
 				sr.ReadLine (); // skip
 				string uriString = sr.ReadLine ();
-TextWriter sw = Console.Out;
-				sw.WriteLine ("-------------------------");
-				sw.WriteLine (uriString);
+//TextWriter sw = Console.Out;
+//				sw.WriteLine ("-------------------------");
+//				sw.WriteLine (uriString);
 
 				if (uriString == null || uriString.Length == 0)
 					break;
 
 				Uri uri = new Uri (uriString);
-
+/*
 				sw.WriteLine ("ToString(): " + uri.ToString ());
 				sw.WriteLine (uri.AbsoluteUri);
 				sw.WriteLine (uri.Scheme);
@@ -80,7 +80,7 @@ TextWriter sw = Console.Out;
 				sw.WriteLine (uri.Authority);
 				sw.WriteLine (uri.Fragment);
 				sw.WriteLine (uri.UserInfo);
-
+*/
 				AssertUri (uri,
 					sr.ReadLine (),
 					sr.ReadLine (),
@@ -99,7 +99,7 @@ TextWriter sw = Console.Out;
 					sr.ReadLine (),
 					sr.ReadLine (),
 					sr.ReadLine ());
-				Console.WriteLine ("Passed: " + uriString);
+//				Console.WriteLine ("Passed: " + uriString);
 			}
 		}
 
