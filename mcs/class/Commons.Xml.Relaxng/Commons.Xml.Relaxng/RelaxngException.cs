@@ -22,7 +22,7 @@ namespace Commons.Xml.Relaxng
 		public RelaxngException (string message) : base (message) {}
 		public RelaxngException (string message, Exception innerException)
 			: base (message, innerException) {}
-		public RelaxngException (string message, RdpPattern invalidatedPattern)
+		internal RelaxngException (string message, RdpPattern invalidatedPattern)
 			: base (message)
 		{
 			debugXml = RdpUtil.DebugRdpPattern (invalidatedPattern, new Hashtable ());

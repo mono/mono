@@ -14,7 +14,7 @@ using Commons.Xml.Relaxng.Derivative;
 
 namespace Commons.Xml.Relaxng
 {
-	public class Util
+	internal class Util
 	{
 		public static string ResolveUri (string baseUri, string href)
 		{

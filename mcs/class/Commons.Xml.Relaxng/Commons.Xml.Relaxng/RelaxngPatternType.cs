@@ -36,7 +36,7 @@ namespace Commons.Xml.Relaxng
 		ZeroOrMore = 17,	// no use in derivative
 		Mixed = 18,		// no use in derivative
 		Optional = 19,		// no use in derivative
-		Include = 20,		// no use in derivative
+//		Include = 20,		// no use in derivative
 		ExternalRef = 21,	// no use in derivative
 		ParentRef = 22,		// no use in derivative
 	}

@@ -1,3 +1,13 @@
+2004-05-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Misc.cs : made Util class internal.
+	* RelaxngDatatypeProvider.cs : looks commit was missing.
+	* RelaxngException.cs : made one .ctor() internal that accepts
+	  RdpPattern.
+	* RelaxngNameClas.cs : Names list should not be settable.
+	* RelaxngPattern.cs : RelaxngRefPattern class is internal use only.
+	* RelaxngPatternType.cs : there is not "Include" pattern.
+
 2004-05-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngDatatypeProvider.cs : removed meaningless using alias.

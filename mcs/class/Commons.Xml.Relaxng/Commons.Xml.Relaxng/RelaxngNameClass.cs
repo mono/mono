@@ -260,7 +260,6 @@ namespace Commons.Xml.Relaxng
 
 		public RelaxngNameClassList Names {
 			get { return names; }
-			set { names = value; }
 		}
 
 		public override void Write (XmlWriter writer)

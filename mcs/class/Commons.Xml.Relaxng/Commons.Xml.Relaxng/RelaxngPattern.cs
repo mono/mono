@@ -1348,7 +1348,7 @@ namespace Commons.Xml.Relaxng
 		}
 	}
 
-	public class RelaxngRefPattern
+	internal class RelaxngRefPattern
 	{
 		RelaxngPattern patternRef;
 		string name;

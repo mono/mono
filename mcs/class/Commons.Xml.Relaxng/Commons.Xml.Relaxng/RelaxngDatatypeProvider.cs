@@ -10,9 +10,6 @@
 using System;
 using System.Xml;
 using System.Xml.Schema;
-using Commons.Xml.Relaxng.XmlSchema;
-
-using XSchema = System.Xml.Schema.XmlSchema;
 
 namespace Commons.Xml.Relaxng
 {
