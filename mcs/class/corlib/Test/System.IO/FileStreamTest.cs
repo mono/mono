@@ -211,6 +211,25 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}			
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CtorBufferSizeZero ()
+		{
+			// Buffer size can't be zero
+
+			string path = Path.Combine (TempFolder, "CtorBufferSizeZero");
+			DeleteFile (path);
+
+			FileStream stream = null;
+			try {
+				stream = new FileStream (path, FileMode.CreateNew, FileAccess.Write, FileShare.ReadWrite, 0);
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
 				
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -725,6 +744,26 @@ namespace MonoTests.System.IO
 					stream.Close();
 				DeleteFile (path);
 			}
+		}
+
+		// Check that the stream is flushed even when it doesn't own the
+		// handle
+		[Test]
+		public void TestFlushNotOwningHandle ()
+		{
+			string path = Path.Combine (TempFolder, "TestFlushNotOwningHandle");
+			DeleteFile (path);
+
+			FileStream s = new FileStream (path, FileMode.Create);
+			using (FileStream s2 = new FileStream (s.Handle, FileAccess.Write, false)) {
+				byte[] buf = new byte [2];
+				buf [0] = (int)'1';
+				s2.Write (buf, 0, 1);
+			}
+
+			s.Position = 0;
+			AssertEquals ((int)'1', s.ReadByte ());
+			s.Close ();
 		}
 
 		private void DeleteFile (string path) 
