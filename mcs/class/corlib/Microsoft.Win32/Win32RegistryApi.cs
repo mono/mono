@@ -54,7 +54,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Create a registry key.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCreateKey")]
 		private static extern int RegCreateKey_Internal (IntPtr keyBase, 
 				string keyName, out IntPtr keyHandle);
 
@@ -66,7 +66,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Close a registry key.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCloseKey")]
 		private static extern int RegCloseKey_Internal (IntPtr keyHandle);
 
 		public int RegCloseKey (IntPtr handle)
@@ -77,7 +77,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Flush a registry key's current state to disk.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegFlushKey")]
 		private static extern int RegFlushKey_Internal (IntPtr keyHandle);
 
 		public int RegFlushKey (IntPtr handle)
@@ -89,7 +89,7 @@ namespace Microsoft.Win32
 		///	Open a registry key.
 		///	'unknown' must be zero.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegopenKeyEx")]
 		private static extern int RegOpenKeyEx_Internal (IntPtr keyBase,
 				string keyName, IntPtr reserved, int access,
 				out IntPtr keyHandle);
@@ -103,7 +103,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Delete a registry key.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegDeleteKey")]
 		private static extern int RegDeleteKey_Internal (IntPtr keyHandle, 
 				string valueName);
 
@@ -115,7 +115,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Delete a registry value.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegDeleteValue")]
 		private static extern int RegDeleteValue_Internal (IntPtr keyHandle, 
 				string valueName);
 
@@ -127,7 +127,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Fetch registry key subkeys itteratively.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumKey")]
 		private static extern int RegEnumKey_Internal (IntPtr keyBase, int index,
 				[Out] byte[] nameBuffer, int bufferLength);
 
@@ -143,7 +143,7 @@ namespace Microsoft.Win32
 		///	Arguments 'reserved', 'data', 'dataLength' 
 		///	should be set to IntPtr.Zero.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumValue")]
 		private static extern int RegEnumValue_Internal (IntPtr keyBase, 
 				int index, StringBuilder nameBuffer, 
 				ref int nameLength, IntPtr reserved, 
@@ -160,7 +160,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Set a registry value with string builder data.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
 				string valueName, IntPtr reserved, int type,
 				StringBuilder data, int rawDataLength);
@@ -175,7 +175,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Set a registry value with string data.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
 				string valueName, IntPtr reserved, int type,
 				string data, int rawDataLength);
@@ -190,7 +190,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Set a registry value with binary data (a byte array).
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
 				string valueName, IntPtr reserved, int type,
 				byte[] rawData, int rawDataLength);
@@ -205,7 +205,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Set a registry value to a DWORD value.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
 				string valueName, IntPtr reserved, int type,
 				ref int data, int rawDataLength);
@@ -220,7 +220,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Get a registry value's info. No data.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
 		private static extern int RegQueryValueEx_Internal (IntPtr keyBase,
 				string valueName, IntPtr reserved, ref int type,
 				IntPtr zero, ref int dataSize);
@@ -235,7 +235,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Get a registry value. Binary data.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
 		private static extern int RegQueryValueEx_Internal (IntPtr keyBase,
 				string valueName, IntPtr reserved, ref int type,
 				[Out] byte[] data, ref int dataSize);
@@ -250,7 +250,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Get a registry value. DWORD data.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
 		private static extern int RegQueryValueEx_Internal (IntPtr keyBase,
 				string valueName, IntPtr reserved, ref int type,
 				ref int data, ref int dataSize);
