@@ -14,5 +14,7 @@ using System.Reflection.Emit;
 namespace Mono.CSharp.Debugger {
 	public interface IMonoSymbolWriter : ISymbolWriter {
 		byte[] CreateSymbolFile (AssemblyBuilder assembly_builder);
+
+		void MarkSequencePoint (int offset, int line, int column);
 	}
 }

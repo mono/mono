@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Diagnostics.SymbolStore;
 using System.Runtime.InteropServices;
+using Mono.CSharp.Debugger;
 
 namespace System.Reflection.Emit {
 
@@ -132,7 +133,7 @@ namespace System.Reflection.Emit {
 		private int num_fixups;
 		private ModuleBuilder module;
 		private AssemblyBuilder abuilder;
-		private ISymbolWriter sym_writer;
+		private IMonoSymbolWriter sym_writer;
 		private Stack scopes;
 		private int cur_block;
 		private Stack open_blocks;
@@ -155,7 +156,7 @@ namespace System.Reflection.Emit {
 				module = (ModuleBuilder)((ConstructorBuilder)mb).TypeBuilder.Module;
 			}
 			abuilder = (AssemblyBuilder)module.Assembly;
-			sym_writer = module.GetSymWriter ();
+			sym_writer = module.symbol_writer;
 			open_blocks = new Stack ();
 		}
 
@@ -626,14 +627,7 @@ namespace System.Reflection.Emit {
 			if (sym_writer == null)
 				return;
 
-			int[] offsets = { code_len };
-			int[] startLines = { startLine };
-			int[] startColumns = { startColumn };
-			int[] endLines = { endLine };
-			int[] endColumns = { endColumn };
-
-			sym_writer.DefineSequencePoints (document, offsets, startLines, startColumns,
-							 endLines, endColumns);
+			sym_writer.MarkSequencePoint (code_len, startLine, startColumn);
 		}
 		public virtual void ThrowException (Type exceptionType) {
 			throw new NotImplementedException ();
