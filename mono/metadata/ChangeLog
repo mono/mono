@@ -1,6 +1,7 @@
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* string-icalls.c: if we're not trimming, return the same string.
+	When not splitting, don't create a new string.
 
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
