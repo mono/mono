@@ -177,7 +177,7 @@ namespace Microsoft.JScript {
 				if (left is Identifier) {
 					Identifier parent = left as Identifier;
 					switch (parent.name) {
-					case "Math":
+					case "Math": {
 						MathObject math_obj = new MathObject ();
 						Type math_obj_type = math_obj.GetType ();
 						Identifier property = right as Identifier;
@@ -185,28 +185,28 @@ namespace Microsoft.JScript {
 						switch (property.name) {
 						/* value properties of the math object */
 						case "E":
-							v = math_obj.E;
+							v = MathObject.E;
 							break;
 						case "LN10":
-							v = math_obj.LN10;
+							v = MathObject.LN10;
 							break;
 						case "LN2":
-							v = math_obj.LN2;
+							v = MathObject.LN2;
 							break;
 						case "LOG2E":
-							v = math_obj.LOG2E;
+							v = MathObject.LOG2E;
 							break;
 						case "LOG10E":
-							v = math_obj.LOG10E;
+							v = MathObject.LOG10E;
 							break;
 						case "PI":
-							v = math_obj.PI;
+							v = MathObject.PI;
 							break;
 						case "SQRT1_2":
-							v = math_obj.SQRT1_2;
+							v = MathObject.SQRT1_2;
 							break;
 						case "SQRT2":
-							v = math_obj.SQRT2;
+							v = MathObject.SQRT2;
 							break;
 						
 						/* function properties of the math object */
@@ -225,6 +225,7 @@ namespace Microsoft.JScript {
 						ig.Emit (OpCodes.Ldc_R8, v);
 						ig.Emit (OpCodes.Box, typeof (Double));
 						break;
+						}
 					default:
 						if (right is Identifier)
 							emit_late_binding (ec);
