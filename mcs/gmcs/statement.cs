@@ -95,7 +95,12 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class EmptyStatement : Statement {
+	public sealed class EmptyStatement : Statement {
+		
+		private EmptyStatement () {}
+		
+		public static readonly EmptyStatement Value = new EmptyStatement ();
+		
 		public override bool Resolve (EmitContext ec)
 		{
 			return true;
@@ -103,7 +108,7 @@ namespace Mono.CSharp {
 		
 		protected override bool DoEmit (EmitContext ec)
 		{
-			return false;
+			return true;
 		}
 	}
 	
