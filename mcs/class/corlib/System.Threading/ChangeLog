@@ -1,3 +1,7 @@
+2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Monitor.cs Interlocked.cs: Add net 2.0 ReliabilityContractAttributes.
+
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Interlocked.cs: Applied patch from Luca Barbieri (luca.barbieri@gmail.com). Add NET 2.0 methods.

@@ -33,6 +33,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Contexts;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Threading
 {
 	public sealed class Monitor
@@ -44,6 +48,10 @@ namespace System.Threading
 		// the lock it returns false, true if it can
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool Monitor_try_enter(object obj, int ms);
+
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+#endif
 		public static void Enter(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
@@ -59,6 +67,9 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Monitor_exit(object obj);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+#endif
 		public static void Exit(object obj) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
