@@ -3805,7 +3805,7 @@ namespace Mono.CSharp {
 			}
 
 			if (parent_constructor == caller_builder){
-				Report.Error (515, String.Format ("Constructor `{0}' can not call itself", TypeManager.CSharpSignature (caller_builder)));
+				Report.Error (516, String.Format ("Constructor `{0}' can not call itself", TypeManager.CSharpSignature (caller_builder)));
 				return false;
 			}
 			

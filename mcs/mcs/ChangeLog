@@ -1,5 +1,10 @@
 2004-09-11  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (ConstructorInitializer.Resolve):
+	Wrong error number (515->516).
+
+2004-09-11  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs (Indexer.Define): Add error 631 report.
 
 2004-09-11  Marek Safar  <marek.safar@seznam.cz>

@@ -906,7 +906,7 @@ public class TypeManager {
 			iparams = new ReflectionParameters (mb);
 
 		// Is property
-		if (mb.IsSpecialName && iparams.Count == 0)
+		if (mb.IsSpecialName && iparams.Count == 0 && !mb.IsConstructor)
 			return GetFullNameSignature (mb);
 		
 		for (int i = 0; i < iparams.Count; i++) {
