@@ -7355,7 +7355,6 @@ namespace Mono.CSharp {
 				} else {
 					if (!me.IsInstance) {
 						if (IdenticalNameAndTypeName (ec, left_original, left, loc))
-
 							return member_lookup;
 
 						if (left_is_explicit) {
