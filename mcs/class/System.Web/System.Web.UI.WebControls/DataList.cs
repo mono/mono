@@ -643,7 +643,7 @@ namespace System.Web.UI.WebControls
 				string dataKey = DataKeyField;
 				
 				if (headerTemplate != null) {
-					CreateItem (-1, 0, useDataSource, null);
+					CreateItem (-1, ListItemType.Header, false, null);
 				}
 
 				foreach (object current in source) {
@@ -668,7 +668,7 @@ namespace System.Web.UI.WebControls
 				}
 
 				if (footerTemplate != null)
-					CreateItem (-1, ListItemType.Footer, useDataSource, null);
+					CreateItem (-1, ListItemType.Footer, false, null);
 			}
 
 			if (useDataSource) {
@@ -831,7 +831,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (itemTemplate != null)
-				itemTemplate.InstantiateIn (this);
+				itemTemplate.InstantiateIn (item);
 		}
 
 		bool IRepeatInfoUser.HasFooter {

@@ -327,6 +327,11 @@ namespace System.Web.UI
                         }
                 }
 
+		internal void SetBindingContainer (bool isBC)
+		{
+			bindingContainer = isBC;
+		}
+		
 		private int defaultNumberID;
 		protected internal virtual void AddedControl (Control control, int index)
 		{
@@ -343,7 +348,7 @@ namespace System.Web.UI
 				control._namingContainer = namingContainer;
 			
 			if (control.AutoID == true && control.ID == null)
-				control.ID = "_ctrl_" + defaultNumberID++;
+				control.ID = ID + "_ctrl_" + defaultNumberID++;
 		}
 
                 protected virtual void AddParsedSubObject(object obj) //DIT

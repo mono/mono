@@ -1,5 +1,10 @@
 2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Control.cs: new method to set bindingContainer value.
+	* TemplateControl.cs: added controls are not binding containers.
+
+2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs: implemented TemplateSourceDirectory.
 	* TemplateControl.cs: implemented LoadControl and LoadTemplate.
 

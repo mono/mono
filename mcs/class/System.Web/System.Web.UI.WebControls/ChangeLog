@@ -1,3 +1,9 @@
+2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: for header and footer don't use data source.
+	Instantiate in the DataListItem, not in the DataList.
+	databind-template.aspx works now.
+
 2002-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseDataList.cs:
