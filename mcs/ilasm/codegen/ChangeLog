@@ -1,6 +1,29 @@
+2003-07-27 Jackson Harper <jackson@latitudegeo.com>
+
+	* ExternFieldRef.cs: Resolve as a typespec field if neccasary, make 
+	sure to not resolve more then once.
+	* ExternMethodRef.cs: Resolve as a typespec method if neccasary
+	* ExternTypeRef.cs: Use modifiable type as base class
+	* FieldRef.cs: Make sure to not resolve more then once.
+	* GlobalFieldRef.cs: Make sure to not resolve more then once.
+	* GlobalMethodRef.cs: Make sure to not resolve more then once.
+	* ITypeRef.cs: Types no longer need the AsClassRef method
+	* MethodDef.cs: Only decriment param count for vararg methods if there
+	is an ellipsis on the end of the param list. 
+	Fix little bug so return types allways get resolved.
+	* PeapiTypeRef.cs: Use TypeRef.Ellipsis for a place holder in bound
+	arrays instead of null
+	* PrimitiveTypeRef.cs: Use modifiable type as a base
+	* TypeRef.cs: Use modifable type as base, and let it do all the
+	modifications
+	* TypeSpecFieldRef.cs: Make sure to not resolve more then once.
+	* ModifiableType.cs: New base class for all types. This class will
+	handle all of the typemodification and determine whether methods
+	should be added to the type or the types typespec.
+	
 2003-07-25 Jackson Harper <jackson@latitudegeo.com>
 
-	* MEthodDef.cs: If methods do not have the static attribute give
+	* MethodDef.cs: If methods do not have the static attribute give
 	them the instance calling convention.
 		
 2003-07-21 Jackson Harper <jackson@latitudegeo.com>
