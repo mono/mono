@@ -1,3 +1,7 @@
+2003-07-05  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* unix.args: Added SecurityParser.cs to Mono.Xml
+
 2003-06-22  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* unix.args: Added FileDialogPermission.cs, IsolatedStorageFilePermission.cs,

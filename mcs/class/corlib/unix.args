@@ -25,6 +25,7 @@ Mono.Security.X509/X509Extension.cs
 Mono.Security.X509/X509Extensions.cs
 Mono.Security.X509/X520Attributes.cs
 Mono.Xml/MiniParser.cs
+Mono.Xml/SecurityParser.cs
 System/Activator.cs
 System/AppDomain.cs
 System/AppDomainSetup.cs
