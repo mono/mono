@@ -1,9 +1,0 @@
-2002/07/10  Nick Drochak <ndrochak@gol.com>
-
-	* WindowsAccountType.cs:
-	* WindowsBuiltInRole.cs:
-		Make these enums public instead of internal.
-
-2002-01-07  Nick Drochak  <ndrochak@gol.com>
-
-	* PrincipalPolicy.cs: made enum public like it should be to get _AppDomain to compile.

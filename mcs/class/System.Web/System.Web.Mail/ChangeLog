@@ -1,8 +1,0 @@
-2002-04-26  Lawrence Pit <loz@cable.a2000.nl>
-
-	* MailAttachment.cs: Implemented
-	* MailEncoding.cs: Implemented
-	* MailFormat.cs: Implemented
-	* MailMessage.cs: Implemented
-	* MailPriority.cs: Implemented
-	* SmtpMail.cs: Stubbed

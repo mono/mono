@@ -1,8 +1,0 @@
-2002-06-19  Nick Drochak  <ndrochak@gol.com>
-
-	* AllTests.cs: Add missing test: DebugTest
-
-2002-02-10  Nick Drochak  <ndrochak@gol.com>
-
-	* DebugTest.cs: Put in correct namespace.
-	* TextWriterTraceListenerTest.cs: Put in correct namespace.

@@ -1,4 +1,0 @@
-2002-06-23  Piers Haken <piersh@friskit.com>
-	
-	* XsltContext.cs: added 'PreserveWhitespace' abstract method
-

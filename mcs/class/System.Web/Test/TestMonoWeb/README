@@ -1,5 +1,0 @@
-This small test program tests HttpModule and HttpHandler. The test program can both handle async and sync tests.
-
-This program uses the temporary configuration for modules and handlers.
-
-- Patrik Torstensson

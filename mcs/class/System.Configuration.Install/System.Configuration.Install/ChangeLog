@@ -1,8 +1,0 @@
-2002-07-22  Tim Coleman <tim@timcoleman.com>
-	* UninstallAction.cs: Changed namespace to
-		proper System.Configuration.Install;
-
-2002-08-13  Jonathan Pryor <jonpryor@vt.edu>
-	* ChangeLog: Add change log to this directory
-	* UninstallAction.cs: Implemented.
-
