@@ -1,3 +1,14 @@
+2002-06-25  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.h: PE resource decoding
+
+	* unicode.c (_wapi_unicode_to_utf8): g_utf16_to_utf8 doesnt need
+	to be told the string length
+
+	* io.c: Removed the ACTUALLY_DO_UNICODE option.  Fixed some leaks.
+	Moved _wapi_time_t_to_filetime and the WapiFileTime typedef to
+	timefuncs.c
+
 2002-06-12  Dick Porter  <dick@ximian.com>
 
 	* daemon.c: 
