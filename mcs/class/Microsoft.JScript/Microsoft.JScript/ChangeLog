@@ -1,4 +1,50 @@
+2003-07-03  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+	* jscript-lexer-parser.g: Changed the format of copyright notice.
+
+	This changes will allow the support
+	for the grammar added by MS to EcmaScript (aka its JScript .Net),
+	I'm still missing some, but they are on the way.
+
+	* jscript-lexer-parser.g: Deleted function_declaration, and
+	added global_function_declaration and type_function_declaration.
+	I decided  to make the grammar as strict as the MS docs mark,
+	but there's a difference between what their docs says and what
+	their compiler does. For this case I decided to follow the
+	docs. A program like: 
+		private function F () 
+		{}
+	according to the docs, would not be syntaticly correct. But the MS
+	compiler, accepts the grammar construct and mark the error at
+	semantic analysis phase. I followed the docs this time.	
+
+	* jscript-lexer-parser.g: Added debbuger_statement.
+	* jscript-lexer-parser.g: Added import_statement.
+	* jscript-lexer-parser.g: Added package_statement and package_member(s).
+	* jscript-lexer-parser.g: Added super_statement.
+	* jscript-lexer-parser.g: Added const_statement.
+	* jscript-lexer-parser.g: Added class_statement,
+	interfaces_list and class_members. 
+
+	* jscript-lexer-parser.g: Added interface_statement and
+	interface_members.
+
+	* jscript-lexer-parser.g: Added enum_statement.
+	* jscript-lexer-parser.g: Added static_statement. The rule for
+	this syntatic construc is: static identifier { [body] }
+	body does not get well specified in the docs. Must search wich
+	are the possible values of it.
+
+	* jscript-lexer-parser.g: At variable_declaration, added
+	support for explicit type declaration.
+
+	* jscript-lexer-parser.g: Added numeric_literal,
+	DECIMAL_LITERAL and HEX_INTEGER_LITERAL.
+
+	* jscript-lexer-parser.g: Added modifiers, modifier, version_modifier.
+
+
 2003-06-09  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
 
 	* Added the Visit method to classes: AST, ArrayLiteral, ASTList,
 	Block, DebugBreak, Eval, ForIn, FunctionDeclaration,
