@@ -17,7 +17,7 @@ all-local $(STD_TARGETS:=-local):
 	testlogfile="$*.log" ; \
         echo "*** $(CSCOMPILE) $$options $$f" > $$testlogfile ; \
 	if $(CSCOMPILE) $$options $$f >> $$testlogfile 2>&1 ; then \
-          if test -f $*.exe; then \
+	  if test -f $*.exe; then \
 	    echo "*** $(TEST_RUNTIME) ./$*.exe" >> $$testlogfile ; \
 	      if $(TEST_RUNTIME) -O=-all ./$*.exe >> $$testlogfile 2>&1 ; then \
 		echo "PASS: $*" > $@ ; \
