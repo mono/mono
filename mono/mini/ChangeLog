@@ -1,3 +1,6 @@
+2003-05-04  Martin Baulig  <martin@ximian.com>
+
+	* driver.c: s/mini_parse_default_optimizations/mono_parse_default_optimizations/g.
 
 Sun May 4 11:48:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
