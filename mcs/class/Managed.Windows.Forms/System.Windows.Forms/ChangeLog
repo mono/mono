@@ -1,3 +1,7 @@
+2004-12-19  Geoff Norton  <gnorton@customerdna.com>
+	
+	* XplatUIOSX.cs (SetModal): Implement this method on OSX.
+
 2004-12-18  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs (SetModal): Applied patch from Ashwin Bharambe, 

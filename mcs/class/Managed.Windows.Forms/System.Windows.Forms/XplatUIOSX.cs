@@ -48,13 +48,6 @@ namespace System.Windows.Forms {
 		internal static Point mouse_position;
 		internal static OSXCaret caret;
 
-// FIXME: Caret can have colors?
-		internal static Pen caretOnPen = new Pen (Color.FromArgb (0,0,0));
-		internal static SolidBrush caretOnBrush = new SolidBrush (Color.FromArgb (0,0,0));
-// FIXME: When we figure out HIView backgrounds this will change on a per-caret basis
-		internal static Pen caretOffPen = new Pen (Color.FromArgb (255,255,255));
-		internal static SolidBrush caretOffBrush = new SolidBrush (Color.FromArgb (255,255,255));
-
 		internal static IntPtr mouseInWindow;
 		private static Hashtable handle_data;
 		private static Queue carbonEvents;
@@ -397,9 +390,17 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			//throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		internal override void SetModal(IntPtr handle, bool Modal) {
-			// FIXME: What do we do here on OSX?
+			IntPtr hWnd = IntPtr.Zero;
+			if (view_window_mapping [handle] != null) 
+				hWnd = ((IntPtr)(view_window_mapping [handle]));
+			else 
+				hWnd = GetControlOwner (handle);
+
+			if (Modal)
+				BeginAppModalStateForWindow (hWnd);
+			else
+				EndAppModalStateForWindow (hWnd);
 			return;
 		}
 
@@ -793,7 +794,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		}
 
 		internal override bool Text(IntPtr handle, string text) {
-			// FIXME: We need to set the window as well if this is the root control.
 			if (view_window_mapping [handle] != null) {
 				CheckError (SetWindowTitleWithCFString ((IntPtr)(view_window_mapping [handle]), __CFStringMakeConstantString (text)));
 			}
@@ -1140,6 +1140,10 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewGetBounds (IntPtr vHnd, ref HIRect r);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewScrollRect (IntPtr vHnd, IntPtr rect, float x, float y);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewSetBoundsOrigin (IntPtr vHnd, float x, float y);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewConvertRect (ref HIRect r, IntPtr a, IntPtr b);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -1212,6 +1216,10 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GlobalToLocal (ref QDPoint outData);
 
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int BeginAppModalStateForWindow (IntPtr window);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int EndAppModalStateForWindow (IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int CreateNewWindow (int klass, uint attributes, ref IntPtr r, ref IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
