@@ -33,6 +33,7 @@ using NUnit.Framework;
 
 using System;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MonoTests.System.Security.Cryptography {
 
@@ -221,6 +222,39 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual (BitConverter.ToString (asnLongBytes), BitConverter.ToString (aed.RawData), "RawData");
 			string result = aed.Format (true);
 			Assert.AreEqual (asnLongString, result, "Format(true)");
+		}
+
+		[Test]
+		public void Build_X509EnhancedKeyUsageExtension ()
+		{
+			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x30, 0x05, 0x06, 0x03, 0x2A, 0x03, 0x04 });
+			Assert.AreEqual ("30 05 06 03 2a 03 04", aed.Format (true), "Format(true)");
+			Assert.AreEqual ("30 05 06 03 2a 03 04", aed.Format (false), "Format(false)");
+			aed.Oid = new Oid ("2.5.29.37");
+			// and now "AsnEncodedData" knows how to (magically) decode the data without involving the class
+			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, aed.Format (true), "aed.Format(true)");
+			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", aed.Format (false), "aed.Format(false)");
+			// compare with the output of the "appropriate" class
+			X509EnhancedKeyUsageExtension eku = new X509EnhancedKeyUsageExtension (aed, false);
+			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)" + Environment.NewLine, eku.Format (true), "eku.Format(true)");
+			Assert.AreEqual ("Unknown Key Usage (1.2.3.4)", eku.Format (false), "eku.Format(false)");
+		}
+
+		[Test]
+		public void Build_NetscapeCertTypeExtension ()
+		{
+			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x03, 0x02, 0x01, 0x06 });
+			Assert.AreEqual ("03 02 01 06", aed.Format (true), "Format(true)");
+			Assert.AreEqual ("03 02 01 06", aed.Format (false), "Format(false)");
+			aed.Oid = new Oid ("2.16.840.1.113730.1.1");
+			// and now "AsnEncodedData" knows how to (magically) decode the data without involving the class
+			Assert.AreEqual ("SSL CA, SMIME CA (06)", aed.Format (true), "aed.Format(true)");
+			Assert.AreEqual ("SSL CA, SMIME CA (06)", aed.Format (false), "aed.Format(false)");
+			// note that the Fx doesn't "really" support this extension
+			// and strangely no NewLine is being appended to Format(true)
+			// finally this also means that the Oid "knowns" about oid not used in the Fx itself
+			Assert.AreEqual ("Netscape Cert Type", aed.Oid.FriendlyName, "FriendlyName");
+			// anyway the answer is most probably CryptoAPI
 		}
 	}
 }

@@ -1,3 +1,9 @@
+2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsnEncodedDataTest.cs: Added tests decode Fx supported Enhanced Key
+	Usage extension and Fx "officially" unsupported Netscape Cert Type
+	extension. Both are docoded sucessfully at this level.
+
 2005-01-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsnEncodedDataTest.cs: Added tests for Oid, RawData properties and
