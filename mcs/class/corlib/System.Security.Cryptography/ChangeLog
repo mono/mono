@@ -1,3 +1,19 @@
+2002-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PasswordDeriveBytes.cs: New. PKCS#5 key derivation (PBKDF1) works up to
+	HashSize length (but MS support longer keys)
+
+2002-10-24  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RSACryptoServiceProvider.cs: New. Implemented most logic expect crypto 
+	* RSAOAEPKeyExchangeDeformatter.cs: New. Stub.
+	* RSAOAEPKeyExchangeFormatter.cs: New. Stub.
+	* RSAPKCS1KeyExchangeDeformatter.cs: New. Stub.
+	* RSAPKCS1KeyExchangeFormatter.cs: New. 98% implemented but still
+	require RSA.DecryptValue (not supported in MS .NET Framework)
+	* RSAPKCS1SignatureDeformatter.cs: New. Stub.
+	* RSAPKCS1SignatureFormatter.cs: New. Stub.
+
 2002-10-23  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SymmetricAlgorithm.cs: Fixed CFB mode (do encryption while decrypting!)
