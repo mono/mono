@@ -29,7 +29,7 @@ namespace System {
 		// </summary>
 		public static bool Equals (object a, object b)
 		{
-			if (a == null){
+			if (a == null) {
 				if (b == null)
 					return true;
 				return false;
@@ -109,4 +109,3 @@ namespace System {
 		
 	}
 }
-

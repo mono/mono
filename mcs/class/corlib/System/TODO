@@ -5,3 +5,8 @@ System.ValueType:
 	Need to lock memory and "scan" the actual contents to compute
 	hash code and do comparissions.  Should be simple to do with
 	C#, the problem is figuring out the size of the object.
+
+System.String:
+	Need to implement the Format() and CompareOrdincal() methods 
+	as we all implement all of the methods that take into account 
+	CultureInfo.

@@ -1,3 +1,9 @@
+2001-07-13  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* TODO: Added things that need to be finished in System.String
+
+	* String.cs: New source file implementing the System.String class
+
 2001-07-12  Sean MacIsaac  <macisaac@ximian.com>
 
 	* TypeCode.cs: UInt64 was UInt63.
@@ -21,7 +27,8 @@
 	* IFormatProvider.cs: Added public accesability type to
 	IFormatProvider.
 
-	* Exception.cs: Added a using statement to remove compile time error.
+	* Exception.cs: Added a using statement to remove compile time
+	error.
 
 	* ApplicationException.cs: Removed a ; that was causing a compiler
 	error.
@@ -40,14 +47,14 @@
 
 	* UInt64.cs: Fixed some compiler errors.
 
-	* Void.cs: Fixed a compiler error.
-	
+	* Void.cs: Fixed a compiler error.	
 
 2001-07-12  Joe Shaw  <joe@ximian.com>
 
-	* Array.cs: Fix backwards parameters to Array.SetValue() throughout.
-	(BinarySearch): Fix backward logic surrounding whether to
-	call value.CompareTo or comparer.Compare.
+	* Array.cs: Fix backwards parameters to Array.SetValue()
+	throughout.
+	(BinarySearch): Fix backward logic surrounding whether to call
+	value.CompareTo or comparer.Compare.
 	(LastIndexOf): Stop being stupid. I am so not used to strongly
 	bounded arrays...
 	(Sort): Implement a quicksort.
@@ -56,8 +63,8 @@
 
 	* Array.cs: Change all instances of trying to access an array with
 	the index operator to calls to GetValue and SetValue, and add
-	InternalGetValue and InternalSetValue which are internal calls into
-	the runtime. Ew.
+	InternalGetValue and InternalSetValue which are internal calls
+	into the runtime. Ew.
 
 2001-07-10  Joe Shaw  <joe@ximian.com>
 
@@ -70,8 +77,8 @@
 2001-07-06  Joe Shaw  <joe@ximian.com>
 
 	* Int16.cs, Int32.cs, Int64.cs, UInt16.cs, UInt32.cs, UInt64.cs:
-	Implement the IComparable and IFormattable interfaces. Fix a
-	typo (publig -> public)
+	Implement the IComparable and IFormattable interfaces. Fix a typo
+	(publig -> public)
 
 	* ApplicationException.cs, ArgumentException.cs,
 	ArgumentNullException.cs, ArgumentOutOfRangeException.cs,
