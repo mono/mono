@@ -1,3 +1,9 @@
+2003-10-18  Martin Baulig  <martin@ximian.com>
+
+	* MethodInfo.cs (MethodInfo.GetGenericArguments): Make this method
+	abstract; use an interncall in MonoMethod and a custom
+	implementation in MethodBuilder.	
+
 2003-10-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* MonoEvent.cs: implement ToString method as in MS.NET.

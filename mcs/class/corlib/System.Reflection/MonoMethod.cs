@@ -157,6 +157,11 @@ namespace System.Reflection {
 		{
 			ReflectionSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method);
 		}
+
+#if GENERICS
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public override extern Type [] GetGenericArguments ();
+#endif
 	}
 	
 	internal class MonoCMethod : ConstructorInfo, ISerializable

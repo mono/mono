@@ -107,5 +107,12 @@ namespace System.Reflection {
 			}
 			return ReturnType.Name+" "+Name+"("+parms+")";
 		}
+
+#if GENERICS
+		public override Type[] GetGenericArguments ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

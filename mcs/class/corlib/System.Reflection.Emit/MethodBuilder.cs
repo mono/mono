@@ -256,6 +256,18 @@ namespace System.Reflection.Emit {
 			return define_generic_parameter (gparam);
 		}
 
+		public override Type[] GetGenericArguments ()
+		{
+			if (generic_params == null)
+				return new Type [0];
+
+			Type[] result = new Type [generic_params.Length];
+			for (int i = 0; i < generic_params.Length; i++)
+				result [i] = generic_params [i].Type;
+
+			return result;
+		}
+
 		public void SetGenericMethodSignature (Type return_type, Type[] parameter_types)
 		{
 			RejectIfCreated ();
