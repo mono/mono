@@ -4,6 +4,8 @@
 	the file name.
 	* MonoIOError.cs: uncommented INVALID_NAME.
 
+	Patch by Gert Driesen.
+
 2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileStream.cs: Added new constructor to allow anonymous files (i.e.
