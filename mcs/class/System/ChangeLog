@@ -1,3 +1,6 @@
+2004-09-04  Tim Coleman <tim@timcoleman.com>
+	* System.dll.sources: Add System.Net.Mail and System.Net.Mime classes.
+
 2004-09-03  Tim Coleman <tim@timcoleman.com>
 	* System.dll.sources: Add new class in System.Net
 
