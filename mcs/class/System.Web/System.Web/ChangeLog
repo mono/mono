@@ -1,3 +1,12 @@
+2003-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: added request queue handling.
+
+	* QueueManager.cs: simple request queue.
+	
+	* TimeoutManager.cs: added some locks to prevent the enumerator used in
+	CheckTimeouts to be out of synch.
+
 2003-11-25  Jackson Harper <jackson@ximian.com>
 
 	* HttpStaticObjectsCollection.cs: Add methods for serialization

@@ -45,6 +45,10 @@ namespace System.Web {
 
 		private Exception _initError;
 		private TimeoutManager timeoutManager;
+		private QueueManager queueManager;
+		private WaitCallback doRequestCallback;
+		private int pendingCallbacks;
+
 
 		static HttpRuntime ()
 		{
@@ -59,7 +63,9 @@ namespace System.Web {
 		}
 
 		public HttpRuntime ()
-		{	
+		{
+			doRequestCallback = new WaitCallback (DoRequest);
+			queueManager = new QueueManager ();
 		}
 
 		static internal object CreateInternalObject(Type type) {
@@ -86,7 +92,6 @@ namespace System.Web {
 
 		private void OnFirstRequestStart() {
 			if (null == _initError) {
-				// TODO: First request initialize (config, trace, request queue)
 			}
 
 			// If we got an error during init, throw to client now..
@@ -162,42 +167,44 @@ namespace System.Web {
 			if (null != request)
 				request.EndOfRequest();
 
-			// TODO: Schedule more work in request queue
+			TryExecuteQueuedRequests ();
+		}
+
+		internal static void FinishUnavailable (HttpWorkerRequest wr)
+		{
+			HttpContext context = new HttpContext (wr);
+			HttpException exception = new HttpException (503, "Service unavailable");
+			Interlocked.Increment (ref _runtime._activeRequests);
+			_runtime.FinishRequest (context, exception);
 		}
 
 		private void OnAppDomainUnload(object state) {
 			Dispose();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Move timeout value to config")]
 		internal void Dispose() {
-			// TODO: Drain Request queue
-			// TODO: Stop request queue
-			// TODO: Move timeout value to config
+			queueManager.Dispose (); // Send a 503 to all queued requests
+			queueManager = null;
 			WaitForRequests(5000);
 			
 			_cache = null;
 			HttpApplicationFactory.EndApplication();
 		}
 
-		[MonoTODO]
 		internal void WaitForRequests(int ms) {
 			DateTime timeout = DateTime.Now.AddMilliseconds(ms);
 
 			do {
-				// TODO: We should check the request queue here also
 				if (Interlocked.CompareExchange (ref _activeRequests, 0, 0) == 0)
 					return;
 
-				Thread.Sleep(100);
+				Thread.Sleep (100);
 			} while (timeout > DateTime.Now);
 		}
 
-		internal void InternalExecuteRequest(HttpWorkerRequest request)
+		internal void InternalExecuteRequest (HttpWorkerRequest request)
 		{
-			if (request == null)
-				throw new ArgumentNullException ("request");
-			
 			IHttpHandler handler;
 			IHttpAsyncHandler async_handler;
 
@@ -238,10 +245,43 @@ namespace System.Web {
 			}
 		}
 
+		void DoRequest (object o)
+		{
+			Interlocked.Decrement (ref pendingCallbacks);
+			InternalExecuteRequest ((HttpWorkerRequest) o);
+		}
+		
+		void TryExecuteQueuedRequests ()
+		{
+			// Wait for pending jobs to start
+			if (Interlocked.CompareExchange (ref pendingCallbacks, 3, 3) == 3) {
+				return;
+			}
+
+			if (!queueManager.CanExecuteRequest (false)) {
+				return;
+			}
+
+			HttpWorkerRequest wr = queueManager.Dequeue ();
+			if (wr == null) {
+				return;
+			}
+
+			Interlocked.Increment (ref pendingCallbacks);
+			ThreadPool.QueueUserWorkItem (doRequestCallback, wr);
+			TryExecuteQueuedRequests ();
+		}
+
 		public static void ProcessRequest (HttpWorkerRequest Request)
 		{
-			// TODO: Request queue
-			_runtime.InternalExecuteRequest(Request);
+			if (Request == null)
+				throw new ArgumentNullException ("Request");
+
+			if (_runtime.queueManager.CanExecuteRequest (false)) {
+				_runtime.InternalExecuteRequest (Request);
+			} else {
+				_runtime.queueManager.Queue (Request);
+			}
 		}
 
 		public static Cache Cache {

@@ -1,5 +1,5 @@
 //
-// System.Web.HttpForbiddenHandler
+// System.Web.TimeoutManager
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -45,7 +45,9 @@ namespace System.Web
 				value = list;
 			}
 
-			contexts [context] = value;
+			lock (this) {
+				contexts [context] = value;
+			}
 		}
 
 		public Thread Remove (HttpContext context)
@@ -55,7 +57,9 @@ namespace System.Web
 				return null;
 
 			if (value is Thread) {
-				contexts.Remove (context);
+				lock (this) {
+					contexts.Remove (context);
+				}
 				return (Thread) value;
 			}
 			
@@ -66,8 +70,11 @@ namespace System.Web
 				list.RemoveAt (list.Count - 1);
 			}
 
-			if (list.Count == 0)
-				contexts.Remove (context);
+			if (list.Count == 0) {
+				lock (this) {
+					contexts.Remove (context);
+				}
+			}
 
 			return result;
 		}
@@ -79,25 +86,18 @@ namespace System.Web
 			}
 
 			DateTime now = DateTime.Now;
-			ArrayList list = null;
+			ArrayList clist = new ArrayList ();
 
-			foreach (HttpContext context in contexts.Keys) {
-				
-				if (!context.CheckIfTimeout (now))
-					continue;
-				
-				if (list == null)
-					list = new ArrayList ();
-
-				list.Add (context);
+			lock (this) { // The lock prevents Keys enumerator from being out of synch
+				clist.AddRange (contexts.Keys);
 			}
 
-			if (list == null)
-				return;
+			foreach (HttpContext context in clist) {
+				if (!context.CheckIfTimeout (now))
+					continue;
 
-			foreach (HttpContext context in list) {
 				Thread thread = Remove (context);
-				if (thread != null) // Shouldn't be
+				if (thread != null) // Only if context is removed right after the lock
 					thread.Abort (new StepTimeout ());
 			}
 		}
