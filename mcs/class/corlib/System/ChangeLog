@@ -1,3 +1,8 @@
+2002/03/28  Nick Drochak <ndrochak@gol.com>
+
+	* IntegerFormatter.cs: Change class from internal to public.  Add
+	necessary [CLSCompliant(false)] attributes.
+
 2002-03-27  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* _AppDomain.cs, AppDomain.cs: renamed method GetDate to GetData
 	(was a typo)

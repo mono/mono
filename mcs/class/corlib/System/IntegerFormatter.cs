@@ -88,7 +88,7 @@ using System.Globalization;
 
 namespace System {
 
-	internal sealed class IntegerFormatter {
+	public sealed class IntegerFormatter {
 
 		private static int maxByteLength = 4;
 		private static int maxShortLength = 6;
@@ -263,6 +263,7 @@ namespace System {
 			}			
 		}
 
+		[CLSCompliant(false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, sbyte value)
 		{
 			char specifier;
@@ -295,6 +296,7 @@ namespace System {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, ushort value)
 		{
 			char specifier;
@@ -327,6 +329,7 @@ namespace System {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, uint value)
 		{
 			char specifier;
@@ -359,6 +362,7 @@ namespace System {
 			}
 		}
 
+		[CLSCompliant(false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, ulong value)
 		{
 			char specifier;
