@@ -1,5 +1,8 @@
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_delegate_free_ftnptr): Remove debug array checked in
+	by mistake.
+
 	* string-icalls.c: Return String.Empty where needed. Fixes #73310.
 
 	* object-internals.h (MonoStackFrame): Sync with managed object layout.
