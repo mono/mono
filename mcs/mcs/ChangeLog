@@ -1,3 +1,8 @@
+2004-04-28  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (FlowBranchingException.LookupLabel): Add a null
+	check on current_vector.Block.
+
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (BaseAccess.CommonResolve): Don't allow `base' in
