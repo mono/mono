@@ -1,3 +1,9 @@
+2005-03-30  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (PropertyExpr): Derive from Expression, not
+	ExpressionStatement.
+	(PropertyExpr.EmitStatement): Remove.
+
 2005-03-29  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74060.

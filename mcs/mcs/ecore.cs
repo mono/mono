@@ -3071,7 +3071,7 @@ namespace Mono.CSharp {
 	///   This is not an LValue because we need to re-write the expression, we
 	///   can not take data from the stack and store it.  
 	/// </summary>
-	public class PropertyExpr : ExpressionStatement, IAssignMethod, IMemberExpr {
+	public class PropertyExpr : Expression, IAssignMethod, IMemberExpr {
 		public readonly PropertyInfo PropertyInfo;
 
 		//
@@ -3459,12 +3459,6 @@ namespace Mono.CSharp {
 			
 			if (temp != null)
 				temp.Emit (ec);
-		}
-
-		override public void EmitStatement (EmitContext ec)
-		{
-			Emit (ec);
-			ec.ig.Emit (OpCodes.Pop);
 		}
 	}
 
