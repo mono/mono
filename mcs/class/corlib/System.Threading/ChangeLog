@@ -1,3 +1,6 @@
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ThreadPool.cs: Implemented RegisterWaitForSingleObject methods.
 
 Tue Jan 28 17:55:59 CET 2003 Paolo Molaro <lupus@ximian.com>
 

@@ -198,25 +198,21 @@ namespace System.Threading
          return _Threadpool.QueueUserWorkItemInternal(callback, state);
       }
 
-      [MonoTODO]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, int millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			if (millisecondsTimeOutInterval < -1) {
 				throw new ArgumentOutOfRangeException("timeout < -1");
 			}
+			return RegisterWaitForSingleObject (waitObject, callback, state, TimeSpan.FromMilliseconds (Convert.ToDouble(millisecondsTimeOutInterval)), executeOnlyOnce);
+	  }
 
-         throw new NotImplementedException();
-      }
-
-		[MonoTODO]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, long millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			if (millisecondsTimeOutInterval < -1) {
 				throw new ArgumentOutOfRangeException("timeout < -1");
 			}
 		
-         throw new NotImplementedException();
-      }
+			return RegisterWaitForSingleObject (waitObject, callback, state, TimeSpan.FromMilliseconds (Convert.ToDouble(millisecondsTimeOutInterval)), executeOnlyOnce);
+		}
 
-		[MonoTODO]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce) {
 			// LAMESPEC: I assume it means "timeout" when it says "millisecondsTimeOutInterval"
 			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
@@ -228,13 +224,15 @@ namespace System.Threading
 				throw new NotSupportedException("timeout too large");
 			}
 
-         throw new NotImplementedException();
-      }
+			RegisteredWaitHandle waiter = new RegisteredWaitHandle (waitObject, callback, state, timeout, executeOnlyOnce);
+			_Threadpool.QueueUserWorkItemInternal (new WaitCallback(waiter.Wait), null);
+			return waiter;
+		}
 
-      [CLSCompliant(false)][MonoTODO]
+      [CLSCompliant(false)]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce) {
-         throw new NotImplementedException();
-      }
+		  return RegisterWaitForSingleObject (waitObject, callback, state, TimeSpan.FromMilliseconds (Convert.ToDouble(millisecondsTimeOutInterval)), executeOnlyOnce);
+	  }
 
 		[MonoTODO]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, int millisecondsTimeOutInterval, bool executeOnlyOnce) {
