@@ -1,3 +1,7 @@
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
+	* cs0236.cs: New test.
+
 2002-08-05  Martin Baulig  <martin@gnome.org>
 
 	* runtest.pl: This is a perl script which runs a testcase, parses the
