@@ -73,7 +73,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 		
 		[MonoTODO]
-		public IDictionary Properties {
+		public virtual IDictionary Properties {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -119,13 +119,13 @@ namespace System.Runtime.Remoting.Messaging {
 		} 
 
 		[MonoTODO]
-		public object HeaderHandler (Header[] h)
+		public virtual object HeaderHandler (Header[] h)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Init ()
+		public virtual void Init ()
 		{
 			throw new NotImplementedException ();
 		}

@@ -24,12 +24,12 @@ namespace System.Runtime.Remoting.Messaging {
 		protected IDictionary InternalProperties;
 
 		[MonoTODO]
-		public virtual int ArgCount {
+		public int ArgCount {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual object[] Args {
+		public object[] Args {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -40,37 +40,37 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 		
 		[MonoTODO]
-		public virtual bool HasVarArgs {
+		public bool HasVarArgs {
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public virtual LogicalCallContext LogicalCallContext {
+		public LogicalCallContext LogicalCallContext {
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public virtual MethodBase MethodBase {
+		public MethodBase MethodBase {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual string MethodName {
+		public string MethodName {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual object MethodSignature {
+		public object MethodSignature {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual int OutArgCount {
+		public int OutArgCount {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual object[] OutArgs {
+		public object[] OutArgs {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -86,42 +86,42 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public virtual string TypeName {
+		public string TypeName {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual string Uri {
+		public string Uri {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual object GetArg (int argNum)
+		public object GetArg (int argNum)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual string GetArgName (int index)
+		public string GetArgName (int index)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		} 
 
 		[MonoTODO]
-		public virtual object GetOutArg (int argNum)
+		public object GetOutArg (int argNum)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual string GetOutArgName (int index)
+		public string GetOutArgName (int index)
 		{
 			throw new NotImplementedException ();
 		}

@@ -58,7 +58,7 @@ namespace System.Runtime.Remoting.Channels
 		}
 
 		[MonoTODO]
-		public void AsyncProcessResponse (IClientChannelSinkStack sinkStack,
+		public void AsyncProcessResponse (IClientResponseChannelSinkStack sinkStack,
 						  object state,
 						  ITransportHeaders headers,
 						  Stream stream)

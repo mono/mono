@@ -1,3 +1,8 @@
+2002-08-03  Duncan Mak  <duncan@ximian.com>
+
+	* BinaryClientFormatterSink.cs: 
+	* IClientChannelSink.cs: Fixed signature for AsyncProcessResponse.
+
 2002-08-01  Rodrigo Moya <rodrigo@ximian.com>
 
 	* BinaryClientFormatterSink.cs:
