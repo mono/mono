@@ -1,3 +1,9 @@
+2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* BinaryWriter.cs: use one encoding buffer for writing
+	strings rather than allocting one/string. HUGE perf
+	boost when writing many strings.
+
 2003-12-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Path.cs : Fixed GetFullPath() (and CanonicalizePath()), 

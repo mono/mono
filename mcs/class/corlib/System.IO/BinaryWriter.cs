@@ -228,17 +228,32 @@ namespace System.IO {
 			OutStream.Write(BitConverter.GetBytes(value), 0, 4);
 		}
 
+		byte [] stringBuffer;
+		int maxCharsPerRound;
+		
 		public virtual void Write(string value) {
 
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
-			/* The length field is the byte count, not the
-			 * char count
-			 */
-			byte[] enc = m_encoding.GetBytes(value);
-			Write7BitEncodedInt(enc.Length);
-			OutStream.Write(enc, 0, enc.Length);
+			int len = m_encoding.GetByteCount (value);
+			Write7BitEncodedInt (len);
+			
+			if (stringBuffer == null) {
+				stringBuffer = new byte [512];
+				maxCharsPerRound = 512 / m_encoding.GetMaxByteCount (1);
+			}
+			
+			int chpos = 0;
+			int chrem = value.Length;
+			while (chrem > 0) {
+				int cch = (chrem > maxCharsPerRound) ? maxCharsPerRound : chrem;
+				int blen = m_encoding.GetBytes (value, chpos, cch, stringBuffer, 0);
+				OutStream.Write (stringBuffer, 0, blen);
+				
+				chpos += cch;
+				chrem -= cch;
+			}
 		}
 
 		[CLSCompliant(false)]
