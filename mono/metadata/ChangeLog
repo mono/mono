@@ -1,3 +1,7 @@
+2004-06-23  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c (mono_debugger_unhandled_exception): Store
+	the `exc' object in a static object to put it into the GC's root set.
 
 Wed Jun 23 15:37:31 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
