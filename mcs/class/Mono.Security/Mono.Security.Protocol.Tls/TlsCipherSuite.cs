@@ -33,197 +33,25 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal class TlsCipherSuite
+	internal class TlsCipherSuite : TlsAbstractCipherSuite
 	{
-		#region FIELDS
-
-		private short				code;
-		private string				name;
-		private string				algName;
-		private string				hashName;
-		private bool				isExportable;
-		private CipherMode			cipherMode;
-		private byte				keyMaterialSize;
-		private byte				expandedKeyMaterialSize;
-		private byte				effectiveKeyBits;
-		private byte				ivSize;
-		private byte				blockSize;
-		private TlsSessionContext	sessionContext;
-		private SymmetricAlgorithm	encryptionAlgorithm;
-		private ICryptoTransform	encryptionCipher;
-		private SymmetricAlgorithm	decryptionAlgorithm;
-		private ICryptoTransform	decryptionCipher;
-		private KeyedHashAlgorithm	clientHMAC;
-		private KeyedHashAlgorithm	serverHMAC;
-			
-		#endregion
-
-		#region PROPERTIES
-
-		public short Code
-		{
-			get { return code; }
-		}
-
-		public string Name
-		{
-			get { return name; }
-		}
-
-		public bool IsExportable
-		{
-			get { return isExportable; }
-		}
-
-		public CipherMode CipherMode
-		{
-			get { return cipherMode; }
-		}
-
-		public int HashSize
-		{
-			get { return (int)(hashName == "MD5" ? 16 : 20); }
-		}
-
-		public byte	KeyMaterialSize
-		{
-			get { return keyMaterialSize; }
-		}
-
-		public byte	ExpandedKeyMaterialSize
-		{
-			get { return expandedKeyMaterialSize; }
-		}
-
-		public byte	EffectiveKeyBits
-		{
-			get { return EffectiveKeyBits; }
-		}
-		
-		public byte IvSize
-		{
-			get { return ivSize; }
-		}
-
-		public byte	BlockSize
-		{
-			get { return blockSize; }
-		}
-
-		public string HashName
-		{
-			get { return hashName; }
-		}
-
-		public TlsSessionContext SessionState
-		{
-			get { return sessionContext; }
-			set { sessionContext = value; }
-		}
-
-		public KeyedHashAlgorithm ClientHMAC
-		{
-			get { return clientHMAC; }
-		}
-
-		public KeyedHashAlgorithm ServerHMAC
-		{
-			get { return serverHMAC; }
-		}
-
-		#endregion
-
 		#region CONSTRUCTORS
 		
-		public TlsCipherSuite(short code, string name, string algName, string hashName, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, byte effectiveKeyBytes, byte ivSize, byte blockSize)
+		public TlsCipherSuite(short code, string name, string algName, 
+			string hashName, bool exportable, bool blockMode, 
+			byte keyMaterialSize, byte expandedKeyMaterialSize, 
+			short effectiveKeyBytes, byte ivSize, byte blockSize) 
+			: base (code, name, algName, hashName, exportable, blockMode,
+			keyMaterialSize, expandedKeyMaterialSize, effectiveKeyBytes,
+			ivSize, blockSize)
 		{
-			this.code						= code;
-			this.name						= name;
-			this.algName					= algName;
-			this.hashName					= hashName;
-			this.isExportable				= exportable;
-			if (blockMode)
-			{
-				this.cipherMode				= CipherMode.CBC;
-			}
-			this.keyMaterialSize			= keyMaterialSize;
-			this.expandedKeyMaterialSize	= expandedKeyMaterialSize;
-			this.effectiveKeyBits			= effectiveKeyBits;
-			this.ivSize						= ivSize;
-			this.blockSize					= blockSize;
 		}
 
 		#endregion
 
 		#region METHODS
 
-		public RSACryptoServiceProvider CreateRSA(X509Certificate certificate)
-		{
-			RSAParameters rsaParams = new RSAParameters();
-
-			// for RSA m_publickey contains 2 ASN.1 integers
-			// the modulus and the public exponent
-			ASN1 pubkey	= new ASN1(certificate.GetPublicKey());
-			ASN1 modulus = pubkey [0];
-			if ((modulus == null) || (modulus.Tag != 0x02))
-			{
-				return null;
-			}
-			ASN1 exponent = pubkey [1];
-			if (exponent.Tag != 0x02)
-			{
-				return null;
-			}
-
-			rsaParams.Modulus	= getUnsignedBigInteger(modulus.Value);
-			rsaParams.Exponent	= exponent.Value;
-			
-			return CreateRSA(rsaParams);
-		}
-
-		public RSACryptoServiceProvider CreateRSA(RSAParameters rsaParams)
-		{			
-			// BUG: MS BCL 1.0 can't import a key which 
-			// isn't the same size as the one present in
-			// the container.
-			int keySize = (rsaParams.Modulus.Length << 3);
-			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(keySize);
-			rsa.ImportParameters(rsaParams);
-
-			return rsa;
-		}
-
-		public void InitializeCipher()
-		{
-			createEncryptionCipher();
-			createDecryptionCipher();
-		}
-
-		public void UpdateClientCipherIV(byte[] iv)
-		{
-			if (cipherMode == CipherMode.CBC)
-			{
-				// Set the new IV
-				encryptionAlgorithm.IV	= iv;
-			
-				// Create encryption cipher with the new IV
-				encryptionCipher = encryptionAlgorithm.CreateEncryptor();
-			}
-		}
-
-		public void UpdateServerCipherIV(byte[] iv)
-		{
-			if (cipherMode == CipherMode.CBC)
-			{
-				// Set the new IV
-				decryptionAlgorithm.IV	= iv;
-			
-				// Create encryption cipher with the new IV
-				decryptionCipher = decryptionAlgorithm.CreateDecryptor();
-			}
-		}
-
-		public byte[] EncryptRecord(byte[] fragment, byte[] mac)
+		public override byte[] EncryptRecord(byte[] fragment, byte[] mac)
 		{
 			// Encryption ( fragment + mac [+ padding + padding_length] )
 			MemoryStream ms = new MemoryStream();
@@ -235,7 +63,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				// Calculate padding_length
 				int fragmentLength	= fragment.Length + mac.Length + 1;
-				int paddingLength	= (((fragmentLength/blockSize)*8) + blockSize) - fragmentLength;
+				int paddingLength	= (((fragmentLength/blockSize)*blockSize) + blockSize) - fragmentLength;
 
 				// Write padding length byte
 				cs.WriteByte((byte)paddingLength);
@@ -246,7 +74,7 @@ namespace Mono.Security.Protocol.Tls
 			return ms.ToArray();
 		}
 
-		public void DecryptRecord(byte[] fragment, ref byte[] dcrFragment, ref byte[] dcrMAC)
+		public override void DecryptRecord(byte[] fragment, ref byte[] dcrFragment, ref byte[] dcrMAC)
 		{
 			int	fragmentSize	= 0;
 			int paddingLength	= 0;
@@ -283,102 +111,85 @@ namespace Mono.Security.Protocol.Tls
 			Buffer.BlockCopy(buffer, dcrFragment.Length, dcrMAC, 0, dcrMAC.Length);
 		}
 
-		public int GetKeyBlockSize()
-		{
-			return keyMaterialSize*2 + HashSize*2 + ivSize*2;
-		}
-
 		#endregion
 
-		#region PRIVATE_METHODS
+		#region KEY_GENERATION_METODS
 
-		// This code is from Mono.Security.X509Certificate class.
-		private byte[] getUnsignedBigInteger(byte[] integer) 
+		public override void CreateMasterSecret(byte[] preMasterSecret)
 		{
-			if (integer[0] == 0x00) 
-			{
-				// this first byte is added so we're sure it's an unsigned integer
-				// however we can't feed it into RSAParameters or DSAParameters
-				int		length	 = integer.Length - 1;
-				byte[]	uinteger = new byte[length];				
-				Array.Copy(integer, 1, uinteger, 0, length);
+			TlsStream seed = new TlsStream();
 
-				return uinteger;
+			// Seed
+			seed.Write(context.ClientRandom);
+			seed.Write(context.ServerRandom);
+
+			// Create master secret
+			context.MasterSecret = new byte[preMasterSecret.Length];
+			context.MasterSecret = PRF(preMasterSecret, "master secret", seed.ToArray(), 48);
+
+			seed.Reset();
+		}
+
+		public override void CreateKeys()
+		{
+			TlsStream seed = new TlsStream();
+
+			// Seed
+			seed.Write(context.ServerRandom);
+			seed.Write(context.ClientRandom);
+
+			// Create keyblock
+			TlsStream keyBlock = new TlsStream(
+				PRF(this.Context.MasterSecret, 
+				"key expansion",
+				seed.ToArray(),
+				this.KeyBlockSize));
+
+			this.Context.ClientWriteMAC = keyBlock.ReadBytes(this.HashSize);
+			this.Context.ServerWriteMAC = keyBlock.ReadBytes(this.HashSize);
+			this.Context.ClientWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
+			this.Context.ServerWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
+
+			if (!this.IsExportable)
+			{
+				if (this.IvSize != 0)
+				{
+					this.Context.ClientWriteIV = keyBlock.ReadBytes(this.IvSize);
+					this.Context.ServerWriteIV = keyBlock.ReadBytes(this.IvSize);
+				}
+				else
+				{
+					this.Context.ClientWriteIV = new byte[0];
+					this.Context.ServerWriteIV = new byte[0];
+				}
 			}
 			else
 			{
-				return integer;
-			}
-		}
+				// Seed
+				seed.Reset();
+				seed.Write(this.Context.ClientRandom);
+				seed.Write(this.Context.ServerRandom);
 
-		private void createEncryptionCipher()
-		{
-			// Create and configure the symmetric algorithm
-			switch (this.algName)
-			{
-				case "RC4":
-					encryptionAlgorithm = new ARC4Managed();
-					break;
+				// Generate final write keys
+				byte[] finalClientWriteKey	= PRF(this.Context.ClientWriteKey, "client write key", seed.ToArray(), this.KeyMaterialSize);
+				byte[] finalServerWriteKey	= PRF(this.Context.ServerWriteKey, "server write key", seed.ToArray(), this.KeyMaterialSize);
+				
+				this.Context.ClientWriteKey	= finalClientWriteKey;
+				this.Context.ServerWriteKey	= finalServerWriteKey;
 
-				default:
-					encryptionAlgorithm = SymmetricAlgorithm.Create(algName);
-					break;
-			}
+				// Generate IV block
+				byte[] ivBlock = PRF(new byte[]{}, "IV block", seed.ToArray(), this.IvSize*2);
 
-			// If it's a block cipher
-			if (cipherMode == CipherMode.CBC)
-			{
-				// Configure encrypt algorithm
-				encryptionAlgorithm.Mode		= this.cipherMode;
-				encryptionAlgorithm.Padding		= PaddingMode.PKCS7;
-				encryptionAlgorithm.KeySize		= this.keyMaterialSize * 8;
-				encryptionAlgorithm.BlockSize	= this.blockSize * 8;
+				// Generate IV keys
+				this.Context.ClientWriteIV = new byte[this.IvSize];				
+				System.Array.Copy(ivBlock, 0, this.Context.ClientWriteIV, 0, this.Context.ClientWriteIV.Length);
+				this.Context.ServerWriteIV = new byte[this.IvSize];
+				System.Array.Copy(ivBlock, this.IvSize, this.Context.ServerWriteIV, 0, this.Context.ServerWriteIV.Length);
 			}
 
-			// Set the key and IV for the algorithm
-			encryptionAlgorithm.Key = sessionContext.ClientWriteKey;
-			encryptionAlgorithm.IV	= sessionContext.ClientWriteIV;
-			
-			// Create encryption cipher
-			encryptionCipher = encryptionAlgorithm.CreateEncryptor();
-
-			// Create the HMAC algorithm for the client
-			clientHMAC = new HMAC(hashName, sessionContext.ClientWriteMAC);
-		}
-
-		private void createDecryptionCipher()
-		{
-			// Create and configure the symmetric algorithm
-			switch (this.algName)
-			{
-				case "RC4":
-					decryptionAlgorithm = new ARC4Managed();
-					break;
-
-				default:
-					decryptionAlgorithm = SymmetricAlgorithm.Create(algName);
-					break;
-			}
-
-			// If it's a block cipher
-			if (cipherMode == CipherMode.CBC)
-			{
-				// Configure encrypt algorithm
-				decryptionAlgorithm.Mode		= this.cipherMode;
-				decryptionAlgorithm.Padding		= PaddingMode.None;
-				decryptionAlgorithm.KeySize		= this.keyMaterialSize * 8;
-				decryptionAlgorithm.BlockSize	= this.blockSize * 8;
-			}
-
-			// Set the key and IV for the algorithm
-			decryptionAlgorithm.Key = sessionContext.ServerWriteKey;
-			decryptionAlgorithm.IV	= sessionContext.ServerWriteIV;
-
-			// Create decryption cipher			
-			decryptionCipher = decryptionAlgorithm.CreateDecryptor();
-
-			// Create the HMAC algorithm for the server
-			serverHMAC = new HMAC(hashName, sessionContext.ServerWriteMAC);
+			// Clear no more needed data
+			seed.Reset();
+			keyBlock.Reset();
 		}
 
 		#endregion
