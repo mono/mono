@@ -8,9 +8,7 @@ interface I
 class Stack<T>
 	where T : ICloneable
 {
-	T t;
-
-	public object Test ()
+	public object Test (T t)
 	{
 		return t.Clone ();
 	}

@@ -16,9 +16,7 @@ class J
 class Stack<T>
 	where T : J, I
 {
-	T t;
-
-	public void Test ()
+	public void Test (T t)
 	{
 		t.Hello ();
 		t.Foo ();
