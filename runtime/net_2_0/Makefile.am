@@ -14,7 +14,7 @@ endif
 if PLATFORM_WIN32
 MONO_CSHARP_DEBUGGER =
 else
-MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
+MONO_CSHARP_DEBUGGER = Mono.CompilerServices.SymbolWriter
 endif
 
 gac_assemblies_list = \

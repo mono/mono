@@ -11,7 +11,7 @@ else
 mono_runtime = $(top_builddir)/mono/interpreter/mint
 endif
 
-MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
+MONO_CSHARP_DEBUGGER = Mono.CompilerServices.SymbolWriter
 if PLATFORM_WIN32
 GAC_DIR = `cygpath -w $(libdir)`
 GAC_ROOT_DIR = `cygpath -w $(DESTDIR)$(libdir)`
