@@ -1,3 +1,9 @@
+
+Tue Apr 15 13:56:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: setup klass->nested_in earlier. Allow
+	a dash in the assembly name.
+
 2003-04-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_type_to_unmanaged): dont access
