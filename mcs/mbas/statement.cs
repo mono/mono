@@ -5,6 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Martin Baulig (martin@gnome.org)
 //	 Anirban Bhattacharjee (banirban@novell.com)
+//   Manjula GHM (mmanjula@novell.com)
 //
 // (C) 2001, 2002 Ximian, Inc.
 //
@@ -968,6 +969,39 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 	}
+
+	// Support 'End' Statement which terminates execution immediately
+
+	  public class End : Statement {
+
+                public End (Location l)
+                {
+                        loc = l;
+                }
+
+                public override bool Resolve (EmitContext ec)
+                {
+                        return true;
+                }
+
+                protected override bool DoEmit (EmitContext ec)
+                {
+			Expression e = null;
+                        Expression tmp = Mono.MonoBASIC.Parser.DecomposeQI (
+                                                "Microsoft.VisualBasic.CompilerServices.ProjectData.EndApp",
+                                                        Location.Null);
+
+                       e = new Invocation (tmp, null, loc);
+                       e.Resolve (ec);
+
+                	if (e == null)
+                        	return false;
+                	e.Emit (ec);
+
+                        return true;
+                }
+        }
+
 
 	public class Break : Statement {
 		
