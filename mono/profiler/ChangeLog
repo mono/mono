@@ -1,4 +1,8 @@
 
+Tue Jul 1 11:26:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: added.
+
 Mon Jun 16 18:21:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mono-cov.c: coverage profiler.
