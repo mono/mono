@@ -1,3 +1,8 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DBDataPermissionAttributeTest.cs: New. Unit tests for DBData
+	PermissionAttribute.
+
 2004-08-13 Umadevi S <sumadevi@novell.com>
 	* Added File DataContainerTest
 
