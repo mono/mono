@@ -1,5 +1,11 @@
 2005-03-17  Peter Bartok  <pbartok@novell.com>
 
+	* XplatUIX11.cs: Fixed menu coord calculations
+	* MenuAPI.cs: Now using new ScreenToMenu()/MenuToScreen() methods
+	  for calculating offsets
+
+2005-03-17  Peter Bartok  <pbartok@novell.com>
+
 	* Hwnd.cs: Do not consider menu presence for default client
 	  rectangle location/size
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIX11.cs, XplatUIOSX.cs,

@@ -266,17 +266,37 @@ namespace System.Windows.Forms
 		
 		static public Point ClientAreaPointToScreen (MENU menu, Point pnt)		
 		{
-			Point rslt;
+			Point	rslt;
+			int	x;
+			int	y;
+
 			pnt.Y -= menu.Y;
-			rslt = menu.Wnd.PointToScreen (pnt);			
+
+			x = pnt.X;
+			y = pnt.Y;
+
+			XplatUI.MenuToScreen(menu.Wnd.window.Handle, ref x, ref y);
+
+			rslt = new Point(x, y);
+
 			return rslt;
 		}
 		
 		static public Point ClientAreaPointToClient (MENU menu, Point pnt)		
 		{
-			Point rslt;			
-			rslt = menu.Wnd.PointToClient (pnt);			
+			Point	rslt;
+			int	x;
+			int	y;
+
+			x = pnt.X;
+			y = pnt.Y;
+
+			XplatUI.ScreenToMenu(menu.Wnd.window.Handle, ref x, ref y);
+
+			rslt = new Point(x, y);
+
 			rslt.Y += menu.Y;
+
 			return rslt;
 		}	
 
