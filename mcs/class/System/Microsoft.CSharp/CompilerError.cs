@@ -13,7 +13,7 @@ namespace Microsoft.CSharp {
 
 	public enum ErrorLevel {
 		None,
-		Warning
+		Warning,
 		Error,
 		FatalError,
 	}
