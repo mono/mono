@@ -1,3 +1,7 @@
+2003-01-20	Patrik Torstensson
+	* image.h (MonoAssemblyName): changed major, minor, build, revision
+	from signed to unsigned.
+
 2003-01-20  sean kasun <skasun@azstarnet.com>
 
 	* reflection.c (load_cattr_value): Now this handles
