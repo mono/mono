@@ -680,7 +680,7 @@ namespace System.Web {
 			string entity = String.Empty;
 			StringBuilder output = new StringBuilder ();
 	
-			foreach (char c in s) 
+			foreach (char c in s) {
 				switch (c) {
 				case '&' :
 					output.Append (entity);
@@ -688,10 +688,16 @@ namespace System.Web {
 					insideEntity = true;
 					break;
 				case ';' :
+					if (!insideEntity) {
+						output.Append (c);
+						break;
+					}
+
 					entity += c;
-					if (entity[1] == '#' && entity[2] != ';')
+					int length = entity.Length;
+					if (length >= 2 && entity[1] == '#' && entity[2] != ';')
 						entity = ((char) Int32.Parse (entity.Substring (2, entity.Length - 3))).ToString();
-					else if (entities.ContainsKey (entity.Substring (1, entity.Length - 2)))
+					else if (length > 1 && entities.ContainsKey (entity.Substring (1, entity.Length - 2)))
 						entity = entities [entity.Substring (1, entity.Length - 2)].ToString ();
 					
 					output.Append (entity);
@@ -705,6 +711,7 @@ namespace System.Web {
 						output.Append (c);
 					break;
 				}
+			}
 			output.Append (entity);
 			return output.ToString ();
 		}
