@@ -59,7 +59,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public abstract RdpContentType ContentType { get; }
 
-		private Hashtable setupTable (RelaxngPatternType type, RdpPattern p)
+		private Hashtable setupTable (Type type, RdpPattern p)
 		{
 			// Why?
 			if (patternPool == null) {
@@ -81,7 +81,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpChoice MakeChoice (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RelaxngPatternType.Choice, p1);
+			Hashtable p1Table = setupTable (typeof (RdpChoice), p1);
 			if (p1Table [p2] == null) {
 				RdpChoice c = new RdpChoice (p1, p2);
 				c.setInternTable (this.patternPool);
@@ -92,7 +92,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpPattern MakeGroup (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RelaxngPatternType.Group, p1);
+			Hashtable p1Table = setupTable (typeof (RdpGroup), p1);
 			if (p1Table [p2] == null) {
 				RdpGroup g = new RdpGroup (p1, p2);
 				g.setInternTable (this.patternPool);
@@ -103,7 +103,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpInterleave MakeInterleave (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RelaxngPatternType.Interleave, p1);
+			Hashtable p1Table = setupTable (typeof (RdpInterleave), p1);
 			if (p1Table [p2] == null) {
 				RdpInterleave i = new RdpInterleave (p1, p2);
 				i.setInternTable (this.patternPool);
@@ -114,7 +114,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		public RdpAfter MakeAfter (RdpPattern p1, RdpPattern p2)
 		{
-			Hashtable p1Table = setupTable (RelaxngPatternType.After, p1);
+			Hashtable p1Table = setupTable (typeof (RdpAfter), p1);
 			if (p1Table [p2] == null) {
 				RdpAfter a = new RdpAfter (p1, p2);
 				a.setInternTable (this.patternPool);
@@ -158,7 +158,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			RdpAbstractBinary binary =
 				this as RdpAbstractBinary;
 			if (binary != null) {
-				Hashtable lTable = setupTable (PatternType, binary.LValue);
+				Hashtable lTable = setupTable (GetType (), binary.LValue);
 				if (lTable [binary.RValue] == null) {
 					lTable [binary.RValue] = this;
 					binary.LValue.setInternTable (ht);

@@ -1,3 +1,7 @@
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs : fixed setupTable(). Avoid boxing.
+
 2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs : RdpAttribute now omits value check when the argument
