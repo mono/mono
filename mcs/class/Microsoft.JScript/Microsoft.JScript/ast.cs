@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
@@ -176,6 +177,17 @@ namespace Microsoft.JScript {
 					ret_type = typeof (void);
 				return ret_type;
 			}
+		}
+
+		internal void emit_return_local_field (ILGenerator ig, ConstructorInfo ctr_info, int n)
+		{
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Ldc_I4, n);
+			ig.Emit (OpCodes.Ldstr, "return value");
+			ig.Emit (OpCodes.Ldtoken, typeof (object));
+			ig.Emit (OpCodes.Ldc_I4, n);
+			ig.Emit (OpCodes.Newobj, ctr_info);
+			ig.Emit (OpCodes.Stelem_Ref);
 		}
 	}
 }

@@ -141,7 +141,11 @@ namespace Microsoft.JScript {
 			Type t = typeof (JSLocalField);
 			ConstructorInfo ctr_info =  t.GetConstructor (new Type [] { 
 							typeof (string), typeof (RuntimeTypeHandle), typeof (Int32) });
-			ig.Emit (OpCodes.Ldc_I4, n);
+			if (not_void_return)
+				ig.Emit (OpCodes.Ldc_I4, n + 1);
+			else
+				ig.Emit (OpCodes.Ldc_I4, n);
+			
 			ig.Emit (OpCodes.Newarr, t);
 
 			for (int i = 0; i < n; i++) {
@@ -164,6 +168,9 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Newobj, ctr_info);
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
+
+			if (not_void_return)
+				emit_return_local_field (ig, ctr_info, n);
 		}
 
 		internal override bool Resolve (IdentificationTable context)

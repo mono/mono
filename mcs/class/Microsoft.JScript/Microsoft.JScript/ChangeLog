@@ -1,3 +1,11 @@
+2004-10-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* ast.cs (Function): added method emit_return_local_field, if
+	there's a return stm inside a function we must allocate a
+	JSLocalField indicating the return type of the function.
+	* FunctionDeclaration.cs, FunctionExpression.cs: generate the
+	extra JSLocalField if needed
+
 2004-10-19  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Parser.cs: set the operator properly.
