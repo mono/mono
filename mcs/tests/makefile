@@ -1,5 +1,8 @@
-MCS=../mcs/mcs
-CSC=csc
+ROOT=/cygdrive/$(subst \,/,$(subst :\,/,$(SYSTEMROOT)))
+CSC=$(ROOT)/microsoft.net/framework/v1.0.2914/csc.exe
+
+MCS=../mcs/mcs.exe
+VERIFY=../tools/verifier.exe
 
 TEST_SOURCES = \
 	test-1 test-2 test-3 test-4 test-6 test-7 test-8 test-9 test-10 \
@@ -22,6 +25,22 @@ test-compiler:
 			echo compiler failed on $$i;   exit; \
 		fi \
 	done
+
+
+
+verify:
+	for i in $(TEST_SOURCES); do \
+		if $(MCS) -o mcs-gen-code.exe $$i.cs > /dev/null; then \
+	        	if $(CSC) /out:csc-gen-code.exe $$i.cs > /dev/null; then \
+				if $(VERIFY) mcs-gen-code.exe csc-gen-code.exe; then \
+					echo $$i: identical assemblies; \
+				else \
+					echo $$i: unidentical assemblies; exit; \
+				fi; \
+			fi \
+		fi \
+	done
+
 
 casts.cs: gen-cast-test.cs
 	$(CSC) /out:csc-cast.exe gen-cast-test.cs
