@@ -1,3 +1,7 @@
+2004-06-21  Marek Safar <marek.safar@seznam.cz>
+
+	* test-275.cs: New test for #59792
+
 2004-06-18  Marek Safar <marek.safar@seznam.cz>
 
 	* test-274.cs: New test for #60219
