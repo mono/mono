@@ -435,7 +435,6 @@ namespace System.Web.UI
 
 			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies);
 			if (result.NativeCompilerReturnValue != 0) {
-				StringWriter writer = new StringWriter();
 				StreamReader reader = new StreamReader (realPath);
 				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
 			}

@@ -1,3 +1,7 @@
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: removed creation of StringWriter.  It's not used.
+
 2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LiteralControl.cs: stylized. This control has EnableViewState disabled
