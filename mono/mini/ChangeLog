@@ -1,5 +1,10 @@
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Fix int->float 
+	conversions in sse2 mode.
+
+	* basic-float.cs: Add regression test.
+	
 	* mini-amd64.c: Reenable sse2.
 
 2005-03-07  Zoltan Varga  <vargaz@freemail.hu>
