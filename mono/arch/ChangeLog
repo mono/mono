@@ -9,6 +9,9 @@
 	* x86/tramp.c:
 	remove child from MonoInvocation as it isn't used.
 
+	* hppa/hppa-codegen.h:
+	fix displacements in FP instrs
+
 2004-03-23  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* hppa/hppa-codegen.h: created
