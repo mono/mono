@@ -51,19 +51,20 @@ class DocumentationEditor {
 
 	GLib.Value tree_label_methods, tree_label_properties, tree_label_fields;
 	GLib.Value tree_label_operators, tree_label_events, tree_label_constructors;
+
+	Gtk.Notebook notebook;
 	
 	DocumentationEditor (string [] args)
 	{
 		program = new Program ("MonoDoc", "0.1", Modules.UI, args);
 		gxml = new Glade.XML (null, "gtk-monodoc.glade", null, null);
 
-		main_window = (App) gxml ["main-window"];
-		gxml.Autoconnect (this);
+		LoadWidgetPointers ();
 
 		//
 		// Customize the TreeView
 		Gtk.Container tc = (Gtk.Container) gxml ["tree-container"];
-		store = new TreeStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeObject);
+		store = new TreeStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeString);
 		tv = new TreeView (store);
 		tv.Selection.Mode = SelectionMode.Single;
 		tv.Selection.Changed += new EventHandler (TreeSelectionChanged);
@@ -90,6 +91,116 @@ class DocumentationEditor {
 		tree_label_constructors = new GLib.Value ("Constructors");
 	}
 
+	Gtk.Label namespace_name;
+	Gtk.TextView namespace_summary, namespace_remarks;
+
+	Gtk.Label class_name;
+	Gtk.TextView class_summary, class_remarks;
+	Gtk.Entry class_see_also;
+	Gtk.CheckButton class_thread_safe;
+
+	Gtk.Label method_name;
+	Gtk.TextView method_summary, method_remarks, method_exceptions, method_return, method_parameters;
+	Gtk.Entry method_see_also, method_example;
+
+	Gtk.Label property_name;
+	Gtk.TextView property_summary, property_remarks, property_value;
+	Gtk.Entry property_see_also, property_example;
+
+	Gtk.Label field_name;
+	Gtk.TextView field_summary, field_remarks;
+	Gtk.Entry field_see_also, field_example;
+	
+	void LoadWidgetPointers ()
+	{
+		main_window = (App) gxml ["main-window"];
+		gxml.Autoconnect (this);
+		notebook = (Notebook) gxml ["notebook"];
+		notebook.ShowTabs = false;
+
+		namespace_name = (Gtk.Label) gxml ["namespace-name"];
+		namespace_summary = (Gtk.TextView) gxml ["namespace-summary"];
+		namespace_remarks = (Gtk.TextView) gxml ["namespace-remarks"];
+
+		class_name = (Gtk.Label) gxml ["class-name"];
+		class_summary = (Gtk.TextView) gxml ["class-summary"];
+		class_remarks = (Gtk.TextView) gxml ["class-remarks"];
+		class_thread_safe = (Gtk.CheckButton)gxml ["class-thread-safe"];
+		class_see_also = (Gtk.Entry) gxml ["class-see-also"];
+
+		method_name = (Gtk.Label) gxml ["method-name"];
+		method_summary = (Gtk.TextView) gxml ["method-summary"];
+		method_parameters = (Gtk.TextView) gxml ["method-parameters"];
+		method_return = (Gtk.TextView) gxml ["method-return-value"];
+		method_exceptions = (Gtk.TextView) gxml ["method-exceptions"];
+		method_remarks = (Gtk.TextView) gxml ["method-remarks"];
+		method_see_also = (Gtk.Entry) gxml ["method-see-also"];
+		method_example = (Gtk.Entry) gxml ["method-example"];
+
+		property_name = (Gtk.Label) gxml ["property-name"];
+		property_summary = (Gtk.TextView) gxml ["property-summary"];
+		property_value = (Gtk.TextView) gxml ["property-value"];
+		property_remarks = (Gtk.TextView) gxml ["property-remarks"];
+		property_see_also = (Gtk.Entry) gxml ["property-see-also"];
+		property_example = (Gtk.Entry) gxml ["property-example"];
+
+		field_name = (Gtk.Label) gxml ["field-name"];
+		field_summary = (Gtk.TextView) gxml ["field-summary"];
+		field_remarks = (Gtk.TextView) gxml ["field-remarks"];
+		field_see_also = (Gtk.Entry) gxml ["field-see-also"];
+		field_example = (Gtk.Entry) gxml ["field-example"];
+	}
+
+	void LoadConstructor (string name)
+	{
+		notebook.Page = 2;
+		method_name.Text = "Constructor: " + name;
+	}
+	
+	void LoadNamespace (string name)
+	{
+		notebook.Page = 0;
+		namespace_name.Text = name;
+	}
+
+	void LoadClass (string name)
+	{
+		notebook.Page = 1;
+		class_name.Text = name;
+	}
+
+	void LoadMethod (string name)
+	{
+		notebook.Page = 2;
+
+		if (name.IndexOf ("(") == -1)
+			method_name.Text = name + " ()";
+		else
+			method_name.Text = name;
+	}
+
+	void LoadProperty (string name)
+	{
+		notebook.Page = 3;
+		property_name.Text = name;
+	}
+	
+	void LoadField (string name)
+	{
+		notebook.Page = 4;
+		field_name.Text = name;
+	}
+
+	void LoadOperator (string name)
+	{
+		notebook.Page = 5;
+	}
+
+	void LoadEvent (string name)
+	{
+		notebook.Page = 6;
+	}
+
 	void TreeSelectionChanged (object sender, EventArgs a)
 	{
 		Gtk.TreeIter iter = new Gtk.TreeIter ();
@@ -99,6 +210,26 @@ class DocumentationEditor {
 			GLib.Value val = new GLib.Value ();
 			
 			store.GetValue (iter, 1, val);
+			string key = (string) val;
+			
+			if (key == "namespace"){
+				GLib.Value ns = new GLib.Value ();
+				store.GetValue (iter, 0, ns);
+				LoadNamespace ((string) ns);
+			} else if (key.StartsWith ("class:"))
+				LoadClass (key.Substring (6));
+			else if (key.StartsWith ("mc"))
+				LoadConstructor (key.Substring (2));
+			else if (key.StartsWith ("mm"))
+				LoadMethod (key.Substring (2));
+			else if (key.StartsWith ("mp"))
+				LoadProperty (key.Substring (2));
+			else if (key.StartsWith ("mo"))
+				LoadOperator (key.Substring (2));
+			else if (key.StartsWith ("mf"))
+				LoadField (key.Substring (2));
+			else if (key.StartsWith ("me"))
+				LoadEvent (key.Substring (2));
 		}
 	}
 	
@@ -167,13 +298,14 @@ class DocumentationEditor {
 		l.Sort ();
 
 		TreeIter ns_iter = new TreeIter ();
+		GLib.Value ns_value = new GLib.Value ("namespace");
 		foreach (string k in l){
 			Hashtable h = (Hashtable) namespaces [k];
 
 			GLib.Value str_namespace = new GLib.Value (k);
 			store.Append (out ns_iter);
 			store.SetValue (ns_iter, 0, str_namespace);
-			//store.SetValue (ns_iter, 1, new GLib.Value (k));
+			store.SetValue (ns_iter, 1, ns_value);
 
 			ArrayList ch = new ArrayList ();
 			foreach (DictionaryEntry de in h)
@@ -181,31 +313,37 @@ class DocumentationEditor {
 			ch.Sort ();
 			TreeIter class_iter = new TreeIter ();
 			foreach (string n in ch){
+				string full = k + "." + n;
 				GLib.Value str_class = new GLib.Value (n);
 				store.Append (out class_iter, ns_iter);
 				store.SetValue (class_iter, 0, str_class);
-				//store.SetValue (class_iter, 1, new GLib.Value (k + "." + str_class));
+				store.SetValue (class_iter, 1, new GLib.Value ("class:" + full));
 
 				DocType type = (DocType) h [n];
-				PopulateMember (class_iter, type, tree_label_constructors, type.Constructors, true);
-				PopulateMember (class_iter, type, tree_label_methods, type.Methods, true);
-				PopulateMember (class_iter, type, tree_label_properties, type.Properties, false);
-				PopulateMember (class_iter, type, tree_label_operators, type.Operators, false);
-				PopulateMember (class_iter, type, tree_label_fields, type.Fields, false);
-				PopulateMember (class_iter, type, tree_label_events, type.Events, false);
+				PopulateMember (class_iter, type, "c", tree_label_constructors, type.Constructors, true);
+				PopulateMember (class_iter, type, "m", tree_label_methods, type.Methods, true);
+				PopulateMember (class_iter, type, "p", tree_label_properties, type.Properties, false);
+				PopulateMember (class_iter, type, "o", tree_label_operators, type.Operators, false);
+				PopulateMember (class_iter, type, "f", tree_label_fields, type.Fields, false);
+				PopulateMember (class_iter, type, "e", tree_label_events, type.Events, false);
 			}
 		}
 	}
 
-	void PopulateMember (TreeIter parent, DocType type, GLib.Value label, ArrayList array, bool is_method)
+	GLib.Value nothing;
+
+	void PopulateMember (TreeIter parent, DocType type, string p, GLib.Value label, ArrayList array, bool is_method)
 	{
 		if (array.Count == 0)
 			return;
 
+		if (nothing == null)
+			nothing = new GLib.Value ("nothing");
+		
 		TreeIter group_iter = new TreeIter ();
 		store.Append (out group_iter, parent);
 		store.SetValue (group_iter, 0, label);
-//		store.SetValue (group_iter, 1, null);
+		store.SetValue (group_iter, 1, nothing);
 
 		TreeIter item_iter = new TreeIter ();
 		foreach (DocMember member in array){
@@ -218,7 +356,8 @@ class DocumentationEditor {
 
 			store.Append (out item_iter, group_iter);
 			store.SetValue (item_iter, 0, caption);
-			//store.SetValue (group_iter, 1, null);
+			GLib.Value data = new GLib.Value ("m" + p  + type.Namespace + "." + type.Name + ":" + member.FullName);
+			store.SetValue (item_iter, 1, data);
 		}
 	}
 	
