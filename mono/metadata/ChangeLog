@@ -1,3 +1,8 @@
+2004-03-17  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (do_mono_metadata_parse_generic_inst): Use the
+	`m->generic_inst_cache' here.
+
 2004-03-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exception.h exception.c: Add stack_overflow_exception.
