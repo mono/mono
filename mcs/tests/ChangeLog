@@ -1,3 +1,7 @@
+2002-08-05  Martin Baulig  <martin@gnome.org>
+
+	* error-1.cs, error-2.cs: Moved to ../errors.
+
 2002-08-03  Martin Baulig  <martin@gnome.org>
 
 	* test-156.cs, error-2.cs: New tests.

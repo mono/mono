@@ -39,11 +39,11 @@ Test cases listed by Category:
 
 * Flow Analysis
 
-  test-154.cs error-1.cs
+  test-154.cs
 
 * Type Containers
 
-  test-155.cs test-156.cs error-2.cs
+  test-155.cs test-156.cs
 
 Test cases listed by Number:
 ============================
@@ -97,14 +97,6 @@ Nested interfaces.
 test-156.cs
 -----------
 Check whether base types are at least as accessible than the current type.
-
-error-1.cs
-----------
-Flow analysis: Check whether mcs correctly reports all errors.
-
-error-2.cs
-----------
-Base types are less accessible than the current type.
 
 verify-1.cs
 -----------
