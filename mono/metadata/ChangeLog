@@ -1,5 +1,8 @@
 2005-02-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (resolve_object): Fix the creation of the signature in 
+	the SignatureHelper case.
+
 	* assembly.c (mono_assembly_remap_version): Fix binary search.
 	
 2005-02-17  Sebastien Pouliot  <sebastien@ximian.com>
