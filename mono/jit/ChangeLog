@@ -1,3 +1,7 @@
+2002-10-01  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (MonoDebuggerInfo): Added mono_runtime_invoke().
+
 2002-09-27  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (debug_load_method_lines): Don't use sigaction() on win32.
