@@ -463,6 +463,11 @@ namespace Mono.CSharp.Debugger
 			throw new NotSupportedException ();
 		}
 
+		public void Initialize (string blah, string filename, string[] blah2)
+		{
+			throw new NotSupportedException ();
+		}
+
 		public void OpenMethod (SymbolToken symbol_token)
 		{
 			int token = symbol_token.GetToken ();
