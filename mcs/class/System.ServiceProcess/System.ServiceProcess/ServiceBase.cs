@@ -47,14 +47,14 @@ namespace System.ServiceProcess
 
                 public const int MaxNameLength = 80;
 
-                bool hasStarted;
+                bool hasStarted = false;
                 
-                bool auto_log;
-                bool can_handle_power_event;
-                bool can_pause_and_continue;
-                bool can_shutdown;
-                bool can_stop;
-                EventLog event_log;
+                bool auto_log = true;
+                bool can_handle_power_event = false;
+                bool can_pause_and_continue = false;
+                bool can_shutdown = false;
+                bool can_stop = true;
+                EventLog event_log = null;
                 string service_name;
 
                 public bool AutoLog {
@@ -121,7 +121,11 @@ namespace System.ServiceProcess
                 }
                 
                 public virtual EventLog EventLog {
-                        get { return event_log; }
+                        get { 
+							if (event_log == null)
+								event_log = new EventLog ("Application", ".", service_name);
+							return event_log; 
+						}
                 }
 
                 public string ServiceName {

@@ -1,3 +1,7 @@
+2004-04-06  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* ServiceBase.cs: Fixed default values of members.
+	
 2004-04-04  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* ServiceBase.cs: Introduced static field for interoperation with monod.
