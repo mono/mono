@@ -18,17 +18,19 @@ namespace Mono.ILASM {
                 protected class ExternAssembly {
 
                         public PEAPI.AssemblyRef AssemblyRef;
-
-                        protected PEAPI.PEFile pefile;
                         protected Hashtable type_table;
+			protected string name;
 
-                        public ExternAssembly (PEAPI.PEFile pefile, string name,
-                                AssemblyName asmb_name)
+                        public ExternAssembly (string name, AssemblyName asmb_name)
                         {
+				this.name = name;
                                 type_table = new Hashtable ();
-                                this.pefile = pefile;
-                                AssemblyRef = pefile.AddExternAssembly (name);
                         }
+
+			public void Resolve (CodeGen code_gen)
+			{
+				AssemblyRef = code_gen.PEFile.AddExternAssembly (name);
+			}
 
                         public PEAPI.ClassRef GetType (string name_space, string name)
                         {
@@ -61,13 +63,10 @@ namespace Mono.ILASM {
                         }
                 }
 
-                PEAPI.PEFile pefile;
                 Hashtable assembly_table;
 
-                public ExternTable (PEAPI.PEFile pefile)
+                public ExternTable ()
                 {
-                        this.pefile = pefile;
-
                         // Add mscorlib
                         string mscorlib_name = "mscorlib";
                         AssemblyName mscorlib = new AssemblyName ();
@@ -88,8 +87,14 @@ namespace Mono.ILASM {
                                 return;
                         }
 
-                        assembly_table[name] = new ExternAssembly (pefile, name, asmb_name);
+                        assembly_table[name] = new ExternAssembly (name, asmb_name);
                 }
+
+		public void Resolve (CodeGen code_gen)
+		{
+			foreach (ExternAssembly ext in assembly_table.Values)
+				ext.Resolve (code_gen);
+		}
 
                 public PEAPI.ClassRef GetClass (string asmb_name, string name_space, string name)
                 {

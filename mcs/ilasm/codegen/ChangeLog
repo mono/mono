@@ -1,5 +1,13 @@
 2003-07-27 Jackson Harper <jackson@latitudegeo.com>
 
+	* CodeGen.cs: Do not create the PEFile untill the resolve phase. This 
+	fixes the problem with ilasm creating blank files if their is a 
+	failure in the parsing phase. 
+	* ExternTable.cs: Do not reference the assemblies untill after the 
+	PEFile untill the Resolve phase.
+	
+2003-07-27 Jackson Harper <jackson@latitudegeo.com>
+
 	* ExternFieldRef.cs: Resolve as a typespec field if neccasary, make 
 	sure to not resolve more then once.
 	* ExternMethodRef.cs: Resolve as a typespec method if neccasary

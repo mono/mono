@@ -38,11 +38,18 @@ namespace Mono.ILASM {
                 private int cor_flags;
                 private long image_base;
 
+		private string output_file;
+		private bool is_dll;
+		private bool is_assembly;
+
                 public CodeGen (string output_file, bool is_dll, bool is_assembly)
                 {
-                        pefile = new PEFile (output_file, is_dll, is_assembly);
+			this.output_file = output_file;
+			this.is_dll = is_dll;
+			this.is_assembly = is_assembly;
+
                         type_manager = new TypeManager (this);
-                        extern_table = new ExternTable (pefile);
+                        extern_table = new ExternTable ();
                         typedef_stack = new Stack ();
                         global_field_table = new Hashtable ();
                         global_method_table = new Hashtable ();
@@ -185,6 +192,10 @@ namespace Mono.ILASM {
 
                 public void Write ()
                 {
+			pefile = new PEFile (output_file, is_dll, is_assembly);
+			
+			extern_table.Resolve (this);
+
                         type_manager.DefineAll ();
 
                         foreach (FieldDef fielddef in global_field_table.Values) {
