@@ -1,3 +1,8 @@
+2003-10-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_native_wrapper): Add support for
+	marshalling arrays of complex types. Fixes #29098. Also remove an
+	usused and incomplete function.
 
 Mon Oct 6 15:38:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
