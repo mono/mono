@@ -39,21 +39,6 @@
 			<arg value="/r:.\System.dll"/>
 		</csc>
 
-		<csc target="exe" output="RunTests.System.exe" debug="${debug}">
-			<sources>
-				<includes name="**/*.cs"/>
-			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitBase.dll"/>
-			</references>
-			<references basedir=".">
-				<includes name="System.dll"/>
-			</references>
-			<arg value="/nowarn:1595"/>
-			<arg value="/noconfig"/>
-			<arg value="/r:.\System.dll"/>
-		</csc>
-
 	</target>
 
 	<target name="test" depends="assemblies">
