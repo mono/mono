@@ -1,3 +1,8 @@
+2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c threads.c threads-types.h: Remove slothash icalls as they
+	are no longer used.
+
 2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (compute_class_bitmap): Add support for generics. Fixes
