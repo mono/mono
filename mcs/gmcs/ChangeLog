@@ -1,3 +1,8 @@
+2004-02-27  Martin Baulig  <martin@ximian.com>
+
+	* generics.cs (ConstructedType.ResolveType): Make the nested type
+	stuff actually work.
+
 2004-02-25  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (DeclSpace.CurrentTypeParameters): New protected

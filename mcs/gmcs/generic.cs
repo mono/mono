@@ -424,11 +424,14 @@ namespace Mono.CSharp {
 
 			gen_params = gt.GetGenericArguments ();
 
-			DeclSpace parent = null;
-			if (TypeManager.IsNestedChildOf (gt, ec.ContainerType))
-				parent = ec.DeclSpace;
-			else if ((gt == ec.ContainerType) && (gt.DeclaringType != null))
-				parent = ec.DeclSpace.Parent;
+			DeclSpace decl = ec.DeclSpace, parent = null;
+			while (decl != null) {
+				if (TypeManager.IsNestedChildOf (gt, decl.TypeBuilder)) {
+					parent = decl;
+					break;
+				}
+				decl = decl.Parent;
+			}
 
 			if (parent != null) {
 				TypeParameter[] pparams = parent.TypeParameters;
