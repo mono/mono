@@ -1,3 +1,9 @@
+
+Fri May 16 13:27:23 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-opts.h, inssel.brg: inline small memcpy
+	for value type handling.
+
 2003-05-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_method_to_ir): inline LDFLD/STFLD wrappers
