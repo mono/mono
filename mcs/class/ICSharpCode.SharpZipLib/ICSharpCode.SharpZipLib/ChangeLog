@@ -1,0 +1,4 @@
+2004-05-28  Duncan Mak  <duncan@ximian.com>
+
+	* Zip/Compression/DeflaterHuffman.cs (FlushBlock): Add some
+	parenthesis to help the generics compiler read this source.
