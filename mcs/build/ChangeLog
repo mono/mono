@@ -1,3 +1,7 @@
+2004-11-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* library.make: Some minor fix for PLATFORM_PATH_SEPARATOR.
+
 2004-11-17  Raja R Harinath  <rharinath@novell.com>
 
 	* executable.make: Improve support for building executable into a
