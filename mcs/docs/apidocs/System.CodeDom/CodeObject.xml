@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
+<monodoc language="">
+    <class name="System.CodeDom.CodeObject" assembly="System">
+        <summary>TODO</summary>
+        <remarks>TODO</remarks>
+        <constructor name="CodeObject">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+        </constructor>
+    </class>
+</monodoc>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
+<monodoc language="">
+    <class name="System.Text.RegularExpressions.CaptureCollection" assembly="System">
+        <summary>TODO</summary>
+        <remarks>TODO</remarks>
+        <property name="Item">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+    </class>
+</monodoc>

@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
+<monodoc language="">
+    <class name="System.Diagnostics.TraceListener" assembly="System">
+        <summary>TODO</summary>
+        <remarks>TODO</remarks>
+        <property name="IndentLevel">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="IndentSize">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="Name">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="NeedIndent">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <method name="Dispose">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <returns>TODO</returns>
+        </method>
+        <method name="WriteLine(System.String, System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="message">TODO</param>
+            <param name="category">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="WriteLine(System.Object, System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="o">TODO</param>
+            <param name="category">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="WriteLine(System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="message">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="WriteLine(System.Object)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="o">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="Write(System.String, System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="message">TODO</param>
+            <param name="category">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="Write(System.Object, System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="o">TODO</param>
+            <param name="category">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="Write(System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="message">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="Write(System.Object)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="o">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="Flush">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <returns>TODO</returns>
+        </method>
+        <method name="Fail(System.String, System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="message">TODO</param>
+            <param name="detailMessage">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="Fail(System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="message">TODO</param>
+            <returns>TODO</returns>
+        </method>
+        <method name="Close">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <returns>TODO</returns>
+        </method>
+    </class>
+</monodoc>

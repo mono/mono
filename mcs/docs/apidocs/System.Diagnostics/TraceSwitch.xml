@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
+<monodoc language="">
+    <class name="System.Diagnostics.TraceSwitch" assembly="System">
+        <summary>TODO</summary>
+        <remarks>TODO</remarks>
+        <constructor name="TraceSwitch(System.String, System.String)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="displayName">TODO</param>
+            <param name="description">TODO</param>
+        </constructor>
+        <property name="Level">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="TraceError">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="TraceInfo">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="TraceVerbose">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+        <property name="TraceWarning">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+    </class>
+</monodoc>

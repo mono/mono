@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
+<monodoc language="">
+    <class name="System.CodeDom.CodeDelegateInvokeStatement" assembly="System">
+        <summary>TODO</summary>
+        <remarks>TODO</remarks>
+        <constructor name="CodeDelegateInvokeStatement">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+        </constructor>
+        <constructor name="CodeDelegateInvokeStatement(System.CodeDom.CodeStatement)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="targetObject">TODO</param>
+        </constructor>
+        <constructor name="CodeDelegateInvokeStatement(System.CodeDom.CodeDelegateInvokeExpression)">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="delegateInvoke">TODO</param>
+        </constructor>
+        <constructor name="CodeDelegateInvokeStatement(System.CodeDom.CodeStatement, System.CodeDom.CodeStatement[])">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <param name="targetObject">TODO</param>
+            <param name="parameters">TODO</param>
+        </constructor>
+        <property name="DelegateInvoke">
+            <summary>TODO</summary>
+            <remarks>TODO</remarks>
+            <value>TODO</value>
+        </property>
+    </class>
+</monodoc>
