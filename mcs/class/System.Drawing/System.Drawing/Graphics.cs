@@ -1287,12 +1287,13 @@ namespace System.Drawing
 
 		public static Graphics FromImage (Image image)
 		{
+			IntPtr graphics;
+
 			if (image == null) throw new ArgumentException ();
 
-			int graphics;
 			Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
 			GDIPlus.CheckStatus (status);
-			Graphics result = new Graphics ((IntPtr) graphics);
+			Graphics result = new Graphics (graphics);
 				
 			if (Environment.OSVersion.Platform == (PlatformID) 128)  {
 				Rectangle rect  = new Rectangle (0,0, image.Width, image.Height);
@@ -1305,6 +1306,7 @@ namespace System.Drawing
 		internal static Graphics FromXDrawable (IntPtr drawable, IntPtr display)
 		{
 			IntPtr graphics;
+
 			Status s = GDIPlus.GdipCreateFromXDrawable_linux (drawable, display, out graphics);
 			GDIPlus.CheckStatus (s);
 			return new Graphics (graphics);

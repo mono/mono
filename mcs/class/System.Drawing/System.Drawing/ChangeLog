@@ -1,3 +1,8 @@
+2005-02-11  Peter Bartok  <pbartok@novell.com>
+
+	* Graphics.cs (FromImage): Fixed type of graphics to be IntPtr (since
+	  it really is a pointer)
+
 2005-02-10  Geoff Norton  <gnorton@customerdna.com>
 
 	* Icon.cs: Implement GetObjectData ()
