@@ -1,6 +1,15 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
 	* reflection.h
+	(MonoReflectionGenericParam): Added `has_reference_type' and
+	`has_value_type' fields.
+
+	* reflection.c (mono_image_get_generic_param_info): Encode the
+	correct flags if we have the `class' or `struct' constraint.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* reflection.h
 	(MonoReflectionGenericParam): Added `MonoBoolean has_ctor_constraint'.
 
 2004-04-07  Jackson Harper  <jackson@ximian.com>
