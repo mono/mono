@@ -1,3 +1,10 @@
+2004-06-03  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlSerializationReader.cs: added missing protected members
+	to fix API compatibility with MS.NET
+	* XmlSerializationWriter.cs: added missing protected members
+	to fix API compatibility with MS.NET
+
 2004-06-02  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationReader.cs: Support schamea instance namespaces other than

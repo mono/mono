@@ -85,6 +85,23 @@ namespace System.Xml.Serialization {
 			callbacks.Add (type, info);
 		}
 
+		protected Exception CreateChoiceIdentifierValueException (string value, string identifier, string name, string ns)
+		{
+			string message = string.Format ("Value '{0}' of the choice"
+				+ " identifier '{1}' does not match element '{2}'"
+				+ " from namespace '{3}'.", value, identifier,
+				name, ns);
+			return new InvalidOperationException (message);
+		}
+
+		protected Exception CreateInvalidChoiceIdentifierValueException (string type, string identifier)
+		{
+			string message = string.Format ("Invalid or missing choice"
+				+ " identifier '{0}' of type '{1}'.", identifier,
+				type);
+			return new InvalidOperationException (message);
+		}
+
 		protected Exception CreateMismatchChoiceException (string value, string elementName, string enumValue)
 		{
 			string message = String.Format ("Value of {0} mismatches the type of {1}, you need to set it to {2}.", elementName, value, enumValue);
@@ -644,6 +661,12 @@ namespace System.Xml.Serialization {
 				referencedElements = new Queue ();
 				InitCallbacks ();
 			}
+		}
+
+		[MonoTODO]
+		protected void WriteRpcResult (string name, string ns)
+		{
+			throw new NotImplementedException ();
 		}
 
 		protected void WriteSerializable (IXmlSerializable serializable, string name, string ns, bool isNullable)

@@ -105,6 +105,19 @@ namespace System.Xml.Serialization {
 			get { return reader; }
 		}
 
+		[MonoTODO]
+		protected bool IsReturnValue
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+
+		}
+
+
 		#region Methods
 
 		protected void AddFixup (CollectionFixup fixup)
@@ -174,6 +187,25 @@ namespace System.Xml.Serialization {
 			default:
 				return "(unknown)";
 			}
+		}
+
+		protected Exception CreateCtorHasSecurityException (string typeName)
+		{
+			string message = string.Format ("The type '{0}' cannot"
+				+ " be serialized because its parameterless"
+				+ " constructor is decorated with declarative"
+				+ " security permission attributes."
+				+ " Consider using imperative asserts or demands"
+				+ " in the constructor.", typeName);
+			return new InvalidOperationException (message);
+		}
+
+		protected Exception CreateInaccessibleConstructorException (string typeName)
+		{
+			string message = string.Format ("{0} cannot be serialized"
+				+ " because it does not have a default public"
+				+ " constructor.", typeName);
+			return new InvalidOperationException (message);
 		}
 
 		protected Exception CreateAbstractTypeException (string name, string ns)
