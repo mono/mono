@@ -213,10 +213,10 @@ public class ArrayTest : Assertion
 		AssertEquals ("I=a,i,i,o,c", -1, Array.BinarySearch (array, 0, 1, null,null));
 
 		object[] o = new object [3] { this, this, null };
-		AssertEquals ("O=a,o", -1, Array.BinarySearch (array, null));
-		AssertEquals ("O=a,o,c", -1, Array.BinarySearch (array, null, null));
-		AssertEquals ("O=a,i,i,o", -1, Array.BinarySearch (array, 0, 3, null));
-		AssertEquals ("O=a,i,i,o,c", -1, Array.BinarySearch (array, 0, 3, null, null));
+		AssertEquals ("O=a,o", -1, Array.BinarySearch (o, null));
+		AssertEquals ("O=a,o,c", -1, Array.BinarySearch (o, null, null));
+		AssertEquals ("O=a,i,i,o", -1, Array.BinarySearch (o, 0, 3, null));
+		AssertEquals ("O=a,i,i,o,c", -1, Array.BinarySearch (o, 0, 3, null, null));
 	}
 
 	// TODO - testBinarySearch with explicit IComparer args
