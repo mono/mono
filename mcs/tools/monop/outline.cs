@@ -32,7 +32,7 @@ public class Outline {
 		
 		if (t.IsClass && !t.IsSubclassOf (typeof (System.MulticastDelegate))) {
 			if (t.IsSealed)
-				o.Write (" sealed");
+				o.Write (t.IsAbstract ? " static" : " sealed");
 			else if (t.IsAbstract)
 				o.Write (" abstract");
 		}
