@@ -1,3 +1,7 @@
+2003-07-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* DesignerTransaction.cs: Fixed signature
+
 2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* CheckoutException.cs: Removed unneeded member
