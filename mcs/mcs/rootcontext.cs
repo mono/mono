@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 			//
 			// Try in the current namespace and all its implicit parents
 			//
-			for (NamespaceEntry ns = ds.Namespace; ns != null; ns = ns.ImplicitParent) {
+			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
 				object result = ns.Lookup (ds, name, loc);
 				if (result == null)
 					continue;
@@ -713,7 +713,7 @@ namespace Mono.CSharp {
 					NamespaceEntry ns = (NamespaceEntry) de.Key;
 					Attributes attrs = (Attributes) de.Value;
 					
-					dummy.Namespace = ns;
+					dummy.NamespaceEntry = ns;
 					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs);
 				}
 			}
@@ -813,7 +813,7 @@ namespace Mono.CSharp {
 		//
 		static public void AddGlobalAttributeSection (TypeContainer container, AttributeSection attr)
 		{
-			NamespaceEntry ns = container.Namespace;
+			NamespaceEntry ns = container.NamespaceEntry;
 			Attributes a = (Attributes) global_attributes [ns];
 
 			if (a == null)

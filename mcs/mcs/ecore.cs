@@ -1950,7 +1950,7 @@ namespace Mono.CSharp {
 		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			DeclSpace ds = ec.DeclSpace;
-			NamespaceEntry ns = ds.Namespace;
+			NamespaceEntry ns = ds.NamespaceEntry;
 			Type t;
 			string alias_value;
 
@@ -2030,7 +2030,7 @@ namespace Mono.CSharp {
 			// only do the Alias lookup for namespaces if
 			// the name does not include any dots in it
 			//
-			NamespaceEntry ns = ec.DeclSpace.Namespace;
+			NamespaceEntry ns = ec.DeclSpace.NamespaceEntry;
 			if (is_base && ns != null){
 				string alias_value = ns.LookupAlias (Name);
 				if (alias_value != null){

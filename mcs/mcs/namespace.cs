@@ -17,6 +17,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Namespace {
 		static ArrayList all_namespaces = new ArrayList ();
+		static Hashtable namespaces_map = new Hashtable ();
 		
 		Namespace parent;
 		string name, fullname;
@@ -44,8 +45,16 @@ namespace Mono.CSharp {
 			namespaces = new Hashtable ();
 
 			all_namespaces.Add (this);
+			if (namespaces_map.Contains (fullname))
+				return;
+			namespaces_map [fullname] = true;
 		}
 
+		public static bool IsNamespace (string name)
+		{
+			return namespaces_map [name] != null;
+		}
+		
 		public static Namespace Root = new Namespace (null, "");
 
 		public Namespace GetNamespace (string name, bool create)

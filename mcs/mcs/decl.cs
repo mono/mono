@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
 		//
-		public NamespaceEntry Namespace;
+		public NamespaceEntry NamespaceEntry;
 
 		public Hashtable Cache = new Hashtable ();
 		
@@ -377,8 +377,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string LookupAlias (string name)
 		{
-			if (Namespace != null)
-				return Namespace.LookupAlias (name);
+			if (NamespaceEntry != null)
+				return NamespaceEntry.LookupAlias (name);
 			else
 				return null;
 		}
@@ -606,27 +606,49 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		
+		static DoubleHash dh = new DoubleHash ();
+
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;
 			Type t;
-
+			object r;
+			
 			error = false;
 
-			name = MakeFQN (ns, name);
-
-			t  = TypeManager.LookupType (name);
+			if (dh.Lookup (ns, name, out r))
+				t = (Type) r;
+			else {
+				if (ns != ""){
+					if (Namespace.IsNamespace (ns)){
+						string fullname = (ns != "") ? ns + "." + name : name;
+						t = TypeManager.LookupType (fullname);
+					} else
+						t = null;
+				} else
+					t = TypeManager.LookupType (name);
+			}
+			
 			if (t != null)
 				return t;
 
-			parent = (DeclSpace) RootContext.Tree.Decls [name];
+			//
+			// In case we are fed a composite name, normalize it.
+			//
+			int p = name.LastIndexOf ('.');
+			if (p != -1){
+				ns = MakeFQN (ns, name.Substring (0, p));
+				name = name.Substring (p+1);
+			}
+			
+			parent = RootContext.Tree.LookupByNamespace (ns, name);
 			if (parent == null)
 				return null;
-			
+
 			t = parent.DefineType ();
+			dh.Insert (ns, name, t);
 			if (t == null){
-				Report.Error (146, Location, "Class definition is circular: `"+name+"'");
+				Report.Error (146, Location, "Class definition is circular: `" + MakeFQN (ns, name) + "'");
 				error = true;
 				return null;
 			}
@@ -685,7 +707,7 @@ namespace Mono.CSharp {
 			//
 			// Attempt to lookup the class on our namespace and all it's implicit parents
 			//
-			for (NamespaceEntry ns = Namespace; ns != null; ns = ns.ImplicitParent) {
+			for (NamespaceEntry ns = NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
 				t = LookupInterfaceOrClass (ns.Name, name, out error);
 				if (error)
 					return null;
@@ -709,7 +731,7 @@ namespace Mono.CSharp {
 			// namespaces
 			//
 
-			for (NamespaceEntry ns = Namespace; ns != null; ns = ns.Parent){
+			for (NamespaceEntry ns = NamespaceEntry; ns != null; ns = ns.Parent){
 
 				t = LookupInterfaceOrClass (ns.Name, name, out error);
 				if (error)

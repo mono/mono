@@ -94,6 +94,7 @@ namespace Mono.CSharp
 /*
  *These are the C# keywords
  */
+%token FIRST_KEYWORD
 %token ABSTRACT	
 %token AS
 %token ADD
@@ -181,6 +182,8 @@ namespace Mono.CSharp
 /* C# keywords which are not really keywords */
 %token GET           "get"
 %token SET           "set"
+
+%left LAST_KEYWORD
 
 /* C# single character operators/punctuation. */
 %token OPEN_BRACE    "{"
@@ -306,6 +309,9 @@ using_alias_directive
 	  {
 		  current_namespace.UsingAlias ((string) $2, (string) $4, lexer.Location);
 	  }
+	| USING error {
+		CheckIdentifierToken (yyToken);
+	  }
 	;
 
 using_namespace_directive
@@ -427,10 +433,10 @@ type_declaration
 //
 // Enable this when we have handled all errors, because this acts as a generic fallback
 //
-	| error {
-		Console.WriteLine ("Token=" + yyToken);
-		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
-	  }
+//	| error {
+//		Console.WriteLine ("Token=" + yyToken);
+//		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
+//	  }
 	;
 
 //
@@ -664,7 +670,7 @@ struct_declaration
 		new_struct = new Struct (current_container, full_struct_name, (int) $2, 
 					 (Attributes) $1, lexer.Location);
 		current_container = new_struct;
-		current_container.Namespace = current_namespace;
+		current_container.NamespaceEntry = current_namespace;
 		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
 	  }
 	  opt_class_base
@@ -679,6 +685,9 @@ struct_declaration
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
 		$$ = new_struct;
+	  }
+	| opt_attributes opt_modifiers STRUCT error {
+		CheckIdentifierToken (yyToken);
 	  }
 	;
 
@@ -966,6 +975,13 @@ fixed_parameter
 	  {
 		$$ = new Parameter ((Expression) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1);
 	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
+	  error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
+	  }
 	;
 
 opt_parameter_modifier
@@ -983,6 +999,10 @@ parameter_array
 	  { 
 		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
 		note ("type must be a single-dimension array type"); 
+	  }
+	| opt_attributes PARAMS type error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
 	  }
 	;
 
@@ -1119,7 +1139,7 @@ interface_declaration
 			Report.Error (-2, l, "Internal compiler error: interface inside interface");
 		}
 		current_interface = new_interface;
-		new_interface.Namespace = current_namespace;
+		new_interface.NamespaceEntry = current_namespace;
 		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
 	  }
 	  opt_interface_base
@@ -1133,6 +1153,9 @@ interface_declaration
 		current_interface = null;
 		CheckDef (current_container.AddInterface (new_interface), 
 			  new_interface.Name, new_interface.Location);
+	  }
+	| opt_attributes opt_modifiers INTERFACE error {
+		CheckIdentifierToken (yyToken);
 	  }
 	;
 
@@ -1243,6 +1266,12 @@ interface_property_declaration
 					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1,
 					    lexer.Location);
 	  }
+	| opt_attributes
+	  opt_new
+	  type error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
+	  }
 	;
 
 interface_accesors
@@ -1259,6 +1288,10 @@ interface_event_declaration
 	  {
 		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
 					 lexer.Location);
+	  }
+	| opt_attributes opt_new EVENT type error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
 	  }
 	;
 
@@ -1729,7 +1762,7 @@ enum_declaration
 				  ev.identifier, loc);
 		}
 
-		e.Namespace = current_namespace;
+		e.NamespaceEntry = current_namespace;
 
 		CheckDef (current_container.AddEnum (e), full_name, enum_location);
 		RootContext.Tree.RecordDecl (full_name, e);
@@ -1801,7 +1834,7 @@ delegate_declaration
 		                             MakeName ((string) $5), (Parameters) $7, 
 					     (Attributes) $1, l);
 		  
-		del.Namespace = current_namespace;
+		del.NamespaceEntry = current_namespace;
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }	
 	| opt_attributes
@@ -1818,7 +1851,7 @@ delegate_declaration
 			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
 			(Parameters) $7, (Attributes) $1, l);
 
-		del.Namespace = current_namespace;
+		del.NamespaceEntry = current_namespace;
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }
 	;
@@ -2104,6 +2137,9 @@ argument_list
 		ArrayList list = (ArrayList) $1;
 		list.Add ($3);
 		$$ = list;
+	  }
+	| argument_list error {
+		CheckToken (1026, yyToken, ", or ) expected");
 	  }
 	;
 
@@ -2757,7 +2793,7 @@ class_declaration
 		new_class = new Class (current_container, name, (int) $2, 
 				       (Attributes) $1, lexer.Location);
 		current_container = new_class;
-		current_container.Namespace = current_namespace;
+		current_container.NamespaceEntry = current_namespace;
 		RootContext.Tree.RecordDecl (name, new_class);
 	  }
 	  opt_class_base
@@ -4127,7 +4163,7 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 	this.name = file.Name;
 	this.file = file;
 	current_container = RootContext.Tree.Types;
-	current_container.Namespace = current_namespace;
+	current_container.NamespaceEntry = current_namespace;
 	oob_stack = new Stack ();
 	switch_stack = new Stack ();
 
@@ -4147,9 +4183,24 @@ public override void parse ()
 		// Please do not remove this, it is used during debugging
 		// of the grammar
 		//
-		Report.Error (-25, lexer.Location, ": Parsing error ");
-		Console.WriteLine (e);
+		Report.Error (-25, lexer.Location, "Parsing error");
+		if (Driver.parser_verbose)
+			Console.WriteLine (e);
 	}
+}
+
+void CheckToken (int error, int yyToken, string msg)
+{
+	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD){
+		Report.Error (error, lexer.Location, String.Format ("{0}: `{1}' is a keyword", msg, yyName [yyToken].ToLower ()));
+		return;
+	}		
+	Report.Error (error, lexer.Location, msg);
+}
+
+void CheckIdentifierToken (int yyToken)
+{
+	CheckToken (1041, yyToken, "Identifier expected");
 }
 
 /* end end end */

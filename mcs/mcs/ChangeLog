@@ -1,3 +1,31 @@
+2003-08-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: FIRST_KEYWORD, LAST_KEYWORD: used to know if a
+	token was a keyword or not.
+
+	Add `error' options where an IDENTIFIER was expected;  Provide
+	CheckToken and CheckIdentifierToken convenience error reporting
+	functions. 
+
+	Do not use `DeclSpace.Namespace', use `DeclSpace.NamespaceEntry'.
+
+	* decl.cs: Rename `NamespaceEntry Namespace' public field into
+	NameSpaceEntry NameSpaceEntry.
+
+	(LookupInterfaceOrClass): Avoid creating a full qualified name
+	from namespace and name: avoid doing lookups when we know the
+	namespace is non-existant.   Use new Tree.LookupByNamespace which
+	looks up DeclSpaces based on their namespace, name pair.
+
+	* driver.cs: Provide a new `parser verbose' to display the
+	exception thrown during parsing.  This is turned off by default
+	now, so the output of a failure from mcs is more graceful.
+
+	* namespace.cs: Track all the namespaces defined in a hashtable
+	for quick lookup.
+	
+	(IsNamespace): New method
+
 2003-08-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* namespace.cs: Remove redundant call;  Avoid using MakeFQN when

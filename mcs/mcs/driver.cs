@@ -61,6 +61,7 @@ namespace Mono.CSharp
 		static bool timestamps = false;
 		static bool pause = false;
 		static bool show_counters = false;
+		public static bool parser_verbose = false;
 		
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
@@ -576,6 +577,10 @@ namespace Mono.CSharp
 		static bool UnixParseOption (string arg, ref string [] args, ref int i)
 		{
 			switch (arg){
+			case "-vv":
+				parser_verbose = true;
+				return true;
+				
 			case "-v":
 				yacc_verbose = true;
 				return true;
