@@ -18,12 +18,21 @@ public class ConsoleTest : TestCase
 	public ConsoleTest() : base ("MonoTests.System.ConsoleTest testsuite") {}
 	public ConsoleTest(string name) : base(name) {}
 
+	TextWriter _err;
+	TextReader _in;
+	TextWriter _out;
 	protected override void SetUp() 
 	{
+		_err = Console.Error;
+		_in = Console.In;
+		_out = Console.Out;
 	}
 
 	protected override void TearDown() 
 	{
+		Console.SetError(_err);
+		Console.SetIn(_in);
+		Console.SetOut(_out);
 	}
 
 	public static ITest Suite {
