@@ -35,3 +35,15 @@
 * small update to classes [F-H]*
 * added stubbed and commented out classes for [I-L]*
 * added stubbed and commented out classes for R*
+
+* 5-5-2002 Dennis Hayes <dennish@raytek.com>
+* Added enums
+* 	GridItemType.cs
+* 	HelpNavigator.cs
+* 	HorizontalAlignment.cs
+* 	ImeMode.cs
+* 	ItemActivation.cs
+* 	ItemBoundsPortion.cs
+* 	Keys.cs
+* All correct execpt for Keys.cs which is missing a half dozen
+* duplicate entries that need correcting.
