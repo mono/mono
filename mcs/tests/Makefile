@@ -31,7 +31,8 @@ USE_MCS_FLAGS :=
 NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
 			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341 test-334 test-342 \
 			  test-344 test-345 test-346 test-347 test-348 test-349 test-351 test-352 test-353 test-354 test-355 \
-			  test-356 test-357
+			  test-356 test-357 \
+	mtest-7-dll mtest-7-exe
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -86,7 +87,6 @@ TEST_SOURCES_common = \
 	mtest-4-dll mtest-4-exe \
 	mtest-5-dll mtest-5-exe \
 	mtest-6-dll mtest-6-exe \
-	mtest-7-dll mtest-7-exe \
 	test-319-dll test-319-exe \
 	covariance-1 covariance-2 covariance-3 \
 	conv-dll conv-exe \
