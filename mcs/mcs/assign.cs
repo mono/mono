@@ -126,6 +126,11 @@ namespace Mono.CSharp {
 			this.is_embedded = true;
 		}
 
+		protected virtual Assign GetEmbeddedAssign (Location loc)
+		{
+			return new Assign (this, loc);
+		}
+
 		public Expression Target {
 			get {
 				return target;
@@ -160,7 +165,7 @@ namespace Mono.CSharp {
 		{
 			// Create an embedded assignment if our source is an assignment.
 			if (source is Assign)
-				source = embedded = new Assign ((Assign) source, loc);
+				source = embedded = ((Assign) source).GetEmbeddedAssign (loc);
 
 			real_source = source = source.Resolve (ec);
 			if (source == null)
@@ -175,9 +180,13 @@ namespace Mono.CSharp {
 				// create a new temporary local, otherwise inherit that variable
 				// from our child (the "X = (Y = Z)" inherits the local from the
 				// "Y = Z" assignment).
-				if (embedded == null)
-					real_temp = temp = new LocalTemporary (ec, source.Type);
-				else
+
+				if (embedded == null) {
+					if (this is CompoundAssign)
+						real_temp = temp = new LocalTemporary (ec, target.Type);
+					else
+						real_temp = temp = new LocalTemporary (ec, source.Type);
+				} else
 					temp = embedded.temp;
 
 				// Set the source to the new temporary variable.
@@ -349,7 +358,7 @@ namespace Mono.CSharp {
 		Expression EmitEmbedded (EmitContext ec)
 		{
 			// Emit an embedded assignment.
-			
+
 			if (real_temp != null) {
 				// If we're the innermost assignment, `real_source' is the right-hand
 				// expression which gets assigned to all the variables left of it.
@@ -474,6 +483,17 @@ namespace Mono.CSharp {
 		{
 			original_source = source;
 			this.op = op;
+		}
+
+		protected CompoundAssign (CompoundAssign embedded, Location l)
+			: this (embedded.op, embedded.target, embedded.source, l)
+		{
+			this.is_embedded = true;
+		}
+
+		protected override Assign GetEmbeddedAssign (Location loc)
+		{
+			return new CompoundAssign (this, loc);
 		}
 
 		public Expression ResolveSource (EmitContext ec)
