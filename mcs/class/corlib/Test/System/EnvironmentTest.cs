@@ -4,34 +4,35 @@
 // Author:
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
-// (C) 2004 Novell (http://www.novell.com)
+// (C) 2004-2005 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
+using System.Collections;
 
 namespace MonoTests.System {
 
 	[TestFixture]
-	public class EnvironmentTest : Assertion {
+	public class EnvironmentTest {
 
 		private void ExpandEquals (string toExpand, string toMatch) 
 		{
 			string expanded = Environment.ExpandEnvironmentVariables (toExpand);
-			AssertEquals ("ExpandEnvironmentVariables(" + toExpand + ").Match", toMatch, expanded);
+			Assert.AreEqual (toMatch, expanded, "ExpandEnvironmentVariables(" + toExpand + ").Match");
 		}
 
 		private void ExpandStartsEnds (string toExpand, string start, string end) 
 		{
 			string expanded = Environment.ExpandEnvironmentVariables (toExpand);
-			Assert ("ExpandEnvironmentVariables(" + toExpand + ").Start", expanded.StartsWith (start));
-			Assert ("ExpandEnvironmentVariables(" + toExpand + ").End", expanded.EndsWith (end));
+			Assert.IsTrue (expanded.StartsWith (start), "ExpandEnvironmentVariables(" + toExpand + ").Start");
+			Assert.IsTrue (expanded.EndsWith (end), "ExpandEnvironmentVariables(" + toExpand + ").End");
 		}
 
 		private void ExpandDifferent (string toExpand)
 		{
 			string expanded = Environment.ExpandEnvironmentVariables (toExpand);
-			Assert ("ExpandEnvironmentVariables(" + toExpand + ").Different", (toExpand != expanded));
+			Assert.IsFalse ((toExpand == expanded), "ExpandEnvironmentVariables(" + toExpand + ").Different");
 		}
 
 		[Test]
@@ -83,7 +84,7 @@ namespace MonoTests.System {
 			string path = Environment.GetEnvironmentVariable ("PATH");
 			if (path != null) {
 				string expanded = Environment.ExpandEnvironmentVariables ("%PATH%%PATH%");
-				AssertEquals ("#01", path + path, expanded);
+				Assert.AreEqual (path + path, expanded, "#01");
 			}
 		}
 		
@@ -98,7 +99,7 @@ namespace MonoTests.System {
 		{
 			string path = Environment.GetEnvironmentVariable ("PATH");
 			string expanded=Environment.ExpandEnvironmentVariables("%PATH% PATH%");
-			AssertEquals(path+" PATH%",expanded);
+			Assert.AreEqual (path + " PATH%", expanded);
 		}
 
 
@@ -107,7 +108,7 @@ namespace MonoTests.System {
 		{
 			string path = Environment.GetEnvironmentVariable ("PATH");
 			string expanded=Environment.ExpandEnvironmentVariables("%PATH% %");
-			AssertEquals(path+" %",expanded);
+			Assert.AreEqual (path+" %",expanded);
 		}
 		
 		[Test]
@@ -115,5 +116,37 @@ namespace MonoTests.System {
 		{
 			ExpandStartsEnds ("Hello %%PATH%%%", "Hello %", "%%");
 		}
+
+		[Test]
+		public void GetEnvironmentVariables ()
+		{
+			IDictionary d = Environment.GetEnvironmentVariables ();
+			Assert.IsTrue ((d is Hashtable), "Hashtable");
+			Assert.IsFalse (d.IsFixedSize, "IsFixedSize");
+			Assert.IsFalse (d.IsReadOnly, "IsReadOnly");
+			Assert.IsFalse (d.IsSynchronized, "IsSynchronized");
+		}
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetEnvironmentVariable_Target ()
+		{
+			Environment.GetEnvironmentVariable ("MONO", (EnvironmentVariableTarget)Int32.MinValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetEnvironmentVariables_Target ()
+		{
+			Environment.GetEnvironmentVariables ((EnvironmentVariableTarget)Int32.MinValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetEnvironmentVariable_Target ()
+		{
+			Environment.SetEnvironmentVariable ("MONO", "GO", (EnvironmentVariableTarget)Int32.MinValue);
+		}
+#endif
 	}
 }

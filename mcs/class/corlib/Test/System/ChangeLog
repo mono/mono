@@ -1,3 +1,8 @@
+2005-01-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* EnvironmentTest.cs: Updated to NUnit 2.2 syntax. Added some tests
+	(mostly for NET_2_0).
+
 2005-01-19  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* TypeTest.cs: Added tests for the Type.FilterNameIgnoreCase and 
 	Type.FilterName delegates (more precisely the implementations behind)
