@@ -1,3 +1,7 @@
+2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md (sin): Fix up maximum lengths of some opcodes.
+
 2005-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.c: Skip linkdemand checks for intra-corlib calls. This skips
