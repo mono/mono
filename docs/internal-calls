@@ -1,7 +1,19 @@
+			 Internal Call Topics
 
-* How to map C# types for use in the C implementation of internal calls
+* Introduction
+
+	The Common Language Infrastructure allows for methods to be
+	implemented in unmanaged code.  Unlike the Platform Invocation
+	services which provide marshalling and unmarshalling of data
+	from managed to unmanaged and viceversa the Internal calls do
+	not perform any kind of marshalling.
+
+* Basic Type mapping
+
+	The following lists how the C# types are exposed to the C API.
 
 	C# type 	C type
+	-----------------------------
 	char 		gunichar2
 	bool 		MonoBoolean
 	sbyte 		signed char
@@ -16,44 +28,57 @@
 	object 		MonoObject*
 	string 		MonoString*
 
-For ref and out paramaters you'll use the corresponding pointer type.
-Arrays of any type must be described with a MonoArray* and the elements 
-must be accessed with the mono_array_* macros.
-Any other type that has a matching C structure representation, should use
-a pointer to the struct instead of a generic MonoObject pointer.
+* Pointers
 
-Instance methods that are internal calls will receive as first argument
-the instance object, so you must account for it in the C method signature:
+	For ref and out paramaters you'll use the corresponding
+	pointer type.
 
-	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	public extern override int GetHashCode ();
+	So if you have a C# type listed as "ref int", you should use
+	"int *" in your implementation.
 
-becaomes:
+* Arrays
 
-	gint32 ves_icall_System_String_GetHashCode (MonoString *this);
+	Arrays of any type must be described with a MonoArray* and the
+	elements must be accessed with the mono_array_* macros.
 
+* Other Structures
 
+	Any other type that has a matching C structure representation,
+	should use a pointer to the struct instead of a generic
+	MonoObject pointer.
+
+* Instance Methods.
+
+	Instance methods that are internal calls will receive as first argument
+	the instance object, so you must account for it in the C method signature:
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override int GetHashCode ();
+
+	becomes:
+
+		gint32 ves_icall_System_String_GetHashCode (MonoString *this);
 
 * How to hook internal calls with the runtime
 
-Once you require an internal call in corlib, you need to create a C
-implementation for it and register it in a static table in metadata/icall.c.
-Add an entry in the table like:
-
-	"System.String::GetHashCode", ves_icall_System_String_GetHashCode,
-
-Note that you need to include the full namespace.name of the class.
-If there are overloaded methods, you need also to specify the signature
-of _all_ of them:
-
-	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	public extern override void DoSomething ();
-	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	public extern override void DoSomething (bool useful);
-
-should be mapped with:
-
-	"Namespace.ClassName::DoSomething()", ves_icall_Namespace_ClassName_DoSomething,
-	"Namespace.ClassName::DoSomething(bool)", ves_icall_Namespace_ClassName_DoSomething_bool,
-
+	Once you require an internal call in corlib, you need to
+	create a C implementation for it and register it in a static
+	table in metadata/icall.c.  Add an entry in the table like:
+	
+		"System.String::GetHashCode", ves_icall_System_String_GetHashCode,
+	
+	Note that you need to include the full namespace.name of the
+	class.  If there are overloaded methods, you need also to
+	specify the signature of _all_ of them:
+	
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override void DoSomething ();
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override void DoSomething (bool useful);
+	
+	should be mapped with:
+	
+		"Namespace.ClassName::DoSomething()", ves_icall_Namespace_ClassName_DoSomething,
+		"Namespace.ClassName::DoSomething(bool)", ves_icall_Namespace_ClassName_DoSomething_bool,
+	
 

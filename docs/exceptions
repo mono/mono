@@ -1,5 +1,6 @@
-Author: Dietmar Maurer (dietmar@ximian.com)
-(C) 2001 Ximian, Inc.
+	     Exception Implementation in the Mono Runtime
+		 Dietmar Maurer (dietmar@ximian.com)
+			(C) 2001 Ximian, Inc.
 
 Exception implementation (jit):
 ===============================

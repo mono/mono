@@ -1,7 +1,7 @@
 	
 	   Embedding the Mono runtime, preliminary version
-
-		    Miguel de Icaza, Paolo Molaro.
+		 Miguel de Icaza (miguel@ximian.com),
+		   Paolo Molaro (lupus@ximian.com)
 
 	This document describes how to embed the Mono runtime in your
 	application, and how to invoke CIL methods from C, and how to
