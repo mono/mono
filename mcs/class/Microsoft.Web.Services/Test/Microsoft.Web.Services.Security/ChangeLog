@@ -1,6 +1,8 @@
 2003-10-22 Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyIdentifierTest.cs: New. Unit tests for KeyIdentifier.
+	* NonceTest.cs: New. Unit tests for Nonce. The tests will only work for
+	WSE2 (as WSE1 Nonce constructor are internal)
 	* SecurityTokenReferenceTest.cs: New. Unit tests for SecurityTokenReference.
 
 2003-10-20 Sebastien Pouliot  <spouliot@videotron.ca>
