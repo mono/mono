@@ -1,3 +1,7 @@
+2003-11-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* StackBuilderSink.cs: Implemented AsyncProcessMessage().
+	
 2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CADMessages.cs: Added methods for setting and getting the logical call

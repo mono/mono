@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Threading;
 using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging
@@ -30,10 +31,23 @@ namespace System.Runtime.Remoting.Messaging
 			return RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
 		}
 
-		[MonoTODO]
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
-			throw new NotImplementedException ();
+			object[] parms = new object[] {msg, replySink};
+			ThreadPool.QueueUserWorkItem (new WaitCallback (ExecuteAsyncMessage), parms);
+			return null;
+		}
+		
+		void ExecuteAsyncMessage (object ob)
+		{
+			object[] parms = (object[]) ob;
+			IMethodCallMessage msg = (IMethodCallMessage) parms[0];
+			IMessageSink replySink = (IMessageSink)parms[1];
+			
+			CheckParameters (msg);
+			IMessage res = RemotingServices.InternalExecuteMessage (_target, msg);
+			
+			replySink.SyncProcessMessage (res);
 		}
 
 		public IMessageSink NextSink 
