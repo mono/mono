@@ -1,3 +1,15 @@
+2003-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c reflection.c: Fix memory leaks reported by ccmalloc.
+
+	* reflection.h reflection.c: Allocate long living data using 
+	GC_MALLOC_ATOMIC so the collector does not need to scan it.
+
+	* reflection.c: Double the allocation size in streams instead of
+	increasing it, to prevent unneccesary copying on large assemblies.
+	
+	* reflection.c (mono_reflection_create_runtime_class): Avoid vtable
+	creation if the assembly does not have the Run flag set.
 
 Tue Apr 8 11:19:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
