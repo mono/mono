@@ -114,7 +114,6 @@ Options:
   --nowarn XXX    Ignores warning number XXX
   -o FNAME,
   --output FNAME  Specifies output file
-  --optimize      Optimizes
   --parse         Only parses the source file (for debugging the tokenizer)
   --probe X       Probes for the source to generate code X on line L
   -r ASSEMBLY     References an assembly
@@ -517,10 +516,6 @@ Options:
 
 					case "--unsafe":
 						RootContext.Unsafe = true;
-						continue;
-						
-					case "--optimize":
-						RootContext.Optimize = true;
 						continue;
 
 					case "/?": case "/h": case "/help":

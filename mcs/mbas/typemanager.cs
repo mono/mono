@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace Mono.CSharp {
 
@@ -68,10 +69,11 @@ public class TypeManager {
 	static public Type param_array_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
-	static public Type trace_type;
-	static public Type debug_type;
-	
+	static public object obsolete_attribute_type;
+	static public object conditional_attribute_type;
+
 	static public Type [] NoTypes;
+
 	
 	//
 	// Internal, not really used outside
@@ -594,10 +596,12 @@ public class TypeManager {
 		void_ptr_type         = CoreLookupType ("System.Void*");
 
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
-		if (RootContext.StdLib) {
-			trace_type    = CoreLookupType ("System.Diagnostics.Trace");
-			debug_type    = CoreLookupType ("System.Diagnostics.Debug");
-		}
+
+		//
+		// Attribute types
+		//
+		obsolete_attribute_type = CoreLookupType ("System.ObsoleteAttribute");
+		conditional_attribute_type = CoreLookupType ("System.Diagnostics.ConditionalAttribute");
 	}
 
 	//
@@ -1309,6 +1313,50 @@ public class TypeManager {
 		return target_list;
 	}
 
+	[Flags]
+	public enum MethodFlags {
+		IsObsolete = 1,
+		ShouldIgnore = 2
+	}
+	
+	static public MethodFlags GetMethodFlags (MethodBase mb)
+	{
+		MethodFlags flags = 0;
+		
+		if (mb.DeclaringType is TypeBuilder){
+			//
+			// FIXME: Support lookups of Obsolete and ConditionalAttribute
+			// on MethodBuilders.   
+			//
+			return 0;
+		}
+
+		object [] attrs = mb.GetCustomAttributes (false);
+		foreach (object ta in attrs){
+			if (!(ta is System.Attribute)){
+				Console.WriteLine ("Unknown type in GetMethodFlags: " + ta);
+				continue;
+			}
+			System.Attribute a = (System.Attribute) ta;
+			if (a.TypeId == TypeManager.obsolete_attribute_type){
+				flags |= MethodFlags.IsObsolete;
+				continue;
+			}
+			
+			//
+			// Skip over conditional code.
+			//
+			if (a.TypeId == TypeManager.conditional_attribute_type){
+				ConditionalAttribute ca = (ConditionalAttribute) a;
+
+				if (RootContext.AllDefines [ca.ConditionString] == null)
+					flags |= MethodFlags.ShouldIgnore;
+			}
+		}
+
+		return flags;
+	}
+	
 #region MemberLookup implementation
 	
 	//

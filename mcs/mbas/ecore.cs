@@ -3806,7 +3806,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, method, null);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, method, null, loc);
 			
 		}
 
@@ -3819,7 +3819,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList ();
 
 			args.Add (arg);
-			Invocation.EmitCall (ec, false, IsStatic, instance_expr, Accessors [1], args);
+			Invocation.EmitCall (ec, false, IsStatic, instance_expr, Accessors [1], args, loc);
 		}
 
 		override public void EmitStatement (EmitContext ec)
@@ -3881,10 +3881,10 @@ namespace Mono.CSharp {
 			
 			if (((Binary) source).Oper == Binary.Operator.Addition)
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, add_accessor, args);
+					ec, false, IsStatic, InstanceExpression, add_accessor, args, loc);
 			else
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, remove_accessor, args);
+					ec, false, IsStatic, InstanceExpression, remove_accessor, args, loc);
 		}
 	}
 }	

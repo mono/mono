@@ -1,4 +1,7 @@
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged delegate.cs, ecore.cs, typemanager.cs and rootcontext.cs from mcs/mcs, to resolve expression.cs blues
+
+2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* oops merged expression.cs from mcs/mcs is breaking my make
 	* driver.cs, assemblyinfo.cs wasn´t ready for prime time (offending lines were commented out)
 
