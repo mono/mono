@@ -1,3 +1,16 @@
+2002-04-10  Sergey Chaban <serge@wildwestsoftware.com>
+	* win32-exception: added Win32 SEH exception filter that translates
+	CONTEXT to sigcontext;
+
+	* jit.c: added Win32 SEH init/reset calls, compute sigcontext address
+	in a platfrom-dependent way;
+
+	* jit.h: use win32-exception instead of signal if PLATFORM_WIN32
+	and avoid io-layer includes;
+
+	* delegate.c: do not include io-layer stuff if PLATFORM_WIN32
+	is defined;
+
 2002-04-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* delegate.c (arch_end_invoke): restore output arguments
