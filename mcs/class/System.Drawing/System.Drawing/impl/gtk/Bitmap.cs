@@ -49,7 +49,7 @@ namespace System.Drawing {
 			}
 
 			public IBitmap Bitmap(Stream stream, bool useIcm){
-				return new Bitmap(stream, useIcm);
+				return new Bitmap(stream);
 			}
 
 			public IBitmap Bitmap(string filename, bool useIcm){
