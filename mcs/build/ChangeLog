@@ -1,3 +1,7 @@
+2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* profiles/generics.make: add the -2 flag.
+
 2003-10-28 Jackson Harper <jackson@ximian.com>
 
 	* platforms/linux.make: Tell users to read INSTALL.txt not the
