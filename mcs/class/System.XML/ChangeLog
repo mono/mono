@@ -1,3 +1,8 @@
+2004-02-22  Nick Drochak <ndrochak@ieee.org>
+
+	* System.Xml_test.dll.sources : Removed XmlSchemaAssertion.cs. It does
+	not seem to be in CVS.  This was breaking the build on windows.
+
 2004-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml_test.dll.sources : Added XmlEntityTests.cs and

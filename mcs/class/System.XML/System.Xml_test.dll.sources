@@ -28,7 +28,6 @@ System.Xml/XmlWhiteSpaceTests.cs
 System.Xml/XmlWriterTests.cs
 System.Xml/XsdParticleValidationTests.cs
 System.Xml/XsdValidatingReaderTests.cs
-System.Xml.Schema/XmlSchemaAssertion.cs
 System.Xml.Schema/XmlSchemaTests.cs
 System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Serialization/DeserializeTests.cs
