@@ -10,6 +10,8 @@
 using NUnit.Framework;
 using System;
 using System.Security;
+using System.Security.Permissions;
+using System.Text;
 
 namespace MonoTests.System.Security {
 
@@ -53,6 +55,14 @@ namespace MonoTests.System.Security {
 
 	[TestFixture]
 	public class CodeAccessPermissionTest : Assertion {
+
+		[Test]
+		public void CustomCAS () 
+		{
+			// test for http://bugzilla.ximian.com/show_bug.cgi?id=52626
+			NonAbstractCodeAccessPermission p = new NonAbstractCodeAccessPermission (null, null);
+			p.Demand ();
+		}
 
 		[Test]
 		public void Union () 
