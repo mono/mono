@@ -1,3 +1,12 @@
+2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Don't ignore the CS0119 warnings (private field not used) 
+	when building the assembly (the code is already clean for this).
+	* System.Security.dll.sources: Add DataProtectionPermission, Attribute
+	and Flags to the assembly (moved from corlib).
+	* System.Security_test.dll.sources: Add DataProtectionPermission
+	Attribute unit tests (moved from corlib unit tests).
+
 2004-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Security.dll.sources: Added System.Security.Cryptography/

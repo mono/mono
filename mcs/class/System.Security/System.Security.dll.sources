@@ -119,4 +119,8 @@ System.Security.Cryptography.Xml/XmlDsigXsltTransform.cs
 System.Security.Cryptography.Xml/XmlEncryption.cs
 System.Security.Cryptography.Xml/XmlSignature.cs
 System.Security.Cryptography.Xml/TODOAttribute.cs
+System.Security.Permissions/DataProtectionPermission.cs
+System.Security.Permissions/DataProtectionPermissionAttribute.cs
+System.Security.Permissions/DataProtectionPermissionFlags.cs
+System.Security.Permissions/PermissionHelper.cs
 System.Security.Permissions/StorePermissionFlags.cs
