@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.Services.Xml.OpenAttributeElement.cs
+// Microsoft.Web.Services.Xml.OpenElementElement.cs
 //
 // Author: Todd Berman <tberman@gentoo.org>
 //
@@ -11,13 +11,11 @@ using System.Collections;
 
 namespace Microsoft.Web.Services.Xml
 {
-
-	public abstract class OpenAttributeElement
+	public abstract class OpenElementElement
 	{
-		
 		private ArrayList _any;
-		
-		public OpenAttributeElement ()
+
+		public OpenElementElement ()
 		{
 			_any = new ArrayList ();
 		}
@@ -31,9 +29,10 @@ namespace Microsoft.Web.Services.Xml
 				throw new ArgumentNullException ("element");
 			}
 
-			foreach(XmlAttribute attrib in AnyAttributes) {
-				element.Attributes.Append((XmlAttribute)document.ImportNode(attrib, true));
+			foreach(XmlElement elem in AnyElements) {
+				element.AppendChild(document.ImportNode(elem, true));
 			}
+
 		}
 
 		public void LoadXmlAny (XmlElement element)
@@ -41,15 +40,14 @@ namespace Microsoft.Web.Services.Xml
 			if(element == null) {
 				throw new ArgumentNullException ("element");
 			}
-			foreach(XmlAttribute attrib in element.Attributes) {
-				AnyAttributes.Add(attrib);
+
+			foreach(XmlElement elem in element.ChildNodes) {
+				AnyElements.Add (elem);
 			}
 		}
 
-		public IList AnyAttributes {
+		public ArrayList AnyElements {
 			get { return _any; }
 		}
-	
 	}
-	
 }

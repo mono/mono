@@ -1,3 +1,8 @@
+2003-10-07  Todd Berman <tberman@gentoo.org>
+
+	* OpenElementElement.cs: implemented
+	* OpenElement.cs: implemented
+
 2003-10-05  Todd Berman <tberman@gentoo.org>
 
 	* QualifiedName.cs: implemented.
