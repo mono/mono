@@ -160,7 +160,7 @@ namespace Mono.CSharp {
 			Label entry_point = ig.DefineLabel ();
 			ig.MarkLabel (entry_point);
 			resume_labels.Add (entry_point);
-			
+
 			ec.EmitTopBlock (original_block, parameters, Location);
 
 			EmitYieldBreak (ig, true);
@@ -619,8 +619,8 @@ namespace Mono.CSharp {
 					code_flags |= Modifiers.STATIC;
 
 				EmitContext new_ec = new EmitContext (
-					iterator, loc, ec.ig, iterator.return_type,
-					code_flags);
+					iterator.container, loc, ec.ig,
+					iterator.return_type, code_flags);
 
 				new_ec.CurrentIterator = iterator;
 
