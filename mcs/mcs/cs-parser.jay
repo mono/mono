@@ -3791,7 +3791,7 @@ try_statement
 		// Now s contains the list of specific catch clauses
 		// and g contains the general one.
 		
-		$$ = new Try ((Block) $2, c, g, null, lexer.Location);
+		$$ = new Try ((Block) $2, c, g, null, ((Block) $2).loc);
 	}
 	| TRY block opt_catch_clauses FINALLY block
 	  {
@@ -3808,7 +3808,7 @@ try_statement
 			}
 		}
 
-		$$ = new Try ((Block) $2, s, g, (Block) $5, lexer.Location);
+		$$ = new Try ((Block) $2, s, g, (Block) $5, ((Block) $2).loc);
 	  }
 	| TRY block error 
 	  {
@@ -3885,7 +3885,7 @@ catch_clause
 		}
 
 
-		$$ = new Catch (type, id , (Block) $4, lexer.Location);
+		$$ = new Catch (type, id , (Block) $4, ((Block) $4).loc);
 	}
         ;
 
