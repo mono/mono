@@ -1,3 +1,9 @@
+2004-07-30  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* mini-s390.c: Corrected macro in emit_float_to_int
+
+	* s390-abi.cs: Tests to exercise the s390 ABI
+
 2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-amd64.c (mono_arch_find_jit_info): Fix restoring of
