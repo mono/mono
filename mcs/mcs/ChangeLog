@@ -1,3 +1,8 @@
+2004-10-03 Ben Maurer  <bmaurer@ximian.com>
+ 
+ 	* expression.cs: reftype [!=]= null should always use br[true,false].
+ 	# 67410
+
 2004-09-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Do not report the stack trace, it is useless
