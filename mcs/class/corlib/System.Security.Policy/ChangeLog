@@ -1,3 +1,11 @@
+2003-07-28  Duncan Mak  <duncan@ximian.com>
+
+	* Site.cs: 
+	* UnionCodeGroup.cs: 
+	* Url.cs: Added to CVS, basic functionality implemented, except
+	for CreateIdentityPermission (Site, Url) and the Resolve methods
+	in UnionCodeGroup.
+
 2003-06-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ApplicationDirectory.cs: Added [Serializable] attribute to class.

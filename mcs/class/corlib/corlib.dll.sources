@@ -840,9 +840,12 @@ System.Security.Policy/PolicyException.cs
 System.Security.Policy/PolicyLevel.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
-System.Security.Policy/Publisher.cs 
+System.Security.Policy/Publisher.cs
+System.Security.Policy/Site.cs
 System.Security.Policy/PublisherMembershipCondition.cs
-System.Security.Policy/StrongName.cs 
+System.Security.Policy/StrongName.cs
+System.Security.Policy/UnionCodeGroup.cs
+System.Security.Policy/Url.cs
 System.Security.Policy/Zone.cs 
 System.Security.Principal/GenericIdentity.cs
 System.Security.Principal/GenericPrincipal.cs
