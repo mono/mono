@@ -8,6 +8,9 @@
 	(Argument.Type): Use TypeManager.LookupType instead of Type.GetType - 
 	silly me ;-)
 
+	* delegate.cs : Handle the case when we have more than one applicable
+	method. Flag an error only when we finish checking all.
+
 2002-05-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Add support for boolean static initializers.

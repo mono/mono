@@ -294,6 +294,8 @@ namespace Mono.CSharp {
 		{
 			ParameterData pd = Invocation.GetParameterData (mb);
 
+			int pd_count = pd.Count;
+
 			Expression ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
 
@@ -306,8 +308,11 @@ namespace Mono.CSharp {
 
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
+			if (invoke_pd.Count != pd_count)
+				return null;
+
 			bool mismatch = false;
-			for (int i = pd.Count; i > 0; ) {
+			for (int i = pd_count; i > 0; ) {
 				i--;
 
 				if (invoke_pd.ParameterType (i) == pd.ParameterType (i))
@@ -567,15 +572,18 @@ namespace Mono.CSharp {
 			if (e is MethodGroupExpr) {
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
-				if (mg.Methods.Length > 1) {
+				for (int i = 0; i < mg.Methods.Length; ++i) {
+					delegate_method  = Delegate.VerifyMethod (ec, type, mg.Methods [i], Location);
+
+					if (delegate_method != null)
+						break;
+				}
+					
+				if (delegate_method == null) {
 					Report.Error (-14, Location, "Ambiguous method reference in delegate creation");
 					return null;
 				}
-				
-				delegate_method  = Delegate.VerifyMethod (ec, type, mg.Methods [0], Location);
-				if (delegate_method == null)
-					return null;
-
+						
 				if (mg.InstanceExpression != null)
 					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
 				else {
