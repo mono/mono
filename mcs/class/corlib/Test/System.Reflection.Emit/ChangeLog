@@ -3,6 +3,9 @@
 	* TypeBuilderTest.cs (IsDefined): Comment out this test, since 
 	IsDefined works under mono.
 
+	* TypeBuilderTest.cs (TestEnums): New test for using runtime generated
+	enums.
+
 2003-12-17  Nick Drochak <ndrochak@gol.com>
 
 	* ModuleBuilderTest.cs: Shorten the path, there's a 260-or-so character
