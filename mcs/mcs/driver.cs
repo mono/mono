@@ -1251,9 +1251,6 @@ namespace Mono.CSharp
 			DateTime start = DateTime.Now;
 			TypeManager.ComputeNamespaces ();
 			DateTime end = DateTime.Now;
-			if (!Namespace.VerifyUsing ())
-				return false;
-			
 			
 			//
 			// Before emitting, we need to get the core
@@ -1286,7 +1283,12 @@ namespace Mono.CSharp
 			RootContext.DefineTypes ();
 			
 			TypeManager.InitCodeHelpers ();
-				
+
+			//
+			// Verify using aliases now
+			//
+			Namespace.VerifyUsing ();
+			
 			if (Report.Errors > 0){
 				return false;
 			}

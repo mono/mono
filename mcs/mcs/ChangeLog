@@ -1,5 +1,12 @@
 2003-05-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (New.AddressOf): Implement interface
+	IMemoryLocation.  This is used when the `new' operator is used in
+	the context of an invocation to a method on a value type.
+
+	See http://bugzilla.ximian.com/show_bug.cgi?id=#42390 for an
+	example. 
+
 	* namespace.cs: Also check the using aliases here.
 
 	* driver.cs: Move the test for using validity after the types have

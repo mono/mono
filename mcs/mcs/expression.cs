@@ -3538,6 +3538,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
+			
 			if (ec.RemapToProxy){
 				ig.Emit (OpCodes.Ldarg_0);
 				ec.EmitArgument (idx);
@@ -4828,7 +4829,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///    Implements the new expression 
 	/// </summary>
-	public class New : ExpressionStatement {
+	public class New : ExpressionStatement, IMemoryLocation {
 		public readonly ArrayList Arguments;
 		public readonly Expression RequestedType;
 
@@ -5034,6 +5035,34 @@ namespace Mono.CSharp {
 		{
 			if (DoEmit (ec, false))
 				ec.ig.Emit (OpCodes.Pop);
+		}
+
+		public void AddressOf (EmitContext ec, AddressOp Mode)
+		{
+			if (!type.IsValueType){
+				//
+				// We throw an exception.  So far, I believe we only need to support
+				// value types:
+				// foreach (int j in new StructType ())
+				// see bug 42390
+				//
+				throw new Exception ("AddressOf should not be used for classes");
+			}
+
+			if (!value_target_set)
+				value_target = new LocalTemporary (ec, type);
+					
+			IMemoryLocation ml = (IMemoryLocation) value_target;
+			ml.AddressOf (ec, AddressOp.Store);
+			if (method != null)
+				Invocation.EmitArguments (ec, method, Arguments);
+
+			if (method == null)
+				ec.ig.Emit (OpCodes.Initobj, type);
+			else 
+				ec.ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+			
+			((IMemoryLocation) value_target).AddressOf (ec, Mode);
 		}
 	}
 
@@ -5799,8 +5828,7 @@ namespace Mono.CSharp {
 				if (e is NullLiteral)
 					v = null;
 				else {
-					v = Attribute.GetAttributeArgumentExpression (e, Location);
-					if (v == null)
+					if (!Attribute.GetAttributeArgumentExpression (e, Location, out v))
 						return null;
 				}
 				ret [i++] = v;
