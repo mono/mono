@@ -5521,7 +5521,7 @@ if (rsrc != null)
         /// 
         public class MethPtrType : Type
         {
-
+                bool varArgMeth;
                 Type retType;
                 Type [] parList;
                 Type [] optParList;
@@ -5539,6 +5539,7 @@ if (rsrc != null)
       this.retType = retType;
       callConv = callconv;
       parList = pars;
+      this.varArgMeth = varArgMeth;
       if (parList != null) numPars = (uint)parList.Length;
       if (varArgMeth) {
         optParList = optPars;
@@ -5557,7 +5558,7 @@ if (rsrc != null)
       for (int i=0; i < numPars; i++) {
               parList[i].TypeSig (sig);
       }
-      if (numOptPars > 0) {
+      if (varArgMeth) {
               sig.WriteByte (0x41); // Write the sentinel
         for (int i=0; i < numOptPars; i++) {
           optParList[i].TypeSig (sig);
