@@ -1,3 +1,8 @@
+2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* EnumBuilderTest.cs: Remove test that depends on the exact format
+	of AssemblyName.FullName.
+
 2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: Add a TypeResolve test. Remove a test which

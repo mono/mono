@@ -266,9 +266,6 @@ namespace MonoTests.System.Reflection.Emit {
 			AssertNotNull ("type.Namespace should not be null", type.Namespace);
 			AssertNotNull ("type.UnderlyingSystemType should not be null", type.UnderlyingSystemType);
 
-			AssertEquals (_assemblyName + ", Version=0.0.0.0", type.Assembly.FullName);
-			AssertEquals (_enumNamespace + "." + _enumName + ", " + _assemblyName 
-				+ ", Version=0.0.0.0", type.AssemblyQualifiedName);
 			AssertEquals (_moduleName, type.Module.Name);
 			AssertEquals (_enumNamespace, type.Namespace);
 			AssertEquals (_enumName, type.Name);
