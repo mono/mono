@@ -10,7 +10,7 @@ bootstrap_dirs := \
 	System					\
 	$(MONO_CSHARP_DEBUGGER)
 
-basic_SUBDIRS := corlib System
+basic_SUBDIRS := corlib System System.XML
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Security
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 
