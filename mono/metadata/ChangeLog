@@ -1,5 +1,9 @@
 2002-10-03  Dick Porter  <dick@ximian.com>
 
+	* threads.c: Freebsd pthread_t is a pointer
+
+2002-10-03  Dick Porter  <dick@ximian.com>
+
 	* socket-io.c: Implemented GetHostName_internal
 
 2002-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>

@@ -1,3 +1,12 @@
+2002-10-03  Dick Porter  <dick@ximian.com>
+
+	* daemon.c:
+	* handles.c:
+	* threads.c:  Fixes for freebsd.  Make sure that mutex and condition
+	creation and deletion happen in the process that owns them, when
+	POSIX shared thread objects aren't supported.  This breaks on
+	freebsd, as pthread_t is a pointer to data.
+
 2002-10-02  Dick Porter  <dick@ximian.com>
 
 	* shared.c: Use mmap() instead of sysv shm for the shared data.
