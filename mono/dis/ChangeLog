@@ -1,3 +1,11 @@
+2004-05-06  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* dump.c:
+	* get.c:
+	* main.c:
+	* util.c:
+	* util.h: rename map_t dis_map_t to avoid AIX symbol clash
+
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
 	* dump.c (dump_table_memberref): Added support for TypeDef's.
