@@ -150,7 +150,7 @@ namespace System.Web.Compilation
 					error ("expecting '>'");
 				return tag;
 			default:
-				return null;
+				return new PlainText ("<" + tokenizer.value);
 			}
 		}
 
