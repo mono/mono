@@ -1,3 +1,7 @@
+2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_type_size): code cleanup
+
 2002-07-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* appdomain.c (ves_icall_System_Reflection_Assembly_LoadFrom): Use
