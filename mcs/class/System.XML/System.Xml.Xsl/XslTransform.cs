@@ -223,7 +223,9 @@ namespace System.Xml.Xsl
 
 		string ApplyStylesheetAndGetString (IntPtr doc, string[] argArr, Hashtable extobjects)
 		{
-			IntPtr xmlOutput = ApplyStylesheet (doc, argArr, extobjects);
+			IntPtr xmlOutput = ApplyStylesheet (doc,
+				argArr == null ? new string [0] : argArr, 
+				extobjects == null ? new Hashtable () : extobjects);
 			string strOutput = GetStringFromDocument (xmlOutput, stylesheet);
 			xmlFreeDoc (xmlOutput);
 

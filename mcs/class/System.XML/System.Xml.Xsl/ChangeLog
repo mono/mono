@@ -1,3 +1,11 @@
+2003-12-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Multiplexer.cs : set_XmlResolver is marked as obsolete.
+	  Added new Transform() methods introduced in .NET 1.1.
+	  CRLF and LF are desparately mixed, so adjusted to LF.
+	* XslTransform.cs :
+	  CRLF and LF are desparately mixed, so adjusted to CRLF.
+
 2003-12-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslTransformImpl.cs : Load(XmlReader) should pass XmlSpace.Preserve

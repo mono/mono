@@ -13,13 +13,14 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Policy;
 using System.Xml.XPath;
 
 namespace System.Xml.Xsl {
 	public sealed class XslTransform {
 
-		XmlResolver xmlResolver;
+		XmlResolver xmlResolver = new XmlUrlResolver ();
 		XslTransformImpl impl;
 
 		#region Constructors
@@ -32,60 +33,142 @@ namespace System.Xml.Xsl {
 		}
 		#endregion
 		
-		public XmlResolver XmlResolver { set { xmlResolver = value; }}
+		[MonoTODO ("Security check.")]
+#if NET_1_1
+		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
+#endif
+		public XmlResolver XmlResolver {
+			set {
+				 xmlResolver = value;
+			}
+		}
 		
 		#region Transform
 		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args)
 		{
-			return Transform (input.CreateNavigator (), args);
+			return Transform (input.CreateNavigator (), args, xmlResolver);
 		}
 
-		public XmlReader Transform(XPathNavigator input, XsltArgumentList args)
+#if NET_1_1
+		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args, XmlResolver resolver)
+#else
+		XmlReader Transform (IXPathNavigable input, XsltArgumentList args, XmlResolver resolver)
+#endif
+		{
+			return Transform (input.CreateNavigator (), args, resolver);
+		}
+
+		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
+		{
+			return Transform (input, args, xmlResolver);
+		}
+#if NET_1_1
+		public XmlReader Transform (XPathNavigator input, XsltArgumentList args, XmlResolver resolver)
+#else
+		XmlReader Transform (XPathNavigator input, XsltArgumentList args, XmlResolver resolver)
+#endif
 		{
 			// todo: is this right?
 			MemoryStream stream = new MemoryStream ();
-			Transform (input, args, new XmlTextWriter (stream, null));
+			Transform (input, args, new XmlTextWriter (stream, null), resolver);
 			stream.Position = 0;
 			return new XmlTextReader (stream);
 		}
-		
-		public void Transform(IXPathNavigable input, XsltArgumentList args, TextWriter output)
+
+		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
 		{
-			Transform (input.CreateNavigator (), args, output);
+			Transform (input.CreateNavigator (), args, output, xmlResolver);
+		}
+#if NET_1_1
+		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
+#else
+		void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
+#endif
+		{
+			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
-		public void Transform(IXPathNavigable input, XsltArgumentList args, Stream output)
+		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
 		{
-			Transform (input.CreateNavigator (), args, output);
+			Transform (input.CreateNavigator (), args, output, xmlResolver);
+		}
+#if NET_1_1
+		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output, XmlResolver resolver)
+#else
+		void Transform (IXPathNavigable input, XsltArgumentList args, Stream output, XmlResolver resolver)
+#endif
+		{
+			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
-		public void Transform(IXPathNavigable input, XsltArgumentList args, XmlWriter output)
+		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
 		{
-			Transform (input.CreateNavigator (), args, output);
+			Transform (input.CreateNavigator (), args, output, xmlResolver);
+		}
+#if NET_1_1
+		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
+#else
+		void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
+#endif
+		{
+			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 
-		public void Transform(XPathNavigator input, XsltArgumentList args, XmlWriter output)
+		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
 		{
 			impl.Transform (input, args, output, xmlResolver);
 		}
+#if NET_1_1
+		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
+#else
+		void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
+#endif
+		{
+			impl.Transform (input, args, output, resolver);
+		}
 
-		public void Transform(XPathNavigator input, XsltArgumentList args, Stream output)
+		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
 		{
 			impl.Transform (input, args, new XmlTextWriter (output, null), xmlResolver);		
 		}
+#if NET_1_1
+		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
+#else
+		void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
+#endif
+		{
+			impl.Transform (input, args, new XmlTextWriter (output, null), resolver);
+		}
 
-		public void Transform(XPathNavigator input, XsltArgumentList args, TextWriter output)
+		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
 			impl.Transform (input, args, output, xmlResolver);
+		}
+#if NET_1_1
+		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
+#else
+		void Transform(XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
+#endif
+		{
+			impl.Transform (input, args, output, resolver);
 		}
 		
 		public void Transform (string inputfile, string outputfile)
 		{ 
 			impl.Transform (inputfile, outputfile, xmlResolver);
 		}
+
+#if NET_1_1
+		public void Transform (string inputfile, string outputfile, XmlResolver resolver)
+#else
+		void Transform (string inputfile, string outputfile, XmlResolver resolver)
+#endif
+		{
+			impl.Transform (inputfile, outputfile, resolver);
+		}
 		#endregion
 
-
+		#region Load
 		public void Load (string url)
 		{
 			Load (url, null);
@@ -171,6 +254,6 @@ namespace System.Xml.Xsl {
 		{
 			impl.Load (stylesheet, resolver, null);
 		}
-
+		#endregion
 	}
 }
