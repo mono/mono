@@ -1,3 +1,8 @@
+
+Tue Jun 22 16:32:03 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* *.c, *.h: avoid namespace pollution in public headers.
+
 2004-06-21  Martin Baulig  <martin@ximian.com>
 
 	* exception.c (mono_get_exception_security): It's in
