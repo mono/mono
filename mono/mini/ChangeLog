@@ -1,5 +1,8 @@
 2003-12-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini.c driver.c mini-x86.c mini-ppc.c aot.c: Do not run
+	static constructors when AOT compiling.
+
 	* driver.c (mono_main): Call mono_check_corlib_version.
 
 Sat Dec 13 10:31:12 CET 2003 Paolo Molaro <lupus@ximian.com>
