@@ -33,9 +33,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
-[assembly: Mono.Author("Ravi Pratap")]
-[assembly: Mono.Author("Miguel de Icaza")]
-[assembly: Mono.Author("Rafael Teixeira")]
+[assembly: Mono.Author("Ravi Pratap, Miguel de Icaza, Rafael Teixeira")]
+//[assembly: Mono.Author("Miguel de Icaza")]
+//[assembly: Mono.Author("Rafael Teixeira")]
 
 [assembly: Mono.About("Distributed under the GPL")]
 
