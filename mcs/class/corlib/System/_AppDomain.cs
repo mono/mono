@@ -124,7 +124,7 @@ public interface _AppDomain {
 		string[] args);
 
 	Assembly[] GetAssemblies ();
-	object GetDate (string name);
+	object GetData (string name);
 	int GetHashCode();
 	object GetLifetimeService ();
 	Type GetType ();
