@@ -3,6 +3,18 @@
 	* statement.cs (Using.EmitExpressionFinally): make this work right
 	for valuetypes. Fixes 69926.
 
+2004-11-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* const.cs (Const.ChangeType): Cope with the "0 literal can be
+	converted to an enum" here, before we try to change the underlying
+	type.  This code exists, but it is a different code path than the
+	one used while encoding constants.
+
+	(ImplicitReferenceConversionExists): In addition, resynchronized
+	the code here, so it matches the same code in
+	ImplicitReferenceConversionExists for the `from any class-type S
+	to any interface-type T'.	
+
 2004-11-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* cfold.cs (BinaryFold): Add addition for DecimalConstant.
