@@ -293,6 +293,7 @@ namespace System.Windows.Forms
 				list.Add (value);
 				value.Parent = owner;
 				owner.UpdateZOrder();
+				owner.OnControlAdded(new ControlEventArgs(value));
 			}
 			
 			public virtual void AddRange (Control[] controls)
@@ -363,6 +364,7 @@ namespace System.Windows.Forms
 			}
 
 			public virtual void Remove(Control value) {
+				owner.OnControlRemoved(new ControlEventArgs(value));
 				list.Remove(value);
 				owner.UpdateZOrder();
 			}
@@ -942,6 +944,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue("")]
 		public string AccessibleName {
 			get {
 				return AccessibilityObject.Name;
@@ -952,7 +956,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[Localizable(true)]
 		[DefaultValue("")]
 		public AccessibleRole AccessibleRole {
 			get {
@@ -1035,11 +1038,14 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual BindingContext BindingContext {
 			get {
-				throw new NotImplementedException();
+				return binding_context;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (binding_context != value) {
+					binding_context = value;
+					OnBindingContextChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -1177,6 +1183,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DescriptionAttribute("ControlCompanyNameDescr")]
 		public String CompanyName {
 			get {
 				return "Mono Project, Novell, Inc.";
@@ -1235,7 +1242,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue(null)]
+		[AmbientValue(null)]
 		public virtual Cursor Cursor {
 			get {
 				if (cursor != null) {
@@ -1304,9 +1311,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Localizable(true)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[RefreshProperties(RefreshProperties.Repaint)]
+		[DefaultValue(DockStyle.None)]
 		public virtual DockStyle Dock {
 			get {
 				return dock_style;
@@ -1382,8 +1389,6 @@ namespace System.Windows.Forms
 		}
 
 		[DispId(-513)]
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual Color ForeColor {
 			get {
 				if (foreground_color.IsEmpty) {
@@ -1405,6 +1410,8 @@ namespace System.Windows.Forms
 		}
 
 		[DispId(-515)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {							// IWin32Window
 			get {
 				if (!IsHandleCreated) {
@@ -1589,6 +1596,8 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string ProductName {
 			get {
 				return "Novell Mono MWF";
@@ -1737,6 +1746,7 @@ namespace System.Windows.Forms
 
 		[DispId(-517)]
 		[Localizable(true)]
+		[BindableAttribute(true)]
 		public virtual string Text {
 			get {
 				return this.text;
@@ -1836,13 +1846,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IWindowTarget WindowTarget {
 			get {
 				return null;
 			}
 
 			set {
-				;
+				;	// MS Internal
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -1902,10 +1915,6 @@ namespace System.Windows.Forms
 		protected bool RenderRightToLeft {
 			get {
 				return (this.right_to_left == RightToLeft.Yes);
-			}
-
-			set {
-				;; // Nothing to do?
 			}
 		}
 
@@ -2632,6 +2641,7 @@ namespace System.Windows.Forms
 			return false;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void NotifyInvalidate(Rectangle invalidatedArea) {
 			// override me?
 		}
@@ -2721,18 +2731,22 @@ namespace System.Windows.Forms
 			return false;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RaiseDragEvent(object key, DragEventArgs e) {
 			// MS Internal
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RaiseKeyEvent(object key, KeyEventArgs e) {
 			// MS Internal
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RaiseMouseEvent(object key, MouseEventArgs e) {
 			// MS Internal
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RaisePaintEvent(object key, PaintEventArgs e) {
 			// MS Internal
 		}
@@ -2759,6 +2773,7 @@ namespace System.Windows.Forms
 			is_recreating = false;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void ResetMouseEventArgs() {
 			// MS Internal
 		}
@@ -3106,7 +3121,6 @@ namespace System.Windows.Forms
 #endif
 		}
 
-		[MonoTODO]
 		protected virtual void WndProc(ref Message m) {
 #if debug
 			Console.WriteLine("Received message {0}", m);
@@ -3369,6 +3383,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 		#endregion	// Public Instance Methods
 
 		#region OnXXX methods
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBackColorChanged(EventArgs e) {
 			if (BackColorChanged!=null) BackColorChanged(this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackColorChanged(e);
@@ -3393,7 +3408,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnChangeUICues(UICuesEventArgs e) {
-			if (CausesValidationChanged!=null) CausesValidationChanged(this, e);
+			if (ChangeUICues!=null) ChangeUICues(this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3587,6 +3602,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			if (Move!=null) Move(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnNotifyMessage(Message m) {
 			// Override me!
 		}
