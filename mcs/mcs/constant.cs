@@ -116,6 +116,21 @@ namespace Mono.CSharp {
 
 			return c;
 		}
+
+		public DecimalConstant ToDecimal (Location loc)
+		{
+			DecimalConstant c = ConvertToDecimal ();
+
+			if (c == null)
+				Convert.Error_CannotConvertType (loc, Type, TypeManager.decimal_type);
+
+			return c;
+		}
+
+		public virtual DecimalConstant ConvertToDecimal ()
+		{
+			return null;
+		}
 		
 		public virtual DoubleConstant ConvertToDouble ()
 		{
@@ -640,6 +655,11 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
+		public override DecimalConstant ConvertToDecimal()
+		{
+			return new DecimalConstant (Value);
+		}
+
 		public override DoubleConstant ConvertToDouble ()
 		{
 			return new DoubleConstant (Value);
@@ -1043,6 +1063,15 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+
+			if (Value <= int.MaxValue && Value >= int.MinValue)
+			{
+				IntConstant.EmitInt (ig, (int)Value);
+				ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
+				return;
+			}
+
 			int [] words = Decimal.GetBits (Value);
 			
 			//
@@ -1050,8 +1079,6 @@ namespace Mono.CSharp {
 			// constructor
 			//
 
-			ILGenerator ig = ec.ig;
-			
 			IntConstant.EmitInt (ig, words [0]);
 			IntConstant.EmitInt (ig, words [1]);
 			IntConstant.EmitInt (ig, words [2]);

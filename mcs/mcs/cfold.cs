@@ -134,6 +134,12 @@ namespace Mono.CSharp {
 				}
 
 				return;
+			} else if (left is DecimalConstant || right is DecimalConstant) {
+				if (!(left is DecimalConstant))
+					left = left.ToDecimal (loc);
+				else if (!(right is DecimalConstant))
+					right = right.ToDecimal (loc);
+				return;
 			} else if (left is EnumConstant || right is EnumConstant){
 				//
 				// If either operand is an enum constant, the other one must
@@ -524,7 +530,7 @@ namespace Mono.CSharp {
 
 						result = new IntConstant (res);
 					} else {
-						throw new Exception ( "Unexepected input: " + left);
+						throw new Exception ( "Unexepected addition input: " + left);
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
@@ -631,7 +637,7 @@ namespace Mono.CSharp {
 
 						result = new IntConstant (res);
 					} else {
-						throw new Exception ( "Unexepected input: " + left);
+						throw new Exception ( "Unexepected subtraction input: " + left);
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
@@ -652,10 +658,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((DoubleConstant) left).Value *
-								       ((DoubleConstant) right).Value);
+								((DoubleConstant) right).Value);
 						else
 							res = unchecked (((DoubleConstant) left).Value *
-									 ((DoubleConstant) right).Value);
+								((DoubleConstant) right).Value);
 						
 						return new DoubleConstant (res);
 					} else if (left is FloatConstant){
@@ -663,10 +669,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((FloatConstant) left).Value *
-								       ((FloatConstant) right).Value);
+								((FloatConstant) right).Value);
 						else
 							res = unchecked (((FloatConstant) left).Value *
-									 ((FloatConstant) right).Value);
+								((FloatConstant) right).Value);
 						
 						return new FloatConstant (res);
 					} else if (left is ULongConstant){
@@ -674,10 +680,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((ULongConstant) left).Value *
-								       ((ULongConstant) right).Value);
+								((ULongConstant) right).Value);
 						else
 							res = unchecked (((ULongConstant) left).Value *
-									 ((ULongConstant) right).Value);
+								((ULongConstant) right).Value);
 						
 						return new ULongConstant (res);
 					} else if (left is LongConstant){
@@ -685,10 +691,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((LongConstant) left).Value *
-								       ((LongConstant) right).Value);
+								((LongConstant) right).Value);
 						else
 							res = unchecked (((LongConstant) left).Value *
-									 ((LongConstant) right).Value);
+								((LongConstant) right).Value);
 						
 						return new LongConstant (res);
 					} else if (left is UIntConstant){
@@ -696,10 +702,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((UIntConstant) left).Value *
-								       ((UIntConstant) right).Value);
+								((UIntConstant) right).Value);
 						else
 							res = unchecked (((UIntConstant) left).Value *
-									 ((UIntConstant) right).Value);
+								((UIntConstant) right).Value);
 						
 						return new UIntConstant (res);
 					} else if (left is IntConstant){
@@ -707,14 +713,25 @@ namespace Mono.CSharp {
 
 						if (ec.ConstantCheckState)
 							res = checked (((IntConstant) left).Value *
-								       ((IntConstant) right).Value);
+								((IntConstant) right).Value);
 						else
 							res = unchecked (((IntConstant) left).Value *
-									 ((IntConstant) right).Value);
+								((IntConstant) right).Value);
 
 						return new IntConstant (res);
+					} else if (left is DecimalConstant) {
+						decimal res;
+
+						if (ec.ConstantCheckState)
+							res = checked (((DecimalConstant) left).Value *
+								((DecimalConstant) right).Value);
+						else
+							res = unchecked (((DecimalConstant) left).Value *
+								((DecimalConstant) right).Value);
+
+						return new DecimalConstant (res);
 					} else {
-						throw new Exception ( "Unexepected input: " + left);
+						throw new Exception ( "Unexepected multiply input: " + left);
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
@@ -732,10 +749,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((DoubleConstant) left).Value /
-								       ((DoubleConstant) right).Value);
+								((DoubleConstant) right).Value);
 						else
 							res = unchecked (((DoubleConstant) left).Value /
-									 ((DoubleConstant) right).Value);
+								((DoubleConstant) right).Value);
 						
 						return new DoubleConstant (res);
 					} else if (left is FloatConstant){
@@ -743,10 +760,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((FloatConstant) left).Value /
-								       ((FloatConstant) right).Value);
+								((FloatConstant) right).Value);
 						else
 							res = unchecked (((FloatConstant) left).Value /
-									 ((FloatConstant) right).Value);
+								((FloatConstant) right).Value);
 						
 						return new FloatConstant (res);
 					} else if (left is ULongConstant){
@@ -754,10 +771,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((ULongConstant) left).Value /
-								       ((ULongConstant) right).Value);
+								((ULongConstant) right).Value);
 						else
 							res = unchecked (((ULongConstant) left).Value /
-									 ((ULongConstant) right).Value);
+								((ULongConstant) right).Value);
 						
 						return new ULongConstant (res);
 					} else if (left is LongConstant){
@@ -765,10 +782,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((LongConstant) left).Value /
-								       ((LongConstant) right).Value);
+								((LongConstant) right).Value);
 						else
 							res = unchecked (((LongConstant) left).Value /
-									 ((LongConstant) right).Value);
+								((LongConstant) right).Value);
 						
 						return new LongConstant (res);
 					} else if (left is UIntConstant){
@@ -776,10 +793,10 @@ namespace Mono.CSharp {
 						
 						if (ec.ConstantCheckState)
 							res = checked (((UIntConstant) left).Value /
-								       ((UIntConstant) right).Value);
+								((UIntConstant) right).Value);
 						else
 							res = unchecked (((UIntConstant) left).Value /
-									 ((UIntConstant) right).Value);
+								((UIntConstant) right).Value);
 						
 						return new UIntConstant (res);
 					} else if (left is IntConstant){
@@ -787,14 +804,25 @@ namespace Mono.CSharp {
 
 						if (ec.ConstantCheckState)
 							res = checked (((IntConstant) left).Value /
-								       ((IntConstant) right).Value);
+								((IntConstant) right).Value);
 						else
 							res = unchecked (((IntConstant) left).Value /
-									 ((IntConstant) right).Value);
+								((IntConstant) right).Value);
 
 						return new IntConstant (res);
+					} else if (left is DecimalConstant) {
+						decimal res;
+
+						if (ec.ConstantCheckState)
+							res = checked (((DecimalConstant) left).Value /
+								((DecimalConstant) right).Value);
+						else
+							res = unchecked (((DecimalConstant) left).Value /
+								((DecimalConstant) right).Value);
+
+						return new DecimalConstant (res);
 					} else {
-						throw new Exception ( "Unexepected input: " + left);
+						throw new Exception ( "Unexepected division input: " + left);
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
@@ -878,7 +906,7 @@ namespace Mono.CSharp {
 
 						return new IntConstant (res);
 					} else {
-						throw new Exception ( "Unexepected input: " + left);
+						throw new Exception ( "Unexepected modulus input: " + left);
 					}
 				} catch (DivideByZeroException){
 					Report.Error (020, loc, "Division by constant zero");

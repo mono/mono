@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -49,13 +50,6 @@ namespace Mono.CSharp {
 			ModFlags |= Modifiers.STATIC;
 		}
 
-		public FieldAttributes FieldAttr {
-			get {
-				return FieldAttributes.Literal | FieldAttributes.Static |
-					Modifiers.FieldAttr (ModFlags) ;
-			}
-		}
-
 #if DEBUG
 		void dump_tree (Type t)
 		{
@@ -89,7 +83,16 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, FieldAttr);
+			FieldAttributes field_attr = FieldAttributes.Static | Modifiers.FieldAttr (ModFlags);
+			// I don't know why but they emit decimal constant as InitOnly
+			if (ttype == TypeManager.decimal_type) {
+				field_attr |= FieldAttributes.InitOnly;
+			}
+			else {
+				field_attr |= FieldAttributes.Literal;
+			}
+
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, field_attr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);
 
@@ -155,6 +158,8 @@ namespace Mono.CSharp {
 				retval = new CharConstant ((char) constant_value);
 			else if (type == TypeManager.bool_type)
 				retval = new BoolConstant ((bool) constant_value);
+			else if (type == TypeManager.decimal_type)
+				retval = new DecimalConstant ((decimal) constant_value);
 			else
 				throw new Exception ("LookupConstantValue: Unhandled constant type: " + type);
 			
@@ -253,7 +258,16 @@ namespace Mono.CSharp {
 				}
 			}
 
-			FieldBuilder.SetConstant (ConstantValue);
+			if (ce is DecimalConstant) {
+				Decimal d = ((DecimalConstant)ce).Value;
+				int[] bits = Decimal.GetBits (d);
+				object[] args = new object[] { (byte)(bits [3] >> 16), (byte)(bits [3] >> 31), (uint)bits [2], (uint)bits [1], (uint)bits [0] };
+				CustomAttributeBuilder cab = new CustomAttributeBuilder (TypeManager.decimal_constant_attribute_ctor, args);
+				FieldBuilder.SetCustomAttribute (cab);
+			}
+			else{
+				FieldBuilder.SetConstant (ConstantValue);
+			}
 
 			if (!TypeManager.RegisterFieldValue (FieldBuilder, ConstantValue))
 				throw new Exception ("Cannot register const value");
