@@ -1,3 +1,7 @@
+2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list.unix: added RunInstallerAttribute.cs
+
 2003-02-18  Alan Tam <Tam@SiuLung.com>
 
 	* list.unix (): Add DesignerCategoryAttribute.cs

@@ -1,3 +1,7 @@
+2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RunInstallerAttribute.cs: New file.
+
 2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Win32Exception.cs: added 10065 (WSA_EHOSTUNREACH).
