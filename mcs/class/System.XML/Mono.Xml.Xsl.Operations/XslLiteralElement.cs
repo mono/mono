@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {	
-	public class XslLiteralElement : XslCompiledElement {
+	internal class XslLiteralElement : XslCompiledElement {
 		XslOperation children;
 		string localname, prefix, nsUri;
 		bool isEmptyElement;

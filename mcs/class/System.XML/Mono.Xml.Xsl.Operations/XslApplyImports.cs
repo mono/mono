@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslApplyImports : XslCompiledElement {
+	internal class XslApplyImports : XslCompiledElement {
 		ArrayList withParams;
 		public XslApplyImports (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)

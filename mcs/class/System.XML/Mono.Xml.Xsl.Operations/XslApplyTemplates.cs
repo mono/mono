@@ -17,7 +17,7 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
 
-	public class XslApplyTemplates : XslCompiledElement {
+	internal class XslApplyTemplates : XslCompiledElement {
 		XPathExpression select;
 		XmlQualifiedName mode;
 		ArrayList withParams;

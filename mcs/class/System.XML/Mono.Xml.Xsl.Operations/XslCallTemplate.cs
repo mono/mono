@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslCallTemplate : XslCompiledElement {
+	internal class XslCallTemplate : XslCompiledElement {
 		XmlQualifiedName name;
 		ArrayList withParams;
 		public XslCallTemplate (Compiler c) : base (c) {}

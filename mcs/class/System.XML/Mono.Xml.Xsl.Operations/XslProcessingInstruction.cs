@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 using System.IO;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslProcessingInstruction : XslCompiledElement {
+	internal class XslProcessingInstruction : XslCompiledElement {
 		XslAvt name;
 		XslOperation value;
 		

@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslMessage : XslCompiledElement {
+	internal class XslMessage : XslCompiledElement {
 		bool terminate;
 		XslOperation children;
 		

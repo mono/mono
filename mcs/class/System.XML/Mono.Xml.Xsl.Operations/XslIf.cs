@@ -17,7 +17,7 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
 	// also applicable to xsl:when
-	public class XslIf : XslCompiledElement {
+	internal class XslIf : XslCompiledElement {
 		CompiledExpression test;
 		XslOperation children;
 		

@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl.Operations {
-	public abstract class XslOperation {
+	internal abstract class XslOperation {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 		public abstract void Evaluate (XslTransformProcessor p);
 	}

@@ -19,7 +19,7 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl.Operations {
 
-	public abstract class XslCompiledElement : XslOperation {
+	internal abstract class XslCompiledElement : XslOperation {
 		bool hasStack;
 		int stackSize;
 		int lineNumber;

@@ -19,7 +19,7 @@ using System.IO;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslAttribute : XslCompiledElement {
+	internal class XslAttribute : XslCompiledElement {
 		XslAvt name, ns;
 		string calcName, calcNs, calcPrefix;
 		XmlNamespaceManager nsm;

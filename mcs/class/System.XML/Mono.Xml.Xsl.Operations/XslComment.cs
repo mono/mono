@@ -17,7 +17,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslComment : XslCompiledElement {
+	internal class XslComment : XslCompiledElement {
 		bool disableOutputEscaping = false;
 		XslOperation value;
 		

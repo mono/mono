@@ -18,7 +18,7 @@ using System.Text;
 using Mono.Xml.XPath;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslNumber : XslCompiledElement {
+	internal class XslNumber : XslCompiledElement {
 		
 		// <xsl:number
 		//   level = "single" | "multiple" | "any"

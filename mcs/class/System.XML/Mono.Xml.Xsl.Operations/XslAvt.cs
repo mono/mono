@@ -17,7 +17,7 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
 	// Represents an Attribute Value Template in XSL.
-	public class XslAvt {
+	internal class XslAvt {
 		
 		string simpleString;
 		ArrayList avtParts;

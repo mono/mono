@@ -20,7 +20,7 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl.Operations {
 	
-	public class XslVariableInformation
+	internal class XslVariableInformation
 	{
 		QName name;
 		XPathExpression select;
@@ -94,7 +94,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public QName Name { get { return name; }}
 	}
 	
-	public abstract class XslGeneralVariable : XslCompiledElement, IXsltContextVariable {
+	internal abstract class XslGeneralVariable : XslCompiledElement, IXsltContextVariable {
 		protected XslVariableInformation var;	
 		
 		public XslGeneralVariable (Compiler c) : base (c) {}
@@ -124,7 +124,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public abstract bool IsParam { get; }
 	}
 	
-	public class XslGlobalVariable : XslGeneralVariable {
+	internal class XslGlobalVariable : XslGeneralVariable {
 		public XslGlobalVariable (Compiler c) : base (c) {}
 		static object busyObject = new Object ();
 		
@@ -154,7 +154,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public override bool IsParam { get { return false; }}
 	}
 	
-	public class XslGlobalParam : XslGlobalVariable {
+	internal class XslGlobalParam : XslGlobalVariable {
 		bool overriden;
 		object paramVal;
 		
@@ -170,7 +170,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public override bool IsParam { get { return true; }}
 	}
 	
-	public class XslLocalVariable : XslGeneralVariable {
+	internal class XslLocalVariable : XslGeneralVariable {
 		protected int slot;
 				
 		public XslLocalVariable (Compiler c) : base (c)
@@ -197,7 +197,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public override bool IsParam { get { return false; }}
 	}
 	
-	public class XslLocalParam : XslLocalVariable {
+	internal class XslLocalParam : XslLocalVariable {
 		bool overriden;
 		object paramVal;
 		

@@ -1,5 +1,15 @@
 2004-04-24 Atsushi Enomoto <atsushi@ximian.com>
 
+	* XslApplyImport.cs, XslApplyTemplates.cs, XslAttribute.cs,
+	  XslAvt.cs, XslCallTemplate.cs, XslComment.cs, XslCompiledElement.cs,
+	  XslCopy.cs, XslCopyOf.cs, XslElement.cs, XslFallback.cs,
+	  XslForeach.cs, XslIf.cs, XslLiteralElement.cs, XslMessage.cs,
+	  XslNumber.cs, XslOperation.cs, XslProcessingInstruction.cs,
+	  XslTemplateContent.cs, XslText.cs, XslValueOf.cs, XslVariable.cs :
+	  make extra classes internal.
+
+2004-04-24 Atsushi Enomoto <atsushi@ximian.com>
+
 	* XslProcessingInstruction.cs : Culture independency fix.
 
 2004-04-01 Atsushi Enomoto <atsushi@ximian.com>

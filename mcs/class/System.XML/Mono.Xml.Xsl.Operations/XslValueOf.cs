@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslValueOf : XslCompiledElement {
+	internal class XslValueOf : XslCompiledElement {
 		XPathExpression select;
 		bool disableOutputEscaping;
 

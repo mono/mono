@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslText : XslCompiledElement {
+	internal class XslText : XslCompiledElement {
 		bool disableOutputEscaping = false;
 		string text = "";
 		bool isWhitespace;
