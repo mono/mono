@@ -119,24 +119,13 @@ namespace System.Configuration
 
 		private static string GetAppConfigPath ()
 		{
-		/* FIXME: Uncomment and use this stuff when the current domain is initialized with
-			  the appropiate information.
 			AppDomainSetup currentInfo = AppDomain.CurrentDomain.SetupInformation;
 
-			string appBase = currentInfo.ApplicationBase;
 			string configFile = currentInfo.ConfigurationFile;
-			// FIXME: need to check out default domain configuration file name
 			if (configFile == null || configFile.Length == 0)
 				return null;
-		*/
 
-		// Remove when uncomment the previous comment
-			string assemblyName = Assembly.GetEntryAssembly ().Location;
-			string appBase = Path.GetDirectoryName (assemblyName);
-			string configFile = Path.GetFileName (assemblyName) + ".config";
-		// End remove
-
-			return Path.Combine (appBase, configFile);
+			return configFile;
 
 		}
 	}
