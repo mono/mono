@@ -5521,23 +5521,46 @@ if (rsrc != null)
         /// 
         public class MethPtrType : Type
         {
-    // MethPtrType == FNPTR
-    Method method;
-    uint sigIx = 0;
+
+                Type retType;
+                Type [] parList;
+                Type [] optParList;
+                CallConv callConv;
+                uint numPars;
+                uint numOptPars;
+                uint sigIx = 0;
 
     /// <summary>
     /// Create a new function pointer type
     /// </summary>
     /// <param name="meth">the function to be referenced</param>
-                public MethPtrType(Method meth) : base(0x1B)
-                {
-      method = meth;
-                        tabIx = MDTable.TypeSpec;
-                }
-
-    internal sealed override void TypeSig(MemoryStream str) {
-      str.WriteByte(typeIndex);
-      method.TypeSig(str);
+    public MethPtrType (CallConv callconv, Type retType, Type[] pars,
+                    bool varArgMeth, Type[] optPars) : base(0x1B) {
+      parList = pars;
+      if (parList != null) numPars = (uint)parList.Length;
+      if (varArgMeth) {
+        optParList = optPars;
+        if (optParList != null) numOptPars = (uint)optParList.Length;
+        callConv = CallConv.Vararg;
+      }
+      tabIx = MDTable.TypeSpec;
+    }
+  
+    internal sealed override void TypeSig(MemoryStream sig) {
+      sig.WriteByte(typeIndex);
+      // Bootlegged from method ref
+      sig.WriteByte((byte)callConv);
+      MetaData.CompressNum (numPars + numOptPars, sig);
+      retType.TypeSig (sig);
+      for (int i=0; i < numPars; i++) {
+              parList[i].TypeSig (sig);
+      }
+      if (numOptPars > 0) {
+              sig.WriteByte (0x41); // Write the sentinel
+        for (int i=0; i < numOptPars; i++) {
+          optParList[i].TypeSig (sig);
+        }
+      }
     }
 
     internal sealed override void BuildTables(MetaData md) {

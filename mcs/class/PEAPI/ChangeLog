@@ -1,3 +1,9 @@
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Allow MethPtrTypes to be created from a signature
+	instead of from a method reference because it really doesn't make
+	sense to do it that way ;-).
+	
 2004-06-14  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: Add IExternRef interface and modify sigs so it can be
