@@ -6664,7 +6664,8 @@ namespace Mono.CSharp {
 				// a FieldExpr
 				//
 
-				if (ee.EventInfo.DeclaringType == ec.ContainerType) {
+				if (ee.EventInfo.DeclaringType == ec.ContainerType ||
+				    TypeManager.IsNestedChildOf(ec.ContainerType, ee.EventInfo.DeclaringType)) {
 					MemberInfo mi = GetFieldFromEvent (ee);
 
 					if (mi == null) {
