@@ -264,6 +264,16 @@ namespace MonoTests.System.Text {
 		sb.Append (ca);
 		AssertEquals ("#01", "c", sb.ToString ());
 	}
+
+
+	[Test]
+	public void TestRemove ()
+	{
+		StringBuilder b = new StringBuilder ();
+		b.Append ("Hello, I am a StringBuilder");
+		b.Remove (0, 7);  // Should remove "Hello, "
+		AssertEquals ("#01", "I am a StringBuilder", b.ToString ());
+	}
 }
 
 }
