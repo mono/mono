@@ -60,6 +60,19 @@ namespace System.Data
 		{
 			//TODO: AutoIncrement
 			//TODO: validation
+			if (row == null)
+				throw new ArgumentNullException("row", "'row' argument cannot be null.");
+
+			if (list.IndexOf(row) != -1)
+				throw new ArgumentException ("This row already belongs to this table.");
+				
+			foreach (DataColumn Col in row.Table.Columns) {
+
+				if (Col.AutoIncrement) {
+					row [Col] = Col.AutoIncrementValue();
+				}
+			}
+
 			list.Add (row);
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
@@ -99,6 +112,10 @@ namespace System.Data
 		/// </summary>
 		public bool Contains (object[] keys) 
 		{
+			if (table.PrimaryKey.Length != keys.Length)
+				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length + " value(s) for the key " + 
+							     "being indexed, but received " + keys.Length + " value(s).");
+
 			return Find (keys) != null;
 		}
 
@@ -108,7 +125,34 @@ namespace System.Data
 		[MonoTODO]
 		public DataRow Find (object key) 
 		{
-			throw new NotImplementedException ();
+			if (table.PrimaryKey.Length == 0)
+				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
+			if (table.PrimaryKey.Length > 1)
+				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length + 
+							     " value(s) for the key being indexed, but received 1 value(s).");
+
+			string primColumnName = table.PrimaryKey [0].ColumnName;
+			Type coltype = null;
+			object newKey = null;
+			
+			foreach (DataRow row in this) {
+				
+				object primValue = row [primColumnName];
+				if (key == null) {
+					if (primValue == null)
+						return row;
+					else 
+						continue;
+				}
+				       
+				newKey = Convert.ChangeType (key, Type.GetTypeCode(primValue.GetType ()));
+
+				if (primValue.Equals (newKey))
+					return row;
+			}
+						
+			// FIXME: is the correct value null?
+			return null;
 		}
 
 		/// <summary>
@@ -117,7 +161,45 @@ namespace System.Data
 		[MonoTODO]
 		public DataRow Find (object[] keys) 
 		{
-			throw new NotImplementedException ();
+			if (table.PrimaryKey.Length == 0)
+				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
+
+			string  [] primColumnNames = new string [table.PrimaryKey.Length];
+			
+			for (int i = 0; i < primColumnNames.Length; i++)
+				primColumnNames [i] = table.PrimaryKey [i].ColumnName;
+
+			Type coltype = null;
+			object newKey = null;
+			
+			foreach (DataRow row in this) {
+				
+				bool eq = true;
+				for (int i = 0; i < keys.Length; i++) {
+					
+					object primValue = row [primColumnNames [i]];
+					object keyValue = keys [i];
+					if (keyValue == null) {
+						if (primValue == null)
+							return row;
+						else 
+							continue;
+					}
+								       
+					newKey = Convert.ChangeType (keyValue, Type.GetTypeCode(primValue.GetType ()));
+
+					if (!primValue.Equals (newKey)) {
+						eq = false;
+						break;
+					}						
+				}
+
+				if (eq)
+					return row;
+			}
+						
+			// FIXME: is the correct value null?
+			return null;
 		}
 
 		/// <summary>
@@ -125,7 +207,13 @@ namespace System.Data
 		/// </summary>
 		public void InsertAt (DataRow row, int pos) 
 		{
-			list.Insert (pos, row);
+			if (pos < 0)
+				throw new IndexOutOfRangeException ("The row insert position " + pos + " is invalid.");
+				
+			if (pos >= list.Count)
+				list.Add (row);
+			else
+				list.Insert (pos, row);
 		}
 
 		/// <summary>
@@ -133,6 +221,10 @@ namespace System.Data
 		/// </summary>
 		public void Remove (DataRow row) 
 		{
+			// FIXME: This is the way the MS.NET handles this kind of situation. Could be better, but what can you do.
+			if (row == null || list.IndexOf (row) == -1)
+				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
+
 			list.Remove (row);
 			row.DetachRow ();
 			table.DeletedDataRow (row, DataRowAction.Delete);
@@ -143,6 +235,9 @@ namespace System.Data
 		/// </summary>
 		public void RemoveAt (int index) 
 		{			
+			if (index < 0 || index >= list.Count)
+				throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
+
 			DataRow row = (DataRow)list [index];
 			list.RemoveAt (index);			
 			table.DeletedDataRow (row, DataRowAction.Delete);
