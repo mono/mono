@@ -449,3 +449,10 @@ System.Web/SiteMapNodeCollection.cs
 System.Web/SiteMapProvider.cs
 System.Web/SiteMapProviderCollection.cs
 System.Web/XmlSiteMapProvider.cs
+System.Web.UI/DataSourceControl.cs
+System.Web.UI/DataSourceView.cs
+System.Web.UI/HierarchicalDataSourceView.cs
+System.Web.UI/IDataSource.cs
+System.Web.UI/IHierarchicalDataSource.cs
+System.Web.UI/ListSourceHelper.cs
+System.Web.UI.WebControls/SiteMapDataSourceView.cs

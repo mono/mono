@@ -32,9 +32,11 @@ namespace System.Web {
 				string url = node.Url;
 				if (url != null && url.Length > 0) {
 					
-						url = UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
-						if (UrlUtils.IsRooted (url))
+					
+						if (UrlUtils.IsRelativeUrl (url))
 							url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
+						else
+							url = UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
 						
 						if (FindSiteMapNode (url) != null)
 							throw new InvalidOperationException ();

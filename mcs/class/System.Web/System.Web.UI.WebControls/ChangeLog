@@ -1,3 +1,7 @@
+2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* SiteMapDataSourceView.cs: Implement.
+
 2003-11-07 Jackson Harper <jackson@ximian.com>
 
 	* ImageButton.cs: This is a workaround for bug #49819. It appears

@@ -1,5 +1,11 @@
 2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* SiteMapNode.cs (GetDataSourceView): Implement.
+	* SiteMapProvider.cs: Typo fixing.
+	* XmlSiteMapProvider.cs: We shouldnt resolve here.
+	
+2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* SiteMap.cs (Init): implement a hack that doesnt need the config
 	stuff. Should do that later.
 	* SiteMapNodeCollection (OnValidate): Fix recursion.

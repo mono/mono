@@ -1,3 +1,12 @@
+2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* DataSourceView.cs:
+	* IDataSource.cs:
+	* ListSourceHelper.cs:
+	* DataSourceControl.cs:
+	* HierarchicalDataSourceView.cs:
+	* IHierarchicalDataSource.cs: Move v2 stuff.
+
 2003-11-07 Jackson Harper <jackson@ximian.com>
 
 	* Control.cs (ResolveUrl): Special case for urls that consist of

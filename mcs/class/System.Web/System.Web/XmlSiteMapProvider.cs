@@ -94,13 +94,6 @@ namespace System.Web {
 					}
 				}
 				
-				if (url != null && url.Length > 0 && UrlUtils.IsRelativeUrl (url)) {
-					if (url [0] != '~')
-						url = HttpRuntime.AppDomainAppVirtualPath + '/' + url;
-					else
-						url = UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
-				}
-				
 				SiteMapNode node = new SiteMapNode (this, url, title, description,
 					ArrayList.ReadOnly (keywordsList), ArrayList.ReadOnly (rolesList),
 					null); // TODO what do they want for attributes

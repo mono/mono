@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace System.Web {
 	public class SiteMapNode : IHierarchyData, INavigateUIData {
@@ -35,7 +36,10 @@ namespace System.Web {
 			this.attributes = attributes;
 		}
 
-		//public SiteMapDataSourceView GetDataSourceView();
+		public SiteMapDataSourceView GetDataSourceView ()
+		{
+			return new SiteMapDataSourceView (this);
+		}
 		
 		public override string ToString()
 		{
