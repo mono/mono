@@ -251,6 +251,15 @@ Added delegates. All delegates in System.Windows.Forms done
 * ColumnClickEventArgs.cs
 * Fully implmented.
 
+2002-5-31 DennisHayes <dennish@raytek.com>
+* Minor formating in lots of files
+
+2002-5-31 DennisHayes <dennish@raytek.com>
+* ItemChangedEventHandler.cs
+* InvalidateEventHandler.cs
+* ItemChangedEventHandler.cs
+* added new files
+
 
 
 
