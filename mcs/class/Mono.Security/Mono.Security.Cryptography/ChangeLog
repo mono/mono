@@ -1,3 +1,9 @@
+2004-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS8.cs: Fixed negative Version check.
+	* MD2Managed.cs: Added readonly to static array constants.
+	* MD4Managed.cs: Removed unrequired memory allocation in MD4Transform.
+
 2004-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Added support for truncated, but still valid, RSA

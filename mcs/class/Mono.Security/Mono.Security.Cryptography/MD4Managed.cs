@@ -2,13 +2,13 @@
 // MD4Managed.cs - Message Digest 4 Managed Implementation
 //
 // Author:
-//      Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
-using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography { 
 
@@ -195,7 +195,6 @@ namespace Mono.Security.Cryptography {
 			uint b = state [1];
 			uint c = state [2];
 			uint d = state [3];
-			uint[] x = new uint [16];
 
 			Decode (x, block, index);
 

@@ -2,9 +2,10 @@
 // MD2Managed.cs - Message Digest 2 Managed Implementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2001-2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -26,7 +27,7 @@ namespace Mono.Security.Cryptography {
 		/// Permutation of 0..255 constructed from the digits of pi. It gives a
 		/// "random" nonlinear byte substitution operation.
 		/// </summary>
-		static private byte[] PI_SUBST = {
+		private static readonly byte[] PI_SUBST = {
 			41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6,
 			19, 98, 167, 5, 243, 192, 199, 115, 140, 152, 147, 43, 217, 188,
 			76, 130, 202, 30, 155, 87, 60, 253, 212, 224, 22, 103, 66, 111, 24,

@@ -118,7 +118,7 @@ namespace Mono.Security.Cryptography {
 			public int Version {
 				get { return _version; }
 				set { 
-					if (_version < 0)
+					if (value < 0)
 						throw new ArgumentOutOfRangeException ("negative version");
 					_version = value; 
 				}
