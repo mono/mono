@@ -81,8 +81,9 @@ namespace System.Drawing.Imaging {
 		}
 		
 		[MonoTODO]
+		static ImageFormat PngImageFormat = new ImageFormat(new Guid("33CDFD76-3463-4273-BA28-A7993D11B2DA"));
 		public static ImageFormat Png {
-			get { throw new NotImplementedException (); }
+			get { return PngImageFormat; }
 		}
 		
 		[MonoTODO]

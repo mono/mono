@@ -33,6 +33,7 @@ namespace System.Drawing.Imaging {
 		static ImageCodecInfo() {
 			allCodecs.Add(BMPCodec.CodecInfo);
 			allCodecs.Add(JPEGCodec.CodecInfo);
+			allCodecs.Add(PNGCodec.CodecInfo);
 		}
 
 		internal delegate void DecodeFromStream( Stream stream, InternalImageInfo info);

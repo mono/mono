@@ -1,3 +1,11 @@
+2003-07-22 Alexandre Pigolkine
+	* ImageCodecInfo.cs
+	* ImageFormat.cs
+	* JPEGCodec.cs
+		changes for PNG codec
+		
+	* PNGCodec.cs		added
+	
 2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Metafile.cs: Inherits from image (fix for System.Drawing.Design)

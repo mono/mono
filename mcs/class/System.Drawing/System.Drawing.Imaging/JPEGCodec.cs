@@ -14,6 +14,8 @@ namespace cdeclCallback {
 		internal delegate int MethodIntIntPtr(IntPtr param);
 		internal delegate void MethodVoidIntPtrInt(IntPtr param, int param1);
 		internal delegate int MethodIntIntPtrInt(IntPtr param,int param1);
+		internal delegate void MethodVoidIntPtrIntPtr(IntPtr png_structp,IntPtr png_const_charp);
+		internal delegate void MethodVoidIntPtrIntPtrInt(IntPtr png_structp,IntPtr bytep, int size);
 	}
 }
 #endif
@@ -516,6 +518,7 @@ namespace System.Drawing.Imaging
 			IntPtr bufferPtr = (IntPtr)Marshal.ReadInt32(srcAddr, 0);
 			int bytes = readwriteSize - Marshal.ReadInt32(srcAddr, 4);
 
+			// FIXME: shall we have a buffer as a member variable here ?
 			byte[] result = new byte[readwriteSize];
 			Marshal.Copy(buffer, result, 0, readwriteSize);
 			fs.Write(result, 0, readwriteSize);
@@ -700,7 +703,7 @@ namespace System.Drawing.Imaging
 		}
 
 		internal unsafe bool Encode( Stream stream, InternalImageInfo info) {
-			
+		
 			int bpp = Image.GetPixelFormatSize(info.Format) / 8;
 			if( bpp != 3 && bpp != 4) {
 				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.Format, Image.GetPixelFormatSize(info.Format)));
@@ -766,13 +769,13 @@ namespace System.Drawing.Imaging
 			int src_row_bytes_width = row_width * bpp;
 			JSAMPARRAY inbuf = new JSAMPARRAY(row_bytes_width);
 
-			int inputIndex = info.RawImageBytes.Length - src_row_bytes_width;
+			int outputIndex = info.RawImageBytes.Length - src_row_bytes_width;
 			byte[] buffer = new byte[row_bytes_width];
 			fixed( byte *psrc = info.RawImageBytes, pbuf = buffer) {
 				byte* curSrc = null;
 				byte* curDst = null;
 				while (cinfo.NextScanLine < cinfo.ImageHeight) {
-					curSrc = psrc + inputIndex;
+					curSrc = psrc + outputIndex;
 					curDst = pbuf;
 					for( int i = 0; i < row_width; i++) {
 						*curDst++ = *(curSrc+2);
@@ -781,7 +784,7 @@ namespace System.Drawing.Imaging
 						curSrc += bpp;
 					}
 					Marshal.Copy( buffer, 0, inbuf.JSAMPLE0, row_bytes_width);
-					inputIndex -= src_row_bytes_width;
+					outputIndex -= src_row_bytes_width;
 					jpeg_write_scanlines(cinfo.raw_struct, ref inbuf, 1 /*inbuf.JSAMPLES.Length*/);
 				}
 			}
