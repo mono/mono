@@ -1,3 +1,6 @@
+2002-10-11  Martin Baulig  <martin@gnome.org>
+
+	* gc.c: Don't register/unregister NULL pointers as disappearing links.
 
 Thu Oct 10 14:56:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
