@@ -11,141 +11,139 @@ using System;
 
 namespace MonoTests.System
 {
-	public class BufferTest : TestCase {
-	
-	public BufferTest () : base ("System.Buffer test") {}
-	public BufferTest (string name) : base(name) {}
-
-	protected override void SetUp() 
+	public class BufferTest : TestCase
 	{
 		const int SIZE = 10;
-		byte [] byteArray;   // 8-bits unsigned integer array
-		float [] floatArray;
+		byte [] byteArray  = new byte [SIZE];   // 8-bits unsigned integer array
+		float [] floatArray = new float [SIZE];
 		
-		byteArray = new byte [SIZE];
-		floatArray = new float [SIZE];				
-	}
+		public BufferTest ()
+			: base ("System.Buffer test") {}
+		
+		public BufferTest (string name)
+			: base (name) {}
 
-	protected override void TearDown() {}
+		protected override void SetUp () {}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(BufferTest)); 
+
+		protected override void TearDown () {}
+
+		public static ITest Suite {
+			get { 
+				return new TestSuite (typeof (BufferTest)); 
+			}
 		}
-	}
 
 	
-	public void TestBlockCopy ()
-	{
-		int [] myArray1 = new int [5] {1, 2, 3, 4, 5};
-		int [] myArray2 = new int [10] { 0, 0, 0, 0, 0, 6, 7, 8, 9, 10 };
+		public void TestBlockCopy ()
+		{
+			int [] myArray1 = new int [5] {1, 2, 3, 4, 5};
+			int [] myArray2 = new int [10] { 0, 0, 0, 0, 0, 6, 7, 8, 9, 10 };
 		
-		Buffer.BlockCopy (myarr1, 0, myarr2, 0, 20);
+			Buffer.BlockCopy (myArray1, 0, myArray2, 0, 20);
 		
-		for (i = 0; i < 10; i++) 
-			AssertEquals ("TestBlockCopy Error", i + 1, myArray1 [i]);		
-	}
+			for (int i = 0; i < 10; i++) 
+				AssertEquals ("TestBlockCopy Error", i + 1, myArray1 [i]);		
+		}
 	
 	
-	public void TestByteLength ()
-	{
-		int numBytes;	
-		bool errorThrown = false;
-		floatArray = new float [10];
+		public void TestByteLength ()
+		{
+			int numBytes;	
+			bool errorThrown = false;
+			float [] floatArray = new float [10];
 		
-		try {
-			Buffer.ByteLength (null);	
-		} catch (ArgumentNullException e) {
-			errorThrown = true;
+			try {
+				Buffer.ByteLength (null);	
+			} catch (ArgumentNullException e) {
+				errorThrown = true;
+			}
+			Assert ("TestByteLength: ArgumentNullException not thrown", errorThrown);
+		
+			errorThrown = false;
+		
+			// FIXME: test the case when the ArgumentException is thrown.
+		
+			numBytes = Buffer.ByteLength (floatArray);
+			AssertEquals ("TestByteLength: wrong byteLength", 40, numBytes);
 		}
-		Assert ("TestByteLength: ArgumentNullException not thrown", errorThrown);
 		
-		errorThrown = false;
+		public void TestGetByte () 
+		{
+			Byte [] byteArray;
+			bool errorThrown = false;
+			byteArray = new byte [10];
+			byteArray [5] = 8;
 		
-		// FIXME: test the case when the ArgumentException is thrown.
+			try {
+				Buffer.GetByte (null, 5);
+			} catch (ArgumentNullException e) {
+				errorThrown = true;
+			}
+			Assert ("TestGetByte: ArgumentNullException not thrown",
+				errorThrown);
 		
-		numBytes = Buffer.ByteLength (floatArray);
-		AssertEquals ("TestByteLength: wrong byteLength", 40, numBytes);
-	}
+			errorThrown = false;
 		
-	public void TestGetByte () 
-	{
-		Byte [] byteArray;
-		bool errorThrown = false;
-		byteArray = new byte [10];
-		byteArray [5] = 8;
+			try {
+				Buffer.GetByte (byteArray, -1);
+			} catch (ArgumentOutOfRangeException e) {
+				errorThrown = true;
+			}
+			Assert ("TestGetByte: ArgumentOutOfRangeException (negative index) not implemented",
+				errorThrown);
 		
-		try {
-			Buffer.GetByte (null, 5);
-		} catch (ArgumentNullException e) {
-			errorThrown = true;
+			errorThrown = false;
+		
+			try {
+				Buffer.GetByte (byteArray, 12); 
+			} catch (ArgumentOutOfRangeException e) {
+				errorThrown = true;
+			}
+			Assert ("TestGetByte: ArgumentOutOfRangeException (index bigger/equal than array's size not thrown", errorThrown);
+		
+			errorThrown = false;
+		
+			// FIXME: test the case when the ArgumentException is thrown.
+		
+			AssertEquals ("TestGetByte Error", 8, Buffer.GetByte (byteArray, 5));
 		}
-		Assert ("TestGetByte: ArgumentNullException not thrown",
-		        errorThrown);
-		
-		errorThrown = false;
-		
-		try {
-			Buffer.GetByte (byteArray, -1);
-		} catch (ArgumentOutOfRangeException e) {
-			errorThrown = true;
-		}
-		Assert ("TestGetByte: ArgumentOutOfRangeException (negative index) not implemented",
-		        errorThrown);
-		
-		errorThrown = false;
-		
-		try {
-			Buffer.GetByte (byteArray, 12); 
-		} catch (ArgumentOutOfRangeException e) {
-			errorThrown = true;
-		}
-		Assert ("TestGetByte: ArgumentOutOfRangeException (index bigger/equal than array's size not thrown", errorThrown);
-		
-		errorThrown = false;
-		
-		// FIXME: test the case when the ArgumentException is thrown.
-		
-		AssertEquals ("TestGetByte Error", 8, Buffer.GetByte (byteArray, 5));
-	}
 	
 	
-	public void TestSetByte ()
-	{
-		char foo;
-		foo = 255;
-		bool errorThrown = false;
+		public void TestSetByte ()
+		{
+			bool errorThrown = false;
 		
-		try {
-			Buffer.SetByte (null, 5, 12);
-		} catch (ArgumentNullException e) {
-			errorThown = true;
-		}
-		Assert ("TestSetByte: ArgumentNullException not thrown", errorThrown);
-		errorThrown = false;
+			try {
+				Buffer.SetByte (null, 5, 12);
+			} catch (ArgumentNullException e) {
+				errorThrown = true;
+			}
+			Assert ("TestSetByte: ArgumentNullException not thrown", errorThrown);
+			errorThrown = false;
 		
-		try {
-			Buffer.SetByte (byteArray, -1, 32);
-		} catch (ArgumentOutOfRangeException e) {
-			errorThown = true;
-		}
-		Assert ("TestSetByte: ArgumentOutOfRangeException (case: negative index) not thrown",
-		        errorThrown);
-		errorThrown = false;
+			try {
+				Buffer.SetByte (byteArray, -1, 32);
+			} catch (ArgumentOutOfRangeException e) {
+				errorThrown = true;
+			}
+			Assert ("TestSetByte: ArgumentOutOfRangeException (case: negative index) not thrown",
+				errorThrown);
+			errorThrown = false;
 		
-		try {
-			Buffer.SetByte (byteArray, 12, 43);
-		} catch (ArgumentOutOfRangeException e) {
-			errorThrown = true;
-		}
-		Assert ("TestSetByte: ArgumentOutOfRangeException (case: index bigger/equal than array'size",
-		        errorThrown);
-		errorThrown = false;
+			try {
+				Buffer.SetByte (byteArray, 12, 43);
+			} catch (ArgumentOutOfRangeException e) {
+				errorThrown = true;
+			}
+			Assert ("TestSetByte: ArgumentOutOfRangeException (case: index bigger/equal than array'size",
+				errorThrown);
+			errorThrown = false;
 		
-		// FIXME: test the case when the ArgumentException is thrown
+			// FIXME: test the case when the ArgumentException is thrown
 			
-		Buffer.SetByte (byteArray, 3, (byte) 10);
-		AssertEquals ("TestSetByte", 10, Buffer.GetByte (byteArray, 3));
-	}
+			Buffer.SetByte (byteArray, 3, (byte) 10);
+			AssertEquals ("TestSetByte", 10, Buffer.GetByte (byteArray, 3));
+		}
 	}
 }
