@@ -1,3 +1,9 @@
+2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_icall_wrapper): Add support for vararg
+	icalls.
+	(mono_marshal_get_runtime_invoke): Correctly handle valuetype methods.
+
 2004-07-30  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c, mono-debug.c, mono-debug-debugger.c:
