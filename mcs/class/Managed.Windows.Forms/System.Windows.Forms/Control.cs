@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.31 $
+// $Revision: 1.32 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.32  2004/08/17 21:25:12  pbartok
+// - Drawing improvement; don't call UpdateBounds if we are not visible (or
+//   have been minimized)
+//
 // Revision 1.31  2004/08/17 20:25:28  pbartok
 // - Fixed broken handling of default window sizes
 //
@@ -1521,7 +1525,9 @@ namespace System.Windows.Forms
 #endif
 				// Window management
 				case Msg.WM_WINDOWPOSCHANGED: {
-					UpdateBounds();
+					if (XplatUI.IsVisible(m.HWnd)) {
+						UpdateBounds();
+					}
 					DefWndProc(ref m);
 					break;
 				}
