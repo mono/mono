@@ -80,6 +80,7 @@ clean-local:
 	rm -f *.exe
 	rm -f *.dll
 	rm -f *.log
+	rm -f *.mdb
 
 dist-local: dist-default
 

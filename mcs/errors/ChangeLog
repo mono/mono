@@ -1,3 +1,7 @@
+2004-10-05  John Luke  <john.luke@gmail.com>
+
+	* Makefile: add *.mdb to clean target
+
 2004-10-04  John Luke  <john.luke@gmail.com>
 
 	* cs8205.cs: remove, same as cs1624
