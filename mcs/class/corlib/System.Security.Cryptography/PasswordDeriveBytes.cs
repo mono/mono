@@ -164,7 +164,7 @@ public class PasswordDeriveBytes : DeriveBytes {
 				output2 = new byte [output.Length + n.Length];
 				for (int j=0; j < n.Length; j++)
 					output2 [j] = (byte)(n [j]);
-				Array.Copy (output, 0, output2, n.Length, output.Length);
+				Buffer.BlockCopy (output, 0, output2, n.Length, output.Length);
 				// don't update output
 				output2 = hash.ComputeHash (output2);
 			}
@@ -174,7 +174,7 @@ public class PasswordDeriveBytes : DeriveBytes {
 			}
 
 			int l = Math.Min (cb - cpos, output2.Length);
-			Array.Copy (output2, position, result, cpos, l);
+			Buffer.BlockCopy (output2, position, result, cpos, l);
 			cpos += l;
 			position += l;
 			while (position >= output2.Length) {

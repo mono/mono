@@ -175,7 +175,7 @@ namespace System.Security.Cryptography {
 						}
 						byte[] input = _transform.TransformFinalBlock (_waitingBlock, 0, _waitingCount);
 						transformed = input.Length;
-						Array.Copy (input, 0, _transformedBlock, _transformedCount, input.Length);
+						Buffer.BlockCopy (input, 0, _transformedBlock, _transformedCount, input.Length);
 						// zeroize this last block
 						Array.Clear (input, 0, input.Length);
 					}
@@ -262,17 +262,17 @@ namespace System.Security.Cryptography {
 						_stream.Write (multiBlocks, 0, len); 
 						// copy last block into _currentBlock
 						_partialCount = count - multiSize;
-						Array.Copy (buffer, offset + multiSize, _workingBlock, 0, _partialCount);
+						Buffer.BlockCopy (buffer, offset + multiSize, _workingBlock, 0, _partialCount);
 					}
 					else {
-						Array.Copy (buffer, offset, _workingBlock, _partialCount, count);
+						Buffer.BlockCopy (buffer, offset, _workingBlock, _partialCount, count);
 						_partialCount += count;
 					}
 					count = 0; // the last block, if any, is in _workingBlock
 				}
 				else {
 					int len = Math.Min (_transform.InputBlockSize - _partialCount, count);
-					Array.Copy (buffer, bufferPos, _workingBlock, _partialCount, len);
+					Buffer.BlockCopy (buffer, bufferPos, _workingBlock, _partialCount, len);
 					bufferPos += len;
 					_partialCount += len;
 					count -= len;

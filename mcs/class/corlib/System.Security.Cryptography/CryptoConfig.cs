@@ -427,7 +427,7 @@ public class CryptoConfig {
 			long x = Convert.ToInt64 (parts [i]);
 			if (x > 0x7F) {
 				byte[] num = EncodeLongNumber (x);
-				Array.Copy(num, 0, oid, j, num.Length);
+				Buffer.BlockCopy (num, 0, oid, j, num.Length);
 				j += num.Length;
 			}
 			else
@@ -445,13 +445,13 @@ public class CryptoConfig {
 				Locale.GetText ("OID > 127 bytes"));
 			// comment exception and uncomment next 3 lines to remove restriction
 			//byte[] num = EncodeLongNumber (j);
-			//Array.Copy (num, 0, oid, j, num.Length);
+			//Buffer.BlockCopy (num, 0, oid, j, num.Length);
 			//k = num.Length + 1;
 		}
 		else
 			oid2 [1] = Convert.ToByte (j - 2); 
 
-		Array.Copy (oid, k, oid2, k, j - k);
+		Buffer.BlockCopy (oid, k, oid2, k, j - k);
 		return oid2;
 	}
 

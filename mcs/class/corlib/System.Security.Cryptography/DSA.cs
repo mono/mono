@@ -81,7 +81,7 @@ namespace System.Security.Cryptography {
 				byte[] counter = GetNamedParam (se, "PgenCounter");
 				if (counter != null) {
 					byte[] counter4b = new byte [4]; // always 4 bytes
-					Array.Copy (counter, 0, counter4b, 0, counter.Length);
+					Buffer.BlockCopy (counter, 0, counter4b, 0, counter.Length);
 					dsaParams.Counter = BitConverterLE.ToInt32 (counter4b, 0);
 				}
 				ImportParameters (dsaParams);
@@ -137,7 +137,7 @@ namespace System.Security.Cryptography {
 					while (inArr[l-1] == 0x00)
 						l--;
 					byte[] c = new byte [l];
-					Array.Copy (inArr, 0, c, 0, l);
+					Buffer.BlockCopy (inArr, 0, c, 0, l);
 					sb.Append (Convert.ToBase64String (c));
 					sb.Append ("</PgenCounter>");
 				}

@@ -26,21 +26,11 @@ namespace System.Security.Cryptography {
 		private int accPtr;
 		private bool m_disposed;
 
-
-		/// <summary>
-		///  Creates a new instance of the decoder
-		///  with the default transformation mode (IgnoreWhiteSpaces).
-		/// </summary>
 		public FromBase64Transform ()
 			: this (FromBase64TransformMode.IgnoreWhiteSpaces)
 		{
 		}
 
-
-		/// <summary>
-		///  Creates a new instance of the decoder
-		///  with the specified transformation mode.
-		/// </summary>
 		public FromBase64Transform (FromBase64TransformMode mode)
 		{
 			this.mode = mode;
@@ -63,22 +53,10 @@ namespace System.Security.Cryptography {
 			get { return true; }
 		}
 
-		/// <summary>
-		///  Returns the input block size for the Base64 decoder.
-		/// </summary>
-		/// <remarks>
-		///  The input block size for Base64 decoder is always 1 byte.
-		/// </remarks>
 		public int InputBlockSize {
 			get { return 1; }
 		}
 
-		/// <summary>
-		///  Returns the output block size for the Base64 decoder.
-		/// </summary>
-		/// <remarks>
-		///  The value returned by this property is always 3.
-		/// </remarks>
 		public int OutputBlockSize {
 			get { return 3; }
 		}
@@ -222,7 +200,8 @@ namespace System.Security.Cryptography {
 				n = Filter (inputBuffer, inputOffset, inputCount);
 				src = filterBuffer;
 				srcOff = 0;
-			} else {
+			}
+			else {
 				n = inputCount;
 				src = inputBuffer;
 				srcOff = inputOffset;
@@ -233,7 +212,8 @@ namespace System.Security.Cryptography {
 			if (count < 4) {
 				Buffer.BlockCopy (src, srcOff, accumulator, accPtr, n);
 				accPtr = count;
-			} else {
+			}
+			else {
 				byte[] tmpBuff = new byte [count];
 				Buffer.BlockCopy (accumulator, 0, tmpBuff, 0, accPtr);
 				Buffer.BlockCopy (src, srcOff, tmpBuff, accPtr, n);
@@ -258,7 +238,8 @@ namespace System.Security.Cryptography {
 				n = Filter (inputBuffer, inputOffset, inputCount);
 				src = filterBuffer;
 				srcOff = 0;
-			} else {
+			}
+			else {
 				n = inputCount;
 				src = inputBuffer;
 				srcOff = inputOffset;

@@ -1,3 +1,13 @@
+2004-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherMode.cs: Moved XML comments to monodoc.
+	* CryptoConfig.cs: Changed Array.Copy to Buffer.BlockCopy.
+	* CryptoStream.cs: Changed Array.Copy to Buffer.BlockCopy.
+	* DSA.cs: Changed Array.Copy to Buffer.BlockCopy.
+	* ICryptoTransform.cs: Moved XML comments to monodoc.
+	* PasswordDeriveBytes.cs: Changed Array.Copy to Buffer.BlockCopy.
+	* FromBase64Transform.cs: Moved XML comments to monodoc.
+
 2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAOAEPKeyExchangeDeformatter.cs: Fixed wrt completed unit tests.
