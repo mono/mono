@@ -11,7 +11,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
-	[Guid ("")]
+	//[Guid ("")]
 	public interface IRemoteDispatch {
 
 		#region Methods
