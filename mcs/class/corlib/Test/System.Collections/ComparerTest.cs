@@ -42,7 +42,16 @@ namespace MonoTests.System.Collections {
 			Assert(c.Compare (3, 2) > 0);
 
 		}
-			
+
+		[Test]
+		public void Invariant ()
+		{
+			Comparer c = Comparer.DefaultInvariant;
+
+			Assert (c.Compare ("a", "A") > 0);
+		}
+		
+				
 	}
 
 }
