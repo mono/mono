@@ -1,3 +1,7 @@
+2002-03-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* delegate.c (async_invoke_abort): added support for asynchronous exceptions
+
 2002-03-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* delegate.c (async_invoke_thread): support for domains
