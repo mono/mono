@@ -1,7 +1,9 @@
 //
 // delegate.cs: Delegate Handler
 //
-// Author: Ravi Pratap (ravi@ximian.com)
+// Authors:
+//     Ravi Pratap (ravi@ximian.com)
+//     Miguel de Icaza (miguel@ximian.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -183,6 +185,10 @@ namespace Mono.CSharp {
  								  ret_type,		     
  								  param_types);
 
+			//
+			// Define parameters, and count out/ref parameters
+			//
+			int out_params = 0;
 			i = 0;
 			if (Parameters.FixedParameters != null){
 				int top = Parameters.FixedParameters.Length;
@@ -190,9 +196,10 @@ namespace Mono.CSharp {
 				
 				for (; i < top; i++) {
 					p = Parameters.FixedParameters [i];
+					InvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 
-					InvokeBuilder.DefineParameter (
-						i+1, p.Attributes, p.Name);
+					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
+						out_params++;
 				}
 			}
 			if (Parameters.ArrayParameter != null){
@@ -236,15 +243,13 @@ namespace Mono.CSharp {
 				for (i = 0 ; i < top; i++) {
 					p = Parameters.FixedParameters [i];
 
-					BeginInvokeBuilder.DefineParameter (
-						i+1, p.Attributes, p.Name);
+					BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 				}
 			}
 			if (Parameters.ArrayParameter != null){
 				Parameter p = Parameters.ArrayParameter;
 				
-				BeginInvokeBuilder.DefineParameter (
-					i+1, p.Attributes, p.Name);
+				BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 				i++;
 			}
 
@@ -277,31 +282,45 @@ namespace Mono.CSharp {
 						    async_param_types);
 
 			//
-			// EndInvoke
+			// EndInvoke is a bit more interesting, all the parameters labeled as
+			// out or ref have to be duplicated here.
 			//
-			Type [] end_param_types = new Type [1];
-			end_param_types [0] = TypeManager.iasyncresult_type;
 			
-			EndInvokeBuilder = TypeBuilder.DefineMethod ("EndInvoke",
-								     mattr,
-								     cc,
-								     ret_type,
-								     end_param_types);
-			EndInvokeBuilder.DefineParameter (1, ParameterAttributes.None, "result");
-			
+			Type [] end_param_types = new Type [out_params + 1];
+			Parameter [] end_params = new Parameter [out_params + 1];
+			int param = 0; 
+			if (out_params > 0){
+				int top = Parameters.FixedParameters.Length;
+				for (i = 0; i < top; i++){
+					Parameter p = Parameters.FixedParameters [i];
+					if ((p.ModFlags & Parameter.Modifier.ISBYREF) == 0)
+						continue;
+
+					end_param_types [param] = param_types [i];
+					end_params [param] = p;
+					param++;
+				}
+			}
+			end_param_types [out_params] = TypeManager.iasyncresult_type;
+			end_params [out_params] = new Parameter (TypeManager.system_iasyncresult_expr, "result", Parameter.Modifier.NONE, null);
+
+			//
+			// Create method, define parameters, register parameters with type system
+			//
+			EndInvokeBuilder = TypeBuilder.DefineMethod ("EndInvoke", mattr, cc, ret_type, end_param_types);
 			EndInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
-			Parameter [] end_params = new Parameter [1];
-			end_params [0] = new Parameter (
-				TypeManager.system_iasyncresult_expr, "result",
-							Parameter.Modifier.NONE, null);
+			//
+			// EndInvoke: Label the parameters
+			//
+			EndInvokeBuilder.DefineParameter (out_params + 1, ParameterAttributes.None, "result");
+			for (i = 0; i < end_params.Length-1; i++){
+				EndInvokeBuilder.DefineParameter (i + 1, end_params [i].Attributes, end_params [i].Name);
+			}
 
 			TypeManager.RegisterMethod (
 				EndInvokeBuilder, new InternalParameters (
-					container,
-					new Parameters (
-						end_params, null, Location)),
-						    end_param_types);
+					container, new Parameters (end_params, null, Location)), end_param_types);
 
 			return true;
 		}
