@@ -1,3 +1,9 @@
+
+Wed Apr 17 18:36:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* timed-thread.c: avoid race condition when setting the thread to
+	detached.
+
 2002-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* jit.h: to more #include lines to avoid breaking compilation
