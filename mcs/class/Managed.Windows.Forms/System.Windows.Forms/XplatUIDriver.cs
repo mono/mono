@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.19  2004/08/23 19:39:30  pbartok
+// - Added method to move mouse cursor
+//
 // Revision 1.18  2004/08/21 20:51:27  pbartok
 // - Added method to get default display size
 //
@@ -182,6 +185,7 @@ namespace System.Windows.Forms {
 		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
 
 		internal abstract void GetCursorPos(IntPtr handle, out int x, out int y);
+		internal abstract void SetCursorPos(IntPtr handle, int x, int y);
 		internal abstract void ScreenToClient(IntPtr handle, ref int x, ref int y);
 
 		internal abstract void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd);

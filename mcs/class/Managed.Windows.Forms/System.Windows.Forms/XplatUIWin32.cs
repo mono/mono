@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.27 $
+// $Revision: 1.28 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.28  2004/08/23 19:39:30  pbartok
+// - Added method to move mouse cursor
+//
 // Revision 1.27  2004/08/21 20:51:27  pbartok
 // - Added method to get default display size
 //
@@ -984,6 +987,10 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override void SetCursorPos(IntPtr handle, int x, int y) {
+			Win32SetCursorPos(x, y);
+		}
+
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
 			POINT	pt;
 
@@ -1007,7 +1014,6 @@ namespace System.Windows.Forms {
 
 			x = pnt.x;
 			y = pnt.y;
-			
 		}
 
 		internal override void SendAsyncMethod (AsyncMethodData method)
@@ -1117,6 +1123,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetCursorPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32GetCursorPos(out POINT lpPoint);
+
+		[DllImport ("user32.dll", EntryPoint="SetCursorPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32SetCursorPos(int x, int y);
 
 		[DllImport ("user32.dll", EntryPoint="GetWindowPlacement", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
