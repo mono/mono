@@ -140,6 +140,7 @@ namespace System.Web.Mail {
 	    string boundary = MailUtil.GenerateBoundary();
 		
 	    // set the Content-Type header to multipart/mixed
+	    string bodyContentType = msg.Header.ContentType;
 	    msg.Header.ContentType = 
 		String.Format( "multipart/mixed;\r\n   boundary={0}" , boundary );
 		
@@ -151,7 +152,7 @@ namespace System.Web.Mail {
 	    smtp.WriteBoundary( boundary );
 		
 	    MailHeader partHeader = new MailHeader();
-	    partHeader.ContentType = "text/plain";
+	    partHeader.ContentType = bodyContentType;
 		
 	    smtp.WriteHeader( partHeader );
 	    	
