@@ -226,7 +226,9 @@ DumpSignedXml (s);
 		// see README
 		byte[] key = Encoding.ASCII.GetBytes ("test");	
 
-		foreach (FileInfo fi in new DirectoryInfo ("phaos-xmldsig-three").GetFiles ("signature-*.xml")) {
+		// some documents references other documents in the directory
+		Directory.SetCurrentDirectory ("phaos-xmldsig-three");
+		foreach (FileInfo fi in new DirectoryInfo (".").GetFiles ("signature-*.xml")) {
 			if ((fi.Name.IndexOf ("exclusive") >= 0) && (!exc14n)) {
 				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll cannot validate exclusive-c14n.");
 				skip++;
@@ -237,17 +239,6 @@ DumpSignedXml (s);
 				skip++;
 				continue;
 			}
-			// <Manifest> isn't supported by the Fx
-			if ((fi.Name.IndexOf ("manifest") >= 0) ||
-			    (fi.Name == "signature-big.xml") ||
-			    (fi.Name == "signature-rsa-detached-b64-transform.xml") ||
-			    (fi.Name == "signature-rsa-detached-xpath-transform.xml") ||
-			    (fi.Name == "signature-rsa-detached-xslt-transform.xml") ||
-			    (fi.Name == "signature-rsa-detached-xslt-transform-retrieval-method.xml")) {
-				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll doesn't support <Manifest>.");
-				skip++;
-				continue;
-			}
 			if (fi.Name.IndexOf ("hmac") >= 0) {
 				Symmetric (fi.FullName, key);
 			}
@@ -255,6 +246,8 @@ DumpSignedXml (s);
 				Asymmetric (fi.FullName);
 			}
 		}
+		// return home before next tests
+		Directory.SetCurrentDirectory ("..");
 	}
 
 	// dump methods under construction ;-)
