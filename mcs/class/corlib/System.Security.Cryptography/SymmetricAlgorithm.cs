@@ -114,13 +114,12 @@ namespace System.Security.Cryptography {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("tried setting initial vector to null");
+					throw new ArgumentNullException ("IV");
 					
-				if (value.Length * 8 != this.BlockSizeValue)
-					throw new CryptographicException ("IV length must match block size");
-				
-				this.IVValue = new byte [value.Length];
-				Array.Copy (value, 0, this.IVValue, 0, value.Length);
+				if ((value.Length << 3) > this.BlockSizeValue)
+					throw new CryptographicException ("IV length cannot be larger than block size");
+
+				this.IVValue = (byte[]) value.Clone ();
 			}
 		}
 
@@ -136,14 +135,14 @@ namespace System.Security.Cryptography {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("tried setting key to null");
+					throw new ArgumentNullException ("Key");
 
-				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, value.Length * 8))
+				int length = (value.Length << 3);
+				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, length))
 					throw new CryptographicException ("key size not supported by algorithm");
 
-				this.KeySizeValue = value.Length * 8;
-				this.KeyValue = new byte [value.Length];
-				Array.Copy (value, 0, this.KeyValue, 0, value.Length);
+				this.KeySizeValue = length;
+				this.KeyValue = (byte[]) value.Clone ();
 			}
 		}
 		

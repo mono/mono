@@ -5,6 +5,9 @@
 	container. PersistKeyInCsp default value also changes if a 
 	CspParameters is supplied (or not) to the constructor.
 	* RSACryptoServiceProvider.cs: Same fixes as DSA.
+	* SymmetricAlgorithm.cs: Reintroduced the patch from 2003-08-24 to fix
+	IV length exception for stream ciphers (e.g. RC4). I overwrote it by
+	accident some time ago :(
 
 2004-02-08  Sebastien Pouliot  <sebastien@ximian.com>
 
