@@ -1,4 +1,8 @@
 
+Fri May 2 18:36:45 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: temporarily work around two bugs for this release.
+
 Fri May 2 17:37:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: avoid linking libmono with GMODULE_LIBS, because
