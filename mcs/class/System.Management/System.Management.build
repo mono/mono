@@ -12,6 +12,7 @@
 			<arg value="/noconfig"/>
 			<arg value="/debug"/>
 			<arg value="/r:System.dll"/>
+			<arg value="/r:System.Configuration.Install.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
