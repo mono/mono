@@ -1,3 +1,7 @@
+2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_test.dll.sources: Add System.Reflection/MethodInfoTest.
+
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib_test.dll.sources: Add System.Reflection/ParameterInfoTest.
