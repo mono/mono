@@ -1,3 +1,10 @@
+2005-02-17  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* mini.h: Moved MONO_EXCEPTION_* enum to metadata/class-internals.h so
+	it can be reused for MonoClass.
+	* mini.c: Renamed MONO_EXCEPTION_SECURITY to MONO_EXCEPTION_SECURITY
+	_LINKDEMAND.
+
 2005-02-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mini.c: Fixed 2 cases where I sent a MonoMethod to managed code 
