@@ -161,7 +161,7 @@ namespace System
 				throw new MissingMethodException ("Constructor not found");
 			}
 
-			if (activationAttributes != null && activationAttributes.Length > 0) {
+			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
 				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
 				if (newOb != null)
 					return ctor.Invoke (newOb, args);
@@ -211,7 +211,7 @@ namespace System
 				throw new MissingMethodException ("Constructor not found");
 			}
 
-			if (activationAttributes != null && activationAttributes.Length > 0) {
+			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
 				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
 				if (newOb != null)
 					return ctor.Invoke (newOb, bindingAttr, binder, args, culture);

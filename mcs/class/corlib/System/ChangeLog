@@ -1,5 +1,10 @@
 2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AppDomain.cs: Added null argument check in Load().
+	* Activator.cs: fixed bug #39926.
+
+2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Enum.cs: fixed bugs #41522 and #42879.
 
 2003-05-12  Zoltan Varga  <vargaz@freemail.hu>

@@ -467,6 +467,9 @@ namespace System {
 
 		public Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
+			if (assemblyRef == null)
+				throw new ArgumentNullException ("assemblyRef");
+
 			return LoadAssembly (assemblyRef, assemblySecurity);
 		}
 
