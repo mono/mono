@@ -30,6 +30,7 @@ namespace System.Web.Services.Protocols
 		
 		public override void ProcessRequest (HttpContext context)
 		{
+			Context = context;
 			string name = context.Request.PathInfo;
 			if (name.StartsWith ("/")) name = name.Substring (1);
 			

@@ -10,6 +10,7 @@
 
 using System;
 using System.Reflection;
+using System.Web;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols 
@@ -17,6 +18,8 @@ namespace System.Web.Services.Protocols
 	internal class WebServiceHandler: IHttpHandler 
 	{
 		Type _type;
+		HttpContext _context;
+
 		
 		public WebServiceHandler (Type type)
 		{
@@ -33,13 +36,19 @@ namespace System.Web.Services.Protocols
 			get { return false; }
 		}
 
+		protected HttpContext Context {
+			set { _context = value; }
+		}
+
 		public virtual void ProcessRequest (HttpContext context)
 		{
 		}
 		
 		protected object CreateServerInstance ()
 		{
-			return Activator.CreateInstance (ServiceType);
+			WebService ws = (WebService) Activator.CreateInstance (ServiceType);
+			ws.SetContext (_context);
+			return ws;
 		}
 
 		[MonoTODO]

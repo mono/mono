@@ -1,3 +1,12 @@
+2004-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs:
+	* HttpSimpleWebServiceHandler.cs: set
+	base.Context property.
+
+	* WebServiceHandler.cs: added set_Context and set the context for the
+	WebService when creating the instance.
+
 2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapDocumentationHandler.cs: Added support for DISCO file generation.

@@ -38,6 +38,7 @@ namespace System.Web.Services.Protocols
 
 		public override void ProcessRequest (HttpContext context)
 		{
+			Context = context;
 			SoapServerMessage requestMessage = null;
 			SoapServerMessage responseMessage = null;
 

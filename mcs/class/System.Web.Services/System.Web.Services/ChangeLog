@@ -1,3 +1,7 @@
+2004-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebService.cs: added SetContext ().
+
 2003-02-25  Dave Bettin <dave@opendotnet.com>
 	* WebService.cs:
 		Changed private application to HttpContext
