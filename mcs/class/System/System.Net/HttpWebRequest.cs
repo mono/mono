@@ -772,14 +772,14 @@ namespace System.Net
 			}
 			
 			writeStream = stream;
+			SendRequestHeaders ();
+
 			haveRequest = true;
 			if (asyncWrite != null) {
 				asyncWrite.SetCompleted (false, stream);
 				asyncWrite.DoCallback ();
 				asyncWrite = null;
 			}
-
-			SendRequestHeaders ();
 		}
 
 		internal void SetResponseError (WebExceptionStatus status, Exception e)

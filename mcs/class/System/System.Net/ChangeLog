@@ -1,3 +1,10 @@
+2003-06-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpWebRequest.cs: SetWriteStream(): SendRequestHeaders should be called
+	  before asyncWrite.SetCompleted, to make sure that the waiting thread
+	  does not start to send more information before SendRequestHeaders has
+	  finished.
+
 2003-06-22  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* WebConnectionStream.cs: Only increment pendingReads if an asynchronous read
