@@ -1,3 +1,12 @@
+2003-02-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c: added support for SignatureHelper tokens, which is
+	needed by the Calli opcode.
+
+	* reflection.h: track changes to SignatureHelper class.
+
+	* metadata.c (mono_metadata_parse_signature): handle dynamic tokens.
+
 2003-02-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: fixed loading assemblies from PrivateBinPath.
