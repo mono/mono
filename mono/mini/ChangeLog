@@ -1,3 +1,8 @@
+
+Tue Aug 10 16:18:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: enable loop by default again and include abcrem in -O=all.
+
 2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* iltests.il: Add some localloc tests.
