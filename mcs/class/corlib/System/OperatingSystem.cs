@@ -59,6 +59,11 @@ namespace System
 			case (int) System.PlatformID.Win32Windows:
 				str = "Microsoft Windows 98";
 				break;
+#if NET_1_1
+			case (int) System.PlatformID.WinCE:
+				str = "Microsoft Windows CE";
+				break;
+#endif
 			case 128 /* PlatformID.Unix */:
 				str = "Unix";
 				break;
@@ -71,5 +76,3 @@ namespace System
 		}
 	}
 }
-
-

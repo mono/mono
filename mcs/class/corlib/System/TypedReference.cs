@@ -38,6 +38,7 @@ namespace System
 		}
 
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public static TypedReference MakeTypedReference (object target, FieldInfo[] flds) 
 		{
 			if (target == null) {
@@ -54,6 +55,7 @@ namespace System
 
 		/* how can we set something in value if it's passed by value? */
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public static void SetTypedReference (TypedReference target, object value) 
 		{
 			if (value == null) {
