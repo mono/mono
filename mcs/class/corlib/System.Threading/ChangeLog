@@ -1,3 +1,7 @@
+2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Thread.cs: implemented CurrentContext.
+
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Thread.cs: made the thread_id for the current thread accesible through

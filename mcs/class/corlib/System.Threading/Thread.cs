@@ -33,13 +33,9 @@ namespace System.Threading
 		 */
 		private IntPtr start_notify;
 		
-		[MonoTODO]
 		public static Context CurrentContext {
 			get {
-				// FIXME -
-				// System.Runtime.Remoting.Context not
-				// yet implemented
-				return(null);
+				return AppDomain.InternalGetContext ();
 			}
 		}
 
