@@ -26,6 +26,8 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
+
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientKeyExchange : HandshakeMessage
@@ -47,7 +49,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			byte[] preMasterSecret = this.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSA rsa = this.Context.Cipher.CertificateRSA();
+			RSA rsa = null;
+			if (this.Context.ServerSettings.ServerKeyExchange) 
+			{
+				// this is the case for "exportable" ciphers
+				rsa = new RSAManaged ();
+				rsa.ImportParameters (this.Context.ServerSettings.RsaParameters);
+			}
+			else 
+			{
+				rsa = this.Context.Cipher.CertificateRSA();
+			}
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);
@@ -72,7 +84,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			byte[] preMasterSecret = this.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSA rsa = this.Context.Cipher.CertificateRSA();
+			RSA rsa = null;
+			if (this.Context.ServerSettings.ServerKeyExchange) 
+			{
+				// this is the case for "exportable" ciphers
+				rsa = new RSAManaged ();
+				rsa.ImportParameters (this.Context.ServerSettings.RsaParameters);
+			}
+			else 
+			{
+				rsa = this.Context.Cipher.CertificateRSA();
+			}
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);
