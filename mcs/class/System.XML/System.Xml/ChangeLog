@@ -1,3 +1,9 @@
+2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* DTDValidatingReader.cs : Replaced entity should not treat whitespaces
+	  as significant.
+	* XmlNode.cs : Removed extraneous MonoTODOs.
+
 2003-11-17  Jackson Harper  <jackson@ximian.com>
 
 	* XPathEditor.cs: .net 1.2 only

@@ -303,7 +303,6 @@ namespace Mono.Xml
 		private bool ReadContent ()
 		{
 			if (nextEntityReader != null) {
-				nextMaybeSignificantWhitespace = true;
 				if (DTD == null || DTD.EntityDecls [reader.Name] == null)
 					throw new XmlException ("Entity '" + reader.Name + "' was not declared.");
 				entityReaderStack.Push (reader);

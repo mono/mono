@@ -615,7 +615,6 @@ namespace System.Xml
 			return SelectNodes (xpath, null);
 		}
 
-		[MonoTODO ("return nodes in document order")]
 		public XmlNodeList SelectNodes (string xpath, XmlNamespaceManager nsmgr)
 		{
 			XPathNavigator nav = CreateNavigator ();
@@ -636,7 +635,6 @@ namespace System.Xml
 			return SelectSingleNode (xpath, null);
 		}
 
-		[MonoTODO ("return node in document order")]
 		public XmlNode SelectSingleNode (string xpath, XmlNamespaceManager nsmgr)
 		{
 			XPathNavigator nav = CreateNavigator ();
@@ -665,7 +663,6 @@ namespace System.Xml
 
 		// It parses this and all the ancestor elements,
 		// find 'xmlns' declarations, stores and then return them.
-		// TODO: tests
 		internal XmlNamespaceManager ConstructNamespaceManager ()
 		{
 			XmlDocument doc = this is XmlDocument ? (XmlDocument)this : this.OwnerDocument;
