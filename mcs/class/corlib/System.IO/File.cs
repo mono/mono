@@ -226,7 +226,7 @@ namespace System.IO
 			if (!MonoIO.Exists (src, out error))
 				throw new FileNotFoundException (src + " does not exist");
 			if (MonoIO.ExistsDirectory (dest, out error))
-					throw new ArgumentException(dest + " is a directory");	
+					throw new IOException (dest + " is a directory");	
 
 			string DirName;
 			DirName = Path.GetDirectoryName(src);

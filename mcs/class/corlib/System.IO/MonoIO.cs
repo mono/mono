@@ -145,6 +145,11 @@ namespace System.IO
 		{
 			FileAttributes attrs = GetFileAttributes (path,
 								  out error);
+								  
+			// Actually, we are looking for a directory, not a file
+			if (error == MonoIOError.ERROR_FILE_NOT_FOUND)
+				error = MonoIOError.ERROR_PATH_NOT_FOUND;
+				
 			if (attrs == InvalidFileAttributes)
 				return false;
 
