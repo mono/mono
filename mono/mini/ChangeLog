@@ -1,3 +1,6 @@
+2003-12-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Add workaround for bug #51126.
 
 Sun Dec 21 19:53:16 CET 2003 Paolo Molaro <lupus@ximian.com>
 
