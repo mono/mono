@@ -1,3 +1,7 @@
+2003-12-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (mono_main): Make corlib-out-of-sync message more 
+	descriptive. Also remove verify_corlib call.
 
 Wed Dec 17 15:31:41 CET 2003 Paolo Molaro <lupus@ximian.com>
 
