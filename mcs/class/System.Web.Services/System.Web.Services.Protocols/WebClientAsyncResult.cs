@@ -7,6 +7,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Net;
 using System.Threading;
 
 namespace System.Web.Services.Protocols {
@@ -14,10 +15,27 @@ namespace System.Web.Services.Protocols {
 
 		#region Fields
 
-		object asyncState;
 		WaitHandle waitHandle;
 
+		WebClientProtocol protocol;
+		WebRequest request;
+		AsyncCallback callback;
+		object asyncState;
+
 		#endregion // Fields
+
+		#region Constructors 
+
+		[MonoTODO ("Figure out what this does.")]
+		internal WebClientAsyncResult (WebClientProtocol protocol, object x, WebRequest request, AsyncCallback callback, object asyncState, int y)
+		{
+			this.protocol = protocol;
+			this.request = request;
+			this.callback = callback; 
+			this.asyncState = asyncState;
+		}
+
+		#endregion // Constructors
 
 		#region Properties
 
@@ -43,10 +61,9 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		public void Abort ()
 		{
-			throw new NotImplementedException ();
+			request.Abort ();
 		}
 
 		#endregion // Methods

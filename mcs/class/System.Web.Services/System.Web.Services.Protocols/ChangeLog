@@ -1,3 +1,14 @@
+2002-07-25  Tim Coleman <tim@timcoleman.com>
+	* SoapClientMethod.cs:
+	* SoapServerProtocol.cs:
+		Add new internal classes as discovered.
+	* SoapClientMessage.cs:
+	* SoapMessage.cs:
+	* SoapServerMessage.cs:
+	* WebClientAsyncResult.cs:
+		Add internal constructor, as found on class
+		status page; modify some properties.
+
 2002-07-23  Tim Coleman <tim@timcoleman.com>
 	* SoapException.cs: modified constructors to
 		call base class correctly.

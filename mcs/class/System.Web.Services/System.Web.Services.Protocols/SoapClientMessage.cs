@@ -12,6 +12,25 @@ using System.Web.Services;
 namespace System.Web.Services.Protocols {
 	public sealed class SoapClientMessage : SoapMessage {
 
+		#region Fields
+
+		SoapHttpClientProtocol client;
+		SoapClientMethod clientMethod;
+		string url;
+
+
+		#region Constructors
+		
+		[MonoTODO ("Determine what calls this constructor.")]
+		internal SoapClientMessage (SoapHttpClientProtocol client, SoapClientMethod clientMethod, string url)
+		{
+			this.client = client;
+			this.url = url;
+			this.clientMethod = clientMethod;
+		}
+
+		#endregion 
+
 		#region Properties
 
 		public override string Action {
@@ -20,8 +39,7 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public SoapHttpClientProtocol Client {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return client; }
 		}
 
 		public override LogicalMethodInfo MethodInfo {
@@ -35,8 +53,7 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public override string Url {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return url; }
 		}
 
 		#endregion // Properties

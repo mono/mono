@@ -19,6 +19,16 @@ namespace System.Web.Services.Protocols {
 		bool oneWay;
 		object server;
 		string url;
+		SoapServerProtocol protocol;
+
+		#endregion
+
+		#region Constructors
+
+		[MonoTODO ("Determine what this constructor does.")]
+		internal SoapServerMessage (SoapServerProtocol protocol)
+		{
+		}
 
 		#endregion
 

@@ -22,6 +22,14 @@ namespace System.Web.Services.Protocols {
 
 		#endregion // Fields
 
+		#region Constructors
+
+		internal SoapMessage ()
+		{
+		}
+
+		#endregion
+
 		#region Properties
 
 		public abstract string Action {
