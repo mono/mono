@@ -31,7 +31,6 @@ namespace System.Web.Hosting
 		public SimpleWorkerRequest (string Page, string Query, TextWriter Output)
 		{
 			_Page = Page;
-			ParsePathInfo ();
 
 			_Query = Query;
 			AppDomain current = AppDomain.CurrentDomain;
@@ -55,6 +54,8 @@ namespace System.Web.Hosting
 				throw new HttpException ("Invalid app domain");
 
 			_HasInstallInfo = true;
+
+			ExtractPagePathInfo();
 		}
 
 		public SimpleWorkerRequest (string AppVirtualPath,
@@ -67,12 +68,13 @@ namespace System.Web.Hosting
 				throw new HttpException ("Invalid app domain");
 
 			_Page = Page;
-			ParsePathInfo ();
 			_Query = Query;
 			_AppVirtualPath = AppVirtualPath;
 			_AppPhysicalPath = CheckAndAddSlash (AppPhysicalPath);
 			_Output = Output;
 			_HasInstallInfo = false;
+
+			ExtractPagePathInfo();
 		}
 
 		[MonoTODO("Implement security")]
@@ -119,10 +121,14 @@ namespace System.Web.Hosting
 
 		public override string GetFilePathTranslated ()
 		{
-			if (Path.DirectorySeparatorChar != '/')
-				return _AppPhysicalPath + _Page.Replace ('/', Path.DirectorySeparatorChar);
+                        string page = _Page;
 
-			return _AppPhysicalPath + _Page;
+			if (Path.DirectorySeparatorChar != '/')
+                        {
+                                page = _Page.Replace ('/', Path.DirectorySeparatorChar);
+                        }
+
+			return (Path.Combine (_AppPhysicalPath, page));
 		}
 
 		public override string GetHttpVerbName ()
@@ -258,27 +264,38 @@ namespace System.Web.Hosting
 		// Create's a path string
 		private string CreatePath (bool bIncludePathInfo)
 		{
-			string sPath;
-
-			if ("/" != _AppVirtualPath)
-				sPath = "/" + _Page;
-			else
-				sPath = String.Empty;
+			string sPath = Path.Combine (_AppVirtualPath, _Page);
 
 			if (bIncludePathInfo && null != _PathInfo)
-				return sPath + _PathInfo;
+                        {
+                                sPath = Path.Combine (sPath, _PathInfo);
+                        }
 
 			return sPath;
 		}
 
 		// Parses out the string after / known as the "path info"
-		private void ParsePathInfo ()
+		private void ExtractPagePathInfo ()
 		{
-		/*	int iPos = _Page.LastIndexOf("/");
-			if (iPos >= 0) {
-				_PathInfo = _Page.Substring (iPos);
-				_Page = _Page.Substring (0, iPos);
-			}*/
+                        if (_Page == null || _Page == String.Empty)
+                        {
+                            return;
+                        }
+
+                        string FullPath = GetFilePathTranslated();
+
+                        StringBuilder PathInfo = new StringBuilder();
+
+                        while (!(Directory.Exists (FullPath) || File.Exists (FullPath)))
+                        {
+                            int last = FullPath.LastIndexOf (Path.DirectorySeparatorChar);
+
+                            PathInfo.Insert (0, FullPath.Substring (last));
+                            FullPath = FullPath.Substring (0, last);
+                        }
+
+                        _Page = _Page.Substring (0, _Page.Length - PathInfo.Length);
+                        _PathInfo = PathInfo.ToString();
 		}
 	}
 }

@@ -1,3 +1,14 @@
+2003-06-25  Eric Lindvall <eric@5stops.com>
+
+	* SimpleWorkerRequest.cs: 
+		-adds PATH_INFO support
+		- updates GetFilePathTranslated() to make use of Path.Combine()
+		- gets rid of the null check in GetPathInfo() (we're setting
+		_PathInfo to String.Empty now)
+		- fixed CreatePath() so that it doesn't return String.Empty if
+		  the _AppVirtualPath is not "/" (to match MS runtime -- does
+		  anyone know why it was returning String.Empty?)
+
 2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomainFactory.cs: hacks to work-around our buggy System.Uri.
