@@ -1,3 +1,13 @@
+2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CRL.cs: New. Certificate Revocation List v1/v2 support.
+	* X509Store.cs: New. Managed each individual store (with or
+	without CRL support).
+	* X509StoreManager.cs: New. Certificate Store Manager to access
+	user and machine stores and to merge them when required.
+	* X509Stores.cs: New. Certificate stores group for either the
+	current user or the local machine.
+
 2004-02-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Chain.cs: Added an option to use a pre-built chain (like TLS
