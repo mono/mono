@@ -70,17 +70,14 @@ namespace System.Diagnostics
 
 		private void GetConfigFileSetting ()
 		{
-			// Load up the specified switch
-			IDictionary d = 
-				(IDictionary) DiagnosticsConfiguration.Settings ["switches"];
-			if (d != null) {
-				object o = d [name];
-        try {
-          switchSetting = int.Parse (o.ToString());
-        }
-        catch {
-          switchSetting = 0;
-        }
+			try {
+				
+				// Load up the specified switch
+				IDictionary d = (IDictionary) DiagnosticsConfiguration.Settings ["switches"];
+				if (d != null)
+					switchSetting = int.Parse (d [name].ToString());
+			} catch {
+				switchSetting = 0;
 			}
 		}
 
