@@ -192,6 +192,7 @@ namespace System.Xml
 		// instantiate. It actually returns null by default.
 		public XmlNameTable NameTable {
 			get { return nameTable; }
+			set { nameTable = value; }
 		}
 
 		// LAMESPEC: Apparently, this property should not have a setter.

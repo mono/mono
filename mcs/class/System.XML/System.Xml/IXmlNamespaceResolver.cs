@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections.Specialized;
+using System.Collections;
 using System.Security.Policy;
 using System.Xml.XPath;
 
@@ -38,7 +38,7 @@ namespace System.Xml
 	{
 		XmlNameTable NameTable { get; } 
 
-		StringDictionary GetNamespacesInScope (XmlNamespaceScope scope);
+		IDictionary GetNamespacesInScope (XmlNamespaceScope scope);
 
 		string LookupNamespace (string prefix);  
 

@@ -1,5 +1,21 @@
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* IXmlNamespaceResolver.cs :
+	  Fixed return value of GetNamespacesInScope().
+	* IXmlDataEvidence.cs,
+	  XmlReader.cs,
+	  XmlTextReader.cs,
+	  XmlValidatingReader.cs : fixed Evidence (it is not array anymore).
+	* XmlReader.cs :
+	  Implemented virtual indexers, QuoteChar, and Dispose() (2.0 stuff).
+	* XmlNodeReader.cs,
+	  In net_2_0, indexers vanished from XmlNodeReader.
+	  In net_2_0, overriden QuoteChar vanished.
+	* XmlReaderSettings.cs : set_NameTable is missing.
+	* XmlTextReader.cs : Implemented ProhibitDtd.
+
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlAttributeCollection.cs : In .net 2.0, it became sealed class.
 	* IXmlDataEvidence.cs : not "Evidences" but "Evidence".
 	* XmlInputStream.cs : new csc rejected implicit int->char cast.

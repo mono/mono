@@ -215,6 +215,8 @@ namespace System.Xml
 			}
 		}
 
+#if NET_2_0
+#else
 		public override string this [int i] {
 			get { return GetAttribute (i); }
 		}
@@ -226,6 +228,7 @@ namespace System.Xml
 		public override string this [string name, string namespaceURI] {
 			get { return GetAttribute (name, namespaceURI); }
 		}
+#endif
 
 		public override string LocalName {
 			get {
@@ -321,6 +324,8 @@ namespace System.Xml
 			}
 		}
 
+#if NET_2_0
+#else
 		public override char QuoteChar {
 			get {
 				if (entityReader != null && entityReader.ReadState != ReadState.Initial)
@@ -329,6 +334,7 @@ namespace System.Xml
 				return '"';
 			}
 		}
+#endif
 
 		public override ReadState ReadState {
 			get { return state; }

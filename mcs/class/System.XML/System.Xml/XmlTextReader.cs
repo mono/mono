@@ -188,7 +188,7 @@ namespace System.Xml
 
 #if NET_2_0
 		[MonoTODO]
-		public override Evidence [] Evidence {
+		public override Evidence Evidence {
 			get { return base.Evidence; }
 		}
 #endif
@@ -275,8 +275,6 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-
-		[MonoTODO ("Not documented in .NET SDK")]
 		public bool ProhibitDtd {
 			get { return prohibitDtd; }
 			set { prohibitDtd = value; }
@@ -977,9 +975,8 @@ namespace System.Xml
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
 		private XmlResolver resolver = new XmlUrlResolver ();
 		private bool normalization = false;
-#if NET_2_0
+
 		private bool prohibitDtd = false;
-#endif
 
 		private void Init ()
 		{
@@ -2143,6 +2140,9 @@ namespace System.Xml
 		// the leading '<!DOCTYPE'.
 		private void ReadDoctypeDecl ()
 		{
+			if (prohibitDtd)
+				throw new XmlException (this as IXmlLineInfo,
+					"Document Type Declaration (DTD) is prohibited in this XML.");
 			switch (currentState) {
 			case XmlNodeType.DocumentType:
 			case XmlNodeType.Element:

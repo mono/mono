@@ -46,7 +46,7 @@ namespace System.Xml
 #endif
 	{
 		private StringBuilder readStringBuffer;
-		private Evidence [] evidences;
+		private Evidence evidence;
 #if NET_2_0
 		private XmlReaderSettings settings;
 #endif
@@ -76,8 +76,8 @@ namespace System.Xml
 
 #if NET_2_0
 		[MonoTODO]
-		public virtual Evidence [] Evidence {
-			get { return evidences; }
+		public virtual Evidence Evidence {
+			get { return evidence; }
 		}
 #endif
 
@@ -92,14 +92,25 @@ namespace System.Xml
 
 		public abstract bool IsEmptyElement { get; }
 
-		public abstract string this[int i] { get; }
+#if NET_2_0
+		public virtual string this [int i] {
+			get { return GetAttribute (i); }
+		}
 
-		public abstract string this[string name] { get; }
+		public virtual string this [string name] {
+			get { return GetAttribute (name); }
+		}
 
-		public abstract string this[
-			string localName,
-			string namespaceName]
-		{ get; }
+		public virtual string this [string name, string namespaceURI] {
+			get { return GetAttribute (name, namespaceURI); }
+		}
+#else
+		public abstract string this [int i] { get; }
+
+		public abstract string this [string name] { get; }
+
+		public abstract string this [string localName, string namespaceName] { get; }
+#endif
 
 		public abstract string LocalName { get; }
 
@@ -113,7 +124,13 @@ namespace System.Xml
 
 		public abstract string Prefix { get; }
 
+#if NET_2_0
+		public virtual char QuoteChar {
+			get { return '\"'; }
+		}
+#else
 		public abstract char QuoteChar { get; }
+#endif
 
 		public abstract ReadState ReadState { get; }
 
@@ -143,10 +160,10 @@ namespace System.Xml
 		public abstract void Close ();
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual void Dispose ()
 		{
-			Close ();
+			if (ReadState != ReadState.Closed)
+				Close ();
 		}
 #endif
 

@@ -121,7 +121,7 @@ namespace System.Xml {
 
 #if NET_2_0
 		[MonoTODO]
-		public override Evidence [] Evidence {
+		public override Evidence Evidence {
 			get { throw new NotImplementedException ();
 			}
 		}
