@@ -50,17 +50,20 @@ public class GuidTest : TestCase
 
 	public void TestCtor2 ()
 	{
+		Guid g0 = new Guid ("000102030405060708090a0b0c0d0e0f"); 
 		Guid g1 = new Guid ("00010203-0405-0607-0809-0a0b0c0d0e0f"); 
 		Guid g2 = new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}"); 
 		Guid g3 = new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}");
-		Guid g4;
+		Guid g4 = new Guid ("(00010203-0405-0607-0809-0A0B0C0D0E0F)"); 
 		Guid g5;
 
 		bool exception;
 
+		AssertEquals ("A0", "00010203-0405-0607-0809-0a0b0c0d0e0f", g0.ToString ()); 
 		AssertEquals ("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString ()); 
 		AssertEquals ("A2", "00010203-0405-0607-0809-0a0b0c0d0e0f", g2.ToString ()); 
 		AssertEquals ("A3", "00010203-0405-0607-0809-0a0b0c0d0e0f", g3.ToString ()); 
+		AssertEquals ("A4", "00010203-0405-0607-0809-0a0b0c0d0e0f", g4.ToString ()); 
 
 		try {
 			g4 = new Guid ((string) null);
@@ -79,6 +82,33 @@ public class GuidTest : TestCase
 			exception = true;
 		}
 		Assert ("A5", exception);
+
+		try {
+			g5 = new Guid ("{000102030405060708090A0B0C0D0E0F}");
+			exception = false;
+		}
+		catch (FormatException) {
+			exception = true;
+		}
+		Assert ("A6", exception);
+
+		try {
+			g5 = new Guid ("000102030405-0607-0809-0a0b0c0d0e0f");
+			exception = false;
+		}
+		catch (FormatException) {
+			exception = true;
+		}
+		Assert ("A7", exception);
+
+		try {
+			g5 = new Guid ("(000102030405-0607-0809-0a0b0c0d0e0f}");	// open (, close }
+			exception = false;
+		}
+		catch (FormatException) {
+			exception = true;
+		}
+		Assert ("A8", exception);
 		
 	}
 
