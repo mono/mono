@@ -21,6 +21,7 @@ namespace System.Web.Services.Protocols
 	internal class WebServiceHelper
 	{
 		public const string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
+		static char [] trimChars = { '"', '\'' };
 		
 		public static Encoding GetContentEncoding (string cts, out string content_type)
 		{
@@ -50,6 +51,7 @@ namespace System.Web.Services.Protocols
 				if (body.StartsWith ("charset="))
 				{
 					encoding = body.Substring (8);
+					encoding = encoding.TrimStart (trimChars).TrimEnd (trimChars);
 				}
 			}
 

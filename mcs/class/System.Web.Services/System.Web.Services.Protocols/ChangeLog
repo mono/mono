@@ -1,3 +1,9 @@
+2004-03-25  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* WebServiceHelper.cs: In GetContentEncoding, chop off the single & double
+	  quotes around the encoding name. Patch by George Kodinov. This fixes
+	  bug #55806.
+
 2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs: Set the properties ContentType and 
