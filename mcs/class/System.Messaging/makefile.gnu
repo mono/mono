@@ -4,7 +4,7 @@ TEST_DIR = Test
 LIBRARY = $(topdir)/class/lib/System.Messaging.dll
 
 LIB_LIST = list.unix
-LIB_FLAGS = -r corlib -r System
+LIB_FLAGS = -r corlib -r System -r System.Configuration.Install
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=\
