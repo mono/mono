@@ -4,7 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe ./SqlSharp/sqlsharp.exe secutil.exe cert2spc.exe
+linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe ./SqlSharp/sqlsharp.exe ./security/secutil.exe
 #linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
 monostyle.exe: monostyle.cs
@@ -39,15 +39,13 @@ EnumCheck.exe: EnumCheck.cs EnumCheckAssemblyCollection.cs
 IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSC) $(CSCFLAGS) /out:IFaceDisco.exe IFaceDisco.cs XMLUtil.cs
 
-secutil.exe: secutil.cs
-	$(CSC) $(CSCFLAGS) secutil.cs
-
-cert2spc.exe: cert2spc.cs ASN1.cs
-	$(CSC) $(CSCFLAGS) /out:cert2spc.exe cert2spc.cs ASN1.cs
+./security/secutil.exe: dummy
+	(cd security; make CSC=$(CSC))
 
 clean:
 	(cd corcompare; make clean)
 	(cd SqlSharp; make clean)
+	(cd security; make clean)
 	rm -f *.exe *.pdb *.dbg *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in

@@ -1,3 +1,12 @@
+2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ASN1.cs: Removed - now part of Mono.Security assembly
+	* cert2spc.cs: Moved to /mcs/tools/security
+	* makefile: Removed cert2spc and secutil tools and added reference
+	to makefile inside security directory.
+	* makefile.gnu: Same.
+	* secutil.cs: Moved to /mcs/tools/security
+
 2003/01/20 Nick Drochak <ndrochak@gol.com>
 
 	* makefile: take out type-reflector since it's gone.
