@@ -21,6 +21,8 @@ namespace Mono.Xml.Xsl {
 		private int _depth;		
 		//Ignore nested text nodes
 		private bool _ignoreNestedText;
+		//Attribute value is being outputted flag
+		private bool _inAttribute;
 		
 		public TextOutputter(TextWriter w, bool ignoreNestedText) {
 			_writer = w;
@@ -41,9 +43,13 @@ namespace Mono.Xml.Xsl {
 
 		public override void WriteAttributeString(string prefix, string localName, string nsURI, string value) {}
 
-		public override void WriteStartAttribute(string prefix, string localName, string nsURI) {}
+		public override void WriteStartAttribute(string prefix, string localName, string nsURI) {
+			_inAttribute = true;
+		}
 
-		public override void WriteEndAttribute() {}
+		public override void WriteEndAttribute() {
+			_inAttribute = false;
+		}
 
 		public override void WriteComment(string text) {}
 
@@ -58,7 +64,7 @@ namespace Mono.Xml.Xsl {
 		}
 
 		private void WriteImpl(string text) {
-			if (!_ignoreNestedText || _depth==0) _writer.Write(text);
+			if ((!_ignoreNestedText || _depth==0) && !_inAttribute) _writer.Write(text);
 		}
 
 		public override void Done () {
