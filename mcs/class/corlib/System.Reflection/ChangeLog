@@ -1,5 +1,7 @@
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Module.cs: Add new 2.0 GetMethods and GetFields methods.
+
 	* ParameterInfo.cs: Add GetPseudoCustomAttributes () method.
 
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>

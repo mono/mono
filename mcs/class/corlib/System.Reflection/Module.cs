@@ -176,6 +176,23 @@ namespace System.Reflection {
 
 			return GetGlobalType ().GetMethods ();
 		}
+
+#if NET_2_0
+		public MethodInfo[] GetMethods (BindingFlags flags) {
+			if (IsResource ())
+				return new MethodInfo [0];
+
+			return GetGlobalType ().GetMethods (flags);
+		}
+
+		public FieldInfo[] GetFields (BindingFlags flags) 
+		{
+			if (IsResource ())
+				return new FieldInfo [0];
+
+			return GetGlobalType ().GetFields (flags);
+		}
+#endif
 	
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
