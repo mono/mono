@@ -1300,8 +1300,8 @@ namespace System.Data {
 			{
 				foreach (DataRelation parentRel in _table.ParentRelations)
 				{
-					DataColumn[] childCols = parentRel.ChildKeyConstraint.Columns;
-					DataColumn[] parentCols = parentRel.ChildKeyConstraint.RelatedColumns;
+					DataColumn[] childCols = parentRel.ChildColumns;
+					DataColumn[] parentCols = parentRel.ParentColumns;
 					
 					for (int i = 0; i < parentCols.Length; i++)
 					{
@@ -1315,8 +1315,8 @@ namespace System.Data {
 			}
 			else
 			{
-				DataColumn[] childCols = relation.ChildKeyConstraint.Columns;
-				DataColumn[] parentCols = relation.ChildKeyConstraint.RelatedColumns;
+				DataColumn[] childCols = relation.ChildColumns;
+				DataColumn[] parentCols = relation.ParentColumns;
 					
 				for (int i = 0; i < parentCols.Length; i++)
 				{
