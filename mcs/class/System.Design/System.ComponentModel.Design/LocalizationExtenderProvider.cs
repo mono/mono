@@ -11,6 +11,9 @@ using System.Globalization;
 
 namespace System.ComponentModel.Design
 {
+	[ProvideProperty("Localizable", typeof(object))]
+	[ProvideProperty("Language", typeof(object))]
+	[ProvideProperty("LoadLanguage", typeof(object))]
 	public class LocalizationExtenderProvider : IExtenderProvider,
 	                                            IDisposable
 	{

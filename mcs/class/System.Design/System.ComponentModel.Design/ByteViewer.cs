@@ -11,18 +11,13 @@ using System.Windows.Forms;
 
 namespace System.ComponentModel.Design
 {
+	[DesignTimeVisible(false)]
+	[ToolboxItem(false)]
 	public class ByteViewer : Control
 	{
 		[MonoTODO]
 		public ByteViewer()
 		{
-		}
-
-		public override ISite Site {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]
@@ -33,6 +28,12 @@ namespace System.ComponentModel.Design
 
 		[MonoTODO]
 		public virtual void SaveToFile (string path)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public byte[] GetBytes ()
 		{
 			throw new NotImplementedException();
 		}
