@@ -1,3 +1,9 @@
+2004-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: patch by Yaacov Akiba Slama that fixes 100-continue
+	handling for the case when the same packet also contains the actual
+	[2-5]xx response.
+
 2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpWebRequest.cs: Added missing property.
