@@ -1,5 +1,26 @@
 2004-08-10  Sanjay Gupta <gsanjay@novell.com>
 
+	* FormViewCommandEventArgs.cs:
+	* FormViewCommandEventHandler.cs:
+	* FormViewDeletedEventArgs.cs:
+	* FormViewDeletedEventHandler.cs:
+	* FormViewDeleteEventArgs.cs:
+	* FormViewDeleteEventHandler.cs:
+	* FormViewInsertedEventArgs.cs:
+	* FormViewInsertedEventHandler.cs:
+	* FormViewInsertEventArgs.cs:
+	* FormViewInsertEventHandler.cs:
+	* FormViewModeEventArgs.cs:
+	* FormViewModeEventHandler.cs:
+	* FormViewPageEventArgs.cs:
+	* FormViewPageEventHandler.cs:
+	* FormViewUpdatedEventArgs.cs:
+	* FormViewUpdatedEventHandler.cs:
+	* FormViewUpdateEventArgs.cs:
+	* FormViewUpdateEventHandler.cs: Added new delegates.
+
+2004-08-10  Sanjay Gupta <gsanjay@novell.com>
+
 	* DetailsViewCommandEventArgs.cs:
 	* DetailsViewCommandEventHandler.cs:
 	* DetailsViewDeletedEventArgs.cs:
