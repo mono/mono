@@ -163,7 +163,6 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(CompareMethod.Binary)] 
 			CompareMethod Compare)
 		{
-
 			if (Source == null)
 				throw new ArgumentException("Argument 'Source' can not be null.", "Source");
 			if (Source.Rank > 1)
@@ -193,7 +192,6 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(CompareMethod.Binary)] 
 			CompareMethod Compare)
 		{
-
 			if (Source == null)
 				throw new ArgumentException("Argument 'Source' can not be null.", "Source");
 			if (Source.Rank > 1)
@@ -212,7 +210,7 @@ namespace Microsoft.VisualBasic
 
 			for (int i = 0; i < count; i++)
 			{
-				if (InStr(1, Match, Source[i], Compare) != 0)
+				if (InStr(1, Source[i], Match, Compare) != 0)
 				{
 					//found one more
 					matches[i] = true;
@@ -703,7 +701,10 @@ namespace Microsoft.VisualBasic
 
 			switch (Compare) {
 				case CompareMethod.Text:
-					return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(String1, String2, Start - 1) + 1;
+					return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(
+						String1.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
+						String2.ToLower(System.Globalization.CultureInfo.CurrentCulture)
+						, Start - 1) + 1;
 				case CompareMethod.Binary:
 					return (String1.IndexOf(String2, Start - 1)) + 1;
 				default:
@@ -749,7 +750,10 @@ namespace Microsoft.VisualBasic
                 switch (Compare)
 				{
 					case CompareMethod.Text:
-						index = System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(StringCheck, StringMatch, Start - 1) + 1;
+						index = System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(
+							StringCheck.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
+							StringMatch.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
+							Start - 1) + 1;
 						break;
 					case CompareMethod.Binary:
 						index = StringCheck.IndexOf(StringMatch, Start - 1) + 1;
