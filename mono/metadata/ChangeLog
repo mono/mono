@@ -1,4 +1,9 @@
 
+Wed Dec 18 18:43:47 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: handle nullref constants. Allocate keys for
+	reflection handles with the GC.
+
 Wed Dec 18 11:34:18 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c, threads.h: added mono_thread_get_abort_signal()
