@@ -1,5 +1,14 @@
 2002-08-27  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (mono_debugger_internal_get_symbol_files): Removed, we need
+	to use global variables for this since they're stored in a core file.
+	(mono_debugger_symbol_file_table_generation): New global variable.
+	(mono_debugger_symbol_file_table): New global variable.
+	(mono_debugger_update_symbol_file_table): New global function to update
+	the symbol file table.
+
+2002-08-27  Martin Baulig  <martin@gnome.org>
+
 	* trampoline.c (mono_generic_trampoline_code): New global variable.
 	(arch_create_jit_trampoline): Use the new global variable to store the
 	generic trampoline code instead of using a static one.  This allows the
