@@ -2047,6 +2047,193 @@ namespace CIR {
 				return (ParameterData) rp;
 			}
 		}
+
+		static bool ConversionExists (Type from, Type to)
+		{
+			// FIXME : Need to implement this !
+			return false;
+		}
+		
+		// <summary>
+		//  Determines "better conversion" as specified in 7.4.2.3
+		//  Returns : 1 if a->p is better
+		//            0 if a->q or neither is better 
+		// </summary>
+		static int BetterConversion (Argument a, Type p, Type q)
+		{
+			
+			Type argument_type = a.Expr.Type;
+			Expression argument_expr = a.Expr;
+
+			if (argument_type == null){
+				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
+			}
+
+			if (p == q)
+				return 0;
+
+			if (argument_type == p)
+				return 1;
+
+			if (argument_type == q)
+				return 0;
+
+			// Implicit conversions come here
+
+			//if (ConversionExists (p, q) == true &&
+			//    ConversionExists (q, p) == false)
+			//	return 1;
+
+			//
+			// Now probe whether an implicit constant expression conversion
+			// can be used.
+			//
+			// An implicit constant expression conversion permits the following
+			// conversions:
+			//
+			//    * A constant-expression of type `int' can be converted to type
+			//      sbyte, byute, short, ushort, uint, ulong provided the value of
+			//      of the expression is withing the range of the destination type.
+			//
+			//    * A constant-expression of type long can be converted to type
+			//      ulong, provided the value of the constant expression is not negative
+			//
+			// FIXME: Note that this assumes that constant folding has
+			// taken place.  We dont do constant folding yet.
+			//
+
+			if (argument_type == TypeManager.int32_type && argument_expr is IntLiteral){
+				IntLiteral ei = (IntLiteral) argument_expr;
+				int value = ei.Value;
+				
+				if (p == TypeManager.sbyte_type){
+					if (value >= SByte.MinValue && value <= SByte.MaxValue)
+						return 1;
+				} else if (p == TypeManager.byte_type){
+					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+						return 1;
+				} else if (p == TypeManager.short_type){
+					if (value >= Int16.MinValue && value <= Int16.MaxValue)
+						return 1;
+				} else if (p == TypeManager.ushort_type){
+					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
+						return 1;
+				} else if (p == TypeManager.uint32_type){
+					//
+					// we can optimize this case: a positive int32
+					// always fits on a uint32
+					//
+					if (value >= 0)
+						return 1;
+				} else if (p == TypeManager.uint64_type){
+					//
+					// we can optimize this case: a positive int32
+					// always fits on a uint64
+					//
+					if (value >= 0)
+						return 1;
+				}
+			} else if (argument_type == TypeManager.int64_type && argument_expr is LongLiteral){
+				LongLiteral ll = (LongLiteral) argument_expr;
+				
+				if (p == TypeManager.uint64_type){
+					if (ll.Value > 0)
+						return 1;
+				}
+			}
+			
+			
+			if (p == TypeManager.sbyte_type)
+				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
+				    q == TypeManager.uint32_type || q == TypeManager.uint64_type) 
+					return 1;
+
+			if (p == TypeManager.short_type)
+				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
+				    q == TypeManager.uint64_type)
+					return 1;
+
+			if (p == TypeManager.int32_type)
+				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
+					return 1;
+
+			if (p == TypeManager.int64_type)
+				if (q == TypeManager.uint64_type)
+					return 1;
+
+			return 0;
+		}
+		
+		// <summary>
+		//  Determines "Better function" and returns an integer indicating :
+		//  0 if candidate ain't better
+		//  1 if candidate is better than the current best match
+		// </summary>
+		static int BetterFunction (ArrayList args, MethodBase candidate, MethodBase best)
+		{
+			ParameterData candidate_pd = GetParameterData (candidate);
+			ParameterData best_pd;
+			int argument_count;
+
+			if (args == null)
+				argument_count = 0;
+			else
+				argument_count = args.Count;
+
+			if (candidate_pd.Count == 0 && argument_count == 0)
+				return 1;
+
+			if (best == null) {
+				if (candidate_pd.Count == argument_count) {
+					int x = 0;
+					for (int j = argument_count; j > 0;) {
+						j--;
+						
+						Argument a = (Argument) args [j];
+						
+						x = BetterConversion (a, candidate_pd.ParameterType (j), null);
+						
+						if (x > 0)
+							continue;
+						else
+							break;
+					}
+					
+					if (x > 0)
+						return 1;
+					else
+						return 0;
+					
+				} else
+					return 0;
+			}
+
+			best_pd = GetParameterData (best);
+
+			if (candidate_pd.Count == argument_count && best_pd.Count == argument_count) {
+				int rating1 = 0, rating2 = 0;
+				
+				for (int j = argument_count; j > 0;) {
+					j--;
+					int x, y;
+					
+					Argument a = (Argument) args [j];
+
+					x = BetterConversion (a, candidate_pd.ParameterType (j), best_pd.ParameterType (j));
+					y = BetterConversion (a, best_pd.ParameterType (j), candidate_pd.ParameterType (j));
+
+					rating1 += x;
+					rating2 += y;
+				}
+
+				if (rating1 > rating2)
+					return 1;
+				else
+					return 0;
+			} else
+				return 0;
+			
+		}
 		
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
@@ -2064,60 +2251,27 @@ namespace CIR {
 		public static MethodBase OverloadResolve (MethodGroupExpr me, ArrayList Arguments)
 		{
 			ArrayList afm = new ArrayList ();
-			int best_match = 10000;
 			int best_match_idx = -1;
 			MethodBase method = null;
-			int argument_count;
-
-			if (Arguments == null)
-				argument_count = 0;
-			else
-				argument_count = Arguments.Count;
 
 			for (int i = me.Methods.Length; i > 0; ){
 				i--;
-				MethodBase mb = me.Methods [i];
-				ParameterData pd;
-
-				pd = GetParameterData (mb);
-
-				// If this is the case, we have a method with no args - presumably
-				if (pd == null && argument_count == 0)
-					return me.Methods [0];
-
-				//
-				// Compute how good this is
-				//
-				if (pd.Count == argument_count){
-					int badness = 0;
-					
-					for (int j = argument_count; j > 0;){
-						int x;
-						j--;
-						
-						Argument a = (Argument) Arguments [j];
-
-						x = Badness (a, pd.ParameterType (j));
-
-						if (x < 0){
-							badness = best_match;
-							continue;
-						}
-						
-						badness += x;
-					}
-					
-					if (badness < best_match){
-						best_match = badness;
-						method = me.Methods [i];
-						best_match_idx = i;
-					}
+				MethodBase candidate  = me.Methods [i];
+				int x;
+				
+				x = BetterFunction (Arguments, candidate, method);
+				
+				if (x == 0)
+					continue;
+				else {
+					best_match_idx = i;
+					method = me.Methods [best_match_idx];
 				}
 			}
-
+			
 			if (best_match_idx == -1)
 				return null;
-			
+
 			return method;
 		}
 

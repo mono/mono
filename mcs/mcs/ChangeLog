@@ -1,3 +1,12 @@
+2001-09-21  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation::OverloadResolve): Re-write to conform more to the spec.
+	(Invocation::BetterFunction): Implement.
+	(Invocation::BetterConversion): Implement.
+	(Invocation::ConversionExists): Skeleton, no implementation yet.
+
+	Okay, things work fine !
+
 2001-09-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: declare and load enum_type, delegate_type and
@@ -19,7 +28,7 @@
 	complemented. 
 	(Unary::ResolveOperator): Implement ++, !, ~, ++ and --.
 
-	(Unvocation::Emit): Deal with new Emit convetion.
+	(Invocation::Emit): Deal with new Emit convetion.
 	
 	* All Expression derivatives: Updated their Emit method to return
 	whether they leave values on the stack or not.
