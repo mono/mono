@@ -1,3 +1,7 @@
+2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data_test.dll.sources : added DataRowViewTest.cs.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (BUILT_SOURCES): New.  Build Mono.Data.SqlExpressions/Parser.cs.
