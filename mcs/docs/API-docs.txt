@@ -3,6 +3,17 @@ simply wrong in the microsoft docs. We keep a list of such things
 here so that we can show them to the Microsoft people later on to
 help them fix their documentation and class libraries.
 
+* Guid.Guid(string) ctor:
+  The documentation says this ctor accepts (amongst others) the format
+  "{0xdddddddd,0xdddd,0xdddd,{0xdd},{0xdd},{0xdd},{0xdd},{0xdd},{0xdd},
+  {0xdd},{0xdd}}". As implemented in mscorlib, however, it accepts:
+  "{0xdddddddd,0xdddd,0xdddd,{0xdd,0xdd,0xdd,0xdd,0xdd,0xdd,0xdd,0xdd}.
+
+* Guid.ToString(string format):
+  The documentation specifies that if the format is the empty string or
+  null, this is equivalant to a format "N". In mscorlib, the format "D"
+  is taken here.
+
 * String.Compare (String, Int32, String, Int32, Int32):
 
   The documentation is a bit confusing.
