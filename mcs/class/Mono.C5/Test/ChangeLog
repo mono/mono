@@ -1,3 +1,11 @@
+2004-12-04  Martin Baulig  <martin@ximian.com>
+
+	* hashing/HashTableTests.cs: Disabled some tests which make
+	assumptions about the ordering of elements in the hashtable.  They
+	also do not work on Windows.
+	* hashing/HashBagTests.cs: Likewise.
+	* hashing/HashDictionaryTests.cs: Likewise.
+
 2004-12-03  Martin Baulig  <martin@ximian.com>
 
 	* arrays/SortedArrayTests.cs: Removed the exception message from

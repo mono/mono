@@ -196,6 +196,7 @@ namespace nunit.hashtable.bag
 
 
 		[Test]
+		[Ignore("This is also failing on windows. Martin")]
 		public void RemoveAllCopies()
 		{
 			hashbag.Add(5);hashbag.Add(7);hashbag.Add(5);
@@ -351,6 +352,7 @@ namespace nunit.hashtable.bag
 
 
 		[Test]
+		[Ignore("This is also failing on windows. Martin")]
 		public void CopyTo()
 		{
 			//Note: for small ints the itemhasher is the identity!
