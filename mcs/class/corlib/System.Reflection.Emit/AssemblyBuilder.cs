@@ -185,25 +185,24 @@ namespace System.Reflection.Emit {
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getDataChunk (AssemblyBuilder ab, int type, byte[] buf);
+		private static extern int getPEHeader (AssemblyBuilder ab, byte[] buf, out int data_size);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int getDataChunk (AssemblyBuilder ab, byte[] buf);
 
 		public void Save (string assemblyFileName)
 		{
-			byte[] buf = new byte [1024000];
+			byte[] buf = new byte [2048];
 			FileStream file;
-			int count;
+			int count, data_size;
 
 			file = new FileStream (assemblyFileName, FileMode.Create, FileAccess.Write);
 
-			count = getDataChunk (this, 0, buf);
-			if (count != 0) {
-				file.Write (buf, 0, count);
-				int offset = 1;
-				while ((count = getDataChunk (this, offset, buf)) != 0) {
-					file.Write (buf, 0, count);
-					offset += count;
-				}
-			}
+			count = getPEHeader (this, buf, out data_size);
+			file.Write (buf, 0, count);
+			buf = new byte [data_size];
+			count = getDataChunk (this, buf);
+			file.Write (buf, 0, count);
 
 			file.Close ();
 		}

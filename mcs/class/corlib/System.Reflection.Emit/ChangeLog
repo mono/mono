@@ -1,4 +1,9 @@
 
+Fri Apr 5 15:41:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: simpler protocol wih the runtime to
+	get the assembly data.
+
 Tue Mar 26 20:10:24 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: use FileMode.Create.
