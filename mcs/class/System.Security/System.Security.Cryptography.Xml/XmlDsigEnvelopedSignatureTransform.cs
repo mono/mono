@@ -56,8 +56,8 @@ namespace System.Security.Cryptography.Xml {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						output = new Type [2];
-						input[0] = typeof (System.Xml.XmlDocument);
-						input[1] = typeof (System.Xml.XmlNodeList);
+						output [0] = typeof (System.Xml.XmlDocument);
+						output [1] = typeof (System.Xml.XmlNodeList);
 					}
 				}
 				return output;
@@ -69,7 +69,10 @@ namespace System.Security.Cryptography.Xml {
 			return null; // THIS IS DOCUMENTED AS SUCH
 		}
 
-		[MonoTODO ("Is it really spec-compliant??")]
+		// NOTE: This method never supports the requirements written
+		// in xmldsig spec that says its input is canonicalized before
+		// transforming. This method just removes Signature element.
+		// Canonicalization is done in SignedXml.
 		public override object GetOutput ()
 		{
 			XmlDocument doc = null;

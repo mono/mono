@@ -1,3 +1,20 @@
+2004-03-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SignedXml.cs :
+	  - Use specified (or default) XmlResolver to get external resource,
+	    instead of using WebRequest directly. Also modified it easier.
+	  - ApplyTransform() : Clone only when it is required. Handle 
+	    transformation output other than Stream.
+	  - Even if applicable key was not found in GetHash(), don't throw
+	    crypto exception every time and just return false (MS does it).
+	    Throw an exception only when no key was specified as KeyInfo.
+	* XmlDsigEnvelopedSignatureTransform.cs : Fixed get_OutputTypes which
+	  incorrectly set InputTypes internally.
+	* XmlDsigXPathTransform.cs : Context namespace nodes in loaded 
+	  transform parameter (i.e. <XPath>..</XPath>) should be registered
+	  to XsltContext. Otherwise prefix binding error occurs.
+	  Just filter attribute node, instead of filtering attribute children.
+
 2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Added try/catch in CheckSignatureWithKey to return 

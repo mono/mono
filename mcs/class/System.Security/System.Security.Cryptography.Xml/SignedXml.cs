@@ -28,6 +28,7 @@ namespace System.Security.Cryptography.Xml {
 		private IEnumerator pkEnumerator;
 		private XmlElement signatureElement;
 		private Hashtable hashes;
+		private XmlResolver xmlResolver = new XmlUrlResolver ();
 
 		public SignedXml () 
 		{
@@ -108,12 +109,17 @@ namespace System.Security.Cryptography.Xml {
 
 		private Stream ApplyTransform (Transform t, XmlDocument input) 
 		{
-			XmlDocument doc = (XmlDocument) input.Clone ();
+			// These transformer modify input document, which should
+			// not affect to the input itself.
+			if (t is XmlDsigXPathTransform ||
+				t is XmlDsigEnvelopedSignatureTransform)
+				input = (XmlDocument) input.Clone ();
 
-			t.LoadInput (doc);
+			t.LoadInput (input);
+
 			if (t is XmlDsigEnvelopedSignatureTransform) {
 				// It returns XmlDocument for XmlDocument input.
-				doc = (XmlDocument) t.GetOutput ();
+				XmlDocument doc = (XmlDocument) t.GetOutput ();
 				Transform c14n = GetC14NMethod ();
 				c14n.LoadInput (doc);
 				return (Stream) c14n.GetOutput ();
@@ -122,10 +128,20 @@ namespace System.Security.Cryptography.Xml {
 			object obj = t.GetOutput ();
 			if (obj is Stream)
 				return (Stream) obj;
+			else if (obj is XmlDocument) {
+				MemoryStream ms = new MemoryStream ();
+				XmlTextWriter xtw = new XmlTextWriter (ms, Encoding.UTF8);
+				((XmlDocument) obj).WriteTo (xtw);
+				return ms;
+			}
+			else if (obj == null) {
+				throw new NotImplementedException ("Should not occur. Transform is " + t + ".");
+			}
 			else {
 				// e.g. XmlDsigXPathTransform returns XmlNodeList
-				// TODO - fix
-				return null;
+				Transform c14n = GetC14NMethod ();
+				c14n.LoadInput (obj);
+				return (Stream) c14n.GetOutput ();
 			}
 		}
 
@@ -151,14 +167,12 @@ namespace System.Security.Cryptography.Xml {
 				}
 				else {
 					if (r.Uri.EndsWith (".xml")) {
-#if ! NET_1_0
 						doc.XmlResolver = xmlResolver;
-#endif						
 						doc.Load (r.Uri);
 					}
 					else {
-						WebRequest req = WebRequest.Create (r.Uri);
-						s = req.GetResponse ().GetResponseStream ();
+						if (xmlResolver != null)
+							s = (Stream) xmlResolver.GetEntity (new Uri (r.Uri), null, typeof (Stream));
 					}
 				}
 			}
@@ -252,25 +266,6 @@ namespace System.Security.Cryptography.Xml {
 			return (Stream) t.GetOutput ();
 		}
 
-/*
-		private void CollectDescendants (XmlNode n, ArrayList al)
-		{
-			switch (n.NodeType) {
-			case XmlNodeType.EntityReference:
-				break;
-			default:
-				al.Add (n);
-				break;
-			}
-
-			if (n.Attributes != null)
-				foreach (XmlAttribute a in n.Attributes)
-					al.Add (a);
-			foreach (XmlNode c in n.ChildNodes)
-				CollectDescendants (c, al);
-		}
-*/
-
 		// reuse hash - most document will always use the same hash
 		private HashAlgorithm GetHash (string algorithm) 
 		{
@@ -322,16 +317,18 @@ namespace System.Security.Cryptography.Xml {
 					return null;
 			}
 			else {
+				if (Signature.KeyInfo == null)
+					throw new CryptographicException ("At least one KeyInfo is required.");
 				// no supplied key, iterates all KeyInfo
 				while ((key = GetPublicKey ()) != null) {
 					if (CheckSignatureWithKey (key)) {
 						break;
 					}
 				}
+				pkEnumerator = null;
 				if (key == null)
-					throw new CryptographicException ("No public key found to verify the signature.");
+					return null;
 			}
-
 			// some parts may need to be downloaded
 			// so where doing it last
 			return (CheckReferenceIntegrity () ? key : null);
@@ -522,8 +519,6 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 #if ! NET_1_0
-		private XmlResolver xmlResolver;
-
 		[MonoTODO("property not (yet) used in class")]
 		[ComVisible(false)]
 		public XmlResolver Resolver {

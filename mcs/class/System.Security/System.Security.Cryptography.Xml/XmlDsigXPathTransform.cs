@@ -95,6 +95,13 @@ namespace System.Security.Cryptography.Xml
 			}
 
 			ctx = new XmlDsigXPathContext (doc);
+			foreach (XmlNode n in xpath) {
+				XPathNavigator nav = n.CreateNavigator ();
+				XPathNodeIterator iter = nav.Select ("namespace::*");
+				while (iter.MoveNext ())
+					if (iter.Current.LocalName != "xml")
+						ctx.AddNamespace (iter.Current.LocalName, iter.Current.Value);
+			}
 			return EvaluateMatch (doc, x);
 		}
 
@@ -125,7 +132,8 @@ namespace System.Security.Cryptography.Xml
 				al.Add (n);
 			if (n.Attributes != null)
 				for (int i = 0; i < n.Attributes.Count; i++)
-					EvaluateMatch (n.Attributes [i], exp, al);
+					if (NodeMatches (n.Attributes [i], exp))
+						al.Add (n.Attributes [i]);
 			for (int i = 0; i < n.ChildNodes.Count; i++)
 				EvaluateMatch (n.ChildNodes [i], exp, al);
 		}
