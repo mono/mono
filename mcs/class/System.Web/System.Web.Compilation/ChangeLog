@@ -1,3 +1,11 @@
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs:
+	* CachingCompiler.cs:
+	* WebServiceCompiler.cs: correctly cache Type instead of the assembly
+	for ashx/asmx. Otherwise we need to open the file and check for the
+	class name in there. Thanks to Ben for pointing this out.
+
 2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachingCompiler.cs: don't try to watch for changes in system

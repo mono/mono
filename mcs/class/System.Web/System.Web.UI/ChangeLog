@@ -1,5 +1,11 @@
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* SimpleWebHandlerParser.cs: correctly cache Type instead of the
+	assembly for ashx/asmx. Otherwise we need to open the file and check
+	for the class name in there. Thanks to Ben for pointing this out.
+
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateParser.cs: removed creation of StringWriter.  It's not used.
 	* Control.cs: don't create the EventHandlerList until requested.
 
