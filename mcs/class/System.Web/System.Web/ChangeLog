@@ -1,3 +1,8 @@
+2004-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: patch by Dennis Gervalle that fixes PhysicalPath in
+	presence of rewriting.
+
 2004-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: don't hang if a sync step is aborted. Fixes the

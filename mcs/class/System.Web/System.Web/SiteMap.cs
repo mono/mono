@@ -40,7 +40,7 @@ namespace System.Web {
 		private static void Init ()
 		{
 			if (provider == null) {
-				lock (typeof (SiteMap)) {
+				lock (locker) {
 					if (provider == null) {
 						providers = new SiteMapProviderCollection ();
 						provider = new XmlSiteMapProvider ();
@@ -75,6 +75,7 @@ namespace System.Web {
 		
 		static ISiteMapProvider provider;
 		static SiteMapProviderCollection providers;
+		static object locker = new object ();
 	}
 }
 #endif
