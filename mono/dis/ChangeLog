@@ -1,4 +1,12 @@
+2002-03-08  Nick Drochak  <ndrochak@gol.com>
 
+	* monodis.1: Add info about new parameter
+	* main.c: Add flag to remember if user wants to us mscorlib for
+	non-corilb assembly names
+	* get.c(get_typedef): use mscorlib for assembly name only
+	if user specifies it with a command line parameter. Default
+	behavior is now to use actual assembly name.
+ 
 Tue Mar 5 18:11:01 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c: print index of the methodsemantics table.
