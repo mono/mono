@@ -178,8 +178,7 @@ namespace Microsoft.JScript {
 					Identifier parent = left as Identifier;
 					switch (parent.name) {
 					case "Math": {
-						MathObject math_obj = new MathObject ();
-						Type math_obj_type = math_obj.GetType ();
+						Type math_obj_type = typeof (MathObject);
 						Identifier property = right as Identifier;
 						double v = 0;
 						switch (property.name) {
