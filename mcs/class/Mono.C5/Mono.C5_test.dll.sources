@@ -1,0 +1,16 @@
+heaps/HeapTests.cs
+trees/Bag.cs
+trees/RedBlackTreeSetTests.cs
+trees/Dictionary.cs
+linkedlists/LinkedListTest.cs
+linkedlists/HashedLinkedListTest.cs
+BasesTest.cs
+arrays/HashedArrayListTest.cs
+arrays/ArrayListTest.cs
+arrays/SortedArrayTests.cs
+hashing/HashTableTests.cs
+hashing/HashBagTests.cs
+hashing/HashDictionaryTests.cs
+SupportClasses.cs
+AssemblyInfo.cs
+Sorting.cs
