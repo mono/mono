@@ -30,7 +30,6 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls
@@ -48,7 +47,7 @@ namespace Mono.Security.Protocol.Tls
 		X509CertificateCollection	serverRequestedCertificates);
 	
 	public delegate AsymmetricAlgorithm PrivateKeySelectionCallback(
-		X509Certificate	clientCertificate, 
+		X509Certificate	certificate, 
 		string			targetHost);
 
 	#endregion
@@ -68,6 +67,7 @@ namespace Mono.Security.Protocol.Tls
 		private CertificateValidationCallback	serverCertValidationDelegate;
 		private CertificateSelectionCallback	clientCertSelectionDelegate;
 		private PrivateKeySelectionCallback		privateKeySelectionDelegate;
+
 		private Stream							innerStream;
 		private BufferedStream					inputBuffer;
 		private ClientContext					context;
@@ -392,7 +392,7 @@ namespace Mono.Security.Protocol.Tls
 							!this.context.ConnectionEnd)
 						{
 							// Write close notify							
-							this.protocol.SendAlert(TlsAlertDescription.CloseNotify);
+							this.protocol.SendAlert(AlertDescription.CloseNotify);
 						}
 
 						if (this.ownsStream)
@@ -576,7 +576,7 @@ namespace Mono.Security.Protocol.Tls
 					// Send the buffer as a TLS record
 					
 					byte[] record = this.protocol.EncodeRecord(
-						TlsContentType.ApplicationData, buffer, offset, count);
+						ContentType.ApplicationData, buffer, offset, count);
 				
 					asyncResult = this.innerStream.BeginWrite(
 						record, 0, record.Length, callback, state);
@@ -719,13 +719,13 @@ namespace Mono.Security.Protocol.Tls
 					}
 
 					// Obtain supported cipher suites
-					this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
+					this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
 
 					// Send client hello
-					this.protocol.SendRecord(TlsHandshakeType.ClientHello);
+					this.protocol.SendRecord(HandshakeType.ClientHello);
 
 					// Read server response
-					while (!this.context.HelloDone)
+					while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone)
 					{
 						// Read next record
 						this.protocol.ReceiveRecord();
@@ -734,11 +734,11 @@ namespace Mono.Security.Protocol.Tls
 					// Send client certificate if requested
 					if (this.context.ServerSettings.CertificateRequest)
 					{
-						this.protocol.SendRecord(TlsHandshakeType.Certificate);
+						this.protocol.SendRecord(HandshakeType.Certificate);
 					}
 
 					// Send Client Key Exchange
-					this.protocol.SendRecord(TlsHandshakeType.ClientKeyExchange);
+					this.protocol.SendRecord(HandshakeType.ClientKeyExchange);
 
 					// Now initialize session cipher with the generated keys
 					this.context.Cipher.InitializeCipher();
@@ -746,7 +746,7 @@ namespace Mono.Security.Protocol.Tls
 					// Send certificate verify if requested
 					if (this.context.ServerSettings.CertificateRequest)
 					{
-						this.protocol.SendRecord(TlsHandshakeType.CertificateVerify);
+						this.protocol.SendRecord(HandshakeType.CertificateVerify);
 					}
 
 					// Send Cipher Spec protocol
@@ -806,14 +806,12 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		internal AsymmetricAlgorithm RaisePrivateKeySelection(
-			X509Certificate clientCertificate, 
+			X509Certificate certificate, 
 			string			targetHost)
 		{
 			if (this.PrivateKeySelection != null)
 			{
-				return this.PrivateKeySelection(
-					clientCertificate,
-					targetHost);
+				return this.PrivateKeySelection(certificate, targetHost);
 			}
 
 			return null;

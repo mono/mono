@@ -57,7 +57,7 @@ namespace Mono.Security.Protocol.Tls
 		private short					effectiveKeyBits;
 		private byte					ivSize;
 		private byte					blockSize;
-		private Context		context;
+		private Context					context;
 		private SymmetricAlgorithm		encryptionAlgorithm;
 		private ICryptoTransform		encryptionCipher;
 		private SymmetricAlgorithm		decryptionAlgorithm;
@@ -197,7 +197,10 @@ namespace Mono.Security.Protocol.Tls
 		public Context Context
 		{
 			get { return this.context; }
-			set { this.context = value; }
+			set 
+			{ 
+				this.context = value; 
+			}
 		}
 
 		#endregion
@@ -338,9 +341,9 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Abstract Methods
 
-		public abstract byte[] ComputeClientRecordMAC(TlsContentType contentType, byte[] fragment);
+		public abstract byte[] ComputeClientRecordMAC(ContentType contentType, byte[] fragment);
 
-		public abstract byte[] ComputeServerRecordMAC(TlsContentType contentType, byte[] fragment);
+		public abstract byte[] ComputeServerRecordMAC(ContentType contentType, byte[] fragment);
 
 		public abstract void ComputeMasterSecret(byte[] preMasterSecret);
 
@@ -353,8 +356,8 @@ namespace Mono.Security.Protocol.Tls
 		public byte[] CreatePremasterSecret()
 		{
 			TlsStream		stream	= new TlsStream();
-			ClientContext	context	= (ClientContext)this.Context;
-
+			ClientContext	context = (ClientContext)this.context;
+			
 			// Write protocol version
 			// We need to send here the protocol version used in 
 			// the ClientHello message, that can be different than the actual

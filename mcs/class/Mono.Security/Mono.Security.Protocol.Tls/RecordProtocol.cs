@@ -27,7 +27,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls
@@ -69,7 +68,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Abstract Methods
 
-		public abstract void SendRecord(TlsHandshakeType type);
+		public abstract void SendRecord(HandshakeType type);
 		protected abstract void ProcessHandshakeMessage(TlsStream handMsg);
 				
 		#endregion
@@ -92,9 +91,9 @@ namespace Mono.Security.Protocol.Tls
 				return null;
 			}
 
-			TlsContentType	contentType	= (TlsContentType)type;
-			short			protocol	= this.readShort();
-			short			length		= this.readShort();
+			ContentType	contentType	= (ContentType)type;
+			short		protocol	= this.readShort();
+			short		length		= this.readShort();
 			
 			// Read Record data
 			int		received	= 0;
@@ -108,19 +107,20 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream message = new TlsStream(buffer);
 		
 			// Check that the message has a valid protocol version
-			if (protocol != this.context.Protocol && this.context.ProtocolNegotiated)
+			if (protocol != this.context.Protocol && 
+				this.context.ProtocolNegotiated)
 			{
 				throw this.context.CreateException("Invalid protocol version on message received from server");
 			}
 
 			// Decrypt message contents if needed
-			if (contentType == TlsContentType.Alert && length == 2)
+			if (contentType == ContentType.Alert && length == 2)
 			{
 			}
 			else
 			{
 				if (this.context.IsActual &&
-					contentType != TlsContentType.ChangeCipherSpec)
+					contentType != ContentType.ChangeCipherSpec)
 				{
 					message = this.decryptRecordFragment(
 						contentType, 
@@ -128,26 +128,29 @@ namespace Mono.Security.Protocol.Tls
 				}
 			}
 
+			// Set last handshake message received to None
+			this.context.LastHandshakeMsg = HandshakeType.None;
+			
+			// Process record
 			byte[] result = message.ToArray();
 
-			// Process record
 			switch (contentType)
 			{
-				case TlsContentType.Alert:
+				case ContentType.Alert:
 					this.processAlert(
-						(TlsAlertLevel)message.ReadByte(),
-						(TlsAlertDescription)message.ReadByte());
+						(AlertLevel)message.ReadByte(),
+						(AlertDescription)message.ReadByte());
 					break;
 
-				case TlsContentType.ChangeCipherSpec:
+				case ContentType.ChangeCipherSpec:
 					// Reset sequence numbers
 					this.context.ReadSequenceNumber = 0;
 					break;
 
-				case TlsContentType.ApplicationData:
+				case ContentType.ApplicationData:
 					break;
 
-				case TlsContentType.Handshake:
+				case ContentType.Handshake:
 					while (!message.EOF)
 					{
 						this.ProcessHandshakeMessage(message);
@@ -175,19 +178,19 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		private void processAlert(
-			TlsAlertLevel		alertLevel, 
-			TlsAlertDescription alertDesc)
+			AlertLevel			alertLevel, 
+			AlertDescription	alertDesc)
 		{
 			switch (alertLevel)
 			{
-				case TlsAlertLevel.Fatal:
+				case AlertLevel.Fatal:
 					throw this.context.CreateException(alertLevel, alertDesc);					
 
-				case TlsAlertLevel.Warning:
+				case AlertLevel.Warning:
 				default:
 				switch (alertDesc)
 				{
-					case TlsAlertDescription.CloseNotify:
+					case AlertDescription.CloseNotify:
 						this.context.ConnectionEnd = true;
 						break;
 				}
@@ -199,22 +202,22 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Send Alert Methods
 
-		public void SendAlert(TlsAlertDescription description)
+		public void SendAlert(AlertDescription description)
 		{
-			this.SendAlert(new TlsAlert(this.Context, description));
+			this.SendAlert(new Alert(this.Context, description));
 		}
 
 		public void SendAlert(
-			TlsAlertLevel		level, 
-			TlsAlertDescription description)
+			AlertLevel			level, 
+			AlertDescription	description)
 		{
-			this.SendAlert(new TlsAlert(this.Context, level, description));
+			this.SendAlert(new Alert(this.Context, level, description));
 		}
 
-		public void SendAlert(TlsAlert alert)
+		public void SendAlert(Alert alert)
 		{			
 			// Write record
-			this.SendRecord(TlsContentType.Alert, alert.ToArray());
+			this.SendRecord(ContentType.Alert, alert.ToArray());
 
 			// Update session
 			alert.Update();
@@ -230,7 +233,7 @@ namespace Mono.Security.Protocol.Tls
 		public void SendChangeCipherSpec()
 		{
 			// Send Change Cipher Spec message
-			this.SendRecord(TlsContentType.ChangeCipherSpec, new byte[] {1});
+			this.SendRecord(ContentType.ChangeCipherSpec, new byte[] {1});
 
 			// Reset sequence numbers
 			this.context.WriteSequenceNumber = 0;
@@ -239,10 +242,10 @@ namespace Mono.Security.Protocol.Tls
 			this.context.IsActual = true;
 
 			// Send Finished message
-			this.SendRecord(TlsHandshakeType.Finished);			
+			this.SendRecord(HandshakeType.Finished);			
 		}
 
-		public void SendRecord(TlsContentType contentType, byte[] recordData)
+		public void SendRecord(ContentType contentType, byte[] recordData)
 		{
 			if (this.context.ConnectionEnd)
 			{
@@ -254,7 +257,7 @@ namespace Mono.Security.Protocol.Tls
 			this.innerStream.Write(record, 0, record.Length);
 		}
 
-		public byte[] EncodeRecord(TlsContentType contentType, byte[] recordData)
+		public byte[] EncodeRecord(ContentType contentType, byte[] recordData)
 		{
 			return this.EncodeRecord(
 				contentType,
@@ -264,10 +267,10 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		public byte[] EncodeRecord(
-			TlsContentType	contentType, 
-			byte[]			recordData,
-			int				offset,
-			int				count)
+			ContentType	contentType, 
+			byte[]		recordData,
+			int			offset,
+			int			count)
 		{
 			if (this.context.ConnectionEnd)
 			{
@@ -320,8 +323,8 @@ namespace Mono.Security.Protocol.Tls
 		#region Cryptography Methods
 
 		private byte[] encryptRecordFragment(
-			TlsContentType	contentType, 
-			byte[]			fragment)
+			ContentType	contentType, 
+			byte[]		fragment)
 		{
 			// Calculate message MAC
 			byte[] mac	= this.context.Cipher.ComputeClientRecordMAC(contentType, fragment);
@@ -344,8 +347,8 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		private TlsStream decryptRecordFragment(
-			TlsContentType	contentType, 
-			byte[]			fragment)
+			ContentType	contentType, 
+			byte[]		fragment)
 		{
 			byte[]	dcrFragment	= null;
 			byte[]	dcrMAC		= null;

@@ -29,7 +29,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.Cryptography;
-using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls
@@ -63,8 +62,11 @@ namespace Mono.Security.Protocol.Tls
 		private TlsClientSettings clientSettings;
 
 		// Cipher suite information
-		private CipherSuite					cipher;
-		private TlsCipherSuiteCollection	supportedCiphers;
+		private CipherSuite				cipher;
+		private CipherSuiteCollection	supportedCiphers;
+
+		// Last handshake message received
+		private HandshakeType lastHandshakeMsg;
 
 		// Handshake negotiation state
 		private	HandshakeState handshakeState;
@@ -187,6 +189,12 @@ namespace Mono.Security.Protocol.Tls
 			set { this.isActual = value; }
 		}
 
+		public HandshakeType LastHandshakeMsg
+		{
+			get { return this.lastHandshakeMsg; }
+			set { this.lastHandshakeMsg = value; }
+		}
+
 		public	HandshakeState HandshakeState
 		{
 			get { return this.handshakeState; }
@@ -202,10 +210,14 @@ namespace Mono.Security.Protocol.Tls
 		public CipherSuite Cipher
 		{
 			get { return this.cipher; }
-			set { this.cipher = value; }
+			set 
+			{ 
+				this.cipher			= value; 
+				this.cipher.Context = this;
+			}
 		}
 
-		public TlsCipherSuiteCollection SupportedCiphers
+		public CipherSuiteCollection SupportedCiphers
 		{
 			get { return supportedCiphers; }
 			set { supportedCiphers = value; }
@@ -391,9 +403,11 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Exception Methods
 
-		public TlsException CreateException(TlsAlertLevel alertLevel, TlsAlertDescription alertDesc)
+		public TlsException CreateException(
+			AlertLevel			alertLevel, 
+			AlertDescription	alertDesc)
 		{
-			return CreateException(TlsAlert.GetAlertMessage(alertDesc));
+			return CreateException(Alert.GetAlertMessage(alertDesc));
 		}
 
 		public TlsException CreateException(string format, params object[] args)

@@ -35,7 +35,6 @@ namespace Mono.Security.Protocol.Tls
 
 		private SslClientStream	sslStream;
 		private short			clientHelloProtocol;
-		private bool			helloDone;
 
 		#endregion
 
@@ -44,12 +43,6 @@ namespace Mono.Security.Protocol.Tls
 		public SslClientStream SslStream
 		{
 			get { return this.sslStream; }
-		}
-
-		public bool HelloDone
-		{
-			get { return helloDone; }
-			set { helloDone = value; }
 		}
 
 		public short ClientHelloProtocol
@@ -80,7 +73,6 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Clear()
 		{
-			this.helloDone				= false;
 			this.clientHelloProtocol	= 0;
 
 			base.Clear();

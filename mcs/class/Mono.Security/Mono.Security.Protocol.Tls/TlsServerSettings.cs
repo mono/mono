@@ -37,7 +37,7 @@ namespace Mono.Security.Protocol.Tls
 		private X509CertificateCollection	certificates;
 		private bool						serverKeyExchange;
 		private bool						certificateRequest;
-		private	TlsClientCertificateType[]	certificateTypes;
+		private	ClientCertificateType[]		certificateTypes;
 		private string[]					distinguisedNames;
 		private RSAParameters				rsaParameters;
 		private byte[]						signedParams;		
@@ -48,44 +48,44 @@ namespace Mono.Security.Protocol.Tls
 		
 		public bool	ServerKeyExchange
 		{
-			get { return serverKeyExchange; }
-			set { serverKeyExchange = value; }
+			get { return this.serverKeyExchange; }
+			set { this.serverKeyExchange = value; }
 		}
 
 		public RSAParameters RsaParameters
 		{
-			get { return rsaParameters; }
-			set { rsaParameters = value; }
+			get { return this.rsaParameters; }
+			set { this.rsaParameters = value; }
 		}
 
 		public byte[] SignedParams
 		{
-			get { return signedParams; }
-			set { signedParams = value; }
+			get { return this.signedParams; }
+			set { this.signedParams = value; }
 		}
 
 		public bool	CertificateRequest
 		{
-			get { return certificateRequest; }
-			set { certificateRequest = value; }
+			get { return this.certificateRequest; }
+			set { this.certificateRequest = value; }
 		}
 		
-		public TlsClientCertificateType[] CertificateTypes
+		public ClientCertificateType[] CertificateTypes
 		{
-			get { return certificateTypes; }
-			set { certificateTypes = value; }
+			get { return this.certificateTypes; }
+			set { this.certificateTypes = value; }
 		}
 
 		public string[] DistinguisedNames
 		{
-			get { return distinguisedNames; }
-			set { distinguisedNames = value; }
+			get { return this.distinguisedNames; }
+			set { this.distinguisedNames = value; }
 		}
 		
 		public X509CertificateCollection Certificates
 		{
-			get { return certificates; }
-			set { certificates = value; }
+			get { return this.certificates; }
+			set { this.certificates = value; }
 		}
 
 		#endregion

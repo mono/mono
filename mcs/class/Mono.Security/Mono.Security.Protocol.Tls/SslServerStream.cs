@@ -30,7 +30,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-using Mono.Security.Protocol.Tls.Alerts;
+using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -38,13 +38,15 @@ namespace Mono.Security.Protocol.Tls
 	{
 		#region Internal Events
 		
-		internal event CertificateValidationCallback ClientCertValidation;
+		internal event CertificateValidationCallback	ClientCertValidation;
+		internal event PrivateKeySelectionCallback		PrivateKeySelection;
 		
 		#endregion
 
 		#region Fields
 
 		private CertificateValidationCallback	clientCertValidationDelegate;
+		private PrivateKeySelectionCallback		privateKeySelectionDelegate;
 
 		private ServerRecordProtocol	protocol;
 		private BufferedStream			inputBuffer;
@@ -235,6 +237,20 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		public PrivateKeySelectionCallback PrivateKeyCertSelectionDelegate 
+		{
+			get { return this.privateKeySelectionDelegate; }
+			set 
+			{ 
+				if (this.PrivateKeySelection != null)
+				{
+					this.PrivateKeySelection -= this.privateKeySelectionDelegate;
+				}
+				this.privateKeySelectionDelegate	= value;
+				this.PrivateKeySelection			+= this.privateKeySelectionDelegate;
+			}
+		}
+
 		#endregion
 
 		#region Constructors
@@ -323,7 +339,7 @@ namespace Mono.Security.Protocol.Tls
 						if (this.context.HandshakeState == HandshakeState.Finished)
 						{
 							// Write close notify
-							this.protocol.SendAlert(TlsAlertDescription.CloseNotify);
+							this.protocol.SendAlert(AlertDescription.CloseNotify);
 						}
 
 						if (this.ownsStream)
@@ -503,7 +519,7 @@ namespace Mono.Security.Protocol.Tls
 					// Send the buffer as a TLS record
 					
 					byte[] record = this.protocol.EncodeRecord(
-						TlsContentType.ApplicationData, buffer, offset, count);
+						ContentType.ApplicationData, buffer, offset, count);
 				
 					asyncResult = this.innerStream.BeginWrite(
 						record, 0, record.Length, callback, state);
@@ -638,20 +654,100 @@ namespace Mono.Security.Protocol.Tls
 		{
 			try
 			{
-#warning "Implement server handshake logic"
+				// Reset the context if needed
+				if (this.context.HandshakeState != HandshakeState.None)
+				{
+					this.context.Clear();
+				}
 
 				// Obtain supported cipher suites
-				this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
+				this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
+
+				// Set handshake state
+				this.context.HandshakeState = HandshakeState.Started;
+
+				// Receive Client Hello message
+				this.protocol.ReceiveRecord();
+
+				// If received message is not an ClientHello send a
+				// Fatal Alert
+				if (this.context.LastHandshakeMsg != HandshakeType.ClientHello)
+				{
+					this.protocol.SendAlert(AlertDescription.UnexpectedMessage);
+				}
+
+				// Send ServerHello message
+				this.protocol.SendRecord(HandshakeType.ServerHello);
+
+				// Send ServerCertificate message
+				this.protocol.SendRecord(HandshakeType.Certificate);
+
+				// If the negotiated cipher is a KeyEx cipher send ServerKeyExchange
+				if (this.context.Cipher.ExchangeAlgorithmType == ExchangeAlgorithmType.RsaKeyX)
+				{
+					this.protocol.SendRecord(HandshakeType.ServerKeyExchange);
+					
+				}
+
+				// If the negotiated cipher is a KeyEx cipher or
+				// the client certificate is required send the CertificateRequest message
+				if (this.context.Cipher.ExchangeAlgorithmType == ExchangeAlgorithmType.RsaKeyX ||
+					this.context.ClientCertificateRequired)
+				{
+					this.protocol.SendRecord(HandshakeType.CertificateRequest);
+				}
+
+				// Send ServerHelloDone message
+				this.protocol.SendRecord(HandshakeType.ServerHelloDone);
+
+				// Receive client response, until the Client Finished message
+				// is received
+				while (this.context.LastHandshakeMsg != HandshakeType.Finished)
+				{
+					this.protocol.ReceiveRecord();
+				}
+
+				// Send ChangeCipherSpec and ServerFinished messages
+				this.protocol.SendChangeCipherSpec();
+
+				// The handshake is finished
+				this.context.HandshakeState = HandshakeState.Finished;
 
 				// Clear Key Info
 				this.context.ClearKeyInfo();
-
-				throw new NotSupportedException();
 			}
 			catch
 			{
 				throw new IOException("The authentication or decryption has failed.");
 			}
+		}
+
+		#endregion
+
+		#region Event Methods
+
+		internal virtual bool RaiseClientCertificateValidation(
+			X509Certificate certificate, 
+			int[]			certificateErrors)
+		{
+			if (this.ClientCertValidation != null)
+			{
+				return this.ClientCertValidation(certificate, certificateErrors);
+			}
+
+			return (certificateErrors != null && certificateErrors.Length == 0);
+		}
+
+		internal AsymmetricAlgorithm RaisePrivateKeySelection(
+			X509Certificate certificate, 
+			string			targetHost)
+		{
+			if (this.PrivateKeySelection != null)
+			{
+				return this.PrivateKeySelection(certificate, targetHost);
+			}
+
+			return null;
 		}
 
 		#endregion

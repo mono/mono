@@ -25,7 +25,6 @@
 using System;
 using System.IO;
 
-using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
 using Mono.Security.Protocol.Tls.Handshake.Client;
 
@@ -45,10 +44,10 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Send Messages
 
-		public override void SendRecord(TlsHandshakeType type)
+		public override void SendRecord(HandshakeType type)
 		{
 			// Create the record message
-			TlsHandshakeMessage msg = this.createClientHandshakeMessage(type);
+			HandshakeMessage msg = this.createClientHandshakeMessage(type);
 			
 			// Write record
 			this.SendRecord(msg.ContentType, msg.EncodeMessage());
@@ -66,8 +65,8 @@ namespace Mono.Security.Protocol.Tls
 
 		protected override void ProcessHandshakeMessage(TlsStream handMsg)
 		{
-			TlsHandshakeType	handshakeType	= (TlsHandshakeType)handMsg.ReadByte();
-			TlsHandshakeMessage	message			= null;
+			HandshakeType		handshakeType	= (HandshakeType)handMsg.ReadByte();
+			HandshakeMessage	message			= null;
 
 			// Read message length
 			int length = handMsg.ReadInt24();
@@ -78,6 +77,9 @@ namespace Mono.Security.Protocol.Tls
 
 			// Create and process the server message
 			message = this.createServerHandshakeMessage(handshakeType, data);
+
+			// Update the last handshake message
+			this.Context.LastHandshakeMsg = handshakeType;
 
 			// Update session
 			if (message != null)
@@ -90,24 +92,24 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Client Handshake Message Factories
 
-		private TlsHandshakeMessage createClientHandshakeMessage(
-			TlsHandshakeType type)
+		private HandshakeMessage createClientHandshakeMessage(
+			HandshakeType type)
 		{
 			switch (type)
 			{
-				case TlsHandshakeType.ClientHello:
+				case HandshakeType.ClientHello:
 					return new TlsClientHello(this.context);
 
-				case TlsHandshakeType.Certificate:
+				case HandshakeType.Certificate:
 					return new TlsClientCertificate(this.context);
 
-				case TlsHandshakeType.ClientKeyExchange:
+				case HandshakeType.ClientKeyExchange:
 					return new TlsClientKeyExchange(this.context);
 
-				case TlsHandshakeType.CertificateVerify:
+				case HandshakeType.CertificateVerify:
 					return new TlsClientCertificateVerify(this.context);
 
-				case TlsHandshakeType.Finished:
+				case HandshakeType.Finished:
 					return new TlsClientFinished(this.context);
 
 				default:
@@ -115,14 +117,14 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
-		private TlsHandshakeMessage createServerHandshakeMessage(
-			TlsHandshakeType type, byte[] buffer)
+		private HandshakeMessage createServerHandshakeMessage(
+			HandshakeType type, byte[] buffer)
 		{
 			ClientContext context = (ClientContext)this.context;
 
 			switch (type)
 			{
-				case TlsHandshakeType.HelloRequest:
+				case HandshakeType.HelloRequest:
 					if (context.HandshakeState != HandshakeState.Started)
 					{
 						context.SslStream.NegotiateHandshake();
@@ -130,27 +132,27 @@ namespace Mono.Security.Protocol.Tls
 					else
 					{
 						this.SendAlert(
-							TlsAlertLevel.Warning,
-							TlsAlertDescription.NoRenegotiation);
+							AlertLevel.Warning,
+							AlertDescription.NoRenegotiation);
 					}
 					return null;
 
-				case TlsHandshakeType.ServerHello:
+				case HandshakeType.ServerHello:
 					return new TlsServerHello(this.context, buffer);
 
-				case TlsHandshakeType.Certificate:
+				case HandshakeType.Certificate:
 					return new TlsServerCertificate(this.context, buffer);
 
-				case TlsHandshakeType.ServerKeyExchange:
+				case HandshakeType.ServerKeyExchange:
 					return new TlsServerKeyExchange(this.context, buffer);
 
-				case TlsHandshakeType.CertificateRequest:
+				case HandshakeType.CertificateRequest:
 					return new TlsServerCertificateRequest(this.context, buffer);
 
-				case TlsHandshakeType.ServerHelloDone:
+				case HandshakeType.ServerHelloDone:
 					return new TlsServerHelloDone(this.context, buffer);
 
-				case TlsHandshakeType.Finished:
+				case HandshakeType.Finished:
 					return new TlsServerFinished(this.context, buffer);
 
 				default:

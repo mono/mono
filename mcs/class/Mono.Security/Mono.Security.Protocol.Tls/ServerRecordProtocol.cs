@@ -25,7 +25,6 @@
 using System;
 using System.IO;
 
-using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
 using Mono.Security.Protocol.Tls.Handshake.Server;
 
@@ -45,10 +44,10 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Send Messages
 
-		public override void SendRecord(TlsHandshakeType type)
+		public override void SendRecord(HandshakeType type)
 		{
 			// Create the record message
-			TlsHandshakeMessage msg = this.createServerHandshakeMessage(type);
+			HandshakeMessage msg = this.createServerHandshakeMessage(type);
 			
 			// Write record
 			this.SendRecord(msg.ContentType, msg.EncodeMessage());
@@ -66,8 +65,8 @@ namespace Mono.Security.Protocol.Tls
 
 		protected override void ProcessHandshakeMessage(TlsStream handMsg)
 		{
-			TlsHandshakeType	handshakeType	= (TlsHandshakeType)handMsg.ReadByte();
-			TlsHandshakeMessage	message			= null;
+			HandshakeType		handshakeType	= (HandshakeType)handMsg.ReadByte();
+			HandshakeMessage	message			= null;
 
 			// Read message length
 			int length = handMsg.ReadInt24();
@@ -78,6 +77,9 @@ namespace Mono.Security.Protocol.Tls
 
 			// Create and process the server message
 			message = this.createClientHandshakeMessage(handshakeType, data);
+
+			// Update the last handshake message
+			this.Context.LastHandshakeMsg = handshakeType;
 
 			// Update session
 			if (message != null)
@@ -90,24 +92,24 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Server Handshake Message Factories
 
-		private TlsHandshakeMessage createClientHandshakeMessage(
-			TlsHandshakeType type, byte[] buffer)
+		private HandshakeMessage createClientHandshakeMessage(
+			HandshakeType type, byte[] buffer)
 		{
 			switch (type)
 			{
-				case TlsHandshakeType.ClientHello:
+				case HandshakeType.ClientHello:
 					return new TlsClientHello(this.context, buffer);
 
-				case TlsHandshakeType.Certificate:
+				case HandshakeType.Certificate:
 					return new TlsClientCertificate(this.context, buffer);
 
-				case TlsHandshakeType.ClientKeyExchange:
+				case HandshakeType.ClientKeyExchange:
 					return new TlsClientKeyExchange(this.context, buffer);
 
-				case TlsHandshakeType.CertificateVerify:
+				case HandshakeType.CertificateVerify:
 					return new TlsClientCertificateVerify(this.context, buffer);
 
-				case TlsHandshakeType.Finished:
+				case HandshakeType.Finished:
 					return new TlsClientFinished(this.context, buffer);
 
 				default:
@@ -115,31 +117,31 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
-		private TlsHandshakeMessage createServerHandshakeMessage(
-			TlsHandshakeType type)
+		private HandshakeMessage createServerHandshakeMessage(
+			HandshakeType type)
 		{
 			switch (type)
 			{
-				case TlsHandshakeType.HelloRequest:
-					this.SendRecord(TlsHandshakeType.ClientHello);
+				case HandshakeType.HelloRequest:
+					this.SendRecord(HandshakeType.ClientHello);
 					return null;
 
-				case TlsHandshakeType.ServerHello:
+				case HandshakeType.ServerHello:
 					return new TlsServerHello(this.context);
 
-				case TlsHandshakeType.Certificate:
+				case HandshakeType.Certificate:
 					return new TlsServerCertificate(this.context);
 
-				case TlsHandshakeType.ServerKeyExchange:
+				case HandshakeType.ServerKeyExchange:
 					return new TlsServerKeyExchange(this.context);
 
-				case TlsHandshakeType.CertificateRequest:
+				case HandshakeType.CertificateRequest:
 					return new TlsServerCertificateRequest(this.context);
 
-				case TlsHandshakeType.ServerHelloDone:
+				case HandshakeType.ServerHelloDone:
 					return new TlsServerHelloDone(this.context);
 
-				case TlsHandshakeType.Finished:
+				case HandshakeType.Finished:
 					return new TlsServerFinished(this.context);
 
 				default:

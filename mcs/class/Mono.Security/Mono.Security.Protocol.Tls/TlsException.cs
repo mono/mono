@@ -26,8 +26,6 @@ using System;
 using System.Text;
 using System.Runtime.Serialization;
 
-using Mono.Security.Protocol.Tls.Alerts;
-
 namespace Mono.Security.Protocol.Tls
 {
 	[Serializable]

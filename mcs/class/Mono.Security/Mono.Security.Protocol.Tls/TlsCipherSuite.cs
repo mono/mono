@@ -53,7 +53,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region MAC Generation Methods
 
-		public override byte[] ComputeServerRecordMAC(TlsContentType contentType, byte[] fragment)
+		public override byte[] ComputeServerRecordMAC(ContentType contentType, byte[] fragment)
 		{
 			TlsStream	data	= new TlsStream();
 			byte[]		result	= null;
@@ -71,7 +71,7 @@ namespace Mono.Security.Protocol.Tls
 			return result;
 		}
 
-		public override byte[] ComputeClientRecordMAC(TlsContentType contentType, byte[] fragment)
+		public override byte[] ComputeClientRecordMAC(ContentType contentType, byte[] fragment)
 		{
 			TlsStream	data	= new TlsStream();
 			byte[]		result	= null;

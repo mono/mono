@@ -23,9 +23,10 @@
  */
 
 using System;
-
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+
+using MonoX509 = Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -63,7 +64,13 @@ namespace Mono.Security.Protocol.Tls
 		{
 			this.sslStream					= stream;
 			this.clientCertificateRequired	= clientCertificateRequired;
-			// this.ServerSettings.Certificates.Add(serverCertificate);
+
+			// Convert the System.Security cert to a Mono Cert
+			MonoX509.X509Certificate cert = new MonoX509.X509Certificate(serverCertificate.GetRawCertData());
+
+			// Add server certificate to the certificate collection
+			this.ServerSettings.Certificates = new MonoX509.X509CertificateCollection();
+			this.ServerSettings.Certificates.Add(cert);
 		}
 
 		#endregion
