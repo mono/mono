@@ -21,10 +21,10 @@ namespace System.Reflection {
 		internal MethodAttributes attrs;
 		internal MethodImplAttributes iattrs;
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void get_method_info (RuntimeMethodHandle handle, out MonoMethodInfo info);
 		
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern ParameterInfo[] get_parameter_info (RuntimeMethodHandle handle);
 	};
 	
