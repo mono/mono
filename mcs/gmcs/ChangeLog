@@ -1,3 +1,8 @@
+2004-09-09  Martin Baulig  <martin@ximian.com>
+
+	* README.Changes: New document.  Started to list important changes
+	between MCS and GMCS here.
+
 2004-09-08  Martin Baulig  <martin@ximian.com>
 
 	* class.cs
