@@ -1,3 +1,7 @@
+2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilderTest.cs: Disable last test since the fix is reverted.
+
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: Add new test.

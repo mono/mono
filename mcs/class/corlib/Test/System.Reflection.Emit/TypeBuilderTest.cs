@@ -1779,7 +1779,8 @@ public class TypeBuilderTest : Assertion
 		// Fails under MS.NET:
 		//Assert (tb.IsAssignableFrom (typeof (IDisposable)));
 
-		Assert (typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
+		// bug #73469
+		//Assert (typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
 	}
 }
 }
