@@ -97,6 +97,12 @@ namespace CIR {
 			ArrayParameter  = array_parameter;
 		}
 
+		public bool Empty {
+			get {
+				return (FixedParameters == null) && (ArrayParameter == null);
+			}
+		}
+		
 		public void ComputeSignature (TypeContainer tc)
 		{
 			signature = "";

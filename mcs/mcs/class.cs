@@ -71,12 +71,6 @@ namespace CIR {
 		Constructor default_static_constructor;
 
 		//
-		// Pointers to the constructor builders
-		//
-		ConstructorBuilder default_constructor_builder;
-		ConstructorBuilder default_static_constructor_builder;
-		
-		//
 		// Whether we have seen a static constructor for this class or not
 		//
 		bool have_static_constructor = false;
@@ -235,6 +229,7 @@ namespace CIR {
 			if (is_static)
 				have_static_constructor = true;
 
+			Console.WriteLine ("Found a constructor for " + Name);
 			if (c.IsDefault ()){
 				if (is_static)
 					default_static_constructor = c;
@@ -517,41 +512,24 @@ namespace CIR {
 		}
 
 		//
-		// This function is used to emit instance and static constructors
-		// when the user did not provide one.
-		// 
-		void EmitDefaultConstructor (bool is_static)
+		// Defines the default constructors
+		//
+		void DefineDefaultConstructor (bool is_static)
 		{
-			ConstructorBuilder cb;
-			MethodAttributes ca = (MethodAttributes.RTSpecialName |
-					       MethodAttributes.SpecialName);
+			Constructor c;
+			int mods = 0;
 
-			if (is_static)
-				ca |= MethodAttributes.Static;
+			c = new Constructor (Name, new Parameters (null, null),
+					     new ConstructorBaseInitializer (null));
+			AddConstructor (c);
+			c.Block = new Block (null);
 			
-			//
-			// Default constructors provided by the compiler should be `protected'
-			// if the class is abstract, otherwise it is public
-			//
-			if ((mod_flags & Modifiers.ABSTRACT) != 0)
-				ca |= MethodAttributes.Family;
-			else
-				ca |= MethodAttributes.Public;
+			if (is_static)
+				mods = Modifiers.STATIC;
 
-			cb = TypeBuilder.DefineDefaultConstructor (ca);
-			Constructor c = new Constructor (".ctor", null, new ConstructorBaseInitializer (null));
-							 
-			method_builders_to_methods.Add (cb, c);
-
-			if (is_static){
-				default_static_constructor_builder = cb;
-				EmitStaticFieldInitializers (cb);
-			} else {
-				default_constructor_builder = cb;
-				EmitFieldInitializers (cb);
-			}
+			c.ModFlags = mods;	
 		}
-
+		
 		//
 		// Populates our TypeBuilder with fields and methods
 		//
@@ -567,6 +545,13 @@ namespace CIR {
 					f.Define (this);
 			}
 
+			if (default_constructor == null)
+				DefineDefaultConstructor (false);
+
+			if (initialized_static_fields != null && default_static_constructor == null)
+				DefineDefaultConstructor (true);
+
+			
 			if (Constructors != null){
 				if (method_builders_to_methods == null)
 					method_builders_to_methods = new Hashtable ();
@@ -631,12 +616,6 @@ namespace CIR {
 		//
 		public void Emit ()
 		{
-			if (default_constructor == null)
-				EmitDefaultConstructor (false);
-
-			if (initialized_static_fields != null && default_static_constructor == null)
-				EmitDefaultConstructor (true);
-
 			if (Constructors != null)
 				foreach (Constructor c in Constructors)
 					c.Emit (this);
@@ -735,18 +714,6 @@ namespace CIR {
 						if (filter (c.ConstructorBuilder, criteria) == true)
 							members.Add (c.ConstructorBuilder);
 				}
-
-				if ((bf & BindingFlags.Instance) != 0){
-					if (default_constructor_builder != null)
-						if (filter (default_constructor_builder, criteria) == true)
-							members.Add (default_constructor_builder);
-				}
-
-				
-				if ((bf & BindingFlags.Static) != 0)
-					if (default_static_constructor_builder != null)
-						if (filter (default_static_constructor_builder, criteria) == true)
-							members.Add (default_static_constructor_builder);
 			}
 
 			MemberInfo [] mi = new MemberInfo [members.Count];
@@ -1066,7 +1033,7 @@ namespace CIR {
 		//
 		public bool IsDefault ()
 		{
-			return  (Parameters == null) &&
+			return  (Parameters == null ? true : Parameters.Empty) &&
 				(Initializer is ConstructorBaseInitializer) &&
 				(Initializer.Arguments == null);
 		}
@@ -1095,6 +1062,7 @@ namespace CIR {
 		//
 		public void Emit (TypeContainer parent)
 		{
+			
 			if ((ModFlags & Modifiers.STATIC) != 0) 
 				parent.EmitStaticFieldInitializers (this.ConstructorBuilder);
 			else 
@@ -1446,4 +1414,3 @@ namespace CIR {
 	}
 
 }
-

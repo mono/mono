@@ -90,10 +90,9 @@ namespace CIR {
 			if ((mod_flags & ABSTRACT) != 0)
 				t |= TypeAttributes.Abstract;
 			
-			// If we have static constructors, the runtime needs to
-			// initialize the class, otherwise we can optimize
-			// the case.
-			if (caller.HaveStaticConstructor)
+			// If we do not have static constructors, static methods
+			// can be invoked without initializing the type.
+			if (!caller.HaveStaticConstructor)
 				t |= TypeAttributes.BeforeFieldInit;
 				
 			return t;

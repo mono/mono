@@ -1695,17 +1695,18 @@ namespace CIR {
 			
 			EmitArguments (ec, Arguments);
 
-			if (method.IsVirtual){
-				if (method is MethodInfo)
-					ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
-				else
-					ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
-			} else {
+			if (method.IsStatic){
 				if (method is MethodInfo)
 					ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
 					ec.ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-			}
+			} else {
+				if (method is MethodInfo)
+					ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
+				else
+					ec.ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
+			} 
+
 		}
 	}
 
@@ -1757,7 +1758,8 @@ namespace CIR {
 			BindingFlags bf =
 				BindingFlags.Public |
 				BindingFlags.Instance;
-			
+
+			Console.WriteLine ("Lookup up in " + tc.Name + " for New()");
 			MemberInfo [] mi = tc.RootContext.TypeManager.FindMembers (type, mt, bf, null, null);
 
 			Console.WriteLine ("Found: " + mi.Length);

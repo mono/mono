@@ -238,8 +238,6 @@ namespace CIR {
 
 			error = false;
 			name = MakeFQN (ns, name);
-			//Console.WriteLine ("Attempting to locate " + name);
-			report.Error (-200, "Locating :" + name);
 			
 			t  = type_manager.LookupType (name);
 			if (t != null)
