@@ -1,5 +1,10 @@
 2002-09-18  Martin Baulig  <martin@gnome.org>
 
+	* MonoSymbolTable.cs: Set version number to 21.  Encode the source file
+	as a 4-byte length field followed by the UTF8 encoded string.
+
+2002-09-18  Martin Baulig  <martin@gnome.org>
+
 	* IMonoBinaryReader.cs: New interface.
 
 	* MonoSymbolTable.cs: Use IMonoBinaryReader instead of binary reader.

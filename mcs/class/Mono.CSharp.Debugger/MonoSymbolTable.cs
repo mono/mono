@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int Version = 20;
+		public const int Version = 21;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int total_file_size;
@@ -157,7 +157,9 @@ namespace Mono.CSharp.Debugger
 			if (SourceFileOffset != 0) {
 				long old_pos = reader.Position;
 				reader.Position = SourceFileOffset;
-				SourceFile = reader.ReadString ();
+				int source_file_length = reader.ReadInt32 ();
+				byte[] source_file = reader.ReadBuffer (source_file_length);
+				SourceFile = Encoding.UTF8.GetString (source_file);
 				reader.Position = old_pos;
 			}
 

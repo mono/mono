@@ -52,7 +52,9 @@ namespace Mono.CSharp.Debugger
 					continue;
 
 				sources.Add (source, (int) bw.BaseStream.Position);
-				bw.Write (source.FileName);
+				byte[] file_name = Encoding.UTF8.GetBytes (source.FileName);
+				bw.Write ((int) file_name.Length);
+				bw.Write (file_name);
 			}
 			ot.source_table_size = (int) bw.BaseStream.Position - ot.source_table_offset;
 
