@@ -12,6 +12,7 @@
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Activation;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -61,7 +62,7 @@ namespace System.Runtime.Remoting.Proxies
 
 		public virtual ObjRef CreateObjRef (Type requestedType)
 		{
-			return _objectIdentity.CreateObjRef (requestedType);
+			return RemotingServices.Marshal ((MarshalByRefObject) GetTransparentProxy(), null, requestedType);
 		}
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -99,6 +100,30 @@ namespace System.Runtime.Remoting.Proxies
 		public virtual object GetTransparentProxy () 
 		{
 			return _objTP;
+		}
+
+		[MonoTODO]
+		public IConstructionReturnMessage InitializeServerObject(IConstructionCallMessage ctorMsg)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected void AttachServer(MarshalByRefObject s)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected MarshalByRefObject DetachServer()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected MarshalByRefObject GetUnwrappedServer()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

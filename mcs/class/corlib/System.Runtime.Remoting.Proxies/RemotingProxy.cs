@@ -13,7 +13,9 @@ using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Contexts;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 
 namespace System.Runtime.Remoting.Proxies
@@ -26,16 +28,21 @@ namespace System.Runtime.Remoting.Proxies
 
 		IMessageSink _sink;
 		string _activationUrl;
+		bool _hasEnvoySink;
+		ConstructionCall _ctorCall;
 
 		internal RemotingProxy (Type type, ClientIdentity identity) : base (type, identity)
 		{
 			_sink = identity.ChannelSink;
+			_hasEnvoySink = false;
 		}
 
-		internal RemotingProxy (Type type, string activationUrl, IMessageSink activationSink) : base (type)
+		internal RemotingProxy (Type type, string activationUrl, object[] activationAttributes) : base (type)
 		{
-			_sink = activationSink;
 			_activationUrl = activationUrl;
+			_hasEnvoySink = false;
+
+			_ctorCall = ActivationServices.CreateConstructionCall (type, activationUrl, activationAttributes);
 		}
 
 		public override IMessage Invoke (IMessage request)
@@ -43,7 +50,7 @@ namespace System.Runtime.Remoting.Proxies
 			MonoMethodMessage mMsg = (MonoMethodMessage) request;
 
 			if (mMsg.MethodBase.IsConstructor)
-				return ActivateRemoteObject (request);
+				return ActivateRemoteObject (mMsg);
 
 			if (mMsg.MethodBase == _cache_GetHashCodeMethod)
 				return new MethodResponse(ObjectIdentity.GetHashCode(), null, null, request as IMethodCallMessage);
@@ -53,46 +60,62 @@ namespace System.Runtime.Remoting.Proxies
 
 			mMsg.Uri = _objectIdentity.ObjectUri;
 			((IInternalMessage)mMsg).TargetIdentity = _objectIdentity;
-			return _sink.SyncProcessMessage (request);
+
+			// Exiting from the context?
+			if (!Thread.CurrentContext.IsDefaultContext && !_hasEnvoySink)
+				return Thread.CurrentContext.GetClientContextSinkChain ().SyncProcessMessage (request);
+			else
+				return _sink.SyncProcessMessage (request);
 		}
 
-		IMessage ActivateRemoteObject (IMessage request)
+		IMessage ActivateRemoteObject (IMethodMessage request)
 		{
 			if (_activationUrl == null)
 				return new ReturnMessage (this, new object[0], 0, null, (IMethodCallMessage) request);	// Ignore constructor call for WKOs
 
 			IMethodReturnMessage response;
 
-			ConstructionCall ctorCall = new ConstructionCall (request);
+			_ctorCall.CopyFrom (request);
 
 			if (_activationUrl == ChannelServices.CrossContextUrl)
 			{
 				// Cross context activation
 
-				_objectIdentity = RemotingServices.CreateContextBoundObjectIdentity (ctorCall.ActivationType);
-				RemotingServices.SetMessageTargetIdentity (ctorCall, _objectIdentity);
-				response = (IConstructionReturnMessage) _sink.SyncProcessMessage (ctorCall);
+				_objectIdentity = RemotingServices.CreateContextBoundObjectIdentity (_ctorCall.ActivationType);
+				RemotingServices.SetMessageTargetIdentity (_ctorCall, _objectIdentity);
+				response = _ctorCall.Activator.Activate (_ctorCall);
 			}
 			else
 			{
 				// Remote activation
 
-				MethodCall call = new MethodCall (_activationUrl, typeof(RemoteActivator).AssemblyQualifiedName, "Activate", new object[] {ctorCall} );
-				response = (IMethodReturnMessage) _sink.SyncProcessMessage (call);
-			
-				if (response.Exception != null) return response;
+				RemoteActivator remoteActivator = (RemoteActivator) RemotingServices.Connect (typeof (RemoteActivator), _activationUrl);
 
-				response = response.ReturnValue as IMethodReturnMessage;
+				try {
+					response = remoteActivator.Activate (_ctorCall) as IMethodReturnMessage;
+				}
+				catch (Exception ex) {
+					return new ReturnMessage (ex, (IMethodCallMessage)request);
+				}
+
 				ObjRef objRef = (ObjRef) response.ReturnValue;
+				if (RemotingServices.GetIdentityForUri (objRef.URI) != null)
+					throw new RemotingException("Inconsistent state during activation; there may be two proxies for the same object");
+
 				_objectIdentity = RemotingServices.GetOrCreateClientIdentity (objRef, this);
 			}
 
-			if (_objectIdentity.EnvoySink != null) _sink = _objectIdentity.EnvoySink;
-			else _sink = _objectIdentity.ChannelSink;
+			if (_objectIdentity.EnvoySink != null) 
+			{
+				_sink = _objectIdentity.EnvoySink;
+				_hasEnvoySink = true;
+			}
+			else 
+				_sink = _objectIdentity.ChannelSink;
 
 			_activationUrl = null;
+			_ctorCall = null;
 			return response;
 		}
-
 	}
 }

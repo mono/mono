@@ -10,6 +10,7 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Channels;
 
 namespace System.Runtime.Remoting.Proxies {
 
@@ -20,28 +21,25 @@ namespace System.Runtime.Remoting.Proxies {
 		{
 		}
 
-		[MonoTODO]
 		public virtual MarshalByRefObject CreateInstance (Type serverType)
 		{
-			throw new NotImplementedException ();
+			RemotingProxy proxy = new RemotingProxy (serverType, ChannelServices.CrossContextUrl, null);
+			return (MarshalByRefObject) proxy.GetTransparentProxy();
 		}
 
-		[MonoTODO]
 		public virtual RealProxy CreateProxy (ObjRef objref, Type serverType, object serverObject, Context serverContext)
 		{
-			throw new NotImplementedException ();
+			return RemotingServices.GetRealProxy (RemotingServices.GetProxyForRemoteObject (objref, false));
 		}
 
-		[MonoTODO]
 		public void GetPropertiesForNewContext (IConstructionCallMessage msg)
 		{
-			throw new NotImplementedException ();
+			// Nothing to add
 		}
 
-		[MonoTODO]
 		public bool IsContextOK (Context ctx, IConstructionCallMessage msg)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 	}
 }

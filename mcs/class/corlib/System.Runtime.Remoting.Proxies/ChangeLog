@@ -1,3 +1,11 @@
+2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ProxyAttribute.cs: Implemented.
+	* RealProxy.cs: Added stubs for some missing methods.
+	* RemotingProxy.cs: The activation constructor now creates the ConstructionCall
+	  message and collects the context properties.
+	  Activation of objects now use IActivator instances.
+
 2003-02-18  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RealProxy.cs: Changed constructor to allow only ClientIdentity instances. 
