@@ -10,130 +10,130 @@ using System;
 using System.Web;
 using System.Collections.Specialized;
 
-namespace System.Web {
-   public sealed class HttpCookieCollection : NameObjectCollectionBase {
-      private HttpCookie [] _AllCookies;
-      private string [] _AllKeys;
-      
-      private HttpResponse _Response;
+namespace System.Web
+{
+	public sealed class HttpCookieCollection : NameObjectCollectionBase
+	{
+		HttpCookie [] _AllCookies;
+		string [] _AllKeys;
 
-      internal HttpCookieCollection(HttpResponse Response, bool ReadOnly) : base() {
-         _Response = Response;
-         IsReadOnly = ReadOnly;
-      }
+		HttpResponse _Response;
 
-      public HttpCookieCollection() {
-      }
-      
-      public string [] AllKeys {
-         get {
-            if (null == _AllKeys) {
-               _AllKeys = BaseGetAllKeys();
-            }
+		internal HttpCookieCollection(HttpResponse Response, bool ReadOnly) : base()
+		{
+			_Response = Response;
+			IsReadOnly = ReadOnly;
+		}
 
-            return _AllKeys;
-         }
-      }
-      
-      public HttpCookie this[int index] {
-         get {
-            return Get(index);
-         }
-      }
-      
-      public HttpCookie this[string name] {
-         get {
-            return Get(name);
-         }
-      }
+		public HttpCookieCollection () { }
 
-      public void Add(HttpCookie cookie) {
-         if (null != _Response) {
-            _Response.GoingToChangeCookieColl();
-         }
+		public string [] AllKeys
+		{
+			get {
+				if (null == _AllKeys)
+					_AllKeys = BaseGetAllKeys ();
 
-         // empy performance cache
-         _AllCookies = null;
-         _AllKeys = null;
+				return _AllKeys;
+			}
+		}
 
-         BaseAdd(cookie.Name, cookie);
+		public HttpCookie this [int index]
+		{
+			get { return Get (index); }
+		}
 
-         if (null != _Response) {
-            _Response.OnCookieAdd(cookie);
-         }
-      }
+		public HttpCookie this [string name]
+		{
+			get { return Get (name); }
+		}
 
-      public void Clear() {
-         _AllCookies = null;
-         _AllKeys = null;
-         this.BaseClear();
-      }
+		public void Add (HttpCookie cookie)
+		{
+			if (null != _Response)
+				_Response.GoingToChangeCookieColl ();
 
-      public void CopyTo(Array dest, int index) {
-         if (null == _AllCookies) {
-            _AllCookies = new HttpCookie[Count];
+			// empy performance cache
+			_AllCookies = null;
+			_AllKeys = null;
 
-            for (int i = 0; i != Count; i++) {
-               _AllCookies[i] = Get(i);
-            }
-         }
+			BaseAdd (cookie.Name, cookie);
 
-         if (null != _AllCookies) {
-            _AllCookies.CopyTo(dest, index);
-         }
-      }
+			if (null != _Response)
+				_Response.OnCookieAdd (cookie);
+		}
 
-      public HttpCookie Get(int index) {
-         return (HttpCookie) BaseGet(index);
-      }
+		public void Clear ()
+		{
+			_AllCookies = null;
+			_AllKeys = null;
+			BaseClear ();
+		}
 
-      public HttpCookie Get(string name) {
-         HttpCookie oRet = (HttpCookie) BaseGet(name);
-         if (null == oRet && _Response != null) {
-            _AllCookies = null;
-            _AllKeys = null;
+		public void CopyTo (Array dest, int index)
+		{
+			if (null == _AllCookies) {
+				_AllCookies = new HttpCookie [Count];
 
-            _Response.GoingToChangeCookieColl();
-            
-            oRet = new HttpCookie(name);
-            BaseAdd(name, oRet);
+				for (int i = 0; i != Count; i++)
+					_AllCookies [i] = Get (i);
+			}
 
-            _Response.OnCookieAdd(oRet);
-         }
+			_AllCookies.CopyTo (dest, index);
+		}
 
-         return oRet;
-      }
+		public HttpCookie Get (int index)
+		{
+			return BaseGet (index) as HttpCookie;
+		}
 
-      public string GetKey(int index) {
-         return this.BaseGetKey(index);
-      }
+		public HttpCookie Get (string name)
+		{
+			HttpCookie oRet = BaseGet (name) as HttpCookie;
+			if (null == oRet && _Response != null) {
+				_AllCookies = null;
+				_AllKeys = null;
 
-      public void Remove(string name) {
-         if (null != _Response) {
-            _Response.GoingToChangeCookieColl();
-         }
+				_Response.GoingToChangeCookieColl ();
 
-         _AllCookies = null;
-         _AllKeys = null;
-         this.BaseRemove(name);
-         
-         if (null != _Response) {
-            _Response.ChangedCookieColl();
-         }
-      }
+				oRet = new HttpCookie (name);
+				BaseAdd (name, oRet);
 
-      public void Set(HttpCookie cookie) {
-         if (null != _Response) {
-            _Response.GoingToChangeCookieColl();
-         }
+				_Response.OnCookieAdd (oRet);
+			}
 
-         _AllCookies = null;
-         _AllKeys = null;
-         this.BaseSet(cookie.Name, cookie);
+			return oRet;
+		}
 
-         if (null != _Response) {
-            _Response.ChangedCookieColl();
-         }
-      }
-   }
+		public string GetKey (int index)
+		{
+			return BaseGetKey (index);
+		}
+
+		public void Remove (string name)
+		{
+			if (null != _Response)
+				_Response.GoingToChangeCookieColl ();
+
+			_AllCookies = null;
+			_AllKeys = null;
+			BaseRemove (name);
+
+			if (null != _Response)
+				_Response.ChangedCookieColl ();
+		}
+
+		public void Set (HttpCookie cookie)
+		{
+			if (null != _Response)
+				_Response.GoingToChangeCookieColl ();
+
+			_AllCookies = null;
+			_AllKeys = null;
+			BaseSet (cookie.Name, cookie);
+
+			if (null != _Response)
+				_Response.ChangedCookieColl();
+		}
+	}
 }
+
