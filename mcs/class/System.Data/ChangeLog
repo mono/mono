@@ -1,3 +1,8 @@
+2002-06-02  Francisco Jr. <fxjrlists@yahoo.com.br>
+
+	* System.Data.SqlClient/SqlParameterCollection.cs: implemented missing
+	methods.
+
 2002-05-30  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.SqlClient/SqlConnection.cs: modifed -

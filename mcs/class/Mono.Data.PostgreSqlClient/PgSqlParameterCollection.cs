@@ -54,13 +54,19 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public int Add(	object value)
 		{
-			throw new NotImplementedException ();
+			// Call the add version that receives a SqlParameter 
+			
+			// Check if value is a SqlParameter.
+			CheckType(value);
+			Add((SqlParameter) value);
+
+			return IndexOf (value);
 		}
 
-		[MonoTODO]
+		
 		public SqlParameter Add(SqlParameter value)
 		{
 			parameterList.Add(value);
@@ -68,30 +74,46 @@ namespace System.Data.SqlClient
 			return value;
 		}
 
-		[MonoTODO]
+		
 		public SqlParameter Add(string parameterName, object value)
 		{
-			throw new NotImplementedException ();
+			SqlParameter sqlparam = new SqlParameter();
+			sqlparam.Value = value;
+			// TODO: Get the dbtype and Sqldbtype from system type of value.
+			
+			return Add(sqlparam);
 		}
 
-		[MonoTODO]
+		
 		public SqlParameter Add(string parameterName, SqlDbType sqlDbType)
 		{
-			throw new NotImplementedException ();
+			SqlParameter sqlparam = new SqlParameter();
+			sqlparam.ParameterName = parameterName;
+			sqlparam.SqlDbType = sqlDbType;
+			return Add(sqlparam);			
 		}
 
-		[MonoTODO]
+		
 		public SqlParameter Add(string parameterName,
 			SqlDbType sqlDbType, int size)
 		{
-			throw new NotImplementedException ();
+			SqlParameter sqlparam = new SqlParameter();
+			sqlparam.ParameterName = parameterName;
+			sqlparam.SqlDbType = sqlDbType;
+			sqlparam.Size = size;
+			return Add(sqlparam);			
 		}
 
-		[MonoTODO]
+		
 		public SqlParameter Add(string parameterName,
 			SqlDbType sqlDbType, int size, string sourceColumn)
 		{
-			throw new NotImplementedException ();
+			SqlParameter sqlparam = new SqlParameter();
+			sqlparam.ParameterName = parameterName;
+			sqlparam.SqlDbType = sqlDbType;
+			sqlparam.Size = size;
+			sqlparam.SourceColumn = sourceColumn;
+			return Add(sqlparam);			
 		}
 
 		[MonoTODO]
@@ -100,10 +122,12 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public bool Contains(object value)
 		{
-			throw new NotImplementedException ();
+			// Check if value is a SqlParameter
+			CheckType(value);
+			return Contains(((SqlParameter)value).ParameterName);
 		}
 
 
@@ -119,16 +143,18 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public int IndexOf(object value)
 		{
-			throw new NotImplementedException ();
+			// Check if value is a SqlParameter
+			CheckType(value);
+			return IndexOf(((SqlParameter)value).ParameterName);
 		}
 
-		[MonoTODO]
+		
 		public int IndexOf(string parameterName)
 		{
-			throw new NotImplementedException ();
+			return parameterList.IndexOf(parameterName);
 		}
 
 		[MonoTODO]
@@ -235,5 +261,16 @@ namespace System.Data.SqlClient
 				throw new NotImplementedException ();
 			}			  
 		}
+		
+		/// <summary>
+		/// This method checks if the parameter value is of 
+		/// SqlParameter type. If it doesn't, throws an InvalidCastException.
+		/// </summary>
+		private void CheckType(object value)
+		{
+			if(!(value is SqlParameter))
+				throw new InvalidCastException("Only SQLParameter objects can be used.");
+		}
+		
 	}
 }
