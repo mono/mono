@@ -168,6 +168,10 @@ DumpSignedXml (s);
 					break;
 				// Phaos
 				case "signature-big.xml":
+				case "signature-rsa-manifest-x509-data-issuer-serial.xml":
+				case "signature-rsa-manifest-x509-data-ski.xml":
+				case "signature-rsa-manifest-x509-data-subject-name.xml":
+				case "signature-rsa-detached-xslt-transform-retrieval-method.xml":
 					mx = LoadCertificate (GetPath (filename, "rsa-cert.der"));
 					break;
 				case "signature-rsa-detached-xslt-transform-bad-retrieval-method.xml":
