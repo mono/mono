@@ -522,10 +522,10 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			buffer.MoveMark(buf.InsertMark, buffer.EndIter);
 			if (text.Equals ("") == false) {				
 				iter = buffer.EndIter;
-				buffer.Insert (iter, text, -1);
+				buffer.Insert (iter, text);
 			}
 			iter = buffer.EndIter;
-			buffer.Insert (iter, "\n", -1);
+			buffer.Insert (iter, "\n");
 		}
 
 		// WriteLine() to output text to bottom TextView

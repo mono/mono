@@ -18,7 +18,7 @@ namespace SqlEditorSharp
 	using System;
 	using Gtk;
 	using Gdk;
-	using Glib;
+	using GLib;
 	using System.Collections;
 	using System.IO;
 	using System.Text;
@@ -258,8 +258,8 @@ namespace SqlEditorSharp
 				if (start_iter.ForwardSearch (
 					"/*",
 					TextSearchFlags.TextOnly,
-					match_start1, 
-					match_end1,
+					out match_start1, 
+					out match_end1,
 					end_iter) == true) {
 
 					/* beginning of free comment found */ 
@@ -269,8 +269,8 @@ namespace SqlEditorSharp
 					if (match_end1.ForwardSearch (
 						"*/",
 						TextSearchFlags.TextOnly, 
-						match_start2,
-						match_end2,
+						out match_start2,
+						out match_end2,
 						end_iter) == true) {
 
 						// ending of free comment found, 
@@ -639,8 +639,7 @@ namespace SqlEditorSharp
 			
 			while((NextLine = sr.ReadLine()) != null) {
 				line = NextLine + "\n";
-				sqlTextBuffer.Insert (sqlTextBuffer.EndIter, 
-					line, line.Length);
+				sqlTextBuffer.Insert (sqlTextBuffer.EndIter, line);
 			}
 			sr.Close();
 		}

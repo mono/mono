@@ -119,7 +119,7 @@ namespace Gtk.Controls
 			// FIXME: does not belong in base method
 			// define the columns in the treeview store
 			// based on the schema of the result
-			int[] theTypes = new int[pdc.Count];
+			uint[] theTypes = new uint[pdc.Count];
 			for (int col = 0; col < pdc.Count; col++) {
 				theTypes[col] = (int) TypeFundamentals.TypeString;
 			}

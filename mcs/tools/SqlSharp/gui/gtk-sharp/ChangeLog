@@ -1,3 +1,16 @@
+2003-04-25  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* SqlEditorSharp.cs: Change: Glib -> GLib.
+
+	* sqlsharpgtk.cs: Correct method calls because they
+    changed in GTK#.
+
+	* makefile.gnu: Reference gdk-sharp in assembly list.
+
+	* FileSelectionDialog.cs: Update method calls (GTK#).
+
+	* DataGrid.cs: Fix a type of a variable.
+
 2003-04-14  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpDataAdapter.cs: added new file

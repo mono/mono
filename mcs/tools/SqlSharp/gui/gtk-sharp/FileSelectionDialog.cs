@@ -55,13 +55,13 @@ namespace Mono.GtkSharp.Goodies
 
 		void OnFileSelectionOk(object o, EventArgs args) 
 		{
-			Gtk.FileSelection.Button fsbutton = (Gtk.FileSelection.Button) o;
+			Gtk.Button fsbutton = (Gtk.Button) o;
 			string filename = window.Filename;
 			FileSelectionEventArgs fa = new FileSelectionEventArgs (filename);
 			if (fh != null) {
 				fh (this, fa); 
 			}
-			fsbutton.FileSelection.Destroy ();
+			window.Destroy ();
 		}
 
 		void OnFileSelectionCancel (object o, EventArgs args) 
