@@ -110,7 +110,7 @@ namespace System.Xml.Schema
 		object nominalEventSender;
 		IXmlLineInfo lineInfo;
 		IXmlNamespaceResolver nsResolver;
-		string sourceUri;
+		Uri sourceUri;
 
 		// These fields will be from XmlReaderSettings or 
 		// XPathNavigator.CheckValidity(). BTW, I think we could
@@ -182,7 +182,7 @@ namespace System.Xml.Schema
 		}
 
 		[MonoTODO]
-		public string SourceUri {
+		public Uri SourceUri {
 			get { return sourceUri; }
 			// FIXME: actually there seems no setter, but then
 			// it will never make sense.
@@ -191,6 +191,10 @@ namespace System.Xml.Schema
 		#endregion
 
 		#region Private properties
+
+		private string BaseUri {
+			get { return sourceUri != null ? sourceUri.AbsoluteUri : String.Empty; }
+		}
 
 		private XsdValidationContext Context {
 			get { return state.Context; }
@@ -214,10 +218,10 @@ namespace System.Xml.Schema
 
 		public XmlSchemaAttribute [] GetExpectedAttributes ()
 		{
-			ArrayList al = new ArrayList ();
 			ComplexType cType = Context.ActualType as ComplexType;
 			if (cType == null)
 				return emptyAttributeArray;
+			ArrayList al = new ArrayList ();
 			foreach (DictionaryEntry entry in cType.AttributeUses)
 				if (!occuredAtts.Contains ((QName) entry.Key))
 					al.Add (entry.Value);
@@ -231,9 +235,15 @@ namespace System.Xml.Schema
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("check return type")]
 		public void GetUnspecifiedDefaultAttributes (ArrayList list)
 		{
+			if (transition != Transition.StartTag)
+				throw new InvalidOperationException ("Method 'GetUnsoecifiedDefaultAttributes' works only when the validator state is inside a start tag.");
+			foreach (XmlSchemaAttribute attr
+				in GetExpectedAttributes ())
+				if (attr.ValidatedDefaultValue != null || attr.ValidatedFixedValue != null)
+					list.Add (attr);
+
 			list.AddRange (defaultAttributes);
 		}
 
@@ -245,12 +255,17 @@ namespace System.Xml.Schema
 
 		// State Controller
 
+		public void AddSchema (XmlSchema schema)
+		{
+			schemas.Add (schema);
+			schemas.Compile ();
+		}
+
 		public void Initialize ()
 		{
 			Initialize (null);
 		}
 
-		[MonoTODO]
 		public void Initialize (SOMObject startType)
 		{
 			this.startType = startType;
@@ -302,34 +317,17 @@ namespace System.Xml.Schema
 			XmlSchemaInfo info)
 		{
 			CheckState (Transition.StartTag);
+
+			QName qname = new QName (localName, ns);
+			if (occuredAtts.Contains (qname))
+				throw new InvalidOperationException (String.Format ("Attribute '{0}' has already been validated in the same element.", qname));
+			occuredAtts.Add (qname);
+
 			if (ns == XmlNamespaceManager.XmlnsXmlns)
 				return null;
-			if (ns == XmlSchema.InstanceNamespace) {
-				switch (localName) {
-				case "schemaLocation":
-					HandleSchemaLocation (attributeValue ());
-					break;
-				case "noNamespaceSchemaLocation":
-					HandleNoNSSchemaLocation (attributeValue ());
-					break;
-				case "nil":
-					HandleXsiNil (attributeValue, info);
-					break;
-				case "type":
-					string xsiTypeName = attributeValue ();
-					HandleXsiType (xsiTypeName.Trim (XmlChar.WhitespaceChars));
-					break;
-				default:
-					HandleError ("Unknown schema instance namespace attribute: " + localName);
-					break;
-				}
-				return null; // no further validation.
-			}
 
 			if (schemas.Count == 0)
 				return null;
-
-			occuredAtts.Add (new QName (localName, ns));
 
 			// 3.3.4 Element Locally Valid (Type) - attribute
 			if (Context.ActualType is ComplexType)
@@ -343,10 +341,30 @@ namespace System.Xml.Schema
 		public void ValidateElement (
 			string localName,
 			string ns,
-			XmlSchemaInfo info) // How is it used?
+			XmlSchemaInfo info)
+		{
+			ValidateElement (localName, ns, info, null, null, null, null);
+		}
+
+		public void ValidateElement (
+			string localName,
+			string ns,
+			XmlSchemaInfo info,
+			string xsiType,
+			string xsiNil,
+			string schemaLocation,
+			string noNsSchemaLocation)
 		{
 			CheckState (Transition.Content);
 			transition = Transition.StartTag;
+
+			if (schemaLocation != null)
+				HandleSchemaLocation (schemaLocation);
+			if (noNsSchemaLocation != null)
+				HandleNoNSSchemaLocation (noNsSchemaLocation);
+
+			elementQNameStack.Add (new XmlQualifiedName (localName, ns));
+
 			if (schemas.Count == 0)
 				return;
 
@@ -356,8 +374,6 @@ namespace System.Xml.Schema
 #endregion
 			defaultAttributes = emptyAttributeArray;
 
-			elementQNameStack.Add (new XmlQualifiedName (localName, ns));
-
 			// If there is no schema information, then no validation is performed.
 			if (skipValidationDepth < 0 || depth <= skipValidationDepth) {
 				if (shouldValidateCharacters)
@@ -365,6 +381,11 @@ namespace System.Xml.Schema
 
 				AssessOpenStartElementSchemaValidity (localName, ns);
 			}
+
+			if (xsiNil != null)
+				HandleXsiNil (xsiNil, info);
+			if (xsiType != null)
+				HandleXsiType (xsiType);
 
 			shouldValidateCharacters = true;
 		}
@@ -381,6 +402,9 @@ namespace System.Xml.Schema
 			object var)
 		{
 			CheckState (Transition.Content);
+
+			elementQNameStack.RemoveAt (elementQNameStack.Count - 1);
+
 			if (schemas.Count == 0)
 				return null;
 			if (depth == 0)
@@ -394,20 +418,22 @@ namespace System.Xml.Schema
 			else if (skipValidationDepth < 0 || depth <= skipValidationDepth)
 				ret = AssessEndElementSchemaValidity ();
 
-			elementQNameStack.RemoveAt (elementQNameStack.Count - 1);
-
 			return ret;
 		}
 
 		// StartTagCloseDeriv
 		public void ValidateEndOfAttributes ()
 		{
-			CheckState (Transition.StartTag);
-			transition = Transition.Content;
-			if (schemas.Count == 0)
-				return;
+			try {
+				CheckState (Transition.StartTag);
+				transition = Transition.Content;
+				if (schemas.Count == 0)
+					return;
 
-			AssessCloseStartElementSchemaValidity ();
+				AssessCloseStartElementSchemaValidity ();
+			} finally {
+				occuredAtts.Clear ();
+			}
 		}
 
 		// TextDeriv ... without text. Maybe typed check is done by
@@ -464,7 +490,7 @@ namespace System.Xml.Schema
 				return;
 
 			ValException vex = new ValException (
-				message, nominalEventSender, SourceUri,
+				message, nominalEventSender, BaseUri,
 				null, innerException);
 			HandleError (vex, isWarning);
 		}
@@ -488,99 +514,6 @@ namespace System.Xml.Schema
 				isWarning ? XmlSeverityType.Warning :
 					XmlSeverityType.Error);
 			ValidationEventHandler (nominalEventSender, e);
-		}
-
-		#endregion
-
-		#region External schema resolution
-
-		private XmlSchema ReadExternalSchema (string uri)
-		{
-			Uri absUri = xmlResolver.ResolveUri ((SourceUri != "" ? new Uri (SourceUri) : null), uri);
-			XmlTextReader xtr = null;
-			try {
-				xtr = new XmlTextReader (absUri.ToString (),
-					(Stream) xmlResolver.GetEntity (
-						absUri, null, typeof (Stream)),
-					nameTable);
-				return XmlSchema.Read (
-					xtr, ValidationEventHandler);
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
-			}
-		}
-
-		private void HandleSchemaLocation (string schemaLocation)
-		{
-			if (xmlResolver == null)
-				return;
-			XmlSchema schema = null;
-
-			bool schemaAdded = false;
-			string [] tmp = null;
-			try {
-				schemaLocation = XsDatatype.FromName ("token", XmlSchema.Namespace).Normalize (schemaLocation);
-				tmp = schemaLocation.Split (XmlChar.WhitespaceChars);
-			} catch (Exception ex) {
-				HandleError ("Invalid schemaLocation attribute format.", ex, true);
-				tmp = new string [0];
-			}
-			if (tmp.Length % 2 != 0)
-				HandleError ("Invalid schemaLocation attribute format.");
-			for (int i = 0; i < tmp.Length; i += 2) {
-				try {
-					schema = ReadExternalSchema (tmp [i + 1]);
-				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
-					HandleError ("Could not resolve schema location URI: " + schemaLocation, null, true);
-					continue;
-				}
-				if (schema.TargetNamespace == null)
-					schema.TargetNamespace = tmp [i];
-				else if (schema.TargetNamespace != tmp [i])
-					HandleError ("Specified schema has different target namespace.");
-
-				if (schema != null) {
-					if (!schemas.Contains (schema.TargetNamespace)) {
-						schemaAdded = true;
-						schemas.Add (schema);
-					}
-				}
-			}
-			// FIXME: should call Reprocess()?
-			if (schemaAdded)
-				schemas.Compile ();
-		}
-
-		private void HandleNoNSSchemaLocation (string noNsSchemaLocation)
-		{
-			if (xmlResolver == null)
-				return;
-			XmlSchema schema = null;
-			bool schemaAdded = false;
-
-			Uri absUri = null;
-			XmlTextReader xtr = null;
-			try {
-				schema = ReadExternalSchema (noNsSchemaLocation);
-			} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
-				HandleError ("Could not resolve schema location URI: " + noNsSchemaLocation, null, true);
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
-			}
-			if (schema != null && schema.TargetNamespace != null)
-				HandleError ("Specified schema has different target namespace.");
-
-			if (schema != null) {
-				if (!schemas.Contains (schema.TargetNamespace)) {
-					schemaAdded = true;
-					schemas.Add (schema);
-				}
-			}
-			// FIXME: should call Reprocess()?
-			if (schemaAdded)
-				schemas.Compile ();
 		}
 
 		#endregion
@@ -766,7 +699,6 @@ namespace System.Xml.Schema
 			defaultAttributesCache.Clear ();
 			// 5. wild IDs was already checked at ValidateAttribute().
 
-			occuredAtts.Clear ();
 		}
 
 		private object AssessAttributeElementLocallyValidType (string localName, string ns, XmlValueGetter getter, XmlSchemaInfo info)
@@ -1100,7 +1032,7 @@ namespace System.Xml.Schema
 							elementQNameStack,
 							nominalEventSender,
 							nameTable,
-							SourceUri,
+							BaseUri,
 							schemaType,
 							nsResolver,
 							lineInfo,
@@ -1327,14 +1259,14 @@ namespace System.Xml.Schema
 		}
 		#endregion
 
-		private void HandleXsiNil (XmlValueGetter getter, XmlSchemaInfo info)
+		private void HandleXsiNil (string value, XmlSchemaInfo info)
 		{
 			XsElement element = Context.Element;
 			if (!element.ActualIsNillable) {
 				HandleError (String.Format ("Current element '{0}' is not nillable and thus does not allow occurence of 'nil' attribute.", Context.Element.QualifiedName));
 				return;
 			}
-			string value = getter ().Trim (XmlChar.WhitespaceChars);
+			value = value.Trim (XmlChar.WhitespaceChars);
 			// 3.2.
 			// Note that 3.2.1 xsi:nil constraints are to be 
 			// validated in AssessElementSchemaValidity() and 
@@ -1347,6 +1279,91 @@ namespace System.Xml.Schema
 					info.IsNil = true;
 			}
 		}
+
+		#region External schema resolution
+
+		private XmlSchema ReadExternalSchema (string uri)
+		{
+			Uri absUri = new Uri (SourceUri, uri.Trim (XmlChar.WhitespaceChars));
+			XmlTextReader xtr = null;
+			try {
+				xtr = new XmlTextReader (absUri.ToString (),
+					(Stream) xmlResolver.GetEntity (
+						absUri, null, typeof (Stream)),
+					nameTable);
+				return XmlSchema.Read (
+					xtr, ValidationEventHandler);
+			} finally {
+				if (xtr != null)
+					xtr.Close ();
+			}
+		}
+
+		private void HandleSchemaLocation (string schemaLocation)
+		{
+			if (xmlResolver == null)
+				return;
+			XmlSchema schema = null;
+			bool schemaAdded = false;
+			string [] tmp = null;
+			try {
+				schemaLocation = XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Token).Datatype.ParseValue (schemaLocation, null, null) as string;
+				tmp = schemaLocation.Split (XmlChar.WhitespaceChars);
+			} catch (Exception ex) {
+				HandleError ("Invalid schemaLocation attribute format.", ex, true);
+				tmp = new string [0];
+			}
+			if (tmp.Length % 2 != 0)
+				HandleError ("Invalid schemaLocation attribute format.");
+			for (int i = 0; i < tmp.Length; i += 2) {
+				try {
+					schema = ReadExternalSchema (tmp [i + 1]);
+				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
+					HandleError ("Could not resolve schema location URI: " + schemaLocation, ex, true);
+					continue;
+				}
+				if (schema.TargetNamespace == null)
+					schema.TargetNamespace = tmp [i];
+				else if (schema.TargetNamespace != tmp [i])
+					HandleError ("Specified schema has different target namespace.");
+
+				if (schema != null) {
+					if (!schemas.Contains (schema.TargetNamespace)) {
+						schemaAdded = true;
+						schemas.Add (schema);
+					}
+				}
+			}
+			if (schemaAdded)
+				schemas.Compile ();
+		}
+
+		private void HandleNoNSSchemaLocation (string noNsSchemaLocation)
+		{
+			if (xmlResolver == null)
+				return;
+			XmlSchema schema = null;
+			bool schemaAdded = false;
+
+			try {
+				schema = ReadExternalSchema (noNsSchemaLocation);
+			} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
+				HandleError ("Could not resolve schema location URI: " + noNsSchemaLocation, ex, true);
+			}
+			if (schema != null && schema.TargetNamespace != null)
+				HandleError ("Specified schema has different target namespace.");
+
+			if (schema != null) {
+				if (!schemas.Contains (schema.TargetNamespace)) {
+					schemaAdded = true;
+					schemas.Add (schema);
+				}
+			}
+			if (schemaAdded)
+				schemas.Compile ();
+		}
+
+		#endregion
 	}
 }
 

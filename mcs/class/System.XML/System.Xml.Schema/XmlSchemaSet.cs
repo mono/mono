@@ -46,7 +46,7 @@ namespace System.Xml.Schema
 #endif
 	{
 		XmlNameTable nameTable;
-		XmlResolver xmlResolver;
+		XmlResolver xmlResolver = new XmlUrlResolver ();
 
 		ArrayList schemas;
 		XmlSchemaObjectTable attributes;
@@ -186,13 +186,24 @@ namespace System.Xml.Schema
 		[MonoTODO ("It should be the actual compilation engine.")]
 		public void Compile ()
 		{
-			foreach (XmlSchema schema in schemas) {
-				if (!schema.IsCompiled) {
+			ClearGlobalComponents ();
+			ArrayList al = new ArrayList ();
+			al.AddRange (schemas);
+			foreach (XmlSchema schema in al) {
+				if (!schema.IsCompiled)
 					schema.Compile (handler, this, xmlResolver);
-					AddGlobalComponents (schema);
-				}
+				AddGlobalComponents (schema);
 			}
 			isCompiled = true;
+		}
+
+		private void ClearGlobalComponents ()
+		{
+			GlobalElements.Clear ();
+			GlobalAttributes.Clear ();
+			GlobalTypes.Clear ();
+			// GlobalAttributeGroups.Clear ();
+			// GlobalGroups.Clear ();
 		}
 
 		private void AddGlobalComponents (XmlSchema schema)

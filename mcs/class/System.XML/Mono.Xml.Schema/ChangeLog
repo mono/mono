@@ -1,3 +1,9 @@
+2004-12-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidatingReader.cs : xsi:* attributes are now handled via
+	  XmlSchemaValidator.ValidateElement().
+	  Removed some obsolete overrides.
+
 2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs : new file; another XmlReader 

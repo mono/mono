@@ -29,11 +29,14 @@
 //
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
+#if !NON_MONO
 using Mono.Xml;
+#endif
 
 #if NET_2_0
 
@@ -80,12 +83,13 @@ namespace Mono.Xml.Schema
 		#region Instance Fields
 
 		XmlReader reader;
-		XmlSchemaSet schemas;
+		ValidationFlags options;
 		XmlSchemaValidator v;
 		XmlValueGetter getter;
 		XmlSchemaInfo xsinfo;
 		IXmlLineInfo readerLineInfo;
 		ValidationType validationType;
+		IXmlNamespaceResolver nsResolver;
 //		IHasXmlSchemaInfo sourceReaderSchemaInfo;
 		int startDepth;
 
@@ -106,21 +110,21 @@ namespace Mono.Xml.Schema
 
 		public XmlSchemaValidatingReader (XmlReader reader, XmlSchemaSet schemas)
 		{
-			IXmlNamespaceResolver nsResolver = reader as IXmlNamespaceResolver;
+			nsResolver = reader as IXmlNamespaceResolver;
 			if (nsResolver == null)
 				throw new ArgumentException ("Argument XmlReader must implement IXmlNamespaceResolver.");
+			options = ValidationFlags.IgnoreValidationWarnings
+				| ValidationFlags.IgnoreSchemaLocation
+				| ValidationFlags.IgnoreInlineSchema;
 
 			this.reader = reader;
 			if (schemas == null)
 				schemas = new XmlSchemaSet ();
-			this.schemas = schemas;
 			v = new XmlSchemaValidator (
 				reader.NameTable,
 				schemas,
 				nsResolver,
-				ValidationFlags.IgnoreValidationWarnings
-				| ValidationFlags.IgnoreSchemaLocation
-				| ValidationFlags.IgnoreInlineSchema);
+				options);
 
 			readerLineInfo = reader as IXmlLineInfo;
 			startDepth = reader.Depth;
@@ -128,10 +132,12 @@ namespace Mono.Xml.Schema
 			xsinfo = new XmlSchemaInfo (); // transition cache
 			v.LineInfoProvider = this;
 			v.ValidationEventSender = reader;
-#if !MS_NET
+#if !NON_MONO
 			v.XmlResolver = schemas.XmlResolver;
+#else
+			v.XmlResolver = new XmlUrlResolver ();
 #endif
-			v.SourceUri = reader.BaseURI; // FIXME: it is in fact not in MS.NET.
+			v.SourceUri = new Uri (null, reader.BaseURI); // FIXME: it is in fact not in MS.NET.
 			v.Initialize ();
 		}
 
@@ -142,25 +148,30 @@ namespace Mono.Xml.Schema
 			if (nsResolver == null)
 				throw new ArgumentException ("Argument XmlReader must implement IXmlNamespaceResolver.");
 
-			schemas = settings.Schemas;
+			XmlSchemaSet schemas = settings.Schemas;
 			if (schemas == null)
 				schemas = new XmlSchemaSet ();
+			options = settings.ValidationFlags;
 
 			this.reader = reader;
 			v = new XmlSchemaValidator (
 				reader.NameTable,
 				schemas,
 				nsResolver,
-				settings.ValidationFlags);
+				options);
 
 			readerLineInfo = reader as IXmlLineInfo;
 			startDepth = reader.Depth;
 			getter = delegate () { return Value; };
 			v.LineInfoProvider = this;
 			v.ValidationEventSender = reader;
-#if !MS_NET
+#if !NON_MONO
 			if (settings != null && settings.Schemas != null)
 				v.XmlResolver = settings.Schemas.XmlResolver;
+			else
+				v.XmlResolver = new XmlUrlResolver ();
+#else
+			v.XmlResolver = new XmlUrlResolver ();
 #endif
 			v.Initialize ();
 		}
@@ -188,14 +199,15 @@ namespace Mono.Xml.Schema
 				navigator,
 				ValidationFlags.IgnoreSchemaLocation |
 					ValidationFlags.IgnoreInlineSchema);
-			this.schemas = schemas;
 
 			readerLineInfo = navigator as IXmlLineInfo;
 			getter = delegate () { return Value; };
 			v.LineInfoProvider = this;
 			v.ValidationEventSender = navigator;
-#if !MS_NET
-			v.XmlResolver = schemas.XmlResolver; // internal getter
+#if !NON_MONO
+			v.XmlResolver = schemas.XmlResolver;
+#else
+			v.XmlResolver = new XmlUrlResolver ();
 #endif
 			v.Initialize (schemaType);
 		}
@@ -228,10 +240,6 @@ namespace Mono.Xml.Schema
 
 		public int LinePosition {
 			get { return readerLineInfo != null ? readerLineInfo.LinePosition : 0; }
-		}
-
-		public XmlSchemaSet Schemas {
-			get { return schemas; }
 		}
 
 		public object SchemaType {
@@ -282,21 +290,7 @@ namespace Mono.Xml.Schema
 
 		public string LookupPrefix (string ns)
 		{
-			return ((IXmlNamespaceResolver) this).LookupPrefix (ns, false);
-		}
-
-		public string LookupPrefix (string ns, bool atomizedNames)
-		{
-			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
-			if (resolver == null)
-				throw new NotSupportedException ("The input XmlReader does not implement IXmlNamespaceResolver and thus this validating reader cannot execute namespace prefix lookup.");
-			return resolver.LookupPrefix (ns, atomizedNames);
-		}
-
-		// It is used only for independent XmlReader use, not for XmlValidatingReader.
-		public override object ReadTypedValue ()
-		{
-			return XmlSchemaUtil.ReadTypedValue (this, SchemaType, this as IXmlNamespaceResolver, tmpBuilder);
+			return nsResolver.LookupPrefix (ns);
 		}
 
 		// Public Overriden Properties
@@ -426,9 +420,11 @@ namespace Mono.Xml.Schema
 			}
 		}
 
+#if !NON_MONO
 		public XmlParserContext ParserContext {
 			get { return XmlSchemaUtil.GetParserContext (reader); }
 		}
+#endif
 
 		public override string Prefix {
 			get {
@@ -437,7 +433,7 @@ namespace Mono.Xml.Schema
 				if (defaultAttributeConsumed)
 					return String.Empty;
 				XmlQualifiedName qname = defaultAttributes [currentDefaultAttribute].QualifiedName;
-				string prefix = this.ParserContext.NamespaceManager.LookupPrefix (qname.Namespace, false);
+				string prefix = nsResolver.LookupPrefix (qname.Namespace);
 				if (prefix == null)
 					return String.Empty;
 				else
@@ -596,15 +592,6 @@ namespace Mono.Xml.Schema
 			return reader.LookupNamespace (prefix);
 		}
 
-		public override string LookupNamespace (string prefix, bool atomizedNames)
-		{
-			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
-			if (res != null)
-				return res.LookupNamespace (prefix, atomizedNames);
-			else
-				return reader.LookupNamespace (prefix);
-		}
-
 		public override void MoveToAttribute (int i)
 		{
 			switch (reader.NodeType) {
@@ -756,29 +743,40 @@ namespace Mono.Xml.Schema
 
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
-				// FIXME: find out what another overload means.
+				string sl = reader.GetAttribute (
+					"schemaLocation",
+					XmlSchema.InstanceNamespace);
+				string noNsSL = reader.GetAttribute (
+					"noNamespaceSchemaLocation",
+					XmlSchema.InstanceNamespace);
+				string xsiType = reader.GetAttribute ("type",
+					XmlSchema.InstanceNamespace);
+				string xsiNil = reader.GetAttribute ("nil",
+					XmlSchema.InstanceNamespace);
+
 				v.ValidateElement (reader.LocalName,
 					reader.NamespaceURI,
-					xsinfo);
-
-				if (reader.MoveToAttribute ("nil", XmlSchema.InstanceNamespace)) {
-					v.ValidateAttribute ("nil",
-						XmlSchema.InstanceNamespace,
-						getter, xsinfo);
-					reader.MoveToElement ();
-				}
-
-				if (reader.MoveToAttribute ("type", XmlSchema.InstanceNamespace)) {
-					v.ValidateAttribute ("type",
-						XmlSchema.InstanceNamespace,
-						getter, xsinfo);
-					reader.MoveToElement ();
-				}
+					xsinfo,
+					xsiType,
+					xsiNil,
+					sl,
+					noNsSL);
 
 				if (reader.MoveToFirstAttribute ()) {
 					do {
-						if (reader.NamespaceURI == "http://www.w3.org/2000/xmlns/")
+						switch (reader.NamespaceURI) {
+						case XmlSchema.InstanceNamespace:
+							switch (reader.LocalName) {
+							case "schemaLocation":
+							case "noNamespaceSchemaLocation":
+							case "nil":
+							case "type":
+								continue;
+							}
+							break;
+						case XmlNamespaceManager.XmlnsXmlns:
 							continue;
+						}
 						v.ValidateAttribute (
 							reader.LocalName,
 							reader.NamespaceURI,
@@ -787,12 +785,13 @@ namespace Mono.Xml.Schema
 					} while (reader.MoveToNextAttribute ());
 					reader.MoveToElement ();
 				}
-				v.ValidateEndOfAttributes ();
 				v.GetUnspecifiedDefaultAttributes (
 					defaultAttributesCache);
 				defaultAttributes = (XsAttr [])
 					defaultAttributesCache.ToArray (
 					typeof (XsAttr));
+				v.ValidateEndOfAttributes ();
+				defaultAttributesCache.Clear ();
 
 				if (reader.IsEmptyElement)
 					goto case XmlNodeType.EndElement;

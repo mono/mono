@@ -10,6 +10,7 @@ public class XsdTest
 	static ValidationEventHandler noValidateHandler =
 		new ValidationEventHandler (NoValidate);
 
+	bool version2;
 	bool verbose;
 	bool stopOnError;
 	bool noResolver;
@@ -36,7 +37,7 @@ USAGE: mono xsdtest.exe options target-pattern
 	--stoponerr:		stops at unexpected error.
 	--noresolve:		don't resolve external resources.
 	--novalidate:		don't validate and continue reading.
-
+{0}
 	--verbose:		includes processing status.
 	--xml:			report as XML format.
 	--details:		report stack trace for errors.
@@ -45,7 +46,9 @@ USAGE: mono xsdtest.exe options target-pattern
 
 	target-pattern:		Part of the target schema file name.
 				(No Regex support.)
-");
+",
+"	--v2			use XmlReader.Create() [2.0 only]"
+	);
 		return;
 	}
 
@@ -56,6 +59,8 @@ USAGE: mono xsdtest.exe options target-pattern
 			case "--help":
 				Usage ();
 				return;
+			case "--v2":
+				version2 = true; break;
 			case "--verbose":
 				verbose = true; break;
 			case "--stoponerr":
@@ -160,14 +165,39 @@ USAGE: mono xsdtest.exe options target-pattern
 			if (verbose)
 				Report (instanceFile, false, "reading ", "");
 			bool isValidInstance = test.SelectSingleNode ("@out_x").InnerText == "1";
-			XmlValidatingReader xvr = null;
+			XmlReader xvr = null;
 			try {
-				xvr = new XmlValidatingReader (new XmlTextReader (basePath + "\\" + instanceFile));
-				if (noResolver)
-					xvr.XmlResolver = null;
-				if (noValidate)
-					xvr.ValidationEventHandler += noValidateHandler;
-				xvr.Schemas.Add (schema);
+				XmlTextReader ixtr = new XmlTextReader (
+					Path.Combine (basePath, instanceFile));
+#if NET_2_0
+				if (version2) {
+					XmlReaderSettings settings =
+						new XmlReaderSettings ();
+					settings.ValidationType = ValidationType.Schema;
+					settings.ValidationFlags =
+						XmlSchemaValidationFlags.IgnoreValidationWarnings;
+					if (noValidate)
+						settings.ValidationEventHandler +=
+							noValidateHandler;
+					if (noResolver)
+						settings.Schemas.XmlResolver = null;
+					settings.Schemas.Add (schema);
+					if (noResolver)
+						xvr = XmlReader.Create (ixtr, null, settings);
+					else
+						xvr = XmlReader.Create (ixtr, settings);
+				} else {
+#endif
+					XmlValidatingReader vr = new XmlValidatingReader (ixtr);
+					if (noResolver)
+						vr.XmlResolver = null;
+					if (noValidate)
+						vr.ValidationEventHandler += noValidateHandler;
+					vr.Schemas.Add (schema);
+					xvr = vr;
+#if NET_2_0
+				}
+#endif
 				while (!xvr.EOF)
 					xvr.Read ();
 				if (!isValidInstance && !noValidate)

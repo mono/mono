@@ -147,6 +147,10 @@ namespace Mono.Xml
 		public override XmlNameTable NameTable {
 			get { return reader.NameTable; }
 		}
+
+		public override XmlReaderSettings Settings {
+			get { return settings; }
+		}
 		#endregion
 
 		#region Methods

@@ -54,6 +54,7 @@ namespace System.Xml
 		private XmlSchemaSet schemas;
 		private XsValidationFlags validationFlags;
 		private ValidationType validationType;
+		private XmlResolver xmlResolver;
 
 		public XmlReaderSettings ()
 		{
@@ -75,7 +76,8 @@ namespace System.Xml
 			schemas = org.schemas;
 			validationFlags = org.validationFlags;
 			validationType = org.validationType;
-			nameTable = org.NameTable;
+			nameTable = org.nameTable;
+			xmlResolver = org.xmlResolver;
 		}
 
 		public event ValidationEventHandler ValidationEventHandler;
@@ -102,6 +104,7 @@ namespace System.Xml
 				| XsValidationFlags.IgnoreSchemaLocation
 				| XsValidationFlags.IgnoreInlineSchema;
 			validationType = ValidationType.None;
+			xmlResolver = new XmlUrlResolver ();
 		}
 
 		public bool CheckCharacters {
@@ -173,6 +176,11 @@ namespace System.Xml
 		public ValidationType ValidationType {
 			get { return validationType; }
 			set { validationType = value; }
+		}
+
+		public XmlResolver XmlResolver {
+			internal get { return xmlResolver; }
+			set { xmlResolver = value; }
 		}
 	}
 }

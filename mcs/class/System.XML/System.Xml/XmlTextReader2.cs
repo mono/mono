@@ -217,7 +217,7 @@ namespace System.Xml
 		}
 
 		public override XmlReaderSettings Settings {
-			get { return Current.Settings; }
+			get { return base.Settings; }
 		}
 
 		public override string Value {

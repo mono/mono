@@ -1,3 +1,8 @@
+2004-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xsdtest.cs : added --v2 option that uses XmlReader.Create()
+	  instead of XmlValidatingReader.
+
 2004-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xsdtest.cs : improved significantly. Enabled reporting to file,

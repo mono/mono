@@ -37,6 +37,7 @@ using System.Text;
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml; // only required for NET_2_0
+using Mono.Xml.Schema; // only required for NET_2_0
 
 namespace System.Xml
 {
@@ -168,6 +169,25 @@ namespace System.Xml
 		public abstract void Close ();
 
 #if NET_2_0
+		private static XmlNameTable PopulateNameTable (
+			XmlReaderSettings settings)
+		{
+			XmlNameTable nameTable = settings.NameTable;
+			if (nameTable == null)
+				nameTable = new NameTable ();
+			return nameTable;
+		}
+
+		private static XmlNodeType GetNodeType (
+			XmlReaderSettings settings)
+		{
+			ConformanceLevel level = settings != null ? settings.ConformanceLevel : ConformanceLevel.Auto;
+			return
+				level == ConformanceLevel.Fragment ?
+				XmlNodeType.Element :
+				XmlNodeType.Element;
+		}
+
 		public static XmlReader Create (Stream stream)
 		{
 			return Create (stream, null, null, new XmlUrlResolver (), null);
@@ -193,28 +213,55 @@ namespace System.Xml
 			return Create (reader, new XmlUrlResolver (), settings);
 		}
 
-		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
+		[MonoTODO ("ConformanceLevel")]
 		public static XmlReader Create (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			return CreateFilteredXmlReader (reader, resolver, settings);
+			if (settings == null) {
+				settings = new XmlReaderSettings ();
+				settings.XmlResolver = resolver;
+			}
+			XmlReader r = CreateFilteredXmlReader (reader, resolver, settings);
+			r.settings = settings;
+			return r;
 		}
 
-		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.; Encoding")]
+		[MonoTODO ("ConformanceLevel; Encoding")]
 		public static XmlReader Create (string url, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			return CreateCustomizedTextReader (new XmlTextReader (url, settings != null ? settings.NameTable : null), resolver, settings);
+			if (settings == null) {
+				settings = new XmlReaderSettings ();
+				settings.XmlResolver = resolver;
+			}
+			return CreateCustomizedTextReader (new XmlTextReader (url, PopulateNameTable (settings)), resolver, settings);
 		}
 
-		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
+		[MonoTODO ("ConformanceLevel")]
+		public static XmlReader Create (Stream stream, XmlReaderSettings settings, XmlParserContext context)
+		{
+			if (settings == null)
+				settings = new XmlReaderSettings ();
+			return CreateCustomizedTextReader (new XmlTextReader (stream, GetNodeType (settings), context), settings.XmlResolver, settings);
+		}
+
+		[MonoTODO ("ConformanceLevel")]
 		public static XmlReader Create (TextReader reader, string baseUri, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			return CreateCustomizedTextReader (new XmlTextReader (baseUri, reader, settings != null ? settings.NameTable : null), resolver, settings);
+			if (settings == null) {
+				settings = new XmlReaderSettings ();
+				settings.XmlResolver = resolver;
+			}
+			return CreateCustomizedTextReader (new XmlTextReader (baseUri, reader, PopulateNameTable (settings)), resolver, settings);
 		}
 
-		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
+		[MonoTODO ("ConformanceLevel")]
 		public static XmlReader Create (Stream stream, string baseUri, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			XmlNameTable nameTable = settings != null ? settings.NameTable : null;
+			if (settings == null) {
+				settings = new XmlReaderSettings ();
+				settings.XmlResolver = resolver;
+			}
+			XmlNameTable nameTable = PopulateNameTable (settings);
+
 			return CreateCustomizedTextReader (
 				encoding == null ?
 					new XmlTextReader (baseUri, stream, nameTable) :
@@ -228,9 +275,6 @@ namespace System.Xml
 			reader.XmlResolver = resolver;
 			// Normalization is set true by default.
 			reader.Normalization = true;
-
-			if (settings == null)
-				settings = new XmlReaderSettings ();
 
 			if (settings.ProhibitDtd)
 				reader.ProhibitDtd = true;
@@ -256,16 +300,17 @@ namespace System.Xml
 			reader.AdjustLineInfoOffset (settings.LineNumberOffset,
 				settings.LinePositionOffset);
 
-			// FIXME: maybe we had better create XmlParserContext.
 			if (settings.NameTable != null)
 				reader.SetNameTable (settings.NameTable);
 
-			return CreateFilteredXmlReader (reader, resolver, settings);
+			XmlReader r = CreateFilteredXmlReader (reader, resolver, settings);
+			r.settings = settings;
+			return r;
 		}
 
 		private static XmlReader CreateFilteredXmlReader (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			reader = CreateValidatingXmlReader (reader, settings);
+			reader = CreateValidatingXmlReader (reader, resolver, settings);
 
 			if (reader.Settings != null ||
 				settings.IgnoreComments ||
@@ -278,18 +323,26 @@ namespace System.Xml
 			}
 		}
 
-		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlReaderSettings settings)
+		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
 		{
 			XmlValidatingReader xvr = null;
 			switch (settings.ValidationType) {
+			case ValidationType.None:
+				return reader;
 			case ValidationType.DTD:
 				xvr = new XmlValidatingReader (reader);
+				xvr.XmlResolver = resolver;
 				xvr.ValidationType = ValidationType.DTD;
-				 break;
+				break;
 			case ValidationType.Schema:
 //				xvr = new XmlValidatingReader (reader);
 //				xvr.ValidationType = ValidationType.Schema;
-				return new Mono.Xml.Schema.XmlSchemaValidatingReader (reader, settings);
+				return new XmlSchemaValidatingReader (reader, settings);
+			case ValidationType.Auto:
+				xvr = new XmlValidatingReader (reader);
+				xvr.ValidationType = ValidationType.DTD;
+				reader = xvr;
+				goto case ValidationType.Schema;
 			case ValidationType.XDR:
 				throw new NotSupportedException ();
 			}

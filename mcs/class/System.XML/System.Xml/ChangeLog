@@ -1,3 +1,12 @@
+2004-12-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs :
+	  Create() should assure NameTable!=null on creating XmlTextReader.
+	  Now use XmlSchemaValidatingReader for all xsd validation.
+	* XmlTextReader2.cs :
+	  Don't use input reader's Settings. It is null.
+	* XmlReaderSettings.cs : added XmlResolver.
+
 2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderSettings.cs : XsdValidate and DtdValidate are now

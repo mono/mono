@@ -1,3 +1,17 @@
+2004-12-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSet.cs : set default resolver. Clear components before
+	  recompilation.
+	* XmlSchemaValidator.cs :
+	  SourceUri is System.Uri.
+	  GetUnspecifiedDefaultAttributes() is allowed only when it is inside
+	  start tag.
+	  Added AddSchema().
+	  Added duplicate attribute check.
+	  Added ValidateElement() that takes xsi:* parameters.
+	  (http://lab.msdn.microsoft.com/productfeedback/viewfeedback.aspx?feedbackId=7fc38ea1-c306-4fb7-8631-0e174b0ff3c6)
+	  HandleXsiNil() now just takes string parameter.
+
 2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : implemented basic validation feature.
