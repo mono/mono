@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
 <monodoc language="en">
     <class name="System.Net.Sockets.NetworkStream" assembly="System">
@@ -73,12 +73,6 @@
             <remarks>TODO</remarks>
             <value>TODO</value>
         </property>
-        <method name="Dispose(System.Boolean)">
-            <summary>TODO</summary>
-            <remarks>TODO</remarks>
-            <param name="disposing">TODO</param>
-            <returns>TODO</returns>
-        </method>
         <method name="Write(System.Byte[], System.Int32, System.Int32)">
             <summary>TODO</summary>
             <remarks>TODO</remarks>

@@ -1,13 +1,9 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
 <monodoc language="en">
     <class name="System.Configuration.ConfigurationSettings" assembly="System">
         <summary>TODO</summary>
         <remarks>TODO</remarks>
-        <constructor name="ConfigurationSettings">
-            <summary>TODO</summary>
-            <remarks>TODO</remarks>
-        </constructor>
         <property name="AppSettings">
             <summary>TODO</summary>
             <remarks>TODO</remarks>
