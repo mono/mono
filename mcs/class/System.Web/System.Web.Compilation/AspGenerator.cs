@@ -319,8 +319,8 @@ namespace System.Web.Compilation
 
 				if (isvirtual) {
 					file = tparser.MapPath (file);
-				} else if (!Path.IsPathRooted (file)) {
-					file = UrlUtils.Combine (tparser.BaseVirtualDir, file);
+				} else {
+					file = GetIncludeFilePath (tparser.BaseDir, file);
 				}
 
 				InitParser (file);
@@ -332,6 +332,14 @@ namespace System.Web.Compilation
 			//PrintLocation (location);
 		}
 
+		static string GetIncludeFilePath (string basedir, string filename)
+		{
+			if (Path.DirectorySeparatorChar == '/')
+				filename = filename.Replace ("\\", "/");
+
+			return Path.GetFullPath (Path.Combine (basedir, filename));
+		}
+		
 		void TextParsed (ILocation location, string text)
 		{
 			if (text.IndexOf ("<%") != -1 && !inScript) {

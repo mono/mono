@@ -1,3 +1,8 @@
+2004-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: the path for file was treated as virtual, but it's
+	physical. Fixes bug #61524.
+
 2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspParser.cs: fixed case-sensitivity issues with #include and its

@@ -805,7 +805,12 @@ namespace System.Web
 					return ret;
 				} catch (DirectoryNotFoundException) {
 					throw new HttpException (404, "Cannot find '" + file + "'.");
-				} catch (FileNotFoundException) {
+				} catch (FileNotFoundException fnf) {
+					string fname = fnf.FileName;
+					if (fname != null && fname != "") {
+						file = Path.GetFileName (fname);
+					}
+
 					throw new HttpException (404, "Cannot find '" + file + "'.");
 				}
 			}
