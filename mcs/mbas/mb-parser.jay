@@ -2061,6 +2061,10 @@ statement :
 	    {
 	   	  AddHandler ((Expression) $2, (string) $5);
 	    }
+	  | REMOVEHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
+		{
+	   	  RemoveHandler ((Expression) $2, (string) $5);
+	    }
 	  | RAISEEVENT identifier opt_raise_event_args  //OPEN_PARENS opt_argument_list CLOSE_PARENS
 	    {
 	      RaiseEvent ((string) $2, (ArrayList) $3);
@@ -3535,6 +3539,10 @@ argument
 	  {
 	  	$$ = new Argument (new EmptyExpression (), Argument.AType.NoArg);
 	  }
+	/*| ADDRESSOF expression
+	  {
+		$$ = new Argument ((Expression) $2, Argument.AType.AddressOf);
+	  }*/
 	;
 
 variable_reference
