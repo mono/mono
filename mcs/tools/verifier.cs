@@ -298,6 +298,10 @@ namespace Mono.Verifier {
 
 		public static bool operator == (AbstractTypeStuff t1, AbstractTypeStuff t2)
 		{
+			if ((t1 as object) == null) {
+				if ((t2 as object) == null) return true;
+				return false;
+			}
 			return t1.Equals (t2);
 		}
 
@@ -326,6 +330,9 @@ namespace Mono.Verifier {
 
 
 
+	/// <summary>
+	///  Represents a class.
+	/// </summary>
 	public class ClassStuff : AbstractTypeStuff {
 
 		public PublicMethods publicMethods;
@@ -438,6 +445,9 @@ namespace Mono.Verifier {
 
 
 
+	/// <summary>
+	///  Represents an interface.
+	/// </summary>
 	public class InterfaceStuff : AbstractTypeStuff {
 
 		public PublicMethods publicMethods;
@@ -470,6 +480,110 @@ namespace Mono.Verifier {
 			return res;
 		}
 
+	}
+
+
+
+	/// <summary>
+	///  Represents an enumeration.
+	/// </summary>
+	public class EnumStuff : AbstractTypeStuff {
+
+		//public FieldInfo [] members;
+
+		public string baseType;
+		public Hashtable enumTable;
+		public bool isFlags;
+
+		public EnumStuff (Type type) : base (type)
+		{
+			//members = type.GetFields (BindingFlags.Public | BindingFlags.Static);
+
+			Array values = Enum.GetValues (type);
+			Array names = Enum.GetNames (type);
+
+			baseType = Enum.GetUnderlyingType (type).Name;
+
+			enumTable = new Hashtable ();
+
+			object [] attrs = type.GetCustomAttributes (false);
+			isFlags = (attrs != null && attrs.Length > 0);
+			if (isFlags) {
+				foreach (object attr in attrs) {
+					isFlags |= (attr is FlagsAttribute);
+				}
+			}
+
+			int indx = 0;
+			foreach (string id in names) {
+				enumTable [id] = Convert.ToInt64(values.GetValue(indx) as Enum);
+				++indx;
+			}
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			bool res = (o is EnumStuff);
+			bool ok;
+
+			if (res) {
+				EnumStuff that = o as EnumStuff;
+				ok = this.CompareTypes (that);
+				res &= ok;
+				if (!ok && Verifier.stopOnError) return res;
+
+				ok = (this.baseType == that.baseType);
+				res &= ok;
+				if (!ok) {
+					Verifier.log.Write ("error",
+						String.Format ("Underlying types mismatch [{0}, {1}].", this.baseType, that.baseType),
+						ImportanceLevel.MEDIUM);
+					if (Verifier.stopOnError) return res;
+				}
+
+				Verifier.Log.Write ("info", "Comparing [Flags] attribute.");
+				ok = !(this.isFlags ^ that.isFlags);
+				res &= ok;
+				if (!ok) {
+					Verifier.log.Write ("error",
+						String.Format ("[Flags] attribute mismatch ({0} : {1}).", this.isFlags ? "Yes" : "No", that.isFlags ? "Yes" : "No"),
+					    ImportanceLevel.MEDIUM);
+					if (Verifier.stopOnError) return res;
+				}
+
+				Verifier.Log.Write ("info", "Comparing enum values.");
+
+				ICollection names = enumTable.Keys;
+				foreach (string id in names) {
+					ok = that.enumTable.ContainsKey (id);
+					res &= ok;
+					if (!ok) {
+						Verifier.log.Write ("error", String.Format("{0} absent in enumeration.", id),
+							ImportanceLevel.MEDIUM);
+						if (Verifier.stopOnError) return res;
+					}
+
+					if (ok) {
+						long val1 = (long) this.enumTable [id];
+						long val2 = (long) that.enumTable [id];
+						ok = (val1 == val2);
+						res &= ok;
+						if (!ok) {
+							Verifier.log.Write ("error",
+								String.Format ("Enum values mismatch [{0}: {1} != {2}].", id, val1, val2),
+								ImportanceLevel.MEDIUM);
+							if (Verifier.stopOnError) return res;
+						}
+					}
+				}
+			}
+			return res;
+		}
 	}
 
 
@@ -630,6 +744,29 @@ namespace Mono.Verifier {
 
 
 
+	public class EnumCollection : AbstractTypeCollection {
+
+		public EnumCollection () : base ()
+		{
+		}
+
+		public EnumCollection (string assemblyName)
+		: base (assemblyName)
+		{
+		}
+
+		public override void LoaderHook (TypeArray types)
+		{
+			foreach (Type type in types.types) {
+				if (type.IsEnum) {
+					this [type.FullName] = new EnumStuff (type);
+				}
+			}
+		}
+	}
+
+
+
 	public class AssemblyStuff {
 
 		public string name;
@@ -637,7 +774,7 @@ namespace Mono.Verifier {
 
 		public ClassCollection classes;
 		public InterfaceCollection interfaces;
-
+		public EnumCollection enums;
 
 
 		protected delegate bool Comparer (AssemblyStuff asm1, AssemblyStuff asm2);
@@ -650,6 +787,7 @@ namespace Mono.Verifier {
 			comparers.Add (new Comparer (CompareNumInterfaces));
 			comparers.Add (new Comparer (CompareClasses));
 			comparers.Add (new Comparer (CompareInterfaces));
+			comparers.Add (new Comparer (CompareEnums));
 		}
 
 		protected static bool CompareNumClasses (AssemblyStuff asm1, AssemblyStuff asm2)
@@ -681,7 +819,9 @@ namespace Mono.Verifier {
 
 				if (class2 == null) {
 					Verifier.Log.Write ("error", String.Format ("There is no such class in {0}", asm2.name));
-					return false;
+					res = false;
+					if (Verifier.stopOnError || !Verifier.ignoreMissingTypes) return res;
+					continue;
 				}
 
 				res &= (class1 == class2);
@@ -706,12 +846,40 @@ namespace Mono.Verifier {
 
 				if (ifc2 == null) {
 					Verifier.Log.Write ("error", String.Format ("There is no such interface in {0}", asm2.name));
-					return false;
+					res = false;
+					if (Verifier.stopOnError || !Verifier.ignoreMissingTypes) return res;
+					continue;
 				}
 
 				res &= (ifc1 == ifc2);
 				if (!res && Verifier.stopOnError) return res;
 
+			}
+
+			return res;
+		}
+
+
+		protected static bool CompareEnums (AssemblyStuff asm1, AssemblyStuff asm2)
+		{
+			bool res = true;
+			Verifier.Log.Write ("info", "Comparing enums.");
+
+			foreach (DictionaryEntry e in asm1.enums) {
+				string enumName = e.Key as string;
+				Verifier.Log.Write ("enum", enumName);
+
+				EnumStuff e1 = e.Value as EnumStuff;
+				EnumStuff e2 = asm2.enums [enumName] as EnumStuff;
+
+				if (e2 == null) {
+					Verifier.Log.Write ("error", String.Format ("There is no such enum in {0}", asm2.name));
+					res = false;
+					if (Verifier.stopOnError || !Verifier.ignoreMissingTypes) return res;
+					continue;
+				}
+				res &= (e1 == e2);
+				if (!res && Verifier.stopOnError) return res;
 			}
 
 			return res;
@@ -739,6 +907,11 @@ namespace Mono.Verifier {
 			ok = interfaces.LoadFrom (name);
 			res &= ok;
 			if (!ok) Verifier.log.Write ("error", String.Format ("Unable to load interfaces from {0}.", name), ImportanceLevel.HIGH);
+
+			enums = new EnumCollection ();
+			ok = enums.LoadFrom (name);
+			res &= ok;
+			if (!ok) Verifier.log.Write ("error", String.Format ("Unable to load enums from {0}.", name), ImportanceLevel.HIGH);
 
 			valid = res;
 			return res;
@@ -780,8 +953,8 @@ namespace Mono.Verifier {
 		{
 			string res;
 			if (valid) {
-				res = String.Format ("Asssembly {0}, valid, {1} classes, {2} interfaces.",
-				             name, classes.Count, interfaces.Count);
+				res = String.Format ("Asssembly {0}, valid, {1} classes, {2} interfaces, {3} enums.",
+				             name, classes.Count, interfaces.Count, enums.Count);
 			} else {
 				res = String.Format ("Asssembly {0}, invalid.", name);
 			}
@@ -837,18 +1010,6 @@ namespace Mono.Verifier {
 						if (Verifier.stopOnError) break;
 					}
 
-					if (params1 [i].IsIn != params2 [i].IsIn) {
-						Verifier.Log.Write ("error", "[in] mismatch.");
-						res = false;
-						if (Verifier.stopOnError) break;
-					}
-
-					if (params1 [i].IsIn != params2 [i].IsIn) {
-						Verifier.Log.Write ("error", "[in] mismatch.");
-						res = false;
-						if (Verifier.stopOnError) break;
-					}
-
 					if (params1 [i].IsOut != params2 [i].IsOut) {
 						Verifier.Log.Write ("error", "[out] mismatch.");
 						res = false;
@@ -856,7 +1017,7 @@ namespace Mono.Verifier {
 					}
 
 					if (params1 [i].IsRetval != params2 [i].IsRetval) {
-						Verifier.Log.Write ("error", "[in] mismatch.");
+						Verifier.Log.Write ("error", "[ref] mismatch.");
 						res = false;
 						if (Verifier.stopOnError) break;
 					}
@@ -1288,15 +1449,16 @@ namespace Mono.Verifier {
 
 
 
+
 	////////////////////////////////
 	// Main
 	////////////////////////////////
 
 	public class Verifier {
 
-
 		public static Log log = new Log ();
 		public static bool stopOnError = false;
+		public static bool ignoreMissingTypes = true;
 		public static bool checkOptionalFlags = true;
 
 
@@ -1335,6 +1497,7 @@ namespace Mono.Verifier {
 					Environment.Exit (-1);
 				}
 
+
 				try {
 					ok = (asm1 == asm2);
 				} catch {
@@ -1351,6 +1514,7 @@ namespace Mono.Verifier {
 		}
 
 	}
+
 
 }
 
