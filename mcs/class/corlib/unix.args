@@ -458,6 +458,7 @@ System.Runtime.Remoting/IEnvoyInfo.cs
 System.Runtime.Remoting/IRemotingTypeInfo.cs
 System.Runtime.Remoting/ObjectHandle.cs
 System.Runtime.Remoting/ObjRef.cs
+System.Runtime.Remoting/RemotingConfiguration.cs
 System.Runtime.Remoting/RemotingException.cs
 System.Runtime.Remoting/RemotingTimeoutException.cs
 System.Runtime.Remoting/RemotingServices.cs
@@ -514,6 +515,7 @@ System.Runtime.Remoting.Lifetime/ISponsor.cs
 System.Runtime.Remoting.Lifetime/LeaseState.cs
 System.Runtime.Remoting.Lifetime/LifetimeServices.cs
 System.Runtime.Remoting.Messaging/AsyncResult.cs
+System.Runtime.Remoting.Messaging/CallContext.cs
 System.Runtime.Remoting.Messaging/Header.cs
 System.Runtime.Remoting.Messaging/HeaderHandler.cs
 System.Runtime.Remoting.Messaging/IMessage.cs
@@ -545,6 +547,7 @@ System.Runtime.Remoting.Proxies/RealProxy.cs
 System.Runtime.Remoting.Proxies/RemotingProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
+System.Runtime.Remoting.Services/TrackingServices.cs
 System.Runtime.Serialization/FormatterConverter.cs
 System.Runtime.Serialization/FormatterServices.cs
 System.Runtime.Serialization/IDeserializationCallback.cs
