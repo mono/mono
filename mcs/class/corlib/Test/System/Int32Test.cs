@@ -198,6 +198,55 @@ public class Int32Test : Assertion
 			Assert ("#C34", typeof (OverflowException) == e.GetType ());
 		}
 	}
+
+#if NET_2_0	
+	public void TestTryParse()
+	{
+		int result;
+
+		AssertEquals (true, Int32.TryParse (MyString1, out result));
+		AssertEquals (MyInt32_1, result);
+		AssertEquals (true, Int32.TryParse (MyString2, out result));
+		AssertEquals (MyInt32_2, result);
+		AssertEquals (true, Int32.TryParse (MyString3, out result));
+		AssertEquals (MyInt32_3, result);
+
+		AssertEquals (true, Int32.TryParse ("1", out result));
+		AssertEquals (1, result);
+		AssertEquals (true, Int32.TryParse (" 1", out result));
+		AssertEquals (1, result);
+		AssertEquals (true, Int32.TryParse ("     1", out result));
+		AssertEquals (1, result);
+		AssertEquals (true, Int32.TryParse ("1    ", out result));
+		AssertEquals (1, result);
+		AssertEquals (true, Int32.TryParse ("+1", out result));
+		AssertEquals (1, result);
+		AssertEquals (true, Int32.TryParse ("-1", out result));
+		AssertEquals (-1, result);
+		AssertEquals (true, Int32.TryParse ("  -1", out result));
+		AssertEquals (-1, result);
+		AssertEquals (true, Int32.TryParse ("  -1  ", out result));
+		AssertEquals (-1, result);
+		AssertEquals (true, Int32.TryParse ("  -1  ", out result));
+		AssertEquals (-1, result);
+
+		result = 1;
+		AssertEquals (false, Int32.TryParse (null, out result));
+		AssertEquals (0, result);
+
+		AssertEquals (false, Int32.TryParse ("not-a-number", out result));
+
+		double OverInt = (double)Int32.MaxValue + 1;
+		AssertEquals (false, Int32.TryParse (OverInt.ToString (), out result));
+
+		AssertEquals (false, Int32.TryParse ("$42", NumberStyles.Integer, null, out result));
+		AssertEquals (false, Int32.TryParse ("%42", NumberStyles.Integer, Nfi, out result));
+		AssertEquals (false, Int32.TryParse ("$42", NumberStyles.Integer, Nfi, out result));
+		AssertEquals (false, Int32.TryParse (" - 1 ", out result));
+		AssertEquals (false, Int32.TryParse (" - ", out result));
+		AssertEquals (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+	}
+#endif
 	
 	public void TestToString()
 	{
