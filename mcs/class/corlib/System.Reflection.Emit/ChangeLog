@@ -1,3 +1,8 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MethodRental.cs: Added Demand for UnmanagedCode on SwapMethodBody 
+	method.
+
 2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilder.cs: Add internal BestFitMapping and 
