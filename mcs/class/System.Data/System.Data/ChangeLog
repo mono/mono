@@ -1,3 +1,9 @@
+2003-11-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* DataRowCollection.cs: Make the row be deleted by itself. If not,
+	it fails because we need to call OnRowDeleting and OnRowDeleted. It
+	is full implemented inside DataRow.
+
 2003-11-05  Eran Domb  <erand@mainsoft.com>
 	* DataView.cs (ctor) : Changing default RowStateFilter to CurrentRow.
 

@@ -251,7 +251,7 @@ namespace System.Data
 			int index = list.IndexOf(row);
 			if (index < 0)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-			RemoveAt(index);
+			row.Delete();
 		}
 
 		/// <summary>
@@ -263,11 +263,7 @@ namespace System.Data
 				throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 
 			DataRow row = (DataRow)list [index];
-			if (row.RowState != DataRowState.Deleted && row.RowState != DataRowState.Added)
-				row.Delete();
-			list.RemoveAt (index);
-			row.DetachRow();
-			table.DeletedDataRow (row, DataRowAction.Delete);
+			row.Delete();
 		}
 
 		///<summary>
