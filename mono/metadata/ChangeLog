@@ -1,3 +1,7 @@
+2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added internalGetHome.
+
 2004-06-14  Dick Porter  <dick@ximian.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_FindFirstFile): It was
