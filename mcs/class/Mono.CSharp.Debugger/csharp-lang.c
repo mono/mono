@@ -92,6 +92,22 @@ csharp_value_print (struct value *val, struct ui_file *stream, int format,
 		     stream, format, 1, 0, pretty));
 }
 
+void
+csharp_print_type (struct type *type, char *varstring, struct ui_file *stream,
+		   int show, int level)
+{
+  CHECK_TYPEDEF (type);
+  switch (TYPE_CODE (type))
+    {
+    case TYPE_CODE_CSHARP_STRING:
+      fputs_filtered ("string", stream);
+      return;
+
+    default:
+      c_print_type (type, varstring, stream, show, level);
+      break;
+    }
+}
 
 /* Print data of type TYPE located at VALADDR (within GDB), which came from
    the inferior at address ADDRESS, onto stdio stream STREAM according to

@@ -54,7 +54,7 @@ const struct language_defn csharp_mono_language_defn =
   c_printstr,			/* Function to print string constant */
   csharp_emit_char,		/* Function to print a single character */
   c_create_fundamental_type,	/* Create fundamental type in this language */
-  c_print_type,			/* Print a type using appropriate syntax */
+  csharp_print_type,		/* Print a type using appropriate syntax */
   csharp_val_print,		/* Print a value using appropriate syntax */
   csharp_value_print,		/* Print a top-level value */
   {"", "", "", ""},		/* Binary format info */

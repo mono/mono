@@ -745,15 +745,20 @@ namespace Mono.CSharp.Debugger
 		protected void WriteMethod (ISourceMethod method)
 		{
 			DwarfFileWriter.DieCompileUnit parent_die = writer.DieGlobalCompileUnit;
+			DwarfFileWriter.TypeHandle declaring_type;
 			DwarfFileWriter.DieSubProgram die;
+			DwarfFileWriter.Die defining_die;
 
-			die = new DwarfFileWriter.DieSubProgram (parent_die, method);
+			declaring_type = DwarfFileWriter.RegisterType (method.MethodBase.DeclaringType);
+
+			die = new DwarfFileWriter.DieSubProgram (declaring_type.TypeDie, method);
+			defining_die = new DwarfFileWriter.DieSubProgram (parent_die, die, method);
 
 			foreach (ILocalVariable local in method.Locals)
-				WriteLocal (die, local);
+				WriteLocal (defining_die, local);
 
 			foreach (ISourceBlock block in method.Blocks)
-				WriteBlock (die, block);
+				WriteBlock (defining_die, block);
 		}
 
 		protected void WriteSource (DwarfFileWriter writer, ISourceFile source)

@@ -970,6 +970,7 @@ namespace Mono.CSharp.Debugger
 			private static int my_abbrev_id;
 
 			protected Hashtable types = new Hashtable ();
+			protected Hashtable methods = new Hashtable ();
 			protected Hashtable pointer_types = new Hashtable ();
 
 			static DieCompileUnit ()
@@ -1046,6 +1047,7 @@ namespace Mono.CSharp.Debugger
 			private static int my_abbrev_id_2;
 			private static int my_abbrev_id_3;
 			private static int my_abbrev_id_4;
+			private static int my_abbrev_id_5;
 
 			static DieSubProgram ()
 			{
@@ -1077,6 +1079,12 @@ namespace Mono.CSharp.Debugger
 					new AbbrevEntry (DW_AT.AT_declaration, DW_FORM.FORM_flag),
 					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
 				};
+				// Method definition
+				AbbrevEntry[] entries_5 = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_specification, DW_FORM.FORM_ref4)
+				};
 
 
 				AbbrevDeclaration decl_1 = new AbbrevDeclaration (
@@ -1087,16 +1095,19 @@ namespace Mono.CSharp.Debugger
 					DW_TAG.TAG_subprogram, true, entries_3);
 				AbbrevDeclaration decl_4 = new AbbrevDeclaration (
 					DW_TAG.TAG_subprogram, true, entries_4);
+				AbbrevDeclaration decl_5 = new AbbrevDeclaration (
+					DW_TAG.TAG_subprogram, true, entries_5);
 
 				my_abbrev_id_1 = RegisterAbbrevDeclaration (decl_1);
 				my_abbrev_id_2 = RegisterAbbrevDeclaration (decl_2);
 				my_abbrev_id_3 = RegisterAbbrevDeclaration (decl_3);
 				my_abbrev_id_4 = RegisterAbbrevDeclaration (decl_4);
+				my_abbrev_id_5 = RegisterAbbrevDeclaration (decl_5);
 			}
 
-			private static int get_abbrev_id (DieCompileUnit parent_die, ISourceMethod method)
+			private static int get_abbrev_id (bool DoGeneric, ISourceMethod method)
 			{
-				if (parent_die.DoGeneric)
+				if (DoGeneric)
 					if (method.ReturnType == typeof (void))
 						return my_abbrev_id_3;
 					else
@@ -1108,6 +1119,8 @@ namespace Mono.CSharp.Debugger
 						return my_abbrev_id_2;
 			}
 
+			protected string name;
+			protected Die specification_die;
 			protected ISourceMethod method;
 			protected ITypeHandle retval_type;
 
@@ -1116,13 +1129,29 @@ namespace Mono.CSharp.Debugger
 			// for method @name (which has a void return value) and add it
 			// to the @parent_die
 			//
-			public DieSubProgram (DieCompileUnit parent_die, ISourceMethod method)
-				: base (parent_die, get_abbrev_id (parent_die, method))
+			public DieSubProgram (DieCompileUnit parent_die, Die specification_die,
+					      ISourceMethod method)
+				: this (parent_die, method.FullName, method, my_abbrev_id_5)
 			{
-				this.method = method;
+				this.specification_die = specification_die;
+			}
 
+			public DieSubProgram (Die parent_die, ISourceMethod method)
+				: this (parent_die, method.MethodBase.Name, method,
+					get_abbrev_id (false, method))
+			{
 				if (method.ReturnType != typeof (void))
 					retval_type = dw.RegisterType (method.ReturnType);
+
+				DieCompileUnit.LineNumberEngine.AddMethod (method);
+			}
+
+			private DieSubProgram (Die parent_die, string name, ISourceMethod method,
+					       int abbrev_id)
+				: base (parent_die, abbrev_id)
+			{
+				this.name = name;
+				this.method = method;
 
 				if (!method.MethodBase.IsStatic)
 					new DieMethodVariable (this, method);
@@ -1132,14 +1161,17 @@ namespace Mono.CSharp.Debugger
 
 					new DieMethodVariable (this, mp);
 				}
-
-				DieCompileUnit.LineNumberEngine.AddMethod (method);
 			}
 
 			public override void DoEmit ()
 			{
-				aw.WriteString (method.FullName);
+				aw.WriteString (name);
 				aw.WriteUInt8 (true);
+				if (specification_die != null) {
+					DieCompileUnit.WriteRelativeDieReference (specification_die);
+					return;
+				}
+
 				if (dw.DoGeneric)
 					aw.WriteUInt8 (true);
 				else {
@@ -1513,6 +1545,8 @@ namespace Mono.CSharp.Debugger
 			protected FieldInfo[] fields;
 			protected ITypeHandle[] field_types;
 			protected Die[] field_dies;
+			protected MethodInfo[] methods;
+			protected Die[] method_dies;
 
 			protected const BindingFlags FieldBindingFlags =
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
@@ -2074,7 +2108,6 @@ namespace Mono.CSharp.Debugger
 				: base (parent_die, param.Name, param.TypeHandle,
 					VariableType.VARIABLE_PARAMETER)
 			{
-				Console.WriteLine ("PARAM: " + param.Name);
 				this.var = param;
 			}
 

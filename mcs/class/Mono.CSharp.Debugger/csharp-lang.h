@@ -25,6 +25,9 @@ extern const struct op_print csharp_op_print_tab[];
 
 extern void csharp_emit_char (int c, struct ui_file *stream, int quoter);
 
+extern void csharp_print_type (struct type *type, char *varstring,
+			       struct ui_file *stream, int show, int level);
+
 extern int csharp_val_print (struct type *type, char *valaddr, int embedded_offset,
 			     CORE_ADDR address, struct ui_file *stream, int format,
 			     int deref_ref, int recurse, enum val_prettyprint pretty);

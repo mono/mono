@@ -1,3 +1,8 @@
+2002-06-29  Martin Baulig  <martin@gnome.org>
+
+	* MonoDwarfFileWriter.cs, MonoSymbolWriter.cs: Put all TAG_subprogram's into their
+	corresponding struct/class declarations.
+
 2002-06-28  Martin Baulig  <martin@gnome.org>
 
 	* gdb-csharp-support.patch: Updated.
