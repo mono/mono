@@ -1,4 +1,9 @@
 
+Sun Feb 16 13:10:06 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, reflection.c: simple speedup to type hash
+	and equals code.
+
 Sat Feb 15 15:15:03 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* image.c, image.h, class.c, assembly.c: move module loading
