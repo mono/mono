@@ -1,3 +1,10 @@
+2003-10-09  Dick Porter  <dick@ximian.com>
+
+	* icall.c:
+	* locales.h:
+	* locales.c: Internal calls for constructing CultureInfo and
+	related objects from libicu (if its available.)
+
 2003-10-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* debug-helpers.c (wrapper_type_names): Add 'unknown' wrapper type.
