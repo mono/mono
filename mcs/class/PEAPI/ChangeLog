@@ -1,5 +1,12 @@
 2004-06-14  Jackson Harper  <jackson@ximian.com>
 
+	* PEAPI.cs: Add IExternRef interface and modify sigs so it can be
+	used. So we can easily add stuff to modules and assemblies. Fix
+	the nometadata flag, it should be set when there is NO metadata
+	not when there is metadata.
+	
+2004-06-14  Jackson Harper  <jackson@ximian.com>
+
 	* PEAPI.cs: Add new constructor so we can explicitly set the
 	module name.
 	

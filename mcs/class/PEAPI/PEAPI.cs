@@ -381,10 +381,16 @@ namespace PEAPI
 
   }     
   /**************************************************************************/  
+
+        public interface IExternRef  {
+                ClassRef AddClass(string nsName, string name);
+                ClassRef AddValueClass(string nsName, string name);
+        }
+        
         /// <summary>
         /// A reference to an external assembly (.assembly extern)
         /// </summary>
-        public class AssemblyRef : ResolutionScope
+        public class AssemblyRef : ResolutionScope, IExternRef
         {
     private ushort major, minor, build, revision;
     uint flags, keyIx, hashIx, cultIx;
@@ -3648,13 +3654,13 @@ if (rsrc != null)
         /// </summary>
         public class FileRef : MetaDataElement
         {
-    private static readonly uint HasMetaData = 0x1;
+    private static readonly uint NoMetaData = 0x1;
     uint nameIx = 0, hashIx = 0;
     uint flags = 0;
 
     internal FileRef(string name, byte[] hashBytes, bool metaData,
                       bool entryPoint, MetaData md) {
-      if (metaData) flags = HasMetaData;
+      if (!metaData) flags = NoMetaData;
       if (entryPoint) md.SetEntryPoint(this);
       nameIx = md.AddToStringsHeap(name);
       hashIx = md.AddToBlobHeap(hashBytes);
@@ -5588,12 +5594,11 @@ if (rsrc != null)
                         return 0;
     }
 
-        }
   /**************************************************************************/  
         /// <summary>
         /// Descriptor for another module in THIS assembly
         /// </summary>
-  public class ModuleRef : ResolutionScope
+        public class ModuleRef : ResolutionScope, IExternRef
         {
 
                 internal ModuleRef(MetaData md, string name) : base(name,md) {
@@ -5607,7 +5612,7 @@ if (rsrc != null)
     /// <param name="nsName">name space name</param>
     /// <param name="name">class name</param>
     /// <returns>a descriptor for this class in another module</returns>
-    public ClassRef AddClass(string nsName, string name, bool exportClass) {
+    public ClassRef AddClass(string nsName, string name) {
       ClassRef aClass = new ClassRef(nsName,name,metaData);
       metaData.AddToTable(MDTable.TypeRef,aClass);
       aClass.SetParent(this);
