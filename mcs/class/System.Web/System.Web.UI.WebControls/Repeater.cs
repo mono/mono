@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				EnsureChildControls();
-				return Controls;
+				return base.Controls;
 			}
 		}
 
@@ -237,7 +237,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void OnDataBinding(EventArgs e)
 		{
-			OnDataBinding(e);
+			base.OnDataBinding(e);
 			Controls.Clear();
 			ClearChildViewState();
 			CreateControlHierarchy(true);

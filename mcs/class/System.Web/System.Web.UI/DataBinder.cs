@@ -1,12 +1,15 @@
 //
 // System.Web.UI.DataBinder.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+// 	Duncan Mak  (duncan@ximian.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
+using System.Reflection;
 
 namespace System.Web.UI {
 
@@ -16,16 +19,14 @@ namespace System.Web.UI {
 		{
 		}
 
-		[MonoTODO]
 		public static object Eval (object container, string expression)
 		{
-			throw new NotImplementedException ();
+			return GetPropertyValue (container, expression);
 		}
 
-		[MonoTODO]
 		public static string Eval (object container, string expression, string format)
 		{
-			throw new NotImplementedException ();
+			return GetPropertyValue (container, expression, format);
 		}
 
 		[MonoTODO]
@@ -40,16 +41,37 @@ namespace System.Web.UI {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static object GetPropertyValue (object container, string propName)
 		{
-			throw new NotImplementedException ();
+			if (container == null || propName == null)
+				throw new ArgumentException ();
+
+			Type type = container.GetType ();
+			PropertyInfo prop = type.GetProperty (propName);
+			if (prop == null)
+				throw new HttpException ("Property " + propName + " not found in " +
+							 type.ToString ());
+			MethodInfo getm = prop.GetGetMethod ();
+			if (getm == null)
+				throw new HttpException ("Cannot find get accessor for " + propName +
+							 " in " + type.ToString ());
+			
+			return getm.Invoke (container, null);
 		}
 
-		[MonoTODO]
-		public static string  GetPropertyValue (object container, string propName, string format)
+		public static string GetPropertyValue (object container, string propName, string format)
 		{
-			throw new NotImplementedException ();
+			object result;
+
+			result = GetPropertyValue (container, propName);
+			if (result == null)
+				return String.Empty;
+
+			if (format == null)
+				return result.ToString ();
+
+			return String.Format (format, result);
 		}		
 	}
 }
+

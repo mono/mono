@@ -1,5 +1,11 @@
 2002-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* System.Web.UI.WebControls/Repeater.cs:
+	(Controls):
+	(OnDataBinding): fixed stack overflow.
+
+2002-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* RadioButtonList.cs: implemented IRepeatInfoUser.RenderItem.
 	* RepeatInfo.cs: implemented DoHorizontalRendering.
 

@@ -111,6 +111,7 @@ namespace System.Web.UI
                 private EventHandlerList _events = new EventHandlerList();
                 private RenderMethod _renderMethodDelegate = null;
 		private bool autoID = true;
+		private bool creatingControls = false;
         	
         	    private DataBindingCollection dataBindings = null;
 
@@ -118,6 +119,17 @@ namespace System.Web.UI
                 {
                         if (this is INamingContainer) _isNamingContainer = true;
                 }
+
+		public Control BindingContainer
+		{
+			get {
+				Control container = NamingContainer;
+				if (_isNamingContainer)
+					container = container.BindingContainer;
+				return container;
+			}
+		}
+		
                 public virtual string ClientID //DIT
                 {
                         get
@@ -328,14 +340,17 @@ namespace System.Web.UI
                 {
                         return new ControlCollection(this);
                 }
-                protected virtual void EnsureChildControls() //DIT
+
+                protected virtual void EnsureChildControls () //DIT
                 {
-                        if (_childControlsCreated == false)
-                        {
+                        if (ChildControlsCreated == false && !creatingControls) {
+				creatingControls = true;
                                 CreateChildControls();
                                 ChildControlsCreated = true;
+				creatingControls = false;
                         }
                 }
+
                 protected virtual Control FindControl(string id, int pathOffset)
                 {
                         //TODO: I think there is Naming Container stuff here. Redo.

@@ -1,3 +1,14 @@
+2002-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompiledTemplateBuilder.cs: new file. Used in the code generated
+	by xsp.
+
+	* Control.cs:
+	(BindingContainer): implemented.
+	(EnsureChildControls): avoid stack overflow.
+
+	* DataBinder.cs: implemented Eval and PropertyValue.
+
 2002-06-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextWriter.cs: fixed style attributes rendering (almost the same
