@@ -1,3 +1,9 @@
+2004-12-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Use the remapped dll name in
+	the exception message. Fixes #70070.
+	(method_from_methodspec): Fix warnings.
+
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* process.c: (complete_path) return the path quoted
