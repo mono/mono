@@ -36,6 +36,7 @@ namespace Mono.CSharp {
 			MethodAttributes.Virtual;
 		
 		ArrayList bases;
+		Type[] baseTypes;
 		
 		ArrayList defined_method;
 		ArrayList defined_indexer;
@@ -276,13 +277,10 @@ namespace Mono.CSharp {
 				                members.Add (eb);
 			}
 
-			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
-				MemberList parent_mi;
-				
-				parent_mi = TypeContainer.FindMembers (
-					TypeBuilder.BaseType, mt, bf, filter, criteria);
-
-				members.AddRange (parent_mi);
+			if (((bf & BindingFlags.DeclaredOnly) == 0) && (baseTypes != null)) {
+				foreach (Type baseType in baseTypes) {
+					members.AddRange (TypeContainer.FindMembers (baseType, mt, bf, filter, criteria));
+				}
 			}
 
 			return new MemberList (members);
@@ -773,9 +771,11 @@ namespace Mono.CSharp {
 			}
 
 			if (ifaces != null) {
-				foreach (TypeExpr iface in ifaces) {
-					Type itype = iface.ResolveType (ec);
+				baseTypes = new Type[ifaces.Length];
+				for (int i = 0; i < ifaces.Length; ++i) {
+					Type itype = ifaces [i].ResolveType (ec);
 					TypeBuilder.AddInterfaceImplementation (itype);
+					baseTypes [i] = itype;
 				}
 			}
 

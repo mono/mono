@@ -1,3 +1,8 @@
+2004-02-16  Marek Safar  <marek.safar@seznam.cz>
+
+	* interface.cs (FindMembers): The operation is performed on all base
+	interfaces and not only on the first. It is required for future CLS Compliance patch.
+
 2004-02-12 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* statement.cs, codegen.cs:
