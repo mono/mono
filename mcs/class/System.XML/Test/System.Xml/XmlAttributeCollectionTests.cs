@@ -181,5 +181,24 @@ namespace MonoTests.System.Xml
 			AssertEquals("RemoveAt", null, el.GetAttributeNode("a6"));
 			AssertEquals("Remove.Removed", "pearl", attr.Value);
 		}
+
+		[Test]
+		public void RemoveDefaultAttribute ()
+		{
+			string dtd = "<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root attr CDATA 'default'>]>";
+			string xml = dtd + "<root/>";
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml (xml);
+
+			doc.DocumentElement.Attributes ["attr"].Value = "modified";
+			doc.DocumentElement.RemoveAttribute("attr");
+
+			XmlAttribute defAttr = doc.DocumentElement.Attributes ["attr"];
+			AssertNotNull (defAttr);
+			AssertEquals ("default", defAttr.Value);
+
+			defAttr.Value = "default"; // same value as default
+			AssertEquals (true, defAttr.Specified);
+		}
 	}
 }

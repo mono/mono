@@ -91,9 +91,9 @@ namespace MonoTests.System.Xml
 		{
 			string dtd = "<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'def'>]>";
 			string xml = dtd + "<root />";
-			XmlValidatingReader xvr = new XmlValidatingReader (new XmlTextReader (xml, XmlNodeType.Document, null));
+//			XmlValidatingReader xvr = new XmlValidatingReader (new XmlTextReader (xml, XmlNodeType.Document, null));
 			XmlDocument doc = new XmlDocument ();
-			doc.Load (xvr);
+			doc.LoadXml (xml);
 			Console.WriteLine (doc.DocumentElement.Attributes.Count);
 			Console.WriteLine (doc.CreateElement ("root").Attributes.Count);
 			Console.WriteLine (doc.CreateElement ("root2").Attributes.Count);

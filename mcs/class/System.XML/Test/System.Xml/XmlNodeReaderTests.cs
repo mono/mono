@@ -37,7 +37,7 @@ namespace MonoTests.System.Xml
 			try {
 				nrdr = new XmlNodeReader (null);
 				Fail ("null reference exception is preferable.");
-			} catch (NullReferenceException ex) {
+			} catch (NullReferenceException) {
 			}
 			nrdr = new XmlNodeReader (new XmlDocument ());
 			nrdr.Read ();
@@ -105,6 +105,7 @@ namespace MonoTests.System.Xml
 			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
 			AssertEquals (1, nr.Depth);
 			nr.ResolveEntity ();
+			AssertEquals (xml, document.OuterXml);
 			// It is still entity reference.
 			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
 			// It now became element node.
@@ -127,6 +128,7 @@ namespace MonoTests.System.Xml
 			xtr.Read ();
 			document.AppendChild (document.ReadNode (xtr));
 			document.AppendChild (document.ReadNode (xtr));
+			xtr.Close ();
 			AssertEquals (xml, document.OuterXml);
 			XmlNodeReader nr = new XmlNodeReader (document);
 			nr.Read ();	// DTD
@@ -156,6 +158,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xtr.Read ();
 			document.AppendChild (document.ReadNode (xtr));
+			xtr.Close ();
 			AssertEquals (xml, document.OuterXml);
 			XmlNodeReader nr = new XmlNodeReader (document);
 			nr.Read ();	// root

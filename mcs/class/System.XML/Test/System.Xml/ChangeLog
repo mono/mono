@@ -1,3 +1,10 @@
+2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttributeCollectionTests.cs : Added RemoveDefaultAttribute().
+	* XmlDocumentTests.cs, XmlElementTests.cs, XmlNodeReaderTests.cs,
+	  XmlTextReaderTests.cs, XmlTextWriter.cs, XmlWriterTests.cs :
+	  Close or avoid XmlTextReader.
+
 2004-01-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttributeCollectionTests.cs :

@@ -1033,6 +1033,7 @@ namespace MonoTests.System.Xml
 			string xml = dtd + "<root>&ent3;&ent2;</root>";
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			document.Load (xtr);
+			xtr.Close ();
 		}
 
 		[Test]

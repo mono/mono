@@ -588,6 +588,7 @@ namespace MonoTests.System.Xml
 				null);
 			xtr.Read ();	// ws
 			xtr.Read ();	// not-wf xmldecl
+			xtr.Close ();
 		}
 
 		[Test]
@@ -600,6 +601,7 @@ namespace MonoTests.System.Xml
 				null);
 			xtr.Read ();	// comment
 			xtr.Read ();	// not-wf xmldecl
+			xtr.Close ();
 		}
 
 		[Test]
@@ -612,6 +614,7 @@ namespace MonoTests.System.Xml
 				null);
 			xtr.Read ();	// PI
 			xtr.Read ();	// not-wf xmldecl
+			xtr.Close ();
 		}
 
 		[Test]
@@ -623,6 +626,7 @@ namespace MonoTests.System.Xml
 				XmlNodeType.Document,
 				null);
 			xtr.Read ();
+			xtr.Close ();
 		}
 
 		[Test]
@@ -631,6 +635,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (
 				"<foo /><bar />", XmlNodeType.Element, null);
 			xtr.Read ();
+			xtr.Close ();
 		}
 
 		[Test]
@@ -639,6 +644,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (
 				"test", XmlNodeType.Attribute, null);
 			xtr.Read ();
+			xtr.Close ();
 		}
 
 		[Test] 
@@ -657,6 +663,7 @@ namespace MonoTests.System.Xml
 			xtr.Normalization = true;
 			xtr.Read ();
 			xtr.Read ();
+			xtr.Close ();
 		}
 
 		[Test]
@@ -666,6 +673,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xtr.Read ();
 			xtr.Read ();
+			xtr.Close ();
 		}
 
 		[Test]
@@ -679,6 +687,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			while (!xtr.EOF)
 				xtr.Read ();
+			xtr.Close ();
 		}
 
 		[Test]
@@ -693,6 +702,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			while (!xtr.EOF)
 				xtr.Read ();
+			xtr.Close ();
 		}
 
 		[Test]
@@ -741,6 +751,7 @@ namespace MonoTests.System.Xml
 			AssertEquals (134, bytes2 [4]);
 			AssertEquals (184, bytes2 [5]);
 			AssertEquals (0, bytes2 [6]);
+			xtr.Close ();
 
 			xtr = new XmlTextReader (base64, XmlNodeType.Document, null);
 			bytes2 = new byte [10];
@@ -765,6 +776,7 @@ namespace MonoTests.System.Xml
 			AssertEquals (134, bytes2 [3]);
 			AssertEquals (184, bytes2 [4]);
 			AssertEquals (0, bytes2 [5]);
+			xtr.Close ();
 		}
 	}
 }

@@ -54,6 +54,7 @@ namespace MonoTests.System.Xml
 			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xtw.WriteNode (xtr, false);
 			AssertEquals (xml, writer.ToString ());
+			xtr.Close ();
 		}
 
 		[Test]
@@ -67,6 +68,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteNode (xtr, false);
 			AssertEquals ("<?xml version='1.0'?>",
 				 writer.ToString ());
+			xtr.Close ();
 		}
 
 		[Test]
@@ -79,6 +81,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteNode (xtr, false);
 			AssertEquals (xml.Replace ("'", "\""),
 				writer.ToString ());
+			xtr.Close ();
 		}
 
 		[Test]
@@ -100,6 +103,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteNode (xtr, false);
 			AssertEquals (xml.Replace ("'", "\""),
 				writer.ToString ());
+			xtr.Close ();
 		}
 
 		[Test]
@@ -109,6 +113,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader ("", XmlNodeType.Element, null);
 			xtr.Read ();
 			xtw.WriteNode (xtr, false); // does not report any errors
+			xtr.Close ();
 		}
 
 		[Test]
@@ -116,7 +121,7 @@ namespace MonoTests.System.Xml
 		{
 			setupWriter ();
 			xtw.WriteSurrogateCharEntity ('\udfff', '\udb00');
-			AssertEquals ("&#xd03ff;", writer.ToString ());
+			AssertEquals ("&#xD03FF;", writer.ToString ());
 
 			try {
 				xtw.WriteSurrogateCharEntity ('\ud800', '\udc00');

@@ -1045,6 +1045,7 @@ namespace MonoTests.System.Xml
 			wr.Close();
 			// This method don't always have to take this double-quoted style...
 			AssertEquals("#WriteAttributes.Element", "<root a1=\"A\" b2=\"B\" c3=\"C\" />", sw.ToString().Trim());
+			xtr.Close ();
 		}
 
 		[Test]
