@@ -1220,10 +1220,11 @@ namespace Microsoft.VisualBasic
 
 			
 			if (Expression == null)
-				return new string[0];
+				return new string[1];
+
 			if ((Delimiter == null) || (Delimiter.Length == 0))
 			{
-				string [] ret = new string[0];
+				string [] ret = new string[1];
 				ret[0] = Expression;
 				return ret;
 			}
@@ -1231,8 +1232,7 @@ namespace Microsoft.VisualBasic
 				Limit = 1; 
 
 			if (Limit < -1)
-				throw new ArgumentOutOfRangeException("Limit", "Argument 'Limit' must be -1 or greater than zero.");
-
+				throw new OverflowException("Arithmetic operation resulted in an overflow.");
 			switch (Compare)
 			{
 				case CompareMethod.Binary:

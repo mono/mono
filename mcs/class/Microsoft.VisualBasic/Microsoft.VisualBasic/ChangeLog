@@ -1,3 +1,7 @@
+2004-06-23 Sachin Kumar <skumar1@novell.com>
+	* Conversion.cs: Trivial Fixes
+	* Strings.cs: Trivial Fixes
+ 
 2004-06-23 Anirban Bhattacharjee <banirban@novell.com>
 	* Strings.cs: Several trivial bug fixing
 

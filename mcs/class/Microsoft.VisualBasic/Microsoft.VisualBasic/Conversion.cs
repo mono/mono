@@ -53,6 +53,8 @@ namespace Microsoft.VisualBasic {
 		public static string ErrorToString (System.Int32 ErrorNumber) {
 			if(ErrorNumber >= 65535)
 				throw new ArgumentException(VBUtils.GetResourceString("MaxErrNumber"));
+			if(ErrorNumber == 0)
+				return Information.Err().Description;
 
 			String errStr = VBUtils.GetResourceString(ErrorNumber);
 		
