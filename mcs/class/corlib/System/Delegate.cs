@@ -218,10 +218,9 @@ namespace System {
 		}
 
 		// This is from ISerializable
-		[MonoTODO]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			// TODO: IMPLEMENT ME
+			DelegateSerializationHolder.GetDelegateData (this, info, context);
 		}
 
 		public virtual Delegate[] GetInvocationList()

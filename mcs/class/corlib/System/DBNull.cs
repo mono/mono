@@ -20,9 +20,9 @@ namespace System
 		private DBNull () {}
 
 		// Methods
-		[MonoTODO]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			UnitySerializationHolder.GetDBNullData (this, info, context);
 		}
 
 		public TypeCode GetTypeCode ()

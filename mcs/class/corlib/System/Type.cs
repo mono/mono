@@ -289,7 +289,9 @@ namespace System {
 
 		public bool IsSerializable {
 			get {
-				return (Attributes & TypeAttributes.Serializable) != 0;
+				// Enums and delegates are always serializable
+				return (Attributes & TypeAttributes.Serializable) != 0 || IsEnum || 
+					type_is_subtype_of (this, typeof (System.Delegate), false);
 			}
 		}
 

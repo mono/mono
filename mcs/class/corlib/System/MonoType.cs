@@ -11,6 +11,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace System
 {
@@ -24,7 +25,8 @@ namespace System
 		public bool isprimitive;
 	}
 
-	internal sealed class MonoType : Type
+	[Serializable]
+	internal sealed class MonoType : Type, ISerializable
 	{
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -497,10 +499,7 @@ namespace System
 			get {
 				MonoTypeInfo info;
 				get_type_info (_impl, out info);
-				if (info.nested_in == null)
-					return info.name_space;
-				else
-					return info.nested_in.Namespace;
+				return info.name_space;
 			}
 		}
 
@@ -537,6 +536,11 @@ namespace System
 			
 			get_type_info (_impl, out info);
 			return info.rank;
+		}
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			UnitySerializationHolder.GetTypeData (this, info, context);
 		}
 	}
 }
