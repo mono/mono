@@ -113,7 +113,7 @@ namespace System.Web.UI.WebControls
 				document        = null;
 				documentContent = null;
 				xpathDoc        = null;
-				documentSource  = MapPathSecure (value);
+				documentSource  = value;
 			}
 		}
 

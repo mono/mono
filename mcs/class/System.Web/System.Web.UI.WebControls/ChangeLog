@@ -1,3 +1,7 @@
+2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Xml.cs: don't call MapPathSecure when setting DocumentSource.
+
 2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RangeValidator.cs: fixed bug #37577. Thanks to Stephane Tombeur
