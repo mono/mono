@@ -783,6 +783,12 @@ namespace Mono.CSharp {
 			if (check_type == tb)
 				return true;
 
+			if (TypeBuilder == null)
+				// FIXME: TypeBuilder will be null when invoked by Class.GetNormalBases().
+				//        However, this is invoked again later -- so safe to return true.
+				//        May also be null when resolving top-level attributes.
+				return true;
+
 			if (check_type.IsGenericParameter)
 				return true; // FIXME
 			
