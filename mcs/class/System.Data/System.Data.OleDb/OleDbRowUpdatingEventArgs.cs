@@ -25,13 +25,11 @@ namespace System.Data.OleDb
 
 		#region Constructors
 
-		[MonoTODO]
 		public OleDbRowUpdatingEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 			: base (dataRow, command, statementType, tableMapping)
 
 		{
-			this.command = (OleDbCommand) command;
-			throw new NotImplementedException ();
+			
 		}
 
 		#endregion
@@ -39,8 +37,9 @@ namespace System.Data.OleDb
 		#region Properties
 		
 		public new OleDbCommand Command {
-			get { return command; }
-			set { command = value; }
+			get { return (OleDbCommand) base.Command; }
+                        set { base.Command = value; }
+
 		}
 
 		#endregion
