@@ -1,6 +1,8 @@
-* Commons.Xml.Relaxng
+* Commons.Xml.Relaxng.dll
 
-** Introduction
+** Commons.Xml.Relaxng
+
+*** Introduction
 
   RelaxngValidatingReader is an implementation to validate XML with RELAX NG
   grammar. You can use full standard grammar components with it.
@@ -18,7 +20,7 @@
   as yet.
 
 
-** Grammar Object Model
+*** Grammar Object Model
 
   RELAX NG grammar structure is represented in abstract RelaxngPattern class
   and its derivations. The easiest way to get this instance is to use
@@ -34,7 +36,7 @@
   like System.Xml.Schema.XmlSchema.
 
 
-** Compact Syntax Support
+*** Compact Syntax Support
 
   Commons.Xml.Relaxng.dll also supports RELAX NG Compact Syntax. To parse
   compact syntax file, use Commons.Xml.Relaxng.Rnc.RncParser class:
@@ -44,7 +46,7 @@
 	RelaxngGrammar grammar = parser.Parse (source);
 
 
-** Validating Reader usage
+*** Validating Reader usage
 
   RelaxngValidatingReader is used to validate XML document with RELAX NG
   grammar. The usage is simple:
@@ -58,7 +60,7 @@
   reads the instance, validating with the supplied grammar.
 
 
-** Datatype support
+*** Datatype support
 
   Commons.Xml.Relaxng now supports custom datatype library. There are two 
   classes from which you have to write classes derived.
@@ -89,7 +91,7 @@
   implement your own merging provider). 
 
 
-** Known bugs
+*** Known bugs
 
   Currently it is beta version as yet. It has some bugs:
 
@@ -100,4 +102,41 @@
 	- Name class analysis and constraint check is not implemented (part
 	  of spec 7).
 	- Empty string might not be validated properly.
+
+
+** NvdlValidatingReader
+
+*** NVDL
+
+	NvdlValidatingReader is an implementation of ISO DSDL Part 4
+	Namespace-based Validation Dispatching Language (NVDL). Note that the
+	development is still ongoing, and NVDL specification itself is also
+	still not in standard status as yet.
+	http://www.asahi-net.or.jp/~eb2m-mrt/dsdl/
+
+	NOTE: It is "just started" implementation and have many limitations
+	and (maybe) problems.
+
+	By default, NvdlValidatingReader supports RELAX NG, RELAX NG Compact
+	syntax, and XML Schema.
+
+*** Usage
+
+	1) Using built-in RELAX NG support.
+
+	NvdlRules rules = NvdlReader.Read (
+		new XmlTextReader ("xhtml2-xforms.nvdl"));
+	XmlReader vr = new NvdlValidatingReader (
+		new XmlTextReader ("index.html"), rules);
+
+	2) custom validation support
+
+	NvdlConfig config = new NvdlConfig ();
+	config.AddProvider (myOwnSchematronProvider);
+	config.AddProvider (myOwnExamplotronProvider);
+	NvdlRules rules = NvdlReader.Read (new XmlTextReader ("myschemas.nvdl"));
+	XmlReader vr = new NvdlValidatingReader (
+		new XmlTextReader ("myinstance.xml"), rules, config);
+
+(Will follow up later.)
 

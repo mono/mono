@@ -1,3 +1,13 @@
+2005-03-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Commons.Xml.Relaxng.dll.sources : added NVDL support files.
+	* README : added halfbaked description.
+
+2005-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Commons.Xml.Relaxng.dll.sources :
+	  added RncWriter.cs and RelaxngInference.cs.
+
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (RESOURCE_FILES): List only filenames.
