@@ -1,3 +1,11 @@
+2004-02-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h linear-scan.c mini-x86.c mini-sparc.c mini-ppc.c: Add 'cfg'
+	argument to mono_arch_regalloc_cost.
+
+	* mini-x86.c (mono_arch_regalloc_cost): Compute regalloc costs 
+	precisely.
+
 2004-02-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h mini-x86.c mini-ppc.c mini-sparc.c linear-scan.c: 
