@@ -132,3 +132,27 @@ Integration
 * get System.Data to work with GUI
   System.Windows.Forms.DataGrid
 
+
+Provider Factoros (target: mono 1.2 PROFILE=net_2_0)
+===============================
+
+* Create Configuration Class
+	DbProviderFactoriesConfigurationHandler - done
+	DbProviderConfigurationHandler - not much documents/use cases.
+	ConnectionStringSection
+	ConnectionStringSettingsCollection
+	ConnectionStringSettings
+
+* Create Base class
+	DbProviderFactories - done
+	DbProviderFactory - done
+	DbConnectionFactory
+	
+	Add nunit test cases for these.
+	
+* Create Factory classes & methods for Providers.
+	Factory methods for SqlClient - done.
+
+** DbConnectionStringBuilder - done (not added to sources list).
+	This uses Generic.Collections.Dictionary, which has not yet
+   been implemented. Once it is done, this can be added to sources.
