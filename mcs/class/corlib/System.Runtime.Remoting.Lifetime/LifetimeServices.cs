@@ -66,5 +66,10 @@ namespace System.Runtime.Remoting.Lifetime {
 		{
 			_leaseManager.TrackLifetime (identity);
 		}
+
+		internal static void StopTrackingLifetime (ServerIdentity identity)
+		{
+			_leaseManager.StopTrackingLifetime (identity);
+		}
 	}
 }

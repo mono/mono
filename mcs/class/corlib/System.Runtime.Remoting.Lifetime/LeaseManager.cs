@@ -38,6 +38,14 @@ namespace System.Runtime.Remoting.Lifetime
 			}
 		}
 
+		public void StopTrackingLifetime (ServerIdentity identity)
+		{
+			lock (_objects.SyncRoot)
+			{
+				_objects.Remove (identity);
+			}
+		}
+
 		public void StartManager()
 		{
 			_timer = new Timer (new TimerCallback (ManageLeases), null, LifetimeServices.LeaseManagerPollTime,LifetimeServices.LeaseManagerPollTime);

@@ -1,3 +1,8 @@
+2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* LeaseManager.cs: Added method for removing an object from the lease manager.
+	* LifetimeServices.cs: Added method for removing an object from the lease manager.
+
 2003-02-16  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* LeaseSink.cs: small correction.
