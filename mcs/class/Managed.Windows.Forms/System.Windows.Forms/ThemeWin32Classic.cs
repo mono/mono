@@ -26,9 +26,14 @@
 //
 //
 //
-// $Revision: 1.44 $
+// $Revision: 1.45 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.45  2004/10/13 03:41:45  pbartok
+// - From John BouAntoun: Added an overload to CPDrawBorder3D to allow him
+//   using the function for flatstyle drawing
+// - Changed functions to use the new version of CPDrawBorder3D
+//
 // Revision 1.44  2004/10/13 02:45:21  pbartok
 // - Fixes from John BouAntoun: now handles forecolors and backcolors for
 //   flatstyle rendered controls much better; It also fixes normal checkbox
@@ -661,7 +666,7 @@ namespace System.Windows.Forms
 						ControlPaint.DrawBorder(graphics, checkbox_rectangle, checkbox.ForeColor, ButtonBorderStyle.Solid);
 					} else {
 						// draw sunken effect
-						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right);
+						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right, this.ColorButtonFace);
 						// draw top left
 						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, checkbox_rectangle.X, checkbox_rectangle.Y+checkbox_rectangle.Height);
 						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, Math.Max(checkbox_rectangle.X + checkbox_rectangle.Width - 1, 0), checkbox_rectangle.Y);
@@ -882,7 +887,7 @@ namespace System.Windows.Forms
 			increment = block_width + space_betweenblocks;
 
 			/* Draw border */
-			CPDrawBorder3D (dc, progress_bar.paint_area, Border3DStyle.SunkenInner, Border3DSide.All);
+			CPDrawBorder3D (dc, progress_bar.paint_area, Border3DStyle.SunkenInner, Border3DSide.All, this.ColorButtonFace);
 			
 			/* Draw Blocks */
 			while ((x - client_area.X) < barpos_pixels) {
@@ -1307,7 +1312,7 @@ namespace System.Windows.Forms
 				Border3DStyle border_style = Border3DStyle.SunkenInner;
 				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
 					border_style = Border3DStyle.RaisedOuter;
-				CPDrawBorder3D(dc, area, border_style, Border3DSide.All);
+				CPDrawBorder3D(dc, area, border_style, Border3DSide.All, this.ColorButtonFace);
 			}
 
 			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {
@@ -1440,10 +1445,9 @@ namespace System.Windows.Forms
 					}
 					/* Draw the button frame, only if it is not a separator */
 					if (flat) { 
-						if (button.Pushed || button.Pressed)
-							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
-								Border3DSide.All);
-						else if (button.Hilight) {
+						if (button.Pushed || button.Pressed) {
+							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter, Border3DSide.All, this.ColorButtonFace);
+						} else if (button.Hilight) {
 							dc.DrawRectangle (ResPool.GetPen (ColorButtonText), buttonArea);
 							if (! ddRect.IsEmpty) {
 								dc.DrawLine (ResPool.GetPen (ColorButtonText), ddRect.X, ddRect.Y, ddRect.X, 
@@ -1455,19 +1459,19 @@ namespace System.Windows.Forms
 					else { // normal toolbar
 						if (button.Pushed || button.Pressed) {
 							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
-								Border3DSide.All);
+								Border3DSide.All, this.ColorButtonFace);
 							if (! ddRect.IsEmpty) {
 								CPDrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
-									Border3DSide.Left);
+									Border3DSide.Left, this.ColorButtonFace);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
 						}
 						else {
 							CPDrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
-								Border3DSide.All);
+								Border3DSide.All, this.ColorButtonFace);
 							if (! ddRect.IsEmpty) {
 								CPDrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
-									Border3DSide.Left);
+									Border3DSide.Left, this.ColorButtonFace);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
 						}
@@ -1556,7 +1560,7 @@ namespace System.Windows.Forms
 						else {
 							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-								Border3DSide.Right | Border3DSide.Bottom);
+								Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 						}
 					}
 					if (button.Enabled)
@@ -1575,7 +1579,7 @@ namespace System.Windows.Forms
 						else {
 							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-								Border3DSide.Right | Border3DSide.Bottom);
+								Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 						}
 					}
 					if (button.Enabled)
@@ -1609,7 +1613,7 @@ namespace System.Windows.Forms
 					else {
 						dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
 						CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-							Border3DSide.Right | Border3DSide.Bottom);
+							Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 					}
 				}
 				if (button.Enabled)
@@ -2143,12 +2147,16 @@ namespace System.Windows.Forms
 		}
 
 		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
-			Pen			penTopLeft;
-			Pen			penTopLeftInner;
-			Pen			penBottomRight;
-			Pen			penBottomRightInner;
+			CPDrawBorder3D(graphics, rectangle, style, sides, this.ColorButtonFace);
+		}
+
+		private void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color) {
+			Pen		penTopLeft;
+			Pen		penTopLeftInner;
+			Pen		penBottomRight;
+			Pen		penBottomRightInner;
 			Rectangle	rect= new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-			bool			doInner = false;
+			bool		doInner = false;
 
 			if ((style & Border3DStyle.Adjust)!=0) {
 				rect.Y-=2;
@@ -2158,20 +2166,20 @@ namespace System.Windows.Forms
 			}
 
 			/* default to flat */
-			penTopLeft=SystemPens.ControlDark;
-			penTopLeftInner=SystemPens.ControlDark;
-			penBottomRight=SystemPens.ControlDark;
-			penBottomRightInner=SystemPens.ControlDark;
+			penTopLeft=ResPool.GetPen(ControlPaint.Dark(control_color));
+			penTopLeftInner=ResPool.GetPen(ControlPaint.Dark(control_color));
+			penBottomRight=ResPool.GetPen(ControlPaint.Dark(control_color));
+			penBottomRightInner=ResPool.GetPen(ControlPaint.Dark(control_color));
 
 			if ((style & Border3DStyle.RaisedOuter)!=0) {
-				penTopLeft=SystemPens.ControlLightLight;
-				penBottomRight=SystemPens.ControlDarkDark;
+				penTopLeft=ResPool.GetPen(ControlPaint.LightLight(control_color));
+				penBottomRight=ResPool.GetPen(ControlPaint.DarkDark(control_color));
 				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
 					doInner=true;
 				}
 			} else if ((style & Border3DStyle.SunkenOuter)!=0) {
-				penTopLeft=SystemPens.ControlDarkDark;
-				penBottomRight=SystemPens.ControlLightLight;
+				penTopLeft=ResPool.GetPen(ControlPaint.DarkDark(control_color));
+				penBottomRight=ResPool.GetPen(ControlPaint.LightLight(control_color));
 				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
 					doInner=true;
 				}
@@ -2179,24 +2187,24 @@ namespace System.Windows.Forms
 
 			if ((style & Border3DStyle.RaisedInner)!=0) {
 				if (doInner) {
-					penTopLeftInner=SystemPens.ControlLight;
-					penBottomRightInner=SystemPens.ControlDark;
+					penTopLeftInner=ResPool.GetPen(ControlPaint.Light(control_color));
+					penBottomRightInner=ResPool.GetPen(ControlPaint.Dark(control_color));
 				} else {
-					penTopLeft=SystemPens.ControlLightLight;
-					penBottomRight=SystemPens.ControlDarkDark;
+					penTopLeft=ResPool.GetPen(ControlPaint.LightLight(control_color));
+					penBottomRight=ResPool.GetPen(ControlPaint.DarkDark(control_color));
 				}
 			} else if ((style & Border3DStyle.SunkenInner)!=0) {
 				if (doInner) {
-					penTopLeftInner=SystemPens.ControlDark;
-					penBottomRightInner=SystemPens.ControlLight;
+					penTopLeftInner=ResPool.GetPen(ControlPaint.Dark(control_color));
+					penBottomRightInner=ResPool.GetPen(ControlPaint.Light(control_color));
 				} else {
-					penTopLeft=SystemPens.ControlDarkDark;
-					penBottomRight=SystemPens.ControlLightLight;
+					penTopLeft=ResPool.GetPen(ControlPaint.DarkDark(control_color));
+					penBottomRight=ResPool.GetPen(ControlPaint.LightLight(control_color));
 				}
 			}
 
 			if ((sides & Border3DSide.Middle)!=0) {
-				graphics.FillRectangle(SystemBrushes.Control, rect);
+				graphics.FillRectangle(ResPool.GetSolidBrush(control_color), rect);
 			}
 
 			if ((sides & Border3DSide.Left)!=0) {
@@ -2373,9 +2381,9 @@ namespace System.Windows.Forms
 				ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 			} else {
 				if ((state & (ButtonState.Pushed | ButtonState.Checked))!=0) {
-					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 				} else {
-					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 				}
 			}
 
@@ -3131,14 +3139,14 @@ namespace System.Windows.Forms
 					}
 
 					if ((State & DrawFrameControlStates.Pushed)!=0) {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 					} else if ((State & DrawFrameControlStates.Flat)!=0) {
 						ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 					} else if ((State & DrawFrameControlStates.Inactive)!=0) {
 						/* Same as normal, it would seem */
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 					} else {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 					}
 				} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
 					Pen			penFatDark	= new Pen(ColorButtonShadow, 1);
@@ -3189,7 +3197,7 @@ namespace System.Windows.Forms
 					if ((State & DrawFrameControlStates.Flat)!=0) {
 						ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 					} else {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
 					}
 
 					/* Make sure we've got at least a line width of 1 */
