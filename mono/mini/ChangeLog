@@ -1,3 +1,8 @@
+
+Tue Dec 7 10:06:39 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: avoid calling ppc_patch in exception trampolines.
+
 2004-12-01  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* inssel-s390.brgi, mini-ops.h, mini-s390.c : Add stubs for support of tls offset
