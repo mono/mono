@@ -1,5 +1,7 @@
 2002-08-03  Martin Baulig  <martin@gnome.org>
 
+	Fixed bugs #27998 and #22735.
+
 	* class.cs (Method.IsOperator): New public field.
 	(Method.CheckBase): Report CS0111 if there's already a method
 	with the same parameters in the current class.  Report CS0508 when
