@@ -1,5 +1,7 @@
 System/AppDomainSetupTest.cs
 System/AppDomainTest.cs
+System/ApplicationIdentityTest.cs
+System/ApplicationIdTest.cs
 System/ArrayTest.cs
 System/AttributeTest.cs
 System/BitConverterTest.cs

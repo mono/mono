@@ -3,6 +3,8 @@
 	* corlib.dll.sources: Added System/ApplicationId.cs, 
 	System.Reflection/ImageFileMachine.cs and PortableExecutableKind.cs,
 	and System.Security.Policy/ApplicationSecurityInfo.cs for NET_2_0.
+	* corlib_test.dll.sources: Added System/ApplicationIdentityTest.cs and
+	ApplicationIdTest.cs unit tests for NET_2_0.
 
 2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
