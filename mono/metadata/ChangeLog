@@ -1,3 +1,10 @@
+
+Thu Jun 5 19:51:49 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.h, profiler.c: made the simple profiler thread-safe,
+	get more accurate timing info. Allow the loading of an
+	externally-developed profiler module.
+
 2003-06-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): improved
