@@ -1,5 +1,8 @@
 2003-06-04  Dietmar Maurer  <dietmar@ximian.com>
 
+	* appdomain.c
+	(ves_icall_System_AppDomainSetup_InitAppDomainSetup): fix for bug 42934
+
 	* loader.c (mono_lookup_pinvoke_call): look for modules in the
 	current directory (fix bug 44008)
 
