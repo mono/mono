@@ -254,6 +254,10 @@ namespace System.Windows.Forms {
 			set { show_slider = value; }
 		}
 
+		internal int SliderPos {
+			get { return slider_pos; }
+		}
+
 		internal ButtonState RightSliderState {
 			get { return right_slider_state; }
 		}
@@ -377,11 +381,10 @@ namespace System.Windows.Forms {
 					return true;
 				return false;
 			}
-			
 		}
 
 		private bool CanScrollLeft {
-			get { return slider_pos < 0; }
+			get { return slider_pos > 0; }
 		}
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)
@@ -392,7 +395,7 @@ namespace System.Windows.Forms {
 				if (right.Contains (e.X, e.Y)) {
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {
-						slider_pos--;
+						slider_pos++;
 						SizeTabs ();
 					}
 					Refresh ();
@@ -400,7 +403,7 @@ namespace System.Windows.Forms {
 				} else if (left.Contains (e.X, e.Y)) {
 					left_slider_state = ButtonState.Pushed;
 					if (CanScrollLeft) {
-						slider_pos++;
+						slider_pos--;
 						SizeTabs ();
 					}
 					Refresh ();
@@ -410,7 +413,7 @@ namespace System.Windows.Forms {
 			}
 
 			int count = Controls.Count;
-			for (int i = 0; i<count; i++) {
+			for (int i = SliderPos; i < count; i++) {
 				if (!GetTabRect (i).Contains (e.X, e.Y))
 					continue;
 				SelectedIndex = i;
@@ -641,7 +644,7 @@ namespace System.Windows.Forms {
 			int prev_row = 1;
 			Size spacing = TabSpacing;
 			int size = item_size.Width + 2 + (spacing.Width * 2);
-			int xpos = 4 + (slider_pos * size);
+			int xpos = 4;
 			int begin_prev = 0;
 
 			if (TabPages.Count == 0)
@@ -649,10 +652,10 @@ namespace System.Windows.Forms {
 
 			prev_row = TabPages [0].Row;
 
-			for (int i = 0; i < TabPages.Count; i++) {
+			for (int i = slider_pos; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
 				int width;
-
+ 
 				if (SizeMode == TabSizeMode.Fixed) {
 					width = item_size.Width;
 				} else {
@@ -662,12 +665,11 @@ namespace System.Windows.Forms {
 				if (width < MinimumTabWidth)
 					width = MinimumTabWidth;
 				if (page.Row != prev_row)
-					xpos = 4 + (slider_pos * size);
+					xpos = 4;
 
 				page.TabBounds = new Rectangle (xpos,
 						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
 						width, item_size.Height);
-
 				
 				if (page.Row != prev_row) {
 					if (SizeMode == TabSizeMode.FillToRight) {
@@ -690,7 +692,7 @@ namespace System.Windows.Forms {
 				ExpandSelected (TabPages [SelectedIndex], 2, row_width - 1);
 			}
 		}
-
+		
 		private void FillRow (int start, int end, int amount, Size spacing)
 		{
 			int xpos = TabPages [start].TabBounds.Left;

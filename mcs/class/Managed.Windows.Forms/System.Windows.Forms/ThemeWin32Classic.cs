@@ -1838,7 +1838,7 @@ namespace System.Windows.Forms
 
 			if (tab.Alignment == TabAlignment.Top) {
 				for (int r = tab.TabPages.Count; r > 0; r--) {
-					for (int i = 0; i < tab.TabPages.Count; i++) {
+					for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {
 						if (i == tab.SelectedIndex)
 							continue;
 						if (r != tab.TabPages [i].Row)
@@ -1851,7 +1851,7 @@ namespace System.Windows.Forms
 				}
 			} else {
 				for (int r = 0; r < tab.TabPages.Count; r++) {
-					for (int i = 0; i < tab.TabPages.Count; i++) {
+					for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {
 						if (i == tab.SelectedIndex)
 							continue;
 						if (r != tab.TabPages [i].Row)
@@ -1863,8 +1863,8 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-			
-			if (tab.SelectedIndex != -1) {
+
+			if (tab.SelectedIndex != -1 && tab.SelectedIndex >= tab.SliderPos) {
 				Rectangle rect = tab.GetTabRect (tab.SelectedIndex);
 				if (rect.IntersectsWith (area))
 					DrawTab (dc, tab.TabPages [tab.SelectedIndex], tab, rect, true);

@@ -1,5 +1,12 @@
 2004-11-10  Jackson Harper  <jackson@ximian.com>
 
+	* ThemeWin32Classic.cs:
+	* TabControl.cs: instead of moving tabs by the slider pos just
+	start drawing at the tab that is offset by the slider. This way
+	scrolling always moves by exactly one tab.
+
+2004-11-10  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: You can only scroll left when the slider has
 	already ben moved right.
 	
