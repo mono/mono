@@ -8,6 +8,7 @@
 
 using System.Net;
 using System.IO;
+using System.Text;
 using Mono.Xml.Native;
 
 namespace System.Xml
@@ -56,14 +57,16 @@ namespace System.Xml
 
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
-			if (baseUri == null) {
-				try {
-					return new Uri (relativeUri);
-				} catch (UriFormatException) {
-					return new Uri (Path.Combine (Path.GetFullPath ("."), relativeUri));
-				}
-			} else
-				return new Uri (baseUri, relativeUri);
+			if (relativeUri == null)
+				return baseUri;
+			
+			if (baseUri == null)
+				return new Uri (Path.GetFullPath (relativeUri));
+			
+			if (relativeUri.IndexOf ("://") >= 0)
+				return new Uri (relativeUri);
+
+			return new Uri (baseUri, relativeUri);
 		}
 	}
 }
