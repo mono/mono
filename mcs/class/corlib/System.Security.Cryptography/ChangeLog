@@ -1,5 +1,11 @@
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DSACryptoServiceProvider.cs: Added keypair persistence support.
+	Corrected dispose so object cannot be disposed multiple time. Added
+	PublicOnly property (as internal before 1.2, public after).
+	* RSACryptoServiceProvider.cs: Added keypair persistence support.
+	Corrected dispose so object cannot be disposed multiple time. Added
+	PublicOnly property (as internal before 1.2, public after).
 	* SymmetricAlgorithm.cs: Removed class SymmetricTransform from file
 	and moved it to Mono.Security.Cryptography namespace. The transform
 	class will also be included in Mono.Security assembly.

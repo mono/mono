@@ -3,12 +3,13 @@
 //
 // Authors:
 //	Dan Lewis (dihlewis@yahoo.co.uk)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //	Ben Maurer (bmaurer@users.sf.net)
 //
 // (C) 2002
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -23,16 +24,20 @@ namespace System.Security.Cryptography {
 #else
 	public sealed class DSACryptoServiceProvider : DSA {
 #endif
-		private CspParameters cspParams;
+		private const int PROV_DSS = 2;		// from WinCrypt.h
+
+		private KeyPairPersistence store;
+		private bool persistKey = true;
+		private bool persisted;
 
 		private bool privateKeyExportable = true;
-		private bool m_disposed = false;
-		private bool persistKey = false;
+		private bool m_disposed;
 
 		private DSAManaged dsa;
 
-		// S implementation generates a keypair everytime a new DSA 
-		// object is created (with a CspParameters).
+		// MS implementation generates a keypair everytime a new DSA 
+		// object is created (unless an existing key container is 
+		// specified in the CspParameters).
 		// However we:
 		// (a) often use DSA to import an existing keypair.
 		// (b) take a LOT of time to generate the DSA group
@@ -42,33 +47,37 @@ namespace System.Security.Cryptography {
 
 		public DSACryptoServiceProvider () : this (1024, null) {}
 
-		[MonoTODO("Persistance")]
 		public DSACryptoServiceProvider (CspParameters parameters) : this (1024, parameters) {}
 
 		public DSACryptoServiceProvider (int dwKeySize) : this (dwKeySize, null) {}
 
-		[MonoTODO("Persistance")]
 		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters)
 		{
 			if (parameters == null) {
-				cspParams = new CspParameters ();
+				parameters = new CspParameters (PROV_DSS);
 #if ! NET_1_0
 				if (useMachineKeyStore)
-					cspParams.Flags |= CspProviderFlags.UseMachineKeyStore;
+					parameters.Flags |= CspProviderFlags.UseMachineKeyStore;
 #endif
-				// TODO: set default values (for keypair persistance)
+				store = new KeyPairPersistence (parameters);
+				// no need to load - it cannot exists
 			}
 			else {
-				cspParams = parameters;
-				// FIXME: We'll need this to support some kind of persistance
+				store = new KeyPairPersistence (parameters);
+				store.Load ();
+				if (store.KeyValue != null) {
+					persisted = true;
+					this.FromXmlString (store.KeyValue);
+				}
 			}
+
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
 
 			// will throw an exception is key size isn't supported
 			KeySize = dwKeySize;
 			dsa = new DSAManaged (dwKeySize);
-			m_disposed = false;
+			dsa.KeyGenerated += new DSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
 		}
 
 		~DSACryptoServiceProvider ()
@@ -89,25 +98,36 @@ namespace System.Security.Cryptography {
 			get { return LegalKeySizesValue; }
 		}
 
-		public override string SignatureAlgorithm {
-			get { return "http://www.w3.org/2000/09/xmldsig#dsa-sha1"; }
-		}
-
-		[MonoTODO("Persistance")]
 		public bool PersistKeyInCsp {
 			get { return persistKey; }
 			set {
+				if (value) {
+					OnKeyGenerated (dsa);
+				}
+				else {
+					// delete the container
+					store.Remove ();
+				}
 				persistKey = value;
-				// FIXME: We'll need this to support some kind of persistance
-				if (value)
-					throw new NotSupportedException ("CspParameters not supported");
 			}
+		}
+
+#if (NET_1_0 || NET_1_1)
+		internal
+#else
+		public 
+#endif
+		bool PublicOnly {
+			get { return dsa.PublicOnly; }
+		}
+
+		public override string SignatureAlgorithm {
+			get { return "http://www.w3.org/2000/09/xmldsig#dsa-sha1"; }
 		}
 
 #if ! NET_1_0
 		private static bool useMachineKeyStore = false;
 
-		[MonoTODO("Related to persistance")]
 		public static bool UseMachineKeyStore {
 			get { return useMachineKeyStore; }
 			set { useMachineKeyStore = value; }
@@ -186,11 +206,25 @@ namespace System.Security.Cryptography {
 
 		protected override void Dispose (bool disposing) 
 		{
-			if (dsa != null)
-				dsa.Clear ();
-			// call base class 
-			// no need as they all are abstract before us
-			m_disposed = true;
+			if (!m_disposed) {
+				if (dsa != null)
+					dsa.Clear ();
+				// call base class 
+				// no need as they all are abstract before us
+				m_disposed = true;
+			}
+		}
+
+		// private stuff
+
+		private void OnKeyGenerated (object sender) 
+		{
+			if ((persistKey) && (!persisted)) {
+				// save the current keypair
+				store.KeyValue = this.ToXmlString (!dsa.PublicOnly);
+				store.Save ();
+				persisted = true;
+			}
 		}
 	}
 }

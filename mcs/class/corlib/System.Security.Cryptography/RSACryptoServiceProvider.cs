@@ -2,11 +2,12 @@
 // RSACryptoServiceProvider.cs: Handles an RSA implementation.
 //
 // Authors:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //	Ben Maurer (bmaurer@users.sf.net)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -19,11 +20,14 @@ namespace System.Security.Cryptography {
 
 	public sealed class RSACryptoServiceProvider : RSA {
 	
-		private CspParameters cspParams;
+		private const int PROV_RSA_FULL = 1;	// from WinCrypt.h
+
+		private KeyPairPersistence store;
+		private bool persistKey = true;
+		private bool persisted;
 	
 		private bool privateKeyExportable = true; 
-		private bool persistKey = false;
-		private bool m_disposed = false;
+		private bool m_disposed;
 
 		private RSAManaged rsa;
 	
@@ -40,7 +44,6 @@ namespace System.Security.Cryptography {
 			Common (1024, null);
 		}
 	
-		[MonoTODO("Missing keypair persistance using CspParameters")]
 		public RSACryptoServiceProvider (CspParameters parameters) 
 		{
 			Common (1024, parameters);
@@ -54,30 +57,31 @@ namespace System.Security.Cryptography {
 			// no keypair generation done at this stage
 		}
 	
-		// FIXME: We currently dont link with MS CAPI. Anyway this makes
-		// only sense in Windows - what do we do elsewhere ?
-		[MonoTODO("Missing keypair persistance using CspParameters")]
 		public RSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
 		{
 			Common (dwKeySize, parameters);
 			// no keypair generation done at this stage
 		}
 	
-		// FIXME: We currently dont link with MS CAPI. Anyway this makes
-		// only sense in Windows - what do we do elsewhere ?
 		private void Common (int dwKeySize, CspParameters p) 
 		{
 			if (p == null) {
-				cspParams = new CspParameters ();
+				p = new CspParameters (PROV_RSA_FULL);
 #if ! NET_1_0
 				if (useMachineKeyStore)
-					cspParams.Flags |= CspProviderFlags.UseMachineKeyStore;
+					p.Flags |= CspProviderFlags.UseMachineKeyStore;
 #endif
-				// TODO: set default values (for keypair persistance)
+				store = new KeyPairPersistence (p);
+				// no need to load - it cannot exists
 			}
-			else
-				cspParams = p;
-				// FIXME: We'll need this to support some kind of persistance
+			else {
+				store = new KeyPairPersistence (p);
+				store.Load ();
+				if (store.KeyValue != null) {
+					persisted = true;
+					this.FromXmlString (store.KeyValue);
+				}
+			}
 
 			// Microsoft RSA CSP can do between 384 and 16384 bits keypair
 			LegalKeySizesValue = new KeySizes [1];
@@ -85,12 +89,12 @@ namespace System.Security.Cryptography {
 			base.KeySize = dwKeySize;
 
 			rsa = new RSAManaged (KeySize);
+			rsa.KeyGenerated += new RSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
 		}
 
 #if ! NET_1_0
 		private static bool useMachineKeyStore = false;
 
-		[MonoTODO("Related to keypair persistance")]
 		public static bool UseMachineKeyStore {
 			get { return useMachineKeyStore; }
 			set { useMachineKeyStore = value; }
@@ -115,11 +119,28 @@ namespace System.Security.Cryptography {
 				      return rsa.KeySize;
 			}
 		}
-	
-		[MonoTODO("Related to keypair persistance")]
+
 		public bool PersistKeyInCsp {
-			get { return persistKey;  }
-			set { persistKey = value; }
+			get { return persistKey; }
+			set {
+				if (value) {
+					OnKeyGenerated (rsa);
+				}
+				else {
+					// delete the container
+					store.Remove ();
+				}
+				persistKey = value;
+			}
+		}
+
+#if (NET_1_0 || NET_1_1)
+		internal
+#else
+		public 
+#endif
+		bool PublicOnly {
+			get { return rsa.PublicOnly; }
 		}
 	
 		public override string SignatureAlgorithm {
@@ -277,7 +298,7 @@ namespace System.Security.Cryptography {
 	
 		// LAMESPEC: str is not the hash name but an OID
 		// NOTE: this method is LIMITED to SHA1 and MD5 like the MS framework 1.0 
-		// and 1.1 because there's no mathod to get a hash algorithm from an OID. 
+		// and 1.1 because there's no method to get a hash algorithm from an OID. 
 		// However there's no such limit when using the [De]Formatter class.
 		public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature) 
 		{
@@ -292,11 +313,25 @@ namespace System.Security.Cryptography {
 	
 		protected override void Dispose (bool disposing) 
 		{
-			if (rsa != null)
-				rsa.Clear ();
-			// call base class 
-			// no need as they all are abstract before us
-			m_disposed = true;
+			if (!m_disposed) {
+				if (rsa != null)
+					rsa.Clear ();
+				// call base class 
+				// no need as they all are abstract before us
+				m_disposed = true;
+			}
+		}
+
+		// private stuff
+
+		private void OnKeyGenerated (object sender) 
+		{
+			if ((persistKey) && (!persisted)) {
+				// save the current keypair
+				store.KeyValue = this.ToXmlString (!rsa.PublicOnly);
+				store.Save ();
+				persisted = true;
+			}
 		}
 	}
 }
