@@ -17,6 +17,10 @@ Support return values and ref/out parameters
 
 Support more primitive types
 
+Separate the redistributable generated header files
+
+Verbose and force (delete target directory) switches
+
 LOW PRIORITY
 ------------
 

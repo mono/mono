@@ -50,6 +50,12 @@ public class cilc
 		//TODO: parse given .h files here and register the type names
 
 		Assembly a = Assembly.LoadFrom (assembly);
+
+		Console.WriteLine ();
+		Console.WriteLine ("References (not followed):");
+		foreach (AssemblyName reference in a.GetReferencedAssemblies ())
+		Console.WriteLine ("  " + reference.Name);
+
 		dllname = Path.GetFileName (assembly);
 		AssemblyGen (a);
 
@@ -77,6 +83,8 @@ public class cilc
 		Console.WriteLine ();
 		MakeReport (registry_hits, "Type registry missed hits", 20);
 		Console.WriteLine ();
+		Console.WriteLine (registered_types.Count + " types generated in " + namespaces.Length + " namespaces; " + warnings_ignored + " types ignored");
+		Console.WriteLine ();
 	}
 
 	static void MakeReport (Hashtable ctable, string desc, int num)
@@ -94,6 +102,8 @@ public class cilc
 		}
 	}
 
+	static int warnings_ignored = 0;
+
 	static void AssemblyGen (Assembly a)
 	{
 		Type[] types = a.GetTypes ();
@@ -101,12 +111,14 @@ public class cilc
 
 		foreach (Type t in types) {
 			if (t.IsNotPublic) {
-				Console.WriteLine ("Ignoring non-public type: " + t.Name);
+				//Console.WriteLine ("Ignoring non-public type: " + t.Name);
+				warnings_ignored++;
 				continue;
 			}
 
 			if (!t.IsClass) {
-				Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
+				//Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
+				warnings_ignored++;
 				continue;
 			}
 
@@ -794,7 +806,7 @@ class CodeWriter
 	{
 		if (File.Exists (fname)) {
 			string newfname = fname + ".x";
-			Console.WriteLine ("Warning: File " + fname + " already exists, using " + newfname);
+			//Console.WriteLine ("Warning: File " + fname + " already exists, using " + newfname);
 			IsDuplicate = true;
 			Init (newfname);
 			return;

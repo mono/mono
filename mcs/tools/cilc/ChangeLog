@@ -12,6 +12,7 @@
 	Code generator access modifier cleanups.
 	Use base name of input as default output target directory.
 	Report missed type registry hits after generation, using FullName if needed.
+	Reduce verbosity.
 	* Makefile:
 	Build Demo.dll, not Test.dll.
 
