@@ -44,6 +44,8 @@ namespace Mono.CSharp {
 			}
 			set {
 				attributes = value;
+				if (attributes != null)
+					attributes.CheckTargets (ValidAttributeTargets);
 			}
 		}
 
@@ -60,13 +62,14 @@ namespace Mono.CSharp {
 		public abstract bool IsClsCompliaceRequired (DeclSpace ds);
 
 		/// <summary>
-		/// Gets list of valid attribute targets for explicit target declaration
+		/// Gets list of valid attribute targets for explicit target declaration.
+		/// The first array item is default target. Don't break this rule.
 		/// </summary>
 		protected abstract string[] ValidAttributeTargets { get; }
 	};
 
 	public class Attribute {
-		public readonly string Target;
+		public string Target;
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
@@ -802,11 +805,6 @@ namespace Mono.CSharp {
 			get { return ImplOptions == MethodImplOptions.InternalCall; }
 		}
 
-		protected virtual bool CanIgnoreInvalidAttribute (Attributable ias)
-		{
-			return false;
-		}
-
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
@@ -818,24 +816,17 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
-				// The parser applies toplevel attributes both to the assembly and
-				// to a top-level class, if any.  So, be silent about them.
-				if (! CanIgnoreInvalidAttribute (ias))
-					Error_AttributeNotValidForElement (this, Location);
+				Error_AttributeNotValidForElement (this, Location);
 				return;
 			}
 
 			ias.ApplyAttributeBuilder (this, cb);
 
-			// Because default target is null (we save some space). We need to transform it here
-			// for distinction between "default" and "doesn't exist"
-			string target = Target == null ? "default" : Target;
-			string emitted = emitted_attr [Type] as string;
-			if (emitted == target && !usage_attr.AllowMultiple) {
+			if (!usage_attr.AllowMultiple && emitted_attr.Contains (Target)) {
 				Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
 			}
 
-			emitted_attr [Type] = target;
+			emitted_attr [Type] = Target;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
@@ -1065,16 +1056,6 @@ namespace Mono.CSharp {
 				ec.DeclSpace.NamespaceEntry = ns;
 			return base.CheckAttributeType (ec, complain);
 		}
-
-		protected override bool CanIgnoreInvalidAttribute (Attributable ias)
-		{
-			// Ignore error if this attribute is shared between the Assembly
-			// and a top-level class.  The parser couldn't figure out which entity
-			// this attribute belongs to.  If this attribute is erroneous, it should
-			// be caught when it is processed by the top-level class.
-
-			return (Target == null && ias is CommonAssemblyModulClass);
-		}
 	}
 
 	public class Attributes {
@@ -1102,8 +1083,10 @@ namespace Mono.CSharp {
 		public void CheckTargets (string[] possible_targets)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.Target == null)
+				if (a.Target == null) {
+					a.Target = possible_targets [0];
 					continue;
+				}
 
 				if (((IList) possible_targets).Contains (a.Target))
 					continue;

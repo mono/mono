@@ -6026,7 +6026,7 @@ namespace Mono.CSharp {
 		public string MethodName;
 		public Method OperatorMethod;
 
-		static string[] attribute_targets = new string [] { "param" };
+		static string[] attribute_targets = new string [] { "method", "return" };
 
 		public Operator (OpType type, Expression ret_type, int mod_flags,
 				 Expression arg1type, string arg1name,
