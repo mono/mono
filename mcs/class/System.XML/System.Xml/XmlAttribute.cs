@@ -5,7 +5,9 @@
 // Author:
 //   Daniel Weber (daniel-weber@austin.rr.com)
 //
-// (C) 2001 Daniel Weberusing System;
+// (C) 2001 Daniel Weber
+
+using System;
 
 namespace System.Xml
 {

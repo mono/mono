@@ -1,3 +1,8 @@
+2002-03-02  Mike Kestner <mkestner@speakeasy.net>
+
+	* XmlAttribute.cs : Using fix.
+	* XmlDocument.cs (CreateAttribute(String)): Implement.
+
 2002-03-02  Jason Diamond <jason@injektilo.org>
 
 	* XmlNamespaceManager.cs: Atomize prefixes and namespaces strings in 

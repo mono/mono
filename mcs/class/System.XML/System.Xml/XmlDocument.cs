@@ -209,8 +209,7 @@ namespace System.Xml
 
 		public XmlAttribute CreateAttribute(string name)
 		{
-			// TODO - implement XmlDocument.CreateAttribute(string name)
-			throw new NotImplementedException("CreateAttribute(string name) not implemented");
+			return new XmlAttribute(this, name, "");
 		}
 
 		public XmlAttribute CreateAttribute(string qualifiedName,string namespaceURI)
