@@ -14,7 +14,7 @@ namespace System.Web.SessionState
 	{
 	      void Dispose ();
 	      void Init (HttpApplication context);
-	      void UpdateContext (HttpContext context);
+	      bool UpdateContext (HttpContext context);
 	}
 }
 

@@ -1,3 +1,10 @@
+2003-07-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ISessionHandler.cs:
+	* SessionInProcHandler.cs:
+	* SessionStateModule.cs: UpdateContext returns a bool indicating if we
+	started a new session. Only call session start event if that is true.
+
 2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: fire application start and session start/end

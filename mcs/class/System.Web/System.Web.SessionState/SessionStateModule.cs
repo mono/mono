@@ -72,8 +72,9 @@ namespace System.Web.SessionState
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 
-			if (handler!=null)
-			    handler.UpdateContext (context);
+			bool isNew = false;
+			if (handler != null)
+			    isNew = handler.UpdateContext (context);
 			
 			// In the future, we might want to move the Async stuff down to
 			// the interface level, if we're going to support other than
@@ -81,7 +82,7 @@ namespace System.Web.SessionState
 			// simply fake it.
 			HttpAsyncResult result=new HttpAsyncResult (cb,this);
 			result.Complete (true, o, null);
-			if (Start != null)
+			if (isNew && Start != null)
 				Start (this, args);
 
 			return result;

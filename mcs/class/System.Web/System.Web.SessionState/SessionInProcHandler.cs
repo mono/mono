@@ -73,7 +73,7 @@ namespace System.Web.SessionState
 
 
 		//this is the code that actually do stuff.
-		public void UpdateContext (HttpContext context)
+		public bool UpdateContext (HttpContext context)
 		{
 			SessionContainer container = null;
 
@@ -90,7 +90,7 @@ namespace System.Web.SessionState
 					container.Touch ();
 					 // Can we do this? It feels safe, but what do I know.
 					context.Session = container.SessionState;
-					return; // and we're done
+					return false; // and we're done
 				} else if(container!=null) {
 					//A empty or expired session, lets kill it.
 					_sessionTable[context.Request.Cookies[COOKIE_NAME]]=null;
@@ -112,12 +112,14 @@ namespace System.Web.SessionState
 
 			// and returns it.
 			context.Session = container.SessionState;
+			context.Session.IsNewSession = true;
 
 
 			// sets the session cookie. We're assuming that session scope is the default mode.
 			context.Response.AppendCookie (new HttpCookie (COOKIE_NAME,sessionID));
 
 			// And we're done!
+			return true;
 		}
 	}
 }
