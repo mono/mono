@@ -21,7 +21,12 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.X509 {
 
-	public class PKCS5 {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class PKCS5 {
 
 		public const string pbeWithMD2AndDESCBC = "1.2.840.113549.1.5.1";
 		public const string pbeWithMD5AndDESCBC = "1.2.840.113549.1.5.3";
@@ -33,7 +38,12 @@ namespace Mono.Security.X509 {
 		public PKCS5 () {}
 	}
 
-	public class PKCS12 {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class PKCS12 {
 
 		public const string pbeWithSHAAnd128BitRC4 = "1.2.840.113549.1.12.1.1";
 		public const string pbeWithSHAAnd40BitRC4 = "1.2.840.113549.1.12.1.2";
@@ -202,15 +212,20 @@ namespace Mono.Security.X509 {
 			}
 		}
 
+		static private int recommendedIterationCount = 2000;
+
 		private int _version;
 		private byte[] _password;
 		private ArrayList _keyBags;
 		private X509CertificateCollection _certs;
+		private int _iterations;
+		private RandomNumberGenerator _rng;
 
 		// constructors
 
 		public PKCS12 () 
 		{
+			_iterations = recommendedIterationCount;
 			_keyBags = new ArrayList ();
 			_certs = new X509CertificateCollection ();
 		}
@@ -277,24 +292,16 @@ namespace Mono.Security.X509 {
 				if (macSalt.Tag != 0x04)
 					throw new ArgumentException ("missing MAC salt");
 
-				int iterations = 1; // default value
+				_iterations = 1; // default value
 				if (macData.Count > 2) {
 					ASN1 iters = macData [2];
 					if (iters.Tag != 0x02)
 						throw new ArgumentException ("invalid MAC iteration");
-					iterations = ASN1Convert.ToInt32 (iters);
+					_iterations = ASN1Convert.ToInt32 (iters);
 				}
 
-				PKCS12.DeriveBytes pd = new PKCS12.DeriveBytes ();
-				pd.HashName = "SHA1";
-				pd.Password = _password;
-				pd.Salt = macSalt.Value;
-				pd.IterationCount = iterations;
-
-				HMACSHA1 hmac = (HMACSHA1) HMACSHA1.Create ();
-				hmac.Key = pd.DeriveMAC (20);
 				byte[] authSafeData = authSafe.Content [0].Value;
-				byte[] calculatedMac = hmac.ComputeHash (authSafeData, 0, authSafeData.Length);
+				byte[] calculatedMac = MAC (_password, macSalt.Value, _iterations, authSafeData);
 				if (!Compare (macValue, calculatedMac))
 					throw new CryptographicException ("Invalid MAC - file may have been tampered!");
 			}
@@ -352,12 +359,25 @@ namespace Mono.Security.X509 {
 			}
 		}
 
+		public int IterationCount {
+			get { return _iterations; }
+			set { _iterations = value; }
+		}
+
 		public ArrayList Keys {
 			get { return _keyBags; }
 		}
 
 		public X509CertificateCollection Certificates {
 			get { return _certs; }
+		}
+
+		internal RandomNumberGenerator RNG {
+			get {
+				if (_rng == null)
+					_rng = RandomNumberGenerator.Create ();
+				return _rng;
+			}
 		}
 
 		// private methods
@@ -375,7 +395,7 @@ namespace Mono.Security.X509 {
 			return compare;
 		}
 
-		public byte[] Decrypt (string algorithmOid, byte[] salt, int iterationCount, byte[] encryptedData) 
+		private SymmetricAlgorithm GetSymmetricAlgorithm (string algorithmOid, byte[] salt, int iterationCount)
 		{
 			string algorithm = null;
 			int keyLength = 8;	// 64 bits (default)
@@ -463,8 +483,23 @@ namespace Mono.Security.X509 {
 				sa.IV = pd.DeriveIV (ivLength);
 				sa.Mode = CipherMode.CBC;
 			}
-			ICryptoTransform ct = sa.CreateDecryptor ();
-			return ct.TransformFinalBlock (encryptedData, 0, encryptedData.Length);
+			return sa;
+		}
+
+		public byte[] Decrypt (string algorithmOid, byte[] salt, int iterationCount, byte[] encryptedData) 
+		{
+			SymmetricAlgorithm sa = null;
+			byte[] result = null;
+			try {
+				sa = GetSymmetricAlgorithm (algorithmOid, salt, iterationCount);
+				ICryptoTransform ct = sa.CreateDecryptor ();
+				result = ct.TransformFinalBlock (encryptedData, 0, encryptedData.Length);
+			}
+			finally {
+				if (sa != null)
+					sa.Clear ();
+			}
+			return result;
 		}
 
 		public byte[] Decrypt (PKCS7.EncryptedData ed)
@@ -473,6 +508,16 @@ namespace Mono.Security.X509 {
 				ed.EncryptionAlgorithm.Content [0].Value, 
 				ASN1Convert.ToInt32 (ed.EncryptionAlgorithm.Content [1]),
 				ed.EncryptedContent);
+		}
+
+		public byte[] Encrypt (string algorithmOid, byte[] salt, int iterationCount, byte[] data) 
+		{
+			byte[] result = null;
+			using (SymmetricAlgorithm sa = GetSymmetricAlgorithm (algorithmOid, salt, iterationCount)) {
+				ICryptoTransform ct = sa.CreateEncryptor ();
+				result = ct.TransformFinalBlock (data, 0, data.Length);
+			}
+			return result;
 		}
 
 		private void AddPrivateKey (PKCS8.PrivateKeyInfo pki) 
@@ -536,9 +581,63 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		static private int recommendedIterationCount = 2000;
+		private ASN1 Pkcs8ShroudedKeyBag (AsymmetricAlgorithm aa) 
+		{
+			PKCS8.PrivateKeyInfo pki = new PKCS8.PrivateKeyInfo ();
+			if (aa is RSA) {
+				pki.Algorithm = "1.2.840.113549.1.1.1";
+				pki.PrivateKey = PKCS8.PrivateKeyInfo.Encode ((RSA)aa);
+			}
+			else if (aa is DSA) {
+				pki.Algorithm = null;
+				pki.PrivateKey = PKCS8.PrivateKeyInfo.Encode ((DSA)aa);
+			}
+			else
+				throw new CryptographicException ("Unknown asymmetric algorithm {0}", aa.ToString ());
 
-		/*
+			PKCS8.EncryptedPrivateKeyInfo epki = new PKCS8.EncryptedPrivateKeyInfo ();
+			epki.Algorithm = pbeWithSHAAnd3KeyTripleDESCBC;
+			epki.IterationCount = _iterations;
+			epki.EncryptedData = Encrypt (pbeWithSHAAnd3KeyTripleDESCBC, epki.Salt, _iterations, pki.GetBytes ());
+
+			ASN1 seqEncryptedWithParams = new ASN1 (0x30);
+			seqEncryptedWithParams.Add (new ASN1 (epki.GetBytes ()));
+
+			return seqEncryptedWithParams;
+		}
+
+		private ASN1 CertificateSafeBag (X509Certificate x509) 
+		{
+			ASN1 encapsulatedCertificate = new ASN1 (0x04, x509.RawData);
+
+			PKCS7.ContentInfo ci = new PKCS7.ContentInfo ();
+			ci.ContentType = x509Certificate;
+			ci.Content.Add (encapsulatedCertificate);
+
+			ASN1 bagValue = new ASN1 (0xA0);
+			bagValue.Add (ci.ASN1);
+
+			ASN1 safeBag = new ASN1 (0x30);
+			safeBag.Add (ASN1Convert.FromOID (certBag));
+			safeBag.Add (bagValue);
+
+			return safeBag;
+		}
+
+		private byte[] MAC (byte[] password, byte[] salt, int iterations, byte[] data) 
+		{
+			PKCS12.DeriveBytes pd = new PKCS12.DeriveBytes ();
+			pd.HashName = "SHA1";
+			pd.Password = password;
+			pd.Salt = salt;
+			pd.IterationCount = iterations;
+
+			HMACSHA1 hmac = (HMACSHA1) HMACSHA1.Create ();
+			hmac.Key = pd.DeriveMAC (20);
+			return hmac.ComputeHash (data, 0, data.Length);
+		}
+
+                /*
 		 * SafeContents ::= SEQUENCE OF SafeBag
 		 * 
 		 * SafeBag ::= SEQUENCE {
@@ -549,25 +648,91 @@ namespace Mono.Security.X509 {
 		 */
 		public byte[] GetBytes () 
 		{
-			PKCS7.ContentInfo authSafe = new PKCS7.ContentInfo (PKCS7.data);
-			
 			// TODO (incomplete)
+			ASN1 safeBagSequence = new ASN1 (0x30);
 
+			if (_keyBags.Count > 0) {
+				ASN1 keysSafeBag = new ASN1 (0x30);
+				foreach (AsymmetricAlgorithm key in _keyBags) {
+					keysSafeBag.Add (ASN1Convert.FromOID (pkcs8ShroudedKeyBag));
+					keysSafeBag.Add (Pkcs8ShroudedKeyBag (key));
+				}
+
+				ASN1 seq = new ASN1 (0x30);
+				seq.Add (keysSafeBag);
+
+				ASN1 data = new ASN1 (0x30);
+				data.Add (seq);
+
+				ASN1 keyContent = new ASN1 (0xA0);
+				keyContent.Add (data);
+
+				PKCS7.ContentInfo keyBag = new PKCS7.ContentInfo (PKCS7.data);
+				keyBag.Content = keyContent;
+				safeBagSequence.Add (keyBag.ASN1);
+			}
+
+			if (_certs.Count > 0) {
+				byte[] certsSalt = new byte [8];
+				RNG.GetBytes (certsSalt);
+
+				ASN1 seqParams = new ASN1 (0x30);
+				seqParams.Add (new ASN1 (0x04, certsSalt));
+				seqParams.Add (ASN1Convert.FromInt32 (_iterations));
+
+				ASN1 seqPbe = new ASN1 (0x30);
+				seqPbe.Add (ASN1Convert.FromOID (pbeWithSHAAnd3KeyTripleDESCBC));
+				seqPbe.Add (seqParams);
+
+				ASN1 certsSafeBag = new ASN1 (0x30);
+				foreach (X509Certificate x in _certs) {
+					ASN1 certSafeBag = CertificateSafeBag (x);
+					certsSafeBag.Add (certSafeBag);
+				}
+				byte[] encrypted = Encrypt (pbeWithSHAAnd3KeyTripleDESCBC, certsSalt, _iterations, certsSafeBag.GetBytes ());
+				ASN1 encryptedCerts = new ASN1 (0x80, encrypted);
+
+				ASN1 seq = new ASN1 (0x30);
+				seq.Add (ASN1Convert.FromOID (PKCS7.data));
+				seq.Add (seqPbe);
+				seq.Add (encryptedCerts);
+
+				ASN1 certsVersion = new ASN1 (0x02, new byte [1] { 0x00 });
+				ASN1 encData = new ASN1 (0x30);
+				encData.Add (certsVersion);
+				encData.Add (seq);
+
+				ASN1 certsContent = new ASN1 (0xA0);
+				certsContent.Add (encData);
+
+				PKCS7.ContentInfo bag = new PKCS7.ContentInfo (PKCS7.encryptedData);
+				bag.Content = certsContent;
+				safeBagSequence.Add (bag.ASN1);
+			}
+
+			ASN1 encapsulates = new ASN1 (0x04, safeBagSequence.GetBytes ());
+			ASN1 ci = new ASN1 (0xA0);
+			ci.Add (encapsulates);
+			PKCS7.ContentInfo authSafe = new PKCS7.ContentInfo (PKCS7.data);
+			authSafe.Content = ci;
+			
 			byte[] salt = new byte [20];
-			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-			rng.GetBytes (salt);
+			RNG.GetBytes (salt);
 
 			ASN1 macData = new ASN1 (0x30);
-			byte[] macValue = null;
+			byte[] macValue = MAC (_password, salt, _iterations, authSafe.Content [0].Value);
 			if (macValue != null) {
 				// only for password based encryption
+				ASN1 oidSeq = new ASN1 (0x30);
+				oidSeq.Add (ASN1Convert.FromOID ("1.3.14.3.2.26"));	// SHA1
+
 				ASN1 mac = new ASN1 (0x30);
-				mac.Add (ASN1Convert.FromOID ("1.3.14.3.2.26"));	// SHA1
+				mac.Add (oidSeq);
 				mac.Add (new ASN1 (0x04, macValue));
 
 				macData.Add (mac);
 				macData.Add (new ASN1 (0x04, salt));
-				macData.Add (ASN1Convert.FromInt32 (recommendedIterationCount));
+				macData.Add (ASN1Convert.FromInt32 (_iterations));
 			}
 			
 			ASN1 version = new ASN1 (0x02, new byte [1] { 0x03 });
@@ -580,7 +745,14 @@ namespace Mono.Security.X509 {
 				pfx.Add (macData);
 			}
 
-			return pfx.GetBytes ();
+			byte[] result = pfx.GetBytes ();
+/* DEBUG
+			using (FileStream fs = File.OpenWrite (@"c:\my.pfx")) {
+				fs.Write (result, 0, result.Length);
+				fs.Close ();
+			}
+*/
+			return result;
 		}
 
 		// static methods
@@ -608,8 +780,6 @@ namespace Mono.Security.X509 {
 		{
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
-			if (password == null)
-				throw new ArgumentNullException ("password");
 
 			return new PKCS12 (LoadFile (filename), password);
 		}

@@ -1,3 +1,8 @@
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: Completed GetBytes() so it	is now possible to encode
+	/ encrypt PKCS12 files.
+
 2004-02-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Store.cs: Changed not to use base64 in filenames as it can 
