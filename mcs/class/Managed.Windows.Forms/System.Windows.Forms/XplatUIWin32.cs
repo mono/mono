@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.23 $
+// $Revision: 1.24 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.24  2004/08/21 17:31:21  pbartok
+// - Drivers now return proper mouse state
+//
 // Revision 1.23  2004/08/20 20:39:07  pbartok
 // - Added jackson's Async code from X11 to Win32
 //
@@ -795,6 +798,36 @@ namespace System.Windows.Forms {
 
 			// We need to fake WM_MOUSE_ENTER/WM_MOUSE_LEAVE
 			switch (msg.message) {
+				case Msg.WM_LBUTTONDOWN: {
+					mouse_state |= MouseButtons.Left;
+					break;
+				}
+
+				case Msg.WM_MBUTTONDOWN: {
+					mouse_state |= MouseButtons.Middle;
+					break;
+				}
+
+				case Msg.WM_RBUTTONDOWN: {
+					mouse_state |= MouseButtons.Right;
+					break;
+				}
+
+				case Msg.WM_LBUTTONUP: {
+					mouse_state &= ~MouseButtons.Left;
+					break;
+				}
+
+				case Msg.WM_MBUTTONUP: {
+					mouse_state &= ~MouseButtons.Middle;
+					break;
+				}
+
+				case Msg.WM_RBUTTONUP: {
+					mouse_state &= ~MouseButtons.Right;
+					break;
+				}
+
 				case Msg.WM_ERASEBKGND: {
 					EraseWindowBackground(msg.hwnd, msg.wParam);
 					break;

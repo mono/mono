@@ -550,21 +550,21 @@ namespace System.Windows.Forms {
 				case XEventName.ButtonPress: {
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
-							mouse_state=MouseButtons.Left;
+							mouse_state |= MouseButtons.Left;
 							msg.message=Msg.WM_LBUTTONDOWN;
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 2: {
-							mouse_state=MouseButtons.Middle;
+							mouse_state |= MouseButtons.Middle;
 							msg.message=Msg.WM_MBUTTONDOWN;
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 3: {
-							mouse_state=MouseButtons.Right;
+							mouse_state |= MouseButtons.Right;
 							msg.message=Msg.WM_RBUTTONDOWN;
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -593,21 +593,21 @@ namespace System.Windows.Forms {
 				case XEventName.ButtonRelease: {
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
-							mouse_state=MouseButtons.Left;
+							mouse_state &= ~MouseButtons.Left;
 							msg.message=Msg.WM_LBUTTONUP;
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 2: {
-							mouse_state=MouseButtons.Middle;
+							mouse_state &= ~MouseButtons.Middle;
 							msg.message=Msg.WM_MBUTTONUP;
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 3: {
-							mouse_state=MouseButtons.Right;
+							mouse_state &= ~MouseButtons.Right;
 							msg.message=Msg.WM_RBUTTONUP;
 							msg.wParam=GetMousewParam(0);
 							break;
