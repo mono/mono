@@ -17,6 +17,7 @@ using System.IO;
 using System.Text;
 using System.Xml.XPath;
 using System.Diagnostics;
+using System.Collections;
 
 namespace System.Xml
 {
@@ -339,10 +340,22 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XmlNodeList GetElementsByTagName (string name)
 		{
-			throw new NotImplementedException ();
+			ArrayList nodeArrayList = new ArrayList ();
+			this.searchNodesRecursively (this, name, nodeArrayList);
+			return new XmlNodeArrayList (nodeArrayList);
+		}
+
+		private void searchNodesRecursively (XmlNode argNode, string argName, ArrayList argArrayList)
+		{
+			XmlNodeList xmlNodeList = argNode.ChildNodes;
+			foreach (XmlNode node in xmlNodeList){
+				if (node.Name.Equals (argName))
+					argArrayList.Add (node);
+				else	
+					this.searchNodesRecursively (node, argName, argArrayList);
+			}
 		}
 
 		[MonoTODO]
@@ -377,10 +390,10 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void Load (Stream inStream)
 		{
-			throw new NotImplementedException ();
+			XmlReader xmlReader = new XmlTextReader (inStream);
+			Load (xmlReader);
 		}
 
 		public virtual void Load (string filename)

@@ -9,6 +9,8 @@
 
 using System;
 using System.Xml;
+using System.IO;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -133,6 +135,23 @@ namespace MonoTests.System.Xml
 			element.SetAttribute ("attr2", "val2");
 			AssertEquals ("val1", element.GetAttribute ("attr1"));
 			AssertEquals ("val2", element.GetAttribute ("attr2"));
+		}
+
+		public void TestGetElementsByTagNameNoNameSpace ()
+		{
+			string xml = @"<library><book><title>XML Fun</title><author>John Doe</author>
+				<price>34.95</price></book><book><title>Bear and the Dragon</title>
+				<author>Tom Clancy</author><price>6.95</price></book><book>
+				<title>Bourne Identity</title><author>Robert Ludlum</author>
+				<price>9.95</price></book><Fluffer><Nutter><book>
+				<title>Bourne Ultimatum</title><author>Robert Ludlum</author>
+				<price>9.95</price></book></Nutter></Fluffer></library>";
+
+			MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (xml));
+			document = new XmlDocument ();
+			document.Load (memoryStream);
+			XmlNodeList bookList = document.GetElementsByTagName ("book");
+			AssertEquals ("GetElementsByTagName (string) returned incorrect count.", 4, bookList.Count);
 		}
 
 		public void TestOuterXmlWithNamespace ()

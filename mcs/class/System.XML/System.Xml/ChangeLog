@@ -1,3 +1,8 @@
+2002-08-19  Jason Diamond <jason@injektilo.org>
+
+	* XmlDocument.cs, XmlElement.cs: Added implementation of 
+	GetElementsByTagName courtesy of Matt Hunter <xrkune@tconl.com>.
+
 2002-08-16  Jason Diamond <jason@injektilo.org>
 
 	* XmlElement.cs: Fixed writing out qualified elements courtesy of
