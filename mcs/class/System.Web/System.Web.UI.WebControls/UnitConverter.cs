@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     UnitConverter
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -24,14 +24,14 @@ namespace System.Web.UI.WebControls
 		public UnitConverter(): base()
 		{
 		}
-		
+
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
 			if(sourceType == typeof(string))
 				return true;
 			return CanConvertFrom(context, sourceType);
 		}
-		
+
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if(value == null)
@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls
 			}
 			return ConvertFrom(context, culture, value);
 		}
-		
+
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			if(destinationType == typeof(string))
@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls
 				}
 				return val.ToString(culture);
 			}
-			ConvertTo(context, culture, value, destinationType);
+			return ConvertTo(context, culture, value, destinationType);
 		}
 	}
 }

@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls
 			if(value is string)
 			{
 				string val = ((string)value).Trim();
-				if(val == String.Empty || val.Lenth == 0)
+				if(val == String.Empty || val.Length == 0)
 				{
 					return Color.Empty;
 				}

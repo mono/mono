@@ -123,9 +123,9 @@ namespace System.Web.UI.WebControls
 		{
 			AddAttributesToRender(writer);
 			if(ColumnSpan > 0)
-				writer.AddAttribute(HtmlTextWriterAttribute.Colspan, Colspan.ToString(NumberFormatInfo.InvariantInfo));
+				writer.AddAttribute(HtmlTextWriterAttribute.Colspan, ColumnSpan.ToString(NumberFormatInfo.InvariantInfo));
 			if(RowSpan > 0)
-				writer.AddAttribute(HtmlTextWriterAttribute.Rowspan, Rowspan.ToString(NumberFormatInfo.InvariantInfo));
+				writer.AddAttribute(HtmlTextWriterAttribute.Rowspan, RowSpan.ToString(NumberFormatInfo.InvariantInfo));
 		}
 
 		protected override void AddParsedSubObject(object obj)

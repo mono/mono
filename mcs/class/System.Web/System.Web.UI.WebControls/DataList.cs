@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DataList
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  70%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls
 		public const string EditCommandName   = "Edit";
 		public const string SelectCommandName = "Select";
 		public const string UpdateCommandName = "Update";
-		
+
 		private static readonly object CancelCommandEvent = new object();
 		private static readonly object DeleteCommandEvent = new object();
 		private static readonly object EditCommandEvent   = new object();
@@ -47,15 +47,19 @@ namespace System.Web.UI.WebControls
 		private ITemplate editItemTemplate;
 		private ITemplate footerTemplate;
 		private ITemplate headerTemplate;
-		private ITemplate separatorTemplate;
+		private ITemplate itemTemplate;
+		private ITemplate selectedItemTemplate;
+		private ITemplate separatorItemTemplate;
 
 		private ArrayList itemsArray;
 		private DataListItemCollection items;
-		
+
+		private bool extractTemplateRows;
+
 		public DataList(): base()
 		{
 		}
-		
+
 		public virtual TableItemStyle AlternatingItemStyle
 		{
 			get
@@ -63,13 +67,13 @@ namespace System.Web.UI.WebControls
 				if(alternatingItemStyle == null)
 				{
 					alternatingItemStyle = new TableItemStyle();
-					if(IsTrackingViewState())
+					if(IsTrackingViewState)
 						alternatingItemStyle.TrackViewState();
 				}
 				return alternatingItemStyle;
 			}
 		}
-		
+
 		public virtual ITemplate AlternatingItemTemplate
 		{
 			get
@@ -81,7 +85,7 @@ namespace System.Web.UI.WebControls
 				alternatingItemTemplate = value;
 			}
 		}
-		
+
 		public virtual int EditItemIndex
 		{
 			get
@@ -96,7 +100,7 @@ namespace System.Web.UI.WebControls
 				ViewState["EditItemIndex"] = value;
 			}
 		}
-		
+
 		public virtual TableItemStyle EditItemStyle
 		{
 			get
@@ -104,13 +108,13 @@ namespace System.Web.UI.WebControls
 				if(editItemStyle == null)
 				{
 					editItemStyle = new TableItemStyle();
-					if(IsTrackingViewState())
+					if(IsTrackingViewState)
 						editItemStyle.TrackViewState();
 				}
 				return editItemStyle;
 			}
 		}
-		
+
 		public virtual ITemplate EditItemTemplate
 		{
 			get
@@ -137,7 +141,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ExtractTemplateRows"] = value;
 			}
 		}
-		
+
 		public virtual TableItemStyle FooterStyle
 		{
 			get
@@ -145,13 +149,13 @@ namespace System.Web.UI.WebControls
 				if(footerStyle == null)
 				{
 					footerStyle = new TableItemStyle();
-					if(IsTrackingViewState())
-						footerItemStyle.TrackViewState();
+					if(IsTrackingViewState)
+						footerStyle.TrackViewState();
 				}
-				return footerItemStyle;
+				return footerStyle;
 			}
 		}
-		
+
 		public virtual ITemplate FooterTemplate
 		{
 			get
@@ -163,7 +167,7 @@ namespace System.Web.UI.WebControls
 				footerTemplate = value;
 			}
 		}
-		
+
 		public override GridLines GridLines
 		{
 			get
@@ -175,7 +179,7 @@ namespace System.Web.UI.WebControls
 				GridLines = value;
 			}
 		}
-		
+
 		public virtual TableItemStyle HeaderStyle
 		{
 			get
@@ -183,13 +187,13 @@ namespace System.Web.UI.WebControls
 				if(headerStyle == null)
 				{
 					headerStyle = new TableItemStyle();
-					if(IsTrackingViewState())
+					if(IsTrackingViewState)
 						headerStyle.TrackViewState();
 				}
 				return headerStyle;
 			}
 		}
-		
+
 		public virtual ITemplate HeaderTemplate
 		{
 			get
@@ -201,14 +205,14 @@ namespace System.Web.UI.WebControls
 				headerTemplate = value;
 			}
 		}
-		
+
 		public virtual DataListItemCollection Items
 		{
 			get
 			{
 				if(items == null)
 				{
-					if(itemsArray = null)
+					if(itemsArray == null)
 					{
 						EnsureChildControls();
 						itemsArray = new ArrayList();
@@ -218,7 +222,7 @@ namespace System.Web.UI.WebControls
 				return items;
 			}
 		}
-		
+
 		public virtual TableItemStyle ItemStyle
 		{
 			get
@@ -226,13 +230,13 @@ namespace System.Web.UI.WebControls
 				if(itemStyle == null)
 				{
 					itemStyle = new TableItemStyle();
-					if(IsTrackingViewState())
+					if(IsTrackingViewState)
 						itemStyle.TrackViewState();
 				}
 				return itemStyle;
 			}
 		}
-		
+
 		public virtual ITemplate ItemTemplate
 		{
 			get
@@ -244,7 +248,7 @@ namespace System.Web.UI.WebControls
 				itemTemplate = value;
 			}
 		}
-		
+
 		public virtual int RepeatColumns
 		{
 			get
@@ -261,7 +265,7 @@ namespace System.Web.UI.WebControls
 				ViewState["RepeatColumns"] = value;
 			}
 		}
-		
+
 		public virtual RepeatDirection RepeatDirection
 		{
 			get
@@ -278,7 +282,7 @@ namespace System.Web.UI.WebControls
 				ViewState["RepeatDirection"] = value;
 			}
 		}
-		
+
 		public virtual RepeatLayout RepeatLayout
 		{
 			get
@@ -295,7 +299,7 @@ namespace System.Web.UI.WebControls
 				ViewState["RepeatLayout"] = value;
 			}
 		}
-		
+
 		public virtual int SelectedIndex
 		{
 			get
@@ -311,7 +315,7 @@ namespace System.Web.UI.WebControls
 				// Exception is missing in document. I haven't tested the case
 				// But I think exception should follow
 				if(value < -1)
-					throw ArgumentOutOfRangeException("value");
+					throw new ArgumentOutOfRangeException("value");
 				int prevSel = SelectedIndex;
 				ViewState["SelectedIndex"] = value;
 				DataListItem prevSelItem;
@@ -329,7 +333,7 @@ namespace System.Web.UI.WebControls
 					}
 					if(value >= 0 && value < itemsArray.Count)
 					{
-						prevSelItem = (DataListItem) iteamArray[value];
+						prevSelItem = (DataListItem) itemsArray[value];
 						if(prevSelItem.ItemType != ListItemType.EditItem)
 						{
 							prevSelItem.SetItemType(ListItemType.SelectedItem);
@@ -338,7 +342,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public virtual DataListItem SelectedItem
 		{
 			get
@@ -348,7 +352,7 @@ namespace System.Web.UI.WebControls
 				return Items[SelectedIndex];
 			}
 		}
-		
+
 		public virtual TableItemStyle SelectedItemStyle
 		{
 			get
@@ -356,7 +360,7 @@ namespace System.Web.UI.WebControls
 				if(selectedItemStyle == null)
 				{
 					selectedItemStyle = new TableItemStyle();
-					if(IsTrackingViewState())
+					if(IsTrackingViewState)
 						selectedItemStyle.TrackViewState();
 				}
 				return selectedItemStyle;
@@ -374,7 +378,7 @@ namespace System.Web.UI.WebControls
 				selectedItemTemplate = value;
 			}
 		}
-		
+
 		public virtual TableItemStyle SeparatorStyle
 		{
 			get
@@ -382,7 +386,7 @@ namespace System.Web.UI.WebControls
 				if(separatorStyle == null)
 				{
 					separatorStyle = new TableItemStyle();
-					if(IsTrackingViewState())
+					if(IsTrackingViewState)
 						separatorStyle.TrackViewState();
 				}
 				return separatorStyle;
@@ -415,7 +419,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ShowHeader"] = value;
 			}
 		}
-		
+
 		public virtual bool ShowFooter
 		{
 			get
@@ -514,14 +518,14 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(UpdateCommandEvent, value);
 			}
 		}
-		
+
 		protected override Style CreateControlStyle()
 		{
-			TableStyle retVal = new TableStyle(StateBag);
+			TableStyle retVal = new TableStyle(ViewState);
 			retVal.CellSpacing = 0;
 			return retVal;
 		}
-		
+
 		protected override void LoadViewState(object savedState)
 		{
 			object[] states;
@@ -558,7 +562,7 @@ namespace System.Web.UI.WebControls
 			states[7] = (separatorStyle == null       ? null : separatorStyle.SaveViewState());
 			return states;
 		}
-		
+
 		protected override void TrackViewState()
 		{
 			TrackViewState();
@@ -577,10 +581,10 @@ namespace System.Web.UI.WebControls
 			if(separatorStyle != null)
 				separatorStyle.TrackViewState();
 		}
-		
+
 		protected override bool OnBubbleEvent(object source, EventArgs e)
 		{
-			bool retVal;
+			bool retVal = false;
 			if(e is DataListCommandEventArgs)
 			{
 				DataListCommandEventArgs dlcea = (DataListCommandEventArgs)e;
@@ -600,7 +604,8 @@ namespace System.Web.UI.WebControls
 				}
 				if(String.Compare(dlcea.CommandName, "Select") == 0)
 				{
-					OnSelectCommand(dlcea);
+					SelectedIndex = dlcea.Item.ItemIndex;
+					OnSelectedIndexChanged(EventArgs.Empty);
 				}
 				if(String.Compare(dlcea.CommandName, "Update") == 0)
 				{
@@ -609,7 +614,7 @@ namespace System.Web.UI.WebControls
 			}
 			return retVal;
 		}
-		
+
 		protected virtual void OnCancelCommand(DataListCommandEventArgs e)
 		{
 			if(Events != null)
@@ -619,7 +624,7 @@ namespace System.Web.UI.WebControls
 					dlceh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnDeleteCommand(DataListCommandEventArgs e)
 		{
 			if(Events != null)
@@ -629,7 +634,7 @@ namespace System.Web.UI.WebControls
 					dlceh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnEditCommand(DataListCommandEventArgs e)
 		{
 			if(Events != null)
@@ -639,7 +644,7 @@ namespace System.Web.UI.WebControls
 					dlceh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnItemCommand(DataListCommandEventArgs e)
 		{
 			if(Events != null)
@@ -649,7 +654,7 @@ namespace System.Web.UI.WebControls
 					dlceh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnItemCreated(DataListCommandEventArgs e)
 		{
 			if(Events != null)
@@ -659,7 +664,7 @@ namespace System.Web.UI.WebControls
 					dlceh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnItemDataBound(DataListCommandEventArgs e)
 		{
 			if(Events != null)
@@ -669,7 +674,7 @@ namespace System.Web.UI.WebControls
 					dlceh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnUpdateCommand(DataListCommandEventArgs e)
 		{
 			if(Events != null)
@@ -679,7 +684,7 @@ namespace System.Web.UI.WebControls
 					dlceh(this, e);
 			}
 		}
-		
+
 		[MonoTODO]
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
@@ -692,7 +697,7 @@ namespace System.Web.UI.WebControls
 			DataListItem retVal = null;
 			switch(itemType)
 			{
-				case ListItemType.Header: retVal = (DataListitem)Controls[0];
+				case ListItemType.Header: retVal = (DataListItem)Controls[0];
 				                          break;
 				case ListItemType.Footer: retVal = (DataListItem)Controls[Controls.Count - 1];
 				                          break;
@@ -705,10 +710,11 @@ namespace System.Web.UI.WebControls
 				                             if(headerTemplate != null)
 				                             	index ++;
 				                             retVal = (DataListItem)Controls[index];
+				                             break;
 			}
 			return retVal;
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
@@ -717,23 +723,23 @@ namespace System.Web.UI.WebControls
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
 		[MonoTODO]
 		protected DataListItem CreateItem(int itemIndex, ListItemType itemType)
 		{
-			
+			throw new NotImplementedException();
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
 		[MonoTODO]
 		protected DataListItem CreateItem(int itemIndex, ListItemType itemType, bool dataBind, object dataItem)
 		{
-			
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -744,7 +750,7 @@ namespace System.Web.UI.WebControls
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
@@ -753,7 +759,7 @@ namespace System.Web.UI.WebControls
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		bool IRepeatInfoUser.HasFooter
 		{
 			get
@@ -761,7 +767,7 @@ namespace System.Web.UI.WebControls
 				return !(ShowFooter && footerTemplate!=null);
 			}
 		}
-		
+
 		bool IRepeatInfoUser.HasHeader
 		{
 			get
@@ -769,15 +775,15 @@ namespace System.Web.UI.WebControls
 				return !(ShowHeader && headerTemplate!=null);
 			}
 		}
-		
+
 		bool IRepeatInfoUser.HasSeparators
 		{
 			get
 			{
-				return (separatorTemplate!=null);
+				return (separatorItemTemplate!=null);
 			}
 		}
-		
+
 		int IRepeatInfoUser.RepeatedItemCount
 		{
 			get
@@ -787,7 +793,7 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 		}
-		
+
 		void IRepeatInfoUser.RenderItem(ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
 		{
 			DataListItem item = GetItem(itemType, repeatIndex);
@@ -796,7 +802,7 @@ namespace System.Web.UI.WebControls
 				item.RenderItem(writer, extractTemplateRows, repeatInfo.RepeatLayout == RepeatLayout.Table);
 			}
 		}
-		
+
 		Style IRepeatInfoUser.GetItemStyle(ListItemType itemType, int repeatIndex)
 		{
 			if(GetItem(itemType, repeatIndex)!=null && ControlStyleCreated)

@@ -1,3 +1,10 @@
+2002-03-17  Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* System.Web -- Assembly build.
+	  Another milestone reached. Compiled 195 classes successfully.
+	  Build includes System.Web.UI.WebControls and all the dependencies
+	  for the namespace.
+
 2002-03-05  Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* System.Web.Security: Added directory.

@@ -83,7 +83,7 @@ namespace System.Web.Security
 				throw new HttpException(HttpRuntime.FormatResourceString("InvalidArgumentValue", "encryptedTicket"));
 			}
 			Initialize();
-			//Traceack("Decrypting cookie:" + encryptedTicket);
+			//Traceback("Decrypting cookie:" + encryptedTicket);
 			byte[] bytes = HexStringToBytesArray(encryptedTicket);
 			if(bytes == null || bytes.Length == 0)
 			{

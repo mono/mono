@@ -13,7 +13,9 @@
 
 using System;
 using System.Drawing;
+using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
@@ -37,7 +39,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public override Style BorderStyle
+		public override BorderStyle BorderStyle
 		{
 			get
 			{
@@ -118,11 +120,11 @@ namespace System.Web.UI.WebControls
 				Page.VerifyRenderingInServerForm(this);
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-			writer.AddAttribute(HtmlTextWriterAttribute.Size, Rows.ToString(NumberFormatInfo.InvariantInfo);
+			writer.AddAttribute(HtmlTextWriterAttribute.Size, Rows.ToString(NumberFormatInfo.InvariantInfo));
 			writer.AddAttribute(HtmlTextWriterAttribute.Multiple, "multiple");
 			if(AutoPostBack && Page != null)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Onchange, Page.GetPostBackClientEvent(""));
+				writer.AddAttribute(HtmlTextWriterAttribute.Onchange, Page.GetPostBackClientEvent(this, ""));
 				writer.AddAttribute("language", "javascript");
 			}
 		}
@@ -154,7 +156,7 @@ namespace System.Web.UI.WebControls
 				}
 				writer.WriteAttribute("value", current.Value, true);
 				writer.Write('>');
-				writer.Write(HttpUtility.Encode(Text));
+				writer.Write(HttpUtility.HtmlEncode(current.Text));
 				writer.WriteEndTag("option");
 				writer.WriteLine();
 			}
@@ -180,7 +182,7 @@ namespace System.Web.UI.WebControls
 				{
 					foreach(string current in vals)
 					{
-						final.Add(Items.FindByValueInternal(current);
+						final.Add(Items.FindByValueInternal(current));
 					}
 					if(selected != null && selected.Count == vals.Length)
 					{
@@ -199,7 +201,7 @@ namespace System.Web.UI.WebControls
 				}
 				if(!updated)
 				{
-					SelectInternal(final);
+					Select(final);
 				}
 			} else
 			{

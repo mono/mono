@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls
 				base.AddParsedSubObject(obj);
 				return;
 			}
-			if(obj is LiteralConrol)
+			if(obj is LiteralControl)
 			{
 				Text = ((LiteralControl)obj).Text;
 				return;

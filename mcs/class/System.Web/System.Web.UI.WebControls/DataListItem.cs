@@ -78,5 +78,13 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
+
+		internal void SetItemType(ListItemType itemType)
+		{
+			if(Enum.IsDefined(typeof(ListItemType), itemType))
+			{
+				this.itemType = itemType;
+			}
+		}
 	}
 }

@@ -24,14 +24,12 @@ namespace System.Web.UI.WebControls
 	{
 		//TODO: A list of private members may be incomplete
 
-		private HtmlTextWriterTag   writerTag;
+		private HtmlTextWriterTag   tagKey;
 		private string              stringTag;
 		private AttributeCollection attributes;
 		private StateBag            attributeState;
-		private Style               borderStyle;
 		private Style               controlStyle;
 		private bool                enabled;
-		private HtmlTextWriterTag   tagKey;
 		private string              tagName;
 
 		// TODO: The constructors definitions
@@ -44,7 +42,7 @@ namespace System.Web.UI.WebControls
 		public WebControl(HtmlTextWriterTag tag): base()
 		{
 			//FIXME: am i right?
-			writerTag = tag;
+			tagKey = tag;
 			//stringTag = null;
 			Initialize();
 		}
@@ -53,7 +51,6 @@ namespace System.Web.UI.WebControls
 		{
 			//FIXME: am i right?
 			stringTag = tag;
-			//writerTag = null;
 			Initialize();
 		}
 
@@ -143,15 +140,24 @@ namespace System.Web.UI.WebControls
 		}
 
 		[MonoTODO("FIXME_Internal_method_calls")]
-		public virtual Style BorderStyle
+		public virtual BorderStyle BorderStyle
 		{
 			get
 			{
-				return borderStyle;
+				object o = ViewState["BorderStyle"];
+				if(o != null)
+				{
+					return (BorderStyle)o;
+				}
+				return BorderStyle.NotSet;
 			}
 			set
 			{
-				borderStyle = value;
+				if(!Enum.IsDefined(typeof(BorderStyle), value))
+				{
+					throw new ArgumentException();
+				}
+				ViewState["BorderStyle"] = value;
 			}
 		}
 

@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 			}finally
 			{
 				if(ie is IDisposable)
-					ie.Dispose();
+					((IDisposable)ie).Dispose();
 			}
 			values.Sort();
 			return values.ToArray();

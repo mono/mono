@@ -105,7 +105,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(ImageAlign != ImageAlign.NotSet)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Align, Enum.Format(typeof(ImageAlign), ImageAling, "G"));
+				writer.AddAttribute(HtmlTextWriterAttribute.Align, Enum.Format(typeof(ImageAlign), ImageAlign, "G"));
 			}
 		}
 

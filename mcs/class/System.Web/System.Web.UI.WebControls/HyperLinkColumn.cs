@@ -141,14 +141,13 @@ namespace System.Web.UI.WebControls
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
 			InitializeCell(cell, columnIndex, itemType);
-			if(Enum.IsDefined(ListItemType, itemType) && itemType != ListItemType.Footer)
+			if(Enum.IsDefined(typeof(ListItemType), itemType) && itemType != ListItemType.Footer)
 			{
 				HyperLink toDisplay = new HyperLink();
 				toDisplay.Text                 = Text;
 				toDisplay.NavigateUrl          = NavigateUrl;
-				toDisplay.DataNavigateUrlField = DataNavigateUrlField;
 				toDisplay.Target               = Target;
-				if(DataTextField.Length > 0)
+				if(DataTextField.Length > 0 || DataNavigateUrlField.Length>0)
 				{
 					toDisplay.DataBinding += new EventHandler(OnDataBindHyperLinkColumn);
 				}
@@ -170,9 +169,9 @@ namespace System.Web.UI.WebControls
 					throw new HttpException(HttpRuntime.FormatResourceString("Field_Not_Found", DataNavigateUrlField));
 			}
 
-			if(textFieldDescritor != null)
+			if(textFieldDescriptor != null)
 			{
-				link.Text = FormatDataTextValue(textFieldDescritor.GetValue(item));
+				link.Text = FormatDataTextValue(textFieldDescriptor.GetValue(item));
 			} else
 			{
 				link.Text = "Sample_DataBound_Text";
@@ -206,7 +205,7 @@ namespace System.Web.UI.WebControls
 		protected virtual string FormatDataTextValue(object dataTextValue)
 		{
 			string retVal = String.Empty;
-			if(dataUrlValue != null)
+			if(dataTextValue != null)
 			{
 				if(DataTextFormatString.Length > 0)
 				{

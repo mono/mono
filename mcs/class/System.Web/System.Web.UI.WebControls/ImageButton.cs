@@ -21,15 +21,15 @@ namespace System.Web.UI.WebControls
 {
 	public class ImageButton: Image, IPostBackDataHandler, IPostBackEventHandler
 	{
-		private static readonly object ClickEvent = new object();
+		private static readonly object ClickEvent   = new object();
 		private static readonly object CommandEvent = new object();
-		
+
 		private int x, y;
-		
+
 		public ImageButton(): base()
 		{
 		}
-		
+
 		public bool CausesValidation
 		{
 			get
@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 				ViewState["CausesValidation"] = value;
 			}
 		}
-		
+
 		public string CommandArgument
 		{
 			get
@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls
 				ViewState["CommandArgument"] = value;
 			}
 		}
-		
+
 		public string CommandName
 		{
 			get
@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls
 				ViewState["CommandName"] = value;
 			}
 		}
-		
+
 		protected override HtmlTextWriterTag TagKey
 		{
 			get
@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls
 				return HtmlTextWriterTag.Input;
 			}
 		}
-		
+
 		public event ImageClickEventHandler Click
 		{
 			add
@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ClickEvent, value);
 			}
 		}
-		
+
 		public event CommandEventHandler Command
 		{
 			add
@@ -106,7 +106,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(CommandEvent, value);
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "image");
@@ -115,23 +115,23 @@ namespace System.Web.UI.WebControls
 			{
 				if(Page.Validators.Count > 0)
 				{
-					writer.AddAttribute(HtmlTextWriterAttribute.OnClick, Utils.GetClientValidatedEvent());
+					writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent());
 					writer.AddAttribute("language", "javascript");
 				}
 			}
 			AddAttributesToRender(writer);
 		}
-		
+
 		protected virtual void OnClick(ImageClickEventArgs e)
 		{
 			if(Events != null)
 			{
-				ImageClickEventHandler iceh = (ImageClickEventHandler)(Events[ImageClickEvent]);
+				ImageClickEventHandler iceh = (ImageClickEventHandler)(Events[ClickEvent]);
 				if(iceh != null)
 					iceh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnCommand(CommandEventArgs e)
 		{
 			if(Events != null)
@@ -142,15 +142,15 @@ namespace System.Web.UI.WebControls
 				RaiseBubbleEvent(this, e);
 			}
 		}
-		
+
 		protected override void OnPreRender(EventArgs e)
 		{
 			if(Page != null)
 			{
-				Page.RequiresPostBack(this);
+				Page.RegisterRequiresPostBack(this);
 			}
 		}
-		
+
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			string xCoord = postCollection[UniqueID + ".x"];
@@ -163,11 +163,11 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
 		}
-		
+
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
 			if(CausesValidation)

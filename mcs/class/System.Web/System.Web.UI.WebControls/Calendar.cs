@@ -845,7 +845,7 @@ namespace System.Web.UI.WebControls
 			if(isWeekMode)
 			{
 				headerCell.ApplyStyle(SelectorStyle);
-				selMthText = GetCalendarLinkText("selectMonth", SelectMonthText, isActive, SelectorStyle.ForeColor);
+				selMthText = GetCalendarLinkText("selectMonth", SelectedMonthText, SelectorStyle.ForeColor, isActive);
 			} else
 			{
 				headerCell.ApplyStyle(DayHeaderStyle);
@@ -860,20 +860,21 @@ namespace System.Web.UI.WebControls
 				content = GetHtmlForCell(dayHeaderCell, isActive);
 			}
 			int dayOfWeek = (int)globCal.GetDayOfWeek(firstDay);
+			DateTimeFormatInfo currDTInfo = DateTimeFormatInfo.CurrentInfo;
 			for(int currDay = dayOfWeek; currDay < dayOfWeek + 7; currDay++)
 			{
-				int effDay = (currDay % 7);
+				DayOfWeek effDay = (DayOfWeek) Enum.ToObject(typeof(DayOfWeek),currDay % 7);
 				string currDayContent = String.Empty;
 				switch(DayNameFormat)
 				{
-					case DayNameFormat.Full:            currDayContent = DateTimeFormatInfo.GetDayName(effDay);
+					case DayNameFormat.Full:            currDayContent = currDTInfo.GetDayName(effDay);
 					                                    break;
-					case DayNameFormat.FirstLetter:     currDayContent = DateTimeFormatInfo.GetDayName(effDay).Substring(0,1);
+					case DayNameFormat.FirstLetter:     currDayContent = currDTInfo.GetDayName(effDay).Substring(0,1);
 					                                    break;
-					case DayNameFormat.FirstTwoLetters: currDayContent = DateTimeFormatInfo.GetDayName(effDay).Substring(0,2);
+					case DayNameFormat.FirstTwoLetters: currDayContent = currDTInfo.GetDayName(effDay).Substring(0,2);
 					                                    break;
-					case DayNameFormat.Short:
-					default:                            currDayContent = DateTimeFormatInfo.GetAbbreviatedDayName(effDay);
+					case DayNameFormat.Short:           goto default;
+					default:                            currDayContent = currDTInfo.GetAbbreviatedDayName(effDay);
 					                                    break;
 				}
 				if(isDownLevel)
@@ -923,7 +924,7 @@ namespace System.Web.UI.WebControls
 						prevContent = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(pMthInt);
 				}
 				prevCell.ApplyStyle(NextPrevStyle);
-				RenderCalendarCell(writer, prevCell, GetCalendarLinkText("prevMonth", prevContent, isActive, NextPrevStyle.ForeColor));
+				RenderCalendarCell(writer, prevCell, GetCalendarLinkText("prevMonth", prevContent, NextPrevStyle.ForeColor, isActive));
 			}
 			TableCell currCell = new TableCell();
 			currCell.Width = Unit.Percentage(70);
@@ -957,7 +958,7 @@ namespace System.Web.UI.WebControls
 				} else
 				{
 					int nMthInt = globCal.GetMonth(globCal.AddMonths(visibleDate, 1));
-					if(NextPrevFormat == NextPrevFormat.FullText)
+					if(NextPrevFormat == NextPrevFormat.FullMonth)
 						nextContent = DateTimeFormatInfo.CurrentInfo.GetMonthName(nMthInt);
 					else
 						nextContent = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(nMthInt);
@@ -1021,7 +1022,11 @@ namespace System.Web.UI.WebControls
 
 		private DateTime GetFirstCalendarDay(DateTime visibleDate)
 		{
-			DayOfWeek firstDay = ( FirstDayOfWeek == FirstDayOfWeek.Default ? DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek : FirstDayOfWeek);
+			DayOfWeek firstDay = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek;
+			if(FirstDayOfWeek != FirstDayOfWeek.Default)
+			{
+				firstDay = (DayOfWeek) Enum.ToObject(typeof(DayOfWeek), (int)FirstDayOfWeek);
+			}
 			//FIXME: is (int)(Enum) correct?
 			int days = (int)globCal.GetDayOfWeek(visibleDate) - (int)firstDay;
 			if(days < 0)
@@ -1084,17 +1089,17 @@ namespace System.Web.UI.WebControls
 			return sw.ToString();
 		}
 
-		internal DateTime SelectRangeInternal(DateTime fromDate, DateTime toDate, DateTime visibleDate)
+		internal void SelectRangeInternal(DateTime fromDate, DateTime toDate, DateTime visibleDate)
 		{
 			TimeSpan span = fromDate - toDate;
-			if(SelectedDates.Count != span.Days || SelectedDates[SelectedDate.Count - 1]!= toDate)
+			if(SelectedDates.Count != span.Days || SelectedDates[SelectedDates.Count - 1]!= toDate)
 			{
 				SelectedDates.SelectRange(fromDate, toDate);
 				OnSelectionChanged();
 			}
-			if(globCal.GetMonth(fromDate) == globCal.GetMonth(fromDate) && globCal.GetMonth(fromDate) != globCal.GetMonth(visibleDate)
+			if(globCal.GetMonth(fromDate) == globCal.GetMonth(fromDate) && globCal.GetMonth(fromDate) != globCal.GetMonth(visibleDate))
 			{
-				VisibleDate = new DateTime(globCal.GetYear(fromDate), globCal.getMonth(fromDate), 1, globCal);
+				VisibleDate = new DateTime(globCal.GetYear(fromDate), globCal.GetMonth(fromDate), 1, globCal);
 				OnVisibleMonthChanged(VisibleDate, visibleDate);
 			}
 		}

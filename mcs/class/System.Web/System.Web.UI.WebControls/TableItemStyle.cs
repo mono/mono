@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(IsSet(V_ALIGN))
-					return (VerticalAlign)iewState["VerticalAlign"];
+					return (VerticalAlign)ViewState["VerticalAlign"];
 				return VerticalAlign.NotSet;
 			}
 			set
@@ -110,15 +111,15 @@ namespace System.Web.UI.WebControls
 			{
 				base.MergeWith(s);
 				TableItemStyle with = (TableItemStyle)s;
-				if(from.IsSet(H_ALIGN) && !IsSet(H_ALIGN))
+				if(with.IsSet(H_ALIGN) && !IsSet(H_ALIGN))
 				{
 					HorizontalAlign = with.HorizontalAlign;
 				}
-				if(from.IsSet(V_ALIGN) && !IsSet(V_ALIGN))
+				if(with.IsSet(V_ALIGN) && !IsSet(V_ALIGN))
 				{
 					VerticalAlign = with.VerticalAlign;
 				}
-				if(from.IsSet(WRAP) && !IsSet(WRAP))
+				if(with.IsSet(WRAP) && !IsSet(WRAP))
 				{
 					Wrap = with.Wrap;
 				}
@@ -141,7 +142,7 @@ namespace System.Web.UI.WebControls
 			base.AddAttributesToRender(writer, owner);
 			if(!Wrap)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.NoWrap, "nowrap");
+				writer.AddAttribute(HtmlTextWriterAttribute.Nowrap, "nowrap");
 			}
 			if(HorizontalAlign != HorizontalAlign.NotSet)
 			{

@@ -147,12 +147,12 @@ namespace System.Web.UI.WebControls
 
 		void IList.Insert(int index, object o)
 		{
-			onwer.Controls.Insert(index, (TableRow)o);
+			owner.Controls.AddAt(index, (TableRow)o);
 		}
 
 		void IList.Remove(object o)
 		{
-			onwer.Controls.Remove((TableRow)o);
+			owner.Controls.Remove((TableRow)o);
 		}
 
 		bool IList.IsFixedSize

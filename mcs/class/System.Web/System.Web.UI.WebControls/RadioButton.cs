@@ -14,6 +14,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
@@ -24,7 +25,7 @@ namespace System.Web.UI.WebControls
 		public RadioButton(): base()
 		{
 		}
-		
+
 		public virtual string GroupName
 		{
 			get
@@ -52,38 +53,38 @@ namespace System.Web.UI.WebControls
 				GroupName = UniqueID;
 			}
 		}
-		
+
 		internal override void RenderInputTag(HtmlTextWriter writer, string id)
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Id, id);
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueGroupNamePrivate);
 			writer.AddAttribute(HtmlTextWriterAttribute.Value, ValueAttributePrivate);
-			
+
 			if(Checked)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
 			}
 			if(AutoPostBack)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.OnClick, Page.GetPostBackClientEvent(this, ""));
+				writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Page.GetPostBackClientEvent(this, ""));
 				writer.AddAttribute("language", "javascript");
 			}
-			
+
 			if(AccessKey.Length > 0)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Accesskey, AccessKey);
 			}
-			
+
 			if(TabIndex > 0)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Tabindex, TabIndex.ToString(NumberFormatInfo.InvariantInfo))
+				writer.AddAttribute(HtmlTextWriterAttribute.Tabindex, TabIndex.ToString(NumberFormatInfo.InvariantInfo));
 			}
-			
+
 			writer.RenderBeginTag(System.Web.UI.HtmlTextWriterTag.Input);
 			writer.RenderEndTag();
 		}
-		
+
 		private string UniqueGroupNamePrivate
 		{
 			get
@@ -96,7 +97,7 @@ namespace System.Web.UI.WebControls
 				return retVal;
 			}
 		}
-		
+
 		private string ValueAttributePrivate
 		{
 			get
@@ -113,7 +114,7 @@ namespace System.Web.UI.WebControls
 				return retVal;
 			}
 		}
-		
+
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			if(postCollection[UniqueGroupNamePrivate] != null && postCollection[UniqueGroupNamePrivate] == ValueAttributePrivate)
@@ -130,10 +131,10 @@ namespace System.Web.UI.WebControls
 			}
 			return true;
 		}
-		
+
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
-			OnCheckChanged(EventArgs.Empty);
+			OnCheckedChanged(EventArgs.Empty);
 		}
 	}
 }

@@ -23,7 +23,7 @@ namespace System.Web.UI.WebControls
 	{
 		CheckBox checkBoxRepeater;
 		bool     isChangeNotified;
-		
+
 		public CheckBoxList()
 		{
 			checkBoxRepeater = new CheckBox();
@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls
 			checkBoxRepeater.Controls.Add(this);
 			isChangeNotified = false;
 		}
-		
+
 		public virtual int CellPadding
 		{
 			get
@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).CellPadding = value;
 			}
 		}
-		
+
 		public virtual int CellSpacing
 		{
 			get
@@ -56,7 +56,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).CellSpacing = value;
 			}
 		}
-		
+
 		public virtual int RepeatColumns
 		{
 			get
@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls
 				ViewState["RepeatColumns"] = value;
 			}
 		}
-		
+
 		public virtual RepeatDirection RepeatDirection
 		{
 			get
@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls
 				ViewState["RepeatDirection"] = value;
 			}
 		}
-		
+
 		public virtual RepeatLayout RepeatLayout
 		{
 			get
@@ -107,7 +107,7 @@ namespace System.Web.UI.WebControls
 				ViewState["RepeatLayout"] = value;
 			}
 		}
-		
+
 		public virtual TextAlign TextAlign
 		{
 			get
@@ -124,17 +124,17 @@ namespace System.Web.UI.WebControls
 				ViewState["TextAlign"] = value;
 			}
 		}
-		
+
 		protected override Style CreateControlStyle()
 		{
 			return new TableStyle(ViewState);
 		}
-		
+
 		protected override Control FindControl(string id, int pathOffset)
 		{
 			return this;
 		}
-		
+
 		protected override void OnPreRender(EventArgs e)
 		{
 			checkBoxRepeater.AutoPostBack = AutoPostBack;
@@ -150,13 +150,13 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			RepeatInfo ri = new RepeatInfo();
 			checkBoxRepeater.TabIndex = TabIndex;
 			bool dirtyFlag = false;
-			int  tTabIndex = TabIndex;
+			short  tTabIndex = TabIndex;
 			Style s = (ControlStyleCreated ? ControlStyle : null);
 			if(TabIndex > 0)
 			{
@@ -170,14 +170,14 @@ namespace System.Web.UI.WebControls
 			ri.RenderRepeater(writer, this, s, this);
 			if(tTabIndex > 0)
 			{
-				TabInde = tTabIndex;
+				TabIndex = tTabIndex;
 			}
 			if(dirtyFlag)
 			{
 				ViewState.SetItemDirty("TabIndex", false);
 			}
 		}
-		
+
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			int index = Int32.Parse(postDataKey.Substring(UniqueID.Length + 1));
@@ -196,12 +196,12 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
 			OnSelectedIndexChanged(EventArgs.Empty);
 		}
-		
+
 		bool IRepeatInfoUser.HasFooter
 		{
 			get
@@ -209,7 +209,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		bool IRepeatInfoUser.HasHeader
 		{
 			get
@@ -217,7 +217,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		bool IRepeatInfoUser.HasSeparators
 		{
 			get
@@ -225,7 +225,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		int IRepeatInfoUser.RepeatedItemCount
 		{
 			get
@@ -233,12 +233,12 @@ namespace System.Web.UI.WebControls
 				return Items.Count;
 			}
 		}
-		
+
 		Style IRepeatInfoUser.GetItemStyle(ListItemType itemType, int repeatIndex)
 		{
 			return null;
 		}
-		
+
 		void IRepeatInfoUser.RenderItem(ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
 		{
 			checkBoxRepeater.ID = repeatIndex.ToString(NumberFormatInfo.InvariantInfo);

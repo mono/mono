@@ -195,7 +195,7 @@ namespace System.Web.UI.WebControls
 		{
 			WebControl ctrl = null;
 			bool       sort = true;
-			string     sortExpr;
+			string     sortExpr = "";
 			ImageButton headButton;
 			Image       headImage;
 			LinkButtonInternal link;
@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(ctrl != null)
 			{
-				cell.Add(ctrl);
+				cell.Controls.Add(ctrl);
 			}
 		}
 
@@ -296,7 +296,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(owner != null)
 			{
-				owner.OnColumnChanged();
+				owner.OnColumnsChanged();
 			}
 		}
 

@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public override Style BorderStyle
+		public override BorderStyle BorderStyle
 		{
 			get
 			{
@@ -114,7 +114,7 @@ namespace System.Web.UI.WebControls
 				foreach(ListItem current in Items)
 				{
 					writer.WriteBeginTag("option");
-					if(Selected)
+					if(current.Selected)
 					{
 						if(selected)
 						{
@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls
 					}
 					writer.WriteAttribute("value", current.Value, true);
 					writer.Write('>');
-					HttpUtility.Encode(current.Text, writer);
+					HttpUtility.HtmlEncode(current.Text, writer);
 					writer.WriteEndTag("option");
 					writer.WriteLine();
 				}
@@ -134,7 +134,7 @@ namespace System.Web.UI.WebControls
 
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
-			string[] vals = postCollection.GetValues();
+			string[] vals = postCollection.GetValues(postDataKey);
 			if(vals != null)
 			{
 				int index = Items.FindByValueInternal(vals[0]);

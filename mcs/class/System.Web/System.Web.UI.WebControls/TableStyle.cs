@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
@@ -89,7 +90,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(IsSet(GRID_LINE))
-					return (string)(ViewState["GridLines"]);
+					return (GridLines)(ViewState["GridLines"]);
 				return GridLines.Both;
 			}
 			set
@@ -106,7 +107,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(IsSet(HOR_ALIGN))
-					return (string)(ViewState["HorizontalAlign"]);
+					return (HorizontalAlign)(ViewState["HorizontalAlign"]);
 				return HorizontalAlign.NotSet;
 			}
 			set
@@ -123,7 +124,7 @@ namespace System.Web.UI.WebControls
 			base.AddAttributesToRender(writer, owner);
 			if(BackImageUrl.Length > 0)
 			{
-				writer.AddStyleAttribute(HtmlTextWriterStyle.BackgroundImage, "url(" + ResolveUrl(BackImageUrl) + ")");
+				writer.AddStyleAttribute(HtmlTextWriterStyle.BackgroundImage, "url(" + owner.ResolveUrl(BackImageUrl) + ")");
 			}
 			if(CellSpacing >= 0)
 			{
@@ -195,7 +196,7 @@ namespace System.Web.UI.WebControls
 				{
 					BackImageUrl = with.BackImageUrl;
 				}
-				if(with.IsSet(CELL_PADD) && IsSet(CELLL_PADD))
+				if(with.IsSet(CELL_PADD) && IsSet(CELL_PADD))
 				{
 					CellPadding = with.CellPadding;
 				}

@@ -20,8 +20,8 @@ namespace System.Web.UI.WebControls
 {
 	public class RadioButtonList : ListControl, IRepeatInfoUser, INamingContainer, IPostBackDataHandler
 	{
-		private bool selectionIndexChanged;
-		private int  tabIndex;
+		private bool  selectionIndexChanged;
+		private short  tabIndex;
 
 		public RadioButtonList(): base()
 		{
@@ -33,7 +33,10 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(ControlStyleCreated)
+				{
 					return (int)(((TableStyle)ControlStyle).CellPadding);
+				}
+				return -1;
 			}
 			set
 			{
@@ -46,7 +49,10 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(ControlStyleCreated)
+				{
 					return (int)(((TableStyle)ControlStyle).CellSpacing);
+				}
+				return -1;
 			}
 			set
 			{

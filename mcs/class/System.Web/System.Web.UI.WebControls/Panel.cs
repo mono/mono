@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     Panel
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -23,7 +23,7 @@ namespace System.Web.UI.WebControls
 		public Panel(): base(HtmlTextWriterTag.Div)
 		{
 		}
-		
+
 		public virtual string BackImageUrl
 		{
 			get
@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls
 				ViewState["BackImageUrl"] = value;
 			}
 		}
-		
+
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -57,7 +57,7 @@ namespace System.Web.UI.WebControls
 				ViewState["HorizontalAlign"] = value;
 			}
 		}
-		
+
 		public virtual bool Wrap
 		{
 			get
@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Wrap"] = value;
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(Wrap)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.NoWrap, "nowrap");
+				writer.AddAttribute(HtmlTextWriterAttribute.Nowrap, "nowrap");
 			}
 		}
 	}

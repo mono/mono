@@ -92,11 +92,11 @@ namespace System.Web.UI.WebControls
 		{
 			add
 			{
-				Events.AddHandler(ClickEvent, this);
+				Events.AddHandler(ClickEvent, value);
 			}
 			remove
 			{
-				Events.RemoveHandler(ClickEvent, this);
+				Events.RemoveHandler(ClickEvent, value);
 			}
 		}
 
@@ -104,11 +104,11 @@ namespace System.Web.UI.WebControls
 		{
 			add
 			{
-				Events.AddHandler(CommandEvent, this);
+				Events.AddHandler(CommandEvent, value);
 			}
 			remove
 			{
-				Events.RemoveHandler(CommandEvent, this);
+				Events.RemoveHandler(CommandEvent, value);
 			}
 		}
 
@@ -149,10 +149,10 @@ namespace System.Web.UI.WebControls
 			{
 				if(CausesValidation && Page.Validators.Count > 0)
 				{
-					writer.Write(HtmlTextWriterAttribute.Href, "javscript:" + Utils.GetClientValidatedPostBack(this));
+					writer.AddAttribute(HtmlTextWriterAttribute.Href, "javscript:" + Utils.GetClientValidatedPostBack(this));
 					return;
 				}
-				writer.Write(HtmlTextWriterAttribute.Href, GetPostBackClientHyperlink(this, ""));
+				writer.AddAttribute(HtmlTextWriterAttribute.Href, Page.GetPostBackClientHyperlink(this, ""));
 			}
 		}
 

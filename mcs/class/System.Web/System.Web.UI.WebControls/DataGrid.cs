@@ -39,9 +39,10 @@ namespace System.Web.UI.WebControls
 		private DataGridPagerStyle pagerStyle;
 
 		private DataGridColumnCollection columns;
-		private ArrayList columnsArrayList;
-		private DataGridColumnCollection items;
-		private ArrayList itemsArrayList;
+		private ArrayList                columnsArrayList;
+		private DataGridItemCollection   items;
+		private ArrayList                itemsArrayList;
+		private PagedDataSource          pagedDataSource;
 
 		private static readonly object CancelCommandEvent    = new object();
 		private static readonly object DeleteCommandEvent    = new object();
@@ -107,9 +108,13 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(alternatingItemStyle == null)
+				{
 					alternatingItemStyle = new TableItemStyle();
-				if(IsTrackingViewState())
+				}
+				if(IsTrackingViewState)
+				{
 					alternatingItemStyle.TrackViewState();
+				}
 				return alternatingItemStyle;
 			}
 		}
@@ -151,13 +156,13 @@ namespace System.Web.UI.WebControls
 				if(columns == null)
 				{
 					columnsArrayList = new ArrayList();
-					columns = new DataGridColumnCollection(columnsArrayList);
+					columns = new DataGridColumnCollection(this, columnsArrayList);
 					if(IsTrackingViewState)
 					{
-						columns.TrackViewState();
+						((IStateManager)columns).TrackViewState();
 					}
-					return columns;
 				}
+				return columns;
 			}
 		}
 
@@ -190,7 +195,7 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				if(value < -1)
-					throw ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException();
 				ViewState["EditItemIndex"] = value;
 			}
 		}
@@ -207,6 +212,7 @@ namespace System.Web.UI.WebControls
 						editItemStyle.TrackViewState();
 					}
 				}
+				return editItemStyle;
 			}
 		}
 
@@ -222,6 +228,7 @@ namespace System.Web.UI.WebControls
 						footerStyle.TrackViewState();
 					}
 				}
+				return footerStyle;
 			}
 		}
 
@@ -237,6 +244,7 @@ namespace System.Web.UI.WebControls
 						headerStyle.TrackViewState();
 					}
 				}
+				return headerStyle;
 			}
 		}
 
@@ -295,7 +303,7 @@ namespace System.Web.UI.WebControls
 			{
 				if(pagerStyle == null)
 				{
-					pagerStyle = new DataGridPageStyle(this);
+					pagerStyle = new DataGridPagerStyle(this);
 					if(IsTrackingViewState)
 					{
 						pagerStyle.TrackViewState();
@@ -342,7 +350,7 @@ namespace System.Web.UI.WebControls
 					if(prevVal !=-1 && prevVal < items.Count)
 					{
 						DataGridItem prev = (DataGridItem)items[prevVal];
-						if(prev.ListItemType != ListItemType.EditItem)
+						if(prev.ItemType != ListItemType.EditItem)
 						{
 							ListItemType newType = ListItemType.Item;
 							if( (prevVal % 2) != 0)
@@ -378,6 +386,7 @@ namespace System.Web.UI.WebControls
 						selectedItemStyle.TrackViewState();
 					}
 				}
+				return selectedItemStyle;
 			}
 		}
 
@@ -541,18 +550,19 @@ namespace System.Web.UI.WebControls
 			TableStyle style = new TableStyle(ViewState);
 			style.GridLines = GridLines.Both;
 			style.CellSpacing = 0;
+			return style;
 		}
 
 		protected override void LoadViewState(object savedState)
 		{
-			if(states != null)
+			if(savedState != null)
 			{
 				object[] states = (object[])savedState;
 				if(states != null)
 				{
 					LoadViewState(states[0]);
 					if(columns != null)
-						columns.LoadViewState(states[1]);
+						((IStateManager)columns).LoadViewState(states[1]);
 					if(pagerStyle != null)
 						pagerStyle.LoadViewState(states[2]);
 					if(headerStyle != null)
@@ -575,7 +585,7 @@ namespace System.Web.UI.WebControls
 		{
 			object[] states = new object[9];
 			states[0] = SaveViewState();
-			states[1] = (columns == null ? null : columns.SaveViewState());
+			states[1] = (columns == null ? null : ((IStateManager)columns).SaveViewState());
 			states[2] = (pagerStyle == null ? null : pagerStyle.SaveViewState());
 			states[3] = (headerStyle == null ? null : headerStyle.SaveViewState());
 			states[4] = (footerStyle == null ? null : footerStyle.SaveViewState());
@@ -620,13 +630,14 @@ namespace System.Web.UI.WebControls
 
 			if(columns != null)
 			{
-				columns.TrackViewState();
+				((IStateManager)columns).TrackViewState();
 			}
 		}
 
 		[MonoTODO]
 		protected override bool OnBubbleEvent(object source, EventArgs e)
 		{
+			/*
 			bool retVal = false;
 			if(e is DataGridCommandEventArgs)
 			{
@@ -644,6 +655,7 @@ namespace System.Web.UI.WebControls
 					// Next; Prev; Sort etc
 				}
 			}
+			*/
 			throw new NotImplementedException();
 			//return retVal;
 		}

@@ -226,7 +226,7 @@ namespace System.Web.UI.WebControls
 				if(isTable)
 					writer.RenderEndTag();
 				else
-					if(rowIndex != (rowsCount - 1) || (user.hasFooter && !outerTableImp))
+					if(rowIndex != (rowsCount - 1) || (user.HasFooter && !outerTableImp))
 						writer.WriteFullBeginTag("br");
 				rowIndex++;
 			}

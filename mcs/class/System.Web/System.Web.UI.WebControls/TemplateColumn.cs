@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     TemplateColumn
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -23,7 +23,7 @@ namespace System.Web.UI.WebControls
 		private ITemplate footerTemplate;
 		private ITemplate headerTemplate;
 		private ITemplate itemTemplate;
-		
+
 		public TemplateColumn(): base()
 		{
 		}
@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls
 				OnColumnChanged();
 			}
 		}
-		
+
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
 			base.InitializeCell(cell, columnIndex, itemType);
@@ -97,6 +97,7 @@ namespace System.Web.UI.WebControls
 				case ListItemType.SelectedItem: toRender = editItemTemplate;
 				                          break;
 				default:                  toRender = editItemTemplate;
+				                          break;
 			}
 			if(toRender != null)
 			{

@@ -132,9 +132,9 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute("showmessagebox", "True");
 				if(!ShowSummary)
 					writer.AddAttribute("showsummary", "False");
-				if(ValidationSummary.DisplayMode != ValidationSummaryDisplayMode.BulletList)
+				if(DisplayMode != ValidationSummaryDisplayMode.BulletList)
 				{
-					writer.AddAttribute("displaymode", PropertyConverter.EnumToString(typeof(ValidationSummaryDisplayMode), ValidationSummary.DisplayMode));
+					writer.AddAttribute("displaymode", PropertyConverter.EnumToString(typeof(ValidationSummaryDisplayMode), DisplayMode));
 				}
 			}
 		}

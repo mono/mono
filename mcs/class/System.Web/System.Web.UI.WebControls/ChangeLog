@@ -1,3 +1,14 @@
+2002-03-17      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	Finally, I have made it. Today I did a second build for the
+	 System.Web assembly. It compiled 195 classes today.
+	I am waiting eagerly for the runtime to come up so that the objects
+	 may be tested to their last levels. Several of the methods are still
+	 under the tag of "TODO" throwing NotImplementedException. Well, I
+	 hope to remove them soon, but how far is this soon - even I don't
+	 know, though I am happy to make the build a success even before
+	 the vacations to come.
+
 2002-03-07      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	Yesterday and today I tried to do some building of the aseembly,
