@@ -300,7 +300,10 @@ namespace Mono.CSharp {
 		//
 		void PopulateMethod (TypeContainer parent, DeclSpace decl_space, InterfaceMethod im)
 		{
-			Type return_type = this.ResolveType (im.ReturnType, false, im.Location);
+			Type return_type = im.ReturnType.Type;
+			if (return_type == null)
+				return_type = this.ResolveType (im.ReturnType, false, im.Location);
+			
 			Type [] arg_types = im.ParameterTypes (this);
 			MethodBuilder mb;
 			Parameter [] p;
@@ -1016,7 +1019,7 @@ namespace Mono.CSharp {
 	}
 	
 	public class InterfaceMethod : InterfaceMemberBase {
-		public readonly Expression ReturnType;
+		public Expression ReturnType;
 		public readonly Parameters Parameters;
 		public readonly Location Location;
 		
@@ -1034,7 +1037,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string GetSignature (DeclSpace ds)
 		{
-			Type ret = ds.ResolveType (ReturnType, false, Location);
+			ReturnType = ds.ResolveTypeExpr (ReturnType, false, Location);
+			Type ret = ReturnType.Type;
 			string args = Parameters.GetSignature (ds);
 
 			if ((ret == null) || (args == null))

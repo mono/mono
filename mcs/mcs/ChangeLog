@@ -1,3 +1,34 @@
+2003-04-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs (PopulateMethod): Do not lookup the types twice.
+	We were doing it once during SemanticAnalysis and once during
+	PopulateMethod.
+
+	* cs-parser.jay: Due to our hack in the grammar, things like A.B[]
+	in local variable type definitions, were being returned as a
+	SimpleName (we decomposed everything into a string), that is
+	because primary_expression was being used instead of a type in the
+	grammar (reduce/reduce conflicts).
+
+	The part that was wrong is that we converted the expression into a
+	string (an oversimplification in one hand, compounded with primary
+	expressions doing string concatenation).
+
+	So things like:
+
+	A.B.C [] x;
+
+	Would return "A.B.C[]" as a SimpleName.  This stopped things like
+	using clauses from working on this particular context.  And a type
+	was being matched directly against "A.B.C[]".
+
+	We now use the correct approach, and allow for ComposedCast to be
+	part of the unary expression.  So the "A.B.C []" become a composed
+	cast of "A.B.C" (as a nested group of MemberAccess with a
+	SimpleName at the end) plus the rank composition "[]". 
+
+	Also fixes 35567
+	
 2003-04-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* decl.cs (CheckAccessLevel): Implement the NestedPrivate rules
