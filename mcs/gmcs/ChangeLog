@@ -1,3 +1,9 @@
+2004-10-12  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.IsEqual): Added support for arrays.
+	When comparing two type parameters, only do the signature-only
+	comparision for method type parameters.
+
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
 	* report.cs: Don't make --fatal abort on warnings, we have

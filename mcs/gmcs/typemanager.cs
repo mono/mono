@@ -1765,9 +1765,15 @@ public class TypeManager {
 		}
 
 		if (a.IsGenericParameter && b.IsGenericParameter) {
-			if ((a.DeclaringMethod != null) != (b.DeclaringMethod != null))
+			if ((a.DeclaringMethod == null) || (b.DeclaringMethod == null))
 				return false;
 			return a.GenericParameterPosition == b.GenericParameterPosition;
+		}
+
+		if (a.IsArray && b.IsArray) {
+			if (a.GetArrayRank () != b.GetArrayRank ())
+				return false;
+			return IsEqual (a.GetElementType (), b.GetElementType ());
 		}
 
 		if (a.IsGenericInstance && b.IsGenericInstance) {
