@@ -456,12 +456,13 @@ namespace Mono.Xml.Xsl {
 		
 		public XslLocalVariable Resolve (XslTransformProcessor p, QName name)
 		{
-			for (VariableScope s = this; s != null; s = s.Parent)			
-				if (s.variables != null && s.variables.Contains (name)) {
-					XslLocalVariable v = (XslLocalVariable)s.variables [name];								
-					if (v.IsEvaluated (p))
-						return v;
-				}
+			for (VariableScope s = this; s != null; s = s.Parent) {
+				if (s.variables == null) continue;
+				XslLocalVariable v = s.variables [name] as XslLocalVariable;
+				if (v != null && v.IsEvaluated (p))
+					return v;
+
+			}
 			return null;
 		}
 	}
