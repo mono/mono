@@ -1,3 +1,9 @@
+2002-12-30  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h (MonoSymbolFileMethodAddress): Include the
+	line number table in this data blob instead of using an external
+	pointer.
+
 2002-12-28  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h: Increment MONO_SYMBOL_FILE_DYNAMIC_VERSION.
