@@ -1,3 +1,7 @@
+2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Locale.cs: Removed (added new version to Assembly directory)
+
 2003-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* DateTimeFormatInfo.cs: theInvariantDateTimeFormatInfo should not
