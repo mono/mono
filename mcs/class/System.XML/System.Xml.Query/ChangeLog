@@ -1,3 +1,7 @@
+2004-11-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryConvert.cs : added some date/dateTime methods.
+
 2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XQueryConvert.cs : hexbinary to base64 is now byte[] to byte[].
