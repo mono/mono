@@ -257,7 +257,7 @@ namespace Mono.CompilerServices.SymbolWriter
 				"MonoDebugger_GetLocalTypeFromSignature");
 
 			get_guid = (GetGuidFunc) create_delegate (
-				typeof (Module), typeof (GetGuidFunc), "MonoDebugger_GetGuid");
+				typeof (Module), typeof (GetGuidFunc), "Mono_GetGuid");
 		}
 
 		public static Type GetType (Assembly assembly, int token)

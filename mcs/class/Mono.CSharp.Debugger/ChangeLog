@@ -1,3 +1,8 @@
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoDebuggerSupport.GetGuid): The function is
+	called Module.Mono_GetGuid(), not Module.MonoDebugger_GetGuid().
+
 2004-07-30  Martin Baulig  <martin@ximian.com>
 
 	The library is now called Mono.CompilerServices.SymbolWriter.dll
