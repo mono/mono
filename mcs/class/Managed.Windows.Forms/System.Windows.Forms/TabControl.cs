@@ -471,7 +471,8 @@ namespace System.Windows.Forms {
 			Size spacing = TabSpacing;
 
 			row_count = 1;
-
+			show_slider = false;
+			
 			for (int i = 0; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
 				int width;
