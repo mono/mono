@@ -1,3 +1,13 @@
+
+Thu Apr 15 14:24:49 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: load per-assembly config files.
+	* icall.c: decrapified code to get the config dir and moved to
+	mono-config.c.
+	* image.h, loader.c, loader.h, mono-config.c, mono-config.h: allow
+	per-assembly config files. When doing a dll map lookup give precedence
+	to the per-assembly data.
+
 2004-04-14  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h (MonoDebuggerEvent): Removed
@@ -9713,6 +9723,7 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
 
 
