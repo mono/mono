@@ -37,7 +37,10 @@ namespace System.Collections.Generic {
 	
 		public Comparer () {} /* workaround 60438 by not having a protected ctor */
 		public abstract int Compare (T x, T y);
-		public abstract bool Equals (T x, T y);
+		public virtual bool Equals (T x, T y)
+		{
+			return Compare (x, y) == 0;
+		}
 		public virtual int GetHashCode (T obj)
 		{
 			if (obj == null)
@@ -46,29 +49,52 @@ namespace System.Collections.Generic {
 		}
 	
 		static DefaultComparer <T> _default;
-		public static Comparer<T> Default
-		{
+		
+		[MonoTODO ("This is going to make a really slow comparer. We need to speed this up if T : ICompareable<T> create a class with a where clause of T : ICompareable <T>")]
+		public static Comparer<T> Default {
 			get {
-				throw new NotImplementedException ("Waiting on bug#60437");
-				//if (_default != null)
-				//	return _default;
-				//return _default = new DefaultComparer<T> ();
+				if (_default != null)
+					return _default;
+				return _default = new DefaultComparer<T> ();
 			}
 		}
 	
 		int System.Collections.IComparer.Compare (object x, object y)
 		{
-			return this.Compare ((T)x, (T)y);
+			
+			if (x == null)
+				return y == null ? 0 : -1;
+			if (y == null)
+				return 1;
+			
+			if (x is T && y is T)
+				return Compare ((T) x, (T) y);
+			
+			throw new ArgumentException ();
 		}
 	
 		bool System.Collections.IKeyComparer.Equals (object x, object y)
 		{
-			return this.Equals ((T) x, (T) y);
+			if (x == y)
+				return true;
+			
+			if (x == null || y == null)
+				return false;
+			
+			if (x is T && y is T)
+				return Equals ((T) x, (T) y);
+			
+			throw new ArgumentException ();
 		}
 	
 		int System.Collections.IHashCodeProvider.GetHashCode (object obj)
 		{
-			return this.GetHashCode ((T)obj);
+			if (obj == null)
+				throw new ArgumentNullException ();
+			if (obj is T)
+				return GetHashCode ((T) obj);
+			
+			throw new ArgumentException ();
 		}
 	
 		class DefaultComparer<T> : Comparer<T> {
@@ -91,7 +117,7 @@ namespace System.Collections.Generic {
 	
 			public override bool Equals (T x, T y)
 			{
-				return System.Object.Equals (x, y);
+				return Object.Equals (x, y);
 			}
 		}
 	}
