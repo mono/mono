@@ -1,3 +1,7 @@
+2001-09-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.y (yylex): bug fix
+
 2001-09-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c (emit_header): bug fix for MBCOND macro

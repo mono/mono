@@ -1,6 +1,7 @@
 2001-09-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: implemented long MUL/DIV
+	(MB_OPT_LEVEL): define optimisation level macro
 
 	* testjit.c (tree_allocate_regs): added a way to prevent EDX usage
 	for operations like idiv. it is also possible to assign specific registers.
