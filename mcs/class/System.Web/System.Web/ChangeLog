@@ -1,3 +1,7 @@
+2004-09-29 Ben Maurer  <bmaurer@ximian.com>
+
+	* HttpContext.cs, TimeoutManager: Use DateTime.UtcNow.
+
 2004-09-25 Ben Maurer  <bmaurer@ximian.com>
 
 	* HttpApplication.cs: Make sure requests are removed from

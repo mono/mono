@@ -106,7 +106,7 @@ namespace System.Web
 				return;
 			}
 
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 			ArrayList clist = new ArrayList ();
 
 			lock (this) { // The lock prevents Keys enumerator from being out of synch

@@ -287,7 +287,7 @@ namespace System.Web
 		internal void BeginTimeoutPossible ()
 		{
 			timeoutPossible = 1;
-			timeoutBegin = DateTime.Now.Ticks;
+			timeoutBegin = DateTime.UtcNow.Ticks;
 		}
 
 		internal void EndTimeoutPossible ()
