@@ -1,3 +1,8 @@
+2004-12-09  Raja R Harinath  <rharinath@novell.com>
+
+	* test-driver: Clean up.
+	* Makefile.am (testjit, testaot, testinterp): Error out on failing tests.
+
 2004-12-08  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (CLEANFILES): Add *.exe, stest.dat.
