@@ -1,5 +1,8 @@
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-x86.c (mono_arch_create_jit_trampoline): Remove code which is
+	now in the xp code.
+
 	* mini.c (mini_init): Register mono_thread_force_interruption_checkpoint
 	icall.
 
