@@ -1,5 +1,12 @@
 2002-05-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (InitEnumUnderlyingTypes): New helper function
+	that splits out the loading of just the core types.
+
+	* rootcontext.cs (ResolveCore): Split the struct resolution in
+	two, so we can load the enumeration underlying types before any
+	enums are used.
+
 	* expression.cs (Is): Bandaid until we fix properly Switch (see
 	bug #24985 for details).
 

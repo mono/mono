@@ -293,7 +293,6 @@ namespace Mono.CSharp {
 			foreach (string iname in interfaces_first_stage)
 				BootstrapCorlib_ResolveInterface (root, iname);
 
-
 			//
 			// These are the base value types
 			//
@@ -302,6 +301,18 @@ namespace Mono.CSharp {
 				"System.Int16",   "System.UInt16",
 				"System.Int32",   "System.UInt32",
 				"System.Int64",   "System.UInt64",
+			};
+
+			foreach (string cname in structs_first_stage)
+				BootstrapCorlib_ResolveStruct (root, cname);
+
+			//
+			// Now, we can load the enumerations, after this point,
+			// we can use enums.
+			//
+			TypeManager.InitEnumUnderlyingTypes ();
+
+			string [] structs_second_stage = {
 				"System.Single",  "System.Double",
 				"System.Char",    "System.Boolean",
 				"System.Decimal", "System.Void",
@@ -310,7 +321,7 @@ namespace Mono.CSharp {
 				"System.IntPtr"
 			};
 			
-			foreach (string cname in structs_first_stage)
+			foreach (string cname in structs_second_stage)
 				BootstrapCorlib_ResolveStruct (root, cname);
 			
 			//
