@@ -1083,7 +1083,7 @@ namespace System.Web.UI.WebControls
 					}
 					pagedDataSource.DataSource = resolvedDS;
 					if(pagedDataSource.IsPagingEnabled && (pagedDataSource.CurrentPageIndex < 0 ||
-					                       pagedDataSource.CurrentPageIndex >= pagedDataSource.PageCount))
+							pagedDataSource.PageCount < pagedDataSource.CurrentPageIndex))
 					{
 						throw new HttpException(HttpRuntime.FormatResourceString("DataGrid_Invalid_Current_PageIndex", ID));
 					}

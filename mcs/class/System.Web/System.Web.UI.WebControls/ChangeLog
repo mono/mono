@@ -1,3 +1,9 @@
+2003-11-07 Jackson Harper <jackson@ximian.com>
+
+	* DataGrid.cs (CreateControlHierarchy): Current page index is
+	alolowed to equal page count. This prevents an exception being
+	thrown when both are zero.
+	
 2003-11-06 Jackson Harper <jackson@ximian.com>
 
 	* ValidationSummary.cs: Add Render method. Patch by Yaron Shkop.
