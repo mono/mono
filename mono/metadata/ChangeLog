@@ -1,3 +1,8 @@
+2004-12-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (compare_genericparam): Sort params with identical
+	owner by their number. Fixes gen-111 on sparc.
+
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threadpool.c (async_invoke_thread): Call push/pop_appdomain_ref
