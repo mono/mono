@@ -1,3 +1,8 @@
+2001-10-11  Ravi Pratap  <ravi@ximian.com>
+
+	* test-21.cs : Add. This is a test for testing our support
+	for nested types
+	
 2001-10-05  Ravi Pratap  <ravi@ximian.com>
 
 	* test-16.cs : Update to exercise the code which selects the best 
