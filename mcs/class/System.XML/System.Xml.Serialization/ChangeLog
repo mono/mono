@@ -1,3 +1,8 @@
+2004-01-13  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs: type namespace must never be used as root
+	  namespace. This fixes bug #52772.
+
 2004-01-08  Nick Drochak <ndrochak@ieee.org>
 
 	* XmlSchemaImporter.cs: Removed unused variable.

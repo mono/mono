@@ -138,7 +138,7 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
 		{
-			string membersNamespace;
+			string rootNamespace = "";
 			string elementName;
 			bool includeInSchema = true;
 			XmlAttributes atts = null;
@@ -170,7 +170,6 @@ namespace System.Xml.Serialization {
 				includeInSchema = atts.XmlType.IncludeInSchema;
 			}
 
-			membersNamespace = defaultNamespace;
 			elementName = defaultXmlType;
 
 			if (root != null)
@@ -178,11 +177,13 @@ namespace System.Xml.Serialization {
 				if (root.ElementName != null && root.ElementName != String.Empty)
 					elementName = root.ElementName;
 				if (root.Namespace != null && root.Namespace != String.Empty)
-					membersNamespace = root.Namespace;
+					rootNamespace = root.Namespace;
 			}
 
-			if (membersNamespace == null) membersNamespace = "";
-			XmlTypeMapping map = new XmlTypeMapping (elementName, membersNamespace, typeData, defaultXmlType, defaultNamespace);
+			if (rootNamespace == null) rootNamespace = "";
+			if (defaultNamespace == null || defaultNamespace.Length == 0) defaultNamespace = rootNamespace;
+			
+			XmlTypeMapping map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, defaultNamespace);
 			map.IncludeInSchema = includeInSchema;
 			relatedMaps.Add (map);
 			
@@ -213,7 +214,7 @@ namespace System.Xml.Serialization {
 				foreach (XmlReflectionMember rmember in members)
 				{
 					if (rmember.XmlAttributes.XmlIgnore) continue;
-					classMap.AddMember (CreateMapMember (rmember, map.Namespace));
+					classMap.AddMember (CreateMapMember (rmember, map.XmlTypeNamespace));
 				}
 //			}
 //			catch (Exception ex) {
@@ -331,7 +332,7 @@ namespace System.Xml.Serialization {
 				else if (elem.TypeData.IsComplexType)
 					elem.MappedType = ImportTypeMapping (itemType, null, defaultNamespace);
 
-				if (elem.MappedType != null) elem.ElementName = elem.MappedType.ElementName;
+				if (elem.MappedType != null) elem.ElementName = elem.MappedType.XmlType;
 				else elem.ElementName = TypeTranslator.GetTypeData(itemType).XmlType ;
 
 				elem.Namespace = (defaultNamespace != null) ? defaultNamespace : "";
@@ -350,7 +351,7 @@ namespace System.Xml.Serialization {
 			else
 			{
 				XmlTypeMapElementInfo elem = ((XmlTypeMapElementInfo)list[0]);
-				if (elem.MappedType != null) baseName = TypeTranslator.GetArrayName (elem.MappedType.ElementName);
+				if (elem.MappedType != null) baseName = TypeTranslator.GetArrayName (elem.MappedType.XmlType);
 				else baseName = TypeTranslator.GetArrayName (elem.ElementName);
 			}
 
