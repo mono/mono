@@ -32,9 +32,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.2  2004/08/17 00:48:50  ravindra
+// Added attributes.
+//
 // Revision 1.1  2004/08/15 23:13:15  ravindra
 // First Implementation of ToolBar control.
 //
@@ -46,10 +49,13 @@
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {	
+	[DefaultEvent ("ButtonClick")]
+	[DefaultProperty ("Buttons")]
 	public class ToolBar : Control
 	{
 		#region Instance Variables
@@ -108,7 +114,8 @@ namespace System.Windows.Forms
 			get {
 				CreateParams createParams = base.CreateParams;
 				createParams.ClassName = XplatUI.DefaultClassName;
-				createParams.Style = (int) WindowStyles.WS_CHILD | (int) WindowStyles.WS_VISIBLE;
+				createParams.Style = (int) WindowStyles.WS_CHILD | (int) WindowStyles.WS_VISIBLE |
+					(int)WindowStyles.WS_CLIPCHILDREN | (int) WindowStyles.WS_CLIPSIBLINGS;
 
 				return createParams;
 			}
@@ -124,6 +131,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[Localizable (true)]
+		[DefaultValue (ToolBarAppearance.Normal)]
 		public ToolBarAppearance Appearance {
 			get { return appearance; }
 			set {
@@ -134,7 +143,9 @@ namespace System.Windows.Forms
 				Redraw (false);
 			}
 		}
-		
+
+		[Localizable (true)]
+		[DefaultValue (true)]
 		public bool AutoSize {
 			get { return autosize; }
 			set {
@@ -146,6 +157,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color BackColor {
 			get { return background_color; }
 			set {
@@ -159,6 +172,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return background_image; }
 			set {
@@ -172,6 +187,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (BorderStyle.None)]
+		[DispIdAttribute (-504)]
 		public BorderStyle BorderStyle {
 			get { return borderStyle; }
 			set {
@@ -183,10 +200,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable (true)]
+		[MergableProperty (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ToolBarButtonCollection Buttons {
 			get { return buttons; }
 		}
 
+		[Localizable (true)]
+		[RefreshProperties (RefreshProperties.All)]
 		public Size ButtonSize {
 			get {
 				if (buttonSize.IsEmpty) {
@@ -208,16 +230,21 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (true)]
 		public bool Divider {
 			get { return divider; }
 			set { divider = value; }
 		}
 
+		[DefaultValue (DockStyle.Top)]
+		[Localizable (true)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set { base.Dock = value; } 
 		}
 
+		[DefaultValue (false)]
+		[Localizable (true)]
 		public bool DropDownArrows {
 			get { return dropDownArrows; }
 			set {
@@ -229,6 +256,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color ForeColor {
 			get { return foreground_color; }
 			set {
@@ -240,11 +269,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (null)]
 		public ImageList ImageList {
 			get { return imageList; }
 			set { imageList = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public Size ImageSize {
 			get {
 				if (imageList == null)
@@ -254,6 +287,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
 			get { return imeMode; }
 			set {
@@ -267,6 +302,8 @@ namespace System.Windows.Forms
 		}
 
 		/* NYI in Control.cs.
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override RightToLeft RightToLeft {
 			get { return base.RightToLeft; }
 			set {
@@ -280,16 +317,23 @@ namespace System.Windows.Forms
 		}
 		*/
 
+		[DefaultValue (false)]
+		[Localizable (true)]
 		public bool ShowToolTips {
 			get { return showToolTips; }
 			set { showToolTips = value; }
 		}
 
+		[DefaultValue (false)]
 		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
 
+		[Bindable (false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
 			get { return text; } 
 			set {
@@ -303,6 +347,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (ToolBarTextAlign.Underneath)]
+		[Localizable (true)]
 		public ToolBarTextAlign TextAlign {
 			get { return textAlignment; }
 			set {
@@ -314,6 +360,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (true)]
+		[Localizable (true)]
 		public bool Wrappable {
 			get { return wrappable; }
 			set {
@@ -350,8 +398,8 @@ namespace System.Windows.Forms
 			Size size = new Size ((int) Math.Ceiling (sz.Width), (int) Math.Ceiling (sz.Height));
 
 			if (imageList != null) {
-				int imgWidth = this.ImageSize.Width + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
 				// adjustment for the image grip 
+				int imgWidth = this.ImageSize.Width + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
 				int imgHeight = this.ImageSize.Height + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
 
 				if (textAlignment == ToolBarTextAlign.Right) {
@@ -367,12 +415,6 @@ namespace System.Windows.Forms
 				size.Width += ThemeEngine.Current.ToolBarDropDownWidth;
 
 			return new Rectangle (button.Location, size);
-		}
-
-		internal void Redraw (bool recalculate)
-		{
-			redraw = true;
-			this.recalculate = recalculate;
 		}
 		#endregion Internal Methods
 
@@ -435,7 +477,7 @@ namespace System.Windows.Forms
    		{
 			base.OnMouseDown (me);
 
-			if (! Enabled) return;
+			if (! this.Enabled) return;
 			Point hit = new Point (me.X - Location.X, me.Y - Location.Y);
 			// draw the pushed button
 			foreach (ToolBarButton button in buttons) {
@@ -452,7 +494,7 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseUp (me);
 
-			if (! Enabled) return;
+			if (! this.Enabled) return;
 			Point hit = new Point (me.X - Location.X, me.Y - Location.Y);
 			// draw the normal button
 			foreach (ToolBarButton button in buttons) {
@@ -469,7 +511,7 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseEnter (e);
 
-			if (!Enabled || appearance != ToolBarAppearance.Flat) return;
+			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
 			// TODO:
 			// draw the transparent rectangle with single line border around the flat button
       		}
@@ -478,25 +520,25 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseLeave (e);
 
-			if (!Enabled || appearance != ToolBarAppearance.Flat) return;
+			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
 			// TODO:
 			// draw the normal flat button 
     		}
 
 		protected override void OnPaint (PaintEventArgs pe)
 		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
+			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
     				return;
 
 			Draw ();
-			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
 
-			if (Width <= 0 || Height <= 0 || Visible == false)
+			if (this.Width <= 0 || this.Height <= 0 || this.Visible == false)
 				return;
 
 			Redraw (true);
@@ -515,6 +557,12 @@ namespace System.Windows.Forms
 		#endregion Protected Methods
 
 		#region Private Methods
+		private void Redraw (bool recalculate)
+		{
+			redraw = true;
+			this.recalculate = recalculate;
+		}
+
 		private void Draw ()
 		{
 			if (redraw) {
@@ -530,10 +578,10 @@ namespace System.Windows.Forms
 
 				if (recalculate) {
 					CalcToolBar ();
-					CreateBuffers (Width, Height);
+					CreateBuffers (this.Width, this.Height);
 				}
 
-				ThemeEngine.Current.DrawToolBar (DeviceContext, this, strFormat);
+				ThemeEngine.Current.DrawToolBar (this.DeviceContext, this, strFormat);
 			}
 			redraw = false;
 			recalculate = false;
@@ -552,8 +600,8 @@ namespace System.Windows.Forms
 			Size size = new Size ((int) Math.Ceiling (sz.Width), (int) Math.Ceiling (sz.Height));
 
 			if (imageList != null) {
-				int imgWidth = this.ImageSize.Width + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
 				// adjustment for the image grip 
+				int imgWidth = this.ImageSize.Width + 2 * ThemeEngine.Current.ToolBarImageGripWidth; 
 				int imgHeight = this.ImageSize.Height + 2 * ThemeEngine.Current.ToolBarImageGripWidth;
 
 				if (textAlignment == ToolBarTextAlign.Right) {
@@ -566,24 +614,6 @@ namespace System.Windows.Forms
 				}
 			}
 			return size;
-		}
-
-		private void DumpToolBar (string msg) {
-			Console.WriteLine (msg);
-			Console.WriteLine ("ToolBar: name: " + this.Text);
-			Console.WriteLine ("ToolBar: wd, ht: " + this.Size);
-			Console.WriteLine ("ToolBar: img size: " + this.ImageSize);
-			Console.WriteLine ("ToolBar: button sz: " + this.buttonSize);
-			Console.WriteLine ("ToolBar: textalignment: "+ this.TextAlign);
-			Console.WriteLine ("ToolBar: appearance: "+ this.Appearance);
-			Console.WriteLine ("ToolBar: wrappable: "+ this.Wrappable);
-			Console.WriteLine ("ToolBar: buttons count: " + this.Buttons.Count);
-			int i= 0;	
-			
-			foreach (ToolBarButton b in buttons) {
-				Console.WriteLine ("ToolBar: button [{0}]:",i++);
-				b.Dump ();
-			}
 		}
 
 		/* Checks for the separators and sets the location of a button and its wrapper flag */
@@ -677,6 +707,25 @@ namespace System.Windows.Forms
 						this.Height = loc.Y + ht;
 			}
 		}
+
+		private void DumpToolBar (string msg)
+		{
+			Console.WriteLine (msg);
+			Console.WriteLine ("ToolBar: name: " + this.Text);
+			Console.WriteLine ("ToolBar: wd, ht: " + this.Size);
+			Console.WriteLine ("ToolBar: img size: " + this.ImageSize);
+			Console.WriteLine ("ToolBar: button sz: " + this.buttonSize);
+			Console.WriteLine ("ToolBar: textalignment: "+ this.TextAlign);
+			Console.WriteLine ("ToolBar: appearance: "+ this.Appearance);
+			Console.WriteLine ("ToolBar: wrappable: "+ this.Wrappable);
+			Console.WriteLine ("ToolBar: buttons count: " + this.Buttons.Count);
+
+			int i= 0;	
+			foreach (ToolBarButton b in buttons) {
+				Console.WriteLine ("ToolBar: button [{0}]:",i++);
+				b.Dump ();
+			}
+		}
  		#endregion Private Methods
 
 		#region subclass
@@ -696,6 +745,7 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return buttonsList.Count; }
 			}
