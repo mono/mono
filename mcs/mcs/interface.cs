@@ -342,19 +342,13 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			//
-			// Define each type attribute (in/out/ref) and
-			// the argument names.
-			//
-			p = im.Parameters.FixedParameters;
-			if (p != null){
-				for (i = 0; i < p.Length; i++)
-					mb.DefineParameter (i + 1, p [i].Attributes, p [i].Name);
-
-				if (i != arg_types.Length)
-					Console.WriteLine ("Implement the type definition for params");
-			}
-
+                        //
+                        // Labelling of parameters is taken care of
+                        // during the Emit phase via
+                        // MethodCore.LabelParameters method so I am
+                        // removing the old code here.
+                        //
+                        
                         im.Builder = mb;
                         
                 }
