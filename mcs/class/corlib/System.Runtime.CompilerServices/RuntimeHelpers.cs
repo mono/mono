@@ -19,7 +19,12 @@ namespace System.Runtime.CompilerServices
 		private RuntimeHelpers () {}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern void InitializeArray (Array array, RuntimeFieldHandle fldHandle);
+		static extern void InitializeArray (Array array, IntPtr fldHandle);
+
+		public static void InitializeArray (Array array, RuntimeFieldHandle fldHandle)
+		{
+			InitializeArray (array, fldHandle.Value);
+		}
 
 		public static int OffsetToStringData {
 			get {
@@ -52,7 +57,12 @@ namespace System.Runtime.CompilerServices
 		public static extern object GetObjectValue (object obj);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern void RunClassConstructor (RuntimeTypeHandle type);
+		static extern void RunClassConstructor (IntPtr type);
+
+		public static void RunClassConstructor (RuntimeTypeHandle type)
+		{
+			RunClassConstructor (type.Value);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int GetOffsetToStringData();
