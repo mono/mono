@@ -2790,10 +2790,12 @@ namespace Mono.CSharp {
 			public MethodInfo get_enumerator;
 			public MethodInfo move_next;
 			public MethodInfo get_current;
+			public Type element_type;
 
 			public ForeachHelperMethods (EmitContext ec)
 			{
 				this.ec = ec;
+				this.element_type = TypeManager.object_type;
 			}
 		}
 		
@@ -2873,6 +2875,8 @@ namespace Mono.CSharp {
 			hm.get_current = FetchMethodGetCurrent (return_type);
 			if (hm.get_current == null)
 				return false;
+
+			hm.element_type = hm.get_current.ReturnType;
 
 			return true;
 		}
@@ -2957,7 +2961,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			LocalBuilder enumerator, disposable;
-			Expression empty = new EmptyExpression ();
+			Expression empty = new EmptyExpression (hm.element_type);
 			Expression conv;
 
 			//
@@ -2970,7 +2974,7 @@ namespace Mono.CSharp {
 			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
 			if (conv == null)
 				return false;
-			
+
 			enumerator = ig.DeclareLocal (TypeManager.ienumerator_type);
 			disposable = ig.DeclareLocal (TypeManager.idisposable_type);
 			

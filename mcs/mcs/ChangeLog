@@ -1,5 +1,16 @@
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Foreach.ForeachHelperMethods): Added `Type element_type',
+	initialize it to TypeManager.object_type in the constructor.
+	(Foreach.GetEnumeratorFilter): Set `hm.element_type' to the return type
+	of the `hm.get_current' method if we're using the collection pattern.
+	(Foreach.EmitCollectionForeach): Use `hm.element_type' as the source type
+	for the explicit conversion to make it work when we're using the collection
+	pattern and the `Current' property has a different return type than `object'.
+	Fixes #27713.
+
+2002-07-24  Martin Baulig  <martin@gnome.org>
+
 	* delegate.cs (Delegate.VerifyMethod): Simply return null if the method
 	does not match, but don't report any errors.  This method is called in
 	order for all methods in a MethodGroupExpr until a matching method is
