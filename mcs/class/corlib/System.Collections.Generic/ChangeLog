@@ -1,3 +1,7 @@
+2005-04-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* Dictionary.cs: Real impl.
+
 2005-02-21  Martin Baulig  <martin@ximian.com>
 
 	* IComparer.cs: Reverted the last change here, Equals() and
