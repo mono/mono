@@ -23,23 +23,24 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 	}
 	
 	public class SoapFormatter: IRemotingFormatter, IFormatter {
-		private ObjectWriter _objWriter;
 		private SoapWriter _soapWriter;
 		private SerializationBinder _binder;
 		private StreamingContext _context;
 		private ISurrogateSelector _selector;
 		private FormatterAssemblyStyle _assemblyFormat = FormatterAssemblyStyle.Full;
-		private ISoapMessage _topObject;
+		private FormatterTypeStyle _typeFormat = FormatterTypeStyle.TypesWhenNeeded;
+		private ISoapMessage _topObject = null;
 		
 #if NET_1_1
 		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
 #endif
 
 		public SoapFormatter() {
-			
+			_selector = null;
+			_context = new StreamingContext(StreamingContextStates.All);
 		}
 		
-		public SoapFormatter(ISurrogateSelector selector, StreamingContext context):this() {
+		public SoapFormatter(ISurrogateSelector selector, StreamingContext context) {
 			_selector = selector;
 			_context = context;
 		}
@@ -54,21 +55,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		
 		public object Deserialize(Stream serializationStream, HeaderHandler handler) {
 			object objReturn = null;
-			SoapParser parser = new SoapParser(serializationStream);
-			SoapReader soapReader = new SoapReader(parser);
-			soapReader.Binder = _binder;
-			
-			if(_topObject != null) soapReader.TopObject = _topObject;
-			ObjectReader reader = new ObjectReader(_selector, _context, soapReader);
-			// Use the english numeral and date format during the serialization
-			// and the deserialization.
-			// The original CultureInfo is restored when the operation
-			// is done
+			SoapReader soapReader = new SoapReader(_binder, _selector, _context);
 			CultureInfo savedCi = CultureInfo.CurrentCulture;
 			try {
 				Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-				parser.Run();
-				objReturn = reader.TopObject;
+				objReturn = soapReader.Deserialize(serializationStream, _topObject);
 			}
 			finally {
 				Thread.CurrentThread.CurrentCulture = savedCi;
@@ -87,18 +78,16 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				throw new ArgumentNullException("serializationStream");
 			if(!serializationStream.CanWrite)
 				throw new SerializationException("Can't write in the serialization stream");
-			_soapWriter = new SoapWriter(serializationStream);
-			_objWriter = new ObjectWriter((ISoapWriter) _soapWriter, _selector,  new StreamingContext(StreamingContextStates.File));
-			_soapWriter.Writer = _objWriter;
-
-			// Use the english numeral and date format during the serialization
-			// and the deserialization.
-			// The original CultureInfo is restored when the operation
-			// is done
+			if(graph == null)
+				throw new ArgumentNullException("graph");
+			_soapWriter = new SoapWriter(serializationStream, _selector, _context, _topObject);
 			CultureInfo savedCi = CultureInfo.CurrentCulture;
 			try {
 				Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-				_objWriter.Serialize(graph);
+				_soapWriter.Serialize(
+					graph,
+					_typeFormat,
+					_assemblyFormat);
 			}
 			finally {
 				Thread.CurrentThread.CurrentCulture = savedCi;
@@ -155,7 +144,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 #endif
 		
-		[MonoTODO ("Interpret this")]
 		public FormatterAssemblyStyle AssemblyFormat
 		{
 			get {
@@ -163,6 +151,18 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 			set {
 				_assemblyFormat = value;
+			}
+		}
+
+		public FormatterTypeStyle TypeFormat
+		{
+			get 
+			{
+				return _typeFormat;
+			}
+			set 
+			{
+				_typeFormat = value;
 			}
 		}
 
