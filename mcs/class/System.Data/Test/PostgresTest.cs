@@ -129,13 +129,9 @@ namespace TestSystemDataSqlClient {
 
 			selectCommand.CommandText = 
 				"select " +				
-					"boolean_value, " +
 					"int2_value, " +
 					"int4_value, " +
 					"bigint_value, " +
-					"float_value, " +
-					"double_value, " +
-					"numeric_value, " +
 					"char_value, " +
 					"varchar_value, " +
 					"text_value " +
@@ -231,11 +227,19 @@ namespace TestSystemDataSqlClient {
 		static void Main(string[] args)
 		{
 			SqlConnection cnc = new SqlConnection ();
+
+			/*
 			string connectionString = 
 				"host=localhost;" +
 				"dbname=test;" +
-				"user=danmorg;" +
-				"password=viewsonic";
+				"user=userid;" +
+				"password=password";
+			*/
+
+			string connectionString = 
+				"host=localhost;" +
+				"dbname=test;" +
+				"user=postgres;";
 
 			cnc.ConnectionString =  connectionString;
 

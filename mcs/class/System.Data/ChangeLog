@@ -1,3 +1,20 @@
+2002-05-05  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/PostgresTest.cs: modified to run completely.  There
+	are many TODOs in System.Data, so not all data types are
+	included in the SELECT SQL query.  Also, I made it to where
+	it would connect 
+	using "host=localhost;dbname=test;user=postgres"
+	instead of my userid and password.  When more types are included,
+	update this test.
+
+2002-05-05  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/PostgresTest.cs: added - ported
+	libgda postgres-test.c originally by 
+	Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+	to C#.
+
 2002-05-05  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlTypes/SqlBinary.cs:
 	* System.Data.SqlTypes/SqlBoolean.cs:
