@@ -341,9 +341,14 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		public void SetGenericMethodSignature (Type return_type, Type[] parameter_types)
+		public void SetGenericMethodSignature (MethodAttributes attributes, CallingConventions callingConvention, Type return_type, Type[] parameter_types)
 		{
 			RejectIfCreated ();
+
+			this.attrs = attributes;
+			this.call_conv = callingConvention;
+			if ((attributes & MethodAttributes.Static) == 0)
+ 				this.call_conv |= CallingConventions.HasThis;
 
 			this.rtype = return_type;
 			this.parameters = new Type [parameter_types.Length];
