@@ -1,5 +1,14 @@
 2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslStylesheet.cs, XslCompiledContext.cs : Fixed PreserveWhitespace()
+	  to work fine with xsl:*-space attributes as expected.
+	* XslTransformProcessor.cs : PreserveWhitespace() in this file is 
+	  actually nothing. It should not use XsltContext.PreserveWhitespace()
+	  because this method is used to control output, while the referenced
+	  method is used to control source document.
+
+2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTemplate.cs : First non-element content were incorrectly ignored.
 
 2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>

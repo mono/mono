@@ -202,15 +202,19 @@ namespace Mono.Xml.Xsl {
 			}
 		}
 
-		public bool GetPreserveWhitespace (string localName, string ns)
+		QName allMatchName = new QName ("*");
+
+		public bool GetPreserveWhitespace (XPathNavigator nav)
 		{
 			if (!HasSpaceControls)
 				return true;
 
+			string localName = nav.LocalName;
+			string ns = nav.NamespaceURI;
+
 			XmlQualifiedName qname = new XmlQualifiedName (localName, ns);
 			object o = spaceControls [qname];
 			if (o == null) {
-
 				for (int i = 0; i < imports.Count; i++) {
 					o = ((XslStylesheet) imports [i]).SpaceControls [qname];
 					if (o != null)
@@ -231,8 +235,7 @@ namespace Mono.Xml.Xsl {
 			}
 
 			if (o == null) {
-				qname = new XmlQualifiedName ("*", String.Empty);
-				o = spaceControls [qname];
+				o = spaceControls [allMatchName];
 				if (o == null) {
 					for (int i = 0; i < imports.Count; i++) {
 						o = ((XslStylesheet) imports [i]).SpaceControls [qname];
@@ -250,6 +253,9 @@ namespace Mono.Xml.Xsl {
 					return false;
 				}
 			}
+			if (nav.MoveToParent () &&
+				nav.NodeType == XPathNodeType.Element)
+				return GetPreserveWhitespace (nav);
 			return true;
 		}
 

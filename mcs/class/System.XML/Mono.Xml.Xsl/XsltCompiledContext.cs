@@ -176,7 +176,7 @@ namespace Mono.Xml.Xsl
 
 		public override bool PreserveWhitespace (XPathNavigator nav) 
 		{
-			return p.CompiledStyle.Style.GetPreserveWhitespace (nav.LocalName, nav.NamespaceURI);
+			return p.CompiledStyle.Style.GetPreserveWhitespace (nav.Clone ());
 		}
 
 		public override bool Whitespace { get { return WhitespaceHandling; } }

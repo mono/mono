@@ -582,7 +582,7 @@ namespace Mono.Xml.Xsl {
 			bool b = IsCData (name, ns);
 			XPathContext.PushScope ();
 			Out.InsideCDataSection = XPathContext.IsCData = b;
-			XPathContext.WhitespaceHandling = preserveWhitespace;
+			XPathContext.WhitespaceHandling = true;//preserveWhitespace;
 			XPathContext.ElementPrefix = prefix;
 			XPathContext.ElementNamespace = ns;
 			return b;
@@ -607,7 +607,8 @@ namespace Mono.Xml.Xsl {
 
 		public bool PreserveWhitespace ()
 		{
-			return XPathContext.PreserveWhitespace (CurrentNode);
+//			return XPathContext.PreserveWhitespace (CurrentNode);
+			return XPathContext.Whitespace;
 		}
 	}
 }
