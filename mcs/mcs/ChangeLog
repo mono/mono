@@ -1,3 +1,9 @@
+2003-02-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Indexers.GetIndexersForType): Interfaces do not
+	inherit from System.Object, so we have to stop at null, not only
+	when reaching System.Object.
+
 2003-02-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: (Indexers.GetIndexersForType): Martin's fix used

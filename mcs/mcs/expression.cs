@@ -6845,7 +6845,7 @@ namespace Mono.CSharp {
 				return ix;
 
 			Type copy = lookup_type;
-			while (copy != TypeManager.object_type){
+			while (copy != TypeManager.object_type && copy != null){
 				ix = GetIndexersForTypeOrInterface (caller_type, copy);
 
 				if (ix != null)
