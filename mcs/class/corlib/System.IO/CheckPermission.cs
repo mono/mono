@@ -102,7 +102,7 @@ namespace System.IO
 			}
 			else
 			{
-				throw new FileNotFoundException();
+				throw new FileNotFoundException("File not found", path);
 			}
 #endif
 		}
