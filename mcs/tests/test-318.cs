@@ -1,6 +1,29 @@
 // This code must be compilable without any warning
 // Compiler options: -warnaserror -warn:4 -unsafe
-// Test of wrong CS0219 warning
+// Test of wrong warnings
+
+using System;
+using System.ComponentModel;
+
+public class Ev
+{
+        object disposedEvent = new object ();
+        EventHandlerList Events = new EventHandlerList();
+                
+        public event EventHandler Disposed
+        {
+                add { Events.AddHandler (disposedEvent, value); }
+                remove { Events.RemoveHandler (disposedEvent, value); }
+        }
+
+        public void OnClick(EventArgs e)
+        {
+            EventHandler clickEventDelegate = (EventHandler)Events[disposedEvent];
+            if (clickEventDelegate != null) {
+                clickEventDelegate(this, e);
+            }
+        }
+}
 
 public class C {
     
