@@ -27,7 +27,7 @@ using System.Xml;
 namespace Mono.CSharp {
 
 	public class MemberName {
-		public string Name;
+		public readonly string Name;
 		public readonly MemberName Left;
 
 		public static readonly MemberName Null = new MemberName ("");
@@ -44,8 +44,22 @@ namespace Mono.CSharp {
 		}
 
 		public MemberName (MemberName left, MemberName right)
-			: this (left, right.Name)
 		{
+			Name = right.Name;
+			Left = (right.Left == null) ? left : new MemberName (left, right.Left);
+		}
+
+		static readonly char [] dot_array = { '.' };
+
+		public static MemberName FromDotted (string name)
+		{
+			string [] elements = name.Split (dot_array);
+			int count = elements.Length;
+			int i = 0;
+			MemberName n = new MemberName (elements [i++]);
+			while (i < count)
+				n = new MemberName (n, elements [i++]);
+			return n;
 		}
 
 		public string GetName ()
@@ -114,6 +128,44 @@ namespace Mono.CSharp {
 			else
 				return Name;
 		}
+
+		public override bool Equals (object other)
+		{
+			return Equals (other as MemberName);
+		}
+
+		public bool Equals (MemberName other)
+		{
+			if (this == other)
+				return true;
+			if (other == null || Name != other.Name)
+				return false;
+#if NET_2_0
+			if (TypeArguments == null)
+				return other.TypeArguments == null;
+
+			if (other.TypeArguments == null || TypeArguments.Count != other.TypeArguments.Count)
+				return false;
+#endif
+			if (Left == null)
+				return other.Left == null;
+
+			return Left.Equals (other.Left);
+		}
+
+		public override int GetHashCode ()
+		{
+			int hash = Name.GetHashCode ();
+			for (MemberName n = Left; n != null; n = n.Left)
+				hash ^= n.Name.GetHashCode ();
+
+#if NET_2_0
+			if (TypeArguments != null)
+				hash ^= TypeArguments.Count << 5;
+#endif
+
+			return hash & 0x7FFFFFFF;
+		}
 	}
 
 	/// <summary>
@@ -124,15 +176,21 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Public name
 		/// </summary>
+
+		protected string cached_name;
 		public string Name {
 			get {
-				// !(this is GenericMethod) && !(this is Method)
-				return MemberName.GetName (false);
+				if (cached_name == null)
+					cached_name = MemberName.GetName (false);
+				return cached_name;
 			}
 		}
 
                 // Is not readonly because of IndexerName attribute
-		public MemberName MemberName;
+		private MemberName member_name;
+		public MemberName MemberName {
+			get { return member_name; }
+		}
 
 		/// <summary>
 		///   Modifier flags that the user specified in the source code
@@ -185,9 +243,15 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("A PartialContainer cannot be the direct parent of a member");
 
 			Parent = parent;
-			MemberName = name;
+			member_name = name;
 			Location = loc;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
+		}
+
+		protected virtual void SetMemberName (MemberName new_name)
+		{
+			member_name = new_name;
+			cached_name = null;
 		}
 
 		/// <summary>
@@ -470,18 +534,18 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Adds the member to defined_names table. It tests for duplications and enclosing name conflicts
 		/// </summary>
-		protected bool AddToContainer (MemberCore symbol, string fullname, string basename)
+		protected bool AddToContainer (MemberCore symbol, string name)
 		{
-			if (basename == Basename && !(this is Interface)) {
+			if (name == Basename && !(this is Interface) && !(this is Enum)) {
 				Report.SymbolRelatedToPreviousError (this);
 				Report.Error (542,  symbol.Location, "'{0}': member names cannot be the same as their enclosing type", symbol.GetSignatureForError ());
 				return false;
 			}
 
-			MemberCore mc = (MemberCore)defined_names [fullname];
+			MemberCore mc = (MemberCore) defined_names [name];
 
 			if (mc == null) {
-				defined_names.Add (fullname, symbol);
+				defined_names.Add (name, symbol);
 				return true;
 			}
 
@@ -489,7 +553,7 @@ namespace Mono.CSharp {
 				return true;
 
 			Report.SymbolRelatedToPreviousError (mc);
-			Report.Error (102, symbol.Location, "The type '{0}' already contains a definition for '{1}'", GetSignatureForError (), basename);
+			Report.Error (102, symbol.Location, "The type '{0}' already contains a definition for '{1}'", GetSignatureForError (), name);
 			return false;
 		}
 

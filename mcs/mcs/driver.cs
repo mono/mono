@@ -1605,7 +1605,7 @@ namespace Mono.CSharp
 
 				if (ep == null) {
 					if (RootContext.MainClass != null) {
-						DeclSpace main_cont = RootContext.Tree.Decls [RootContext.MainClass] as DeclSpace;
+						DeclSpace main_cont = RootContext.Tree.GetDecl (MemberName.FromDotted (RootContext.MainClass));
 						if (main_cont == null) {
 							Report.Error (1555, output_file, "Could not find '{0}' specified for Main method", RootContext.MainClass); 
 							return false;

@@ -45,7 +45,7 @@ namespace Mono.CSharp
 			decls = new Hashtable ();
 		}
 
-		public void RecordDecl (string name, DeclSpace ds)
+		public void RecordDecl (MemberName name, DeclSpace ds)
 		{
 			DeclSpace other = (DeclSpace) decls [name];
 			if (other != null){
@@ -84,7 +84,12 @@ namespace Mono.CSharp
                         }
                 }
 
-		public Hashtable Decls {
+		public DeclSpace GetDecl (MemberName name)
+		{
+			return (DeclSpace) decls [name];
+		}
+
+		public Hashtable AllDecls {
 			get {
 				return decls;
 			}

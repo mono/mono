@@ -477,12 +477,13 @@ namespace Mono.CSharp {
 
 		public bool AddToMemberContainer (MemberCore symbol)
 		{
-			return AddToContainer (symbol, String.Concat (Name, ".", symbol.Name), symbol.Name);
+			return AddToContainer (symbol, symbol.Name);
 		}
 
 		bool AddToTypeContainer (DeclSpace ds)
 		{
-			return AddToContainer (ds, ds.Name, ds.Basename);
+			// Parent == null ==> this == RootContext.Tree.Types
+			return AddToContainer (ds, (Parent == null) ? ds.Name : ds.Basename);
 		}
 
 		public void AddConstant (Const constant)
@@ -534,7 +535,7 @@ namespace Mono.CSharp {
 			if (methods == null)
 				methods = new MethodArrayList (this);
 			
-			if (method.Name.IndexOf ('.') != -1)
+			if (method.MemberName.Left != null)
 				methods.Insert (0, method);
 			else 
 				methods.Add (method);
@@ -628,7 +629,7 @@ namespace Mono.CSharp {
 			if (properties == null)
 				properties = new MemberCoreArrayList ();
 
-			if (prop.Name.IndexOf ('.') != -1)
+			if (prop.MemberName.Left != null)
 				properties.Insert (0, prop);
 			else
 				properties.Add (prop);
@@ -2446,8 +2447,7 @@ namespace Mono.CSharp {
 						Location loc)
 		{
 			PartialContainer pc;
-			string full_name = member_name.GetName (true);
-			DeclSpace ds = (DeclSpace) RootContext.Tree.Decls [full_name];
+			DeclSpace ds = RootContext.Tree.GetDecl (member_name);
 			if (ds != null) {
 				pc = ds as PartialContainer;
 
@@ -2485,7 +2485,7 @@ namespace Mono.CSharp {
 				parent = ((ClassPart) parent).PartialContainer;
 
 			pc = new PartialContainer (ns.NS, parent, member_name, mod_flags, kind, loc);
-			RootContext.Tree.RecordDecl (full_name, pc);
+			RootContext.Tree.RecordDecl (member_name, pc);
 
 			if (kind == Kind.Interface)
 				parent.AddInterface (pc);
@@ -4515,7 +4515,7 @@ namespace Mono.CSharp {
 					if (implementing == null){
 						if (member is PropertyBase) {
 							Report.Error (550, method.Location, "'{0}' is an accessor not found in interface member '{1}'",
-								method.GetSignatureForError (container), member.ExplicitInterfaceName);
+								method.GetSignatureForError (container), member.Name);
 
 						} else {
 							Report.Error (539, method.Location,
@@ -4824,7 +4824,12 @@ namespace Mono.CSharp {
 		// The "short" name of this property / indexer / event.  This is the
 		// name without the explicit interface.
 		//
-		public string ShortName;
+		public string ShortName {
+			get { return MemberName.Name; }
+			set {
+				SetMemberName (new MemberName (MemberName.Left, value));
+			}
+		}
 
 		//
 		// The type of this property / indexer / event
@@ -4832,22 +4837,17 @@ namespace Mono.CSharp {
 		public Type MemberType;
 
 		//
-		// If true, this is an explicit interface implementation
-		//
-		public bool IsExplicitImpl = false;
-
-		//
-		// The name of the interface we are explicitly implementing
-		//
-		public MemberName ExplicitInterfaceName = null;
-
-		//
 		// Whether this is an interface member.
 		//
 		public bool IsInterface;
 
 		//
-		// If true, the interface type we are explicitly implementing
+		// If true, this is an explicit interface implementation
+		//
+		public bool IsExplicitImpl;
+
+		//
+		// The interface type we are explicitly implementing
 		//
 		public Type InterfaceType = null;
 
@@ -4862,14 +4862,7 @@ namespace Mono.CSharp {
 			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
-
-			// Check for explicit interface implementation
-			if (MemberName.Left != null) {
-				ExplicitInterfaceName = MemberName.Left;
-				ShortName = MemberName.Name;
-				IsExplicitImpl = true;
-			} else
-				ShortName = Name;
+			IsExplicitImpl = (MemberName.Left != null);
 		}
 
 		protected virtual bool CheckBase ()
@@ -5012,7 +5005,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (IsExplicitImpl) {
-				Expression expr = ExplicitInterfaceName.GetTypeExpression (Location);
+				Expression expr = MemberName.Left.GetTypeExpression (Location);
 				TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
 				if (texpr == null)
 					return false;
@@ -5023,14 +5016,6 @@ namespace Mono.CSharp {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
 					return false;
 				}
-
-#if FIXME
-				// Compute the full name that we need to export.
-				if (InterfaceType.FullName != ExplicitInterfaceName) {
-					ExplicitInterfaceName = InterfaceType.FullName;
-					UpdateMemberName ();
-				}
-#endif
 				
 				if (!Parent.VerifyImplements (InterfaceType, ShortName, Name, Location))
 					return false;
@@ -5039,14 +5024,6 @@ namespace Mono.CSharp {
 				
 			}
 			return true;
-		}
-
-		/// <summary>
-		/// The name of the member can be changed during definition (see IndexerName attribute)
-		/// </summary>
-		protected virtual void UpdateMemberName ()
-		{
-			MemberName.Name = ShortName;
 		}
 
 		public override string GetSignatureForError (TypeContainer tc)
@@ -5685,14 +5662,12 @@ namespace Mono.CSharp {
 
 		static MemberName SetupName (string prefix, MemberBase member)
 		{
-			MemberName name = member.MemberName.Clone ();
-			name.Name = prefix + member.ShortName;
-			return name;
+			return new MemberName (member.MemberName.Left, prefix + member.ShortName);
 		}
 
 		public void UpdateName (MemberBase member)
 		{
-			MemberName.Name = prefix + member.ShortName;
+			SetMemberName (SetupName (prefix, member));
 		}
 
 		#region IMethodData Members
@@ -6276,9 +6251,9 @@ namespace Mono.CSharp {
 			return Get.IsDuplicateImplementation (mc) || Set.IsDuplicateImplementation (mc);
 		}
 
-		protected override void UpdateMemberName ()
+		protected override void SetMemberName (MemberName new_name)
 		{
-			base.UpdateMemberName ();
+			base.SetMemberName (new_name);
 
 			Get.UpdateName (this);
 			Set.UpdateName (this);
@@ -7124,8 +7099,6 @@ namespace Mono.CSharp {
 							      "The argument to the 'IndexerName' attribute must be a valid identifier");
 						return false;
 					}
-
-					UpdateMemberName ();
 				}
 			}
 
@@ -7133,7 +7106,6 @@ namespace Mono.CSharp {
 				string base_IndexerName = TypeManager.IndexerPropertyName (InterfaceType);
 				if (base_IndexerName != Name)
 					ShortName = base_IndexerName;
-					UpdateMemberName ();
 			}
 
 			if (!Parent.AddToMemberContainer (this) ||
