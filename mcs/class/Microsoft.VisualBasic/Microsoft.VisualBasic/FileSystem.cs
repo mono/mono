@@ -525,11 +525,12 @@ namespace Microsoft.VisualBasic
 			vbFile.print(output);
 		}
 
-		public static void PrintLine(int fileNumber)
-		{
-			VBFile vbFile = getVBFile(fileNumber);
-			vbFile.printLine(null);
-		}
+// Seems not to exist in MS's 1.1 implementation as told by class status pages
+//		public static void PrintLine(int fileNumber)
+//		{
+//			VBFile vbFile = getVBFile(fileNumber);
+//			vbFile.printLine(null);
+//		}
 
 		public static void PrintLine(int fileNumber, Object[] output)
 		{
@@ -1036,7 +1037,9 @@ namespace Microsoft.VisualBasic
 		}
 
 		[MonoTODO]
-		public static void FileGet(int fileNumber, out ValueType value, long recordNumber) 
+		public static void FileGet(int fileNumber, 
+						ref ValueType value, 
+						long recordNumber) 
 		{
 			throw new NotImplementedException();
 		}

@@ -1,3 +1,7 @@
+2004-10-11 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* FileSystem.cs: Adjusting exposed API according to class status page ('ref' instead of 'out'). 
+	Commented out an additional API.
+
 2004-09-06  Jambunathan K  <kjambunathan@novell.com>
 
 	* Strings.cs: Fixed formatting issues. For the sake of consistency
