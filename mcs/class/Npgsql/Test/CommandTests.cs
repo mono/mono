@@ -281,6 +281,31 @@ namespace NpgsqlTests
 		}
 		
 		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void ListenNotifySupport()
+		{
+		  
+		  _conn.Open();
+		  
+		  NpgsqlCommand command = new NpgsqlCommand("listen notifytest;", _conn);
+		  command.ExecuteNonQuery();
+		  
+		  _conn.OnNotification += new NotificationEventHandler(NotificationSupportHelper);
+		  
+		                                                       
+		  command = new NpgsqlCommand("notify notifytest;", _conn);
+		  command.ExecuteNonQuery();
+		  
+		  
+		  
+		}
+		
+		private void NotificationSupportHelper(Object sender, NpgsqlNotificationEventArgs args)
+		{
+		  throw new InvalidOperationException();
+		}
+		
+		[Test]
 		public void DateTimeSupport()
 		{
 			_conn.Open();
@@ -293,6 +318,34 @@ namespace NpgsqlTests
 			
 			Assertion.AssertEquals("2002-02-02 09:00:23Z", d.ToString("u"));
 			
+			
+		}
+		
+		[Test]
+		public void DateSupport()
+		{
+		  _conn.Open();
+		  
+		  NpgsqlCommand command = new NpgsqlCommand("select field_date from tablec where field_serial = 1;", _conn);
+			
+			DateTime d = (DateTime)command.ExecuteScalar();
+			
+			
+			Assertion.AssertEquals("2002-03-04", d.ToString("yyyy-MM-dd"));
+			
+		}
+		
+		[Test]
+		public void TimeSupport()
+		{
+		  _conn.Open();
+		  
+		  NpgsqlCommand command = new NpgsqlCommand("select field_time from tablec where field_serial = 2;", _conn);
+			
+			DateTime d = (DateTime)command.ExecuteScalar();
+			
+			
+			Assertion.AssertEquals("10:03:45.345", d.ToString("HH:mm:ss.fff"));
 			
 		}
 		
