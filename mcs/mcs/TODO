@@ -96,18 +96,6 @@ BUGS
 	It is pretty simple to implement dead code elimination in 
 	if/do/while
 
-* Implement short circuit evaluation.
-
-	Currently our and/or operations do not implement short circuit
-	evaluation.  
-
-* Foreach and arrays
-
-	Support foreach (T t in Array)
-
-	And optimize to deal with the array rather than getting the enumerator
-	out of it.
-
 * Indexer bugs:
 
 	the following wont work:
@@ -121,20 +109,6 @@ BUGS
 
 	Multi-dim arrays are declared as [,] instead of [0..,0..]
 
-* Variables
-
-	Things like:
-
-	for (int i = 0; ...; i++){
-	}
-
-	for (int i = 0; i < 10; i++){
-	}
-
-	Currently defines `i' for the rest of the execution after the first
-	loop, so the second loop generates an error.
-
-	I think we should pop all the blocks until this point.
 
 PENDING TASKS
 -------------
@@ -266,12 +240,12 @@ RECOMMENDATIONS
 
 	We need to change that to use this pattern:
 
-	TOKEN { $$ = lexer.Location } nt TERMINAL nt TERMINAL nt3 {
-		$$ = new Blah ($3, $5, $7, (Location) $2);
+	TOKEN { oob_stack.Push (lexer.Location) } nt TERMINAL nt TERMINAL nt3 {
+		$$ = new Blah ($3, $5, $7, (Location) oob_stack.Pop ());
 	}
 
-	Notice how numbering of the arguments changes, as the { $$ =
-	lexer.Location } takes up a number
+	Notice how numbering of the arguments changes as the
+	{ oob_stack.Push (lexer.Location) } takes a "slot"  in the productions.
 
 * local_variable_declaration
 

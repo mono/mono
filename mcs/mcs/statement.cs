@@ -106,31 +106,34 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Label false_target = ig.DefineLabel ();
 			Label end;
-			bool is_ret;
+			bool is_true_ret, is_false_ret;
 			
 			if (!EmitBoolExpression (ec, Expr, false_target, false))
 				return false;
 			
-			is_ret = TrueStatement.Emit (ec);
+			is_true_ret = TrueStatement.Emit (ec);
+			is_false_ret = is_true_ret;
 
 			if (FalseStatement != null){
 				bool branch_emitted = false;
 				
 				end = ig.DefineLabel ();
-				if (!is_ret){
+				if (!is_true_ret){
 					ig.Emit (OpCodes.Br, end);
 					branch_emitted = true;
 				}
 			
 				ig.MarkLabel (false_target);
-				is_ret = FalseStatement.Emit (ec);
+				is_false_ret = FalseStatement.Emit (ec);
 
 				if (branch_emitted)
 					ig.MarkLabel (end);
-			} else
+			} else {
 				ig.MarkLabel (false_target);
+				is_false_ret = false;
+			}
 
-			return is_ret;
+			return is_true_ret && is_false_ret;
 		}
 	}
 

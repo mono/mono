@@ -1316,7 +1316,23 @@ namespace Mono.CSharp {
 		{
 			OpCode opcode;
 			bool close_target = false;
-			
+			ILGenerator ig = ec.ig;
+				
+			//
+			// short-circuit operators
+			//
+			if (oper == Operator.LogicalAnd){
+				left.Emit (ec);
+				ig.Emit (OpCodes.Brfalse, target);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Brfalse, target);
+			} else if (oper == Operator.LogicalOr){
+				left.Emit (ec);
+				ig.Emit (OpCodes.Brtrue, target);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Brfalse, target);
+			}
+				
 			left.Emit (ec);
 			right.Emit (ec);
 			
@@ -1368,7 +1384,7 @@ namespace Mono.CSharp {
 						     + oper.ToString ());
 			}
 
-			ec.ig.Emit (opcode, target);
+			ig.Emit (opcode, target);
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -1390,6 +1406,36 @@ namespace Mono.CSharp {
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 
+				return;
+			}
+
+			//
+			// Handle short-circuit operators differently
+			// than the rest
+			//
+			if (oper == Operator.LogicalAnd){
+				Label load_zero = ig.DefineLabel ();
+				Label end = ig.DefineLabel ();
+				
+				left.Emit (ec);
+				ig.Emit (OpCodes.Brfalse, load_zero);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Br, end);
+				ig.MarkLabel (load_zero);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.MarkLabel (end);
+				return;
+			} else if (oper == Operator.LogicalOr){
+				Label load_one = ig.DefineLabel ();
+				Label end = ig.DefineLabel ();
+				
+				left.Emit (ec);
+				ig.Emit (OpCodes.Brtrue, load_one);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Br, end);
+				ig.MarkLabel (load_one);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.MarkLabel (end);
 				return;
 			}
 			
@@ -1489,12 +1535,10 @@ namespace Mono.CSharp {
 				opcode = OpCodes.Sub;
 				break;
 
-			case Operator.LogicalOr:
 			case Operator.BitwiseOr:
 				opcode = OpCodes.Or;
 				break;
 
-			case Operator.LogicalAnd:
 			case Operator.BitwiseAnd:
 				opcode = OpCodes.And;
 				break;

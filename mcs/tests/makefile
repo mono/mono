@@ -9,7 +9,7 @@ TEST_SOURCES = \
 	test-11 test-12 test-13 test-14 test-15 test-16 test-17 test-18 test-19 test-20  \
 	test-21 	test-23 test-24 test-25 test-26 test-27 test-28 		 \
 	test-31 test-32 test-33 test-34 test-35 test-37 test-39 test-40 test-42 test-43  \
-	test-44 test-45 test-46
+	test-44 test-45 test-46 test-47
 
 TEST_NOPASS = \
 	test-22 test-29

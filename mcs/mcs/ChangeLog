@@ -1,8 +1,15 @@
 2001-11-22  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (Cast.DoResolve): Resolve type.
+	* statement.cs (If.Emit): Fix a bug that generated incorrect code
+	on If.  Basically, we have to return `true' (ie, we do return to
+	our caller) only if both branches of the if return.
+
+	* expression.cs (Binary.Emit): LogicalOr and LogicalAnd are
+	short-circuit operators, handle them as short circuit operators. 
+
+	(Cast.DoResolve): Resolve type.
 	(Cast.Cast): Take an expression as the target type.
-	
+
 	* cs-parser.jay (cast_expression): Remove old hack that only
 	allowed a limited set of types to be handled.  Now we take a
 	unary_expression and we resolve to a type during semantic
