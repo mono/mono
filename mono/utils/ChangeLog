@@ -1,3 +1,7 @@
+2004-09-07  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mono-sha1.c: Remove uint32 and int32 types completely
+
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-codeman.c (new_codechunk): Remove g_assert_not_reached ().
