@@ -1,4 +1,8 @@
-2002-07-11  Dietmar Maurer  <dietmar@ximian.com>
+2002-07-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): adjust valuetype size for pinvoke calls
+
+i2002-07-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (freg): new rule freg: CALL_R8 (this, reg)
 
