@@ -1,5 +1,11 @@
 2003-04-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Method.CheckBase): Call parent.
+	(MemberBase.CheckBase): Check for protected members on sealed
+	classes.
+	(PropertyBase.CheckBase): Call parent.
+	(Field.Define): Call parent.
+
 	* report.cs: Negative error codes are now mapped to 8000 - code,
 	so that the display is render more nicely.
 

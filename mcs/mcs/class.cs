@@ -2310,6 +2310,8 @@ namespace Mono.CSharp {
 		//
 		protected override bool CheckBase (TypeContainer container)
 		{
+			base.CheckBase (container);
+			
 			// Check whether arguments were correct.
 			if (!DoDefineParameters (container))
 				return false;
@@ -3292,6 +3294,11 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase (TypeContainer container)
 		{
+			if (RootContext.WarningLevel > 3){
+				if ((ModFlags & Modifiers.PROTECTED) != 0 && (container.ModFlags & Modifiers.SEALED) != 0){
+					Report.Warning (628, Location, "Member " + container.MakeName (Name) + " protected in sealed class");
+				}
+			}
 			return true;
 		}
 
@@ -3498,6 +3505,8 @@ namespace Mono.CSharp {
 			if (t == null)
 				return false;
 
+			CheckBase (container);
+			
 			if (!container.AsAccessible (t, ModFlags)) {
 				Report.Error (52, Location,
 					      "Inconsistent accessibility: field type `" +
@@ -3623,6 +3632,8 @@ namespace Mono.CSharp {
 		//
 		protected override bool CheckBase (TypeContainer container)
 		{
+			base.CheckBase (container);
+			
 			// Check whether arguments were correct.
 			if (!DoDefineParameters (container))
 				return false;
