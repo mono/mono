@@ -59,7 +59,11 @@ or can be used by methods that have been tagged with the Conditional
 attribute. 
 .TP
 .I \-debug, \-debug+, \-g
-Generate debugging information.  
+Generate debugging information.  The debugging information is stored
+in a file with the extension .dbg (if you install system wide
+assemblies, you need to install this file as well).  To get stack
+traces with debugging information, you need to invoke the mono runtime
+with the `--debug' flag.  
 .TP
 .I \-debug-
 Do not generate debugging information.
