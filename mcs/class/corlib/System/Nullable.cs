@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 #if NET_1_2
 namespace System
 {
+	[CLSCompliant(false)]
 	public struct Nullable<T>
 	{
 		T value;
