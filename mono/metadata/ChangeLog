@@ -1,4 +1,9 @@
 
+Wed Dec 4 10:44:01 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* string-icalls.c: handle embedded nulls in string ctor when the
+	length is specified.
+
 Tue Dec 3 19:29:20 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: look for explicit interface implementation in parent
