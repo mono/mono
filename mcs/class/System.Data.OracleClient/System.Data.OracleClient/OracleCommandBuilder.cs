@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.Oracle
+namespace System.Data.OracleClient
 {
 	public sealed class OracleCommandBuilder : Component
 	{

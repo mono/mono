@@ -1,3 +1,17 @@
+2004-05-27	Joerg Rosenkranz <joergr@voelcker.com>
+
+	* System.Data.OracleClient/OracleCommandBuilder.cs:
+		Fixed namespace.
+	* System.Data.OracleClient.dll.sources:
+		Added OracleCommandBuilder.cs.
+		
+2004-05-26	Joerg Rosenkranz <joergr@voelcker.com>
+
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+		Merged in a fix send by Rogerio Pereira Araujo 
+		<webmaster@cisnet.com.br>: Fixed a bug with NUMBER data type 
+		when no parameter is passed to OracleCommand.
+		
 2004-05-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Data.OracleClient/OracleType.cs: fixed values for Int16 and

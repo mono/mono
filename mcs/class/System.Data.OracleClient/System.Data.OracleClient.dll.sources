@@ -58,3 +58,4 @@ System.Data.OracleClient/OracleTransaction.cs
 System.Data.OracleClient/OracleTimeSpan.cs
 System.Data.OracleClient/OracleType.cs
 System.Data.OracleClient/TODOAttribute.cs
+System.Data.OracleClient/OracleCommandBuilder.cs

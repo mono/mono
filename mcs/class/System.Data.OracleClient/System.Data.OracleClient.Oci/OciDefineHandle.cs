@@ -284,10 +284,16 @@ namespace System.Data.OracleClient.Oci {
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
 				if (tmp != null) {
 					if (Scale == 0) {
-						if (Size < 10)
-							return Int32.Parse (String.Copy ((string) tmp));
-						else
-							return Int64.Parse (String.Copy ((string) tmp));
+						try {
+							if (Size < 10)
+								return Int32.Parse (String.Copy ((string) tmp));
+							else
+								return Int64.Parse (String.Copy ((string) tmp));
+						} catch {
+							// Fallback: Scale is reported as 0 when column
+							// was created as NUMBER without parameters.
+							return Decimal.Parse (String.Copy ((string) tmp));
+						}
 					}
 					else
 						return Decimal.Parse (String.Copy ((string) tmp));
