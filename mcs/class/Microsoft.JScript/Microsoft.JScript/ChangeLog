@@ -1,3 +1,9 @@
+2005-01-17  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* CodeGenerator.cs: Added load_engine.
+	* expression.cs (emit_func_call), FunctionDeclaration.cs: Fix
+	computation of VsaEngine.
+
 2005-01-11  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* StringConstructor.cs: implement CreateInstance.

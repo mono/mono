@@ -713,14 +713,15 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 			FieldInfo engine = typeof (ScriptObject).GetField ("engine");
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, engine);
+
+			CodeGenerator.load_engine (parent, ig);
+
 			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
 			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, engine);
+
+			CodeGenerator.load_engine (parent, ig);
 
 			args.Emit (ec);
 
