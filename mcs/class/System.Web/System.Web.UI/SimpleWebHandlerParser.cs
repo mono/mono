@@ -276,7 +276,6 @@ namespace System.Web.UI
 
 			CompilerResults result = CachingCompiler.Compile (realPath, realPath, assemblies);
 			if (result.NativeCompilerReturnValue != 0) {
-				StringWriter writer = new StringWriter();
 				StreamReader reader = new StreamReader (realPath);
 				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
 			}
@@ -287,7 +286,26 @@ namespace System.Web.UI
 		
 		internal Type GetTypeFromBin (string typeName)
 		{
-			return null;
+			if (!Directory.Exists (PrivateBinPath))
+				throw new HttpException (String.Format ("Type {0} not found.", typeName));
+
+			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+			Type result = null;
+			foreach (string dll in binDlls) {
+				Assembly assembly = Assembly.LoadFrom (dll);
+				Type type = assembly.GetType (typeName, false);
+				if (type != null) {
+					if (result != null) 
+						throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
+
+					result = type;
+				} 
+			}
+
+			if (result == null)
+				throw new HttpException (String.Format ("Type {0} not found.", typeName));
+
+			return result;
 		}
 		
 		internal virtual void AddDependency (string filename)

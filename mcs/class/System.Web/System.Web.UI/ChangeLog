@@ -1,5 +1,9 @@
 2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* SimpleWebHandlerParser.cs: implemented GetTypeFromBin.
+
+2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SimpleWebHandlerParser.cs: updated to new compilation interface.
 
 	* TemplateParser.cs: use the new parameter when compiling.  
