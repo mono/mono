@@ -581,20 +581,6 @@ namespace Mono.CSharp {
 			return LookupType (tc, name, true, loc);
 		}
 
-		static public bool IsNamespace (string name)
-		{
-			Namespace ns;
-
-			if (tree.Namespaces != null){
-				ns = (Namespace) tree.Namespaces [name];
-
-				if (ns != null)
-					return true;
-			}
-
-			return false;
-		}
-
 		static void Report1530 (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");

@@ -1,5 +1,15 @@
 2004-07-20  Martin Baulig  <martin@ximian.com>
 
+	* tree.cs (Tree.RecordNamespace): Removed.
+	(Tree.Namespaces): Removed.
+
+	* rootcontext.cs (RootContext.IsNamespace): Removed.
+
+	* cs-parser.jay (namespace_declaration): Just create a new
+	NamespaceEntry here.
+
+2004-07-20  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (ExceptionStatement): New abstract class.  This is
 	now used as a base class for everyone who's using `finally'.
 	(Using.ResolveLocalVariableDecls): Actually ResolveLValue() all

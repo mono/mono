@@ -34,11 +34,6 @@ namespace Mono.CSharp
 		TypeContainer root_types;
 
 		// <summary>
-		//  Keeps track of namespaces defined in the source code
-		// </summary>
-		Hashtable namespaces;
-
-		// <summary>
 		//   Keeps track of all the types definied (classes, structs, ifaces, enums)
 		// </summary>
 		Hashtable decls;
@@ -48,7 +43,6 @@ namespace Mono.CSharp
 			root_types = new TypeContainer ();
 
 			decls = new Hashtable ();
-			namespaces = new Hashtable ();
 		}
 
 		DoubleHash decl_ns_name = new DoubleHash ();
@@ -85,26 +79,6 @@ namespace Mono.CSharp
 			return (DeclSpace) res;
 		}
 		
-		public NamespaceEntry RecordNamespace (NamespaceEntry parent, SourceFile file, string name, Location loc)
-		{
-			NamespaceEntry ns = new NamespaceEntry (parent, file, name, loc);
-
-			if (namespaces.Contains (file)){
-				Hashtable ns_ns = (Hashtable) namespaces [file];
-
-				if (ns_ns.Contains (ns.FullName))
-					return (NamespaceEntry) ns_ns [ns.FullName];
-				ns_ns.Add (ns.FullName, ns);
-			} else {
-				Hashtable new_table = new Hashtable ();
-				namespaces [file] = new_table;
-
-				new_table.Add (ns.FullName, ns);
-			}
-
-			return ns;
-		}
-
 		//
 		// FIXME: Why are we using Types?
 		//
@@ -117,12 +91,6 @@ namespace Mono.CSharp
 		public Hashtable Decls {
 			get {
 				return decls;
-			}
-		}
-
-		public Hashtable Namespaces {
-			get {
-				return namespaces;
 			}
 		}
 	}

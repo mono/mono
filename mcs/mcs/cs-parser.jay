@@ -350,8 +350,9 @@ namespace_declaration
 			Report.Error_T (134, lexer.Location);
 		}
 
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, $3.ToString (), lexer.Location);
-	} 
+		current_namespace = new NamespaceEntry (
+			current_namespace, file, $3.ToString (), lexer.Location);
+	  } 
 	  namespace_body opt_semicolon
 	  { 
 		current_namespace = current_namespace.Parent;
