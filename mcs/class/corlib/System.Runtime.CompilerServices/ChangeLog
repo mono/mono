@@ -1,3 +1,8 @@
+2003-04-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* RuntimeHelpers.cs: Enable the last changes again since they no
+	longer break the corlib_cmp build.
+
 2003-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* RuntimeHelpers.cs: Back out these changes as they break the windows

@@ -27,7 +27,6 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
-		/*
 		public static int GetHashCode (object o) {
 			return Object.InternalGetHashCode (o);
 		}
@@ -48,7 +47,6 @@ namespace System.Runtime.CompilerServices
 			else
 				return Object.Equals (o1, o2);
 		}
-		*/
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern object GetObjectValue (object obj);
