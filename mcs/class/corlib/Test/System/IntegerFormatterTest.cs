@@ -103,23 +103,19 @@ public class IntegerFormatterTest : TestCase
 		switch (testType) {
 		case INT32:
 			int i32 = Int32.Parse (number, nfi);
-			if (i32.ToString (format, nfi) != expected)
-				Console.WriteLine (id + " failed.");
+			AssertEquals(id, expected, i32.ToString (format, nfi));
 			break;
 		case INT64:
 			long i64 = Int64.Parse (number, nfi);
-			if (i64.ToString (format, nfi) != expected)
-				Console.WriteLine (id + " failed.");
+			AssertEquals(id, expected, i64.ToString (format, nfi));
 			break;
 		case UINT32:
 			uint ui32 = UInt32.Parse (number, nfi);
-			if (ui32.ToString (format, nfi) != expected)
-				Console.WriteLine (id + " failed.");
+			AssertEquals(id, expected, ui32.ToString (format, nfi));
 			break;
 		case UINT64:
 			ulong ui64 = UInt64.Parse (number, nfi);
-			if (ui64.ToString (format, nfi) != expected)
-				Console.WriteLine (id + " failed.");
+			AssertEquals(id, expected, ui64.ToString (format, nfi));
 			break;
 		}
 	}

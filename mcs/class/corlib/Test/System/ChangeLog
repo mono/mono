@@ -1,3 +1,8 @@
+2002/04/24  Nick Drochak <ndrochak@gol.com>
+
+	* IntegerFormatterTest.cs: Remove Console.WriteLines and use 
+	AssertEquals() instead.
+
 2002-04-22  Nick Drochak  <ndrochak@gol.com>
 
 	* StringTest.cs: Add unique markers to Assert messages.
