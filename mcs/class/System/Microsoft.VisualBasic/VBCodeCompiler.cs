@@ -165,8 +165,10 @@ namespace Microsoft.VisualBasic
 			if (options.WarningLevel != -1)
 				args.AppendFormat ("/wlevel:{0} ", options.WarningLevel);
 
-			if (options.OutputAssembly == null)
-				options.OutputAssembly = GetTempFileNameWithExtension ("dll");
+			if (options.OutputAssembly == null) {
+				string ext = (options.GenerateExecutable ? "exe" : "dll");
+				options.OutputAssembly = GetTempFileNameWithExtension (ext);
+			}
 
 			args.AppendFormat ("/out:\"{0}\" ", options.OutputAssembly);
 
