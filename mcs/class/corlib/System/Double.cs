@@ -368,12 +368,8 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			if (fp is CultureInfo)
-				return DoubleFormatter.NumberToString(format,
-				((CultureInfo)fp).NumberFormat, m_value);
-			else
-				return DoubleFormatter.NumberToString(format,
-				(NumberFormatInfo)fp, m_value);
+			NumberFormatInfo nfi = fp != null ? fp.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo : null;
+			return DoubleFormatter.NumberToString (format, nfi, m_value);
 		}
 
 		// =========== IConvertible Methods =========== //

@@ -1,3 +1,12 @@
+2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Double.cs : Use IFormatProvider.GetFormat() instead of literal '-'.
+	* FloatingPointFormatter.cs :
+	  Use NumberFormatInfo.NegativeSign. This change saves many XSLT test
+	  failures.
+	  Format Permille pattern (It is undocumented but actually available,
+	  and used in xsl:format-number).
+
 2004-06-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Console.cs (Console.Write, Console.WriteLine): Disable __arglist

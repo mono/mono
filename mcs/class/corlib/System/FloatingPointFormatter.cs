@@ -592,7 +592,7 @@ namespace System {
 							return "0";
 						}
 						if (result.Length > 0) {
-							result = "-" + result;
+							result = nfi.NegativeSign + result;
 						}
 						return result;
 					}
@@ -628,6 +628,7 @@ namespace System {
 			public int NumberOfColons;
 			public bool Groupping;
 			public bool Percent;
+			public bool Permille;
 			public int DotPos;
 			public int ExpPos;
 			public int FirstFormatPos;
@@ -676,6 +677,9 @@ namespace System {
 				case '%':
 					f.Percent = true;
 					break;
+				case '\u2030':
+					f.Permille = true;
+					break;
 				case 'e':
 				case 'E':
 					f.DecimalLength = count;
@@ -705,12 +709,16 @@ namespace System {
 			if (f.FirstFormatPos < 0) {
 				return format;
 			}
-			if (((f.Percent) || (f.NumberOfColons > 0)) && (f.ExpPos < 0)) {
+			if (((f.Percent) || (f.Permille) || (f.NumberOfColons > 0)) && (f.ExpPos < 0)) {
 				int len = f.DecimalLength;
 				int exp = 0;
 				if (f.Percent) {
 					len += 2;
 					exp += 2;
+				}
+				else if (f.Permille) {
+					len += 3;
+					exp += 3;
 				}
 				if (f.NumberOfColons > 0) {
 					len -= (3 * f.NumberOfColons);
