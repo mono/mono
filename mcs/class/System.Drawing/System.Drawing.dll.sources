@@ -165,6 +165,7 @@ System.Drawing.Imaging/MetaHeader.cs
 System.Drawing.Imaging/PaletteFlags.cs
 System.Drawing.Imaging/PixelFormat.cs
 System.Drawing.Imaging/PlayRecordCallback.cs
+System.Drawing.Imaging/PNGCodec.cs
 System.Drawing.Imaging/PropertyItem.cs
 System.Drawing.Imaging/WmfPlaceableFileHeader.cs
 System.Drawing.Printing/Duplex.cs
