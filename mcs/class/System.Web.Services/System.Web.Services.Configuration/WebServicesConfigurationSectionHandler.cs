@@ -134,8 +134,8 @@ namespace System.Web.Services.Configuration
 	
 	enum WSExtensionGroup
 	{
-		Low,
-		High
+		High,
+		Low
 	}
 	
 	class WSExtensionConfig
