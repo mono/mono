@@ -9,9 +9,20 @@ assemblies_DATA =	\
 	System.Data.dll	\
 	System.Xml.dll	\
 	System.Web.dll	\
-	System.Drawing.dll
+	System.Web.Services.dll	\
+	System.Drawing.dll	\
+	System.EnterpriseServices.dll	\
+	System.Configuration.Install.dll	\
+	System.Runtime.Remoting.dll	\
+	System.Runtime.Serialization.Formatters.Soap.dll	\
+	I18N.dll	\
+	I18N.West.dll	\
+	I18N.Rare.dll	\
+	I18N.Other.dll	\
+	I18N.MidEast.dll	\
+	I18N.CJK.dll
 
-monobins_DATA = mcs.exe
+monobins_DATA = mcs.exe monoresgen.exe
 
 EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
 
