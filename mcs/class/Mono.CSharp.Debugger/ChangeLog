@@ -1,5 +1,11 @@
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
+	* AssemblerWriterI386.cs: Don't use GNU extensions and produce assembler
+	output which is free of comments and extra whitespaces so that it's suitable
+	for `as -f'.
+
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
 	* IMonoSymbolWriter.cs (ISourceMethod): Replaced `MethodInfo MethodInfo' with
 	`MethodBase MethodBase' and added `Type ReturnType'.  We're now correctly
 	dealing with constructors and not crashing anymore.
