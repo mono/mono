@@ -712,10 +712,7 @@ namespace Microsoft.JScript {
 		void emit_func_call (MethodBuilder mb, EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			FieldInfo engine = typeof (ScriptObject).GetField ("engine");
-
 			CodeGenerator.load_engine (parent, ig);
-
 			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
