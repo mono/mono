@@ -45,6 +45,7 @@ System.Web.UI.Design/ITemplateEditingService.cs
 System.Web.UI.Design/IWebFormReferenceManager.cs
 System.Web.UI.Design/IWebFormsBuilderUIService.cs
 System.Web.UI.Design/IWebFormsDocumentService.cs
+System.Web.UI.Design/PanelDesigner.cs
 System.Web.UI.Design/ReadWriteControlDesigner.cs
 System.Web.UI.Design/TemplatedControlDesigner.cs
 System.Web.UI.Design/TemplateEditingService.cs

@@ -1,3 +1,7 @@
+2004-10-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Design.dll.sources: added PanelDesigner.cs.
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System.Design.dll.sources: added more stub for classes
