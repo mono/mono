@@ -737,25 +737,19 @@ struct_declaration
 	  { 
 		MemberName name = MakeName ((MemberName) $5);
 		bool partial = (bool) $3;
-		int mod_flags = (int) $2;
 
 		if (partial) {
 			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_container, name, mod_flags,
+				current_namespace, current_container, name, (int) $2,
 				(Attributes) $1, Kind.Struct, lexer.Location);
 
 			current_container = part.PartialContainer;
 			current_class = part;
 		} else {
-			if ((mod_flags & Modifiers.STATIC) != 0) {
-				current_class = new StaticClass (
-					current_namespace, current_container, name,
-					mod_flags, (Attributes) $1, lexer.Location);
-			} else {
-				current_class = new Struct (
-					current_namespace, current_container, name,
-					mod_flags, (Attributes) $1, lexer.Location);
-			}
+			current_class = new Struct (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, lexer.Location);
+
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
@@ -3132,18 +3126,25 @@ class_declaration
 	  {
 		MemberName name = MakeName ((MemberName) $5);
 		bool partial = (bool) $3;
+		int mod_flags = (int) $2;
 
 		if (partial) {
 			ClassPart part = PartialContainer.CreatePart (
-				current_namespace, current_container, name, (int) $2,
+				current_namespace, current_container, name, mod_flags,
 				(Attributes) $1, Kind.Class, lexer.Location);
 
 			current_container = part.PartialContainer;
 			current_class = part;
 		} else {
-			current_class = new Class (
-				current_namespace, current_container, name, (int) $2,
-				       (Attributes) $1, lexer.Location);
+			if ((mod_flags & Modifiers.STATIC) != 0) {
+				current_class = new StaticClass (
+					current_namespace, current_container, name,
+					mod_flags, (Attributes) $1, lexer.Location);
+			} else {
+				current_class = new Class (
+					current_namespace, current_container, name,
+					mod_flags, (Attributes) $1, lexer.Location);
+			}
 
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
