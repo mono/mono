@@ -1,3 +1,8 @@
+2004-09-03  Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Web.dll.sources: Added new interface and classes in 
+	System.Web.UI namespace.
+
 2004-08-31  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web.dll.sources: Added new interfaces in 

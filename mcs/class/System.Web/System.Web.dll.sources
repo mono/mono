@@ -550,6 +550,8 @@ System.Web.UI/DesignTimeParseData.cs
 System.Web.UI/DesignTimeTemplateParser.cs
 System.Web.UI/DesignerDataBoundLiteralControl.cs
 System.Web.UI/EmptyControlCollection.cs
+System.Web.UI/ExpressionBinding.cs
+System.Web.UI/ExpressionBindingCollection.cs
 System.Web.UI/ExtractTemplateValuesMethod.cs
 System.Web.UI/HierarchicalDataSourceControl.cs
 System.Web.UI/HierarchicalDataSourceView.cs
@@ -570,6 +572,7 @@ System.Web.UI/IDataItemContainer.cs
 System.Web.UI/IDataSource.cs
 System.Web.UI/IDataSourceViewSchemaAccessor.cs
 System.Web.UI/IDReferencePropertyAttribute.cs
+System.Web.UI/IExpressionsAccessor.cs
 System.Web.UI/IFilterResolutionService.cs
 System.Web.UI/IHierarchicalDataSource.cs
 System.Web.UI/IHierarchicalEnumerable.cs
