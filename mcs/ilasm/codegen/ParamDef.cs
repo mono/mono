@@ -23,6 +23,7 @@ namespace Mono.ILASM {
                 private ITypeRef typeref;
                 private bool is_defined;
                 private PEAPI.Param peapi_param;
+                private PEAPI.Constant defval;
 
                 public static readonly ParamDef Ellipsis = new ParamDef (new PEAPI.ParamAttr (), "ELLIPSIS", null);
 
@@ -32,6 +33,12 @@ namespace Mono.ILASM {
                         this.name = name;
                         this.typeref = typeref;
                         is_defined = false;
+                        defval = null;
+                }
+
+                public void AddDefaultValue (PEAPI.Constant cVal)
+                {
+                        defval = cVal;
                 }
 
                 public ITypeRef Type {
@@ -64,6 +71,9 @@ namespace Mono.ILASM {
 
                         peapi_param = new PEAPI.Param (attr,
                                         name, typeref.PeapiType);
+                        if (defval != null) {
+                                peapi_param.AddDefaultValue (defval);
+                        }
 
                         is_defined = true;
                 }

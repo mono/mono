@@ -172,6 +172,13 @@ namespace Mono.ILASM {
                         gi.ConstraintList.Add (constraint);
                 }
 
+                public void AddParamDefaultValue (int index, PEAPI.Constant defval)
+                {
+                        if (param_list [index] != null) {
+                                ((ParamDef)param_list [index]).AddDefaultValue (defval);
+                        }
+                }
+
                 public void AddLocals (ArrayList local_list)
                 {
                         int slot_pos = this.local_list.Count;

@@ -1,3 +1,8 @@
+2005-03-17  Ankit Jain  <radical@corewars.org>
+
+	* PEAPI.cs: Metadata tables that must be sorted are sorted now.
+	Fixes the code for ParamAttr.Opt. Fix bug #73517.
+		
 2004-12-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PEAPI.cs: Added support for allocating and storing strongname 
@@ -6,7 +11,8 @@
 
 2004-12-01  Jackson Harper  <jackson@ximian.com>
 
-	* PEAPI.cs: Allow DataConstants underlying type to be set.
+	* PEAPI.cs: Allow underlying types of ByteArrConsts to be set when
+	they are used as field init data.
 
 2004-07-29  Martin Baulig  <martin@ximian.com>
 

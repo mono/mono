@@ -1714,6 +1714,9 @@ method_decl		: D_EMITBYTE int32
                           }
 			| scope_block
 			| D_PARAM OPEN_BRACKET int32 CLOSE_BRACKET init_opt
+                          {
+                                codegen.CurrentMethodDef.AddParamDefaultValue ((int)$3 - 1, (Constant)$5);
+                          }
 			| id COLON
                           {
                                 codegen.CurrentMethodDef.AddLabel ((string) $1);

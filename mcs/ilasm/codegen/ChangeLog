@@ -1,3 +1,9 @@
+2005-03-17  Ankit Jain  <radical@corewars.org>
+
+	* MethodDef.cs: Added method AddParamDefaultValue for adding DefaultValue
+	to a method parameter.
+	* ParamDef.cs: Added method AddDefaultValue and handling of default value.
+
 2005-02-07  Jackson Harper  <jackson@ximian.com>
 
 	* MethodDef.cs: Don't die on duplicate local symbols. Fixes bug

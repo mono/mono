@@ -613,7 +613,7 @@ namespace PEAPI
   /// <summary>
   /// Modes for a parameter
   /// </summary>
-  public enum ParamAttr { Default, In, Out, Opt = 4 }
+  public enum ParamAttr { Default, In, Out, Opt = 16 }
 
   /// <summary>
   /// CIL instructions
@@ -2595,7 +2595,14 @@ namespace PEAPI
       this.parent = parent;
       cValue = val;
                         tabIx = MDTable.Constant;
+                        sortTable = true;
                 }
+
+   internal override uint SortKey() 
+   {  
+     return (parent.Row << MetaData.CIxShiftMap[(uint)CIx.HasConst]) 
+             | parent.GetCodedIx(CIx.HasConst);
+   }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -2650,6 +2657,11 @@ namespace PEAPI
       type = constrType;
       tabIx = MDTable.CustomAttribute;
       byteVal = val;
+    }
+
+    internal override uint SortKey() {
+      return (parent.Row << MetaData.CIxShiftMap[(uint)CIx.HasCustomAttr])
+              | parent.GetCodedIx(CIx.HasCustomAttr);
     }
 
     public void AddFieldOrProp(string name, Constant val) {
@@ -2726,6 +2738,11 @@ namespace PEAPI
       tabIx = MDTable.DeclSecurity;
       throw(new NotYetImplementedException("Security "));
                 }
+
+    internal override uint SortKey() {
+      return (parent.Row << MetaData.CIxShiftMap[(uint)CIx.HasDeclSecurity])
+              | parent.GetCodedIx(CIx.HasDeclSecurity);
+    }
 
     internal sealed override uint Size(MetaData md) {
       return 2 + md.CodedIndexSize(CIx.HasDeclSecurity) + md.BlobIndexSize();
@@ -3082,6 +3099,11 @@ namespace PEAPI
       this.nt = nType;
                         tabIx = MDTable.FieldMarshal;
                 }
+
+    internal override uint SortKey() { 
+      return (field.Row << MetaData.CIxShiftMap[(uint)CIx.HasFieldMarshal])
+              | field.GetCodedIx(CIx.HasFieldMarshal);
+    }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -3763,6 +3785,11 @@ if (rsrc != null)
       //throw(new NotYetImplementedException("PInvoke "));
                 }
 
+    internal override uint SortKey() {
+      return (meth.Row << MetaData.CIxShiftMap[(uint)CIx.MemberForwarded]) 
+              | meth.GetCodedIx(CIx.MemberForwarded);
+    }
+
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
       iNameIx = md.AddToStringsHeap(importName);
@@ -4118,6 +4145,11 @@ if (rsrc != null)
                         this.name = name;
                 }
 
+    internal override uint SortKey() {
+      return (owner.Row << MetaData.CIxShiftMap[(uint)CIx.TypeOrMethodDef])
+              | owner.GetCodedIx(CIx.TypeOrMethodDef);
+    }
+
                 public void AddConstraint  (Type constraint) {
                         metadata.AddToTable (MDTable.GenericParamConstraint,
                                         new GenericParamConstraint (this, constraint));
@@ -4418,7 +4450,7 @@ if (rsrc != null)
 
   public class MetaData 
         {
-                private static readonly int[] CIxShiftMap = {2,2,5,1,2,3,1,1,1,2,3,2,1};
+                internal static readonly int[] CIxShiftMap = {2,2,5,1,2,3,1,1,1,2,3,2,1};
                 private static readonly byte StringsHeapMask = 0x1;
                 private static readonly byte GUIDHeapMask = 0x2;
                 private static readonly byte BlobHeapMask = 0x4;
@@ -4807,6 +4839,14 @@ CalcHeapSizes ();
       }
     }
 
+    private void SortTable (ArrayList mTable) {
+      if (mTable == null) return;
+      mTable.Sort();
+      for (int i=0; i < mTable.Count; i++) {
+        ((MetaDataElement)mTable[i]).Row = (uint)i+1;
+      }
+    }
+
     internal void BuildMetaData(uint codeStartOffset) {
       codeStart = codeStartOffset;
       BuildTable(metaDataTables[(int)MDTable.TypeDef]);
@@ -4838,6 +4878,30 @@ CalcHeapSizes ();
                         SetStreamOffsets();
       byteCodePadding = NumToAlign(codeSize,4);
       if (entryPoint != null) file.SetEntryPoint(entryPoint.Token());
+      
+      // Check ordering of specific tables
+      // Constant, CustomAttribute, FieldMarshal, DeclSecurity, MethodSemantics
+      // ImplMap, GenericParam
+      // Need to load GenericParamConstraint AFTER GenericParam table in correct order
+      // The tables:
+      //   InterfaceImpl, ClassLayout, FieldLayout, MethodImpl, FieldRVA, NestedClass
+      // will _ALWAYS_ be in the correct order as embedded in BuildMDTables
+      
+      SortTable(metaDataTables[(int)MDTable.Constant]);
+      SortTable(metaDataTables[(int)MDTable.CustomAttribute]);
+      SortTable(metaDataTables[(int)MDTable.FieldMarshal]);
+      SortTable(metaDataTables[(int)MDTable.DeclSecurity]);
+      SortTable(metaDataTables[(int)MDTable.MethodSemantics]);
+      SortTable(metaDataTables[(int)MDTable.ImplMap]);
+      if (metaDataTables[(int)MDTable.GenericParam] != null) {
+        SortTable(metaDataTables[(int)MDTable.GenericParam]);
+        // Now add GenericParamConstraints
+        /*for (int i=0; i < metaDataTables[(int)MDTable.GenericParam].Count; i++) {
+          ((GenericParameter)metaDataTables[(int)MDTable.GenericParam][i]).AddConstraints(this);
+        }*/
+      }
+      SortTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
+
     }
 
     internal void WriteByteCodes(FileImage output) {
@@ -4900,18 +4964,26 @@ CalcHeapSizes ();
     }
 
         }
+    /// <summary>
+    /// Error for invalid PE file
+    /// </summary>
+    public class PEFileException : System.Exception {
+      public PEFileException(string msg) : base("Error in PE File:  " + msg) { }
+    }
+
   /**************************************************************************/  
         /// <summary>
         /// Base class for all Meta Data table elements
         /// </summary>
 
-  public abstract class MetaDataElement
+  public abstract class MetaDataElement: IComparable
         {
 
     protected ArrayList customAttributes;
     private uint row = 0;
     protected bool done = false;
                 protected MDTable tabIx;
+    protected bool sortTable = false;
 
     internal MetaDataElement() { }
 
@@ -4963,6 +5035,38 @@ CalcHeapSizes ();
     }
 
     internal virtual void Write(FileImage output) {   }
+
+    internal virtual uint SortKey() 
+    { 
+      throw new PEFileException("Trying to sort table of " + this);
+      //return 0; 
+    }
+
+    internal virtual uint SortKey2()
+    {
+      return 0;
+    }
+
+
+    public int CompareTo(object obj) 
+    {
+      uint otherKey = ((MetaDataElement)obj).SortKey();
+      uint thisKey = SortKey();
+
+      if (thisKey == otherKey) 
+      {
+        otherKey = ((MetaDataElement)obj).SortKey2();
+        thisKey = SortKey2();
+        if (thisKey == otherKey)
+          return 0;
+        if (thisKey < otherKey)
+          return -1;
+        return 1;
+      }
+      if (thisKey < otherKey) return -1;
+
+      return 1;
+    }
 
         }
   /**************************************************************************/  
@@ -5560,6 +5664,10 @@ CalcHeapSizes ();
       eventOrProp = feature;
                         tabIx = MDTable.MethodSemantics;
                 }
+
+    internal override uint SortKey() {
+      return meth.Row;
+    }
 
     internal sealed override uint Size(MetaData md) {
       return 2 + md.TableIndexSize(MDTable.Method) + md.CodedIndexSize(CIx.HasSemantics);
