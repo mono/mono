@@ -1,5 +1,28 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class-internals.h (MonoClass): Add 'has_cctor' flag.
+
+	* class-internals.h (MonoCachedClassInfo): New structure.
+
+	* class.c: Initialize properties and events fields of MonoClass lazily.
+
+	* class.c: Add infrastructure for lazily initializing the methods and
+	vtable fields of MonoClass. Not yet used.
+
+	* class.c (mono_class_get_finalizer): New helper function.
+
+	* class.c: Add infrastructure for loading some class related data from
+	an AOT file.
+
+	* object.c: Add infrastructure for initializing the vtable from data
+	in the AOT file.
+
+	* gc.c (run_finalize): Use mono_class_get_finalizer ().
+
+	* class.c loader.c object.c icall.c gc.c reflection.c: Call the
+	appropriate initialization function before accessing parts of the
+	MonoClass structure.
+
 	* marshal.c: Fix warnings.
 	
 	* marshal.c (emit_marshal_array): Add missing 'break'. Fixes #72169.
