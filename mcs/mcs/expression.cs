@@ -1258,11 +1258,12 @@ namespace Mono.CSharp {
 				// converted to type ulong.  or an error ocurrs if the other
 				// operand is of type sbyte, short, int or long
 				//
-				
 				if (l == TypeManager.uint64_type){
 					if (r != TypeManager.uint64_type){
 						if (right is IntConstant){
-							e = TryImplicitIntConversion(l, (IntConstant) right);
+							IntConstant ic = (IntConstant) right;
+							
+							e = TryImplicitIntConversion (l, ic);
 							if (e != null)
 								right = e;
 						} else if (right is LongConstant){
@@ -1270,6 +1271,10 @@ namespace Mono.CSharp {
 
 							if (ll > 0)
 								right = new ULongConstant ((ulong) ll);
+						} else {
+							e = ImplicitNumericConversion (ec, right, l, loc);
+							if (e != null)
+								right = e;
 						}
 					}
 					other = right.Type;
@@ -1280,9 +1285,13 @@ namespace Mono.CSharp {
 							left = e;
 					} else if (left is LongConstant){
 						long ll = ((LongConstant) left).Value;
-
+						
 						if (ll > 0)
 							left = new ULongConstant ((ulong) ll);
+					} else {
+						e = ImplicitNumericConversion (ec, left, r, loc);
+						if (e != null)
+							left = e;
 					}
 					other = left.Type;
 				}
