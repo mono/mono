@@ -1,3 +1,7 @@
+2005-01-31	John BouAntoun  <jba-mono@optusnet.com.au>
+
+	* ThemeWin32Classic.cs: quick fix to comboboxbutton pushed painting
+
 2005-02-01  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Combobox.cs:

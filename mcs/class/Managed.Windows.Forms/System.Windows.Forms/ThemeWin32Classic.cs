@@ -3622,7 +3622,10 @@ namespace System.Windows.Forms
 				ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 			} else {
 				if ((state & (ButtonState.Pushed | ButtonState.Checked))!=0) {
-					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
+					// this needs to render like a pushed button - jba
+					// CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
+					Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
+					graphics.DrawRectangle (ResPool.GetPen (ControlPaint.Dark (ColorButtonFace)), trace_rectangle);
 				} else {
 					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 				}
