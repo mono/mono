@@ -21,6 +21,7 @@ System.Data/DataColumnChangeEventHandler.cs
 System.Data/DataColumnCollection.cs
 System.Data/DataColumnPropertyDescriptor.cs
 System.Data/DataException.cs
+System.Data/RelationshipConverter.cs
 System.Data/DataRelation.cs
 System.Data/DataRelationCollection.cs
 System.Data/DataRow.cs
