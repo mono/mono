@@ -1338,7 +1338,7 @@ namespace Mono.CSharp {
 				return mc.GetObsoleteAttribute ();
 
 			// TODO: remove after Constructor will be ready for IMethodData
-			if (mb.DeclaringType is TypeBuilder)
+			if ((mb.DeclaringType is TypeBuilder) || mb.DeclaringType.IsGenericInstance)
 				return null;
 
 			return GetMemberObsoleteAttribute (mb);
