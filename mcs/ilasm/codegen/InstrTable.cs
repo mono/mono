@@ -209,7 +209,6 @@ namespace Mono.ILASM {
                         inst_table["ldelema"] = new ILToken (Token.INSTR_TYPE, TypeOp.ldelema);
                         inst_table["refanyval"] = new ILToken (Token.INSTR_TYPE, TypeOp.refanyval);
                         inst_table["mkrefany"] = new ILToken (Token.INSTR_TYPE, TypeOp.mkrefany);
-                        inst_table["ldtoken"] = new ILToken (Token.INSTR_TYPE, TypeOp.ldtoken);
                         inst_table["initobj"] = new ILToken (Token.INSTR_TYPE, TypeOp.initobj);
                         inst_table["sizeof"] = new ILToken (Token.INSTR_TYPE, TypeOp.sizeOf);
 
@@ -221,7 +220,6 @@ namespace Mono.ILASM {
                         inst_table["call"] = new ILToken (Token.INSTR_METHOD, MethodOp.call);
                         inst_table["callvirt"] = new ILToken (Token.INSTR_METHOD, MethodOp.callvirt);
                         inst_table["newobj"] = new ILToken (Token.INSTR_METHOD, MethodOp.newobj);
-                        inst_table["ldtoken"] = new ILToken (Token.INSTR_METHOD, MethodOp.ldtoken);
                         inst_table["ldftn"] = new ILToken (Token.INSTR_METHOD, MethodOp.ldftn);
                         inst_table["ldvirtftn"] = new ILToken (Token.INSTR_METHOD, MethodOp.ldvirtfn);
 
@@ -235,7 +233,6 @@ namespace Mono.ILASM {
                         inst_table["ldsfld"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldsfld);
                         inst_table["ldsflda"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldsflda);
                         inst_table["stsfld"] = new ILToken (Token.INSTR_FIELD, FieldOp.stsfld);
-                        inst_table["ldtoken"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldtoken);
 
                         //
                         // Branch Instructions
@@ -280,6 +277,7 @@ namespace Mono.ILASM {
                         inst_table["ldc.r8"] = new ILToken (Token.INSTR_R, "ldc.r8");
                         inst_table["switch"] = new ILToken (Token.INSTR_SWITCH, "switch");
                         inst_table["calli"] = new ILToken (Token.INSTR_SIG, "calli");
+                        inst_table["ldtoken"] = new ILToken (Token.INSTR_TOK, "ldtoken");
                 }
 
         }

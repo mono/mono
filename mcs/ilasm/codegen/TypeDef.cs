@@ -18,7 +18,7 @@ namespace Mono.ILASM {
                 private PEAPI.TypeAttr attr;
                 private string name_space;
                 private string name;
-                private bool is_resolved;
+                private bool is_defined;
                 private bool is_intransit;
                 private IClassRef parent;
                 private ArrayList impl_list;
@@ -26,6 +26,7 @@ namespace Mono.ILASM {
                 private ArrayList field_list;
                 private ArrayList method_list;
                 private ArrayList data_list;
+                private TypeDef outer;
 
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
                                 IClassRef parent, ArrayList impl_list, Location location)
@@ -38,10 +39,22 @@ namespace Mono.ILASM {
                         field_list = new ArrayList ();
                         method_list = new ArrayList ();
                         data_list = new ArrayList ();
+
+                        is_defined = false;
+                        is_intransit = false;
+                }
+
+                public string Name {
+                        get { return name; }
                 }
 
                 public string FullName {
                         get { return MakeFullName (); }
+                }
+
+                public TypeDef OuterType {
+                        get { return outer; }
+                        set { outer = value; }
                 }
 
                 public PEAPI.ClassDef PeapiType {
@@ -52,8 +65,8 @@ namespace Mono.ILASM {
                         get { return classdef; }
                 }
 
-                public bool IsResolved {
-                        get { return is_resolved; }
+                public bool IsDefined {
+                        get { return is_defined; }
                 }
 
                 public void AddFieldDef (FieldDef fielddef)
@@ -73,30 +86,45 @@ namespace Mono.ILASM {
 
                 public void Define (CodeGen code_gen)
                 {
-                        if (is_resolved)
+                        if (is_defined)
                                 return;
 
                         if (is_intransit) {
                                 // Circular definition
-                                throw new Exception ("Circular definition of class: " + this);
+                                throw new Exception ("Circular definition of class: " + FullName);
                         }
 
-                        is_intransit = true;
-
                         if (parent != null) {
+                                is_intransit = true;
                                 parent.Resolve (code_gen);
+                                is_intransit = false;
                                 if (parent.PeapiClass == null) {
                                         throw new Exception ("this type can not be a base type: "
                                                         + parent);
                                 }
-                                classdef = code_gen.PEFile.AddClass (attr,
+                                if (outer != null) {
+                                        if (!outer.IsDefined)
+                                                outer.Define (code_gen);
+                                        classdef = outer.PeapiType.AddNestedClass (attr,
+                                                        name_space, name, parent.PeapiClass);
+                                } else {
+                                        classdef = code_gen.PEFile.AddClass (attr,
                                                 name_space, name, parent.PeapiClass);
+                                }
                         } else {
-                                classdef = code_gen.PEFile.AddClass (attr,
+                                if (outer != null) {
+                                        if (!outer.IsDefined)
+                                                outer.Define (code_gen);
+                                        classdef = outer.PeapiType.AddNestedClass (attr,
                                                 name_space, name);
+                                } else {
+                                        classdef = code_gen.PEFile.AddClass (attr,
+                                                name_space, name);
+                                }
                         }
 
                         is_intransit = false;
+                        is_defined = true;
 
                         foreach (FieldDef fielddef in field_list) {
                                 fielddef.Define (code_gen, classdef);
@@ -105,7 +133,6 @@ namespace Mono.ILASM {
                         foreach (MethodDef methoddef in method_list) {
                                 methoddef.Define (code_gen, classdef);
                         }
-
                 }
 
                 private string MakeFullName ()

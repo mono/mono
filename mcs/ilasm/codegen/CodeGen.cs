@@ -71,8 +71,12 @@ namespace Mono.ILASM {
                 public void BeginTypeDef (TypeAttr attr, string name, IClassRef parent,
                                 ArrayList impl_list, Location location)
                 {
-                        if (typedef_stack.Count > 0)
-                                name = (string) typedef_stack.Peek () + '/' + name;
+                        TypeDef outer = null;
+
+                        if (typedef_stack.Count > 0) {
+                                outer = (TypeDef) typedef_stack.Peek ();
+                                name = outer.Name + '/' + name;
+                        }
 
                         TypeDef typedef = type_manager[name];
 
@@ -85,6 +89,9 @@ namespace Mono.ILASM {
 
                         typedef = new TypeDef (attr, current_namespace,
                                         name, parent, impl_list, location);
+
+                        if (outer != null)
+                                typedef.OuterType = outer;
 
                         type_manager[typedef.FullName] = typedef;
                         current_typedef = typedef;
