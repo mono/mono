@@ -1,3 +1,8 @@
+
+Mon Jan 19 17:50:27 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, metadata.c: eliminate CSIZE macro.
+
 2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* icall.c: Added ves_icall_type_IsInstanceOf internal call.
