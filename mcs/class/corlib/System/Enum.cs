@@ -301,7 +301,7 @@ namespace System {
 
 		public override bool Equals (object obj)
 		{
-			if (!(obj is Enum))
+			if (obj.GetType() != this.GetType())
 				return false;
 
 			object v1 = this.get_value ();
