@@ -33,6 +33,7 @@ namespace Mono.Xml.XPath
 				throw new XPathException ("Error during parse of " + xpath, e);
 			}
 		}
+		static int yacc_verbose_flag;
 %}
 
 %token ERROR
