@@ -1,4 +1,4 @@
-RUNTIME = mono
+RUNTIME = mono --debug
 MCS_RUNTIME =
 MCS = mcs
 TESTS = xsd-test-suite/suntest/SunTestsAll/xsiType1.xsd
@@ -25,7 +25,7 @@ xsd-test-suite:
 	mkdir xsd-test-suite
 
 run-test :
-	$(RUNTIME) xsdtest.exe --xml --reportsuccess --testall --report:TestResult.xml
+	$(RUNTIME) xsdtest.exe --xml --reportsuccess --testall --details --report:TestResult.xml $(XSD_TEST_FLAGS)
 	@echo "SUCCESS: `grep -c \"OK\" TestResult.xml` NORMAL FAILURE: `grep -c should TestResult.xml` UNEXPECTED `grep -c unexpected TestResult.xml`"
 
 test-psci : xs-psci-compare.exe
