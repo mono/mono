@@ -1,3 +1,7 @@
+2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* PropertyBuilderTest.cs: New file.
+
 2003-05-28  Nick Drochak <ndrochak@gol.com>
 
 	* MethodBuilderTest: correct order of expected and actual values.
