@@ -1,3 +1,9 @@
+
+Tue May 7 11:47:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* StreamReader.cs: return the number of chars read even if we diddn't
+	fill the whole buffer (makes Sergey's ilasm work with mono).
+
 2002-05-07  Mike Gray     <mikeg_us@hotmail.com> 
 
 	* FileInfo.cs (Create): Implement missing method.

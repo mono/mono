@@ -202,7 +202,7 @@ namespace System.IO {
 			while (count > 0)
 			{
 				if (pos >= cchDecoded && ReadBuffer () == 0)
-					return -1;
+					return cchRead > 0? cchRead: -1;
 
 				int cch = Math.Min (cchDecoded - pos, count);
 				Array.Copy (rgchDecoded, pos, dest_buffer, index, cch);
