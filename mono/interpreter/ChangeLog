@@ -1,3 +1,9 @@
+2001-07-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* interp.c (ves_exec_method): Make the interpreter abort with more
+	information than it currently does.
+
+	Enable the slow processor, as it is easier to debug.
 
 Sun Jul 15 17:50:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
