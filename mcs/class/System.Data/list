@@ -96,6 +96,7 @@ System.Data.Common/RowUpdatedEventArgs.cs
 System.Data.Common/RowUpdatingEventArgs.cs
 System.Data.SqlClient/ParmUtil.cs
 System.Data.SqlClient/PostgresLibrary.cs
+System.Data.SqlClient/PostgresTypes.cs
 System.Data.SqlClient/SqlCommand.cs
 System.Data.SqlClient/SqlConnection.cs
 System.Data.SqlClient/SqlDataReader.cs

@@ -1,3 +1,7 @@
+2002-06-06  Rodrigo Moya <rodrigo@ximian.com>
+
+	* list: added missing PostgresTypes.cs file.
+
 2002-06-02  Francisco Jr. <fxjrlists@yahoo.com.br>
 
 	* System.Data.SqlClient/SqlParameterCollection.cs: implemented missing
