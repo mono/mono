@@ -1,3 +1,8 @@
+2004-12-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* CodeGen.cs: Correctly compute the name of a nested class,
+	currently it was ignoring anything above level 1.
+
 2004-07-27  Jackson Harper  <jackson@ximian.com>
 
 	* Driver.cs: Make debug switch compatible with MS's add debug to

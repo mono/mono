@@ -15,6 +15,7 @@ using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 
 namespace Mono.ILASM {
 
@@ -28,7 +29,8 @@ namespace Mono.ILASM {
                 private string current_namespace;
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
-                private Stack typedef_stack;
+                private ArrayList typedef_stack;
+		private int typedef_stack_top;
 		private SymbolWriter symwriter;
 
                 private byte [] assembly_public_key;
@@ -73,7 +75,8 @@ namespace Mono.ILASM {
 
                         type_manager = new TypeManager (this);
                         extern_table = new ExternTable ();
-                        typedef_stack = new Stack ();
+                        typedef_stack = new ArrayList ();
+			typedef_stack_top = 0;
                         global_field_table = new Hashtable ();
                         global_method_table = new Hashtable ();
 
@@ -196,9 +199,16 @@ namespace Mono.ILASM {
                         TypeDef outer = null;
                         string cache_name = CacheName (name);
 
-                        if (typedef_stack.Count > 0) {
-                                outer = (TypeDef) typedef_stack.Peek ();
-                                cache_name = CacheName (outer.Name + '/' + name);
+                        if (typedef_stack_top > 0) {
+				StringBuilder sb = new StringBuilder ();
+				
+				for (int i = 0; i < typedef_stack_top; i++){
+					outer = (TypeDef) typedef_stack [i];
+					sb.Append (outer.Name);
+					sb.Append ("/");
+				}
+				sb.Append (name);
+                                cache_name = CacheName (sb.ToString ());
                         }
 
                         TypeDef typedef = type_manager[cache_name];
@@ -206,7 +216,8 @@ namespace Mono.ILASM {
                         if (typedef != null) {
                                 // Class head is allready defined, we are just reopening the class
                                 current_typedef = typedef;
-                                typedef_stack.Push (current_typedef);
+                                typedef_stack.Add (current_typedef);
+				typedef_stack_top++;
                                 return;
                         }
 
@@ -218,7 +229,8 @@ namespace Mono.ILASM {
 
                         type_manager[cache_name] = typedef;
                         current_typedef = typedef;
-                        typedef_stack.Push (typedef);
+			typedef_stack.Add (typedef);
+			typedef_stack_top++;
                 }
 
                 public void AddFieldDef (FieldDef fielddef)
@@ -268,10 +280,11 @@ namespace Mono.ILASM {
 
                 public void EndTypeDef ()
                 {
-                        typedef_stack.Pop ();
+			typedef_stack_top--;
+			typedef_stack.RemoveAt (typedef_stack_top);
 
-                        if (typedef_stack.Count > 0)
-                                current_typedef = (TypeDef) typedef_stack.Peek ();
+                        if (typedef_stack_top > 0)
+                                current_typedef = (TypeDef) typedef_stack [typedef_stack_top-1];
                         else
                                 current_typedef = null;
 
