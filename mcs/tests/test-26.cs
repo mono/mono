@@ -9,7 +9,7 @@ public class Blah {
 		return i+j;
 	}
 
-	public static int Main ()
+	public static int Test1 ()
 	{
 		Blah f = new Blah ();
 
@@ -29,7 +29,44 @@ public class Blah {
 			return 0;
 		else
 			return 1;
+	}
+	
+	public delegate int List (params int [] args);
 
+	public static int Adder (params int [] args)
+	{
+		int total = 0;
+		
+		foreach (int i in args)
+			total += i;
+
+		return total;
+	}
+
+	public static int Test2 ()
+	{
+		List my_adder = new List (Adder);
+
+		if (my_adder (1, 2, 3) != 6)
+			return 2;
+
+		return 0;
+	}
+	
+	public static int Main ()
+	{
+		int v;
+
+		v = Test1 ();
+		if (v != 0)
+			return v;
+
+		v = Test2 ();
+		if (v != 0)
+			return v;
+
+		Console.WriteLine ("All tests pass");
+		return 0;
 	}
 
 }

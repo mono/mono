@@ -1,3 +1,16 @@
+abstract class A {
+        protected abstract int this [int a] { get; } 
+}
+
+class B : A {
+	protected override int this [int a] { get { return a;}  }
+
+	public int M ()
+	{
+		return this [0];
+	}
+	
+}
 class X {
 	int v1, v2;
 	
@@ -29,7 +42,6 @@ class X {
 		if (x [0] != 1)
 			return 2;
 
-		return 0;
-		
+		return new B ().M ();
 	}
 }
