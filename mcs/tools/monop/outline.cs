@@ -132,7 +132,7 @@ public class Outline {
 	void OutlineProperty (PropertyInfo pi)
 	{
 		ParameterInfo [] idxp = pi.GetIndexParameters ();
-		MethodBase accessor = pi.CanRead ? pi.GetGetMethod () : pi.GetSetMethod ();
+		MethodBase accessor = pi.CanRead ? pi.GetGetMethod (true) : pi.GetSetMethod (true);
 		
 		o.Write (GetMethodVisibility (accessor));
 		o.Write (GetMethodModifiers  (accessor));
@@ -339,8 +339,8 @@ public class Comparer : IComparer  {
 	{
 		PropertyInfo aa = (PropertyInfo) a, bb = (PropertyInfo) b;
 		
-		bool astatic = (aa.CanRead ? aa.GetGetMethod () : aa.GetSetMethod ()).IsStatic;
-		bool bstatic = (bb.CanRead ? bb.GetGetMethod () : bb.GetSetMethod ()).IsStatic;
+		bool astatic = (aa.CanRead ? aa.GetGetMethod (true) : aa.GetSetMethod (true)).IsStatic;
+		bool bstatic = (bb.CanRead ? bb.GetGetMethod (true) : bb.GetSetMethod (true)).IsStatic;
 		
 		if (astatic == bstatic)
 			return CompareMemberInfo (a, b);
