@@ -1,3 +1,8 @@
+2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (abort_appdomain_thread): Fix unref errors.
+	(mono_thread_current): Fix THREAD_DEBUG define.
+
 2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata.h (MONO_TYPE_ISSTRUCT): Fix warning.
