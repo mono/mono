@@ -1,5 +1,9 @@
 2004-06-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* FormsAuthentication.cs: Undo last change.
+
+2004-06-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* FormsAuthentication.cs: go to loginUrl from web.config settings
 	before try with the default ones.
 
