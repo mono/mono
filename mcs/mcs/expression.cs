@@ -5240,8 +5240,18 @@ namespace Mono.CSharp {
 			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
 
 			if (member_lookup == null){
-				Report.Error (117, loc, "`" + expr_type + "' does not contain a " +
-					      "definition for `" + Identifier + "'");
+				//
+				// Try looking the member up from the same type, if we find
+				// it, we know that the error was due to limited visibility
+				//
+				object lookup = TypeManager.MemberLookup (
+					expr_type, expr_type, AllMemberTypes, AllBindingFlags, Identifier);
+				if (lookup == null)
+					Report.Error (117, loc, "`" + expr_type + "' does not contain a " +
+						      "definition for `" + Identifier + "'");
+				else
+					Report.Error (122, loc, "`" + expr_type + "." + Identifier + "' " +
+						      "is inaccessible because of its protection level");
 					      
 				return null;
 			}
