@@ -1,5 +1,5 @@
 //
-// System.Diagnostics.SymbolStore/MonoSymbolTable.cs
+// Mono.CSharp.Debugger/MonoSymbolTable.cs
 //
 // Author:
 //   Martin Baulig (martin@ximian.com)

@@ -1,8 +1,8 @@
 //
-// System.Diagnostics.SymbolStore/MonoSymbolFile.cs
+// Mono.CSharp.Debugger/MonoSymbolFile.cs
 //
 // Author:
-//   Martin Baulig (martin@gnome.org)
+//   Martin Baulig (martin@ximian.com)
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //

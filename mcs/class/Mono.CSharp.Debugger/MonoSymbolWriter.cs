@@ -1,8 +1,8 @@
 //
-// System.Diagnostics.SymbolStore/MonoSymbolWriter.cs
+// Mono.CSharp.Debugger/MonoSymbolWriter.cs
 //
 // Author:
-//   Martin Baulig (martin@gnome.org)
+//   Martin Baulig (martin@ximian.com)
 //
 // This is the default implementation of the System.Diagnostics.SymbolStore.ISymbolWriter
 // interface.
