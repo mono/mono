@@ -207,9 +207,9 @@ namespace System.Drawing {
 // 		[DllImport("gdiplus.dll")]
 //                 internal static extern Status GdipGetPenEndCap (IntPtr pen, out LineCap endCap);
 		[DllImport("gdiplus.dll")]
-                internal static extern Status GdipSetPenTransform (IntPtr pen, Matrix matrix);
+                internal static extern Status GdipSetPenTransform (IntPtr pen, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
-                internal static extern Status GdipGetPenTransform (IntPtr pen, out Matrix matrix);
+                internal static extern Status GdipGetPenTransform (IntPtr pen, out IntPtr matrix);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenWidth (IntPtr pen, float width);
 		[DllImport("gdiplus.dll")]

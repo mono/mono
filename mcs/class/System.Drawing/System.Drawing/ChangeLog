@@ -1,3 +1,19 @@
+2004-01-20  Ravindra  <rkumar@novell.com>
+
+	* Pen.cs: Fixed bug #52811 in Pen.Transform property. Setting
+	this property was hanging and getting was throwing a NullRef
+	Exception. Earlier we were passing Matrix object to and fro
+	which was causing the problem. Now, we are using IntPtr.
+	Thanks to Duncan for helping me.
+	Also, .NET behavior is to maintain Pen.Color and Pen.Brush
+	together. If color is set, a SolidBrush automatically gets
+	set with the same color, Pen loses the old brush object.
+	If a SolidBrush is set, Pen.Color gets the value same as that
+	of brush color losing the old value. Pen shows this behavior
+	now.
+	* gdipFunctions.cs: Changed the signature of GdipGetPenTransform
+	and GdipSetPenTransform methods to use IntPtr instead of Matrix.
+
 2004-01-19  Duncan Mak  <duncan@ximian.com>
 
 	* gdipFunctions.cs: Import functions for GraphicsPath.

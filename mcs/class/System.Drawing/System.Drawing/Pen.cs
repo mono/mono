@@ -18,6 +18,8 @@ namespace System.Drawing {
 	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable {
 		internal IntPtr nativeObject;
 		internal bool isModifiable = true;
+		internal Brush brush;
+		internal Color color;
 
                 internal Pen (IntPtr p)
                 {
@@ -37,6 +39,9 @@ namespace System.Drawing {
 			int pen;
 			GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out pen);
 			nativeObject = (IntPtr) pen;
+			this.brush = brush;
+			color = ((SolidBrush) brush).Color;
+			GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
 		}
 
 		public Pen (Color color, float width)
@@ -44,6 +49,9 @@ namespace System.Drawing {
 			int pen;
 			GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out pen);
 			nativeObject = (IntPtr)pen;
+			this.color = color;
+			brush = new SolidBrush (color);
+			GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
 		}
 
 		//
@@ -68,17 +76,21 @@ namespace System.Drawing {
 
 		public Brush Brush {
 			get {
-                                IntPtr retval;
-                                GDIPlus.GdipGetPenBrushFill (nativeObject, out retval);
-                                BrushType type;
-                                GDIPlus.GdipGetBrushType (retval, out type);
-                                
-                                return Brush.CreateBrush (retval, type);
+                                return brush;
                         }
 
 			set {
-				if (isModifiable)
-                                	GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+				if (isModifiable) {
+					if (value is SolidBrush) {
+						brush = value;
+						GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+						color = ((SolidBrush) brush).Color;
+						GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+					}
+					else
+						// other brushes should clear the color property
+						throw new NotImplementedException ();
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 			}
@@ -86,15 +98,16 @@ namespace System.Drawing {
 
 		public Color Color {
 			get {
-				int argb;
-                                GDIPlus.GdipGetPenColor (nativeObject, out argb);
-
-                                return Color.FromArgb (argb);
+                                return color;
 			}
 
 			set {
-				if (isModifiable)
+				if (isModifiable) {
+					color = value;
 					GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
+					brush = new SolidBrush (color);
+					GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 			}
@@ -310,14 +323,14 @@ namespace System.Drawing {
                 public Matrix Transform {
 
                         get {
-                                Matrix result;
-                                GDIPlus.GdipGetPenTransform (nativeObject, out result);
-                                return result;
+                                IntPtr matrix;
+                                GDIPlus.GdipGetPenTransform (nativeObject, out matrix);
+                                return new Matrix (matrix);
                         }
 
                         set {
 				if (isModifiable)
-                                	GDIPlus.GdipSetPenTransform (nativeObject, value);
+                                	GDIPlus.GdipSetPenTransform (nativeObject, value.nativeMatrix);
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
                         }
