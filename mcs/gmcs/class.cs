@@ -3195,6 +3195,9 @@ namespace Mono.CSharp {
 		//
 		public override bool Define (TypeContainer container)
 		{
+			if (!DoDefineBase (container))
+				return false;
+
 			DeclSpace decl;
 			MethodBuilder mb = null;
 			if (GenericMethod != null) {
@@ -4588,7 +4591,7 @@ namespace Mono.CSharp {
 			return !error;
 		}
 
-		protected virtual bool DoDefine (DeclSpace decl, TypeContainer container)
+		protected virtual bool DoDefineBase (TypeContainer container)
 		{
 			if (Name == null)
 				Name = "this";
@@ -4604,12 +4607,17 @@ namespace Mono.CSharp {
 					MethodAttributes.NewSlot |
 					MethodAttributes.Virtual;
 			} else {
-			if (!container.MethodModifiersValid (ModFlags, Name, Location))
-				return false;
+				if (!container.MethodModifiersValid (ModFlags, Name, Location))
+					return false;
 
-			flags = Modifiers.MethodAttr (ModFlags);
+				flags = Modifiers.MethodAttr (ModFlags);
 			}
 
+			return true;
+		}
+
+		protected virtual bool DoDefine (DeclSpace decl, TypeContainer container)
+		{
 			// Lookup Type, verify validity
 			MemberType = decl.ResolveType (Type, false, Location);
 			if (MemberType == null)
@@ -5533,6 +5541,9 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer container)
 		{
+			if (!DoDefineBase (container))
+				return false;
+
 			if (!DoDefine (container, container))
 				return false;
 
@@ -6049,6 +6060,9 @@ namespace Mono.CSharp {
 				e_attr = EventAttributes.RTSpecialName |
 					EventAttributes.SpecialName;
 ;
+			if (!DoDefineBase (container))
+				return false;
+
 			if (!DoDefine (container, container))
 				return false;
 
@@ -6256,6 +6270,9 @@ namespace Mono.CSharp {
 				PropertyAttributes.RTSpecialName |
 				PropertyAttributes.SpecialName;
 			
+			if (!DoDefineBase (container))
+				return false;
+
 			if (!DoDefine (container, container))
 				return false;
 

@@ -1376,21 +1376,66 @@ opt_new
 	;
 
 interface_method_declaration
-	: opt_attributes opt_new type IDENTIFIER 
+	: opt_attributes opt_new type namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
-	  SEMICOLON
 	  {
-		$$ = new Method (current_container, (Expression) $3, (int) $2, true,
-				 new MemberName ((string) $4), (Parameters) $6,
-				 (Attributes) $1, lexer.Location);
+		lexer.ConstraintsParsing = true;
 	  }
-	| opt_attributes opt_new VOID IDENTIFIER 
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  opt_type_parameter_constraints_clauses
 	  SEMICOLON
 	  {
-		$$ = new Method (current_container, TypeManager.system_void_expr, (int) $2,
-				 true, new MemberName ((string) $4), (Parameters) $6,
-				 (Attributes) $1, lexer.Location);
+		lexer.ConstraintsParsing = false;
+
+		MemberName name = (MemberName) $4;
+
+		if ($9 != null && name.TypeArguments == null)
+			Report.Error (80, lexer.Location,
+				      "Contraints are not allowed on non-generic declarations");
+
+		GenericMethod generic = null;
+		if (name.TypeArguments != null) {
+			generic = new GenericMethod (current_namespace, current_container,
+						     name, (Attributes) $1, lexer.Location);
+
+			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+
+			$$ = new Method (generic, (Expression) $3, (int) $2, true, name,
+					 (Parameters) $6, (Attributes) $1, lexer.Location);
+		} else
+			$$ = new Method (current_container, (Expression) $3, (int) $2, true,
+					 name, (Parameters) $6, (Attributes) $1,
+					 lexer.Location);
+	  }
+	| opt_attributes opt_new VOID namespace_or_type_name
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
+	  opt_type_parameter_constraints_clauses
+	  SEMICOLON
+	  {
+		lexer.ConstraintsParsing = false;
+
+		MemberName name = (MemberName) $4;
+
+		if ($9 != null && name.TypeArguments == null)
+			Report.Error (80, lexer.Location,
+				      "Contraints are not allowed on non-generic declarations");
+
+		GenericMethod generic = null;
+		if (name.TypeArguments != null) {
+			generic = new GenericMethod (current_namespace, current_container,
+						     name, (Attributes) $1, lexer.Location);
+
+			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+
+			$$ = new Method (generic, TypeManager.system_void_expr, (int) $2,
+					 true, name, (Parameters) $6, (Attributes) $1,
+					 lexer.Location);
+		} else
+			$$ = new Method (current_container, TypeManager.system_void_expr,
+					 (int) $2, true, name, (Parameters) $6,
+					 (Attributes) $1, lexer.Location);
 	  }
 	;
 
