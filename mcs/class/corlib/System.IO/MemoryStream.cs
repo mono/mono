@@ -353,7 +353,7 @@ namespace System.IO
 			if (!canWrite)
 				throw new NotSupportedException ("Cannot write to this stream.");
 
-			if (position + 1 >= capacity)
+			if (position >= capacity)
 				Capacity = CalculateNewCapacity (position + 1);
 
 			if (position >= length)
