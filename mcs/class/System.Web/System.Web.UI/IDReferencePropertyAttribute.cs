@@ -48,12 +48,14 @@ namespace System.Web.UI
 		
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (obj != null && obj is IDReferencePropertyAttribute) 
+				return (this.controlType == ((IDReferencePropertyAttribute) obj).controlType);							
+			return false;
 		}
 		
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException();
+			return controlType.GetHashCode ();
 		}
 
 		public Type ReferencedControlType { 
