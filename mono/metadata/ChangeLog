@@ -1,5 +1,9 @@
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi): Return NULL here instead of an empty string to match MS behavior.
+	(ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len):
+	Throw an ArgumentNullException if 'ptr' is null.
+
 	* appdomain.c (mono_domain_assembly_search): Avoid matching dynamic
 	assemblies here. Fixes #69020.
 
