@@ -320,6 +320,7 @@ namespace Mono.CSharp {
 		protected Hashtable defined_names;
 
 		readonly bool is_generic;
+		readonly int count_type_params;
 
 		//
 		// Whether we are Generic
@@ -344,8 +345,12 @@ namespace Mono.CSharp {
 			NamespaceEntry = ns;
 			Basename = name.Name;
 			defined_names = new Hashtable ();
-			if (name.TypeParameters != null)
+			if (name.TypeParameters != null) {
 				is_generic = true;
+				count_type_params = name.TypeParameters.Length;
+			}
+			if (parent != null)
+				count_type_params += parent.count_type_params;
 			this.parent = parent;
 		}
 
@@ -1224,12 +1229,7 @@ namespace Mono.CSharp {
 
 		public int CountTypeParameters {
 			get {
-				if (!IsGeneric)
-					return 0;
-				if (type_param_list == null)
-					initialize_type_params ();
-
-				return type_param_list.Length;
+				return count_type_params;
 			}
 		}
 
