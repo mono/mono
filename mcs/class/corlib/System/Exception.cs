@@ -32,6 +32,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Reflection;
 using System.Diagnostics;
@@ -146,6 +147,8 @@ namespace System
 
 		public virtual string StackTrace {
 			get {
+				if (stack_trace == null)
+					stack_trace = get_trace ();
 				return stack_trace;
 			}
 		}
@@ -184,7 +187,7 @@ namespace System
 			info.AddValue ("Message", message);
 			info.AddValue ("InnerException", inner_exception);
 			info.AddValue ("HelpURL", help_link);
-			info.AddValue ("StackTraceString", stack_trace);
+			info.AddValue ("StackTraceString", StackTrace);
 			info.AddValue ("RemoteStackTraceString", remote_stack_trace);
 			info.AddValue ("RemoteStackIndex", remote_stack_index);
 			info.AddValue ("HResult", hresult);
@@ -207,8 +210,8 @@ namespace System
 				result.Append (Environment.NewLine);
 			}
 
-			if (stack_trace != null)
-				result.Append (Environment.NewLine).Append (stack_trace);
+			if (StackTrace != null)
+				result.Append (Environment.NewLine).Append (StackTrace);
 			return result.ToString();
 		}
 
@@ -226,5 +229,8 @@ namespace System
 
 			return this;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern string get_trace ();
 	}
 }
