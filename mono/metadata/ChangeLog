@@ -1,3 +1,11 @@
+2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* locales.c: don't ignore symbols when doing case insensitive compares.
+	Thanks Dick! Fixes bug #54046.
+
+	* threads.c: surround 'threads' usage with enter/leave in
+	mono_thread_manage.
+
 2004-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Char arrays are 
