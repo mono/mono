@@ -73,11 +73,8 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		
 		public object Evaluate (XsltContext xsltContext)
-		{
-			XslTransformProcessor p = ((XsltCompiledContext)xsltContext).Processor;
-			Evaluate (p);
-			
-			object value = GetValue (p);
+		{	
+			object value = GetValue (((XsltCompiledContext)xsltContext).Processor);
 			
 			if (value is XPathNodeIterator)			
 				return ((XPathNodeIterator)value).Clone ();
@@ -113,6 +110,7 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override object GetValue (XslTransformProcessor p)
 		{
+			Evaluate (p);
 			return p.globalVariableTable [this];
 		}
 			

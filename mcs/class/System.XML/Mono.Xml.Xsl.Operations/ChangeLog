@@ -1,3 +1,7 @@
+2003-08-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslVariable.cs: Fix up how variables are evaluated.
+
 2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslMessage.cs: Implement.
