@@ -9,18 +9,19 @@ LIB_MCS_FLAGS = /unsafe \
 	@System.Windows.Forms.dll.resources \
 	/nowarn:649 /nowarn:169 /nowarn:67 /nowarn:108 /nowarn:114
 
+RESOURCES = \
+	resources/System.Windows.Forms.resources \
+	resources/System.Windows.Forms.en.resources \
+	resources/System.Windows.Forms.de.resources
+
 EXTRA_DISTFILES = \
-	README
+	README System.Windows.Forms.dll.resources \
+	$(RESOURCES:.resources=.resx) $(RESOURCES:=.prebuilt)
 
 TEST_MCS_FLAGS = /r:System.Drawing.dll
 
 SWF.csproj: System.Windows.Forms.dll.sources
 	./build-csproj
-
-RESOURCES = \
-	resources/System.Windows.Forms.resources \
-	resources/System.Windows.Forms.en.resources \
-	resources/System.Windows.Forms.de.resources
 
 include ../../build/library.make
 
