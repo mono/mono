@@ -153,11 +153,17 @@ This condition specify a specific hash that an assembly must generate
 policy to be updated (as the hash value will have changed).
 .TP
 .I -pub [-cert certificate | -file signedfile | -hex rawdata]
-This condition specify a specific X.509 Authenticode(r) certificate that
-must signed an assembly to be satisfied. The certificate can be referenced
+This condition specify a X.509 Authenticode(r) certificate that must have 
+signed an assembly in order to be satisfied. The certificate can be referenced
 as a file (binary DER), a signed file (containing the certificate) or with
 the hexadecimal value of the certificate. Note that files outside the 
 policy must also be protected against tempering.
+.TP
+.I -strong -file filename [name | -noname] [version | -noversion]
+This condition specify a specific StrongName that must have signed an
+assembly to be satisfied. Use -noname if the assembly name isn't known
+(or important) and -version if the version isn't known (or important) in
+the resolution.
 .TP
 .I -site hostname
 This condition specify the site from where the assembly must come from to 
