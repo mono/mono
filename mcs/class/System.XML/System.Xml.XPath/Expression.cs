@@ -1176,8 +1176,8 @@ namespace System.Xml.XPath
 
 	internal class ExprFunctionCall : Expression
 	{
-		protected XmlQualifiedName _name;
-		protected ArrayList _args = new ArrayList ();
+		protected readonly XmlQualifiedName _name;
+		protected readonly ArrayList _args = new ArrayList ();
 		public ExprFunctionCall (XmlQualifiedName name, FunctionArguments args)
 		{
 			_name = name;
@@ -1253,8 +1253,17 @@ namespace System.Xml.XPath
 				XPathResultType [] rgFuncTypes = func.ArgTypes;
 				for (int iArg = 0; iArg < _args.Count; iArg ++)
 				{
-					XPathResultType typeArg = (iArg < rgFuncTypes.Length) ? rgFuncTypes [iArg] : rgFuncTypes [rgFuncTypes.Length - 1];
-					rgArgs [iArg] = ((Expression) _args [iArg]).EvaluateAs (iter, typeArg);
+					XPathResultType typeArg;
+					if (rgFuncTypes == null)
+						typeArg = XPathResultType.Any;
+					else if (iArg < rgFuncTypes.Length)
+						typeArg = rgFuncTypes [iArg];
+					else
+						typeArg = rgFuncTypes [rgFuncTypes.Length - 1];
+
+					Expression arg = (Expression) _args [iArg];
+					object result = arg.EvaluateAs (iter, typeArg);
+					rgArgs [iArg] = result;
 				}
 			}
 			return func.Invoke (context, rgArgs, iter.Current);
