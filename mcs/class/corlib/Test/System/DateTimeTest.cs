@@ -347,20 +347,6 @@ public class DateTimeTest : TestCase
 		t1 = DateTime.Parse ("February 8");
 		AssertEquals ("H16", t2.Ticks, t1.Ticks);
 	}
-
-	protected override void RunTest ()
-	{
-		CultureInfo oldcult = Thread.CurrentThread.CurrentCulture;
-
-		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
-
-		TestCtors ();
-		TestToString ();
-		TestParseExact ();
-		TestParse ();
-
-		Thread.CurrentThread.CurrentCulture = oldcult;
-	}
 }
 
 }

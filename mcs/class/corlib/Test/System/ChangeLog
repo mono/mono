@@ -1,3 +1,9 @@
+2002/06/11  Nick Drochak <ndrochak@gol.com>
+
+	* DateTimeTest.cs: Remove RunTest override and put culture manipulation
+	in SetUp and TearDown like the other tests.
+	* TimeZoneTest.cs: Same.
+
 2002-06-11  Nick Drochak  <ndrochak@gol.com>
 
 	* Int64Test.cs: Set the culture to en-US for testing.

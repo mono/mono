@@ -17,6 +17,8 @@ namespace MonoTests.System
 
 public class TimeZoneTest : TestCase
 {
+	private CultureInfo oldcult;
+
 	public TimeZoneTest() : base ("MonoTests.System.TimeZoneTest testcase") {}
         public TimeZoneTest (string name): base(name) {}
 
@@ -25,6 +27,19 @@ public class TimeZoneTest : TestCase
 		get {
 			return new TestSuite (typeof(TimeZoneTest));
 		}
+	}
+
+	protected override void SetUp ()
+	{
+		oldcult = Thread.CurrentThread.CurrentCulture;
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+
+	}
+	
+	protected override void TearDown ()
+	{
+		Thread.CurrentThread.CurrentCulture = oldcult;
 	}
 
 	public void TestCtors ()
@@ -54,18 +69,6 @@ public class TimeZoneTest : TestCase
 		AssertEquals("A13", 72000000000L, t1.GetUtcOffset (d4).Ticks);
 		AssertEquals("A14", 36000000000L, t1.GetUtcOffset (d5).Ticks);
         }
-
-	protected override void RunTest ()
-	{
-		CultureInfo oldcult = Thread.CurrentThread.CurrentCulture;
-
-		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
-
-		TestCtors ();
-
-		Thread.CurrentThread.CurrentCulture = oldcult;
-	}
-
 }
 
 }
