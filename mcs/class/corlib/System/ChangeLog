@@ -1,4 +1,9 @@
 
+2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTime.cs: fixed bug #30076.
+	* TimeZone.cs: provide the parameter name in a exception.
+
 2002-12-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DecimalFormatter.cs: fixed bug #35560.

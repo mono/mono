@@ -165,7 +165,7 @@ namespace System {
 		public override DaylightTime GetDaylightChanges (int year)
                 {
                         if (year < 1 || year > 9999)
-                                throw new ArgumentOutOfRangeException (year + " is not in a range between 1 and 9999.");
+                                throw new ArgumentOutOfRangeException ("year", year + " is not in a range between 1 and 9999.");
 
                         if (daylightCache [year] == null) {
 				lock (this) {

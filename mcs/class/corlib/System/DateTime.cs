@@ -39,7 +39,7 @@ namespace System
 		internal const long UnixEpoch = 621355968000000000L;
 		
 		public static readonly DateTime MaxValue = new DateTime (false,TimeSpan.MaxValue);
-		public static readonly DateTime MinValue = new DateTime (false,TimeSpan.MinValue);
+		public static readonly DateTime MinValue = new DateTime (false,0);
 		
 		private enum Which 
 		{
