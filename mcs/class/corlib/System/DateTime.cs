@@ -432,6 +432,18 @@ namespace System
 			return AddTicks (msticks);
 		}
 
+		// required to match MS implementation for OADate (OLE Automation)
+		private DateTime AddRoundedMilliseconds (double ms)
+		{
+			if ((ms * TimeSpan.TicksPerMillisecond) > long.MaxValue ||
+				(ms * TimeSpan.TicksPerMillisecond) < long.MinValue) {
+ 				throw new ArgumentOutOfRangeException ();
+ 			}
+			long msticks = (long) (ms += ms > 0 ? 0.5 : -0.5) * TimeSpan.TicksPerMillisecond;
+
+			return AddTicks (msticks);
+		}
+
 		public DateTime AddMinutes (double minutes)
 		{
 			return AddMilliseconds (minutes * 60000);
@@ -551,13 +563,14 @@ namespace System
 			if (d < 0.0d) {
 				Double days = Math.Ceiling (d);
 				// integer part is the number of days (negative)
-				dt = dt.AddDays (days);
+				dt = dt.AddRoundedMilliseconds (days * 86400000);
 				// but decimals are the number of hours (in days fractions) and positive
 				Double hours = (days - d);
-				dt = dt.AddDays (hours);
+				dt = dt.AddRoundedMilliseconds (hours * 86400000);
 			}
-			else
-				dt = dt.AddDays (d);
+			else {
+				dt = dt.AddRoundedMilliseconds (d * 86400000);
+			}
 
 			return dt;
 		}

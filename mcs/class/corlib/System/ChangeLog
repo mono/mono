@@ -1,3 +1,8 @@
+2004-06-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTime.cs: Added a AddRoundedMilliseconds which use the "old Mono"
+	rounding logic which worked for FromOADate (while the newer didn't).
+
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* String.cs (Concat): Implemented the varargs version.
