@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.Mono.Security.Protocol.Ntlm {
 
 	[TestFixture]
-	public class NTLMTest : Assertion {
+	public class Type3MessageTest : Assertion {
 
 		static byte[] nonce = { 0x53, 0x72, 0x76, 0x4e, 0x6f, 0x6e, 0x63, 0x65 };
 
@@ -43,7 +43,7 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 			AssertEquals ("Domain", "URSA-MINOR", msg.Domain);
 			AssertEquals ("Host", "LIGHTCITY", msg.Host);
 			AssertEquals ("Username", "Zaphod", msg.Username);
-			AssertEquals ("Options", 0x8201, msg.Options);
+			AssertEquals ("Flags", (NtlmFlags)0x8201, msg.Flags);
 			AssertEquals ("Type", 3, msg.Type);
 			AssertNull ("Password", msg.Password);
 			AssertEquals ("LM", "AD-87-CA-6D-EF-E3-46-85-B9-C4-3C-47-7A-8C-42-D6-00-66-7D-68-92-E7-E8-97", BitConverter.ToString (msg.LM));
@@ -59,7 +59,7 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 			AssertEquals ("Domain", "DOMAIN", msg.Domain);
 			AssertEquals ("Host", "WORKSTATION", msg.Host);
 			AssertEquals ("Username", "user", msg.Username);
-			AssertEquals ("Options", 0x201, msg.Options);
+			AssertEquals ("Flags", (NtlmFlags)0x201, msg.Flags);
 			AssertEquals ("Type", 3, msg.Type);
 			AssertNull ("Password", msg.Password);
 			AssertEquals ("LM", "C3-37-CD-5C-BD-44-FC-97-82-A6-67-AF-6D-42-7C-6D-E6-7C-20-C2-D3-E7-7C-56", BitConverter.ToString (msg.LM));

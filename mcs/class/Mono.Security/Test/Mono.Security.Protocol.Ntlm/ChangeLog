@@ -1,3 +1,7 @@
+2003-12-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Type3MessageTest.cs: Fixed 16 bits Options to 32 bits Flags and class name.
+
 2003-12-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChallengeResponseTest.cs: New. Unit tests for NTLMv1 challenge response.
