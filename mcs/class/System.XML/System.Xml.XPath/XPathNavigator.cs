@@ -795,7 +795,7 @@ namespace System.Xml.XPath
 					SetValue (value);
 					return;
 				}
-				AppendChild (new XmlTextReader (value, XmlNodeType.Element, null));
+				AppendChild (value);
 			}
 		}
 
@@ -927,7 +927,10 @@ namespace System.Xml.XPath
 
 
 
-
+		private XmlReader CreateFragmentReader (string fragment)
+		{
+			return new XmlTextReader (fragment, XmlNodeType.Element, new XmlParserContext (NameTable, null, null, XmlSpace.None));
+		}
 
 		public virtual XmlWriter AppendChild ()
 		{
@@ -939,7 +942,7 @@ namespace System.Xml.XPath
 			string xmlFragments)
 		{
 			// FIXME: should XmlParserContext be something?
-			return AppendChild (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+			return AppendChild (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]
@@ -1010,7 +1013,7 @@ namespace System.Xml.XPath
 
 		public virtual XPathNavigator InsertAfter (string xmlFragments)
 		{
-			return InsertAfter (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+			return InsertAfter (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]
@@ -1037,7 +1040,7 @@ namespace System.Xml.XPath
 
 		public virtual XPathNavigator InsertBefore (string xmlFragments)
 		{
-			return InsertBefore (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+			return InsertBefore (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]
@@ -1084,7 +1087,7 @@ namespace System.Xml.XPath
 
 		public virtual XPathNavigator PrependChild (string xmlFragments)
 		{
-			return PrependChild (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+			return PrependChild (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]

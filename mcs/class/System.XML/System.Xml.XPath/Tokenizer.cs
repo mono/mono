@@ -39,7 +39,7 @@ namespace System.Xml.XPath
 {
 	internal class Tokenizer : Mono.Xml.XPath.yyParser.yyInput
 	{
-		private char [] m_rgchInput;
+		private string m_rgchInput;
 		private int m_ich;
 		private int m_cch;
 		private int m_iToken;
@@ -83,7 +83,7 @@ namespace System.Xml.XPath
 		public Tokenizer (string strInput)
 		{
 			//Console.WriteLine ("Tokenizing: " + strInput);
-			m_rgchInput = strInput.ToCharArray ();
+			m_rgchInput = strInput;
 			m_ich = 0;
 			m_cch = strInput.Length;
 			SkipWhitespace ();
