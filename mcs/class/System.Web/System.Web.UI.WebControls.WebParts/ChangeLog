@@ -1,4 +1,11 @@
 2004-09-29  Sanjay Gupta <gsanjay@novell.com>
+
+	* ConnectionPoint.cs: Initial implementation.
+	* ConsumerConnectionPoint.cs:
+	* ProviderConnectionPoint.cs: Added stubs.
+	* TypeCollection.cs: Completed.
+
+2004-09-29  Sanjay Gupta <gsanjay@novell.com>
 		
 	* IWebPart.cs: Added new property and removed extra property.
 	* WebPart.cs: Corrected according to change in interface IWebPart.
