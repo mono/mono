@@ -1,10 +1,13 @@
 ./System.Runtime.Remoting/TODOAttribute.cs
 ./System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs
 ./System.Runtime.Remoting.Channels/BinaryClientFormatterSinkProvider.cs
+./System.Runtime.Remoting.Channels/BinaryCore.cs
 ./System.Runtime.Remoting.Channels/BinaryServerFormatterSink.cs
 ./System.Runtime.Remoting.Channels/BinaryServerFormatterSinkProvider.cs
+./System.Runtime.Remoting.Channels/ChannelCore.cs
 ./System.Runtime.Remoting.Channels/CommonTransportKeys.cs
 ./System.Runtime.Remoting.Channels/SoapClientFormatterSink.cs
+./System.Runtime.Remoting.Channels/SoapCore.cs
 ./System.Runtime.Remoting.Channels/SoapServerFormatterSink.cs
 ./System.Runtime.Remoting.Channels/SoapClientFormatterSinkProvider.cs
 ./System.Runtime.Remoting.Channels/SoapServerFormatterSinkProvider.cs
