@@ -1,5 +1,9 @@
 2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* catalog.diff : changed diff format to unified style.
+
+2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : more tiny rm -f fix.
 
 2005-02-14  Atsushi Enomoto  <atsushi@ximian.com>
