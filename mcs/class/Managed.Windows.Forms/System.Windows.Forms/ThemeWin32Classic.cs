@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.38 $
+// $Revision: 1.39 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.39  2004/10/04 07:09:37  jordi
+// fixes right button position causing right button not showing on horizontal scrollbars
+//
 // Revision 1.38  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -1012,7 +1015,7 @@ namespace System.Windows.Forms
 				first_arrow_area = new Rectangle(0, 0, scrollbutton_width, bar.Height);
 				bar.FirstArrowArea = first_arrow_area;
 
-				second_arrow_area = new Rectangle(0, area.Width - scrollbutton_width, scrollbutton_width, bar.Height);
+				second_arrow_area = new Rectangle(area.Width - scrollbutton_width, 0, scrollbutton_width, bar.Height);
 				bar.SecondArrowArea = second_arrow_area;
 
 				thumb_pos.Height = bar.Height;
