@@ -252,15 +252,7 @@ namespace Mono.TypeReflector
 
       AddMethodDeclaration (sb, method);
 
-			if (method.GetParameters().Length == 0) {
-				try {
-					object r = method.Invoke (instance, null);
-					string s = GetValue (r);
-					sb.AppendFormat (" {0} = {1}", LineComment, s);
-				}
-				catch {
-				}
-			}
+			AddMethodReturnValue (sb, " " + LineComment + " = {0}", method, instance);
 
 			string str = sb.ToString();
 

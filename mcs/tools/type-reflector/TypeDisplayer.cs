@@ -108,6 +108,8 @@ namespace Mono.TypeReflector
 
 		private IDictionary _Types (IDictionary namespaces, string ns)
 		{
+			if (ns == null)
+				ns = string.Empty;
 			IDictionary list = (IDictionary) namespaces[ns];
 			if (list == null) {
 				list = CreateDictionary ();
@@ -122,6 +124,11 @@ namespace Mono.TypeReflector
 		}
 
 		public abstract void Run ();
+
+		public virtual void ShowError (string message)
+		{
+			Console.WriteLine (message);
+		}
 	}
 }
 

@@ -40,22 +40,29 @@ namespace Mono.TypeReflector
 			Console.WriteLine ("Copyright (C) 2002 Jonathan Pryor.");
 		}
 
-		private static void InitFactory ()
+		private static void InitFactories ()
 		{
 			Factories.Formatter.Add ("default", typeof (DefaultNodeFormatter));
 			Factories.Formatter.Add ("csharp", typeof (CSharpNodeFormatter));
 			Factories.Formatter.Add ("vb", typeof (VBNodeFormatter));
+
 			Factories.Finder.Add ("explicit", typeof (ExplicitNodeFinder));
 			Factories.Finder.Add ("reflection", typeof (ReflectionNodeFinder));
+
 			Factories.Displayer.Add ("console", typeof (ConsoleTypeDisplayer));
+
 #if HAVE_GUI_GTK
 			Factories.Displayer.Add ("gtk", typeof (GtkTypeDisplayer));
+#endif
+
+#if HAVE_GUI_SWF
+			Factories.Displayer.Add ("swf", typeof (SwfTypeDisplayer));
 #endif
 		}
 
 		public static void Main (string[] args)
 		{
-			InitFactory ();
+			InitFactories ();
 
 			TypeReflectorOptions options = new TypeReflectorOptions ();
 
@@ -139,9 +146,10 @@ namespace Mono.TypeReflector
 						displayer.AddType (type);
 					}
 				else
-					Console.WriteLine ("Unable to find types.");
+					displayer.ShowError ("Unable to find types.");
 			} catch (Exception e) {
-				Console.WriteLine ("Unable to display type: {0}.", e.ToString());
+				displayer.ShowError (string.Format ("Unable to display type: {0}.", 
+					e.ToString()));
 			}
 		}
 
@@ -159,7 +167,6 @@ namespace Mono.TypeReflector
 		public static ITypeDisplayer CreateDisplayer (TypeReflectorOptions options)
 		{
 			ITypeDisplayer d = Factories.Displayer.Create (options.Displayer);
-			Console.WriteLine ("creating displayer: {0}", d);
 
 			if (d != null) {
 				d.MaxDepth = options.MaxDepth;
@@ -194,7 +201,14 @@ namespace Mono.TypeReflector
 
 		public static INodeFormatter CreateFormatter (TypeReflectorOptions options)
 		{
-			return Factories.Formatter.Create (options.Formatter);
+			INodeFormatter formatter = Factories.Formatter.Create (options.Formatter);
+			NodeFormatter f = formatter as NodeFormatter;
+
+			if (f != null) {
+				f.InvokeMethods = options.InvokeMethods;
+			}
+
+			return formatter;
 		}
 	}
 }

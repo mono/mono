@@ -31,13 +31,10 @@ namespace Mono.TypeReflector
 		protected override string GetMethodDescription (MethodInfo mb, object instance)
 		{
 			if (mb.GetParameters().Length == 0) {
-				try {
-					object r = mb.Invoke (instance, null);
-					string s = GetValue (r);
-					return string.Format ("{0}()={1}", mb.Name, s);
-				}
-				catch {
-				}
+        StringBuilder sb = new StringBuilder ();
+        AddMethodReturnValue (sb, mb.Name + "()={0}", mb, instance);
+        if (sb.Length != 0)
+          return sb.ToString();
 			}
 			return mb.Name;
 		}

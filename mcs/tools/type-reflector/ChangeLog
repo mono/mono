@@ -1,3 +1,42 @@
+2003-01-08  Jonathan Pryor <jonpryor@vt.edu>
+	* AssemblyInfo.cs: New; Assembly Information (version, etc.)
+	* DefaultNodeFormatter.cs: Use AddMethodReturnValue to invoke methods
+	* ITypeDisplayer.cs: Provide a way to display error messages
+	* LanguageNodeFormatter.cs: Use AddMethodReturnValue to invoke methods
+	* Makefile: Since I need to use csc.exe to compile System.Windows.Forms
+	  support, I need a way to use directory separators in a (reasonably)
+		portable fashion.  Hennce the DS (Directory Separator) variable, which
+		holds the directory separator of the current platform.  Set it to
+		backslash for Windows.
+	* NodeFormatter.cs: 
+	  - Provide an option to enable/disable invoking methods.  See README for a 
+	    short discussion of why this is needed.  (Search for [1].)
+	  - Minor formatting changes.
+	  - Add AddMethodReturnValue() function.  This is used by derived classes,
+	    instead of directly invoking a method, if invocation is permitted.
+	* README: Updates.
+	* TypeDisplayer.cs: 
+	  - Check for a null namespace.  This apparently can happen under .NET.  
+	    I'm not sure why, but handle it.
+	  - Provide default implementation of ITypeDisplayer.ShowError().
+	* TypeFactory.cs: Remove Console messages, clean formatting.
+	* TypeReflectorApp.cs: 
+	  - There's > 1 factory now.  Change names so it makes more sense.
+	  - Add "swf" displayer. 
+	  - Use ITypeDisplayer.ShowError() for errors
+	  - Handle new program options for formatter objects
+	* TypeReflectorOptions.cs: Add option to enable method invocation.  Clean up
+	  formatting.
+	* makefile.core:
+	  - Add "swf" target for System.Windows.Forms display:
+	  - csc.exe wants ".dll" appended to referenced assemblies.  Add this.
+	  - csc.exe wants a colon, not a space, after -r.  Fix.
+	  - Add new files (AssemblyInfo.cs, swf/*.cs)
+	  - Use $(DS) where appropriate.
+	* makefile.gnu: Add $(DS) variable
+	* type-reflector.exe.config: Comment out default listeners, enable
+	  type-factory messages by default.
+
 2003-01-02  Jonathan Pryor <jonpryor@vt.edu>
 	* NodeFormatter.cs: Change formatting of error message.
 	* NodeInfo.cs: Nested types are MemberTypes.NestedType; set as

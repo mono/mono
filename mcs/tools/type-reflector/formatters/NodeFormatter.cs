@@ -18,6 +18,13 @@ namespace Mono.TypeReflector
 {
 	public class NodeFormatter : INodeFormatter {
 
+		private bool invokeMethods = false;
+		
+		public bool InvokeMethods {
+			get {return invokeMethods;}
+			set {invokeMethods = value;}
+		}
+
 		public string GetDescription (NodeInfo node)
 		{
 			string r = "";
@@ -49,11 +56,11 @@ namespace Mono.TypeReflector
 			case NodeTypes.Event:
 				r = GetEventDescription ((EventInfo) node.ReflectionObject, node.ReflectionInstance);
 				break;
-        /*
+			/*
 			case NodeTypes.CustomAttributeProvider:
 				r = GetCustomAttributeProviderDescription ((ICustomAttributeProvider) node.ReflectionObject, node.ReflectionInstance);
 				break;
-         */
+			 */
 			case NodeTypes.Other:
 			case NodeTypes.Alias:
 				r = GetOtherDescription (node);
@@ -69,7 +76,7 @@ namespace Mono.TypeReflector
 			return r;
 		}
 
-		public string GetValue (object o)
+		public static string GetValue (object o)
 		{
 			if (o == null)
 				return "null";
@@ -114,9 +121,9 @@ namespace Mono.TypeReflector
 
 		protected virtual string GetBaseTypeDescription (Type type, object instance)
 		{
-      if (type != null)
-        return type.Name;
-      return "No Base Type";
+			if (type != null)
+				return type.Name;
+			return "No Base Type";
 		}
 
 		protected virtual string GetInterfaceDescription (Type type, object instance)
@@ -141,7 +148,30 @@ namespace Mono.TypeReflector
 
 		protected virtual string GetMethodDescription (MethodInfo method, object instance)
 		{
-      return method.Name;
+			return method.Name;
+		}
+
+		protected void AddMethodReturnValue (StringBuilder sb, string format, MethodInfo method, object instance)
+		{
+			// Only invoke the function if:
+			// 1. Function has no parameters
+			//  - AND -
+			// 2. It's a static function
+			//  - OR -
+			// 3. We have a `this' pointer for the instance function
+
+			bool is_static = method.IsStatic;
+			bool have_instance = instance != null;
+
+			if (InvokeMethods && method.GetParameters().Length == 0 && (is_static || have_instance)) {
+				try {
+					object r = method.Invoke (instance, null);
+					string s = GetValue (r);
+					sb.AppendFormat (format, s);
+				}
+				catch {
+				}
+			}
 		}
 
 		protected virtual string GetParameterDescription (ParameterInfo param, object instance)

@@ -1,8 +1,8 @@
 PROGRAM = type-reflector.exe
 
-PROGRAM_LIBS = 
+PROGRAM_LIBS = -r:System.dll
 
-PROGRAM_FLAGS = /out:$(PROGRAM) /d:TRACE /d:DEBUG $(PROGRAM_LIBS)
+PROGRAM_FLAGS = -out:$(PROGRAM) -d:TRACE -d:DEBUG $(PROGRAM_LIBS)
 
 # For debugging
 # CSCFLAGS = /debug+ /debug:full
@@ -11,6 +11,7 @@ CSCFLAGS =
 MONO = mono
 
 PROGRAM_FILES =  \
+	AssemblyInfo.cs \
 	ConsoleTypeDisplayer.cs \
 	CSharpNodeFormatter.cs \
 	DefaultNodeFormatter.cs \
@@ -39,23 +40,47 @@ PROGRAM_FILES =  \
 	TypeReflectorOptions.cs \
 	VBNodeFormatter.cs \
 
+CSC_INVOKE = $(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(PROGRAM_FILES) $(PROGRAM_LIBS)
+
+GUI_LIBS = -r:System.Drawing.dll
+
 GUI_GTK_FILES = \
-	gtk/GtkTypeDisplayer.cs \
+	gtk$(DS)GtkTypeDisplayer.cs \
 
-GUI_GTK_GLADE_FILE = gtk/type-reflector.glade
+GUI_GTK_GLADE_FILE = gtk$(DS)type-reflector.glade
 
-GUI_GTK_FLAGS = /d:HAVE_GUI_GTK /resource:$(GUI_GTK_GLADE_FILE)
+GUI_GTK_FLAGS = -d:HAVE_GUI_GTK -resource:$(GUI_GTK_GLADE_FILE)
 
-GUI_GTK_LIBS = -r glib-sharp.dll -r pango-sharp.dll -r atk-sharp.dll -r gdk-sharp.dll -r gtk-sharp.dll -r System.Drawing -r glade-sharp.dll
+GUI_GTK_LIBS = -r:glib-sharp.dll -r:pango-sharp.dll -r:atk-sharp.dll -r:gdk-sharp.dll -r:gtk-sharp.dll -r:glade-sharp.dll
 
-all: $(PROGRAM)
+GUI_SWF_FILES = \
+	swf$(DS)SwfWindow.cs \
+	swf$(DS)SwfTypeDisplayer.cs \
+
+GUI_SWF_LIBS = -r:System.Windows.Forms.dll
+
+GUI_SWF_FLAGS = -d:HAVE_GUI_SWF
+
+all: console
+
+console : $(PROGRAM)
+
+gui: gtk
 
 $(PROGRAM) : $(PROGRAM_FILES)
-	$(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(PROGRAM_FILES) $(PROGRAM_LIBS)
+	$(CSC_INVOKE)
 	chmod +x $(PROGRAM)
 
-gui: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE)
-	$(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(GUI_GTK_FLAGS) $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_LIBS)
+.PHONY: gtk swf
+
+
+gtk: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE)
+	# $(CSC_INVOKE) $(GUI_GTK_FLAGS) $(GUI_GTK_FILES) $(GUI_GTK_LIBS)
+	$(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(GUI_GTK_FLAGS) $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_LIBS) $(GUI_LIBS)
+	chmod +x $(PROGRAM)
+
+swf: $(PROGRAM_FILES) $(GUI_SWF_FILES)
+	$(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(GUI_SWF_FLAGS) $(PROGRAM_FILES) $(GUI_SWF_FILES) $(GUI_SWF_LIBS) $(GUI_LIBS)
 	chmod +x $(PROGRAM)
 
 test-run : $(PROGRAM)
@@ -74,14 +99,14 @@ linux:
 	mcs @unix.args
 
 clean:
-	rm -f *.exe *.pdb *.dll *.dbg *~
+	rm -f *.exe *.pdb *.dll *.dbg *~ gtk/*~ swf/*~
 
 INSTALL_FILES = \
 	$(PROGRAM) \
 	$(PROGRAM).config \
 
 
-install: $(PROGRAM) $(PROGRAM).config
+install: $(INSTALL_FILES)
 	if test x$$prefix = x; then \
 		echo Usage is: make -f makefile.gnu install prefix=YOURPREFIX; \
 		exit 1; \

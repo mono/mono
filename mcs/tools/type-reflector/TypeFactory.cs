@@ -47,11 +47,8 @@ namespace Mono.TypeReflector
 				return CreateInstance (type);
 			}
 			catch (Exception e) {
-				Console.WriteLine ("TypeFactory trace: {0}", info.Enabled);
-				Console.WriteLine (
-						"Exception creating ({0}, {1}): {2}", key, type, e.ToString());
 				Trace.WriteLineIf (info.Enabled, string.Format (
-						"Exception creating ({0}, {1}): {2}", key, type, e.ToString()));
+						"Exception creating ({0}, {1}): {2})", key, type, e.ToString()));
 				return null;
 			}
 		}

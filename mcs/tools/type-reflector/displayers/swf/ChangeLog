@@ -1,0 +1,6 @@
+2003-01-08  Jonathan Pryor <jonpryor@vt.edu>
+	* ChangeLog: Added
+	* SwfTypeDisplayer.cs: System.Windows.Forms front-end for 
+	  reflection information
+	* SwfWindow.cs: Creates the actual window, menus, etc.
+

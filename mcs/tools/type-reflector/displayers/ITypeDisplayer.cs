@@ -23,6 +23,8 @@ namespace Mono.TypeReflector
 		void AddType (Type n);
 
 		void Run ();
+
+		void ShowError (string message);
 	}
 }
 

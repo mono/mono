@@ -41,6 +41,7 @@ namespace Mono.TypeReflector
 		private static char showInheritedMembers= 'r';
 		private static char verboseOutput       = 'v';
 		private static char flattenHierarchy    = 'l';
+		private static char invokeMethods       = 'n';
 		private static string version           = "version";
 		private static string formatter         = "formatter";
 		private static string finder            = "finder";
@@ -113,12 +114,17 @@ namespace Mono.TypeReflector
 				"Show everything except System.Type "+
 				"properties, inherited members, non-public "+
 				"members, and \"broken\" Mono attributes.  " +
-        "Equivalent to -bcefimp.");
+				"Equivalent to -bcefimp.");
 			AddOption (flattenHierarchy,        "flatten-hierarchy",
 				"Static members of base types should be " + 
 				"displayed.");
+			AddOption (invokeMethods,           "invoke-methods",
+				"Invoke static methods that accept no arguments " +
+				"and display the return value in the method " +
+				"description (e.g. -m).\n" +
+				"This is not set by -S.");
 			StringBuilder formatterDescription = new StringBuilder ();
-			formatterDescription.Append ("Experimental.  Specify the output style touse.  Available values are:");
+			formatterDescription.Append ("Experimental.  Specify the output style to use.  Available values are:");
 			foreach (object o in Factories.Formatter.Keys)
 				formatterDescription.Append (string.Format ("\n{0}", o));
 			AddArgumentOption (formatter, formatterDescription.ToString(), "<formatter>");
@@ -303,6 +309,10 @@ namespace Mono.TypeReflector
 			}
 		}
 
+		public bool InvokeMethods {
+			get {return base.FoundOption (invokeMethods);}
+		}
+
 		public bool DefaultAssemblies {
 			get {
 				return base.FoundOption (defaultAssemblies);
@@ -391,9 +401,9 @@ namespace Mono.TypeReflector
 						"<types> is interpreted as a regular expression.  As regular expression " + 
 						"meta-characters are seldom used in class names, specifying a type name " +
 						"looks for all types that have the specified type name as a substring.  " +
-            "To get a listing of all available types, pass '.' as the type.  (Since " +
-            "regular expressions are used, '.' will match any character, thus matching " +
-            "all possible types.)") +
+						"To get a listing of all available types, pass '.' as the type.  (Since " +
+						"regular expressions are used, '.' will match any character, thus matching " +
+						"all possible types.)") +
 					"\n\n" +
 					tg0.Group (
 						"<assembly-list> is a `" + Path.PathSeparator + "'-delimited list.  " + 

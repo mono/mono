@@ -13,6 +13,7 @@ narrowing down the list of assemblies searched for a matching type.
 It also allows the types to be viewed according to two different policies.
 The "finder" policy dictates how members are found.  There are currently two
 such policies:
+
   explicit - Searches for members by name
   reflection - uses System.Reflection for member lookup
 
@@ -21,7 +22,8 @@ more work done on it, and "reflection" is dependant upon System.Reflection,
 which may or may not be complete, depending on the platform.
 
 The other policy is the "formatter" policy, which dictates how a member is
-displayed.  There are currently two such policies:
+displayed.  There are currently three such policies:
+
   default - typically the result of .ToString() on the member reflection object
   csharp - attempts to display the member as if it were from C# source code.
   vb - attempts to display the member as if it were from VB.NET source code.
@@ -33,13 +35,81 @@ it was declared...  This constitutes a great deal of information that isn't
 normally present without writing test programs to view the available
 information.
 
+I prefer to think of it as the "Frankenstein" combination of ``TypeFinder''
+and a debugger.  It doesn't just find types.  It doesn't just display the
+members of those types.  It will also (when able to) display the result of
+invoking methods on a type.  The method must fulfill some limitations:
+
+  - There must be a valid object instance.  For arbitrary types, this
+    effectively means you can only get the result of invoking static
+    methods/properties, but this can be useful when looking at Reflection
+    objects.
+
+  - The invoked methods must accept 0 arguments.
+
+Thus, for the C# class definition:
+
+    public class Test {
+        public static int Foo {get {return 42;}}
+    }
+
+we can use type-reflector to determine the value returned by Test.Foo.
+
+This is also useful for determining the values of class constants/readonly
+fields and properties, such as Enumeration values.
+
+There is also support to invoke (and display the return value) of class
+methods that accept no arguments.  However, due to "problems" [1] this is not
+enabled by default; pass the -n argument to enable.
+
+[1] Some of the mono tools do actual work in their static methods that accept
+no arguments.  For example, using Type Reflector on itself to display the
+member Mono.TypeReflector.TypeReflectorApp.PrintVersion would display the
+version information to the console.  Other apps request user input when
+invoked, halting all display until the user presses a key.  Displaying all
+libraries would cause core dumps as gtk_init could be called before gdk_init
+(as they were P/Invoked from the Gtk# assemblies) during this process.
+
+I thought this would be cool, but unless you're careful, things can get weird.
+
+
 GUI Support
 ===========
-type-reflector has a prototype GUI using Gtk#.  To compile it, run:
+Type Reflector has two GUI front-ends, depending on which platform you're on.
+The front-end is specified with the --displayer program argument.
 
-  make -f makefile.gnu gui
+All front ends have their own makefile target.  For now, the "gui" makefile
+target defaults to the Gtk# front-end (essentially because I'm usually on
+Linux).  Long-term, the "gui" target will compile in support for all
+front-ends.
+
+
+Gtk#
+----
+The Gtk# front-end uses (duh!) Gtk#.  And Glade#.  And any other Gnome
+technology I feel like throwing in at any given point in time.  Ahem.
+To compile it, run:
+
+  make -f makefile.gnu gtk
 
 To run it, pass ``--displayer=gtk'' on the command line:
 
-  type-reflector.exe --displayer-gtk .
+  type-reflector.exe --displayer=gtk .
+
+This will display all types in all assemblies; it takes ~25 seconds to finish
+loading (PIII 700 MHz notebook).
+
+
+System.Windows.Forms
+--------------------
+The Windows.Forms front-end is the "swf" displayer.  To compile, run:
+
+    make swf
+
+This must be done on a Windows box, as (at present) the Mono
+System.Windows.Forms implementation will not permit compilation.
+
+To run it, pass ``--displayer=gtk'' on the command line:
+
+  type-reflector.exe --displayer=swf -S .
 
