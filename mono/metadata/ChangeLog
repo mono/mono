@@ -1,3 +1,8 @@
+2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* icall.c: Support ContextBoundObject proxies in ves_icall_InternalExecute.
+	Support also calling constructors, but only for already allocated objects.
+
 2004-09-17  Geoff Norton <gnorton@customerdna.com>
 
 	* reflection.c (type_get_qualified_name): If the klass is null
