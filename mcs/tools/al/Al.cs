@@ -491,23 +491,25 @@ namespace Mono.AssemblyLinker
 			 * Set entry point
 			 */
 
-			string mainClass = entryPoint.Substring (0, entryPoint.LastIndexOf ('.'));
-			string mainMethod = entryPoint.Substring (entryPoint.LastIndexOf ('.') + 1);
+			if (entryPoint != null) {
+				string mainClass = entryPoint.Substring (0, entryPoint.LastIndexOf ('.'));
+				string mainMethod = entryPoint.Substring (entryPoint.LastIndexOf ('.') + 1);
 
-			MethodInfo mainMethodInfo = null;
+				MethodInfo mainMethodInfo = null;
 
-			try {
-				Type mainType = ab.GetType (mainClass);
-				if (mainType != null)
-					mainMethodInfo = mainType.GetMethod (mainMethod);
+				try {
+					Type mainType = ab.GetType (mainClass);
+					if (mainType != null)
+						mainMethodInfo = mainType.GetMethod (mainMethod);
+				}
+				catch (Exception ex) {
+					Console.WriteLine (ex);
+				}
+				if (mainMethodInfo != null)
+					ab.SetEntryPoint (mainMethodInfo);
+				else
+					Report (1037, "Unable to find the entry point method '" + entryPoint + "'");
 			}
-			catch (Exception ex) {
-				Console.WriteLine (ex);
-			}
-			if (mainMethodInfo != null)
-				ab.SetEntryPoint (mainMethodInfo);
-			else
-				Report (1037, "Unable to find the entry point method '" + entryPoint + "'");
 
 			/*
 			 * Emit resources
