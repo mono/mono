@@ -34,11 +34,16 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.ComponentModel.Design.Serialization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-
+	[DefaultProperty("Items")]
+	[DefaultEvent("SelectedIndexChanged")]
+	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class ListBox : ListControl
 	{
 		internal class ListBoxInfo
@@ -195,12 +200,25 @@ namespace System.Windows.Forms
 		}
 
 		#region Events
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public new event EventHandler Click;
+
 		public event DrawItemEventHandler DrawItem;
 		public event MeasureItemEventHandler MeasureItem;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
+
 		public event EventHandler SelectedIndexChanged;
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public new event EventHandler TextChanged;
 		#endregion // Events
 
@@ -216,6 +234,8 @@ namespace System.Windows.Forms
 			}				// the overriden one that refresh also all the items
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set {
@@ -231,6 +251,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (BorderStyle.Fixed3D)]
+		[DispId(-504)]
 		public BorderStyle BorderStyle {
 			get { return border_style; }
 
@@ -246,6 +268,8 @@ namespace System.Windows.Forms
     			}
 		}
 
+		[DefaultValue (0)]
+		[Localizable (true)]
 		public int ColumnWidth {
 			get { return column_width; }
 			set {
@@ -271,6 +295,8 @@ namespace System.Windows.Forms
 			get { return new Size (120, 96); }
 		}
 
+		[RefreshProperties(RefreshProperties.Repaint)]
+		[DefaultValue (DrawMode.Normal)]
 		public virtual DrawMode DrawMode {
 			get { return draw_mode; }
 
@@ -301,6 +327,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (0)]
+		[Localizable (true)]
 		public int HorizontalExtent {
 			get { return horizontal_extent; }
 			set {
@@ -312,6 +340,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
+		[Localizable (true)]
 		public bool HorizontalScrollbar {
 			get { return horizontal_scrollbar; }
 			set {
@@ -324,6 +354,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (true)]
+		[Localizable (true)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public bool IntegralHeight {
 			get { return integral_height; }
 			set {
@@ -335,6 +368,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (13)]
+		[Localizable (true)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public virtual int ItemHeight {
 			get { return listbox_info.item_height; }
 			set {
@@ -346,10 +382,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Localizable (true)]
+		[Editor ("System.Windows.Forms.Design.ListContolStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public ObjectCollection Items {
 			get { return items; }
 		}
 
+		[DefaultValue (false)]
 		public bool MultiColumn {
 			get { return multicolumn; }
 			set {
@@ -369,6 +409,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get { return preferred_height;}
 		}
@@ -385,7 +428,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// Only afects the Vertical ScrollBar
+		// Only affects the Vertical ScrollBar
+		[DefaultValue (false)]
+		[Localizable (true)]
 		public bool ScrollAlwaysVisible {
 			get { return scroll_always_visible; }
 			set {
@@ -398,6 +443,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Bindable(true)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
 			get { return selected_index;}
 			set {
@@ -420,10 +468,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SelectedIndexCollection SelectedIndices {
 			get { return selected_indices; }
 		}
 
+		[Bindable(true)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public object SelectedItem {
 			get {
 				if (SelectedItems.Count > 0)
@@ -444,10 +497,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SelectedObjectCollection SelectedItems {
 			get {return selected_items;}
 		}
 
+		[DefaultValue (SelectionMode.One)]
 		public virtual SelectionMode SelectionMode {
 			get { return selection_mode; }
     			set {
@@ -480,6 +536,7 @@ namespace System.Windows.Forms
     			}
 		}
 
+		[DefaultValue (false)]
 		public bool Sorted {
 			get { return sorted; }
 
@@ -492,6 +549,10 @@ namespace System.Windows.Forms
     			}
 		}
 
+		[Bindable (false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override string Text {
 			get {
 				if (SelectionMode != SelectionMode.None && SelectedIndex != -1)
@@ -517,6 +578,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int TopIndex {
 			get { return top_index;}
 			set {
@@ -531,6 +594,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (true)]
 		public bool UseTabStops {
 			get { return use_tabstops; }
 
@@ -1714,6 +1778,7 @@ namespace System.Windows.Forms
 		/*
 			ListBox.ObjectCollection
 		*/
+		[ListBindable (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable
 		{
 			// Compare objects
@@ -1993,6 +2058,7 @@ namespace System.Windows.Forms
 			}
 
 			#region Public Properties
+			[Browsable (false)]
 			public virtual int Count {
 				get { return indices.Count; }
 			}
