@@ -76,6 +76,8 @@
 		bool      modal;
 		bool      exitModalLoop;
 		Size	  autoScaleBaseSize;
+		bool	  keyPreview;
+		bool      showInTaskbar;
 
 		public Form () : base ()
     		{
@@ -88,6 +90,8 @@
 			maximizeBox = true;
 			minimizeBox = true;
 			controlBox  = true;
+			keyPreview  = false;
+			showInTaskbar = true;
     		}
     		
     		static Form ()
@@ -291,14 +295,9 @@
     			get {	return mdiParent != null; }
     		}
 
-       		[MonoTODO]
     		public bool KeyPreview {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-					//FIXME:
-				}
+    			get { return keyPreview;  }
+    			set { keyPreview = value; }
     		}
     
 	  		//Compact Framework
@@ -457,12 +456,14 @@
     
     		[MonoTODO]
     		public bool ShowInTaskbar {
-    			get {
-    				throw new NotImplementedException ();
-    			}
+    			get { return showInTaskbar; }
     			set {
-					//FIXME:
+				if ( showInTaskbar != value ) {
+					showInTaskbar = value;
+					RecreateHandle ( );
+					Visible = Visible;
 				}
+			}
     		}
     
     
@@ -699,8 +700,11 @@
 					pars.ExStyle |= (int)WindowExStyles.WS_EX_MDICHILD;
 				}
 				else {
-					pars.X = (int)CreateWindowCoordinates.CW_USEDEFAULT;
-					pars.Y = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+					if ( !RecreatingHandle ) {
+						// don't change location of the form when it is being recreated
+						pars.X = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+						pars.Y = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+					}
 
 					pars.Style |= (int)( WindowStyles.WS_CLIPSIBLINGS  |
 							     WindowStyles.WS_CLIPCHILDREN );
@@ -708,6 +712,14 @@
 
 				if ( TopLevel && Parent == null ) 
 					pars.Parent = IntPtr.Zero;
+
+				if ( ShowInTaskbar )
+					pars.ExStyle |= (int) WindowExStyles.WS_EX_APPWINDOW;
+				else {
+					pars.ExStyle &= ~(int) WindowExStyles.WS_EX_APPWINDOW;
+					// should be child of the hidden window
+					pars.Parent = Control.ParkingWindowHandle;
+				}
 				
 				// this property is used for modal dialogs
 				if ( dlgOwner != null )
@@ -975,7 +987,10 @@
     
     		protected override bool ProcessKeyPreview (ref Message m)
     		{
-    			return base.ProcessKeyPreview (ref m);
+			if ( KeyPreview )
+				return ProcessKeyEventArgs ( ref m ); 
+
+    			return false;
     		}
 
     		protected override bool ProcessTabKey ( bool forward )

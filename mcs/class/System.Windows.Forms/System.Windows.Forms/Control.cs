@@ -876,7 +876,7 @@
     			}
     		}
     		
-		private static IntPtr ParkingWindowHandle {
+		protected static IntPtr ParkingWindowHandle {
 			get {
 				if ( parkingWindow == null )
 					parkingWindow = new NativeWindow ( );

@@ -1,3 +1,7 @@
+2003-06-04   Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs
+	* Form.cs   : KeyPreview, ShowInTaskBar
+
 2003-06-02 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Application.cs
 	* ComboBox.cs
