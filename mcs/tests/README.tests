@@ -261,6 +261,12 @@ Fix for bug #39108 - ensure that the correct form of a params method is called:
 object[]) affects resolution of normal/expanded form
 of method invocation."
 
+test-195.cs
+-----------
+
+Fix for bug #45149, constructors that call another constructor in the
+same class (using ": this()") should not emit instance field initializers. 
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
