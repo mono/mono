@@ -58,49 +58,67 @@ namespace Microsoft.JScript
 		public const int LITERAL_var = 28;
 		public const int COMMA = 29;
 		public const int ASSIGNMENT = 30;
-		public const int COMPOUND_ASSIGNMENT = 31;
-		public const int INTERROGATION = 32;
-		public const int LOGICAL_OR = 33;
-		public const int LOGICAL_AND = 34;
-		public const int BITWISE_OR = 35;
-		public const int TRIANGLE = 36;
-		public const int BITWISE_AND = 37;
-		public const int L_THAN = 38;
-		public const int G_THAN = 39;
-		public const int LE_THAN = 40;
-		public const int GE_THAN = 41;
-		public const int LITERAL_instanceof = 42;
-		public const int PLUS = 43;
-		public const int MINUS = 44;
-		public const int TIMES = 45;
-		public const int SLASH = 46;
-		public const int PERCENT = 47;
-		public const int LITERAL_delete = 48;
-		public const int LITERAL_void = 49;
-		public const int LITERAL_typeof = 50;
-		public const int INCREMENT = 51;
-		public const int DECREMENT = 52;
-		public const int ADMIRATION = 53;
-		public const int LITERAL_new = 54;
-		public const int THIS = 55;
-		public const int STRING_LITERAL = 56;
-		public const int LSQUARE = 57;
-		public const int RSQUARE = 58;
-		public const int LITERAL_function = 59;
-		public const int LITERAL_true = 60;
-		public const int LITERAL_false = 61;
-		public const int LITERAL_null = 62;
-		public const int TAB = 63;
-		public const int VERTICAL_TAB = 64;
-		public const int FORM_FEED = 65;
-		public const int SPACE = 66;
-		public const int NO_BREAK_SPACE = 67;
-		public const int LINE_FEED = 68;
-		public const int CARRIGE_RETURN = 69;
-		public const int LINE_SEPARATOR = 70;
-		public const int PARAGRAPH_SEPARATOR = 71;
-		public const int DOT = 72;
-		public const int SL_COMMENT = 73;
+		public const int MULTIPLICATION_ASSIGN = 31;
+		public const int DIVISION_ASSIGN = 32;
+		public const int REMAINDER_ASSIGN = 33;
+		public const int ADDITION_ASSIGN = 34;
+		public const int SUBSTRACTION_ASSIGN = 35;
+		public const int SIGNED_LEFT_SHIFT_ASSIGN = 36;
+		public const int SIGNED_RIGHT_SHIFT_ASSIGN = 37;
+		public const int UNSIGNED_RIGHT_SHIFT_ASSIGN = 38;
+		public const int BITWISE_AND_ASSIGN = 39;
+		public const int BITWISE_XOR_ASSIGN = 40;
+		public const int BITWISE_OR_ASSIGN = 41;
+		public const int CONDITIONAL = 42;
+		public const int LOGICAL_OR = 43;
+		public const int LOGICAL_AND = 44;
+		public const int BITWISE_OR = 45;
+		public const int BITWISE_XOR = 46;
+		public const int BITWISE_AND = 47;
+		public const int EQUALS = 48;
+		public const int DOES_NOT_EQUALS = 49;
+		public const int STRICT_EQUALS = 50;
+		public const int STRICT_DOES_NOT_EQUALS = 51;
+		public const int L_THAN = 52;
+		public const int G_THAN = 53;
+		public const int LE_THAN = 54;
+		public const int GE_THAN = 55;
+		public const int LITERAL_instanceof = 56;
+		public const int SIGNED_RIGHT_SHIFT = 57;
+		public const int SIGNED_LEFT_SHIFT = 58;
+		public const int PLUS = 59;
+		public const int MINUS = 60;
+		public const int TIMES = 61;
+		public const int DIVISION = 62;
+		public const int REMAINDER = 63;
+		public const int LITERAL_delete = 64;
+		public const int LITERAL_void = 65;
+		public const int LITERAL_typeof = 66;
+		public const int INCREMENT = 67;
+		public const int DECREMENT = 68;
+		public const int BITWISE_NOT = 69;
+		public const int LOGICAL_NOT = 70;
+		public const int LITERAL_new = 71;
+		public const int LSQUARE = 72;
+		public const int RSQUARE = 73;
+		public const int DOT = 74;
+		public const int THIS = 75;
+		public const int STRING_LITERAL = 76;
+		public const int LITERAL_function = 77;
+		public const int LITERAL_true = 78;
+		public const int LITERAL_false = 79;
+		public const int LITERAL_null = 80;
+		public const int TAB = 81;
+		public const int VERTICAL_TAB = 82;
+		public const int FORM_FEED = 83;
+		public const int SPACE = 84;
+		public const int NO_BREAK_SPACE = 85;
+		public const int LINE_FEED = 86;
+		public const int CARRIGE_RETURN = 87;
+		public const int LINE_SEPARATOR = 88;
+		public const int PARAGRAPH_SEPARATOR = 89;
+		public const int UNSIGNED_RIGHT_SHIFT = 90;
+		public const int SL_COMMENT = 91;
 		
 		public JScriptLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -123,33 +141,33 @@ namespace Microsoft.JScript
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
 			literals = new Hashtable();
-			literals.Add("for", 13);
-			literals.Add("if", 7);
-			literals.Add("delete", 48);
-			literals.Add("throw", 24);
-			literals.Add("try", 25);
-			literals.Add("function", 59);
-			literals.Add("while", 12);
-			literals.Add("var", 28);
-			literals.Add("with", 19);
-			literals.Add("null", 62);
-			literals.Add("break", 17);
 			literals.Add("switch", 20);
-			literals.Add("catch", 26);
-			literals.Add("in", 14);
-			literals.Add("else", 10);
-			literals.Add("continue", 15);
 			literals.Add("case", 21);
-			literals.Add("void", 49);
-			literals.Add("true", 60);
-			literals.Add("typeof", 50);
-			literals.Add("do", 11);
-			literals.Add("false", 61);
-			literals.Add("return", 18);
+			literals.Add("for", 13);
+			literals.Add("false", 79);
+			literals.Add("true", 78);
+			literals.Add("try", 25);
 			literals.Add("finally", 27);
-			literals.Add("new", 54);
+			literals.Add("void", 65);
+			literals.Add("typeof", 66);
+			literals.Add("instanceof", 56);
+			literals.Add("throw", 24);
+			literals.Add("continue", 15);
+			literals.Add("do", 11);
+			literals.Add("in", 14);
+			literals.Add("null", 80);
+			literals.Add("function", 77);
+			literals.Add("while", 12);
+			literals.Add("break", 17);
+			literals.Add("new", 71);
+			literals.Add("return", 18);
+			literals.Add("delete", 64);
+			literals.Add("if", 7);
 			literals.Add("default", 23);
-			literals.Add("instanceof", 42);
+			literals.Add("else", 10);
+			literals.Add("var", 28);
+			literals.Add("catch", 26);
+			literals.Add("with", 19);
 		}
 		
 		public new Token nextToken()			//throws TokenStreamException
@@ -275,69 +293,21 @@ tryAgain:
 							theRetToken = returnToken_;
 							break;
 						}
-						case '<':
+						case '~':
 						{
-							mL_THAN(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '>':
-						{
-							mG_THAN(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '*':
-						{
-							mTIMES(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '%':
-						{
-							mPERCENT(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '&':
-						{
-							mBITWISE_AND(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '|':
-						{
-							mBITWISE_OR(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '!':
-						{
-							mADMIRATION(true);
+							mBITWISE_NOT(true);
 							theRetToken = returnToken_;
 							break;
 						}
 						case '?':
 						{
-							mINTERROGATION(true);
+							mCONDITIONAL(true);
 							theRetToken = returnToken_;
 							break;
 						}
 						case ':':
 						{
 							mCOLON(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '=':
-						{
-							mASSIGNMENT(true);
-							theRetToken = returnToken_;
-							break;
-						}
-						case '^':
-						{
-							mTRIANGLE(true);
 							theRetToken = returnToken_;
 							break;
 						}
@@ -366,8 +336,48 @@ tryAgain:
 							break;
 						}
 						default:
-							if ((LA(1)=='+') && (LA(2)=='+'))
+							if ((LA(1)=='>') && (LA(2)=='>') && (LA(3)=='>') && (LA(4)=='='))
 							{
+								mUNSIGNED_RIGHT_SHIFT_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='=') && (LA(2)=='=') && (LA(3)=='=')) {
+								mSTRICT_EQUALS(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='!') && (LA(2)=='=') && (LA(3)=='=')) {
+								mSTRICT_DOES_NOT_EQUALS(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='>') && (LA(2)=='>') && (LA(3)=='>') && (true)) {
+								mUNSIGNED_RIGHT_SHIFT(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='<') && (LA(2)=='<') && (LA(3)=='=')) {
+								mSIGNED_LEFT_SHIFT_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='>') && (LA(2)=='>') && (LA(3)=='=')) {
+								mSIGNED_RIGHT_SHIFT_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='<') && (LA(2)=='=')) {
+								mLE_THAN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='>') && (LA(2)=='=')) {
+								mGE_THAN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='=') && (LA(2)=='=') && (true)) {
+								mEQUALS(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='!') && (LA(2)=='=') && (true)) {
+								mDOES_NOT_EQUALS(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='+') && (LA(2)=='+')) {
 								mINCREMENT(true);
 								theRetToken = returnToken_;
 							}
@@ -375,8 +385,64 @@ tryAgain:
 								mDECREMENT(true);
 								theRetToken = returnToken_;
 							}
+							else if ((LA(1)=='<') && (LA(2)=='<') && (true)) {
+								mSIGNED_LEFT_SHIFT(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='>') && (LA(2)=='>') && (true)) {
+								mSIGNED_RIGHT_SHIFT(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='&') && (LA(2)=='&')) {
+								mLOGICAL_AND(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='|') && (LA(2)=='|')) {
+								mLOGICAL_OR(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='+') && (LA(2)=='=')) {
+								mADDITION_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='-') && (LA(2)=='=')) {
+								mSUBSTRACTION_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='*') && (LA(2)=='=')) {
+								mMULTIPLICATION_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='%') && (LA(2)=='=')) {
+								mREMAINDER_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='&') && (LA(2)=='=')) {
+								mBITWISE_AND_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='|') && (LA(2)=='=')) {
+								mBITWISE_OR_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='^') && (LA(2)=='=')) {
+								mBITWISE_XOR_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='/') && (LA(2)=='=')) {
+								mDIVISION_ASSIGN(true);
+								theRetToken = returnToken_;
+							}
 							else if ((LA(1)=='/') && (LA(2)=='/')) {
 								mSL_COMMENT(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='<') && (true)) {
+								mL_THAN(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='>') && (true)) {
+								mG_THAN(true);
 								theRetToken = returnToken_;
 							}
 							else if ((LA(1)=='+') && (true)) {
@@ -387,8 +453,36 @@ tryAgain:
 								mMINUS(true);
 								theRetToken = returnToken_;
 							}
+							else if ((LA(1)=='*') && (true)) {
+								mTIMES(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='%') && (true)) {
+								mREMAINDER(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='&') && (true)) {
+								mBITWISE_AND(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='|') && (true)) {
+								mBITWISE_OR(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='^') && (true)) {
+								mBITWISE_XOR(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='!') && (true)) {
+								mLOGICAL_NOT(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='=') && (true)) {
+								mASSIGNMENT(true);
+								theRetToken = returnToken_;
+							}
 							else if ((LA(1)=='/') && (true)) {
-								mSLASH(true);
+								mDIVISION(true);
 								theRetToken = returnToken_;
 							}
 						else
@@ -423,6 +517,7 @@ tryAgain:
 		_ttype = TAB;
 		
 		match('\u0009');
+		_ttype = Token.SKIP;
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -680,16 +775,6 @@ tryAgain:
 		_ttype = L_THAN;
 		
 		match('<');
-		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = LE_THAN;
-			}
-			else {
-			}
-			
-		}
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -704,16 +789,90 @@ tryAgain:
 		_ttype = G_THAN;
 		
 		match('>');
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = GE_THAN;
-			}
-			else {
-			}
-			
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
 		}
+		returnToken_ = _token;
+	}
+	
+	public void mLE_THAN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = LE_THAN;
+		
+		match("<=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mGE_THAN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = GE_THAN;
+		
+		match(">=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mEQUALS(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = EQUALS;
+		
+		match("==");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mDOES_NOT_EQUALS(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = DOES_NOT_EQUALS;
+		
+		match("!=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mSTRICT_EQUALS(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = STRICT_EQUALS;
+		
+		match("===");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mSTRICT_DOES_NOT_EQUALS(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = STRICT_DOES_NOT_EQUALS;
+		
+		match("!==");
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -728,16 +887,6 @@ tryAgain:
 		_ttype = PLUS;
 		
 		match('+');
-		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-			}
-			else {
-			}
-			
-		}
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -752,16 +901,6 @@ tryAgain:
 		_ttype = MINUS;
 		
 		match('-');
-		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-			}
-			else {
-			}
-			
-		}
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -776,16 +915,6 @@ tryAgain:
 		_ttype = TIMES;
 		
 		match('*');
-		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-			}
-			else {
-			}
-			
-		}
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -794,46 +923,82 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mSLASH(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	public void mREMAINDER(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = SLASH;
-		
-		match('/');
-		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-			}
-			else {
-			}
-			
-		}
-		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
-		{
-			_token = makeToken(_ttype);
-			_token.setText(text.ToString(_begin, text.Length-_begin));
-		}
-		returnToken_ = _token;
-	}
-	
-	public void mPERCENT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
-{
-		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = PERCENT;
+		_ttype = REMAINDER;
 		
 		match('%');
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-			}
-			else {
-			}
-			
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
 		}
+		returnToken_ = _token;
+	}
+	
+	public void mINCREMENT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = INCREMENT;
+		
+		match("++");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mDECREMENT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = DECREMENT;
+		
+		match("--");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mSIGNED_LEFT_SHIFT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = SIGNED_LEFT_SHIFT;
+		
+		match("<<");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mSIGNED_RIGHT_SHIFT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = SIGNED_RIGHT_SHIFT;
+		
+		match(">>");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mUNSIGNED_RIGHT_SHIFT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = UNSIGNED_RIGHT_SHIFT;
+		
+		match(">>>");
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -848,26 +1013,6 @@ tryAgain:
 		_ttype = BITWISE_AND;
 		
 		match('&');
-		{
-			switch ( LA(1) )
-			{
-			case '&':
-			{
-				match('&');
-				_ttype = LOGICAL_AND;
-				break;
-			}
-			case '=':
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-				break;
-			}
-			default:
-				{
-				}
-			break; }
-		}
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -882,26 +1027,6 @@ tryAgain:
 		_ttype = BITWISE_OR;
 		
 		match('|');
-		{
-			switch ( LA(1) )
-			{
-			case '|':
-			{
-				match('|');
-				_ttype = LOGICAL_OR;
-				break;
-			}
-			case '=':
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-				break;
-			}
-			default:
-				{
-				}
-			break; }
-		}
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -910,10 +1035,24 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mADMIRATION(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	public void mBITWISE_XOR(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = ADMIRATION;
+		_ttype = BITWISE_XOR;
+		
+		match('^');
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mLOGICAL_NOT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = LOGICAL_NOT;
 		
 		match('!');
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -924,10 +1063,52 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mINTERROGATION(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	public void mBITWISE_NOT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = INTERROGATION;
+		_ttype = BITWISE_NOT;
+		
+		match('~');
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mLOGICAL_AND(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = LOGICAL_AND;
+		
+		match("&&");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mLOGICAL_OR(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = LOGICAL_OR;
+		
+		match("||");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mCONDITIONAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = CONDITIONAL;
 		
 		match('?');
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -966,22 +1147,12 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mTRIANGLE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	public void mADDITION_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = TRIANGLE;
+		_ttype = ADDITION_ASSIGN;
 		
-		match('^');
-		{
-			if ((LA(1)=='='))
-			{
-				match('=');
-				_ttype = COMPOUND_ASSIGNMENT;
-			}
-			else {
-			}
-			
-		}
+		match("+=");
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -990,12 +1161,12 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mINCREMENT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	public void mSUBSTRACTION_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = INCREMENT;
+		_ttype = SUBSTRACTION_ASSIGN;
 		
-		match("++");
+		match("-=");
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -1004,12 +1175,138 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mDECREMENT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	public void mMULTIPLICATION_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = DECREMENT;
+		_ttype = MULTIPLICATION_ASSIGN;
 		
-		match("--");
+		match("*=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mREMAINDER_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = REMAINDER_ASSIGN;
+		
+		match("%=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mSIGNED_LEFT_SHIFT_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = SIGNED_LEFT_SHIFT_ASSIGN;
+		
+		match("<<=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mSIGNED_RIGHT_SHIFT_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = SIGNED_RIGHT_SHIFT_ASSIGN;
+		
+		match(">>=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mUNSIGNED_RIGHT_SHIFT_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = UNSIGNED_RIGHT_SHIFT_ASSIGN;
+		
+		match(">>>=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mBITWISE_AND_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = BITWISE_AND_ASSIGN;
+		
+		match("&=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mBITWISE_OR_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = BITWISE_OR_ASSIGN;
+		
+		match("|=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mBITWISE_XOR_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = BITWISE_XOR_ASSIGN;
+		
+		match("^=");
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mDIVISION(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = DIVISION;
+		
+		match('/');
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	public void mDIVISION_ASSIGN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = DIVISION_ASSIGN;
+		
+		match("/=");
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -1028,7 +1325,7 @@ tryAgain:
 		match('"');
 		text.Length = _saveIndex;
 		{ // ( ... )+
-		int _cnt155=0;
+		int _cnt178=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -1062,12 +1359,12 @@ tryAgain:
 			}
 			default:
 			{
-				if (_cnt155 >= 1) { goto _loop155_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt178 >= 1) { goto _loop178_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt155++;
+			_cnt178++;
 		}
-_loop155_breakloop:		;
+_loop178_breakloop:		;
 		}    // ( ... )+
 		_saveIndex = text.Length;
 		match('"');
@@ -1152,11 +1449,11 @@ _loop155_breakloop:		;
 				}
 				default:
 				{
-					goto _loop159_breakloop;
+					goto _loop182_breakloop;
 				}
 				 }
 			}
-_loop159_breakloop:			;
+_loop182_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1184,11 +1481,11 @@ _loop159_breakloop:			;
 				}
 				else
 				{
-					goto _loop163_breakloop;
+					goto _loop186_breakloop;
 				}
 				
 			}
-_loop163_breakloop:			;
+_loop186_breakloop:			;
 		}    // ( ... )*
 		_ttype = Token.SKIP; newline ();
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))

@@ -50,49 +50,67 @@ namespace Microsoft.JScript
 		public const int LITERAL_var = 28;
 		public const int COMMA = 29;
 		public const int ASSIGNMENT = 30;
-		public const int COMPOUND_ASSIGNMENT = 31;
-		public const int INTERROGATION = 32;
-		public const int LOGICAL_OR = 33;
-		public const int LOGICAL_AND = 34;
-		public const int BITWISE_OR = 35;
-		public const int TRIANGLE = 36;
-		public const int BITWISE_AND = 37;
-		public const int L_THAN = 38;
-		public const int G_THAN = 39;
-		public const int LE_THAN = 40;
-		public const int GE_THAN = 41;
-		public const int LITERAL_instanceof = 42;
-		public const int PLUS = 43;
-		public const int MINUS = 44;
-		public const int TIMES = 45;
-		public const int SLASH = 46;
-		public const int PERCENT = 47;
-		public const int LITERAL_delete = 48;
-		public const int LITERAL_void = 49;
-		public const int LITERAL_typeof = 50;
-		public const int INCREMENT = 51;
-		public const int DECREMENT = 52;
-		public const int ADMIRATION = 53;
-		public const int LITERAL_new = 54;
-		public const int THIS = 55;
-		public const int STRING_LITERAL = 56;
-		public const int LSQUARE = 57;
-		public const int RSQUARE = 58;
-		public const int LITERAL_function = 59;
-		public const int LITERAL_true = 60;
-		public const int LITERAL_false = 61;
-		public const int LITERAL_null = 62;
-		public const int TAB = 63;
-		public const int VERTICAL_TAB = 64;
-		public const int FORM_FEED = 65;
-		public const int SPACE = 66;
-		public const int NO_BREAK_SPACE = 67;
-		public const int LINE_FEED = 68;
-		public const int CARRIGE_RETURN = 69;
-		public const int LINE_SEPARATOR = 70;
-		public const int PARAGRAPH_SEPARATOR = 71;
-		public const int DOT = 72;
-		public const int SL_COMMENT = 73;
+		public const int MULTIPLICATION_ASSIGN = 31;
+		public const int DIVISION_ASSIGN = 32;
+		public const int REMAINDER_ASSIGN = 33;
+		public const int ADDITION_ASSIGN = 34;
+		public const int SUBSTRACTION_ASSIGN = 35;
+		public const int SIGNED_LEFT_SHIFT_ASSIGN = 36;
+		public const int SIGNED_RIGHT_SHIFT_ASSIGN = 37;
+		public const int UNSIGNED_RIGHT_SHIFT_ASSIGN = 38;
+		public const int BITWISE_AND_ASSIGN = 39;
+		public const int BITWISE_XOR_ASSIGN = 40;
+		public const int BITWISE_OR_ASSIGN = 41;
+		public const int CONDITIONAL = 42;
+		public const int LOGICAL_OR = 43;
+		public const int LOGICAL_AND = 44;
+		public const int BITWISE_OR = 45;
+		public const int BITWISE_XOR = 46;
+		public const int BITWISE_AND = 47;
+		public const int EQUALS = 48;
+		public const int DOES_NOT_EQUALS = 49;
+		public const int STRICT_EQUALS = 50;
+		public const int STRICT_DOES_NOT_EQUALS = 51;
+		public const int L_THAN = 52;
+		public const int G_THAN = 53;
+		public const int LE_THAN = 54;
+		public const int GE_THAN = 55;
+		public const int LITERAL_instanceof = 56;
+		public const int SIGNED_RIGHT_SHIFT = 57;
+		public const int SIGNED_LEFT_SHIFT = 58;
+		public const int PLUS = 59;
+		public const int MINUS = 60;
+		public const int TIMES = 61;
+		public const int DIVISION = 62;
+		public const int REMAINDER = 63;
+		public const int LITERAL_delete = 64;
+		public const int LITERAL_void = 65;
+		public const int LITERAL_typeof = 66;
+		public const int INCREMENT = 67;
+		public const int DECREMENT = 68;
+		public const int BITWISE_NOT = 69;
+		public const int LOGICAL_NOT = 70;
+		public const int LITERAL_new = 71;
+		public const int LSQUARE = 72;
+		public const int RSQUARE = 73;
+		public const int DOT = 74;
+		public const int THIS = 75;
+		public const int STRING_LITERAL = 76;
+		public const int LITERAL_function = 77;
+		public const int LITERAL_true = 78;
+		public const int LITERAL_false = 79;
+		public const int LITERAL_null = 80;
+		public const int TAB = 81;
+		public const int VERTICAL_TAB = 82;
+		public const int FORM_FEED = 83;
+		public const int SPACE = 84;
+		public const int NO_BREAK_SPACE = 85;
+		public const int LINE_FEED = 86;
+		public const int CARRIGE_RETURN = 87;
+		public const int LINE_SEPARATOR = 88;
+		public const int PARAGRAPH_SEPARATOR = 89;
+		public const int UNSIGNED_RIGHT_SHIFT = 90;
+		public const int SL_COMMENT = 91;
 		
 		
 		protected void initialize()
@@ -714,11 +732,12 @@ namespace Microsoft.JScript
 				case LITERAL_typeof:
 				case INCREMENT:
 				case DECREMENT:
-				case ADMIRATION:
+				case BITWISE_NOT:
+				case LOGICAL_NOT:
 				case LITERAL_new:
+				case LSQUARE:
 				case THIS:
 				case STRING_LITERAL:
-				case LSQUARE:
 				case LITERAL_function:
 				case LITERAL_true:
 				case LITERAL_false:
@@ -1010,6 +1029,7 @@ namespace Microsoft.JScript
 				case SEMI_COLON:
 				case RPAREN:
 				case COLON:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1472,9 +1492,9 @@ _loop28_breakloop:			;
 			{
 				switch ( LA(1) )
 				{
-				case INTERROGATION:
+				case CONDITIONAL:
 				{
-					match(INTERROGATION);
+					match(CONDITIONAL);
 					assignment_expression();
 					match(COLON);
 					assignment_expression();
@@ -1485,6 +1505,7 @@ _loop28_breakloop:			;
 				case RPAREN:
 				case COLON:
 				case COMMA:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1522,9 +1543,59 @@ _loop28_breakloop:			;
 				match(ASSIGNMENT);
 				break;
 			}
-			case COMPOUND_ASSIGNMENT:
+			case MULTIPLICATION_ASSIGN:
 			{
-				match(COMPOUND_ASSIGNMENT);
+				match(MULTIPLICATION_ASSIGN);
+				break;
+			}
+			case DIVISION_ASSIGN:
+			{
+				match(DIVISION_ASSIGN);
+				break;
+			}
+			case REMAINDER_ASSIGN:
+			{
+				match(REMAINDER_ASSIGN);
+				break;
+			}
+			case ADDITION_ASSIGN:
+			{
+				match(ADDITION_ASSIGN);
+				break;
+			}
+			case SUBSTRACTION_ASSIGN:
+			{
+				match(SUBSTRACTION_ASSIGN);
+				break;
+			}
+			case SIGNED_LEFT_SHIFT_ASSIGN:
+			{
+				match(SIGNED_LEFT_SHIFT_ASSIGN);
+				break;
+			}
+			case SIGNED_RIGHT_SHIFT_ASSIGN:
+			{
+				match(SIGNED_RIGHT_SHIFT_ASSIGN);
+				break;
+			}
+			case UNSIGNED_RIGHT_SHIFT_ASSIGN:
+			{
+				match(UNSIGNED_RIGHT_SHIFT_ASSIGN);
+				break;
+			}
+			case BITWISE_AND_ASSIGN:
+			{
+				match(BITWISE_AND_ASSIGN);
+				break;
+			}
+			case BITWISE_XOR_ASSIGN:
+			{
+				match(BITWISE_XOR_ASSIGN);
+				break;
+			}
+			case BITWISE_OR_ASSIGN:
+			{
+				match(BITWISE_OR_ASSIGN);
 				break;
 			}
 			default:
@@ -1568,7 +1639,8 @@ _loop28_breakloop:			;
 				case RPAREN:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1614,8 +1686,9 @@ _loop28_breakloop:			;
 				case RPAREN:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
 				case LOGICAL_OR:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1661,9 +1734,10 @@ _loop28_breakloop:			;
 				case RPAREN:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
 				case LOGICAL_OR:
 				case LOGICAL_AND:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1698,9 +1772,9 @@ _loop28_breakloop:			;
 			{
 				switch ( LA(1) )
 				{
-				case TRIANGLE:
+				case BITWISE_XOR:
 				{
-					match(TRIANGLE);
+					match(BITWISE_XOR);
 					bitwise_xor_expression();
 					break;
 				}
@@ -1709,10 +1783,11 @@ _loop28_breakloop:			;
 				case RPAREN:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
 				case LOGICAL_OR:
 				case LOGICAL_AND:
 				case BITWISE_OR:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1758,11 +1833,12 @@ _loop28_breakloop:			;
 				case RPAREN:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
 				case LOGICAL_OR:
 				case LOGICAL_AND:
 				case BITWISE_OR:
-				case TRIANGLE:
+				case BITWISE_XOR:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1794,6 +1870,67 @@ _loop28_breakloop:			;
 		
 		try {      // for error handling
 			relational_expression();
+			{
+				switch ( LA(1) )
+				{
+				case EQUALS:
+				case DOES_NOT_EQUALS:
+				case STRICT_EQUALS:
+				case STRICT_DOES_NOT_EQUALS:
+				{
+					{
+						switch ( LA(1) )
+						{
+						case EQUALS:
+						{
+							match(EQUALS);
+							break;
+						}
+						case DOES_NOT_EQUALS:
+						{
+							match(DOES_NOT_EQUALS);
+							break;
+						}
+						case STRICT_EQUALS:
+						{
+							match(STRICT_EQUALS);
+							break;
+						}
+						case STRICT_DOES_NOT_EQUALS:
+						{
+							match(STRICT_DOES_NOT_EQUALS);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
+					equality_expression();
+					break;
+				}
+				case RBRACE:
+				case SEMI_COLON:
+				case RPAREN:
+				case COLON:
+				case COMMA:
+				case CONDITIONAL:
+				case LOGICAL_OR:
+				case LOGICAL_AND:
+				case BITWISE_OR:
+				case BITWISE_XOR:
+				case BITWISE_AND:
+				case RSQUARE:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				 }
+			}
 		}
 		catch (RecognitionException ex)
 		{
@@ -1873,12 +2010,17 @@ _loop28_breakloop:			;
 				case RPAREN:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
 				case LOGICAL_OR:
 				case LOGICAL_AND:
 				case BITWISE_OR:
-				case TRIANGLE:
+				case BITWISE_XOR:
 				case BITWISE_AND:
+				case EQUALS:
+				case DOES_NOT_EQUALS:
+				case STRICT_EQUALS:
+				case STRICT_DOES_NOT_EQUALS:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1895,7 +2037,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_19_);
+				consumeUntil(tokenSet_20_);
 			}
 			else
 			{
@@ -1910,6 +2052,65 @@ _loop28_breakloop:			;
 		
 		try {      // for error handling
 			additive_expression();
+			{
+				switch ( LA(1) )
+				{
+				case SIGNED_RIGHT_SHIFT:
+				case SIGNED_LEFT_SHIFT:
+				{
+					{
+						switch ( LA(1) )
+						{
+						case SIGNED_RIGHT_SHIFT:
+						{
+							match(SIGNED_RIGHT_SHIFT);
+							break;
+						}
+						case SIGNED_LEFT_SHIFT:
+						{
+							match(SIGNED_LEFT_SHIFT);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
+					shift_expression();
+					break;
+				}
+				case RBRACE:
+				case SEMI_COLON:
+				case RPAREN:
+				case LITERAL_in:
+				case COLON:
+				case COMMA:
+				case CONDITIONAL:
+				case LOGICAL_OR:
+				case LOGICAL_AND:
+				case BITWISE_OR:
+				case BITWISE_XOR:
+				case BITWISE_AND:
+				case EQUALS:
+				case DOES_NOT_EQUALS:
+				case STRICT_EQUALS:
+				case STRICT_DOES_NOT_EQUALS:
+				case L_THAN:
+				case G_THAN:
+				case LE_THAN:
+				case GE_THAN:
+				case LITERAL_instanceof:
+				case RSQUARE:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				 }
+			}
 		}
 		catch (RecognitionException ex)
 		{
@@ -1917,7 +2118,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_20_);
+				consumeUntil(tokenSet_21_);
 			}
 			else
 			{
@@ -1966,17 +2167,24 @@ _loop28_breakloop:			;
 				case LITERAL_in:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
 				case LOGICAL_OR:
 				case LOGICAL_AND:
 				case BITWISE_OR:
-				case TRIANGLE:
+				case BITWISE_XOR:
 				case BITWISE_AND:
+				case EQUALS:
+				case DOES_NOT_EQUALS:
+				case STRICT_EQUALS:
+				case STRICT_DOES_NOT_EQUALS:
 				case L_THAN:
 				case G_THAN:
 				case LE_THAN:
 				case GE_THAN:
 				case LITERAL_instanceof:
+				case SIGNED_RIGHT_SHIFT:
+				case SIGNED_LEFT_SHIFT:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -1993,7 +2201,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_20_);
+				consumeUntil(tokenSet_22_);
 			}
 			else
 			{
@@ -2012,8 +2220,8 @@ _loop28_breakloop:			;
 				switch ( LA(1) )
 				{
 				case TIMES:
-				case SLASH:
-				case PERCENT:
+				case DIVISION:
+				case REMAINDER:
 				{
 					{
 						switch ( LA(1) )
@@ -2023,14 +2231,14 @@ _loop28_breakloop:			;
 							match(TIMES);
 							break;
 						}
-						case SLASH:
+						case DIVISION:
 						{
-							match(SLASH);
+							match(DIVISION);
 							break;
 						}
-						case PERCENT:
+						case REMAINDER:
 						{
-							match(PERCENT);
+							match(REMAINDER);
 							break;
 						}
 						default:
@@ -2048,19 +2256,26 @@ _loop28_breakloop:			;
 				case LITERAL_in:
 				case COLON:
 				case COMMA:
-				case INTERROGATION:
+				case CONDITIONAL:
 				case LOGICAL_OR:
 				case LOGICAL_AND:
 				case BITWISE_OR:
-				case TRIANGLE:
+				case BITWISE_XOR:
 				case BITWISE_AND:
+				case EQUALS:
+				case DOES_NOT_EQUALS:
+				case STRICT_EQUALS:
+				case STRICT_DOES_NOT_EQUALS:
 				case L_THAN:
 				case G_THAN:
 				case LE_THAN:
 				case GE_THAN:
 				case LITERAL_instanceof:
+				case SIGNED_RIGHT_SHIFT:
+				case SIGNED_LEFT_SHIFT:
 				case PLUS:
 				case MINUS:
+				case RSQUARE:
 				{
 					break;
 				}
@@ -2077,7 +2292,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_21_);
+				consumeUntil(tokenSet_23_);
 			}
 			else
 			{
@@ -2097,9 +2312,9 @@ _loop28_breakloop:			;
 			case LPAREN:
 			case IDENTIFIER:
 			case LITERAL_new:
+			case LSQUARE:
 			case THIS:
 			case STRING_LITERAL:
-			case LSQUARE:
 			case LITERAL_function:
 			case LITERAL_true:
 			case LITERAL_false:
@@ -2115,7 +2330,8 @@ _loop28_breakloop:			;
 			case LITERAL_typeof:
 			case INCREMENT:
 			case DECREMENT:
-			case ADMIRATION:
+			case BITWISE_NOT:
+			case LOGICAL_NOT:
 			{
 				{
 					switch ( LA(1) )
@@ -2155,9 +2371,14 @@ _loop28_breakloop:			;
 						match(MINUS);
 						break;
 					}
-					case ADMIRATION:
+					case BITWISE_NOT:
 					{
-						match(ADMIRATION);
+						match(BITWISE_NOT);
+						break;
+					}
+					case LOGICAL_NOT:
+					{
+						match(LOGICAL_NOT);
 						break;
 					}
 					default:
@@ -2181,7 +2402,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_7_);
+				consumeUntil(tokenSet_24_);
 			}
 			else
 			{
@@ -2196,6 +2417,57 @@ _loop28_breakloop:			;
 		
 		try {      // for error handling
 			left_hand_side_expression();
+			{
+				switch ( LA(1) )
+				{
+				case INCREMENT:
+				{
+					match(INCREMENT);
+					break;
+				}
+				case DECREMENT:
+				{
+					match(DECREMENT);
+					break;
+				}
+				case RBRACE:
+				case SEMI_COLON:
+				case RPAREN:
+				case LITERAL_in:
+				case COLON:
+				case COMMA:
+				case CONDITIONAL:
+				case LOGICAL_OR:
+				case LOGICAL_AND:
+				case BITWISE_OR:
+				case BITWISE_XOR:
+				case BITWISE_AND:
+				case EQUALS:
+				case DOES_NOT_EQUALS:
+				case STRICT_EQUALS:
+				case STRICT_DOES_NOT_EQUALS:
+				case L_THAN:
+				case G_THAN:
+				case LE_THAN:
+				case GE_THAN:
+				case LITERAL_instanceof:
+				case SIGNED_RIGHT_SHIFT:
+				case SIGNED_LEFT_SHIFT:
+				case PLUS:
+				case MINUS:
+				case TIMES:
+				case DIVISION:
+				case REMAINDER:
+				case RSQUARE:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				 }
+			}
 		}
 		catch (RecognitionException ex)
 		{
@@ -2203,7 +2475,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_7_);
+				consumeUntil(tokenSet_24_);
 			}
 			else
 			{
@@ -2222,9 +2494,9 @@ _loop28_breakloop:			;
 			case LBRACE:
 			case LPAREN:
 			case IDENTIFIER:
+			case LSQUARE:
 			case THIS:
 			case STRING_LITERAL:
-			case LSQUARE:
 			case LITERAL_function:
 			case LITERAL_true:
 			case LITERAL_false:
@@ -2265,31 +2537,59 @@ _loop28_breakloop:			;
 		
 		
 		try {      // for error handling
-			switch ( LA(1) )
 			{
-			case LBRACE:
-			case LPAREN:
-			case IDENTIFIER:
-			case THIS:
-			case STRING_LITERAL:
-			case LSQUARE:
-			case LITERAL_true:
-			case LITERAL_false:
-			case LITERAL_null:
-			{
-				primary_expression();
-				break;
+				switch ( LA(1) )
+				{
+				case LBRACE:
+				case LPAREN:
+				case IDENTIFIER:
+				case LSQUARE:
+				case THIS:
+				case STRING_LITERAL:
+				case LITERAL_true:
+				case LITERAL_false:
+				case LITERAL_null:
+				{
+					primary_expression();
+					break;
+				}
+				case LITERAL_function:
+				{
+					function_expression();
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				 }
 			}
-			case LITERAL_function:
-			{
-				function_expression();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
+			{    // ( ... )*
+				for (;;)
+				{
+					switch ( LA(1) )
+					{
+					case LSQUARE:
+					{
+						match(LSQUARE);
+						expression();
+						match(RSQUARE);
+						break;
+					}
+					case DOT:
+					{
+						match(DOT);
+						match(IDENTIFIER);
+						break;
+					}
+					default:
+					{
+						goto _loop90_breakloop;
+					}
+					 }
+				}
+_loop90_breakloop:				;
+			}    // ( ... )*
 		}
 		catch (RecognitionException ex)
 		{
@@ -2297,7 +2597,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_25_);
 			}
 			else
 			{
@@ -2313,6 +2613,37 @@ _loop28_breakloop:			;
 		try {      // for error handling
 			member_expression();
 			arguments();
+			{    // ( ... )*
+				for (;;)
+				{
+					switch ( LA(1) )
+					{
+					case LPAREN:
+					{
+						arguments();
+						break;
+					}
+					case LSQUARE:
+					{
+						match(LSQUARE);
+						expression();
+						match(RSQUARE);
+						break;
+					}
+					case DOT:
+					{
+						match(DOT);
+						match(IDENTIFIER);
+						break;
+					}
+					default:
+					{
+						goto _loop86_breakloop;
+					}
+					 }
+				}
+_loop86_breakloop:				;
+			}    // ( ... )*
 		}
 		catch (RecognitionException ex)
 		{
@@ -2348,11 +2679,12 @@ _loop28_breakloop:			;
 				case LITERAL_typeof:
 				case INCREMENT:
 				case DECREMENT:
-				case ADMIRATION:
+				case BITWISE_NOT:
+				case LOGICAL_NOT:
 				case LITERAL_new:
+				case LSQUARE:
 				case THIS:
 				case STRING_LITERAL:
-				case LSQUARE:
 				case LITERAL_function:
 				case LITERAL_true:
 				case LITERAL_false:
@@ -2379,7 +2711,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_0_);
+				consumeUntil(tokenSet_26_);
 			}
 			else
 			{
@@ -2442,7 +2774,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_27_);
 			}
 			else
 			{
@@ -2505,7 +2837,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_27_);
 			}
 			else
 			{
@@ -2546,7 +2878,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_23_);
+				consumeUntil(tokenSet_28_);
 			}
 			else
 			{
@@ -2590,7 +2922,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_27_);
 			}
 			else
 			{
@@ -2631,7 +2963,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_27_);
 			}
 			else
 			{
@@ -2673,7 +3005,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_27_);
 			}
 			else
 			{
@@ -2711,7 +3043,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_27_);
 			}
 			else
 			{
@@ -2733,7 +3065,7 @@ _loop28_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_22_);
+				consumeUntil(tokenSet_27_);
 			}
 			else
 			{
@@ -2748,7 +3080,7 @@ _loop28_breakloop:			;
 		
 		try {      // for error handling
 			{ // ( ... )+
-			int _cnt91=0;
+			int _cnt101=0;
 			for (;;)
 			{
 				if ((LA(1)==COMMA))
@@ -2757,12 +3089,12 @@ _loop28_breakloop:			;
 				}
 				else
 				{
-					if (_cnt91 >= 1) { goto _loop91_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					if (_cnt101 >= 1) { goto _loop101_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 				}
 				
-				_cnt91++;
+				_cnt101++;
 			}
-_loop91_breakloop:			;
+_loop101_breakloop:			;
 			}    // ( ... )+
 		}
 		catch (RecognitionException ex)
@@ -2771,7 +3103,7 @@ _loop91_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_24_);
+				consumeUntil(tokenSet_29_);
 			}
 			else
 			{
@@ -2814,7 +3146,7 @@ _loop91_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_25_);
+				consumeUntil(tokenSet_30_);
 			}
 			else
 			{
@@ -2852,7 +3184,7 @@ _loop91_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_26_);
+				consumeUntil(tokenSet_31_);
 			}
 			else
 			{
@@ -2893,7 +3225,7 @@ _loop91_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_23_);
+				consumeUntil(tokenSet_28_);
 			}
 			else
 			{
@@ -2915,7 +3247,7 @@ _loop91_breakloop:			;
 			{
 				reportError(ex);
 				consume();
-				consumeUntil(tokenSet_25_);
+				consumeUntil(tokenSet_30_);
 			}
 			else
 			{
@@ -2960,34 +3292,52 @@ _loop91_breakloop:			;
 		@"""var""",
 		@"""COMMA""",
 		@"""ASSIGNMENT""",
-		@"""COMPOUND_ASSIGNMENT""",
-		@"""INTERROGATION""",
+		@"""MULTIPLICATION_ASSIGN""",
+		@"""DIVISION_ASSIGN""",
+		@"""REMAINDER_ASSIGN""",
+		@"""ADDITION_ASSIGN""",
+		@"""SUBSTRACTION_ASSIGN""",
+		@"""SIGNED_LEFT_SHIFT_ASSIGN""",
+		@"""SIGNED_RIGHT_SHIFT_ASSIGN""",
+		@"""UNSIGNED_RIGHT_SHIFT_ASSIGN""",
+		@"""BITWISE_AND_ASSIGN""",
+		@"""BITWISE_XOR_ASSIGN""",
+		@"""BITWISE_OR_ASSIGN""",
+		@"""CONDITIONAL""",
 		@"""LOGICAL_OR""",
 		@"""LOGICAL_AND""",
 		@"""BITWISE_OR""",
-		@"""TRIANGLE""",
+		@"""BITWISE_XOR""",
 		@"""BITWISE_AND""",
+		@"""EQUALS""",
+		@"""DOES_NOT_EQUALS""",
+		@"""STRICT_EQUALS""",
+		@"""STRICT_DOES_NOT_EQUALS""",
 		@"""L_THAN""",
 		@"""G_THAN""",
 		@"""LE_THAN""",
 		@"""GE_THAN""",
 		@"""instanceof""",
+		@"""SIGNED_RIGHT_SHIFT""",
+		@"""SIGNED_LEFT_SHIFT""",
 		@"""PLUS""",
 		@"""MINUS""",
 		@"""TIMES""",
-		@"""SLASH""",
-		@"""PERCENT""",
+		@"""DIVISION""",
+		@"""REMAINDER""",
 		@"""delete""",
 		@"""void""",
 		@"""typeof""",
 		@"""INCREMENT""",
 		@"""DECREMENT""",
-		@"""ADMIRATION""",
+		@"""BITWISE_NOT""",
+		@"""LOGICAL_NOT""",
 		@"""new""",
-		@"""THIS""",
-		@"""STRING_LITERAL""",
 		@"""LSQUARE""",
 		@"""RSQUARE""",
+		@"""DOT""",
+		@"""THIS""",
+		@"""STRING_LITERAL""",
 		@"""function""",
 		@"""true""",
 		@"""false""",
@@ -3001,7 +3351,7 @@ _loop91_breakloop:			;
 		@"""CARRIGE_RETURN""",
 		@"""LINE_SEPARATOR""",
 		@"""PARAGRAPH_SEPARATOR""",
-		@"""DOT""",
+		@"""UNSIGNED_RIGHT_SHIFT""",
 		@"""SL_COMMENT"""
 	};
 	
@@ -3019,19 +3369,19 @@ _loop91_breakloop:			;
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = { 576460752624269554L, 0L};
+		long[] data = { 320846066L, 8192L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 576460752634756338L, 0L};
+		long[] data = { 331332850L, 8192L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 576460752836082930L, 0L};
+		long[] data = { 532659442L, 8192L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
@@ -3043,13 +3393,13 @@ _loop91_breakloop:			;
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
 	private static long[] mk_tokenSet_6_()
 	{
-		long[] data = { 4194880L, 0L};
+		long[] data = { 4194880L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());
 	private static long[] mk_tokenSet_7_()
 	{
-		long[] data = { 281471222825568L, 0L};
+		long[] data = { -4397505428896L, 536L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_7_ = new BitSet(mk_tokenSet_7_());
@@ -3067,7 +3417,7 @@ _loop91_breakloop:			;
 	public static readonly BitSet tokenSet_9_ = new BitSet(mk_tokenSet_9_());
 	private static long[] mk_tokenSet_10_()
 	{
-		long[] data = { 576460752768974066L, 0L};
+		long[] data = { 465550578L, 8192L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_10_ = new BitSet(mk_tokenSet_10_());
@@ -3085,88 +3435,118 @@ _loop91_breakloop:			;
 	public static readonly BitSet tokenSet_12_ = new BitSet(mk_tokenSet_12_());
 	private static long[] mk_tokenSet_13_()
 	{
-		long[] data = { 541065824L, 0L};
+		long[] data = { 541065824L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_13_ = new BitSet(mk_tokenSet_13_());
 	private static long[] mk_tokenSet_14_()
 	{
-		long[] data = { 4836033120L, 0L};
+		long[] data = { 4398587576928L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_14_ = new BitSet(mk_tokenSet_14_());
 	private static long[] mk_tokenSet_15_()
 	{
-		long[] data = { 13425967712L, 0L};
+		long[] data = { 13194680599136L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_15_ = new BitSet(mk_tokenSet_15_());
 	private static long[] mk_tokenSet_16_()
 	{
-		long[] data = { 30605836896L, 0L};
+		long[] data = { 30786866643552L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_16_ = new BitSet(mk_tokenSet_16_());
 	private static long[] mk_tokenSet_17_()
 	{
-		long[] data = { 64965575264L, 0L};
+		long[] data = { 65971238732384L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_17_ = new BitSet(mk_tokenSet_17_());
 	private static long[] mk_tokenSet_18_()
 	{
-		long[] data = { 133685052000L, 0L};
+		long[] data = { 136339982910048L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_18_ = new BitSet(mk_tokenSet_18_());
 	private static long[] mk_tokenSet_19_()
 	{
-		long[] data = { 271124005472L, 0L};
+		long[] data = { 277077471265376L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_19_ = new BitSet(mk_tokenSet_19_());
 	private static long[] mk_tokenSet_20_()
 	{
-		long[] data = { 8792339137120L, 0L};
+		long[] data = { 4499202121925216L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_20_ = new BitSet(mk_tokenSet_20_());
 	private static long[] mk_tokenSet_21_()
 	{
-		long[] data = { 35180618203744L, 0L};
+		long[] data = { 144110790570426976L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_21_ = new BitSet(mk_tokenSet_21_());
 	private static long[] mk_tokenSet_22_()
 	{
-		long[] data = { 281471222825824L, 0L};
+		long[] data = { 576456354797994592L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_22_ = new BitSet(mk_tokenSet_22_());
 	private static long[] mk_tokenSet_23_()
 	{
-		long[] data = { 512L, 0L};
+		long[] data = { 2305838611708265056L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_23_ = new BitSet(mk_tokenSet_23_());
 	private static long[] mk_tokenSet_24_()
 	{
-		long[] data = { 288230376151711744L, 0L};
+		long[] data = { -4397505428896L, 512L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_24_ = new BitSet(mk_tokenSet_24_());
 	private static long[] mk_tokenSet_25_()
 	{
-		long[] data = { 32L, 0L};
+		long[] data = { -4397505428640L, 536L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_25_ = new BitSet(mk_tokenSet_25_());
 	private static long[] mk_tokenSet_26_()
 	{
-		long[] data = { 4194304L, 0L};
+		long[] data = { 258L, 1280L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_26_ = new BitSet(mk_tokenSet_26_());
+	private static long[] mk_tokenSet_27_()
+	{
+		long[] data = { -4397505428640L, 1816L, 0L, 0L};
+		return data;
+	}
+	public static readonly BitSet tokenSet_27_ = new BitSet(mk_tokenSet_27_());
+	private static long[] mk_tokenSet_28_()
+	{
+		long[] data = { 512L, 0L};
+		return data;
+	}
+	public static readonly BitSet tokenSet_28_ = new BitSet(mk_tokenSet_28_());
+	private static long[] mk_tokenSet_29_()
+	{
+		long[] data = { 0L, 512L, 0L, 0L};
+		return data;
+	}
+	public static readonly BitSet tokenSet_29_ = new BitSet(mk_tokenSet_29_());
+	private static long[] mk_tokenSet_30_()
+	{
+		long[] data = { 32L, 0L};
+		return data;
+	}
+	public static readonly BitSet tokenSet_30_ = new BitSet(mk_tokenSet_30_());
+	private static long[] mk_tokenSet_31_()
+	{
+		long[] data = { 4194304L, 0L};
+		return data;
+	}
+	public static readonly BitSet tokenSet_31_ = new BitSet(mk_tokenSet_31_());
 	
 }
 }
