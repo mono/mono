@@ -3409,5 +3409,64 @@ namespace MonoTests.System {
 			AssertEquals ("ToUInt64", 0, Convert.ToUInt64 (s));
 			AssertEquals ("ToUInt64+base", 0, Convert.ToUInt64 (s, 10));
 		}
+
+		[Test]
+		public void To_NullObject () 
+		{
+			object o = null;
+			// signed
+			AssertEquals ("ToSByte", 0, Convert.ToSByte (o));
+			AssertEquals ("ToInt16", 0, Convert.ToInt16 (o));
+			AssertEquals ("ToInt32", 0, Convert.ToInt32 (o));
+			AssertEquals ("ToInt64", 0, Convert.ToInt64 (o));
+			// unsigned
+			AssertEquals ("ToByte", 0, Convert.ToByte (o));
+			AssertEquals ("ToUInt16", 0, Convert.ToUInt16 (o));
+			AssertEquals ("ToUInt32", 0, Convert.ToUInt32 (o));
+			AssertEquals ("ToUInt64", 0, Convert.ToUInt64 (o));
+		}
+
+		[Test]
+		public void To_NullObjectFormatProvider () 
+		{
+			object o = null;
+			IFormatProvider fp = (IFormatProvider) new NumberFormatInfo ();
+			// signed
+			AssertEquals ("ToSByte", 0, Convert.ToSByte (o, fp));
+			AssertEquals ("ToInt16", 0, Convert.ToInt16 (o, fp));
+			AssertEquals ("ToInt32", 0, Convert.ToInt32 (o, fp));
+			AssertEquals ("ToInt64", 0, Convert.ToInt64 (o, fp));
+			// unsigned
+			AssertEquals ("ToByte", 0, Convert.ToByte (o, fp));
+			AssertEquals ("ToUInt16", 0, Convert.ToUInt16 (o, fp));
+			AssertEquals ("ToUInt32", 0, Convert.ToUInt32 (o, fp));
+			AssertEquals ("ToUInt64", 0, Convert.ToUInt64 (o, fp));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ToSByte_NullStringFormatProvider () 
+		{
+			string s = null;
+			// SByte is a "special" case ???
+			Convert.ToSByte (s, new NumberFormatInfo ());
+		}
+
+		[Test]
+		public void To_NullStringFormatProvider () 
+		{
+			string s = null;
+			IFormatProvider fp = (IFormatProvider) new NumberFormatInfo ();
+			// signed
+			// No SByte here
+			AssertEquals ("ToInt16", 0, Convert.ToInt16 (s, fp));
+			AssertEquals ("ToInt32", 0, Convert.ToInt32 (s, fp));
+			AssertEquals ("ToInt64", 0, Convert.ToInt64 (s, fp));
+			// unsigned
+			AssertEquals ("ToByte", 0, Convert.ToByte (s, fp));
+			AssertEquals ("ToUInt16", 0, Convert.ToUInt16 (s, fp));
+			AssertEquals ("ToUInt32", 0, Convert.ToUInt32 (s, fp));
+			AssertEquals ("ToUInt64", 0, Convert.ToUInt64 (s, fp));
+		}
 	}
 }

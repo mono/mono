@@ -1,3 +1,9 @@
+2004-05-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: Added new parsing tests including special case for
+	Convert.ToSByte.
+	* Int64Test.cs: Added new test cases for overflows. 
+
 2004-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConvertTest.cs: Removed extra 0 from ToInt16_MinValue. Added overflow

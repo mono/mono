@@ -18,7 +18,8 @@ using System.Threading;
 namespace MonoTests.System
 {
 
-public class Int64Test : TestCase
+[TestFixture]
+public class Int64Test : Assertion
 {
 	private const Int64 MyInt64_1 = -42;
 	private const Int64 MyInt64_2 = -9223372036854775808;
@@ -60,11 +61,10 @@ public class Int64Test : TestCase
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	private NumberFormatInfo NfiUser;
 
-	public Int64Test() {}
-
 	private CultureInfo old_culture;
 
-	protected override void SetUp() 
+	[SetUp]
+	public void SetUp () 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -103,7 +103,8 @@ public class Int64Test : TestCase
 		NfiUser.PercentSymbol = "%%%";
 	}
 
-	protected override void TearDown()
+	[TearDown]
+	public void TearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
@@ -364,6 +365,45 @@ public class Int64Test : TestCase
         s = val2.ToString("p", NfiUser);
         Assert(s.Equals(sval2UserPercent1));
     }
-}
 
+		[Test]
+		public void Parse_MaxValue ()
+		{
+			AssertEquals ("9223372036854775807", Int64.MaxValue, Int64.Parse ("9223372036854775807"));
+		}
+
+		[Test]
+		public void Parse_MinValue ()
+		{
+			AssertEquals ("-9223372036854775808,10", Int64.MinValue, Int64.Parse ("-9223372036854775808"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void Parse_OverByOneMaxValue ()
+		{
+			Int64.Parse ("9223372036854775808");
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void Parse_WayOverMaxValue ()
+		{
+			Int64.Parse ("1" + Int64.MaxValue.ToString ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void Parse_OverByOneMinValue ()
+		{
+			Int64.Parse ("-9223372036854775809");
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void Parse_WayOverMinValue ()
+		{
+			Int64.Parse (Int64.MinValue.ToString () + "1");
+		}
+	}
 }
