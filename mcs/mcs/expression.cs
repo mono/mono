@@ -1042,6 +1042,10 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 			
+			if (expr.Type.IsPointer) {
+				Report.Error (244, loc, "\"is\" or \"as\" are not valid on pointer types");
+				return null;
+			}
 			return this;
 		}
 	}
