@@ -31,11 +31,11 @@ monobins_DATA = \
 	sn.exe
 
 monoone_DATA = \
-	mcs.exe					\
+	mcs.exe mcs.exe.config			\
 	mbas.exe
 
 if ! PLATFORM_WIN32
-gmcs_exe = gmcs.exe
+gmcs_exe = gmcs.exe gmcs.exe.config
 endif
 monotwo_DATA = $(gmcs_exe)
 
@@ -59,6 +59,7 @@ endif
 $(monoone_DATA) $(monotwo_DATA) $(monobins_DATA):
 	@case "$@" in \
 	mcs.exe)		 d=mcs				;; \
+	mcs.exe.config)		 d=mcs				;; \
 	mbas.exe)		 d=mbas				;; \
 	monoresgen.exe)          d=monoresgen                   ;; \
 	ilasm.exe)               d=ilasm                        ;; \
@@ -84,6 +85,7 @@ $(monoone_DATA) $(monotwo_DATA) $(monobins_DATA):
 	browsercaps-updater.exe) d=tools/browsercaps-updater    ;; \
 	gacutil.exe)		 d=tools/gacutil		;; \
 	gmcs.exe)                d=gmcs				;; \
+	gmcs.exe.config)         d=gmcs				;; \
 	esac; \
 	echo "test -f $(top_srcdir)/../mcs/$$d/$@" ; \
 	test -f $(top_srcdir)/../mcs/$$d/$@ || exit 1 ; \
