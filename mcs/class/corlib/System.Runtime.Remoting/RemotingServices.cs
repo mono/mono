@@ -146,7 +146,13 @@ namespace System.Runtime.Remoting
 					if (uri != null)
 						throw new RemotingException ("It is not possible marshal a proxy of a remote object");
 
-					return proxy.ObjectIdentity.CreateObjRef(requested_type);
+					Console.WriteLine("Marshal() TP RealProxy -> uri = " + proxy.ObjectIdentity.ObjectUri);
+					
+					ObjRef o =  proxy.ObjectIdentity.CreateObjRef(requested_type);
+
+					Console.WriteLine("Marshal() channel data = " + o.ChannelInfo);
+					
+					return o;
 				}
 			}
 
@@ -190,16 +196,7 @@ namespace System.Runtime.Remoting
 		{
 			if (obj == null) throw new ArgumentNullException ("obj");
 
-			MarshalByRefObject mbr = (MarshalByRefObject)obj;
-
-			ObjRef oref;
-			Identity ident = GetObjectIdentity(mbr);
-
-			if (ident != null)
-				oref = ident.CreateObjRef(null);
-			else
-				oref = Marshal (mbr);
-
+			ObjRef oref = Marshal ((MarshalByRefObject)obj);
 			oref.GetObjectData (info, context);
 		}
 

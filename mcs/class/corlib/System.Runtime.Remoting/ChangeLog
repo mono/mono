@@ -1,3 +1,7 @@
+2003-02-07 Patrik Torstensson
+
+	* RemotingServices.cs: Always marshal an object in GetObjectData
+
 2003-02-07 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Identity.cs: Added ObjRef attribute, that holds the objref of the object.
