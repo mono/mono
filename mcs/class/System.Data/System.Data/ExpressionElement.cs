@@ -40,7 +40,7 @@ namespace System.Data
 		}
 		
 		public override bool Test (DataRow Row) {
-			
+
 			foreach (ExpressionElement El in Elements) {
 				if (!El.Test (Row))
 					return false;
@@ -69,6 +69,7 @@ namespace System.Data
 			string newExp = "";
 			bool isDigit = false;
 			bool litOperator = false;
+			s = s.Trim();
 			
 			for (int i = 0; i < s.Length; i++) {
 
@@ -193,7 +194,7 @@ namespace System.Data
         	}
 
 		public override bool Test (DataRow Row) {
-								
+			
 			ExpressionElement E1 = (ExpressionElement)Elements [0];
 			ExpressionElement E2 = (ExpressionElement)Elements [1];
 
@@ -1632,6 +1633,74 @@ namespace System.Data
 		}
         }
 
+	/// <summary>
+	///  Class for In (exp, exp, exp, ...) function
+	/// </summary>
+	internal class ExpressionIn : ExpressionElement
+	{
+		public ExpressionIn (string exp1, string exp2)
+		{       
+			ParseExpression(exp1);
+			ParseParameters (exp2);
+		}
+
+		/// <summary>
+		///  IsNull function does not return boolean value, so throw exception
+		/// </summary>
+		public override bool Test (DataRow Row) 
+		{
+			ExpressionElement E;
+			ExpressionElement columnElement = (ExpressionElement)Elements [0];
+
+			for (int i = 1; i < Elements.Count; i++)
+			{
+				E = (ExpressionElement)Elements [i];
+				if(ExpressionElement.Compare (columnElement, E, Row) == 0)
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		///  Parses parameters of function and invoke ParseExpression methods
+		/// </summary>
+		private void ParseParameters (string s)
+		{
+			bool inString = false;
+			ArrayList parameters = new ArrayList();
+			
+			// find (
+			while (!s.StartsWith ("("))
+				s = s.Remove (0, 1);
+
+			// remove (
+			s = s.Remove (0, 1);
+			int parentheses = 0;
+			for (int i = 0; i < s.Length; i++) 
+			{
+
+				if (s [i] == '\'')
+					inString = !inString;
+				else if (s [i] == '(')
+					parentheses++;
+				else if (s [i] == ')')
+					parentheses--;
+
+
+				if ((s [i] == ',' && !inString && parentheses == 0) || 
+					(s [i] == ')' && i == (s.Length -1))) 
+				{
+					parameters.Add(s.Substring (0, i));
+					s = s.Substring (i + 1);
+					i = 0;
+				}
+			}
+			
+			for (int i = 0; i < parameters.Count; i++)
+				ParseExpression((string)parameters[i]);
+		}
+	}
+
         /// <summary>
         ///  Class for just one element for example string, int, ...
         /// </summary>
@@ -1646,13 +1715,13 @@ namespace System.Data
 				Element = s.Substring (1, s.Length - 2);
 				_ResultType = typeof (string);
 			}
-			else if (s.StartsWith ("#") && s.EndsWith ("#")) {
-				Element = DateTime.Parse (s.Substring (1, s.Length - 2));
-				_ResultType = typeof (DateTime);
-			}
 			else if (!Char.IsDigit (s [0]) && s [0] != '-' && s [0] != '+') {
 				Element = s;
 				_ResultType = typeof (DataColumn);
+			}
+			else if (s.StartsWith ("#") && s.EndsWith ("#")) {
+				Element = DateTime.Parse (s.Substring (1, s.Length - 2));
+				_ResultType = typeof (DateTime);
 			}
 			else {
 				try {
@@ -1673,7 +1742,13 @@ namespace System.Data
 				if (!Row.Table.Columns.Contains (Element.ToString ()))
 					throw new EvaluateException ("Column name '" + Element.ToString () + "' not found.");
 				else
-					Result = Row [Element.ToString ()];
+				{
+					DataRowVersion rowVersion = DataRowVersion.Default;
+					// if this row is deleted we get the original version, or else we get an exception.
+					if (Row.RowState == DataRowState.Deleted)
+						rowVersion = DataRowVersion.Original;
+					Result = Row [Element.ToString (), rowVersion];
+				}
 			}
 			else
 				Result = Element;
@@ -1778,8 +1853,7 @@ namespace System.Data
 			Type RT2 = E2.ResultType (Row);
 
 			if (t1 == typeof (string) || t2 == typeof (string)) {
-				// FIXME: If one of elements are string they both should be???				
-				
+				// FIXME: If one of elements are string they both should be???
 				//TempType = typeof (string);				
 				if (t1 != typeof (string))
 					value1 = Convert.ChangeType (value1, Type.GetTypeCode (t2));
@@ -1791,8 +1865,8 @@ namespace System.Data
 					value1 = ((string)value1).ToLower ();
 					value2 = ((string)value2).ToLower ();
 				}
-			} else if (t1 != t2) {
-
+			}else if (t1 != t2) {
+				
 				value2 = Convert.ChangeType (value2, Type.GetTypeCode (t1));
 			}
 
@@ -1801,7 +1875,7 @@ namespace System.Data
 							       value1, 
 							       new object [] {value2});
 			ReturnValue = (int)Result;
-			
+
 			return ReturnValue;
 		}
 
@@ -1846,8 +1920,8 @@ namespace System.Data
 				    !functionName.EndsWith ("sum") && !functionName.EndsWith ("avg") &&
 				    !functionName.EndsWith ("min") && !functionName.EndsWith ("max") &&
 				    !functionName.EndsWith ("count") && !functionName.EndsWith ("stdev") &&
-				    !functionName.EndsWith ("var")) {
-
+				    !functionName.EndsWith ("var")&& !functionName.EndsWith ("in")) {
+					
 					int startIndex = s.IndexOf ("(");
 					int i = startIndex + 1;
 					int par = 1;
@@ -1881,6 +1955,10 @@ namespace System.Data
 			// find LIKE
 			else if (FindLikeElement (s, ref string1, ref string2))
 				CreateLikeElement (string1, string2, inside);
+			
+			// find IN
+			else if (FindInElement (s, ref string1, ref string2))
+				CreateInElement (string1, string2, inside);
 
 			// find =
 			else if (FindEqualElement (s, ref string1, ref string2))
@@ -1970,7 +2048,7 @@ namespace System.Data
 			else if (FindIsNullElement (s))
 				Elements.Add (new ExpressionIsNull (s.Trim ()));
 
-			// find substrin
+			// find substring
 			else if (FindSubstringElement (s))
 				Elements.Add (new ExpressionSubstring (s.Trim ()));
 
@@ -2897,6 +2975,48 @@ namespace System.Data
 			return false;			
 		}
 
+		private bool FindInElement (string s, ref string s1, ref string s2)
+		{
+			string stemp = s.ToLower ();
+			int indexOf = stemp.IndexOf ("in");
+
+			if (indexOf == -1)
+				return false;
+
+			int oldIndex = -1;
+			while ((indexOf = stemp.IndexOf ("in", oldIndex + 1)) != -1 && indexOf > oldIndex) 
+			{
+				oldIndex = indexOf;
+				
+				// check is the 'and' element part of string element
+				if (IsPartOfStringElement (stemp, indexOf))
+					continue;
+
+
+				// Check is or part of something else for example column name
+				if (indexOf != 0) 
+				{	
+					if (stemp [indexOf - 1] != ' ' && stemp [indexOf - 1] != '\'')
+						continue;
+				}
+				
+				if (indexOf < stemp.Length + 2) 
+				{
+					if (stemp [indexOf + 2] != ' ' && stemp [indexOf + 2] != '\'')
+						continue;
+				}
+
+				if (IsPartOfFunction (stemp, indexOf))
+					continue;
+
+				s1 = s.Substring (0, indexOf).Trim ();
+				s2 = s.Substring (indexOf + 2).Trim ();
+				return true;
+			}
+		
+			return false;			
+		}
+
 		
 		#endregion // CheckElement methods
 
@@ -2922,6 +3042,12 @@ namespace System.Data
 		{
 			CheckParenthesis (inside, ref s1, ref s2);
 			Elements.Add (new ExpressionLike (s1.Trim (), s2.Trim ()));
+		}
+
+		private void CreateInElement (string s1, string s2, string inside)
+		{
+			CheckParenthesis (inside, ref s1, ref s2);
+			Elements.Add (new ExpressionIn (s1.Trim (), s2.Trim ()));
 		}
 
 		private void CreateEqualsElement (string s1, string s2, string inside)

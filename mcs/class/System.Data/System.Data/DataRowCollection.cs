@@ -65,7 +65,7 @@ namespace System.Data
 			if (list.IndexOf(row) != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
 			
-			if (table.DataSet != null && table.DataSet.EnforceConstraints)
+			if (table.DataSet == null || table.DataSet.EnforceConstraints)
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 			
@@ -90,6 +90,20 @@ namespace System.Data
 		/// </summary>
 		public void Clear () 
 		{
+			if (this.table.DataSet != null)
+			{
+				foreach (DataTable table in this.table.DataSet.Tables)
+				{
+					foreach (Constraint c in table.Constraints)
+					{
+						if (c is ForeignKeyConstraint)
+						{
+							if (((ForeignKeyConstraint) c).RelatedTable.Equals(this.table))
+								throw new InvalidConstraintException("Cannot clear table Parent because ForeignKeyConstraint " + c.ConstraintName + " enforces Child.");
+						}
+					}
+				}
+			}
 			list.Clear ();
 		}
 

@@ -83,7 +83,7 @@ namespace System.Data {
 				ForeignKeyConstraint foreignKeyConstraint = null;
 				if (relation.createConstraints) 
 				{
-					foreignKeyConstraint = new ForeignKeyConstraint (relation.ParentColumns, relation.ChildColumns);
+					foreignKeyConstraint = new ForeignKeyConstraint (relation.RelationName, relation.ParentColumns, relation.ChildColumns);
 					relation.ChildTable.Constraints.Add (foreignKeyConstraint);
 				
 					UniqueConstraint uniqueConstraint = null;

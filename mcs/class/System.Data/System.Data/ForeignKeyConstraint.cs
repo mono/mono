@@ -147,7 +147,7 @@ namespace System.Data {
 					{
 						//LAMESPEC: spec says throw InvalidConstraintException
 						//		implementation throws InvalidOperationException
-						throw new InvalidOperationException("Parent column is not type compatible with it's child"
+						throw new InvalidConstraintException("Parent column is not type compatible with it's child"
 								+ " column.");
 					}
 				}	
@@ -385,6 +385,26 @@ namespace System.Data {
 		{
 			//Implement: this should be used to validate ForeignKeys constraints 
 			//when modifiying the DataRow values of a DataTable.
+
+			foreach (DataRow parentRow in this.RelatedTable.Rows)
+			{
+				if (parentRow.RowState != DataRowState.Deleted)
+				{
+					bool match = true;
+					// check if the values in the constraints columns are equal
+					int i = 0;
+					for (; i < _parentColumns.Length; i++)
+					{
+						if (!row[_childColumns[i]].Equals(parentRow[_parentColumns[i]]))
+						{
+							match = false;
+							break;
+						}	
+					}
+					if (!match)
+						throw new InvalidConstraintException("ForeignKeyConstraint " + ConstraintName + " requires the child key values (" + row[_childColumns[i]].ToString() + ") to exist in the parent table.");					
+				}
+			}
 		}
 		
 		#endregion // Methods

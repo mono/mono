@@ -228,6 +228,8 @@ namespace System.Data {
 			get { return prefix; } 
 			[MonoTODO]
 			set {
+				//TODO - trigger an event if this happens?
+
 				if (value == null)
 				{
 					value = string.Empty;
@@ -427,7 +429,9 @@ namespace System.Data {
 		public string GetXml()
 		{
 			StringWriter Writer = new StringWriter ();
-			WriteXml (Writer, XmlWriteMode.IgnoreSchema);
+
+			// Sending false for not printing the Processing instruction
+			WriteXml (Writer, XmlWriteMode.IgnoreSchema,false);
 			return Writer.ToString ();
 		}
 
@@ -499,7 +503,7 @@ namespace System.Data {
 			int i;
 			bool oldEnforceConstraints = this.EnforceConstraints;
 			this.EnforceConstraints = false;
-			for (i = 0; i < this.Tables.Count; i++)
+			for (i=0;(i<this.Tables.Count);i++)
 			{
 				this.Tables[i].RejectChanges();
 			}
@@ -555,35 +559,35 @@ namespace System.Data {
 
 		public void WriteXml(XmlWriter writer)
 		{
-			WriteXml( writer, XmlWriteMode.IgnoreSchema );
+			WriteXml( writer, XmlWriteMode.IgnoreSchema,false);
 		}
 
-		public void WriteXml(Stream stream, XmlWriteMode mode)
+		public void WriteXml(Stream stream, XmlWriteMode mode,bool writePI)
 		{
 			XmlWriter writer = new XmlTextWriter(stream, null );
 			
-			WriteXml( writer, mode );
+			WriteXml( writer, mode, writePI );
 		}
 
-		public void WriteXml(string fileName, XmlWriteMode mode)
+		public void WriteXml(string fileName, XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter writer = new XmlTextWriter(fileName, null );
 			
-			WriteXml( writer, mode );
+			WriteXml( writer, mode, writePI );
 			
 			writer.Close();
 		}
 
-		public void WriteXml(TextWriter writer,	XmlWriteMode mode)
+		public void WriteXml(TextWriter writer,	XmlWriteMode mode, bool writePI)
 		{
 			XmlWriter xwriter = new XmlTextWriter(writer);
 			
-			WriteXml( xwriter, mode );
+			WriteXml( xwriter, mode, writePI);
 		}
 
-		public void WriteXml(XmlWriter writer, XmlWriteMode mode)
+		public void WriteXml(XmlWriter writer, XmlWriteMode mode, bool writePI)
 		{
-			if (writer.WriteState == WriteState.Start)
+			if (writePI && (writer.WriteState == WriteState.Start))
 				writer.WriteStartDocument (true);
 
 			((XmlTextWriter)writer).Formatting = Formatting.Indented;
@@ -839,7 +843,7 @@ namespace System.Data {
 		void IXmlSerializable.WriteXml(XmlWriter writer)
 		{
 			DoWriteXmlSchema (writer);
-			WriteXml(writer, XmlWriteMode.IgnoreSchema);
+			WriteXml(writer, XmlWriteMode.IgnoreSchema, true);
 		}
 
 		protected virtual bool ShouldSerializeRelations ()

@@ -1,4 +1,28 @@
 2003-10-27  Eran Domb  <erand@mainsoft.com>
+	* DataColumn.cs (DefaultValue) : Changing null value to DBNull. Checking that the type of the new default value 
+	can be converted to the column type.
+	
+	* DataRelationCollection.cs (AddCore) : Give the new FK the name of the relation.
+	
+	* DataRow.cs (EndEdit) : Check if we need to validate the constraints.
+	(GetParentRows, GetChildRows) : Checking that the row has the wanted version, before accessing the row's value.
+	
+	* DataRowCollection.cs (Add) : Fixing a bug. 
+	(Clear) : Before clearing the array check that there is no violation of FK constraint.
+	
+	* DataSet.cs (Prefix) : If value is null chage it to empty string.
+	(GetXml) : Removing the Processing Instructions from the xml string as in MS ADO.NET.
+	
+	* ExpressionElement : Adding support for IN expresion.
+	
+	* DataTable (CopyConstraints) : New method that copy the tables constraints to the copy table.
+	(Select) : Adding support for DataViewwRowState.
+	
+	* ForeignKeyConstraint.cs (AssertConstraint) : Adding implementation.
+	
+	* MergeManager.cs (MergeRow) : Fix bugs.
+	
+2003-10-27  Eran Domb  <erand@mainsoft.com>
 	* DataRow.cs (SetColumnValue): Donot check null value when in midle of loading data.
 	check null values when ending loading data.
 	

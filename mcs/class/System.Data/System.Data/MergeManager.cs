@@ -58,51 +58,36 @@ namespace System.Data
 			DataColumnCollection columns = row.Table.Columns;
 			DataColumn[] primaryKeys = targetTable.PrimaryKey;
 			DataRow targetRow = null;
+			DataRowVersion version = DataRowVersion.Default;
+			if (row.RowState == DataRowState.Deleted)
+				version = DataRowVersion.Original;
+
 			if (primaryKeys != null && primaryKeys.Length > 0) // if there are any primary key.
 			{
-				bool foundKeyInSourceTable = true;
-				// check that all primary keys exists in the source table.
-				for (int j = 0; j < primaryKeys.Length; j++)
-				{
-					if(!row.Table.Columns.Contains(primaryKeys[j].ColumnName))
-					{
-						foundKeyInSourceTable = false;
-						break;
-					}
-				}
-				// if all primary key found in the source table
-				if(foundKeyInSourceTable)
-				{
-					// initiate an array that has the values of the primary keys.
-					object[] keyValues = new object[primaryKeys.Length];
-					for (int j = 0; j < keyValues.Length; j++)
-					{
-						keyValues[j] = row[primaryKeys[j].ColumnName];
-					}
+				// initiate an array that has the values of the primary keys.
+				object[] keyValues = new object[primaryKeys.Length];
 				
-					// find the row in the target table.
-					targetRow = targetTable.Rows.Find(keyValues);
+				for (int j = 0; j < keyValues.Length; j++)
+				{
+					keyValues[j] = row[primaryKeys[j].ColumnName, version];
 				}
+			
+				// find the row in the target table.
+				targetRow = targetTable.Rows.Find(keyValues);
 			}
 			// row doesn't exist in target table, or there are no primary keys.
 			// create new row and copy values from source row to the new row.
 			if (targetRow == null)
 			{ 
 				targetRow = targetTable.NewRow();
-				for(int j = 0; j < columns.Count; j++)
-				{
-					targetRow[columns[j].ColumnName] = row[columns[j].ColumnName];
-				}
+				row.CopyValuesToRow(targetRow);
 				targetTable.Rows.Add(targetRow);
 			}
 			// row exists in target table, and presere changes is false - 
 			// change the values of the target row to the values of the source row.
 			else if (!preserveChanges)
 			{
-				for(int j = 0; j < columns.Count; j++)
-				{
-					targetRow[columns[j].ColumnName] = row[columns[j].ColumnName];
-				}
+				row.CopyValuesToRow(targetRow);
 			}
 
 		}
@@ -155,7 +140,6 @@ namespace System.Data
 		// return true if there is a match, else return false and raise a MergeFailedEvent.
 		private static bool CheckPrimaryKeys(DataTable targetTable, DataTable sourceTable)
 		{
-			bool retVal = true;
 			// if the length of one of the tables primarykey if 0 - there is nothing to check.
 			if (targetTable.PrimaryKey.Length != 0 && sourceTable.PrimaryKey.Length != 0)
 			{
@@ -187,7 +171,6 @@ namespace System.Data
 						{
 							if (srcDataColumns[j].ColumnName == col.ColumnName)
 							{
-								retVal = false;
 								foundMatch = true;
 								break;
 							}
@@ -197,13 +180,14 @@ namespace System.Data
 							string message = "Mismatch columns in the PrimaryKey : <target>." + col.ColumnName + " versus <source>." + srcDataColumns[i].ColumnName + ".";
 							MergeFailedEventArgs e = new MergeFailedEventArgs(sourceTable, message);
 							targetTable.DataSet.OnMergeFailed(e);
+							return false;
 						}
 						
 					}
 				}
 			}
 
-			return retVal;
+			return true;
 		}
 		
 		// fill the data from the source table to the target table

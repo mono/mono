@@ -55,6 +55,7 @@ namespace System.Data {
 		internal bool _duringDataLoad;
 		private bool dataSetPrevEnforceConstraints;
 
+
 		
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
@@ -476,6 +477,7 @@ namespace System.Data {
 					this.dataSet.EnforceConstraints = false;
 				}
 			}
+			return;
 		}
 
 		/// <summary>
@@ -523,6 +525,7 @@ namespace System.Data {
 		public virtual DataTable Clone () 
 		{
 			DataTable Copy = new DataTable ();			
+			
 			CopyProperties (Copy);
 			return Copy;
 		}
@@ -583,6 +586,7 @@ namespace System.Data {
 		[MonoTODO]
 		private void CopyProperties (DataTable Copy) 
 		{
+					
 			Copy.CaseSensitive = CaseSensitive;
 			Copy.VirginCaseSensitive = VirginCaseSensitive;
 
@@ -601,11 +605,15 @@ namespace System.Data {
 			Copy.Site = Site;
 			Copy.TableName = TableName;
 
+
+
 			// Copy columns
 			foreach (DataColumn Column in Columns) {
-				Copy.Columns.Add (CopyColumn (Column));				
+				
+				Copy.Columns.Add (CopyColumn (Column));	
 			}
 
+			CopyConstraints(Copy);
 			// add primary key to the copy
 			if (PrimaryKey.Length > 0)
 			{
@@ -615,7 +623,25 @@ namespace System.Data {
 
 				Copy.PrimaryKey = pColumns;
 			}
+		}
 
+		private void CopyConstraints(DataTable copy)
+		{
+			UniqueConstraint origUc;
+			UniqueConstraint copyUc;
+			for (int i = 0; i < this.Constraints.Count; i++)
+			{
+				if (this.Constraints[i] is UniqueConstraint)
+				{
+					origUc = (UniqueConstraint)this.Constraints[i];
+					DataColumn[] columns = new DataColumn[origUc.Columns.Length];
+					for (int j = 0; j < columns.Length; j++)
+						columns[j] = copy.Columns[origUc.Columns[j].ColumnName];
+					
+					copyUc = new UniqueConstraint(origUc.ConstraintName, columns, origUc.IsPrimaryKey);
+					copy.Constraints.Add(copyUc);
+				}
+			}
 		}
 		/// <summary>
 		/// Ends the initialization of a DataTable that is used 
@@ -656,6 +682,7 @@ namespace System.Data {
 				}
 
 			}
+
 		}
 
 		/// <summary>
@@ -871,9 +898,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow[] Select () 
 		{
-			DataRow[] dataRows = new DataRow[_rows.Count];
-			_rows.CopyTo (dataRows, 0);
-			return dataRows;
+			return Select(String.Empty, String.Empty, DataViewRowState.CurrentRows);
 		}
 
 		/// <summary>
@@ -883,15 +908,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow[] Select (string filterExpression) 
 		{
-			ExpressionElement Expression = new ExpressionMainElement (filterExpression);
-
-			ArrayList List = new ArrayList ();
-			foreach (DataRow Row in Rows) {
-				if (Expression.Test (Row))
-					List.Add (Row);
-			}
-			
-			return (DataRow [])List.ToArray (typeof (DataRow));
+			return Select(filterExpression, String.Empty, DataViewRowState.CurrentRows);
 		}
 
 		/// <summary>
@@ -901,30 +918,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow[] Select (string filterExpression, string sort) 
 		{
-			DataRow[] dataRows = null;
-
-			if (filterExpression != null && filterExpression.Equals (String.Empty) == false)
-				dataRows = Select (filterExpression);
-			else
-				dataRows = Select ();
-
-			if (sort != null && !sort.Equals (String.Empty)) {
-				SortableColumn[] sortableColumns = null;
-
-				sortableColumns = ParseTheSortString (sort);
-				if (sortableColumns == null)
-					throw new Exception ("sort expression result is null");
-				if (sortableColumns.Length == 0)
-					throw new Exception("sort expression result is 0");
-
-				RowSorter rowSorter = new RowSorter (dataRows, sortableColumns);
-				dataRows = rowSorter.SortRows ();
-			
-				sortableColumns = null;
-				rowSorter = null;
-			}
-
-			return dataRows;
+			return Select(filterExpression, sort, DataViewRowState.CurrentRows);
 		}
 
 		/// <summary>
@@ -936,11 +930,64 @@ namespace System.Data {
 		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates) 
 		{
 			DataRow[] dataRows = null;
+			if (filterExpression == null)
+				filterExpression = String.Empty;
 
-			// TODO: do something with recordStates
-			dataRows = Select (filterExpression, sort);
+			ExpressionElement Expression = null;
+			if (filterExpression != null && filterExpression.Length != 0)
+				Expression = new ExpressionMainElement(filterExpression);
 
+			ArrayList List = new ArrayList();
+			int recordStateFilter = GetRowStateFilter(recordStates);
+			foreach (DataRow Row in Rows) 
+			{
+				if (((int)Row.RowState & recordStateFilter) != 0)
+				{
+					if (Expression == null || Expression.Test(Row))
+						List.Add(Row);
+				}
+			}
+
+			dataRows = (DataRow[])List.ToArray(typeof(DataRow));
+			
+
+			if (sort != null && !sort.Equals(String.Empty)) 
+			{
+				SortableColumn[] sortableColumns = null;
+
+				sortableColumns = ParseTheSortString (sort);
+				if (sortableColumns == null)
+					throw new Exception ("sort expression result is null");
+				if (sortableColumns.Length == 0)
+					throw new Exception("sort expression result is 0");
+
+				RowSorter rowSorter = new RowSorter (dataRows, sortableColumns);
+				dataRows = rowSorter.SortRows ();
+
+				sortableColumns = null;
+				rowSorter = null;
+			}
+
+			
 			return dataRows;
+		}
+
+		private static int GetRowStateFilter(DataViewRowState recordStates)
+		{
+			int flag = 0;
+
+			if ((recordStates & DataViewRowState.Added) != 0)
+				flag |= (int)DataRowState.Added;
+			if ((recordStates & DataViewRowState.Deleted) != 0)
+				flag |= (int)DataRowState.Deleted;
+			if ((recordStates & DataViewRowState.ModifiedCurrent) != 0)
+				flag |= (int)DataRowState.Modified;
+			if ((recordStates & DataViewRowState.ModifiedOriginal) != 0)
+				flag |= (int)DataRowState.Modified;
+			if ((recordStates & DataViewRowState.Unchanged) != 0)
+				flag |= (int)DataRowState.Unchanged;
+
+			return flag;
 		}
 
 		/// <summary>
@@ -1049,9 +1096,9 @@ namespace System.Data {
 			Copy.Caption = Column.Caption;
 			Copy.ColumnMapping = Column.ColumnMapping;
 			Copy.ColumnName = Column.ColumnName;
-			// Copy.Container
-			// Copy.DataType
-			// Copy.DefaultValue			
+			//Copy.Container
+			Copy.DataType = Column.DataType;
+			Copy.DefaultValue = Column.DefaultValue;			
 			Copy.Expression = Column.Expression;
 			//Copy.ExtendedProperties
 			Copy.MaxLength = Column.MaxLength;
@@ -1059,7 +1106,8 @@ namespace System.Data {
 			Copy.Prefix = Column.Prefix;
 			Copy.ReadOnly = Column.ReadOnly;
 			//Copy.Site
-			Copy.Unique = Column.Unique;
+			//we do not copy the unique value - it will be copyied when copying the constraints.
+			//Copy.Unique = Column.Unique;
 			
 			return Copy;
 		}			

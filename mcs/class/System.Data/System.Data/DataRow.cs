@@ -624,7 +624,16 @@ namespace System.Data {
 				
 				//Calling next method validates UniqueConstraints
 				//and ForeignKeys.
-				_table.Rows.ValidateDataRowInternal(this);
+				try
+				{
+					if (_table.DataSet == null || _table.DataSet.EnforceConstraints)
+						_table.Rows.ValidateDataRowInternal(this);
+				}
+				catch (Exception e)
+				{
+					proposed = null;
+					throw e;
+				}
 				// check all child rows.
 				CheckChildRows(DataRowAction.Change);
 				current = proposed;
@@ -661,16 +670,26 @@ namespace System.Data {
 			DataColumn[] parentColumns = relation.ParentColumns;
 			DataColumn[] childColumns = relation.ChildColumns;
 			int numColumn = parentColumns.Length;
-			foreach (DataRow row in relation.ChildTable.Rows) {
-				bool allColumnsMatch = true;
-				for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) {
-					if (!this[parentColumns[columnCnt], version].Equals(
-					    row[childColumns[columnCnt], version])) {
-						allColumnsMatch = false;
-						break;
+			if (HasVersion(version)) 
+			{
+				foreach (DataRow row in relation.ChildTable.Rows) 
+				{
+					bool allColumnsMatch = false;
+					if (row.HasVersion(DataRowVersion.Default))
+					{
+						allColumnsMatch = true;
+						for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) 
+						{
+							if (!this[parentColumns[columnCnt], version].Equals(
+								row[childColumns[columnCnt], DataRowVersion.Default])) 
+							{
+								allColumnsMatch = false;
+								break;
+							}
+						}
 					}
+					if (allColumnsMatch) rows.Add(row);
 				}
-				if (allColumnsMatch) rows.Add(row);
 			}
 			return rows.ToArray(typeof(DataRow)) as DataRow[];
 		}
@@ -795,16 +814,26 @@ namespace System.Data {
 			DataColumn[] parentColumns = relation.ParentColumns;
 			DataColumn[] childColumns = relation.ChildColumns;
 			int numColumn = parentColumns.Length;
-			foreach (DataRow row in relation.ParentTable.Rows) {
-				bool allColumnsMatch = true;
-				for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) {
-					if (!this[parentColumns[columnCnt], version].Equals(
-					    row[childColumns[columnCnt], version])) {
-						allColumnsMatch = false;
-						break;
+			if (HasVersion(version))
+			{
+				foreach (DataRow row in relation.ParentTable.Rows) 
+				{
+					bool allColumnsMatch = false;
+					if (row.HasVersion(DataRowVersion.Default))
+					{
+						allColumnsMatch = true;
+						for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) 
+						{
+							if (!this[parentColumns[columnCnt], version].Equals(
+								row[childColumns[columnCnt], DataRowVersion.Default])) 
+							{
+								allColumnsMatch = false;
+								break;
+							}
+						}
 					}
+					if (allColumnsMatch) rows.Add(row);
 				}
-				if (allColumnsMatch) rows.Add(row);
 			}
 			return rows.ToArray(typeof(DataRow)) as DataRow[];
 		}

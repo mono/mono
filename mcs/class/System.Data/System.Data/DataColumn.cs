@@ -323,24 +323,38 @@ namespace System.Data {
 				return _defaultValue;
 			}
 			set {
-				
-				//If autoIncrement == true throw
-				if (AutoIncrement) 
+				object tmpObj;
+				if ((this._defaultValue == null) || (!this._defaultValue.Equals(value)))
 				{
-					throw new ArgumentException("Can not set default value while" +
+					//If autoIncrement == true throw
+					if (AutoIncrement) 
+					{
+						throw new ArgumentException("Can not set default value while" +
 							" AutoIncrement is true on this column.");
+					}
+
+					if (value == null) 
+					{
+						tmpObj = DBNull.Value;
+					}
+					else
+						tmpObj = value;
+
+					if ((this.DataType != typeof (object))&& (tmpObj != DBNull.Value))
+					{
+						try
+						{
+							//Casting to the new type
+							tmpObj= Convert.ChangeType(tmpObj,this.DataType);
+						}
+						catch (InvalidCastException)
+						{
+							throw new InvalidCastException("Default Value type is not compatible with" + 
+								" column type.");
+						}
+					}
+					_defaultValue = tmpObj;
 				}
-					
-				//Will throw invalid cast exception
-				//if value is not the correct type
-				//FIXME: some types can be casted
-				if (value.GetType() != _dataType)
-				{
-					throw new InvalidCastException("Default Value type is not compatible with" + 
-							" column type.");
-				}
-					
-				_defaultValue = value;
 			}
 		}
 
