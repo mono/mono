@@ -275,6 +275,8 @@ namespace System.Web.Services.Protocols {
 
 	// FIXME: this class should be internal, but it needs to be public in
 	// order to be serialized using XmlSerializer.
+	[SoapType (Namespace="http://schemas.xmlsoap.org/soap/envelope/")]
+	[XmlType (Namespace="http://schemas.xmlsoap.org/soap/envelope/")]
 	public class Fault
 	{
 		public Fault () {}

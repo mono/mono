@@ -1,3 +1,12 @@
+2003-11-27  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Methods.cs: Added correct namespace for serialization in Fault class.
+	* SoapHttpClientProtocol.cs: Changed the method used to check if the
+	  result is a fault. Now the check is done inside 
+	  WebServiceHelper.ReadSoapMessage. Removed some debug writelines.
+	* WebServiceHelper.cs: If the message body is a fault, use the fault
+	  serializer.
+
 2003-11-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Methods.cs, TypeStubManager.cs, SoapMessage.cs: Removed TODO comment.

@@ -21,7 +21,7 @@ namespace System.Web.Services.Protocols
 	internal class WebServiceHelper
 	{
 		public const string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
-
+		
 		public static Encoding GetContentEncoding (string cts, out string content_type)
 		{
 			string encoding;
@@ -94,6 +94,9 @@ namespace System.Web.Services.Protocols
 			xmlReader.MoveToContent ();
 			xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
 			xmlReader.MoveToContent ();
+			
+			if (xmlReader.LocalName == "Fault" && xmlReader.NamespaceURI == SoapEnvelopeNamespace)
+				bodySerializer = typeStubInfo.GetFaultSerializer (methodUse);
 
 			body = bodySerializer.Deserialize (xmlReader);
 		}

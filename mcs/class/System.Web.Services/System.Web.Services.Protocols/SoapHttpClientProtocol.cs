@@ -91,7 +91,6 @@ namespace System.Web.Services.Protocols {
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine ("E1:" + ex);
 				ainfo.SetCompleted (null, ex, true);
 			}
 		}
@@ -105,7 +104,6 @@ namespace System.Web.Services.Protocols {
 				response = GetWebResponse (ainfo.Request, ar);
 			}
 			catch (WebException ex) {
-				Console.WriteLine ("E2:" + ex);
 				response = ex.Response;
 				HttpWebResponse http_response = response as HttpWebResponse;
 				if (http_response == null || http_response.StatusCode != HttpStatusCode.InternalServerError) {
@@ -209,7 +207,6 @@ namespace System.Web.Services.Protocols {
 		{
 			SoapMethodStubInfo msi = message.MethodStubInfo;
 			HttpWebResponse http_response = response as HttpWebResponse;
-			bool isSuccessful = true;
 			
 			if (http_response != null)
 			{
@@ -217,8 +214,6 @@ namespace System.Web.Services.Protocols {
 	
 				if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError))
 					throw new WebException ("Request error. Return code was: " + http_response.StatusCode);
-					
-				isSuccessful = (code != HttpStatusCode.InternalServerError);
 			}
 			
 			//
@@ -247,17 +242,17 @@ namespace System.Web.Services.Protocols {
 			SoapHeaderCollection headers;
 			object content;
 
-			if (isSuccessful) {
-				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, msi.ResponseSerializer, out content, out headers);
-				message.OutParameters = (object[]) content;
-			}
-			else {
-				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, type_info.GetFaultSerializer (msi.Use), out content, out headers);
+			WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, msi.ResponseSerializer, out content, out headers);
+			
+			if (content is Fault)
+			{
 				Fault fault = (Fault) content;
 				SoapException ex = new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
 				message.SetException (ex);
 			}
-
+			else
+				message.OutParameters = (object[]) content;
+			
 			message.SetHeaders (headers);
 			message.UpdateHeaderValues (this, message.MethodStubInfo.Headers);
 
@@ -266,7 +261,7 @@ namespace System.Web.Services.Protocols {
 				SoapExtension.ExecuteProcessMessage (extensions, message, false);
 			}
 
-			if (isSuccessful)
+			if (message.Exception == null)
 				return message.OutParameters;
 			else
 				throw message.Exception;
