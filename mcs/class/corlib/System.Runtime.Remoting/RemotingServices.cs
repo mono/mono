@@ -211,7 +211,7 @@ namespace System.Runtime.Remoting
 			}
 			else
 			{
-				ClientActivatedIdentity identity = uri_hash [uri] as ClientActivatedIdentity;
+				ClientActivatedIdentity identity = GetIdentityForUri (uri) as ClientActivatedIdentity;
 				if (identity == null || obj != identity.GetServerObject()) 
 					CreateClientActivatedServerIdentity (obj, requested_type, uri);
 			}
@@ -486,7 +486,7 @@ namespace System.Runtime.Remoting
 
 		internal static object GetProxyForRemoteObject (ObjRef objref, Type classToProxy)
 		{
-			ClientActivatedIdentity identity = uri_hash [objref.URI] as ClientActivatedIdentity;
+			ClientActivatedIdentity identity = GetIdentityForUri (objref.URI) as ClientActivatedIdentity;
 			if (identity != null) return identity.GetServerObject ();
 			else return GetRemoteObject (objref, classToProxy);
 		}
@@ -525,7 +525,10 @@ namespace System.Runtime.Remoting
 	        
 		internal static void DisposeIdentity (ServerIdentity ident)
 		{
-			uri_hash.Remove (ident.ObjectUri);
+			lock (uri_hash)
+			{
+				uri_hash.Remove (ident.ObjectUri);
+			}
 		}
 
 		internal static Identity GetMessageTargetIdentity (IMessage msg)
