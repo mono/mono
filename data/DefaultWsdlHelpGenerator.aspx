@@ -1208,10 +1208,7 @@ public class HtmlSampleGenerator: SampleGenerator
 			}
 			else if (item is XmlSchemaAny)
 			{
-				xtw.WriteStartElement ("any"); xtw.WriteEndElement ();
-				if (multiValue) {
-					xtw.WriteStartElement ("any"); xtw.WriteEndElement (); 
-				}
+				xtw.WriteString (GetLiteral ("xml"));
 			}
 			else if (item is XmlSchemaParticle) {
 				WriteParticleContent (xtw, ns, (XmlSchemaParticle)item, multiValue);
