@@ -1640,6 +1640,9 @@ method_decl		: D_EMITBYTE int32
                                 codegen.CurrentMethodDef.EntryPoint ();
                           }
 			| D_ZEROINIT
+                          {
+                                codegen.CurrentMethodDef.ZeroInit ();
+                          }
 			| D_EXPORT OPEN_BRACKET int32 CLOSE_BRACKET
 			| D_EXPORT OPEN_BRACKET int32 CLOSE_BRACKET K_AS id
 			| D_VTENTRY int32 COLON int32 

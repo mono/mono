@@ -1,3 +1,7 @@
+2003-11-18  Jackson Harper <jackson@ximian.com>
+
+	* ILParser.jay: Add zeroinit.
+	
 2003-11-17 Jackson Harper <jackson@ximian.com>
 
 	* ILParser.jay: Create strings from byte arrays. Fix parsing of
