@@ -685,7 +685,7 @@ namespace System.Web.UI.WebControls
 			case ListItemType.SelectedItem:
 				goto case ListItemType.EditItem;
 			case ListItemType.EditItem:
-				retVal = (DataListItem) Controls [repeatIndex];
+				retVal = (DataListItem) itemsArray [repeatIndex];
 				break;
 			case ListItemType.Separator:
 				int index = 2 * repeatIndex + 1;
