@@ -228,10 +228,23 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		throw new NotImplementedException ();
 	}
 	
-	[MonoTODO]	
 	public Image GetThumbnailImage(int thumbWidth, int thumbHeight, Image.GetThumbnailImageAbort callback, IntPtr callbackData)
 	{
-		throw new NotImplementedException ();				
+		Status		status;
+		Image		ThumbNail;
+		Graphics	g;
+
+		ThumbNail=new Bitmap(thumbWidth, thumbHeight);
+		g=Graphics.FromImage(ThumbNail);
+		
+		status = GDIPlus.GdipDrawImageRectRectI(g.nativeObject, nativeObject,
+					0, 0, thumbWidth, thumbHeight,
+					0, 0, this.Width, this.Height,
+					GraphicsUnit.Pixel, IntPtr.Zero, null, IntPtr.Zero);
+                GDIPlus.CheckStatus (status);
+		g.Dispose();
+
+		return(ThumbNail);
 	}
 	
 	
