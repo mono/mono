@@ -5,6 +5,7 @@
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Implementation: yes
  * Status:  40%
  * 
  * (C) Gaurav Vaish (2001)
@@ -405,13 +406,13 @@ namespace System.Web.UI.WebControls
 		
 		// Implemented procedures
 		//TODO: The scope of the functions - is public valid. Test thru Reflection
-		public string GetAttribute(string key)
+		string IAttributeAccessor.GetAttribute(string key)
 		{
 			if(Attributes!=null)
 				return (string)Attributes[key];
 		}
 		
-		public void SetAttribute(string key, string val)
+		void IAttributeAccessor.SetAttribute(string key, string val)
 		{
 			Attributes[key] = value;
 		}

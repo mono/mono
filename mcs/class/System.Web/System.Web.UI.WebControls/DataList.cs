@@ -5,6 +5,7 @@
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Implementation: yes
  * Status:  20%
  * 
  * (C) Gaurav Vaish (2001)
@@ -153,7 +154,7 @@ namespace System.Web.UI.WebControls
 		
 		//Impemented methods/properties of IRepeatInfoUser
 		//TODO: Check all these implementations are valid or a total absurd
-		public bool HasFooter
+		bool IRepeatInfoUser.HasFooter
 		{
 			get
 			{

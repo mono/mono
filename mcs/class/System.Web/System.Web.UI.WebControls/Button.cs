@@ -5,6 +5,7 @@
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Implementation: yes
  * Status:  20%
  * 
  * (C) Gaurav Vaish (2001)
@@ -144,7 +145,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		public void RaisePostBackEvent(string eventArgument)
+		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
 			/* Will have to see what work needs to be done before I actually call OnClick
 			 * Basically I have to see what is to be done with the string argument

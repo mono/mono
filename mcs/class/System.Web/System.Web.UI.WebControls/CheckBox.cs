@@ -5,6 +5,7 @@
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Implementation: yes
  * Status:  100%
  *
  * (C) Gaurav Vaish (2001)
@@ -230,7 +231,7 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag();
 		}
 		
-		public bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			string postedVal = postCollection[postDataKey];
 			bool   postChecked = false;
@@ -242,7 +243,7 @@ namespace System.Web.UI.WebControls
 			return (postChecked == Checked == false);
 		}
 		
-		public void RaisePostDataChangedEvent()
+		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
 			OnCheckedChanged(EventArgs.Empty);
 		}

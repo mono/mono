@@ -5,7 +5,8 @@
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- *Status: 100%
+ * Implementation: yes
+ * Status: 100%
  * 
  * (C) Gaurav Vaish (2001)
  */
