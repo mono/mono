@@ -27,6 +27,7 @@
 #include "gdip.h"
 #include "gdip_win32.h"
 #include <math.h>
+#include <glib.h>
 
 void
 gdip_graphics_init (GpGraphics *graphics)
@@ -794,9 +795,17 @@ GdipFillPolygon2I (GpGraphics *graphics, GpBrush *brush, GpPoint *points, int co
 }
 
 GpStatus 
-GdipDrawString (GpGraphics *graphics, const char *string,// FIXME: The string is encode using Unicode, Jordi
+GdipDrawString (GpGraphics *graphics, const char *stringUnicode,
                 int len, void *font, RectF *rc, void *format, GpBrush *brush)
 {
+	glong            items_read = 0;
+	glong            items_written = 0;  
+	GError          *error;
+
+
+	char* string = (char*)g_utf16_to_utf8 ((const gunichar2 *)stringUnicode, (glong)len,
+			&items_read, &items_written, &error);
+	
         cairo_save (graphics->ct);
 	if (brush)
 		gdip_brush_setup (graphics, brush);
@@ -807,6 +816,7 @@ GdipDrawString (GpGraphics *graphics, const char *string,// FIXME: The string is
 	cairo_move_to (graphics->ct, rc->left, rc->top + 12);
 	cairo_scale_font (graphics->ct, 12);
 	cairo_show_text (graphics->ct, string);
+	g_free(string);
 
         cairo_restore (graphics->ct);        
 	return gdip_get_status (cairo_status (graphics->ct));

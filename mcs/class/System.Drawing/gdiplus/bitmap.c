@@ -171,11 +171,6 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 
 	if (stride == 0)
 		return InvalidParameter;
-
-	if (scan0 == NULL) {
-                scan0 = GdipAlloc (stride*height);
-                own_scan0 = TRUE;
-        }
 			
 	switch (format) {
 	case Format24bppRgb:
@@ -189,6 +184,11 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 		return NotImplemented;
 	}
 
+	if (scan0 == NULL) {
+                scan0 = GdipAlloc (stride*height);
+                own_scan0 = TRUE;
+        }
+
 	result = gdip_bitmap_new ();
 	result->cairo_format = cairo_format;
 	result->data.Width = width;
@@ -197,7 +197,8 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 	result->data.PixelFormat = format;
 	result->data.Scan0 = scan0;
         result->data.own_scan0 = own_scan0;
-	
+
+		
 	*bitmap = result;
 	return Ok;
 }
