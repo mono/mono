@@ -1,3 +1,12 @@
+2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Pkcs9ContentTypeTest.cs: New. Unit tests for ContentType attribute.
+	* Pkcs9DocumentDescriptionTest.cs: Added tests for Format(bool).
+	* Pkcs9DocumentNameTest.cs: Added tests for Format(bool).
+	* Pkcs9MessageDigestTest.cs: New. Unit tests for MessageDigest attr.
+	* Pkcs9SigningTimeTest.cs: Added tests for Format(bool) and tests to
+	check valid dates - limited to [1950,2049].
+
 2004-07-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AlgorithmIdentifierTest.cs: Fixed for Fx 2.0 beta1.

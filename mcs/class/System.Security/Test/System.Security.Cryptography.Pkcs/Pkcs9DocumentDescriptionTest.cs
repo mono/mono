@@ -47,9 +47,18 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Pkcs9DocumentDescription dd = new Pkcs9DocumentDescription ();
 			Assert.AreEqual ("1.3.6.1.4.1.311.88.2.2", dd.Oid.Value, "Oid.Value");
 			Assert.IsNull (dd.Oid.FriendlyName, "Oid.FriendlyName");
-			// FIXME: throws a NullReferenceException in beta 1
-			// Assert.IsNull (dd.DocumentDescription, "DocumentDescription");
 			Assert.IsNull (dd.RawData, "RawData");
+			Assert.AreEqual (String.Empty, dd.Format (true), "Format(true)");
+			Assert.AreEqual (String.Empty, dd.Format (false), "Format(false)");
+		}
+
+		[Test]
+		// FIXME: throws a NullReferenceException in beta 1 - still true in Dec CTP
+		[Category ("NotDotNet")] // MS throws [ExpectedException (typeof (NullReferenceException))]
+		public void Constructor_Empty_MessageDigest ()
+		{
+			Pkcs9DocumentDescription dd = new Pkcs9DocumentDescription ();
+			Assert.IsNull (dd.DocumentDescription, "DocumentDescription");
 		}
 
 		[Test]
@@ -61,11 +70,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual ("mono", dd.DocumentDescription, "DocumentDescription");
 			Assert.AreEqual (12, dd.RawData.Length, "RawData.Length");
 			Assert.AreEqual ("04-0A-6D-00-6F-00-6E-00-6F-00-00-00", BitConverter.ToString (dd.RawData), "RawData");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dd.Format (true), "Format(true)");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dd.Format (false), "Format(false)");
 		}
 
 		[Test]
-		// BUG [ExpectedException (typeof (ArgumentNullException))]
 		[ExpectedException (typeof (NullReferenceException))]
+		// MSBUG [ExpectedException (typeof (ArgumentNullException))]
+		// reported as 
 		public void Constructor_StringNull () 
 		{
 			string desc = null;
@@ -82,6 +94,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual ("mono", dd.DocumentDescription, "DocumentDescription");
 			Assert.AreEqual (12, dd.RawData.Length, "RawData.Length");
 			Assert.AreEqual ("04-0A-6D-00-6F-00-6E-00-6F-00-00-00", BitConverter.ToString (dd.RawData), "RawData");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dd.Format (true), "Format(true)");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dd.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -90,6 +104,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			byte[] desc = null;
 			Pkcs9DocumentDescription dd = new Pkcs9DocumentDescription (desc);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CopyFrom_Null ()
+		{
+			new Pkcs9DocumentDescription ().CopyFrom (null);
 		}
 	}
 }

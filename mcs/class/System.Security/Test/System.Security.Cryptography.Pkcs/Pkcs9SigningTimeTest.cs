@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
+using System.Text;
 
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
@@ -46,12 +47,21 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		static DateTime mono10release = new DateTime (632241648000000000);
 
 		[Test]
+		public void DateTime_Mono10Release ()
+		{
+			// some tests fails if the assumption fails
+			Assert.AreEqual ("040630040000Z", mono10release.ToString ("yyMMddhhmmssZ"), "Z");
+		}
+
+		[Test]
 		public void Constructor_Empty () 
 		{
 			Pkcs9SigningTime st = new Pkcs9SigningTime ();
 			Assert.AreEqual (signingTimeName, st.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (signingTimeOid, st.Oid.Value, "Oid.Value");
 			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
+			Assert.AreEqual (BitConverter.ToString (st.RawData).ToLower ().Replace ("-", " "), st.Format (true), "Format(true)");
+			Assert.AreEqual (BitConverter.ToString (st.RawData).ToLower ().Replace ("-", " "), st.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -61,6 +71,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (signingTimeName, st.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (signingTimeOid, st.Oid.Value, "Oid.Value");
 			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
+			Assert.AreEqual (BitConverter.ToString (st.RawData).ToLower ().Replace ("-", " "), st.Format (true), "Format(true)");
+			Assert.AreEqual (BitConverter.ToString (st.RawData).ToLower ().Replace ("-", " "), st.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -71,10 +83,74 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Constructor_DateTime_1600 ()
+		{
+			DateTime dt = new DateTime (1600, 12, 31, 11, 59, 59);
+			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Constructor_DateTime_1601 ()
+		{
+			DateTime dt = new DateTime (1601, 01, 01, 00, 00, 00);
+			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
+		}
+
+		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		public void Constructor_DateTime_MaxValue ()
 		{
 			Pkcs9SigningTime st = new Pkcs9SigningTime (DateTime.MaxValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Constructor_DateTime_Before1950 ()
+		{
+			DateTime dt = new DateTime (1949, 12, 31, 11, 59, 59);
+			// UTCTIME (0x17), i.e. 2 digits years, limited to 1950-2050
+			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
+		}
+
+		[Test]
+		public void Constructor_DateTime_After1950 ()
+		{
+			DateTime dt = new DateTime (1950, 01, 01, 00, 00, 00);
+			// UTCTIME (0x17), i.e. 2 digits years, limited to 1950-2050
+			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
+			Assert.AreEqual (signingTimeName, st.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (signingTimeOid, st.Oid.Value, "Oid.Value");
+			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
+			Assert.AreEqual ("17-0D-35-30-30-31-30-31-30-30-30-30-30-30-5A", BitConverter.ToString (st.RawData));
+			Assert.AreEqual (dt, st.SigningTime, "st.SigningTime");
+			Assert.AreEqual ("17 0d 35 30 30 31 30 31 30 30 30 30 30 30 5a", st.Format (true), "Format(true)");
+			Assert.AreEqual ("17 0d 35 30 30 31 30 31 30 30 30 30 30 30 5a", st.Format (false), "Format(false)");
+		}
+
+		[Test]
+		public void Constructor_DateTime_Before2050 ()
+		{
+			DateTime dt = new DateTime (2049, 12, 31, 11, 59, 59);
+			// up to 2050 encoding should stay with UTCTIME (0x17), i.e. 2 digits years
+			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
+			Assert.AreEqual (signingTimeName, st.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (signingTimeOid, st.Oid.Value, "Oid.Value");
+			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
+			Assert.AreEqual ("17-0D-34-39-31-32-33-31-31-31-35-39-35-39-5A", BitConverter.ToString (st.RawData));
+			Assert.AreEqual (dt, st.SigningTime, "st.SigningTime");
+			Assert.AreEqual ("17 0d 34 39 31 32 33 31 31 31 35 39 35 39 5a", st.Format (true), "Format(true)");
+			Assert.AreEqual ("17 0d 34 39 31 32 33 31 31 31 35 39 35 39 5a", st.Format (false), "Format(false)");
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Constructor_DateTime_After2050 ()
+		{
+			DateTime dt = new DateTime (2050, 01, 01, 00, 00, 00);
+			// in 2050 encoding should switch to GENERALIZEDTIME (0x18), i.e. 4 digits years
+			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
 		}
 
 		[Test]
@@ -86,6 +162,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
 			Assert.AreEqual ("17-0D-30-34-30-36-33-30-30-34-30-30-30-30-5A", BitConverter.ToString (st.RawData), "RawData");
 			Assert.AreEqual (mono10release, st.SigningTime, "st.SigningTime");
+			Assert.AreEqual ("17 0d 30 34 30 36 33 30 30 34 30 30 30 30 5a", st.Format (true), "Format(true)");
+			Assert.AreEqual ("17 0d 30 34 30 36 33 30 30 34 30 30 30 30 5a", st.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -98,6 +176,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
 			Assert.AreEqual ("17-0D-30-34-30-36-33-30-30-34-30-30-30-30-5A", BitConverter.ToString (st.RawData), "RawData");
 			Assert.AreEqual (mono10release, st.SigningTime, "st.SigningTime");
+			Assert.AreEqual ("17 0d 30 34 30 36 33 30 30 34 30 30 30 30 5a", st.Format (true), "Format(true)");
+			Assert.AreEqual ("17 0d 30 34 30 36 33 30 30 34 30 30 30 30 5a", st.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -108,6 +188,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore ("MS returns bad results (original time) - Mono needs to override CopyFrom to fix")]
+		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=66943396-ad73-497f-82ae-090b87ffcb4e
 		public void CopyFrom () 
 		{
 			Pkcs9SigningTime st1 = new Pkcs9SigningTime (mono10release);
@@ -116,8 +198,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (st2.Oid.FriendlyName, st1.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (st2.Oid.Value, st1.Oid.Value, "Oid.Value");
 			Assert.AreEqual (BitConverter.ToString (st2.RawData), BitConverter.ToString (st1.RawData), "RawData");
-			// BUG - SigningTime isn't updated
-			Assert.AreEqual (st2.SigningTime, st1.SigningTime, "SigningTime");
+			// Note: Some timing resolution is lost by goind to ASN.1
+			Assert.AreEqual (st2.SigningTime.ToString (), st1.SigningTime.ToString (), "SigningTime");
 		}
 
 		[Test]
@@ -128,6 +210,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Ignore ("MS doesn't throw but returns bad results - Mono needs to override CopyFrom to fix")]
+		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=66943396-ad73-497f-82ae-090b87ffcb4e
+		[ExpectedException (typeof (CryptographicException))]
 		public void CopyFrom_Bad ()
 		{
 			Pkcs9SigningTime st = new Pkcs9SigningTime (mono10release);
@@ -136,7 +221,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual (dn.Oid.FriendlyName, st.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (dn.Oid.Value, st.Oid.Value, "Oid.Value");
 			Assert.AreEqual (BitConverter.ToString (dn.RawData), BitConverter.ToString (st.RawData), "RawData");
-			// BUG ???
+			// wrong ASN.1
 			Assert.AreEqual (mono10release, st.SigningTime, "SigningTime");
 		}
 	}

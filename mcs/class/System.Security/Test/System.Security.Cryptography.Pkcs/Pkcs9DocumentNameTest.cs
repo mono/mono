@@ -47,9 +47,18 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Pkcs9DocumentName dn = new Pkcs9DocumentName ();
 			Assert.IsNull (dn.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual ("1.3.6.1.4.1.311.88.2.1", dn.Oid.Value, "Oid.Value");
-			// FIXME: throws a NullReferenceException in beta 1
-			// Assert.IsNull (dn.DocumentName, "DocumentName");
 			Assert.IsNull (dn.RawData, "RawData");
+			Assert.AreEqual (String.Empty, dn.Format (true), "Format(true)");
+			Assert.AreEqual (String.Empty, dn.Format (false), "Format(false)");
+		}
+
+		[Test]
+		// FIXME: throws a NullReferenceException in beta 1 - still true in Dec CTP
+		[Category ("NotDotNet")] // MS throws [ExpectedException (typeof (NullReferenceException))]
+		public void Constructor_Empty_MessageDigest ()
+		{
+			Pkcs9DocumentName dn = new Pkcs9DocumentName ();
+			Assert.IsNull (dn.DocumentName, "DocumentName");
 		}
 
 		[Test]
@@ -61,11 +70,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual ("mono", dn.DocumentName, "DocumentName");
 			Assert.AreEqual (12, dn.RawData.Length, "RawData.Length");
 			Assert.AreEqual ("04-0A-6D-00-6F-00-6E-00-6F-00-00-00", BitConverter.ToString (dn.RawData), "RawData");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dn.Format (true), "Format(true)");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dn.Format (false), "Format(false)");
 		}
 
 		[Test]
-		// BUG [ExpectedException (typeof (ArgumentNullException))]
 		[ExpectedException (typeof (NullReferenceException))]
+		// MSBUG [ExpectedException (typeof (ArgumentNullException))]
+		// reported as 
 		public void Constructor_StringNull ()
 		{
 			string name = null;
@@ -82,6 +94,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual ("mono", dn.DocumentName, "DocumentName");
 			Assert.AreEqual (12, dn.RawData.Length, "RawData.Length");
 			Assert.AreEqual ("04-0A-6D-00-6F-00-6E-00-6F-00-00-00", BitConverter.ToString (dn.RawData), "RawData");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dn.Format (true), "Format(true)");
+			Assert.AreEqual ("04 0a 6d 00 6f 00 6e 00 6f 00 00 00", dn.Format (false), "Format(false)");
 		}
 
 		[Test]
@@ -90,6 +104,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			byte[] name = null;
 			Pkcs9DocumentName dn = new Pkcs9DocumentName (name);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CopyFrom_Null ()
+		{
+			new Pkcs9DocumentName ().CopyFrom (null);
 		}
 	}
 }
