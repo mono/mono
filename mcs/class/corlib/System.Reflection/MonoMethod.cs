@@ -118,6 +118,8 @@ namespace System.Reflection {
 				throw new ArgumentException ("parameters");
 			try {
 				return InternalInvoke (obj, parameters);
+			} catch (InvalidOperationException) {
+				throw;
 			} catch (TargetException) {
 				throw;
 			} catch (Exception e) {
@@ -316,6 +318,8 @@ namespace System.Reflection {
 				throw new ArgumentException ("parameters");
 			try {
 				return InternalInvoke (obj, parameters);
+			} catch (InvalidOperationException) {
+				throw;
 			} catch (TargetException) {
 				throw;
 			} catch (Exception e) {

@@ -360,11 +360,16 @@ namespace System.Reflection {
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static Assembly LoadFrom (String assemblyFile);
+		private extern static Assembly LoadFrom (String assemblyFile, bool refonly);
+
+		public static Assembly LoadFrom (String assemblyFile)
+		{
+			return LoadFrom (assemblyFile, false);
+		}
 
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
-			Assembly a = LoadFrom (assemblyFile);
+			Assembly a = LoadFrom (assemblyFile, false);
 			if ((a != null) && (securityEvidence != null)) {
 				// merge evidence (i.e. replace defaults with provided evidences)
 				a.Evidence.Merge (securityEvidence);
@@ -436,20 +441,22 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public static Assembly ReflectionOnlyLoad (byte[] rawAssembly)
 		{
-			throw new NotImplementedException ();
+			return AppDomain.CurrentDomain.Load (rawAssembly, null, null, true);
 		}
 
-		[MonoTODO]
-		public static Assembly ReflectionOnlyLoad (string assemblyString) {
-			throw new NotImplementedException ();
+		public static Assembly ReflectionOnlyLoad (string assemblyName) 
+		{
+			return AppDomain.CurrentDomain.Load (assemblyName, null, true);
 		}
 
-		[MonoTODO]
-		public static Assembly ReflectionOnlyLoadFrom (string assemblyFile) {
-			throw new NotImplementedException ();
+		public static Assembly ReflectionOnlyLoadFrom (string assemblyFile) 
+		{
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
+			
+			return LoadFrom (assemblyFile, true);
 		}
 #endif
 
@@ -524,7 +531,11 @@ namespace System.Reflection {
 			if (t == null)
 				return null;
 
-			return Activator.CreateInstance (t);
+			try {
+				return Activator.CreateInstance (t);
+			} catch (InvalidOperationException) {
+				throw new ArgumentException ("It is illegal to invoke a method on a Type loaded via ReflectionOnly methods.");
+			}
 		}
 
 		public Object CreateInstance (String typeName, Boolean ignoreCase,
@@ -536,7 +547,11 @@ namespace System.Reflection {
 			if (t == null)
 				return null;
 
-			return Activator.CreateInstance (t, bindingAttr, binder, args, culture, activationAttributes);
+			try {
+				return Activator.CreateInstance (t, bindingAttr, binder, args, culture, activationAttributes);
+			} catch (InvalidOperationException) {
+				throw new ArgumentException ("It is illegal to invoke a method on a Type loaded via ReflectionOnly methods.");
+			}
 		}
 
 		public Module[] GetLoadedModules ()
@@ -704,10 +719,10 @@ namespace System.Reflection {
 			}
 		}
 
-		[MonoTODO ("see ReflectionOnlyLoad")]
 		[ComVisible (false)]
-		public virtual bool ReflectionOnly {
-			get { return false; }
+		public virtual extern bool ReflectionOnly {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 #endif
 
