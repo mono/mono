@@ -416,6 +416,9 @@ namespace System.Data.SqlClient {
 		{
 			theServerName = "";
 			string theInstanceName = "";
+			if ((theDataSource == null) || (theServerName == null))
+				throw new ArgumentException("Format of initialization string doesnot conform to specifications");
+				
 			thePort = 1433; // default TCP port for SQL Server
 			bool success = true;
                         			
@@ -456,7 +459,7 @@ namespace System.Data.SqlClient {
                 {
 			NameValueCollection parameters = new NameValueCollection ();
 
-			if (connectionString.Length == 0)
+			if (( connectionString == null)||( connectionString.Length == 0)) 
 				return;
 			connectionString += ";";
 
@@ -545,8 +548,8 @@ namespace System.Data.SqlClient {
 
                         this.connectionString = connectionString;
                 }
-
-                void SetDefaultConnectionParameters (NameValueCollection parameters)
+	
+	        void SetDefaultConnectionParameters (NameValueCollection parameters)
                 {
                         if (null == parameters.Get ("APPLICATION NAME"))
                                 parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
@@ -655,7 +658,9 @@ namespace System.Data.SqlClient {
                                 case "WORKSTATION ID" :
                                         parms.Hostname = value;
                                         break;
-                                }
+				default :
+					throw new ArgumentException("Keyword not supported :"+name);
+			          }
 			}
 		}
 

@@ -1,3 +1,8 @@
+2004-06-18 Umadevi S <sumadevi@novell.com>
+	* SqlConnection.cs - handled null being passed as a connectionstring
+	  - checked for minimal set of parameters in connectionstring.
+	  - handled unrecogonized keywords similar to MS.NET
+
 2004-06-17 Umadevi S <sumadevi@novell.com>
 	* SqlTransaction.cs - fixed  multiple rollbacks being called causes invalidoperationexception
 
