@@ -1,3 +1,8 @@
+2004-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNodeChageType.cs, XmlChangeFilters.cs : fixed enum values.
+	* XPathResultType.cs : marked [MonoFIX] on .Navigator.
+
 2004-07-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs, Iterator.cs, XPathNavigator.cs :

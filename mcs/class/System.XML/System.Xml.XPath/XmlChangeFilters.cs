@@ -29,12 +29,14 @@
 
 namespace System.Xml.XPath
 {
+	[Flags]
+	[Serializable]
 	public enum XmlChangeFilters
 	{
-		Updated,
-		Inserted,
-		Deleted,
-		AllChanges
+		Inserted = 1,
+		Deleted = 2,
+		Updated = 4,
+		AllChanges = 7
 	}
 }
 #endif

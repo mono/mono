@@ -29,12 +29,13 @@
 
 namespace System.Xml.XPath
 {
+	[Serializable]
 	public enum XmlNodeChangeType
 	{
-		Updated,
-		Inserted,
-		Deleted,
-		Unchanged
+		Updated = 1,
+		Inserted = 2,
+		Deleted = 4,
+		Unchanged = 8
 	}
 }
 #endif
