@@ -196,6 +196,8 @@ namespace Mono.CSharp {
 					right = ((EnumConstant) right).Child;
 			}
 
+			Type wrap_as = null;
+
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
@@ -357,7 +359,6 @@ namespace Mono.CSharp {
 				//
 				// note that E operator + (E x, E y) is invalid
 				//
-				Type wrap_as = null;
 				if (left is EnumConstant){
 					if (right is EnumConstant){
 						return null;
@@ -462,7 +463,6 @@ namespace Mono.CSharp {
 				// handle "E operator - (Y y, E x)"
 				// handle "U operator - (E x, E y)"
 				//
-				Type wrap_as = null;
 				if (left is EnumConstant){
 					if (right is EnumConstant){
 						if (left.Type == right.Type)
