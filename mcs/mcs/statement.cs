@@ -2317,11 +2317,15 @@ namespace Mono.CSharp {
 			private Hashtable struct_field_hash;
 			private Hashtable field_hash;
 
+			protected bool InTransit = false;
+
 			// Private constructor.  To save memory usage, we only need to create one instance
 			// of this class per struct type.
 			private StructInfo (Type type)
 			{
 				this.Type = type;
+
+				field_type_hash.Add (type, this);
 
 				if (type is TypeBuilder) {
 					TypeContainer tc = TypeManager.LookupTypeContainer (type);
@@ -2371,13 +2375,25 @@ namespace Mono.CSharp {
 				StructFields = new TypeInfo [Count];
 				StructInfo[] sinfo = new StructInfo [Count];
 
+				InTransit = true;
+
 				for (int i = 0; i < Count; i++) {
 					FieldInfo field = (FieldInfo) Fields [i];
 
 					sinfo [i] = GetStructInfo (field.FieldType);
 					if (sinfo [i] == null)
 						field_hash.Add (field.Name, ++Length);
+					else if (sinfo [i].InTransit) {
+						Report.Error (523, String.Format (
+								      "Struct member '{0}.{1}' of type '{2}' causes " +
+								      "a cycle in the structure layout",
+								      type, field.Name, sinfo [i].Type));
+						sinfo [i] = null;
+						return;
+					}
 				}
+
+				InTransit = false;
 
 				TotalLength = Length + 1;
 				for (int i = 0; i < Count; i++) {
@@ -2411,19 +2427,15 @@ namespace Mono.CSharp {
 
 			public static StructInfo GetStructInfo (Type type)
 			{
-				if (!TypeManager.IsValueType (type) || TypeManager.IsEnumType (type))
-					return null;
-
-				if (!(type is TypeBuilder) && TypeManager.IsBuiltinType (type))
+				if (!TypeManager.IsValueType (type) || TypeManager.IsEnumType (type) ||
+				    TypeManager.IsBuiltinType (type))
 					return null;
 
 				StructInfo info = (StructInfo) field_type_hash [type];
 				if (info != null)
 					return info;
 
-				info = new StructInfo (type);
-				field_type_hash.Add (type, info);
-				return info;
+				return new StructInfo (type);
 			}
 
 			public static StructInfo GetStructInfo (TypeContainer tc)
@@ -2432,9 +2444,7 @@ namespace Mono.CSharp {
 				if (info != null)
 					return info;
 
-				info = new StructInfo (tc.TypeBuilder);
-				field_type_hash.Add (tc.TypeBuilder, info);
-				return info;
+				return new StructInfo (tc.TypeBuilder);
 			}
 		}
 	}
@@ -3046,6 +3056,11 @@ namespace Mono.CSharp {
 			if (block.children != null) {
 				foreach (Block child in block.children)
 					AddChildVariableNames (child);
+			}
+
+			if (block.child_variable_names != null) {
+				foreach (string name in block.child_variable_names.Keys)
+					AddChildVariableName (name);
 			}
 		}
 
