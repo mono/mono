@@ -82,7 +82,6 @@
 	* class.cs: If there is a problem with the parameter types,
 	return. 
 
->>>>>>> 1.492
 2002-05-24  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (ImplicitConversionExists): Wrapper function which also
