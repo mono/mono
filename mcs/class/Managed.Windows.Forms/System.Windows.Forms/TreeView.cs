@@ -615,7 +615,7 @@ namespace System.Windows.Forms {
 
 			int ly = 0;
 			if (node.PrevNode != null) {
-				int prevadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
+				int prevadjust = (node.PrevNode.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
 				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
 				ly = node.PrevNode.Bounds.Bottom - (item_height / 2) + prevadjust;
 				DeviceContext.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);

@@ -1,3 +1,7 @@
+2004-12-29  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Align lines to the bottom of plus minus boxes properly.
+	
 2004-12-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* X11Structs.cs X11Keyboard.cs XplatUIX11.cs: Fix 64 bit issues.
