@@ -1,3 +1,8 @@
+2003-01-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlElementTests.cs : added TestWriteToDefaultNamespace test.
+	* XmlNodeTests.cs : added TestGetPrefixOfNamespace test.
+
 2003-01-18  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlWriterTests.cs file and added it to AllTests.cs

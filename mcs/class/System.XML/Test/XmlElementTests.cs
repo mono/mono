@@ -283,6 +283,16 @@ namespace MonoTests.System.Xml
 			AssertNull ("RemoveAllAttributes", el.GetAttributeNode ("a2"));
 		}
 
+		public void TestWriteToWithDefaultNamespace ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<RetrievalElement URI=\"\"xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />");
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			doc.DocumentElement.WriteTo (xtw);
+			AssertEquals ("<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", sw.ToString());
+		}
+
 		public void TestWriteToWithDeletedNamespacePrefix ()
 		{
 			XmlDocument doc = new XmlDocument ();
