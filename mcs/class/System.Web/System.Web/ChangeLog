@@ -1,3 +1,11 @@
+2002-07-25  Tim Coleman <tim@timcoleman.com>
+	* ProcessModelInfo.cs:
+		New class added
+	* HttpParseException.cs:
+	* HttpCompileException.cs:
+	* HttpUnhandledException.cs:
+		Internal constructors added to these
+
 2002-07-24  Tim Coleman <tim@timcoleman.com>
 	* ProcessInfo.cs: 
 		Fix constructor, reference to shutdownreason.
