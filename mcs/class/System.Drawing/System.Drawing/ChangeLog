@@ -1,5 +1,10 @@
 2004-04-28  Sanjay Gupta  <gsanjay@novell.com>
 
+	* ColorTranslator.cs, StringFormat.cs, SystemIcons.cs, ToolBoxBitmapAttributes.cs:
+	Converted to unix format from dos format.
+
+2004-04-28  Sanjay Gupta  <gsanjay@novell.com>
+
 	* ImageConverter.cs: Implemented GetProperties() and GetPropertiesSupported () methods.
 
 2004-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
