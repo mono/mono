@@ -99,6 +99,7 @@ System.Web.UI/ITemplate.cs
 System.Web.UI/IValidator.cs
 System.Web.UI/ImageClickEventHandler.cs
 System.Web.UI/LiteralControl.cs
+System.Web.UI/LosFormatter.cs
 System.Web.UI/OutputCacheLocation.cs
 System.Web.UI/Pair.cs
 System.Web.UI/PersistenceMode.cs
@@ -111,12 +112,14 @@ System.Web.UI/ConstructorNeedsTagAttribute.cs
 System.Web.UI/ControlBuilderAttribute.cs
 System.Web.UI/ImageClickEventArgs.cs
 System.Web.UI/Page.cs
+System.Web.UI/PageParser.cs
 System.Web.UI/ParseChildrenAttribute.cs
 System.Web.UI/PartialCachingAttribute.cs
 System.Web.UI/PersistChildrenAttribute.cs
 System.Web.UI/PersistenceModeAttribute.cs
 System.Web.UI/TagPrefixAttribute.cs
 System.Web.UI/TemplateContainerAttribute.cs
+System.Web.UI/TemplateControlParser.cs
 System.Web.UI/ValidatorCollection.cs
 System.Web.UI/ValidationPropertyAttribute.cs
 System.Web.UI/AttributeCollection.cs
@@ -309,3 +312,10 @@ System.Web.SessionState/IRequiresSessionState.cs
 System.Web.SessionState/SessionDictionary.cs
 System.Web.SessionState/SessionStateMode.cs
 System.Web.SessionState/SessionStateModule.cs
+System.Web.Compilation/AspComponentFoundry.cs
+System.Web.Compilation/AspElements.cs
+System.Web.Compilation/AspGenerator.cs
+System.Web.Compilation/AspParser.cs
+System.Web.Compilation/AspTokenizer.cs
+System.Web.Compilation/PageCompiler.cs
+System.Web.Compilation/TemplateFactory.cs
