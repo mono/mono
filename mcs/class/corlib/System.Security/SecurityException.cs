@@ -106,7 +106,7 @@ namespace System.Security {
 			: base (info, context)
 		{
 			base.HResult = unchecked ((int)0x8013150A);
-			permissionState = info.GetString ("permissionState");
+			permissionState = info.GetString ("PermissionState");
 		}
 		
 		public SecurityException (string message, Exception inner) 

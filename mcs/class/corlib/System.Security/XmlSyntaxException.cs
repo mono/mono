@@ -54,6 +54,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace System.Security {
 	[Serializable]
@@ -69,5 +70,7 @@ namespace System.Security {
 			: base (message){}
 		public XmlSyntaxException(string message, Exception inner) 
 			: base (message, inner) {}
+		internal XmlSyntaxException(SerializationInfo info, StreamingContext context)
+			: base(info, context) {}
 	}
 }
