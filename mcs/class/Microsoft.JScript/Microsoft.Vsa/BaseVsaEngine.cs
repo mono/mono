@@ -31,7 +31,7 @@ namespace Microsoft.Vsa {
 		private bool namespaceNotSet;
 		private bool supportDebug;
 		private bool generateDebugInfo;
-		private bool compiled;
+		protected bool compiled;
 		private bool dirty;
 
 		private bool initNewCalled;
@@ -576,6 +576,7 @@ namespace Microsoft.Vsa {
 
 		internal bool InitNewCalled {
 			get { return initNewCalled; }
+			set { initNewCalled = value; }
 		}
 	}
 

@@ -1,3 +1,7 @@
+2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+        * Microsoft.Vsa/BaseVsaEngine.cs: added setter for InitNewCalled.
+
 2003-09-29    <cesar@ciencias.unam.mx>
 
 	* BaseVsaEngine.cs: added default constructor, added exceptions
