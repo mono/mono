@@ -6,14 +6,11 @@
 //
 // (C) 2002
 //
-// Stubbed.
-//
 
 using System;
 
 namespace System.Security.Cryptography {
 	
-	[MonoTODO]
 	[Serializable]
 	public struct RSAParameters {
 		[NonSerialized]
@@ -28,7 +25,6 @@ namespace System.Security.Cryptography {
 		public byte[] DQ;
 		[NonSerialized]
 		public byte[] InverseQ;
-		[NonSerialized]
 
 		public byte[] Modulus;
 		public byte[] Exponent;

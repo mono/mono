@@ -166,15 +166,6 @@ namespace System.Security.Cryptography {
 			return res;
 		}
 
-
-
-		/// <summary>
-		/// </summary>
-		public override string ToString ()
-		{
-			return "mono::System.Security.Cryptography.ToBase64Transform";
-		}
-
 	} // ToBase64Transform
 
 

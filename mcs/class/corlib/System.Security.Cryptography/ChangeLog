@@ -1,3 +1,20 @@
+2002-10-14  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* MD5.cs: Create using CryptoConfig, set HashSizeValue, removed TODO.
+	* Rijndael.cs: Create using CryptoConfig. Removed TODO.
+	* RSAParameters.cs: Modulus must be serialized. Removed TODO.
+	* SHA256.cs: Create using CryptoConfig, set HashSizeValue, removed TODO.
+	* SHA384.cs: Create using CryptoConfig, set HashSizeValue, removed TODO.
+	* SHA512.cs: Create using CryptoConfig, set HashSizeValue, removed TODO.
+	* FromBase64Transform.cs: Removed ToString()
+	* ToBase64Transform.cs: Removed ToString()
+	* SymmetricAlgorithm.cs: Create using CryptoConfig, set default Mode and 
+	Padding, added Clear, Dispose
+	* TripleDES.cs: New. Abstract class.
+	* MaskGenerationMethod.cs: New. Abstract class.
+	* PKCS1MaskGenerationMethod.cs: New. Implement PKCS#1 MGF (currently not 
+	compatible with MS implementation - but not sure the bug is mine!).
+
 2002-10-13  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* HashAlgorithm.cs: Added Dispose() to HashAlgorithm because it 

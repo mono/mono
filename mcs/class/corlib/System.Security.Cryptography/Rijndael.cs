@@ -3,20 +3,28 @@
 //
 // Authors: Dan Lewis (dihlewis@yahoo.co.uk)
 //          Andrew Birkett (andy@nobugs.org)
-// (C) 2002
 //
+// (C) 2002
 //
 
 using System;
 
 namespace System.Security.Cryptography {
 	
-	[MonoTODO]
 	public abstract class Rijndael : SymmetricAlgorithm {
-		public static new Rijndael Create () { return new RijndaelManaged(); }
-		public static new Rijndael Create (string alg) { return Create (); }
+
+		public static new Rijndael Create () 
+		{
+			return Create ("System.Security.Cryptography.Rijndael");
+		}
+
+		public static new Rijndael Create (string algName) 
+		{
+			return (Rijndael) CryptoConfig.CreateFromName (algName);
+		}
 		
-		public Rijndael () {
+		public Rijndael () 
+		{
 			KeySizeValue = 256;
 			BlockSizeValue = 128;
 			FeedbackSizeValue = 128;
@@ -26,7 +34,6 @@ namespace System.Security.Cryptography {
 
 			LegalBlockSizesValue = new KeySizes[1];
 			LegalBlockSizesValue[0] = new KeySizes(128, 256, 64);
-
 		}
 	}
 }
