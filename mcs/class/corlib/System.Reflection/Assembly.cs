@@ -304,10 +304,8 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static Assembly GetCallingAssembly ();
 
-		public AssemblyName[] GetReferencedAssemblies ()
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern AssemblyName[] GetReferencedAssemblies ();
 
 		public virtual ManifestResourceInfo GetManifestResourceInfo (String resourceName)
 		{
