@@ -322,6 +322,7 @@ System.Reflection/PropertyInfo.cs
 System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/ResourceAttributes.cs
 System.Reflection/ResourceLocation.cs
+System.Reflection/ReflectionSerializationHolder.cs
 System.Reflection/StrongNameKeyPair.cs
 System.Reflection/TargetException.cs
 System.Reflection/TargetInvocationException.cs
