@@ -669,7 +669,28 @@ namespace System.Windows.Forms {
 					height = DefaultSize.Height;
 				}
 			}
-			base.SetBoundsCore(x,y,width,height,specified);
+			if ( (specified & BoundsSpecified.X) == 0)      x = Left;
+			if ( (specified & BoundsSpecified.Y) == 0)      y = Top;
+			if ( (specified & BoundsSpecified.Width) == 0)  width = Width;
+			//if ( (specified & BoundsSpecified.Height) == 0) height = Height;
+
+			if (IsHandleCreated){
+				SetWindowPosFlags flags = SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_DRAWFRAME;
+				Win32.SetWindowPos (Handle, SetWindowPosZOrder.HWND_NOTOPMOST, x, y, width, height, flags);
+
+				RECT rect = new RECT();
+				Win32.GetWindowRect (Handle, ref rect);
+				if( Parent != null) {
+					Win32.ScreenToClient(Parent.Handle, ref rect);
+				}
+				x = rect.left;
+				y = rect.top;
+				width = rect.right - rect.left;
+				height = rect.bottom - rect.top;
+			}
+
+			UpdateBounds (x, y, width, height);
+
 			// FIXME: this is needed, otherwise painting is not correct
 			if( dropDownStyle == ComboBoxStyle.Simple ) {
 				Win32.InvalidateRect(Handle, IntPtr.Zero, 0);

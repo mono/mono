@@ -1,4 +1,12 @@
 2003-08-22  Alexandre Pigolkine <pigolkine@gmx.de>
+	* CheckedListBox.cs
+				new keyword added to avoid warnings - Brian Takita
+				<brian.takita@runbox.com>
+				
+	* ComboBox.cs				modified SetBoundsCore to keep correct value for Height 
+	* Control.cs				avoid Control creation in Enabled property 
+
+2003-08-22  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Button.cs
 	* ButtonBase.cs
 	* CheckBox.cs

@@ -104,7 +104,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public CheckedListBox.ObjectCollection Items {
+		public new CheckedListBox.ObjectCollection Items {
 			get {
 				return (CheckedListBox.ObjectCollection)base.Items; 
 			}
@@ -604,7 +604,7 @@ namespace System.Windows.Forms {
 		/// </summary>
 		
 		[MonoTODO]
-		public class ObjectCollection : ListBox.ObjectCollection {
+		public new class ObjectCollection : ListBox.ObjectCollection {
 			
 			/// --- ObjectCollection.constructor ---
 			[MonoTODO]

@@ -712,12 +712,14 @@ namespace System.Windows.Forms {
     				//return Win32.IsWindowEnabled (Handle);
     			}
     			set {
-				if (enabled != value) {
-					Win32.EnableWindow (Handle, value);
-					enabled = value;
-					// FIXME: Disable/enable all children here
-					Invalidate ();
-				}
+					if (enabled != value) {
+						if (IsHandleCreated) {
+							Win32.EnableWindow (Handle, value);
+							// FIXME: Disable/enable all children here
+							Invalidate ();
+						}
+						enabled = value;
+					}
     			}
     		}
     		
