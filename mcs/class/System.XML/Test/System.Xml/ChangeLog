@@ -1,3 +1,8 @@
+2003-07-01  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* Made tests which expect an exception use the
+	  ExpectedException Attribute.
+
 2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlUrlResolverTests.cs.

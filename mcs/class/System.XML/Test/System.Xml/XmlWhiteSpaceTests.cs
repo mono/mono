@@ -60,17 +60,10 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void XmlWhitespaceBadConstructor ()
 		{
-			try {
-				broken = document.CreateWhitespace ("black");				
-
-			} catch (ArgumentException) {
-				return;
-
-			} catch (Exception) {
-				Fail ("Incorrect Exception thrown.");
-			}
+			broken = document.CreateWhitespace ("black");				
 		}
 
 		[Test]
