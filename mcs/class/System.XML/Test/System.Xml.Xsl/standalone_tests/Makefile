@@ -1,9 +1,10 @@
-RUNTIME =
+RUNTIME = mono
+MCS_RUNTIME =
 MCS = mcs
 TESTS = testsuite/TESTS/Xalan_Conformance_Tests/whitespace/whitespace35.xsl
 
 xslttest.exe : xslttest.cs $(TESTS)
-	$(RUNTIME) $(MCS) xslttest.cs
+	$(MCS_RUNTIME) $(MCS) xslttest.cs
 
 $(TESTS) : xslt-testsuite-01.zip
 	unzip -n xslt-testsuite-01.zip
@@ -12,4 +13,7 @@ $(TESTS) : xslt-testsuite-01.zip
 
 xslt-testsuite-01.zip :
 	wget http://www.oasis-open.org/committees/download.php/1937/xslt-testsuite-01.zip
+
+test :
+	$(RUNTIME) xslttest.exe
 

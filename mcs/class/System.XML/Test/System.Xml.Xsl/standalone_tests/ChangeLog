@@ -1,3 +1,8 @@
 2003-12-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Added missing xalan_correct_catalog.xml.
+	* Makefile : a bit improved.
+
+2003-12-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile, prepare.cs, xslttest.cs : Initial checkin.
