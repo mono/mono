@@ -1,5 +1,6 @@
 // cs0067.cs: The event is never used.
-// Line: 11
+// Line: 12
+// Compiler options: -warnaserror -warn:4
 
 using System;
 

@@ -1,3 +1,7 @@
+2004-09-01 Marek Safar <marek.safar@seznam.cz>
+
+	* 20 new tests mainly for static classes.
+
 2004-08-27  Martin Baulig  <martin@ximian.com>
 
 	* Makefile (test-everything): New target.

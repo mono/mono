@@ -1,3 +1,5 @@
+// Compiler options: -warnaserror -warn:3
+
 using System;
 using System;
 

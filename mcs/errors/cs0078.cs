@@ -1,5 +1,6 @@
-// cs0078.cs: Compiler Warning level 4. 'l' is easily confused with digit '1'.
+// cs0078.cs: 'l' is easily confused with digit '1'.
 // Line: 12
+// Compiler options: -warnaserror -warn:4
 
 using System;
 
