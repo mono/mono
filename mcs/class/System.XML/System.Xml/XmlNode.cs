@@ -272,6 +272,8 @@ namespace System.Xml
 			switch (NodeType) {
 			case XmlNodeType.Attribute:
 				node = ((XmlAttribute) this).OwnerElement;
+				if (node == null)
+					return String.Empty;
 				break;
 			case XmlNodeType.Element:
 				node = this;
@@ -281,7 +283,9 @@ namespace System.Xml
 				break;
 			}
 
-			while (node.NodeType != XmlNodeType.Document) {
+			while (node != null) {
+				if (node.Prefix == prefix)
+					return node.NamespaceURI;
 				foreach (XmlAttribute attr in node.Attributes) {
 					if (prefix == attr.LocalName && attr.Prefix == "xmlns"
 						|| attr.Name == "xmlns" && prefix == String.Empty)
@@ -289,7 +293,7 @@ namespace System.Xml
 				}
 				node = node.ParentNode;
 			}
-			return null;
+			return String.Empty;
 		}
 
 		public virtual string GetPrefixOfNamespace (string namespaceURI)
@@ -625,7 +629,7 @@ namespace System.Xml
 			return SelectSingleNode (xpath, null);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("return node in document order")]
 		public XmlNode SelectSingleNode (string xpath, XmlNamespaceManager nsmgr)
 		{
 			XPathNavigator nav = CreateNavigator ();

@@ -188,6 +188,10 @@ namespace System.Xml
 				XmlNode firstChild = FirstChild;
 				if (firstChild == null)
 					AppendChild (OwnerDocument.CreateTextNode (value));
+				else if (FirstChild.NextSibling != null) {
+					this.RemoveAll ();
+					AppendChild (OwnerDocument.CreateTextNode (value));
+				}
 				else
 					firstChild.Value = value;
 			}

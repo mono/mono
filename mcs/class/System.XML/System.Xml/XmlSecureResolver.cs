@@ -52,12 +52,6 @@ namespace System.Xml
 
 			return e;
 		}
-
-		[MonoTODO]
-		public static new bool Equals (object objA, object objB)
-		{
-			throw new NotImplementedException ();
-		}
 #endregion
 
 		XmlResolver resolver;
@@ -85,12 +79,6 @@ namespace System.Xml
 			XmlResolver resolver, string securityUrl)
 			: this (resolver, CreateEvidenceForUrl (securityUrl))
 		{
-		}
-
-		[MonoTODO]
-		~XmlSecureResolver ()
-		{
-			// What is expected here, not in Dispose() ?
 		}
 #endregion
 

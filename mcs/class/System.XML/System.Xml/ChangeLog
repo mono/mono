@@ -1,3 +1,12 @@
+2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs : Fixed InnerText that did not removed its content
+	  if there is two or more children.
+	* XmlNode.cs : XmlNode.cs : Fixed bugzilla #49580 (1)to return "",
+	  (2)not to compare NodeType for detached nodes, (3)optimization to
+	  compare element's prefix.
+	* XmlSecureResolver.cs : Removed extraneous members.
+
 2003-10-09  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added DTDReader.cs. It is almost importation of XmlTextReader.
