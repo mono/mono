@@ -102,7 +102,8 @@ namespace System.Web.Mail {
 	    // create the headers
 	    IDictionary headers = CreateHeaders( msg );
 
-	    // set the part boundary
+	    // set the part boundary FIXME: THIS SHOULD NOT BE HARDCODED
+	    // look att  Gaurav Vaish implementation
 	    string boundary = "NextPart_000_1113_1962_1fe8";
 		
 	    // set the Content-Type header to multipart/mixed
