@@ -1140,15 +1140,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
-			WINDOWPLACEMENT	wndpl;
-
-			wndpl = new WINDOWPLACEMENT();
-			wndpl.length=(uint)Marshal.SizeOf(wndpl);
-			Win32GetWindowPlacement(handle, ref wndpl);
-			if ((wndpl.showCmd == WindowPlacementFlags.SW_SHOWMINIMIZED)) {
-				return false;
-			}
-			return true;
+			return IsWindowVisible (handle);
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
@@ -1208,7 +1200,6 @@ namespace System.Windows.Forms {
 			override_cursor = cursor;
 		}
 
-		
 		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
 			IntPtr	cursor;
 			Bitmap	cursor_bitmap;
@@ -1811,6 +1802,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("gdi32.dll", EntryPoint="CreateRectRgn", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+
+		[DllImport ("user32.dll", EntryPoint="IsWindowVisible", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool IsWindowVisible(IntPtr hwnd);
 		#endregion
 	}
 }

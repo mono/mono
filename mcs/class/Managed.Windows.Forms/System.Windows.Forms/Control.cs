@@ -716,7 +716,7 @@ namespace System.Windows.Forms
 
 			if (((control.control_style & ControlStyles.Selectable) !=0)  && (parent != null)) {
 				while (parent != null) {
-					if (!parent.is_visible || !parent.is_enabled) {
+					if (!parent.Visible || !parent.is_enabled) {
 						return false;
 					}
 					parent = parent.parent;
@@ -1119,7 +1119,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanFocus {
 			get {
-				if (is_visible && is_enabled && GetStyle(ControlStyles.Selectable)) {
+				if (Visible && is_enabled && GetStyle(ControlStyles.Selectable)) {
 					return true;
 				}
 				return false;
@@ -1139,7 +1139,7 @@ namespace System.Windows.Forms
 
 				parent = this.parent;
 				while (parent != null) {
-					if (!parent.is_visible || !parent.is_enabled) {
+					if (!parent.Visible || !parent.is_enabled) {
 						return false;
 					}
 
@@ -1807,6 +1807,8 @@ namespace System.Windows.Forms
 			get {
 				if (!is_visible) {
 					return false;
+				} else if (parent != null) {
+					return parent.Visible;
 				}
 
 				return true;
@@ -3019,7 +3021,15 @@ namespace System.Windows.Forms
 					this.CreateBuffers(bounds.Width, bounds.Height);
 				}
 
-				// FIXME - deal with focus
+				if (value == false && parent != null) {
+					Control	container;
+
+					// Need to start at parent, GetContainerControl might return ourselves if we're a container
+					container = (Control)parent.GetContainerControl();
+					if (container != null) {
+						container.SelectNextControl(this, true, true, true, true);
+					}
+				}
 
 				if (parent != null) {
 					parent.PerformLayout(this, "visible");
@@ -3706,9 +3716,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentVisibleChanged(EventArgs e) {
-			if (is_visible!=Parent.is_visible) {
-				is_visible=false;
-				Invalidate();
+			if (is_visible) {
 				OnVisibleChanged(e);
 			}
 		}

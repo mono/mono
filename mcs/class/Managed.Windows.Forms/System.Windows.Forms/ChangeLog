@@ -1,3 +1,16 @@
+2005-03-01  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - Fixed Visible property, now follows (once again) parent chain
+	    to return false if any control in the chain is visible=false
+	  - Fixed OnParentVisibleChanged, now just calls OnVisibleChanged event
+	  - Fixed several places where is_visible instead of Visible was used
+	  - Implemented FIXME related to focus selection when setting focused
+	    control to be invisible
+
+	* XplatUIWin32.cs: Now using proper method to find out if window is
+	  visible. Thanks to Jordi for pointing it out
+
 2005-02-28  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: show/hide scrollbar instead of creating it
