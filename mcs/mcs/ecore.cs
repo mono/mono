@@ -2217,7 +2217,12 @@ namespace Mono.CSharp {
 				if (t != null)
 					return t;
 				
-				return ConvertNumericExplicit (ec, e, target_type, loc);
+				t = ConvertNumericExplicit (ec, e, target_type, loc);
+				if (t != null)
+					return t;
+				
+				Error_CannotConvertType (loc, expr_type, target_type);
+				return null;
 			}
 			
 			ne = ConvertReferenceExplicit (expr, target_type);
