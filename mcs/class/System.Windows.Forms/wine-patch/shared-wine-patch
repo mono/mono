@@ -1,0 +1,303 @@
+diff -ruN wine/configure.ac wine-mono/configure.ac
+--- wine/configure.ac	2004-03-01 23:48:48.000000000 -0700
++++ wine-mono/configure.ac	2004-03-03 07:01:14.000000000 -0700
+@@ -1670,6 +1671,7 @@
+ programs/uninstaller/Makefile
+ programs/view/Makefile
+ programs/wcmd/Makefile
++programs/wine-sharedlib/Makefile
+ programs/wineboot/Makefile
+ programs/winebrowser/Makefile
+ programs/winecfg/Makefile
+diff -ruN wine/dlls/kernel/process.c wine-mono/dlls/kernel/process.c
+--- wine/dlls/kernel/process.c	2004-02-20 13:19:24.000000000 -0700
++++ wine-mono/dlls/kernel/process.c	2004-03-03 09:03:34.000000000 -0700
+@@ -756,8 +756,12 @@
+ 
+         SetLastError( 0 );  /* clear error code */
+         if (peb->BeingDebugged) DbgBreakPoint();
+-        ExitProcess( entry( peb ) );
++        if (__wine_shared_lib==0) {
++            // This starts the main app and then exits wine
++            ExitProcess( entry( peb ) );
++        }
+     }
++
+     __EXCEPT(UnhandledExceptionFilter)
+     {
+         TerminateThread( GetCurrentThread(), GetExceptionCode() );
+@@ -895,13 +899,20 @@
+     set_library_wargv( __wine_main_argv );
+     if (!build_command_line( __wine_main_wargv )) goto error;
+ 
+-    stack_size = RtlImageNtHeader(peb->ImageBaseAddress)->OptionalHeader.SizeOfStackReserve;
++    if (__wine_shared_lib==1) {
++        /* We don't want a new stack if we're going shared. Screws up our return path */
++        start_process(NULL);
++    } else {
++        stack_size = RtlImageNtHeader(peb->ImageBaseAddress)->OptionalHeader.SizeOfStackReserve;
+ 
+-    /* allocate main thread stack */
+-    if (!THREAD_InitStack( NtCurrentTeb(), stack_size )) goto error;
++        /* allocate main thread stack */
++        if (!THREAD_InitStack( NtCurrentTeb(), stack_size )) goto error;
++
++        /* switch to the new stack */
++        wine_switch_to_stack( start_process, NULL, NtCurrentTeb()->Tib.StackBase );
++    }
++    return;
+ 
+-    /* switch to the new stack */
+-    wine_switch_to_stack( start_process, NULL, NtCurrentTeb()->Tib.StackBase );
+ 
+  error:
+     ExitProcess( GetLastError() );
+diff -ruN wine/dlls/ntdll/loader.c wine-mono/dlls/ntdll/loader.c
+--- wine/dlls/ntdll/loader.c	2004-02-23 18:25:03.000000000 -0700
++++ wine-mono/dlls/ntdll/loader.c	2004-03-03 06:07:50.000000000 -0700
+@@ -1951,7 +1951,9 @@
+     WINE_MODREF *wm;
+     NTSTATUS status;
+     ANSI_STRING func_name;
+-    void (* DECLSPEC_NORETURN init_func)();
++    /* We might return for shared-lib startup */
++    /* void (* DECLSPEC_NORETURN init_func)(); */
++    void (* init_func)();
+     extern void __wine_dbg_ntdll_init(void);
+ 
+     thread_init();
+diff -ruN wine/include/wine/library.h wine-mono/include/wine/library.h
+--- wine/include/wine/library.h	2004-01-02 14:08:05.000000000 -0700
++++ wine-mono/include/wine/library.h	2004-03-03 06:45:54.000000000 -0700
+@@ -49,6 +49,7 @@
+ extern void wine_dll_unload( void *handle );
+ extern int wine_dll_get_owner( const char *name, char *buffer, int size, int *file_exists );
+ 
++extern int __wine_shared_lib;
+ extern int __wine_main_argc;
+ extern char **__wine_main_argv;
+ extern WCHAR **__wine_main_wargv;
+diff -ruN wine/libs/wine/loader.c wine-mono/libs/wine/loader.c
+--- wine/libs/wine/loader.c	2004-01-02 14:08:05.000000000 -0700
++++ wine-mono/libs/wine/loader.c	2004-03-03 06:47:28.000000000 -0700
+@@ -46,6 +46,7 @@
+ char **__wine_main_argv = NULL;
+ WCHAR **__wine_main_wargv = NULL;
+ char **__wine_main_environ = NULL;
++int __wine_shared_lib = 0;
+ 
+ struct dll_path_context
+ {
+diff -ruN wine/libs/wine/wine.def wine-mono/libs/wine/wine.def
+--- wine/libs/wine/wine.def	2004-02-04 19:01:35.000000000 -0700
++++ wine-mono/libs/wine/wine.def	2004-03-03 08:44:10.000000000 -0700
+@@ -9,6 +9,7 @@
+     __wine_dbgstr_an
+     __wine_dbgstr_wn
+     __wine_dll_register
++    __wine_shared_lib
+     __wine_main_argc
+     __wine_main_argv
+     __wine_main_environ
+diff -ruN wine/libs/wine/wine.map wine-mono/libs/wine/wine.map
+--- wine/libs/wine/wine.map	2004-02-12 15:54:00.000000000 -0700
++++ wine-mono/libs/wine/wine.map	2004-03-03 08:44:02.000000000 -0700
+@@ -9,6 +9,7 @@
+     __wine_dbgstr_an;
+     __wine_dbgstr_wn;
+     __wine_dll_register;
++    __wine_shared_lib;
+     __wine_main_argc;
+     __wine_main_argv;
+     __wine_main_environ;
+diff -ruN wine/programs/Makefile.in wine-mono/programs/Makefile.in
+--- wine/programs/Makefile.in	2004-01-06 13:49:59.000000000 -0700
++++ wine-mono/programs/Makefile.in	2004-03-03 06:14:56.000000000 -0700
+@@ -11,6 +11,7 @@
+ 	cmdlgtst \
+ 	control \
+ 	expand \
++	wine-sharedlib \
+ 	notepad \
+ 	progman \
+ 	regedit \
+@@ -41,6 +42,7 @@
+ 	clock \
+ 	control \
+ 	expand \
++	wine-sharedlib \
+ 	notepad \
+ 	progman \
+ 	regedit \
+@@ -179,6 +181,9 @@
+ icinfo.exe$(DLLEXT): avitools/icinfo.exe$(DLLEXT)
+ 	$(RM) $@ && $(LN_S) avitools/icinfo.exe$(DLLEXT) $@
+ 
++wine-sharedlib.exe$(DLLEXT): wine-sharedlib/wine-sharedlib.exe$(DLLEXT)
++	$(RM) $@ && $(LN_S) wine-sharedlib/wine-sharedlib.exe$(DLLEXT) $@
++
+ notepad.exe$(DLLEXT): notepad/notepad.exe$(DLLEXT)
+ 	$(RM) $@ && $(LN_S) notepad/notepad.exe$(DLLEXT) $@
+ 
+@@ -255,6 +260,7 @@
+ control/control.exe$(DLLEXT): control
+ expand/expand.exe$(DLLEXT): expand
+ avitools/icinfo.exe$(DLLEXT): avitools
++wine-sharedlib/wine-sharedlib.exe$(DLLEXT): wine-sharedlib
+ notepad/notepad.exe$(DLLEXT): notepad
+ progman/progman.exe$(DLLEXT): progman
+ regedit/regedit.exe$(DLLEXT): regedit
+diff -ruN wine/programs/wine-sharedlib/Makefile.in wine-mono/programs/wine-sharedlib/Makefile.in
+--- wine/programs/wine-sharedlib/Makefile.in	1969-12-31 17:00:00.000000000 -0700
++++ wine-mono/programs/wine-sharedlib/Makefile.in	2004-03-03 07:37:45.000000000 -0700
+@@ -0,0 +1,26 @@
++TOPSRCDIR = @top_srcdir@
++TOPOBJDIR = ../..
++SRCDIR    = @srcdir@
++VPATH     = @srcdir@
++MODULE    = wine-sharedlib.exe
++APPMODE   = -mwindows
++IMPORTS   = kernel32
++DELAYIMPORTS = user32
++EXTRAINCL = 
++EXTRADEFS =
++
++C_SRCS = \
++	wine-sharedlib.c \
++	../../loader/pthread.c
++
++RC_SRCS =
++RC_BINSRC =
++RC_BINARIES =
++
++PLTESTS =
++
++EXTRASUBDIRS =
++
++@MAKE_PROG_RULES@
++
++### Dependencies:
+diff -ruN wine/programs/wine-sharedlib/wine-sharedlib.c wine-mono/programs/wine-sharedlib/wine-sharedlib.c
+--- wine/programs/wine-sharedlib/wine-sharedlib.c	1969-12-31 17:00:00.000000000 -0700
++++ wine-mono/programs/wine-sharedlib/wine-sharedlib.c	2004-03-03 09:43:04.000000000 -0700
+@@ -0,0 +1,109 @@
++/*
++ * wine-sharedlib code
++ *
++ * Copyright 2004 Novell, Inc. (http://www.novell.com/)
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ */
++
++
++#include <wine/library.h>
++#include <windows.h>
++#include <winsock.h>
++#include <dlfcn.h>
++
++/*
++	Dummy WinMain. Wine is modified so that this function is never actually called
++*/
++
++int WINAPI
++WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
++{
++	int	dummy;
++
++   dummy=GetSystemMetrics(SM_CXSCREEN);
++	wine_pthread_init_process(NULL);
++
++   return(0);
++}
++
++/*
++	WineLoadLibrary is used by System.Windows.Forms to import the Wine dlls
++*/
++void	*(*LoadLibraryF)(unsigned char *);
++void	*(*GetProcAddressF)(void *, unsigned char *);
++char	VideoDLL[MAX_PATH];
++
++void *
++WineLoadLibrary(unsigned char *dll)
++{
++   return(LoadLibraryF(dll));
++}
++
++void *
++WineGetProcAddress(void *handle, unsigned char *function)
++{
++	return(GetProcAddressF(handle, function));
++}
++
++/*
++	MonoWineInit()	Must be called to initialize wine. We pass special arguments
++						which will tell wine to not actually run the specified 
++						application
++*/
++
++int
++SharedWineInit(void)
++{
++	unsigned char	Error[1024]="";
++	char				*WineArguments[] = {"sharedapp", "/usr/local/lib/wine/wine-sharedlib.exe.so", NULL};
++	void				*hModule;
++	int				FileExists;
++
++	__wine_shared_lib=1;
++	
++	wine_init(2, WineArguments, Error, sizeof(Error));
++	if (Error[0]!='\0') {
++		printf("Wine initialization error:%s\n", Error);
++		exit(-1);
++	}
++
++   /* Now load kernel32 go get the pointers for LoadLibraryA and GetProcAddress */
++   hModule=wine_dll_load("kernel32.dll", Error, sizeof(Error), &FileExists);
++   if (hModule==NULL) {
++      printf("Error loading kernel32.dll: %s\n", Error);
++      exit(-2);
++   }
++
++   LoadLibraryF=dlsym(hModule, "LoadLibraryA");
++   if (LoadLibraryF==NULL) {
++      printf("Did not find symbol LoadLibraryA in kernel32.dll\n");
++      exit(-3);
++   }
++
++   GetProcAddressF=dlsym(hModule, "GetProcAddress");
++   if (GetProcAddressF==NULL) {
++      printf("Did not find symbol GetProcAddress in kernel32.dll\n");
++      exit(-3);
++   }
++
++	/*
++		We need to load user32 here to make sure that __wine_main_argv is valid 
++		when USER32.DLL loads the graphics driver. It seems that when SWF loads
++		USER32 __wine_main_argv contains garbage.
++	*/
++	LoadLibraryF("user32.dll");
++}
++
+diff -ruN wine/tools/winebuild/spec32.c wine-mono/tools/winebuild/spec32.c
+--- wine/tools/winebuild/spec32.c	2004-02-16 13:24:32.000000000 -0700
++++ wine-mono/tools/winebuild/spec32.c	2004-03-03 06:48:28.000000000 -0700
+@@ -568,6 +568,7 @@
+     fprintf( outfile, "extern int __wine_main_argc;\n" );
+     fprintf( outfile, "extern char **__wine_main_argv;\n" );
+     fprintf( outfile, "extern char **__wine_main_environ;\n" );
++    fprintf( outfile, "extern int __wine_shared_lib;\n" );
+     fprintf( outfile, "extern unsigned short **__wine_main_wargv;\n" );
+     fprintf( outfile, "extern void _init(int, char**, char**);\n" );
+     fprintf( outfile, "extern void _fini();\n" );
