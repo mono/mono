@@ -1,3 +1,7 @@
+2004-03-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-sparc.c (mono_arch_has_unwind_info): Add missing function.
+
 2004-03-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* basic-calls.cs: Add test for unaligned byref long argument passing.
