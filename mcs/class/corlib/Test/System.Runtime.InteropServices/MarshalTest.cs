@@ -87,6 +87,17 @@ namespace MonoTests.System.Runtime.InteropServices
 		{
 			Marshal.SizeOf (typeof (string[]));
 		}
+
+		[Test]
+		public void PtrToStringWithNull ()
+		{
+			AssertEquals (Marshal.PtrToStringAnsi (IntPtr.Zero), String.Empty);
+			AssertEquals (Marshal.PtrToStringAnsi (IntPtr.Zero, 0), String.Empty);
+			AssertEquals (Marshal.PtrToStringUni (IntPtr.Zero), String.Empty);
+			AssertEquals (Marshal.PtrToStringUni (IntPtr.Zero, 0), String.Empty);
+		}
+
+
 	}
 }
 
