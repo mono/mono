@@ -1,3 +1,9 @@
+2004-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : removed all XQuery related classes, fixed
+	  XmlConvertDateTimeSerializationMode, removed 2.0 XPathDocument
+	  implementation classes.
+
 2004-10-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added -nowarn:0162 -nowarn:0618 to the compiler options.
