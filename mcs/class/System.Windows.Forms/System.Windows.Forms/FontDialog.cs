@@ -16,7 +16,7 @@ namespace System.Windows.Forms
         public class FontDialog : CommonDialog 
         {        	        	
 	        private bool	bAllowScriptChange;
-	        private bool	bAllowSimululations;							
+	        private bool	bAllowSimulations;							
 		  	private bool	bAllowVectorForms;							
 		  	private bool	bAllowVerticalForms;							
 		  	private Color	color = Color.Black;							
@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 			{		
 				font = new Font("Microsoft Sans Serif", 8);
 				bAllowScriptChange = true;
-	        	bAllowSimululations  = true;							
+	        	bAllowSimulations  = true;							
 		  		bAllowVectorForms  = true;							
 		  		bAllowVerticalForms  = true;							
 		  		color = Color.Black;							
@@ -67,22 +67,22 @@ namespace System.Windows.Forms
 				set { bAllowScriptChange = value; }
 			}
 			
-			public bool AllowSimululations 
+			public bool AllowSimulations 
 			{
-				get { return AllowSimululations;  }
-				set { bAllowSimululations = value; }
+				get { return bAllowSimulations;  }
+				set { bAllowSimulations = value; }
 			}
 			
 			public bool AllowVectorForms 
 			{
-				get { return AllowVectorForms;  }
-				set { AllowVectorForms = value; }
+				get { return bAllowVectorForms;  }
+				set { bAllowVectorForms = value; }
 			}
 			
 			public bool AllowVerticalForms 
 			{
-				get { return AllowVerticalForms;  }
-				set { AllowVerticalForms = value; }
+				get { return bAllowVerticalForms;  }
+				set { bAllowVerticalForms = value; }
 			}
 			
 			public Color Color 

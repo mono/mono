@@ -1,5 +1,8 @@
+2003-09-21 Alexandre Pigolkine <pigolkine@gmx.de>
+ 	* small fix to FontDialog
+
 2003-09-19 Jordi Mas i Hernàndez <jmas@softcatala.org>
- 	* Initial FileDialog Box implementation 
+ 	* Initial FontDialog Box implementation 
  
 2003-09-13  Duncan Mak  <duncan@ximian.com>
 
