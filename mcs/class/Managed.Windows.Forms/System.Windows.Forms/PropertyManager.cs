@@ -106,6 +106,10 @@ namespace System.Windows.Forms {
 			binding_suspended = true;
 		}
 
+                internal override bool IsSuspended {
+                        get { return binding_suspended; }
+                }
+
 		protected internal override string GetListName (ArrayList list)
 		{
 			return String.Empty;

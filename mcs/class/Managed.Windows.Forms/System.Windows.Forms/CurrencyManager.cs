@@ -107,6 +107,10 @@ namespace System.Windows.Forms {
 			binding_suspended = false;
 		}
 
+                internal override bool IsSuspended {
+                        get { return binding_suspended; }
+                }
+
 		public override void AddNew ()
 		{
 			if (binding_list == null)

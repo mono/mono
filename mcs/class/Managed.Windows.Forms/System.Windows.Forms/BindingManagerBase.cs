@@ -87,6 +87,10 @@ namespace System.Windows.Forms {
 		public abstract void SuspendBinding();
 		#endregion	// Public Instance Methods
 
+                internal abstract bool IsSuspended {
+                        get;
+                }
+
 		#region Protected Instance Methods
 		[MonoTODO]
 		protected internal virtual PropertyDescriptorCollection GetItemProperties(System.Collections.ArrayList dataSources, System.Collections.ArrayList listAccessors) {

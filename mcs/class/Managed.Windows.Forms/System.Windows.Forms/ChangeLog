@@ -1,6 +1,9 @@
 2005-04-01  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs: Implement IsBinding.
+	* BindingManagerBase.cs:
+	* PropertyManager.cs:
+	* CurrencyManager.cs: Add IsSuspended property.
 
 2005-04-01  Jackson Harper  <jackson@ximian.com>
 
