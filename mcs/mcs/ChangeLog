@@ -1,3 +1,12 @@
+2004-08-03  John Luke  <jluke@cfl.rr.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	Fix for #60997.
+	* attribute.cs (Attribute.complained_before): New flag.
+	(Attribute.ResolveType, Attribute.Resolve),
+	(Attribute.DefinePInvokeMethod): Set it.
+	(Attributes.Search): Pass 'complain' to Attribute.ResolveType.
+	
 2004-08-03  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Don't abort if we can't

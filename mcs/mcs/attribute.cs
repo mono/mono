@@ -174,10 +174,14 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		private bool complained_before = false;
+		
 		public Type ResolveType (EmitContext ec, bool complain)
 		{
 			if (Type == null)
-				Type = CheckAttributeType (ec, complain);
+				Type = CheckAttributeType (ec, complain && ! complained_before);
+			if (complain && Type == null)
+				complained_before = true;
 			return Type;
 		}
 
@@ -234,10 +238,11 @@ namespace Mono.CSharp {
 			Type oldType = Type;
 			
 			// Sanity check.
-			Type = CheckAttributeType (ec, true);
+			Type = CheckAttributeType (ec, ! complained_before);
+
 			if (oldType == null && Type == null)
 				return null;
-			if (oldType != null && oldType != Type) {
+			if ((complained_before || oldType != null) && oldType != Type) {
 				Report.Error (-6, Location,
 					      "Attribute {0} resolved to different types at different times: {1} vs. {2}",
 					      Name, oldType, Type);
@@ -1093,7 +1098,7 @@ namespace Mono.CSharp {
 		private Attribute Search (Type t, EmitContext ec, bool complain)
 		{
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType (ec, false) == t)
+				if (a.ResolveType (ec, complain) == t)
 					return a;
 			}
 			return null;
