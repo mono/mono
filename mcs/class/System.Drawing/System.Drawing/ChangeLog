@@ -1,3 +1,7 @@
+2004-12-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* FontFamily.cs: This one is static.
+
 2004-11-25  Ravindra  <rkumar@novell.com>
 
 	* gdipFunctions.cs (GdipCreateFontFromLogfontA): Changed return

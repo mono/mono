@@ -289,7 +289,7 @@ namespace System.Drawing {
 		}
 			
 			
-		public FontFamily[] Families
+		public static FontFamily[] Families
 		{
 			get {
 				
