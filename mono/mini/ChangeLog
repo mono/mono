@@ -1,4 +1,9 @@
 
+Wed Apr 30 15:33:11 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: added --version/-V command line option.
+	Added the inline optimization in the regression tests.
+
 Wed Apr 30 15:16:02 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, basic-calls.cs: when inlining, save arguments to locals according 
