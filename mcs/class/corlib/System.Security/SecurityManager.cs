@@ -32,6 +32,7 @@
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Security.Permissions;
 using System.Security.Policy;
 
@@ -49,11 +50,16 @@ namespace System.Security {
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
 
+		private static Hashtable _ht;
+
 		static SecurityManager () 
 		{
 			// lock(this) is bad
 			// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
 			_lockObject = new object ();
+
+			// temporary (to be relocated)
+			_ht = new Hashtable ();
 		}
 
 		private SecurityManager ()
@@ -64,18 +70,20 @@ namespace System.Security {
 
 		public static bool CheckExecutionRights {
 			get { return checkExecutionRights; }
+
+			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 			set {
 				// throw a SecurityException if we don't have ControlPolicy permission
-				new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
 				checkExecutionRights = value; 
 			}
 		}
 
 		public static bool SecurityEnabled {
 			get { return securityEnabled; }
+
+			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 			set {
 				// throw a SecurityException if we don't have ControlPolicy permission
-				new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
 				securityEnabled = value; 
 			}
 		}
@@ -84,7 +92,7 @@ namespace System.Security {
 
 #if NET_2_0
 		[MonoTODO]
-//		[StrongNameIdentityPermission (LinkDemand, PublicKey = "0x00000000000000000400000000000000")]
+		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey = "0x00000000000000000400000000000000")]
 		public static void GetZoneAndOrigin (out ArrayList zone, out ArrayList origin) 
 		{
 			zone = null;
@@ -92,27 +100,30 @@ namespace System.Security {
 		}
 #endif
 
-		[MonoTODO("Incomplete")]
 		public static bool IsGranted (IPermission perm)
 		{
 			if (perm == null)
 				return true;
 			if (!securityEnabled)
 				return true;
-			return false;
+
+			// - Policy driven
+			// - Only check the caller (no stack walk required)
+			// - Not affected by overrides (like Assert, Deny and PermitOnly)
+			Assembly a = Assembly.GetCallingAssembly ();
+			return DemandFromAssembly (perm, a);
 		}
 
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
 			// throw a SecurityException if we don't have ControlPolicy permission
-			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
-
 			if (path == null)
 				throw new ArgumentNullException ("path");
 
 			PolicyLevel pl = null;
 			try {
-				pl = new PolicyLevel (type.ToString ());
+				pl = new PolicyLevel (type.ToString (), PolicyLevelType.AppDomain);
 				pl.LoadFromFile (path);
 			}
 			catch (Exception e) {
@@ -121,17 +132,16 @@ namespace System.Security {
 			return pl;
 		}
 
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
 			// throw a SecurityException if we don't have ControlPolicy permission
-			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
-
 			if (null == str)
 				throw new ArgumentNullException ("str");
 
 			PolicyLevel pl = null;
 			try {
-				pl = new PolicyLevel (type.ToString ());
+				pl = new PolicyLevel (type.ToString (), PolicyLevelType.AppDomain);
 				pl.LoadFromString (str);
 			}
 			catch (Exception e) {
@@ -140,26 +150,57 @@ namespace System.Security {
 			return pl;
 		}
 
-		[MonoTODO("InitializePolicyHierarchy isn't complete")]
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static IEnumerator PolicyHierarchy ()
 		{
 			// throw a SecurityException if we don't have ControlPolicy permission
-			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
-			
 			return Hierarchy;
 		}
 
-		[MonoTODO()]
 		public static PermissionSet ResolvePolicy (Evidence evidence)
 		{
-			return null;
+			// no evidence, no permission
+			if (evidence == null)
+				return new PermissionSet (PermissionState.None);
+
+			PermissionSet ps = null;
+			// Note: can't call PolicyHierarchy since ControlPolicy isn't required to resolve policies
+			IEnumerator ple = Hierarchy;
+			while (ple.MoveNext ()) {
+				PolicyLevel pl = (PolicyLevel) ple.Current;
+				PolicyStatement pst = pl.Resolve (evidence);
+				if (ps == null)
+					ps = pst.PermissionSet;
+				else
+					ps = ps.Intersect (pst.PermissionSet);
+
+				if ((pst.Attributes & PolicyStatementAttribute.LevelFinal) == PolicyStatementAttribute.LevelFinal)
+					break;
+			}
+	
+			foreach (object o in evidence) {
+				IIdentityPermissionFactory ipf = (o as IIdentityPermissionFactory);
+				if (ipf != null) {
+					IPermission p = ipf.CreateIdentityPermission (evidence);
+					ps.AddPermission (p);
+				}
+			}
+
+			return ps;
 		}
 
 #if NET_2_0
-		[MonoTODO ()]
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
-			return null;
+			// probably not optimal
+			PermissionSet ps = null;
+			foreach (Evidence evidence in evidences) {
+				if (ps == null)
+					ps = ResolvePolicy (evidence);
+				else
+					ps = ps.Intersect (ResolvePolicy (evidence));
+			}
+			return ps;
 		}
 #endif
 
@@ -170,37 +211,45 @@ namespace System.Security {
 			return null;
 		}
 
-		[MonoTODO()]
 		public static IEnumerator ResolvePolicyGroups (Evidence evidence)
 		{
-			return null;
+			if (evidence == null)
+				throw new ArgumentNullException ("evidence");
+
+			ArrayList al = new ArrayList ();
+			// Note: can't call PolicyHierarchy since ControlPolicy isn't required to resolve policies
+			IEnumerator ple = Hierarchy;
+			while (ple.MoveNext ()) {
+				PolicyLevel pl = (PolicyLevel) ple.Current;
+				CodeGroup cg = pl.ResolveMatchingCodeGroups (evidence);
+				al.Add (cg);
+			}
+			return al.GetEnumerator ();
 		}
 
-		[MonoTODO ("InternalSavePolicyLevel isn't complete")]
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static void SavePolicy () 
 		{
 			// throw a SecurityException if we don't have ControlPolicy permission
-			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
-
 			IEnumerator e = Hierarchy;
 			while (e.MoveNext ()) {
 				PolicyLevel level = (e.Current as PolicyLevel);
-				InternalSavePolicyLevel (level);
+				level.Save ();
 			}
 		}
 
-		[MonoTODO ("InternalSavePolicyLevel isn't complete")]
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static void SavePolicyLevel (PolicyLevel level) 
 		{
 			// throw a SecurityException if we don't have ControlPolicy permission
-			new SecurityPermission (SecurityPermissionFlag.ControlPolicy).Demand ();
-
-			InternalSavePolicyLevel (level);
+// MS BUG		if (level == null)
+//				throw new ArgumentNullException ("level");
+			level.Save ();
 		}
 
-		// internal stuff
+		// private/internal stuff
 
-		internal static IEnumerator Hierarchy {
+		private static IEnumerator Hierarchy {
 			get {
 				if (_hierarchy == null) {
 					lock (_lockObject) {
@@ -211,24 +260,42 @@ namespace System.Security {
 			}
 		}
 
-		internal static void InternalSavePolicyLevel (PolicyLevel level) 
+		private static void InitializePolicyHierarchy ()
 		{
-			// without the security checks (to avoid checks in loops)
-		}
-
-		[MonoTODO ("Incomplete")]
-		internal static void InitializePolicyHierarchy ()
-		{
-			string machinePolicyPath = "";
-			string userPolicyPath = "";
+			string machinePolicyPath = Path.GetDirectoryName (Environment.GetMachineConfigPath ());
+			string userPolicyPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "mono");
 
 			ArrayList al = new ArrayList ();
-			// minimum: Machine, Enterprise and User
-			// FIXME: Incomplete
-			al.Add (new PolicyLevel ("Enterprise", Path.Combine (machinePolicyPath, "enterprisesec.config")));
-			al.Add (new PolicyLevel ("Machine", Path.Combine (machinePolicyPath, "security.config")));
-			al.Add (new PolicyLevel ("User", Path.Combine (userPolicyPath, "security.config")));
+			al.Add (new PolicyLevel ("Enterprise", PolicyLevelType.Enterprise,
+				Path.Combine (machinePolicyPath, "enterprisesec.config")));
+
+			al.Add (new PolicyLevel ("Machine", PolicyLevelType.Machine,
+				Path.Combine (machinePolicyPath, "security.config")));
+
+			al.Add (new PolicyLevel ("User", PolicyLevelType.User,
+				Path.Combine (userPolicyPath, "security.config")));
+
 			_hierarchy = ArrayList.Synchronized (al);
+		}
+
+		private static bool DemandFromAssembly (IPermission demanded, Assembly a) 
+		{
+			PermissionSet granted = (PermissionSet) _ht [a];
+			if (granted == null) {
+				Evidence e = a.Evidence;
+				lock (_lockObject) {
+					granted = SecurityManager.ResolvePolicy (e);
+					_ht [a] = granted;
+				}
+			}
+
+			Type t = demanded.GetType ();
+			IPermission p = granted.GetPermission (t);
+			if (p != null) {
+				if (!demanded.IsSubsetOf (p))
+					return false;
+			}
+			return true;
 		}
 	}
 }

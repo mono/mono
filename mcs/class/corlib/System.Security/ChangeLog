@@ -1,3 +1,11 @@
+2004-08-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyTypeLevel.cs: Removed duplicate license.
+	* SecurityManager.cs: Moved secuirty demands as attributes (but mcs 
+	doesn't seem to encode them properly as they show up in corcompare).
+	Implemented IsGranted, ResolvePolicy (but some code is still missing
+	in related classes) and SavePolicy/SavePolicyLevel.
+
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Added CheckAssert, CheckDemand, CheckDeny,
