@@ -115,6 +115,7 @@ namespace System {
 			parseHost(uri);
 		}
 
+		[MonoTODO]
 		private void parseHost(string uri) {
 
 			// FIXME: this doesn't handle IPv6 addresses correctly
@@ -139,6 +140,7 @@ namespace System {
 			host = uri;
 		}
 
+		[MonoTODO]
 		private void parsePort(string uri) {
 
 			for (int i = 0; i < uri.Length; i++) {
@@ -243,7 +245,7 @@ namespace System {
 			}
 		}
 
-		// FIXME: should check IPv6
+		[MonoTODO ("Should check IPv6")]
 		public bool IsLoopback { 
 			get { 
 				if (host == "localhost" || host == "127.0.0.1")
@@ -253,10 +255,12 @@ namespace System {
 			} 
 		}
 
+		[MonoTODO]
 		public bool IsUnc { 
 			get { throw new NotImplementedException(); } 
 		}
 
+		[MonoTODO]
 		public string LocalPath { 
 			get { throw new NotImplementedException(); } 
 		}
@@ -272,42 +276,51 @@ namespace System {
 		public string Scheme { get { return scheme; } }
 
 		// FIXME: what the hell are segments?
+		[MonoTODO]
 		public string[] Segments { 
 			get { throw new NotImplementedException(); } 
 		}
 
 		public bool UserEscaped { get { return userEscaped; } }
 
+		[MonoTODO]
 		public string UserInfo { 
 			get { throw new NotImplementedException(); } 
 		}
 
+		[MonoTODO]
 		public override bool Equals(object compared) {
 			throw new NotImplementedException();	
 		}
 
+		[MonoTODO]
 		public override int GetHashCode() {
 			throw new NotImplementedException();	
 		}
 
+		[MonoTODO]
 		public string GetLeftPart(UriPartial part) {
 			throw new NotImplementedException();	
 		}
 
+		[MonoTODO]
 		public string MakeRelative(Uri toUri) {
 			throw new NotImplementedException();	
 		}
 
+		[MonoTODO]
 		public override string ToString() {
 			throw new NotImplementedException();	
 		}
 
+		[MonoTODO]
 		public void GetObjectData(SerializationInfo info, 
 					  StreamingContext context)
 		{
 			// FIXME: Implement me.  yes, it is public because it implements ISerializable
 		}
 
+		[MonoTODO]
 		protected static string EscapeString(string str) {
 			throw new NotImplementedException();	
 		}

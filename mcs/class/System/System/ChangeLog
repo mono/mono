@@ -1,0 +1,5 @@
+2002-01-05  Ravi Pratap  <ravi@ximian.com>
+
+	* ChangeLog : Add to this directory.
+
+	* Uri.cs, UriFormatException.cs : Decorate bits with MonoTODO attribute.
