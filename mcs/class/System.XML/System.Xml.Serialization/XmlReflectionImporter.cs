@@ -21,6 +21,7 @@ namespace System.Xml.Serialization {
 		ArrayList includedTypes;
 		ReflectionHelper helper = new ReflectionHelper();
 		int arrayChoiceCount = 1;
+		ArrayList relatedMaps = new ArrayList ();
 
 		static readonly string errSimple = "Cannot serialize object of type '{0}'. Base " +
 			"type '{1}' has simpleContent and can be only extended by adding XmlAttribute " +
@@ -79,6 +80,7 @@ namespace System.Xml.Serialization {
 				mapping[n] = new XmlMemberMapping (members[n], mapMem);
 			}
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, mapping);
+			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Literal;
 			return mps;
 		}
@@ -122,6 +124,7 @@ namespace System.Xml.Serialization {
 				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
 			}
 
+			map.RelatedMaps = relatedMaps;
 			map.Format = SerializationFormat.Literal;
 			return map;
 		}
@@ -170,6 +173,7 @@ namespace System.Xml.Serialization {
 
 			if (membersNamespace == null) membersNamespace = "";
 			XmlTypeMapping map = new XmlTypeMapping (elementName, membersNamespace, typeData, defaultXmlType, defaultNamespace);
+			relatedMaps.Add (map);
 			return map;
 		}
 

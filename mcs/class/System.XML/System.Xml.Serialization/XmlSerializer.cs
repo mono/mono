@@ -156,12 +156,14 @@ namespace System.Xml.Serialization
 
 		protected virtual XmlSerializationReader CreateReader ()
 		{
-			return new XmlSerializationReaderInterpreter (typeMapping);
+			// Must be implemented in derived class
+			throw new NotImplementedException ();
 		}
 
 		protected virtual XmlSerializationWriter CreateWriter ()
 		{
-			return new XmlSerializationWriterInterpreter (typeMapping);
+			// Must be implemented in derived class
+			throw new NotImplementedException ();
 		}
 
 		public object Deserialize (Stream stream)
@@ -178,14 +180,27 @@ namespace System.Xml.Serialization
 
 		public object Deserialize (XmlReader xmlReader)
 		{
-			XmlSerializationReader xsReader = CreateReader ();
+			XmlSerializationReader xsReader;
+			if (typeMapping == null)
+				xsReader = CreateReader ();
+			else
+				xsReader = new XmlSerializationReaderInterpreter (typeMapping);
+				
 			xsReader.Initialize (xmlReader, this);
 			return Deserialize (xsReader);
 		}
 
 		protected virtual object Deserialize (XmlSerializationReader reader)
 		{
-			return reader.ReadObject ();
+			if (typeMapping == null)
+			{
+				XmlSerializationReaderInterpreter rd = reader as XmlSerializationReaderInterpreter;
+				if (rd == null) throw new InvalidOperationException ();
+				return rd.ReadObject ();
+			}
+			else
+				// Must be implemented in derived class
+				throw new NotImplementedException ();
 		}
 
 		public static XmlSerializer [] FromMappings (XmlMapping	[] mappings)
@@ -206,7 +221,15 @@ namespace System.Xml.Serialization
 
 		protected virtual void Serialize (object o, XmlSerializationWriter writer)
 		{
-			writer.WriteObject (o);
+			if (typeMapping != null)
+			{
+				XmlSerializationWriterInterpreter wr = writer as XmlSerializationWriterInterpreter;
+				if (wr == null) throw new InvalidOperationException ();
+				wr.WriteObject (o);
+			}
+			else
+				// Must be implemented in derived class
+				throw new NotImplementedException ();
 		}
 
 		public void Serialize (Stream stream, object o)
@@ -245,8 +268,14 @@ namespace System.Xml.Serialization
 
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
 		{
-			XmlSerializationWriter xsWriter = CreateWriter ();
-			xsWriter.Initialize (writer);
+			XmlSerializationWriter xsWriter;
+			
+			if (typeMapping == null)
+				xsWriter = CreateWriter ();
+			else
+				xsWriter = new XmlSerializationWriterInterpreter (typeMapping);
+				
+			xsWriter.Initialize (writer, namespaces);
 			Serialize (o, xsWriter);
 			writer.Flush ();
 		}

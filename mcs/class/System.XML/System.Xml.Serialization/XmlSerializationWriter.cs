@@ -39,6 +39,17 @@ namespace System.Xml.Serialization {
 		{
 			qnameCount = 0;
 		}
+		
+		internal void Initialize (XmlWriter writer, XmlSerializerNamespaces nss)
+		{
+			this.writer = writer;
+			if (nss != null)
+			{
+				namespaces = new ArrayList ();
+				foreach (XmlQualifiedName ns in nss.ToArray())
+					namespaces.Add (ns);
+			}	
+		}
 
 		#endregion // Constructors
 
@@ -57,16 +68,6 @@ namespace System.Xml.Serialization {
 		#endregion // Properties
 
 		#region Methods
-
-		internal void Initialize (XmlWriter writer)
-		{
-			this.writer = writer;
-		}
-
-		internal virtual void WriteObject (object ob)
-		{
-			throw new NotImplementedException ();
-		}
 
 		protected void AddWriteCallback (Type type, string typeName, string typeNs, XmlSerializationWriteCallback callback)
 		{
@@ -684,6 +685,12 @@ namespace System.Xml.Serialization {
 					WriteAttribute ("xmlns","xsd",xmlNamespace,XmlSchema.Namespace);
 				if (Writer.LookupPrefix (XmlSchema.InstanceNamespace) == null)
 					WriteAttribute ("xmlns","xsi",xmlNamespace,XmlSchema.InstanceNamespace);
+					
+				if (namespaces != null)
+				{
+					foreach (XmlQualifiedName qn in namespaces)
+						WriteAttribute ("xmlns",qn.Name,xmlNamespace,qn.Namespace);
+				}
 			}
 			topLevelElement = false;
 		}

@@ -15,12 +15,12 @@ using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
-	internal class XmlSerializationWriterInterpreter: XmlSerializationWriter
+	public class XmlSerializationWriterInterpreter: XmlSerializationWriter
 	{
 		XmlMapping _typeMap;
 		SerializationFormat _format;
 
-		public XmlSerializationWriterInterpreter(XmlMapping typeMap)
+		public XmlSerializationWriterInterpreter (XmlMapping typeMap)
 		{
 			_typeMap = typeMap;
 			_format = typeMap.Format;
@@ -39,7 +39,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		internal override void WriteObject (object ob)
+		public void WriteObject (object ob)
 		{
 			WriteStartDocument ();
 
@@ -61,8 +61,19 @@ namespace System.Xml.Serialization
 
 			WriteReferencedElements ();
 		}
+		
+		protected XmlTypeMapping GetTypeMap (Type type)
+		{
+			ArrayList maps = _typeMap.RelatedMaps;
+			if (maps != null)
+			{
+				foreach (XmlTypeMapping map in maps)
+					if (map.TypeData.Type == type) return map;
+			}
+			throw new InvalidOperationException ("Type " + type + " not mapped");
+		}
 
-		internal void WriteObject (XmlTypeMapping typeMap, object ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
+		protected virtual void WriteObject (XmlTypeMapping typeMap, object ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
 		{
 			if (ob == null)
 			{
@@ -116,7 +127,7 @@ namespace System.Xml.Serialization
 				WriteEndElement (ob);
 		}
 
-		void WriteMessage (XmlMembersMapping membersMap, object[] parameters)
+		protected virtual void WriteMessage (XmlMembersMapping membersMap, object[] parameters)
 		{
 			if (membersMap.HasWrapperElement) {
 				TopLevelElement ();
@@ -135,15 +146,35 @@ namespace System.Xml.Serialization
 				WriteEndElement();
 		}
 
-		void WriteObjectElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
+		protected virtual void WriteObjectElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
 			ClassMap map = (ClassMap)typeMap.ObjectMap;
 			if (map.NamespaceDeclarations != null)
 				WriteNamespaceDeclarations ((XmlSerializerNamespaces) map.NamespaceDeclarations.GetValue (ob));
-			WriteMembers (map, ob, false);
+			
+			WriteObjectElementAttributes (typeMap, ob);
+			WriteObjectElementElements (typeMap, ob);
+		}
+		
+		protected virtual void WriteObjectElementAttributes (XmlTypeMapping typeMap, object ob)
+		{
+			ClassMap map = (ClassMap)typeMap.ObjectMap;
+			WriteAttributeMembers (map, ob, false);
+		}
+
+		protected virtual void WriteObjectElementElements (XmlTypeMapping typeMap, object ob)
+		{
+			ClassMap map = (ClassMap)typeMap.ObjectMap;
+			WriteElementMembers (map, ob, false);
 		}
 
 		void WriteMembers (ClassMap map, object ob, bool isValueList)
+		{
+			WriteAttributeMembers (map, ob, isValueList);
+			WriteElementMembers (map, ob, isValueList);
+		}
+		
+		void WriteAttributeMembers (ClassMap map, object ob, bool isValueList)
 		{
 			// Write attributes
 
@@ -166,9 +197,10 @@ namespace System.Xml.Serialization
 						WriteAttribute (attr.Prefix, attr.LocalName, attr.NamespaceURI, attr.Value);
 				}
 			}
+		}
 
-			// Write elements
-
+		void WriteElementMembers (ClassMap map, object ob, bool isValueList)
+		{
 			ICollection members = map.ElementMembers;
 			if (members != null)
 			{
@@ -318,7 +350,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		void WriteListElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
+		protected virtual void WriteListElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
 			if (_format == SerializationFormat.Encoded)
 			{
@@ -407,12 +439,12 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		void WritePrimitiveElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
+		protected virtual void WritePrimitiveElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
 			Writer.WriteString (GetStringValue (typeMap, typeMap.TypeData, ob));
 		}
 
-		void WriteEnumElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
+		protected virtual void WriteEnumElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
 			Writer.WriteString (GetEnumXmlValue (typeMap, ob));
 		}

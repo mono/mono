@@ -1,3 +1,22 @@
+2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs: Fill RelatedMaps property of the generated map.
+	* XmlSchemas.cs: Find method: make sure the returned object belongs to
+	  the requested type.
+	* XmlSerializationReader.cs: Removed unneded virtual ReadObject method.
+	  Add null checks for eventSource.
+	* XmlSerializationReaderInterpreter.cs: ReadObject is not virtual any more.
+	* XmlSerializationWriter.cs: In Initialize method, initialize the provided
+	  namespece declarations. Virtual method WriteObject not needed any more.
+	  In WriteStartElement, write the provided namespaces.
+	* XmlSerializationWriterInterpreter.cs: Write object is not virtual any more.
+	  Added GetTypeMap method, that returns the map for a given type. Added some
+	  virtual methods, so writer behavior can be extended at several places by
+	  derived classes.
+	* XmlSerializer.cs: Changed behavior to match what MS.NET does. The virtual 
+	  methods CreateReader and CreateWriter are not called unless no type or 
+	  type mapping was provided in the constructor.
+
 2003-08-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchemaImporter.cs: ImportTypeMapping doesn't need to check if the

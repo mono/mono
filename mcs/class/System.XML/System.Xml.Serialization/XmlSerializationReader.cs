@@ -72,11 +72,6 @@ namespace System.Xml.Serialization {
 			InitIDs ();
 		}
 			
-		internal virtual object ReadObject ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		private ArrayList EnsureArrayList (ArrayList list)
 		{
 			if (list == null)
@@ -752,8 +747,9 @@ namespace System.Xml.Serialization {
 				line_number = 0;
 				line_position = 0;
 			}
-			
-			eventSource.OnUnknownAttribute (new XmlAttributeEventArgs (attr, line_number, line_position, o));
+
+			if (eventSource != null)
+				eventSource.OnUnknownAttribute (new XmlAttributeEventArgs (attr, line_number, line_position, o));
 		}
 
 		protected void UnknownElement (object o, XmlElement elem)
@@ -767,8 +763,9 @@ namespace System.Xml.Serialization {
 				line_number = 0;
 				line_position = 0;
 			}
-			
-			eventSource.OnUnknownElement (new XmlElementEventArgs (elem, line_number, line_position,o));
+	
+			if (eventSource != null)
+				eventSource.OnUnknownElement (new XmlElementEventArgs (elem, line_number, line_position,o));
 		}
 
 		protected void UnknownNode (object o)
@@ -782,8 +779,10 @@ namespace System.Xml.Serialization {
 				line_number = 0;
 				line_position = 0;
 			}
-			
-			eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
+	
+			if (eventSource != null)
+				eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
+	
 			if (Reader.NodeType == XmlNodeType.Attribute)
 			{
 				XmlAttribute att = (XmlAttribute) ReadXmlNode (false);
@@ -806,7 +805,8 @@ namespace System.Xml.Serialization {
 
 		protected void UnreferencedObject (string id, object o)
 		{
-			eventSource.OnUnreferencedObject (new UnreferencedObjectEventArgs (o,id));
+			if (eventSource != null)
+				eventSource.OnUnreferencedObject (new UnreferencedObjectEventArgs (o,id));
 		}
 
 		#endregion // Methods
@@ -917,4 +917,3 @@ namespace System.Xml.Serialization {
 
 	}
 }
-

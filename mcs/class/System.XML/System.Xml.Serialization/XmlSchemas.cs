@@ -78,7 +78,7 @@ namespace System.Xml.Serialization {
 			if (!schema.IsCompiled) {
 				try {
 					schema.Compile (null);
-				} catch {
+				} catch (Exception ex) {
 					throw new InvalidOperationException ("Error compiling XmlSchema " + 
 									     name.Namespace);
 				}
@@ -99,7 +99,9 @@ namespace System.Xml.Serialization {
 			else if (type == typeof (XmlSchemaNotation))
 				tbl = schema.Notations;
 
-			return (tbl != null) ? tbl [name] : null;
+			object res = (tbl != null) ? tbl [name] : null;
+			if (res != null && res.GetType () != type) return null;
+			else return res;
 		}
 
 		public int IndexOf (XmlSchema schema)

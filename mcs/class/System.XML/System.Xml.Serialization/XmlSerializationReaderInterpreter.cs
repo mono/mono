@@ -44,7 +44,7 @@ namespace System.Xml.Serialization
 		{
 		}
 
-		internal override object ReadObject ()
+		public object ReadObject ()
 		{
 			Reader.MoveToContent();
 			if (_typeMap is XmlTypeMapping)
