@@ -1,0 +1,117 @@
+On how to fill out the CultureInfo XML files
+
+For all the files:
+
+    * We need translation for the name of each culture. Given a
+      CultureInfo code, we'd like to know its DisplayName, EnglishName
+      and NativeName.
+
+      DisplayName - This is the full name of this language used in
+      this culture. The format for this string should be:
+
+           [Full language name] ([Country name] / [Region name])
+
+      EnglishName - This string is the same as DisplayName, but it
+      must be in English.
+
+      NativeName - This string is the same as DisplayName, but it is
+      in the language of this specific culture. For example, for 'de',
+      the NativeName should be 'Deutsch'.
+
+    * We need to fill in possible Calendars that can be used in this
+      Culture. If alternative calendars are used in this culture, an
+      element should be added to the sequence in
+      OptionalCalendars. The text inside each additional element
+      should be the full name of a class in the System.Globalization
+      namespace, and this class must be a decendant of the
+      System.Globalization.Calendar class.
+
+For specific cultures:
+
+    These are the files that are in the form ??-??.xml (excluding
+    zh-CHS.xml and zh-CHT.xml). These files describe a culture /
+    language that is specific to a single location. For example, while
+    'fr' is the code for 'French' in general; 'fr-FR' is the code for
+    French used in France specifically.
+
+    For these cultures, we need the following items:
+
+        - NumberFormatInfo
+
+        - DateTimeFormatInfo
+
+The format of DateTimeFormatInfo:
+
+    The DateTimeFormatInfo section consists of 21 parts:
+
+    Patterns:
+
+     1. FullDateTimePattern
+     2. LongDatePattern
+     3. LongTimePattern
+     4. MonthDayPattern
+     5. RFC1123Pattern
+     6. ShortTimePattern
+     7. ShortDatePattern
+     8. SortableDateTimePattern
+     9. UniversalSortableDateTimePattern
+    10. YearMonthPattern
+
+    Names:
+
+    11. AbbreviatedDayNames
+    12. AbbreviatedMonthNames
+    13. DayNames
+    14. MonthNames
+
+    Misc:
+
+    15. AMDesignator
+    16. Calendar
+    17. CalendarWeekRule
+    18. DateSeparator
+    19. FirstDayOfWeek
+    20. PMDesignator
+    21. TimeSeparator
+   
+    
+The format of NumberFormatInfo:
+
+    The NumberFormatInfo section consists of 25 parts:
+
+    Currency related:
+
+     1. CurrencySymbol
+     2. CurrencyPositivePattern
+     3. CurrencyNegativePattern
+     4. CurrencyGroupSizes
+     5. CurrencyGroupSeparator
+     6. CurrencyDecimalSeparator
+     7. CurrencyDecimalDigits
+     
+    Percent related:
+     
+     8. PercentSymbol
+     9. PercentPositivePattern
+    10. PercentNegativePattern
+    11. PercentGroupSizes
+    12. PercentGroupSeparator
+    13. PercentDecimalSeparator
+    14. PercentDecimalDigits
+
+    Number related:
+
+    15. NumberNegativePattern
+    16. NumberGroupSizes
+    17. NumberGroupSeparator
+    18. NumberDecimalSeparator
+    19. NumberDecimalDigits
+
+    Misc.
+
+    20. PositiveSign
+    21. NegativeSign
+    22. PositiveInfinitySymbol
+    23. NegativeInfinitySymbol
+    24. Permillesymbol
+    25. NaNSymbol

@@ -1,5 +1,7 @@
 2003-04-12  Duncan Mak  <duncan@ximian.com>
 
+	* README: Added to explain how to fill out the CultureInfo XML files.
+
 	* Data/CultureInfo.xsd: XML schema for the XML files.
 
 	* Data/*.xml: Modify the DisplayName element to allow for more
