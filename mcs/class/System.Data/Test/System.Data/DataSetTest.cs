@@ -1195,5 +1195,23 @@ namespace MonoTests.System.Data
 			ds.WriteXml (sw);
 			AssertEquals (xml, sw.ToString ().Replace ("\r\n", "\n"));
 		}
+
+		[Test]
+		public void ReadWriteXml2 ()
+		{
+			string xml = "<FullTextResponse><Domains><AvailResponse info='y' name='novell-ximian-group' /><AvailResponse info='n' name='ximian' /></Domains></FullTextResponse>";
+			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (xml));
+			AssertDataSet ("ds", ds, "FullTextResponse", 2, 1);
+			DataTable dt = ds.Tables [0];
+			AssertDataTable ("dt1", dt, "Domains", 1, 1, 0, 1, 1, 1);
+			dt = ds.Tables [1];
+			AssertDataTable ("dt2", dt, "AvailResponse", 3, 2, 1, 0, 1, 0);
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.QuoteChar = '\'';
+			ds.WriteXml (xtw);
+			AssertEquals (xml, sw.ToString ());
+		}
         }
 }
