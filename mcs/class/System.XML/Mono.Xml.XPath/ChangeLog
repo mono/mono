@@ -1,3 +1,7 @@
+2004-07-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added XPathNavigatorReader.cs.
+
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder.cs : Close XmlTextReader strictly. It might
