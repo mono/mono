@@ -101,7 +101,6 @@ namespace System.Runtime.Serialization
 			return new SerializationInfoEnumerator (serialized);
 		}
 		
-		[CLSCompliant(false)]
 		public void AddValue (string name, short value)
 		{
 			AddValue (name, value, typeof (System.Int16));
