@@ -2302,7 +2302,10 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.RightShift:
-				opcode = OpCodes.Shr;
+				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
+					opcode = OpCodes.Shr_Un;
+				else
+					opcode = OpCodes.Shr;
 				break;
 				
 			case Operator.LeftShift:

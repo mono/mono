@@ -1,3 +1,7 @@
+2002-05-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Use Shr_Un on unsigned operations. 
+
 2002-05-08  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (FindMostEncompass*): Fix trivial bug where the set of 
