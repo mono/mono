@@ -74,7 +74,6 @@ namespace System.Xml
 		{
 		}
 
-		[MonoTODO("Non-filename-url must be supported. Waiting for WebClient")]
 		public XmlTextReader (string url, XmlNameTable nt)
 			: this (url, new XmlStreamReader (url, null, null), nt)
 		{
@@ -815,12 +814,9 @@ namespace System.Xml
 			}
 
 			if (url != null && url != String.Empty) {
-				string path = Path.GetFullPath (".");
-				path = Path.Combine (path, url);
-				UriBuilder ub = new UriBuilder (path);
-				ub.Scheme = "file";
-//				parserContext.BaseURI = new Uri (ub.Uri, url).ToString ();
-				parserContext.BaseURI = ub.ToString ();
+				string path = Path.GetFullPath ("./a");
+				Uri uri = new Uri (new Uri (path), url);
+				parserContext.BaseURI = uri.ToString ();
 			}
 
 			Init ();

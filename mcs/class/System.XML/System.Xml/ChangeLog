@@ -1,3 +1,8 @@
+2003-06-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReader.cs : removed CRLFs. Fixed private InitializeContext()
+	  to use known Uri way (used in XmlUrlResolver) instead of UriBuilder.
+
 2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlInputStream.cs : quick fix for public ctor() BaseURI bug.
