@@ -1,5 +1,8 @@
 2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am (common_sources): Move mini-exceptions.c here as it is
+	used by all the ports now.
+
 	* aot.c: Add write-symbols and save-temps options.
 
 2005-01-10  Zoltan Varga  <vargaz@freemail.hu>
