@@ -29,54 +29,48 @@ namespace System.ComponentModel {
 				name  = designerTypeName;
 			}
 
-			public DesignerAttribute(Type designerType)
+			public DesignerAttribute (Type designerType)
 			{
 				type = designerType;
 			}
 
-			public DesignerAttribute(string designerTypeName, string designerBaseTypeName)
+			public DesignerAttribute (string designerTypeName, string designerBaseTypeName)
 			{
 				name = designerTypeName;
 				basetypename = designerBaseTypeName;
 			}
 
-			public DesignerAttribute(string designerTypeName, Type designerBaseType)
+			public DesignerAttribute (string designerTypeName, Type designerBaseType)
 			{
 				name = designerTypeName;
 				basetype = designerBaseType;
 			}
 
-			public DesignerAttribute(Type designerType, Type designerBaseType)
+			public DesignerAttribute (Type designerType, Type designerBaseType)
 			{
 				type = designerType;
 				basetype = designerBaseType;
 			}
 
-			public string DesignerBaseTypeName 
-			{
-				get
-				{
+			public string DesignerBaseTypeName {
+				get {
 					return basetypename;
 				}
 			}
 
-			public string DesignerTypeName 
-			{
-				get
-				{
+			public string DesignerTypeName  {
+				get {
 					return name;
 				}
 			}
 
-			public override object TypeId 
-			{
-				get 
-				{
-					return this.GetType();
+			public override object TypeId {
+				get {
+					return this.GetType ();
 				}
 			}
 			
-			public override bool Equals(object obj)
+			public override bool Equals (object o)
 			{
 	                        if (!(obj is DesignerAttribute))
 	                                return false;
@@ -86,7 +80,7 @@ namespace System.ComponentModel {
 					(((DesignerAttribute) obj).basetypename == basetypename);
 			}				
 
-			public override int GetHashCode()
+			public override int GetHashCode ()
 			{
 				return base.GetHashCode ();
 			}

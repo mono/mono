@@ -13,7 +13,7 @@ namespace System.ComponentModel {
 	///   Editor Attribute for classes. 
 	/// </summary>
 
-	[AttributeUsage(AttributeTargets.All)]
+	[AttributeUsage (AttributeTargets.All)]
 	public sealed class EditorAttribute : Attribute {
 		
 		string name;	
@@ -21,66 +21,65 @@ namespace System.ComponentModel {
 		Type baseType;
 		Type nametype;
 
-		public EditorAttribute()
+		public EditorAttribute ()
 		{
 			this.name = "";
 		}
 
-		public EditorAttribute(string typeName, string baseTypeName)
+		public EditorAttribute (string typeName, string baseTypeName)
 		{
 			name = typeName;
 			basename = baseTypeName;
 		}
 
-		public EditorAttribute(string typeName, Type baseType)
+		public EditorAttribute (string typeName, Type baseType)
 		{
 			name = typeName;
 			this.baseType = baseType;	
 		}
 
-		public EditorAttribute(Type type, Type baseType)
+		public EditorAttribute (Type type, Type baseType)
 		{
 			nametype = type;
 			this.baseType = baseType;
 		}
 
 		public string EditorBaseTypeName {
-			get
-			{
+			get {
 				return basename;
 			}
 		}
 		
 		public string EditorTypeName {
-			get
-			{
+			get {
 				return name;
 			}
 		}
 
 		public override object TypeId {
-			get
-			{
-				return this.GetType();
+			get {
+				return this.GetType ();
 			}
 		}
 		
-		public override bool Equals(object obj)
+		public override bool Equals (object o)
 		{
 			if (!(obj is EditorAttribute))
 				return false;
+
 			return (((EditorAttribute) obj).name == name) &&
 				(((EditorAttribute) obj).basename == basename) &&
 				(((EditorAttribute) obj).baseType == baseType) &&
 				(((EditorAttribute) obj).nametype == nametype);
+
 		}
 		
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
                         if (name == null)
 	                        return 0;
+
                         return name.GetHashCode ();
 		}
 	}
 }
-
