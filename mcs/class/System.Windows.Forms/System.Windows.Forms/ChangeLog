@@ -1,3 +1,13 @@
+2003-05-12  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Application.cs
+	* ContainerControl.cs
+	* Control.cs
+	* Form.cs
+	* ScrollableControl.cs
+	* StatusBar.cs
+	* TabControl.cs
+	* TabPage.cs : changes in the code for TAB key handling
+
 2003-05-09  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs
 	* Form.cs

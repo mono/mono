@@ -101,7 +101,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool ProcessDialogKey (Keys keyData) 
 		{
-			//FIXME:
+			if ( keyData == Keys.Tab ) {
+				return ProcessTabKey ( Control.ModifierKeys != Keys.Shift );
+			}
 			return base.ProcessDialogKey(keyData);
 		}
 		
@@ -113,9 +115,12 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected virtual bool ProcessTabKey (bool forward) 
+		protected virtual bool ProcessTabKey ( bool forward ) 
 		{
-			throw new NotImplementedException ();
+			Control newFocus = getNextFocusedControl ( this, forward );
+			if ( newFocus != null )
+				return newFocus.Focus ( );
+			return false;
 		}
 		
 		// Not an overridden function?

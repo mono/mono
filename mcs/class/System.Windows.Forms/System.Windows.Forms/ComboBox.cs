@@ -239,7 +239,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool Focused {
 			get {
-				throw new NotImplementedException ();
+				return base.Focused;
 			}
 		}
 		

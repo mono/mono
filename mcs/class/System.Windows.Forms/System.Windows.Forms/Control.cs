@@ -815,10 +815,18 @@
 				}
 			}
     		
-    		[MonoTODO]
     		public static Keys ModifierKeys {
     			get {
-    				throw new NotImplementedException ();
+				Keys keys = Keys.None;
+
+				if ( ( Win32.GetKeyState( (int) VirtualKeys.VK_SHIFT ) & 0x8000 ) == 0x8000 )
+					 keys |= Keys.Shift;
+				if ( ( Win32.GetKeyState( (int) VirtualKeys.VK_MENU ) & 0x8000 )  == 0x8000 )
+					keys |= Keys.Alt;
+				if ( ( Win32.GetKeyState( (int) VirtualKeys.VK_CONTROL) & 0x8000) == 0x8000 )
+					 keys |= Keys.Control;
+
+				return keys;
     			}
     		}
     		
@@ -1096,16 +1104,10 @@
     			}
     		}
     
-  			//Compact Framework
     		public bool Visible {
-    			get {
-				return visible;
-    			}
+    			get {	return visible;	}
     			set {
-				visible = value;
-				if ( visible ) 
-					 Show();
-				else	 Hide ();
+				SetVisibleCore ( value );
     			}
     		}
     		
@@ -1282,25 +1284,82 @@
     		//{
     		//	throw new NotImplementedException ();
     		//}
+
+		internal Control getNextFocusedControlCore ( Control parent, Control ctl, bool forward )
+		{
+			while ( parent.Parent != null )
+				parent = parent.Parent;
+
+			Control next = parent.GetNextControl ( ctl, forward );
+			while ( next != null ) {
+				if ( next.TabStop && next.CanFocus )
+					return next;
+				next = parent.GetNextControl ( next, forward );
+			}
+			return null;
+		}
+
+		internal Control getNextFocusedControl ( Control parent, bool forward )
+		{
+			Control next = getNextFocusedControlCore ( parent, FocusedControl, forward );
+			if ( next == null )
+				next = getNextFocusedControlCore ( parent, null, forward );
+			return next;
+		}
     		
     		[MonoTODO]
     		public Control GetNextControl ( Control ctl, bool forward ) 
     		{
-			if ( ctl == null || ctl.Parent == null )
-				return Controls.GetFirstControl ( forward );
+			Control next = null;
+
+			if ( ctl == null ) 
+				next = Controls.GetFirstControl ( forward );
 			else {
-				Control parent = ctl.Parent;
-
-				Control next = parent.Controls.GetNextControl ( ctl, forward );
-				if ( next != null )
-					return next;
-
-				return GetNextControl ( parent, forward );
+				if ( forward )
+					next = getNextControlForward ( ctl );
+				else
+					next = getNextControlBackward ( ctl );
 			}
-			return null;
-    		}
+			return next;
+		}
 
-    	
+    		private Control getNextControlForward ( Control ctl ) 
+		{
+			if ( ctl.Controls.Count != 0 )
+				return ctl.Controls.GetFirstControl ( true );
+
+			Control parent = ctl.Parent;
+			if ( parent != null ) {
+				while ( parent != null ) {
+					Control next = parent.Controls.GetNextControl ( ctl, true );
+					if ( next != null )
+						return next;
+					ctl = parent;
+					parent = parent.Parent;
+				}
+				return null;
+			}
+			else
+				return Controls.GetFirstControl ( true );
+		}
+
+    		private Control getNextControlBackward ( Control ctl ) 
+		{
+			Control parent = ctl.Parent;
+			if ( parent != null ) {
+				Control next = parent.Controls.GetNextControl ( ctl, false );
+				if ( next != null ) {
+					if ( next.Controls.Count > 0 )
+						return next.Controls.GetFirstControl ( false );
+					else
+						return next;
+				}
+				return parent;
+			}
+			else
+				return Controls.GetFirstControl ( false );
+		}
+
     		[MonoTODO]
     		protected bool GetStyle (ControlStyles flag) 
     		{
@@ -1313,12 +1372,9 @@
     			throw new NotImplementedException ();
     		}
     		
- 			//Compact Framework
     		public void Hide ()
      		{
-			visible = false;
-    			if (IsHandleCreated)
-    				Win32.ShowWindow (Handle, ShowWindowStyles.SW_HIDE);
+			Visible = false;
     		}
     		
     		[MonoTODO]
@@ -1494,8 +1550,8 @@
     		{	
 			if ( Created ) {
 				e.Control.CreateControl ( );
-				e.Control.Visible = Visible;
 			}
+			e.Control.Visible = Visible;
 
     			if (ControlAdded != null)
     				ControlAdded (this, e);
@@ -2384,17 +2440,25 @@
     		}
     		
     		[MonoTODO]
-    		protected virtual void SetVisibleCore (bool value)
+    		protected virtual void SetVisibleCore ( bool value )
     		{
-				//FIXME:
-			}
+			bool visibleChanged = ( visible != value );
+
+			visible = value;
+
+			foreach ( Control c in Controls )
+				c.Visible = value ;
+
+			if ( IsHandleCreated )
+				Win32.ShowWindow ( Handle, value ? ShowWindowStyles.SW_SHOW : ShowWindowStyles.SW_HIDE );
+
+			if ( visibleChanged )
+				OnVisibleChanged ( EventArgs.Empty );
+		}
     		
- 			//Compact Framework
     		public void Show () 
     		{
-			visible = true;
-			if (IsHandleCreated)
-	    			Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
+			Visible = true;
     		}
     		
     		public void SuspendLayout () 
@@ -2628,18 +2692,16 @@
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_KEYDOWN:
-				if ( !PreProcessMessage ( ref m ) )
-					if ( !ProcessKeyMessage ( ref m ) )
-						CallControlWndProc(ref m);
+				if ( !ProcessKeyMessage ( ref m ) )
+					CallControlWndProc( ref m );
 			break;
     			case Msg.WM_CHAR:
-				if ( !PreProcessMessage ( ref m ) )
-					if ( !ProcessKeyMessage ( ref m ) )
-						CallControlWndProc(ref m);
+				if ( !ProcessKeyMessage ( ref m ) )
+					CallControlWndProc( ref m );
 			break;
     			case Msg.WM_KEYUP:
 				if ( !ProcessKeyMessage ( ref m ) )
-					CallControlWndProc(ref m);
+					CallControlWndProc( ref m );
 			break;
     			case Msg.WM_KILLFOCUS:
     				OnLeave (eventArgs);
@@ -3135,7 +3197,7 @@
     			{
 					//FIXME:
 					return base.ToString();
-				}
+			}
     		}
     		
     		/// sub-class: Control.ControlCollection
@@ -3145,13 +3207,6 @@
     		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable {
     
 			class ControlComparer : IComparer {
-				int greater;
-				int less;
-				internal ControlComparer ( bool dir )
-				{	
-					greater = dir ? 1 : -1;
-					less    = - greater;
-				}
 
 				int IComparer.Compare( object x, object y )
 				{
@@ -3159,9 +3214,9 @@
 					int ty = ( ( Control )y ).TabIndex;
 
 					if ( tx > ty )
-						return greater;
+						return 1;
 					else if ( tx < ty )
-						return less;
+						return -1;
 					else
 						return 0;
 				}
@@ -3288,25 +3343,21 @@
 
 			internal Control GetFirstControl ( bool direction )
 			{
-				Control first = null;
+				if ( collection.Count == 0 )
+					return null;
 
-				if ( collection.Count > 0 ) {
-					ArrayList copy = collection.Clone ( ) as ArrayList;
-					copy.Sort ( new ControlComparer ( direction ) );
-
-					foreach ( Control c in copy ) {
-						first = c.Controls.GetFirstControl ( direction );
-
-						if ( first != null )
-							break;
-
-						if ( c.TabStop && c.CanFocus ) {
-							first = c;
-							break;
-						}
-					}
-				}								
-				return first;
+				ArrayList copy = collection.Clone ( ) as ArrayList;
+				copy.Sort ( new ControlComparer ( ) );
+				
+				if ( direction )
+					return copy [0] as Control;
+				else {
+					Control last = copy[ collection.Count - 1 ] as Control;
+					if ( last.Controls.Count == 0 )
+						return last;
+					else
+						return last.Controls.GetFirstControl ( false );
+				}
 			}
 
 
@@ -3316,26 +3367,14 @@
 					return null;
 
 				ArrayList copy = collection.Clone ( ) as ArrayList;
-				copy.Sort ( new ControlComparer ( forward ) );
-				int index = copy.IndexOf ( ctl );
+				copy.Sort ( new ControlComparer (  ) );
 
-				Control next = null;
+				int index = copy.IndexOf ( ctl ) + ( forward ? 1 : -1 );
 
-				for ( int i = index + 1; i < copy.Count ; i++ ) {
-					Control c = copy[i] as Control;
+				if ( ( forward && index  < copy.Count ) || ( !forward && index >= 0 ) )
+					return copy[index] as Control;
 
-					if ( c.TabStop && c.CanFocus ) {
-						next = c;
-						break;
-					}
-					else {
-						next = c.Controls.GetFirstControl ( forward );
-						if ( next != null )
-							break;
-					}
-				}
-
-				return next;
+				return null;
 			}
 
     			/// --- ControlCollection.IClonable methods ---
@@ -3401,3 +3440,36 @@
     		}  // --- end of Control.ControlCollection ---
     	}
     }
+
+/*
+			if ( forward && ctl.Controls.Count != 0 )
+				return ctl.Controls.GetFirstControl ( forward );
+			else {
+				Control parent = ctl.Parent;
+				if ( parent != null ) {
+					while ( parent != null ) {
+						Control next = parent.Controls.GetNextControl ( ctl, forward );
+						if ( next != null ) {
+							string name = next.Name;
+							if ( forward )
+								return next;
+							else {
+								if ( next.Controls.Count > 0 )
+									return next.Controls.GetFirstControl ( forward );
+								else
+									return next;
+							}
+						}
+						else if ( !forward ) {
+							return parent;
+						}
+
+						ctl = parent;
+						parent = parent.Parent;
+						
+					}
+					return null;
+				}
+				else
+					return Controls.GetFirstControl ( forward);
+			}*/

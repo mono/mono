@@ -25,6 +25,7 @@ namespace System.Windows.Forms {
 		//
 		public ScrollableControl () : base () {
 			dockPadding = new ScrollableControl.DockPaddingEdges();
+			TabStop = false;
 		}
 		//
 		//  --- Public Properties

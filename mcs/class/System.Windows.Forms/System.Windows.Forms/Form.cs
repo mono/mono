@@ -779,7 +779,7 @@
     		{
 			OnLoad ( EventArgs.Empty );
     			base.OnCreateControl ();
-			Control c = GetNextControl ( null, true );
+			Control c = getNextFocusedControl ( this, true );
 			if ( c != null )
 				c.Focus ( );
     		}
@@ -938,12 +938,6 @@
     
     		protected override bool ProcessDialogKey (Keys keyData)
     		{
-			if ( keyData == Keys.Tab ) {
-				Control newFocus = GetNextControl ( FocusedControl, true );
-				if ( newFocus != null ) {
-					return newFocus.Focus ( );
-				}
-			}
     			return base.ProcessDialogKey (keyData);
     		}
     
@@ -952,9 +946,13 @@
     			return base.ProcessKeyPreview (ref m);
     		}
 
-    		protected override bool ProcessTabKey (bool forward)
+    		protected override bool ProcessTabKey ( bool forward )
     		{
-    			return base.ProcessTabKey (forward);
+			Control newFocus = getNextFocusedControl ( this, forward );
+			if ( newFocus != null ) {
+				return newFocus.Focus ( );
+			}
+			return base.ProcessTabKey ( forward );
     		}
     
     		protected override void ScaleCore (float x, float y)

@@ -238,10 +238,15 @@ namespace System.Windows.Forms {
 						dispatchMessage = false;
 				}
 
-					if (dispatchMessage) {
-						Win32.TranslateMessage (ref msg);
-						Win32.DispatchMessageA (ref msg);
-					}
+				Control receiver = Control.FromHandle ( message.HWnd );
+				if ( receiver != null ) {
+					dispatchMessage = ! receiver.PreProcessMessage ( ref message );
+				}
+
+				if (dispatchMessage) {
+					Win32.TranslateMessage (ref msg);
+					Win32.DispatchMessageA (ref msg);
+				}
 				//if (Idle != null)
 					//Idle (null, new EventArgs());
 			}

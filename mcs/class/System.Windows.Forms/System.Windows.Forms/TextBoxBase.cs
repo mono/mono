@@ -533,6 +533,7 @@ namespace System.Windows.Forms {
 			case Msg.WM_COMMAND:
 				if ( m.HiWordWParam == (int) EditControlNotifications.EN_CHANGE )
 					OnTextChanged ( EventArgs.Empty );
+
 				CallControlWndProc ( ref m );
 			break;
 			default:

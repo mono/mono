@@ -37,6 +37,7 @@ namespace System.Windows.Forms {
 			Dock = DockStyle.Bottom;
 			showPanels = false;
 			sizingGrip = true;
+			base.TabStop = false;
 		}
 
 		public override string ToString()

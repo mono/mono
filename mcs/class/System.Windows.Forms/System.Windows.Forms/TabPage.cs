@@ -102,5 +102,14 @@ namespace System.Windows.Forms {
 			get { return added; }
 			set { added = value;}
 		}
+
+		protected override void SetVisibleCore ( bool value )
+		{
+			TabControl parent = Parent as TabControl;
+			if ( parent != null && this != parent.SelectedTab )
+				value = false;
+
+			base.SetVisibleCore ( value );
+		}
 	}
 }

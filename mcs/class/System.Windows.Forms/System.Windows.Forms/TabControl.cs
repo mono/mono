@@ -56,6 +56,7 @@ namespace System.Windows.Forms {
 		private ImageList imageList;
 
 		public TabControl() {
+			SubClassWndProc_ = true;
 			selectedIndex = -1;
 			multiline = false;
 			tabAlignment = TabAlignment.Top;
@@ -402,7 +403,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) {
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		[MonoTODO]
@@ -430,7 +431,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void OnKeyDown(KeyEventArgs ke) {
-			throw new NotImplementedException ();
+			base.OnKeyDown( ke );
 		}
 
 		[MonoTODO]
@@ -453,7 +454,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override bool ProcessKeyPreview(ref Message m) {
-			throw new NotImplementedException ();
+			return base.ProcessKeyPreview( ref m );
 		}
 
 		protected void RemoveAll() {
@@ -479,6 +480,9 @@ namespace System.Windows.Forms {
 					m.Result = IntPtr.Zero;
 				break;
 				}
+			break;
+			default:
+				base.WndProc ( ref m );
 			break;
 			}
 		}
