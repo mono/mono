@@ -1,3 +1,7 @@
+2003-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Module.cs: Corrected indentation for class.
+
 2003-02-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Binder.cs:
@@ -10,7 +14,7 @@
 
 2003-02-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
-	* Modules.cs: Oups - not implemented. Added MonoTODO to most methods
+	* Module.cs: Oups - not implemented. Added MonoTODO to most methods
 	so it's real status get reflected correctly on the web site.
 
 2003-01-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
