@@ -298,7 +298,7 @@ namespace Mono.CSharp {
 			field_builders.Add (fb);
 			member_to_value [name] = default_value;
 
-			if (!TypeManager.RegisterField (fb, default_value))
+			if (!TypeManager.RegisterFieldValue (fb, default_value))
 				return null;
 			
 			return default_value;
@@ -356,7 +356,7 @@ namespace Mono.CSharp {
 					field_builders.Add (fb);
 					member_to_value [name] = default_value;
 					
-					if (!TypeManager.RegisterField (fb, default_value))
+					if (!TypeManager.RegisterFieldValue (fb, default_value))
 						return false;
 				}
 

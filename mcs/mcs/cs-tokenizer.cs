@@ -212,6 +212,7 @@ namespace Mono.CSharp
 			keywords.Add ("using", Token.USING);
 			keywords.Add ("virtual", Token.VIRTUAL);
 			keywords.Add ("void", Token.VOID);
+			keywords.Add ("volatile", Token.VOLATILE);
 			keywords.Add ("while", Token.WHILE);
 		}
 

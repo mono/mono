@@ -5,6 +5,10 @@
 	access private members we compute our containing type from the
 	EmitContext.
 
+	(FieldExpr): Added partial support for volatile fields.  This does
+	not work for volatile fields exposed from assemblies, as I can not
+	figure out how to extract the modreq from it.
+
 	Updated all the source files to use this.
 
 	* codegen.cs (EmitContext): Compute ContainerType ahead of time,

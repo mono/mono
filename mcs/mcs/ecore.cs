@@ -397,9 +397,11 @@ namespace Mono.CSharp {
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
 			Type source_type = ec.ContainerType;
-			
-			if (source_type == t || source_type.IsSubclassOf (t))
-				bf |= BindingFlags.NonPublic;
+
+			if (source_type != null){
+				if (source_type == t || source_type.IsSubclassOf (t))
+					bf |= BindingFlags.NonPublic;
+			}
 
 			//
 			// Lookup for members starting in the type requested and going
@@ -3022,7 +3024,6 @@ namespace Mono.CSharp {
 				InstanceExpression = InstanceExpression.Resolve (ec);
 				if (InstanceExpression == null)
 					return null;
-				
 			}
 
 			return this;
@@ -3055,10 +3056,20 @@ namespace Mono.CSharp {
 		override public void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-
-			if (FieldInfo.IsStatic)
+			bool is_volatile = false;
+				
+			if (FieldInfo is FieldBuilder){
+				Field f = TypeManager.GetField (FieldInfo);
+				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
+					is_volatile = true;
+			}
+			
+			if (FieldInfo.IsStatic){
+				if (is_volatile)
+					ig.Emit (OpCodes.Volatile);
+				
 				ig.Emit (OpCodes.Ldsfld, FieldInfo);
-			else {
+			} else {
 				if (InstanceExpression.Type.IsValueType){
 					IMemoryLocation ml;
 					
@@ -3076,6 +3087,9 @@ namespace Mono.CSharp {
 				} else 
 					InstanceExpression.Emit (ec);
 
+				if (is_volatile)
+					ig.Emit (OpCodes.Volatile);
+				
 				ig.Emit (OpCodes.Ldfld, FieldInfo);
 			}
 		}
@@ -3083,7 +3097,8 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			bool is_static = FieldInfo.IsStatic;
-
+			ILGenerator ig = ec.ig;
+			
 			if (!is_static){
 				Expression instance = InstanceExpression;
 
@@ -3101,21 +3116,34 @@ namespace Mono.CSharp {
 					instance.Emit (ec);
 			}
 			source.Emit (ec);
+
+			if (FieldInfo is FieldBuilder){
+				Field f = TypeManager.GetField (FieldInfo);
+				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
+					ig.Emit (OpCodes.Volatile);
+			}
 			
 			if (is_static)
-				ec.ig.Emit (OpCodes.Stsfld, FieldInfo);
-			else {
-				ec.ig.Emit (OpCodes.Stfld, FieldInfo);
-			}
+				ig.Emit (OpCodes.Stsfld, FieldInfo);
+			else 
+				ig.Emit (OpCodes.Stfld, FieldInfo);
 		}
 		
 		public void AddressOf (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			
+			if (FieldInfo is FieldBuilder){
+				Field f = TypeManager.GetField (FieldInfo);
+				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
+					ig.Emit (OpCodes.Volatile);
+			}
+
 			if (FieldInfo.IsStatic)
-				ec.ig.Emit (OpCodes.Ldsflda, FieldInfo);
+				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
 				InstanceExpression.Emit (ec);
-				ec.ig.Emit (OpCodes.Ldflda, FieldInfo);
+				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
 	}

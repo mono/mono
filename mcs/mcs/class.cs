@@ -2452,6 +2452,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE |
 			Modifiers.STATIC |
+		        Modifiers.VOLATILE |
 			Modifiers.READONLY;
 
 		public Field (string type, int mod, string name, Object expr_or_array_init,
@@ -2488,10 +2489,34 @@ namespace Mono.CSharp {
 						System.Type.FilterName, Name);
 				}
 			}
+
+			if ((ModFlags & Modifiers.VOLATILE) != 0){
+				if (!t.IsClass){
+					if (TypeManager.IsEnumType (t))
+						t = TypeManager.EnumToUnderlying (t);
+
+					if (!((t == TypeManager.bool_type) ||
+					      (t == TypeManager.sbyte_type) ||
+					      (t == TypeManager.byte_type) ||
+					      (t == TypeManager.short_type) ||    
+					      (t == TypeManager.ushort_type) ||
+					      (t == TypeManager.int32_type) ||    
+					      (t == TypeManager.uint32_type) ||    
+					      (t == TypeManager.char_type) ||    
+					      (t == TypeManager.float_type))){
+						Report.Error (
+							677, Location, parent.MakeName (Name) +
+							" A volatile field can not be of type `" +
+							TypeManager.CSharpName (t) + "'");
+						return false;
+					}
+				}
+			}
 			
 			FieldBuilder = parent.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
 
+			TypeManager.RegisterField (FieldBuilder, this);
 			return true;
 		}
 

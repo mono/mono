@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 
 			FieldBuilder.SetConstant (ConstantValue);
 
-			if (!TypeManager.RegisterField (FieldBuilder, ConstantValue))
+			if (!TypeManager.RegisterFieldValue (FieldBuilder, ConstantValue))
 				return null;
 
 			return ConstantValue;

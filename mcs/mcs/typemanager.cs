@@ -685,13 +685,9 @@ public class TypeManager {
 	//  This is a workaround the fact that GetValue is not
 	//  supported for dynamic types
 	// </remarks>
-	static Hashtable fields;
-
-	static public bool RegisterField (FieldBuilder fb, object value)
+	static Hashtable fields = new Hashtable ();
+	static public bool RegisterFieldValue (FieldBuilder fb, object value)
 	{
-		if (fields == null)
-			fields = new Hashtable ();
-
 		if (fields.Contains (fb))
 			return false;
 
@@ -705,6 +701,21 @@ public class TypeManager {
 		return fields [fb];
 	}
 
+	static Hashtable fieldbuilders_to_fields = new Hashtable ();
+	static public bool RegisterField (FieldBuilder fb, Field f)
+	{
+		if (fieldbuilders_to_fields.Contains (fb))
+			return false;
+
+		fieldbuilders_to_fields.Add (fb, f);
+		return true;
+	}
+
+	static public Field GetField (FieldInfo fb)
+	{
+		return (Field) fieldbuilders_to_fields [fb];
+	}
+	
 	static Hashtable events;
 
 	static public bool RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)

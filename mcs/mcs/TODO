@@ -119,15 +119,6 @@ PENDING TASKS
 	* Unsafe code.
 		Making the parser accept unsafe code.
 		
-* OUT Variables passed as OUT variables.
-
-	Currently we pass the pointer to the pointer (see expression.cs:Argument.Emit)
-
-* Make the rules for inheritance/overriding apply to 
-  indexers
-
-* Handle volatile
-
 * Static flow analysis
 
 	Required to warn about reachability of code and definite
@@ -137,6 +128,10 @@ PENDING TASKS
 
 	The information when registering a method in InternalParameters
 	is duplicated, you can always get the types from the InternalParameters
+
+* Emit modreq for volatiles
+
+	Handle modreq from public apis.
 
 OPTIMIZATIONS
 -------------
@@ -271,3 +266,4 @@ class Y : X, I {
 
 
 
+*************

@@ -162,6 +162,7 @@ namespace Mono.CSharp
 %token USING	
 %token VIRTUAL	
 %token VOID	
+%token VOLATILE
 %token WHILE	
 
 /* C# keywords which are not really keywords */
@@ -2500,6 +2501,7 @@ modifier
 	| VIRTUAL		{ $$ = Modifiers.VIRTUAL; }
 	| OVERRIDE 		{ $$ = Modifiers.OVERRIDE; }
 	| EXTERN		{ $$ = Modifiers.EXTERN; }
+	| VOLATILE		{ $$ = Modifiers.VOLATILE; }
 	;
 
 opt_class_base

@@ -23,7 +23,8 @@ namespace Mono.CSharp {
 		public const int VIRTUAL   = 0x0200;
 		public const int OVERRIDE  = 0x0400;
 		public const int EXTERN    = 0x0800;
-		public const int TOP       = 0x0800;
+		public const int VOLATILE  = 0x1000;
+		public const int TOP       = 0x1000;
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;
@@ -57,6 +58,8 @@ namespace Mono.CSharp {
 				s = "override"; break;
 			case Modifiers.EXTERN:
 				s = "extern"; break;
+			case Modifiers.VOLATILE:
+				s = "volatile"; break;
 			}
 
 			return s;
