@@ -100,7 +100,8 @@ namespace Mono.Xml.Xsl.Operations {
 				return o;
 			} else if (content != null) {
 //				XmlNodeWriter w = new XmlNodeWriter (false);
-				DTMXPathDocumentWriter w = new DTMXPathDocumentWriter (p.CurrentNode.NameTable, 200);
+//				DTMXPathDocumentWriter w = new DTMXPathDocumentWriter (p.CurrentNode.NameTable, 200);
+				DTMXPathDocumentWriter2 w = new DTMXPathDocumentWriter2 (p.CurrentNode.NameTable, 200);
 				Outputter outputter = new GenericOutputter(w, p.Outputs, null, true);
 				p.PushOutput (outputter);
 				content.Evaluate (p);
