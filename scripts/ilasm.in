@@ -1,2 +1,2 @@
 #!/bin/sh
-@bindir@/@mono_interp@ @plat_bindir@/ilasm.exe "$@"
+exec @bindir@/@mono_interp@ @plat_bindir@/ilasm.exe "$@"

@@ -1,2 +1,2 @@
 #!/bin/sh
-@bindir@/@mono_interp@ @plat_bindir@/genxs.exe "$@"
+exec @bindir@/@mono_interp@ @plat_bindir@/genxs.exe "$@"
