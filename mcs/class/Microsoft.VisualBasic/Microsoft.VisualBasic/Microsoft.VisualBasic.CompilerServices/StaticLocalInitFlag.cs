@@ -33,7 +33,9 @@
 namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
+#if NET_2_0
 	[System.Serializable]
+#endif
 	sealed public class StaticLocalInitFlag {
 		// Declarations
 		public System.Int16 State = (System.Int16)(0);

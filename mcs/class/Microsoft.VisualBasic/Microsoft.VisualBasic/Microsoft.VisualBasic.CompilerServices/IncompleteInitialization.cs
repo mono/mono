@@ -32,6 +32,9 @@
 namespace Microsoft.VisualBasic.CompilerServices
 {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
+#if NET_2_0
+	[System.Serializable]
+#endif
 	sealed public class IncompleteInitialization : System.Exception, System.Runtime.Serialization.ISerializable {
 	};
 }
