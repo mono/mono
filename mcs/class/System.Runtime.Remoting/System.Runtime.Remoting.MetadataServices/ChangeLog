@@ -1,3 +1,8 @@
+2004-11-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* MetaDataExporter.cs: Addded EnumToUnderlying method to get the underlying
+	type of an enum. This fixes bug #69753.
+	
 2004-05-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SUDSGeneratorException.cs, SUDSParserException.cs: Removed unneeded

@@ -398,7 +398,7 @@ namespace System.Runtime.Remoting.MetadataServices
 		{
 			tw.WriteStartElement ("simpleType", MetaData.SchemaNamespace);
 			tw.WriteAttributeString ("name", GetXmlType (type));
-			tw.WriteAttributeString ("suds", "enumType", MetaData.SudsNamespace, GetQualifiedXmlType (tw, type.UnderlyingSystemType, null));
+			tw.WriteAttributeString ("suds", "enumType", MetaData.SudsNamespace, GetQualifiedXmlType (tw, EnumToUnderlying (type), null));
 			tw.WriteStartElement ("restriction", MetaData.SchemaNamespace);
 			tw.WriteAttributeString ("base", "xsd:string");
 			
@@ -664,6 +664,38 @@ namespace System.Runtime.Remoting.MetadataServices
 				return "anyType";
 				
 			return null;
+		}
+		
+		//
+		// This is needed, because enumerations from assemblies
+		// do not report their underlyingtype, but they report
+		// themselves
+		//
+		public static Type EnumToUnderlying (Type t)
+		{
+			TypeCode tc = Type.GetTypeCode (t);
+	
+			switch (tc){
+			case TypeCode.Boolean:
+				return typeof (bool);
+			case TypeCode.Byte:
+				return typeof (byte);
+			case TypeCode.SByte:
+				return typeof (sbyte);
+			case TypeCode.Int16:
+				return typeof (short);
+			case TypeCode.UInt16:
+				return typeof (ushort);
+			case TypeCode.Int32:
+				return typeof (int);
+			case TypeCode.UInt32:
+				return typeof (uint);
+			case TypeCode.Int64:
+				return typeof (long);
+			case TypeCode.UInt64:
+				return typeof (ulong);
+			}
+			throw new Exception ("Unhandled typecode in enum " + tc + " from " + t.AssemblyQualifiedName);
 		}
 	}
 	
