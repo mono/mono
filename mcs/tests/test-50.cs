@@ -8,7 +8,7 @@ public class Blah {
 
 	public static int Main ()
 	{
-		MessageBox (0, "Hello World !", "PInvoke Test", 0);
+		MessageBox (0, "Hello from Mono !", "PInvoke Test", 0);
 
 		return 0;
 	}
