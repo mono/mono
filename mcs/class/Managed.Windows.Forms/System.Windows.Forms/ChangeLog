@@ -1,5 +1,10 @@
 2004-12-28  Peter Bartok  <pbartok@novell.com>
 
+	* Form.cs (get_CreateParams): Make sure we have an owner before using
+	  the owner variable. Implement proper default if no owner exists
+
+2004-12-28  Peter Bartok  <pbartok@novell.com>
+
 	* In preparation for making Managed.Windows.Forms the default build target
 	  for System.Windows.Forms, the following stubbed files were added.
 	  Dialogs are currently being implemented by contributors and are only 

@@ -101,20 +101,24 @@ namespace System.Windows.Forms {
 					cp.Width = 250;
 					cp.Height = 250;
 
-					if (owner.ShowInTaskbar) {
-						cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
-					}
+					if (owner != null) {
+						if (owner.ShowInTaskbar) {
+							cp.ExStyle |= (int)WindowStyles.WS_EX_APPWINDOW;
+						}
 
-					if (owner.MaximizeBox) {
-						cp.Style |= (int)WindowStyles.WS_MAXIMIZEBOX;
-					}
+						if (owner.MaximizeBox) {
+							cp.Style |= (int)WindowStyles.WS_MAXIMIZEBOX;
+						}
 
-					if (owner.MinimizeBox) {
-						cp.Style |= (int)WindowStyles.WS_MINIMIZEBOX;
-					}
+						if (owner.MinimizeBox) {
+							cp.Style |= (int)WindowStyles.WS_MINIMIZEBOX;
+						}
 
-					if (owner.ControlBox) {
-						cp.Style |= (int)WindowStyles.WS_SYSMENU;
+						if (owner.ControlBox) {
+							cp.Style |= (int)WindowStyles.WS_SYSMENU;
+						}
+					} else {
+						cp.Style |= (int)(WindowStyles.WS_SYSMENU | WindowStyles.WS_MINIMIZEBOX | WindowStyles.WS_MAXIMIZEBOX | WindowStyles.WS_EX_APPWINDOW);
 					}
 
 					return cp;
