@@ -110,6 +110,8 @@ namespace Mono.CSharp {
 		{
 			if (Type == null)
 				Type = CheckAttributeType (ec);
+			if (Type == null)
+				return null;
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;

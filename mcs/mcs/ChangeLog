@@ -1,5 +1,7 @@
 2002-06-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs: Return null if we can not look up the type.
+
 	* class.cs (TypeContainer.GetClassBases): Use ExpandInterfaces on
 	the interface types found.
 
