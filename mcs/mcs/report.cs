@@ -184,12 +184,34 @@ namespace Mono.CSharp {
 						sb.Append (",");
 					if (arg == null)
 						sb.Append ("null");
+					else if (arg is ICollection)
+						sb.Append (PrintCollection ((ICollection) arg));
 					else
 						sb.Append (arg);
 				}
 			}
 
 			Console.WriteLine (sb.ToString ());
+		}
+
+		static public string PrintCollection (ICollection collection)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append (collection.GetType ());
+			sb.Append ("(");
+
+			bool first = true;
+			foreach (object o in collection) {
+				if (first)
+					first = false;
+				else
+					sb.Append (",");
+				sb.Append (o);
+			}
+
+			sb.Append (")");
+			return sb.ToString ();
 		}
 	}
 

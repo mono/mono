@@ -123,7 +123,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Utility wrapper routine for Warning, just to beautify the code
 		/// </summary>
-		protected void Warning (int warning, string s)
+		public void Warning (int warning, string s)
 		{
 			if (!Location.IsNull (loc))
 				Report.Warning (warning, loc, s);
@@ -131,7 +131,11 @@ namespace Mono.CSharp {
 				Report.Warning (warning, s);
 		}
 
-		protected void Warning (int warning, int level, string s)
+		/// <summary>
+		///   Utility wrapper routine for Warning, only prints the warning if
+		///   warnings of level `level' are enabled.
+		/// </summary>
+		public void Warning (int warning, int level, string s)
 		{
 			if (level <= RootContext.WarningLevel)
 				Warning (warning, s);
