@@ -23,18 +23,10 @@ namespace System.Drawing.Drawing2D
 			if(count < 2){
 				throw new ArgumentOutOfRangeException("Count", count, "Must be at least 2");
 			}
-			if(count == 2){
-				//FIXME: call Blend!
-				count = 2;
-				positions = new float [1];
-				factors = new float [1];
-				positions[0] = 0.0F;
-				positions[1] = 1.0F;
-				factors[0] = 0.0F;
-				factors[1] = 1.0F;
-			}
-			int i;
-			for(i = 0; i < count; i++){
+			positions = new float [count];
+			factors = new float [count];
+				//FIXME: call Blend! 
+			for (int i = 0; i < count; i++){
 				positions[i] = (1.0F/count) * i;
 				factors[i] = (1.0F/count) * i;
 			}
@@ -47,8 +39,8 @@ namespace System.Drawing.Drawing2D
 		}
 		public Blend() {
 			count = 2;
-			positions = new float [1];
-			factors = new float [1];
+			positions = new float [2];
+			factors = new float [2];
 			positions[0] = 0.0F;
 			positions[1] = 1.0F;
 			factors[0] = 0.0F;
