@@ -1,5 +1,9 @@
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataList.cs: added a few attributes and fixed infinite recursion.
+
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListItemCollection.cs: fixed LoadViewState.
 
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>

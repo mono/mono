@@ -64,6 +64,11 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty(true)]
+		[WebCategory("Style")]
+		[WebSysDescription("The style applied to alternating items.")]
 		public virtual TableItemStyle AlternatingItemStyle
 		{
 			get
@@ -78,6 +83,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Browsable(false)]
+		[DefaultValue(null)]
+		[TemplateContainer(typeof(DataListItem))]
+		[WebSysDescription("The template used for alternating items.")]
 		public virtual ITemplate AlternatingItemTemplate
 		{
 			get
@@ -90,6 +99,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue(-1)]
+		[WebCategory("Misc")]
+		[WebSysDescription("The index of the item shown in edit mode.")]
 		public virtual int EditItemIndex
 		{
 			get
@@ -105,6 +117,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue(null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[NotifyParentProperty(true)]
+		[WebCategory("Style")]
+		[WebSysDescription("The style applied to items in edit mode.")]
 		public virtual TableItemStyle EditItemStyle
 		{
 			get
@@ -176,11 +193,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return GridLines;
+				return base.GridLines;
 			}
 			set
 			{
-				GridLines = value;
+				base.GridLines = value;
 			}
 		}
 
@@ -548,7 +565,7 @@ namespace System.Web.UI.WebControls
 			if(savedState != null && (states = (object[])savedState) != null)
 			{
 				if(states[0] != null)
-					LoadViewState(states[0]);
+					base.LoadViewState(states[0]);
 				if(states[1] != null)
 					alternatingItemStyle.LoadViewState(states[1]);
 				if(states[2] != null)
@@ -568,7 +585,7 @@ namespace System.Web.UI.WebControls
 		protected override object SaveViewState()
 		{
 			object[] states = new object[8];
-			states[0] = SaveViewState();
+			states[0] = base.SaveViewState();
 			states[1] = (alternatingItemStyle == null ? null : alternatingItemStyle.SaveViewState());
 			states[2] = (editItemStyle == null        ? null : editItemStyle.SaveViewState());
 			states[3] = (footerStyle == null          ? null : footerStyle.SaveViewState());
@@ -581,7 +598,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void TrackViewState()
 		{
-			TrackViewState();
+			base.TrackViewState();
 			if(alternatingItemStyle != null)
 				alternatingItemStyle.TrackViewState();
 			if(editItemStyle != null)
@@ -795,8 +812,6 @@ namespace System.Web.UI.WebControls
 				int selIndex       = SelectedIndex;
 				string dataKey     = DataKeyField;
 				
-				bool useDB = (useDataSource ? (dataKey.Length != 0) : false);
-				
 				if(headerTemplate != null)
 				{
 					CreateItem(-1, 0, useDataSource, null);
@@ -807,7 +822,7 @@ namespace System.Web.UI.WebControls
 					while(listEnumerator.MoveNext())
 					{
 						object current = listEnumerator.Current;
-						if(useDB)
+						if(!useDataSource)
 						{
 							dkeys.Add(DataBinder.GetPropertyValue(current, dataKey));
 						}
