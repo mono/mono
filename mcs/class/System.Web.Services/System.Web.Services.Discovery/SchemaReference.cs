@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 //
@@ -24,7 +25,6 @@ namespace System.Web.Services.Discovery {
 
 		private string defaultFilename;
 		private string href;
-		private string url;
 		private string targetNamespace;
 		private XmlSchema schema;
 		
@@ -32,16 +32,13 @@ namespace System.Web.Services.Discovery {
 		
 		#region Constructors
 
-		[MonoTODO]
 		public SchemaReference () 
 		{
-			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public SchemaReference (string href) : this() 
 		{
-			throw new NotImplementedException ();
+			this.href = href;
 		}		
 		
 		#endregion // Constructors
@@ -50,7 +47,7 @@ namespace System.Web.Services.Discovery {
 
 		[XmlIgnore]
 		public override string DefaultFilename {
-			get { return defaultFilename; }
+			get { return FilenameFromUrl (Url) + ".xsd"; }
 		}
 		
 		[XmlAttribute("ref")]
@@ -61,8 +58,8 @@ namespace System.Web.Services.Discovery {
 		
 		[XmlIgnore]
 		public override string Url {
-			get { return url; }
-			set { url = value; }
+			get { return href; }
+			set { href = value; }
 		}
 		
 		[DefaultValue("")]
@@ -74,7 +71,16 @@ namespace System.Web.Services.Discovery {
 
 		[XmlIgnore]
 		public XmlSchema Schema {
-			get { return schema; }
+			get { 
+				if (ClientProtocol == null) 
+					throw new InvalidOperationException ("The ClientProtocol property is a null reference");
+				
+				XmlSchema doc = ClientProtocol.Documents [Url] as XmlSchema;
+				if (doc == null)
+					throw new Exception ("The Documents property of ClientProtocol does not contain a schema with the url " + Url);
+					
+				return doc; 
+			}
 			
 		}
 		
@@ -82,22 +88,21 @@ namespace System.Web.Services.Discovery {
 
 		#region Methods
 
-		[MonoTODO]
 		public override object ReadDocument (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return XmlSchema.Read (stream, null);
 		}
                 
-		[MonoTODO]
-                protected internal override void Resolve (string contentType, Stream stream) 
+		protected internal override void Resolve (string contentType, Stream stream) 
 		{
-			throw new NotImplementedException ();
+			XmlSchema doc = XmlSchema.Read (stream, null);
+			ClientProtocol.Documents.Add (Url, doc);
+			ClientProtocol.References.Add (this);
 		}
                 
-		[MonoTODO]
-                public override void WriteDocument (object document, Stream stream) 
+		public override void WriteDocument (object document, Stream stream) 
 		{
-			throw new NotImplementedException ();
+			((XmlSchema)document).Write (stream);
 		}
 
 		#endregion // Methods

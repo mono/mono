@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 //
@@ -13,7 +14,7 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
 
-	[XmlRootAttribute("contractRef", Namespace="https://schemas.xmlsoap.org/disco/scl/", IsNullable=true)]
+	[XmlRootAttribute("contractRef", Namespace="http://schemas.xmlsoap.org/disco/scl/", IsNullable=true)]
 	public class ContractReference : DiscoveryReference {
 
 		#region Fields
@@ -24,28 +25,24 @@ namespace System.Web.Services.Discovery {
 		private string defaultFilename;
 		private string docRef;
 		private string href;
-		private string url;
 		
 		#endregion // Fields
 		
 		#region Constructors
 
-		[MonoTODO]
 		public ContractReference () 
 		{
-			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public ContractReference (string href) : this() 
 		{
-			throw new NotImplementedException ();
+			this.href = href;
 		}
 		
-		[MonoTODO]
-		public ContractReference (string href, string docRef) : this(href) 
+		public ContractReference (string href, string docRef)
 		{
-			throw new NotImplementedException ();
+			this.href = href;
+			this.docRef = docRef;
 		}
 		
 		#endregion // Constructors
@@ -54,12 +51,21 @@ namespace System.Web.Services.Discovery {
 
 		[XmlIgnore]
 		public ServiceDescription Contract {
-			get { return contract; }			
+			get {
+				if (ClientProtocol == null) 
+					throw new InvalidOperationException ("The ClientProtocol property is a null reference");
+				
+				ServiceDescription desc = ClientProtocol.Documents [Url] as ServiceDescription;
+				if (desc == null)
+					throw new Exception ("The Documents property of ClientProtocol does not contain a WSDL document with the url " + Url);
+					
+				return desc; 
+			}
 		}
 
 		[XmlIgnore]
 		public override string DefaultFilename {
-			get { return defaultFilename; }
+			get { return FilenameFromUrl (Url) + ".wsdl"; }
 		}
 		
 		[XmlAttribute("docRef")]
@@ -76,30 +82,29 @@ namespace System.Web.Services.Discovery {
 		
 		[XmlIgnore]
 		public override string Url {
-			get { return url;}			
-			set { url = value; }
+			get { return href;}			
+			set { href = value; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override object ReadDocument (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return ServiceDescription.Read (stream);
 		}
                 
-		[MonoTODO]
-                protected internal override void Resolve (string contentType, Stream stream) 
+		protected internal override void Resolve (string contentType, Stream stream) 
 		{
-			throw new NotImplementedException ();
+			ServiceDescription wsdl = ServiceDescription.Read (stream);
+			ClientProtocol.Documents.Add (Url, wsdl);
+			ClientProtocol.References.Add (this);
 		}
                 
-		[MonoTODO]
-                public override void WriteDocument (object document, Stream stream) 
+        public override void WriteDocument (object document, Stream stream) 
 		{
-			throw new NotImplementedException ();
+			((ServiceDescription)document).Write (stream);
 		}
 
 		#endregion // Methods

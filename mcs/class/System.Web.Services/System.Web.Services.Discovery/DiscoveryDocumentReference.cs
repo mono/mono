@@ -4,6 +4,7 @@
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 // Copyright (C) Tim Coleman, 2002
@@ -23,19 +24,17 @@ namespace System.Web.Services.Discovery {
 		private DiscoveryDocument document;
 		private string defaultFilename;
 		private string href;
-		private string url;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryDocumentReference () 
 		{
 			href = String.Empty;
 		}
 		
-		public DiscoveryDocumentReference (string href) : this () 
+		public DiscoveryDocumentReference (string href)
 		{
 			this.href = href;
 		}		
@@ -46,12 +45,21 @@ namespace System.Web.Services.Discovery {
 		
 		[XmlIgnore]
 		public DiscoveryDocument Document {
-			get { return Document; }
+			get {
+				if (ClientProtocol == null) 
+					throw new InvalidOperationException ("The ClientProtocol property is a null reference");
+				
+				DiscoveryDocument doc = ClientProtocol.Documents [Url] as DiscoveryDocument;
+				if (doc == null)
+					throw new Exception ("The Documents property of ClientProtocol does not contain a discovery document with the url " + Url);
+					
+				return doc; 
+			}
 		}
 		
 		[XmlIgnore]
 		public override string DefaultFilename {
-			get { return defaultFilename; }
+			get { return FilenameFromUrl (Url) + ".disco"; }
 		}
 		
 		[XmlAttribute("ref")]
@@ -62,36 +70,47 @@ namespace System.Web.Services.Discovery {
 		
 		[XmlIgnore]
 		public override string Url {
-			get { return url; }
-			set { url = value; }
+			get { return href; }
+			set { href = value; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override object ReadDocument (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return DiscoveryDocument.Read (stream);
 		}
                 
-		[MonoTODO]
-                protected internal override void Resolve (string contentType, Stream stream) 
+		protected internal override void Resolve (string contentType, Stream stream) 
 		{
-			throw new NotImplementedException ();
+			DiscoveryDocument doc = DiscoveryDocument.Read (stream);
+			ClientProtocol.Documents.Add (Url, doc);
+			ClientProtocol.References.Add (this);
+			foreach (DiscoveryReference re in doc.References)
+				ClientProtocol.References.Add (re);
 		}
-                
-		[MonoTODO]
-                public void ResolveAll () 
+
+		public void ResolveAll () 
 		{
-			throw new NotImplementedException ();
+			if (ClientProtocol.Documents.Contains (Url)) 	// Already resolved
+				return;
+				
+			Resolve ();
+			DiscoveryDocument doc = document;
+			foreach (DiscoveryReference re in doc.References)
+			{
+				if (re is DiscoveryDocumentReference)
+					((DiscoveryDocumentReference)re).ResolveAll ();
+				else
+					re.Resolve ();
+			}
 		}
 		
-		[MonoTODO]
-                public override void WriteDocument (object document, Stream stream) 
+		public override void WriteDocument (object document, Stream stream) 
 		{
-			throw new NotImplementedException ();
+			((DiscoveryDocument)document).Write (stream);
 		}
 
 		#endregion // Methods

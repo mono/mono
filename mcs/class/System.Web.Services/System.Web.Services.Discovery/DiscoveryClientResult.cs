@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 //
@@ -23,16 +24,15 @@ namespace System.Web.Services.Discovery {
 
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryClientResult () 
 		{
-			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public DiscoveryClientResult (Type referenceType, string url, string filename) : this() 
 		{
-			throw new NotImplementedException ();
+			this.filename = filename;
+			this.url = url;
+			this.referenceTypeName = referenceType.FullName;
 		}
 		
 		#endregion // Constructors

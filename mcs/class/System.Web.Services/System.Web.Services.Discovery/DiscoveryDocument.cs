@@ -4,6 +4,7 @@
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
 //   Tim Coleman (tim@timcoleman.com)  
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 // Copyright (C) Tim Coleman, 2002
@@ -20,16 +21,19 @@ namespace System.Web.Services.Discovery {
 
 		#region Fields
 		
-		public const string Namespace = "http://schema.xmlsoap.org/disco/";
+		public const string Namespace = "http://schemas.xmlsoap.org/disco/";
+		
+		[XmlElement(typeof(ContractReference))]
+		[XmlElement(typeof(DiscoveryDocumentReference))]
+		[XmlElement(typeof(SchemaReference))]
+		internal ArrayList references = new ArrayList();
 		
 		#endregion // Fields
 		
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryDocument () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
@@ -38,56 +42,78 @@ namespace System.Web.Services.Discovery {
 	
 		[XmlIgnore]
 		public IList References {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return references; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public static bool CanRead (XmlReader xmlReader)
 		{
-                        throw new NotImplementedException ();
+			xmlReader.MoveToContent ();
+			return xmlReader.NodeType == XmlNodeType.Element &&
+					xmlReader.LocalName == "discovery" && 
+					xmlReader.NamespaceURI == Namespace;
 		}
 
-		[MonoTODO]
 		public static DiscoveryDocument Read (Stream stream)
 		{
-                        throw new NotImplementedException ();
+			return Read (new XmlTextReader (stream));
 		}
 		
-		[MonoTODO]
 		public static DiscoveryDocument Read (TextReader textReader)
 		{
-                        throw new NotImplementedException ();
+			return Read (new XmlTextReader (textReader));
 		}
 		
-		[MonoTODO]
 		public static DiscoveryDocument Read (XmlReader xmlReader)
 		{
-                        throw new NotImplementedException ();
+			DiscoveryDocumentSerializer ser = new DiscoveryDocumentSerializer();
+			return (DiscoveryDocument) ser.Deserialize (xmlReader);
 		}
 		
-		[MonoTODO]
 		public void Write (Stream stream)
 		{
-                        throw new NotImplementedException ();
+			Write (new XmlTextWriter (new StreamWriter (stream)));
 		}
 		
-		[MonoTODO]
 		public void Write (TextWriter textWriter)
 		{
-                        throw new NotImplementedException ();
+			Write (new XmlTextWriter (textWriter));
 		}
 		
-		[MonoTODO]
 		public void Write (XmlWriter xmlWriter)
 		{
-                        throw new NotImplementedException ();
+			DiscoveryDocumentSerializer ser = new DiscoveryDocumentSerializer();
+			ser.Serialize (xmlWriter, ser);
 		}
 
 		#endregion // Methods
 	}
+
+	internal class DiscoveryDocumentSerializer : XmlSerializer 
+	{
+		protected override void Serialize (object o, XmlSerializationWriter writer)
+		{
+			DiscoveryDocumentWriter xsWriter = writer as DiscoveryDocumentWriter;
+			xsWriter.WriteTree ((DiscoveryDocument)o);
+		}
+		
+		protected override object Deserialize (XmlSerializationReader reader)
+		{
+			DiscoveryDocumentReader xsReader = reader as DiscoveryDocumentReader;
+			return xsReader.ReadTree ();
+		}
+		
+		protected override XmlSerializationWriter CreateWriter ()
+		{
+			return new DiscoveryDocumentWriter ();
+		}
+		
+		protected override XmlSerializationReader CreateReader ()
+		{
+			return new DiscoveryDocumentReader ();
+		}
+	}	
 }

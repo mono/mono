@@ -17,7 +17,6 @@ namespace System.Web.Services.Discovery {
 		[MonoTODO]
 		public DiscoveryExceptionDictionary () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors

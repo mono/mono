@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 //
@@ -22,10 +23,8 @@ namespace System.Web.Services.Discovery {
 
 		#region Constructors
 
-		[MonoTODO]
 		protected DiscoveryReference () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
@@ -39,9 +38,8 @@ namespace System.Web.Services.Discovery {
 			
 		}
 		
-		[XmlIgnore]
 		public virtual string DefaultFilename {
-			get { return defaultFilename; }			
+			get { return FilenameFromUrl (Url); }			
 		}
 		
 		[XmlIgnore]
@@ -54,23 +52,36 @@ namespace System.Web.Services.Discovery {
 
 		#region Methods
 
-		[MonoTODO]
 		protected static string FilenameFromUrl (string url)
 		{
-                        throw new NotImplementedException ();
+			int i = url.LastIndexOf ("/");
+			if (i != -1) url = url.Substring (i+1);
+			
+			i = url.IndexOfAny (new char[] {'.','?','\\'});
+			if (i != -1) url = url.Substring (0,i);
+			
+			return url;
 		}
 		
 		public abstract object ReadDocument (Stream stream);
 		
-                [MonoTODO]
 		public void Resolve () 
 		{
-                        throw new NotImplementedException ();
+			if (clientProtocol == null) 
+				throw new InvalidOperationException ("The ClientProtocol property is a null reference");
+			
+			if (clientProtocol.Documents.Contains (Url)) 	// Already resolved
+				return;
+			
+			string contentType = null;
+			string url = Url;
+			Stream stream = clientProtocol.Download (ref url, ref contentType);
+			Resolve (contentType, stream);
 		}
                 
-                protected internal abstract void Resolve (string contentType, Stream stream);
-                
-                public abstract void WriteDocument (object document, Stream stream);		
+		protected internal abstract void Resolve (string contentType, Stream stream);
+		
+		public abstract void WriteDocument (object document, Stream stream);		
 
 		#endregion // Methods
 	}
