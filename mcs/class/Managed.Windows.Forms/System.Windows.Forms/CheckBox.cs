@@ -25,6 +25,10 @@
 //
 //
 // $Log: CheckBox.cs,v $
+// Revision 1.10  2004/10/15 13:32:45  ravindra
+// 	- Renamed Paint() method to Draw() for clarity. Also, moved
+// 	DrawImage() to OnPaint().
+//
 // Revision 1.9  2004/10/15 13:25:50  ravindra
 // 	- Removed Redraw (), we get it from ButtonBase.
 // 	- Implemented Paint (), to do class specific painting.
@@ -286,12 +290,11 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region	Internal drawing code
-		internal override void Paint (PaintEventArgs pe) {
+		internal override void Draw (PaintEventArgs pe) {
 			if (redraw) {
 				ThemeEngine.Current.DrawCheckBox (this.DeviceContext, this.ClientRectangle, this);
 				redraw = false;
 			}
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 		#endregion	// Internal drawing code
 	}

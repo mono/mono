@@ -23,6 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.15  2004/10/15 13:32:45  ravindra
+// 	- Renamed Paint() method to Draw() for clarity. Also, moved
+// 	DrawImage() to OnPaint().
+//
 // Revision 1.14  2004/10/15 13:16:10  ravindra
 // 	- Redraw () is not virtual now.
 // 	- Added an internal virtual method Paint (), so that
@@ -147,15 +151,13 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
-		// Derived classes should override Paint method and we dont want
+		// Derived classes should override Draw method and we dont want
 		// to break the control signature, hence this approach.
-		internal virtual void Paint (PaintEventArgs pevent) {
+		internal virtual void Draw (PaintEventArgs pevent) {
 			if (redraw) {
 				ThemeEngine.Current.DrawButtonBase(this.DeviceContext, pevent.ClipRectangle, this);
 				redraw = false;
 			}
-
-			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
 		private void RedrawEvent(object sender, System.EventArgs e) {
@@ -497,7 +499,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
-			Paint (pevent);
+			Draw (pevent);
+			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 			base.OnPaint (pevent);
 		}
 

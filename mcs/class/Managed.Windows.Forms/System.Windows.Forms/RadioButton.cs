@@ -23,6 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: RadioButton.cs,v $
+// Revision 1.8  2004/10/15 13:32:45  ravindra
+// 	- Renamed Paint() method to Draw() for clarity. Also, moved
+// 	DrawImage() to OnPaint().
+//
 // Revision 1.7  2004/10/15 13:25:50  ravindra
 // 	- Removed Redraw (), we get it from ButtonBase.
 // 	- Implemented Paint (), to do class specific painting.
@@ -291,13 +295,11 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Internal Drawing Code
-		internal override void Paint (PaintEventArgs pe) {
+		internal override void Draw (PaintEventArgs pe) {
 			if (redraw) {
 				ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
 				redraw = false;
 			}
-
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 		#endregion	// Internal Drawing Code
 	}
