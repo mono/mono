@@ -521,6 +521,8 @@ namespace Mono.CSharp {
 
 			if (ii.OptAttributes != null)
 				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes, Location);
+
+			property_builders.Add (pb);
 		}
 
 		/// <summary>

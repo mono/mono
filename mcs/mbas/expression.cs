@@ -5806,8 +5806,8 @@ namespace Mono.CSharp {
 				}
 			}
 		}
-		
-		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
+
+		static private Indexers GetIndexersForTypeOrInterface (Type caller_type, Type lookup_type)
 		{
 			Indexers ix = (Indexers) map [lookup_type];
 			
@@ -5820,17 +5820,39 @@ namespace Mono.CSharp {
 				caller_type, lookup_type, MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance, p_name);
 
-			if (mi == null || mi.Length == 0){
-				Report.Error (21, loc,
-					      "Type `" + TypeManager.CSharpName (lookup_type) +
-					      "' does not have any indexers defined");
+			if (mi == null || mi.Length == 0)
 				return null;
-			}
-			
+
 			ix = new Indexers (mi);
 			map [lookup_type] = ix;
 
 			return ix;
+		}
+		
+		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
+		{
+			Indexers ix = (Indexers) map [lookup_type];
+			
+			if (ix != null)
+				return ix;
+
+			ix = GetIndexersForTypeOrInterface (caller_type, lookup_type);
+			if (ix != null)
+				return ix;
+
+			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
+			if (ifaces != null) {
+				foreach (Type itype in ifaces) {
+					ix = GetIndexersForTypeOrInterface (caller_type, itype);
+					if (ix != null)
+						return ix;
+				}
+			}
+
+			Report.Error (21, loc,
+				      "Type `" + TypeManager.CSharpName (lookup_type) +
+				      "' does not have any indexers defined");
+			return null;
 		}
 	}
 
