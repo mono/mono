@@ -486,6 +486,13 @@ namespace System.Data.Odbc
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Int, ref int_data, 0, ref outsize);
 						DataValue=int_data;
 						break;
+
+					case OdbcType.SmallInt:
+                                                short sint_data=0;
+                                                ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.SmallInt, ref sint_data, 0, ref outsize);
+                                                DataValue=sint_data;
+                                                break;
+
 					case OdbcType.BigInt:
 						long long_data=0;
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.BigInt, ref long_data, 0, ref outsize);
