@@ -1,4 +1,5 @@
 CSC=csc.exe
+CSCRIPT=$(WINDIR)/system32/cscript.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 
 windows: linux
@@ -14,6 +15,7 @@ CorCompare.exe:
 update: CorCompare.exe
 	./corcompare/CorCompare.exe -x cormissing.xml ../class/lib/corlib_cmp.dll
 	./corcompare/CorCompare.exe -t ../class/lib/corlib_cmp.dll > ../../mono/doc/pending-classes.in
+	$(CSCRIPT) /nologo ./corcompare/transform.js ./corcompare/cormissing.xml ./corcompare/cormissing.xsl > ../../mono/doc/pending-classes
 
 EnumCheck: EnumCheck.exe
 
