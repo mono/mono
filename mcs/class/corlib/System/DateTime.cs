@@ -601,6 +601,9 @@ namespace System
 
 		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
 		{
+			if ("dDgGfFmMrRstTuUyY".IndexOf (format) < 0)
+				throw new FormatException ("Invalid format character.");
+
 			// LAMESPEC: There is NO assurance that 'U' ALWAYS
 			// euqals to 'F', but since we have to iterate all
 			// the pattern strings, we cannot just use 

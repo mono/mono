@@ -1,5 +1,10 @@
 2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : GetDateTimeFormats(char, IFormatProvider) should also
+	  check if the format character is valid.
+
+2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : AddDays(double) rounds the input.
 
 2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
