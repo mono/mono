@@ -1,3 +1,6 @@
+2003-11-26  Tim Coleman <tim@timcoleman.com>
+	* DbDataReader.cs: Add new stub class
+
 2003-11-23  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DbDataAdapter.cs: Call command dispose in self dispose method. We
