@@ -3,6 +3,7 @@
 //
 // author:
 //   Marcel Narings (marcel@narings.nl)
+//   Martin Baulig (martin@gnome.org)
 //
 //   (C) 2001 Marcel Narings
 
@@ -1250,8 +1251,6 @@ namespace System
 			TimeZone tz = TimeZone.CurrentTimeZone;
 
 			TimeSpan offset = tz.GetUtcOffset (this);
-
-			Console.WriteLine (new DateTime (offset.Ticks));
 
 			return new DateTime (true, ticks - offset);
 		}
