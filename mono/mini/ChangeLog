@@ -1,3 +1,11 @@
+Wed Jul 30 22:31:02 EDT 2003 Mark Crichton <crichton@gimp.org>
+
+	* inssel-sparc.brg: Add some needed rules.  Direct
+	copy from PPC.
+	* Makefile.am: Use inssel-sparc.brg
+	* exceptions-sparc.c: 0xdeadbeef/0xdecafbad to keep
+	an assert happy for now.
+
 Wed Jul 30 20:44:07 EDT 2003 Mark Crichton <crichton@gimp.org>
 
 	* mini-sparc.c: Fixed compile errors.
