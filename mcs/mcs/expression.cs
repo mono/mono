@@ -6848,6 +6848,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			ArrayList AllGetters = new ArrayList();
 			if (!CommonResolve (ec))
 				return null;
 
@@ -6861,27 +6862,18 @@ namespace Mono.CSharp {
 			Type lookup_type = indexer_type;
 			while (lookup_type != null) {
 				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
-
-				if (ilist == null) {
-					lookup_type = lookup_type.BaseType;
-					continue;
+				if (ilist != null) {
+					foreach (object o in ilist.getters) {
+						AllGetters.Add(o);
+					}
 				}
-
-				found_any = true;
-
-				//
-				// Step 2: find the proper match
-				//
-				if (ilist.getters != null && ilist.getters.Count > 0) {
-					found_any_getters = true;
-					get = (MethodInfo) Invocation.OverloadResolve (
-						ec, new MethodGroupExpr (ilist.getters, loc), arguments, loc);
-
-					if (get != null)
-						break;
-				}
-
 				lookup_type = lookup_type.BaseType;
+			}
+			if (AllGetters.Count > 0) {
+				found_any = true;
+				found_any_getters = true;
+				get = (MethodInfo) Invocation.OverloadResolve (
+					ec, new MethodGroupExpr (AllGetters, loc), arguments, loc);
 			}
 
 			if (!found_any) {

@@ -1,3 +1,9 @@
+2003-01-27  Pedro Martinez Juliá  <yoros@wanadoo.es>
+
+	* expression.cs (IndexerAccess.DoResolve): Before trying to resolve
+	any indexer, it's needed to build a list with all the indexers in the
+	hierarchy (AllGetters), else we have problems. Fixes #35653.
+
 2003-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MethodData.Define): It is wrong for an interface
