@@ -21,8 +21,10 @@ namespace System {
 		string help_link;
 		string class_name;
 		string stack_trace = "TODO: implement stack traces";
+		string remote_stack_trace = "TODO: Implement remote stack trace";
+		int remote_stack_index;
 		int hresult;
-		private string source;
+		string source;
 		
 		public Exception ()
 		{
@@ -46,7 +48,10 @@ namespace System {
 			inner_exception = (Exception) info.GetValue  ("InnerException", typeof (Exception));
 			help_link       = info.GetString ("HelpURL");
 			stack_trace     = info.GetString ("StackTraceString");
-			hresult         = info.GetInt32  ("HResult");
+			remote_stack_trace = info.GetString ("RemoteStackTrace");
+			remote_stack_index = info.GetInt32  ("RemoteStackIndex");
+			hresult            = info.GetInt32  ("HResult");
+			source             = info.GetString ("Source");
 		}
 
 		public Exception (string msg, Exception e)
@@ -129,10 +134,17 @@ namespace System {
 			return this;
 		}
 
-		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			// TODO: implement me.
+			info.AddValue ("ClassName", class_name);
+			info.AddValue ("Message",   message);
+			info.AddValue  ("InnerException", inner_exception);
+			info.AddValue ("HelpURL",   help_link);
+			info.AddValue ("StackTraceString", stack_trace);
+			info.AddValue ("RemoteStackTrace", remote_stack_trace);
+			info.AddValue ("RemoteStackIndex", remote_stack_index);
+			info.AddValue ("HResult", hresult);
+			info.AddValue ("Source", source);
 		}
 
 		public override string ToString ()

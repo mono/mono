@@ -7,6 +7,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace System {
@@ -25,6 +26,11 @@ namespace System {
 
 		public ArgumentNullException (string param_name, string message)
 			: base (message, param_name)
+		{
+		}
+
+		protected ArgumentNullException (SerializationInfo info, StreamingContext sc)
+			: base (info, sc)
 		{
 		}
 	}

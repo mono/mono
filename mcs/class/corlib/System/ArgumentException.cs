@@ -6,7 +6,7 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
-
+using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace System {
@@ -42,11 +42,23 @@ namespace System {
 			this.param_name = param_name;
 		}
 
+		protected ArgumentException (SerializationInfo info, StreamingContext sc)
+			: base (info, sc)
+		{
+			param_name = info.GetString ("ParamName");
+		}
+
 		// Properties		
 		public virtual string ParamName {
 			get {
 				return param_name;
 			}
+		}
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("ParamName", param_name);
 		}
 	}
 }

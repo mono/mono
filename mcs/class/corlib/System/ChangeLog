@@ -1,3 +1,13 @@
+2002-01-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* ArgumentException.cs: Implement serialization constructor.
+	(GetObjectData): Implement serializer.
+	
+	* ArgumentNullException.cs: Implement serialization constructor.
+
+	* Exception.cs: Implement serialization constructor.
+	(GetObjectData): Implement serializer.
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* DateTime.cs (UnixEpoch): The Begining of the Unix epoch.
