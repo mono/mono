@@ -1326,9 +1326,7 @@ namespace Mono.CSharp {
 		ArrayList global = new ArrayList ();
 		bool using_global = false;
 		
-		static MemberInfo [] emptyMemberInfo = new MemberInfo [0];
-		
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, string name,
+		public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 					       MemberFilter filter, object criteria)
 		{
 			if (using_global)
@@ -1352,7 +1350,7 @@ namespace Mono.CSharp {
 				applicable = (ArrayList) member_hash [name];
 			
 			if (applicable == null)
-				return emptyMemberInfo;
+				return MemberList.Empty;
 
 			//
 			// 32  slots gives 53 rss/54 size
@@ -1421,7 +1419,7 @@ namespace Mono.CSharp {
 			using_global = false;
 			MemberInfo [] copy = new MemberInfo [global.Count];
 			global.CopyTo (copy);
-			return copy;
+			return new MemberList (copy);
 		}
 	}
 }
