@@ -1,3 +1,7 @@
+2003-07-22  Martin Baulig  <martin@ximian.com>
+
+	* test-207.cs: New test for expressions which return delegates.
+
 2003-07-21  Martin Baulig  <martin@ximian.com>
 
 	* test-206.cs: New test for bug #46502.
