@@ -846,6 +846,8 @@ namespace System.Xml.XPath
 	internal class ExprSLASH2 : NodeSet {
 		public readonly Expression left;
 		public readonly NodeSet right;
+			
+		static NodeTest DescendantOrSelfStar = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
 
 		public ExprSLASH2 (Expression left, NodeSet right)
 		{
@@ -855,11 +857,13 @@ namespace System.Xml.XPath
 		public override String ToString () { return left.ToString ()+ "//" + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
-			BaseIterator iterLeft = new DescendantOrSelfIterator(
-				left.EvaluateNodeSet (iter)
+			return new SlashIterator (
+				new SlashIterator (
+					left.EvaluateNodeSet (iter),
+					DescendantOrSelfStar
+				),
+				right
 			);
-			
-			return new SlashIterator (iterLeft, right);
 		}
 	}
 
