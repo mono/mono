@@ -50,6 +50,10 @@ namespace System.Text.RegularExpressions {
 			list.Add (o);
 		}
 
+		internal void Reverse () {
+			list.Reverse ();
+		}
+
 		// IEnumerator implementation
 
 		private class Enumerator : IEnumerator {
@@ -93,15 +97,7 @@ namespace System.Text.RegularExpressions {
 			get { return (Capture)list[i]; }
 		}
 
-		internal CaptureCollection (Capture cap) {
-			while (cap != null) {
-				if (cap.IsDefined)
-					Add (cap);
-
-				cap = cap.Previous;
-			}
-			
-			list.Reverse ();
+		internal CaptureCollection () {
 		}
 	}
 

@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace System.Text.RegularExpressions {
@@ -15,13 +16,11 @@ namespace System.Text.RegularExpressions {
 	class Interpreter : IMachine {
 		public Interpreter (ushort[] program) {
 			this.program = program;
-			this.checkpoints = new Stack ();
 			this.qs = null;
 
 			// process info block
 
-			if ((OpCode)program[0] != OpCode.Info)
-				throw NewInterpretException ("Can't find info block.");
+			Debug.Assert ((OpCode)program[0] == OpCode.Info, "Regex", "Cant' find info block");
 
 			this.group_count = program[1] + 1;
 			this.match_min = program[2];
@@ -29,8 +28,8 @@ namespace System.Text.RegularExpressions {
 
 			// setup
 
-			this.captures = new Capture[group_count];
 			this.program_start = 4;
+			this.groups = new int [group_count];
 		}
 
 		// IMachine implementation
@@ -41,7 +40,7 @@ namespace System.Text.RegularExpressions {
 			this.scan_ptr = start;
 
 			if (Eval (Mode.Match, ref scan_ptr, program_start))
-				return new Match (regex, this, end, captures);
+				return GenerateMatch (regex);
 
 			return Match.Empty;
 		}
@@ -49,11 +48,7 @@ namespace System.Text.RegularExpressions {
 		// private methods
 
 		private void Reset () {
-			for (int i = 0; i < group_count; ++ i)
-				captures[i] = new Capture (text);
-		
-			checkpoints.Clear ();
-			checkpoint = 0;
+			ResetGroups ();
 			fast = repeat = null;
 		}
 
@@ -231,12 +226,12 @@ namespace System.Text.RegularExpressions {
 				case OpCode.Reference: {
 					bool reverse = (flags & OpFlags.RightToLeft) != 0;
 					bool ignore = (flags & OpFlags.IgnoreCase) != 0;
-					Capture cap = captures[program[pc + 1]].GetLastDefined ();
-					if (cap == null)
+					int m = GetLastDefined (program [pc + 1]);
+					if (m < 0)
 						goto Fail;
 
-					int str = cap.Index;
-					int len = cap.Length;
+					int str = marks [m].Index;
+					int len = marks [m].Length;
 
 					if (reverse) {
 						ptr -= len;
@@ -298,8 +293,8 @@ namespace System.Text.RegularExpressions {
 				}
 
 				case OpCode.IfDefined: {
-					Capture cap = captures[program[pc + 2]];
-					if (cap.GetLastDefined () == null)
+					int m = GetLastDefined (program [pc + 2]);
+					if (m < 0)
 						pc += program[pc + 1];
 					else
 						pc += 3;
@@ -545,7 +540,8 @@ namespace System.Text.RegularExpressions {
 				}
 
 				case OpCode.Info: {
-					throw NewInterpretException ("Info block found in pattern.");
+					Debug.Assert (false, "Regex", "Info block found in pattern");
+					goto Fail;
 				}
 				}
 			}
@@ -678,9 +674,9 @@ namespace System.Text.RegularExpressions {
 			Reset ();
 			
 			int ptr = ref_ptr;
-			captures[0].Open (ptr);
+			marks [groups [0]].Start = ptr;
 			if (Eval (Mode.Match, ref ptr, pc)) {
-				captures[0].Close (ptr);
+				marks [groups [0]].End = ptr;
 				ref_ptr = ptr;
 				return true;
 			}
@@ -754,55 +750,105 @@ namespace System.Text.RegularExpressions {
 		// capture management
 
 		private void Open (int gid, int ptr) {
-			Capture cap = captures[gid];
-			if (cap.IsDefined || cap.Checkpoint < checkpoint) {
-				cap = new Capture (cap, checkpoint);
-				captures[gid] = cap;
+			int m = groups [gid];
+			if (m < mark_start || marks [m].IsDefined) {
+				m = CreateMark (m);
+				groups [gid] = m;
 			}
 
-			cap.Open (ptr);
+			marks [m].Start = ptr;
 		}
 
 		private void Close (int gid, int ptr) {
-			captures[gid].Close (ptr);
+			marks [groups [gid]].End = ptr;
 		}
 
 		private void Balance (int gid, int balance_gid, int ptr) {
-			Capture balance = captures[balance_gid];
-			if (!balance.IsDefined)
-				throw NewInterpretException ("Invalid state - balancing group not closed.");
+			int b = groups [balance_gid];
+			Debug.Assert (marks [b].IsDefined, "Regex", "Balancing group not closed");
 
 			if (gid > 0) {
-				Open (gid, balance.Index + balance.Length);
+				Open (gid, marks [b].Index + marks [b].Length);
 				Close (gid, ptr);
 			}
 
-			captures[balance_gid] = balance.Previous;
+			groups [balance_gid] = marks [b].Previous;
 		}
 
 		private int Checkpoint () {
-			checkpoints.Push (captures);
-			captures = (Capture[])captures.Clone ();
-			checkpoint = checkpoints.Count;
-
-			return checkpoint;
+			mark_start = mark_end;
+			return mark_start;
 		}
 
 		private void Backtrack (int cp) {
-			if (cp > checkpoints.Count)
-				throw NewInterpretException ("Can't backtrack forwards");
+			Debug.Assert (cp > mark_start, "Regex", "Attempt to backtrack forwards");
 
-			while (checkpoints.Count > cp)
-				checkpoints.Pop ();
+			for (int i = 0; i < groups.Length; ++ i) {
+				int m = groups [i];
+				while (cp <= m)
+					m = marks [m].Previous;
 
-			captures = (Capture[])checkpoints.Peek ();
-			checkpoint = cp;
-
-			// TODO optimize this
+				groups [i] = m;
+			}
 		}
 
-		private Exception NewInterpretException (string msg) {
-			return new ApplicationException (msg);
+		private void ResetGroups () {
+			int n = groups.Length;
+			if (marks == null)
+				marks = new Mark [n * 10];
+
+			for (int i = 0; i < n; ++ i) {
+				groups [i] = i;
+
+				marks [i].Start = -1;
+				marks [i].End = -1;
+				marks [i].Previous = -1;
+			}
+			
+			mark_start = 0;
+			mark_end = n;
+		}
+
+		private int GetLastDefined (int gid) {
+			int m = groups [gid];
+			while (m >= 0 && !marks [m].IsDefined)
+				m = marks [m].Previous;
+
+			return m;
+		}
+
+		private int CreateMark (int previous) {
+			if (mark_end == marks.Length) {
+				Mark [] dest = new Mark [marks.Length * 2];
+				marks.CopyTo (dest, 0);
+				marks = dest;
+			}
+
+			int m = mark_end ++;
+			marks [m].Start = marks [m].End = -1;
+			marks [m].Previous = previous;
+
+			return m;
+		}
+
+		private Match GenerateMatch (Regex regex) {
+			int[][] grps = new int[groups.Length][];
+			ArrayList caps = new ArrayList ();
+
+			for (int gid = 0; gid < groups.Length; ++ gid) {
+				caps.Clear ();
+				for (int m = groups[gid]; m >= 0; m = marks[m].Previous) {
+					if (!marks[m].IsDefined)
+						continue;
+					
+					caps.Add (marks[m].Index);
+					caps.Add (marks[m].Length);
+				}
+
+				grps[gid] = (int[])caps.ToArray (typeof (int));
+			}
+
+			return new Match (regex, this, text, text_end, grps);
 		}
 
 		// interpreter attributes
@@ -819,15 +865,33 @@ namespace System.Text.RegularExpressions {
 		
 		private int scan_ptr;			// start of scan
 
-		private Capture[] captures;		// current captures
-
-		private int checkpoint;			// last checkpoint
-		private Stack checkpoints;		// checkpointed captures
-		
 		private RepeatContext repeat;		// current repeat context
 		private RepeatContext fast;		// fast repeat context
 
+		private Mark[] marks = null;		// mark stack
+		private int mark_start;			// start of current checkpoint
+		private int mark_end;			// end of checkpoint/next free mark
+
+		private int[] groups;			// current group definitions
+
 		// private classes
+
+		private struct Mark {
+			public int Start, End;
+			public int Previous;
+
+			public bool IsDefined {
+				get { return Start >= 0 && End >= 0; }
+			}
+
+			public int Index {
+				get { return Start < End ? Start : End; }
+			}
+
+			public int Length {
+				get { return Start < End ? End - Start : Start - End; }
+			}
+		}
 
 		private class RepeatContext {
 			public RepeatContext (RepeatContext previous, int min, int max, bool lazy, int expr_pc) {

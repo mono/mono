@@ -13,29 +13,15 @@ namespace System.Text.RegularExpressions {
 	[Serializable]
 	public class Capture {
 		public int Index {
-			get {
-				if (!IsDefined)
-					return 0;		// capture not completed
-				else if (start <= end)
-					return start;		// normal capture
-				else
-					return end;		// reverse capture
-			}
+			get { return index; }
 		}
 
 		public int Length {
-			get {
-				if (!IsDefined)
-					return 0;
-				else if (start <= end)
-					return end - start;
-				else
-					return start - end;
-			}
+			get { return length; }
 		}
 
 		public string Value {
-			get { return IsDefined ? text.Substring (Index, Length) : ""; }
+			get { return text.Substring (index, length); }
 		}
 
 		public override string ToString () {
@@ -44,80 +30,22 @@ namespace System.Text.RegularExpressions {
 
 		// internal members
 
-		internal Capture () {			// empty capture
-			this.previous = null;
-			this.text = null;
-			this.checkpoint = 0;
+		internal Capture (string text) : this (text, 0, 0) { }
 
-			this.start = -1;
-			this.end = -1;
-		}
-
-		internal Capture (Capture cap) {	// copy constructor
-			this.previous = cap.previous;
-			this.text = cap.text;
-			this.checkpoint = cap.checkpoint;
-
-			this.start = cap.start;
-			this.end = cap.end;
-		}
-
-		internal Capture (string text) {	// first capture
-			this.previous = null;
+		internal Capture (string text, int index, int length) {
 			this.text = text;
-			this.checkpoint = 0;
-
-			this.start = -1;
-			this.end = -1;
+			this.index = index;
+			this.length = length;
 		}
 		
-		internal Capture (Capture previous, int checkpoint) {
-			this.previous = previous;
-			this.text = previous.text;
-			this.checkpoint = checkpoint;
-
-			this.start = -1;
-			this.end = -1;
-		}
-
-		internal Capture Previous {
-			get { return previous; }
-		}
-
 		internal string Text {
 			get { return text; }
 		}
 
-		internal int Checkpoint {
-			get { return checkpoint; }
-		}
-
-		internal bool IsDefined {
-			get { return start >= 0 && end >= 0; }
-		}
-
-		internal Capture GetLastDefined () {
-			Capture cap = this;
-			while (cap != null && !cap.IsDefined)
-				cap = cap.Previous;
-
-			return cap;
-		}
-
-		internal void Open (int ptr) {
-			this.start = ptr;
-		}
-
-		internal void Close (int ptr) {
-			this.end = ptr;
-		}
-
 		// private
 
-		private int start, end;
-		private string text;
-		private int checkpoint;
-		private Capture previous;
+		internal int index, length;
+		internal string text;
 	}
 
 	[Serializable]
@@ -131,20 +59,29 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public bool Success {
-			get { return GetLastDefined () != null; }
+			get { return success; }
 		}
 
 		// internal
 
-		internal Group () : base () {
-		}
-		
-		internal Group (Capture last) : base (last) {
-			captures = new CaptureCollection (last);
+		internal Group (string text, int[] caps) : base (text) {
+			this.captures = new CaptureCollection ();
 
-			// TODO make construction of captures lazy
+			if (caps == null || caps.Length == 0) {
+				this.success = false;
+				return;
+			}
+
+			this.success = true;
+			this.index = caps[0];
+			this.length = caps[1];
+			captures.Add (this);
+			for (int i = 2; i < caps.Length; i += 2)
+				captures.Add (new Capture (text, caps[i], caps[i + 1]));
+			captures.Reverse ();
 		}
 
+		private bool success;
 		private CaptureCollection captures;
 	}
 
@@ -182,7 +119,7 @@ namespace System.Text.RegularExpressions {
 
 		// internal
 
-		internal Match () : base () {
+		internal Match () : base (null, null) {
 			this.regex = null;
 			this.machine = null;
 			this.text_length = 0;
@@ -191,15 +128,17 @@ namespace System.Text.RegularExpressions {
 			groups.Add (this);
 		}
 		
-		internal Match (Regex regex, IMachine machine, int text_length, Capture[] captures) : base (captures[0]) {
+		internal Match (Regex regex, IMachine machine, string text, int text_length, int[][] grps) :
+			base (text, grps[0])
+		{
 			this.regex = regex;
 			this.machine = machine;
 			this.text_length = text_length;
-			this.groups = new GroupCollection ();
 
+			this.groups = new GroupCollection ();
 			groups.Add (this);
-			for (int i = 1; i < captures.Length; ++ i)
-				groups.Add (new Group (captures[i]));
+			for (int i = 1; i < grps.Length; ++ i)
+				groups.Add (new Group (text, grps[i]));
 		}
 
 		internal Regex Regex {

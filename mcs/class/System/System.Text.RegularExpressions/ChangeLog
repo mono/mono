@@ -1,3 +1,13 @@
+2002-05-08  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* interpreter.cs: Moved to an array-based stack representation
+	for faster captures.
+
+	* match.cs, collections.cs: Decoupled capture representation from
+	interpreter internals.
+
+	* cache.cs: Changed Key type from struct to class for speed.
+
 2002-04-06  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* cache.cs: Object methods should be overridden with "override".

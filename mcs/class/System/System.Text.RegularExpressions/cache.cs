@@ -49,7 +49,7 @@ namespace System.Text.RegularExpressions {
 		private Hashtable factories;
 		private MRUList mru_list;
 
-		struct Key {
+		class Key {
 			public string pattern;
 			public RegexOptions options;
 
@@ -63,7 +63,7 @@ namespace System.Text.RegularExpressions {
 			}
 
 			public override bool Equals (object o) {
-				if (o == null || o.GetType () != this.GetType ())
+				if (o == null || !(o is Key))
 					return false;
 
 				Key k = (Key)o;
