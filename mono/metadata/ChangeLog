@@ -1,3 +1,12 @@
+2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c:
+	(mono_assembly_load): search_loaded -> mono_assembly_loaded (we didn't
+	own the critical section before). Removed dead code (that's done
+	in the preload hook).
+
+	(mono_assembly_load_with_partial_name): call the preload hook.
+
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c (mono_metadata_signature_alloc): Default
