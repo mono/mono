@@ -2531,11 +2531,20 @@ invocation_expression
 opt_argument_list
 	: argument_list 
 	  { 
-		ArrayList list = (ArrayList) $1;
-		if (list.Count == 1 && ((Argument)list[0]).ArgType == Argument.AType.NoArg)
+		/*
+		   The 'argument' rule returns an 'empty' argument
+		   of type NoArg (used for default arguments in invocations)
+		   if no arguments are actually passed.
+
+		   If there is only one argument and it is o type NoArg,
+		   we return a null (empty) list
+		*/
+		ArrayList args = (ArrayList) $1;
+		if (args.Count == 1 &&
+		    ((Argument)args[0]).ArgType == Argument.AType.NoArg)
 			$$ = null;
 		else
-			$$ = list;
+			$$ = $1;
 	  }
 	;
 
