@@ -1,3 +1,9 @@
+2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventLogPermissionTest.cs: New. Unit tests for EventLogPermission.
+	* PerformanceCounterPermissionTest.cs: New. Unit tests for 
+	PerformanceCounterPermission.
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventLogPermissionAttributeTest.cs: New. Unit tests for 
