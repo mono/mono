@@ -142,7 +142,7 @@ namespace Mono.AssemblyInfo
 			AddAttribute (nassembly, "version", aname.Version.ToString ());
 			parent.AppendChild (nassembly);
 			AttributeData.OutputAttributes (document, nassembly, ass.GetCustomAttributes (false));
-			Type [] types = ass.GetTypes ();
+			Type [] types = ass.GetExportedTypes ();
 			if (types == null || types.Length == 0)
 				return;
 
