@@ -2844,7 +2844,7 @@ class_declaration
 				      "Type parameter constraints only valid if there is a type parameter list");
 
 		if ($6 != null)
-			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, $8), new_class.Name, new_class.Location);
+			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, (ArrayList) $8, new_class.Location), new_class.Name, new_class.Location);
 		if ($7 != null)
 			new_class.Bases = (ArrayList) $7;
 		current_container = current_container.Parent;
@@ -2948,12 +2948,19 @@ opt_type_parameter_constraints_clauses
 
 type_parameter_constraints_clauses
 	: type_parameter_constraints_clause
-	| type_parameter_constraints_clauses type_parameter_constraints_clause
+	| type_parameter_constraints_clauses type_parameter_constraints_clause {
+		ArrayList constraints = (ArrayList) $1;
+
+		constraints.Add ($2);
+		$$ = constraints;
+	  }
 	; 
 
 type_parameter_constraints_clause
 	: WHERE type_parameter COLON type_parameter_constraints {
-		$$ = new Constraints ((string) $2, (ArrayList) $4);
+		ArrayList constraints = new ArrayList (1);
+		constraints.Add (new Constraints ((string) $2, (ArrayList) $4));
+		$$ = constraints;
 	  }
 	; 
 

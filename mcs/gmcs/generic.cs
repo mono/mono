@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using System.Reflection.Emit;
 using System.Text;
 	
 namespace Mono.CSharp {
@@ -15,7 +16,7 @@ namespace Mono.CSharp {
 	//
 	// Tracks the constraints for a type parameter
 	//
-	class Constraints {
+	public class Constraints {
 		string type_parameter;
 		ArrayList constraints;
 		
@@ -27,6 +28,56 @@ namespace Mono.CSharp {
 		{
 			this.type_parameter = type_parameter;
 			this.constraints = constraints;
+		}
+
+		public string TypeParameter {
+			get {
+				return type_parameter;
+			}
+		}
+	}
+
+	//
+	// This type represents a generic type parameter
+	//
+	public class TypeParameter {
+		string name;
+		Constraints constraints;
+		Location loc;
+
+		public TypeParameter (string name, Constraints constraints, Location loc)
+		{
+			this.name = name;
+			this.constraints = constraints;
+			this.loc = loc;
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public Location Location {
+			get {
+				return loc;
+			}
+		}
+
+		public Constraints Constraints {
+			get {
+				return constraints;
+			}
+		}
+		
+		public Type Define (TypeBuilder tb)
+		{
+			return tb.DefineGenericParameter (name, new Type [0]);
+		}
+
+		public override string ToString ()
+		{
+			return "TypeParameter[" + name + "]";
 		}
 	}
 
@@ -52,7 +103,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return "TypeParameter[" + type_parameter + "]";
+			return "TypeParameterExpr[" + type_parameter + "]";
 		}
 
 		public void Error_CannotUseAsUnmanagedType (Location loc)

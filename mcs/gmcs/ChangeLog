@@ -1,5 +1,23 @@
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (DeclSpace.SetParameterInfo): The `constraints' argument
+	is now an ArrayList; initialize the result of the `TypeParameters'
+	property here.
+	(DeclSpace.GetGenericData): Removed.
+	(DeclSpace.LookupGeneric): Temporarily removed; we need to
+	implement this in a different way.
+	(DeclSpace.GetTypeParameters): Removed; there's now a
+	`TypeParameters' property.
+	(DeclSpace.TypeParameters): New public property.
+
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Removed the generic
+	lookup for the moment.
+
+	* generic.cs (Constraints): Make this class public.
+	(TypeParameter): New public class.
+
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (DeclSpace.GetTypeParameters): New method to return the
 	generic parameters.
 

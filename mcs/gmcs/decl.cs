@@ -646,15 +646,15 @@ namespace Mono.CSharp {
 		//
 		// Extensions for generics
 		//
-		ArrayList type_parameter_list;
+		TypeParameter[] type_params;
 
 		///
 		/// Called by the parser to configure the type_parameter_list for this
 		/// declaration space
 		///
-		public AdditionResult SetParameterInfo (ArrayList type_parameter_list, object constraints)
+		public AdditionResult SetParameterInfo (ArrayList type_parameter_list, ArrayList constraints_list, Location loc)
 		{
-			this.type_parameter_list = type_parameter_list;
+			type_params = new TypeParameter [type_parameter_list.Count];
 
 			//
 			// Mark this type as Generic
@@ -664,52 +664,36 @@ namespace Mono.CSharp {
 			//
 			// Register all the names
 			//
-			foreach (string type_parameter in type_parameter_list){
-				AdditionResult res = IsValid (type_parameter, type_parameter);
+			for (int i = 0; i < type_parameter_list.Count; i++) {
+				string name = (string) type_parameter_list [i];
+
+				AdditionResult res = IsValid (name, name);
 
 				if (res != AdditionResult.Success)
 					return res;
 
-				DefineName (type_parameter, GetGenericData ());
+				Constraints constraints = null;
+				if (constraints_list != null) {
+					foreach (Constraints constraint in constraints_list) {
+						if (constraint.TypeParameter == name) {
+							constraints = constraint;
+							break;
+						}
+					}
+				}
+
+				type_params [i] = new TypeParameter (name, constraints, loc);
+
+				DefineName (name, type_params [i]);
 			}
 
 			return AdditionResult.Success;
 		}
 
-		//
-		// This is just something to flag the defined names for now
-		//
-		const int GENERIC_COOKIE = 20;
-		static object generic_flag = GENERIC_COOKIE;
-		
-		static object GetGenericData ()
-		{
-			return generic_flag;
-		}
-		
-		/// <summary>
-		///   Returns a GenericTypeExpr if `name' refers to a type parameter
-		/// </summary>
-		public TypeParameterExpr LookupGeneric (string name, Location l)
-		{
-			foreach (string type_parameter in type_parameter_list){
-				Console.WriteLine ("   trying: " + type_parameter);
-				if (name == type_parameter)
-					return new TypeParameterExpr (name, l);
+		public TypeParameter[] TypeParameters {
+			get {
+				return type_params;
 			}
-
-			return null;
-		}
-
-		public TypeParameterExpr[] GetTypeParameters (Location l)
-		{
-			TypeParameterExpr[] retval = new TypeParameterExpr [type_parameter_list.Count];
-
-			for (int i = 0; i < type_parameter_list.Count; i++){
-				retval [i] = new TypeParameterExpr ((string) type_parameter_list [i], l);
-			}
-
-			return retval;
 		}
 	}
 
