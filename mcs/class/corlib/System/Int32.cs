@@ -264,7 +264,6 @@ namespace System {
 			bool AllowLeadingSign = (style & NumberStyles.AllowLeadingSign) != 0;
 			bool AllowTrailingWhite = (style & NumberStyles.AllowTrailingWhite) != 0;
 			bool AllowLeadingWhite = (style & NumberStyles.AllowLeadingWhite) != 0;
-			bool AllowExponent = (style & NumberStyles.AllowExponent) != 0;
 
 			int pos = 0;
 
