@@ -1676,9 +1676,10 @@ namespace Mono.MonoBASIC {
 			if (src_type == TypeCode.Object) {
 				Expression cast_type = Mono.MonoBASIC.Parser.DecomposeQI(target_type.ToString(), loc);
 				Cast ce = new Cast (cast_type, expr, loc);
+				ce.IsRuntimeCast = true;
 				return ce.Resolve (ec);
 			}
-				
+
 			switch (dest_type) {
 				case TypeCode.String:
 					switch (src_type) {
@@ -2321,7 +2322,7 @@ namespace Mono.MonoBASIC {
 		///   type is expr.Type to 'target_type'.
 		/// </summary>
 		static public Expression ConvertExplicit (EmitContext ec, Expression expr,
-							  Type target_type, Location loc)
+							  Type target_type, bool runtimeconv, Location loc)
 		{
 			Type expr_type = expr.Type;
 			Expression ne = ConvertImplicitStandard (ec, expr, target_type, loc);
@@ -2424,12 +2425,14 @@ namespace Mono.MonoBASIC {
 			ne = ExplicitUserConversion (ec, expr, target_type, loc);
 			if (ne != null)
 				return ne;
+
+			if (!(runtimeconv))	{
+				ne = RuntimeConversion (ec, expr, target_type, loc);
+				if (ne != null)
+					return ne;
 				
-			ne = RuntimeConversion (ec, expr, target_type, loc);
-			if (ne != null)
-				return ne;
-					
-			Error_CannotConvertType (loc, expr_type, target_type);
+				Error_CannotConvertType (loc, expr_type, target_type);
+			}
 			return null;
 		}
 
@@ -3640,7 +3643,7 @@ namespace Mono.MonoBASIC {
 		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
 		{
 			Expression e = null;
-
+			
 			//
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
@@ -3784,7 +3787,7 @@ namespace Mono.MonoBASIC {
 				else
 					e = e.DoResolve (ec);
 
-				return e;				
+				return e;
 			}
 
 			if (ec.IsStatic || ec.IsFieldInitializer){

@@ -1161,12 +1161,14 @@ namespace Mono.MonoBASIC {
 	public class Cast : Expression {
 		Expression target_type;
 		Expression expr;
+		bool runtime_cast;
 			
 		public Cast (Expression cast_type, Expression expr, Location loc)
 		{
 			this.target_type = cast_type;
 			this.expr = expr;
 			this.loc = loc;
+			runtime_cast = false;
 		}
 
 		public Expression TargetType {
@@ -1181,6 +1183,16 @@ namespace Mono.MonoBASIC {
 			}
 			set {
 				expr = value;
+			}
+		}
+
+		public bool IsRuntimeCast
+		{
+			get {
+				return runtime_cast;
+			}
+			set{
+				runtime_cast = value;
 			}
 		}
 
@@ -1462,7 +1474,7 @@ namespace Mono.MonoBASIC {
 			int errors = Report.Errors;
 
 			type = ec.DeclSpace.ResolveType (target_type, false, Location);
-			
+
 			if (type == null)
 				return null;
 
@@ -1475,7 +1487,7 @@ namespace Mono.MonoBASIC {
 					return e;
 			}
 			
-			expr = ConvertExplicit (ec, expr, type, loc);
+			expr = ConvertExplicit (ec, expr, type, runtime_cast, loc);
 			return expr;
 		}
 
@@ -3573,7 +3585,7 @@ namespace Mono.MonoBASIC {
 				~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 
 			if (a_mod == p_mod || (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
-				if (a_mod == Parameter.Modifier.NONE)					
+				if (a_mod == Parameter.Modifier.NONE)	
 					if (! (ImplicitConversionExists (ec, a.Expr, ptype) || RuntimeConversionExists (ec, a.Expr, ptype)) )
 						return false;
 				
@@ -3645,23 +3657,26 @@ namespace Mono.MonoBASIC {
 							bool IsDelegate = TypeManager.IsDelegateType (param_type);
 
 							if (IsDelegate)	{	
-								if (a.ArgType != Argument.AType.AddressOf)
-									return false;
+								if (a.ArgType == Argument.AType.AddressOf) {
+									a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
+									ArrayList args = new ArrayList();
+									args.Add (a);
+									string param_name = param_type.Name;
+									Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
 
-								a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
-								ArrayList args = new ArrayList();
-								args.Add (a);
-								string param_name = param_type.Name;
-								Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
+									New temp_new = new New ((Expression)pname, args, Location.Null);
+									Expression del_temp = temp_new.DoResolve(ec);
 
-								New temp_new = new New ((Expression)pname, args, Location.Null);
-								Expression del_temp = temp_new.DoResolve(ec);
+									if (del_temp == null)
+										return false;
 
-								if (del_temp == null)
-									return false;
-
-								a = new Argument (del_temp, Argument.AType.Expression);
-								if (!a.Resolve(ec, Location.Null))
+									a = new Argument (del_temp, Argument.AType.Expression);
+									if (!a.Resolve(ec, Location.Null))
+										return false;
+								}
+							}
+							else {
+								if (a.ArgType == Argument.AType.AddressOf)
 									return false;
 							}
 

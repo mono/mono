@@ -1,4 +1,9 @@
-2004-07-18 Anirban Bhattacharjee <banirban@novell.com>i
+2004-07-20 Anirban Bhattacharjee <banirban@novell.com>
+	* expression.cs: Fixed resolution of overloaded functions with delegate as parameter
+	* ecore.cs: Changes made to stop program getting into an endless loop on not able to cast types of source to destination object.
+	* statement.cs: Added new argument to Expression.ConvertExplicit function call
+
+2004-07-18 Anirban Bhattacharjee <banirban@novell.com>
 	* argument.cs: Introduced AddressOf argument type for tracking AddressOf operator in method parameter
 	* expression.cs: A parameter with AddressOf operator will get converted to Delegate before overload resolution
 	* mb-parser.jay: Omitted two delegate creation expression grammar. This is now taken care by normal object creation expressions since Argument is capable of handling AddressOf operator now

@@ -4958,7 +4958,7 @@ namespace Mono.MonoBASIC {
 			// Although it is not as important in this case, as the type
 			// will not likely be object (what the enumerator will return).
 			//
-			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
+			conv = Expression.ConvertExplicit (ec, empty, var_type, false, loc);
 			if (conv == null)
 				return false;
 
