@@ -171,13 +171,17 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public void StartListening (Object data)
 		{
-			if(_port <= 0) return;	// TODO: take unused port
-			
 			_tcpListener = new TcpListener (_bindToAddr, _port);
 			
 			if(!_bListening)
 				_tcpListener.Start();
 
+			if (_port == 0) {
+				_port = ((IPEndPoint)_tcpListener.LocalEndpoint).Port;
+				String[] uris = { this.GetChannelUri() };
+				_channelData.ChannelUris = uris;
+			}
+				
 			if(_listenerThread == null)
 			{
 				ThreadStart t = new ThreadStart(this.Listen);
@@ -231,14 +235,7 @@ namespace System.Runtime.Remoting.Channels.Http
 	
 		public String GetChannelUri()
 		{
-			if ((_channelData != null) && (_channelData.ChannelUris != null))
-			{
-				return _channelData.ChannelUris[0];
-			}
-			else
-			{
-				return "http://" + _machineName + ":" + _port;
-			}
+			return "http://" + _machineName + ":" + _port;
 		} 
 	
 		public virtual String[] GetUrlsForUri(String objectUri)
