@@ -1,3 +1,10 @@
+2004-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* region.xsd : To make sure that "msdata" prefix has nothing to do
+	  with the actual "msdata namespace", modified namespace URI string.
+	  (This modification never affects on the results under MS.NET.)
+	* XmlDataDocumentTest.cs : Make sure Read2() loaded the table just fine.
+
 2004-04-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDataDocumentTest.cs : still path problem.

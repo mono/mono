@@ -1,6 +1,7 @@
 <?xml version="1.0" standalone="yes"?>
+<!-- Note that the msdata namespace is incorrect (even mofifying any URI), however Root is regarded as dataset element under MS.NET -->
 <xsd:schema id="Root" xmlns=""
-xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="INCORRECT!!!-urn:schemas-microsoft-
 com:xml-msdata">
  <xsd:element name="Root" msdata:IsDataSet="true">
    <xsd:complexType>

@@ -291,7 +291,8 @@ namespace MonoTests.System.Data.Xml
                         DataSet RegionDS = new DataSet ();
                         DataRow RegionRow;
                         RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
-                        XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
+			AssertEquals ("Was read correct?", 1, RegionDS.Tables.Count);
+			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
                         DataDoc.Load("Test/System.Xml/region.xml" );
 
 
