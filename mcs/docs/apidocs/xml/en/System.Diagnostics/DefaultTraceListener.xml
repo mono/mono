@@ -2,8 +2,18 @@
 <!DOCTYPE monodoc SYSTEM "http://www.go-mono.org/monodoc.dtd">
 <monodoc language="en">
     <class name="System.Diagnostics.DefaultTraceListener" assembly="System">
-        <summary>TODO</summary>
-        <remarks>TODO</remarks>
+        <summary>
+          Provides the default output methods and behavior for tracing.
+        </summary>
+        <remarks>
+          Since there is no debugging API ala Win32 on Mono, 
+          <see cref="System.Console.Out">Console.Out</see> 
+          is being used as the default output method.
+
+          <para>This needs help, as MSDN specifies that GUI widgets be used 
+          for certain features.  The short-term solution is to just send 
+          output to OutputDebugString.</para>
+        </remarks>
         <constructor name="DefaultTraceListener">
             <summary>TODO</summary>
             <remarks>TODO</remarks>
@@ -14,34 +24,50 @@
             <value>TODO</value>
         </property>
         <property name="LogFileName">
-            <summary>TODO</summary>
+            <summary>
+              Gets or sets name of a log file to write trace or debug 
+              messages to.
+            </summary>
             <remarks>TODO</remarks>
-            <value>TODO</value>
+            <value>
+              The name of a log file to write trace or debug messages to.
+            </value>
         </property>
         <method name="WriteLine(System.String)">
-            <summary>TODO</summary>
+            <summary>
+              Writes the output to the Console, followed by a newline
+            </summary>
             <remarks>TODO</remarks>
-            <param name="message">TODO</param>
+            <param name="message">The message to write.</param>
             <returns>TODO</returns>
         </method>
         <method name="Write(System.String)">
-            <summary>TODO</summary>
+            <summary>Writes the output to the Console.</summary>
             <remarks>TODO</remarks>
-            <param name="message">TODO</param>
+            <param name="message">The message to write.</param>
             <returns>TODO</returns>
         </method>
         <method name="Fail(System.String, System.String)">
-            <summary>TODO</summary>
+            <summary>
+              Emits or displays detailed messages and a stack trace
+              for an assertion that always fails.
+            </summary>
             <remarks>TODO</remarks>
-            <param name="message">TODO</param>
-            <param name="detailMessage">TODO</param>
+            <param name="message">The message to emit or display.</param>
+            <param name="detailMessage">
+              The detailed message to emit or display.
+            </param>
             <returns>TODO</returns>
         </method>
         <method name="Fail(System.String)">
-            <summary>TODO</summary>
+            <summary>
+              Emits or displays a message and a stack trace for an 
+              assertion that always fails.
+            </summary>
             <remarks>TODO</remarks>
-            <param name="message">TODO</param>
+            <param name="message">The message to emit or display.</param>
             <returns>TODO</returns>
         </method>
     </class>
 </monodoc>
+
