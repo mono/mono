@@ -474,7 +474,6 @@ namespace Mono.CSharp {
 			MethodGroupExpr mg = GetInvokeMethod (ec, delegate_type, loc);
 			if (mg == null)
 				return null;
-			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			MethodBase invoke_mb = mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
@@ -483,6 +482,7 @@ namespace Mono.CSharp {
 			    !TypeManager.InferTypeArguments (ec, invoke_pd, ref mb))
 				return null;
 
+			ParameterData pd = TypeManager.GetParameterData (mb);
 			if (invoke_pd.Count != pd.Count)
 				return null;
 
@@ -1011,7 +1011,7 @@ namespace Mono.CSharp {
 						return null;
 				}
 			}
-			
+
 			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
 				return null;
 
