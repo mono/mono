@@ -13,7 +13,6 @@ using System.ComponentModel;
 
 namespace Microsoft.VisualBasic
 {
-	[ToolboxItem (""), DesignerCategory ("Component")]
 	public class VBCodeProvider : CodeDomProvider
 	{
 
