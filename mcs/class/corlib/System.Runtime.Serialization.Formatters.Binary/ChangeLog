@@ -1,3 +1,10 @@
+2004-02-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BinaryCommon.cs: Added UseReflectionSerialization property.
+	* CodeGenerator.cs, ObjectWriter.cs: When serializing the name of an 
+	  inherited field, prefix the name with the class name. This fixes #54439.
+	  Moved check for reflection serialization variable to BinaryCommon.
+	
 2004-02-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ObjectWriter.cs: Factorized some serialization code in new classes, so it

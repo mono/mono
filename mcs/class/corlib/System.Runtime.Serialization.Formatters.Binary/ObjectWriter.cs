@@ -145,8 +145,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			writer.Write (members.Length);
 
 			// Names of fields
-			foreach (FieldInfo field in members)
-				writer.Write (field.Name);
+			foreach (FieldInfo field in members) {
+				if (field.DeclaringType == InstanceType)
+					writer.Write (field.Name);
+				else
+					writer.Write (field.DeclaringType.Name + "+" + field.Name);
+			}
 
 			// Types of fields
 			foreach (FieldInfo field in members)
@@ -382,9 +386,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		
 		TypeMetadata CreateMemberTypeMetadata (Type type)
 		{
-			// This environment variable is only for test and benchmarking pourposes.
-			// By default, mono will always use IL generated class serializers.
-			if (Environment.GetEnvironmentVariable("MONO_REFLECTION_SERIALIZER") == null) {
+			if (!BinaryCommon.UseReflectionSerialization) {
 				Type metaType = CodeGenerator.GenerateMetadataType (type, _context);
 				return (TypeMetadata) Activator.CreateInstance (metaType);
 			}

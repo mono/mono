@@ -111,7 +111,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			{
 				// EMIT writer.Write (name);
 				gen.Emit (OpCodes.Ldarg_2);
-				gen.Emit (OpCodes.Ldstr, field.Name);
+				
+				if (field.DeclaringType == type)
+					gen.Emit (OpCodes.Ldstr, field.Name);
+				else
+					gen.Emit (OpCodes.Ldstr, field.DeclaringType.Name + "+" + field.Name);
 				EmitWrite (gen, typeof(string));
 			}
 

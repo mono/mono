@@ -16,6 +16,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		static Type[] _typeCodesToType;
 		static byte[] _typeCodeMap;
+		public static bool UseReflectionSerialization = false;
 
 		static BinaryCommon()
 		{
@@ -57,6 +58,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			// TimeStamp does not have a TypeCode, so it is managed as a special
 			// case in GetTypeCode()
+			
+			// This environment variable is only for test and benchmarking pourposes.
+			// By default, mono will always use IL generated class serializers.
+			string s = Environment.GetEnvironmentVariable("MONO_REFLECTION_SERIALIZER");
+			if (s == null) s = "no";
+			UseReflectionSerialization = (s != "no");
 		}
 
 		public static bool IsPrimitive (Type type)
