@@ -1,3 +1,10 @@
+2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_FieldInfo_SetValueInternal): Handle setting of
+	valuetype fields to null.
+
+	* object.c (set_value): Ditto. Fixes #71669.	
+
 2005-01-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_runtime_get_main_args): Return an array from the
