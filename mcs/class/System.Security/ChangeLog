@@ -1,3 +1,9 @@
+2003-03-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* System.Security.build: Added a new output System.Security_cmp.dll
+	which links with mscorlib. This version is to be used to generate
+	the class status web page (required for CorCompare).
+
 2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* System.Security.build: Updated build file to stop linking with

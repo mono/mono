@@ -21,6 +21,18 @@
 				<includes name="../lib/System.Xml.dll"/>
 			</references>
 		</csc>
+		<csc target="library" output="../lib/System.Security_cmp.dll" debug="${debug}">
+			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:1595"/>
+			<arg value="/noconfig"/>
+			<arg value="/r:../lib/System.Xml.dll"/>
+			<sources basedir=".">
+				<includes name="System.Security.Cryptography.Xml/*.cs"/>
+			</sources>
+			<references>
+				<includes name="../lib/System.Xml.dll"/>
+			</references>
+		</csc>
 	</target>
 
 	<target name="test" depends="build">
