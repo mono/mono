@@ -6,17 +6,17 @@
 Imports System
 Imports Nunit.Framework
 
-Class A
+Class AQ
 	Public a as Integer
 End Class
 
-Class P
-	Inherits A
+Class PQ
+	Inherits AQ
 	Public i as Integer
 End Class
 
-Class P1
-	Inherits P
+Class PQ1
+	Inherits PQ
 	Public b as Byte
 End Class
 
@@ -24,8 +24,8 @@ End Class
 public Class InheritanceN
 	<Test, ExpectedException (GetType (System.InvalidCastException))> _
 	Sub Main()
-		Dim a as A = new A()
-		Dim a1 as P1 = new P1()
+		Dim a as AQ = new AQ()
+		Dim a1 as PQ1 = new PQ1()
 		a1 = a
 	End Sub
 End Class
