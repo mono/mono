@@ -121,8 +121,6 @@ namespace System
 				assembly = Assembly.GetCallingAssembly ();
 			else
 				assembly = Assembly.Load (assemblyName);			
-			assembly = Assembly.Load (assemblyName);
-
 			Type type = assembly.GetType (typeName, true, ignoreCase);
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
