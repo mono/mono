@@ -1,3 +1,7 @@
+2004-02-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder.cs : Close XmlReader when we passed uri.
+
 2004-02-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* LocationPathPattern.cs : Implemented easy XPathNavigator cache on

@@ -35,8 +35,10 @@ namespace Mono.Xml.XPath
 		}
 
 		public DTMXPathDocumentBuilder (string url, XmlSpace space, int defaultCapacity)
-			: this (new XmlTextReader (url), space, defaultCapacity)
 		{
+			XmlReader r = new XmlTextReader (url);
+			Init (r, space, defaultCapacity);
+			r.Close ();
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader)
@@ -50,6 +52,11 @@ namespace Mono.Xml.XPath
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, int defaultCapacity)
+		{
+			Init (reader, space, defaultCapacity);
+		}
+
+		private void Init (XmlReader reader, XmlSpace space, int defaultCapacity)
 		{
 			this.xmlReader = reader;
 			this.validatingReader = reader as XmlValidatingReader;
