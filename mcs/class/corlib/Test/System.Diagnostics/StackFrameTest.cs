@@ -22,12 +22,14 @@ namespace MonoTests.System.Diagnostics {
                 private StackFrame frame1;
                 private StackFrame frame2;
                 
-                protected override void SetUp() {
+		[SetUp]
+                public void InitTest() {
                         frame1 = new StackFrame("dir/someFile", 13, 45);
                         frame2 = new StackFrame("SomeFile2.cs", 24);
                 }
                 
-                protected override void TearDown() {
+		[TearDown]
+                public void CleanupTest() {
                         frame1 = null;
                         frame2 = null;
                 }

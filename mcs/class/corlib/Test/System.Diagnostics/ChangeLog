@@ -1,3 +1,7 @@
+2003-04-17  Nick Drochak  <ndrochak@gol.com>
+
+	* StackFrameTest.cs: Use nunit version 2 style.
+
 2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StackTraceTest.cs: Added test for unthrown exceptions.
