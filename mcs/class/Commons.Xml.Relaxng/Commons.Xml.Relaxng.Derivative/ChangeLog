@@ -1,5 +1,10 @@
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpPattern.cs : The last attribute stuff broke usual validation wrt
+	  global attributes.
+
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPattern.cs : fixed setupTable(). Avoid boxing.
 
 2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
