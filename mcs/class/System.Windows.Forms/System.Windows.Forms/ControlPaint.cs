@@ -777,19 +777,109 @@ namespace System.Windows.Forms {
 			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.DFC_BUTTON, dfcs);
 		}
 		
-		[MonoTODO]
 		public static void DrawComboButton(Graphics graphics, Rectangle rectangle, ButtonState state) {
-			//FIXME:
+			SolidBrush		sb;
+			Point[]			arrow = new Point[3];
+			Point				P1;
+			Point				P2;
+			Point				P3;
+			int				centerX;
+			int				centerY;
+			int				shiftX;
+			int				shiftY;
+			Rectangle		rect;
+
+			if ((state & ButtonState.Checked)!=0) {
+				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+				graphics.FillRectangle(hatchBrush,rectangle);
+				hatchBrush.Dispose();
+			}
+
+			if ((state & ButtonState.Flat)!=0) {
+				DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+			} else {
+				if ((state & (ButtonState.Pushed | ButtonState.Checked))!=0) {
+					DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+				} else {
+					DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+				}
+			}
+
+			rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
+			centerX=rect.Left+rect.Width/2;
+			centerY=rect.Top+rect.Height/2;
+			shiftX=Math.Max(1, rect.Width/8);
+			shiftY=Math.Max(1, rect.Height/8);
+
+			if ((state & ButtonState.Pushed)!=0) {
+				shiftX++;
+				shiftY++;
+			}
+
+			rect.Y-=shiftY;
+			centerY-=shiftY;
+			P1=new Point(rect.Left, centerY);
+			P2=new Point(rect.Right, centerY);
+			P3=new Point(centerX, rect.Bottom);
+
+			arrow[0]=P1;
+			arrow[1]=P2;
+			arrow[2]=P3;
+
+			/* Draw the arrow */
+			if ((state & ButtonState.Inactive)!=0) {
+				sb=new SolidBrush(colorHighlight);
+				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+				sb.Dispose();
+
+				/* Move away from the shadow */
+				P1.X-=1;		P1.Y-=1;
+				P2.X-=1;		P2.Y-=1;
+				P3.X-=1;		P3.Y-=1;
+
+				arrow[0]=P1;
+				arrow[1]=P2;
+				arrow[2]=P3;
+				
+
+				sb=new SolidBrush(colorShadow);
+				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+			} else {
+				sb=new SolidBrush(colorText);
+				
+				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+			}
+			sb.Dispose();
 		}
 		
-		[MonoTODO]
 		public static void DrawComboButton(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
-			//FIXME:
+			DrawComboButton(graphics, new Rectangle(x, y, width, height), state);
 		}
 		
-		[MonoTODO]
-		public static void DrawContainerGrabHandle(Graphics graphics,Rectangle bounds) {
-			//FIXME:
+		public static void DrawContainerGrabHandle(Graphics graphics, Rectangle bounds) {
+			SolidBrush	sb		= new SolidBrush(Color.White);
+			Pen			pen	= new Pen(Color.Black, 1);
+			Rectangle	rect	= new Rectangle(bounds.X, bounds.Y, bounds.Width-1, bounds.Height-1);	// Dunno why, but MS does it that way, too
+			int			X;
+			int			Y;
+
+			graphics.FillRectangle(sb, rect);
+			graphics.DrawRectangle(pen, rect);
+
+			X=rect.X+rect.Width/2;
+			Y=rect.Y+rect.Height/2;
+
+			/* Draw the cross */
+			graphics.DrawLine(pen, X, rect.Y+2, X, rect.Bottom-2);
+			graphics.DrawLine(pen, rect.X+2, Y, rect.Right-2, Y);
+
+			/* Draw 'arrows' for vertical lines */
+			graphics.DrawLine(pen, X-1, rect.Y+3, X+1, rect.Y+3);
+			graphics.DrawLine(pen, X-1, rect.Bottom-3, X+1, rect.Bottom-3);
+
+			/* Draw 'arrows' for horizontal lines */
+			graphics.DrawLine(pen, rect.X+3, Y-1, rect.X+3, Y+1);
+			graphics.DrawLine(pen, rect.Right-3, Y-1, rect.Right-3, Y+1);
 		}
 		
 		[MonoTODO]
