@@ -31,6 +31,7 @@ System.ComponentModel\IListSource.cs
 System.ComponentModel\ISite.cs
 System.ComponentModel\ISupportInitialize.cs
 System.ComponentModel\ISynchronizeInvoke.cs
+System.ComponentModel\ITypeDescriptorContext.cs
 System.ComponentModel\ITypedList.cs
 System.ComponentModel\ListChangedEventArgs.cs
 System.ComponentModel\ListChangedEventHandler.cs

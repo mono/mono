@@ -456,6 +456,7 @@ namespace System
 		
 		public string GetLeftPart (UriPartial part) 
 		{
+			int defaultPort;
 			switch (part) {				
 			case UriPartial.Scheme : 
 				return scheme + GetSchemeDelimiter (scheme); 				
@@ -473,7 +474,7 @@ namespace System
 				if (userinfo.Length > 0) 
 					s.Append (userinfo).Append ('@');
 				s.Append (host);
-				int defaultPort = GetDefaultPort (scheme);
+				defaultPort = GetDefaultPort (scheme);
 				if ((port != -1) && (port != defaultPort))
 					s.Append (':').Append (port);			 
 				return s.ToString ();				

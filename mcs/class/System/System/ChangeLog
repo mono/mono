@@ -1,3 +1,8 @@
+
+Mon Jun 17 15:05:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Uri.cs: workaround for mcs bug.
+
 2002-05-28  Lawrence Pit <loz@cable.a2000.nl>
 
 	* Uri.cs: Implemented ctor UriTest (baseUri, relativeUri)
