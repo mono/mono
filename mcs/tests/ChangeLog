@@ -1,3 +1,10 @@
+2004-01-05 Marek Safar <marek.safar@seznam.cz>
+
+        * cls-test-0.cs, cls-test-1.cs, cls-test-2.cs, cls-test-3.cs,
+          cls-test-5.cs, cls-test-6.cs, cls-test-7.cs, cls-test-10.cs,
+          cls-test-11.cs, cls-test-14.cs, cls-test-15.cs, cls-test-16.cs:
+        New tests for CLS-compliant
+        
 2004-01-03 Todd Berman  <tberman@gentoo.org>
 
 	* test-224.cs: new test for #52429

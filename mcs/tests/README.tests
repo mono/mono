@@ -68,6 +68,11 @@ Test cases listed by Category:
 Test cases listed by Number:
 ============================
 
+test-91.cs
+----------
+
+Tests various permissions sets based on the visiblity flags.
+
 test-146.cs
 -----------
 Test for Binary.EmitBrancheable() to ensure we're emitting correct
