@@ -1,3 +1,7 @@
+2004-10-20  Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Web.dll.sources: Added new class in System.Web.UI.
+
 2004-10-12  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web_test.dll.sources: Added new test case source file.

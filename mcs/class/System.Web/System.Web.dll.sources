@@ -566,6 +566,7 @@ System.Web.UI/DataSourceCacheExpiry.cs
 System.Web.UI/DataSourceCapabilities.cs
 System.Web.UI/DataSourceControl.cs
 System.Web.UI/DataSourceOperation.cs
+System.Web.UI/DataSourceSelectArguments.cs
 System.Web.UI/DataSourceView.cs
 System.Web.UI/DataSourceViewOperationCallback.cs
 System.Web.UI/DataSourceViewSelectCallback.cs
