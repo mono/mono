@@ -1,3 +1,18 @@
+2003-06-11  Tim Coleman <tim@timcoleman.com>
+	* SybaseConnection.cs:
+		Make connection parameter parsing "more correct"
+		and throw appropriate exceptions, similar to MS SqlClient
+	* SybaseBinary.cs:
+	* SybaseBoolean.cs:
+	* SybaseByte.cs:
+	* SybaseDateTime.cs:
+	* SybaseDecimal.cs:
+	* SybaseDouble.cs:
+	* SybaseMoney.cs:
+	* SybaseString.cs:
+		Mass import of code from SqlClient to make this behave
+		better.
+
 2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SybaseConnection.cs: - parse data source for 2 possible uses:

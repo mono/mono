@@ -4,7 +4,10 @@
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
 //
-// (C) Copyright Tim Coleman, 2002
+// Based on System.Data.SqlTypes.SqlDateTime
+//
+// (C) Ximian, Inc. 2002-2003
+// (C) Copyright Tim Coleman, 2002-2003
 //
 
 using Mono.Data.SybaseClient;
@@ -18,13 +21,15 @@ namespace Mono.Data.SybaseTypes {
 		#region Fields
 		private DateTime value;
 		private bool notNull;
+		private static readonly float DateTimeTicksPerHour = 3.6E+10f;
+		private static readonly DateTime Epoch = new DateTime (1900, 1, 1);
 
-		public static readonly SybaseDateTime MaxValue = new SybaseDateTime (9999,12,31);
+		public static readonly SybaseDateTime MaxValue = new SybaseDateTime (9999, 12, 31, 23, 59, 59);
 		public static readonly SybaseDateTime MinValue = new SybaseDateTime (1753,1,1);
 		public static readonly SybaseDateTime Null;
-		public static readonly int SQLTicksPerHour;
-		public static readonly int SQLTicksPerMinute;
-		public static readonly int SQLTicksPerSecond;
+		public static readonly int SQLTicksPerHour = 1080000;
+		public static readonly int SQLTicksPerMinute = 18000;
+		public static readonly int SQLTicksPerSecond = 300;
 
 		#endregion
 
@@ -36,10 +41,10 @@ namespace Mono.Data.SybaseTypes {
 			notNull = true;
 		}
 
-		[MonoTODO]
 		public SybaseDateTime (int dayTicks, int timeTicks) 
 		{
-			throw new NotImplementedException ();
+			this.value = new DateTime (Epoch.Ticks + (long) (dayTicks + timeTicks));
+			notNull = true;
 		}
 
 		public SybaseDateTime (int year, int month, int day) 
@@ -54,34 +59,40 @@ namespace Mono.Data.SybaseTypes {
 			notNull = true;
 		}
 
-		[MonoTODO]
 		public SybaseDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond) 
 		{
-			throw new NotImplementedException ();
+			DateTime t = new DateTime (year, month, day);
+			this.value = new DateTime ((long) (t.Day * 24 * SQLTicksPerHour + hour * SQLTicksPerHour + minute * SQLTicksPerMinute + second * SQLTicksPerSecond + millisecond * 1000));
+			notNull = true;
 		}
 
-		[MonoTODO]
 		public SybaseDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) 
 		{
-			throw new NotImplementedException ();
+			DateTime t = new DateTime (year, month, day);
+			this.value = new DateTime ((long) (t.Day * 24 * SQLTicksPerHour + hour * SQLTicksPerHour + minute * SQLTicksPerMinute + second * SQLTicksPerSecond + bilisecond));
+			notNull = true;
 		}
 
 		#endregion
 
 		#region Properties
 
-		[MonoTODO]
 		public int DayTicks {
-			get { throw new NotImplementedException (); }
+			get { 
+				return (int) ((this.Value.Ticks - Epoch.Ticks) / (24 * DateTimeTicksPerHour));
+			}
 		}
 
 		public bool IsNull { 
 			get { return !notNull; }
 		}
 
-		[MonoTODO]
 		public int TimeTicks {
-			get { throw new NotImplementedException (); }
+			get { 
+				if (this.IsNull)
+					throw new SybaseNullValueException ();
+				return (int) (value.Hour * SQLTicksPerHour + value.Minute * SQLTicksPerMinute + value.Second * SQLTicksPerSecond + value.Millisecond);
+			}
 		}
 
 		public DateTime Value {
@@ -122,10 +133,9 @@ namespace Mono.Data.SybaseTypes {
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 42;
+			return value.GetHashCode ();
 		}
 
 		public static SybaseBoolean GreaterThan (SybaseDateTime x, SybaseDateTime y)
@@ -153,10 +163,9 @@ namespace Mono.Data.SybaseTypes {
 			return (x != y);
 		}
 
-		[MonoTODO]
 		public static SybaseDateTime Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SybaseDateTime (DateTime.Parse (s));
 		}
 
 		public SybaseString ToSybaseString ()
@@ -172,10 +181,11 @@ namespace Mono.Data.SybaseTypes {
 				return value.ToString ();
 		}
 	
-		[MonoTODO]	
 		public static SybaseDateTime operator + (SybaseDateTime x, TimeSpan t)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return SybaseDateTime.Null;
+			return new SybaseDateTime (x.Value + t);
 		}
 
 		public static SybaseBoolean operator == (SybaseDateTime x, SybaseDateTime y)
@@ -226,10 +236,11 @@ namespace Mono.Data.SybaseTypes {
 				return new SybaseBoolean (x.Value <= y.Value);
 		}
 
-		[MonoTODO]
 		public static SybaseDateTime operator - (SybaseDateTime x, TimeSpan t)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return SybaseDateTime.Null;
+			return new SybaseDateTime (x.Value - t);
 		}
 
 		public static explicit operator DateTime (SybaseDateTime x)
@@ -237,10 +248,9 @@ namespace Mono.Data.SybaseTypes {
 			return x.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SybaseDateTime (SybaseString x)
 		{
-			throw new NotImplementedException();
+			return SybaseDateTime.Parse (x.Value);
 		}
 
 		public static implicit operator SybaseDateTime (DateTime x)

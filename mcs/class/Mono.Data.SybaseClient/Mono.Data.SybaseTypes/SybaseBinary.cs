@@ -4,7 +4,10 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// (C) Copyright Tim Coleman, 2002
+// Based on System.Data.SqlTypes.SqlBinary
+//
+// (C) Ximian, Inc. 2002-2003
+// (C) Copyright Tim Coleman, 2002-2003
 //
 
 using Mono.Data.SybaseClient;
@@ -74,10 +77,16 @@ namespace Mono.Data.SybaseTypes {
 
 		#region Methods
 
-		[MonoTODO]
 		public int CompareTo (object value) 
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return 1;
+			else if (!(value is SybaseBinary))
+				throw new ArgumentException ("Value is not a Mono.Data.SybaseTypes.SybaseBinary.");
+			else if (((SybaseBinary) value).IsNull)
+				return 1;
+			else
+				return Compare (this, (SybaseBinary) value);
 		}
 
 		public static SybaseBinary Concat (SybaseBinary x, SybaseBinary y) 
@@ -98,10 +107,12 @@ namespace Mono.Data.SybaseTypes {
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode () 
 		{
-			throw new NotImplementedException ();
+			int result = 10;
+			for (int i = 0; i < value.Length; i += 1) 
+				result = 91 * result + ((int) value [i]);
+			return result;
 		}
 
 		#endregion
@@ -149,64 +160,69 @@ namespace Mono.Data.SybaseTypes {
 
 		#region Operators
 
-		[MonoTODO]
 		public static SybaseBinary operator + (SybaseBinary x, SybaseBinary y) 
 		{
-			throw new NotImplementedException ();
+			byte[] b = new byte [x.Length + y.Length];
+			int j = 0;
+			int i;
+
+			for (i = 0; i < x.Length; i += 1)
+				b [i] = x [i];
+
+			for (; i < x.Length + y.Length; i += 1) {
+				b [i] = y [j];
+				j += 1;
+			}
+
+			return new SybaseBinary (b);
 		}
 
-		[MonoTODO]
 		public static SybaseBoolean operator == (SybaseBinary x, SybaseBinary y) 
 		{
 			if (x.IsNull || y.IsNull) 
 				return SybaseBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SybaseBoolean (Compare (x, y) == 0);
 		}
 
-		[MonoTODO]
 		public static SybaseBoolean operator > (SybaseBinary x, SybaseBinary y) 
 		{
 			if (x.IsNull || y.IsNull) 
 				return SybaseBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SybaseBoolean (Compare (x, y) > 0);
 		}
 
-		[MonoTODO]
 		public static SybaseBoolean operator >= (SybaseBinary x, SybaseBinary y) 
 		{
 			if (x.IsNull || y.IsNull) 
 				return SybaseBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SybaseBoolean (Compare (x, y) >= 0);
 		}
 
-		[MonoTODO]
 		public static SybaseBoolean operator != (SybaseBinary x, SybaseBinary y) 
 		{
 			if (x.IsNull || y.IsNull) 
 				return SybaseBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SybaseBoolean (Compare (x, y) != 0);
 		}
 
-		[MonoTODO]
 		public static SybaseBoolean operator < (SybaseBinary x, SybaseBinary y) 
 		{
 			if (x.IsNull || y.IsNull) 
 				return SybaseBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SybaseBoolean (Compare (x, y) < 0);
 		}
 
-		[MonoTODO]
 		public static SybaseBoolean operator <= (SybaseBinary x, SybaseBinary y) 
 		{
 			if (x.IsNull || y.IsNull) 
 				return SybaseBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SybaseBoolean (Compare (x, y) <= 0);
 		}
 
 		public static explicit operator byte[] (SybaseBinary x) 
@@ -214,15 +230,49 @@ namespace Mono.Data.SybaseTypes {
 			return x.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SybaseBinary (SybaseGuid x) 
 		{
-			throw new NotImplementedException ();
+			return new SybaseBinary (x.ToByteArray ());
 		}
 
 		public static implicit operator SybaseBinary (byte[] x) 
 		{
 			return new SybaseBinary (x);
+		}
+
+		private static int Compare (SybaseBinary x, SybaseBinary y)
+		{
+			int lengthDiff = 0;
+			
+			if (x.Length != y.Length) {
+				lengthDiff = x.Length - y.Length;
+				
+				// if diff more than 0, x is longer
+				if (lengthDiff > 0) {
+					for (int i = x.Length - 1; i > x.Length - lengthDiff; i -= 1) 
+						if (x [i] != (byte) 0)
+							return 1;
+				} else {
+					for (int i = y.Length - 1; i > y.Length - lengthDiff; i -= 1) 
+						if (y [i] != (byte) 0)
+							return -1;
+				}
+			}
+
+			// choose shorter
+			int len = (lengthDiff > 0) ? y.Length : x.Length;
+
+			for (int i = len - 1; i > 0; i -= 1) {
+				byte bx = x [i];
+				byte by = y [i];
+
+				if (bx > by)
+					return 1;
+				else if (bx < by)
+					return -1;
+			}
+
+			return 0;
 		}
 
 		#endregion

@@ -4,7 +4,10 @@
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
 //
-// (C) Copyright Tim Coleman, 2002
+// Based on System.Data.SqlTypes.SqlDouble
+//
+// (C) Ximian, Inc. 2002-2003
+// (C) Copyright Tim Coleman, 2002-2003
 //
 
 using Mono.Data.SybaseClient;
@@ -20,8 +23,8 @@ namespace Mono.Data.SybaseTypes {
 
 		private bool notNull;
 
-		public static readonly SybaseDouble MaxValue = new SybaseDouble (1.7976931348623157e308);
-		public static readonly SybaseDouble MinValue = new SybaseDouble (-1.7976931348623157e308);
+		public static readonly SybaseDouble MaxValue = new SybaseDouble (1.7976931348623157E+308);
+		public static readonly SybaseDouble MinValue = new SybaseDouble (-1.7976931348623157E+308);
 		public static readonly SybaseDouble Null;
 		public static readonly SybaseDouble Zero = new SybaseDouble (0);
 

@@ -4,6 +4,10 @@
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
 //
+// Based on System.Data.SqlTypes.SqlByte
+//
+//
+// (C) Ximian, Inc. 2002-2003
 // (C) Copyright Tim Coleman, 2002
 //
 

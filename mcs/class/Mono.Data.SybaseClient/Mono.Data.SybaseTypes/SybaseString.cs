@@ -4,13 +4,17 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// (C) Copyright Tim Coleman, 2002
+// Based on System.Data.SqlTypes.SqlString
+//
+// (C) Ximian, Inc. 2002-2003
+// (C) Copyright Tim Coleman, 2002-2003
 //
 
 using Mono.Data.SybaseClient;
 using System;
 using System.Data.SqlTypes;
 using System.Globalization;
+using System.Text;
 
 namespace Mono.Data.SybaseTypes {
 	public struct SybaseString : INullable, IComparable 
@@ -21,11 +25,14 @@ namespace Mono.Data.SybaseTypes {
 
 		private bool notNull;
 
-		public static readonly int BinarySort;
-		public static readonly int IgnoreCase;
-		public static readonly int IgnoreKanaType;
-		public static readonly int IgnoreNonSpace;
-		public static readonly int IgnoreWidth;
+		private CultureInfo cultureInfo;
+		private SybaseCompareOptions compareOptions;
+
+		public static readonly int BinarySort = 0x8000;
+		public static readonly int IgnoreCase = 0x1;
+		public static readonly int IgnoreKanaType = 0x8;
+		public static readonly int IgnoreNonSpace = 0x2;
+		public static readonly int IgnoreWidth = 0x10;
 		public static readonly SybaseString Null;
 
 		#endregion // Fields
@@ -36,55 +43,72 @@ namespace Mono.Data.SybaseTypes {
 		public SybaseString (string data) 
 		{
 			this.value = data;
-			notNull = true;
+			this.cultureInfo = CultureInfo.CurrentCulture;
+			this.compareOptions = SybaseCompareOptions.None;
+			this.notNull = true;
 		}
 
 		// init with a string data and locale id values.
-		[MonoTODO]
 		public SybaseString (string data, int lcid) 
+			: this (data, lcid, SybaseCompareOptions.None)
 		{
-			throw new NotImplementedException ();
 		}
 
 		// init with locale id, compare options, 
 		// and an array of bytes data
-		[MonoTODO]
 		public SybaseString (int lcid, SybaseCompareOptions compareOptions, byte[] data) 
+			: this (lcid, compareOptions, data, true)
 		{
-			throw new NotImplementedException ();
 		}
 
 		// init with string data, locale id, and compare options
-		[MonoTODO]
 		public SybaseString (string data, int lcid, SybaseCompareOptions compareOptions) 
 		{
-			throw new NotImplementedException ();
+			this.value = data;
+			this.cultureInfo = new CultureInfo (lcid);
+			this.compareOptions = compareOptions;
+			this.notNull = true;
 		}
 
 		// init with locale id, compare options, array of bytes data,
 		// and whether unicode is encoded or not
-		[MonoTODO]
 		public SybaseString (int lcid, SybaseCompareOptions compareOptions, byte[] data, bool fUnicode) 
 		{
-			throw new NotImplementedException ();
+			Encoding encoding;
+			if (fUnicode)
+				encoding = new UnicodeEncoding ();
+			else
+				encoding = new ASCIIEncoding ();
+
+			this.value = encoding.GetString (data);
+			this.cultureInfo = new CultureInfo (lcid);
+			this.compareOptions = compareOptions;
+			this.notNull = true;
 		}
 
 		// init with locale id, compare options, array of bytes data,
 		// starting index in the byte array, 
 		// and number of bytes to copy
-		[MonoTODO]
 		public SybaseString (int lcid, SybaseCompareOptions compareOptions, byte[] data, int index, int count) 
+			: this (lcid, compareOptions, data, index, count, true)
 		{
-			throw new NotImplementedException ();
 		}
 
 		// init with locale id, compare options, array of bytes data,
 		// starting index in the byte array, number of byte to copy,
 		// and whether unicode is encoded or not
-		[MonoTODO]
 		public SybaseString (int lcid, SybaseCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode) 
 		{
-			throw new NotImplementedException ();
+			Encoding encoding;
+			if (fUnicode)
+				encoding = new UnicodeEncoding ();
+			else
+				encoding = new ASCIIEncoding ();
+
+			this.value = encoding.GetString (data, index, count);
+			this.cultureInfo = new CultureInfo (lcid);
+			this.compareOptions = compareOptions;
+			this.notNull = true;
 		}
 
 		#endregion // Constructors
@@ -93,15 +117,11 @@ namespace Mono.Data.SybaseTypes {
 		#region Public Properties
 
 		public CompareInfo CompareInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
-			}
+			get { return cultureInfo.CompareInfo; }
 		}
 
 		public CultureInfo CultureInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
-			}
+			get { return cultureInfo; }
 		}
 
 		public bool IsNull {
@@ -110,40 +130,45 @@ namespace Mono.Data.SybaseTypes {
 
 		// geographics location and language (locale id)
 		public int LCID {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
-			}
+			get { return cultureInfo.LCID; }
 		}
 	
 		public SybaseCompareOptions SybaseCompareOptions {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
-			}
+			get { return compareOptions; }
 		}
 
-                public string Value {
-                        get {
-                                if (this.IsNull)
-                                        throw new SybaseNullValueException ("The property contains Null.");
-                                else
-                                        return value;
-                        }
-                }
+		public string Value {
+			get {
+				if (this.IsNull)
+					throw new SybaseNullValueException ("The property contains Null.");
+				else
+					return value;
+			}
+		}
 
 		#endregion // Public Properties
 
 		#region Public Methods
 
-		[MonoTODO]
 		public SybaseString Clone() 
 		{
-			throw new NotImplementedException ();
+			return new SybaseString (value, LCID, SybaseCompareOptions);
 		}
 
-		[MonoTODO]
 		public static CompareOptions CompareOptionsFromSybaseCompareOptions (SybaseCompareOptions compareOptions) 
 		{
-			throw new NotImplementedException ();
+			CompareOptions options = CompareOptions.None;
+			if ((compareOptions & SybaseCompareOptions.IgnoreCase) != 0)
+				options |= CompareOptions.IgnoreCase;
+			if ((compareOptions & SybaseCompareOptions.IgnoreKanaType) != 0)
+				options |= CompareOptions.IgnoreKanaType;
+			if ((compareOptions & SybaseCompareOptions.IgnoreNonSpace) != 0)
+				options |= CompareOptions.IgnoreNonSpace;
+			if ((compareOptions & SybaseCompareOptions.IgnoreWidth) != 0)
+				options |= CompareOptions.IgnoreWidth;
+			if ((compareOptions & SybaseCompareOptions.BinarySort) != 0)
+				throw new ArgumentOutOfRangeException ();
+			return options;
 		}
 
 		// **********************************
@@ -180,22 +205,33 @@ namespace Mono.Data.SybaseTypes {
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode() 
 		{
-			throw new NotImplementedException ();
+			int result = 10;
+			for (int i = 0; i < value.Length; i += 1)
+				result = 91 * result + (int) (value [i] ^ (value [i] >> 32));
+			result = 91 * result + LCID.GetHashCode ();
+			result = 91 * result + (int) compareOptions;
+			return result;
 		}
 
-		[MonoTODO]
 		public byte[] GetNonUnicodeBytes() 
 		{
-			throw new NotImplementedException ();
+			return GetBytes (new ASCIIEncoding ());
 		}
 
-		[MonoTODO]
 		public byte[] GetUnicodeBytes() 
 		{
-			throw new NotImplementedException ();
+			return GetBytes (new UnicodeEncoding ());
+		}
+
+		private byte[] GetBytes (Encoding encoding)
+		{
+			int blen = encoding.GetByteCount (value);
+			int clen = value.Length;
+			byte[] bytes = new byte [blen];
+			encoding.GetBytes (value, 0, clen, bytes, 0);
+			return bytes;
 		}
 
 		public static SybaseBoolean GreaterThan(SybaseString x, SybaseString y) 

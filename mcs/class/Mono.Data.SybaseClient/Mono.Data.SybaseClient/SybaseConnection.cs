@@ -5,7 +5,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //
-// Copyright (C) Tim Coleman, 2002, 2003
+// Copyright (C) Tim Coleman, 2002-2003
 // Copyright (C) Daniel Morgan, 2003
 //
 
@@ -48,7 +48,7 @@ namespace Mono.Data.SybaseClient {
 		int minPoolSize;
 		int maxPoolSize;
 		int packetSize;
-		int port = 1533;
+		int port = 2048;
 
 		// The current state
 		ConnectionState state = ConnectionState.Closed;
@@ -286,7 +286,7 @@ namespace Mono.Data.SybaseClient {
 		public void Open () 
 		{
 			string serverName = "";
-			if (connectionString == null)
+			if (connectionString == null || connectionString.Equals (""))
 				throw new InvalidOperationException ("Connection string has not been initialized.");
 
 			try {
@@ -325,7 +325,7 @@ namespace Mono.Data.SybaseClient {
 		private void ParseDataSource (string theDataSource, out int thePort, out string theServerName) 
 		{
 			theServerName = "";
-			thePort = 1433; // default TCP port for SQL Server
+			thePort = 2048; 
                         			
 			int idx = 0;
 			if ((idx = theDataSource.IndexOf (",")) > -1) {
@@ -338,174 +338,187 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-                void SetConnectionString (string connectionString)
-                {
-                        connectionString += ";";
-                        NameValueCollection parameters = new NameValueCollection ();
+		private string ParseValue (string name, string value)
+		{
+			if (name.Length == 0 && value.Length > 0)
+				throw new ArgumentException ("Expected '=' delimiter while parsing connection value pair.");
+			if (name.Length > 0)
+				return value.Trim ();
+			return String.Empty;
+		}
 
-                        if (connectionString == String.Empty)
-                                return;
+		private void SetConnectionString (string connectionString)
+		{
+			if (connectionString == String.Empty) {
+				this.connectionString = connectionString;
+				return;
+			}
 
-                        bool inQuote = false;
-                        bool inDQuote = false;
+			NameValueCollection parameters = new NameValueCollection ();
 
-                        string name = String.Empty;
-                        string value = String.Empty;
-                        StringBuilder sb = new StringBuilder ();
+			string name = String.Empty;
+			string value = String.Empty;
+			StringBuilder sb = new StringBuilder ();
 
-                        foreach (char c in connectionString)
-                        {
-                                switch (c) {
-                                case '\'':
-                                        inQuote = !inQuote;
-                                        break;
-                                case '"' :
-                                        inDQuote = !inDQuote;
-                                        break;
-                                case ';' :
-                                        if (!inDQuote && !inQuote) {
-						if (name != String.Empty && name != null) {
-                                                	value = sb.ToString ();
-                                                	parameters [name.ToUpper ().Trim ()] = value.Trim ();
-						}
-                                                name = String.Empty;
-                                                value = String.Empty;
-                                                sb = new StringBuilder ();
-                                        }
-                                        else
-                                                sb.Append (c);
-                                        break;
-                                case '=' :
-                                        if (!inDQuote && !inQuote) {
-                                                name = sb.ToString ();
-                                                sb = new StringBuilder ();
-                                        }
-                                        else
-                                                sb.Append (c);
-                                        break;
-                                default:
-                                        sb.Append (c);
-                                        break;
-                                }
-                        }
+			char delimiter = '\0';
 
-                        if (this.ConnectionString == null)
-                        {
-                                SetDefaultConnectionParameters (parameters);
-                        }
+			foreach (char c in connectionString) {
+				switch (c) {
+				case '\'' :
+				case '"' :
+					if (delimiter.Equals (c))
+						delimiter = '\0';
+					else if (delimiter.Equals ('\0'))
+						delimiter = c;
+					else
+						sb.Append (c);
+					break;
+				case ';' :
+					if (delimiter.Equals ('\0')) {
+						value = ParseValue (name, sb.ToString ());
+						if (!value.Equals ("")) 
+							parameters [name.ToUpper ().Trim ()] = value;
+						name = String.Empty;
+						sb = new StringBuilder ();
+					} 
+					else
+						sb.Append (c);
+					break;
+				case '=' :
+					if (delimiter.Equals ('\0')) {
+						name = sb.ToString ();
+						sb = new StringBuilder ();
+					}
+					else
+						sb.Append (c);
+					break;
+				default:
+					sb.Append (c);
+					break;
+				}
+			}
 
-                        SetProperties (parameters);
+			if (!delimiter.Equals ('\0'))
+				throw new ArgumentException (String.Format ("Matching end delimiter {0} not found in connection option value.", delimiter));
 
-                        this.connectionString = connectionString;
-                }
+			value = ParseValue (name, sb.ToString ());
+			if (!value.Equals (""))
+				parameters [name.ToUpper ().Trim ()] = value;
 
-                void SetDefaultConnectionParameters (NameValueCollection parameters)
-                {
-                        if (null == parameters.Get ("APPLICATION NAME"))
-                                parameters["APPLICATION NAME"] = ".Net SybaseClient Data Provider";
-                        if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
-                                parameters["CONNECT TIMEOUT"] = "15";
-                        if (null == parameters.Get ("CONNECTION LIFETIME"))
-                                parameters["CONNECTION LIFETIME"] = "0";
-                        if (null == parameters.Get ("CONNECTION RESET"))
-                                parameters["CONNECTION RESET"] = "true";
-                        if (null == parameters.Get ("ENLIST"))
-                                parameters["ENLIST"] = "true";
-                        if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
-                                parameters["INTEGRATED SECURITY"] = "false";
-                        if (null == parameters.Get ("MAX POOL SIZE"))
-                                parameters["MAX POOL SIZE"] = "100";
-                        if (null == parameters.Get ("MIN POOL SIZE"))
-                                parameters["MIN POOL SIZE"] = "0";
-                        if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
-                                parameters["NETWORK LIBRARY"] = "dbmssocn";
-                        if (null == parameters.Get ("PACKET SIZE"))
-                                parameters["PACKET SIZE"] = "512";
-                        if (null == parameters.Get ("PERSIST SECURITY INFO"))
-                                parameters["PERSIST SECURITY INFO"] = "false";
-                        if (null == parameters.Get ("POOLING"))
-                                parameters["POOLING"] = "true";
-                        if (null == parameters.Get ("WORKSTATION ID"))
-                                parameters["WORKSTATION ID"] = Dns.GetHostByName ("localhost").HostName;
-                }
+			if (this.ConnectionString == null)
+				SetDefaultConnectionParameters (parameters);
 
-                private void SetProperties (NameValueCollection parameters)
-                {
-                        string value;
-                        foreach (string name in parameters) {
-                                value = parameters[name];
+			SetProperties (parameters);
 
-                                switch (name) {
-                                case "APPLICATION NAME" :
-                                        parms.ApplicationName = value;
-                                        break;
-                                case "ATTACHDBFILENAME" :
-                                case "EXTENDED PROPERTIES" :
-                                case "INITIAL FILE NAME" :
-                                        break;
-                                case "CONNECT TIMEOUT" :
-                                case "CONNECTION TIMEOUT" :
-                                        connectionTimeout = Int32.Parse (value);
-                                        break;
-                                case "CONNECTION LIFETIME" :
-                                        break;
-                                case "CONNECTION RESET" :
-                                        connectionReset = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
-                                        break;
-                                case "CURRENT LANGUAGE" :
-                                        parms.Language = value;
-                                        break;
-                                case "DATA SOURCE" :
-                                case "SERVER" :
-                                case "ADDRESS" :
-                                case "ADDR" :
-                                case "NETWORK ADDRESS" :
-                                        dataSource = value;
-                                        break;
-                                case "ENLIST" :
-                                        break;
-                                case "INITIAL CATALOG" :
-                                case "DATABASE" :
-                                        parms.Database = value;
-                                        break;
-                                case "INTEGRATED SECURITY" :
-                                case "TRUSTED_CONNECTION" :
-                                        break;
-                                case "MAX POOL SIZE" :
-                                        maxPoolSize = Int32.Parse (value);
-                                        break;
-                                case "MIN POOL SIZE" :
-                                        minPoolSize = Int32.Parse (value);
-                                        break;
-                                case "NET" :
-                                case "NETWORK LIBRARY" :
-                                        if (!value.ToUpper ().Equals ("DBMSSOCN"))
-                                                throw new ArgumentException ("Unsupported network library.");
-                                        break;
-                                case "PACKET SIZE" :
-                                        packetSize = Int32.Parse (value);
-                                        break;
-                                case "PASSWORD" :
-                                case "PWD" :
-                                        parms.Password = value;
-                                        break;
-                                case "PERSIST SECURITY INFO" :
-                                        break;
-                                case "POOLING" :
-                                        pooling = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
-                                        break;
-                                case "USER ID" :
-                                        parms.User = value;
-                                        break;
-                                case "WORKSTATION ID" :
-                                        parms.Hostname = value;
-                                        break;
-                                }
+			this.connectionString = connectionString;
+		}
+
+		private void SetDefaultConnectionParameters (NameValueCollection parameters)
+		{
+			if (null == parameters.Get ("APPLICATION NAME"))
+				parameters["APPLICATION NAME"] = "Mono SybaseClient Data Provider";
+			if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
+				parameters["CONNECT TIMEOUT"] = "15";
+			if (null == parameters.Get ("CONNECTION LIFETIME"))
+				parameters["CONNECTION LIFETIME"] = "0";
+			if (null == parameters.Get ("CONNECTION RESET"))
+				parameters["CONNECTION RESET"] = "true";
+			if (null == parameters.Get ("ENLIST"))
+				parameters["ENLIST"] = "true";
+			if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
+				parameters["INTEGRATED SECURITY"] = "false";
+			if (null == parameters.Get ("MAX POOL SIZE"))
+				parameters["MAX POOL SIZE"] = "100";
+			if (null == parameters.Get ("MIN POOL SIZE"))
+				parameters["MIN POOL SIZE"] = "0";
+			if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
+				parameters["NETWORK LIBRARY"] = "dbmssocn";
+			if (null == parameters.Get ("PACKET SIZE"))
+				parameters["PACKET SIZE"] = "512";
+			if (null == parameters.Get ("PERSIST SECURITY INFO"))
+				parameters["PERSIST SECURITY INFO"] = "false";
+			if (null == parameters.Get ("POOLING"))
+				parameters["POOLING"] = "true";
+			if (null == parameters.Get ("WORKSTATION ID"))
+				parameters["WORKSTATION ID"] = Dns.GetHostByName ("localhost").HostName;
+		}
+
+		private void SetProperties (NameValueCollection parameters)
+		{
+			string value;
+			foreach (string name in parameters) {
+				value = parameters [name];
+
+				switch (name) {
+				case "APPLICATION NAME" :
+					parms.ApplicationName = value;
+					break;
+				case "ATTACHDBFILENAME" :
+				case "EXTENDED PROPERTIES" :
+				case "INITIAL FILE NAME" :
+					break;
+				case "CONNECT TIMEOUT" :
+				case "CONNECTION TIMEOUT" :
+					connectionTimeout = Int32.Parse (value);
+					break;
+				case "CONNECTION LIFETIME" :
+					break;
+				case "CONNECTION RESET" :
+					connectionReset = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
+					break;
+				case "CURRENT LANGUAGE" :
+					parms.Language = value;
+					break;
+				case "DATA SOURCE" :
+				case "SERVER" :
+				case "ADDRESS" :
+				case "ADDR" :
+				case "NETWORK ADDRESS" :
+					dataSource = value;
+					break;
+				case "ENLIST" :
+					break;
+				case "INITIAL CATALOG" :
+				case "DATABASE" :
+					parms.Database = value;
+					break;
+				case "INTEGRATED SECURITY" :
+				case "TRUSTED_CONNECTION" :
+					break;
+				case "MAX POOL SIZE" :
+					maxPoolSize = Int32.Parse (value);
+					break;
+				case "MIN POOL SIZE" :
+					minPoolSize = Int32.Parse (value);
+					break;
+				case "NET" :
+				case "NETWORK LIBRARY" :
+					if (!value.ToUpper ().Equals ("DBMSSOCN"))
+						throw new ArgumentException ("Unsupported network library.");
+					break;
+				case "PACKET SIZE" :
+					packetSize = Int32.Parse (value);
+					break;
+				case "PASSWORD" :
+				case "PWD" :
+					parms.Password = value;
+					break;
+				case "PERSIST SECURITY INFO" :
+					break;
+				case "POOLING" :
+					pooling = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
+					break;
+				case "USER ID" :
+					parms.User = value;
+					break;
+				case "WORKSTATION ID" :
+					parms.Hostname = value;
+					break;
+				}
 			}
 		}
 
-
-		static bool IsValidDatabaseName (string database)
+		private static bool IsValidDatabaseName (string database)
 		{
 			if (database.Length > 32 || database.Length < 1)
 				return false;

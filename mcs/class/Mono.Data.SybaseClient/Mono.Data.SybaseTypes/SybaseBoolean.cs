@@ -4,12 +4,15 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// (C) Copyright Tim Coleman, 2002
+// Based on System.Data.SqlTypes.SqlBoolean
+//
+// (C) Ximian, Inc. 2002-2003
+// (C) Copyright Tim Coleman, 2002-2003
 //
 
 using Mono.Data.SybaseClient;
 using System;
-using System.Data.SqlTypes;
+using System.Data.SqlTypes; 
 using System.Globalization;
 
 namespace Mono.Data.SybaseTypes {

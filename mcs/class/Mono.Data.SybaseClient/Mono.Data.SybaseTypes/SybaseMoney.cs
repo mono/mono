@@ -4,7 +4,10 @@
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
 //
-// (C) Copyright 2002 Tim Coleman
+// Based on System.Data.SqlTypes.SqlMoney
+//
+// (C) Ximian, Inc. 2002-2003
+// (C) Copyright Tim Coleman, 2002-2003
 //
 
 using Mono.Data.SybaseClient;
@@ -58,7 +61,6 @@ namespace Mono.Data.SybaseTypes {
 
 		#region Properties
 
-		[MonoTODO]
 		public bool IsNull { 
 			get { return !notNull; }
 		}
