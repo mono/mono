@@ -1,5 +1,17 @@
 2003-07-26  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Indexers.Indexer): New nested struct; contains
+	getter, setter and the indexer's type.
+	(Indexers.Properties): This is now an ArrayList of
+	Indexers.Indexer's.
+	(IndexerAccess.DoResolveLValue): Correctly set the type if the
+	indexer doesn't have any getters.
+
+	* assign.cs (Assign.DoResolve): Also do the implicit conversions
+	for embedded property and indexer assignments.
+
+2003-07-26  Martin Baulig  <martin@ximian.com>
+
 	* cs-tokenizer.cs (Tokenizer.xtoken): Report a CS1040 if a
 	preprocessor directive is not the first non-whitespace character
 	on a line.

@@ -216,33 +216,6 @@ namespace Mono.CSharp {
 				type = target_type;
 			eclass = ExprClass.Value;
 
-			//
-			// If we are doing a property assignment, then
-			// set the `value' field on the property, and Resolve
-			// it.
-			//
-			if (target is PropertyExpr){
-				PropertyExpr property_assign = (PropertyExpr) target;
-
-				if (source_type != target_type){
-					source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
-					if (source == null)
-						return null;
-				}
-
-				//
-				// FIXME: Maybe handle this in the LValueResolve
-				//
-				if (!property_assign.VerifyAssignable ())
-					return null;
-
-				return this;
-			}
-
-			if (target is IndexerAccess) {
-				return this;
-			}
-
 			if (target is EventExpr) {
 				EventInfo ei = ((EventExpr) target).EventInfo;
 
@@ -276,7 +249,8 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (source is New && target_type.IsValueType){
+			if (source is New && target_type.IsValueType &&
+			    (target.eclass != ExprClass.IndexerAccess) && (target.eclass != ExprClass.PropertyAccess)){
 				New n = (New) source;
 
 				if (n.SetValueTypeVariable (target))
@@ -285,7 +259,8 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
+			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess &&
+			    target.eclass != ExprClass.IndexerAccess && target.eclass != ExprClass.PropertyAccess){
 				Report.Error (131, loc,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");

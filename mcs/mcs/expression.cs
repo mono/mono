@@ -7375,8 +7375,20 @@ namespace Mono.CSharp {
 
 	
 	class Indexers {
-		public ArrayList properties;
+		public ArrayList Properties;
 		static Hashtable map;
+
+		public struct Indexer {
+			public readonly Type Type;
+			public readonly MethodInfo Getter, Setter;
+
+			public Indexer (Type type, MethodInfo get, MethodInfo set)
+			{
+				this.Type = type;
+				this.Getter = get;
+				this.Setter = set;
+			}
+		}
 
 		static Indexers ()
 		{
@@ -7385,7 +7397,7 @@ namespace Mono.CSharp {
 
 		Indexers ()
 		{
-			properties = new ArrayList ();
+			Properties = new ArrayList ();
 		}
 				
 		void Append (MemberInfo [] mi)
@@ -7395,7 +7407,7 @@ namespace Mono.CSharp {
 				
 				get = property.GetGetMethod (true);
 				set = property.GetSetMethod (true);
-				properties.Add (new Pair (get, set));
+				Properties.Add (new Indexer (property.PropertyType, get, set));
 			}
 		}
 
@@ -7513,10 +7525,10 @@ namespace Mono.CSharp {
 			ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
 			if (ilist != null) {
 				found_any = true;
-				if (ilist.properties != null) {
-					foreach (Pair o in ilist.properties) {
-						if (o.First != null)
-							AllGetters.Add(o.First);
+				if (ilist.Properties != null) {
+					foreach (Indexers.Indexer ix in ilist.Properties) {
+						if (ix.Getter != null)
+							AllGetters.Add(ix.Getter);
 					}
 				}
 			}
@@ -7577,10 +7589,10 @@ namespace Mono.CSharp {
 			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type, loc);
 			if (ilist != null) {
 				found_any = true;
-				if (ilist.properties != null) {
-					foreach (Pair o in ilist.properties) {
-						if (o.Second != null)
-							AllSetters.Add(o.Second);
+				if (ilist.Properties != null) {
+					foreach (Indexers.Indexer ix in ilist.Properties) {
+						if (ix.Setter != null)
+							AllSetters.Add(ix.Setter);
 					}
 				}
 			}
@@ -7624,10 +7636,9 @@ namespace Mono.CSharp {
 			// Now look for the actual match in the list of indexers to set our "return" type
 			//
 			type = TypeManager.void_type;	// default value
-			foreach (Pair t in ilist.properties){
-				if (t.Second == set){
-					if (t.First != null)
-						type = ((MethodInfo) t.First).ReturnType;
+			foreach (Indexers.Indexer ix in ilist.Properties){
+				if (ix.Setter == set){
+					type = ix.Type;
 					break;
 				}
 			}
