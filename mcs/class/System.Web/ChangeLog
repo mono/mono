@@ -1,3 +1,11 @@
+2002-04-10  Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* System.Web -- Assembly build.
+	
+	  The basic runtime support is now working, we can now start working
+	  on the runtime flow system (thread pool etc) and also start testing
+	  the parser and control framework. (224 files are compiled)
+
 2002-03-26  Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* System.Web.Security: Removed all files. Will do it later.
