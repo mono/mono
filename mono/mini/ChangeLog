@@ -1,3 +1,9 @@
+
+Fri Dec 19 17:58:28 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-g4.md, mini-ppc.c, exceptions-ppc.c, mini-ppc.h:
+	initial support for stack walking and unwinding.
+
 2003-12-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c (mono_main): Make corlib-out-of-sync message more 
