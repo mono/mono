@@ -21,7 +21,7 @@ using System.Collections;
 namespace System.Web.SessionState
 {
 	// Container object, containing the current session state and when it was last accessed.
-	public class SessionContainer
+	internal class SessionContainer
 	{
 		private HttpSessionState _state;
 		private long _last_access;
@@ -54,7 +54,7 @@ namespace System.Web.SessionState
 	}
 
 
-	public class SessionInProcHandler : ISessionHandler
+	internal class SessionInProcHandler : ISessionHandler
 	{
 		protected Hashtable _sessionTable;
 		const string COOKIE_NAME = "ASPSESSION"; // The name of the cookie.
