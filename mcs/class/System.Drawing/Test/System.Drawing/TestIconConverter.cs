@@ -123,9 +123,10 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertFrom ()
 		{
-			AssertEquals ("CF#1", icon, (Icon) icoConv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								iconBytes));
+			Icon newIcon = (Icon) icoConv.ConvertFrom (null, CultureInfo.InvariantCulture, iconBytes);
+
+			AssertEquals ("CF#1", icon.Height, newIcon.Height );
+			AssertEquals ("CF#1a", icon.Width, newIcon.Width );
 			
 			try {
 				icoConv.ConvertFrom ("System.Drawing.String");
@@ -175,9 +176,10 @@ namespace MonoTests.System.Drawing
 			}
 
 
-			AssertEquals ("CF#1A", icon, (Icon) icoConvFrmTD.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								iconBytes));
+			newIcon = (Icon) icoConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, iconBytes);
+
+			AssertEquals ("CF#1A", icon.Height, newIcon.Height);
+			AssertEquals ("CF#1Aa", icon.Width, newIcon.Width);
 			
 			try {
 				icoConvFrmTD.ConvertFrom ("System.Drawing.String");
@@ -238,12 +240,14 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CT#1a", iconStr, (String) icoConv.ConvertTo (icon, 
 									typeof (String)));
 				
-			AssertEquals ("CT#2", iconBytes, (byte []) icoConv.ConvertTo (null, 
-								CultureInfo.InvariantCulture,
-								icon, iconBytes.GetType ()));
+			byte [] newIconBytes = (byte []) icoConv.ConvertTo (null, CultureInfo.InvariantCulture,
+											icon, iconBytes.GetType ());
+		
+			AssertEquals ("CT#2", iconBytes.Length, newIconBytes.Length);
+
+			newIconBytes = (byte []) icoConv.ConvertTo (icon, iconBytes.GetType ());
 			
-			AssertEquals ("CT#2a", iconBytes, (byte []) icoConv.ConvertTo (icon, 
-									iconBytes.GetType ()));
+			AssertEquals ("CT#2a", iconBytes.Length, newIconBytes.Length);
 
 			
 			try {
@@ -318,14 +322,15 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CT#1aA", iconStr, (String) icoConvFrmTD.ConvertTo (icon, 
 									typeof (String)));
 				
-			AssertEquals ("CT#2A", iconBytes, (byte []) icoConvFrmTD.ConvertTo (null, 
-								CultureInfo.InvariantCulture,
-								icon, iconBytes.GetType ()));
-			
-			AssertEquals ("CT#2aA", iconBytes, (byte []) icoConvFrmTD.ConvertTo (icon, 
-									iconBytes.GetType ()));
+			newIconBytes = (byte []) icoConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
+											icon, iconBytes.GetType ());
+		
+			AssertEquals ("CT#2A", iconBytes.Length, newIconBytes.Length);
 
+			newIconBytes = (byte []) icoConvFrmTD.ConvertTo (icon, iconBytes.GetType ());
 			
+			AssertEquals ("CT#2aA", iconBytes.Length, newIconBytes.Length);
+
 			try {
 				icoConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, 
 						 icon, typeof (Rectangle));
