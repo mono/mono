@@ -1,5 +1,18 @@
 2003-07-08  Martin Baulig  <martin@ximian.com>
 
+	Rewrote the handling of namespaces to fix a lot of the issues
+	wrt. `using' aliases etc.
+
+	* namespace.cs (Namespace): Splitted this class into a
+	per-assembly `Namespace' and a per-file `NamespaceEntry'.
+
+	* typemanager.cs (TypeManager.IsNamespace): Removed.
+	(TypeManager.ComputeNamespaces): Only compute namespaces from
+	loaded assemblies here, not the namespaces from the assembly we're
+	currently compiling.
+
+2003-07-08  Martin Baulig  <martin@ximian.com>
+
 	* rootcontext.cs, class.cs: Fixed the CS1530 reporting.
 
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>

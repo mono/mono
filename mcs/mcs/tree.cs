@@ -65,15 +65,15 @@ namespace Mono.CSharp
 			decls.Add (name, ds);
 		}
 		
-		public Namespace RecordNamespace (Namespace parent, SourceFile file, string name)
+		public NamespaceEntry RecordNamespace (NamespaceEntry parent, SourceFile file, string name)
 		{
-			Namespace ns = new Namespace (parent, file, name);
+			NamespaceEntry ns = new NamespaceEntry (parent, file, name);
 
 			if (namespaces.Contains (file)){
 				Hashtable ns_ns = (Hashtable) namespaces [file];
 
 				if (ns_ns.Contains (ns.Name))
-					return (Namespace) ns_ns [ns.Name];
+					return (NamespaceEntry) ns_ns [ns.Name];
 				ns_ns.Add (ns.Name, ns);
 			} else {
 				Hashtable new_table = new Hashtable ();

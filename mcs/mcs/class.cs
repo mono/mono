@@ -797,7 +797,7 @@ namespace Mono.CSharp {
 
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
-				if (TypeManager.NamespaceClash (Name))
+				if (TypeManager.NamespaceClash (Name, Location))
 					return null;
 				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;

@@ -280,7 +280,7 @@ namespace Mono.CSharp {
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
 		//
-		public Namespace Namespace;
+		public NamespaceEntry Namespace;
 
 		public Hashtable Cache = new Hashtable ();
 		
@@ -703,7 +703,7 @@ namespace Mono.CSharp {
 			// namespaces
 			//
 
-			for (Namespace ns = Namespace; ns != null; ns = ns.Parent){
+			for (NamespaceEntry ns = Namespace; ns != null; ns = ns.Parent){
 
 				t = LookupInterfaceOrClass (ns.Name, name, out error);
 				if (error)
@@ -715,14 +715,9 @@ namespace Mono.CSharp {
 				//
 				// Now check the using clause list
 				//
-				ArrayList using_list = ns.UsingTable;
-				
-				if (using_list == null)
-					continue;
-
 				Type match = null;
-				foreach (Namespace.UsingEntry ue in using_list){
-					match = LookupInterfaceOrClass (ue.Name, name, out error);
+				foreach (Namespace using_ns in ns.GetUsingTable ()) {
+					match = LookupInterfaceOrClass (using_ns.Name, name, out error);
 					if (error)
 						return null;
 

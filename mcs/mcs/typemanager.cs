@@ -603,31 +603,6 @@ public class TypeManager {
 		return t;
 	}
 
-	//
-	// UNUSED: This version tries to reduce the impact of calling LookupType by validating if
-	// UNUSED: the namespace exists
-	//
-	public static Type xLookupType (string ns, string name, out string res)
-	{
-		// CURRENTLY UNUSED
-		// CURRENTLY UNUSED
-		// CURRENTLY UNUSED
-		// CURRENTLY UNUSED
-		
-		if (!IsNamespace (ns)){
-			res = null;
-			return null;
-		}
-
-		res = DeclSpace.MakeFQN (ns, name);
-		return LookupType (res);
-		// CURRENTLY UNUSED
-		// CURRENTLY UNUSED
-		// CURRENTLY UNUSED
-		// CURRENTLY UNUSED
-		// CURRENTLY UNUSED
-	}
-
 	/// <summary>
 	///   Returns the Type associated with @name, takes care of the fact that
 	///   reflection expects nested types to be separated from the main type
@@ -693,24 +668,6 @@ public class TypeManager {
 		return null;
 	}
 
-	// Total list of known namespaces for the compilation 
-	static string [] namespaces;
-
-	static Hashtable AddModuleNamespaces (Hashtable h)
-	{
-		foreach (ModuleBuilder mb in modules){
-			foreach (Type t in mb.GetTypes ()){
-				string ns = t.Namespace;
-
-				if (h.Contains (ns))
-					continue;
-				h [ns] = ns;
-			}
-		}
-		return h;
-	}
-	
-	
 	/// <summary>
 	///   Computes the namespaces that we import from the assemblies we reference.
 	/// </summary>
@@ -721,7 +678,6 @@ public class TypeManager {
 		//
 		// First add the assembly namespaces
 		//
-		Hashtable namespaces_hash = new Hashtable ();
 		if (assembly_get_namespaces != null){
 			int count = assemblies.Length;
 			int total;
@@ -732,9 +688,7 @@ public class TypeManager {
 				foreach (string ns in namespaces){
 					if (ns == "")
 						continue;
-					if (namespaces_hash.Contains (ns))
-						continue;
-					namespaces_hash [ns] = true;
+					Namespace.LookupNamespace (ns, true);
 				}
 			}
 		} else {
@@ -745,72 +699,18 @@ public class TypeManager {
 					// t.Namespace returns null for <PrivateImplDetails>
 					if (ns == ""|| ns == null)
 						continue;
-					if (namespaces_hash.Contains (ns))
-						continue;
-					namespaces_hash [ns] = true;
+					Namespace.LookupNamespace (ns, true);
 				}
 			}
 		}
-		//
-		// Now insert all the namespaces defined by the application
-		//
-		StringBuilder s = null;
-		foreach (Namespace ns in Namespace.UserDefinedNamespaces){
-			string name = ns.Name;
-			if (name == "")
-				continue;
-			if (name == null)
-				throw new Exception ();
-			if (namespaces_hash.Contains (name))
-				continue;
-			
-			if (name.IndexOf ('.') != -1){
-				if (s == null)
-					s = new StringBuilder ();
-				string [] pieces = name.Split ('.');
-				for (int i = 1; i < pieces.Length; i++){
-					s.Length = 0;
-				
-					s.Append (pieces [0]);
-					for (int j = 1; j < i; j++){
-						s.Append (".");
-						s.Append (pieces [j]);
-					}
-					string n = s.ToString ();
-					if (namespaces_hash.Contains (n))
-						continue;
-					namespaces_hash [n] = true;
-				}
-			}
-			
-			namespaces_hash [name] = true;
-		}
-
-		//
-		// Store it sorted
-		//
-		int idx = 0;
-		TypeManager.namespaces = new string [namespaces_hash.Count];
-		foreach (string ns in namespaces_hash.Keys){
-			namespaces [idx++] = ns;
-		}
-		Array.Sort (namespaces);
 	}
 
-	public static bool IsNamespace (string name)
+	public static bool NamespaceClash (string name, Location loc)
 	{
-		if (Array.BinarySearch (namespaces, name) < 0)
-			return false;
-		
-		return true;
-	}
-
-	public static bool NamespaceClash (string name)
-	{
-		if (Array.BinarySearch (namespaces, name) < 0)
+		if (Namespace.LookupNamespace (name, false) == null)
 			return false;
 
-		Report.Error (519, String.Format ("`{0}' clashes with a predefined namespace", name));
+		Report.Error (519, loc, String.Format ("`{0}' clashes with a predefined namespace", name));
 		return true;
 	}
 

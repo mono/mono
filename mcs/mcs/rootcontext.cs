@@ -151,8 +151,7 @@ namespace Mono.CSharp {
 					i.DefineType ();
 			}
 
-			
-			foreach (TypeContainer tc in root.Types) 
+			foreach (TypeContainer tc in root.Types)
 				tc.DefineType ();
 
 			if (root.Delegates != null)
@@ -460,10 +459,10 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (Namespace curr_ns, string name, Location loc)
+		static Type NamespaceLookup (NamespaceEntry curr_ns, string name, Location loc)
 		{
 			Type t;
-			
+
 			//
 			// Try in the current namespace and all its implicit parents
 			//
@@ -496,7 +495,7 @@ namespace Mono.CSharp {
 					return t;
 			}
 			
-			for (Namespace ns = curr_ns; ns != null; ns = ns.Parent) {
+			for (NamespaceEntry ns = curr_ns; ns != null; ns = ns.Parent) {
 				//
 				// Look in the namespace ns
 				//
@@ -507,23 +506,20 @@ namespace Mono.CSharp {
 				//
 				// Then try with the using clauses
 				//
-				ArrayList using_list = ns.UsingTable;
-
-				if (using_list == null)
-					continue;
-
 				Type match = null;
-				foreach (Namespace.UsingEntry ue in using_list) {
-					match = TypeManager.LookupType (MakeFQN (ue.Name, name));
+				foreach (Namespace using_ns in ns.GetUsingTable ()) {
+					string full_name = DeclSpace.MakeFQN (using_ns.Name, name);
+					match = TypeManager.LookupType (full_name);
 					if (match != null){
 						if (t != null){
 							DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
 							return null;
 						}
-						
+
 						t = match;
 					}
 				}
+
 				if (t != null)
 					return t;
 
@@ -775,7 +771,7 @@ namespace Mono.CSharp {
 					dummy, Mono.CSharp.Location.Null, null, null, 0, false);
 			
 				foreach (DictionaryEntry de in global_attributes){
-					Namespace ns = (Namespace) de.Key;
+					NamespaceEntry ns = (NamespaceEntry) de.Key;
 					Attributes attrs = (Attributes) de.Value;
 					
 					dummy.Namespace = ns;
@@ -870,7 +866,7 @@ namespace Mono.CSharp {
 		//
 		static public void AddGlobalAttributeSection (TypeContainer container, AttributeSection attr)
 		{
-			Namespace ns = container.Namespace;
+			NamespaceEntry ns = container.Namespace;
 			Attributes a = (Attributes) global_attributes [ns];
 
 			if (a == null)
