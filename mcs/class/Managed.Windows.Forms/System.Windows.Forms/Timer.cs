@@ -117,6 +117,7 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing)
 		{
+			base.Dispose (disposing);
 			Enabled = false;
 		}
 

@@ -1539,7 +1539,58 @@ namespace System.Windows.Forms {
 		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
 		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
 		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, uint background);
-		#endregion
+
+		// Keyboard
+
+		[StructLayout (LayoutKind.Sequential)]
+		internal struct XKeyBoardState {
+			int key_click_percent;
+			int bell_percent;
+			uint bell_pitch, bell_duration;
+			uint led_mask;
+			int global_auto_repeat;
+			AutoRepeats auto_repeats;
+
+			[StructLayout (LayoutKind.Explicit)]
+			struct AutoRepeats {
+				[FieldOffset (0)]
+					byte first;
+				
+				[FieldOffset (31)]
+				byte last;
+			}
+		}
+		
+		[DllImport ("libX11", EntryPoint="XGetKeyboardControl")]
+		internal extern static int XGetKeyboardControl (IntPtr display, out XKeyBoardState state);
+
+		internal override int KeyboardSpeed {
+			get {
+				//
+				// A lot harder: need to do:
+				// XkbQueryExtension(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)       = 1
+				// XkbAllocKeyboard(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)        = 0x080517a8
+				// XkbGetControls(0x08051008, 1, 0x080517a8, 0xbfffdf54, 0xbfffdf58)                   = 0
+				//
+				// And from that we can tell the repetition rate
+				//
+				// Notice, the values must map to:
+				//   [0, 31] which maps to 2.5 to 30 repetitions per second.
+				//
+				return 0;
+			}
+		}
+
+		internal override int KeyboardDelay {
+			get {
+				//
+				// Return values must range from 0 to 4, 0 meaning 250ms,
+				// and 4 meaning 1000 ms.
+				//
+				return 1; // ie, 500 ms
+			}
+		}
+#endregion
 
 	}
 }

@@ -392,6 +392,18 @@ namespace System.Windows.Forms {
 			driver.KillTimer (timer);
 		}
 
+		internal static int KeyboardSpeed {
+			get {
+				return driver.KeyboardSpeed;
+			}
+		}
+
+		internal static int KeyboardDelay {
+			get {
+				return driver.KeyboardSpeed;
+			}
+		}
+		
 		// Santa's little helper
 		internal static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());

@@ -1,3 +1,22 @@
+2004-11-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* NumericUpDown.cs: Added new implementation.
+	* UpDownBase.cs: Added new implementation.
+	
+	* XplatUIWin32.cs (KeyboardSpeed, KeyboardDelay): added default
+	implementations. 
+	
+	* XplatUIX11.cs (KeyboardSpeed, KeyboardDelay): added default
+	implementations. 
+
+	* XplatUIDriver.cs ((KeyboardSpeed, KeyboardDelay): added new
+	methods. 
+
+2004-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* Timer.cs  (Dispose): Should call the base dispose when
+	overriding. 
+
 2004-11-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ScrollBar.cs: updates thumb position when max, min or increment

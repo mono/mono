@@ -550,34 +550,48 @@ namespace System.Windows.Forms
 			#endregion // ControlCollection Public Instance Properties
 			
 			#region	ControlCollection Private Instance Methods
-			public virtual void Add(Control value) {
-				for (int i=0; i<list.Count; i++) {
-					if (list[i]==value) {
+			public virtual void Add (Control value)
+			{
+				
+				for (int i = 0; i < list.Count; i++) {
+					if (list [i] == value) {
 						// Do we need to do anything here?
 						return;
 					}
 				}
-				list.Add(value);
-				value.Parent=owner;
+				list.Add (value);
+				value.Parent = owner;
 			}
 			
-			public virtual void AddRange(Control[] controls) {
-				for (int i=0; i<controls.Length; i++) {
-					Add(controls[i]);
+			public virtual void AddRange (Control[] controls)
+			{
+				if (controls == null)
+					throw new ArgumentNullException ("controls");
+
+				owner.SuspendLayout ();
+
+				try {
+					for (int i = 0; i < controls.Length; i++) 
+						Add (controls[i]);
+				} finally {
+					owner.ResumeLayout ();
 				}
 			}
 
-			public virtual void Clear() {
+			public virtual void Clear ()
+			{
 				owner.SuspendLayout();
 				list.Clear();
 				owner.ResumeLayout();
 			}
 
-			public virtual bool Contains(Control value) {
-				return list.Contains(value);
+			public virtual bool Contains (Control value)
+			{
+				return list.Contains (value);
 			}
 
-			public void CopyTo(Array array, int index) {
+			public void CopyTo (Array array, int index)
+			{
 				list.CopyTo(array, index);
 			}
 

@@ -228,7 +228,11 @@ namespace System.Windows.Forms {
 		internal abstract void SetTimer (Timer timer);
 		internal abstract void KillTimer (Timer timer);
 
+		// System information
 
+		internal abstract int KeyboardSpeed { get; } 
+		internal abstract int KeyboardDelay { get; } 
+		
 #endregion	// XplatUI Driver Methods
 	}
 }

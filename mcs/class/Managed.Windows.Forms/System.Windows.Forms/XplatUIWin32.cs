@@ -1090,6 +1090,29 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override int KeyboardSpeed {
+			get {
+				Console.WriteLine ("KeyboardSpeed: need to query Windows");
+
+				//
+				// Return values range from 0 to 31 which map to 2.5 to 30 repetitions per second.
+				//
+				return 0;
+			}
+		}
+
+		internal override int KeyboardDelay {
+			get {
+				Console.WriteLine ("KeyboardDelay: need to query Windows");
+
+				//
+				// Return values must range from 0 to 4, 0 meaning 250ms,
+				// and 4 meaning 1000 ms.
+				//
+				return 1;
+			}
+		}
+		
 		internal override event EventHandler Idle;
 
 		// Santa's little helper
