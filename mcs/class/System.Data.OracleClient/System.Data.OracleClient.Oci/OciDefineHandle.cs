@@ -29,7 +29,10 @@ namespace System.Data.OracleClient.Oci {
 		short indicator;
 		OracleType type;
 		OciDataType ociType;
+		OciDataType definedType;
 		int definedSize;
+		int rlenp;
+		sbyte scale;
 	
 		#endregion // Fields
 
@@ -53,6 +56,17 @@ namespace System.Data.OracleClient.Oci {
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
+			status = OciGlue.OCIAttrGetSByte (parameterHandle,
+							(uint) OciDescriptorType.Parameter,
+							out scale,
+							IntPtr.Zero,
+							OciAttributeType.DataSize,
+							statement.ErrorHandle.Handle);
+			if (status != 0) {
+				OciErrorInfo info = statement.ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
 			status = OciGlue.OCIAttrGetInt32 (parameterHandle,
 							(uint) OciDescriptorType.Parameter,
 							out ociTypeInt,
@@ -63,7 +77,20 @@ namespace System.Data.OracleClient.Oci {
 				OciErrorInfo info = statement.ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
-			ociType = (OciDataType) ociTypeInt;
+			definedType = (OciDataType) ociTypeInt;
+
+			switch (definedType) {
+			case OciDataType.Number:
+				ociType = OciDataType.Char;
+				break;
+			case OciDataType.Date:
+				ociType = OciDataType.Char;
+				definedSize = 20;
+				break;
+			default:
+				ociType = definedType;
+				break;
+			}
 
 			value = Marshal.AllocHGlobal (definedSize);
 
@@ -75,16 +102,14 @@ namespace System.Data.OracleClient.Oci {
 							definedSize,
 							ociType,
 							ref indicator,
-							IntPtr.Zero,
+							ref rlenp,
 							IntPtr.Zero,
 							0);
+
 			if (status != 0) {
 				OciErrorInfo info = statement.ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
-
-			if (value == IntPtr.Zero)
-				Console.WriteLine ("BRRRRAAAAP");
 
 			statement.FreeParameterHandle (parameterHandle);
 		}
@@ -92,6 +117,10 @@ namespace System.Data.OracleClient.Oci {
 		#endregion // Constructors
 
 		#region Properties
+
+		public OciDataType DataType {
+			get { return definedType; }
+		}
 
 		public int DefinedSize {
 			get { return definedSize; }
@@ -106,17 +135,31 @@ namespace System.Data.OracleClient.Oci {
 			get { return OciHandleType.Define; }
 		}
 
+		public bool IsNull {
+			get { return (indicator == -1); }
+		}
+
+		public sbyte Scale {
+			get { return scale; }
+		}
+
+		public int Size {
+			get { return rlenp; }
+		}
+
 		public IntPtr Value {
-			get { 
-				if (value == IntPtr.Zero)
-					Console.WriteLine ("BRRRRAAAAP! EXCEEEUUUUSE ME!");
-				return value; 
-			}
+			get { return value; }
 		}
 
 		#endregion
 
 		#region Methods
+
+		[DllImport ("oci")]
+		public static extern int OCIDateGetDate (IntPtr date,
+							out short year,
+							out byte month,
+							out byte day);
 
 		[DllImport ("oci")]
 		public static extern int OCIDefineByPos (IntPtr stmtp,
@@ -127,13 +170,27 @@ namespace System.Data.OracleClient.Oci {
 							int value_sz,
 							[MarshalAs (UnmanagedType.U2)] OciDataType dty,
 							ref short indp,
-							IntPtr rlenp,
+							ref int rlenp,
 							IntPtr rcodep,
 							uint mode);
 
 		public void Dispose ()
 		{
 			Marshal.FreeHGlobal (value);
+		}
+
+		public DateTime GetDateValue ()
+		{
+			short year;
+			byte month;
+			byte day;
+
+			OCIDateGetDate (value,
+					out year,
+					out month,
+					out day);
+
+			return new DateTime (year, month, day);
 		}
 
 		#endregion // Methods

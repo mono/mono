@@ -45,6 +45,7 @@ namespace System.Data.OracleClient {
 			this.isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
 			this.schemaTable = ConstructSchemaTable ();
 			this.fieldCount = command.StatementHandle.ColumnCount;
+			Read ();
 		}
 
 		public int Depth {
@@ -275,7 +276,7 @@ namespace System.Data.OracleClient {
 					return (int) schemaRow ["ColumnOrdinal"];
 			throw new IndexOutOfRangeException ();
 		}
-		
+
 		public DataTable GetSchemaTable ()
 		{
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
@@ -323,15 +324,51 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public object GetValue (int i)
 		{
-			// OBVIOUSLY THIS IS NOT REALLY A STRING ALWAYS
-			// The OciDefineHandle should get it as a native type.
-			object foo = Marshal.PtrToStringAnsi (((OciDefineHandle) command.StatementHandle.Values [i]).Value, ((OciDefineHandle) command.StatementHandle.Values[i]).DefinedSize);
+			OciDefineHandle defineHandle = (OciDefineHandle) command.StatementHandle.Values [i];
+			object tmp;
 
-			if (foo != null)
-				return String.Copy ((string) foo);
+			if (defineHandle.IsNull)
+				return DBNull.Value;
 
-			return null;
-			//throw new NotImplementedException ();
+			switch (defineHandle.DataType) {
+			case OciDataType.VarChar2:
+			case OciDataType.String:
+			case OciDataType.VarChar:
+			case OciDataType.Char:
+			case OciDataType.CharZ:
+			case OciDataType.OciString:
+				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
+				if (tmp != null)
+					return String.Copy ((string) tmp);
+				break;
+			case OciDataType.Integer:
+				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
+				if (tmp != null) 
+					return Int32.Parse (String.Copy ((string) tmp));
+				break;
+			case OciDataType.Number:
+				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
+				if (tmp != null) {
+					if (defineHandle.Scale == 0) 
+						return Int32.Parse (String.Copy ((string) tmp));
+					else
+						return Decimal.Parse (String.Copy ((string) tmp));
+				}
+				break;
+			case OciDataType.Float:
+				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
+				if (tmp != null) 
+					return Double.Parse (String.Copy ((string) tmp));
+				break;
+			case OciDataType.Date:
+				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
+				Console.WriteLine ((string) tmp);
+				if (tmp != null)
+					return DateTime.Parse ((string) tmp);
+				break;
+			}
+
+			return DBNull.Value;
 		}
 
 		[MonoTODO]

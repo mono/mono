@@ -1,3 +1,16 @@
+2003-02-17  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OracleDataAdapter.cs:
+	* System.Data.OracleClient/OracleRowUpdatedEventArgs.cs:
+	* System.Data.OracleClient/OracleRowUpdatedEventHandler.cs:
+	* System.Data.OracleClient/OracleRowUpdatingEventArgs.cs:
+	* System.Data.OracleClient/OracleRowUpdatingEventHandler.cs:
+	* list:
+		New classes added.
+	* System.Data.OracleClient/OracleDataReader.cs:
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+		Add handling for number and date types in OracleDataReader
+		GetValue
+
 2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.OracleClient.Oci/OciStatementHandle.cs

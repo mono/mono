@@ -27,10 +27,15 @@ System.Data.OracleClient.Oci/OciTransactionHandle.cs
 System.Data.OracleClient/OciGlue.cs
 System.Data.OracleClient/OracleCommand.cs
 System.Data.OracleClient/OracleConnection.cs
+System.Data.OracleClient/OracleDataAdapter.cs
 System.Data.OracleClient/OracleDataReader.cs
 System.Data.OracleClient/OracleException.cs
 System.Data.OracleClient/OracleParameterCollection.cs
 System.Data.OracleClient/OracleParameter.cs
+System.Data.OracleClient/OracleRowUpdatedEventArgs.cs
+System.Data.OracleClient/OracleRowUpdatedEventHandler.cs
+System.Data.OracleClient/OracleRowUpdatingEventArgs.cs
+System.Data.OracleClient/OracleRowUpdatingEventHandler.cs
 System.Data.OracleClient/OracleString.cs
 System.Data.OracleClient/OracleTransaction.cs
 System.Data.OracleClient/OracleType.cs
