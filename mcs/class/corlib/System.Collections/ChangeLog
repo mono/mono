@@ -1,3 +1,14 @@
+2004-12-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* Hashtable.cs (GetHash): Avoid a method call. Also, don't store
+	the this.hcpRef in a variable. This will create another register
+	which must be pushed on the stack. It is better to just reference
+	the variable again. hcpRef.GetHashCode (key) is the slow path
+	anyways, so an extra variable reference here doesn't hurt
+	(KeyEquals): ditto.
+
+	This gives me a few % back in a raw benchmark.
+
 2004-12-20  Ben Maurer  <bmaurer@ximian.com>
 
 	* Hashtable.cs (Find): Some minor optimizations here.

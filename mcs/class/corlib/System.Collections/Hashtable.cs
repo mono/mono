@@ -504,10 +504,10 @@ namespace System.Collections {
 		/// <summary>Returns the hash code for the specified key.</summary>
 		protected virtual int GetHash (Object key)
 		{
-			IHashCodeProvider hcp = this.hcp;
-			return (hcp!= null)
-			        ? hcp.GetHashCode (key)
-			        : key.GetHashCode ();
+			if (hcpRef == null)
+				return key.GetHashCode ();
+			
+			return hcpRef.GetHashCode (key);
 		}
 
 		/// <summary>
@@ -516,11 +516,10 @@ namespace System.Collections {
 		/// </summary>
 		protected virtual bool KeyEquals (Object item, Object key)
 		{
-			IComparer c = this.comparer;
-			if (c!= null)
-				return (c.Compare (item, key) == 0);
-			else
+			if (comparerRef == null)
 				return item.Equals (key);
+			
+			return comparerRef.Compare (item, key) == 0;
 		}
 
 
