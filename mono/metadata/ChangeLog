@@ -1,3 +1,8 @@
+2004-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_load_references): Make this thread safe.
+	Fixes #56327.
+
 2004-04-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* monosn.c: Add missing initialization calls.
