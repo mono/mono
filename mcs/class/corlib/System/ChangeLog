@@ -1,5 +1,7 @@
 2003-12-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Environment.cs: Make it a const instead.
+	
 	* Environment.cs: Make version field static.
 
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>

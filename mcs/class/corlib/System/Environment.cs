@@ -29,7 +29,7 @@ namespace System
 		 * increment this variable. Also increment the
 		 * pair of this variable in the runtime in metadata/appdomain.c.
 		 */
-		private static int mono_corlib_version = 1;
+		private const int mono_corlib_version = 2;
 
 		private Environment () {}
 
