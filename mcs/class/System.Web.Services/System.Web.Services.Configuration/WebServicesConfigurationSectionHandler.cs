@@ -64,19 +64,34 @@ namespace System.Web.Services.Configuration
 			if (error != null)
 				return false;
 
-			if ((protocols & proto) != 0) {
-				error = "Protocol already added";
+			protocols |= proto;
+			return true;
+		}
+
+		public bool RemoveProtocol (string protoName, out string error)
+		{
+			if (protoName == "All") {
+				error = "Invalid protocol name";
 				return false;
 			}
 
-			protocols |= proto;
+			WSProtocol proto = ParseProtocol (protoName, out error);
+			if (error != null)
+				return false;
+
+			protocols &= ~proto;
 			return true;
+		}
+
+		public void ClearProtocol ()
+		{
+			protocols = 0;
 		}
 
 		// Methods to query/get configuration
 		public static bool IsSupported (WSProtocol proto)
 		{
-			return ((Instance.protocols & WSProtocol.All) == proto && (proto != 0) && (proto != WSProtocol.All));
+			return ((Instance.protocols & proto) == proto && (proto != 0) && (proto != WSProtocol.All));
 		}
 
 		// Properties
@@ -187,6 +202,25 @@ namespace System.Web.Services.Configuration
 					if (!config.AddProtocol (protoName, out error))
 						ThrowException (error, child);
 					
+					continue;
+				}
+
+				if (name == "remove") {
+					string protoName = AttValue ("name", child, false);
+					if (child.Attributes != null && child.Attributes.Count != 0)
+						HandlersUtil.ThrowException ("Unrecognized attribute", child);
+
+					if (!config.RemoveProtocol (protoName, out error))
+						ThrowException (error, child);
+					
+					continue;
+				}
+
+				if (name == "clear") {
+					if (child.Attributes != null && child.Attributes.Count != 0)
+						HandlersUtil.ThrowException ("Unrecognized attribute", child);
+
+					config.ClearProtocol ();
 					continue;
 				}
 

@@ -1,5 +1,10 @@
 2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebServicesConfigurationSectionHandler.cs: support remove/clear for
+	<protocols>. Fixed IsSupported.
+
+2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* WebServicesConfigurationSectionHandler.cs: singleton.
 
 2003-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
