@@ -1,3 +1,8 @@
+2003-04-14  Ville Palo <vi64pa@kolumbus.fi>
+
+	* BinaryWriter.cs: Fixed decimal writing and lots of 
+	ObjectDisposedExceptions added.
+	
 2003-04-13  Ville Palo <vi64pa@kolumbus.fi>
 
 	* BinaryReader.cs: Fix to ReadDecimal() method.

@@ -19,6 +19,7 @@ namespace System.IO {
 		protected Stream OutStream;
 		private Encoding m_encoding;
 		private byte [] buffer;
+		private bool disposed = false;
 
 		static BinaryWriter() {
 			Null = new BinaryWriter();
@@ -62,7 +63,7 @@ namespace System.IO {
 			
 			buffer = null;
 			m_encoding = null;
-			OutStream = null;
+			disposed = true;
 		}
 
 		public virtual void Flush() {
@@ -70,31 +71,52 @@ namespace System.IO {
 		}
 
 		public virtual long Seek(int offset, SeekOrigin origin) {
+
 			return OutStream.Seek(offset, origin);
 		}
 
 		public virtual void Write(bool value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			buffer [0] = (byte) (value ? 1 : 0);
 			OutStream.Write(buffer, 0, 1);
 		}
 
 		public virtual void Write(byte value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			OutStream.WriteByte(value);
 		}
 
 		public virtual void Write(byte[] value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			if (value == null)
 				throw new ArgumentNullException(Locale.GetText ("Byte buffer is a null reference."));
 			OutStream.Write(value, 0, value.Length);
 		}
 
 		public virtual void Write(byte[] value, int offset, int length) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			if (value == null)
 				throw new ArgumentNullException(Locale.GetText ("Byte buffer is a null reference."));
 			OutStream.Write(value, offset, length);
 		}
 
 		public virtual void Write(char value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			char[] dec = new char[1];
 			dec[0] = value;
 			byte[] enc = m_encoding.GetBytes(dec, 0, 1);
@@ -102,6 +124,10 @@ namespace System.IO {
 		}
 		
 		public virtual void Write(char[] value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			if (value == null)
 				throw new ArgumentNullException(Locale.GetText ("Chars is a null reference."));
 			byte[] enc = m_encoding.GetBytes(value, 0, value.Length);
@@ -109,6 +135,10 @@ namespace System.IO {
 		}
 
 		public virtual void Write(char[] value, int offset, int length) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			if (value == null)
 				throw new ArgumentNullException(Locale.GetText ("Chars is a null reference."));
 			byte[] enc = m_encoding.GetBytes(value, offset, length);
@@ -116,25 +146,53 @@ namespace System.IO {
 		}
 
 		unsafe public virtual void Write(decimal value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			byte* value_ptr = (byte *)&value;
 			for (int i = 0; i < 16; i++) {
-				buffer [i] = value_ptr [i];
+
+				/*
+				 * decimal in stream is lo32, mi32, hi32, ss32
+				 * but its internal structure si ss32, hi32, lo32, mi32
+				 */
+				if (i < 4) 
+					buffer [i + 12] = value_ptr [i];
+				else if (i < 8)
+					buffer [i + 4] = value_ptr [i];
+				else if (i < 12)
+					buffer [i - 8] = value_ptr [i];
+				else 
+					buffer [i - 8] = value_ptr [i];
 			}
 
 			OutStream.Write(buffer, 0, 16);
 		}
 
 		public virtual void Write(double value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			OutStream.Write(BitConverter.GetBytes(value), 0, 8);
 		}
 		
 		public virtual void Write(short value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			buffer [0] = (byte) value;
 			buffer [1] = (byte) (value >> 8);
 			OutStream.Write(buffer, 0, 2);
 		}
 		
 		public virtual void Write(int value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			buffer [0] = (byte) value;
 			buffer [1] = (byte) (value >> 8);
 			buffer [2] = (byte) (value >> 16);
@@ -143,6 +201,10 @@ namespace System.IO {
 		}
 
 		public virtual void Write(long value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			for (int i = 0, sh = 0; i < 8; i++, sh += 8)
 				buffer [i] = (byte) (value >> sh);
 			OutStream.Write(buffer, 0, 8);
@@ -150,15 +212,27 @@ namespace System.IO {
 
 		[CLSCompliant(false)]
 		public virtual void Write(sbyte value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			buffer [0] = (byte) value;
 			OutStream.Write(buffer, 0, 1);
 		}
 
 		public virtual void Write(float value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			OutStream.Write(BitConverter.GetBytes(value), 0, 4);
 		}
 
 		public virtual void Write(string value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			/* The length field is the byte count, not the
 			 * char count
 			 */
@@ -169,6 +243,10 @@ namespace System.IO {
 
 		[CLSCompliant(false)]
 		public virtual void Write(ushort value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			buffer [0] = (byte) value;
 			buffer [1] = (byte) (value >> 8);
 			OutStream.Write(buffer, 0, 2);
@@ -176,6 +254,10 @@ namespace System.IO {
 
 		[CLSCompliant(false)]
 		public virtual void Write(uint value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			buffer [0] = (byte) value;
 			buffer [1] = (byte) (value >> 8);
 			buffer [2] = (byte) (value >> 16);
@@ -185,6 +267,10 @@ namespace System.IO {
 
 		[CLSCompliant(false)]
 		public virtual void Write(ulong value) {
+
+			if (disposed)
+				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
+
 			for (int i = 0, sh = 0; i < 8; i++, sh += 8)
 				buffer [i] = (byte) (value >> sh);
 			OutStream.Write(buffer, 0, 8);
