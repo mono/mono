@@ -410,7 +410,6 @@ namespace Mono.Security {
 
 		public bool Verify (string fileName) 
 		{
-			bool result = false;
 			StrongNameSignature sn;
 			FileStream fs = File.OpenRead (fileName);
 			try {
