@@ -4708,7 +4708,7 @@ namespace Mono.CSharp {
                         //
                         // false is normal form, true is expanded form
                         //
-                        Hashtable candidate_to_form = new PtrHashtable ();
+                        Hashtable candidate_to_form = null;
 
 
                         //
@@ -4746,15 +4746,17 @@ namespace Mono.CSharp {
                                         candidates.Add (candidate);
                                         applicable_type = candidate.DeclaringType;
                                         found_applicable = true;
-                                        candidate_to_form [candidate] = false;
                                 } else if (IsParamsMethodApplicable (ec, Arguments, candidate)) {
-                                                // Candidate is applicable in expanded form
-                                                candidates.Add (candidate);
-                                                applicable_type = candidate.DeclaringType;
-                                                found_applicable = true; 
-                                                candidate_to_form [candidate] = true;
-                                        }
-                                }
+					if (candidate_to_form == null)
+						candidate_to_form = new PtrHashtable ();
+					
+					// Candidate is applicable in expanded form
+					candidates.Add (candidate);
+					applicable_type = candidate.DeclaringType;
+					found_applicable = true; 
+					candidate_to_form [candidate] = candidate;
+				}
+			}
                         
 
                         //
@@ -4764,11 +4766,11 @@ namespace Mono.CSharp {
 			for (int ix = 0; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
 
-                                bool cand_params = (bool) candidate_to_form [candidate];
+                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
                                 bool method_params = false;
 
                                 if (method != null)
-                                        method_params = (bool) candidate_to_form [method];
+                                        method_params = candidate_to_form != null && candidate_to_form.Contains (method);
                                 
                                 int x = BetterFunction (ec, Arguments,
                                                         candidate, cand_params,
@@ -4820,7 +4822,7 @@ namespace Mono.CSharp {
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
-                        bool best_params = (bool) candidate_to_form [method];
+                        bool best_params = candidate_to_form != null && candidate_to_form.Contains (method);
 
 			for (int ix = 0; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
@@ -4840,7 +4842,7 @@ namespace Mono.CSharp {
 //                                      IsApplicable (ec, Arguments, method)))
 //                                         continue;
                                 
-                                bool cand_params = (bool) candidate_to_form [candidate];
+                                bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 				int x = BetterFunction (ec, Arguments,
                                                         method, best_params,
                                                         candidate, cand_params,

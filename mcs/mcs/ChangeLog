@@ -1,3 +1,8 @@
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs (Invocation.OverloadResolve): Avoid the
+	use of hashtables and boxing here by allocating on demand.
+
 2004-05-30  Martin Baulig  <martin@ximian.com>
 
 	* rootcontext.cs (RootContext.LookupType): Don't cache things if
