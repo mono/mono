@@ -1,5 +1,5 @@
-CSC=csc.exe
-CSCFLAGS=/nologo /debug+ /debug:full /optimize /target:exe /r:System.dll /r:Mono.GetOptions.dll /out:mbas.exe 
+CSC=mcs
+CSCFLAGS=/nologo /optimize /target:exe /r:System.dll /r:Mono.GetOptions.dll /out:mbas.exe 
 
 VERSION=0.13
 
