@@ -1240,7 +1240,10 @@ namespace Mono.CSharp {
 
 			if ((mt & MemberTypes.Field) != 0) {
 				if (fields != null) {
-					foreach (Field f in fields) {
+					int len = fields.Count;
+					for (int i = 0; i < len; i++) {
+						Field f = (Field) fields [i];
+						
 						if ((f.ModFlags & modflags) == 0)
 							continue;
 						if ((f.ModFlags & static_mask) != static_flags)
@@ -1253,7 +1256,10 @@ namespace Mono.CSharp {
 				}
 
 				if (constants != null) {
-					foreach (Const con in constants) {
+					int len = constants.Count;
+					for (int i = 0; i < len; i++) {
+						Const con = (Const) constants [i];
+						
 						if ((con.ModFlags & modflags) == 0)
 							continue;
 						if ((con.ModFlags & static_mask) != static_flags)
@@ -1268,7 +1274,10 @@ namespace Mono.CSharp {
 
 			if ((mt & MemberTypes.Method) != 0) {
 				if (methods != null) {
-					foreach (Method m in methods) {
+					int len = methods.Count;
+					for (int i = 0; i < len; i++) {
+						Method m = (Method) methods [i];
+						
 						if ((m.ModFlags & modflags) == 0)
 							continue;
 						if ((m.ModFlags & static_mask) != static_flags)
@@ -1281,8 +1290,11 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (operators != null){
-					foreach (Operator o in operators) {
+				if (operators != null) {
+					int len = operators.Count;
+					for (int i = 0; i < len; i++) {
+						Operator o = (Operator) operators [i];
+						
 						if ((o.ModFlags & modflags) == 0)
 							continue;
 						if ((o.ModFlags & static_mask) != static_flags)
@@ -1294,8 +1306,11 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (properties != null){
-					foreach (Property p in properties){
+				if (properties != null) {
+					int len = properties.Count;
+					for (int i = 0; i < len; i++) {
+						Property p = (Property) properties [i];
+						
 						if ((p.ModFlags & modflags) == 0)
 							continue;
 						if ((p.ModFlags & static_mask) != static_flags)
@@ -1313,8 +1328,11 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (indexers != null){
-					foreach (Indexer ix in indexers){
+				if (indexers != null) {
+					int len = indexers.Count;
+					for (int i = 0; i < len; i++) {
+						Indexer ix = (Indexer) indexers [i];
+						
 						if ((ix.ModFlags & modflags) == 0)
 							continue;
 						if ((ix.ModFlags & static_mask) != static_flags)
@@ -1334,8 +1352,11 @@ namespace Mono.CSharp {
 			}
 
 			if ((mt & MemberTypes.Event) != 0) {
-				if (events != null)
-				        foreach (Event e in events) {
+				if (events != null) {
+					int len = events.Count;
+					for (int i = 0; i < len; i++) {
+						Event e = (Event) events [i];
+						
 						if ((e.ModFlags & modflags) == 0)
 							continue;
 						if ((e.ModFlags & static_mask) != static_flags)
@@ -1345,11 +1366,15 @@ namespace Mono.CSharp {
 						if (eb != null && filter (eb, criteria) == true)
 						        members.Add (e.EventBuilder);
 					}
+				}
 			}
 			
 			if ((mt & MemberTypes.Property) != 0){
-				if (properties != null)
-					foreach (Property p in properties) {
+				if (properties != null) {
+					int len = properties.Count;
+					for (int i = 0; i < len; i++) {
+						Property p = (Property) properties [i];
+						
 						if ((p.ModFlags & modflags) == 0)
 							continue;
 						if ((p.ModFlags & static_mask) != static_flags)
@@ -1360,9 +1385,13 @@ namespace Mono.CSharp {
 							members.Add (p.PropertyBuilder);
 						}
 					}
+				}
 
-				if (indexers != null)
-					foreach (Indexer ix in indexers) {
+				if (indexers != null) {
+					int len = indexers.Count;
+					for (int i = 0; i < len; i++) {
+						Indexer ix = (Indexer) indexers [i];
+						
 						if ((ix.ModFlags & modflags) == 0)
 							continue;
 						if ((ix.ModFlags & static_mask) != static_flags)
@@ -1373,11 +1402,15 @@ namespace Mono.CSharp {
 							members.Add (ix.PropertyBuilder);
 						}
 					}
+				}
 			}
 			
 			if ((mt & MemberTypes.NestedType) != 0) {
-				if (types != null){
-					foreach (TypeContainer t in types) {
+				if (types != null) {
+					int len = types.Count;
+					for (int i = 0; i < len; i++) {
+						TypeContainer t = (TypeContainer) types [i];
+						
 						if ((t.ModFlags & modflags) == 0)
 							continue;
 
@@ -1387,8 +1420,11 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (enums != null){
-					foreach (Enum en in enums){
+				if (enums != null) {
+					int len = enums.Count;
+					for (int i = 0; i < len; i++) {
+						Enum en = (Enum) enums [i];
+						
 						if ((en.ModFlags & modflags) == 0)
 							continue;
 
@@ -1398,8 +1434,11 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (delegates != null){
-					foreach (Delegate d in delegates){
+				if (delegates != null) {
+					int len = delegates.Count;
+					for (int i = 0; i < len; i++) {
+						Delegate d = (Delegate) delegates [i];
+						
 						if ((d.ModFlags & modflags) == 0)
 							continue;
 
@@ -1409,8 +1448,11 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (interfaces != null){
-					foreach (Interface iface in interfaces){
+				if (interfaces != null) {
+					int len = interfaces.Count;
+					for (int i = 0; i < len; i++) {
+						Interface iface = (Interface) interfaces [i];
+						
 						if ((iface.ModFlags & modflags) == 0)
 							continue;
 
@@ -1423,7 +1465,10 @@ namespace Mono.CSharp {
 
 			if ((mt & MemberTypes.Constructor) != 0){
 				if (((bf & BindingFlags.Instance) != 0) && (instance_constructors != null)){
-					foreach (Constructor c in instance_constructors){
+					int len = instance_constructors.Count;
+					for (int i = 0; i < len; i++) {
+						Constructor c = (Constructor) instance_constructors [i];
+						
 						ConstructorBuilder cb = c.ConstructorBuilder;
 						if (cb != null)
 							if (filter (cb, criteria) == true)

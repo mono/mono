@@ -1,5 +1,20 @@
 2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* class.cs (FindMembers): Remove foreach's.
+
+	Bootstrap times:
+	
+	BEFORE
+		Run 1:   8.74 seconds
+		Run 2:   8.71 seconds
+	
+	AFTER
+		Run 1:   8.64 seconds
+		Run 2:   8.58 seconds
+	
+
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* cs-parser.jay:
 	* gen-treedump.cs:
 	* statement.cs:
