@@ -47,7 +47,7 @@ namespace Mono.CSharp {
 		public Type ParameterType (int pos)
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
-				return pi [pi.Length -1].ParameterType.GetElementType ();
+				return pi [pi.Length -1].ParameterType;
 			else 
 				return pi [pos].ParameterType;
 		}
@@ -126,8 +126,7 @@ namespace Mono.CSharp {
 			if (pos < len)
 				return parameters.FixedParameters [pos].ParameterType;
 			else 
-				return parameters.ArrayParameter.ParameterType.GetElementType ();
-
+				return parameters.ArrayParameter.ParameterType;
 
 			//
 			// Return the internal type.

@@ -1,3 +1,22 @@
+2001-12-28  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (DefinePInvokeMethod): Set the implementation flags
+	to PreserveSig by default. Also emit HideBySig on such methods.
+
+	Basically, set the defaults to standard values.
+
+	* expression.cs (Invocation.BetterFunction): We need to make sure that for each
+	argument, if candidate is better, it can't be worse than the best !
+
+	(Invocation): Re-write bits to differentiate between methods being
+	applicable in their expanded form and their normal form - for params
+	methods of course.
+
+	Get rid of use_standard everywhere as only standard conversions are allowed
+	in overload resolution. 
+
+	More spec conformance.
+	
 2001-12-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Add --timestamp, to see where the compiler spends

@@ -2600,8 +2600,7 @@ namespace Mono.CSharp {
 		///  Returns : 1 if a->p is better
 		///            0 if a->q or neither is better 
 		/// </summary>
-		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, bool use_standard,
-					     Location loc)
+		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
 		{
 			Type argument_type = a.Type;
 			Expression argument_expr = a.Expr;
@@ -2680,11 +2679,8 @@ namespace Mono.CSharp {
 
 				Expression tmp;
 
-				if (use_standard)
-					tmp = ConvertImplicitStandard (ec, argument_expr, p, loc);
-				else
-					tmp = ConvertImplicit (ec, argument_expr, p, loc);
-
+				tmp = ConvertImplicitStandard (ec, argument_expr, p, loc);
+				
 				if (tmp != null)
 					return 1;
 				else
@@ -2727,7 +2723,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		static int BetterFunction (EmitContext ec, ArrayList args,
 					   MethodBase candidate, MethodBase best,
-					   bool use_standard, Location loc)
+					   bool expanded_form, Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
@@ -2752,9 +2748,13 @@ namespace Mono.CSharp {
 					j--;
 					
 					Argument a = (Argument) args [j];
+					Type t = candidate_pd.ParameterType (j);
+
+					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
+						if (expanded_form)
+							t = t.GetElementType ();
 					
-					x = BetterConversion (ec, a, candidate_pd.ParameterType (j), null,
-							      use_standard, loc);
+					x = BetterConversion (ec, a, t, null, loc);
 					
 					if (x <= 0)
 						break;
@@ -2774,15 +2774,26 @@ namespace Mono.CSharp {
 				int x, y;
 				
 				Argument a = (Argument) args [j];
-				
-				x = BetterConversion (ec, a, candidate_pd.ParameterType (j),
-						      best_pd.ParameterType (j), use_standard, loc);
-				y = BetterConversion (ec, a, best_pd.ParameterType (j),
-						      candidate_pd.ParameterType (j), use_standard, loc);
 
+				Type ct = candidate_pd.ParameterType (j);
+				Type bt = best_pd.ParameterType (j);
+
+				if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
+					if (expanded_form)
+						ct = ct.GetElementType ();
+
+				if (best_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
+					if (expanded_form)
+						bt = bt.GetElementType ();
+				
+				x = BetterConversion (ec, a, ct, bt, loc);
+				y = BetterConversion (ec, a, bt, ct, loc);
+						      
+				if (x < y)
+					break;
+				
 				rating1 += x;
 				rating2 += y;
-
 			}
 
 			if (rating1 > rating2)
@@ -2908,7 +2919,7 @@ namespace Mono.CSharp {
 			// of the params array is compatible with each argument type
 			//
 
-			Type element_type = pd.ParameterType (pd_count - 1);
+			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
 
 			for (int i = pd_count - 1; i < arg_count - 1; i++) {
 				Argument a = (Argument) arguments [i];
@@ -2987,8 +2998,7 @@ namespace Mono.CSharp {
 		///
 		/// </summary>
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, Location loc,
-							  bool use_standard)
+							  ArrayList Arguments, Location loc)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match_idx = -1;
@@ -3006,8 +3016,7 @@ namespace Mono.CSharp {
 					continue;
 
 				candidates.Add (candidate);
-		
-				x = BetterFunction (ec, Arguments, candidate, method, use_standard, loc);
+				x = BetterFunction (ec, Arguments, candidate, method, false, loc);
 				
 				if (x == 0)
 					continue;
@@ -3027,6 +3036,8 @@ namespace Mono.CSharp {
 			// since if they were applicable in their normal form, they would have been selected
 			// above anyways
 			//
+			bool chose_params_expanded = false;
+			
 			if (best_match_idx == -1) {
 
 				candidates = new ArrayList ();
@@ -3039,13 +3050,14 @@ namespace Mono.CSharp {
 
 					candidates.Add (candidate);
 
-					int x = BetterFunction (ec, Arguments, candidate, method, use_standard, loc);
+					int x = BetterFunction (ec, Arguments, candidate, method, true, loc);
 
 					if (x == 0)
 						continue;
 					else {
 						best_match_idx = i;
 						method = me.Methods [best_match_idx];
+						chose_params_expanded = true;
 					}
 				}
 			}
@@ -3081,22 +3093,23 @@ namespace Mono.CSharp {
 			// should be better than all the others
 			//
 
-#if NOPE
  			for (int i = 0; i < candidates.Count; ++i) {
  				MethodBase candidate = (MethodBase) candidates [i];
-				x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
+				
  				if (candidate == method)
  					continue;
- 				int x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
- 				if (x != 1) {
+
+				int x = BetterFunction (ec, Arguments, method, candidate,
+							chose_params_expanded, loc);
+
+				if (x != 1) {
  					Console.WriteLine (candidate + "  " + method);
  					Report.Error (
  						121, loc,
  						"Ambiguous call when selecting function due to implicit casts");
  					return null;
  				}
-#endif
-				
+			}
 			
 			// And now convert implicitly, each argument to the required type
 			
@@ -3108,15 +3121,13 @@ namespace Mono.CSharp {
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
 
+				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS && chose_params_expanded)
+					parameter_type = parameter_type.GetElementType ();
+
 				if (a.Type != parameter_type){
 					Expression conv;
 					
-					if (use_standard)
-						conv = ConvertImplicitStandard (
-							ec, a_expr, parameter_type, Location.Null);
-					else
-						conv = ConvertImplicit (
-							ec, a_expr, parameter_type, Location.Null);
+					conv = ConvertImplicitStandard (ec, a_expr, parameter_type, Location.Null);
 
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {
@@ -3132,8 +3143,6 @@ namespace Mono.CSharp {
 						return null;
 					}
 					
-			
-					
 					//
 					// Update the argument with the implicit conversion
 					//
@@ -3146,7 +3155,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (a.GetParameterModifier () != pd.ParameterModifier (j) &&
-				    pd.ParameterModifier (j) != Parameter.Modifier.PARAMS) {
+				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
 						Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
@@ -3158,19 +3167,11 @@ namespace Mono.CSharp {
 					}
 					return null;
 				}
-				
-				
 			}
 			
 			return method;
 		}
 		
-		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, Location loc)
-		{
-			return OverloadResolve (ec, me, Arguments, loc, false);
-		}
-			
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -3609,8 +3610,9 @@ namespace Mono.CSharp {
 			sb.Append ("[");
 			for (int i = 1; i < idx_count; i++)
 				sb.Append (",");
-			sb.Append ("]");
 			
+			sb.Append ("]");
+
 			return sb.ToString ();
                 }
 
@@ -3621,8 +3623,9 @@ namespace Mono.CSharp {
 			sb.Append ("[");
 			for (int i = 1; i < idx_count; i++)
 				sb.Append (",");
+			
 			sb.Append ("]");
-
+			
 			sb.Append (rank);
 
 			string val = sb.ToString ();

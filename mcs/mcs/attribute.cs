@@ -502,9 +502,9 @@ namespace Mono.CSharp {
 			}
 
 			// Now we process the named arguments
-			CallingConvention cc = CallingConvention.StdCall;
-			CharSet charset = CharSet.Auto;
-			bool preserve_sig = false;
+			CallingConvention cc = CallingConvention.Winapi;
+			CharSet charset = CharSet.Ansi;
+			bool preserve_sig = true;
 			bool exact_spelling = false;
 			bool set_last_err = false;
 			string entry_point = null;
@@ -562,12 +562,15 @@ namespace Mono.CSharp {
 			}
 
 			MethodBuilder mb = builder.DefinePInvokeMethod (
-				name, dll_name, flags,
+				name, dll_name, flags | MethodAttributes.HideBySig,
 				CallingConventions.Standard,
 				ret_type,
 				param_types,
 				cc,
-				charset); 
+				charset);
+
+			if (preserve_sig)
+				mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
 			
 			return mb;
 		}
