@@ -6,9 +6,6 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-// This should probably be implemented in IL instead of C#, to
-// use internalcalls to get its hands on the underlying Type
-// of an object. 
 //
 
 using System.Runtime.CompilerServices;

@@ -90,12 +90,14 @@ namespace Mono.CSharp {
 
 			if (mb.IsVirtual || mb.IsAbstract){
 				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					Report.Warning (
-						114, Location, parent.MakeName (Name) + 
-						" hides inherited member " + MethodBaseName (mb) +
-						".  To make the current member override that " +
-						"implementation, add the override keyword, " +
-						"otherwise use the new keyword");
+					if (Name != "Finalize" && (RootContext.WarningLevel >= 2)){
+						Report.Warning (
+							114, Location, parent.MakeName (Name) + 
+							" hides inherited member " + MethodBaseName (mb) +
+							".  To make the current member override that " +
+							"implementation, add the override keyword, " +
+							"otherwise use the new keyword");
+					}
 				}
 			}
 

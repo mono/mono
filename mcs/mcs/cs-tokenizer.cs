@@ -871,7 +871,7 @@ namespace Mono.CSharp
 			arg = "";
 			static_cmd_arg.Length = 0;
 				
-			while ((c = getChar ()) != -1 && (c != '\n') && ((c != ' ') || c == '\t')){
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ') && (c != '\t')){
 				if (c == '\r')
 					continue;
 				static_cmd_arg.Append ((char) c);
@@ -1273,7 +1273,7 @@ namespace Mono.CSharp
 				}
 			}
 			
-			Report.Error (1024, "Preprocessor directive expected (got: " + cmd + ")");
+			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
 			return true;
 		}
 		

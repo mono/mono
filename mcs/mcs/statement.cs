@@ -2170,7 +2170,74 @@ namespace Mono.CSharp {
 			statement = stmt;
 			loc = l;
 		}
+		
+		//
+		// Retrieves a `public bool MoveNext ()' method from the Type `t'
+		//
+		static MethodInfo FetchMethodMoveNext (Type t)
+		{
+			MemberInfo [] move_next_list;
+			
+			move_next_list = TypeContainer.FindMembers (
+				t, MemberTypes.Method,
+				BindingFlags.Public | BindingFlags.Instance,
+				Type.FilterName, "MoveNext");
+			if (move_next_list == null || move_next_list.Length == 0)
+				return null;
 
+			foreach (MemberInfo m in move_next_list){
+				MethodInfo mi = (MethodInfo) m;
+				Type [] args;
+				
+				args = TypeManager.GetArgumentTypes (mi);
+				if (args != null && args.Length == 0){
+					if (mi.ReturnType == TypeManager.bool_type)
+						return mi;
+				}
+			}
+			return null;
+		}
+		
+		//
+		// Retrieves a `public T get_Current ()' method from the Type `t'
+		//
+		static MethodInfo FetchMethodGetCurrent (Type t)
+		{
+			MemberInfo [] move_next_list;
+			
+			move_next_list = TypeContainer.FindMembers (
+				t, MemberTypes.Method,
+				BindingFlags.Public | BindingFlags.Instance,
+				Type.FilterName, "get_Current");
+			if (move_next_list == null || move_next_list.Length == 0)
+				return null;
+
+			foreach (MemberInfo m in move_next_list){
+				MethodInfo mi = (MethodInfo) m;
+				Type [] args;
+				
+				args = TypeManager.GetArgumentTypes (mi);
+				if (args != null && args.Length == 0)
+					return mi;
+			}
+			return null;
+		}
+
+		// 
+		// This struct records the helper methods used by the Foreach construct
+		//
+		class ForeachHelperMethods {
+			public EmitContext ec;
+			public MethodInfo get_enumerator;
+			public MethodInfo move_next;
+			public MethodInfo get_current;
+
+			public ForeachHelperMethods (EmitContext ec)
+			{
+				this.ec = ec;
+			}
+		}
+		
 		static bool GetEnumeratorFilter (MemberInfo m, object criteria)
 		{
 			if (m == null)
@@ -2181,22 +2248,72 @@ namespace Mono.CSharp {
 			
 			if (m.Name != "GetEnumerator")
 				return false;
-			
-			MethodInfo mi = (MethodInfo) m;
 
-			if (mi.ReturnType != TypeManager.ienumerator_type){
-				if (!TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType))
+			MethodInfo mi = (MethodInfo) m;
+			Type [] args = TypeManager.GetArgumentTypes (mi);
+			if (args != null){
+				if (args.Length != 0)
 					return false;
 			}
+			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
+			EmitContext ec = hm.ec;
 			
-			Type [] args = TypeManager.GetArgumentTypes (mi);
-			if (args == null)
+			//
+			// Check whether GetEnumerator is accessible to us
+			//
+			MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+			Type declaring = mi.DeclaringType;
+			if (prot == MethodAttributes.Private){
+				if (declaring != ec.ContainerType)
+					return false;
+			} else if (prot == MethodAttributes.FamANDAssem){
+				// If from a different assembly, false
+				if (!(mi is MethodBuilder))
+					return false;
+				//
+				// Are we being invoked from the same class, or from a derived method?
+				//
+				if (ec.ContainerType != declaring){
+					if (!ec.ContainerType.IsSubclassOf (declaring))
+						return false;
+				}
+			} else if (prot == MethodAttributes.FamORAssem){
+				if (!(mi is MethodBuilder ||
+				      ec.ContainerType == declaring ||
+				      ec.ContainerType.IsSubclassOf (declaring)))
+					return false;
+			} if (prot == MethodAttributes.Family){
+				if (!(ec.ContainerType == declaring ||
+				      ec.ContainerType.IsSubclassOf (declaring)))
+					return false;
+			}
+
+			//
+			// Ok, we can access it, now make sure that we can do something
+			// with this `GetEnumerator'
+			//
+			if (mi.ReturnType == TypeManager.ienumerator_type || 
+			    TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType)){
+				hm.move_next = TypeManager.bool_movenext_void;
+				hm.get_current = TypeManager.object_getcurrent_void;
 				return true;
-			
-			if (args.Length == 0)
-				return true;
-			
-			return false;
+			}
+
+			//
+			// Ok, so they dont return an IEnumerable, we will have to
+			// find if they support the GetEnumerator pattern.
+			//
+			Type return_type = mi.ReturnType;
+
+			hm.move_next = FetchMethodMoveNext (return_type);
+			if (hm.move_next == null)
+				return false;
+			hm.get_current = FetchMethodGetCurrent (return_type);
+			if (hm.get_current == null)
+				return false;
+
+			return true;
 		}
 		
 		/// <summary>
@@ -2218,32 +2335,64 @@ namespace Mono.CSharp {
                                       " GetEnumerator method or it is inaccessible");
                 }
 
-		MethodInfo ProbeCollectionType (Type t)
+		static bool TryType (Type t, ForeachHelperMethods hm)
 		{
 			MemberInfo [] mi;
-
+			
 			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
-							BindingFlags.Public | BindingFlags.Instance,
-							FilterEnumerator, null);
+							BindingFlags.Public | BindingFlags.NonPublic |
+							BindingFlags.Instance,
+							FilterEnumerator, hm);
 
-			if (mi == null){
-				error1579 (t);
-				return null;
-			}
+			if (mi == null || mi.Length == 0)
+				return false;
 
-			if (mi.Length == 0){
-				error1579 (t);
-				return null;
-			}
+			hm.get_enumerator = (MethodInfo) mi [0];
+			return true;	
+		}
+		
+		//
+		// Looks for a usable GetEnumerator in the Type, and if found returns
+		// the three methods that participate: GetEnumerator, MoveNext and get_Current
+		//
+		ForeachHelperMethods ProbeCollectionType (EmitContext ec, Type t)
+		{
+			ForeachHelperMethods hm = new ForeachHelperMethods (ec);
 
-			return (MethodInfo) mi [0];
+			if (TryType (t, hm))
+				return hm;
+
+			//
+			// Now try to find the method in the interfaces
+			//
+			while (t != null){
+				Type [] ifaces = t.GetInterfaces ();
+
+				foreach (Type i in ifaces){
+					if (TryType (i, hm))
+						return hm;
+				}
+				
+				//
+				// Since TypeBuilder.GetInterfaces only returns the interface
+				// types for this type, we have to keep looping, but once
+				// we hit a non-TypeBuilder (ie, a Type), then we know we are
+				// done, because it returns all the types
+				//
+				if ((t is TypeBuilder))
+					t = t.BaseType;
+				else
+					break;
+			} 
+
+			return null;
 		}
 
 		//
 		// FIXME: possible optimization.
 		// We might be able to avoid creating `empty' if the type is the sam
 		//
-		bool EmitCollectionForeach (EmitContext ec, Type var_type, MethodInfo get_enum)
+		bool EmitCollectionForeach (EmitContext ec, Type var_type, ForeachHelperMethods hm)
 		{
 			ILGenerator ig = ec.ig;
 			LocalBuilder enumerator, disposable;
@@ -2275,10 +2424,10 @@ namespace Mono.CSharp {
 				} else
 					throw new Exception ("Expr " + expr + " of type " + expr.Type +
 							     " does not implement IMemoryLocation");
-				ig.Emit (OpCodes.Call, get_enum);
+				ig.Emit (OpCodes.Call, hm.get_enumerator);
 			} else {
 				expr.Emit (ec);
-				ig.Emit (OpCodes.Callvirt, get_enum);
+				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
 			}
 			ig.Emit (OpCodes.Stloc, enumerator);
 
@@ -2294,10 +2443,10 @@ namespace Mono.CSharp {
 			
 			ig.MarkLabel (ec.LoopBegin);
 			ig.Emit (OpCodes.Ldloc, enumerator);
-			ig.Emit (OpCodes.Callvirt, TypeManager.bool_movenext_void);
+			ig.Emit (OpCodes.Callvirt, hm.move_next);
 			ig.Emit (OpCodes.Brfalse, end_try);
 			ig.Emit (OpCodes.Ldloc, enumerator);
-			ig.Emit (OpCodes.Callvirt, TypeManager.object_getcurrent_void);
+			ig.Emit (OpCodes.Callvirt, hm.get_current);
 			variable.EmitAssign (ec, conv);
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
@@ -2497,12 +2646,13 @@ namespace Mono.CSharp {
 			if (expr.Type.IsArray)
 				ret_val = EmitArrayForeach (ec, var_type);
 			else {
-				MethodInfo get_enum;
+				ForeachHelperMethods hm;
 				
-				if ((get_enum = ProbeCollectionType (expr.Type)) == null)
+				hm = ProbeCollectionType (ec, expr.Type);
+				if (hm == null)
 					return false;
 
-				ret_val = EmitCollectionForeach (ec, var_type, get_enum);
+				ret_val = EmitCollectionForeach (ec, var_type, hm);
 			}
 			
 			ec.LoopBegin = old_begin;

@@ -1,3 +1,30 @@
+2002-03-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Foreach): Lots of work to accomodate a particular
+	kind of foreach statement that I had not kept in mind.  It is
+	possible to have foreachs on classes that provide a GetEnumerator
+	method that return objects that implement the "pattern" for using
+	a foreach, there is no need to support GetEnumerator
+	specifically. 
+
+	This is needed to compile nant.
+
+	* decl.cs: Only report 114 if the member is not `Finalize' and if
+	the warning level is at least 2.
+
+	* class.cs: Moved the compare function from Method to
+	MethodSignature. 
+
+	(MethodSignature.InheritableMemberSignatureCompare): Add new
+	filter function that is used to extract inheritable methods from a
+	class. 
+
+	(Method.Define): Use the new `inheritable_method_signature_filter'
+	delegate
+
+	* cs-tokenizer.cs (get_cmd_arg): Do not add white space to the
+	command. 
+
 2002-03-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (Expression.ConvertReferenceExplicit): Removed dead code.

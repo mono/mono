@@ -1436,6 +1436,16 @@ namespace Mono.CSharp {
 			else
 				return t.FindMembers (mt, bf, filter, criteria);
 		}
+
+		//
+		// FindMethods will look for methods not only in the type `t', but in
+		// any interfaces implemented by the type.
+		//
+		public static MethodInfo [] FindMethods (Type t, BindingFlags bf,
+							 MemberFilter filter, object criteria)
+		{
+			return null;
+		}
 		
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
@@ -1594,7 +1604,7 @@ namespace Mono.CSharp {
 			MemberInfo [] list = FindMembers (
 				TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance,
-				Method.method_signature_filter, ms);
+				MethodSignature.method_signature_filter, ms);
 
 			if (list == null || list.Length == 0)
 				return false;
@@ -2145,49 +2155,6 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
-		{
-			MethodInfo mi;
-
-			if (! (m is MethodInfo))
-				return false;
-
-			MethodSignature sig = (MethodSignature) filter_criteria;
-
-			if (m.Name != sig.Name)
-				return false;
-			
-			mi = (MethodInfo) m;
-
-			if (mi.ReturnType != sig.RetType)
-				return false;
-
-			Type [] args = TypeManager.GetArgumentTypes (mi);
-			Type [] sigp = sig.Parameters;
-
-			if (args.Length != sigp.Length)
-				return false;
-
-			for (int i = args.Length; i > 0; ){
-				i--;
-				if (args [i] != sigp [i])
-					return false;
-			}
-			return true;
-		}
-		
-		/// <summary>
-		///    This delegate is used to extract methods which have the
-		///    same signature as the argument
-		/// </summary>
-		public static MemberFilter method_signature_filter;
-		
-		static Method ()
-		{
-			method_signature_filter = new MemberFilter (MemberSignatureCompare);
-			return;
-		}
-		
 		//
 		// Returns the `System.Type' for the ReturnType of this
 		// function.  Provides a nice cache.  (used between semantic analysis
@@ -2267,12 +2234,13 @@ namespace Mono.CSharp {
 
 				mi_static = TypeContainer.FindMembers (
 					ptype, MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.Static, method_signature_filter,
-					ms);
+					BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
+					MethodSignature.inheritable_method_signature_filter, ms);
 
 				mi_instance = TypeContainer.FindMembers (
 					ptype, MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.Instance, method_signature_filter,
+					BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
+					MethodSignature.inheritable_method_signature_filter,
 					ms);
 
 				if (mi_instance != null && mi_instance.Length > 0){
@@ -4023,6 +3991,27 @@ namespace Mono.CSharp {
 		public Type RetType;
 		public Type [] Parameters;
 		
+		/// <summary>
+		///    This delegate is used to extract methods which have the
+		///    same signature as the argument
+		/// </summary>
+		public static MemberFilter method_signature_filter;
+
+		/// <summary>
+		///   This delegate is used to extract inheritable methods which
+		///   have the same signature as the argument.  By inheritable,
+		///   this means that we have permissions to override the method
+		///   from the current assembly and class
+		/// </summary>
+		public static MemberFilter inheritable_method_signature_filter;
+		
+		static MethodSignature ()
+		{
+			method_signature_filter = new MemberFilter (MemberSignatureCompare);
+			inheritable_method_signature_filter = new MemberFilter (
+				InheritableMemberSignatureCompare);
+		}
+		
 		public MethodSignature (string name, Type ret_type, Type [] parameters)
 		{
 			Name = name;
@@ -4067,6 +4056,66 @@ namespace Mono.CSharp {
 					return false;
 
 			return true;
+		}
+
+		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
+		{
+			MethodInfo mi;
+
+			if (! (m is MethodInfo))
+				return false;
+
+			MethodSignature sig = (MethodSignature) filter_criteria;
+
+			if (m.Name != sig.Name)
+				return false;
+			
+			mi = (MethodInfo) m;
+
+			if (mi.ReturnType != sig.RetType)
+				return false;
+
+			Type [] args = TypeManager.GetArgumentTypes (mi);
+			Type [] sigp = sig.Parameters;
+
+			if (args.Length != sigp.Length)
+				return false;
+
+			for (int i = args.Length; i > 0; ){
+				i--;
+				if (args [i] != sigp [i])
+					return false;
+			}
+			return true;
+		}
+
+		//
+		// This filter should be used when we are requesting methods that
+		// we want to override.  
+		// 
+		static bool InheritableMemberSignatureCompare (MemberInfo m, object filter_criteria)
+		{
+		        if (MemberSignatureCompare (m, filter_criteria)){
+				MethodInfo mi = (MethodInfo) m;
+				MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+				// If only accessible to the current class.
+				if (prot == MethodAttributes.Private)
+					return false;
+
+				// If only accessible to the defining assembly or 
+				if (prot == MethodAttributes.FamANDAssem ||
+				    prot == MethodAttributes.Assembly){
+					if (m is MethodBuilder)
+						return true;
+					else
+						return false;
+				}
+
+				// Anything else (FamOrAssembly and Public) is fine
+				return true;
+			}
+			return false;
 		}
 	}		
 }
