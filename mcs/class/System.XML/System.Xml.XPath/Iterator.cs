@@ -362,6 +362,8 @@ namespace System.Xml.XPath
 					return true;
 				}
 			}
+			// Don't worry about node type of start position, like AncestorOrSelf.
+			// It should be Element or Root.
 			if (nextDepth < positions.Count) {
 				int thisTimePos = (int) positions [nextDepth];
 				_nav.MoveToFirstChild ();
@@ -389,6 +391,7 @@ namespace System.Xml.XPath
 		ArrayList positions = new ArrayList ();
 		XPathNavigator startPosition;
 		int nextDepth;
+
 		public AncestorOrSelfIterator (BaseIterator iter) : base (iter)
 		{
 			startPosition = iter.Current.Clone ();
@@ -404,9 +407,11 @@ namespace System.Xml.XPath
 		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
 		public override bool MoveNext ()
 		{
+			bool initialIteration = false;
 			if (finished)
 				return false;
 			if (!started) {
+				initialIteration = true;
 				started = true;
 				XPathNavigator ancestors = startPosition.Clone ();
 				do {
@@ -422,7 +427,15 @@ namespace System.Xml.XPath
 				} while (ancestors.NodeType != XPathNodeType.Root);
 				positions.Reverse ();
 			}
-			if (nextDepth < positions.Count) {
+			if (initialIteration && startPosition.NodeType != XPathNodeType.Root)
+				return true;
+			else if (nextDepth + 1 == positions.Count) {
+				nextDepth++;
+				_pos++;
+				_nav.MoveTo (startPosition);
+				return true;
+			}
+			else if (nextDepth < positions.Count) {
 				int thisTimePos = (int) positions [nextDepth];
 				_nav.MoveToFirstChild ();
 				for (int i = 0; i < thisTimePos; i++)
@@ -811,8 +824,7 @@ namespace System.Xml.XPath
 		protected BaseIterator _iterRight;
 		protected NodeSet _expr;
 		protected int _pos;
-//		Stack _iterStack;
-		ArrayList _navStore;//(XPathIteratorComparer.Instance);
+		ArrayList _navStore;
 		SortedList _iterList;
 		bool _finished;
 		BaseIterator _nextIterRight;
@@ -831,11 +843,13 @@ namespace System.Xml.XPath
 			_expr = other._expr;
 			_pos = other._pos;
 			if (other._iterList != null)
-				_iterList = other._iterList.Clone () as SortedList;
+				_iterList = (SortedList) other._iterList.Clone ();
 			if (other._navStore != null)
-				_navStore = other._navStore.Clone () as ArrayList;
+				_navStore = (ArrayList) other._navStore.Clone ();
 			_finished = other._finished;
-			_nextIterRight = other._nextIterRight;
+			if (_nextIterRight != null)
+				_nextIterRight = (BaseIterator) other._nextIterRight.Clone ();
+//			_nextIterRight = other._nextIterRight;
 		}
 		public override XPathNodeIterator Clone () { return new SlashIterator (this); }
 
@@ -877,7 +891,7 @@ namespace System.Xml.XPath
 				_pos ++;
 				return true;
 #else
-				if (_iterRight == null) {
+				if (_iterRight == null) { // First time
 					if (!_iterLeft.MoveNext ())
 						return false;
 					_iterRight = _expr.EvaluateNodeSet (_iterLeft);
@@ -888,7 +902,7 @@ namespace System.Xml.XPath
 					while (!_iterRight.MoveNext ()) {
 						if (_iterList.Count > 0) {
 							int last = _iterList.Count - 1;
-							BaseIterator tmpIter = _iterList.GetByIndex (last) as BaseIterator;
+							BaseIterator tmpIter = (BaseIterator) _iterList.GetByIndex (last);
 							_iterList.RemoveAt (last);
 							switch (tmpIter.Current.ComparePosition (_iterRight.Current)) {
 							case XmlNodeOrder.Same:
@@ -960,7 +974,7 @@ namespace System.Xml.XPath
 									int last = _iterList.Count;
 									if (last > 0) {
 										_iterList.Add (last, _nextIterRight);
-										_nextIterRight = _iterList.GetByIndex (last) as BaseIterator;
+										_nextIterRight = (BaseIterator) _iterList.GetByIndex (last);
 										_iterList.RemoveAt (last);
 									}
 								}
@@ -998,7 +1012,7 @@ namespace System.Xml.XPath
 			get {
 				if (_pos <= 0) return null;
 				if (RequireSorting) {
-					return _navStore [_pos - 1] as XPathNavigator;
+					return (XPathNavigator) _navStore [_pos - 1];
 				} else {
 					return _iterRight.Current;
 				}
@@ -1080,6 +1094,7 @@ namespace System.Xml.XPath
 		public override bool RequireSorting { get { return true; } }
 	}
 
+	// WARNING: Before using be sure about IEnumerator argument, because
 	internal class EnumeratorIterator : BaseIterator
 	{
 		protected IEnumerator _enum;
@@ -1087,20 +1102,22 @@ namespace System.Xml.XPath
 
 		public EnumeratorIterator (BaseIterator iter, IEnumerator enumerator) : base (iter)
 		{
+			if (!(enumerator is ICloneable))
+				throw new ArgumentException ("Target enumerator must be cloneable.");
 			_enum = enumerator;
 		}
 		
 		public EnumeratorIterator (IEnumerator enumerator, XmlNamespaceManager nsm) : base (nsm)
 		{
+			if (!(enumerator is ICloneable))
+				throw new ArgumentException ("Target enumerator must be cloneable.");
 			_enum = enumerator;
 		}
 
 		protected EnumeratorIterator (EnumeratorIterator other) : base (other)
 		{
 			ICloneable enumClone = other._enum as ICloneable;
-			if (enumClone == null)
-				throw new ArgumentException ("Enumerator must be cloneable.");
-			_enum = enumClone.Clone () as IEnumerator;
+			_enum = (IEnumerator) enumClone.Clone ();
 			_pos = other._pos;
 		}
 		public override XPathNodeIterator Clone () { return new EnumeratorIterator (this); }

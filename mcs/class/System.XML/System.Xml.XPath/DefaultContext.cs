@@ -85,7 +85,7 @@ namespace System.Xml.XPath
 		public static double ToNumber (string arg)
 		{
 			try {
-				return XmlConvert.ToDouble ((string) arg);	// TODO: spec? convert string to number
+				return XmlConvert.ToDouble ((string) arg.Trim (XmlChar.WhitespaceChars));
 			} catch (System.OverflowException) {
 				return double.NaN;
 			} catch (System.FormatException) {
@@ -114,6 +114,11 @@ namespace System.Xml.XPath
 		{
 			return (double) iter.Count;
 		}
+
+		public override string ToString ()
+		{
+			return "last()";
+		}
 	}
 
 
@@ -130,6 +135,11 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			return (double) iter.CurrentPosition;
+		}
+
+		public override string ToString ()
+		{
+			return "position()";
 		}
 	}
 
@@ -160,6 +170,11 @@ namespace System.Xml.XPath
 			
 			return arg0.EvaluateNodeSet (iter).MoveNext ();
 		}
+
+		public override string ToString ()
+		{
+			return "count(" + arg0.ToString () + ")";
+		}
 	}
 
 
@@ -180,7 +195,6 @@ namespace System.Xml.XPath
 		private static char [] rgchWhitespace = {' ', '\t', '\r', '\n'};
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
 
-		[MonoTODO]
 		public override object Evaluate (BaseIterator iter)
 		{
 			String strArgs;
@@ -206,6 +220,11 @@ namespace System.Xml.XPath
 			}
 			rgNodes.Sort (XPathNavigatorComparer.Instance);
 			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
+		}
+
+		public override string ToString ()
+		{
+			return "id(" + arg0.ToString () + ")";
 		}
 	}
 
@@ -233,6 +252,11 @@ namespace System.Xml.XPath
 			if (argNs == null || !argNs.MoveNext ())
 				return "";
 			return argNs.Current.LocalName;
+		}
+
+		public override string ToString ()
+		{
+			return "local-name(" + arg0.ToString () + ")";
 		}
 	}
 
@@ -262,6 +286,11 @@ namespace System.Xml.XPath
 				return "";
 			return argNs.Current.NamespaceURI;
 		}
+
+		public override string ToString ()
+		{
+			return "namespace-uri(" + arg0.ToString () + ")";
+		}
 	}
 
 
@@ -290,6 +319,11 @@ namespace System.Xml.XPath
 				return "";
 			return argNs.Current.Name;
 		}
+
+		public override string ToString ()
+		{
+			return "name(" + arg0.ToString () + ")";
+		}
 	}
 
 
@@ -313,6 +347,11 @@ namespace System.Xml.XPath
 			if (arg0 == null)
 				return iter.Current.Value;
 			return arg0.EvaluateString (iter);
+		}
+
+		public override string ToString ()
+		{
+			return "string(" + arg0.ToString () + ")";
 		}
 	}
 
@@ -341,6 +380,19 @@ namespace System.Xml.XPath
 			
 			return sb.ToString ();
 		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("concat(");
+			for (int i = 0; i < rgs.Count - 1; i++) {
+				sb.Append (rgs [i].ToString ());
+				sb.Append (',');
+			}
+			sb.Append (rgs [rgs.Count - 1].ToString ());
+			sb.Append (')');
+			return sb.ToString ();
+		}
 	}
 
 
@@ -363,6 +415,11 @@ namespace System.Xml.XPath
 		{
 			return arg0.EvaluateString (iter).StartsWith (arg1.EvaluateString (iter));
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat ("starts-with(", arg0.ToString (), ",", arg1.ToString (), ")");
+		}
 	}
 
 
@@ -384,6 +441,11 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			return arg0.EvaluateString (iter).IndexOf (arg1.EvaluateString (iter)) != -1;
+		}
+
+		public override string ToString ()
+		{
+			return String.Concat ("contains(", arg0.ToString (), ",", arg1.ToString (), ")");
 		}
 	}
 
@@ -412,6 +474,11 @@ namespace System.Xml.XPath
 				return "";
 			return str1.Substring (0, ich);
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat ("substring-before(", arg0.ToString (), ",", arg1.ToString (), ")");
+		}
 	}
 
 
@@ -438,6 +505,11 @@ namespace System.Xml.XPath
 			if (ich < 0)
 				return "";
 			return str1.Substring (ich + str2.Length);
+		}
+
+		public override string ToString ()
+		{
+			return String.Concat ("substring-after(", arg0.ToString (), ",", arg1.ToString (), ")");
 		}
 	}
 
@@ -492,6 +564,12 @@ namespace System.Xml.XPath
 				return str.Substring ((int) ich, (int) cch);
 			}
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {
+				"substring(", arg0.ToString (), ",", arg1.ToString (), ",", arg2.ToString (), ")"});
+		}
 	}
 
 
@@ -519,6 +597,12 @@ namespace System.Xml.XPath
 				str = iter.Current.Value;
 			return (double) str.Length;
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {
+				"string-length(", arg0.ToString (), ")"});
+		}
 	}
 
 
@@ -531,17 +615,16 @@ namespace System.Xml.XPath
 			if (args != null) {
 				arg0 = args.Arg;
 				if (args.Tail != null)
-					throw new XPathException ("string-length takes 1 or zero args");
+					throw new XPathException ("normalize-space takes 1 or zero args");
 			}
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 
-		[MonoTODO]
 		public override object Evaluate (BaseIterator iter)
 		{
 			string str;
-			if (arg0 == null)
+			if (arg0 != null)
 				str = arg0.EvaluateString (iter);
 			else
 				str = iter.Current.Value;
@@ -565,6 +648,14 @@ namespace System.Xml.XPath
 				}
 			}
 			return sb.ToString ();
+		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {
+				"normalize-space(",
+				arg0 != null ? arg0.ToString () : String.Empty,
+				")"});
 		}
 	}
 
@@ -610,6 +701,15 @@ namespace System.Xml.XPath
 			
 			return ret.ToString ();
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {
+				"string-length(",
+				arg0.ToString (), ",",
+				arg1.ToString (), ",",
+				arg2.ToString (), ")"});
+		}
 	}
 
 
@@ -634,6 +734,11 @@ namespace System.Xml.XPath
 				return XPathFunctions.ToBoolean (iter.Current.Value);
 			return arg0.EvaluateBoolean (iter);
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"boolean(", arg0.ToString (), ")"});
+		}
 	}
 
 
@@ -654,6 +759,11 @@ namespace System.Xml.XPath
 		{
 			return !arg0.EvaluateBoolean (iter);
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"not(", arg0.ToString (), ")"});
+		}
 	}
 
 
@@ -671,6 +781,11 @@ namespace System.Xml.XPath
 		{
 			return true;
 		}
+
+		public override string ToString ()
+		{
+			return "true()";
+		}
 	}
 
 
@@ -686,6 +801,11 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			return false;
+		}
+
+		public override string ToString ()
+		{
+			return "false()";
 		}
 	}
 
@@ -710,6 +830,11 @@ namespace System.Xml.XPath
 			
 			return lang == actualLang || lang == (actualLang.Split ('-')[0]);
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"lang(", arg0.ToString (), ")"});
+		}
 	}
 
 
@@ -733,6 +858,11 @@ namespace System.Xml.XPath
 			if (arg0 == null)
 				return XPathFunctions.ToNumber (iter.Current.Value);
 			return arg0.EvaluateNumber (iter);
+		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"number(", arg0.ToString (), ")"});
 		}
 	}
 
@@ -760,6 +890,11 @@ namespace System.Xml.XPath
 			
 			return sum;
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"sum(", arg0.ToString (), ")"});
+		}
 	}
 
 
@@ -780,6 +915,11 @@ namespace System.Xml.XPath
 		{
 			return Math.Floor (arg0.EvaluateNumber (iter));
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"floor(", arg0.ToString (), ")"});
+		}
 	}
 
 
@@ -799,6 +939,11 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			return Math.Ceiling (arg0.EvaluateNumber (iter));
+		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"ceil(", arg0.ToString (), ")"});
 		}
 	}
 
@@ -822,6 +967,11 @@ namespace System.Xml.XPath
 			if (arg < -0.5 || arg > 0)
 				return Math.Floor (arg + 0.5);
 			return Math.Round (arg);
+		}
+
+		public override string ToString ()
+		{
+			return String.Concat (new string [] {"round(", arg0.ToString (), ")"});
 		}
 	}
 }

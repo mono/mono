@@ -1,3 +1,14 @@
+2003-12-03 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* DefaultContext.cs : Overrode all functions' ToString().
+	  XPathFunctions.ToNumber() trims whitespaces at both side.
+	  Fixed NullReferenceException in normalize-space().
+	* Iterator.cs : Fixed AncestorOrSelfIterator.MoveNext() didn't handle
+	  attribute or namespace node correctly.
+	  SlashIterator.Clone() didn't clone "next node iterator" correctly.
+	  EnumeratorIterator.ctor() should raise an error (not at Clone())
+	  when the target IEnumerator is not ICloneable.
+
 2003-11-28  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Expression.cs : namespace axis now traversed in reverse order, so it
