@@ -105,6 +105,10 @@ namespace Npgsql
         private Boolean                          _shared;
 
         private NpgsqlState                      _state;
+        
+        
+        private Int32                            _planIndex;
+        private Int32                            _portalIndex;
 
 
 
@@ -122,6 +126,9 @@ namespace Npgsql
             _state = NpgsqlClosedState.Instance;
             _mediator = new NpgsqlMediator();
             _oidToNameMapping = new NpgsqlBackendTypeMapping();
+            _planIndex = 0;
+            _portalIndex = 0;
+            
         }
 
 
@@ -643,5 +650,26 @@ namespace Npgsql
             }
             catch {}
         }
-}
+        
+        
+        ///<summary>
+        /// Returns next portal index.
+        ///</summary>
+        internal Int32 NextPortalIndex()
+        {
+        	return System.Threading.Interlocked.Increment(ref _portalIndex);
+        }
+        
+        
+        ///<summary>
+        /// Returns next plan index.
+        ///</summary>
+        internal Int32 NextPlanIndex()
+        {
+        	return System.Threading.Interlocked.Increment(ref _planIndex);
+        }
+        
+        
+        
+	}
 }

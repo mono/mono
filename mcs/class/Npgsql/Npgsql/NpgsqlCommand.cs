@@ -54,8 +54,6 @@ namespace Npgsql
         private CommandType                 type;
         private NpgsqlParameterCollection   parameters;
         private String                      planName;
-        private static Int32                planIndex = 0;
-        private static Int32                portalIndex = 0;
 
         private NpgsqlParse                 parse;
         private NpgsqlBind                  bind;
@@ -449,6 +447,8 @@ namespace Npgsql
                 for (Int32 i = 0; i < parameters.Count; i++)
                 {
                     // Do not quote strings, or escape existing quotes - this will be handled by the backend.
+                    // DBNull or null values are returned as null.
+                    // TODO: Would it be better to remove this null special handling out of ConvertToBackend?? 
                     parameterValues[i] = parameters[i].TypeInfo.ConvertToBackend(parameters[i].Value, true);
                 }
                 bind.ParameterValues = parameterValues;
@@ -532,8 +532,8 @@ namespace Npgsql
             else
             {
                 // Use the extended query parsing...
-                planName = "NpgsqlPlan" + System.Threading.Interlocked.Increment(ref planIndex);
-                String portalName = "NpgsqlPortal" + System.Threading.Interlocked.Increment(ref portalIndex);
+                planName = "NpgsqlPlan" + Connector.NextPlanIndex();
+                String portalName = "NpgsqlPortal" + Connector.NextPortalIndex();
 
                 parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
 
@@ -705,7 +705,7 @@ namespace Npgsql
 
 
 
-            planName = "NpgsqlPlan" + System.Threading.Interlocked.Increment(ref planIndex);
+            planName = "NpgsqlPlan" + Connector.NextPlanIndex();
 
             StringBuilder command = new StringBuilder("prepare " + planName);
 
