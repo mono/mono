@@ -1494,7 +1494,7 @@ public class TypeManager {
 				return false;
 
 			for (int i = 0; i < aparams.Length; i++)
-				if (aparams [i] != bparams [i])
+				if (!aparams [i].Equals (bparams [i]))
 					return false;
 
 			return true;
