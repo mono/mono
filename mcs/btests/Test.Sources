@@ -133,7 +133,13 @@ PropertyB \
 PropertyC \
 PropertyD \
 PropertyE \
-DelegateA
+DelegateA \
+EventA \
+EventB \ 
+EventC \
+EventD \
+EventE \
+EventF 
 
 # All negetive test cases which should
 # fail during compilation goes here

@@ -25,5 +25,4 @@ Module M
 		dim y as new C1
 		y.call_S()
 	End Sub
-
 End Module

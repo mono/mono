@@ -1,10 +1,7 @@
 Imports System
 
 Public Class C
-   Delegate Sub EH()
-   Public Event E as EH
-
-   'Public Event E() 
+   Public Event E() 
 
    Sub S()
       RaiseEvent E() 
@@ -25,7 +22,6 @@ End Sub
 
 Sub Main()
 	S1()
-
 End Sub
 
 End Module

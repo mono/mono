@@ -1,23 +1,23 @@
 Imports System
 
 Class C
-	Delegate Sub EH(ByVal i as integer)
+	Delegate Sub EH()
 	Public Event E as EH
 
 	Public Sub S()
-		RaiseEvent E(10)
+		RaiseEvent E
 	End Sub
 End Class
 
 Class C1
-	dim WithEvents x as C = new C()
-
 	Sub call_S()
+		dim x as C = new C()
+		AddHandler x.E, AddressOf xh
 		x.S()
 	End Sub
 
-	Sub EH(i as Integer) Handles x.E
-		Console.WriteLine("event called : " + i)
+	Sub xh() 
+		Console.WriteLine("event called")
 	End Sub
 End Class
 
@@ -26,6 +26,5 @@ Module M
 		dim y as new C1
 		y.call_S()
 	End Sub
+
 End Module
-
-

@@ -1,8 +1,7 @@
 Imports System
 
 Class C
-	Delegate Sub EH(ByVal i as integer)
-	Public Event E as EH
+	Public Event E (ByVal i as integer)
 
 	Public Sub S()
 		RaiseEvent E(10)
@@ -10,7 +9,7 @@ Class C
 End Class
 
 Class C1
-	dim WithEvents x as C = new C()
+	dim WithEvents x as C = new C()	
 
 	Sub call_S()
 		x.S()
