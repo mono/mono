@@ -65,14 +65,11 @@ namespace System.Xml
 			}
 
 			// (MS documentation says) parameter role isn't used yet.
-			Stream s = null;
-			using (s) {
-				WebClient wc = new WebClient ();
-				wc.Credentials = credential;
-				byte [] data = wc.DownloadData (absoluteUri.ToString ());
-				wc.Dispose ();
-				return new MemoryStream (data, 0, data.Length);
-			}
+			WebRequest req = WebRequest.Create (absoluteUri);
+			if (credential != null)
+				req.Credentials = credential;
+			return req.GetResponse().GetResponseStream();
+
 		}
 
 		// see also XmlResolver.EscapeRelativeUriBody().
