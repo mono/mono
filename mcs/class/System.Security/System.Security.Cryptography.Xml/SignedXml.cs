@@ -351,13 +351,19 @@ namespace System.Security.Cryptography.Xml {
 			if (verifier == null)
 				return false;
 
-			verifier.SetKey (key);
-			verifier.SetHashAlgorithm (sd.DigestAlgorithm);
+			try {
+				verifier.SetKey (key);
+				verifier.SetHashAlgorithm (sd.DigestAlgorithm);
 
-			HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
-			// get the hash of the C14N SignedInfo element
-			byte[] digest = hash.ComputeHash (SignedInfoTransformed ());
-			return verifier.VerifySignature (digest, signature.SignatureValue); 
+				HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
+				// get the hash of the C14N SignedInfo element
+				byte[] digest = hash.ComputeHash (SignedInfoTransformed ());
+				return verifier.VerifySignature (digest, signature.SignatureValue);
+			}
+			catch {
+				// e.g. SignatureMethod != AsymmetricAlgorithm type
+				return false;
+			} 
 		}
 
 		private bool Compare (byte[] expected, byte[] actual) 

@@ -1,3 +1,9 @@
+2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXml.cs: Added try/catch in CheckSignatureWithKey to return 
+	false on exceptions. Fix signature-rsa-detached-xslt-transform-bad
+	-retrieval-method.xml in the Phaos test suite.
+
 2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Reference.cs, Signature.cs : They should keep input element and hence
