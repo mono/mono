@@ -1,3 +1,8 @@
+2003-01-13  Nick Drochak  <ndrochak@gol.com>
+
+	* MutexTest.cs: Disable some tests that case unhandled exceptoins
+	on MS.NET.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2
