@@ -1,5 +1,15 @@
 2004-05-12  Mike Kestner <mkestner@ximian.com>
 
+	* Activity.cs : stub
+	* BindingOption.cs : impl
+	* InheritanceOption.cs : impl
+	* PartitionOption.cs : impl
+	* ServiceConfig.cs : stub
+	* SxsOption.cs : impl
+	* ThreadPoolOption.cs : impl
+
+2004-05-12  Mike Kestner <mkestner@ximian.com>
+
 	* IAsyncErrorNotify.cs : oops, should be public
 	* IProcessInitComponent.cs : ditto
 	* IProcessInitializer.cs : ditto
