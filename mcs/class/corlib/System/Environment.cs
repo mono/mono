@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Collections;
 
 namespace System
@@ -141,7 +142,8 @@ namespace System
 		{
 			get
 			{
-				return getTickCount();
+				return 0;
+				//return getTickCount();
 			}
 		}
 
@@ -231,7 +233,7 @@ namespace System
 		/// </summary>
 		public static string GetEnvironmentVariable(string variable)
 		{
-			return getEnvironmentStrings()[variable];
+			return (string)(getEnvironmentStrings()[variable]);
 		}
 
 		/// <summary>
@@ -243,13 +245,16 @@ namespace System
 			// could cache these in a member variable, but that
 			// wouldn't be very safe because the environment is
 			// dyanamic ya know
-			string strEnv = getEnvironment();
-			string[] arEnv = strEnv.Split('\t');
+			string strEnv = PlatformSpecific.getEnvironment();
+			char[] delimiter = new char[1];
+			delimiter[0] = '\t';
+			string[] arEnv = strEnv.Split(delimiter);
 			string[] arStr;
 			Hashtable ht = new Hashtable();
 			foreach(string str in arEnv)
 			{
-				arStr = str.Split('=', 2);
+				delimiter[0] = '=';
+				arStr = str.Split(delimiter, 2);
 				switch(arStr.Length)
 				{
 				case 1:

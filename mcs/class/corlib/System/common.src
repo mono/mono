@@ -16,6 +16,7 @@ ContextStaticAttribute.cs
 DivideByZeroException.cs
 Double.cs
 DuplicateWaitObjectException.cs
+Environment.cs
 EventArgs.cs
 EventHandler.cs
 Exception.cs
