@@ -338,7 +338,7 @@ namespace Mono.CSharp {
 					return null;
 				t = FindDocumentedMember (mc, parent,
 					identifier.Substring (index + 1),
-					emptyParamList,
+					Type.EmptyTypes,
 					ds, out warn, cref) as Type;
 			}
 			return t;
@@ -475,8 +475,6 @@ namespace Mono.CSharp {
 			return mis [0];
 		}
 
-		private static Type [] emptyParamList = new Type [0];
-
 		//
 		// Processes "see" or "seealso" elements.
 		// Checks cref attribute.
@@ -540,7 +538,7 @@ namespace Mono.CSharp {
 			}
 
 			// check if parameters are valid
-			Type [] parameterTypes = emptyParamList;
+			Type [] parameterTypes = Type.EmptyTypes;
 			if (parameters.Length > 0) {
 				string [] paramList = parameters.Split (',');
 				ArrayList plist = new ArrayList ();

@@ -1,3 +1,8 @@
+2005-01-25  Martin Baulig  <martin@ximian.com>
+
+	* doc.cs
+	(DocUtil.emptyParamList): Removed; use `Type.EmptyTypes' instead.
+
 2005-01-11  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0509.cs, cs1632.cs.
