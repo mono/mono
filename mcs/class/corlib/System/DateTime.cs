@@ -1298,8 +1298,8 @@ namespace System
 					if (format [i + 1] == '%')
 						throw new FormatException ("%% in date string");
 
-					result.Append (this.ToString (format [i + 1].ToString (), dfi));
-					tokLen = 2;
+					// Look for the next char
+					tokLen = 1;
 					break;
 				case '\\':
 					// C-Style escape
