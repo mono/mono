@@ -15,6 +15,7 @@
 namespace System.Globalization {
 
 	[Flags]
+	[Serializable]
 	public enum NumberStyles {
 		None                 = 0x00000000,
 		AllowLeadingWhite    = 0x00000001,

@@ -1,3 +1,7 @@
+2002-04-22  Nick Drochak  <ndrochak@gol.com>
+
+	* NumberStyles.cs: Add [Serializable].
+
 2002-04-08  Nick Drochak  <ndrochak@gol.com>
 
 	* UnicodeCategory.cs: Fix typos in enum names.
