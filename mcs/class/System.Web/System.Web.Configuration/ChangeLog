@@ -1,3 +1,9 @@
+2004-01-10  Jackson Harper <jackson@ximian.com>
+
+	* TraceConfig.cs: New class contains trace configuration data.
+	* TraceConfigurationHandler.cs: New class parses trace
+	configurations.
+	
 2004-01-05  Jackson Harper <jackson@ximian.com>
 
 	* HandlerItem.cs: Fix typo so slashes are stripped from paths properly.
