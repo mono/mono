@@ -1,3 +1,7 @@
+2004-06-18  Dick Porter  <dick@ximian.com>
+
+	* String.cs: The icall can cope with embedded \0 now.
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs :
