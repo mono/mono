@@ -1,3 +1,7 @@
+2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Added XslComment.cs.
+
 2003-08-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslVariable.cs: Fix up how variables are evaluated.
