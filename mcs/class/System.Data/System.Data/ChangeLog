@@ -1,5 +1,9 @@
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs : Add to table only when the row is not in the table.
+
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataView.cs : implemented FindRows() (btw we should not use
 	  DataTable since there are detached rows by AddNew().)
 

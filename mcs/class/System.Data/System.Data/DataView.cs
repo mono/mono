@@ -397,7 +397,8 @@ namespace System.Data
 
 		internal void EndEditRowView (DataRowView rowView)
 		{
-			Table.Rows.Add (rowView.Row);
+			if (rowView.Row.RowState == DataRowState.Detached)
+				Table.Rows.Add (rowView.Row);
 			addNewCache.Remove (rowView.Row);
 			rowView.Row.EndEdit ();
 		}
