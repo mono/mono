@@ -1,4 +1,9 @@
 
+Wed Jul 24 13:32:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: Type.GetType () can now return also types from the
+	calling assembly.
+
 Wed Jul 24 13:04:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* loader.h, loader.c: stack walking support.
