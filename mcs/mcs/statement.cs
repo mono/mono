@@ -2047,17 +2047,32 @@ namespace Mono.CSharp {
 			: this (parent, implicit_block, Location.Null, Location.Null)
 		{ }
 
+		public Block (Block parent, bool implicit_block, Parameters parameters)
+			: this (parent, implicit_block, parameters, Location.Null, Location.Null)
+		{ }
+
 		public Block (Block parent, Location start, Location end)
 			: this (parent, false, start, end)
 		{ }
 
+		public Block (Block parent, Parameters parameters, Location start, Location end)
+			: this (parent, false, parameters, start, end)
+		{ }
+
 		public Block (Block parent, bool implicit_block, Location start, Location end)
+			: this (parent, implicit_block, Parameters.EmptyReadOnlyParameters,
+				start, end)
+		{ }
+
+		public Block (Block parent, bool implicit_block, Parameters parameters,
+			      Location start, Location end)
 		{
 			if (parent != null)
 				parent.AddChild (this);
 			
 			this.Parent = parent;
 			this.Implicit = implicit_block;
+			this.parameters = parameters;
 			this.StartLocation = start;
 			this.EndLocation = end;
 			this.loc = start;
@@ -2260,6 +2275,16 @@ namespace Mono.CSharp {
 		public Statement this [string name] {
 			get {
 				return (Statement) labels [name];
+			}
+		}
+
+		Parameters parameters = null;
+		public Parameters Parameters {
+			get {
+				if (Parent != null)
+					return Parent.Parameters;
+
+				return parameters;
 			}
 		}
 

@@ -111,12 +111,12 @@ namespace Mono.CSharp {
 	public class InternalParameters : ParameterData {
 		Type [] param_types;
 
-		Parameters parameters;
+		public readonly Parameters Parameters;
 		
 		public InternalParameters (Type [] param_types, Parameters parameters)
 		{
 			this.param_types = param_types;
-			this.parameters = parameters;
+			this.Parameters = parameters;
 		}
 
 		public InternalParameters (DeclSpace ds, Parameters parameters)
@@ -138,25 +138,25 @@ namespace Mono.CSharp {
 			if (param_types == null)
 				return null;
 
-			Parameter [] fixed_pars = parameters.FixedParameters;
+			Parameter [] fixed_pars = Parameters.FixedParameters;
 			if (fixed_pars != null){
 				int len = fixed_pars.Length;
 				if (pos < len)
-					return parameters.FixedParameters [pos].ParameterType;
+					return Parameters.FixedParameters [pos].ParameterType;
 				else 
-					return parameters.ArrayParameter.ParameterType;
+					return Parameters.ArrayParameter.ParameterType;
 			} else
-				return parameters.ArrayParameter.ParameterType;
+				return Parameters.ArrayParameter.ParameterType;
 		}
 
 		public string ParameterName (int pos)
 		{
 			Parameter p;
 
-			if (pos >= parameters.FixedParameters.Length)
-				p = parameters.ArrayParameter;
+			if (pos >= Parameters.FixedParameters.Length)
+				p = Parameters.ArrayParameter;
 			else
-				p = parameters.FixedParameters [pos];
+				p = Parameters.FixedParameters [pos];
 
 			return p.Name;
 		}
@@ -166,10 +166,10 @@ namespace Mono.CSharp {
 			string tmp = String.Empty;
 			Parameter p;
 
-			if (pos >= parameters.FixedParameters.Length)
-				p = parameters.ArrayParameter;
+			if (pos >= Parameters.FixedParameters.Length)
+				p = Parameters.ArrayParameter;
 			else
-				p = parameters.FixedParameters [pos];
+				p = Parameters.FixedParameters [pos];
 			
 			if (p.ModFlags == Parameter.Modifier.REF)
 				tmp = "ref ";
@@ -187,15 +187,15 @@ namespace Mono.CSharp {
 		{
 			Parameter.Modifier mod;
 
-			if (parameters.FixedParameters == null) {
-				if (parameters.ArrayParameter != null) 
-					mod = parameters.ArrayParameter.ModFlags;
+			if (Parameters.FixedParameters == null) {
+				if (Parameters.ArrayParameter != null) 
+					mod = Parameters.ArrayParameter.ModFlags;
 				else
 					mod = Parameter.Modifier.NONE;
-			} else if (pos >= parameters.FixedParameters.Length)
-				mod = parameters.ArrayParameter.ModFlags;
+			} else if (pos >= Parameters.FixedParameters.Length)
+				mod = Parameters.ArrayParameter.ModFlags;
 			else
-				mod = parameters.FixedParameters [pos].ModFlags;
+				mod = Parameters.FixedParameters [pos].ModFlags;
 
 			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
 				mod |= Parameter.Modifier.ISBYREF;

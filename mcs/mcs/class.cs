@@ -557,8 +557,10 @@ namespace Mono.CSharp {
 			int mods = 0;
 
 			c = new Constructor (Basename, Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (null, new Location (-1)),
-					     new Location (-1));
+					     new ConstructorBaseInitializer (
+						     null, Parameters.EmptyReadOnlyParameters,
+						     Location.Null),
+					     Location.Null);
 			
 			if (is_static)
 				mods = Modifiers.STATIC;
@@ -2141,12 +2143,15 @@ namespace Mono.CSharp {
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
 		ConstructorInfo parent_constructor;
-		Location location;
+		Parameters parameters;
+		Location loc;
 		
-		public ConstructorInitializer (ArrayList argument_list, Location location)
+		public ConstructorInitializer (ArrayList argument_list, Parameters parameters,
+					       Location loc)
 		{
 			this.argument_list = argument_list;
-			this.location = location;
+			this.parameters = parameters;
+			this.loc = loc;
 		}
 
 		public ArrayList Arguments {
@@ -2159,13 +2164,17 @@ namespace Mono.CSharp {
 		{
 			Expression parent_constructor_group;
 			Type t;
-			
+
+			ec.CurrentBlock = new Block (null, true, parameters);
+
 			if (argument_list != null){
 				foreach (Argument a in argument_list){
-					if (!a.Resolve (ec, location))
+					if (!a.Resolve (ec, loc))
 						return false;
 				}
 			}
+
+			ec.CurrentBlock = null;
 
 			if (this is ConstructorBaseInitializer) {
 				if (ec.ContainerType.BaseType == null)
@@ -2173,7 +2182,7 @@ namespace Mono.CSharp {
 
 				t = ec.ContainerType.BaseType;
 				if (ec.ContainerType.IsValueType) {
-					Report.Error (522, location,
+					Report.Error (522, loc,
 						"structs cannot call base class constructors");
 					return false;
 				}
@@ -2184,19 +2193,19 @@ namespace Mono.CSharp {
 				ec, t, ".ctor", 
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-				location);
+				loc);
 			
 			if (parent_constructor_group == null){
-				Report.Error (1501, location,
+				Report.Error (1501, loc,
 				       "Can not find a constructor for this argument list");
 				return false;
 			}
 			
 			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (ec, 
-				(MethodGroupExpr) parent_constructor_group, argument_list, location);
+				(MethodGroupExpr) parent_constructor_group, argument_list, loc);
 			
 			if (parent_constructor == null){
-				Report.Error (1501, location,
+				Report.Error (1501, loc,
 				       "Can not find a constructor for this argument list");
 				return false;
 			}
@@ -2216,13 +2225,15 @@ namespace Mono.CSharp {
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
-		public ConstructorBaseInitializer (ArrayList argument_list, Location l) : base (argument_list, l)
+		public ConstructorBaseInitializer (ArrayList argument_list, Parameters pars, Location l) :
+			base (argument_list, pars, l)
 		{
 		}
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
-		public ConstructorThisInitializer (ArrayList argument_list, Location l) : base (argument_list, l)
+		public ConstructorThisInitializer (ArrayList argument_list, Parameters pars, Location l) :
+			base (argument_list, pars, l)
 		{
 		}
 	}
@@ -2322,7 +2333,8 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (parent is Class && Initializer == null)
-					Initializer = new ConstructorBaseInitializer (null, parent.Location);
+					Initializer = new ConstructorBaseInitializer (
+						null, Parameters.EmptyReadOnlyParameters, parent.Location);
 
 
 				//

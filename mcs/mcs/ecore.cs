@@ -3343,7 +3343,26 @@ namespace Mono.CSharp {
 					else
 						return var.Resolve (ec);
 				}
-			
+
+				if (current_block != null){
+					int idx = -1;
+					Parameter par = null;
+					Parameters pars = current_block.Parameters;
+					if (pars != null)
+						par = pars.GetParameterByName (Name, out idx);
+
+					if (par != null) {
+						ParameterReference param;
+					
+						param = new ParameterReference (pars, idx, Name, loc);
+
+						if (right_side != null)
+							return param.ResolveLValue (ec, right_side);
+						else
+							return param.Resolve (ec);
+					}
+				}
+
 				//
 				// Stage 2: Lookup members 
 				//

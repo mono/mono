@@ -1434,11 +1434,11 @@ opt_constructor_initializer
 constructor_initializer
 	: COLON BASE OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorBaseInitializer ((ArrayList) $4, lexer.Location);
+		$$ = new ConstructorBaseInitializer ((ArrayList) $4, current_local_parameters, lexer.Location);
 	  }
 	| COLON THIS OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorThisInitializer ((ArrayList) $4, lexer.Location);
+		$$ = new ConstructorThisInitializer ((ArrayList) $4, current_local_parameters, lexer.Location);
 	  }
 	;
 
@@ -2644,7 +2644,8 @@ class_base
 block
 	: OPEN_BRACE 
 	  {
-		current_block = new Block (current_block, lexer.Location, Location.Null);
+		current_block = new Block (current_block, current_local_parameters,
+					   lexer.Location, Location.Null);
 	  } 
 	  opt_statement_list CLOSE_BRACE 
 	  { 
@@ -3656,45 +3657,19 @@ CheckDef (bool result, string name, Location l)
 	CheckDef (AdditionResult.NameExists, name, l);
 }
 
-//
-// This routine should be removed soon.  I am in the process of making
-// changes to never keep anything but SimpleNames during parsing, as
-// that breaks some kinds of code (documented in the ChangeLog).
-//
-Expression
-SimpleLookup (string name, Location loc)
-{
-	//
-	// we need to check against current_block not being null
-	// as `expression' is allowed in argument_lists, which 
-	// do not exist inside a block.  
-	//
-
-	if (current_local_parameters != null){
-		int idx;
-		Parameter par = current_local_parameters.GetParameterByName (name, out idx);
-		if (par != null)
-			return new ParameterReference (current_local_parameters, idx, name, lexer.Location);
-	}
-
-	return null;
-}
-
 Expression DecomposeQI (string name, Location loc)
 {
 	Expression o;
 
 	if (name.IndexOf ('.') == -1){
-	 	o = SimpleLookup (name, loc);
-		if (o == null)
-			return new SimpleName (name, loc);
-		return o;
+		return new SimpleName (name, loc);
 	} else {
 		int pos = name.LastIndexOf (".");
 		string left = name.Substring (0, pos);
 		string right = name.Substring (pos + 1);
 
 		o = DecomposeQI (left, loc);
+
 		return new MemberAccess (o, right, loc);
 	}
 }

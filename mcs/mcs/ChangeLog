@@ -1,5 +1,28 @@
 2002-08-06  Martin Baulig  <martin@gnome.org>
 
+	* cs-parser.jay (SimpleLookup): Removed.  We need to create
+	ParameterReferences during semantic analysis so that we can do a
+	type-only search when resolving Cast, TypeOf and SizeOf.
+	(block): Pass the `current_local_parameters' to the Block's
+	constructor.
+
+	* class.cs (ConstructorInitializer): Added `Parameters parameters'
+	argument to the constructor.
+	(ConstructorInitializer.Resolve): Create a temporary implicit
+	block with the parameters.
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Resolve parameter
+	references here if we aren't doing a type-only search.
+
+	* statement.cs (Block): Added constructor which takes a
+	`Parameters parameters' argument.
+	(Block.Parameters): New public property.
+
+	* support.cs (InternalParameters.Parameters): Renamed `parameters'
+	to `Parameters' and made it public readonly.
+
+2002-08-06  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (Expression.Warning): Made this public as well.
 
 	* report.cs (Report.Debug): Print the contents of collections.
