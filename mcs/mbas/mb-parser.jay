@@ -838,6 +838,11 @@ modifier
 	| PRIVATE		{ $$ = Modifiers.PRIVATE; }
 	| SHARED		{ $$ = Modifiers.STATIC; }
 	| FRIEND		{ $$ = Modifiers.INTERNAL; }
+	| OVERRIDES 		{ $$ = Modifiers.OVERRIDE; }
+	| OVERRIDABLE		{ $$ = 0; }
+	| NOTOVERRIDABLE	{ $$ = 0; }
+	| MUSTOVERRIDE		{ $$ = 0; }
+	| OVERLOADS		{ $$ = 0; }
 	;
 
 module_declaration
@@ -2724,12 +2729,12 @@ invocation_expression
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
-	| MYBASE DOT identifier OPEN_PARENS opt_expression_list CLOSE_PARENS
+	| MYBASE DOT identifier OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
 		BaseAccess ba = new BaseAccess ((string) $3, lexer.Location);
 		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
 	  }  
-	| MYBASE DOT NEW OPEN_PARENS opt_expression_list CLOSE_PARENS
+	| MYBASE DOT NEW OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
 		BaseAccess ba = new BaseAccess ("New", lexer.Location);
 		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
@@ -2979,6 +2984,10 @@ relational_expression
 	  {
 		$$ = new Is ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	| relational_expression IS NOTHING
+	  {
+		$$ = new Is ((Expression) $1, TypeManager.system_void_expr, lexer.Location);
+	  }	  
 	| relational_expression AS type_name
 	  {
 		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
