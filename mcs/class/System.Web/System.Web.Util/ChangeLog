@@ -1,5 +1,10 @@
 2003-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* UrlUtils.cs: fix bug introduced with last change that makes relative
+	paths fail. Closes bug #51448.
+
+2003-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* UrlUtils.cs: fixed Combine() handling of ~.
 
 2003-11-25  Jackson Harper <jackson@ximian.com>

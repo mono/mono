@@ -139,7 +139,7 @@ namespace System.Web.Util
 			if (vPath.Length <= 1)
 				vPath = String.Empty;
 
-			return Reduce (vPath + "/" + relPath.Substring (2));
+			return Reduce (vPath + "/" + relPath);
 		}
 		
 		public static bool IsValidProtocol(string protocol)
