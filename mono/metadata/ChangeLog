@@ -1,3 +1,9 @@
+2005-02-21  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_build_metadata): We also need to
+	"fixup" the MethodImpl table after we computed the final method
+	indices.  Call fixup_methodimpl() to do that.
+	(fixup_methodimpl): New private method.
 
 Mon Feb 21 16:17:14 CET 2005 Paolo Molaro <lupus@ximian.com>
 
