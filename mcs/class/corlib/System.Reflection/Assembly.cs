@@ -5,10 +5,6 @@
 //   Paolo Molaro (lupus@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,7 +28,9 @@
 //
 
 using System;
+using System.Security;
 using System.Security.Policy;
+using System.Security.Permissions;
 using System.Runtime.Serialization;
 using System.Reflection.Emit;
 using System.IO;
@@ -52,11 +50,20 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
+
+		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
 		private IntPtr _mono_assembly;
 
 		private ResolveEventHolder resolve_event_holder;
+		private Evidence _evidence;
+		private PermissionSet _minimum;		// for SecurityAction.RequestMinimum
+		private PermissionSet _optional;	// for SecurityAction.RequestOptional
+		private PermissionSet _refuse;		// for SecurityAction.RequestRefuse
+		private PermissionSet _granted;		// for the resolved assembly granted permissions
+		private PermissionSet _denied;		// for the resolved assembly denied permissions
 		
-		internal Assembly () {
+		internal Assembly () 
+		{
 			resolve_event_holder = new ResolveEventHolder ();
 		}
 
@@ -122,7 +129,9 @@ namespace System.Reflection {
 
 		[MonoTODO ("CAS related - post Mono 1.0 (see #53548)")]
 		public virtual Evidence Evidence {
-			get { return new Evidence (); }
+			get {
+				return _evidence;
+			}
 		}
 
 		public bool GlobalAssemblyCache {

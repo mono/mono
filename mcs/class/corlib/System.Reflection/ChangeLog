@@ -1,3 +1,7 @@
+2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Added new fields for CAS to match the runtime (v23).
+
 2004-07-29  Martin Baulig  <martin@ximian.com>
 
 	* Module.cs (Mono_GetGuid): Make this static.
