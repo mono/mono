@@ -1,11 +1,3 @@
-2002-07-26  Martin Baulig  <martin@gnome.org>
-
-	* cs-parser.jay (CSharpParser): Added `Stack switch_stack'.
-	(switch_statement): Push the current_block to the switch_stack and
-	pop it again when we're done with the switch.
-	(switch_section): The new block is an implicit child of the
-	current_block.  Fixes bug #24007, added test-152.cs.	
-
 2002-07-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Rename --resource to --linkres, because that is what
