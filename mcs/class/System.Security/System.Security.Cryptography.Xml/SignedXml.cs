@@ -22,9 +22,9 @@ namespace System.Security.Cryptography.Xml {
 
 	public class SignedXml {
 
-		private Signature signature;
+		protected Signature m_signature;
 		private AsymmetricAlgorithm key;
-		private string keyName;
+		protected string m_strSigningKeyName;
 		private XmlDocument envdoc;
 		private IEnumerator pkEnumerator;
 		private XmlElement signatureElement;
@@ -41,8 +41,8 @@ namespace System.Security.Cryptography.Xml {
 
 		public SignedXml () 
 		{
-			signature = new Signature ();
-			signature.SignedInfo = new SignedInfo ();
+			m_signature = new Signature ();
+			m_signature.SignedInfo = new SignedInfo ();
 			hashes = new Hashtable (2); // 98% SHA1 for now
 		}
 
@@ -71,28 +71,28 @@ namespace System.Security.Cryptography.Xml {
 		public const string XmlDsigSHA1Url = XmlDsigNamespaceUrl + "sha1";
 
 		public KeyInfo KeyInfo {
-			get { return signature.KeyInfo; }
-			set { signature.KeyInfo = value; }
+			get { return m_signature.KeyInfo; }
+			set { m_signature.KeyInfo = value; }
 		}
 
 		public Signature Signature {
-			get { return signature; }
+			get { return m_signature; }
 		}
 
 		public string SignatureLength {
-			get { return signature.SignedInfo.SignatureLength; }
+			get { return m_signature.SignedInfo.SignatureLength; }
 		}
 
 		public string SignatureMethod {
-			get { return signature.SignedInfo.SignatureMethod; }
+			get { return m_signature.SignedInfo.SignatureMethod; }
 		}
 
 		public byte[] SignatureValue {
-			get { return signature.SignatureValue; }
+			get { return m_signature.SignatureValue; }
 		}
 
 		public SignedInfo SignedInfo {
-			get { return signature.SignedInfo; }
+			get { return m_signature.SignedInfo; }
 		}
 
 		public AsymmetricAlgorithm SigningKey {
@@ -102,18 +102,18 @@ namespace System.Security.Cryptography.Xml {
 
 		// NOTE: CryptoAPI related ? documented as fx internal
 		public string SigningKeyName {
-			get { return keyName; }
-			set { keyName = value; }
+			get { return m_strSigningKeyName; }
+			set { m_strSigningKeyName = value; }
 		}
 
 		public void AddObject (DataObject dataObject) 
 		{
-			signature.AddObject (dataObject);
+			m_signature.AddObject (dataObject);
 		}
 
 		public void AddReference (Reference reference) 
 		{
-			signature.SignedInfo.AddReference (reference);
+			m_signature.SignedInfo.AddReference (reference);
 		}
 
 		private Stream ApplyTransform (Transform t, XmlDocument input) 
@@ -244,7 +244,7 @@ namespace System.Security.Cryptography.Xml {
 					}
 				}
 				if (objectName != null) {
-					foreach (DataObject obj in signature.ObjectList) {
+					foreach (DataObject obj in m_signature.ObjectList) {
 						if (obj.Id == objectName) {
 							XmlElement xel = obj.GetXml ();
 							doc.LoadXml (xel.OuterXml);
@@ -290,7 +290,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			// we must tell each reference which hash algorithm to use 
 			// before asking for the SignedInfo XML !
-			foreach (Reference r in signature.SignedInfo.References) {
+			foreach (Reference r in m_signature.SignedInfo.References) {
 				// assume SHA-1 if nothing is specified
 				if (r.DigestMethod == null)
 					r.DigestMethod = XmlDsigSHA1Url;
@@ -300,9 +300,9 @@ namespace System.Security.Cryptography.Xml {
 
 		private Transform GetC14NMethod ()
 		{
-			Transform t = (Transform) CryptoConfig.CreateFromName (signature.SignedInfo.CanonicalizationMethod);
+			Transform t = (Transform) CryptoConfig.CreateFromName (m_signature.SignedInfo.CanonicalizationMethod);
 			if (t == null)
-				throw new CryptographicException ("Unknown Canonicalization Method {0}", signature.SignedInfo.CanonicalizationMethod);
+				throw new CryptographicException ("Unknown Canonicalization Method {0}", m_signature.SignedInfo.CanonicalizationMethod);
 			return t;
 		}
 
@@ -314,7 +314,7 @@ namespace System.Security.Cryptography.Xml {
 				// when creating signatures
 				XmlDocument doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;
-				doc.LoadXml (signature.SignedInfo.GetXml ().OuterXml);
+				doc.LoadXml (m_signature.SignedInfo.GetXml ().OuterXml);
 				if (envdoc != null)
 				foreach (XmlAttribute attr in envdoc.DocumentElement.SelectNodes ("namespace::*")) {
 					if (attr.LocalName == "xml")
@@ -327,7 +327,7 @@ namespace System.Security.Cryptography.Xml {
 			}
 			else {
 				// when verifying signatures
-				// TODO - check signature.SignedInfo.Id
+				// TODO - check m_signature.SignedInfo.Id
 				XmlElement el = signatureElement.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI) [0] as XmlElement;
 				StringWriter sw = new StringWriter ();
 				XmlTextWriter xtw = new XmlTextWriter (sw);
@@ -432,7 +432,7 @@ namespace System.Security.Cryptography.Xml {
 
 			// some parts may need to be downloaded
 			// so where doing it last
-			if (! CheckReferenceIntegrity (signature.SignedInfo.References))
+			if (!CheckReferenceIntegrity (m_signature.SignedInfo.References))
 				return null;
 
 			if (manifests != null) {
@@ -452,7 +452,7 @@ namespace System.Security.Cryptography.Xml {
 			if (key == null)
 				return false;
 
-			SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (signature.SignedInfo.SignatureMethod);
+			SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (m_signature.SignedInfo.SignatureMethod);
 			if (sd == null)
 				return false;
 
@@ -469,7 +469,7 @@ namespace System.Security.Cryptography.Xml {
 				MemoryStream ms = (MemoryStream) SignedInfoTransformed ();
 
 				byte[] digest = hash.ComputeHash (ms);
-				return verifier.VerifySignature (digest, signature.SignatureValue);
+				return verifier.VerifySignature (digest, m_signature.SignatureValue);
 			}
 			catch {
 				// e.g. SignatureMethod != AsymmetricAlgorithm type
@@ -507,11 +507,11 @@ namespace System.Security.Cryptography.Xml {
 
 			byte[] actual = macAlg.ComputeHash (s);
 			// HMAC signature may be partial
-			if (signature.SignedInfo.SignatureLength != null) {
+			if (m_signature.SignedInfo.SignatureLength != null) {
 				int length = actual.Length;
 				try {
 					// SignatureLength is in bits
-					length = (Int32.Parse (signature.SignedInfo.SignatureLength) >> 3);
+					length = (Int32.Parse (m_signature.SignedInfo.SignatureLength) >> 3);
 				}
 				catch {
 				}
@@ -523,10 +523,10 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 
-			if (Compare (signature.SignatureValue, actual)) {
+			if (Compare (m_signature.SignatureValue, actual)) {
 				// some parts may need to be downloaded
 				// so where doing it last
-				return CheckReferenceIntegrity (signature.SignedInfo.References);
+				return CheckReferenceIntegrity (m_signature.SignedInfo.References);
 			}
 			return false;
 		}
@@ -541,7 +541,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (key != null) {
 				// required before hashing
-				signature.SignedInfo.SignatureMethod = key.SignatureAlgorithm;
+				m_signature.SignedInfo.SignatureMethod = key.SignatureAlgorithm;
 				DigestReferences ();
 
 				AsymmetricSignatureFormatter signer = null;
@@ -552,14 +552,14 @@ namespace System.Security.Cryptography.Xml {
 					signer = new RSAPKCS1SignatureFormatter (key);
 
 				if (signer != null) {
-					SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (signature.SignedInfo.SignatureMethod);
+					SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (m_signature.SignedInfo.SignatureMethod);
 
 					HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
 					// get the hash of the C14N SignedInfo element
 					byte[] digest = hash.ComputeHash (SignedInfoTransformed ());
 
 					signer.SetHashAlgorithm ("SHA1");
-					signature.SignatureValue = signer.CreateSignature (digest);
+					m_signature.SignatureValue = signer.CreateSignature (digest);
 				}
 			}
 		}
@@ -572,8 +572,8 @@ namespace System.Security.Cryptography.Xml {
 			if (macAlg is HMACSHA1) {
 				DigestReferences ();
 
-				signature.SignedInfo.SignatureMethod = XmlDsigHMACSHA1Url;
-				signature.SignatureValue = macAlg.ComputeHash (SignedInfoTransformed ());
+				m_signature.SignedInfo.SignatureMethod = XmlDsigHMACSHA1Url;
+				m_signature.SignatureValue = macAlg.ComputeHash (SignedInfoTransformed ());
 			}
 			else 
 				throw new CryptographicException ("unsupported algorithm");
@@ -594,11 +594,11 @@ namespace System.Security.Cryptography.Xml {
 		// iterates all possible keys then return null
 		protected virtual AsymmetricAlgorithm GetPublicKey () 
 		{
-			if (signature.KeyInfo == null)
+			if (m_signature.KeyInfo == null)
 				return null;
 
 			if (pkEnumerator == null) {
-				pkEnumerator = signature.KeyInfo.GetEnumerator ();
+				pkEnumerator = m_signature.KeyInfo.GetEnumerator ();
 			}
 
 			if (pkEnumerator.MoveNext ()) {
@@ -620,7 +620,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
-			return signature.GetXml ();
+			return m_signature.GetXml ();
 		}
 
 		public void LoadXml (XmlElement value) 
@@ -629,7 +629,7 @@ namespace System.Security.Cryptography.Xml {
 				throw new ArgumentNullException ("value");
 
 			signatureElement = value;
-			signature.LoadXml (value);
+			m_signature.LoadXml (value);
 		}
 
 #if NET_1_1

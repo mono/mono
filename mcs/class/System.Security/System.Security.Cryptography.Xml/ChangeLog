@@ -1,3 +1,7 @@
+2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SignedXml.cs: API signature fixes
+
 2004-06-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SignedXml.cs : Complete fix for bug #59545. Support #xpointer(id()).
