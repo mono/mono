@@ -1,3 +1,11 @@
+2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* expression.cs (Binary.Operator): Renamed LogicalAnd/LogicalOr to
+	LogicalAndAlso and LogicalOrElse.
+	
+	* cfold.cs, gen-treedump.cs, generic.cs, mb-parser.jay: Changes
+	related to the above renaming.
+
 2005-03-25  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* constant.cs (DateConstant): Added (Borrowed from mbas)

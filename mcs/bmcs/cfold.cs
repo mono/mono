@@ -999,7 +999,7 @@ namespace Mono.CSharp {
 				Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);
 				break;
 
-			case Binary.Operator.LogicalAnd:
+			case Binary.Operator.LogicalAndAlso:
 				if (left is BoolConstant && right is BoolConstant){
 					return new BoolConstant (
 						((BoolConstant) left).Value &&
@@ -1007,7 +1007,7 @@ namespace Mono.CSharp {
 				}
 				break;
 
-			case Binary.Operator.LogicalOr:
+			case Binary.Operator.LogicalOrElse:
 				if (left is BoolConstant && right is BoolConstant){
 					return new BoolConstant (
 						((BoolConstant) left).Value ||

@@ -30,15 +30,8 @@ include ../build/executable.make
 bmcs.exe: mb-parser.cs
 	gmcs    -d:NET_1_1 -d:ONLY_1_1 -debug /target:exe /out:bmcs.exe mb-parser.cs  @bmcs.exe.sources -nowarn:219 -nowarn:162
 
-install-as-mbas: all
-	cp ../class/lib/default/bmcs.exe $(prefix)/lib/mono/1.0/mbas.exe
-
 winstall: all
-	cp ../class/lib/default/bmcs.exe  /cygdrive/c/WINDOWS/Microsoft.NET/Framework/v1.1.4322/
-
-winstall-as-mbas: all
-	cp ../class/lib/default/bmcs.exe  /cygdrive/c/WINDOWS/Microsoft.NET/Framework/v1.1.4322/
-	cp ../class/lib/default/bmcs.exe  /cygdrive/c/WINDOWS/Microsoft.NET/Framework/v1.1.4322/mbas.exe
+	cp bmcs.exe  $(prefix)/lib/mono/2.0/
 
 diffus:
 	diff --exclude='.svn' --exclude='*-parser.*' --exclude='*-tokenizer.cs' -ruN ../gmcs ../bmcs

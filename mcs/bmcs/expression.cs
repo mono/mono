@@ -1862,8 +1862,8 @@ namespace Mono.CSharp {
 			BitwiseAnd,
 			ExclusiveOr,
 			BitwiseOr,
-			LogicalAnd,
-			LogicalOr,
+			LogicalAndAlso,
+			LogicalOrElse,
 			TOP
 		}
 
@@ -1893,8 +1893,8 @@ namespace Mono.CSharp {
 			oper_names [(int) Operator.BitwiseAnd] = "op_BitwiseAnd";
 			oper_names [(int) Operator.BitwiseOr] = "op_BitwiseOr";
 			oper_names [(int) Operator.ExclusiveOr] = "op_ExclusiveOr";
-			oper_names [(int) Operator.LogicalOr] = "op_LogicalOr";
-			oper_names [(int) Operator.LogicalAnd] = "op_LogicalAnd";
+			oper_names [(int) Operator.LogicalOrElse] = "op_LogicalOr";
+			oper_names [(int) Operator.LogicalAndAlso] = "op_LogicalAnd";
 		}
 
 		public Binary (Operator oper, Expression left, Expression right, Location loc)
@@ -1971,10 +1971,10 @@ namespace Mono.CSharp {
 				return "|";
 			case Operator.ExclusiveOr:
 				return "^";
-			case Operator.LogicalOr:
-				return "||";
-			case Operator.LogicalAnd:
-				return "&&";
+			case Operator.LogicalOrElse:
+				return "OrElse";
+			case Operator.LogicalAndAlso:
+				return "AndAlso";
 			}
 
 			return oper.ToString ();
@@ -2648,7 +2648,7 @@ namespace Mono.CSharp {
 			if (oper == Operator.LeftShift || oper == Operator.RightShift)
 				return CheckShiftArguments (ec);
 
-			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
+			if (oper == Operator.LogicalOrElse || oper == Operator.LogicalAndAlso){
 				if (l == TypeManager.bool_type && r == TypeManager.bool_type) {
 					type = TypeManager.bool_type;
 					return this;
@@ -2660,7 +2660,7 @@ namespace Mono.CSharp {
 				}
 
 				Expression e = new ConditionalLogicalOperator (
-					oper == Operator.LogicalAnd, left, right, l, loc);
+					oper == Operator.LogicalAndAlso, left, right, l, loc);
 				return e.Resolve (ec);
 			} 
 
@@ -2759,8 +2759,8 @@ namespace Mono.CSharp {
 
 			Constant lc = left as Constant;
 			if (lc != null && lc.Type == TypeManager.bool_type && 
-				((oper == Operator.LogicalAnd && (bool)lc.GetValue () == false) ||
-				 (oper == Operator.LogicalOr && (bool)lc.GetValue () == true))) {
+				((oper == Operator.LogicalAndAlso && (bool)lc.GetValue () == false) ||
+				 (oper == Operator.LogicalOrElse && (bool)lc.GetValue () == true))) {
 
 				// TODO: make a sense to resolve unreachable expression as we do for statement
 				Report.Warning (429, 4, loc, "Unreachable expression code detected");
@@ -2835,7 +2835,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-			} else if (oper == Operator.LogicalAnd) {
+			} else if (oper == Operator.LogicalAndAlso) {
 
 				if (onTrue) {
 						Label tests_end = ig.DefineLabel ();
@@ -2850,7 +2850,7 @@ namespace Mono.CSharp {
 
 				return;
 								
-			} else if (oper == Operator.LogicalOr){
+			} else if (oper == Operator.LogicalOrElse){
 				if (onTrue) {
 					left.EmitBranchable (ec, target, true);
 					right.EmitBranchable (ec, target, true);
@@ -2960,7 +2960,7 @@ namespace Mono.CSharp {
 			// Handle short-circuit operators differently
 			// than the rest
 			//
-			if (oper == Operator.LogicalAnd) {
+			if (oper == Operator.LogicalAndAlso) {
 				Label load_zero = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
 
@@ -2972,7 +2972,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.MarkLabel (end);
 				return;
-			} else if (oper == Operator.LogicalOr) {
+			} else if (oper == Operator.LogicalOrElse) {
 				Label load_one = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
 				

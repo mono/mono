@@ -214,13 +214,13 @@ namespace Generator {
 					prec = 2;
 					op = "|"; break;
 				
-				case Binary.Operator.LogicalAnd:
+				case Binary.Operator.LogicalAndAlso:
 					prec = 1;
-					op = "&&"; break;
+					op = "AndAlso"; break;
 				
-				case Binary.Operator.LogicalOr:
+				case Binary.Operator.LogicalOrElse:
 					prec = 0;
-					op = "||"; break;
+					op = "OrElse"; break;
 				
 				case Binary.Operator.ExclusiveOr:
 					prec = 3;

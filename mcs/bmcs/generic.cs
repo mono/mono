@@ -2624,7 +2624,7 @@ namespace Mono.CSharp {
 				}
 
 				if (((Oper == Binary.Operator.BitwiseAnd) || (Oper == Binary.Operator.BitwiseOr) ||
-				     (Oper == Binary.Operator.LogicalAnd) || (Oper == Binary.Operator.LogicalOr)) &&
+				     (Oper == Binary.Operator.LogicalAndAlso) || (Oper == Binary.Operator.LogicalOrElse)) &&
 				    ((left.Type == TypeManager.bool_type) && (right.Type == TypeManager.bool_type))) {
 					Expression empty = new EmptyExpression (TypeManager.bool_type);
 					bool_wrap = new Wrap (empty, loc).Resolve (ec);
@@ -2685,7 +2685,7 @@ namespace Mono.CSharp {
 
 				left.Emit (ec);
 				ig.Emit (OpCodes.Dup);
-				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOr))
+				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOrElse))
 					ig.Emit (OpCodes.Brtrue, wrap_label);
 				else
 					ig.Emit (OpCodes.Brfalse, wrap_label);
@@ -2695,7 +2695,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Brfalse, right_is_null_label);
 				}
 
-				if ((Oper == Binary.Operator.LogicalAnd) || (Oper == Binary.Operator.LogicalOr))
+				if ((Oper == Binary.Operator.LogicalAndAlso) || (Oper == Binary.Operator.LogicalOrElse))
 					ig.Emit (OpCodes.Pop);
 
 				right.Emit (ec);
@@ -2713,7 +2713,7 @@ namespace Mono.CSharp {
 
 				right.Emit (ec);
 				ig.Emit (OpCodes.Dup);
-				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOr))
+				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOrElse))
 					ig.Emit (OpCodes.Brtrue, wrap_label);
 				else
 					ig.Emit (OpCodes.Brfalse, wrap_label);
