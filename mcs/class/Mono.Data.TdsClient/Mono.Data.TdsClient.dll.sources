@@ -1,7 +1,6 @@
 Assembly/Locale.cs
 Mono.Data.TdsClient/TdsCommand.cs
 Mono.Data.TdsClient/TdsConnection.cs
-Mono.Data.TdsClient/TdsConnectionPool.cs
 Mono.Data.TdsClient/TdsDataAdapter.cs
 Mono.Data.TdsClient/TdsDataReader.cs
 Mono.Data.TdsClient/TdsError.cs
