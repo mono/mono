@@ -1,3 +1,8 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrivateKeyTest.cs: Fixed SaltWithoutPassword test to always use 
+	little endian.
+
 2004-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatterTest.cs: Check timestamp as an UTC value so 
