@@ -851,7 +851,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 
-				defs = value.Split (new Char [] {';'});
+				defs = value.Split (new Char [] {';', ','});
 				foreach (string d in defs){
 					defines.Add (d);
 				}

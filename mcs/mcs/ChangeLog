@@ -1,5 +1,10 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* driver.cs: csc also allows the arguments to /define being
+	separated by commas, not only by semicolons.
+
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
 	* interface.cs (Interface.GetMembers): Added static check for events.
 
 2002-08-15  Martin Baulig  <martin@gnome.org>
