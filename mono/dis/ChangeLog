@@ -1,5 +1,15 @@
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
+	* main.c (dis_genericparam): renamed to
+	dis_generic_param_and_constraints, allow a table type to be passed
+	to the method so this could be used with generic methods (It is
+	not though).
+	* get.c/get.h (get_generic_param): method to stringify generic
+	type and method parameters.
+	* get.c (dis_stringify_method_signature): Add generic parameters.
+	
+2003-10-08 Jackson Harper <jackson@ximian.com>
+
 	* main.c (dis_type): NULL cnst_block so we dont explode on
 	interfaces.
 	* main.c (dis_genericparam): oops, fix off-by-one error.
