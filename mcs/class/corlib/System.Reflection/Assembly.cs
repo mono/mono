@@ -223,12 +223,13 @@ namespace System.Reflection {
 
 		public Object CreateInstance (String typeName) 
 		{
-			throw new NotImplementedException ();
+			return CreateInstance (typeName, false);
 		}
 
 		public Object CreateInstance (String typeName, Boolean ignoreCase)
 		{
-			throw new NotImplementedException ();
+			Type t = GetType (typeName, true, ignoreCase);
+			return Activator.CreateInstance (t);
 		}
 
 		public Object CreateInstance (String typeName, Boolean ignoreCase,
@@ -236,7 +237,8 @@ namespace System.Reflection {
 					      Object[] args, CultureInfo culture,
 					      Object[] activationAttributes)
 		{
-			throw new NotImplementedException ();
+			Type t = GetType (typeName, true, ignoreCase);
+			return Activator.CreateInstance (t, bindingAttr, binder, args, culture, activationAttributes);
 		}
 
 		public Module[] GetLoadedModules ()
