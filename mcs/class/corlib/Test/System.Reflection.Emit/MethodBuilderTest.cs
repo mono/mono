@@ -134,8 +134,7 @@ public class MethodBuilderTest : Assertion
 		MethodBuilder mb2 = genClass.DefineMethod (
 			genMethodName (), 0, null, new Type [0]);
 
-		AssertEquals ("ReturnType is null", null,
-					  mb2.ReturnType);
+		Assert ("void ReturnType works", (mb2.ReturnType == null) || (mb2.ReturnType == typeof (void)));
 	}
 
 	public void TestReturnTypeCustomAttributes () {

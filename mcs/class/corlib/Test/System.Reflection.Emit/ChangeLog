@@ -1,3 +1,8 @@
+2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilderTest.cs (TestReturnType): Make test more general so
+	it works both on Mono and MS.NET.
+
 2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* EventBuilderTest.cs: New file.
