@@ -1,3 +1,4 @@
+using System.Collections;
 abstract class A {
         protected abstract int this [int a] { get; }
 
@@ -51,6 +52,13 @@ class X {
 		if (bb.EmulateIndexer (10) != 10)
 			return 3;
 
+		//
+		// This tests that we properly set the return type for the setter
+		// use pattern in the following indexer (see bug 36156)
+		Hashtable a = new Hashtable ();
+		int b = (int) (a [0] = 1);
+		if (b != 1)
+			return 4;
 		return new B ().M ();
 	}
 }
