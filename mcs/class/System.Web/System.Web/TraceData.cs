@@ -198,7 +198,7 @@ namespace System.Web {
 			table.Rows.Add (AltRow ("Request Details:"));
 			table.Rows.Add (InfoRow2 ("Session Id:", session_id,
 							"Request Type", request_type));
-			table.Rows.Add (InfoRow2 ("Time of Re	     quest:", request_time.ToString (),
+			table.Rows.Add (InfoRow2 ("Time of Request:", request_time.ToString (),
 							"State Code:", status_code.ToString ()));
 			table.Rows.Add (InfoRow2 ("Request Encoding:", request_encoding.EncodingName,
 						   "Response Encoding:", response_encoding.EncodingName));	     
@@ -226,14 +226,14 @@ namespace System.Web {
 			table.Rows.Add (AltRow ("Control Tree"));
 			table.Rows.Add (SubHeadRow ("Control Id", "Type",
 							"Render Size Bytes (including children)",
-							"View	     state Size Bytes (excluding children)"));
+							"View state Size Bytes (excluding children)"));
 			
 			int pos = 0;
 			foreach (DataRow r in control_data.Rows) {
 				int depth = (int) r ["Depth"];
 				string prefix = String.Empty;
 				for (int i=0; i<depth; i++)
-					prefix += "&nb	     sp;&nbsp;&nbsp;&nbsp;";
+					prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
 				RenderAltRow (table, pos++, prefix + r ["ControlId"],
 						r ["Type"].ToString (), "&nbsp;", "&nbsp;");
 			}
@@ -306,7 +306,7 @@ namespace System.Web {
 			open = close = String.Empty;
 			if ((bool) r ["IsWarning"]) {
 				open = "<font color=\"Red\">";
-				close = "</f ont>";
+				close = "</font>";
 			}
 			
 			double t = (double) r ["TimeSinceFirst"];

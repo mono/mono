@@ -1,5 +1,9 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
+	* TraceData.cs: Fix some typos in the output text.
+	
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
 	* HttpCachePolicy.cs: Expose duration and sliding properties.
 	
 2004-01-14  Jackson Harper <jackson@ximian.com>
