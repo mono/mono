@@ -1,3 +1,8 @@
+2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Module.cs: Decrease the image reference count when the Module is
+	garbage collected.
+
 2004-01-16  Martin Baulig  <martin@ximian.com>
 
 	* Assembly.cs: Make the `MonoDebugger_' methods static.

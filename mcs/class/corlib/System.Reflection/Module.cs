@@ -29,7 +29,11 @@ namespace System.Reflection {
 		internal string scopename;
 		internal bool is_resource;
 	
-		internal Module () {}
+		internal Module () { }
+
+		~Module () {
+			Close ();
+		}
 	
 		public Assembly Assembly {
 			get { return assembly; }
@@ -200,5 +204,8 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern Type GetGlobalType ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void Close ();
 	}
 }
