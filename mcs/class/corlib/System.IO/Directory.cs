@@ -41,7 +41,7 @@ namespace System.IO
 				throw new ArgumentException ("Only blank characters in path");
 			
 			// LAMESPEC: with .net 1.0 version this throw NotSupportedException and msdn says so too
-			// byt v1.1 throws ArgumentException.
+			// but v1.1 throws ArgumentException.
 			if (path == ":")
 				throw new ArgumentException ("Only ':' In path");
 			
@@ -56,6 +56,15 @@ namespace System.IO
 
 			MonoIOError error;
 			if (!MonoIO.CreateDirectory (path, out error)) {
+				// LAMESPEC: 1.1 and 1.2alpha allow CreateDirectory on a file path.
+				// So CreateDirectory ("/tmp/somefile") will succeed if 'somefile' is
+				// not a directory. However, 1.0 will throw an exception.
+				// We behave like 1.0 here (emulating 1.1-like behavior is just a matter
+				// of comparing error to ERROR_FILE_EXISTS, but it's lame to do:
+				//    DirectoryInfo di = Directory.CreateDirectory (something);
+				// and having di.Exists return false afterwards.
+				// I hope we don't break anyone's code, as they should be catching
+				// the exception anyway.
 				if (error != MonoIOError.ERROR_ALREADY_EXISTS)
 					throw MonoIO.GetException (path, error);
 			}
