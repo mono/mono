@@ -1,3 +1,7 @@
+2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c: Add EnumBuilder:setup_enum_type icall.
+
 2004-06-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* icall.c: Added a new icall for the property version of
