@@ -51,6 +51,7 @@ namespace System.Security.Policy {
 		private ArrayList named_permission_sets;
 		private string _location;
 		private PolicyLevelType _type;
+		private Hashtable fullNames;
 
 		internal PolicyLevel (string label, PolicyLevelType type)
                 {
@@ -93,7 +94,7 @@ namespace System.Security.Policy {
 					Save ();
 				}
 			}
-			catch (Exception) {
+/*			catch (Exception) {
 				// this can fail in many ways include
 				// * can't lookup policy (path discovery);
 				// * can't copy default file to policy
@@ -102,7 +103,7 @@ namespace System.Security.Policy {
 				// * can't decode policy file
 				if (!loaded)
 					CreateFromHardcodedDefault (_type);
-			}
+			}*/
 			finally {
 				_location = filename;
 			}
@@ -240,7 +241,6 @@ namespace System.Security.Policy {
 //			if (e.Tag != "PolicyLevel")
 //				throw new ArgumentException (Locale.GetText ("Invalid XML"));
 
-			Hashtable fullNames = null;
 			SecurityElement sc = e.SearchForChildByTag ("SecurityClasses");
 			if ((sc != null) && (sc.Children != null) && (sc.Children.Count > 0)) {
 				fullNames = new Hashtable (sc.Children.Count);
@@ -254,6 +254,7 @@ namespace System.Security.Policy {
 				named_permission_sets.Clear ();
 				foreach (SecurityElement se in nps.Children) {
 					NamedPermissionSet n = new NamedPermissionSet ();
+					n.Resolver = this;
 					n.FromXml (se);
 					named_permission_sets.Add (n);
 				}
@@ -272,7 +273,7 @@ namespace System.Security.Policy {
 				foreach (SecurityElement se in fta.Children) {
 					if (se.Tag != "IMembershipCondition")
 						throw new ArgumentException (Locale.GetText ("Invalid XML"));
-					string className = (string) se.Attributes ["class"];
+					string className = se.Attribute ("class");
 					if (className.IndexOf ("StrongNameMembershipCondition") < 0)
 						throw new ArgumentException (Locale.GetText ("Invalid XML - must be StrongNameMembershipCondition"));
 					// we directly use StrongNameMembershipCondition
@@ -363,20 +364,24 @@ namespace System.Security.Policy {
 
                 public void Reset ()
                 {
+			if (fullNames != null)
+				fullNames.Clear ();
                         full_trust_assemblies.Clear ();
                         named_permission_sets.Clear ();
 
-			if ((_location != null) && (File.Exists (_location))) {
-				try {
-					File.Delete (_location);
+			if (_type != PolicyLevelType.AppDomain) {
+				// because the policy doesn't exist LoadFromFile will try to
+				// 1. use the .default file if existing (like Fx 2.0 does); or
+				// 2. use the hard-coded default values
+				// and recreate a policy file
+				if ((_location != null) && (File.Exists (_location))) {
+					try {
+						File.Delete (_location);
+					}
+					catch {}
 				}
-				catch {}
+				LoadFromFile (_location);
 			}
-			// because the policy doesn't exist LoadFromFile will try to
-			// 1. use the .default file if existing (like Fx 2.0 does); or
-			// 2. use the hard-coded default values
-			// and recreate a policy file
-			LoadFromFile (_location);
                 }
 
                 public PolicyStatement Resolve (Evidence evidence)
@@ -500,6 +505,16 @@ namespace System.Security.Policy {
 				root_code_group = new UnionCodeGroup (new AllMembershipCondition (), psu); 
 				break;
 			}
+		}
+
+		internal string ResolveClassName (string className)
+		{
+			if (fullNames != null) {
+				object name = fullNames [className];
+				if (name != null)
+					return (string) name;
+			}
+			return className;
 		}
         }
 }

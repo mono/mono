@@ -1,3 +1,8 @@
+2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevel.cs: Fixed Reset not to delete/load policy file for 
+	AppDomain level. Added internal Resolve method for class names.
+
 2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationDirectory.cs: Now use Uri class to create the local 
