@@ -38,80 +38,88 @@ namespace Mono.Security.Cryptography {
 		// e.g. SNK files, PVK files
 		static public RSA FromCapiPrivateKeyBlob (byte[] blob) 
 		{
-			// PRIVATEKEYBLOB (0x07)
-			// Version (0x02)
-			if ((blob [0] != 0x07) || (blob [1] != 0x02))
-				return null;
-			// Reserved (word)
-			if ((blob [2] != 0x00) || (blob [3] != 0x00))
-				return null;
-			// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
-			int algId = BitConverter.ToInt32 (blob, 4);
-			// DWORD magic = RSA2
-			if (BitConverter.ToUInt32 (blob, 8) != 0x32415352)
-				return null;
-			// DWORD bitlen
-			int bitLen = BitConverter.ToInt32 (blob, 12);
+			return FromCapiPrivateKeyBlob (blob, 0);
+		}
 
-			// DWORD public exponent
-			RSAParameters rsap = new RSAParameters ();
-			byte[] exp = new byte [4];
-			Array.Copy (blob, 16, exp, 0, 4);
-			Array.Reverse (exp);
-			rsap.Exponent = Trim (exp);
-		
-			int pos = 20;
-			// BYTE modulus[rsapubkey.bitlen/8];
-			int byteLen = (bitLen >> 3);
-			rsap.Modulus = new byte [byteLen];
-			Array.Copy (blob, pos, rsap.Modulus, 0, byteLen);
-			Array.Reverse (rsap.Modulus);
-			pos += byteLen;
+		static public RSA FromCapiPrivateKeyBlob (byte[] blob, int offset) 
+		{
+			if (blob == null)
+				throw new ArgumentNullException ("blob");
+			if (offset >= blob.Length)
+				throw new ArgumentException ("blob is too small.");
 
-			// BYTE prime1[rsapubkey.bitlen/16];
-			int byteHalfLen = (byteLen >> 1);
-			rsap.P = new byte [byteHalfLen];
-			Array.Copy (blob, pos, rsap.P, 0, byteHalfLen);
-			Array.Reverse (rsap.P);
-			pos += byteHalfLen;
-
-			// BYTE prime2[rsapubkey.bitlen/16];
-			rsap.Q = new byte [byteHalfLen];
-			Array.Copy (blob, pos, rsap.Q, 0, byteHalfLen);
-			Array.Reverse (rsap.Q);
-			pos += byteHalfLen;
-
-			// BYTE exponent1[rsapubkey.bitlen/16];
-			rsap.DP = new byte [byteHalfLen];
-			Array.Copy (blob, pos, rsap.DP, 0, byteHalfLen);
-			Array.Reverse (rsap.DP);
-			pos += byteHalfLen;
-
-			// BYTE exponent2[rsapubkey.bitlen/16];
-			rsap.DQ = new byte [byteHalfLen];
-			Array.Copy (blob, pos, rsap.DQ, 0, byteHalfLen);
-			Array.Reverse (rsap.DQ);
-			pos += byteHalfLen;
-
-			// BYTE coefficient[rsapubkey.bitlen/16];
-			rsap.InverseQ = new byte [byteHalfLen];
-			Array.Copy (blob, pos, rsap.InverseQ, 0, byteHalfLen);
-			Array.Reverse (rsap.InverseQ);
-			pos += byteHalfLen;
-
-			// BYTE privateExponent[rsapubkey.bitlen/8];
-			rsap.D = new byte [byteLen];
-			Array.Copy (blob, pos, rsap.D, 0, byteLen);
-			Array.Reverse (rsap.D);
-
-			RSA rsa = (RSA)RSA.Create ();
 			try {
+				if ((blob [offset]   != 0x07) ||				// PRIVATEKEYBLOB (0x07)
+				    (blob [offset+1] != 0x02) ||				// Version (0x02)
+				    (blob [offset+2] != 0x00) ||				// Reserved (word)
+				    (blob [offset+3] != 0x00) ||
+				    (BitConverter.ToUInt32 (blob, offset+8) != 0x32415352))	// DWORD magic = RSA2
+					throw new CryptographicException ("Invalid blob header");
+				
+				// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
+				int algId = BitConverter.ToInt32 (blob, offset+4);
+
+				// DWORD bitlen
+				int bitLen = BitConverter.ToInt32 (blob, offset+12);
+
+				// DWORD public exponent
+				RSAParameters rsap = new RSAParameters ();
+				byte[] exp = new byte [4];
+				Array.Copy (blob, offset+16, exp, 0, 4);
+				Array.Reverse (exp);
+				rsap.Exponent = Trim (exp);
+			
+				int pos = offset+20;
+				// BYTE modulus[rsapubkey.bitlen/8];
+				int byteLen = (bitLen >> 3);
+				rsap.Modulus = new byte [byteLen];
+				Array.Copy (blob, pos, rsap.Modulus, 0, byteLen);
+				Array.Reverse (rsap.Modulus);
+				pos += byteLen;
+
+				// BYTE prime1[rsapubkey.bitlen/16];
+				int byteHalfLen = (byteLen >> 1);
+				rsap.P = new byte [byteHalfLen];
+				Array.Copy (blob, pos, rsap.P, 0, byteHalfLen);
+				Array.Reverse (rsap.P);
+				pos += byteHalfLen;
+
+				// BYTE prime2[rsapubkey.bitlen/16];
+				rsap.Q = new byte [byteHalfLen];
+				Array.Copy (blob, pos, rsap.Q, 0, byteHalfLen);
+				Array.Reverse (rsap.Q);
+				pos += byteHalfLen;
+
+				// BYTE exponent1[rsapubkey.bitlen/16];
+				rsap.DP = new byte [byteHalfLen];
+				Array.Copy (blob, pos, rsap.DP, 0, byteHalfLen);
+				Array.Reverse (rsap.DP);
+				pos += byteHalfLen;
+
+				// BYTE exponent2[rsapubkey.bitlen/16];
+				rsap.DQ = new byte [byteHalfLen];
+				Array.Copy (blob, pos, rsap.DQ, 0, byteHalfLen);
+				Array.Reverse (rsap.DQ);
+				pos += byteHalfLen;
+
+				// BYTE coefficient[rsapubkey.bitlen/16];
+				rsap.InverseQ = new byte [byteHalfLen];
+				Array.Copy (blob, pos, rsap.InverseQ, 0, byteHalfLen);
+				Array.Reverse (rsap.InverseQ);
+				pos += byteHalfLen;
+
+				// BYTE privateExponent[rsapubkey.bitlen/8];
+				rsap.D = new byte [byteLen];
+				Array.Copy (blob, pos, rsap.D, 0, byteLen);
+				Array.Reverse (rsap.D);
+
+				RSA rsa = (RSA)RSA.Create ();
 				rsa.ImportParameters (rsap);
+				return rsa;
 			}
-			catch {
-				rsa = null;
+			catch (Exception e) {
+				throw new CryptographicException ("Invalid blob.", e);
 			}
-			return rsa;
 		}
 
 		static public byte[] ToCapiPrivateKeyBlob (RSA rsa) 
@@ -193,43 +201,46 @@ namespace Mono.Security.Cryptography {
 
 		static public RSA FromCapiPublicKeyBlob (byte[] blob, int offset) 
 		{
-			// PUBLICKEYBLOB (0x06)
-			// Version (0x02)
-			if ((blob [offset] != 0x06) || (blob [offset+1] != 0x02))
-				return null;
-			// Reserved (word)
-			if ((blob [offset+2] != 0x00) || (blob [offset+3] != 0x00))
-				return null;
-			// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
-			int algId = BitConverter.ToInt32 (blob, offset+4);
-			// DWORD magic = RSA1
-			if (BitConverter.ToUInt32 (blob, offset+8) != 0x31415352)
-				return null;
-			// DWORD bitlen
-			int bitLen = BitConverter.ToInt32 (blob, offset+12);
+			if (blob == null)
+				throw new ArgumentNullException ("blob");
+			if (offset >= blob.Length)
+				throw new ArgumentException ("blob is too small.");
 
-			// DWORD public exponent
-			RSAParameters rsap = new RSAParameters ();
-			rsap.Exponent = new byte [3];
-			rsap.Exponent [0] = blob [offset+18];
-			rsap.Exponent [1] = blob [offset+17];
-			rsap.Exponent [2] = blob [offset+16];
-		
-			int pos = offset+20;
-			// BYTE modulus[rsapubkey.bitlen/8];
-			int byteLen = (bitLen >> 3);
-			rsap.Modulus = new byte [byteLen];
-			Array.Copy (blob, pos, rsap.Modulus, 0, byteLen);
-			Array.Reverse (rsap.Modulus);
-
-			RSA rsa = (RSA)RSA.Create ();
 			try {
+				if ((blob [offset]   != 0x06) ||				// PUBLICKEYBLOB (0x06)
+				    (blob [offset+1] != 0x02) ||				// Version (0x02)
+				    (blob [offset+2] != 0x00) ||				// Reserved (word)
+				    (blob [offset+3] != 0x00) || 
+				    (BitConverter.ToUInt32 (blob, offset+8) != 0x31415352))	// DWORD magic = RSA1
+					throw new CryptographicException ("Invalid blob header");
+
+				// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
+				int algId = BitConverter.ToInt32 (blob, offset+4);
+
+				// DWORD bitlen
+				int bitLen = BitConverter.ToInt32 (blob, offset+12);
+
+				// DWORD public exponent
+				RSAParameters rsap = new RSAParameters ();
+				rsap.Exponent = new byte [3];
+				rsap.Exponent [0] = blob [offset+18];
+				rsap.Exponent [1] = blob [offset+17];
+				rsap.Exponent [2] = blob [offset+16];
+			
+				int pos = offset+20;
+				// BYTE modulus[rsapubkey.bitlen/8];
+				int byteLen = (bitLen >> 3);
+				rsap.Modulus = new byte [byteLen];
+				Array.Copy (blob, pos, rsap.Modulus, 0, byteLen);
+				Array.Reverse (rsap.Modulus);
+
+				RSA rsa = (RSA)RSA.Create ();
 				rsa.ImportParameters (rsap);
+				return rsa;
 			}
-			catch {
-				rsa = null;
+			catch (Exception e) {
+				throw new CryptographicException ("Invalid blob.", e);
 			}
-			return rsa;
 		}
 
 		static public byte[] ToCapiPublicKeyBlob (RSA rsa) 
@@ -272,19 +283,32 @@ namespace Mono.Security.Cryptography {
 		// PUBLICKEYBLOB
 		static public RSA FromCapiKeyBlob (byte[] blob) 
 		{
-			switch (blob [0]) {
+			return FromCapiKeyBlob (blob, 0);
+		}
+
+		static public RSA FromCapiKeyBlob (byte[] blob, int offset) 
+		{
+			if (blob == null)
+				throw new ArgumentNullException ("blob");
+			if (offset >= blob.Length)
+				throw new ArgumentException ("blob is too small.");
+
+			switch (blob [offset]) {
 				case 0x06:
-					return FromCapiPublicKeyBlob (blob);
+					return FromCapiPublicKeyBlob (blob, offset);
 				case 0x07:
-					return FromCapiPrivateKeyBlob (blob);
+					return FromCapiPrivateKeyBlob (blob, offset);
 				default:
-					return null;
+					throw new CryptographicException ("Unknown blob format.");
 			}
 		}
 
 		static public byte[] ToCapiKeyBlob (AsymmetricAlgorithm keypair, bool includePrivateKey) 
 		{
-			// check between RSA and DSA
+			if (keypair == null)
+				throw new ArgumentNullException ("keypair");
+
+			// check between RSA and DSA (and potentially others like DH)
 			if (keypair is RSA)
 				return ToCapiKeyBlob ((RSA)keypair, includePrivateKey);
 			else
@@ -293,6 +317,9 @@ namespace Mono.Security.Cryptography {
 
 		static public byte[] ToCapiKeyBlob (RSA rsa, bool includePrivateKey) 
 		{
+			if (rsa == null)
+				throw new ArgumentNullException ("rsa");
+
 			RSAParameters p = rsa.ExportParameters (includePrivateKey);
 			if (includePrivateKey)
 				return ToCapiPrivateKeyBlob (rsa);
@@ -327,6 +354,8 @@ namespace Mono.Security.Cryptography {
 		{
 			if (hex == null)
 				return null;
+			if ((hex.Length & 0x1) == 0x1)
+				throw new ArgumentException ("Length must be a multiple of 2");
 
 			byte[] result = new byte [hex.Length >> 1];
 			int n = 0;
