@@ -1,4 +1,8 @@
+2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_blittable): Methods which set LastError are not 
+	blittable either. Fixes #51108.
+	
 Tue Nov 18 16:41:37 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: flush icache.
