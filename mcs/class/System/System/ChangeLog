@@ -1,3 +1,10 @@
+2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : should not escape already-escaped string (Patch by 
+	  Boris Kirzner).  File LocalPath should unespace return value.
+	  ToString() should be unescaped only when it is not an UNC path.
+	  (UNC looks not to be unescaped).
+
 2004-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : quick fix on local file relative uri.

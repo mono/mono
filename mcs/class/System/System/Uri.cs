@@ -324,10 +324,11 @@ namespace System
 				if (!IsFile)
 					return path;
 				if (!IsUnc) {
+					string p = Unescape (path);
 					if (System.IO.Path.DirectorySeparatorChar == '\\')
-						return path.Replace ('/', '\\');
+						return p.Replace ('/', '\\');
 					else
-						return path;
+						return p;
 				}
 
 				// support *nix and W32 styles
@@ -664,7 +665,10 @@ namespace System
 		{
 			if (cachedToString != null) 
 				return cachedToString;
-			cachedToString = AbsoluteUri;
+			if (IsFile && !IsUnc)
+				cachedToString = Unescape (AbsoluteUri);
+			else
+				cachedToString = AbsoluteUri;
 
 			return cachedToString;
 		}
@@ -704,6 +708,19 @@ namespace System
 				// delims      = "<" | ">" | "#" | "%" | <">
 				// unwise      = "{" | "}" | "|" | "\" | "^" | "[" | "]" | "`"
 
+				// check for escape code already placed in str, 
+				// i.e. for encoding that follows the pattern 
+                // "%hexhex" in a string, where "hex" is a digit from 0-9 
+				// or a letter from A-F (case-insensitive).
+				if('%'.Equals(c) && IsHexEncoding(str,i))
+				{
+					// if ,yes , copy it as is
+					s.Append(c);
+					s.Append(str[++i]);
+					s.Append(str[++i]);
+					continue;
+				}
+
 				if ((c <= 0x20) || (c >= 0x7f) || 
 				    ("<>%\"{}|\\^`".IndexOf (c) != -1) ||
 				    (escapeHex && (c == '#')) ||
@@ -713,6 +730,7 @@ namespace System
 					s.Append (HexEscape (c));
 					continue;
 				}
+				
 					
 				s.Append (c);
 			}
