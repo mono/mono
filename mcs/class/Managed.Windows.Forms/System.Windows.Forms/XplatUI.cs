@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.25 $
+// $Revision: 1.26 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.26  2004/11/08 20:53:03  pbartok
+// - Added argument to SetTopmost
+//
 // Revision 1.25  2004/10/18 04:50:54  pbartok
 // - Added method for enabling/disabling windows
 // - Added method for setting window modality
@@ -351,8 +354,8 @@ namespace System.Windows.Forms {
 			return driver.SetZOrder(hWnd, AfterhWnd, Top, Bottom);
 		}
 
-		internal static bool SetTopmost(IntPtr hWnd, bool Enabled) {
-			return driver.SetTopmost(hWnd, Enabled);
+		internal static bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled) {
+			return driver.SetTopmost(hWnd, hWndOwner, Enabled);
 		}
 
 		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
