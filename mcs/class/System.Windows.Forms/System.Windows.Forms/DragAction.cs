@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
 	/// Specifies how and if a drag-and-drop operation should continue.
 	/// </summary>
 	[Serializable]
 	[ComVisible(true)]
-	public enum DragAction
-	{
+	public enum DragAction {
+
 		//Values were verified with enumcheck.
 		Continue = 0,
 		Drop = 1,

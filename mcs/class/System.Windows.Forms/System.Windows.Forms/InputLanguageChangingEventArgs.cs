@@ -22,13 +22,15 @@ namespace System.Windows.Forms {
 		//  --- Constructor
 		//
 		[MonoTODO] //what about input lang?
-		public InputLanguageChangingEventArgs(CultureInfo culture, bool sysCharSet) {
+		public InputLanguageChangingEventArgs(CultureInfo culture, bool sysCharSet) 
+		{
 			this.culture = culture;
 			this.systemcharset =sysCharSet;
 		}
 
 		[MonoTODO] //what about culture?
-		public InputLanguageChangingEventArgs(InputLanguage inputlanguage, bool sysCharSet) {
+		public InputLanguageChangingEventArgs(InputLanguage inputlanguage, bool sysCharSet) 
+		{
 			this.culture = culture;
 			this.inputlanguage = inputlanguage;
 		}

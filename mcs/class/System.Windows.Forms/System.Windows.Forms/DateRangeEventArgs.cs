@@ -7,13 +7,13 @@
 // (C) Ximian, Inc., 2002
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	///	Provides data for the DateChanged or DateSelected events of the MonthCalendar control.
 	/// </summary>
-	public class DateRangeEventArgs : EventArgs
-	{
+	public class DateRangeEventArgs : EventArgs {
+
 		//
 		//  --- Private Fields
 		//
@@ -32,13 +32,13 @@ namespace System.Windows.Forms
 		//
 		//  --- Public Properties
 		//
-		public DateTime End
-		{
+		public DateTime End {
+
 			get { return end; }
 		}
 		[MonoTODO]
-		public DateTime Start
-		{
+		public DateTime Start {
+
 			get { return start; }
 		}
 	}

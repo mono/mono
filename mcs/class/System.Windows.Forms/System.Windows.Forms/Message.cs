@@ -35,8 +35,8 @@ namespace System.Windows.Forms {
 		/// </remarks>
 
 		public static bool operator == (Message msg_a, 
-			Message msg_b)
-		{
+			Message msg_b) {
+
 			return ((msg_a.msg == msg_b.msg) &&
 				(msg_a.hwnd == msg_b.hwnd) &&
 				(msg_a.lparam == msg_b.lparam) &&
@@ -112,7 +112,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Message create(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam){
+		public static Message create(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+		{
 			NewMessage = new Message();
 			NewMessage.msg = msg;
 			NewMessage.wparm = wparam;

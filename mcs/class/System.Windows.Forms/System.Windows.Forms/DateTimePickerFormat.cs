@@ -9,13 +9,13 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// </summary>
 	[MonoTODO]
-	public class DateTimePickerFormat
-	{
+	public class DateTimePickerFormat {
+
 		/// --- Constructor ---
 	}
 }

@@ -9,14 +9,14 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	///	Provides data for the DragDrop, DragEnter, or DragOver event.
 	/// </summary>
 	[ComVisible(true)]
-	public class DragEventArgs : EventArgs
-	{
+	public class DragEventArgs : EventArgs {
+
 		//
 		//  --- Private Fields
 		//
@@ -45,34 +45,34 @@ namespace System.Windows.Forms
 		//  --- Public Properties
 		//
 		[ComVisible(true)]
-		public DragDropEffects AllowedEffect
-		{
+		public DragDropEffects AllowedEffect {
+
 			get { return allowedEffect; }
 		}
 		[ComVisible(true)]
-		public IDataObject Data
-		{
+		public IDataObject Data {
+
 			get { return data; }
 		}
 		[ComVisible(true)]
-		public DragDropEffects Effect
-		{
+		public DragDropEffects Effect {
+
 			get { return effect; }
 			set { effect = value; }
 		}
 		[ComVisible(true)]
-		public int KeyState
-		{
+		public int KeyState {
+
 			get { return keyState; }
 		}
 		[ComVisible(true)]
-		public int X
-		{
+		public int X {
+
 			get { return x; }
 		}
 		[ComVisible(true)]
-		public int Y
-		{
+		public int Y {
+
 			get { return y; }
 		}
 	}

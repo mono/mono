@@ -3,19 +3,18 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
 using System.Collections;
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template. Nothing is implemented yet.
 	//	Represents a Windows up-down control that displays string values.
 	// </summary>
-	public class DomainUpDown : UpDownBase
-	{
+	public class DomainUpDown : UpDownBase {
+
 		
 		//  --- Constructors/Destructors
 		
@@ -56,24 +55,24 @@ namespace System.Windows.Forms
 		protected override void OnChanged(object source, EventArgs e)
 		{
 			//This method is internal to the .NET framework.
-			if (Changed != null)
-			{
+			if (Changed != null) {
+
 				Changed(this, e);
 			}
 		}
 		[MonoTODO]
 		protected void OnSelectedItemChanged(object source, EventArgs e)
 		{
-			if (SelectedItemChanged != null)
-			{
+			if (SelectedItemChanged != null) {
+
 				SelectedItemChanged(this, e);
 			}
 		}
 		[MonoTODO]
 		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
 		{
-			if (TextBoxKeyDown != null)
-			{
+			if (TextBoxKeyDown != null) {
+
 				TextBoxKeyDown(this, e);
 			}
 		}
@@ -97,31 +96,31 @@ namespace System.Windows.Forms
 		//  --- Public Properties
 		
 		[MonoTODO]
-		public DomainUpDown.DomainUpDownItemCollection Items
-		{
+		public DomainUpDown.DomainUpDownItemCollection Items {
+
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public int SelectedIndex // default -1
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public object SelectedItem // default null
-		{
+		public int SelectedIndex // default -1 {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool Sorted // default false
-		{
+		public object SelectedItem // default null {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool Wrap // default false
-		{
+		public bool Sorted // default false {
+
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		[MonoTODO]
+		public bool Wrap // default false {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -137,8 +136,8 @@ namespace System.Windows.Forms
 		//This is only a template. Nothing is implemented yet.
 		//Encapsulates a collection of objects for use by the DomainUpDown class.
 		//</summary>
-		public class DomainUpDownItemCollection : ArrayList
-		{
+		public class DomainUpDownItemCollection : ArrayList {
+
 			//
 			//  --- Constructors/Destructors
 			//
@@ -175,8 +174,8 @@ namespace System.Windows.Forms
 			
 			//  --- Public Properties
 					
-			public override object this[int index]
-			{
+			public override object this[int index] {
+
 				get { throw new NotImplementedException (); }
 				set { throw new NotImplementedException (); }
 			}

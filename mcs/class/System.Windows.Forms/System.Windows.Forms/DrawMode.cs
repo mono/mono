@@ -9,15 +9,15 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies how the elements of a control are drawn.
 	/// </summary>
 	[Serializable]
-	public enum DrawMode
-	{
+	public enum DrawMode {
+
 		//Values were verified with enumcheck.
 		Normal = 0,
 		OwnerDrawFixed = 1,

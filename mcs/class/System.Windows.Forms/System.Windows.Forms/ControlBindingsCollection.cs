@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -11,8 +10,8 @@
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents the collection of data bindings for a control.
 	///
@@ -21,10 +20,11 @@ namespace System.Windows.Forms
 	/// </summary>
 	
 	[MonoTODO]
-	public class ControlBindingsCollection : BindingsCollection
-	{
+	public class ControlBindingsCollection : BindingsCollection {
+
 		#region Constructors
-		protected internal ControlBindingsCollection() : base () {
+		protected internal ControlBindingsCollection() : base () 
+		{
 		}
 		#endregion
 		
@@ -50,27 +50,32 @@ namespace System.Windows.Forms
 		/// - protected override void ClearCore();
 		/// - protected override void RemoveCore(Binding dataBinding);
 		[MonoTODO]
-		public new void Add(Binding binding) {
+		public new void Add(Binding binding) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Binding Add(string propertyName,object dataSource,string dataMember) {
+		public Binding Add(string propertyName,object dataSource,string dataMember) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public new void Clear() {
+		public new void Clear() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public new void Remove(Binding binding) {
+		public new void Remove(Binding binding) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public new void RemoveAt(int index) {
+		public new void RemoveAt(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

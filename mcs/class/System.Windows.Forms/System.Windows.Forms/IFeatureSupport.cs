@@ -8,10 +8,10 @@
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
-	public interface IFeatureSupport
-	{
+namespace System.Windows.Forms {
+
+	public interface IFeatureSupport {
+
 		Version GetVersionPresent(object feature);
 		bool IsPresent(object feature);
 		bool IsPresent(object feature, Version minimumVersion);

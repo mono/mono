@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
 	/// Specifies the type of caption button to display.
 	/// </summary>
 
 	[Serializable]
-	public enum CaptionButton
-	{
+	public enum CaptionButton {
+
 		//Values were verified with enumcheck.
 		Close = 0,
 		Minimize = 1,

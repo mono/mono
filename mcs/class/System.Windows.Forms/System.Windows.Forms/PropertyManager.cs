@@ -85,12 +85,12 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		protected /*internal */override string GetListName(ArrayList listAccessors) {
+		protected internal override string GetListName(ArrayList listAccessors) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected /*internal */override void OnCurrentChanged(EventArgs ea) {
+		protected internal override void OnCurrentChanged(EventArgs ea) {
 			throw new NotImplementedException ();
 		}
 		

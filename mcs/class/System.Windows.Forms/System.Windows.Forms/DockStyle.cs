@@ -9,15 +9,15 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
 	/// Specifies the position and manner in which a control is docked.
 	/// </summary>
 	[Serializable]
-	public enum DockStyle
-	{
+	public enum DockStyle {
+
 		//Values were verified with enumcheck.
 		None = 0,
 		Top = 1,

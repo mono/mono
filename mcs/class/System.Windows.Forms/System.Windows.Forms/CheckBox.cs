@@ -9,8 +9,8 @@
 
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a Windows check box.
 	/// ToDo note:
@@ -18,8 +18,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class CheckBox : ButtonBase
-	{
+	public class CheckBox : ButtonBase {
+
 		// private fields
 		Appearance appearance;
 		bool autoCheck;
@@ -30,7 +30,8 @@ namespace System.Windows.Forms
 		
 		
 		// --- Constructor ---
-		public CheckBox() : base() {
+		public CheckBox() : base() 
+		{
 			appearance = Appearance.Normal;
 			autoCheck = true;
 			checkAlign = ContentAlignment.MiddleLeft;
@@ -94,51 +95,60 @@ namespace System.Windows.Forms
 		
 		// --- CheckBox methods ---
 		[MonoTODO]
-		protected override AccessibleObject CreateAccessibilityInstance() {
+		protected override AccessibleObject CreateAccessibilityInstance() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		
 		// [event methods]
 		[MonoTODO]
-		protected virtual void OnAppearanceChanged(EventArgs e) {
+		protected virtual void OnAppearanceChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnCheckedChanged(EventArgs e) {
+		protected virtual void OnCheckedChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnCheckStateChanged(EventArgs e) {
+		protected virtual void OnCheckStateChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnClick(EventArgs e) {
+		protected override void OnClick(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs mevent) {
+		protected override void OnMouseUp(MouseEventArgs mevent) 
+		{
 			throw new NotImplementedException ();
 		}
 		// end of [event methods]
 		
 		
 		[MonoTODO]
-		protected override bool ProcessMnemonic(char charCode) {
+		protected override bool ProcessMnemonic(char charCode) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		

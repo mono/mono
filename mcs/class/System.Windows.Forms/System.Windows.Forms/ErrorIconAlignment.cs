@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies constants indicating the locations that an error icon can appear
   /// in relation to the control with an error. 
 	/// </summary>
 	[Serializable]
-	public enum ErrorIconAlignment
-	{
+	public enum ErrorIconAlignment {
+
 		//Values were verified with enumcheck.
 		TopLeft = 0,
 		TopRight = 1,

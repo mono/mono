@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -13,8 +12,8 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides a collection of Cursor objects for use by a Windows Forms application.
 	///
@@ -23,8 +22,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public sealed class Cursors
-	{
+	public sealed class Cursors {
+
 		#region Properties
 		[MonoTODO]
 		public static Cursor AppStarting {

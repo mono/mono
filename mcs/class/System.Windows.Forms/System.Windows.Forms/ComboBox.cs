@@ -11,8 +11,8 @@ using System.ComponentModel;
 using System.Collections;
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a Windows combo box control.
 	/// ToDo note:
@@ -20,8 +20,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class ComboBox : ListControl
-	{
+	public class ComboBox : ListControl {
+
 		// private fields
 		DrawMode drawMode;
 		ComboBoxStyle dropDownStyle;
@@ -31,7 +31,8 @@ namespace System.Windows.Forms
 		
 		
 		// --- Constructor ---
-		public ComboBox() : base() {
+		public ComboBox() : base() 
+		{
 			drawMode = DrawMode.Normal;
 			dropDownStyle = ComboBoxStyle.DropDown;
 			droppedDown = false;
@@ -179,171 +180,204 @@ namespace System.Windows.Forms
 		/// - protected virtual void OnSelectedItemChanged(EventArgs e);
 		/// - protected override void SetItemCore(int index,object value);
 		[MonoTODO]
-		protected virtual void AddItemsCore(object[] value) {
+		protected virtual void AddItemsCore(object[] value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void BeginUpdate() {
+		public void BeginUpdate() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void EndUpdate() {
+		public void EndUpdate() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public int FindString(string s) {
+		public int FindString(string s) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public int FindString(string s,int startIndex) {
+		public int FindString(string s,int startIndex) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public int FindStringExact(string s) {
+		public int FindStringExact(string s) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public int FindStringExact(string s,int startIndex) {
+		public int FindStringExact(string s,int startIndex) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public int GetItemHeight(int index) {
+		public int GetItemHeight(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool IsInputKey(Keys keyData) {
+		protected override bool IsInputKey(Keys keyData) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		/// [methods for events]
 		[MonoTODO]
-		protected override void OnBackColorChanged(EventArgs e) {
+		protected override void OnBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnDataSourceChanged(EventArgs e) {
+		protected override void OnDataSourceChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnDisplayMemberChanged(EventArgs e) {
+		protected override void OnDisplayMemberChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnDrawItem(DrawItemEventArgs e) {
+		protected virtual void OnDrawItem(DrawItemEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnDropDown(EventArgs e) {
+		protected virtual void OnDropDown(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnDropDownStyleChanged(EventArgs e) {
+		protected virtual void OnDropDownStyleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnForeColorChanged(EventArgs e) {
+		protected override void OnForeColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleDestroyed(EventArgs e) {
+		protected override void OnHandleDestroyed(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyPress(KeyPressEventArgs e) {
+		protected override void OnKeyPress(KeyPressEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnMeasureItem(MeasureItemEventArgs e) {
+		protected virtual void OnMeasureItem(MeasureItemEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnParentBackColorChanged(EventArgs e) {
+		protected override void OnParentBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnResize(EventArgs e) {
+		protected override void OnResize(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnSelectedIndexChanged(EventArgs e) {
+		protected override void OnSelectedIndexChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnSelectionChangeCommitted(EventArgs e) {
+		protected virtual void OnSelectionChangeCommitted(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		/// end of [methods for events]
 		
 		
 		[MonoTODO]
-		protected override void RefreshItem(int index) {
+		protected override void RefreshItem(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void Select(int start,int length) {
+		public void Select(int start,int length) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void SelectAll() {
+		public void SelectAll() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) {
+		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		// for IList interface
 		[MonoTODO]
-		protected override void SetItemsCore(IList value) {
+		protected override void SetItemsCore(IList value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -436,7 +470,8 @@ namespace System.Windows.Forms
 			
 			/// --- ObjectCollection.constructor ---
 			[MonoTODO]
-			public ObjectCollection (ComboBox owner) {
+			public ObjectCollection (ComboBox owner) 
+			{
 				throw new NotImplementedException ();
 			}
 			
@@ -464,19 +499,19 @@ namespace System.Windows.Forms
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
-			object IList.this[int index]
-			{
+			object IList.this[int index] {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 				[MonoTODO] set { throw new NotImplementedException (); }
 			}
 	
-			object ICollection.SyncRoot
-			{
+			object ICollection.SyncRoot {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 	
-			bool ICollection.IsSynchronized
-			{
+			bool ICollection.IsSynchronized {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
@@ -484,58 +519,69 @@ namespace System.Windows.Forms
 			/// --- ObjectCollection Methods ---
 			/// Note: IList methods are stubbed out, otherwise IList interface cannot be implemented
 			[MonoTODO]
-			public int Add(object item) {
+			public int Add(object item) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void AddRange(object[] items) {
+			public void AddRange(object[] items) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void Clear() {
+			public void Clear() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public bool Contains(object value) {
+			public bool Contains(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void CopyTo(object[] dest,int arrayIndex) {
+			public void CopyTo(object[] dest,int arrayIndex) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			/// for ICollection:
 			[MonoTODO]
-			void ICollection.CopyTo(Array dest,int index) {
+			void ICollection.CopyTo(Array dest,int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public int IndexOf(object value) {
+			public int IndexOf(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void Insert(int index,object item) {
+			public void Insert(int index,object item) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void Remove(object value) {
+			public void Remove(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void RemoveAt(int index) {
+			public void RemoveAt(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 		}  // --- end of ComboBox.ObjectCollection ---

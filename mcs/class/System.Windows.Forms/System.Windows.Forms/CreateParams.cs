@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -11,14 +10,14 @@
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Encapsulates the information needed when creating a control.
 	/// </summary>
 	
-	public class CreateParams
-	{
+	public class CreateParams {
+
 		#region Fields
 		private string caption;
 		private string className;
@@ -34,7 +33,8 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Constructors
-		public CreateParams() {
+		public CreateParams() 
+		{
 		}
 		#endregion
 		
@@ -97,7 +97,8 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

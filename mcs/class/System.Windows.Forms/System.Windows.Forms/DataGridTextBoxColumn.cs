@@ -8,14 +8,14 @@
 //
 using System.Drawing;
 using System.ComponentModel;
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template. Nothing is implemented yet.
 	//	Hosts a TextBox control in a cell of a DataGridColumnStyle for editing strings.
 	// </summary>
-	public class DataGridTextBoxColumn : DataGridColumnStyle
-	{
+	public class DataGridTextBoxColumn : DataGridColumnStyle {
+
 		//
 		//  --- Constructors/Destructors
 		//
@@ -67,8 +67,8 @@ namespace System.Windows.Forms
 		}
 		[MonoTODO]
 		protected internal override void Edit(CurrencyManager source, int rowNum, Rectangle bounds,
-		                                       bool readOnly, string instantText, bool cellIsVisible)
-		{
+		                                       bool readOnly, string instantText, bool cellIsVisible) {
+
 			// This method is internal to the .NET framework.
 			throw new NotImplementedException ();
 		}
@@ -130,8 +130,8 @@ namespace System.Windows.Forms
 		}
 		[MonoTODO]
 		protected internal override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum,
-		                                        Brush backBrush, Brush foreBrush, bool alignToRight)
-		{
+		                                        Brush backBrush, Brush foreBrush, bool alignToRight) {
+
 			// This method is internal to the .NET framework.
 			throw new NotImplementedException ();
 		}
@@ -160,31 +160,31 @@ namespace System.Windows.Forms
 		//  --- Public Properties
 		
 		[MonoTODO]
-		public string Format
-		{
+		public string Format {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public IFormatProvider FormatInfo
-		{
+		public IFormatProvider FormatInfo {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override PropertyDescriptor PropertyDescriptor
-		{
+		public override PropertyDescriptor PropertyDescriptor {
+
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override bool ReadOnly
-		{
+		public override bool ReadOnly {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public virtual TextBox TextBox
-		{
+		public virtual TextBox TextBox {
+
 			get { throw new NotImplementedException (); }
 		}
 	}

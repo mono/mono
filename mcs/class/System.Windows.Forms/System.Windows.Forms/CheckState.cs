@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies the state of a control, such as a check box, 
   /// that can be checked, unchecked, or set to an indeterminate state.
 	/// </summary>
 	[Serializable]
-	public enum CheckState
-	{
+	public enum CheckState {
+
 		//Values were verified with enumcheck.
 		Unchecked = 0,
 		Checked = 1,

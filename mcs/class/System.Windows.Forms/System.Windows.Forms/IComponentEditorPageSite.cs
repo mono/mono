@@ -8,10 +8,10 @@
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
-	public interface IComponentEditorPageSite
-	{
+namespace System.Windows.Forms {
+
+	public interface IComponentEditorPageSite {
+
 		// There is no documentation for this interface's members!
 		// Only a note saying that it supports the .NET infrastructure
 		// and is not intended to be used directly from your code.

@@ -8,10 +8,10 @@
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
 using System.IO;
-namespace System.Windows.Forms
-{
-	public interface IFileReaderService
-	{
+namespace System.Windows.Forms {
+
+	public interface IFileReaderService {
+
 		// There is no documentation for this interface's members!
 		// Only a note saying that it supports the .NET infrastructure
 		// and is not intended to be used directly from your code.

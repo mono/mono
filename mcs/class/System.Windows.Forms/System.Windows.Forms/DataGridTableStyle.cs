@@ -11,8 +11,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Collections;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents the table drawn by the System.Windows.Forms.DataGrid control at run time.
 	///
@@ -21,8 +21,8 @@ namespace System.Windows.Forms
 	/// </summary>
 	
 	[MonoTODO]
-	public class DataGridTableStyle : Component
-	{
+	public class DataGridTableStyle : Component {
+
 		#region Fields
 		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code:
 		// public static DataGridTableStyle DefaultTableStyle;
@@ -50,7 +50,8 @@ namespace System.Windows.Forms
 		
 		#region Constructors
 		[MonoTODO]
-		public DataGridTableStyle() {
+		public DataGridTableStyle() 
+		{
 			allowSorting=true;
 			alternatingBackColor=SystemColors.Window;
 			gridLineStyle=DataGridLineStyle.Solid;
@@ -62,7 +63,8 @@ namespace System.Windows.Forms
 		// public DataGridTableStyle(bool isDefaultTableStyle);
 		
 		[MonoTODO]
-		public DataGridTableStyle(CurrencyManager listManager) : this() {
+		public DataGridTableStyle(CurrencyManager listManager) : this() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -180,167 +182,200 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		public bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) {
+		public bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop) {
+		protected internal virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop,bool isDefault) {
+		protected internal virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop,bool isDefault) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) {
+		public bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnAllowSortingChanged(EventArgs e) {
+		protected virtual void OnAllowSortingChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnAlternatingBackColorChanged(EventArgs e) {
+		protected virtual void OnAlternatingBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnBackColorChanged(EventArgs e) {
+		protected virtual void OnBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnColumnHeadersVisibleChanged(EventArgs e) {
+		protected virtual void OnColumnHeadersVisibleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnForeColorChanged(EventArgs e) {
+		protected virtual void OnForeColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnGridLineColorChanged(EventArgs e) {
+		protected virtual void OnGridLineColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnGridLineStyleChanged(EventArgs e) {
+		protected virtual void OnGridLineStyleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnHeaderBackColorChanged(EventArgs e) {
+		protected virtual void OnHeaderBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnHeaderFontChanged(EventArgs e) {
+		protected virtual void OnHeaderFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnHeaderForeColorChanged(EventArgs e) {
+		protected virtual void OnHeaderForeColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnLinkColorChanged(EventArgs e) {
+		protected virtual void OnLinkColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnLinkHoverColorChanged(EventArgs e) {
+		protected virtual void OnLinkHoverColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnMappingNameChanged(EventArgs e) {
+		protected virtual void OnMappingNameChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnPreferredColumnWidthChanged(EventArgs e) {
+		protected virtual void OnPreferredColumnWidthChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnPreferredRowHeightChanged(EventArgs e) {
+		protected virtual void OnPreferredRowHeightChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnReadOnlyChanged(EventArgs e) {
+		protected virtual void OnReadOnlyChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnRowHeadersVisibleChanged(EventArgs e) {
+		protected virtual void OnRowHeadersVisibleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnRowHeaderWidthChanged(EventArgs e) {
+		protected virtual void OnRowHeaderWidthChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnSelectionBackColorChanged(EventArgs e) {
+		protected virtual void OnSelectionBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnSelectionForeColorChanged(EventArgs e) {
+		protected virtual void OnSelectionForeColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetAlternatingBackColor() {
+		public void ResetAlternatingBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetBackColor() {
+		public void ResetBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetForeColor() {
+		public void ResetForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetGridLineColor() {
+		public void ResetGridLineColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderBackColor() {
+		public void ResetHeaderBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderFont() {
+		public void ResetHeaderFont() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderForeColor() {
+		public void ResetHeaderForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetLinkColor() {
+		public void ResetLinkColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -348,47 +383,56 @@ namespace System.Windows.Forms
 		// public void ResetLinkHoverColor
 		
 		[MonoTODO]
-		public void ResetSelectionBackColor() {
+		public void ResetSelectionBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetSelectionForeColor() {
+		public void ResetSelectionForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeAlternatingBackColor() {
+		protected virtual bool ShouldSerializeAlternatingBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializeBackColor() {
+		protected bool ShouldSerializeBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializeForeColor() {
+		protected bool ShouldSerializeForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeGridLineColor() {
+		protected virtual bool ShouldSerializeGridLineColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeHeaderBackColor() {
+		protected virtual bool ShouldSerializeHeaderBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeHeaderForeColor() {
+		protected virtual bool ShouldSerializeHeaderForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeLinkColor() {
+		protected virtual bool ShouldSerializeLinkColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -396,17 +440,20 @@ namespace System.Windows.Forms
 		/// protected virtual bool ShouldSerializeLinkHoverColor();
 		
 		[MonoTODO]
-		protected bool ShouldSerializePreferredRowHeight() {
+		protected bool ShouldSerializePreferredRowHeight() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializeSelectionBackColor() {
+		protected bool ShouldSerializeSelectionBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeSelectionForeColor() {
+		protected virtual bool ShouldSerializeSelectionForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies how a form window is displayed.
 	/// </summary>
 	[Serializable]
 	[ComVisible(true)]
-	public enum FormWindowState
-	{
+	public enum FormWindowState {
+
 		//Values were verified with enumcheck.
 		Normal = 0,
 		Maximized = 1,

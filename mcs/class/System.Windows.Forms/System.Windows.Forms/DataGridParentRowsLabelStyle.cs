@@ -9,15 +9,15 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies how the parent row labels of a DataGrid control are displayed.
 	/// </summary>
 	[Serializable]
-	public enum DataGridParentRowsLabelStyle
-	{
+	public enum DataGridParentRowsLabelStyle {
+
 		//Values were verified with enumcheck.
 		None = 0,
 		TableName = 1,

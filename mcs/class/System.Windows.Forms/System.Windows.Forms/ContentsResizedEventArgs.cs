@@ -10,17 +10,18 @@
 
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides data for the ContentsResized event.
 	/// </summary>
 
-	public class ContentsResizedEventArgs : EventArgs
-	{
+	public class ContentsResizedEventArgs : EventArgs {
+
 		private Rectangle newrectangle;
 		/// --- Constructor ---
-		public ContentsResizedEventArgs(Rectangle newRectangle) : base() {
+		public ContentsResizedEventArgs(Rectangle newRectangle) : base() 
+		{
 			newrectangle = newRectangle;
 		}
 		

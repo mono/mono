@@ -10,8 +10,8 @@
 using System.Drawing;
 using System.Collections;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Displays a ListBox in which a check box is displayed to the left of each item.
 	/// ToDo note:
@@ -19,15 +19,16 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class CheckedListBox : ListBox
-	{
+	public class CheckedListBox : ListBox {
+
 		// private fields
 		bool checkOnClick;
 		bool threeDCheckBoxes;
 		
 		
 		// --- Constructor ---
-		public CheckedListBox() : base() {
+		public CheckedListBox() : base() 
+		{
 			checkOnClick = false;
 			threeDCheckBoxes = true;
 		}
@@ -94,87 +95,103 @@ namespace System.Windows.Forms
 		// - protected virtual void OnItemCheck(ItemCheckEventArgs ice)
 		// - protected override void WmReflectCommand(ref Message m)
 		[MonoTODO]
-		protected override AccessibleObject CreateAccessibilityInstance() {
+		protected override AccessibleObject CreateAccessibilityInstance() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override ObjectCollection CreateItemCollection() {
+		protected override ObjectCollection CreateItemCollection() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool GetItemChecked(int index) {
+		public bool GetItemChecked(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public CheckState GetItemCheckState(int index) {
+		public CheckState GetItemCheckState(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		// [event methods]
 		[MonoTODO]
-		protected override void OnBackColorChanged(EventArgs e) {
+		protected override void OnBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnClick(EventArgs e) {
+		protected override void OnClick(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnDrawItem(DrawItemEventArgs e) {
+		protected override void OnDrawItem(DrawItemEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		// only supports .NET framework, thus is not stubbed out
 		/*
 		[MonoTODO]
-		protected virtual void OnItemCheck(ItemCheckEventArgs ice) {
+		protected virtual void OnItemCheck(ItemCheckEventArgs ice) 
+		{
 			throw new NotImplementedException ();
 		}
 		*/
 		
 		[MonoTODO]
-		protected override void OnKeyPress(KeyPressEventArgs e) {
+		protected override void OnKeyPress(KeyPressEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMeasureItem(MeasureItemEventArgs e) {
+		protected override void OnMeasureItem(MeasureItemEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnSelectedIndexChanged(EventArgs e) {
+		protected override void OnSelectedIndexChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		// end of [event methods]
 		
 		[MonoTODO]
-		public void SetItemChecked(int index,bool value) {
+		public void SetItemChecked(int index,bool value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void SetItemCheckState(int index,CheckState value) {
+		public void SetItemCheckState(int index,CheckState value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -228,19 +245,19 @@ namespace System.Windows.Forms
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
-			object IList.this[int index]
-			{
+			object IList.this[int index] {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 				[MonoTODO] set { throw new NotImplementedException (); }
 			}
 	
-			object ICollection.SyncRoot
-			{
+			object ICollection.SyncRoot {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 	
-			bool ICollection.IsSynchronized
-			{
+			bool ICollection.IsSynchronized {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
@@ -250,58 +267,69 @@ namespace System.Windows.Forms
 			/// --- CheckedIndexCollection Methods ---
 			/// Note: IList methods are stubbed out, otherwise does not IList interface cannot be implemented
 			[MonoTODO]
-			public bool Contains(int index) {
+			public bool Contains(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void CopyTo(Array dest,int index) {
+			public void CopyTo(Array dest,int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public int IndexOf(int index) {
+			public int IndexOf(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			/// --- CheckedIndexCollection.IList methods ---
 			[MonoTODO]
-			int IList.Add(object value) {
+			int IList.Add(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			void IList.Clear() {
+			void IList.Clear() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			bool IList.Contains(object index) {
+			bool IList.Contains(object index) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			int IList.IndexOf(object index) {
+			int IList.IndexOf(object index) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			void IList.Insert(int index,object value) {
+			void IList.Insert(int index,object value) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			void IList.Remove(object value) {
+			void IList.Remove(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			void IList.RemoveAt(int index) {
+			void IList.RemoveAt(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 		}  // --- end of CheckedListBox.CheckedIndexCollection ---
@@ -339,19 +367,19 @@ namespace System.Windows.Forms
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
-			object IList.this[int index]
-			{
+			object IList.this[int index] {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 				[MonoTODO] set { throw new NotImplementedException (); }
 			}
 	
-			object ICollection.SyncRoot
-			{
+			object ICollection.SyncRoot {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 	
-			bool ICollection.IsSynchronized
-			{
+			bool ICollection.IsSynchronized {
+
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
@@ -360,58 +388,69 @@ namespace System.Windows.Forms
 			/// --- CheckedItemCollection Methods ---
 			/// Note: IList methods are stubbed out, otherwise IList interface cannot be implemented
 			[MonoTODO]
-			public bool Contains(int item) {
+			public bool Contains(int item) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public void CopyTo(Array dest,int index) {
+			public void CopyTo(Array dest,int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public IEnumerator GetEnumerator() {
+			public IEnumerator GetEnumerator() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public int IndexOf(int index) {
+			public int IndexOf(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			/// --- CheckedItemCollection.IList methods ---
 			[MonoTODO]
-			int IList.Add(object value) {
+			int IList.Add(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			void IList.Clear() {
+			void IList.Clear() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			bool IList.Contains(object index) {
+			bool IList.Contains(object index) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			int IList.IndexOf(object index) {
+			int IList.IndexOf(object index) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			void IList.Insert(int index,object value) {
+			void IList.Insert(int index,object value) 
+			{
 				throw new NotImplementedException ();
 			}
 		
 			[MonoTODO]
-			void IList.Remove(object value) {
+			void IList.Remove(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			void IList.RemoveAt(int index) {
+			void IList.RemoveAt(int index) 
+			{
 				throw new NotImplementedException ();
 			}
 		}  // --- end of CheckedListBox.CheckedItemCollection ---
@@ -433,19 +472,22 @@ namespace System.Windows.Forms
 			
 			/// --- ObjectCollection.constructor ---
 			[MonoTODO]
-			public ObjectCollection(CheckedListBox owner) {
+			public ObjectCollection(CheckedListBox owner) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			
 			/// --- methods ---
 			[MonoTODO]
-			public int Add(object item,bool isChecked) {
+			public int Add(object item,bool isChecked) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public int Add(object item,CheckState check) {
+			public int Add(object item,CheckState check) 
+			{
 				throw new NotImplementedException ();
 			}
 		}

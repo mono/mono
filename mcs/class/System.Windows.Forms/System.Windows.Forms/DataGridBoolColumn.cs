@@ -10,8 +10,8 @@
 using System.Drawing;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Specifies a column in which each cell contains a check box for representing a Boolean value.
 	///
@@ -20,8 +20,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class DataGridBoolColumn : DataGridColumnStyle
-	{
+	public class DataGridBoolColumn : DataGridColumnStyle {
+
 		#region Fields
 		bool allowNull;
 		object falseValue;
@@ -31,19 +31,22 @@ namespace System.Windows.Forms
 		
 		#region Constructor
 		[MonoTODO]
-		public DataGridBoolColumn() {
+		public DataGridBoolColumn() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public DataGridBoolColumn(PropertyDescriptor prop) {
+		public DataGridBoolColumn(PropertyDescriptor prop) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		/*
 		 * This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		[MonoTODO]
-		public DataGridBoolColumn(PropertyDescriptor prop,bool isDefault) {
+		public DataGridBoolColumn(PropertyDescriptor prop,bool isDefault) 
+		{
 		}
 		*/
 		#endregion
@@ -73,17 +76,20 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		protected internal override void Abort(int rowNum) {
+		protected internal override void Abort(int rowNum) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected internal override bool Commit(CurrencyManager dataSource,int rowNum) {
+		protected internal override bool Commit(CurrencyManager dataSource,int rowNum) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override void ConcedeFocus() {
+		protected internal override void ConcedeFocus() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -94,33 +100,38 @@ namespace System.Windows.Forms
 			Rectangle bounds,
 			bool readOnly,
 			string instantText,
-			bool cellIsVisible)
-		{
+			bool cellIsVisible) {
+
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected internal override void EnterNullValue() {
+		protected internal override void EnterNullValue() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override object GetColumnValueAtRow(CurrencyManager lm,int row) {
+		protected internal override object GetColumnValueAtRow(CurrencyManager lm,int row) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override int GetMinimumHeight() {
+		protected internal override int GetMinimumHeight() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override int GetPreferredHeight(Graphics g,object value) {
+		protected internal override int GetPreferredHeight(Graphics g,object value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override Size GetPreferredSize(Graphics g,object value) {
+		protected internal override Size GetPreferredSize(Graphics g,object value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -129,8 +140,8 @@ namespace System.Windows.Forms
 			Graphics g,
 			Rectangle bounds,
 			CurrencyManager source,
-			int rowNum)
-		{
+			int rowNum) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -140,8 +151,8 @@ namespace System.Windows.Forms
 			Rectangle bounds,
 			CurrencyManager source,
 			int rowNum,
-			bool alignToRight)
-		{
+			bool alignToRight) {
+
 			throw new NotImplementedException ();
 		}
 
@@ -153,13 +164,14 @@ namespace System.Windows.Forms
 			int rowNum,
 			Brush backBrush,
 			Brush foreBrush,
-			bool alignToRight)
-		{
+			bool alignToRight) {
+
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected internal override void SetColumnValueAtRow(CurrencyManager lm,int row,object value) {
+		protected internal override void SetColumnValueAtRow(CurrencyManager lm,int row,object value) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

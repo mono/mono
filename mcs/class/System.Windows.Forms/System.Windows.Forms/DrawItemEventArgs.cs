@@ -10,13 +10,13 @@
 using System;
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	///	Provides data for the DrawItem event.
 	/// </summary>
-	public class DrawItemEventArgs : EventArgs
-	{
+	public class DrawItemEventArgs : EventArgs {
+
 		//
 		//  --- Private Fields
 		//
@@ -66,8 +66,8 @@ namespace System.Windows.Forms
 		public virtual void DrawFocusRectangle()
 		{
 			if((DrawItemState.Focus == (DrawItemState.Focus & state)) && // check for focus
-			   (DrawItemState.NoFocusRect != (DrawItemState.NoFocusRect & state))) // check if this matters
-			{
+			   (DrawItemState.NoFocusRect != (DrawItemState.NoFocusRect & state))) // check if this matters {
+
 				ControlPaint.DrawFocusRectangle(graphics,bounds,foreColor,backColor);
 			}
 		}
@@ -75,32 +75,32 @@ namespace System.Windows.Forms
 		//
 		//  --- Public Properties
 		//
-		public Color BackColor
-		{
+		public Color BackColor {
+
 			get { return (DrawItemState.Select == (state & DrawItemState.Select)) ? SystemColors.Highlight : backColor; }
 		}
-		public Rectangle Bounds
-		{
+		public Rectangle Bounds {
+
 			get { return bounds; }
 		}
-		public Font Font
-		{
+		public Font Font {
+
 			get { return font; }
 		}
-		public Color ForeColor
-		{
+		public Color ForeColor {
+
 			get { return (DrawItemState.Select == (state & DrawItemState.Select)) ? SystemColors.HighlightText : foreColor; }
 		}
-		public Graphics Graphics
-		{
+		public Graphics Graphics {
+
 			get { return graphics; }
 		}
-		public int Index
-		{
+		public int Index {
+
 			get { return index; }
 		}
-		public DrawItemState State
-		{
+		public DrawItemState State {
+
 			get { return state; }
 		}
 	}

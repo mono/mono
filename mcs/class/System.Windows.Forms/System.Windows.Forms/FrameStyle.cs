@@ -9,15 +9,15 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies the frame style of the selected control.
 	/// </summary>
 	[Serializable]
-	public enum FrameStyle
-	{
+	public enum FrameStyle {
+
 		//Values were verified with enumcheck.
 		Dashed = 0,
 		Thick = 1,

@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc 2002
 //
@@ -11,8 +10,8 @@
 
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides methods used to paint common Windows controls and their elements.
 	///
@@ -21,12 +20,12 @@ namespace System.Windows.Forms
 	/// </summary>
 	
 	[MonoTODO]
-  public sealed class ControlPaint
-	{
+  public sealed class ControlPaint {
+
 		#region Properties
 		[MonoTODO]
-		public static Color ContrastControlDark
-		{
+		public static Color ContrastControlDark {
+
 			get { throw new NotImplementedException (); }
 		}
 		#endregion
@@ -39,26 +38,29 @@ namespace System.Windows.Forms
 		/// - public static IntPtr CreateHBitmapColorMask(Bitmap bitmap,IntPtr monochromeMask);
 		/// - public static IntPtr CreateHBitmapTransparencyMask(Bitmap bitmap);
 		[MonoTODO]
-		public static Color Dark(Color baseColor) {
+		public static Color Dark(Color baseColor) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static Color Dark(Color baseColor,float percOfDarkDark) {
+		public static Color Dark(Color baseColor,float percOfDarkDark) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static Color DarkDark(Color baseColor) {
+		public static Color DarkDark(Color baseColor) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawBorder(
-			Graphics graphics,
-			Rectangle bounds,
-			Color color,
-			ButtonBorderStyle style) {
+			Graphics graphics, {
+
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -77,46 +79,58 @@ namespace System.Windows.Forms
 			ButtonBorderStyle rightStyle,
 			Color bottomColor,
 			int bottomWidth,
-			ButtonBorderStyle bottomStyle)
-		{
+			ButtonBorderStyle bottomStyle) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics,
-			Rectangle rectangle)
-		{
+			Rectangle rectangle) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics,
-			Rectangle rectangle,
-			Border3DStyle style)
-		{
+			Rectangle rectangle, {
+
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics,
-			Rectangle rectangle,
-			Border3DStyle style,
-			Border3DSide sides)
-		{
+			Rectangle rectangle, {
+
+
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height)
-		{
+			int x, {
+
+
+
+
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void DrawBorder3D(
+			Graphics graphics,
+			int x, {
+
+
+
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -127,30 +141,18 @@ namespace System.Windows.Forms
 			int y,
 			int width,
 			int height,
-			Border3DStyle style)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
 			Border3DStyle style,
-			Border3DSide sides)
-		{
+			Border3DSide sides) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawButton(
 			Graphics graphics,
-			Rectangle rectangle,
-			ButtonState state)
-		{
+			Rectangle rectangle, {
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -161,39 +163,39 @@ namespace System.Windows.Forms
 			int y,
 			int width,
 			int height,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawCaptionButton(
 			Graphics graphics,
-			Rectangle rectangle,
+			Rectangle rectangle, {
+
+
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void DrawCaptionButton(
+			Graphics graphics,
+			int x,
+			int y,
+			int width,
+			int height,
 			CaptionButton button,
 			ButtonState state) {
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void DrawCaptionButton(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			CaptionButton button,
-			ButtonState state)
-		{
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawCheckBox(
 			Graphics graphics,
-			Rectangle rectangle,
-			ButtonState state)
-		{
+			Rectangle rectangle, {
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -204,17 +206,17 @@ namespace System.Windows.Forms
 			int y,
 			int width,
 			int height,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawComboButton(
 			Graphics graphics,
-			Rectangle rectangle,
-			ButtonState state)
-		{
+			Rectangle rectangle, {
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -225,20 +227,13 @@ namespace System.Windows.Forms
 			int y,
 			int width,
 			int height,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static void DrawContainerGrabHandle(Graphics graphics,Rectangle bounds) {
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void DrawFocusRectangle(
-			Graphics graphics,
-			Rectangle rectangle)
+		public static void DrawContainerGrabHandle(Graphics graphics,Rectangle bounds) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -246,9 +241,17 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public static void DrawFocusRectangle(
 			Graphics graphics,
-			Rectangle rectangle,
-			Color foreColor,
-			Color backColor) {
+			Rectangle rectangle) {
+
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void DrawFocusRectangle(
+			Graphics graphics,
+			Rectangle rectangle, {
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -257,8 +260,8 @@ namespace System.Windows.Forms
 			Graphics graphics,
 			Rectangle rectangle,
 			bool primary,
-			bool enabled)
-		{
+			bool enabled) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -267,8 +270,8 @@ namespace System.Windows.Forms
 			Graphics graphics,
 			Rectangle area,
 			Size pixelsBetweenDots,
-			Color backColor)
-		{
+			Color backColor) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -278,8 +281,8 @@ namespace System.Windows.Forms
 			Image image,
 			int x,
 			int y,
-			Color background)
-		{
+			Color background) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -287,8 +290,8 @@ namespace System.Windows.Forms
 		public static void DrawLockedFrame(
 			Graphics graphics,
 			Rectangle rectangle,
-			bool primary)
-		{
+			bool primary) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -296,8 +299,8 @@ namespace System.Windows.Forms
 		public static void DrawMenuGlyph(
 			Graphics graphics,
 			Rectangle rectangle,
-			MenuGlyph glyph)
-		{
+			MenuGlyph glyph) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -308,8 +311,8 @@ namespace System.Windows.Forms
 			int y,
 			int width,
 			int height,
-			MenuGlyph glyph)
-		{
+			MenuGlyph glyph) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -317,8 +320,8 @@ namespace System.Windows.Forms
 		public static void DrawMixedCheckBox(
 			Graphics graphics,
 			Rectangle rectangle,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -329,8 +332,8 @@ namespace System.Windows.Forms
 			int y,
 			int width,
 			int height,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -338,8 +341,8 @@ namespace System.Windows.Forms
 		public static void DrawRadioButton(
 			Graphics graphics,
 			Rectangle rectangle,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -350,17 +353,17 @@ namespace System.Windows.Forms
 			int y,
 			int width,
 			int height,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawReversibleFrame(
 			Rectangle rectangle,
-			Color backColor,
-			FrameStyle style)
-		{
+			Color backColor, {
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -368,8 +371,8 @@ namespace System.Windows.Forms
 		public static void DrawReversibleLine(
 			Point start,
 			Point end,
-			Color backColor)
-		{
+			Color backColor) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -377,9 +380,9 @@ namespace System.Windows.Forms
 		public static void DrawScrollButton(
 			Graphics graphics,
 			Rectangle rectangle,
-			ScrollButton button,
-			ButtonState state)
-		{
+			ScrollButton button, {
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -391,8 +394,8 @@ namespace System.Windows.Forms
 			int width,
 			int height,
 			ScrollButton button,
-			ButtonState state)
-		{
+			ButtonState state) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -402,17 +405,17 @@ namespace System.Windows.Forms
 			bool active,
 			Rectangle outsideRect,
 			Rectangle insideRect,
-			Color backColor)
-		{
+			Color backColor) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void DrawSizeGrip(
 			Graphics graphics,
-			Color backColor,
-			Rectangle bounds)
-		{
+			Color backColor, {
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -423,8 +426,8 @@ namespace System.Windows.Forms
 			int x,
 			int y,
 			int width,
-			int height)
-		{
+			int height) {
+
 			throw new NotImplementedException ();
 		}
 		
@@ -435,30 +438,33 @@ namespace System.Windows.Forms
 			Font font,
 			Color color,
 			RectangleF layoutRectangle,
-			StringFormat format)
-		{
+			StringFormat format) {
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public static void FillReversibleRectangle(
 			Rectangle rectangle,
-			Color backColor)
+			Color backColor) {
+
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static Color Light(Color baseColor) 
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static Color Light(Color baseColor) {
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static Color Light(Color baseColor,float percOfLightLight) {
+		public static Color Light(Color baseColor,float percOfLightLight) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public static Color LightLight(Color baseColor) {
+		public static Color LightLight(Color baseColor) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies the initial position of a form.
 	/// </summary>
 	[Serializable]
 	[ComVisible(true)]
-	public enum FormStartPosition
-	{
+	public enum FormStartPosition {
+
 		//Values were verified with enumcheck.
 		Manual = 0,
 		CenterScreen = 1,

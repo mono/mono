@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies the border styles for a form.
 	/// </summary>
 	[Serializable]
 	[ComVisible(true)]
-	public enum FormBorderStyle
-	{
+	public enum FormBorderStyle {
+
 		//Values were verified with enumcheck.
 		None = 0,
 		FixedSingle = 1,

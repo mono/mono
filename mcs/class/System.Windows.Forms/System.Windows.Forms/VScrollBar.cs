@@ -11,32 +11,32 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	public class VScrollBar : ScrollBar {
-//
-//		// --- Properties ---
-//		[MonoTODO]
-//		protected override CreateParams CreateParams {
-//
-//			get { throw new NotImplementedException(); }
-//		}
-//
-//		[MonoTODO]
-//		protected override Size DefaultSize {
-//
-//			get { throw new NotImplementedException(); }
-//		}
-//
-//		[MonoTODO]
-//		public override RightToLeft RightToLeft {
-//
-//			get { throw new NotImplementedException(); }
-//			set { throw new NotImplementedException(); }
-//		}
-//
-//		// --- Constructor ---
-//		[MonoTODO]
-//		public VScrollBar()
-//		{
-//			throw new NotImplementedException();
-//		}
+
+		// --- Properties ---
+		[MonoTODO]
+		protected override CreateParams CreateParams {
+
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		protected override Size DefaultSize {
+
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		public override RightToLeft RightToLeft {
+
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		// --- Constructor ---
+		[MonoTODO]
+		public VScrollBar()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

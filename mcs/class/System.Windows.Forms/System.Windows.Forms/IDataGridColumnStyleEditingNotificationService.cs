@@ -8,10 +8,10 @@
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
-	public interface IDataGridColumnStyleEditingNotificationService
-	{
+namespace System.Windows.Forms {
+
+	public interface IDataGridColumnStyleEditingNotificationService {
+
 		void ColumnStartedEditing(Control editingControl);
 	}
 }

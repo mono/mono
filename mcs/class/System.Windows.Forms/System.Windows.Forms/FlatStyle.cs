@@ -9,15 +9,15 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies the appearance of a control.
 	/// </summary>
 	[Serializable]
-	public enum FlatStyle
-	{
+	public enum FlatStyle {
+
 		//Values were verified with enumcheck.
 		Flat = 0,
 		Popup = 1,

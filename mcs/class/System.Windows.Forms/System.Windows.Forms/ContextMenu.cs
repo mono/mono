@@ -11,8 +11,8 @@
 //using System.Collections;
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a Windows combo box control.
 	/// ToDo note:
@@ -20,19 +20,21 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class ContextMenu : Menu
-	{
+	public class ContextMenu : Menu {
+
 		// private fields
 		RightToLeft rightToLeft;
 		
 		// --- Constructor ---
 		[MonoTODO]
-		public ContextMenu() : base(null) {
+		public ContextMenu() : base(null) 
+		{
 			rightToLeft = RightToLeft.Inherit;
 		}
 
 		[MonoTODO]
-		public ContextMenu(MenuItem[] menuItems) : base(menuItems) {
+		public ContextMenu(MenuItem[] menuItems) : base(menuItems) 
+		{
 		}
 		
 		
@@ -56,7 +58,8 @@ namespace System.Windows.Forms
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected internal virtual void OnPopup(EventArgs e);
 		[MonoTODO]
-		public void Show(Control control,Point pos) {
+		public void Show(Control control,Point pos) 
+		{
 			throw new NotImplementedException ();
 		}
 		

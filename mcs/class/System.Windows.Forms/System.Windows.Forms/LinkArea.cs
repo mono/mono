@@ -28,7 +28,8 @@ namespace System.Windows.Forms {
 		///
 		/// </remarks>
 		
-		public LinkArea (int Start, int Length){
+		public LinkArea (int Start, int Length)
+		{
 			start = Start;
 			length = Length;
 		}
@@ -47,8 +48,8 @@ namespace System.Windows.Forms {
 		/// </remarks>
 
 		public static bool operator == (LinkArea la_a, 
-			LinkArea la_b)
-		{
+			LinkArea la_b) {
+
 			return ((la_a.start == la_b.start) &&
 				(la_a.length == la_b.length));
 		}

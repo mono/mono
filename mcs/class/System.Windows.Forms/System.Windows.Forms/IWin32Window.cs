@@ -8,13 +8,13 @@
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	[ComVisible(true)]
 	// FixMe [Guid("")]
 	// FixMe [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IWin32Window
-	{
+	public interface IWin32Window {
+
 		IntPtr Handle {get;}
 	}
 }

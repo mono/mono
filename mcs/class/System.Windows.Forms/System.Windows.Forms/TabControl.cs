@@ -8,6 +8,8 @@
 //
 using System.ComponentModel;
 using System.Collections;
+using System.Drawing;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -21,418 +23,418 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public TabControl()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public TabAlignment Alignment  {
-		//	get
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public TabAppearance Appearance  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Color BackColor  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Image BackgroundImage  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Rectangle DisplayRectangle  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public TabDrawMode DrawMode  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Color ForeColor  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public bool HotTrack  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public ImageList ImageList  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public Size ItemSize  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public bool Multiline  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public Point Padding  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public int RowCount {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public int SelectedIndex {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public TabPage SelectedTab  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public bool ShowToolTips  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public TabSizeMode SizeMode {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public int TabCount  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public TabControl.TabPageCollection TabPages  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override string Text  {
-		//	get 
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//	set
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// 
+		[MonoTODO]
+		public TabControl()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public TabAlignment Alignment  {
+			get
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public TabAppearance Appearance  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public override Color BackColor  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public override Image BackgroundImage  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public override Rectangle DisplayRectangle  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public TabDrawMode DrawMode  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public override Color ForeColor  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public bool HotTrack  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public ImageList ImageList  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public Size ItemSize  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public bool Multiline  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public Point Padding  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public int RowCount {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public int SelectedIndex {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public TabPage SelectedTab  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public bool ShowToolTips  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public TabSizeMode SizeMode {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public int TabCount  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public TabControl.TabPageCollection TabPages  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public override string Text  {
+			get 
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		 
   		// --- Public Methods
-		//
-		//[MonoTODO]
-		//public Rectangle GetTabRect(int index)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public override string ToString()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
+		
+		[MonoTODO]
+		public Rectangle GetTabRect(int index)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public override string ToString()
+		{
+			throw new NotImplementedException ();
+		}
+		
 		// --- Public Events
-		//
-		//[MonoTODO]
-		//public event DrawItemEventHandler DrawItem;
-		//
+		
+		[MonoTODO]
+		public event DrawItemEventHandler DrawItem;
+		
 		// --- Protected Properties
-		//
-		//[MonoTODO]
-		//protected override CreateParams CreateParams  {
-		//	get
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//protected override Size DefaultSize {
-		//	get
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//
+		
+		[MonoTODO]
+		protected override CreateParams CreateParams  {
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		protected override Size DefaultSize {
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		
 		// --- Protected Methods
-		//
-		//[MonoTODO]
-		//protected override ControlCollection CreateControlsInstance()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void CreateHandle()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override bool IsInputKey(Keys keyData)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual void OnDrawItem(DrawItemEventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnFontChanged(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnHandleCreated(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnHandleDestroyed(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnKeyDown(KeyEventArgs ke)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnResize(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual void OnSelectedIndexChanged(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnStyleChanged(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override bool ProcessKeyPreview(ref Message m)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected void RemoveAll()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void WndProc(ref Message m)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		
+		[MonoTODO]
+		protected override ControlCollection CreateControlsInstance()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void CreateHandle()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override bool IsInputKey(Keys keyData)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected virtual void OnDrawItem(DrawItemEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void OnFontChanged(EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void OnHandleDestroyed(EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void OnKeyDown(KeyEventArgs ke)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void OnResize(EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected virtual void OnSelectedIndexChanged(EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void OnStyleChanged(EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override bool ProcessKeyPreview(ref Message m)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected void RemoveAll()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void WndProc(ref Message m)
+		{
+			throw new NotImplementedException ();
+		}
    		public class ControlCollection : Control.ControlCollection {
 			//
 			// --- Public Methods
 			//
-			//[MonoTODO]
-			//public override void Add(Control value) 
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public override void Remove(Control value)
-			//{
-			//	throw new NotImplementedException ();
-			//}
+			[MonoTODO]
+			public override void Add(Control value) 
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public override void Remove(Control value)
+			{
+				throw new NotImplementedException ();
+			}
 		}
 		public class TabPageCollection : IList, ICollection, IEnumerable {
 			//
 			// --- Public Contructor
 			//
-			//[MonoTODO]
-			//public TabPageCollection(TabControl owner)
-			//{
-			//	throw new NotImplementedException ();
-			//}
+			[MonoTODO]
+			public TabPageCollection(TabControl owner)
+			{
+				throw new NotImplementedException ();
+			}
 			//
 			// --- Public Properties
 			//
-			//[MonoTODO]
-			//public int Count {
-			//	get 
-			//	{
-			//		throw new NotImplementedException ();
-			//	}
-			//}
-			//[MonoTODO]
-			//public bool IsReadOnly {
-			//	get 
-			//	{
-			//		throw new NotImplementedException ();
-			//	}
-			//}
-			//[MonoTODO]
-			//public virtual TabPage this[int index] {
-			//	get 
-			//	{
-			//		throw new NotImplementedException ();
-			//	}
-			//	set
-			//	{
-			//		throw new NotImplementedException ();
-			//	}
-			//}
-			//
-			// --- Public Methods
-			//
-			//[MonoTODO]
-			//public void Add(TabPage value)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public void AddRange(TabPage[] pages)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public virtual void Clear()
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public bool Contains(TabPage page)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public IEnumerator GetEnumerator()
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public int IndexOf(TabPage page)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public void Remove(TabPage value)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public void RemoveAt(int index)
-			//{
-			//	throw new NotImplementedException ();
-			//}
+			[MonoTODO]
+			public int Count {
+				get 
+				{
+					throw new NotImplementedException ();
+				}
+			}
+			[MonoTODO]
+			public bool IsReadOnly {
+				get 
+				{
+					throw new NotImplementedException ();
+				}
+			}
+			[MonoTODO]
+			public virtual TabPage this[int index] {
+				get 
+				{
+					throw new NotImplementedException ();
+				}
+				set
+				{
+					throw new NotImplementedException ();
+				}
+			}
+			
+			//--- Public Methods
+			
+			[MonoTODO]
+			public void Add(TabPage value)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public void AddRange(TabPage[] pages)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public virtual void Clear()
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public bool Contains(TabPage page)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public IEnumerator GetEnumerator()
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public int IndexOf(TabPage page)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public void Remove(TabPage value)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public void RemoveAt(int index)
+			{
+				throw new NotImplementedException ();
+			}
 		}
    }
 }

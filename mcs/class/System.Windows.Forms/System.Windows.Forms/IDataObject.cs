@@ -8,11 +8,11 @@
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	[ComVisible(true)]
-	public interface IDataObject
-	{
+	public interface IDataObject {
+
 		object GetData(string format);
 		object GetData(Type format);
 		object GetData(string format, bool autoConvert);

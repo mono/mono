@@ -28,7 +28,8 @@ namespace System.Windows.Forms {
 		///
 		/// </remarks>
 		
-		public DataGridCell (int r, int c){
+		public DataGridCell (int r, int c)
+		{
 			rownumber = r;
 			columnnumber = c;
 		}
@@ -47,8 +48,8 @@ namespace System.Windows.Forms {
 		/// </remarks>
 
 		public static bool operator == (DataGridCell dgc_a, 
-			DataGridCell dgc_b)
-		{
+			DataGridCell dgc_b) {
+
 			return ((dgc_a.rownumber == dgc_b.rownumber) &&
 				(dgc_a.columnnumber == dgc_b.columnnumber));
 		}

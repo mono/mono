@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -13,8 +12,8 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents the image used to paint the mouse pointer.
 	///
@@ -24,8 +23,8 @@ namespace System.Windows.Forms
 
 	[MonoTODO]
 	[Serializable]
-	public sealed class Cursor : IDisposable, ISerializable
-	{
+	public sealed class Cursor : IDisposable, ISerializable {
+
 		#region Fields
 		#endregion
 		
@@ -33,22 +32,26 @@ namespace System.Windows.Forms
 		
 		#region Constructors
 		[MonoTODO]
-		public Cursor(IntPtr handle) {
+		public Cursor(IntPtr handle) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Cursor(Stream stream) {
+		public Cursor(Stream stream) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Cursor(string fileName) {
+		public Cursor(string fileName) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Cursor(Type type,string resource) {
+		public Cursor(Type type,string resource) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -91,27 +94,32 @@ namespace System.Windows.Forms
 		
 		#region Methods
 		[MonoTODO]
-		public IntPtr CopyHandle() {
+		public IntPtr CopyHandle() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void Dispose() {
+		public void Dispose() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void Draw(Graphics g,Rectangle targetRect) {
+		public void Draw(Graphics g,Rectangle targetRect) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void DrawStretched(Graphics g,Rectangle targetRect) {
+		public void DrawStretched(Graphics g,Rectangle targetRect) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override bool Equals(object obj) {
+		public override bool Equals(object obj) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -121,28 +129,33 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		public override int GetHashCode() {
+		public override int GetHashCode() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static void Hide() {
+		public static void Hide() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		/// ISerializable.GetObjectData only supports .NET framework:
 		[MonoTODO]
-		void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
+		void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static void Show() {
+		public static void Show() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -151,12 +164,14 @@ namespace System.Windows.Forms
 		
 		#region Operators
 		[MonoTODO]
-		public static bool operator ==(Cursor left, Cursor right) {
+		public static bool operator ==(Cursor left, Cursor right) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static bool operator !=(Cursor left, Cursor right) {
+		public static bool operator !=(Cursor left, Cursor right) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

@@ -19,10 +19,10 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Constructor
 		//
-		//[MonoTODO]
-		//public ThreadExceptionDialog(Exception t)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		public ThreadExceptionDialog(Exception t)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -9,16 +9,16 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies constants indicating when the error icon, supplied by an ErrorProvider, 
   /// should blink to alert the user that an error has occurred.
 	/// </summary>
 	[Serializable]
-	public enum ErrorBlinkStyle
-	{
+	public enum ErrorBlinkStyle {
+
 		//Values were verified with enumcheck.
 		BlinkIfDifferentError = 0,
 		AlwaysBlink = 1,

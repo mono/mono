@@ -3,14 +3,13 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
 
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides static (Shared in Visual Basic), predefined Clipboard format names.
 	/// Use them to identify the format of data that you store in an IDataObject.
@@ -20,8 +19,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class DataFormats
-	{
+	public class DataFormats {
+
 		#region Fields
 		public static readonly string Bitmap="Bitmap";
 		public static readonly string CommaSeparatedValue="Csv";
@@ -52,12 +51,14 @@ namespace System.Windows.Forms
 		/// or create a new format with the given string/int
 		/// </todo>
 		[MonoTODO]
-		public static Format GetFormat(int id) {
+		public static Format GetFormat(int id) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public static Format GetFormat(string format) {
+		public static Format GetFormat(string format) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -77,7 +78,8 @@ namespace System.Windows.Forms
 			/// <note>
 			/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 			/// </note>
-			public Format (string name,int id) {
+			public Format (string name,int id) 
+			{
 				this.id=id;
 				this.name=name;
 			}

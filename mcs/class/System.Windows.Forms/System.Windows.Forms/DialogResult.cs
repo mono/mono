@@ -9,15 +9,15 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Specifies identifiers to indicate the return value of a dialog box.
 	/// </summary>
 	[Serializable]
 	[ComVisible(true)]
-	public enum DialogResult
-	{
+	public enum DialogResult {
+
 		//Values were verified with enumcheck.
 		None = 0,
 		OK = 1,

@@ -3,15 +3,14 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
 
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Displays a single column header in a ListView control.
 	///
@@ -20,15 +19,16 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class ColumnHeader : Component, ICloneable
-	{
+	public class ColumnHeader : Component, ICloneable {
+
 		// private fields
 		string text;
 		HorizontalAlignment textAlign;
 		
 		/// --- constructor ---
 		[MonoTODO]
-		public ColumnHeader() : base () {
+		public ColumnHeader() : base () 
+		{
 			text = null;
 			textAlign = HorizontalAlignment.Left;
 		}
@@ -64,16 +64,19 @@ namespace System.Windows.Forms
 		
 		/// --- Methods ---
 		[MonoTODO]
-		public object Clone() {
+		public object Clone() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		
-		public override string ToString() {
+		public override string ToString() 
+		{
 			//FIXME: add class specific info to the string
 			return base.ToString();
 		}

@@ -50,16 +50,16 @@ namespace System.Windows.Forms
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public void BeginInit()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void EndInit()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		public void BeginInit()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public void EndInit()
+		{
+			throw new NotImplementedException ();
+		}
 		public override string ToString()
 		{
 			return text;
@@ -68,11 +68,11 @@ namespace System.Windows.Forms
 		//
 		//  --- Protected Methods
 		//
-		//[MonoTODO]
-		//protected override void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		protected override void Dispose(bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
 
 		//
 		//  --- Public Properties

@@ -9,8 +9,8 @@
 
 using System.Drawing;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents a common dialog box that displays available colors along with controls that allow the user to define custom colors.
 	///
@@ -19,8 +19,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class ColorDialog : CommonDialog
-	{
+	public class ColorDialog : CommonDialog {
+
 		// private fields
 		bool allowFullOpen;
 		bool anyColor;
@@ -31,7 +31,8 @@ namespace System.Windows.Forms
 		bool solidColorOnly;
 
 		/// --- Constructor ---
-		protected ColorDialog() : base() {
+		protected ColorDialog() : base() 
+		{
 			allowFullOpen = true;
 			anyColor = false;
 			color = Color.Black;
@@ -88,17 +89,20 @@ namespace System.Windows.Forms
 		
 		/// --- ColorDialog methods ---
 		[MonoTODO]
-		public override void Reset() {
+		public override void Reset() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool RunDialog(IntPtr hwndOwner) {
+		protected override bool RunDialog(IntPtr hwndOwner) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
 			throw new NotImplementedException ();
 		}
 		

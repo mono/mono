@@ -9,8 +9,8 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
 	/// Specifies the state of an item that is being drawn.
@@ -18,8 +18,8 @@ namespace System.Windows.Forms
 	/// </summary>
 	[Flags]
 	[Serializable]
-	public enum DrawItemState
-	{
+	public enum DrawItemState {
+
 		None = 0,
 		Selected = 1,
 		Grayed = 2,

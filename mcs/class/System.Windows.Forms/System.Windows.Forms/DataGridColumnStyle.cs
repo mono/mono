@@ -11,8 +11,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Collections;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Specifies the appearance and text formatting and behavior of a System.Windows.Forms.DataGrid control column. This class is abstract.
 	///
@@ -21,8 +21,8 @@ namespace System.Windows.Forms
 	/// </summary>
 	
 	[MonoTODO]
-	public abstract class DataGridColumnStyle : Component, IDataGridColumnStyleEditingNotificationService
-	{
+	public abstract class DataGridColumnStyle : Component, IDataGridColumnStyleEditingNotificationService {
+
 		#region Fields
 		HorizontalAlignment alignment;
 		DataGridTableStyle dataGridTableStyle;
@@ -37,7 +37,8 @@ namespace System.Windows.Forms
 		
 		#region Constructors
 		[MonoTODO]
-		public DataGridColumnStyle() {
+		public DataGridColumnStyle() 
+		{
 			alignment=HorizontalAlignment.Left;
 			dataGridTableStyle=null;
 			fontHeight=-1;
@@ -46,7 +47,8 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
-		public DataGridColumnStyle(PropertyDescriptor prop) : this() {
+		public DataGridColumnStyle(PropertyDescriptor prop) : this() 
+		{
 			propertyDescriptor=prop;
 		}
 		#endregion
@@ -104,24 +106,28 @@ namespace System.Windows.Forms
 		protected internal abstract void Abort(int rowNum);
 		
 		[MonoTODO]
-		protected void BeginUpdate() {
+		protected void BeginUpdate() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected void CheckValidDataSource(CurrencyManager value) {
+		protected void CheckValidDataSource(CurrencyManager value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual void ColumnStartedEditing(Control editingControl) {
+		protected internal virtual void ColumnStartedEditing(Control editingControl) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		protected internal abstract bool Commit(CurrencyManager dataSource,int rowNum);
 		
 		[MonoTODO]
-		protected internal virtual void ConcedeFocus() {
+		protected internal virtual void ConcedeFocus() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -132,22 +138,22 @@ namespace System.Windows.Forms
 		 
 		[MonoTODO]
 		protected internal virtual void Edit(
-			CurrencyManager source,
-			int rowNum,
-			Rectangle bounds,
-			bool readOnly)
-		{
+			CurrencyManager source, {
+
+
+
+
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected internal virtual void Edit(
 			CurrencyManager source,
-			int rowNum,
-			Rectangle bounds,
-			bool readOnly,
-			string instantText)
-		{
+			int rowNum, {
+
+
+
+
 			throw new NotImplementedException ();
 		}
 		
@@ -161,17 +167,20 @@ namespace System.Windows.Forms
 			bool cellIsVisible);
 		
 		[MonoTODO]
-		protected void EndUpdate() {
+		protected void EndUpdate() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual void EnterNullValue() {
+		protected internal virtual void EnterNullValue() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual object GetColumnValueAtRow(CurrencyManager source,int rowNum) {
+		protected internal virtual object GetColumnValueAtRow(CurrencyManager source,int rowNum) 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -185,12 +194,14 @@ namespace System.Windows.Forms
 		 * This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		 */
 		[MonoTODO]
-		void IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(Control editingControl) {
+		void IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(Control editingControl) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual void Invalidate() {
+		protected virtual void Invalidate() 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -206,33 +217,38 @@ namespace System.Windows.Forms
 			int rowNum,
 			Brush backBrush,
 			Brush foreBrush,
-			bool alignToRight)
+			bool alignToRight) {
+
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void ResetHeaderText() 
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderText() {
+		protected internal virtual void SetColumnValueAtRow(CurrencyManager source,int rowNum,object value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual void SetColumnValueAtRow(CurrencyManager source,int rowNum,object value) {
+		protected virtual void SetDataGrid(DataGrid value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void SetDataGrid(DataGrid value) {
+		protected virtual void SetDataGridInColumn(DataGrid value) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void SetDataGridInColumn(DataGrid value) {
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		protected internal virtual void UpdateUI(CurrencyManager source,int rowNum,string instantText) {
+		protected internal virtual void UpdateUI(CurrencyManager source,int rowNum,string instantText) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion

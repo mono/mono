@@ -8,16 +8,17 @@
 // (C) Ximian, Inc., 2002
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides data for the ColumnClick event.
 	/// </summary>
-	public class ColumnClickEventArgs : EventArgs
-	{
+	public class ColumnClickEventArgs : EventArgs {
+
 		private int column;
 		/// --- Constructor ---
-		public ColumnClickEventArgs(int Column) : base() {
+		public ColumnClickEventArgs(int Column) : base() 
+		{
 			column = Column;
 		}
 		
@@ -39,7 +40,8 @@ namespace System.Windows.Forms
 		///	of the two ColumnClickEventArgs.
 		/// </remarks>
 
-		public static bool operator == (ColumnClickEventArgs ColumnClickEventArgsA , ColumnClickEventArgs ColumnClickEventArgsB) {
+		public static bool operator == (ColumnClickEventArgs ColumnClickEventArgsA , ColumnClickEventArgs ColumnClickEventArgsB) 
+		{
 			return ColumnClickEventArgsA.column == ColumnClickEventArgsB.column;
 		}
 		
@@ -53,7 +55,8 @@ namespace System.Windows.Forms
 		///	of the two ColumnClickEventArgs.
 		/// </remarks>
 
-		public static bool operator != (ColumnClickEventArgs ColumnClickEventArgsA, ColumnClickEventArgs ColumnClickEventArgsB) {
+		public static bool operator != (ColumnClickEventArgs ColumnClickEventArgsA, ColumnClickEventArgs ColumnClickEventArgsB) 
+		{
 			return ColumnClickEventArgsA.column != ColumnClickEventArgsB.column;
 		}
 		/// <summary>
@@ -64,7 +67,8 @@ namespace System.Windows.Forms
 		///	Checks equivalence of this ColumnClickEventArgs and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o) {
+		public override bool Equals (object o) 
+		{
 			if (!(o is ColumnClickEventArgs))return false;
 			return (this == (ColumnClickEventArgs) o);
 		}
@@ -78,7 +82,8 @@ namespace System.Windows.Forms
 		///	Calculates a hashing value.
 		/// </remarks>
 		// If class has only one proprity, just return the hash code of the proprity.
-		public override int GetHashCode () {
+		public override int GetHashCode () 
+		{
 			return column.GetHashCode();
 		}
 
@@ -90,7 +95,8 @@ namespace System.Windows.Forms
 		///	Formats the ColumnClickEventArgs as a string.
 		/// </remarks>
 		
-		public override string ToString () {
+		public override string ToString () 
+		{
 			return String.Format ("[{0}]", column);
 		}
 	}

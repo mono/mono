@@ -3,7 +3,6 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -34,31 +33,38 @@ namespace System.Windows.Forms {
 		//
 		
 		[MonoTODO]
-		public bool CanConvertTo(Type t) {
+		public bool CanConvertTo(Type t) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type t) {
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type t) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public object ConvertTo(object o, Type t) {
+		public object ConvertTo(object o, Type t) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object o, Type t) {
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object o, Type t) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override object CreateInstance(ITypeDescriptorContext context, IDictionary dict) {
+		public override object CreateInstance(ITypeDescriptorContext context, IDictionary dict) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public bool GetCreateInstanceSupported() {
+		public bool GetCreateInstanceSupported() 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context) {
+		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context) 
+		{
 			throw new NotImplementedException ();
 		}
 		

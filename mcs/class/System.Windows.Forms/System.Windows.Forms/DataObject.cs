@@ -3,20 +3,19 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
 using System.Runtime.InteropServices;
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template. Nothing is implemented yet.
 	//	Implements a basic data transfer mechanism.
 	// </summary>
 	[ClassInterface(ClassInterfaceType.None)]
-	public class DataObject : IDataObject
-	{
+	public class DataObject : IDataObject {
+
 		//
 		//  --- Constructors/Destructors
 		//

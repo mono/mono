@@ -10,8 +10,8 @@
 using System.Drawing;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Displays ADO.NET data in a scrollable grid.
 	///
@@ -20,8 +20,8 @@ namespace System.Windows.Forms
 	/// </summary>
 
 	[MonoTODO]
-	public class DataGrid : Control, ISupportInitialize
-	{
+	public class DataGrid : Control, ISupportInitialize {
+
 		#region Fields
 		bool allowNavigation;
 		bool allowSorting;
@@ -54,7 +54,8 @@ namespace System.Windows.Forms
 		
 		#region Constructors
 		[MonoTODO]
-		public DataGrid() {
+		public DataGrid() 
+		{
 			// setting default values:
 			allowNavigation=true;
 			borderStyle = BorderStyle.FixedSingle;
@@ -357,441 +358,529 @@ namespace System.Windows.Forms
 			 - public void SubObjectsSiteChange(bool site)
 		 */
 		[MonoTODO]
-		public bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) {
+		public bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void BeginInit() {
+		public void BeginInit() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void CancelEditing() {
+		protected virtual void CancelEditing() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void Collapse(int row) {
+		public void Collapse(int row) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual void ColumnStartedEditing(Control editingControl) {
+		protected internal virtual void ColumnStartedEditing(Control editingControl) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal virtual void ColumnStartedEditing(Rectangle bounds) {
+		protected internal virtual void ColumnStartedEditing(Rectangle bounds) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		 protected AccessibleObject CreateAccessibilityInstance() {
+		 protected AccessibleObject CreateAccessibilityInstance() 
+		 {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop) {
+		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop,bool isDefault) {
+		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop,bool isDefault) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) {
+		public bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void EndInit() {
+		public void EndInit() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Rectangle GetCellBounds(DataGridCell dgc) {
+		public Rectangle GetCellBounds(DataGridCell dgc) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Rectangle GetCellBounds(int row,int col) {
+		public Rectangle GetCellBounds(int row,int col) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Rectangle GetCurrentCellBounds() {
+		public Rectangle GetCurrentCellBounds() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void GridHScrolled(object sender,ScrollEventArgs se) {
+		protected virtual void GridHScrolled(object sender,ScrollEventArgs se) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void GridVScrolled(object sender,ScrollEventArgs se) {
+		protected virtual void GridVScrolled(object sender,ScrollEventArgs se) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public HitTestInfo HitTest(Point position) {
+		public HitTestInfo HitTest(Point position) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public HitTestInfo HitTest(int x,int y) {
+		public HitTestInfo HitTest(int x,int y) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool IsExpanded(int rowNumber) {
+		public bool IsExpanded(int rowNumber) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool IsSelected(int row) {
+		public bool IsSelected(int row) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void NavigateBack() {
+		public void NavigateBack() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void NavigateTo(int rowNumber,string relationName) {
+		public void NavigateTo(int rowNumber,string relationName) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnAllowNavigationChanged(EventArgs e) {
+		protected virtual void OnAllowNavigationChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected void OnBackButtonClicked(object sender,EventArgs e) {
+		protected void OnBackButtonClicked(object sender,EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnBackColorChanged(EventArgs e) {
+		protected override void OnBackColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnBackgroundColorChanged(EventArgs e) {
+		protected virtual void OnBackgroundColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnBindingContextChanged(EventArgs e) {
+		protected override void OnBindingContextChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnBorderStyleChanged(EventArgs e) {
+		protected virtual void OnBorderStyleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnCaptionVisibleChanged(EventArgs e) {
+		protected virtual void OnCaptionVisibleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnCurrentCellChanged(EventArgs e) {
+		protected virtual void OnCurrentCellChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnDataSourceChanged(EventArgs e) {
+		protected virtual void OnDataSourceChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnEnter(EventArgs e) {
+		protected override void OnEnter(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnFlatModeChanged(EventArgs e) {
+		protected virtual void OnFlatModeChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnForeColorChanged(EventArgs e) {
+		protected override void OnForeColorChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleDestroyed(EventArgs e) {
+		protected override void OnHandleDestroyed(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyDown(KeyEventArgs ke) {
+		protected override void OnKeyDown(KeyEventArgs ke) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyPress(KeyPressEventArgs kpe) {
+		protected override void OnKeyPress(KeyPressEventArgs kpe) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnLayout(LayoutEventArgs levent) {
+		protected override void OnLayout(LayoutEventArgs levent) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnLeave(EventArgs e) {
+		protected override void OnLeave(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseDown(MouseEventArgs e) {
+		protected override void OnMouseDown(MouseEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseLeave(EventArgs e) {
+		protected override void OnMouseLeave(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseMove(MouseEventArgs e) {
+		protected override void OnMouseMove(MouseEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs e) {
+		protected override void OnMouseUp(MouseEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseWheel(MouseEventArgs e) {
+		protected override void OnMouseWheel(MouseEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected void OnNavigate(NavigateEventArgs e) {
+		protected void OnNavigate(NavigateEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs pe) {
+		protected override void OnPaint(PaintEventArgs pe) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override void OnPaintBackground(PaintEventArgs ebe) {
+		protected override void OnPaintBackground(PaintEventArgs ebe) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnParentRowsLabelStyleChanged(EventArgs e) {
+		protected virtual void OnParentRowsLabelStyleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnParentRowsVisibleChanged(EventArgs e) {
+		protected virtual void OnParentRowsVisibleChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void OnReadOnlyChanged(EventArgs e) {
+		protected virtual void OnReadOnlyChanged(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		protected void OnRowHeaderClick(EventArgs e) {
+		protected void OnRowHeaderClick(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected void OnScroll(EventArgs e) {
+		protected void OnScroll(EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected void OnShowParentDetailsButtonClicked(object sender,EventArgs e) {
+		protected void OnShowParentDetailsButtonClicked(object sender,EventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessDialogKey(Keys keyData) {
+		protected override bool ProcessDialogKey(Keys keyData) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ProcessGridKey(KeyEventArgs ke) {
+		protected bool ProcessGridKey(KeyEventArgs ke) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessKeyPreview(ref Message m) {
+		protected override bool ProcessKeyPreview(ref Message m) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ProcessTabKey(Keys keyData) {
+		protected bool ProcessTabKey(Keys keyData) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetAlternatingBackColor() {
+		public void ResetAlternatingBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void ResetBackColor() {
+		public override void ResetBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void ResetForeColor() {
+		public override void ResetForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetGridLineColor() {
+		public void ResetGridLineColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderBackColor() {
+		public void ResetHeaderBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderFont() {
+		public void ResetHeaderFont() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderForeColor() {
+		public void ResetHeaderForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetLinkColor() {
+		public void ResetLinkColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected void ResetSelection() {
+		protected void ResetSelection() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetSelectionBackColor() {
+		public void ResetSelectionBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetSelectionForeColor() {
+		public void ResetSelectionForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void Select(int row) {
+		public void Select(int row) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void SetDataBinding(object dataSource,string dataMember) {
+		public void SetDataBinding(object dataSource,string dataMember) 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeAlternatingBackColor() {
+		protected virtual bool ShouldSerializeAlternatingBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeBackgroundColor() {
+		protected virtual bool ShouldSerializeBackgroundColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeCaptionBackColor() {
+		protected virtual bool ShouldSerializeCaptionBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeCaptionForeColor() {
+		protected virtual bool ShouldSerializeCaptionForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeGridLineColor() {
+		protected virtual bool ShouldSerializeGridLineColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeHeaderBackColor() {
+		protected virtual bool ShouldSerializeHeaderBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializeHeaderFont() {
+		protected bool ShouldSerializeHeaderFont() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeHeaderForeColor() {
+		protected virtual bool ShouldSerializeHeaderForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeLinkHoverColor() {
+		protected virtual bool ShouldSerializeLinkHoverColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeParentRowsBackColor() {
+		protected virtual bool ShouldSerializeParentRowsBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeParentRowsForeColor() {
+		protected virtual bool ShouldSerializeParentRowsForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializePreferredRowHeight() {
+		protected bool ShouldSerializePreferredRowHeight() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializeSelectionBackColor() {
+		protected bool ShouldSerializeSelectionBackColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeSelectionForeColor() {
+		protected virtual bool ShouldSerializeSelectionForeColor() 
+		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void UnSelect(int row) {
+		public void UnSelect(int row) 
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -978,17 +1067,20 @@ namespace System.Windows.Forms
 			
 			#region DataGrid.HitTestInfo: Methods
 			[MonoTODO]
-			public override bool Equals(object value) {
+			public override bool Equals(object value) 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public override int GetHashCode() {
+			public override int GetHashCode() 
+			{
 				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
-			public override string ToString() {
+			public override string ToString() 
+			{
 				throw new NotImplementedException ();
 			}
 			#endregion

@@ -8,10 +8,10 @@
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
-	public interface IContainerControl
-	{
+namespace System.Windows.Forms {
+
+	public interface IContainerControl {
+
 		bool ActivateControl(Control active);
 		Control ActiveControl {get; set;}
 	}

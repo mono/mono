@@ -3,19 +3,18 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
 using System.Drawing;
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	// <summary>
 	//	This is only a template. Nothing is implemented yet.
 	//	Represents a Windows date-time picker control.
 	// </summary>
-	public class DateTimePicker : Control
-	{
+	public class DateTimePicker : Control {
+
 		//
 		//  --- Public Fields
 		//
@@ -121,48 +120,48 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected virtual void OnCloseUp(EventArgs e)
 		{
-			if (CloseUp != null)
-			{
+			if (CloseUp != null) {
+
 				CloseUp(this, e);
 			}
 		}
 		[MonoTODO]
 		protected virtual void OnDropDown(EventArgs e)
 		{
-			if (DropDown != null)
-			{
+			if (DropDown != null) {
+
 				DropDown(this, e);
 			}
 		}
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e)
 		{
-			if (FontChanged != null)
-			{
+			if (FontChanged != null) {
+
 				FontChanged(this, e);
 			}
 		}
 		[MonoTODO]
 		protected virtual void OnFormatChanged(EventArgs e)
 		{
-			if (FormatChanged != null)
-			{
+			if (FormatChanged != null) {
+
 				FormatChanged(this, e);
 			}
 		}
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e)
 		{
-			if (SystemColorsChanged != null)
-			{
+			if (SystemColorsChanged != null) {
+
 				SystemColorsChanged(this, e);
 			}
 		}
 		[MonoTODO]
 		protected virtual void OnValueChanged(EventArgs e)
 		{
-			if (ValueChanged != null)
-			{
+			if (ValueChanged != null) {
+
 				ValueChanged(this, e);
 			}
 		}
@@ -190,121 +189,121 @@ namespace System.Windows.Forms
 		//  --- Public Properties
 		
 		[MonoTODO]
-		public override Color BackColor
-		{
+		public override Color BackColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override Image BackgroundImage
-		{
+		public override Image BackgroundImage {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public Font CalendarFont
-		{
+		public Font CalendarFont {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public Color CalendarForeColor
-		{
+		public Color CalendarForeColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public Color CalendarMonthBackground
-		{
+		public Color CalendarMonthBackground {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public Color CalendarTitleBackColor
-		{
+		public Color CalendarTitleBackColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public Color CalendarTitleForeColor
-		{
+		public Color CalendarTitleForeColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public Color CalendarTrailingForeColor
-		{
+		public Color CalendarTrailingForeColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool Checked
-		{
+		public bool Checked {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public string CustomFormat
-		{
+		public string CustomFormat {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public LeftRightAlignment DropDownAlign
-		{
+		public LeftRightAlignment DropDownAlign {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override Color ForeColor
-		{
+		public override Color ForeColor {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public DateTimePickerFormat Format
-		{
+		public DateTimePickerFormat Format {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public DateTime MaxDate
-		{
+		public DateTime MaxDate {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public DateTime MinDate
-		{
+		public DateTime MinDate {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public int PreferredHeight
-		{
+		public int PreferredHeight {
+
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public bool ShowCheckBox
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public bool ShowUpDown
-		{
+		public bool ShowCheckBox {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public override string Text
-		{
+		public bool ShowUpDown {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		public DateTime Value
-		{
+		public override string Text {
+
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		[MonoTODO]
+		public DateTime Value {
+
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -313,13 +312,13 @@ namespace System.Windows.Forms
 		//  --- Protected Properties
 		
 		[MonoTODO]
-		protected override CreateParams CreateParams
-		{
+		protected override CreateParams CreateParams {
+
 			get { throw new NotImplementedException (); }
 		}
 		[MonoTODO]
-		protected override Size DefaultSize
-		{
+		protected override Size DefaultSize {
+
 			get { throw new NotImplementedException (); }
 		}
 	}

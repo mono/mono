@@ -9,8 +9,8 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
 	/// Specifies the effects of a drag-and-drop operation.
@@ -18,8 +18,8 @@ namespace System.Windows.Forms
 	/// </summary>
 	[Flags]
 	[Serializable]
-	public enum DragDropEffects
-	{
+	public enum DragDropEffects {
+
 		None = 0,
 		Copy = 1,
 		Move = 2,

@@ -9,15 +9,15 @@
 
 using System;
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	/// <summary>
   /// Specifies the case of characters in a TextBox control.
 	/// </summary>
 	[Serializable]
-	public enum CharacterCasing
-	{
+	public enum CharacterCasing {
+
 		//Values were verified with enumcheck.
 		Normal = 0,
 		Upper = 1,

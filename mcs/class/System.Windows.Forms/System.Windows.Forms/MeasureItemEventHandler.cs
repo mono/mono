@@ -8,8 +8,8 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Represents the method that will handle the MeasureItem event of the 
 	/// ListBox, ComboBox, CheckedListBox, or MenuItem controls.

@@ -8,20 +8,21 @@
 // (C) Ximian, Inc., 2002
 
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 	/// <summary>
 	/// Provides data for the ControlAdded and ControlRemoved events.
 	/// ToDo note:
 	///  - no methods are implemented
 	/// </summary>
 
-	public class ControlEventArgs : EventArgs
-	{
+	public class ControlEventArgs : EventArgs {
+
 		Control control;
 
 		#region Constructors
-		public ControlEventArgs(Control control) {
+		public ControlEventArgs(Control control) 
+		{
 			this.control = control;
 		}
 		#endregion
@@ -31,10 +32,12 @@ namespace System.Windows.Forms
 			get { return control; }
 		}
 		#endregion
-		public override string ToString() {
+		public override string ToString() 
+		{
 			return base.ToString + control.ToString();
 		}
-		public override int  GetHashCode() {
+		public override int  GetHashCode() 
+		{
 			return unchecked(base.GetHashCode() * control.ToString());
 		}
 

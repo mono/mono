@@ -7,8 +7,8 @@
 // (C) 2002 Ximian, Inc
 //
 
-namespace System.Windows.Forms
-{
+namespace System.Windows.Forms {
+
 
 	// <summary>
 	//	This is only a template.  Nothing is implemented yet.
