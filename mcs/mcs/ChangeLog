@@ -1,10 +1,17 @@
 2003-10-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (New): Overload the meaning of RequestedType to
+	track the possible creation of the NewDelegate type, since
+	DoResolve is invoked more than once for new constructors on field
+	initialization.
+
+	See bugs: #48800 and #37014
+
 	* cs-parser.jay (declare_local_constants): Take an arraylist
 	instead of a single constant.
 
 	(local_constant_declaration): It should take a
-	constant_declarators, not a constant_declarator.
+	constant_declarators, not a constant_declarator.  Fixes 49487
 
 	* convert.cs: Fix error report.
 

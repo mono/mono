@@ -5249,7 +5249,13 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class New : ExpressionStatement, IMemoryLocation {
 		public readonly ArrayList Arguments;
-		public readonly Expression RequestedType;
+
+		//
+		// During bootstrap, it contains the RequestedType,
+		// but if `type' is not null, it *might* contain a NewDelegate
+		// (because of field multi-initialization)
+		//
+		public Expression RequestedType;
 
 		MethodBase method = null;
 
@@ -5315,8 +5321,11 @@ namespace Mono.CSharp {
 			//
 			// This leads to bugs (#37014)
 			//
-			if (type != null)
+			if (type != null){
+				if (RequestedType is NewDelegate)
+					return RequestedType;
 				return this;
+			}
 			
 			type = ec.DeclSpace.ResolveType (RequestedType, false, loc);
 			
@@ -5325,8 +5334,12 @@ namespace Mono.CSharp {
 			
 			bool IsDelegate = TypeManager.IsDelegateType (type);
 			
-			if (IsDelegate)
-				return (new NewDelegate (type, Arguments, loc)).Resolve (ec);
+			if (IsDelegate){
+				RequestedType = (new NewDelegate (type, Arguments, loc)).Resolve (ec);
+				if (!(RequestedType is NewDelegate))
+					throw new Exception ("NewDelegate.Resolve returned a non NewDelegate: " + RequestedType.GetType ());
+				return RequestedType;
+			}
 
 			if (type.IsInterface || type.IsAbstract){
 				Error (144, "It is not possible to create instances of interfaces or abstract classes");
