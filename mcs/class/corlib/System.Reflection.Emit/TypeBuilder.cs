@@ -74,7 +74,7 @@ namespace System.Reflection.Emit {
 	private Type created;
 	string fullname;
 
-	public const int UnspecifiedTypeSize = -1;
+	public const int UnspecifiedTypeSize = 0;
 
 		protected override TypeAttributes GetAttributeFlagsImpl () {
 			return attrs;
@@ -95,7 +95,7 @@ namespace System.Reflection.Emit {
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr) {
 			this.parent = null;
 			this.attrs = attr;
-			this.class_size = -1;
+			this.class_size = UnspecifiedTypeSize;
 			fullname = this.tname = "<Module>";
 			this.nspace = "";
 			pmodule = mb;
