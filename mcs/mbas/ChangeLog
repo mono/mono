@@ -1,3 +1,7 @@
+2003/02/19  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay : eliminated reduce/reduce conflict on duplicated rank_specifier rule
+	  by renaming the one using brackets to bracketed_rank_specifier
+
 2003/02/12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* added argument.cs (extracted from expression.cs) makefiles corrected
 	* mb-parser.jay : eliminated reduce/reduce conflict on opt_argument_list rule, 

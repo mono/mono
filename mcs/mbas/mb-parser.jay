@@ -2529,7 +2529,7 @@ invocation_expression
 	;
 
 opt_argument_list
-	: argument_list 
+	: argument_list
 	  { 
 		/*
 		   The 'argument' rule returns an 'empty' argument
@@ -2611,6 +2611,11 @@ element_access
 	  }*/
 	;
 
+expression
+	: conditional_expression { $$ = $1; }
+	/*| assignment_expression*/
+	;
+
 opt_expression
 	: /* empty */
 	| expression
@@ -2631,6 +2636,11 @@ expression_list
 	  }
 	;
 
+opt_expression_list
+	: /*empty */ { $$ = null; }
+	| expression_list
+	;
+	
 this_access
 	: ME
 	  {
@@ -2638,12 +2648,6 @@ this_access
 	  }
 	;
 
-opt_expression_list
-	: /*empty */ { $$ = null; }
-	| expression_list COMMA expression
-	| expression
-	;
-	
 unary_expression
 	: primary_expression
 	| NOT prefixed_unary_expression
@@ -2829,11 +2833,6 @@ assignment_expression
 	  }
 	;
 
-expression
-	: conditional_expression { $$ = $1; }
-	/*| assignment_expression*/
-	;
-
 constant_expression
 	: expression
 	;
@@ -2881,25 +2880,36 @@ namespace_or_type_name
 	;
 
 array_type
-	: type rank_specifiers
+	: type bracketed_rank_specifiers
 	  {
 		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
 	;
 	
-rank_specifiers
-	: rank_specifier opt_rank_specifier
+bracketed_rank_specifiers
+	: bracketed_rank_specifier bracketed_opt_rank_specifier
 	  {
 		  $$ = (string) $2 + (string) $1;
 	  }
         ;
 
-rank_specifier
+bracketed_rank_specifier
 	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
 	  {
 		$$ = "[" + (string) $2 + "]";
 	  }
 	;
+
+bracketed_opt_rank_specifier
+	: /* empty */
+	  {
+		  $$ = "";
+	  }
+	| bracketed_rank_specifiers
+	  {
+		$$ = $1;
+	  }
+	;        	
 
 /* Built-in / Integral types */
 builtin_types
