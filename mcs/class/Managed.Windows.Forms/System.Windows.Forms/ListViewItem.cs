@@ -22,9 +22,12 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
+// Revision 1.4  2004/10/26 09:32:19  ravindra
+// Calculations for ListViewItem.
+//
 // Revision 1.3  2004/10/15 15:05:09  ravindra
 // Implemented GetBounds method and fixed coding style.
 //
@@ -53,13 +56,12 @@ namespace System.Windows.Forms
 	public class ListViewItem : ICloneable, ISerializable
 	{
 		#region Instance Variables
-		private Color back_color;
+		private Color back_color = ThemeEngine.Current.ColorWindow;
 		private Font font = ThemeEngine.Current.DefaultFont;
-		private Color fore_color;
+		private Color fore_color = ThemeEngine.Current.ColorWindowText;
 		private int image_index = -1;
 		private bool is_checked = false;
 		private bool is_focused = false;
-		internal ListView owner;
 		private bool selected;
 		private int state_image_index = -1;
 		private ListViewSubItemCollection sub_items;
@@ -67,11 +69,16 @@ namespace System.Windows.Forms
 		private string text;
 		private bool use_item_style = true;
 
-		internal Point location;
-		internal Rectangle icon_rect;
-		internal Rectangle label_rect;
-		internal Rectangle item_rect;
+		// internal variables
+		internal CheckBox checkbox;				// the associated checkbox with an item
+		internal Rectangle checkbox_rect;		// calculated by CalcListViewItem method
 		internal Rectangle entire_rect;
+		internal Rectangle icon_rect;
+		internal Rectangle item_rect;
+		internal Rectangle label_rect;
+		internal Point location = Point.Empty;	// set by the ListView control
+		internal ListView owner;
+
 		#endregion Instance Variables
 
 		#region Public Constructors
@@ -289,6 +296,9 @@ namespace System.Windows.Forms
 		{
 			if (owner == null)
 				return Rectangle.Empty;
+			
+			// should we check for dirty flag to optimize this ?
+			CalcListViewItem ();
 
 			switch (portion) {
 
@@ -339,6 +349,153 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Protected Methods
 
+		#region Private Internal Methods
+		internal Rectangle CheckRect {
+			get { return this.checkbox_rect; }
+		}
+
+		internal Rectangle EntireRect {
+			get { return this.entire_rect; }
+		}
+
+		internal Rectangle IconRect {
+			get { return this.icon_rect; }
+		}
+
+		internal Rectangle LabelRect {
+			get { return this.label_rect; }
+		}
+
+		internal void CalcListViewItem ()
+		{
+			int item_ht;
+			Size text_size = owner.text_size;
+
+			if (owner.CheckBoxes) {
+				checkbox_rect.Location = this.location;
+				checkbox_rect.Height = checkbox_rect.Width = ThemeEngine.Current.CheckBoxWidth;
+				checkbox = new CheckBox ();
+			}
+			else
+				checkbox_rect = Rectangle.Empty;
+
+			switch (owner.View) {
+
+			case View.Details:
+				// LAMESPEC: MSDN says, "In all views except the details
+				// view of the ListView, this value specifies the same
+				// bounding rectangle as the Entire value." Actually, it
+				// returns same bounding rectangles for Item and Entire
+				// values in the case of Details view.
+
+				icon_rect.X = checkbox_rect.X + checkbox_rect.Width + 2;
+				icon_rect.Y = location.Y;
+
+				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth + 1, text_size.Height);
+
+				if (owner.SmallImageList != null) {
+					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height + 1);
+					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
+				}
+				else
+					icon_rect.Width = 0;
+
+				label_rect.Height = checkbox_rect.Height = icon_rect.Height = item_ht;
+
+				label_rect.X = icon_rect.X + icon_rect.Width;
+				label_rect.Y = icon_rect.Y;
+				label_rect.Width = text_size.Width;
+
+				item_rect = entire_rect = Rectangle.Union (Rectangle.Union (checkbox_rect, icon_rect), label_rect);
+
+				// Take into account the rest of columns. First column
+				// is already taken into account above.
+				for (int i = 1; i < owner.Columns.Count; i++) {
+					item_rect.Width += owner.Columns [i].Wd;
+					entire_rect.Width += owner.Columns [i].Wd;
+				}
+				break;
+
+			case View.LargeIcon:
+				checkbox_rect.X += ThemeEngine.Current.HorizontalSpacing;
+
+		 		icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
+				icon_rect.Y = location.Y;
+				if (owner.LargeImageList != null) {
+					icon_rect.Width = owner.LargeImageList.ImageSize.Width + 16;
+					icon_rect.Height = owner.LargeImageList.ImageSize.Height + 4;
+				}
+				else {
+					icon_rect.Width = 16;
+					icon_rect.Height = 4;
+				}
+
+				label_rect.X = icon_rect.X + (icon_rect.Width - text_size.Width) / 2;
+				label_rect.Y = icon_rect.Bottom + 2;
+				label_rect.Height = text_size.Height;
+
+				item_rect = Rectangle.Union (icon_rect, label_rect);
+				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
+				break;
+
+			case View.List:
+		 		icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
+				icon_rect.Y = location.Y;
+
+				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth, text_size.Height);
+
+				if (owner.SmallImageList != null) {
+					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height + 1);
+					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
+				}
+				else
+					icon_rect.Width = 0;
+
+				label_rect.Height = checkbox_rect.Height = icon_rect.Height = item_ht;
+
+				label_rect.X = icon_rect.X + icon_rect.Width;
+				label_rect.Y = icon_rect.Y;
+				label_rect.Width = text_size.Width;
+
+				item_rect = Rectangle.Union (icon_rect, label_rect);
+				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
+				break;
+
+			case View.SmallIcon:
+				icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
+				icon_rect.Y = location.Y;
+
+				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth, text_size.Height);
+
+				if (owner.SmallImageList != null) {
+					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height + 1);
+					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
+				}
+				else
+					icon_rect.Width = 0;
+
+				label_rect.Height = checkbox_rect.Height = icon_rect.Height = item_ht;
+
+				label_rect.X = icon_rect.X + icon_rect.Width;
+				label_rect.Y = icon_rect.Y;
+				label_rect.Width = text_size.Width;
+
+				item_rect = Rectangle.Union (icon_rect, label_rect);
+				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
+				break;
+			}
+			if (checkbox != null) {
+				checkbox.Location = checkbox_rect.Location;
+				checkbox.Size = checkbox_rect.Size;
+				checkbox.CheckAlign = ContentAlignment.BottomRight;
+				checkbox.Checked = this.Checked;
+
+				if (owner.child_controls.Contains (checkbox))
+					owner.child_controls.Remove (checkbox);
+				owner.child_controls.Add (checkbox);
+			}
+		}
+		#endregion	// Private Internal Methods
 
 		#region Subclasses
 
