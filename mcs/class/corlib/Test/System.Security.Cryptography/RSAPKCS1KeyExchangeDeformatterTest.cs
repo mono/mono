@@ -20,7 +20,7 @@ public class RSAPKCS1KeyExchangeDeformatterTest : Assertion {
 	protected static RSA key;
 
 	[SetUp]
-	void SetUp () 
+	public void SetUp () 
 	{
 		// generating a keypair is REALLY long and the framework
 		// makes sure that we generate one (even if create an object

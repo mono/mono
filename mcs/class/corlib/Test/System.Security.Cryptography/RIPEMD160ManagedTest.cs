@@ -20,7 +20,7 @@ namespace MonoTests.System.Security.Cryptography {
 	public class RIPEMD160ManagedTest : RIPEMD160Test {
 
 		[SetUp]
-		public void Setup () 
+		public void SetUp () 
 		{
 			hash = new RIPEMD160Managed ();
 		}

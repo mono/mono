@@ -130,7 +130,7 @@ namespace MonoTests.System.Security.Cryptography {
 		SymmetricAlgorithm aes;
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			if (readStream == null) {
 				readStream = new FileStream ("read", FileMode.OpenOrCreate, FileAccess.Read);
@@ -142,7 +142,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[TearDown]
-		void CleanUp () 
+		public void TearDown () 
 		{
 			try {
 				if (File.Exists ("read"))

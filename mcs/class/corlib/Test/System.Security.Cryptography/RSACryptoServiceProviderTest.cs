@@ -25,7 +25,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	static int minKeySize = 384;
 
 	[SetUp]
-	void Setup () 
+	public void SetUp () 
 	{
 		if (disposed == null) {
 			sha1OID = CryptoConfig.MapNameToOID ("SHA1");

@@ -126,7 +126,7 @@ public class RSATest : Assertion {
 	static string xmlPublic = "<RSAKeyValue><Modulus>u/gvCQaCzpwjOKwrnahx9zaNB+7UEEOkQNa28HRU9R+437qvA1wCq2HqSM7rb81Idu1SDWDh7EYZcZ2KW4uAf6+44KPfxzdyPua0t9k6JYTuamSdBglTdIg0skVFmDlO4KqxLXthpR9SeppB9sFof+JTcpjKKo9ZRvjl/Qkdvcs=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue>";
 
 	[SetUp]
-	void SetUp () 
+	public void SetUp () 
 	{
 		rsa = new NonAbstractRSAForUnitTests ();
 	}

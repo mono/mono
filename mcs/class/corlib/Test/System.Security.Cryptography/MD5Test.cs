@@ -11,9 +11,11 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography
 {
-	public class MD5Test : TestCase
+	[TestFixture]
+	public class MD5Test : Assertion
 	{
-		public void TestComputeHashNull () 
+		[Test]
+		public void ComputeHashNull () 
 		{
 			byte [] dato_vacio = {};
 			string MD5_dato_vacio = "d41d8cd98f00b204e9800998ecf8427e";
@@ -29,7 +31,8 @@ namespace MonoTests.System.Security.Cryptography
 			AssertEquals ("#01 MD5 Of {} is wrong", result_str, MD5_dato_vacio);
 		}
 
-		public void TestComputeHashA()
+		[Test]
+		public void ComputeHashA ()
 		{
 			byte [] dato_a = { Convert.ToByte ('a') };
 			string MD5_dato_a = "0cc175b9c0f1b6a831c399e269772661";
@@ -42,7 +45,8 @@ namespace MonoTests.System.Security.Cryptography
 			AssertEquals ("#02 MD5 Of 'a' is wrong", result_str, MD5_dato_a);
 		}
 
-		public void TestComputeHashB ()
+		[Test]
+		public void ComputeHashB ()
 		{
 			byte[] dato_b = { Convert.ToByte ('\u00F1') };
 			string MD5_dato_b = "edb907361219fb8d50279eabab0b83b1";

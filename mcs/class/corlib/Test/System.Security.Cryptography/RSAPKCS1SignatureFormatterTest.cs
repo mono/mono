@@ -27,7 +27,7 @@ namespace MonoTests.System.Security.Cryptography {
 		private RSAPKCS1SignatureFormatter fmt;
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			if (rsa == null) {
 				rsa = RSA.Create ();

@@ -30,7 +30,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	private bool machineKeyStore;
 
 	[SetUp]
-	void Setup () 
+	public void Setup () 
 	{
 		machineKeyStore = DSACryptoServiceProvider.UseMachineKeyStore;
 		if (disposed == null) {
@@ -43,7 +43,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[TearDown]
-	void Reset () 
+	public void TearDown () 
 	{
 		DSACryptoServiceProvider.UseMachineKeyStore = machineKeyStore;
 	}

@@ -21,7 +21,7 @@ namespace MonoTests.System.Security.Cryptography {
 		private RNGCryptoServiceProvider _algo;
 		
 		[SetUp]
-		private void SetUp () 
+		public void SetUp () 
 		{
 			_algo = new RNGCryptoServiceProvider ();
 		}

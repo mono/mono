@@ -18,7 +18,7 @@ namespace MonoTests.System.Security.Cryptography {
 	public class DESCryptoServiceProviderTest : DESFIPS81Test {
 
 		[SetUp]
-		void Create () 
+		public void SetUp () 
 		{
 			des = new DESCryptoServiceProvider ();
 		}

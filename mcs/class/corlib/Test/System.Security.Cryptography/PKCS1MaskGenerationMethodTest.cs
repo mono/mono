@@ -23,7 +23,7 @@ namespace MonoTests.System.Security.Cryptography {
 		protected PKCS1MaskGenerationMethod pkcs1;
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			pkcs1 = new PKCS1MaskGenerationMethod ();
 		}

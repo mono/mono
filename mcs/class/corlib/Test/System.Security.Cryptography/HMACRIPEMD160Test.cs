@@ -50,7 +50,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			hmac = new HMACRIPEMD160 ();
 		}

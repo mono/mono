@@ -1,3 +1,15 @@
+2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStreamTest.cs, DESCryptoServiceProviderTest.cs, 
+	DSACryptoServiceProviderTest.cs, DSATest.cs, FromBase64Transform.cs,
+	HMACRIPEMD160Test.cs, MD5Test.cs, PKCS1MaskGenerationMethodTest.cs,
+	RIPEMD160ManagedTest.cs, RNGCryptoServiceProviderTest.cs, 
+	RSACryptoServiceProviderTest.cs, RSAOAEPKeyExchangeDeformatterTest.cs,
+	RSAOAEPKeyExchangeFormatterTest.cs, RSAPKCS1KeyExchangeDeformatterTest.cs,
+	RSAPKCS1KeyExchangeFormatterTest.cs, RSAPKCS1SignatureDeformatterTest.cs,
+	RSAPKCS1SignatureFormatterTest.cs, RSATest.cs: SetUp/TearDown are now
+	public (required for new nunit).
+
 2004-05-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RNGCryptoServiceProviderTest.cs: Added new tests to see how the 

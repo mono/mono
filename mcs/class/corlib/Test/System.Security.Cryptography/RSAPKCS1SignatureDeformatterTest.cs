@@ -24,7 +24,7 @@ namespace MonoTests.System.Security.Cryptography {
 		private static DSA dsa;
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			shaSignature [0] = 0x51;
 			md5Signature [0] = 0xB4;

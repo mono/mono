@@ -21,7 +21,7 @@ namespace MonoTests.System.Security.Cryptography {
 		private FromBase64Transform _algo;
 
 		[SetUp]
-		private void SetUp ()
+		public void SetUp ()
 		{
 			_algo = new FromBase64Transform ();
 		}
