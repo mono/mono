@@ -575,6 +575,7 @@ namespace System.Xml
 			// like properties we have, etc.
 			RemoveAll ();
 
+			this.baseURI = xmlReader.BaseURI;
 			// create all contents with use of ReadNode()
 			do {
 				XmlNode n = ReadNode (xmlReader);

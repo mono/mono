@@ -188,21 +188,14 @@ namespace System.Xml
 
 		public virtual XmlNodeType MoveToContent ()
 		{
-			XmlNodeType nodeType = NodeType;
-			if (IsEmptyElement)
-				return nodeType;
-
-			if (nodeType == XmlNodeType.Attribute) {
+			if (NodeType == XmlNodeType.Attribute)
 				MoveToElement ();
-				return nodeType;
-			}
 
 			do {
+				if (IsContent (NodeType))
+					return NodeType;
 				Read ();
-				nodeType = NodeType;
-				if (IsContent (nodeType))
-					return nodeType;
-			} while (ReadState != ReadState.EndOfFile);
+			} while (!EOF);
 			return XmlNodeType.None;
 		}
 

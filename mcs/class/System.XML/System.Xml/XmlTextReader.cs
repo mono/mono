@@ -430,7 +430,8 @@ namespace System.Xml
 		{
 			if (orderedAttributesEnumerator != null) {
 				orderedAttributesEnumerator = null;
-				RestoreProperties ();
+				if (isPropertySaved)
+					RestoreProperties ();
 				return true;
 			}
 
@@ -473,8 +474,13 @@ namespace System.Xml
 		public override bool Read ()
 		{
 			bool more = false;
-
+			isPropertySaved = false;
 			readState = ReadState.Interactive;
+
+			// It was moved from end of ReadStartTag ().
+			if (depthUp)
+				++depth;
+			depthUp = false;
 
 			more = ReadContent ();
 
@@ -598,7 +604,6 @@ namespace System.Xml
 					innerXmlBuilder = new StringBuilder ();
 				innerXmlBuilder.Length = 0;
 				do {
-//					ReadContent ();
 					Read ();
 					if (NodeType != XmlNodeType.EndElement || depth + 1 > startDepth)
 						innerXmlBuilder.Append (currentTag);
@@ -751,7 +756,7 @@ namespace System.Xml
 
 		private int depth;
 		private int elementDepth;
-		private bool depthDown;
+		private bool depthUp;
 
 		private bool popScope;
 		private Stack elementStack;
@@ -767,6 +772,7 @@ namespace System.Xml
 		private bool isEmptyElement;
 		private string value;
 
+		private bool isPropertySaved;
 		private XmlNodeType saveNodeType;
 		private string saveName;
 		private string savePrefix;
@@ -822,7 +828,7 @@ namespace System.Xml
 			readState = ReadState.Initial;
 
 			depth = 0;
-			depthDown = false;
+			depthUp = false;
 
 			popScope = false;
 			elementStack = new Stack();
@@ -893,6 +899,10 @@ namespace System.Xml
 
 		private void SaveProperties ()
 		{
+			// If already saved, then return.
+			if (isPropertySaved)
+				return;
+
 			saveNodeType = nodeType;
 			saveName = name;
 			savePrefix = prefix;
@@ -900,6 +910,7 @@ namespace System.Xml
 			saveNamespaceURI = namespaceURI;
 			saveIsEmptyElement = isEmptyElement;
 			// An element's value is always String.Empty.
+			isPropertySaved = true;
 		}
 
 		private void RestoreProperties ()
@@ -911,6 +922,7 @@ namespace System.Xml
 			namespaceURI = saveNamespaceURI;
 			isEmptyElement = saveIsEmptyElement;
 			value = String.Empty;
+			isPropertySaved = false;
 		}
 
 		private void AddAttribute (string name, string value)
@@ -1047,10 +1059,10 @@ namespace System.Xml
 			if (PeekChar () == '/') {
 				ReadChar ();
 				isEmptyElement = true;
-				depthDown = true;
 				popScope = true;
 			}
 			else {
+				depthUp = true;
 				elementStack.Push (name);
 				baseURIStack.Push (attributes ["xml:base"] != null ?
 					attributes ["xml:base"] : BaseURI);
@@ -1065,12 +1077,6 @@ namespace System.Xml
 				String.Empty, // value
 				false // clearAttributes
 			);
-
-			if (!depthDown)
-				++depth;
-			else
-				depthDown = false;
-
 		}
 
 		// The reader is positioned on the first character

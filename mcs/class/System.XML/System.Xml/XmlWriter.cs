@@ -50,31 +50,30 @@ namespace System.Xml
 			if(reader == null)
 				throw new ArgumentException("null XmlReader specified.", "reader");
 
-			switch(reader.NodeType)
-			{
-				case XmlNodeType.XmlDeclaration:
-					// this method doesn't write "<?xml " and "?>", at least MS .NET Framework as yet.
-					XmlDeclaration decl = new XmlDeclaration("1.0", String.Empty, String.Empty, null);
-					decl.Value = reader.Value;
-					if(decl.Version != null && decl.Version != String.Empty) WriteAttributeString("version", decl.Version);
-					if(decl.Encoding != null && decl.Encoding != String.Empty) WriteAttributeString("encoding", decl.Encoding);
-					if(decl.Standalone != null && decl.Standalone != String.Empty) WriteAttributeString("standalone", decl.Standalone);
-					break;
-				case XmlNodeType.Element:
-					while (reader.MoveToNextAttribute ()) 
-					{
-						WriteAttributeString(reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.Value);
-					}
-					break;
-				case XmlNodeType.Attribute:
-					do
-					{
-						WriteAttributeString(reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.Value);
-					}
-					while (reader.MoveToNextAttribute ()) ;
-					break;
-				default:
-					throw new XmlException("NodeType is not one of Element, Attribute, nor XmlDeclaration.");
+			switch (reader.NodeType) {
+			case XmlNodeType.XmlDeclaration:
+				string val = reader ["version"];
+				if (val != String.Empty)
+					WriteAttributeString ("version", val);
+				val = reader ["encoding"];
+				if (val != String.Empty)
+					WriteAttributeString ("encoding", val);
+				val = reader ["standalone"];
+				if(val != String.Empty)
+					WriteAttributeString ("standalone", val);
+				break;
+			case XmlNodeType.Element:
+				if (reader.MoveToFirstAttribute ())
+					goto case XmlNodeType.Attribute;
+				break;
+			case XmlNodeType.Attribute:
+				do {
+					// FIXME: use ReadAttributeValue () for strictly write EntityReference.
+					WriteAttributeString (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.Value);
+				} while (reader.MoveToNextAttribute ());
+				break;
+			default:
+				throw new XmlException("NodeType is not one of Element, Attribute, nor XmlDeclaration.");
 			}
 		}
 
@@ -166,54 +165,72 @@ namespace System.Xml
 				throw new ArgumentException ();
 
 			if (reader.ReadState == ReadState.Initial) {
-				while (reader.Read ())
+				reader.Read ();
+				do {
 					WriteNode (reader, defattr);
+				} while (!reader.EOF);
+				return;
 			}
-			else {
-				switch (reader.NodeType) {
-				case XmlNodeType.Element:
-					WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-					WriteAttributes (reader, defattr);
-					if (reader.IsEmptyElement)
-						WriteEndElement ();
-					break;
-				case XmlNodeType.Attribute:
-					break;
-				case XmlNodeType.Text:
-					WriteString (reader.Value);
-					break;
-				case XmlNodeType.CDATA:
-					WriteCData (reader.Value);
-					break;
-				case XmlNodeType.EntityReference:
-					WriteEntityRef (reader.Name);
-					break;
-				case XmlNodeType.ProcessingInstruction:
-					WriteProcessingInstruction (reader.Name, reader.Value);
-					break;
-				case XmlNodeType.Comment:
-					WriteComment (reader.Value);
-					break;
-				case XmlNodeType.DocumentType:
-					WriteDocType (reader.Name,
-						reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
-					break;
-				case XmlNodeType.SignificantWhitespace:
-					goto case XmlNodeType.Whitespace;
-				case XmlNodeType.Whitespace:
-					WriteWhitespace (reader.Value);
-					break;
-				case XmlNodeType.EndElement:
-					break;
-				case XmlNodeType.EndEntity:
-					break;
-				case XmlNodeType.XmlDeclaration:
-					WriteStartDocument (reader.GetAttribute  ("standalone").ToLower () == "yes");
-					break;
-				default:
-					throw new NotImplementedException ();
+
+			switch (reader.NodeType) {
+			case XmlNodeType.Element:
+				WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+				WriteAttributes (reader, defattr);
+				reader.MoveToElement ();
+				if (reader.IsEmptyElement)
+					WriteEndElement ();
+				else {
+					int depth = reader.Depth;
+					reader.Read ();
+					do {
+						WriteNode (reader, defattr);
+					} while (depth < reader.Depth);
+					WriteEndElement ();
 				}
+				break;
+			// In case of XmlAttribute, don't proceed reader.
+			case XmlNodeType.Attribute:
+				return;
+			case XmlNodeType.Text:
+				WriteString (reader.Value);
+				break;
+			case XmlNodeType.CDATA:
+				WriteCData (reader.Value);
+				break;
+			case XmlNodeType.EntityReference:
+				WriteEntityRef (reader.Name);
+				break;
+			case XmlNodeType.ProcessingInstruction:
+				WriteProcessingInstruction (reader.Name, reader.Value);
+				break;
+			case XmlNodeType.Comment:
+				WriteComment (reader.Value);
+				break;
+			case XmlNodeType.DocumentType:
+				WriteDocType (reader.Name,
+					reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+				break;
+			case XmlNodeType.SignificantWhitespace:
+				goto case XmlNodeType.Whitespace;
+			case XmlNodeType.Whitespace:
+				WriteWhitespace (reader.Value);
+				break;
+			case XmlNodeType.EndElement:
+				WriteEndElement ();
+				break;
+			case XmlNodeType.EndEntity:
+				break;
+			case XmlNodeType.XmlDeclaration:
+				string st = reader.GetAttribute ("standalone");
+				if (st != String.Empty)
+                                        WriteStartDocument (st.ToLower () == "yes");
+				else
+					WriteStartDocument ();
+				break;
+			default:
+				throw new NotImplementedException ();
 			}
+			reader.Read ();
 		}
 
 		public abstract void WriteProcessingInstruction (string name, string text);

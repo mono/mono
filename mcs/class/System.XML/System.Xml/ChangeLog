@@ -1,3 +1,20 @@
+2003-04-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs : fixed Load() to set baseURI correctly.
+	* XmlReader.cs : patch by Gonzalo. Fixed not to skip XmlDeclaration.
+	* XmlTextReader.cs :
+	  fixed Depth. When it's on StartElement, Depth was already incremented.
+	  fixed private SaveProperty(), which moved away its saved properties
+	  when MoveToElement was called repeatedly.
+	* XmlTextWriter.cs : fixed WriteQualifiedName() to close start tag.
+	* XmlWriter.cs :
+	  WriteAttributes() refactory (for XMLDecl).
+	  WriteNode() don't Read() when the reader is Initial state, let other
+	  invokation to Read(). In case of Element, it should write entire
+	  element. In case of Attribute, it shouldn't Read().
+	  WriteStartDocument() should omit standalone decl. when there is no
+	  explicit value.
+
 2003-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlReader.cs: reverted last patch. It breaks System.Configuration 

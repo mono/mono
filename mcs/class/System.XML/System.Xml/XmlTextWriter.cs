@@ -493,6 +493,8 @@ namespace System.Xml
 				throw new ArgumentException ();
 
 			CheckState ();
+			if (!openAttribute)
+				CloseStartElement ();
 
 			string prefix = namespaceManager.LookupPrefix (ns);
 			w.Write ("{0}:{1}", prefix, localName);
@@ -599,7 +601,7 @@ namespace System.Xml
 
 			string encodingFormatting = "";
 
-			if (!nullEncoding) 
+			if (!nullEncoding && w.Encoding.WebName != "utf-16" && w.Encoding.WebName != "utf-8") 
 				encodingFormatting = String.Format (" encoding={0}{1}{0}", quoteChar, w.Encoding.WebName);
 
 			w.Write("<?xml version={0}1.0{0}{1}{2}?>", quoteChar, encodingFormatting, standaloneFormatting);
