@@ -1,3 +1,7 @@
+2003-05-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Path.cs: fixed bug #42631.
+
 2003-05-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* File.cs (Move): Allow moving of directories.

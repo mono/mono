@@ -308,17 +308,13 @@ namespace System.IO
 			string root = GetPathRoot (path);
 			if (root == path) return path;
 				
-			string dir = GetDirectoryName (path).Substring (path.IndexOfAny (new char [] {DirectorySeparatorChar,	AltDirectorySeparatorChar}) + 1);
-			if (dir == String.Empty) return path;
-			
 			// STEP 3: split the directories, this gets rid of consecutative "/"'s
 			string [] dirs = path.Split (DirectorySeparatorChar, AltDirectorySeparatorChar);
-			
 			// STEP 4: Get rid of directories containing . and ..
 			int target = 0;
 			
 			for (int i = 0; i < dirs.Length; i++) {
-				if (dirs [i] == "." || dirs [i] == String.Empty) continue;
+				if (dirs [i] == "." || (i != 0 && dirs [i] == String.Empty)) continue;
 				else if (dirs [i] == "..") {
 					if (target != 0) target--;
 				}
@@ -330,7 +326,7 @@ namespace System.IO
 			if (target == 0)
 				return root;
 			else
-				return root + String.Join (DirectorySeparatorStr, dirs, 0, target);
+				return String.Join (DirectorySeparatorStr, dirs, 0, target);
 		}
 	}
 }
