@@ -748,7 +748,7 @@ namespace System
 					} else if (num < 3) {
 						year = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 					} else {
-						if(Char.IsDigit(s[4]))
+						if(s.Length > 4 && Char.IsDigit(s[4]))
 							throw new ArgumentOutOfRangeException ("year", "Valid " + "values are between 1 and 9999 inclusive");
 						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;

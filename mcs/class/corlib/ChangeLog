@@ -1,3 +1,8 @@
+2003-12-14  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* DateTime.cs: Be sure that the array access is not out of range
+	when looking for ArgumentOutOfRangeException in the year value.
+
 2003-12-08  Peter Williams  <peter@newton.cx>
 
 	* Makefile: Use embedded tab instead of $(ECHO_ESCAPE).
