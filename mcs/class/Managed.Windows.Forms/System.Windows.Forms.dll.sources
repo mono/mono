@@ -104,6 +104,7 @@ System.Windows.Forms/LabelEditEventArgs.cs
 System.Windows.Forms/LabelEditEventHandler.cs
 System.Windows.Forms/LayoutEventArgs.cs
 System.Windows.Forms/LayoutEventHandler.cs
+System.Windows.Forms/LeftRightAlignment.cs
 System.Windows.Forms/LinkArea.cs
 System.Windows.Forms/LinkBehavior.cs
 System.Windows.Forms/LinkClickedEventArgs.cs
