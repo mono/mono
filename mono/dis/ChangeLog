@@ -1,3 +1,7 @@
+2004-01-09  Jackson Harper  <jackson@ximian.com>
+
+	* monodis.1: Add typespec switch
+	
 2004-01-08  Jackson Harper  <jackson@ximian.com>
 
 	* main.c: Add switch to dump typespec table.
