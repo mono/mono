@@ -1,3 +1,8 @@
+2004-05-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* rand.c
+	(ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_InternalGetBytes): Always close the file. 
+
 2004-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h: Updated after changes to managed structures.
