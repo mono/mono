@@ -255,9 +255,14 @@ namespace System
 		/// <summary>
 		/// Substitute environment variables in the argument "name"
 		/// </summary>
-		[MonoTODO]
-		public static string ExpandEnvironmentVariables(string name)
+		public static string ExpandEnvironmentVariables (string name)
 		{
+			IDictionary dict = Environment.GetEnvironmentVariables ();
+			foreach (DictionaryEntry de in dict) {
+				string var = String.Concat ("%", de.Key, "%");
+				string val = (string) de.Value;
+				name = name.Replace (var, val);
+			}
 			return name;
 		}
 

@@ -1,3 +1,7 @@
+2004-04-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: Implement ExpandEnvironmentVariables static method.
+
 2004-04-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoType.cs: AssemblyQualifiedName now displays culture, version...
