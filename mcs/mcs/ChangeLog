@@ -1,3 +1,8 @@
+2005-02-01  Duncan Mak  <duncan@ximian.com>
+
+	* const.cs (LookupConstantValue): Check that `ce' is not null
+	before calling GetValue ().
+
 2005-02-01  Raja R Harinath  <rharinath@novell.com>
 
 	Fix test-334.cs (#69519).

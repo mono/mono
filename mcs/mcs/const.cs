@@ -252,7 +252,9 @@ namespace Mono.CSharp {
 				}
 				Expr = ce;
 			}
-			ConstantValue = ce.GetValue ();
+
+			if (ce != null)
+				ConstantValue = ce.GetValue ();
 
 			if (MemberType.IsEnum){
 				//
