@@ -1,12 +1,18 @@
+2003-10-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigurationSettings.cs: patch by Eric Lindvall (eric@5stops.com)
+	that improves performance by not reading the file more than once.
+
 2003-07-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* ConfigurationSettings.cs: Removed unused exception variable, fixes compiler warning
+	* ConfigurationSettings.cs: Removed unused exception variable, fixes
+	compiler warning
 
 2003-06-16  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* ConfigurationSettings.cs: Avoid chicken-egg problem when reading machine.config.
-	  Cannot use an uri to read mechine.config because web request module handelrs are
-	  defined in machine.config.
+	* ConfigurationSettings.cs: Avoid chicken-egg problem when reading
+	machine.config. Cannot use an uri to read mechine.config because web
+	request module handelrs are defined in machine.config.
 
 2003-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
