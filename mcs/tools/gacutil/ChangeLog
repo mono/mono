@@ -1,5 +1,10 @@
 2004-05-21  Jackson Harper  <jackson@ximian.com>
 
+	* driver.cs: Do not allow gacdir and root to be specified at the
+	same time. Cleanup help. Add help for options.
+	
+2004-05-21  Jackson Harper  <jackson@ximian.com>
+
 	* driver.cs: Add uninstall-specific option. This takes an assembly
 	file and uninstalls a matching named one from the GAC. Fix search
 	string shenanigans when uninstalling.

@@ -88,6 +88,11 @@ namespace Mono.Tools {
 					name += args [i];
 			}
 
+			if (gacdir != null && root != null) {
+				Console.WriteLine ("gacdir and root options can not be specified together.");
+				Environment.Exit (1);
+			}
+
 			if (gacdir == null)
 				gacdir = GetGacDir ();
 			else
@@ -432,38 +437,67 @@ namespace Mono.Tools {
 			Console.WriteLine ("Usage: gacutil.exe <commands> [ <options> ]");
 			Console.WriteLine ("Commands:");
 
-			Console.WriteLine ("-i <assembly_path> [-package NAME] [-root ROOTDIR]");
+			Console.WriteLine ("-i <assembly_path> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
 			Console.WriteLine ("\tInstalls an assembly into the global assembly cache.");
 			if (detailed) {
-				Console.WriteLine ("\t<assembly_path> is the name of the file that " +
-						"contains the assembly manifest\n" +
+				Console.WriteLine ("\t<assembly_path> is the name of the file that contains the " +
+						"\tassembly manifest\n" +
 						"\tExample: -i myDll.dll");
 			}
 			Console.WriteLine ();
 
-			Console.WriteLine ("-u <assembly_display_name> [-package NAME] [-root ROOTDIR]");
+			Console.WriteLine ("-u <assembly_display_name> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
 			Console.WriteLine ("\tUninstalls an assembly from the global assembly cache.");
 			if (detailed) {
-				Console.WriteLine ("\t<assembly_display_name> is the name of the assembly\n" +
-						"\t(partial or fully qualified) to remove " +
-						"from the global assembly cache.\n" +
-						"\tIf a partial name is specified all matching " +
-						"assemblies will be uninstalled.\n" +
-						"\tExample: /u myDll,Version=1.2.1.0\n");
+				Console.WriteLine ("\t<assembly_display_name> is the name of the assembly (partial or\n" +
+						"\tfully qualified) to remove from the global assembly cache. If a \n" +
+						"\tpartial name is specified all matching assemblies will be uninstalled.\n" +
+						"\tExample: -u myDll,Version=1.2.1.0");
 			}
 			Console.WriteLine ();
 
-			Console.WriteLine ("-l [assembly_name] [-root ROOTDIR]");
+			Console.WriteLine ("-us <assembly_path> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
+			Console.WriteLine ("\tUninstalls an assembly using the specifed assemblies full name.");
+			if (detailed) {
+				Console.WriteLine ("\t<assembly path> is the path to an assembly. The full assembly name\n" +
+						"\tis retrieved from the specified assembly if there is an assembly in\n" +
+						"\tthe GAC with a matching name, it is removed.\n" +
+						"\tExample: -us myDll.dll");
+			}
+			Console.WriteLine ();
+
+			Console.WriteLine ("-l [assembly_name] [-root ROOTDIR] [-gacdir GACDIR]");
 			Console.WriteLine ("\tLists the contents of the global assembly cache.");
 			if (detailed) {
-				Console.WriteLine ("\tWhen the <assembly_name> parameter is specified only " +
-						"matching assemblies are listed.");
+				Console.WriteLine ("\tWhen the <assembly_name> parameter is specified only matching\n" +
+						"\tassemblies are listed.");
 			}
 			Console.WriteLine ();
 
 			Console.WriteLine ("-?");
 			Console.WriteLine ("\tDisplays a detailed help screen\n");
 			Console.WriteLine ();
+
+			if (!detailed)
+				return;
+
+			Console.WriteLine ("Options:");
+			Console.WriteLine ("-package <NAME>");
+			Console.WriteLine ("Used to create a directory in prefix/lib/mono with the name NAME, and a\n" +
+					"\tsymlink is created from NAME/assembly_name to the assembly on the GAC.\n" +
+					"\tThis is used so developers can reference a set of libraries at once.");
+			Console.WriteLine ();
+
+			Console.WriteLine ("-gacdir <GACDIR>");
+			Console.WriteLine ("Used to specify the GACs base directory. Once an assembly has been installed\n" +
+					"\tto a non standard gacdir the MONO_GAC_PATH environment variable must be used\n" +
+					"\tto access the assembly.");
+			Console.WriteLine ();
+
+			Console.WriteLine ("-root <ROOTDIR>");
+			Console.WriteLine ("\tUsed by developers integrating this with automake tools or packaging tools\n" +
+					"\tthat require a prefix directory to  be  specified. The  root	 represents the\n" +
+					"\t\"libdir\" component of a prefix (typically prefix/lib).");
 		}
 	}
 }
