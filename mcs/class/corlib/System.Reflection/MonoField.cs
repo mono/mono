@@ -82,9 +82,13 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-		public override object GetValue(object obj) {
-			throw new NotImplementedException ("Field::GetValue");
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override object GetValue(object obj);
 
+		public override string ToString () {
+			MonoFieldInfo info;
+			MonoFieldInfo.get_field_info (this, out info);
+			return String.Format ("{0} {1}", info.type, info.name);
+		}
 	}
 }

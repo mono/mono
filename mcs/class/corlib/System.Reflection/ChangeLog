@@ -1,4 +1,9 @@
 
+Fri Feb 22 18:54:13 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoField.cs: implement GetValue as an internalcall.
+	Implemented ToString().
+
 Tue Feb 19 20:36:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Assembly.cs, Module.cs, MonoField.cs, MonoMethod.cs,
