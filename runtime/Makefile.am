@@ -13,6 +13,7 @@ assemblies_DATA =	\
 	I18N.Other.dll						\
 	I18N.Rare.dll						\
 	I18N.West.dll						\
+	ICSharpCode.SharpZipLib.dll				\
 	Microsoft.VisualBasic.dll				\
 	Microsoft.VisualC.dll					\
 	Mono.CSharp.Debugger.dll				\
@@ -25,7 +26,9 @@ assemblies_DATA =	\
 	Mono.Data.Tds.dll					\
 	Mono.GetOptions.dll					\
 	Mono.PEToolkit.dll					\
+	Npqsql.dll						\
 	NUnitCore_mono.dll					\
+	PEAPI.dll						\
 	System.Configuration.Install.dll			\
 	System.Data.dll						\
 	System.Data.OracleClient.dll				\
