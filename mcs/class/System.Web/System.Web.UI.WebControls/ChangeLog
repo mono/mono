@@ -7,6 +7,11 @@
 	            annoyinglyc crazy-driving class, basically the method
 	            EvaluateIsValid().
 	* RangeValidator.cs           - Completed.
+	* DataGridColumn.cs           - Completed.
+	* EditCommandColumn.cs        - All is complete except for the
+	            InitializeCell(TableCell, int, ListItemType) method.
+	* DataListItem.cs             - All done except for a longish method
+	            RenderItem(HtmlTextWriter, bool, bool)
 
 2002-03-02      Gaurav Vaish <gvaish@iitk.ac.in>
 
