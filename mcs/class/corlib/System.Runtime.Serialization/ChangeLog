@@ -1,3 +1,8 @@
+2002/03/07  Nick Drochak <ndrochak@gol.com>
+
+	* StreamingContextStates.cs: Add missing value (CrossAppDomain) and
+	adjust All value accordingly.
+
 2002-03-01  Duncan Mak  <duncan@ximian.com>
 
 	* ObjectIDGenerator.cs: Implemented.

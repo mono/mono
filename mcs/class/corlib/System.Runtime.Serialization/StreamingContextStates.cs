@@ -45,9 +45,11 @@ namespace System.Runtime.Serialization {
 		/// </summary>
 		Clone = 64,
 
+		CrossAppDomain = 128,
+
 		/// <summary>
 		/// </summary>
-		All = 127,
+		All = 255,
 	} // StreamingContextStates
 
 } // System.Runtime.Serialization
