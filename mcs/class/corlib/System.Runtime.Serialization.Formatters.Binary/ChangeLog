@@ -1,3 +1,8 @@
+2004-12-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ObjectReader.cs: Use GetField instead of GetMembers. Properties can't
+	be serialized, so it makes no sense to use GetMembers.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CodeGenerator.cs: Call new DefineInternalDynamicAssembly method to prevent a race
