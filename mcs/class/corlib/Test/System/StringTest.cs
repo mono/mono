@@ -209,6 +209,12 @@ public class StringTest : Assertion
 		AssertEquals (string1, String.Concat (string1, wts));
 		AssertEquals (string1, String.Concat (wts, string1));
 		AssertEquals ("", String.Concat (wts, wts));
+		string [] allstr = new string []{ string1, null, string2, concat };
+		object [] allobj = new object []{ string1, null, string2, concat };
+		string astr = String.Concat (allstr);
+		AssertEquals ("string1string2string1string2", astr);
+		string ostr = String.Concat (allobj);
+		AssertEquals (astr, ostr);
 	}
 
 	public void TestCopy()

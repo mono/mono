@@ -1077,65 +1077,38 @@ namespace System
 
 		public static String Concat (params Object[] args)
 		{
-			string [] strings;
-			int len, i, currentpos;
-
 			if (args == null)
 				throw new ArgumentNullException ("args");
 
-			strings = new string [args.Length];
-			len = 0;
+			int i = args.Length;
+			if (i == 0)
+				return String.Empty;
+
+			string [] strings = new string [i];
 			i = 0;
+			int len = 0;
 			foreach (object arg in args) {
-				/* use Empty for each null argument */
-				if (arg == null)
+				if (arg == null) {
 					strings[i] = String.Empty;
-				else
+				} else {
 					strings[i] = arg.ToString ();
-				len += strings[i].length;
+					len += strings[i].length;
+				}
 				i++;
 			}
 
 			if (len == 0)
 				return String.Empty;
 
-			currentpos = 0;
-
-			String tmp = InternalAllocateStr (len);
-			for (i = 0; i < strings.Length; i++) {
-				InternalStrcpy (tmp, currentpos, strings[i]);
-				currentpos += strings[i].length;
-			}
-
-			return tmp;
+			return InternalJoin (String.Empty, strings, 0, strings.Length);
 		}
 
 		public static String Concat (params String[] values)
 		{
-			int len, i, currentpos;
-
 			if (values == null)
 				throw new ArgumentNullException ("values");
 
-			len = 0;
-			foreach (string value in values)
-				len += value != null ? value.length : 0;
-
-			if (len == 0)
-				return String.Empty;
-
-			currentpos = 0;
-
-			String tmp = InternalAllocateStr (len);
-			for (i = 0; i < values.Length; i++) {
-				if (values[i] == null)
-					continue;
-
-				InternalStrcpy (tmp, currentpos, values[i]);
-				currentpos += values[i].length;
-			}	
-
-			return tmp;
+			return InternalJoin (String.Empty, values, 0, values.Length);
 		}
 
 		public String Insert (int startIndex, String value)
