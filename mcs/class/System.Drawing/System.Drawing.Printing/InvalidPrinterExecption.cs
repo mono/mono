@@ -14,7 +14,7 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for InvalidPrinterExecption.
 	/// </summary>
-	public class InvalidPrinterExecption : SystemException {
+	public class InvalidPrinterException : SystemException {
 		private PrinterSettings settings;
 
 		public InvalidPrinterExecption(PrinterSettings settings) {
