@@ -235,7 +235,7 @@ namespace System.Xml
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The local name for elements or attributes cannot be null or an empty string.");
 
-			return new XmlElement (prefix, localName, namespaceURI, this);
+			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this);
 		}
 
 		[MonoTODO]

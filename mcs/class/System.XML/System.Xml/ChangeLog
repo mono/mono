@@ -1,3 +1,8 @@
+2002-07-12  Jason Diamond  <jason@injektilo.org>
+
+	* XmlDocument.cs: If null was passed in for prefix or namespaceURI when
+	creating an element, use String.Empty instead.
+
 2002-07-12	Piers Haken <piersh@friksit.com>
 
 	* XmlAttributeCollection.cs: implement some ItemOf indexers
