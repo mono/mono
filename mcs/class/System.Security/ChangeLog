@@ -1,3 +1,15 @@
+2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Security.dll.sources: Added System.Security.Cryptography.
+	X509Certificates/X509EnhancedKeyUsageExtension.cs and 
+	X509SubjectKeyIdentifierHashAlgorithm.cs to the build.
+	* System.Security_test.dll.sources: Added System.Security.Cryptography
+	.Pkcs/Pkcs9ContentTypeTest.cs, Pkcs9MessageDigestTest.cs and System.
+	Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs,
+	X509EnhancedKeyUsageExtensionTest.cs, X509ExtensionTest.cs, 
+	X509KeyUsageExtensionTest.cs and X509SubjectKeyIdentifierExtensionTest.cs
+	to the unit test assembly.
+
 2005-01-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (LIB_MCS_FLAGS): Add reference to Mono.Security.dll

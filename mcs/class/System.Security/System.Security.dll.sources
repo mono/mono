@@ -60,6 +60,7 @@ System.Security.Cryptography.X509Certificates/X509ChainElementEnumerator.cs
 System.Security.Cryptography.X509Certificates/X509ChainPolicy.cs
 System.Security.Cryptography.X509Certificates/X509ChainStatus.cs
 System.Security.Cryptography.X509Certificates/X509ChainStatusFlags.cs
+System.Security.Cryptography.X509Certificates/X509EnhancedKeyUsageExtension.cs
 System.Security.Cryptography.X509Certificates/X509Extension.cs
 System.Security.Cryptography.X509Certificates/X509ExtensionCollection.cs
 System.Security.Cryptography.X509Certificates/X509ExtensionEnumerator.cs
@@ -73,6 +74,7 @@ System.Security.Cryptography.X509Certificates/X509RevocationMode.cs
 System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 System.Security.Cryptography.X509Certificates/X509Store.cs
 System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtension.cs
+System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierHashAlgorithm.cs
 System.Security.Cryptography.X509Certificates/X509VerificationFlags.cs
 System.Security.Cryptography.Xml/CipherData.cs
 System.Security.Cryptography.Xml/CipherReference.cs
