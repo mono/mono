@@ -141,7 +141,6 @@ namespace Novell.Directory.Ldap.Rfc2251
 			{
 				filterExpr = new System.Text.StringBuilder("(objectclass=*)").ToString();
 			}
-			
 			int idx;
 			if ((idx = filterExpr.IndexOf((System.Char) '\\')) != - 1)
 			{
@@ -270,8 +269,8 @@ namespace Novell.Directory.Ldap.Rfc2251
 							{
 								// substrings parse:
 								//    [initial], *any*, [final] into an Asn1SequenceOf
-//								SupportClass.Tokenizer sub = new StringTokenizer(value_Renamed, "*", true);
-								SupportClass.Tokenizer sub = new SupportClass.Tokenizer(value_Renamed, "*");//, true);
+								SupportClass.Tokenizer sub = new SupportClass.Tokenizer(value_Renamed, "*", true);
+//								SupportClass.Tokenizer sub = new SupportClass.Tokenizer(value_Renamed, "*");//, true);
 								Asn1SequenceOf seq = new Asn1SequenceOf(5);
 								int tokCnt = sub.Count;
 								int cnt = 0;
