@@ -347,7 +347,7 @@ namespace Mono.Xml.Xsl
 			Expression expr = parser.Compile (expression);
 			if (isKey)
 				expr = new ExprKeyContainer (expr);
-			CompiledExpression e = new CompiledExpression (expr);
+			CompiledExpression e = new CompiledExpression (expression, expr);
 
 			exprStore.AddExpression (e, this);
 			

@@ -1,3 +1,7 @@
+2004-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs : Changes that reflects CompiledExpression changes.
+
 2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HtmlEmitter.cs : TH tag is not regarded as HTML tag.
