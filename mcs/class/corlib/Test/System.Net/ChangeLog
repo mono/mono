@@ -1,3 +1,8 @@
+2002-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPAddressTest.cs: use BitConverter to set localhost, catch
+	OverflowException in TestParseWrong() and changed some constants.
+
 2002-04-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AllTests.cs: added IPEndPointTest.

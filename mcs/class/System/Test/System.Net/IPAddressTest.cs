@@ -36,7 +36,9 @@ public class IPAddressTest : TestCase
 	{
 		AssertEquals ("Any", IPAddress.Any.Address, (long) 0);
 		AssertEquals ("Broadcast", IPAddress.Broadcast.Address, (long) 0xFFFFFFFF);
-		long loopback = IPAddress.HostToNetworkOrder (0x7f000001);
+		long loopback = IPAddress.HostToNetworkOrder (BitConverter.IsLittleEndian ? 
+							      0x7f000001 : 
+							      0x0100007f);
 		AssertEquals ("Loopback", IPAddress.Loopback.Address, loopback);
 		AssertEquals ("None", IPAddress.None.Address, (long) 0xFFFFFFFF);
 	}
@@ -64,7 +66,7 @@ public class IPAddressTest : TestCase
 		AssertEquals ("Parse #4", ip, IPAddress.None);
 
 		ip = IPAddress.Parse ("127.0.0.1");
-		Assert ("Parse #5", IPAddress.IsLoopback (ip));
+		AssertEquals ("Parse #5", IPAddress.IsLoopback (ip), true);
 
 		ip = IPAddress.Parse ("12.1.1.3 ");
 		AssertEquals ("Parse #6", IPAddress.Parse ("12.1.1.3"), ip);
@@ -114,8 +116,8 @@ public class IPAddressTest : TestCase
 		failure = false;
 		try {
 			ip = IPAddress.Parse ("257.1.1.9");
-                        Fail("Should raise a FormatException #3");
-		} catch (FormatException) {
+                        Fail("Should raise a OverFlowException #3");
+		} catch (OverflowException) {
 			failure = true;
 		}
 
@@ -135,7 +137,7 @@ public class IPAddressTest : TestCase
 	public void TestNetworkHost ()
 	{
 		long [] tested = new long [] { 0, 1, 1, 1};
-		long [] expectedLE = new long [] {0, 256, 16777216, ((long) 1) << 56 };
+		long [] expectedLE = new long [] {0, 256, 16777216, 72057594037927936 };
 		long [] expected;
 		
 		expected = BitConverter.IsLittleEndian ? expectedLE : tested;
