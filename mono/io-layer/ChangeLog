@@ -1,3 +1,10 @@
+2002-06-12  Dick Porter  <dick@ximian.com>
+
+	* daemon.c: 
+	* daemon-messages.c: Handle SIGPIPE in a non-stupid way in the
+	daemon, if MSG_NOSIGNAL isn't available.  Thanks to Jaroslaw
+	Kowalski <jarek@atm.com.pl> for pointing out the bogosity.
+
 2002-06-10  Jaroslaw Kowalski <jarek@atm.com.pl>
 
 	* sockets.c, daemon-messages.c: Prevent SIGPIPE from being raised
