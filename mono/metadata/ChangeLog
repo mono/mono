@@ -1,3 +1,7 @@
+2003-03-05  Aleksey Demakov <avd@openlinksw.com>
+
+	* icall.c (ves_icall_type_GetTypeCode): fixed check for
+	System.DBNull (it's class not valuetype).
 
 Wed Apr 2 18:37:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
