@@ -1,3 +1,8 @@
+2004-08-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_emit_epilog): Use RIP relative addressing
+	in exception throwing code.
+	
 2004-08-14 Ben Maurer  <bmaurer@ximian.com>
 
 	* inssel-x86.brg: use xor esi,esi.
