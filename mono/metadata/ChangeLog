@@ -1,6 +1,7 @@
 2002-08-12  Dick Porter  <dick@ximian.com>
 
-	* object.h: Rename some parameters to avoid c++ keywords
+	* object.h: Rename some parameters to avoid c++ keywords (Patch
+	from Joseph Wenninger <kde@jowenn.at>)
 
 Thu Aug 8 13:04:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
