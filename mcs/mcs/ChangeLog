@@ -1,3 +1,9 @@
+2004-09-10  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-290.cs.
+	* cs-parser.jay (delegate_declaration): Record a delegate
+	declaration as a type declaration.
+
 2004-09-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Return false if we fail to resolve the inner
