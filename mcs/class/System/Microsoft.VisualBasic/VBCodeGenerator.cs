@@ -15,6 +15,8 @@
 // 2003-11-08 JW: automatically add Microsoft.VisualBasic
 // 2003-11-12 JW: some corrections to allow correct compilation
 // 2003-11-28 JW: implementing code differences into current build of this file
+// 2003-12-10 JW: added "String." for the ChrW method because mbas doesn't support it without the String currently / TODO: remove it ASAP!
+
 
 using System;
 using System.Text;
@@ -1072,7 +1074,7 @@ namespace Microsoft.VisualBasic
 						mySBuilder.Append ("\"");
 						inQuotes = false;
 					}
-					mySBuilder.Append ("&Microsoft.VisualBasic.ChrW(");
+					mySBuilder.Append ("&Microsoft.VisualBasic.Strings.ChrW("); //TODO: remove "String." when mbas supports it
 					mySBuilder.Append ((int)value[MyCounter]); 
 					mySBuilder.Append (")");
 				}			
