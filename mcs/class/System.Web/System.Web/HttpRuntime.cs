@@ -53,7 +53,7 @@ namespace System.Web
 			autogenKeys = new byte[88];
 			initialized = false;
 			isapiLoaded = false;
-			
+
 			appPathDiscoveryStackWalk = null;
 			ctrlPrincipalStackWalk    = null;
 			sensitiveInfoStackWalk    = null;
@@ -89,7 +89,7 @@ namespace System.Web
 						/* TODO: I need the code to read registry
 						 * I need LOCAL_MACHINE\Software\Micorosoft\ASP.NET\<version>
 						*/
-					} catch(Exception e)
+					} catch
 					{
 						dir = null;
 					}
@@ -119,12 +119,16 @@ namespace System.Web
 		private void Init()
 		{
 			initErrorException = null;
+			cache = new Cache();
+			appDomainAppPath = "";
+
 			try
 			{
 				//FIXME: OS Check?
-				if(false)
-					throw new PlatformNotSupportedException();
+				//if(false)
+				//	throw new PlatformNotSupportedException();
 				//I am here <gvaish>
+				throw new NotImplementedException();
 			} catch(Exception e)
 			{
 				initErrorException = e;

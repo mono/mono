@@ -16,7 +16,6 @@
 using System;
 using System.IO;
 using System.Web;
-using System.Web.Utils;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Threading;
@@ -27,7 +26,7 @@ namespace System.Web.Utils
 	{
 		private static string BIN    = "bin";
 		private static string BINDIR = "bin/";
-		private static string MAXLEN = 260;
+		private static int MAXLEN = 260;
 		
 		private FileChangeEventHandler       cbRename;
 		private NativeFileChangeEventHandler cbSubDirs;
@@ -41,8 +40,8 @@ namespace System.Web.Utils
 		
 		public FileChangesMonitor()
 		{
-			allDirs = new Hashtable(WebHashcodeProvider.Default, WebEqualComparer.Default);
-			rsLock  = new ReaderWriterLock();
+			allDirs = new Hashtable(WebHashCodeProvider.Default, WebEqualComparer.Default);
+			rwLock  = new ReaderWriterLock();
 		}
 		
 		/// <param name="file">Name of the file</param>
@@ -50,12 +49,13 @@ namespace System.Web.Utils
 		/// <param name="length">Legnth of the file</param>
 		public void GetFileAttributes(string file, out DateTime mTime, long length)
 		{
-			if(!Path.IsRooted(file))
+			if(!Path.IsPathRooted(file))
 			{
 				throw new HttpException(HttpRuntime.FormatResourceString("Path_must_be_rooted"));
 			}
 			// TODO: finish this
-			// mTime = File.
+			mTime = DateTime.Now;
+			throw new NotImplementedException();
 		}
 	}
 }

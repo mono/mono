@@ -16,7 +16,7 @@ namespace System.Web.UI
 {
 	public sealed class DesignTimeParseData
 	{
-		private static bool inDesigner;
+		private static bool inDesigner = false;
 		
 		internal static bool InDesigner
 		{

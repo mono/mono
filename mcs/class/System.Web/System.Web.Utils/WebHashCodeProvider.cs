@@ -22,12 +22,13 @@
 
 
 using System.Collections;
+using System.Globalization;
 
 namespace System.Web.Utils
 {
 	public class WebHashCodeProvider : IHashCodeProvider
 	{
-		private static readonly IHashCodeProvider defHcp;
+		private static IHashCodeProvider defHcp;
 
 		public WebHashCodeProvider()
 		{
@@ -44,7 +45,7 @@ namespace System.Web.Utils
 			{
 				if(defHcp==null)
 				{
-					 defHcp = = new CaseInsensitiveHashCodeProvider(CultureInfo.InvariantCulture);
+					 defHcp = new CaseInsensitiveHashCodeProvider(CultureInfo.InvariantCulture);
 				}
 				return defHcp;
 			}

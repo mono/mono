@@ -17,7 +17,7 @@
 				<excludes name="Test/**"/>
 				<excludes name="System.Web/HttpWorkerRequest.cs"/>
 				<excludes name="System.Web.Hosting/**"/>
-				<excludes name="System.Web.UI/**"/>
+				<!--<excludes name="System.Web.UI/**"/>-->
 				<excludes name="System.Web/IHttpModule.cs"/>
 				<excludes name="System.Web.UI.HtmlControls/**"/>
 				<excludes name="System.Web.UI.WebControls/**"/>

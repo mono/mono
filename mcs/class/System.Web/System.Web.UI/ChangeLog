@@ -1,3 +1,10 @@
+2002-01-03  Nick Drochak  <ndrochak@gol.com>
+
+	* DesignTimeParseData.cs: initialze static member to avoid compile
+	error
+	* PropertyConverter.cs: remove uneeded exception variables from
+	catch blocks.
+
 2002-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* DesignTimeParseData.cs: fix header to show correct class name

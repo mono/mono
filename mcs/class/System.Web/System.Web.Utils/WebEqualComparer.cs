@@ -19,7 +19,7 @@ namespace System.Web.Utils
 {
 	public class WebEqualComparer : IComparer
 	{
-		private static readonly IComparer defC;
+		private static IComparer defC;
 
 		public WebEqualComparer()
 		{
@@ -46,13 +46,15 @@ namespace System.Web.Utils
 		int IComparer.Compare(object left, object right)
 		{
 			string leftStr, rightStr;
+			leftStr = null;
+			rightStr = null;
 			if(left is string)
 			{
-				leftStr = (string)leftStr;
+				leftStr = (string)left;
 			}
 			if(right is string)
 			{
-				rightStr = (string)rightStr;
+				rightStr = (string)right;
 			}
 
 			if(leftStr==null || rightStr==null)
@@ -69,7 +71,7 @@ namespace System.Web.Utils
 
 			if(ll==0 || lr==0)
 			{
-				retrun ( (ll > 0) ? 1 : -1);
+				return ( (ll > 0) ? 1 : -1);
 			}
 
 			char cl,cr;

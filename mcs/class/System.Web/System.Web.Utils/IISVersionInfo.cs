@@ -30,7 +30,7 @@ namespace System.Web.Utils
 		private static string mscoreeVersion;
 		private static string systemWebVersion;
 
-		private static readonly object lockObj;
+		private static readonly object lockObj = null;
 
 		public IISVersionInfo()
 		{

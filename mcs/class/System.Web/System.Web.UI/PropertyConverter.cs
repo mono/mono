@@ -43,7 +43,7 @@ namespace System.Web.UI
 			try
 			{
 				retVal = Enum.Parse(enumType, enumValue, true);
-			} catch(Exception e)
+			} catch
 			{
 				retVal = null;
 			}
@@ -95,7 +95,7 @@ namespace System.Web.UI
 				try
 				{
 					o = Utils.InvokeMethod(mi, null, parameters);
-				} catch(Exception e)
+				} catch
 				{
 				}
 			}
@@ -109,7 +109,7 @@ namespace System.Web.UI
 					try
 					{
 						o = Utils.InvokeMethod(mi, null, parameters);
-					} catch(Exception e)
+					} catch
 					{
 					}
 				}

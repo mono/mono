@@ -10,6 +10,7 @@
  *
  * (C) Gaurav Vaish (2001)
  */
+using System.IO;
 
 namespace System.Web.Utils
 {
@@ -67,7 +68,7 @@ namespace System.Web.Utils
 		public static string GetBaseDirOrRoot(string file)
 		{
 			string bDir = Path.GetDirectoryName(file);
-			return ( bDir!=null ? bDir : GetPathRoot(file));
+			return ( bDir!=null ? bDir : Path.GetPathRoot(file));
 		}
 		
 		public static string GetShortPathName(string path)

@@ -1,3 +1,16 @@
+2002-01-03  Nick Drochak  <ndrochak@gol.com>
+
+	* FileChangesMonitor.cs: remove redundant using statement; use int
+	for MAXLEN; capitalize correctly 'WebHashCodeProvider';
+	fix typo rsLock -> rwLock; Change IsRooted to IsPathRooted;
+	set out parameter value where needed
+	* FilePathParser.cs: qualify method GetPathRoot() with 'Path.'
+	* IISVersionInfo.cs: initialize static member to avoid compile error.
+	* WebEqualComparer.cs: static member defC shouldn't be readonly;
+	the string comparer had some typos (fixed)
+	* WebHashCodeProvider.cs: needed System.Globalization; static member
+	defHcp shouldn't be readonly; remove double equal typo.
+
 2002-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* FileAction.cs: Use 0x7FFFFFFF as enum value for error.  0xFFFFFFFF
