@@ -1,3 +1,7 @@
+2004-11-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mini.c: Fix pointer overwrite in mini_method_compile.
+
 2004-11-2  Geoff Norton  <gnorton@customerdna.com>
 
 	* inssel-ppc.brg (OP_OUTARG_VT (CEE_LDOBJ (base))):
