@@ -1,3 +1,9 @@
+2004-12-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Hashtable.cs: Add deserialized elements in OnDeserialization, since
+	when the serialization constructor is called, some of the elements
+	may not yet be fully deserialized. This fixes bug #70570.
+
 2004-10-08  Raja R Harinath  <rharinath@novell.com>
 
 	* CaseInsensitiveHashCodeProvider.cs (GetHashCode): When culture

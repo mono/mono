@@ -75,6 +75,7 @@ namespace System.Collections {
 
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
+		private SerializationInfo serializationInfo;
 
 		private static readonly int [] primeTbl = {
 			11,
@@ -201,26 +202,7 @@ namespace System.Collections {
 
 		protected Hashtable (SerializationInfo info, StreamingContext context)
 		{
-			loadFactor = (float) info.GetValue ("LoadFactor", typeof(float));
-			modificationCount = (int) info.GetValue ("Version", typeof(int));
-			comparerRef = (IComparer) info.GetValue ("Comparer", typeof (object));
-			hcpRef = (IHashCodeProvider) info.GetValue ("HashCodeProvider", typeof (object));
-			int size = (int) info.GetValue ("HashSize", typeof(int));
-			Object [] keys = (Object []) info.GetValue("Keys", typeof(Object [] ));
-			Object [] values = (Object []) info.GetValue("Values", typeof(Object [] ));
-
-			if (keys.Length != values.Length) 
-			  throw new SerializationException("Keys and values of uneven size");
-			 
-			size = ToPrime (size);
-			this.SetTable (new Slot [size]);
-			
-			for(int i=0;i<keys.Length;i++) {
-                           Add(keys[i], values[i]);
-			}
-			
-		
- 			AdjustThreshold();
+			serializationInfo = info;
 		}
 
 		//
@@ -472,6 +454,27 @@ namespace System.Collections {
 
 		public virtual void OnDeserialization (object sender)
 		{
+			loadFactor = (float) serializationInfo.GetValue ("LoadFactor", typeof(float));
+			modificationCount = (int) serializationInfo.GetValue ("Version", typeof(int));
+			comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));
+			hcpRef = (IHashCodeProvider) serializationInfo.GetValue ("HashCodeProvider", typeof (object));
+			int size = (int) serializationInfo.GetValue ("HashSize", typeof(int));
+			
+			Object [] keys = (Object []) serializationInfo.GetValue("Keys", typeof(Object [] ));
+			Object [] values = (Object []) serializationInfo.GetValue("Values", typeof(Object [] ));
+
+			if (keys.Length != values.Length) 
+			  throw new SerializationException("Keys and values of uneven size");
+			 
+			size = ToPrime (size);
+			this.SetTable (new Slot [size]);
+			
+			for(int i=0;i<keys.Length;i++)
+				Add(keys[i], values[i]);
+		
+ 			AdjustThreshold();
+			
+			serializationInfo = null;
 		}
 
 		/// <summary>
