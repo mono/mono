@@ -1,7 +1,7 @@
 2002-07-31  Duncan Mak  <duncan@ximian.com>
 
-	* BinaryServerFormatterSink.Protocol.cs:
-	* SoapServerFormatterSink.Protocol.cs: Added.
+	* BinaryServerFormatterSink.cs:
+	* SoapServerFormatterSink.cs: Added.
 
 	* IChannelReceiverHook.cs: 
 	* IClientFormatterSink.cs: Various compilation fixes.
