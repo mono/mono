@@ -76,11 +76,6 @@
                     BuildAction = "None"
                 />
                 <File
-                    RelPath = "System.Xml\DomEncodingType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml\Driver.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -117,11 +112,6 @@
                 />
                 <File
                     RelPath = "System.Xml\TODOAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\TreePosition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -176,11 +166,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlDataType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml\XmlDeclaration.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -212,11 +197,6 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\XmlExceptionCode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -311,11 +291,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlSortOrder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml\XmlSpace.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -341,11 +316,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlUtil.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml\XmlWhitespace.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -356,16 +326,21 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XPathNodeType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml.XPath\ChangeLog"
                     BuildAction = "None"
                 />
                 <File
                     RelPath = "System.Xml.XPath\IXPathNavigable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XmlDataType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XmlSortOrder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -386,6 +361,11 @@
                 />
                 <File
                     RelPath = "System.Xml.XPath\XPathNodeIterator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathNodeType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

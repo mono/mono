@@ -1,5 +1,10 @@
 2002-03-08  Jason Diamond  <jason@injektilo.org>
 
+	* DomEncodingType.cs, TreePosition.cs, XPathNodeType.cs, XmlDataType.cs,
+	XmlExceptionCode.cs, XmlSortOrder.cs, XmlUtil.cs: Removed files.
+
+2002-03-08  Jason Diamond  <jason@injektilo.org>
+
 	* XmlAttribute.cs: Attribute nodes are supposed to store their values
 	as child nodes so updated to reflect that.
 
