@@ -1,5 +1,9 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* Nullable.cs: New file.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* Type.cs (Type.GetGenericArguments): Make this abstract.
 
 2004-04-07  Jackson Harper  <jackson@ximian.com>
