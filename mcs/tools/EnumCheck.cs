@@ -19,11 +19,13 @@ namespace Mono.Enumerations
 		private string className;
 		private Type   type;
 
+		public static string basePath = @"C:\WINNT\Microsoft.NET\Framework\v1.0.3705";
+		//public static string basePath = "file:///C:/WINNT/Microsoft.NET/Framework/v1.0.3705";
 		private static readonly string[] assemblies = {
 			"mscorlib",
+			"System.Web",
 			"System",
 			"System.Drawing",
-			"System.Web",
 			"System.Security",
 			"System.Windows.Forms",
 			"System.XML",
@@ -68,7 +70,15 @@ namespace Mono.Enumerations
 			{
 				try
 				{
-					Assembly assembly = Assembly.Load(assemblyName + ".dll");
+					Assembly assembly;
+					/*if(assemblyName == "mscorlib")
+					{
+						assembly = Assembly.LoadFrom(assemblyName);
+					} else
+					{*/
+						assembly = Assembly.LoadFrom(basePath + "\\" + assemblyName + ".dll");
+					//}
+					System.Console.WriteLine("\tSearching in: {0}", assembly.ToString());
 					foreach(Type t in assembly.GetTypes())
 					{
 						if(!t.IsEnum)
@@ -111,6 +121,18 @@ namespace Mono.Enumerations
 				return;
 			}
 			EnumCheck check = null;
+			string bdir;
+			System.Console.WriteLine("Enter directory to search assemblies");
+			System.Console.Write("[{0}]: ", basePath);
+			bdir = System.Console.ReadLine();
+			while(bdir.EndsWith("/") || bdir.EndsWith("\\"))
+			{
+				bdir = bdir.Substring(0, bdir.Length - 1);
+			}
+			if(bdir != "")
+			{
+				basePath = bdir;
+			}
 			if(args.Length != 0)
 			{
 				foreach(string clName in args)
@@ -124,7 +146,7 @@ namespace Mono.Enumerations
 			{
 				System.Console.Write("Enter the name of the Enumeration (end to stop): ");
 				string clName = System.Console.ReadLine();
-				if(clName == "stop" || clName.Length == 0)
+				if(clName == "stop" || clName == "end" || clName.Length == 0)
 					break;
 				check = new EnumCheck(clName);
 				check.Display();
