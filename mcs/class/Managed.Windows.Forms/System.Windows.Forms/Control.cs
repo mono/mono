@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.61 $
+// $Revision: 1.62 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.62  2004/09/11 01:28:11  pbartok
+// - Moved methods into their appropriate #regions
+// - Reordered methods within regions alphabetically
+//
 // Revision 1.61  2004/09/11 00:56:33  pbartok
 // - Moved some internal functions into the internal region
 // - Implemented FontHeight
@@ -749,6 +753,18 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods
+		internal static IAsyncResult BeginInvokeInternal (Delegate method, object [] args) {
+			AsyncMethodResult result = new AsyncMethodResult ();
+			AsyncMethodData data = new AsyncMethodData ();
+
+			data.Method = method;
+			data.Args = args;
+			data.Result = new WeakReference (result);
+
+			XplatUI.SendAsyncMethod (data);
+			return result;
+		}
+
 		internal Graphics DeviceContext {
 			get { 
 				if (dc_mem==null) {
@@ -788,6 +804,7 @@ namespace System.Windows.Forms
 			dc_mem = Graphics.FromImage (bmp_mem);
 		}
 
+
 		internal static void SetChildColor(Control parent) {
 			Control	child;
 
@@ -802,6 +819,7 @@ namespace System.Windows.Forms
 			}
 				
 		}
+
 
 		private bool Select(Control control) {
 			Control	parent;
@@ -825,6 +843,7 @@ namespace System.Windows.Forms
 			return true;
 		}
 
+
 		private Control FindTabStop(Control control, bool forward) {
 			if (control == null) {
 				return null;
@@ -833,6 +852,34 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+
+		internal virtual void DoDefaultAction() {
+			// Only here to be overriden by our actual controls; this is needed by the accessibility class
+		}
+
+		internal static int LowOrder (int param) {
+			return (param & 0xffff);
+		}
+
+		internal static int HighOrder (int param) {
+			return (param >> 16);
+		}
+		
+		internal static MouseButtons FromParamToMouseButtons (int param) {		
+			MouseButtons buttons = MouseButtons.None;
+					
+			if ((param & (int) MsgButtons.MK_LBUTTON) != 0)
+				buttons |= MouseButtons.Left;
+			
+			if ((param & (int) MsgButtons.MK_MBUTTON) != 0)
+				buttons |= MouseButtons.Middle;
+				
+			if ((param & (int) MsgButtons.MK_RBUTTON) != 0)
+				buttons |= MouseButtons.Right;    	
+				
+			return buttons;
+
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
@@ -1689,6 +1736,14 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region	Public Instance Methods
+		public IAsyncResult BeginInvoke(Delegate method) {
+			return BeginInvokeInternal(method, null);
+		}
+
+		public IAsyncResult BeginInvoke (Delegate method, object[] args) {
+			return BeginInvokeInternal (method, args);
+		}
+
 		public bool Contains(Control ctl) {
 			Control current;
 
@@ -1713,120 +1768,15 @@ namespace System.Windows.Forms
 			OnCreateControl();
 		}
 
-		public virtual void Refresh() {			
-			if (IsHandleCreated == true) {
-				XplatUI.RefreshWindow(window.Handle);
-			}
+		public Graphics CreateGraphics() {
+			return Graphics.FromHwnd(this.window.Handle);
 		}
 
-		public void Select() {
-			Select(false, false);
+		public object EndInvoke (IAsyncResult async_result) {
+			AsyncMethodResult result = (AsyncMethodResult) async_result;
+			return result.EndInvoke ();
 		}
 
-		[MonoTODO("Finish")]
-		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
-			return false;
-		}
-
-		public void SetBounds(int x, int y, int width, int height) {
-			SetBoundsCore(x, y, width, height, BoundsSpecified.All);
-		}
-
-		public void SetBounds(int x, int y, int width, int height, BoundsSpecified specified) {
-			SetBoundsCore(x, y, width, height, specified);
-		}
-
-		public void Show() {
-			if (!IsHandleCreated) {
-				this.CreateHandle();
-			}
-
-			this.Visible=true;			
-		}
-
-		public object Invoke (Delegate method) {
-			return Invoke(method, null);
-		}
-
-		public object Invoke (Delegate method, object[] args) {
-			IAsyncResult result = BeginInvoke (method, args);
-			return EndInvoke(result);
-		}
-
-		public IAsyncResult BeginInvoke(Delegate method) {
-			return BeginInvoke(method, null);
-		}
-
-		protected virtual AccessibleObject CreateAccessibilityInstance() {
-			return new AccessibleObject(this);
-		}
-
-		protected virtual ControlCollection CreateControlsInstance() {
-			return new ControlCollection(this);
-		}
-
-		protected void UpdateBounds() {
-			int	x;
-			int	y;
-			int	width;
-			int	height;
-			int	client_width;
-			int	client_height;
-
-			if (!IsHandleCreated) {
-				CreateHandle();
-			}
-
-			XplatUI.GetWindowPos(this.Handle, out x, out y, out width, out height, out client_width, out client_height);
-			UpdateBounds(x, y, width, height, client_width, client_height);
-		}
-
-		protected void UpdateBounds(int x, int y, int width, int height) {
-			// UpdateBounds only seems to set our sizes and fire events but not update the GUI window to match
-			bool	moved	= false;
-			bool	resized	= false;
-
-			int	client_x_diff = this.bounds.Width-this.client_size.Width;
-			int	client_y_diff = this.bounds.Height-this.client_size.Height;
-
-			// Needed to generate required notifications
-			if ((this.bounds.X!=x) || (this.bounds.Y!=y)) {
-				moved=true;
-			}
-
-			if ((this.Bounds.Width!=width) || (this.Bounds.Height!=height)) {
-				resized=true;
-			}
-
-			bounds.X=x;
-			bounds.Y=y;
-			bounds.Width=width;
-			bounds.Height=height;
-
-			// Update client rectangle as well
-			if (this.layout_suspended==0) {
-				prev_size.Width=client_size.Width;
-				prev_size.Height=client_size.Height;
-			}
-
-			client_size.Width=width-client_x_diff;
-			client_size.Height=height-client_y_diff;
-
-			if (moved) {
-				OnLocationChanged(EventArgs.Empty);
-			}
-
-			if (resized) {
-				OnSizeChanged(EventArgs.Empty);
-			}
-		}
-
-		protected void UpdateBounds(int x, int y, int width, int height, int clientWidth, int clientHeight) {
-			UpdateBounds(x, y, width, height);
-
-			this.client_size.Width=clientWidth;
-			this.client_size.Height=clientHeight;
-		}
 
 		public void Invalidate() {
 			Invalidate(ClientRectangle, false);
@@ -1856,7 +1806,7 @@ namespace System.Windows.Forms
 			Invalidate(region, false);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Figure out if GetRegionScans is usable")]
 		public void Invalidate(System.Drawing.Region region, bool invalidateChildren) {
 			throw new NotImplementedException();
 
@@ -1866,27 +1816,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public IAsyncResult BeginInvoke (Delegate method, object[] args)
-		{
-			return BeginInvokeInternal (method, args);
+		public object Invoke (Delegate method) {
+			return Invoke(method, null);
 		}
 
-		internal static IAsyncResult BeginInvokeInternal (Delegate method, object [] args)
-		{
-			AsyncMethodResult result = new AsyncMethodResult ();
-			AsyncMethodData data = new AsyncMethodData ();
-
-			data.Method = method;
-			data.Args = args;
-			data.Result = new WeakReference (result);
-
-			XplatUI.SendAsyncMethod (data);
-			return result;
-		}
-
-		public object EndInvoke (IAsyncResult async_result) {
-			AsyncMethodResult result = (AsyncMethodResult) async_result;
-			return result.EndInvoke ();
+		public object Invoke (Delegate method, object[] args) {
+			IAsyncResult result = BeginInvoke (method, args);
+			return EndInvoke(result);
 		}
 
 		public void PerformLayout() {
@@ -1927,43 +1863,43 @@ namespace System.Windows.Forms
 				for (int i=0; i < child_controls.Count; i++) {
 					child=child_controls[i];
 					switch (child.Dock) {
-						case DockStyle.None: {
-							// Do nothing
-							break;
-						}
+					case DockStyle.None: {
+						// Do nothing
+						break;
+					}
 
-						case DockStyle.Left: {
-							child.SetBounds(space.Left, space.Y, child.Width, space.Height);
-							space.X+=child.Width;
-							space.Width-=child.Width;
-							break;
-						}
+					case DockStyle.Left: {
+						child.SetBounds(space.Left, space.Y, child.Width, space.Height);
+						space.X+=child.Width;
+						space.Width-=child.Width;
+						break;
+					}
 
-						case DockStyle.Top: {
-							child.SetBounds(space.Left, space.Y, space.Width, child.Height);
-							space.Y+=child.Height;
-							space.Height-=child.Height;
-							break;
-						}
+					case DockStyle.Top: {
+						child.SetBounds(space.Left, space.Y, space.Width, child.Height);
+						space.Y+=child.Height;
+						space.Height-=child.Height;
+						break;
+					}
 				
-						case DockStyle.Right: {
-							child.SetBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
-							space.Width-=child.Width;
-							break;
-						}
+					case DockStyle.Right: {
+						child.SetBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
+						space.Width-=child.Width;
+						break;
+					}
 
-						case DockStyle.Bottom: {
-							child.SetBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
-							space.Height-=child.Height;
-							break;
-						}
+					case DockStyle.Bottom: {
+						child.SetBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
+						space.Height-=child.Height;
+						break;
+					}
 
-						case DockStyle.Fill: {
-							child.SetBounds(space.Left, space.Top, space.Width, space.Height);
-							space.Width=0;
-							space.Height=0;
-							break;
-						}
+					case DockStyle.Fill: {
+						child.SetBounds(space.Left, space.Top, space.Width, space.Height);
+						space.Width=0;
+						space.Height=0;
+						break;
+					}
 					}
 				}
 
@@ -2030,19 +1966,32 @@ namespace System.Windows.Forms
 				OnLayout(levent);
 			}
 
-			// Need to make sure we decremend layout_suspended
+				// Need to make sure we decremend layout_suspended
 			finally {
 				layout_suspended--;
 			}
 		}
 
-		public void ResumeLayout() 
-		{
+		public Point PointToClient (Point p) {
+			int x = p.X;
+			int y = p.Y;
+
+			XplatUI.ScreenToClient (Handle, ref x, ref y);
+
+			return new Point (x, y);
+		}
+
+		public virtual void Refresh() {			
+			if (IsHandleCreated == true) {
+				XplatUI.RefreshWindow(window.Handle);
+			}
+		}
+
+		public void ResumeLayout() {
 			ResumeLayout (true);
 		}
 
-		public void ResumeLayout(bool performLayout) 
-		{
+		public void ResumeLayout(bool performLayout) {
 			layout_suspended--;
 			
 			if (layout_suspended > 0) {
@@ -2054,194 +2003,46 @@ namespace System.Windows.Forms
 			}
 		}
 
-		
-		public void SuspendLayout() 
-		{
+		public void Select() {
+			Select(false, false);
+		}
+
+		[MonoTODO("Finish")]
+		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
+			return false;
+		}
+
+		public void SetBounds(int x, int y, int width, int height) {
+			SetBoundsCore(x, y, width, height, BoundsSpecified.All);
+		}
+
+		public void SetBounds(int x, int y, int width, int height, BoundsSpecified specified) {
+			SetBoundsCore(x, y, width, height, specified);
+		}
+
+		public void Show() {
+			if (!IsHandleCreated) {
+				this.CreateHandle();
+			}
+
+			this.Visible=true;			
+		}
+
+		public void SuspendLayout() {
 			layout_suspended++;
 		}
 
-		public Point PointToClient (Point p)
-		{
-			int x = p.X;
-			int y = p.Y;
-
-			XplatUI.ScreenToClient (Handle, ref x, ref y);
-
-			return new Point (x, y);
-		}
-
-
-		[MonoTODO]
-		protected virtual void WndProc(ref Message m) {
-			EventArgs	e = new EventArgs();
-
-#if debug
-			Console.WriteLine("Received message {0}", m);
-#endif
-
-			switch((Msg)m.Msg) {
-#if notyet
-				// Mouse handling
-				case Msg.WM_LBUTTONDBLCLK:	throw new NotImplementedException();	break;
-
-				case Msg.WM_RBUTTONDOWN:	throw new NotImplementedException();	break;
-				case Msg.WM_RBUTTONUP:		throw new NotImplementedException();	break;
-				case Msg.WM_RBUTTONDBLCLK:	throw new NotImplementedException();	break;
-
-				case Msg.WM_MOUSEHOVER:		throw new NotImplementedException();	break;
-				case Msg.WM_MOUSELEAVE:		throw new NotImplementedException();	break;
-				
-
-				// Keyboard handling
-				case Msg.WM_CHAR:		throw new NotImplementedException();	break;
-				case Msg.WM_KEYDOWN:		throw new NotImplementedException();	break;
-				case Msg.WM_KEYUP:		throw new NotImplementedException();	break;
-#endif
-				// Window management
-				case Msg.WM_WINDOWPOSCHANGED: {
-					if (XplatUI.IsVisible(m.HWnd)) {
-						UpdateBounds();
-					}
-					DefWndProc(ref m);
-					break;
-				}
-
-				case Msg.WM_PAINT: {
-					Rectangle	rect;
-					PaintEventArgs	paint_event;
-
-					paint_event = XplatUI.PaintEventStart(Handle);
-					OnPaint(paint_event);
-					XplatUI.PaintEventEnd(Handle);
-					DefWndProc(ref m);	
-					break;
-				}
-				
-				case Msg.WM_ERASEBKGND:{					
-					if (GetStyle (ControlStyles.UserPaint)){						
-						if (!GetStyle(ControlStyles.AllPaintingInWmPaint)) {
-		    					PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
-			    				OnPaintBackground (eraseEventArgs);
-						}
-	    					m.Result = (IntPtr)1;
-    					}	
-    					else {
-#if notdef
-						SolidBrush	sb = new SolidBrush(this.BackColor);
-						this.DeviceContext.FillRectangle(sb, this.ClientRectangle);
-						sb.Dispose();
-#endif
-
-    						m.Result = IntPtr.Zero;
-    						DefWndProc (ref m);	
-    					}    					
-    					
-					break;
-				}
-				
-				case Msg.WM_LBUTTONUP: {					
-					int clicks = 1;
-					
-					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
-							clicks, 
-							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-							0));
-					break;
-				}
-				
-				case Msg.WM_LBUTTONDOWN: {					
-					int clicks = 1;
-					
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-							0));
-					
-					break;
-				}
-
-				case Msg.WM_MOUSEWHEEL: {
-					int clicks = 1;
-
-					OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-							HighOrder(m.WParam.ToInt32())));
-					break;
-				}
-
-				
-				case Msg.WM_MOUSEMOVE: {					
-					int clicks = 1;
-
-					OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							clicks, 
-							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-							0));
-					break;
-				}
-
-				case Msg.WM_MOUSE_ENTER: {
-					if (is_entered) {
-						return;
-					}
-					is_entered = true;
-					OnMouseEnter(EventArgs.Empty);
-					break;
-				}
-
-				case Msg.WM_MOUSE_LEAVE: {
-					is_entered=false;
-					OnMouseLeave(EventArgs.Empty);
-					break;
-				}
-
-				case Msg.WM_MOUSEHOVER:	{
-					OnMouseHover(EventArgs.Empty);
-					break;
-				}
-			
-				case Msg.WM_SIZE: {					
-					if (GetStyle(ControlStyles.ResizeRedraw)) {
-						Invalidate();
-					}
-					DefWndProc(ref m);	
-					break;				
-				}
-
-				case Msg.WM_KEYDOWN: {
-
-					if (!ProcessKeyEventArgs (ref m))
-						DefWndProc (ref m);
-
-					break;					
-				}
-
-				case Msg.WM_KEYUP: {
-
-					if (!ProcessKeyEventArgs (ref m))
-						DefWndProc (ref m);
-
-					break;					
-				}		
-				
-
-#if notyet				
-				case Msg.WM_WINDOWPOSCHANGED:	throw new NotImplementedException();	break;
-				case Msg.WM_SYSCOLORCHANGE:	throw new NotImplementedException();	break;
-				
-#endif
-
-				default:
-					DefWndProc(ref m);	
-					break;
-			}
-			
-			
-			
-		}
 		#endregion	// Public Instance Methods
 
+		#region Protected Instance Methods
+		protected virtual AccessibleObject CreateAccessibilityInstance() {
+			return new AccessibleObject(this);
+		}
 
-		#region		// Protected Instance Methods
+		protected virtual ControlCollection CreateControlsInstance() {
+			return new ControlCollection(this);
+		}
+
 		protected virtual void CreateHandle() {
 			if (IsDisposed) {
 				throw new ObjectDisposedException(Name);
@@ -2449,18 +2250,238 @@ namespace System.Windows.Forms
 			}
 		}
 
-		#endregion	// Public Instance Methods
 
-		#region Private Instance Methods
-		#endregion	// Private Instance Methods
+		protected void UpdateBounds() {
+			int	x;
+			int	y;
+			int	width;
+			int	height;
+			int	client_width;
+			int	client_height;
 
+			if (!IsHandleCreated) {
+				CreateHandle();
+			}
 
-		#region Private Instance Methods
-		internal virtual void DoDefaultAction() {
-			// Only here to be overriden by our actual controls; this is needed by the accessibility class
+			XplatUI.GetWindowPos(this.Handle, out x, out y, out width, out height, out client_width, out client_height);
+			UpdateBounds(x, y, width, height, client_width, client_height);
 		}
-		#endregion	// Private Instance Methods
 
+		protected void UpdateBounds(int x, int y, int width, int height) {
+			// UpdateBounds only seems to set our sizes and fire events but not update the GUI window to match
+			bool	moved	= false;
+			bool	resized	= false;
+
+			int	client_x_diff = this.bounds.Width-this.client_size.Width;
+			int	client_y_diff = this.bounds.Height-this.client_size.Height;
+
+			// Needed to generate required notifications
+			if ((this.bounds.X!=x) || (this.bounds.Y!=y)) {
+				moved=true;
+			}
+
+			if ((this.Bounds.Width!=width) || (this.Bounds.Height!=height)) {
+				resized=true;
+			}
+
+			bounds.X=x;
+			bounds.Y=y;
+			bounds.Width=width;
+			bounds.Height=height;
+
+			// Update client rectangle as well
+			if (this.layout_suspended==0) {
+				prev_size.Width=client_size.Width;
+				prev_size.Height=client_size.Height;
+			}
+
+			client_size.Width=width-client_x_diff;
+			client_size.Height=height-client_y_diff;
+
+			if (moved) {
+				OnLocationChanged(EventArgs.Empty);
+			}
+
+			if (resized) {
+				OnSizeChanged(EventArgs.Empty);
+			}
+		}
+
+		protected void UpdateBounds(int x, int y, int width, int height, int clientWidth, int clientHeight) {
+			UpdateBounds(x, y, width, height);
+
+			this.client_size.Width=clientWidth;
+			this.client_size.Height=clientHeight;
+		}
+
+		[MonoTODO]
+		protected virtual void WndProc(ref Message m) {
+			EventArgs	e = new EventArgs();
+
+#if debug
+			Console.WriteLine("Received message {0}", m);
+#endif
+
+			switch((Msg)m.Msg) {
+#if notyet
+				// Mouse handling
+				case Msg.WM_LBUTTONDBLCLK:	throw new NotImplementedException();	break;
+
+				case Msg.WM_RBUTTONDOWN:	throw new NotImplementedException();	break;
+				case Msg.WM_RBUTTONUP:		throw new NotImplementedException();	break;
+				case Msg.WM_RBUTTONDBLCLK:	throw new NotImplementedException();	break;
+
+				case Msg.WM_MOUSEHOVER:		throw new NotImplementedException();	break;
+				case Msg.WM_MOUSELEAVE:		throw new NotImplementedException();	break;
+				
+
+				// Keyboard handling
+				case Msg.WM_CHAR:		throw new NotImplementedException();	break;
+				case Msg.WM_KEYDOWN:		throw new NotImplementedException();	break;
+				case Msg.WM_KEYUP:		throw new NotImplementedException();	break;
+#endif
+				// Window management
+			case Msg.WM_WINDOWPOSCHANGED: {
+				if (XplatUI.IsVisible(m.HWnd)) {
+					UpdateBounds();
+				}
+				DefWndProc(ref m);
+				break;
+			}
+
+			case Msg.WM_PAINT: {
+				Rectangle	rect;
+				PaintEventArgs	paint_event;
+
+				paint_event = XplatUI.PaintEventStart(Handle);
+				OnPaint(paint_event);
+				XplatUI.PaintEventEnd(Handle);
+				DefWndProc(ref m);	
+				break;
+			}
+				
+			case Msg.WM_ERASEBKGND:{					
+				if (GetStyle (ControlStyles.UserPaint)){						
+					if (!GetStyle(ControlStyles.AllPaintingInWmPaint)) {
+						PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
+						OnPaintBackground (eraseEventArgs);
+					}
+					m.Result = (IntPtr)1;
+				}	
+				else {
+#if notdef
+						SolidBrush	sb = new SolidBrush(this.BackColor);
+						this.DeviceContext.FillRectangle(sb, this.ClientRectangle);
+						sb.Dispose();
+#endif
+
+					m.Result = IntPtr.Zero;
+					DefWndProc (ref m);	
+				}    					
+    					
+				break;
+			}
+				
+			case Msg.WM_LBUTTONUP: {					
+				int clicks = 1;
+					
+				OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
+					clicks, 
+					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+				break;
+			}
+				
+			case Msg.WM_LBUTTONDOWN: {					
+				int clicks = 1;
+					
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+					
+				break;
+			}
+
+			case Msg.WM_MOUSEWHEEL: {
+				int clicks = 1;
+
+				OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					HighOrder(m.WParam.ToInt32())));
+				break;
+			}
+
+				
+			case Msg.WM_MOUSEMOVE: {					
+				int clicks = 1;
+
+				OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					clicks, 
+					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+				break;
+			}
+
+			case Msg.WM_MOUSE_ENTER: {
+				if (is_entered) {
+					return;
+				}
+				is_entered = true;
+				OnMouseEnter(EventArgs.Empty);
+				break;
+			}
+
+			case Msg.WM_MOUSE_LEAVE: {
+				is_entered=false;
+				OnMouseLeave(EventArgs.Empty);
+				break;
+			}
+
+			case Msg.WM_MOUSEHOVER:	{
+				OnMouseHover(EventArgs.Empty);
+				break;
+			}
+			
+			case Msg.WM_SIZE: {					
+				if (GetStyle(ControlStyles.ResizeRedraw)) {
+					Invalidate();
+				}
+				DefWndProc(ref m);	
+				break;				
+			}
+
+			case Msg.WM_KEYDOWN: {
+
+				if (!ProcessKeyEventArgs (ref m))
+					DefWndProc (ref m);
+
+				break;					
+			}
+
+			case Msg.WM_KEYUP: {
+
+				if (!ProcessKeyEventArgs (ref m))
+					DefWndProc (ref m);
+
+				break;					
+			}		
+				
+
+#if notyet				
+				case Msg.WM_WINDOWPOSCHANGED:	throw new NotImplementedException();	break;
+				case Msg.WM_SYSCOLORCHANGE:	throw new NotImplementedException();	break;
+				
+#endif
+
+			default:
+				DefWndProc(ref m);	
+				break;
+			}
+			
+			
+			
+		}
+		#endregion	// Public Instance Methods
 
 		#region OnXXX methods
 		protected virtual void OnBackColorChanged(EventArgs e) {
@@ -2851,34 +2872,5 @@ namespace System.Windows.Forms
 		public event CancelEventHandler		Validating;
 		public event EventHandler		VisibleChanged;
 		#endregion	// Events
-		
-		#region Private Methods
-		internal static int LowOrder (int param) 
-		{
-			return (param & 0xffff);
-		}
-
-		internal static int HighOrder (int param) 
-		{
-			return (param >> 16);
-		}
-		
-		internal static MouseButtons FromParamToMouseButtons (int param) 
-		{		
-			MouseButtons buttons = MouseButtons.None;
-					
-			if ((param & (int) MsgButtons.MK_LBUTTON) != 0)
-				buttons |= MouseButtons.Left;
-			
-			if ((param & (int) MsgButtons.MK_MBUTTON) != 0)
-				buttons |= MouseButtons.Middle;
-				
-			if ((param & (int) MsgButtons.MK_RBUTTON) != 0)
-				buttons |= MouseButtons.Right;    	
-				
-			return buttons;
-
-		}
-		#endregion	
 	}
 }
