@@ -1926,11 +1926,11 @@ cast_expression
 	 */
 	: OPEN_PARENS qualified_identifier CLOSE_PARENS unary_expression
 	  {
-		$$ = new Cast ((string) $2, (Expression) $4);
+		$$ = new Cast ((string) $2, (Expression) $4, lexer.Location);
 	  }
 	| OPEN_PARENS builtin_types CLOSE_PARENS unary_expression
 	  {
-		$$ = new Cast ((string) $2, (Expression) $4);
+		$$ = new Cast ((string) $2, (Expression) $4, lexer.Location);
 	  }
 	;
 
@@ -2668,7 +2668,7 @@ foreach_statement
 				new Cast (
 					(string) $3, 
 					new MemberAccess (
-				new LocalVariableReference (foreach_block, temp_id), "Current")), 
+				new LocalVariableReference (foreach_block, temp_id), "Current"), lexer.Location), 
 				lexer.Location));
 
 		child_block.AddStatement (getcurrent);

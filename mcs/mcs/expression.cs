@@ -839,14 +839,33 @@ namespace CIR {
 
 		}
 		
+
+		// <summary>
+		//  User-defined Implicit conversions
+		// </summary>
+		static public Expression ImplicitUserConversion (TypeContainer tc, Expression source, Type target,
+								 Location l)
+		{
+			return UserDefinedConversion (tc, source, target, l, false);
+		}
+
+		// <summary>
+		//  User-defined Explicit conversions
+		// </summary>
+		static public Expression ExplicitUserConversion (TypeContainer tc, Expression source, Type target,
+								 Location l)
+		{
+			return UserDefinedConversion (tc, source, target, l, true);
+		}
 		
 		// <summary>
-		//   User-defined implicit conversions
+		//   User-defined conversions
 		// </summary>
-		static public Expression ImplicitUserConversion (TypeContainer tc, Expression source,
-								 Type target, Location l)
+		static public Expression UserDefinedConversion (TypeContainer tc, Expression source,
+								Type target, Location l, bool look_for_explicit)
 		{
 			Expression mg1 = null, mg2 = null, mg3 = null, mg4 = null;
+			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
 			MethodBase method = null;
 			Type source_type = source.Type;
 
@@ -874,7 +893,31 @@ namespace CIR {
 			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2);
 			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4);
 
-			MethodGroupExpr union  = Invocation.MakeUnionSet (union1, union2);
+			MethodGroupExpr union3 = Invocation.MakeUnionSet (union1, union2);
+
+			MethodGroupExpr union4 = null;
+
+			if (look_for_explicit) {
+
+				op_name = "op_Explicit";
+				
+				mg5 = MemberLookup (tc, source_type, op_name, false);
+
+				if (source_type.BaseType != null)
+					mg6 = MemberLookup (tc, source_type.BaseType, op_name, false);
+				
+				mg7 = MemberLookup (tc, target, op_name, false);
+				
+				if (target.BaseType != null)
+					mg8 = MemberLookup (tc, target.BaseType, op_name, false);
+				
+				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6);
+				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8);
+
+				union4 = Invocation.MakeUnionSet (union5, union6);
+			}
+			
+			MethodGroupExpr union = Invocation.MakeUnionSet (union3, union4);
 
 			if (union != null) {
 
@@ -908,12 +951,14 @@ namespace CIR {
 					}
 				}
 
-				if (method == null || count > 1)
+				if (method == null || count > 1) {
+					Report.Error (-11, l, "Ambiguous user defined conversion");
 					return null;
+				}
 				
 
-				return new UserImplicitCast ((MethodInfo) method, source, most_specific_source,
-							     most_specific_target);
+				return new UserCast ((MethodInfo) method, source, most_specific_source,
+						     most_specific_target, look_for_explicit);
 
 			}
 			
@@ -1282,9 +1327,9 @@ namespace CIR {
 		//   type is expr.Type to `target_type'.
 		// </summary>
 		static public Expression ConvertExplicit (TypeContainer tc, Expression expr,
-							  Type target_type)
+							  Type target_type, Location l)
 		{
-			Expression ne = ConvertImplicit (tc, expr, target_type, Location.Null);
+			Expression ne = ConvertImplicit (tc, expr, target_type, l);
 
 			if (ne != null)
 				return ne;
@@ -1296,7 +1341,13 @@ namespace CIR {
 			ne = ConvertReferenceExplicit (tc, expr, target_type);
 			if (ne != null)
 				return ne;
-			
+
+			ne = ExplicitUserConversion (tc, expr, target_type, l);
+			if (ne != null)
+				return ne;
+
+			Report.Error (30, l, "Cannot convert type '" + TypeManager.CSharpName (expr.Type) + "' to '"
+				      + TypeManager.CSharpName (target_type) + "'");
 			return null;
 		}
 
@@ -2026,11 +2077,13 @@ namespace CIR {
 	public class Cast : Expression {
 		string target_type;
 		Expression expr;
+		Location   location;
 			
-		public Cast (string cast_type, Expression expr)
+		public Cast (string cast_type, Expression expr, Location loc)
 		{
 			this.target_type = cast_type;
 			this.expr = expr;
+			this.location = loc;
 		}
 
 		public string TargetType {
@@ -2060,7 +2113,7 @@ namespace CIR {
 			if (type == null)
 				return null;
 
-			expr = ConvertExplicit (tc, expr, type);
+			expr = ConvertExplicit (tc, expr, type, location);
 
 			return expr;
 		}
@@ -4339,19 +4392,21 @@ namespace CIR {
 		}
 	}
 
-	public class UserImplicitCast : Expression {
+	public class UserCast : Expression {
 		MethodBase method;
 		Expression source;
 		Type       most_specific_source;
 		Type       most_specific_target;
+		bool       is_explicit;
 		
-		public UserImplicitCast (MethodInfo method, Expression source, Type most_specific_source,
-					 Type most_specific_target)
+		public UserCast (MethodInfo method, Expression source, Type most_specific_source,
+				 Type most_specific_target, bool is_explicit)
 		{
 			this.method = method;
 			this.source = source;
 			this.most_specific_source = most_specific_source;
 			this.most_specific_target = most_specific_target;
+			this.is_explicit = is_explicit;
 			type = method.ReturnType;
 			eclass = ExprClass.Value;
 		}
@@ -4371,7 +4426,13 @@ namespace CIR {
 
 			// Note that operators are static anyway
 
-			Expression e = ConvertImplicitStandard (ec.parent, source, most_specific_source, tmp);
+			Expression e;
+			
+			if (!is_explicit)
+				e = ConvertImplicitStandard (ec.parent, source, most_specific_source, tmp);
+			else
+				e = ConvertExplicit (ec.parent, source, most_specific_source, tmp);
+			
 			e.Emit (ec);
 			
 			if (method is MethodInfo)

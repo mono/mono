@@ -1,3 +1,33 @@
+2001-10-05  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Expression::ImplicitUserConversion): Rename to
+	UserDefinedConversion.
+
+	(Expression::UserDefinedConversion): Take an extra argument specifying 
+	whether we look for explicit user conversions too.
+
+	(Expression::ImplicitUserConversion): Make it a call to UserDefinedConversion.
+
+	(UserDefinedConversion): Incorporate support for user defined explicit conversions.
+
+	(ExplicitUserConversion): Make it a call to UserDefinedConversion
+	with the appropriate arguments.
+
+	* cs-parser.jay (cast_expression): Record location too.
+
+	* expression.cs (Cast): Record location info.
+
+	(Expression::ConvertExplicit): Take location argument.
+
+	(UserImplicitCast): Change name to UserCast. Take an extra constructor argument
+	to determine if we are doing explicit conversions.
+
+	(UserCast::Emit): Update accordingly.
+
+	(Expression::ConvertExplicit): Report an error if everything fails.
+
+	* ../errors/cs0030.cs : Add.
+
 2001-10-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* modifiers.cs: If the ABSTRACT keyword is present, also set the
