@@ -1,3 +1,8 @@
+
+Wed Jun 4 13:09:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, arrays.cs: fixed register allocation bug.
+
 2003-06-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini-x86.c (mono_arch_output_basic_block): use IEEE compatible fprem1
