@@ -1,3 +1,10 @@
+2005-01-25  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71651, #71675
+	* attribute.cs (ExtractSecurityPermissionSet): Catch exceptions from
+	CreatePermission.
+	Create custom PermissionSet only for PermissionSetAttribute.
+
 2005-01-24  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #71649
