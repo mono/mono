@@ -527,7 +527,8 @@ namespace Mono.CSharp {
 				while (containing_ds != null){
 					Type current_type = containing_ds.TypeBuilder;
 					
-					while (current_type != null) {
+					while (current_type != null &&
+					       current_type != TypeManager.object_type) {
 						//
 						// nested class
 						//
@@ -544,7 +545,8 @@ namespace Mono.CSharp {
 				}
 				
 				t = NamespaceLookup (ds, name, silent, loc);
-				ds.Cache [name] = t;
+				if (!silent)
+					ds.Cache [name] = t;
 			}
 
 			if (t == null && !silent)
