@@ -366,7 +366,7 @@ namespace System.Runtime.Remoting.Messaging {
 			_propertyCount = MarshalProperties (retMsg.Properties, ref serializeList);
 
 			_returnValue = MarshalArgument ( retMsg.ReturnValue, ref serializeList);
-			_args = MarshalArguments ( retMsg.OutArgs, ref serializeList);
+			_args = MarshalArguments ( retMsg.Args, ref serializeList);
 
 			if (null != retMsg.Exception) {
 				if (null == serializeList)

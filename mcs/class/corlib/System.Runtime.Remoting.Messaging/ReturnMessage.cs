@@ -157,8 +157,8 @@ namespace System.Runtime.Remoting.Messaging {
 		public object [] OutArgs {
 			get {
 				if (_outArgs == null) {
-					_outArgs = new object [OutArgCount];
-					Array.Copy (_args, _outArgs, OutArgCount);
+					if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
+					_outArgs = _inArgInfo.GetInOutArgs (_args);
 				}					
 				return _outArgs;
 			}
@@ -172,7 +172,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object GetOutArg (int arg_num)
 		{
-			return _args[arg_num];
+			if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
+			return _args[_inArgInfo.GetInOutArgIndex (arg_num)];
 		}
 
 		public string GetOutArgName (int arg_num)

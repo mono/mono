@@ -76,7 +76,7 @@ namespace System.Runtime.Remoting.Messaging {
 			
 			_exception = null;
 			_returnValue = returnValue;
-			_outArgs = outArgs;
+			_args = outArgs;
 		}
 
 		internal MethodResponse (IMethodCallMessage msg, CADMethodReturnMessage retmsg) {
@@ -92,7 +92,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 			_exception = retmsg.GetException (args);
 			_returnValue = retmsg.GetReturnValue (args);
-			_outArgs = retmsg.GetArgs (args);
+			_args = retmsg.GetArgs (args);
 
 			_callContext = retmsg.GetLogicalCallContext (args);
 			if (_callContext == null) _callContext = new LogicalCallContext ();
@@ -116,7 +116,7 @@ namespace System.Runtime.Remoting.Messaging {
 				case "__MethodSignature": _methodSignature = (Type[]) value; break;
 				case "__Uri": _uri = (string) value; break;
 				case "__Return": _returnValue = value; break;
-				case "__OutArgs": _outArgs = (object[]) value; break;
+				case "__OutArgs": _args = (object[]) value; break;
 				case "__fault": _exception = (Exception) value; break;
 				case "__CallContext": _callContext = (LogicalCallContext) value; break;
 				default: Properties [key] = value; break;
@@ -185,18 +185,18 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int OutArgCount {
 			get { 
-				if (null == _outArgs)
-					return 0;
-
-				return _outArgs.Length;
+				if (_args.Length == 0) return 0;
+				if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
+				return _inArgInfo.GetInOutArgCount ();
 			}
 		}
 
 		public object[] OutArgs {
 			get { 
-				if (null == _outArgs)
-					return new object[0];
-
+				if (_outArgs == null) {
+					if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
+					_outArgs = _inArgInfo.GetInOutArgs (_args);
+				}					
 				return _outArgs;
 			}
 		}
@@ -243,15 +243,15 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object GetArg (int argNum)
 		{
-			if (null == _outArgs)
+			if (null == _args)
 				return null;
 
-			return _outArgs [argNum];
+			return _args [argNum];
 		}
 
 		public string GetArgName (int index)
 		{
-			throw new NotSupportedException ();
+			return MethodBase.GetParameters()[index].Name;
 		}
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -263,7 +263,7 @@ namespace System.Runtime.Remoting.Messaging {
 				info.AddValue ("__MethodSignature", _methodSignature);
 				info.AddValue ("__Uri", _uri);
 				info.AddValue ("__Return", _returnValue);
-				info.AddValue ("__OutArgs", _outArgs);
+				info.AddValue ("__OutArgs", _args);
 			}
 			else
 				info.AddValue ("__fault", _exception);
@@ -278,10 +278,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object GetOutArg (int argNum)
 		{
-			if (null == _methodBase)
-				return null;
-
-			return _outArgs [argNum];
+			if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
+			return _args[_inArgInfo.GetInOutArgIndex (argNum)];
 		}
 
 		public string GetOutArgName (int index)
@@ -320,14 +318,14 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 			else
 			{
-				if (_outArgs != null)
+				if (_args != null)
 				{
-					for (int n=0; n<_outArgs.Length; n++)
+					for (int n=0; n<_args.Length; n++)
 					{
 						if (n>0) s+= ", ";
-						if (_outArgs[n] != null) s += _outArgs[n].GetType().Name + " ";
+						if (_args[n] != null) s += _args[n].GetType().Name + " ";
 						s += GetOutArgName (n);
-						if (_outArgs[n] != null) s += " = {" + _outArgs[n] + "}";
+						if (_args[n] != null) s += " = {" + _args[n] + "}";
 						else s+=" = {null}";
 					}
 				}

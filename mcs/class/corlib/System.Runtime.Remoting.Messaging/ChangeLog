@@ -1,3 +1,12 @@
+2004-04-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CADMessages.cs: Revert last change. It was ok.
+	* MethodResponse.cs, ReturnMessage.cs: Handle output parameters in a
+	  different way. The message is constructed from an array that has all
+	  parameters, including input parameters (which will be set to null).
+	  The Args property returns all arguments. OutArgs returns only the
+	  output arguments, which are taken from the provided args list.
+	
 2004-04-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CADMessages.cs: Marshal the correct return args for the return message.
