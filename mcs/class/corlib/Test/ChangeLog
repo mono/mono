@@ -1,5 +1,11 @@
 2003-07-01  Sebastien Pouliot <spouliot@videotron.ca>
 
+	* corlib_test.args: Added GenetricIdentityTest.cs and 
+	GenetricPrincipalTest.cs in System.Security.Principal
+	* corlib_test.args: Same.
+
+2003-07-01  Sebastien Pouliot <spouliot@videotron.ca>
+
 	* corlib_test.args: Added PrincipalPermissionAttributeTest.cs and
 	PrincipalPermissionTest.cs in System.Security.Permissions.
 	* corlib_test.args: Same.
