@@ -2108,7 +2108,7 @@ namespace System.Windows.Forms {
 				// BIG FAT WARNING. This only works with how we use this function right now
 				// where we basically still scroll the whole window, but work around areas
 				// that are covered by our children
-				//data.ScrollInvalidArea(XAmount, YAmount);
+				data.ScrollInvalidArea(XAmount, YAmount);
 			}
 
 			gc_values = new XGCValues();
@@ -2153,7 +2153,7 @@ namespace System.Windows.Forms {
 				data = new HandleData ();
 				handle_data [hwnd] = data;
 			} else if (data.InvalidArea != Rectangle.Empty) {
-				//data.ScrollInvalidArea(XAmount, YAmount);
+				data.ScrollInvalidArea(XAmount, YAmount);
 			}
 
 			// We're abusing clear_width and height, here, don't want two extra vars, we don't use the results here
