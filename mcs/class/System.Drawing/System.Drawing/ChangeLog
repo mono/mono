@@ -1,3 +1,7 @@
+2005-02-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* Brushes.cs: Kill the static ctor here, it has tons of code bloat.
+
 2005-02-03 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Region.cs: revert Jackson's patch and fix this at libgdiplus level
