@@ -1,3 +1,8 @@
+2004-02-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg inssel-x86.brg: Move call(immediate) rules to the platform
+	independent file.
+
 2004-02-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-ppc.c (mono_arch_create_jump_trampoline): Fix compilation on
