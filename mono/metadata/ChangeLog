@@ -1,4 +1,11 @@
 
+Tue Mar 26 19:56:10 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c: do not use the byte marker in ldstr table lookup.
+	* debug-helpers.c: allow two ':' to separate class and method name.
+	* object.c: allocate arrays bounds with the GC, too.
+	* verify: add a few more checks.
+
 Tue Mar 26 18:45:46 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: output also literal strings. Allocate parameter data
