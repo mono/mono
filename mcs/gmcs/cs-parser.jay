@@ -205,6 +205,7 @@ namespace Mono.CSharp
 %token BANG           "!"
 %token ASSIGN         "="
 %token OP_LT          "<"
+%token OP_GENERICS_LT "<"
 %token OP_GT          ">"
 %token BITWISE_AND    "&"
 %token BITWISE_OR     "|"
@@ -217,6 +218,8 @@ namespace Mono.CSharp
 /* C# multi-character operators. */
 %token OP_INC                 "++"
 %token OP_DEC                 "--"
+%token OP_SHIFT_LEFT          "<<"
+%token OP_SHIFT_RIGHT         ">>"
 %token OP_LE                  "<="
 %token OP_GE                  ">="
 %token OP_EQ                  "=="
@@ -228,6 +231,8 @@ namespace Mono.CSharp
 %token OP_MOD_ASSIGN          "%="
 %token OP_ADD_ASSIGN          "+="
 %token OP_SUB_ASSIGN          "-="
+%token OP_SHIFT_LEFT_ASSIGN   "<<="
+%token OP_SHIFT_RIGHT_ASSIGN  ">>="
 %token OP_AND_ASSIGN          "&="
 %token OP_XOR_ASSIGN          "^="
 %token OP_OR_ASSIGN           "|="
@@ -252,6 +257,7 @@ namespace Mono.CSharp
 %left OP_AND
 %left BITWISE_OR
 %left BITWISE_AND
+%left OP_SHIFT_LEFT OP_SHIFT_RIGHT
 %left PLUS MINUS
 %left STAR DIV PERCENT
 %right BANG CARRET UMINUS
@@ -523,7 +529,10 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
-		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $2);
+		//
+		// Attributes need a string, not an expression: generic types will fail here.
+		//
+		$$ = new Attribute (((Expression) $1).ToString (), (ArrayList) $3, (Location) $2);
 	  }
 	;
 
@@ -1357,8 +1366,8 @@ overloadable_operator
         | BITWISE_AND { $$ = Operator.OpType.BitwiseAnd; }
         | BITWISE_OR { $$ = Operator.OpType.BitwiseOr; }
         | CARRET { $$ = Operator.OpType.ExclusiveOr; }
-        | OP_LT OP_LT { $$ = Operator.OpType.LeftShift; }
-        | OP_GT OP_GT { $$ = Operator.OpType.RightShift; }
+        | OP_SHIFT_LEFT { $$ = Operator.OpType.LeftShift; }
+        | OP_SHIFT_RIGHT { $$ = Operator.OpType.RightShift; }
         | OP_EQ { $$ = Operator.OpType.Equality; }
         | OP_NE { $$ = Operator.OpType.Inequality; }
         | OP_GT { $$ = Operator.OpType.GreaterThan; }
@@ -1847,7 +1856,7 @@ namespace_or_type_name
 //
 opt_type_argument_list
 	: /* empty */ 		     { $$ = null; } 
-	| OP_LT type_arguments OP_GT { $$ = $2; } 
+	| OP_GENERICS_LT type_arguments OP_GT { $$ = $2; } 
 	;
 
 type_arguments
@@ -2520,12 +2529,12 @@ additive_expression
 
 shift_expression
 	: additive_expression
-	| shift_expression OP_LT OP_LT additive_expression
+	| shift_expression OP_SHIFT_LEFT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.LeftShift, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| shift_expression OP_GT OP_GT additive_expression
+	| shift_expression OP_SHIFT_RIGHT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.RightShift, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
@@ -2671,14 +2680,14 @@ assignment_expression
 		$$ = new CompoundAssign (
 			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, l);
 	  }
-	| prefixed_unary_expression OP_LT OP_LE expression
+	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, l);
 	  }
-	| prefixed_unary_expression OP_GT OP_GE expression
+	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 

@@ -1,3 +1,20 @@
+2003-07-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs: Compute IsGeneric correctly.
+
+	* cs-parser.jay: Introduce OP_GENERIC_LT for the grammar ambiguity
+	resolution. 
+
+	Bring back (temporarily) OP_LEFT_SHIFT, OP_RIGHT_SHIFT,
+	OP_SHIFT_RIGHT_ASSIGN, OP_SHIFT_LEFT_ASSIGN.  There were too many
+	regressions, and I was chasing more bugs than I required.
+
+	* interface.cs: Use expressions for base type names (like classes
+	and structs have been doing for a while now), and resolve that.
+	This patch should probably go into head as well.
+
+	This makes it one less user of FindType.
+
 2003-07-24  Miguel de Icaza  <miguel@ximian.com>
 
 	This compiler can not self host currently.  Need to fix that.

@@ -494,7 +494,16 @@ namespace Mono.CSharp
 			}
 
 			if (c == '<'){
-				if (d == '='){
+				if (d == '<'){
+					getChar ();
+					d = peekChar ();
+
+					if (d == '='){
+						doread = true;
+						return Token.OP_SHIFT_LEFT_ASSIGN;
+					}
+					return Token.OP_SHIFT_LEFT;
+				} else if (d == '='){
 					doread = true;
 					return Token.OP_LE;
 				}
@@ -502,7 +511,16 @@ namespace Mono.CSharp
 			}
 
 			if (c == '>'){
-				if (d == '='){
+				if (d == '>'){
+					getChar ();
+					d = peekChar ();
+
+					if (d == '='){
+						doread = true;
+						return Token.OP_SHIFT_RIGHT_ASSIGN;
+					}
+					return Token.OP_SHIFT_RIGHT;
+				} else if (d == '='){
 					doread = true;
 					return Token.OP_GE;
 				}

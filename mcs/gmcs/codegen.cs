@@ -319,7 +319,7 @@ namespace Mono.CSharp {
 			//
 			// We should also set it if the method is generic
 			//
-			IsGeneric = ds.IsGeneric || ((Modifiers.METHOD_GENERIC) != 0);
+			IsGeneric = ds.IsGeneric || ((code_flags & Modifiers.METHOD_GENERIC) != 0);
 		}
 
 		public EmitContext (TypeContainer tc, Location l, ILGenerator ig,

@@ -667,15 +667,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		Type GetInterfaceTypeByName (string name)
+		Type GetInterfaceTypeByName (Expression name)
 		{
-			Type t = FindType (Location, name);
-
-			if (t == null) {
-				Report.Error (246, Location, "The type or namespace `" + name +
-					      "' could not be found");
+			Expression original = name;
+			name = ResolveTypeExpr (name, false, Location);
+			if (name == null)
 				return null;
-			}
+
+			Type t = name.Type;
 			
 			if (t.IsInterface)
 				return t;
@@ -713,7 +712,7 @@ namespace Mono.CSharp {
 			tbases = new Type [Bases.Count];
 			i = 0;
 
-			foreach (string name in Bases){
+			foreach (Expression name in Bases){
 				Type t;
 
 				t = GetInterfaceTypeByName (name);
