@@ -1,4 +1,9 @@
 
+Mon Jan 24 16:42:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, null-gc.c, profiler.c, boehm-gc.c: hook the
+	GC events to the profiler.
+
 Mon Jan 24 15:59:54 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: remove valgrind detection nonsense. Set GC_DONT_GC
