@@ -1,5 +1,10 @@
 2002-10-19  Ville Palo <vi64pa@koti.soon.fi>
 
+	* System.Data.SqlTypes/AllTests.cs:
+	* System.Data.SqlTypes/SqlGuidTest.cs: new test suite for SqlGuid.
+	
+2002-10-19  Ville Palo <vi64pa@koti.soon.fi>
+
 	* System.Data.SqlTypes/AllTest.cs:
 	* System.Data.SqlTypes/SqlMoneyTest.cs new test suite for SqlMoney
 	* System.Data.SqlTypes/SqlDateTimeTest.cs new test suite for 
