@@ -1,3 +1,7 @@
+2002-11-20  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+
+	* ApplicationCrmEnabledAttribute.cs added.
+
 2002-08-13  Tim Coleman <tim@timcoleman.com>
 	* Clerk.cs:
 	* Compensator.cs:
