@@ -1,9 +1,11 @@
-// cs0577.cs: Conditional not valid on 'MainClass.MainClass()' because it is a constructor, destructor, operator, or explicit interface implementation
-// Line: 5
+// cs0577.cs: Conditional not valid on 'MainClass.I.F()' because it is a destructor, operator, or explicit interface implementation// Line: 10
 
-class MainClass {
-        [System.Diagnostics.Conditional("DEBUG")] public MainClass () {}
-            
-        public static void Main () {}
+interface I
+{
+    void F ();
 }
 
+class MainClass: I {
+        [System.Diagnostics.Conditional("DEBUG")]
+        void I.F () {}
+}

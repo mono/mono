@@ -1,3 +1,8 @@
+2004-05-10 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0577-2, cs0577-3,
+	* cs1618.cs: 3 new error tests.
+
 2004-05-10  Raja R Harinath  <rharinath@novell.com>
 
 	* do-tests.pl: Add back lost 'chomp'.

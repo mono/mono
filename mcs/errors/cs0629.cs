@@ -1,7 +1,7 @@
-// cs0629.cs: Conditional member 'DerivedClass.Show(int)' cannot implement interface member 'IFace.Show(int)'// Line: 12
+// cs0629.cs: Conditional member 'DerivedClass.Show(int)' cannot implement interface member 'IFace.Show(int)'// Line: 12
 interface IFace
-{        void Show (int arg);}
+{        void Show (int arg);}
 class DerivedClass: IFace
-{        [System.Diagnostics.Conditional("DEBUG")]
-        public void Show (int arg) {}}
+{        [System.Diagnostics.Conditional("DEBUG")]
+        public void Show (int arg) {}}
 
