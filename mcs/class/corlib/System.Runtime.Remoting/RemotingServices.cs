@@ -46,6 +46,7 @@ using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 namespace System.Runtime.Remoting
@@ -55,12 +56,27 @@ namespace System.Runtime.Remoting
 		// Holds the identities of the objects, using uri as index
 		static Hashtable uri_hash = new Hashtable ();		
 
+		static BinaryFormatter _serializationFormatter;
+		static BinaryFormatter _deserializationFormatter;
+		
 		internal static string app_id;
 		static int next_id = 1;
 		static readonly BindingFlags methodBindings = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 		
+		// Holds information in xdomain calls. Names are short to minimize serialized size.
+		[Serializable]
+		class CACD {
+			public object d;	/* call data */
+			public object c;	/* call context */
+		}
+		
 		static RemotingServices ()
 		{
+			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
+			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting, null);
+			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
+			_deserializationFormatter = new BinaryFormatter (null, context);
+			
 			RegisterInternalChannels ();
 			app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
 			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
@@ -108,7 +124,7 @@ namespace System.Runtime.Remoting
 						returnArgs [n++] = null; 
 				}
 				
-				result = new ReturnMessage (rval, returnArgs, n, CallContext.CreateLogicalCallContext(), reqMsg);
+				result = new ReturnMessage (rval, returnArgs, n, CallContext.CreateLogicalCallContext (true), reqMsg);
 			} 
 			catch (Exception e) 
 			{
@@ -534,6 +550,10 @@ namespace System.Runtime.Remoting
 				if (proxyType != null)
 				{
 					RemotingProxy proxy = new RemotingProxy (proxyType, identity);
+					CrossAppDomainSink cds = sink as CrossAppDomainSink;
+					if (cds != null)
+						proxy.SetTargetDomain (cds.TargetDomainId);
+
 					clientProxy = proxy.GetTransparentProxy();
 					identity.ClientProxy = (MarshalByRefObject) clientProxy;
 				}
@@ -614,7 +634,88 @@ namespace System.Runtime.Remoting
 			GetOrCreateClientIdentity (objRef, proxyType, out proxy);
 			return proxy;
 		}
+		
+		// This method is called by the runtime
+		internal static object GetServerObject (string uri)
+		{
+			ClientActivatedIdentity identity = GetIdentityForUri (uri) as ClientActivatedIdentity;
+			if (identity == null) throw new RemotingException ("Server for uri '" + uri + "' not found");
+			return identity.GetServerObject ();
+		}
 
+		// This method is called by the runtime
+		internal static byte[] SerializeCallData (object obj)
+		{
+			LogicalCallContext ctx = CallContext.CreateLogicalCallContext (false);
+			if (ctx != null) {
+				CACD cad = new CACD ();
+				cad.d = obj;
+				cad.c = ctx;
+				obj = cad;
+			}
+			
+			if (obj == null) return null;
+			MemoryStream ms = new MemoryStream ();
+			_serializationFormatter.Serialize (ms, obj);
+			return ms.ToArray ();
+		}
+
+		// This method is called by the runtime
+		internal static object DeserializeCallData (byte[] array)
+		{
+			if (array == null) return null;
+			
+			MemoryStream ms = new MemoryStream (array);
+			object obj = _deserializationFormatter.Deserialize (ms);
+			
+			if (obj is CACD) {
+				CACD cad = (CACD) obj;
+				obj = cad.d;
+				CallContext.UpdateCurrentCallContext ((LogicalCallContext) cad.c);
+			}
+			return obj;
+		}
+		
+		// This method is called by the runtime
+		internal static byte[] SerializeExceptionData (Exception ex)
+		{
+			try {
+				int retry = 4;
+				
+				do {
+					try {
+						MemoryStream ms = new MemoryStream ();
+						_serializationFormatter.Serialize (ms, ex);
+						return ms.ToArray ();
+					}
+					catch (Exception e) {
+						if (e is ThreadAbortException) {
+							Thread.ResetAbort ();
+							retry = 5;
+							ex = e;
+						}
+						else if (retry == 2) {
+							ex = new Exception ();
+							ex.SetMessage (e.Message);
+							ex.SetStackTrace (e.StackTrace);
+						}
+						else
+							ex = e;
+					}
+					retry--;
+				}
+				while (retry > 0);
+				
+				return null;
+			}
+			catch (Exception tex)
+			{
+				byte[] data = SerializeExceptionData (tex);
+				Thread.ResetAbort ();
+				return data;
+			}
+		}
+		
 		internal static object GetDomainProxy(AppDomain domain) 
 		{
 			byte[] data = null;

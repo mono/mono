@@ -1,3 +1,10 @@
+2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: Added several serialization methods needed by
+	the cross app domain wrappers.
+	In GetOrCreateClientIdentity(), set the domain of the proxy if it
+	references an object in another domain.
+
 2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingServices.cs: Allways pass the uri when calling
