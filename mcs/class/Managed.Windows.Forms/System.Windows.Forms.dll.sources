@@ -55,6 +55,7 @@ System.Windows.Forms/HScrollBar.cs
 System.Windows.Forms/IButtonControl.cs
 System.Windows.Forms/IContainerControl.cs
 System.Windows.Forms/IDataObject.cs
+System.Windows.Forms/ImageIndexConverter.cs
 System.Windows.Forms/ImageList.cs
 System.Windows.Forms/ImageListStreamer.cs
 System.Windows.Forms/ImeMode.cs
