@@ -1,5 +1,9 @@
 2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlImplementation.cs : forgot to commit (renaming internal case)
+
+2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocument.cs : Implementation should not return null.
 
 2004-02-25  Atsushi Enomoto <atsushi@ximian.com>

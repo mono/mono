@@ -12,11 +12,10 @@ namespace System.Xml
 	{
 		#region Constructor
 		public XmlImplementation ()
-			: base ()
 		{
 			// The following keys are default of MS .NET Framework
 			NameTable nt = new NameTable();
-			internalNameTable = nt;
+			InternalNameTable = nt;
 		}
 		#endregion
 
@@ -38,7 +37,7 @@ namespace System.Xml
 		#endregion
 
 		#region Internals
-		internal XmlNameTable internalNameTable;
+		internal XmlNameTable InternalNameTable;
 		#endregion
 	}
 }
