@@ -1583,7 +1583,7 @@ event_declaration
 	  	VariableDeclaration var = new VariableDeclaration ((string) $2, (Expression) $4, lexer.Location);
 
 		Event e = new Event ((Expression) $4, var.identifier, 
-				     null, current_modifiers, null, null, 
+				     null, current_modifiers, 
 				     current_attributes, (ArrayList) $5,
 				     lexer.Location);
 
@@ -1620,7 +1620,7 @@ event_declaration
 		
 		Event e = new Event (DecomposeQI (delName, lexer.Location),
 					 (string) $2, 
-				     null, current_modifiers, null, null, 
+				     null, current_modifiers, 
 				     current_attributes, (ArrayList) $4, 
 				     lexer.Location);
 
@@ -1866,7 +1866,7 @@ interface_event_declaration
 	  	VariableDeclaration var = new VariableDeclaration ((string) $2, (Expression) $4, lexer.Location);
 
 		Event e = new Event ((Expression) $4, var.identifier, 
-				     null, current_modifiers, null, null, 
+				     null, current_modifiers, 
 				     current_attributes, lexer.Location);
 
 		CheckDef (current_interface.AddEvent (e), e.Name, e.Location);
@@ -1887,7 +1887,7 @@ interface_event_declaration
 	  
 		Event e = new Event (DecomposeQI (delName, lexer.Location),
 					 (string) $2, 
-				     null, current_modifiers, null, null, 
+				     null, current_modifiers, 
 				     current_attributes, lexer.Location);
 
 		CheckDef (current_interface.AddEvent (e), e.Name, e.Location);

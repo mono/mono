@@ -1,3 +1,10 @@
+2004-11-24  Jambunathan K  <kjambunathan@novell.com>
+	* class.cs: Factored out classes - 1) GetMethod and SetMethod from
+	Property and 2) AddDelegateMethod and RemoveDelegateMethod from
+	Event respectively.
+	
+	* mb-parser.jay: Related changes.
+
 2004-11-22  Jambunathan K  <kjambunathan@novell.com>
 	* enum.cs: Factored out a new class EnumMember from the existing
 	class Enum. Much of the functionality that existed in

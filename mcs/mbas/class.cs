@@ -2752,11 +2752,11 @@ namespace Mono.MonoBASIC {
 		//
 		// Protected data.
 		//
-		protected MemberBase member;
-		protected int modifiers;
-		protected MethodAttributes flags;
-		protected bool is_method;
-		protected string accessor_name;
+		readonly MemberBase member;
+		readonly int modifiers;
+		MethodAttributes flags;
+		readonly bool is_method;
+		readonly string accessor_name;
 		ArrayList conditionals;
 
 		MethodBuilder builder = null;
@@ -3732,11 +3732,155 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
+	public class GetMethod {
+		private Accessor Get;
+		public MethodData GetData;
+		public MethodBuilder GetBuilder;
+
+		Property parent_property;
+		Location Location;
+
+		Parameters get_params;
+		
+		public GetMethod (Property parent_property, Accessor get_block, Attributes attrs, Parameters p_get, Location loc)
+		{
+			this.parent_property = parent_property;
+			Get = get_block;
+			get_params = p_get;
+			Location = loc;
+		}		
+		
+		public MethodBuilder Define (TypeContainer parent)
+		{
+			Type [] g_parameters=null;
+			Parameter [] g_parms;
+			InternalParameters g_ip=null;
+
+			if (get_params == Parameters.EmptyReadOnlyParameters) {
+				g_parameters = TypeManager.NoTypes;
+				g_ip = new InternalParameters (parent, Parameters.EmptyReadOnlyParameters);
+			} else	{
+				g_parameters = new Type [get_params.FixedParameters.Length];
+				for (int i = 0; i < get_params.FixedParameters.Length; i ++) {
+					g_parameters[i] = get_params.FixedParameters[i].ParameterType;
+				}
+				g_parms = new Parameter [get_params.FixedParameters.Length];
+				for (int i = 0; i < get_params.FixedParameters.Length; i ++) {
+					Parameter tp = get_params.FixedParameters[i];
+					g_parms[i] = new Parameter (tp.TypeName, tp.Name,
+						Parameter.Modifier.NONE, null);
+				}
+				g_ip = new InternalParameters (
+					parent, new Parameters (g_parms, null, Location));
+			}
+
+			GetData = new MethodData (parent_property, "get", parent_property.MemberType,
+						  g_parameters, g_ip, CallingConventions.Standard,
+						  Get.OptAttributes, parent_property.ModFlags, parent_property.MethodAttributeFlags, false);
+
+			if (!GetData.Define (parent))
+					return null;
+
+			GetBuilder = GetData.MethodBuilder;
+			
+			return GetBuilder;
+		}
+
+ 		public void Emit (TypeContainer tc)
+ 		{
+ 			if (GetData != null) 
+ 			{
+ 				parent_property.Parameters = get_params;
+ 				GetData.Emit (tc, Get.Block, Get);
+ 			}
+ 		}
+	}
+
+	public class SetMethod {
+		Accessor Set;
+		MethodData SetData;
+		MethodBuilder SetBuilder;
+
+		Property parent_property;
+		Location Location;
+
+		string set_parameter_name;
+		Parameters set_params;
+		
+		public SetMethod (Property parent_property, Accessor set_block, string set_name, 
+				Parameters p_set, Location loc)
+		{
+			this.parent_property = parent_property;
+			Set = set_block;
+			set_params = p_set;
+			set_parameter_name = set_name;
+			this.Location = loc;
+		}		
+		
+		public MethodBuilder Define (TypeContainer parent)
+		{
+			Type [] s_parameters=null;
+			Parameter [] s_parms;
+			InternalParameters s_ip=null;
+			
+			if (set_params == Parameters.EmptyReadOnlyParameters) 
+			{
+				s_parameters = new Type [1];
+				s_parameters [0] = parent_property.MemberType;
+
+				s_parms = new Parameter [1];
+				s_parms [0] = new Parameter (parent_property.Type, set_parameter_name, 
+					Parameter.Modifier.NONE, null);
+			} else {
+				s_parameters = new Type [set_params.FixedParameters.Length];
+				for (int i = 0; i < set_params.FixedParameters.Length; i ++) {
+					s_parameters[i] = set_params.FixedParameters[i].ParameterType;
+				}
+
+				s_parms = new Parameter [set_params.FixedParameters.Length];
+				for (int i = 0; i < set_params.FixedParameters.Length; i ++) {
+					Parameter tp = set_params.FixedParameters[i];
+					s_parms[i] = new Parameter (tp.TypeName, tp.Name,
+						Parameter.Modifier.NONE, null);
+				}
+			}
+
+			s_ip = new InternalParameters (
+				parent, new Parameters (s_parms, null, Location));
+
+			SetData = new MethodData (parent_property, "set", TypeManager.void_type,
+				s_parameters, s_ip, CallingConventions.Standard,
+				Set.OptAttributes, parent_property.ModFlags, parent_property.MethodAttributeFlags, false);
+
+			if (!SetData.Define (parent))
+				return null;
+
+			SetBuilder = SetData.MethodBuilder;
+			SetBuilder.DefineParameter (1, ParameterAttributes.None, 
+				set_parameter_name); 
+
+			return SetBuilder;
+		}
+
+		public void Emit (TypeContainer tc)
+		{
+			if (SetData != null) 
+			{
+				parent_property.Parameters = set_params;
+				SetData.Emit (tc, Set.Block, Set);
+			}
+		}
+	}
+
 	public class Property : MethodCore {
-		public Accessor Get, Set;
+		GetMethod GetMethod;
+		SetMethod SetMethod;
+		
+		public Accessor Set;
 		public PropertyBuilder PropertyBuilder;
-		public MethodBuilder GetBuilder, SetBuilder;
-		public MethodData GetData, SetData;
+		public MethodBuilder GetBuilder;
+		public MethodBuilder SetBuilder;
+		public MethodData SetData;
 
 		protected EmitContext ec;
 
@@ -3953,12 +4097,11 @@ namespace Mono.MonoBASIC {
 			: base (type, mod_flags, AllowedModifiers, name, attrs, p_set, loc)
 		
 		{
-			Get = get_block;
-			get_params = p_get;
+			if (get_block != null)
+				GetMethod = new GetMethod (this, get_block, attrs, p_get, loc);
 
-			Set = set_block;
-			set_params = p_set;
-			set_parameter_name = set_name;
+			if (set_block != null)
+				SetMethod = new SetMethod (this, set_block, set_name, p_set, loc);
 			
 			Implements = impl_what;
 		}		
@@ -3973,10 +4116,10 @@ namespace Mono.MonoBASIC {
 
 		public override bool Define (TypeContainer parent)
 		{
-			Type [] g_parameters=null, s_parameters=null;
-			Parameter [] g_parms, s_parms;
-			InternalParameters g_ip=null, s_ip=null;
-
+			Type [] s_parameters=null;
+			Parameter [] s_parms;
+			InternalParameters s_ip=null;
+			
 			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
 				Report.Error (30435, Location,
 					"'Property' inside a 'Structure' can not be declared as " +
@@ -3990,43 +4133,15 @@ namespace Mono.MonoBASIC {
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 
-			if (Get == null) {
+			if (GetMethod == null) {
 				if ((ModFlags & Modifiers.WRITEONLY) == 0)
 					Report.Error (
 						30124, Location,
 						"Property without 'Get' accessor must have a 'WriteOnly' modifier");
-			}
-			else {
-				if (get_params == Parameters.EmptyReadOnlyParameters) {
-					g_parameters = TypeManager.NoTypes;
-					g_ip = new InternalParameters (
-							parent, Parameters.EmptyReadOnlyParameters);
-				} else	{
-					g_parameters = new Type [get_params.FixedParameters.Length];
-					for (int i = 0; i < get_params.FixedParameters.Length; i ++) {
-						g_parameters[i] = get_params.FixedParameters[i].ParameterType;
-					}
-					g_parms = new Parameter [get_params.FixedParameters.Length];
-					for (int i = 0; i < get_params.FixedParameters.Length; i ++) {
-						Parameter tp = get_params.FixedParameters[i];
-						g_parms[i] = new Parameter (tp.TypeName, tp.Name,
-							Parameter.Modifier.NONE, null);
-					}
-					g_ip = new InternalParameters (
-						parent, new Parameters (g_parms, null, Location));
-				}
+			} else
+				GetBuilder = GetMethod.Define (parent);
 
-				GetData = new MethodData (this, "get", MemberType,
-							  g_parameters, g_ip, CallingConventions.Standard,
-							  Get.OptAttributes, ModFlags, flags, false);
-
-				if (!GetData.Define (parent))
-					return false;
-
-				GetBuilder = GetData.MethodBuilder;
-			}
-
-			if (Set == null) {
+			if (SetMethod== null) {
 				if ((ModFlags & Modifiers.READONLY) == 0)
 					Report.Error (
 						30124, Location,
@@ -4034,43 +4149,7 @@ namespace Mono.MonoBASIC {
 						
 			}
 			else 
-			{
-				if (set_params == Parameters.EmptyReadOnlyParameters) 
-				{
-					s_parameters = new Type [1];
-					s_parameters [0] = MemberType;
-
-					s_parms = new Parameter [1];
-					s_parms [0] = new Parameter (Type, set_parameter_name, 
-						Parameter.Modifier.NONE, null);
-				} else {
-					s_parameters = new Type [set_params.FixedParameters.Length];
-					for (int i = 0; i < set_params.FixedParameters.Length; i ++) {
-						s_parameters[i] = set_params.FixedParameters[i].ParameterType;
-					}
-
-					s_parms = new Parameter [set_params.FixedParameters.Length];
-					for (int i = 0; i < set_params.FixedParameters.Length; i ++) {
-						Parameter tp = set_params.FixedParameters[i];
-						s_parms[i] = new Parameter (tp.TypeName, tp.Name,
-							Parameter.Modifier.NONE, null);
-					}
-				}
-
-				s_ip = new InternalParameters (
-					parent, new Parameters (s_parms, null, Location));
-
-				SetData = new MethodData (this, "set", TypeManager.void_type,
-					s_parameters, s_ip, CallingConventions.Standard,
-					Set.OptAttributes, ModFlags, flags, false);
-
-				if (!SetData.Define (parent))
-					return false;
-
-				SetBuilder = SetData.MethodBuilder;
-				SetBuilder.DefineParameter (1, ParameterAttributes.None, 
-					set_parameter_name); 
-			}
+				SetBuilder = SetMethod.Define (parent);
 
 			// FIXME - PropertyAttributes.HasDefault ?
 			
@@ -4111,19 +4190,23 @@ namespace Mono.MonoBASIC {
 			if (PropertyBuilder != null && OptAttributes != null)
 				OptAttributes.Emit (ec, this);
 			
-			if (GetData != null) 
+			if (GetMethod != null) 
 			{
-				Parameters = get_params;
-				GetData.Emit (tc, Get.Block, Get);
+				GetMethod.Emit (tc);
 			}
 
-			if (SetData != null) 
+			if (SetMethod != null) 
 			{
-				Parameters = set_params;
-				SetData.Emit (tc, Set.Block, Set);
+				SetMethod.Emit (tc);
 			}
-				
 		}
+
+		public MethodAttributes MethodAttributeFlags {
+			get {
+				return flags;
+			}
+		}
+
 	}
 
 	/// </summary>
@@ -4260,6 +4343,98 @@ namespace Mono.MonoBASIC {
 			}
 		}
 	}
+
+	
+	public class AddDelegateMethod {
+		MethodBuilder AddBuilder;
+		MethodData AddData;
+		Event parent_event;
+		Location Location;
+		
+		public AddDelegateMethod (Event parent_event, Location loc)
+		{
+			this.parent_event = parent_event;
+			Location = loc;
+		}
+
+		public MethodBuilder Define (TypeContainer parent)
+		{
+			Type [] parameter_types = new Type [1];
+			parameter_types [0] = parent_event.MemberType;
+
+			Parameter [] parms = new Parameter [1];
+			parms [0] = new Parameter (parent_event.Type, /* was "value" */ parent_event.Name, Parameter.Modifier.NONE, null);
+			InternalParameters ip = new InternalParameters (
+				parent, new Parameters (parms, null, Location)); 
+
+			AddData = new MethodData (parent_event, "add", TypeManager.void_type,
+						  parameter_types, ip, CallingConventions.Standard, null,
+						  parent_event.ModFlags, parent_event.MethodAttributeFlags, false);
+
+			if (!AddData.Define (parent))
+				return null;
+
+			AddBuilder = AddData.MethodBuilder;
+			AddBuilder.DefineParameter (1, ParameterAttributes.None, /* was "value" */ parent_event.Name);
+
+
+			return AddBuilder;
+		}
+
+
+		public void Emit (TypeContainer tc)
+		{
+			ILGenerator ig = AddData.MethodBuilder.GetILGenerator ();
+			EmitContext ec = new EmitContext (tc, Location, ig, TypeManager.void_type, parent_event.ModFlags);
+			parent_event.EmitDefaultMethod (ec, true);
+		}
+	}
+
+	public class RemoveDelegateMethod {
+		MethodBuilder RemoveBuilder;
+		MethodData RemoveData;
+		Event parent_event;
+		Location Location;
+		
+		public RemoveDelegateMethod (Event parent_event, Location loc)
+		{
+			this.parent_event = parent_event;
+			Location = loc;
+		}
+
+		public MethodBuilder Define (TypeContainer parent)
+		{
+			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
+
+			Type [] parameter_types = new Type [1];
+			parameter_types [0] = parent_event.MemberType;
+
+			Parameter [] parms = new Parameter [1];
+			parms [0] = new Parameter (parent_event.Type, /* was "value" */ parent_event.Name, Parameter.Modifier.NONE, null);
+			InternalParameters ip = new InternalParameters (
+				parent, new Parameters (parms, null, Location)); 
+
+
+			RemoveData = new MethodData (parent_event, "remove", TypeManager.void_type,
+						     parameter_types, ip, CallingConventions.Standard, null,
+						     parent_event.ModFlags, parent_event.MethodAttributeFlags, false);
+
+			if (!RemoveData.Define (parent))
+				return null;
+
+			RemoveBuilder = RemoveData.MethodBuilder;
+			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, /* was "value" */ parent_event.Name);
+
+			return RemoveBuilder;
+		}
+
+		public void Emit (TypeContainer tc)
+		{
+			ILGenerator ig = RemoveData.MethodBuilder.GetILGenerator ();
+			EmitContext ec = new EmitContext (tc, Location, ig, TypeManager.void_type, parent_event.ModFlags);
+			parent_event.EmitDefaultMethod (ec, false);
+		}
+	}
 	
 	public class Event : FieldBase {
 		const int AllowedModifiers =
@@ -4275,28 +4450,27 @@ namespace Mono.MonoBASIC {
 			Modifiers.UNSAFE |
 			Modifiers.ABSTRACT;
 
-		public readonly Accessor  Add;
-		public readonly Accessor  Remove;
+		public readonly AddDelegateMethod  Add;
+		public readonly RemoveDelegateMethod  Remove;
 		public MyEventBuilder     EventBuilder;
 
 		MethodBuilder AddBuilder, RemoveBuilder;
-		MethodData AddData, RemoveData;
 		
-		public Event (Expression type, string name, Object init, int mod, Accessor add,
-			      Accessor remove, Attributes attrs, Location loc)
-			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
+		public Event (Expression type, string name, Object init, int mod, Attributes attrs, Location loc)
+	      			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
 		{
-			Add = add;
-			Remove = remove;
+			Add = new AddDelegateMethod (this, loc);
+			Remove = new RemoveDelegateMethod (this, loc);
+
 			Implements = null;
 		}
 
-		public Event (Expression type, string name, Object init, int mod, Accessor add,
-			Accessor remove, Attributes attrs, ArrayList impl_what, Location loc)
+		public Event (Expression type, string name, Object init, int mod,  Attributes attrs, ArrayList impl_what, Location loc)
 			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
 		{
-			Add = add;
-			Remove = remove;
+			Add = new AddDelegateMethod (this, loc);
+			Remove = new RemoveDelegateMethod (this, loc);
+
 			Implements = impl_what;
 		}
 
@@ -4335,52 +4509,27 @@ namespace Mono.MonoBASIC {
 			if (!CheckBase (parent))
 				return false;
 
-			//
-			// Now define the accessors
-			//
-			AddData = new MethodData (this, "add", TypeManager.void_type,
-						  parameter_types, ip, CallingConventions.Standard,
-						  (Add != null) ? Add.OptAttributes : null,
-						  ModFlags, flags, false);
-
-			if (!AddData.Define (parent))
-				return false;
-
-			AddBuilder = AddData.MethodBuilder;
-			AddBuilder.DefineParameter (1, ParameterAttributes.None, /* was "value" */ this.Name);
-
-			RemoveData = new MethodData (this, "remove", TypeManager.void_type,
-						     parameter_types, ip, CallingConventions.Standard,
-						     (Remove != null) ? Remove.OptAttributes : null,
-						     ModFlags, flags, false);
-
-			if (!RemoveData.Define (parent))
-				return false;
-
-			RemoveBuilder = RemoveData.MethodBuilder;
-			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, /* was "value" */ this.Name);
+			AddBuilder = Add.Define (parent);
+			RemoveBuilder = Remove.Define (parent);
+			
 
 			if (!IsExplicitImpl){
 				EventBuilder = new MyEventBuilder (
 					parent.TypeBuilder, Name, e_attr, MemberType);
 					
-				if (Add == null && Remove == null) {
-					FieldBuilder = parent.TypeBuilder.DefineField (
-						Name, MemberType,
+				FieldBuilder = parent.TypeBuilder.DefineField (Name, MemberType,
 						FieldAttributes.FamANDAssem | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
-					TypeManager.RegisterPrivateFieldOfEvent (
-						(EventInfo) EventBuilder, FieldBuilder);
-					TypeManager.RegisterFieldBase (FieldBuilder, this);
-				}
+				TypeManager.RegisterPrivateFieldOfEvent ((EventInfo) EventBuilder, FieldBuilder);
+				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			
 				EventBuilder.SetAddOnMethod (AddBuilder);
 				EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
 				if (!TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder)) {
 					Report.Error (111, Location,
-						      "Class `" + parent.Name +
-						      "' already contains a definition for the event `" +
-						      Name + "'");
+					  	    "Class `" + parent.Name +
+					     	 "' already contains a definition for the event `" +
+					     	 Name + "'");
 					return false;
 				}
 			}
@@ -4388,7 +4537,7 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		void EmitDefaultMethod (EmitContext ec, bool is_add)
+		public void EmitDefaultMethod (EmitContext ec, bool is_add)
 		{
 			ILGenerator ig = ec.ig;
 			MethodInfo method = null;
@@ -4425,20 +4574,13 @@ namespace Mono.MonoBASIC {
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this);
 
-			if (Add != null)
-				AddData.Emit (tc, Add.Block, Add);
-			else {
-				ILGenerator ig = AddData.MethodBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
-				EmitDefaultMethod (ec, true);
-			}
+			Add.Emit (tc);
+			Remove.Emit (tc);
+		}
 
-			if (Remove != null)
-				RemoveData.Emit (tc, Remove.Block, Remove);
-			else {
-				ILGenerator ig = RemoveData.MethodBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
-				EmitDefaultMethod (ec, false);
+		public MethodAttributes MethodAttributeFlags {
+			get {
+				return flags;
 			}
 		}
 		
