@@ -17,10 +17,17 @@ namespace Mono.ILASM {
 
                 private int error_count;
                 private int mark_count;
+                private bool quiet;
 
-                public Report ()
+                public Report () : this (false)
                 {
-                        error_count = 0;
+
+                }
+
+                public Report (bool quiet)
+                {
+                        this.error_count = 0;
+                        this.quiet = quiet;
                 }
 
                 public int ErrorCount {
@@ -30,6 +37,9 @@ namespace Mono.ILASM {
                 public void AssembleFile (string file, string listing,
                                           string target, string output)
                 {
+                        if (quiet)
+                                return;
+
                         Console.WriteLine ("Assembling '{0}' , {1}, to {2} --> '{3}'", file,
                                            GetListing (listing), target, output);
                 }

@@ -43,19 +43,19 @@ namespace Mono.ILASM {
                         private string output_file;
                         private Target target = Target.Exe;
                         private string target_string = "exe";
+                        private bool quiet = false;
                         private bool show_tokens = false;
                         private bool show_method_def = false;
                         private bool show_method_ref = false;
                         private bool show_parser = false;
                         private bool scan_only = false;
-                        private bool delete_on_error = false;
                         private CodeGen codegen;
 
                         public DriverMain (string[] args)
                         {
                                 il_file_list = new ArrayList ();
                                 ParseArgs (args);
-                                report = new Report ();
+                                report = new Report (quiet);
                         }
 
                         public void Run ()
@@ -73,10 +73,6 @@ namespace Mono.ILASM {
 
                                         codegen.Write ();
                                 } catch {
-                                        if (delete_on_error) {
-                                                if (File.Exists (output_file))
-                                                        File.Delete (output_file);
-                                        }
                                         throw;
                                 }
                         }
@@ -167,6 +163,9 @@ namespace Mono.ILASM {
                                                 target = Target.Dll;
                                                 target_string = "dll";
                                                 break;
+                                        case "quiet":
+                                                quiet = true;
+                                                break;
                                         case "scan_only":
                                                 scan_only = true;
                                                 break;
@@ -181,10 +180,6 @@ namespace Mono.ILASM {
                                                 break;
                                         case "show_parser":
                                                 show_parser = true;
-                                                break;
-                                        case "delete_on_error":
-                                        case "doe":
-                                                delete_on_error = true;
                                                 break;
                                         case "-about":
                                                 if (str[0] != '-')
