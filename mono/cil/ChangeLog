@@ -1,3 +1,9 @@
+2004-08-05  Duncan Mak  <duncan@ximian.com>
+
+	* cil-opcodes.xml: 
+	* opcode.def: Rename "stelem" to "stelem.any"
+	and "ldelem" to "ldelem.any".
+	
 2004-08-02  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (opcode.def): Make $(srcdir)!=$(builddir) safe.

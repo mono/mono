@@ -1,3 +1,8 @@
+2004-08-05  Duncan Mak  <duncan@ximian.com>
+
+	* mini.c: Renamed CEE_STELEM to CEE_STELEM_ANY and CEE_LDELEM to
+	CEE_LDELEM_ANY.
+
 2004-08-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (emit_move_return_value): Move return value for normal
