@@ -121,7 +121,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			HatchStyles ();
 
 			// save the drawing
-			string file = getDir () + "TestHatchBrush.png";
+			string file =  "TestHatchBrush" + getOutSufix() + ".png";
 			bmp.Save (file, ImageFormat.Png);
 		}
 
@@ -608,17 +608,12 @@ namespace MonoTests.System.Drawing.Drawing2D
 			currentTop = top;
 		}
 
-		/* Get the right directory depending on the runtime */
-		private string getDir ()
-		{
-			string dir;
-
-			if (Environment.GetEnvironmentVariable ("MSNet") == null)
-				dir = "mono/";
-			else
-				dir = "MSNet/";
-
-			return dir;
+		internal string getOutSufix()
+		{			
+			if (Environment.GetEnvironmentVariable("MSNet")==null)
+				return "-mono";
+					
+			return "";
 		}
 	}
 }
