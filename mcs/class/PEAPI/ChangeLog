@@ -1,5 +1,10 @@
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
+	* PEAPI.cs: Remove some old hacks for adding methods to arrays,
+	typespecs are used for this now.
+	
+2003-10-08 Jackson Harper <jackson@ximian.com>
+
 	* PEAPI.cs: Remove methods for creating generic parameters without
 	a name, names are mandatory. Add method to add type parameters to
 	methods. Allow GenericParameters to have either a type or a
