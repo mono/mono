@@ -1,3 +1,8 @@
+2005-02-14 Satya Sudha K <ksathyasudha@novell.com>
+	* expression.cs: 
+		 - Fixed one of my previous checkin, which was breaking some test cases.
+	* ecore.cs :
+		 - Fixed the explicit conversion of float/double to integral types in some places.
 
 2005-02-11 Ritvik Mayank <mritvik@novell.com>
 	* class.cs

@@ -2498,50 +2498,52 @@ namespace Mono.MonoBASIC {
 				// ushort, int, uint, long, ulong, char
 				// or decimal
 				//
+				Expression rounded_expr = RTConversionExpression(ec, "System.Math",".Round" , expr, loc);
 				if (real_target_type == TypeManager.sbyte_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_I1);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I1);
 				if (real_target_type == TypeManager.byte_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U1);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U1);
 				if (real_target_type == TypeManager.short_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_I2);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I2);
 				if (real_target_type == TypeManager.ushort_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U2);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U2);
 				if (real_target_type == TypeManager.int32_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_I4);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I4);
 				if (real_target_type == TypeManager.uint32_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U4);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U4);
 				if (real_target_type == TypeManager.int64_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_I8);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I8);
 				if (real_target_type == TypeManager.uint64_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U8);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U8);
 				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_CH);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_CH);
 			} else if (expr_type == TypeManager.double_type){
 				//
 				// From double to byte, byte, short,
 				// ushort, int, uint, long, ulong,
 				// char, float or decimal
 				//
+				Expression rounded_expr = RTConversionExpression(ec, "System.Math",".Round" , expr, loc);
 				if (real_target_type == TypeManager.sbyte_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I1);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I1);
 				if (real_target_type == TypeManager.byte_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_U1);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U1);
 				if (real_target_type == TypeManager.short_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I2);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I2);
 				if (real_target_type == TypeManager.ushort_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_U2);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U2);
 				if (real_target_type == TypeManager.int32_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I4);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I4);
 				if (real_target_type == TypeManager.uint32_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_U4);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U4);
 				if (real_target_type == TypeManager.int64_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I8);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I8);
 				if (real_target_type == TypeManager.uint64_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_U8);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U8);
 				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_CH);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_CH);
 				if (real_target_type == TypeManager.float_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
+					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_R4);
 			} 
 
 			// decimal is taken care of by the op_Explicit methods.

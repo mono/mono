@@ -2135,15 +2135,12 @@ namespace Mono.MonoBASIC {
 						
 						// string + string
 						method = TypeManager.string_concat_string_string;
+						type = TypeManager.string_type;
+						Arguments = new ArrayList ();
+						Arguments.Add (new Argument (left, Argument.AType.Expression));
+						Arguments.Add (new Argument (right, Argument.AType.Expression));
+						return this;
 					} 
-
-					type = TypeManager.string_type;
-
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
-
-					return this;
 					
 				} else if (r == TypeManager.string_type){
 					// object + string
@@ -2175,6 +2172,7 @@ namespace Mono.MonoBASIC {
 					}
 				}
 			}
+
 
 			if (oper == Operator.Equality || oper == Operator.Inequality){
 				if (l == TypeManager.bool_type || r == TypeManager.bool_type){
