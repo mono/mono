@@ -51,7 +51,7 @@ public struct TimeSpan :  IComparable  {
 	public int Days
 	{
 		get {
-			return (int) TotalDays;
+			return (int) (_ticks / TicksPerDay);
 		}
 	}
 

@@ -1,3 +1,8 @@
+2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TimeSpan.cs: fixed bug #52075. Days (int) don't rely on TotalDays
+	(double), which might round up.
+
 2004-01-19  Jackson Harper <jackson@ximian.com>
 
 	* FloatingPointFormatter.cs: Use the default decimal digits count
