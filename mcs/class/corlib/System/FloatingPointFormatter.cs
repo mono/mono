@@ -612,7 +612,7 @@ namespace System {
 		{
 			// Translate the double into sign, exponent and mantissa.
 			long bits = BitConverter.DoubleToInt64Bits (value);
-			bool negative = (bits >> 63)==1;
+			bool negative = ((bits >> 63) == -1);
 			int exponent = (int) ((bits >> 52) & 0x7ffL);
 			long mantissa = bits & 0xfffffffffffffL;
 

@@ -1,3 +1,8 @@
+2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FloatingPointFormatter.cs: Applied correction from Jon Skeet on
+	the "R"eversible format for negative numbers.
+
 2004-06-21  Jackson Harper  <jackson@ximian.com>
 
 	* Decimal.cs: Make sure to use invariant culture when parsing
@@ -78,7 +83,6 @@
 	* DateTime.cs : Added overflow check in ToUniversalTime() and
 	  ToLocalTime(). Fixed bug #60253.
 
->>>>>>> 1.890
 2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FloatingPointFormatter.cs: Implemented "R" format using Jon Skeet
