@@ -185,7 +185,7 @@ namespace System.Web.Util
 			{
 				return null;
 			}
-			string leftOver = fullUrl.Substring(relativeTo.Length);
+			string leftOver = fullUrl.Substring(0, relativeTo.Length);
 			if(!fullUrl.EndsWith("/") && !leftOver.StartsWith("/"))
 			{
 				return null;

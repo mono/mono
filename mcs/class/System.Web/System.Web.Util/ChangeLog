@@ -1,3 +1,7 @@
+2004-04-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: fixed MakeRelative. nGallery goes one step further.
+
 2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: small fix from George Kodinov for Combine when ~ is used. 
