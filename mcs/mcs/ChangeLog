@@ -1,5 +1,10 @@
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
+	* typemanager.cs (CSharpSignature): Now reports also inner class name.
+          (CSharpSignature): New method for indexer and property signature.
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
 	* pending.cs (IsVirtualFilter): Faster implementation.
 
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
