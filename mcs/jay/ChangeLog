@@ -1,3 +1,8 @@
+2004-03-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* main.c: Applied patch from Albert Strasheim (13640887@sun.ac.za).
+	Fix compilation under mingw.
+
 2004-02-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* skeleton.cs: Report the token that we errored on;  Helps

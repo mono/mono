@@ -91,7 +91,13 @@ char  *rassoc;
 short **derives;
 char *nullable;
 
+#if defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
+extern char* mktemp();
+#define mkstemp mktemp
+#else
 extern char *mkstemp();
+#endif
+
 extern char *getenv();
 
 done(k)
@@ -253,8 +259,12 @@ create_file_names()
     int i, len;
     char *tmpdir;
 
+#if defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
+    tmpdir = ".";
+#else
     tmpdir = getenv("TMPDIR");
     if (tmpdir == 0) tmpdir = "/tmp";
+#endif
 
     len = strlen(tmpdir);
     i = len + 13;
