@@ -5430,13 +5430,14 @@ namespace Mono.CSharp {
 			}
 
 			if (member_lookup is EventExpr) {
+
 				EventExpr ee = (EventExpr) member_lookup;
 				
 				//
 				// If the event is local to this class, we transform ourselves into
 				// a FieldExpr
 				//
-
+				
 				Expression ml = MemberLookup (
 					ec, ec.ContainerType, ee.EventInfo.Name, MemberTypes.Event,
 					AllBindingFlags | BindingFlags.DeclaredOnly, loc);
@@ -5460,10 +5461,11 @@ namespace Mono.CSharp {
 						Report.Error (-200, loc, "Internal error!!");
 						return null;
 					}
+					
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
 			}
-
+			
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
 

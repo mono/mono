@@ -677,6 +677,31 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (InstanceExpr is EventExpr) {
+				
+				EventInfo ei = ((EventExpr) InstanceExpr).EventInfo;
+				
+				Expression ml = MemberLookup (
+					ec, ec.ContainerType, ei.Name,
+					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
+
+				if (ml == null) {
+				        //
+					// If this is the case, then the Event does not belong 
+					// to this Type and so, according to the spec
+					// cannot be accessed directly
+					//
+					// Note that target will not appear as an EventExpr
+					// in the case it is being referenced within the same type container;
+					// it will appear as a FieldExpr in that case.
+					//
+					
+					Assign.error70 (ei, loc);
+					return null;
+				}
+			}
+			
+			
 			Type del_type = InstanceExpr.Type;
 			if (del_type == null)
 				return null;

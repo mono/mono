@@ -235,14 +235,11 @@ namespace Mono.CSharp {
 			}
 
 			if (target is EventExpr) {
-
-				Binary tmp;
 				EventInfo ei = ((EventExpr) target).EventInfo;
-
 
 				Expression ml = MemberLookup (
 					ec, ec.ContainerType, ei.Name,
-					MemberTypes.Event, AllBindingFlags, loc);
+					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml == null) {
 				        //
@@ -260,7 +257,7 @@ namespace Mono.CSharp {
 						error70 (ei, loc);
 						return null;
 					} else {
-						tmp = ((Binary) source);
+						Binary tmp = ((Binary) source);
 						if (tmp.Oper != Binary.Operator.Addition &&
 						    tmp.Oper != Binary.Operator.Subtraction) {
 							error70 (ei, loc);
