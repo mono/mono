@@ -8,7 +8,6 @@
 //
 using System;
 using System.Xml;
-
 namespace System.Configuration
 {
 	/// <summary>
