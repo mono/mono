@@ -571,7 +571,10 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 		public virtual void EmitWriteLine (string val) {
-			throw new NotImplementedException ();
+			Emit (OpCodes.Ldstr, val);
+			Emit (OpCodes.Call, 
+				  typeof (Console).GetMethod ("WriteLine",
+											  new Type[1] { typeof(string)}));
 		}
 
 		public virtual void EndExceptionBlock () {

@@ -1,5 +1,7 @@
 2003-01-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ILGenerator.cs: Implemented EmitWriteLine(string).
+
 	* TypeBuilder.cs (DefineInitializedData): Call DefineNestedType() 
 	instead of DefineType() so the auxiliary types do not pollute the 
 	global namespace. This is consistent with the behaviour of MS .NET.
