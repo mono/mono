@@ -275,5 +275,11 @@ namespace System.Web.UI.MobileControls
 		{
 			throw new NotImplementedException();
 		}
+
+		[MonoTODO]
+		public void ApplyTo(WebControls.WebControl control)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

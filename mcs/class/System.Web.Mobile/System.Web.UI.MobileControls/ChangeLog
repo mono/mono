@@ -1,4 +1,8 @@
 
+2003-10-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* Style.cs               : ApplyTo(WebControl)        - Stubbed.
+
 2003-08-14	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* MobileControl.cs       : Style { get; }             - Completed.
