@@ -1,5 +1,15 @@
 2004-11-16  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs: Remove printf(3) and fprintf(3).  These are vararg/CDECL 
+	  functions, and it's not portable to call them in this manner.
+	  (It's not portable because some architectures, such as AMD64, use a
+	  "cookie" as part of the vararg calling sequence to help reduce buffer
+	  overflow exploits.  Trying to call vararg functions as if they were an
+	  overloaded function will not properly set this hardware cookie, resulting
+	  in a hardware exception.  Talk to lupus for more information.)
+
+2004-11-16  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Syscall.cs, UnixConvert.cs: Remove mount- and umount-related
 	  functionality.  Mount/umount is inherently non-portable (see the C code
 	  for mount/umount), and trying to provide a consistent interface is

@@ -108,22 +108,6 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int fileno (IntPtr stream);
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="printf")]
-		private static extern int sys_printf (string format, string arg);
-
-		public static int printf (string message)
-		{
-			return sys_printf ("%s", message);
-		}
-
-		[DllImport (LIBC, SetLastError=true, EntryPoint="fprintf")]
-		private static extern int sys_fprintf (IntPtr stream, string format, string arg);
-
-		public static int fprintf (IntPtr stream, string message)
-		{
-			return sys_fprintf (stream, "%s", message);
-		}
-
 		//
 		// <stdlib.h>
 		//
