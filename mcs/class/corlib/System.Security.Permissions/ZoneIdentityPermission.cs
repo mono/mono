@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -26,7 +27,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
+using System.Globalization;
 using System.Security;
 
 namespace System.Security.Permissions {
@@ -34,22 +37,27 @@ namespace System.Security.Permissions {
 	[Serializable]
 	public sealed class ZoneIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
-		SecurityZone zone;
+		private SecurityZone zone;
 
 		public ZoneIdentityPermission (PermissionState state)
 		{
-			if (state == PermissionState.Unrestricted)
-				throw new ArgumentException ("unrestricted not allowed");
-
-			if (state != PermissionState.None)
-				throw new ArgumentException ("invalid state");
-
-			zone = SecurityZone.NoZone;
+			switch (state) {
+				case PermissionState.None:
+					zone = SecurityZone.NoZone;
+					break;
+				case PermissionState.Unrestricted:
+					throw new ArgumentException (Locale.GetText (
+						"unrestricted not allowed"));
+				default:
+					throw new ArgumentException (Locale.GetText (
+						"invalid state"));
+			}
 		}
 
 		public ZoneIdentityPermission (SecurityZone zone)
 		{
-			this.zone = zone;
+			// also needs the validations
+			SecurityZone = zone;
 		}
 
 		public override IPermission Copy ()
@@ -62,10 +70,13 @@ namespace System.Security.Permissions {
 			if (target == null)
 				return zone == SecurityZone.NoZone;
 
-			if (!(target is ZoneIdentityPermission))
-				throw new ArgumentException ();
+			ZoneIdentityPermission zip = (target as ZoneIdentityPermission);
+			if (zip == null) {
+				throw new ArgumentException (Locale.GetText (
+					"Invalid permission"));
+			}
 
-			return zone != ((ZoneIdentityPermission) target).zone;
+			return (zone == zip.zone);
 		}
 
 		public override IPermission Union (IPermission target)
@@ -73,17 +84,23 @@ namespace System.Security.Permissions {
 			if (target == null)
 				return (zone == SecurityZone.NoZone) ? null : Copy ();
 
-			if (!(target is ZoneIdentityPermission))
-				throw new ArgumentException ();
+			ZoneIdentityPermission zip = (target as ZoneIdentityPermission);
+			if (zip == null) {
+				throw new ArgumentException (Locale.GetText (
+					"Invalid permission"));
+			}
 
-			ZoneIdentityPermission se = (ZoneIdentityPermission) target;
-			if (zone == se.zone || se.zone == SecurityZone.NoZone)
+			if (zone == zip.zone || zip.zone == SecurityZone.NoZone)
 				return Copy ();
 
 			if (zone == SecurityZone.NoZone)
-				return se.Copy ();
-
+				return zip.Copy ();
+#if NET_2_0
+			throw new ArgumentException (Locale.GetText (
+				"Union impossible"));
+#else
 			return null;
+#endif
 		}
 
 		public override IPermission Intersect (IPermission target)
@@ -91,10 +108,13 @@ namespace System.Security.Permissions {
 			if (target == null || zone == SecurityZone.NoZone)
 				return null;
 
-			if (!(target is ZoneIdentityPermission))
-				throw new ArgumentException ();
+			ZoneIdentityPermission zip = (target as ZoneIdentityPermission);
+			if (zip == null) {
+				throw new ArgumentException (Locale.GetText (
+					"Invalid permission"));
+			}
 
-			if (zone == ((ZoneIdentityPermission) target).zone)
+			if (zone == zip.zone)
 				return Copy ();
 
 			return null;
@@ -103,10 +123,12 @@ namespace System.Security.Permissions {
 		public override void FromXml (SecurityElement esd)
 		{
 			if (esd == null)
-				throw new ArgumentException ("esd is null");
+				throw new ArgumentException ("esd");
 
-			if (esd.Attribute ("version") != "1")
-				throw new ArgumentException ("version attributte is wrong");
+			if (esd.Attribute ("version") != "1") {
+				throw new ArgumentException (Locale.GetText (
+					"version attributte is wrong"));
+			}
 				
 			string zoneName = esd.Attribute ("Zone");
 			zone = (SecurityZone) Enum.Parse (typeof (SecurityZone), zoneName);
@@ -123,15 +145,13 @@ namespace System.Security.Permissions {
 			return se;
 		}
 
-		public SecurityZone SecurityZone
-		{
-			get {
-				return zone;
-			}
-
+		public SecurityZone SecurityZone {
+			get { return zone; }
 			set {
-				if (!Enum.IsDefined (typeof (SecurityZone), value))
-					throw new ArgumentException ("invalid zone");
+				if (!Enum.IsDefined (typeof (SecurityZone), value)) {
+					throw new ArgumentException (Locale.GetText (
+						"invalid zone"));
+				}
 				zone = value;
 			}
 		}

@@ -1,7 +1,8 @@
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ZoneIdentityPermission.cs: Reordered attributes in ToXml and added
-	missing Zone attribute.
+	missing Zone attribute. Fixed buglets wrt new unit tests. Added
+	globalization to exceptions.
 
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
