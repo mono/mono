@@ -17,8 +17,6 @@ namespace MonoTests.System.Security.Policy {
 	[TestFixture]
 	public class ZoneTest : Assertion {
 
-		private static string className = "System.Security.Permissions.ReflectionPermission, ";
-
 		[Test]
 		public void MyComputer () 
 		{
@@ -36,6 +34,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("MyComputer.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
 			Assert ("MyComputer.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
 			Assert ("MyComputer.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
+			Assert ("MyComputer.Null.Equals", !z.Equals (null));
 		}
 
 		[Test]
@@ -55,6 +54,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Intranet.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
 			Assert ("Intranet.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
 			Assert ("Intranet.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
+			Assert ("Intranet.Null.Equals", !z.Equals (null));
 		}
 
 		[Test]
@@ -74,6 +74,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Trusted.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
 			Assert ("Trusted.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
 			Assert ("Trusted.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
+			Assert ("Trusted.Null.Equals", !z.Equals (null));
 		}
 
 		[Test]
@@ -93,6 +94,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Internet.Internet.Equals", z.Equals (new Zone (SecurityZone.Internet)));
 			Assert ("Internet.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
 			Assert ("Internet.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
+			Assert ("Internet.Null.Equals", !z.Equals (null));
 		}
 
 		[Test]
@@ -112,6 +114,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Untrusted.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
 			Assert ("Untrusted.Untrusted.Equals", z.Equals (new Zone (SecurityZone.Untrusted)));
 			Assert ("Untrusted.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
+			Assert ("Untrusted.Null.Equals", !z.Equals (null));
 		}
 
 		[Test]
@@ -131,6 +134,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("NoZone.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
 			Assert ("NoZone.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
 			Assert ("NoZone.NoZone.Equals", z.Equals (new Zone (SecurityZone.NoZone)));
+			Assert ("NoZone.Null.Equals", !z.Equals (null));
 		}
 	}
 }

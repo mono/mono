@@ -1,3 +1,9 @@
+2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ZoneMembershipConditionTest.cs: Fixed tests that where failing too
+	soon, i.e. not where I expected them to ;).
+	* ZoneTest.cs: Added tests for Zone.Equals (null).
+
 2004-08-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnionCodeGroupTest.cs: Added unit tests for Resolve. Converted 

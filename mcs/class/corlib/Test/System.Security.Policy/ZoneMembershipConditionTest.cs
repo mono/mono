@@ -175,7 +175,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsFalse (zmc.Check (assemblyInternet), "Check(assemblyInternet)");
 			Assert.IsFalse (zmc.Check (assemblyIntranet), "Check(assemblyIntranet)");
 			Assert.IsFalse (zmc.Check (assemblyMyComputer), "Check(assemblyMyComputer)");
-
 			Assert.IsFalse (zmc.Check (assemblyNoZone), "Check(assemblyNoZone)");
 			Assert.IsFalse (zmc.Check (assemblyTrusted), "Check(assemblyTrusted)");
 			Assert.IsFalse (zmc.Check (assemblyUntrusted), "Check(assemblyUntrusted)");
@@ -228,7 +227,7 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentException))]
 		public void SecurityZone_NoZone ()
 		{
-			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.NoZone);
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			zmc.SecurityZone = SecurityZone.NoZone;
 		}
 
@@ -236,15 +235,15 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentException))]
 		public void SecurityZone_Invalid ()
 		{
-			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.NoZone);
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			zmc.SecurityZone = (SecurityZone)128;
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void FromXmlNull ()
 		{
-			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.NoZone);
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			zmc.FromXml (null);
 		}
 
@@ -252,7 +251,7 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (ArgumentException))]
 		public void FromXmlInvalid ()
 		{
-			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.NoZone);
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			SecurityElement se = zmc.ToXml ();
 			se.Tag = "IMonoship";
 			zmc.FromXml (se);
