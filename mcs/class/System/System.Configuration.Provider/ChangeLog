@@ -1,3 +1,8 @@
+2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* IProvider.cs, ProviderCollection.cs: IProvider has been Replaced by
+	ProviderBase.
+
 2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Implemented everything for V2.

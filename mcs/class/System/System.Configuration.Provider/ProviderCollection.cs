@@ -40,7 +40,7 @@ namespace System.Configuration.Provider {
 			values = new ArrayList ();
 		}
 	
-		public virtual void Add (IProvider provider)
+		public virtual void Add (ProviderBase provider)
 		{
 			if (readOnly)
 				throw new NotSupportedException ();
@@ -112,12 +112,12 @@ namespace System.Configuration.Provider {
 		public bool IsSynchronized { get { return false; } }
 		public object SyncRoot { get { return this; } }
 		
-		public IProvider this [string name] { 
+		public ProviderBase this [string name] { 
 			get {
 				object pos = lookup [name];
 				if (pos == null) return null;
 				
-				return values [(int) pos] as IProvider;
+				return values [(int) pos] as ProviderBase;
 			}
 		}
 		

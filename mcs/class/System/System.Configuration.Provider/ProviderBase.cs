@@ -1,10 +1,10 @@
 //
-// System.Configuration.Provider.IProvider
+// System.Configuration.Provider.ProviderBase
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -29,13 +29,28 @@
 //
 
 #if NET_2_0
-using System.Collections;
+
 using System.Collections.Specialized;
 
-namespace System.Configuration.Provider {
-	public interface IProvider {
-		void Initialize (string name, NameValueCollection config);
-		string Name { get; }
+namespace System.Configuration.Provider
+{
+	public abstract class ProviderBase
+	{
+		string _name;
+		
+		protected ProviderBase ()
+		{
+		}
+		
+		public virtual void Initialize (string name, NameValueCollection config)
+		{
+			_name = name;
+		}
+		
+		public virtual string Name { 
+			get { return _name; }
+		}
 	}
 }
+
 #endif
