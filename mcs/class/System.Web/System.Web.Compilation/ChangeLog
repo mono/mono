@@ -1,3 +1,12 @@
+2003-03-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: generate correct appbase path. It was working with
+	mcs but not with csc.
+
+	* BaseCompiler.cs: quote arguments and removed GetRandomFileName.
+
+	* CachingCompiler.cs: quote source file.
+
 2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: now the Inherits attribute works as expected for

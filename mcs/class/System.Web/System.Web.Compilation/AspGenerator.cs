@@ -347,8 +347,11 @@ class AspGenerator
 			
 		if (!Path.IsPathRooted (privateBinPath)) {
 			string appbase = setup.ApplicationBase;
-			if (appbase.StartsWith ("file://"))
+			if (appbase.StartsWith ("file://")) {
 				appbase = appbase.Substring (7);
+				if (Path.DirectorySeparatorChar != '/')
+					appbase = appbase.Replace ('/', Path.DirectorySeparatorChar);
+			}
 			privateBinPath = Path.Combine (appbase, privateBinPath);
 		}
 		

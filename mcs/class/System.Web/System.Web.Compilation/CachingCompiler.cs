@@ -147,8 +147,8 @@ namespace System.Web.Compilation
 			if (compiler.CompilerOptions != null)
 				options.Append (compiler.CompilerOptions + ' ');
 
-			options.AppendFormat ("/out:{0} ", compiler.TargetFile);
-			options.Append (compiler.SourceFile);
+			options.AppendFormat ("/out:\"{0}\" ", compiler.TargetFile);
+			options.Append ('"' + compiler.SourceFile + '"');
 
 			//Console.WriteLine ("mcs {0}", options);
 			Process proc = new Process ();

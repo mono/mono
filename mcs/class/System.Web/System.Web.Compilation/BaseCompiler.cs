@@ -86,7 +86,7 @@ namespace System.Web.Compilation
 				string [] split = assemblies.Split (',');
 				StringBuilder result = new StringBuilder ();
 				foreach (string assembly in split)
-					result.AppendFormat ("/r:{0} ", assembly.TrimStart ());
+					result.AppendFormat ("/r:\"{0}\" ", assembly.TrimStart ());
 				
 				if (options == null)
 					return result.ToString ();
@@ -109,21 +109,15 @@ namespace System.Web.Compilation
 			}
 		}
 
-		static string GetRandomFileName ()
-		{
-			string output;
-
-			do { 
-				output = "tmp" + rnd.Next () + ".dll";
-			} while (File.Exists (output));
-
-			return output;
-		}
-
 		public virtual string TargetFile {
 			get {
-				if (randomName == null)
-					randomName = GetRandomFileName ();
+				if (randomName == null) {
+					randomName = Path.GetTempFileName ();
+					try {
+						File.Delete (randomName);
+					} catch {}
+					randomName += ".dll";
+				}
 
 				return randomName;
 			}
