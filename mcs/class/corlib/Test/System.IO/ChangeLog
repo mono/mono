@@ -1,3 +1,7 @@
+2003-04-21  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DirectoryTest.cs: lots of new tests. and some fixes and clean ups
+	
 2003-04-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* StringReaderTest.cs: Update test to include read-past-the-end
