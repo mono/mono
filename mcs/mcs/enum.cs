@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Globalization;
 
 namespace Mono.CSharp {
 
@@ -689,7 +690,7 @@ namespace Mono.CSharp {
 						continue;
 
 					string enumerator_name = ordered_enums [ii] as string;
-					if (String.Compare (checked_name, enumerator_name, true) == 0) {
+					if (String.Compare (checked_name, enumerator_name, true, CultureInfo.InvariantCulture) == 0) {
 						Report.SymbolRelatedToPreviousError ((Location)member_to_location [enumerator_name], enumerator_name);
 						Report.Error_T (3005, (Location)member_to_location [checked_name], GetEnumeratorName (checked_name));
 						break;

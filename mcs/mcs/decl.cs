@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Reflection.Emit;
 using System.Reflection;
 
@@ -1055,7 +1056,7 @@ namespace Mono.CSharp {
 					if (l != type_name.Length)
 						continue;
 
-					if (String.Compare (Name, type_name, true) == 0 && 
+					if (String.Compare (Name, type_name, true, CultureInfo.InvariantCulture) == 0 && 
 						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type)) {
 						Report.SymbolRelatedToPreviousError ((Type)TypeManager.all_imported_types [type_name]);
 						return false;
@@ -1068,7 +1069,7 @@ namespace Mono.CSharp {
 				if (l != name.Length)
 					continue;
 
-				if (String.Compare (Name, name, true) == 0) { 
+				if (String.Compare (Name, name, true, CultureInfo.InvariantCulture) == 0) { 
 
 					if (Name == name)
 						continue;

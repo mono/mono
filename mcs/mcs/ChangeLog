@@ -1,3 +1,10 @@
+2004-05-24  Anders Carlsson  <andersca@gnome.org>
+
+	* decl.cs:
+	* enum.cs:
+	Use the invariant culture when doing String.Compare for CLS case
+	sensitivity.
+	
 2004-05-23  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (DeclSpace.FindType): Only check the `using' list if we
