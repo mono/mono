@@ -1,3 +1,8 @@
+2005-04-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* Thread.cs: Do argument checking for Current[UI]Culture to make
+	the exception more clear for a null value being set.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompressedStack.cs: Added LinkDemand for UnmanagedCode and ECMA 

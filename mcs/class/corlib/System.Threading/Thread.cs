@@ -372,6 +372,9 @@ namespace System.Threading
 			[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 			set {
 				in_currentculture = true;
+				
+				if (value == null)
+					throw new ArgumentNullException ("value");
 
 				try {
 					BinaryFormatter bf = new BinaryFormatter();
@@ -380,8 +383,7 @@ namespace System.Threading
 
 					SetCachedCurrentCulture (value);
 					SetSerializedCurrentCulture (ms.GetBuffer ());
-				}
-				finally {
+				} finally {
 					in_currentculture = false;
 				}
 			}
@@ -439,6 +441,9 @@ namespace System.Threading
 			
 			set {
 				in_currentculture = true;
+				
+				if (value == null)
+					throw new ArgumentNullException ("value");
 
 				try {
 					BinaryFormatter bf = new BinaryFormatter();
@@ -447,8 +452,7 @@ namespace System.Threading
 
 					SetCachedCurrentUICulture (value);
 					SetSerializedCurrentUICulture (ms.GetBuffer ());
-				}
-				finally {
+				} finally {
 					in_currentculture = false;
 				}
 			}
