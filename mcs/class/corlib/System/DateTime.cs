@@ -1298,8 +1298,7 @@ namespace System
 			TimeSpan utcoffset;
 
 			if (useutc)
-				return true;
-
+				utcoffset = new TimeSpan (0, 0, 0);
 			else if (tzsign == -1) {
 				TimeZone tz = TimeZone.CurrentTimeZone;
 				utcoffset = tz.GetUtcOffset (result);

@@ -1,3 +1,8 @@
+2005-01-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTime.cs: Reverted last patch for utc as it broke all certificate
+	handling and another unit test in DateTime.
+
 2005-01-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* DateTime.cs: Return immediately if useutc is set to true, there
