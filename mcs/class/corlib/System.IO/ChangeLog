@@ -1,3 +1,8 @@
+2003-07-16  Dick Porter  <dick@ximian.com>
+
+	* FileInfo.cs: Update path info when a file is moved.  Patch by
+	John Luke <jluke@cfl.rr.com>, fixes bug 44253.
+
 2003-07-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MemoryStream.cs: fixed bug #46060. Thanks to Carlos Barcenilla.

@@ -141,6 +141,7 @@ namespace System.IO {
 				MonoIO.ExistsDirectory (dest, out error))
 				throw new IOException ();
 			File.Move (FullPath, dest);
+			this.FullPath = Path.GetFullPath (dest);
 		}
 
 		public FileInfo CopyTo (string path) {
