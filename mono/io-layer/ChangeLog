@@ -1,3 +1,8 @@
+2004-09-09  Dick Porter  <dick@ximian.com>
+
+	* error.c:
+	* io.c: Set error codes everywhere.
+
 2004-09-06  Dick Porter  <dick@ximian.com>
 
 	* handles.c (_wapi_handle_unref): Reset the private record's type
