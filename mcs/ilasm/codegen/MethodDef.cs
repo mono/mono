@@ -327,7 +327,7 @@ namespace Mono.ILASM {
                         Array.Sort (label_info);
 
                         foreach (LabelInfo label in label_info) {
-				if (label.Offset > 0) {
+				if (label.Offset > -1) {
 					label.Define (new PEAPI.CILLabel (label.Offset));
 					continue;
 				}
