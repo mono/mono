@@ -1,5 +1,10 @@
 2004-05-29  Martin Baulig  <martin@ximian.com>
 
+	* literal.cs (NullPointer): Provide a private .ctor which sets
+	`type' to TypeManager.object_type.  Fixes #59048.
+
+2004-05-29  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (MemberAccess.ResolveMemberAccess): If we're an
 	EventExpr, set `ee.InstanceExpression = left'.  Fixes #59188.
 
