@@ -78,7 +78,7 @@ namespace Microsoft.JScript {
 			if (names.Contains (name))
 				 throw new VsaException (VsaError.ItemNameInUse);
 
-			IVsaItem item = null;
+  			IVsaItem item = null;
 
 			switch (itemType) {
 			case VsaItemType.AppGlobal:

@@ -347,8 +347,8 @@ call_aux returns [AST args]
 	Args tmp_args = new Args ();
 	args = null;
 }
-	: (("(" (arguments_list [tmp_args] { args = tmp_args; } | ) ")"
-	   | "[" expr "]"
+	: ((OPEN_PARENS (arguments_list [tmp_args] { args = tmp_args; } | ) CLOSE_PARENS
+	   | OPEN_BRACKET expr CLOSE_BRACKET
 	   | DOT IDENTIFIER
 	   ) call_aux 
 	  |

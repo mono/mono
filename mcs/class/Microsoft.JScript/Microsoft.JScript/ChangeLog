@@ -1,3 +1,8 @@
+2003-10-30  cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: fixed function call parsing! yeah! (give
+	thanks to Hector!) 
+
 2003-10-28  cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: allow empty program files. Added type
