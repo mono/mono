@@ -8,16 +8,18 @@ using System;
 
 namespace Microsoft.Win32
 {
+
 	[Serializable]
-	public enum RegistryHive :uint
+	public enum RegistryHive
 	{
-		ClassesRoot = 0x80000000,
-		CurrentConfig = 0x80000005,
-		CurrentUser = 0x80000001,
-		DynData = 0x80000006,
-		LocalMachine = 0x80000002,
-		PerformanceData = 0x80000004,
-		Users = 0x80000003
+		
+		ClassesRoot = -2147483648,
+		CurrentConfig = -2147483643,
+		CurrentUser = -2147483647,
+		DynData = -2147483642,
+		LocalMachine = -2147483646,
+		PerformanceData = -2147483644,
+		Users = -2147483645
 	}
 
 }
