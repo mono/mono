@@ -39,6 +39,21 @@ using System.Runtime.Serialization;
 
 
 namespace System.Collections.Generic {
+
+	// FIXME: This should be an unparametrized nested class of Dictionary<K,V>
+	[Serializable]
+	internal class Slot<K, V> {
+		public K Key;
+		public V Value;
+		public Slot<K, V> next;
+		public Slot (K Key, V Value, Slot<K, V> next)
+		{
+			this.Key = Key;
+			this.Value = Value;
+			this.next = next;
+		}
+	}
+
 	[Serializable, CLSCompliant (false)]
 	public class Dictionary<K, V> : IDictionary<K, V>,
 		//ICollection<KeyValuePair<K, V>>,
@@ -49,16 +64,24 @@ namespace System.Collections.Generic {
 		ISerializable,
 		IDeserializationCallback
 	{
-	
-		[Serializable]
-		internal class Slot<K, V> {
-			public K Key;
-			public V Value;
-			public Slot<K, V> next;
-		}
-	
 		const int INITIAL_SIZE = 10;
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
+
+#if false
+		// FIXME: compiler bug prevents this from being used.
+		[Serializable]
+		internal class Slot {
+			public K Key;
+			public V Value;
+			public Slot next;
+			public Slot (K Key, V Value, Slot next)
+			{
+				this.Key = Key;
+				this.Value = Value;
+				this.next = next;
+			}
+		}
+#endif
 	
 		Slot<K, V> [] _table;
 	
@@ -67,37 +90,26 @@ namespace System.Collections.Generic {
 	
 		IComparer<K> _hcp;
 	
-		// FIXME: I think taht the need for internal here is a compiler bug
-		internal int Threshold {
-			get {
-				return (int) (_table.Length * _loadFactor);
-			}
-		}
+		uint _threshold;
 	
 		public int Count {
 			get { return _usedSlots; }
 		}
-	
-		public int Capacity {
-			get { return _table.Length; }
-		}
-	
+
 		public V this [K key] {
 			get {
-				return GetSlot (key).Value;
+				int index = GetSlot (key);
+				if (index < 0)
+					throw new KeyNotFoundException ();
+				return _table [index].Value;
 			}
 			
 			set {
-				GetSlot (key).Value = value;
-			}
-		}
-	
-		internal object this [int index, int dummy] {
-			get {
-				return _table [index];
-			}
-			set {
-				_table [index] = (Slot<K, V>) value;
+				int index = GetSlot (key);
+				if (index < 0)
+					DoAdd (index, key, value);
+				else
+					_table [index].Value = value;
 			}
 		}
 	
@@ -108,12 +120,12 @@ namespace System.Collections.Generic {
 	
 		public Dictionary (IComparer<K> comparer)
 		{
-			Init ();
+			Init (INITIAL_SIZE, comparer, DEFAULT_LOAD_FACTOR);
 		}
 	
 		public Dictionary (IDictionary<K, V> dictionary)
+			: this (dictionary, null)
 		{
-			Init ();
 		}
 	
 		public Dictionary (int capacity)
@@ -128,6 +140,8 @@ namespace System.Collections.Generic {
 	
 		public Dictionary (IDictionary<K, V> dictionary, IComparer<K> comparer)
 		{
+			if (dictionary == null)
+				throw new ArgumentNullException ("dictionary");
 			int capacity = dictionary.Count;
 			Init (capacity, comparer, DEFAULT_LOAD_FACTOR);
 			foreach (KeyValuePair<K, V> entry in dictionary) {
@@ -162,9 +176,14 @@ namespace System.Collections.Generic {
 		
 		protected void Init (int capacity, IComparer<K> hcp, float loadFactor)
 		{
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity");
 			this._hcp = hcp;
 			_table = new Slot<K, V> [capacity];
 			_loadFactor = loadFactor;
+			_threshold = (uint) (capacity * _loadFactor);
+			if (_threshold == 0 && capacity > 0)
+				_threshold = 1;
 		}
 	
 		ICollection<V> GetValues ()
@@ -195,29 +214,24 @@ namespace System.Collections.Generic {
 			//	 to the smallest prime number that is larger
 			//	 than twice the current number of Hashtable buckets
 			uint newSize = (uint) ToPrime ((_table.Length << 1) | 1);
-			
-			int count = Count;
-			
-			Slot<K, V> [] slots = new Slot<K, V> [newSize];
+
+			_threshold = (uint) (newSize * _loadFactor);
+			if (_threshold == 0 && newSize > 0)
+				_threshold = 1;
+		
+			Slot<K, V> nextslot = null;
 			Slot<K, V> [] oldTable = _table;
-			int oldUsedSlots = _usedSlots;
 			
-			_table = slots;
-			_usedSlots = 0;
-			
+			_table = new Slot<K, V> [newSize];
+
+			int index;
 			for (int i = 0; i < oldTable.Length; i++) {
-				Slot<K, V> entry = oldTable [i];
-			
-				if (entry == null)
-					continue;
-				
-				Add (entry.Key, entry.Value);
-				if (entry.next != null) {
-					//Chain Exists, traverse.. 
-					Slot<K, V> tmp;
-	
-					for (tmp = entry.next; tmp != null; tmp = tmp.next)
-						Add (tmp.Key, tmp.Value);
+				for (Slot<K, V> slot = oldTable [i]; slot != null; slot = nextslot) {
+					nextslot = slot.next;
+
+					index = DoHash (slot.Key);
+					slot.next = _table [index];
+					_table [index] = slot;
 				}
 			}
 		}
@@ -234,36 +248,26 @@ namespace System.Collections.Generic {
 			*/
 		}
 	
-		// FIXME: Horrible performance / ugly
 		public void Add (K key, V value)
 		{
-			try {
-				GetSlot (key);
-			} catch (KeyNotFoundException e) {
-				if (_usedSlots >= Threshold)
-					Resize ();
-				
-				int index = DoHash (key);
-				
-				Slot<K, V> tmp = new Slot<K, V> ();
-				tmp.Key = key;
-				tmp.Value = value;
-				
-				// Key does not already exist, add it
-				if (_table [index] != null) {
-					//Collision! Add to front
-					tmp.next = _table [index];
-					_table [index] = tmp;
-				} else {
-					_table [index] = tmp;
-					tmp.next = null;
-				}
-				_usedSlots++;
-				
-				return;
+			int index = GetSlot (key);
+			if (index >= 0)
+				throw new ArgumentException ("An element with the same key already exists in the dictionary.");
+
+			DoAdd (index, key, value);
+		}
+
+		void DoAdd (int negated_index, K key, V value)
+		{
+			int index = -negated_index - 1;
+
+			if (_usedSlots >= _threshold) {
+				Resize ();
+				index = DoHash (key);
 			}
-	
-			throw new ArgumentException ("An element with the same key already exists in the dictionary.");
+
+			_table [index] = new Slot<K, V> (key, value, _table [index]);
+			++_usedSlots;
 		}
 	
 		protected int DoHash (K key)
@@ -285,15 +289,9 @@ namespace System.Collections.Generic {
 			_usedSlots = 0;
 		}
 	
-		// FIXME bad performance
 		public bool ContainsKey (K key)
 		{
-			try {
-				GetSlot (key);
-				return true;
-			} catch (KeyNotFoundException e) {
-				return false;
-			}
+			return GetSlot (key) >= 0;
 		}
 	
 		public bool ContainsValue (V value)
@@ -317,83 +315,53 @@ namespace System.Collections.Generic {
 	
 		public bool Remove (K key)
 		{
-			int index = DoHash (key);
-			Slot<K, V> slot = _table [index];
-	
-			if (slot == null) {
-				throw new KeyNotFoundException ();
-			}
-	
-			if (slot.Key.Equals (key)) {
-				//Found it! Remove it.. 
-				_table [index] = slot.next;
-				_usedSlots--;
-			} else if (slot.next != null) {
-				//Chain exists, check for the key
-				Slot<K, V> prev = null, tmp = slot.next;
-				prev = slot;
-	
-				while (tmp != null && !tmp.Key.Equals (key)) {
-					prev = tmp;
-					tmp = tmp.next;
-				}
-				if (tmp != null) {
-					//Found it, remove the entry.. patch prev.next
-					prev.next = tmp.next;
-					_usedSlots--;
-				} else
-					throw new KeyNotFoundException ();
-			} else
-				throw new KeyNotFoundException ();
+			int index = GetSlot (key);
+
+			if (index < 0)
+				return false;
+
+			// If GetSlot returns a valid index, the given key is at the head of the chain.
+			_table [index] = _table [index].next;
+			--_usedSlots;
 			return true;
 		}
-	
-		internal Slot<K, V> FindInChain (int index, K key)
+
+		//
+		// Returns the index of the chain containing key.  Also ensures that the found key is the first element of the chain.
+		// If the key is not found, returns -h-1, where 'h' is the index of the chain that would've contained the key.
+		// 
+		internal int GetSlot (K key)
 		{
-			Slot<K, V> tmp = _table[index].next, prev = _table[index];
-			while (tmp != null && !tmp.Key.Equals (key)){
-				prev = tmp;
-				tmp = tmp.next;
-			}
-			if(tmp!=null){
-				//Moving it to the head of the list
-				prev.next = tmp.next;
-				tmp.next = _table[index];
-				_table[index] = tmp;
-			}
-			return tmp;
-		}
-	
-		internal Slot<K, V> GetSlot (K key)
-		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
 			int index = DoHash (key);
 			Slot<K, V> slot = _table [index];
-			Slot<K, V> tmp = null;
+			Slot<K, V> prev = null;
+
+			while (slot != null && !slot.Key.Equals (key)) {
+				prev = slot;
+				slot = slot.next;
+			}
 	
-			//if (slot.Equals (default (Slot<K,V>)))
 			if (slot == null)
-				throw new KeyNotFoundException ();
+				return - index - 1;
 	
-	
-			if (slot.Key.Equals (key))
-				return slot;
-			else
-				if ((tmp = FindInChain (index, key)) != null)
-					return tmp;
-				else
-					throw new KeyNotFoundException ();
+			if (prev != null) {
+				// Move to the head of the list
+				prev.next = slot.next;
+				slot.next = _table [index];
+				_table [index] = slot;
+			}
+
+			return index;
 		}
 	
-		// FIXME bad performance
 		public bool TryGetValue (K key, out V value)
 		{
-			try {
-				value = GetSlot (key).Value;
-			} catch (KeyNotFoundException e) {
-				value = default (V);
-				return false;
-			}
-			return true;
+			int index = GetSlot (key);
+			bool found = index >= 0;
+			value = found ? _table [index].Value : default (V);
+			return found;
 		}
 	
 		ICollection<K> IDictionary<K, V>.Keys {
@@ -548,9 +516,9 @@ namespace System.Collections.Generic {
 				if (_validNodeVisited == _dictionary.Count)
 					return (_isValid = false);
 	
-				while (_index < _dictionary.Capacity) {
+				while (_index < _dictionary._table.Length) {
 					if (_current == null)
-						_current = (Slot<K, V>) _dictionary [_index++, 0];
+						_current = _dictionary._table [_index++];
 					else
 						_current = _current.next;
 	

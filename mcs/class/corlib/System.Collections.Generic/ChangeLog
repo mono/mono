@@ -1,3 +1,12 @@
+2005-04-04  Raja R Harinath  <rharinath@novell.com>
+
+	* Dictionary.cs: Update to draft of Feb 27.  Add some argument checks.
+	(GetSlot): Don't throw KeyNotFoundException.  Unify all list
+	traversals in here.  Move found key to head of chain, and return
+	the index of the chain suitable for/containing the key.
+	(Item, Add, Remove): Simplify, and remove FIXMEs.
+	(Resize): Reuse linked list nodes from old table.
+
 2005-04-02  Ben Maurer  <bmaurer@ximian.com>
 
 	* Dictionary.cs: Real impl.

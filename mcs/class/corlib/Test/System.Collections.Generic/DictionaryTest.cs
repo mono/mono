@@ -95,6 +95,12 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (10, _dictionary2 [m1].Value, "#2");
 			Assert.AreEqual (12, _dictionary2 [m3].Value, "#3");
 		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void NullTest ()
+		{
+			_dictionary.Add (null, "");
+		}
 	
 		//Tests Add when resize takes place
 		[Test]
@@ -117,24 +123,47 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (i, numElems, "Add with resize failed!");
 		}
 	
-		[Test, ExpectedException(typeof(KeyNotFoundException))]
-		public void IndexorTest ()
+		[Test]
+		public void IndexerGetExistingTest ()
 		{
 			_dictionary.Add ("key1", (object)"value");
 			Assert.AreEqual ("value", _dictionary ["key1"].ToString (), "Add failed!");
-			Assert.AreEqual ("value", _dictionary ["key2"].ToString (), "Add failed!");
+		}
+		
+		[Test, ExpectedException(typeof(KeyNotFoundException))]
+		public void IndexerGetNonExistingTest ()
+		{
+			object foo = _dictionary ["foo"];
+		}
+
+		[Test]
+		public void IndexerSetExistingTest ()
+		{
+			_dictionary.Add ("key1", (object)"value1");
+			_dictionary ["key1"] = (object) "value2";
+			Assert.AreEqual (1, _dictionary.Count);
+			Assert.AreEqual ("value2", _dictionary ["key1"]);
+		}
+
+		[Test]
+		public void IndexerSetNonExistingTest ()
+		{
+			_dictionary ["key1"] = (object) "value1";
+			Assert.AreEqual (1, _dictionary.Count);
+			Assert.AreEqual ("value1", _dictionary ["key1"]);
 		}
 	
-		[Test, ExpectedException(typeof(KeyNotFoundException))]
+		[Test]
 		public void RemoveTest ()
 		{
 			_dictionary.Add ("key1", (object)"value1");
 			_dictionary.Add ("key2", (object)"value2");
 			_dictionary.Add ("key3", (object)"value3");
 			_dictionary.Add ("key4", (object)"value4");
-			_dictionary.Remove ("key3");
+			Assert.IsTrue (_dictionary.Remove ("key3"));
+			Assert.IsFalse (_dictionary.Remove ("foo"));
 			Assert.AreEqual (3, _dictionary.Count);
-			string value = _dictionary ["key3"].ToString ();
+			Assert.IsFalse (_dictionary.ContainsKey ("key3"));
 		}
 	
 		[Test]
@@ -151,7 +180,7 @@ namespace MonoTests.System.Collections.Generic {
 			
 		}
 	
-		[Test, ExpectedException (typeof (KeyNotFoundException))]
+		[Test]
 		public void ClearTest ()
 		{
 			_dictionary.Add ("key1", (object)"value1");
@@ -160,7 +189,7 @@ namespace MonoTests.System.Collections.Generic {
 			_dictionary.Add ("key4", (object)"value4");
 			_dictionary.Clear ();
 			Assert.AreEqual (0, _dictionary.Count, "Clear method failed!");
-			string value = _dictionary ["key2"].ToString ();
+			Assert.IsFalse (_dictionary.ContainsKey ("key2"));
 		}
 	
 		[Test]
@@ -360,7 +389,6 @@ namespace MonoTests.System.Collections.Generic {
 			dictionary.Add ("key3", (object)"value3");
 	
 			Assert.AreEqual (3, dictionary.Count);
-			Assert.AreEqual (11, dictionary.Capacity);
 	
 			dictionary.Add ("key4", (object)"value4");
 			Assert.AreEqual (4, dictionary.Count);
