@@ -9020,23 +9020,28 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			if (dim != "") {
+			//
+			// ltype.Fullname is already fully qualified, so we can skip
+			// a lot of probes, and go directly to TypeManager.LookupType
+			//
+			string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
+			string cname = fname + dim;
+			type = TypeManager.LookupTypeDirect (cname);
+			if (type == null){
 				//
+				// For arrays of enumerations we are having a problem
+				// with the direct lookup.  Need to investigate.
 				// ltype.Fullname is already fully qualified, so we can skip
 				// a lot of probes, and go directly to TypeManager.LookupType
 				//
 				// For now, fall back to the full lookup in that case.
-				//	
-				string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
-				string cname = fname + dim;
-				FullNamedExpression e = ec.DeclSpace.LookupType (
-					cname, loc, /*silent=*/ false, /*ignore_cs0104=*/ false);
+				//
+				FullNamedExpression e = ec.DeclSpace.LookupType (cname, loc, false, false);
 				if (e is TypeExpr)
 					type = ((TypeExpr) e).ResolveType (ec);
 				if (type == null)
 					return null;
-			} else
-				type = ltype;
+			}
 
 			if (!ec.InUnsafe && type.IsPointer){
 				UnsafeError (loc);

@@ -1,5 +1,11 @@
 2005-03-22  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Put the old
+	code back; this method has been completely rewritten in MCS, so
+	the new changes will get in anyways when I merge the rest.
+
+2005-03-22  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.GetField): Add support for generic
 	instances.
 
