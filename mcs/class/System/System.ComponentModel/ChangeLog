@@ -1,3 +1,8 @@
+2005-01-25  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* Win32Exception.cs: Set the correct name for the serialized
+	NativeErrorCode. This fixes bug #71572. Fix by Aleksandar Dezelin.
+
 2005-01-24 Joerg Rosenkranz <joergr@voelcker.com>
 
 	* TypeDescriptor.cs: Changed handling of interfaces and objects in
