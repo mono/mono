@@ -1,3 +1,9 @@
+2003-09-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (ves_exec_method): Fix warning.
+	(ves_exec_method_with_context): Fix CGT_UN and CLT_UN. Patch by
+	David Waite (mass@akuma.org).
+
 2003-9-24  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c: I broke calling native delegates reinstate
