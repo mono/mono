@@ -1,3 +1,12 @@
+2004-07-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (LocalTemporary): Add new argument: is_address,If
+	`is_address' is true, then the value that we store is the address
+	to the real value, and not the value itself.
+	
+	* ecore.cs (PropertyExpr): use the new local temporary
+	stuff to allow us to handle X.Y += z (where X is a struct)
+
 2004-07-08  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Lock.Resolve): Set ec.NeedReturnLabel() if we do
