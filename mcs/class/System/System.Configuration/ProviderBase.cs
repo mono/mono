@@ -31,24 +31,25 @@ using System.Collections.Specialized;
 
 namespace System.Configuration
 {
-        public abstract class ProviderBase
-        {
-                string name;
-                NameValueCollection configuration;
-                
-                protected ProviderBase ()
-                {
-                }
+	public abstract class ProviderBase
+	{
+		string name;
+		NameValueCollection configuration;
+		
+		protected ProviderBase ()
+		{
+		}
 
-                public virtual string Name {
-                        get { return name; }
-                }
+		public virtual string Name {
+			get { return name; }
+		}
 
-                public virtual void Initialize (string anme, NameValueCollection configuration)
-                {
-                        this.name = name;
-                        this.configuration = configuration;
-                }
-        }
+		[MonoTODO]
+		public virtual void Initialize (string anme, NameValueCollection configuration)
+		{
+			this.name = name;
+			this.configuration = configuration;
+		}
+	}
 }
 #endif

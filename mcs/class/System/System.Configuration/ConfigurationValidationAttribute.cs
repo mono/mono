@@ -32,14 +32,14 @@ using System;
 
 namespace System.Configuration
 {
-        public abstract class ConfigurationValidationAttribute : Attribute
-        {
-                protected ConfigurationValidationAttribute ()
-                {
-                }
+	public abstract class ConfigurationValidationAttribute : Attribute
+	{
+		protected ConfigurationValidationAttribute ()
+		{
+		}
 
-                protected abstract bool Validate (ConfigurationProperty property, object value);
-        }
+		protected abstract bool Validate (ConfigurationProperty property, object value);
+	}
 }
 #endif
 #endif

@@ -32,31 +32,35 @@ using System;
 
 namespace System.Configuration {
 
-        public sealed class ConnectionStringsSection : ConfigurationSection
-        {
-                public ConnectionStringsSection ()
-                {
-                }
+	public sealed class ConnectionStringsSection : ConfigurationSection
+	{
+		[MonoTODO]
+		public ConnectionStringsSection ()
+		{
+		}
 
-                protected internal override object GetRuntimeObject ()
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected internal override object GetRuntimeObject ()
+		{
+			throw new NotImplementedException ();
+		}
 
-                protected internal override void InitializeDefault ()
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected internal override void InitializeDefault ()
+		{
+			throw new NotImplementedException ();
+		}
 
-//              [MonoTODO ("Implement ConnectionStringsSettingsCollection")]
-//              public ConnectionStringsSettingsCollection ConnectionStrings {
-//                      get { throw new NotImplementedException (); }
-//              }
+//		[MonoTODO ("Implement ConnectionStringsSettingsCollection")]
+//		public ConnectionStringsSettingsCollection ConnectionStrings {
+//			  get { throw new NotImplementedException (); }
+//		}
 
-                protected internal override ConfigurationPropertyCollection Properties {
-                        get { throw new NotImplementedException (); }
-                }                                
-        }
+		[MonoTODO]
+		protected internal override ConfigurationPropertyCollection Properties {
+			get { throw new NotImplementedException (); }
+		}                                
+	}
 }
 #endif
 #endif

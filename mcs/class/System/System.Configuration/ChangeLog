@@ -1,5 +1,12 @@
 2004-11-04  Lluis Sanchez Gual <lluis@novell.com>
 
+	* AppSettingsSection.cs, ConfigurationPropertyCollection.cs,
+	  ConfigurationValidationAttribute.cs, ConnectionStringsSection.cs,
+	  ProtectedConfigurationProvider.cs, ProviderBase.cs
+	  RuntimeOnlySection.cs: Fixed formatting and added missing TODOs.
+
+2004-11-04  Lluis Sanchez Gual <lluis@novell.com>
+
 	* Configuration.cs, ConfigurationElement.cs, ConfigurationLocation.cs,
 	  ConfigurationLocationCollection.cs, ConfigurationProperty.cs,
 	  ConfigurationPropertyAttribute.cs, ConfigurationSection.cs,

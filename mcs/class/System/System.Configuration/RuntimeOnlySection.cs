@@ -36,24 +36,29 @@ namespace System.Configuration
 	{
 		string xml;
 		
+		[MonoTODO]
 		protected internal override bool IsModified ()
 		{
 			return false;
 		}
 
+		[MonoTODO]
 		protected internal override void ReadXml (XmlReader reader, object context)
 		{
 			xml = reader.ReadOuterXml ();
 		}
 
+		[MonoTODO]
 		protected internal override void Reset (ConfigurationElement parent_element, object context)
 		{
 		}
 
+		[MonoTODO]
 		protected internal override void ResetModified ()
 		{
 		}
 
+		[MonoTODO]
 		protected internal override string WriteXml (
 				ConfigurationElement parent,
 				object context, string name,

@@ -34,72 +34,72 @@ using System.Collections.Generic;
 
 namespace System.Configuration
 {
-        public class ConfigurationPropertyCollection : ICollection, IEnumerable
-        {
-                List <ConfigurationProperty> collection;
+	public class ConfigurationPropertyCollection : ICollection, IEnumerable
+	{
+		List <ConfigurationProperty> collection;
 
-                public ConfigurationPropertyCollection ()
-                {
-                        collection = new List <ConfigurationProperty> ();
-                }
+		public ConfigurationPropertyCollection ()
+		{
+			collection = new List <ConfigurationProperty> ();
+		}
 
-                public virtual int Count {
-                        get { return collection.Count; }
-                }
+		public virtual int Count {
+			get { return collection.Count; }
+		}
 
-                public ConfigurationProperty this [string name] {
-                        get {
-                                foreach (ConfigurationProperty cp in collection)
-                                        if (cp.Name == name)
-                                                return cp;
+		public ConfigurationProperty this [string name] {
+			get {
+				foreach (ConfigurationProperty cp in collection)
+					if (cp.Name == name)
+							return cp;
 
-                                return null;
-                        }
-                }
+				return null;
+			}
+		}
 
-                bool ICollection.IsSynchronized {
-                        get {  return false; }
-                }
+		bool ICollection.IsSynchronized {
+			get {  return false; }
+		}
 
-                object ICollection.SyncRoot {
-                        get { return collection; }
-                }
+		object ICollection.SyncRoot {
+			get { return collection; }
+		}
 
-                public void Add (ConfigurationProperty property)
-                {
-                        collection.Add (property);
-                }
+		public void Add (ConfigurationProperty property)
+		{
+			collection.Add (property);
+		}
 
-                public bool Contains (string name)
-                {
-                        ConfigurationProperty property = this [name];
+		public bool Contains (string name)
+		{
+			ConfigurationProperty property = this [name];
 
-                        if (property == null)
-                                return false;
-                        
-                        return collection.Contains (property);
-                }
+			if (property == null)
+				return false;
+			
+			return collection.Contains (property);
+		}
 
-                public void CopyTo (ConfigurationProperty [] array, int index)
-                {
-                        collection.CopyTo (array, index);
-                }
+		public void CopyTo (ConfigurationProperty [] array, int index)
+		{
+			collection.CopyTo (array, index);
+		}
 
-                void ICollection.CopyTo (Array array, int index)
-                {
-                        ((ICollection) collection).CopyTo (array, index);
-                }
+		void ICollection.CopyTo (Array array, int index)
+		{
+			((ICollection) collection).CopyTo (array, index);
+		}
 
-                IEnumerator IEnumerable.GetEnumerator ()
-                {
-                        return collection.GetEnumerator ();
-                }
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return collection.GetEnumerator ();
+		}
 
-                public bool Remove (string name)
-                {
-                        return collection.Remove (this [name]);
-                }
-        }
+		public bool Remove (string name)
+		{
+			return collection.Remove (this [name]);
+		}
+	}
 }
 #endif
 #endif

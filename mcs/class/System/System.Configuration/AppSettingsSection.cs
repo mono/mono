@@ -34,48 +34,54 @@ using System.Xml;
 
 namespace System.Configuration {
 
-        public sealed class AppSettingsSection : ConfigurationSection
-        {
-                public AppSettingsSection ()
-                {
-                }
+	public sealed class AppSettingsSection : ConfigurationSection
+	{
+		public AppSettingsSection ()
+		{
+		}
 
-                protected internal override  bool IsModified ()
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected internal override  bool IsModified ()
+		{
+			throw new NotImplementedException ();
+		}
 
-                protected internal override void ReadXml (XmlReader reader, object context)
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected internal override void ReadXml (XmlReader reader, object context)
+		{
+			throw new NotImplementedException ();
+		}
 
-                protected internal override void Reset (
-                        ConfigurationElement parent_section, object context)
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected internal override void Reset (ConfigurationElement parent_section, object context)
+		{
+			throw new NotImplementedException ();
+		}
 
-                protected internal override void ResetModified ()
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected internal override void ResetModified ()
+		{
+			throw new NotImplementedException ();
+		}
 
-                protected internal override string WriteXml (
-                        ConfigurationElement parent, object context, string name, ConfigurationUpdateMode mode)
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected internal override string WriteXml (
+			ConfigurationElement parent, object context, string name, ConfigurationUpdateMode mode)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public string File {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public string File {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-                public NameValueCollection Settings {
-                        get { throw new NotImplementedException (); }
-                }
-        }
+		[MonoTODO]
+		public NameValueCollection Settings {
+			get { throw new NotImplementedException (); }
+		}
+	}
 }
 #endif
 #endif

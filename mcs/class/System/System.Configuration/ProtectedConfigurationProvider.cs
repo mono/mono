@@ -32,16 +32,16 @@ using System.Xml;
 
 namespace System.Configuration
 {
-        public abstract class ProtectedConfigurationProvider
-        {
-                protected ProtectedConfigurationProvider ()
-                {
-                }
+	public abstract class ProtectedConfigurationProvider
+	{
+		protected ProtectedConfigurationProvider ()
+		{
+		}
 
-                public abstract XmlNode Decrypt (XmlNode encrypted_node);
+		public abstract XmlNode Decrypt (XmlNode encrypted_node);
 
-                public abstract XmlNode Encrypt (XmlNode node);
-        }
+		public abstract XmlNode Encrypt (XmlNode node);
+	}
 }
 #endif
 #endif
