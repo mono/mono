@@ -1,3 +1,8 @@
+2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlFormatExtensionPointAttribute.cs: Fixed constructor. Member name
+	  was not set.
+
 2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebServicesConfigurationSectionHandler.cs: added <soapExtensionTypes>
