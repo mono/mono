@@ -1,4 +1,8 @@
 
+Fri Jun 21 19:16:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: small tweak to handle self-hosting.
+
 Thu Jun 20 23:28:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fix type name parse code.
