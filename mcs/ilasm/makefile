@@ -28,6 +28,7 @@ SOURCES =				\
         codegen/SimpInstr.cs            \
 	codegen/MiscInstr.cs		\
 	codegen/LdcInstr.cs		\
+	codegen/BranchInstr.cs		\
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
