@@ -10,7 +10,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 
 
-namespace System.Runtime.Remoting {
+namespace System.Runtime.Remoting.Metadata {
 
 
 	/// <summary>
@@ -44,4 +44,4 @@ namespace System.Runtime.Remoting {
 
 	} // SoapOption
 
-} // System.Runtime.Remoting
+} // System.Runtime.Remoting.Metadata

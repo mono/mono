@@ -1,3 +1,8 @@
+2002-07-29  Duncan Mak  <duncan@ximian.com>
+
+	* ILease.cs: Add the method part of the interface and renamed the
+	CurrentState property to it proper name.
+
 2002-07-24  Duncan Mak  <duncan@ximian.com>
 
 	* LeaseState.cs: Moved here from System.Runtime.Remoting.

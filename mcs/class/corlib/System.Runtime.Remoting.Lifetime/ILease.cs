@@ -14,9 +14,14 @@ namespace System.Runtime.Remoting.Lifetime {
 	public interface ILease
 	{
 		TimeSpan CurrentLeaseTime { get; }
-		LeaseState CurrentLeaseState { get; }
+		LeaseState CurrentState { get; }
 		TimeSpan InitialLeaseTime { get; set; }
 		TimeSpan RenewOnCallTime { get; set; }
 		TimeSpan SponsorshipTimeout {get; set; }
+
+		void Register (ISponsor obj);
+		void Register (ISponsor obj, TimeSpan renewalTime);
+		TimeSpan Renew (TimeSpan renewalTime);
+		void Unregister (ISponsor obj);
 	}
 }

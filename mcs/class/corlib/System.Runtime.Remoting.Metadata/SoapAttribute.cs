@@ -17,7 +17,7 @@ namespace System.Runtime.Remoting.Metadata {
 		}
 
 		protected string ProtXmlNamespace;
-		protected object ReflectionInfo;
+		protected object ReflectInfo;
 
 		[MonoTODO]
 		public virtual bool Embedded {
