@@ -1,5 +1,9 @@
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaDataImporter.cs : empty element is not regarded as a column.
+
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UniqueConstraint.cs : mostly reverted the previous patch + check
 	  IsPrimaryKey before validation.
 

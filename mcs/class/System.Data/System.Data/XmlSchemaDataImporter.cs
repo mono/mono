@@ -379,13 +379,10 @@ el.ElementType != schemaAnyType)
 					return true; // column element
 				if (ct.AttributeUses.Count > 0)
 					return false; // table element
-				switch (ct.ContentType) {
-				case XmlSchemaContentType.Empty:
-				case XmlSchemaContentType.TextOnly:
+				if (ct.ContentType == XmlSchemaContentType.TextOnly)
 					return true; // column element
-				default:
+				else
 					return false; // table element
-				}
 			}
 			XmlSchemaGroupBase gb = p as XmlSchemaGroupBase;
 			for (int i = 0; i < gb.Items.Count; i++) {
