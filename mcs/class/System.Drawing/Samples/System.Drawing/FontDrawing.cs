@@ -120,7 +120,7 @@ namespace Font1Sample {
                         str = "This a " +  f3.Name + " italic test string size: "+ f3.Height;
 			gr.DrawString( str, f3, br, 10, 100);
 
-                        str = "This an " +  f1.Name + " test string size: "+ f4.Height;
+                        str = "This an " +  f4.Name + " test string size: "+ f4.Height;
 			gr.DrawString (str, f4, br, 10, 150);
 
                         str = "This a " +  f5.Name + " test string size: "+ f5.Height;
