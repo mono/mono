@@ -172,6 +172,23 @@ namespace Mono.Xml.Xsl {
 			return ret;
 		}
 		
+		public bool ParseYesNoAttribute (string localName, bool defaultVal)
+		{
+			return ParseYesNoAttribute (localName, String.Empty, defaultVal);
+		}
+		
+		public bool ParseYesNoAttribute (string localName, string ns, bool defaultVal)
+		{
+			string s = GetAttribute (localName, ns);
+			
+			switch (s) {
+			case null: return defaultVal;
+			case "yes": return true;
+			case "no": return false;
+			default: throw new Exception ("invalid value for " + localName);
+			}
+		}
+		
 		public string GetAttribute (string localName)
 		{
 			return GetAttribute (localName, String.Empty);

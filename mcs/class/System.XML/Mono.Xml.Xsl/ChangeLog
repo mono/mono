@@ -1,5 +1,9 @@
 2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Compiler.cs: Add support for boolean attributes (yes/no).
+
+2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs: Add method LocalNameOf, to get the local name of a
 	string.
 	* XslTransformProcessor.cs: Support for setting the XmlResolver.
