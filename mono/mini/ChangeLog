@@ -1,5 +1,7 @@
 2005-01-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c exceptions-amd64.c: Use the new global code manager.
+
 	* mini.c (mono_global_codeman_reserve): New function to allocate code memory from a global
 	code manager.
 
