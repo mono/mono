@@ -111,7 +111,6 @@ namespace System
 			if (null == name || types == null)
 				throw new ArgumentNullException();
 			
-			bool found = false;
 			PropertyInfo ret = null;
 			PropertyInfo [] props = GetProperties(bindingAttr);
 
