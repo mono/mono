@@ -37,11 +37,10 @@ namespace System {
 
 		static ConsoleDriver ()
 		{
-			string term = Environment.GetEnvironmentVariable ("TERM");
-			if (term == null && Environment.IsRunningOnWindows) {
+			if (Environment.IsRunningOnWindows) {
 				driver = new WindowsConsoleDriver ();
 			} else {
-				driver = new TermInfoDriver (term);
+				driver = new TermInfoDriver (Environment.GetEnvironmentVariable ("TERM"));
 			}
 		}
 
