@@ -90,7 +90,8 @@ namespace System.Web.UI.WebControls
 			return _knownTypes;
 		}
 
-		public IOrderedDictionary GetValues (Control control)
+		[MonoTODO ("Take care of HTTPContext parameter")]
+		public IOrderedDictionary GetValues (HttpContext context, Control control)
 		{
 			if (_values == null)
 			{
@@ -157,10 +158,11 @@ namespace System.Web.UI.WebControls
 			((IList)this).RemoveAt (idx);
 		}
 
-		[MonoTODO("eh?")]
 		protected override void SetDirtyObject (object o)
 		{
-			throw new NotImplementedException ();
+			Parameter param = (Parameter)o;
+			if (Contains (param))
+				param.SetDirty ();
 		}
 
 		internal void CallOnParameterChanged ()
@@ -208,6 +210,28 @@ namespace System.Web.UI.WebControls
 			add { _parametersChanged += value; }
 			remove { _parametersChanged -= value; }
 		}
+
+		public bool Contains (Parameter param)
+		{
+			return ((IList)this).Contains (param);
+		}
+
+		public void CopyTo (Parameter[] paramArray, int index)
+		{
+			((IList)this).CopyTo (paramArray, index);
+		}
+
+		public int IndexOf (Parameter param)
+		{
+			return ((IList)this).IndexOf (param);
+		}
+
+		protected override void OnRemoveComplete (int index, object value)
+		{
+			base.OnRemoveComplete (index, value);			
+			OnParametersChanged (EventArgs.Empty);
+		}
+		
 	}
 }
 
