@@ -20,7 +20,8 @@ namespace MonoTests.System.Net
 public class HttpWebRequestTest : Assertion
 {
         [Test]
-        public void Sync ()
+		[Category("InetAccess")] 
+       public void Sync ()
         {
 		HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
 		AssertNotNull ("req:If Modified Since: ", req.IfModifiedSince);

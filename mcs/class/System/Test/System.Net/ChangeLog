@@ -1,3 +1,8 @@
+2005-02-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* HttpWebRequestTest.cs ServicePointManagerTest.cs ServicePointTest.cs:
+	Mark some tests with [Caregory ("InetAccess")].
+
 2005-01-28  Nick Drochak  <ndrochak@ieee.org>
 
 	* DnsTest.cs: Pick a URL we can most likely fail against.
