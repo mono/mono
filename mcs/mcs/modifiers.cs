@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 				ma |= MethodAttributes.Static;
 			if ((mod_flags & ABSTRACT) != 0){
 				ma |= MethodAttributes.Abstract | MethodAttributes.Virtual |
-					MethodAttributes.NewSlot | MethodAttributes.HideBySig;
+					MethodAttributes.HideBySig;
 			}
 			if ((mod_flags & SEALED) != 0)
 				ma |= MethodAttributes.Final;

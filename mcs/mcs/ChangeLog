@@ -1,5 +1,11 @@
 2002-02-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Property.Define, Method.Define): Remove newslot when
+	`implementing'.  
+
+	* modifiers.cs: My use of NewSlot when `Abstract' was set was
+	wrong.  NewSlot should only be used if the `new' keyword is present.
+
 	* driver.cs (GetSystemDir): Use CodeBase instead of FullName for
 	locating our system dir.  Sorry about this.
 

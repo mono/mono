@@ -2877,7 +2877,7 @@ namespace Mono.CSharp {
 			if (implementing != null){
 				flags |=
 					MethodAttributes.Virtual |
-					MethodAttributes.NewSlot |
+					// removed newslot
 					MethodAttributes.HideBySig;
 
 				// If an interface implementation, then we can set Final.
@@ -3454,7 +3454,7 @@ namespace Mono.CSharp {
 			if (implementing != null){
 				attr |=
 					MethodAttributes.Virtual |
-					MethodAttributes.NewSlot |
+					// removed newslot
 					MethodAttributes.HideBySig;
 
 				// If an interface implementing, then we can set final.
