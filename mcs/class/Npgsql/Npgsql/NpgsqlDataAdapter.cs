@@ -112,8 +112,13 @@ namespace Npgsql
 			foreach (IDataParameter parameter in value.Command.Parameters) {
 				
 				string dsColumnName = parameter.SourceColumn;
-				DataColumnMapping mapping = columnMappings [parameter.SourceColumn];
-				if (mapping != null) dsColumnName = mapping.DataSetColumn;
+				try {
+					DataColumnMapping mapping = columnMappings[parameter.SourceColumn];
+					if (mapping != null) {
+						dsColumnName = mapping.DataSetColumn;
+					}
+				}
+				catch (IndexOutOfRangeException) { }
 				DataRowVersion rowVersion = DataRowVersion.Default;
 				if (value.StatementType == StatementType.Update) rowVersion = parameter.SourceVersion;
 				if (value.StatementType == StatementType.Delete) rowVersion = DataRowVersion.Original;
