@@ -4742,7 +4742,7 @@ namespace Mono.MonoBASIC {
 
 		void Error_IncorrectArrayInitializer ()
 		{
-			Error (178, "Incorrectly structured array initializer");
+			Error (30567, "Incorrectly structured array initializer");
 		}
 		
 		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)

@@ -2761,10 +2761,14 @@ array_creation_expression
 		}
 			
 	  	Expression atype = n.RequestedType;
+
+		ArrayList init = (ArrayList) $2;
+		if (init.Count == 0)
+			init = null;
   	
 	  	if (VariableDeclaration.IndexesSpecifiedInRank(dims)) {
 	  		VariableDeclaration.VBFixIndexList (ref dims);
-	  		$$ = new ArrayCreation (atype, dims, "", (ArrayList) $2, lexer.Location); 
+	  		$$ = new ArrayCreation (atype, dims, "", init, lexer.Location); 
 	  	}
 	  	else
 	  	{
@@ -2916,21 +2920,28 @@ variable_declarator
 	  		if ($2 is Pair) {
 	  			vartype = (Expression) ((Pair) $2).First;
 				
-	  			if ($3 != null && $3 is ArrayList)
-	  				Report.Error (205, "End of statement expected.");
+	  			/*if ($3 != null && $3 is ArrayList)
+	  				Report.Error (205, "End of statement expected.");*/
 		  			
 				ArrayList args = (ArrayList) ((Pair) $2).Second;
+				if (current_rank_specifiers != null)
+					Report.Error (31087, lexer.Location,
+						 "Array types specified in too many places");	
+				
 				if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
-					Report.Error (638, "Array bounds cannot appear in type specifiers.");	
-		
-				string s_vartype = vartype.ToString();				
+					Report.Error (30638, "Array bounds cannot appear in type specifiers.");	
+				
+				current_rank_specifiers = new ArrayList ();
+				current_rank_specifiers.Add (args);
+				
+				/*string s_vartype = vartype.ToString();				
 				s_vartype += "[";
 				if (args != null)
 					for (int x = 0; x < args.Count; x++)
 						s_vartype += ",";
 					
 				s_vartype += "]";	
-				vartype = DecomposeQI(s_vartype, Location.Null);						
+				vartype = DecomposeQI(s_vartype, Location.Null);	*/
 	  		}
 	  		else
 				vartype = ($2 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $2;
@@ -3036,7 +3047,7 @@ opt_type_decl
 	  {
 	  	$$ = $1;
 	  }
-	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS
+	| AS type OPEN_PARENS /*opt_argument_list*/ opt_dim_separators CLOSE_PARENS
 	  {
 	  	$$ = new Pair ($2, $4);
 	  }
