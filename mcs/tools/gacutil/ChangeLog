@@ -1,3 +1,7 @@
+2004-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: MONO_GAC_PREFIX not MONO_GAC_PATH.
+	
 2004-06-15  Jackson Harper  <jackson@ximian.com>
 
 	* driver.cs: Ensure that the -gacdir ends with /lib if it does not

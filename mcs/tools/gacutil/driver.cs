@@ -717,7 +717,7 @@ namespace Mono.Tools {
 
 			WriteLine ("-gacdir <GACDIR>");
 			WriteLine ("\tUsed to specify the GACs base directory. Once an assembly has been installed\n" +
-					"\tto a non standard gacdir the MONO_GAC_PATH environment variable must be used\n" +
+					"\tto a non standard gacdir the MONO_GAC_PREFIX environment variable must be used\n" +
 					"\tto access the assembly.");
 			WriteLine ();
 
