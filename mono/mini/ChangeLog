@@ -1,4 +1,8 @@
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c (create_specific_trampoline): Revert parts of the 
+	last change as it seems to cause strange crashes.
+	
 Wed Mar 16 16:24:11 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* *.c: handle unsafe function pointers where needed.
