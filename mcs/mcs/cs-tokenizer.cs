@@ -95,7 +95,7 @@ namespace Mono.CSharp
 					current_token_name = current_token.ToString ();
 
 				return String.Format ("{0} ({1},{2}), Token: {3} {4}", ref_name,
-										       line,
+										       ref_line,
 										       col,
 										       current_token_name,
 										       det);
@@ -183,7 +183,7 @@ namespace Mono.CSharp
 		
 		public int Line {
 			get {
-				return line;
+				return ref_line;
 			}
 		}
 
@@ -1060,7 +1060,7 @@ namespace Mono.CSharp
 				return false;
 
 			if (arg == "default"){
-				line = ref_line = line;
+				ref_line = line;
 				return true;
 			}
 			
@@ -1078,6 +1078,8 @@ namespace Mono.CSharp
 				} else {
 					ref_line = System.Int32.Parse (arg);
 				}
+				
+				ref_line--;
 			} catch {
 				return false;
 			}
