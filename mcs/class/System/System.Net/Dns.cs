@@ -122,7 +122,13 @@ namespace System.Net {
                 /// <summary>
                 /// This method returns the host name associated with the local host.
                 /// </summary>
+		[MonoTODO]
                 public static string GetHostName() {
+
+			//
+			// This should really PInvoke into `gethostname', which is not the
+			// same thing as `127.0.0.1' which will be most likely localhost
+			//
                         IPHostEntry h = GetHostByAddress("127.0.0.1");
                         return h.HostName;
                 }
