@@ -77,6 +77,10 @@ namespace System.Data
 			foreach (DataColumn column in childColumns)
 				if (column.Table != childTable)
 					throw new InvalidConstraintException ();
+
+			for (int i=0; i<ChildColumns.Length; i++)
+				if (!( parentColumns[i].DataType.Equals( childColumns[i].DataType)))
+					throw new InvalidConstraintException();
 		}
 
 		[MonoTODO]
