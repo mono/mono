@@ -1,5 +1,7 @@
 2004-02-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ppc.c: Fix compilation.
+
 	* basic-calls.cs: New regression tests.
 
 	* mini-sparc.c (mono_sparc_is_virtual_call): New helper function.
