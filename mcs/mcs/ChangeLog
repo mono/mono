@@ -1,6 +1,19 @@
 2003-04-10  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (Binary.Emit): Test first for doubles instead of
+	* expression.cs (Indexers): Instead of tracking getters/setters,
+	we now track them in parallel.  We create one arraylist less, but
+	most importantly it is possible now for the LValue code to find a
+	matching get for a set.
+
+	(IndexerAccess.DoResolveLValue): Update the code.
+	GetIndexersForType has been modified already to extract all the
+	indexers from a type.  The code assumed it did not.
+
+	Also make the code set the correct return type for the indexer.
+	This was fixed a long time ago for properties, but was missing for
+	indexers.  It used to be void_type.
+
+	(Binary.Emit): Test first for doubles instead of
 	floats, as they are more common.
 
 	(Binary.EmitBranchable): Use the .un version of the branch opcodes

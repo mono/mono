@@ -6438,19 +6438,16 @@ namespace Mono.CSharp {
 			Type t = Expr.Type;
 
 			if (t == TypeManager.void_ptr_type){
-				Error (
-					242,
-					"The array index operation is not valid for void pointers");
+				Error (242, "The array index operation is not valid for void pointers");
 				return null;
 			}
 			if (Arguments.Count != 1){
-				Error (
-					196,
-					"A pointer must be indexed by a single value");
+				Error (196, "A pointer must be indexed by a single value");
 				return null;
 			}
-			Expression p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr,
-							      t, loc);
+			Expression p;
+
+			p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr, t, loc);
 			return new Indirection (p, loc);
 		}
 		
@@ -6842,7 +6839,7 @@ namespace Mono.CSharp {
 
 	
 	class Indexers {
-		public ArrayList getters, setters;
+		public ArrayList properties;
 		static Hashtable map;
 
 		static Indexers ()
@@ -6850,25 +6847,19 @@ namespace Mono.CSharp {
 			map = new Hashtable ();
 		}
 
+		Indexers ()
+		{
+			properties = new ArrayList ();
+		}
+				
 		void Append (MemberInfo [] mi)
 		{
 			foreach (PropertyInfo property in mi){
 				MethodInfo get, set;
 				
 				get = property.GetGetMethod (true);
-				if (get != null){
-					if (getters == null)
-						getters = new ArrayList ();
-
-					getters.Add (get);
-				}
-				
 				set = property.GetSetMethod (true);
-				if (set != null){
-					if (setters == null)
-						setters = new ArrayList ();
-					setters.Add (set);
-				}
+				properties.Add (new Pair (get, set));
 			}
 		}
 
@@ -6983,9 +6974,10 @@ namespace Mono.CSharp {
 			ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
 			if (ilist != null) {
 				found_any = true;
-				if (ilist.getters != null) {
-					foreach (object o in ilist.getters) {
-						AllGetters.Add(o);
+				if (ilist.properties != null) {
+					foreach (Pair o in ilist.properties) {
+						if (o.First != null)
+							AllGetters.Add(o.First);
 					}
 				}
 			}
@@ -7042,20 +7034,16 @@ namespace Mono.CSharp {
 			Type right_type = right_side.Type;
 
 			bool found_any = false, found_any_setters = false;
-			Type lookup_type = indexer_type;
 
-			Indexers ilist;
-			while (lookup_type != null) {
-				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
-				if (ilist != null) {
-					found_any = true;
-					if (ilist.setters != null) {
-						foreach (object o in ilist.setters) {
-							AllSetters.Add(o);
-						}
+			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type, loc);
+			if (ilist != null) {
+				found_any = true;
+				if (ilist.properties != null) {
+					foreach (Pair o in ilist.properties) {
+						if (o.Second != null)
+							AllSetters.Add(o.Second);
 					}
 				}
-				lookup_type = lookup_type.BaseType;
 			}
 			if (AllSetters.Count > 0) {
 				found_any_setters = true;
@@ -7092,7 +7080,19 @@ namespace Mono.CSharp {
 				Report.Error (205, loc, "Cannot call an abstract base indexer: " + Invocation.FullMethodDesc (set));
 				return null;
 			}
-			type = TypeManager.void_type;
+
+			//
+			// Now look for the actual match in the list of indexers to set our "return" type
+			//
+			type = TypeManager.void_type;	// default value
+			foreach (Pair t in ilist.properties){
+				if (t.Second == set){
+					if (t.First != null)
+						type = ((MethodInfo) t.First).ReturnType;
+					break;
+				}
+			}
+			
 			eclass = ExprClass.IndexerAccess;
 			return this;
 		}
