@@ -11,6 +11,8 @@ LOCAL_MCS_FLAGS = /r:System.dll /r:$(topdir)/class/lib/$(PROFILE)/Mono.GetOption
 EXTRA_DISTFILES = mb-parser.jay mbas.csproj mbas.ico mbas.sln
 CLEAN_FILES = y.output testmbas/WriteOK.exe
 
+PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
+
 include ../build/executable.make
 
 test-local: mbas.exe

@@ -1,3 +1,8 @@
+2004-05-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM_INSTALL_DIR): Install mbas into
+	$(prefix)/lib/mono/1.0.
+
 2004-05-10 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: few Property related grammar changes
 
@@ -23,7 +28,7 @@
 	* typemanager.cs: Property.GetGetMethod() does not return the method if it
 	is private (it did until now because of a bug). Make sure it works as it 
 	worked before the fix.
-	
+
 2004-04-28 Anirban Bhattacharjee <banirban@novell.com>
 	* expression.cs: fixed bug to get enum running
 	* enum.cs: handling several negative scenarios 
