@@ -180,6 +180,12 @@ namespace System.Collections {
 			return ret;
 		}
 
+		public virtual void TrimToSize() {
+			object[] trimmed = new object [count];
+			CopyTo (trimmed, 0);
+			contents = trimmed;
+		}
+
 		// private methods
 
 		private void grow () {
