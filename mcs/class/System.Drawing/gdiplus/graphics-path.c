@@ -714,10 +714,11 @@ GpStatus
 GdipTransformPath (GpPath* path, GpMatrix *matrix)
 {
         PointF *points = g_array_to_array (path->points);
+        int count = path->count;
 
-        Status s = GdipTransformMatrixPoints (matrix, points, path->count);
+        Status s = GdipTransformMatrixPoints (matrix, points, count);
 
-        path->points = array_to_g_array (points);
+        path->points = array_to_g_array (points, count);
 
         GdipFree (points);
 
