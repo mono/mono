@@ -1,3 +1,7 @@
+2003-01-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* icall.c: Rename `PowImpl' to Pow.
+
 2003-01-23  Dick Porter  <dick@ximian.com>
 
 	* threads.c (start_wrapper): Create a Thread object if needed, so
