@@ -30,11 +30,7 @@ namespace System.Runtime.Remoting.Activation
 		public IConstructionReturnMessage Activate (IConstructionCallMessage msg)
 		{
 			// The StackBuilderSink at the end of the server context sink chain will do the job
-			
-			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
-			if (identity.Context == null) identity.Context = Threading.Thread.CurrentContext;
-
-			return (IConstructionReturnMessage) identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
+			return (IConstructionReturnMessage) Threading.Thread.CurrentContext.GetServerContextSinkChain().SyncProcessMessage (msg);
 		}
 	}
 }

@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Contexts;
 
 namespace System.Runtime.Remoting.Activation
@@ -34,19 +35,26 @@ namespace System.Runtime.Remoting.Activation
 
 		public IConstructionReturnMessage Activate (IConstructionCallMessage ctorCall)
 		{
-			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (ctorCall);
-			identity.Context = Context.CreateNewContext (ctorCall);
+			ServerIdentity identity = RemotingServices.CreateContextBoundObjectIdentity (ctorCall.ActivationType);
+			RemotingServices.SetMessageTargetIdentity (ctorCall, identity);
 
-			Context oldContext = Context.SwitchToContext (identity.Context);
-			try
+			ConstructionCall call = ctorCall as ConstructionCall;
+			if (call == null || !call.IsContextOk)
 			{
-				IConstructionReturnMessage response = (IConstructionReturnMessage) _next.Activate (ctorCall);
-				return response;
+				identity.Context = Context.CreateNewContext (ctorCall);
+				Context oldContext = Context.SwitchToContext (identity.Context);
+
+				try
+				{
+					return _next.Activate (ctorCall);
+				}
+				finally
+				{
+					Context.SwitchToContext (oldContext);
+				}
 			}
-			finally
-			{
-				Context.SwitchToContext (oldContext);
-			}
+			else
+				return _next.Activate (ctorCall);
 		}
 	}
 }

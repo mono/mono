@@ -7,9 +7,11 @@
 //
 
 using System;
+using System.Threading;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Proxies;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections;
@@ -20,6 +22,36 @@ namespace System.Runtime.Remoting.Activation
 	internal class ActivationServices
 	{
 		static IActivator _constructionActivator = new ConstructionLevelActivator ();
+
+		public static IMessage Activate (RemotingProxy proxy, ConstructionCall ctorCall)
+		{
+			IMessage response;
+
+			if (Thread.CurrentContext.HasExitSinks && !ctorCall.IsContextOk)
+				response = Thread.CurrentContext.GetClientContextSinkChain ().SyncProcessMessage (ctorCall);
+			else
+				response = RemoteActivate (ctorCall);
+
+			if (response is IConstructionReturnMessage)
+			{
+				Identity identity = RemotingServices.GetMessageTargetIdentity (ctorCall);
+				proxy.AttachIdentity (identity);
+			}
+
+			return response;
+		}
+
+		public static IMessage RemoteActivate (IConstructionCallMessage ctorCall)
+		{
+			try 
+			{
+				return ctorCall.Activator.Activate (ctorCall);
+			}
+			catch (Exception ex) 
+			{
+				return new ReturnMessage (ex, ctorCall);
+			}		
+		}
 
 		public static object CreateProxyFromAttributes (Type type, object[] activationAttributes)
 		{
@@ -46,9 +78,20 @@ namespace System.Runtime.Remoting.Activation
 		public static ConstructionCall CreateConstructionCall (Type type, string activationUrl, object[] activationAttributes)
 		{
 			ConstructionCall ctorCall = new ConstructionCall (type);
-			ctorCall.Activator = _constructionActivator;
 
-			if (!type.IsContextful) return ctorCall;
+			if (!type.IsContextful) 
+			{
+				// Must be a remote activated object
+				ctorCall.Activator = new AppDomainLevelActivator (activationUrl, _constructionActivator);
+				ctorCall.IsContextOk = false;	// It'll be activated in a remote context
+				return ctorCall;
+			}
+
+			// It is a CBO. Need collect context properties and
+			// check if a new context is needed.
+
+			IActivator activatorChain = _constructionActivator;
+			activatorChain = new ContextLevelActivator (activatorChain);
 
 			ArrayList attributes = new ArrayList ();
 			if (activationAttributes != null) attributes.AddRange (activationAttributes);
@@ -80,15 +123,20 @@ namespace System.Runtime.Remoting.Activation
 
 			if (!isContextOk)
 			{
-				// A new context is needed. Collect the context properties and set
+				// A new context is needed. Collect the context properties and chain
 				// the context level activator.
 
 				ctorCall.SetActivationAttributes (attributes.ToArray());
-				ctorCall.Activator = new ContextLevelActivator (ctorCall.Activator);
 
 				foreach (IContextAttribute attr in attributes)
 					attr.GetPropertiesForNewContext (ctorCall);
 			}
+
+			if (activationUrl != ChannelServices.CrossContextUrl)
+				activatorChain = new AppDomainLevelActivator (activationUrl, activatorChain);
+			
+			ctorCall.Activator = activatorChain;
+			ctorCall.IsContextOk = isContextOk;
 
 			return ctorCall;
 		}

@@ -1,3 +1,13 @@
+2003-03-21  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ActivationServices.cs: Added the method Activate that performs the forwards the
+	  creation message to the right message sink. Added support for AppDomainLevelActivator.
+	* ConstructionLevelActivator.cs: Activate does not use the object identity because
+	  it may not be set yet.
+	* ContextLevelActivator.cs: this activator is now always called for CBOs. A new context
+	  has to be created only if the construction message says so.
+	* AppDomainLevelActivator.cs: Added. Implements an IActivator that makes a remote creation.
+	
 2003-02-25  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* ActivationServices.cs: Added method for creating a proxy from a list
