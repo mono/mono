@@ -1,3 +1,8 @@
+2002-06-10  Ajay kumar Dwivedi <adwiv@yahoo.com>
+	* XmlConstruct.cs : New Internal class with Helper methods for
+	Checking XmlConstructs
+	* XmlConvert.cs: Implemented most of the methods
+
 2002-06-08  Duncan Mak  <duncan@ximian.com>	
 
 	* XmlDocument.cs (Load):
