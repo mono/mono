@@ -1,3 +1,16 @@
+2004-07-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ProtocolImporter.cs: Added some internal properties needed for 2.0
+	  features.
+	* ServiceDescriptionImporter.cs: Implemented some 2.0 methods.
+	* SoapProtocolImporter.cs: Create xml importers using the correct
+	  ImportContext and generation options.
+	* WebReference.cs: It is now internal for 1.1 profile. Implemented some
+	  properties.
+	* CodeGenerationOptions.cs: Made internal in 1.1 profile.
+	* ImportContext.cs: Implemented.
+	* XmlSchemaImporter.cs: Implemented some 2.0 constructors.
+
 2004-07-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ConformanceChecker.cs, BasicProfileChecker.cs: New files that implement

@@ -31,6 +31,7 @@
 
 using System;
 using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Xml.Serialization;
@@ -174,6 +175,20 @@ namespace System.Web.Services.Description {
 		{
 			get { return soapSchemas; }
 		}
+		
+#if NET_2_0
+		internal CodeGenerationOptions CodeGenerationOptions {
+			get { return descriptionImporter.CodeGenerationOptions; }
+		}
+		
+		internal ICodeGenerator CodeGenerator {
+			get { return descriptionImporter.CodeGenerator; }
+		}
+
+		internal ImportContext ImportContext {
+			get { return descriptionImporter.Context; }
+		}
+#endif
 
 		#endregion // Properties
 

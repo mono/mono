@@ -37,6 +37,7 @@ using System.Web.Services.Protocols;
 using System.Web.Services.Description;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Xml.Schema;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -50,6 +51,12 @@ namespace System.Web.Services.Description {
 		XmlSchemas schemas;
 		ServiceDescriptionCollection serviceDescriptions;
 		ServiceDescriptionImportStyle style;
+		
+#if NET_2_0
+		CodeGenerationOptions options;
+		ICodeGenerator codeGenerator;
+		ImportContext context;
+#endif
 
 		ArrayList importInfo = new ArrayList ();
 		
@@ -89,18 +96,22 @@ namespace System.Web.Services.Description {
 		}
 		
 #if NET_2_0
-		[MonoTODO]
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public CodeGenerationOptions CodeGenerationOptions {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return options; }
+			set { options = value; }
 		}
 		
-		[MonoTODO]
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public ICodeGenerator CodeGenerator {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return codeGenerator; }
+			set { codeGenerator = value; }
+		}
+		
+		
+		internal ImportContext Context {
+			get { return context; }
+			set { context = value; }
 		}
 #endif
 	
@@ -113,10 +124,7 @@ namespace System.Web.Services.Description {
 			if (appSettingUrlKey != null && appSettingUrlKey == string.Empty && style == ServiceDescriptionImportStyle.Server)
 				throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
 
-			ImportInfo info = new ImportInfo ();
-			info.ServiceDescription = serviceDescription;
-			info.AppSettingUrlKey = appSettingUrlKey;
-			info.AppSettingBaseUrl = appSettingBaseUrl;
+			ImportInfo info = new ImportInfo (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
 			importInfo.Add (info);
 			serviceDescriptions.Add (serviceDescription);
 			
@@ -156,17 +164,18 @@ namespace System.Web.Services.Description {
 		}
 		
 #if NET_2_0
-		[MonoTODO]
+
 		public static StringCollection GenerateWebReferences (
 			WebReferenceCollection webReferences, 
 			CodeGenerationOptions options, 
 			ServiceDescriptionImportStyle style, 
 			ICodeGenerator codeGenerator)
 		{
-			throw new NotImplementedException ();
+			CodeCompileUnit codeCompileUnit = new CodeCompileUnit ();
+			return GenerateWebReferences (webReferences, options, style, codeGenerator, codeCompileUnit, false);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("verbose?")]
 		public static StringCollection GenerateWebReferences (
 			WebReferenceCollection webReferences, 
 			CodeGenerationOptions options, 
@@ -175,8 +184,52 @@ namespace System.Web.Services.Description {
 			CodeCompileUnit codeCompileUnit, 
 			bool verbose)
 		{
-			throw new NotImplementedException ();
+			StringCollection allWarnings = new StringCollection ();
+			ImportContext context = new ImportContext (new CodeIdentifiers(), true);
+			
+			foreach (WebReference reference in webReferences) 
+			{
+				if (reference.AppSettingUrlKey != null && reference.AppSettingUrlKey == string.Empty && style == ServiceDescriptionImportStyle.Server)
+					throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
+				
+				ServiceDescriptionImporter importer = new ServiceDescriptionImporter ();
+				importer.CodeGenerator = codeGenerator;
+				importer.CodeGenerationOptions = options;
+				importer.Context = context;
+				importer.ProtocolName = reference.ProtocolName;
+				
+				importer.AddReference (reference);
+				
+				reference.Warnings = importer.Import (reference.ProxyCode, codeCompileUnit);
+				reference.SetValidationWarnings (context.Warnings);
+				foreach (string s in context.Warnings)
+					allWarnings.Add (s);
+
+				context.Warnings.Clear ();
+			}
+
+			return allWarnings;
 		}
+		
+		internal void AddReference (WebReference reference)
+		{
+			foreach (object doc in reference.Documents)
+			{
+				if (doc is ServiceDescription) {
+					ServiceDescription service = (ServiceDescription) doc;
+					ImportInfo info = new ImportInfo (service, reference);
+					importInfo.Add (info);
+					serviceDescriptions.Add (service);
+					
+					if (service.Types != null)
+						schemas.Add (service.Types.Schemas);
+				}
+				else if (doc is XmlSchema) {
+					schemas.Add ((XmlSchema) doc);
+				}
+			}
+		}
+		
 #endif
 
 #endregion
@@ -184,9 +237,52 @@ namespace System.Web.Services.Description {
 
 	internal class ImportInfo
 	{
-		public ServiceDescription ServiceDescription;
-		public string AppSettingUrlKey;
-		public string AppSettingBaseUrl;
+		string _appSettingUrlKey;
+		string _appSettingBaseUrl;
+		ServiceDescription _serviceDescription;
+		
+		public WebReference _reference;
+		
+		public ImportInfo (ServiceDescription serviceDescription, string appSettingUrlKey, string appSettingBaseUrl)
+		{
+			_serviceDescription = serviceDescription;
+			_appSettingUrlKey = appSettingUrlKey;
+			_appSettingBaseUrl = appSettingBaseUrl;
+		}
+		
+		public ImportInfo (ServiceDescription serviceDescription, WebReference reference)
+		{
+			_reference = reference;
+			_serviceDescription = serviceDescription;
+		}
+		
+		public WebReference Reference {
+			get { return _reference; }
+		}
+		
+		public ServiceDescription ServiceDescription {
+			get { return _serviceDescription; }
+		}
+		
+		public string AppSettingUrlKey {
+			get {
+				if (_reference != null) return _reference.AppSettingUrlKey;
+				else return _appSettingUrlKey;
+			}
+			set {
+				_appSettingUrlKey = value;
+			}
+		}
+		
+		public string AppSettingBaseUrl {
+			get {
+				if (_reference != null) return _reference.AppSettingBaseUrl;
+				else return _appSettingBaseUrl;
+			}
+			set {
+				_appSettingBaseUrl = value;
+			}
+		}
 	}
 
 }

@@ -28,15 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Web.Services.Discovery;
 using System.Collections.Specialized;
 using System.CodeDom;
 
 namespace System.Web.Services.Description 
 {
-	public sealed class WebReference
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	sealed class WebReference
 	{
 		DiscoveryClientDocumentCollection _documents;
 		CodeNamespace _proxyCode;
@@ -44,6 +47,7 @@ namespace System.Web.Services.Description
 		string _protocolName;
 		string _appSettingUrlKey;
 		string _appSettingBaseUrl;
+		StringCollection _validationWarnings;
 		
 		public WebReference (DiscoveryClientDocumentCollection documents, CodeNamespace proxyCode)
 		{
@@ -87,16 +91,22 @@ namespace System.Web.Services.Description
 			get { return _proxyCode; }
 		}
 
-		[MonoTODO]
 		public StringCollection ValidationWarnings {
-			get { throw new NotImplementedException (); }
+			get { 
+				if (_validationWarnings == null) _validationWarnings = new StringCollection ();
+				return _validationWarnings; 
+			}
 		}
 
 		public ServiceDescriptionImportWarnings Warnings {
 			get { return _warnings; }
 			set { _warnings = value; }
 		}
+		
+		internal void SetValidationWarnings (StringCollection col)
+		{
+			_validationWarnings = col;
+		}
 	}
 }
 
-#endif

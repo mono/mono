@@ -134,8 +134,13 @@ namespace System.Web.Services.Description {
 		
 		protected override void BeginNamespace ()
 		{
+#if NET_2_0
+			xmlImporter = new XmlSchemaImporter (LiteralSchemas, base.CodeGenerationOptions, base.CodeGenerator, base.ImportContext);
+			soapImporter = new SoapSchemaImporter (EncodedSchemas, base.CodeGenerationOptions, base.CodeGenerator, base.ImportContext);
+#else
 			xmlImporter = new XmlSchemaImporter (LiteralSchemas, ClassNames);
 			soapImporter = new SoapSchemaImporter (EncodedSchemas, ClassNames);
+#endif
 			xmlExporter = new XmlCodeExporter (CodeNamespace, null);
 			soapExporter = new SoapCodeExporter (CodeNamespace, null);
 		}
