@@ -94,6 +94,8 @@ namespace System.ComponentModel
 				       Locale.GetText("Network subsystem is down"));
 			w32_errors.Add(10051,
 				       Locale.GetText("Network is unreachable"));
+			w32_errors.Add(10054,
+				       Locale.GetText("Connection reset by peer"));
 			w32_errors.Add(10055,
 				       Locale.GetText("Not enough buffer space is available"));
 			w32_errors.Add(10056,
