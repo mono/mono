@@ -5631,6 +5631,7 @@ namespace Mono.CSharp {
 				EmitContext ec = CreateEmitContext (tc, ig);
 				FieldInfo field_info = (FieldInfo)method.FieldBuilder;
 
+				method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Synchronized);
 				if ((method.ModFlags & Modifiers.STATIC) != 0) {
 					ig.Emit (OpCodes.Ldsfld, field_info);
 					ig.Emit (OpCodes.Ldarg_0);
