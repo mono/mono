@@ -1,3 +1,10 @@
+2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Byte.cs: Fixed parsing for "-0" which is valid for unsigned types.
+	* UInt16.cs: Fixed parsing for "-0" which is valid for unsigned types.
+	* UInt32.cs: Fixed parsing for "-0" which is valid for unsigned types.
+	* UInt64.cs: Fixed parsing for "-0" which is valid for unsigned types.
+
 2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DateTime.cs : 

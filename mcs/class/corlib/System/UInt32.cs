@@ -106,8 +106,11 @@ namespace System
 			if (!digits_seen)
 				throw new FormatException ();
 
-			if (has_negative_sign)
-				throw new OverflowException ();
+			// -0 is legal but other negative values are not
+			if (has_negative_sign && (val > 0)) {
+				throw new OverflowException (
+					Locale.GetText ("Negative number"));
+			}
 
 			return val;
 		}
@@ -302,8 +305,11 @@ namespace System
 			if (pos < s.Length && s [pos] != '\u0000')
 				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 
-			if (negative)
-				throw new OverflowException (Locale.GetText ("Value too large or too small."));
+			// -0 is legal but other negative values are not
+			if (negative && (number > 0)) {
+				throw new OverflowException (
+					Locale.GetText ("Negative number"));
+			}
 
 			return number;
 		}

@@ -100,8 +100,11 @@ namespace System
 			if (!digits_seen)
 				throw new FormatException ();
 
-			if (has_negative_sign)
-				throw new OverflowException ();
+			// -0 is legal but other negative values are not
+			if (has_negative_sign && (val > 0)) {
+				throw new OverflowException (
+					Locale.GetText ("Negative number"));
+			}
 
 			return val;
 		}

@@ -56,6 +56,7 @@ namespace System
 			int len;
 			int i;
 			bool digits_seen = false;
+			bool negative = false;
 
 			if (s == null)
 				throw new ArgumentNullException ("s");
@@ -78,8 +79,8 @@ namespace System
 			if (s [i] == '+')
 				i++;
 			else if (s [i] == '-') {
-				throw new OverflowException (
-					Locale.GetText ("Negative number"));
+				negative = true;
+				i++;
 			}
 
 			// we should just have numerals followed by whitespace now
@@ -103,6 +104,12 @@ namespace System
 					} else
 						throw new FormatException ();
 				}
+			}
+
+			// -0 is legal but other negative values are not
+			if (negative && (val > 0)) {
+				throw new OverflowException (
+					Locale.GetText ("Negative number"));
 			}
 
 			// if all we had was a '+' sign, then throw exception
