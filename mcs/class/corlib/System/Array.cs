@@ -301,6 +301,9 @@ namespace System
 
 		public static Array CreateInstance(Type elementType, int[] lengths)
 		{
+                        if (lengths.Length > 255)
+                                throw new TypeLoadException ();
+
 			int[] bounds = null;
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
@@ -310,6 +313,9 @@ namespace System
 		{
 			if (bounds == null)
 				throw new ArgumentNullException("bounds");
+
+                        if (lengths.Length > 255)
+                                throw new TypeLoadException ();
 
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}

@@ -1,3 +1,11 @@
+2003-06-08  Duncan Mak  <duncan@ximian.com>
+
+	* Array.cs (CreateInstance): Throw a TypeLoadException if the
+	Length of the input array 'lengths' is greater than 255 so that we
+	won't see the g_assert that is in mono_array_class_get in class.c.
+
+	This fixes bug #44304.
+
 2003-06-05  Nick Drochak  <ndrochak@gol.com>
 
 	* UnitySerializataionHolder.cs: Cleanups according to class status page
