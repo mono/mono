@@ -1,5 +1,10 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): Added special case for
+	Equality/Inequality between a type parameter and a null literal.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* convert.cs: Check null literal -> type parameter conversions.
 
 2004-04-07  Martin Baulig  <martin@ximian.com>

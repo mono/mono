@@ -2279,13 +2279,35 @@ namespace Mono.CSharp {
 			bool overload_failed = false;
 
 			//
-			// Special cases: string comapred to null
+			// Special cases: string or type parameter comapred to null
 			//
 			if (oper == Operator.Equality || oper == Operator.Inequality){
 				if ((l == TypeManager.string_type && (right is NullLiteral)) ||
 				    (r == TypeManager.string_type && (left is NullLiteral))){
 					Type = TypeManager.bool_type;
 					
+					return this;
+				}
+
+				if (l.IsGenericParameter && (right is NullLiteral)) {
+					if (l.BaseType == TypeManager.value_type) {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+
+					left = new BoxedCast (left);
+					Type = TypeManager.bool_type;
+					return this;
+				}
+
+				if (r.IsGenericParameter && (left is NullLiteral)) {
+					if (r.BaseType == TypeManager.value_type) {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+
+					right = new BoxedCast (right);
+					Type = TypeManager.bool_type;
 					return this;
 				}
 			}
