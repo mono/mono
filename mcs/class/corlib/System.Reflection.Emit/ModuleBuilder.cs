@@ -60,7 +60,7 @@ namespace System.Reflection.Emit {
 
 			// First get the constructor.
 			{
-				Type[] arg_types = new Type [2];
+				Type[] arg_types = new Type [1];
 				arg_types [0] = typeof (ModuleBuilder);
 				ConstructorInfo constructor = type.GetConstructor (arg_types);
 
