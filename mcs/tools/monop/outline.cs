@@ -99,6 +99,12 @@ public class Outline {
 				o.Write (FormatType (intf));
 			}
 		}
+
+		if (t.IsEnum) {
+			Type underlyingType = Enum.GetUnderlyingType (t);
+			if (underlyingType != typeof (int))
+				o.Write (" : {0}", FormatType (underlyingType));
+		}
 		
 		o.WriteLine (" {");
 		o.Indent++;
