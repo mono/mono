@@ -1,3 +1,10 @@
+2002-04-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* ValueType.cs: Add Serializable attribute.
+
+	* String.cs: ifdef-out out the __arglist Concat function until I
+	add support for that to mcs.
+
 2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* AppDomain.cs (GetValue): usage of the correct icall (bug)
