@@ -29,6 +29,7 @@ namespace System.Net
 		byte [] buffer;
 		int offset;
 		int size;
+		object locker = new object ();
 
 		public WebAsyncResult (AsyncCallback cb, object state)
 		{
@@ -54,50 +55,64 @@ namespace System.Net
 
 		internal void SetCompleted (bool synch, Exception e)
 		{
-			isCompleted = true;
 			this.synch = synch;
 			exc = e;
-			((ManualResetEvent) AsyncWaitHandle).Set ();
+			lock (locker) {
+				isCompleted = true;
+				if (handle != null)
+					handle.Set ();
+			}
 		}
 		
 		internal void Reset ()
 		{
-			isCompleted = false;
 			callbackDone = false;
 			exc = null;
 			request = null;
 			response = null;
 			writeStream = null;
 			exc = null;
-			if (handle != null)
-				handle.Reset ();
+			lock (locker) {
+				isCompleted = false;
+				if (handle != null)
+					handle.Reset ();
+			}
 		}
 
 		internal void SetCompleted (bool synch, int nbytes)
 		{
-			isCompleted = true;
 			this.synch = synch;
 			this.nbytes = nbytes;
 			exc = null;
-			((ManualResetEvent) AsyncWaitHandle).Set ();
+			lock (locker) {
+				isCompleted = true;
+				if (handle != null)
+					handle.Set ();
+			}
 		}
 		
 		internal void SetCompleted (bool synch, Stream writeStream)
 		{
-			isCompleted = true;
 			this.synch = synch;
 			this.writeStream = writeStream;
 			exc = null;
-			((ManualResetEvent) AsyncWaitHandle).Set ();
+			lock (locker) {
+				isCompleted = true;
+				if (handle != null)
+					handle.Set ();
+			}
 		}
 		
 		internal void SetCompleted (bool synch, HttpWebResponse response)
 		{
-			isCompleted = true;
 			this.synch = synch;
 			this.response = response;
 			exc = null;
-			((ManualResetEvent) AsyncWaitHandle).Set ();
+			lock (locker) {
+				isCompleted = true;
+				if (handle != null)
+					handle.Set ();
+			}
 		}
 		
 		internal void DoCallback ()
@@ -110,7 +125,7 @@ namespace System.Net
 		
 		internal void WaitUntilComplete ()
 		{
-			if (isCompleted)
+			if (IsCompleted)
 				return;
 
 			AsyncWaitHandle.WaitOne ();
@@ -118,7 +133,7 @@ namespace System.Net
 
 		internal bool WaitUntilComplete (int timeout, bool exitContext)
 		{
-			if (isCompleted)
+			if (IsCompleted)
 				return true;
 
 			return AsyncWaitHandle.WaitOne (timeout, exitContext);
@@ -130,11 +145,9 @@ namespace System.Net
 
 		public WaitHandle AsyncWaitHandle {
 			get {
-				if (handle == null) {
-					lock (this) {
-						if (handle == null)
-							handle = new ManualResetEvent (isCompleted);
-					}
+				lock (locker) {
+					if (handle == null)
+						handle = new ManualResetEvent (isCompleted);
 				}
 				
 				return handle;
@@ -146,7 +159,11 @@ namespace System.Net
 		}
 
 		public bool IsCompleted {
-			get { return isCompleted; }
+			get {
+				lock (locker) {
+					return isCompleted;
+				}
+			}
 		}
 
 		internal bool GotException {

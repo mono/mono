@@ -1,5 +1,9 @@
 2004-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebAsyncResult.cs: don't create the WaitHandle if not needed.
+
+2004-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebRequest.cs: added 3 missing properties for 1.1. They are not
 	used yet.
 
