@@ -1,3 +1,8 @@
+2002-05-20  Radek Doulik  <rodo@ximian.com>
+
+	* object.c (mono_value_box): don't use memcpy for boxing on BIG
+	endian
+
 2002-05-20  Martin Baulig  <martin@gnome.org>
 
 	* reflection.c (mono_reflection_setup_internal_class): Don't crash
