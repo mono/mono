@@ -42,6 +42,7 @@ using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
+	[DefaultEvent("LinkClicked")]
 	public class LinkLabel : Label, IButtonControl
 	{
 		/* Encapsulates a piece of text (regular or link)*/
@@ -73,6 +74,7 @@ namespace System.Windows.Forms
 		private Font link_font;
 		private bool link_click;
 		private Piece[] pieces;
+		private int num_pieces;
 		private Cursor override_cursor;
 		private DialogResult dialog_result;
 
@@ -88,6 +90,7 @@ namespace System.Windows.Forms
 			link_visited = false;
 			link_click = false;
 			pieces = null;
+			num_pieces = 0;
 
 			ActiveLinkColor = Color.Red;
 			DisabledLinkColor = ThemeEngine.Current.ColorGrayText;
@@ -142,6 +145,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable (true)]
+		[Editor ("System.Windows.Forms.Design.LinkAreaEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]				
 		public LinkArea LinkArea {
 			get { return link_area;}
 			set {
@@ -156,7 +161,8 @@ namespace System.Windows.Forms
 				Refresh ();
 			}
 		}
-
+				
+		[DefaultValue (LinkBehavior.SystemDefault)]
 		public LinkBehavior LinkBehavior {
 
 			get { return link_behavior;}
@@ -173,6 +179,7 @@ namespace System.Windows.Forms
 			get { return link_collection;}
 		}
 
+		[DefaultValue (false)]
 		public bool LinkVisited {
 			get { return link_visited;}
 			set {
@@ -219,18 +226,17 @@ namespace System.Windows.Forms
 		}
 
 		#region Public Methods
-		protected override AccessibleObject CreateAccessibilityInstance()
+		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
 			return base.CreateAccessibilityInstance();
 		}
 
 		protected override void CreateHandle ()
 		{
+			base.CreateHandle ();
 			CreateLinkFont ();
-			CreateLinkPieces ();
-			base.CreateHandle();
+			CreateLinkPieces ();			
 		}
-
 
 		protected override void OnEnabledChanged (EventArgs e)
 		{
@@ -270,10 +276,10 @@ namespace System.Windows.Forms
 		{
 			if (!Enabled) return;
 
-			base.OnMouseDown(e);
+			base.OnMouseDown (e);
 			this.Capture = true;
 
-			for (int i = 0; i < pieces.Length; i++) {
+			for (int i = 0; i < num_pieces; i++) {
 				if (pieces[i].rect.Contains (e.X, e.Y)) {
 					if (pieces[i].link!= null) {
 						pieces[i].clicked = true;
@@ -288,7 +294,7 @@ namespace System.Windows.Forms
 		{
 			if (!Enabled) return;
 
-			base.OnMouseLeave(e);
+			base.OnMouseLeave (e);
 		}
 
 		protected override void OnMouseMove (MouseEventArgs e)
@@ -303,7 +309,7 @@ namespace System.Windows.Forms
 			base.OnMouseUp (e);
 			this.Capture = false;
 
-			for (int i = 0; i < pieces.Length; i++) {
+			for (int i = 0; i < num_pieces; i++) {
 				if (pieces[i].link!= null && pieces[i].clicked == true) {
 
 					if (LinkClicked != null)
@@ -324,9 +330,9 @@ namespace System.Windows.Forms
 			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}
 
-		protected override void OnPaintBackground(PaintEventArgs e)
+		protected override void OnPaintBackground (PaintEventArgs e)
 		{
-
+			base.OnPaintBackground (e);
 		}
 
 		protected override void OnTextAlignChanged (EventArgs e)
@@ -343,7 +349,7 @@ namespace System.Windows.Forms
 		
 		protected Link PointInLink (int x, int y)
 		{
-			for (int i = 0; i < pieces.Length; i++) {
+			for (int i = 0; i < num_pieces; i++) {
 				if (pieces[i].rect.Contains (x,y) && pieces[i].link != null)
 					return pieces[i].link;
 			}
@@ -361,15 +367,9 @@ namespace System.Windows.Forms
 			base.Select (directed, forward);
 		}
 
-		public void Select ()
-		{
-			base.Select ();
-		}
-		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			base.SetBoundsCore (x, y, width, height, specified);
-			Refresh ();
+			base.SetBoundsCore (x, y, width, height, specified);			
 		}
 
 		protected override void WndProc (ref Message m)
@@ -383,19 +383,21 @@ namespace System.Windows.Forms
 
 		internal void CreateLinkPieces ()
 		{
-			if (Links.Count == 0)
+			if (Links.Count == 0 || IsHandleCreated == false || Text.Length == 0)
 				return;
 
 			int cur_piece = 0;
+			num_pieces = 0;
 
 			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1) {
-				pieces = new Piece [1];
+				num_pieces = 1;
+				pieces = new Piece [num_pieces];
 				pieces[cur_piece] = new Piece();
 				pieces[cur_piece].start = 0;
 				pieces[cur_piece].end = Text.Length;
 				pieces[cur_piece].link = Links[0];
 				pieces[cur_piece].text = Text;
-				pieces[cur_piece].rect = ClientRectangle;
+				pieces[cur_piece].rect = ClientRectangle;				
 				return;
 			}
 
@@ -406,7 +408,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < Text.Length; i++) { /* Every char on the text*/
 				for (int l = 0; l < Links.Count; l++)	{ /* Every link that we know of*/
 					if (Links[l].Start == i) {
-						if (i > 0) {
+						if (i > 0) {							
 							/*Push prev. regular text*/
 							pieces[cur_piece].end = i;
 							pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start,
@@ -415,14 +417,28 @@ namespace System.Windows.Forms
 							cur_piece++;
 
 							/* New link*/
-							pieces[cur_piece] = new Piece ();
+							pieces[cur_piece] = new Piece ();							
 						}
+						
+						int end;
+						
+						if (Links[l].Start + Links[l].Length > Text.Length) {
+							end = Text.Length - Links[l].Start;
+						}
+						else {
+							end = Links[l].Length;
+						}
+						
+						Console.WriteLine ("Punt 2: {0} ", end);
 
 						pieces[cur_piece].start = Links[l].Start;
-						pieces[cur_piece].end = Links[l].Start + Links[l].Length;
+						pieces[cur_piece].end = Links[l].Start + end;
 						pieces[cur_piece].link = Links[l];
-						pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start,
-						pieces[cur_piece].end - pieces[cur_piece].start);
+						
+						Console.WriteLine ("Punt 2:  start:{0} end:{1} text:{2} len {3} ", pieces[cur_piece].start, end, Text,
+							Text.Length);
+						
+						pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start, end);
 
 						cur_piece++; /* Push link*/
 						pieces[cur_piece] = new Piece();
@@ -430,24 +446,27 @@ namespace System.Windows.Forms
 						pieces[cur_piece].start = i;
 					}
 				}
-			}
+			}			
 
-			if (pieces[cur_piece].end == 0) {
+			if (pieces[cur_piece].end == 0 && pieces[cur_piece].start <= Text.Length) {
 				pieces[cur_piece].end = Text.Length;
 				pieces[cur_piece].text = Text.Substring (pieces[cur_piece].start, pieces[cur_piece].end - pieces[cur_piece].start);
+				cur_piece++;
 			}
+			
+			num_pieces = cur_piece;
 
-			CharacterRange[] charRanges = new CharacterRange [pieces.Length];
+			CharacterRange[] charRanges = new CharacterRange [num_pieces];
 
-			for (int i = 0; i < pieces.Length; i++)
+			for (int i = 0; i < num_pieces; i++)
 				charRanges[i] = new CharacterRange (pieces[i].start, pieces[i].end - pieces[i].start);
 
-			Region[] charRegions = new Region [pieces.Length];
+			Region[] charRegions = new Region [num_pieces];
 			string_format.SetMeasurableCharacterRanges (charRanges);
 
 			charRegions = DeviceContext.MeasureCharacterRanges (Text, Font, ClientRectangle, string_format);
 
-			for (int i = 0; i < pieces.Length; i++)  {
+			for (int i = 0; i < num_pieces; i++)  {
 				//RectangleF[] f = charRegions[i].GetRegionScans (new Matrix());
 				pieces[i].rect = charRegions[i].GetBounds (DeviceContext);
 				Console.WriteLine (pieces[i].rect);
@@ -509,7 +528,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			for (int i = 0; i < pieces.Length; i++)	{
+			for (int i = 0; i < num_pieces; i++)	{
 
 				color = GetLinkColor (pieces[i], i);
 
@@ -671,8 +690,7 @@ namespace System.Windows.Forms
 				int idx;
 
 				if (Count == 1 && this[0].Start == 0
-					&& this[0].Length == -1) {
-					Console.WriteLine ("Clear list");
+					&& this[0].Length == -1) {					
 					Clear ();
 				}
 
