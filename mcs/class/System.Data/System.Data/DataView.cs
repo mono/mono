@@ -505,11 +505,6 @@ namespace System.Data
 			isOpen = false;
 		}
 
-		protected virtual void ColumnCollectionChanged (
-			object sender, CollectionChangeEventArgs e)
-		{
-		}
-
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing)
@@ -569,7 +564,7 @@ namespace System.Data
 			dataTable.RowChanged     += new DataRowChangeEventHandler(OnRowChanged);
 			dataTable.RowDeleting    += new DataRowChangeEventHandler(OnRowDeleting);
 			dataTable.RowDeleted     += new DataRowChangeEventHandler(OnRowDeleted);
-			dataTable.Columns.CollectionChanged += new CollectionChangeEventHandler(OnColumnCollectionChanged);
+			dataTable.Columns.CollectionChanged += new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged += new CollectionChangeEventHandler(OnConstraintCollectionChanged);
 		}
 
@@ -580,7 +575,7 @@ namespace System.Data
 			dataTable.RowChanged     -= new DataRowChangeEventHandler(OnRowChanged);
 			dataTable.RowDeleting    -= new DataRowChangeEventHandler(OnRowDeleting);
 			dataTable.RowDeleted     -= new DataRowChangeEventHandler(OnRowDeleted);
-			dataTable.Columns.CollectionChanged -= new CollectionChangeEventHandler(OnColumnCollectionChanged);
+			dataTable.Columns.CollectionChanged -= new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged -= new CollectionChangeEventHandler(OnConstraintCollectionChanged);
 		}
 
@@ -666,7 +661,7 @@ namespace System.Data
 			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, deletedIndex, -1));
 		}
 		
-		private void OnColumnCollectionChanged (object sender, CollectionChangeEventArgs args)
+		protected virtual void ColumnCollectionChanged (object sender, CollectionChangeEventArgs args)
 		{
 			// UpdateIndex() is not invoked here (even if the sort
 			// column is being removed).
