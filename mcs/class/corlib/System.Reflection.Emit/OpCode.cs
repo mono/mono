@@ -125,9 +125,8 @@ namespace System.Reflection.Emit {
 					return op2;
 				} else {
 					// two byte instruction - combine
-					// give the same values as the mscorlib impl
-					// this makes the Value property useless
-					return (short) ((op1 << 2) | op2);
+					// Some old MS betas returned (op1 << 2) | op2 here...
+					return (short) ((op1 << 8) | op2);
 				}
 			}
 		}

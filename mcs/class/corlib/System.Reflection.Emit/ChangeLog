@@ -1,3 +1,7 @@
+2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* OpCode.cs: Fix Value property. Fixes #49328.
+
 2003-10-10  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.MonoGenericParam): Added `index' field.
