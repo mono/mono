@@ -1,3 +1,7 @@
+2003-10-22  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* KeyIdentifier.cs: Completed implementation.
+
 2003-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricEncryptionKey.cs: Added internal property to get the AsymmetricAlgorithm object.

@@ -6,14 +6,6 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
 using System.Security.Cryptography.Xml;
@@ -29,6 +21,7 @@ namespace Microsoft.Web.Services.Security {
 
 		private byte[] kivalue;
 		private XmlQualifiedName vtype;
+		static private char[] separator = { ':' };
 
 		public KeyIdentifier (byte[] identifier) 
 		{
@@ -68,14 +61,51 @@ namespace Microsoft.Web.Services.Security {
 		{
 			if (document == null)
 				throw new ArgumentNullException ("document");
-			return null;
+
+			XmlElement ki = document.CreateElement (WSSecurity.Prefix, WSSecurity.ElementNames.KeyIdentifier, WSSecurity.NamespaceURI);
+			ki.InnerText = Convert.ToBase64String (kivalue);
+			if ((vtype != null) && (!vtype.IsEmpty)) {
+				string ns = ki.GetPrefixOfNamespace (vtype.Namespace);
+				if ((ns == null) || (ns == String.Empty)) {
+					ns = "vt";
+					XmlAttribute nsa = document.CreateAttribute ("xmlns:vt");
+					nsa.InnerText = vtype.Namespace;
+					ki.Attributes.Append (nsa);
+				}
+				XmlAttribute vt = document.CreateAttribute (WSSecurity.AttributeNames.ValueType);
+				vt.InnerText = String.Concat (ns, ":", vtype.Name);
+				ki.Attributes.Append (vt);
+			}
+			return ki;
 		}
 
 		public void LoadXml (XmlElement element) 
 		{
+			if (element == null)
+				throw new ArgumentNullException ("element");
+
 			if ((element.LocalName != WSSecurity.ElementNames.KeyIdentifier) || (element.NamespaceURI != WSSecurity.NamespaceURI))
 				throw new System.ArgumentException ("invalid LocalName or NamespaceURI");
-			// TODO
+
+			try {
+				kivalue = Convert.FromBase64String (element.InnerText);
+			}
+			catch {
+				kivalue = null;
+			}
+
+			XmlAttribute vt = element.Attributes [WSSecurity.AttributeNames.ValueType];
+			if (vt != null) {
+				string[] nsvt = vt.InnerText.Split (separator);
+				switch (nsvt.Length) {
+					case 2:
+						string ns = element.GetNamespaceOfPrefix (nsvt [0]);
+						vtype = new XmlQualifiedName (nsvt [1], ns);
+						break;
+					default:
+						throw new SecurityFormatException ("missing namespace");
+				}
+			}
 		}
 	}
 }
