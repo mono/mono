@@ -1,0 +1,9 @@
+
+Mon Mar 25 12:50:53 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* First checkin: libmonoutils is meant to hold some utility
+	data structures and bits that are usefult to the rest of the project
+	and don't require metadata/runtime support.
+	mono-hash is a GC-safe hash table: i.e. you can store GC-allocated
+	data in it.
+
