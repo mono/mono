@@ -1,3 +1,12 @@
+2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* socket-io.c: conditionally include sys/filio.h and sys/sockio.h
+	for FIONBIO, FIONREAD and SIOCATMARK.
+	(ves_icall_System_Net_Dns_GetHostByAddr_internal): SunOS doesn't
+	define INADDR_NONE and besides, inet_addr() is deprecated and
+	should not be used. Use inet_pton() instead - it also has the
+	added bonus that it can easily handle IPv6 addresses as well.
+	(inet_pton): Implement using inet_aton() ifndef HAVE_INET_PTON.
 
 Wed Feb 13 23:00:21 CET 2002 Paolo Molaro <lupus@ximian.com>
 
@@ -11,7 +20,8 @@ Wed Feb 13 23:00:21 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 Wed Feb 13 19:20:01 CET 2002 Paolo Molaro <lupus@ximian.com>
 
-	* assembly.cs: better resolver: use it instead of some kludgy code.
+	* assembly.cs: better resolver: use it instead of some kludgy
+	code.
 
 Wed Feb 13 18:25:55 CET 2002 Paolo Molaro <lupus@ximian.com>
 
