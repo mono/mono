@@ -3070,12 +3070,14 @@ namespace Mono.CSharp {
 						Parent.Methods.HasGetHashCode = true;
 				}
 
-				ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
-				if (oa != null) {
-					EmitContext ec = new EmitContext (this.Parent, this.Parent, Location, null, null, ModFlags, false);
-					if (OptAttributes == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type, ec)) {
-						Report.SymbolRelatedToPreviousError (base_method);
-						Report.Warning (672, 1, Location, "Member '{0}' overrides obsolete member. Add the Obsolete attribute to '{0}'", GetSignatureForError (Parent));
+				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
+					if (oa != null) {
+						EmitContext ec = new EmitContext (this.Parent, this.Parent, Location, null, null, ModFlags, false);
+						if (OptAttributes == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type, ec)) {
+							Report.SymbolRelatedToPreviousError (base_method);
+							Report.Warning (672, 1, Location, "Member '{0}' overrides obsolete member. Add the Obsolete attribute to '{0}'", GetSignatureForError (Parent));
+						}
 					}
 				}
 				return true;
