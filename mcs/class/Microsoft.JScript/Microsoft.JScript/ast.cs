@@ -9,5 +9,7 @@
 namespace Microsoft.JScript
 {
 	public abstract class AST
-	{}
+	{
+		public abstract object Visit (Visitor v, object obj);
+	}
 }
