@@ -6,7 +6,7 @@
 // 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) Bob Smith
-// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (c) Copyright 2002 Ximian, Inc. (http://www.ximian.com)
 //
 using System;
 using System.Collections;
@@ -105,6 +105,7 @@ namespace System.Web.Hosting
 			setup.PrivateBinPath = "bin";
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
+			
 			//HACK: we should use Uri (appBase).ToString () once Uri works fine.
 			string uri = "file://" + appPath;
 			if (Path.DirectorySeparatorChar != '/')
@@ -112,6 +113,8 @@ namespace System.Web.Hosting
 				
 			setup.ApplicationBase = uri;
 			setup.ApplicationName = appName;
+			string temp = Path.GetTempPath ();
+			setup.DynamicBase = Path.Combine (temp, Environment.UserName + "-temp-aspnet");
 			string webConfigName = Path.Combine (appPath, "Web.config");
 			if (File.Exists (webConfigName))
 				setup.ConfigurationFile = webConfigName;

@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// (c) Copyright 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 
 using System;
@@ -21,6 +21,7 @@ namespace System.Web.Compilation
 {
 	abstract class BaseCompiler
 	{
+		static string dynamicBase = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		TemplateParser parser;
 		CodeDomProvider provider;
 		ICodeCompiler compiler;
@@ -287,7 +288,13 @@ namespace System.Web.Compilation
 							     parser.CompilerOptions;
 
 			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
-			compilerParameters.TempFiles = new TempFileCollection (config.TempDirectory);
+			TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory);
+			compilerParameters.TempFiles = tempcoll;
+			string dllfilename = Path.GetFileName (tempcoll.BasePath) + ".dll";
+			if (!Directory.Exists (dynamicBase))
+				Directory.CreateDirectory (dynamicBase);
+
+			compilerParameters.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
 
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);

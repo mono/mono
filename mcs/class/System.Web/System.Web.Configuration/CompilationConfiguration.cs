@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// (c) Copyright 2003 Ximian, Inc (http://www.ximian.com)
 //
 
 using System;
@@ -163,10 +163,7 @@ namespace System.Web.Configuration
 		public string TempDirectory {
 			get { return temp_directory; }
 			set {
-				if (value == null || value == "")
-					value = Path.GetTempPath ();
-
-				if (!Directory.Exists (value))
+				if (value != null && !Directory.Exists (value))
 					throw new ArgumentException ("Directory does not exist");
 
 				temp_directory = value;

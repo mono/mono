@@ -1,3 +1,7 @@
+2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilationConfiguration.cs: a null value is ok for TempDirectory.
+
 2004-05-12  Jaroslaw Kowalski <jaak@zd.com.pl>
 
 	* AuthenticationConfigHandler.cs: fixed slidingExpiration and requireSSL
