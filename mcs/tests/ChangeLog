@@ -1,3 +1,10 @@
+2002-07-24  Martin Baulig  <martin@gnome.org>
+
+	* test-149.cs: New test.
+
+	* test-95.cs: .... and finally, another bug in MCS is fixed and
+	the syntax error in this test is caught.
+
 2002-07-23  Martin Baulig  <martin@gnome.org>
 
 	* test-148.cs: New test.

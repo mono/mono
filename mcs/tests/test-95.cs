@@ -2,7 +2,7 @@ class X {
 
 	double d = 0;
 
-	void X ()
+	X ()
 	{
 	}
 

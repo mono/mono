@@ -17,6 +17,10 @@ Test cases listed by Category:
 
   test-148.cs
 
+* Events and Delegates
+
+  test-149.cs
+
 Test cases listed by Number:
 ============================
 
@@ -32,6 +36,10 @@ Testing `new' modifier.
 test-148.cs
 -----------
 Testing the `IndexerName' attribute in interface indexers.
+
+test-149.cs
+-----------
+Testing interface events.
 
 verify-1.cs
 -----------
