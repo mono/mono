@@ -1,3 +1,8 @@
+2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* dis-cil.c: added isinf() for Solaris, that does not seem to have it.
+	Fixes the build on Solaris.
+
 2004-12-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* dis-cil.c, dump.c: Encode special constant +Inf, -Inf and NaN
