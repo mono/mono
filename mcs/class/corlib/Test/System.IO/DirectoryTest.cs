@@ -577,6 +577,7 @@ public class DirectoryTest : Assertion {
 	}
 	
 	[Test]
+        [Ignore("Unix doesnt support CreationTime")]
 	public void CreationTime ()
 	{
 		string path = TempFolder + "/DirectoryTest.CreationTime.1";

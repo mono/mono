@@ -1,3 +1,9 @@
+2004-01-22  David Sheldon <dave-mono@earth.li>
+
+       * DirectoryTest.cs: Added Ignore to the CreationTime tests, 
+        as Unix filesystems don't support them. Should we only ignore
+	them on Unix?
+
 2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PathTest.cs: added some unix-only tests for GetFullPath.
