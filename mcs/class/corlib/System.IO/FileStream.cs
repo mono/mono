@@ -215,6 +215,7 @@ namespace System.IO
 
 		public override void SetLength (long length)
 		{
+			Flush ();
 			FileSetLength (handle, length);
 		}
 
