@@ -319,6 +319,7 @@ namespace System.Data.SqlClient {
 
 		private void Execute (CommandBehavior behavior, bool wantResults)
 		{
+                        Connection.Tds.RecordsAffected = 0;
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			if (preparedStatement == null) {
 				bool schemaOnly = ((behavior & CommandBehavior.SchemaOnly) > 0);

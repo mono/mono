@@ -1,3 +1,8 @@
+2005-01-03  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommand.cs: Fixed bug #68973. Reset Tds.RecordsAffected to 0
+	for each execute statement.
+	
 2004-11-25  Sureshkumar T  <tsureshkumar@novell.com>
 
 	These changes are for 2.0 profile only. These changes implement
