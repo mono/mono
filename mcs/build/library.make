@@ -58,7 +58,7 @@ clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \
 	       $(test_makefrag) $(test_response) \
 	       $(stampfile) $(test_stampfile) \
-	       $(the_pdb) $(test_pdb) \
+	       $(the_pdb) $(test_pdb) $(CLEAN_FILES) \
 	       TestResult.xml
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 	-rm -rf $(response)
