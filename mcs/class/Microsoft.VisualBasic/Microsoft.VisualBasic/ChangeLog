@@ -1,6 +1,7 @@
 2004-09-05  Jambunathan K  <kjambunathan@novell.com>
 	* DateAndTime.cs (DateTime.Today): Changed signature of stime().
-	
+	* Strings.cs: 
+	* Collection.cs: 
 	* VBMath.cs: 
 	* Interaction.cs: 
 	* Information.cs: 

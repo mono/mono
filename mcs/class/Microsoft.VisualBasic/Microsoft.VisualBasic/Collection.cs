@@ -33,6 +33,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.ComponentModel;
+using Microsoft.VisualBasic.CompilerServices;
 
 
 namespace Microsoft.VisualBasic {
@@ -298,9 +299,9 @@ namespace Microsoft.VisualBasic {
 		}
 
 		public void Add (System.Object Item, 
-			[Optional] [DefaultValue(null)] String Key, 
-			[Optional] [DefaultValue(null)] System.Object Before, 
-			[Optional] [DefaultValue(null)] System.Object After)
+			[Optional, __DefaultArgumentValue(null)] String Key, 
+			[Optional, __DefaultArgumentValue(null)] System.Object Before, 
+			[Optional, __DefaultArgumentValue(null)] System.Object After)
 		{
 			int Position = int.MinValue;
 			
