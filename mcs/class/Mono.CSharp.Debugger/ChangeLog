@@ -1,3 +1,7 @@
+2003-12-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* MonoSymbolTable.cs: Fewer StringBuilder allocs.
+
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoSymbolWriter.cs: Create ArrayLists only when needed.

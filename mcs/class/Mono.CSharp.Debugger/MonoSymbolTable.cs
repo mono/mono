@@ -597,22 +597,30 @@ namespace Mono.CSharp.Debugger
 			ParameterInfo[] parameters = method.GetParameters ();
 			if (parameters == null)
 				parameters = new ParameterInfo [0];
-
-			StringBuilder sb = new StringBuilder ();
-			sb.Append (method.DeclaringType.FullName);
-			sb.Append (".");
-			sb.Append (method.Name);
-			sb.Append ("(");
-			for (int i = 0; i < parameters.Length; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (parameters [i].ParameterType.FullName);
+			
+			if (parameters.Length == 0)
+				full_name = method.DeclaringType.FullName + "." + method.Name + "()";
+			else if (parameters.Length == 1)
+				full_name = method.DeclaringType.FullName + "." + method.Name + "(" + parameters [0].ParameterType.FullName +  ")";
+			else if (parameters.Length == 2)
+				full_name = method.DeclaringType.FullName + "." + method.Name + "(" + parameters [0].ParameterType.FullName + "," + parameters [1].ParameterType.FullName + ")";
+			else {
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (method.DeclaringType.FullName);
+				sb.Append (".");
+				sb.Append (method.Name);
+				sb.Append ("(");
+				for (int i = 0; i < parameters.Length; i++) {
+					if (i > 0)
+						sb.Append (",");
+					sb.Append (parameters [i].ParameterType.FullName);
+				}
+				sb.Append (")");
+				full_name = sb.ToString ();
 			}
-			sb.Append (")");
 
 			name = method.Name;
-			full_name = sb.ToString ();
-
+			
 			NumParameters = parameters.Length;
 			ParamTypeIndices = new int [NumParameters];
 			for (int i = 0; i < NumParameters; i++)
