@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.14  2004/08/23 22:53:15  jordi
+// small fix
+//
 // Revision 1.13  2004/08/23 22:43:46  jordi
 // *** empty log message ***
 //
@@ -206,7 +209,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public new ImeMode ImeMode 
 		{
-			get { return base.ForeColor; }
+			get { return base.ImeMode; }
 			set { 
 				if (base.ImeMode == value)
 					return;
