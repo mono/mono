@@ -5,8 +5,7 @@ LIBRARY = ../class/lib/NUnitCore_mono.dll
 LIB_LIST = list.unix
 LIB_FLAGS = -r ../class/lib/corlib.dll -r ../class/lib/System.dll
 
-include ../class/library.make
+export MONO_PATH_PREFIX = ../class/lib:
 
-MCS = mcs
-MCS_FLAGS = --target library --noconfig
+include ../class/library.make
 
