@@ -159,7 +159,7 @@ namespace System
 						}
 					}
 					else {
-						char c = Char.ToLower (_src[_cur]);
+						char c = Char.ToLowerInvariant (_src[_cur]);
 						if (Char.IsDigit (c)) {
 							res = res * 16 + c - '0';
 							_cur++;
@@ -622,13 +622,12 @@ namespace System
 	
 		public string ToString (string format)
 		{
-			string f;
 			bool h = true;
 			bool p = false;
 			bool b = false;
 	
 			if (format != null) {
-				f = format.ToLower();
+				string f = format.ToLowerInvariant();
 	
 				if (f == "b") {
 					b = true;

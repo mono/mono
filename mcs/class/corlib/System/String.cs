@@ -700,7 +700,7 @@ namespace System
 				char* sourcePtr = (char*)source;
 
 				for (int n = 0; n < length; n++) {
-					*destPtr = Char.ToLower (*sourcePtr);
+					*destPtr = Char.ToLowerInvariant (*sourcePtr);
 					sourcePtr++;
 					destPtr++;
 				}
@@ -734,7 +734,7 @@ namespace System
 				char* sourcePtr = (char*)source;
 
 				for (int n = 0; n < length; n++) {
-					*destPtr = Char.ToUpper (*sourcePtr);
+					*destPtr = Char.ToUpperInvariant (*sourcePtr);
 					sourcePtr++;
 					destPtr++;
 				}

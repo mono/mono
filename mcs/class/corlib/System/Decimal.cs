@@ -767,7 +767,7 @@ namespace System
             if (pos < len)
             {
                 char ch = s[pos];
-                if (allowedExponent && Char.ToUpper(ch) == 'E')
+                if (allowedExponent && Char.ToUpperInvariant (ch) == 'E')
                 {
                     expFlag = true;
                     pos++; if (pos >= len) throw new FormatException(invalidExponent);

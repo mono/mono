@@ -2374,7 +2374,7 @@ namespace System {
 				if (Char.IsNumber (c))
 					digitValue = c - '0';
 				else if (Char.IsLetter (c))
-					digitValue = Char.ToLower(c) - 'a' + 10;
+					digitValue = Char.ToLowerInvariant (c) - 'a' + 10;
 				else
 					throw new FormatException ("This is an invalid string: " + value);
 
@@ -2413,7 +2413,7 @@ namespace System {
 				if (Char.IsNumber (c))
 					digitValue = c - '0';
 				else if (Char.IsLetter (c))
-					digitValue = Char.ToLower(c) - 'a' + 10;
+					digitValue = Char.ToLowerInvariant (c) - 'a' + 10;
 				else
 					throw new FormatException ("This is an invalid string: " + value);
 

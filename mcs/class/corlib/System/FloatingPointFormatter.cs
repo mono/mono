@@ -1,4 +1,4 @@
-//
+﻿//
 // System.FloatingPointFormatter.cs
 //
 // Author:
@@ -121,12 +121,12 @@ namespace System {
 				
 			switch (format.Length) {
 			case 1:
-				specifier = Char.ToUpper(format[0]);
+				specifier = Char.ToUpperInvariant(format[0]);
 				precision = -1;
 				return true;
 			case 2:
 				if (Char.IsLetter(format[0]) && Char.IsDigit(format[1])) {
-					specifier = Char.ToUpper(format[0]);
+					specifier = Char.ToUpperInvariant(format[0]);
 					precision = Convert.ToInt32(format[1] - '0');
 					return true;
 				}
@@ -134,7 +134,7 @@ namespace System {
 			case 3:
 				if (Char.IsLetter(format[0]) && Char.IsDigit(format[1])
 						&& Char.IsDigit(format[2])) {
-					specifier = Char.ToUpper(format[0]);
+					specifier = Char.ToUpperInvariant(format[0]);
 					precision = Convert.ToInt32(format.Substring(1, 2));
 					return true;
 				}

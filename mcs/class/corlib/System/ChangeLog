@@ -1,5 +1,14 @@
 2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* Convert.cs:
+	* Decimal.cs:
+	* DecimalFormatter.cs:
+	* FloatingPointFormatter.cs: Call invariant Char functions
+	* Guid.cs: Call invariant Char and String functions
+	* String.cs: Call invariant Char functions
+
+2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* String.cs: Refactored the Invariant ToXXX into its own internal methods
 	  so they are directly callable within corlib (can prevent early
 	  construction of CultureInfo, InvariantCulture and related classes)

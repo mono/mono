@@ -30,7 +30,7 @@ namespace System
                 return false;
 		    
             char[] chars = format.ToCharArray ();
-            specifier = Char.ToUpper(chars[0]);
+            specifier = Char.ToUpperInvariant(chars[0]);
 
             if (length == 1) 
                 return true;
