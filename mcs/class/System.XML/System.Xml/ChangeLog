@@ -1,5 +1,10 @@
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDValidatingReader.cs : reverted one change in r40985. Entity stack
+	  is nothing to do with ReadAttributeValue().
+
+2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader.cs : When there was actual attribute in source 
 	  XmlReader, MoveToAttribute(i) did not move source reader as expected.
 

@@ -903,7 +903,7 @@ namespace Mono.Xml
 			if (consumedAttribute)
 				return false;
 			if (NodeType == XmlNodeType.Attribute &&
-					entityReaderStack.Count > 0 && currentEntityHandling == EntityHandling.ExpandEntities) {
+					currentEntityHandling == EntityHandling.ExpandEntities) {
 				consumedAttribute = true;
 				return true;
 			}
