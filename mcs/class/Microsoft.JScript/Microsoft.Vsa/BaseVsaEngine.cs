@@ -11,6 +11,8 @@ using System;
 using System.Reflection;
 using System.Security.Policy;
 using System.Threading;
+using Microsoft.JScript;
+using Microsoft.JScript.Vsa;
 
 namespace Microsoft.Vsa {
 
@@ -25,9 +27,6 @@ namespace Microsoft.Vsa {
 		private bool empty;
 		private bool siteAlreadySet;
 		private bool running;
-
-		// indicates that RootMoniker and Site have been set.
-		private bool initialized;
 
 		private bool namespaceNotSet;
 		private bool supportDebug;
@@ -49,6 +48,10 @@ namespace Microsoft.Vsa {
 		private Evidence evidence;
 		private string name;
 		private string rootNamespace;
+
+		// FIXME: must set vars to proper values		
+		internal BaseVsaEngine ()
+		{}
 
 		public BaseVsaEngine (string language, string version, bool supportDebug)
 		{
@@ -73,7 +76,6 @@ namespace Microsoft.Vsa {
 			this.rootNamespace = "";
 			this.namespaceNotSet = true;	
 
-			this.initialized = false;
 			this.initNewCalled = false;
 			this.generateDebugInfo = false;
 			this.closed = false;
@@ -219,6 +221,7 @@ namespace Microsoft.Vsa {
 				else if (!initNewCalled)
 					throw new VsaException (VsaError.EngineNotInitialized);
 
+				items = new VsaItems ((VsaEngine) this);
 				return items;
 			}
 		}
@@ -436,9 +439,21 @@ namespace Microsoft.Vsa {
 
 		public virtual void Close ()
 		{
+			if (running)
+				Reset ();
+			else if (closed)
+				throw new VsaException (VsaError.EngineClosed);
+			else if (busy)
+				throw new VsaException (VsaError.EngineBusy);
+
 			running = false;
+			closed = true;
 		}
 
+
+		//
+		// Count that AssemblyExpected exception may be thrown.
+		//
 		public virtual bool Compile ()
 		{
 			if (closed)
@@ -459,8 +474,19 @@ namespace Microsoft.Vsa {
 
 		public virtual object GetOption (string name)
 		{
-			throw new NotImplementedException ();
+			object opt;
+			
+			try {			
+				opt =  GetSpecificOption (name);
+			} catch (VsaException e) {
+				throw;
+			}
+			return opt;
 		}
+
+		protected abstract object GetSpecificOption (string name);
+
+		protected abstract void SetSpecificOption (string name, object val);
 
 		public virtual void InitNew ()
 		{
@@ -535,6 +561,22 @@ namespace Microsoft.Vsa {
 		}
 
 		public abstract bool IsValidIdentifier (string ident);
+
+		internal bool Closed {
+			get { return closed; }
+		}
+
+		internal bool Running {
+			get { return running; }
+		}
+
+		internal bool Busy {
+			get { return busy; }
+		}
+
+		internal bool InitNewCalled {
+			get { return initNewCalled; }
+		}
 	}
 
 	public class BaseVsaSite : IVsaSite {

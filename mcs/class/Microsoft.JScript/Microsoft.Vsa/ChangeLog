@@ -1,3 +1,9 @@
+2003-09-29    <cesar@ciencias.unam.mx>
+
+	* BaseVsaEngine.cs: added default constructor, added exceptions
+	for Close (),  implemented GetOption, added properties that let
+	know the state of the engine.
+
 2003-09-25    <cesar@ciencias.unam.mx>
 
 	* BaseVsaEngine.cs: Implemented the properties of "the kind of
