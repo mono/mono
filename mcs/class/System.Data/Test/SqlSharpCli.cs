@@ -133,16 +133,18 @@ namespace Mono.Data.SqlSharp {
 				theType = (Type) schemaRow["DataType"];
 				dataType = theType.ToString();
 				dataTypeName = reader.GetDataTypeName(c);
-				
-				if(dataType.Equals("System.DateTime"))
-					columnSize = 19;
 
-				// columnSize correction based on data type
-				if(dataType.Equals("System.Boolean")) {
+				switch(dataType) {
+				case "System.DateTime":
+					columnSize = 19;
+					break;
+				case "System.Boolean":
 					columnSize = 5;
+					break;
 				}
-				if(provider.Equals("POSTGRESQL") || 
-				provider.Equals("MYSQL"))
+
+				if(provider.Equals("POSTGRESQL") ||
+					provider.Equals("MYSQL"))
 					if(dataTypeName.Equals("text"))				
 						columnSize = 32; // text will be truncated to 32
 
@@ -180,7 +182,7 @@ namespace Mono.Data.SqlSharp {
 				line = new StringBuilder();
 				for(c = 0; c < reader.FieldCount; c++) {
 					int dataLen = 0;
-					string dataValue;
+					string dataValue = "";
 					column = new StringBuilder();
 					outData = "";
 					
@@ -194,46 +196,44 @@ namespace Mono.Data.SqlSharp {
 					columnSize = (int) row["ColumnSize"];
 					theType = (Type) row["DataType"];
 					dataType = theType.ToString();
+					
 					dataTypeName = reader.GetDataTypeName(c);
 
-					if(dataType.Equals("System.DateTime"))
+					switch(dataType) {
+					case "System.DateTime":
 						columnSize = 19;
-					
+						break;
+					case "System.Boolean":
+						columnSize = 5;
+						break;
+					}
+
+					if(provider.Equals("POSTGRESQL") ||
+						provider.Equals("MYSQL"))
+						if(dataTypeName.Equals("text"))				
+							columnSize = 32; // text will be truncated to 32
+
 					columnSize = (colhdr.Length > columnSize) ? 
 						colhdr.Length : columnSize;
 
 					if(columnSize < 0)
 						columnSize = 0;
 					if(columnSize > 32)
-						columnSize = 32;				
-
-					// certain types need to have the
-					// columnSize adjusted for display
-					// so the column will line up for each
-					// row and match the column header size
-					if(dataType.Equals("System.Boolean")) {
-						columnSize = 5;
-					}
-					if(provider.Equals("POSTGRESQL") ||
-					provider.Equals("MYSQL"))
-						if(dataTypeName.Equals("text"))				
-							columnSize = 32; // text will be truncated to 32
+						columnSize = 32;							
 					
-					dataValue = "";
-		
+					dataValue = "";	
+					
 					if(reader.IsDBNull(c)) {
 						dataValue = "";
 						dataLen = 0;
 					}
-					else {
-						object obj = reader.GetValue(c);						
-												
+					else {											
 						StringBuilder sb;
 						DateTime dt;
 						if(dataType.Equals("System.DateTime")) {
 							// display date in ISO format
 							// "YYYY-MM-DD HH:MM:SS"
-							dt = (DateTime) obj;
+							dt = reader.GetDateTime(c);
 							sb = new StringBuilder();
 							// year
 							if(dt.Year < 10)
@@ -278,7 +278,7 @@ namespace Mono.Data.SqlSharp {
 							dataValue = sb.ToString();
 						}
 						else {
-							dataValue = obj.ToString();
+							dataValue = reader.GetValue(c).ToString();
 						}
 
 						dataLen = dataValue.Length;
@@ -295,6 +295,10 @@ namespace Mono.Data.SqlSharp {
 					
 					// spacing
 					spacingChar = ' ';										
+					if(columnSize < colhdr.Length) {
+						spacing = colhdr.Length - columnSize;
+						column.Append(spacingChar, spacing);
+					}
 					if(dataLen < columnSize) {
 						spacing = columnSize - dataLen;
 						column.Append(spacingChar, spacing);
@@ -402,22 +406,22 @@ namespace Mono.Data.SqlSharp {
 				
 				schemaTable = reader.GetSchemaTable();
 				
-				if(reader.RecordsAffected >= 0) {
-					// SQL Command (INSERT, UPDATE, or DELETE)
-					// RecordsAffected >= 0
-					Console.WriteLine("SQL Command Records Affected: " + reader.RecordsAffected);
-				}
-				else if(schemaTable == null) {
-					// SQL Command (not INSERT, UPDATE, nor DELETE)
-					// RecordsAffected -1 and DataTable has a null reference
-					Console.WriteLine("SQL Command Executed.");
-				}
-				else {
+				if(reader.FieldCount > 0) {
 					// SQL Query (SELECT)
 					// RecordsAffected -1 and DataTable has a reference
 					OutputQueryResult(reader, schemaTable);
 				}
-
+				else if(reader.RecordsAffected >= 0) {
+					// SQL Command (INSERT, UPDATE, or DELETE)
+					// RecordsAffected >= 0
+					Console.WriteLine("SQL Command Records Affected: " + reader.RecordsAffected);
+				}
+				else {
+					// SQL Command (not INSERT, UPDATE, nor DELETE)
+					// RecordsAffected -1 and DataTable has a null reference
+					Console.WriteLine("SQL Command Executed.");
+				}
+				
 				// get next result set (if anymore is left)
 			} while(reader.NextResult());
 		}

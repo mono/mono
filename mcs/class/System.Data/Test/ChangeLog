@@ -1,3 +1,11 @@
+2002-10-15  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: get it to work with System.Data.OleDb 
+	on MS .net when connected to Oracle 8i.  Also, get data
+	to space correctly when data size is smaller than the
+	header size.  If DataType is DateTime, use GetDataTime(),
+	otherwise, use GetValue().
+
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: better formatting of output
