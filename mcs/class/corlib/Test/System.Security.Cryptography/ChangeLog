@@ -1,3 +1,12 @@
+2004-12-23  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoStreamTest.cs: Fixed tests to execute properly on 2.0 Nov CTP.
+	* DSACryptoServiceProviderTest.cs: Fixed tests to execute properly on 
+	2.0 Nov CTP.
+	* PaddingModeTest.cs: Fixed tests to execute properly on 2.0 Nov CTP.
+	* RSACryptoServiceProviderTest.cs: Fixed tests to execute properly on 
+	2.0 Nov CTP.
+
 2004-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ProtectedDataTest.cs: Moved in System.Security.dll

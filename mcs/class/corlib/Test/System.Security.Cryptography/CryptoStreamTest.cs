@@ -168,6 +168,8 @@ namespace MonoTests.System.Security.Cryptography {
 					File.Delete ("read");
 				if (File.Exists ("write"))
 					File.Delete ("write");
+				if (File.Exists ("*.tmp"))
+					File.Delete ("*.tmp");
 			}
 			catch {}
 		}
@@ -230,7 +232,8 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (NotSupportedException))]
 		public void GetLength () 
 		{
-			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			DebugStream debug = new DebugStream ();
+			cs = new CryptoStream (debug, encryptor, CryptoStreamMode.Read);
 			long x = cs.Length;
 		}
 
@@ -238,7 +241,8 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (NotSupportedException))]
 		public void GetPosition () 
 		{
-			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			DebugStream debug = new DebugStream ();
+			cs = new CryptoStream (debug, encryptor, CryptoStreamMode.Read);
 			long x = cs.Position;
 		}
 
@@ -246,7 +250,8 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (NotSupportedException))]
 		public void SetPosition () 
 		{
-			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			DebugStream debug = new DebugStream ();
+			cs = new CryptoStream (debug, encryptor, CryptoStreamMode.Read);
 			cs.Position = 1;
 		}
 
@@ -254,7 +259,8 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (NotSupportedException))]
 		public void Seek () 
 		{
-			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			DebugStream debug = new DebugStream ();
+			cs = new CryptoStream (debug, encryptor, CryptoStreamMode.Read);
 			cs.Seek (0, SeekOrigin.Begin);
 		}
 
@@ -262,7 +268,8 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (NotSupportedException))]
 		public void SetLength () 
 		{
-			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			DebugStream debug = new DebugStream ();
+			cs = new CryptoStream (debug, encryptor, CryptoStreamMode.Read);
 			cs.SetLength (0);
 		}
 
@@ -275,7 +282,9 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void FlushFinalBlockReadStream () 
 		{
 			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
@@ -286,32 +295,48 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (NotSupportedException))]
 		public void FlushFinalBlock_Dual () 
 		{
-			byte[] data = {0, 1, 2, 3, 4, 5, 6, 7};
-			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
-			cs.Write (data, 0, data.Length);
-			cs.FlushFinalBlock ();
-			cs.FlushFinalBlock ();
+			// do no corrupt writeStream in further tests
+			using (FileStream fs = new FileStream ("FlushFinalBlock_Dual.tmp", FileMode.OpenOrCreate, FileAccess.Write)) {
+				byte[] data = {0, 1, 2, 3, 4, 5, 6, 7};
+				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Write);
+				cs.Write (data, 0, data.Length);
+				cs.FlushFinalBlock ();
+				cs.FlushFinalBlock ();
+			}
 		}
 
 		[Test]
 		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+#if NET_2_0
+		[ExpectedException (typeof (NotSupportedException))]
+#else
+		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void FlushFinalBlock_Disposed () 
 		{
-			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
-			cs.Clear ();
-			cs.FlushFinalBlock ();
+			// do no corrupt writeStream in further tests
+			using (FileStream fs = new FileStream ("FlushFinalBlock_Disposed.tmp", FileMode.OpenOrCreate, FileAccess.Write)) {
+				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Write);
+				cs.Clear ();
+				cs.FlushFinalBlock ();
+			}
 		}
 
 		[Test]
 		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
+#if !NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void Read_Disposed () 
 		{
-			byte[] buffer = new byte [8];
-			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
-			cs.Clear ();
-			cs.Read (buffer, 0, 8);
+			// do no corrupt readStream in further tests
+			using (FileStream fs = new FileStream ("read", FileMode.OpenOrCreate, FileAccess.Read)) {
+				byte[] buffer = new byte [8];
+				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Read);
+				cs.Clear ();
+				cs.Read (buffer, 0, 8);
+			}
 		}
 
 		[Test]
@@ -323,12 +348,15 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void Read_Disposed_Break () 
 		{
-			byte[] buffer = new byte [8];
-			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
-			int len = cs.Read (buffer, 0, 4);
-			AssertEquals ("Read 4", 4, len);
-			cs.Clear ();
-			len = cs.Read (buffer, 3, 4);
+			// do no corrupt readStream in further tests
+			using (FileStream fs = new FileStream ("read", FileMode.OpenOrCreate, FileAccess.Read)) {
+				byte[] buffer = new byte [8];
+				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Read);
+				int len = cs.Read (buffer, 0, 4);
+				AssertEquals ("Read 4", 4, len);
+				cs.Clear ();
+				len = cs.Read (buffer, 3, 4);
+			}
 		}
 
 		[Test]
@@ -341,7 +369,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		// [ExpectedException (typeof (ArgumentNullException))]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void Read_NullBuffer () 
 		{
@@ -421,10 +448,13 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void Write_Disposed () 
 		{
-			byte[] buffer = new byte [8];
-			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
-			cs.Clear ();
-			cs.Write (buffer, 0, 8);
+			// do no corrupt writeStream in further tests
+			using (FileStream fs = new FileStream ("Write_Disposed.tmp", FileMode.OpenOrCreate, FileAccess.Write)) {
+				byte[] buffer = new byte [8];
+				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Write);
+				cs.Clear ();
+				cs.Write (buffer, 0, 8);
+			}
 		}
 
 		[Test]
@@ -437,7 +467,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		// [ExpectedException (typeof (ArgumentNullException))]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void Write_NullBuffer () 
 		{
@@ -492,8 +521,9 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (ArgumentException))]
 		public void Write_InvalidOffset () 
 		{
+			DebugStream debug = new DebugStream ();
 			byte[] buffer = new byte [8];
-			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs = new CryptoStream (debug, encryptor, CryptoStreamMode.Write);
 			cs.Write (buffer, 5, 4);
 		}
 
@@ -501,8 +531,9 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (ArgumentException))]
 		public void Write_OverflowCount () 
 		{
+			DebugStream debug = new DebugStream ();
 			byte[] buffer = new byte [8];
-			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs = new CryptoStream (debug, encryptor, CryptoStreamMode.Write);
 			cs.Write (buffer, 0, Int32.MaxValue);
 		}
 

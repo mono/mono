@@ -178,6 +178,13 @@ public class DSACryptoServiceProviderTest : Assertion {
 	public void TooSmallKeyPair () 
 	{
 		dsa = new DSACryptoServiceProvider (384);
+#if NET_2_0
+		// in 2.0 MS delay the creation of the key pair until it is required
+		// (same trick that Mono almost always used ;-) but they also delay
+		// the parameter validation (what Mono didn't). So here we must "get"
+		// the key (export) to trigger the exception
+		dsa.ToXmlString (true);
+#endif
 	}
 
 	[Test]
@@ -185,6 +192,13 @@ public class DSACryptoServiceProviderTest : Assertion {
 	public void TooBigKeyPair () 
 	{
 		dsa = new DSACryptoServiceProvider (2048);
+#if NET_2_0
+		// in 2.0 MS delay the creation of the key pair until it is required
+		// (same trick that Mono almost always used ;-) but they also delay
+		// the parameter validation (what Mono didn't). So here we must "get"
+		// the key (export) to trigger the exception
+		dsa.ToXmlString (true);
+#endif
 	}
 
 	[Test]
@@ -878,28 +892,8 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
 		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
-		Assert ("Accessible", !info.Accessible);
-		// info.Exportable throws a CryptographicException at this stage
-		Assert ("HardwareDevice", !info.HardwareDevice);
-		AssertNotNull ("KeyContainerName", info.KeyContainerName);
-		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
-		Assert ("MachineKeyStore", !info.MachineKeyStore);
-		// info.Protected throws a CryptographicException at this stage
-		AssertNotNull ("ProviderName", info.ProviderName);
-		AssertEquals ("ProviderType", 13, info.ProviderType);
-		Assert ("RandomlyGenerated", info.RandomlyGenerated);
-		Assert ("Removable", !info.Removable);
-		// info.UniqueKeyContainerName throws a CryptographicException at this stage
-	}
-
-	[Test]
-	public void CspKeyContainerInfo_ImportedKeypair ()
-	{
-		dsa = new DSACryptoServiceProvider (minKeySize);
-		DSAParameters rsap = AllTests.GetKey (true);
-		dsa.ImportParameters (rsap);
-		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
 		Assert ("Accessible", info.Accessible);
+// FIXME	AssertNotNull ("CryptoKeySecurity", info.CryptoKeySecurity);
 		Assert ("Exportable", info.Exportable);
 		Assert ("HardwareDevice", !info.HardwareDevice);
 		AssertNotNull ("KeyContainerName", info.KeyContainerName);
@@ -914,6 +908,29 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	public void CspKeyContainerInfo_ImportedKeypair ()
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		DSAParameters rsap = AllTests.GetKey (true);
+		dsa.ImportParameters (rsap);
+		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
+		Assert ("Accessible", info.Accessible);
+// FIXME	AssertNotNull ("CryptoKeySecurity", info.CryptoKeySecurity);
+		Assert ("Exportable", info.Exportable);
+		Assert ("HardwareDevice", !info.HardwareDevice);
+		AssertNotNull ("KeyContainerName", info.KeyContainerName);
+		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
+		Assert ("MachineKeyStore", !info.MachineKeyStore);
+		Assert ("Protected", !info.Protected);
+		AssertNotNull ("ProviderName", info.ProviderName);
+		AssertEquals ("ProviderType", 13, info.ProviderType);
+		Assert ("RandomlyGenerated", info.RandomlyGenerated);
+		Assert ("Removable", !info.Removable);
+		AssertNotNull ("UniqueKeyContainerName", info.UniqueKeyContainerName);
+	}
+
+	[Test]
+	// This case wasn't fixed in Nov CTP
 	public void CspKeyContainerInfo_ImportedPublicKey ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
@@ -921,6 +938,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa.ImportParameters (rsap);
 		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
 		Assert ("Accessible", !info.Accessible);
+		// info.CryptoKeySecurity throws a CryptographicException at this stage
 		// info.Exportable throws a CryptographicException at this stage
 		Assert ("HardwareDevice", !info.HardwareDevice);
 		AssertNotNull ("KeyContainerName", info.KeyContainerName);
@@ -1038,9 +1056,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
-//	[ExpectedException (typeof (ArgumentNullException))]
-//	http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=2b7ff7d4-67db-43f0-8eba-20d962708140
-	[ExpectedException (typeof (NullReferenceException))]
+	[ExpectedException (typeof (ArgumentNullException))]
 	public void ImportCspBlob_Null ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);

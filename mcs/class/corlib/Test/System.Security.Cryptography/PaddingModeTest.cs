@@ -826,7 +826,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void ANSIX923_PKCS7 ()
 		{
-			Assert.AreEqual (0, Mismatch (PaddingMode.ANSIX923, PaddingMode.PKCS7));
+			Assert.AreEqual (4, Mismatch (PaddingMode.ANSIX923, PaddingMode.PKCS7));
 		}
 
 		[Test]
