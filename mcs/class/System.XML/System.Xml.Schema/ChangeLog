@@ -1,3 +1,11 @@
+2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* BuiltInDatatype.cs,
+	  XmlSchemaFacet.cs,
+	  XmlSchemaSimpleTypeRestriction.cs,
+	  XmlSchemaXPath.cs : modified some enum const to static readonly
+	  (.NET 1.0 does not allow it). Use safe overload of LookupNamespace().
+
 2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaDatatypeVariety.cs,

@@ -179,7 +179,7 @@ namespace System.Xml.Schema
 					string prefix = xpath.Substring (nameStart, pos - nameStart);
 					pos++;
 					if (xpath.Length > pos && xpath [pos] == '*') {
-						string ns = nsmgr.LookupNamespace (prefix);
+						string ns = nsmgr.LookupNamespace (prefix, false);
 						if (ns == null) {
 							error (h, "Specified prefix '" + prefix + "' is not declared.");
 							this.currentPath = null;
@@ -196,7 +196,7 @@ namespace System.Xml.Schema
 								pos++;
 						}
 						step.Name = xpath.Substring (localNameStart, pos - localNameStart);
-						string ns = nsmgr.LookupNamespace (prefix);
+						string ns = nsmgr.LookupNamespace (prefix, false);
 						if (ns == null) {
 							error (h, "Specified prefix '" + prefix + "' is not declared.");
 							this.currentPath = null;
@@ -291,7 +291,7 @@ namespace System.Xml.Schema
 					case "xmlns":
 						continue;
 					default:
-						path.nsmgr.AddNamespace (prefix, currentMgr.LookupNamespace (prefix));
+						path.nsmgr.AddNamespace (prefix, currentMgr.LookupNamespace (prefix, false));
 						break;
 					}
 				}

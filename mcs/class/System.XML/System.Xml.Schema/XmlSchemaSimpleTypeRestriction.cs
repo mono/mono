@@ -110,7 +110,7 @@ namespace System.Xml.Schema
 			* not been fixed in the baseType. That is done elsewhere.
 			*/
 		
-		private const XmlSchemaFacet.Facet listFacets =
+		private static readonly XmlSchemaFacet.Facet listFacets =
 						 XmlSchemaFacet.Facet.length | XmlSchemaFacet.Facet.minLength |
 						 XmlSchemaFacet.Facet.maxLength | XmlSchemaFacet.Facet.pattern | 
 						 XmlSchemaFacet.Facet.enumeration | XmlSchemaFacet.Facet.whiteSpace; 

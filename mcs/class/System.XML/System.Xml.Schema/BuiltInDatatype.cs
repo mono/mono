@@ -127,12 +127,12 @@ namespace Mono.Xml.Schema
 
 		/* Matches facets allowed on boolean type
 		 */
-		internal const XmlSchemaFacet.Facet booleanAllowedFacets = 
+		internal static readonly XmlSchemaFacet.Facet booleanAllowedFacets = 
 					 XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.whiteSpace;
 
 		/* Matches facets allowed on decimal type. 
 		 */
-		internal const XmlSchemaFacet.Facet decimalAllowedFacets = 
+		internal static readonly XmlSchemaFacet.Facet decimalAllowedFacets = 
 							XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.enumeration | 
 							XmlSchemaFacet.Facet.whiteSpace | XmlSchemaFacet.Facet.maxInclusive | 
 							XmlSchemaFacet.Facet.minInclusive | XmlSchemaFacet.Facet.maxExclusive | 
@@ -143,7 +143,7 @@ namespace Mono.Xml.Schema
 		 * gYearMonth, gYear, gMonthDay, gMonth, and gDay types
 		 */
 
-		internal const XmlSchemaFacet.Facet durationAllowedFacets = 
+		internal static readonly XmlSchemaFacet.Facet durationAllowedFacets = 
 							XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.enumeration | 
 							XmlSchemaFacet.Facet.whiteSpace | XmlSchemaFacet.Facet.maxInclusive |
 							XmlSchemaFacet.Facet.minInclusive | XmlSchemaFacet.Facet.maxExclusive |
@@ -155,7 +155,7 @@ namespace Mono.Xml.Schema
 		 * Also used on list types
 		 */
 
-		internal const XmlSchemaFacet.Facet stringAllowedFacets = 
+		internal static readonly XmlSchemaFacet.Facet stringAllowedFacets = 
 						 XmlSchemaFacet.Facet.length | XmlSchemaFacet.Facet.minLength |
 						 XmlSchemaFacet.Facet.maxLength | XmlSchemaFacet.Facet.pattern | 
 						 XmlSchemaFacet.Facet.enumeration | XmlSchemaFacet.Facet.whiteSpace; 
@@ -1272,7 +1272,8 @@ namespace Mono.Xml.Schema
 			string localName = colonAt < 0 ? s : s.Substring (colonAt + 1);
 //			string localName = nameTable.Add (colonAt < 0 ? s : s.Substring (colonAt + 1));
 			return new XmlQualifiedName (localName, nsmgr.LookupNamespace (
-				colonAt < 0 ? "" : s.Substring (0, colonAt - 1)));
+				colonAt < 0 ? "" : s.Substring (0, colonAt - 1),
+				false));
 		}
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
