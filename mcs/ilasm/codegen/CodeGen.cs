@@ -11,6 +11,7 @@
 
 using PEAPI;
 using System;
+using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -192,30 +193,38 @@ namespace Mono.ILASM {
 
                 public void Write ()
                 {
-			pefile = new PEFile (output_file, is_dll, is_assembly);
+			FileStream out_stream = null;
 			
-			extern_table.Resolve (this);
+			try {
+				out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
+				pefile = new PEFile (assembly_name, is_dll, is_assembly, out_stream);			
+				extern_table.Resolve (this);
+                        	type_manager.DefineAll ();
 
-                        type_manager.DefineAll ();
+                        	foreach (FieldDef fielddef in global_field_table.Values) {
+                                	fielddef.Define (this);
+                        	}
 
-                        foreach (FieldDef fielddef in global_field_table.Values) {
-                                fielddef.Define (this);
-                        }
+                        	foreach (MethodDef methoddef in global_method_table.Values) {
+                                	methoddef.Define (this);
+                        	}
 
-                        foreach (MethodDef methoddef in global_method_table.Values) {
-                                methoddef.Define (this);
-                        }
+                        	foreach (TypeDef typedef in defcont_list) {
+                                	typedef.DefineContents (this);
+                        	}
 
-                        foreach (TypeDef typedef in defcont_list) {
-                                typedef.DefineContents (this);
-                        }
+                        	if (sub_system != -1)
+                                	pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
+                        	if (cor_flags != -1)
+                                	pefile.SetCorFlags (cor_flags);
 
-                        if (sub_system != -1)
-                                pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
-                        if (cor_flags != -1)
-                                pefile.SetCorFlags (cor_flags);
-
-                        pefile.WritePEFile ();
+                        	pefile.WritePEFile ();
+			} catch {
+				throw;
+			} finally {
+				if (out_stream != null)
+					out_stream.Close ();
+			}
                 }
 
                 public PEAPI.Method ResolveMethod (string signature)

@@ -1,8 +1,13 @@
 2003-07-27 Jackson Harper <jackson@latitudegeo.com>
 
+	* CodeGen.cs: Set the assembly name when creating the PEFile. 
+
+2003-07-27 Jackson Harper <jackson@latitudegeo.com>
+
 	* CodeGen.cs: Do not create the PEFile untill the resolve phase. This 
 	fixes the problem with ilasm creating blank files if their is a 
-	failure in the parsing phase. 
+	failure in the parsing phase and not being able to set the assembly
+	name.
 	* ExternTable.cs: Do not reference the assemblies untill after the 
 	PEFile untill the Resolve phase.
 	
