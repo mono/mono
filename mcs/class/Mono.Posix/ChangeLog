@@ -1,3 +1,7 @@
+2004-11-16  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Rename Mono.Posix to Mono.Unix.
+
 2004-11-05  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Mono.Posix.dll.sources: Add lots of new files to the binding.
