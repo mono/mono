@@ -71,5 +71,92 @@ namespace MonoTests.System.Xml
 			XmlDataDocument doc = new XmlDataDocument ();
 			doc.LoadXml ("<NewDataSet><TestTable><TestRow><TestColumn>1</TestColumn></TestRow></TestTable></NewDataSet>");
 		}
+
+		[Test]
+		public void TestCreateElementAndRow ()
+		{
+			DataSet ds = new DataSet ("set");
+			DataTable dt = new DataTable ("tab1");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			ds.Tables.Add (dt);
+			DataTable dt2 = new DataTable ("child");
+			dt2.Columns.Add ("ref");
+			dt2.Columns.Add ("val");
+			ds.Tables.Add (dt2);
+			DataRelation rel = new DataRelation ("rel",
+				dt.Columns [0], dt2.Columns [0]);
+			rel.Nested = true;
+			ds.Relations.Add (rel);
+			XmlDataDocument doc = new XmlDataDocument (ds);
+			doc.LoadXml ("<set><tab1><col1>1</col1><col2/><child><ref>1</ref><val>aaa</val></child></tab1></set>");
+			AssertEquals (1, ds.Tables [0].Rows.Count);
+			AssertEquals (1, ds.Tables [1].Rows.Count);
+
+			// document element - no mapped row
+			XmlElement el = doc.DocumentElement;
+			AssertNull (doc.GetRowFromElement (el));
+
+			// tab1 element - has mapped row
+			el = el.FirstChild as XmlElement;
+			DataRow row = doc.GetRowFromElement (el);
+			AssertNotNull (row);
+			AssertEquals (DataRowState.Added, row.RowState);
+
+			// col1 - it is column. no mapped row
+			el = el.FirstChild as XmlElement;
+			row = doc.GetRowFromElement (el);
+			AssertNull (row);
+
+			// col2 - it is column. np mapped row
+			el = el.NextSibling as XmlElement;
+			row = doc.GetRowFromElement (el);
+			AssertNull (row);
+
+			// child - has mapped row
+			el = el.NextSibling as XmlElement;
+			row = doc.GetRowFromElement (el);
+			AssertNotNull (row);
+			AssertEquals (DataRowState.Added, row.RowState);
+
+			// created (detached) table 1 element (used later)
+			el = doc.CreateElement ("tab1");
+			row = doc.GetRowFromElement (el);
+			AssertEquals (DataRowState.Detached, row.RowState);
+			AssertEquals (1, dt.Rows.Count); // not added yet
+
+			// adding a node before setting EnforceConstraints
+			// raises an error
+			try {
+				doc.DocumentElement.AppendChild (el);
+				Fail ("Invalid Operation should occur; EnforceConstraints prevents addition.");
+			} catch (InvalidOperationException) {
+			}
+
+			// try again...
+			ds.EnforceConstraints = false;
+			AssertEquals (1, dt.Rows.Count); // not added yet
+			doc.DocumentElement.AppendChild (el);
+			AssertEquals (2, dt.Rows.Count); // added
+			row = doc.GetRowFromElement (el);
+			AssertEquals (DataRowState.Added, row.RowState); // changed
+
+			// Irrelevant element
+			XmlElement el2 = doc.CreateElement ("hoge");
+			row = doc.GetRowFromElement (el2);
+			AssertNull (row);
+
+			// created table 2 element (used later)
+			el = doc.CreateElement ("child");
+			row = doc.GetRowFromElement (el);
+			AssertEquals (DataRowState.Detached, row.RowState);
+
+			// Adding it to irrelevant element performs no row state change.
+			AssertEquals (1, dt2.Rows.Count); // not added yet
+			el2.AppendChild (el);
+			AssertEquals (1, dt2.Rows.Count); // still not added
+			row = doc.GetRowFromElement (el);
+			AssertEquals (DataRowState.Detached, row.RowState); // still detached here
+		}
 	}
 }
