@@ -1,3 +1,17 @@
+2004-06-18  Dick Porter  <dick@ximian.com>
+
+	* event-private.h:
+	* events.c: Auto-reset events need to release one thread for each
+	time SetEvent() is called.  Fixes bug 41292.
+
+	* threads.h:
+	* mutex-private.h:
+	* mutexes.c: Scan for mutexes that are still locked by a thread
+	when it exits.  Fixes the MS demo app linked by bug 41292.
+
+	* wait.c (test_and_own): Make sure a handle is signalled before it
+	is owned.
+
 2004-06-16  Dick Porter  <dick@ximian.com>
 
 	* timed-thread.c: Call the thread cleanup exit routine before taking
