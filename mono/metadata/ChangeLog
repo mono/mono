@@ -1,5 +1,9 @@
 2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_class_proxy_vtable): Make it thread safe.
+
+	* pedump.c: Fix warning.
+
 	* object.c appdomain.h: Get rid of metadata_section. 
 	It is no longer needed and it was causing deadlocks with domain->lock.
 
