@@ -15,7 +15,7 @@ cs0229.cs
 cs0576.cs
 cs0642-2.cs
 cs0642.cs
-cs0647.cs # corlib bug
+cs0647.cs # corlib bug #73142
 cs0652.cs
 cs1035.cs
 cs2023.cs
