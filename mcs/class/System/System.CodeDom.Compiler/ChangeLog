@@ -1,3 +1,7 @@
+2003-02-20  Alfonso Ali <isa@infomed.sld.cu>
+
+	* CodeGenerator.cs: Generates the entry point method.
+
 2003-01-10  Duncan Mak  <duncan@ximian.com>
 
 	* CompilerErrorCollection.cs: 

@@ -873,6 +873,11 @@ namespace System.CodeDom.Compiler {
 					GenerateField( field );
 					continue;
 				}
+				CodeEntryPointMethod epmethod = member as CodeEntryPointMethod;
+				if ( epmethod != null ) {
+					GenerateEntryPointMethod( epmethod, type );
+					continue;
+				}
 				CodeMemberMethod method = member as CodeMemberMethod;
 				if ( method != null ) {
 					GenerateMethod( method, type );
