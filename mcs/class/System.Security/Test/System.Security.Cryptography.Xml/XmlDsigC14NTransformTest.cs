@@ -215,20 +215,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			doc.PreserveWhitespace = true;
 			doc.LoadXml (InputXml);
 		
-    	    	        // Aleksey:
-			// Currently Mono's XmlValidatingReader does not support resolving
-			// default attributes (vreader.ValidationType = ValidationType.None).
-			// We need it for C14N and this code needs to be uncommented 
-			// when Mono will have it.
+			// Testing default attribute support with
+			// vreader.ValidationType = ValidationType.None.
 			//
-			//	UTF8Encoding utf8 = new UTF8Encoding ();
-			//	byte[] data = utf8.GetBytes (InputXml.ToString ());
-			//	Stream stream = new MemoryStream (data);
-			//	XmlTextReader reader = new XmlTextReader (stream);
-			//	XmlValidatingReader vreader = new XmlValidatingReader (reader);
-			//	vreader.ValidationType = ValidationType.None;
-			//	vreader.EntityHandling = EntityHandling.ExpandCharEntities;
-			//	doc.Load(vreader);
+			UTF8Encoding utf8 = new UTF8Encoding ();
+			byte[] data = utf8.GetBytes (InputXml.ToString ());
+			Stream stream = new MemoryStream (data);
+			XmlTextReader reader = new XmlTextReader (stream);
+			XmlValidatingReader vreader = new XmlValidatingReader (reader);
+			vreader.ValidationType = ValidationType.None;
+			vreader.EntityHandling = EntityHandling.ExpandCharEntities;
+			doc.Load (vreader);
 
 			transform.LoadInput (doc);
 			return Stream2String ((Stream)transform.GetOutput ());
@@ -293,16 +290,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        // Example 3 from C14N spec - Start and End Tags: 
 	        // http://www.w3.org/TR/xml-c14n#Example-SETags
 	        //
-	        // Aleksey:
-	        // Currently Mono XML parser does not support resolving default 
-	        // attributes thru XmlValidateReader interface. Thus this test
-	        // fails because it needs a default attribute. Bellow I put a
-	        // test w/o default attributes. Thus we commented out DTD declaration.
-	        //
-	        // See Also: ExecuteXmlDSigC14NTransformTest()
-	        //
 	        static string C14NSpecExample3Input =  
-	    	        // "<!DOCTYPE doc [<!ATTLIST e9 attr CDATA \"default\">]>\n" +
+	    	        "<!DOCTYPE doc [<!ATTLIST e9 attr CDATA \"default\">]>\n" +
 	    	        "<doc>\n" +
 	    	        "   <e1   />\n" +
 	    	        "   <e2   ></e2>\n" +
@@ -330,8 +319,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
     	    	        "   <e6 xmlns:a=\"http://www.w3.org\">\n" +
 	    	        "       <e7 xmlns=\"http://www.ietf.org\">\n" +
 	    	        "           <e8 xmlns=\"\">\n" +
-	    	        // "               <e9 xmlns:a=\"http://www.ietf.org\" attr=\"default\"></e9>\n" +
-	    	        "               <e9 xmlns:a=\"http://www.ietf.org\"></e9>\n" +
+	    	        "               <e9 xmlns:a=\"http://www.ietf.org\" attr=\"default\"></e9>\n" +
+//	    	        "               <e9 xmlns:a=\"http://www.ietf.org\"></e9>\n" +
 	    	        "           </e8>\n" +
 	    	        "       </e7>\n" +
 	    	        "   </e6>\n" +
@@ -373,8 +362,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        // Example 5 from C14N spec - Entity References: 
 	        // http://www.w3.org/TR/xml-c14n#Example-Entities
 	        //
-	        // Aleksey: 
-	        // We don't support entities :( at all...
 	        static string C14NSpecExample5Input =  
 	    	        "<!DOCTYPE doc [\n" +
 	    	        "<!ATTLIST doc attrExtEnt ENTITY #IMPLIED>\n" +
@@ -384,13 +371,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	    	        "<!NOTATION gif SYSTEM \"viewgif.exe\">\n" +
 	    	        "]>\n" +
 	    	        "<doc attrExtEnt=\"entExt\">\n" +
-	    	        // "   &ent1;, &ent2;!\n" +
+	    	        "   &ent1;, &ent2;!\n" +
 	    	        "</doc>\n" +
 	    	        "\n" +
 	    	        "<!-- Let world.txt contain \"world\" (excluding the quotes) -->\n";
 	        static string C14NSpecExample5Output =  
 	    	        "<doc attrExtEnt=\"entExt\">\n" +
-	    	        // "   Hello, world!\n" +
+	    	        "   Hello, world!\n" +
 	    	        "</doc>";	    
     
     	        //

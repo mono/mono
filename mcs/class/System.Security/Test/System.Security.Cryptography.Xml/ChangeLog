@@ -1,3 +1,9 @@
+2004-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigC14NTransformTest.cs,
+	  XmlDsigC14NWithCommentsTransformTest.cs:
+	  uncommented some code blocks which should be tested.
+
 2004-02-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyInfoTest.cs: Corrected the xmlRSA XML string.
