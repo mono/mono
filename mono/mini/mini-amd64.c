@@ -1519,6 +1519,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
+		case OP_SETREG:
 			/*
 			 * Removes:
 			 *
@@ -2785,6 +2786,14 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					if (val < -1) {
 						/* the register gets spilled after this inst */
 						spill = -val -1;
+					}
+
+					if (((ins->opcode == OP_MOVE) || (ins->opcode == OP_SETREG)) && !spill && !fp && (!is_global_ireg (ins->dreg) && (rs->ifree_mask & (1 << ins->dreg)))) {
+						/* 
+						 * Allocate the same hreg to sreg1 as well so the 
+						 * peephole can get rid of the move.
+						 */
+						sreg1_mask = 1 << ins->dreg;
 					}
 
 					val = alloc_reg (cfg, tmp, ins, sreg1_mask, ins->sreg1, reginfo [ins->sreg1].flags, fp);

@@ -1,3 +1,8 @@
+2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_local_regalloc): Optimize away reg->reg
+	moves if possible.
+
 2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_local_regalloc): Split the arch-dependent
