@@ -1,3 +1,9 @@
+
+Tue Sep 24 11:48:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: use mono_type_size () to get the size of
+	a blob of data for a type (Zoltan Varga spotted the bug).
+
 2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* get.c: closes bug #30814. Thanks to Zoltan Varga.
