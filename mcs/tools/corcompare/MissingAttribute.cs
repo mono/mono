@@ -122,6 +122,9 @@ namespace Mono.Util.CorCompare
 					//nodeStatus.statusCountsTotal.errorCounts.Add (ErrorTypes.Todo);
 					//nodeStatus.cTodo ++;	// this is where ALL the 'todo's come from
 				}
+				else if (attribute.ToString ().EndsWith ("DllImportAttribute") || attribute.ToString ().EndsWith ("PreserveSigAttribute")) {
+					// Ignore these
+				}
 				else
 				{
 					MissingAttribute ma = new MissingAttribute (attribute, null);
