@@ -7,47 +7,67 @@
 // (C) Ximian, Inc., 2002
 //
 
+using System;
+using System.ComponentModel
+
 namespace System.Windows.Forms
 {
-	// <summary>
-	//	This is only a template. Nothing is implemented yet.
-	//	Represents a panel in a StatusBar control.
-	// </summary>
-using System.ComponentModel;
+	/// <summary>
+	///	Represents a panel in a StatusBar control.
+	/// </summary>
 	public class StatusBarPanel : Component, ISupportInitialize
 	{
+		//
+		//  --- Private Fields
+		//
+		private HorizontalAlignment alignment;
+		private StatusBarPanelAutoSize autoSize;
+		private StatusBarPanelBorderStyle borderStyle;
+		private Icon icon;
+		private int minWidth;
+		private StatusBar parent;
+		private StatusBarPanelStyle style;
+		private string text;
+		private string toolTipText;
+		private int width;
+
+		//
+		//  --- Constructors/Destructors
+		//
+		StatusBarPanel() : base()
+		{
+			alignment = HorizontalAlignment.Left;
+			autoSize = StatusBarPanelAutoSize.None;
+			borderStyle = StatusBarPanelBorderStyle.Sunken;
+			icon = null;
+			minWidth = 10;
+			style = StatusBarPanelStyle.Text;
+			text = "";
+			toolTipText = "";
+			width = 100;
+		}
+
 		//
 		//  --- Public Methods
 		//
 		//[MonoTODO]
-		//StatusBarPanel()
+		//public void BeginInit()
 		//{
 		//	throw new NotImplementedException ();
-		//	// defaults :)
-		//	alignment = HorizontalAlignment.Left;
-		//	autoSize = StatusBarPanelAutoSize.None;
-		//	borderStyle = StatusBarPanelBorderStyle.Sunken;
-		//	icon = null;
-		//	minWidth = 10;
-		//	style = StatusBarPanelStyle.Text;
-		//	text = "";
-		//	toolTipText = "";
-		//	width = 100;
 		//}
 		//[MonoTODO]
-		//public override string ToString()
+		//public void EndInit()
 		//{
 		//	throw new NotImplementedException ();
 		//}
+		public override string ToString()
+		{
+			return text;
+		}
 
 		//
 		//  --- Protected Methods
 		//
-		//[MonoTODO]
-		//~StatusBarPanel()
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		//[MonoTODO]
 		//protected override void Dispose(bool disposing)
 		//{
@@ -57,65 +77,63 @@ using System.ComponentModel;
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public HorizontalAlignment Alignment
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public StatusBarPanelAutoSize AutoSize
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public StatusBarPanelBorderStyle BorderStyle
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public Icon Icon
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public int MinWidth
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public StatusBar Parent
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public StatusBarPanelStyle Style
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public string Text
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public string ToolTipText
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public int Width
-		//{
-		//	get{ throw new NotImplementedException (); }
-		//	set{ throw new NotImplementedException (); }
-		//}
+		public HorizontalAlignment Alignment
+		{
+			get { return alignment; }
+			set { alignment = value; }
+		}
+		public StatusBarPanelAutoSize AutoSize
+		{
+			get { return autoSize; }
+			set
+			{
+				if  (value != StatusBarPanelAutoSize.None && value != StatusBarPanelAutoSize.Contents && value != StatusBarPanelAutoSize.Spring)
+				{
+					throw new InvalidEnumArgumentException("System.Windows.Forms.StatusBarPanel::set_AutoSize(StatusBarPanelAutoSize) " +
+					                                       "value is not a valid StatusBarPanelAutoSize value");
+				}
+				autoSize = value;
+			}
+		}
+		public StatusBarPanelBorderStyle BorderStyle
+		{
+			get { return borderStyle; }
+			set { borderStyle = value; }
+		}
+		public Icon Icon
+		{
+			get { return icon; }
+			set { icon = value; }
+		}
+		public int MinWidth
+		{
+			get { return minWidth; }
+			set { minWidth = value; }
+		}
+		public StatusBar Parent
+		{
+			get { return parent; }
+			set { parent = value; }
+		}
+		public StatusBarPanelStyle Style
+		{
+			get { return style; }
+			set { style = value; }
+		}
+		public string Text
+		{
+			get { return text; }
+			set { text = value; }
+		}
+		public string ToolTipText
+		{
+			get { return toolTipText; }
+			set { toolTipText = value; }
+		}
+		public int Width
+		{
+			get { return width; }
+			set { width = value; }
+		}
 	}
 }

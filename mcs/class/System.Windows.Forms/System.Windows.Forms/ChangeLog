@@ -1,4 +1,13 @@
 2002-7-1  DennisHayes <dennish@raytek.com>
+*  Checked in for Richard Baumann (biochem333@nyc.rr.com)
+* StatusBar.cs
+* StatusBarDrawItemEventArgs.cs
+* StatusBarPanel.cs
+* StatusBarPanelClickEventArgs.cs
+* SystemInformation.cs
+* Minor changes by Rich B
+
+2002-7-1  DennisHayes <dennish@raytek.com>
 
 * AccessibleObject.cs
 * AmbientProperties.cs

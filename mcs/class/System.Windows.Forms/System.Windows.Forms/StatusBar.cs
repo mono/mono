@@ -3,251 +3,47 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 //
 // (C) 2002 Ximian, Inc
 //
 
-namespace System.Windows.Forms {
+using System;
+using System.Collections;
 
+namespace System.Windows.Forms
+{
 	// <summary>
 	//	This is only a template.  Nothing is implemented yet.
-	//
+	//	Represents a Windows status bar control.
 	// </summary>
-
-        public class StatusBar : Control {
+      public class StatusBar : Control
+	{
+		//
+		//  --- Private Fields
+		//
+		//private bool showPanels;
+		//private bool sizingGrip;
 
 		//
-		//  --- Constructor
+		//  --- Constructors/Destructors
 		//
 		//[MonoTODO]
-		//public StatusBar()
+		//public StatusBar() : base()
 		//{
+		//	Dock = DockStyle.bottom;
+		//	showPanels = false;
+		//	sizingGrip = true;
 		//	throw new NotImplementedException ();
-		//}
-
-		//
-		//  --- Public Properties
-		//
-		//[MonoTODO]
-		//public override Color BackColor {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Image BackgroundImage {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override DockStyle Dock {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Font Font {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Color ForeColor {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override ISite Site {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override string Text {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
 		//}
 
 		//
 		//  --- Public Methods
 		//
 		//[MonoTODO]
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public IAsyncResult BeginInvoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(bool b)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(Rectangle rect, bool b)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void ResumeLayout(bool b)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Scale(float val1)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Scale(float val1, float val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void SetBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpcified bounds)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
 		//public override string ToString()
 		//{
 		//	throw new NotImplementedException ();
-		//}
-
-		//
-		//  --- Public Events
-		//
-		//[MonoTODO]
-		//public event StatusBarDrawItmeEventHandler DrawItem {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public event StatusBarPanelClickEventHandler PanelClick {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
-		//
-		//  --- Protected Properties
-		//
-		//[MonoTODO]
-		//protected override CreateParams CreateParams {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//protected override ImeMode DefaultImeMode {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//protected override Size DefaultSize {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
 		//}
 
 		//
@@ -259,7 +55,7 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//protected override void Dispose(bool val)
+		//protected override void Dispose(bool disposing)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -299,44 +95,364 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
 		//protected override void WndProc(ref Message m)
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	 }
+
+		//
+		//  --- Public Events
+		//
+		//public event StatusBarDrawItmeEventHandler DrawItem;
+		//public event StatusBarPanelClickEventHandler PanelClick;
+
+		//
+		//  --- Public Properties
+		//
+		//[MonoTODO]
+		//public override Color BackColor
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public override Image BackgroundImage
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public override DockStyle Dock
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public override Font Font
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public override Color ForeColor
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public new ImeMode ImeMode
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public StatusBar.StatusBarPanelCollection Panels
+		//{
+		//	get { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public bool ShowPanels // default false
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public bool SizingGrip // default true
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public new bool TabStop
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//public override string Text
+		//{
+		//	get { throw new NotImplementedException (); }
+		//	set { throw new NotImplementedException (); }
+		//}
+
+		//
+		//  --- Protected Properties
+		//
+		//[MonoTODO]
+		//protected override CreateParams CreateParams
+		//{
+		//	get { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//protected override ImeMode DefaultImeMode
+		//{
+		//	get { throw new NotImplementedException (); }
+		//}
+		//[MonoTODO]
+		//protected override Size DefaultSize
+		//{
+		//	get { throw new NotImplementedException (); }
+		//}
+
+		//
+		// System.Windows.Forms.StatusBar.StatusBarPanelCollection
+		//
+		// Author:
+		//   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+		//   Implemented by Richard Baumann <biochem333@nyc.rr.com>
+		// (C) Ximian, Inc., 2002
+		//
+		// <summary>
+		//	Represents the collection of panels in a StatusBar control.
+		// </summary>
+		public class StatusBarPanelCollection : IList, ICollection, IEnumerable
+		{
+			//
+			//  --- Private Fields
+			//
+			//private ArrayList list;
+			//private StatusBar owner;
+			//private static string class_string = "System.Windows.Forms.StatusBar.StatusBarPanelCollection::";
+
+			//
+			//  --- Constructors/Destructors
+			//
+			//StatusBarPanelCollection(StatusBar owner) : base()
+			//{
+			//	list = new ArrayList();
+			//	this.owner = owner;
+			//}
+
+			//
+			//  --- Public Methods
+			//
+			//public virtual int Add(StatusBarPanel panel)
+			//{
+			//	string method_string = "Add(StatusBarPanel) ";
+			//	if (panel == null)
+			//	{
+			//		throw new ArgumentNullException(class_string + method_string + "panel == null");
+			//	}
+			//	if (panel.Parent == null)
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "panel.Parent != null");
+			//	}
+			//	panel.Parent = owner;
+			//	return list.Add(panel);
+			//}
+			//public virtual StatusBarPanel Add(string s)
+			//{
+			//	StatusBarPanel tmp = new StatusBarPanel();
+			//	tmp.Text = s;
+			//	tmp.Parent = owner;
+			//	list.Add(tmp);
+			//	return tmp;
+			//}
+			//public virtual void AddRange(StatusBarPanel[] panels)
+			//{
+			//	string method_string = "AddRange(StatusBarPanel[]) ";
+			//	if (panels == null)
+			//	{
+			//		throw new ArgumentNullException(class_string + method_string + "panels == null");
+			//	}
+			//	for (int i = 0; i < panels.Length; i++)
+			//	{
+			//		panels[i].Parent = owner;
+			//	}
+			//	list.AddRange(panels);
+			//}
+			//public virtual void Clear()
+			//{
+			//	list.Clear();
+			//}
+			//public bool Contains(StatusBarPanel panel)
+			//{
+			//	return list.Contains(panel);
+			//}
+			//public IEnumerator GetEnumerator()
+			//{
+			//	return list.GetEnumerator();
+			//}
+			//public int IndexOf(StatusBarPanel panel)
+			//{
+			//	return list.IndexOf(panel);
+			//}
+			//public virtual void Insert(int index, StatusBarPanel panel)
+			//{
+			//	string method_string = "Insert(int,StatusBarPanel) ";
+			//	if (panel == null)
+			//	{
+			//		throw new ArgumentNullException(class_string + method_string + "panel == null");
+			//	}
+			//	if (panel.Parent == null)
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "panel.Parent != null");
+			//	}
+			//	if  (panel.AutoSize != StatusBarPanelAutoSize.None &&
+			//	     panel.AutoSize != StatusBarPanelAutoSize.Contents &&
+			//	     panel.AutoSize != StatusBarPanelAutoSize.Spring)
+			//	{
+			//		throw new InvalidEnumArgumentException(class_string + method_string + "panel.AutoSize is not a valid StatusBarPanelAutoSize value");
+			//	}
+			//	list.Insert(index,panel);
+			//	
+			//	                      // do this after insert because insert does the range checking and might throw an exception
+			//	panel.Parent = owner; // a rethrow for a better exception message, or an extra range check, would incur an unnecessary performance cost
+			//}
+			//public virtual void Remove(StatusBarPanel panel)
+			//{
+			//	string method_string = "Remove(StatusBarPanel) ";
+			//	if (panel == null)
+			//	{
+			//		throw new ArgumentNullException(class_string + method_string + "panel == null");
+			//	}
+			//	list.Remove(panel);
+			//}
+			//public virtual void RemoveAt(int index)
+			//{
+			//	list.RemoveAt(index);
+			//}
+			//void ICollection.CopyTo(Array dest, int index)
+			//{
+			//	string method_string = "ICollection.CopyTo(Array,int) ";
+			//	if (dest == null)
+			//	{
+			//		throw new ArgumentNullException(class_string + method_string + "array == null");
+			//	}
+			//	if (index < 0)
+			//	{
+			//		throw new ArgumentOutOfRangeException(class_string + method_string + "index < 0");
+			//	}
+			//	if (dest.Rank != 1)
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "array is multidimensional");
+			//	}
+			//	if (index >= dest.Length)
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "index >= array.Length");
+			//	}
+			//	if (Count+index >= dest.Length)
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "insufficient array capacity");
+			//	}
+			//	// easier/quicker to let the runtime throw the invalid cast exception if necessary
+			//	for (int i = 0; index < dest.Length; i++, index++)
+			//	{
+			//		dest.SetValue(list[i], index);
+			//	}
+			//}
+			//int IList.Add(object panel)
+			//{
+			//	string method_string = "IList.Add(object) ";
+			//	if (!(panel is StatusBarPanel))
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
+			//	}
+			//	return Add((StatusBarPanel) panel);
+			//}
+			//bool IList.Contains(object panel)
+			//{
+			//	if (!(panel is StatusBarPanel))
+			//	{
+			//		return false;
+			//	}
+			//	return Contains((StatusBarPanel) panel);
+			//}
+			//int IList.IndexOf(object panel)
+			//{
+			//	if (!(panel is StatusBarPanel))
+			//	{
+			//		return -1;
+			//	}
+			//	return IndexOf((StatusBarPanel) panel);
+			//}
+			//void IList.Insert(int index, object panel)
+			//{
+			//	string method_string = "IList.Insert(int,object) ";
+			//	if (!(panel is StatusBarPanel))
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
+			//	}
+			//	Insert(index, (StatusBarPanel) panel);
+			//}
+			//void IList.Remove(object panel)
+			//{
+			//	string method_string = "IList.Remove(object) ";
+			//	if (!(panel is StatusBarPanel))
+			//	{
+			//		throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
+			//	}
+			//	Remove((StatusBarPanel) panel);
+			//}
+
+			//
+			//  --- Public Properties
+			//
+			//public int Count
+			//{
+			//	get { return list.Count; }
+			//}
+			//public bool IsReadOnly
+			//{
+			//	get { return false; }
+			//}
+			//public virtual StatusBarPanel this[int index]
+			//{
+			//	get
+			//	{
+			//		// The same checks are done by the list, so this is redundant
+			//		// This is left here in case you prefer better exception messages over performance
+			//		//string method_string = "get_Item(int) ";
+			//		//if (index < 0)
+			//		//{
+			//		//	throw new ArgumentOutOfRangeException(class_string + method_string + "index < 0");
+			//		//}
+			//		//if (index >= Count)
+			//		//{
+			//		//	throw new ArgumentOutOfRangeException(class_string + method_string + "index >= Count");
+			//		//}
+			//		return list[index];
+			//	}
+			//	set
+			//	{
+			//		// The same checks are done by the list, so this is redundant
+			//		// This is left here in case you prefer better exception messages over performance
+			//		string method_string = "set_Item(int,StatusBarPanel) ";
+			//		//if (index < 0)
+			//		//{
+			//		//	throw new ArgumentOutOfRangeException(class_string + method_string + "index < 0");
+			//		//}
+			//		//if (index >= Count)
+			//		//{
+			//		//	throw new ArgumentOutOfRangeException(class_string + method_string + "index >= Count");
+			//		//}
+			//		if (value == null)
+			//		{
+			//			throw new ArgumentNullException(class_string + method_string + "panel == null");
+			//		}
+			//		list[index] = value;
+			//	}
+			//}
+			
+			//
+			//  --- Private Properties
+			//
+			//private bool IsFixedSize { get { return false; } }
+			//private bool IsSynchronized { get { return false; } }
+			//private object SyncRoot { get { return null; } }
+			//private object ILList.this[int index]
+			//{
+			//	get { return (StatusBarPanel) this[index]; }
+			//	set
+			//	{
+			//		string method_string = "IList.set_Item(int,object) ";
+			//		if (!(value is StatusBarPanel))
+			//		{
+			//			throw new ArgumentException(class_string + method_string + "panel is not a StatusBarPanel");
+			//		}
+			//		this[index] = (StatusBarPanel) value;
+			//	}
+			//}
+		}
+	}
 }
