@@ -10,12 +10,17 @@ SOURCES = 				\
 	Driver.cs			\
 	AssemblyInfo.cs			\
 	codegen/CodeGen.cs		\
-	codegen/ClassTable.cs		\
 	codegen/ExternTable.cs		\
-	codegen/MethodTable.cs          \
 	codegen/InstrTable.cs		\
-	codegen/FieldTable.cs		\
+        codegen/ITypeRef.cs             \
+        codegen/IClassRef.cs            \
+        codegen/FieldDef.cs             \
+        codegen/TypeDef.cs              \
         codegen/TypeRef.cs              \
+        codegen/PeapiTypeRef.cs         \
+        codegen/ExternTypeRef.cs        \
+        codegen/PrimitiveTypeRef.cs     \
+        codegen/TypeManager.cs          \
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\

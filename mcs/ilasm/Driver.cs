@@ -60,8 +60,8 @@ namespace Mono.ILASM {
                                         ProcessFile (file_path);
                                 if (scan_only)
                                         return;
-                                codegen.ClassTable.CheckForUndefined ();
-                                codegen.PEFile.WritePEFile ();
+
+                                codegen.Write ();
                         }
 
                         private void ProcessFile (string file_path)
@@ -76,10 +76,10 @@ namespace Mono.ILASM {
 
                                 if (show_tokens)
                                         scanner.NewTokenEvent += new NewTokenEvent (ShowToken);
-                                if (show_method_def)
-                                        MethodTable.MethodDefinedEvent += new MethodDefinedEvent (ShowMethodDef);
-                                if (show_method_ref)
-                                        MethodTable.MethodReferencedEvent += new MethodReferencedEvent (ShowMethodRef);
+                                //if (show_method_def)
+                                //        MethodTable.MethodDefinedEvent += new MethodDefinedEvent (ShowMethodDef);
+                                //if (show_method_ref)
+                                //       MethodTable.MethodReferencedEvent += new MethodReferencedEvent (ShowMethodRef);
 
                                 if (scan_only) {
                                         ILToken tok;
@@ -100,7 +100,7 @@ namespace Mono.ILASM {
                         {
                                 Console.WriteLine ("token: '{0}'", args.Token);
                         }
-
+                        /*
                         public void ShowMethodDef (object sender, MethodDefinedEventArgs args)
                         {
                                 Console.WriteLine ("***** Method defined *****");
@@ -121,7 +121,7 @@ namespace Mono.ILASM {
                                 Console.WriteLine ("-- return type: {0}", args.ReturnType);
                                 Console.WriteLine ("-- is in table: {0}", args.IsInTable);
                         }
-
+                        */
                         private void ParseArgs (string[] args)
                         {
                                 string command_arg;
