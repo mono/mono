@@ -6494,16 +6494,6 @@ namespace Mono.CSharp {
 			}
 			return ret;
 		}
-
-		public Expression TurnIntoConstant ()
-		{
-			//
-			// Should use something like the above attribute thing.
-			// It should return a subclass of Constant that just returns
-			// the computed value of the array
-			//
-			throw new Exception ("Does not support yet Turning array into a Constant");
-		}
 	}
 	
 	/// <summary>
