@@ -1,5 +1,7 @@
 2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AppDomain.cs: Make ThreadStatic variables static. Fixes #56614.
+
 	* Runtime*Handle.cs ModuleHandle.cs: Add Equals + GetHashCode.
 
 	* ModuleHandle.cs: Add missing methods.
