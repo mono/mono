@@ -1,3 +1,11 @@
+
+Sun Nov 3 15:39:28 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, object.c: introduced mono_object_get_virtual_method ()
+	to lookup the method invoked on an object when a callvirt is done on
+	a method.
+	* icall.c: make MethodInfo::Invoke() always do a virtual call.
+
 2002-11-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: invoke AssemblyLoad and AsemblyResolve events in the
