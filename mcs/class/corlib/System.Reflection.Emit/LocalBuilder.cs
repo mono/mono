@@ -25,12 +25,13 @@ namespace System.Reflection.Emit {
 		#region Sync with reflection.h
 		private Type type;
 		private string name;
+		private bool is_pinned;
 		#endregion
 		
 		//
 		// Order does not matter after here
 		//
-		internal uint position;
+		internal ushort position;
 		internal ILGenerator ilgen;
 
 		internal LocalBuilder (Type t, ILGenerator ilgen)
@@ -65,7 +66,9 @@ namespace System.Reflection.Emit {
 			}
 		}
 		
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		internal extern void MakePinned ();
+		internal void MakePinned ()
+		{
+			is_pinned = true;
+		}
 	}
 }

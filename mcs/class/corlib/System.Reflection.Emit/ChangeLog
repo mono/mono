@@ -1,3 +1,7 @@
+2004-04-01 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* LocalBuilder.cs: Fix pinned support.
+
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.SetGenericParameterConstraints):

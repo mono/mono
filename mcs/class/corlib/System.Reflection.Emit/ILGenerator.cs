@@ -378,7 +378,7 @@ namespace System.Reflection.Emit {
 				locals = new LocalBuilder [1];
 				locals [0] = res;
 			}
-			res.position = (uint)(locals.Length - 1);
+			res.position = (ushort)(locals.Length - 1);
 			return res;
 		}
 		
