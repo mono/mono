@@ -102,7 +102,7 @@ public class MemberList : IList {
 		}
 	}
 
-	MemberInfo this [int index] {
+	public MemberInfo this [int index] {
 		get {
 			return (MemberInfo) List [index];
 		}
