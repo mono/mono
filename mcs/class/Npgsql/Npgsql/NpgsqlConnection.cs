@@ -140,7 +140,7 @@ namespace Npgsql
             state = NpgsqlClosedState.Instance;
             connection_string = ConnectionString;
             connection_string_values = new ListDictionary();
-            connection_encoding = Encoding.UTF8;
+            connection_encoding = Encoding.Default;
             _backendProtocolVersion = ProtocolVersion.Version3;
 
             _mediator = new NpgsqlMediator();
@@ -430,13 +430,7 @@ namespace Npgsql
                     Connector.BackendProtocolVersion = BackendProtocolVersion;
                     
                 }
-                //NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
-                //String serverEncoding = (String)commandEncoding.ExecuteScalar();
-
-                //if (serverEncoding.Equals("UNICODE"))
-                //  connection_encoding = Encoding.UTF8;
-                
-                
+                                
                 // Connector was obtained from pool. 
                 // Do a mini initialization in the state machine.
                 
@@ -448,11 +442,13 @@ namespace Npgsql
                 ProcessServerVersion();
                 _oidToNameMapping = NpgsqlTypesHelper.LoadTypesMapping(this);
                 
-                /*NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
+                // Adjust client encoding. 
+                
+                NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
                 String serverEncoding = (String)commandEncoding.ExecuteScalar();
 
                 if (serverEncoding.Equals("UNICODE"))
-                  connection_encoding = Encoding.UTF8;*/
+                  connection_encoding = Encoding.UTF8;
                 
 
             }
