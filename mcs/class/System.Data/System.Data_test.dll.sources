@@ -24,6 +24,7 @@ System.Data/DataSetAssertion.cs
 System.Data/DataSetTest.cs
 System.Data/DataSetReadXmlTest.cs
 System.Data/DataSetReadXmlSchemaTest.cs
+System.Data/DataSetInferXmlSchemaTest.cs
 System.Data/DataTableTest.cs
 System.Data/DataViewTest.cs
 System.Data/ForeignKeyConstraintTest.cs

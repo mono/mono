@@ -1,5 +1,9 @@
 2004-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* System.Data_test.dll.sources : added DataSetInferXmlSchemaTest.cs.
+
+2004-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* System.Data.dll.sources : Added XmlSchemaDataImporter.cs
 
 2004-04-15  Atsushi Enomoto <atsushi@ximian.com>
