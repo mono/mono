@@ -29,9 +29,22 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.60 $
+// $Revision: 1.61 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.61  2004/09/11 00:56:33  pbartok
+// - Moved some internal functions into the internal region
+// - Implemented FontHeight
+// - Implemented RenderRightToLeft
+// - Implemented ResizeRedraw
+// - Implemented ShowFocusCues
+// - Implemented ShowKeyboardCues
+// - Implemented FromChildHandle
+// - Implemented FromHandle
+// - Implemented IsMnemonic
+// - Implemented ReflectMessage
+// - All public and protected Static Methods are now complete
+//
 // Revision 1.60  2004/09/10 22:54:52  pbartok
 // - Implemented remaining missing public instance properties
 // - Alphabetized some out of order properties
@@ -736,6 +749,45 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods
+		internal Graphics DeviceContext {
+			get { 
+				if (dc_mem==null) {
+					CreateBuffers(this.Width, this.Height);
+				}
+				return dc_mem;
+			}
+		}
+
+		internal Bitmap ImageBuffer {
+			get {
+				if (bmp_mem==null) {
+					CreateBuffers(this.Width, this.Height);
+				}
+				return bmp_mem;
+			}
+		}
+
+		internal void CreateBuffers (int width, int height) {
+			if (double_buffering == false)
+				return;
+
+			if (dc_mem != null)
+				dc_mem.Dispose ();
+			if (bmp_mem != null)
+				bmp_mem.Dispose ();
+
+			if (width < 1) {
+				width = 1;
+			}
+
+			if (height < 1) {
+				height = 1;
+			}
+
+			bmp_mem = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			dc_mem = Graphics.FromImage (bmp_mem);
+		}
+
 		internal static void SetChildColor(Control parent) {
 			Control	child;
 
@@ -939,7 +991,6 @@ namespace System.Windows.Forms
 				throw new NotImplementedException();
 			}
 		}
-
 
 		public int Bottom {
 			get {
@@ -1497,46 +1548,6 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Public Instance Properties
 
-		internal Graphics DeviceContext {
-			get { 
-				if (dc_mem==null) {
-					CreateBuffers(this.Width, this.Height);
-				}
-				return dc_mem;
-			}
-		}
-
-		internal Bitmap ImageBuffer {
-			get {
-				if (bmp_mem==null) {
-					CreateBuffers(this.Width, this.Height);
-				}
-				return bmp_mem;
-			}
-		}
-
-		internal void CreateBuffers (int width, int height)
-		{
-			if (double_buffering == false)
-				return;
-
-			if (dc_mem != null)
-				dc_mem.Dispose ();
-			if (bmp_mem != null)
-				bmp_mem.Dispose ();
-
-			if (width < 1) {
-				width = 1;
-			}
-
-			if (height < 1) {
-				height = 1;
-			}
-
-			bmp_mem = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-			dc_mem = Graphics.FromImage (bmp_mem);
-		}
-
 		#region	Protected Instance Properties
 		protected virtual CreateParams CreateParams {
 			get {
@@ -1579,7 +1590,103 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected int FontHeight {
+			get {
+				return Font.Height;
+			}
+
+			set {
+				;; // Nothing to do
+			}
+		}
+
+		protected bool RenderRightToLeft {
+			get {
+				return (this.right_to_left == RightToLeft.Yes);
+			}
+
+			set {
+				;; // Nothing to do?
+			}
+		}
+
+		protected bool ResizeRedraw {
+			get {
+				return GetStyle(ControlStyles.ResizeRedraw);
+			}
+
+			set {
+				SetStyle(ControlStyles.ResizeRedraw, value);
+			}
+		}
+
+		protected virtual bool ShowFocusCues {
+			get {
+				return true;
+			}
+		}
+
+		protected bool ShowKeyboardCues {
+			get {
+				return true;
+			}
+		}
 		#endregion	// Protected Instance Properties
+
+		#region Public Static Methods
+		public static Control FromChildHandle(IntPtr handle) {
+			IEnumerator control = Control.controls.GetEnumerator();
+
+			while (control.MoveNext()) {
+				if (((Control)control.Current).window.Handle == handle) {
+					// Found it
+					if (((Control)control.Current).Parent != null) {
+						return ((Control)control.Current).Parent;
+					}
+				}
+			}
+			return null;
+		}
+
+		public static Control FromHandle(IntPtr handle) {
+			IEnumerator control = Control.controls.GetEnumerator();
+
+			while (control.MoveNext()) {
+				if (((Control)control.Current).window.Handle == handle) {
+					// Found it
+					return ((Control)control.Current);
+				}
+			}
+			return null;
+		}
+
+		public static bool IsMnemonic(char charCode, string text) {
+			int amp;
+
+			amp = text.IndexOf('&');
+
+			if (amp != -1) {
+				if (charCode == text.ToCharArray(amp, 1)[0]) {
+					return true;
+				}
+			}
+			return false;
+		}
+		#endregion
+
+		#region Protected Static Methods
+		protected static bool ReflectMessage(IntPtr hWnd, ref Message m) {
+			Control	c;
+
+			c = Control.FromHandle(hWnd);
+
+			if (c != null) {
+				c.WndProc(ref m);
+				return true;
+			}
+			return false;
+		}
+		#endregion
 
 		#region	Public Instance Methods
 		public bool Contains(Control ctl) {
