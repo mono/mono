@@ -119,7 +119,7 @@ namespace Mono.Security.X509 {
 				// parameters ANY DEFINED BY algorithm OPTIONAL
 				// so we dont ask for a specific (Element) type and return DER
 				ASN1 parameters = algorithm [1];
-				m_keyalgoparams = parameters.GetBytes ();
+				m_keyalgoparams = ((algorithm.Count > 1) ? parameters.GetBytes () : null);
 		
 				ASN1 subjectPublicKey = subjectPublicKeyInfo.Element (1, 0x03); 
 				// we must drop th first byte (which is the number of unused bits
@@ -239,6 +239,7 @@ namespace Mono.Security.X509 {
 						hash = MD5.Create ();
 						break;
 					case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
+					case "1.3.14.3.2.29":		// SHA1 with RSA signature 
 					case "1.2.840.10040.4.3":	// SHA1-1 with DSA
 						hash = SHA1.Create ();
 						break;
@@ -311,6 +312,7 @@ namespace Mono.Security.X509 {
 					case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
 					case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 					case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
+					case "1.3.14.3.2.29":		// SHA1 with RSA signature
 						return signature;
 					case "1.2.840.10040.4.3":	// SHA-1 with DSA
 						ASN1 sign = new ASN1 (signature);
@@ -393,6 +395,7 @@ namespace Mono.Security.X509 {
 					break;
 				// SHA-1 with RSA Encryption 
 				case "1.2.840.113549.1.1.5":
+				case "1.3.14.3.2.29":
 					v.SetHashAlgorithm ("SHA1");
 					break;
 				default:

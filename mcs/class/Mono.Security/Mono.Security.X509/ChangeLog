@@ -1,3 +1,10 @@
+2004-02-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Add support for the OID "1.3.14.3.2.29" (SHA1 
+	with RSA). Added a fix for "really" null algorithm parameters.
+	* X509CertificateCollection.cs: Fixed Contains and IndexOf (worked
+	on objects but not for the same certificate in a different object).
+
 2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestAnchors.cs: Removed - no need to be hardcoded anymore.
