@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 
 		private BindingManagerBase manager;
 		private PropertyDescriptor prop_desc;
+		private PropertyDescriptor is_null_desc;
 		private object data;
 
 		private EventDescriptor changed_event;
@@ -123,6 +124,9 @@ namespace System.Windows.Forms {
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' on target control."));
 			if (prop_desc.IsReadOnly)
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' because it is read only."));
+
+			control.Validating += new CancelEventHandler (ControlValidatingHandler);
+
 			this.control = control;
 		}
 
@@ -136,6 +140,8 @@ namespace System.Windows.Forms {
 
 			WirePropertyValueChangedEvent ();
 
+			is_null_desc = TypeDescriptor.GetProperties (manager.Current).Find (property_name + "IsNull", false);
+
 			PullData ();
 			PushData ();
 		}
@@ -147,6 +153,14 @@ namespace System.Windows.Forms {
 
 		internal void PullData ()
 		{
+			if (is_null_desc != null) {
+				bool is_null = (bool) is_null_desc.GetValue (manager.Current);
+				if (is_null) {
+					data = Convert.DBNull;
+					return;
+				}
+			}
+
 			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
 			data = pd.GetValue (manager.Current);
 		}
@@ -179,6 +193,11 @@ namespace System.Windows.Forms {
 		{
 			PullData ();
 			PushData ();
+		}
+
+		private void ControlValidatingHandler (object sender, CancelEventArgs e)
+		{
+			PullData ();
 		}
 
 		#region Events
