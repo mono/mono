@@ -4,8 +4,8 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2001 Ximian, Inc.
-//
+// (C) 2001, 2002, 2003 Ximian, Inc.
+// (C) 2003, 2004 Novell, Inc.
 //
 #define USE_OLD
 

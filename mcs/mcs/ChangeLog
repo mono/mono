@@ -1,3 +1,15 @@
+2004-01-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Handle #line hidden from PDC bits.
+
+2004-01-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Remove YIELD token, instead use the new grammar
+	changes that treat `yield' specially when present before `break'
+	or `return' tokens.
+
+	* cs-tokenizer.cs: yield is no longer a keyword.
+
 2004-01-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay, class.cs (DefineDefaultConstructor): Fixed ModFlags

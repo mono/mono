@@ -182,9 +182,6 @@ namespace Mono.CSharp
 %token VOLATILE
 %token WHILE	
 
-/* v2 tokens */
-%token YIELD
-
 /* C# keywords which are not really keywords */
 %token GET           "get"
 %token SET           "set"
@@ -3530,8 +3527,17 @@ throw_statement
 	;
 
 yield_statement 
-	: YIELD RETURN expression SEMICOLON
+	: IDENTIFIER RETURN expression SEMICOLON
 	  {
+		string s = (string) $1;
+		if (s != "yield"){
+			Report.Error (1003, lexer.Location, "; expected");
+			$$ = null;
+		}
+		if (RootContext.V2){
+			Report.Error (-222, lexer.Location, "yield statement only available in C# 2.0 mode");
+			$$ = null;
+		}
 		if (iterator_container == null){
 			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;
@@ -3540,18 +3546,17 @@ yield_statement
 			$$ = new Yield ((Expression) $3, lexer.Location); 
 		}
 	  }
-	| YIELD expression SEMICOLON 
+	| IDENTIFIER BREAK SEMICOLON
 	  {
-		if (iterator_container == null){
-			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+		string s = (string) $1;
+		if (s != "yield"){
+			Report.Error (1003, lexer.Location, "; expected");
 			$$ = null;
-		} else {
-			iterator_container.SetYields ();
-			$$ = new Yield ((Expression) $2, lexer.Location);
 		}
-	  }
-	| YIELD BREAK SEMICOLON
-	  {
+		if (!RootContext.V2){
+			Report.Error (-222, lexer.Location, "yield statement only available in C# 2.0 mode");
+			$$ = null;
+		}
 		if (iterator_container == null){
 			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;

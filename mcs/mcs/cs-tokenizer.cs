@@ -289,11 +289,6 @@ namespace Mono.CSharp
 			AddKeyword ("void", Token.VOID);
 			AddKeyword ("volatile", Token.VOLATILE);
 			AddKeyword ("while", Token.WHILE);
-
-			if (RootContext.V2){
-				AddKeyword ("__yield", Token.YIELD);
-				AddKeyword ("yield", Token.YIELD);
-			}
 		}
 
 		//
@@ -1164,6 +1159,11 @@ namespace Mono.CSharp
 				ref_line = line;
 				ref_name = file_name;
 				Location.Push (ref_name);
+				return true;
+			} else if (arg == "hidden"){
+				//
+				// We ignore #line hidden
+				//
 				return true;
 			}
 			

@@ -1,12 +1,12 @@
-Anonymous methods
------------------
-
-
 Iterators
 ---------
+	* `yield' is no longer a keyword, it only has special
+	  meaning before a return or break keywords.
 
 	* Study side effects with assign
 	* Study TemporaryStorage/LocalStorage -> Merge/rename
+
+	* Reset should throw not implemented now.
 
 Instance idea
 -------------
@@ -55,12 +55,7 @@ Anonymous Methods
 		* Before Emit, create proxy classes with proper depth.
 		* Emit.
 
-	Return Type:
-		During Resolve, track all the return types.
-		Allow for ec.ReturnType to be null, indicating `Pending Return Evaluation' 
-
-
-	Open question:
+Open question:
 		Create a toplevel block for anonymous methods?	
 
 EmitContext.ResolveTypeTree
