@@ -2741,8 +2741,15 @@ namespace Mono.CSharp {
 			// Classes can have base initializers and instance field initializers.
 			//
 			if (container is Class){
-				if ((ModFlags & Modifiers.STATIC) == 0)
-					container.EmitFieldInitializers (ec);
+				if ((ModFlags & Modifiers.STATIC) == 0){
+
+					//
+					// If we use a "this (...)" constructor initializer, then
+					// do not emit field initializers, they are initialized in the other constructor
+					//
+					if (!(Initializer != null && Initializer is ConstructorThisInitializer))
+						container.EmitFieldInitializers (ec);
+				}
 			}
 			if (Initializer != null)
 				Initializer.Emit (ec);

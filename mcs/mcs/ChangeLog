@@ -1,3 +1,8 @@
+2003-06-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer.Emit): Only call EmitFieldInitializers
+	if we do not have a ": this ()" constructor initializer.  Fixes 45149
+
 2003-06-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* namespace.cs: Add some information to reduce FAQs.
