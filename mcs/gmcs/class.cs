@@ -2867,7 +2867,7 @@ namespace Mono.CSharp {
 						Type parent_ret = TypeManager.TypeToCoreType (
 							parent_method.ReturnType);
 
-						if (parent_ret != MemberType) {
+						if (!parent_ret.Equals (MemberType)) {
 							Report.Error (
 								508, Location, container.MakeName (Name) + ": cannot " +
 								"change return type when overriding " +
