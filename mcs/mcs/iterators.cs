@@ -576,7 +576,7 @@ namespace Mono.CSharp {
 					this_field = handler.this_field;
 				}
 
-				if (false)
+				if (this_field == null && handler.parameters.Count == 0)
 					return;
 				
 				LocalBuilder temp = ec.GetTemporaryLocal (temp_type);

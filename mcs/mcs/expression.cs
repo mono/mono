@@ -7387,7 +7387,9 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldelem_R8);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldelem_I);
-			else if (type.IsValueType){
+			else if (TypeManager.IsEnumType (type)){
+				EmitLoadOpcode (ig, TypeManager.EnumToUnderlying (type));
+			} else if (type.IsValueType){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
 			} else 

@@ -1,6 +1,16 @@
 2004-04-14  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (This.Emit): Use EmitContext.EmitThis to emit our
+	* iterators.cs: Avoid creating temporaries if there is no work to
+	do. 
+
+	* expression.cs (ArrayAccess.EmitLoadOpcode): If dealing with
+	Enumerations, use TypeManager.EnumToUnderlying and call
+	recursively. 
+
+	Based on the patch from Benjamin Jemlich (pcgod@gmx.net), fixes
+	bug #57013
+
+	(This.Emit): Use EmitContext.EmitThis to emit our
 	instance variable.
 
 	(This.EmitAssign): Ditto.
