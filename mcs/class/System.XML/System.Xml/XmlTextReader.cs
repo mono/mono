@@ -304,6 +304,9 @@ namespace System.Xml
 		public override void Close ()
 		{
 			readState = ReadState.Closed;
+			foreach (XmlParserInput input in parserInputStack.ToArray ())
+				input.Close ();
+			this.currentInput.Close ();
 		}
 
 		public override string GetAttribute (int i)

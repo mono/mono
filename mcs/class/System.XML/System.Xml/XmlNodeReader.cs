@@ -153,12 +153,12 @@ namespace System.Xml
 				if (current == null)
 					return null;
 
-				string ret =  current.Attributes [name].Value;
+				XmlAttribute attr = current.Attributes [name];
 				
-				if (ret == null)
+				if (attr == null)
 					return String.Empty;
 				else
-					return ret;
+					return attr.Value;
 			}
 		}
 
@@ -167,12 +167,12 @@ namespace System.Xml
 				if (current == null)
 					return null;
 
-				string ret =  current.Attributes [name, namespaceURI].Value;
+				XmlAttribute attr = current.Attributes [name, namespaceURI];
 				
-				if (ret == null)
+				if (attr == null)
 					return String.Empty;
 				else
-					return ret;
+					return attr.Value;
 			}
 		}
 

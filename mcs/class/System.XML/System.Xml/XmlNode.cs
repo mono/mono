@@ -411,33 +411,43 @@ namespace System.Xml
 
 			ownerDoc.onNodeRemoving (oldChild, oldChild.ParentNode);
 
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {
-				if (IsReadOnly)
-					throw new ArgumentException ("This node is read only.");
-
-				if (Object.ReferenceEquals (LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals (LastLinkedChild, oldChild))
-					LastLinkedChild = null;
-				else {
-					XmlLinkedNode oldLinkedChild = (XmlLinkedNode)oldChild;
-					XmlLinkedNode beforeLinkedChild = LastLinkedChild;
-					
-					while (!Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, LastLinkedChild) && !Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
-						beforeLinkedChild = beforeLinkedChild.NextLinkedSibling;
-
-					if (!Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, oldLinkedChild))
-						throw new ArgumentException ();
-
-					beforeLinkedChild.NextLinkedSibling = oldLinkedChild.NextLinkedSibling;
-					oldLinkedChild.NextLinkedSibling = null;
-				 }
-
-				ownerDoc.onNodeRemoved (oldChild, oldChild.ParentNode);
-				oldChild.parentNode = null;	// clear parent 'after' above logic.
-
-				return oldChild;
-			} 
-			else
+			if (NodeType != XmlNodeType.Attribute && 
+				NodeType != XmlNodeType.Element && 
+				NodeType != XmlNodeType.Document && 
+				NodeType != XmlNodeType.DocumentFragment)
 				throw new ArgumentException (String.Format ("This {0} node cannot remove child.", NodeType));
+
+			if (IsReadOnly)
+				throw new ArgumentException (String.Format ("This {0} node is read only.", NodeType));
+
+			if (Object.ReferenceEquals (LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals (LastLinkedChild, oldChild))
+				// If there is only one children, simply clear.
+				LastLinkedChild = null;
+			else {
+				XmlLinkedNode oldLinkedChild = (XmlLinkedNode) oldChild;
+				XmlLinkedNode beforeLinkedChild = LastLinkedChild;
+				XmlLinkedNode firstChild = (XmlLinkedNode) FirstChild;
+				
+				while (Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, LastLinkedChild) == false && 
+					Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, oldLinkedChild) == false)
+					beforeLinkedChild = beforeLinkedChild.NextLinkedSibling;
+
+				if (Object.ReferenceEquals (beforeLinkedChild.NextLinkedSibling, oldLinkedChild) == false)
+					throw new ArgumentException ();
+
+				beforeLinkedChild.NextLinkedSibling = oldLinkedChild.NextLinkedSibling;
+
+				// Each derived class may have its own LastLinkedChild, so we must set it explicitly.
+				if (oldLinkedChild.NextLinkedSibling == firstChild)
+					this.LastLinkedChild = beforeLinkedChild;
+
+				oldLinkedChild.NextLinkedSibling = null;
+				}
+
+			ownerDoc.onNodeRemoved (oldChild, oldChild.ParentNode);
+			oldChild.parentNode = null;	// clear parent 'after' above logic.
+
+			return oldChild;
 		}
 
 		public virtual XmlNode ReplaceChild (XmlNode newChild, XmlNode oldChild)

@@ -17,9 +17,12 @@ namespace Mono.Xml.Native
 	#region XmlStreamReader
 	public class XmlStreamReader : StreamReader
 	{
+		XmlInputStream input;
+
 		XmlStreamReader (XmlInputStream input)
 			: base (input, input.ActualEncoding != null ? input.ActualEncoding : Encoding.UTF8)
 		{
+			this.input = input;
 		}
 
 		public XmlStreamReader (Stream input)
@@ -40,6 +43,19 @@ namespace Mono.Xml.Native
 		public XmlStreamReader (string url, bool docent)
 			: this (new XmlInputStream (url, docent))
 		{
+		}
+
+		public override void Close ()
+		{
+			this.input.Close ();
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+			if (disposing) {
+				Close ();
+			}
 		}
 	}
 	#endregion
@@ -260,7 +276,12 @@ namespace Mono.Xml.Native
 			}
 		}
 
-		public override void Flush()
+		public override void Close ()
+		{
+			stream.Close ();
+		}
+
+		public override void Flush ()
 		{
 			stream.Flush ();
 		}

@@ -581,6 +581,7 @@ namespace System.Xml
 				if(n == null) break;
 				AppendChild (n);
 			} while (true);
+			xmlReader.Close ();
 		}
 
 		public virtual void LoadXml (string xml)
@@ -776,12 +777,17 @@ namespace System.Xml
 					// hack ;-)
 					XmlTextReader xtReader = reader as XmlTextReader;
 					if(xtReader == null) {
+						// XmlTextReader doesn't allow such creation that starts reading from Doctype.
+					/*
 						xtReader = new XmlTextReader (reader.ReadOuterXml (),
 							XmlNodeType.DocumentType,
 							new XmlParserContext (NameTable, ConstructNamespaceManager(), XmlLang, XmlSpace));
 						xtReader.Read ();
+					*/
+						newNode = CreateDocumentType (reader.Name, reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+					} else {
+						newNode = ReadDoctypeNode (xtReader);
 					}
-					newNode = ReadDoctypeNode (xtReader);
 					if(currentNode != null)
 						throw new XmlException ("XmlDocumentType at invalid position.");
 					break;
@@ -808,9 +814,12 @@ namespace System.Xml
 						ignoredWhitespace = true;
 					break;
 				}
-				reader.Read ();
+				if (!reader.Read ())
+					break;
 			} while (ignoredWhitespace || reader.Depth > startDepth ||
 				(reader.Depth == startDepth && reader.NodeType == XmlNodeType.EndElement));
+			if (startDepth != reader.Depth && reader.EOF)
+				throw new XmlException ("Unexpected end of xml reader.");
 			return resultNode != null ? resultNode : newNode;
 		}
 

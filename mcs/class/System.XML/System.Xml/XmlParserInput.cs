@@ -39,6 +39,11 @@ namespace Mono.Xml.Native
 		#region Public Methods
 		// Read the next character and compare it against the
 		// specified character.
+		public void Close ()
+		{
+			this.reader.Close ();
+		}
+
 		public void Expect (int expected)
 		{
 			int ch = ReadChar ();
