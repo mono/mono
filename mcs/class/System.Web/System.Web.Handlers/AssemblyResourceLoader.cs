@@ -31,7 +31,7 @@ namespace System.Web.Handlers {
 
 	
 		[MonoTODO ("Substitution not implemented")]
-		private void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
+		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
 		{
 #if NET_1_2
 			string resourceName = context.Request.QueryString ["resource"];
@@ -64,7 +64,7 @@ namespace System.Web.Handlers {
 #endif
 		}
 		
-		private bool System.Web.IHttpHandler.IsReusable { get { return true; } }
+		bool System.Web.IHttpHandler.IsReusable { get { return true; } }
 	}
 }
 

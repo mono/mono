@@ -1,3 +1,8 @@
+2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AssemblyResourceLoader.cs: fixed compilation under MS. Ben already
+	filed a bug report.
+
 2003-11-04 Jackson Harper <jackson@ximian.com>
 
 	* AssemblyResourceLoader.cs: No method body for v1. This fixes the
