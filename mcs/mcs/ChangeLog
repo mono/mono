@@ -1,3 +1,16 @@
+2001-12-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Return.Emit): Report error 157 if the user
+	attempts to return from a finally block.
+
+	(Return.Emit): Instead of emitting a return, jump to the end of
+	the function.
+
+	* codegen.cs (EmitContext): ReturnValue, ReturnLabel: new
+	LocalBuilder to store the result of the function.  ReturnLabel is
+	the target where we jump.
+	
+
 2001-12-09  Radek Doulik  <rodo@ximian.com>
 
 	* cs-parser.jay: remember alias in current namespace

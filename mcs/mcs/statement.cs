@@ -288,6 +288,9 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   Implements the return statement
+	/// </summary>
 	public class Return : Statement {
 		public Expression Expr;
 		public readonly Location loc;
@@ -300,6 +303,11 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
+			if (ec.InFinally){
+				Report.Error (157,loc,"Control can not leave the body of the finally block");
+				return false;
+			}
+			
 			if (ec.ReturnType == null){
 				if (Expr != null){
 					Report.Error (127, loc, "Return with a value not allowed here");
@@ -325,11 +333,18 @@ namespace Mono.CSharp {
 					return false;
 
 				Expr.Emit (ec);
+
+				if (ec.InTry || ec.InCatch)
+					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			ec.ig.Emit (OpCodes.Ret);
-
-			return true; 
+			if (ec.InTry || ec.InCatch){
+				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
+				return false; 
+			} else {
+				ec.ig.Emit (OpCodes.Ret);
+				return true;
+			}
 		}
 	}
 
@@ -1481,12 +1496,17 @@ namespace Mono.CSharp {
 			bool returns;
 			
 			end = ig.BeginExceptionBlock ();
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
 			returns = Block.Emit (ec);
+			ec.InTry = old_in_try;
 
 			//
 			// System.Reflection.Emit provides this automatically:
 			// ig.Emit (OpCodes.Leave, finish);
-			
+
+			bool old_in_catch = ec.InCatch;
+			ec.InCatch = true;
 			foreach (Catch c in Specific){
 				Type catch_type = ec.TypeContainer.LookupType (c.Type, false);
 				VariableInfo vi;
@@ -1515,11 +1535,15 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Pop);
 				General.Block.Emit (ec);
 			}
+			ec.InCatch = old_in_catch;
 
 			ig.MarkLabel (finish);
 			if (Fini != null){
 				ig.BeginFinallyBlock ();
+				bool old_in_finally = ec.InFinally;
+				ec.InFinally = true;
 				Fini.Emit (ec);
+				ec.InFinally = false;
 			}
 			
 			ig.EndExceptionBlock ();

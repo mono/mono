@@ -22,7 +22,6 @@ namespace Mono.CSharp
 	/// </summary>
 	public class Driver
 	{
-
 		enum Target {
 			Library, Exe, Module, WinExe
 		};
@@ -84,9 +83,10 @@ namespace Mono.CSharp
 				"--checked    Set default context to checked\n" +
 				"--fatal      Makes errors fatal\n" +
 				"--nostdlib   Does not load core libraries\n" +
-				"--target     Specifies the target (exe, winexe, library, module)\n" +
+				"--optimize   Optimizes\n" +
 				"--parse      Only parses the source file\n" +
 				"--probe X L  Probes for the source to generate code X on line L\n" +
+				"--target     Specifies the target (exe, winexe, library, module)\n" +
 				"-r           References an assembly\n");
 			
 		}
@@ -202,6 +202,11 @@ namespace Mono.CSharp
 						
 						if (arg == "--parse"){
 							parse_only = true;
+							continue;
+						}
+
+						if (arg == "--optimize"){
+							RootContext.Optimize = true;
 							continue;
 						}
 						

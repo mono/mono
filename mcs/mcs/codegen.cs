@@ -119,6 +119,36 @@ namespace Mono.CSharp {
 
 		public Block CurrentBlock;
 
+		/// <summary>
+		///   The location where we store the return value.
+		/// </summary>
+		LocalBuilder return_value;
+
+		/// <summary>
+		///   The location where return has to jump to return the
+		///   value
+		/// </summary>
+		public Label ReturnLabel;
+
+		/// <summary>
+		///   Whether we are in a Finally block
+		/// </summary>
+		public bool InFinally;
+
+		/// <summary>
+		///   Whether we are in a Try block
+		/// </summary>
+		public bool InTry;
+
+		/// <summary>
+		///   Whether we are in a Catch block
+		/// </summary>
+		public bool InCatch;
+		
+		/// <summary>
+		///   Whether we are generating code in a finally handler,
+		///   this disallows `return' statements in there.
+		/// </summary>
 		Location loc;
 		
 		public EmitContext (TypeContainer parent, Location l, ILGenerator ig,
@@ -161,27 +191,18 @@ namespace Mono.CSharp {
 				}
 			}
 
-			//
-			// FIXME: We need to use the flow analysis information
-			// here to correctly implement this
-			//
-			if (!has_ret){
-				//
-				// For void functions, we just emit a ret.
-				//
-				if (ReturnType == null){
-					Statement s = new Return (null, Location.Null);
-					s.Emit (this);
-				} else {
-					//
-					// We cant figure whether all code paths
-					// have returned or not, and we can not really
-					// generate a ret, so warn the user
-					//
-					Report.Warning (-13, loc,
-							"This function might be missing a return " +
-							"statement");
-				}
+			if (ReturnType != null && !has_ret){
+				Report.Error (161, Location.Null, "Not all code paths return a value");
+				return;
+			}
+				
+			if (return_value != null){
+				ig.MarkLabel (ReturnLabel);
+				ig.Emit (OpCodes.Ldloc, return_value);
+				ig.Emit (OpCodes.Ret);
+			} else {
+				if (!has_ret)
+					ig.Emit (OpCodes.Ret);
 			}
 		}
 
@@ -226,5 +247,21 @@ namespace Mono.CSharp {
 		///   If this is non-null, points to the current switch statement
 		/// </summary>
 		public Switch Switch;
+
+		/// <summary>
+		///   ReturnValue creates on demand the LocalBuilder for the
+		///   return value from the function.  By default this is not
+		///   used.  This is only required when returns are found inside
+		///   Try or Catch statements.
+		/// </summary>
+		public LocalBuilder TemporaryReturn ()
+		{
+			if (return_value == null){
+				return_value = ig.DeclareLocal (ReturnType);
+				ReturnLabel = ig.DefineLabel ();
+			}
+
+			return return_value;
+		}
 	}
 }

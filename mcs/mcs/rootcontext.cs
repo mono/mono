@@ -32,6 +32,8 @@ namespace Mono.CSharp {
 		//
 		CodeGen cg;
 
+		static public bool Optimize;
+		
 		//
 		// The module builder pointer.
 		//
@@ -42,7 +44,7 @@ namespace Mono.CSharp {
 		// This is only used to tell whether `System.Object' should
 		// have a parent or not.
 		//
-		bool stdlib = true;
+		static bool stdlib = true;
 
 		//
 		// This keeps track of the order in which classes were defined
