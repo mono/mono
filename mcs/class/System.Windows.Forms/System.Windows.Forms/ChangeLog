@@ -47,3 +47,9 @@
 * 	Keys.cs
 * All correct execpt for Keys.cs which is missing a half dozen
 * duplicate entries that need correcting.
+
+2002-05-07 Daniel Carrera (dcarrera@math.utoronto.ca)
+* Fixed a problem with an "extra byte" problem.  It caused an extra '?'
+  at the beginning of some lines.
+  Classes F-L and Q-R were updated.
+* Added the classes SaveFileDialog.cs and Screen.cs
