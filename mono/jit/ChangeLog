@@ -1,3 +1,7 @@
+2002-07-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (ARG_OBJ): removed zero sized object warning 
+
 2002-07-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_allocate_excvar): mark excvar as volatile
