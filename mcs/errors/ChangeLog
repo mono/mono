@@ -1,5 +1,7 @@
 2004-12-29  Duncan Mak  <duncan@ximian.com>
 
+	* cs0246-9.cs: Added to track bug #70758.
+
 	* cs1510-3.cs: Added to track bug #70402.
 
 2004-12-17  Raja R Harinath  <rharinath@novell.com>
