@@ -270,8 +270,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO: implement me.
-				return null;
+				return localName;
 			}
 		}
 
@@ -341,8 +340,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO: implement me.
-				return null;
+				return prefix;
 			}
 		}
 
@@ -562,6 +560,8 @@ namespace System.Xml
 
 		private XmlNodeType nodeType;
 		private string name;
+		private string prefix;
+		private string localName;
 		private bool isEmptyElement;
 		private string value;
 		private Hashtable attributes;
@@ -588,6 +588,8 @@ namespace System.Xml
 
 			nodeType = XmlNodeType.None;
 			name = String.Empty;
+			prefix = String.Empty;
+			localName = string.Empty;
 			isEmptyElement = false;
 			value = String.Empty;
 			attributes = new Hashtable();
@@ -624,6 +626,19 @@ namespace System.Xml
 			if (clearAttributes)
 			{
 				ClearAttributes();
+			}
+
+			int indexOfColon = name.IndexOf(':');
+
+			if (indexOfColon == -1)
+			{
+				prefix = String.Empty;
+				localName = name;
+			}
+			else
+			{
+				prefix = name.Substring(0, indexOfColon);
+				localName = name.Substring(indexOfColon + 1);
 			}
 		}
 

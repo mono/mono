@@ -1,3 +1,21 @@
+2002-02-10  Jason Diamond  <jason@injektilo.org>
+
+	* System.XML.build: Renamed the System.Xml.dll assembly to 
+	System.XML.dll to match Microsoft.
+
+	* System.XML.build, Test/System.XML_test.build: Added tasks to 
+	clean .dll and .pdb files.
+
+	* System.XML.build, Test/System.XML_test.build: Copy System.XML.dll 
+	to Test directory and reference that. This makes it so our tests 
+	test our code and not Microsoft's.
+
+	* System.Xml/XmlTextReader.cs: Added support for parsing prefixes 
+	and local names.
+
+	* Test/Test.cs: Updated all tests to test the prefix and local name 
+	properties.
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* System.Xml/XmlNode.cs: Fixed IndexerName attribute so it

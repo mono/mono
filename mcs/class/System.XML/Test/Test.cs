@@ -34,6 +34,8 @@ namespace System.Xml
 			int depth,
 			bool isEmptyElement,
 			string name,
+			string prefix,
+			string localName,
 			string value,
 			int attributeCount)
 		{
@@ -44,11 +46,44 @@ namespace System.Xml
 			Assert(xmlReader.NodeType == nodeType);
 			Assert(xmlReader.Depth == depth);
 			Assert(xmlReader.IsEmptyElement == isEmptyElement);
-			Assert(xmlReader.Name == name);
+
+			Assert(
+				String.Format(
+					"name was {0}, expected {1}",
+					xmlReader.Name,
+					name),
+				xmlReader.Name == name);
+
+			Assert(
+				String.Format(
+					"prefix was {0}, expected {1}",
+					xmlReader.Prefix,
+					prefix),
+				xmlReader.Prefix == prefix);
+
+			Assert(
+				String.Format(
+					"localName was {0}, expected {1}",
+					xmlReader.LocalName,
+					localName),
+				xmlReader.LocalName == localName);
+
 			Assert(xmlReader.HasValue == (value != String.Empty));
 			Assert(xmlReader.Value == value);
-			Assert(xmlReader.HasAttributes == (attributeCount > 0));
-			Assert(xmlReader.AttributeCount == attributeCount);
+
+			Assert(
+				String.Format(
+					"hasAttributes was {0}, expected {1}",
+					xmlReader.HasAttributes,
+					(attributeCount > 0)),
+				xmlReader.HasAttributes == (attributeCount > 0));
+
+			Assert(
+				String.Format(
+					"attributeCount was {0}, expected {1}",
+					xmlReader.AttributeCount,
+					attributeCount),
+				xmlReader.AttributeCount == attributeCount);
 		}
 
 		private void AssertAttribute(
@@ -86,6 +121,8 @@ namespace System.Xml
 				0, // depth
 				true, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -107,6 +144,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -128,6 +167,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -138,6 +179,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -159,6 +202,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -169,6 +214,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -190,6 +237,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -200,6 +249,8 @@ namespace System.Xml
 				1, //depth
 				true, // isEmptyElement
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -210,6 +261,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -231,6 +284,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -241,6 +296,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				"bar", // value
 				0 // attributeCount
 			);
@@ -251,6 +308,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -272,6 +331,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				1 // attributeCount
 			);
@@ -299,6 +360,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				1 // attributeCount
 			);
@@ -315,6 +378,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -336,6 +401,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				2 // attributeCount
 			);
@@ -369,6 +436,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				"bar", // value
 				0 // attributeCount
 			);
@@ -379,6 +448,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"baz", // name
+				String.Empty, // prefix
+				"baz", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -400,6 +471,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				"foo", // value
 				0 // attributeCount
 			);
@@ -410,6 +483,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -431,6 +506,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -441,6 +518,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				"<>&'\"", // value
 				0 // attributeCount
 			);
@@ -451,6 +530,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -472,6 +553,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -482,6 +565,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -492,6 +577,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -513,6 +600,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -523,6 +612,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				"bar", // value
 				0 // attributeCount
 			);
@@ -533,6 +624,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				"baz", // name
+				String.Empty, // prefix
+				"baz", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -543,6 +636,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				"quux", // value
 				0 // attributeCount
 			);
@@ -553,6 +648,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -574,6 +671,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -584,6 +683,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				"FOO", // value
 				0 // attributeCount
 			);
@@ -594,6 +695,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -615,6 +718,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				1 // attributeCount
 			);
@@ -642,6 +747,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				1 // attributeCount
 			);
@@ -669,6 +776,8 @@ namespace System.Xml
 				0, //depth
 				true, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				1 // attributeCount
 			);
@@ -696,6 +805,8 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);
@@ -706,6 +817,8 @@ namespace System.Xml
 				1, //depth
 				false, // isEmptyElement
 				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
 				"<>&", // value
 				0 // attributeCount
 			);
@@ -716,6 +829,31 @@ namespace System.Xml
 				0, //depth
 				false, // isEmptyElement
 				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertEndDocument(xmlReader);
+		}
+
+		public void TestEmptyElementInNamespace()
+		{
+			string xml = @"<foo:bar />";
+			XmlReader xmlReader =
+				new XmlTextReader(new StringReader(xml));
+
+			AssertStartDocument(xmlReader);
+
+			AssertNode(
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, // depth
+				true, // isEmptyElement
+				"foo:bar", // name
+				"foo", // prefix
+				"bar", // localName
 				String.Empty, // value
 				0 // attributeCount
 			);

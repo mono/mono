@@ -10,14 +10,14 @@
 
 	<target name="build">
 		<csc target="library" output="System.XML_test.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
 			<sources>
 				<includes name="**/*.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
 			</references>
-			<arg value="/r:..\..\lib\System.XML.dll"/>
-			<arg value="/nowarn:1595"/>
+			<arg value="/r:.\System.XML.dll"/>
 		</csc>
 	</target>
 
@@ -26,6 +26,8 @@
 	</target>
 
 	<target name="clean">
+		<delete file="System.XML.dll" failonerror="false"/>
 		<delete file="System.XML_test.dll" failonerror="false"/>
+		<delete file="System.XML_test.pdb" failonerror="false"/>
 	</target>
 </project>

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<!-- NAnt build file for System.Xml.dll -->
+<!-- NAnt build file for System.XML.dll -->
 
-<project name="System.Xml" default="build">
+<project name="System.XML" default="build">
 	<property name="debug" value="false"/>
 
 	<target name="build">
 		<mkdir dir="../lib"/>
-		<csc target="library" output="../lib/System.Xml.dll" debug="${debug}">
+		<csc target="library" output="../lib/System.XML.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
-			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
 			</sources>
 		</csc>
+		<copy file="../lib/System.XML.dll" tofile="Test/System.XML.dll"/>
 		<nant basedir="Test" target="build"/>
 	</target>
 
@@ -24,5 +24,7 @@
 
 	<target name="clean">
 		<nant basedir="Test" target="clean"/>
+		<delete file="../lib/System.XML.dll" failonerror="false"/>
+		<delete file="../lib/System.XML.pdb" failonerror="false"/>
 	</target>
 </project>
