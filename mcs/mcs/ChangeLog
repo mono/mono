@@ -1,5 +1,14 @@
 2002-08-19  Martin Baulig  <martin@gnome.org>
 
+	* typemanager.cs (MemberCache): When creating the cache for an
+	interface type, add all inherited members.
+	(TypeManager.MemberLookup_FindMembers): Changed `ref bool searching'
+	to `out bool used_cache' and documented it.
+	(TypeManager.MemberLookup): If we already used the cache in the first
+	iteration, we don't need to do the interfaces check.
+
+2002-08-19  Martin Baulig  <martin@gnome.org>
+
 	* decl.cs (DeclSpace.FindMembers): New abstract method.  Moved this
 	here from IMemberFinder and don't implement this interface anymore.
 	(DeclSpace.MemberCache): Moved here from IMemberFinder.

@@ -177,6 +177,9 @@ public interface IMemberFinder {
 	///   requested member name.
 	///
 	///   This method will try to use the cache to do the lookup if possible.
+	///
+	///   Unlike other FindMembers implementations, this method will always
+	///   check all inherited members - even when called on an interface type.
 	/// </summary>
 	/// <remarks>
 	///   When implementing this function, you must manually check for the
@@ -206,6 +209,13 @@ public interface IMemberContainer : IMemberFinder {
 	///   debugging purposes.
 	/// </summary>
 	string Name {
+		get;
+	}
+
+	/// <summary>
+	///   The type of this IMemberContainer.
+	/// </summary>
+	Type Type {
 		get;
 	}
 
@@ -1141,12 +1151,13 @@ public class TypeManager {
 
 	/// <summary>
 	///   This method is only called from within MemberLookup.  It tries to use the member
-	///   cache if possible and falls back to the normal FindMembers if not.  The `searching'
-	///   flag is set to false if members from the parent classes are included in the return
-	///   value, otherwise it's left unchanged.
+	///   cache if possible and falls back to the normal FindMembers if not.  The `used_cache'
+	///   flag tells the caller whether we used the cache or not.  If we used the cache, then
+	///   our return value will already contain all inherited members and the caller don't need
+	///   to check base classes and interfaces anymore.
 	/// </summary>
 	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-							    string name, ref bool searching)
+							    string name, out bool used_cache)
 	{
 		//
 		// We have to take care of arrays specially, because GetType on
@@ -1154,7 +1165,7 @@ public class TypeManager {
 		// and we can not call FindMembers on this type.
 		//
 		if (t.IsSubclassOf (TypeManager.array_type)) {
-			searching = false;
+			used_cache = true;
 			return TypeHandle.ArrayType.MemberCache.FindMembers (
 				mt, bf, name, FilterWithClosure_delegate, null);
 		}
@@ -1168,7 +1179,7 @@ public class TypeManager {
 			MemberCache cache = decl.MemberCache;
 
 			if (cache != null) {
-				searching = false;
+				used_cache = true;
 				return cache.FindMembers (
 					mt, bf, name, FilterWithClosure_delegate, null);
 			}
@@ -1180,6 +1191,7 @@ public class TypeManager {
 			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
 						 FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
+			used_cache = false;
 			return list;
 		}
 
@@ -1190,7 +1202,7 @@ public class TypeManager {
 		//
 		IMemberFinder finder = TypeHandle.GetTypeHandle (t);
 
-		searching = false;
+		used_cache = true;
 		return finder.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
 	}
 
@@ -2179,6 +2191,7 @@ public class TypeManager {
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
 		bool private_ok;
 		bool always_ok_flag = false;
+		bool skip_iface_check = true, used_cache = false;
 
 		closure_name = name;
 		closure_invocation_type = invocation_type;
@@ -2234,9 +2247,23 @@ public class TypeManager {
 
 			Timer.StopTimer (TimerType.MemberLookup);
 
-			list = MemberLookup_FindMembers (current_type, mt, bf, name, ref searching);
+			list = MemberLookup_FindMembers (current_type, mt, bf, name, out used_cache);
 
 			Timer.StartTimer (TimerType.MemberLookup);
+
+			//
+			// When queried for an interface type, the cache will automatically check all
+			// inherited members, so we don't need to do this here.  However, this only
+			// works if we already used the cache in the first iteration of this loop.
+			//
+			// If we used the cache in any further iteration, we can still terminate the
+			// loop since the cache always looks in all parent classes.
+			//
+
+			if (used_cache)
+				searching = false;
+			else
+				skip_iface_check = false;
 
 			if (current_type == TypeManager.object_type)
 				searching = false;
@@ -2281,7 +2308,14 @@ public class TypeManager {
 
 		if (method_list != null && method_list.Count > 0)
 			return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-	
+
+		//
+		// This happens if we already used the cache in the first iteration, in this case
+		// the cache already looked in all interfaces.
+		//
+		if (skip_iface_check)
+			return null;
+
 		//
 		// Interfaces do not list members they inherit, so we have to
 		// scan those.
@@ -2329,7 +2363,7 @@ public class MemberCache {
 		if (Container.Parent != null)
 			member_hash = SetupCache (Container.Parent.MemberCache);
 		else if (Container.IsInterface)
-			member_hash = SetupCache (TypeHandle.ObjectType.MemberCache);
+			member_hash = SetupCacheForInterface ();
 		else
 			member_hash = new Hashtable ();
 
@@ -2354,6 +2388,44 @@ public class MemberCache {
 		return hash;
 	}
 
+	/// <summary>
+	///   Add the contents of `new_hash' to `hash'.
+	/// </summary>
+	void AddHashtable (Hashtable hash, Hashtable new_hash)
+	{
+		IDictionaryEnumerator it = new_hash.GetEnumerator ();
+		while (it.MoveNext ()) {
+			ArrayList list = (ArrayList) hash [it.Key];
+			if (list != null)
+				list.AddRange ((ArrayList) it.Value);
+			else
+				hash [it.Key] = ((ArrayList) it.Value).Clone ();
+		}
+	}
+
+	/// <summary>
+	///   Bootstrap the member cache for an interface type.
+	///   Type.GetMembers() won't return any inherited members for interface types, so we
+	///   need to do this manually.  Interfaces also inherit from System.Object.
+	/// </summary>
+	Hashtable SetupCacheForInterface ()
+	{
+		Hashtable hash = SetupCache (TypeHandle.ObjectType.MemberCache);
+		Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
+
+		foreach (Type iface in ifaces) {
+			IMemberContainer iface_container = TypeManager.LookupMemberContainer (iface);
+
+			MemberCache iface_cache = iface_container.MemberCache;
+			AddHashtable (hash, iface_cache.member_hash);
+		}
+
+		return hash;
+	}
+
+	/// <summary>
+	///   Add all members from class `container' to the cache.
+	/// </summary>
 	void AddMembers (IMemberContainer container)
 	{
 		AddMembers (MemberTypes.Constructor | MemberTypes.Field | MemberTypes.Method |
@@ -2659,6 +2731,12 @@ public sealed class TypeHandle : IMemberContainer {
 	public string Name {
 		get {
 			return type.FullName;
+		}
+	}
+
+	public Type Type {
+		get {
+			return type;
 		}
 	}
 
