@@ -795,23 +795,65 @@ call_kind		: /* EMPTY */
 native_type		: /* EMPTY */
 			| K_CUSTOM OPEN_PARENS comp_qstring COMMA comp_qstring CLOSE_PARENS
 			| K_FIXED K_SYSSTRING OPEN_BRACKET int32 CLOSE_BRACKET
+                          {
+                                $$ = NativeType.FixedSysString;
+                          }
 			| K_FIXED K_ARRAY OPEN_BRACKET int32 CLOSE_BRACKET
 			| K_VARIANT
 			| K_CURRENCY
+                          {
+                                $$ = NativeType.Currency;
+                          }
 			| K_SYSCHAR
 			| K_VOID
+                          {
+                                $$ = NativeType.Void;
+                          }
 			| K_BOOL
+                          {
+                                $$ = NativeType.Boolean;
+                          }
 			| K_INT8
+                          {
+                                $$ = NativeType.Int8;
+                          }
 			| K_INT16
+                          {
+                                $$ = NativeType.Int16;
+                          }
 			| K_INT32
+                          {
+                                $$ = NativeType.Int32;
+                          }
 			| K_INT64
+                          {
+                                $$ = NativeType.Int64;
+                          }
 			| K_FLOAT32
+                          {
+                                $$ = NativeType.Float32;
+                          }
 			| K_FLOAT64
+                          {
+                                $$ = NativeType.Float64;
+                          }
 			| K_ERROR
 			| K_UNSIGNED K_INT8
+                          {
+                                $$ = NativeType.UInt8;
+                          }
 			| K_UNSIGNED K_INT16
+                          {
+                                $$ = NativeType.UInt16;
+                          }
 			| K_UNSIGNED K_INT32
+                          {
+                                $$ = NativeType.UInt32;
+                          }
 			| K_UNSIGNED K_INT64
+                          {
+                                $$ = NativeType.UInt64;
+                          }
 			| native_type STAR
 			| native_type OPEN_BRACKET CLOSE_BRACKET
 			| native_type OPEN_BRACKET int32 CLOSE_BRACKET
@@ -820,25 +862,70 @@ native_type		: /* EMPTY */
 			| K_DECIMAL
 			| K_DATE
 			| K_BSTR
+                          {
+                                $$ = NativeType.BStr;
+                          }
 			| K_LPSTR
+                          {
+                                $$ = NativeType.LPStr;
+                          }
 			| K_LPWSTR
+                          {
+                                $$ = NativeType.LPWStr;
+                          }
 			| K_LPTSTR
+                          {
+                                $$ = NativeType.LPTStr;
+                          }
 			| K_OBJECTREF
 			| K_IUNKNOWN
+                          {
+                                $$ = NativeType.IUnknown;
+                          }
 			| K_IDISPATCH
+                          {
+                                $$ = NativeType.IDispatch;
+                          }
 			| K_STRUCT
+                          {
+                                $$ = NativeType.Struct;
+                          }
 			| K_INTERFACE
+                          {
+                                $$ = NativeType.Interface;
+                          }
 			| K_SAFEARRAY variant_type
 			| K_SAFEARRAY variant_type COMMA comp_qstring
 			| K_INT
+                          {
+                                $$ = NativeType.Int;
+                          }
 			| K_UNSIGNED K_INT
+                          {
+                                $$ = NativeType.UInt;
+                          }
 			| K_NESTED K_STRUCT
 			| K_BYVALSTR
+                          {
+                                $$ = NativeType.ByValStr;
+                          }
 			| K_ANSI K_BSTR
+                          {
+                                $$ = NativeType.AnsiBStr;
+                          }
 			| K_TBSTR
+                          {
+                                $$ = NativeType.TBstr;
+                          }
 			| K_VARIANT K_BOOL
+                          {
+                                $$ = NativeType.VariantBool;
+                          }
 			| K_METHOD
 			| K_AS K_ANY
+                          {
+                                $$ = NativeType.AsAny;
+                          }
 			| K_LPSTRUCT
 			;
 

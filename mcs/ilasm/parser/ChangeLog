@@ -1,5 +1,9 @@
 2003-04-02 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Support most non-obsolete native types.
+		
+2003-04-02 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Proper names for native int and native uint
 		
 2003-04-01 Jackson Harper <jackson@latitudegeo.com>
