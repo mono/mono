@@ -1,3 +1,91 @@
+2004-03-30  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute): Location is now public.
+        (Resolve): Store resolved arguments (pos_values) in attribute class.
+        Attribute extractors (now GetClsCompliantAttributeValue) can reuse them.
+        (GetClsCompliantAttributeValue): New method that gets
+        CLSCompliantAttribute value.
+        (GetClsCompliantAttribute): Returns CLSCompliantAttribute for DeclSpace
+        if exists else null.
+        (AttributeTester): New class for CLS-Compliant verification routines.
+        
+	* class.cs (Emit): Add CLS-Compliant verification.
+        (Method.GetSignatureForError): Implemented.
+        (Constructor.GetSignatureForError): Implemented
+        (Constructor.HasCompliantArgs): Returns if constructor has
+        CLS-Compliant arguments.
+        (Constructor.Emit): Override.
+        (Construcor.IsIdentifierClsCompliant): New method; For constructors
+        is needed to test only parameters.
+        (FieldBase.GetSignatureForError): Implemented.
+        (TypeContainer): New member for storing base interfaces.
+        (TypeContainer.FindMembers): Search in base interfaces too.
+        
+        * codegen.cs (GetClsComplianceAttribute): New method that gets
+        assembly or module CLSCompliantAttribute value.
+        (ResolveClsCompliance): New method that resolve CLSCompliantAttribute
+        for assembly.
+        (ModuleClass.Emit): Add error 3012 test.
+        
+        * const.cs (Emit): Override and call base for CLS-Compliant tests.
+        
+        * decl.cs (ClsComplianceValue): New enum that holds CLS-Compliant
+        state for all decl types.
+        (MemberCore.Emit): Emit is now virtual and call VerifyClsCompliance
+        if CLS-Compliant tests are required.
+        (IsClsCompliaceRequired): New method. Analyze whether code
+        must be CLS-Compliant.
+        (IsExposedFromAssembly): New method. Returns true when MemberCore
+        is exposed from assembly.
+        (GetClsCompliantAttributeValue): New method. Resolve CLSCompliantAttribute
+        value or gets cached value.
+        (HasClsCompliantAttribute): New method. Returns true if MemberCore
+        is explicitly marked with CLSCompliantAttribute.
+        (IsIdentifierClsCompliant): New abstract method. This method is
+        used to testing error 3005.
+        (IsIdentifierAndParamClsCompliant): New method. Common helper method
+        for identifier and parameters CLS-Compliant testing.
+        (VerifyClsCompliance): New method. The main virtual method for
+        CLS-Compliant verifications.
+        (CheckAccessLevel): In one special case (System.Drawing) was TypeBuilder
+        null. I don't know why is null (too many public members !).
+        (GetClsCompliantAttributeValue). New method. Goes through class hierarchy
+        and get value of first CLSCompliantAttribute that found.
+
+        delegate.cs (Emit): Override and call base for CLS-Compliant tests.
+        (VerifyClsCompliance): Override and add extra tests.
+        
+        * driver.cs (CSCParseOption): New command line options (clscheck[+|-]).
+        clscheck- disable CLS-Compliant verification event if assembly is has
+        CLSCompliantAttribute(true).
+        
+        * enum.cs (Emit): Override and call base for CLS-Compliant tests.
+        ApllyAttribute is now called in emit section as in the other cases.
+        Possible future Emit integration.
+        (IsIdentifierClsCompliant): New override.
+        (VerifyClsCompliance): New override.
+        (GetEnumeratorName): Returns full enum name.
+        
+        * parameter.cs (GetSignatureForError): Implemented.
+        
+        * report.cs (WarningData): New struct for Warning message information.
+        (LocationOfPreviousError): New method.
+        (Warning): New method. Reports warning based on the warning table.
+        (Error_T): New method. Reports error based on the error table.
+        
+        * rootcontext.cs (EmitCode): Added new Emit(s) because CLS-Compliant
+        verifications are done here.
+        
+        * tree.cs (RecordDecl): Used new LocationOfPreviousError method.
+        
+        * typemanager.cs (cls_compliant_attribute_type): New member thath holds
+        CLSCompliantAttribute.
+        (all_imported_types): New member holds all imported types from other
+        assemblies.
+        (LoadAllImportedTypes): New method fills static table with exported types
+        from all referenced assemblies.
+        (Modules): New property returns all assembly modules.
+
 2004-03-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Add a rule to catch wrong event syntax instead of

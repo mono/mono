@@ -267,11 +267,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Emits the field value by evaluating the expression
 		/// </summary>
-		public void Emit (TypeContainer parent)
+		public override void Emit (TypeContainer parent)
 		{
 			LookupConstantValue ();
-			
-			return;
+			base.Emit (parent);
 		}
 	}
 }

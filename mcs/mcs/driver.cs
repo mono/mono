@@ -195,6 +195,7 @@ namespace Mono.CSharp
 				"   -checked[+|-]      Set default context to checked\n" +
 				"   -codepage:ID       Sets code page to the one in ID\n" +
 				"                      (number, `utf8' or `reset')\n" +
+				"   -clscheck[+|-]     Disables CLS Compliance verifications" + Environment.NewLine +
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
 				"   -debug[+|-]        Generate debugging information\n" + 
 				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
@@ -1078,6 +1079,14 @@ namespace Mono.CSharp
 				RootContext.Checked = false;
 				return true;
 
+			case "/clscheck":
+			case "/clscheck+":
+				return true;
+
+			case "/clscheck-":
+				RootContext.VerifyClsCompliance = false;
+				return true;
+
 			case "/unsafe":
 			case "/unsafe+":
 				RootContext.Unsafe = true;
@@ -1442,6 +1451,7 @@ namespace Mono.CSharp
 				ShowTime ("Populate tree");
 			if (!RootContext.StdLib)
 				RootContext.BootCorlib_PopulateCoreTypes ();
+
 			RootContext.PopulateTypes ();
 			RootContext.DefineTypes ();
 			
@@ -1454,6 +1464,12 @@ namespace Mono.CSharp
 			
 			if (Report.Errors > 0){
 				return false;
+			}
+			
+			if (RootContext.VerifyClsCompliance) { 
+				CodeGen.Assembly.ResolveClsCompliance ();
+				AttributeTester.VerifyModulesClsCompliance ();
+				TypeManager.LoadAllImportedTypes ();
 			}
 			
 			//

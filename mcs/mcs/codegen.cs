@@ -789,6 +789,32 @@ namespace Mono.CSharp {
 			}
 		}
                 
+		protected Attribute GetClsCompliantAttribute ()
+		{
+			if (m_attributes.Count < 1)
+				return null;
+
+			EmitContext temp_ec = new EmitContext (new TypeContainer (), Mono.CSharp.Location.Null, null, null, 0, false);
+			
+			foreach (DictionaryEntry de in m_attributes) {
+
+				NamespaceEntry ns = (NamespaceEntry) de.Key;
+				Attributes attrs = (Attributes) de.Value;
+				temp_ec.TypeContainer.NamespaceEntry = ns;
+
+				foreach (AttributeSection attr_section in attrs.AttributeSections) {
+					foreach (Attribute a in attr_section.Attributes) {
+						Type attributeType = RootContext.LookupType (temp_ec.DeclSpace, Attributes.GetAttributeFullName (a.Name), true, Location.Null);
+						if (attributeType == TypeManager.cls_compliant_attribute_type) {
+							a.Resolve (temp_ec);
+							return a;
+						}
+					}
+				}
+			}
+			return null;
+		}
+                
 		#region IAttributeSupport Members
 		public abstract void SetCustomAttribute(CustomAttributeBuilder customBuilder);
 		#endregion
@@ -800,17 +826,26 @@ namespace Mono.CSharp {
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
                     
-		bool m_is_cls_compliant;
+		bool is_cls_compliant;
 
 		public AssemblyClass (): base ()
 		{
-			m_is_cls_compliant = false;
+			is_cls_compliant = false;
 		}
 
 		public bool IsClsCompliant {
 			get {
-				return m_is_cls_compliant;
+				return is_cls_compliant;
 			}
+		}
+
+		public void ResolveClsCompliance ()
+		{
+			Attribute a = GetClsCompliantAttribute ();
+			if (a == null)
+				return;
+
+			is_cls_compliant = a.GetClsCompliantAttributeValue (null);
 		}
 
 		public AssemblyName GetAssemblyName (string name, string output) 
@@ -929,6 +964,11 @@ namespace Mono.CSharp {
 		public override void Emit () 
 		{
 			base.Emit ();
+
+			Attribute a = GetClsCompliantAttribute ();
+			if (a != null) {
+				Report.Warning (3012, a.Location);
+			}
 
 			if (!m_module_is_unsafe)
 				return;

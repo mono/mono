@@ -84,6 +84,7 @@ public class TypeManager {
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
 	static public Type in_attribute_type;
+	static public Type cls_compliant_attribute_type;
 
 	//
 	// An empty array of types
@@ -238,6 +239,12 @@ public class TypeManager {
 	// </remarks>
 
 	static Hashtable builder_to_method;
+
+	// <remarks>
+	//  Contains all public types from referenced assemblies.
+	//  This member is used only if CLS Compliance verification is required.
+	// </remarks>
+	public static Hashtable all_imported_types;
 
 	struct Signature {
 		public string name;
@@ -544,6 +551,12 @@ public class TypeManager {
 		modules = n;
 	}
 
+	public static Module[] Modules {
+		get {
+			return modules;
+		}
+	}
+
 	static Hashtable references = new Hashtable ();
 	
 	//
@@ -762,6 +775,23 @@ public class TypeManager {
 						continue;
 					Namespace.LookupNamespace (ns, true);
 				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Fills static table with exported types from all referenced assemblies.
+	/// This information is required for CLS Compliance tests.
+	/// </summary>
+	public static void LoadAllImportedTypes ()
+	{
+		if (!CodeGen.Assembly.IsClsCompliant)
+			return;
+
+		all_imported_types = new Hashtable ();
+		foreach (Assembly a in assemblies) {
+			foreach (Type t in a.GetExportedTypes ()) {
+				all_imported_types [t.FullName] = t;
 			}
 		}
 	}
@@ -1030,6 +1060,7 @@ public class TypeManager {
 		//
 		obsolete_attribute_type = CoreLookupType ("System.ObsoleteAttribute");
 		conditional_attribute_type = CoreLookupType ("System.Diagnostics.ConditionalAttribute");
+		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
 
 		//
 		// When compiling corlib, store the "real" types here.

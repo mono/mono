@@ -351,7 +351,31 @@ namespace Mono.CSharp {
 				new InternalParameters (container, end_parameters),
 				end_param_types);
 
-			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+			return true;
+		}
+
+		public override void Emit (TypeContainer tc)
+		{
+			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
+				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+			}
+
+			base.Emit (tc);
+		}
+
+		//TODO: duplicate
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds)) {
+				return false;
+			}
+
+			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
+
+			if (!AttributeTester.IsClsCompliant (ReturnType.Type)) {
+				Report.Error_T (3002, Location, GetSignatureForError ());
+			}
 			return true;
 		}
 

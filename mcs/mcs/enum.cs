@@ -602,12 +602,61 @@ namespace Mono.CSharp {
 
 				default_value = GetNextDefaultValue (default_value);
 			}
+			return true;
+		}
 			
-			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+		public override void Emit (TypeContainer tc)
+		{
+			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
+				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+			}
+
+			base.Emit (tc);
+		}
+		
+		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		{
+			if (!base.IsIdentifierClsCompliant (ds))
+				return false;
+
+			for (int i = 1; i < ordered_enums.Count; ++i) {
+				string checked_name = ordered_enums [i] as string;
+				for (int ii = 0; ii < ordered_enums.Count; ++ii) {
+					if (ii == i)
+						continue;
+
+					string enumerator_name = ordered_enums [ii] as string;
+					if (String.Compare (checked_name, enumerator_name, true) == 0) {
+						Report.Error_T (3005, (Location)member_to_location [checked_name], GetEnumeratorName (checked_name));
+						Report.LocationOfPreviousError ((Location)member_to_location [enumerator_name]);
+						break;
+					}
+				}
+			}
+			return true;
+		}
+
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			if (!AttributeTester.IsClsCompliant (UnderlyingType)) {
+				Report.Error_T (3009, Location, GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+			}
 
 			return true;
 		}
 		
+		/// <summary>
+		/// Returns full enum name.
+		/// </summary>
+		string GetEnumeratorName (string valueName)
+		{
+			return String.Concat (Name, ".", valueName);
+		}
+
 		//
 		// IMemberFinder
 		//

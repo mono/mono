@@ -105,6 +105,20 @@ namespace Mono.CSharp {
 
 			return ExternalType ().FullName;
 		}
+
+		public string GetSignatureForError ()
+		{
+			string typeName = TypeManager.CSharpName (parameter_type);
+			switch (ModFlags & ~Modifier.ISBYREF) {
+				case Modifier.OUT:
+					return "out " + typeName;
+				case Modifier.PARAMS:
+					return "params " + typeName;
+				case Modifier.REF:
+					return "ref " + typeName;
+			}
+			return typeName;
+		}
 	}
 
 	/// <summary>

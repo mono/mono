@@ -60,8 +60,7 @@ namespace Mono.CSharp
 					101, ds.Location,
 					"There is already a definition for `" + name + "'");
 				DeclSpace other = (DeclSpace) decls [name];
-				Report.Error (0,
-					other.Location, "(Location of symbol related to previous error)");
+				Report.LocationOfPreviousError (other.Location);
 				return;
 			}
 

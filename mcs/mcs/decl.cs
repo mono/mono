@@ -42,11 +42,24 @@ namespace Mono.CSharp {
 		/// </summary>
  		Attributes attributes;
 
+		public enum ClsComplianceValue
+		{
+			Undetected,
+			Yes,
+			No	
+		}
+
+		/// <summary>
+		/// Whether CLS compliance must be done on this type.
+		/// </summary>
+		protected ClsComplianceValue cls_compliance;
+
 		public MemberCore (string name, Attributes attrs, Location loc)
 		{
 			Name = name;
 			Location = loc;
 			attributes = attrs;
+			cls_compliance = ClsComplianceValue.Undetected;
 		}
 
 		public abstract bool Define (TypeContainer parent);
@@ -54,7 +67,8 @@ namespace Mono.CSharp {
 		// 
 		// Returns full member name for error message
 		//
-		public virtual string GetSignatureForError () {
+		public virtual string GetSignatureForError ()
+		{
 			return Name;
 		}
 
@@ -66,6 +80,17 @@ namespace Mono.CSharp {
 			set {
 				attributes = value;
 			}
+		}
+
+		/// <summary>
+		/// Base Emit method. This is also entry point for CLS-Compliant verification.
+		/// </summary>
+		public virtual void Emit (TypeContainer container)
+		{
+			if (!RootContext.VerifyClsCompliance)
+				return;
+
+			VerifyClsCompliance (container);
 		}
 
 		// 
@@ -85,6 +110,166 @@ namespace Mono.CSharp {
 			Expression.UnsafeError (Location);
 			return false;
 		}
+
+		/// <summary>
+		/// Analyze whether CLS-Compliant verification must be execute for this MemberCore.
+		/// </summary>
+		public bool IsClsCompliaceRequired (DeclSpace container)
+		{
+			if (cls_compliance != ClsComplianceValue.Undetected)
+				return cls_compliance == ClsComplianceValue.Yes;
+
+			if (!IsExposedFromAssembly (container)) {
+				cls_compliance = ClsComplianceValue.No;
+				return false;
+			}
+
+			if (!GetClsCompliantAttributeValue (container)) {
+				cls_compliance = ClsComplianceValue.No;
+				return false;
+			}
+
+			cls_compliance = ClsComplianceValue.Yes;
+			return true;
+		}
+
+		/// <summary>
+		/// Returns true when MemberCore is exposed from assembly.
+		/// </summary>
+		protected virtual bool IsExposedFromAssembly (DeclSpace ds)
+		{
+			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
+				return false;
+			
+			DeclSpace parentContainer = ds;
+			while (parentContainer != null && parentContainer.ModFlags != 0) {
+				if ((parentContainer.ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
+					return false;
+				parentContainer = parentContainer.Parent;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Resolve CLSCompliantAttribute value or gets cached value.
+		/// </summary>
+		bool GetClsCompliantAttributeValue (DeclSpace ds)
+		{
+			if (OptAttributes != null) {
+				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ds);
+				if (cls_attribute != null) {
+					if (cls_attribute.GetClsCompliantAttributeValue (ds)) {
+						cls_compliance = ClsComplianceValue.Yes;
+						return true;
+					}
+					cls_compliance = ClsComplianceValue.No;
+					return false;
+				}
+			}
+
+			cls_compliance = ds.GetClsCompliantAttributeValue ();
+			return cls_compliance == ClsComplianceValue.Yes;
+		}
+
+		/// <summary>
+		/// Returns true if MemberCore is explicitly marked with CLSCompliantAttribute
+		/// </summary>
+		protected bool HasClsCompliantAttribute (DeclSpace ds)
+		{
+			if (OptAttributes == null)
+				return false;
+
+			return OptAttributes.GetClsCompliantAttribute (ds) != null;
+		}
+
+		/// <summary>
+		/// This method is used to testing error 3005 (Method or parameter name collision).
+		/// </summary>
+		protected abstract bool IsIdentifierClsCompliant (DeclSpace ds);
+
+		/// <summary>
+		/// Common helper method for identifier and parameters CLS-Compliant testing.
+		/// When return false error 3005 is reported. True means no violation.
+		/// And error 3006 tests are peformed here because of speed.
+		/// </summary>
+		protected bool IsIdentifierAndParamClsCompliant (DeclSpace ds, string name, MemberInfo methodBuilder, Type[] paramTypes)
+		{
+			MemberList ml = ds.FindMembers (MemberTypes.Event | MemberTypes.Field | MemberTypes.Method | MemberTypes.Property, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance, System.Type.FilterNameIgnoreCase, name);
+		
+			if (ml.Count < 2)
+				return true;
+
+			bool error3006 = false;
+			foreach (MemberInfo mi in ml) {
+				if (name == mi.Name) {
+					MethodBase method = mi as MethodBase;
+					if (method == null || method == methodBuilder || paramTypes == null || paramTypes.Length == 0)
+						continue;
+
+					if (AttributeTester.AreOverloadedMethodParamsClsCompliant (paramTypes, TypeManager.GetArgumentTypes (method))) {
+						error3006 = false;
+						continue;
+					}
+
+					error3006 = true;
+				}
+
+				// We need to test if member is not marked as CLSCompliant (false) and if type is not only internal
+				// because BindingFlags.Public returns internal types too
+				DeclSpace temp_ds = TypeManager.LookupDeclSpace (mi.DeclaringType);
+
+				// Type is external, we can get attribute directly
+				if (temp_ds == null) {
+					object[] cls_attribute = mi.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
+					if (cls_attribute.Length == 1 && (!((CLSCompliantAttribute)cls_attribute[0]).IsCompliant))
+						continue;
+				} else {
+					string tmp_name = String.Concat (temp_ds.Name, '.', mi.Name);
+
+					MemberCore mc = temp_ds.GetDefinition (tmp_name) as MemberCore;
+					if (!mc.IsClsCompliaceRequired (ds))
+						continue;
+				}
+
+				if (error3006)
+					Report.Error_T (3006, Location, GetSignatureForError ());
+
+				return error3006;
+
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// The main virtual method for CLS-Compliant verifications.
+		/// The method returns true if member is CLS-Compliant and false if member is not
+		/// CLS-Compliant which means that CLS-Compliant tests are not necessary. A descendants override it
+		/// and add their extra verifications.
+		/// </summary>
+		protected virtual bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!IsClsCompliaceRequired (ds)) {
+				return false;
+			}
+
+			if (!CodeGen.Assembly.IsClsCompliant) {
+				if (HasClsCompliantAttribute (ds)) {
+					Report.Error_T (3014, Location, GetSignatureForError ());
+				}
+			}
+
+			if (Name[0] == '_') {
+				Report.Error_T (3008, Location, GetSignatureForError () );
+			}
+
+			if (!IsIdentifierClsCompliant (ds)) {
+				Report.Error_T (3005, Location, GetSignatureForError ());
+			}
+
+			return true;
+		}
+
 	}
 
 	/// <summary>
@@ -409,13 +594,15 @@ namespace Mono.CSharp {
 				return true;
 
 			case TypeAttributes.NotPublic:
+
+				// In same cases is null.
+				if (TypeBuilder == null)
+					return true;
+
 				//
 				// This test should probably use the declaringtype.
 				//
-				if (check_type.Assembly == TypeBuilder.Assembly){
-					return true;
-				}
-				return false;
+				return check_type.Assembly == TypeBuilder.Assembly;
 				
 			case TypeAttributes.NestedPublic:
 				return true;
@@ -775,6 +962,70 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract MemberCache MemberCache {
 			get;
+		}
+
+		/// <summary>
+		/// Goes through class hierarchy and get value of first CLSCompliantAttribute that found.
+		/// If no is attribute exists then return assembly CLSCompliantAttribute.
+		/// </summary>
+		public ClsComplianceValue GetClsCompliantAttributeValue ()
+		{
+			if (cls_compliance != ClsComplianceValue.Undetected)
+				return cls_compliance;
+
+			if (OptAttributes != null) {
+				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (this);
+				if (cls_attribute != null) {
+					cls_compliance = cls_attribute.GetClsCompliantAttributeValue (this) ? ClsComplianceValue.Yes : ClsComplianceValue.No;
+					return cls_compliance;
+				}
+			}
+
+			if (parent == null) {
+				cls_compliance = CodeGen.Assembly.IsClsCompliant ? ClsComplianceValue.Yes : ClsComplianceValue.No;
+				return cls_compliance;
+			}
+
+			return parent.GetClsCompliantAttributeValue ();
+		}
+
+
+		// Tests container name for CLS-Compliant name (differing only in case)
+		// Possible optimalization: search in same namespace only
+		protected override bool IsIdentifierClsCompliant (DeclSpace ds)
+		{
+			int l = Name.Length;
+
+			if (Namespace.LookupNamespace (NamespaceEntry.FullName, false) != null) {
+				// Seek through all imported types
+				foreach (string type_name in TypeManager.all_imported_types.Keys) 
+				{
+					if (l != type_name.Length)
+						continue;
+
+					if (String.Compare (Name, type_name, true) == 0 && 
+						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type))
+						return false;
+				}
+			}
+
+			// Seek through generated types
+			foreach (string name in RootContext.Tree.Decls.Keys) {
+				if (l != name.Length)
+					continue;
+
+				if (String.Compare (Name, name, true) == 0) { 
+
+					if (Name == name)
+						continue;
+					
+					DeclSpace found_ds = RootContext.Tree.Decls[name] as DeclSpace;
+					if (found_ds.IsClsCompliaceRequired (found_ds.Parent))
+						return false;
+				}
+			}
+
+			return true;
 		}
 	}
 

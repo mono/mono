@@ -24,7 +24,7 @@ namespace Mono.CSharp {
 		public readonly string    Name;
 		public readonly ArrayList Arguments;
 
-		Location Location;
+		public readonly Location Location;
 
 		public Type Type;
 		
@@ -47,6 +47,7 @@ namespace Mono.CSharp {
 		FieldInfo [] field_info_arr;
 		object [] field_values_arr;
 		object [] prop_values_arr;
+		object [] pos_values;
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -201,7 +202,7 @@ namespace Mono.CSharp {
 					named_args = (ArrayList) Arguments [1];
 			}
 
-			object [] pos_values = new object [pos_arg_count];
+			pos_values = new object [pos_arg_count];
 
 			//
 			// First process positional arguments 
@@ -762,6 +763,28 @@ namespace Mono.CSharp {
 			return ((StringConstant) arg.Expr).Value;
 		}
 
+		/// <summary>
+		/// Returns value of CLSCompliantAttribute contructor parameter but because the method can be called
+		/// before ApplyAttribute. We need to resolve the arguments.
+		/// This situation occurs when class deps is differs from Emit order.  
+		/// </summary>
+		public bool GetClsCompliantAttributeValue (DeclSpace ds)
+		{
+			if (pos_values == null) {
+				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
+
+				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
+				// But because a lot of attribute class code must be rewritten will be better to wait...
+				Resolve (ec);
+			}
+
+			// Some error occurred
+			if (pos_values [0] == null)
+				return false;
+
+			return (bool)pos_values [0];
+		}
+
 		static object GetFieldValue (Attribute a, string name)
                 {
 			int i;
@@ -1041,9 +1064,53 @@ namespace Mono.CSharp {
 					if (!emitted_targets.Contains (attr_target))
 						emitted_targets.Add (attr_target);
 				}
-				
-				
 			}
+
+			// Here we are testing attribute arguments for array usage (error 3016)
+			DeclSpace ds = kind as DeclSpace;
+			if ((ds != null && ds.IsClsCompliaceRequired (ds)) ||
+			    (kind is AssemblyClass && CodeGen.Assembly.IsClsCompliant)) {
+				
+				foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+					foreach (Attribute a in asec.Attributes) {
+						if (a.Arguments == null)
+							continue;
+
+						ArrayList pos_args = (ArrayList) a.Arguments [0];
+						if (pos_args != null) {
+							foreach (Argument arg in pos_args) { 
+								// Type is undefined (was error 246)
+								if (arg.Type == null)
+									return;
+
+								if (arg.Type.IsArray) {
+									Report.Error_T (3016, a.Location);
+									return;
+								}
+							}
+						}
+					
+						if (a.Arguments.Count < 2)
+							continue;
+					
+						ArrayList named_args = (ArrayList) a.Arguments [1];
+						foreach (DictionaryEntry de in named_args) {
+							Argument arg  = (Argument) de.Value;
+
+							// Type is undefined (was error 246)
+							if (arg.Type == null)
+								return;
+
+							if (arg.Type.IsArray) 
+							{
+								Report.Error_T (3016, a.Location);
+								return;
+							}
+						}
+					}
+				}
+			}
+
 		}
 
 		public object GetValue (EmitContext ec, Constant c, Type target)
@@ -1253,9 +1320,203 @@ namespace Mono.CSharp {
                         
 			return false;
 		}
+
+		public Attribute GetClsCompliantAttribute (DeclSpace ds)
+		{
+			foreach (AttributeSection attr_section in AttributeSections) {
+				foreach (Attribute a in attr_section.Attributes) {
+
+					// Unfortunately, we have also attributes that has not been resolved yet.
+					// We need to simulate part of ApplyAttribute method.
+					if (a.Type == null) {
+						Type attr_type = RootContext.LookupType (ds, GetAttributeFullName (a.Name), true, a.Location);
+						if (attr_type == TypeManager.cls_compliant_attribute_type)
+							return a;
+
+						continue;
+					}
+
+					if (a.Type == TypeManager.cls_compliant_attribute_type)
+						return a;
+				}
+			}
+			return null;
+		}
+
+		public static string GetAttributeFullName (string name)
+		{
+			if (name.EndsWith ("Attribute"))
+				return name;
+			return name + "Attribute";
+		}
 	}
 
-	public interface IAttributeSupport {
+	public interface IAttributeSupport
+	{
 		void SetCustomAttribute (CustomAttributeBuilder customBuilder);
+	}
+
+	/// <summary>
+	/// Helper class for attribute verification routine.
+	/// </summary>
+	sealed class AttributeTester
+	{
+		static PtrHashtable analyzed_types = new PtrHashtable ();
+
+		private AttributeTester ()
+		{
+		}
+
+		/// <summary>
+		/// Returns true if parameters of two compared methods are CLS-Compliant.
+		/// It tests differing only in ref or out, or in array rank.
+		/// </summary>
+		public static bool AreOverloadedMethodParamsClsCompliant (Type[] types_a, Type[] types_b) 
+		{
+			if (types_a == null || types_b == null)
+				return true;
+
+			if (types_a.Length != types_b.Length)
+				return true;
+
+			for (int i = 0; i < types_b.Length; ++i) {
+				Type aType = types_a [i];
+				Type bType = types_b [i];
+
+				if (aType.IsArray && bType.IsArray && aType.GetArrayRank () != bType.GetArrayRank () && aType.GetElementType () == bType.GetElementType ()) {
+					return false;
+				}
+
+				Type aBaseType = aType;
+				bool is_either_ref_or_out = false;
+
+				if (aType.IsByRef || aType.IsPointer) {
+					aBaseType = aType.GetElementType ();
+					is_either_ref_or_out = true;
+				}
+
+				Type bBaseType = bType;
+				if (bType.IsByRef || bType.IsPointer) 
+				{
+					bBaseType = bType.GetElementType ();
+					is_either_ref_or_out = !is_either_ref_or_out;
+				}
+
+				if (aBaseType != bBaseType)
+					continue;
+
+				if (is_either_ref_or_out)
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Goes through all parameters and test if they are CLS-Compliant.
+		/// </summary>
+		public static bool AreParametersCompliant (Parameter[] fixedParameters, Location loc)
+		{
+			if (fixedParameters == null)
+				return true;
+
+			foreach (Parameter arg in fixedParameters) {
+				if (!AttributeTester.IsClsCompliant (arg.ParameterType)) {
+					Report.Error_T (3001, loc, arg.GetSignatureForError ());
+					return false;
+				}
+			}
+			return true;
+		}
+
+
+		/// <summary>
+		/// This method tests the CLS compliance of external types. It doesn't test type visibility.
+		/// </summary>
+		public static bool IsClsCompliant (Type type) 
+		{
+			if (type == null)
+				return true;
+
+			object type_compliance = analyzed_types[type];
+			if (type_compliance != null)
+				return type_compliance != null;
+
+			if (type.IsPointer) {
+				analyzed_types.Add (type, null);
+				return false;
+			}
+
+			bool result;
+			if (type.IsArray || type.IsByRef)	{
+				result = IsClsCompliant (TypeManager.GetElementType (type));
+			} else {
+				result = AnalyzeTypeCompliance (type);
+			}
+			analyzed_types.Add (type, result ? typeof(int) : null);
+			return result;
+		}                
+
+		/// <summary>
+		/// Non-hierarchical CLS Compliance analyzer
+		/// </summary>
+		public static bool IsComplianceRequired (MemberInfo mi, DeclSpace ds)
+		{
+			DeclSpace temp_ds = TypeManager.LookupDeclSpace (mi.DeclaringType);
+
+			// Type is external, we can get attribute directly
+			if (temp_ds == null) {
+				object[] cls_attribute = mi.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
+				return (cls_attribute.Length == 1 && ((CLSCompliantAttribute)cls_attribute[0]).IsCompliant);
+			}
+
+			string tmp_name;
+			// Interface doesn't store full name
+			if (temp_ds is Interface)
+				tmp_name = mi.Name;
+			else
+				tmp_name = String.Concat (temp_ds.Name, ".", mi.Name);
+
+			MemberCore mc = temp_ds.GetDefinition (tmp_name) as MemberCore;
+			return mc.IsClsCompliaceRequired (ds);
+		}
+
+		public static void VerifyModulesClsCompliance ()
+		{
+			Module[] modules = TypeManager.Modules;
+			if (modules == null)
+				return;
+
+			// The first module is generated assembly
+			for (int i = 1; i < modules.Length; ++i) {
+				Module module = modules [i];
+				if (!IsClsCompliant (module)) {
+					Report.Error_T (3013, module.Name);
+					return;
+				}
+			}
+		}
+
+		static bool IsClsCompliant (ICustomAttributeProvider attribute_provider) 
+		{
+			object[] CompliantAttribute = attribute_provider.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
+			if (CompliantAttribute.Length == 0)
+				return false;
+
+			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
+		}
+
+		static bool AnalyzeTypeCompliance (Type type)
+		{
+			DeclSpace ds = TypeManager.LookupDeclSpace (type);
+			if (ds != null) {
+				return ds.IsClsCompliaceRequired (ds.Parent);
+			}
+
+			object[] CompliantAttribute = type.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
+			if (CompliantAttribute.Length == 0) 
+				return IsClsCompliant (type.Assembly);
+
+			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
+		}
 	}
 }
