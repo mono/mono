@@ -186,11 +186,16 @@ namespace System.Data
 					
 				}
 				else { //Child node is a column.
+					object val = null;
+					if (childNode.FirstChild != null)
+						val = childNode.FirstChild.Value;
+					else
+						val = "";
 					if (table.Columns.Contains(childNode.LocalName))
-						rowValue.Add(childNode.LocalName, childNode.FirstChild.Value);
+						rowValue.Add(childNode.LocalName, val);
 					else if (inferSchema) {
 						table.Columns.Add(childNode.LocalName);
-						rowValue.Add(childNode.LocalName, childNode.FirstChild.Value);
+						rowValue.Add(childNode.LocalName, val);
 					}
 				}
 			}
