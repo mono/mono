@@ -93,11 +93,14 @@ namespace Microsoft.JScript {
 			else 
 				full_name = prefix + "." + name;
 
-			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, 
-									  HandleReturnType,
-									  func_obj.params_types ());
-			TypeManager.AddMethod (name, method_builder);
-			
+			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, HandleReturnType,
+								  func_obj.params_types ());
+			MethodBuilder tmp = TypeManager.GetMethod (name);
+			if (tmp == null)
+				TypeManager.AddMethod (name, method_builder);
+			else
+				TypeManager.SetMethod (name, method_builder);
+
 			set_custom_attr (method_builder);
 			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
 							      method_builder.GetILGenerator ());

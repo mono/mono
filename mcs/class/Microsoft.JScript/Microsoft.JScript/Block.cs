@@ -36,10 +36,12 @@ namespace Microsoft.JScript {
 	public class Block : AST {
 
 		internal ArrayList elems;
+		private Hashtable ocurrences;
 
 		Block ()
 		{
 			elems = new ArrayList ();
+			ocurrences = new Hashtable ();
 		}
 
 		internal Block (int line_number)
@@ -115,13 +117,13 @@ namespace Microsoft.JScript {
 			bool no_effect;
 			bool r = true;
 			int i, n = elems.Count;
-			
+
 			if (parent == null || parent is FunctionDeclaration)
 				no_effect = true;
 			else
 				no_effect = false;
-
-			for (i = 0; i < n; i++) {
+			
+			for (i = 0; i < elems.Count; i++) {
 				e = (AST) elems [i];
 				//
 				// Add the variables to the symbol
@@ -143,10 +145,24 @@ namespace Microsoft.JScript {
 					// variables can be referenced
 					// in function's body.
 					//
-					context.Enter (Symbol.CreateSymbol (((FunctionDeclaration) e).func_obj.name), new FunctionDeclaration ());
-				}
-			}
+					string name = ((FunctionDeclaration) e).func_obj.name;
+					AST binding = context.Get (Symbol.CreateSymbol (name));
 
+					if (binding == null) {						
+						ocurrences.Add (name, i);
+						context.Enter (Symbol.CreateSymbol (((FunctionDeclaration) e).func_obj.name), new FunctionDeclaration ());
+					} else {
+						Console.WriteLine ("warning: JS1111: '{0}' has already been defined.", name);
+						int k = (int) ocurrences [name];
+						elems.RemoveAt (k);
+						if (k < i)
+							i -= 1;
+						ocurrences [name] = i;
+					}
+				}
+			}			
+			n = elems.Count;
+			
 			for (i = 0; i < n; i++) {
 				e = (AST) elems [i];
 				if (e is Exp) 

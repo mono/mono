@@ -23,7 +23,8 @@ namespace Microsoft.JScript {
 	
 		enum Operation {
 			Add,
-			Get
+			Get,
+			Set
 		}
 
 		static Hashtable methods;
@@ -45,6 +46,11 @@ namespace Microsoft.JScript {
 			return (MethodBuilder) Operate (Operation.Get, ManagedType.Method, name, null);
 		}
 
+		internal static void SetMethod (string name, MethodBuilder builder)
+		{
+			Operate (Operation.Set, ManagedType.Method, name, builder);
+		}
+
 		internal static void AddLocal (string name, LocalBuilder loc_builder)
 		{
 			Operate (Operation.Add, ManagedType.Local, name, loc_builder);
@@ -64,6 +70,10 @@ namespace Microsoft.JScript {
 					return null;
 				} else if (op == Operation.Get)
 					return methods [name];
+				else if (op == Operation.Set) {
+					methods [name] = obj;
+					return null;
+				}
 				break;
 			case ManagedType.Local:
 				if (op == Operation.Add) {

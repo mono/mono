@@ -78,8 +78,17 @@ namespace Microsoft.JScript {
 
 		internal void EmitDecl (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
+			object var;
+			if ((var = CodeGenerator.VariableDefined (id, ec)) != null) {
+				Type t = var.GetType ();
+				if (t == typeof (FieldBuilder))
+					field_info = (FieldBuilder) var;
+				else if (t == typeof (LocalBuilder))
+					local_builder = (LocalBuilder) var;
+				return;
+			}
 
+			ILGenerator ig = ec.ig;
 			if (parent == null || (parent.GetType () != typeof (FunctionDeclaration)
 					       && parent.GetType () != typeof (FunctionExpression))) {
 				FieldBuilder field_builder;
@@ -92,7 +101,7 @@ namespace Microsoft.JScript {
 		}
 
 		internal override void Emit (EmitContext ec)
-		{
+		{			
 			ILGenerator ig = ec.ig;
 
 			if (parent == null || (parent.GetType () != typeof (FunctionDeclaration)

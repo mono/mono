@@ -536,6 +536,7 @@ namespace Microsoft.JScript {
 							n = built_in.NumOfArgs;
 						}
 					} else if (bind_type == typeof (FunctionDeclaration) || bind_type == typeof (FunctionExpression)) {
+						args.func = (Function) binding;
 						n = (binding as Function).NumOfArgs;
 					}
 				} else if (member_exp is Binary) {
@@ -553,7 +554,7 @@ namespace Microsoft.JScript {
 					}
 				} else
 					r &= member_exp.Resolve (context);
-				
+		
 				if (args != null) {
 					args.DesiredNumOfArgs = n;
 					r &= args.Resolve (context);
@@ -1072,6 +1073,7 @@ namespace Microsoft.JScript {
 
 		internal ArrayList elems;
 		int num_of_args = -1;
+		internal Function func;
 		internal bool is_print;
 		internal ParameterInfo [] params_info;
 		internal bool late_bind = false;
@@ -1164,7 +1166,12 @@ namespace Microsoft.JScript {
 					if (!late_bind && params_info != null)
 						force_strong_type (ig, ast, params_info [j]);
 				}
-				int missing = num_of_args - n;
+				int missing = 0;
+				if (func != null) 
+					missing = func.NumOfArgs - n;
+				else if (params_info != null)
+					missing = params_info.Length - n;
+
 				for (int k = 0; k < missing; k++)
 					ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value"));
 			}

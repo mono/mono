@@ -1,3 +1,23 @@
+2005-02-22  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* CodeGenerator.cs: Added method VariableDefined.
+	
+	* TypeManager.cs: Added method SetMethod.
+	
+	* VariableDeclaration.cs (EmitDecl): Added logic to allow multiple
+	declarations of the same var. Fixes #72674.
+	
+	* Block.cs: Added hashtable ocurrences. It holds the index of the
+	previous declaration which after encountering another one with the
+	same name gets nuked.
+
+	* FunctionDeclaration.cs: Added logic for allowing multiple
+	declaration of methods with the same name. Fixes #72674.	
+
+	* expression.cs (Args): Added field func. Holds a reference to the
+	Function which to the args are being passed. Use it to track the
+	proper number of arguments for the call. 
+
 2005-02-20  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs (Args.Emit): check if num_of_args is -1.

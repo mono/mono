@@ -487,5 +487,10 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Castclass, iact_obj);
 			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
 		}
+
+		internal static FieldInfo VariableDefined (string id, EmitContext ec)
+		{
+			return ec.type_builder.GetField (id, BindingFlags.Public | BindingFlags.Static);
+		}
 	}
 }
