@@ -15,18 +15,16 @@ namespace System.Xml
 		string publicId;        // public identifier on the DOCTYPE
 		string systemId;        // system identifier on the DOCTYPE
 		string internalSubset;  // value of the DTD internal subset
-		XmlDocument document;
 		
 		// Constructor
 		protected internal XmlDocumentType (string name, string publicId, string systemId,
 						    string internalSubset, XmlDocument doc)
-			: base (null)						    
+			: base (doc)						    
 		{
 			this.name = name;
 			this.publicId = publicId;
 			this.systemId = systemId;
 			this.internalSubset = internalSubset;
-			this.document = doc;
 		}
 
 
@@ -79,15 +77,15 @@ namespace System.Xml
 		}
 
 		// Methods
-		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			return null;
+			// deep is ignored
+			return new XmlDocumentType (name, publicId, systemId, internalSubset, this.OwnerDocument);
 		}
-
-		[MonoTODO]
+		
 		public override void WriteContentTo (XmlWriter w)
 		{
+			// No effect
 		}
 
 		[MonoTODO]

@@ -1,5 +1,14 @@
 2002-03-15  Duncan Mak  <duncan@ximian.com>
 
+	* XmlEntity.cs: Added to CVS. Need to implement BaseURI and
+	InnerText once I know what they do.
+
+	* XmlDocumentType.cs (XmlDocumentType): Fix the constructor now
+	that we can properly chain constructors.
+	(CloneNode): implemented.
+	(WriteContentTo): Removed MonoTODO attribute as this method has no
+	effect in this class.
+
 	* XmlProcessingInstruction.cs (Value): Added the missing Set
 	block.
 	(InnerText): Added in, but not implemented.
