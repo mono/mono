@@ -31,6 +31,7 @@ namespace MonoTests.System.IO
 		protected override void TearDown ()
 		{
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
+		        File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
 		}
 
@@ -41,10 +42,20 @@ namespace MonoTests.System.IO
 
 		public void TestExists ()
 		{
-                        Assert ("null filename should not exist", !File.Exists (null));
-                        Assert ("empty filename should not exist", !File.Exists (""));
-			Assert ("File resources" + Path.DirectorySeparatorChar + "AFile.txt should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
-                        Assert ("File resources" + Path.DirectorySeparatorChar + "doesnotexist should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "doesnotexist"));
+			int i = 0;
+			try {
+				Assert ("null filename should not exist", !File.Exists (null));
+				i++;
+				Assert ("empty filename should not exist", !File.Exists (""));
+				i++;
+				Assert ("whitespace filename should not exist", !File.Exists ("  \t\t  \t \n\t\n \n"));
+				i++;
+				Assert ("File resources" + Path.DirectorySeparatorChar + "AFile.txt should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
+				i++;
+				Assert ("File resources" + Path.DirectorySeparatorChar + "doesnotexist should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "doesnotexist"));
+			} catch (Exception e) {
+				Fail ("Unexpected exception at i = " + i + ". e=" + e);
+			}
 		}
 
 		public void TestCreate ()
@@ -188,11 +199,12 @@ namespace MonoTests.System.IO
 
 			/* positive test: copy resources/AFile.txt to resources/bar */
 			try {
+				File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
 				File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar");
 				Assert ("File AFile.txt should still exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
 				Assert ("File bar should exist after File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
 			} catch (Exception e) {
-				Fail ("File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
+				Fail ("#1 File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
 			}
 
 			/* exception test: File.Copy(resources/AFile.txt, resources/bar) (default is overwrite == false) */
@@ -202,7 +214,7 @@ namespace MonoTests.System.IO
 			} catch (IOException) {
 				// do nothing, this is what we expect
 			} catch (Exception e) {
-				Fail ("File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
+				Fail ("#2 File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
 			}
 
 
@@ -262,6 +274,10 @@ namespace MonoTests.System.IO
 				Fail ("File.Delete(directory_does_not_exist) unexpected exception caught: e=" + e.ToString());
 			}
 
+			if (!File.Exists ("resources" + Path.DirectorySeparatorChar + "foo")) {
+				FileStream f = File.Create("resources" + Path.DirectorySeparatorChar + "foo");
+				f.Close();
+			}
 
                         Assert ("File resources" + Path.DirectorySeparatorChar + "foo should exist for TestDelete to succeed", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
                         try {
@@ -392,8 +408,11 @@ namespace MonoTests.System.IO
 				Fail ("File.Move('doesnotexist/foo', 'b') unexpected exception caught: e=" + e.ToString());
 			}
 
-
-
+			if (!File.Exists ("resources" + Path.DirectorySeparatorChar + "bar")) {
+				FileStream f = File.Create("resources" + Path.DirectorySeparatorChar + "bar");
+				f.Close();
+			}
+			
 			Assert ("File resources" + Path.DirectorySeparatorChar + "bar should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
 			File.Move ("resources" + Path.DirectorySeparatorChar + "bar", "resources" + Path.DirectorySeparatorChar + "baz");
 			Assert ("File resources" + Path.DirectorySeparatorChar + "bar should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));

@@ -1,3 +1,9 @@
+2002-05-14  Nick Drochak  <ndrochak@gol.com>
+
+	* FileTest.cs: Delete temporary files after each test method; Catch
+	unexpected exceptions and report them; Make some Assert messages
+	unique; Make sure temp files exist before trying Move and Delete, etc.
+
 2002-05-13  Mike Gray <mike@mikegray.org>
 
 	* FileTest.cs: Adding better tests for File.Delete, File.Move
