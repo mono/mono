@@ -1,5 +1,10 @@
 2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : clean more.
+	* xalan-correct-catalog.xml : removed old file.
+
+2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : added patching step against buggy catalog.xml.
 	  Build both xslttest.exe and alltest.exe.
 

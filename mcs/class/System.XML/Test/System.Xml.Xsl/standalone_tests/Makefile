@@ -63,6 +63,7 @@ clean : clean-original clean-ms
 clean-original :
 	find testsuite/TESTS -name *.out > output.lst
 	perl cleanup-output.pl
+	rm xslttest.exe TestResult.xml
 
 clean-ms :
 	rm -rf testsuite/TESTS/Reports
