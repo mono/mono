@@ -1,4 +1,8 @@
 
+Mon Feb 11 18:40:04 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* sparc/*: sparc codegen header and some untested trampoline code.
+
 Mon Feb 11 12:32:35 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: fix handling of multiple marshaleed strings.
