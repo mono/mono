@@ -14,14 +14,15 @@ assemblies_DATA =	\
 	I18N.Rare.dll						\
 	I18N.West.dll						\
 	Microsoft.VisualBasic.dll				\
+	Microsoft.VisualC.dll					\
 	Mono.CSharp.Debugger.dll				\
+	Mono.Data.DB2Client.dll					\
 	Mono.Data.MySql.dll					\
 	Mono.Data.PostgreSqlClient.dll				\
 	Mono.Data.SqliteClient.dll				\
 	Mono.Data.SybaseClient.dll				\
 	Mono.Data.TdsClient.dll					\
 	Mono.Data.Tds.dll					\
-	Mono.Data.DB2Client.dll					\
 	Mono.GetOptions.dll					\
 	Mono.PEToolkit.dll					\
 	NUnitCore_mono.dll					\
@@ -32,6 +33,7 @@ assemblies_DATA =	\
 	System.EnterpriseServices.dll				\
 	System.Runtime.Remoting.dll				\
 	System.Runtime.Serialization.Formatters.Soap.dll	\
+	System.Security.dll					\
 	System.Web.dll						\
 	System.Web.Services.dll					\
 	System.Windows.Forms.dll				\
