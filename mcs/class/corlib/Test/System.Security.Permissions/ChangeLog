@@ -1,3 +1,8 @@
+2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ZoneIdentityPermissionTest.cs: Ensure we aren't encoding NoZone in
+	the permission XML (ToXml).
+
 2003-08-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessSecurityAttributeTest.cs: New unit tests for abstract 

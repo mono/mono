@@ -124,6 +124,7 @@ namespace MonoTests.System.Security.Permissions {
 		public void SecurityZone_NoZone ()
 		{
 			ZoneIdentityPermission zip = BasicTestZone (SecurityZone.NoZone, false);
+			Assert.IsNull (zip.ToXml ().Attribute ("Zone"), "Zone Attribute");
 			Assert.IsTrue (zip.IsSubsetOf (null), "IsSubset-Null");
 			IPermission intersect = zip.Intersect (zip);
 			Assert.IsNull (intersect, "Intersect with No Zone");
