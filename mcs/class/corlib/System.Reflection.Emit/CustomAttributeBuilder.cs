@@ -89,6 +89,9 @@ namespace System.Reflection.Emit {
 			if ((con.Attributes & MethodAttributes.Static) == MethodAttributes.Static ||
 					(con.Attributes & MethodAttributes.Private) == MethodAttributes.Private)
 				throw new ArgumentException ("Cannot have private or static constructor.");
+			/* 
+			   FIXME: Enabling this causes regressions
+
 			Type atype = ctor.DeclaringType;
 			int i;
 			i = 0;
@@ -132,6 +135,7 @@ namespace System.Reflection.Emit {
 				}
 				i ++;
 			}
+			*/
 				
 			data = GetBlob (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}

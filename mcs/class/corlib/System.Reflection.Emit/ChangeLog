@@ -1,3 +1,8 @@
+2004-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs: Disable argument checking since it causes
+	regressions.
+
 2004-03-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilder.cs (Initialize): Add more argument checking. 
