@@ -1,3 +1,8 @@
+2002-10-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* parser.cs: applied fix from Tim Haynes (thaynes@openlinksw.com) to
+	solve bug #32807. Also modified GetMapping to return the same as MS.
+
 2002-08-28  Juli Mallett  <jmallett@FreeBSD.org>
 
 	* arch.cs, compiler.cs: Give the interpreter machine a property

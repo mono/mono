@@ -128,9 +128,15 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		public IDictionary GetMapping () {
 			Hashtable mapping = new Hashtable ();
-			foreach (CapturingGroup group in caps) {
-				if (group.Name != null)
+			int end = caps.Count;
+			mapping.Add ("0", 0);
+			for (int i = 0; i < end;) {
+				CapturingGroup group = (CapturingGroup) caps [i];
+				i++;
+				if (group.Name != null && !mapping.Contains (group.Name))
 					mapping.Add (group.Name, group.Number);
+				else
+					mapping.Add (i.ToString (), i);
 			}
 
 			return mapping;
