@@ -669,12 +669,8 @@ namespace Mono.CSharp {
 
 			if (type_container_resolve_order != null){
 				if (RootContext.StdLib){
-					foreach (TypeContainer tc in type_container_resolve_order) {
-						if ((tc.ModFlags & Modifiers.NEW) == 0)
-							tc.DefineMembers (root);
-						else
-							Report1530 (tc.Location);
-					}
+					foreach (TypeContainer tc in type_container_resolve_order)
+						tc.DefineMembers (root);
 				} else {
 					foreach (TypeContainer tc in type_container_resolve_order) {
 						// When compiling corlib, these types have already been
@@ -684,10 +680,7 @@ namespace Mono.CSharp {
 						     (tc.Name == "System.ValueType")))
 						continue;
 
-						if ((tc.ModFlags & Modifiers.NEW) == 0)
-							tc.DefineMembers (root);
-						else
-							Report1530 (tc.Location);
+						tc.DefineMembers (root);
 					}
 				} 
 			}

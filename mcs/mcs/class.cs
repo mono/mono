@@ -700,6 +700,9 @@ namespace Mono.CSharp {
 				start = 0;
 			}
 
+			if (parent != null)
+				base_class_name = parent.Name;
+
 			Type [] ifaces = new Type [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
@@ -771,7 +774,7 @@ namespace Mono.CSharp {
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
 			ifaces = GetClassBases (is_class, out parent, out error); 
-			
+
 			if (error)
 				return null;
 
@@ -1008,7 +1011,30 @@ namespace Mono.CSharp {
 					Array.Sort (defined_names, mif_compare);
 				}
 			}
-			
+
+			Class pclass = Parent as Class;
+			if (pclass != null) {
+				string pname = null;
+				Type ptype = null;
+				Type t = pclass.TypeBuilder.BaseType;
+				while ((t != null) && (ptype == null)) {
+					pname = MakeFQN (t.Name, Basename);
+					ptype = RootContext.LookupType (this, pname, true, Location.Null);
+					t = t.BaseType;
+				}
+
+				if ((ModFlags & Modifiers.NEW) != 0) {
+					if (ptype == null)
+						Report.Warning (109, Location, "The member '" + Name + "' does not hide an " +
+								"inherited member. The keyword new is not required.");
+				} else if (ptype != null) {
+					Report.Warning (108, Location, "The keyword new is required on `" +
+							Name + "' because it hides inherited member '" +
+							pname + "'.");
+				}
+			} else if ((ModFlags & Modifiers.NEW) != 0)
+				Error_KeywordNotAllowed (Location);
+
 			if (constants != null)
 				DefineMembers (constants, defined_names);
 

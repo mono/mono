@@ -1,3 +1,7 @@
+2003-07-08  Martin Baulig  <martin@ximian.com>
+
+	* rootcontext.cs, class.cs: Fixed the CS1530 reporting.
+
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: Reverted patch from Gonzalo, my previous patch
