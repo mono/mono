@@ -3,16 +3,19 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
+using System.ComponentModel;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms
+{
 	[Serializable]
-	public struct LinkArea { 
-
+	[TypeConverter (typeof (LinkArea.LinkAreaConverter))]
+	public struct LinkArea
+	{
 		private int start;
 		private int length;
 
@@ -20,59 +23,55 @@ namespace System.Windows.Forms {
 		// Public Constructor
 		// -----------------------
 
-		/// <summary>
-		/// 
-		/// </summary>
-		///
-		/// <remarks>
-		///
-		/// </remarks>
-		
-		public LinkArea (int Start, int Length)
+		public LinkArea (int start, int length)
 		{
-			start = Start;
-			length = Length;
+			this.start = start;
+			this.length = length;
 		}
 
 		// -----------------------
 		// Public Instance Members
 		// -----------------------
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool IsEmpty {
-			get{
-				// Start can be 0, so no way to know if it is empty.
-				// Docs seem to say Start must/should be set before
-				// length, os if length is valid, start must also be ok.
-				return length!=0;
+			get {
+				if (start != 0)
+					return false;
+				return (length == 0);
 			}
 		}
 
-		[MonoTODO]
-		public override bool Equals(object o){
-			return base.Equals(o) ;
+		public override bool Equals (object o)
+		{
+			if (!(o is LinkArea)) {
+				return false;
+			}
+
+			LinkArea comp = (LinkArea) o;
+			return (comp.Start == start && comp.Length == length);
 		}
 
-		[MonoTODO]
-		public override int GetHashCode(){
-			return base.GetHashCode() ;
+		public override int GetHashCode ()
+		{
+			return start << 4 | length;
 		}
 
 		public int Start {
-			get{
-				return start;
-			}
-			set{
-				start = value;
-			}
+			get { return start; }
+			set { start = value; }
 		}
 
 		public int Length {
-			get{
-				return length;
-			}
-			set{
-				length = value;
-			}
+			get { return length; }
+			set { length = value; }
+		}
+
+		[MonoTODO ("Implement")]
+		public class LinkAreaConverter : TypeConverter
+		{
+			//Implement
 		}
 	}
 }

@@ -1,4 +1,8 @@
-2004-04-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+2004-04-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* LinkArea.cs: Added attributes, implemented
+
+2004-04-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* win32structs: made members internal
 	* FileDialog.cs
