@@ -1,5 +1,9 @@
 2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class-internals.h marshal.c: Add two new wrappers, ldfld_remote and
+	stfld_remote which call mono_load/store_field_new. This allows methods
+	calling ldfld/stfld wrappers to be AOTed.
+
 	* console-io.c: Include sys/filio.h under solaris.
 	
 	* console-io.c: Include curses.h if needed correctly.
