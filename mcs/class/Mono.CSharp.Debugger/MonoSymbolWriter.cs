@@ -791,7 +791,7 @@ namespace Mono.CSharp.Debugger
 
 			writer.WriteSymbolTable (this);
 
-			writer.Close (assembly);
+			writer.Close ();
 		}
 	}
 }

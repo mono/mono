@@ -1,3 +1,7 @@
+2002-05-25  Martin Baulig  <martin@gnome.org>
+
+	* DwarfFileWriter.cs: Finished the type rewrite, put back strings and arrays.
+
 2002-05-24  Martin Baulig  <martin@gnome.org>
 
 	* IMonoSymbolWriter.cs (ISourceMethod): Added `FullName' and `Parameters'.
