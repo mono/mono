@@ -464,12 +464,17 @@ public class cilc
 
 		//TODO: use our list of supported primitive types instead
 		if (!isreg && !t.IsPrimitive) {
-			if (!registry_hits.Contains (t.Namespace)) {
+			//Console.WriteLine ("hit: " + t.Namespace + " " + t.Name + " : " + t.FullName);
+			string tns = t.Namespace;
+			if (tns == null || tns == "")
+				tns = t.FullName;
+
+			if (!registry_hits.Contains (tns)) {
 				int count = 0;
-				registry_hits[t.Namespace] = count;
+				registry_hits[tns] = count;
 			}
 
-			registry_hits[t.Namespace] = (int) registry_hits[t.Namespace] + 1;
+			registry_hits[tns] = (int) registry_hits[tns] + 1;
 		}
 
 		return isreg;
