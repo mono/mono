@@ -120,6 +120,10 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		public override string ToString()
+		{
+			return Name;
+		}
 	} // OpCode
 
 } // System.Reflection.Emit
