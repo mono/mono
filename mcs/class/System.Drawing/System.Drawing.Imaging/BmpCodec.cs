@@ -97,7 +97,7 @@ namespace System.Drawing.Imaging {
 			biWidth = info.Size.Width;
 			biHeight = info.Size.Height;
 			biPlanes = 1;
-			biBitCount = (short)System.Drawing.Image.GetPixelFormatSize(info.Format);
+			biBitCount = (short)System.Drawing.Image.GetPixelFormatSize(info.PixelFormat);
 			biCompression = (int)BitmapCompression.BI_RGB;
 			biSizeImage = (int)info.RawImageBytes.Length;
 			biXPelsPerMeter = 0;
@@ -213,7 +213,7 @@ namespace System.Drawing.Imaging {
 
 			switch (bmih.biBitCount) {
 				case 24:
-				info.Format = PixelFormat.Format24bppRgb;
+				info.PixelFormat = PixelFormat.Format24bppRgb;
 				if (bmfh.bfOffBits != 0L) stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
 				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
 					info.RawImageBytes = new byte[bmih.biSizeImage];
@@ -223,7 +223,7 @@ namespace System.Drawing.Imaging {
 				}
 				break;
 				case 32:
-				info.Format = PixelFormat.Format32bppArgb;
+				info.PixelFormat = PixelFormat.Format32bppArgb;
 				if (bmfh.bfOffBits != 0L) stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
 				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
 					info.RawImageBytes = new byte[bmih.biSizeImage];

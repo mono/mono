@@ -1,3 +1,8 @@
+2003-07-23 Alexandre Pigolkine
+	* JPEGCodec.cs
+	* PNGCodec.cs		
+	* BmpCodec.cs		cosmetic changes
+
 2003-07-22 Alexandre Pigolkine
 	* ImageCodecInfo.cs
 	* ImageFormat.cs

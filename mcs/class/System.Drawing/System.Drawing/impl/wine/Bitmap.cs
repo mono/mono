@@ -114,7 +114,7 @@ namespace System.Drawing {
 			void InitFromStream( Stream stream) {
 				InternalImageInfo info = System.Drawing.Image.Decode(stream);
 				if (info != null) {
-					createdFrom_ = info;
+					sourceImageInfo = info;
 					IntPtr memDC = Win32.CreateCompatibleDC(IntPtr.Zero);
 					IntPtr dibBits;
 					BITMAPINFO_FLAT bmi = new BITMAPINFO_FLAT();
@@ -122,7 +122,7 @@ namespace System.Drawing {
 					bmi.bmiHeader_biWidth = info.Size.Width;
 					bmi.bmiHeader_biHeight = info.Size.Height;
 					bmi.bmiHeader_biPlanes = 1;
-					bmi.bmiHeader_biBitCount = (short)System.Drawing.Image.GetPixelFormatSize(info.Format);
+					bmi.bmiHeader_biBitCount = (short)System.Drawing.Image.GetPixelFormatSize(info.PixelFormat);
 					bmi.bmiHeader_biCompression = (int)BitmapCompression.BI_RGB;
 					bmi.bmiHeader_biSizeImage = (int)info.RawImageBytes.Length;
 					bmi.bmiHeader_biXPelsPerMeter = 0;
@@ -146,7 +146,7 @@ namespace System.Drawing {
 					Win32.DeleteDC(memDC);
 					imageSize_ = info.Size;
 					imageFormat_ = info.RawFormat;
-					pixelFormat_ =  info.Format;
+					pixelFormat_ =  info.PixelFormat;
 				}
 			}
 			

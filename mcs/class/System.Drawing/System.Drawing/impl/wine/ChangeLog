@@ -1,3 +1,7 @@
+2003-07-30 Alexandre Pigolkine
+	* Bitmap.cs 
+	* Image.cs		cosmetic changes
+
 2003-06-29 Alexandre Pigolkine
 	* Graphics.cs image drawing
 

@@ -113,13 +113,13 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-			protected InternalImageInfo createdFrom_ = null;
+			protected InternalImageInfo sourceImageInfo = null;
 			public InternalImageInfo ConvertToInternalImageInfo() {
 				InternalImageInfo result = new InternalImageInfo();
 				IntPtr hTempBitmap = IntPtr.Zero;
 				IntPtr hdc = IntPtr.Zero;
 				result.Size = imageSize_;
-				result.Format = pixelFormat_;
+				result.PixelFormat = pixelFormat_;
 				//result.Stride = 
 				if(selectedIntoGraphics_ != null) {
 					hdc = selectedIntoGraphics_.GetHdc();

@@ -260,7 +260,7 @@ namespace System.Drawing.Imaging
 			// FIXME: do a real palette processing
 			//info.Palette = new ColorPalette(1, cinfo.ColorMap);
 			// FIXME: get color information from png info structure
-			info.Format = PixelFormat.Format24bppRgb;
+			info.PixelFormat = PixelFormat.Format24bppRgb;
 			info.RawImageBytes = new byte[height * row_width];
 			
 			IntPtr row_data = Marshal.AllocHGlobal (row_width);
@@ -284,9 +284,9 @@ namespace System.Drawing.Imaging
 
 		internal unsafe bool Encode( Stream stream, InternalImageInfo info) 
 		{
-			int bpp = Image.GetPixelFormatSize(info.Format) / 8;
+			int bpp = Image.GetPixelFormatSize(info.PixelFormat) / 8;
 			if( bpp != 3 && bpp != 4) {
-				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.Format, Image.GetPixelFormatSize(info.Format)));
+				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.PixelFormat, Image.GetPixelFormatSize(info.PixelFormat)));
 			}
 
 			fs = stream;
