@@ -227,6 +227,9 @@ namespace System.Windows.Forms
 		}
 
 		#region Principal Theme Methods
+		// To let the theme now that a change of defaults (colors, etc) was detected and force a re-read (and possible recreation of cached resources)
+		public abstract void ResetDefaults();
+
 		// If the theme writes directly to a window instead of a device context
 		public abstract bool DoubleBufferingSupported {get;}
 		#endregion	// Principal Theme Methods

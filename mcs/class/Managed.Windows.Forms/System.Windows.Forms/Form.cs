@@ -281,6 +281,7 @@ Console.WriteLine("ParentForm got focus");
 			maximize_box = true;
 			help_button = false;
 			show_in_taskbar = true;
+			ime_mode = ImeMode.NoControl;
 
 			owned_forms = new Form.ControlCollection(this);
 		}

@@ -314,6 +314,9 @@ namespace System.Windows.Forms
 			public virtual void Clear ()
 			{
 				owner.SuspendLayout();
+				for (int i = 0; i < list.Count; i++) {
+					owner.OnControlRemoved(new ControlEventArgs(list[i]));
+				}
 				list.Clear();
 				owner.ResumeLayout();
 			}
@@ -374,6 +377,7 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
 				}
 
+				owner.OnControlRemoved(new ControlEventArgs(list[index]));
 				list.RemoveAt(index);
 				owner.UpdateZOrder();
 			}
@@ -583,6 +587,7 @@ namespace System.Windows.Forms
 			}
 
 			DestroyHandle();
+			OnHandleDestroyed(EventArgs.Empty);
 			controls.Remove(this);
 		}
 		#endregion 	// Public Constructors
@@ -1462,7 +1467,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				ime_mode = value;
+				if (ime_mode != value) {
+					ime_mode = value;
+
+					OnImeModeChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -1591,6 +1600,8 @@ namespace System.Windows.Forms
 					XplatUI.SetParent(Handle, value.Handle);
 
 					InitLayout();
+
+					OnParentChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -1726,7 +1737,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				tab_stop = value;
+				if (tab_stop != value) {
+					tab_stop = value;
+					OnTabStopChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -2165,6 +2179,7 @@ namespace System.Windows.Forms
 			if (invalidateChildren) {
 				for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
 			}
+			OnInvalidated(new InvalidateEventArgs(rc));
 		}
 
 		public void Invalidate(System.Drawing.Region region) {
@@ -3329,7 +3344,6 @@ namespace System.Windows.Forms
 			}
 
 			case Msg.WM_KILLFOCUS: {
-Console.WriteLine("Window {0} lost focus", this.Text);
 				OnLeave(EventArgs.Empty);
 				if (CausesValidation) {
 					CancelEventArgs e;
@@ -3351,7 +3365,6 @@ Console.WriteLine("Window {0} lost focus", this.Text);
 			}
 
 			case Msg.WM_SETFOCUS: {
-Console.WriteLine("Window {0} got focus", this.Text);
 				OnEnter(EventArgs.Empty);
 				this.has_focus = true;
 				OnGotFocus(EventArgs.Empty);
@@ -3359,10 +3372,12 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 				
 
-#if notyet				
-				case Msg.WM_SYSCOLORCHANGE:	throw new NotImplementedException();	break;
+			case Msg.WM_SYSCOLORCHANGE: {
+				ThemeEngine.Current.ResetDefaults();
+				OnSystemColorsChanged(EventArgs.Empty);
+				return;
+			}
 				
-#endif
 
 			case Msg.WM_SETCURSOR: {
 				if (cursor == null) {
@@ -3485,6 +3500,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnFontChanged(EventArgs e) {
 			if (FontChanged!=null) FontChanged(this, e);
+			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentFontChanged(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3554,6 +3570,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLocationChanged(EventArgs e) {
+			OnMove(e);
 			if (LocationChanged!=null) LocationChanged(this, e);
 		}
 

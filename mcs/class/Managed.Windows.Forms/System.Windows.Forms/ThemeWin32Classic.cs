@@ -92,6 +92,10 @@ namespace System.Windows.Forms
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
 		}	
 
+		public override void ResetDefaults() {
+			throw new NotImplementedException("Need to implement ResetDefaults() for Win32 theme");
+		}
+
 		public override bool DoubleBufferingSupported {
 			get {return true; }
 		}
