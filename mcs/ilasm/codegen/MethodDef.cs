@@ -28,8 +28,8 @@ namespace Mono.ILASM {
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
                 private Hashtable label_table;
-		private Hashtable labelref_table;
-		private ArrayList label_list;
+                private Hashtable labelref_table;
+                private ArrayList label_list;
                 private PEAPI.MethodDef methoddef;
                 private bool entry_point;
                 private bool is_resolved;
@@ -38,7 +38,7 @@ namespace Mono.ILASM {
                 private Hashtable named_local_table;
                 private bool init_locals;
                 private int max_stack;
-                private Random label_random;
+
 
                 public MethodDef (PEAPI.MethAttr meth_attr, PEAPI.CallConv call_conv,
                                 PEAPI.ImplAttr impl_attr, string name,
@@ -54,12 +54,12 @@ namespace Mono.ILASM {
                         inst_list = new ArrayList ();
                         customattr_list = new ArrayList ();
                         label_table = new Hashtable ();
-			labelref_table = new Hashtable ();
-			label_list = new ArrayList ();
+                        labelref_table = new Hashtable ();
+                        label_list = new ArrayList ();
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
                         named_param_table = new Hashtable ();
-                        label_random = new Random ();
+
                         entry_point = false;
                         init_locals = false;
                         max_stack = -1;
@@ -78,12 +78,32 @@ namespace Mono.ILASM {
                         get { return signature; }
                 }
 
+                public ITypeRef RetType {
+                        get { return ret_type; }
+                }
+
+                public PEAPI.CallConv CallConv {
+                        get { return call_conv; }
+                }
+
                 public PEAPI.MethodDef PeapiMethodDef {
                         get { return methoddef; }
                 }
 
                 public bool IsVararg {
                         get { return (call_conv & PEAPI.CallConv.Vararg) != 0; }
+                }
+
+                public ITypeRef[] ParamTypeList () {
+
+                        if (param_list == null)
+                                return new ITypeRef[0];
+                        int count = 0;
+                        ITypeRef[] type_list = new ITypeRef[param_list.Count];
+                        foreach (ParamDef param in param_list) {
+                                type_list[count++] = param.Type;
+                        }
+                        return type_list;
                 }
 
                 public void AddLocals (ArrayList local_list)
@@ -151,14 +171,10 @@ namespace Mono.ILASM {
 
                         if (param_list != null) {
                                 int param_count = param_list.Count;
-				if (IsVararg && param_list[param_count-1] == ParamDef.Ellipsis)
-					param_count--;
                                 param_array = new PEAPI.Param[param_count];
                                 int count = 0;
 
                                 foreach (ParamDef paramdef in param_list) {
-                                        if (paramdef == ParamDef.Ellipsis)
-                                                break;
                                         paramdef.Define (code_gen);
                                         param_array[count++] = paramdef.PeapiParam;
                                 }
@@ -187,14 +203,10 @@ namespace Mono.ILASM {
 
                         if (param_list != null) {
                                 int param_count = param_list.Count;
-				if (IsVararg && param_list[param_count-1] == ParamDef.Ellipsis)		
-					param_count--;
                                 param_array = new PEAPI.Param[param_count];
                                 int count = 0;
-				
+
                                 foreach (ParamDef paramdef in param_list) {
-                                        if (paramdef == ParamDef.Ellipsis)
-                                                break;
                                         paramdef.Define (code_gen);
                                         param_array[count++] = paramdef.PeapiParam;
                                 }
@@ -291,34 +303,34 @@ namespace Mono.ILASM {
                         /// probably only create the ones that need to be
                         LabelInfo[] label_info = new LabelInfo[label_table.Count + label_list.Count];
                         label_table.Values.CopyTo (label_info, 0);
-			label_list.CopyTo (label_info, label_table.Count);
+                        label_list.CopyTo (label_info, label_table.Count);
                         int previous_pos = -1;
                         LabelInfo previous_label = null;
                         Array.Sort (label_info);
 
                         foreach (LabelInfo label in label_info) {
-				if (label.UseOffset) {
-					label.Define (new PEAPI.CILLabel (label.Offset));
-					continue;
-				}
+                                if (label.UseOffset) {
+                                        label.Define (new PEAPI.CILLabel (label.Offset));
+                                        continue;
+                                }
                                 if (label.Pos == previous_pos)
                                         label.Label = previous_label.Label;
                                 else
                                         label.Define (cil.NewLabel ());
-				
+
                                 previous_label = label;
                                 previous_pos = label.Pos;
                         }
 
-			// Set all the label refs
-			foreach (LabelInfo label in labelref_table.Values) {
-				LabelInfo def = (LabelInfo) label_table[label.Name];
-				if (def == null) {
-					Console.WriteLine ("Undefined Label:  " + label);
-					return;
-				}
-				label.Label = def.Label;
-			}
+                        // Set all the label refs
+                        foreach (LabelInfo label in labelref_table.Values) {
+                                LabelInfo def = (LabelInfo) label_table[label.Name];
+                                if (def == null) {
+                                        Console.WriteLine ("Undefined Label:  " + label);
+                                        return;
+                                }
+                                label.Label = def.Label;
+                        }
 
                         int label_pos = 0;
                         int next_label_pos = (label_info.Length > 0 ? label_info[0].Pos : -1);
@@ -329,10 +341,10 @@ namespace Mono.ILASM {
                                         cil.CodeLabel (label_info[label_pos].Label);
                                         if (label_pos < label_info.Length) {
                                                 while (next_label_pos == i && ++label_pos < label_info.Length) {
-							if (label_info[label_pos].UseOffset)
-								cil.CodeLabel (label_info[label_pos].Label);
+                                                        if (label_info[label_pos].UseOffset)
+                                                                cil.CodeLabel (label_info[label_pos].Label);
                                                        next_label_pos = label_info[label_pos].Pos;
-						}
+                                                }
                                         }
                                         if (label_pos >= label_info.Length)
                                                 next_label_pos = -1;
@@ -345,41 +357,41 @@ namespace Mono.ILASM {
                 public LabelInfo AddLabel (string name)
                 {
                         LabelInfo label_info = (LabelInfo) label_table[name];
-			if (label_info != null)
-				return label_info;
-			label_info = new LabelInfo (name, inst_list.Count);
+                        if (label_info != null)
+                                return label_info;
+                        label_info = new LabelInfo (name, inst_list.Count);
                         label_table.Add (name, label_info);
-			return label_info;
+                        return label_info;
                 }
 
-		public LabelInfo AddLabelRef (string name)
-		{
-			LabelInfo label_info = (LabelInfo) label_table[name];
-			if (label_info != null)
-				return label_info;
-			label_info = (LabelInfo) labelref_table[name];
-			if (label_info != null)
-				return label_info;
-			label_info = new LabelInfo (name, -1);
-			labelref_table.Add (name, label_info);
-			return label_info;
-		}
+                public LabelInfo AddLabelRef (string name)
+                {
+                        LabelInfo label_info = (LabelInfo) label_table[name];
+                        if (label_info != null)
+                                return label_info;
+                        label_info = (LabelInfo) labelref_table[name];
+                        if (label_info != null)
+                                return label_info;
+                        label_info = new LabelInfo (name, -1);
+                        labelref_table.Add (name, label_info);
+                        return label_info;
+                }
 
-		public LabelInfo AddLabel (int offset)
-		{
-			// We go pos + 1 so this line is not counted
-			LabelInfo label_info = new LabelInfo (null, inst_list.Count+1, (uint) offset);
-			label_list.Add (label_info);
-			return label_info;
-		}
+                public LabelInfo AddLabel (int offset)
+                {
+                        // We go pos + 1 so this line is not counted
+                        LabelInfo label_info = new LabelInfo (null, inst_list.Count+1, (uint) offset);
+                        label_list.Add (label_info);
+                        return label_info;
+                }
 
-		public LabelInfo AddLabel ()
-		{
-			int pos = inst_list.Count;
-			LabelInfo label_info = new LabelInfo (null, inst_list.Count);
-			label_list.Add (label_info);
-			return label_info;
-		}
+                public LabelInfo AddLabel ()
+                {
+                        int pos = inst_list.Count;
+                        LabelInfo label_info = new LabelInfo (null, inst_list.Count);
+                        label_list.Add (label_info);
+                        return label_info;
+                }
 
                 public PEAPI.CILLabel GetLabelDef (string name)
                 {
@@ -388,21 +400,21 @@ namespace Mono.ILASM {
                         return label_info.Label;
                 }
 
-		public PEAPI.CILLabel GetLabelDef (int pos)
-		{
-			foreach (LabelInfo li in label_list) {
-				if (li.Pos == pos)
-					return li.Label;
-			}
-			return null;
-		}
+                public PEAPI.CILLabel GetLabelDef (int pos)
+                {
+                        foreach (LabelInfo li in label_list) {
+                                if (li.Pos == pos)
+                                        return li.Label;
+                        }
+                        return null;
+                }
 
                 private void CreateSignature ()
                 {
-			if (IsVararg)
-				signature = CreateVarargSignature (name, param_list);
-			else
-                        	signature = CreateSignature (name, param_list);
+                        if (IsVararg)
+                                signature = CreateVarargSignature (name, param_list);
+                        else
+                                signature = CreateSignature (name, param_list);
                 }
 
                 public static string CreateSignature (string name, IList param_list)
@@ -426,14 +438,14 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-		 public static string CreateVarargSignature (string name, IList param_list)
+                 public static string CreateVarargSignature (string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
 
                         builder.Append (name);
                         builder.Append ('(');
 
-			bool first = true;
+                        bool first = true;
                         if (param_list != null) {
                                 foreach (ParamDef paramdef in param_list) {
                                         if (!first)
@@ -442,12 +454,12 @@ namespace Mono.ILASM {
                                         first = false;
                                 }
                         }
-			ParamDef last = (ParamDef) param_list[param_list.Count - 1];
-			if (!last.IsSentinel ()) {
-				if (!first)
-					builder.Append (',');
-				builder.Append ("...");
-			}
+                        ParamDef last = (ParamDef) param_list[param_list.Count - 1];
+                        if (!last.IsSentinel ()) {
+                                if (!first)
+                                        builder.Append (',');
+                                builder.Append ("...");
+                        }
                         builder.Append (')');
 
                         return builder.ToString ();
@@ -467,8 +479,8 @@ namespace Mono.ILASM {
                                                 builder.Append (',');
                                         builder.Append (param.FullName);
                                         first = false;
-					if (param is SentinelTypeRef)
-						break;
+                                        if (param is SentinelTypeRef)
+                                                break;
                                 }
                         }
                         builder.Append (')');

@@ -34,6 +34,10 @@ namespace Mono.ILASM {
                         is_defined = false;
                 }
 
+                public ITypeRef Type {
+                        get { return typeref; }
+                }
+
                 public string TypeName {
                         get { return typeref.FullName; }
                 }
@@ -46,10 +50,10 @@ namespace Mono.ILASM {
                         get { return peapi_param; }
                 }
 
-		public bool IsSentinel ()
-		{
-			return (typeref is SentinelTypeRef);
-		}
+                public bool IsSentinel ()
+                {
+                        return (typeref is SentinelTypeRef);
+                }
 
                 public void Define (CodeGen code_gen)
                 {

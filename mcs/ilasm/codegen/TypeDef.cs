@@ -30,6 +30,7 @@ namespace Mono.ILASM {
                 private ArrayList event_list;
                 private ArrayList property_list;
                 private ArrayList typar_list;
+                private ArrayList override_list;
                 private Hashtable constraint_table;
                 private TypeDef outer;
 
@@ -39,8 +40,8 @@ namespace Mono.ILASM {
                 private int size;
                 private int pack;
 
-		private bool is_value_class;
-		private bool is_enum_class;
+                private bool is_value_class;
+                private bool is_enum_class;
 
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
                                 IClassRef parent, ArrayList impl_list, Location location)
@@ -60,8 +61,8 @@ namespace Mono.ILASM {
                         is_defined = false;
                         is_intransit = false;
 
-			is_value_class = false;
-			is_value_class = false;
+                        is_value_class = false;
+                        is_value_class = false;
                 }
 
                 public string Name {
@@ -101,15 +102,24 @@ namespace Mono.ILASM {
                         get { return current_property; }
                 }
 
-		public void MakeValueClass ()
-		{
-			is_value_class = true;
-		}
 
-		public void MakeEnumClass ()
-		{
-			is_enum_class = true;
-		}
+                public void AddOverride (MethodDef decl, ITypeRef parent, string name)
+                {
+                        if (override_list == null)
+                                override_list = new ArrayList ();
+                        override_list.Add (new DictionaryEntry (decl,
+                                           new DictionaryEntry (parent, name)));
+                }
+
+                public void MakeValueClass ()
+                {
+                        is_value_class = true;
+                }
+
+                public void MakeEnumClass ()
+                {
+                        is_enum_class = true;
+                }
 
                 public void SetSize (int size)
                 {
@@ -218,14 +228,14 @@ namespace Mono.ILASM {
                                         classdef = outer.PeapiType.AddNestedClass (attr,
                                                         name_space, name, parent.PeapiClass);
                                 } else {
-					if (is_value_class) {
-						// Should probably confirm that the parent is System.ValueType
-						classdef = code_gen.PEFile.AddValueClass (attr,
-                                                	name_space, name);
-					} else {
-                                        	classdef = code_gen.PEFile.AddClass (attr,
-                                                	name_space, name, parent.PeapiClass);
-					}
+                                        if (is_value_class) {
+                                                // Should probably confirm that the parent is System.ValueType
+                                                classdef = code_gen.PEFile.AddValueClass (attr,
+                                                        name_space, name);
+                                        } else {
+                                                classdef = code_gen.PEFile.AddClass (attr,
+                                                        name_space, name, parent.PeapiClass);
+                                        }
                                 }
                         } else {
                                 if (outer != null) {
@@ -234,14 +244,15 @@ namespace Mono.ILASM {
                                         classdef = outer.PeapiType.AddNestedClass (attr,
                                                 name_space, name);
                                 } else {
-					if (is_value_class) {
-                                        	classdef = code_gen.PEFile.AddValueClass (attr,
-                                                	name_space, name);
-					} else {
-						classdef = code_gen.PEFile.AddClass (attr,
-                                                	name_space, name);
-					}
+                                        if (is_value_class) {
+                                                classdef = code_gen.PEFile.AddValueClass (attr,
+                                                        name_space, name);
+                                        } else {
+                                                classdef = code_gen.PEFile.AddClass (attr,
+                                                        name_space, name);
+                                        }
                                 }
+                                classdef.SpecialNoSuper ();
                         }
 
                         if (size != -1)
@@ -292,6 +303,21 @@ namespace Mono.ILASM {
                         if (customattr_list != null) {
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, classdef);
+                        }
+
+                        if (override_list != null) {
+                                foreach (DictionaryEntry entry in override_list) {
+                                        MethodDef decl = (MethodDef) entry.Key;
+                                        DictionaryEntry body = (DictionaryEntry) entry.Value;
+                                        ITypeRef parent_type = (ITypeRef) body.Key;
+                                        parent_type.Resolve (code_gen);
+                                        string over_name = (string) body.Value;
+                                        IMethodRef over_meth = parent_type.GetMethodRef (decl.RetType,
+                                                        decl.CallConv, over_name, decl.ParamTypeList ());
+                                        over_meth.Resolve (code_gen);
+                                        classdef.AddMethodOverride (over_meth.PeapiMethod,
+                                                        decl.PeapiMethodDef);
+                                }
                         }
                 }
 

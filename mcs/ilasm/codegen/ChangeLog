@@ -1,3 +1,13 @@
+2003-08-19 Jackson Harper <jackson@latitudegeo.com>
+
+	* IClassRef.cs: Removed methods that have been moved into ITypeRef
+	* MethodDef.cs: Make some properties public, Add method to get a
+	list of parameter types. This is used to build signatures. Alow
+	sentinels in signatures and in param lists. Fix some tabbing.
+	* ParamDef.cs: Expose the parameters type so they can be used when
+	building signatures.
+	* TypeDef.cs: Add and emit overrides.
+		
 2003-08-10 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: Fix tabbing

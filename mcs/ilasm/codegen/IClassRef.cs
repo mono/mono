@@ -15,12 +15,8 @@ namespace Mono.ILASM {
 
                 PEAPI.Class PeapiClass { get; }
 
-                new IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
-                                string name, ITypeRef[] param);
+                void MakeValueClass ();
 
-                new IFieldRef GetFieldRef (ITypeRef ret_type, string name);
-	
-		void MakeValueClass ();
         }
 
 }
