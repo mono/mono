@@ -459,6 +459,11 @@ namespace Mono.Xml.Xsl {
 		{
 			return new XPathNavigatorNsm (Input);
 		}
+		
+		public XmlNamespaceManager GetNsm ()
+		{
+			return new XPathNavigatorNsm (Input);
+		}
 #endregion
 		public void CompileOutput ()
 		{

@@ -1,5 +1,9 @@
 2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Compiler.cs: add GetNsm to main class as well.
+
+2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs (ParseAvtAttribute): Get the attribue using our
 	internal version so we get null if the attr doesnt exist.
 

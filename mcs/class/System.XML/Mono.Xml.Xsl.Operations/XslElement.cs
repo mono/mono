@@ -21,6 +21,7 @@ namespace Mono.Xml.Xsl.Operations {
 	public class XslElement : XslCompiledElement {
 		XslAvt name, ns;
 		string calcName, calcNs;
+		XmlNamespaceManager nsm;
 		
 		XslOperation value;
 		XmlQualifiedName [] useAttributeSets;
@@ -40,6 +41,8 @@ namespace Mono.Xml.Xsl.Operations {
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			
+			if (ns == null && calcNs == null)
+				nsm = c.GetNsm ();
 			
 			useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets");
 			
@@ -56,8 +59,12 @@ namespace Mono.Xml.Xsl.Operations {
 			nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
 			
-			if (nmsp == null)
-				throw new NotImplementedException ();
+			if (nmsp == null) {
+				QName q = XslNameUtil.FromString (nm, nsm);
+				nm = q.Name;
+				nmsp = q.Namespace;	
+			} else
+				nm = XslNameUtil.LocalNameOf (nm);
 			
 			p.Out.WriteStartElement (nm, nmsp);
 			

@@ -22,6 +22,7 @@ namespace Mono.Xml.Xsl.Operations {
 	public class XslAttribute : XslCompiledElement {
 		XslAvt name, ns;
 		string calcName, calcNs;
+		XmlNamespaceManager nsm;
 		
 		XslOperation value;
 		public XslAttribute (Compiler c) : base (c) {}
@@ -40,6 +41,9 @@ namespace Mono.Xml.Xsl.Operations {
 				calcNs = q.Namespace;	
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
+			
+			if (ns == null && calcNs == null)
+				nsm = c.GetNsm ();
 				
 			if (c.Input.MoveToFirstChild ()) {
 				value = c.CompileTemplateContent ();
@@ -54,19 +58,23 @@ namespace Mono.Xml.Xsl.Operations {
 			nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
 			
-			if (nmsp == null)
-				throw new NotImplementedException ();
+			if (nmsp == null) {
+				QName q = XslNameUtil.FromString (nm, nsm);
+				nm = q.Name;
+				nmsp = q.Namespace;	
+			} else
+				nm = XslNameUtil.LocalNameOf (nm);
 
 			if (value == null)
-			    p.Out.WriteAttributeString("", XslNameUtil.LocalNameOf(nm), nmsp, "");
+				p.Out.WriteAttributeString("", nm, nmsp, "");
 			else {
-			    StringWriter sw = new StringWriter();
-			    Outputter outputter = new TextOutputter(sw, true);
-			    p.PushOutput(outputter);
-			    value.Evaluate (p);			    
-			    p.PopOutput();
-			    outputter.Done();			        
-                p.Out.WriteAttributeString("", XslNameUtil.LocalNameOf(nm), nmsp, sw.ToString());			                    			        
+				StringWriter sw = new StringWriter ();
+				Outputter outputter = new TextOutputter (sw, true);
+				p.PushOutput (outputter);
+				value.Evaluate (p);			    
+				p.PopOutput ();
+				outputter.Done ();			        
+				p.Out.WriteAttributeString ("", nm, nmsp, sw.ToString ());			                    			        
 			}						
 		}
 	}
