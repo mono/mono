@@ -1,3 +1,13 @@
+2002-12-11  Jaime Anguiano Olarra <jaime@gnome.org>
+
+	* RemotingConfiguration.cs: added to the CVS.
+
+2002-11-29  Jaime Anguiano Olarra <jaime@gnome.org>
+
+	* ObjectHandle.cs: added implementation  for InitializeLifetimeService
+	* method.
+
+
 2002-11-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SoapServices.cs: fix error CS3005.
