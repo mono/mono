@@ -1,3 +1,7 @@
+2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509Certificate.cs: Changes to refer Mono.Security (for ASN1)
+
 2002-12-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ASN1.cs: New. Updated ASN1 classes for X509Certificate that can
