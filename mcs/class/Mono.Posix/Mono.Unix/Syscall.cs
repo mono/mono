@@ -60,7 +60,7 @@ using System.Text;
 using Mono.Unix;
 
 [assembly:Mono.Unix.IncludeAttribute (
-	new string [] {"sys/types.h", "sys/stat.h", "sys/poll.h", "sys/wait.h", "sys/mount.h",
+	new string [] {"sys/types.h", "sys/stat.h", "sys/poll.h", "sys/wait.h",
 		"unistd.h", "fcntl.h", "signal.h", "poll.h", "grp.h", "errno.h"}, 
 	new string [] {"_GNU_SOURCE", "_XOPEN_SOURCE"})]
 
@@ -387,32 +387,6 @@ namespace Mono.Unix {
 		SIGPWR    = 30, // Power failure restart (System V).
 		SIGSYS    = 31, // Bad system call.
 		SIGUNUSED = 31
-	}
-
-	[Map][Flags]
-	public enum MountFlags : ulong {
-		MS_RDONLY      = 1,    // Mount read-only.
-		MS_NOSUID      = 2,    // Ignore suid and sgid bits.
-		MS_NODEV       = 4,    // Disallow access to device special files.
-		MS_NOEXEC      = 8,    // Disallow program execution.
-		MS_SYNCHRONOUS = 16,   // Writes are synced at once.
-		MS_REMOUNT     = 32,   // Alter flags of a mounted FS.
-		MS_MANDLOCK    = 64,   // Allow mandatory locks on an FS.
-		S_WRITE        = 128,  // Write on file/directory/symlink.
-		S_APPEND       = 256,  // Append-only file.
-		S_IMMUTABLE    = 512,  // Immutable file.
-		MS_NOATIME     = 1024, // Do not update access times.
-		MS_NODIRATIME  = 2048, // Do not update directory access times.
-		MS_BIND        = 4096, // Bind directory at different place.
-		MS_RMT_MASK    = (MS_RDONLY | MS_MANDLOCK),
-		MS_MGC_VAL     = 0xc0ed0000, // Magic flag number to indicate "new" flags
-		MS_MGC_MSK     = 0xffff0000, // Magic flag number mask
-	}
-
-	[Map][Flags]
-	public enum UmountFlags : int {
-		MNT_FORCE  = 1, // Force unmount even if busy
-		MNT_DETACH,     // Perform a lazy unmount.
 	}
 
 	[Flags][Map]
@@ -1507,28 +1481,6 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_posix_madvise")]
 		public static extern int posix_madvise (IntPtr addr, ulong len, 
 			PosixMadviseAdvice advice);
-
-		//
-		// <sys/mount.h>
-		//
-		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_mount")]
-		public static extern int mount (string source, string target, 
-				string filesystemtype, MountFlags mountflags, string data);
-
-		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_umount")]
-		public static extern int umount (string target);
-
-		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_umount2")]
-		private static extern int sys_umount2 (string target, int flags);
-
-		public static int umount2 (string target, UmountFlags flags)
-		{
-			int _flags = UnixConvert.FromUmountFlags (flags);
-			return sys_umount2 (target, _flags);
-		}
 
 		//
 		// <sys/poll.h>

@@ -1,5 +1,13 @@
 2004-11-16  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Syscall.cs, UnixConvert.cs: Remove mount- and umount-related
+	  functionality.  Mount/umount is inherently non-portable (see the C code
+	  for mount/umount), and trying to provide a consistent interface is
+	  impossible.  If you need mount/umount support, use the command-line
+	  programs mount(1) and umount(1).
+
+2004-11-16  Jonathan Pryor <jonpryor@vt.edu>
+
 	+ Lots o' Renames, as the namespace changed.
 	* PosixConvert.cs: Moved to UnixConvert.cs:
 	* PosixDirectory.cs: Moved to UnixDirectory.cs:
