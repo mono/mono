@@ -1,7 +1,12 @@
+2003-05-04  Ben Maurer <bmaurer@users.sourceforge.net>
+	* PathTest.cs
+	Added new tests for GetFullPath () that include a path with
+	. and ..
+	
 2003-05-05  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DirectoryInfoTest.cs: new file.
-	
+
 2003-05-04  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileInfoTest.cs: new file.

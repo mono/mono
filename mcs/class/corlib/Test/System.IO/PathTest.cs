@@ -314,6 +314,10 @@ namespace MonoTests.System.IO
 			string testFullPath = Path.GetFullPath ("foo.txt");
 			string expected = current + DSC + "foo.txt";
 			AssertEquals ("GetFullPath #01", expected, testFullPath);
+			
+			testFullPath = Path.GetFullPath ("a/./../foo.txt");
+			expected = current + DSC + "foo.txt";
+			AssertEquals ("GetFullPath #02", expected, testFullPath);
 
 			try {
 				testFullPath = Path.GetFullPath (null);
