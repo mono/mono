@@ -1,4 +1,9 @@
 
+Thu Dec 20 20:13:07 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: fix create_method_pointer() to pass the arguments
+	correctly and add check for overflow.
+
 Thu Dec 13 15:56:53 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h: x86_mov_memindex_imm() added.
