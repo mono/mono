@@ -1,3 +1,7 @@
+2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentTests.cs : added Implementation().
+
 2004-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlEntityTests.cs, XmlDocumentEventTests.cs : added.

@@ -649,6 +649,12 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void Implementation ()
+		{
+			AssertNotNull (new XmlDocument ().Implementation);
+		}
+
+		[Test]
 		public void InnerAndOuterXml ()
 		{
 			AssertEquals (String.Empty, document.InnerXml);
