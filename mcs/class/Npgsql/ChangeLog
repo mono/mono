@@ -1,5 +1,15 @@
 2003-11-07  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* Npgsql/NpgsqlDataAdapter.cs: Fixed the mistake I did in the last
+	change. The Command objects must not be created in the constructor.
+	The Commands should be in the overrided method "OnRowUpdating".
+
+	* Npgsql/NpgsqlCommand.cs: Added two try-catch instructions to get
+	the proper exception (not MissingManifestResourceException). It is
+	thrown in MS.NET and in MONO. (Npgsql compiled with MCS).
+
+2003-11-07  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* Npgsql/NpgsqlDataAdapter.cs: Create new Command classes for the
 	different Insrt / Update / Delete commands.
 
