@@ -1532,7 +1532,7 @@ constructor_declarator
 	  opt_constructor_initializer
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor (current_container, (string) $1, (Parameters) $3,
+		$$ = new Constructor (current_container, (string) $1, 0, (Parameters) $3,
 				      (ConstructorInitializer) $6, l);
 	  }
 	;

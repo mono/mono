@@ -557,25 +557,23 @@ namespace Mono.CSharp {
 		void DefineDefaultConstructor (bool is_static)
 		{
 			Constructor c;
-			int mods = 0;
 
-			c = new Constructor (this, Basename, Parameters.EmptyReadOnlyParameters,
+			// The default constructor is public
+			// If the class is abstract, the default constructor is protected
+			// The default static constructor is private
+
+			int mods = Modifiers.PUBLIC;
+			if (is_static)
+				mods = Modifiers.STATIC | Modifiers.PRIVATE;
+			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
+				mods = Modifiers.PROTECTED;
+
+			c = new Constructor (this, Basename, mods, Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (
 						     null, Parameters.EmptyReadOnlyParameters,
 						     Location),
 					     Location);
 			
-			if (is_static)
-				mods = Modifiers.STATIC;
-
-			//
-			// If the class is abstract, the default constructor is protected
-			//
-			if ((ModFlags & Modifiers.ABSTRACT) != 0)
-				mods |= Modifiers.PROTECTED;
-			
-			c.ModFlags = mods;
-
 			AddConstructor (c);
 			
 			c.Block = new ToplevelBlock (null, Location);
@@ -2760,9 +2758,9 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (DeclSpace ds, string name, Parameters args,
+		public Constructor (DeclSpace ds, string name, int mod, Parameters args,
 				    ConstructorInitializer init, Location l)
-			: base (ds, null, 0, AllowedModifiers, name, null, args, l)
+			: base (ds, null, mod, AllowedModifiers, name, null, args, l)
 		{
 			Initializer = init;
 		}

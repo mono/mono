@@ -1,3 +1,8 @@
+2004-01-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay, class.cs (DefineDefaultConstructor): Fixed ModFlags
+        setting for default constructors.
+
 2004-01-22  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (namespace_or_type_name): Return an Expression,
