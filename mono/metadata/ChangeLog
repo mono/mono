@@ -1,3 +1,8 @@
+2005-03-23  Chris Toshok  <toshok@ximian.com>
+
+	* mono-debug-debugger.c (mono_debugger_runtime_invoke): comment
+	out some spew.
+
 2005-03-24  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (assembly.lo, mono-config.lo): Rebuild when Makefile
