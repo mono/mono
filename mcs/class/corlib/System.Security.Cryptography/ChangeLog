@@ -1,3 +1,11 @@
+2003-02-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricSignatureFormatter.cs: Call abstract SetHashAlgorithm
+	when CreateSignature(hash) is called.
+	* CryptoStream.cs: Fixed some issues in constructor.
+	* DSACryptoServiceProvider.cs: Fixed a bug (1 chance in 256) that
+	a signature could be less than 40 bytes (which is invalid).
+
 2003-01-25  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptographicException.cs: Default HResult to CORSEC_E_CRYPTO

@@ -23,14 +23,20 @@ public class CryptoStream : Stream {
 	
 	public CryptoStream (Stream stream, ICryptoTransform transform, CryptoStreamMode mode)
 	{
+		if ((mode == CryptoStreamMode.Read) && (!stream.CanRead))
+			throw new ArgumentException ("Can't read on stream");
+		if ((mode == CryptoStreamMode.Write) && (!stream.CanWrite))
+			throw new ArgumentException ("Can't write on stream");
 		_stream = stream;
 		_transform = transform;
 		_mode = mode;
 		disposed = false;
-		if (mode == CryptoStreamMode.Read)
-			work = new byte [transform.InputBlockSize];
-		else if (mode == CryptoStreamMode.Write)
-			work = new byte [transform.OutputBlockSize];
+		if (transform != null) {
+			if (mode == CryptoStreamMode.Read)
+				work = new byte [transform.InputBlockSize];
+			else if (mode == CryptoStreamMode.Write)
+				work = new byte [transform.OutputBlockSize];
+		}
 		workPos = 0;
 	}
 

@@ -297,9 +297,11 @@ public class DSACryptoServiceProvider : DSA {
 	{
 		if (rgbHash == null)
 			throw new ArgumentNullException ();
+		if (x.ToString() == "0")
+			throw new CryptographicException ("no private key available for signature");
 		// right now only SHA1 is supported by FIPS186-2
 		if (str.ToUpper () != "SHA1")
-			throw new Exception( ); // not documented
+			throw new Exception (); // not documented
 		if (rgbHash.Length != 20)
 			throw new Exception (); // not documented
 
@@ -321,8 +323,11 @@ public class DSACryptoServiceProvider : DSA {
 		byte[] signature = new byte [40];
 		byte[] part1 = r.getBytes ();
 		byte[] part2 = s.getBytes ();
-		Array.Copy (part1, 0, signature, 0, 20);
-		Array.Copy (part2, 0, signature, 20, 20);
+		// note: sometime (1/256) we may get less than 20 bytes (if first is 00)
+		int start = 20 - part1.Length;
+		Array.Copy (part1, 0, signature, start, part1.Length);
+		start = 40 - part2.Length;
+		Array.Copy (part2, 0, signature, start, part2.Length);
 		return signature;
 	}
 
@@ -422,8 +427,12 @@ public class DSACryptoServiceProvider : DSA {
 			param.Seed = NormalizeArray (seed.getBytes ());
 			param.Counter = counter;
 		}
-		if (includePrivateParameters)
-			param.X = NormalizeArray (x.getBytes ());
+		if (includePrivateParameters) {
+			byte[] privateKey = x.getBytes ();
+			if (privateKey.Length == 20) {
+				param.X = NormalizeArray (privateKey);
+			}
+		}
 		return param;
 	}
 

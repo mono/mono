@@ -21,32 +21,33 @@ namespace System.Security.Cryptography {
 		/// constructor, no idea why it is here (abstract class)  :-)
 		/// just for compatibility with MS
 		/// </summary>
-		public AsymmetricSignatureFormatter() 
+		public AsymmetricSignatureFormatter () 
 		{
 		}
 		
 		/// <summary>
 		/// Sets the hash algorithm used for verifying a signature
 		/// </summary>
-		public abstract void SetHashAlgorithm(string strName);		
+		public abstract void SetHashAlgorithm (string strName);		
 		
 		/// <summary>
 		/// set the private key
 		/// </summary>
-		public abstract void SetKey(AsymmetricAlgorithm key);
+		public abstract void SetKey (AsymmetricAlgorithm key);
 		
 		/// <summary>
 		/// Create a signature from the given data
 		/// </summary>
-		public abstract byte[] CreateSignature(byte[] rgbHash);
+		public abstract byte[] CreateSignature (byte[] rgbHash);
 
 		/// <summary>
 		/// Create a signature from data with the specified hash algorithm
 		/// </summary>
-		public virtual byte[] CreateSignature(HashAlgorithm hash) 
+		public virtual byte[] CreateSignature (HashAlgorithm hash) 
 		{
 			if (hash == null)
-				throw new ArgumentNullException ("hash");
+				throw new ArgumentNullException ();
+			SetHashAlgorithm (hash.ToString ());
 			return CreateSignature (hash.Hash);
 		}
 		
