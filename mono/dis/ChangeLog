@@ -1,3 +1,8 @@
+
+Thu Nov 13 16:12:09 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* util.h, dump.c: get rid of ugly CSIZE macro.
+
 2003-11-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* main.c: Add disassembly of module, moduleref and file tables.
