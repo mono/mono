@@ -21,8 +21,8 @@ public class SignatureDescriptionTest : Assertion {
 	protected static DSA dsa;
 	protected static RSA rsa;
 
-	[Setup]
-	void SetUp () 
+	[SetUp]
+	void Setup () 
 	{
 		sig = new SignatureDescription();
 		// key generation is VERY long so one time is enough
