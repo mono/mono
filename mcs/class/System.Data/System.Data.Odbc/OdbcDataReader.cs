@@ -167,25 +167,8 @@ namespace System.Data.Odbc
 			return cols[ordinal];
 		}
 
-                private string GetSQLState (IntPtr hstmt, ushort recNo) 
-                {
-                        OdbcReturn ret = OdbcReturn.Error;
-                        short bufLength=256, txtLength=0;
-                        int nativeError = 1;
-                        string sqlState = "", sqlMsg = "";
-                        byte [] msgtxtBuffer = new byte [bufLength];
-                        byte [] sqlStateBuffer = new byte [bufLength];
-                        ret = libodbc.SQLGetDiagRec (OdbcHandleType.Stmt, hstmt, recNo,
-                                            sqlStateBuffer, ref nativeError, msgtxtBuffer, 
-                                            bufLength, ref txtLength);
-                        sqlState = Encoding.Default.GetString (sqlStateBuffer).Replace (
-                                                        (char) 0, ' ').Trim ();
-                        return sqlState;
-                }
-	
 		public void Close ()
 		{
-			// libodbc.SQLFreeHandle((ushort) OdbcHandleType.Stmt, hstmt);
 		
 			OdbcReturn ret=libodbc.SQLCloseCursor(hstmt);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
@@ -196,6 +179,9 @@ namespace System.Data.Odbc
 
 			if ((behavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
 				this.command.Connection.Close();
+			ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
 		}
 
 		~OdbcDataReader ()
@@ -231,6 +217,10 @@ namespace System.Data.Odbc
                         if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
                                 throw new OdbcException (new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt));
 
+			OdbcError odbcErr = null;
+			if ( (ret == OdbcReturn.SuccessWithInfo))
+				odbcErr = new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt);
+
                         if (buffer == null)
                                 return outsize; //if buffer is null,return length of the field
                         
@@ -241,11 +231,10 @@ namespace System.Data.Odbc
                                         copyBuffer = false;
                                         returnVal = -1;
                                 } else {
-                                        string sqlstate = GetSQLState (hstmt, 1);
+                                        string sqlstate = odbcErr.SQLState;
                                         //SQLState: String Data, Right truncated
                                         if (sqlstate != libodbc.SQLSTATE_RIGHT_TRUNC) 
-                                                throw new OdbcException (new OdbcError ("SQLGetData",
-                                                                OdbcHandleType.Stmt, hstmt));
+                                                throw new OdbcException ( odbcErr);
                                         copyBuffer = true;
                                 }
                         } else {
@@ -400,7 +389,6 @@ namespace System.Data.Odbc
 				for (int i = 0; i < cols.Length; i += 1 ) 
 				{
 					OdbcColumn col=GetColumn(i);
-					//Console.WriteLine("{0}:{1}:{2}",col.ColumnName,col.DataType,col.OdbcType);
 
 					schemaRow = dataTableSchema.NewRow ();
 					dataTableSchema.Rows.Add (schemaRow);
@@ -539,7 +527,6 @@ namespace System.Data.Odbc
                                                 DataValue = buffer;
                                                 break;
 					default:
-						//Console.WriteLine("Fetching unsupported data type as string: "+col.OdbcType.ToString());
 						bufsize=255;
 						buffer=new byte[bufsize];
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
