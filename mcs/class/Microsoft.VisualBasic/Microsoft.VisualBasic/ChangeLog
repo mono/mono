@@ -1,3 +1,6 @@
+2004-06-17 Anirban Bhattacharjee <banirban@novell.com>
+	* Strings.cs: An effort make this file feature complete
+
 2004-06-17  Jambunathan K  <kjambunathan@novell.com>
 	* FileSystem.cs: A few more methods from Rob Tillie
 	<Rob.Tillie@Student.tUL.EDU>

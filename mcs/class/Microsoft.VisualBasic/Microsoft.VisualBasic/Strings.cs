@@ -43,7 +43,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an Integer value representing the character code corresponding to a character.
 		/// </summary>
 		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
-		[MonoTODO]
 		public static int Asc(char String) 
 		{
 			//FIXME: Check the docs, it says something about Locales, DBCS, etc.
@@ -63,7 +62,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an Integer value representing the character code corresponding to a character.
 		/// </summary>
 		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
-		[MonoTODO("Needs testing")]
 		public static int Asc(string String)
 		{
 			if ((String == null) || (String.Length < 1))
@@ -77,7 +75,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an Integer value representing the character code corresponding to a character.
 		/// </summary>
 		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
-		[MonoTODO("Needs testing")]
 		public static int AscW(char String) 
 		{
 			/*
@@ -93,7 +90,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an Integer value representing the character code corresponding to a character.
 		/// </summary>
 		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
-		[MonoTODO("Needs testing")]
 		public static int AscW(string String) 
 		{
 			/*
@@ -111,7 +107,6 @@ namespace Microsoft.VisualBasic
 		/// Returns the character associated with the specified character code.
 		/// </summary>
 		/// <param name="CharCode">Required. An Integer expression representing the code point, or character code, for the character. If CharCode is outside the range -32768 through 65535, an ArgumentException error occurs.</param>
-		[MonoTODO]
 		public static char Chr(int CharCode) 
 		{
 
@@ -131,7 +126,6 @@ namespace Microsoft.VisualBasic
 		/// Returns the character associated with the specified character code.
 		/// </summary>
 		/// <param name="CharCode">Required. An Integer expression representing the code point, or character code, for the character. If CharCode is outside the range -32768 through 65535, an ArgumentException error occurs.</param>
-		[MonoTODO("Needs testing")]
 		public static char ChrW(int CharCode ) 
 		{
 			/*
@@ -161,7 +155,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="Match">Required. String to search for.</param>
 		/// <param name="Include">Optional. Boolean value indicating whether to return substrings that include or exclude Match. If Include is True, the Filter function returns the subset of the array that contains Match as a substring. If Include is False, the Filter function returns the subset of the array that does not contain Match as a substring.</param>
 		/// <param name="Compare">Optional. Numeric value indicating the kind of string comparison to use. See Settings for values.</param>
-		[MonoTODO("Needs testing")]
 		public static string[] Filter(object[] Source, 
 			string Match, 
 			[Optional]
@@ -275,7 +268,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Expression">Required. Any valid expression.</param>
 		/// <param name="Style">Optional. A valid named or user-defined format String expression. </param>
-		[MonoTODO("Needs Testing")]
 		public static string Format(object expression, [Optional][DefaultValue("")]string style)
 		{
 			string returnstr=null;
@@ -406,7 +398,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
 		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
 		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
-		[MonoTODO]
 		public static string FormatCurrency(object Expression, 
 			[Optional]
 			[DefaultValue(-1)] 
@@ -421,10 +412,57 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(TriState.UseDefault)] 
 			TriState GroupDigits)
 		{
-			//FIXME
-			throw new NotImplementedException();
-			//throws InvalidCastException
-			//throws ArgumentException
+			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
+				throw new ArgumentException(
+					VBUtils.GetResourceString("Argument_Range0to99_1",
+						"NumDigitsAfterDecimal" ));       
+
+			if (Expression == null)
+				return "";
+
+			if (!(Expression is IFormattable))
+				throw new InvalidCastException(
+					VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+
+			String formatStr = "00";
+
+			if (GroupDigits == TriState.True)
+				formatStr = formatStr + ",00";
+
+			if (NumDigitsAfterDecimal > -1)	{
+				string decStr = ".";
+				for (int count=1; count<=NumDigitsAfterDecimal; count ++)
+					decStr = decStr + "0";
+			
+				formatStr = formatStr + decStr;
+			}
+
+			if (UseParensForNegativeNumbers == TriState.True) {
+				String temp = formatStr;
+				formatStr = formatStr + ";(" ;
+				formatStr = formatStr + temp;
+				formatStr = formatStr + ")";
+			}
+
+			//Console.WriteLine("formatStr : " + formatStr);	
+
+			string returnstr=null;
+			string expstring= Expression.GetType().ToString();
+			switch(expstring) {
+				case "System.Decimal":	case "System.Byte":	case "System.SByte":
+				case "System.Int16":	case "System.Int32":	case "System.Int64":
+				case "System.Double":	case "System.Single":	case "System.UInt16":
+				case "System.UInt32":	case "System.UInt64":
+					returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+					break;
+				default:
+					throw new InvalidCastException(
+						VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			}
+			String curSumbol = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+			returnstr = curSumbol + returnstr;
+			
+			return returnstr;
 		}
 
 		/// <summary>
@@ -432,14 +470,12 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Expression">Required. Date expression to be formatted. </param>
 		/// <param name="NamedFormat">Optional. Numeric value that indicates the date or time format used. If omitted, GeneralDate is used.</param>
-		[MonoTODO]
 		public static string FormatDateTime(DateTime Expression, 
 			[Optional]
 			[DefaultValue(DateFormat.GeneralDate)] 
 			DateFormat NamedFormat)
 		{
-			switch(NamedFormat)
-			{
+			switch(NamedFormat) {
 				case DateFormat.GeneralDate:
 					//FIXME: WTF should I do with it?
 					throw new NotImplementedException(); 	
@@ -464,7 +500,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
 		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
 		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
-		[MonoTODO]
 		public static string FormatNumber(object Expression, 
 			[Optional]
 			[DefaultValue(-1)] 
@@ -479,9 +514,55 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(TriState.UseDefault)] 
 			TriState GroupDigits)
 		{
-			//FIXME
-			throw new NotImplementedException();
-			//throws InvalidCastException
+			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
+				throw new ArgumentException(
+					VBUtils.GetResourceString("Argument_Range0to99_1",
+					"NumDigitsAfterDecimal" ));       
+
+			if (Expression == null)
+				return "";
+
+			if (!(Expression is IFormattable))
+				throw new InvalidCastException(
+					VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+
+			String formatStr = "00";
+
+			if (GroupDigits == TriState.True)
+				formatStr = formatStr + ",00";
+
+			if (NumDigitsAfterDecimal > -1)	{
+				string decStr = ".";
+				for (int count=1; count<=NumDigitsAfterDecimal; count ++)
+					decStr = decStr + "0";
+			
+				formatStr = formatStr + decStr;
+			}
+
+			if (UseParensForNegativeNumbers == TriState.True) {
+				String temp = formatStr;
+				formatStr = formatStr + ";(" ;
+				formatStr = formatStr + temp;
+				formatStr = formatStr + ")";
+			}
+
+			//Console.WriteLine("formatStr : " + formatStr);	
+
+			string returnstr=null;
+			string expstring= Expression.GetType().ToString();
+			switch(expstring) {
+				case "System.Decimal":	case "System.Byte":	case "System.SByte":
+				case "System.Int16":	case "System.Int32":	case "System.Int64":
+				case "System.Double":	case "System.Single":	case "System.UInt16":
+				case "System.UInt32":	case "System.UInt64":
+					returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+					break;
+				default:
+					throw new InvalidCastException(
+						VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			}
+			
+			return returnstr;
 		}
 
 		/// <summary>
@@ -492,7 +573,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
 		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
 		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
-		[MonoTODO]
 		public static string FormatPercent(object Expression, 
 			[Optional]
 			[DefaultValue(-1)] 
@@ -507,9 +587,55 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(TriState.UseDefault)] 
 			TriState GroupDigits)
 		{
-			//FIXME
-			throw new NotImplementedException();
-			//throws InvalidCastException
+			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
+				throw new ArgumentException(
+					VBUtils.GetResourceString("Argument_Range0to99_1",
+					"NumDigitsAfterDecimal" ));       
+
+			if (Expression == null)
+				return "";
+
+			if (!(Expression is IFormattable))
+				throw new InvalidCastException(
+					VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+
+			String formatStr = "00";
+
+			if (GroupDigits == TriState.True)
+				formatStr = formatStr + ",00";
+
+			if (NumDigitsAfterDecimal > -1) {
+				string decStr = ".";
+				for (int count=1; count<=NumDigitsAfterDecimal; count ++)
+					decStr = decStr + "0";
+			
+				formatStr = formatStr + decStr;
+			}
+
+			if (UseParensForNegativeNumbers == TriState.True) {
+				String temp = formatStr;
+				formatStr = formatStr + ";(" ;
+				formatStr = formatStr + temp;
+				formatStr = formatStr + ")";
+			}
+
+			formatStr = formatStr + "%";
+
+			string returnstr=null;
+			string expstring= Expression.GetType().ToString();
+			switch(expstring) {
+				case "System.Decimal":	case "System.Byte":	case "System.SByte":
+				case "System.Int16":	case "System.Int32":	case "System.Int64":
+				case "System.Double":	case "System.Single":	case "System.UInt16":
+				case "System.UInt32":	case "System.UInt64":
+					returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+					break;
+				default:
+					throw new InvalidCastException(
+						VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			}
+			
+			return returnstr;
 		}
 
 		/// <summary>
@@ -517,7 +643,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Str">Required. Any valid String expression.</param>
 		/// <param name="Index">Required. Integer expression. The (1-based) index of the character in Str to be returned.</param>
-		[MonoTODO("Needs testing")]
 		public static char GetChar(string Str, 
 			int Index)
 		{
@@ -539,7 +664,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="String1">Required. String expression being searched.</param>
 		/// <param name="String2">Required. String expression sought.</param>
 		/// <param name="Compare">Optional. Specifies the type of string comparison. If Compare is omitted, the Option Compare setting determines the type of comparison. Specify a valid LCID (LocaleID) to use locale-specific rules in the comparison. </param>
-		[MonoTODO("Needs testing")]
 		public static int InStr(string String1, 
 			string String2, 
 			[OptionCompare]
@@ -557,7 +681,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="String1">Required. String expression being searched.</param>
 		/// <param name="String2">Required. String expression sought.</param>
 		/// <param name="Compare">Optional. Specifies the type of string comparison. If Compare is omitted, the Option Compare setting determines the type of comparison. Specify a valid LCID (LocaleID) to use locale-specific rules in the comparison. </param>
-		[MonoTODO("Needs testing")]
 		public static int InStr(int Start, 
 			string String1, 
 			string String2, 
@@ -568,37 +691,26 @@ namespace Microsoft.VisualBasic
 		{
 			if (Start < 1)
 				throw new ArgumentException("Argument 'Start' must be non-negative.", "Start");
+			
+			int leng = 0;
+			if (String1 != null) {
+				leng = String1.Length;
+			}
+			if (Start > leng || leng == 0){
+				return 0;
+			}
+			if (String2 == null || String2.Length == 0) {
+				return Start + 1;
+			}
 
-			/* 
-			 * FIXME: ms-help://MS.VSCC/MS.MSDNVS/vblr7/html/vafctinstr.htm
-			 * If Compare is omitted, the Option Compare setting determines the type of comparison. Specify 
-			 * a valid LCID (LocaleID) to use locale-specific rules in the comparison.
-			 * How do I do this?
-			 */
-
-			/*
-			 * If									InStr returns 
-			 *
-			 * String1 is zero length or Nothing	0 
-			 * String2 is zero length or Nothing	start 
-			 * String2 is not found					0 
-			 * String2 is found within String1		Position where match begins 
-			 * Start > String2						0 
-			 */
-
-			//FIXME: someone with a non US setup should test this.
-			switch (Compare)
-			{
+			switch (Compare) {
 				case CompareMethod.Text:
-					return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(String2, String1, Start - 1) + 1;
-
+					return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(String1, String2, Start - 1) + 1;
 				case CompareMethod.Binary:
 					return String1.IndexOf(String2, Start - 1) + 1;
 				default:
 					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
 			}
-
-
 		}
 
 		/// <summary>
@@ -608,7 +720,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="StringMatch">Required. String expression being searched for.</param>
 		/// <param name="Start">Optional. Numeric expression that sets the one-based starting position for each search, starting from the left side of the string. If Start is omitted, 1 is used, which means that the search begins at the last character position. Search then proceeds from right to left.</param>
 		/// <param name="Compare">Optional. Numeric value indicating the kind of comparison to use when evaluating substrings. If omitted, a binary comparison is performed. See Settings for values.</param>
-		[MonoTODO]
 		public static int InStrRev(string StringCheck, 
 			string StringMatch, 
 			[Optional]
@@ -620,10 +731,46 @@ namespace Microsoft.VisualBasic
 			CompareMethod Compare)
 		{
 			if ((Start == 0) || (Start < -1))
-				throw new ArgumentException("Argument 'Start' must be greater than 0 or equal to -1", "Start");
- 
-			//FIXME: Use LastIndexOf()
-			throw new NotImplementedException();
+				throw new ArgumentException("Argument 'StringCheck' must be greater than 0 or equal to -1", "StringCheck");
+
+			if (StringCheck == null)
+				return 0;
+
+			if (Start == -1)
+				Start = StringCheck.Length;
+
+			if (Start > StringCheck.Length || StringCheck.Length == 0)
+				return 0;
+
+			if (StringMatch == null || StringMatch.Length == 0)
+				return Start;
+
+			int retindex = -1;
+			int index = -1;
+			while (index == 0){
+                switch (Compare)
+				{
+					case CompareMethod.Text:
+						index = System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(StringCheck, StringMatch, Start - 1) + 1;
+						break;
+					case CompareMethod.Binary:
+						index = StringCheck.IndexOf(StringMatch, Start - 1) + 1;
+						break;
+					default:
+						throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
+				}
+				if (index == 0){
+					if (retindex == -1)
+						return index;
+					else
+						return retindex;
+				}
+				else {
+					retindex = index;
+					Start = index;
+				}
+			}
+			return retindex;
 		}
 
 		/// <summary>
@@ -631,7 +778,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="SourceArray">Required. One-dimensional array containing substrings to be joined.</param>
 		/// <param name="Delimiter">Optional. String used to separate the substrings in the returned string. If omitted, the space character (" ") is used. If Delimiter is a zero-length string (""), all items in the list are concatenated with no delimiters.</param>
-		[MonoTODO("Needs testing")]
 		public static string Join(string[] SourceArray, 
 			[Optional]
 			[DefaultValue(" ")] 
@@ -649,7 +795,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="SourceArray">Required. One-dimensional array containing substrings to be joined.</param>
 		/// <param name="Delimiter">Optional. String used to separate the substrings in the returned string. If omitted, the space character (" ") is used. If Delimiter is a zero-length string (""), all items in the list are concatenated with no delimiters.</param>
-		[MonoTODO("Needs testing")]
 		public static string Join(object[] SourceArray, 
 			[Optional]
 			[DefaultValue(" ")] 
@@ -672,7 +817,6 @@ namespace Microsoft.VisualBasic
 		/// Returns a string or character converted to lowercase.
 		/// </summary>
 		/// <param name="Value">Required. Any valid String or Char expression.</param>
-		[MonoTODO("Needs testing")]
 		public static char LCase(char Value) 
 		{
 			return char.ToLower(Value);
@@ -682,7 +826,6 @@ namespace Microsoft.VisualBasic
 		/// Returns a string or character converted to lowercase.
 		/// </summary>
 		/// <param name="Value">Required. Any valid String or Char expression.</param>
-		[MonoTODO("Needs testing")]
 		public static string LCase(string Value) 
 		{
 			if ((Value == null) || (Value.Length == 0))
@@ -697,7 +840,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Str">Required. String expression from which the leftmost characters are returned.</param>
 		/// <param name="Length">Required. Integer expression. Numeric expression indicating how many characters to return. If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, the entire string is returned.</param>
-		[MonoTODO]
 		public static string Left(string Str, 
 			int Length) 
 		{
@@ -713,7 +855,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(bool Expression) 
 		{
 			return 2; //sizeof(bool)
@@ -723,7 +864,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(byte Expression) 
 		{
 			return 1; //sizeof(byte)
@@ -733,7 +873,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(char Expression) 
 		{
 			return 2; //sizeof(char)
@@ -743,7 +882,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(double Expression) 
 		{
 			return 8; //sizeof(double)
@@ -753,7 +891,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(int Expression) 
 		{
 			return 4; //sizeof(int)
@@ -763,7 +900,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(long Expression) 
 		{
 			return 8; //sizeof(long)
@@ -773,22 +909,59 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO]
-		public static int Len(object Expression) 
+		public static int Len(object expression) 
 		{
-			 // FIXME: 
-			 // With user-defined types and Object variables, the Len function returns the size as it will 
-			 // be written to the file. If an Object contains a String, it will return the length of the string. 
-			 // If an Object contains any other type, it will return the size of the object as it will be written 
-			 // to the file.
-			throw new NotImplementedException(); 
+		    IConvertible convertible = null;
+
+			if (expression == null)
+				return 0;
+
+			if (expression is String)
+				return ((String)expression).Length;
+
+			if (expression is char[])
+				return ((char[])expression).Length;
+
+			if (expression is IConvertible)
+				convertible = (IConvertible)expression;
+			
+			if (convertible != null) {
+				switch (convertible.GetTypeCode()) {
+					case TypeCode.String :
+						return expression.ToString().Length;
+					case TypeCode.Int16 :
+						return 2;
+					case TypeCode.Byte :
+						return 1;
+					case TypeCode.Int32 :
+						return 4;
+					case TypeCode.Int64 :
+						return 8;
+					case TypeCode.Single :
+						return 4;
+					case TypeCode.Double :
+						return 8;
+					case TypeCode.Boolean :
+						return 2;
+					case TypeCode.Decimal :
+						return 16;
+					case TypeCode.Char :
+						return 2;
+					case TypeCode.DateTime :
+						return 8;
+				}
+
+			}
+			if (expression is ValueType)
+				return System.Runtime.InteropServices.Marshal.SizeOf(expression);
+
+			throw new InvalidCastException(VBUtils.GetResourceString(13));
 		}
 		
 		/// <summary>
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(short Expression) 
 		{
 			return 2; //sizeof(short)
@@ -798,7 +971,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(Single Expression) 
 		{
 			return 4; //sizeof(Single)
@@ -808,7 +980,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		//[MonoTODO("Needs testing")]
 		//public static int Len(string Expression) 
 		//{
 		//	return Expression.Length; //length of the string
@@ -822,7 +993,6 @@ namespace Microsoft.VisualBasic
 		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
 		/// </summary>
 		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		[MonoTODO("Needs testing")]
 		public static int Len(DateTime Expression) 
 		{
 			return 8; //sizeof(DateTime)
@@ -842,7 +1012,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Source">Required. String expression. Name of string variable.</param>
 		/// <param name="Length">Required. Integer expression. Length of returned string.</param>
-		[MonoTODO("Needs testing")]
 		public static string LSet(string Source, 
 			int Length) 
 		{
@@ -858,7 +1027,6 @@ namespace Microsoft.VisualBasic
 		/// Returns a string containing a copy of a specified string with no leading spaces.
 		/// </summary>
 		/// <param name="Str">Required. Any valid String expression.</param>
-		[MonoTODO("Needs testing")]
 		public static string LTrim(string Str) 
 		{
 			if ((Str == null) || (Str.Length == 0))
@@ -871,7 +1039,6 @@ namespace Microsoft.VisualBasic
 		/// Returns a string containing a copy of a specified string with no trailing spaces.
 		/// </summary>
 		/// <param name="Str">Required. Any valid String expression.</param>
-		[MonoTODO("Needs testing")]
 		public static string RTrim(string Str) 
 		{
 			if ((Str == null) || (Str.Length == 0))
@@ -884,7 +1051,6 @@ namespace Microsoft.VisualBasic
 		/// Returns a string containing a copy of a specified string with no leading or trailing spaces.
 		/// </summary>
 		/// <param name="Str">Required. Any valid String expression.</param>
-		[MonoTODO("Needs testing")]
 		public static string Trim(string Str) 
 		{
 			if ((Str == null) || (Str.Length == 0))
@@ -899,7 +1065,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="Str">Required. String expression from which characters are returned.</param>
 		/// <param name="Start">Required. Integer expression. Character position in Str at which the part to be taken starts. If Start is greater than the number of characters in Str, the Mid function returns a zero-length string (""). Start is one based.</param>
 		/// <param name="Length">Required Integer expression. Number of characters to return. If there are fewer than Length characters in the text (including the character at position Start), all characters from the start position to the end of the string are returned.</param>
-		[MonoTODO("Verify if this is the correct behaviour for Length==0...[Rafael]")]
 		public static string Mid(string Str, 
 			int Start, 
 			int Length)
@@ -927,7 +1092,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Str">Required. String expression from which characters are returned.</param>
 		/// <param name="Start">Required. Integer expression. Character position in Str at which the part to be taken starts. If Start is greater than the number of characters in Str, the Mid function returns a zero-length string (""). Start is one based.</param>
-		[MonoTODO("Needs testing")]
 		public static string Mid (string Str, int Start) 
 		{
 			if (Start <= 0)
@@ -951,7 +1115,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="Start">Optional. Position within Expression where substring search is to begin. If omitted, 1 is assumed.</param>
 		/// <param name="Count">Optional. Number of substring substitutions to perform. If omitted, the default value is 1, which means make all possible substitutions.</param>
 		/// <param name="Compare">Optional. Numeric value indicating the kind of comparison to use when evaluating substrings. See Settings for values.</param>
-		[MonoTODO("Needs testing")]
 		public static string Replace(string Expression, 
 			string Find, 
 			string Replacement, 
@@ -987,7 +1150,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Str">Required. String expression from which the rightmost characters are returned.</param>
 		/// <param name="Length">Required. Integer. Numeric expression indicating how many characters to return. If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, the entire string is returned.</param>
-		[MonoTODO("Needs testing")]
 		public static string Right(string Str, 
 			int Length) 
 		{
@@ -1010,7 +1172,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Source">Required. String expression. Name of string variable.</param>
 		/// <param name="Length">Required. Integer expression. Length of returned string.</param>
-		[MonoTODO("Needs testing")]
 		public static string RSet(string Source, 
 			int Length) 
 		{
@@ -1027,7 +1188,6 @@ namespace Microsoft.VisualBasic
 		/// Returns a string consisting of the specified number of spaces.
 		/// </summary>
 		/// <param name="Number">Required. Integer expression. The number of spaces you want in the string.</param>
-		[MonoTODO("Needs testing")]
 		public static string Space(int Number) 
 		{
 			if (Number < 0)
@@ -1043,7 +1203,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="Delimiter">Optional. Single character used to identify substring limits. If Delimiter is omitted, the space character (" ") is assumed to be the delimiter. If Delimiter is a zero-length string, a single-element array containing the entire Expression string is returned.</param>
 		/// <param name="Limit">Optional. Number of substrings to be returned; the default, 1, indicates that all substrings are returned.</param>
 		/// <param name="Compare">Optional. Numeric value indicating the comparison to use when evaluating substrings. See Settings for values.</param>
-		[MonoTODO]
 		public static string[] Split(string Expression, 
 			[Optional]
 			[DefaultValue(" ")] 
@@ -1067,12 +1226,8 @@ namespace Microsoft.VisualBasic
 				return ret;
 			}
 			if (Limit == 0)
-				Limit = 1; // VB.net does this. I call it a bug.
+				Limit = 1; 
 
-			/*
-			 * FIXME: VB.net does NOT do this. It simply fails with AritmethicException.
-			 * What should I do?
-			 */
 			if (Limit < -1)
 				throw new ArgumentOutOfRangeException("Limit", "Argument 'Limit' must be -1 or greater than zero.");
 
@@ -1081,13 +1236,10 @@ namespace Microsoft.VisualBasic
 				case CompareMethod.Binary:
 					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
 				case CompareMethod.Text:
-					//FIXME
-					throw new NotImplementedException();
+					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
 				default:
 					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
 			}
-
-			
 		}
 
 		/// <summary>
@@ -1096,7 +1248,6 @@ namespace Microsoft.VisualBasic
 		/// <param name="String1">Required. Any valid String expression.</param>
 		/// <param name="String2">Required. Any valid String expression.</param>
 		/// <param name="Compare">Optional. Specifies the type of string comparison. If compare is omitted, the Option Compare setting determines the type of comparison.</param>
-		[MonoTODO("Needs testing")]
 		public static int StrComp(string String1, 
 			string String2,
 			[OptionCompare] 
@@ -1124,16 +1275,41 @@ namespace Microsoft.VisualBasic
 		/// <param name="Str">Required. String expression to be converted.</param>
 		/// <param name="Conversion">Required. VbStrConv member. The enumeration value specifying the type of conversion to perform. </param>
 		/// <param name="LocaleID">Optional. The LocaleID value, if different from the system LocaleID value. (The system LocaleID value is the default.)</param>
-		[MonoTODO("Not impemented")]
 		public static string StrConv (string str, 
 			VbStrConv Conversion, 
 			[Optional]
 			[DefaultValue(0)]
 			int LocaleID)
 		{
-			//FIXME
-			throw new NotImplementedException(); 
-			//throws ArgumentException
+			if (str == null)
+				throw new ArgumentNullException("str");
+			
+			if (Conversion == VbStrConv.None){
+				return str;
+			}
+			else if (Conversion == VbStrConv.UpperCase)	{
+				return str.ToUpper();
+			}
+			else if (Conversion == VbStrConv.LowerCase)	{
+				return str.ToLower();
+			}
+			else if (Conversion == VbStrConv.ProperCase){
+				String[] arr = str.Split(null);
+				String tmp = "" ;
+				for (int i =0 ; i < (arr.Length - 1) ; i++)	{
+					arr[i] =  arr[i].ToLower();
+					tmp +=  arr[i].Substring(0,1).ToUpper() + arr[i].Substring(1) + " ";
+				}
+				arr[arr.Length - 1] =  arr[arr.Length - 1].ToLower();
+				tmp +=  arr[arr.Length - 1].Substring(0,1).ToUpper() + arr[arr.Length - 1].Substring(1);
+
+				return tmp;
+			}         
+			else if (Conversion == VbStrConv.SimplifiedChinese || 
+				Conversion == VbStrConv.TraditionalChinese ) 
+				return str;
+			else
+				throw new ArgumentException("Unsuported conversion in StrConv");	
 		}
 
 		/// <summary>
@@ -1141,7 +1317,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Number">Required. Integer expression. The length to the string to be returned.</param>
 		/// <param name="Character">Required. Any valid Char, String, or Object expression. Only the first character of the expression will be used. If Character is of type Object, it must contain either a Char or a String value.</param>
-		[MonoTODO("Needs testing")]
 		public static string StrDup(int Number, 
 			char Character)
 		{
@@ -1155,7 +1330,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Number">Required. Integer expression. The length to the string to be returned.</param>
 		/// <param name="Character">Required. Any valid Char, String, or Object expression. Only the first character of the expression will be used. If Character is of type Object, it must contain either a Char or a String value.</param>
-		[MonoTODO("Needs testing")]
 		public static string StrDup(int Number, 
 			string Character)
 		{
@@ -1172,7 +1346,6 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Number">Required. Integer expression. The length to the string to be returned.</param>
 		/// <param name="Character">Required. Any valid Char, String, or Object expression. Only the first character of the expression will be used. If Character is of type Object, it must contain either a Char or a String value.</param>
-		[MonoTODO("Needs testing")]
 		public static object StrDup(int Number, 
 			object Character)
 		{
@@ -1205,7 +1378,6 @@ namespace Microsoft.VisualBasic
 		/// Returns a string in which the character order of a specified string is reversed.
 		/// </summary>
 		/// <param name="Expression">Required. String expression whose characters are to be reversed. If Expression is a zero-length string (""), a zero-length string is returned.</param>
-		[MonoTODO("Needs testing")]
 		public static string StrReverse(string Expression)
 		{
 			// Patched by Daniel Campos (danielcampos@myway.com)
