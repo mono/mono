@@ -188,7 +188,7 @@ namespace Mono.ILASM {
                         inst_table["ldc.i8"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
                         inst_table["ldarg"] = new ILToken (Token.INSTR_I, IntOp.ldarg);
                         inst_table["ldarga"] = new ILToken (Token.INSTR_I, IntOp.ldarga);
-                        inst_table["starf"] = new ILToken (Token.INSTR_I, IntOp.starg);
+                        inst_table["starg"] = new ILToken (Token.INSTR_I, IntOp.starg);
                         inst_table["ldloc"] = new ILToken (Token.INSTR_I, IntOp.ldloc);
                         inst_table["ldloca"] = new ILToken (Token.INSTR_I, IntOp.ldloca);
                         inst_table["stloc"] = new ILToken (Token.INSTR_I, IntOp.stloc);
