@@ -24,6 +24,7 @@ namespace Ximian.Mono.Tests.System
 				suite.AddTest (Collections.Specialized.NameValueCollectionTest.Suite);
 				suite.AddTest (Collections.Specialized.StringCollectionTest.Suite);
 				suite.AddTest (Text.RegularExpressions.AllTests.Suite);
+        // suite.AddTest (MonoTests.System.Diagnostics.AllTests.Suite);
 				return suite;
 			}
 		}
