@@ -1,3 +1,27 @@
+
+2005-01-11 Manjula GHM <mmanjula@novell.com>
+	Added following files
+	
+      *DefaultPropF.vb
+      *DefaultPropA.vb
+      *DefaultPropG.vb
+      *DefaultPropB.vb
+      *DefaultPropH.vb
+      *DefaultPropC.vb
+      *DefaultPropD.vb
+      *DefaultPropE.vb
+	
+	Removed following files
+        * DefaultAttrA:
+        * DefaultAttrB:
+        * DefaultAttrC:
+        * DefaultAttrD:
+        * DefaultAttrE:
+        * DefaultAttrF:
+        * DefaultAttrG:
+
+	Above test cases are contributed by Sudharsan <vsudharsan@novell.com>
+
 2005-01-10 Manjula GHM <mmanjula@novell.com>
 
        * ScopeC.vb
