@@ -1,5 +1,7 @@
 2002-07-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs: Pass the entry point to the DefinePInvokeMethod
+
 	* statement.cs (Checked): Set the CheckedState during the resolve
 	process too, as the ConvCast operations track the checked state on
 	the resolve process, and not emit.
