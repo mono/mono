@@ -204,6 +204,10 @@ namespace Mono.MonoBASIC
 		
 			static IfElseStateMachine()
 			{
+				// FIXME: Fix both the error nos and the error strings. 
+				// Currently the error numbers and the error strings are 
+				// just placeholders for getting the state-machine going.
+
 				errStrings.Add(0, "");
 				errStrings.Add(30012, "#If must end with a matching #End If");
 				errStrings.Add(30013, "#ElseIf, #Else or #End If must be preceded by a matching #If");
@@ -231,7 +235,7 @@ namespace Mono.MonoBASIC
 
 				errTable[(int)State.ELSE_SEEN, (int)Token.IF] = 0;
 				errTable[(int)State.ELSE_SEEN, (int)Token.ELSEIF] = 32030;
-				errTable[(int)State.ELSE_SEEN, (int)Token.ELSE] = 30028;
+				errTable[(int)State.ELSE_SEEN, (int)Token.ELSE] = 32030;
 				errTable[(int)State.ELSE_SEEN, (int)Token.ENDIF] = 0;
 				errTable[(int)State.ELSE_SEEN, (int)Token.EOF] = 30012;
 
@@ -4150,7 +4154,7 @@ pp_directive
 	  	if(tokenizerController.IsAcceptingTokens)
 	  	{
 	  		if(in_external_source) 
-				Report.Error (30205, lexer.Location, "#ExternalSource directives may not be nested");
+				Report.Error (30580, lexer.Location, "#ExternalSource directives may not be nested");
 			else {
 	  			in_external_source = true;
 			
@@ -4162,7 +4166,7 @@ pp_directive
 	  }
 	| HASH IDENTIFIER LITERAL_STRING EOL
 	  {
-	  	if(tokenizerController.IsAcceptingTokens)
+	  	if(tokenizerController.IsAcceptingTokens) 
 	  	{
 	  		string id = ($2 as string);
 		
@@ -4171,7 +4175,6 @@ pp_directive
 			else
 			{
 				++in_marked_region;
-				Console.WriteLine("Ref line = {0} Marked Region = {1}" , lexer.ref_line, in_marked_region);
 			}
 	  	}
 	  }
@@ -4179,27 +4182,24 @@ pp_directive
 	  {
 	  	if(tokenizerController.IsAcceptingTokens)
 	  	{
-	  		if( ($3 as string).ToLower().Equals("externalsource"))
-	  		{
+	  		if( ($3 as string).ToLower().Equals("externalsource")) {
 				if(!in_external_source)
-					Report.Error (30205, lexer.Location, "No matching #ExternalSource directive found");
-				else
-				{
+					Report.Error (30578, lexer.Location, "'#End ExternalSource' must be preceded by a matching '#ExternalSource'");
+				else {
 					in_external_source = false;
 					lexer.ref_name = lexer.file_name;
 					lexer.ref_line = lexer.line;
 				}
 	  		}
-			else if(($3 as string).ToLower().Equals("region"))
-			{
+			else if(($3 as string).ToLower().Equals("region")) {
 				if(in_marked_region > 0)
 					--in_marked_region;
 				else
-					Report.Error (30205, lexer.Location, "No matching #Region directive found");
-
-			
-				Console.WriteLine("Ref line = {0} Marked Region = {1}" , lexer.ref_line, in_marked_region);
+					Report.Error (30205, lexer.Location, "'#End Region' must be preceded  by a matching '#Region'");
 			}
+			else {
+				Report.Error (29999, lexer.Location, "Unrecognized Pre-Processor statement");
+			}	
 	  	}
 	  }
 	| HASH CONST IDENTIFIER ASSIGN boolean_literal EOL
@@ -4786,8 +4786,10 @@ protected override int parse ()
 	try {
 		if (yacc_verbose_flag)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
-		else
+		else {
 			yyparse (lexer);
+			cleanup();
+		}
 	} 
 	catch(MBASException e) {
 		Report.Error(e.code, e.loc, e.Message);
@@ -4799,6 +4801,22 @@ protected override int parse ()
 	RootContext.VerifyImports();
 
 	return Report.Errors;
+}
+
+void cleanup()
+{
+	try {
+		ifElseStateMachine.HandleToken(IfElseStateMachine.Token.EOF);
+	}
+	catch(ApplicationException) {
+		throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+	}
+
+	if(in_external_source) 
+		Report.Error (30579, lexer.Location, "'#ExternalSource' directives must end with matching '#End ExternalSource'");
+
+	if(in_marked_region > 0)
+		Report.Error (30205, lexer.Location, "'#Region' directive must be followed by a matching '#End Region'");
 }
 
 void HandleConditionalDirective(IfElseStateMachine.Token tok, BoolLiteral expr)

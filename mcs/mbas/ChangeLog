@@ -1,5 +1,10 @@
 2004-07-30  Jambunathan K  <kjambunathan@novell.com>
-	* mb-parser.jay (Module): Oops. Reversed unintended checkin.
+	* mb-parser.jay: Oops. Reversed unintended checkin.
+	* mb-tokenizer.cs: Added comment in Tokenizer() 
+	* mb-parser.jay: Fixed miscellaneous bugs in handling of 
+	pre-processor directives. There are two positive test 
+	cases that fail currently: ExternalSourceDirectivesC4.vb
+	and RegionDirectivesC1.vb
 
 2004-07-30  Raja R Harinath  <rharinath@novell.com>
 

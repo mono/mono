@@ -284,7 +284,13 @@ namespace Mono.MonoBASIC
 		public Tokenizer (System.IO.TextReader input, string fname, ArrayList defines)
 		{
 			this.ref_name = fname;
+			this.file_name = fname;
 			reader = input;
+
+			// putback an EOL at the beginning of a stream
+			// This is a convenience that allows pre-processor
+			// directives to be added to the beginning of a vb
+			// file.
 			putback('\n');
 			
 			Location.Push (fname);
