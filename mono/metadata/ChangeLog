@@ -1,3 +1,8 @@
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* reflection.h
+	(MonoReflectionGenericParam): Added `MonoBoolean has_ctor_constraint'.
+
 2004-04-07  Jackson Harper  <jackson@ximian.com>
 
 	* appdomain.c: Revert extra patches, just wanted to bump the
