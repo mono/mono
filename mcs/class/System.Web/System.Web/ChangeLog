@@ -1,5 +1,10 @@
 2002-10-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWriter.cs: changed encoding of the writer from Unicode to UTF8.
+	This fixes sending bytes and allows mixing byte with chars.
+
+2002-10-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs: implemented WriteFile methods.
 	* MimeTypes.cs: removed duplicated entries.
 

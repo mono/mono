@@ -29,7 +29,7 @@ namespace System.Web
 			_Response = Response;
 
 			_OutputStream = new MemoryStream (32768);
-			_OutputHelper = new StreamWriter (_OutputStream, Encoding.Unicode);
+			_OutputHelper = new StreamWriter (_OutputStream, Encoding.UTF8);
 			_ResponseStream = new HttpResponseStream (this);
 
 			Update ();
@@ -42,7 +42,7 @@ namespace System.Web
 			_OutputFilter.Close ();
 		}
 
-		internal Stream GetActiveFilter()
+		internal Stream GetActiveFilter ()
 		{
 			if (null == _OutputFilter) {
 				// Create a filter proxy to allow us to know if we have a valid filter
@@ -100,29 +100,14 @@ namespace System.Web
 			_OutputHelper = new StreamWriter (_OutputStream, Encoding.Unicode);
 		}
 
-		internal byte [] ToArray ()
-		{
-			if (_OutputStream.Length == 0)
-				return null;
-
-			// TODO: Optimize
-			byte [] arrStream = _OutputStream.ToArray ();
-			byte [] arrData = new byte [arrStream.Length - 2];
-
-			Buffer.BlockCopy (arrStream, 2, arrData, 0, arrStream.Length - 2);
-
-			byte [] arrContent = _Encoding.GetBytes (Encoding.Unicode.GetString (arrData));
-
-			return arrContent;
-		}
-
 		internal void SendContent (HttpWorkerRequest Handler)
 		{
 			FlushBuffers();
 
-			if (_OutputStream.Length > 0) {
-				byte [] arrContent = ToArray ();
-				Handler.SendResponseFromMemory (arrContent, arrContent.Length);
+			int l = _OutputStream.Length;
+			if (l > 0) {
+				byte [] arrContent = _OutputStream.ToArray ();
+				Handler.SendResponseFromMemory (arrContent, l);
 			}
 		}
 
@@ -136,11 +121,7 @@ namespace System.Web
 		{
 			get {
 				FlushBuffers ();
-
-				if (_OutputStream.Length == 0)
-					return 0;
-
-				return ToArray ().Length;
+				return _OutputStream.Length;
 			}
 		}
 
@@ -173,67 +154,54 @@ namespace System.Web
 			_Response.Flush ();
 		}
 
-		public override void Write (char ch)
+		private void CheckIfFlush ()
 		{
-			_OutputHelper.Write (ch);
 			if (!_Response.BufferOutput) {
 				FlushBuffers ();
 				_Response.Flush ();
 			}
+		}
+
+		public override void Write (char ch)
+		{
+			_OutputHelper.Write (ch);
+			CheckIfFlush ();
 		}
 
 		public override void Write (object obj)
 		{
 			_OutputHelper.Write (obj.ToString ());
-			if (!_Response.BufferOutput) {
-				FlushBuffers ();
-				_Response.Flush ();
-			}
+			CheckIfFlush ();
 		}
 
 		public override void Write (string s)
 		{
 			_OutputHelper.Write (s);
-			if (!_Response.BufferOutput) {
-				FlushBuffers ();
-				_Response.Flush ();
-			}
+			CheckIfFlush ();
 		}
 
 		public override void Write (char [] buffer, int index, int count)
 		{
 			_OutputHelper.Write (buffer, index, count);
-			if (!_Response.BufferOutput) {
-				FlushBuffers ();
-				_Response.Flush ();
-			}
+			CheckIfFlush ();
 		}
 
-		public void WriteBytes (byte[] buffer, int index, int count)
+		public void WriteBytes (byte [] buffer, int index, int count)
 		{
 			_OutputStream.Write (buffer, index, count);
-			if (!_Response.BufferOutput) {
-				FlushBuffers ();
-				_Response.Flush ();
-			}
+			CheckIfFlush ();
 		}
 
 		public override void WriteLine ()
 		{
 			_OutputHelper.Write ("\r\n");
-			if (!_Response.BufferOutput) {
-				FlushBuffers ();
-				_Response.Flush ();
-			}
+			CheckIfFlush ();
 		}
 
 		public void WriteString (string s, int index, int count)
 		{
 			_OutputHelper.Write (s.Substring (index, count));
-			if (!_Response.BufferOutput) {
-				FlushBuffers ();
-				_Response.Flush ();
-			}
+			CheckIfFlush ();
 		}
 	}
 }
