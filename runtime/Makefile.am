@@ -2,7 +2,7 @@
 # being compiled on windows.
 #
 
-SUBDIRS = net_1_1 net_2_0
+SUBDIRS = . net_1_1 net_2_0
 
 mcs_topdir=$(top_srcdir)/../mcs
 

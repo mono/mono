@@ -3,7 +3,7 @@
 #
 
 mcs_topdir=$(top_srcdir)/../mcs
-gacutil=$(mcs_topdir)/tools/gacutil/gacutil.exe
+gacutil=$(srcdir)/../gacutil.exe
 
 gac_assemblies_list = \
 	Accessibility.dll					\
