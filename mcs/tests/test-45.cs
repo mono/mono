@@ -94,6 +94,12 @@ public class Blah {
 			if (x [idx] != idx + 1)
 				return 12;
 		}
+
+		// Remove this when bug 43682 is fixed:
+		//IntPtr [] arr = { new System.IntPtr (1) };
+		//if (arr [0] != (IntPtr) 1)
+		//return 13;
+		
 		Console.WriteLine ("Array initialization test okay.");
 				   
 		return 0;
