@@ -1,5 +1,10 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
+	* Page.cs: Don't tell the response to cache anymore. This is done
+	when the cacheability is modified by a callback.
+	
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
 	* TemplateParser.cs: If varybyparam is set to "none" make it null
 	so we dont get a param named null in the outputcache key.
 	
