@@ -2,14 +2,16 @@
 // System.Web.UI.TemplateControl.cs
 //
 // Authors:
-// 	Duncan Mak  (duncan@ximian.com)
-// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Duncan Mak  (duncan@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Util;
@@ -60,7 +62,7 @@ namespace System.Web.UI {
 		}
 
 		[MonoTODO]
-		protected virtual LiteralControl CreateResourceBasedLiteralControl (int offset,
+		protected LiteralControl CreateResourceBasedLiteralControl (int offset,
 										    int size,
 										    bool fAsciiOnly)
 		{
@@ -101,6 +103,7 @@ namespace System.Web.UI {
 			}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected virtual void FrameworkInitialize ()
 		{
 		}
@@ -156,18 +159,21 @@ namespace System.Web.UI {
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public static object ReadStringResource (Type t)
 		{
 			return null;
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected void SetStringResourcePointer (object stringResourcePointer,
 							 int maxResourceOffset)
 		{
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected void WriteUTF8ResourceString (HtmlTextWriter output, int offset,
 							int size, bool fAsciiOnly)
 		{
@@ -177,16 +183,19 @@ namespace System.Web.UI {
 
 		#region Events
 
+		[WebSysDescription ("Raised when the user aborts a transaction.")]
 		public event EventHandler AbortTransaction {
 			add { Events.AddHandler (abortTransaction, value); }
 			remove { Events.RemoveHandler (abortTransaction, value); }
 		}
 
+		[WebSysDescription ("Raised when the user initiates a transaction.")]
 		public event EventHandler CommitTransaction {
 			add { Events.AddHandler (commitTransaction, value); }
 			remove { Events.RemoveHandler (commitTransaction, value); }
 		}
 
+		[WebSysDescription ("Raised when an exception occurs that cannot be handled.")]
 		public event EventHandler Error {
 			add { Events.AddHandler (error, value); }
 			remove { Events.RemoveHandler (error, value); }

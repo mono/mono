@@ -1,19 +1,27 @@
 //
-// System.Web.UI.UserControl
+// System.Web.UI.UserControl.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.ComponentModel.Design.Serialization;
 using System.Web.Caching;
 using System.Web.SessionState;
 
 namespace System.Web.UI
 {
 	[ControlBuilder (typeof (UserControlControlBuilder))]
-	public class UserControl : TemplateControl, IAttributeAccessor
+	[DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
+	[ToolboxItem (false)]
+	[Designer ("System.Web.UI.Design.UserControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
+	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor
 	{
 		private bool initialized;
 		private AttributeCollection attributes;
@@ -24,6 +32,8 @@ namespace System.Web.UI
 			//??
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public HttpApplicationState Application
 		{
 			get {
@@ -44,6 +54,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public AttributeCollection Attributes
 		{
 			get {
@@ -51,6 +63,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public Cache Cache
 		{
 			get {
@@ -61,6 +75,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public bool IsPostBack
 		{
 			get {
@@ -71,6 +87,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public HttpRequest Request
 		{
 			get {
@@ -81,6 +99,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public HttpResponse Response
 		{
 			get {
@@ -91,6 +111,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public HttpServerUtility Server
 		{
 			get {
@@ -101,6 +123,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public HttpSessionState Session
 		{
 			get {
@@ -111,6 +135,8 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public TraceContext Trace
 		{
 			get {
@@ -122,11 +148,13 @@ namespace System.Web.UI
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void DesignerInitialize ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void InitializeAsUserControl (Page page)
 		{
 			if (initialized)
@@ -184,6 +212,28 @@ namespace System.Web.UI
 		{
 			EnsureAttributes ();
 			Attributes [name] = value;
+		}
+
+		string IUserControlDesignerAccessor.InnerText
+		{
+			get {
+				string innerText = ((string) ViewState["!DesignTimeInnerText"]);
+				if (innerText == null)
+					return string.Empty; 
+				return innerText;
+			}
+			set { ViewState["!DesignTimeInnerText"] = value; }
+		}
+
+		string IUserControlDesignerAccessor.TagName
+		{
+			get {
+				string innerTag = ((string) ViewState["!DesignTimeTagName"]);
+				if (innerTag == null)
+					return string.Empty; 
+				return innerTag;
+			}
+			set { ViewState["!DesignTimeTagName"] = value; }
 		}
 	}
 }

@@ -2,8 +2,9 @@
 // System.Web.UI.Control.cs
 //
 // Authors:
-// 	Bob Smith <bob@thestuff.net>
-// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Bob Smith <bob@thestuff.net>
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Bob Smith
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
@@ -82,11 +83,17 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.ComponentModel.Design.Serialization;
 using System.Web;
 using System.Web.Util;
 
 namespace System.Web.UI
 {
+	[DefaultProperty ("ID"), DesignerCategory ("Code"), ToolboxItemFilter ("System.Web.UI", ToolboxItemFilterType.Require)]
+	[ToolboxItem ("System.Web.UI.Design.WebControlToolboxItem, " + Consts.AssemblySystem_Design)]
+	[Designer ("System.Web.UI.Design.ControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[DesignerSerializer ("Microsoft.VSDesigner.WebForms.ControlCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
         public class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
         {
                 private static readonly object DataBindingEvent = new object();
@@ -130,6 +137,8 @@ namespace System.Web.UI
                         if (this is INamingContainer) _isNamingContainer = true;
                 }
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never), Browsable (false)]
 		public Control BindingContainer
 		{
 			get {
@@ -140,6 +149,9 @@ namespace System.Web.UI
 			}
 		}
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[WebSysDescription ("An Identification of the control that is rendered.")]
 		public virtual string ClientID {
 			get {
 				string client = UniqueID;
@@ -151,6 +163,9 @@ namespace System.Web.UI
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[WebSysDescription ("The child controls of this control.")]
                 public virtual ControlCollection Controls //DIT
                 {
                         get
@@ -159,6 +174,9 @@ namespace System.Web.UI
                                 return _controls;
                         }
                 }
+
+		[DefaultValue (true), WebCategory ("FIXME")]
+		[WebSysDescription ("An Identification of the control that is rendered.")]
                 public virtual bool EnableViewState //DIT
                 {
                         get
@@ -171,6 +189,8 @@ namespace System.Web.UI
                         }
                 }
 		
+		[MergableProperty (false), ParenthesizePropertyName (true)]
+		[WebSysDescription ("The name of the control that is rendered.")]
                 public virtual string ID {
                         get {
                                 return _userId;
@@ -185,6 +205,9 @@ namespace System.Web.UI
                         }
                 }
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[WebSysDescription ("The container that this control is part of. The control's name has to be unique within the container.")]
                 public virtual Control NamingContainer //DIT
                 {
                         get
@@ -199,6 +222,10 @@ namespace System.Web.UI
                                 return _namingContainer;
                         }
                 }
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[WebSysDescription ("The webpage that this control resides on.")]
                 public virtual Page Page //DIT
                 {
                         get
@@ -211,6 +238,10 @@ namespace System.Web.UI
                                 _page = value;
                         }
                 }
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[WebSysDescription ("The parent control of this control.")]
                 public virtual Control Parent //DIT
                 {
                         get
@@ -218,6 +249,10 @@ namespace System.Web.UI
                                 return _parent;
                         }
                 }
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Advanced), Browsable (false)]
+		[WebSysDescription ("The site this control is part of.")]
                 public ISite Site //DIT
                 {
                         get
@@ -230,10 +265,16 @@ namespace System.Web.UI
                         }
                 }
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[WebSysDescription ("A virtual directory containing the parent of the control.")]
                 public virtual string TemplateSourceDirectory {
                         get { return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; }
                 }
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[WebSysDescription ("The unique ID of the control.")]
                 public virtual string UniqueID {
                         get {
 				if (uniqueID != null)
@@ -256,6 +297,9 @@ namespace System.Web.UI
 				return uniqueID;
                         }
                 }
+
+		[DefaultValue (true), Bindable (true), WebCategory ("FIXME")]
+		[WebSysDescription ("Visiblity state of the control.")]
                 public virtual bool Visible
                 {
                         get
@@ -439,6 +483,15 @@ namespace System.Web.UI
                         }
                 }
 
+		protected bool IsLiteralContent()
+		{
+			if (_controls != null) 
+				if (_controls.Count == 1)
+					if (_controls[0] is LiteralControl)
+						return true;
+			return false;
+		}
+
                 public virtual Control FindControl (string id)
                 {
 			return FindControl (id, 0);
@@ -597,11 +650,13 @@ namespace System.Web.UI
                         }
                 }
 
-		public bool HasChildren
+		internal bool HasChildren
 		{
 			get { return (_controls != null && _controls.Count > 0); }
 		}
 
+		[WebCategory ("FIXME")]
+		[WebSysDescription ("Raised when the contols databound properties are evaluated.")]
                 public event EventHandler DataBinding //DIT
                 {
                         add
@@ -613,6 +668,8 @@ namespace System.Web.UI
                                 Events.RemoveHandler(DataBindingEvent, value);
                         }
                 }
+
+		[WebSysDescription ("Raised when the contol is disposed.")]
                 public event EventHandler Disposed //DIT
                 {
                         add
@@ -624,6 +681,8 @@ namespace System.Web.UI
                                 Events.RemoveHandler(DisposedEvent, value);
                         }
                 }
+
+		[WebSysDescription ("Raised when the page containing the control is initialized.")]
                 public event EventHandler Init //DIT
                 {
                         add
@@ -635,6 +694,8 @@ namespace System.Web.UI
                                 Events.RemoveHandler(InitEvent, value);
                         }
                 }
+
+		[WebSysDescription ("Raised after the page containing the control has been loaded.")]
                 public event EventHandler Load //DIT
                 {
                         add
@@ -646,6 +707,8 @@ namespace System.Web.UI
                                 Events.RemoveHandler(LoadEvent, value);
                         }
                 }
+
+		[WebSysDescription ("Raised before the page containing the control is rendered.")]
                 public event EventHandler PreRender //DIT
                 {
                         add
@@ -657,6 +720,8 @@ namespace System.Web.UI
                                 Events.RemoveHandler(PreRenderEvent, value);
                         }
                 }
+
+		[WebSysDescription ("Raised when the page containing the control is unloaded.")]
                 public event EventHandler Unload //DIT
                 {
                         add
@@ -708,6 +773,7 @@ namespace System.Web.UI
 			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
                 }
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
                 {
 			WebTrace.PushContext ("Control.AddParsedSubobject ()");
@@ -717,7 +783,7 @@ namespace System.Web.UI
 			WebTrace.PopContext ();
                 }
 
-                protected void LoadRecursive()
+                internal void LoadRecursive()
                 {
                         OnLoad (EventArgs.Empty);
                         if (_controls != null) {
@@ -727,7 +793,7 @@ namespace System.Web.UI
 			loaded = true;
                 }
 
-                protected void UnloadRecursive(Boolean dispose)
+                internal void UnloadRecursive(Boolean dispose)
                 {
                         if (_controls != null) {
 				foreach (Control c in _controls)
@@ -739,7 +805,7 @@ namespace System.Web.UI
 				Dispose();
                 }
 
-                protected void PreRenderRecursiveInternal()
+                internal void PreRenderRecursiveInternal()
                 {
 			if (_visible) {
 				EnsureChildControls ();
@@ -753,7 +819,7 @@ namespace System.Web.UI
 			prerendered = true;
                 }
 
-                protected void InitRecursive(Control namingContainer)
+                internal void InitRecursive(Control namingContainer)
                 {
                         if (_controls != null) {
 				if (_isNamingContainer)

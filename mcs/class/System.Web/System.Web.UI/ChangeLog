@@ -1,3 +1,11 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IUserControlDesignerAccessor.cs: Added and implemented
+	* Control.cs: Missing member added, added all attributes
+	* Page.cs: Added attributes, fixed signature
+	* TemplateControl.cs: Fixed signature, added all attributes
+	* UserControl.cs: Added all attributes, added and implemented missing interface
+	
 2003-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollection.cs: fixed bug #46472.
