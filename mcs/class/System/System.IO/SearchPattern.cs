@@ -47,12 +47,19 @@ namespace System.IO {
 			Compile (pattern);
 		}
 
-		public bool IsMatch (string text)
+		// OSX has a retarded case-insensitive yet case-aware filesystem
+		// so we need a overload in here for the Kqueue watcher
+		public bool IsMatch (string text, bool ignorecase)
 		{
 			if (!hasWildcard)
-				return (String.Compare (pattern, text, ignore) == 0);
+				return (String.Compare (pattern, text, ignorecase) == 0);
 
 			return Match (ops, text, 0);
+		}
+
+		public bool IsMatch (string text)
+		{
+			return IsMatch (text, ignore);
 		}
 
 		public bool HasWildcard {

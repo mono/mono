@@ -37,13 +37,19 @@ using System.Threading;
 
 namespace System.IO {
 
-	struct kevent {
+	struct kevent : IDisposable {
 		public int ident;
 		public short filter;
 		public ushort flags;
 		public uint fflags;
 		public int data;
-		public string udata;	
+		public IntPtr udata;
+
+		public void Dispose ()
+		{
+			if (udata != IntPtr.Zero)
+				Marshal.FreeHGlobal (udata);
+		}
 	}
 
 	struct timespec {
@@ -155,6 +161,7 @@ namespace System.IO {
 
 			int fd = open(data.Directory, 0, 0);
 			kevent ev = new kevent();
+			ev.udata = IntPtr.Zero;
 			timespec nullts = new timespec();
 			nullts.tv_sec = 0;
 			nullts.tv_usec = 0;
@@ -164,9 +171,9 @@ namespace System.IO {
 				ev.flags = 1 | 4 | 20;
 				ev.fflags = 20 | 2 | 1 | 8;
 				ev.data = 0;
-				ev.udata = data.Directory;
+				ev.udata = Marshal.StringToHGlobalAuto (data.Directory);
 				kevent outev = new kevent();
-				outev.udata = "";
+				outev.udata = IntPtr.Zero;
 				kevent (conn, ref ev, 1, ref outev, 0, ref nullts);
 				data.ev = ev;
 				requests [fd] = data;
@@ -206,9 +213,9 @@ namespace System.IO {
 		
 			while (!stop) {
 				kevent ev = new kevent();
-				ev.udata = "";
+				ev.udata = IntPtr.Zero;
 				kevent nullev = new kevent();
-				nullev.udata = "";
+				nullev.udata = IntPtr.Zero;
 				timespec ts = new timespec();
 				ts.tv_sec = 0;
 				ts.tv_usec = 0;
@@ -252,8 +259,8 @@ namespace System.IO {
 					foreach (FileSystemInfo fsi in dir.GetFileSystemInfos() )
 						if (data.DirEntries.ContainsKey (fsi.FullName) && (fsi is FileInfo)) {
 							KeventFileData entry = (KeventFileData) data.DirEntries [fsi.FullName];
-							if ( (entry.LastWriteTime != fsi.LastWriteTime) || (entry.LastAccessTime != fsi.LastAccessTime) ) {
-								filename = fsi.FullName;
+							if (entry.LastWriteTime != fsi.LastWriteTime) {
+								filename = fsi.Name;
 								fa = FileAction.Modified;
 								data.DirEntries [fsi.FullName] = new KeventFileData(fsi, fsi.LastAccessTime, fsi.LastWriteTime);
 								if (fsw.IncludeSubdirectories && fsi is DirectoryInfo) {
@@ -273,7 +280,7 @@ namespace System.IO {
 					while(deleteMatched) {
 						foreach (KeventFileData entry in data.DirEntries.Values) { 
 							if (!File.Exists (entry.fsi.FullName) && !Directory.Exists (entry.fsi.FullName)) {
-								filename = entry.fsi.FullName;
+								filename = entry.fsi.Name;
 								fa = FileAction.Removed;
 								data.DirEntries.Remove (entry.fsi.FullName);
 								PostEvent(filename, fsw, fa, changedFsi);
@@ -290,7 +297,7 @@ namespace System.IO {
 					foreach (FileSystemInfo fsi in dir.GetFileSystemInfos()) 
 						if (!data.DirEntries.ContainsKey (fsi.FullName)) {
 							changedFsi = fsi;
-							filename = fsi.FullName;
+							filename = fsi.Name;
 							fa = FileAction.Added;
 							data.DirEntries [fsi.FullName] = new KeventFileData(fsi, fsi.LastAccessTime, fsi.LastWriteTime);
 							PostEvent(filename, fsw, fa, changedFsi);
@@ -323,7 +330,7 @@ namespace System.IO {
 				}
 			}
 		
-			if (!fsw.Pattern.IsMatch(filename))
+			if (!fsw.Pattern.IsMatch(filename, true))
 				return;
 
 			lock (fsw) {

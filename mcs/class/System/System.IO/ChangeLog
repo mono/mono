@@ -1,3 +1,21 @@
+2004-12-11  Geoff Norton  <gnorton@customerdna.com>
+
+        * SearchPattern.cs:  Have IsMatch(string)
+        call IsMatch(string, bool) to avoid setting a instance variable in a
+        method that logically should not be changing it.
+        * KeventWatcher.cs: Add IDisposable to our kevent struct
+        so the disposer gets called.  Fixes a small memory leak.  Dont monitor
+        LastAccessedTime for changed files, as this will cause AppUnloading in XSP
+        when global.asax is accessed after creation.  Use a case-insensitive IsMatch
+        to deal with OSX Case-aware/Case-insensitive filesystem.
+        * SearchPattern.cs: Add a overload to IsMatch to explicitly set
+        the ignore field for OSX case-aware yet case-insensitive filesystem.  This
+        allows monitoring of global.asax to happen properly.
+        * KeventWatcher.cs:  Dont marshal a string to a struct
+        that the kernel will hold; this causes a double free bug.  Marshal
+        it as a IntPtr and clean it up in the dispose method.  Don't pass
+        FullName to the pattern matcher, pass the filename.  Fixes bug #69692.
+
 2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultWatcher.cs: make it work when the FileMask does not have
