@@ -210,15 +210,15 @@ internal class ASN1 {
 [Serializable]
 public class X509Certificate 
 {
-	protected byte[] m_encodedcert;
+	private byte[] m_encodedcert;
 	private byte[] m_certhash;
-	protected DateTime m_from;
-	protected DateTime m_until;
+	private DateTime m_from;
+	private DateTime m_until;
 	private string m_issuername;
 	private string m_keyalgo;
 	private byte[] m_keyalgoparams;
 	private string m_subject;
-	protected byte[] m_publickey;
+	private byte[] m_publickey;
 	private byte[] m_serialnumber;
 
 	// almost every byte[] returning function has a string equivalent
@@ -236,7 +236,7 @@ public class X509Certificate
 	}
 
 	/// <summary>
-	/// Tranform an RDN to a UFF-8 string representation
+	/// Tranform an RDN to a UTF-8 string representation
 	/// The string is reserved from what is defined in RFC2253.
 	/// </summary>
 	/// <returns>The relative distingued name (RDN) as a string</returns>
@@ -371,9 +371,7 @@ public class X509Certificate
 		case 15: mask = "yyyyMMddHHmmssZ"; // GeneralizedTime
 			break;
 		}
-		DateTime dt = DateTime.ParseExact (t, mask, null);
-		return dt;
-//		return TimeZone.CurrentTimeZone.ToLocalTime (dt);
+		return DateTime.ParseExact (t, mask, null);
 	}
 
 	// that's were the real job is!
@@ -558,17 +556,21 @@ public class X509Certificate
 	}
 
 	// strangly there are no DateTime returning function
+	// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
+	// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
 	public virtual string GetEffectiveDateString ()
 	{
-		// FIXME: i dont get the same time as MS (daylight ?)
-		return m_from.ToString ("yyyy-MM-dd HH:mm:ss");
+		DateTime dt = m_from.AddHours (-8);
+		return dt.ToString ("yyyy-MM-dd HH:mm:ss");
 	}
 
 	// strangly there are no DateTime returning function
+	// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
+	// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
 	public virtual string GetExpirationDateString () 
 	{
-		// FIXME: i dont get the same time as MS (daylight ?)
-		return m_until.ToString ("yyyy-MM-dd HH:mm:ss");
+		DateTime dt = m_until.AddHours (-8);
+		return dt.ToString ("yyyy-MM-dd HH:mm:ss");
 	}
 
 	// well maybe someday there'll be support for PGP or SPKI ?
@@ -644,6 +646,12 @@ public class X509Certificate
 	public virtual string GetSerialNumberString () 
 	{
 		return tostr (m_serialnumber);
+	}
+
+	// to please corcompare ;-)
+	public override string ToString() 
+	{
+		return base.ToString ();
 	}
 
 	public virtual string ToString (bool details) 

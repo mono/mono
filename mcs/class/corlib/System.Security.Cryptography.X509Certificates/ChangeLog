@@ -1,3 +1,9 @@
+2002-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509Certificate.cs: Fixed the date issue. MS implementation always
+	return the local time for Pacific (GMT-8). Added ToString() and changed
+	some protected to private to please corcompare.
+
 2002-11-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Updated some DN cases and some minor time issues.
