@@ -206,7 +206,11 @@ namespace Mono.CSharp {
 	}
 
 	class PtrHashtable : Hashtable {
-		class PtrComparer : IComparer {
+		sealed class PtrComparer : IComparer {
+			private PtrComparer () {}
+			
+			public static PtrComparer Instance = new PtrComparer ();
+			
 			public int Compare (object x, object y)
 			{
 				if (x == y)
@@ -218,7 +222,7 @@ namespace Mono.CSharp {
 		
 		public PtrHashtable ()
 		{
-			comparer = new PtrComparer ();
+			comparer = PtrComparer.Instance;
 		}
 	}
 

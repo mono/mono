@@ -1,3 +1,8 @@
+2003-12-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* support.cs: Make the PtrHashtable use only one
+	instance of its comparer.
+
 2003-11-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* typemanager.cs: Fix lookup of GetNamespaces.
