@@ -208,7 +208,7 @@ namespace System.Net
 			if (address == null)
 				return null;
 				
-			if (address.IndexOf (':') == -1) 
+			if (address.IndexOf ("://") == -1) 
 				address = "http://" + address;
 			
 			return new Uri (address);
