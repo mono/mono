@@ -33,6 +33,8 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (OperationFault) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public OperationFault this [string name] {

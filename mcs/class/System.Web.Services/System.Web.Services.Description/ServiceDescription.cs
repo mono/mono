@@ -9,10 +9,13 @@
 
 using System.IO;
 using System.Web.Services;
+using System.Web.Services.Configuration;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
+	[XmlFormatExtensionPoint ("Extensions")]
+	[XmlRoot ("definitions", Namespace = "http://schemas.xmlsoap.org/wsdl/")]
 	public sealed class ServiceDescription : DocumentableItem {
 
 		#region Fields
@@ -55,36 +58,44 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlElement ("binding")]
 		public BindingCollection Bindings {
 			get { return bindings; }
 		}
 
+		[XmlIgnore]
 		public ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}
 
+		[XmlElement ("import")]
 		public ImportCollection Imports {
 			get { return imports; }
 		}
 
+		[XmlElement ("message")]
 		public MessageCollection Messages {
 			get { return messages; }
 		}
-	
+
+		[XmlAttribute ("name", DataType = "NMTOKEN")]	
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
-	
+
+		[XmlElement ("portType")]	
 		public PortTypeCollection PortTypes {
 			get { return portTypes; }
 		}
-		
+	
+		[XmlIgnore]	
 		public string RetrievalUrl {
 			get { return retrievalUrl; }
 			set { retrievalUrl = value; }
 		}
-		
+	
+		[XmlIgnore]	
 		public static XmlSerializer Serializer {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
@@ -98,15 +109,18 @@ namespace System.Web.Services.Description {
 			}
 		}
 
+		[XmlElement ("service")]
 		public ServiceCollection Services {
 			get { return services; }
 		}
 
+		[XmlAttribute ("targetNamespace")]
 		public string TargetNamespace {
 			get { return targetNamespace; }
 			set { targetNamespace = value; }
 		}
 
+		[XmlElement ("type")]
 		public Types Types {
 			get { return types; }
 			set { types = value; }

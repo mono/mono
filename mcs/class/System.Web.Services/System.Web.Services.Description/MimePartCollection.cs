@@ -21,6 +21,7 @@ namespace System.Web.Services.Description {
 
 				return (MimePart) List[index]; 
 			}
+			set { List[index] = value; }
 		}
 
 		#endregion // Properties

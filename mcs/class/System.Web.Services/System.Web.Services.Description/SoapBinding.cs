@@ -7,7 +7,15 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.ComponentModel;
+using System.Web.Services.Configuration;
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
+	[XmlFormatExtensionPrefix ("soap", "http://schemas.xmlsoap.org/wsdl/soap/")]
+	[XmlFormatExtension ("binding", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (Binding))]
+	// FIXME: this won't compile! 
+	// [XmlFormatExtensionPrefix ("soapenc", "http://schemas.xmlsoap.org/soap/encoding/")]
 	public sealed class SoapBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
@@ -32,11 +40,17 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		// LAMESPEC: .NET says that the default value is SoapBindingStyle.Document but
+		// reflection shows this attribute is SoapBindingStyle.Default
+
+		[DefaultValue (SoapBindingStyle.Default)]
+		[XmlAttribute ("style")]
 		public SoapBindingStyle Style {
 			get { return style; }
 			set { style = value; }
 		}
 
+		[XmlAttribute ("transport")]
 		public string Transport {
 			get { return transport; }
 			set { transport = value; }

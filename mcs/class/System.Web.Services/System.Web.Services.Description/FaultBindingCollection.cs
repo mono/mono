@@ -7,6 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Web.Services;
+
 namespace System.Web.Services.Description {
 	public sealed class FaultBindingCollection : ServiceDescriptionBaseCollection {
 
@@ -33,6 +35,8 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (FaultBinding) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public FaultBinding this [string name] {

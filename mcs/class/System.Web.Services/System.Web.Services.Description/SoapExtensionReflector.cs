@@ -18,7 +18,7 @@ namespace System.Web.Services.Description {
 
 		#region Constructors
 	
-		public SoapExtensionReflector ()
+		protected SoapExtensionReflector ()
 		{
 		}
 		

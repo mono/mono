@@ -7,6 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
 	public sealed class Import : DocumentableItem {
 
@@ -31,11 +33,13 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlAttribute ("location")]
 		public string Location {
 			get { return location; }
 			set { location = value; }
 		}
 
+		[XmlAttribute ("namespace")]
 		public string Namespace {
 			get { return ns; }
 			set { ns = value; }

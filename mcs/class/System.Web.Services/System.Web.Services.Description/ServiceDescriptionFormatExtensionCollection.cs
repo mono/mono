@@ -21,7 +21,7 @@ namespace System.Web.Services.Description {
 
 		#region Constructors
 	
-		internal ServiceDescriptionFormatExtensionCollection (object parent) 
+		public ServiceDescriptionFormatExtensionCollection (object parent) 
 		{
 			this.parent = parent;
 		}
@@ -37,6 +37,7 @@ namespace System.Web.Services.Description {
 
 				return List[index]; 
 			}
+			set { List[index] = value; }
 		}
 
 		#endregion // Properties

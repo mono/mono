@@ -7,7 +7,11 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Web.Services.Configuration;
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
+	[XmlFormatExtensionPoint ("Extensions")]
 	public sealed class OperationBinding : DocumentableItem {
 
 		#region Fields
@@ -40,24 +44,29 @@ namespace System.Web.Services.Description {
 			get { return binding; }
 		}
 
+		[XmlIgnore]
 		public ServiceDescriptionFormatExtensionCollection Extensions {
 			get { return extensions; }
 		}
 
+		[XmlElement ("fault")]
 		public FaultBindingCollection Faults {
 			get { return faults; }
 		}
 
+		[XmlElement ("input")]
 		public InputBinding Input {
 			get { return input; }
 			set { input = value; }
 		}
 
+		[XmlAttribute ("name", DataType = "NCName")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
+		[XmlElement ("output")]
 		public OutputBinding Output {
 			get { return output; }
 			set { output= value; }

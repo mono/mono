@@ -7,6 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
 	public sealed class Service : DocumentableItem {
 
@@ -33,15 +35,18 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlIgnore]
 		public ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}
-	
+
+		[XmlAttribute ("name", DataType = "NCName")]	
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
-	
+
+		[XmlElement ("port")]	
 		public PortCollection Ports {
 			get { return ports; }
 		}

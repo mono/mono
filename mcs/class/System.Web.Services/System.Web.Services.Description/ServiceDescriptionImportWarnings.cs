@@ -8,6 +8,7 @@
 //
 
 namespace System.Web.Services.Description {
+	[Serializable]
 	public enum ServiceDescriptionImportWarnings {
 		NoCodeGenerated,
 		NoMethodsGenerated,

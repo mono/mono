@@ -7,7 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using System.Web.Services;
+using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	public abstract class ServiceDescriptionFormatExtension {
@@ -33,6 +34,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlIgnore]
 		public bool Handled {
 			get { return handled; }
 			set { handled = value; }
@@ -42,6 +44,8 @@ namespace System.Web.Services.Description {
 			get { return parent; }
 		}
 
+		[DefaultValue (false)]
+		[XmlAttribute ("required", Namespace = "http://schemas.xmlsoap.org/wsdl/")]
 		public bool Required {	
 			get { return required; }
 			set { required = value; }

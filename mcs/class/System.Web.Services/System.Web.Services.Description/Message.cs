@@ -9,6 +9,7 @@
 
 using System.Collections;
 using System.Web.Services;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	public sealed class Message : DocumentableItem {
@@ -34,14 +35,15 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlAttribute ("name", DataType = "NCName")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
+		[XmlElement ("part")]
 		public MessagePartCollection Parts {
 			get { return parts; }
-			set { parts = value; }
 		}
 
 		public ServiceDescription ServiceDescription {

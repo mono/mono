@@ -21,6 +21,7 @@ namespace System.Web.Services.Description {
 
 				return (MimeTextMatch) List [index]; 
 			}
+			set { List[index] = value; }
 		}
 
 		#endregion // Properties

@@ -7,9 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using System.Web.Services;
-
 namespace System.Web.Services.Description {
+	[Serializable]
 	public enum OperationFlow {
 		None,
 		Notification,

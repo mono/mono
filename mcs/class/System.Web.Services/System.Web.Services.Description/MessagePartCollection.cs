@@ -33,6 +33,8 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (MessagePart) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public MessagePart this [string name] {

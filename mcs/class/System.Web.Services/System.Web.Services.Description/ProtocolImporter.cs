@@ -91,7 +91,7 @@ namespace System.Web.Services.Description {
 			get { throw new NotImplementedException (); }
 		}
 
-		public string MessageName {
+		public string MethodName {
 			[MonoTODO]	
 			get { throw new NotImplementedException (); }
 		}

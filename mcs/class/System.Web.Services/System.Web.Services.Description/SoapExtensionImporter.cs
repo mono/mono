@@ -20,7 +20,7 @@ namespace System.Web.Services.Description {
 
 		#region Constructors
 	
-		public SoapExtensionImporter ()
+		protected SoapExtensionImporter ()
 		{
 		}
 		

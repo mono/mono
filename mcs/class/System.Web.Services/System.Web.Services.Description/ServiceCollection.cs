@@ -7,6 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Web.Services;
+
 namespace System.Web.Services.Description {
 	public sealed class ServiceCollection : ServiceDescriptionBaseCollection {
 		
@@ -34,6 +36,8 @@ namespace System.Web.Services.Description {
 
 				return (Service) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public Service this [string name] {

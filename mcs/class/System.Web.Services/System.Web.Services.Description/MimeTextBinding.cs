@@ -7,7 +7,12 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Web.Services.Configuration;
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
+	[XmlFormatExtension ("text", "http://microsoft.com/wsdl/mime/textMatching/", typeof (InputBinding), typeof (OutputBinding), typeof (MimePart))]
+	[XmlFormatExtensionPrefix ("tm", "http://microsoft.com/wsdl/mime/textMatching/")]
 	public sealed class MimeTextBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
@@ -27,7 +32,8 @@ namespace System.Web.Services.Description {
 		#endregion // Constructors
 
 		#region Properties
-	
+
+		[XmlElement ("match", typeof (MimeTextMatch))]	
 		public MimeTextMatchCollection Matches {
 			get { return matches; }
 		}

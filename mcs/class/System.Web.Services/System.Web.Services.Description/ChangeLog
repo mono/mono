@@ -1,3 +1,71 @@
+2002-07-22 Tim Coleman <tim@timcoleman.com>	
+	* Binding.cs:
+	* BindingCollection.cs:
+	* DocumentableItem.cs:
+	* FaultBinding.cs:
+	* FaultBindingCollection.cs:
+	* HttpAddressBinding.cs:
+	* HttpBinding.cs:
+	* HttpOperationBinding.cs:
+	* HttpUrlEncodedBinding.cs:
+	* HttpUrlReplacementBinding.cs:
+	* Import.cs:
+	* ImportCollection.cs:
+	* InputBinding.cs:
+	* Message.cs:
+	* MessageBinding.cs:
+	* MessageCollection.cs:
+	* MessagePart.cs:
+	* MessagePartCollection.cs:
+	* MimeContentBinding.cs:
+	* MimeMultipartRelatedBinding.cs:
+	* MimePart.cs:
+	* MimePartCollection.cs:
+	* MimeTextBinding.cs:
+	* MimeTextMatch.cs:
+	* MimeTextMatchCollection.cs:
+	* MimeXmlBinding.cs:
+	* Operation.cs:
+	* OperationBinding.cs:
+	* OperationBindingCollection.cs:
+	* OperationCollection.cs:
+	* OperationFaultCollection.cs:
+	* OperationFlow.cs:
+	* OperationMessage.cs:
+	* OperationMessageCollection.cs:
+	* OutputBinding.cs:
+	* Port.cs:
+	* PortCollection.cs:
+	* PortType.cs:
+	* PortTypeCollection.cs:
+	* ProtocolImporter.cs:
+	* Service.cs:
+	* ServiceCollection.cs:
+	* ServiceDescription.cs:
+	* ServiceDescriptionBaseCollection.cs:
+	* ServiceDescriptionCollection.cs:
+	* ServiceDescriptionFormatExtension.cs:
+	* ServiceDescriptionFormatExtensionCollection.cs:
+	* ServiceDescriptionImportWarnings.cs:
+	* SoapAddressBinding.cs:
+	* SoapBinding.cs:
+	* SoapBindingStyle.cs:
+	* SoapBindingUse.cs:
+	* SoapBodyBinding.cs:
+	* SoapExtensionImporter.cs:
+	* SoapExtensionReflector.cs:
+	* SoapFaultBinding.cs:
+	* SoapHeaderBinding.cs:
+	* SoapHeaderFaultBinding.cs:
+	* SoapOperationBinding.cs:
+	* SoapTransportImporter.cs:
+	* Types.cs:
+		1. Add missing attributes as determined by reflection
+		2. Fix protection levels where appropriate
+		3. Add missing items where appropriate
+		Basically, this was a change to remove all the X's from	
+		the project status page for this namespace :)
+
 2002-07-19 Tim Coleman  <tim@timcoleman.com>	
 	* Binding.cs:
 	* BindingCollection.cs:

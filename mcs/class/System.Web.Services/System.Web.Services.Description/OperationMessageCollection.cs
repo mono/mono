@@ -46,7 +46,7 @@ namespace System.Web.Services.Description {
 
 		public OperationOutput Output {
 			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { throw new NotImplementedException (); }
 		}
 
 		#endregion // Properties
@@ -98,7 +98,7 @@ namespace System.Web.Services.Description {
 			throw new NotImplementedException ();
 		}
 	
-		public void Remove (Operation operationMessage)
+		public void Remove (OperationMessage operationMessage)
 		{
 			List.Remove (operationMessage);
 		}

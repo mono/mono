@@ -30,6 +30,8 @@ namespace System.Web.Services.Description {
 
 				return (ServiceDescription) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public ServiceDescription this [string ns] {

@@ -7,6 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
 	public abstract class MessageBinding : DocumentableItem {
 
@@ -19,7 +21,7 @@ namespace System.Web.Services.Description {
 
 		#region Constructors
 		
-		public MessageBinding ()
+		protected MessageBinding ()
 		{
 			name = String.Empty;
 			operationBinding = new OperationBinding ();
@@ -29,10 +31,12 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlIgnore]
 		public abstract ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get;
 		}
-	
+
+		[XmlAttribute ("name", DataType = "NMTOKEN")]	
 		public string Name {
 			get { return name; }
 			set { name = value; }

@@ -7,6 +7,9 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.ComponentModel;
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
 	public abstract class DocumentableItem {
 
@@ -27,6 +30,8 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlElement ("documentation")]
+		[DefaultValue ("")]
 		public string Documentation {
 			get { return documentation; }
 			set { documentation = value; }

@@ -7,7 +7,11 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Web.Services.Configuration;
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
+	[XmlFormatExtensionPoint ("Extensions")]
 	public sealed class MimePart : ServiceDescriptionFormatExtension {
 
 		#region Fields
@@ -26,7 +30,8 @@ namespace System.Web.Services.Description {
 		#endregion // Constructors
 
 		#region Properties
-	
+
+		[XmlIgnore]	
 		public ServiceDescriptionFormatExtensionCollection Extensions {
 			get { return extensions; }
 		}

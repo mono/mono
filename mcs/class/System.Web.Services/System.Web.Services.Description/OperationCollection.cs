@@ -33,6 +33,7 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (Operation) List[index]; 
 			}
+			set { List[index] = value; }
 		}
 
 		#endregion // Properties

@@ -35,6 +35,8 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (Binding) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public Binding this [string name] {

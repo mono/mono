@@ -8,6 +8,7 @@
 //
 
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	public sealed class MessagePart : DocumentableItem {
@@ -35,6 +36,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlAttribute ("element")]
 		public XmlQualifiedName Element {
 			get { return element; }
 			set { element = value; }
@@ -43,12 +45,14 @@ namespace System.Web.Services.Description {
 		public Message Message {
 			get { return message; }
 		}
-		
+	
+		[XmlAttribute ("name", DataType = "NMTOKEN")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
+		[XmlAttribute ("type")]
 		public XmlQualifiedName Type {
 			get { return type; }
 			set { type = value; }

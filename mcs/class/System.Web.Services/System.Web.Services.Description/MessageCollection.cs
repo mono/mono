@@ -34,6 +34,8 @@ namespace System.Web.Services.Description {
 
 				return (Message) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public Message this [string name] {

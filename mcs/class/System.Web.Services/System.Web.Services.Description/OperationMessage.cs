@@ -9,6 +9,7 @@
 
 using System.Web.Services;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	public abstract class OperationMessage : DocumentableItem {
@@ -23,7 +24,7 @@ namespace System.Web.Services.Description {
 
 		#region Constructors
 		
-		public OperationMessage ()
+		protected OperationMessage ()
 		{
 			message = null;
 			name = String.Empty;
@@ -34,11 +35,13 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlAttribute ("message")]
 		public XmlQualifiedName Message {
 			get { return message; }
 			set { message = value; }
 		}
 
+		[XmlAttribute ("name", DataType = "NMTOKEN")]
 		public string Name {
 			get { return name; }
 			set { name = value; }

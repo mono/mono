@@ -7,7 +7,11 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.Web.Services.Configuration;
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Description {
+	[XmlFormatExtension ("multipartRelated", "http://schemas.xmlsoap.org/wsdl/mime/", typeof (InputBinding), typeof (OutputBinding))]
 	public sealed class MimeMultipartRelatedBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
@@ -26,7 +30,8 @@ namespace System.Web.Services.Description {
 		#endregion // Constructors
 
 		#region Properties
-	
+
+		[XmlElement ("parts")]	
 		public MimePartCollection Parts {
 			get { return parts; }
 		}

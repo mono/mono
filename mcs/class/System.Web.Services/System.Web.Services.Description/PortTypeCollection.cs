@@ -34,6 +34,8 @@ namespace System.Web.Services.Description {
 
 				return (PortType) List[index]; 
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 
 		public PortType this [string name] {

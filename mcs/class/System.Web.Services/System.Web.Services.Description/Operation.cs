@@ -7,7 +7,9 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.ComponentModel;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	public sealed class Operation : DocumentableItem {
@@ -17,9 +19,9 @@ namespace System.Web.Services.Description {
 		OperationFaultCollection faults;
 		OperationMessageCollection messages;
 		string name;
-		public string[] parameterOrder;
-		public string parameterOrderString;
-		public PortType portType;
+		string[] parameterOrder;
+		string parameterOrderString;
+		PortType portType;
 
 		#endregion // Fields
 
@@ -39,24 +41,31 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+		[XmlElement ("fault")]
 		public OperationFaultCollection Faults {
 			get { return faults; }
 		}
 
+		[XmlElement ("output", typeof (OperationOutput))]
+		[XmlElement ("input", typeof (OperationInput))]
 		public OperationMessageCollection Messages {
 			get { return messages; }
 		}
 
+		[XmlAttribute ("name", DataType = "NCName")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
+		[XmlIgnore]
 		public string[] ParameterOrder {
 			get { return parameterOrder; }
 			set { parameterOrder = value; }
 		}
 
+		[DefaultValue ("")]
+		[XmlAttribute ("parameterOrder")]
 		public string ParameterOrderString {
 			get { return String.Join (" ", parameterOrder); }
 			set { ParameterOrder = value.Split (' '); }

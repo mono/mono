@@ -15,18 +15,9 @@ namespace System.Web.Services.Description {
 		
 		#region Fields
 
-		Hashtable table;
+		Hashtable table = new Hashtable ();
 
 		#endregion // Fields
-
-		#region Constructors
-	
-		protected internal ServiceDescriptionBaseCollection ()
-		{
-			table = new Hashtable ();
-		}
-
-		#endregion // Constructors
 
 		#region Properties
 
