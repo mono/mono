@@ -11,6 +11,7 @@ using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using System.Text;
 
 namespace System.Xml.XPath
 {
@@ -333,13 +334,13 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override int Minargs { get { return 2; }}
 		public override int Maxargs { get { return int.MaxValue; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.String, XPathResultType.String }; }}
+		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any, XPathResultType.Any, XPathResultType.Any }; }}
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			String str = "";
-			foreach (string strArg in args)
-				str += strArg;
-			return str;
+			StringBuilder sb = new StringBuilder ();
+			foreach (object arg in args)
+				sb.Append (XPathFunctions.ToString (arg));
+			return sb.ToString ();
 		}
 		public override string Name { get { return "concat"; }}
 	}
