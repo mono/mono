@@ -1,6 +1,12 @@
+2003-05-25  Joel Basson  <jstrike@mweb.co.za>
+
+* Added Shortcut and Checked property to MenuItem.cs
+* Updated Demo2.cs to demonstrate new properties 
+
 2003-05-24  Joel Basson  <jstrike@mweb.co.za>
+
 * MainMenu.cs
-* MenuItems.cs
+* MenuItem.cs
 * Some more work done to MessageBox.cs
 
 2003-05-11  Joel Basson  <jstrike@mweb.co.za>

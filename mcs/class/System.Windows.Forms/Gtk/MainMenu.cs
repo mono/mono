@@ -55,10 +55,7 @@ namespace System.Windows.Forms{
 		private void CreateMenuBar (){
 			
 			mb = new Gtk.MenuBar ();
-			// you cannot call this because then locationchanged gets triggered
-			// and that means that a parent will be set for this widget
-			//this.Location = new Point(0, 0);
-			//this.Size = new Size(1024, 27);
+			
 		}
 
 	}

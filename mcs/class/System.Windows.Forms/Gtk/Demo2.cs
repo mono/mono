@@ -45,8 +45,10 @@ namespace demo2
 			menuItem1.Text = "File";
 			menuItem2.Text = "Exit";
 			menuItem3.Text = "Edit";
-			menuItem4.Text = "Stop";
-			menuItem5.Text = "Start";
+			menuItem4.Text = "&Stop";
+			menuItem4.Shortcut = Shortcut.CtrlN;
+			menuItem5.Text = "&Start";
+			menuItem5.Checked = true;
 			menuItem1.MenuItems.Add(menuItem2);
 			menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {menuItem4,
 							       menuItem5});	
@@ -77,14 +79,13 @@ namespace demo2
     	}
 
 		private void button1_Click(object sender, EventArgs e){ 
-			color1.ShowDialog();		
+			color1.ShowDialog();			
   		}
 
 		private void button2_Click(object sender, EventArgs e){ 
 			combo1.BeginUpdate();
 			for (int i = 1; i < 5; i++) {combo1.Items.Add("Joel");}
 			combo1.EndUpdate();	
- 	
   		}
 
 	 }

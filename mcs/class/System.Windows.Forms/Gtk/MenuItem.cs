@@ -14,7 +14,9 @@ namespace System.Windows.Forms{
 
 		public MenuItemCollection MenuItems;
 		internal Gtk.MenuItem file_item;
-		String text;
+		String text, text2;
+		int check1;
+		bool blChecked;
 		
 		public class MenuItemCollection{
 
@@ -51,19 +53,58 @@ namespace System.Windows.Forms{
 
 		public override String Text{
 			get{
-				return text;
+				return text2;
 			}
 			set{
-				text = value;
-				CreateMenuItem();
+				text2 = value; 
+				if (text == null){
+					text = value.Replace("&", "_");
+					CreateMenuItem();
+				}	
 			}
 		}	
 		
-		public void CreateMenuItem (){
-			
-			file_item = new Gtk.MenuItem(text);			
-			file_item.Show();
+		private void CreateMenuItem (){
+			if (check1 != 1) {
+				file_item = new Gtk.MenuItem(text);			
+				file_item.Show();
+			}
+			else{
+			CreateCheckMenu();	
+			}				
+		}
+		
+		public Shortcut Shortcut {
+			get{
+				throw new NotImplementedException ();
+			}
+			set{
+				if (value == Shortcut.CtrlN){
+				  file_item.AddAccelerator("activate", new Gtk.AccelGroup(), 'N', Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible);
+				}
+			}
+		}
+		
+		public bool Checked {	
+			get{
+				return blChecked;
+			}
+			set{
+				if (check1 != 1){  
+					file_item = new Gtk.CheckMenuItem(text);
+					file_item.Show();
+					check1 = 1;
+				}
+				((Gtk.CheckMenuItem)file_item).Active = value;
+				blChecked = value;
+			}
+		}
 
+		private void CreateCheckMenu () {
+			file_item = new Gtk.CheckMenuItem(text);
+			file_item.Show();
+			((Gtk.CheckMenuItem)file_item).Active = blChecked;
+			check1 = 1;
 		}
 
 	}

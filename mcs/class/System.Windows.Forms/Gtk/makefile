@@ -32,6 +32,7 @@ SOURCES = \
 	MessageBoxButtons.cs	\
 	MenuItem.cs	\
 	MainMenu.cs	\
+	Shortcut.cs	\
 	ScrollableControl.cs
 
 all: demo.exe Demo2.exe
