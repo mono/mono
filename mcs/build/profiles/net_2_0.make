@@ -15,9 +15,6 @@
 # in the MONO_PATH too).
 
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
-ifdef PLATFORM_MONO_NATIVE
-TEST_RUNTIME = MONO_PATH=".:$$MONO_PATH" $(RUNTIME) --debug
-endif
 
 # nuttzing!
 

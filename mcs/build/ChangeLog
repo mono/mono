@@ -1,3 +1,12 @@
+2004-09-14  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (test_lib, btest_lib): Build separate test
+	assemblies for separate profiles.
+	(dist-local): Don't copy files beginning with '../'.
+	* rules.make (dist-default): Handle any of Makefile, makefile, or
+	GNUmakefile being present.
+	* profiles/net_2_0.make (TEST_RUNTIME): Don't define.
+
 2004-08-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* executable.make:

@@ -131,11 +131,16 @@ dist-recursive: dist-local
 #
 # Note that we error out if we try to dist a nonexistant
 # file. Seems reasonable to me.
+#
+# Pick up Makefile, makefile, or GNUmakefile
 
 dist-default:
-	-mkdir $(distdir)
+	-mkdir -p $(distdir)
 	test '!' -f ChangeLog || cp ChangeLog $(distdir)
-	for f in Makefile $(DISTFILES) ; do \
+	if test -f Makefile; then m=M; fi; \
+	if test -f makefile; then m=m; fi; \
+	if test -f GNUmakefile; then m=GNUm; fi; \
+	for f in $${m}akefile $(DISTFILES) ; do \
 	    dest=`dirname $(distdir)/$$f` ; \
 	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
 	done

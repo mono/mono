@@ -46,24 +46,24 @@ test_dep = $(the_lib)
 endif
 
 ifndef test_lib
-test_lib = $(LIBRARY:.dll=_test.dll)
+test_lib = $(LIBRARY:.dll=_test_$(PROFILE).dll)
 endif
 test_pdb = $(test_lib:.dll=.pdb)
-test_sourcefile = $(test_lib).sources
+test_sourcefile = $(LIBRARY:.dll=_test.dll.sources)
 test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
 test_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
-library_CLEAN_FILES += $(test_lib) $(test_pdb) $(test_response) $(test_makefrag)
+library_CLEAN_FILES += $(LIBRARY:.dll=_test*.dll) $(LIBRARY:.dll=_test*.pdb) $(test_response) $(test_makefrag)
 
 ifndef btest_lib
-btest_lib = $(LIBRARY:.dll=_btest.dll)
+btest_lib = $(LIBRARY:.dll=_btest_$(PROFILE).dll)
 endif
 btest_pdb = $(btest_lib:.dll=.pdb)
-btest_sourcefile = $(btest_lib).sources
+btest_sourcefile = $(LIBRARY:.dll=_btest.dll.sources)
 btest_response = $(depsdir)/$(btest_lib).response
 btest_makefrag = $(depsdir)/$(btest_lib).makefrag
 btest_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
-library_CLEAN_FILES += $(btest_lib) $(btest_pdb) $(btest_response) $(btest_makefrag)
+library_CLEAN_FILES += $(LIBRARY:.dll=_btest*.dll) $(LIBRARY:.dll=_btest*.pdb) $(btest_response) $(btest_makefrag)
 
 ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
@@ -180,9 +180,10 @@ endif
 
 dist-local: dist-default
 	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
-	    dest=`dirname $(distdir)/$$f` ; \
-	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
-	done
+	  case $$f in \
+	  ../*) : ;; \
+	  *) dest=`dirname $(distdir)/$$f` ; $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ;; \
+	  esac ; done
 
 ifndef LIBRARY_COMPILE
 LIBRARY_COMPILE = $(CSCOMPILE)
