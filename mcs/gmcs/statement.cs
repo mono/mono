@@ -530,7 +530,8 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			expr = expr.ResolveStatement (ec);
+			if (expr != null)
+				expr = expr.ResolveStatement (ec);
 			return expr != null;
 		}
 		
@@ -2071,7 +2072,7 @@ namespace Mono.CSharp {
 
 			if (emit_debug_info) {
 				if (is_lexical_block)
-					ec.ig.BeginScope ();
+					ec.BeginScope ();
 
 				if (variables != null) {
 					foreach (DictionaryEntry de in variables) {
@@ -2091,7 +2092,7 @@ namespace Mono.CSharp {
 			ec.Mark (EndLocation, true); 
 
 			if (emit_debug_info && is_lexical_block)
-				ec.ig.EndScope ();
+				ec.EndScope ();
 
 			ec.CurrentBlock = prev_block;
 		}

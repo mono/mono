@@ -1,3 +1,31 @@
+2005-02-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Atttribute.Resolve): Add cache for parameter-less
+	attributes. Removed useless attribute double check.
+	It saves almost 2MBs for corlib.
+
+2005-02-25  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #72924.
+	* statement.cs (ExpressionStatement.Resolve): Make robust to being
+	called twice in case of error.
+
+2005-02-23  Chris Toshok  <toshok@ximian.com>
+
+	Fix compiler portions of #72827.
+	* statement.cs (Block.Emit): call Begin/EndScope on the
+	EmitContext instead of the ILGenerator.
+
+	* codegen.cs (EmitContext.BeginScope): new method, call
+	ILGenerator.BeginScope as well as the SymbolWriter's OpenScope (if
+	we have one.)
+	(EmitContext.BeginScope): same, but EndScope and CloseScope
+
+	* symbolwriter.cs (SymbolWriter.OpenScope): get the current il
+	offset and call the superclass's OpenScope(int) with it.
+	(SymbolWriter.CloseScope): get the current il
+	offset and call superclass's CloseScope(int) with it.
+
 2005-02-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* anonymous.cs (AnonymousMethod.Compatible): Fixed to report
