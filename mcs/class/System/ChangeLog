@@ -1,3 +1,11 @@
+2004-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (lib_file) [PROFILE=net_2_0]: New test.  Use
+	net_2_0_bootstrap libraries if necessary.
+	($(the_lib)): Don't depend on a phony target.  Move 'echo-warning' ...
+	(all-local): ... here.  Will now warn unnecessarily, but is better
+	than rebuilding the library each time.
+
 2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System.dll.sources: Moved ReadOnlyCollection.cs and Collection.cs
