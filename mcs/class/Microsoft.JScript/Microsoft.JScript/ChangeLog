@@ -1,3 +1,28 @@
+2003-12-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: keep track of parent reference for
+	IDENTIFIER, STRING_LITERAL.
+
+	* expression.cs: Added 'binding' field. Added 'parent' parameter
+	to constructor. Now we emit the proper code for the identifier.
+
+	* VariableStatement.cs: updated to field names instead of the old
+	property's name.
+
+	* VariableDeclaration.cs: Added class Decl, it constains the
+	references to the static field or LocalBuilder that are created
+	when a declaration is emitted. Deleted unuseful properties (Id,
+	InitValue, Type).
+
+	* SymbolTable.cs: Deleted Retrieve method. Contains now returns an
+	object instead of a boolean.
+
+	* StringLiteral.cs: Deleted unuseful properties. Use ig instead of ec.ig.
+
+	* IdentificationTable.cs: Deleted Retrieve method. Contains method
+	now return an object instead of a boolean, that reference is the
+	binding associated with the identifier being searched.
+
 2003-12-18  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: Keep track of parent for numeric_literal.
