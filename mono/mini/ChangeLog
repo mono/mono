@@ -1,5 +1,8 @@
 2004-03-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-long32.brg (OP_LNEG): Use ADC instead of ADD here. Fixes
+	#56223.
+
 	* basic-long.cs: Add test for negation of Int64.MinValue.
 
 2004-03-30  Zoltan Varga  <vargaz@freemail.hu>
