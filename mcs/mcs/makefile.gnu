@@ -1,5 +1,5 @@
 MCS = mcs
-MCS_FLAGS = --debug --fatal --target exe
+MCS_FLAGS = --fatal --target exe
 
 COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs location.cs
 
