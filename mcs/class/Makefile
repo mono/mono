@@ -41,6 +41,8 @@ SUBDIRS = \
 	Mono.Directory.LDAP		\
 	Mono.Security.Win32		\
 	System.DirectoryServices	\
+	System.Messaging	\
+	System.ServiceProcess \
 #	Microsoft.Vsa			\
 #	Microsoft.JScript		\
 
