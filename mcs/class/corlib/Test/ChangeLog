@@ -1,3 +1,7 @@
+2001-10-02  Martin Weindel <martin.weindel@t-online.de>
+  * added directory System
+  * added tests for System.Int64
+
 2001-08-29  Alexander Klyubin <klyubin@aqris.com>
   
   * Added tests for System.Diagnostics.StackFrame and
