@@ -1,3 +1,13 @@
+2002-04-12  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.h (MonoDebugLocalInfo): New type. This contains the
+	stack offset and begin/end scope address of a local variable.
+	(MonoDebugMethodInfo): Replaced `guint32 *local_offsets' with
+	'MonoDebugLocalInfo *locals', added `prologue_end' and `epilogue_begin'.
+	(MONO_DEBUG_SYMBOL_FILE_VERSION): Increase to 8.
+
+	* debug-symfile.c (MRT_variable_start_scope, MRT_variable_end_scope):
+	Added new relocation types for start/end scope of a local variable.
 
 Fri Apr 12 18:30:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
