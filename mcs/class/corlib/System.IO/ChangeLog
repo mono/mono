@@ -1,3 +1,8 @@
+2003-06-02  Nick Drochak <ndrochak@gol.com>
+
+	* FileInfo.cs (MoveTo): Throw exceptions when dest exists, and check
+	for null too.
+
 2003-05-27  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BinaryReader.cs: Stream don't need to be seekable to use PeekChar.

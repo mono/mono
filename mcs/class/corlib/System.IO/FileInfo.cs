@@ -134,6 +134,12 @@ namespace System.IO {
 		}
 		
 		public void MoveTo (string dest) {
+			if (dest == null)
+				throw new ArgumentNullException ();
+			MonoIOError error;
+			if (MonoIO.Exists (dest, out error) ||
+				MonoIO.ExistsDirectory (dest, out error))
+				throw new IOException ();
 			File.Move (FullPath, dest);
 		}
 
