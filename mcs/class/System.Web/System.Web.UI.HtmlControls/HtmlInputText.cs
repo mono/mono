@@ -21,10 +21,10 @@ namespace System.Web.UI.HtmlControls{
 		public HtmlInputText(string type):base(type){}
 		public HtmlInputText():base("text"){}
 		
-		protected override void OnPreRender(EventArgs e){
-			if (Events[EventServerChange] != null && !Disabled){
+		protected override void OnPreRender (EventArgs e)
+		{
+			if (Events [EventServerChange] == null && !Disabled)
 				ViewState.SetItemDirty("value",false);
-			}
 		}
 		
 		protected virtual void OnServerChange (EventArgs e)
@@ -35,8 +35,9 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected override void RenderAttributes(HtmlTextWriter writer){
 			//hide value when password box
-			if (String.Compare (Type, "password",true) != 0)
-				ViewState.Remove("value");
+			if (String.Compare (Type, "password",true) == 0)
+				ViewState.Remove ("value");
+
 			base.RenderAttributes(writer);
 		}
 		

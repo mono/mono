@@ -1,3 +1,7 @@
+2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputText.cs: fixed bug #35670.
+
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlSelect.cs: fixed LoadViewstate.
