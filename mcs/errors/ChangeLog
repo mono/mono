@@ -1,5 +1,9 @@
 2004-08-27  Martin Baulig  <martin@ximian.com>
 
+	* Makefile (test-everything): New target.
+
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
 	* gmcs-ignore-tests: New file.  This file lists tests which should
 	not be run at all because they make the compiler hang.
 

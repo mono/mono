@@ -21,6 +21,11 @@ DISTFILES = \
 	runtest.pl		\
 	$(wildcard *.cs)
 
+#
+# This is the target which is run by buildbot.
+#
+test-everything: run-test-local
+
 #all-local: run-test-local test-multi-local
 all-local: CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
 CS3005-16-lib.dll CS3013-module.dll
