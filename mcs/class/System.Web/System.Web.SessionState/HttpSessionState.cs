@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
 using System.Collections;
@@ -15,7 +15,6 @@ using System.Threading;
 namespace System.Web.SessionState {
 public sealed class HttpSessionState : ICollection, IEnumerable
 {
-	private NameValueCollection _state; //FIXME: it should be a ManagementNamedValueCollection
 	private string _id;
 	private SessionDictionary _dict;
 	private HttpStaticObjectsCollection _staticObjects;
@@ -59,7 +58,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	public int Count
 	{
-		get { return _state.Count; }
+		get { return _dict.Count; }
 	}
 
 	internal bool IsAbandoned
@@ -89,22 +88,22 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	public object this [string key]
 	{
-		get { return _state [key]; }
-		set { _state [key] = (string) value; }
+		get { return _dict [key]; }
+		set { _dict [key] = value; }
 	}
 
 	public object this [int index]
 	{
-		get { return _state [index]; }
+		get { return _dict [index]; }
 		set {
-			string key = _state.Keys [index];
-			_state [key] = (string) value;
+			string key = _dict.Keys [index];
+			_dict [key] = value;
 		}
 	}
 
 	public NameObjectCollectionBase.KeysCollection Keys
 	{
-		get { return _state.Keys; }
+		get { return _dict.Keys; }
 	}
 
 	public int LCID
@@ -146,53 +145,40 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	public void Add (string name, object value)
 	{
-		if (_state == null)
-			_state = new NameValueCollection ();
-
-		_state.Add (name, (string) value);
+		_dict [name] = value;
 	}
 
 	public void Clear ()
 	{
-		if (_state != null)
-			_state.Clear ();
+		if (_dict != null)
+			_dict.Clear ();
 	}
 	
 	public void CopyTo (Array array, int index)
 	{
-		if (_state == null)
-			_state = new NameValueCollection ();
-
-		_state.CopyTo (array, index);
+		NameObjectCollectionBase.KeysCollection all = Keys;
+		for (int i = 0; i < all.Count; i++)
+			array.SetValue (_dict [all [i]], i + index);
 	}
 
 	public IEnumerator GetEnumerator ()
 	{
-		if (_state == null)
-			_state = new NameValueCollection ();
-
-		return _state.GetEnumerator ();
+		return _dict.GetEnumerator ();
 	}
 	
 	public void Remove (string name)
 	{
-		if (_state != null)
-			_state.Remove (name);
+		_dict.Remove (name);
 	}
 
 	public void RemoveAll ()
 	{
-		if (_state != null)
-			foreach (string key in _state.AllKeys)
-				_state.Remove (key);
+		_dict.Clear ();
 	}
 
-	[MonoTODO("Implement ManagementNameValueCollection")]
 	public void RemoveAt (int index)
 	{
-		throw new NotImplementedException ();
-		//if (_state != null)
-		//	_state.RemoveAt (index);
+		_dict.RemoveAt (index);
 	}
 }
 }
