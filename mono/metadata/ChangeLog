@@ -1,4 +1,8 @@
 
+Tue Sep 24 11:17:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: updates from Zoltan.2.Varga@nokia.com.
+
 Tue Sep 24 11:09:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: cleanup: use mono_object_domain ().
