@@ -305,11 +305,11 @@ public struct TimeSpan :  IComparable  {
 			res += Math.Abs (Days) + "." ;
 		}
 
-		res += string.Format ("{0:00}:{1:00}:{2:00}", Math.Abs(Hours), Math.Abs(Minutes), Math.Abs(Seconds));
+		res += string.Format ("{0:D2}:{1:D2}:{2:D2}", Math.Abs(Hours), Math.Abs(Minutes), Math.Abs(Seconds));
 
 		int fractional = (int) Math.Abs (_ticks % TicksPerSecond);
 		if (fractional != 0) {
-			res += string.Format (".{0:0000000}", fractional);
+			res += string.Format (".{0:D7}", fractional);
 		}
  
 		return res;

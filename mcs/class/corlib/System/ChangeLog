@@ -1,3 +1,9 @@
+2002-03-13  Duco Fijma  <duco@lorentz.xs4all.n>
+	* TimeSpan.cs: removed the use of Custom Numeric Format Strings,
+	such as 42.ToString("0000000"), as these are (currently) not implemented
+	in System.IntegerFormatter. TimeSpan luckely can do with Standard
+	Numeric Format Strings, such as 42.ToString("D7").
+
 2002-03-12  Duncan Mak  <duncan@ximian.com>
 
 	* FieldAccessException.cs: 
