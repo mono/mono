@@ -1,3 +1,10 @@
+2002-08-06  Tim Coleman <tim@timcoleman.com>
+	* XmlSerializer.cs:
+		Some reformatting of code for readability.
+		Modify to correctly serialize ICollection objects
+		such as the BindingCollection of a ServiceDescription
+		for example.
+
 2002-08-03  Tim Coleman <tim@timcoleman.com>
 	* XmlSerializer.cs: 
 		Changed Implements() to check based on name rather

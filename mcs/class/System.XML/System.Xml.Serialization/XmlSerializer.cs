@@ -167,16 +167,14 @@ namespace System.Xml.Serialization
 
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
 		{	
-
 			Type objType = o.GetType();
 			string rootName = objType.Name;
 			string rootNs	= String.Empty;
 			string rootPrefix = String.Empty;
 
 			if(namespaces == null)
-			{
 				namespaces = new XmlSerializerNamespaces();
-			}
+
 			if(namespaces.Count == 0)
 			{
 				namespaces.Add("xsd", System.Xml.Schema.XmlSchema.Namespace);
@@ -218,38 +216,30 @@ namespace System.Xml.Serialization
 				FieldInfo fInfo = member as FieldInfo;
 				PropertyInfo propInfo = member as PropertyInfo;
 				XmlSerializerNamespaces xns;
+
 				if(fInfo != null)
 					xns = (XmlSerializerNamespaces) fInfo.GetValue(o);
 				else
 					xns = (XmlSerializerNamespaces) propInfo.GetValue(o,null);
 				
 				qnames = xns.ToArray();
+
 				foreach(XmlQualifiedName qname in qnames)
-				{
 					nss.Add(qname.Name, qname.Namespace);
-				}				
 			}
+
 			//XmlNs from the namespaces passed
 			qnames = namespaces.ToArray();
 			foreach(XmlQualifiedName qname in qnames)
-			{
 				if(writer.LookupPrefix(qname.Namespace) != qname.Name)
-				{
 					nss.Add(qname.Name, qname.Namespace);
-				}
-			}
-
 
 			writer.WriteStartElement(rootPrefix,rootName, rootNs);
 
 			qnames = nss.ToArray();
 			foreach(XmlQualifiedName qname in qnames)
-			{
 				if(writer.LookupPrefix(qname.Namespace) != qname.Name)
-				{
 					writer.WriteAttributeString("xmlns", qname.Name, null, qname.Namespace);
-				}
-			}
 
 			if (rootPrefix == String.Empty && rootNs != String.Empty && rootNs != null)
 				writer.WriteAttributeString(String.Empty, "xmlns", null, rootNs);
@@ -261,13 +251,13 @@ namespace System.Xml.Serialization
 		private void SerializeMembers ( XmlWriter writer, object o, bool isRoot)
 		{
 			Type objType = o.GetType();
+
 			XmlAttributes XnsAttrs = (XmlAttributes)((object[])typeTable[objType])[1];
 			ArrayList attrList = (ArrayList)((object[])typeTable[objType])[2];
 			ArrayList elemList = (ArrayList)((object[])typeTable[objType])[3];
 
 
-			if(!isRoot && XnsAttrs != null)
-			{
+			if(!isRoot && XnsAttrs != null) {
 				MemberInfo member = XnsAttrs.MemberInfo;
 				FieldInfo fInfo = member as FieldInfo;
 				PropertyInfo propInfo = member as PropertyInfo;
@@ -279,15 +269,12 @@ namespace System.Xml.Serialization
 				
 				XmlQualifiedName[] qnames = xns.ToArray();
 				foreach(XmlQualifiedName qname in qnames)
-				{
 					if(writer.LookupPrefix(qname.Namespace) != qname.Name)
 						writer.WriteAttributeString("xmlns", qname.Name, null, qname.Namespace);
-				}
 			}
 
 			//Serialize the Attributes.
-			foreach(XmlAttributes attrs in attrList)
-			{
+			foreach(XmlAttributes attrs in attrList) {
 				MemberInfo member = attrs.MemberInfo;
 				FieldInfo fInfo = member as FieldInfo;
 				PropertyInfo propInfo = member as PropertyInfo;
@@ -356,11 +343,11 @@ namespace System.Xml.Serialization
 			}
 
 			//Serialize Elements
-			foreach(XmlAttributes attrs in elemList)
-			{
-				MemberInfo member	= attrs.MemberInfo;
-				FieldInfo fInfo		= member as FieldInfo;
+			foreach(XmlAttributes attrs in elemList) {
+				MemberInfo member = attrs.MemberInfo;
+				FieldInfo fInfo = member as FieldInfo;
 				PropertyInfo propInfo = member as PropertyInfo;
+
 				Type	elementType;
 				object	elementValue;
 				string	elementName;
@@ -379,18 +366,18 @@ namespace System.Xml.Serialization
 				else throw new Exception("should never happpen. Element is neither field nor property");
 
 				elementName = attrs.GetElementName(elementType, member.Name);
-				elementNs	= attrs.GetElementNamespace(elementType);
-
+				elementNs = attrs.GetElementNamespace(elementType);
 				WriteElement(writer, attrs, elementName, elementNs, elementType, elementValue);
 			}
 		}
 
-		private void WriteElement(XmlWriter writer, XmlAttributes attrs, 
-			string name, string ns, Type type, Object value)
+		private void WriteElement(XmlWriter writer, XmlAttributes attrs, string name, string ns, Type type, Object value)
 		{
 			if(IsInbuiltType(type))
 			{
-				writer.WriteElementString(name, ns,  "" + GetXmlValue(value));
+				string xmlValue = GetXmlValue (value);
+				if (xmlValue != String.Empty && xmlValue != null)
+					writer.WriteElementString(name, ns,  xmlValue);
 			}
 			else if(attrs.XmlText != null && value != null)
 			{
@@ -417,33 +404,31 @@ namespace System.Xml.Serialization
 				SerializeArray(writer, value);
 				writer.WriteEndElement();
 			}
-			else if(value is ICollection)
+			else if (value is ICollection)
 			{
 				BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-				//Find a non indexer Count Property with return type of int
-				PropertyInfo countProp = type.GetProperty("Count", flags, null, typeof(int),new Type[0], null);
-				PropertyInfo itemProp = type.GetProperty("Item", flags, null, null, new Type[1]{typeof(int)}, null);
-				int count = (int)countProp.GetValue(value,null);
-				object[] items = new object[1];
 
-				if(count > 0)
-				{
-					for(int i=0;i<count;i++)
-					{
+				//Find a non indexer Count Property with return type of int
+				PropertyInfo countInfo = type.GetProperty ("Count", flags, null, typeof (int), new Type[0], null);
+				PropertyInfo itemInfo = type.GetProperty ("Item", flags, null, null, new Type[1] {typeof(int)}, null);
+				int count = (int) countInfo.GetValue (value, null);
+
+				object[] items = new object [1];
+
+				if(count > 0) 
+					for(int i = 0; i < count; i++) {
 						items[0] = i;
-						object itemval = itemProp.GetValue(value, items);
-						string itemName;
-						string itemNs; 
-						if(itemval != null)
-						{
-							itemName = attrs.GetElementName(itemval.GetType(), name);
-							itemNs	= attrs.GetElementNamespace(itemval.GetType());
-							writer.WriteStartElement(itemName, itemNs);
-							SerializeMembers(writer, itemval, false);
-							writer.WriteEndElement();
+						object itemValue = itemInfo.GetValue (value, items);
+
+						if(itemValue != null) {
+							string itemName = attrs.GetElementName (itemValue.GetType (), name);
+							string itemNs = attrs.GetElementNamespace (itemValue.GetType ());
+
+							writer.WriteStartElement (itemName, itemNs);
+							SerializeMembers (writer, itemValue, false);
+							writer.WriteEndElement ();
 						}
 					}
-				}
 			}
 			else if(value is IEnumerable)
 			{
@@ -502,9 +487,7 @@ namespace System.Xml.Serialization
 			{
 				//There must be a public constructor
 				if(!HasDefaultConstructor(type))
-				{
 					throw new Exception("Can't Serialize Type " + type.Name + " since it does not have default Constructor");
-				}
 
 				if(type.GetInterface("ICollection") == typeof(System.Collections.ICollection))
 				{
@@ -514,8 +497,8 @@ namespace System.Xml.Serialization
 				
 				if(type.GetInterface("IEnumerable") == typeof(System.Collections.IEnumerable))
 				{
-					FillIEnumerableType(type);
-					return;
+					//FillIEnumerableType(type);
+					//return;
 				}
 			}
 
@@ -691,30 +674,19 @@ namespace System.Xml.Serialization
 			PropertyInfo itemProp = type.GetProperty("Item", flags, null, null, new Type[1]{typeof(int)}, null);
 			if(itemProp == null || !itemProp.CanRead || !itemProp.CanWrite)
 				throw new Exception("Cannot Serialize "+type+" because it does not have a read/write indexer property that takes an int as argument");
+			FillTypeTable (itemProp.PropertyType);
 		}
 
+		[MonoTODO]
 		private void FillIEnumerableType(Type type)
 		{
 			//Must implement a public Add method that takes a single parameter.
 			//The Add method's parameter must be of the same type as is returned from 
-			// the Current property on the value returned from GetEnumerator, or one of that type's bases.
-			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-			MethodInfo enumMethod = type.GetMethod("GetEnumerator", flags, null, new Type[0], null);
-			if(enumMethod == null)
-				throw new Exception("Cannot serialize "+type+" because it does not implement GetEnumerator");
+			//the Current property on the value returned from GetEnumerator, or one of that type's bases.
 
-			Type returnType = enumMethod.ReturnType;
-
-			while(returnType != null)
-			{
-				MethodInfo addMethod = type.GetMethod("Add", flags, null, new Type[1]{returnType},null);
-				if(addMethod != null)
-					return;
-				returnType = returnType.BaseType;
-			}
-			
-			throw new Exception("Cannot serialize "+type+" because it does not have a Add method which takes "
-					+enumMethod.ReturnType+" or one of its base types.");
+			// We currently ignore enumerable types anyway, so this method was junked.
+			// The code did not do what the documentation above says (if that is even possible!)
+			return;
 		}
 
 		private void FillEnum(Type type)
