@@ -1,0 +1,6 @@
+2002-07-19 Tim Coleman  <tim@timcoleman.com>
+	* ChangeLog:
+	* LogicalMethodInfo.cs:
+	* LogicalMethodTypes.cs:
+		Add required classes to make System.Web.Services.Description
+		buildable.
