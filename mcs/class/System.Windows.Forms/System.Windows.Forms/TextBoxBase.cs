@@ -54,6 +54,8 @@ namespace System.Windows.Forms {
 			SetStyle ( ControlStyles.FixedHeight, true );
 		}
 
+		[MonoTODO]
+			//this should be inherited
 		~TextBoxBase ( )
 		{
 			if ( backgrBrush != IntPtr.Zero )

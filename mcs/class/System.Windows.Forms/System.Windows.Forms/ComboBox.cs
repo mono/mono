@@ -772,6 +772,9 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[MonoTODO]
+		protected override void SetItemsCore (IList Items){
+		}
 	
 		/// --- Button events ---
 		/// commented out, cause it only supports the .NET Framework infrastructure

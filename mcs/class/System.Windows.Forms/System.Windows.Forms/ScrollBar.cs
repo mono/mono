@@ -199,6 +199,10 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		protected void UpdateScrollInfo()
+		{
+		}
+		[MonoTODO]
 		protected override void WndProc(ref Message m) {
 			switch ( m.Msg ) {
 				case Msg.WM_HSCROLL:

@@ -513,6 +513,15 @@ namespace System.Windows.Forms {
 			//FIXME:
 			base.SetBoundsCore(x, y, width, height, specified);
 		}
+
+		[MonoTODO]
+		protected override void SetItemCore (int index, object value) {
+			//FIXME:
+		}
+
+		protected override void SetItemsCore (IList Items){
+		}
+
 		[MonoTODO]
 		protected virtual void Sort() {
 			//FIXME:

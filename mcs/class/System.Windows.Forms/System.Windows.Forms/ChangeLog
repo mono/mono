@@ -1,8 +1,22 @@
+
 2003-09-01  Dennis Hayes <dennish@raytek.com>
 	* Application.cs
 	* DataGrid.cs
+	* ControlPaint.cs
 	* Control.cs
+	* Label.cs
+	* KeyEventArgs.cs
+	* ButtonBase.cs
+	* CheckBox.cs
+	* CheckedListBox.cs
 	* Form.cs
+	* ScrollableControl.cs
+	* TextBoxBase.cs
+	* ScrollBar.cs
+	* ListBox.cs
+	* ListControl.cs
+	* ComboBox.cs
+
 	* Signiture fixes. Most notably marked as protected internal
 	* some protected implmentation in Control.cs
 

@@ -58,8 +58,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal string getDisplayMemberOfObj (object obj)
-		{
+		internal string getDisplayMemberOfObj (object obj) {
 			string objectString = String.Empty;
 			Type t = obj.GetType();
 
@@ -116,8 +115,7 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public string GetItemText (object item)
-                {
+		public string GetItemText (object item) {
 			throw new NotImplementedException ();
 		}
 
@@ -150,47 +148,62 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
+
 		[MonoTODO]
-		protected override bool IsInputKey (Keys keyData)
-                {
+		protected object FilterItemOnProperty(object item){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected object FilterItemOnProperty(object item, string field){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override bool IsInputKey (Keys keyData) {
 			//FIXME:
 			return base.IsInputKey(keyData);
 		}
 		[MonoTODO]
-		protected virtual void OnDataSourceChanged (EventArgs e)
-                {
+		protected virtual void OnDataSourceChanged (EventArgs e) {
 			//FIXME:
 		}
 		[MonoTODO]
-		protected virtual void OnDisplayMemberChanged (EventArgs e)
-                {
+		protected virtual void OnDisplayMemberChanged (EventArgs e) {
 			//FIXME:
 		}
 
 		[MonoTODO]
-		protected virtual void OnSelectedIndexChanged (EventArgs e)
-                {
+		protected virtual void OnSelectedIndexChanged (EventArgs e) {
 			//FIXME:
 		}		
 		
 		[MonoTODO]
-		protected virtual void OnSelectedValueChanged (EventArgs e)
-                {
+		protected virtual void OnSelectedValueChanged (EventArgs e) {
 			//FIXME:
 		}
-
+		
 		public event EventHandler SelectedValueChanged;
 		public event EventHandler ValueMemberChanged;
 		
 		[MonoTODO]
-		protected override void OnBindingContextChanged (EventArgs e)
-                {
+		protected override void OnBindingContextChanged (EventArgs e) {
 			//FIXME:
 			base.OnBindingContextChanged(e);
 		}
+		
+		[MonoTODO]
+		protected virtual void OnValueMemberChanged (EventArgs e) {
+			//FIXME:
+		}
+
+		[MonoTODO]
+		protected virtual void SetItemCore (int index, object value) {
+			//FIXME:
+		}
+		protected abstract void SetItemsCore (IList Items);
 
 		[MonoTODO]
 		protected abstract void RefreshItem (int index);
-
 	}
 }

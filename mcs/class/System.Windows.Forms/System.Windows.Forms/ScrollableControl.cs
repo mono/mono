@@ -23,7 +23,7 @@ namespace System.Windows.Forms {
 		protected  const int ScrollStateFullDrag = 16;
 		protected  const int ScrollStateHScrollVisible = 2;
 		
-		protected  const int ScrollStateUserHasSCrolled = 8;
+		protected  const int ScrollStateUserHasScrolled = 8;
 		protected  const int ScrollStateVScrollVisible = 4;
 
 
@@ -177,11 +177,15 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		protected void SetAutoScrollMargin(int x,int y){
+		public void SetAutoScrollMargin(int x,int y){
 		}
 
 		[MonoTODO]
 		protected void SetScrollState(int bit,bool value){
+		}
+
+		[MonoTODO]
+		protected void SetDisplayRectLocation(int x,int y){
 		}
 
 		protected override void WndProc (ref Message m) {
