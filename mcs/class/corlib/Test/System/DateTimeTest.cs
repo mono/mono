@@ -67,12 +67,12 @@ public class DateTimeTest : TestCase
 		AssertEquals("B06", "02/25/2002 05:25:13", t1.ToString ("G"));
 		AssertEquals("B07", "February 25", t1.ToString ("m"));
 		AssertEquals("B08", "February 25", t1.ToString ("M"));
-		AssertEquals("B09", "Mon, 25 Feb 2002 05:25:13 GMT", t1.ToString ("r"));
-		AssertEquals("B10", "Mon, 25 Feb 2002 05:25:13 GMT", t1.ToString ("R"));
+		AssertEquals("B09", "Mon, 25 Feb 2002 04:25:13 GMT", t1.ToString ("r"));
+		AssertEquals("B10", "Mon, 25 Feb 2002 04:25:13 GMT", t1.ToString ("R"));
 		AssertEquals("B11", "2002-02-25T05:25:13", t1.ToString ("s"));
 		AssertEquals("B12", "05:25", t1.ToString ("t"));
 		AssertEquals("B13", "05:25:13", t1.ToString ("T"));
-		AssertEquals("B14", "2002-02-25 05:25:13Z", t1.ToString ("u"));
+		AssertEquals("B14", "2002-02-25 04:25:13Z", t1.ToString ("u"));
 		AssertEquals("B15", "Monday, 25 February 2002 04:25:13", t1.ToString ("U"));
 		AssertEquals("B16", "2002 February", t1.ToString ("y"));
 		AssertEquals("B17", "2002 February", t1.ToString ("Y"));
@@ -112,7 +112,7 @@ public class DateTimeTest : TestCase
 		AssertEquals("C32", " d", t1.ToString (" \\d"));
 	}
 
-	public void TestParse ()
+	public void TestParseExact ()
 	{
 		// Standard patterns
 		DateTime t1 = DateTime.ParseExact ("02/25/2002", "d", null);
@@ -127,7 +127,7 @@ public class DateTimeTest : TestCase
 		AssertEquals ("D05", myTicks[3], t1.Ticks);
 		t1 = DateTime.ParseExact ("02/25/2002 05:25:13", "G", null);
 		AssertEquals ("D06", myTicks[4], t1.Ticks);
-		t1 = DateTime.ParseExact ("2002-02-25 05:25:13Z", "u", null);
+		t1 = DateTime.ParseExact ("2002-02-25 04:25:13Z", "u", null);
 		AssertEquals ("D07", myTicks[4], t1.Ticks);
 		t1 = DateTime.ParseExact ("Monday, 25 February 2002 04:25:13", "U", null);
 		AssertEquals ("D08", myTicks[4], t1.Ticks);
@@ -140,9 +140,9 @@ public class DateTimeTest : TestCase
 		t1 = DateTime.ParseExact ("February 25", "M", null);
 		AssertEquals ("D10", t2.Ticks, t1.Ticks);
 
-		t1 = DateTime.ParseExact ("Mon, 25 Feb 2002 05:25:13 GMT", "r", null);
+		t1 = DateTime.ParseExact ("Mon, 25 Feb 2002 04:25:13 GMT", "r", null);
 		AssertEquals ("D11", myTicks[4], t1.Ticks);
-		t1 = DateTime.ParseExact ("Mon, 25 Feb 2002 05:25:13 GMT", "R", null);
+		t1 = DateTime.ParseExact ("Mon, 25 Feb 2002 04:25:13 GMT", "R", null);
 		AssertEquals ("D12", myTicks[4], t1.Ticks);
 
 		t1 = DateTime.ParseExact ("2002-02-25T05:25:13", "s", null);
@@ -221,7 +221,91 @@ public class DateTimeTest : TestCase
 		AssertEquals ("F03", t2.Ticks, t1.Ticks);
 		t1 = DateTime.ParseExact ("7:48PM +03:30", "h:mmtt zzz", null);
 		AssertEquals ("F04", t2.Ticks, t1.Ticks);
+
+		// Options
+		t2 = DateTime.Today + new TimeSpan (16, 18, 0);
+		t1 = DateTime.ParseExact ("11:18AM -5", "h:mmtt z",
+					  null, DateTimeStyles.AdjustToUniversal);
+		AssertEquals ("G01", t2.Ticks, t1.Ticks);
+
+		t1 = DateTime.ParseExact ("Monday, 25 February 2002 05:25:13", "F",
+					  null, DateTimeStyles.AdjustToUniversal);
+		AssertEquals ("G02", myTicks[4], t1.Ticks);
+		t1 = DateTime.ParseExact ("Monday, 25 February 2002 05:25:13",
+					  "dddd, dd MMMM yyyy HH:mm:ss",
+					  null, DateTimeStyles.AdjustToUniversal);
+		AssertEquals ("G03", myTicks[4], t1.Ticks);
+
+		t1 = DateTime.ParseExact ("02/25/2002", "d", null,
+					  DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("G04", myTicks[0], t1.Ticks);
+
+		t1 = DateTime.ParseExact ("    02/25/2002", "d", null,
+					  DateTimeStyles.AllowLeadingWhite);
+		AssertEquals ("G05", myTicks[0], t1.Ticks);
+
+		t1 = DateTime.ParseExact ("02/25/2002    ", "d", null,
+					  DateTimeStyles.AllowTrailingWhite);
+		AssertEquals ("G06", myTicks[0], t1.Ticks);
+
+		t1 = DateTime.ParseExact ("  02 / 25 / 2002    ", "d", null,
+					  DateTimeStyles.AllowWhiteSpaces);
+		AssertEquals ("G07", myTicks[0], t1.Ticks);
 	}
+
+	public void TestParse ()
+	{
+		// Standard patterns
+		DateTime t1 = DateTime.Parse ("02/25/2002");
+		AssertEquals ("H01", myTicks[0], t1.Ticks);
+		t1 = DateTime.Parse ("Monday, 25 February 2002");
+		AssertEquals ("H02", myTicks[0], t1.Ticks);
+		t1 = DateTime.Parse ("Monday, 25 February 2002 05:25");
+		AssertEquals ("H03", myTicks[3], t1.Ticks);
+		t1 = DateTime.Parse ("Monday, 25 February 2002 05:25:13");
+		AssertEquals ("H04", myTicks[4], t1.Ticks);
+		t1 = DateTime.Parse ("02/25/2002 05:25");
+		AssertEquals ("H05", myTicks[3], t1.Ticks);
+		t1 = DateTime.Parse ("02/25/2002 05:25:13");
+		AssertEquals ("H06", myTicks[4], t1.Ticks);
+		t1 = DateTime.Parse ("2002-02-25 04:25:13Z");
+		AssertEquals ("H07", myTicks[4], t1.Ticks);
+
+		DateTime t2 = new DateTime (DateTime.Today.Year, 2, 25);
+		t1 = DateTime.Parse ("February 25");
+		AssertEquals ("H08", t2.Ticks, t1.Ticks);
+
+		t2 = new DateTime (DateTime.Today.Year, 2, 8);
+		t1 = DateTime.Parse ("February 08");
+		AssertEquals ("H09", t2.Ticks, t1.Ticks);
+
+		t1 = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
+		AssertEquals ("H10", myTicks[4], t1.Ticks);
+
+		t1 = DateTime.Parse ("2002-02-25T05:25:13");
+		AssertEquals ("H11", myTicks[4], t1.Ticks);
+
+		t2 = DateTime.Today + new TimeSpan (5,25,0);
+		t1 = DateTime.Parse ("05:25");
+		AssertEquals("H12", t2.Ticks, t1.Ticks);
+
+		t2 = DateTime.Today + new TimeSpan (5,25,13);
+		t1 = DateTime.Parse ("05:25:13");
+		AssertEquals("H13", t2.Ticks, t1.Ticks);
+
+		t2 = new DateTime (2002, 2, 1);
+		t1 = DateTime.Parse ("2002 February");
+		AssertEquals ("H14", t2.Ticks, t1.Ticks);
+
+		t2 = new DateTime (2002, 2, 1);
+		t1 = DateTime.Parse ("2002 February");
+		AssertEquals ("H15", t2.Ticks, t1.Ticks);
+
+		t2 = new DateTime (DateTime.Today.Year, 2, 8);
+		t1 = DateTime.Parse ("February 8");
+		AssertEquals ("H16", t2.Ticks, t1.Ticks);
+	}
+
 
 	protected override void RunTest ()
 	{
@@ -231,6 +315,7 @@ public class DateTimeTest : TestCase
 
 		TestCtors ();
 		TestToString ();
+		TestParseExact ();
 		TestParse ();
 
 		Thread.CurrentThread.CurrentCulture = oldcult;
