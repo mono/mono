@@ -83,7 +83,7 @@ all-local: $(gac_assemblies)
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
-	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) -i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir)" ; \
+	    echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(gacutil) -i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir) \
 	      $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(gacutil) -i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir) || exit 1 ; \
 	  done; fi
