@@ -224,7 +224,14 @@ namespace System.IO {
 			foreach (string filename in files) {
 				FileData fd = (FileData) data.Files [filename];
 				if (fd == null) {
-					data.Files.Add (filename, CreateFileData (directory, filename));
+					try {
+						data.Files.Add (filename, CreateFileData (directory, filename));
+					} catch {
+						// The file might have been removed in the meanwhile
+						data.Files.Remove (filename);
+						continue;
+					}
+					
 					if (dispatch)
 						DispatchEvents (data.FSW, FileAction.Added, filename);
 				} else if (fd.Directory == directory) {
