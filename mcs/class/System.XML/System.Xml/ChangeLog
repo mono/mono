@@ -1,3 +1,8 @@
+2004-11-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDReader.cs : Consideration on parameter entity was missing for 
+	  attribute default value. Fixed bug #70008.
+
 2004-11-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : not fixage, just explicitly formatted code a bit.
