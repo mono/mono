@@ -18,12 +18,8 @@ namespace System.Drawing.Text {
 
 		public InstalledFontCollection ()
 		{
-			Status status = GDIPlus.GdipNewInstalledFontCollection( out nativeFontCollection );
-						
-			if ( status != Status.Ok ) {
-				nativeFontCollection = IntPtr.Zero;
-				throw new Exception ( "Error calling GDIPlus.GdipNewInstalledFontCollection: " + status );
-			}			
+			Status status = GDIPlus.GdipNewInstalledFontCollection( out nativeFontCollection );						
+			GDIPlus.CheckStatus ( status );			
 		}
 	}
 }

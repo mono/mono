@@ -22,10 +22,7 @@ namespace System.Drawing.Text {
 		public PrivateFontCollection ()
 		{
 			Status status = GDIPlus.GdipNewPrivateFontCollection( out nativeFontCollection );
-			if ( status != Status.Ok ){
-				nativeFontCollection = IntPtr.Zero;
-				throw new Exception ( "Error calling GDIPlus.GdipNewPrivateFontCollection: " + status );
-			}
+			GDIPlus.CheckStatus ( status );
 		}
 		
 		// methods
@@ -39,16 +36,14 @@ namespace System.Drawing.Text {
 				throw new Exception ( "The path is not of a legal form" );
 
 			Status status = GDIPlus.GdipPrivateAddFontFile ( nativeFontCollection, filename );
-			if ( status != Status.Ok ) 
-				throw new Exception ( "Error calling GDIPlus.GdipPrivateAddFontFile: " + status );			
+			GDIPlus.CheckStatus ( status );			
 		}
 
 		[ComVisible(false)]
 		public void AddMemoryFont ( IntPtr memory, int length ) 
 		{
 			Status status = GDIPlus.GdipPrivateAddMemoryFont ( nativeFontCollection, memory, length );
-			if ( status != Status.Ok )
-				throw new Exception ( "Error calling GDIPlus.GdipPrivateAddFontFile: " + status );						
+			GDIPlus.CheckStatus ( status );						
 		}
 	}
 }

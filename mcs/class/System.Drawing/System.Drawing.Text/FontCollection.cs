@@ -34,8 +34,7 @@ namespace System.Drawing.Text {
 				Status status;
 				for ( int i = 0; i < length; i++){
 					status = GDIPlus.GdipDeleteFontFamily ( families[i].NativeObject );
-					if ( status != Status.Ok ) 
-						families[i].NativeObject = IntPtr.Zero;
+					GDIPlus.CheckStatus ( status );
 				}
 			}
 			System.GC.SuppressFinalize ( this );
@@ -56,17 +55,13 @@ namespace System.Drawing.Text {
 				Status status;
 				
 				status = GDIPlus.GdipGetFontCollectionFamilyCount ( nativeFontCollection, out found );
-				if ( status != Status.Ok ) {
-					throw new Exception ( "Error calling GDIPlus.GdipGetFontCollectionFamilyCount: " + status );
-				}
+				GDIPlus.CheckStatus ( status );
 				
 				int nSize =  Marshal.SizeOf ( IntPtr.Zero );
 				IntPtr dest = Marshal.AllocHGlobal ( nSize * found );           
                
 				status = GDIPlus.GdipGetFontCollectionFamilyList( nativeFontCollection, found, dest, out returned );
-				if ( status != Status.Ok ) {					
-					throw new Exception ( "Error calling GDIPlus.GdipGetFontCollectionFamilyList: " + status );					
-				}
+				GDIPlus.CheckStatus ( status );
                    
 				IntPtr[] ptrAr = new IntPtr [ returned ];
 				int pos = dest.ToInt32 ();

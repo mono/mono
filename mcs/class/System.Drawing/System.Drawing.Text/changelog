@@ -1,3 +1,8 @@
+2004-02-06  Sanjay Gupta <gsanjay@novell.com>
+	* CheckStatus(): Used method of GDIPlus for error checking
+	  in FontCollection.cs, InstalledFontCollection.cs and
+	  PrivateFontCollection.cs
+
 2004-01-29  Sanjay Gupta <gsanjay@novell.com>
 	* FontCollection.cs: Implemented Dispose method.
 	* InstalledFontCollection.cs: Removed Console.WriteLine calls.
