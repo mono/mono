@@ -1,5 +1,0 @@
-class X {
-}
-
-struct Y {
-}

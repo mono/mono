@@ -1,6 +1,0 @@
-2002-02-25  Nick Drochak  <ndrochak@gol.com>
-
-	* ToDoAssembly.cs: remove unused code 
-	* ToDoNamespace.cs: using BindingFlags for GetMembers
-	* ToDoType.cs: throw exception if we encounter a member type
-	that we didn't expect. Also remove unused property.

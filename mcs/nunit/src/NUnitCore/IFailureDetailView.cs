@@ -1,6 +1,7 @@
 namespace NUnit.Runner {
 
   using System;
+  using System.Windows.Forms;
 
   using NUnit.Framework;
 
@@ -12,6 +13,11 @@ namespace NUnit.Runner {
     /// Clears the view
     /// </summary>
     void Clear();
+
+    /// <summary>
+    /// Returns the component used to present the TraceView
+    /// </summary>
+    Control GetComponent();
 
     /// <summary>
     /// Shows details of a TestFailure

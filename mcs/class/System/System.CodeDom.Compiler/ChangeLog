@@ -1,9 +1,0 @@
-2002-01-05  Ravi Pratap  <ravi@ximian.com>
-
-	* CodeGenerator.cs : Mark bits with MonoTODO.
-
-2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
-
-	* CodeGenerator.cs: moved using statement out of namespace
-	declaration.
-

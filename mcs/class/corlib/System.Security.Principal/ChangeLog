@@ -1,3 +1,0 @@
-2002-01-07  Nick Drochak  <ndrochak@gol.com>
-
-	* PrincipalPolicy.cs: made enum public like it should be to get _AppDomain to compile.
