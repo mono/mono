@@ -1,5 +1,17 @@
 2004-02-17  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_Type_GetFields): Renamed to
+	ves_icall_Type_GetFields_internal() and added a
+	`MonoReflectionType *rtype' argument; pass it to
+	mono_field_get_object() to set the field's "reflected" type.
+	(ves_icall_Type_GetConstructors): Likewise.
+	(ves_icall_Type_GetEvents): Likewise.
+	(ves_icall_Type_GetMethodsByName): Added `MonoReflectionType *rtype'
+	argument; pass it to mono_method_get_object() to set the method's
+	"reflected" type.	
+
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
 	* class.h (MonoDynamicGenericInst): New type.
 	(MonoGenericInst): Added `dynamic_info' and `is_dynamic' fields.
 
