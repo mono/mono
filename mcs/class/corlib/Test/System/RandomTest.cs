@@ -68,11 +68,21 @@ public class RandomTest : TestCase
                 Random r = new Random();
                 int i;
                 long c;
-                for (i=0; i<20; i++)
+		AssertEquals ("#1 Failed where min == max", 42, r.Next (42, 42));
+		AssertEquals ("#2 Failed where min == max", Int32.MaxValue, r.Next (Int32.MaxValue,Int32.MaxValue));
+		AssertEquals ("#3 Failed where min == max", Int32.MinValue, r.Next (Int32.MinValue,Int32.MinValue));
+		AssertEquals ("#4 Failed where min == max", 0, r.Next (0, 0));
+                for (i = 1; i <= Int32.MaxValue / 2; i *= 2)
                 {
-                        c = r.Next(1, 10);
-			Assert ("At i=" + i + " c < 10 failed", c < 10);
-                        Assert ("At i=" + i + " c >= 1 failed", c >= 1);
+                        c = r.Next (i, i * 2);
+			Assert ("At i=" + i + " c < i*2 failed", c < i * 2);
+                        Assert ("At i=" + i + " c >= i failed", c >= i);
+                }
+                for (i = -1; i >= Int32.MinValue / 2; i *= 2)
+                {
+                        c = r.Next (i * 2, i);
+			Assert ("At i=" + i + " c < i*2 failed", c < i);
+                        Assert ("At i=" + i + " c >= i failed", c >= i * 2);
                 }
         }
 }

@@ -1,3 +1,8 @@
+2002/06/12  Nick Drochak <ndrochak@gol.com>
+
+	* RandomTest.cs: Exercise Next(min,max) a little more, especially
+	boundary conditions.
+
 2002-06-11  Nick Drochak  <ndrochak@gol.com>
 
 	* StringTest.cs: Check for "end of string" conditions for IndexOf() and
