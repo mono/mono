@@ -10,6 +10,7 @@ public class Test
 
 	public static void Main ()
 	{
+Console.WriteLine ("Started:  " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.fff"));
 		RunInvalidTest ("xmltest", false);
 		RunInvalidTest ("ibm", false);
 		RunInvalidTest ("sun", true);
@@ -23,6 +24,7 @@ public class Test
 		RunNotWellFormedTest ("sun", true);
 
 		RunOASISTest ();
+Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.fff"));
 	}
 
 	static void RunOASISTest ()
@@ -34,8 +36,8 @@ public class Test
 				XmlTextReader xtr = new XmlTextReader (fi.FullName);
 				xtr.Namespaces = false;
 				xtr.Normalization = true;
-				doc.RemoveAll ();
-				doc.Load (xtr);
+				while (!xtr.EOF)
+					xtr.Read ();
 				if (fi.Name.IndexOf ("fail") >= 0)
 					Console.WriteLine ("Incorrectly valid: " + fi.FullName);
 			} catch (Exception ex) {
@@ -54,14 +56,13 @@ public class Test
 		else
 			dirs = new DirectoryInfo (basePath).GetDirectories ();
 
-		XmlDocument doc = new XmlDocument ();
 		foreach (DirectoryInfo di in dirs) {
 			foreach (FileInfo fi in di.GetFiles ("*.xml")) {
 				try {
 					XmlTextReader xtr = new XmlTextReader (fi.FullName);
 					xtr.Namespaces = false;
-					doc.RemoveAll ();
-					doc.Load (xtr);
+					while (!xtr.EOF)
+						xtr.Read ();
 					Console.WriteLine ("Incorrectly wf: " + fi.FullName);
 				} catch (XmlException) {
 					// expected
@@ -81,7 +82,6 @@ public class Test
 		else
 			dirs = new DirectoryInfo (basePath).GetDirectories ();
 
-		XmlDocument doc = new XmlDocument ();
 		foreach (DirectoryInfo di in dirs) {
 			foreach (FileInfo fi in di.GetFiles ("*.xml")) {
 				try {
@@ -111,14 +111,12 @@ public class Test
 		else
 			dirs = new DirectoryInfo (basePath).GetDirectories ();
 
-		XmlDocument doc = new XmlDocument ();
 		foreach (DirectoryInfo di in dirs) {
 			foreach (FileInfo fi in di.GetFiles ("*.xml")) {
 				try {
 					XmlTextReader xtr = new XmlTextReader (fi.FullName);
 					xtr.Namespaces = false;
 					xtr.Normalization = true;
-					doc.RemoveAll ();
 					while (!xtr.EOF)
 						xtr.Read ();
 				} catch (Exception ex) {
@@ -133,8 +131,10 @@ public class Test
 					XmlTextReader xtr = new XmlTextReader (fi.FullName);
 					xtr.Namespaces = false;
 					xtr.Normalization = true;
-					doc.RemoveAll ();
-					doc.Load (new XmlValidatingReader (xtr));
+					XmlValidatingReader xr =
+						new XmlValidatingReader (xtr);
+					while (!xr.EOF)
+						xr.Read ();
 					Console.WriteLine ("Incorrectly valid: " + fi.FullName);
 				} catch (XmlSchemaException) {
 					// expected

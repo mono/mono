@@ -1,3 +1,8 @@
+2004-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltest.cs : timestamps are only put in my box (while it is 
+	  documented as to be written, in my standalone_tests description).
+
 2004-02-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Added xrdump.cs, domdump.cs, eventdump.cs and dump-results.zip.
