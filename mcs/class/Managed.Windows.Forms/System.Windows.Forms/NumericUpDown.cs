@@ -191,6 +191,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Bindable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override string Text {
 			get {
 				return base.Text;
