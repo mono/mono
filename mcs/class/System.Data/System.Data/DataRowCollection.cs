@@ -7,6 +7,7 @@
 //
 // (C) Ximian, Inc 2002
 // (C) Copyright 2002 Tim Coleman
+// (C) Copyright 2002 Daniel Morgan
 //
 
 using System;

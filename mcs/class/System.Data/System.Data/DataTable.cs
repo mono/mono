@@ -23,8 +23,8 @@ namespace System.Data
 	/// Represents one table of in-memory data.
 	/// </summary>
 	[Serializable]
-	public class DataTable : ISerializable
-                //MarshalByValueComponent, IListSource, ISupportInitialize
+	public class DataTable : MarshalByValueComponent, IListSource,
+		ISupportInitialize, ISerializable	
 	{
 		internal DataSet dataSet;   
 		
@@ -341,7 +341,7 @@ namespace System.Data
 		/// for the DataTable.
 		/// </summary>
 		
-		public virtual ISite Site
+		public override ISite Site
 		{
 			get {
 				return _site;
@@ -364,15 +364,14 @@ namespace System.Data
 				_tableName = value;
 			}
 		}
-
-		/* FIXME: implement IListSource
-		public bool IListSource.ContainsListCollection
+		
+		bool IListSource.ContainsListCollection
 		{
 			get {
-				return _containsListCollection;
+				// the collection is a DataView
+				return false;
 			}
 		}
-		*/
 
 		/// <summary>
 		/// Commits all the changes made to this table since the 
@@ -520,16 +519,18 @@ namespace System.Data
 		/// <summary>
 		/// This member supports the .NET Framework infrastructure 
 		/// and is not intended to be used directly from your code.
+		/// 
+		/// Used for Data Binding between System.Web.UI. controls 
+		/// like a DataGrid
+		/// or
+		/// System.Windows.Forms controls like a DataGrid
 		/// </summary>
-		
-		/* FIXME: implement IListSource
-		public IList IListSource.GetList()
+		IList IListSource.GetList()
 		{
-			IList list = null;
+			IList list = (IList) _defaultView;
 			return list;
 		}
-		*/
-		
+				
 		/// <summary>
 		/// Copies a DataRow into a DataTable, preserving any 
 		/// property settings, as well as original and current values.

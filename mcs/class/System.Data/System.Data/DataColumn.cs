@@ -10,8 +10,8 @@
 // (C) Copyright 2002, Franklin Wise
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
+// (C) Daniel Morgan 2002
 //
-
 
 using System;
 using System.ComponentModel;
@@ -20,7 +20,6 @@ namespace System.Data
 {
 	internal delegate void DelegateColumnValueChange(DataColumn column,
 			DataRow row, object proposedValue);
-
 	
 	/// <summary>
 	/// Summary description for DataColumn.
@@ -36,7 +35,6 @@ namespace System.Data
 		//used for FK Constraint Cascading rules
 		internal event DelegateColumnValueChange ColumnValueChanging;
 		#endregion //Events
-
 		
 		#region Fields
 

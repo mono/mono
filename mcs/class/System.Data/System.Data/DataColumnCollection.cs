@@ -17,11 +17,9 @@ namespace System.Data
 	/// <summary>
 	/// Represents a collection of DataColumn objects for a DataTable.
 	/// </summary>
+	[Serializable]
 	public class DataColumnCollection : InternalDataCollectionBase
 	{
-		
-
-		
 		// The defaultNameIndex is used to create a default name for a column if one wasn't given.
 		private int defaultNameIndex;
 
@@ -34,8 +32,6 @@ namespace System.Data
 			defaultNameIndex = 1;
 			parentTable = table;
 		}
-
-
 
 		/// <summary>
 		/// Gets the DataColumn from the collection at the specified index.
@@ -62,12 +58,9 @@ namespace System.Data
 						return column;
 					}
 				}
-
-				return null;
-                
+				return null;                
 			}
 		}
-
 
 		/// <summary>
 		/// Gets a list of the DataColumnCollection items.
@@ -79,7 +72,6 @@ namespace System.Data
 				return base.List;
 			}
 		}
-
 
 		//Add Logic
 		//
@@ -457,6 +449,5 @@ namespace System.Data
 		/// Occurs when the columns collection changes, either by adding or removing a column.
 		/// </summary>
 		public event CollectionChangeEventHandler CollectionChanged;
-
 	}
 }

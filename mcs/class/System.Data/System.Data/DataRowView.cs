@@ -4,20 +4,44 @@
 // Author:
 //    Rodrigo Moya <rodrigo@ximian.com>
 //    Miguel de Icaza <miguel@ximian.com>
+//    Daniel Morgan <danmorg@sc.rr.com>
 //
 // (C) Ximian, Inc 2002
+// (C) Daniel Morgan 2002
 //
 
+using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace System.Data
 {
 	/// <summary>
 	/// Represents a customized view of a DataRow exposed as a fully featured Windows Forms control.
 	/// </summary>
+	//[DefaultMember("Item")]
+	[DefaultProperty("Item")]
 	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo
 	{
+		#region Fields
+
+		private DataView dataView;
+		private DataRow dataRow;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		internal DataRowView (DataView dataView, int rowIndex) {
+			this.dataView = dataView;
+			this.dataRow = dataView.Table.Rows[rowIndex];
+		}
+
+		#endregion // Constructors
+
+		#region Methods
+
 		[MonoTODO]
 		public void BeginEdit ()
 		{
@@ -53,12 +77,16 @@ namespace System.Data
 		{
 			throw new NotImplementedException ();
 		}
+
+		#endregion // Methods
+
+		#region Properties
 		
 		public DataView DataView
 		{
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return dataView;
 			}
 		}
 
@@ -75,15 +103,17 @@ namespace System.Data
 				throw new NotImplementedException ();
 			}
 		}
-
-		public string this[string column] {
+		
+		public object this[string column] {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				DataColumn dc = dataView.Table.Columns[column];
+				return dataRow[dc];
 			}
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				DataColumn dc = dataView.Table.Columns[column];
+				dataRow[dc] = value;
 			}
 		}
 
@@ -96,18 +126,21 @@ namespace System.Data
 		public object this[int column] {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				DataColumn dc = dataView.Table.Columns[column];
+				return dataRow[dc];
 			}
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				DataColumn dc = dataView.Table.Columns[column];
+				dataRow[dc] = value;
+
 			}
 		}
 
 		public DataRow Row {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return dataRow;
 			}
 		}
 
@@ -118,32 +151,38 @@ namespace System.Data
 			}
 		}
 
-		//
-		// ICustomTypeDescriptor implementations
-		//
-
+		#endregion // Properties
+		
+		#region ICustomTypeDescriptor implementations
+		
 		[MonoTODO]
 		AttributeCollection ICustomTypeDescriptor.GetAttributes  ()
 		{
-			throw new NotImplementedException ();
+			System.ComponentModel.AttributeCollection attributes;
+			attributes = AttributeCollection.Empty;
+			return attributes;
+			//object[] attributes = this.GetType ().GetCustomAttributes (true);
+			//AttributeCollection attribCollection;
+			//attribCollection = new AttributeCollection (attributes);
+			//return attribCollection;
 		}
 
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetClassName ()
 		{
-			throw new NotImplementedException ();
+			return "";
 		}
 		
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetComponentName ()
 		{
-			throw new NotImplementedException ();
+			return "";
 		}
 
 		[MonoTODO]
 		TypeConverter ICustomTypeDescriptor.GetConverter ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[MonoTODO]
@@ -155,7 +194,7 @@ namespace System.Data
 		[MonoTODO]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
 		[MonoTODO]
@@ -179,13 +218,17 @@ namespace System.Data
 		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
-			throw new NotImplementedException ();
+			ITypedList typedList = (ITypedList) dataView;
+			return typedList.GetItemProperties(new PropertyDescriptor[0]);
 		}
 
 		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute [] attributes)
 		{
-			throw new NotImplementedException ();
+			PropertyDescriptorCollection descriptors;
+			descriptors = ((ICustomTypeDescriptor) this).GetProperties ();
+			// TODO: filter out any Attributes not in the attributes array
+			return descriptors;
 		}
 		
 		[MonoTODO]
@@ -193,5 +236,25 @@ namespace System.Data
 		{
 			throw new NotImplementedException ();
 		}
+
+		#endregion // ICustomTypeDescriptor implementations
+
+		#region IDataErrorInfo implementation
+
+		string IDataErrorInfo.Error {
+			[MonoTODO]
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
+		string IDataErrorInfo.this[string columnName] {
+			[MonoTODO]
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion // IDataErrorInfo implementation
 	}
 }

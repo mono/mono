@@ -1,3 +1,16 @@
+2002-11-06  Daniel Morgan <danmorg@sc.rr.com>
+
+	* DataColumnPropertyDescriptor.cs: added file
+	
+	* System.Data/DataRowView.cs: started implementation
+	
+	* DataTable.cs: stubbed more interfaces.  Implemented
+	IListSource.GetList()
+	
+	* DataView.cs: stubbed more interfaces.  Implemented
+	some properties and methods: GetEnumerator(), 
+	ITypedList.GetItemProperties, Item indexer, CopyTo()
+
 2002-05-18  Nick Drochak  <ndrochak@gol.com>
 
 	* DataRow.cs: Fix typo.
