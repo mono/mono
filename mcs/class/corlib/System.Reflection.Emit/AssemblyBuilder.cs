@@ -34,6 +34,13 @@ namespace System.Reflection.Emit {
 		private string dir;
 		private CustomAttributeBuilder[] cattrs;
 		private MonoResource[] resources;
+		string keyfile;
+		string version;
+		string culture;
+		uint algid;
+		uint flags;
+		PEFileKinds pekind = PEFileKinds.Dll;
+		bool delay_sign;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
@@ -267,15 +274,55 @@ namespace System.Reflection.Emit {
 
 		public void SetEntryPoint (MethodInfo entryMethod)
 		{
-			entry_point = entryMethod;
+			SetEntryPoint (entryMethod, PEFileKinds.ConsoleApplication);
 		}
 
 		public void SetEntryPoint (MethodInfo entryMethod, PEFileKinds fileKind)
 		{
 			entry_point = entryMethod;
+			pekind = fileKind;
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
+			byte[] data;
+			int len, pos;
+			if (attrname == "System.Reflection.AssemblyVersionAttribute") {
+				data = customBuilder.Data;
+				pos = 2;
+				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
+				version = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				return;
+			} else if (attrname == "System.Reflection.AssemblyKeyFileAttribute") {
+				data = customBuilder.Data;
+				pos = 2;
+				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
+				keyfile = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
+				data = customBuilder.Data;
+				pos = 2;
+				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
+				culture = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+			} else if (attrname == "System.Reflection.AssemblyAlgorithmIdAttribute") {
+				data = customBuilder.Data;
+				pos = 2;
+				algid = (uint)data [pos];
+				algid |= ((uint)data [pos + 1]) << 8;
+				algid |= ((uint)data [pos + 2]) << 16;
+				algid |= ((uint)data [pos + 3]) << 24;
+			} else if (attrname == "System.Reflection.AssemblyFlagsAttribute") {
+				data = customBuilder.Data;
+				pos = 2;
+				flags = (uint)data [pos];
+				flags |= ((uint)data [pos + 1]) << 8;
+				flags |= ((uint)data [pos + 2]) << 16;
+				flags |= ((uint)data [pos + 3]) << 24;
+				return;
+			} else if (attrname == "System.Reflection.AssemblyDelaySignAttribute") {
+				data = customBuilder.Data;
+				pos = 2;
+				delay_sign = data [2] != 0;
+			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

@@ -1,3 +1,8 @@
+
+Mon Sep 16 19:02:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.c: special case some custom attributes.
+
 2002-09-12  Dick Porter  <dick@ximian.com>
 
 	* TypeBuilder.cs: Say _which_ Type has already been created
