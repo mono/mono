@@ -1,3 +1,7 @@
+2002-10-09  Nick Drochak  <ndrochak@gol.com>
+
+	* SortedListTest.cs: Re-enable test for IsSyncronized
+
 2002-09-24  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayListTest.cs: Add test for InsertRange() for the case where an

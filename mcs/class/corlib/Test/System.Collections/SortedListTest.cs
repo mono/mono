@@ -115,8 +115,6 @@ public class SortedListTest : TestCase {
 		} catch (ArgumentOutOfRangeException) {}
 	}
 
-/*
-	FIXME: Once this is done in the class, re-enable the test
 	public void TestIsSynchronized() {
 		SortedList sl1 = new SortedList();
 		Assert("sl: should not be synchronized by default", 
@@ -124,7 +122,7 @@ public class SortedListTest : TestCase {
 		SortedList sl2 = SortedList.Synchronized(sl1);
 		Assert("sl: synchronized wrapper not working", sl2.IsSynchronized);
 	}
-*/
+
 	public void TestCapacity() {
 		for (int i = 0; i < 100; i++) {
 			SortedList sl1 = new SortedList(i);
