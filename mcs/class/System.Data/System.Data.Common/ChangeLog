@@ -1,3 +1,9 @@
+2004-12-10  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbDataAdapter.cs (BuildSchema): Add the primary key schema iff
+	MissingSchemaAction is set to AddWithKey. Also, Add auto increment
+	value from the source table. fixes bug #67757 and #69110.
+
 2004-11-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbProviderSupportedClasses.cs: Added correct enum values.

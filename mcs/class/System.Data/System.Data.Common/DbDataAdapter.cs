@@ -536,13 +536,19 @@ namespace System.Data.Common {
 							// if the column is not in the table - add it.
 							if (table.Columns.IndexOf(col) == -1)
 							{
-								if (MissingSchemaAction == MissingSchemaAction.Add || MissingSchemaAction == MissingSchemaAction.AddWithKey)
+								if (MissingSchemaAction == MissingSchemaAction.Add 
+                                                                    || MissingSchemaAction == MissingSchemaAction.AddWithKey)
 									table.Columns.Add(col);
 							}
 
-							if (!schemaRow["IsKey"].Equals (DBNull.Value))
-								if ((bool) (schemaRow ["IsKey"]))
-									primaryKey.Add (col);
+
+                                                        if (MissingSchemaAction == MissingSchemaAction.AddWithKey) {
+                                                                if (!schemaRow["IsKey"].Equals (DBNull.Value))
+                                                                        if ((bool) (schemaRow ["IsKey"]))
+                                                                                primaryKey.Add (col);
+                                                                
+                                                                col.AutoIncrement = (bool) schemaRow ["IsAutoIncrement"];
+                                                        }
 							
 							// add the ordinal of the column as a key and the index of the column in the datareader as a value.
 							mapping[col.Ordinal] = readerIndex;
