@@ -48,7 +48,7 @@ namespace System.Net
 		static Authorization InternalAuthenticate (WebRequest webRequest, ICredentials credentials)
 		{
 			HttpWebRequest request = webRequest as HttpWebRequest;
-			if (request == null)
+			if (request == null || credentials == null)
 				return null;
 
 			NetworkCredential cred = credentials.GetCredential (request.AuthUri, "basic");

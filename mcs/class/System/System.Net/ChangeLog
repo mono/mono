@@ -1,3 +1,7 @@
+2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BasicClient.cs: ensure credentials are not null.
+
 2005-03-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: moved cookie parsing into its own class.
