@@ -22,7 +22,6 @@ namespace System.Runtime.Remoting.Channels.Http
 {
 	internal class HttpHelper
 	{
-		public static int d;
 		public static string Parse(string URL , out string ObjectURI)
 		{
 
@@ -39,9 +38,9 @@ namespace System.Runtime.Remoting.Channels.Http
 				Pos = URL.IndexOf("/",0);
 			}
 
-			if(Pos>0 || Pos == 0)
+			if(Pos >= 0)
 			{
-				ObjectURI = URL.Substring(Pos);
+				ObjectURI = URL.Substring(Pos + 1);
 				return URL.Substring(0,Pos);
 			}
 			return URL;
@@ -82,32 +81,21 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			return outStream;
 		}
-		public static bool CopyStream(Stream inStream,ref Stream outStream)
+		public static bool CopyStream(Stream inStream, Stream outStream)
 		{
 			int  temp;
-			d++;
+
 			try
 			{
-				FileStream f=null;
-				if(d==2)
-					f = new FileStream("f.txt",System.IO.FileMode.Create);
-
 				while(true)
 				{
 					temp = inStream.ReadByte();
-                    
-					
-					if(d==2)
-						f.WriteByte((byte)temp);
-						
-					
+										
 					if(temp==-1)
 						break;
 					outStream.WriteByte((byte)temp);
 				}
 				
-				if(d==2)
-				f.Close();
 				outStream.Flush();
 				
 				if(outStream.CanSeek)

@@ -150,8 +150,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			if(_sinkProvider == null)
 				_sinkProvider = new SoapServerFormatterSinkProvider();
 
-			
-			
 			// collect channel data from all providers
 			IServerChannelSinkProvider provider = _sinkProvider;
 			while (provider != null) 
@@ -163,7 +161,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			// create the sink chain
 			IServerChannelSink snk = 
 				ChannelServices.CreateServerChannelSinkChain(_sinkProvider,this);
-			
 
 			_transportSink = new HttpServerTransportSink(snk);
 
@@ -181,8 +178,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			{
 				Socket socket = _tcpListener.AcceptSocket();
 				RequestArguments reqArg = new RequestArguments(socket,_transportSink);
-				HttpThread httpThread = new HttpThread(reqArg);
-			
+				ThreadPool.QueueUserWorkItem (new WaitCallback (HttpServer.ProcessRequest), reqArg);
 			}
 
 		} 
@@ -197,13 +193,10 @@ namespace System.Runtime.Remoting.Channels.Http
 				ThreadStart t = new ThreadStart(this.Listen);
 				_listenerThread = new Thread(t);
 				_listenerThread.IsBackground = true;
-
 			}
 			
 			if(!_listenerThread.IsAlive)
 				_listenerThread.Start();
-			
-			
 			
 			_bListening = true;
 		} 
@@ -212,6 +205,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			if( _bListening)
 			{
+				_listenerThread.Abort ();
 				_tcpListener.Stop();
 			}
 
@@ -371,7 +365,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			ITransportHeaders responseHeaders;
 			Stream responseStream;
 
-			ServerProcessing processing= ServerProcessing.Complete;
+			ServerProcessing processing = ServerProcessing.Complete;
 			try
 			{
 				processing =
@@ -379,8 +373,6 @@ namespace System.Runtime.Remoting.Channels.Http
 					out responseMessage,
 					out responseHeaders, out responseStream);
 
-
-			
 				switch (processing)
 				{                    
 					case ServerProcessing.Complete:
@@ -405,10 +397,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			catch(Exception )
 			{
 			}
-
-} 
-      
-
+		}
 
 
 		//

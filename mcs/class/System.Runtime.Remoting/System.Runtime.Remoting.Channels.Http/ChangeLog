@@ -1,0 +1,34 @@
+2003-08-22  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpClientChannel.cs: Changed text for user-agent header (removed references
+	  to MS.NET).
+	  Removed try/catch from AsyncProcessRequest. If there is an exception it must
+	  flow to the caller.
+	  in AsyncRequestHandler, improved management of exceptions. HttpWebRequest
+	  throws an exception if the result code is 400, 500. Is is not a communication
+	  error, but an application or server error. The content of the body must be
+	  deserialized like in normal responses.
+	  In CreateWebRequest, if the stream being sent is a MemoryStream, use a more
+	  efficient way of writing the content.
+	  In SendAndRecieve, same as in AsyncRequestHandler. Also moved some code to a
+	  new method named ReceiveResponse, so it can be reused from AsyncRequestHandler.
+	* HttpHelper.cs: Removed some debugging code that is not needed.
+	* HttpServer.cs: Improved formatting of some code.
+	  In CheckRequest method, send a 100-continue response if the request has
+	  the header: expect:100-continue.
+	  Method SendResponse: the remoting formatter may include the result code and
+	  reason phrase to use in the transport headers. Used them if provided.
+	* HttpServerChannel.cs: Use ThreadPool to create the thread that will answer
+	  a request.
+
+2003-08-18  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpClientChannel.cs, HttpServerChannel.cs: Fixed bug #47703
+
+2003-06-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpChannel.cs, HttpClientChannel.cs, HttpHelper.cs, HttpServer.cs,
+	  HttpServerChannel.cs, HttpThread.cs: added new implementation of the HttpChannel
+	  by Ahmad Tantawy, Ahmad Kadry and Hussein Mehanna.
+	* unix.args: added HttpHelper.cs,HttpServer.cs,HttpThread.cs.
+

@@ -60,10 +60,8 @@ namespace System.Runtime.Remoting.Channels.Http
 		
 		public static void ProcessRequest(object Object)
 		{
-			
 			if(Object as RequestArguments == null)
 				return;
-
 
 			Socket socket;
 			HttpServerTransportSink snk;
@@ -73,40 +71,30 @@ namespace System.Runtime.Remoting.Channels.Http
 			socket = reqArg.socket;
 			snk = reqArg.snk;
 				
-			 if(!socket.Connected)
-					return;
+			if(!socket.Connected)
+				return;
 
-				//Step (1) Start Reciceve the header
-				ArrayList  Headers = RecieveHeader(socket);
+			//Step (1) Start Reciceve the header
+			ArrayList  Headers = RecieveHeader(socket);
 				
-				
-				//Step (2) Start Parse the header
-				IDictionary HeaderFields = new Hashtable();
-				IDictionary CustomHeaders = new Hashtable();
-				if(!ParseHeader(socket,Headers,HeaderFields,CustomHeaders))
-					return;
-			
+			//Step (2) Start Parse the header
+			IDictionary HeaderFields = new Hashtable();
+			IDictionary CustomHeaders = new Hashtable();
+			if(!ParseHeader(socket,Headers,HeaderFields,CustomHeaders))
+				return;
 
+			//Step (3)
+			if(!CheckRequest(socket,HeaderFields,CustomHeaders))
+				return;
 
+			//Step (4) Recieve the entity body
+			byte [] buffer =new byte[(int)HeaderFields["content-length"]];
+			if(!RecieveEntityBody(socket,buffer))
+				return ;
 
-				//Step (3)
-			    if(!CheckRequest(socket,HeaderFields,CustomHeaders))
-					return;
-
-
-				//Step (4) Recieve the entity body
-				byte [] buffer =new byte[(int)HeaderFields["content-length"]];
-				if(!RecieveEntityBody(socket,buffer))
-					return ;
-				
-				
-
-				//Step (5)
-
-			    if(! SendRequestForChannel(socket,snk,HeaderFields,CustomHeaders,buffer))
-					return ;
-
-	
+			//Step (5)
+		    if(! SendRequestForChannel(socket,snk,HeaderFields,CustomHeaders,buffer))
+				return ;
 		}
 
 		private static ArrayList RecieveHeader(Socket socket)
@@ -116,8 +104,6 @@ namespace System.Runtime.Remoting.Channels.Http
 	
 			byte[] buffer = new byte[1024];
 			ArrayList  Headers = new ArrayList();
-
-
 
 			int index =0;
 			while(!bLastLine)
@@ -153,8 +139,6 @@ namespace System.Runtime.Remoting.Channels.Http
 				if(bLastLine)
 					continue;
                 	Headers.Add( Encoding.ASCII.GetString(buffer,0,index));
-
-				
 
 			}//end while loop
 			
@@ -194,6 +178,9 @@ namespace System.Runtime.Remoting.Channels.Http
                 return false;
 			}
 
+			if (HeaderFields["expect"].ToString() == "100-continue")
+				SendResponse(socket,100,null,null);
+
 			//Check for the content-length field
 			if(HeaderFields["content-length"]==null)
 			{
@@ -206,11 +193,8 @@ namespace System.Runtime.Remoting.Channels.Http
 		
 		private static bool RecieveEntityBody(Socket socket, byte[] buffer)
 		{
-			
-
 			try
 			{
-				//Recieved = socket.Receive(buffer,0,buffer.Length,SocketFlags.None);
 				int nr = 0;
 				while (nr < buffer.Length)
 					nr += socket.Receive (buffer, nr, buffer.Length - nr,SocketFlags.None);
@@ -235,13 +219,9 @@ namespace System.Runtime.Remoting.Channels.Http
 	
 		private static bool SendRequestForChannel(Socket socket ,HttpServerTransportSink snk ,IDictionary HeaderFields , IDictionary CustomHeaders, byte[]buffer)
 		{
-
-
 			TransportHeaders THeaders = new TransportHeaders();
 
-
 			Stream stream = new MemoryStream(buffer);
-
 
 			if(stream.Position !=0)
 				stream.Seek(0,SeekOrigin.Begin);
@@ -282,19 +262,26 @@ namespace System.Runtime.Remoting.Channels.Http
 			byte [] headersBuffer = null;
 			byte [] entityBuffer = null;
 
-			StringBuilder ResponseStr ;		
+			StringBuilder ResponseStr;
 			String Reason = GetReasonPhrase(HttpStatusCode);
 
+			if (headers != null && headers["__HttpStatusCode"] != null) {
+				// The formatter can override the result code
+				HttpStatusCode = int.Parse ((string)headers["__HttpStatusCode"]);
+				Reason = (string)headers["__HttpReasonPhrase"];
+			}
 			
 			//Response Line 
-			ResponseStr = new StringBuilder( "HTTP/1.1 " + HttpStatusCode.ToString() + " " + Reason + "\r\n" );
+			ResponseStr = new StringBuilder( "HTTP/1.0 " + HttpStatusCode + " " + Reason + "\r\n" );
 			if(headers!=null)
 				foreach(DictionaryEntry entry in headers)
 				{
-					ResponseStr.Append(entry.Key.ToString()+": "+entry.Value.ToString()+"\r\n");
+					string key = entry.Key.ToString();
+					if (key != "__HttpStatusCode" && key != "__HttpReasonPhrase")
+						ResponseStr.Append(key + ": " + entry.Value.ToString() + "\r\n");
 				}
 			
-			ResponseStr.Append("Server: MS .NET Remoting, MS .NET CLR 1.0.3705.0\r\n");
+			ResponseStr.Append("Server: Mono Remoting, Mono CLR " + System.Environment.Version.ToString() + "\r\n");
 
 			if(responseStream != null)
 			if(responseStream.Length!=0)
@@ -343,7 +330,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			switch (HttpStatusCode)
 			{
-				case 100 : return " Continue" ;
+				case 100 : return "Continue" ;
 				case 101  :return "Switching Protocols";
 				case 200  :return "OK";
 				case 201  :return "Created";

@@ -28,11 +28,6 @@ using System.Text;
 
 namespace System.Runtime.Remoting.Channels.Http
 {
-
-
-
-
-
 	public class HttpClientChannel : IChannelSender,IChannel
 	{
 		// Property Keys (purposely all lower-case)
@@ -252,8 +247,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		private const String s_defaultVerb = "POST";
 
 		private static String s_userAgent =
-			"Mozilla/4.0+(compatible; MSIE 6.0; Windows " + 
-			"; MS .NET Remoting; MS .NET CLR " + System.Environment.Version.ToString() + " )";
+			"Mono Remoting Client (Mono CLR " + System.Environment.Version.ToString() + ")";
         
 		// Property keys (purposely all lower-case)
 		private const String UserNameKey = "username";
@@ -306,8 +300,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			ITransportHeaders requestHeaders, Stream requestStream,
 			out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
-			
-
 			string url = null;
 			string uri = (string)requestHeaders[CommonTransportKeys.RequestUri];
 			CreateUrl(uri,out url);
@@ -321,22 +313,14 @@ namespace System.Runtime.Remoting.Channels.Http
 		public void AsyncProcessRequest(IClientChannelSinkStack sinkStack, IMessage msg,
 			ITransportHeaders headers, Stream stream)
 		{
-			try
-			{
-				string url = null;
-				string uri = (string)headers[CommonTransportKeys.RequestUri];
-				CreateUrl(uri,out url);
+			string url = null;
+			string uri = (string)headers[CommonTransportKeys.RequestUri];
+			CreateUrl(uri,out url);
 
-				HttpWebRequest httpWebRequest = CreateWebRequest(url,headers,stream);
-				RequestState reqState = new RequestState(httpWebRequest,sinkStack);
+			HttpWebRequest httpWebRequest = CreateWebRequest(url,headers,stream);
+			RequestState reqState = new RequestState(httpWebRequest,sinkStack);
 
-				httpWebRequest.BeginGetResponse(new AsyncCallback(AsyncRequestHandler),reqState);
-
-			}
-			catch
-			{
-				Console.WriteLine("Error Sending Async Request");
-			}
+			httpWebRequest.BeginGetResponse(new AsyncCallback(AsyncRequestHandler),reqState);
 		}
 
 		private void AsyncRequestHandler(IAsyncResult ar)
@@ -345,36 +329,29 @@ namespace System.Runtime.Remoting.Channels.Http
 
 			RequestState reqState = (RequestState) ar.AsyncState;
 			HttpWebRequest httpWebRequest = reqState.webRquest;
+			IClientChannelSinkStack sinkStack = reqState.sinkStack;
 
 			try
 			{
 				httpWebResponse = (HttpWebResponse) httpWebRequest.EndGetResponse(ar);
-				
-				Stream responseStream ;
-				ITransportHeaders responseHeaders;
+			}
+			catch (WebException ex)
+			{
+				httpWebResponse = ex.Response as HttpWebResponse;
+				if (httpWebResponse == null) sinkStack.DispatchException (ex);
+			}
 
-				IClientChannelSinkStack sinkStack = reqState.sinkStack;
+			Stream responseStream;
+			ITransportHeaders responseHeaders;
 
-				responseStream = new MemoryStream();
-				HttpHelper.CopyStream(httpWebResponse.GetResponseStream(),ref responseStream);
-			
-			
-				responseHeaders = new TransportHeaders();
-			
-				for(int i=0; i < httpWebResponse.Headers.Count; ++i)
-					responseHeaders[httpWebResponse.Headers.Keys[i].ToString()] = httpWebResponse.Headers[i].ToString();
-
+			try
+			{
+				ReceiveResponse (httpWebResponse, out responseHeaders, out responseStream);
 				sinkStack.AsyncProcessResponse(responseHeaders,responseStream);
-					
 			}
-			catch
+			catch (Exception ex)
 			{
-				Console.WriteLine("Error Recieving Async Response");
-			}
-			finally
-			{
-				if(httpWebResponse!=null)
-					httpWebResponse.Close();	
+				sinkStack.DispatchException (ex);
 			}
 		}
 
@@ -533,10 +510,6 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		private HttpWebRequest CreateWebRequest(string url, ITransportHeaders requestHeaders, Stream requestStream)
 		{
-
-			
-
-			
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);;
 			request.AllowAutoRedirect = _bAllowAutoRedirect;
 			request.ContentLength = requestStream.Length;
@@ -575,57 +548,74 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 
 			Stream reqStream = request.GetRequestStream();
-			HttpHelper.CopyStream(requestStream,ref reqStream);
-			
+			if (requestStream is MemoryStream)
+			{
+				MemoryStream memStream = (MemoryStream)requestStream;
+				reqStream.Write (memStream.GetBuffer(), 0, (int)memStream.Length);
+			}
+			else
+				HttpHelper.CopyStream(requestStream, reqStream);
+
 			reqStream.Close();
 			
 			return request;
 		}       
         
-		private bool SendAndRecieve(HttpWebRequest httpRequest,out ITransportHeaders responseHeaders,out Stream responseStream)
+		private void SendAndRecieve(HttpWebRequest httpRequest,out ITransportHeaders responseHeaders,out Stream responseStream)
 		{
 			responseStream = null;
 			responseHeaders = null;
 			HttpWebResponse httpWebResponse = null;
 
-			bool returnValue = false;
-
-
 			try
 			{
 				httpWebResponse = (HttpWebResponse)httpRequest.GetResponse();
+			}
+			catch (WebException ex)
+			{
+				httpWebResponse = ex.Response as HttpWebResponse;
+				if (httpWebResponse == null) throw ex;
+			}
 
-        			responseStream = new MemoryStream();
-				HttpHelper.CopyStream(httpWebResponse.GetResponseStream(),ref responseStream);
+			ReceiveResponse (httpWebResponse, out responseHeaders, out responseStream);
+		}
 
+		private void ReceiveResponse (HttpWebResponse httpWebResponse, out ITransportHeaders responseHeaders, out Stream responseStream)
+		{
+			responseHeaders = new TransportHeaders();
 
-				responseHeaders = new TransportHeaders();
-				
-				
+			try
+			{
+				Stream webStream = httpWebResponse.GetResponseStream();
+
+				if (httpWebResponse.ContentLength != -1)
+				{
+					byte[] buffer = new byte [httpWebResponse.ContentLength];
+					int nr = 0;
+					while (nr < buffer.Length)
+						nr += webStream.Read (buffer, nr, buffer.Length - nr);
+					responseStream = new MemoryStream (buffer);
+				}
+				else
+				{
+					responseStream = new MemoryStream();
+					HttpHelper.CopyStream(webStream, responseStream);
+				}
+
 				//Use the two commented lines below instead of the 3 below lines when HttpWebResponse
 				//class is fully implemented in order to support custom headers
 				//for(int i=0; i < httpWebResponse.Headers.Count; ++i)
 				//	responseHeaders[httpWebResponse.Headers.Keys[i].ToString()] = httpWebResponse.Headers[i].ToString();
-				
+
 				responseHeaders["Content-Type"] = httpWebResponse.ContentType;
 				responseHeaders["Server"] = httpWebResponse.Server;
 				responseHeaders["Content-Length"] = httpWebResponse.ContentLength;
-			
-				returnValue =true;
 			}
-			catch(Exception e)
-			{
-				
-				Console.WriteLine(e);
-				returnValue = false;
-			}
-
 			finally
 			{
 				if(httpWebResponse!=null)
-					httpWebResponse.Close();			
+					httpWebResponse.Close();
 			}
-			return returnValue;
 		}
 
 		private void ProcessErrorCode()
