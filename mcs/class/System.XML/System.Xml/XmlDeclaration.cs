@@ -82,7 +82,7 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			return new XmlDeclaration (Encoding, standAlone, OwnerDocument);
+			return new XmlDeclaration (Version, Encoding, standAlone, OwnerDocument);
 		}
 
 		public override void WriteContentTo (XmlWriter w)

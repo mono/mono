@@ -1,10 +1,15 @@
 2002-03-26  Duncan Mak  <duncan@ximian.com>
 
+	* XmlDeclaration.cs (CloneNode): 
+	* XmlDocument.cs (CreateXmlDeclaration): Added missing constructor
+	arguments.
+
 	* XmlCharacterData.cs (InnerText): Implemented. Funny that the
 	docs say it is the "The concatenated values of the node and all
 	the children of the node.". I wrote some test programs and
 	couldn't get any of the derived nodes to AppendChild. For now,
 	InnerText == Data == Value.
+	(Substring): Fixed typo.
 
 	* XmlDeclaration.cs (XmlDeclaration): Fixed the constructor parameter signature.
 

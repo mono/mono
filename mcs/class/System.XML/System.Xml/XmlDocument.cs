@@ -328,7 +328,7 @@ namespace System.Xml
 			if  ((standalone != null) && !((standalone == "yes") || (standalone == "no")))
 				throw new ArgumentException ("standalone string is not correct.");
 			
-			return new XmlDeclaration (encoding, standalone, this);
+			return new XmlDeclaration (version, encoding, standalone, this);
 		}
 
 		[MonoTODO]

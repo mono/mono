@@ -79,7 +79,7 @@ namespace System.Xml
 
 		public virtual string Substring (int offset, int count)
 		{
-			return new data.SubString (offset, count);
+			return data.Substring (offset, count);
 		}
 
 		#endregion
