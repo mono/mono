@@ -1,3 +1,6 @@
+2001-10-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* main.c (arch_compile_method):  added to compute vtable entry
 
 Mon Oct 8 16:13:55 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

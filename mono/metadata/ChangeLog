@@ -1,4 +1,23 @@
+2001-10-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_metadata_init): interface offset table now
+	contains pointers into the vtable - this is more efficient for the jit
+
+2001-10-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_metadata_init): use a temporary vtable (the
+	old algorithm only worked for the interpreter, but not for the jit)
+
+2001-10-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* loader.c (method_from_memberref): use mono_class_get to get the
+	class of an array instead of using System.Array directly.
+	(mono_get_method): also add MEMBERREF methods to the method cache
+	which usefull for arrays.
+
 2001-10-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* pedump.c (arch_compile_method): added to compute vtable entry
 
 	* metadata.c (mono_metadata_interfaces_from_typedef): also return the
 	number of interfaces.

@@ -1,6 +1,11 @@
+2001-10-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c: removed newobj()
+
 2001-10-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (get_virtual_method): use the vtable
+	(arch_compile_method): added to compute vtable entry
 
 Mon Oct 8 16:14:40 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

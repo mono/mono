@@ -1,3 +1,33 @@
+2001-10-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: added some experimental code for CALL
+	instructions - still not found the optimal way to do it.
+
+	* testjit.c (map_stind_type): add support for value types with
+	a size of 1, 2 or 4 bytes, implemented CEE_UNBOX, CEE_LDOBJ,
+	CEE_LDSTR, CEE_LDFLD, CEE_LDFLDA, CEE_STFLD, CEE_NEWOBJ, CEE_CEQ
+	(ctree_create_newobj): impl.
+	
+
+	* emit-x86.c (tree_allocate_regs): removed allocation code for
+	addr nonterminal.
+	(get_address): use a simple, but bug free search instead of the
+	buggy binary search.
+
+2001-10-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c: support virtual functions
+
+	* x86.brg: support different addressing modes for calls
+
+2001-10-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c: impl. STFLD
+
+2001-10-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: impl. CEQ
+
 2001-10-04  Dick Porter  <dick@ximian.com>
 
 	* testjit.c:
