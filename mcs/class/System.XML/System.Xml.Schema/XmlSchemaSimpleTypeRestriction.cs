@@ -566,6 +566,7 @@ namespace System.Xml.Schema
 		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt)
 		{
 			// pattern
+			// TODO: Shouldn't patterns be treated as an OR?
 			if (this.patternFacetValues != null) {
 				for (int i = 0; i < this.patternFacetValues.Length; i++)
 					if (rexPatterns [i] != null && !rexPatterns [i].IsMatch (value))
@@ -583,23 +584,33 @@ namespace System.Xml.Schema
 				if (!matched)
 					return false;
 			}
+			XsdAnySimpleType dt = getDatatype ();
 			
-			// TODO: Need to skip length tests for 
+			// Need to skip length tests for 
 			// types derived from QName or NOTATION
 			// see errata: E2-36 Clarification
 			
-						
-			// numeric
-			// : length
-			if (lengthFacet >= 0 && value.Length != lengthFacet)
-					return false;
-			// : maxLength
-			if (maxLengthFacet >= 0 && value.Length > maxLengthFacet)
-					return false;
-			// : minLength
-			if (minLengthFacet >= 0 && value.Length < minLengthFacet)
-					return false;
+			if (! ( (dt is XsdQName) || (dt is XsdNotation))) {  
+        // Length potentially slower now, so only calculate if needed			
+				if (! (lengthFacet == -1) && (maxLengthFacet == -1) && (minLengthFacet == -1)) {
+											
+					// numeric
+					// : length
+				
+					int length = dt.Length(value);
+					
+					if (lengthFacet >= 0 && length != lengthFacet)
+							return false;
+					// : maxLength
+					if (maxLengthFacet >= 0 && length > maxLengthFacet)
+							return false;
+					// : minLength
+					if (minLengthFacet >= 0 && length < minLengthFacet)
+							return false;
 
+				}
+		  }
+				
 			if ((totalDigitsFacet >=0) || (fractionDigitsFacet >=0)) {
 				String newValue = value.Trim(new Char [] { '+', '-', '0', '.' });
 				int fractionDigits = 0;
@@ -619,7 +630,6 @@ namespace System.Xml.Schema
 					(maxExclusiveFacet != null) ||
 					(minInclusiveFacet != null) ||
 					(minExclusiveFacet != null)) { 
-				XsdAnySimpleType dt = getDatatype ();
 				if (dt != null) {
 					object parsed;
 					try {

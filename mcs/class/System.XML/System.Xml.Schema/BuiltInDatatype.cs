@@ -12,6 +12,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace Mono.Xml.Schema
 {
@@ -109,6 +110,11 @@ namespace Mono.Xml.Schema
 		internal virtual XsdOrdering Compare(object x, object y) {
 			return XsdOrdering.Indeterminate;
 			}
+	
+		internal virtual int Length(string s) {
+			return s.Length;
+		}
+
 		
 		// anySimpleType allows any facet
 		internal virtual XmlSchemaFacet.Facet AllowedFacets {
@@ -184,18 +190,6 @@ namespace Mono.Xml.Schema
 			get { return XsdOrderedFacet.False; }
 		}
 
-		/* Freeze their use now.
-		// Constraining Facets
-		public bool HasLengthFacet;
-		public bool HasMaxLengthFacet;
-		public bool HasMinLengthFacet;
-		public int Length;
-		public int MaxLength;
-		public int MinLength;
-		public string Pattern;
-		public ICollection Enumeration;
-		*/
-	
 	}
 
 	// xs:normalizedString
@@ -514,19 +508,6 @@ namespace Mono.Xml.Schema
 			get { return XsdOrderedFacet.False; }
 		}
 
-		// Constraining Facets
-		public bool HasLengthFacet;
-		public bool HasMaxLengthFacet;
-		public bool HasMinLengthFacet;
-		public int Length;
-		public int MaxLength;
-		public int MinLength;
-		public string Pattern;
-		public ICollection Enumeration;
-
-
-
-
 	}
 
 	// xs:decimal
@@ -590,19 +571,6 @@ namespace Mono.Xml.Schema
 			get { return XsdOrderedFacet.Total; }
 		}
 
-		// Constraining Facets
-		public bool HasLengthFacet;
-		public bool HasMaxLengthFacet;
-		public bool HasMinLengthFacet;
-		public int Length;
-		public int MaxLength;
-		public int MinLength;
-		public string Pattern;
-		public ICollection Enumeration;
-		
-		
-		
-		
 	}
 
 	// xs:integer
@@ -1126,8 +1094,69 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return Convert.FromBase64String (Normalize (s));
+		        // If it isnt ASCII it isnt valid base64 data
+			byte[] inArr = new System.Text.ASCIIEncoding().GetBytes(s);
+			FromBase64Transform t = new FromBase64Transform();
+			return t.TransformFinalBlock(inArr, 0, inArr.Length);
 		}
+
+
+		internal override int Length(string s) {
+			int length = 0;
+			int pad = 0;
+			int end = s.Length;
+			for (int i = 0; i < end; i++) {
+			  char c = s[i];
+				if (!Char.IsWhiteSpace(c)) {
+					if (isData(c))
+						length ++;
+					else if (isPad(c)) 
+						pad++;					
+					else 
+					  return -1;   // Invalid characters
+				}	
+			}
+			if (pad > 2) 
+			  return -1; // Max 2 padding at the end.
+			if (pad > 0) 
+			  pad = 3-pad;				
+			
+		  return ((length/4)*3)+pad;
+		}	
+
+/* TODO: Use the Base64Table and similar code when it makes it 
+ * out of System.Security.Cryptography (currently internal so I 
+ * don't think we can use it).
+ * 
+ */
+			private static string ALPHABET =
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+			private static byte[] decodeTable;
+			static XsdBase64Binary ()
+			{
+				int len = ALPHABET.Length;
+
+				decodeTable = new byte [1 + (int)'z'];
+
+				for (int i=0; i < decodeTable.Length; i++) {
+					decodeTable [i] = Byte.MaxValue;
+				}
+
+				for (int i=0; i < len; i++) {
+					char ch = ALPHABET [i];
+					decodeTable [(int)ch] = (byte) i;
+				}
+			}
+	
+		protected static bool isPad(char octect) {
+			return (octect == '=');
+		}
+											
+		protected static bool isData(char octect) {
+			return (decodeTable[octect] != Byte.MaxValue);
+		}
+
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{
@@ -1135,12 +1164,13 @@ namespace Mono.Xml.Schema
 		}
 	}
 
+	
 	// xs:hexBinary
 	public class XsdHexBinary : XsdAnySimpleType
 	{
 		internal XsdHexBinary ()
 		{
-      this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		internal override XmlSchemaFacet.Facet AllowedFacets {
@@ -1160,6 +1190,10 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.FromBinHexString (Normalize (s));
 		}
+		
+		internal override int Length(string s) {
+		  return s.Length / 2 + s.Length % 2 ;   // Not sure if odd lengths are even allowed
+    }
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
 		{

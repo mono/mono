@@ -1,3 +1,15 @@
+2004-01-14  David Sheldon <dave-mono@earth.li>
+
+        * BuiltInDatatype.cs:
+	   XsdAnySimpleType - Added Length that returns the string length. 
+	   XsdBase64Binary - Added Length, and used more direct, less fussy, 
+	       Base64 decoder. 
+	   XsdHexBinary - Added Length method
+
+	* XmlSchemaSimpleTypeRestriction: use DataType Length method to
+	  determine length to compare against. Stop testing Lenght facets on 
+	  QName and Notation types (as per errata)
+
 2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaComplexType.cs : forgot to commit ;)
