@@ -30,7 +30,7 @@ Module misc1
         End If
     End Function
 
-    Sub Main()
+    Sub main()
 	try
         LineContinuation(10, 20)
         WhiteSpace(10, 20)

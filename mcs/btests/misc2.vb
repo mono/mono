@@ -1,6 +1,6 @@
 module misc2
 
-sub main()
+sub Main()
 	System.Console.WriteLine ("Misc2")
 end sub
 

@@ -1,7 +1,7 @@
 In this directory we have three types of test cases :
 
-	* The test cases which should compile and run without failure (positive test cases). Any 	   failure during compile and run shows some defect in the compiler or class libraries
-	* Test cases which should fail during compilation time. If these test cases get compiled 	   without failure denotes that the compiler is deviating from the specification.
+	* The test cases which should compile and run without failure (positive test cases). Any failure during compile and run shows some defect in the compiler or class libraries
+	* Test cases which should fail during compilation time. If these test cases get compiled without failure denotes that the compiler is deviating from the specification.
 	* Test cases those fails during run time.
 
 The make file picks-up test cases from Test.Sources file.
@@ -9,6 +9,6 @@ The make file picks-up test cases from Test.Sources file.
 The new test cases have to be added to Test.Sources in appropriate section.
 
 To run the tests type following command
-	make run-test-local
+	make run-test-local or just make
 
-All the failure messages gets stored in failures.out file.
+All the failure/success messages get stored in results.out file.
