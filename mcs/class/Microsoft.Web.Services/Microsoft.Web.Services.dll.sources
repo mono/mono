@@ -81,9 +81,12 @@ Microsoft.Web.Services.Security/SecurityTokenReference.cs
 Microsoft.Web.Services.Security/Signature.cs
 Microsoft.Web.Services.Security/SignatureKey.cs
 Microsoft.Web.Services.Security/SignatureOptions.cs
+Microsoft.Web.Services.Security/SignedInfo.cs
+Microsoft.Web.Services.Security/SignedXml.cs
 Microsoft.Web.Services.Security/SymmetricDecryptionKey.cs
 Microsoft.Web.Services.Security/SymmetricEncryptionKey.cs
 Microsoft.Web.Services.Security/SecurityFault.cs
+Microsoft.Web.Services.Security/TransformChain.cs
 Microsoft.Web.Services.Security/UsernameToken.cs
 Microsoft.Web.Services.Security/WSSecurity.cs
 Microsoft.Web.Services.Security/X509SecurityToken.cs
