@@ -1,3 +1,11 @@
+2002-07-26  Martin Baulig  <martin@gnome.org>
+
+	* cs-parser.jay (CSharpParser): Added `Stack switch_stack'.
+	(switch_statement): Push the current_block to the switch_stack and
+	pop it again when we're done with the switch.
+	(switch_section): The new block is a child of the current_block.
+	Fixes bug #24007, added test-152.cs.
+
 2002-07-27  Martin Baulig  <martin@gnome.org>
 
 	These two changes won't give us any performance or code-size
