@@ -3,7 +3,7 @@ topdir = ../..
 LIBRARY = $(topdir)/class/lib/System.Runtime.Remoting.dll
 
 LIB_LIST = unix.args
-LIB_FLAGS = -r corlib -r System
+LIB_FLAGS = -r corlib -r System -r System.Web
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=./Test*

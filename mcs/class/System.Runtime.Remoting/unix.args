@@ -27,4 +27,8 @@
 ./System.Runtime.Remoting.Channels.Simple/SimpleClientChannel.cs
 ./System.Runtime.Remoting.Channels.Simple/SimpleServerChannel.cs
 ./System.Runtime.Remoting.Channels.Simple/SimpleServerTransportSink.cs
-
+./System.Runtime.Remoting.Channels.Http/HttpChannel.cs
+./System.Runtime.Remoting.Channels.Http/HttpClientChannel.cs
+./System.Runtime.Remoting.Channels.Http/HttpRemotingHandler.cs
+./System.Runtime.Remoting.Channels.Http/HttpRemotingHandlerFactory.cs
+./System.Runtime.Remoting.Channels.Http/HttpServerChannel.cs

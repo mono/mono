@@ -1,3 +1,7 @@
+2003-03-22  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* Stubed System.Runtime.Remoting.Channels.Http
+
 2003-02-05  Alvaro del Castillo <acs@barrapunto.com>
 
 	* System.Runtime.Remoting.Channels.Tcp/TcpClientTransportSink.cs:
