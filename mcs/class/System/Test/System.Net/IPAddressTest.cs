@@ -52,6 +52,12 @@ public class IPAddressTest : TestCase
 		AssertEquals ("ToString #4", "127.0.0.1", IPAddress.Loopback.ToString ());
 		AssertEquals ("ToString #5", "255.255.255.255", IPAddress.None.ToString ());
 	}
+	
+	public void TestIsLoopback ()
+	{
+		IPAddress ip = IPAddress.Parse ("127.0.0.1");
+		AssertEquals ("IsLoopback #1", true, IPAddress.IsLoopback (ip));
+	}
 
 	public void TestParseOk ()
 	{

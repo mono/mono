@@ -1,11 +1,16 @@
+2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
+
+	* IPAddressTest.cs: added test for loopback
+
 2002-04-30  Nick Drochak  <ndrochak@gol.com>
 
 	* IPAddressTest.cs: Remove unused code to eliminate compiler warnings.
 
 2002-04-27  Lawrence Pit <loz@cable.a2000.nl>
-	* CookieTest.cs
-	* CookieCollectionTest.cs
-	* AllTests.cs
+
+	* CookieTest.cs: added
+	* CookieCollectionTest.cs: added
+	* AllTests.cs: added
 
 2002-04-24  Nick Drochak  <ndrochak@gol.com>
 
