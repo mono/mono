@@ -173,6 +173,9 @@ namespace System.IO
 			if (!path.EndsWith (Path.DirectorySeparatorStr))
 				path = path + Path.DirectorySeparatorChar;
 
+			if (pattern [0] == '/') // need to adapt to windows conventions...
+				path = "";
+
 			if (pattern == "*")
 				pattern = null;
 			else {
@@ -186,6 +189,8 @@ namespace System.IO
 			}
 			
 			dir_handle = Wrapper.opendir (path);
+			if (dir_handle == IntPtr.Zero)
+				return null;
 			list = new ArrayList ();
 			while ((name = Wrapper.readdir (dir_handle)) != null){
 				if (pattern == null){
@@ -223,6 +228,9 @@ namespace System.IO
 
 			foreach (string name in list){
 				string full = path + name;
+
+				if (name [0] == '/') // update for windows stuff
+					full = name;
 
 				unsafe {
 					stat s;
