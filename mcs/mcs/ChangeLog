@@ -1,3 +1,28 @@
+2001-09-14  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::TypeAttr): Remove property code and move it into
+	Modifiers.TypeAttr. This should just be a call to that method.
+
+	* modifiers.cs (TypeAttr): Re-write and take an extra argument, the TypeContainer
+	object so that we can determine if we are top-level or not.
+
+	* delegate.cs (Delegate::Define): Update call to TypeAttr method to pass in the 
+	TypeContainer too.
+
+	* enum.cs (Enum::Define): Ditto.
+
+	* modifiers.cs (FieldAttr): Re-write.
+
+	* class.cs (TypeContainer::IsTopLevel): Change accessibility to public.
+	(TypeContainer::HaveStaticConstructor): New property to provide access
+	to precisely that info.
+
+	* modifiers.cs (MethodAttr): Re-write.
+	(EventAttr): Remove altogether as there seems to be no ostensible use for it.
+
+	* class.cs (TypeContainer::IsTopLevel): Re-write. root_types doesn't seem to be the parent
+	of top-level types as claimed.
+	
 2001-09-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (MemberLookup): Fruitless attempt to lookup

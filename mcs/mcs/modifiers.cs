@@ -62,22 +62,39 @@ namespace CIR {
 			return s;
 		}
 
-		public static TypeAttributes TypeAttr (int mod_flags)
+		public static TypeAttributes TypeAttr (int mod_flags, TypeContainer parent)
 		{
 			TypeAttributes t = 0;
 			
-			if ((mod_flags & PUBLIC) != 0)
+			if ((mod_flags & PUBLIC) != 0 && parent.IsTopLevel == true)
 				t |= TypeAttributes.Public;
-			if ((mod_flags & PRIVATE) != 0)
+			else if ((mod_flags & PUBLIC) != 0)
+				t |= TypeAttributes.NestedPublic;
+			
+			if ((mod_flags & PRIVATE) != 0 && parent.IsTopLevel == true)
 				t |= TypeAttributes.NotPublic;
+			else if ((mod_flags & PRIVATE) != 0)
+				t |= TypeAttributes.NestedPrivate;
+
+			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0 && parent.IsTopLevel == false)
+				t |= TypeAttributes.NestedFamANDAssem;
+			if ((mod_flags & PROTECTED) != 0 && parent.IsTopLevel == false)
+				t |= TypeAttributes.NestedFamily;
+			if ((mod_flags & INTERNAL) != 0 && parent.IsTopLevel == false)
+				t |= TypeAttributes.NestedAssembly;
+			
+
 			if ((mod_flags & SEALED) != 0)
 				t |= TypeAttributes.Sealed;
 			if ((mod_flags & ABSTRACT) != 0)
 				t |= TypeAttributes.Abstract;
 
-			// FIXME: what happens to protected and internal ? Are
-			// they connected with NestedAssembly etc. ?
-
+			// If we have static constructors, the runtime needs to
+			// initialize the class, otherwise we can optimize
+		        // the case.
+			if (parent.HaveStaticConstructor)
+				t |= TypeAttributes.BeforeFieldInit;
+			
 			return t;
 		}
 
@@ -85,13 +102,20 @@ namespace CIR {
 		{
 			FieldAttributes fa = 0;
 
-			if ((mod_flags & Modifiers.PUBLIC) != 0)
+			if ((mod_flags & PUBLIC) != 0)
 				fa |= FieldAttributes.Public;
-			if ((mod_flags & Modifiers.PRIVATE) != 0)
+			if ((mod_flags & PRIVATE) != 0)
 				fa |= FieldAttributes.Private;
-			if ((mod_flags & Modifiers.STATIC) != 0)
+			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
+				fa |= FieldAttributes.FamANDAssem;
+			if ((mod_flags & PROTECTED) != 0)
+				fa |= FieldAttributes.Family;
+			if ((mod_flags & INTERNAL) != 0)
+				fa |= FieldAttributes.Assembly;
+			
+			if ((mod_flags & STATIC) != 0)
 				fa |= FieldAttributes.Static;
-			if ((mod_flags & Modifiers.READONLY) != 0)
+			if ((mod_flags & READONLY) != 0)
 				fa |= FieldAttributes.InitOnly;
 
 			return fa;
@@ -101,34 +125,30 @@ namespace CIR {
 		{
 			MethodAttributes ma = 0;
 
-			if ((mod_flags & Modifiers.PUBLIC) != 0)
+			if ((mod_flags & PUBLIC) != 0)
 				ma |= MethodAttributes.Public;
-			if ((mod_flags & Modifiers.PRIVATE) != 0)
+			if ((mod_flags & PRIVATE) != 0)
 				ma |= MethodAttributes.Private;
-			if ((mod_flags & Modifiers.STATIC) != 0)
+			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
+				ma |= MethodAttributes.FamANDAssem;
+			if ((mod_flags & PROTECTED) != 0)
+				ma |= MethodAttributes.Family;
+			if ((mod_flags & INTERNAL) != 0)
+				ma |= MethodAttributes.Assembly;
+			
+
+			if ((mod_flags & STATIC) != 0)
 				ma |= MethodAttributes.Static;
-			if ((mod_flags & Modifiers.ABSTRACT) != 0)
+			if ((mod_flags & ABSTRACT) != 0)
 				ma |= MethodAttributes.Abstract;
-			if ((mod_flags & Modifiers.SEALED) != 0)
+			if ((mod_flags & SEALED) != 0)
 				ma |= MethodAttributes.Final;
-			if ((mod_flags & Modifiers.VIRTUAL) != 0)
+			if ((mod_flags & VIRTUAL) != 0)
 				ma |= MethodAttributes.Virtual;
 
 			return ma;
 		}
 
-		public static EventAttributes EventAttr (int mod_flags)
-		{
-			EventAttributes ea = 0;
-
-			// FIXME : Somebody please help me with this !! What happens to
-			// public, static etc modifiers ?
-
-			ea = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
-			
-			return ea;
-		}
-		
 		// <summary>
 		//   Checks the object @mod modifiers to be in @allowed.
 		//   Returns the new mask.  Side effect: reports any

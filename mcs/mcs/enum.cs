@@ -57,7 +57,7 @@ namespace CIR {
 
 		public void Define (TypeContainer parent)
 		{
-			TypeAttributes attr = Modifiers.TypeAttr (ModFlags);
+			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, parent);
 
 			Type t = System.Type.GetType (type);
 

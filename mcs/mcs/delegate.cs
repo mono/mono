@@ -44,7 +44,7 @@ namespace CIR {
 
 		public void Define (TypeContainer parent)
 		{
-			TypeAttributes attr = Modifiers.TypeAttr (ModFlags);
+			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, parent);
 
 			Type t = parent.LookupType (type, false);
 			Type [] param_types = Parameters.GetParameterInfo (parent);

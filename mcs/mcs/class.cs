@@ -461,68 +461,33 @@ namespace CIR {
 			}
 		}
 
-		//
-		// The Toplevel is `root_types' which is a containerfor all
-		// types defined, hence the non-obviios parent.parent.
-		//
-		// If we were not tracking Namespaces we could remove this.
-		//
-		bool IsTopLevel {
+		// FIXME : The following doesn't seem to be the case :
+		// The Toplevel is `root_types' which is a container for all
+		// types defined, hence the non-obvious parent.parent.
+		public bool IsTopLevel {
 			get {
-				if (parent != null){
-					if (parent.parent == null)
-						return true;
-				}
-
-				return false;
+				if (parent == null)
+					return true;
+				else
+					return false;
+			
 			}
 		}
-
+			
+		public bool HaveStaticConstructor {
+			get {
+				return have_static_constructor;
+			}
+		}
+		
 		// <summary>
 		//   Returns the TypeAttributes for this TypeContainer
 		// </summary>
 		public virtual TypeAttributes TypeAttr {
 			get {
-				TypeAttributes x = 0;
-
-				//
-				// FIXME: Figure out exactly how private, public and protected
-				// map to the TypeAttribute flags.
-				//
-				// FIXME: Figure out what `new' in the context of a class/struct means.
-				//
-				// FIXME: figure out what `internal' means in the context of class/structs
-				//
-				if ((mod_flags & Modifiers.PUBLIC) != 0)
-					x |= TypeAttributes.Public;
-
-				if ((mod_flags & Modifiers.PRIVATE) != 0)
-					x |= TypeAttributes.NotPublic;
-				
-				if ((mod_flags & Modifiers.ABSTRACT) != 0)
-					x |= TypeAttributes.Abstract;
-				
-				if ((mod_flags & Modifiers.SEALED) != 0)
-					x |= TypeAttributes.Sealed;
-
-				if (!IsTopLevel){
-					if ((mod_flags & Modifiers.PUBLIC) != 0)
-						x |= TypeAttributes.NestedPublic;
-					else
-						x |= TypeAttributes.NestedPrivate;
-				}
-
-				//
-				// If we have static constructors, the runtime needs to
-				// initialize the class, otherwise we can optimize
-				// the case.
-				//
-				if (!have_static_constructor)
-					x |= TypeAttributes.BeforeFieldInit;
-				return x;
+				return Modifiers.TypeAttr (mod_flags, parent);
 			}
 		}
-
 
 
 		//
