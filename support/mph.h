@@ -45,6 +45,10 @@
 #define MPH_INTERNAL
 #endif
 
+#if defined (PLATFORM_WIN32) && !defined (EOVERFLOW)
+#define EOVERFLOW 75
+#endif /* def PLATFORM_WIN32 && ndef EOVERFLOW */
+
 typedef    gint64 mph_blkcnt_t;
 typedef    gint64 mph_blksize_t;
 typedef   guint64 mph_dev_t;

@@ -15,11 +15,11 @@
 #endif /* ndef _XOPEN_SOURCE */
 
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <sys/stat.h>
 
 #ifndef PLATFORM_WIN32
 #include <sys/poll.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <grp.h>
