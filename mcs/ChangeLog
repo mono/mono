@@ -1,3 +1,7 @@
+2002-05-09  Daniel Morgan <danmorg@sc.rr.com>
+
+	* AUTHORS: add me to class libraries list
+
 2002-03-26  Dick Porter  <dick@ximian.com>
 
 	* makefile (linux): Abandon the build if any of the subdir makes fail
