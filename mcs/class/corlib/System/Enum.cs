@@ -345,8 +345,12 @@ namespace System {
 		[MonoTODO]
 		public string ToString (String format, IFormatProvider provider)
 		{
-			// fixme: consider format and provider
-			return GetName (this.GetType(), this.get_value ());
+			// provider is not used for Enums
+
+			if (format == String.Empty || format == null){
+				format = "G";
+			}
+			return Format (this.GetType(), this.get_value (), format);
 		}
 
 		public static object ToObject(Type enumType, byte value)
@@ -421,13 +425,147 @@ namespace System {
 			if (null == format)
 				throw new ArgumentNullException("format cannot be null");
 
-			if (enumType != typeof(Enum))
+			if (!enumType.IsEnum)
 				throw new ArgumentException("enumType is not an Enum Type");
+			
+			Type vType = value.GetType();
+			if (vType != enumType && vType != Enum.GetUnderlyingType(enumType))
+				throw new ArgumentException();
 
-			// FIXME: other tests for ArgumentException
+			if (format.Length != 1 || (
+				format != "G" && format != "g" &&
+				format != "X" && format != "x" &&
+				format != "D" && format != "d" &&
+				format != "F" && format != "f")
+				)
+				throw new FormatException("Format String can be only \"G\",\"g\",\"X\",\"x\",\"F\",\"f\",\"D\" or \"d\".");
 
-			// fixme: consider format, including test and throw FormatException
-			return GetName (enumType, value);
+			// FIXME: Need to re-include this when mono/mint can handle the array
+			//	cast properly.  Bugzilla bug submitted #23123
+			//if ((format == "G" || format == "g") 
+			//	&& Attribute.IsDefined(enumType, typeof(FlagsAttribute)))
+			//	format = "F";
+
+			string retVal = "";
+			switch (format) {
+			    case "G":
+			    case "g":
+				retVal = GetName (enumType, value);
+				if (retVal == null)
+					retVal = value.ToString();
+				break;
+			    case "X":
+			    case "x":
+				retVal = value.ToString();
+				long xValue = Int64.Parse(retVal);
+				// FIXME: Not sure if padding should always be with precision
+				// 8, if it's culture specific, or what.  This works for me.
+				retVal = xValue.ToString("x8");
+				break;
+			    case "D":
+			    case "d":
+				retVal = value.ToString();
+				break;
+			    case "F":
+			    case "f":
+				MonoEnumInfo info;
+				MonoEnumInfo.GetInfo (enumType, out info);
+				// This is ugly, yes.  We need to handle the different integer
+				// types for enums.  If someone else has a better idea, be my guest.
+				switch (((Enum)info.values.GetValue (0)).GetTypeCode()) {
+					case TypeCode.Byte:
+						byte byteFlag = (byte)value;
+						byte byteenumValue;
+						for (int i = info.values.Length-1; i>=0 && byteFlag != 0; i--) {
+							byteenumValue = (byte)info.values.GetValue (i);
+							if ((byteenumValue & byteFlag) == byteenumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								byteFlag -= byteenumValue;
+							}
+						}
+						break;
+					case TypeCode.SByte:
+						SByte sbyteFlag = (SByte)value;
+						SByte sbyteenumValue;
+						for (int i = info.values.Length-1; i>=0 && sbyteFlag != 0; i--) {
+							sbyteenumValue = (SByte)info.values.GetValue (i);
+							if ((sbyteenumValue & sbyteFlag) == sbyteenumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								sbyteFlag -= sbyteenumValue;
+							}
+						}
+						break;
+					case TypeCode.Int16:
+						short Int16Flag = (short)value;
+						short Int16enumValue;
+						for (int i = info.values.Length-1; i>=0 && Int16Flag != 0; i--) {
+							Int16enumValue = (short)info.values.GetValue (i);
+							if ((Int16enumValue & Int16Flag) == Int16enumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								Int16Flag -= Int16enumValue;
+							}
+						}
+						break;
+					case TypeCode.Int32:
+						int Int32Flag = (int)value;
+						int Int32enumValue;
+						for (int i = info.values.Length-1; i>=0 && Int32Flag != 0; i--) {
+							Int32enumValue = (int)info.values.GetValue (i);
+							if ((Int32enumValue & Int32Flag) == Int32enumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								Int32Flag -= Int32enumValue;
+							}
+						}
+						break;
+					case TypeCode.Int64:
+						long Int64Flag = (long)value;
+						long Int64enumValue;
+						for (int i = info.values.Length-1; i>=0 && Int64Flag != 0; i--) {
+							Int64enumValue = (long)info.values.GetValue (i);
+							if ((Int64enumValue & Int64Flag) == Int64enumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								Int64Flag -= Int64enumValue;
+							}
+						}
+						break;
+					case TypeCode.UInt16:
+						UInt16 UInt16Flag = (UInt16)value;
+						UInt16 UInt16enumValue;
+						for (int i = info.values.Length-1; i>=0 && UInt16Flag != 0; i--) {
+							UInt16enumValue = (UInt16)info.values.GetValue (i);
+							if ((UInt16enumValue & UInt16Flag) == UInt16enumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								UInt16Flag -= UInt16enumValue;
+							}
+						}
+						break;
+					case TypeCode.UInt32:
+						UInt32 UInt32Flag = (UInt32)value;
+						UInt32 UInt32enumValue;
+						for (int i = info.values.Length-1; i>=0 && UInt32Flag != 0; i--) {
+							UInt32enumValue = (UInt32)info.values.GetValue (i);
+							if ((UInt32enumValue & UInt32Flag) == UInt32enumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								UInt32Flag -= UInt32enumValue;
+							}
+						}
+						break;
+					case TypeCode.UInt64:
+						UInt64 UInt64Flag = (UInt64)value;
+						UInt64 UInt64enumValue;
+						for (int i = info.values.Length-1; i>=0 && UInt64Flag != 0; i--) {
+							UInt64enumValue = (UInt64)info.values.GetValue (i);
+							if ((UInt64enumValue & UInt64Flag) == UInt64enumValue){
+								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+								UInt64Flag -= UInt64enumValue;
+							}
+						}
+						break;
+				}
+				break;
+			}
+
+			return retVal;
 		}
 	}
 }

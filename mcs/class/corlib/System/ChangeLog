@@ -1,3 +1,9 @@
+2002-04-08  Nick Drochak  <ndrochak@gol.com>
+
+	* Enum.cs (ToString): Big ugly fix for the case where [Flags] is
+	applied to an enum. Need to handle the different possible integer
+	types of an enum somehow.  Can anyone say generics?
+
 Mon Apr  8 06:22:42  2002 Piers Haken <piersh@friskit.com>
 
 	* Convert.cs: switched the To*(object) methods to use
