@@ -172,7 +172,7 @@ namespace System.Web.Security
 			if (returnUrl != null)
 				return returnUrl;
 
-			AuthConfig authConfig = context.GetConfig (authConfigPath) as AuthConfig;
+			AuthConfig authConfig = HttpContext.Current.GetConfig (authConfigPath) as AuthConfig;
 			if (authConfig.LoginUrl != null) {
 				return authConfig.LoginUrl;
 			}
