@@ -49,16 +49,26 @@ namespace Font1Sample {
 			checkFontProperties();            
 			
 			Console.WriteLine("Draw--------------------");
-			float width = 400.0F;
+			float width = 800.0F;
 			float height = 400.0F;
             string str = "";
 			
 			Font f1 = new Font("Arial",12);			
 			Font f2 = new Font("Verdana", 12, FontStyle.Bold);	
 			Font f3 = new Font("Courier New", 12, FontStyle.Italic);
-   			Font f4 = new Font("Arial",12);
 			
-			Console.WriteLine("Name: {1}", f1.Name, f1.Height);
+   			Font f4  = new Font(FontFamily.GenericSansSerif, 19, FontStyle.Regular, GraphicsUnit.Millimeter);
+			Console.WriteLine("Font:" + f4.Name + " size:" + f4.Size + "Points: " + f4.SizeInPoints);
+			
+			Font f5  = new Font(FontFamily.GenericSerif, 15, FontStyle.Regular, GraphicsUnit.Point);
+			Console.WriteLine("Font:" + f5.Name + " size:" + f5.Size + "Points: " + f5.SizeInPoints);
+			
+			Font f6  = new Font("Arial", 40, FontStyle.Regular, GraphicsUnit.Pixel);
+			Console.WriteLine("Font:" + f6.Name + " size:" + f6.Size + "Points: " + f6.SizeInPoints);
+			
+			Font f7  = new Font("Verdana", 19, FontStyle.Regular, GraphicsUnit.World);
+			Console.WriteLine("Font:" + f7.Name + " size:" + f7.Size + "Points: " + f7.SizeInPoints);					
+			
 			
 			Bitmap bmp = new Bitmap((int)width, (int)height);
 			Graphics gr = Graphics.FromImage(bmp);
@@ -78,14 +88,17 @@ namespace Font1Sample {
             str = "This a " +  f3.Name + " italic test string size: "+ f3.Height;
 			gr.DrawString( str, f3, br, 10, 100);
 
-                        str = "This an " +  f1.Name + " test string size: "+ f1.Height;
-			gr.DrawString (str, f1, br, 10, 10);
+            str = "This an " +  f1.Name + " test string size: "+ f4.Height;
+			gr.DrawString (str, f4, br, 10, 150);
 
-            str = "This a " +  f2.Name + " bold test string size: "+ f2.Height;
-			gr.DrawString( str, f2, colorRed, 10, 50);
+            str = "This a " +  f5.Name + " test string size: "+ f5.Height;
+			gr.DrawString( str, f5, colorRed, 10, 250);
 
-            str = "This a " +  f3.Name + " italic test string size: "+ f3.Height;
-			gr.DrawString( str, f3, br, 10, 100);
+            str = "This a " +  f6.Name + " test string size: "+ f6.Height;
+			gr.DrawString( str, f6, br, new Rectangle(10,300,0,0));
+			
+           	str = "This a " +  f7.Name + " test string size: "+ f7.Height;
+			gr.DrawString( str, f7, br, 10,350);
 			
 			bmp.Save("fontdrawing.bmp", ImageFormat.Bmp);			
 		}

@@ -21,6 +21,8 @@ namespace System.Drawing
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
+		internal static float defDpiX = 0;
+		internal static float defDpiY = 0;
 		
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
@@ -33,6 +35,28 @@ namespace System.Drawing
 		private Graphics (IntPtr nativeGraphics)
 		{
 			nativeObject = nativeGraphics;
+		}
+		
+		static internal float systemDpiX {
+			get {					
+					if (defDpiX==0) {
+						Bitmap bmp = new Bitmap(1,1);
+						Graphics g = Graphics.FromImage(bmp);	
+       					defDpiX = g.DpiX;
+       				}
+       				return defDpiX;
+			}
+		}
+
+		public float systemDpiY {
+			get {
+					if (defDpiY==0) {
+						Bitmap bmp = new Bitmap(1,1);
+						Graphics g = Graphics.FromImage(bmp);	
+       					defDpiY = g.DpiY;
+       				}
+       				return defDpiY;
+			}
 		}
 		
 		internal IntPtr NativeObject {

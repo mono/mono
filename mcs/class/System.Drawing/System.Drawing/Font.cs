@@ -27,27 +27,86 @@ namespace System.Drawing {
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 		}
+		
+		~Font()
+		{	
+			Dispose ();
+		}
 
 		public void Dispose ()
 		{
-			if (fontObject!=IntPtr.Zero)
-			{
+			if (fontObject!=IntPtr.Zero){				
 				GDIPlus.GdipDeleteFont(fontObject);			
 				GC.SuppressFinalize(this);
 			}
+		}		
+		
+		internal void unitConversion(GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, out float nTrg)
+		{
+			float inchs = 0;
+			nTrg = 0;		
+			
+			switch (fromUnit) {
+			case GraphicsUnit.Display:
+				inchs = nSrc / 75f;
+				break;
+			case GraphicsUnit.Document:
+				inchs = nSrc / 300f;
+				break;
+			case GraphicsUnit.Inch:
+				inchs = nSrc;
+				break;
+			case GraphicsUnit.Millimeter:
+				inchs = nSrc / 25.4f;
+				break;
+			case GraphicsUnit.Pixel:				
+			case GraphicsUnit.World:
+				inchs = nSrc / Graphics.systemDpiX;
+				break;
+			case GraphicsUnit.Point:
+				inchs = nSrc / 72f;
+				break;				
+			default:		
+				throw new ArgumentException("Invalid GraphicsUnit");				
+			}			
+			
+			switch (toUnit) {
+			case GraphicsUnit.Display:
+				nTrg = inchs * 75;
+				break;
+			case GraphicsUnit.Document:
+				nTrg = inchs * 300;
+				break;
+			case GraphicsUnit.Inch:
+				nTrg = inchs;
+				break;
+			case GraphicsUnit.Millimeter:
+				nTrg = inchs * 25.4f;
+				break;
+			case GraphicsUnit.Pixel:				
+			case GraphicsUnit.World:
+				nTrg = inchs * Graphics.systemDpiX;
+				break;
+			case GraphicsUnit.Point:
+				nTrg = inchs * 72;
+				break;
+			default:	
+				throw new ArgumentException("Invalid GraphicsUnit");				
+			}				
 		}
 		
 		internal void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)			 
-		{
-			//Todo: Handle unit conversions
+		{			
 			_name=family.Name;
 			_fontFamily = family;
-			_size = emSize;
+			_size = emSize;			
 			_unit = unit;
 			_style = style;
 			_gdiCharSet = charSet;
 			_gdiVerticalFont = isVertical;
-			_sizeInPoints = emSize;
+			
+			unitConversion(unit, GraphicsUnit.Point, emSize, out  _sizeInPoints);
+			Console.WriteLine("Size " + emSize +";" +   _sizeInPoints);
 			
 			_bold = _italic = _strikeout = _underline = false;
 			
@@ -118,9 +177,9 @@ namespace System.Drawing {
 		}
 		
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
-		{			
-			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);		
-			setProperties(family, emSize, style, unit, charSet, isVertical);
+		{	
+			setProperties(family, emSize, style, unit, charSet, isVertical);		
+			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);					
 		}
 
 		public Font(string familyName, float emSize)
@@ -146,9 +205,9 @@ namespace System.Drawing {
 		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)			 
 		{
 			FontFamily family = new FontFamily(familyName);			
-			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);		
-			
 			setProperties(family, emSize, style, unit, charSet, isVertical);
+			
+			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);					
 		}
 		
 		
