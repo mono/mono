@@ -1,3 +1,11 @@
+2005-02-08  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #72015.
+	* delegate.cs (Delegate.DefineType): When bootstrapping corlib, if
+	TypeManager.multicast_delegate_type is null, resolve it by looking
+	up "System.MulticastDelegate".
+	* rootcontext.cs (RootContext.ResolveCore): Simplify.
+
 2005-02-07  Abin Thomas (NOSIP)  <projectmonokochi@rediffmail.com>
 	    Anoob V.E (NOSIP)  <projectmonokochi@rediffmail.com>
 	    Harilal P.R (NOSIP)  <projectmonokochi@rediffmail.com>
