@@ -1093,6 +1093,9 @@ namespace System
 				|| (items != null && index > items.Length - length))
 				throw new ArgumentException ();
 
+			if (length <= 1)
+				return;
+
 			if (comparer == null) {
 				Swapper iswapper;
 				if (items == null)
