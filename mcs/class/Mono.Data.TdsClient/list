@@ -18,7 +18,6 @@ Mono.Data.TdsClient.Internal/ITds.cs
 Mono.Data.TdsClient.Internal/Tds.cs
 Mono.Data.TdsClient.Internal/Tds42.cs
 Mono.Data.TdsClient.Internal/TdsColumnType.cs
-Mono.Data.TdsClient.Internal/TdsColumnSchema.cs
 Mono.Data.TdsClient.Internal/TdsComm.cs
 Mono.Data.TdsClient.Internal/TdsConnectionParameters.cs
 Mono.Data.TdsClient.Internal/TdsContext.cs
