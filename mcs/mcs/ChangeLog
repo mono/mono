@@ -1,3 +1,41 @@
+2001-10-30  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (NewArray): Merge into the ArrayCreation class.
+
+2001-10-29  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (NewArray): Merge classes NewBuiltinArray and 
+	NewUserdefinedArray into one as there wasn't much of a use in having
+	two separate ones.
+
+	* expression.cs (Argument): Change field's name to ArgType from Type.
+
+	(Type): New readonly property which returns the proper type, taking into 
+	account ref/out modifiers.
+
+	(everywhere): Adjust code accordingly for the above.
+
+	* codegen.cs (EmitContext.RefOrOutParameter): New field to determine
+	whether we are emitting for a ref or out parameter.
+
+	* expression.cs (Argument::Emit): Use the above field to set the state.
+
+	(LocalVariableReference::Emit): Update to honour the flag and emit the
+	right stuff.
+
+	* parameter.cs (Attributes): Set the correct flags for ref parameters.
+
+	* expression.cs (Argument::FullDesc): New function to provide a full desc.
+
+	* support.cs (ParameterData): Add method ParameterDesc to the interface.
+
+	(ReflectionParameters, InternalParameters): Implement the above method.
+
+	* expression.cs (Invocation::OverloadResolve): Use the new desc methods in
+	reporting errors.
+
+	(Invocation::FullMethodDesc): Ditto. 
+
 2001-10-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Add extra production for the second form of array

@@ -43,9 +43,9 @@ namespace CIR {
 				case Modifier.NONE:
 					return ParameterAttributes.None;
 				case Modifier.REF:
-					return ParameterAttributes.Retval;
+					return ParameterAttributes.None;
 				case Modifier.OUT:
-					return ParameterAttributes.Out | ParameterAttributes.Retval;
+					return ParameterAttributes.Out;
 				case Modifier.PARAMS:
 					return 0;
 				}

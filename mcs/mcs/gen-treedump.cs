@@ -263,7 +263,7 @@ namespace Generator {
 				for (int i = 0; i < top; i++){
 					Argument arg = (Argument) args [i];
 						
-					switch (arg.Type){
+					switch (arg.ArgType){
 						case Argument.AType.Ref:
 							r += "ref "; break;
 						case Argument.AType.Out:

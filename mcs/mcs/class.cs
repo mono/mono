@@ -1792,10 +1792,10 @@ namespace CIR {
 			if (p != null){
 				int i;
 				
-				for (i = 0; i < p.Length; i++)
+				for (i = 0; i < p.Length; i++) 
 					MethodBuilder.DefineParameter (
-						i + 1, p [i].Attributes, p [i].Name);
-
+						      i + 1, p [i].Attributes, p [i].Name);
+					
 				if (i != parameters.Length)
 					Console.WriteLine ("Implement the type definition for params");
 			}

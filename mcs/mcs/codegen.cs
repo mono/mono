@@ -184,5 +184,11 @@ namespace CIR {
 		// Whether we are inside a loop and break/continue are possible.
 		// 
 		public bool  InLoop;
+
+		//
+		// Whether we are currently emitting code for a ref/out parameter
+		//
+		public bool  RefOrOutParameter;
+		
 	}
 }

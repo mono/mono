@@ -32,7 +32,7 @@ verify:
 	for i in $(TEST_SOURCES); do \
 		if $(MCS) -o mcs-gen-code.exe $$i.cs > /dev/null; then \
 	        	if $(CSC) /out:csc-gen-code.exe $$i.cs > /dev/null; then \
-				if $(VERIFY) mcs-gen-code.exe csc-gen-code.exe; then \
+				if $(VERIFY) mcs-gen-code.exe csc-gen-code.exe > /dev/null; then \
 					echo $$i: identical assemblies; \
 				else \
 					echo $$i: unidentical assemblies; exit; \

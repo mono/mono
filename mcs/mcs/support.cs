@@ -11,12 +11,14 @@
 using System.Reflection.Emit;
 using System.Reflection;
 using System;
+using System.Text;
 
 namespace CIR {
 
 	public interface ParameterData {
 		Type ParameterType (int pos);
 		int  Count { get; }
+		string ParameterDesc (int pos);
 	}
 
 	public class ReflectionParameters : ParameterData {
@@ -30,6 +32,22 @@ namespace CIR {
 		public Type ParameterType (int pos)
 		{
 			return pi [pos].ParameterType;
+		}
+
+		public string ParameterDesc (int pos)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			if (pi [pos].IsOut)
+				sb.Append ("out ");
+
+			if (pi [pos].IsIn)
+				sb.Append ("in ");
+
+			sb.Append (TypeManager.CSharpName (ParameterType (pos)));
+
+			return sb.ToString ();
+			
 		}
 
 		public int Count {
@@ -63,6 +81,11 @@ namespace CIR {
 				return null;
 					
 			return pars [pos];
+		}
+
+		public string ParameterDesc (int pos)
+		{
+			return TypeManager.CSharpName (ParameterType (pos));
 		}
 	}
 }

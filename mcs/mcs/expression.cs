@@ -3350,32 +3350,38 @@ namespace CIR {
 			ILGenerator ig = ec.ig;
 			int idx = vi.Idx;
 
-			vi.Used = true;
+			bool ref_parameter = ec.RefOrOutParameter;
 			
-			switch (idx){
-			case 0:
-				ig.Emit (OpCodes.Ldloc_0);
-				break;
+			vi.Used = true;
+
+			if (!ref_parameter) {
 				
-			case 1:
-				ig.Emit (OpCodes.Ldloc_1);
-				break;
-
-			case 2:
-				ig.Emit (OpCodes.Ldloc_2);
-				break;
-
-			case 3:
-				ig.Emit (OpCodes.Ldloc_3);
-				break;
-
-			default:
-				if (idx <= 255)
-					ig.Emit (OpCodes.Ldloc_S, (byte) idx);
-				else
-					ig.Emit (OpCodes.Ldloc, idx);
-				break;
-			}
+				switch (idx){
+				case 0:
+					ig.Emit (OpCodes.Ldloc_0);
+					break;
+					
+				case 1:
+					ig.Emit (OpCodes.Ldloc_1);
+					break;
+					
+				case 2:
+					ig.Emit (OpCodes.Ldloc_2);
+					break;
+					
+				case 3:
+					ig.Emit (OpCodes.Ldloc_3);
+					break;
+					
+				default:
+					if (idx <= 255)
+						ig.Emit (OpCodes.Ldloc_S, (byte) idx);
+					else
+						ig.Emit (OpCodes.Ldloc, idx);
+					break;
+				}
+			} else 
+				AddressOf (ec);
 		}
 
 		public static void Store (ILGenerator ig, int idx)
@@ -3498,13 +3504,13 @@ namespace CIR {
 			Out
 		};
 
-		public readonly AType Type;
+		public readonly AType ArgType;
 		public Expression expr;
 
 		public Argument (Expression expr, AType type)
 		{
 			this.expr = expr;
-			this.Type = type;
+			this.ArgType = type;
 		}
 
 		public Expression Expr {
@@ -3517,6 +3523,31 @@ namespace CIR {
 			}
 		}
 
+		public Type Type {
+			get {
+				if (ArgType == AType.Ref || ArgType == AType.Out)
+					return Type.GetType (expr.Type.FullName + "&");
+				else
+					return expr.Type;
+			}
+		}
+
+	        public static string FullDesc (Argument a)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			if (a.ArgType == AType.Ref)
+				sb.Append ("ref ");
+
+			if (a.ArgType == AType.Out)
+				sb.Append ("out ");
+
+			sb.Append (TypeManager.CSharpName (a.Expr.Type));
+
+			return sb.ToString ();
+		}
+			
+		
 		public bool Resolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
@@ -3526,7 +3557,11 @@ namespace CIR {
 
 		public void Emit (EmitContext ec)
 		{
+			if (ArgType == AType.Ref || ArgType == AType.Out)
+				ec.RefOrOutParameter = true;
+
 			expr.Emit (ec);
+			ec.RefOrOutParameter = false;
 		}
 	}
 
@@ -3647,7 +3682,7 @@ namespace CIR {
 		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, bool use_standard,
 					     Location loc)
 		{
-			Type argument_type = a.Expr.Type;
+			Type argument_type = a.Type;
 			Expression argument_expr = a.Expr;
 
 			if (argument_type == null)
@@ -3848,7 +3883,7 @@ namespace CIR {
 			for (int i = count; i > 0; ) {
 				i--;
 				
-				sb.Append (TypeManager.CSharpName (pd.ParameterType (count - i - 1)));
+				sb.Append (pd.ParameterDesc (count - i - 1));
 				if (i != 0)
 					sb.Append (", ");
 			}
@@ -3998,13 +4033,13 @@ namespace CIR {
 			
 			pd = GetParameterData (method);
 
-			for (int j = argument_count; j > 0;) {
-				j--;
+			for (int j = 0; j < argument_count; j++) {
+
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
 				
-				if (a_expr.Type != parameter_type){
+				if (a.Type != parameter_type){
 					Expression conv;
 
 					if (use_standard)
@@ -4017,12 +4052,12 @@ namespace CIR {
 					if (conv == null){
 						if (!Location.IsNull (loc)) {
 							Error (1502, loc,
-							       "The best overloaded match for method '" + FullMethodDesc (method) +
+						        "The best overloaded match for method '" + FullMethodDesc (method)+
 							       "' has some invalid arguments");
 							Error (1503, loc,
-							       "Argument " + (j+1) +
-							       ": Cannot convert from '" + TypeManager.CSharpName (a_expr.Type)
-							       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
+							 "Argument " + (j+1) +
+							 ": Cannot convert from '" + Argument.FullDesc (a) 
+							 + "' to '" + pd.ParameterDesc (j) + "'");
 						}
 						return null;
 					}
@@ -4260,7 +4295,7 @@ namespace CIR {
 							return null;
 					}
 				}
-				
+
 				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
 								     Arguments, Location);
 			}
@@ -4336,12 +4371,18 @@ namespace CIR {
 	//   expression that specifies the dimensions and optionally the
 	//   initialization data
 	public class ArrayCreation : ExpressionStatement {
+
 		string RequestedType;
 		string Rank;
 		ArrayList Initializers;
-		Location loc;
+		Location  Location;
 		ArrayList Arguments;
-		Expression Array;
+
+		MethodBase method = null;
+		Type array_element_type;
+		bool IsOneDimensional = false;
+		
+		bool IsBuiltinType = false;
 
 		public ArrayCreation (string requested_type, ArrayList exprs,
 				      string rank, ArrayList initializers, Location l)
@@ -4349,7 +4390,7 @@ namespace CIR {
 			RequestedType = requested_type;
 			Rank          = rank;
 			Initializers  = initializers;
-			loc           = l;
+			Location      = l;
 
 			Arguments = new ArrayList ();
 
@@ -4363,66 +4404,7 @@ namespace CIR {
 			RequestedType = requested_type;
 			Rank = rank;
 			Initializers = initializers;
-			loc = l;
-		}
-		
-		public override Expression DoResolve (EmitContext ec)
-		{
-			type = ec.TypeContainer.LookupType (RequestedType, false);
-			
-			if (TypeManager.IsBuiltinType (type))
-				Array = new NewBuiltinArray (
-					RequestedType, Rank, Arguments, Initializers, loc)
-					.Resolve (ec);
-			else
-				Array = new NewUserdefinedArray (
-					RequestedType, Rank, Arguments, Initializers, loc)
-					.Resolve (ec);
-
-			if (Array == null)
-				return null;
-
-			type = Array.Type;
-			eclass = ExprClass.Value;
-
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			Array.Emit (ec);
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			Emit (ec);
-			ec.ig.Emit (OpCodes.Pop);
-		}
-	}
-	
-	// 
-	// Class to create arrays out of built-in types
-	// 
-	public class NewBuiltinArray : Expression {
-
-		public readonly string RequestedType;
-		public readonly string Rank;
-		public ArrayList Arguments;
-		public ArrayList Initializers;
-
-		Location Location;
-
-		MethodBase method = null;
-		Type array_element_type;
-		bool IsOneDimensional = false;
-
-		public NewBuiltinArray (string type, string rank, ArrayList args, ArrayList initializers, Location loc)
-		{
-			RequestedType = type;
-			Rank          = rank;
-			Arguments     = args;
-			Initializers  = initializers;
-			Location      = loc;
+			Location = l;
 		}
 
 		public static string FormArrayType (string base_type, int idx_count, string rank)
@@ -4454,11 +4436,12 @@ namespace CIR {
 
 			return val.Substring (0, val.LastIndexOf ("["));
 		}
+		
 
 		public override Expression DoResolve (EmitContext ec)
 		{
 			int arg_count;
-
+			
 			if (Arguments == null)
 				arg_count = 0;
 			else
@@ -4469,167 +4452,96 @@ namespace CIR {
 			string element_type = FormElementType (RequestedType, arg_count, Rank);
 
 			type = ec.TypeContainer.LookupType (array_type, false);
-
+			
 			array_element_type = ec.TypeContainer.LookupType (element_type, false);
-
+			
 			if (type == null)
 				return null;
-
+			
 			if (arg_count == 1) {
 				IsOneDimensional = true;
 				eclass = ExprClass.Value;
 				return this;
 			}
+
+			IsBuiltinType = TypeManager.IsBuiltinType (type);
+			
+			if (IsBuiltinType) {
 				
-			Expression ml;
-
-			ml = MemberLookup (ec, type, ".ctor", false, MemberTypes.Constructor,
-					   AllBindingsFlags, Location);
-
-			if (!(ml is MethodGroupExpr)){
-				report118 (Location, ml, "method group");
-				return null;
-			}
-
-			if (ml == null) {
-				Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
-					      "this argument list");
-				return null;
-			}
+				Expression ml;
 				
-			if (Arguments != null) {
-				for (int i = arg_count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-					
-					if (!a.Resolve (ec))
+				ml = MemberLookup (ec, type, ".ctor", false, MemberTypes.Constructor,
+						   AllBindingsFlags, Location);
+				
+				if (!(ml is MethodGroupExpr)){
+					report118 (Location, ml, "method group");
+					return null;
+				}
+				
+				if (ml == null) {
+					Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+						      "this argument list");
+					return null;
+				}
+				
+				if (Arguments != null) {
+					for (int i = arg_count; i > 0;){
+						--i;
+						Argument a = (Argument) Arguments [i];
+						
+						if (!a.Resolve (ec))
 							return null;
+					}
 				}
-			}
-			
-			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, Location);
-
-			if (method == null) {
-				Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
-					      "this argument list");
-				return null;
-			}
-
-			eclass = ExprClass.Value;
-			return this;
-
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			if (IsOneDimensional) {
-				Invocation.EmitArguments (ec, Arguments);
-				ec.ig.Emit (OpCodes.Newarr, array_element_type);
-
-			} else {
-				Invocation.EmitArguments (ec, Arguments);
-				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
-			}
-		}
-	}
-
-	//
-	// Class to create arrays out of user defined types
-	//
-	public class NewUserdefinedArray : Expression {
-
-		public readonly string RequestedType;
-		public readonly string Rank;
-		public ArrayList Arguments;
-		public ArrayList Initializers;
-
-		Location Location;
-
-		bool IsOneDimensional = false;
-
-		MethodBase method;
-		Type array_element_type;
-
-		public NewUserdefinedArray (string type, string rank, ArrayList args, ArrayList initializers, Location loc)
-		{
-			RequestedType = type;
-			Rank          = rank;
-			Arguments     = args;
-			Initializers  = initializers;
-			Location      = loc;
-		}
-
-		public static string FormArrayType (string base_type, int idx_count, string rank)
-		{
-			StringBuilder sb = new StringBuilder (base_type);
-
-			sb.Append ("[");
-			for (int i = 1; i < idx_count; i++)
-				sb.Append (",");
-			sb.Append ("]");
-
-			sb.Append (rank);
-			
-			return sb.ToString ();
-                }
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
-			int arg_count;
-
-			if (Arguments == null)
-				arg_count = 0;
-			else
-				arg_count = Arguments.Count;
-
-			string array_type = NewBuiltinArray.FormArrayType (RequestedType, arg_count, Rank);
-
-			string element_type = NewBuiltinArray.FormElementType (RequestedType, arg_count, Rank);
-			
-			type = mb.GetType (array_type);
-			array_element_type = mb.GetType (element_type);
-
-			if (type == null)
-				return null;
-
-			if (arg_count == 1) {
-				IsOneDimensional = true;
+				
+				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, Location);
+				
+				if (method == null) {
+					Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+						      "this argument list");
+					return null;
+				}
+				
 				eclass = ExprClass.Value;
 				return this;
-			}
+				
+			} else {
 
-			ArrayList args = new ArrayList ();
-			if (Arguments != null){
-				for (int i = arg_count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-					
-					if (!a.Resolve (ec))
-						return null;
-					
-					args.Add (a.Expr.Type);
+				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+
+				ArrayList args = new ArrayList ();
+				if (Arguments != null){
+					for (int i = arg_count; i > 0;){
+						--i;
+						Argument a = (Argument) Arguments [i];
+						
+						if (!a.Resolve (ec))
+							return null;
+						
+						args.Add (a.Type);
+					}
 				}
+				
+				Type [] arg_types = null;
+				
+				if (args.Count > 0)
+					arg_types = new Type [args.Count];
+				
+				args.CopyTo (arg_types, 0);
+				
+				method = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
+							    arg_types);
+				
+				if (method == null) {
+					Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+						      "this argument list");
+					return null;
+				}
+				
+				eclass = ExprClass.Value;
+				return this;
+				
 			}
-			
-			Type [] arg_types = null;
-			
-			if (args.Count > 0)
-				arg_types = new Type [args.Count];
-			
-			args.CopyTo (arg_types, 0);
-
-			method = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
-						    arg_types);
-			
-			if (method == null) {
-				Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
-					      "this argument list");
-				return null;
-			}
-
-			eclass = ExprClass.Value;
-			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -4640,10 +4552,21 @@ namespace CIR {
 				
 			} else {
 				Invocation.EmitArguments (ec, Arguments);
-				ec.ig.Emit (OpCodes.Newobj, (MethodInfo) method);
-			}
-		}
 
+				if (IsBuiltinType)
+					ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+				else
+					ec.ig.Emit (OpCodes.Newobj, (MethodInfo) method);
+			}
+			
+		}
+		
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
+			ec.ig.Emit (OpCodes.Pop);
+		}
+		
 	}
 	
 	//
