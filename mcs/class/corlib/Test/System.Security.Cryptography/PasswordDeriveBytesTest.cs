@@ -716,18 +716,6 @@ public class PasswordDeriveBytesTest {
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", null, "MD5", 1000);
 		pd.CryptDeriveKey ("AlgName", "MD5", 256, new byte [8]);
 	}
-
-	[Test]
-	public void Bug69036 ()
-	{
-		byte[] salt = new byte[] { 0x47, 0x6F, 0x6E, 0x7A, 0x61, 0x6C, 0x6F, 0x20, 0x53, 0x6F, 0x73, 0x61 };
-		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("12345678password", salt);
-
-		byte[] key = pdb.GetBytes (32);
-		Assert.AreEqual ("55-BD-86-26-D2-7B-01-55-64-4A-6C-91-37-F7-C5-15-28-A4-87-C2-BF-66-89-E0-E7-8E-85-97-E4-88-63-95", BitConverter.ToString (key), "GetBytes(32)");
-		byte[] iv = pdb.GetBytes (16);
-		Assert.AreEqual ("64-4A-6C-91-37-F7-C5-15-2D-44-2E-0A-EE-B7-99-FA", BitConverter.ToString (iv), "GetBytes(16)");
-	}
 }
 
 }

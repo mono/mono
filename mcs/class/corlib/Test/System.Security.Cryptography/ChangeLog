@@ -1,3 +1,8 @@
+2004-11-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PasswordDeriveBytesTest.cs: Removed test for 69036. This is a MS
+	bug that will be fixed in 2.0 beta 2.
+
 2004-11-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSACryptoServiceProviderTest.cs: Fixed UseMachineKeyStore not to 
