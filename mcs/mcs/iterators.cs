@@ -40,11 +40,11 @@ namespace Mono.CSharp {
 
 		public static bool CheckContext (EmitContext ec, Location loc)
 		{
-			if (ec.InFinally){
+			if (ec.CurrentBranching.InFinally (true)){
 				Report.Error (-208, loc, "yield statement can not appear in finally clause");
 				return false;
 			}
-			if (ec.InCatch){
+			if (ec.CurrentBranching.InCatch ()){
 				Report.Error (-209, loc, "yield statement can not appear in the catch clause");
 				return false;
 			}

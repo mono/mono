@@ -3460,18 +3460,15 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			Label finish = ig.DefineLabel ();
-			bool old_in_try = ec.InTry;
+
+			block.SetDestructor ();
 			
 			ig.BeginExceptionBlock ();
-			ec.InTry = true;
 			ec.ReturnLabel = finish;
 			ec.HasReturnLabel = true;
 			ec.EmitTopBlock (block, null, Location);
-			ec.InTry = old_in_try;
 			
 			// ig.MarkLabel (finish);
-			bool old_in_finally = ec.InFinally;
-			ec.InFinally = true;
 			ig.BeginFinallyBlock ();
 			
 			if (ec.ContainerType.BaseType != null) {
@@ -3486,7 +3483,6 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Call, (MethodInfo) parent_destructor.Methods [0]);
 				}
 			}
-			ec.InFinally = old_in_finally;
 			
 			ig.EndExceptionBlock ();
 			//ig.MarkLabel (ec.ReturnLabel);

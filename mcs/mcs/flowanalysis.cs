@@ -33,7 +33,7 @@ namespace Mono.CSharp
 			Conditional,
 
 			// A loop block.
-			LoopBlock,
+			Loop,
 
 			// Try/Catch block.
 			Exception,
@@ -115,6 +115,60 @@ namespace Mono.CSharp
 				return cloned;
 			}
 
+			// <summary>
+			//   Performs an `And' operation on the FlowReturns status
+			//   (for instance, a block only returns Always if all its siblings
+			//   always return).
+			// </summary>
+			public static FlowReturns AndFlowReturns (FlowReturns a, FlowReturns b)
+			{
+				if (a == FlowReturns.Undefined)
+					return b;
+
+				switch (a) {
+				case FlowReturns.Never:
+					if (b == FlowReturns.Never)
+						return FlowReturns.Never;
+					else
+						return FlowReturns.Sometimes;
+
+				case FlowReturns.Sometimes:
+					return FlowReturns.Sometimes;
+
+				case FlowReturns.Always:
+					if (b == FlowReturns.Always)
+						return FlowReturns.Always;
+					else
+						return FlowReturns.Sometimes;
+
+				default:
+					throw new ArgumentException ();
+				}
+			}
+
+			public static FlowReturns OrFlowReturns (FlowReturns a, FlowReturns b)
+			{
+				if (a == FlowReturns.Undefined)
+					return b;
+
+				switch (a) {
+				case FlowReturns.Never:
+					return b;
+
+				case FlowReturns.Sometimes:
+					if (b == FlowReturns.Always)
+						return FlowReturns.Always;
+					else
+						return FlowReturns.Sometimes;
+
+				case FlowReturns.Always:
+					return FlowReturns.Always;
+
+				default:
+					throw new ArgumentException ();
+				}
+			}
+
 			public static void And (ref Reachability a, Reachability b, bool do_break)
 			{
 				if (a == null) {
@@ -178,6 +232,16 @@ namespace Mono.CSharp
 				a.barrier = AndFlowReturns (a.barrier, b.barrier);
 
 				a.reachable = AndFlowReturns (a.reachable, b.reachable);
+			}
+
+			public void Or (Reachability b)
+			{
+				returns = OrFlowReturns (returns, b.returns);
+				breaks = OrFlowReturns (breaks, b.breaks);
+				throws = OrFlowReturns (throws, b.throws);
+				barrier = OrFlowReturns (barrier, b.barrier);
+
+				update ();
 			}
 
 			public static Reachability Never ()
@@ -296,7 +360,7 @@ namespace Mono.CSharp
 		{
 			switch (type) {
 			case BranchingType.Exception:
-				return new FlowBranchingException (parent, type, block, loc);
+				return new FlowBranchingException (parent, block, loc);
 
 			case BranchingType.Switch:
 				return new FlowBranchingBlock (parent, type, SiblingType.SwitchSection, block, loc);
@@ -345,37 +409,6 @@ namespace Mono.CSharp
 
 		static int next_id = 0;
 		int id;
-
-		// <summary>
-		//   Performs an `And' operation on the FlowReturns status
-		//   (for instance, a block only returns Always if all its siblings
-		//   always return).
-		// </summary>
-		public static FlowReturns AndFlowReturns (FlowReturns a, FlowReturns b)
-		{
-			if (a == FlowReturns.Undefined)
-				return b;
-
-			switch (a) {
-			case FlowReturns.Never:
-				if (b == FlowReturns.Never)
-					return FlowReturns.Never;
-				else
-					return FlowReturns.Sometimes;
-
-			case FlowReturns.Sometimes:
-				return FlowReturns.Sometimes;
-
-			case FlowReturns.Always:
-				if (b == FlowReturns.Always)
-					return FlowReturns.Always;
-				else
-					return FlowReturns.Sometimes;
-
-			default:
-				throw new ArgumentException ();
-			}
-		}
 
 		// <summary>
 		//   The vector contains a BitArray with information about which local variables
@@ -577,33 +610,33 @@ namespace Mono.CSharp
 
 				Report.Debug (2, "  MERGING CHILD", this, IsDirty,
 					      result.ParameterVector, result.LocalVector,
-					      result.Reachability, Type);
+					      result.Reachability, reachability, Type);
 
-				reachability = result.Reachability;
+				Reachability new_r = result.Reachability;
 
-				if (branching.Type == BranchingType.LoopBlock) {
-					bool may_leave_loop = reachability.MayBreak;
-					reachability.ResetBreaks ();
+				if (branching.Type == BranchingType.Loop) {
+					bool may_leave_loop = new_r.MayBreak;
+					new_r.ResetBreaks ();
 
 					if (branching.Infinite && !may_leave_loop) {
-						if (reachability.Returns == FlowReturns.Sometimes) {
+						if (new_r.Returns == FlowReturns.Sometimes) {
 							// If we're an infinite loop and do not break,
 							// the code after the loop can never be reached.
 							// However, if we may return from the loop,
 							// then we do always return (or stay in the
 							// loop forever).
-							reachability.SetReturns ();
+							new_r.SetReturns ();
 						}
 
-						reachability.SetBarrier ();
+						new_r.SetBarrier ();
 					} else {
-						if (reachability.Returns == FlowReturns.Always) {
+						if (new_r.Returns == FlowReturns.Always) {
 							// We're either finite or we may leave the loop.
-							reachability.SetReturnsSometimes ();
+							new_r.SetReturnsSometimes ();
 						}
 					}
 				} else if (branching.Type == BranchingType.Switch)
-					reachability.ResetBreaks ();
+					new_r.ResetBreaks ();
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -614,7 +647,7 @@ namespace Mono.CSharp
 				// we need to look at (see above).
 				//
 
-				if ((Type == SiblingType.SwitchSection) && !reachability.IsUnreachable) {
+				if ((Type == SiblingType.SwitchSection) && !new_r.IsUnreachable) {
 					Report.Error (163, Location,
 						      "Control cannot fall through from one " +
 						      "case label to another");
@@ -627,7 +660,10 @@ namespace Mono.CSharp
 				if (result.ParameterVector != null)
 					parameters.Or (result.ParameterVector);
 
-				Report.Debug (2, "  MERGING CHILD DONE", this, result);
+				reachability.Or (new_r);
+
+				Report.Debug (2, "  MERGING CHILD DONE", this, result,
+					      new_r, reachability);
 
 				IsDirty = true;
 
@@ -919,7 +955,7 @@ namespace Mono.CSharp
 
 			for (UsageVector child = sibling_list; child != null; child = child.Next) {
 				bool do_break = (Type != BranchingType.Switch) &&
-					(Type != BranchingType.LoopBlock);
+					(Type != BranchingType.Loop);
 
 				Report.Debug (2, "    MERGING SIBLING   ", child,
 					      child.ParameterVector, child.LocalVector,
@@ -1024,10 +1060,73 @@ namespace Mono.CSharp
 			return result.Reachability;
 		}
 
-		public virtual bool InTryBlock ()
+		//
+		// Checks whether we're in a `try' block.
+		//
+		public virtual bool InTryOrCatch (bool is_return)
+		{
+			if ((Block != null) && Block.IsDestructor)
+				return true;
+			else if (!is_return &&
+			    ((Type == BranchingType.Loop) || (Type == BranchingType.Switch)))
+				return false;
+			else if (Parent != null)
+				return Parent.InTryOrCatch (is_return);
+			else
+				return false;
+		}
+
+		//
+		// Checks whether we're in a `catch' block.
+		//
+		public virtual bool InCatch ()
 		{
 			if (Parent != null)
-				return Parent.InTryBlock ();
+				return Parent.InCatch ();
+			else
+				return false;
+		}
+
+		//
+		// Checks whether we're in a `finally' block.
+		//
+		public virtual bool InFinally (bool is_return)
+		{
+			if (!is_return &&
+			    ((Type == BranchingType.Loop) || (Type == BranchingType.Switch)))
+				return false;
+			else if (Parent != null)
+				return Parent.InFinally (is_return);
+			else
+				return false;
+		}
+
+		public virtual bool InLoop ()
+		{
+			if (Type == BranchingType.Loop)
+				return true;
+			else if (Parent != null)
+				return Parent.InLoop ();
+			else
+				return false;
+		}
+
+		public virtual bool InSwitch ()
+		{
+			if (Type == BranchingType.Switch)
+				return true;
+			else if (Parent != null)
+				return Parent.InSwitch ();
+			else
+				return false;
+		}
+
+		public virtual bool BreakCrossesTryCatchBoundary ()
+		{
+			if ((Type == BranchingType.Loop) || (Type == BranchingType.Switch))
+				return false;
+			else if (Parent != null)
+				return Parent.BreakCrossesTryCatchBoundary ();
 			else
 				return false;
 		}
@@ -1036,7 +1135,7 @@ namespace Mono.CSharp
 		{
 			if (Parent != null)
 				Parent.AddFinallyVector (vector);
-			else
+			else if ((Block == null) || !Block.IsDestructor)
 				throw new NotSupportedException ();
 		}
 
@@ -1098,8 +1197,8 @@ namespace Mono.CSharp
 	{
 		UsageVector sibling_list = null;
 
-		public FlowBranchingBlock (FlowBranching parent, BranchingType type, SiblingType stype,
-					   Block block, Location loc)
+		public FlowBranchingBlock (FlowBranching parent, BranchingType type,
+					   SiblingType stype, Block block, Location loc)
 			: base (parent, type, stype, block, loc)
 		{ }
 
@@ -1136,9 +1235,10 @@ namespace Mono.CSharp
 		UsageVector catch_vectors;
 		UsageVector finally_vector;
 		UsageVector finally_origins;
+		bool in_try;
 
-		public FlowBranchingException (FlowBranching parent, BranchingType type, Block block, Location loc)
-			: base (parent, type, SiblingType.Try, block, loc)
+		public FlowBranchingException (FlowBranching parent, Block block, Location loc)
+			: base (parent, BranchingType.Exception, SiblingType.Try, block, loc)
 		{ }
 
 		protected override void AddSibling (UsageVector sibling)
@@ -1146,12 +1246,15 @@ namespace Mono.CSharp
 			if (sibling.Type == SiblingType.Try) {
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
+				in_try = true;
 			} else if (sibling.Type == SiblingType.Catch) {
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
+				in_try = false;
 			} else if (sibling.Type == SiblingType.Finally) {
 				sibling.MergeFinallyOrigins (finally_origins);
 				finally_vector = sibling;
+				in_try = false;
 			} else
 				throw new InvalidOperationException ();
 
@@ -1162,7 +1265,22 @@ namespace Mono.CSharp
 			get { return current_vector; }
 		}
 
-		public override bool InTryBlock ()
+		public override bool InTryOrCatch (bool is_return)
+		{
+			return finally_vector == null;
+		}
+
+		public override bool InCatch ()
+		{
+			return !in_try && (finally_vector == null);
+		}
+
+		public override bool InFinally (bool is_return)
+		{
+			return finally_vector != null;
+		}
+
+		public override bool BreakCrossesTryCatchBoundary ()
 		{
 			return true;
 		}

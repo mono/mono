@@ -10,6 +10,31 @@
 
 2004-01-20  Martin Baulig  <martin@ximian.com>
 
+	* codegen.cs (EmitContext): Removed `InTry', `InCatch',
+	`InFinally', `InLoop', `TryCatchLevel', `LoopBeginTryCatchLevel'
+	and `NeedExplicitReturn'; added `IsLastStatement'.
+	(EmitContext.EmitTopBlock): Emit the explicit "ret" if we either
+	have a `ReturnLabel' or we're not unreachable.
+
+	* flowanalysis.cs (FlowBranching.MergeChild): Actually merge the
+	child's reachability; don't just override ours with it.  Fixes
+	#58058 (lluis's example).
+	(FlowBranching): Added public InTryOrCatch(), InCatch(),
+	InFinally(), InLoop(), InSwitch() and
+	BreakCrossesTryCatchBoundary() methods.
+
+	* statement.cs (Return): Do all error checking in Resolve().
+	Unless we are the last statement in a top-level block, always
+	create a return label and jump to it.
+	(Break, Continue): Do all error checking in Resolve(); also make
+	sure we aren't leaving a `finally'.
+	(Block.DoEmit): Set `ec.IsLastStatement' when emitting the last
+	statement in a top-level block.
+	(Block.Flags): Added `IsDestructor'.
+	(Block.IsDestructor): New public property.
+
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Break.DoEmit): Set ec.NeedExplicitReturn; fixes #52427.
 
 2004-01-20  Martin Baulig  <martin@ximian.com>

@@ -254,35 +254,17 @@ namespace Mono.CSharp {
 		public bool HasReturnLabel;
 
 		/// <summary>
-		///   Whether we are in a Finally block
-		/// </summary>
-		public bool InFinally;
-
-		/// <summary>
-		///   Whether we are in a Try block
-		/// </summary>
-		public bool InTry;
-
-		/// <summary>
 		///   Whether we are inside an iterator block.
 		/// </summary>
 		public bool InIterator;
 
-		/// <summary>
-		///   Whether we need an explicit return statement at the end of the method.
-		/// </summary>
-		public bool NeedExplicitReturn;
-		
+		public bool IsLastStatement;
+
 		/// <summary>
 		///   Whether remapping of locals, parameters and fields is turned on.
 		///   Used by iterators and anonymous methods.
 		/// </summary>
 		public bool RemapToProxy;
-
-		/// <summary>
-		///   Whether we are in a Catch block
-		/// </summary>
-		public bool InCatch;
 
 		/// <summary>
 		///  Whether we are inside an unsafe block
@@ -433,7 +415,7 @@ namespace Mono.CSharp {
 
 		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
 		{
-			bool has_ret = false;
+			bool unreachable = false;
 
 			if (!Location.IsNull (loc))
 				CurrentFile = loc.File;
@@ -456,7 +438,7 @@ namespace Mono.CSharp {
 						DoFlowAnalysis = old_do_flow_analysis;
 						return;
 					}
-					
+
 					FlowBranching.Reachability reachability = current_flow_branching.MergeTopBlock ();
 					current_flow_branching = null;
 					
@@ -464,10 +446,10 @@ namespace Mono.CSharp {
 
 					block.Emit (this);
 
-					if ((reachability.Returns == FlowBranching.FlowReturns.Always) ||
-					    (reachability.Throws == FlowBranching.FlowReturns.Always) ||
-					    (reachability.Reachable == FlowBranching.FlowReturns.Never))
-						has_ret = true;
+					if (reachability.AlwaysReturns ||
+					    reachability.AlwaysThrows ||
+					    reachability.IsUnreachable)
+						unreachable = true;
 				}
 			    } catch (Exception e) {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
@@ -484,12 +466,7 @@ namespace Mono.CSharp {
 			    }
 			}
 
-			if (ReturnType != null && !has_ret){
-				//
-				// FIXME: we need full flow analysis to implement this
-				// correctly and emit an error instead of a warning.
-				//
-				//
+			if (ReturnType != null && !unreachable){
 				if (!InIterator){
 					Report.Error (161, loc, "Not all code paths return a value");
 					return;
@@ -502,22 +479,22 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloc, return_value);
 				ig.Emit (OpCodes.Ret);
 			} else {
-				if (!InTry){
-					if (InIterator)
-						has_ret = true;
-					
-					if (!has_ret || HasReturnLabel) {
-						ig.Emit (OpCodes.Ret);
-						NeedExplicitReturn = false;
-					}
-				}
+				//
+				// If `HasReturnLabel' is set, then we already emitted a
+				// jump to the end of the method, so we must emit a `ret'
+				// there.
+				//
+				// Unfortunately, System.Reflection.Emit automatically emits
+				// a leave to the end of a finally block.  This is a problem
+				// if no code is following the try/finally block since we may
+				// jump to a point after the end of the method.
+				// As a workaround, we're always creating a return label in
+				// this case.
+				//
 
-				// Unfortunately, System.Reflection.Emit automatically emits a leave
-				// to the end of a finally block.  This is a problem if no code is
-				// following the try/finally block since we may jump to a point after
-				// the end of the method. As a workaround, emit an explicit ret here.
-
-				if (NeedExplicitReturn) {
+				if ((block != null) && block.IsDestructor) {
+					// Nothing to do; S.R.E automatically emits a leave.
+				} else if (HasReturnLabel || (!unreachable && !InIterator)) {
 					if (ReturnType != null)
 						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
 					ig.Emit (OpCodes.Ret);
@@ -606,22 +583,6 @@ namespace Mono.CSharp {
 		public Label LoopBegin, LoopEnd;
 
 		/// <summary>
-		///   Whether we are inside a loop and break/continue are possible.
-		/// </summary>
-		public bool  InLoop;
-
-		/// <summary>
-		///   This is incremented each time we enter a try/catch block and
-		///   decremented if we leave it.
-		/// </summary>
-		public int   TryCatchLevel;
-
-		/// <summary>
-		///   The TryCatchLevel at the begin of the current loop.
-		/// </summary>
-		public int   LoopBeginTryCatchLevel;
-
-		/// <summary>
 		///   Default target in a switch statement.   Only valid if
 		///   InSwitch is true
 		/// </summary>
@@ -647,6 +608,14 @@ namespace Mono.CSharp {
 			}
 
 			return return_value;
+		}
+
+		public void NeedReturnLabel ()
+		{
+			if (!HasReturnLabel) {
+				ReturnLabel = ig.DefineLabel ();
+				HasReturnLabel = true;
+			}
 		}
 
 		//
