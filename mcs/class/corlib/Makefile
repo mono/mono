@@ -14,7 +14,8 @@ test_against = $(reslib)
 endif
 
 LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -d:INSIDE_CORLIB
-corlib = $(topdir)/class/lib/corlib.dll
+
+corlib = $(topdir)/class/lib/mscorlib.dll
 testlib = corlib_test.dll
 cmplib = $(topdir)/class/lib/corlib_cmp.dll
 reslib = $(topdir)/class/lib/corlib_res.dll

@@ -1,3 +1,7 @@
+2003-11-12 Jackson Harper <jackson@ximian.com>
+
+	* Makefile: corlib is now named mscorlib.
+
 2003-11-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* corlib.dll.sources: Added new 1.2 classes for System.Security.Cryptography.
