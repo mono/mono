@@ -2424,8 +2424,17 @@ namespace Mono.CSharp {
 			//
 			// abstract or extern methods have no bodies
 			//
-			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
+				if (Block != null){
+					if ((ModFlags & Modifiers.ABSTRACT) != 0){
+						Report.Error (
+							500, "Abstract method `" +
+							TypeManager.CSharpSignature (MethodBuilder) +
+							"' can not have a body");
+					}
+				}
 				return;
+			}
 
 			//
 			// Handle destructors specially

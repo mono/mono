@@ -421,9 +421,15 @@ namespace Mono.CSharp {
 		public static Expression MemberLookupFinal (EmitContext ec, Type t, string name, 
 							    Location loc)
 		{
+			return MemberLookupFinal (ec, t, name, MemberTypes.Method, AllBindingFlags, loc);
+		}
+
+		public static Expression MemberLookupFinal (EmitContext ec, Type t, string name,
+							    MemberTypes mt, BindingFlags bf, Location loc)
+		{
 			Expression e;
 
-			e = MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
+			e = MemberLookup (ec, t, name, mt, bf, loc);
 
 			if (e != null)
 				return e;
@@ -441,7 +447,7 @@ namespace Mono.CSharp {
 			}
 			
 			return null;
-		}
+		}			
 		
 		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)

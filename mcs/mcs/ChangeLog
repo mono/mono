@@ -1,11 +1,24 @@
 2002-05-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (MemberLookupFinal): new version with all the
+	parameters customizable.
+
+	* expression.cs (New.DoResolve): Use MemberLookupFinal to locate
+	constructors.  Return if the result value is null (as the error
+	would have been flagged already by MemberLookupFinal)
+
+	Do not allow instances of abstract classes or interfaces to be
+	created.
+	
 	* class.cs: (MethodSignature.InheritableMemberSignatureCompare):
 	We have to compare the assembly property here when dealing with
 	FamANDAssem and Assembly access modifiers, because we might be
 	creating an assembly from *modules* (that means that we are not
 	getting TypeBuilders for types defined in other modules that are
 	part of this assembly).
+
+	(Method.Emit): If the method is marked abstract and has a body,
+	emit an error. 
 
 	(TypeContainer.DefineMembers): If both the defined member and the
 	parent name match are methods, then do not emit any warnings: let

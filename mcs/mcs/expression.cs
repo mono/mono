@@ -3894,6 +3894,13 @@ namespace Mono.CSharp {
 			
 			if (IsDelegate)
 				return (new NewDelegate (type, Arguments, loc)).Resolve (ec);
+
+			if (type.IsInterface || type.IsAbstract){
+				Report.Error (
+					144, "It is not possible to create instances of interfaces " +
+					"or abstract classes");
+				return null;
+			}
 			
 			bool is_struct = false;
 			is_struct = type.IsSubclassOf (TypeManager.value_type);
@@ -3907,9 +3914,12 @@ namespace Mono.CSharp {
 				return this;
 			
 			Expression ml;
-			ml = MemberLookup (ec, type, ".ctor",
-					   MemberTypes.Constructor,
-					   AllBindingFlags | BindingFlags.DeclaredOnly, loc);
+			ml = MemberLookupFinal (ec, type, ".ctor",
+						MemberTypes.Constructor,
+						AllBindingFlags | BindingFlags.DeclaredOnly, loc);
+
+			if (ml == null)
+				return null;
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
