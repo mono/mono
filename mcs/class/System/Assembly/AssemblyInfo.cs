@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Resources;
 using System.Security;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 // General Information about the system assembly
 
@@ -22,6 +23,8 @@ using System.Runtime.CompilerServices;
 #if (NET_1_1)
 	[assembly: AssemblyVersion("1.0.5000.0")]
 	[assembly: SatelliteContractVersion("1.0.5000.0")]
+	[assembly: ComCompatibleVersion(1, 0, 3300, 0)]
+	[assembly: TypeLibVersion(1, 10)]
 #endif
 
 [assembly: AssemblyTitle("System.dll")]
