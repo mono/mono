@@ -57,6 +57,9 @@ install-local: mcs.exe
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
 	$(INSTALL_BIN) mcs.exe $(DESTDIR)$(prefix)/bin
 
+uninstall-local:
+	-rm -f $(DESTDIR)$(prefix)/bin/mcs.exe
+
 test-local run-test-local:
 
 clean-local:

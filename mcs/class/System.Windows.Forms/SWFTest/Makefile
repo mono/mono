@@ -12,7 +12,7 @@ test-local: SWFTest.exe
 # Fixme: does the program run itself and exit automatically?
 # We want run-test to work without supervision.
 
-run-test-local install-local:
+run-test-local install-local uninstall-local:
 
 DISTFILES = App.ico AssemblyInfo.cs changelog Form1.cs \
     Form1.resx SWFTest.csproj SWFTest.csproj.user

@@ -35,6 +35,11 @@ install-local: all-local
 	   $(INSTALL_BIN) $$t $(DESTDIR)$(prefix)/bin ; \
 	done
 
+uninstall-local:
+	for t in $(MONO_TOOLS) ; do \
+	   rm -f $(DESTDIR)$(prefix)/bin/$$t ; \
+	done
+
 test-local run-test-local:
 
 clean-local:

@@ -23,6 +23,9 @@ install-local: $(PROGRAM)
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
 	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(prefix)/bin
 
+uninstall-local:
+	-rm -f $(DESTDIR)$(prefix)/bin/$(base_prog)
+
 clean-local:
 	-rm -f *.exe $(BUILT_SOURCES) $(CLEAN_FILES) $(pdb) $(stampfile) $(makefrag)
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD

@@ -35,6 +35,9 @@ install-local: $(the_lib)
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib
 
+uninstall-local:
+	-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
+
 clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \
 	       $(test_makefrag) $(test_response) \

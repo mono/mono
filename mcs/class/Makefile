@@ -83,7 +83,7 @@ DISTFILES = \
 	doc/notes		\
 	notes/BitVecto32.txt
 
-all-local install-local test-local run-test-local clean-local:
+all-local install-local test-local run-test-local clean-local uninstall-local:
 
 dist-local: dist-default
 	-mkdir $(distdir)/lib

@@ -74,5 +74,5 @@ clean-local:
 
 dist-local: dist-default
 
-install-local:
+install-local uninstall-local:
 

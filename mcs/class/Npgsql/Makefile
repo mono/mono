@@ -59,3 +59,6 @@ all: $(RESX_RES) $(the_lib)
 clean: clean-recursive clean-local
 
 install: install-recursive install-local
+
+uninstall: uninstall-recursive uninstall-local
+

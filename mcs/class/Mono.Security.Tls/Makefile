@@ -11,6 +11,9 @@ install:
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(LIBRARY) $(DESTDIR)$(prefix)/lib
 
+uninstall:
+	-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
+
 test:
 
 run-test:

@@ -9,6 +9,8 @@ all: platform-check profile-check all-recursive #all-local
 
 install: platform-check profile-check install-recursive #install-local
 
+uninstall: platform-check profile-check uninstall-recursive #uninstall-local
+
 test: platform-check profile-check test-recursive #test-local
 
 run-test: run-test-recursive #run-test-local
@@ -71,8 +73,8 @@ distcheck:
 	$(MAKE) dist-tarball || exit 1 ; \
 	mv $(package) Distcheck-MCS ; \
 	(cd Distcheck-MCS && \
-	    make prefix=$(prefix) && make test && make install DESTDIR="$$destdir" && \
-	    make clean && make dist || exit 1) || exit 1 ; \
+	    $(MAKE) prefix=$(prefix) && $(MAKE) test && $(MAKE) install DESTDIR="$$destdir" && \
+	    $(MAKE) clean && $(MAKE) dist || exit 1) || exit 1 ; \
 	mv Distcheck-MCS $(package) ; \
 	tar tzf $(package)/$(package).tar.gz |sed -e 's,/$$,,' |sort >distdist.list ; \
 	rm $(package)/$(package).tar.gz ; \

@@ -13,7 +13,7 @@
 dots := $(shell echo $(thisdir) |sed -e 's,[^./][^/]*,..,g')
 topdir := $(dots)
 
-VERSION = 0.26.99
+VERSION = 0.28.99
 
 USE_MCS_FLAGS = $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS)
@@ -119,6 +119,8 @@ test: test-recursive test-local
 run-test: run-test-recursive test-local run-test-local
 
 clean: clean-recursive clean-local
+
+uninstall: uninstall-recursive uninstall-local
 
 endif
 

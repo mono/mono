@@ -24,6 +24,12 @@ install-local: jay
 	done
 	$(INSTALL_DATA) jay.1 $(DESTDIR)$(prefix)/man/man1
 
+uninstall-local:
+	-rm -f $(DESTDIR)$(prefix)/bin/jay
+	for datafile in $(datafiles) ; do \
+	   rm -f $(DESTDIR)$(prefix)/share/jay/$$datafile ; \
+	done
+
 clean-local:
 	rm -f jay *.o *.exe *.pdb
 

@@ -60,9 +60,12 @@ plattest_flags = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /r:$(PLATFORM_COR
 
 all-local: $(corlib)
 
-install-local: $(corlib)
+install-local: $(corlib) $(makefrag)
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib
+
+uninstall-local:
+	-rm -f $(DESTDIR)$(prefix)/lib/corlib.dll
 
 clean-local:
 	-rm -f $(corlib) $(cmplib) $(testlib) $(reslib) $(plattestlib) TestResult.xml \

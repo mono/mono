@@ -25,6 +25,11 @@ install-local: $(SECURITY_PROGRAMS)
 	    $(INSTALL_BIN) $$p $(DESTDIR)$(prefix)/bin ; \
 	done
 
+uninstall-local:
+	for p in $(SECURITY_PROGRAMS) ; do \
+	    rm -f $(DESTDIR)$(prefix)/bin/$$p ; \
+	done
+
 test-local:
 
 run-test-local:

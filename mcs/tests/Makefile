@@ -54,7 +54,7 @@ WINDOWS_SOURCES = \
 TEST_NOPASS = \
 	test-28  test-45  test-53  test-91  test-102 test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
 
-all-local install-local:
+all-local install-local uninstall-local:
 
 # casts
 
