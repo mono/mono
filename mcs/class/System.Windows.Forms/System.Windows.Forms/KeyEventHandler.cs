@@ -8,7 +8,7 @@
 //
 
 namespace System.Windows.Forms {
-	//[Serializable]
+	[Serializable]
 	public delegate void KeyEventHandler (
 	object sender,
 	KeyEventArgs e

@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// Represents the method that will handle the BeforeLabelEdit 
 	/// and AfterLabelEdit events of a TreeView control. 
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void NodeLabelEditEventHandler(object sender, NodeLabelEditEventArgs e);
 }

@@ -10,7 +10,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 	using System.Runtime.Remoting;
@@ -42,11 +41,6 @@ namespace System.Windows.Forms {
 		}
 
 		//
-		//	 --- Public Fields
-		//
-
-
-		//
 		//  --- Public Properties
 		//
 
@@ -71,7 +65,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+			//FIXME:
 			}
 		}
 
@@ -80,7 +74,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -89,7 +83,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -108,7 +102,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 

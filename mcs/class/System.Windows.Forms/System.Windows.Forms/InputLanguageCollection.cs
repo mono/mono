@@ -11,11 +11,9 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-    public class InputLanguageCollection : ReadOnlyCollectionBase {
+	public class InputLanguageCollection : ReadOnlyCollectionBase {
 
 		//
 		//  --- Public Properties
@@ -33,38 +31,19 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public bool Contains(InputLanguage lang)
-		{
+		public bool Contains(InputLanguage lang) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void CopyTo(InputLanguage[] array, int index)
-		{
-			throw new NotImplementedException ();
+		public void CopyTo(InputLanguage[] array, int index) {
+			//FIXME:
 		}
 
 		[MonoTODO]
-		public override bool Equals(object o)
-		{
+		public int IndexOf(InputLanguage lang) {
 			throw new NotImplementedException ();
 		}
 
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-
-		[MonoTODO]
-		public int IndexOf(InputLanguage lang)
-		{
-			throw new NotImplementedException ();
-		}
- 		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-}
+	}
 }

@@ -24,7 +24,6 @@ namespace System.Windows.Forms {
 			//
 		}
 
-
 		//
 		// --- Public Properties
 		// Following properties not stubbed out, because they are only supporting internal .NET Framework infrastructure.

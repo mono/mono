@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that handles the Invoke event for a method.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void MethodInvoker();
 }

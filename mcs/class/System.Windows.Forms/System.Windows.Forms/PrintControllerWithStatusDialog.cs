@@ -12,8 +12,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
         public class PrintControllerWithStatusDialog : PrintController {
@@ -40,19 +38,12 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public override int GetHashCode() {
 			//FIXME add our proprities
 			return base.GetHashCode();
 		}
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e)
 		{
@@ -78,14 +69,6 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-
-		//
-		//  --- Protected Methods
-		//
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		//
 		//  --- Destructor

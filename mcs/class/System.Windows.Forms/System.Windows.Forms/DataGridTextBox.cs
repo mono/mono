@@ -29,7 +29,6 @@ namespace System.Windows.Forms {
 		public DataGridTextBox() 
 		{
 			isInEditOrNavigateMode=true;
-			throw new NotImplementedException ();
 		}
 		#endregion
 		
@@ -44,31 +43,35 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnKeyPress(KeyPressEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnKeyPress(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseWheel(MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseWheel(e);
 		}
 		
 		[MonoTODO]
 		protected internal override bool ProcessKeyMessage(ref Message m) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessKeyMessage(ref m);
 		}
 		
 		[MonoTODO]
 		public void SetDataGrid(DataGrid parentGrid) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 		#endregion
 	}

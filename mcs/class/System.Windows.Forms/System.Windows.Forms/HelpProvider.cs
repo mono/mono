@@ -10,8 +10,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 	using System.ComponentModel;
 	public class HelpProvider : Component, IExtenderProvider {
@@ -35,32 +33,13 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
 		//
 		//  --- Public Methods
 		//
-
-		//public void Dispose() {
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override bool Equals(object o) {
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2) {
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 
 		[MonoTODO]
 		public virtual  string GetHelpKeyword(Control ctl) {
@@ -84,31 +63,29 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public virtual  void SetHelpKeyword(Control ctl, string keyword) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public virtual  void SetHelpNavigator(Control ctl, HelpNavigator nav) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public virtual  void SetHelpString(Control ctl, string helpString) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public virtual  void SetShowHelp(Control ctl, bool val) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
-
-		//
-		//  --- Public Events
 		
 		//
 		//  --- Protected Methods

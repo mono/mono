@@ -11,7 +11,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template. Nothing is implemented yet.
 	//	Represents a Windows date-time picker control.
 	// </summary>
 	public class DateTimePicker : Control {
@@ -93,7 +92,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 
 		//
@@ -102,7 +102,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CreateAccessibilityInstance();;
 		}
 
 		[MonoTODO]
@@ -115,13 +116,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void DestroyHandle()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.DestroyHandle();
 		}
 
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.IsInputKey(keyData);
 		}
 
 		[MonoTODO]
@@ -145,6 +148,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e)
 		{
+			//FIXME:
 			//if (FontChanged != null) {
 			//	FontChanged(this, e);
 			//}
@@ -162,6 +166,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e)
 		{
+			//FIXME:
 			//if (SystemColorsChanged != null) {
 			//	SystemColorsChanged(this, e);
 			//}
@@ -179,13 +184,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetBoundsCore(x, y, width, height, specified);
 		}
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 
 		
@@ -207,7 +214,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -218,7 +225,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -229,7 +236,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -240,7 +247,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -251,7 +258,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -262,7 +269,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -273,7 +280,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -284,7 +291,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException (); 
+				//FIXME:
 			}
 		}
 
@@ -295,7 +302,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -306,7 +313,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -317,7 +324,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -339,7 +346,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException (); 
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -350,7 +357,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -361,7 +368,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -379,7 +386,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -390,7 +397,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -412,7 +419,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException (); 
+				//FIXME:
 			}
 		}
 
@@ -443,10 +450,9 @@ namespace System.Windows.Forms {
 			}		
 		}
 
-		[MonoTODO]
 		protected override Size DefaultSize {
 			get{
-				return new System.Drawing.Size(300,200);
+				return new System.Drawing.Size(200,20);//correct size.
 			}
 		}
 	}

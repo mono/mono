@@ -12,7 +12,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template. Nothing is implemented yet.
 	//	Represents a Windows up-down control that displays string values.
 	// </summary>
 	public class DomainUpDown : UpDownBase {
@@ -51,7 +50,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CreateAccessibilityInstance();
 		}
 		//[MonoTODO]
 		//protected override void OnChanged(object source, EventArgs e)
@@ -84,14 +84,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		//inherited
-		//[MonoTODO]
-		//protected override void WndProc(Message m) // override changed to virtual in .NET V.1. Beta
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		
 		//  --- Public Events
 		
 		public event EventHandler SelectedItemChanged;
@@ -137,7 +129,6 @@ namespace System.Windows.Forms {
 		//(C) Ximian, Inc., 2002
 		//
 		//<summary>
-		//This is only a template. Nothing is implemented yet.
 		//Encapsulates a collection of objects for use by the DomainUpDown class.
 		//</summary>
 		public class DomainUpDownItemCollection : ArrayList {
@@ -148,31 +139,35 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			internal DomainUpDownItemCollection(DomainUpDown owner) : base()
 			{
-				throw new NotImplementedException ();
+				
 			}
 
 			
 			//  --- Public Methods
 			
 			[MonoTODO]
-			public override int Add(object item)
+			public override int Add(object value)
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Add(value);
 			}
 			[MonoTODO]
-			public override void Insert(int index, object item)
+			public override void Insert(int index, object value)
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Insert(index, value);
 			}
 			[MonoTODO]
-			public override void Remove(object item)
+			public override void Remove(object obj)
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Remove(obj);
 			}
 			[MonoTODO]
-			public override void RemoveAt(int item)
+			public override void RemoveAt(int index)
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				base.RemoveAt(index);
 			}
 
 			
@@ -184,7 +179,7 @@ namespace System.Windows.Forms {
 					throw new NotImplementedException ();
 				}
 				set {
-					throw new NotImplementedException ();
+					//FIXME:
 				}
 			}
 		}

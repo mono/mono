@@ -28,7 +28,6 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		//[ComVisible(true)] 
 		public QueryContinueDragEventArgs(int keyState, bool escapePressed, DragAction action)
 		{
 			this.keystate = keyState;

@@ -8,7 +8,7 @@
 //
 
 namespace System.Windows.Forms {
-	//[Serializable]
+	[Serializable]
 	public delegate void InvalidateEventHandler (
 	object sender,
 	InvalidateEventArgs e

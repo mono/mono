@@ -12,64 +12,33 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public class GridColumnStylesCollection : BaseCollection, IList {
-
-		//
-		//  --- Public Properties
-		//
-//		[MonoTODO]
-//		public DataGridColumnStyle Item this[int index]  {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-
 		//
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public virtual int Add(DataGridColumnStyle column)
-		{
+		public virtual int Add(DataGridColumnStyle column) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void AddRange(DataGridColumnStyle [] columns)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void Clear()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public bool Contains()
 		{
 			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
 		}
 
 		[MonoTODO]
@@ -81,33 +50,26 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Remove(DataGridColumnStyle column)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void RemoveAt(int index)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void ResetPropertyDescriptors()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		//
 		//  --- Public Events
 		//
 		[MonoTODO]
-		public event CollectionChangeEventHandler CollectionChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event CollectionChangeEventHandler CollectionChanged;
 
 		//
 		//  --- Protected Properties
@@ -115,7 +77,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override ArrayList List {
 			get {
-				throw new NotImplementedException ();
+				return base.List;
+				//FIXME:
 			}
 		}
 
@@ -125,7 +88,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected void OnCollectionChanged(CollectionChangeEventArgs cevent)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		/// <summary>
 		/// IList Interface implmentation.
@@ -149,13 +112,13 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
 		[MonoTODO]
 		void IList.Clear(){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -175,17 +138,17 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		void IList.Insert(int index, object value){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		void IList.Remove( object value){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		void IList.RemoveAt( int index){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		// End of IList interface
 
@@ -208,7 +171,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		void ICollection.CopyTo(Array array, int index){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		// End Of ICollection
 	}

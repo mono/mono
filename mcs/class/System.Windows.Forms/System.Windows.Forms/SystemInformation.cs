@@ -11,7 +11,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template. Nothing is implemented yet.
 	//	Provides information about the operating system.
 	// </summary>
 

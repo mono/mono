@@ -22,31 +22,29 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public DataGridTextBoxColumn() : base()
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		public DataGridTextBoxColumn(PropertyDescriptor prop) : base(prop)
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		public DataGridTextBoxColumn(PropertyDescriptor prop, bool isDefault) : base(prop)
 		{
 			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		public DataGridTextBoxColumn(PropertyDescriptor prop, string format) : base(prop)
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		public DataGridTextBoxColumn(PropertyDescriptor prop, string format, bool isDefault) : base(prop)
 		{
 			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
 		}
-
 		
 		//  --- Protected Methods
 		
@@ -63,7 +61,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected internal override void ConcedeFocus()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.ConcedeFocus();
 		}
 		[MonoTODO]
 		protected internal override void Edit(CurrencyManager source, int rowNum, Rectangle bounds,
@@ -83,18 +82,19 @@ namespace System.Windows.Forms {
 		protected internal virtual void Edit(CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText)
 		{
 			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected void EndEdit()
 		{
 			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected internal override void EnterNullValue()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.EnterNullValue();
 		}
 		[MonoTODO]
 		protected internal override int GetMinimumHeight()
@@ -104,56 +104,58 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected internal override int GetPreferredHeight(Graphics g, object value)
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
 		protected internal override Size GetPreferredSize(Graphics g, object value)
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
 		protected void HideEditBox()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected internal override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
 		{
 			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected internal override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight)
 		{
 			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected internal override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum,
 		                                        Brush backBrush, Brush foreBrush, bool alignToRight) {
 
 			// This method is internal to the .NET framework.
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected void PaintText(Graphics g, Rectangle bounds, string text, bool alignToRight)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected void PaintText(Graphics g, Rectangle textBounds, string text, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void SetDataGridInColumn(DataGrid value)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected internal override void UpdateUI(CurrencyManager source, int rowNum, string instantText)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		
@@ -174,13 +176,22 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override PropertyDescriptor PropertyDescriptor {
 
-			set { throw new NotImplementedException (); }
+			set { 
+				//FIXME:
+				base.PropertyDescriptor = value;
+			}
 		}
 		[MonoTODO]
 		public override bool ReadOnly {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.ReadOnly;
+			}
+			set {
+				//FIXME:
+				base.ReadOnly = value; 
+			}
 		}
 		[MonoTODO]
 		public virtual TextBox TextBox {

@@ -61,8 +61,6 @@ namespace System.Windows.Forms {
 		{
 			//
 		}
-		
 		#endregion
-
 	 }
 }

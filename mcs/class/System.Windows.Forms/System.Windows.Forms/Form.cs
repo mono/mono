@@ -55,8 +55,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -79,8 +79,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
 			internal Size autoscalebasesize; //debug/test only
 
@@ -118,8 +118,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -159,8 +159,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -169,8 +169,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
   			//Compact Framework
@@ -212,8 +212,8 @@
     				 throw new NotImplementedException ();
     			 }
     			 set {
-    				 throw new NotImplementedException ();
-    			 }
+					 //FIXME:
+				 }
     		}
     
     		[MonoTODO]
@@ -222,8 +222,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -232,8 +232,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -242,8 +242,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
 	  		//Compact Framework
@@ -273,8 +273,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -283,8 +283,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
  			//Compact Framework
@@ -377,8 +377,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -387,8 +387,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     
@@ -407,8 +407,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -417,8 +417,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -427,8 +427,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -437,8 +437,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		[MonoTODO]
@@ -447,8 +447,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     
@@ -471,8 +471,8 @@
 					// by win32 in a get.
 				}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		
@@ -485,8 +485,8 @@
     		[MonoTODO]
     		public void AddOwnedForm (Form ownedForm)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     
 	  		//Compact Framework
     		public void Close ()
@@ -497,14 +497,14 @@
    			[MonoTODO]
     		public void LayoutMdi (MdiLayout value)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     
     		[MonoTODO]
     		public void RemoveOwnedForm (Form ownedForm)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     
      
     		public void SetDesktopLocation (int x, int y)
@@ -527,7 +527,8 @@
     		[MonoTODO]
     		public override string ToString ()
     		{
-    			return base.ToString();
+				//FIXME:
+				return base.ToString();
     		}
     
     		//  --- Public Events
@@ -569,20 +570,21 @@
     			}
     		}
     
-    		//[MonoTODO]
-    		////FIXME
-    		//protected override Size DefaultSize {
-    		//}
+    		protected override Size DefaultSize {
+				get {
+					return new Size(300,300);
+				}
+			}
     
-    		//[MonoTODO]
- 			//public new Size Size {
- 			//	get {
- 			//		throw new NotImplementedException ();
- 			//	}
- 			//	set {
- 			//		throw new NotImplementedException ();
- 			//	}
- 			//}
+    		[MonoTODO]
+ 			public new Size Size {
+ 				get {
+ 					throw new NotImplementedException ();
+ 				}
+ 				set {
+					//FIXME:
+ 				}
+ 			}
  
  			[MonoTODO]
     		protected Rectangle MaximizedBounds {
@@ -590,8 +592,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		
@@ -711,8 +713,8 @@
     
     		protected virtual void OnMinimumSizeChanged (EventArgs e)
     		{
-    
-    		}
+				//FIXME:
+			}
     
 	 		//Compact Framework
     		protected override void  OnPaint (PaintEventArgs e)
@@ -957,8 +959,9 @@
     				base.Add (value);
     			}
     
-    			public override bool Equals (object o) {
-    				throw new NotImplementedException ();
+    			public override bool Equals (object obj) {
+					//FIXME:
+					return base.Equals(obj);
     			}
 
     			public override int GetHashCode () {

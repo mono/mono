@@ -8,7 +8,7 @@
 //
 
 namespace System.Windows.Forms {
-	//[Serializable]
+	[Serializable]
 	public delegate void ConvertEventHandler (
 	object sender,
 	ConvertEventArgs e

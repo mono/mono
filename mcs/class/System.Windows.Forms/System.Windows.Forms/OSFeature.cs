@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
         public class OSFeature : FeatureSupport {
@@ -36,24 +34,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public override Version GetVersionPresent(object feature)
 		{
@@ -66,28 +47,6 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public virtual bool IsPresent(object o, Version v)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException ();
-		}
-
-		//
-		//  --- Protected Methods
-		//
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//
-		//  --- Destructor
-		//
-		[MonoTODO]
-		~OSFeature()
 		{
 			throw new NotImplementedException ();
 		}

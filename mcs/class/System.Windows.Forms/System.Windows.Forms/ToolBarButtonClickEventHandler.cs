@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that will handle the ButtonClick event of a ToolBar.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void ToolBarButtonClickEventHandler(object sender, ToolBarButtonClickEventArgs e);
 }

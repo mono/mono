@@ -12,8 +12,6 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public abstract class GridItemCollection : ICollection, IEnumerable {
@@ -37,23 +35,6 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 
 		[MonoTODO]
 		public IEnumerator GetEnumerator()

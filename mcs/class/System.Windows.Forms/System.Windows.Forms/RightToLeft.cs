@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	/// </summary>
 	public enum RightToLeft {
 		Inherit = 2,
-		No =0,
+		No = 0,
 		Yes = 1
 	}
 }

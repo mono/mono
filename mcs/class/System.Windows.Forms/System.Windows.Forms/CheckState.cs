@@ -16,7 +16,6 @@ namespace System.Windows.Forms {
   /// Specifies the state of a control, such as a check box, 
   /// that can be checked, unchecked, or set to an indeterminate state.
 	/// </summary>
-	//[Serializable]
 	public enum CheckState {
 
 		//Values were verified with enumcheck.

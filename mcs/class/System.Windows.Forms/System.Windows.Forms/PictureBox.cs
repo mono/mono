@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	//<summary>
-	//	Skeleton. Nothing is implemented
-	//
 	//</summary>
 	using System.Drawing;
 	using System.ComponentModel;

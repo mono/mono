@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public class TreeViewImageIndexConverter : ImageIndexConverter {
@@ -23,7 +21,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public TreeViewImageIndexConverter()
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		// --- Protected Properties
@@ -32,7 +30,8 @@ namespace System.Windows.Forms {
 		protected override bool IncludeNoneAsStandardValue {
 			get
 			{
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.IncludeNoneAsStandardValue;
 			}
 		}
 	}

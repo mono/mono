@@ -35,19 +35,19 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
-
-
 
 		[MonoTODO]
 		public override ISite Site {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Site;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Site = value;
 			}
 		}
 
@@ -60,11 +60,6 @@ namespace System.Windows.Forms {
 				base.Text = value;
 			}
 		}
-
-		//
-		//  --- Public Methods
-		//
-
 
 		//
 		//  --- Protected Properties
@@ -95,12 +90,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new Size(219,109);
 			}
 		}
 		[MonoTODO]
-		protected override void OnResize(EventArgs eventargs) {
-			throw new NotImplementedException ();
+		protected override void OnResize(EventArgs e) {
+			//FIXME:
+			base.OnResize(e);
 		}
 	}
 }

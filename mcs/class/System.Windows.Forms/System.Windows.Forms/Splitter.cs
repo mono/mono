@@ -12,8 +12,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public class Splitter : Control, IMessageFilter {

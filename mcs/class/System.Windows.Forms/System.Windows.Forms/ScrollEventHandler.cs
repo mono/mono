@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// Represents the method that handles the Scroll 
 	/// event of a ScrollBar, TrackBar, or DataGrid.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void ScrollEventHandler(object sender, ScrollEventArgs e);
 }

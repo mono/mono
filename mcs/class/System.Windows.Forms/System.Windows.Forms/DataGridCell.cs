@@ -38,10 +38,6 @@ namespace System.Windows.Forms {
 		// Public Shared Members
 		// -----------------------
 
-		/// <summary>
-		///	Equality Operator
-		/// </summary>
-		///
 		/// <remarks>
 		///	Compares two DataGridCell objects. The return value is
 		///	based on the equivalence of the RowNumber and ColumnNumber properties of the two objects.
@@ -90,8 +86,6 @@ namespace System.Windows.Forms {
 				columnnumber = value;
 			}
 		}
-
-
 
 		/// <summary>
 		///	Equals Method

@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that will handle the DrawItem event of a StatusBar.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void StatusBarDrawItemEventHandler(object sender, StatusBarDrawItemEventArgs e);
 }

@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that will handle the PropertyTabChanged event of a PropertyGrid.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void PropertyTabChangedEventHandler(object s, PropertyTabChangedEventArgs e);
 }

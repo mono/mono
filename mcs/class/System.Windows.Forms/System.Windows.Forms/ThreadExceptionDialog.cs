@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public class ThreadExceptionDialog : Form {
@@ -23,7 +21,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ThreadExceptionDialog(Exception t)
 		{
-			throw new NotImplementedException ();
+			
 		}
 	}
 }

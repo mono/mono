@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// Represents the method that will handle the 
 	/// AfterCheck, AfterCollapse, AfterExpand, or AfterSelect event of a TreeView.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void TreeViewEventHandler(object sender, TreeViewEventArgs e);
 }

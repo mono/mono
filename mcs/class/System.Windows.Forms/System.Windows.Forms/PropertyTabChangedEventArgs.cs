@@ -30,7 +30,6 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Constructor
-		//[ComVisible(true)]
 		public PropertyTabChangedEventArgs(PropertyTab oldTab, PropertyTab newTab){
 			
 			this.oldtab = oldTab;

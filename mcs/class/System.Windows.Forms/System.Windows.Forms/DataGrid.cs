@@ -645,90 +645,91 @@ namespace System.Windows.Forms {
 		protected override void OnFontChanged(EventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnFontChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnForeColorChanged(EventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnForeColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnHandleCreated(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnHandleDestroyed(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyDown(KeyEventArgs ke) 
+		protected override void OnKeyDown(KeyEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnKeyDown(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyPress(KeyPressEventArgs kpe) 
+		protected override void OnKeyPress(KeyPressEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnKeyPress(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnLayout(LayoutEventArgs levent) 
+		protected override void OnLayout(LayoutEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnLayout(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnLeave(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnLeave(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseDown(MouseEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnMouseDown(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseLeave(EventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnMouseLeave(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseMove(MouseEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnMouseMove(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseUp(MouseEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnMouseUp(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseWheel(MouseEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnMouseWheel(e);
 		}
 		
 		[MonoTODO]
@@ -738,17 +739,17 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs pe) 
+		protected override void OnPaint(PaintEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnPaint(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnPaintBackground(PaintEventArgs ebe) 
+		protected override void OnPaintBackground(PaintEventArgs e) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.OnPaintBackground(e);
 		}
 		
 		[MonoTODO]
@@ -790,7 +791,7 @@ namespace System.Windows.Forms {
 		protected override bool ProcessDialogKey(Keys keyData) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			return base.ProcessDialogKey(keyData);
 		}
 		
 		[MonoTODO]
@@ -803,7 +804,7 @@ namespace System.Windows.Forms {
 		protected override bool ProcessKeyPreview(ref Message m) 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			return base.ProcessKeyPreview(ref m);
 		}
 		
 		[MonoTODO]
@@ -822,14 +823,14 @@ namespace System.Windows.Forms {
 		public override void ResetBackColor() 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.ResetBackColor();
 		}
 		
 		[MonoTODO]
 		public override void ResetForeColor() 
 		{
 			//FIXME:
-			throw new NotImplementedException ();
+			base.ResetForeColor();
 		}
 		
 		[MonoTODO]
@@ -1015,17 +1016,23 @@ namespace System.Windows.Forms {
 			#region DataGrid.HitTestInfo: Properties
 			[MonoTODO]
 			public int Column {
-				get { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException ();
+				}
 			}
 			
 			[MonoTODO]
 			public int Row {
-				get { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException (); 
+				}
 			}
 			
 			[MonoTODO]
 			public HitTestType Type {
-				get { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException ();
+				}
 			}
 			#endregion
 		

@@ -112,7 +112,7 @@ namespace System.Windows.Forms {
 		
 		protected override Size DefaultSize {
 			get {
-				return new Size(100,20);
+				return new Size(121,21);//correct size
 			}
 		}
 		

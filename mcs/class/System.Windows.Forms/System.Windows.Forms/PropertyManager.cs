@@ -18,9 +18,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Maintains a Binding between an object's property and a data-bound control property.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -31,18 +28,13 @@ namespace System.Windows.Forms {
 		#endregion
 		*/
 		
-		
-		
 		#region Constructor
 		[MonoTODO]
 		public PropertyManager() 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		#endregion
-		
-		
-		
 		
 		#region Properties
 		[MonoTODO]
@@ -61,9 +53,6 @@ namespace System.Windows.Forms {
 			set { throw new NotImplementedException (); }
 		}
 		#endregion
-		
-		
-		
 		
 		#region Methods
 		[MonoTODO]

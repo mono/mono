@@ -12,8 +12,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
         public class TextBoxBase : Control {

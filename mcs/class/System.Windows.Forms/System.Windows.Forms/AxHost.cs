@@ -17,9 +17,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Wraps ActiveX controls and exposes them as fully featured Windows Forms controls.
-	///
-	/// ToDo note:
-	///  - Nothing is implemented
 	/// </summary>
 	
 	[MonoTODO]

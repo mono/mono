@@ -20,7 +20,6 @@ namespace System.Windows.Forms {
 	/// Provides information that accessibility applications use to adjust an application's UI for users with impairments.
 	///
 	/// ToDo note:
-	///  - Nothing is implemented
 	///  - IAccessible members not stubbed out
 	///  - MarshalByRefObject members not stubbed out
 	/// MSDN gives little info on the members of IAccessible: "This member supports the .NET Framework infrastructure and is not intended to be used directly from your code."

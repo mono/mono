@@ -1,3 +1,8 @@
+    2002-12-3  DennisHayes <dennish@raytek.com>	
+
+	* 140 files changed. replaced throw notimplmenteds with FIXME:s, removed dead code,
+	* corrected
+
   2002-12-1  DennisHayes <dennish@raytek.com>
 
 	* AccessibleObject.cs

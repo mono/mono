@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that will handle the PanelClick event of a StatusBar.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void StatusBarPanelClickEventHandler(object sender, StatusBarPanelClickEventArgs e);
 }

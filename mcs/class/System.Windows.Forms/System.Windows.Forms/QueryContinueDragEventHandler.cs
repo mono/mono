@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that will handle the QueryContinueDrag event of a Control.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void QueryContinueDragEventHandler(object sender, QueryContinueDragEventArgs e);
 }

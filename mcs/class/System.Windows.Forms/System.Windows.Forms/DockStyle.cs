@@ -15,7 +15,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Specifies the position and manner in which a control is docked.
 	/// </summary>
-	//[Serializable]
 	public enum DockStyle {
 
 		//Values were verified with enumcheck.

@@ -17,8 +17,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents a Windows combo box control.
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]

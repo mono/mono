@@ -33,7 +33,6 @@ namespace System.Windows.Forms {
 			this.newvalue = newvalue;
 			this.type = type;
 		}
-
 		
 		#region Public Properties
 

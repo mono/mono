@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// Represents the method that will handle the MeasureItem event of the 
 	/// ListBox, ComboBox, CheckedListBox, or MenuItem controls.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void MeasureItemEventHandler(object sender, MeasureItemEventArgs e);
 }

@@ -16,9 +16,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Specifies the appearance and text formatting and behavior of a System.Windows.Forms.DataGrid control column. This class is abstract.
-	///
-	/// ToDo note:
-	///  - no methods are implemented
 	/// </summary>
 	
 	[MonoTODO]
@@ -109,19 +106,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected void BeginUpdate() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected void CheckValidDataSource(CurrencyManager value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected internal virtual void ColumnStartedEditing(Control editingControl) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		protected internal abstract bool Commit(CurrencyManager dataSource,int rowNum);
@@ -129,7 +126,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected internal virtual void ConcedeFocus() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		/*
@@ -139,35 +136,28 @@ namespace System.Windows.Forms {
 		 
 		[MonoTODO]
 		protected internal virtual void Edit(CurrencyManager source) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual void Edit(
-			CurrencyManager source,
-			int rowNum) {
-			throw new NotImplementedException ();
+		protected internal virtual void Edit(CurrencyManager source, int rowNum) {
+			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal abstract void Edit(
-			CurrencyManager source,
-			int rowNum,
-			Rectangle bounds,
-			bool readOnly,
-			string instantText,
-			bool cellIsVisible);
+		protected internal abstract void Edit(CurrencyManager source, int rowNum, Rectangle bounds,
+			bool readOnly, string instantText, bool cellIsVisible);
 		
 		[MonoTODO]
 		protected void EndUpdate() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected internal virtual void EnterNullValue() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -188,13 +178,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		void IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(Control editingControl) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected virtual void Invalidate() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		protected internal abstract void Paint(Graphics g,Rectangle bounds,CurrencyManager source,int rowNum);
@@ -202,123 +192,55 @@ namespace System.Windows.Forms {
 		protected internal abstract void Paint(Graphics g,Rectangle bounds,CurrencyManager source,int rowNum,bool alignToRight);
 		
 		[MonoTODO]
-		protected internal virtual void Paint(
-			Graphics g,
-			Rectangle bounds,
-			CurrencyManager source,
-			int rowNum,
-			Brush backBrush,
-			Brush foreBrush,
-			bool alignToRight) {
-
-			throw new NotImplementedException ();
+		protected internal virtual void Paint(Graphics g, Rectangle bounds, CurrencyManager source,
+			int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight) {
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetHeaderText() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected internal virtual void SetColumnValueAtRow(CurrencyManager source,int rowNum,object value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void SetDataGrid(DataGrid value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void SetDataGridInColumn(DataGrid value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual void UpdateUI(CurrencyManager source,int rowNum,string instantText) 
-		{
-			throw new NotImplementedException ();
+		protected internal virtual void UpdateUI(CurrencyManager source,int rowNum,string instantText) {
+			//FIXME:
 		}
 		#endregion
 		
 		#region Events
-		[MonoTODO]
-		public event EventHandler AlignmentChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+
+		public event EventHandler AlignmentChanged;
 		
 		/* This member supports the .NET Framework infrastructure and is not intended to be used directly from your code
 		public event EventHandler FontChanged;
 		*/
 		
-		[MonoTODO]
-		public event EventHandler HeaderTextChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler MappingNameChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler NullTextChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler PropertyDescriptorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ReadOnlyChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler WidthChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler HeaderTextChanged;
+		public event EventHandler MappingNameChanged;
+		public event EventHandler NullTextChanged;
+		public event EventHandler PropertyDescriptorChanged;
+		public event EventHandler ReadOnlyChanged;
+		public event EventHandler WidthChanged;
 		#endregion
 
 		/// sub-classes:

@@ -12,8 +12,6 @@ using System.Runtime.Serialization;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
 	public sealed class ImageListStreamer : ISerializable {
@@ -21,21 +19,10 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public override bool Equals(object o) {
-			throw new NotImplementedException ();
-		}
-		//public static bool Equals(object o1, object o2) {
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
+
 		[MonoTODO]
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	}
 }

@@ -21,8 +21,6 @@ namespace System.Windows.Forms  {
 
 
 	/// <summary>
-	/// ToDo note:
-	///  - Nothing is implemented
 	/// </summary>
 	using System.ComponentModel;
 	public abstract class Menu : Component {

@@ -24,7 +24,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -33,7 +33,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -42,7 +42,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -60,7 +60,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -155,22 +155,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 
 		//
 		// --- Public Events
 		//
-		[MonoTODO]
-		public event CancelEventHandler FileOk {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
 
+		public event CancelEventHandler FileOk;
 		//
 		// --- Protected Methods
 		//
@@ -178,12 +171,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected  override IntPtr HookProc( IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam )
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.HookProc(hWnd, msg, wparam, lparam);
 		}
 		[MonoTODO]
 		protected  void OnFileOk( CancelEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected  override bool RunDialog( IntPtr hWndOwner)

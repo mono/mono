@@ -14,8 +14,6 @@ using System.Runtime.Remoting;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
     public sealed class NotifyIcon : Component {
 
@@ -42,7 +40,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -52,7 +50,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -79,24 +77,13 @@ namespace System.Windows.Forms {
 		}
 
 		//
-		//  --- Public Methods
-		//
-
-
-		//
 		//  --- Public Events
 		//
-		[MonoTODO]
 		public event EventHandler Click;
 		public event EventHandler DoubleClick;
 		public event MouseEventHandler MouseDown;
 		public event MouseEventHandler MouseMove;
 		public event MouseEventHandler MouseUp;
-
-		//
-		//  --- Protected Properties
-		//
-
 		//
 		//  --- Protected Methods
 		//

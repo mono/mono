@@ -92,23 +92,9 @@ namespace System.Windows.Forms {
 		//  --- Public Events
 		//
 		[MonoTODO]
-		public event EventHandler DataSourceChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler DataSourceChanged;
 		[MonoTODO]
-		public event EventHandler DisplayMemberChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler DisplayMemberChanged;
 
 		//
 		// --- Protected Constructor
@@ -128,7 +114,6 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-
 
 		//
 		//  --- Protected Methods

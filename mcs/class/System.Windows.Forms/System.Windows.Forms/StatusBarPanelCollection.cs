@@ -12,7 +12,6 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template. Nothing is implemented yet.
 	//	Represents the collection of panels in a StatusBar control.
 	// </summary>
 

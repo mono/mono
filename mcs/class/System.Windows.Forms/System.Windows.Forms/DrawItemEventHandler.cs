@@ -8,7 +8,7 @@
 //
 
 namespace System.Windows.Forms {
-	//[Serializable]
+	[Serializable]
 	public delegate void DrawItemEventHandler (
 	object sender,
 	DrawItemEventArgs e

@@ -54,28 +54,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void BeginInit()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void EndInit()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		public override string ToString()
 		{
 			return text;
 		}
-
-		//
-		//  --- Protected Methods
-		//
-
-		//inherited
-		//protected override void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
 		//
 		//  --- Public Properties
 		//

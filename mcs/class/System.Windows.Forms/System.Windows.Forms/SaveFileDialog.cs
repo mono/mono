@@ -12,8 +12,6 @@ using System.IO;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public sealed class SaveFileDialog : FileDialog {
@@ -36,7 +34,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -45,7 +43,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -61,7 +59,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override void Reset()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	 }
 }

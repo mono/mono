@@ -11,8 +11,6 @@ using System.Globalization;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public sealed class InputLanguage {
@@ -64,14 +62,12 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public override bool Equals(object o)
+		public override bool Equals(object obj)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.Equals(obj);
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public static InputLanguage FromCulture(CultureInfo culture)
 		{
@@ -80,7 +76,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.GetHashCode();
 		}
 	 }
 }

@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public abstract class GridItem {
@@ -34,67 +32,32 @@ namespace System.Windows.Forms {
 				expanded = value;
 			}
 		}
-		//[MonoTODO]
-		//public abstract GridItemCollection GridItems {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public abstract GridItemType GridItemType {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public abstract string Label {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public abstract GridItem Parent {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
+		public abstract GridItemCollection GridItems {
+			get;
+		}
+		public abstract GridItemType GridItemType {
+			get;
+		}
+		public abstract string Label {
+			get;
+		}
+		public abstract GridItem Parent {
+			get;
+		}
 		//public abstract PropertyDescriptor PropertyDescriptor {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
+		//	get;
 		//}
-		//[MonoTODO]
-		//public abstract object Value {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public abstract object Value {
+			get;
+		}
 
-		//
-		//  --- Public Properties
-		//
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 		//
 		// --- Protected Constructor
 		//
 		[MonoTODO]
 		protected GridItem()
 		{
-			throw new NotImplementedException ();
+			
 		}
 	 }
 }

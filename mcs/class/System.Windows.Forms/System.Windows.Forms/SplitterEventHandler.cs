@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that will handle the SplitterMoving and SplitterMoved events of a Splitter.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void SplitterEventHandler(object sender, SplitterEventArgs e);
 }

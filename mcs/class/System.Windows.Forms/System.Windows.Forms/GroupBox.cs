@@ -11,8 +11,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
 	public class GroupBox : Control {
@@ -33,17 +31,20 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool AllowDrop {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.AllowDrop;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.AllowDrop = value;
 			}
 		}
 
 		[MonoTODO]
 		public override Rectangle DisplayRectangle {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.DisplayRectangle;
 			}
 		}
 
@@ -53,84 +54,18 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
 		//
 		//  --- Public Methods
 		//
-		
-		//inherited
-		//public IAsyncResult BeginInvoke(Delegate d) {
-		//	throw new NotImplementedException ();
-		//}
-
-		//public IAsyncResult BeginInvoke(Delegate d, object[] objs) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Dispose() {
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override bool Equals(object o) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-
-		//public static bool Equals(object o1, object o2) {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Invalidate() {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public object Invoke(Delegate d) {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public object Invoke(Delegate d, object[] objs) {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void PerformLayout() {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void ResumeLayout() {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Scale(float val) {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Scale(float val1, float val2) {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Select() {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void SetBounds(int b1, int b2, int b3, int b4) {
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void SetBounds(int b1, int b2, int b3, int b4, BoundsSpecified bounds) {
-		//	throw new NotImplementedException ();
-		//}
 
 		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 
 
@@ -164,7 +99,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new Size(200,100);//correct value
 			}
 		}
 
@@ -172,53 +107,28 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 
-		//[MonoTODO]
-		//protected override void Dispose(bool disposing) {
-		//	throw new NotImplementedException ();
-		//}
-
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnFontChanged(e);
 		}
 
 		[MonoTODO]
 		protected override void OnPaint(PaintEventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnPaint(e);
 		}
 
 		[MonoTODO]
 		protected override bool ProcessMnemonic(char charCode) {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessMnemonic(charCode);
 		}
-
-		//[MonoTODO]
-		//protected override virtual void Select(bool b1, bool b2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-
-		//protected override void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		// Inherited
-		//protected override void UpdateBounds(int b1, int b2, int b3, int b4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		// Inherited
-		//protected override void UpdateBounds(int b1, int b2, int b3, int b4, int b5, int b6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 
 	}

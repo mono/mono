@@ -15,9 +15,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Specifies a column in which each cell contains a check box for representing a Boolean value.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -34,13 +31,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public DataGridBoolColumn() 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		[MonoTODO]
 		public DataGridBoolColumn(PropertyDescriptor prop) 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		/*
@@ -91,122 +88,88 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected internal override void ConcedeFocus() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.ConcedeFocus();
 		}
 		
 		[MonoTODO]
-		protected internal override void Edit(
-			CurrencyManager source,
-			int rowNum,
-			Rectangle bounds,
-			bool readOnly,
-			string instantText,
-			bool cellIsVisible) {
-
-			throw new NotImplementedException ();
+		protected internal override void Edit(CurrencyManager source, int rowNum,
+			Rectangle bounds, bool readOnly, string instantText, bool cellIsVisible) {
+			//FIXME:
 		}
 
 		[MonoTODO]
 		protected internal override void EnterNullValue() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.EnterNullValue();
 		}
 		
 		[MonoTODO]
-		protected internal override object GetColumnValueAtRow(CurrencyManager lm,int row) 
+		protected internal override object GetColumnValueAtRow(CurrencyManager source,int rowNum) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.GetColumnValueAtRow(source, rowNum);
 		}
 		
 		[MonoTODO]
 		protected internal override int GetMinimumHeight() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:made up number
+			return 20;
 		}
 		
 		[MonoTODO]
-		protected internal override int GetPreferredHeight(Graphics g,object value) 
+		protected internal override int GetPreferredHeight(Graphics g, object value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:made up number
+			return 300;
 		}
 		
 		[MonoTODO]
-		protected internal override Size GetPreferredSize(Graphics g,object value) 
+		protected internal override Size GetPreferredSize(Graphics g, object value) 
 		{
+			//FIXME:made up number
+			return new Size(300,300);
+		}
+		
+		[MonoTODO]
+		protected internal override void Paint(Graphics g, Rectangle bounds,
+			CurrencyManager source, int rowNum) {
+			//FIXME:made up number
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected internal override void Paint(
-			Graphics g,
-			Rectangle bounds,
-			CurrencyManager source,
-			int rowNum) {
+		protected internal override void Paint(Graphics g, Rectangle bounds,
+			CurrencyManager source, int rowNum, bool alignToRight) {
 
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		protected internal override void Paint(
-			Graphics g,
-			Rectangle bounds,
-			CurrencyManager source,
-			int rowNum,
-			bool alignToRight) {
-
-			throw new NotImplementedException ();
+			//return base.Paint(g, bounds, source, rowNum, 
 		}
 
 		[MonoTODO]
-		protected internal override void Paint(
-			Graphics g,
-			Rectangle bounds,
-			CurrencyManager source,
-			int rowNum,
-			Brush backBrush,
-			Brush foreBrush,
-			bool alignToRight) {
-
-			throw new NotImplementedException ();
+		protected internal override void Paint(Graphics g, Rectangle bounds, CurrencyManager source,
+			int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight) {
+			//FIXME:
 		}
 
 		[MonoTODO]
-		protected internal override void SetColumnValueAtRow(CurrencyManager lm,int row,object value) 
+		protected internal override void SetColumnValueAtRow(CurrencyManager source,int rowNum, object value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetColumnValueAtRow(source, rowNum, value);
 		}
 		#endregion
 		
 		#region Events
 		[MonoTODO]
-		public event EventHandler AllowNullChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler AllowNullChanged;
 		
 		[MonoTODO]
-		public event EventHandler FalseValueChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler FalseValueChanged;
 		
 		[MonoTODO]
-		protected event EventHandler TrueValueChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		protected event EventHandler TrueValueChanged;
 		#endregion
 	}
 }

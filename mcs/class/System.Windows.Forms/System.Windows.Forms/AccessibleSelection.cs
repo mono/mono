@@ -13,11 +13,10 @@ namespace System.Windows.Forms {
 
 
 	/// <summary>
-  /// Specifies how an accessible object is selected or receives focus.
-  /// This enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
+	/// Specifies how an accessible object is selected or receives focus.
+	/// This enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
-	//[Serializable]
 	public enum AccessibleSelection {
 
 		AddSelection = 1,

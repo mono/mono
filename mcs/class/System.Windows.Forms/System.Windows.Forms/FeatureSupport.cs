@@ -11,7 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -22,41 +21,23 @@ namespace System.Windows.Forms {
 		//
 		//IFeatureSupport
 
+		[MonoTODO]
 		Version IFeatureSupport.GetVersionPresent(object feature) {
-			throw new NotImplementedException ();
-		}
-		bool IFeatureSupport.IsPresent(object feature){
-			throw new NotImplementedException ();
-		}
-		bool IFeatureSupport.IsPresent(object feature, Version minimumVersion){
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override bool Equals(object obj)
-		{
+		bool IFeatureSupport.IsPresent(object feature){
 			throw new NotImplementedException ();
 		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
+	
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
+		bool IFeatureSupport.IsPresent(object feature, Version minimumVersion){
+			throw new NotImplementedException ();
 		}
-
+	
 		[MonoTODO]
 		public abstract Version GetVersionPresent(object o);
-
-		//[MonoTODO]
-		//public virtual bool IsPresent(object o)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		//
 		// --- Protected Constructors
@@ -64,7 +45,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected FeatureSupport()
 		{
-			throw new NotImplementedException ();
 		}
 	 }
 }

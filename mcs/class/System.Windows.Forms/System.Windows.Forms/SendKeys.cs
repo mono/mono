@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public class SendKeys {
@@ -21,32 +19,31 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public override bool Equals(object o)
+		public override bool Equals(object obj)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.Equals(obj);
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public override int GetHashCode() {
 			//FIXME add our proprities
 			return base.GetHashCode();
-		}		[MonoTODO]
+		}
+		[MonoTODO]
 		static void Flush()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		static void Send(string keys)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		static void SendWait(string keys)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	 }
 }

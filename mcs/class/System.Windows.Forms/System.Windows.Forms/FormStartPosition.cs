@@ -15,7 +15,6 @@ namespace System.Windows.Forms {
 	/// <summary>
   /// Specifies the initial position of a form.
 	/// </summary>
-	//[Serializable]
 	[ComVisible(true)]
 	public enum FormStartPosition {
 

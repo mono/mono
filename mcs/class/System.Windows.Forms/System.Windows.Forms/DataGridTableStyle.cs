@@ -54,7 +54,6 @@ namespace System.Windows.Forms {
 			alternatingBackColor=SystemColors.Window;
 			gridLineStyle=DataGridLineStyle.Solid;
 			rowHeadersVisible=true;
-			throw new NotImplementedException ();
 		}
 
 		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code:
@@ -63,7 +62,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public DataGridTableStyle(CurrencyManager listManager) : this() 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		#endregion
 		
@@ -200,7 +199,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void Dispose(bool disposing) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.Dispose(disposing);;
 		}
 		
 		[MonoTODO]
@@ -212,169 +212,169 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnAllowSortingChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnAlternatingBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnColumnHeadersVisibleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnForeColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnGridLineColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnGridLineStyleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnHeaderBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnHeaderFontChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnHeaderForeColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnLinkColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnLinkHoverColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMappingNameChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnPreferredColumnWidthChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnPreferredRowHeightChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnReadOnlyChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnRowHeadersVisibleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnRowHeaderWidthChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnSelectionBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnSelectionForeColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetAlternatingBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetForeColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetGridLineColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetHeaderBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetHeaderFont() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetHeaderForeColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetLinkColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
@@ -383,13 +383,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void ResetSelectionBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetSelectionForeColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]

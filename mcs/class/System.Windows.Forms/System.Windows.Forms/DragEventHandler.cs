@@ -8,7 +8,7 @@
 //
 
 namespace System.Windows.Forms {
-	//[Serializable]
+	[Serializable]
 	public delegate void DragEventHandler (
 	object sender,
 	DragEventArgs e

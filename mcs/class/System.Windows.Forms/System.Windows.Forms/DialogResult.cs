@@ -15,7 +15,6 @@ namespace System.Windows.Forms {
 	/// Specifies identifiers to indicate the return value of a dialog box.
 	/// </summary>
 	//LAMESPEC: Docs say serializable, verifer says no.
-	//[Serializable]
 	[ComVisible(true)]
 	public enum DialogResult {
 

@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// The event handler class that is invoked when 
 	/// a property in the grid is modified by the user. 
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void PropertyValueChangedEventHandler(object s, PropertyValueChangedEventArgs e);
 }

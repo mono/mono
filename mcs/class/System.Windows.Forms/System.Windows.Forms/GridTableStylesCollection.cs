@@ -12,8 +12,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public class GridTableStylesCollection : BaseCollection, IList {
@@ -47,30 +45,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public virtual void AddRange(DataGridTableStyle[] tables)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public virtual void Clear()
 		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
+			//FIXME:
 		}
 
 		[MonoTODO]
@@ -82,13 +63,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Remove(DataGridTableStyle table)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void RemoveAt(int index)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		//
@@ -113,7 +94,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected void OnCollectionChanged(CollectionChangeEventArgs cevent)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		/// <summary>
 		/// IList Interface implmentation.
@@ -137,13 +118,13 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
 		[MonoTODO]
 		void IList.Clear(){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -163,7 +144,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		void IList.Insert(int index, object value){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]

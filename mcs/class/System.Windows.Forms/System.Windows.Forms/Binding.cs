@@ -15,7 +15,6 @@ namespace System.Windows.Forms {
 		/// Represents the simple binding between the property value of an object and the property value of a control.
 		///
 		/// ToDo note:
-		///  - Nothing is implemented
 		///  - MarshalByRefObject members not stubbed out
 		/// </summary>
 
@@ -25,7 +24,6 @@ namespace System.Windows.Forms {
 		{
 			
 		}
-
 
 		//
 		// --- Public Properties

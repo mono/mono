@@ -162,14 +162,7 @@ namespace System.Windows.Forms {
 		
 		#region Events
 		[MonoTODO]
-		public event EventHandler StartPageChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler StartPageChanged;
 		#endregion
 	}
 }

@@ -75,14 +75,6 @@ namespace System.Windows.Forms {
 			//FIXME add our proprities
 			return base.GetHashCode();
 		}
-		//inherited
-		//public ContextMenu GetContextMenu() {
-		//	throw new NotImplementedException ();
-		//}
-
-		//public MainMenu GetMainMenu() {
-		//	throw new NotImplementedException ();
-		//}
 
 		public virtual MenuItem MergeMenu() {
 			throw new NotImplementedException ();
@@ -91,11 +83,6 @@ namespace System.Windows.Forms {
 		public void MergeMenu(MenuItem m) {
 			throw new NotImplementedException ();
 		}
-
-		//inherited
-		//public virtual void MergeMenu(Menu m) {
-		//	throw new NotImplementedException ();
-		//}
 
 		public void PerformClick() {
 			OnClick( new EventArgs());
@@ -126,22 +113,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		//inherited
-		//protected void CloneMenu(Menu m) {
-		//	throw new NotImplementedException ();
-		//}
-
 		~MenuItem() {
 			throw new NotImplementedException ();
 		}
-
-		//protected virtual object GetService(Type t) {
-		//	throw new NotImplementedException ();
-		//}
-
-		//protected object MemberwiseClone() {
-		//	throw new NotImplementedException ();
-		//}
 
 		protected virtual void OnClick(EventArgs e) {
 			if( Click != null){
@@ -260,18 +234,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		//inherited
-		//public MenuItem MdiListItem {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//public Menu.MenuItemCollection MenuItems {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
 		public int MergeOrder {
 
 			get {
@@ -343,16 +305,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		//inherited
-		//public virtual ISite Site {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
 		private string text_ = String.Empty;
 
 		public string Text {
@@ -377,18 +329,6 @@ namespace System.Windows.Forms {
 		//
 		// -- Protected Properties
 		//
-
-		//inherited
-		//protected bool DesignMode {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//protected EventHandlerList Events {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
 
 		internal const int INVALID_MENU_ID = -1; //0xffffffff;
 		// Variables are stored here to provide access for the base functions

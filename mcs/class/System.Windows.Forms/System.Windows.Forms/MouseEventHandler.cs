@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// Represents the method that will handle the MouseDown, MouseUp, or MouseMove 
 	/// event of a form, control, or other component.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void MouseEventHandler(object sender, MouseEventArgs e);
 }

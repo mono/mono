@@ -107,30 +107,26 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Draw(Graphics g, Point pt, int n)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void Draw(Graphics g, int n1, int n2, int n3)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 
 		//
 		//  --- Public Events
 		//
 		public event EventHandler RecreateHandle;
-
-		//
-		//  --- Protected Methods
-		//
-
 
 		//
 		// System.Windows.Forms.ImageList.ImageCollection.cs
@@ -189,19 +185,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Add(Icon icon)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void Add(Image img)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public int Add(Image img, Color col)
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ();			
 		}
 
 		[MonoTODO]
@@ -213,7 +209,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Clear()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
@@ -237,19 +233,20 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Remove(Image image)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void RemoveAt(int index)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 			/// <summary>
 			/// IList Interface implmentation.
@@ -273,13 +270,13 @@ namespace System.Windows.Forms {
 					throw new NotImplementedException ();
 				}
 				set{
-					throw new NotImplementedException ();
+					//FIXME:
 				}
 			}
 		
 			[MonoTODO]
 			void IList.Clear(){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		
 			[MonoTODO]
@@ -299,17 +296,17 @@ namespace System.Windows.Forms {
 
 			[MonoTODO]
 			void IList.Insert(int index, object value){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 
 			[MonoTODO]
 			void IList.Remove( object value){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 
 			[MonoTODO]
 			void IList.RemoveAt( int index){
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			// End of IList interface
 			/// <summary>

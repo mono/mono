@@ -33,19 +33,23 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool AllowDrop {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.AllowDrop;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.AllowDrop = value;
 			}
 		}
 		[MonoTODO]
 		public override bool AutoSize {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.AutoSize;;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.AutoSize = value;
 			}
 		}
 		[MonoTODO]
@@ -60,10 +64,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackgroundImage;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackgroundImage = value;
 			}
 		}
 		[MonoTODO]
@@ -93,19 +99,23 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Font Font {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.Font;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Font = value;
 			}
 		}
 		[MonoTODO]
 		public override Color ForeColor {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.ForeColor;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.ForeColor = value;
 			}
 		}
 		[MonoTODO]

@@ -16,7 +16,6 @@ namespace System.Windows.Forms {
   /// Specifies constants indicating the locations that an error icon can appear
   /// in relation to the control with an error. 
 	/// </summary>
-	//[Serializable]
 	public enum ErrorIconAlignment {
 
 		//Values were verified with enumcheck.

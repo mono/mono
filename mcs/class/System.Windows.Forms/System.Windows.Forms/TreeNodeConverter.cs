@@ -11,8 +11,6 @@ using System.Globalization;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 using System.ComponentModel;
     public class TreeNodeConverter : TypeConverter {

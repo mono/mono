@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// Represents the method that will handle the BeforeCheck, 
 	/// BeforeCollapse, BeforeExpand, or BeforeSelect event of a TreeView.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void TreeViewCancelEventHandler(object sender, TreeViewCancelEventArgs e);
 }

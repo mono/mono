@@ -15,33 +15,32 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Converts the value of an object to a different data type.
-	///
-	/// ToDo note:
-	///  - no methods are implemented
 	/// </summary>
 	
 	[MonoTODO]
 	public class DataGridPreferredColumnWidthTypeConverter : TypeConverter {
 
-
 		#region Constructors
 		[MonoTODO]
 		public DataGridPreferredColumnWidthTypeConverter() 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		#endregion
+
 		#region Methods
 		[MonoTODO]
 		public override bool CanConvertFrom(ITypeDescriptorContext context,Type sourceType) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CanConvertFrom(context, sourceType);
 		}
 		
 		[MonoTODO]
 		public override object ConvertFrom(ITypeDescriptorContext context,CultureInfo culture,object value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertFrom(context, culture, value);
 		}
 		
 		[MonoTODO]
@@ -50,8 +49,8 @@ namespace System.Windows.Forms {
 			CultureInfo culture,
 			object value,
 			Type destinationType) {
-
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 		#endregion
 		

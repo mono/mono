@@ -7,7 +7,7 @@
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 namespace System.Windows.Forms {
-	//[Serializable]
+	[Serializable]
 	public delegate void ColumnClickEventHandler(
 	object sender,
 	ColumnClickEventArgs e

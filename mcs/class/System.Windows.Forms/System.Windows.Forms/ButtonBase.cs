@@ -17,8 +17,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Implements the basic functionality common to button controls.
-	/// ToDo note:
-	///  - no methods are implemented
 	/// </summary>
 
 	public abstract class ButtonBase : Control {
@@ -58,7 +56,9 @@ namespace System.Windows.Forms {
 		}
 		
 		protected override Size DefaultSize {
-			get { return base.DefaultSize; }
+			get {
+				return new Size(75,23);// default size for button.
+			}
 		}
 		
 		public FlatStyle FlatStyle {

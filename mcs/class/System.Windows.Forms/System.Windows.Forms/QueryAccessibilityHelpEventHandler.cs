@@ -13,6 +13,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents the method that will handle the QueryAccessibilityHelp event of a control.
 	/// </summary>
-	//[Serializable]
+	[Serializable]
 	public delegate void QueryAccessibilityHelpEventHandler(object sender, QueryAccessibilityHelpEventArgs e);
 }

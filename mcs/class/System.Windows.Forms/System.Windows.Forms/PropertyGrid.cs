@@ -18,9 +18,7 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Provides a user interface for browsing the properties of an object.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
+
 	/// </summary>
 
 	[MonoTODO]
@@ -42,9 +40,6 @@ namespace System.Windows.Forms {
 		Color viewForeColor;
 		#endregion
 		
-		
-		
-		
 		#region Constructors
 		[MonoTODO]
 		public PropertyGrid() 
@@ -64,12 +59,8 @@ namespace System.Windows.Forms {
 			toolbarVisible=true;
 			viewBackColor=SystemColors.Window;
 			viewForeColor=SystemColors.WindowText;
-			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
 		
 		#region Properties
 		[MonoTODO]
@@ -241,9 +232,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
-		
-		
-		
 		#region Methods
 		[MonoTODO]
 		public void CollapseAllGridItems() 
@@ -395,63 +383,13 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
-		
-		
-		
 		#region Events
-		[MonoTODO]
-		public event EventHandler PropertySortChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event PropertyTabChangedEventHandler PropertyTabChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event PropertyValueChangedEventHandler PropertyValueChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event SelectedGridItemChangedEventHandler SelectedGridItemChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler SelectedObjectsChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler PropertySortChanged;
+		public event PropertyTabChangedEventHandler PropertyTabChanged;
+		public event PropertyValueChangedEventHandler PropertyValueChanged;
+		public event SelectedGridItemChangedEventHandler SelectedGridItemChanged;
+		public event EventHandler SelectedObjectsChanged;
 		#endregion
-		
-		
-		
 		
 		/// sub-class: PropertyGrid.PropertyTabCollection
 		/// <summary>
@@ -469,8 +407,6 @@ namespace System.Windows.Forms {
 //				get { throw new NotImplementedException (); }
 //			}
 			#endregion
-			
-			
 			
 			#region Methods
 			[MonoTODO]

@@ -17,7 +17,6 @@ namespace System.Windows.Forms {
 	/// this enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
-	//[Serializable]
 	public enum DrawItemState {
 
 		None = 0,

@@ -13,9 +13,8 @@ namespace System.Windows.Forms {
 
 
 	/// <summary>
-  /// Specifies the appearance of a control.
+	/// Specifies the appearance of a control.
 	/// </summary>
-	//[Serializable]
 	public enum FlatStyle {
 
 		//Values were verified with enumcheck.

@@ -11,8 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
     public class SelectionRange {
@@ -67,10 +65,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override string ToString()
 		{

@@ -134,7 +134,7 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
+					//FIXME:
     			}
     		}
     
@@ -144,8 +144,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     		}
     
     		public int PreferredHeight {
@@ -217,8 +217,7 @@
     
     		protected override Size DefaultSize {
     			get {
-    				// FIXME: use GetSystemMetrics?
-    				throw new NotImplementedException ();
+    				return new Size(100,23);//Correct value
     			}
     		}
     
@@ -240,17 +239,7 @@
     		//
     		//  --- Public Methods
     		//
-    		[MonoTODO]
-    		public override bool Equals(object o)
-    		{
-    			throw new NotImplementedException ();
-    		}
-    
-    		public override int GetHashCode() {
-    			//FIXME add our proprities
-    			return base.GetHashCode();
-    		}
-    
+
     		public new void Select()
     		{
     			base.Select ();
@@ -285,17 +274,7 @@
       		{
       			throw new NotImplementedException ();
       		}
-    
-    		protected new virtual void Dispose()
-    		{
-    			//throw new NotImplementedException ();
-    		}
-    
-    		protected  override void Dispose(bool disposing)
-    		{
-    			//throw new NotImplementedException ();
-    		}
-    
+
     		[MonoTODO]
     		protected  void DrawImage (Graphics g, Image img, 
     					   Rectangle r, ContentAlignment align)
@@ -324,7 +303,7 @@
     
     		}
     
-  		//Compact Framework
+  			//Compact Framework
     		protected override void OnParentChanged (EventArgs e)
     		{
     			base.OnParentChanged (e);
@@ -335,7 +314,7 @@
     				TextAlignChanged (this, e);
     		}
     
- 		//Compact Framework
+ 			//Compact Framework
     		protected override void OnTextChanged (EventArgs e) {
     			base.OnTextChanged (e);
     		}

@@ -12,8 +12,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Specifies the contextual information about an application thread.
-	///
-	/// ToDo note: Needsa Core; eg,==,!=,Gethascode,ToString.
 	/// </summary>
 
 	[MonoTODO]
