@@ -1,5 +1,7 @@
 2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* domain-internals.h domain.c: Add a per-domain jump trampoline hash.
+
 	* icall.c (ves_icall_System_Reflection_MethodBase_GetMethodFromHandle): Rename to ...Internal.
 
 	* icall.c: Fix some warnings.
