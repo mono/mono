@@ -138,6 +138,14 @@ namespace System.Xml.Schema
 				return datatypeBase64Binary;
 			case "boolean":
 				return datatypeBoolean;
+			case "anyURI":
+				return datatypeAnyURI;
+			case "dateTime":
+				return datatypeDateTime;
+			case "date":
+				return datatypeDate;
+			case "time":
+				return datatypeTime;
 			default:
 				throw new NotImplementedException ("Unknown type: " + localName);
 			}
@@ -174,5 +182,9 @@ namespace System.Xml.Schema
 		private static XsdFloat datatypeFloat = new XsdFloat ();
 		private static XsdBase64Binary datatypeBase64Binary = new XsdBase64Binary ();
 		private static XsdBoolean datatypeBoolean = new XsdBoolean ();
+		private static XsdAnyURI datatypeAnyURI = new XsdAnyURI ();
+		private static XsdDateTime datatypeDateTime = new XsdDateTime ();
+		private static XsdDate datatypeDate = new XsdDate ();
+		private static XsdTime datatypeTime = new XsdTime ();
 	}
 }

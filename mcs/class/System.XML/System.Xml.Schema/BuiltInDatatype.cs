@@ -282,6 +282,7 @@ namespace Mono.Xml.Schema
 	public class XsdEntity : XsdName
 	{
 		internal XsdEntity ()
+
 		{
 		}
 
@@ -560,6 +561,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
+
 	// xs:positiveInteger
 	public class XsdPositiveInteger : XsdNonNegativeInteger
 	{
@@ -671,6 +673,81 @@ namespace Mono.Xml.Schema
 		}
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Total; }
+		}
+	}
+
+	// xs:anyURI
+	public class XsdAnyURI : XsdString
+	{
+		public override XmlTokenizedType TokenizedType {
+
+			get { return XmlTokenizedType.CDATA; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (Uri); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return new Uri (s);
+		}
+	}
+	
+	// xs:dateTime
+	public class XsdDateTime : XsdAnySimpleType
+	{
+		internal XsdDateTime ()
+		{
+		}
+
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.CDATA; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDateTime (s);
+		}
+
+		// Fundamental Facets
+		public override bool Bounded {
+			get { return false; }
+		}
+		public override bool Finite {
+			get { return true; }
+		}
+		public override bool Numeric {
+			get { return false; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Total; }
+		}
+	}
+
+	// xs:date
+	public class XsdDate : XsdDateTime
+	{
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return DateTime.ParseExact (s, "yyyy-MM-dd", null);
+		}
+	}
+
+	// xs:time
+	public class XsdTime : XsdDateTime
+	{
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return DateTime.ParseExact (s, "HH:mm:ss.fffffffzzz", null);
 		}
 	}
 }
