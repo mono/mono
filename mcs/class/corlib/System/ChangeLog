@@ -1,5 +1,10 @@
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
+	* DateTime.cs: Miguel already committed this, but there was still a
+	ChangeLog entry for this missing ....
+	We're now reusing functionality from TimeSpan, printing dates is
+	fully implemented, currently working on parsing.
+
 	* TimeZone.cs: Fully implemented this. There's a new InternCall in the
 	runtime for this.
 
