@@ -1449,6 +1449,16 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
+	public void TestInsertRange_this() {
+		String[] s1 = {"this", "is", "a", "test"};
+		ArrayList al = new ArrayList(s1);
+		al.InsertRange(2, al);
+		String[] s2 = {"this", "is", "this", "is", "a", "test", "a", "test"};
+		for (int i=0; i < al.Count; i++) {
+			AssertEquals("at i=" + i, s2[i], al[i]);
+		}
+	}
+
 	public void TestSort() {
 		{
 			bool errorThrown = false;
