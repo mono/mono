@@ -1,3 +1,8 @@
+
+Thu Apr 10 16:27:43 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg, basic.cs: fixed checked conversions to byte and short.
+
 2003-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c regalloc.c regalloc.h: Fix memory leak.
