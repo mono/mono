@@ -1,3 +1,8 @@
+2004-11-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlCodeExporter.cs, XmlSerializer.cs, XmlSchemaImporter.cs: Fixed some
+	compilation warnings.
+
 2004-11-24  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationSource.cs: Made SerializationSource abstract, and

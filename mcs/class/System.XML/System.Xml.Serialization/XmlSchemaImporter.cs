@@ -52,8 +52,11 @@ namespace System.Xml.Serialization
 		bool encodedFormat = false;
 		XmlReflectionImporter auxXmlRefImporter;
 		SoapReflectionImporter auxSoapRefImporter;
-		CodeGenerationOptions options;
 		bool anyTypeImported;
+
+#if NET_2_0
+		CodeGenerationOptions options;
+#endif
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);

@@ -58,8 +58,6 @@ namespace System.Xml.Serialization
 		XmlMapping typeMapping;
 		
 		SerializerData serializerData;
-		Type writerType;
-		Type readerType;
 		
 		static Hashtable serializerTypes = new Hashtable ();
 		
@@ -71,7 +69,7 @@ namespace System.Xml.Serialization
 			public Type WriterType;
 			public MethodInfo WriterMethod;
 			public GenerationBatch Batch;
-			public IXmlSerializerImplementation Implementation;
+			public IXmlSerializerImplementation Implementation = null;
 			
 			public XmlSerializationReader CreateReader () {
 				if (ReaderType != null)

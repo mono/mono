@@ -46,7 +46,6 @@ namespace System.Xml.Serialization
 
 		CodeNamespace codeNamespace;
 		CodeCompileUnit codeCompileUnit;
-		bool encodedFormat;
 
 #if NET_2_0
 		CodeGenerationOptions options;
