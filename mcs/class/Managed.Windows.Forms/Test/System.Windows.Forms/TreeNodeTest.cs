@@ -102,24 +102,33 @@ public class TreeNodeTest {
 		string s = new TreeNode ("").FullPath;
 	}
 
-	[Test, Ignore ("TODO")]
+	[Test]
 	public void FullPathTest ()
 	{
 		TreeNode tn_1 = new TreeNode ("A");
 		TreeNode tn_2 = new TreeNode ("B");
 		tn_2.Nodes.Add (tn_1);
-		Assert.AreEqual (@"A\B", tn_1.FullPath);
 
+		TreeView tv = new TreeView ();
+		tv.Nodes.Add (tn_1);
+		tv.Nodes [0].Nodes.Add (tn_2);
+
+		Assert.AreEqual ("A", tn_1.FullPath, "#1");
+		Assert.AreEqual ("A", tv.Nodes[0].FullPath, "#2");
+		Assert.AreEqual (@"A\B", tn_2.FullPath, "#3");
+		tv.PathSeparator = "_separator_";
+		Assert.AreEqual ("A_separator_B", tn_2.FullPath, "#4");
 	}
 
 	[Test]
 	public void CloneTest ()
 	{
-		// TODO: Add draw oriented fields will be implemented
-
 		TreeNode orig = new TreeNode ("text", 2, 3, new TreeNode [] { new TreeNode ("child", 22, 33) });
 		orig.Tag = FlatStyle.Flat;
 		orig.Checked = true;
+		orig.BackColor = System.Drawing.Color.AliceBlue;
+		orig.ForeColor = System.Drawing.Color.Beige;
+
 		TreeNode clone = (TreeNode)orig.Clone ();
 		Assert.AreEqual ("text", clone.Text, "#1");
 		Assert.AreEqual (2, clone.ImageIndex, "#2");
@@ -129,6 +138,8 @@ public class TreeNodeTest {
 		Assert.IsTrue (clone.Checked, "#6");
 		Assert.AreEqual ("child", clone.Nodes [0].Text, "#10");
 		Assert.AreEqual (22, clone.Nodes [0].ImageIndex, "#11");
+		Assert.AreEqual (System.Drawing.Color.AliceBlue, clone.BackColor, "#12");
+		Assert.AreEqual (System.Drawing.Color.Beige, clone.ForeColor, "#13");
 	}
 
 }
