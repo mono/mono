@@ -1,3 +1,7 @@
+2004-09-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Microsoft.JScript.dll.sources: drop antlr dependency.
+	
 2004-08-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Microsoft.JScript.dll.sources: added In.cs, Token.cs,
