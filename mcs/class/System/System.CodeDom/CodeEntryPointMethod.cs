@@ -38,5 +38,9 @@ namespace System.CodeDom
 	public class CodeEntryPointMethod
 		: CodeMemberMethod
 	{
+		public CodeEntryPointMethod ()
+		{
+			Attributes = MemberAttributes.Public | MemberAttributes.Static;
+		}
 	}
 }
