@@ -59,12 +59,15 @@ namespace System.Web.Compilation
 
 		public override Type GetCompiledType ()
 		{
-			Type type = CachingCompiler.GetTypeFromCache (parser.PhysicalPath, parser.ClassName);
+			Type type = CachingCompiler.GetTypeFromCache (parser.PhysicalPath);
 			if (type != null)
 				return type;
 
-			if (parser.Program.Trim () == "")
-				return parser.GetTypeFromBin (parser.ClassName);
+			if (parser.Program.Trim () == "") {
+				type = parser.GetTypeFromBin (parser.PhysicalPath);
+				CachingCompiler.InsertType (type, parser.PhysicalPath);
+				return type;
+			}
 
 			string lang = parser.Language;
 			CompilationConfiguration config;
@@ -106,7 +109,9 @@ namespace System.Web.Compilation
 					"No assembly returned after compilation!?");
 
 			results.TempFiles.Delete ();
-			return results.CompiledAssembly.GetType (parser.ClassName, true);
+			type = results.CompiledAssembly.GetType (parser.ClassName, true);
+			CachingCompiler.InsertType (type, parser.PhysicalPath);
+			return type;
 		}
 
 		void CheckCompilerErrors (CompilerResults results)

@@ -284,7 +284,7 @@ namespace System.Web.Compilation
 
 		public virtual Type GetCompiledType () 
 		{
-			Type type = CachingCompiler.GetTypeFromCache (parser.InputFile, parser.ClassName);
+			Type type = CachingCompiler.GetTypeFromCache (parser.InputFile);
 			if (type != null)
 				return type;
 
