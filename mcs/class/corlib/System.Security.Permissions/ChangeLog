@@ -1,3 +1,9 @@
+2004-09-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileIOPermission.cs: Reworked to support partial paths, non-c14n
+	paths (like ..) and PathDiscovery in XML. Now runs MSDN sample.
+	* RegistryPermission.cs: Removed unrequired variable.
+
 2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EnvironmentPermission.cs: Fixed Unrestricted in FromXml.

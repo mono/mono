@@ -89,7 +89,6 @@ namespace System.Security.Permissions {
 			if (pathList == null)
 				throw new ArgumentNullException ("pathList");
 
-			string[] paths;
 			switch (access) {
 				case RegistryPermissionAccess.AllAccess:
 					AddWithUnionKey (createList, pathList);
