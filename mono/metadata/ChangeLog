@@ -1,3 +1,7 @@
+2002-03-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_string_to_utf8): remove assert(!error), instead
+	print a warning. 
 
 Thu Mar 7 18:55:15 CET 2002 Paolo Molaro <lupus@ximian.com>
 
