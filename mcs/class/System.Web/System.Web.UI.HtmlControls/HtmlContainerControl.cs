@@ -68,8 +68,8 @@ namespace System.Web.UI.HtmlControls
                 public override Render(HtmlTextWriter writer)
                 {
                         if(_doChildren) RenderChildren(writer);
-                        else if(_doText) writer.write(Page.Server.HtmlEncode(_innerText));
-                        else writer.write(_innerHtml);
+                        else if(_doText) Page.Server.HtmlEncode(_innerText, writer);
+                        else writer.Write(_innerHtml);
                 }
         }
 }
