@@ -1,3 +1,9 @@
+
+Sat Jan 4 18:28:42 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: raise the proper exceptions if the arguments to the
+	internal Invoke are incorrect.
+
 2003-01-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_ptr_to_struct): code cleanups
