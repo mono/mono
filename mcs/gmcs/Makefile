@@ -57,24 +57,36 @@ DISTFILES = \
 
 all-local: gmcs.exe
 
+PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/2.0
+
 install-local: gmcs.exe
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/mono/2.0
-	$(INSTALL_BIN) gmcs.exe $(DESTDIR)$(prefix)/lib/mono/2.0
-	$(INSTALL_DATA) gmcs.exe.config $(DESTDIR)$(prefix)/lib/mono/2.0
-	$(INSTALL_DATA) gmcs.exe.mdb $(DESTDIR)$(prefix)/lib/mono/2.0
+	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_BIN) gmcs.exe $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_DATA) gmcs.exe.config $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_DATA) gmcs.exe.mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(prefix)/bin/mcs.exe
+	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/gmcs.exe*
 
 test-local run-test-local:
 
 clean-local:
 	rm -f *.exe *.pdb cs-parser.cs y.output *.mdb
+	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap clean
 
 dist-local: dist-default
 
-gmcs.exe: $(all_sources)
-	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../mcs/mcs.exe $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
+bootstrap_libs = mscorlib.dll System.dll System.Xml.dll Mono.CompilerServices.SymbolWriter.dll
+bootstrap_libfiles = $(bootstrap_libs:%=$(topdir)/class/lib/net_2_0_bootstrap/%)
+
+$(bootstrap_libfiles): bootstrap-libs
+	@:
+.PHONY: bootstrap-libs
+bootstrap-libs:
+	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap all
+
+gmcs.exe: $(all_sources) $(bootstrap_libfiles)
+	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../mcs/mcs.exe $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $(all_sources)
 
 gmcs2.exe: $(all_sources)
 	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time mcs -2 /target:exe /debug /out:$@ $^ $(DEBUG_FLAGS) 

@@ -1,3 +1,12 @@
+2004-10-29  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (bootstrap_libs,bootstrap_libfiles): New.
+	(bootstrap-libs): New target.  Invokes the net_2_0_bootstrap profile.
+	(gmcs.exe): Invoke bootstrap-libs.
+	(clean-local): Clean the net_2_0_bootstrap profile too.
+	(PROGRAM_INSTALL_DIR): New.
+	(install-local): Use it.
+
 2004-10-13  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.InflatedConstraints): New nested class.
