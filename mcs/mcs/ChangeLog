@@ -1,3 +1,11 @@
+2001-09-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Reveted lsat change from Ravi to IsTopLevel.  That is
+	incorrect.  IsTopLevel is not used to tell whether an object is
+	root_types or not (that can be achieved by testing this ==
+	root_types).  But to see if this is a top-level *class* (not
+	necessarly our "toplevel" container). 
+
 2001-09-14  Ravi Pratap  <ravi@ximian.com>
 
 	* enum.cs (Enum::Define): Modify to call the Lookup method on the

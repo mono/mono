@@ -461,16 +461,18 @@ namespace CIR {
 			}
 		}
 
-		// FIXME : The following doesn't seem to be the case :
-		// The Toplevel is `root_types' which is a container for all
-		// types defined, hence the non-obvious parent.parent.
+		// 
+		// root_types contains all the types.  All TopLevel types
+		// hence have a parent that points to `root_types', that is
+		// why there is a non-obvious test down here.
+		//
 		public bool IsTopLevel {
 			get {
-				if (parent == null)
-					return true;
-				else
-					return false;
-			
+				if (parent != null){
+					if (parent.parent == null)
+						return true;
+				}
+				return false;
 			}
 		}
 			
