@@ -1,3 +1,9 @@
+2002-09-24  Mark Crichton  <crichton@gimp.org>
+
+	* sparc/tramp.c: Works as well as the old code did.  Cleanup is
+	finished.  The framework now for adding more type support is in,
+	and should be a *lot* cleaner.
+	
 2002-09-22  Mark Crichton  <crichton@gimp.org>
 
 	* sparc/tramp.c: Completely broke trampolining on SPARC processors.
