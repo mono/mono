@@ -1,5 +1,13 @@
 2003-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DirectoryInfo.cs: changed ToString to match MS behavior.
+	* Path.cs: further fixes to GetDirectoryName to return null in the
+	same cases that MS does.
+
+	Fixes bug #38387.
+
+2003-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Path.cs: fixed a couple of bugs reported in #35906.
 
 2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>

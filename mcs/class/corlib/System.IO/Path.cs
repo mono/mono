@@ -94,25 +94,20 @@ namespace System.IO
 
 		public static string GetDirectoryName (string path)
 		{
-			if (path != null)
-			{
-				CheckArgument.Empty (path);
-				CheckArgument.WhitespaceOnly (path);
-				CheckArgument.PathChars (path);
+			if (path == null || path == "" || GetPathRoot (path) == path)
+				return null;
 
-				if (path.Length > 0)
-				{
-					int nLast = path.LastIndexOfAny (PathSeparatorChars);
-					if (nLast == 0)
-						nLast++;
+			CheckArgument.WhitespaceOnly (path);
+			CheckArgument.PathChars (path);
 
-					if (nLast > 0)
-						return path.Substring (0, nLast);
-					else
-						return String.Empty;
-				} 
-			}
-			return path;
+			int nLast = path.LastIndexOfAny (PathSeparatorChars);
+			if (nLast == 0)
+				nLast++;
+
+			if (nLast > 0)
+				return path.Substring (0, nLast);
+
+			return String.Empty;
 		}
 
 		public static string GetExtension (string path)

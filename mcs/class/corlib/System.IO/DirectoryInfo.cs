@@ -129,7 +129,7 @@ namespace System.IO {
 		}
 
 		public override string ToString () {
-			return OriginalPath;
+			return Path.GetFileName (OriginalPath);
 		}
 	}
 }
