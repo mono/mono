@@ -74,6 +74,5 @@ using System.Runtime.CompilerServices;
 //   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
 //       documentation for more information on this.
 //
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("..\\..\\..\\c5.snk")]
-//[assembly: AssemblyKeyName("")]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("c5.pub")]
