@@ -1,3 +1,12 @@
+2005-01-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PermissionSetTest.cs: Changed [Ignore] to [Category("NotDotNet")] to
+	reduce nunit logs.
+	* SecurityElementTest.cs: Changed [Ignore] to [Category("NotDotNet")] 
+	to reduce nunit logs.
+	* SecurityManagerTest.cs: Changed [Ignore] to [Category("NotDotNet")] 
+	to reduce nunit logs.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SecurityExceptionCas.cs: New. Permission tests for SecurityException.

@@ -189,7 +189,7 @@ namespace MonoTests.System.Security {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Ignore ("this will result in an InvalidCastException on MS.Net - I have no clue why")]
+		[Category ("NotDotNet")] // this will result in an InvalidCastException on MS.Net - I have no clue why
 		public void Attributes_StrangeCase () 
 		{
 			Hashtable h = elem.Attributes;

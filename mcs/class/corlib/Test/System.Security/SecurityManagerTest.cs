@@ -219,7 +219,7 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-		[Ignore ("MS bug - throws a NullReferenceException")]
+		[Category ("NotDotNet")] // MS bug - throws a NullReferenceException
 		public void ResolvePolicy_Evidence_DenyUnrestricted_NoExecution ()
 		{
 			PermissionSet deny = new PermissionSet (PermissionState.Unrestricted);

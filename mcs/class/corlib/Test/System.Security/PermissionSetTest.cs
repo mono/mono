@@ -231,7 +231,7 @@ namespace MonoTests.System.Security {
 
 		[Test]
 #if !NET_2_0
-		[Ignore ("Don't know why it doesn't work under Fx 1.1")]
+		[Category ("NotDotNet")] // Don't know why it doesn't work under Fx 1.1
 #endif
 		public void ConvertPermissionSet_BinaryToBinary ()
 		{
@@ -246,7 +246,7 @@ namespace MonoTests.System.Security {
 
 		[Test]
 #if !NET_2_0
-		[Ignore ("Don't know why it doesn't work under Fx 1.1")]
+		[Category ("NotDotNet")] // Don't know why it doesn't work under Fx 1.1
 #endif
 		public void ConvertPermissionSet_XmlToBinary ()
 		{
