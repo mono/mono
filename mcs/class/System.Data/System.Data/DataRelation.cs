@@ -331,6 +331,25 @@ namespace System.Data
                         return null;
                 }
 
+                /// <summary>
+                ///     Check whether the given column is part of this relation.
+                /// <summary>
+                /// <returns>
+                ///     true if the column is part of this relation, otherwise false.
+                /// </returns>
+                internal bool Contains (DataColumn column)
+                {
+                        foreach (DataColumn col in ParentColumns)
+                                if (col == column)
+                                        return true;
+
+                        foreach (DataColumn col in ChildColumns)
+                                if (col == column)
+                                        return true;
+                        return false;
+                }
+                
+
 		#endregion // Methods
 	}
 }

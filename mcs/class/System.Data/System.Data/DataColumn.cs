@@ -352,17 +352,24 @@ namespace System.Data {
 				return DataContainer.Type;
 			}
 			set {
+
+                                if ( value == null ) 
+                                        return;
+
 				if ( _dataContainer != null ) {
-					if ( value == _dataContainer.Type ) {
+					if ( value == _dataContainer.Type ) 
 						return;
-					}
 
 					// check if data already exists can we change the datatype
 					if ( _dataContainer.Capacity > 0 )
 						throw new ArgumentException("The column already has data stored.");
 				}
-				
-				_dataContainer = AbstractDataContainer.CreateInstance(value, this);
+
+                                if (null != GetParentRelation () || null != GetChildRelation ())
+                                        throw new InvalidConstraintException ("Cannot change datatype, " + 
+                                                                              "when column is part of a relation");
+                                
+                                _dataContainer = AbstractDataContainer.CreateInstance(value, this);
 
 				//Check AutoIncrement status, make compatible datatype
 				if(AutoIncrement == true) {
@@ -735,6 +742,42 @@ namespace System.Data {
 		{
 			return DataContainer.CompareValues(index1, index2);
 		}
+
+                /// <summary>
+                ///     Returns the data relation, which contains this column.
+                ///     This searches in current table's parent relations.
+                /// <summary>
+                /// <returns>
+                ///     DataRelation if found otherwise null.
+                /// </returns>
+                internal DataRelation GetParentRelation ()
+                {
+                        if (_table == null)
+                                return null;
+                        foreach (DataRelation rel in _table.ParentRelations)
+                                if (rel.Contains (this))
+                                        return rel;
+                        return null;
+                }
+                
+
+                /// <summary>
+                ///     Returns the data relation, which contains this column.
+                ///     This searches in current table's child relations.
+                /// <summary>
+                /// <returns>
+                ///     DataRelation if found otherwise null.
+                /// </returns>
+                internal DataRelation GetChildRelation ()
+                {
+                        if (_table == null)
+                                return null;
+                        foreach (DataRelation rel in _table.ChildRelations)
+                                if (rel.Contains (this))
+                                        return rel;
+                        return null;
+                }
+                
 
 		#endregion // Methods
 

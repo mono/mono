@@ -1,4 +1,16 @@
 2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
+	    Ankit Jain     <radical@corewars.org>
+
+	* DataColumn.cs: throw exception if the column is part of a
+	relationship, when chaning the data type. Added methods
+	"GetParentRelation ()" and "GetChildRelation ()" get the relation
+	which contains the current column
+	* DataRelation.cs: Added method "Contains (DataColumn)" to check
+	whether the relation contains the given column.
+
+	fixes nunit failure: DataRelationTest.InvalidConstraintException2.
+
+2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataColumnCollection.cs: implemented todo item "check for
 	constraints" when removing columns from table.
