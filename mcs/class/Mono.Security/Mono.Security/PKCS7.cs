@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Security.Cryptography;
+//using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.X509;
 
@@ -24,6 +25,10 @@ namespace Mono.Security {
 		// pkcs 7
 		public const string data = "1.2.840.113549.1.7.1";
 		public const string signedData = "1.2.840.113549.1.7.2";
+		public const string envelopedData = "1.2.840.113549.1.7.3";
+		public const string signedAndEnvelopedData = "1.2.840.113549.1.7.4";
+		public const string digestedData = "1.2.840.113549.1.7.5";
+		public const string encryptedData = "1.2.840.113549.1.7.6";
 		// pkcs 9
 		public const string contentType = "1.2.840.113549.1.9.3";
 		public const string messageDigest  = "1.2.840.113549.1.9.4";
@@ -134,6 +139,7 @@ namespace Mono.Security {
 
 			public ASN1 Content {
 				get { return content; }
+				set { content = value; }
 			}
 
 			public string ContentType {
@@ -156,6 +162,315 @@ namespace Mono.Security {
 			public byte[] GetBytes () 
 			{
 				return GetASN1 ().GetBytes ();
+			}
+		}
+
+		/*
+		 * EncryptedData ::= SEQUENCE {
+		 *	version		INTEGER {edVer0(0)} (edVer0),
+		 *	 encryptedContentInfo  EncryptedContentInfo
+		 * }
+		 */
+		public class EncryptedData {
+			private byte _version;
+			private ContentInfo _content;
+			private ContentInfo _encryptionAlgorithm;
+			private byte[] _encrypted;
+
+			public EncryptedData () 
+			{
+				_version = 0;
+			}
+
+			public EncryptedData (byte[] data) 
+				: this (new ASN1 (data)) {}
+
+			public EncryptedData (ASN1 asn1) : this () 
+			{
+				if ((asn1.Tag != 0x30) || (asn1.Count < 2))
+					throw new ArgumentException ("Invalid EncryptedData");
+
+				if (asn1 [0].Tag != 0x02)
+					throw new ArgumentException ("Invalid version");
+				_version = asn1 [0].Value [0];
+
+				ASN1 encryptedContentInfo = asn1 [1];
+				if (encryptedContentInfo.Tag != 0x30)
+					throw new ArgumentException ("missing EncryptedContentInfo");
+
+				ASN1 contentType = encryptedContentInfo [0];
+				if (contentType.Tag != 0x06)
+					throw new ArgumentException ("missing EncryptedContentInfo.ContentType");
+				_content = new ContentInfo (ASN1Convert.ToOID (contentType));
+
+				ASN1 contentEncryptionAlgorithm = encryptedContentInfo [1];
+				if (contentEncryptionAlgorithm.Tag != 0x30)
+					throw new ArgumentException ("missing EncryptedContentInfo.ContentEncryptionAlgorithmIdentifier");
+				_encryptionAlgorithm = new ContentInfo (ASN1Convert.ToOID (contentEncryptionAlgorithm [0]));
+				_encryptionAlgorithm.Content = contentEncryptionAlgorithm [1];
+				
+				ASN1 encryptedContent = encryptedContentInfo [2];
+				if (encryptedContent.Tag != 0x80)
+					throw new ArgumentException ("missing EncryptedContentInfo.EncryptedContent");
+				_encrypted = encryptedContent.Value;
+			}
+
+			public ASN1 ASN1 {
+				get { return GetASN1(); }
+			}
+
+			public ContentInfo ContentInfo {
+				get { return _content; }
+			}
+
+			public ContentInfo EncryptionAlgorithm {
+				get { return _encryptionAlgorithm; }
+			}
+
+			public byte[] EncryptedContent {
+				get { return _encrypted; }
+			}
+
+			public byte Version {
+				get { return _version; }
+				set { _version = value; }
+			}
+
+			// methods
+
+			internal ASN1 GetASN1 () 
+			{
+				return null;
+			}
+
+			public byte[] GetBytes () 
+			{
+				return GetASN1 ().GetBytes ();
+			}
+		}
+
+		/*
+		 * EnvelopedData ::= SEQUENCE {
+		 *	version Version,
+		 *	recipientInfos RecipientInfos,
+		 *	encryptedContentInfo EncryptedContentInfo 
+		 * }
+		 * 
+		 * RecipientInfos ::= SET OF RecipientInfo
+		 * 
+		 * EncryptedContentInfo ::= SEQUENCE {
+		 *	contentType ContentType,
+		 *	contentEncryptionAlgorithm ContentEncryptionAlgorithmIdentifier,
+		 *	encryptedContent [0] IMPLICIT EncryptedContent OPTIONAL 
+		 * }
+		 * 
+		 * EncryptedContent ::= OCTET STRING
+		 * 
+		 */
+		public class EnvelopedData {
+			private byte _version;
+			private ContentInfo _content;
+			private ContentInfo _encryptionAlgorithm;
+			private ArrayList _recipientInfos;
+			private byte[] _encrypted;
+
+			public EnvelopedData () 
+			{
+				_version = 0;
+				_content = new ContentInfo ();
+				_encryptionAlgorithm = new ContentInfo ();
+				_recipientInfos = new ArrayList ();
+			}
+
+			public EnvelopedData (byte[] data) 
+				: this (new ASN1 (data)) {}
+
+			public EnvelopedData (ASN1 asn1) : this ()
+			{
+				if ((asn1[0].Tag != 0x30) || (asn1[0].Count < 3))
+					throw new ArgumentException ("Invalid EnvelopedData");
+
+				if (asn1[0][0].Tag != 0x02)
+					throw new ArgumentException ("Invalid version");
+				_version = asn1[0][0].Value[0];
+
+				// recipientInfos
+
+				ASN1 recipientInfos = asn1 [0][1];
+				if (recipientInfos.Tag != 0x31)
+					throw new ArgumentException ("missing RecipientInfos");
+				for (int i=0; i < recipientInfos.Count; i++) {
+					ASN1 recipientInfo = recipientInfos [i];
+					_recipientInfos.Add (new RecipientInfo (recipientInfo));
+				}
+
+				ASN1 encryptedContentInfo = asn1[0][2];
+				if (encryptedContentInfo.Tag != 0x30)
+					throw new ArgumentException ("missing EncryptedContentInfo");
+
+				ASN1 contentType = encryptedContentInfo [0];
+				if (contentType.Tag != 0x06)
+					throw new ArgumentException ("missing EncryptedContentInfo.ContentType");
+				_content = new ContentInfo (ASN1Convert.ToOID (contentType));
+
+				ASN1 contentEncryptionAlgorithm = encryptedContentInfo [1];
+				if (contentEncryptionAlgorithm.Tag != 0x30)
+					throw new ArgumentException ("missing EncryptedContentInfo.ContentEncryptionAlgorithmIdentifier");
+				_encryptionAlgorithm = new ContentInfo (ASN1Convert.ToOID (contentEncryptionAlgorithm [0]));
+				_encryptionAlgorithm.Content = contentEncryptionAlgorithm [1];
+				
+				ASN1 encryptedContent = encryptedContentInfo [2];
+				if (encryptedContent.Tag != 0x80)
+					throw new ArgumentException ("missing EncryptedContentInfo.EncryptedContent");
+				_encrypted = encryptedContent.Value;
+			}
+
+			public ArrayList RecipientInfos {
+				  get { return _recipientInfos; }
+			}
+
+			public ASN1 ASN1 {
+				get { return GetASN1(); }
+			}
+
+			public ContentInfo ContentInfo {
+				get { return _content; }
+			}
+
+			public ContentInfo EncryptionAlgorithm {
+				get { return _encryptionAlgorithm; }
+			}
+
+			public byte[] EncryptedContent {
+				get { return _encrypted; }
+			}
+
+			public byte Version {
+				get { return _version; }
+				set { _version = value; }
+			}
+
+			internal ASN1 GetASN1 () 
+			{
+				// SignedData ::= SEQUENCE {
+				ASN1 signedData = new ASN1 (0x30);
+				// version Version -> Version ::= INTEGER
+/*				byte[] ver = { _version };
+				signedData.Add (new ASN1 (0x02, ver));
+				// digestAlgorithms DigestAlgorithmIdentifiers -> DigestAlgorithmIdentifiers ::= SET OF DigestAlgorithmIdentifier
+				ASN1 digestAlgorithms = signedData.Add (new ASN1 (0x31));
+				if (hashAlgorithm != null) {
+					string hashOid = CryptoConfig.MapNameToOID (hashAlgorithm);
+					digestAlgorithms.Add (AlgorithmIdentifier (hashOid));
+				}
+
+				// contentInfo ContentInfo,
+				ASN1 ci = contentInfo.ASN1;
+				signedData.Add (ci);
+				if ((mda == null) && (hashAlgorithm != null)) {
+					// automatically add the messageDigest authenticated attribute
+					HashAlgorithm ha = HashAlgorithm.Create (hashAlgorithm);
+					byte[] idcHash = ha.ComputeHash (ci[1][0].Value);
+					ASN1 md = new ASN1 (0x30);
+					mda = Attribute (messageDigest, md.Add (new ASN1 (0x04, idcHash)));
+					signerInfo.AuthenticatedAttributes.Add (mda);
+				}
+
+				// certificates [0] IMPLICIT ExtendedCertificatesAndCertificates OPTIONAL,
+				if (certs.Count > 0) {
+					ASN1 a0 = signedData.Add (new ASN1 (0xA0));
+					foreach (X509Certificate x in certs)
+						a0.Add (new ASN1 (x.RawData));
+				}
+				// crls [1] IMPLICIT CertificateRevocationLists OPTIONAL,
+				if (crls.Count > 0) {
+					ASN1 a1 = signedData.Add (new ASN1 (0xA1));
+					foreach (byte[] crl in crls)
+						a1.Add (new ASN1 (crl));
+				}
+				// signerInfos SignerInfos -> SignerInfos ::= SET OF SignerInfo
+				ASN1 signerInfos = signedData.Add (new ASN1 (0x31));
+				if (signerInfo.Key != null)
+					signerInfos.Add (signerInfo.ASN1);*/
+				return signedData;
+			}
+
+			public byte[] GetBytes () {
+				return GetASN1 ().GetBytes ();
+			}
+		}
+
+		/* RecipientInfo ::= SEQUENCE {
+		 *	version Version,
+		 *	issuerAndSerialNumber IssuerAndSerialNumber,
+		 *	keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
+		 *	encryptedKey EncryptedKey 
+		 * }
+		 * 
+		 * KeyEncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
+		 * 
+		 * EncryptedKey ::= OCTET STRING
+		 */
+		public class RecipientInfo {
+
+			private int _version;
+			private string _oid;
+			private byte[] _key;
+			private byte[] _ski;
+			private string _issuer;
+			private byte[] _serial;
+
+			public RecipientInfo () {}
+
+			public RecipientInfo (ASN1 data) 
+			{
+				if (data.Tag != 0x30)
+					throw new ArgumentException ("Invalid RecipientInfo");
+				
+				ASN1 version = data [0];
+				if (version.Tag != 0x02)
+					throw new ArgumentException ("missing Version");
+				_version = version.Value [0];
+
+				// issuerAndSerialNumber IssuerAndSerialNumber
+				ASN1 subjectIdentifierType = data [1];
+				if ((subjectIdentifierType.Tag == 0x80) && (_version == 3)) {
+					_ski = subjectIdentifierType.Value;
+				}
+				else {
+					_issuer = X501.ToString (subjectIdentifierType [0]);
+					_serial = subjectIdentifierType [1].Value;
+				}
+
+				ASN1 keyEncryptionAlgorithm = data [2];
+				_oid = ASN1Convert.ToOID (keyEncryptionAlgorithm [0]);
+
+				ASN1 encryptedKey = data [3];
+				_key = encryptedKey.Value;
+			}
+
+			public string Oid {
+				get { return _oid; }
+			}
+
+			public byte[] Key {
+				get { return _key; }
+			}
+
+			public byte[] SubjectKeyIdentifier {
+				get { return _ski; }
+			}
+
+			public string Issuer {
+				get { return _issuer; }
+			}
+
+			public byte[] Serial {
+				get { return _serial; }
+			}
+
+			public int Version {
+				get { return _version; }
 			}
 		}
 
@@ -319,6 +634,8 @@ namespace Mono.Security {
 		 * 	encryptedDigest EncryptedDigest,
 		 * 	unauthenticatedAttributes [1] IMPLICIT Attributes OPTIONAL 
 		 * }
+		 * 
+		 * For version == 3 issuerAndSerialNumber may be replaced by ...
 		 */
 		public class SignerInfo {
 
@@ -331,6 +648,7 @@ namespace Mono.Security {
 			private byte[] signature;
 			private string issuer;
 			private byte[] serial;
+			private byte[] ski;
 
 			public SignerInfo () 
 			{
@@ -354,9 +672,14 @@ namespace Mono.Security {
 				version = asn1[0][0].Value[0];
 
 				// issuerAndSerialNumber IssuerAndSerialNumber
-				ASN1 issuerAndSerialNumber = asn1 [0][1];
-				issuer = X501.ToString (issuerAndSerialNumber [0]);
-				serial = issuerAndSerialNumber [1].Value;
+				ASN1 subjectIdentifierType = asn1 [0][1];
+				if ((subjectIdentifierType.Tag == 0x80) && (version == 3)) {
+					ski = subjectIdentifierType.Value;
+				}
+				else {
+					issuer = X501.ToString (subjectIdentifierType [0]);
+					serial = subjectIdentifierType [1].Value;
+				}
 
 				// digestAlgorithm DigestAlgorithmIdentifier
 				ASN1 digestAlgorithm = asn1 [0][2];
@@ -393,7 +716,11 @@ namespace Mono.Security {
 			}
 
 			public byte[] SerialNumber {
-				get { return (byte[]) serial.Clone(); }
+				get { return (byte[]) serial.Clone (); }
+			}
+
+			public byte[] SubjectKeyIdentifier {
+				get { return (byte[]) ski.Clone (); }
 			}
 
 			public ASN1 ASN1 {

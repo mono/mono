@@ -1,3 +1,8 @@
+2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS7.cs: Implemented EncryptedData, EnvelopedData and updated 
+	SignedData for v3 SubjectKeyIdentifier.
+	
 2003-11-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* StrongName.cs: Now supports MZ headers bigger than 128 bytes.
