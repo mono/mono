@@ -163,6 +163,9 @@ namespace System.Reflection.Emit {
 		}*/
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int getUSIndex (AssemblyBuilder ab, string str);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int getDataChunk (AssemblyBuilder ab, int type, byte[] buf);
 
 		public void Save (string assemblyFileName)

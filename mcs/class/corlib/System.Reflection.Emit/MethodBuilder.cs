@@ -21,11 +21,12 @@ namespace System.Reflection.Emit {
 		private Type rtype;
 		private Type[] parameters;
 		private MethodAttributes attrs;
+		private MethodImplAttributes iattrs;
 		private string name;
 		private int table_idx;
 		private byte[] code;
 		private ILGenerator ilgen;
-		internal TypeBuilder type;
+		private TypeBuilder type;
 		private ParameterBuilder[] pinfo;
 		private string pi_dll;
 		private string pi_entry;
@@ -43,7 +44,7 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}
 			type = tb;
-			table_idx = tb.pmodule.assemblyb.get_next_table_index (0x06, true);
+			table_idx = get_next_table_index (0x06, true);
 		}
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, 
@@ -73,16 +74,12 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 		public override MethodImplAttributes GetMethodImplementationFlags() {
-			return (MethodImplAttributes)0;
+			return iattrs;
 		}
 		public override ParameterInfo[] GetParameters() {
 			return null;
 		}
 		
-		/*
-		 * FIXME: this method signature needs to be expanded to handle also
-		 * a ILGenerator.
-		 */
 		public void CreateMethodBody( byte[] il, int count) {
 			code = new byte [count];
 			System.Array.Copy(il, code, count);
@@ -123,6 +120,10 @@ namespace System.Reflection.Emit {
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 		}
 		public void SetImplementationFlags( MethodImplAttributes attributes) {
+			iattrs = attributes;
+		}
+		internal override int get_next_table_index (int table, bool inc) {
+			return type.get_next_table_index (table, inc);
 		}
 	}
 }

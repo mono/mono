@@ -9,6 +9,7 @@
 
 using System;
 using System.Globalization;
+using System.Reflection.Emit;
 
 namespace System.Reflection {
 
@@ -119,6 +120,18 @@ namespace System.Reflection {
 				return ((attr & (int)MethodAttributes.RTSpecialName) != 0
 					&& (Name == ".ctor"));
 			}
+		}
+
+		internal virtual int get_next_table_index (int table, bool inc) {
+			if (this is MethodBuilder) {
+				MethodBuilder mb = (MethodBuilder)this;
+				return mb.get_next_table_index (table, inc);
+			}
+			if (this is ConstructorBuilder) {
+				ConstructorBuilder mb = (ConstructorBuilder)this;
+				return mb.get_next_table_index (table, inc);
+			}
+			throw new Exception ("Method is not a builder method");
 		}
 	}
 }

@@ -1,4 +1,9 @@
 
+Mon Nov 19 13:56:55 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* MethodBase.cs: add internal get_next_table_index() for use in
+	Reflection.Emit.
+
 Wed Nov 14 16:53:28 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* Assembly.cs: implement some of the Load() methods.

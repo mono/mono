@@ -1,4 +1,21 @@
 
+Mon Nov 19 13:58:01 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: add method to register a string in the "#US"
+	stream.
+	* EnumBuilder.cs, SignatureHelper.cs: added stubs.
+	* ILGenerator.cs: more stuff implemented.
+	* LocalBuilder.cs: keep track of local var index.
+
+Thu Nov 15 18:11:23 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* ConstructorBuilder.cs: implement the interesting methods.
+	* ILGenerator.cs: adapt for use with both a MethodBuilder and a
+	ConstructorBuilder.
+	* MethodBuilder.cs: add ImplAttributes.
+	* ParameterBuilder.cs: adapt for ConstructorBuilder.
+	* TypeBuilder.cs: add constructors handling.
+
 Wed Nov 14 17:01:45 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* ConstructorBuilder.cs: added missing stubs and some implementation.

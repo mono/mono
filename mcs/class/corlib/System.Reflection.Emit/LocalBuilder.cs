@@ -18,6 +18,7 @@ namespace System.Reflection.Emit {
 	public sealed class LocalBuilder {
 		private Type type;
 		private string name;
+		internal int position;
 
 		internal LocalBuilder (Type t) {
 			type = t;

@@ -20,16 +20,17 @@ namespace System.Reflection.Emit {
 	private Type parent;
 	private Type[] interfaces;
 	private MethodBuilder[] methods;
+	private ConstructorBuilder[] ctors;
 	private PropertyBuilder[] properties;
 	private FieldBuilder[] fields;
 	private TypeAttributes attrs;
 	private int table_idx;
-	internal ModuleBuilder pmodule;
+	private ModuleBuilder pmodule;
 	private PackingSize packing_size;
 
 	public const int UnspecifiedTypeSize = -1;
 
-	internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces) {
+		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			int sep_index;
 			this.parent = parent;
 			this.attrs = attr;
@@ -47,8 +48,8 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (interfaces, this.interfaces, interfaces.Length);
 			}
 			pmodule = mb;
-			table_idx = mb.assemblyb.get_next_table_index (0x02, true);
-	}
+			table_idx = mb.get_next_table_index (0x02, true);
+		}
 
 		public override Assembly Assembly {get {return null;}}
 		public override string AssemblyQualifiedName {get {return null;}}
@@ -75,7 +76,9 @@ namespace System.Reflection.Emit {
 			get {return packing_size;}
 		}
 		public override Type ReflectedType {get {return null;}}
-		public override MemberTypes MemberType { get {return (MemberTypes)0;}}
+		public override MemberTypes MemberType { 
+			get {return MemberTypes.TypeInfo;}
+		}
 
 		public override bool IsDefined( Type attributeType, bool inherit) {
 			return false;
@@ -127,11 +130,21 @@ namespace System.Reflection.Emit {
 		}
 
 		public ConstructorBuilder DefineConstructor( MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
-			return null;
+			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes);
+			if (ctors != null) {
+				ConstructorBuilder[] new_ctors = new ConstructorBuilder [ctors.Length+1];
+				System.Array.Copy (ctors, new_ctors, ctors.Length);
+				new_ctors [ctors.Length] = cb;
+				ctors = new_ctors;
+			} else {
+				ctors = new ConstructorBuilder [1];
+				ctors [0] = cb;
+			}
+			return cb;
 		}
 
 		public ConstructorBuilder DefineDefaultConstructor( MethodAttributes attributes) {
-			return null;
+			return DefineConstructor (attributes, CallingConventions.Standard, null);
 		}
 
 		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes) {
@@ -203,6 +216,11 @@ namespace System.Reflection.Emit {
 					method.fixup ();
 				}
 			}
+			if (ctors != null) {
+				foreach (ConstructorBuilder ctor in ctors) {
+					ctor.fixup ();
+				}
+			}
 			return null;
 		}
 
@@ -227,6 +245,13 @@ namespace System.Reflection.Emit {
 
 		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
 			return null;
+		}
+
+		public void SetParent (Type parentType) {
+			parent = parentType;
+		}
+		internal int get_next_table_index (int table, bool inc) {
+			return pmodule.get_next_table_index (table, inc);
 		}
 
 	}

@@ -35,7 +35,7 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (parameterTypes, this.parameters, this.parameters.Length);
 			}
 			typeb = tb;
-			table_idx = tb.pmodule.assemblyb.get_next_table_index (0x17, true);
+			table_idx = tb.get_next_table_index (0x17, true);
 		}
 
 		public override PropertyAttributes Attributes {

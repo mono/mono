@@ -19,7 +19,7 @@ namespace System.Reflection.Emit {
 			public int label_idx;
 		};
 		private byte[] code;
-		private MethodBuilder mbuilder;
+		private MethodBase mbuilder; /* a MethodBuilder or ConstructorBuilder */
 		private int code_len;
 		private int max_stack;
 		private int cur_stack;
@@ -29,7 +29,7 @@ namespace System.Reflection.Emit {
 		private LabelFixup[] fixups;
 		private int num_fixups;
 
-		internal ILGenerator (MethodBuilder mb, int size) {
+		internal ILGenerator (MethodBase mb, int size) {
 			if (size < 0)
 				size = 256;
 			code_len = 0;
@@ -141,6 +141,7 @@ namespace System.Reflection.Emit {
 				locals = new LocalBuilder [1];
 				locals [0] = res;
 			}
+			res.position = locals.Length - 1;
 			return res;
 		}
 		public virtual Label DefineLabel () {
@@ -169,7 +170,12 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 			emit_int (token);
 		}
-		public virtual void Emit (OpCode opcode, Int16 val) {}
+		public virtual void Emit (OpCode opcode, Int16 val) {
+			make_room (4);
+			ll_emit (opcode);
+			code [code_len++] = (byte) (val & 0xFF);
+			code [code_len++] = (byte) ((val >> 8) & 0xFF);
+		}
 		public virtual void Emit (OpCode opcode, Int32 val) {
 			make_room (6);
 			ll_emit (opcode);
@@ -192,8 +198,33 @@ namespace System.Reflection.Emit {
 			code_len += tlen;
 
 		}
-		public virtual void Emit (OpCode opcode, Label[] labels) {}
-		public virtual void Emit (OpCode opcode, LocalBuilder lbuilder) {}
+		public virtual void Emit (OpCode opcode, Label[] labels) {
+			/* opcode needs to be switch. */
+			int count = labels.Length;
+			make_room (6 + count * 4);
+			ll_emit (opcode);
+			emit_int (count);
+			if (num_fixups + count >= fixups.Length) {
+				LabelFixup[] newf = new LabelFixup [fixups.Length + count + 16];
+				System.Array.Copy (fixups, newf, fixups.Length);
+				fixups = newf;
+			}
+			for (int i = 0; i < count; ++i) {
+				fixups [num_fixups].size = 4;
+				fixups [num_fixups].pos = code_len;
+				fixups [num_fixups].label_idx = labels [i].label;
+				num_fixups++;
+				code_len += 4;
+			}
+		}
+		public virtual void Emit (OpCode opcode, LocalBuilder lbuilder) {
+			make_room (6);
+			ll_emit (opcode);
+			code [code_len++] = (byte) (lbuilder.position & 0xFF);
+			if (opcode.operandType == OperandType.InlineVar) {
+				code [code_len++] = (byte) ((lbuilder.position >> 8) & 0xFF);
+			}
+		}
 		public virtual void Emit (OpCode opcode, MethodInfo method) {
 			int token = 0; // FIXME: request a token from the modulebuilder
 			make_room (6);
@@ -206,9 +237,19 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 			code [code_len++] = (byte)val;
 		}
-		public virtual void Emit (OpCode opcode, SignatureHelper shelper) {}
+		public virtual void Emit (OpCode opcode, SignatureHelper shelper) {
+			int token = 0; // FIXME: request a token from the modulebuilder
+			make_room (6);
+			ll_emit (opcode);
+			emit_int (token);
+		}
 		public virtual void Emit (OpCode opcode, float val) {}
-		public virtual void Emit (OpCode opcode, string val) {}
+		public virtual void Emit (OpCode opcode, string val) {
+			int token = 0; /* FIXME: request the token from the assembly */
+			make_room (3);
+			ll_emit (opcode);
+			emit_int (token);
+		}
 		public virtual void Emit (OpCode opcode, Type type) {}
 
 		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes) {}

@@ -16,13 +16,13 @@ namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
 		private TypeBuilder[] types;
 		private int table_idx;
-		internal AssemblyBuilder assemblyb;
+		private AssemblyBuilder assemblyb;
 
 		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
 			this.assemblyb = assb;
-			table_idx = assb.get_next_table_index (0x00, true);
+			table_idx = get_next_table_index (0x00, true);
 		}
 	
 		public override string FullyQualifiedName {get { return fqname;}}
@@ -68,6 +68,15 @@ namespace System.Reflection.Emit {
 
 		public MethodInfo GetArrayMethod( Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
 			return null;
+		}
+
+		public EnumBuilder DefineEnum( string name, TypeAttributes visibility, Type underlyingType) {
+			EnumBuilder eb = new EnumBuilder (this, name, visibility, underlyingType);
+			return eb;
+		}
+
+		internal int get_next_table_index (int table, bool inc) {
+			return assemblyb.get_next_table_index (table, inc);
 		}
 
 	}

@@ -17,18 +17,18 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection.Emit {
 	public class ParameterBuilder {
-		private MethodBuilder methodb;
+		private MethodBase methodb; /* MethodBuilder or ConstructorBuilder */
 		private string name;
 		private ParameterAttributes attrs;
 		private int position;
 		private int table_idx;
 		
-		internal ParameterBuilder (MethodBuilder mb, int pos, ParameterAttributes attributes, string strParamName) {
+		internal ParameterBuilder (MethodBase mb, int pos, ParameterAttributes attributes, string strParamName) {
 			name = strParamName;
 			position = pos;
 			attrs = attributes;
 			methodb = mb;
-			table_idx = mb.type.pmodule.assemblyb.get_next_table_index (0x08, true);
+			table_idx = mb.get_next_table_index (0x08, true);
 		}
 
 		public virtual int Attributes {
