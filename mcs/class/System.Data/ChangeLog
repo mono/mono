@@ -1,5 +1,5 @@
 2002-12-01  Tim Coleman <tim@timcoleman.com>
-	* System.Data.SqlClient/SqlDataAdapter.cs:
+	* System.Data.SqlClient/SqlDataReader.cs:
 		Change to reflect TdsSchemaInfo -> TdsDataColumnCollection
 		shift.
 
