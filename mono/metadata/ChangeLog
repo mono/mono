@@ -1,4 +1,9 @@
 
+Fri Jan 31 16:09:48 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: handle object type separately from defined
+	class types.
+
 Fri Jan 31 16:01:20 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: handle NATIVE_LPSTR for strings when it's
