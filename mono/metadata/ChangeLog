@@ -1,4 +1,11 @@
 
+Tue Jun 11 16:52:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: mono_image_get_memberref_token()
+	takes a type instead of a class, now. Added
+	mono_image_get_array_token() to create tokens for the special
+	multi-dim array methods.
+
 Tue Jun 11 13:21:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: handle modules (no assembly table). Split
