@@ -38,6 +38,9 @@ namespace Mono.Security.Protocol.Tls
 		// Protocol version
 		private TlsProtocol			protocol;
 
+		// Compression method
+		private TlsCompressionMethod compressionMethod;
+
 		// Information sent and request by the server in the Handshake protocol
 		private TlsServerSettings	serverSettings;
 
@@ -45,7 +48,6 @@ namespace Mono.Security.Protocol.Tls
 		private bool				isActual;
 		private bool				connectionEnd;
 		private TlsCipherSuite		cipher;
-		private int					compressionMethod;
 
 		// Sequence numbers
 		private long				writeSequenceNumber;
@@ -77,6 +79,12 @@ namespace Mono.Security.Protocol.Tls
 			set { protocol = value; }
 		}
 
+		public TlsCompressionMethod CompressionMethod
+		{
+			get { return compressionMethod; }
+			set { compressionMethod = value; }
+		}
+
 		public TlsServerSettings ServerSettings
 		{
 			get { return serverSettings; }
@@ -99,12 +107,6 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get { return cipher; }
 			set { cipher = value; }
-		}
-
-		public int CompressionMethod
-		{
-			get { return compressionMethod; }
-			set { compressionMethod = value; }
 		}
 
 		public TlsHandshakeHashes HandshakeHashes
@@ -185,13 +187,22 @@ namespace Mono.Security.Protocol.Tls
 		public TlsSessionContext()
 		{
 			this.protocol			= TlsProtocol.Tls1;
+			this.compressionMethod	= TlsCompressionMethod.None;
 			this.serverSettings		= new TlsServerSettings();
 			this.handshakeHashes	= new TlsHandshakeHashes();
 		}
 
 		#endregion
 
-		#region KEY_GENERATION_METODS
+		#region METHODS
+		
+		public int GetUnixTime()
+		{
+			DateTime now		= DateTime.Now.ToUniversalTime();
+			TimeSpan unixTime	= now.Subtract(new DateTime(1970, 1, 1));
+
+			return (int)unixTime.TotalSeconds;
+		}
 
 		public byte[] GetSecureRandomBytes(int count)
 		{
@@ -203,186 +214,6 @@ namespace Mono.Security.Protocol.Tls
 			return secureBytes;
 		}
 
-		public int GetUnixTime()
-		{
-			DateTime now		= DateTime.Now.ToUniversalTime();
-			TimeSpan unixTime	= now.Subtract(new DateTime(1970, 1, 1));
-
-			return (int)unixTime.TotalSeconds;
-		}
-
-		public byte[] CreatePremasterSecret()
-		{
-			TlsStream stream = new TlsStream();
-
-			// Write protocol version
-			stream.Write((short)protocol);
-
-			// Generate random bytes
-			stream.Write(GetSecureRandomBytes(46));
-
-			byte[] preMasterSecret = stream.ToArray();
-
-			stream.Reset();
-
-			return preMasterSecret;
-		}
-
-		public void CreateMasterSecret(byte[] preMasterSecret)
-		{
-			TlsCipherSuite	cipherSuite	= cipher;			
-			TlsStream		seed		= new TlsStream();
-
-			// Seed
-			seed.Write(clientRandom);
-			seed.Write(serverRandom);
-
-			// Create master secret
-			masterSecret = new byte[preMasterSecret.Length];
-			masterSecret = PRF(preMasterSecret, "master secret", seed.ToArray(), 48);
-
-			seed.Reset();
-		}
-
-		public void CreateKeys()
-		{
-			TlsStream seed = new TlsStream();
-
-			// Seed
-			seed.Write(serverRandom);
-			seed.Write(clientRandom);
-
-			// Create keyblock
-			TlsStream keyBlock = new TlsStream(
-				PRF(masterSecret, 
-				"key expansion",
-				seed.ToArray(), 
-				cipher.GetKeyBlockSize()));
-
-			clientWriteMAC = keyBlock.ReadBytes(cipher.HashSize);
-			serverWriteMAC = keyBlock.ReadBytes(cipher.HashSize);
-			clientWriteKey = keyBlock.ReadBytes(cipher.KeyMaterialSize);
-			serverWriteKey = keyBlock.ReadBytes(cipher.KeyMaterialSize);
-
-			if (!cipher.IsExportable)
-			{
-				if (cipher.IvSize != 0)
-				{
-					clientWriteIV = keyBlock.ReadBytes(cipher.IvSize);
-					serverWriteIV = keyBlock.ReadBytes(cipher.IvSize);
-				}
-				else
-				{
-					clientWriteIV = new byte[0];
-					serverWriteIV = new byte[0];
-				}
-			}
-			else
-			{
-				// Seed
-				seed.Reset();
-				seed.Write(clientRandom);
-				seed.Write(serverRandom);
-
-				// Generate final write keys
-				byte[] finalClientWriteKey	= PRF(clientWriteKey, "client write key", seed.ToArray(), cipher.KeyMaterialSize);
-				byte[] finalServerWriteKey	= PRF(serverWriteKey, "server write key", seed.ToArray(), cipher.KeyMaterialSize);
-				
-				clientWriteKey	= finalClientWriteKey;
-				serverWriteKey	= finalServerWriteKey;
-
-				// Generate IV block
-				byte[] ivBlock = PRF(new byte[]{}, "IV block", seed.ToArray(), cipher.IvSize*2);
-
-				// Generate IV keys
-				clientWriteIV = new byte[cipher.IvSize];				
-				System.Array.Copy(ivBlock, 0, clientWriteIV, 0, clientWriteIV.Length);
-				serverWriteIV = new byte[cipher.IvSize];
-				System.Array.Copy(ivBlock, cipher.IvSize, serverWriteIV, 0, serverWriteIV.Length);
-			}
-
-			// Clear no more needed data
-			seed.Reset();
-			keyBlock.Reset();
-		}
-
-		public byte[] PRF(byte[] secret, string label, byte[] data, int length)
-		{
-			MD5CryptoServiceProvider	md5	= new MD5CryptoServiceProvider();
-			SHA1CryptoServiceProvider	sha1 = new SHA1CryptoServiceProvider();
-
-			int secretLen = secret.Length / 2;
-
-			// Seed
-			TlsStream seedStream = new TlsStream();
-			seedStream.Write(Encoding.ASCII.GetBytes(label));
-			seedStream.Write(data);
-			byte[] seed = seedStream.ToArray();
-			seedStream.Reset();
-
-			// Secret 1
-			byte[] secret1 = new byte[secretLen];
-			System.Array.Copy(secret, 0, secret1, 0, secretLen);
-
-			// Secret2
-			byte[] secret2 = new byte[secretLen];
-			System.Array.Copy(secret, secretLen, secret2, 0, secretLen);
-
-			// Secret 1 processing
-			byte[] p_md5 = Expand("MD5", secret1, seed, length);
-
-			// Secret 2 processing
-			byte[] p_sha = Expand("SHA1", secret2, seed, length);
-
-			// Perfor XOR of both results
-			byte[] masterSecret = new byte[length];
-			for (int i = 0; i < masterSecret.Length; i++)
-			{
-				masterSecret[i] = (byte)(p_md5[i] ^ p_sha[i]);
-			}
-
-			return masterSecret;
-		}
-		
-		public byte[] Expand(string hashName, byte[] secret, byte[] seed, int length)
-		{
-			int hashLength	= hashName == "MD5" ? 16 : 20;
-			int	iterations	= (int)(length / hashLength);
-			if ((length % hashLength) > 0)
-			{
-				iterations++;
-			}
-			
-			HMAC		hmac	= new HMAC(hashName, secret);
-			TlsStream	resMacs	= new TlsStream();
-			
-			byte[][] hmacs = new byte[iterations + 1][];
-			hmacs[0] = seed;
-			for (int i = 1; i <= iterations; i++)
-			{				
-				TlsStream hcseed = new TlsStream();
-				hmac.TransformFinalBlock(hmacs[i-1], 0, hmacs[i-1].Length);
-				hmacs[i] = hmac.Hash;
-				hcseed.Write(hmacs[i]);
-				hcseed.Write(seed);
-				hmac.TransformFinalBlock(hcseed.ToArray(), 0, (int)hcseed.Length);
-				resMacs.Write(hmac.Hash);
-				hcseed.Reset();
-			}
-
-			byte[] res = new byte[length];
-			
-			System.Array.Copy(resMacs.ToArray(), 0, res, 0, res.Length);
-
-			resMacs.Reset();
-
-			return res;
-		}
-
-		#endregion
-
-		#region METHODS
-		
 		public void ClearKeyInfo()
 		{
 			// Clear Master Secret

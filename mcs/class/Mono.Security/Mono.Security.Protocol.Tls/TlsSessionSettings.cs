@@ -36,6 +36,7 @@ namespace Mono.Security.Protocol.Tls
 		private int							serverPort;
 		private Encoding					encoding;
 		private TlsProtocol					protocol;
+		private TlsCompressionMethod		compressionMethod;
 		private X509CertificateCollection	certificates;
 	
 		#endregion
@@ -73,6 +74,19 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		public TlsCompressionMethod CompressionMethod
+		{
+			get { return compressionMethod; }
+			set 
+			{ 
+				if (value != TlsCompressionMethod.None)
+				{
+					throw new NotSupportedException("Specified compression method is not supported");
+				}
+				compressionMethod = value; 
+			}
+		}
+
 		public X509CertificateCollection Certificates
 		{
 			get { return certificates; }
@@ -86,6 +100,7 @@ namespace Mono.Security.Protocol.Tls
 		public TlsSessionSettings()
 		{
 			this.protocol			= TlsProtocol.Tls1;
+			this.compressionMethod	= TlsCompressionMethod.None;
 			this.certificates		= new X509CertificateCollection();
 			this.serverName			= "localhost";
 			this.serverPort			= 443;
