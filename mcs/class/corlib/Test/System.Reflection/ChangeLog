@@ -1,5 +1,10 @@
 2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BinderTests.cs: one more test for matching a single property. Adapted
+	to nunit 2.2 style.
+
+2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BinderTests.cs: added more indexers and more SelectProperty tests.
 
 2003-05-20  Sebastien Pouliot  <sebastien@ximian.com>

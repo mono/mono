@@ -19,6 +19,12 @@ namespace MonoTests.System.Reflection
 		Two
 	}
 	
+	class SingleIndexer {
+		public Type this [int i] {
+			get { return i.GetType (); }
+		}
+	}
+	
 	class MultiIndexer
 	{
 		public Type this[byte i] {
@@ -75,7 +81,7 @@ namespace MonoTests.System.Reflection
 	}
 
 	[TestFixture]
-	public class BinderTest : Assertion
+	public class BinderTest
 	{
 		Binder binder = Type.DefaultBinder;
 
@@ -134,7 +140,7 @@ namespace MonoTests.System.Reflection
 					throw new Exception ("Type: " + t, e);
 				}
 				Type gotten = (Type) prop.GetValue (obj, new object [] {Activator.CreateInstance (t)});
-				AssertEquals (t.ToString (), t, gotten);
+				Assert.AreEqual (t, gotten);
 			}
 		}
 
@@ -151,7 +157,25 @@ namespace MonoTests.System.Reflection
 			MultiIndexer obj = new MultiIndexer ();
 			PropertyInfo prop1 = binder.SelectProperty (0, props, null, new Type [] {types [0]}, null);
 			PropertyInfo prop2 = binder.SelectProperty (0, props, null, new Type [] {types [1]}, null);
-			AssertEquals (prop1, prop2);
+			Assert.AreEqual (prop1, prop2);
+		}
+
+		[Test]
+		public void Select1Match ()
+		{
+			Type type = typeof (SingleIndexer);
+			PropertyInfo [] props = type.GetProperties (BindingFlags.DeclaredOnly |
+								    BindingFlags.Public |
+								    BindingFlags.Instance);
+
+			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [0], null);
+			Assert.IsNotNull (prop, "empty");
+			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (long) }, null);
+			Assert.IsNull (prop, "long");
+			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (int) }, null);
+			Assert.IsNotNull (prop, "int");
+			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (short) }, null);
+			Assert.IsNotNull (prop, "short");
 		}
 	}
 }
