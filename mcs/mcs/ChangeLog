@@ -1,3 +1,12 @@
+2003-04-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer.GetClassBases): We were checking for the
+	parent class being sealed too late.
+
+	* expression.cs (Binary.Emit): For <= and >= when dealing with
+	floating point values, use cgt.un and clt.un instead of cgt and
+	clt alone.
+
 2003-04-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* statement.cs: Apply the same optimization as MS: skip the 

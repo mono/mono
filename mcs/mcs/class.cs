@@ -668,6 +668,17 @@ namespace Mono.CSharp {
 				if (first.IsClass){
 					parent = first;
 					start = 1;
+				} else if (first.IsSealed){
+					string detail = "";
+					
+					if (first.IsValueType)
+						detail = " (a class can not inherit from a struct/enum)";
+					
+					Report.Error (509, "class `"+ Name +
+						      "': Cannot inherit from sealed class `"+
+						      first + "'" + detail);
+					error = true;
+					return null;
 				} else {
 					parent = TypeManager.object_type;
 					start = 0;
@@ -707,19 +718,6 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				if (t.IsSealed) {
-					string detail = "";
-					
-					if (t.IsValueType)
-						detail = " (a class can not inherit from a struct/enum)";
-							
-					Report.Error (509, "class `"+ Name +
-						      "': Cannot inherit from sealed class `"+
-						      bases [i]+"'"+detail);
-					error = true;
-					return null;
-				}
-
 				if (t.IsClass) {
 					if (parent != null){
 						Report.Error (527, "In Class `" + Name + "', type `"+

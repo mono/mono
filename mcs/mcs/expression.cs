@@ -2902,6 +2902,7 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			bool isUnsigned = is_unsigned (left.Type);
+
 			switch (oper){
 			case Operator.Multiply:
 				if (ec.CheckState){
@@ -2991,7 +2992,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.LessThanOrEqual:
-				if (isUnsigned)
+				if (isUnsigned || (left.Type == TypeManager.float_type || left.Type == TypeManager.double_type))
 					ig.Emit (OpCodes.Cgt_Un);
 				else
 					ig.Emit (OpCodes.Cgt);
@@ -3001,7 +3002,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.GreaterThanOrEqual:
-				if (isUnsigned)
+				if (isUnsigned || (left.Type == TypeManager.float_type || left.Type == TypeManager.double_type))
 					ig.Emit (OpCodes.Clt_Un);
 				else
 					ig.Emit (OpCodes.Clt);
