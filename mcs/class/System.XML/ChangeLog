@@ -1,3 +1,7 @@
+2004-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : Added XslFunctions.cs.
+
 2004-02-15 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* DTDValidatingReader.cs: simple optimization. there is only

@@ -59,6 +59,7 @@ Mono.Xml.Xsl/XslStylesheet.cs
 Mono.Xml.Xsl/XslTemplate.cs
 Mono.Xml.Xsl/XslTransformProcessor.cs
 Mono.Xml.Xsl/XsltCompiledContext.cs
+Mono.Xml.Xsl/XslFunctions.cs
 Mono.Xml/IHasXmlParserContext.cs
 Mono.Xml/IHasXmlSchemaInfo.cs
 Mono.Xml/XmlNodeWriter.cs
