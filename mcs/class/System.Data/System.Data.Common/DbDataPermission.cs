@@ -21,23 +21,23 @@ namespace System.Data.Common
 		private PermissionState permissionState;
 
 		protected DBDataPermission () {
-			this.allowBlankPassword = false;
-			this.permissionState = None;
+			allowBlankPassword = false;
+			permissionState = PermissionState.None;
 		}
 
 		protected DBDataPermission (PermissionState state) {
-			this.allowBlankPassword = false;
-			this.permissionState = state;
+			allowBlankPassword = false;
+			permissionState = state;
 		}
 
 		public DBDataPermission (PermissionState state, bool abp) {
-			this.allowBlankPassword = abp;
-			this.permissionState = state;
+			allowBlankPassword = abp;
+			permissionState = state;
 		}
 
 		public override IPermission Copy () {
 			DbDataPermission copy = new DbDataPermission (
-				this.permissionState, this.allowBlankPassword);
+				permissionState, allowBlankPassword);
 
 			return copy;
 		}
@@ -47,7 +47,9 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public override IPermission Intersect (IPermission target) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -56,7 +58,7 @@ namespace System.Data.Common
 		}
 
 		public bool IsUnrestricted () {
-			if (this.permissionState == Unrestricted)
+			if (permissionState == PermissionState.Unrestricted)
 				return true;
 			return false;
 		}
@@ -72,8 +74,12 @@ namespace System.Data.Common
 		}
 		
 		public bool AllowBlankPassword {
-			get { return this.allowBlankPassword; }
-			set { this.allowBlankPassword = value; }
+			get {
+				return allowBlankPassword;
+			}
+			set {
+				allowBlankPassword = value;
+			}
 		}
 	}
 }

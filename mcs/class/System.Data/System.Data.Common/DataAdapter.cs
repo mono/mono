@@ -23,11 +23,11 @@ namespace System.Data.Common
 		private DataTableMappingCollection tableMappings;
 
 		protected DataAdapter () {
-			this.acceptChangesDuringFill = false;
-			this.continueUpdateOnError = false;
-			this.missingMappingAction = Error;
-			this.missingSchemaAction = Error;
-			this.tableMappings = null;
+			acceptChangesDuringFill = false;
+			continueUpdateOnError = false;
+			missingMappingAction = MissingMappingAction.Error;
+			missingSchemaAction = MissingSchemaAction.Error;
+			tableMappings = null;
 		}
 		
 		public abstract int Fill (DataSet dataSet);
@@ -47,45 +47,45 @@ namespace System.Data.Common
 		
 		public bool AcceptChangesDuringFill {
 			get {
-				return this.acceptChangesDuringFill;
+				return acceptChangesDuringFill;
 			}
 			set {
-				this.acceptChangesDuringFill = value;
+				acceptChangesDuringFill = value;
 			}
 		}
 		
 		public bool ContinueUpdateOnError {
 			get {
-				return this.continueUpdateOnError;
+				return continueUpdateOnError;
 			}
 			set {
-				this.continueUpdateOnError = value;
+				continueUpdateOnError = value;
 			}
 		}
 
 		public MissingMappingAction MissingMappingAction {
 			get {
-				return this.missingMappingAction;
+				return missingMappingAction;
 			}
 			set {
-				this.missingMappingAction = value;
+				missingMappingAction = value;
 			}
 		}
 
 		public MissingSchemaAction MissingSchemaAction {
 			get {
-				return this.missingSchemaAction;
+				return missingSchemaAction;
 			}
 			set {
-				this.missingSchemaAction = value;
+				missingSchemaAction = value;
 			}
 		}
 
 		public DataTableMappingCollection TableMappings {
 			get {
-				if (this.tableMappings == null)
-					this.tableMappings = CreateTableMappings ();
-				return this.tableMappings;
+				if (tableMappings == null)
+					tableMappings = CreateTableMappings ();
+				return tableMappings;
 			}
 		}
 	}

@@ -17,17 +17,17 @@ namespace System.Data.Common
 		private SecurityAction securityAction;
 		private bool allowBlankPassword;
 
-		protected DBDataPermissionAttribute(SecurityAction action) {
-			this.securityAction = action;
-			this.allowBlankPassword = false;
+		protected DBDataPermissionAttribute (SecurityAction action) {
+			securityAction = action;
+			allowBlankPassword = false;
 		}
 
 		public bool AllowBlankPassword {
 			get {
-				return this.allowBlankPassword;
+				return allowBlankPassword;
 			}
 			set {
-				this.allowBlankPassword = value;
+				allowBlankPassword = value;
 			}
 		}
 	}
