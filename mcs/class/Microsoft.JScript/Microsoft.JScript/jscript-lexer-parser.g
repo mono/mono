@@ -92,10 +92,10 @@ statement returns [AST stm]
 	| iteration_stm
 	| stm = continue_stm
 	| stm = break_stm
-	| return_stm
+	| stm = return_stm
 	| stm = with_stm
 	| switch_stm
-	| throw_stm
+	| stm = throw_stm
 	| try_stm
 	;
 
@@ -116,8 +116,15 @@ finally_exp
 	: "finally" block
 	;
 
-throw_stm
-	: "throw" expr SEMI_COLON
+throw_stm returns [AST t]
+{
+	t = null;
+	AST e = null;
+}
+	: "throw" e = expr SEMI_COLON
+	  {
+		  t = new Throw (e);
+	  }
 	;
 
 switch_stm
@@ -152,8 +159,12 @@ with_stm returns [AST with]
 	  }	
 	;
 
-return_stm
-	: "return" (expr | ) SEMI_COLON
+return_stm returns [AST r]
+{
+	r = null;
+	AST e = null;
+}
+	: "return" (e = expr { r = new Return (e); } | ) SEMI_COLON
 	;
 
 break_stm returns [AST b]

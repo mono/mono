@@ -1,5 +1,8 @@
 2003-10-22  cesar lopez nataren <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: Allow return_stm and throw_stm tree
+	building.  
+	
 	* With.cs: added constructor and ToString. Back to the non-tmp
 	namespace.
 
