@@ -373,6 +373,9 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern string[] GetNamespaces ();
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern virtual String[] GetManifestResourceNames ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
