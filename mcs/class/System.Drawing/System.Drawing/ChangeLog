@@ -1,3 +1,9 @@
+2005-03-30 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Pen.cs: remove locks. They are done at gdiplus level
+	* Brush.cs: remove locks. They are done at gdiplus level
+	* Image.cs: remove locks. They are done at gdiplus level
+
 2005-03-30  Rogério Pereira Araújo <rogerio.araujo@gmail.com>
 
 	* Icon.cs: Finished Icon(Type, String) ctor

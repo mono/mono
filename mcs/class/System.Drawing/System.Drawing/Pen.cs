@@ -62,32 +62,27 @@ namespace System.Drawing
 
 		public Pen (Brush brush, float width)
 		{
-			lock (this)
-			{
-				Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out nativeObject);
+			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out nativeObject);
+			GDIPlus.CheckStatus (status);
+		
+			this.brush = brush;
+			if (brush is SolidBrush) {
+				color = ((SolidBrush) brush).Color;
+				status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
 				GDIPlus.CheckStatus (status);
-			
-				this.brush = brush;
-				if (brush is SolidBrush) {
-					color = ((SolidBrush) brush).Color;
-					status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
-					GDIPlus.CheckStatus (status);
-				}
-			}
+			}			
 		}
 
 		public Pen (Color color, float width)
 		{
-			lock (this)
-			{
-				Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out nativeObject);
-				GDIPlus.CheckStatus (status);
-	
-				this.color = color;
-				brush = new SolidBrush (color);
-				status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
-				GDIPlus.CheckStatus (status);
-			}
+
+			Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out nativeObject);
+			GDIPlus.CheckStatus (status);
+
+			this.color = color;
+			brush = new SolidBrush (color);
+			status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
+			GDIPlus.CheckStatus (status);			
 		}
 
 		//

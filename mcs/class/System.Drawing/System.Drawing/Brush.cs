@@ -87,13 +87,12 @@ namespace System.Drawing
 
 		protected virtual void Dispose (bool disposing)
 		{
-			lock (this){
-				if (disposed == false) {
-					GDIPlus.GdipDeleteBrush (nativeObject);
-					disposed = true;
-					nativeObject = IntPtr.Zero;
-				}
-			}
+
+			if (disposed == false) {
+				GDIPlus.GdipDeleteBrush (nativeObject);
+				disposed = true;
+				nativeObject = IntPtr.Zero;
+			}			
 		}
 
 		~Brush ()
