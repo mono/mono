@@ -17,21 +17,34 @@ using System.Security.Permissions;
 namespace Mono.Data.PostgreSqlClient {
 
 	public sealed class PgSqlClientPermission : DBDataPermission {
-		
+	
+#if NET_1_2
+		[Obsolete ("use PgSqlClientPermission(PermissionState.None)", true)]
+#endif
 		[MonoTODO]
 		public PgSqlClientPermission() 
-			: this (PermissionState.None)
+#if NET_1_2
+			: base (PermissionState.None)
+#endif
 		{
 		}
 
 		[MonoTODO]
-		public PgSqlClientPermission(PermissionState state) {
+		public PgSqlClientPermission(PermissionState state) 
+			: base (state)
+		{
 			// FIXME: do constructor
 		}
 
+#if NET_1_2
+		[Obsolete ("use PgSqlClientPermission(PermissionState.None)", true)]
+#endif
 		[MonoTODO]
-		public PgSqlClientPermission(PermissionState state,
-			bool allowBlankPassword) { 
+		public PgSqlClientPermission(PermissionState state, bool allowBlankPassword) 
+#if NET_1_2
+			: base (PermissionState.None)
+#endif
+		{ 
 			throw new NotImplementedException ();
 		}
 
