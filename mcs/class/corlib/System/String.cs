@@ -1337,19 +1337,19 @@ namespace System {
 		public bool ToBoolean (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return false;
+			throw new NotImplementedException ();
 		}
 
 		public byte ToByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return (byte) '\0';
+			throw new NotImplementedException ();
 		}
 
 		public char ToChar (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return '\0';
+			throw new NotImplementedException ();
 		}
 
 		public char[] ToCharArray ()
@@ -1375,38 +1375,38 @@ namespace System {
 		public DateTime ToDateTime (IFormatProvider provider)
 		{
 			// FIXME: implement me
-
-			return new DateTime (0);
+			// return new DateTime (0);
+			throw new NotImplementedException ();
 		}
 
 		public decimal ToDecimal (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0.0M;
+			throw new NotImplementedException ();
 		}
 
 		public double ToDouble (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0.0;
+			throw new NotImplementedException ();
 		}
 
 		public short ToInt16 (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public int ToInt32 (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public long ToInt64 (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public string ToLower ()
@@ -1424,20 +1424,21 @@ namespace System {
 		public string ToLower (CultureInfo culture)
 		{
 			// FIXME: implement me
-			return null;
+			throw new NotImplementedException ();
+
 		}
 
 		[CLSCompliant(false)]
 		public sbyte ToSByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public float ToSingle (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0.0F;
+			throw new NotImplementedException ();
 		}
 
 		public override string ToString ()
@@ -1448,34 +1449,34 @@ namespace System {
 		public string ToString (IFormatProvider format)
 		{
 			// FIXME: implement me
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public object ToType (Type conversionType, IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		[CLSCompliant(false)]
 		public ushort ToUInt16 (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		[CLSCompliant(false)]
 		public uint ToUInt32 (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		[CLSCompliant(false)]
 		public ulong ToUInt64 (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public string ToUpper ()
@@ -1493,7 +1494,7 @@ namespace System {
 		public string ToUpper (CultureInfo culture)
 		{
 			// FIXME: implement me
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public string Trim ()

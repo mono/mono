@@ -137,7 +137,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -154,12 +154,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}
 		}		
 
@@ -169,7 +169,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -186,12 +186,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this insance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);	
@@ -218,12 +218,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}
 		}
 
@@ -233,7 +233,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -250,12 +250,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}			
 		}
 
@@ -265,7 +265,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -282,12 +282,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}
 		}
 
@@ -297,7 +297,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -314,12 +314,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}
 		}
 
@@ -329,7 +329,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -346,12 +346,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}
 		}
 
@@ -361,7 +361,7 @@ namespace System {
 			int precision;
 			
 			if (!ParseFormat (format, out specifier, out precision))
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			
 			switch(specifier) {
 			case 'c': return FormatCurrency (value, precision, nfi);
@@ -378,12 +378,12 @@ namespace System {
 			case 'N': return FormatNumber (value, precision, nfi);
 			case 'p': return FormatPercent (value, precision, nfi);
 			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException ("The specified format cannot be used in this instance");
-			case 'R': throw new FormatException ("The specified format cannot be used in this instance");
+			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
+			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'x': return FormatHexadecimal (value, precision, false);
 			case 'X': return FormatHexadecimal (value, precision, true);
 			default: 
-				throw new FormatException ("The specified format is invalid");
+				throw new FormatException (Locale.GetText ("The specified format is invalid"));
 			}
 		}
 

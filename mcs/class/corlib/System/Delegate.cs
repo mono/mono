@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System {
@@ -23,10 +24,10 @@ namespace System {
 		protected Delegate (object target, string method)
 		{
 			if (target == null)
-				throw new ArgumentNullException ("Target object is null");
+				throw new ArgumentNullException (Locale.GetText ("Target object is null"));
 
 			if (method == null)
-				throw new ArgumentNullException ("method name is null");
+				throw new ArgumentNullException (Locale.GetText ("method name is null"));
 
 			this.target_type = null;
 			this.method_ptr = IntPtr.Zero;
@@ -37,10 +38,10 @@ namespace System {
 		protected Delegate (Type target_type, string method)
 		{
 			if (m_target == null)
-				throw new ArgumentNullException ("Target type is null");
+				throw new ArgumentNullException (Locale.GetText ("Target type is null"));
 
 			if (method == null)
-				throw new ArgumentNullException ("method string is null");
+				throw new ArgumentNullException (Locale.GetText ("method string is null"));
 
 			this.target_type = target_type;
 			this.method_ptr = IntPtr.Zero;
@@ -106,7 +107,7 @@ namespace System {
 					return a;
 
 			if (a.GetType () != b.GetType ())
-				throw new ArgumentException ("Incompatible Delegate Types");
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types"));
 			
 			return a.CombineImpl (b);
 		}

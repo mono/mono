@@ -8,6 +8,7 @@
 //
 
 using System.Runtime.Serialization;
+using System.Globalization;
 
 namespace System {
 
@@ -32,7 +33,7 @@ namespace System {
 
 			value = t.TypeHandle.Value;
 			if (value == (IntPtr) 0)
-				throw new SerializationException ("Insufficient state");
+				throw new SerializationException (Locale.GetText ("Insufficient state"));
 		}
 		
                 public void GetObjectData (SerializationInfo info, StreamingContext context)

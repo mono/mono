@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 
 namespace System
 {
@@ -95,7 +96,7 @@ namespace System
 			case System.PlatformID.Win32S: str = "Microsoft Win32S";  break;
 			case System.PlatformID.Win32Windows: str = "Microsoft Windows 98"; break;
 			case System.PlatformID.Unix: str = "Unix"; break;
-			default: str = "<unknown>";	 break;
+			default: str = Locale.GetText ("<unknown>"); break;
 			}
 
 			return str + " " + itsVersion.ToString();

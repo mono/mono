@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class TypeLoadException : SystemException {
 		// Constructors
 		public TypeLoadException ()
-			: base ("A type load exception has occurred.")
+			: base (Locale.GetText ("A type load exception has occurred."))
 		{
 		}
 

@@ -91,10 +91,11 @@ namespace System
 		{	// TODO: find a way to implement this property
 			get
 			{
-				return 0;
+				throw new NotImplementedException ();
 			}
 			set
 			{
+				throw new NotImplementedException ();
 			}
 		}
 

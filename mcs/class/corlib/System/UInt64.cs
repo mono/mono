@@ -23,7 +23,7 @@ namespace System {
 		public int CompareTo (object v)
 		{
 			if (v == null || !(v is System.UInt64))
-				throw new ArgumentException ("Value is not a System.UInt64");
+				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt64"));
 
 			if (value == (ulong) v)
 				return 0;
@@ -65,7 +65,7 @@ namespace System {
 		public static ulong Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public override string ToString ()

@@ -7,12 +7,14 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public class NotImplementedException : SystemException {
 		// Constructors
 		public NotImplementedException ()
-			: base ("The requested feature is not yet implemented")
+			: base (Locale.GetText ("The requested feature is not yet implemented"))
 		{
 		}
 

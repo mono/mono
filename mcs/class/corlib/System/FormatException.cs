@@ -7,12 +7,14 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public class FormatException : SystemException {
 		// Constructors
 		public FormatException ()
-			: base ("Invalid format")
+			: base (Locale.GetText ("Invalid format"))
 		{
 		}
 

@@ -26,7 +26,7 @@ namespace System {
 		public int CompareTo (object v)
 		{
 			if (v == null || !(v is System.Single))
-				throw new ArgumentException ("Value is not a System.Single");
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Single"));
 
 			return (int) (value - ((float) v));
 		}
@@ -82,7 +82,7 @@ namespace System {
 		public static float Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public override string ToString ()
@@ -103,7 +103,7 @@ namespace System {
 		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
-			return "";
+			throw new NotImplementedException ();
 		}
 
 		// ============= IConvertible Methods ============ //

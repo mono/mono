@@ -42,8 +42,7 @@ namespace System {
 		/// </summary>
 		public TypeAttributes Attributes {
 			get {
-				// FIXME: Implement me.
-				return 0;
+				throw new NotImplementedException ();
 			}
 		}
 		
@@ -59,8 +58,7 @@ namespace System {
 		/// </summary>
 		public override Type DeclaringType {
 			get {
-				// FIXME: Implement me.
-				return null;
+				throw new NotImplementedException ();
 			}
 		}
 		
@@ -114,42 +112,42 @@ namespace System {
 		
 		public bool IsValueType {
 			get {
-				// FIXME
-				return(false);
+				// FIXME: Implement me.
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsClass {
 			get {
 				// FIXME
-				return true;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsInterface {
 			get {
 				// FIXME
-				return false;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsArray {
 			get {
 				// FIXME
-				return false;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsSubclassOf (Type c)
 		{
 			// FIXME
-			return false;
+			throw new NotImplementedException ();
 		}
 
 		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
 		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public abstract Type[] GetInterfaces ();
@@ -157,13 +155,13 @@ namespace System {
 		public virtual bool IsAssignableFrom (Type c)
 		{
 			// FIXME
-			return true;
+			throw new NotImplementedException ();
 		}
 
 		public virtual int GetArrayRank ()
 		{
 			// FIXME
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public abstract Type GetElementType ();
@@ -171,14 +169,14 @@ namespace System {
 		public bool IsSealed {
 			get {
 				// FIXME
-				return false;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsAbstract {
 			get {
 				// FIXME
-				return false;
+			throw new NotImplementedException ();
 			}
 		}
 
@@ -191,14 +189,14 @@ namespace System {
 		public bool IsNotPublic {
 			get {
 				// FIXME
-				return false;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsPublic {
 			get {
 				// FIXME
-				return false;
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -208,42 +206,46 @@ namespace System {
 		public MethodInfo[] GetMethods ()
 		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public MethodInfo[] GetMethods (BindingFlags bindingAttr)
 		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public PropertyInfo GetProperty (string name, Type[] types)
 		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public MethodInfo GetMethod (string name, Type[] types)
 		{
 			// FIXME
+			throw new NotImplementedException ();
+		}
+
+		public virtual MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr,
+							 MemberFilter filter, object filterCriteria)
+		{
 			return null;
 		}
 
-		public virtual MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr, MemberFilter filter, object filterCriteria) {
-			return null;
-		}
-
-		public static TypeCode GetTypeCode( Type type) {
+		public static TypeCode GetTypeCode( Type type)
+		{
 			return TypeCode.Empty;
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			return null;
 		}
 

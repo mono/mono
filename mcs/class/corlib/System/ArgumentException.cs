@@ -7,6 +7,8 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public class ArgumentException : SystemException {
@@ -14,7 +16,7 @@ namespace System {
 
 		// Constructors
 		public ArgumentException ()
-			: base ("An invalid argument was specified.")
+			: base (Locale.GetText ("An invalid argument was specified."))
 		{
 		}
 

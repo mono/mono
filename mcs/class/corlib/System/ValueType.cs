@@ -24,9 +24,8 @@ namespace System {
 		// </summary>
 		public override bool Equals (object o)
 		{
-			if (o == null){
-				throw new ArgumentNullException ("Null argument to Equals");
-			}
+			if (o == null)
+				throw new ArgumentNullException ();
 
 			if (o.GetType() != this.GetType())
 				return false;

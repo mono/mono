@@ -59,7 +59,7 @@ namespace System
             int precision;
             if (!DecimalFormatter.ParseFormat(format, out specifier, out precision)) 
             {
-                throw new FormatException ("The specified format is invalid");
+                throw new FormatException (Locale.GetText ("The specified format is invalid"));
             }
 
             int digits = -1;
@@ -118,7 +118,7 @@ namespace System
                 case 'P': return FormatPercent(nfi, sb, decimals, decPos, sign);
                 case 'Z': return FormatNormalized(nfi, sb, digits, decPos, sign);
                 default: 
-                    throw new FormatException ("The specified format is invalid");
+                    throw new FormatException (Locale.GetText ("The specified format is invalid"));
             }
         }
 
@@ -264,7 +264,7 @@ namespace System
                     case 4:
                         return s + " " + nfi.NegativeSign;
                     default:
-                        throw new ArgumentException("Invalid NumberNegativePattern");
+                        throw new ArgumentException(Locale.GetText ("Invalid NumberNegativePattern"));
                 }
             } 
             else 
@@ -316,7 +316,7 @@ namespace System
                     case 15:
                         return "(" + s + " " + nfi.CurrencySymbol + ")";
                     default:
-                        throw new ArgumentException("Invalid CurrencyNegativePattern");
+                        throw new ArgumentException(Locale.GetText ("Invalid CurrencyNegativePattern"));
                 }
             }
             else 
@@ -332,7 +332,7 @@ namespace System
                     case 3:
                         return s + " " + nfi.CurrencySymbol;
                     default:
-                        throw new ArgumentException("Invalid CurrencyPositivePattern");
+                        throw new ArgumentException(Locale.GetText ("Invalid CurrencyPositivePattern"));
                 }
             }
         }
@@ -354,7 +354,7 @@ namespace System
                     case 2:
                         return nfi.NegativeSign + nfi.PercentSymbol + s;
                     default:
-                        throw new ArgumentException("Invalid PercentNegativePattern");
+                        throw new ArgumentException(Locale.GetText ("Invalid PercentNegativePattern"));
                 }
             }
             else 
@@ -377,7 +377,7 @@ namespace System
             int digits, int decPos, int sign)
         {
             //LAMESPEC: how should this format look like ? Is this a fixed point format ?
-            throw new Exception("Not implemented yet"); //TODO: implement me
+	    throw new NotImplementedException ();
         }
     }
 }

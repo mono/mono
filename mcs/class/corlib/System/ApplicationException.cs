@@ -10,13 +10,14 @@
 
 using System.Runtime.Serialization;
 using System.Reflection;
+using System.Globalization;
 
 namespace System {
 
 	public class ApplicationException : Exception {
 		// Constructors
 		public ApplicationException ()
-			: base ("An application exception has occurred.")
+			: base (Locale.GetText ("An application exception has occurred."))
 		{
 		}
 

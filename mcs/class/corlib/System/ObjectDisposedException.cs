@@ -7,6 +7,8 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public class ObjectDisposedException : InvalidOperationException {
@@ -14,7 +16,7 @@ namespace System {
 		// Constructors
 
 		public ObjectDisposedException (string objectName)
-			: base ("The object was used after being disposed")
+			: base (Locale.GetText ("The object was used after being disposed"))
 		{
 			obj_name = objectName;
 		}

@@ -8,6 +8,7 @@
 //
 
 using System.Runtime.Serialization;
+using System.Globalization;
 
 namespace System {
 
@@ -21,10 +22,9 @@ namespace System {
 			}
 		}
 		
-    // This is from ISerializable
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			// TODO: IMPLEMENT ME.
+			throw new NotImplementedException ();
 		}
 	}
 }

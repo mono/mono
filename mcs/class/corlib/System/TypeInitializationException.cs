@@ -7,6 +7,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class TypeInitializationException : SystemException {
@@ -14,7 +15,7 @@ namespace System {
 
 		// Constructors
 		public TypeInitializationException (string type_name, Exception inner)
-			: base ("An exception was thrown by the type initializer for " + type_name, inner)
+			: base (Locale.GetText ("An exception was thrown by the type initializer for ") + type_name, inner)
 		{
 			this.type_name = type_name;
 		}

@@ -7,6 +7,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class NotFiniteNumberException : ArithmeticException {
@@ -14,7 +15,7 @@ namespace System {
 
 		// Constructors
 		public NotFiniteNumberException ()
-			: base ("The number encountered was not a finite quantity")
+			: base (Locale.GetText ("The number encountered was not a finite quantity"))
 		{
 		}
 

@@ -22,7 +22,7 @@ namespace System {
 		public int CompareTo (object v)
 		{
 			if (v == null || !(v is System.Int64))
-				throw new ArgumentException ("Value is not a System.Int64");
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Int64"));
 
 			if (value == (long) v)
 				return 0;
@@ -64,7 +64,7 @@ namespace System {
 		public static long Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public override string ToString ()

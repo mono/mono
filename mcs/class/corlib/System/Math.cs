@@ -8,8 +8,9 @@
 //
 
 using System;
-using System.Runtime.InteropServices;
 using System.PAL;
+using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System
 {
@@ -33,25 +34,25 @@ namespace System
                 public static int Abs(int value)
                 {
                         if (value == Int32.MinValue)
-                                throw new OverflowException("Value is too small.");
+                                throw new OverflowException (Locale.GetText (Locale.GetText ("Value is too small")));
                         return (value < 0)? -value: value;
                 }
                 public static long Abs(long value)
                 {
                         if (value == Int64.MinValue)
-                                throw new OverflowException("Value is too small.");
+                                throw new OverflowException(Locale.GetText ("Value is too small"));
                         return (value < 0)? -value: value;
                 }
                 public static sbyte Abs(sbyte value)
                 {
                         if (value == SByte.MinValue)
-                                throw new OverflowException("Value is too small.");
+                                throw new OverflowException(Locale.GetText ("Value is too small"));
                         return (sbyte)((value < 0)? -value: value);
                 }
                 public static short Abs(short value)
                 {
                         if (value == Int16.MinValue)
-                                throw new OverflowException("Value is too small.");
+                                throw new OverflowException(Locale.GetText ("Value is too small"));
                         return (short)((value < 0)? -value: value);
                 }
 
@@ -241,7 +242,8 @@ namespace System
                         int c;
                         decimal retval = d;
                         if (decimals < 0 || decimals > 15)
-                                throw new ArgumentOutOfRangeException("Value is too small or too big.");
+                                throw new ArgumentOutOfRangeException(Locale.GetText (
+					"Value is too small or too big."));
                         else if (decimals == 0)
                                 return Math.Round(d);
                         for (c=0; c<decimals; c++) p*=10;
@@ -267,7 +269,8 @@ namespace System
                         int c;
                         double retval = value;
                         if (digits < 0 || digits > 15)
-                                throw new ArgumentOutOfRangeException("Value is too small or too big.");
+                                throw new ArgumentOutOfRangeException(Locale.GetText (
+					"Value is too small or too big."));
                         else if (digits == 0)
                                 return Math.Round(value);
                         for (c=0; c<digits; c++) p*=10;

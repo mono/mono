@@ -1,3 +1,113 @@
+2001-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* ApplicationException.cs: internationalize by adding calls to
+	Locale.GetText ().  And throw NotImplementedExceptions on calls
+	that we have to implement.
+
+	* Version.cs: Ditto.
+
+	* ValueType.cs: ditto.
+
+	* UnauthorizedAccessException.cs: ditto.
+
+	* UInt32.cs: ditto.
+
+	* UInt64.cs: ditto.
+
+	* UInt16.cs: ditto.
+
+	* TypeLoadException.cs: ditto
+
+	* TypeInitializationException.cs: ditto.
+
+	* Type.cs: ditto.
+
+	* TimeSpan.cs: ditto.
+
+	* SystemException.cs: ditto.
+
+	* String.cs: ditto.
+
+	* StackOverflowException.cs: ditto.x
+
+	* Single.cs: ditto.
+
+	* SByte.cs: ditto.
+
+	* RuntimeTypeHandle.cs: ditto.
+
+	* RuntimeMethodHandle.cs: ditto.
+
+	* RuntimeFieldHandle.cs: ditto.
+
+	* Random.cs: ditto.
+
+	* OutOfMemoryException.cs: ditto.
+
+	* OperatingSystem.cs: ditto.
+
+	* ObjectDisposedException.cs: ditto.
+
+	* NullReferenceException.cs: ditto.
+
+	* NotImplementedException.cs: ditto.
+
+	* NotFiniteNumberException.cs: ditto.o
+
+	* MulticastNotSupportedException.cs: ditto.
+
+	* MissingMethodException.cs: ditto.
+
+	* MemberAccessException.cs: ditto.
+
+	* Math.cs: ditto.
+
+	* InvalidCastException.cs: ditto.
+
+	* IntegerFormatter.cs: ditto.
+
+	* Int32.cs: ditto.
+
+	* Int16.cs: ditto.
+
+	* IndexOutOfRangeException.cs: ditto.
+
+	* Environment.cs: ditto
+
+	* Enum.cs: ditto.
+
+	* DuplicateWaitObjectException.cs: ditto.
+
+	* DivideByZeroException.cs: ditto.
+
+	* Delegate.cs: ditto
+
+	* DecimalFormatter.cs: ditto.
+
+	* Decimal.cs: ditto.
+
+	* DateTime.cs: ditto.
+
+	* Convert.cs: ditto.
+
+	* Char.cs: ditto.
+
+	* Byte.cs: ditto.
+
+	* Boolean.cs: ditto.
+
+	* ArrayTypeMismatchException.cs: ditto.
+
+	* ArithmeticException.cs: ditto.
+
+	* ArgumentOutOfRangeException.cs: ditto.
+
+	* ArgumentNullException.cs: ditto.
+
+	* Enum.cs: Make it derive from ValueType, add CompareTo method.
+
+	* Attribute.cs: Reformat.
+
 2001-11-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Decimal.cs, Double.cs, Byte.cs, Char.cs, Int16, UInt16, Int32,

@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class StackOverflowException : SystemException {
 		// Constructors
 		public StackOverflowException ()
-			: base ("The requested operation caused a stack overflow")
+			: base (Locale.GetText ("The requested operation caused a stack overflow"))
 		{
 		}
 

@@ -4,14 +4,14 @@
 //
 // (C) 2001 Ximian, Inc.
 
+using System.Globalization;
 namespace System
 {
 	public class BadImageFormatException : Exception
 	{
 		public string FusionLog {
 			get {
-				// FIXME
-				return null;
+				throw new NotImplementedException ();
 			}
 		}
 	}

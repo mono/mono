@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class OutOfMemoryException : SystemException {
 		// Constructors
 		public OutOfMemoryException ()
-			: base ("There is insufficient memory to continue execution")
+			: base (Locale.GetText ("There is insufficient memory to continue execution"))
 		{
 		}
 

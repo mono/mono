@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class UnauthorizedAccessException : SystemException {
 		// Constructors
 		public UnauthorizedAccessException ()
-			: base ("Access to the requested resource is not authorized")
+			: base (Locale.GetText ("Access to the requested resource is not authorized"))
 		{
 		}
 

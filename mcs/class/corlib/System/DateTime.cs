@@ -386,7 +386,8 @@ namespace System
 				return 1 ;
 
 			if (!(v is System.DateTime))
-				throw new ArgumentException ("Value is not a System.DateTime");
+				throw new ArgumentException (Locale.GetText (
+					"Value is not a System.DateTime"));
 
 			return Compare (this , (DateTime) v);
 		}
@@ -528,14 +529,14 @@ namespace System
 
 		public string ToLongDateString()
 		{
-			// TODO implement me 
-			return "ToLongDateString";
+			// TODO implement me
+			throw new NotImplementedException ();
 		}
 
 		public string ToLongTimeString()
 		{
-			// TODO implement me 
-			return "ToLongTimeString";
+			// TODO implement me
+			throw new NotImplementedException ();
 		}
 
 		public double ToOADate()
@@ -547,37 +548,37 @@ namespace System
 		public string ToShortDateString()
 		{
 			// TODO implement me 
-			return "ToShortDateString";
+			throw new NotImplementedException ();
 		}
 
 		public string ToShortTimeString()
 		{
 			// TODO implement me
-			return "ToShortTimeString";
+			throw new NotImplementedException ();
 		}
         
 		public override string ToString ()
 		{
 			// TODO: Implement me
-			return "" ;
+			throw new NotImplementedException ();
 		}
 
 		public string ToString (IFormatProvider fp)
 		{
 			// TODO: Implement me.
-			return "ToString1";
+			throw new NotImplementedException ();
 		}
 
 		public string ToString (string format)
 		{
 			// TODO: Implement me.
-			return "ToString2";
+			throw new NotImplementedException ();
 		}
 
 		public string ToString (string format, IFormatProvider fp)
 		{
 			// TODO: Implement me.
-				return "" ;
+			throw new NotImplementedException ();
 		}
 
 		public DateTime ToUniversalTime()

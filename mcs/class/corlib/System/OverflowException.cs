@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class OverflowException : ArithmeticException {
 		// Constructors
 		public OverflowException ()
-			: base ("Number overflow")
+			: base (Locale.GetText ("Number overflow"))
 		{
 		}
 

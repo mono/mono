@@ -1,12 +1,13 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Globalization;
 
 namespace System {
 	public class MissingMemberException : MemberAccessException {
 		
 		public MissingMemberException ()
-			: base ("A missing member exception has occurred.")
+			: base (Locale.GetText ("A missing member exception has occurred."))
 		{
 		}
 

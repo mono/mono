@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class NotSupportedException : SystemException {
 		// Constructors
 		public NotSupportedException ()
-			: base ("Operation is not supported")
+			: base (Locale.GetText ("Operation is not supported"))
 		{
 		}
 

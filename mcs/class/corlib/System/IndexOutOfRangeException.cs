@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public sealed class IndexOutOfRangeException : SystemException {
 		// Constructors
 		public IndexOutOfRangeException ()
-			: base ("Array index is out of range")
+			: base (Locale.GetText ("Array index is out of range"))
 		{
 		}
 

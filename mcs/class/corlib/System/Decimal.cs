@@ -65,7 +65,7 @@ namespace System
             
                 if (scale > MAX_SCALE) 
                 {
-                    throw new ArgumentOutOfRangeException("scale must be between 0 and 28");
+			throw new ArgumentOutOfRangeException (Locale.GetText ("scale must be between 0 and 28"));
                 }
 
                 ss32 = scale;
@@ -152,12 +152,12 @@ namespace System
         {
             if (bits == null) 
             {
-                throw new ArgumentNullException("Bits is a null reference");
+		throw new ArgumentNullException(Locale.GetText ("Bits is a null reference"));
             }
 
             if (bits.GetLength(0) != 4) 
             {
-                throw new ArgumentException("bits does not contain four values");
+                throw new ArgumentException(Locale.GetText ("bits does not contain four values"));
             }
 
             unchecked {
@@ -168,7 +168,7 @@ namespace System
                 byte scale = (byte)(ss32 >> SCALE_SHIFT);
                 if (scale > MAX_SCALE || (ss32 & RESERVED_SS32_BITS) != 0) 
                 {
-                    throw new ArgumentException("Invalid bits[3]");
+                    throw new ArgumentException(Locale.GetText ("Invalid bits[3]"));
                 }
             }
         }
@@ -194,7 +194,7 @@ namespace System
             if (decimalIncr(ref d1, ref d2) == 0)
                 return d1;
             else
-                throw new OverflowException("Overflow on adding decimal nummber");
+                throw new OverflowException(Locale.GetText ("Overflow on adding decimal nummber"));
         }
 
         public static Decimal Subtract(Decimal d1, Decimal d2) 
@@ -203,7 +203,7 @@ namespace System
             if (decimalIncr(ref d1, ref d2) == 0)
                 return d1;
             else
-                throw new OverflowException("Overflow on subtracting decimal nummbers");
+                throw new OverflowException(Locale.GetText ("Overflow on subtracting decimal nummbers"));
         }
 
         public override int GetHashCode() 
@@ -532,7 +532,7 @@ namespace System
         {
             if (decimals < 0 || decimals > iMAX_SCALE) 
             {
-                throw new ArgumentOutOfRangeException("decimals must be between 0 and 28");
+                throw new ArgumentOutOfRangeException(Locale.GetText ("decimals must be between 0 and 28"));
             }
 
             decimalRound(ref d, decimals);
@@ -589,7 +589,7 @@ namespace System
         public int CompareTo(object val)
         {
             if (val == null || !(val is Decimal))
-                throw new ArgumentException ("Value is not a System.Decimal");
+                throw new ArgumentException (Locale.GetText ("Value is not a System.Decimal"));
 
             Decimal d2 = (Decimal)val;
             return decimalCompare(ref this, ref d2);
@@ -634,8 +634,8 @@ namespace System
         private static string stripStyles(string s, NumberStyles style, NumberFormatInfo nfi, 
             out int decPos, out bool isNegative, out bool expFlag, out int exp)
         {
-            const string invalidChar = "Invalid character at position ";
-            const string invalidExponent = "Invalid exponent";
+            string invalidChar = Locale.GetText ("Invalid character at position ");
+            string invalidExponent = Locale.GetText ("Invalid exponent");
             isNegative = false;
             expFlag = false;
             exp = 0;
@@ -726,7 +726,8 @@ namespace System
                 }
             }
 
-            if (pos == len) throw new FormatException("No digits found");
+            if (pos == len)
+		throw new FormatException(Locale.GetText ("No digits found"));
 
             // digits 
             while (pos < len)
@@ -841,8 +842,9 @@ namespace System
                 }
             }
 
-            if (hasOpeningParentheses) throw new FormatException("Closing Parentheses not found");
-
+            if (hasOpeningParentheses) throw new FormatException (
+		    Locale.GetText ("Closing Parentheses not found"));
+	    
             if (!hasDecimalPoint) decPos = sb.Length;
 
             return sb.ToString();
@@ -852,13 +854,14 @@ namespace System
         {
             NumberFormatInfo nfi = GetNumberFormatInfoFromIFormatProvider(provider);
 
-            if (s == null) throw new ArgumentNullException("string s");
+            if (s == null) throw new ArgumentNullException (Locale.GetText ("string s"));
 
             int iDecPos, exp;
             bool isNegative, expFlag;
             s = stripStyles(s, style, nfi, out iDecPos, out isNegative, out expFlag, out exp);
 
-            if (iDecPos < 0) throw new Exception("Error in System.Decimal.Parse");
+            if (iDecPos < 0)
+		throw new Exception (Locale.GetText ("Error in System.Decimal.Parse"));
             uint decPos = (uint) iDecPos;
 
             Decimal d;

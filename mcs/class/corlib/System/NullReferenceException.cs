@@ -7,12 +7,14 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public class NullReferenceException : SystemException {
 		// Constructors
 		public NullReferenceException ()
-			: base ("A null value was found where an object instance was required")
+			: base (Locale.GetText ("A null value was found where an object instance was required"))
 		{
 		}
 

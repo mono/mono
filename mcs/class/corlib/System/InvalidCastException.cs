@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class InvalidCastException : SystemException {
 		// Constructors
 		public InvalidCastException ()
-			: base ("Cannot cast from source type to destination type")
+			: base (Locale.GetText ("Cannot cast from source type to destination type"))
 		{
 		}
 

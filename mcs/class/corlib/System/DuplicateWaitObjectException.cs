@@ -7,17 +7,18 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class DuplicateWaitObjectException : ArgumentException {
 		// Constructors
 		public DuplicateWaitObjectException ()
-			: base ("Duplicate objects in argument")
+			: base (Locale.GetText ("Duplicate objects in argument"))
 		{
 		}
 
 		public DuplicateWaitObjectException (string param_name)
-			: base ("Duplicate objects in argument", param_name)
+			: base (Locale.GetText ("Duplicate objects in argument"), param_name)
 		{
 		}
 

@@ -24,7 +24,7 @@ namespace System {
 		public int CompareTo (object v)
 		{
 			if (v == null || !(v is System.Byte))
-				throw new ArgumentException ("Value is not a System.Byte");
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Byte"));
 
 			return value - ((byte) v);
 		}

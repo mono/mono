@@ -9,6 +9,7 @@
 // TODO: Mucho left to implement.
 //
 
+using System.Globalization;
 namespace System {
 
 	public abstract class MulticastDelegate : Delegate {
@@ -85,7 +86,8 @@ namespace System {
 		// </summary>
 		protected override Delegate CombineImpl (Delegate follow)
 		{
-			throw new Exception ("IMPLEMENT ME");
+			
+			throw new NotImplementedException ();
 
 			// FIXME: Implement me.
 			// This is not as simple to implement, as we can

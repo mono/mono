@@ -8,13 +8,14 @@
 //
 
 using System.Runtime.Serialization;
+using System.Globalization;
 
 namespace System {
 
 	public class SystemException : Exception {
 		// Constructors
 		public SystemException ()
-			: base ("A system exception has occurred.")
+			: base (Locale.GetText ("A system exception has occurred."))
 		{
 		}
 

@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public sealed class ExecutionEngineException : SystemException {
 		// Constructors
 		public ExecutionEngineException ()
-			: base ("Internal error occurred") // Haha. Nice.
+			: base (Locale.GetText ("Internal error occurred")) // Haha. Nice.
 		{
 		}
 

@@ -7,6 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public sealed class Version : ICloneable, IComparable {
@@ -176,17 +178,17 @@ namespace System {
 				return major.ToString () + "." + minor.ToString ();
 			if (fields == 3){
 				if (build == MAXINT)
-					throw new ArgumentException ("fields is larger than the number of components defined in this instance");
+					throw new ArgumentException (Locale.GetText ("fields is larger than the number of components defined in this instance"));
 				return major.ToString () + "." + minor.ToString () + "." +
 					build.ToString ();
 			}
 			if (fields == 4){
 				if (build == MAXINT || revision == MAXINT)
-					throw new ArgumentException ("fields is larger than the number of components defined in this instance");
+					throw new ArgumentException (Locale.GetText ("fields is larger than the number of components defined in this instance"));
 				return major.ToString () + "." + minor.ToString () + "." +
 					build.ToString () + "." + revision.ToString ();
 			}
-			throw new ArgumentException ("Invalid fields parameter: " + fields.ToString());	
+			throw new ArgumentException (Locale.GetText ("Invalid fields parameter: ") + fields.ToString());	
 		}
 	}
 }

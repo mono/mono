@@ -1,3 +1,6 @@
+2001-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* Locale.cs: New file, a place holder for Locale.GetText.
 
 Wed Nov 14 16:47:07 CET 2001 Paolo Molaro <lupus@ximian.com>
 

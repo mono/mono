@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public class RankException : SystemException {
 		// Constructors
 		public RankException ()
-			: base ("Two arrays must have the same number of dimensions")
+			: base (Locale.GetText ("Two arrays must have the same number of dimensions"))
 		{
 		}
 

@@ -7,12 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
 namespace System {
 
 	public sealed class MulticastNotSupportedException : SystemException {
 		// Constructors
 		public MulticastNotSupportedException ()
-			: base ("This operation cannot be performed with the specified delagates")
+			: base (Locale.GetText ("This operation cannot be performed with the specified delagates"))
 		{
 		}
 

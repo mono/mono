@@ -29,7 +29,7 @@ namespace System {
 		public int CompareTo (object v)
 		{
 			if (v == null || !(v is System.Char))
-				throw new ArgumentException ("Value is not a System.Char");
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Char"));
 
 			return value - ((char) v);
 		}
@@ -57,11 +57,12 @@ namespace System {
 		public static double GetNumericValue (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
+					
 			
 			return GetNumericValue (str[index]);
 		}
@@ -74,11 +75,10 @@ namespace System {
 
 		public static UnicodeCategory GetUnicodeCategory (string str, int index) {
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText ("The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return GetUnicodeCategory (str[index]);
 		}
@@ -92,11 +92,11 @@ namespace System {
 		public static bool IsControl (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("Str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsControl (str[index]);
 		}
@@ -109,11 +109,11 @@ namespace System {
 		public static bool IsDigit (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("Str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsDigit (str[index]);
 		}
@@ -127,11 +127,11 @@ namespace System {
 		public static bool IsLetter (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsLetter (str[index]);
 		}
@@ -147,11 +147,11 @@ namespace System {
 		public static bool IsLetterOrDigit (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsLetterOrDigit (str[index]);
 		}
@@ -165,11 +165,11 @@ namespace System {
 		public static bool IsLower (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsLower (str[index]);
 		}
@@ -182,11 +182,11 @@ namespace System {
 		public static bool IsNumber (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsNumber (str[index]);
 		}
@@ -204,11 +204,11 @@ namespace System {
 		public static bool IsPunctuation (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsPunctuation (str[index]);
 		}
@@ -222,11 +222,11 @@ namespace System {
 		public static bool IsSeparator (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsSeparator (str[index]);
 		}
@@ -240,11 +240,11 @@ namespace System {
 		public static bool IsSurrogate (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsSurrogate (str[index]);
 		}
@@ -258,11 +258,11 @@ namespace System {
 		public static bool IsSymbol (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsSymbol (str[index]);
 		}
@@ -276,11 +276,11 @@ namespace System {
 		public static bool IsUpper (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsUpper (str[index]);
 		}
@@ -296,11 +296,11 @@ namespace System {
 		public static bool IsWhiteSpace (string str, int index)
 		{
 			if (str == null) 
-				throw new ArgumentNullException ("Str is a null reference");
+				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
-				throw new ArgumentOutOfRangeException
-				("The value of index is less than zero, or greater than or equal to the length of str");
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsWhiteSpace (str[index]);
 		}

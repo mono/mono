@@ -7,17 +7,19 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public class ArgumentNullException : ArgumentException {
 		// Constructors
 		public ArgumentNullException ()
-			: base ("Argument cannot be null")
+			: base (Locale.GetText ("Argument cannot be null"))
 		{
 		}
 
 		public ArgumentNullException (string param_name)
-			: base ("Argument cannot be null", param_name)
+			: base (Locale.GetText ("Argument {0} cannot be null"), param_name)
 		{
 		}
 

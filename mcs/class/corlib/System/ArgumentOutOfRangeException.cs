@@ -7,6 +7,8 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 
 	public class ArgumentOutOfRangeException : ArgumentException {
@@ -14,12 +16,12 @@ namespace System {
 
 		// Constructors
 		public ArgumentOutOfRangeException ()
-			: base ("Argument is out of range")
+			: base (Locale.GetText ("Argument is out of range"))
 		{
 		}
 
 		public ArgumentOutOfRangeException (string param_name)
-			: base ("Argument is out of range", param_name)
+			: base (Locale.GetText ("Argument is out of range"), param_name)
 		{
 		}
 

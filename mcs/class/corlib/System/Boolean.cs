@@ -24,6 +24,7 @@
 // member functions to implement. 
 //
 
+using System.Globalization;
 namespace System {
 
 	/// <summary>
@@ -78,7 +79,7 @@ namespace System {
 		{
 			if(obj != null && !(obj is System.Boolean))
 				throw new ArgumentException
-				("Object is not a Boolean and is not a null reference");
+				(Locale.GetText ("Object is not a Boolean and is not a null reference"));
 			
 			// for case #3
 			if (obj == null || (value == true && (bool)obj == false))
@@ -139,7 +140,8 @@ namespace System {
 		public static bool Parse (string val) 
 		{
 			if (val == null)
-				throw new ArgumentNullException ("Value is a null reference");
+				throw new ArgumentNullException (
+					Locale.GetText ("Value is a null reference"));
 	    
 			val = val.Trim ();
 	    
@@ -149,8 +151,8 @@ namespace System {
 			if (String.Compare (val, FalseString, true) == 0)
 				return false;
 	    
-			throw new FormatException
-			("Value is not equivalent to either TrueString or FalseString");
+			throw new FormatException (Locale.GetText (
+				"Value is not equivalent to either TrueString or FalseString"));
 		}
 
 		/// <summary>

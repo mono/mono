@@ -1,11 +1,13 @@
 using System;
 using System.Runtime.Serialization;
 
+using System.Globalization;
+
 namespace System {
 	public class MemberAccessException : SystemException {
 		
 		public MemberAccessException ()
-			: base ("A member access exception has occurred.")
+			: base (Locale.GetText ("A member access exception has occurred."))
 		{
 		}
 

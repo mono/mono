@@ -54,3 +54,17 @@ the restricted dll found in the same directory.
 	this consistent).  If you are modifying someone else's code, try
 	to keep the coding style similar.
 
+	Please use code that looks like this:
+
+	bool Method (int argument_1, int argument_2)
+	{
+		if (argument_1 == argument_2)
+			throw new Exception (Locale.GetText ("They are equal!");
+
+		if (argument_1 < argument_2) {
+			if (argument_1 * 3 > 4)
+				return true;
+			else
+				return false;
+		}
+	}

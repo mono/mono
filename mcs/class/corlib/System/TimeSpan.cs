@@ -8,6 +8,8 @@
 //
 // version: 07312001
 
+using System.Globalization;
+
 namespace System {
 	
 	public struct TimeSpan :  IComparable  {
@@ -165,7 +167,8 @@ namespace System {
 			}
 
 			if (!(value is TimeSpan)) {
-				throw new ArgumentException ("Argument of System.TimeSpan.CompareTo should be a TimeSpan");
+				throw new ArgumentException (Locale.GetText (
+					"Argument of System.TimeSpan.CompareTo should be a TimeSpan"));
 			}
 		
 			return Compare(this, (TimeSpan) value);
@@ -267,7 +270,8 @@ namespace System {
 		public static TimeSpan Parse (string s)
 		{
 			if (s == null) {
-				throw new ArgumentNullException ("null reference passed to TimeSpan.Parse");
+				throw new ArgumentNullException (
+					Locale.GetText ("null reference passed to TimeSpan.Parse"));
 			}
 
 			Parser p = new Parser (s); 
@@ -386,7 +390,7 @@ namespace System {
 
 		private void ThrowFormatException() 
 		{
-			throw new FormatException ("Invalid format for TimeSpan.Parse");
+			throw new FormatException (Locale.GetText ("Invalid format for TimeSpan.Parse"));
 		}
 
 		// All "Parse" functions throw a FormatException on syntax error.
@@ -527,7 +531,8 @@ namespace System {
 			}
 
 			if ( hours > 23 || minutes > 59 || seconds > 59 ) {
-				throw new OverflowException ( "Value outside range in TimeSpan.Parse" );
+				throw new OverflowException (Locale.GetText (
+					"Value outside range in TimeSpan.Parse" ));
 			}
 
 			TimeSpan ts = new TimeSpan (sign, days, hours, minutes, seconds, 0, ticks);
