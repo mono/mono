@@ -1,3 +1,8 @@
+2004-12-02  Peter Bartok  <pbartok@novell.com>
+
+	* SWF.csproj: Added Jackson's fresly minted TreeView files to 
+	  build list
+
 2004-12-01  Jackson Harper  <jackson@ximian.com>
 
 	* System.Windows.Forms.dll.sources: Add TreeNode love to the build.
