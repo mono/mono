@@ -1,5 +1,7 @@
 2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel.brg (stmt): Add DUMMY rule for OP_DUMMY_STORE.
+
 	* mini-ops.h: Add OP_DUMMY_STORE opcode.
 
 	* mini.h (MONO_BBLOCK_IS_IN_REGION): New helper macro.
