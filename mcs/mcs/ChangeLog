@@ -1,3 +1,16 @@
+2003-04-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (CheckAccessLevel): If the type is an array, we can not
+	depend on whether the information is acurrate, because the
+	Microsoft runtime will always claim that the array type is public,
+	regardless of the real state.
+
+	If the type is a pointer, another problem happens: the type is
+	reported as non-public in Microsoft.  
+
+	In both cases we have to call CheckAccessLevel recursively with
+	the underlying type as the argument to be tested.
+
 2003-04-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (Assign.Emit): If we are dealing with a compound

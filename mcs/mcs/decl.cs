@@ -498,12 +498,31 @@ namespace Mono.CSharp {
 		
 		bool CheckAccessLevel (Type check_type) 
 		{
-			if (check_type.IsPublic || check_type.IsNestedPublic)
+			//
+			// Broken Microsoft runtime, return public for arrays, no matter what 
+			// the accessibility is for their underlying class
+			//
+			if (check_type.IsPublic){
+				if (check_type.IsArray)
+				 	return CheckAccessLevel (check_type.GetElementType ());
+				
+				return true;
+			}
+			
+			if (check_type.IsNestedPublic)
 				return true;
 			
 			if (check_type.Assembly == TypeBuilder.Assembly)
 				return true;
 
+			//
+			// Broken Microsoft runtime: They set the accessibility of
+			// pointers to NonPublic, even if their ElementType is accessible
+			// in some form.
+			//
+			if (check_type.IsPointer)
+				return CheckAccessLevel (check_type.GetElementType ());
+			
 			return false;
 
 		}
