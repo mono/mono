@@ -45,6 +45,8 @@ namespace System.Windows.Forms
 			
 			form.Size =  new Size( 554, 384 );
 			
+			OpenSaveButtonText = "Open";
+			
 			fileDialogPanel = new FileDialogPanel( this );
 		}
 		#endregion	// Public Constructors

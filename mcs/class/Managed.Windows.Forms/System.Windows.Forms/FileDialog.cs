@@ -55,6 +55,8 @@ namespace System.Windows.Forms
 		private string title = "";
 		private bool validateNames = true;
 		
+		internal string openSaveButtonText;
+		
 		public bool AddExtension
 		{
 			get
@@ -239,6 +241,19 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal string OpenSaveButtonText
+		{
+			set
+			{
+				openSaveButtonText = value;
+			}
+			
+			get
+			{
+				return openSaveButtonText;
+			}
+		}
+		
 		public override void Reset( )
 		{
 			addExtension = true;
@@ -350,7 +365,7 @@ namespace System.Windows.Forms
 			private Button cancelButton;
 			private ToolBarButton upToolBarButton;
 			private ToolBar bigButtonToolBar;
-			private Button openButton;
+			private Button openSaveButton;
 			private Label fileTypeLabel;
 			private ToolBarButton menueToolBarButton;
 			private ContextMenu menueToolBarButtonContextMenu;
@@ -384,7 +399,7 @@ namespace System.Windows.Forms
 			// store DirectoryInfo for backButton
 			internal Stack directoryStack = new Stack();
 			
-			internal string currentFileName;
+			internal string currentFileName = "";
 			
 			private MenuItem previousCheckedMenuItem;
 			
@@ -408,7 +423,7 @@ namespace System.Windows.Forms
 				desktopToolBarButton = new ToolBarButton( );
 				menueToolBarButton = new ToolBarButton( );
 				fileTypeLabel = new Label( );
-				openButton = new Button( );
+				openSaveButton = new Button( );
 				bigButtonToolBar = new ToolBar( );
 				upToolBarButton = new ToolBarButton( );
 				cancelButton = new Button( );
@@ -462,6 +477,11 @@ namespace System.Windows.Forms
 				fileListView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom ) | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
 				fileListView.Location = new Point( 99, 37 );
 				fileListView.Size = new Size( 449, 282 );
+				fileListView.Columns.Add( " Name", 170, HorizontalAlignment.Left );
+				fileListView.Columns.Add( "Size ", 80, HorizontalAlignment.Right );
+				fileListView.Columns.Add( " Type", 100, HorizontalAlignment.Left );
+				fileListView.Columns.Add( " Last Access", 150, HorizontalAlignment.Left );
+				fileListView.AllowColumnReorder = true;
 				fileListView.TabIndex = 2;
 				
 				// fileNameLabel
@@ -587,12 +607,12 @@ namespace System.Windows.Forms
 				fileTypeLabel.TextAlign = ContentAlignment.MiddleLeft;
 				
 				// openButton
-				openButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
-				openButton.FlatStyle = FlatStyle.System;
-				openButton.Location = new Point( 475, 330 );
-				openButton.Size = new Size( 72, 21 );
-				openButton.TabIndex = 8;
-				openButton.Text = "Open";
+				openSaveButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
+				openSaveButton.FlatStyle = FlatStyle.System;
+				openSaveButton.Location = new Point( 475, 330 );
+				openSaveButton.Size = new Size( 72, 21 );
+				openSaveButton.TabIndex = 8;
+				openSaveButton.Text = fileDialog.OpenSaveButtonText;
 				
 				// cancelButton
 				cancelButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
@@ -606,7 +626,7 @@ namespace System.Windows.Forms
 				
 				Controls.Add( smallButtonToolBar );
 				Controls.Add( cancelButton );
-				Controls.Add( openButton );
+				Controls.Add( openSaveButton );
 				Controls.Add( fileTypeLabel );
 				Controls.Add( fileNameLabel );
 				Controls.Add( fileTypeComboBox );
@@ -624,10 +644,13 @@ namespace System.Windows.Forms
 				
 				fileListView.UpdateFileListView( );
 				
-				openButton.Click += new EventHandler( OnClickOpenButton );
+				openSaveButton.Click += new EventHandler( OnClickOpenButton );
 				cancelButton.Click += new EventHandler( OnClickCancelButton );
 				
 				smallButtonToolBar.ButtonClick += new ToolBarButtonClickEventHandler( OnClickSmallButtonToolBar );
+				
+				// Key events DONT'T work
+				fileNameComboBox.KeyUp += new KeyEventHandler( OnKeyUpFileNameComboBox );
 				
 				// FIXME: Default for Filter is "", aka nothing, nada...
 				// which means, show all files
@@ -679,6 +702,39 @@ namespace System.Windows.Forms
 			
 			void OnClickOpenButton( object sender, EventArgs e )
 			{
+				Console.WriteLine( "OnClickOpenButton currentFileName: " + currentFileName );
+				
+				currentFileName.Trim();
+				
+				if ( currentFileName.Length == 0 )
+					return;
+				
+				if ( fileDialog.CheckFileExists )
+				{
+					if ( !File.Exists( currentFileName ) )
+					{
+						string message = currentFileName + " doesn't exist. Please verify that you have entered the correct file name.";
+						MessageBox.Show(message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						
+						currentFileName = "";
+						
+						return;
+					}
+				}
+				
+				if ( fileDialog.CheckPathExists )
+				{
+					if ( !Directory.Exists( currentDirectoryName ) )
+					{
+						string message = currentDirectoryName + " doesn't exist. Please verify that you have entered the correct directory name.";
+						MessageBox.Show(message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						
+						currentDirectoryName = Environment.CurrentDirectory;
+						
+						return;
+					}
+				}
+				
 				fileDialog.FileName = currentFileName;
 				
 				CancelEventArgs cancelEventArgs = new CancelEventArgs( );
@@ -750,6 +806,7 @@ namespace System.Windows.Forms
 						fileListView.View = View.LargeIcon;
 						break;
 					case 2:
+						fileListView.View = View.LargeIcon;
 						break;
 					case 3:
 						fileListView.View = View.List;
@@ -761,6 +818,18 @@ namespace System.Windows.Forms
 						break;
 				}
 				
+			}
+			
+			void OnKeyUpFileNameComboBox( object sender, KeyEventArgs e )
+			{
+				Console.WriteLine( "OnKeyUpFileNameComboBox");
+				
+				if ( e.KeyCode == Keys.Enter )
+				{
+					Console.WriteLine( "OnKeyUpFileNameComboBox e.KeyCode =...");
+					currentFileName = currentDirectoryName + fileNameComboBox.Text;
+					ForceDialogEnd();
+				}
 			}
 			
 			public void UpdateFilters( ArrayList filters )
@@ -816,7 +885,8 @@ namespace System.Windows.Forms
 			// FileListView
 			internal class FileListView : ListView
 			{
-				private ImageList fileListViewImageList = new ImageList();
+				private ImageList fileListViewSmallImageList = new ImageList();
+				private ImageList fileListViewBigImageList = new ImageList();
 				
 				private FileDialogPanel fileDialogPanel;
 				
@@ -824,14 +894,20 @@ namespace System.Windows.Forms
 				{
 					this.fileDialogPanel = fileDialogPanel;
 					
-					fileListViewImageList.ColorDepth = ColorDepth.Depth32Bit;
-					fileListViewImageList.ImageSize = new Size( 16, 16 );
-					fileListViewImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
-					fileListViewImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
-					fileListViewImageList.TransparentColor = Color.Transparent;
+					fileListViewSmallImageList.ColorDepth = ColorDepth.Depth32Bit;
+					fileListViewSmallImageList.ImageSize = new Size( 16, 16 );
+					fileListViewSmallImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
+					fileListViewSmallImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
+					fileListViewSmallImageList.TransparentColor = Color.Transparent;
 					
-					SmallImageList = fileListViewImageList;
-					LargeImageList = fileListViewImageList;
+					fileListViewBigImageList.ColorDepth = ColorDepth.Depth32Bit;
+					fileListViewBigImageList.ImageSize = new Size( 48, 48 );
+					fileListViewBigImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
+					fileListViewBigImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
+					fileListViewBigImageList.TransparentColor = Color.Transparent;
+					
+					SmallImageList = fileListViewSmallImageList;
+					LargeImageList = fileListViewBigImageList;
 					
 					View = View.List;
 				}
@@ -843,40 +919,54 @@ namespace System.Windows.Forms
 					DirectoryInfo[] directoryInfoArray = directoryInfo.GetDirectories( );
 					FileInfo[] fileInfoArray = directoryInfo.GetFiles( );
 					
+					fileDialogPanel.fileHashtable.Clear( );
+					
 					BeginUpdate( );
 					
 					Items.Clear( );
 					
-					fileDialogPanel.fileHashtable.Clear( );
-					
-					foreach ( DirectoryInfo dii in directoryInfoArray )
+					foreach ( DirectoryInfo directoryInfoi in directoryInfoArray )
 					{
 						FileStruct fileStruct = new FileStruct( );
 						
-						fileStruct.fullname = dii.FullName;
+						fileStruct.fullname = directoryInfoi.FullName;
 						
-						ListViewItem listViewItem = new ListViewItem( dii.Name );
+						ListViewItem listViewItem = new ListViewItem( directoryInfoi.Name );
 						
 						listViewItem.ImageIndex = 1;
+						
+						listViewItem.SubItems.Add( "" );
+						listViewItem.SubItems.Add( "Directory" );
+						listViewItem.SubItems.Add( directoryInfoi.LastAccessTime.ToShortDateString() + " " + directoryInfoi.LastAccessTime.ToShortTimeString() );
+						
 						fileStruct.attributes = FileAttributes.Directory;
 						
-						fileDialogPanel.fileHashtable.Add( dii.Name, fileStruct );
+						fileDialogPanel.fileHashtable.Add( directoryInfoi.Name, fileStruct );
 						
 						Items.Add( listViewItem );
 					}
 					
-					foreach ( FileInfo fi in fileInfoArray )
+					foreach ( FileInfo fileInfo in fileInfoArray )
 					{
 						FileStruct fileStruct = new FileStruct( );
 						
-						fileStruct.fullname = fi.FullName;
+						fileStruct.fullname = fileInfo.FullName;
 						
-						ListViewItem listViewItem = new ListViewItem( fi.Name );
+						ListViewItem listViewItem = new ListViewItem( fileInfo.Name );
 						
 						listViewItem.ImageIndex = 0;
+						
+						long fileLen = 1;
+						if ( fileInfo.Length > 1024 )
+							fileLen = fileInfo.Length / 1024;
+						
+						listViewItem.SubItems.Add( fileLen.ToString() + " KB" );
+						listViewItem.SubItems.Add( "File" );
+						listViewItem.SubItems.Add( fileInfo.LastAccessTime.ToShortDateString() + " " + fileInfo.LastAccessTime.ToShortTimeString() );
+						
 						fileStruct.attributes = FileAttributes.Normal;
 						
-						fileDialogPanel.fileHashtable.Add( fi.Name, fileStruct );
+						fileDialogPanel.fileHashtable.Add( fileInfo.Name, fileStruct );
 						
 						Items.Add( listViewItem );
 					}
