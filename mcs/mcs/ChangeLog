@@ -1,5 +1,13 @@
 2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* PointerArithmetic (Resolve): make sure we are not doing
+	pointer arith on void*. Also, make sure we are resolved
+	by not setting eclass until resolve.
+
+	All callers: Make sure that PointerArithmetic gets resolved.
+
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* ArrayCreation (LookupType): If the type does not resolve 
 	to an array, give an error.
 
