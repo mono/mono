@@ -1,5 +1,10 @@
 2002-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Page.cs: added more page events to invoke automagically if some
+	methods are defined.
+
+2002-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs:
 	(SaveViewState): save state even when control is not visible.
 	(SaveViewStateRecursive):

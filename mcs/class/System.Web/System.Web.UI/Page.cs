@@ -430,6 +430,26 @@ public class Page : TemplateControl, IHttpHandler
 		InvokeEventMethod ("Page_Load", sender, e);
 	}
 
+	private void _Page_DataBind (object sender, EventArgs e)
+	{
+		InvokeEventMethod ("Page_DataBind", sender, e);
+	}
+
+	private void _Page_PreRender (object sender, EventArgs e)
+	{
+		InvokeEventMethod ("Page_PreRender", sender, e);
+	}
+
+	private void _Page_Dispose (object sender, EventArgs e)
+	{
+		InvokeEventMethod ("Page_Dispose", sender, e);
+	}
+
+	private void _Page_Error (object sender, EventArgs e)
+	{
+		InvokeEventMethod ("Page_Error", sender, e);
+	}
+
 	private void ProcessPostData (NameValueCollection data, bool second)
 	{
 		if (data == null)
@@ -468,9 +488,13 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		if (!init_done){
 			init_done = true;
-			// This 2 should depend on AutoEventWireUp in Page directive. Defaults to true.
+			// These should depend on AutoEventWireUp in Page directive. Defaults to true.
 			Init += new EventHandler (_Page_Init);
 			Load += new EventHandler (_Page_Load);
+			DataBinding += new EventHandler (_Page_DataBind);
+			PreRender += new EventHandler (_Page_PreRender);
+			Disposed += new EventHandler (_Page_Dispose);
+			Error += new EventHandler (_Page_Error);
 		}
 		//-- Control execution lifecycle in the docs
 		Controls.Clear ();
