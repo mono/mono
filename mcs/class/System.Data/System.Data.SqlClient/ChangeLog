@@ -1,3 +1,11 @@
+2005-03-07  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommand.cs : Set CommandBehavior on
+	ExecuteReader,ExecuteScalar,ExecuteNonQuery. This is used in
+	CloseDataReader.
+
+	This fixes bug #73252.
+
 2005-03-03  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlClientFactory.cs: While creating command, create using

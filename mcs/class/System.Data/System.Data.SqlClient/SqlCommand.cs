@@ -366,6 +366,7 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteNonQuery");
 			int result = 0;
+                        behavior = CommandBehavior.Default;
 
 			try {
 				Execute (CommandBehavior.Default, false);
@@ -400,14 +401,27 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteReader");
 			try {
+                                this.behavior = behavior;
+                                Console.WriteLine (this.behavior.ToString ());
 				Execute (behavior, true);
+                                Connection.DataReader = new SqlDataReader (this);
 			}
 			catch (TdsTimeoutException e) {
-				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
-			}
+                                // if behavior is closeconnection, even if it throws exception
+                                // the connection has to be closed.
+                                if ((behavior & CommandBehavior.CloseConnection) != 0)
+                                        Connection.Close ();
+                                throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			} catch (SqlException) {
+                                // if behavior is closeconnection, even if it throws exception
+                                // the connection has to be closed.
+                                if ((behavior & CommandBehavior.CloseConnection) != 0)
+                                        Connection.Close ();
 
-			Connection.DataReader = new SqlDataReader (this);
-			return Connection.DataReader;
+                                throw;
+                        }
+
+                        return Connection.DataReader;
 		}
 
 		public 
@@ -417,6 +431,7 @@ namespace System.Data.SqlClient {
                 object ExecuteScalar ()
 		{
 			ValidateCommand ("ExecuteScalar");
+                        behavior = CommandBehavior.Default;
 			try {
 				Execute (CommandBehavior.Default, true);
 			}
@@ -435,6 +450,7 @@ namespace System.Data.SqlClient {
 		public XmlReader ExecuteXmlReader ()
 		{
 			ValidateCommand ("ExecuteXmlReader");
+                        behavior = CommandBehavior.Default;
 			try { 
 				Execute (CommandBehavior.Default, true);
 			}
