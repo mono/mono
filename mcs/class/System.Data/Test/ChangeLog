@@ -1,3 +1,7 @@
+2003-03-31  Nick Drochak <ndrochak@gol.com>
+
+	* makefile.gnu: NUnit.Framework.dll now in class/lib
+
 2003-03-17  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Removed AllTests.cs, System.Data/AllTests.cs,
 	  System.Data.SqlTypes/AllTests.cs,
