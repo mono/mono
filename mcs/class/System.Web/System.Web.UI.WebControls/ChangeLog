@@ -1,3 +1,7 @@
+2005-02-10  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CheckBoxList.cs: Fix build.
+
 2005-02-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Button.cs: Use validation group when validating page.

@@ -231,7 +231,7 @@ namespace System.Web.UI.WebControls
 #if NET_2_0
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
-			LoadPostData (postDataKey, postCollection);
+			return LoadPostData (postDataKey, postCollection);
 		}
 		
 		protected virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
