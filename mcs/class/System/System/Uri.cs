@@ -65,12 +65,10 @@ namespace System
 		{
 		}
 
-		[MonoTODO]
 		protected Uri (SerializationInfo serializationInfo, 
 			       StreamingContext streamingContext) :
-			this (serializationInfo.GetString ("Uri"), true)
+			this (serializationInfo.GetString ("AbsoluteUri"), true)
 		{
-			// TODO: check whether this is compatible with ms.net
 		}
 
 		public Uri (string uriString, bool dontEscape) 
@@ -595,12 +593,10 @@ namespace System
 			return cachedToString;
 		}
 
-		[MonoTODO]
 		public void GetObjectData (SerializationInfo info, 
 					  StreamingContext context)
 		{
-			// TODO: check whether this is compatible with ms.net
-			info.AddValue ("Uri", this.AbsoluteUri);
+			info.AddValue ("AbsoluteUri", this.AbsoluteUri);
 		}
 
 

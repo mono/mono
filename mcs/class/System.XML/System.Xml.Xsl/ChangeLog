@@ -1,3 +1,14 @@
+2002-09-20  Duncan Mak  <duncan@ximian.com>
+
+	* XslTransform.cs (Load): Implemented the  methods, not
+	including the ones that deal with XPathNavigator (hopefully those
+	will come later).
+	(Transform): Implemented the version that saves directly to a file.
+	(Save): New private method for recreating the XML in text from
+	from an XmlReader
+
+	We're now P/Invoking libxslt for doing XSLT work.
+
 2002-06-23  Piers Haken <piersh@friskit.com>
 	
 	* XsltContext.cs: added 'PreserveWhitespace' abstract method

@@ -1,3 +1,8 @@
+2002-09-16  Duncan Mak  <duncan@ximian.com>
+
+	* Uri.cs (GetObjectData):
+	(Uri): The key should be "AbsoluteUri", not "Uri".
+
 2002-09-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* Uri.cs: Implemented a few of the protected methods. 

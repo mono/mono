@@ -6,15 +6,18 @@
 using System;
 using System.Xml.XPath;
 using System.IO;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Xml.Xsl
 {
 	public sealed class XslTransform
 	{
+
 		#region Fields
 
 		XmlResolver xmlResolver;
-
+		string stylesheet_file;
 		#endregion
 
 		#region Constructors
@@ -36,25 +39,23 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
-		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the IXPathNavigable.
 		public void Load (IXPathNavigable stylesheet)
 		{
-			throw new NotImplementedException ();
+			Load (stylesheet.CreateNavigator ());
 		}
 
-		[MonoTODO]
 		// Loads the XSLT stylesheet specified by a URL.
 		public void Load (string url)
 		{
-			throw new NotImplementedException ();
+			stylesheet_file = url;
 		}
 
-		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the XmlReader
 		public void Load (XmlReader stylesheet)
 		{
-			throw new NotImplementedException ();
+			stylesheet_file = Path.GetTempFileName ();
+			Save (stylesheet, stylesheet_file);
 		}
 
 		[MonoTODO]
@@ -92,6 +93,21 @@ namespace System.Xml.Xsl
 			throw new NotImplementedException ();
 		}
 
+		[DllImport ("libxslt.so")]
+		static extern IntPtr xsltParseStylesheetFile (string filename);
+
+		[DllImport ("libxslt.so")]
+		static extern IntPtr xsltApplyStylesheet (IntPtr stylePtr, IntPtr DocPtr, string [] parameters);
+
+		[DllImport ("libxslt.so")]
+		static extern IntPtr xmlNewDoc (string version);
+
+		[DllImport ("libxslt.so")]
+		static extern IntPtr xmlParseFile (string filename);
+
+		[DllImport ("libxslt.so")]
+		static extern int xmlSaveFile (string filename, IntPtr cur);
+
 		[MonoTODO]
 		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to an XmlReader.
@@ -105,7 +121,14 @@ namespace System.Xml.Xsl
 		// the result to an output file.
 		public void Transform (string inputfile, string outputfile)
 		{
-			throw new NotImplementedException ();
+			IntPtr xmlDocument = xmlParseFile (inputfile);
+			IntPtr xmlStylesheet = xsltParseStylesheetFile (stylesheet_file);
+			IntPtr xmlOutput = xmlNewDoc ("1.0");
+			string [] parameters = new string [] {};
+
+			xmlOutput = xsltApplyStylesheet (xmlStylesheet, xmlDocument, parameters);
+			
+			xmlSaveFile (outputfile, xmlOutput);
 		}
 
 		[MonoTODO]
@@ -164,6 +187,56 @@ namespace System.Xml.Xsl
 			throw new NotImplementedException ();
 		}
 
+		static void Save (XmlReader rdr, string filename)
+		{
+			XmlTextWriter writer = new XmlTextWriter (filename, new UTF8Encoding ());
+		
+			while (rdr.Read ()) {
+				switch (rdr.NodeType) {
+				
+				case XmlNodeType.CDATA:
+					writer.WriteCData (rdr.Value);
+					break;
+				
+				case XmlNodeType.Comment:
+					writer.WriteComment (rdr.Value);
+					break;
+
+				case XmlNodeType.DocumentType:
+					writer.WriteDocType (rdr.Value, null, null, null);
+					break;
+
+				case XmlNodeType.Element:
+					writer.WriteStartElement (rdr.Name, rdr.Value);
+				
+					while (rdr.MoveToNextAttribute ())
+						writer.WriteAttributes (rdr, true);
+					break;
+			
+				case XmlNodeType.EndElement:
+					writer.WriteEndElement ();
+					break;
+
+				case XmlNodeType.ProcessingInstruction:
+					writer.WriteProcessingInstruction (rdr.Name, rdr.Value);
+					break;
+
+				case XmlNodeType.Text:
+					writer.WriteString (rdr.Value);
+					break;
+
+				case XmlNodeType.Whitespace:
+					writer.WriteWhitespace (rdr.Value);
+					break;
+
+				case XmlNodeType.XmlDeclaration:
+					writer.WriteStartDocument ();
+					break;
+				}
+			}
+
+			writer.Close ();
+		}
 		#endregion
 	}
 }
