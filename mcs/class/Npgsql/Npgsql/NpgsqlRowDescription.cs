@@ -76,7 +76,8 @@ namespace Npgsql
 
         public void ReadFromStream(Stream input_stream, Encoding encoding, NpgsqlBackendTypeMapping type_mapping)
         {
-            switch (protocol_version) {
+            switch (protocol_version)
+            {
             case ProtocolVersion.Version2 :
                 ReadFromStream_Ver_2(input_stream, encoding, type_mapping);
                 break;
@@ -175,21 +176,34 @@ namespace Npgsql
 
         public Int16 FieldIndex(String fieldName)
         {
-            Int16 result = 0;
+            Int16 result = -1;
 
-            foreach (String name in fields_index)
+            // First try to find the index with IndexOf (case-sensitive)
+            result = (Int16)fields_index.IndexOf(fieldName);
+
+            if (result > -1)
+            {
+                return result;
+            }
+            else
             {
 
-                if (name.Equals(fieldName))
+                result = 0;
+                foreach (String name in fields_index)
                 {
-                    return result;
-                }
-                result++;
-            }
 
-            throw new ArgumentOutOfRangeException("fieldName", fieldName, "Field name not found"); 
+                    if (name.Equals(fieldName))
+                    {
+                        return result;
+                    }
+                    result++;
+                }
+
+            }
+            
+            throw new ArgumentOutOfRangeException("fieldName", fieldName, "Field name not found");
+
         }
 
     }
-
 }
