@@ -334,11 +334,11 @@ namespace Mono.Xml.Schema
 			get { return GetAttribute (localName, ns); }
 		}
 
-		int IXmlLineInfo.LineNumber {
+		public int LineNumber {
 			get { return readerLineInfo != null ? readerLineInfo.LineNumber : 0; }
 		}
 
-		int IXmlLineInfo.LinePosition {
+		public int LinePosition {
 			get { return readerLineInfo != null ? readerLineInfo.LinePosition : 0; }
 		}
 
@@ -826,11 +826,10 @@ namespace Mono.Xml.Schema
 				case ContentProc.Lax:
 					break;
 				default:
-					// FIXME: why is it not invalid if xsi:type exists?
 					if (xsiTypeName == null &&
 						(schemas.Contains (reader.NamespaceURI) ||
 						!schemas.MissedSubComponents (reader.NamespaceURI)))
-						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
+						HandleError ("Element declaration for " + new QName (reader.LocalName, reader.NamespaceURI) + " is missing.");
 					break;
 				}
 			}
@@ -1121,7 +1120,7 @@ namespace Mono.Xml.Schema
 				XsdKeyTable seq  = (XsdKeyTable) keyTables [i];
 				if (seq.SelectorMatches (this.elementQNameStack, reader.Depth) != null) {
 					// creates and registers new entry.
-					XsdKeyEntry entry = new XsdKeyEntry (seq, reader.Depth, reader as IXmlLineInfo);
+					XsdKeyEntry entry = new XsdKeyEntry (seq, reader.Depth, readerLineInfo);
 					seq.Entries.Add (entry);
 				}
 			}
@@ -1146,7 +1145,7 @@ namespace Mono.Xml.Schema
 		private void ProcessKeyEntry (XsdKeyEntry entry)
 		{
 			bool isNil = XsiNilDepth == Depth;
-			entry.ProcessMatch (false, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, null, null, null, isNil, CurrentKeyFieldConsumers);
+			entry.ProcessMatch (false, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, readerLineInfo, Depth, null, null, null, isNil, CurrentKeyFieldConsumers);
 			if (MoveToFirstAttribute ()) {
 				try {
 					do {
@@ -1155,7 +1154,7 @@ namespace Mono.Xml.Schema
 						case XmlSchema.InstanceNamespace:
 							continue;
 						}
-						entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
+						entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, readerLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
 					} while (MoveToNextAttribute ());
 				} finally {
 					MoveToElement ();
@@ -1191,7 +1190,7 @@ namespace Mono.Xml.Schema
 					if (identity == null)
 						identity = value;
 
-					if (!field.SetIdentityField (identity, reader.Depth == xsiNilDepth, dt as XsdAnySimpleType, this.Depth, (IXmlLineInfo) this))
+					if (!field.SetIdentityField (identity, reader.Depth == xsiNilDepth, dt as XsdAnySimpleType, this.Depth, readerLineInfo))
 						HandleError ("Two or more identical key value was found: '" + value + "' .");
 					this.currentKeyFieldConsumers.RemoveAt (0);
 				}
@@ -1346,7 +1345,7 @@ namespace Mono.Xml.Schema
 			return -1;
 		}
 
-		bool IXmlLineInfo.HasLineInfo ()
+		public bool HasLineInfo ()
 		{
 			return readerLineInfo != null && readerLineInfo.HasLineInfo ();
 		}

@@ -1,5 +1,12 @@
 2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidatingReader.cs : new file; another XmlReader 
+	  implementation that handles XSD validation. It is an reference
+	  application for XmlSchemaValidator.
+	* XsdValidatingReader.cs : Use readerLineInfo for IXmlLineInfo.
+
+2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdIdentityState.cs : use validation exception for 2.0.
 	  ProcessMatch() does not have to return bool. Use break and continue
 	  and reduced indentation.

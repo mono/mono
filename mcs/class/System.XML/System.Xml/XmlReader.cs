@@ -281,23 +281,26 @@ namespace System.Xml
 		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlReaderSettings settings)
 		{
 			XmlValidatingReader xvr = null;
-			if (settings.DtdValidate) {
+			switch (settings.ValidationType) {
+			case ValidationType.DTD:
 				xvr = new XmlValidatingReader (reader);
-				if (!settings.XsdValidate)
-					xvr.ValidationType = ValidationType.DTD;
-				 // otherwise .Auto by default.
-			} else if (settings.XsdValidate) {
-				xvr = new XmlValidatingReader (reader);
-				xvr.ValidationType = ValidationType.Schema;
+				xvr.ValidationType = ValidationType.DTD;
+				 break;
+			case ValidationType.Schema:
+//				xvr = new XmlValidatingReader (reader);
+//				xvr.ValidationType = ValidationType.Schema;
+				return new Mono.Xml.Schema.XmlSchemaValidatingReader (reader, settings);
+			case ValidationType.XDR:
+				throw new NotSupportedException ();
 			}
 			if (xvr != null)
 				xvr.SetSchemas (settings.Schemas);
 
 			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreIdentityConstraints) != 0)
 				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreInlineSchema) == 0)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreInlineSchema) != 0)
 				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreSchemaLocation) == 0)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreSchemaLocation) != 0)
 				throw new NotImplementedException ();
 			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreValidationWarnings) == 0)
 				throw new NotImplementedException ();

@@ -44,7 +44,6 @@ namespace System.Xml
 		private bool checkCharacters;
 		private bool closeInput;
 		private ConformanceLevel conformance;
-		private bool dtdValidate;
 		private bool ignoreComments;
 		private bool ignoreProcessingInstructions;
 		private bool ignoreWhitespace;
@@ -53,8 +52,8 @@ namespace System.Xml
 		private bool prohibitDtd;
 		private XmlNameTable nameTable;
 		private XmlSchemaSet schemas;
-		private bool xsdValidate;
 		private XsValidationFlags validationFlags;
+		private ValidationType validationType;
 
 		public XmlReaderSettings ()
 		{
@@ -66,7 +65,6 @@ namespace System.Xml
 			checkCharacters = org.checkCharacters;
 			closeInput = org.closeInput;
 			conformance = org.conformance;
-			dtdValidate = org.dtdValidate;
 			ignoreComments = org.ignoreComments;
 			ignoreProcessingInstructions = 
 				org.ignoreProcessingInstructions;
@@ -76,7 +74,7 @@ namespace System.Xml
 			prohibitDtd = org.prohibitDtd;
 			schemas = org.schemas;
 			validationFlags = org.validationFlags;
-			xsdValidate = org.xsdValidate;
+			validationType = org.validationType;
 			nameTable = org.NameTable;
 		}
 
@@ -92,7 +90,6 @@ namespace System.Xml
 			checkCharacters = true;
 			closeInput = false; // ? not documented
 			conformance = ConformanceLevel.Document;
-			dtdValidate = false;
 			ignoreComments = false;
 			ignoreProcessingInstructions = false;
 			ignoreWhitespace = false;
@@ -104,7 +101,7 @@ namespace System.Xml
 				XsValidationFlags.IgnoreValidationWarnings
 				| XsValidationFlags.IgnoreSchemaLocation
 				| XsValidationFlags.IgnoreInlineSchema;
-			xsdValidate = false;
+			validationType = ValidationType.None;
 		}
 
 		public bool CheckCharacters {
@@ -120,11 +117,6 @@ namespace System.Xml
 		public ConformanceLevel ConformanceLevel {
 			get { return conformance; }
 			set { conformance = value; }
-		}
-
-		public bool DtdValidate {
-			get { return dtdValidate; }
-			set { dtdValidate = value; }
 		}
 
 		public bool IgnoreComments {
@@ -178,9 +170,9 @@ namespace System.Xml
 			set { validationFlags = value; }
 		}
 
-		public bool XsdValidate {
-			get { return xsdValidate; }
-			set { xsdValidate = value; }
+		public ValidationType ValidationType {
+			get { return validationType; }
+			set { validationType = value; }
 		}
 	}
 }

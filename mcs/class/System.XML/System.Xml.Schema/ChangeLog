@@ -1,5 +1,9 @@
 2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : implemented basic validation feature.
+
+2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaUtil.cs : added FindAttributeDeclaration() and
 	  AttributeWildcardItemValid().
 

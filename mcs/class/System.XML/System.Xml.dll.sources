@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
+Mono.Xml.Schema/XmlSchemaValidatingReader.cs
 Mono.Xml.Schema/XsdIdentityPath.cs
 Mono.Xml.Schema/XsdIdentityState.cs
 Mono.Xml.Schema/XsdKeyTable.cs
