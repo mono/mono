@@ -51,6 +51,7 @@ SOURCES =				\
         codegen/HandlerBlock.cs         \
         codegen/FaultBlock.cs           \
         codegen/CatchBlock.cs           \
+        codegen/CustomAttr.cs           \
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
