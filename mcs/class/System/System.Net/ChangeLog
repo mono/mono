@@ -1,5 +1,10 @@
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DigestClient.cs: merged in code from Sebastien Pouliot and Greg
+	Reinacker that Supports cnonce and preauthentication.
+
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DigestClient.cs: initial Digest authentication. Works with apache
 	mod_digest.
 
