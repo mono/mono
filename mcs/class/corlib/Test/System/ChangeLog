@@ -1,3 +1,7 @@
+2002/06/14  Nick Drochak <ndrochak@gol.com>
+
+	* Int64Test.cs: Make currency symbol test more culturally sensitive.
+
 2002-06-14  Nick Drochak  <ndrochak@gol.com>
 
 	* DateTimeTest.cs: Make some of the tests a bit more timezone neutral.

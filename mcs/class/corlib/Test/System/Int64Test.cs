@@ -30,7 +30,7 @@ public class Int64Test : TestCase
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
 	private string[] Results1 = {"", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
 	                                  "-9223372036854775808", "-9,223,372,036,854,775,808.00", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
-	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
+	private string[] Results2 = {"", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
 	                                  "9.2234e+18", "9,223,372,036,854,775,807.00000", "922,337,203,685,477,580,700.00000 %", "7fffffffffffffff"};
 	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"9,223,372,036,854,775,808.00)", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
 	                                  "-9223372036854775808", "-9,223,372,036,854,775,808.00", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
@@ -86,7 +86,7 @@ public class Int64Test : TestCase
 		string csym = NumberFormatInfo.CurrentInfo.CurrencySymbol;
 		string csuffix = (cdd > 0 ? "." : "").PadRight(cdd + (cdd > 0 ? 1 : 0), '0');
 		Results1[0] = "(" + csym + "9,223,372,036,854,775,808" + csuffix + ")";
-
+		Results2[0] = csym + "9,223,372,036,854,775,807.00000";
 		NfiUser = new NumberFormatInfo();
 		NfiUser.CurrencyDecimalDigits = 3;
 		NfiUser.CurrencyDecimalSeparator = ":";
