@@ -1,3 +1,10 @@
+2002-07-30  Sergey Chaban <serge@wildwestsoftware.com>
+
+	* x86.brg (LOCALLOC): under Windows, if allocation size is bigger
+	than one page, it's necessary to allocate memory incrementally,
+	in page-size steps, performing stack-touch every time.
+	Also added LOCALLOC(CONST_I4) implementation.
+
 2002-07-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_get_runtime_method): code cleanup
