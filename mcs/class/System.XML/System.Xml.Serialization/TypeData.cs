@@ -49,7 +49,6 @@ namespace System.Xml.Serialization
 		public TypeData (Type type, string elementName, bool isPrimitive)
 		{
 			this.type = type;
-			this.elementName = elementName;
 			this.typeName = type.Name;
 			this.fullTypeName = type.FullName.Replace ('+', '.');
 
@@ -68,6 +67,11 @@ namespace System.Xml.Serialization
 				else
 					sType = SchemaTypes.Class;
 			}
+			
+			if (IsListType)
+				this.elementName = TypeTranslator.GetArrayName (ListItemTypeData.XmlType);
+			else
+				this.elementName = elementName;
 		}
 
 		internal TypeData (string typeName, string fullTypeName, string xmlType, SchemaTypes schemaType, TypeData listItemTypeData)

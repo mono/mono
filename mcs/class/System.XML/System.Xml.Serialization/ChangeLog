@@ -1,3 +1,9 @@
+2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TypeData.cs: In the constructor, set the correct xml type name if the
+	  type is an array (for example, instead of StringCollection, use
+	  ArrayOfString).
+
 2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ReflectionHelper.cs: Correctly detect private types.
