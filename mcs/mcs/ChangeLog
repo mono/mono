@@ -1,3 +1,16 @@
+2001-10-09  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (New::DoResolve): Revert changes for array creation, doesn't
+	seem very right.
+
+	(ElementAccess): Remove useless bits for now - keep checks as the spec
+	says.
+
+2001-10-08  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ElementAccess::DoResolve): Remove my crap code
+	and start performing checks according to the spec.
+
 2001-10-07  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (type_suffix*): Remove - they are redundant. Use

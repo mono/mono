@@ -624,7 +624,7 @@ namespace CIR {
 		//  Determines if a standard implicit conversion exists from
 		//  expr_type to target_type
 		// </summary>
-		static bool StandardConversionExists (Type expr_type, Type target_type)
+		public static bool StandardConversionExists (Type expr_type, Type target_type)
 		{
 			if (expr_type == target_type)
 				return true;
@@ -3219,7 +3219,7 @@ namespace CIR {
 		};
 
 		public readonly AType Type;
-		Expression expr;
+		public Expression expr;
 
 		public Argument (Expression expr, AType type)
 		{
@@ -3973,47 +3973,7 @@ namespace CIR {
 
 			if (NewType == NType.Array) {
 
-				Expression ml;
-
-				string lookup_type = FormLookupType (RequestedType, Arguments.Count, Rank);
-									    
-				type   = tc.LookupType (lookup_type, false);
-				
-				if (type == null)
-					return null;
-
-				ml = MemberLookup (tc, type, ".ctor", false,
-						   MemberTypes.Constructor, AllBindingsFlags);
-				
-				if (! (ml is MethodGroupExpr)){
-				        //
-				        // FIXME: Find proper error
-				        //
-					report118 (tc, Location, ml, "method group");
-					return null;
-				}
-
-				if (Arguments != null){
-					for (int i = Arguments.Count; i > 0;){
-						--i;
-						Argument a = (Argument) Arguments [i];
-						
-						if (!a.Resolve (tc))
-							return null;
-					}
-				}
-
-				method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments,
-								     Location);
-				
-				if (method == null) {
-					Error (tc, -6, Location,
-					       "New invocation: Can not find a constructor for this argument list");
-					return null;
-				}
-
-				eclass = ExprClass.Value;
-				return this;
+				throw new Exception ("Finish array creation");
 				
 			}
 
@@ -4466,7 +4426,6 @@ namespace CIR {
 		public Expression Expr;
 
 		Location   location;
-		MethodBase method;
 		
 		public ElementAccess (Expression e, ArrayList e_list, Location loc)
 		{
@@ -4483,7 +4442,7 @@ namespace CIR {
 		{
 			Expr = Expr.Resolve (tc);
 
-			Console.WriteLine (Expr.ToString ());
+			//Console.WriteLine (Expr.ToString ());
 
 			if (Expr == null) 
 				return null;
@@ -4492,7 +4451,7 @@ namespace CIR {
 				return null;
 
 			if (Expr.ExprClass != ExprClass.Variable) {
-				Report.Error (-30, location, "Variable expected !");
+				report118 (tc, location, Expr, "variable");
 				return null;
 			}
 
@@ -4503,31 +4462,21 @@ namespace CIR {
 					
 					if (!a.Resolve (tc))
 						return null;
+					
+					Type a_type = a.expr.Type;
+					if (!(StandardConversionExists (a_type, TypeManager.int32_type) ||
+					      StandardConversionExists (a_type, TypeManager.uint32_type) ||
+					      StandardConversionExists (a_type, TypeManager.int64_type) ||
+					      StandardConversionExists (a_type, TypeManager.uint64_type)))
+						return null;
+					
 				}
 			}			
+
+			// FIXME : Implement the actual storage here.
 			
-			type = Expr.Type;
+			throw new Exception ("Finish element access");
 			
-			Expression ml = MemberLookup (tc, type, "Set", false,
-						      MemberTypes.Method, AllBindingsFlags);
-			
-			if (! (ml is MethodGroupExpr)){
-				//
-				// FIXME: Find proper error
-				//
-				report118 (tc, location, ml, "method group");
-				return null;
-			}
-			
-			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments, location);
-			
-			if (method == null) {
-				Report.Error (-31, location, "Internal error : Couldn't find the Set method !");
-				return null;
-			}
-			
-			eclass = ExprClass.Variable;
-			return this;
 		}
 
 		public void Store (EmitContext ec)
@@ -4542,11 +4491,7 @@ namespace CIR {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Expr.Emit (ec);
-
-			Invocation.EmitArguments (ec, method, Arguments);
-
-			ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
+			throw new Exception ("Implement me !");
 		}
 		
 	}
