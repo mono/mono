@@ -1,5 +1,11 @@
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ja.xml : added extra datetime patterns.
+	* renamed ca.xml to added ca_ES.xml.
+	* ca_ES.xml, ko_KR.xml, pt_BR.xml : fixed percent patterns.
+
+2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* en.xml : added "all datetime" pattern strings.
 	* ca.xml, da.xml, el.xml, fi.xml, fr_FR.xml, he.xml, hu.xml,
 	  nl_NL.xml : fixed percent patterns.

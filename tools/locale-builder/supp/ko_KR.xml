@@ -8,6 +8,13 @@
 				</currencyFormat>
 			</currencyFormatLength >
 		</currencyFormats>
+		<percentFormats>
+			<percentFormatLength >
+				<percentFormat >
+					<pattern>#,##0 %</pattern>
+				</percentFormat>
+			</percentFormatLength >
+		</percentFormats>
 	</numbers>
 	<dates>
 		<calendars>
