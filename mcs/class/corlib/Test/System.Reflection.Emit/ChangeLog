@@ -1,3 +1,8 @@
+2004-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilderTest.cs (TestCustomAttributes): Remove 
+	KeyFileAttribute from the test, since it must point to a valid keyfile.
+
 2004-01-09  Nick Drochak <ndrochak@ieee.org>
 
 	* TypeBuilderTest.cs (TestEnums): Fix build with csc.

@@ -397,8 +397,6 @@ public class AssemblyBuilderTest : Assertion
 
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyVersionAttribute).GetConstructor (new Type [] { typeof (string) }), new object [] { "1.2.3.4"}));
 
-		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyKeyFileAttribute).GetConstructor (new Type [] { typeof (string) }), new object [] { "foo"}));
-
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyCultureAttribute).GetConstructor (new Type [] { typeof (string) }), new object [] { "bar"}));
 
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyAlgorithmIdAttribute).GetConstructor (new Type [] { typeof (AssemblyHashAlgorithm) }), new object [] { AssemblyHashAlgorithm.MD5 }));
