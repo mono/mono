@@ -57,6 +57,9 @@ namespace System.Web.Compilation
 				MakeHash ();
 			}
 
+			if (value != null)
+				value = HttpUtility.HtmlDecode (value.ToString ());
+
 			if (got_hashed) {
 				if (atts_hash.ContainsKey (key))
 					throw new HttpException ("Tag contains duplicated '" + key +

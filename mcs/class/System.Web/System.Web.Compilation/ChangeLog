@@ -1,3 +1,8 @@
+2004-01-16  Jackson Harper <jackson@ximian.com>
+
+	* TagAttribute.cs: attributes can be stored as encoded html so we
+	decode them here.
+	
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
 	* TemplateControlCompiler.cs: Is a user control is cached and
