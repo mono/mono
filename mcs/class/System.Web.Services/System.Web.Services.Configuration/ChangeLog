@@ -1,0 +1,6 @@
+2002-07-21 Tim Coleman  <tim@timcoleman.com>
+	* ChangeLog:
+	* XmlFormatExtensionAttribute.cs:
+	* XmlFormatExtensionPointAttribute.cs:
+	* XmlFormatExtensionPrefixAttribute.cs:
+		New files added
