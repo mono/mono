@@ -57,7 +57,7 @@ install: all
 	$(INSTALL) -m 755 mbas.exe $(prefix)/bin/
 
 test: mbas.exe
-	$(RUNTIME) mbas.exe  --stacktrace --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	$(RUNTIME) mbas.exe  --verbosegetoptions --stacktrace  /r:Mono.GetOptions.dll /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
 	$(RUNTIME) testmbas/WriteOK.exe
 
 verbose: mbas.exe
