@@ -183,6 +183,24 @@ namespace System {
 			return GetString (buffer, offset + strOffsets * 2 + off2);
 		}
 
+		public byte [] GetStringBytes (TermInfoStrings tstr)
+		{
+			int x = (int) tstr;
+			if (x < 0 || tstr >= TermInfoStrings.Last || x > strOffsets)
+				return null;
+
+			int offset = booleansOffset + boolSize;
+			if ((offset % 2) == 1)
+				offset++;
+
+			offset += numSize * 2;
+			int off2 = GetInt16 (buffer, offset + (int) tstr * 2);
+			if (off2 == -1)
+				return null;
+
+			return GetStringBytes (buffer, offset + strOffsets * 2 + off2);
+		}
+
 		short GetInt16 (byte [] buffer, int offset)
 		{
 			int uno = (int) buffer [offset];
@@ -201,6 +219,18 @@ namespace System {
 				length++;
 
 			return Encoding.ASCII.GetString (buffer, offset, length);
+		}
+
+		byte [] GetStringBytes (byte [] buffer, int offset)
+		{
+			int length = 0;
+			int off = offset;
+			while (buffer [off++] != 0)
+				length++;
+
+			byte [] result = new byte [length];
+			Buffer.BlockCopyInternal (buffer, offset, result, 0, length);
+			return result;
 		}
 
 		internal static string Escape (string s)

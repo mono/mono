@@ -1,3 +1,11 @@
+2005-02-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TermInfoDriver.cs: set the xmit mode if available. Handle key input
+	and translate them into a ConsoleKeyInfo.
+	* TermInfoReader.cs: added a method to return the bytes of a string
+	property.
+	* ConsoleKeyInfo.cs: added copy constructor and setters.
+
 2005-02-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Array.cs: Add missing 2.0 attributes and correct some parameter names.

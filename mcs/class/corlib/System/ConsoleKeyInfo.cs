@@ -38,6 +38,29 @@ namespace System {
 		{
 			this.key = key;
 			this.keychar = keyChar;
+			modifiers = 0;
+			SetModifiers (shift, alt, control);
+		}
+
+		internal ConsoleKeyInfo (ConsoleKeyInfo other)
+		{
+			this.key = other.key;
+			this.keychar = other.keychar;
+			this.modifiers = other.modifiers;
+		}
+
+		internal void SetKey (ConsoleKey key)
+		{
+			this.key = key;
+		}
+
+		internal void SetKeyChar (char keyChar)
+		{
+			this.keychar = keyChar;
+		}
+
+		internal void SetModifiers (bool shift, bool alt, bool control)
+		{
 			this.modifiers = (shift) ? ConsoleModifiers.Shift : 0;
 			this.modifiers |= (alt) ? ConsoleModifiers.Alt : 0;
 			this.modifiers |= (control) ? ConsoleModifiers.Control : 0;
