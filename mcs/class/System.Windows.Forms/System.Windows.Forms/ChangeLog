@@ -1,3 +1,9 @@
+2004-05-14  Peter Bartok <pbartok@novell.com>
+   * Control.cs: Fixed get_Text property (fixes bug #55005)
+
+2004-05-04  Peter Bartok <pbartok@novell.com>
+   * TreeView.cs: Added OnBeforeExpand, OnAfterExpand and OnAfterSelect handlers
+
 2004-04-26  Peter Bartok <pbartok@novell.com>
    * Application.cs: Fixed DoEvents. PeekMessage does not dispatch and remove
      WM_PAINT messages, added code to specifically handle WM_PAINT.

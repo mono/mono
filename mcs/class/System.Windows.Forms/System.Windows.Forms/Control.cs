@@ -614,7 +614,7 @@ namespace System.Windows.Forms
 			if (m.LParam.ToInt32 () != 0) {
 				if (m.LParam != Handle) {
 					// Control notification
-					System.Console.WriteLine ("Control notification Code {0} Id = Hwnd {1}", m.HiWordWParam, m.LParam.ToInt32 ());
+					//System.Console.WriteLine ("Control notification Code {0} Id = Hwnd {1}", m.HiWordWParam, m.LParam.ToInt32 ());
 					Control.ReflectMessage (m.LParam, ref m);
 				}
 				else {
@@ -1098,12 +1098,10 @@ namespace System.Windows.Forms
 		//Compact Framework
     		public virtual string Text {
     			get {
-    				if (GetStyle(ControlStyles.CacheText) && IsHandleCreated){
-					int len = Win32.GetWindowTextLengthA (Handle);
-					// FIXME: len is doubled due to some strange behaviour. (of GetWindowText function ?)
-					// instead of 10 characters we can get only 9, even if sb.Capacity is 10.
-					StringBuilder sb = new StringBuilder (len * 2 /*Win32.GetWindowTextLengthA (Handle)*/);
-    					Win32.GetWindowText (Handle, sb, sb.Capacity);
+    				if (!GetStyle(ControlStyles.CacheText) && IsHandleCreated){
+					int len = Win32.GetWindowTextLengthA(Handle);
+					StringBuilder sb = new StringBuilder(len+1);
+    					Win32.GetWindowTextA(Handle, sb, sb.Capacity);
     					text = sb.ToString ();
     				} 
 				return text;
