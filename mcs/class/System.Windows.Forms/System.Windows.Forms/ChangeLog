@@ -1,3 +1,13 @@
+2003-04-30  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : some fixes, added call to OnControlAdded, update visibility flag in Show and Hide
+	* GroupBox.cs
+	* Label.cs
+	* ButtoBase.cs : use base.CreateParams
+	* PictureBox.cs : call base.OnResize
+	* RadioButton.cs : implemented
+	* TabControl.cs
+	* TabPage.cs : some fixes
+
 2003-04-29  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : call OnResize from OnSizeChanged
 	* TabControl.cs : small fixes

@@ -129,7 +129,7 @@ namespace System.Windows.Forms {
 		protected override void OnResize(EventArgs e) 
 		{
 			//FIXME:
-			OnResize(e);
+			base.OnResize(e);
 		}
 		[MonoTODO]
 		protected virtual void OnSizeModeChanged(EventArgs e)

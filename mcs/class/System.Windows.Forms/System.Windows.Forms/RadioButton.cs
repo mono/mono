@@ -4,173 +4,172 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
-//
+//   implemented by Aleksey Ryabchuk (ryabchuk@yahoo.com)
 // (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
 	// <summary>
+	// Represents a Windows radio button
 	// </summary>
 
     public class RadioButton : ButtonBase {
 
-		//
-		//  --- Constructor
-		//
-		[MonoTODO]
+		Appearance appearance;
+		bool       autoCheck;
+		ContentAlignment checkAlign;
+		bool       checked_;
+
 		public RadioButton()
 		{
-			
+			appearance = Appearance.Normal;
+			autoCheck  = true;
+			checkAlign = ContentAlignment.MiddleLeft;
+			checked_   = false;
 		}
 
-		//
-		//  --- Public Properties
-		//
-		[MonoTODO]
 		public Appearance Appearance {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return appearance; }
 			set {
-				throw new NotImplementedException ();
+				if ( !Enum.IsDefined ( typeof(Appearance), value ) )
+					throw new InvalidEnumArgumentException( "Appearance",
+						(int)value,
+						typeof(Appearance));
+
+				if ( appearance != value ) {
+					int oldStyle = AppearanceStyle;
+					appearance = value;
+					
+					if ( IsHandleCreated )
+						Win32.UpdateWindowStyle ( Handle, oldStyle, AppearanceStyle );
+
+					if ( AppearanceChanged != null )
+						AppearanceChanged ( this, EventArgs.Empty );
+				}
 			}
 		}
-		[MonoTODO]
+
 		public bool AutoCheck {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return autoCheck; }
 			set {
-				throw new NotImplementedException ();
+				if ( autoCheck != value ) {
+					int oldStyle = AutoCheckStyle;
+					autoCheck = value;
+
+					if ( IsHandleCreated )
+						Win32.UpdateWindowStyle ( Handle, oldStyle, AutoCheckStyle );
+				}
 			}
 		}
+
 		[MonoTODO]
 		public ContentAlignment CheckAlign {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return checkAlign; }
 			set {
-				throw new NotImplementedException ();
+				if ( !Enum.IsDefined ( typeof(ContentAlignment), value ) )
+					throw new InvalidEnumArgumentException( "CheckAlign",
+						(int)value,
+						typeof(Appearance));
+
+				if ( checkAlign != value ) {
+					checkAlign = value;
+				}
 			}
 		}
-		[MonoTODO]
+
 		public bool Checked {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return checked_; }
 			set {
-				throw new NotImplementedException ();
+				if ( checked_ != value ) {
+					checked_ = value;
+
+					updateCheck ( );
+					OnCheckedChanged ( EventArgs.Empty );
+				}
 			}
 		}
+
 		[MonoTODO]
 		public override ContentAlignment TextAlign {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get {	return base.TextAlign;	}
+			set {	base.TextAlign = value;	}
 		}
 
-		//
-		//  --- Public Methods
-		//
-
-
-		[MonoTODO]
 		public void PerformClick()
 		{
-			throw new NotImplementedException ();
+			Checked = !Checked;
+			OnClick ( EventArgs.Empty );
 		}
 
-		[MonoTODO]// we need to implment this
-			//Compact Framework
 		public override string ToString()
 		{
-			return base.ToString();
+			return GetType().FullName.ToString () + ", Checked: " + Checked.ToString ( );
 		}
 
-		//
-		//  --- Public Events
-		//
-		[MonoTODO]
-		public event EventHandler AppearanceChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public event EventHandler CheckedChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler AppearanceChanged;
+		public event EventHandler CheckedChanged;
 
-		//
-		//  --- Protected Properties
-		//
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				CreateParams createParams = base.CreateParams;
  
-				createParams.Caption = Text;
-				createParams.ClassName = "RADIOBUTTON";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//		createParams.Parent = Parent.Handle;
+				createParams.ClassName = "BUTTON";
+
 				createParams.Style = (int) (
 					(int)WindowStyles.WS_CHILD | 
-					(int)WindowStyles.WS_VISIBLE | (int)SS_Static_Control_Types.SS_LEFT );
-				window.CreateHandle (createParams);
+					(int)WindowStyles.WS_VISIBLE );
+
+				createParams.Style |= AutoCheckStyle | AppearanceStyle;
+				createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle( TextAlign );
+
 				return createParams;
 			}
 		}
-		[MonoTODO]
+
 		protected override ImeMode DefaultImeMode {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		protected override Size DefaultSize {
-			get {
-				return new Size(104,24);
-			}
+			get {	return ImeMode.Disable;	}
 		}
 
-		//
-		//  --- Protected Methods
-		//
+		protected override Size DefaultSize {
+			get {	return new Size(104,24); }
+		}
+
 		[MonoTODO]
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
 		protected virtual void OnCheckedChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if ( CheckedChanged != null )
+				CheckedChanged ( this, e );
 		}
+
 		[MonoTODO]
 		protected override void OnClick(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			int res = Win32.SendMessage ( Handle, (int)ButtonMessages.BM_GETCHECK, 0, 0);
+
+			bool check = Checked;
+
+			if ( res == (int) NativeButtonState.BST_CHECKED ) 
+				check = true;
+			else if ( res == (int) NativeButtonState.BST_UNCHECKED ) 
+				check = false;
+
+			if ( checked_ != check ) {
+				checked_ = check;
+				OnCheckedChanged ( EventArgs.Empty );
+			}
+
+			base.OnClick ( e );
 		}
+
 		[MonoTODO]
 		protected override void OnEnter(EventArgs e)
 		{
@@ -179,8 +178,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnHandleCreated ( e );
+			updateCheck ( );
 		}
+
 		[MonoTODO]
 		protected override void OnMouseUp(MouseEventArgs mevent)
 		{
@@ -192,5 +193,21 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
+		private int AutoCheckStyle
+		{
+			get { return (int) ( AutoCheck ?  ButtonStyles.BS_AUTORADIOBUTTON : ButtonStyles.BS_RADIOBUTTON ); }
+		}
+
+		private int AppearanceStyle
+		{
+			get { return (int) ( Appearance == Appearance.Normal ? 0 : ButtonStyles.BS_PUSHLIKE ); }
+		}
+
+		private void updateCheck ( ) {
+			if ( IsHandleCreated ) 
+				Win32.SendMessage ( Handle, (int) ButtonMessages.BM_SETCHECK, 
+							Checked ? (int) NativeButtonState.BST_CHECKED :
+								  ( int ) NativeButtonState.BST_UNCHECKED, 0 );
+		}
 	 }
 }

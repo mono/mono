@@ -53,6 +53,7 @@ namespace System.Windows.Forms {
 		private Size  itemSize;
 		private TabSizeMode sizeMode;
 		private bool showTooltips;
+		private ImageList imageList;
 
 		public TabControl() {
 			selectedIndex = -1;
@@ -80,12 +81,11 @@ namespace System.Windows.Forms {
 				if ( tabAlignment != value ) {
 					if ( value == TabAlignment.Right ||
 						 value == TabAlignment.Left )
-							Multiline = true;
+							multiline = true;
 				
 					tabAlignment = value;
 
-					if ( IsHandleCreated )
-						RecreateHandle( );
+					recreate ( );
 				}
 			}
 		}
@@ -101,8 +101,7 @@ namespace System.Windows.Forms {
 				if ( appearance != value ) {
 					appearance = value;
 					
-					if ( IsHandleCreated )
-						RecreateHandle( );
+					recreate ( );
 				}
 			}
 		}
@@ -146,8 +145,7 @@ namespace System.Windows.Forms {
 				if ( tabDrawMode != value ) {
 					tabDrawMode = value;
 
-					if ( IsHandleCreated )
-						RecreateHandle ( );
+					recreate ( );
 				}
 			}
 		}
@@ -164,19 +162,16 @@ namespace System.Windows.Forms {
 				if ( hotTrack != value ) {
 					hotTrack = value;
 
-					if ( IsHandleCreated )
-						RecreateHandle ( );
+					recreate ( );
 				}
 			}
 		}
 
 		[MonoTODO]
 		public ImageList ImageList  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return imageList; }
 			set {
-				throw new NotImplementedException ();
+				imageList = value;
 			}
 		}
 
@@ -204,10 +199,9 @@ namespace System.Windows.Forms {
 
 					if ( multiline == false && ( Alignment == TabAlignment.Left ||
 						Alignment == TabAlignment.Right ) )
-							Alignment = TabAlignment.Top;
+							tabAlignment = TabAlignment.Top;
 
-					if ( IsHandleCreated )
-						RecreateHandle( );
+					recreate ( );
 				}
 			}
 		}
@@ -274,8 +268,7 @@ namespace System.Windows.Forms {
 				if ( showTooltips != value ) {
 					showTooltips = value;
 
-					if ( IsHandleCreated )
-						RecreateHandle ( );
+					recreate ( );
 				}
 			}
 		}
@@ -291,8 +284,7 @@ namespace System.Windows.Forms {
 				if ( sizeMode != value ) {
 					sizeMode = value;
 
-					if ( IsHandleCreated )
-						RecreateHandle ( );
+					recreate ( );
 				}
 			}
 		}
@@ -429,7 +421,6 @@ namespace System.Windows.Forms {
 			setPages ( );
 			setPadding ( );
 			setItemSize ( );
-			selectPage ( SelectedIndex );
 		}
 
 		[MonoTODO]
@@ -481,7 +472,7 @@ namespace System.Windows.Forms {
 				switch ( nmhdr.code ) {
 				case (int)TabControlNotifications.TCN_SELCHANGE:
 					selectedIndex =	Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_GETCURSEL, 0, 0);
-					updatePageBounds ( selectedIndex );
+					updatePage ( selectedIndex );
 					OnSelectedIndexChanged ( EventArgs.Empty );
 				break;
 				case (int)TabControlNotifications.TCN_SELCHANGING:
@@ -503,14 +494,14 @@ namespace System.Windows.Forms {
 		private void update ( ) {
 		}
 
-		private void updatePageBounds ( int index ) {
+		private void updatePage ( int index ) {
 			if ( Controls.Count != 0 && index >=0 && index < Controls.Count ) {
 				Control c = Controls[ index ];
 
-				c.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
-
 				if ( c.Created == false )
 					c.CreateControl ( );
+
+				c.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
 
 				showOrHidePages( index );
 			}
@@ -527,6 +518,13 @@ namespace System.Windows.Forms {
 			header.pszText = page.Text;
 				
 			sendMessageHelper ( TabControlMessages.TCM_INSERTITEM, index, ref header );
+
+			if ( index == SelectedIndex )
+				selectPage ( index );
+			else {
+				page.Visible = false;
+				page.SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
+			}
 		}
 
 		internal void pageTextChanged ( TabPage page ) {
@@ -566,7 +564,7 @@ namespace System.Windows.Forms {
 				if ( Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETCURSEL, selectedIndex, 0 ) != -1 )
 					OnSelectedIndexChanged ( EventArgs.Empty );
 			}
-			updatePageBounds ( selectedIndex != -1 ? selectedIndex : 0 );
+			updatePage ( selectedIndex != -1 ? selectedIndex : 0 );
 		}
 
 		private void removeAllTabs ( ) {
@@ -582,6 +580,18 @@ namespace System.Windows.Forms {
 		private void showOrHidePages ( int index ) {
 			for (int i = 0; i < Controls.Count; i++ )
 				Controls[i].Visible = ( i == index ) ? true : false;
+		}
+
+		private void recreate ( ) {
+			if ( IsHandleCreated ) {
+				RecreateHandle ( );
+
+				for  ( int i = 0; i < Controls.Count; i++ ) {
+					Controls[ i ].SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
+				}
+				
+				selectPage ( SelectedIndex );
+			}
 		}
 
 		public class TabPageCollection : IList, ICollection, IEnumerable {

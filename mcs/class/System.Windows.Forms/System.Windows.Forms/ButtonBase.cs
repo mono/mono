@@ -30,7 +30,6 @@ namespace System.Windows.Forms {
 		ContentAlignment textAlign;
 		ImeMode imeMode;
 		bool isDefault;
-		CreateParams createParams;
 		Label label;
 
 //		
@@ -48,7 +47,7 @@ namespace System.Windows.Forms {
 
 		// --- Properties ---
 		protected override CreateParams CreateParams {
-			get { return createParams; }
+			get { return base.CreateParams; }
 		}
 		
 		protected override ImeMode DefaultImeMode {

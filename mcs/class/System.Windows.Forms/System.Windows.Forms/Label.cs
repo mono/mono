@@ -195,29 +195,18 @@
     
     		protected override CreateParams CreateParams {
     			get {
-					if( Parent != null) {
-						CreateParams createParams = new CreateParams ();
+				CreateParams createParams = base.CreateParams;
 
-						createParams.Caption = Text;
-						createParams.ClassName = "Static";
-						createParams.X = Left;
-						createParams.Y = Top;
-						createParams.Width = Width;
-						createParams.Height = Height;
-						createParams.ClassStyle = 0;
-						createParams.ExStyle = 0;
-						createParams.Param = 0;
-						createParams.Parent = Parent.Handle;
-						createParams.Style = (int) (
-							(int)WindowStyles.WS_CHILD | 
-							(int)WindowStyles.WS_VISIBLE | 
-							(int)SS_Static_Control_Types.SS_LEFT |
-							(int)WindowStyles.WS_CLIPCHILDREN |
-							(int)WindowStyles.WS_CLIPSIBLINGS );
+				createParams.ClassName = "Static";
 
-						return createParams;
-					}
-					return null;
+				createParams.Style = (int) (
+					(int)WindowStyles.WS_CHILD | 
+					(int)WindowStyles.WS_VISIBLE | 
+					(int)SS_Static_Control_Types.SS_LEFT |
+					(int)WindowStyles.WS_CLIPCHILDREN |
+					(int)WindowStyles.WS_CLIPSIBLINGS );
+
+				return createParams;
     			}
     		}
     

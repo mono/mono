@@ -59,9 +59,9 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public override string Text  {
-			get {	return base.Text; }
+			get {	return text; }
 			set {
-				base.Text = value;
+				text = value;
 				if ( Parent != null && Parent is TabControl ) {
 					( ( TabControl ) Parent ).pageTextChanged ( this );
 				}
@@ -88,8 +88,12 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			Rectangle rect = Parent.DisplayRectangle;			
-			base.SetBoundsCore(rect.Left, rect.Top, rect.Width, rect.Height, BoundsSpecified.All);
+			if ( Parent != null ) {
+				Rectangle rect = Parent.DisplayRectangle;			
+				base.SetBoundsCore(rect.Left, rect.Top, rect.Width, rect.Height, BoundsSpecified.All);
+			}
+			else
+				base.SetBoundsCore( x, y, width, height, specified );
 		}
 	}
 }

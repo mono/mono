@@ -84,7 +84,7 @@
     		Region region;
     		RightToLeft rightToLeft;
     		bool tabStop;
-    		string text;
+    		protected string text;
     		bool visible;
     		protected ControlStyles controlStyles_;
 
@@ -1125,9 +1125,11 @@
     		
     		public void CreateControl () 
     		{
-    			CreateHandle ();
-			OnCreateControl();
-			statuses [ CREATED ] = true;
+			if ( !Created )	{
+    				CreateHandle ();
+				OnCreateControl();
+				statuses [ CREATED ] = true;
+			}
 		}
     
     		[MonoTODO]
@@ -1278,6 +1280,7 @@
  			//Compact Framework
     		public void Hide ()
      		{
+			visible = false;
     			if (IsHandleCreated)
     				Win32.ShowWindow (Handle, ShowWindowStyles.SW_HIDE);
     		}
@@ -1450,7 +1453,12 @@
     		}
     		
     		protected virtual void OnControlAdded (ControlEventArgs e)
-    		{
+    		{	
+			if ( Created ) {
+				e.Control.CreateControl ( );
+				e.Control.Visible = parent.Visible;
+			}
+
     			if (ControlAdded != null)
     				ControlAdded (this, e);
     		}
@@ -2295,6 +2303,7 @@
  			//Compact Framework
     		public void Show () 
     		{
+			visible = true;
 			if (IsHandleCreated)
 	    			Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
     		}
@@ -3063,11 +3072,12 @@
     		
     			public virtual void Add (Control value) 
     			{
-					if( !Contains(value)) {
-						collection.Add (value);
-						value.Parent = owner;
-					}
+				if( !Contains(value)) {
+					collection.Add (value);
+					value.Parent = owner;
+					owner.OnControlAdded ( new ControlEventArgs ( value ) );
 				}
+			}
     			
     			public virtual void AddRange (Control[] controls) 
     			{

@@ -94,29 +94,19 @@ namespace System.Windows.Forms {
 						classRegistered = true; 
 				}		
 
-				if( Parent != null) {
-					CreateParams createParams = new CreateParams ();
-	 
-					createParams.Caption = Text;
-					createParams.ClassName = "mono_static_control";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
-					createParams.ExStyle = 0;
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
-					createParams.Style = (int) (
-						(int)WindowStyles.WS_CHILDWINDOW |
-						(int)SS_Static_Control_Types.SS_LEFT |
-						(int)WindowStyles.WS_CLIPCHILDREN |
-						(int)WindowStyles.WS_CLIPSIBLINGS |
-						(int)WindowStyles.WS_OVERLAPPED);
+				CreateParams createParams = base.CreateParams;
+	
+				createParams.ClassName = "mono_static_control";
 
-					return createParams;
-				}
-				return null;
+				createParams.Style = (int) (
+					(int)WindowStyles.WS_CHILDWINDOW |
+					(int)SS_Static_Control_Types.SS_LEFT |
+					(int)WindowStyles.WS_CLIPCHILDREN |
+					(int)WindowStyles.WS_CLIPSIBLINGS |
+					(int)WindowStyles.WS_OVERLAPPED |
+					(int)WindowStyles.WS_VISIBLE );
+
+				return createParams;
 			}
 		}
 
