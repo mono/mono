@@ -1,5 +1,9 @@
 2002-10-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* StreamWriter.cs: Ditto for Null stream.
+
+	* BinaryReader.cs: Use Unmarked here too.
+
 	* BinaryWriter.cs: Use the UTF8Unmarker encoding by default, this
 	is what .NET does.
 

@@ -32,7 +32,7 @@ namespace System.IO {
 
 		private bool DisposedAlready = false;
 
-		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8, 0);
+		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 0);
 
 		public StreamWriter (Stream stream)
 			: this (stream, new UTF8Encoding (false, true), DefaultBufferSize) {}

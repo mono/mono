@@ -18,7 +18,7 @@ namespace System.IO {
 
 		byte[] m_buffer;
 
-		public BinaryReader(Stream input) : this(input, Encoding.UTF8) {
+		public BinaryReader(Stream input) : this(input, Encoding.UTF8Unmarked) {
 		}
 
 		public BinaryReader(Stream input, Encoding encoding) {
