@@ -402,6 +402,12 @@ namespace Mono.Data.SybaseClient {
 						break;
 				}
 
+				row ["BaseColumnName"] = DBNull.Value;
+				row ["BaseTableName"] = DBNull.Value;
+				row ["ColumnName"] = DBNull.Value;
+				row ["NumericPrecision"] = DBNull.Value;
+				row ["NumericScale"] = DBNull.Value;
+
 				row ["ColumnOrdinal"] = schema.ColumnOrdinal;
 				row ["ColumnSize"] = schema.ColumnSize;
 				row ["AllowDBNull"] = schema.AllowDBNull;
@@ -409,30 +415,19 @@ namespace Mono.Data.SybaseClient {
 				row ["IsIdentity"] = schema.IsIdentity;
 				row ["IsKey"] = schema.IsKey;
 
-				// FIXME: Base Column Name and Column Name are not necessarily the same
-				if (schema.ColumnName == null)
-					row ["BaseColumnName"] = DBNull.Value;
-				else
-					row ["BaseColumnName"] = schema.ColumnName;
+				if (schema.BaseColumnName != null)
+					row ["BaseColumnName"] = schema.BaseColumnName;
 
-				if (schema.ColumnName == null)
-					row ["ColumnName"] = DBNull.Value;
-				else
+				if (schema.ColumnName != null)
 					row ["ColumnName"] = schema.ColumnName;
 
-				if (schema.TableName == null)
-					row ["BaseTableName"] = DBNull.Value;
-				else
-					row ["BaseTableName"] = schema.TableName;
+				if (schema.BaseTableName != null)
+					row ["BaseTableName"] = schema.BaseTableName;
 
-				if (schema.NumericScale == 0)
-					row ["NumericPrecision"] = DBNull.Value;
-				else
+				if (schema.NumericScale != 0)
 					row ["NumericPrecision"] = schema.NumericPrecision;
 
-				if (schema.NumericScale == 0)
-					row ["NumericScale"] = DBNull.Value;
-				else
+				if (schema.NumericScale != 0)
 					row ["NumericScale"] = schema.NumericScale;
 
 				schemaTable.Rows.Add (row);

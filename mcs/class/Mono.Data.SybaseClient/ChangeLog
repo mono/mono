@@ -1,3 +1,9 @@
+2002-11-03  Tim Coleman (tim@timcoleman.com)
+	* list:
+		Add Mono.Data.TdsClient.Internal.TdsColumnStatus
+	* Mono.Data.SybaseClient/SybaseDataReader.cs:
+		Add more schema information
+
 2002-11-01  Tim Coleman (tim@timcoleman.com)
 	* Mono.Data.SybaseClient/Locale.cs:
 	* Mono.Data.SybaseClient/SybaseCommand.cs:
