@@ -586,15 +586,17 @@ namespace Mono.MonoBASIC {
 			int mods = 0;
 
 			c = new Constructor ("New", Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (
-						     null, Parameters.EmptyReadOnlyParameters,
-						     Location.Null),
+					     null,
 					     Location.Null);
 			
-			if (is_static)
+			if (is_static) {
 				mods = Modifiers.STATIC;
-
-			c.ModFlags |= mods;
+				c.ModFlags = mods;
+			}
+			else 
+				c.Initializer = new ConstructorBaseInitializer (
+					null, Parameters.EmptyReadOnlyParameters,
+					Location.Null);
 
 			AddConstructor (c);
 			

@@ -1,3 +1,6 @@
+2004-04-15 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Couple of bug fixes in defining default static constructor, partially imposed by the fix earlier
+
 2004-04-14 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Added support for Shadows modifier in Variables
 
