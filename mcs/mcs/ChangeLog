@@ -1,5 +1,11 @@
 2003-07-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (MemberAccess.ResolveMemberAccess): Events are
+	defined recursively;  but since we modify the input parameters
+	(left is set to `this' temporarily), we reset this value if the
+	left_is_explicit is false, which gives the original semantics to
+	the code. 
+
 	* literal.cs (NullPointer): new class used to represent a null
 	literal in a pointer context.
 

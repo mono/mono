@@ -6224,7 +6224,6 @@ namespace Mono.CSharp {
 			}
 
 			if (member_lookup is EventExpr) {
-
 				EventExpr ee = (EventExpr) member_lookup;
 				
 				//
@@ -6251,6 +6250,9 @@ namespace Mono.CSharp {
 						Report.Error (-200, loc, "Internal error!!");
 						return null;
 					}
+
+					if (!left_is_explicit)
+						left = null;
 					
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
