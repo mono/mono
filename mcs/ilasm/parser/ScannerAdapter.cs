@@ -55,10 +55,6 @@ namespace Mono.ILASM {
 		{
 			return tokens.LastToken.Value;
 		}
-
-	        public void cleanup ()
-		{
-		}
 	}
 }
 

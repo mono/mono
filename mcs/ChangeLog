@@ -1,3 +1,8 @@
+2003-01-14  Duncan Mak  <duncan@ximian.com>
+
+       * ilasm/parser/ScannerAdapter.cs: Remove the cleanup method now that
+       it's no longer in the interface.
+
 2003-01-13  Duncan Mak  <duncan@ximian.com>
 
 	* ilasm/parser/ScannerAdapter.cs: Implement the new cleanup method
