@@ -1,5 +1,10 @@
 2005-02-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c: Fix build.
+
+	* mini-x86.c tramp-x86.c: Moved get_vtable_slot_addr into mini-x86.c and rename
+	it to mono_arch_.... Add get_delegate_method_ptr implementation for x86.
+
 	* mini-amd64.h mini.h mini-amd64.c tramp-amd64.c (mono_amd64_get_vcall_slot_addr):
 	Rename this to mono_arch....
 	(mono_amd64_get_delegate_method_ptr_addr): Ditto.
