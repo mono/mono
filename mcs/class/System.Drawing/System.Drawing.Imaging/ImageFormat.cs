@@ -25,9 +25,12 @@ namespace System.Drawing.Imaging {
 		}
 		
 		// methods
-		[MonoTODO]
 		public override bool Equals(object o) {
-			return base.Equals(o);
+			
+			if (o is ImageFormat)
+				if ( ((ImageFormat)o).Guid.Equals(this.Guid))
+					return true;
+			return false;
 		}
 
 		[MonoTODO]

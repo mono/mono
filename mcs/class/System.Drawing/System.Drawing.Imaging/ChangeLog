@@ -1,5 +1,9 @@
 2004-04-27 Sanjay Gupta <gsanjay@novell.com>
 
+	* ImageFormat.cs: Implemented Equals() method.
+
+2004-04-27 Sanjay Gupta <gsanjay@novell.com>
+
 	* ImageFormat.cs: Implemented ToString() method.
 
 2004-04-06  Vladimir Vukicevic  <vladimir@pobox.com>
