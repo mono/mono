@@ -29,7 +29,8 @@ namespace System.IO
 		public static void Demand(FileIOPermissionAccess flags, string path)
 		{
 			FileIOPermission ioPerm = new FileIOPermission(flags, path);
-			ioPerm.Demand();
+			// FIXME: FileIOPermission is not yet implemented
+			//ioPerm.Demand();
 		}		
 		
 		public static void Access(FileAccess access, string path)
