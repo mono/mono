@@ -1,3 +1,15 @@
+2003-12-16  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (LocalInfo.Assigned): Removed this property.
+	(LocalInfo.Flags): Removed `Assigned'.
+	(LocalInfo.IsAssigned): New public method; takes the EmitContext
+	and uses flow analysis.
+	(Block.UsageWarning): Made this method private.
+	(Block.Resolve): Call UsageWarning() if appropriate.
+
+	* expression.cs (LocalVariableReference.DoResolve): Always set
+	LocalInfo.Used here.
+
 2003-12-13  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Statement.DoEmit, Statement.Emit): Don't return

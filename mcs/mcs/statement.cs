@@ -983,9 +983,8 @@ namespace Mono.CSharp {
 
 		enum Flags : byte {
 			Used = 1,
-			Assigned = 2,
-			ReadOnly = 4,
-			Fixed = 8
+			ReadOnly = 2,
+			Fixed = 4
 		}
 
 		Flags flags;
@@ -1014,6 +1013,14 @@ namespace Mono.CSharp {
 				return true;
 
 			return VariableInfo.TypeInfo.IsFullyInitialized (ec.CurrentBranching, VariableInfo, loc);
+		}
+
+		public bool IsAssigned (EmitContext ec)
+		{
+			if (VariableInfo == null)
+				throw new Exception ();
+
+			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo);
 		}
 
 		public bool Resolve (DeclSpace decl)
@@ -1057,15 +1064,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Assigned {
-			get {
-				return (flags & Flags.Assigned) != 0;
-			}
-			set {
-				flags = value ? (flags | Flags.Assigned) : (flags & ~Flags.Assigned);
-			}
-		}
-		
 		public bool ReadOnly {
 			get {
 				return (flags & Flags.ReadOnly) != 0;
@@ -1676,7 +1674,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void UsageWarning ()
+		void UsageWarning (EmitContext ec)
 		{
 			string name;
 			
@@ -1684,12 +1682,15 @@ namespace Mono.CSharp {
 				foreach (DictionaryEntry de in variables){
 					LocalInfo vi = (LocalInfo) de.Value;
 					
+					Report.Debug (4, "USAGE VARNING", this, (string) de.Key,
+						      vi, vi.Used, vi.IsAssigned (ec));
+						
 					if (vi.Used)
 						continue;
 					
 					name = (string) de.Key;
-						
-					if (vi.Assigned){
+
+					if (vi.IsAssigned (ec)){
 						Report.Warning (
 							219, vi.Location, "The variable `" + name +
 							"' is assigned but its value is never used");
@@ -1704,13 +1705,15 @@ namespace Mono.CSharp {
 
 			if (children != null)
 				foreach (Block b in children)
-					b.UsageWarning ();
+					b.UsageWarning (ec);
 		}
 
 		public override bool Resolve (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
 			bool ok = true;
+
+			int errors = Report.Errors;
 
 			ec.CurrentBlock = this;
 			ec.StartFlowBranching (this);
@@ -1770,6 +1773,11 @@ namespace Mono.CSharp {
 			    (reachability.Throws == FlowBranching.FlowReturns.Always) ||
 			    (reachability.Reachable == FlowBranching.FlowReturns.Never))
 				flags |= Flags.HasRet;
+
+			if (ok && (errors == Report.Errors)) {
+				if (RootContext.WarningLevel >= 3)
+					UsageWarning (ec);
+			}
 
 			return ok;
 		}

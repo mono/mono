@@ -466,11 +466,6 @@ namespace Mono.CSharp {
 					    (reachability.Throws == FlowBranching.FlowReturns.Always) ||
 					    (reachability.Reachable == FlowBranching.FlowReturns.Never))
 						has_ret = true;
-
-					if (Report.Errors == errors){
-						if (RootContext.WarningLevel >= 3)
-							block.UsageWarning ();
-					}
 				}
 			    } catch {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");

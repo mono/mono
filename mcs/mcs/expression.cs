@@ -3584,6 +3584,8 @@ namespace Mono.CSharp {
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
+			local_info.Used = true;
+
 			if (local_info.LocalBuilder == null)
 				return ec.RemapLocal (local_info);
 			
@@ -3629,8 +3631,6 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
-
-			local_info.Assigned = true;
 
 			source.Emit (ec);
 			ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
