@@ -84,26 +84,6 @@ statementCollection.cs: X-Collection.cs
 parameterCollection.cs: X-Collection.cs
 	sed -e "s/@CONTAINEE@/Parameter/g" -e "s/@arrayname@/parameters/g" < X-Collection.cs > parameterCollection.cs
 
-DIST_FILES=$(COMPILER_SOURCES) cs-parser.jay makefile ChangeLog 
-
-dist:
-	rm -rf /tmp/mcs-$(VERSION)
-	mkdir /tmp/mcs-$(VERSION)
-	mkdir /tmp/mcs-$(VERSION)/errors
-	mkdir /tmp/mcs-$(VERSION)/tests
-	mkdir /tmp/mcs-$(VERSION)/docs
-	cp -a $(DIST_FILES) /tmp/mcs-$(VERSION)
-	cp errors/*.cs errors/*.txt /tmp/mcs-$(VERSION)/errors
-	cp tests/*.cs /tmp/mcs-$(VERSION)/tests
-	cp docs/*.txt /tmp/mcs-$(VERSION)/docs
-	(cd /tmp; tar czvf mcs-$(VERSION).tar.gz mcs-$(VERSION))
-
-try:
-	-mkdir try-dir
-	for i in $(COMPILER_SOURCES); do \
-		./compiler -t tree $$i > try-dir/$$i; \
-	done
-
 clean:
 	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mb-parser.cs mcs.log
 
