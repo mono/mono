@@ -1,5 +1,12 @@
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
+	* metadata.c (mono_metadata_signature_alloc): Default
+	`sentinelpos' to -1.
+
+	* reflection.c (mono_image_get_array_token): Likewise.
+
+2004-06-08  Martin Baulig  <martin@ximian.com>
+
 	* icall.c (ves_icall_ModuleBuilder_getMethodToken): New icall.
 
 	* metadata.c (mono_metadata_parse_method_signature): When parsing
