@@ -1,7 +1,6 @@
 2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* DataSet.cs : now xs:schema contains xmlns="".
-	  This fixes bug #68008.
+	* DataSetTest.cs : now xs:schema contains xmlns="".
 
 2004-09-24 Umadevi S <sumadevi@novell.com>
 	* DataRowTest.cs : Added a test for EnforceConstraints with relations defined.
