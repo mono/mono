@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.16  2004/08/10 17:39:22  pbartok
+// - Added GetWindowPos method
+//
 // Revision 1.15  2004/08/09 22:09:47  pbartok
 // - Added handling for middle and right mousebutton
 // - Added handling for mouse wheel
@@ -327,11 +330,6 @@ namespace System.Windows.Forms {
 			;
 		}
 
-		internal override void SetWindowPos(IntPtr handle, Rectangle rc) {
-			SetWindowPos(handle, rc.X, rc.Y, rc.Width, rc.Height);
-			return;
-		}
-
 		internal override bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height) {
 			XMoveResizeWindow(DisplayHandle, hWnd, x, y, width, height);
 			return true;
@@ -339,6 +337,17 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
+			return;
+		}
+
+		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height) {
+			XWindowAttributes	attributes = new XWindowAttributes();
+
+			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+			x = attributes.x;
+			y = attributes.y;
+			width = attributes.width;
+			height = attributes.height;
 			return;
 		}
 

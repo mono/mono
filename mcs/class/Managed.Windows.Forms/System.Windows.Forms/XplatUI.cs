@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.7  2004/08/10 17:39:22  pbartok
+// - Added GetWindowPos method
+//
 // Revision 1.6  2004/08/09 20:55:59  pbartok
 // - Removed Run method, was only required for initial development
 //
@@ -194,16 +197,16 @@ namespace System.Windows.Forms {
 			driver.PaintEventEnd(handle);
 		}
 
-		internal static void SetWindowPos(IntPtr handle, Rectangle rc) {
-			driver.SetWindowPos(handle, rc);
-		}
-
 		internal static void MoveWindow(IntPtr hWnd, int x, int y, int width, int height) {
 			driver.MoveWindow(hWnd, x, y, width, height);
 		}
 
 		internal static void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			driver.SetWindowPos(handle, x, y, width, height);
+		}
+
+		internal static void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height) {
+			driver.GetWindowPos(handle, out x, out y, out width, out height);
 		}
 
 		internal static void Invalidate(IntPtr handle, Rectangle rc, bool clear) {

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.7  2004/08/10 17:39:22  pbartok
+// - Added GetWindowPos method
+//
 // Revision 1.6  2004/08/10 14:34:15  jackson
 // Use default colors from the theme
 //
@@ -120,8 +123,8 @@ namespace System.Windows.Forms {
 		internal abstract PaintEventArgs PaintEventStart(IntPtr handle);
 		internal abstract void PaintEventEnd(IntPtr handle);
 
-		internal abstract void SetWindowPos(IntPtr handle, Rectangle rc);
 		internal abstract void SetWindowPos(IntPtr handle, int x, int y, int width, int height);
+		internal abstract void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height);
 		internal abstract void Activate(IntPtr handle);
 		internal abstract void Invalidate(IntPtr handle, Rectangle rc, bool clear);
 		internal abstract IntPtr DefWndProc(ref Message msg);
