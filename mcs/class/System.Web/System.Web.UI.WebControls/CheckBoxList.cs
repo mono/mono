@@ -191,10 +191,14 @@ namespace System.Web.UI.WebControls
 
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
+			if (!Enabled)
+				return false;
+
 			int index = Int32.Parse(postDataKey.Substring(UniqueID.Length + 1));
 			if(index >= 0 && index < Items.Count)
 			{
-				bool exists = (postCollection[postDataKey]!=null);
+				string v = postCollection [postDataKey];
+				bool exists = (v != null && v.Trim () != "");
 				if(Items[index].Selected != exists)
 				{
 					Items[index].Selected = exists;
