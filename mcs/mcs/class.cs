@@ -1988,18 +1988,37 @@ namespace Mono.CSharp {
 			return;
 		}
 
-		protected virtual void VerifyMembers (EmitContext ec)
+		void CheckMemberUsage (MemberCoreArrayList al, string member_type)
+		{
+			if (al == null)
+				return;
+
+			foreach (MemberCore mc in al) {
+				if ((mc.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
+					continue;
+
+				if (!mc.IsUsed) {
+					Report.Warning (169, mc.Location, "The private {0} '{1}' is never used", member_type, mc.GetSignatureForError ());
+				}
+			}
+		}
+
+		public virtual void VerifyMembers ()
 		{
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (RootContext.WarningLevel >= 4) {
+			if (RootContext.WarningLevel >= 3) {
+				CheckMemberUsage (properties, "property");
+				CheckMemberUsage (methods, "method");
+				CheckMemberUsage (constants, "constant");
+
 				if (fields != null){
-					foreach (Field f in fields) {
+					foreach (FieldMember f in fields) {
 						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
 							continue;
 						
-						if ((f.status & Field.Status.USED) == 0){
+						if (!f.IsUsed){
 							Report.Warning (169, f.Location, "The private field '{0}' is never used", f.GetSignatureForError ());
 							continue;
 						}
@@ -2100,8 +2119,6 @@ namespace Mono.CSharp {
 			if ((Pending != null) && !(this is ClassPart))
 				if (Pending.VerifyPendingMethods ())
 					return;
-
-			VerifyMembers (ec);
 
 			if (iterators != null)
 				foreach (Iterator iterator in iterators)
@@ -2632,9 +2649,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void VerifyMembers (EmitContext ec)
+		public override void VerifyMembers ()
 		{
-			base.VerifyMembers (ec);
+			base.VerifyMembers ();
 
 			if ((events != null) && (RootContext.WarningLevel >= 3)) {
 				foreach (Event e in events){
@@ -3353,6 +3370,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override bool IsUsed
+		{
+			get {
+				if (IsExplicitImpl)
+					return true;
+
+				return base.IsUsed;
+			}
+		}
+
 		//
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
@@ -3726,6 +3753,9 @@ namespace Mono.CSharp {
 			    (RootContext.MainClass == null ||
 			     RootContext.MainClass == Parent.TypeBuilder.FullName)){
                                 if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
+                                        IMethodData md = TypeManager.GetMethod (MethodBuilder);
+                                        md.SetMemberIsUsed ();
+
                                         if (RootContext.EntryPoint == null) {
                                                 RootContext.EntryPoint = MethodBuilder;
                                                 RootContext.EntryPointLocation = Location;
@@ -4486,6 +4516,7 @@ namespace Mono.CSharp {
 		string GetSignatureForError (TypeContainer tc);
 		bool IsExcluded (EmitContext ec);
 		bool IsClsCompliaceRequired (DeclSpace ds);
+		void SetMemberIsUsed ();
 	}
 
 	//
@@ -5111,7 +5142,6 @@ namespace Mono.CSharp {
 		[Flags]
 		public enum Status : byte {
 			ASSIGNED = 1,
-			USED = 2,
 			HAS_OFFSET = 4		// Used by FieldMember.
 		}
 
@@ -5824,6 +5854,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override bool IsUsed
+		{
+			get {
+				if (IsDummy)
+					return false;
+
+				return base.IsUsed;
+			}
+		}
+
 		public new Location Location { 
 			get {
 				return base.Location;
@@ -6291,6 +6331,16 @@ namespace Mono.CSharp {
 			return Get.IsDuplicateImplementation (mc) || Set.IsDuplicateImplementation (mc);
 		}
 
+		public override bool IsUsed
+		{
+			get {
+				if (IsExplicitImpl)
+					return true;
+
+				return Get.IsUsed | Set.IsUsed;
+			}
+		}
+
 		protected override void SetMemberName (MemberName new_name)
 		{
 			base.SetMemberName (new_name);
@@ -6567,8 +6617,10 @@ namespace Mono.CSharp {
 		
 		public void SetUsed ()
 		{
-			if (my_event != null)
-				my_event.status = (FieldBase.Status.ASSIGNED | FieldBase.Status.USED);
+			if (my_event != null) {
+				my_event.status = FieldBase.Status.ASSIGNED;
+				my_event.SetMemberIsUsed ();
+			}
 		}
 	}
 	

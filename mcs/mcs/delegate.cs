@@ -798,6 +798,7 @@ namespace Mono.CSharp {
 					Report.Error (1618, loc, "Cannot create delegate with '{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
 				}
 			} else {
+				md.SetMemberIsUsed ();
 				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type, ec) != null) {
 					Report.Error (1618, loc, "Cannot create delegate with '{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
 				}

@@ -227,7 +227,8 @@ namespace Mono.CSharp {
 			ClsCompliantAttributeTrue = 1 << 7,			// Type has CLSCompliant (true)
 			Excluded_Undetected = 1 << 8,		// Conditional attribute has not been detected yet
 			Excluded = 1 << 9,					// Method is conditional
-			TestMethodDuplication = 1 << 10		// Test for duplication must be performed
+			TestMethodDuplication = 1 << 10,		// Test for duplication must be performed
+			IsUsed = 1 << 11
 		}
 
 		/// <summary>
@@ -306,6 +307,17 @@ namespace Mono.CSharp {
 			get {
 				return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext;
 			}
+		}
+
+		public virtual bool IsUsed {
+			get {
+				return (caching_flags & Flags.IsUsed) != 0;
+			}
+		}
+
+		public void SetMemberIsUsed ()
+		{
+			caching_flags |= Flags.IsUsed;
 		}
 
 		// 

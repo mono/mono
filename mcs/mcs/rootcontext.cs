@@ -613,6 +613,9 @@ namespace Mono.CSharp {
 			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitType ();
+
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.VerifyMembers ();
 			}
 			
 			if (Tree.Types.Delegates != null) {
