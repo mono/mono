@@ -80,7 +80,7 @@ namespace Mono.ASPNET
 	class Updater
 	{
 		static string VersionUrl = "http://www.garykeith.com/browsers/version.asp";
-		static string BrowscapUrl = "http://www.garykeith.com/data/browscap.ini";
+		static string BrowscapUrl = "http://www.garykeith.com/browsers/stream.asp?BrowsCapINI";
 		static string UserAgent = "Mono Browser Capabilities Updater 0.1";
 
 		string filename;
