@@ -5,8 +5,6 @@
 //
 // (C) 2003 Lluis Sanchez Gual
 
-// FIXME: Implement the missing binary elements
-
 using System;
 using System.IO;
 using System.Collections;

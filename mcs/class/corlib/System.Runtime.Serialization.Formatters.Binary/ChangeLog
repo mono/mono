@@ -1,3 +1,7 @@
+2004-04-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ObjectReader.cs, ObjectWriter.cs: FIXME cleaning.
+
 2004-04-20  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CodeGenerator.cs, ObjectReader.cs, ObjectWriter.cs: Serialize decimals

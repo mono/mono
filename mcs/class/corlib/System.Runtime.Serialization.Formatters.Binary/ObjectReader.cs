@@ -6,8 +6,6 @@
 //
 // (C) 2003 Lluis Sanchez Gual
 
-// FIXME: Implement the missing binary elements
-
 using System;
 using System.Runtime.Serialization;
 using System.IO;
