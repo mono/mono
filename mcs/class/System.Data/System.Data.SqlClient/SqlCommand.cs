@@ -202,7 +202,6 @@ namespace System.Data.SqlClient {
 
 		internal void CloseDataReader (bool moreResults)
 		{
-			GetOutputParameters ();
 			Connection.DataReader = null;
 
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
@@ -345,11 +344,9 @@ namespace System.Data.SqlClient {
 			return xmlReader;
 		}
 
-		private void GetOutputParameters ()
+		internal void GetOutputParameters ()
 		{
-			Connection.Tds.SkipToEnd ();
-
-			IList list = Connection.Tds.ColumnValues;
+			IList list = Connection.Tds.OutputParameters;
 
 			if (list != null && list.Count > 0) {
 				int index = 0;

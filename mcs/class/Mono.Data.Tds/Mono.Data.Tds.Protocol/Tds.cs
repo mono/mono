@@ -184,8 +184,8 @@ namespace Mono.Data.Tds.Protocol {
 			comm.StartPacket (TdsPacketType.Logoff);
 			comm.Append ((byte) 0);
 			comm.SendPacket ();	
-
-			SkipToEnd ();
+			comm.Close ();
+			connected = false;
 		}
 
 		public void Execute (string sql)
@@ -237,14 +237,26 @@ namespace Mono.Data.Tds.Protocol {
 			TdsPacketSubType subType;
 
 			bool done = false;
+			bool outputParams = false;
 
 			while (!done) {
 				subType = ProcessSubPacket ();
+				if (outputParams) {
+					moreResults = false;
+					break;
+				}
+
 				switch (subType) {
 				case TdsPacketSubType.ColumnInfo:
 				case TdsPacketSubType.ColumnMetadata: 
 				case TdsPacketSubType.RowFormat: 
-					done = (Comm.Peek () != (byte) TdsPacketSubType.TableName);
+					byte peek = Comm.Peek ();
+					done = (peek != (byte) TdsPacketSubType.TableName);
+					if (done && doneProc && peek == (byte) TdsPacketSubType.Row) {
+						outputParams = true;
+						done = false;
+					}
+
 					break;
 				case TdsPacketSubType.TableName:
 					done = true;
@@ -763,6 +775,9 @@ namespace Mono.Data.Tds.Protocol {
 			foreach (TdsDataColumn column in columns) {
 				object o = GetColumnValue ((TdsColumnType) column["ColumnType"], false, i);
 				currentRow.Add (o);
+				if (doneProc)
+					outputParameters.Add (o);
+
 				if (o is TdsBigDecimal && currentRow.BigDecimalIndex < 0) 
 					currentRow.BigDecimalIndex = i;
 				i += 1;

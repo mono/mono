@@ -215,6 +215,11 @@ namespace Mono.Data.Tds.Protocol {
 				Append (BitConverter.GetBytes (l));
 		}
 
+		public void Close ()
+		{
+			stream.Close ();
+		}
+
 		private void ConnectCallback (IAsyncResult ar)
 		{
 			Socket s = (Socket) ar.AsyncState;

@@ -1,3 +1,20 @@
+2002-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Tds.cs:
+	(Disconnect): close the stream and set connected to false.
+	(NextResult): check if after DoneProc we have a ColumnMetadata + Row,
+	which holds the values for the output parameters and read them.
+	(LoadRow): add the values to outputParameters if DoneProc.
+	When executing a stored procedure, we execute the procedure and then
+	select the parameter values.
+
+	* Tds70.cs:
+	(BuildParameters): check Parameters.
+
+	* TdsComm.cs: added Close () to close the stream.
+
+	* TdsConnectionParameters.cs: initialize all the string to be empty.
+
 2002-11-04  Tim Coleman (tim@timcoleman.com)
 	* TdsBigDecimal.cs:
 		New class added to handle (potentially) large

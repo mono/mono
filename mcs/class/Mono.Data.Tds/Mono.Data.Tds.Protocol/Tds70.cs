@@ -45,6 +45,9 @@ namespace Mono.Data.Tds.Protocol {
 
 		private string BuildParameters ()
 		{
+			if (Parameters == null || parameters.Count == 0)
+				return String.Empty;
+
 			StringBuilder result = new StringBuilder ();
 			foreach (TdsMetaParameter p in Parameters) {
 				if (result.Length > 0)

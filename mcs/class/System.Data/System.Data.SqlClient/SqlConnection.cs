@@ -351,8 +351,13 @@ namespace System.Data.SqlClient {
 
 			if (!tds.IsConnected) 
 				tds.Connect (parms);
+			/* Not sure ebout removing these 2 lines.
+			 * The command that gets to the sql server is just
+			 * 'sp_reset_connection' and it fails.
+			 * Either remove them definitely or fix it
 			else if (connectionReset)
 				tds.ExecProc ("sp_reset_connection");
+			*/
 				
 			ChangeState (ConnectionState.Open);
 		}

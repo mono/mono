@@ -1,3 +1,16 @@
+2002-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Data.SqlClient/SqlCommand.cs:
+	(CloseReader): don't get the output parameters here.
+	(GetOutputParameters): don't skip the stream. The parameters will be
+	there.
+
+	* System.Data.SqlClient/SqlConnection.cs: don't try to execute
+	'sp_reset_connection'.
+
+	* System.Data.SqlClient/SqlDataReader.cs: get the output parameters
+	after the end of the results.
+
 2002-12-04  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Xml/XmlDataDocument.cs: Now this works in both ways,
