@@ -1,3 +1,9 @@
+2005-02-02  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (Delegate.DefineType): Report an internal error if
+	TypeManager.multicast_delegate_type is null.  See bug #72015 for
+	details.	
+
 2005-01-29  Miguel de Icaza  <miguel@novell.com>
 
 	* pending.cs: Produce better code (no nops produced by using Ldarg
