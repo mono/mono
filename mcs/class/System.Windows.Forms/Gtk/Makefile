@@ -75,6 +75,7 @@ LIB_SOURCES = \
 	DockStyle.cs \
 	ListControl.cs \
 	ListBox.cs \
+	DataGrid.cs	\
 	LayoutEventArgs.cs 
 
 all-local: $(LIBRARY) $(EXES)
@@ -93,4 +94,3 @@ $(LIBRARY): $(LIB_SOURCES)
 
 %.exe: %.cs $(LIBRARY)
 	$(CSCOMPILE) $(EXE_MCS_FLAGS) /target:exe /out:$@ $<
-
