@@ -1,5 +1,5 @@
 //
-// ainfo.cs
+// mono-api-info.cs - Dumps public assembly information to an xml file.
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -275,8 +275,6 @@ namespace Mono.AssemblyInfo
 				nclass.AppendChild (ifaces);
 				foreach (Type t in interfaces) {
 					XmlNode iface = document.CreateElement ("interface", null);
-					if (t == null)
-						Console.WriteLine (type);
 					AddAttribute (iface, "name", t.FullName);
 					ifaces.AppendChild (iface);
 				}

@@ -1,5 +1,6 @@
 //
-// acompare.cs
+// mono-api-diff.cs - Compares 2 xml files produced by mono-api-info and
+//		      produces a file suitable to build class status pages.
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
