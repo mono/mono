@@ -34,10 +34,10 @@ if [ "$COCOASHARP_MODE" -eq "1" ]; then
 	export DYLD_LIBRARY_PATH=$PWD/$APP_PATH/Contents/Resources:$DYLD_LIBRARY_PATH
 fi
 
-cd $APP_PATH/Contents/Resources
+cd "$APP_PATH/Contents/Resources"
 
 if [ "$X11_MODE" -eq "1" ]; then
-	open-x11 $APP_NAME
+	open-x11 "$APP_NAME"
 else
-	mono $APP_NAME
+	mono "$APP_NAME"
 fi
