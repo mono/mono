@@ -4,7 +4,7 @@
  * 
  * Author:  Gaurav Vaish
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Status:  Unknown %
+ * Status:  10%??
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -26,12 +26,12 @@ namespace System.Web.UI.WebControls
 		private string _clientID;
 		private Color  _backColor    = Color.Empty;
 		private Color  _borderColor  = Color.Empty;
-		private BorderStyle _bStyle;
+		//private BorderStyle _bStyle;
 		private Unit   _borderWidth  = Unit.Empty;
 		private Style  _controlStyle = null;			//TODO: What's initial value?
 		private string _cssClass     = string.Empty;
 		private bool   _enabled      = true;
-		private FontInfo _font;
+		private FontInfo _font = new FontInfo();
 
 		// TODO: Should this have other methods called? or
 		// the values should be left blank - to be used up by the end-user?
