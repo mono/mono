@@ -7,7 +7,9 @@
 //
 
 using System.Reflection;
+#if GENERICS
 using System.Collections.Generic;
+#endif
 using System.Runtime.CompilerServices;
 
 #if GENERICS
