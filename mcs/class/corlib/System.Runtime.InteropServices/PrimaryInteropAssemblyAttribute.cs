@@ -10,7 +10,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Assembly)]
+	[AttributeUsage (AttributeTargets.Assembly, Inherited=false)]
 	public sealed class PrimaryInteropAssemblyAttribute : Attribute
 	{
 		int major, minor;

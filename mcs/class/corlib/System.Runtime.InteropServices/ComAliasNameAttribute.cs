@@ -10,7 +10,8 @@ using System;
 
 namespace System.Runtime.InteropServices {
 	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Field |
-			 AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+			 AttributeTargets.Parameter | AttributeTargets.ReturnValue,
+			 Inherited=false)]
 	public sealed class ComAliasNameAttribute : Attribute
 	{
 		string val;

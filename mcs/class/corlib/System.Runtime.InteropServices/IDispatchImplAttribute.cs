@@ -10,7 +10,8 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Assembly, 
+			 AllowMultiple = false, Inherited = false)]
 	public sealed class IDispatchImplAttribute : Attribute
 	{
 		private IDispatchImplType Impl;

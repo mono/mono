@@ -11,7 +11,8 @@
 
 namespace System.Runtime.InteropServices
 {
-	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, 
+			Inherited = false)]
 	public sealed class TypeLibVersionAttribute : Attribute
 	{
 		private int major;
@@ -34,3 +35,4 @@ namespace System.Runtime.InteropServices
 }
 
 #endif
+

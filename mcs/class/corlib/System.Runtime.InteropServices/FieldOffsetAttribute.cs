@@ -2,7 +2,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Field)]
+	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 	public sealed class FieldOffsetAttribute : Attribute {
 		private int val;
 		

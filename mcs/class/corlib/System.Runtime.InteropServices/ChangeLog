@@ -1,3 +1,43 @@
+2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
+
+        * AutomationProxyAttribute.cs
+        * BestFitMappingAttribute.cs
+        * ClassInterfaceAttribute.cs
+        * CoClassAttribute.cs
+        * ComAliasNameAttribute.cs
+        * ComCompatibleVersionAttribute.cs
+	* ComConversionLossAttribute.cs
+	* ComEventInterfaceAttribute.cs
+	* ComImportAttribute.cs
+	* ComRegisterFunctionAttribute.cs
+	* ComSourceInterfaceAttribute.cs
+	* ComUnregisterFunctionAttribute.cs
+	* Comvisible.cs
+	* DispIdAttribute.cs
+	* DllImportAttribute.cs
+	* FieldOffsetAttribute.cs
+	* GuidAttribute.cs
+	* IDispatchImplAttribute.cs
+	* ImportedFromTypeLibAttribute.cs
+	* InAttribute.cs
+	* InterfaceTypeAttribute.cs
+	* LCIDConversionAttribute.cs
+	* MarshalAsAttribute.cs
+	* OptionalAttribute.cs
+	* OutAttribute.cs
+	* PreserveSigAttribute.cs
+	* PrimaryInteropAssemblyAttribute.cs
+	* ProgIdAttribute.cs
+	* StructLayoutAttribute.cs
+	* TypeLibFuncAttribute.Cs
+	* TypeLibTypeAttribute.cs
+	* TypeLibVarAttribute.cs
+	* TypeLibVersionAttribute.cs now that Inherited is 
+	false by default on AttributeUsageAttribute (as it 
+	should be) we need to explicitly set Inherited to 
+	false for those attributes should where it should be
+	false.
+
 2004-05-06  Mike Shaver  <shaver@off.net>
 	* Marshal.cs: Implement StringToCoTaskMem{Ansi,Uni}
 

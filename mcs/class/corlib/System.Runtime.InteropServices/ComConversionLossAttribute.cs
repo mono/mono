@@ -10,7 +10,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.All)]
+	[AttributeUsage (AttributeTargets.All, Inherited=false)]
 	public sealed class ComConversionLossAttribute : Attribute
 	{
 		public ComConversionLossAttribute ()

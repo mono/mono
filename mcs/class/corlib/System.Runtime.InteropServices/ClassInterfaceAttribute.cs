@@ -11,7 +11,8 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Assembly | 
+			AttributeTargets.Class, Inherited=false)]
 	public sealed class ClassInterfaceAttribute : Attribute {
 		private ClassInterfaceType ciType;
 		

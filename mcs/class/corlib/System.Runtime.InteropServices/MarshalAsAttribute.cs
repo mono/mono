@@ -9,7 +9,8 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter | 
+			 AttributeTargets.ReturnValue, Inherited=false)]
 	public sealed class MarshalAsAttribute : Attribute {
 		private UnmanagedType utype;
 		public UnmanagedType ArraySubType;

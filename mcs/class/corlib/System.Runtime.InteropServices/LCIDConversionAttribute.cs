@@ -10,7 +10,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
 	public sealed class LCIDConversionAttribute : Attribute
 	{
 		int id;

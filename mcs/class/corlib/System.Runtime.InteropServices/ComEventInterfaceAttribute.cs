@@ -10,7 +10,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Interface)]
+	[AttributeUsage (AttributeTargets.Interface, Inherited=false)]
 	public sealed class ComEventInterfaceAttribute : Attribute
 	{
 		Type si, ep;

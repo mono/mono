@@ -10,7 +10,9 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | 
+			 AttributeTargets.Struct | AttributeTargets.Interface,
+			 Inherited=false)]
 	[Serializable]
 	public sealed class BestFitMappingAttribute : Attribute {
 		bool bfm;

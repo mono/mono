@@ -10,7 +10,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
 	public sealed class TypeLibFuncAttribute : Attribute
 	{
 		TypeLibFuncFlags flags;

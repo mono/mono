@@ -9,7 +9,7 @@
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage(AttributeTargets.Interface)]
+	[AttributeUsage(AttributeTargets.Interface, Inherited=false)]
 	public sealed class InterfaceTypeAttribute : Attribute {
 		
 		private ComInterfaceType intType;

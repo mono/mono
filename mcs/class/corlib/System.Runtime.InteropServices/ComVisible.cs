@@ -15,7 +15,7 @@ namespace System.Runtime.InteropServices {
 		| AttributeTargets.Struct | AttributeTargets.Enum |
 		AttributeTargets.Method | AttributeTargets.Property |
 		AttributeTargets.Field | AttributeTargets.Interface |
-		AttributeTargets.Delegate)]
+		AttributeTargets.Delegate, Inherited=false)]
 	public sealed class ComVisibleAttribute : Attribute 
 	{
 		private bool Visible = false;
