@@ -1,5 +1,8 @@
+2004-10-12  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* every *.cs: moved to namespace-based subdirectories as is the norm in Mono
+	* Mono.GetOptions.dll.sources: adjusted to new sources locations
+	
 2004-09-15  John Luke  <john.luke@gmail.com>
-
 	* AssemblyInfo.cs: add CLSCompliant(true) attribute
 
 2004-08-11  Jambunathan K  <kjambunathan@novell.com>
