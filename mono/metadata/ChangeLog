@@ -1,3 +1,8 @@
+
+Mon Jan 10 12:06:18 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* process.c, verify.c: remove some bloat.
+
 2005-01-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): If we found the function without name mangling, change
