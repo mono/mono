@@ -1,4 +1,10 @@
 
+Thu Dec 20 15:46:31 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* FieldOffsetAttribute.cs, InAttribute.cs, MarshalAsAttribute.cs,
+	OptionalAttribute.cs, StructLayoutAttribute.cs, VarEnum.cs:
+	more stuff needed by the compiler.
+
 Thu Dec 13 20:22:18 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* DllImportAttribute.cs: added.
