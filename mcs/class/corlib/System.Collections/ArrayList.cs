@@ -892,11 +892,17 @@ namespace System.Collections {
 					("Collection is fixed size.");
 			}
 
-			if (index < 0 || index >= this.count || index + count > this.count) {
-				throw new ArgumentOutOfRangeException
-					("index/count out of range");
-			}
+                       if (index < 0)
+                               throw new ArgumentOutOfRangeException ("index", "Non-negative number required.");
 
+                       if (count < 0)
+                               throw new ArgumentOutOfRangeException ("count", "Non-negative number required.");
+
+                       if (index + count > this.count)
+                               throw new ArgumentException ("Offset and length were out of bounds for the array " +
+							    "or count is greater than the number of elements from index " +
+							    "to the end of the source collection.");
+ 
 			shiftElements (index, - count);
 			this.count -= count;
 			version++;
