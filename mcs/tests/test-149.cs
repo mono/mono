@@ -42,10 +42,10 @@ public class Y : X
 			return 2;
 
 		if (TestEvent (2) != 4)
-			return 2;
+			return 3;
 
 		if (a != 2)
-			return 3;
+			return 4;
 
 		return 0;
 	}
