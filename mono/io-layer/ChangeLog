@@ -1,5 +1,15 @@
 2001-11-21  Dick Porter  <dick@ximian.com>
 
+	* events.c:
+	* handles.c:
+	* mutexes.c:
+	* semaphores.c:
+	* threads.c:
+	* wait.c: Reliable method of returning which handle was signalled
+	on return from WaitForMultipleObjects().
+
+2001-11-21  Dick Porter  <dick@ximian.com>
+
 	* events.c: Implement events
 
 2001-11-15  Dick Porter  <dick@ximian.com>
