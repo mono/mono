@@ -26,6 +26,7 @@ namespace System.Net
 	{
 		Uri requestUri;
 		Uri actualUri;
+		bool hostChanged;
 		bool allowAutoRedirect = true;
 		bool allowBuffering = true;
 		X509CertificateCollection certificates;
@@ -427,12 +428,14 @@ namespace System.Net
 		
 		internal ServicePoint GetServicePoint ()
 		{
-			if (servicePoint != null)
+			if (!hostChanged && servicePoint != null)
 				return servicePoint;
 
 			lock (this) {
-				if (servicePoint == null)
+				if (hostChanged || servicePoint == null) {
 					servicePoint = ServicePointManager.FindServicePoint (actualUri, proxy);
+					hostChanged = false;
+				}
 			}
 
 			return servicePoint;
@@ -759,7 +762,9 @@ namespace System.Net
 			if (e != null)
 				throw e;
 
+			string host = actualUri.Host;
 			actualUri = new Uri (uriString);
+			hostChanged = (actualUri.Host != host);
 			return true;
 		}
 

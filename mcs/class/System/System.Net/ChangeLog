@@ -1,3 +1,7 @@
+2003-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: fixed redirects when they target another host.
+
 2003-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddress.cs: prevent exceptions when trying to parse the static IPv6
