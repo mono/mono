@@ -1,3 +1,12 @@
+2003-02-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs: When creating the various temporary "Parameters"
+	classes, make sure that we call the ComputeAndDefineParameterTypes
+	on those new parameters (just like we do with the formal ones), to
+	allow them to be resolved in the context of the DeclSpace.
+
+	This fixes the bug that Dick observed in Bugzilla #38530.
+
 2003-02-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ResolveMemberAccess): When resolving a constant,
