@@ -60,6 +60,42 @@ namespace System.Reflection
 			return true;
 		}
 
+		internal static int GetDerivedLevel (Type type) 
+		{
+			Type searchType = type;
+			int level = 1;
+
+			while (searchType.BaseType != null) 
+			{
+				level++;
+				searchType = searchType.BaseType;
+			}
+
+			return level;
+		}
+
+		internal static MethodBase FindMostDerivedMatch (MethodBase [] match) 
+		{
+			int highLevel = 0;
+			int matchId = -1;
+			int count = match.Length;
+
+			for (int current = 0; current < count; current++) 
+			{
+				int level = GetDerivedLevel (match[current].DeclaringType);
+				if (level == highLevel)
+					throw new AmbiguousMatchException ();
+
+				if (level > highLevel) 
+				{
+					highLevel = level;
+					matchId = current;
+				}
+			}
+
+			return match[matchId];
+		}
+
 		internal sealed class Default : Binder {
 			public override FieldInfo BindToField (BindingFlags bindingAttr, FieldInfo[] match, object value, CultureInfo culture) 
 			{
