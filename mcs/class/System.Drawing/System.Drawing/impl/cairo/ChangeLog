@@ -1,0 +1,19 @@
+2003-08-24  Duncan Mak  <duncan@ximian.com> 		
+
+	Initial checkin of System.Drawing.XrImpl ported to use Cairo.
+
+	* Graphics.cs (DrawCurve):
+	(DrawImageUnscaled): 
+	(IsVisible):Implement the overloads in terms of the other overloads.
+
+	(FillClosedCurve): Implement the simple APIs, the default tension
+	is 0.5, the default FillMode is FillMode.Alternate.
+
+	* cairo.cs: A copy of the CairoAPI class from the Mono.Cairo
+	assembly, with some method parameter/return type changed to better
+	fit the usage within System.Drawing.
+
+	* gdk-helpers.cs: Emulate some of Gdk.Pixbuf's API here,
+	basically the same as XrImpl's GDKfunctions.cs, but the names of
+	the functions are nicer, with the help of the DllImportAttribute's
+	EntryPoint field.
