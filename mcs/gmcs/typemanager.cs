@@ -1946,6 +1946,48 @@ public class TypeManager {
 		return false;
 	}
 
+	public static bool IsPrivateAccessible (Type type, Type parent)
+	{
+		if (type.Equals (parent))
+			return true;
+
+		if ((type is TypeBuilder) && type.IsGenericTypeDefinition && parent.IsGenericInstance) {
+			//
+			// `a' is a generic type definition's TypeBuilder and `b' is a
+			// generic instance of the same type.
+			//
+			// Example:
+			//
+			// class Stack<T>
+			// {
+			//     void Test (Stack<T> stack) { }
+			// }
+			//
+			// The first argument of `Test' will be the generic instance
+			// "Stack<!0>" - which is the same type than the "Stack" TypeBuilder.
+			//
+			//
+			// We hit this via Closure.Filter() for gen-82.cs.
+			//
+			if (type != parent.GetGenericTypeDefinition ())
+				return false;
+
+			return true;
+		}
+
+		if (type.IsGenericInstance && parent.IsGenericInstance) {
+			Type tdef = type.GetGenericTypeDefinition ();
+			Type pdef = parent.GetGenericTypeDefinition ();
+
+			if (type.GetGenericTypeDefinition () != parent.GetGenericTypeDefinition ())
+				return false;
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public static bool IsFamilyAccessible (Type type, Type parent)
 	{
 		TypeParameter tparam = LookupTypeParameter (type);
@@ -2834,7 +2876,7 @@ public class TypeManager {
 
 			if (ma == MethodAttributes.Private)
 				return private_ok ||
-					IsEqual (invocation_type, mb.DeclaringType) ||
+					IsPrivateAccessible (invocation_type, mb.DeclaringType) ||
 					IsNestedChildOf (invocation_type, mb.DeclaringType);
 
 			//
@@ -2885,7 +2927,7 @@ public class TypeManager {
 
 			if (fa == FieldAttributes.Private)
 				return private_ok ||
-					IsEqual (invocation_type, fi.DeclaringType) ||
+					IsPrivateAccessible (invocation_type, fi.DeclaringType) ||
 					IsNestedChildOf (invocation_type, fi.DeclaringType);
 
 			//
@@ -2946,7 +2988,7 @@ public class TypeManager {
 
 			if (((qualifier_type == null) || (qualifier_type == invocation_type)) &&
 			    (invocation_type != null) &&
-			    IsEqual (m.DeclaringType, invocation_type))
+			    IsPrivateAccessible (m.DeclaringType, invocation_type))
 				return true;
 
 			//

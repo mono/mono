@@ -1,3 +1,9 @@
+2004-11-10  Martin Baulig  <martin@localhost>
+
+	* typemanager.cs
+	(TypeManager.IsPrivateAccessible): New public method.
+	(Closure.Filter): Use IsPrivateAccessible() instead of IsEqual().
+
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineType): Call
