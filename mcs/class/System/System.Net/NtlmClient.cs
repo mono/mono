@@ -42,10 +42,7 @@ namespace System.Net
 
 		public Authorization PreAuthenticate (WebRequest webRequest, ICredentials credentials) 
 		{
-			if (authObject == null)
-				return null;
-
-			return authObject.PreAuthenticate (webRequest, credentials);
+			return null;
 		}
 	
 		public string AuthenticationType { 
@@ -53,7 +50,7 @@ namespace System.Net
 		}
 	
 		public bool CanPreAuthenticate { 
-			get { return true; }
+			get { return false; }
 		}
 	}
 }
