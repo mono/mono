@@ -3,196 +3,426 @@
 //
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // C) Christopher Podurgiel
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.XPath;
 
 namespace System.Configuration
 {
-	/// <summary>
-	///		Component class.
-	/// </summary>
-	/// <remarks>
-	///		Longer description
-	/// </remarks>
-
 	public sealed class ConfigurationSettings
 	{
-
-		private static string applicationConfigFileName;
-		
-		/// <summary>
-		///		ConfigurationSettings Constructor.
-		/// </summary>
+		static IConfigurationSystem config;
+			
 		private ConfigurationSettings ()
 		{
-			
 		}
 
-		/// <summary>
-		///		Returns configuration settings for a user-defined configuration section.
-		/// </summary>
-		/// <param name="sectionName">The name of the configuration section that configuration settings are read from.</param>
-		/// <returns></returns>
-		public static object GetConfig(string sectionName)
+		public static object GetConfig (string sectionName)
 		{
-			// NOTE: We can only use Assembly.GetCallingAssembly() if we're called
-			//       directly from user code.
-			return GetConfig (Assembly.GetCallingAssembly (), sectionName);
+			if (config == null)
+				config = DefaultConfig.GetInstance ();
+
+			return config.GetConfig (sectionName);
 		}
 
-		private static object GetConfig(Assembly assembly, string sectionName)
-		{
-			//Get the full path to the Applicaton Configuration File.
-			applicationConfigFileName =  assembly.Location + ".config";
-
-			//Create an instance of an XML Document.
-			XmlDocument ConfigurationDocument = new XmlDocument();
-
-			//Try to load the XML Document.
-			try
-			{ 
-				ConfigurationDocument.Load(applicationConfigFileName);
-			}
-			catch(XmlException e)
-			{
-				//Error loading the XML Document.  Throw a ConfigurationException.
-				throw(new ConfigurationException(e.Message, applicationConfigFileName, e.LineNumber));
-			}
-
-			string sectionHandlerName = GetSectionHandlerType(ConfigurationDocument, sectionName);
-
-			XmlNode sectionNode = ConfigurationDocument.SelectSingleNode("/configuration/" + sectionName);
-			
-			
-			
-			//If the specified sectionName is not found, then sectionNode will be null.  When calling objNVSHandler.Create(),
-			//sectionNode cannot be null.
-			 if(sectionNode == null)
-			{
-				return null;
-			}
-			
-
-			//Create a new SectionHandler
-
-			//According to the Docs provided by Microsoft, the user can create their own configuration sections, and create a custom
-			//handler class for it. The user would specify the class and its assebly in the <configSections> section.  These would be
-			//seperated by a comma.
-
-			string sectionHandlerClassName = sectionHandlerName;
-			string sectionHandlerAssemblyName = "System";
-
-			//Split the SectionHandler Class Name from the Assembly Name (if provided).
-			string[] sectionHandlerArray = sectionHandlerName.Split(new char[]{','}, 2);
-			if(sectionHandlerArray.Length == 2)
-			{
-				sectionHandlerClassName = sectionHandlerArray[0];
-				sectionHandlerAssemblyName = sectionHandlerArray[1];
-			}
-			
-			// Load the assembly to use.
-			Assembly assem = Assembly.Load(sectionHandlerAssemblyName);
-			//Get the class type.
-			Type handlerObjectType = assem.GetType(sectionHandlerClassName);
-			//Get a reference to the method "Create"
-			MethodInfo createMethod = handlerObjectType.GetMethod("Create");
-			//Create an Instance of this SectionHandler.
-			Object objSectionHandler = Activator.CreateInstance(handlerObjectType);
-
-			//define the arguments to be passed to the "Create" Method.
-			Object[] args = new Object[3];
-			args[0] = null;
-			args[1] = null;
-			args[2] = sectionNode;
-
-			object sectionHandlerCollection = createMethod.Invoke(objSectionHandler, args);
-
-			//Return the collection
-			return sectionHandlerCollection;
-
-		}
-
-
-		/// <summary>
-		///		Gets the name of the SectionHandler Class that will handle this section.
-		/// </summary>
-		/// <param name="xmlDoc">An xml Configuration Document.</param>
-		/// <param name="sectionName">The name of the configuration section that configuration settings are read from.</param>
-		/// <returns>The name of the Handler Object for this configuration section, including the name if its Assembly.</returns>
-		[MonoTODO]
-		private static string GetSectionHandlerType(XmlDocument xmlDoc, string sectionName)
-		{
-			//TODO: This method does not account for sectionGroups yet.
-			string handlerName = null;
-
-			//<appSettings> is a predefined configuration section. It does not have a definition
-			// in the <configSections> section, and will always be handled by the NameValueSectionHandler.
-			if(sectionName == "appSettings")
-			{
-				handlerName = "System.Configuration.NameValueSectionHandler";
-			}
-			else
-			{
-				
-				string[] sectionPathArray = sectionName.Split(new char[]{'/'});
-
-				//Build an XPath statement.
-				string xpathStatement = "/configuration/configSections";
-				for (int i=0; i < sectionPathArray.Length; i++)
-				{
-					if(i < sectionPathArray.Length - 1)
-					{
-						xpathStatement = xpathStatement + "/sectionGroup[@name='" + sectionPathArray[i] + "']";
-					}
-					else
-					{
-						xpathStatement = xpathStatement + "/section[@name='" + sectionPathArray[i] + "']";
-					}
-				}
-				
-				//Get all of the <section> node using the xpath statement.
-				XmlNode sectionNode = xmlDoc.SelectSingleNode(xpathStatement);
-
-				// if this section isn't found, then there was something wrong with the config document,
-				// or the sectionName didn't have a proper definition.
-				if(sectionNode == null)
-				{
-					
-					throw (new ConfigurationException("Unrecognized element."));
-				}
-
-				handlerName =  sectionNode.Attributes["type"].Value;
-
-			}
-
-			//Return the name of the handler.
-			return handlerName;
-		}
-
-
-
-		/// <summary>
-		///		Get the Application Configuration Settings.
-		/// </summary>
 		public static NameValueCollection AppSettings
 		{
-			get
-			{	
-				//Get the Configuration Settings for the "appSettings" section.
-				NameValueCollection appSettings = (NameValueCollection)GetConfig(
-					Assembly.GetCallingAssembly (), "appSettings");
+			get {
+				object appSettings = GetConfig ("appSettings");
+				if (appSettings == null)
+					appSettings = new NameValueCollection ();
 
-				return appSettings;
+				return (NameValueCollection) appSettings;
 			}
 		}
 
+	}
+
+	//
+	// class DefaultConfig: read configuration from machine.config file and application
+	// config file if available.
+	//
+	class DefaultConfig : IConfigurationSystem
+	{
+		static string creatingInstance = "137213797382-asad";
+		static string buildingData = "1797382-ladgasjkdg";
+		static DefaultConfig instance;
+		ConfigurationData config;
+
+		private DefaultConfig ()
+		{
+		}
+
+		public static DefaultConfig GetInstance ()
+		{
+			if (instance == null) {
+				lock (creatingInstance) {
+					if (instance == null) {
+						instance = new DefaultConfig ();
+						instance.Init ();
+					}
+					
+				}
+			}
+
+			return instance;
+		}
+
+		public object GetConfig (string sectionName)
+		{
+			return config.GetConfig (sectionName);
+		}
+
+		public void Init ()
+		{
+			if (config == null)
+				lock (buildingData) {
+					if (config != null)
+						return;
+
+					ConfigurationData data = new ConfigurationData ();
+					if (data.Load (GetMachineConfigPath ())) {
+						ConfigurationData appData = new ConfigurationData (data);
+						appData.Load (GetAppConfigPath ());
+						config = appData;
+					}
+				}
+		}
+
+		private static string GetMachineConfigPath ()
+		{
+			string location = typeof (string).Assembly.Location;
+			// Workaround for bug #31730
+			int index = location.IndexOf ("install");
+			location = Path.Combine (location.Substring (0, index + 7), "lib");
+			// 
+			return Path.Combine (location, "machine.config");
+		}
+
+		private static string GetAppConfigPath ()
+		{
+			AppDomainSetup currentInfo = AppDomain.CurrentDomain.SetupInformation;
+
+			string appBase = currentInfo.ApplicationBase;
+			string configFile = currentInfo.ConfigurationFile;
+			// FIXME: need to check out default domain configuration file name
+			if (configFile == null || configFile.Length == 0)
+				return null;
+
+			return Path.Combine (appBase, configFile);
+		}
+	}
+
+	class ConfigurationData
+	{
+		ConfigurationData parent;
+		Hashtable factories;
+		string fileName;
+		object removedMark = new object ();
+		object groupMark = new object ();
+
+		public ConfigurationData () : this (null)
+		{
+		}
+
+		public ConfigurationData (ConfigurationData parent)
+		{
+			this.parent = parent;
+			factories = new Hashtable ();
+		}
+
+		public bool Load (string fileName)
+		{
+			if (fileName == null)
+				return false;
+
+			this.fileName = fileName;
+			XmlTextReader reader = null;
+
+			try {
+				reader = new XmlTextReader (fileName);
+				InitRead (reader);
+				MoveToNextElement (reader);
+				ReadSections (reader, null);
+			} finally {
+				if (reader == null)
+					reader.Close();
+			}
+
+			return true;
+		}
+
+		IConfigurationSectionHandler GetSectionHandler (string sectionName)
+		{
+			if (!factories.Contains (sectionName)) {
+				if (parent == null)
+					return null;
+
+				return parent.GetConfig (sectionName) as IConfigurationSectionHandler;
+			}
+			
+			object o = factories [sectionName];
+			if (o == removedMark)
+				return null;
+
+			if (o is IConfigurationSectionHandler)
+				return (IConfigurationSectionHandler) o;
+
+			Type iconfig = typeof (IConfigurationSectionHandler);
+			string [] typeInfo = ((string) o).Split (',');
+			Type t;
+			
+			// Hack. Type.GetType should be enough
+			if (typeInfo.Length > 1) {
+				Assembly ass = Assembly.Load (typeInfo [1].Trim ());
+				t = ass.GetType (typeInfo [0].Trim ());
+			} else {
+				t = Type.GetType (typeInfo [0]);
+			}
+			
+			if (t == null)
+				throw new ConfigurationException ("Cannot get Type for " + o);
+
+			if (!iconfig.IsAssignableFrom (t))
+				throw new ConfigurationException (sectionName + " does not implement " + iconfig);
+			
+			o = Activator.CreateInstance (t, true);
+			if (o == null)
+				throw new ConfigurationException ("Cannot get instance for " + t);
+			
+			return (IConfigurationSectionHandler) o;
+		}
+
+		//TODO: Should use XPath when it works properly for this.
+		XmlDocument GetDocumentForSection (string sectionName)
+		{
+			ConfigXmlDocument doc = new ConfigXmlDocument ();
+			XmlTextReader reader = new XmlTextReader (fileName);
+			InitRead (reader);
+			string [] sectionPath = sectionName.Split ('/');
+			int i = 0;
+			if (!reader.EOF) {
+				reader.Skip ();
+				while (!reader.EOF) {
+					if (reader.NodeType == XmlNodeType.Element &&
+					    reader.Name == sectionPath [i]) {
+						if (++i == sectionPath.Length) {
+							doc.LoadSingleElement (fileName, reader);
+							break;
+						}
+						MoveToNextElement (reader);
+						continue;
+					}
+					reader.Skip ();
+					if (reader.NodeType != XmlNodeType.Element)
+						MoveToNextElement (reader);
+				}
+			}
+
+			reader.Close ();
+			return doc;
+		}
+		
+		public object GetConfig (string sectionName)
+		{
+			IConfigurationSectionHandler handler = GetSectionHandler (sectionName);
+			if (handler == null)
+				return null;
+
+			factories [sectionName] = handler;
+
+			XmlDocument doc = GetDocumentForSection (sectionName);
+			if (doc == null)
+				throw new ConfigurationException ("Section not found: " + sectionName);
+
+			return handler.Create (null, null, doc);
+		}
+
+		private object LookForFactory (string key)
+		{
+			object o = factories [key];
+			if (o != null)
+				return o;
+
+			if (parent != null)
+				return parent.LookForFactory (key);
+
+			return null;
+		}
+		
+		private void InitRead (XmlTextReader reader)
+		{
+			reader.MoveToContent ();
+			if (reader.NodeType != XmlNodeType.Element || reader.Name != "configuration")
+				ThrowException ("Configuration file does not have a valid root element", reader);
+
+			if (reader.HasAttributes)
+				ThrowException ("Unrecognized attribute in root element", reader);
+
+			MoveToNextElement (reader);
+			if (reader.Depth == 1 && reader.Name == "configSections") {
+				if (reader.HasAttributes)
+					ThrowException ("Unrecognized attribute in configSections element.",
+							reader);
+			}
+		}
+
+		private void MoveToNextElement (XmlTextReader reader)
+		{
+			while (reader.Read ()) {
+				XmlNodeType ntype = reader.NodeType;
+				if (ntype == XmlNodeType.Element)
+					return;
+
+				if (ntype != XmlNodeType.Whitespace &&
+				    ntype != XmlNodeType.Comment &&
+				    ntype != XmlNodeType.SignificantWhitespace &&
+				    ntype != XmlNodeType.EndElement)
+					ThrowException ("Unrecognized element", reader);
+			}
+		}
+
+		private void ReadSection (XmlTextReader reader, string sectionName)
+		{
+			string attName;
+			string nameValue = null;
+			string typeValue = null;
+
+			while (reader.MoveToNextAttribute ()) {
+				attName = reader.Name;
+				if (attName == null)
+					continue;
+
+				if (attName == "allowLocation" || attName == "allowDefinition")
+					continue;
+
+				if (attName == "type")  {
+					if (typeValue != null)
+						ThrowException ("Duplicated type attribute.", reader);
+					typeValue = reader.Value;
+					continue;
+				}
+				
+				if (attName == "name")  {
+					if (nameValue != null)
+						ThrowException ("Duplicated name attribute.", reader);
+					nameValue = reader.Value;
+					continue;
+				}
+
+				ThrowException ("Unrecognized attribute.", reader);
+			}
+
+			if (nameValue == null || typeValue == null)
+				ThrowException ("Required attribute missing", reader);
+
+			if (sectionName != null)
+				nameValue = sectionName + '/' + nameValue;
+
+			reader.MoveToElement();
+			object o = LookForFactory (nameValue);
+			if (o != null && o != removedMark)
+				ThrowException ("Already have a factory for " + nameValue, reader);
+
+			factories [nameValue] = typeValue;
+			MoveToNextElement (reader);
+		}
+
+		private void ReadRemoveSection (XmlTextReader reader, string sectionName)
+		{
+			if (!reader.MoveToNextAttribute () || reader.Name != "name")
+				ThrowException ("Unrecognized attribute.", reader);
+
+			string removeValue = reader.Value;
+			if (removeValue == null || removeValue.Length == 0)
+				ThrowException ("Empty name to remove", reader);
+
+			reader.MoveToElement ();
+
+			if (sectionName != null)
+				removeValue = sectionName + '/' + removeValue;
+
+			object o = LookForFactory (removeValue);
+			if (o != null && o != removedMark)
+				ThrowException ("No factory for " + removeValue, reader);
+
+			factories [removeValue] = removedMark;
+			MoveToNextElement (reader);
+		}
+
+		private void ReadSectionGroup (XmlTextReader reader, string configSection)
+		{
+			if (!reader.MoveToNextAttribute ())
+				ThrowException ("sectionGroup must have a 'name' attribute.", reader);
+
+			if (reader.Name != "name")
+				ThrowException ("Unrecognized attribute.", reader);
+
+			if (reader.MoveToNextAttribute ())
+				ThrowException ("Unrecognized attribute.", reader);
+
+			string value = reader.Value;
+			if (configSection != null)
+				value = configSection + '/' + value;
+
+			object o = LookForFactory (value);
+			if (o != null && o != removedMark)
+				ThrowException ("Already have a factory for " + value, reader);
+
+			factories [value] = groupMark;
+			MoveToNextElement (reader);
+			ReadSections (reader, value);
+		}
+
+		private void ReadSections (XmlTextReader reader, string configSection)
+		{
+			int depth = reader.Depth;
+			while (reader.Depth == depth) {
+				string name = reader.Name;
+				if (reader.Name == null)
+					continue;
+					
+				if (name == "section") {
+					ReadSection (reader, configSection);
+					continue;
+				} 
+				
+				if (name == "remove") {
+					ReadRemoveSection (reader, configSection);
+					continue;
+				}
+
+				if (name == "clear") {
+					if (reader.HasAttributes)
+						ThrowException ("Unrecognized attribute.", reader);
+
+					factories.Clear ();
+					continue;
+				}
+
+				if (name == "sectionGroup") {
+					ReadSectionGroup (reader, configSection);
+					continue;
+				}
+
+				ThrowException ("Unrecognized element", reader);
+			}
+		}
+
+		private void ThrowException (string text, XmlTextReader reader)
+		{
+			throw new ConfigurationException (text, fileName, reader.LineNumber);
+		}
 	}
 }
 
