@@ -186,6 +186,10 @@ namespace System.Windows.Forms {
 			driver.RefreshWindow(handle);
 		}
 
+		internal static void UpdateWindow(IntPtr handle) {
+			driver.UpdateWindow(handle);
+		}
+
 		internal static void SetWindowBackground(IntPtr handle, Color color) {
 			driver.SetWindowBackground(handle, color);
 		}

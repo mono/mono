@@ -663,7 +663,7 @@ Console.WriteLine("ParentForm got focus");
 
 		public FormWindowState WindowState {
 			get {
-				return XplatUI.GetWindowState(form_parent_window.window.Handle);;
+				return XplatUI.GetWindowState(form_parent_window.window.Handle);
 			}
 
 			set {

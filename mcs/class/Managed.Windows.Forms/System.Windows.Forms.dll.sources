@@ -10,6 +10,7 @@ System.Windows.Forms.Design/IUIService.cs
 System.Windows.Forms.Design/IWindowsFormsEditorService.cs
 System.Windows.Forms.Design/PropertyTab.cs
 System.Windows.Forms.Design/WindowsFormsComponentEditor.cs
+System.Windows.Forms/AccessibleEvents.cs
 System.Windows.Forms/AccessibleNavigation.cs
 System.Windows.Forms/AccessibleObject.cs
 System.Windows.Forms/AccessibleRole.cs

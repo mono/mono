@@ -1,5 +1,9 @@
 2005-01-16  Peter Bartok  <pbartok@novell.com>
 
+	* System.Windows.Forms.dll.Sources: Added AccessibleEvents.cs
+
+2005-01-16  Peter Bartok  <pbartok@novell.com>
+
 	* System.Windows.Forms.dll.Sources: Added Cursors.cs
 
 2005-01-11  Peter Bartok  <pbartok@novell.com>

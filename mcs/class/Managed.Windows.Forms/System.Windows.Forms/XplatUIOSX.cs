@@ -360,6 +360,12 @@ namespace System.Windows.Forms {
 			Invalidate (handle, new Rectangle (0, 0, (int)r.size.width, (int)r.size.height), true);
 		}
 
+		internal override void UpdateWindow(IntPtr handle) {
+			// Force a redraw of previously invalidated areas (ie send a WM_PAINT)
+			throw new NotImplementedException();
+		}
+
+
 		[MonoTODO("Find a way to make all the views do this; not just the window view")]
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
 			if (view_window_mapping [handle] != null) {

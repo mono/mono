@@ -120,7 +120,10 @@ namespace System.Windows.Forms {
 			FontChanged+=new EventHandler(RedrawEvent);
 			SizeChanged+=new EventHandler(RedrawEvent);
 
-			SetStyle (ControlStyles.ResizeRedraw, true);
+			SetStyle(ControlStyles.UserPaint, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.ResizeRedraw, true);
+			SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 		}
 		#endregion	// Public Constructors
 
@@ -284,8 +287,6 @@ namespace System.Windows.Forms {
 
 				cp.Style=(int)WindowStyles.WS_VISIBLE | (int)WindowStyles.WS_CHILD;
 
-				SetStyle(ControlStyles.UserPaint, true);
-				SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 				return cp;
 			}
 		}

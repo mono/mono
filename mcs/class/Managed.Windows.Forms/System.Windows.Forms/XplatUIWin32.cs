@@ -677,6 +677,10 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
+		internal override void UpdateWindow(IntPtr handle) {
+			Win32UpdateWindow(handle);
+		}
+
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
 			Win32SetWindowLong(handle, WindowLong.GWL_USERDATA, (IntPtr)color.ToArgb());
 		}

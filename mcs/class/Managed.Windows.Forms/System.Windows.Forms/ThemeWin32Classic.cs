@@ -747,7 +747,8 @@ namespace System.Windows.Forms
 			SizeF size;
 			int width, y;
 			Rectangle rect = box.ClientRectangle;
-			Color disabled = ColorGrayText;
+			// Needed once the Dark/Light code below is enabled again
+			//Color disabled = ColorGrayText;
 			
 			Pen pen_light = ResPool.GetPen (Color.FromArgb (255,255,255,255));
 			Pen pen_dark = ResPool.GetPen (Color.FromArgb (255, 128, 128,128));
@@ -3828,13 +3829,11 @@ namespace System.Windows.Forms
 				int				centerX;
 				int				centerY;
 				int				shiftX;
-				int				shiftY;
 
 				rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
 				centerX=rect.Left+rect.Width/2;
 				centerY=rect.Top+rect.Height/2;
 				shiftX=Math.Max(1, rect.Width/8);
-				shiftY=Math.Max(1, rect.Height/8);
 
 				rect.X-=shiftX;
 				centerX-=shiftX;

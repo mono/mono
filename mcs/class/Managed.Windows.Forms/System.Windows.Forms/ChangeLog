@@ -1,3 +1,51 @@
+2005-01-17  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs: 
+	  - Implemented InvokeGotFocus() method
+	  - Implemented InvokeLostFocus() method
+	  - Implemented InvokePaint() method
+	  - Implemented InvokePaintBackground() method
+	  - Implemented InvokeClick() method
+	  - Implemented FindForm() method
+	  - Implemented RectangleToClient() method
+	  - Implemented ClientToRectangle() method
+	  - Implemented ResetBackColor() method
+	  - Implemented ResetCursor() method
+	  - Implemented ResetFont() method
+	  - Implemented ResteForeColor() method
+	  - Implemented ResetImeMode() method
+	  - Implemented ResetLeftToRight() method
+	  - Implemented ResetText() method
+	  - Implemented Scale() methods
+	  - Implemented ScaleCore() method
+	  - Implemented Update() method
+	  - Removed unused variables
+	  - Stubbed AccessibilityNotifyClients and 
+	    ControlAccessibleObject.NotifyClients() methods (dunno what to do 
+	    with those yet)
+	  - Now setting proper default for RightToLeft property
+	  - Fixed bug in SetClientSizeCore that would cause windows to get 
+	    really big
+	  - Now sending Click/DoubleClick events
+	  - Now selecting controls when left mouse button is clicked on
+	    selectable control
+	* AccessibleEvents.cs: Added
+	* XplatUI.cs, XplatUIDriver.cs: Added UpdateWindow() method
+	* XplatUIOSX.cs: Stubbed UpdateWindow() method
+	* XplatUIWin32.cs: Implemented UpdateWindow() method
+	* XplatUIX11.cs: Implemented UpdateWindow() method
+	* Form.cs: Removed stray semicolon causing CS0162 warning
+	* ThemeWin32Classic.cs: Fixed unused variable warnings
+	* ScrollableControl.cs: Now calls base method for ScaleCore
+	* ButtonBase.cs: Now disabling StandardClick and StandardDoubleClick
+	  style to avoid interference with internal click handler (which is
+	  different than standard Control click handling)
+	* RadioButton.cs:
+	  - Now unchecks all sibling radio buttons when control is 
+	    selected (Fixes #68756)
+	  - Removed internal tabstop variable, using the one inherited from
+	    Control
+
 2005-01-17  Jackson Harper  <jackson@ximian.com>
 
 	* NavigateEventArgs.cs: Fix base type.

@@ -108,6 +108,7 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr GetParent(IntPtr handle);
 
 		internal abstract void RefreshWindow(IntPtr handle);
+		internal abstract void UpdateWindow(IntPtr handle);
 		internal abstract void SetWindowBackground(IntPtr handle, Color color);
 		internal abstract PaintEventArgs PaintEventStart(IntPtr handle);
 		internal abstract void PaintEventEnd(IntPtr handle);

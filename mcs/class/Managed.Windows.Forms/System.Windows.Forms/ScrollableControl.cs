@@ -367,7 +367,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void ScaleCore(float dx, float dy) {
-			throw new NotImplementedException();
+			base.ScaleCore(dx, dy);
 		}
 
 		protected void SetDisplayRectLocation(int x, int y) {

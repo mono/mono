@@ -35,7 +35,6 @@ namespace System.Windows.Forms {
 		internal bool			auto_check;
 		internal ContentAlignment	radiobutton_alignment;
 		internal CheckState		check_state;
-		private bool			is_tabstop;
 		#endregion	// Local Variables
 
 		#region RadioButtonAccessibleObject Subclass
@@ -100,9 +99,34 @@ namespace System.Windows.Forms {
 			auto_check = true;
 			radiobutton_alignment = ContentAlignment.MiddleLeft;
 			text_alignment = ContentAlignment.MiddleLeft;
-			is_tabstop = false;
+			tab_stop = false;
 		}
 		#endregion	// Public Constructors
+
+		#region Private Methods
+		private void UpdateSiblings() {
+			Control	c;
+
+			if (auto_check == false) {
+				return;
+			}
+
+			// Remove tabstop property from and uncheck our radio-button siblings
+			c = this.parent;
+			if (c != null) {
+				for (int i = 0; i < c.child_controls.Count; i++) {
+					if ((this != c.child_controls[i]) && (c.child_controls[i] is RadioButton)) {
+						if (((RadioButton)(c.child_controls[i])).auto_check) {
+							c.child_controls[i].TabStop = false;
+							((RadioButton)(c.child_controls[i])).Checked = false;
+						}
+					}
+				}
+			}
+
+			this.TabStop = true;
+		}
+		#endregion	// Private Methods
 
 		#region Public Instance Properties
 		public Appearance Appearance {
@@ -155,6 +179,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value && (check_state != CheckState.Checked)) {
+					UpdateSiblings();
 					check_state = CheckState.Checked;
 					Redraw();
 					OnCheckedChanged(EventArgs.Empty);
@@ -168,11 +193,11 @@ namespace System.Windows.Forms {
 
 		public new bool TabStop {
 			get {
-				return is_tabstop;
+				return tab_stop;
 			}
 
 			set {
-				is_tabstop = value;
+				tab_stop = value;
 			}
 		}
 

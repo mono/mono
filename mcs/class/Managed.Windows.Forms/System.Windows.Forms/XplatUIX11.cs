@@ -817,6 +817,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void UpdateWindow(IntPtr handle) {
+			// Nothing to do, happens automatically
+			return;
+		}
+
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
 			XColor	xcolor;
 

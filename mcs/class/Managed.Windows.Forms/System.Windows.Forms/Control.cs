@@ -202,6 +202,20 @@ namespace System.Windows.Forms
 				return base.GetHelpTopic (out FileName);
 			}
 
+			[MonoTODO("Implement this and tie it into Control.AccessibilityNotifyClients")]
+			public void NotifyClients(AccessibleEvents accEvent) {
+				throw new NotImplementedException();
+			}
+
+			[MonoTODO("Implement this and tie it into Control.AccessibilityNotifyClients")]
+			public void NotifyClients(AccessibleEvents accEvent, int childID) {
+				throw new NotImplementedException();
+			}
+
+			public override string ToString() {
+				return "ControlAccessibleObject: Owner = " + owner.ToString() + ", Text: " + owner.text;
+			}
+
 			#endregion	// ControlAccessibleObject Public Instance Methods
 		}
 
@@ -499,6 +513,7 @@ namespace System.Windows.Forms
 			mouse_clicks = 1;
 			tab_index = -1;
 			cursor = null;
+			right_to_left = RightToLeft.Inherit;
 
 			control_style = ControlStyles.Selectable | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
 
@@ -743,9 +758,6 @@ namespace System.Windows.Forms
 
 		private static Control FindControlForward(Control container, Control start) {
 			Control found;
-			int	end;
-			int	index;
-			bool	ready;
 			Control	p;
 
 			found = null;
@@ -808,10 +820,6 @@ namespace System.Windows.Forms
 
 		private static Control FindControlBackward(Control container, Control start) {
 			Control found;
-			int	end;
-			int	index;
-			bool	ready;
-			Control	p;
 
 			found = null;
 
@@ -833,6 +841,20 @@ namespace System.Windows.Forms
 			}
 
 			return found;
+		}
+
+		private void HandleClick(int clicks) {
+			if (GetStyle(ControlStyles.StandardClick)) {
+				if (clicks > 1) {
+					if (GetStyle(ControlStyles.StandardDoubleClick)) {
+						OnDoubleClick(EventArgs.Empty);
+					} else {
+						OnClick(EventArgs.Empty);
+					}
+				} else {
+					OnClick(EventArgs.Empty);
+				}
+			}
 		}
 		#endregion	// Private & Internal Methods
 
@@ -1189,7 +1211,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if not
+#if haveDataBindings
 		public ControlBindingsCollection DataBindings {
 			get {
 				throw new NotImplementedException();
@@ -1878,6 +1900,19 @@ namespace System.Windows.Forms
 			return result.EndInvoke ();
 		}
 
+		public Form FindForm() {
+			Control	c;
+
+			c = this;
+			while (c != null) {
+				if (c is Form) {
+					return (Form)c;
+				}
+				c = c.Parent;
+			}
+			return null;
+		}
+
 		public bool Focus() {
 			if (IsHandleCreated) {
 				XplatUI.SetFocus(window.Handle);
@@ -1949,6 +1984,8 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated || !Visible) {
 				return;
 			}
+
+			NotifyInvalidate(rc);
 
 			XplatUI.Invalidate(Handle, rc, !GetStyle (ControlStyles.AllPaintingInWmPaint));
 
@@ -2170,10 +2207,53 @@ namespace System.Windows.Forms
 			return false;
 		}
 
+		public Rectangle RectangleToClient(Rectangle r) {
+			return new Rectangle(PointToClient(r.Location), r.Size);
+		}
+
+		public Rectangle RectangleToScreen(Rectangle r) {
+			return new Rectangle(PointToScreen(r.Location), r.Size);
+		}
+
 		public virtual void Refresh() {			
 			if (IsHandleCreated == true) {
 				XplatUI.RefreshWindow(window.Handle);
 			}
+		}
+
+		public virtual void ResetBackColor() {
+			background_color = Color.Empty;
+		}
+
+#if haveDataBindings
+		[MonoTODO]
+		public void ResetBindings() {
+			// Do something
+		}
+#endif
+
+		public virtual void ResetCursor() {
+			cursor = null;
+		}
+
+		public virtual void ResetFont() {
+			font = null;
+		}
+
+		public virtual void ResetForeColor() {
+			foreground_color = Color.Empty;
+		}
+
+		public void ResetImeMode() {
+			ime_mode = DefaultImeMode;
+		}
+
+		public virtual void ResetRightToLeft() {
+			right_to_left = RightToLeft.Inherit;
+		}
+
+		public virtual void ResetText() {
+			text = null;
 		}
 
 		public void ResumeLayout() {
@@ -2190,6 +2270,14 @@ namespace System.Windows.Forms
 			if (performLayout || layout_pending) {
 				PerformLayout();
 			}
+		}
+
+		public void Scale(float ratio) {
+			ScaleCore(ratio, ratio);
+		}
+
+		public void Scale(float dx, float dy) {
+			ScaleCore(dx, dy);
 		}
 
 		public void Select() {
@@ -2252,11 +2340,19 @@ namespace System.Windows.Forms
 			layout_suspended++;
 		}
 
+		public void Update() {
+			XplatUI.UpdateWindow(window.Handle);
+		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		[MonoTODO("Implement this and tie it into Control.ControlAccessibleObject.NotifyClients")]
+		protected void AccessibilityNotifyClients(AccessibleEvents accEvent, int childID) {
+			throw new NotImplementedException();
+		}
+
 		protected virtual AccessibleObject CreateAccessibilityInstance() {
-			return new AccessibleObject(this);
+			return new Control.ControlAccessibleObject(this);
 		}
 
 		protected virtual ControlCollection CreateControlsInstance() {
@@ -2320,6 +2416,26 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected void InvokeGotFocus(Control toInvoke, EventArgs e) {
+			toInvoke.OnGotFocus(e);
+		}
+
+		protected void InvokeLostFocus(Control toInvoke, EventArgs e) {
+			toInvoke.OnLostFocus(e);
+		}
+
+		protected void InvokeOnClick(Control toInvoke, EventArgs e) {
+			toInvoke.OnClick(e);
+		}
+
+		protected void InvokePaint(Control toInvoke, PaintEventArgs e) {
+			toInvoke.OnPaint(e);
+		}
+
+		protected void InvokePaintBackground(Control toInvoke, PaintEventArgs e) {
+			toInvoke.OnPaintBackground(e);
+		}
+
 		protected virtual bool IsInputChar (char charCode) {
 			if (parent != null) {
 				return parent.IsInputChar(charCode);
@@ -2331,6 +2447,10 @@ namespace System.Windows.Forms
 		protected virtual bool IsInputKey (Keys keyData) {
 			// Doc says this one calls IsInputChar; not sure what to do with that
 			return false;
+		}
+
+		protected virtual void NotifyInvalidate(Rectangle invalidatedArea) {
+			// override me?
 		}
 
 		protected virtual bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -2535,7 +2655,32 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void ScaleCore(float dx, float dy) {
-			throw new NotImplementedException();
+			Point	location;
+			Size	size;
+
+			SuspendLayout();
+
+			location = new Point((int)(Left * dx), (int)(Top * dy));
+			size = this.ClientSize;
+			
+
+			if (!GetStyle(ControlStyles.FixedWidth)) {
+				size.Width = (int)(size.Width * dx);
+			}
+
+			if (!GetStyle(ControlStyles.FixedHeight)) {
+				size.Height = (int)(size.Height * dy);
+			}
+
+			Location = location;
+			ClientSize = size;
+
+			/* Now scale our children */
+			for (int i=0; i < child_controls.Count; i++) {
+				child_controls[i].Scale(dx, dy);
+			}
+
+			ResumeLayout();
 		}
 
 		protected virtual void Select(bool directed, bool forward) {
@@ -2610,7 +2755,6 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			this.client_size = new Size(x, y);
 			SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 		}
 
@@ -2743,9 +2887,9 @@ namespace System.Windows.Forms
 
 		protected void UpdateZOrder() {
 			int	children;
+#if not
 			Control	ctl;
 
-#if not
 			if (parent == null) {
 				return;
 			}
@@ -2811,6 +2955,7 @@ namespace System.Windows.Forms
 			}
 
 			case Msg.WM_LBUTTONUP: {
+				HandleClick(mouse_clicks);
 				OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
 					mouse_clicks, 
 					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -2821,7 +2966,10 @@ namespace System.Windows.Forms
 				return;
 			}
 				
-			case Msg.WM_LBUTTONDOWN: {					
+			case Msg.WM_LBUTTONDOWN: {
+				if (CanSelect && !is_selected) {
+					Select(this);
+				}
 				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
@@ -2839,6 +2987,7 @@ namespace System.Windows.Forms
 			}
 
 			case Msg.WM_MBUTTONUP: {
+				HandleClick(mouse_clicks);
 				OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
 					mouse_clicks, 
 					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -2866,6 +3015,7 @@ namespace System.Windows.Forms
 			}
 
 			case Msg.WM_RBUTTONUP: {
+				HandleClick(mouse_clicks);
 				OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
 					mouse_clicks, 
 					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -3003,7 +3153,6 @@ Console.WriteLine("Window {0} got focus", this.Text);
 #endif
 
 			case Msg.WM_SETCURSOR: {
-Console.WriteLine("Got WM_SETCURSOR, cursor is {0}", cursor);
 				if (cursor == null) {
 					DefWndProc(ref m);
 					return;
