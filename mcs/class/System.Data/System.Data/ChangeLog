@@ -1,3 +1,8 @@
+2004-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataColumnCollection.cs : When add a column to the collection, fill
+	  auto-increment column.
+
 2004-04-26  Boris Kirzner <borisk@mainsoft.com>
 
 	* DataColumn.cs : Small perfomance fix (avoid unnesessary string concatenation).

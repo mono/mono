@@ -140,6 +140,12 @@ namespace System.Data {
 			int ordinal = base.List.Add(column);
 			column.SetOrdinal (ordinal);
 
+			if (column.AutoIncrement) {
+				long value = column.AutoIncrementSeed;
+				for (int i = 0; i < column.Table.Rows.Count; i++, value += column.AutoIncrementStep)
+					column.Table.Rows [i] [ordinal] = value;
+			}
+
 			OnCollectionChanged (e);
 		}
 
