@@ -1,3 +1,10 @@
+2002-07-04  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_cleanup): Nasty kludge to get this to
+	compile on mingw.  This will cause mingw builds to not wait for
+	subthreads to terminate after the main thread does.  I've lodged a
+	bug with the mingw developers for them to wrap OpenThread().
+
 2002-07-03  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Store thread IDs instead of handles, because
