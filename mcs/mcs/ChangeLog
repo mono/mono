@@ -1,3 +1,8 @@
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
+	* expression.cs (Argument.Resolve): Report an error 118 when trying
+	to pass a type as argument.
+
 2002-07-18  Martin Baulig  <martin@gnome.org>
 
 	* ecore.cs (Expression.ImplicitNumericConversion): Don't emit a

@@ -2949,8 +2949,18 @@ namespace Mono.CSharp {
 		{
 			Expr = Expr.Resolve (ec);
 
-			if (ArgType == AType.Expression)
-				return Expr != null;
+			if (ArgType == AType.Expression){
+				if (Expr == null)
+					return false;
+
+				if ((Expr.eclass == ExprClass.Type) && (Expr is TypeExpr)) {
+					Report.Error (118, loc, "Expression denotes a `type' " +
+						      "where a `variable or value' was expected");
+					return false;
+				}
+
+				return true;
+			}
 
 			if (Expr.eclass != ExprClass.Variable){
 				//
