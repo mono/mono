@@ -1,3 +1,6 @@
+2002-09-03  Jonathan Pryor <jonpryor@vt.edu>
+	* Enum.cs: Get rid of warning CS0162.
+
 2002-09-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* Double.cs, Single.cs, Char.cs, Boolean.cs: Use internal for the

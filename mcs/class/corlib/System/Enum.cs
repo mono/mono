@@ -432,7 +432,6 @@ namespace System {
 					return ((ulong)value).ToString(format);
 				default:
 					throw new Exception ("invalid type code for enumeration");
-					break;
 			}
 		}
 
