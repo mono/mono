@@ -82,30 +82,33 @@ endif
 mcs-do-test-profiles:
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' test-profiles
 
-mcs-do-run-test-profiles:
-	$(mkinstalldirs) $(tmpinst)/bin
-	$(MAKE) $(TEST_SUPPORT_FILES)
+mcs-do-run-test-profiles: test-support-files
 	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
 	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/$(tmpinst)/bin/mono PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
-	rm -fr $(tmpinst) ; $$ret
+	rm -fr $(tmpinst); $$ret
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
 # This doesn't yet work on the 2.0 profile
 verify_profiles = $(filter-out net_2_0, $(build_profiles))
 #verify_profiles = $(build_profiles)
-mcs-compileall: $(tmpinst)/bin/mono
-	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && pwd`; \
+mcs-compileall: test-support-files
+	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && pwd`; ret=:; \
 	for profile in $(verify_profiles); do \
 	  MONO_PATH="$$mcs_topdir/class/lib/$$profile:$$save_MONO_PATH"; export MONO_PATH; \
 	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do \
-	    echo $$i; ./$(tmpinst)/bin/mono --compile-all $$i || exit 1; done; done
+	    if ./$(tmpinst)/bin/mono --compile-all $$i; then \
+	      echo $$i verified OK; \
+	    else \
+	      echo $$i verification failed; ret=false; \
+	    fi; done; done; \
+	rm -fr $(tmpinst); $$ret
 
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
 $(tmpinst)/config: ../data/config
 	d=`cd ../support && pwd`; \
-	sed 's,<configuration>,& <dllmap dll="MonoPosixHelper" target="'$$d/libMonoPosixHelper.la'" />,' ../data/config > $@
+	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@
 
 $(tmpinst)/bin/mono: mono-wrapper $(tmpinst)/config
 	sed 's,/data/config",/runtime/$(tmpinst)/config",' mono-wrapper > $@
@@ -122,6 +125,10 @@ $(tmpinst)/bin/gmcs:
 
 $(tmpinst)/bin/ilasm:
 	$(MAKE) test-support-file target=$@ file=ilasm/ilasm.exe
+
+test-support-files:
+	$(mkinstalldirs) $(tmpinst)/bin
+	$(MAKE) $(TEST_SUPPORT_FILES)
 
 test-support-file:
 	echo '#! /bin/sh' > $(target)
