@@ -39,7 +39,7 @@ TEST_SOURCES = \
 	test-201 test-202 test-203 test-204 test-205 test-206 test-207 test-208 test-209 test-210 \
 	test-211 test-212 test-213 test-214 test-215 test-216 test-217 test-218 test-219 test-220 \
 	test-221 test-222 test-223 test-224 test-225 test-226 test-227          test-229 test-230 \
-	test-231 test-232 test-233 test-234 test-235 test-236 test-237 test-238 test-239 	  \
+	test-231 test-232 test-233 test-234 test-235 test-236 test-237 test-238 test-239 test-240 \
 	test-241 test-242 test-243 test-244 test-245 test-246 test-247 test-248 test-249 test-250 \
 	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258 test-259 test-260 \
 	test-260 test-261 test-262 test-263 test-264 test-265 test-266 \
