@@ -1,0 +1,6 @@
+2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* BasicConstraintsExtension.cs: New. Handle X.509 Basic 
+	Constaints extension.
+	* KeyUsageExtension.cs: New. Handle X.509 Key Usage
+	extension.
