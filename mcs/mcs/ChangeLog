@@ -1,5 +1,26 @@
 2003-11-06  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (New.DoResolve): Do not dereference value that
+	might be a null return.
+
+	* statement.cs (Block.EmitMeta): Use the Const.ChangeType to make
+	sure that the constant value has the right type.  Fixes an
+	unreported bug, similar to 50425.
+
+	* const.cs (Const.LookupConstantValue): Call
+	ImplicitStandardConversionExists before doing a conversion to
+	avoid havng the TypeManager.ChangeType do conversions.
+
+	Reduced the number of casts used
+
+	(Const.ChangeType): New routine to enable reuse of the constant
+	type changing code from statement.
+
+	* typemanager.cs (ChangeType): Move common initialization to
+	static global variables.
+
+	Fixes #50425.
+
 	* convert.cs (ImplicitReferenceConversion): Somehow we allowed
 	every value type to go through, even if it was void.  Fix that. 
 

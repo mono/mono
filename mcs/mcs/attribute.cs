@@ -423,7 +423,7 @@ namespace Mono.CSharp {
 				// Don't know what to do here
 				//
 				Report.Warning (
-				        -100, Location, "NullReferenceException while trying to create attribute." +
+				        -101, Location, "NullReferenceException while trying to create attribute." +
                                         "Something's wrong!");
 			} catch (Exception e) {
 				//
@@ -916,7 +916,7 @@ namespace Mono.CSharp {
 
 						try {
 							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException) {
+						} catch (System.ArgumentException e) {
 							Report.Warning (
 								-21, loc,
 						"The CharSet named property on StructLayout\n"+

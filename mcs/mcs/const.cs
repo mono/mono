@@ -111,6 +111,68 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		//
+		// Changes the type of the constant expression `expr' to the Type `type'
+		// Returns null on failure.
+		//
+		public static Constant ChangeType (Location loc, Constant expr, Type type)
+		{
+			bool fail;
+
+			// from the null type to any reference-type.
+			if (expr is NullLiteral && !type.IsValueType && !TypeManager.IsEnumType (type))
+				return NullLiteral.Null;
+
+			if (!Convert.ImplicitStandardConversionExists (expr, type)){
+				Convert.Error_CannotImplicitConversion (loc, expr.Type, type);
+				return null;
+			}
+			
+			object constant_value = TypeManager.ChangeType (expr.GetValue (), type, out fail);
+			if (fail){
+				Convert.Error_CannotImplicitConversion (loc, expr.Type, type);
+				
+				//
+				// We should always catch the error before this is ever
+				// reached, by calling Convert.ImplicitStandardConversionExists
+				//
+				throw new Exception (
+						     String.Format ("LookupConstantValue: This should never be reached {0} {1}", expr.Type, type));
+			}
+
+			Constant retval;
+			if (type == TypeManager.int32_type)
+				retval = new IntConstant ((int) constant_value);
+			else if (type == TypeManager.uint32_type)
+				retval = new UIntConstant ((uint) constant_value);
+			else if (type == TypeManager.int64_type)
+				retval = new LongConstant ((long) constant_value);
+			else if (type == TypeManager.uint64_type)
+				retval = new ULongConstant ((ulong) constant_value);
+			else if (type == TypeManager.float_type)
+				retval = new FloatConstant ((float) constant_value);
+			else if (type == TypeManager.double_type)
+				retval = new DoubleConstant ((double) constant_value);
+			else if (type == TypeManager.string_type)
+				retval = new StringConstant ((string) constant_value);
+			else if (type == TypeManager.short_type)
+				retval = new ShortConstant ((short) constant_value);
+			else if (type == TypeManager.ushort_type)
+				retval = new UShortConstant ((ushort) constant_value);
+			else if (type == TypeManager.sbyte_type)
+				retval = new SByteConstant ((sbyte) constant_value);
+			else if (type == TypeManager.byte_type)
+				retval = new ByteConstant ((byte) constant_value);
+			else if (type == TypeManager.char_type)
+				retval = new CharConstant ((char) constant_value);
+			else if (type == TypeManager.bool_type)
+				retval = new BoolConstant ((bool) constant_value);
+			else
+				throw new Exception ("LookupConstantValue: Unhandled constant type: " + type);
+			
+			return retval;
+		}
+		
 		/// <summary>
 		///  Looks up the value of a constant field. Defines it if it hasn't
 		///  already been. Similar to LookupEnumValue in spirit.
@@ -140,7 +202,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!(Expr is Constant)) {
+			Constant ce = Expr as Constant;
+			if (ce == null){
 				UnCheckedExpr un_expr = Expr as UnCheckedExpr;
 				CheckedExpr ch_expr = Expr as CheckedExpr;
 
@@ -155,50 +218,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ConstantValue = ((Constant) Expr).GetValue ();
-
-			if (type != Expr.Type) {
-				bool fail;
-
-				// from the null type to any reference-type.
-				if (Expr is NullLiteral && !type.IsValueType &&
-				    !TypeManager.IsEnumType (type)){
-					return NullLiteral.Null;
-				}
-				
-				ConstantValue = TypeManager.ChangeType (ConstantValue, type, out fail);
-				if (fail){
-					Convert.Error_CannotImplicitConversion (Location, Expr.Type, type);
+			if (type != ce.Type) {
+				ce = ChangeType (Location, ce, type);
+				if (ce == null)
 					return null;
-				}
-
-				if (type == TypeManager.int32_type)
-					Expr = new IntConstant ((int) ConstantValue);
-				else if (type == TypeManager.uint32_type)
-					Expr = new UIntConstant ((uint) ConstantValue);
-				else if (type == TypeManager.int64_type)
-					Expr = new LongConstant ((long) ConstantValue);
-				else if (type == TypeManager.uint64_type)
-					Expr = new ULongConstant ((ulong) ConstantValue);
-				else if (type == TypeManager.float_type)
-					Expr = new FloatConstant ((float) ConstantValue);
-				else if (type == TypeManager.double_type)
-					Expr = new DoubleConstant ((double) ConstantValue);
-				else if (type == TypeManager.string_type)
-					Expr = new StringConstant ((string) ConstantValue);
-				else if (type == TypeManager.short_type)
-					Expr = new ShortConstant ((short) ConstantValue);
-				else if (type == TypeManager.ushort_type)
-					Expr = new UShortConstant ((ushort) ConstantValue);
-				else if (type == TypeManager.sbyte_type)
-					Expr = new SByteConstant ((sbyte) ConstantValue);
-				else if (type == TypeManager.byte_type)
-					Expr = new ByteConstant ((byte) ConstantValue);
-				else if (type == TypeManager.char_type)
-					Expr = new CharConstant ((char) ConstantValue);
-				else if (type == TypeManager.bool_type)
-					Expr = new BoolConstant ((bool) ConstantValue);
+				Expr = ce;
 			}
+			ConstantValue = ce.GetValue ();
 
 			if (type.IsEnum){
 				//

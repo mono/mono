@@ -540,7 +540,10 @@ namespace Mono.CSharp {
 			
 			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
-			
+
+			//
+			// Implicit Constant Expression Conversions
+			//
 			if (expr is IntConstant){
 				int value = ((IntConstant) expr).Value;
 

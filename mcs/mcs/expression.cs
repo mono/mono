@@ -5337,8 +5337,9 @@ namespace Mono.CSharp {
 			
 			if (IsDelegate){
 				RequestedType = (new NewDelegate (type, Arguments, loc)).Resolve (ec);
-				if (!(RequestedType is NewDelegate))
-					throw new Exception ("NewDelegate.Resolve returned a non NewDelegate: " + RequestedType.GetType ());
+				if (RequestedType != null)
+					if (!(RequestedType is NewDelegate))
+						throw new Exception ("NewDelegate.Resolve returned a non NewDelegate: " + RequestedType.GetType ());
 				return RequestedType;
 			}
 
