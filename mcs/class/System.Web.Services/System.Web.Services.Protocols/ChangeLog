@@ -1,3 +1,8 @@
+2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapClientMessage.cs: Get the MethodInfo from the corresponding
+	  SoapMethodStubInfo.
+
 2004-05-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SoapHttpClientProtocol.cs: when the response has a not acceptable

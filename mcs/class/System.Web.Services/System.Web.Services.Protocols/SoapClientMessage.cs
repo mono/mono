@@ -19,7 +19,6 @@ namespace System.Web.Services.Protocols {
 
 		SoapHttpClientProtocol client;
 		string url;
-		LogicalMethodInfo client_method;
 		internal SoapMethodStubInfo MethodStubInfo;
 
 		//
@@ -37,7 +36,6 @@ namespace System.Web.Services.Protocols {
 		{
 			this.MethodStubInfo = msi;
 			this.client = client;
-			this.client_method = client_method;
 			this.url = url;
 			Parameters = parameters;
 		}
@@ -55,7 +53,7 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public override LogicalMethodInfo MethodInfo {
-			get { return client_method; }
+			get { return MethodStubInfo.MethodInfo; }
 		}
 
 		public override bool OneWay {
