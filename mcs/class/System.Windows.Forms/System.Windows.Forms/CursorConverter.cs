@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.CursorConverter
+//// System.Windows.Forms.CursorConverter.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

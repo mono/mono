@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.Help
+// System.Windows.Forms.Help.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

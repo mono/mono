@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.HelpEventArgs
+// System.Windows.Forms.HelpEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

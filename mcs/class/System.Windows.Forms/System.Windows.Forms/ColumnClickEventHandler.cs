@@ -1,5 +1,5 @@
 //
-// System.ColumnClickEventHandler.cs
+// System.Windows.Forms.ColumnClickEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

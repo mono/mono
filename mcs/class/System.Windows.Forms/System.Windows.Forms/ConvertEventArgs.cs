@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ConvertEventArgs
+//// System.Windows.Forms.ConvertEventArgs.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

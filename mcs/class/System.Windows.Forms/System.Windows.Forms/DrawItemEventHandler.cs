@@ -1,5 +1,5 @@
 //
-// System.DrawItemEventHandler.cs
+// System.Windows.Forms.DrawItemEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

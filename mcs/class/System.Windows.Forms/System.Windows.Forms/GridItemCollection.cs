@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.GridItemCollection
+// System.Windows.Forms.GridItemCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

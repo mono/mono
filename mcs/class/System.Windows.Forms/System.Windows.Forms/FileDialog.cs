@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.FileDialog
+// System.Windows.Forms.FileDialog.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

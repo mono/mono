@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ControlEventArgs
+//// System.Windows.Forms.ControlEventArgs.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

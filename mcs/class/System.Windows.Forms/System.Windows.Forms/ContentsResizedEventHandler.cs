@@ -1,5 +1,5 @@
 //
-// System.ContentsResizedEventHandler.cs
+// System.Windows.Forms.ContentsResizedEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.CommonDialog
+//// System.Windows.Forms.CommonDialog.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

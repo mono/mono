@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ColumnHeader
+//// System.Windows.Forms.ColumnHeader.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

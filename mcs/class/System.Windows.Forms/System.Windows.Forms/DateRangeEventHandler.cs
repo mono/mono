@@ -1,5 +1,5 @@
 //
-// System.DateRangeEventHandler.cs
+// System.Windows.Forms.DateRangeEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

@@ -1,5 +1,5 @@
 //
-// System.GiveFeedbackEventHandler.cs
+// System.Windows.Forms.GiveFeedbackEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

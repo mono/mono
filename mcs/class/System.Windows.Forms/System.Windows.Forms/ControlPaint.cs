@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ControlPaint
+//// System.Windows.Forms.ControlPaint.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.Getopt
+// System.Windows.Forms.Getopt.cs
 //
 // Author:
 //   stubbed out by #!/usr/bin/perl -w

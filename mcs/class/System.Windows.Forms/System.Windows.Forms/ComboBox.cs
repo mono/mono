@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ComboBox
+//// System.Windows.Forms.ComboBox.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.CheckBox
+//// System.Windows.Forms.CheckBox.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

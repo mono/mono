@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.Cursors
+//// System.Windows.Forms.Cursors.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

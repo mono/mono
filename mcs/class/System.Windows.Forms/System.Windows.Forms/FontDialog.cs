@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.FontDialog
+// System.Windows.Forms.FontDialog.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.CurrencyManager
+//// System.Windows.Forms.CurrencyManager.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

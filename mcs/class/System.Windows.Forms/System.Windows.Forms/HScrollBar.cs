@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.HScrollBar
+// System.Windows.Forms.HScrollBar.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

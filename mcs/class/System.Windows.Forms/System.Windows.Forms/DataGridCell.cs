@@ -1,5 +1,5 @@
 //
-// System.Drawing.DataGridCell.cs
+// System.Windows.Forms.DataGridCell.cs
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)

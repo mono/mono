@@ -1,5 +1,5 @@
 //
-// System.HelpEventHandler.cs
+// System.Windows.Forms.HelpEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

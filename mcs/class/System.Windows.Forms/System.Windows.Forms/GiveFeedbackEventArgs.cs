@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.GiveFeedbackEventArgs
+// System.Windows.Forms.GiveFeedbackEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.Clipboard
+//// System.Windows.Forms.Clipboard.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

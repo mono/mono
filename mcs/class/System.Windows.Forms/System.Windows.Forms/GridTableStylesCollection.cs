@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.GridTableStylesCollection
+// System.Windows.Forms.GridTableStylesCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

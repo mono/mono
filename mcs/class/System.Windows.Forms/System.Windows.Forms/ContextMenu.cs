@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ContextMenu
+//// System.Windows.Forms.ContextMenu.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

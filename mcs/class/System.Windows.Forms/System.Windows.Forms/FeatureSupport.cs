@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.FeatureSupport
+// System.Windows.Forms.FeatureSupport.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 //
-// System.ConvertEventHandler.cs
+// System.Windows.Forms.ConvertEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

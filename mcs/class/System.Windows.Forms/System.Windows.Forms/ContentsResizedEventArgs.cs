@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ColumnClickEventArgs
+//// System.Windows.Forms.ColumnClickEventArgs.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

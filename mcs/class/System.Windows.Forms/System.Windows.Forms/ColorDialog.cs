@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.ColorDialog
+//// System.Windows.Forms.ColorDialog.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

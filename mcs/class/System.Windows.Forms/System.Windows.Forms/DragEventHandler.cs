@@ -1,5 +1,5 @@
 //
-// System.DragEventHandler.cs
+// System.Windows.Forms.DragEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

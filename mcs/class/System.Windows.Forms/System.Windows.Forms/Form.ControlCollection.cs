@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.Form.ControlCollection
+// System.Windows.Forms.Form.ControlCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
