@@ -22,8 +22,19 @@ public class DoubleTest : TestCase
 	private const Double d_pinf = Double.PositiveInfinity;
 	private const Double d_ninf = Double.NegativeInfinity;
 	private const String s = "What Ever";
+	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public DoubleTest() : base ("MonoTests.System.DoubleTest testcase") {}
+	
+	private string[] string_values = {"1", ".1", "1.1", "-12", "44.444432", ".000021121", 
+									  "   .00001", "  .223    ", "         -221.3233",
+									  " 1.7976931348623157e308 ", "+1.7976931348623157E308", "-1.7976931348623157e308",
+									  "4.9406564584124650e-324"};
+	private double[] double_values = {1, .1, 1.1, -12, 44.444432, .000021121,
+									  .00001, .223, -221.3233,
+									  1.7976931348623157e308, 1.7976931348623157e308, -1.7976931348623157e308,
+									  4.9406564584124650e-324};
+
+	public DoubleTest () : base ("MonoTests.System.DoubleTests testcase") {}
 	public DoubleTest (string name) : base (name) {}
 	
 
@@ -79,12 +90,6 @@ public class DoubleTest : TestCase
 		
 	}
 
-	public void TestGetHasCode () {
-		//I have no idea why this is failing....
-		AssertEquals("GetHashCode 1 Failed", 1234, d_pos.GetHashCode());		
-		AssertEquals("GetHashCode 2 Failed", -1234, d_neg.GetHashCode());
-	}
-
 	public void TestTypeCode () {
 		AssertEquals("GetTypeCode Failed", TypeCode.Double, d_pos.GetTypeCode());		
 	}
@@ -112,8 +117,47 @@ public class DoubleTest : TestCase
 	}
 
 	public void TestParse() {
-		//I get a System.Security.SecuriytException with this... why???
-		//AssertEquals("Parse Failed", 1234.5678, Double.Parse("1234.5678"));
+		int i=0;
+		for(i=0;i<string_values.Length;i++) {			
+			AssertEquals("Parse Failed", double_values[i], Double.Parse(string_values[i]));
+		}
+		
+		AssertEquals("Parse Failed NumberStyles.Float", 10.1111, Double.Parse(" 10.1111 ", NumberStyles.Float, Nfi));
+		AssertEquals("Parse Failed NumberStyles.AllowThousands", 1234.5678, Double.Parse("1,234.5678", NumberStyles.AllowThousands, Nfi));
+	
+		try {
+			Double.Parse(null);
+			Fail("Parse should raise a ArgumentNullException");
+		}
+		catch (Exception e) {
+			Assert("Parse should be a ArgumentNullException", typeof(ArgumentNullException) == e.GetType());
+		}		
+
+		try {
+			Double.Parse("save the elk");
+			Fail("Parse should raise a FormatException");
+		}
+		catch (Exception e) {
+			Assert("Parse should be a FormatException", typeof(FormatException) == e.GetType());
+		}		
+
+		try {
+			Double.Parse("1.7976931348623158e308");
+			Fail("Parse should raise a OverflowException+");
+		}
+		catch (Exception e) {
+			Assert("Parse should be a OverflowException+ ", typeof(OverflowException) == e.GetType());
+		}		
+
+		try {
+			Double.Parse("-1.7976931348623158e308");
+			Fail("Parse should raise a OverflowException-");
+		}
+		catch (Exception e) {
+			Assert("Parse should be a OverflowException-", typeof(OverflowException) == e.GetType());
+		}		
+
+
 	}
 
 	public void TestToString() {

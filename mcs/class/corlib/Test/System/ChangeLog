@@ -112,3 +112,7 @@
 	* BooleanTest.cs: Use correct argument order in AssertEquals
 	* AllTests.cs: Added new Double test to suite.
 	* DoubleTest.cs: Add new test suite
+
+2002-02-24  Bob Doan  <bdoan@sicompos.com>
+
+	* DoubleTest.cs: Added parse tests to Double test suite, removed GetHashCodeTests

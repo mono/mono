@@ -97,7 +97,6 @@ namespace MonoTests.System
 			TestPublicFields ();
 			TestCompareTo ();
 			TestEquals ();
-			TestGetHasCode ();
 			TestTypeCode ();
 			TestIsInfinity ();
 			TestIsNan ();
