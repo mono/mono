@@ -25,23 +25,27 @@ namespace System.Data
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource,
 		ISupportInitialize, ISerializable {
+
+		private string dataSetName;
+		private bool caseSensitive;
+		private bool enforceConstraints;
+		private DataTableCollection tableCollection;
 		
 		#region Constructors
 
 		[MonoTODO]
-		public DataSet()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
+		public DataSet() {
+			tableCollection = new DataTableCollection ();
 		}
 
 		[MonoTODO]
-		public DataSet(string dataSetName) {
+		public DataSet(string name) : this () {
+			dataSetName = name;
 		}
 
 		[MonoTODO]
-		protected DataSet(SerializationInfo info, StreamingContext context) {
+		protected DataSet(SerializationInfo info, StreamingContext context) : this () {
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors
@@ -49,24 +53,21 @@ namespace System.Data
 		#region Public Properties
 
 		public bool CaseSensitive {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return caseSensitive;
 			} 
-			
-			[MonoTODO]
 			set {
+				caseSensitive = value;
 			}
 		}
 
 		public string DataSetName {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return dataSetName;
 			} 
 			
-			[MonoTODO]
 			set {
+				dataSetName = value;
 			}
 		}
 
@@ -78,17 +79,17 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool EnforceConstraints {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return enforceConstraints;
 			} 
 			
-			[MonoTODO]
 			set {
+				enforceConstraints = value;
 			}
 		}
 
@@ -114,6 +115,7 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -125,6 +127,7 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -136,6 +139,7 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -154,13 +158,13 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public DataTableCollection Tables {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return tableCollection;
 			}
 		}
 
@@ -264,13 +268,18 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		public void WriteXmlSchema(string fileName) {
+		public void WriteXmlSchema(string fileName)
+	        {
+			throw new NotImplementedException ();
 		}
 
-		public void WriteXmlSchema(TextWriter writer) {
+		public void WriteXmlSchema(TextWriter writer)
+		{
 		}
 
-		public void WriteXmlSchema(XmlWriter writer) {
+		public void WriteXmlSchema(XmlWriter writer)
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Public Methods
@@ -283,7 +292,8 @@ namespace System.Data
 
 		#region Destructors
 
-		~DataSet() {
+		~DataSet()
+		{
 		}
 
 		#endregion Destructors
