@@ -756,6 +756,17 @@ public class EnumTest : TestCase
 			i++;
 			AssertEquals("bitfield with flags format wrong for Int64 enum", 
 				     "b, c", ((SomeInt64Enum)3).ToString("f"));
+
+			i++;
+			AssertEquals("bitfield with unknown flags format wrong for Int32 enum",
+				     "12", ((SomeEnum)12).ToString("f"));
+			i++;
+			AssertEquals("bitfield with unknown flags format wrong for Byte enum",
+				     "12", ((SomeByteEnum)12).ToString("f"));
+			i++;
+			AssertEquals("bitfield with unknown flags format wrong for Int64 enum",
+				     "12", ((SomeInt64Enum)12).ToString("f"));
+
 		} catch (Exception e) {
 			Fail ("Unexpected exception at i = " + i + " with e=" + e);
 		}
