@@ -30,9 +30,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.11  2004/08/20 19:45:50  jordi
+// fixes timer, new properties and methods
+//
 // Revision 1.10  2004/08/13 20:55:20  jordi
 // change from wndproc to events
 //
@@ -97,6 +100,9 @@ namespace System.Windows.Forms
 		#region Events
 		public event EventHandler Scroll;
 		public event EventHandler ValueChanged;		
+		public new event EventHandler ImeModeChanged;
+		public new event EventHandler ForeColorChanged;
+		public new event EventHandler TextChanged;
 		#endregion // Events
 
 		public TrackBar ()
@@ -116,6 +122,7 @@ namespace System.Windows.Forms
 			SizeChanged += new System.EventHandler (OnResizeTB);
 			MouseDown += new MouseEventHandler (OnMouseDownTB); 
 			MouseUp += new MouseEventHandler (OnMouseUpTB); 
+			holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);			
@@ -164,10 +171,31 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]	
 		public override Color ForeColor {
 			get { return base.ForeColor; }
-			set { base.ForeColor = value; }
+			set {
+				if (value == base.ForeColor)
+					return;
+
+				if (ForeColorChanged != null)
+					ForeColorChanged (this, EventArgs.Empty);
+
+				Refresh ();
+			}
 		}		
 
-		public int LargeChange {
+		public new ImeMode ImeMode {
+			get { return base.ImeMode; }
+			set {
+				if (value == base.ImeMode)
+					return;
+
+				base.ImeMode = value;
+				if (ImeModeChanged != null)
+					ImeModeChanged (this, EventArgs.Empty);
+			}
+		}
+
+		public int LargeChange 
+		{
 			get { return largeChange; }
 			set {
 				if (value < 0)
@@ -240,8 +268,16 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
-			get {	return base.Text; }
-			set {	base.Text = value; }
+			get {	return base.Text; }			
+			set {
+				if (value == base.Text)
+					return;
+
+				if (TextChanged != null)
+					TextChanged (this, EventArgs.Empty);
+
+				Refresh ();
+			}
 		}
 
 
@@ -534,8 +570,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (fire_timer) { 
-				holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
+			if (fire_timer) { 				
 				holdclick_timer.Interval = 300;
 				holdclick_timer.Enabled = true;				
 			}			
@@ -627,6 +662,12 @@ namespace System.Windows.Forms
 
 			}			
 		}					
+
+		protected override void SetBoundsCore (int x, int y,int width, int height, BoundsSpecified specified)
+		{
+			base.SetBoundsCore (x, y,width,	height, specified);
+		}
+
 		
     		#endregion // Private Methods
 	}
