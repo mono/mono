@@ -1,3 +1,9 @@
+2003-12-21  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs, XmlElement.cs, XmlNode.cs :
+	  GetElementsByTagName() - Fixed bugzilla #52419, refactored, 
+	  and moved private implementation methods to XmlNode class.
+
 2003-12-20  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriter.cs :

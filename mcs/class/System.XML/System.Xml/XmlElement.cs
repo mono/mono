@@ -229,39 +229,14 @@ namespace System.Xml
 		public virtual XmlNodeList GetElementsByTagName (string name)
 		{
 			ArrayList nodeArrayList = new ArrayList ();
-			this.searchNodesRecursively (this, name, nodeArrayList);
+			this.SearchDescendantElements (name, name == "*", nodeArrayList);
 			return new XmlNodeArrayList (nodeArrayList);
-		}
-
-		private void searchNodesRecursively (XmlNode argNode, string argName, 
-			ArrayList argArrayList)
-		{
-			XmlNodeList xmlNodeList = argNode.ChildNodes;
-			foreach (XmlNode node in xmlNodeList){
-				if (node.Name.Equals (argName))
-					argArrayList.Add (node);
-				else	
-					this.searchNodesRecursively (node, argName, argArrayList);
-			}
-		}
-
-		private void searchNodesRecursively (XmlNode argNode, string argName, string argNamespaceURI, 
-			ArrayList argArrayList)
-		{
-			XmlNodeList xmlNodeList = argNode.ChildNodes;
-			foreach (XmlNode node in xmlNodeList)
-			{
-				if (node.LocalName.Equals (argName) && node.NamespaceURI.Equals (argNamespaceURI))
-					argArrayList.Add (node);
-				else	
-					this.searchNodesRecursively (node, argName, argNamespaceURI, argArrayList);
-			}
 		}
 
 		public virtual XmlNodeList GetElementsByTagName (string localName, string namespaceURI)
 		{
 			ArrayList nodeArrayList = new ArrayList ();
-			this.searchNodesRecursively (this, localName, namespaceURI, nodeArrayList);
+			this.SearchDescendantElements (localName, localName == "*", namespaceURI, namespaceURI == "*", nodeArrayList);
 			return new XmlNodeArrayList (nodeArrayList);
 		}
 

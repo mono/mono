@@ -610,6 +610,29 @@ namespace System.Xml
 			return oldChild;
 		}
 
+		internal void SearchDescendantElements (string name, bool matchAll, ArrayList list)
+		{
+			foreach (XmlNode n in ChildNodes){
+				if (n.NodeType != XmlNodeType.Element)
+					continue;
+				if (matchAll || n.Name == name)
+					list.Add (n);
+				n.SearchDescendantElements (name, matchAll, list);
+			}
+		}
+
+		internal void SearchDescendantElements (string name, bool matchAllName, string ns, bool matchAllNS, ArrayList list)
+		{
+			foreach (XmlNode n in ChildNodes){
+				if (n.NodeType != XmlNodeType.Element)
+					continue;
+				if ((matchAllName || n.LocalName == name)
+					&& (matchAllNS || n.NamespaceURI == ns))
+					list.Add (n);
+				n.SearchDescendantElements (name, matchAllName, ns, matchAllNS, list);
+			}
+		}
+
 		public XmlNodeList SelectNodes (string xpath)
 		{
 			return SelectNodes (xpath, null);
