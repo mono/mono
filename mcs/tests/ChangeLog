@@ -1,3 +1,7 @@
+2004-11-04  Raja R Harinath  <rharinath@novell.com>
+
+	* harness.mk: Avoid creating and deleting symlinks.
+
 2004-11-03  Carlos Alberto Cortez <carlos@unixmexico.org>
 
 	* acc-modifiers.cs: New test for accessor modifiers

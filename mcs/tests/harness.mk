@@ -12,11 +12,11 @@ endif
 all-local $(STD_TARGETS:=-local):
 
 %.res:
-	@f=$*.cs; rm -f $$f; ln -s ../$$f $$f; \
-	options=`sed -n 's,^// Compiler options:,,p' $$f`; \
+	@f=../$*.cs; options=`sed -n 's,^// Compiler options:,,p' $$f`; \
+	case $$options in *-t:library*) ext=dll ;; *-t:module*) ext=netmodule ;; *) ext=exe ;; esac; \
 	testlogfile="$*.log" ; \
-        echo "*** $(CSCOMPILE) $$options $$f" > $$testlogfile ; \
-	if $(CSCOMPILE) $$options $$f >> $$testlogfile 2>&1 ; then \
+        echo "*** $(CSCOMPILE) $$options -out:$*.$$ext $$f" > $$testlogfile ; \
+	if $(CSCOMPILE) $$options -out:$*.$$ext $$f >> $$testlogfile 2>&1 ; then \
 	  if test -f $*.exe; then \
 	    echo "*** $(TEST_RUNTIME) ./$*.exe" >> $$testlogfile ; \
 	      if $(TEST_RUNTIME) -O=-all ./$*.exe >> $$testlogfile 2>&1 ; then \
@@ -34,7 +34,6 @@ all-local $(STD_TARGETS:=-local):
 	  echo "Exit code: $$?" >> $$testlogfile ; \
 	  echo "FAIL: $*: compilation" > $@ ; \
 	fi ; \
-	rm -f $$f; \
 	cat $@; \
 	if test ! -f $$testlogfile ; then :; else cat $$testlogfile; fi
 
