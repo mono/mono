@@ -1,3 +1,21 @@
+2004-11-16  Martin Baulig  <martin@ximian.com>
+
+	This is based on a patch from Marek Safar, see bug #69082.
+	Fixes bugs #63705 and #67130.
+
+	* typemanager.cs (TypeManager.LookupInterfaceCache): New public
+	method; create a MemberCache for an interface type and cache the
+	result.
+
+	* decl.cs (IMemberContainer.ParentContainer): Removed.
+	(IMemberContainer.ParentCache): New property.
+	(MemberCache.SetupCacheForInterface): Removed.
+	(MemberCache..ctor): Added .ctor which takes a `Type[]'; use this
+	to create a cache for an interface's "parent".
+
+	* class.cs (TypeContainer.DoDefineMembers): Setup cache for
+	interfaces too.
+
 2004-11-15  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberName.GetPartialName): Removed, use GetTypeName() instead.

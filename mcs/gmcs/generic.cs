@@ -663,7 +663,7 @@ namespace Mono.CSharp {
 			get { return Name; }
 		}
 
-		IMemberContainer IMemberContainer.ParentContainer {
+		MemberCache IMemberContainer.ParentCache {
 			get { return null; }
 		}
 

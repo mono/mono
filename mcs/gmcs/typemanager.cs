@@ -222,6 +222,8 @@ public class TypeManager {
 
 	static PtrHashtable builder_to_declspace;
 
+	static PtrHashtable builder_to_member_cache;
+
 	// <remarks>
 	//   Tracks the interfaces implemented by typebuilders.  We only
 	//   enter those who do implement or or more interfaces
@@ -277,6 +279,7 @@ public class TypeManager {
 		typecontainers = null;
 		user_types = null;
 		builder_to_declspace = null;
+		builder_to_member_cache = null;
 		builder_to_ifaces = null;
 		method_arguments = null;
 		indexer_arguments = null;
@@ -377,6 +380,7 @@ public class TypeManager {
 		typecontainers = new Hashtable ();
 		
 		builder_to_declspace = new PtrHashtable ();
+		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
@@ -508,7 +512,7 @@ public class TypeManager {
 
 		return LookupTypeContainer (t);
 	}
-	
+
 	public static IMemberContainer LookupMemberContainer (Type t)
 	{
 		if (t is TypeBuilder) {
@@ -525,6 +529,17 @@ public class TypeManager {
 		}
 
 		return TypeHandle.GetTypeHandle (t);
+	}
+
+	public static MemberCache LookupInterfaceCache (IMemberContainer container, Type t)
+	{
+		MemberCache cache = builder_to_member_cache [t] as MemberCache;
+		if (cache != null)
+			return cache;
+
+		cache = new MemberCache (container, GetInterfaces (t));
+		builder_to_member_cache.Add (t, cache);
+		return cache;
 	}
 
 	public static TypeContainer LookupInterface (Type t)
@@ -3166,8 +3181,10 @@ public class TypeManager {
 				// This happens with interfaces, they have a null
 				// basetype.  Look members up in the Object class.
 				//
-				if (current_type == null)
+				if (current_type == null) {
 					current_type = TypeManager.object_type;
+					searching = true;
+				}
 			}
 			
 			if (list.Length == 0)
@@ -3364,13 +3381,17 @@ public sealed class TypeHandle : IMemberContainer {
 	private string full_name;
 	private bool is_interface;
 	private MemberCache member_cache;
+	private MemberCache parent_cache;
 
 	private TypeHandle (Type type)
 	{
 		this.type = type;
 		full_name = type.FullName != null ? type.FullName : type.Name;
-		if (type.BaseType != null)
+		if (type.BaseType != null) {
 			BaseType = GetTypeHandle (type.BaseType);
+			parent_cache = BaseType.MemberCache;
+		} else if (type.IsInterface)
+			parent_cache = TypeManager.LookupInterfaceCache (this, type);
 		this.is_interface = type.IsInterface || type.IsGenericParameter;
 		this.member_cache = new MemberCache (this);
 	}
@@ -3389,9 +3410,9 @@ public sealed class TypeHandle : IMemberContainer {
 		}
 	}
 
-	public IMemberContainer ParentContainer {
+	public MemberCache ParentCache {
 		get {
-			return BaseType;
+			return parent_cache;
 		}
 	}
 

@@ -525,7 +525,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected bool AddToContainer (MemberCore symbol, bool is_method, string fullname, string basename)
 		{
-			if (basename == Basename) {
+			if (basename == Basename && !(this is Interface)) {
 				Report.SymbolRelatedToPreviousError (this);
 				Report.Error (542, "'{0}': member names cannot be the same as their enclosing type", symbol.Location, symbol.GetSignatureForError ());
 				return false;
@@ -1568,7 +1568,7 @@ namespace Mono.CSharp {
 		///   This is used when creating the member cache for a class to get all
 		///   members from the parent class.
 		/// </summary>
-		IMemberContainer ParentContainer {
+		MemberCache ParentCache {
 			get;
 		}
 
@@ -1619,7 +1619,7 @@ namespace Mono.CSharp {
 		public readonly IMemberContainer Container;
 		protected Hashtable member_hash;
 		protected Hashtable method_hash;
-		
+
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
 		/// </summary>
@@ -1630,20 +1630,10 @@ namespace Mono.CSharp {
 			Timer.IncrementCounter (CounterType.MemberCache);
 			Timer.StartTimer (TimerType.CacheInit);
 
-			
-
 			// If we have a parent class (we have a parent class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
-			if (Container.IsInterface) {
-				MemberCache parent;
-				
-				if (Container.ParentContainer != null)
-					parent = Container.ParentContainer.MemberCache;
-				else
-					parent = TypeHandle.ObjectType.MemberCache;
-				member_hash = SetupCacheForInterface (parent);
-			} else if (Container.ParentContainer != null)
-				member_hash = SetupCache (Container.ParentContainer.MemberCache);
+			if (Container.ParentCache != null)
+				member_hash = SetupCache (Container.ParentCache);
 			else
 				member_hash = new Hashtable ();
 
@@ -1661,12 +1651,33 @@ namespace Mono.CSharp {
 			Timer.StopTimer (TimerType.CacheInit);
 		}
 
+		public MemberCache (IMemberContainer container, Type[] ifaces)
+		{
+			this.Container = container;
+
+			member_hash = new Hashtable ();
+			if (ifaces == null)
+				return;
+
+			foreach (Type itype in ifaces) {
+				IMemberContainer iface_container =
+					TypeManager.LookupMemberContainer (itype);
+
+				MemberCache iface_cache = iface_container.MemberCache;
+
+				AddHashtable (member_hash, iface_cache);
+			}
+		}
+
 		/// <summary>
 		///   Bootstrap this member cache by doing a deep-copy of our parent.
 		/// </summary>
 		Hashtable SetupCache (MemberCache parent)
 		{
 			Hashtable hash = new Hashtable ();
+
+			if (parent == null)
+				return hash;
 
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
@@ -1675,7 +1686,6 @@ namespace Mono.CSharp {
                                 
 			return hash;
 		}
-
 
 		/// <summary>
 		///   Add the contents of `new_hash' to `hash'.
@@ -1698,36 +1708,16 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Bootstrap the member cache for an interface type.
-		///   Type.GetMembers() won't return any inherited members for interface types,
-		///   so we need to do this manually.  Interfaces also inherit from System.Object.
-		/// </summary>
-		Hashtable SetupCacheForInterface (MemberCache parent)
-		{
-			Hashtable hash = SetupCache (parent);
-			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
-
-			foreach (Type itype in ifaces) {
-				IMemberContainer iface_container =
-					TypeManager.LookupMemberContainer (itype);
-
-				MemberCache iface_cache = iface_container.MemberCache;
-
-				AddHashtable (hash, iface_cache);
-			}
-
-			return hash;
-		}
-
-		/// <summary>
 		///   Add all members from class `container' to the cache.
 		/// </summary>
 		void AddMembers (IMemberContainer container)
 		{
 			// We need to call AddMembers() with a single member type at a time
 			// to get the member type part of CacheEntry.EntryType right.
+			if (!container.IsInterface) {
 			AddMembers (MemberTypes.Constructor, container);
 			AddMembers (MemberTypes.Field, container);
+			}
 			AddMembers (MemberTypes.Method, container);
 			AddMembers (MemberTypes.Property, container);
 			AddMembers (MemberTypes.Event, container);
@@ -1913,6 +1903,12 @@ namespace Mono.CSharp {
 				this.Container = container;
 				this.Member = member;
 				this.EntryType = GetEntryType (mt, bf);
+			}
+
+			public override string ToString ()
+			{
+				return String.Format ("CacheEntry ({0}:{1}:{2})", Container.Name,
+						      EntryType, Member);
 			}
 		}
 
