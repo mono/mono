@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Text 
 {
+	[Serializable]
 	public enum TextRenderingHint {
 		AntiAlias = 4,
 		AntiAliasGridFit = 3,

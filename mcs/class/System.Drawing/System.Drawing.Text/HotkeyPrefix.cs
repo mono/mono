@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Text 
 {
+	[Serializable]
 	public enum HotkeyPrefix {
 		Hide = 2,
 		None = 0,
