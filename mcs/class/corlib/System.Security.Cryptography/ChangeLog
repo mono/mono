@@ -1,3 +1,6 @@
+2002-01-10  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Create (trivial) implementation of RandomNumberGenerator
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* CryptoAPITransform.cs, DESCryptoProvider.cs : MonoTODO attribute
