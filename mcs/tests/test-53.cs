@@ -105,11 +105,11 @@ class X {
 		else
 			Console.WriteLine ("Implicit conversion from type to IDisposable pass");
 
-		MyDispose a = new MyDispose ();
-		using (a){
+		MyDispose bb = new MyDispose ();
+		using (bb){
 			
 		}
-		if (a.disposed == false)
+		if (bb.disposed == false)
 			return 6;
 		
 		Console.WriteLine ("All tests pass");

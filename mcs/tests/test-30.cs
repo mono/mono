@@ -39,10 +39,21 @@ class test {
 
 		if (x.ib_called)
 			return 1;
-		if (x.ia_called)
-			return 0;
+		if (!x.ia_called)
+			return 2;
 
-		return 1;
+		X y = new X ();
+		((IB) y).Draw ();
+		Console.WriteLine ("IA: " + x.ia_called);
+		Console.WriteLine ("IB: " + x.ib_called);
+
+		if (!y.ib_called)
+			return 3;
+		if (y.ia_called)
+			return 4;
+
+		Console.WriteLine ("All tests pass");
+		return 0;
 	}
 }
 

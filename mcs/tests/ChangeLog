@@ -1,3 +1,11 @@
+2001-12-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* makefile (test-30): Another test moved to the `pass' section.
+	This is explicit interface implementation.
+
+	(test-54): returning from catch exceptions has been working for
+	some time now. 
+
 2001-12-09  Radek Doulik  <rodo@ximian.com>
 
 	* makefile (TEST_SOURCES): added test-55 for using alias directive

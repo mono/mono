@@ -2,6 +2,7 @@
 // This test does not pass peverify because we dont return properly
 // from catch blocks
 //
+using System;
 
 class X {
 
