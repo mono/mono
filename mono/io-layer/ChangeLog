@@ -1,3 +1,7 @@
+2003-04-11  Dick Porter  <dick@ximian.com>
+
+	* atomic.h: ARM atomic operations by Malte Hildingson
+	<tds00mahi@tellus.thn.htu.se>
 
 Tue Apr 8 11:37:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
