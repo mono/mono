@@ -1,4 +1,4 @@
-2002-03-18  Jason Diamond <jason@injektilo.org>
+2002-03-19  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocument.cs: Fixed typo in Load that was duplicating the LocalName
 	in the prefix.
