@@ -1,3 +1,8 @@
+2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : complex table content child was not properly added
+	  when it is the only one child in the parent table. Fixed bug #53959.
+
 2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
        * DataTableTypeConverter.cs: added
        * DataView.cs: added missing attribute on Table property

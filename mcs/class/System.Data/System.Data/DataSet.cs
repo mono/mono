@@ -1576,7 +1576,6 @@ namespace System.Data {
 
 			XmlSchemaObjectCollection schemaAttributes = null;
 
-			//TODO - what about the simple content?
 			if (simple != null) {
 				// add simpleContent
 				XmlSchemaSimpleContent simpleContent = new XmlSchemaSimpleContent();
@@ -1660,8 +1659,6 @@ namespace System.Data {
 					colElem.UnhandledAttributes = (XmlAttribute[])xattrs.ToArray(typeof (XmlAttribute));
 					seq.Items.Add (colElem);
 				}
-				if (seq.Items.Count > 0)
-					complex.Particle = seq;
 
 				foreach (DataRelation rel in table.ChildRelations) {
 					if (rel.Nested) {
@@ -1670,6 +1667,8 @@ namespace System.Data {
 							el.RefName = new XmlQualifiedName (rel.ChildTable.TableName, rel.ChildTable.Namespace);
 						} else {
 							XmlSchemaElement el = GetTableSchema (doc, rel.ChildTable, schemaToAdd, nsmgr);
+							el.MinOccurs = 0;
+							el.MaxOccursString = "unbounded";
 							XmlSchemaComplexType ct = (XmlSchemaComplexType) el.SchemaType;
 							ct.Name = el.Name;
 							el.SchemaType = null;
@@ -1679,6 +1678,9 @@ namespace System.Data {
 						}
 					}
 				}
+
+				if (seq.Items.Count > 0)
+					complex.Particle = seq;
 			}
 
 			//Then a list of attributes
