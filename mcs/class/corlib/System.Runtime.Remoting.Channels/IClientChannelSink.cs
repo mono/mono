@@ -11,15 +11,15 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Channels {
 
-	public interface IClientChannelSink
+	public interface IClientChannelSink : IChannelSinkBase
 	{
 		IClientChannelSink NextChannelSink { get; }
 
 		void AsyncProcessRequest (IClientChannelSinkStack sinkStack, IMessage msg,
 					  ITransportHeaders headers, Stream stream);
 
-		void AsyncProcessRequest (IClientChannelSinkStack sinkStack, object state,
-					  ITransportHeaders headers, Stream stream);
+		void AsyncProcessResponse (IClientChannelSinkStack sinkStack, object state,
+					   ITransportHeaders headers, Stream stream);
 
 		Stream GetRequestStream (IMessage msg, ITransportHeaders headers);
 

@@ -16,9 +16,10 @@ namespace System.Runtime.Remoting.Channels {
 		IServerChannelSink NextChannelSink { get; }
 
 		void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
-					  ITransportHeaders headers, Stream stream);
+					   IMessage msg, ITransportHeaders headers, Stream stream);
 
-		Stream GetReponseStream (IMessage msg, ITransportHeaders headers);
+		Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
+					  IMessage msg, ITransportHeaders headers);
 
 		ServerProcessing ProcessMessage (IServerChannelSinkStack sinkStack,
 						 IMessage requestMsg, ITransportHeaders requestHeaders, Stream requestStream,

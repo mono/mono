@@ -12,7 +12,7 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		object ChannelData { get; }
 
-		string [] GetUrlsForUris (string objectUri);
+		string [] GetUrlsForUri (string objectUri);
 
 		void StartListening (object data);
 

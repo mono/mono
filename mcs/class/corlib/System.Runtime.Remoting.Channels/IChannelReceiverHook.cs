@@ -9,13 +9,14 @@
 
 namespace System.Runtime.Remoting.Channels {
 
-	public interface IChannelReceiverHook : IChannel
+	public interface IChannelReceiverHook
 	{
 		string ChannelScheme { get; }
 
 		IServerChannelSink ChannelSinkChain { get; }
 
 		bool WantsToListen { get; }
-		
+
+		void AddHookChannelUri (string channelUri);
 	}
 }

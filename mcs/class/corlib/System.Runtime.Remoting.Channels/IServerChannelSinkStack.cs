@@ -14,7 +14,7 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		object Pop (IServerChannelSink sink);
 
-		object Push (IServerChannelSink sink, object state);
+		void Push (IServerChannelSink sink, object state);
 
 		void ServerCallback (IAsyncResult ar);
 

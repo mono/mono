@@ -12,6 +12,6 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		object Pop (IClientChannelSink sink);
 
-		object Push (IClientChannelSink sink, object state);
+		void Push (IClientChannelSink sink, object state);
 	}
 }

@@ -12,7 +12,7 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		string ChannelName { get; }
 
-		int ChannelPriorirty { get; }
+		int ChannelPriority { get; }
 
 		string Parse (string url, out string objectURI);
 	}
