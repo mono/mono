@@ -35,9 +35,10 @@ namespace System.Windows.Forms {
 			autoSize = false;
 			border_style = BorderStyle.None;
 			base.TabStop = false;
-			
+			text_align = ContentAlignment.TopLeft;
 			SubClassWndProc_ = true;
 			SetStyle (ControlStyles.Selectable, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
     		}
 
 #region Properties
@@ -271,8 +272,65 @@ namespace System.Windows.Forms {
     
     		protected override void OnPaint (PaintEventArgs e)
     		{
-				//FIXME:
-				base.OnPaint(e);
+				Rectangle paintBounds = ClientRectangle;
+				Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
+				Graphics paintOn = Graphics.FromImage(bmp);
+			
+				Color controlColor = BackColor; //SystemColors.Control;
+				Color textColor = ForeColor; // SystemColors.ControlText;
+				if (BackColor == System.Drawing.Color.Red) {
+					Color t = System.Drawing.Color.Red;
+				}
+			
+				Rectangle rc = paintBounds;
+				Rectangle rcImageClip = paintBounds;
+				rcImageClip.Inflate(-2,-2);
+
+				SolidBrush sb = new SolidBrush( controlColor);
+				paintOn.FillRectangle(sb, rc);
+				sb.Dispose();
+				
+				// Do not place Text and Images on the borders 
+				paintOn.Clip = new Region(rcImageClip);
+				if(Image != null) {
+					int X = rc.X;
+					int Y = rc.Y;
+
+					if( ImageAlign == ContentAlignment.TopCenter ||
+						ImageAlign == ContentAlignment.MiddleCenter ||
+						ImageAlign == ContentAlignment.BottomCenter) {
+						X += (rc.Width - Image.Width) / 2;
+					}
+					else if(ImageAlign == ContentAlignment.TopRight ||
+						ImageAlign == ContentAlignment.MiddleRight||
+						ImageAlign == ContentAlignment.BottomRight) {
+						X += (rc.Width - Image.Width);
+					}
+
+					if( ImageAlign == ContentAlignment.BottomCenter ||
+						ImageAlign == ContentAlignment.BottomLeft ||
+						ImageAlign == ContentAlignment.BottomRight) {
+						Y += rc.Height - Image.Height;
+					}
+					else if(ImageAlign == ContentAlignment.MiddleCenter ||
+							ImageAlign == ContentAlignment.MiddleLeft ||
+							ImageAlign == ContentAlignment.MiddleRight) {
+						Y += (rc.Height - Image.Height) / 2;
+					}
+					paintOn.DrawImage(Image, X, Y, Image.Width, Image.Height);
+				}
+
+				// DrawString does not paint _ under character, so we can use Win32 function call
+				if( Enabled) {
+					Win32.DrawText(paintOn, Text, Font, textColor, rc, TextAlign);
+				}
+				else {
+					ControlPaint.DrawStringDisabled(paintOn, Text, Font, textColor, rc, Win32.ContentAlignment2StringFormat(TextAlign));
+				}
+
+				e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
+				paintOn.Dispose ();
+				bmp.Dispose();
 			}
     
   			//Compact Framework
@@ -353,10 +411,18 @@ namespace System.Windows.Forms {
 		{
     			base.UpdateBounds (x, y, width, height, clientWidth, clientHeight);
 		}
-    
+
     		protected override void WndProc(ref Message m)
     		{
-    			base.WndProc (ref m);
+				switch (m.Msg) {
+					case Msg.WM_DRAWITEM: {
+						m.Result = (IntPtr)1;
+					}
+						break;
+					default:
+						base.WndProc (ref m);
+						break;
+				}
     		}
 #endregion
 

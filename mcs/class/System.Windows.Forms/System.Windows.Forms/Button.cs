@@ -274,6 +274,7 @@ namespace System.Windows.Forms {
 				ControlPaint.DrawFocusRectangle( paintOn, focusRC);
 			}
 			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
+			paintOn.Dispose ();
 			bmp.Dispose();
 		}
 

@@ -525,7 +525,7 @@ namespace System.Windows.Forms {
 			BackgroundMode prevBkMode = Win32.SetBkMode(hdc, BackgroundMode.TRANSPARENT);
 			IntPtr prevFont = Win32.SelectObject(hdc, font.ToHfont());
 			
-			Win32.DrawText(hdc, s, s.Length, ref rc, DrawTextFormatFlags.DT_CENTER | DrawTextFormatFlags.DT_VCENTER);
+			Win32.DrawText(hdc, s, s.Length, ref rc, Win32.StringFormat2DrawTextFormat(format));
 			
 			rect.Offset(-1,-1);
 			rc.left = rect.Left;
@@ -533,7 +533,7 @@ namespace System.Windows.Forms {
 			rc.right = rect.Right;
 			rc.bottom = rect.Bottom;
 			Win32.SetTextColor(hdc, Win32.GetSysColor(GetSysColorIndex.COLOR_3DSHADOW));
-			Win32.DrawText(hdc, s, s.Length, ref rc, DrawTextFormatFlags.DT_CENTER | DrawTextFormatFlags.DT_VCENTER);
+			Win32.DrawText(hdc, s, s.Length, ref rc,  Win32.StringFormat2DrawTextFormat(format));
 			
 			Win32.SelectObject(hdc, prevFont);
 			Win32.SetBkMode(hdc, prevBkMode);

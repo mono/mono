@@ -1163,6 +1163,31 @@ namespace System.Windows.Forms{
 			}
 			return format;
 		}
+
+		internal static DrawTextFormatFlags StringFormat2DrawTextFormat( StringFormat strFormat) {
+			DrawTextFormatFlags format = 0;
+			
+			if( strFormat.Alignment == StringAlignment.Far) {
+				format |= DrawTextFormatFlags.DT_BOTTOM;
+			}
+			else if(strFormat.Alignment == StringAlignment.Near) {
+				format |= DrawTextFormatFlags.DT_TOP;
+			}
+			else {
+				format |= DrawTextFormatFlags.DT_VCENTER;
+			}
+
+			if( strFormat.LineAlignment == StringAlignment.Near) {
+				format |= DrawTextFormatFlags.DT_LEFT;
+			}
+			else if(strFormat.LineAlignment == StringAlignment.Far) {
+				format |= DrawTextFormatFlags.DT_RIGHT;
+			}
+			else {
+				format |= DrawTextFormatFlags.DT_CENTER;
+			}
+			return format;
+		}
 		
 		internal static void DrawText(Graphics paintOn, string text, Font font, Color color, Rectangle rect, ContentAlignment alignment) {
 

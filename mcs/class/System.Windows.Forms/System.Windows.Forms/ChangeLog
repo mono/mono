@@ -1,3 +1,9 @@
+2003-08-01 Alexandre Pigolkine <pigolkine@gmx.de>
+	* ControlPaint.cs		DrawStringDisabled changed
+	* Label.cs				painting moved inside OnPaint function
+	* Button.cs				disposing Graphics in OnPaint
+	* win32functions.cs		StringFormat2DrawTextFormat added
+
 2003-07-31 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Control.cs : do not keep oldBounds if LAYOUT_SUSPENDED is true, 
 					call OnMouseDown/Up functions
