@@ -1,3 +1,9 @@
+
+Wed Jul 14 19:28:57 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* GCHandle.cs: throw exception if the result from AddrOfPinnedObject()
+	is -1 (special value returned by the runtime).
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* _Exception.cs: New interface in Fx 2.0 to preserve member's order
