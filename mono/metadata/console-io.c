@@ -14,11 +14,18 @@
 #include <errno.h>
 #include <signal.h>
 #include <unistd.h>
+#ifdef HAVE_CURSES_H
+#include <curses.h>
+#endif
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
 #endif
 #ifdef HAVE_TERM_H
 #include <term.h>
+#endif
+/* Needed for FIONREAD under solaris */
+#ifdef HAVE_SYS_FILIO_H
+#include <sys/filio.h>
 #endif
 #ifndef PLATFORM_WIN32
 #ifndef TIOCGWINSZ
