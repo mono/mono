@@ -427,14 +427,17 @@ namespace System.Web.UI.WebControls
 
 		protected override void LoadViewState (object savedState)
 		{
-			if (savedState != null) {
-				Triplet saved = (Triplet) savedState;
-				base.LoadViewState (saved.First);
-				if (ControlStyleCreated)
-					ControlStyle.LoadViewState (saved.Second);
-				if (attributeState != null)
-					attributeState.LoadViewState (saved.Third);
-			}
+			if (savedState == null)
+				return;
+
+			Triplet saved = (Triplet) savedState;
+			base.LoadViewState (saved.First);
+			if (saved.Second != null ||
+			    ViewState [System.Web.UI.WebControls.Style.selectionBitString] != null)
+				ControlStyle.LoadViewState (saved.Second);
+
+			if (attributeState != null)
+				attributeState.LoadViewState (saved.Third);
 		}
 
 		protected override void Render(HtmlTextWriter writer)
@@ -451,14 +454,14 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState()
 		{
-			object baseView = base.SaveViewState ();
 			object controlView = null;
 			if (ControlStyleCreated)
-				controlView = ControlStyle.SaveViewState();
+				controlView = ControlStyle.SaveViewState ();
 
+			object baseView = base.SaveViewState ();
 			object attrView = null;
 			if (attributeState != null)
-				attrView = attributeState.SaveViewState();
+				attrView = attributeState.SaveViewState ();
 
 			return new Triplet (baseView, controlView, attrView);
 		}

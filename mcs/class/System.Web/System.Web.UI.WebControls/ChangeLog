@@ -1,3 +1,11 @@
+2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Style.cs: the MARKED bit is not send set in ViewState unless something
+	is changed. Fixed TrackViewState condition.
+	
+	* WebControl.cs: save the base ViewState *after* ControlStyle is done,
+	because it uses the same ViewState as the control. Fixes bug #47725.
+
 2003-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HyperLinkColumn.cs: patch from David Pickens <dsp@rci.rutgers.edu>

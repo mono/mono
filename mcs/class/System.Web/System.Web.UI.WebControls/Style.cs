@@ -24,7 +24,7 @@ namespace System.Web.UI.WebControls
 	[TypeConverter(typeof(ExpandableObjectConverter))]
 	public class Style : Component , IStateManager
 	{
-		internal static int MARKED      = (0x01 << 0);
+		internal static int MARKED   	= (0x01 << 0);
 		internal static int BACKCOLOR   = (0x01 << 1);
 		internal static int BORDERCOLOR = (0x01 << 2);
 		internal static int BORDERSTYLE = (0x01 << 3);
@@ -41,11 +41,12 @@ namespace System.Web.UI.WebControls
 		internal static int FONT_OLINE  = (0x01 << 14);
 		internal static int FONT_ULINE  = (0x01 << 15);
 
-		internal static string selectionBitString = "_SystemWebUIWebControlsStyle_SBS";
+		internal static string selectionBitString = "_SBS";
 
-		private StateBag viewState;
-		private int      selectionBits;
-		private bool     selfStateBag;
+		StateBag viewState;
+		int  selectionBits;
+		bool selfStateBag;
+		bool marked;
 
 		private FontInfo font;
 
@@ -89,7 +90,7 @@ namespace System.Web.UI.WebControls
 		internal virtual void Set(int bit)
 		{
 			selectionBits |= bit;
-			if(IsTrackingViewState)
+			if (IsTrackingViewState)
 				selectionBits |= MARKED;
 		}
 
@@ -494,44 +495,38 @@ namespace System.Web.UI.WebControls
 			selectionBits = 0x00;
 		}
 
-		protected bool IsTrackingViewState
-		{
-			get
-			{
-				return ( (selectionBits & MARKED) != 0x00 );
-			}
+		protected bool IsTrackingViewState {
+			get { return marked; }
 		}
 
-		protected internal virtual void TrackViewState()
+		protected internal virtual void TrackViewState ()
 		{
-			if(viewState!=null)
-				ViewState.TrackViewState();
-			Set(MARKED);
+			if (selfStateBag)
+				ViewState.TrackViewState ();
+
+			marked = true;
 		}
 
-		protected internal virtual object SaveViewState()
+		protected internal virtual object SaveViewState ()
 		{
-			if(viewState != null)
-			{
-				if(IsSet(MARKED))
-				{
-					ViewState[selectionBitString] = selectionBits;
-				}
-				if(selfStateBag)
-				{
-					return ViewState.SaveViewState();
-				}
+			if (viewState != null) {
+				if (marked)
+					ViewState [selectionBitString] = selectionBits;
+
+				if (selfStateBag)
+					return ViewState.SaveViewState ();
 			}
+
 			return null;
 		}
 
 		protected internal void LoadViewState(object state)
 		{
 			if (state != null && selfStateBag)
-				ViewState.LoadViewState(state);
+				ViewState.LoadViewState (state);
 
 			if (viewState != null) {
-				object o = ViewState[selectionBitString];
+				object o = ViewState [selectionBitString];
 				if (o != null)
 					selectionBits = (int) o;
 			}
