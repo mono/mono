@@ -39,8 +39,10 @@ namespace Mono.ILASM {
                 private class DriverMain {
 
                         private ArrayList il_file_list;
+                        private Report report;
                         private string output_file;
                         private Target target = Target.Exe;
+                        private string target_string = "exe";
                         private bool show_tokens = false;
                         private bool show_method_def = false;
                         private bool show_method_ref = false;
@@ -53,6 +55,7 @@ namespace Mono.ILASM {
                         {
                                 il_file_list = new ArrayList ();
                                 ParseArgs (args);
+                                report = new Report ();
                         }
 
                         public void Run ()
@@ -85,6 +88,8 @@ namespace Mono.ILASM {
                                                 file_path);
                                         Environment.Exit (2);
                                 }
+                                report.AssembleFile (file_path, null,
+                                                target_string, output_file);
                                 StreamReader reader = File.OpenText (file_path);
                                 ILTokenizer scanner = new ILTokenizer (reader);
 
@@ -104,16 +109,16 @@ namespace Mono.ILASM {
                                 }
 
                                 ILParser parser = new ILParser (codegen);
-				try {
-                                	if (show_parser)
-                                        	parser.yyparse (new ScannerAdapter (scanner),  
-								new yydebug.yyDebugSimple ());
-                                	else
-                                        	parser.yyparse (new ScannerAdapter (scanner),  null);
-				} catch {
-					Console.WriteLine ("Error at: " + scanner.Reader.Location);
-					throw;
-				}
+                                try {
+                                        if (show_parser)
+                                                parser.yyparse (new ScannerAdapter (scanner),
+                                                                new yydebug.yyDebugSimple ());
+                                        else
+                                                parser.yyparse (new ScannerAdapter (scanner),  null);
+                                } catch {
+                                        Console.WriteLine ("Error at: " + scanner.Reader.Location);
+                                        throw;
+                                }
                         }
 
                         public void ShowToken (object sender, NewTokenEventArgs args)
@@ -156,9 +161,11 @@ namespace Mono.ILASM {
                                                 break;
                                         case "exe":
                                                 target = Target.Exe;
+                                                target_string = "exe";
                                                 break;
                                         case "dll":
                                                 target = Target.Dll;
+                                                target_string = "dll";
                                                 break;
                                         case "scan_only":
                                                 scan_only = true;
@@ -220,7 +227,7 @@ namespace Mono.ILASM {
                                         ext_index = file_name.Length;
 
                                 return String.Format ("{0}.{1}", file_name.Substring (0, ext_index),
-                                        target.ToString ().ToLower ());
+                                        target_string);
                         }
 
                         private void Usage ()

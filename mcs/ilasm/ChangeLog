@@ -1,3 +1,10 @@
+2003-08-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Report entry for each il file processed
+	* Report.cs: New file - All error/warning/progress reporting will
+	go through here.
+	* ilasm.exe.sources: Add report to build
+		
 2003-08-12 Jackson Harper <jackson@latitudegeo.com>
 
 	* AssemblyInfo.cs: Bump up the vizzity-version number.

@@ -1,4 +1,5 @@
 Driver.cs
+Report.cs
 AssemblyInfo.cs
 codegen/CodeGen.cs
 codegen/ExternTable.cs
