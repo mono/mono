@@ -1,6 +1,11 @@
 
 2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* TODO                    : Updates of what I am doing / have done.
+	* BaseValidatorDesigner.cs: Completed.
+
+2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* BaseDataListDesigner.cs : GetDesignTimeDataSource(IEnumerable, int, bool)
 	                                            - Implemented.
 

@@ -12,8 +12,8 @@ Documented + Undocumented.
 
 * AdRotatorDesigner
 * BaseDataListComponentEditor
-BaseDataListDesigner
-BaseValidatorDesigner
+& BaseDataListDesigner
+* BaseValidatorDesigner
 * ButtonDesigner
 & CalendarAutoFormatDialog
 & CalendarDesigner
