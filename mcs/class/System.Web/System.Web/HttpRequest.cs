@@ -282,7 +282,7 @@ namespace System.Web {
 					bufLength = length - loaded;
 
 				read = _WorkerRequest.ReadEntityBody (arrBuffer, bufLength);
-				if (read == 0)
+				if (read == 0 ||read == -1 )
 					break;
 
 				ms.Write (arrBuffer, 0, read);
@@ -1215,7 +1215,10 @@ namespace System.Web {
 			if (cookies == null)
 				return;
 
-			foreach (HttpCookie cookie in cookies) {
+			int size = cookies.Count;
+			HttpCookie cookie;
+			for (int i = 0 ; i < size ; i++) {
+				cookie = cookies[i];
 				if (CheckString (cookie.Value))
 					ThrowValidationException ("Cookies", cookie.Name, cookie.Value);
 			}

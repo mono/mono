@@ -1,3 +1,8 @@
+2004-03-25  Alon Gazit <along@mainsoft.com>
+
+	* HttpRequest.cs: fix ValidateCookieCollection() to prevent
+	InvalidCastException.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpValueCollection.cs: don't UrlDecode cookies. Fixes bug #55254.
