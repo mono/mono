@@ -700,7 +700,7 @@ namespace Mono.CSharp {
 
 		public new void CacheTemporaries (EmitContext ec)
 		{
-			temporary = new LocalTemporary (ec, type);
+			temporary = new LocalTemporary (ec, expr.Type);
 		}
 
 		public override string ToString ()

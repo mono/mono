@@ -1,3 +1,8 @@
+2003-08-12  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Indirection.CacheTemporaries): Create the
+	LocalTemporary with the pointer type, not its element type.
+
 2003-08-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: FIRST_KEYWORD, LAST_KEYWORD: used to know if a
