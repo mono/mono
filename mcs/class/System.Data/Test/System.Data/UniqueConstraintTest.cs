@@ -219,5 +219,16 @@ namespace MonoTests.System.Data
 			//false
 			Assert("Hash Not Equals", (cst.GetHashCode() == cst3.GetHashCode()) == false);
 		}
+
+		[Test]
+		public void DBNullAllowed ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Constraints.Add (new UniqueConstraint (dt.Columns [0]));
+			dt.Rows.Add (new object [] {1, 3});
+			dt.Rows.Add (new object [] {DBNull.Value, 3});
+		}
 	}
 }

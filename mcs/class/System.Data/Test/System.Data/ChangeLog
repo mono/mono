@@ -1,3 +1,7 @@
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UniqueConstraintTest.cs : added DBNullAllowed().
+
 2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataViewTest.cs : added test for ListChanged.
