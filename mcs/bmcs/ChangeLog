@@ -1,3 +1,14 @@
+2005-03-01  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* convert.cs: Added the following conversion routines:
+	BooleanConversions, WideningStringConversions,
+	NarrowingStringConversions.
+
+	* ecore.cs: Added following helper classes: BooleanToNumericCast,
+	NumericToBooleanCast
+	
+	* typemanager.cs: Added System.DateTime to the cached types.
+
 2005-02-28  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* ecore.cs (StringToExpression):

@@ -1674,6 +1674,184 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		/// <summary> 
+		/// VB.NET specific: Convert to and from boolean
+		/// </summary>
+
+		static public Expression BooleanConversions (EmitContext ec, Expression expr,
+								    Type target_type, Location loc)
+		{
+			Type expr_type = expr.Type;
+ 			Type real_target_type = target_type;
+
+			if (expr_type == TypeManager.bool_type) {
+
+				//
+				// From boolean to byte, short, int,
+				// long, float, double, decimal
+				//
+
+				if (real_target_type == TypeManager.byte_type)
+					return new BooleanToNumericCast (expr, target_type, OpCodes.Conv_U1);
+				if (real_target_type == TypeManager.short_type)
+					return new BooleanToNumericCast (expr, target_type, OpCodes.Conv_I2);
+				if (real_target_type == TypeManager.int32_type)
+					return new BooleanToNumericCast (expr, target_type, OpCodes.Conv_I4);
+				if (real_target_type == TypeManager.int64_type)
+					return new BooleanToNumericCast (expr, target_type, OpCodes.Conv_I8);
+				if (real_target_type == TypeManager.float_type)
+					return new BooleanToNumericCast (expr, target_type, OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.double_type)
+					return new BooleanToNumericCast (expr, target_type, OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.decimal_type) {
+					return new ImplicitInvocation("DecimalType", "FromBoolean", loc, expr);
+				}
+			} if (real_target_type == TypeManager.bool_type) {
+
+				//
+				// From byte, short, int, long, float,
+				// double, decimal to boolean
+				//
+
+				if (expr_type == TypeManager.byte_type ||
+					expr_type == TypeManager.short_type ||
+					expr_type == TypeManager.int32_type ||
+					expr_type == TypeManager.int64_type || 
+					expr_type == TypeManager.float_type || 
+					expr_type == TypeManager.double_type)
+						return new NumericToBooleanCast (expr, expr_type);
+				if (expr_type == TypeManager.decimal_type) {
+					return new ImplicitInvocation("System", "Convert", "ToBoolean", loc, expr);
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary> 
+		/// VB.NET specific: Widening conversions to string
+		/// </summary>
+
+		static public Expression WideningStringConversions (EmitContext ec, Expression expr,
+								    Type target_type, Location loc)
+		{
+			Expression ret_expr = DoWideningStringConversions (ec, expr, target_type, loc);
+
+			if (ret_expr != null)
+				ret_expr = ret_expr.Resolve (ec);
+
+			return ret_expr;
+		}
+
+		static public Expression DoWideningStringConversions (EmitContext ec, Expression expr,
+								    Type target_type, Location loc)
+
+		{
+			Type expr_type = expr.Type;
+ 			Type real_target_type = target_type;
+
+			if (real_target_type == TypeManager.string_type) {
+				//
+				// From char to string
+				//
+				if (expr_type == TypeManager.char_type)
+					return new ImplicitInvocation ("StringType", "FromChar", loc, expr);
+			}
+
+			if(expr_type.IsArray && (expr_type.GetElementType() == TypeManager.char_type)) {
+				//
+				// From char array to string
+				//
+				return new ImplicitNew ("System", "String", loc, expr);
+			}
+
+			return null;
+		}
+		
+		/// <summary> 
+		/// VB.NET specific: Narrowing conversions involving strings
+		/// </summary>
+
+		static public Expression NarrowingStringConversions (EmitContext ec, Expression expr,
+								    Type target_type, Location loc)
+		{
+			Expression ret_expr = DoNarrowingStringConversions (ec, expr, target_type, loc);
+
+			if (ret_expr != null)
+				ret_expr = ret_expr.Resolve (ec);
+
+			return ret_expr;
+		}
+		
+		static public Expression DoNarrowingStringConversions (EmitContext ec, Expression expr,
+								    Type target_type, Location loc)
+		{
+			Type expr_type = expr.Type;
+ 			Type real_target_type = target_type;
+
+			// FIXME: Need to take care of Constants
+
+			if (expr_type == TypeManager.string_type) {
+
+				//
+				// From string to chararray, bool,
+				// byte, short, char, int, long,
+				// float, double, decimal and date 
+				//
+
+				if (real_target_type.IsArray && (real_target_type.GetElementType() == TypeManager.char_type))
+					return new ImplicitInvocation("CharArrayType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.bool_type)
+					return new ImplicitInvocation("BooleanType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.byte_type)
+					return new ImplicitInvocation("ByteType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.short_type)
+					return new ImplicitInvocation("ShortType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.char_type)
+					return new ImplicitInvocation("CharType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.int32_type)
+					return new ImplicitInvocation("IntegerType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.int64_type)
+					return new ImplicitInvocation("LongType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.float_type)
+					return new ImplicitInvocation("SingleType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.double_type)
+					return new ImplicitInvocation("DoubleType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.decimal_type)
+					return new ImplicitInvocation("DecimalType", "FromString", loc, expr);
+				if (real_target_type == TypeManager.date_type)
+					return new ImplicitInvocation("DateType", "FromString", loc, expr);
+			} if (real_target_type == TypeManager.string_type) {
+
+				//
+				// From bool, byte, short, char, int,
+				// long, float, double, decimal and
+				// date to string
+				//
+
+				if (expr_type == TypeManager.bool_type)
+					return new ImplicitInvocation("StringType", "FromBoolean", loc, expr);
+				if (expr_type == TypeManager.byte_type)
+					return new ImplicitInvocation("StringType", "FromByte", loc, expr);
+				if (expr_type == TypeManager.short_type)
+					return new ImplicitInvocation("StringType", "FromShort", loc, expr);
+				if (expr_type == TypeManager.int32_type)
+					return new ImplicitInvocation("StringType", "FromInteger", loc, expr);
+				if (expr_type == TypeManager.int64_type)
+					return new ImplicitInvocation("StringType", "FromLong", loc, expr);
+				if (expr_type == TypeManager.float_type)
+					return new ImplicitInvocation("StringType", "FromSingle", loc, expr);
+				if (expr_type == TypeManager.double_type)
+					return new ImplicitInvocation("StringType", "FromDouble", loc, expr);
+				if (expr_type == TypeManager.decimal_type)
+					return new ImplicitInvocation("StringType", "FromDecimal", loc, expr);
+				if (expr_type == TypeManager.date_type)
+					return new ImplicitInvocation("StringType", "FromDate", loc, expr);
+			}
+
+			return null;
+		}
+
 		/// <summary>
 		///  Returns whether an explicit reference conversion can be performed
 		///  from source_type to target_type

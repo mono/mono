@@ -2034,6 +2034,88 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Castclass, type);
 		}
 	}
+
+	//
+	// VB.NET specific
+	//
+	public class BooleanToNumericCast : EmptyCast {
+		OpCode op, op2;
+		
+		public BooleanToNumericCast (Expression child, Type return_type, OpCode op)
+			: base (child, return_type)
+			
+		{
+			this.op = op;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+			ec.ig.Emit (OpCodes.Ldc_I4_0);
+			ec.ig.Emit (OpCodes.Cgt_Un);
+			ec.ig.Emit (OpCodes.Neg);
+			ec.ig.Emit (op);
+		}			
+	}
+
+	//
+	// VB.NET specific
+	//
+	public class NumericToBooleanCast : EmptyCast {
+
+		Type expr_type;	
+
+		public NumericToBooleanCast (Expression child, Type src_type)
+			: base (child, TypeManager.bool_type)
+			
+		{
+			expr_type = src_type;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+
+			if (expr_type == TypeManager.byte_type ||
+				expr_type == TypeManager.short_type ||
+				expr_type == TypeManager.int32_type) {
+				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				ec.ig.Emit (OpCodes.Cgt_Un);
+				return;
+			}
+
+			if (expr_type == TypeManager.int64_type) {
+				ec.ig.Emit (OpCodes.Ldc_I8, (long) 0);
+				ec.ig.Emit (OpCodes.Cgt_Un);
+				return;
+			}
+
+			if (expr_type == TypeManager.float_type)
+				ec.ig.Emit (OpCodes.Ldc_R4, (float) 0);
+			else if (expr_type == TypeManager.double_type) 
+				ec.ig.Emit (OpCodes.Ldc_R8, (double) 0);
+		
+			ec.ig.Emit (OpCodes.Ceq);
+			ec.ig.Emit (OpCodes.Ldc_I4_0);
+			ec.ig.Emit (OpCodes.Ceq);
+		}			
+	}
 	
 	/// <summary>
 	///   SimpleName expressions are formed of a single word and only happen at the beginning 

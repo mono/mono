@@ -98,6 +98,7 @@ public partial class TypeManager {
 	static public Type struct_layout_attribute_type;
 	static public Type field_offset_attribute_type;
 	static public Type security_attr_type;
+	static public Type date_type;
 
 	//
 	// An empty array of types
@@ -122,6 +123,11 @@ public partial class TypeManager {
 	static public TypeExpr system_iasyncresult_expr;
 	static public TypeExpr system_valuetype_expr;
 	static public TypeExpr system_intptr_expr;
+
+	//
+	// VB.NET Specific
+	//
+	static public TypeExpr system_date_expr;
 
 	//
 	// This is only used when compiling corlib
@@ -362,6 +368,11 @@ public partial class TypeManager {
 		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
 		system_valuetype_expr  = new TypeLookupExpression ("System.ValueType");
 		system_intptr_expr  = new TypeLookupExpression ("System.IntPtr");
+
+		//
+		// VB.NET Specific
+		//
+		system_date_expr = new TypeLookupExpression ("System.DateTime");
 	}
 
 	static TypeManager ()
@@ -1108,6 +1119,11 @@ public partial class TypeManager {
 		bool_type     = CoreLookupType ("System.Boolean");
 		enum_type     = CoreLookupType ("System.Enum");
 
+		//
+		// VB.NET Specific
+		//
+		date_type  = CoreLookupType ("System.DateTime");
+
 		multicast_delegate_type = CoreLookupType ("System.MulticastDelegate");
 		delegate_type           = CoreLookupType ("System.Delegate");
 
@@ -1256,6 +1272,12 @@ public partial class TypeManager {
 		system_asynccallback_expr.Type = asynccallback_type;
 		system_iasyncresult_expr.Type = iasyncresult_type;
 		system_valuetype_expr.Type = value_type;
+
+
+		//
+		// VB.NET Specific
+		//
+		system_date_expr.Type  = date_type;
 
 		//
 		// These are only used for compare purposes
