@@ -1,3 +1,10 @@
+2002-07-20  Martin Baulig  <martin@gnome.org>
+
+	* README.tests: Added (empty) list of all the test cases.
+	When you add any test cases, please add them to this file.
+
+	* test-146.cs: Added test for bug #27977 which is now fixed.
+
 2002-07-19  Martin Baulig  <martin@gnome.org>
 
 	* test-145.cs: Added test for bug #25318 which is now fixed.

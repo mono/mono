@@ -5,7 +5,7 @@
 CSC=csc.exe
 
 MCS=../mcs/mcs.exe
-MCS2=mono ../mcs/mcs-mono2.exe
+MCS2=mono ../mcs/mcs.exe
 VERIFY=../tools/verifier.exe
 
 TEST_SOURCES = \
@@ -23,7 +23,7 @@ TEST_SOURCES = \
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 \
 	test-121 test-122 test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
 	test-131 test-132 test-133 test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
-	test-141 test-142 test-143 test-144 test-145
+	test-141 test-142 test-143 test-144 test-145 test-146
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2 unsafe-3
