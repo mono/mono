@@ -1,3 +1,6 @@
+2004-07-28  Ben Maurer  <bmaurer@ximian.com>
+
+	* basic.cs: tests for 61797 and 61740
 
 Tue Jul 27 16:05:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
