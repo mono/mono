@@ -1746,11 +1746,15 @@ namespace System.Xml.Serialization
 					{
 						if (!readByOrder)
 							WriteLine (readFlag[info.Member.Index] + " = true;");
-						if (_format == SerializationFormat.Encoded) 
+						if (_format == SerializationFormat.Encoded)
 						{
 							string val = GetObTempVar ();
 							RegisterReferencingMap (info.MappedType);
-							WriteLine ("object " + val + " = ReadReferencingElement (out fixup.Ids[" + info.Member.Index + "]);");
+							
+							if (info.Member.TypeData.SchemaType != SchemaTypes.Primitive)
+								WriteLine ("object " + val + " = ReadReferencingElement (out fixup.Ids[" + info.Member.Index + "]);");
+							else
+								WriteLine ("object " + val + " = ReadReferencingElement (" + GetLiteral(info.Member.TypeData.XmlType) + ", " + GetLiteral(System.Xml.Schema.XmlSchema.Namespace) + ", out fixup.Ids[" + info.Member.Index + "]);");
 							
 							if (info.MultiReferenceType)
 								WriteLineInd ("if (fixup.Ids[" + info.Member.Index + "] == null) {");	// already read

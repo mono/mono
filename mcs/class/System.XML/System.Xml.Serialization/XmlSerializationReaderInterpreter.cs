@@ -390,7 +390,11 @@ namespace System.Xml.Serialization
 							readFlag[info.Member.Index] = true;
 							if (_format == SerializationFormat.Encoded)
 							{
-								val = ReadReferencingElement (out fixup.Ids[info.Member.Index]);
+								if (info.Member.TypeData.SchemaType != SchemaTypes.Primitive)
+									val = ReadReferencingElement (out fixup.Ids[info.Member.Index]);
+								else
+									val = ReadReferencingElement (info.Member.TypeData.XmlType, System.Xml.Schema.XmlSchema.Namespace, out fixup.Ids[info.Member.Index]);
+									
 								if (info.MultiReferenceType) {
 									if (fixup.Ids[info.Member.Index] == null)	// already read
 										SetMemberValue (info.Member, ob, val, isValueList);

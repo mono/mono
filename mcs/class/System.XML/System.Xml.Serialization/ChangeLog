@@ -1,3 +1,11 @@
+2004-09-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs:
+	  when reading a primitive value in encoded format using
+	  ReadReferencingElement, provide the type name and namespace
+	  since the xsi type may not be present in the xml element. This
+	  fixes bug #65929.
+
 2004-09-15  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MapCodeGenerator.cs: Moved generation of XmlInclude attributes from
