@@ -1,3 +1,19 @@
+2004-10-12  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_metadata_generic_param_equal): We always have
+	an owner.
+
+	* class.c
+	(mono_class_from_generic_parameter): We need to have an owner.
+	(my_mono_class_from_generic_parameter): Likewise.
+
+	* reflection.c (mono_reflection_setup_generic_class): Renamed to
+	mono_reflection_create_generic_class() and added a new
+	mono_reflection_setup_generic_class().	
+	(mono_reflection_initialize_generic_param): If we're a nested
+	generic type and inherited from the containing class, set our
+	owner to the outer class.
+
 2004-10-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal): New icall.
