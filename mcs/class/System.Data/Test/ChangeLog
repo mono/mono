@@ -1,3 +1,8 @@
+2002-12-10  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Xml/XmlDataDocumentTest.cs: Added new tests 
+	* System.Xml/region.xml: Changed XmlDocument.
+	
 2002-11-24  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Xml/XmlDataDocumentTest.cs: Added new test suite for
