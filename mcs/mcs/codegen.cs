@@ -50,8 +50,16 @@ namespace CIR {
 		
 		public static void EmitCode (TypeContainer parent, ILGenerator ig, Block block)
 		{
+			foreach (Statement s in block.Statements){
+			}
+		}
+
+		public static void EmitTopBlock (TypeContainer parent, ILGenerator ig, Block block)
+		{
 			block.EmitVariables (parent, ig);
-			
+
+			EmitCode (parent, ig, block);
+
 			ig.Emit (OpCodes.Ret);
 		}
 	}

@@ -241,6 +241,11 @@ namespace CIR {
 		StatementCollection statements;
 
 		//
+		// An array of Blocks
+		//
+		ArrayList children;
+		
+		//
 		// Labels.  (label, block) pairs.
 		//
 		Hashtable labels;
@@ -255,17 +260,12 @@ namespace CIR {
 		//
 		Hashtable local_builders;
 
-		//
-		// If we have a child, here it is
-		//
-		Block child;
-		
 		bool used = false;
 
 		public Block (Block parent)
 		{
 			if (parent != null)
-				parent.Child = this;
+				parent.AddChild (this);
 			
 			this.Parent = parent;
 			this.Implicit = false;
@@ -274,7 +274,7 @@ namespace CIR {
 		public Block (Block parent, bool implicit_block)
 		{
 			if (parent != null)
-				parent.Child = this;
+				parent.AddChild (this);
 			
 			this.Parent = parent;
 			this.Implicit = true;
@@ -283,21 +283,19 @@ namespace CIR {
 		public Block (Block parent, string labeled)
 		{
 			if (parent != null)
-				parent.Child = this;
+				parent.AddChild (this);
 			
 			this.Parent = parent;
 			this.Implicit = true;
 			Label = labeled;
 		}
-		
-		public Block Child {
-			get {
-				return child;
-			}
 
-			set {
-				child = value;
-			}
+		public void AddChild (Block b)
+		{
+			if (children == null)
+				children = new ArrayList ();
+			
+			children.Add (b);
 		}
 
 		// <summary>
@@ -445,8 +443,10 @@ namespace CIR {
 			//
 			// Now, handle the children
 			//
-			if (Child != null)
-				Child.EmitVariables (tc, ig);
+			if (children != null){
+				foreach (Block b in children)
+					b.EmitVariables (tc, ig);
+			}
 		}
 	}
 

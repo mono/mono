@@ -1,3 +1,7 @@
+2001-08-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: Add support for multiple child blocks.
+
 2001-08-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs (EmitCode): New function, will emit the code for a
