@@ -1,3 +1,7 @@
+2001-12-21   Gaurav Vaish <gvaish@iitk.ac.in>
+
+        * StateBag.cs             - Completed
+
 2001-12-19   Gaurav Vaish <gvaish@iitk.ac.in>
 
         * Pair.cs                 - Small undocumented class. Completed.

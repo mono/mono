@@ -1,3 +1,12 @@
+2001-12-21      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* Calendar.cs                 - Added some more functions
+	* Style.cs                    - Completed
+	* ListItem.cs                 - Completed
+	* ListItemCollection.cs       - Completed
+
+  Made the first successful build of System.Web.dll that included System.Web.UI.WebControls!
+
 2001-12-20	Gaurav Vaish <gvaish@iitk.ac.in>
 
 	FontInfo.cs                 - Completed revamp. Completed

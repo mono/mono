@@ -1,3 +1,7 @@
+2001-12-21      Gaurav Vaish <gvaish@iitk.ac.in>
+
+        * CacheDependency.cs:    Some unimplemented methods to make build
+
 2001-07-20	Patrik Torstensson (Patrik.Torstensson@labs2.com)
 
 	* Cache.cs:	Implemented. (90% ready)

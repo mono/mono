@@ -24,6 +24,8 @@ namespace System.Web.Utils
 		private FileChangeEventHandler rename;
 		private NativeFileChangeEventHandler subDir;
 		
-		private int 
+		private int    monitoredSubdirs;
+		private string rootDir;
+		//private 
 	}
 }
