@@ -1363,17 +1363,15 @@ namespace Mono.CSharp {
 			get { return Name; }
 		}
 
-		TypeExpr IAlias.Type
+		TypeExpr IAlias.ResolveAsType (EmitContext ec)
 		{
-			get {
-				if (TypeBuilder == null)
-					throw new InvalidOperationException ();
+			if (TypeBuilder == null)
+				throw new InvalidOperationException ();
 
-				if (CurrentType != null)
-					return CurrentType;
+			if (CurrentType != null)
+				return CurrentType;
 
-				return new TypeExpression (TypeBuilder, Location);
-			}
+			return new TypeExpression (TypeBuilder, Location);
 		}
 
 		public override string[] ValidAttributeTargets {

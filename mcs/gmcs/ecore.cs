@@ -109,9 +109,7 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		TypeExpr Type {
-			get;
-		}
+		TypeExpr ResolveAsType (EmitContext ec);
 	}
 
 	/// <summary>
@@ -278,7 +276,7 @@ namespace Mono.CSharp {
 
 			TypeExpr te = ResolveAsTypeStep (ec) as TypeExpr;
 
-			if (te == null || te.eclass != ExprClass.Type) {
+			if ((te == null) || (te.eclass != ExprClass.Type) || (te.Type == null)) {
 				if (errors == Report.Errors)
 					Report.Error (246, Location, "Cannot find type '{0}'", ToString ());
 				return null;
@@ -2091,7 +2089,7 @@ namespace Mono.CSharp {
 
 				if (alias_value != null){
 					if (alias_value.IsType)
-						return alias_value.Type;
+						return alias_value.ResolveAsType (ec);
 					if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
 						return t;
 				}
@@ -2102,7 +2100,7 @@ namespace Mono.CSharp {
 
 			if (alias_value != null) {
 				if (alias_value.IsType)
-					return alias_value.Type;
+					return alias_value.ResolveAsType (ec);
 				if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
 					return t;
 				
@@ -2220,7 +2218,7 @@ namespace Mono.CSharp {
 					IAlias alias_value = ns.LookupAlias (Name);
 					if (alias_value != null){
 						if (alias_value.IsType)
-							return alias_value.Type;
+							return alias_value.ResolveAsType (ec);
 
 						Name = alias_value.Name;
 						Type t;
@@ -2413,10 +2411,9 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		TypeExpr IAlias.Type {
-			get {
-				return this;
-			}
+		TypeExpr IAlias.ResolveAsType (EmitContext ec)
+		{
+			return ResolveAsTypeTerminal (ec);
 		}
 	}
 
@@ -2493,21 +2490,22 @@ namespace Mono.CSharp {
 	}
 
 	public class TypeAliasExpression : TypeExpr, IAlias {
+		IAlias alias;
 		TypeExpr texpr;
 		TypeArguments args;
 		string name;
 
-		public TypeAliasExpression (TypeExpr texpr, TypeArguments args, Location l)
+		public TypeAliasExpression (IAlias alias, TypeArguments args, Location l)
 		{
-			this.texpr = texpr;
+			this.alias = alias;
 			this.args = args;
-			loc = texpr.Location;
+			loc = l;
 
 			eclass = ExprClass.Type;
 			if (args != null)
-				name = texpr.Name + "<" + args.ToString () + ">";
+				name = alias.Name + "<" + args.ToString () + ">";
 			else
-				name = texpr.Name;
+				name = alias.Name;
 		}
 
 		public override string Name {
@@ -2516,6 +2514,10 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
+			texpr = alias.ResolveAsType (ec);
+			if (texpr == null)
+				return null;
+
 			Type type = texpr.ResolveType (ec);
 			if (type == null)
 				return null;

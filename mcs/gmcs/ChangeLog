@@ -1,5 +1,16 @@
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (IAlias.Type): Replaced with ResolveAsType() to make
+	sure we don't return any unresolved TypeExpr's.
+	(TypeAliasExpression): The .ctor now takes an `IAlias' instead of
+	a `TypeExpr'.
+	(Expression.ResolveAsTypeTerminal): Make sure `te.Type != null'.
+
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Don't return any
+	unresolved `ConstructedType's.
+
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (TypeExpr.ResolveType): Don't make this virtual.
 
 2004-11-17  Martin Baulig  <martin@ximian.com>

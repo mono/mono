@@ -503,7 +503,7 @@ namespace Mono.CSharp {
 				if (!result.IsType)
 					return null;
 
-				return result.Type;
+				return result.ResolveAsType (ds.EmitContext);
 			}
 
 			return null;

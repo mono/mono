@@ -7781,12 +7781,11 @@ namespace Mono.CSharp {
 					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
 					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name);
 					if (fully_qualified != null) {
-						if (args != null)
-							return new ConstructedType (
-								fully_qualified, args, loc);
-						else
-							return new TypeExpression (
-								fully_qualified, loc);
+						if (args == null)
+							return new TypeExpression (fully_qualified, loc);
+
+						ConstructedType ctype = new ConstructedType (fully_qualified, args, loc);
+						return ctype.ResolveAsTypeStep (ec);
 					}
 				}
 

@@ -184,10 +184,9 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		TypeExpr IAlias.Type {
-			get {
-				throw new InvalidOperationException ();
-			}
+		TypeExpr IAlias.ResolveAsType (EmitContext ec)
+		{
+			throw new InvalidOperationException ();
 		}
 	}
 
@@ -288,7 +287,7 @@ namespace Mono.CSharp {
 
 				if (resolved.IsType)
 					resolved = new TypeAliasExpression (
-						resolved.Type, Alias.TypeArguments, Location);
+						resolved, Alias.TypeArguments, Location);
 
 				return resolved;
 			}
@@ -622,7 +621,7 @@ namespace Mono.CSharp {
 					IAlias alias = entry.Resolve ();
 					if (alias != null) {
 						if (alias.IsType)
-							alias.Type.ResolveType (ec);
+							alias.ResolveAsType (ec);
 
 						continue;
 					}

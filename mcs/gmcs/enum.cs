@@ -208,6 +208,8 @@ namespace Mono.CSharp {
 
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel);
 
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+
 			attr |= TypeAttributes.Class | TypeAttributes.Sealed;
 
 			if (!(BaseType is TypeLookupExpression)) {
