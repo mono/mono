@@ -4544,7 +4544,7 @@ namespace Mono.CSharp {
 			return new ComposedCast (base_type, sb.ToString (), loc);
 		}
 
-		void error178 ()
+		void Error_IncorrectArrayInitializer ()
 		{
 			Error (178, "Incorrectly structured array initializer");
 		}
@@ -4565,19 +4565,34 @@ namespace Mono.CSharp {
 				int value = (int) ((Constant) a.Expr).GetValue ();
 				
 				if (value != probe.Count) {
-					error178 ();
+					Error_IncorrectArrayInitializer ();
 					return false;
 				}
 				
 				bounds [idx] = value;
 			}
-			
+
+			int child_bounds = -1;
 			foreach (object o in probe) {
 				if (o is ArrayList) {
+					int current_bounds = ((ArrayList) o).Count;
+					
+					if (child_bounds == -1) 
+						child_bounds = current_bounds;
+
+					else if (child_bounds != current_bounds){
+						Error_IncorrectArrayInitializer ();
+						return false;
+					}
 					bool ret = CheckIndices (ec, (ArrayList) o, idx + 1, specified_dims);
 					if (!ret)
 						return false;
 				} else {
+					if (child_bounds != -1){
+						Error_IncorrectArrayInitializer ();
+						return false;
+					}
+					
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
 					if (tmp == null)
@@ -4663,7 +4678,7 @@ namespace Mono.CSharp {
 				UpdateIndices (ec);
 				
 				if (arguments.Count != dimensions) {
-					error178 ();
+					Error_IncorrectArrayInitializer ();
 					return false;
 				}
 
