@@ -1,3 +1,21 @@
+2004-05-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #52705
+	* attribute.cs
+	(GetObsoleteAttribute): New method. Creates the instance of
+	ObsoleteAttribute.
+	(AttributeTester.GetMemberObsoleteAttribute): Returns instance of
+	ObsoleteAttribute when method is obsolete.
+	(AttributeTester.Report_ObsoleteMessage): Common method for
+	Obsolete error/warning reporting.
+
+	* class.cs
+	(TypeContainer.base_classs_type): New member for storing parent type.
+
+	* decl.cs
+	(MemberCore.GetObsoleteAttribute): Returns instance of ObsoleteAttribute
+	for this MemberCore.
+
 2004-05-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs, const.cs: Fix bug #58590
@@ -12,7 +30,7 @@
 
 	* codegen.cs, cs-parser.jay: Removed SetAttributes method.
 	Hari was right, why extra method.
-        
+
 2004-05-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs, cs-parser.jay: Fix errors/cs0579-7.cs.

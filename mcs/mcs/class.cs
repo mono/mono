@@ -111,6 +111,7 @@ namespace Mono.CSharp {
 		// from classes from the arraylist `type_bases' 
 		//
 		string     base_class_name;
+		public Type base_classs_type;
 
 		ArrayList type_bases;
 
@@ -817,11 +818,8 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
-			Type ptype;
 			if (parent != null)
-				ptype = parent.ResolveType (ec);
-			else
-				ptype = null;
+				base_classs_type = parent.ResolveType (ec);
 
 			if (IsTopLevel){
 				if (TypeManager.NamespaceClash (Name, Location)) {
@@ -831,14 +829,15 @@ namespace Mono.CSharp {
 				
 				ModuleBuilder builder = CodeGen.Module.Builder;
 				TypeBuilder = builder.DefineType (
-					Name, type_attributes, ptype, null);
+					Name, type_attributes, base_classs_type, null);
+				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
 				if (builder == null)
 					return null;
 				
 				TypeBuilder = builder.DefineNestedType (
-					Basename, type_attributes, ptype, null);
+					Basename, type_attributes, base_classs_type, null);
 			}
 				
 			//
@@ -2991,7 +2990,7 @@ namespace Mono.CSharp {
 
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
-		ConstructorInfo parent_constructor;
+		protected ConstructorInfo parent_constructor;
 		Parameters parameters;
 		Location loc;
 		
@@ -3086,6 +3085,49 @@ namespace Mono.CSharp {
 					Invocation.EmitCall (ec, true, false, ec.GetThis (loc), parent_constructor, argument_list, loc);
 			}
 		}
+
+		/// <summary>
+		/// Method search for base ctor. (We do not cache it).
+		/// </summary>
+		Constructor GetOverloadedConstructor (TypeContainer tc)
+		{
+			if (tc.InstanceConstructors == null)
+				return null;
+
+			foreach (Constructor c in tc.InstanceConstructors) {
+				if (Arguments == null) {
+					if (c.ParameterTypes.Length == 0)
+						return c;
+
+					continue;
+				}
+
+				if (c.ParameterTypes.Length != Arguments.Count)
+					continue;
+
+				for (int i = 0; i < Arguments.Count; ++i)
+					if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type)
+						continue;
+
+				return c;
+			}
+
+			throw new InternalErrorException ();
+		}
+
+		//TODO: implement caching when it will be necessary
+		public virtual void CheckObsoleteAttribute (EmitContext ec, TypeContainer tc, Location loc)
+		{
+			Constructor ctor = GetOverloadedConstructor (tc);
+			if (ctor == null)
+				return;
+
+			ObsoleteAttribute oa = ctor.GetObsoleteAttribute (ec);
+			if (oa == null)
+				return;
+
+			AttributeTester.Report_ObsoleteMessage (oa, ctor.GetSignatureForError (), loc);
+		}
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
@@ -3093,6 +3135,24 @@ namespace Mono.CSharp {
 			base (argument_list, pars, l)
 		{
 		}
+
+		public override void CheckObsoleteAttribute(EmitContext ec, TypeContainer tc, Location loc) {
+			if (parent_constructor == null)
+				return;
+
+			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_classs_type);
+			if (type_ds == null) {
+				ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (parent_constructor);
+
+				if (oa != null)
+					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (parent_constructor), loc);
+
+				return;
+			}
+
+			base.CheckObsoleteAttribute (ec, type_ds, loc);
+		}
+
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
@@ -3321,8 +3381,10 @@ namespace Mono.CSharp {
 						container.EmitFieldInitializers (ec);
 				}
 			}
-			if (Initializer != null)
+			if (Initializer != null) {
+				Initializer.CheckObsoleteAttribute (ec, container, Location);
 				Initializer.Emit (ec);
+			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				container.EmitFieldInitializers (ec);

@@ -719,6 +719,32 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		/// Creates the instance of ObsoleteAttribute from this attribute instance
+		/// </summary>
+		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
+		{
+			if (pos_values == null) {
+				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
+
+				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
+				// But because a lot of attribute class code must be rewritten will be better to wait...
+				Resolve (ec);
+			}
+
+			// Some error occurred
+			if (pos_values == null)
+				return null;
+
+			if (pos_values.Length == 0)
+				return new ObsoleteAttribute ();
+
+			if (pos_values.Length == 1)
+				return new ObsoleteAttribute ((string)pos_values [0]);
+
+			return new ObsoleteAttribute ((string)pos_values [0], (bool)pos_values [1]);
+		}
+
+		/// <summary>
 		/// Returns value of CLSCompliantAttribute contructor parameter but because the method can be called
 		/// before ApplyAttribute. We need to resolve the arguments.
 		/// This situation occurs when class deps is differs from Emit order.  
@@ -1152,6 +1178,7 @@ namespace Mono.CSharp {
 	sealed class AttributeTester
 	{
 		static PtrHashtable analyzed_types = new PtrHashtable ();
+		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
 
 		private AttributeTester ()
 		{
@@ -1310,6 +1337,40 @@ namespace Mono.CSharp {
 				return IsClsCompliant (type.Assembly);
 
 			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
+		}
+
+		/// <summary>
+		/// Returns instance of ObsoleteAttribute when member is obsolete
+		/// </summary>
+		public static ObsoleteAttribute GetMemberObsoleteAttribute (MemberInfo mi)
+		{
+			object type_obsolete = analyzed_member_obsolete [mi];
+			if (type_obsolete == FALSE)
+				return null;
+
+			if (type_obsolete != null)
+				return (ObsoleteAttribute)type_obsolete;
+
+			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false) as ObsoleteAttribute;
+			analyzed_member_obsolete.Add (mi, oa == null ? FALSE : oa);
+			return oa;
+		}
+
+		/// <summary>
+		/// Common method for Obsolete error/warning reporting.
+		/// </summary>
+		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
+		{
+			if (oa.IsError) {
+				Report.Error_T (619, loc, member, oa.Message);
+				return;
+			}
+
+			if (oa.Message == null) {
+				Report.Warning_T (612, loc, member);
+				return;
+			}
+			Report.Warning_T (618, loc, member, oa.Message);
 		}
 	}
 }

@@ -81,7 +81,7 @@ public class TypeManager {
 	static public Type indexer_name_type;
 	static public Type exception_type;
 	static public Type invalid_operation_exception_type;
-	static public object obsolete_attribute_type;
+	static public Type obsolete_attribute_type;
 	static public object conditional_attribute_type;
 	static public Type in_attribute_type;
 	static public Type cls_compliant_attribute_type;
