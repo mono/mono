@@ -22,6 +22,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 	public class MoreComplexObject {
 		public event TrucDlg TrucEvent;
 		private string _string;
+		private string[] _strings = new string[]{};
 		private Queue _queue = new Queue();
 		public Hashtable _table = new Hashtable();
 
@@ -167,6 +168,15 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 		private SoapFormatter _soapFormatter;
 		private SoapFormatter _soapFormatterDeserializer;
 		private RemotingSurrogateSelector _surrogate;
+
+#if DEBUG
+		private void Out(MemoryStream stream, object objGraph) {
+			Console.WriteLine("\n---------------------\n{0}\n", objGraph.ToString());
+			stream.Position = 0;
+			StreamReader r = new StreamReader(stream);
+			Console.WriteLine(r.ReadToEnd());
+		}			
+#endif
 		
 		private object Serialize(object objGraph) {
 			MemoryStream stream = new MemoryStream();
@@ -175,9 +185,9 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			_soapFormatter.SurrogateSelector = _surrogate;
 			_soapFormatter.Serialize(stream, objGraph);
 			
-//			stream.Position = 0;
-//			StreamReader r = new StreamReader(stream);
-//			Console.WriteLine(r.ReadToEnd());
+#if DEBUG
+			Out(stream, objGraph);
+#endif
 			stream.Position = 0;
 			
 			object objReturn = _soapFormatterDeserializer.Deserialize(stream);
@@ -186,10 +196,8 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			stream = new MemoryStream();
 			_soapFormatter.Serialize(stream, objReturn);
 			stream.Position = 0;
-//			StreamReader r = new StreamReader(stream);
-//			Console.WriteLine(r.ReadToEnd());
-			
 			return objReturn;
+			
 		}
 		
 		[SetUp]
@@ -281,6 +289,9 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			objTest = new object[]{1, null, ":-)", 1234567890};
 			objReturn = Serialize(objTest);
 			objTest = new int[,]{{0, 1}, {2, 3}, {123, 4}};
+			objReturn = Serialize(objTest);
+			CheckArray(objTest, objReturn);
+			objTest = new string[]{};
 			objReturn = Serialize(objTest);
 			CheckArray(objTest, objReturn);
 			object[,,] objArray = new object[3,2,1];

@@ -13,6 +13,8 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Messaging;
 using System.Xml.Serialization;
+using System.Threading;
+using System.Globalization;
 
 
 namespace System.Runtime.Serialization.Formatters.Soap {
@@ -51,15 +53,26 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 		
 		public object Deserialize(Stream serializationStream, HeaderHandler handler) {
+			object objReturn = null;
 			SoapParser parser = new SoapParser(serializationStream);
 			SoapReader soapReader = new SoapReader(parser);
 			soapReader.Binder = _binder;
 			
-			
 			if(_topObject != null) soapReader.TopObject = _topObject;
 			ObjectReader reader = new ObjectReader(_selector, _context, soapReader);
-			parser.Run();
-			object objReturn = reader.TopObject;
+			// Use the english numeral and date format during the serialization
+			// and the deserialization.
+			// The original CultureInfo is restored when the operation
+			// is done
+			CultureInfo savedCi = CultureInfo.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+				parser.Run();
+				objReturn = reader.TopObject;
+			}
+			finally {
+				Thread.CurrentThread.CurrentCulture = savedCi;
+			}
 			return objReturn;
 		}
 		
@@ -77,7 +90,19 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_soapWriter = new SoapWriter(serializationStream);
 			_objWriter = new ObjectWriter((ISoapWriter) _soapWriter, _selector,  new StreamingContext(StreamingContextStates.File));
 			_soapWriter.Writer = _objWriter;
-			_objWriter.Serialize(graph);
+
+			// Use the english numeral and date format during the serialization
+			// and the deserialization.
+			// The original CultureInfo is restored when the operation
+			// is done
+			CultureInfo savedCi = CultureInfo.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+				_objWriter.Serialize(graph);
+			}
+			finally {
+				Thread.CurrentThread.CurrentCulture = savedCi;
+			}
 			
 		}
 		

@@ -71,11 +71,20 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		public string prefix;
 		public string attributeName;
 		public string attributeValue;
+		public string nameSpace;
 		
 		public SoapAttributeStruct(string prefix, string attributeName, string attributeValue) {
 			this.prefix = prefix;
 			this.attributeName = attributeName;
 			this.attributeValue = attributeValue;
+			this.nameSpace = null;
+		}
+
+		public SoapAttributeStruct(string prefix, string nameSpace, string attributeName, string attributeValue) {
+			this.prefix = prefix;
+			this.attributeName = attributeName;
+			this.attributeValue = attributeValue;
+			this.nameSpace = nameSpace;
 		}
 	}
 	

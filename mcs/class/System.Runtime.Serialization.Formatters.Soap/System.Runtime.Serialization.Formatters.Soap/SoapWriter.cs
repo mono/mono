@@ -118,13 +118,13 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			// If the type of the element needs to be specified, do it there
 			if(entry.SpecifyEncoding) {
 				needNamespace = GetPrefix(entry.elementNamespace, out prefix);
-				attributeList.Add(new SoapAttributeStruct("xsi", "type", prefix+":"+ entry.elementName));
+				attributeList.Add(new SoapAttributeStruct("xsi", XmlSchema.InstanceNamespace, "type", prefix+":"+ entry.elementName));
 				if(needNamespace) attributeList.Add(new SoapAttributeStruct("xmlns", prefix, entry.elementNamespace));
 			}
 			
 			switch(entry.elementType) {
 				case ElementType.Null:
-					attributeList.Add(new SoapAttributeStruct("xsi", "null", "1"));
+					attributeList.Add(new SoapAttributeStruct("xsi", XmlSchema.InstanceNamespace, "null", "1"));
 					return attributeList;
 					//break;
 				case ElementType.Id:
@@ -148,7 +148,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				rank = rank.Substring(0,rank.Length - 1);
 				rank += "]";
 				needNamespace = GetPrefix(elementMapping.TypeNamespace, out prefix);
-				attributeList.Add(new SoapAttributeStruct("SOAP-ENC", "arrayType",prefix+":"+elementMapping.TypeName+rank));
+				attributeList.Add(new SoapAttributeStruct("SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "arrayType", prefix+":"+elementMapping.TypeName+rank));
 				if(needNamespace) attributeList.Add(new SoapAttributeStruct("xmlns", prefix, elementMapping.TypeNamespace));
 				
 			}
@@ -232,7 +232,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter.WriteStartElement(entry.prefix, XmlConvert.EncodeNmToken(entry.elementName), entry.elementNamespace);
 			
 			if (entry.elementAttributes != null) foreach(SoapAttributeStruct attr in entry.elementAttributes){
-				_xmlWriter.WriteAttributeString(attr.prefix, attr.attributeName, null, attr.attributeValue);
+				_xmlWriter.WriteAttributeString(attr.prefix, attr.attributeName, attr.nameSpace, attr.attributeValue);
 			}
 			if(entry.CanBeValue && entry.elementValue != null && !entry.getIntoFields){
 				_xmlWriter.WriteString(String.Format(_format, "{0}", entry.elementValue));

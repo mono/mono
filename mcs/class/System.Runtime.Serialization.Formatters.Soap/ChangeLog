@@ -1,3 +1,13 @@
+2004-02-19  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
+	* SoapFormatter.cs:
+		Forced the utilisation of CultureInfo("en-US") during
+		the serialization and deserialization because I got problems
+		with numeral and date format.
+
+	* SoapWriter.cs, SoapCommon.cs:
+		Bug fixed: XmlTextWriter.WriteAttributeString() was used
+		with its "namespace" parameter set to null whereas it shouldn't.
+
 2003-12-22  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
 	* SoapFormatterTest.cs:
 		Added unit test for the SerializationBinder property
