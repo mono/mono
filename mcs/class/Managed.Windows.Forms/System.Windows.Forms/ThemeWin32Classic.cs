@@ -26,9 +26,13 @@
 //
 //
 //
-// $Revision: 1.64 $
+// $Revision: 1.65 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.65  2004/11/10 20:10:38  jackson
+// 	* ThemeWin32Classic.cs: Do not draw the selected tab if its not in
+// 	the clip area.
+//
 // Revision 1.64  2004/11/10 19:22:26  jackson
 // 	* ThemeWin32Classic.cs: Don't bother drawing tabs outside of the
 // 	clip area.
@@ -1859,9 +1863,11 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-
+			
 			if (tab.SelectedIndex != -1) {
-				DrawTab (dc, tab.TabPages [tab.SelectedIndex], tab, tab.GetTabRect (tab.SelectedIndex), true);
+				Rectangle rect = tab.GetTabRect (tab.SelectedIndex);
+				if (rect.IntersectsWith (area))
+					DrawTab (dc, tab.TabPages [tab.SelectedIndex], tab, rect, true);
 			}
 
 			if (tab.ShowSlider) {
