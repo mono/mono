@@ -1,6 +1,11 @@
 
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Activator.cs: applied patch for bug #39926. Thanks to Jean Marc and
+	Jaime.
+
+2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* String.cs: fixed bug #41411 and another similar problem in
 	LastIndexOf (string).
 

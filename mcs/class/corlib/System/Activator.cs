@@ -79,6 +79,9 @@ namespace System
 		
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
+			if (assemblyName == null)
+				assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
+
 			return Activator.CreateInstance (assemblyName, typeName, null);
 		}
 		
@@ -86,6 +89,9 @@ namespace System
 							   string typeName,
 							   object [] activationAttributes)
 		{
+			if (assemblyName == null)
+				assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
+
 			return Activator.CreateInstance (assemblyName,
 							 typeName,
 							 false,
@@ -110,7 +116,12 @@ namespace System
 		{
 			//TODO: when Assembly implements security, use it.
 			//Assembly assembly = Assembly.Load (assemblyFile, securityInfo);
-			Assembly assembly = Assembly.Load (assemblyName);
+			Assembly assembly = null;
+			if(assemblyName == null)
+				assembly = Assembly.GetCallingAssembly ();
+			else
+				assembly = Assembly.Load (assemblyName);
+
 			Type type = assembly.GetType (typeName, true, ignoreCase);
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
