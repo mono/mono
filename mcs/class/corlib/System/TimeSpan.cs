@@ -34,32 +34,47 @@ namespace System
 		}
 
 		public TimeSpan (int hours, int minutes, int seconds)
-			: this(false, 0, hours, minutes, seconds, 0, 0)
+			: this (0, hours, minutes, seconds, 0)
 		{
 		}
 
 		public TimeSpan (int days, int hours, int minutes, int seconds)
-			: this(false, days, hours, minutes, seconds, 0, 0)
+			: this (days, hours, minutes, seconds, 0)
 		{
 		}
 
 		public TimeSpan (int days, int hours, int minutes, int seconds, int milliseconds)
-			: this(false, days, hours, minutes, seconds, milliseconds, 0)
 		{
+			try {
+				checked {
+					_ticks = TicksPerDay * days + 
+						TicksPerHour * hours +
+						TicksPerMinute * minutes +
+						TicksPerSecond * seconds +
+						TicksPerMillisecond * milliseconds;
+				}
+			}
+			catch {
+				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
+			}
 		}
 
-		internal TimeSpan (bool sign, int days, int hours, int minutes, int seconds, int milliseconds, long ticks)
+		private TimeSpan (bool sign, int days, int hours, int minutes, int seconds, long ticks)
 		{
-			checked {
-				_ticks = TicksPerDay * days + 
-					TicksPerHour * hours +
-					TicksPerMinute * minutes +
-					TicksPerSecond * seconds +
-					TicksPerMillisecond * milliseconds +
-					ticks;
-				if ( sign ) {
-					_ticks = -_ticks;
+			try {
+				checked {
+					_ticks = TicksPerDay * days + 
+						TicksPerHour * hours +
+						TicksPerMinute * minutes +
+						TicksPerSecond * seconds +
+						ticks;
+					if ( sign ) {
+						_ticks = -_ticks;
+					}
 				}
+			}
+			catch {
+				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
 			}
 		}
 
@@ -131,50 +146,56 @@ namespace System
 
 		public TimeSpan Add (TimeSpan ts)
 		{
-			checked {
-				return new TimeSpan (_ticks + ts.Ticks);
+			try {
+				checked {
+					return new TimeSpan (_ticks + ts.Ticks);
+				}
+			}
+			catch {
+				throw new OverflowException (Locale.GetText ("Resulting timespan is too big."));
 			}
 		}
 
 		public static int Compare (TimeSpan t1, TimeSpan t2)
 		{
-			if (t1._ticks < t2._ticks) {
+			if (t1._ticks < t2._ticks)
 				return -1;
-			}
-			else if (t1._ticks > t2._ticks) {
+			if (t1._ticks > t2._ticks)
 				return 1;
-			}
-			else {
-				return 0;
-			}
+			return 0;
 		}
 
 		public int CompareTo (object value)
 		{
-			if (value == null )
+			if (value == null)
 				return 1;
-	
+
 			if (!(value is TimeSpan)) {
-				throw new ArgumentException (Locale.GetText (
-					"Argument of System.TimeSpan.CompareTo should be a TimeSpan"));
+				throw new ArgumentException (Locale.GetText ("Argument has to be a TimeSpan."), "value");
 			}
-		
-			return Compare(this, (TimeSpan) value);
+
+			return Compare (this, (TimeSpan) value);
 		}
 
 		public TimeSpan Duration ()
 		{
-			checked {
-				return new TimeSpan (Math.Abs (_ticks));
+			try {
+				checked {
+					return new TimeSpan (Math.Abs (_ticks));
+				}
+			}
+			catch {
+				throw new OverflowException (Locale.GetText (
+					"This TimeSpan value is MinValue so you cannot get the duration."));
 			}
 		}
 
 		public override bool Equals (object value)
 		{
-			if (!(value is TimeSpan)) {
+			if (!(value is TimeSpan))
 				return false;
-			}
-			return Equals (this, (TimeSpan) value);
+
+			return _ticks == ((TimeSpan) value)._ticks;
 		}
 
 		public static bool Equals (TimeSpan t1, TimeSpan t2)
@@ -182,73 +203,44 @@ namespace System
 			return t1._ticks == t2._ticks;
 		}
 
-		// Implementing FromDays -> FromHours -> FromMinutes -> FromSeconds ->
-		// FromMilliseconds as done here is probably not the most efficient
-		// way. 
 		public static TimeSpan FromDays (double value)
 		{
-			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
-				return MinValue;
-			}
-	
-			if (Double.IsPositiveInfinity (value)) {
-				return MaxValue;
-			}
-	
-			return new TimeSpan ((int) value,0,0,0,0) + FromHours ((value - ((int) value)) * 24);
+			return FromMilliseconds (value * (TicksPerDay / TicksPerMillisecond));
 		}
 
 		public static TimeSpan FromHours (double value)
 		{
-			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
-				return MinValue;
-			}
-	
-			if (Double.IsPositiveInfinity (value)) {
-				return MaxValue;
-			}
-	
-			return new TimeSpan ((int) value,0,0) + FromMinutes ((value - ((int) value)) * 60);
+			return FromMilliseconds (value * (TicksPerHour / TicksPerMillisecond));
 		}
 
 		public static TimeSpan FromMinutes (double value)
 		{
-			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
-				return MinValue;
-			}
-	
-			if (Double.IsPositiveInfinity (value)) {
-				return MaxValue;
-			}
-	
-			return new TimeSpan (0, (int) value, 0) + FromSeconds((value - ((int) value)) * 60);
+			return FromMilliseconds (value * (TicksPerMinute / TicksPerMillisecond));
 		}
 
 		public static TimeSpan FromSeconds (double value)
 		{
-			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
-				return MinValue;
-			}
-	
-			if (Double.IsPositiveInfinity (value)) {
-				return MaxValue;
-			}
-	
-			return new TimeSpan (0, 0, 0, (int) value) + FromMilliseconds((value - ((int) value)) * 1000);
-	
+			return FromMilliseconds (value * (TicksPerSecond / TicksPerMillisecond));
 		}
 
 		public static TimeSpan FromMilliseconds (double value)
 		{
-			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
+			if (Double.IsNaN (value))
+				throw new ArgumentException (Locale.GetText ("Value cannot be NaN."), "value");
+			if (Double.IsNegativeInfinity (value))
 				return MinValue;
-			}
-	
-			if (Double.IsPositiveInfinity (value)) {
+			if (Double.IsPositiveInfinity (value))
 				return MaxValue;
+
+			try {
+				checked {
+					long val = (long) Math.Round(value);
+					return new TimeSpan (val * TicksPerMillisecond);
+				}
 			}
-	
-			return new TimeSpan (0, 0, 0, 0, (int) value);
+			catch {
+				throw new OverflowException (Locale.GetText ("Resulting timespan is too big."));
+			}
 		}
 
 		public static TimeSpan FromTicks (long value)
@@ -263,53 +255,63 @@ namespace System
 
 		public TimeSpan Negate ()
 		{
-			if (_ticks == long.MinValue)
-				throw new OverflowException ("This TimeSpan value is MinValue and cannot be negated.");
+			if (_ticks == MinValue._ticks)
+				throw new OverflowException (Locale.GetText (
+					"This TimeSpan value is MinValue and cannot be negated."));
 			return new TimeSpan (-_ticks);
 		}
 
 		public static TimeSpan Parse (string s)
 		{
 			if (s == null) {
-				throw new ArgumentNullException (
-					Locale.GetText ("null reference passed to TimeSpan.Parse"));
+				throw new ArgumentNullException ("s");
 			}
-	
-			Parser p = new Parser (s); 
+
+			Parser p = new Parser (s);
 			return p.Execute ();
 		}
 
 		public TimeSpan Subtract (TimeSpan ts)
 		{
-			checked {
-				return new TimeSpan (_ticks - ts.Ticks);
+			try {
+				checked {
+					return new TimeSpan (_ticks - ts.Ticks);
+				}
+			}
+			catch {
+				throw new OverflowException (Locale.GetText ("Resulting timespan is too big."));
 			}
 		}
 
 		public override string ToString ()
 		{
-			string res = "";	
-	
-			if (_ticks < 0) {
-				res += "-";
-			}
+			StringBuilder sb = new StringBuilder (14);
+			
+			if (_ticks < 0)
+				sb.Append ('-');
 
 			// We need to take absolute values of all components.
 			// Can't handle negative timespans by negating the TimeSpan
 			// as a whole. This would lead to an overflow for the 
 			// degenerate case "TimeSpan.MinValue.ToString()".
 			if (Days != 0) {
-				res += Math.Abs (Days) + "." ;
+				sb.Append (Math.Abs (Days));
+				sb.Append ('.');
 			}
 
-			res += string.Format ("{0:D2}:{1:D2}:{2:D2}", Math.Abs(Hours), Math.Abs(Minutes), Math.Abs(Seconds));
+			sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (Hours), 2, 4));
+			sb.Append (':');
+			sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (Minutes), 2, 4));
+			sb.Append (':');
+			sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (Seconds), 2, 4));
 
 			int fractional = (int) Math.Abs (_ticks % TicksPerSecond);
 			if (fractional != 0) {
-				res += string.Format (".{0:D7}", fractional);
+				sb.Append ('.');
+				sb.Append (IntegerFormatter.FormatDecimal (Math.Abs (fractional), 7, 4));
 			}
 
-			return res;
+			return sb.ToString ();
 		}
 
 		public static TimeSpan operator + (TimeSpan t1, TimeSpan t2)
@@ -319,32 +321,32 @@ namespace System
 
 		public static bool operator == (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare (t1, t2) == 0;
+			return t1._ticks == t2._ticks;
 		}
 
 		public static bool operator > (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare (t1, t2) == 1;
+			return t1._ticks > t2._ticks;
 		}
 
 		public static bool operator >= (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare (t1, t2) != -1;
+			return t1._ticks >= t2._ticks;
 		}
 
 		public static bool operator != (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare (t1, t2) != 0;
+			return t1._ticks != t2._ticks;
 		}
 
 		public static bool operator < (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare (t1, t2) == -1;
+			return t1._ticks < t2._ticks;
 		}
 
 		public static bool operator <= (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare (t1, t2) != 1;
+			return t1._ticks <= t2._ticks;
 		}
 
 		public static TimeSpan operator - (TimeSpan t1, TimeSpan t2)
@@ -362,34 +364,28 @@ namespace System
 			return t;
 		}
 
-		// Class Parser implements simple parser for TimeSpan::Parse
-		internal class Parser
+		// Class Parser implements parser for TimeSpan.Parse
+		private class Parser
 		{
 			private string _src;
-			private int _cur;
+			private int _cur = 0;
 			private int _length;
 
 			public Parser (string src)
 			{
 				_src = src;
-				Reset ();
-			}
-
-			public void Reset ()
-			{
-				_cur = 0;
 				_length = _src.Length;
 			}
-
+	
 			public bool AtEnd {
 				get {
 					return _cur >= _length;
 				}
 			}
 
-			private void ThrowFormatException() 
+			private void ThrowFormatException ()
 			{
-				throw new FormatException (Locale.GetText ("Invalid format for TimeSpan.Parse"));
+				throw new FormatException (Locale.GetText ("Invalid format for TimeSpan.Parse."));
 			}
 
 			// All "Parse" functions throw a FormatException on syntax error.
@@ -407,16 +403,16 @@ namespace System
 			private void ParseWhiteSpace ()
 			{
 				while (!AtEnd && Char.IsWhiteSpace (_src, _cur)) {
-					_cur++; 
+					_cur++;
 				}
 			}
 
 			// Parse optional sign character.
-			private bool ParseSign () 
+			private bool ParseSign ()
 			{
 				bool res = false;
 
-				if (!AtEnd && _src[_cur] == '-') { 
+				if (!AtEnd && _src[_cur] == '-') {
 					res = true;
 					_cur++;
 				}
@@ -432,15 +428,14 @@ namespace System
 
 				while (!AtEnd && Char.IsDigit (_src, _cur)) {
 					checked {
-						res = res*10 + _src[_cur] - '0';
+						res = res * 10 + _src[_cur] - '0';
 					}
 					_cur++;
 					count++;
 				}
 
-				if (count == 0) {
+				if (count == 0)
 					ThrowFormatException ();
-				}
 
 				return res;
 			}
@@ -448,28 +443,23 @@ namespace System
 			// Parse optional dot
 			private bool ParseOptDot ()
 			{
-				if (AtEnd) {
+				if (AtEnd)
 					return false;
-				}
 
 				if (_src[_cur] == '.') {
 					_cur++;
 					return true;
 				}
-				else {
-					return false;
-				}
-			}
+				return false;
+			}	
 
-			// Parse NON-optional colon 
+			// Parse NON-optional colon
 			private void ParseColon ()
 			{
-				if (!AtEnd && _src[_cur] == ':') {
+				if (!AtEnd && _src[_cur] == ':')
 					_cur++;
-				}
-				else {
+				else 
 					ThrowFormatException ();
-				}
 			}
 
 			// Parse [1..7] digits, representing fractional seconds (ticks)
@@ -478,17 +468,16 @@ namespace System
 				long mag = 1000000;
 				long res = 0;
 				bool digitseen = false;
-
-				while ( mag > 0 && !AtEnd && Char.IsDigit (_src, _cur) ) {
+				
+				while (mag > 0 && !AtEnd && Char.IsDigit (_src, _cur)) {
 					res = res + (_src[_cur] - '0') * mag;
 					_cur++;
 					mag = mag / 10;
 					digitseen = true;
 				}
 
-				if (!digitseen) {
+				if (!digitseen)
 					ThrowFormatException ();
-				}
 
 				return res;
 			}
@@ -502,7 +491,7 @@ namespace System
 				int seconds;
 				long ticks;
 
-				// Parse [ws][dd.]hh:mm:ss[.ff][ws]
+				// Parse [ws][-][dd.]hh:mm:ss[.ff][ws]
 				ParseWhiteSpace ();
 				sign = ParseSign ();
 				days = ParseInt ();
@@ -515,26 +504,25 @@ namespace System
 				}
 				ParseColon();
 				minutes = ParseInt ();
-				ParseColon();
+				ParseColon ();
 				seconds = ParseInt ();
 				if ( ParseOptDot () ) {
 					ticks = ParseTicks ();
-				}	
+				}
 				else {
 					ticks = 0;
 				}
 				ParseWhiteSpace ();
-
-				if ( !AtEnd ) {
+	
+				if (!AtEnd)
 					ThrowFormatException ();
-				}
 
-				if ( hours > 23 || minutes > 59 || seconds > 59 ) {
+				if (hours > 23 || minutes > 59 || seconds > 59) {
 					throw new OverflowException (Locale.GetText (
-						"Value outside range in TimeSpan.Parse" ));
+						"Invalid time data."));
 				}
 
-				TimeSpan ts = new TimeSpan (sign, days, hours, minutes, seconds, 0, ticks);
+				TimeSpan ts = new TimeSpan (sign, days, hours, minutes, seconds, ticks);
 
 				return ts;
 			}
