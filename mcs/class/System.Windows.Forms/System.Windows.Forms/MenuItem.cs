@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //	Dennis Hayes (dennish@raytek.com)
+//	Alexandre Pigolkine (pigolkine@gmx.de)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -21,43 +22,42 @@ namespace System.Windows.Forms {
 	/// ToDo note:
 	///  - Nothing is implemented
 	/// </summary>
-        
+
 	public class MenuItem : Menu {
 		//
 		// - Constructor
 		//
-		public MenuItem() {
+		public MenuItem() : base(null) {
+		}
+
+		public MenuItem(string s) : base(null) {
 			throw new NotImplementedException ();
 		}
-                
-		public MenuItem(string s) {
+
+		public MenuItem(string s, EventHandler e) : base(null) {
 			throw new NotImplementedException ();
 		}
-                
-		public MenuItem(string s, EventHandler e) {
+
+		public MenuItem(string s, MenuItem[] items) : base(null) {
 			throw new NotImplementedException ();
 		}
-                
-		public MenuItem(string s, MenuItem[] items) {
+
+		public MenuItem(string s, EventHandler e, Shortcut sc) : base(null) {
 			throw new NotImplementedException ();
 		}
-                
-		public MenuItem(string s, EventHandler e, Shortcut sc) {
+
+		public MenuItem(MenuMerge mm, int i, Shortcut sc, string s, EventHandler e, EventHandler e1, EventHandler e2, MenuItem[] items)  : base(null){
 			throw new NotImplementedException ();
 		}
-                
-		public MenuItem(MenuMerge mm, int i, Shortcut sc, string s, EventHandler e, EventHandler e1, EventHandler e2, MenuItem[] items) {
-			throw new NotImplementedException ();
-		}
-                
+
 		//
 		// -- Public Methods
 		//
-                
+
 		public virtual MenuItem CloneMenu() {
 			throw new NotImplementedException ();
 		}
-                
+
 		public override ObjRef CreateObjRef(Type t) {
 			throw new NotImplementedException ();
 		}
@@ -359,13 +359,14 @@ namespace System.Windows.Forms {
 		//	}
 		//}
                 
-		public string Text {
+		private string text_ = String.Empty;
 
+		public string Text {
 			get {
-				throw new NotImplementedException ();
+				return text_;
 			}
 			set {
-				throw new NotImplementedException ();
+				text_ = value;
 			}
 		}
                 
