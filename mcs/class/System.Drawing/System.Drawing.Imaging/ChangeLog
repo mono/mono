@@ -1,3 +1,7 @@
+2004-03-04 Nick Drochak <ndrochak@ieee.org>
+
+	* Metafile.cs: Fix build, remove duplicate member.
+
 2004-03-03 Sanjay Gupta <gsanjay@novell.com>
 	*ImageAttributes.cs: Added few missing functions
 	*Metafile.cs: Added stubs for missing constructors and functions

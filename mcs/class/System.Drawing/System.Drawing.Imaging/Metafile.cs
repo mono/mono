@@ -249,13 +249,6 @@ namespace System.Drawing.Imaging {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public Metafile (string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type,
-															string description) 
-		{
-			throw new NotImplementedException ();
-		}
-
 		// methods
 		[MonoTODO]
 		public IntPtr GetHenhmetafile()
