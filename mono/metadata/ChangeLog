@@ -1,3 +1,8 @@
+2005-03-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Add support for
+	typedbyref return values. Fixes #73941.
+
 2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-manager.c|h: Added demandunmanaged method and 
