@@ -1,3 +1,7 @@
+2004-04-12  Nick Drochak <ndrochak@gol.com>
+
+	* WebConfigurationSettings.cs: Fix build.  Forgot the '?'
+
 2004-04-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* WebConfigurationSettings.cs : On Windows "Web.config" is "web.config".
