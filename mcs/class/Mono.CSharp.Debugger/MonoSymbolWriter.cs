@@ -52,87 +52,28 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	internal class SourceBlock
-	{
-		static private int next_index;
-		private readonly int _index;
-
-		internal SourceBlock (SourceMethod method, int startOffset)
-		{
-			this._method = method;
-			this._start_offset = startOffset;
-			this._index = ++next_index;
-		}
-
-		public override string ToString ()
-		{
-			return "SourceBlock #" + ID;
-		}
-
-		private readonly SourceMethod _method;
-		private ArrayList _blocks = new ArrayList ();
-		internal int _start_offset, _end_offset;
-
-		private ArrayList _locals = new ArrayList ();
-
-		public SourceMethod SourceMethod {
-			get {
-				return _method;
-			}
-		}
-
-		public SourceBlock[] Blocks {
-			get {
-				SourceBlock[] retval = new SourceBlock [_blocks.Count];
-				_blocks.CopyTo (retval);
-				return retval;
-			}
-		}
-
-		public void AddBlock (SourceBlock block)
-		{
-			_blocks.Add (block);
-		}
-
-		public int ID {
-			get {
-				return _index;
-			}
-		}
-
-		public LocalVariableEntry[] Locals {
-			get {
-				LocalVariableEntry[] retval = new LocalVariableEntry [_locals.Count];
-				_locals.CopyTo (retval);
-				return retval;
-			}
-		}
-
-		public void AddLocal (LocalVariableEntry local)
-		{
-			_locals.Add (local);
-		}
-	}
-
 	internal class SourceMethod
 	{
 		private ArrayList _lines = new ArrayList ();
+		private ArrayList _locals = new ArrayList ();
 		private ArrayList _blocks = new ArrayList ();
-		private Hashtable _block_hash = new Hashtable ();
 		private Stack _block_stack = new Stack ();
+		private int next_block_id = 0;
 
 		internal readonly MethodBase _method_base;
 		internal SourceFile _source_file;
 		internal int _token;
 		private int _namespace_id;
 		private LineNumberEntry _start, _end;
+		private MonoSymbolFile _file;
 
-		private SourceBlock _implicit_block;
+		private LexicalBlockEntry _implicit_block;
 
-		internal SourceMethod (SourceFile source_file, int startLine, int startColumn,
-				       int endLine, int endColumn, MethodBase method_base,
-				       int namespace_id)
+		internal SourceMethod (MonoSymbolFile file, SourceFile source_file,
+				       int startLine, int startColumn, int endLine, int endColumn,
+				       MethodBase method_base, int namespace_id)
 		{
+			this._file = file;
 			this._method_base = method_base;
 			this._source_file = source_file;
 			this._namespace_id = namespace_id;
@@ -140,40 +81,35 @@ namespace Mono.CSharp.Debugger
 			this._start = new LineNumberEntry (startLine, 0);
 			this._end = new LineNumberEntry (endLine, 0);
 
-			this._implicit_block = new SourceBlock (this, 0);
+			this._implicit_block = new LexicalBlockEntry (0, 0);
 		}
 
-		public void StartBlock (SourceBlock block)
+		public void StartBlock (int startOffset)
 		{
+			LexicalBlockEntry block = new LexicalBlockEntry (++next_block_id, startOffset);
 			_block_stack.Push (block);
+			_blocks.Add (block);
 		}
 
-		public void EndBlock (int endOffset) {
-			SourceBlock block = (SourceBlock) _block_stack.Pop ();
-
-			block._end_offset = endOffset;
-
-			if (_block_stack.Count > 0) {
-				SourceBlock parent = (SourceBlock) _block_stack.Peek ();
-
-				parent.AddBlock (block);
-			} else
-				_blocks.Add (block);
-
-			_block_hash.Add (block.ID, block);
-		}
-
-		public void SetBlockRange (int BlockID, int startOffset, int endOffset)
+		public void EndBlock (int endOffset)
 		{
-			SourceBlock block = (SourceBlock) _block_hash [BlockID];
-			block._start_offset = startOffset;
-			block._end_offset = endOffset;
+			LexicalBlockEntry block = (LexicalBlockEntry) _block_stack.Pop ();
+
+			block.Close (endOffset);
 		}
 
-		public SourceBlock CurrentBlock {
+		public LexicalBlockEntry[] Blocks {
+			get {
+				LexicalBlockEntry[] retval = new LexicalBlockEntry [_blocks.Count];
+				_blocks.CopyTo (retval, 0);
+				return retval;
+			}
+		}
+
+		public LexicalBlockEntry CurrentBlock {
 			get {
 				if (_block_stack.Count > 0)
-					return (SourceBlock) _block_stack.Peek ();
+					return (LexicalBlockEntry) _block_stack.Peek ();
 				else
 					return _implicit_block;
 			}
@@ -192,23 +128,17 @@ namespace Mono.CSharp.Debugger
 			_lines.Add (line);
 		}
 
-		public SourceBlock[] Blocks {
+		public LocalVariableEntry[] Locals {
 			get {
-				SourceBlock[] retval = new SourceBlock [_blocks.Count];
-				_blocks.CopyTo (retval);
+				LocalVariableEntry[] retval = new LocalVariableEntry [_locals.Count];
+				_locals.CopyTo (retval, 0);
 				return retval;
 			}
 		}
 
-		public LocalVariableEntry[] Locals {
-			get {
-				return _implicit_block.Locals;
-			}
-		}
-
-		public void AddLocal (LocalVariableEntry local)
+		public void AddLocal (string name, FieldAttributes attributes, byte[] signature)
 		{
-			_implicit_block.AddLocal (local);
+			_locals.Add (new LocalVariableEntry (name, attributes, signature, CurrentBlock.Index));
 		}
 
 		public MethodBase MethodBase {
@@ -392,7 +322,7 @@ namespace Mono.CSharp.Debugger
 			if (current_method == null)
 				return;
 
-			current_method.AddLocal (new LocalVariableEntry (name, attributes, signature));
+			current_method.AddLocal (name, attributes, signature);
 		}
 
 		public void DefineParameter (string name,
@@ -451,14 +381,15 @@ namespace Mono.CSharp.Debugger
 			if ((source_info == null) || (method == null))
 				throw new NullReferenceException ();
 
-			current_method = new SourceMethod (source_info, startLine, startColumn,
+			current_method = new SourceMethod (file, source_info, startLine, startColumn,
 							   endLine, endColumn, method, namespace_id);
 
 			methods.Add (current_method);
 			source_info.AddMethod (current_method);
 		}
 
-		public void CloseMethod () {
+		public void CloseMethod ()
+		{
 			current_method = null;
 		}
 
@@ -485,13 +416,12 @@ namespace Mono.CSharp.Debugger
 			if (current_method == null)
 				return 0;
 
-			SourceBlock block = new SourceBlock (current_method, startOffset);
-			current_method.StartBlock (block);
-
-			return block.ID;
+			current_method.StartBlock (startOffset);
+			return 0;
 		}
 
-		public void CloseScope (int endOffset) {
+		public void CloseScope (int endOffset)
+		{
 			if (current_method == null)
 				return;
 
@@ -500,10 +430,7 @@ namespace Mono.CSharp.Debugger
 
 		public void SetScopeRange (int scopeID, int startOffset, int endOffset)
 		{
-			if (current_method == null)
-				return;
-
-			current_method.SetBlockRange (scopeID, startOffset, endOffset);
+			throw new NotSupportedException ();
 		}
 
 		public void SetSymAttribute (SymbolToken parent, string name, byte[] data)
@@ -556,7 +483,7 @@ namespace Mono.CSharp.Debugger
 
 				method.SourceFile.DefineMethod (
 					method.MethodBase, method.Token, method.Locals,
-					method.Lines, method.Start.Row, method.End.Row,
+					method.Lines, method.Blocks, method.Start.Row, method.End.Row,
 					method.NamespaceID);
 			}
 

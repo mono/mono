@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 33;
+		public const int  Version = 34;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int TotalFileSize;
@@ -136,17 +136,56 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
+	public class LexicalBlockEntry
+	{
+		public int Index;
+		public int StartOffset;
+		public int EndOffset;
+
+		public LexicalBlockEntry (int index, int start_offset)
+		{
+			this.Index = index;
+			this.StartOffset = start_offset;
+		}
+
+		internal LexicalBlockEntry (int index, BinaryReader reader)
+		{
+			this.Index = index;
+			this.StartOffset = reader.ReadInt32 ();
+			this.EndOffset = reader.ReadInt32 ();
+		}
+
+		public void Close (int end_offset)
+		{
+			this.EndOffset = end_offset;
+		}
+
+		internal void Write (BinaryWriter bw)
+		{
+			bw.Write (StartOffset);
+			bw.Write (EndOffset);
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("[LexicalBlock {0}:{1}]", StartOffset, EndOffset);
+		}
+	}
+
 	public struct LocalVariableEntry
 	{
 		public readonly string Name;
 		public readonly FieldAttributes Attributes;
 		public readonly byte[] Signature;
+		public readonly int BlockIndex;
 
-		public LocalVariableEntry (string Name, FieldAttributes Attributes, byte[] Signature)
+		public LocalVariableEntry (string Name, FieldAttributes Attributes, byte[] Signature,
+					   int BlockIndex)
 		{
 			this.Name = Name;
 			this.Attributes = Attributes;
 			this.Signature = Signature;
+			this.BlockIndex = BlockIndex;
 		}
 
 		internal LocalVariableEntry (BinaryReader reader)
@@ -157,6 +196,7 @@ namespace Mono.CSharp.Debugger
 			Attributes = (FieldAttributes) reader.ReadInt32 ();
 			int sig_length = reader.ReadInt32 ();
 			Signature = reader.ReadBytes (sig_length);
+			BlockIndex = reader.ReadInt32 ();
 		}
 
 		internal void Write (MonoSymbolFile file, BinaryWriter bw)
@@ -165,6 +205,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write ((int) Attributes);
 			bw.Write ((int) Signature.Length);
 			bw.Write (Signature);
+			bw.Write (BlockIndex);
 		}
 
 		public override string ToString ()
@@ -199,13 +240,14 @@ namespace Mono.CSharp.Debugger
 		}
 
 		public void DefineMethod (MethodBase method, int token, LocalVariableEntry[] locals,
-					  LineNumberEntry[] lines, int start, int end, int namespace_id)
+					  LineNumberEntry[] lines, LexicalBlockEntry[] blocks,
+					  int start, int end, int namespace_id)
 		{
 			if (!creating)
 				throw new InvalidOperationException ();
 
 			MethodEntry entry = new MethodEntry (
-				file, this, method, token, locals, lines, start, end, namespace_id);
+				file, this, method, token, locals, lines, blocks, start, end, namespace_id);
 
 			methods.Add (entry);
 			file.AddMethod (entry);
@@ -411,6 +453,8 @@ namespace Mono.CSharp.Debugger
 		int TypeIndexTableOffset;
 		int LocalVariableTableOffset;
 		int LineNumberTableOffset;
+		int NumLexicalBlocks;
+		int LexicalBlockTableOffset;
 		#endregion
 
 		int index;
@@ -425,6 +469,7 @@ namespace Mono.CSharp.Debugger
 		public readonly int[] LocalTypeIndices;
 		public readonly LocalVariableEntry[] Locals;
 		public readonly Type[] LocalTypes;
+		public readonly LexicalBlockEntry[] LexicalBlocks;
 
 		public readonly MonoSymbolFile SymbolFile;
 
@@ -461,6 +506,8 @@ namespace Mono.CSharp.Debugger
 			TypeIndexTableOffset = reader.ReadInt32 ();
 			LocalVariableTableOffset = reader.ReadInt32 ();
 			LineNumberTableOffset = reader.ReadInt32 ();
+			NumLexicalBlocks = reader.ReadInt32 ();
+			LexicalBlockTableOffset = reader.ReadInt32 ();
 			NamespaceID = reader.ReadInt32 ();
 
 			name = file.ReadString (NameOffset);
@@ -512,11 +559,23 @@ namespace Mono.CSharp.Debugger
 
 				reader.BaseStream.Position = old_pos;
 			}
+
+			if (LexicalBlockTableOffset != 0) {
+				long old_pos = reader.BaseStream.Position;
+				reader.BaseStream.Position = LexicalBlockTableOffset;
+
+				LexicalBlocks = new LexicalBlockEntry [NumLexicalBlocks];
+				for (int i = 0; i < NumLexicalBlocks; i++)
+					LexicalBlocks [i] = new LexicalBlockEntry (i, reader);
+
+				reader.BaseStream.Position = old_pos;
+			}
 		}
 
 		internal MethodEntry (MonoSymbolFile file, SourceFileEntry source, MethodBase method,
 				      int token, LocalVariableEntry[] locals, LineNumberEntry[] lines,
-				      int start_row, int end_row, int namespace_id)
+				      LexicalBlockEntry[] blocks, int start_row, int end_row,
+				      int namespace_id)
 		{
 			this.SymbolFile = file;
 			index = file.GetNextMethodIndex ();
@@ -527,6 +586,8 @@ namespace Mono.CSharp.Debugger
 			StartRow = start_row;
 			EndRow = end_row;
 			NamespaceID = namespace_id;
+			LexicalBlocks = blocks;
+			NumLexicalBlocks = LexicalBlocks.Length;
 
 			LineNumbers = BuildLineNumberTable (lines);
 			NumLineNumbers = LineNumbers.Length;
@@ -608,18 +669,18 @@ namespace Mono.CSharp.Debugger
 				bw.Write (LocalTypeIndices [i]);
 
 			LocalVariableTableOffset = (int) bw.BaseStream.Position;
-
 			for (int i = 0; i < NumLocals; i++)
 				Locals [i].Write (file, bw);
-
-			LineNumberTableOffset = (int) bw.BaseStream.Position;
-
-			for (int i = 0; i < NumLineNumbers; i++)
-				LineNumbers [i].Write (bw);
-
-			file.LineNumberCount += NumLineNumbers;
 			file.LocalCount += NumLocals;
 
+			LineNumberTableOffset = (int) bw.BaseStream.Position;
+			for (int i = 0; i < NumLineNumbers; i++)
+				LineNumbers [i].Write (bw);
+			file.LineNumberCount += NumLineNumbers;
+
+			LexicalBlockTableOffset = (int) bw.BaseStream.Position;
+			for (int i = 0; i < NumLexicalBlocks; i++)
+				LexicalBlocks [i].Write (bw);
 			file_offset = (int) bw.BaseStream.Position;
 
 			index_entry = new MethodIndexEntry (file_offset, FullNameOffset, Token);
@@ -637,6 +698,8 @@ namespace Mono.CSharp.Debugger
 			bw.Write (TypeIndexTableOffset);
 			bw.Write (LocalVariableTableOffset);
 			bw.Write (LineNumberTableOffset);
+			bw.Write (NumLexicalBlocks);
+			bw.Write (LexicalBlockTableOffset);
 			bw.Write (NamespaceID);
 
 			return new MethodSourceEntry (index, file_offset, StartRow, EndRow);

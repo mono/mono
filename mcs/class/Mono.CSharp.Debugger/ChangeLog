@@ -1,3 +1,18 @@
+2003-03-13  Martin Baulig  <martin@ximian.com>
+
+	Added basic support for lexical scopes.  This is just to tell a
+	debugger that a local variable is only available in a specific
+	lexical scope and that another variable of the same name may exist
+	in another lexical scope.  See debugger/test/TestLexicalScope.cs
+	for examples.
+
+	* MonoSymbolTable.cs (LexicalScopeEntry): New class.
+	(LocalVariableEntry): Added `BlockIndex' field which specifies the
+	lexical scope of this variable.
+
+	* MonoSymbolWriter.cs (SourceBlock): Removed, we're now using
+	LexicalScopeEntry instead.
+
 2003-02-22  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolTable.cs: Incremented version number.
