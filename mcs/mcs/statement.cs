@@ -636,6 +636,7 @@ namespace Mono.CSharp {
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
+			label.AddReference ();
 
 			return true;
 		}
@@ -706,8 +707,6 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentBranching.Label (vectors);
 
-			referenced = true;
-
 			return true;
 		}
 
@@ -715,6 +714,11 @@ namespace Mono.CSharp {
 		{
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
+		}
+
+		public void AddReference ()
+		{
+			referenced = true;
 		}
 	}
 	

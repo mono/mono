@@ -2,6 +2,12 @@
 	    Anoob V E (NOSIP)  <projectmonokochi@rediffmail.com>
 	    Harilal P R (NOSIP)  <projectmonokochi@rediffmail.com>
 
+	Fix cs0164.cs.
+	* statement.cs (LabeledStatement.Resolve): Don't set 'referenced'.
+	(LabeledStatement.AddReference): New.  Set 'referenced'.
+	(Goto.Resolve): Use it.
+
+	Fix cs0111-8.cs.
 	* class.cs (MethodCore.IsDuplicateImplementation): Make internal,
 	not protected.
 	(Operator.Define): Add test for error CS0111.
