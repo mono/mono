@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System
 {
-	public class ExceptionTest : Assertion
+	public class ExceptionTest : TestCase
 	{
 		public ExceptionTest() {}
 		
@@ -102,7 +102,6 @@ namespace MonoTests.System
 			throw new Exception();
 		}
 
-		[Test]
 		private static void ThrowBeforeTry()
 		{
 			ThrowException();
@@ -113,7 +112,6 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
 		private static void ThrowAtBeginOfTry()
 		{
 			DoNothing();
@@ -125,7 +123,6 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
 		private static void ThrowAtEndOfTry()
 		{
 			DoNothing();
@@ -136,7 +133,7 @@ namespace MonoTests.System
 				DoNothing();
 			}
 		}
-		[Test]
+
 		private static void ThrowAtBeginOfCatch()
 		{
 			DoNothing();
@@ -148,7 +145,6 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
 		private static void ThrowAtEndOfCatch()
 		{
 			DoNothing();
@@ -161,7 +157,6 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
 		private static void ThrowAtBeginOfFinally()
 		{
 			DoNothing();
@@ -176,7 +171,6 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
 		private static void ThrowAtEndOfFinally()
 		{
 			DoNothing();
@@ -191,7 +185,6 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
 		private static void ThrowAfterFinally()
 		{
 			DoNothing();
@@ -207,12 +200,12 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		private static void InnerExceptionSource ()
+		public void InnerExceptionSource ()
 		{
 			Exception a = new Exception ("a", new ArgumentException ("b"));
 			a.Source = "foo";
 
-			AssertEquals (null, e.InnerException.Source);
+			AssertEquals (null, a.InnerException.Source);
 		}
 	}
 }
