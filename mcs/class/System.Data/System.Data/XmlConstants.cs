@@ -70,6 +70,7 @@ internal class XmlConstants
 	public const string RelationName = "RelationName";
 	public const string ConstraintName = "ConstraintName";
 	public const string PrimaryKey = "PrimaryKey";
+	public const string ColumnName = "ColumnName";
 
 	public static XmlQualifiedName QnString = new XmlQualifiedName ("string", XmlSchema.Namespace);
 	public static XmlQualifiedName QnShort = new XmlQualifiedName ("short", XmlSchema.Namespace);

@@ -1,4 +1,15 @@
 2004-02-04 Eran Domb <erand@mainsoft.com>
+
+	* DataRowCollection.cs (InsertAt): Add a check for null row. Replace check of IndexOf with RowId for
+	better performance.
+	* DataSet.cs (GetTableSchema) : Add supprot for simple content columns. Change the condition for a case
+	when all column are attributes (elements count is 0), we still want to add the relations. No relations
+	can be on simple contents.
+	(AddUniqueConstraints) Check that the column of the constraint are not hidden.
+	(AddForeignKeys) Check that the relation has constraints attach to it.
+	* XmlConstants.cs : Added constant.
+
+2004-02-04 Eran Domb <erand@mainsoft.com>
 	
 	* DataSet.cs : GetSchemaSerializable() return null and not BuildSchema().
 	DoWriteXmlSchema calls BuildSchema ().

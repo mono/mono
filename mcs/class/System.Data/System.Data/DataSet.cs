@@ -1332,6 +1332,18 @@ namespace System.Data {
 						UniqueConstraint uqConst = (UniqueConstraint)constaint;
 						XmlSchemaUnique uniq = new XmlSchemaUnique ();
 						
+						// if column of the constraint is hidden do not write the constraint.
+						bool isHidden = false;
+						foreach (DataColumn column in uqConst.Columns) {
+							if (column.ColumnMapping == MappingType.Hidden) {
+								isHidden = true;
+								break;
+							}
+						}
+
+						if (isHidden)
+							continue;
+
 						// if constaraint name do not exist in the hashtable we can use it.
 						if (!uniqueNames.ContainsKey (uqConst.ConstraintName)) {
 							uniq.Name = uqConst.ConstraintName;
@@ -1375,6 +1387,9 @@ namespace System.Data {
 			
 			XmlDocument doc = new XmlDocument();
 			foreach (DataRelation rel in relations) {
+				
+				if (rel.ParentKeyConstraint == null || rel.ChildKeyConstraint == null)
+					continue;
 				
 				ArrayList attrs = new ArrayList ();
 				XmlAttribute attrib;
@@ -1426,7 +1441,27 @@ namespace System.Data {
 			elem.SchemaType = complex;
 
 			//TODO - what about the simple content?
-			if (elements.Count == 0) {				
+			if (simple != null) {
+				// add simpleContent
+				XmlSchemaSimpleContent simpleContent = new XmlSchemaSimpleContent();
+				complex.ContentModel = simpleContent;
+
+				// add column name attribute
+				XmlAttribute[] xlmAttrs = new XmlAttribute [2];
+				xlmAttrs[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.ColumnName, XmlConstants.MsdataNamespace);
+				xlmAttrs[0].Value = simple.ColumnName;
+				
+				// add ordinal attribute
+				xlmAttrs[1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Ordinal, XmlConstants.MsdataNamespace);
+				xlmAttrs[1].Value = simple.Ordinal.ToString();
+				simpleContent.UnhandledAttributes = xlmAttrs;
+				
+			        
+				// add extension
+				XmlSchemaSimpleContentExtension extension = new XmlSchemaSimpleContentExtension();
+				simpleContent.Content = extension;
+				extension.BaseTypeName = MapType (simple.DataType);
+			
 			}
 			else {
 				//A sequence of element types or a simple content node
