@@ -30,7 +30,6 @@ namespace Mono.Data.TdsClient {
 		ArrayList tdsPool = null;
 
 		TdsServerType serverType = TdsServerType.Generic;
-		TdsVersion tdsVersion = TdsVersion.tds42;
 		TdsConnectionParameters parms = new TdsConnectionParameters ();
 
 		#endregion // Fields
@@ -45,6 +44,7 @@ namespace Mono.Data.TdsClient {
 		public TdsConnection (string connectionString)
 		{
 			parms.PacketSize = 512;
+			parms.TdsVersion = TdsVersion.tds42;
 			SetConnectionString (connectionString);
 		}
 			
