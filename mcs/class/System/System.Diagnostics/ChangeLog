@@ -1,3 +1,7 @@
+2003-03-19  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Implement HasExited, fixes bug 39267
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: throw an exception when the executable cannot be found.

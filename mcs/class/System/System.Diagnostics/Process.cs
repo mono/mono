@@ -87,10 +87,16 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		public bool HasExited {
 			get {
-				return(false);
+				int exitcode=ExitCode;
+
+				if(exitcode==259) {
+					/* STILL_ACTIVE */
+					return(false);
+				} else {
+					return(true);
+				}
 			}
 		}
 
