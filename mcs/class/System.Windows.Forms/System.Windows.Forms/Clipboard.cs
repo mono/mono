@@ -12,9 +12,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Provides methods to place data on and retrieve data from the system Clipboard. This class cannot be inherited.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -30,13 +27,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void SetDataObject(object data) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void SetDataObject(object data,bool copy) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	}
 }

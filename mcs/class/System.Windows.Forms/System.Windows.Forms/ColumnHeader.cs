@@ -14,9 +14,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Displays a single column header in a ListView control.
-	///
-	/// ToDo note:
-	///  - no methods are implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -36,8 +33,6 @@ namespace System.Windows.Forms {
 			width = -2;//default to autosize, not in spec
 			index = -1;//default to not in list
 		}
-		
-		
 		
 		// --- Properties ---
 		[MonoTODO]

@@ -61,13 +61,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public virtual void NotifyDefault(bool value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void PerformClick() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		// --- Button methods for events ---
@@ -90,7 +90,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString () 
 		{
-			throw new NotImplementedException ();
+			return base.ToString();
 		}
 		
 		protected override void WndProc (ref Message m) 

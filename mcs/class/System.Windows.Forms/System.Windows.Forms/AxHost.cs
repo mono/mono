@@ -40,95 +40,161 @@ namespace System.Windows.Forms {
 		///  - public bool EditMode {get;}
 		[MonoTODO]
 		public override Color BackColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.BackColor;
+			}
+			set {
+				//FIXME:
+				base.BackColor = value;
+			}
 		}
 		
 		[MonoTODO]
 		public override Image BackgroundImage {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.BackgroundImage;
+			}
+			set {
+				//FIXME:
+				base.BackgroundImage = value;
+			}
 		}
 		
 		[MonoTODO]
 		public ContainerControl ContainingControl {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException (); 
+			}
+			set {
+				//FIXME:
+			}
 		}
 		
 		[MonoTODO]
 		public override ContextMenu ContextMenu {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.ContextMenu;
+			}
+			set {
+				//FIXME:
+				base.ContextMenu = value;
+			}
 		}
 		
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.CreateParams;
+			}
 		}
 		
 		[MonoTODO]
 		public override Cursor Cursor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.Cursor;
+			}
+			set {
+				//FIXME:
+				base.Cursor = value;
+			}
 		}
 		
 		[MonoTODO]
 		protected override Size DefaultSize {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.DefaultSize;
+			}
 		}
 		
-		//[MonoTODO]
+		[MonoTODO]
 		public override bool Enabled {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.Enabled;
+			}
+			set {
+				//FIXME:
+				base.Enabled = value;
+			}
 		}
 		
 		[MonoTODO]
 		public override Font Font {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.Font;
+			}
+			set {
+				//FIXME:
+				base.Font = value;
+			}
 		}
 		
 		[MonoTODO]
 		public override Color ForeColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				//FIXME:
+				return base.ForeColor; 
+			}
+			set {
+				//FIXME:
+				base.ForeColor = value; 
+			}
 		}
 		
 		[MonoTODO]
 		public bool HasAboutBox {
-			get { throw new NotImplementedException (); }
+			get { 
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public AxHost.State OcxState {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
 		}
 		
-		//		[MonoTODO]
-		//		//FIXME
-		//		public virtual bool RightToLeft {
-		//			get { throw new NotImplementedException (); }
-		//			set { throw new NotImplementedException (); }
-		//		}
+		[MonoTODO]
+		//FIXME
+		public virtual bool RightToLeft {
+			get {
+				throw new NotImplementedException (); 
+			}
+			set {
+				//FIXME:
+			}
+		}
 		
-		//		[MonoTODO]
-		//		//FIXME
-		//		ISite Site {
-		//			set { throw new NotImplementedException (); }
-		//		}
+		[MonoTODO]
+		ISite Site {
+			set {
+				//FIXME:
+			}
+		}
 		
 		[MonoTODO]
 		public override string Text {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.Text; 
+			}
+			set {
+				//FIXME:
+				base.Text = value;
+			}
 		}
-		
-		
-		
-		
 		
 		/// --- methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
@@ -163,32 +229,35 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected virtual void AttachInterfaces() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void BeginInit() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void CreateHandle() {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.CreateHandle();
 		}
 		
 		[MonoTODO]
 		protected override void DestroyHandle() {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.DestroyHandle();
 		}
 		
 		[MonoTODO]
 		protected override void Dispose(bool disposing) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.Dispose(disposing);
 		}
 		
 		[MonoTODO]
 		public virtual void EndInit() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -203,84 +272,96 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override bool IsInputChar(char charCode) {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.IsInputChar(charCode);
 		}
 		
 		/// --- methods used with events ---
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnBackColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnFontChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnForeColorChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnForeColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnLostFocus(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnLostFocus(e);
 		}
 		/// --- END OF: methods used with events ---
 		
 		[MonoTODO]
 		public override bool PreProcessMessage(ref Message msg) {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.PreProcessMessage(ref msg);
 		}
 		
 		[MonoTODO]
 		protected override bool ProcessMnemonic(char charCode) {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessMnemonic(charCode);
 		}
 
 		[MonoTODO]
 		protected override bool ProcessDialogKey(Keys keyData) { // .NET V1.1 Beta
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessDialogKey(keyData);
 		}
 		
 		[MonoTODO]
 		protected void SetAboutBoxDelegate(AxHost.AboutBoxDelegate d) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetBoundsCore(x,y,width,height,specified);
 		}
 		
 		[MonoTODO]
 		protected override void SetVisibleCore(bool value) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetVisibleCore(value);
 		}
 		
 		[MonoTODO]
 		public void ShowAboutBox() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ShowPropertyPages() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ShowPropertyPages(Control control) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 		
 		/// --- events ---
@@ -340,13 +421,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetClassName() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return "";
 		}
 		
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetComponentName() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return "";
 		}
 		
 		[MonoTODO]
@@ -411,11 +494,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public class InvalidActiveXStateException : Exception {
 
-			/// --- methods ---
-//			[MonoTODO]
-//			public override string ToString() {
-//				throw new NotImplementedException ();
-//			}
 		}
 		
 		

@@ -14,8 +14,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents a Windows check box.
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -128,37 +126,40 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnAppearanceChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnCheckedChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnCheckStateChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void OnClick(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnClick(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs mevent) 
+		protected override void OnMouseUp(MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnMouseUp(e);
 		}
 		// end of [event methods]
 		
@@ -166,7 +167,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool ProcessMnemonic(char charCode) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessMnemonic(charCode);
 		}
 		
 		[MonoTODO]

@@ -225,7 +225,7 @@ namespace System.Windows.Forms {
 		}
 		
 		void IAccessible.accDoDefaultAction(object childID) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		int IAccessible.accChildCount{
 			get{
@@ -253,7 +253,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		void IAccessible.accSelect(int flagsSelect, object childID) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		object IAccessible.accSelection {
 			get{
@@ -291,10 +291,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		void IAccessible.set_accName(object childID, string newName) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		void IAccessible.set_accValue(object childID, string newValue) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	}
 	

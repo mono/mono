@@ -16,9 +16,7 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents a Windows combo box control.
-	/// ToDo note:
-	///  - nothing is implemented
-	/// </summary>
+   	/// </summary>
 
 	[MonoTODO]
 	public class ComboBox : ListControl {
@@ -142,7 +140,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -168,7 +166,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -187,7 +185,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException (); 
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -200,9 +198,11 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public int MaxDropDownItems {
-			get { throw new NotImplementedException ();
+			get {
+				throw new NotImplementedException ();
 			}
-			set { throw new NotImplementedException ();
+			set {
+				//FIXME:		
 			}
 		}
 		
@@ -212,7 +212,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}
 		
@@ -229,7 +229,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -239,7 +239,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set { 
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -249,7 +249,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException (); 
+				//FIXME:
 			}
 		}
 		
@@ -259,7 +259,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -269,7 +269,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		
@@ -299,13 +299,14 @@ namespace System.Windows.Forms {
 		/// internal .NET framework supporting methods, not stubbed out:
 		[MonoTODO]
 		protected override void OnSelectedValueChanged(EventArgs e){ // .NET V1.1 Beta
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnSelectedValueChanged(e);
 		}
 
 		/// - protected override void SetItemCore(int index,object value);
 		[MonoTODO]
 		protected virtual void AddItemsCore(object[] value) {
-			throw new NotImplementedException ();
+			//FIXME:		
 		}
 		
 		[MonoTODO]
@@ -353,104 +354,116 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.IsInputKey(keyData);
 		}
 		
 		/// [methods for events]
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnBackColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnDataSourceChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnDataSourceChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnDisplayMemberChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnDisplayMemberChanged(e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnDrawItem(DrawItemEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:		
 		}
 		
 		[MonoTODO]
 		protected virtual void OnDropDown(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:		
 		}
 		
 		[MonoTODO]
 		protected virtual void OnDropDownStyleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:		
 		}
 		
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnFontChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnForeColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnForeColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleDestroyed(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnKeyPress(KeyPressEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnKeyPress(e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMeasureItem(MeasureItemEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void OnParentBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnParentBackColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnResize(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnSelectedIndexChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnSelectedIndexChanged(e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnSelectionChangeCommitted(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:		
 		}
 		/// end of [methods for events]
 		
@@ -458,25 +471,27 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void RefreshItem(int index) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.Refresh();
 		}
 		
 		[MonoTODO]
 		public void Select(int start,int length) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void SelectAll() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.SetBoundsCore(x,y,width,height,specified);
 		}
 		
 		// for IList interface
@@ -490,57 +505,31 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.WndProc(ref m);
 		}
 		
 	
 		/// --- Button events ---
 		/// commented out, cause it only supports the .NET Framework infrastructure
 		[MonoTODO]
-		public event DrawItemEventHandler DrawItem {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event DrawItemEventHandler DrawItem;
 		
 		[MonoTODO]
-		public event EventHandler DropDown {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler DropDown;
 		
 		[MonoTODO]
-		public event EventHandler DropDownStyleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler DropDownStyleChanged;
 		
 		[MonoTODO]
-		public event MeasureItemEventHandler MeasureItem {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event MeasureItemEventHandler MeasureItem;
 		
 		/* only supports .NET framework
 			[MonoTODO]
@@ -548,33 +537,13 @@ namespace System.Windows.Forms {
 		*/
 		
 		[MonoTODO]
-		public event EventHandler SelectedIndexChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler SelectedIndexChanged;
 		
 		[MonoTODO]
-		public event EventHandler SelectionChangeCommitted {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		
-		
-		
+		public event EventHandler SelectionChangeCommitted;
 		
 		/// --- public class ComboBox.ChildAccessibleObject : AccessibleObject ---
 		/// the class is not stubbed, cause it's only used for .NET framework
-		
-		
 		
 		
 		/// sub-class: ComboBox.ObjectCollection
@@ -588,10 +557,8 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public ObjectCollection (ComboBox owner) 
 			{
-				throw new NotImplementedException ();
+				
 			}
-			
-			
 			
 			/// --- ObjectCollection Properties ---
 			[MonoTODO]
@@ -649,7 +616,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void Clear() 
 			{
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 			
 			[MonoTODO]
@@ -686,19 +653,19 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void Insert(int index,object item) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 			
 			[MonoTODO]
 			public void Remove(object value) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 			
 			[MonoTODO]
 			public void RemoveAt(int index) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:		
 			}
 		}  // --- end of ComboBox.ObjectCollection ---
 	}

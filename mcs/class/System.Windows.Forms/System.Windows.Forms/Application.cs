@@ -19,7 +19,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
-
+using Microsoft.Win32;
 namespace System.Windows.Forms {
 
 	/// <summary>
@@ -34,8 +34,8 @@ namespace System.Windows.Forms {
 		static private ApplicationContext applicationContext = null;
 		static private bool messageLoopStarted = false;
 		static private bool messageLoopStopRequest = false;
-		private static ArrayList messageFilters = new ArrayList ();
-
+		static private  ArrayList messageFilters = new ArrayList ();
+		static private string safeTopLevelCaptionFormat;
 		// --- (public) Properties ---
 		public static bool AllowQuit {
 			// according to docs return false if embbedded in a 
@@ -45,24 +45,35 @@ namespace System.Windows.Forms {
 	
 		[MonoTODO]
 		public static string CommonAppDataPath {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "";
+			}
 		}
 	
-		//[MonoTODO]
-		// Registry key not yet defined (this should be interesting)
-		//public static RegistryKey CommonAppDataRegistry {
-		//	get { throw new NotImplementedException (); }
-		//}
+		[MonoTODO]
+		public static RegistryKey CommonAppDataRegistry {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 	
 		[MonoTODO]
 		public static string CompanyName {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "Company Name";
+			}
 		}
 	
 		[MonoTODO]
 		public static CultureInfo CurrentCulture {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
 		}
 	
 		[MonoTODO]
@@ -72,42 +83,66 @@ namespace System.Windows.Forms {
 	
 		[MonoTODO]
 		public static string ExecutablePath {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "";
+			}
 		}
 	
 		[MonoTODO]
 		public static string LocalUserAppDataPath {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "";
+			}
 		}
 	
 		public static bool MessageLoop {
-			get { return messageLoopStarted; }
+			get {
+				return messageLoopStarted;
+			}
 		}
 	
 		[MonoTODO]
 		public static string ProductName {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "Product Name";
+			}
 		}
 	
 		[MonoTODO]
 		public static string ProductVersion {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "0.0.0";
+			}
 		}
 	
 		[MonoTODO]
 		public static string SafeTopLevelCaptionFormat {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return safeTopLevelCaptionFormat;
+			}
+			set {
+				safeTopLevelCaptionFormat = value;
+			}
 		}
 	
 		[MonoTODO]
 		public static string StartupPath {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "";
+			}
 		}
 	
 		[MonoTODO]
 		public static string UserAppDataPath {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return "";
+			}
 		}
 	
 		//[MonoTODO]
@@ -151,7 +186,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void OnThreadException (Exception t) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	
 		public static void RemoveMessageFilter (IMessageFilter value)

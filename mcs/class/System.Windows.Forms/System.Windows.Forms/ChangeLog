@@ -1,4 +1,44 @@
+  2002-12-1  DennisHayes <dennish@raytek.com>
+
+	* AccessibleObject.cs
+	* Application.cs
+	* ApplicationContext.cs
+	* AxHost.cs
+	* Binding.cs
+	* BindingContext.cs
+	* Button.cs
+	* CheckBox.cs
+	* CheckedListBox.cs
+	* Clipboard.cs
+	* ColorDialog.cs
+	* ColumnHeader.cs
+	* ComboBox.cs
+	* CommonDialog.cs
+	* ContainerControl.cs
+	* ContextMenu.cs
+	* Control.cs
+	* ControlBindingsCollection.cs
+	* ControlPaint.cs
+	* CreateParams.cs
+	* CurrencyManager.cs
+	* Cursor.cs
+	* CursorConverter.cs
+	* Cursors.cs
+	* DataFormats.cs
+	* DataGrid.cs
+	* DataGridTableStyle.cs
+	* DataGridTextBox.cs
+	* DataGridTextBoxColumn.cs
+	* DataObject.cs
+	* ErrorProvider.cs
+	* Form.cs
+
+	* removed some throw notimplmented ecexptions
+	* Some small implmentaions
+	* some dead code removal
+
   2002-11-28  DennisHayes <dennish@raytek.com>
+
 	* In visual studio, I added a SWFTest project to the SWF solution.
 	* Using Microsoft's swf.dll, I added one of each possible stock controls to the form.
 	* I closed the form (swf design stuff i svery incomplete).

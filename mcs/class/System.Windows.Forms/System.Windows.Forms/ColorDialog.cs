@@ -14,9 +14,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents a common dialog box that displays available colors along with controls that allow the user to define custom colors.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]

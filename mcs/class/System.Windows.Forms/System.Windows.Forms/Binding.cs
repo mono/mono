@@ -23,7 +23,7 @@ namespace System.Windows.Forms {
 		//
 		public Binding(string propertyName,object dataSource,string dataMember)
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 

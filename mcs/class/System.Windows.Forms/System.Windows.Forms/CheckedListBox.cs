@@ -15,8 +15,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Displays a ListBox in which a check box is displayed to the left of each item.
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -37,17 +35,23 @@ namespace System.Windows.Forms {
 		// --- CheckedListBox Properties ---
 		[MonoTODO]
 		public CheckedListBox.CheckedIndexCollection CheckedIndices {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
 		public CheckedListBox.CheckedItemCollection CheckedItems {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException (); }
 		}
 		
 		public bool CheckOnClick {
-			get { return checkOnClick; }
-			set { checkOnClick=value; }
+			get {
+				return checkOnClick;
+			}
+			set {
+				checkOnClick = value;
+			}
 		}
 		
 		[MonoTODO]
@@ -75,21 +79,34 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		//FIXME
 		public override DrawMode DrawMode {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME
+				return base.DrawMode;
+			}
+			set {
+				//FIXME
+				base.DrawMode = value;
+			}
 		}
 		
 		[MonoTODO]
 		public override int ItemHeight {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME
+				return base.ItemHeight;
+			}
+			set {
+				//FIXME
+				base.ItemHeight = value;
+			}
 		}
 		
 		[MonoTODO]
 		public CheckedListBox.ObjectCollection Items {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException (); 
+			}
 		}
 
 		[MonoTODO]
@@ -156,31 +173,36 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnBackColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnClick(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnClick(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnDrawItem(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnFontChanged(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnHandleCreated(e);
 		}
 		
 		// only supports .NET framework, thus is not stubbed out
@@ -195,19 +217,22 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnKeyPress(KeyPressEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnKeyPress(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnMeasureItem(MeasureItemEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnMeasureItem(e);
 		}
 		
 		[MonoTODO]
 		protected override void OnSelectedIndexChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.OnSelectedIndexChanged(e);
 		}
 		// end of [event methods]
 		
@@ -226,7 +251,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.WndProc(ref m);
 		}
 		
 		
@@ -491,7 +517,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public ObjectCollection(CheckedListBox owner) :base(owner)
 			{
-				throw new NotImplementedException ();
+				
 			}
 			
 			/// --- methods ---

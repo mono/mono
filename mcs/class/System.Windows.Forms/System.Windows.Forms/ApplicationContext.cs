@@ -55,19 +55,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void ExitThread() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void ExitThreadCore() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMainFormClosed(object sender,EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		// --- Methods: object ---

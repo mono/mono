@@ -59,7 +59,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected internal void Clear()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected internal void Remove(object dataSource)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		//
