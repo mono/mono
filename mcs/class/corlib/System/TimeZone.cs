@@ -44,7 +44,7 @@ namespace System {
 
 		public virtual bool IsDaylightSavingTime (DateTime time)
 		{
-			int currentYear = Calendar.GetYear (time);
+			int currentYear = CultureInfo.CurrentCulture.Calendar.GetYear (time);
 			DaylightTime daylight = GetDaylightChanges (currentYear);
 			if ((daylight.Start <= time) && (time < daylight.End))
 				return true;
