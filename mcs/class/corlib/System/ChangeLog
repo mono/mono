@@ -1,3 +1,13 @@
+2001-07-17  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* String.cs (IndexOf): Slight optimization that allows skipping
+	over a few chars here and there. This isn't as good as using my
+	Boyer-Moore implementation, however, Boyer-Moore is only really
+	good for long strings (I plan on making the code decide which
+	string search algorithm it should use on-the-fly at some point).
+	(LastIndexOf): Fix to work correctly.
+	(BoyerMoore): Took out some unneeded code and fixed an edge-case.
+
 2001-07-16  Michael Lambert <michaellambert@email.com>
 
 	* EventArgs.cs: Add.

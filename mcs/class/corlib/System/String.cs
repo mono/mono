@@ -212,7 +212,7 @@ namespace System {
 		unsafe private static int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
-			char[] skiptable = new char[65536];  /* our unicode-safe skip-table */
+			uint[] skiptable = new uint[65536];  /* our unicode-safe skip-table */
 			char *he_ptr;
 			char *ne_ptr;  /* end-of-string pointers */
 			char *hc_ptr;
@@ -236,7 +236,7 @@ namespace System {
 				return startIndex;
 
 			/* set a pointer at the end of each string */
-			ne_ptr = needle + nlen - 1;              /* point to char before '\0' */
+			ne_ptr = needle + n_len - 1;              /* point to char before '\0' */
 			he_ptr = haystack + startIndex + count;  /* point to last valid char */
 
 			/* init the skip table with the pattern length */
@@ -247,7 +247,7 @@ namespace System {
 			 * pattern buffer (needle) to the distance from the index to
 			 * the end of the pattern buffer. */
 			for (nc_ptr = needle; nc_ptr < ne_ptr; nc_ptr++)
-				skiptable[*nc_ptr] = ne_ptr - nc_ptr;
+				skiptable[(uint) *nc_ptr] = ne_ptr - nc_ptr;
 
 			h_ptr = haystack + startIndex;
 			while (h_len >= n_len) {
@@ -261,12 +261,7 @@ namespace System {
 						break;
 
 				if (*nc_ptr != *hc_ptr) {
-					n = skiptable[*hc_ptr];
-					if (n == 0)
-						n = n_len;
-					if (n == n_len && i > 0)
-						if (*ne_ptr == *needle)
-							n--;
+					n = skiptable[(uint) *hc_ptr] - i;
 					h_ptr += n;
 					h_len -= n;
 				} else
@@ -816,18 +811,26 @@ namespace System {
 			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (i = startIndex; i - startIndex < count; i++) {
+			for (i = startIndex; i - startIndex + value.Length <= count; ) {
 				if (this.c_str[i] == value[0]) {
 					bool equal = true;
-					int j, offset;
-					
-					offset = i - startIndex;
-					for (j = 1; equal && value[j] != '\0' && offset + j < count; j++)
+					int j, nexti = 0;
+
+					for (j = 1; equal && value[j] != '\0'; j++) {
 						equal = this.c_str[i + j] == value[j];
+						if (this.c_str[i + j] == value[0] && nexti == 0)
+							nexti = i + j;
+					}
 
 					if (equal)
 						return i;
-				}
+
+					if (nexti != 0)
+						i = nexti;
+					else
+						i += j;
+				} else
+					i++;
 			}
 
 			return -1;
@@ -1025,7 +1028,7 @@ namespace System {
 			}
 
 			// FIXME: use a reversed-unicode-safe-Boyer-Moore?
-			len = value.Length;
+			len = value.Length - 1;
 			for (i = startIndex; i >= startIndex - count; i--) {
 				if (this.c_str[i + len] == value[len]) {
 					bool equal = true;
