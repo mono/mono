@@ -1,3 +1,8 @@
+2004-09-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Load all
+	assemblies from the parent. Fixes #65665.
+
 2004-09-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata.c (mono_metadata_parse_type): Fix parsing of custom
