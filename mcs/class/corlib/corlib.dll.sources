@@ -114,6 +114,7 @@ System/FlagsAttribute.cs
 System/FloatingPointFormatter.cs
 System/FormatException.cs
 System/GC.cs
+System/GenericParameterAttributes.cs
 System/Guid.cs
 System/IAppDomainSetup.cs
 System/IApplicationDescription.cs
