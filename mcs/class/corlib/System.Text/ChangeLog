@@ -1,3 +1,7 @@
+2002/04/02  Nick Drochak <ndrochak@gol.com>
+
+	* StringBuilder.cs (Append): Removed obsolete overload.
+
 2002-03-21  Mike Kestner  <mkestner@speakeasy.net>
 
 	* ASCIIEncoding.cs : Fix off by one error in Get(Char|Byte)Count.

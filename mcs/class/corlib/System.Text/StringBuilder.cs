@@ -357,14 +357,6 @@ namespace System.Text {
 			return Append( value.ToString().ToCharArray() );
 		}
 
-		public StringBuilder Append( int index, char value) {
-			char[] appendChar = new char[1];
-			
-			appendChar[0] = value;
-			return Append( appendChar );
-		}
-
-
 		public StringBuilder Append( decimal value ) {
 			return Append( value.ToString().ToCharArray() );
 		}
