@@ -15,9 +15,34 @@ endif
 
 gac_assemblies_list = \
 	Accessibility					\
+	ByteFX.Data.dll					\
+	Commons.Xml.Relaxng.dll				\
 	Cscompmgd					\
+	I18N.CJK.dll					\
+	I18N.dll					\
+	I18N.MidEast.dll				\
+	I18N.Other.dll					\
+	I18N.Rare.dll					\
+	I18N.West.dll					\
+	ICSharpCode.SharpZipLib.dll			\
+	Microsoft.VisualBasic.dll			\
+	Microsoft.VisualC.dll				\
+	Microsoft.Vsa.dll				\
+	Microsoft.Web.Services.dll 			\
+	Mono.Cairo.dll					\
+	Mono.CSharp.Debugger.dll			\
+	Mono.Data.SybaseClient.dll			\
+	Mono.Data.SqliteClient.dll			\
+	Mono.Data.TdsClient.dll				\
+	Mono.Data.Tds.dll				\
+	Mono.GetOptions.dll				\
+	Mono.Http.dll					\
+	Mono.Posix.dll					\
 	Mono.Security					\
 	Mono.Security.Win32				\
+	Novell.Directory.Ldap.dll			\
+	Npgsql.dll					\
+	PEAPI.dll					\
 	System.Configuration.Install			\
 	System.Data					\
 	System.Data.OracleClient			\
@@ -41,33 +66,8 @@ gac_assemblies_list = \
 gac_assemblies = $(gac_assemblies_list:=.dll)
 
 non_gac_assemblies = \
-	ByteFX.Data.dll						\
-	Commons.Xml.Relaxng.dll					\
-	I18N.CJK.dll						\
-	I18N.dll						\
-	I18N.MidEast.dll					\
-	I18N.Other.dll						\
-	I18N.Rare.dll						\
-	I18N.West.dll						\
-	ICSharpCode.SharpZipLib.dll				\
-	Microsoft.VisualBasic.dll				\
-	Microsoft.VisualC.dll					\
-	Microsoft.Vsa.dll					\
-	Microsoft.Web.Services.dll 				\
-	Mono.Cairo.dll						\
-	Mono.CSharp.Debugger.dll				\
-	Mono.Data.SqliteClient.dll				\
-	Mono.Data.SybaseClient.dll				\
-	Mono.Data.TdsClient.dll					\
-	Mono.Data.Tds.dll					\
-	Novell.Directory.Ldap.dll				\
-	Mono.GetOptions.dll					\
-	Mono.Http.dll						\
-	Mono.Posix.dll						\
-	Npgsql.dll						\
-	NUnit.Util.dll						\
-	NUnit.Framework.dll					\
-	PEAPI.dll						
+	NUnit.Util.dll					\
+	NUnit.Framework.dll				\
 
 corlibdir = $(libdir)/net_2_0
 dist_corlib_DATA = mscorlib.dll
