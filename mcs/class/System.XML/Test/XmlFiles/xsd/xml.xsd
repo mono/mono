@@ -23,4 +23,4 @@
 	<xs:attribute ref="xml:space" />
 </xs:attributeGroup>
 
-<xs:schema>
+</xs:schema>
