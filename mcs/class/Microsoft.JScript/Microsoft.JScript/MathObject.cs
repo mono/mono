@@ -42,6 +42,10 @@ namespace Microsoft.JScript {
 		public const double SQRT1_2 = 0.7071067811865476;
 		public const double SQRT2 = 1.4142135623730951;
 
+		internal MathObject ()
+		{
+		}
+
 		[JSFunctionAttribute (0, JSBuiltin.Math_abs)]
 		public static double abs (double d)
 		{
