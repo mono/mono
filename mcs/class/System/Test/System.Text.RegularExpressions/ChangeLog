@@ -1,3 +1,7 @@
+2004-07-05  Jackson Harper  <jackson@ximian.com>
+
+	* RegexTest.cs: Add some simple tests for debugging/zen building.
+	
 2004-06-06  Jambunathan K <kjambunathan@novell.com>
 	
 	* RegexTest.cs: 
