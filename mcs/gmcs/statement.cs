@@ -1016,6 +1016,8 @@ namespace Mono.CSharp {
 					return false;
 				
 				VariableType = texpr.ResolveType (ec);
+				if (VariableType == null)
+					return false;
 			}
 
 			if (VariableType == TypeManager.void_type) {
@@ -1121,8 +1123,8 @@ namespace Mono.CSharp {
 			VariablesInitialized = 8,
 			HasRet = 16,
 			IsDestructor = 32,
-			HasVarargs = 64,
-			Unsafe = 128,
+			HasVarargs = 64	,
+			Unsafe = 128
 		}
 		Flags flags;
 
@@ -3807,9 +3809,6 @@ namespace Mono.CSharp {
 
 			var_type = texpr.ResolveType (ec);
 
-			Report.Debug (64, "RESOLVE FOREACH", expr, expr.Type, expr.Type.IsArray, type,
-				      texpr, var_type, loc);
-			
 			//
 			// We need an instance variable.  Not sure this is the best
 			// way of doing this.
