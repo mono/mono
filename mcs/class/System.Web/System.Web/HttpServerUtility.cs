@@ -9,6 +9,9 @@
  * (C) Wictor Wilén (2002)
  * ---------------------------------------
  * 2002-03-27	Wictor		Started implementation
+ * 
+ * TODO: move the encoding/decoding to the HttpUtility class	
+ * 
  */
 using System;
 using System.IO;
@@ -24,8 +27,13 @@ namespace System.Web
 		// private stuff
 		private const string _hex = "0123456789ABCDEF";
 		private const string _chars = "<>;:.?=&@*+%/\\";
-
+		private static string _name = "";
+		
+		
+		
 		// Properties
+
+
 		/// <summary>
 		/// Gets the server's computer name.
 		/// </summary>
@@ -33,7 +41,11 @@ namespace System.Web
 		{
 			get
 			{
-				return Environment.MachineName;
+				if(_name.Length == 0)
+				{
+					_name = Environment.MachineName;
+				}
+				return _name;
 			}
 		}
 		/// <summary>
@@ -69,10 +81,9 @@ namespace System.Web
 		/// </summary>
 		/// <param name="progID">The class or type of object to be instantiated. </param>
 		/// <returns>The new object.</returns>
-		[MonoTODO()]
 		public object CreateObject(string progID)
 		{
-			throw new System.NotImplementedException();
+			return CreateObject(Type.GetTypeFromProgID(progID));
 		}
 
 
@@ -83,8 +94,13 @@ namespace System.Web
 		/// <returns>The new object.</returns>
 		[MonoTODO()]
 		public object CreateObject(Type type)
-		{			
-			throw new System.NotImplementedException();
+		{	
+			Object o;
+			o = Activator.CreateInstance(type);
+			
+			// TODO: Call OnStartPage()
+
+			return o;
 		}
 
 
@@ -93,10 +109,10 @@ namespace System.Web
 		/// </summary>
 		/// <param name="clsid">The class identifier of the object to be instantiated. </param>
 		/// <returns>The new object.</returns>
-		[MonoTODO()]
 		public object CreateObjectFromClsid(string clsid)
 		{
-			throw new System.NotImplementedException();
+			Guid guid = new Guid(clsid);
+			return CreateObject(Type.GetTypeFromCLSID(guid));
 		}
 
 
@@ -179,27 +195,27 @@ namespace System.Web
 				switch(s[i])
 				{
 					case '>':
-						dest.Insert(dest.Length, "&gt;");
+						dest += "&gt;";
 						break;
 					case '<':
-						dest.Insert(dest.Length, "&lt;");
+						dest += "&lt;";
 						break;
 					case '"':
-						dest.Insert(dest.Length, "&quot;");
+						dest += "&quot;";
 						break;
 					case '&':
-						dest.Insert(dest.Length, "&amp;");
+						dest += "&amp;";
 						break;
 					default:
 						if(s[i] >= 128)
 						{
-							dest.Insert(dest.Length, "&H");
+							dest += "&H";
 							v = (int) s[i];
-							dest.Insert(dest.Length, v.ToString());
+							dest += v.ToString() ;
 							
 						}
 						else
-							dest += s[i].ToString();
+							dest += s[i];
 						break;
 				}
 			}
