@@ -1,3 +1,22 @@
+2002-05-02  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data/DataViewSettingCollection.cs: implemented.
+
+	* System.Data/DataRowView.cs: new stubs.
+
+	* System.Data.SqlTypes/SqlByte.cs:
+	* System.Data.SqlTypes/SqlDateTime.cs:
+	* System.Data.SqlTypes/SqlDecimal.cs:
+	* System.Data.SqlTypes/SqlDouble.cs:
+	* System.Data.SqlTypes/SqlGuid.cs:
+	* System.Data.SqlTypes/SqlInt16.cs:
+	* System.Data.SqlTypes/SqlInt64.cs:
+	* System.Data.SqlTypes/SqlMoney.cs:
+	* System.Data.SqlTypes/SqlSingle.cs: new stubs, contributed
+	by Tim Coleman <tcoleman@opentext.com>
+
+	* System.Data.build: excluded newly-added files.
+
 2002-05-02  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.SqlClient/PostgresLibrary.cs: included new 
