@@ -1,3 +1,17 @@
+2002-10-22  Tim Haynes <thaynes@openlinksw.com>
+
+	* - Fixed the duplication of xmlns:xx = yy when serializing the
+	XML for serialization
+	
+	Fixed the unnecessary parsing/serializing when adding assemblies
+	for serialization 
+
+	Avoided setting the XmlNode.InnerXml property
+	(as it's not implemented) 
+
+	Fixed the usage/implementation of
+	XmlElement.GetElementsByTagName()
+	
 2002-10-21  Duncan Mak  <duncan@ximian.com>
 
 	* XmlDocument.cs:
