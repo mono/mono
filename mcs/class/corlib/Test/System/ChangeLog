@@ -4,6 +4,12 @@
 
 2003-11-14  Nick Drochak <ndrochak@gol.com>
 
+	* DateTime.cs: Running tests in different timezones give different 
+	results.  Need to change the way these tests work. Disabling some
+	tests for now.
+
+2003-11-14  Nick Drochak <ndrochak@gol.com>
+
 	* ArrayTest.cs: Fix a few tests where NullReferenceException 
 	is expected, not ArgumentNullException.
 
