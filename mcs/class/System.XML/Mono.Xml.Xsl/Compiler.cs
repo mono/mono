@@ -338,18 +338,19 @@ namespace Mono.Xml.Xsl {
 			
 			XPathNavigator nav = Input.Clone ();
 			XPathNavigator nsScope = nav.Clone ();
+			
+			if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
+				do {
+					if (nav.Value != XsltNamespace && !ret.Contains (nav.Name))
+						ret.Add (nav.Name, nav.Value);
+				} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
+				nav.MoveToParent ();
+			}
+			
 			do {
 				bool isXslt = nav.NamespaceURI == XsltNamespace;
 				nsScope.MoveTo (nav);
-				
-				if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
-					do {
-						if (nav.Value != XsltNamespace && !ret.Contains (nav.Name))
-							ret.Add (nav.Name, nav.Value);
-					} while (nav.MoveToNextNamespace (XPathNamespaceScope.Local));
-					nav.MoveToParent ();
-				}
-				
+
 				if (nav.MoveToFirstAttribute())	{
 					do {
 						if ((nav.LocalName == "extension-element-prefixes" || nav.LocalName == "exclude-result-prefixes") &&
