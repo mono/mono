@@ -4,37 +4,11 @@
 // Authors:
 //	Miguel de Icaza (miguel@ximian.com)
 //	Nick Drochak, ndrochak@gol.com
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2001 Nick Drochak, All Rights Reserved
 // Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -66,28 +40,94 @@ namespace System.Security {
 	[Serializable]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
-		protected CodeAccessPermission () {}
+		protected CodeAccessPermission ()
+		{
+		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO("SecurityStackFrame not ready")]
+		[MonoTODO]
 		public void Assert ()
 		{
-			// throw a SecurityException if Assertion is denied
+			// Not everyone can assert freely so we must check for
+			// System.Security.Permissions.SecurityPermissionFlag.Assertion
 			new SecurityPermission (SecurityPermissionFlag.Assertion).Demand ();
-//			SecurityStackFrame.Current.Assert = this;
+
+			// TODO: Only one Assert can be active in a stack frame
+			// throw new SecurityException (Locale.GetText (
+			//	"Only one Assert can be active in a stack frame"));
+		}
+
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		virtual bool CheckAssert (CodeAccessPermission asserted)
+		{
+			if (asserted == null)
+				return false;
+			if (asserted.GetType() != this.GetType ())
+				return false;
+			return IsSubsetOf (asserted);
+		}
+
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		virtual bool CheckDemand (CodeAccessPermission target)
+		{
+			if (target == null)
+				return false;
+			if (target.GetType () != this.GetType ())
+				return false;
+			return IsSubsetOf (target);
+		}
+
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		virtual bool CheckDeny (CodeAccessPermission denied)
+		{
+			if (denied == null)
+				return true;
+			if (denied.GetType () != this.GetType ())
+				return true;
+			return (Intersect (denied) == null);
+		}
+
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		virtual bool CheckPermitOnly (CodeAccessPermission target)
+		{
+			if (target == null)
+				return false;
+			if (target.GetType () != this.GetType ())
+				return false;
+			return IsSubsetOf (target);
 		}
 
 		public abstract IPermission Copy ();
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO("MS contralize demands, but I think we should branch back into indivual permission classes.")]
+		[MonoTODO ("MS centralize demands for IBuiltInPermission, but I think we should branch back into indivual permission classes.")]
 		public void Demand ()
 		{
 			IBuiltInPermission perm = (this as IBuiltInPermission);
 			if (perm == null)
 				return; // not sure about this :(
 
+			bool result = false;
+
 			// TODO : Loop the stack
+			// TODO : Loop all permission on the current frame
+			result = CheckDemand (this);
 			switch (perm.GetTokenIndex ()) {
 				case 0: // EnvironmentPermission
 					// TODO
@@ -135,16 +175,39 @@ namespace System.Security {
 					string message = String.Format (Locale.GetText ("Unknown IBuiltInPermission #{0}"), perm.GetTokenIndex ());
 					throw new SecurityException (message);
 			}
+
+			if (!result) {
+				throw new SecurityException (Locale.GetText (
+					"Demand failed."));
+			}
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO("SecurityStackFrame not ready")]
+		[MonoTODO]
 		public void Deny ()
 		{
-//			SecurityStackFrame.Current.Deny = this;
 		}
 
+#if NET_2_0
+		public override bool Equals (object obj)
+		{
+			if (obj == null)
+				return false;
+			if (obj.GetType () != this.GetType ())
+				return false;
+			// TODO: compare
+			return true;
+		}
+#endif
+
 		public abstract void FromXml (SecurityElement elem);
+
+#if NET_2_0
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+#endif
 
 		public abstract IPermission Intersect (IPermission target);
 
@@ -166,34 +229,29 @@ namespace System.Security {
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO("SecurityStackFrame not ready")]
+		[MonoTODO]
 		public void PermitOnly ()
 		{
-//			SecurityStackFrame.Current.PermitOnly = this;
 		}
 
-		[MonoTODO("SecurityStackFrame not ready")]
+		[MonoTODO]
 		public static void RevertAll ()
 		{
-//			SecurityStackFrame.Current.RevertAll ();
 		}
 
-		[MonoTODO("SecurityStackFrame not ready")]
-		public static void RevertAssert () 
+		[MonoTODO]
+		public static void RevertAssert ()
 		{
-//			SecurityStackFrame.Current.RevertAssert ();
 		}
 
-		[MonoTODO("SecurityStackFrame not ready")]
+		[MonoTODO]
 		public static void RevertDeny ()
 		{
-//			SecurityStackFrame.Current.RevertDeny ();
 		}
 
-		[MonoTODO("SecurityStackFrame not ready")]
-		public static void RevertPermitOnly () 
+		[MonoTODO]
+		public static void RevertPermitOnly ()
 		{
-//			SecurityStackFrame.Current.RevertPermitOnly ();
 		}
 
 		// snippet moved from FileIOPermission (nickd) to be reused in all derived classes

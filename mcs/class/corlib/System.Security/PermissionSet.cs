@@ -3,36 +3,10 @@
 //
 // Authors:
 //	Nick Drochak(ndrochak@gol.com)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Nick Drochak
 // Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -68,6 +42,7 @@ namespace System.Security {
 
 		private PermissionState state;
 		private ArrayList list;
+		private int _hashcode;
 
 		// constructors
 
@@ -116,6 +91,11 @@ namespace System.Security {
 		[MonoTODO()]
 		public virtual void Assert ()
 		{
+		}
+
+		internal void Clear () 
+		{
+			list.Clear ();
 		}
 
 		public virtual PermissionSet Copy ()
@@ -343,5 +323,47 @@ namespace System.Security {
 		void IDeserializationCallback.OnDeserialization (object sender) 
 		{
 		}
+
+#if NET_2_0
+		public override bool Equals (object obj)
+		{
+			if (obj == null)
+				return false;
+			PermissionSet ps = (obj as PermissionSet);
+			if (ps == null)
+				return false;
+			if (list.Count != ps.Count)
+				return false;
+
+			for (int i=0; i < list.Count; i++) {
+				bool found = false;
+				for (int j=0; i < ps.list.Count; j++) {
+					if (list [i].Equals (ps.list [j])) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+			return true;
+		}
+
+		public override int GetHashCode ()
+		{
+			if (_hashcode == 0) {
+				_hashcode = state.GetHashCode ();
+				foreach (IPermission p in list)	{
+					_hashcode ^= p.GetHashCode ();
+				}
+			}
+			return _hashcode;
+		}
+
+		[MonoTODO ("what's it doing here?")]
+		static public void RevertAssert ()
+		{
+		}
+#endif
 	}
 }

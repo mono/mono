@@ -2,36 +2,11 @@
 // System.Security.SecurityElement.cs
 //
 // Authors:
-//   Miguel de Icaza (miguel@ximian.com)
-//   Lawrence Pit (loz@cable.a2000.nl)
-//   Sebastien Pouliot  <spouliot@videotron.ca>
+//	Miguel de Icaza (miguel@ximian.com)
+//	Lawrence Pit (loz@cable.a2000.nl)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc. http://www.ximian.com
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -57,6 +32,8 @@
 using System.Globalization;
 using System.Collections;
 using System.Text;
+
+using Mono.Xml;
 
 namespace System.Security 
 {
@@ -116,6 +93,24 @@ namespace System.Security
 		{
 			this.Tag = tag;
 			this.Text = text;
+		}
+
+		// deep copy
+		internal SecurityElement (SecurityElement se)
+		{
+			this.Tag = se.Tag;
+			this.Text = se.Text;
+
+			if (se.attributes != null) {
+				foreach (SecurityAttribute sa in se.attributes) {
+					this.AddAttribute (sa.Name, sa.Value);
+				}
+			}
+			if (se.children != null) {
+				foreach (SecurityElement child in se.children) {
+					this.AddChild (new SecurityElement (child));
+				}
+			}
 		}
 		
 		public Hashtable Attributes {
@@ -225,6 +220,13 @@ namespace System.Security
 			return ((sa == null) ? null : sa.Value);
 		}
 
+#if NET_2_0
+		public SecurityElement Copy ()
+		{
+			return new SecurityElement (this);
+		}
+#endif
+
 		public bool Equal (SecurityElement other)
 		{
 			if (other == null)
@@ -297,6 +299,15 @@ namespace System.Security
 
 			return sb.ToString ();
 		}
+
+#if NET_2_0
+		static public SecurityElement FromString (string xml)
+		{
+			SecurityParser sp = new SecurityParser ();
+			sp.LoadXml (xml);
+			return sp.ToXml ();
+		}
+#endif
 
 		public static bool IsValidAttributeName (string name)
 		{

@@ -1,5 +1,25 @@
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CodeAccessPermission.cs: Added CheckAssert, CheckDemand, CheckDeny,
+	CheckPermitOnly, Equals and GetHashCode to NET_2_0 profile. Actualized
+	TODOs. Removed duplicate license.
+	* NamedPermissionSet.cs: Added Equals/GetHashCode to NET_2_0 profile.
+	Removed duplicate license.
+	* PermissionSet.cs: Added Equals/GetHashCode to NET_2_0 profile. 
+	Removed duplicate license.
+	* SecurityElement.cs: Added Copy and FromString methods to NET_2_0 
+	profile. Removed duplicate license.
+	* SecurityException.cs: Added new constructors and properties to 
+	NET_2_0 profile. Removed duplicate license.
+	* SecurityManager.cs: Added GetZoneAndOrigin and ResolvePolicy to 
+	NET_2_0 profile. Removed duplicate license.
+	* VerificationException.cs: Implements _Exception for NET_2_0 profile.
+	Removed duplicate license.
+	* XmlSyntaxException.cs: Implements _Exception for NET_2_0 profile. 
+	Removed duplicate license.
+
+2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* HostProtectionException.cs: New class in Fx 2.0.
 	* HostSecurityManager.cs: New class in Fx 2.0.
 	* HostSecurityManagerFlags.cs: New enum in Fx 2.0.
