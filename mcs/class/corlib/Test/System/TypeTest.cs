@@ -246,6 +246,11 @@ namespace MonoTests.System
 			AssertNotNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.Public));
 			AssertNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.NonPublic));
 		}
+
+		[Test]
+		public void IsPrimitive () {
+			Assert (typeof (IntPtr).IsPrimitive);
+		}
 	}
 }
 

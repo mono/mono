@@ -1,3 +1,7 @@
+2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add test typeof (IntPtr).IsPrimitive.
+	
 2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitConverter.cs: Added test for (legal) ToString (new byte [0]).
