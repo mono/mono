@@ -349,3 +349,4 @@ t        if (yydebug != null) yydebug.shift(yyStates[yyTop], yyState);
 .    Object value ();
 .  }
 . }
+.} // close outermost namespace, that MUST HAVE BEEN opened in the prolog
