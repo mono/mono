@@ -1,3 +1,8 @@
+2003-04-18 Jackson Harper <jackson@latitudegeo.com>
+
+	* FieldDef.cs: Change peapi fielddef name.
+	* MethodDef.cs: Change peapi methoddef name.
+		
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
 	* MethodDef.cs: New file - definition of a method.

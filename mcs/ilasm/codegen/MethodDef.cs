@@ -47,7 +47,7 @@ namespace Mono.ILASM {
                         get { return signature; }
                 }
 
-                public PEAPI.MethodDef Def {
+                public PEAPI.MethodDef PeapiMethodDef {
                         get { return methoddef; }
                 }
 
