@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Microsoft.Vsa/IVsaCodeItem.cs
 Microsoft.Vsa/IVsaEngine.cs
 Microsoft.Vsa/IVsaError.cs
