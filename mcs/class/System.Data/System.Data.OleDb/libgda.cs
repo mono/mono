@@ -55,5 +55,20 @@ namespace System.Data.OleDb
 
 		[DllImport("gda-2")]
 		public static extern string gda_connection_get_database (IntPtr cnc);
+
+		[DllImport("gda-2")]
+		public static extern string gda_connection_get_dsn (IntPtr cnc);
+
+		[DllImport("gda-2")]
+		public static extern string gda_connection_get_cnc_string (IntPtr cnc);
+
+		[DllImport("gda-2")]
+		public static extern string gda_connection_get_provider (IntPtr cnc);
+
+		[DllImport("gda-2")]
+		public static extern string gda_connection_get_username (IntPtr cnc);
+
+		[DllImport("gda-2")]
+		public static extern string gda_connection_get_password (IntPtr cnc);
 	}
 }

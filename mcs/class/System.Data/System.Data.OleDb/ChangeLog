@@ -1,3 +1,21 @@
+2002-06-01  Rodrigo Moya <rodrigo@ximian.com>
+
+	* libgda.cs: added new libgda API functions.
+
+	* OleDbConnection.cs (Provider): implemented.
+	(BeginTransaction): made it overload IDbConnection methods.
+	(ChangeDatabase): new stub, needs some work on libgda for being
+	implemented.
+	(Clone): new stub.
+	(Close): implemented.
+	(CreateCommand): implemented.
+	(GetOleDbSchemaTable): new stub, until I understand what to do here.
+	(Open): implemented basic stuff, which is just supporting connection
+	strings that represent a GDA data source name. More to come.
+	(InfoMessage, StateChange): added events.
+
+	* TestOleDb.cs: test program for System.Data.OleDb.
+
 2002-05-29  Rodrigo Moya <rodrigo@ximian.com>
 
 	* libgda.cs: added static constructor.
