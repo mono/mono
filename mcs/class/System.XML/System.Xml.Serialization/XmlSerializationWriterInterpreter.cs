@@ -224,11 +224,6 @@ namespace System.Xml.Serialization
 						if (memberValue != null)
 							WriteAnyElementContent ((XmlTypeMapMemberAnyElement)member, memberValue);
 					}
-					else if (memType == typeof(XmlTypeMapMemberAnyElement))
-					{
-						if (memberValue != null)
-							WriteAnyElementContent ((XmlTypeMapMemberAnyElement)member, memberValue);
-					}
 					else if (memType == typeof(XmlTypeMapMemberAnyAttribute))
 					{
 						// Ignore
@@ -425,6 +420,7 @@ namespace System.Xml.Serialization
 				memberValue = new object[] { memberValue };
 			}
 
+			bool canBeText = member.CanBeText;
 			Array elems = (Array) memberValue;
 			foreach (XmlNode elem in elems)
 			{
@@ -438,8 +434,10 @@ namespace System.Xml.Serialization
 					else
 						throw CreateUnknownAnyElementException (elem.Name, elem.NamespaceURI);
 				}
+				else if (elem is XmlCharacterData)
+					elem.WriteTo (Writer);
 				else
-					CreateUnknownTypeException (elem);
+					throw CreateUnknownTypeException (elem);
 			}
 		}
 

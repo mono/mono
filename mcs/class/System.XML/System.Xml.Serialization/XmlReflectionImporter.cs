@@ -491,29 +491,43 @@ namespace System.Xml.Serialization {
 		public ICollection GetReflectionMembers (Type type)
 		{
 			ArrayList members = new ArrayList();
-			PropertyInfo[] properties = type.GetProperties (BindingFlags.Instance | BindingFlags.Public);
-			foreach (PropertyInfo prop in properties)
+			MemberInfo[] tmembers = type.GetMembers (BindingFlags.Instance | BindingFlags.Public);
+			int currentTypePos = 0;
+			Type currentType = null;
+			
+			foreach (MemberInfo tmember in tmembers)
 			{
-				if (!prop.CanRead) continue;
-				if (!prop.CanWrite && TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array)
-					continue;
-				if (prop.GetIndexParameters().Length > 0) continue;
-					
-				XmlAttributes atts = attributeOverrides[type, prop.Name];
-				if (atts == null) atts = new XmlAttributes (prop);
-				if (atts.XmlIgnore) continue;
-				XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
-				members.Add (member);
-			}
-
-			FieldInfo[] fields = type.GetFields (BindingFlags.Instance | BindingFlags.Public);
-			foreach (FieldInfo field in fields)
-			{
-				XmlAttributes atts = attributeOverrides[type, field.Name];
-				if (atts == null) atts = new XmlAttributes (field);
-				if (atts.XmlIgnore) continue;
-				XmlReflectionMember member = new XmlReflectionMember(field.Name, field.FieldType, atts);
-				members.Add (member);
+				if (currentType != tmember.DeclaringType)
+				{
+					currentType = tmember.DeclaringType;
+					currentTypePos = 0;
+				}
+				
+				if (tmember is FieldInfo)
+				{
+					FieldInfo field = tmember as FieldInfo;
+					XmlAttributes atts = attributeOverrides[type, field.Name];
+					if (atts == null) atts = new XmlAttributes (field);
+					if (atts.XmlIgnore) continue;
+					XmlReflectionMember member = new XmlReflectionMember(field.Name, field.FieldType, atts);
+					members.Insert (currentTypePos, member);
+					currentTypePos++;
+				}
+				else if (tmember is PropertyInfo)
+				{
+					PropertyInfo prop  = tmember as PropertyInfo;
+					if (!prop.CanRead) continue;
+					if (!prop.CanWrite && TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array)
+						continue;
+					if (prop.GetIndexParameters().Length > 0) continue;
+						
+					XmlAttributes atts = attributeOverrides[type, prop.Name];
+					if (atts == null) atts = new XmlAttributes (prop);
+					if (atts.XmlIgnore) continue;
+					XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
+					members.Insert (currentTypePos, member);
+					currentTypePos++;
+				}
 			}
 			return members;
 		}

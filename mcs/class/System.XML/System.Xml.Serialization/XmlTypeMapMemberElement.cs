@@ -142,6 +142,14 @@ namespace System.Xml.Serialization
 				return false;
 			}
 		}
+		
+		public bool CanBeText
+		{
+			get
+			{
+				return (ElementInfo.Count > 0) && ((XmlTypeMapElementInfo)ElementInfo[0]).IsTextElement;
+			}
+		}
 	}
 
 	internal class XmlTypeMapMemberAnyAttribute: XmlTypeMapMember

@@ -1,3 +1,10 @@
+2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs: Get the class members using the right order.
+	* XmlSerializationWriterInterpreter.cs: Removed unneeded code.
+	  A member with the Any attribute can also contain text. Support this.
+	* XmlTypeMapMemberElement.cs: Added CanBeText property.
+
 2004-01-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlSchemaImporter.cs: Redefinition of types are not supported. Added a
