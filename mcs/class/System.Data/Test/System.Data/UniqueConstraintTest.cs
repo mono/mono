@@ -154,6 +154,24 @@ namespace MonoTests.System.Data
 		
 		}
 
+		public void TestUnique ()                             
+		{                                                     
+			UniqueConstraint U = new UniqueConstraint (_table.Columns [0]);
+			AssertEquals ("test#01", false, _table.Columns [0].Unique); 
+			
+                        U = new UniqueConstraint (new DataColumn [] {_table.Columns [0],_table.Columns [1]});     
+			
+                        AssertEquals ("test#02", false, _table.Columns [0].Unique);
+                        AssertEquals ("test#03", false, _table.Columns [1].Unique);
+                        AssertEquals ("test#04", false, _table.Columns [2].Unique);
+			
+                        _table.Constraints.Add (U);
+                        AssertEquals ("test#05", false, _table.Columns [0].Unique);
+                        AssertEquals ("test#06", false, _table.Columns [1].Unique);
+                        AssertEquals ("test#07", false, _table.Columns [2].Unique);
+                }                                                     
+		
+
 		public void TestEqualsAndHashCode() {
 			UniqueConstraint cst = new UniqueConstraint( new DataColumn [] {
 					_table.Columns[0], _table.Columns[1]});
