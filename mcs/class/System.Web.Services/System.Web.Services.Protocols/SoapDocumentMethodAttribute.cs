@@ -10,7 +10,7 @@
 using System.Web.Services.Description;
 
 namespace System.Web.Services.Protocols {
-	[AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method, Inherited = true)]
 	public sealed class SoapDocumentMethodAttribute : Attribute {
 
 		#region Fields

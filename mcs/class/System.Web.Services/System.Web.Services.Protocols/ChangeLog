@@ -1,5 +1,16 @@
 2004-02-05  Alon Gazit <along@mainsoft.com>
 
+       * HttpMethodAttribute.cs:
+       * MatchAttribute.cs:
+       * SoapDocumentMethodAttribute.cs:
+       * SoapDocumentServiceAttribute.cs:
+       * SoapHeaderAttribute.cs:
+       * SoapRpcMethodAttribute.cs:
+       * SoapRpcServiceAttribute.cs: This attribute is inherited by
+		derived classes.changed the AttributeUsage attribute.
+
+2004-02-05  Alon Gazit <along@mainsoft.com>
+
 	* SoapHeaderAttribute.cs: This attribute is multiuse.
 	Changed the AttributeUsage attribute.
 

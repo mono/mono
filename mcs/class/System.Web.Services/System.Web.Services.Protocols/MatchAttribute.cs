@@ -8,7 +8,7 @@
 //
 
 namespace System.Web.Services.Protocols {
-	[AttributeUsage (AttributeTargets.All)]
+	[AttributeUsage (AttributeTargets.All, Inherited = true)]
 	public sealed class MatchAttribute : Attribute {
 
 		#region Fields

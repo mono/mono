@@ -8,7 +8,7 @@
 //
 
 namespace System.Web.Services.Protocols {
-	[AttributeUsage (AttributeTargets.Class)]
+	[AttributeUsage (AttributeTargets.Class, Inherited = true)]
 	public sealed class SoapRpcServiceAttribute : Attribute {
 
 		#region Fields

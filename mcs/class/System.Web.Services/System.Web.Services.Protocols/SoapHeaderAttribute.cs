@@ -8,7 +8,7 @@
 //
 
 namespace System.Web.Services.Protocols {
-	[AttributeUsage (AttributeTargets.Method, AllowMultiple = true)]
+	[AttributeUsage (AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 	public sealed class SoapHeaderAttribute : Attribute {
 
 		#region Fields
