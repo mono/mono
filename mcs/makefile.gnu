@@ -20,7 +20,7 @@ install:
 	done
 
 clean:
-	-rm monocharge-*.tar.gz
+	-rm -f monocharge-*.tar.gz
 	for i in $(DIRS) ; do \
 		(cd $$i; $(MAKE) -f makefile.gnu $@) || exit 1; \
 	done
