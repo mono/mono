@@ -533,6 +533,8 @@ namespace Mono.CSharp {
 	//
 	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
 		Expression expr;
+		LocalTemporary temporary;
+		bool have_temporary;
 		
 		public Indirection (Expression expr)
 		{
@@ -541,22 +543,60 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 		}
 
+		void LoadExprValue (EmitContext ec)
+		{
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
-			expr.Emit (ec);
-			LoadFromPtr (ec.ig, Type);
+			ILGenerator ig = ec.ig;
+
+			if (temporary != null){
+				if (have_temporary){
+					temporary.Emit (ec);
+					return;
+				}
+				expr.Emit (ec);
+				ec.ig.Emit (OpCodes.Dup);
+				temporary.Store (ec);
+				have_temporary = true;
+			} else
+				expr.Emit (ec);
+			
+			LoadFromPtr (ig, Type);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			expr.Emit (ec);
+			if (temporary != null){
+				if (have_temporary){
+					temporary.Emit (ec);
+					return;
+				}
+				expr.Emit (ec);
+				ec.ig.Emit (OpCodes.Dup);
+				temporary.Store (ec);
+				have_temporary = true;
+			} else
+				expr.Emit (ec);
+
 			source.Emit (ec);
 			StoreFromPtr (ec.ig, type);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
-			expr.Emit (ec);
+			if (temporary != null){
+				if (have_temporary){
+					temporary.Emit (ec);
+					return;
+				}
+				expr.Emit (ec);
+				ec.ig.Emit (OpCodes.Dup);
+				temporary.Store (ec);
+				have_temporary = true;
+			} else
+				expr.Emit (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -565,6 +605,11 @@ namespace Mono.CSharp {
 			// Born fully resolved
 			//
 			return this;
+		}
+
+		public new void CacheTemporaries (EmitContext ec)
+		{
+			temporary = new LocalTemporary (ec, type);
 		}
 	}
 	
@@ -763,6 +808,8 @@ namespace Mono.CSharp {
 			if (temp_storage == null)
 				temp_storage = new LocalTemporary (ec, expr_type);
 
+			ia.CacheTemporaries (ec);
+			ig.Emit (OpCodes.Nop);
 			switch (mode){
 			case Mode.PreIncrement:
 			case Mode.PreDecrement:
@@ -5333,6 +5380,8 @@ namespace Mono.CSharp {
 		// Points to our "data" repository
 		//
 		ElementAccess ea;
+
+		LocalTemporary [] cached_locations;
 		
 		public ArrayAccess (ElementAccess ea_data)
 		{
@@ -5487,17 +5536,63 @@ namespace Mono.CSharp {
 
 			return address;
 		}
+
+		//
+		// Load the array arguments into the stack.
+		//
+		// If we have been requested to cache the values (cached_locations array
+		// initialized), then load the arguments the first time and store them
+		// in locals.  otherwise load from local variables.
+		//
+		void LoadArrayAndArguments (EmitContext ec)
+		{
+			if (cached_locations == null){
+				Console.WriteLine ("Emitting without request to cache");
+				ea.Expr.Emit (ec);
+				foreach (Argument a in ea.Arguments)
+					a.Expr.Emit (ec);
+				return;
+			}
+
+			ILGenerator ig = ec.ig;
+			
+			if (cached_locations [0] == null){
+				cached_locations [0] = new LocalTemporary (ec, ea.Expr.Type);
+				ea.Expr.Emit (ec);
+				ig.Emit (OpCodes.Dup);
+				cached_locations [0].Store (ec);
+				
+				int j = 1;
+				Console.WriteLine ("Loading into cache");
+				
+				foreach (Argument a in ea.Arguments){
+					cached_locations [j] = new LocalTemporary (ec, a.Expr.Type);
+					a.Expr.Emit (ec);
+					ig.Emit (OpCodes.Dup);
+					cached_locations [j].Store (ec);
+					j++;
+				}
+				return;
+			}
+
+			Console.WriteLine ("Reusing cache");
+			foreach (LocalTemporary lt in cached_locations)
+				lt.Emit (ec);
+		}
+
+		public new void CacheTemporaries (EmitContext ec)
+		{
+			Console.WriteLine ("requested to cache values");
+			cached_locations = new LocalTemporary [ea.Arguments.Count + 1];
+		}
 		
 		public override void Emit (EmitContext ec)
 		{
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			ea.Expr.Emit (ec);
-
-			foreach (Argument a in ea.Arguments)
-				a.Expr.Emit (ec);
-
+			LoadArrayAndArguments (ec);
+			
 			if (rank == 1)
 				EmitLoadOpcode (ig, type);
 			else {
@@ -5512,13 +5607,9 @@ namespace Mono.CSharp {
 		{
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
-
-			ea.Expr.Emit (ec);
-
-			foreach (Argument a in ea.Arguments)
-				a.Expr.Emit (ec);
-
 			Type t = source.Type;
+
+			LoadArrayAndArguments (ec);
 
 			//
 			// The stobj opcode used by value types will need
@@ -5561,11 +5652,8 @@ namespace Mono.CSharp {
 		{
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
-			
-			ea.Expr.Emit (ec);
 
-			foreach (Argument a in ea.Arguments)
-				a.Expr.Emit (ec);
+			LoadArrayAndArguments (ec);
 
 			if (rank == 1){
 				ig.Emit (OpCodes.Ldelema, type);

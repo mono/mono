@@ -27,7 +27,20 @@ namespace Mono.CSharp {
 	///   invoking this method.
 	/// </remarks>
 	public interface IAssignMethod {
+		//
+		// This method will emit the code for the actual assignment
+		//
 		void EmitAssign (EmitContext ec, Expression source);
+
+		//
+		// This method is invoked before any code generation takes
+		// place, and it is a mechanism to inform that the expression
+		// will be invoked more than once, and that the method should
+		// use temporary values to avoid having side effects
+		//
+		// Example: a [ g () ] ++
+		//
+		void CacheTemporaries (EmitContext ec);
 	}
 
 	/// <summary>
@@ -284,6 +297,10 @@ namespace Mono.CSharp {
 			// just use `dup' to propagate the result
 			// 
 			IAssignMethod am = (IAssignMethod) target;
+
+			if (this is CompoundAssign){
+				am.CacheTemporaries (ec);
+			}
 			
 			if (is_statement)
 				am.EmitAssign (ec, source);

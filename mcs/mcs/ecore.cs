@@ -2483,6 +2483,13 @@ namespace Mono.CSharp {
 			else
 				return 0;
 		}
+
+		//
+		// Default implementation of IAssignMethod.CacheTemporaries
+		//
+		public void CacheTemporaries (EmitContext ec)
+		{
+		}
 	}
 
 	/// <summary>
