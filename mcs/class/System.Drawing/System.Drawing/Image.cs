@@ -1,13 +1,15 @@
 //
 // System.Drawing.Image.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
+//
 // Author: 	Christian Meyer (Christian.Meyer@cs.tum.edu)
 // 		Alexandre Pigolkine (pigolkine@gmx.de)
 //		Jordi Mas i Hernandez (jordi@ximian.com)
 //		Sanjay Gupta (gsanjay@novell.com)
+//		Ravindra (rkumar@novell.com)
 //
-namespace System.Drawing {
 
 using System;
 using System.Runtime.Remoting;
@@ -17,6 +19,8 @@ using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 
+namespace System.Drawing
+{
 [Serializable]
 [ComVisible (true)]
 [Editor ("System.Drawing.Design.ImageEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -340,6 +344,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 	// properties	
+	[Browsable (false)]
 	public int Flags {
 		get {
 			int flags;
@@ -350,6 +355,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
+	[Browsable (false)]
 	public Guid[] FrameDimensionsList {
 		get {
 			uint found;
@@ -361,7 +367,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			return guid;
 		}
 	}
-	
+
+	[DefaultValue (false)]
+	[Browsable (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public int Height {
 		get {
 			int height;			
@@ -383,6 +392,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
+	[Browsable (false)]
 	public ColorPalette Palette {
 		get {							
 			
@@ -415,14 +425,16 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 	
 	
-	[MonoTODO]	
+	[MonoTODO]
+	[Browsable (false)]
 	public int[] PropertyIdList {
 		get {
 			throw new NotImplementedException ();
 		}
 	}
 	
-	[MonoTODO]	
+	[MonoTODO]
+	[Browsable (false)]
 	public PropertyItem[] PropertyItems {
 		get {
 			throw new NotImplementedException ();
@@ -455,7 +467,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			return resolution;
 		}
 	}
-	
+
+	[DefaultValue (false)]
+	[Browsable (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public int Width {
 		get {
 			int width;			

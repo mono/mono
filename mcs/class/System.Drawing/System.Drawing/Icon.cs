@@ -6,8 +6,10 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2002 Ximian, Inc
+// Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
+
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -16,7 +18,6 @@ using System.ComponentModel;
 
 namespace System.Drawing
 {
-
 	[Serializable]
 	[ComVisible (false)]
 	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -428,12 +429,14 @@ namespace System.Drawing
 			return "<Icon>";			
 		}
 
+		[Browsable (false)]
 		public IntPtr Handle {
 			get { 
 				return winHandle;
 			}
 		}
 
+		[Browsable (false)]
 		public int Height {
 			get {
 				return iconSize.Height;
@@ -446,6 +449,7 @@ namespace System.Drawing
 			}
 		}
 
+		[Browsable (false)]
 		public int Width {
 			get {
 				return iconSize.Width;

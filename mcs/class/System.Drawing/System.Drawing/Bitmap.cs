@@ -1,14 +1,17 @@
 //
 // System.Drawing.Bitmap.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
 //
 // Authors: 
-//   Alexandre Pigolkine (pigolkine@gmx.de)
-//   Christian Meyer (Christian.Meyer@cs.tum.edu)
-//   Miguel de Icaza (miguel@ximian.com)
-//	 Jordi Mas i Hernandez (jmas@softcatala.org)
+//	Alexandre Pigolkine (pigolkine@gmx.de)
+//	Christian Meyer (Christian.Meyer@cs.tum.edu)
+//	Miguel de Icaza (miguel@ximian.com)
+//	Jordi Mas i Hernandez (jmas@softcatala.org)
+//	Ravindra (rkumar@novell.com)
 //
+
 using System;
 using System.IO;
 using System.Drawing.Imaging;
@@ -16,13 +19,13 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
-namespace System.Drawing {
-
+namespace System.Drawing
+{
 	[Serializable]
 	[ComVisible (true)]
 	[Editor ("System.Drawing.Design.BitmapEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
-	public sealed class Bitmap : Image {
-				
+	public sealed class Bitmap : Image
+	{
 		#region constructors
 		// constructors
 		internal Bitmap (IntPtr ptr)
@@ -210,11 +213,13 @@ namespace System.Drawing {
 			return new Bitmap (0,0, PixelFormat.Format32bppArgb, bitmap); // FIXME
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IntPtr GetHbitmap ()
 		{
 			return GetHbitmap(Color.Gray);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IntPtr GetHbitmap (Color background)
 		{
 			IntPtr HandleBmp;
@@ -225,6 +230,7 @@ namespace System.Drawing {
 			return  HandleBmp;
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IntPtr GetHicon ()
 		{
 			IntPtr HandleIcon;
@@ -266,7 +272,7 @@ namespace System.Drawing {
 			Bitmap	bmp = new Bitmap(Width, Height, PixelFormat);		
 			Graphics gr = Graphics.FromImage(bmp);
 			Rectangle destRect = new Rectangle(0,0, Width, Height);
-			ImageAttributes imageAttr = new ImageAttributes();			
+			ImageAttributes imageAttr = new ImageAttributes();
 						
 			gr.Clear(Color.Transparent);					
 			
@@ -294,7 +300,6 @@ namespace System.Drawing {
 			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmap_data);
 			GDIPlus.CheckStatus (status);
 		}
-
 
 		protected override void DisposeResources ()
 		{

@@ -131,9 +131,9 @@ namespace System.Drawing
 			}
 		}
 
-		public sealed class FontUnitConverter : TypeConverter
+		public sealed class FontUnitConverter : EnumConverter
 		{
-			public FontUnitConverter () 
+			public FontUnitConverter () : base (typeof (GraphicsUnit))
 			{
 			}
 

@@ -22,6 +22,9 @@ namespace System.Drawing {
 		internal bool isModifiable = true;
 		internal Brush brush;
 		internal Color color;
+		private CustomLineCap startCap;
+		private CustomLineCap endCap;
+		private bool disposed;
 
                 internal Pen (IntPtr p)
                 {
@@ -153,30 +156,37 @@ namespace System.Drawing {
 			}
 		}
 
-                [MonoTODO]
-                public CustomLineCap CustomEndCap {
-                        get {
-                                throw new NotImplementedException ();
-                        }
+		public CustomLineCap CustomEndCap {
+			get {
+				return endCap;
+			}
 
-			// do a check for isModifiable when implementing this property
-                        set {
-                                throw new NotImplementedException ();                                
-                        }
-                }
+			set {
+				if (isModifiable) {
+					Status status = GDIPlus.GdipSetPenCustomEndCap (nativeObject, value.nativeObject);
+					GDIPlus.CheckStatus (status);
+					endCap = value;
+				}
+				else
+					throw new ArgumentException ("This Pen object can't be modified.");
+			}
+		}
 
-                [MonoTODO]
-                public CustomLineCap CustomStartCap {
+		public CustomLineCap CustomStartCap {
+			get {
+				return startCap;
+			}
 
-                        get {
-                                throw new NotImplementedException ();                                
-                        }
-
-			// do a check for isModifiable when implementing this property
-                        set {
-                                throw new NotImplementedException ();                                
-                        }
-                }
+			set {
+				if (isModifiable) {
+					Status status = GDIPlus.GdipSetPenCustomStartCap (nativeObject, value.nativeObject);
+					GDIPlus.CheckStatus (status);
+					startCap = value;
+				}
+				else
+					throw new ArgumentException ("This Pen object can't be modified.");
+			}
+		}
 
                 public DashCap DashCap {
 
@@ -336,19 +346,13 @@ namespace System.Drawing {
                 }
 
                 public PenType PenType {
-
                         get {
-                                if (brush is TextureBrush)
-                                        return PenType.TextureFill;
-                                else if (brush is HatchBrush)
-                                        return PenType.HatchFill;
-                                else if (brush is LinearGradientBrush)
-                                        return PenType.LinearGradient;
-                                else if (brush is PathGradientBrush)
-                                        return PenType.PathGradient;
-                                else
-                                        return PenType.SolidColor;
-                        }
+				PenType type;
+				Status status = GDIPlus.GdipGetPenFillType (nativeObject, out type);
+				GDIPlus.CheckStatus (status);
+
+				return type;
+			}
                 }
 
                 public Matrix Transform {
@@ -405,9 +409,10 @@ namespace System.Drawing {
 		void Dispose (bool disposing)
 		{
 			// Let the GC collect it
-			if (isModifiable || disposing == false) {
+			if ((disposed == false) && (isModifiable || disposing == false)) {
                         	Status status = GDIPlus.GdipDeletePen (nativeObject);
 				GDIPlus.CheckStatus (status);
+				disposed = true;
 			}
 			else
 				throw new ArgumentException ("This Pen object can't be modified.");

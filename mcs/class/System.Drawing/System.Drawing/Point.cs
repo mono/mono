@@ -4,20 +4,21 @@
 // Author:
 //   Mike Kestner (mkestner@speakeasy.net)
 //
-// (C) 2001 Mike Kestner
+// Copyright (C) 2001 Mike Kestner
+// Copyright (C) 2004 Novell, Inc.  http://www.novell.com 
 //
 
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
-namespace System.Drawing {
-
+namespace System.Drawing
+{
 	[Serializable]	
 	[ComVisible (true)]
-	[TypeConverter(typeof(PointConverter))]
-	public struct Point { 
-		
+	[TypeConverter (typeof (PointConverter))]
+	public struct Point
+	{
 		// Private x and y coordinate fields.
 		int x, y;
 

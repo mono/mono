@@ -2,10 +2,10 @@
 // System.Drawing.gdipFunctions.cs
 //
 // Authors: 
-// Alexandre Pigolkine (pigolkine@gmx.de)
-// Jordi Mas i Hernandez (jordi@ximian.com)
-// Sanjay Gupta (gsanjay@novell.com)
-// Ravindra (rkumar@novell.com)
+//	Alexandre Pigolkine (pigolkine@gmx.de)
+//	Jordi Mas i Hernandez (jordi@ximian.com)
+//	Sanjay Gupta (gsanjay@novell.com)
+//	Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
@@ -18,18 +18,15 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 
-namespace System.Drawing {	
-
+namespace System.Drawing
+{
 	/// <summary>
 	/// GDI+ API Functions
 	/// </summary>
-	internal class GDIPlus {
-	
-		
+	internal class GDIPlus
+	{
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
-		
-		
 		
 		#region gdiplus.dll functions
 

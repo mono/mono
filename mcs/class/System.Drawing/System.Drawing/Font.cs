@@ -15,7 +15,7 @@ namespace System.Drawing {
 	[Serializable]
 	[ComVisible (true)]
 	[Editor ("System.Drawing.Design.FontEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
-	[TypeConverter(typeof(FontConverter))]
+	[TypeConverter (typeof (FontConverter))]
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		IntPtr	fontObject = IntPtr.Zero;
@@ -41,7 +41,7 @@ namespace System.Drawing {
 			}
 		}		
 		
-		internal void unitConversion(GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, out float nTrg)
+		internal void unitConversion (GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, out float nTrg)
 		{
 			float inchs = 0;
 			nTrg = 0;		
@@ -95,7 +95,7 @@ namespace System.Drawing {
 			}				
 		}
 		
-		internal void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+		internal void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{			
 			_name=family.Name;
 			_fontFamily = family;
@@ -122,7 +122,7 @@ namespace System.Drawing {
                                 _underline = true;                  
 		}
 
-		public static Font FromHfont(IntPtr Hfont)
+		public static Font FromHfont (IntPtr Hfont)
 		{
 			System.OperatingSystem	osInfo = System.Environment.OSVersion;
 			IntPtr			newObject;
@@ -215,7 +215,7 @@ namespace System.Drawing {
 			fontObject=newFontObject;
 		}
 
-		public Font(Font original, FontStyle style)
+		public Font (Font original, FontStyle style)
 		{
 			Status status;
 			setProperties (original.FontFamily, original.Size, style, original.Unit, 
@@ -225,7 +225,7 @@ namespace System.Drawing {
 			GDIPlus.CheckStatus (status);
 		}
 		
-		public Font(FontFamily family, float emSize,  GraphicsUnit unit)
+		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
 			: this(family, emSize, FontStyle.Regular, unit, (byte)0, false)
 		{
 			
@@ -237,27 +237,27 @@ namespace System.Drawing {
 			
 		}
 
-		public Font(FontFamily family, float emSize)
+		public Font (FontFamily family, float emSize)
 			: this(family, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
 
-		public Font(FontFamily family, float emSize, FontStyle style)
+		public Font (FontFamily family, float emSize, FontStyle style)
 			: this(family, emSize, style, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
 
-		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit)
+		public Font (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit)
 			: this(family, emSize, style, unit, (byte)0, false)
 		{
 		}
 
-		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet)
+		public Font (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet)
 			: this(family, emSize, style, unit, charSet, false)
 		{
 		}
 		
-		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+		public Font (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			Status status;
 			setProperties (family, emSize, style, unit, charSet, isVertical);		
@@ -265,27 +265,27 @@ namespace System.Drawing {
 			GDIPlus.CheckStatus (status);
 		}
 
-		public Font(string familyName, float emSize)
+		public Font (string familyName, float emSize)
 			: this(familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
 
-		public Font(string familyName, float emSize, FontStyle style)
+		public Font (string familyName, float emSize, FontStyle style)
 			: this(familyName, emSize, style, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
 		
-		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit)
+		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit)
 			: this(familyName, emSize, style, unit, (byte)0, false)
 		{
 		}
 		
-		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet)
+		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet)
 			: this(familyName, emSize, style, unit, charSet, false)
 		{
 		}
 		
-		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			Status status;
 			FontFamily family = new FontFamily (familyName);
@@ -295,21 +295,23 @@ namespace System.Drawing {
 			GDIPlus.CheckStatus (status);
 		}		
 		
-		public object Clone()
+		public object Clone ()
 		{
 			return new Font(this, Style);
 		}
 		
-		internal IntPtr NativeObject{            
-			get{
+		internal IntPtr NativeObject {            
+			get {
 					return fontObject;
 			}
-			set	{
+			set {
 					fontObject = value;
 			}
 		}
 		
 		private bool _bold;
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Bold {
 			get {
 				return _bold;
@@ -317,6 +319,8 @@ namespace System.Drawing {
 		}
 		
 		private FontFamily _fontFamily;
+
+		[Browsable (false)]
 		public FontFamily FontFamily {
 			get {
 				return _fontFamily;
@@ -324,6 +328,8 @@ namespace System.Drawing {
 		}
 		
 		private byte _gdiCharSet;
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public byte GdiCharSet {
 			get {
 				return _gdiCharSet;
@@ -331,6 +337,8 @@ namespace System.Drawing {
 		}
 		
 		private bool _gdiVerticalFont;
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool GdiVerticalFont {
 			get {
 				return _gdiVerticalFont;
@@ -338,6 +346,8 @@ namespace System.Drawing {
 		}
 		
 		private int _height;
+
+		[Browsable (false)]
 		public int Height {
 			get {
 				return _height;
@@ -345,6 +355,8 @@ namespace System.Drawing {
 		}
 
 		private bool _italic;
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Italic {
 			get {
 				return _italic;
@@ -352,6 +364,10 @@ namespace System.Drawing {
 		}
 
 		private string _name;
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Editor ("System.Drawing.Design.FontNameEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[TypeConverter (typeof (FontConverter.FontNameConverter))]
 		public string Name {
 			get {
 				return _name;
@@ -373,6 +389,8 @@ namespace System.Drawing {
 		}
 
 		private bool _strikeout;
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Strikeout {
 			get {
 				return _strikeout;
@@ -380,6 +398,8 @@ namespace System.Drawing {
 		}
 		
 		private FontStyle _style;
+
+		[Browsable (false)]
 		public FontStyle Style {
 			get {
 				return _style;
@@ -387,6 +407,8 @@ namespace System.Drawing {
 		}
 
 		private bool _underline;
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Underline {
 			get {
 				return _underline;
@@ -394,6 +416,8 @@ namespace System.Drawing {
 		}
 
 		private GraphicsUnit _unit;
+
+		[TypeConverter (typeof (FontConverter.FontUnitConverter))]
 		public GraphicsUnit Unit {
 			get {
 				return _unit;
@@ -450,6 +474,12 @@ namespace System.Drawing {
 		{
 			throw new NotImplementedException ();
 		}	
+
+		[MonoTODO]
+		public void ToLogFont(object logFont, Graphics graphics)
+		{
+			throw new NotImplementedException ();
+		}
 		
 		[MonoTODO]	
 		public float GetHeight(Graphics graphics)

@@ -4,17 +4,18 @@
 // Author:
 //   Mike Kestner (mkestner@speakeasy.net)
 //
-// (C) 2001 Mike Kestner
+// Copyright (C) 2001 Mike Kestner
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
 
 using System;
 using System.ComponentModel;
 
-namespace System.Drawing {
-	
+namespace System.Drawing
+{
 	[Serializable]
-	public struct RectangleF { 
-		
+	public struct RectangleF
+	{
                 float x, y, width, height;
 
 		/// <summary>

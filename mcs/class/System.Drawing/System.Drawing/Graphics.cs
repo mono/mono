@@ -12,6 +12,7 @@ using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -23,13 +24,15 @@ namespace System.Drawing
 		internal IntPtr nativeObject = IntPtr.Zero;
 		internal static float defDpiX = 0;
 		internal static float defDpiY = 0;
-		
+
+		[ComVisible(false)]
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
 							    int dataSize,
 							    IntPtr data,
 							    PlayRecordCallback callbackData);
 		
+		[ComVisible (false)]
 		public delegate bool DrawImageAbort (IntPtr callbackData);		
 		
 		private Graphics (IntPtr nativeGraphics)
@@ -1188,7 +1191,8 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                     
 		}
-		
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]		
 		public static Graphics FromHdc (IntPtr hdc)
 		{
 			int graphics;
@@ -1199,17 +1203,20 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHdc (IntPtr hdc, IntPtr hdevice)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]		
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
 			IntPtr graphics;
@@ -1220,6 +1227,7 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHwndInternal (IntPtr hwnd)
 		{
 			throw new NotImplementedException ();
@@ -1251,6 +1259,7 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IntPtr GetHdc ()
 		{
 			int hdc;
@@ -1435,7 +1444,8 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
 			GDIPlus.CheckStatus (status);
 		}
-		
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public void ReleaseHdc (IntPtr hdc)
 		{
 			Status status = GDIPlus.GdipReleaseDC (nativeObject, hdc);
@@ -1443,6 +1453,7 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public void ReleaseHdcInternal (IntPtr hdc)
 		{
 			throw new NotImplementedException ();

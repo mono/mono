@@ -5,8 +5,10 @@
 //	Miguel de Icaza (miguel@ximian.com)
 //      Jordi Mas i Hernandez (jordi@ximian.com)
 //
-// (C) 2003 Ximian, Inc
+// Copyright (C) 2003 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
+
 using System;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;

@@ -5,7 +5,8 @@
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2002 Ximian, Inc
+// Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
 
 using System;

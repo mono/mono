@@ -4,20 +4,21 @@
 // Author:
 //   Mike Kestner (mkestner@speakeasy.net)
 //
-// (C) 2001 Mike Kestner
+// Copyright (C) 2001 Mike Kestner
+// Copyright (C) 2004 Novell, Inc.  http://www.novell.com 
 //
 
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
-namespace System.Drawing {
-
+namespace System.Drawing
+{
 	[Serializable]
-	[StructLayout(LayoutKind.Sequential)]
 	[ComVisible (true)]
-	[TypeConverter(typeof(RectangleConverter))]
-	public struct Rectangle { 
+	[TypeConverter (typeof (RectangleConverter))]
+	public struct Rectangle
+	{
 		int x, y, width, height;
 
 		/// <summary>
