@@ -148,10 +148,6 @@ namespace System.Web
 		internal bool IsCached {
 			get { return cached_response != null; }
 		}
-		
-		internal void CacheResponse (HttpRequest request) {
-			cached_response = new CachedRawResponse (_CachePolicy);
-		}
 
 		internal CachedRawResponse GetCachedResponse () {
 			cached_response.StatusCode = StatusCode;
@@ -379,13 +375,24 @@ namespace System.Web
 		public HttpCachePolicy Cache
 		{
 			get {
-				if (null == _CachePolicy)
+				if (null == _CachePolicy) {
 					_CachePolicy = new HttpCachePolicy ();
+					_CachePolicy.CacheabilityUpdated += new CacheabilityUpdatedCallback (
+						OnCacheabilityUpdated);
+				}
 
 				return _CachePolicy;
 			}
 		}
 
+		private void OnCacheabilityUpdated (object sender, CacheabilityUpdatedEventArgs e)
+		{
+			if (e.Cacheability >= HttpCacheability.Server && !IsCached)
+				cached_response = new CachedRawResponse (_CachePolicy);
+			else if (e.Cacheability <= HttpCacheability.Private)
+				cached_response = null;
+		}
+		
 		[MonoTODO("Set status in the cache policy")]
 		public string CacheControl
 		{

@@ -1,3 +1,13 @@
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
+	* HttpCachePolicy.cs: Add an event that is fired when the
+	cacheability is updated. The response uses this to determine
+	whether or not it needs to cache itself.
+	* HttpResponse.cs: When the cacheability is updated either create
+	or dispose of the cached raw response based on whether or not we
+	wil need it. This allows output caching to be controlled
+	programatically.
+	
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: add setter for ConfigTimeout.

@@ -13,6 +13,19 @@ using System.Web.UI;
 using System.Web.Util;
 
 namespace System.Web {
+
+	public class CacheabilityUpdatedEventArgs : EventArgs {
+
+		public readonly HttpCacheability Cacheability;
+
+		public CacheabilityUpdatedEventArgs (HttpCacheability cacheability)
+		{
+			Cacheability = cacheability;
+		}
+	}
+	
+	internal delegate void CacheabilityUpdatedCallback (object sender, CacheabilityUpdatedEventArgs args);
+	
 	public sealed class HttpCachePolicy {
 
 		internal HttpCachePolicy ()
@@ -46,11 +59,13 @@ namespace System.Web {
 		TimeSpan proxyMaxAge;
 		ArrayList fields;
 		bool slidingExpiration;
-		
+                
 		#endregion
 
+                internal event CacheabilityUpdatedCallback CacheabilityUpdated;
+                
 		#region Properties
-
+                
 		public HttpCacheVaryByHeaders VaryByHeaders {
 			get { return varyByHeaders; }
 		}
@@ -98,6 +113,9 @@ namespace System.Web {
 				return;
 			
 			this.cacheability = cacheability;
+
+			if (CacheabilityUpdated != null)
+				CacheabilityUpdated (this, new CacheabilityUpdatedEventArgs (cacheability));
 		}
 
 		public void SetCacheability (HttpCacheability cacheability, string field)
