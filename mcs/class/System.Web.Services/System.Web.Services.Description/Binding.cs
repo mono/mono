@@ -40,7 +40,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-		[XmlIgnore]
+//		[XmlIgnore]
 		public ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}

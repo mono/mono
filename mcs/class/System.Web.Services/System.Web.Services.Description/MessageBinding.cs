@@ -37,14 +37,14 @@ namespace System.Web.Services.Description {
 			get;
 		}
 
-		[DefaultValue (null)]
+//		[DefaultValue (null)]
 		[XmlAttribute ("name", DataType = "NMTOKEN")]	
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 	
-		[XmlIgnore]
+//		[XmlIgnore]
 		public OperationBinding OperationBinding {
 			get { return operationBinding; }
 		}

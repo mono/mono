@@ -44,7 +44,7 @@ namespace System.Web.Services.Description {
 			get { return operations; }
 		}
 	
-		[XmlIgnore]
+//		[XmlIgnore]
 		public ServiceDescription ServiceDescription {
 			get { return serviceDescription; }
 		}

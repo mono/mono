@@ -85,6 +85,7 @@ namespace System.Web.Services.Description {
 
 #if NET_1_1
 		[MonoTODO]
+		[XmlElement ("headerfault")]
 		public SoapHeaderFaultBinding Fault 
 		{
 			get { return null; }

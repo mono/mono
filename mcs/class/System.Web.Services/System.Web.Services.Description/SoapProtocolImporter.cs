@@ -212,7 +212,6 @@ namespace System.Web.Services.Description {
 		
 		XmlMembersMapping ImportMembersMapping (Message msg, SoapBodyBinding sbb, SoapBindingStyle style, bool output)
 		{
-			XmlQualifiedName elem = null;
 			string elemName = Operation.Name;
 			if (output) elemName += "Response";
 

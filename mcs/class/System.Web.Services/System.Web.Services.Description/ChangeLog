@@ -1,3 +1,25 @@
+2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Binding.cs: removed extra XmlIgnore attribute on ServiceDescription
+	* Import.cs: removed extra XmlIgnore attribute on ServiceDescription
+	* Message.cs: removed extra XmlIgnore attribute on ServiceDescription
+	* MessageBinding.cs: removed extra DefaultValue attribute from Name,
+	removed extra XmlIgnoreAttribute from OperationBinding
+	* MessagePart.cs: removed extra XmlIgnore attribute on Message
+	* MimeContentBinding.cs: removed extra DefaultValue attribute on Part
+	* Operation.cs: removed extra XmlIgnore attribute on PortType
+	* OperationBinding.cs: removed extra XmlIgnore attribute on Binding
+	* OperationMessage.cs: removed extra XmlIgnore attribute on Operation
+	* Port.cs: removed extra XmlIgnore attribute on Service
+	* PortType.cs: removed extra XmlIgnore on ServiceDescription
+	* Service.cs: removed extra XmlIgnore on ServiceDescription
+	* ServiceDescriptionFormatExtension.cs: removed extra XmlIgnore
+	  attribute on Parent
+	* SoapHeaderBinding.cs: added XmlElement attribute on Fault
+	* HttpSimpleProtocolImporter.cs: removed unused variable
+	* ServiceDescriptionImporter.cs: removed unused variable
+	* SoapProtocolImporter.cs: removed unused variable
+
 2004-05-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BindingCollection.cs: Fixed this[string] property.

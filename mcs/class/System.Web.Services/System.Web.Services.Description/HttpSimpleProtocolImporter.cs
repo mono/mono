@@ -118,7 +118,6 @@ namespace System.Web.Services.Description
 
 		XmlMembersMapping ImportInMembersMapping (Message msg)
 		{
-			XmlQualifiedName elem = null;
 			SoapSchemaMember[] mems = new SoapSchemaMember [msg.Parts.Count];
 			for (int n=0; n<mems.Length; n++)
 			{

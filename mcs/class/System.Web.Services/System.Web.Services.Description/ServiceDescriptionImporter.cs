@@ -87,7 +87,6 @@ namespace System.Web.Services.Description {
 
 		public ServiceDescriptionImportWarnings Import (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			ServiceDescriptionImportWarnings warns = 0;
 			ProtocolImporter importer = GetImporter ();
 			
 			if (!importer.Import (this, codeNamespace, codeCompileUnit, importInfo))
