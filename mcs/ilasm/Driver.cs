@@ -35,6 +35,8 @@ namespace Mono.ILASM {
 			private string output_file;
 			private Target target = Target.Exe;
 			private bool show_tokens = false;
+			private bool show_method_def = false;
+			private bool show_method_ref = false;
 			private bool scan_only = false;
 			private CodeGen codegen;
 
@@ -71,10 +73,13 @@ namespace Mono.ILASM {
 				StreamReader reader = File.OpenText (file_path);
 				ILTokenizer scanner = new ILTokenizer (reader);
 
-				if (show_tokens) {
+				if (show_tokens)
 					scanner.NewTokenEvent += new NewTokenEvent (ShowToken);
-				}
-   				
+				if (show_method_def)
+					MethodTable.MethodDefinedEvent += new MethodDefinedEvent (ShowMethodDef);
+				if (show_method_ref)
+					MethodTable.MethodReferencedEvent += new MethodReferencedEvent (ShowMethodRef);
+
 				if (scan_only) {
 					ILToken tok;
 					while ((tok = scanner.NextToken) != ILToken.EOF) {
@@ -90,6 +95,27 @@ namespace Mono.ILASM {
 			public void ShowToken (object sender, NewTokenEventArgs args)
 			{
 				Console.WriteLine ("token: '{0}'", args.Token);
+			}
+
+			public void ShowMethodDef (object sender, MethodDefinedEventArgs args)
+			{
+				Console.WriteLine ("***** Method defined *****");
+				Console.WriteLine ("-- signature:   {0}", args.Signature);
+				Console.WriteLine ("-- name:        {0}", args.Name);
+				Console.WriteLine ("-- return type: {0}", args.ReturnType);
+				Console.WriteLine ("-- is in table: {0}", args.IsInTable);
+				Console.WriteLine ("-- method atts: {0}", args.MethodAttributes);
+				Console.WriteLine ("-- impl atts:   {0}", args.ImplAttributes);
+				Console.WriteLine ("-- call conv:   {0}", args.CallConv);
+			}
+
+			public void ShowMethodRef (object sender, MethodReferencedEventArgs args)
+			{
+				Console.WriteLine ("***** Method referenced *****");
+				Console.WriteLine ("-- signature:   {0}", args.Signature);
+				Console.WriteLine ("-- name:        {0}", args.Name);
+				Console.WriteLine ("-- return type: {0}", args.ReturnType);
+				Console.WriteLine ("-- is in table: {0}", args.IsInTable);
 			}
 
 			private void ParseArgs (string[] args)
@@ -115,6 +141,12 @@ namespace Mono.ILASM {
 							break;
 						case "show_tokens":
 							show_tokens = true;
+							break;
+						case "show_method_def":
+							show_method_def = true;
+							break;
+						case "show_method_ref":
+							show_method_ref = true;
 							break;
 						case "-about":
 							if (str[0] != '-')
