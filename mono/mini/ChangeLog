@@ -1,5 +1,9 @@
 2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* inssel-x86.brg, inssel-long32.brg: burg cleanup.
+
+2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* basic-long.cs, basic-calls.cs: new tests for optimization.
 
 2004-08-26  Zoltan Varga  <vargaz@freemail.hu>
