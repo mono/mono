@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
+using System.Web;
 using System.Web.Compilation;
 using System.Web.Util;
 
@@ -228,27 +229,5 @@ namespace System.Web.UI {
 			}
 		}
 
-		delegate void NoParamsDelegate ();
-		class NoParamsInvoker
-		{
-			EventHandler faked;
-			NoParamsDelegate real;
-
-			public NoParamsInvoker (object o, string method)
-			{
-				 real = (NoParamsDelegate) Delegate.CreateDelegate (
-				 			typeof (NoParamsDelegate), o, method);
-				 faked = new EventHandler (InvokeNoParams);
-			}
-
-			void InvokeNoParams (object o, EventArgs args)
-			{
-				real ();
-			}
-
-			public EventHandler FakeDelegate {
-				get { return faked; }
-			}
-		}
 	}
 }

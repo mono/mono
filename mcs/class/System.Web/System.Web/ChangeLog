@@ -1,3 +1,12 @@
+2003-10-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: use NoParamsInvoker.
+	* HttpRequest.cs: support request filters.
+	* HttpRequestStream.cs: mono-stylized and added new Set method.
+
+	* NoParamsInvoker.cs: proxy class to invoke user-provided methods
+	without parameters that are invoked by EventHandlers.
+
 2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpResponse.cs: Changed harcoded switch to en-US culture to a switch

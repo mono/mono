@@ -59,6 +59,7 @@ System.Web/WebSysDescriptionAttribute.cs
 System.Web/HttpResponse.cs
 System.Web/HtmlizedException.cs
 System.Web/HttpApplicationFactory.cs
+System.Web/NoParamsInvoker.cs
 System.Web.Caching/Cache.cs
 System.Web.Caching/CacheDefinitions.cs
 System.Web.Caching/CacheDependency.cs

@@ -63,6 +63,8 @@ namespace System.Web {
 
 		private HttpCookieCollection cookies;
 		private bool rewritten;
+		Stream userFilter;
+		HttpRequestStream requestFilter;
 
 		public HttpRequest(string Filename, string Url, string Querystring) {
 			_iContentLength = -1;
@@ -273,6 +275,14 @@ namespace System.Web {
 				_arrRawContent = msBuffer;
 			else
 				_arrRawContent = ms.ToArray ();
+
+			if (userFilter != null) {
+				requestFilter.Set (_arrRawContent, 0, _arrRawContent.Length);
+				int userLength = Convert.ToInt32 (userFilter.Length - userFilter.Position);
+				byte [] filtered = new byte [userLength];
+				userFilter.Read (filtered, 0, userLength);
+				_arrRawContent = filtered;
+			}
 
 			return _arrRawContent;
 		}
@@ -527,14 +537,23 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO("Use stream filter in the request stream")]
 		public Stream Filter {
 			get {
-				throw new NotImplementedException();
+				if (userFilter != null)
+					return userFilter;
+
+				if (requestFilter == null)
+					requestFilter = new HttpRequestStream ();
+
+				// This is an empty stream. It will not contain data until GetRawContent
+				return requestFilter;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (requestFilter == null)
+					throw new HttpException ("Invalid request filter.");
+
+				userFilter = value;
 			}
 		}
 

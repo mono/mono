@@ -267,16 +267,26 @@ namespace System.Web {
 					continue;
 
 				if (methodData is MethodInfo) {
-					MethodInfo method = (MethodInfo) methodData;
-					evt.AddEventHandler (target, Delegate.CreateDelegate (
-								typeof (EventHandler), app, method.Name));
+					AddHandler (evt, target, app, (MethodInfo) methodData);
 					continue;
 				}
 
 				ArrayList list = (ArrayList) methodData;
 				foreach (MethodInfo method in list)
-					evt.AddEventHandler (target, Delegate.CreateDelegate (
-								typeof (EventHandler), app, method.Name));
+					AddHandler (evt, target, app, method);
+			}
+		}
+
+		static void AddHandler (EventInfo evt, object target, HttpApplication app, MethodInfo method)
+		{
+			int length = method.GetParameters ().Length;
+
+			if (length == 0) {
+				NoParamsInvoker npi = new NoParamsInvoker (target, method.Name);
+				evt.AddEventHandler (target, npi.FakeDelegate);
+			} else {
+				evt.AddEventHandler (target, Delegate.CreateDelegate (
+							typeof (EventHandler), app, method.Name));
 			}
 		}
 
