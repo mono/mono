@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 		public AdditionResult AddEnum (Mono.CSharp.Enum e)
 		{
 			AdditionResult res;
-			string name = e.Name;
+			string name = e.Basename;
 
 			if ((res = IsValid (name)) != AdditionResult.Success)
 				return res;
@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 		{
 			string name = method.Name;
 			Object value = defined_names [name];
-			
+
 			if (value != null && (!(value is Method)))
 				return AdditionResult.NameExists;
 
