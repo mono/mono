@@ -1,3 +1,11 @@
+2002-02-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): do a LDIND after NEWOBJ for value types.
+
+2002-02-13  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): impl. CEE_SIZEOF
+
 2002-02-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* jit.c (arch_allocate_var): Only assert that the alignment is

@@ -1,3 +1,6 @@
+2002-02-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (stackval_from_data): fix for MONO_TYPE_PTR
 
 Wed Feb 13 16:17:38 CET 2002 Paolo Molaro <lupus@ximian.com>
 

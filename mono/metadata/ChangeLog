@@ -1,3 +1,7 @@
+2002-02-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* socket-io.c (convert_sockopt_level_and_name): ifdef
+	SO_ACCEPTCONN because it is not defined on my system (old debian)
 
 Thu Feb 14 11:49:30 CET 2002 Paolo Molaro <lupus@ximian.com>
 
@@ -37,6 +41,7 @@ Wed Feb 13 18:25:55 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c (mono_class_vtable): changed the object layout
 	(obj->vtable->class). 
+	(mono_class_create_from_typespec): consider MONO_TYPE_PTR
 
 Tue Feb 12 20:06:01 CET 2002 Paolo Molaro <lupus@ximian.com>
 
