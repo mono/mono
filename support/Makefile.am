@@ -25,6 +25,7 @@ MPH_SOURCE = \
 	pwd.c 		\
 	old-map.c 	\
 	serial.c	\
+	signal.c	\
 	stdio.c 	\
 	stdlib.c 	\
 	sys-mman.c 	\

@@ -1,5 +1,10 @@
 2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Makefile.am: Add signal.c to the build.
+	* signal.c: Added.  Contains helper functions to wrap signal(2).
+
+2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* sys-statvfs.c: Fix Mac OS X build (statfs.f_frsize doesn't exist on OSX;
 	  f_fsid isn't an integral type; fstatfs needs to use fpathconf).
 
