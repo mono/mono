@@ -183,6 +183,13 @@ namespace Mono.CSharp {
 		///   Location for this EmitContext
 		/// </summary>
 		public Location loc;
+
+		/// <summary>
+		///   Used to "flag" the resolution process to only lookup types,
+		///   and nothing else.  This is an out-of-band communication
+		///   path to SimpleName from the cast operation.
+		/// </summary>
+		public bool OnlyLookupTypes;
 		
 		public EmitContext (TypeContainer parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
@@ -200,6 +207,7 @@ namespace Mono.CSharp {
 			CurrentBlock = null;
 			ContainerType = parent.TypeBuilder;
 			InUnsafe = ((parent.ModFlags | code_flags) & Modifiers.UNSAFE) != 0;
+			OnlyLookupTypes = false;
 			loc = l;
 			
 			if (ReturnType == TypeManager.void_type)

@@ -75,7 +75,7 @@ namespace Mono.CSharp {
 			else if (Name.LastIndexOf ("Attribute") == 0)
 				name = Name + "Attribute";
 
-			Type = RootContext.LookupType (ec.TypeContainer, name, false, Location);
+			Type = RootContext.LookupType (ec.DeclSpace, name, false, Location);
 
 			if (Type == null) {
 				Report.Error (
@@ -519,7 +519,7 @@ namespace Mono.CSharp {
 			else if (Name.LastIndexOf ("Attribute") == 0)
 				attr_name = Name + "Attribute";
 			
-			Type = RootContext.LookupType (ec.TypeContainer, attr_name, false, Location);
+			Type = RootContext.LookupType (ec.DeclSpace, attr_name, false, Location);
 
 			if (Type == null) {
 				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +

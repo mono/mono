@@ -844,7 +844,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			probe_type = RootContext.LookupType (ec.TypeContainer, ProbeType, false, loc);
+			probe_type = RootContext.LookupType (ec.DeclSpace, ProbeType, false, loc);
 
 			if (probe_type == null)
 				return null;
@@ -1205,9 +1205,15 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
+			bool old_state = ec.OnlyLookupTypes;
+			ec.OnlyLookupTypes = true;
 			target_type = target_type.Resolve (ec);
-			if (target_type == null)
+			ec.OnlyLookupTypes = old_state;
+			
+			if (target_type == null){
+				Report.Error (-10, loc, "Can not resolve type");
 				return null;
+			}
 
 			if (target_type.eclass != ExprClass.Type){
 				report118 (loc, target_type, "class");
@@ -2560,7 +2566,7 @@ namespace Mono.CSharp {
 		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = pars.GetParameterInfo (ec.TypeContainer, idx, out is_ref);
+			type = pars.GetParameterInfo (ec.DeclSpace, idx, out is_ref);
 			eclass = ExprClass.Variable;
 
 			return this;
@@ -3717,7 +3723,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = RootContext.LookupType (ec.TypeContainer, RequestedType, false, loc);
+			type = RootContext.LookupType (ec.DeclSpace, RequestedType, false, loc);
 			
 			if (type == null)
 				return null;
@@ -4033,7 +4039,7 @@ namespace Mono.CSharp {
 			}
 			
 			underlying_type = RootContext.LookupType (
-				ec.TypeContainer, RequestedType, false, loc);
+				ec.DeclSpace, RequestedType, false, loc);
 			
 			//
 			// We use this to store all the date values in the order in which we
@@ -4094,10 +4100,10 @@ namespace Mono.CSharp {
 			string array_type = FormArrayType (RequestedType, arg_count, Rank);
 			string element_type = FormElementType (RequestedType, arg_count, Rank);
 
-			type = RootContext.LookupType (ec.TypeContainer, array_type, false, loc);
+			type = RootContext.LookupType (ec.DeclSpace, array_type, false, loc);
 			
 			array_element_type = RootContext.LookupType (
-				ec.TypeContainer, element_type, false, loc);
+				ec.DeclSpace, element_type, false, loc);
 			
 			if (type == null)
 				return null;
@@ -4524,7 +4530,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			typearg = RootContext.LookupType (
-				ec.TypeContainer, QueriedType, false, loc);
+				ec.DeclSpace, QueriedType, false, loc);
 
 			if (typearg == null)
 				return null;
@@ -4558,7 +4564,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type_queried = RootContext.LookupType (
-				ec.TypeContainer, QueriedType, false, loc);
+				ec.DeclSpace, QueriedType, false, loc);
 			if (type_queried == null)
 				return null;
 
@@ -4618,7 +4624,7 @@ namespace Mono.CSharp {
 
 			SimpleName sn = (SimpleName) left_original;
 
-			Type t = RootContext.LookupType (ec.TypeContainer, sn.Name, true, loc);
+			Type t = RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc);
 			if (t != null)
 				return true;
 
@@ -5709,7 +5715,7 @@ namespace Mono.CSharp {
 			}
 			
 			type = RootContext.LookupType (
-				ec.TypeContainer, left.Type.FullName + dim, false, loc);
+				ec.DeclSpace, left.Type.FullName + dim, false, loc);
 			if (type == null)
 				return null;
 
@@ -5837,7 +5843,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			otype = RootContext.LookupType (ec.TypeContainer, t, false, loc);
+			otype = RootContext.LookupType (ec.DeclSpace, t, false, loc);
 
 			if (otype == null)
 				return null;

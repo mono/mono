@@ -1,5 +1,18 @@
 2002-03-12  Miguel de Icaza  <miguel@ximian.com>
 
+	We could also solve this problem by having a separate path for
+	performing type lookups, instead of DoResolve, we could have a
+	ResolveType entry point, and only participating pieces of the
+	production (simplename, deref, array) would implement this. 
+	
+	* codegen.cs (EmitContext): New field OnlyLookupTypes used to
+	signal SimpleName to only resolve type names and not attempt to
+	resolve anything else.
+
+	* expression.cs (Cast): Set the flag.
+
+	* ecore.cs (SimpleName): Use the OnlyLookupTypes flag
+
 	* class.cs: Only report 108 if there is no `new' modifier.
 
 	* cs-parser.jay: rework foreach statement to work with the new
@@ -10,6 +23,18 @@
 	* makefile: drop --unsafe and /unsafe from the compile.
 
 2002-03-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* Everywhere: Use ec.DeclSpace on calls to LookupType, as this
+	makes the use more obvious of the DeclSpace.  The
+	ec.TypeContainer.TypeBuilder is now only used to pull the
+	TypeBuilder for it.
+
+	My theory is that I can get rid of the TypeBuilder completely from
+	the EmitContext, and have typecasts where it is used (from
+	DeclSpace to where it matters).  
+
+	The only pending problem is that the code that implements Aliases
+	is on TypeContainer, and probably should go in DeclSpace.
 
 	* ecore.cs (SimpleName.SimpleNameResolve): Perform local variable
 	lookups here, instead of doing that at parse time.  This means

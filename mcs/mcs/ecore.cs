@@ -2971,28 +2971,31 @@ namespace Mono.CSharp {
 			//
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
-			Block current_block = ec.CurrentBlock;
-			if (current_block != null && current_block.IsVariableDefined (Name)){
-				LocalVariableReference var;
-				
-				var = new LocalVariableReference (ec.CurrentBlock, Name, Location);
-
-				return var.Resolve (ec);
-			}
+			if (!ec.OnlyLookupTypes){
+				Block current_block = ec.CurrentBlock;
+				if (current_block != null && current_block.IsVariableDefined (Name)){
+					LocalVariableReference var;
+					
+					var = new LocalVariableReference (ec.CurrentBlock, Name, Location);
+					
+					return var.Resolve (ec);
+				}
 			
-			//
-			// Stage 2: Lookup members 
-			//
+				//
+				// Stage 2: Lookup members 
+				//
 
-			//
-			// For enums, the TypeBuilder is not ec.TypeContainer.TypeBuilder
-			// Hence we have two different cases
-			//
-			e = MemberLookup (ec, ec.DeclSpace.TypeBuilder, Name, Location);
+				//
+				// For enums, the TypeBuilder is not ec.TypeContainer.TypeBuilder
+				// Hence we have two different cases
+				//
+				e = MemberLookup (ec, ec.DeclSpace.TypeBuilder, Name, Location);
+				
+				if (e == null && ec.TypeContainer.TypeBuilder != null)
+					e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, Location);
+			}
 
-			if (e == null && ec.TypeContainer.TypeBuilder != null)
-				e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, Location);
-
+			// Continuation of stage 2
 			if (e == null){
 				//
 				// Stage 3: Lookup symbol in the various namespaces. 
@@ -3000,7 +3003,7 @@ namespace Mono.CSharp {
 				DeclSpace ds = ec.DeclSpace;
 				Type t;
 				string alias_value;
-				
+
 				if ((t = RootContext.LookupType (ds, Name, true, Location)) != null)
 					return new TypeExpr (t);
 				
@@ -3033,6 +3036,9 @@ namespace Mono.CSharp {
 			if (e is TypeExpr)
 				return e;
 
+			if (ec.OnlyLookupTypes)
+				return null;
+			
 			if (e is FieldExpr){
 				FieldExpr fe = (FieldExpr) e;
 				FieldInfo fi = fe.FieldInfo;

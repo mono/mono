@@ -183,8 +183,19 @@ PENDING TASKS
 * Maybe track event usage?  Currently I am not tracking these, although they
   are fields.
 
+
 OPTIMIZATIONS
 -------------
+
+* Dropping TypeContainer as an argument to EmitContext
+
+ 	My theory is that I can get rid of the TypeBuilder completely from
+	the EmitContext, and have typecasts where it is used (from
+	DeclSpace to where it matters).  
+
+	The only pending problem is that the code that implements Aliases
+	is on TypeContainer, and probably should go in DeclSpace.
+
 
 * Use of local temporary in UnaryMutator
 

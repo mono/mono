@@ -971,7 +971,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public int EmitMeta (EmitContext ec, Block toplevel, int count)
 		{
-			TypeContainer tc = ec.TypeContainer;
+			DeclSpace ds = ec.DeclSpace;
 			ILGenerator ig = ec.ig;
 				
 			//
@@ -985,7 +985,7 @@ namespace Mono.CSharp {
 					VariableInfo vi = (VariableInfo) de.Value;
 					Type t;
 
-					t = RootContext.LookupType (tc, vi.Type, false, vi.Location);
+					t = RootContext.LookupType (ds, vi.Type, false, vi.Location);
 					if (t == null)
 						continue;
 
@@ -1748,7 +1748,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Type t;
 			
-			t = RootContext.LookupType (ec.TypeContainer, type, false, loc);
+			t = RootContext.LookupType (ec.DeclSpace, type, false, loc);
 			if (t == null)
 				return false;
 
@@ -1939,7 +1939,7 @@ namespace Mono.CSharp {
 
 			bool old_in_catch = ec.InCatch;
 			ec.InCatch = true;
-			DeclSpace ds = ec.TypeContainer;
+			DeclSpace ds = ec.DeclSpace;
 			
 			foreach (Catch c in Specific){
 				Type catch_type = RootContext.LookupType (ds, c.Type, false, c.Location);
@@ -2015,7 +2015,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Expression [] converted_vars;
 			bool need_conv = false;
-			Type type = RootContext.LookupType (ec.TypeContainer, type_name, false, loc);
+			Type type = RootContext.LookupType (ec.DeclSpace, type_name, false, loc);
 			int i = 0;
 
 			if (type == null)
@@ -2620,7 +2620,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			var_type = RootContext.LookupType (ec.TypeContainer, type, false, loc);
+			var_type = RootContext.LookupType (ec.DeclSpace, type, false, loc);
 			if (var_type == null)
 				return false;
 			
