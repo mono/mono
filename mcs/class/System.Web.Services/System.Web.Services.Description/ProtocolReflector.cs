@@ -234,6 +234,7 @@ namespace System.Web.Services.Description {
 				{
 					ServiceDescription newDesc = new ServiceDescription();
 					newDesc.TargetNamespace = binfo.Namespace;
+					newDesc.Name = binfo.Name;
 					int id = ServiceDescriptions.Add (newDesc);
 					AddImport (desc, binfo.Namespace, GetWsdlUrl (url,id));
 					ImportBindingContent (newDesc, typeInfo, url, binfo);

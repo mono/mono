@@ -1,3 +1,9 @@
+2004-01-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ProtocolReflector.cs: in the case a new ServiceDescription is created, 
+	the name of the BindingInfo was not copied into the new ServiceDescriptor.
+	Patch by Yaacov Akiba Slama.
+
 2003-12-12  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* HttpSimpleProtocolImporter.cs: In ImportOutMembersMapping(), support part
@@ -5,8 +11,6 @@
 	  In GetOutMimeFormatter(), support MimeContentBinding.
 	* ProtocolImporter.cs, SoapProtocolImporter.cs: Improved error and warning
 	  handling. Minor fixes.
-	* DiscoveryReference.cs: In FilenameFromUrl(), improved name generation
-	  for some common cases.
 
 2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
