@@ -1,4 +1,12 @@
+2002-03-06  Martin Baulig  <martin@gnome.org>
+
+	* Array.cs (Copy): Calculate absolute array position here and use
+	GetValueImpl() and SetValueImpl() with that position. We can now
+	copy multi-dimensional arrays.
+	(CopyTo): Small bug fix.
+
 2002-03-05  Duco Fijma  <duco@lorentz.xs4all.nl>
+
 	* Version.cs: CompareTo changed according the LAMESPEC discovered by 
 	Nick (See VersionTest.cs).
 	* CharEnumerator.cs: fixed two bugs in MoveNext. It had an off-by-one

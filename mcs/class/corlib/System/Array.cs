@@ -61,7 +61,13 @@ namespace System
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void SetValue (object value, int[] idxs);
-		
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object GetValueImpl (int pos);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern void SetValueImpl (object value, int pos);
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static Array CreateInstanceImpl(Type elementType, int[] lengths, int [] bounds);
 
@@ -145,6 +151,30 @@ namespace System
 			return GetValue (ind);
 		}
 
+		// This function is currently unused, but just in case we need it later on ... */
+		internal int IndexToPos (int[] idxs)
+		{
+			if (idxs == null)
+				throw new ArgumentNullException ();
+
+			if ((idxs.Rank != 1) || (idxs.Length != Rank))
+				throw new ArgumentException ();
+
+			if ((idxs [0] < GetLowerBound (0)) || (idxs [0] > GetUpperBound (0)))
+				throw new IndexOutOfRangeException();
+
+			int pos = idxs [0] - GetLowerBound (0);
+			for (int i = 1; i < Rank; i++) {
+				if ((idxs [i] < GetLowerBound (i)) || (idxs [i] > GetUpperBound (i)))
+					throw new IndexOutOfRangeException();
+
+				pos *= GetLength (i);
+				pos += idxs [i] - GetLowerBound (i);
+			}
+
+			return pos;
+		}
+
 		public void SetValue (object value, int idx)
 		{
 			int[] ind = new int [1];
@@ -217,7 +247,7 @@ namespace System
 
 		public static Array CreateInstance(Type elementType, int[] lengths, int [] bounds)
 		{
-			if(bounds == null)
+			if (bounds == null)
 				throw new ArgumentNullException("bounds");
 
 			return CreateInstanceImpl (elementType, lengths, bounds);
@@ -341,28 +371,42 @@ namespace System
 			if (source == null || dest == null)
 				throw new ArgumentNullException ();
 
-			if (source_idx < source.GetLowerBound (0) ||
-			    source_idx + length > source.GetUpperBound (0) + 1||
-			    dest_idx < dest.GetLowerBound (0) || dest_idx + length > dest.GetUpperBound (0) + 1)
+			if (source_idx < source.GetLowerBound (0) || dest_idx < dest.GetLowerBound (0))
+				throw new ArgumentException ();
+
+			source_idx -= source.GetLowerBound (0);
+			dest_idx -= dest.GetLowerBound (0);
+
+			if (source_idx + length > source.Length || dest_idx + length > dest.Length)
 				throw new ArgumentException ();
 
 			if (source.Rank != dest.Rank)
 				throw new RankException ();
 
-			// I don't know how to handle this ?
-			if (source.Rank > 1 || dest.Rank > 1)
-				throw new RankException ();
+			// FIXME: This should be implemented in C so that we can use memcpy()
+			//        whereever possible.
 
 			for (int i = 0; i < length; i++) 
 			{
-				int srcindex = source.GetLowerBound (0) + i + source_idx;
-				int dstindex = dest.GetLowerBound (0) + i + dest_idx;
+				Object srcval = source.GetValueImpl (source_idx + i);
 
-				Object newval = source.GetValue(srcindex);
+				bool argumentException = false;
+				bool castException = false;
 
-				dest.SetValue(newval, dstindex);
+				try {
+					dest.SetValueImpl (srcval, dest_idx + i);
+				} catch (ArgumentException) {
+					argumentException = true;
+				} catch (InvalidCastException) {
+					castException = true;
+				}
+
+				if (argumentException)
+					throw new InvalidCastException ();
+
+				if (castException)
+					throw new ArrayTypeMismatchException ();
 			}
-			
 		}
 		
 		public static int IndexOf (Array array, object value)
@@ -602,7 +646,7 @@ namespace System
 			// but that's how the microsoft runtime does it.
 			if (this.Rank > 1)
 				throw new RankException ();
-			if (index + this.GetLength(0) > array.GetLength(0))
+			if (index >= array.GetLength(0))
 				throw new ArgumentException ();
 			if (array.Rank > 1)
 				throw new RankException ();
