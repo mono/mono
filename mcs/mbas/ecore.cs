@@ -333,7 +333,7 @@ namespace Mono.CSharp {
 
 				return s;
 			}
-
+			
 			if ((e is TypeExpr) || (e is ComposedCast)) {
 				if ((flags & ResolveFlags.Type) == 0) {
 					e.Error118 (flags);
@@ -1743,7 +1743,11 @@ namespace Mono.CSharp {
 							e = RTConversionExpression(ec, "ShortType.FromObject", expr, loc);
 							break;											
 					}
-					break;													
+					break;	
+				case TypeCode.Byte:
+					// Ok, this *is* broken
+					e = RTConversionExpression(ec, "ByteType.FromObject", expr, loc);
+					break;																			
 			}
 			
 			// We must examine separately some types that
