@@ -16,6 +16,7 @@
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="Test/**"/>
+				<excludes name="**/*Test.cs"/>
 			</sources>
 		</csc>
 	</target>
