@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1312,6 +1312,26 @@ namespace MonoTests.System.Security.Cryptography {
 			csd.Write (data, 0, 64);
 			AssertEquals ("Length", 56, debug.Length);
 			// last block is kept for later processing
+		}
+
+		[Test]
+		public void PaddingModeNone ()
+		{
+			byte[] Key = new byte [16];
+			byte[] IV = new byte [16];
+			byte[] Buffer = new byte [64];
+
+			Rijndael alg = Rijndael.Create ();
+			alg.Mode = CipherMode.CBC;
+			alg.Padding = PaddingMode.None;
+
+			MemoryStream cms = new MemoryStream ();
+			ICryptoTransform ct = alg.CreateDecryptor (Key, IV);
+			CryptoStream cs = new CryptoStream (cms, ct, CryptoStreamMode.Write);
+			cs.Write (Buffer, 0, 64);
+			cs.Close ();
+
+			AssertEquals ("Length", 64, cms.ToArray ().Length);
 		}
 	}
 }

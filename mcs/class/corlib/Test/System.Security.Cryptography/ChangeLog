@@ -1,3 +1,7 @@
+2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStreamTest.cs: Added test case when when no padding is used.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigCas.cs: New. CAS unit tests for CryptoConfig.
