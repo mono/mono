@@ -28,9 +28,9 @@ namespace System.Data.ObjectSpaces
                  public static string name;
                  public static string objectSchema;
                  public static string operand;
-                 //public static string operator;
+                 public static string @operator;
                  public static string orderByItem;
-                 //public static string params;
+                 public static string @params;
                  public static string right;
                  public static string second;
                  public static string source;
