@@ -1,3 +1,9 @@
+2004-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: Registred new icalls for key pair protection and added an
+	icall for Environment.GetFolderPath on Windows.
+	* security.c|h: Added new icalls for key pair protection.
+
 2004-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: don't display the non-supported family warning for known
