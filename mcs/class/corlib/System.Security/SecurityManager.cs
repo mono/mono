@@ -313,7 +313,8 @@ namespace System.Security {
 		private static void InitializePolicyHierarchy ()
 		{
 			string machinePolicyPath = Path.GetDirectoryName (Environment.GetMachineConfigPath ());
-			string userPolicyPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "mono");
+			// note: use InternalGetFolderPath to avoid recursive policy initialization
+			string userPolicyPath = Path.Combine (Environment.InternalGetFolderPath (Environment.SpecialFolder.ApplicationData), "mono");
 
 			ArrayList al = new ArrayList ();
 			al.Add (new PolicyLevel ("Enterprise", PolicyLevelType.Enterprise,
