@@ -1451,18 +1451,19 @@ event_declaration
 
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 	  }
-	| EVENT identifier opt_params logical_end_of_line
+	| EVENT identifier opt_params opt_implement_clause logical_end_of_line
 	  {
 		string delName = (string) $2;
 		delName = delName + "EventHandler";
-	    Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate 
-						(current_container, TypeManager.system_void_expr, 
-					     (int) current_modifiers, MakeName(delName), (Parameters) $3, 
-					     (Attributes) current_attributes, lexer.Location);
-					     	
-		del.Namespace = current_namespace;
-		CheckDef (current_container.AddDelegate (del), del.Name, lexer.Location);
-	
+		if ($4 == null) {
+			Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate 
+							(current_container, TypeManager.system_void_expr, 
+							(int) current_modifiers, MakeName(delName), (Parameters) $3, 
+							(Attributes) current_attributes, lexer.Location);
+						     	  
+			del.Namespace = current_namespace;
+			CheckDef (current_container.AddDelegate (del), del.Name, lexer.Location);
+		}
 		Event e = new Event (DecomposeQI (delName, lexer.Location),
 					 (string) $2, 
 				     null, current_modifiers, null, null, 

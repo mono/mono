@@ -1,4 +1,7 @@
 2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser,jay: Implements clause added to Event grammar
+
+2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Interface event declaration grammar rewritten
 
 2004-08-04 Anirban Bhattacharjee <banirban@novell.com>
