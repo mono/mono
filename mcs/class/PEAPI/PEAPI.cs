@@ -564,7 +564,8 @@ namespace PEAPI
     EventMap, Event = 0x14, PropertyMap, Property = 0x17, MethodSemantics, 
     MethodImpl, ModuleRef, TypeSpec, ImplMap, FieldRVA, Assembly = 0x20, 
     AssemblyProcessor, AssemblyOS, AssemblyRef, AssemblyRefProcessor, 
-    AssemblyRefOS, File, ExportedType, ManifestResource, NestedClass }
+    AssemblyRefOS, File, ExportedType, ManifestResource, NestedClass,
+    GenericParam, MethodSpec, GenericParamConstraint  }
 
   public enum SafeArrayType { int16 = 2, int32, float32, float64,
     currency, date, bstr, dispatch, error, boolean, variant, unknown,
@@ -1650,6 +1651,20 @@ namespace PEAPI
     /// <param name="iFace">the interface that is implemented</param>
     public void AddImplementedInterface(Class iFace) {
       metaData.AddToTable(MDTable.InterfaceImpl,new InterfaceImpl(this,iFace));
+    }
+
+    /// <summary>
+    ///   Add a generic type parameter.
+    /// </summary>
+    public void AddGenericParameter (Type constraint) {
+            metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, constraint));
+    }
+
+    /// <summary>
+    ///  Add a named generic type parameter
+    /// </summary>
+    public void AddGenericParameter (Type constraint, string name) {
+	metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, constraint, name));
     }
 
     /// <summary>
@@ -3886,6 +3901,70 @@ namespace PEAPI
 
   }
   /**************************************************************************/  
+
+        internal class GenericParameter : MetaDataElement
+        {
+                ClassDef owner;
+                Type constraint;
+                string name;
+                uint nameIx;
+
+                private GenericParameter (ClassDef owner) {
+			this.owner = owner;
+                        tabIx = MDTable.GenericParam;
+                }
+
+                public GenericParameter (ClassDef owner, Type constraint)
+			: this (owner) {
+                        this.constraint = constraint;
+                }
+
+                public GenericParameter (ClassDef owner, Type constraint,
+			string name) : this (owner, constraint) {
+                        this.name = name;
+                }
+
+                public Type Constraint {
+                        get { return constraint; }
+                        set { constraint = value; }
+                }
+
+                public string Name {
+                        get { return name; }
+                        set { name = value; }
+                }
+
+                internal ClassDef Owner {
+                        set { owner = value; }
+                }
+
+                internal sealed override uint Size(MetaData md) {
+                        return (uint) (4 +
+                               md.CodedIndexSize(CIx.TypeDefOrRef) + 
+                               md.StringsIndexSize () +
+                               md.CodedIndexSize(CIx.TypeDefOrRef));
+                }
+
+                internal sealed override void BuildTables(MetaData md) {
+                        if (done) return;
+			if (name == null)
+				nameIx = 0;
+			else
+                        	nameIx = md.AddToStringsHeap(name);
+                        done = true;
+                }
+
+                internal sealed override void Write(FileImage output) {
+                        output.Write ((short) 0);
+                        output.Write ((short) 0);
+                        output.WriteCodedIndex(CIx.TypeDefOrRef, owner);
+                        output.StringsIndex(nameIx);
+                        output.WriteCodedIndex (CIx.TypeDefOrRef, owner);
+                }
+
+    
+        }
+  /**************************************************************************/
 	/// <summary>
 	/// Descriptor for interface implemented by a class
 	/// </summary>
@@ -4123,7 +4202,7 @@ namespace PEAPI
 		private static readonly uint MetaDataHeaderSize = 20 + (uint)version.Length;
     private static readonly uint TildeHeaderSize = 24;
     private static readonly uint StreamHeaderSize = 8;
-    private static readonly uint numMetaDataTables = (int)MDTable.NestedClass + 1;
+    private static readonly uint numMetaDataTables = (int)MDTable.GenericParam + 1;
     private static readonly uint tildeHeaderSize = 8 + (uint)tildeName.Length;
 
     MetaDataStream strings, us, guid, blob;
@@ -4476,6 +4555,7 @@ namespace PEAPI
       codeStart = codeStartOffset;
       BuildTable(metaDataTables[(int)MDTable.TypeDef]);
       BuildTable(metaDataTables[(int)MDTable.MemberRef]);
+      BuildTable(metaDataTables[(int)MDTable.GenericParam]);
 /*      for (int i=0; i < metaDataTables.Length; i++) {
         ArrayList table = metaDataTables[i];
         if (table != null) {

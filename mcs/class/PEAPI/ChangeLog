@@ -1,3 +1,8 @@
+2003-04-05 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Add GenericParameter table, and method to add generic
+	parameters.
+		
 2003-03-15 Daniel Morgan <danmorg@sc.rr.com>
 
 	* PEAPI.build: added file for windows build
