@@ -1,3 +1,7 @@
+2004-04-28  Jackson Harper  <jackson@ximian.com>
+
+	* library.make: Install these bad actors to the GAC.
+	
 2004-04-28  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (test_flags): NUnit.Framework.dll is now in

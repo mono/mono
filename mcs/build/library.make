@@ -32,11 +32,19 @@ endif
 all-local: $(the_lib)
 
 install-local: $(the_lib)
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
-	$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib
+	@if test -f Assembly/AssemblyInfo.cs ; then \
+		gacutil /i $(the_lib) /f || exit 1 ; \
+	else \
+		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
+		$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib ; \
+	fi
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
+	@if test -f Assembly/AssemblyInfo.cs ; then \
+		gacutil /u $(the_lib) /f ; \
+	else \
+		-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
+	fi
 
 clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \
