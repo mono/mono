@@ -1,5 +1,9 @@
 2005-02-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Compiler.cs : added ns lookup with nsDecls Hashtable.
+
+2005-02-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XslStylesheet.cs : It should consider "#default" in namespace-alias.
 
 2005-02-23  Atsushi Enomoto <atsushi@ximian.com>

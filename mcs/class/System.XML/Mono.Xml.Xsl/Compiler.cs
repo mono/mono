@@ -809,7 +809,19 @@ namespace Mono.Xml.Xsl
 			else
 				throw new ArgumentException ("Invalid name: " + name);
 		}
-		
+
+		public static QName FromString (string name, Hashtable nsDecls)
+		{
+			int colon = name.IndexOf (':');
+			if (colon > 0)
+				return new QName (name.Substring (colon + 1), nsDecls [name.Substring (0, colon)] as string);
+			else if (colon < 0)
+				// Default namespace is not used for unprefixed names.
+				return new QName (name, "");
+			else
+				throw new ArgumentException ("Invalid name: " + name);
+		}
+
 		public static QName FromString (string name, XmlNamespaceManager ctx)
 		{
 			int colon = name.IndexOf (':');
