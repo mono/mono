@@ -157,7 +157,7 @@ namespace System.Drawing
 					throw new UnauthorizedAccessException ("Access denied.");
 
 				case Status.UnknownImageFormat:
-					throw new NotSupportedException ("Unknown image format.");
+					throw new NotSupportedException ("Either image format is unknown or you don't have the required libraries for this format.");
 
 				case Status.NotImplemented:
 					throw new NotImplementedException ("Feature not implemented.");
