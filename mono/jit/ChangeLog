@@ -1,3 +1,11 @@
+2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c: catching SIGSEGV again, added proxy support
+
+2002-03-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* delegate.c (mono_delegate_init): remove unused worker threads
+
 2002-03-27  Mike Kestner <mkestner@speakeasy.net>
 
 	* delegate.c (arch_get_delegate_invoke): malloc a bigger area

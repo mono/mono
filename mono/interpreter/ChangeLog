@@ -1,3 +1,6 @@
+2002-03-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_exec_method): CASTCLASS: fix for transparent proxy
 
 Tue Mar 26 20:09:10 CET 2002 Paolo Molaro <lupus@ximian.com>
 
