@@ -180,7 +180,6 @@ public class SortedListTest : Assertion {
 
         [Test]
         [ExpectedException (typeof (OutOfMemoryException))]
-        [Ignore ("This is not implemented in the runtime yet")]
         public void TestCapacity4 ()
         {
                 SortedList list = new SortedList ();

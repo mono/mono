@@ -1,3 +1,8 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SortedListTest.cs: Un-ignored TestCapacity4 test case as it now 
+	works correctly under Mono.
+
 2004-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SortedListTest.cs: Added new test when initial capacity is set to 0
