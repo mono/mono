@@ -175,10 +175,11 @@ namespace System.Drawing
 			if (name == null)
 				fontFamily = new FontFamily ("Tahoma");
 			else {
+				name = name.ToLower ();
 				FontCollection collection = new InstalledFontCollection ();
 				FontFamily [] installedFontList = collection.Families;
 				foreach (FontFamily font in installedFontList) {
-					if (name == font.Name) {
+					if (name == font.Name.ToLower ()) {
 						fontFamily = font;
 						break;
 					}
@@ -189,7 +190,7 @@ namespace System.Drawing
 					collection = new PrivateFontCollection ();
 					FontFamily [] privateFontList = collection.Families;
 					foreach (FontFamily font in privateFontList) {
-						if (name == font.Name) {
+						if (name == font.Name.ToLower ()) {
 							fontFamily = font;
 							break;
 						}
@@ -197,7 +198,8 @@ namespace System.Drawing
 				}
 
 				// font family not found in private fonts also
-				fontFamily = FontFamily.GenericSansSerif;
+				if (fontFamily == null)
+					fontFamily = FontFamily.GenericSansSerif;
 			}
 
 			return new Font (fontFamily, size, style, unit, charSet, vertical);

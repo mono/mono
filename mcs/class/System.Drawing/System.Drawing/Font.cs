@@ -299,6 +299,7 @@ namespace System.Drawing
 		public Font (FontFamily family, float emSize, FontStyle style,
 				GraphicsUnit unit, byte charSet, bool isVertical)
 		{
+			// MS does not accept null family
 			lock (this)
 			{
 				Status status;
@@ -333,9 +334,8 @@ namespace System.Drawing
 		{
 			lock (this)
 			{
-				// NOTE: If family name is empty or invalid, MS
-				// creates Microsoft Sans Serif font. MS does not
-				// accept null values for familyName.
+				// NOTE: If family name is null, empty or invalid,
+				// MS creates Microsoft Sans Serif font.
 				Status status;
 				FontFamily family = new FontFamily (familyName);
 				setProperties (family, emSize, style, unit, charSet, isVertical);
