@@ -2342,7 +2342,6 @@ public class ArrayTest : Assertion
 	[Test]
 	public void MoreSort9 ()
 	{
-		char [] a2 = arrsort.Clone ();
 		Array.Sort (arrsort, null, 0, arrsort.Length, null);
 	}
 }
