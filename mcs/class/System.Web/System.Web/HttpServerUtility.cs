@@ -21,6 +21,7 @@
  * 
  */
 using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web.Hosting;
@@ -273,8 +274,7 @@ namespace System.Web
 		/// <param name="path">The URL path of the new page on the server to execute. </param>
 		public void Transfer (string path)
 		{
-			Execute (path);
-			_Context.Response.End ();
+			Transfer (path, true);
 		}
 
 		/// <summary>
@@ -284,10 +284,19 @@ namespace System.Web
 		/// <param name="path">The URL path of the new page on the server to execute. </param>
 		/// <param name="preserveForm">If true, the QueryString and Form collections are preserved. If false,
 		/// they are cleared. The default is false. </param>
-		[MonoTODO("Figure out how to preserve form data")]
 		public void Transfer (string path, bool preserveForm)
 		{
-			Transfer (path);
+			HttpValueCollection oldForm = null;
+			if (!preserveForm) {
+				oldForm = _Context.Request.Form as HttpValueCollection;
+				_Context.Request.SetForm (new HttpValueCollection ());
+			}
+
+			Execute (path);
+			if (!preserveForm)
+				_Context.Request.SetForm (oldForm);
+
+			_Context.Response.End ();
 		}
 
 		/// <summary>

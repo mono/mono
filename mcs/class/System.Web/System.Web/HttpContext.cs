@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Security.Principal;
 using System.Web.Caching;
 using System.Web.Configuration;
+using System.Web.Util;
 using System.Web.SessionState;
 using System.Threading;
 
@@ -291,7 +292,27 @@ namespace System.Web
 
 		public void RewritePath (string path)
 		{
-			Request.SetPhysicalPath(path);
+			//LAMESPEC: they say that they throw a ArgumentNullException, however,
+			// i get a NullReferenceException...
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			string query;
+			int qmark = path.IndexOf ('?');
+			if (qmark == -1 || qmark + 1 >= path.Length) {
+				query = null;
+			} else {
+				query = path.Substring (qmark + 1);
+				path = path.Substring (0, qmark);
+			}
+
+			path = UrlUtils.Combine (Request.BaseVirtualDir, path);
+			if (!path.StartsWith (Request.BaseVirtualDir))
+				throw new HttpException (404, "The virtual path '" + path +
+							 "' maps to another application.");
+
+			Request.SetFilePath (path);
+			Request.QueryStringRaw = query;
 		}
 	}
 }

@@ -1051,9 +1051,9 @@ namespace System.Web {
 			_sFilePath = filePath;
 		}
 
-		internal void SetPhysicalPath (string filePath)
+		internal void SetForm (HttpValueCollection form)
 		{
-			_sPathTranslated = filePath;
+			_oFormData = form;
 		}
 	}
 }
