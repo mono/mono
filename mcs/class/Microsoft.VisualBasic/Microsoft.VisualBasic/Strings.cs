@@ -5,6 +5,8 @@
 //   Martin Adoue (martin@cwanet.com)
 //   Chris J Breisch (cjbreisch@altavista.net)
 //   Francesco Delfino (pluto@tipic.com)
+//   Daniel Campos (danielcampos@myway.com)
+//   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //
 // (C) 2002 Ximian Inc.
 //     2002 Tipic, Inc. (http://www.tipic.com)
@@ -38,12 +40,11 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
 		[MonoTODO]
-		public static int Asc(char String) 
+		public static int Asc(char Char) 
 		{
 			//FIXME: Check the docs, it says something about Locales, DBCS, etc.
-			throw new NotImplementedException();
+			return (int)Char;
 		}
-		
 
 
 		/// <summary>
@@ -53,8 +54,8 @@ namespace Microsoft.VisualBasic
 		[MonoTODO]
 		public static int Asc(string String) 
 		{
-			if ((String == null) || (String.Length != 1))
-				throw new ArgumentException("Length of argument 'String' must be one.", "String");
+			if ((String == null) || (String.Length < 1))
+				throw new ArgumentException("Length of argument 'String' must be at least one.", "String");
 
 			//FIXME: Check the docs, it says something about Locales, DBCS, etc.
 			return (int) String.ToCharArray(0, 1)[0];
@@ -279,7 +280,7 @@ namespace Microsoft.VisualBasic
 		/// Returns an expression formatted as a currency value using the currency symbol defined in the system control panel.
 		/// </summary>
 		/// <param name="Expression">Required. Expression to be formatted.</param>
-		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is –1, which indicates that the computer's regional settings are used.</param>
+		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is Â–1, which indicates that the computer's regional settings are used.</param>
 		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
 		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
 		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
@@ -337,7 +338,7 @@ namespace Microsoft.VisualBasic
 		/// Returns an expression formatted as a number.
 		/// </summary>
 		/// <param name="Expression">Required. Expression to be formatted.</param>
-		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is –1, which indicates that the computer's regional settings are used.</param>
+		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is Â–1, which indicates that the computer's regional settings are used.</param>
 		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
 		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
 		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
@@ -365,7 +366,7 @@ namespace Microsoft.VisualBasic
 		/// Returns an expression formatted as a percentage (that is, multiplied by 100) with a trailing % character.
 		/// </summary>
 		/// <param name="Expression">Required. Expression to be formatted.</param>
-		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is –1, which indicates that the computer's regional settings are used.</param>
+		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is Â–1, which indicates that the computer's regional settings are used.</param>
 		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
 		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
 		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
@@ -483,7 +484,7 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="StringCheck">Required. String expression being searched.</param>
 		/// <param name="StringMatch">Required. String expression being searched for.</param>
-		/// <param name="Start">Optional. Numeric expression that sets the one-based starting position for each search, starting from the left side of the string. If Start is omitted, –1 is used, which means that the search begins at the last character position. Search then proceeds from right to left.</param>
+		/// <param name="Start">Optional. Numeric expression that sets the one-based starting position for each search, starting from the left side of the string. If Start is omitted, Â–1 is used, which means that the search begins at the last character position. Search then proceeds from right to left.</param>
 		/// <param name="Compare">Optional. Numeric value indicating the kind of comparison to use when evaluating substrings. If omitted, a binary comparison is performed. See Settings for values.</param>
 		[MonoTODO]
 		public static int InStrRev(string StringCheck, 
@@ -739,8 +740,7 @@ namespace Microsoft.VisualBasic
 			if ((Str == null) || (Str.Length == 0))
 				return String.Empty; // VB.net does this.
 
-			Str.TrimStart(null);
-			return Str;
+			return Str.TrimStart(null);
 		}
 
 		/// <summary>
@@ -753,8 +753,7 @@ namespace Microsoft.VisualBasic
 			if ((Str == null) || (Str.Length == 0))
 				return String.Empty; // VB.net does this.
 
-			Str.TrimEnd(null);
-			return Str;
+			return Str.TrimEnd(null);
 		}
 	
 		/// <summary>
@@ -767,8 +766,7 @@ namespace Microsoft.VisualBasic
 			if ((Str == null) || (Str.Length == 0))
 				return String.Empty; // VB.net does this.
 			
-			Str.Trim();
-			return Str;
+			return Str.Trim();
 		}
 
 		/// <summary>
@@ -826,7 +824,7 @@ namespace Microsoft.VisualBasic
 		/// <param name="Find">Required. Substring being searched for.</param>
 		/// <param name="Replacement">Required. Replacement substring.</param>
 		/// <param name="Start">Optional. Position within Expression where substring search is to begin. If omitted, 1 is assumed.</param>
-		/// <param name="Count">Optional. Number of substring substitutions to perform. If omitted, the default value is –1, which means make all possible substitutions.</param>
+		/// <param name="Count">Optional. Number of substring substitutions to perform. If omitted, the default value is Â–1, which means make all possible substitutions.</param>
 		/// <param name="Compare">Optional. Numeric value indicating the kind of comparison to use when evaluating substrings. See Settings for values.</param>
 		[MonoTODO("Needs testing")]
 		public static string Replace(string Expression, 
@@ -910,7 +908,7 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Expression">Required. String expression containing substrings and delimiters. If Expression is a zero-length string (""), the Split function returns an array with no elements and no data.</param>
 		/// <param name="Delimiter">Optional. Single character used to identify substring limits. If Delimiter is omitted, the space character (" ") is assumed to be the delimiter. If Delimiter is a zero-length string, a single-element array containing the entire Expression string is returned.</param>
-		/// <param name="Limit">Optional. Number of substrings to be returned; the default, –1, indicates that all substrings are returned.</param>
+		/// <param name="Limit">Optional. Number of substrings to be returned; the default, Â–1, indicates that all substrings are returned.</param>
 		/// <param name="Compare">Optional. Numeric value indicating the comparison to use when evaluating substrings. See Settings for values.</param>
 		[MonoTODO]
 		public static string[] Split(string Expression, 
