@@ -1,3 +1,10 @@
+2005-01-20  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcDataReader.cs: case for type OdbcType.Double added in
+	GetValue.  fixes bug #71173.
+
+	Thanks to patch given by "Appasamy T" <appasamy@rediffmail.com>
+
 2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcType.cs: Change enum values for compatiability with MS.NET.
