@@ -1,3 +1,9 @@
+2004-07-19  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs (Iterator.MapVariable): Don't define fields twice.
+	(Iterator.MoveNextMethod.DoEmit): Use `TypeManager.int32_type' as
+	the return type of the new EmitContext.
+
 2004-07-18  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (Property.Define): Fix iterators.

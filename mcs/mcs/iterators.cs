@@ -119,6 +119,8 @@ namespace Mono.CSharp {
 		bool is_enumerable;
 		bool is_static;
 
+		Hashtable fields;
+
 		//
 		// The state as we generate the iterator
 		//
@@ -185,7 +187,14 @@ namespace Mono.CSharp {
 		//
 		public FieldBuilder MapVariable (string pfx, string name, Type t)
 		{
-			return TypeBuilder.DefineField (pfx + name, t, FieldAttributes.Public);
+			string full_name = pfx + name;
+			FieldBuilder fb = (FieldBuilder) fields [full_name];
+			if (fb != null)
+				return fb;
+
+			fb = TypeBuilder.DefineField (full_name, t, FieldAttributes.Public);
+			fields.Add (full_name, fb);
+			return fb;
 		}
 		
 		//
@@ -208,14 +217,10 @@ namespace Mono.CSharp {
 
 			// Return ok
 			ig.Emit (OpCodes.Ldc_I4_1);
-			
+
 			// Find out how to "leave"
-			if (in_exc || !ec.IsLastStatement){
-				Type old = ec.ReturnType;
-				ec.ReturnType = TypeManager.int32_type;
+			if (in_exc || !ec.IsLastStatement)
 				ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
-				ec.ReturnType = old;
-			}
 
 			if (in_exc){
 				ec.NeedReturnLabel ();
@@ -257,6 +262,8 @@ namespace Mono.CSharp {
 			this.original_name = name;
 			this.original_block = block;
 			this.block = new Block (null);
+
+			fields = new Hashtable ();
 
 			is_static = (modifiers & Modifiers.STATIC) != 0;
 		}
@@ -577,7 +584,7 @@ namespace Mono.CSharp {
 
 				EmitContext new_ec = new EmitContext (
 					iterator.container, loc, ec.ig,
-					iterator.return_type, code_flags);
+					TypeManager.int32_type, code_flags);
 
 				new_ec.CurrentIterator = iterator;
 
