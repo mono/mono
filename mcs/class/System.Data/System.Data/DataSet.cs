@@ -1270,7 +1270,7 @@ namespace System.Data {
 
 		private void WriteColumnAsAttribute (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
 		{
-			WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName), row[col, version].ToString ());
+			WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlConvert.EncodeLocalName (col.ColumnName), WriteObjectXml (row[col, version]));
 		}
 
 		private void WriteTableElement (XmlWriter writer, XmlWriteMode mode, DataTable table, DataRow row, DataRowVersion version)
@@ -1282,7 +1282,7 @@ namespace System.Data {
 
 			if (mode == XmlWriteMode.DiffGram) {
 				WriteAttributeString (writer, mode, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "id", table.TableName + (row.XmlRowID + 1));
-				WriteAttributeString (writer, mode, XmlConstants.MsdataNamespace, XmlConstants.MsdataPrefix, "rowOrder", row.XmlRowID.ToString());
+				WriteAttributeString (writer, mode, XmlConstants.MsdataNamespace, XmlConstants.MsdataPrefix, "rowOrder", XmlConvert.ToString (row.XmlRowID));
 				string modeName = null;
 				if (row.RowState == DataRowState.Modified)
 					modeName = "modified";
@@ -1618,7 +1618,7 @@ namespace System.Data {
 				
 				// add ordinal attribute
 				xlmAttrs[1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Ordinal, XmlConstants.MsdataNamespace);
-				xlmAttrs[1].Value = simple.Ordinal.ToString();
+				xlmAttrs[1].Value = XmlConvert.ToString (simple.Ordinal);
 				simpleContent.UnhandledAttributes = xlmAttrs;
 				
 			        
@@ -1655,12 +1655,12 @@ namespace System.Data {
 
 					if (col.AutoIncrementSeed != 0) {
 						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.AutoIncrementSeed, XmlConstants.MsdataNamespace);
-						xattr.Value = col.AutoIncrementSeed.ToString();
+						xattr.Value = XmlConvert.ToString (col.AutoIncrementSeed);
 						xattrs.Add (xattr);
 					}
 
 					if (col.DefaultValue.ToString () != String.Empty)
-						colElem.DefaultValue = col.DefaultValue.ToString ();
+						colElem.DefaultValue = WriteObjectXml (col.DefaultValue);
 					
 					if (col.MaxLength < 0)
 						colElem.SchemaTypeName = MapType (col.DataType);

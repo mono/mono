@@ -1,3 +1,8 @@
+2004-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : on serialization to XmlWriter, XmlConvert should be
+	  used. There were also some culture dependency problems to write int.
+
 2004-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataInferenceLoader.cs : It was not always filling relation
