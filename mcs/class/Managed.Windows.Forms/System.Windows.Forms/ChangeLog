@@ -1,3 +1,7 @@
+2004-11-11  Jackson Harper  <jackson@ximian.com>
+
+	* TreeViewImageIndexConverter.cs: Initial implementation
+
 2004-11-10  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs:
