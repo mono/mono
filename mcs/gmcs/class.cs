@@ -31,6 +31,7 @@
 //
 #define CACHE
 using System;
+using System.Text;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -4438,13 +4439,34 @@ namespace Mono.CSharp {
 			this.GenericMethod = generic;
 		}
 
+		static string RemoveArity (string name)
+		{
+			int start = 0;
+			StringBuilder sb = new StringBuilder ();
+			while (start < name.Length) {
+				int pos = name.IndexOf ('`', start);
+				if (pos < 0) {
+					sb.Append (name.Substring (start));
+					break;
+				}
+
+				sb.Append (name.Substring (start, pos-start));
+				while (Char.IsNumber (name [++pos]))
+					;
+
+				start = pos;
+			}
+
+			return sb.ToString ();
+		}
+
 		public bool Define (TypeContainer container)
 		{
 			MethodInfo implementing = null;
 			string prefix;
 
 			if (member.IsExplicitImpl)
-				prefix = member.InterfaceType.FullName + ".";
+				prefix = RemoveArity (member.InterfaceType.FullName) + ".";
 			else
 				prefix = "";
 

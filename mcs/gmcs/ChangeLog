@@ -1,5 +1,10 @@
 2004-08-03  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (MethodData.Define): If we're an explicit
+	implementation, remove the generic arity from the type name.
+
+2004-08-03  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Binary.ResolveOperator): Don't abort if we can't
 	use a user-defined operator; we still need to do numeric
 	promotions in case one argument is a builtin type and the other
