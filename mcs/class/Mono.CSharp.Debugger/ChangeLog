@@ -1,3 +1,9 @@
+2003-02-18  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MethodEntry.ThisTypeIndex): Renamed to
+	ClassTypeIndex; provide this for all methods so we can get the
+	class of static methods.
+
 2003-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* Mono.CSharp.Debugger.build: passing the /r using an 'arg' node works.

@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 30;
+		public const int  Version = 31;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int TotalFileSize;
@@ -365,7 +365,7 @@ namespace Mono.CSharp.Debugger
 		public readonly int Token;
 		public readonly int StartRow;
 		public readonly int EndRow;
-		public readonly int ThisTypeIndex;
+		public readonly int ClassTypeIndex;
 		public readonly int NumParameters;
 		public readonly int NumLocals;
 		public readonly int NumLineNumbers;
@@ -411,7 +411,7 @@ namespace Mono.CSharp.Debugger
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
 			EndRow = reader.ReadInt32 ();
-			ThisTypeIndex = reader.ReadInt32 ();
+			ClassTypeIndex = reader.ReadInt32 ();
 			NumParameters = reader.ReadInt32 ();
 			NumLocals = reader.ReadInt32 ();
 			NumLineNumbers = reader.ReadInt32 ();
@@ -514,10 +514,7 @@ namespace Mono.CSharp.Debugger
 			for (int i = 0; i < NumLocals; i++)
 				LocalTypeIndices [i] = file.GetNextTypeIndex ();
 
-			if (method.IsStatic)
-				ThisTypeIndex = 0;
-			else
-				ThisTypeIndex = file.DefineType (method.ReflectedType);
+			ClassTypeIndex = file.DefineType (method.ReflectedType);
 		}
 
 		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
@@ -581,7 +578,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write (Token);
 			bw.Write (StartRow);
 			bw.Write (EndRow);
-			bw.Write (ThisTypeIndex);
+			bw.Write (ClassTypeIndex);
 			bw.Write (NumParameters);
 			bw.Write (NumLocals);
 			bw.Write (NumLineNumbers);
@@ -605,7 +602,7 @@ namespace Mono.CSharp.Debugger
 		{
 			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5} - {6}]",
 					      index, Token, SourceFileIndex, StartRow, EndRow,
-					      SourceFile, FullName, ThisTypeIndex, NumParameters,
+					      SourceFile, FullName, ClassTypeIndex, NumParameters,
 					      NumLocals, NumLineNumbers);
 		}
 	}
