@@ -218,6 +218,11 @@ namespace Mono.Security {
 				return null;
 			UInt32 peHeader = BitConverter.ToUInt32 (mz, 60);
 			cs.Write (mz, 0, 128);
+			if (peHeader != 128) {
+				byte[] mzextra = new byte [peHeader - 128];
+				stream.Read (mzextra, 0, mzextra.Length);
+				cs.Write (mzextra, 0, mzextra.Length);
+			}
 
 			// PE File Header - always 248 bytes
 			// ref: Section 24.2.2, Partition II Metadata
