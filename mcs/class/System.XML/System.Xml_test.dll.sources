@@ -6,10 +6,12 @@ System.Xml/XmlCharacterDataTests.cs
 System.Xml/XmlCommentTests.cs
 System.Xml/XmlConvertTests.cs
 System.Xml/XmlDeclarationTests.cs
+System.Xml/XmlDocumentEventTests.cs
 System.Xml/XmlDocumentFragmentTests.cs
 System.Xml/XmlDocumentTests.cs
 System.Xml/XmlDocumentTypeTests.cs
 System.Xml/XmlElementTests.cs
+System.Xml/XmlEntityTests.cs
 System.Xml/XmlEntityReferenceTests.cs
 System.Xml/XmlNamespaceManagerTests.cs
 System.Xml/XmlNodeListTests.cs
@@ -26,6 +28,7 @@ System.Xml/XmlWhiteSpaceTests.cs
 System.Xml/XmlWriterTests.cs
 System.Xml/XsdParticleValidationTests.cs
 System.Xml/XsdValidatingReaderTests.cs
+System.Xml.Schema/XmlSchemaAssertion.cs
 System.Xml.Schema/XmlSchemaTests.cs
 System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Serialization/DeserializeTests.cs
