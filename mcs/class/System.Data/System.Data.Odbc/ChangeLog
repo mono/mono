@@ -1,3 +1,11 @@
+2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcType.cs: Change enum values for compatiability with MS.NET.
+	* libodbc.cs: Change enum values for compatiability with
+	MS.NET. Change calls into driver with native type.
+	* OdbcDataReader.cs: Change enum values for compatiability with
+	MS.NET. Change calls from/into driver with native type.
+
 2005-01-18  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs: GetOrdinal need not check for

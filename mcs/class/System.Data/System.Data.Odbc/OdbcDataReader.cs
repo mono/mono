@@ -159,7 +159,8 @@ namespace System.Data.Odbc
 					throw new OdbcException(new OdbcError("SQLDescribeCol",OdbcHandleType.Stmt,hstmt));
 				colname=System.Text.Encoding.Default.GetString(colname_buffer);
 				colname=colname.Replace((char) 0,' ').Trim();
-				OdbcColumn c=new OdbcColumn(colname, (OdbcType) dt);
+                                OdbcType t = libodbc.NativeToOdbcType ( (OdbcCType) dt);
+				OdbcColumn c=new OdbcColumn(colname, t);
 				c.AllowDBNull=(Nullable!=0);
 				c.Digits=DecDigits;
 				if (c.IsStringType)
@@ -211,7 +212,7 @@ namespace System.Data.Odbc
                         byte [] tbuff = new byte [length+1];
 
                         length = buffer == null ? 0 : length;
-                        ret=libodbc.SQLGetData (hstmt, (ushort) (ordinal+1), OdbcType.Binary, tbuff, length, 
+                        ret=libodbc.SQLGetData (hstmt, (ushort) (ordinal+1), OdbcCType.Binary, tbuff, length, 
                                         ref outsize);
 
                         if (ret == OdbcReturn.NoData)
@@ -472,7 +473,7 @@ namespace System.Data.Odbc
 					case OdbcType.Decimal:
 						bufsize=50;
 						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.Char, buffer, bufsize, ref outsize);
 						byte[] temp = new byte[outsize];
                                                 for (int i=0;i<outsize;i++)
                                                         temp[i]=buffer[i];
@@ -482,18 +483,18 @@ namespace System.Data.Odbc
 						break;
 					case OdbcType.TinyInt:
 						short short_data=0;
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.TinyInt, ref short_data, 0, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.TinyInt, ref short_data, 0, ref outsize);
 						DataValue=System.Convert.ToByte(short_data);
 						break;
 					case OdbcType.Int:
 						int int_data=0;
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Int, ref int_data, 0, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.Int, ref int_data, 0, ref outsize);
 						DataValue=int_data;
 						break;
 
 					case OdbcType.SmallInt:
                                                 short sint_data=0;
-                                                ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.SmallInt, ref sint_data, 0, ref outsize);
+                                                ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.SmallInt, ref sint_data, 0, ref outsize);
                                                 DataValue=sint_data;
                                                 break;
 
@@ -505,20 +506,20 @@ namespace System.Data.Odbc
 					case OdbcType.NVarChar:
 						bufsize=col.MaxLength*2+1; // Unicode is double byte
 						buffer=new byte[bufsize];
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.NVarChar, buffer, bufsize, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.NVarChar, buffer, bufsize, ref outsize);
 						if (outsize!=-1)
 							DataValue=System.Text.Encoding.Unicode.GetString(buffer,0,outsize);
 						break;
 					case OdbcType.VarChar:
 						bufsize=col.MaxLength+1;
 						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.Char, buffer, bufsize, ref outsize);
 						if (outsize!=-1)
 							DataValue=System.Text.Encoding.Default.GetString(buffer,0,outsize);
 						break;
 					case OdbcType.Real:
 						float float_data=0;
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Real, ref float_data, 0, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.Real, ref float_data, 0, ref outsize);
 						DataValue=float_data;
 						break;
 					case OdbcType.Timestamp:
@@ -527,13 +528,13 @@ namespace System.Data.Odbc
 					case OdbcType.Time:
 						OdbcTimestamp ts_data=new OdbcTimestamp();
 						if (col.OdbcType == OdbcType.Timestamp) 
-							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Timestamp, ref ts_data, 0, ref outsize);
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.Timestamp, ref ts_data, 0, ref outsize);
 						else if (col.OdbcType == OdbcType.DateTime)
-							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.DateTime, ref ts_data, 0, ref outsize);
 						else if (col.OdbcType == OdbcType.Date)
-							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Date, ref ts_data, 0, ref outsize);
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.Date, ref ts_data, 0, ref outsize);
 						else  // FIXME: how to get TIME datatype ??
-							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.DateTime, ref ts_data, 0, ref outsize);
 						if (outsize!=-1) // This means SQL_NULL_DATA 
 							DataValue=new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
 								ts_data.minute,ts_data.second,Convert.ToInt32(ts_data.fraction));
@@ -549,7 +550,7 @@ namespace System.Data.Odbc
 					default:
 						bufsize=255;
 						buffer=new byte[bufsize];
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcCType.Char, buffer, bufsize, ref outsize);
 						DataValue=System.Text.Encoding.Default.GetString(buffer);
 						break;
 				}

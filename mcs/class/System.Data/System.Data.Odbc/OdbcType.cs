@@ -36,14 +36,42 @@ using System.Data.Common;
 namespace System.Data.Odbc
 { 
 
-// From the ODBC documentation:
-//
-//	In ODBC 3.x, the identifiers for date, time, and timestamp SQL data types 
-//  have changed from SQL_DATE, SQL_TIME, and SQL_TIMESTAMP (with instances of 
-//  #define in the header file of 9, 10, and 11) to SQL_TYPE_DATE, SQL_TYPE_TIME,
-//  and SQL_TYPE_TIMESTAMP (with instances of #define in the header file of 91, 92, and 93), 
-//  respectively.
+        public enum OdbcType
+        {
+                BigInt = 1,
+                Binary = 2,
+                Bit = 3,
+                Char = 4,
+                Date = 0x17,
+                DateTime = 5,
+                Decimal = 6,
+                Double = 8,
+                Image = 9,
+                Int = 10,
+                NChar = 11,
+                NText = 12,
+                Numeric = 7,
+                NVarChar = 13,
+                Real = 14,
+                SmallDateTime = 0x10,
+                SmallInt = 0x11,
+                Text = 0x12,
+                Time = 0x18,
+                Timestamp = 0x13,
+                TinyInt = 20,
+                UniqueIdentifier = 15,
+                VarBinary = 0x15,
+                VarChar = 0x16
+        }
 
+        // From the ODBC documentation:
+        //
+        //	In ODBC 3.x, the identifiers for date, time, and timestamp SQL data types 
+        //  have changed from SQL_DATE, SQL_TIME, and SQL_TIMESTAMP (with instances of 
+        //  #define in the header file of 9, 10, and 11) to SQL_TYPE_DATE, SQL_TYPE_TIME,
+        //  and SQL_TYPE_TIMESTAMP (with instances of #define in the header file of 91, 92, and 93), 
+        //  respectively.
+        
 	// Unmapped SQL Types
 	//
 	//#define SQL_FLOAT								6
@@ -51,9 +79,13 @@ namespace System.Data.Odbc
 	//#define SQL_INTERVAL							10
 	//	could map to SmallDateTime?
 
-	public enum OdbcType
-	{
-		BigInt=-5,		// SQL_BIGINT
+        // This internal enum is used as mapping types into database drivers.
+        // This is essentially a map between public OdbcType to C types for 
+        // Odbc to call into driver.
+        internal enum OdbcCType         // Native Types
+        {
+                SignedBigInt=-25,	// SQL_C_SBIGINT
+                BigInt=-5,		// SQL_BIGINT
 		Binary=-2,		// SQL_BINARY
 		Bit=-7,			// SQL_BIT
 		Char=1,			// SQL_CHAR
@@ -77,15 +109,7 @@ namespace System.Data.Odbc
 		UniqueIdentifier=-11,  // SQL_GUID
 		VarBinary=-3,	// SQL_VARBINARY
 		VarChar=12		// SQL_VARCHAR
-	}
-
-        // This internal enum is used as mapping types into database drivers.
-        // This is essentially a map between public OdbcType to C types for 
-        // Odbc to call into driver.
-        internal enum OdbcCType
-        {
-                SignedBigInt=-25	// SQL_C_SBIGINT
         }
-        
+
 }
 
