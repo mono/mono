@@ -25,16 +25,16 @@ namespace System.Windows.Forms {
 
 		// private fields
 		RightToLeft rightToLeft;
-		
+
 		// --- Constructor ---
 		[MonoTODO]
-		public ContextMenu() //: base(null) 
+		public ContextMenu() : base(null)
 		{
 			rightToLeft = RightToLeft.Inherit;
 		}
 
 		[MonoTODO]
-		public ContextMenu(MenuItem[] menuItems) //: base(menuItems)//menu does not have public constructor. Is this a gtk menu?
+		public ContextMenu(MenuItem[] menuItems) : base(menuItems)//menu does not have public constructor. Is this a gtk menu?
 		{
 		}
 		

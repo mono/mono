@@ -30,13 +30,12 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public MainMenu() 
+		public MainMenu() : base(null)
 		{
-			throw new NotImplementedException ();
 		}
-		
+
 		[MonoTODO]
-		public MainMenu(MenuItem[] items) 
+		public MainMenu(MenuItem[] items) : base(items)
 		{
 			throw new NotImplementedException ();
 		}
@@ -44,7 +43,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		
+
 		[MonoTODO]
 		public virtual MainMenu CloneMenu()
 		{

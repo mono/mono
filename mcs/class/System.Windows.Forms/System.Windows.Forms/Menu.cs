@@ -89,10 +89,17 @@ namespace System.Windows.Forms  {
 		protected void CloneMenu(Menu menuSrc) {
 			throw new NotImplementedException();
 		}
-
+		
+		private IntPtr menuHandle_ = IntPtr.Zero;
+		private Menu.MenuItemCollection  menuCollection_ = null;
+		protected Menu( MenuItem[] items) {
+			menuHandle_ = Win32.CreateMenu();
+			menuCollection_ = new Menu.MenuItemCollection( this);
+		}
 
 		~Menu() {
-			throw new NotImplementedException();
+			Win32.DestroyMenu( menuHandle_);
+			//throw new NotImplementedException();
 		}
 
 		//protected virtual object GetService(Type service) {
@@ -124,7 +131,7 @@ namespace System.Windows.Forms  {
 		public IntPtr Handle {
 
 			get {
-				throw new NotImplementedException();
+				return menuHandle_;
 			}
 		}
 
@@ -145,7 +152,7 @@ namespace System.Windows.Forms  {
 		public Menu.MenuItemCollection MenuItems {
 
 			get {
-				throw new NotImplementedException();
+				return menuCollection_;
 			}
 		}
 		//inherited
@@ -187,39 +194,56 @@ namespace System.Windows.Forms  {
 		/// </summary>
 
 		public class MenuItemCollection : IList, ICollection, IEnumerable {
-	
+			private ArrayList		items_ = new ArrayList();
+			private Menu 				parentMenu_ = null;
 			//
 			// -- Constructor
 			//
 
 			public MenuItemCollection(Menu m) {
-				throw new NotImplementedException ();
+				parentMenu_ = m;
 			}
-	
+
 			//
 			// -- Public Methods
 			//
-		
+
 			public virtual int Add(MenuItem m) {
-				throw new NotImplementedException ();
+				int result = -1;
+				// FIXME: MenuItem cannot be inserted to several containers. Check this here.
+				if( m != null){
+					// FIXME: Set MenuItem's owner here.
+					items_.Add(m);
+					result = items_.Count;
+					if( parentMenu_ != null) {
+						Win32.AppendMenuA( parentMenu_.Handle, Win32.MF_ENABLED | Win32.MF_STRING,
+															(uint)result, m.Text);
+					}
+				}
+				return result;
 			}
-	    
+
 			public virtual MenuItem Add(string s) {
-				throw new NotImplementedException ();
+				MenuItem result = new MenuItem();
+				result.Text = s;
+				if( -1 == Add(result)){
+					result = null;
+				}
+				return result;
 			}
-		
+
 			public virtual int Add(int i, MenuItem m) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public virtual MenuItem Add(string s, EventHandler e) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public virtual MenuItem Add(string s, MenuItem[] items) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public virtual void AddRange(MenuItem[] items) {
 				throw new NotImplementedException ();
 			}
@@ -249,54 +273,56 @@ namespace System.Windows.Forms  {
 			public override int GetHashCode() {
 				//FIXME add our proprities
 				return base.GetHashCode();
-			}		public IEnumerator GetEnumerator() {
-						throw new NotImplementedException ();
-					}
-		
+			}
+
+			public IEnumerator GetEnumerator() {
+				throw new NotImplementedException ();
+			}
+
 			//public override Type GetType() {
 			//	throw new NotImplementedException ();
 			//}
-		
+
 			public int IndexOf(MenuItem m) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public virtual void Remove(MenuItem m) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public virtual void RemoveAt(int i) {
 				throw new NotImplementedException ();
 			}
-		
+
 			public override string ToString() {
 				throw new NotImplementedException ();
 			}
-		
+
 			//
 			// -- Protected Methods
 			//
-		
+
 			~MenuItemCollection() {
 				throw new NotImplementedException ();
 			}
-		
+
 			//inherited
 			//protected object MemberwiseClone() {
 			//	throw new NotImplementedException ();
 			//}
-		
+
 			//
 			// -- Public Properties
 			//
-		
+
 			public int Count {
 
 				get {
 					throw new NotImplementedException ();
 				}
 			}
-		
+
 			//		public virtual MenuItem this(int i)
 			//		{
 			//			get
@@ -392,3 +418,4 @@ namespace System.Windows.Forms  {
 	}
 }
 			
+
