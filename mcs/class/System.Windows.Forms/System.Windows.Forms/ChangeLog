@@ -1,80 +1,202 @@
-2002-04-10  Duncan Mak  <duncan@ximian.com>
 
-	* CaptionButton.cs:
-	* CharacterCasing.cs: 
-	* CheckState.cs: 
-	* DataGridParentRowsLabelStyle.cs: 
-	* DialogResult.cs: 
-	* DockStyle.cs: 
-	* DragAction.cs: 
-	* DragDropEffects.cs: 
-	* DrawItemState.cs: 
-	* DrawMode.cs: 
-	* ErrorBlinkStyle.cs: 
-	* ErrorIconAlignment.cs: 
-	* FlatStyle.cs: 
-	* FormBorderStyle.cs: 
-	* FormStartPosition.cs: 
-	* FormWindowState.cs: 
-	* FrameStyle.cs: Fixed enum layouts with EnumCheck.
+2002-7-1  DennisHayes <dennish@raytek.com>
+* changelog
+* reversed order, putting most recent entries at the top
 
-2002-4-23 Dennis Hayes <dennish@raytek.com>
+2002-6-24 DennisHayes <dennish@raytek.com>
+* AccessibleStates.cs
+* ArrangeDirection.cs
+* AccessibleEvents.cs
+* Added values for enums
 
-	* AccessibleNavigation.cs :added to cvs with bad enum values, I will correct.
-	* AccessibleSelection.cs :added with good enum values.
-	* ContentsResizedEventHandler.cs :Added delagate
-	* MainMenu.cs
-	* AccessibleObject.cs
-	* MeasureItemEventArgs :added stubbed classes. Commented out.
-	* IButtonControl.cs : Added interface.
+2002-6-24 DennisHayes <dennish@raytek.com>
+* BindingMemberInfo.cs
+* CaptionButton.cs
+* DataGridCell.cs
+* Message.cs
+* MessageBox.cs
+* Fixed bugs preventing compile
 
-2002-4-23 Dennis Hayes <dennish@raytek.com>
-* added stubbed and commented out classes from F to G *
+2002-6-18 DennisHayes <dennish@raytek.com>
+* checked in  for Stefan Warnke (StefanW@POBox.com)
+* UICuesEventArgs.cs
+* UpDownBase.cs
+* Better comments and formatting
 
-2002-05-02 Daniel Carrera (dcarrera@math.utoronto.ca)
-* small update to classes [F-H]*
-* added stubbed and commented out classes for [I-L]*
-* added stubbed and commented out classes for R*
+2002-6-18 DennisHayes <dennish@raytek.com>
+* Checked in for Jackson Harper (jackson@latitudegeo.com)
+* ToolBar.cs
+* TabControl.cs
+* TabPage.cs
+* Added sub classes
 
-* 5-5-2002 Dennis Hayes <dennish@raytek.com>
-* Added enums
-* 	GridItemType.cs
-* 	HelpNavigator.cs
-* 	HorizontalAlignment.cs
-* 	ImeMode.cs
-* 	ItemActivation.cs
-* 	ItemBoundsPortion.cs
-* 	Keys.cs
-* All correct execpt for Keys.cs which is missing a half dozen
-* duplicate entries that need correcting.
+2002-6-5 DennisHayes <dennish@raytek.com>
+* TabControl.cs
+* TabPage.cs
+* TextBox.cs
+* TextBoxBase.cs
+* ThreadExceptionDialog.cs
+* Timer.cs
+* added new files for Jackson Harper (jackson@latitudegeo.com)
+* needs to be mono styled, and may have other issues
 
-2002-05-07 Daniel Carrera (dcarrera@math.utoronto.ca)
-* Fixed a problem with an "extra byte" problem.  It caused an extra '?'
-  at the beginning of some lines.
-  Classes F-L and Q-R were updated.
-* Added the classes SaveFileDialog.cs and Screen.cs
+2002-6-5 DennisHayes <dennish@raytek.com>
+* ErrorProvider.cs
+* PrintControllerWithStatusDialog.cs
+* PrintDialog.cs
+* added new files for paul
 
-2002-5-7 Dennis Hayes <dennish@raytek.com>
-* Added duplicate values
-* System.Windows.Forms.Keys.cs
+2002-6-5 DennisHayes <dennish@raytek.com>
+* StatusBarDrawItemEventArgs.cs
+* StatusBarPanel.cs
+* StatusBarPanelClickEventArgs.cs
+* StatusBarPanelCollection.cs
+* SystemInformation.cs
+* added new files for Richard Baumann (biochem333@nyc.rr.com)
 
-2002-5-7 Dennis Hayes <dennish@raytek.com>
-* LeftRightAlignment.cs
-* LinkBehavior.cs
-* LinkState.cs
-* ListViewAlignment.cs
-* MdiLayout.cs
-* MenuGlyph.cs
-* MenuMerge.cs
-* MessageBoxButtons.cs
-* MessageBoxDefaultButton.cs
-* MessageBoxIcon.cs
-* MessageBoxOptions.cs
-* MouseButtons.cs
-* Orientation.cs
-* PictureBoxSizeMode.cs
-* PropertySort.cs
-* Added some more enums. All have correct values.
+2002-6-5 DennisHayes <dennish@raytek.com>
+* removed, code moved to main class files, Form.cs, ImageList.cs, LinkLabel.cs,
+*   ListBox.cs, ListView.cs, ListViewItem.cs, Menu.cs, MonthCalendar.cs, ScrollableControl.cs
+* Form.ControlCollectison.cs
+* ImageList.ImageCollection.c
+* LinkLabel.LinkCollection.cs
+* ListBox.ObjectCollection.cs
+* ListBox.SelectedIndexCollection.cs
+* ListBox.SelectedObjectCollection.cs
+* ListView.CheckedListViewItemCollection.cs
+* ListView.CheckedIndexCollection.cs
+* ListView.ColumnHeaderCollection.cs
+* ListView.ListViewItemCollection.cs
+* ListView.SelectedIndexCollection.cs
+* ListView.SelectedListViewItemCollection.cs
+* ListViewItem.ListViewSubItem.cs
+* ListViewItem.ListViewSubItemCollection.cs
+* Menu.MenuItemCollection.cs
+* MonthCalendar.HitTestInfo.cs
+* ScrollableControl.DockPaddingEdges.cs
+
+2002-6-5 DennisHayes <dennish@raytek.com>
+* Checked in for Jackson Harper (jackson@latitudegeo.com)
+* ToolBar.cs
+* ToolBarButton.cs
+* ToolTip.cs
+* TrackBar.cs
+* TreeNode.cs
+* TreeNodeCollection.cs
+* TreeNodeConverter.cs
+* TreeView.cs
+* TreeViewCancelEventArgs.cs
+* TreeViewEventArgs.cs
+* TreeViewImageIndexConverter.cs
+* Just stubbs
+* New files added, work in progress cleanup and mono style needed.
+
+2002-6-5 DennisHayes <dennish@raytek.com>
+* checked in  for Stefan Warnke (StefanW@POBox.com)
+* UICuesEventArgs.cs
+* UpDownBase.cs
+* Just stubbs
+* New files, work in progress, needs cleanup and mono style
+
+
+
+2002-5-31 DennisHayes <dennish@raytek.com>
+* ItemChangedEventHandler.cs
+* InvalidateEventHandler.cs
+* ItemChangedEventHandler.cs
+* added new files
+
+2002-5-31 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* Panel.cs
+* New class, Stubbed and commented out
+
+2002-5-31 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* MonthCalendar.cs
+* MonthCalendar.HitTestInfo.cs
+* MouseEventArgs.cs
+* NativeWindow.cs
+* Removed trash byte
+
+2002-5-31 DennisHayes <dennish@raytek.com>
+* ColumnClickEventArgs.cs
+* Fully implmented.
+
+2002-5-31 DennisHayes <dennish@raytek.com>
+* Minor formating in lots of files
+
+
+2002-5-27 DennisHayes <dennish@raytek.com>
+Added structs. All structs in System.Windows.Forms done
+* BindingMemberInfo.cs
+* DataGridCell.cs
+* LinkArea.cs
+* Message.cs
+* Complete execpt for Message.cs GetLParam
+* and
+* BindingMemberInfo needs constructor.
+* All need verification of hashcodes.
+
+2002-5-27 DennisHayes <dennish@raytek.com>
+Added delegates. All delegates in System.Windows.Forms done
+* ColumnClickEventHandler.cs
+* ContentsResizedEventHandler.cs
+* ControlEventHandler.cs
+* ConvertEventHandler.cs
+* DateRangeEventHandler.cs
+* DragEventHandler.cs
+* DrawItemEventHandler.cs
+* GiveFeedbackEventHandler.cs
+* HelpEventHandler.cs
+* InputLanguageChangedEventHandler.cs
+* InputLanguageChangingEventHandler.cs
+* InvalidateEventHandler.cs
+* ItemChangedEventHandler.cs
+* ItemCheckEventHandler.cs
+* ItemDragEventHandler.cs
+* KeyEventHandler.cs
+* LabelEditEventHandler.cs
+* LayoutEventHandler.cs
+* LinkClickedEventHandler.cs
+* LinkLabelLinkClickedEventHandler.cs
+
+2002-5-27 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* NumericUpDown.cs
+* OpacityConverter.cs
+* OpenFileDialog.cs
+* OSFeature.cs
+* PageSetupDialog.cs
+* PaintEventArgs.cs
+* MonthCalendar.HitTestInfo.cs
+* MouseEventArgs.cs
+* NativeWindow.cs
+* Stubbed and commented out
+* NativeWindow.cs, MonthCalendar.HitTestInfo.cs, MouseEventArgs.cs,
+* have bad extra byte from old skeleton, need new corrected version.
+* MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
+
+2002-5-27 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* Menu.cs
+* Menu.MenuItemCollection.cs
+* MenuItem.cs
+* MessageBox.cs
+* MonthCalendar.cs
+* Stubbed and commented out
+* MonthCalendar.cs has bad extra byte from old skeleton, need new corrected version.
+* MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
+* Menu.MenuItemCollection.cs needs to be incorporated into Menu.cs.
+
+2002-5-27 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* Panel.cs
+* New class, Stubbed and commented out
+
+2002-5-10 Dennis Hayes
+* added IMessageFilter
+* Interfaces complete
 
  2002-5-8 Dennis Hayes <dennish@raytek.com>
 * RichTextBoxFinds.cs
@@ -163,200 +285,81 @@ Checking in new System.Windows.forms classe for Paul Osman <paul.osmand@sympatic
 * NotifyIcon.cs
 Stubbed and commented out
 
-2002-5-10 Dennis Hayes
-* added IMessageFilter
-* Interfaces complete
+2002-05-07 Daniel Carrera (dcarrera@math.utoronto.ca)
+* Fixed a problem with an "extra byte" problem.  It caused an extra '?'
+  at the beginning of some lines.
+  Classes F-L and Q-R were updated.
+* Added the classes SaveFileDialog.cs and Screen.cs
 
-2002-5-27 DennisHayes <dennish@raytek.com>
-Added structs. All structs in System.Windows.Forms done
-* BindingMemberInfo.cs
-* DataGridCell.cs
-* LinkArea.cs
-* Message.cs
-* Complete execpt for Message.cs GetLParam
-* and
-* BindingMemberInfo needs constructor.
-* All need verification of hashcodes.
+2002-5-7 Dennis Hayes <dennish@raytek.com>
+* Added duplicate values
+* System.Windows.Forms.Keys.cs
 
-2002-5-27 DennisHayes <dennish@raytek.com>
-Added delegates. All delegates in System.Windows.Forms done
-* ColumnClickEventHandler.cs
-* ContentsResizedEventHandler.cs
-* ControlEventHandler.cs
-* ConvertEventHandler.cs
-* DateRangeEventHandler.cs
-* DragEventHandler.cs
-* DrawItemEventHandler.cs
-* GiveFeedbackEventHandler.cs
-* HelpEventHandler.cs
-* InputLanguageChangedEventHandler.cs
-* InputLanguageChangingEventHandler.cs
-* InvalidateEventHandler.cs
-* ItemChangedEventHandler.cs
-* ItemCheckEventHandler.cs
-* ItemDragEventHandler.cs
-* KeyEventHandler.cs
-* LabelEditEventHandler.cs
-* LayoutEventHandler.cs
-* LinkClickedEventHandler.cs
-* LinkLabelLinkClickedEventHandler.cs
+2002-5-7 Dennis Hayes <dennish@raytek.com>
+* LeftRightAlignment.cs
+* LinkBehavior.cs
+* LinkState.cs
+* ListViewAlignment.cs
+* MdiLayout.cs
+* MenuGlyph.cs
+* MenuMerge.cs
+* MessageBoxButtons.cs
+* MessageBoxDefaultButton.cs
+* MessageBoxIcon.cs
+* MessageBoxOptions.cs
+* MouseButtons.cs
+* Orientation.cs
+* PictureBoxSizeMode.cs
+* PropertySort.cs
+* Added some more enums. All have correct values.
 
-2002-5-27 DennisHayes <dennish@raytek.com>
-		Check in for Paul Osman <paul.osman@sympatico.ca>
-* NumericUpDown.cs
-* OpacityConverter.cs
-* OpenFileDialog.cs
-* OSFeature.cs
-* PageSetupDialog.cs
-* PaintEventArgs.cs
-* MonthCalendar.HitTestInfo.cs
-* MouseEventArgs.cs
-* NativeWindow.cs
-* Stubbed and commented out
-* NativeWindow.cs, MonthCalendar.HitTestInfo.cs, MouseEventArgs.cs,
-* have bad extra byte from old skeleton, need new corrected version.
-* MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
+* 5-5-2002 Dennis Hayes <dennish@raytek.com>
+* Added enums
+* 	GridItemType.cs
+* 	HelpNavigator.cs
+* 	HorizontalAlignment.cs
+* 	ImeMode.cs
+* 	ItemActivation.cs
+* 	ItemBoundsPortion.cs
+* 	Keys.cs
+* All correct execpt for Keys.cs which is missing a half dozen
+* duplicate entries that need correcting.
 
-2002-5-27 DennisHayes <dennish@raytek.com>
-		Check in for Paul Osman <paul.osman@sympatico.ca>
-* Menu.cs
-* Menu.MenuItemCollection.cs
-* MenuItem.cs
-* MessageBox.cs
-* MonthCalendar.cs
-* Stubbed and commented out
-* MonthCalendar.cs has bad extra byte from old skeleton, need new corrected version.
-* MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
-* Menu.MenuItemCollection.cs needs to be incorporated into Menu.cs.
+2002-05-02 Daniel Carrera (dcarrera@math.utoronto.ca)
+* small update to classes [F-H]*
+* added stubbed and commented out classes for [I-L]*
+* added stubbed and commented out classes for R*
+2002-4-23 Dennis Hayes <dennish@raytek.com>
 
-2002-5-27 DennisHayes <dennish@raytek.com>
-		Check in for Paul Osman <paul.osman@sympatico.ca>
-* Panel.cs
-* New class, Stubbed and commented out
+	* AccessibleNavigation.cs :added to cvs with bad enum values, I will correct.
+	* AccessibleSelection.cs :added with good enum values.
+	* ContentsResizedEventHandler.cs :Added delagate
+	* MainMenu.cs
+	* AccessibleObject.cs
+	* MeasureItemEventArgs :added stubbed classes. Commented out.
+	* IButtonControl.cs : Added interface.
+2002-4-23 Dennis Hayes <dennish@raytek.com>
+* added stubbed and commented out classes from F to G *
 
-2002-5-31 DennisHayes <dennish@raytek.com>
-		Check in for Paul Osman <paul.osman@sympatico.ca>
-* Panel.cs
-* New class, Stubbed and commented out
 
-2002-5-31 DennisHayes <dennish@raytek.com>
-		Check in for Paul Osman <paul.osman@sympatico.ca>
-* MonthCalendar.cs
-* MonthCalendar.HitTestInfo.cs
-* MouseEventArgs.cs
-* NativeWindow.cs
-* Removed trash byte
+2002-04-10  Duncan Mak  <duncan@ximian.com>
 
-2002-5-31 DennisHayes <dennish@raytek.com>
-* ColumnClickEventArgs.cs
-* Fully implmented.
+	* CaptionButton.cs:
+	* CharacterCasing.cs: 
+	* CheckState.cs: 
+	* DataGridParentRowsLabelStyle.cs: 
+	* DialogResult.cs: 
+	* DockStyle.cs: 
+	* DragAction.cs: 
+	* DragDropEffects.cs: 
+	* DrawItemState.cs: 
+	* DrawMode.cs: 
+	* ErrorBlinkStyle.cs: 
+	* ErrorIconAlignment.cs: 
+	* FlatStyle.cs: 
+	* FormBorderStyle.cs: 
+	* FormStartPosition.cs: 
+	* FormWindowState.cs: 
+	* FrameStyle.cs: Fixed enum layouts with EnumCheck.
 
-2002-5-31 DennisHayes <dennish@raytek.com>
-* Minor formating in lots of files
-
-2002-5-31 DennisHayes <dennish@raytek.com>
-* ItemChangedEventHandler.cs
-* InvalidateEventHandler.cs
-* ItemChangedEventHandler.cs
-* added new files
-
-2002-6-5 DennisHayes <dennish@raytek.com>
-* TabControl.cs
-* TabPage.cs
-* TextBox.cs
-* TextBoxBase.cs
-* ThreadExceptionDialog.cs
-* Timer.cs
-* added new files for Jackson Harper (jackson@latitudegeo.com)
-* needs to be mono styled, and may have other issues
-
-2002-6-5 DennisHayes <dennish@raytek.com>
-* ErrorProvider.cs
-* PrintControllerWithStatusDialog.cs
-* PrintDialog.cs
-* added new files for paul
-
-2002-6-5 DennisHayes <dennish@raytek.com>
-* StatusBarDrawItemEventArgs.cs
-* StatusBarPanel.cs
-* StatusBarPanelClickEventArgs.cs
-* StatusBarPanelCollection.cs
-* SystemInformation.cs
-* added new files for Richard Baumann (biochem333@nyc.rr.com)
-
-2002-6-5 DennisHayes <dennish@raytek.com>
-* removed, code moved to main class files, Form.cs, ImageList.cs, LinkLabel.cs,
-*   ListBox.cs, ListView.cs, ListViewItem.cs, Menu.cs, MonthCalendar.cs, ScrollableControl.cs
-* Form.ControlCollectison.cs
-* ImageList.ImageCollection.c
-* LinkLabel.LinkCollection.cs
-* ListBox.ObjectCollection.cs
-* ListBox.SelectedIndexCollection.cs
-* ListBox.SelectedObjectCollection.cs
-* ListView.CheckedListViewItemCollection.cs
-* ListView.CheckedIndexCollection.cs
-* ListView.ColumnHeaderCollection.cs
-* ListView.ListViewItemCollection.cs
-* ListView.SelectedIndexCollection.cs
-* ListView.SelectedListViewItemCollection.cs
-* ListViewItem.ListViewSubItem.cs
-* ListViewItem.ListViewSubItemCollection.cs
-* Menu.MenuItemCollection.cs
-* MonthCalendar.HitTestInfo.cs
-* ScrollableControl.DockPaddingEdges.cs
-
-2002-6-5 DennisHayes <dennish@raytek.com>
-* Checked in for Jackson Harper (jackson@latitudegeo.com)
-* ToolBar.cs
-* ToolBarButton.cs
-* ToolTip.cs
-* TrackBar.cs
-* TreeNode.cs
-* TreeNodeCollection.cs
-* TreeNodeConverter.cs
-* TreeView.cs
-* TreeViewCancelEventArgs.cs
-* TreeViewEventArgs.cs
-* TreeViewImageIndexConverter.cs
-* Just stubbs
-* New files added, work in progress cleanup and mono style needed.
-
-2002-6-5 DennisHayes <dennish@raytek.com>
-* checked in  for Stefan Warnke (StefanW@POBox.com)
-* UICuesEventArgs.cs
-* UpDownBase.cs
-* Just stubbs
-* New files, work in progress, needs cleanup and mono style
-
-2002-6-18 DennisHayes <dennish@raytek.com>
-* checked in  for Stefan Warnke (StefanW@POBox.com)
-* UICuesEventArgs.cs
-* UpDownBase.cs
-* Better comments and formatting
-
-2002-6-18 DennisHayes <dennish@raytek.com>
-* Checked in for Jackson Harper (jackson@latitudegeo.com)
-* ToolBar.cs
-* TabControl.cs
-* TabPage.cs
-* Added sub classes
-
-2002-6-24 DennisHayes <dennish@raytek.com>
-* AccessibleStates.cs
-* ArrangeDirection.cs
-* AccessibleEvents.cs
-* Added values for enums
-
-2002-6-24 DennisHayes <dennish@raytek.com>
-* BindingMemberInfo.cs
-* CaptionButton.cs
-* DataGridCell.cs
-* Message.cs
-* MessageBox.cs
-* Fixed bugs preventing compile
-
-2002-6-28 DennisHayes <dennish@raytek.com>
-* Checked in for Jackson Harper (jackson@latitudegeo.com)
-* Tooltip.cs
-* new class
 
