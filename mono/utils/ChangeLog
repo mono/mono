@@ -1,3 +1,7 @@
+2003-11-10  Dick Porter  <dick@ximian.com>
+
+	* strenc.c: Use platform-endian UTF16
+
 2003-10-28  Dick Porter  <dick@ximian.com>
 
 	* strenc.h:

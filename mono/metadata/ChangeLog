@@ -1,3 +1,7 @@
+2003-11-10  Dick Porter  <dick@ximian.com>
+
+	* locales.c: Use platform-endian UTF16
+
 2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c: Emit FILE and EXPORTEDTYPE tables.
