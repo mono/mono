@@ -1,3 +1,8 @@
+2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* image.c: In mono_image_open(), always use an absolute path name to
+	  look for already loaded images.
+
 2004-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall.c: Added define for CSIDL_FLAG_CREATE (0x8000) in case it is
