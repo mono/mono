@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,7 @@ using System.IO;
 using System.Security.Policy;
 using System.Text;
 
+using Mono.Security.Cryptography;
 using Mono.Xml;
 
 namespace System.Security.Permissions {
@@ -63,7 +64,6 @@ namespace System.Security.Permissions {
 			set { file = value; }
 		}
 #if NET_2_0
-		[MonoTODO ("Undocumented")]
 		public string Hex {
 			get { return hex; }
 			set { hex = value; }
@@ -134,6 +134,15 @@ namespace System.Security.Permissions {
 				else if (xml != null) {
 					pset = CreateFromXml (xml);
 				}
+#if NET_2_0
+				else if (hex != null) {
+					// Unicode isn't supported
+					//Encoding e = ((isUnicodeEncoded) ? System.Text.Encoding.Unicode : System.Text.Encoding.ASCII);
+					Encoding e = System.Text.Encoding.ASCII;
+					byte[] bin = CryptoConvert.FromHex (hex);
+					pset = CreateFromXml (e.GetString (bin, 0, bin.Length));
+				}
+#endif
 			}
 			return pset;
 		}

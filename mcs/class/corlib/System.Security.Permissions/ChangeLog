@@ -1,3 +1,12 @@
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetAttribute.cs: Implemented Hex property (2.0) now that
+	it is documented.
+	* RegistryPermission.cs: Added text to MonoTODO, i.e. lack of access 
+	control support.
+	* KeyContainerPermissionFlags.cs: Fixed values for ViewAcl and 
+	ChangeAcl (a hole as been left). This also corrects AllFlags.
+
 2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataProtectionPermission.cs: Moving to System.Security assembly.
