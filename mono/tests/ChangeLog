@@ -1,3 +1,7 @@
+2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am pinvoke3.cs pinvoke9.cs: Merge pinvoke9 into pinvoke3.
+
 2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke3.cs libtest.c: New test for returning delegates from a
