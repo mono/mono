@@ -98,4 +98,7 @@ System.Windows.Forms/HScrollBar.cs
 System.Windows.Forms/TrackBar.cs
 System.Windows.Forms/Orientation.cs
 System.Windows.Forms/TickStyle.cs
+System.Windows.Forms/ImageList.cs
+System.Windows.Forms/ImageListStreamer.cs
+System.Windows.Forms/ColorDepth.cs
 
