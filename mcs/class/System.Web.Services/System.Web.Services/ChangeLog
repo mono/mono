@@ -1,0 +1,8 @@
+2002-07-19 Tim Coleman  <tim@timcoleman.com>
+	* ChangeLog:
+	* TODOAttribute.cs:
+	* WebMethodAttribute.cs:
+	* WebService.cs:
+	* WebServiceAttribute.cs:
+	* WebServiceBindingAttribute.cs:
+		Initial implementation
