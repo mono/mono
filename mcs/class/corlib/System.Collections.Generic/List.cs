@@ -74,7 +74,7 @@ namespace System.Collections.Generic
 		
 		public void CheckRange (int idx, int count)
 		{
-			if (idx < 0 || count < 0 || idx + count > size)
+			if (idx < 0 || count < 0 || idx > size - count)
 				throw new ArgumentOutOfRangeException ();
 		}
 		
