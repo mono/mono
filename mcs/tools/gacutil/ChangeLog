@@ -1,3 +1,9 @@
+2004-06-07  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: Add -check_refs option to check if all referenced
+	assemblies are stron named. Fix some pathing issues when create
+	links for packaged. Update todds (C) info.
+
 2004-06-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* gacutil.cs: GetAssemblyInfo might return null now, check for

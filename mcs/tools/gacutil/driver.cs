@@ -2,10 +2,10 @@
 // Mono.Tools.GacUtil
 //
 // Author(s):
-//  Tood Berman <tberman@gentoo.org>
+//  Tood Berman <tberman@sevenl.net>
 //  Jackson Harper <jackson@ximian.com>
 //
-// Copyright 2003 Todd Berman
+// Copyright 2003, 2004 Todd Berman 
 // Copyright 2004 Novell, Inc (http://www.novell.com)
 //
 
@@ -50,16 +50,23 @@ namespace Mono.Tools {
 				Environment.Exit (1);
 			}
 
-			string libdir = GetLibDir ();
+			string libdir;
 			string name, package, gacdir, root;
 			name = package = root = gacdir = null;
+			bool check_refs = false;
 
 			for (int i=1; i<args.Length; i++) {
 				if (IsSwitch (args [i])) {
 
 					// for cmd line compatibility with other gacutils
+					// we always force it though
 					if (args [i] == "-f" || args [i] == "/f")
 						continue;
+
+					if (args [i] == "-check_refs" || args [i] == "/check_refs") {
+						check_refs = true;
+						continue;
+					}
 
 					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Option " + args [i] + " takes 1 argument");
@@ -97,9 +104,10 @@ namespace Mono.Tools {
 			}
 
 			string link_gacdir = gacdir;
+			string link_libdir = libdir;
 			if (root != null) {
-				libdir = Path.Combine (root, gacdir);
-				gacdir = Path.Combine (root, libdir);
+				libdir = CombinePaths (root, libdir);
+				gacdir = CombinePaths (root, gacdir);
 			}
 
 			switch (command) {
@@ -108,7 +116,7 @@ namespace Mono.Tools {
 					Console.WriteLine ("Option " + args [0] + " takes 1 argument");
 					Environment.Exit (1);
 				}
-				Install (name, package, gacdir, link_gacdir, libdir);
+				Install (check_refs, name, package, gacdir, link_gacdir, libdir, link_libdir);
 				break;
 			case Command.Uninstall:
 				if (name == null) {
@@ -132,8 +140,8 @@ namespace Mono.Tools {
 			return 0;
 		}
 
-		private static void Install (string name, string package,
-				string gacdir, string link_gacdir, string libdir)
+		private static void Install (bool check_refs, string name, string package,
+				string gacdir, string link_gacdir, string libdir, string link_libdir)
 		{
 			string failure_msg = "Failure adding assembly to the cache: ";
 
@@ -158,6 +166,12 @@ namespace Mono.Tools {
 				Environment.Exit (1);
 			}
 
+			if (check_refs && !CheckReferencedAssemblies (an)) {
+				Console.WriteLine (failure_msg + "Attempt to install an assembly that references non " +
+						"strong named assemblies with -check_refs enabled.");
+				Environment.Exit (1);
+			}
+
 			string conf_name = name + ".config";
 			string version_token = an.Version + "_" +
 					       an.CultureInfo.Name.ToLower (CultureInfo.InvariantCulture) + "_" +
@@ -176,8 +190,7 @@ namespace Mono.Tools {
 			} catch {
 				Console.WriteLine (failure_msg + "gac directories could not be created, " +
 						"possibly permission issues.");
-				// Environment.Exit (1);
-				throw;
+				Environment.Exit (1);
 			}
 
 			File.Copy (name, asmb_path, true);
@@ -185,9 +198,10 @@ namespace Mono.Tools {
 				File.Copy (conf_name, asmb_path + ".config", true);
 
 			if (package != null) {
-				string link_path = Path.Combine (Path.Combine (link_gacdir,an.Name), version_token);
+				string link_path = Path.Combine (Path.Combine (link_gacdir, an.Name), version_token);
 				string ref_dir = Path.Combine (libdir, package);
 				string ref_path = Path.Combine (ref_dir, asmb_file);
+
 				if (File.Exists (ref_path))
 					File.Delete (ref_path);
 				try {
@@ -197,7 +211,10 @@ namespace Mono.Tools {
 					Environment.Exit (1);
 				}
 				Symlink (Path.Combine (link_path, asmb_file), ref_path);
-				Console.WriteLine ("Package exported to: " + Path.Combine (libdir, package));
+
+				Console.WriteLine ("Package exported to: " + ref_path + " -> " +
+						Path.Combine (link_path, asmb_file));
+
 			}
 
 			Console.WriteLine ("{0} installed into the gac ({1})", an.Name, gacdir); 
@@ -318,6 +335,37 @@ namespace Mono.Tools {
 			Console.WriteLine ("Number of items = " + count);
 		}
 
+		private static bool CheckReferencedAssemblies (AssemblyName an)
+		{
+			AppDomain d = null;
+			try {
+				Assembly a;
+				AssemblyName corlib = typeof (object).Assembly.GetName ();
+				d = AppDomain.CreateDomain (an.Name);
+				a = d.Load (an);
+				foreach (AssemblyName ref_an in a.GetReferencedAssemblies ()) {
+					if (ref_an.Name == corlib.Name) // Just do a string compare so we can install on diff versions
+						continue;
+					byte [] pt = ref_an.GetPublicKeyToken ();
+					if (pt == null || pt.Length == 0) {
+						Console.WriteLine (ref_an);
+						return false;
+					}
+				}
+			} catch	 (Exception e) {
+				Console.WriteLine (e); // This should be removed pre beta3
+				return false;
+			} finally {
+				if (d != null) {
+					try {
+						AppDomain.Unload (d);
+					} catch { }
+				}
+			}
+
+			return true;
+		}
+
 		private static string GetSearchString (Hashtable asm_info)
 		{
 			if (asm_info.Keys.Count == 1)
@@ -424,6 +472,14 @@ namespace Mono.Tools {
 			return sb.ToString ();
 		}
 
+		private static string CombinePaths (string a, string b)
+		{
+			string dsc = Path.DirectorySeparatorChar.ToString ();
+			string sep = (a.EndsWith (dsc) ? String.Empty : dsc);
+			string end = (b.StartsWith (dsc) ? b.Substring (1) : b);
+			return String.Concat (a, sep, end);
+		}
+
 		private static void Usage ()
 		{
 			ShowHelp (false);
@@ -435,7 +491,7 @@ namespace Mono.Tools {
 			Console.WriteLine ("Usage: gacutil.exe <commands> [ <options> ]");
 			Console.WriteLine ("Commands:");
 
-			Console.WriteLine ("-i <assembly_path> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
+			Console.WriteLine ("-i <assembly_path> [-check_refs] [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
 			Console.WriteLine ("\tInstalls an assembly into the global assembly cache.");
 			if (detailed) {
 				Console.WriteLine ("\t<assembly_path> is the name of the file that contains the " +
@@ -494,8 +550,16 @@ namespace Mono.Tools {
 
 			Console.WriteLine ("-root <ROOTDIR>");
 			Console.WriteLine ("\tUsed by developers integrating this with automake tools or packaging tools\n" +
-					"\tthat require a prefix directory to  be  specified. The  root	 represents the\n" +
+					"\tthat require a prefix directory to  be specified. The root represents the\n" +
 					"\t\"libdir\" component of a prefix (typically prefix/lib).");
+			Console.WriteLine ();
+
+			Console.WriteLine ("-check_refs");
+			Console.WriteLine ("\tUsed to ensure that the assembly being installed into the GAC does not\n" +
+					"\treference any non strong named assemblies. Assemblies being installed to\n" +
+					"\tthe GAC should not reference non strong named assemblies, however the is\n" +
+					"\tan optional check.\n");
+
 		}
 	}
 }
