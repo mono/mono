@@ -1,3 +1,8 @@
+2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetCollection.cs: New class in Fx 2.0.
+	* SecureString.cs: New class in Fx 2.0. Not yet encrypted.
+
 2004-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyTypeLevel.cs: Removed duplicate license.
