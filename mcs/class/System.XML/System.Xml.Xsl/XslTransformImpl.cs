@@ -20,7 +20,7 @@ namespace System.Xml.Xsl {
 
 		public virtual void Load (string url, XmlResolver resolver)
 		{
-			Load (new XPathDocument (url).CreateNavigator (), resolver, null);
+			Load (new XPathDocument (url, XmlSpace.Preserve).CreateNavigator (), resolver, null);
 		}
 
 		public virtual void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
