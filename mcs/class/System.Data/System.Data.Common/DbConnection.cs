@@ -84,6 +84,12 @@ namespace System.Data.Common {
 
 		protected abstract DbCommand CreateDbCommand ();
 
+                [MonoTODO]
+                public virtual void EnlistTransaction (ITransaction transaction)
+                {
+			throw new NotImplementedException ();                        
+                }
+
 		[MonoTODO]
 		public virtual void EnlistDistributedTransaction (ITransaction transaction)
 		{

@@ -36,7 +36,7 @@ using System.Collections;
 using System.Data.Common;
 
 namespace System.Data.ProviderBase {
-	public abstract class DbParameterCollectionBase : DbParameterCollection
+	public abstract class DbParameterBaseCollection : DbParameterCollection
 	{
 		#region Fields
 
@@ -47,7 +47,7 @@ namespace System.Data.ProviderBase {
 		#region Constructors
 	
 		[MonoTODO]
-		protected DbParameterCollectionBase ()
+		protected DbParameterBaseCollection ()
 		{
 			list = new ArrayList ();
 		}

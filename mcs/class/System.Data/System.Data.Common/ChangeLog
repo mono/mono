@@ -1,3 +1,9 @@
+2004-11-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbProviderSupportedClasses.cs: Added correct enum values.
+	* DbConnection.cs: Missing virtual method EnlistTransaction Added.
+	* DbCommand.cs: Implemented ProviderFactory base factory methods.
+
 2004-11-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbConnectionStringBuilder.cs: Class for helping creation of db

@@ -52,6 +52,11 @@ namespace System.Data.ProviderBase {
 			this.behavior = behavior;
 		}
 
+                internal DbDataReaderBase (DbCommand command)
+                {
+                        
+                }
+
 		#endregion // Constructors
 
 		#region Properties

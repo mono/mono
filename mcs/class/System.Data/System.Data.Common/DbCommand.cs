@@ -54,7 +54,7 @@ namespace System.Data.Common {
 		}
 
 		protected abstract DbConnection DbConnection { get; set; }
-		protected abstract DbParameterCollection DbParameterCollection { get; set; }
+		protected abstract DbParameterCollection DbParameterCollection { get; }
 		protected abstract DbTransaction DbTransaction { get; set; }
 		public abstract bool DesignTimeVisible { get; set; }
 
@@ -109,21 +109,20 @@ namespace System.Data.Common {
 		}
 
 		public abstract int ExecuteNonQuery ();
-		public DbDataReader ExecutePageReader (CommandBehavior behavior, int startRecord, int maxRecords)
+		
+                public DbDataReader ExecutePageReader (CommandBehavior behavior, int startRecord, int maxRecords)
 		{
 			return ExecuteDbPageReader (behavior, startRecord, maxRecords);
 		}
 
-		[MonoTODO]
 		public DbDataReader ExecuteReader ()
 		{
-			throw new NotImplementedException ();
+			return ExecuteDbDataReader (CommandBehavior.Default);
 		}
 
-		[MonoTODO]
 		public DbDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();
+                        return ExecuteDbDataReader (behavior);
 		}
 
 		public abstract object ExecuteScalar ();

@@ -1,3 +1,12 @@
+2004-11-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbParameterCollectionBase.cs: Class name changed according to
+	the documentation
+	* DbDataReaderBase.cs: Added internal constructor to satisfy
+	SqlDataReader, which takes command object.
+	* DbConnectionBase.cs: Added additional methods overriding
+	DbConnection
+
 2003-12-28  Tim Coleman <tim@timcoleman.com>
 	* DbParameterBase.cs:
 		Correct type of ValueSize method to int

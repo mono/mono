@@ -57,6 +57,11 @@ namespace System.Data.ProviderBase {
 		{
 			this.connectionFactory = connectionFactory;
 		}
+
+                protected DbConnectionBase ()
+                {
+                        
+                }
 		
 		#endregion // Constructors
 
@@ -164,6 +169,12 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
+                [MonoTODO]
+                public override void EnlistTransaction (ITransaction transaction)
+                {
+			throw new NotImplementedException ();                        
+                }
+
 		[MonoTODO]
 		protected virtual DbMetaDataFactory GetMetaDataFactory (DbConnectionInternal internalConnection)
 		{
@@ -178,6 +189,24 @@ namespace System.Data.ProviderBase {
 
 		[MonoTODO]
 		public override void Open ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override DataTable GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override DataTable GetSchema (string collectionName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override DataTable GetSchema (string collectionName, string [] restrictionValues)
 		{
 			throw new NotImplementedException ();
 		}

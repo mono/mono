@@ -2,6 +2,7 @@
 // System.Data.Common.DbProviderSupportedClasses.cs
 //
 // Author:
+//   Sureshkumar T (tsureshkumar@novell.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2003
@@ -35,16 +36,16 @@
 namespace System.Data.Common {
 	public enum DbProviderSupportedClasses 
 	{
-		CodeAccessPermission,
-		DbCommand,
-		DbCommandBuilder,
-		DbCommandSet,
-		DbConnection,
-		DbDataAdapter,
-		DbDataSourceEnumerator,
-		DbParameter,
-		DbTable,
-		None
+                CodeAccessPermission = 0x80,
+                DbCommand = 0x02,
+                DbCommandBuilder = 0x10,
+                DbCommandSet = 0x100,
+                DbConnection = 0x01,
+                DbConnectionStringBuilder = 0x08,
+                DbDataAdapter = 0x20,
+                DbDataSourceEnumerator = 0x40,
+                DbParameter = 0x04,
+                None = 0x00
 	}
 }
 
