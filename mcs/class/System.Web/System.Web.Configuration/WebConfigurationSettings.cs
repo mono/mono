@@ -146,17 +146,17 @@ namespace System.Web.Configuration
 
 			string realpath = context.Request.MapPath (dir);
 			string lower = Path.Combine (realpath, "web.config");
-			string upper = Path.Combine (realpath, "Web.config");
-			bool isUpper = File.Exists (upper);
-			// This is a workaround for bug #56938
-			// '\\' checks whether environment is Windows or not
-			bool isLower = (Path.DirectorySeparatorChar == '\\') ? false : File.Exists (lower);
-			if (isUpper && isLower && Directory.GetFiles (realpath, "Web.config").Length < 2)
-				throw new ConfigurationException ("Both web.config and Web.config exist for " + dir);
+			bool isLower = File.Exists (lower);
+			string wcfile = null;
+			if (!isLower) {
+				string upper = Path.Combine (realpath, "Web.config");
+				bool isUpper = File.Exists (upper);
+				if (isUpper)
+					wcfile = upper;
+			} else {
+				wcfile = lower;
+			}
 
-			//
-
-			string wcfile = (isUpper) ? upper : (isLower) ? lower : null;
 			string tempDir = dir;
 			if (tempDir == HttpRuntime.AppDomainAppVirtualPath ||
 			    tempDir + "/" == HttpRuntime.AppDomainAppVirtualPath) {
