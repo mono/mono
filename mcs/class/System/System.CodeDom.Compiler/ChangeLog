@@ -1,3 +1,7 @@
+2004-03-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Executor.cs: Implemented.
+
 2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TempFileCollection.cs: fixed typo in Delete. Closes bug #54443.
