@@ -1,3 +1,7 @@
+2004-04-12 David Sheldon <dave-mono@earth.li>
+ 
+	* TimeZoneTest.cs: Make pass when in "GMT".
+  
 2004-04-09 David Sheldon <dave-mono@earth.li>
  
     * ConvertTest.cs: Tests for Convert.ToInt32(string, base), with

@@ -102,6 +102,37 @@ public class TimeZoneTest : TestCase {
 		AssertEquals("C14", 324000000000L, t1.GetUtcOffset (d5).Ticks);
 	}
 
+	private void GMT (TimeZone t1) {
+		// Probably wont work on MS.NET, but is better than nothing. Where do
+		// we change our implementation to match theirs?
+		
+		AssertEquals("D01", "GMT", t1.StandardName);
+		AssertEquals("D02", "BST", t1.DaylightName);
+	
+		DaylightTime d1 = t1.GetDaylightChanges (2002);
+		AssertEquals("D03", "03/31/2002 01:00:00", d1.Start.ToString ("G"));
+		AssertEquals("D04", "10/27/2002 01:00:00", d1.End.ToString ("G"));
+		AssertEquals("D05", 36000000000L, d1.Delta.Ticks);
+	
+		DaylightTime d2 = t1.GetDaylightChanges (1996);
+		AssertEquals("D06", "03/31/1996 01:00:00", d2.Start.ToString ("G"));
+		AssertEquals("D07", "10/27/1996 01:00:00", d2.End.ToString ("G"));
+		AssertEquals("D08", 36000000000L, d2.Delta.Ticks);
+	
+		DateTime d3 = new DateTime (2002,2,25);
+		AssertEquals("D09", false, t1.IsDaylightSavingTime (d3));
+		DateTime d4 = new DateTime (2002,4,2);
+		AssertEquals("D10", true, t1.IsDaylightSavingTime (d4));
+		DateTime d5 = new DateTime (2002,11,4);
+		AssertEquals("D11", false, t1.IsDaylightSavingTime (d5));
+	
+		AssertEquals("D12", 0L, t1.GetUtcOffset (d3).Ticks);
+		AssertEquals("D13", 36000000000L, t1.GetUtcOffset (d4).Ticks);
+		AssertEquals("D14", 0L, t1.GetUtcOffset (d5).Ticks);
+	}
+
+
+
 	public void TestCtors ()
 	{
 		TimeZone t1 = TimeZone.CurrentTimeZone;
@@ -114,6 +145,9 @@ public class TimeZoneTest : TestCase {
 				break;
 			case "Tokyo Standard Time":
 				TST (t1);
+				break;
+			case "GMT":
+				GMT (t1);
 				break;
 			default:
 				Fail ("Your time zone (" + t1.StandardName + ") isn't defined in the test case");
