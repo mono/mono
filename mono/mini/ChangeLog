@@ -1,4 +1,8 @@
 
+Fri May 14 15:13:06 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: fix make dist as well...
+
 Fri May 14 14:30:13 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, cfold.c: fix style.
