@@ -1,3 +1,7 @@
+// Author: Tim Coleman (tim@timcoleman.com)
+// (C) Copyright 2002 Tim Coleman
+
+
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -10,6 +14,29 @@ namespace MonoTests.System.Data.SqlTypes
 		protected override void RunTest ()
 		{
 			TestCreate ();
+
+			// property tests
+
+			TestIsNullProperty ();
+
+			// method tests
+
+			TestAdd ();
+			TestBitwiseAnd ();
+			TestBitwiseOr ();
+			TestDivide ();
+			TestEquals ();
+			TestGreaterThan ();
+			TestGreaterThanOrEqual ();
+			TestLessThan ();
+			TestLessThanOrEqual ();
+			TestMod ();
+			TestMultiply ();
+			TestNotEquals ();
+			TestOnesComplement ();
+			TestSubtract ();
+			TestConversionMethods ();
+			TestXor ();
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2002-05-05  Tim Coleman <tim@timcoleman.com>
+	* TheTests.cs:
+	* System.Data.SqlTypes/SqlInt32Test.cs:
+		More test cases for System.Data.SqlTypes.SqlInt32
+
 2002-05-03  Tim Coleman <tim@timcoleman.com>
 	* Added ChangeLog to test dir
 	* Added NUnit framework necessary for make test
