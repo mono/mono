@@ -152,26 +152,12 @@ namespace MonoTests.System.Security.Cryptography {
 		public void SetUp () 
 		{
 			if (readStream == null) {
-				readStream = new FileStream ("read", FileMode.OpenOrCreate, FileAccess.Read);
-				writeStream = new FileStream ("write", FileMode.OpenOrCreate, FileAccess.Write);
+				readStream = new MemoryStream (new byte [0], false);
+				writeStream = new MemoryStream (new byte [0], true);
 				aes = SymmetricAlgorithm.Create ();
 				encryptor = aes.CreateEncryptor ();
 				decryptor = aes.CreateEncryptor ();
 			}
-		}
-
-		[TearDown]
-		public void TearDown () 
-		{
-			try {
-				if (File.Exists ("read"))
-					File.Delete ("read");
-				if (File.Exists ("write"))
-					File.Delete ("write");
-				if (File.Exists ("*.tmp"))
-					File.Delete ("*.tmp");
-			}
-			catch {}
 		}
 
 		public void AssertEquals (string msg, byte[] array1, byte[] array2)
@@ -211,12 +197,20 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Write);
 		}
-
+		
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void StreamWriteModeRead () 
 		{
-			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Read);
+			// This needs a stream which can't be read from; memory stream won't do that.
+			string f = Path.GetTempFileName ();
+			FileStream fs = new FileStream (f, FileMode.OpenOrCreate, FileAccess.Write);
+			try {
+				cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Read);
+			} finally {
+				fs.Close ();
+				File.Delete (f);
+			}
 		}
 
 		[Test]
@@ -294,9 +288,9 @@ namespace MonoTests.System.Security.Cryptography {
 		public void FlushFinalBlock_Dual () 
 		{
 			// do no corrupt writeStream in further tests
-			using (FileStream fs = new FileStream ("FlushFinalBlock_Dual.tmp", FileMode.OpenOrCreate, FileAccess.Write)) {
+			using (Stream s = new MemoryStream ()) {
 				byte[] data = {0, 1, 2, 3, 4, 5, 6, 7};
-				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Write);
+				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Write);
 				cs.Write (data, 0, data.Length);
 				cs.FlushFinalBlock ();
 				cs.FlushFinalBlock ();
@@ -309,8 +303,8 @@ namespace MonoTests.System.Security.Cryptography {
 		public void FlushFinalBlock_Disposed () 
 		{
 			// do no corrupt writeStream in further tests
-			using (FileStream fs = new FileStream ("FlushFinalBlock_Disposed.tmp", FileMode.OpenOrCreate, FileAccess.Write)) {
-				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Write);
+			using (Stream s = new MemoryStream ()) {
+				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Write);
 				cs.Clear ();
 				cs.FlushFinalBlock ();
 			}
@@ -322,9 +316,9 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Read_Disposed () 
 		{
 			// do no corrupt readStream in further tests
-			using (FileStream fs = new FileStream ("read", FileMode.OpenOrCreate, FileAccess.Read)) {
+			using (Stream s = new MemoryStream ()) {
 				byte[] buffer = new byte [8];
-				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Read);
+				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Read);
 				cs.Clear ();
 				cs.Read (buffer, 0, 8);
 			}
@@ -342,9 +336,9 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Read_Disposed_Break () 
 		{
 			// do no corrupt readStream in further tests
-			using (FileStream fs = new FileStream ("read", FileMode.OpenOrCreate, FileAccess.Read)) {
+			using (Stream s = new MemoryStream ()) {
 				byte[] buffer = new byte [8];
-				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Read);
+				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Read);
 				int len = cs.Read (buffer, 0, 4);
 				AssertEquals ("Read 4", 4, len);
 				cs.Clear ();
@@ -444,9 +438,9 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Write_Disposed () 
 		{
 			// do no corrupt writeStream in further tests
-			using (FileStream fs = new FileStream ("Write_Disposed.tmp", FileMode.OpenOrCreate, FileAccess.Write)) {
+			using (Stream s = new MemoryStream ()) {
 				byte[] buffer = new byte [8];
-				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Write);
+				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Write);
 				cs.Clear ();
 				cs.Write (buffer, 0, 8);
 			}

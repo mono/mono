@@ -18,6 +18,7 @@ using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.IO;
 using System.Security;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
@@ -54,7 +55,7 @@ public class TypeBuilderTest : Assertion
 
 		assembly = 
 			Thread.GetDomain().DefineDynamicAssembly(
-				assemblyName, AssemblyBuilderAccess.RunAndSave, "c:\\");
+				assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 
 		module = assembly.DefineDynamicModule("module1");
 	}

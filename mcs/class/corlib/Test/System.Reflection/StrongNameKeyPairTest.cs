@@ -30,16 +30,20 @@ public class StrongNameKeyPairTest : Assertion {
 
 	private StrongNameKeyPair snpk;
 
+	string file;
+	
+	[SetUp]
+	public void SetUp () 
+	{
+		file = Path.GetTempFileName ();
+	}
+	
 	[TearDown]
 	public void TearDown () 
 	{
 		try {
-			if (File.Exists ("test.snk"))
-				File.Delete ("test.snk");
-			if (File.Exists ("test.bad"))
-				File.Delete ("test.bad");
-		}
-		catch {} // do no affect unit tests
+			File.Delete (file);
+		} catch {} // do no affect unit tests
 	}
 
 	[Test]
@@ -77,11 +81,11 @@ public class StrongNameKeyPairTest : Assertion {
 	[Test]
 	public void ConstructorFileStream () 
 	{
-		FileStream testFile = new FileStream ("test.snk", FileMode.OpenOrCreate);
+		FileStream testFile = new FileStream (file, FileMode.OpenOrCreate);
 		testFile.Write (test, 0, test.Length);
 		testFile.Close ();
 
-		FileStream fs = new FileStream ("test.snk", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		FileStream fs = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		snpk = new StrongNameKeyPair (fs);
 		fs.Close ();
 
@@ -92,14 +96,14 @@ public class StrongNameKeyPairTest : Assertion {
 	[ExpectedException (typeof (ArgumentException))]
 	public void ConstructorInvalidFileStream () 
 	{
-		FileStream testFile = new FileStream ("test.bad", FileMode.OpenOrCreate);
+		FileStream testFile = new FileStream (file, FileMode.OpenOrCreate);
 		byte[] badheader = { 0xB, 0xAD };
 		testFile.Write (badheader, 0, badheader.Length);
 		testFile.Write (test, 0, test.Length);
 		testFile.Close ();
 
 		// doesn't work on DLL files (actually it works on SNK files)
-		FileStream fs = new FileStream ("test.bad", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		FileStream fs = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		snpk = new StrongNameKeyPair (fs);
 		fs.Close ();
 

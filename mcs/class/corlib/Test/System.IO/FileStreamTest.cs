@@ -330,21 +330,22 @@ namespace MonoTests.System.IO
 		{
 			FileStream fs = null;
 			FileStream fs2 = null;
+			string fn = Path.Combine (TempFolder, "temp");
 			try {
-				if (!File.Exists ("temp")) {
-					TextWriter tw = File.CreateText ("temp");
+				if (!File.Exists (fn)) {
+					TextWriter tw = File.CreateText (fn);
 					tw.Write ("FOO");
 					tw.Close ();
 				}
-				fs = new FileStream ("temp", FileMode.Open, FileAccess.Read);
-				fs2 = new FileStream ("temp", FileMode.Open, FileAccess.Read);
+				fs = new FileStream (fn, FileMode.Open, FileAccess.Read);
+				fs2 = new FileStream (fn, FileMode.Open, FileAccess.Read);
 			} finally {
 				if (fs != null)
 					fs.Close ();
 				if (fs2 != null)
 					fs2.Close ();
-				if (File.Exists ("temp"))
-					File.Delete ("temp");
+				if (File.Exists (fn))
+					File.Delete (fn);
 			}
 		}
 
@@ -352,20 +353,21 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void CtorAccess1Read2Write ()
 		{
+			string fn = Path.Combine (TempFolder, "temp");
 			FileStream fs = null;
 			try {
-				if (!File.Exists ("temp")) {
-					using (TextWriter tw = File.CreateText ("temp")) {
+				if (!File.Exists (fn)) {
+					using (TextWriter tw = File.CreateText (fn)) {
 						tw.Write ("FOO");
 					}
 				}
-				fs = new FileStream ("temp", FileMode.Open, FileAccess.Read);
-				fs = new FileStream ("temp", FileMode.Create, FileAccess.Write);
+				fs = new FileStream (fn, FileMode.Open, FileAccess.Read);
+				fs = new FileStream (fn, FileMode.Create, FileAccess.Write);
 			} finally {
 				if (fs != null)
 					fs.Close ();
-				if (File.Exists ("temp"))
-					File.Delete ("temp");
+				if (File.Exists (fn))
+					File.Delete (fn);
 			}
 		}
 
@@ -373,17 +375,18 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void CtorAccess1Write2Write ()
 		{
+			string fn = Path.Combine (TempFolder, "temp");
 			FileStream fs = null;
 			try {
-				if (File.Exists ("temp"))
-					File.Delete ("temp");
-				fs = new FileStream ("temp", FileMode.Create, FileAccess.Write);
-				fs = new FileStream ("temp", FileMode.Create, FileAccess.Write);
+				if (File.Exists (fn))
+					File.Delete (fn);
+				fs = new FileStream (fn, FileMode.Create, FileAccess.Write);
+				fs = new FileStream (fn, FileMode.Create, FileAccess.Write);
 			} finally {
 				if (fs != null)
 					fs.Close ();
-				if (File.Exists ("temp"))
-					File.Delete ("temp");
+				if (File.Exists (fn))
+					File.Delete (fn);
 			}
 		}
 
@@ -1080,11 +1083,16 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void SetLengthWithClosedBaseStream ()
 		{
-			FileStream fs = new FileStream ("temp", FileMode.Create);
-			BufferedStream bs = new BufferedStream (fs);
-			fs.Close ();
-			
-			bs.SetLength (1000);
+			string fn = Path.Combine (TempFolder, "temp");
+			try {
+				FileStream fs = new FileStream (fn, FileMode.Create);
+				BufferedStream bs = new BufferedStream (fs);
+				fs.Close ();
+				
+				bs.SetLength (1000);
+			} finally {
+				File.Delete (fn);
+			}
 		}
         }
 }
