@@ -1,3 +1,7 @@
+2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: updated and reformatted.
+
 2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.build: added /debug flag. I wanna see line numbers in
