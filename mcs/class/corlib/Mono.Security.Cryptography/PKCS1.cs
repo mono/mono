@@ -53,11 +53,11 @@ namespace Mono.Security.Cryptography {
 			else if (hash is SHA512)
 				return emptySHA512;
 			else
-				return null;
+				return hash.ComputeHash ((byte[])null);
 		}
 	
 		// PKCS #1 v.2.1, Section 4.1
-		// I2OSP converts a nonnegative integer to an octet string of a specified length.
+		// I2OSP converts a non-negative integer to an octet string of a specified length.
 		public static byte[] I2OSP (int x, int size) 
 		{
 			byte[] array = BitConverter.GetBytes (x);
@@ -77,7 +77,7 @@ namespace Mono.Security.Cryptography {
 		public static byte[] OS2IP (byte[] x) 
 		{
 			int i = 0;
-			while ((x[i++] == 0x00) && (i < x.Length));
+			while ((x [i++] == 0x00) && (i < x.Length));
 			i--;
 			if (i > 0) {
 				byte[] result = new byte [x.Length - i];
@@ -246,10 +246,10 @@ namespace Mono.Security.Cryptography {
 	
 		// PKCS #1 v.2.1, Section 8.2.1
 		// RSASSA-PKCS1-V1_5-SIGN (K, M)
-		public static byte[] Sign_v15 (RSA rsa, string oid, byte[] hash) 
+		public static byte[] Sign_v15 (RSA rsa, HashAlgorithm hash, byte[] hashValue) 
 		{
-			int size = rsa.KeySize / 8;
-			byte[] EM = Encode_v15 (oid, hash, size);
+			int size = (rsa.KeySize >> 3); // div 8
+			byte[] EM = Encode_v15 (hash, hashValue, size);
 			byte[] m = OS2IP (EM);
 			byte[] s = RSASP1 (rsa, m);
 			byte[] S = I2OSP (s, size);
@@ -258,13 +258,13 @@ namespace Mono.Security.Cryptography {
 	
 		// PKCS #1 v.2.1, Section 8.2.2
 		// RSASSA-PKCS1-V1_5-VERIFY ((n, e), M, S)
-		public static bool Verify_v15 (RSA rsa, string oid, byte[] hash, byte[] signature) 
+		public static bool Verify_v15 (RSA rsa, HashAlgorithm hash, byte[] hashValue, byte[] signature) 
 		{
-			int size = rsa.KeySize / 8;
+			int size = (rsa.KeySize >> 3); // div 8
 			byte[] s = OS2IP (signature);
-			byte[] m = RSAVP1 (rsa, signature);
+			byte[] m = RSAVP1 (rsa, s);
 			byte[] EM2 = I2OSP (m, size);
-			byte[] EM = Encode_v15 (oid, hash, size);
+			byte[] EM = Encode_v15 (hash, hashValue, size);
 			bool result = Compare (EM, EM2);
 			if (!result) {
 				// NOTE: some signatures don't include the hash OID (pretty lame but real)
@@ -272,74 +272,35 @@ namespace Mono.Security.Cryptography {
 				if ((EM2 [0] != 0x00) || (EM2 [0] != 0x01))
 					return false;
 				// TODO: add more validation
-				byte[] decryptedHash = new byte [hash.Length];
-				Array.Copy (EM2, EM2.Length - hash.Length, decryptedHash, 0, decryptedHash.Length);
-				result = Compare (decryptedHash, hash);
+				byte[] decryptedHash = new byte [hashValue.Length];
+				Array.Copy (EM2, EM2.Length - hashValue.Length, decryptedHash, 0, decryptedHash.Length);
+				result = Compare (decryptedHash, hashValue);
 			}
 			return result;
 		}
 	
-		// Note: MD2 isn't supported in .NET framework
-		private static byte[] md2const = { 0x30, 0x20, 0x30, 0x0c, 0x06, 0x08, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x02, 0x02, 0x05, 0x00, 0x04, 0x10 };
-		private static byte[] md5const = { 0x30, 0x20, 0x30, 0x0c, 0x06, 0x08, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x02, 0x05, 0x05, 0x00, 0x04, 0x10 };
-		private static byte[] sha1const = { 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x05, 0x00, 0x04, 0x14 };
-		private static byte[] sha256const = { 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20 };
-		private static byte[] sha384const = { 0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30 };
-		private static byte[] sha512const = { 0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40 };
-	
 		// PKCS #1 v.2.1, Section 9.2
 		// EMSA-PKCS1-v1_5-Encode
-		public static byte[] Encode_v15 (string oid, byte[] hash, int emLength) 
+		public static byte[] Encode_v15 (HashAlgorithm hash, byte[] hashValue, int emLength) 
 		{
-			string e = "bad hash length for ";
-			byte[] t = null;
-			switch (oid) {
-				case "1.3.14.3.2.26":
-					// SHA1
-					if (hash.Length != 20)
-						throw new CryptographicException (e + oid);
-					t = new byte [35];
-					Array.Copy (sha1const, 0, t, 0, sha1const.Length);
-					break;
-				case "1.2.840.113549.2.2":
-					// MD2
-					if (hash.Length != 16)
-						throw new CryptographicException (e + oid);
-					t = new byte [34];
-					Array.Copy (md2const, 0, t, 0, md2const.Length);
-					break;
-				case "1.2.840.113549.2.5":
-					// MD5
-					if (hash.Length != 16)
-						throw new CryptographicException (e + oid);
-					t = new byte [34];
-					Array.Copy (md5const, 0, t, 0, md5const.Length);
-					break;
-				case "2.16.840.1.101.3.4.1":
-					// SHA256
-					if (hash.Length != 32)
-						throw new CryptographicException (e + oid);
-					t = new byte [51];
-					Array.Copy (sha256const, 0, t, 0, sha256const.Length);
-					break;
-				case "2.16.840.1.101.3.4.2":
-					// SHA384
-					if (hash.Length != 48)
-						throw new CryptographicException (e + oid);
-					t = new byte [67];
-					Array.Copy (sha384const, 0, t, 0, sha384const.Length);
-					break;
-				case "2.16.840.1.101.3.4.3":
-					// SHA512
-					if (hash.Length != 64)
-						throw new CryptographicException (e + oid);
-					t = new byte [83];
-					Array.Copy (sha512const, 0, t, 0, sha512const.Length);
-					break;
-				default:
-					return null;
-			}
-			Array.Copy (hash, 0, t, t.Length - hash.Length, hash.Length);
+			if (hashValue.Length != (hash.HashSize >> 3))
+				throw new CryptographicException ("bad hash length for " + hash.ToString ());
+
+			// DigestInfo ::= SEQUENCE {
+			//	digestAlgorithm AlgorithmIdentifier,
+			//	digest OCTET STRING
+			// }
+			string oid = CryptoConfig.MapNameToOID (hash.ToString ());
+			ASN1 digestAlgorithm = new ASN1 (0x30);
+			digestAlgorithm.Add (new ASN1 (CryptoConfig.EncodeOID (oid)));
+			digestAlgorithm.Add (new ASN1 (0x05));			// NULL
+			ASN1 digest = new ASN1 (0x04, hashValue);
+			ASN1 digestInfo = new ASN1 (0x30);
+			digestInfo.Add (digestAlgorithm);
+			digestInfo.Add (digest);
+
+			byte[] t = digestInfo.GetBytes ();
+			Array.Copy (hashValue, 0, t, t.Length - hashValue.Length, hashValue.Length);
 	
 			int PSLength = System.Math.Max (8, emLength - t.Length - 3);
 			// PS = PSLength of 0xff

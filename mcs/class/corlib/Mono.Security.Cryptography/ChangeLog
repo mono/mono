@@ -1,3 +1,16 @@
+2003-06-11  Sebastien Pouliot <spouliot@motus.com>
+
+	* DSAManaged.cs: Refactored from DSACryptoServiceProvider.cs. Cannot
+	be reused outside [ms]corlib because DSA constructor is internal :-(
+
+	* PKCS1.cs: Now support any hash algorithm when encoding PKCS 1.5
+	(i.e. not limited to pre-calculated values for known hashes). Some
+	other API changes to ease the use of other hash algorithms.
+
+	* RSAManaged.cs: Refactored from RSACryptoServiceProvider.cs. This 
+	class is required for custom PKCS#1 padding in SSL (which is not 
+	possible using RSACryptoServiceProvider).
+
 2003-05-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS1.cs: Corrected I2OSP to match PKCS#1 v.2.1 test vector
