@@ -1,5 +1,5 @@
 thisdir = tools
-SUBDIRS = cilc corcompare ictool mono-xsd security wsdl
+SUBDIRS = cilc corcompare ictool mono-xsd security wsdl genxs
 DIST_ONLY_SUBDIRS = SqlSharp
 include ../build/rules.make
 

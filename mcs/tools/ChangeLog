@@ -1,3 +1,7 @@
+2003-09-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Makefile: Added genxs directory.
+
 2003-08-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Makefile: Added wsdl directory.
