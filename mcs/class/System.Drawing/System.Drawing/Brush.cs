@@ -44,6 +44,12 @@ namespace System.Drawing {
                         case BrushType.BrushTypeSolidColor:
                                 return new SolidBrush (brush);
 
+                        case BrushType.BrushTypeHatchFill:
+                                return new HatchBrush (brush);
+
+                        case BrushType.BrushTypeTextureFill:
+                                return new TextureBrush (brush);
+
                         default:
                                 throw new NotImplementedException ();
                         }

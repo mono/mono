@@ -4,8 +4,10 @@
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Alexandre Pigolkine(pigolkine@gmx.de)
+//   Ravindra (rkumar@novell.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002 Ximian, Inc.
+// (C) 2004 Novell, Inc.
 //
 using System;
 
@@ -20,15 +22,21 @@ namespace System.Drawing
                         : base (ptr)
                 {
 			int val;
-			GDIPlus.GdipGetSolidFillColor (ptr, out val);
+			Status status = GDIPlus.GdipGetSolidFillColor (ptr, out val);
+			if (status != Status.Ok)
+				throw GetException (status);
+
 			color = Color.FromArgb (val);
                 }
 
 		public SolidBrush (Color color)
                 {
-			this.Color = color;
+			this.color = color;
 			int brush;
-			GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
+			Status status = GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
+			if (status != Status.Ok)
+				throw GetException (status);
+
 			nativeObject = (IntPtr) brush;
 		}
 
@@ -37,8 +45,12 @@ namespace System.Drawing
 				return color;
 			}
 			set {
-				if (isModifiable)
+				if (isModifiable) {
 					color = value;
+					Status status = GDIPlus.GdipSetSolidFillColor (nativeObject, value.ToArgb ());
+					if (status != Status.Ok)
+						throw GetException (status);
+				}
 				else
 					throw new ArgumentException ("You may not change this Brush because it does not belong to you.");
 			}
@@ -51,8 +63,11 @@ namespace System.Drawing
 		
 		protected override void Dispose (bool disposing)
 		{
-			if (isModifiable)
-				GDIPlus.GdipDeleteBrush (nativeObject);
+			if (isModifiable) {
+				Status status = GDIPlus.GdipDeleteBrush (nativeObject);
+				if (status != Status.Ok)
+					throw GetException (status);
+			}
 			else
 				throw new ArgumentException ("You may not change this Brush because it does not belong to you.");
 		}

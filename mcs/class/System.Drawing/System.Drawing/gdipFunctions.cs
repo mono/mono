@@ -108,7 +108,19 @@ namespace System.Drawing {
 		static internal extern Status GdipCreateSolidFill (int color, out int brush);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetSolidFillColor (IntPtr brush, out int color);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetSolidFillColor (IntPtr brush, int color);
 		
+		// Hatch Brush functions
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateHatchBrush (HatchStyle hatchstyle, int foreColor, int backColor, out IntPtr brush);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetHatchStyle (IntPtr brush, out HatchStyle hatchstyle);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetHatchForegroundColor (IntPtr brush, out int foreColor);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetHatchBackgroundColor (IntPtr brush, out int backColor);
+
 		// Texture brush functions
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetTextureImage (IntPtr texture, out IntPtr image);

@@ -1,3 +1,11 @@
+2004-02-05  Ravindra  <rkumar@novell.com>
+
+	* gdipFunctions.cs: Added methods for HatchBrush and 
+	SolidBrush.
+	* SolidBrush.cs: Added checks for status.
+	* Brush.cs: Added support for HatchBrush and TextureBrush 
+	types in internal CreateBrush() method.
+
 2004-02-03  Jordi Mas  <jordi@ximian.com>
 	* Font.cs: Setup font properties
 
