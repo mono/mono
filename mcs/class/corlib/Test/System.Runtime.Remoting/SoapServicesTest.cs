@@ -193,6 +193,19 @@ namespace MonoTests.System.Runtime.Remoting
 		[Category("NotWorking")]
 		public void TestSoapActions_NotWorking ()
 		{
+			string act;
+			MethodBase mb;
+
+			mb = typeof(SoapTest).GetMethod ("FesAlgo");
+			act = SoapServices.GetSoapActionFromMethodBase (mb);
+
+			mb = typeof(SoapTest).GetMethod ("FesAlgoMes");
+			SoapServices.RegisterSoapActionForMethodBase (mb, "anotheraction");
+			act = SoapServices.GetSoapActionFromMethodBase (mb);
+
+			mb = typeof(SoapTest).GetMethod ("FesAlgoMesEspecial");
+			act = SoapServices.GetSoapActionFromMethodBase (mb);
+
 			string typeName, methodName;
 			bool res;
 
@@ -217,8 +230,11 @@ namespace MonoTests.System.Runtime.Remoting
 			AssertEquals ("S1", "myaction", act);
 
 			mb = typeof(SoapTest).GetMethod ("FesAlgoMes");
-			SoapServices.RegisterSoapActionForMethodBase (mb, "anotheraction");
 			act = SoapServices.GetSoapActionFromMethodBase (mb);
+			if (act != "anotheraction")
+			{
+				SoapServices.RegisterSoapActionForMethodBase (mb, "anotheraction");
+			}
 			AssertEquals ("S2", "anotheraction", act);
 
 			mb = typeof(SoapTest).GetMethod ("FesAlgoMesEspecial");
