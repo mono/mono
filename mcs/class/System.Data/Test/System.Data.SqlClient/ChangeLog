@@ -1,3 +1,7 @@
+2004-09-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SqlClientPermissionTest.cs: New. Unit tests for SqlClientPermission.
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SqlClientPermissionAttributeTest.cs: New. Unit tests for SqlClient
