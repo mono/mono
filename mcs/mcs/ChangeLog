@@ -1,3 +1,7 @@
+2004-06-18  Marek Safar  <marek.safar@seznam.cz>
+
+ 	* typemanager.cs (GetArgumentTypes): Faster implementation.
+
 2004-06-18  Martin Baulig  <martin@ximian.com>
 
 	* attribute.cs (Attribute.Resolve): Check whether we're an

@@ -1695,19 +1695,23 @@ public class TypeManager {
 	/// </summary>
 	static public Type [] GetArgumentTypes (MethodBase mb)
 	{
-		if (method_arguments.Contains (mb))
-			return (Type []) method_arguments [mb];
-		else {
-			ParameterInfo [] pi = mb.GetParameters ();
-			int c = pi.Length;
-			Type [] types = new Type [c];
-			
+		object t = method_arguments [mb];
+		if (t != null)
+			return (Type []) t;
+
+		ParameterInfo [] pi = mb.GetParameters ();
+		int c = pi.Length;
+		Type [] types;
+
+		if (c == 0) {
+			types = NoTypes;
+		} else {
+			types = new Type [c];
 			for (int i = 0; i < c; i++)
 				types [i] = pi [i].ParameterType;
-
-			method_arguments.Add (mb, types);
-			return types;
 		}
+		method_arguments.Add (mb, types);
+		return types;
 	}
 
 	/// <summary>
