@@ -1,5 +1,11 @@
 2005-03-16 Marek Safar <marek.safar@seznam.cz>
 
+	* Makefile: Enabled TestRunner for default profile.
+	
+	* know-issues-*: Updated.
+
+2005-03-16 Marek Safar <marek.safar@seznam.cz>
+
 	* TestRunner.cs: Add support for (no errors, ignore errors).
 
 2005-03-16  Raja R Harinath  <rharinath@novell.com>

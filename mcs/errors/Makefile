@@ -22,7 +22,8 @@ DISTFILES = \
 	$(wildcard *.response)	\
 	mcs-expect-no-error mcs-expect-wrong-error mcs-ignore-tests \
 	gmcs-expect-no-error gmcs-expect-wrong-error gmcs-ignore-tests \
-	generics-expect-no-error generics-expect-wrong-error
+	generics-expect-no-error generics-expect-wrong-error \
+	TestRunner.exe know-issues-*
 
 all-local: CS0118-2-lib.dll CS0122-10-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
@@ -37,24 +38,20 @@ run-test-ondotnet-local:
 
 run-test-local: run-mcs-tests 
 
-TEST_PROFILE=mcs
-
-ifeq (net_2_0, $(PROFILE))
-TEST_PROFILE=gmcs
-run-test-local: run-generics-tests
-endif
-
 test-everything:
 	$(MAKE) PROFILE=default run-test
 	$(MAKE) PROFILE=net_2_0 run-test
 
-run-mcs-tests:
-	-rm -f $(TEST_PROFILE).log
-	@./do-tests.pl $(TEST_PROFILE) '$(CSCOMPILE)' "cs*.cs"
-
-run-generics-tests:
+run-mcs-tests: TestRunner.exe
+ifeq (net_2_0, $(PROFILE))
 	-rm -f generics.log
 	@./do-tests.pl generics '$(GENERICS_COMPILE)' "gcs*.cs"
+
+#	Is disabled until we solve problem with running
+#	$(RUNTIME) TestRunner.exe "2" $(topdir)/class/lib/$(PROFILE)/gmcs.exe know-issues-gmcs
+else
+	$(RUNTIME) TestRunner.exe "1" $(topdir)/class/lib/$(PROFILE)/mcs.exe know-issues-mcs
+endif
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
@@ -68,3 +65,6 @@ install-local uninstall-local:
 
 %-module.dll: %-module.cs
 	$(BOOTSTRAP_MCS) /target:module /out:$@ $<
+
+TestRunner.exe:
+	$(CSCOMPILE) TestRunner.cs
