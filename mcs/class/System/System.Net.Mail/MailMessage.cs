@@ -30,7 +30,6 @@
 
 #if NET_2_0
 
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net.Mime;
 using System.Text;
@@ -41,16 +40,16 @@ namespace System.Net.Mail {
 	{
 		#region Fields
 
-		Collection<Attachment> alternateViews;
-		Collection<Attachment> attachments;
-		Collection<MailAddress> bcc;
+		AttachmentCollection alternateViews;
+		AttachmentCollection attachments;
+		MailAddressCollection bcc;
 		string body;
 		ContentType bodyContentType;
 		Encoding bodyEncoding;
-		Collection<MailAddress> cc;
+		MailAddressCollection cc;
 		MailAddress from;
 		NameValueCollection headers;
-		Collection<MailAddress> to;
+		MailAddressCollection to;
 		string subject;
 		Encoding subjectEncoding;
 
@@ -62,13 +61,13 @@ namespace System.Net.Mail {
 		{
 			From = from;
 
-			this.to = new Collection<MailAddress> ();
+			this.to = new MailAddressCollection ();
 			this.to.Add (to);
 
-			alternateViews = new Collection<Attachment> ();
-			attachments = new Collection<Attachment> ();
-			bcc = new Collection<MailAddress> ();
-			cc = new Collection<MailAddress> ();
+			alternateViews = new AttachmentCollection ();
+			attachments = new AttachmentCollection ();
+			bcc = new MailAddressCollection ();
+			cc = new MailAddressCollection ();
 			bodyContentType = new ContentType (MediaTypeNames.Application.Octet);
 			headers = new NameValueCollection ();
 
@@ -91,15 +90,18 @@ namespace System.Net.Mail {
 
 		#region Properties
 
-		public Collection<Attachment> AlternateViews {
+		[CLSCompliant (false)]
+		public AttachmentCollection AlternateViews {
 			get { return alternateViews; }
 		}
 
-		public Collection<Attachment> Attachments {
+		[CLSCompliant (false)]
+		public AttachmentCollection Attachments {
 			get { return attachments; }
 		}
 
-		public Collection<MailAddress> Bcc {
+		[CLSCompliant (false)]
+		public MailAddressCollection Bcc {
 			get { return bcc; }
 		}
 
@@ -120,7 +122,8 @@ namespace System.Net.Mail {
 			}
 		}
 
-		public Collection<MailAddress> CC {
+		[CLSCompliant (false)]
+		public MailAddressCollection CC {
 			get { return cc; }
 		}
 
@@ -143,7 +146,8 @@ namespace System.Net.Mail {
 			set { subjectEncoding = value; }
 		}
 
-		public Collection<MailAddress> To {
+		[CLSCompliant (false)]
+		public MailAddressCollection To {
 			get { return to; }
 		}
 

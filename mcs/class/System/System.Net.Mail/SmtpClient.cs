@@ -30,13 +30,14 @@
 
 #if NET_2_0
 
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace System.Net.Mail {
 	public class SmtpClient : IDisposable //, IGetContextAwareResult
@@ -48,7 +49,14 @@ namespace System.Net.Mail {
 		int timeout;
 		ICredentialsByHost credentials;
 		bool useDefaultCredentials;
+
 		TcpClient client;
+		NetworkStream stream;
+		StreamWriter writer;
+		StreamReader reader;
+		int boundaryIndex;
+
+		Mutex mutex = new Mutex ();
 
 		const string MimeVersion = "1.0 (produced by Mono System.Net.Mail.SmtpClient)";
 
@@ -132,31 +140,26 @@ namespace System.Net.Mail {
 		{
 		}
 
+		private void EndSection (string section)
+		{
+			SendData (String.Format ("--{0}--", section));
+		}
+
+		private string GenerateBoundary ()
+		{
+			string output = GenerateBoundary (boundaryIndex);
+			boundaryIndex += 1;
+			return output;
+		}
+
+		private static string GenerateBoundary (int index)
+		{
+			return String.Format ("--boundary_{0}_{1}", index, Guid.NewGuid ().ToString ("D"));
+		}
+
 		private bool IsError (SmtpResponse status)
 		{
 			return ((int) status.StatusCode) >= 400;
-		}
-
-		public static string GenerateBoundary() 
-		{
-			StringBuilder  boundary = new StringBuilder ("__MONO__Boundary");
-
-			boundary.Append ("__");
-
-			DateTime now = DateTime.Now;
-			boundary.Append (now.Year);
-			boundary.Append (now.Month);
-			boundary.Append (now.Day);
-			boundary.Append (now.Hour);
-			boundary.Append (now.Minute);
-			boundary.Append (now.Second);
-			boundary.Append (now.Millisecond);
-
-			boundary.Append ("__");
-			boundary.Append ((new Random ()).Next ());
-			boundary.Append ("__");
-
-			return boundary.ToString();
 		}
 
 		protected void OnSendCompleted (AsyncCompletedEventArgs e)
@@ -165,137 +168,190 @@ namespace System.Net.Mail {
 				SendCompleted (this, e);
 		}
 
+		private SmtpResponse Read ()
+		{
+			SmtpResponse response;
+
+			char[] buf = new char [3];
+			reader.Read (buf, 0, 3);
+			reader.Read ();
+
+			response.StatusCode = (SmtpStatusCode) Int32.Parse (new String (buf));
+			response.Description = reader.ReadLine ();
+
+			return response;
+		}
+
 		[MonoTODO ("Need to work on message attachments.")]
 		public void Send (MailMessage message)
 		{
+			// Block while sending
+			mutex.WaitOne ();
+
 			SmtpResponse status;
-			Sender sender = new Sender (Host, Port);
 
-			string hostname = Dns.GetHostName ();
+			client = new TcpClient (host, port);
+			stream = client.GetStream ();
+			writer = new StreamWriter (stream);
+			reader = new StreamReader (stream);
+			boundaryIndex = 0;
 			string boundary = GenerateBoundary ();
-			string messageID = String.Format ("<{0}@{1}>", Guid.NewGuid ().ToString ("n").ToUpper (), hostname);
 
-			status = sender.Read ();
+			bool hasAlternateViews = (message.AlternateViews.Count > 0);
+			bool hasAttachments = (message.Attachments.Count > 0);
+
+			status = Read ();
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
 			// HELO
-			status = sender.SendCommand (Command.Helo, hostname);
+			status = SendCommand (Command.Helo, Dns.GetHostName ());
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
 			// MAIL FROM:
-			status = sender.SendCommand (Command.MailFrom, message.From.Address);
+			status = SendCommand (Command.MailFrom, message.From.Address);
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
 			// Send RCPT TO: for all recipients in the To list
 			for (int i = 0; i < message.To.Count; i += 1) {
-				status = sender.SendCommand (Command.RcptTo, message.To [i].Address);
+				status = SendCommand (Command.RcptTo, message.To [i].Address);
 				if (IsError (status))
 					throw new SmtpException (status.StatusCode);
 			}
 
 			// Send RCPT TO: for all recipients in the CC list
 			for (int i = 0; i < message.CC.Count; i += 1) {
-				status = sender.SendCommand (Command.RcptTo, message.CC [i].Address);
+				status = SendCommand (Command.RcptTo, message.CC [i].Address);
 				if (IsError (status))
 					throw new SmtpException (status.StatusCode);
 			}
 
 			// Send RCPT TO: for all recipients in the Bcc list
 			for (int i = 0; i < message.Bcc.Count; i += 1) {
-				status = sender.SendCommand (Command.RcptTo, message.Bcc [i].Address);
+				status = SendCommand (Command.RcptTo, message.Bcc [i].Address);
 				if (IsError (status))
 					throw new SmtpException (status.StatusCode);
 			}
 
 			// DATA
-			status = sender.SendCommand (Command.Data);
+			status = SendCommand (Command.Data);
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
+
+			// Figure out the message content type
+			ContentType messageContentType = message.BodyContentType;
+			if (hasAttachments || hasAlternateViews) {
+				messageContentType = new ContentType ();
+				messageContentType.Boundary = boundary;
+
+				if (hasAttachments)
+					messageContentType.MediaType = "multipart/mixed";
+				else
+					messageContentType.MediaType = "multipart/alternative";
+			}
 
 			// Send message headers
-			sender.SendHeader (HeaderName.From, message.From.ToString ());
-			sender.SendHeader (HeaderName.To, CreateAddressList (message.To));
+			SendHeader (HeaderName.From, message.From.ToString ());
+			SendHeader (HeaderName.To, message.To.ToString ());
 			if (message.CC.Count > 0)
-				sender.SendHeader (HeaderName.Cc, CreateAddressList (message.CC));
+				SendHeader (HeaderName.Cc, message.CC.ToString ());
 			if (message.Bcc.Count > 0)
-				sender.SendHeader (HeaderName.Bcc, CreateAddressList (message.Bcc));
-			sender.SendHeader (HeaderName.Subject, message.Subject);
-			sender.SendHeader (HeaderName.MessageId, messageID);
+				SendHeader (HeaderName.Bcc, message.Bcc.ToString ());
+			SendHeader (HeaderName.Subject, message.Subject);
 
 			foreach (string s in message.Headers.AllKeys)
-				sender.SendHeader (s, message.Headers [s]);
+				SendHeader (s, message.Headers [s]);
 
-			bool isMultipart = (message.Attachments.Count > 0 || message.AlternateViews.Count > 0);
+			SendHeader ("Content-Type", messageContentType.ToString ());
+			SendData ("");
 
-			if (isMultipart) {
-				ContentType contentType = new ContentType ();
+			if (hasAlternateViews) {
+				string innerBoundary = boundary;
 
-				contentType.Boundary = boundary;
+				// The body is *technically* an alternative view.  The body text goes FIRST because
+				// that is most compatible with non-MIME readers.
+				//
+				// If there are attachments, then the main content-type is multipart/mixed and
+				// the subpart has type multipart/alternative.  Then all of the views have their
+				// own types.  
+				//
+				// If there are no attachments, then the main content-type is multipart/alternative
+				// and we don't need this subpart.
 
-				if (message.Attachments.Count > 0)
-					contentType.MediaType = "multipart/mixed";
-				else
-					contentType.MediaType = "multipart/related";
+				if (hasAttachments) {
+					innerBoundary = GenerateBoundary ();
+					ContentType contentType = new ContentType ("multipart/alternative");
+					contentType.Boundary = innerBoundary;
+					StartSection (boundary, contentType);
+				}
+				
+				// Start the section for the body text.  This is either section "1" or "0" depending
+				// on whether there are attachments.
 
-				sender.SendHeader ("Content-Type", contentType.ToString ());
-				sender.StartSection (boundary, message.BodyContentType);
+				StartSection (innerBoundary, message.BodyContentType, TransferEncoding.QuotedPrintable);
+				SendData (message.Body);
+
+				// Send message attachments.
+				SendAttachments (message.AlternateViews, innerBoundary);
+
+				if (hasAttachments) 
+					EndSection (innerBoundary);
 			}
 			else {
-				sender.SendHeader ("Content-Type", message.BodyContentType.ToString ());
-				sender.Send ("");
+				// If this is multipart then we need to send a boundary before the body.
+				if (hasAttachments)
+					StartSection (boundary, message.BodyContentType, TransferEncoding.QuotedPrintable);
+				SendData (message.Body);
 			}
 
-			sender.Send (message.Body);
+			// Send attachments
+			if (hasAttachments) {
+				string innerBoundary = boundary;
 
-			if (message.AlternateViews.Count > 0) {
-				ContentType contentType = new ContentType ("multipart/related");
-				contentType.Boundary = GenerateBoundary ();
-				sender.StartSection (boundary, contentType);
-				SendAttachments (sender, message.AlternateViews, contentType);
+				// If we have alternate views and attachments then we need to nest this part inside another
+				// boundary.  Otherwise, we are cool with the boundary we have.
+
+				if (hasAlternateViews) {
+					innerBoundary = GenerateBoundary ();
+					ContentType contentType = new ContentType ("multipart/mixed");
+					contentType.Boundary = innerBoundary;
+					StartSection (boundary, contentType);
+				}
+
+				SendAttachments (message.Attachments, innerBoundary);
+
+				if (hasAlternateViews)
+					EndSection (innerBoundary);
 			}
 
-			if (message.Attachments.Count > 0) {
-				ContentType contentType = new ContentType ("multipart/mixed");
-				contentType.Boundary = GenerateBoundary ();
-				sender.StartSection (boundary, contentType);
-				SendAttachments (sender, message.Attachments, contentType);
-			}
+			SendData (".");
 
-			if (isMultipart)
-				sender.EndSection (boundary);
-
-			sender.Send (".");
-
-			status = sender.Read ();
+			status = Read ();
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
-			status = sender.SendCommand (Command.Quit);
+			status = SendCommand (Command.Quit);
 
-			sender.Close ();
-		}
+			writer.Close ();
+			reader.Close ();
+			stream.Close ();
+			client.Close ();
 
-		private string CreateAddressList (Collection<MailAddress> addressList)
-		{
-			if (addressList.Count > 0) {
-				StringBuilder sb = new StringBuilder ();
-				for (int i = 0; i < addressList.Count; i += 1) {
-					if (sb.Length > 0)
-						sb.Append (", ");
-					sb.Append (addressList [i].ToString ());
-				}
-				return sb.ToString ();
-			}
-
-			return null;
+			// Release the mutex to allow other threads access
+			mutex.ReleaseMutex ();
 		}
 
 		public void Send (string from, string to, string subject, string body)
 		{
 			Send (new MailMessage (from, to, subject, body));
+		}
+
+		private void SendData (string data)
+		{
+			writer.WriteLine (data);
+			writer.Flush ();
 		}
 
 		[MonoTODO]
@@ -316,13 +372,97 @@ namespace System.Net.Mail {
 			throw new NotImplementedException ();
 		}
 
-		private void SendAttachments (Sender sender, Collection<Attachment> attachments, ContentType contentType)
+		private void SendAttachments (AttachmentCollection attachments, string boundary)
 		{
 			for (int i = 0; i < attachments.Count; i += 1) {
-				sender.StartSection (contentType.Boundary, attachments [i].ContentType);
-				sender.Send ("TO BE IMPLEMENTED");
+				StartSection (boundary, attachments [i].ContentType, attachments [i].TransferEncoding);
+
+				switch (attachments [i].TransferEncoding) {
+				case TransferEncoding.Base64:
+					StreamReader reader = new StreamReader (attachments [i].ContentStream);
+					byte[] content = new byte [attachments [i].ContentStream.Length];
+					attachments [i].ContentStream.Read (content, 0, content.Length);
+					SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
+					break;
+				case TransferEncoding.QuotedPrintable:
+					SendData (ToQuotedPrintable (attachments [i].ContentString));
+					break;
+				default:
+					SendData ("TO BE IMPLEMENTED");
+					break;
+				}
 			}
-			sender.EndSection (contentType.Boundary);
+		}
+
+		private SmtpResponse SendCommand (string command, string data)
+		{
+			SmtpResponse response;
+			writer.Write (command);
+			writer.Write (" ");
+			SendData (data);
+			return Read ();
+		}
+
+		private SmtpResponse SendCommand (string command)
+		{
+			writer.WriteLine (command);
+			writer.Flush ();
+			return Read ();
+		}
+
+		private void SendHeader (string name, string value)
+		{
+			SendData (String.Format ("{0}: {1}", name, value));
+		}
+
+		private void StartSection (string section, ContentType sectionContentType)
+		{
+			SendData (String.Format ("--{0}", section));
+			SendHeader ("content-type", sectionContentType.ToString ());
+			SendData ("");
+		}
+
+		private void StartSection (string section, ContentType sectionContentType, TransferEncoding transferEncoding)
+		{
+			SendData (String.Format ("--{0}", section));
+			SendHeader ("content-type", sectionContentType.ToString ());
+			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
+			SendData ("");
+		}
+
+		private string ToQuotedPrintable (string input)
+		{
+			StringReader reader = new StringReader (input);
+			StringWriter writer = new StringWriter ();
+			int i;
+
+			while ((i = reader.Read ()) > 0) {
+				if (i > 127) {
+					writer.Write ("=");
+					writer.Write (Convert.ToString (i, 16).ToUpper ());
+				}
+				else
+					writer.Write (Convert.ToChar (i));
+			}
+
+			return writer.GetStringBuilder ().ToString ();
+		}
+
+		private static string GetTransferEncodingName (TransferEncoding encoding)
+		{
+			switch (encoding) {
+			case TransferEncoding.QuotedPrintable:
+				return "quoted-printable";
+			case TransferEncoding.EightBit:
+				return "8bit";
+			case TransferEncoding.SevenBit:
+				return "7bit";
+			case TransferEncoding.Base64:
+				return "base64";
+			case TransferEncoding.Binary:
+				return "binary";
+			}
+			return "unknown";
 		}
 
 /*
@@ -360,97 +500,6 @@ namespace System.Net.Mail {
 		private struct SmtpResponse {
 			public SmtpStatusCode StatusCode;
 			public string Description;
-		}
-
-		// The Sender class is used to manage sending information to the SMTP server.
-		private class Sender
-		{
-			#region Fields
-
-			TcpClient client;
-			NetworkStream stream;
-			StreamWriter writer;
-			StreamReader reader;
-
-			#endregion // Fields
-
-			#region Constructors
-
-			public Sender (String host, int port)
-			{
-				client = new TcpClient (host, port);
-				stream = client.GetStream ();
-				writer = new StreamWriter (stream);
-				reader = new StreamReader (stream);
-			}
-
-			#endregion // Constructors
-
-			#region Methods
-
-			public void Close ()
-			{
-				writer.Close ();
-				reader.Close ();
-				stream.Close ();
-				client.Close ();
-			}
-
-			public void EndSection (string section)
-			{
-				Send (String.Format ("--{0}--", section));
-			}
-
-			public void Send (string data)
-			{
-				writer.WriteLine (data);
-				writer.Flush ();
-			}
-
-			public SmtpResponse SendCommand (string command)
-			{
-				writer.WriteLine (command);
-				writer.Flush ();
-				return Read ();
-			}
-
-			public SmtpResponse SendCommand (string command, string data)
-			{
-				SmtpResponse response;
-				writer.Write (command);
-				writer.Write (" ");
-				Send (data);
-
-				return Read ();
-			}
-
-			public void SendHeader (string name, string value)
-			{
-				Send (String.Format ("{0}: {1}", name, value));
-			}
-
-			public SmtpResponse Read ()
-			{
-				SmtpResponse response;
-
-				char[] buf = new char [3];
-				reader.Read (buf, 0, 3);
-				reader.Read ();
-
-				response.StatusCode = (SmtpStatusCode) Int32.Parse (new String (buf));
-				response.Description = reader.ReadLine ();
-
-				return response;
-			}
-
-			public void StartSection (string section, ContentType sectionContentType)
-			{
-				Send (String.Format ("--{0}", section));
-				SendHeader ("Content-Type", sectionContentType.ToString ());
-				Send ("");
-			}
-
-			#endregion // Methods
 		}
 	}
 }

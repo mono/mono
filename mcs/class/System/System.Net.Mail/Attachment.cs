@@ -187,6 +187,8 @@ namespace System.Net.Mail {
 			sw.Flush ();
 
 			contentStream.Position = 0;
+
+			this.contentString = contentString;
 		}
 
 		public void SetContent (string contentString, string mediaType, Encoding encoding, TransferEncoding transferEncoding)
