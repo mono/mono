@@ -32,6 +32,8 @@ codegen/IMethodRef.cs
 codegen/ExternMethodRef.cs
 codegen/MethodRef.cs
 codegen/GlobalMethodRef.cs
+codegen/GenericMethodRef.cs
+codegen/GenericMethodSig.cs
 codegen/IFieldRef.cs
 codegen/ExternFieldRef.cs
 codegen/GlobalFieldRef.cs
