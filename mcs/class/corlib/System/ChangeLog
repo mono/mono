@@ -1,4 +1,8 @@
 
+Fri Feb 4 15:46:04 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: provide specialized versions of some methods.
+
 Thu Feb 3 15:15:25 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: provide a managed memcpy and memset method

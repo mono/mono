@@ -41,6 +41,9 @@ using System.Collections.Generic;
 #endif
 namespace System
 {
+	/* delegate used to swap array elements, keep defined outside Array */
+	delegate void Swapper (int i, int j);
+
 	[Serializable]
 	[MonoTODO ("We are doing way to many double/triple exception checks for the overloaded functions")]
 	[MonoTODO ("Sort overloads parameter checks are VERY inconsistent")]
@@ -846,6 +849,18 @@ namespace System
 			return array.GetLowerBound (0) - 1;
 		}
 
+		static Swapper get_swapper (Array array)
+		{
+			if (array is int[])
+				return new Swapper (array.int_swapper);
+			if (array is double[])
+				return new Swapper (array.double_swapper);
+			if (array is object[]) {
+				return new Swapper (array.obj_swapper);
+			}
+			return new Swapper (array.slow_swapper);
+		}
+
 		public static void Reverse (Array array)
 		{
 			if (array == null)
@@ -869,13 +884,46 @@ namespace System
 			if (index > array.GetUpperBound (0) + 1 - length)
 				throw new ArgumentException ();
 
-			for (int i = 0; i < length / 2; i++)
-			{
-				object tmp;
-
-				tmp = array.GetValueImpl (index + i);
-				array.SetValueImpl (array.GetValueImpl (index + length - i - 1), index + i);
-				array.SetValueImpl (tmp, index + length - i - 1);
+			int end = index + length - 1;
+			object[] oarray = array as object[];
+			if (oarray != null) {
+				while (index < end) {
+					object tmp = oarray [index];
+					oarray [index] = oarray [end];
+					oarray [end] = tmp;
+					++index;
+					--end;
+				}
+				return;
+			}
+			int[] iarray = array as int[];
+			if (iarray != null) {
+				while (index < end) {
+					int tmp = iarray [index];
+					iarray [index] = iarray [end];
+					iarray [end] = tmp;
+					++index;
+					--end;
+				}
+				return;
+			}
+			double[] darray = array as double[];
+			if (darray != null) {
+				while (index < end) {
+					double tmp = darray [index];
+					darray [index] = darray [end];
+					darray [end] = tmp;
+					++index;
+					--end;
+				}
+				return;
+			}
+			// fallback
+			Swapper swapper = get_swapper (array);
+			while (index < end) {
+				swapper (index, end);
+				++index;
+				--end;
 			}
 		}
 
@@ -948,6 +996,25 @@ namespace System
 				|| (items != null && index > items.Length - length))
 				throw new ArgumentException ();
 
+			if (comparer == null) {
+				Swapper iswapper;
+				if (items == null)
+					iswapper = null;
+				else 
+					iswapper = get_swapper (items);
+				if (keys is double[]) {
+					combsort (keys as double[], index, length, iswapper);
+					return;
+				}
+				if (keys is int[]) {
+					combsort (keys as int[], index, length, iswapper);
+					return;
+				}
+				if (keys is char[]) {
+					combsort (keys as char[], index, length, iswapper);
+					return;
+				}
+			}
 			try {
 				int low0 = index;
 				int high0 = index + length - 1;
@@ -955,6 +1022,116 @@ namespace System
 			}
 			catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
+			}
+		}
+
+		/* note, these are instance methods */
+		void int_swapper (int i, int j) {
+			int[] array = this as int[];
+			int val = array [i];
+			array [i] = array [j];
+			array [j] = val;
+		}
+
+		void obj_swapper (int i, int j) {
+			object[] array = this as object[];
+			object val = array [i];
+			array [i] = array [j];
+			array [j] = val;
+		}
+
+		void slow_swapper (int i, int j) {
+			object val = GetValueImpl (i);
+			SetValueImpl (GetValue (j), i);
+			SetValueImpl (val, j);
+		}
+
+		void double_swapper (int i, int j) {
+			double[] array = this as double[];
+			double val = array [i];
+			array [i] = array [j];
+			array [j] = val;
+		}
+
+		static int new_gap (int gap)
+		{
+			gap = (gap * 10) / 13;
+			if (gap == 9 || gap == 10)
+				return 11;
+			if (gap < 1)
+				return 1;
+			return gap;
+		}
+
+		/* we use combsort because it's fast enough and very small, since we have
+		 * several specialized versions here.
+		 */
+		static void combsort (double[] array, int start, int size, Swapper swap_items)
+		{
+			int gap = size;
+			while (true) {
+				gap = new_gap (gap);
+				bool swapped = false;
+				int end = start + size - gap;
+				for (int i = start; i < end; i++) {
+					int j = i + gap;
+					if (array [i] > array [j]) {
+						double val = array [i];
+						array [i] = array [j];
+						array [j] = val;
+						swapped = true;
+						if (swap_items != null)
+							swap_items (i, j);
+					}
+				}
+				if (gap == 1 && !swapped)
+					break;
+			}
+		}
+
+		static void combsort (int[] array, int start, int size, Swapper swap_items)
+		{
+			int gap = size;
+			while (true) {
+				gap = new_gap (gap);
+				bool swapped = false;
+				int end = start + size - gap;
+				for (int i = start; i < end; i++) {
+					int j = i + gap;
+					if (array [i] > array [j]) {
+						int val = array [i];
+						array [i] = array [j];
+						array [j] = val;
+						swapped = true;
+						if (swap_items != null)
+							swap_items (i, j);
+					}
+				}
+				if (gap == 1 && !swapped)
+					break;
+			}
+		}
+
+		static void combsort (char[] array, int start, int size, Swapper swap_items)
+		{
+			int gap = size;
+			while (true) {
+				gap = new_gap (gap);
+				bool swapped = false;
+				int end = start + size - gap;
+				for (int i = start; i < end; i++) {
+					int j = i + gap;
+					if (array [i] > array [j]) {
+						char val = array [i];
+						array [i] = array [j];
+						array [j] = val;
+						swapped = true;
+						if (swap_items != null)
+							swap_items (i, j);
+					}
+				}
+				if (gap == 1 && !swapped)
+					break;
 			}
 		}
 
