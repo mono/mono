@@ -227,7 +227,7 @@ public class StringTest : TestCase
 		Assert("Should match", String.Equals(s1, yes));
 		Assert("Shouldn't match", !String.Equals(s1, no));
 
-		AssertEquals ("Equals (object)", false, s1s1.Equals (yes));
+		AssertEquals ("Equals (object)", false, s1s1.Equals (y));
 	}
 
 	public void TestFormat ()
