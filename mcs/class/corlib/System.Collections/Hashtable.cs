@@ -431,6 +431,9 @@ namespace System.Collections {
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
 			info.AddValue ("LoadFactor", loadFactor);
 			info.AddValue ("Version", modificationCount);
 			info.AddValue ("Comparer", comparerRef);

@@ -1,3 +1,7 @@
+2004-05-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Hashtable.cs: Added ArgumentNullException in GetObjectData.
+
 2004-05-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChangeLog:
