@@ -2,7 +2,7 @@
 // System.Web.HttpValueCollection
 //
 // Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //
 using System;
 using System.Collections.Specialized;
@@ -10,134 +10,152 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Web.Util;
 
-namespace System.Web {
+namespace System.Web
+{
+	[Serializable]
+	class HttpValueCollection : NameValueCollection
+	{
+		bool _bHeaders;
 
-   [Serializable]
-   class HttpValueCollection : NameValueCollection {
-      private bool	_bHeaders;
+		internal HttpValueCollection ()
+		{
+			_bHeaders = false;
+		}
 
-      internal HttpValueCollection() {
-         _bHeaders = false;
-      }
+		internal HttpValueCollection (string sData)
+		{
+			FillFromQueryString (sData, WebEncoding.Encoding);
+			IsReadOnly = true;
+		}
 
-      internal HttpValueCollection(string sData) {
-         FillFromQueryString(sData, WebEncoding.Encoding);
-         IsReadOnly = true;
-      }
+		internal HttpValueCollection(string sData, bool ReadOnly, Encoding encoding)
+		{
+			FillFromQueryString (sData, encoding);
+			IsReadOnly = ReadOnly;
+		}
 
-      internal HttpValueCollection(string sData, bool ReadOnly, Encoding encoding) {
-         FillFromQueryString(sData, encoding);
-         IsReadOnly = ReadOnly;
-      }
+		protected HttpValueCollection (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
 
-      protected HttpValueCollection(SerializationInfo info, StreamingContext context) : base(info, context) {
-      }
-      
-      // string = header1: value1\r\nheader2: value2
-      internal void FillFromHeaders(string sHeaders, Encoding encoding) {
-         _bHeaders = true;
-         char [] arrSplitValue = new char [] {':'};
-         string sKey, sValue;
+		// string = header1: value1\r\nheader2: value2
+		internal void FillFromHeaders (string sHeaders, Encoding encoding)
+		{
+			_bHeaders = true;
+			char [] arrSplitValue = new char [] {':'};
+			string sKey, sValue;
 
-         sKey = "";
-         sValue = "";
+			sKey = "";
+			sValue = "";
 
-         string [] arrValues = sHeaders.Split(new char [] {'\r', '\n'});
-         foreach (string sLine in arrValues) {
-            string [] arrKeyValue = sLine.Split(arrSplitValue);
-            if (arrKeyValue.Length == 1 && arrKeyValue[0].Length == 0) {
-               // Empty \r or \n is ignored
-               continue;
-            }
+			string [] arrValues = sHeaders.Split(new char [] {'\r', '\n'});
+			foreach (string sLine in arrValues) {
+				string [] arrKeyValue = sLine.Split (arrSplitValue);
+				if (arrKeyValue.Length == 1 && arrKeyValue [0].Length == 0) {
+					// Empty \r or \n is ignored
+					continue;
+				}
 
-            if (arrKeyValue[0] != sKey && sKey.Length > 0) {
-               Add(System.Web.HttpUtility.UrlDecode(sKey, encoding), System.Web.HttpUtility.UrlDecode(sValue, encoding));
-            }
+				if (arrKeyValue[0] != sKey && sKey.Length > 0) {
+					Add (HttpUtility.UrlDecode (sKey, encoding),
+					     HttpUtility.UrlDecode (sValue, encoding));
+				}
 
-            if (arrKeyValue.Length == 1) {
-               sValue += "\r\n" + arrKeyValue[0].Trim();
-               continue;
-            } 
-            else if (arrKeyValue.Length == 2) {
-               if (arrKeyValue[0].Length == 0) {
-                  sValue += arrKeyValue[1].Trim();
-                  continue;
-               }
+				if (arrKeyValue.Length == 1) {
+					sValue += "\r\n" + arrKeyValue [0].Trim();
+					continue;
+				} else if (arrKeyValue.Length == 2) {
+					if (arrKeyValue[0].Length == 0) {
+						sValue += arrKeyValue [1].Trim();
+						continue;
+					}
 
-               sKey = arrKeyValue[0].Trim();
-               sValue = arrKeyValue[1].Trim();
-            } 
-         }
-			
-         if (sKey.Length > 0) {
-            Add(System.Web.HttpUtility.UrlDecode(sKey, encoding), System.Web.HttpUtility.UrlDecode(sValue, encoding));
-         }
-      }
+					sKey = arrKeyValue [0].Trim();
+					sValue = arrKeyValue [1].Trim();
+				} 
+			}
 
-      internal void FillFromHeaders(string sData) {
-         FillFromHeaders(sData, WebEncoding.Encoding);
-      }
+			if (sKey.Length > 0) {
+				Add (HttpUtility.UrlDecode (sKey, encoding),
+				     HttpUtility.UrlDecode (sValue, encoding));
+			}
+		}
 
-      // String = test=aaa&kalle=nisse
-      internal void FillFromQueryString(string sData, Encoding encoding) {
-         _bHeaders = false;
+		internal void FillFromHeaders (string sData)
+		{
+			FillFromHeaders (sData, WebEncoding.Encoding);
+		}
 
-         char [] arrSplitValue = new char [] {'='};
+		// String = test=aaa&kalle=nisse
+		internal void FillFromQueryString(string sData, Encoding encoding)
+		{
+			_bHeaders = false;
 
-         string [] arrValues = sData.Split(new char [] {'&'});
-         foreach (string sValue in arrValues) {
-            string [] arrKeyValue = sValue.Split(arrSplitValue);
-            if (arrKeyValue.Length == 1) {
-               // Add key only
-               Add(System.Web.HttpUtility.UrlDecode(arrKeyValue[0].Trim(), encoding), string.Empty);
-            } 
-            else if (arrKeyValue.Length == 2) {
-               Add(System.Web.HttpUtility.UrlDecode(arrKeyValue[0].Trim(), encoding),System.Web.HttpUtility.UrlDecode(arrKeyValue[1].Trim(), encoding));
-            } 
-            else {
-               throw new InvalidOperationException("Data is malformed");
-            }
-         }		
-      }
+			char [] arrSplitValue = new char [] {'='};
 
-      internal void FillFromQueryString(string sData) {
-         FillFromQueryString(sData, WebEncoding.Encoding);
-      }
+			string [] arrValues = sData.Split (new char [] {'&'});
+			foreach (string sValue in arrValues) {
+				string [] arrKeyValue = sValue.Split (arrSplitValue);
+				switch (arrKeyValue.Length) {
+				case 1:	// Add key only
+					Add (HttpUtility.UrlDecode(arrKeyValue[0].Trim(), encoding), string.Empty);
+					break;
+				case 2:
+					Add(HttpUtility.UrlDecode (arrKeyValue [0].Trim(), encoding), 
+					    HttpUtility.UrlDecode (arrKeyValue [1].Trim(), encoding));
+					break;
+				default:
+					throw new InvalidOperationException ("Data is malformed");
+				}
+			}		
+		}
 
-      internal void FillFromCookieString(string sData) {
-         FillFromQueryString(sData, WebEncoding.Encoding);
-      }
+		internal void FillFromQueryString (string sData)
+		{
+			FillFromQueryString (sData, WebEncoding.Encoding);
+		}
 
-      internal void MakeReadOnly() {
-         IsReadOnly = true;
-      }
-		
-      internal void MakeReadWrite() {
-         IsReadOnly = false;
-      }
+		internal void FillFromCookieString (string sData)
+		{
+			FillFromQueryString (sData, WebEncoding.Encoding);
+		}
 
-      internal void Merge(NameValueCollection oData) {
-         foreach (string sKey in oData) {
-            Add(sKey, oData[sKey]);
-         }
-      }
+		internal void MakeReadOnly ()
+		{
+			IsReadOnly = true;
+		}
 
-      internal void Reset() {
-         Clear();
-      }
+		internal void MakeReadWrite ()
+		{
+			IsReadOnly = false;
+		}
 
-      [MonoTODO("string ToString(bool UrlEncode)")]
-      internal string ToString(bool UrlEncode) {
-         if (_bHeaders) {
-         }
+		internal void Merge (NameValueCollection oData)
+		{
+			foreach (string sKey in oData)
+				Add (sKey, oData [sKey]);
+		}
 
-         // TODO: Should return a correctly formated string (different depending on header flag)
-         throw new NotImplementedException();
-      }
+		internal void Reset ()
+		{
+			Clear ();
+		}
 
-      virtual new public string ToString() {
-         return ToString(false);
-      }
-   }
+		[MonoTODO("string ToString(bool UrlEncode)")]
+		internal string ToString (bool UrlEncode)
+		{
+			if (_bHeaders) {
+			}
 
+			// TODO: Should return a correctly formated string (different depending on header flag)
+			throw new NotImplementedException ();
+		}
+
+		virtual new public string ToString ()
+		{
+			return ToString (false);
+		}
+	}
 }
+
