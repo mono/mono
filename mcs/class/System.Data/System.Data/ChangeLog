@@ -1,3 +1,8 @@
+2004-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Also clear UnhandledAttributes ArrayList before 
+	  generating next attribute column schema. This fixes bug #68432.
+
 2004-10-14 Umadevi S <sumadevi@novell.com>
         * DataTable.cs : Corrected the Clone method to use  Activator.CreateInstance so that the
         correct subclass is returned. This fixes bug #67631
