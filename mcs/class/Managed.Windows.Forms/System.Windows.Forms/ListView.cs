@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.7  2004/10/30 10:21:14  ravindra
+// Added support for scrolling and fixed calculations.
+//
 // Revision 1.6  2004/10/26 19:51:20  jordi
 // removes warning
 //
@@ -94,6 +97,8 @@ namespace System.Windows.Forms
 		//private TextBox editor;   // Used for editing an item text
 		private ScrollBar h_scroll; // used for scrolling horizontally
 		private ScrollBar v_scroll; // used for scrolling vertically
+		private int h_marker;		// Position markers for scrolling
+		private int v_marker;
 
 		// internal variables
 		internal ImageList large_image_list;
@@ -142,12 +147,15 @@ namespace System.Windows.Forms
 			// we are mostly scrollable
 			h_scroll = new HScrollBar ();
 			v_scroll = new VScrollBar ();
+			h_marker = v_marker = 0;
 
 			// scroll bars are disabled initially
-			h_scroll.Enabled = false;
-			h_scroll.Dock = DockStyle.Bottom;
-			v_scroll.Enabled = false;
-			v_scroll.Dock = DockStyle.Right;
+			h_scroll.Visible = false;
+			//h_scroll.Dock = DockStyle.Bottom;
+			h_scroll.Scroll += new ScrollEventHandler(HorizontalScroller);
+			v_scroll.Visible = false;
+			//v_scroll.Dock = DockStyle.Right;
+			v_scroll.Scroll += new ScrollEventHandler(VerticalScroller);
 
 			child_controls.Add (this.v_scroll);
 			child_controls.Add (this.h_scroll);
@@ -156,6 +164,20 @@ namespace System.Windows.Forms
 			base.Paint += new PaintEventHandler (ListView_Paint);
 		}
 		#endregion	// Public Constructors
+
+		#region Private Internal Properties
+		internal Size CheckBoxSize {
+			get {
+				if (this.check_boxes) {
+					if (this.state_image_list != null)
+						return this.state_image_list.ImageSize;
+					else
+						return ThemeEngine.Current.CheckBoxSize;
+				}
+				return Size.Empty;
+			}
+		}
+		#endregion	// Private Internal Properties
 
 		#region	 Protected Properties
 		protected override CreateParams CreateParams {
@@ -413,47 +435,55 @@ namespace System.Windows.Forms
 
 			if (col.Width == -2) { // autosize = max(items, columnheader)
 				Size size = Size.Ceiling (this.DeviceContext.MeasureString
-							  (text, this.Font));
+							  (col.Text, this.Font));
 				ret_size = BiggestItem (index);
 				if (size.Width > ret_size.Width)
 					ret_size = size;
 			}
-			else // -1 and all the values < -2 are put under one category
+			else { // -1 and all the values < -2 are put under one category
 				ret_size = BiggestItem (index);
+				// fall back to empty columns' width if no subitem is available for a column
+				if (ret_size.IsEmpty) {
+					ret_size.Width = ThemeEngine.Current.EmptyColumnWidth;
+					if (col.Text.Length > 0)
+						ret_size.Height = Size.Ceiling (this.DeviceContext.MeasureString
+										(col.Text, this.Font)).Height;
+					else
+						ret_size.Height = this.Font.Height;
+				}
+			}
 
+			// adjust the size for icon and checkbox for 0th column
+			if (index == 0) {
+				ret_size.Width += (this.CheckBoxSize.Width + 2);
+				if (this.small_image_list != null)
+					ret_size.Width += this.small_image_list.ImageSize.Width;
+			}
 			return ret_size;
 		}
 
-		// returns the biggest item in a column
+		// Returns the size of biggest item text in a column.
 		private Size BiggestItem (int col)
 		{
 			Size temp = Size.Empty;
 			Size ret_size = Size.Empty;
 
-			if (col == 0) {
-				foreach (ListViewItem item in items) {
-					temp = Size.Ceiling (this.DeviceContext.MeasureString
-							     (item.Text, this.Font));
-					if (temp.Width > ret_size.Width)
-						ret_size = temp;
-				}
-			}
-			else {
-				foreach (ListViewItem item in items) {
-					if (col >=item.SubItems.Count)
-						continue;
+			// 0th column holds the item text, we check the size of
+			// the various subitems falling in that column and get
+			// the biggest one's size.
+			foreach (ListViewItem item in items) {
+				if (col >= item.SubItems.Count)
+					continue;
 
-					temp = Size.Ceiling (this.DeviceContext.MeasureString
-							     (item.SubItems [col].Text	, this.Font));
-					if (temp.Width > ret_size.Width)
-						ret_size = temp;
-				}
+				temp = Size.Ceiling (this.DeviceContext.MeasureString
+						     (item.SubItems [col].Text, this.Font));
+				if (temp.Width > ret_size.Width)
+					ret_size = temp;
 			}
 			return ret_size;
 		}
 
-		// Sets the size of the biggest item text
-		// as per the view
+		// Sets the size of the biggest item text as per the view
 		private void CalcTextSize ()
 		{			
 			// clear the old value
@@ -461,25 +491,33 @@ namespace System.Windows.Forms
 
 			if (items.Count == 0)
 				text_size = Size.Empty;
-			else if (view == View.LargeIcon) {
+
+			text_size = BiggestItem (0);
+
+			if (view == View.LargeIcon && this.label_wrap) {
+				Size temp = Size.Empty;
 				if (this.check_boxes)
-					text_size.Width += 2 * ThemeEngine.Current.CheckBoxWidth;
+					temp.Width += 2 * this.CheckBoxSize.Width;
 				if (large_image_list != null)
-					text_size.Width += large_image_list.ImageSize.Width;
-				if (text_size.Width ==0)
-					text_size.Width = 43;
-			}
-			else if (view == View.Details) {
-				if (columns.Count > 0) {
-					text_size = this.BiggestItem (0);
-					if (check_boxes)
-						text_size.Width -= (ThemeEngine.Current.CheckBoxWidth + 2);
-					if (small_image_list != null)
-						text_size.Width -= small_image_list.ImageSize.Width;
+					temp.Width += large_image_list.ImageSize.Width;
+				if (temp.Width == 0)
+					temp.Width = 43;
+				// wrapping is done for two lines only
+				if (text_size.Width > temp.Width) {
+					text_size.Width = temp.Width;
+					text_size.Height *= 2;
 				}
 			}
-			else
-				text_size = BiggestItem (0);
+			else if (view == View.List) {
+				// in list view max text shown in determined by the
+				// control width, even if scolling is enabled.
+				int max_wd = this.Width - (this.CheckBoxSize.Width - 2);
+				if (this.small_image_list != null)
+					max_wd -= this.small_image_list.ImageSize.Width;
+
+				if (text_size.Width > max_wd)
+					text_size.Width = max_wd;
+			}
 
 			// we do the default settings, if we have got 0's
 			if (text_size.Height <= 0)
@@ -505,6 +543,7 @@ namespace System.Windows.Forms
 						col.Y = 0;
 						col.CalcColumnHeader ();
 						current_pos += col.Wd;
+						Console.WriteLine ("col: " + col.column_rect);
 					}
 					this.layout_wd = current_pos;
 					// set the position marker for placing items
@@ -534,25 +573,64 @@ namespace System.Windows.Forms
 			}
 
 			if (this.scrollable) {
-				// FIXME: We need to set the appropriate
-				// Large and small change properties.
-				// horizontal scrollbar
-				if (this.layout_wd > this.Width) {
-					this.h_scroll.Enabled = true;
-					this.h_scroll.Minimum = this.Width;
-					this.h_scroll.Maximum = this.layout_wd;
+				this.CreateBuffers (this.layout_wd, this.layout_ht);
+
+				if (this.layout_wd > this.Width)
+					this.h_scroll.Visible = true;
+				if (this.layout_ht > this.Height)
+					this.v_scroll.Visible = true;
+
+				if (this.h_scroll.Visible) {
+					this.h_scroll.Height = 15;
+					this.h_scroll.Location = new Point (0, this.Height 
+									    - this.h_scroll.Height);
+					
+					this.h_scroll.Minimum = 0;
+					this.h_scroll.Maximum = this.layout_wd - this.Width;
+
+					// if v_scroll is visible, adjust the maximum of the
+					// h_scroll to account for the width of v_scroll
+					if (this.v_scroll.Visible) {
+						this.h_scroll.Maximum += this.v_scroll.Width;
+						this.h_scroll.Width = this.Width - this.v_scroll.Width;
+					}
+					else
+						this.h_scroll.Width = this.Width;
+   
+					this.h_scroll.LargeChange = this.Width;
+					this.h_scroll.SmallChange = this.Font.Height;
+					// adjust the maximum value to make the raw Max value attainable
+					this.h_scroll.Maximum += this.h_scroll.LargeChange;
 				}
 
 				// vertical scrollbar
-				if (this.layout_ht > this.Height) {
-					this.v_scroll.Enabled = true;
-					this.v_scroll.Minimum = this.Height;
-					this.v_scroll.Maximum = this.layout_ht;
+				if (this.v_scroll.Visible) {
+					this.v_scroll.Width = 15;
+					this.v_scroll.Location = new Point (this.Width 
+									    - this.v_scroll.Width, 0);
+
+					this.v_scroll.Minimum = 0;
+					this.v_scroll.Maximum = this.layout_ht - this.Height;
+
+					// if h_scroll is visible, adjust the maximum of the
+					// v_scroll to account for the height of h_scroll
+					if (this.h_scroll.Visible) {
+						this.v_scroll.Maximum += this.h_scroll.Height;
+						this.v_scroll.Height = this.Height - this.h_scroll.Height;
+					}
+					else
+						this.v_scroll.Height = this.Height;
+
+					this.v_scroll.LargeChange = this.Height;
+					this.v_scroll.SmallChange = this.Font.Height;
+
+					// adjust the maximum value to make the raw Max value attainable
+					this.v_scroll.Maximum += this.v_scroll.LargeChange;
 				}
 			}
 			else {
-				this.h_scroll.Enabled = false;
-				this.v_scroll.Enabled = false;
+				this.h_scroll.Visible = false;
+				this.v_scroll.Visible = false;
 			}
 		}
 
@@ -567,12 +645,68 @@ namespace System.Windows.Forms
 				redraw = false;
 			}
 
-			// paint on the screen
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle,
-					       pe.ClipRectangle, GraphicsUnit.Pixel);
+			// We paint on the screen as per the location set
+			// by the two scrollbars. In case of details view
+			// since column headers can scroll only horizontally
+			// and items can scroll in both directions, paiting is
+			// done separtely for the column header and the items. 
+
+			Rectangle srcRect = pe.ClipRectangle;
+			Rectangle dstRect = pe.ClipRectangle;
+
+			if (scrollable) {
+				srcRect.X = h_marker;
+				srcRect.Y = v_marker;
+			}
+
+			// paint the column headers
+			if (this.view == View.Details && this.Columns.Count > 0 && v_marker > 0) {
+				int col_ht = this.Columns [0].Ht;
+				// move the source rect by the amount of horizontal scrolling
+				// done so far.
+				Rectangle headerSrc = new Rectangle (h_marker, 0, this.Width, col_ht);
+				// dest rect is always stable at 0,0
+				Rectangle headerDst = new Rectangle (0, 0, this.Width, col_ht);
+
+				pe.Graphics.DrawImage (this.ImageBuffer, headerDst,
+						       headerSrc, GraphicsUnit.Pixel);
+
+				// item painting starts below header. both the rects should
+				// exclude the column header region.
+				srcRect.Y += col_ht;
+				dstRect.Y += col_ht;
+			}
+
+			// paint the items
+			pe.Graphics.DrawImage (this.ImageBuffer, dstRect,
+					       srcRect, GraphicsUnit.Pixel);
 
 			if (Paint != null)
 				Paint (this, pe);
+		}
+
+		private void HorizontalScroller (object sender, ScrollEventArgs se)
+		{
+			Point loc;
+			h_marker = se.NewValue;
+			foreach (ListViewItem item in this.Items) {
+				loc = item.checkbox.Location;
+				loc.X -= h_marker;
+				item.checkbox.Location = loc;
+			}
+
+			// no need to paint when we reach the end
+			if (se.Type != ScrollEventType.EndScroll)
+				this.Refresh ();
+		}
+
+		private void VerticalScroller (object sender, ScrollEventArgs se)
+		{
+			v_marker = se.NewValue;
+
+			// no need to paint when we reach the end
+			if (se.Type != ScrollEventType.EndScroll)
+				this.Refresh ();
 		}
 		#endregion	// Internal Methods Properties
 
@@ -741,6 +875,8 @@ namespace System.Windows.Forms
 
 			if (sort_order == SortOrder.Descending)
 				items.list.Reverse ();
+
+			this.Redraw (true);
 		}
 
 		public override string ToString ()
@@ -1064,7 +1200,7 @@ namespace System.Windows.Forms
 			int IList.Add (object value)
 			{
 				if (! (value is ColumnHeader)) {
-					throw new ArgumentException("Not of type ColumnHeader", "value");
+					throw new ArgumentException ("Not of type ColumnHeader", "value");
 				}
 
 				return this.Add ((ColumnHeader) value);
@@ -1073,7 +1209,7 @@ namespace System.Windows.Forms
 			bool IList.Contains (object value)
 			{
 				if (! (value is ColumnHeader)) {
-					throw new ArgumentException("Not of type ColumnHeader", "value");
+					throw new ArgumentException ("Not of type ColumnHeader", "value");
 				}
 
 				return this.Contains ((ColumnHeader) value);
@@ -1082,7 +1218,7 @@ namespace System.Windows.Forms
 			int IList.IndexOf (object value)
 			{
 				if (! (value is ColumnHeader)) {
-					throw new ArgumentException("Not of type ColumnHeader", "value");
+					throw new ArgumentException ("Not of type ColumnHeader", "value");
 				}
 
 				return this.IndexOf ((ColumnHeader) value);
@@ -1091,7 +1227,7 @@ namespace System.Windows.Forms
 			void IList.Insert (int index, object value)
 			{
 				if (! (value is ColumnHeader)) {
-					throw new ArgumentException("Not of type ColumnHeader", "value");
+					throw new ArgumentException ("Not of type ColumnHeader", "value");
 				}
 
 				this.Insert (index, (ColumnHeader) value);
@@ -1100,7 +1236,7 @@ namespace System.Windows.Forms
 			void IList.Remove (object value)
 			{
 				if (! (value is ColumnHeader)) {
-					throw new ArgumentException("Not of type ColumnHeader", "value");
+					throw new ArgumentException ("Not of type ColumnHeader", "value");
 				}
 
 				this.Remove ((ColumnHeader) value);

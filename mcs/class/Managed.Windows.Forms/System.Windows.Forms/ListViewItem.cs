@@ -22,9 +22,12 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
+// Revision 1.6  2004/10/30 10:21:14  ravindra
+// Added support for scrolling and fixed calculations.
+//
 // Revision 1.5  2004/10/26 09:55:48  ravindra
 // Some formatting for my last checkins.
 //
@@ -378,8 +381,7 @@ namespace System.Windows.Forms
 
 			if (owner.CheckBoxes) {
 				checkbox_rect.Location = this.location;
-				checkbox_rect.Height = checkbox_rect.Width
-					= ThemeEngine.Current.CheckBoxWidth;
+				checkbox_rect.Size = owner.CheckBoxSize;
 				checkbox = new CheckBox ();
 			}
 			else
@@ -395,9 +397,9 @@ namespace System.Windows.Forms
 				// values in the case of Details view.
 
 				icon_rect.X = checkbox_rect.X + checkbox_rect.Width + 2;
-				icon_rect.Y = location.Y;
+				icon_rect.Y = checkbox_rect.Y;
 
-				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth + 1,
+				item_ht = Math.Max (owner.CheckBoxSize.Height + 1,
 						    text_size.Height);
 
 				if (owner.SmallImageList != null) {
@@ -426,10 +428,6 @@ namespace System.Windows.Forms
 				break;
 
 			case View.LargeIcon:
-				checkbox_rect.X += ThemeEngine.Current.HorizontalSpacing;
-
-		 		icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
-				icon_rect.Y = location.Y;
 				if (owner.LargeImageList != null) {
 					icon_rect.Width = owner.LargeImageList.ImageSize.Width + 16;
 					icon_rect.Height = owner.LargeImageList.ImageSize.Height + 4;
@@ -439,43 +437,44 @@ namespace System.Windows.Forms
 					icon_rect.Height = 4;
 				}
 
-				label_rect.X = icon_rect.X + (icon_rect.Width - text_size.Width) / 2;
-				label_rect.Y = icon_rect.Bottom + 2;
-				label_rect.Height = text_size.Height;
+				if (text_size.Width <= (checkbox_rect.Width + icon_rect.Width)) {
+					checkbox_rect.X += ThemeEngine.Current.HorizontalSpacing;
+
+			 		icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
+					icon_rect.Y = checkbox_rect.Y;
+
+					label_rect.X = icon_rect.X + (icon_rect.Width 
+								      - text_size.Width) / 2;
+					label_rect.Y = Math.Max (checkbox_rect.Bottom,
+								 icon_rect.Bottom) + 2;
+					label_rect.Height = text_size.Height;
+				}
+				else {
+					label_rect.X = ThemeEngine.Current.HorizontalSpacing;
+
+					int centerX = label_rect.X + text_size.Width / 2;
+					icon_rect.X = centerX - icon_rect.Width / 2;
+					checkbox_rect.X += (icon_rect.X - checkbox_rect.Width);
+
+					icon_rect.Y = checkbox_rect.Y;
+
+					label_rect.Y = Math.Max (checkbox_rect.Bottom,
+								 icon_rect.Bottom) + 2;
+					label_rect.Size = text_size;
+				}
 
 				item_rect = Rectangle.Union (icon_rect, label_rect);
 				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
 				break;
 
 			case View.List:
-		 		icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
-				icon_rect.Y = location.Y;
-
-				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth, text_size.Height);
-
-				if (owner.SmallImageList != null) {
-					item_ht = Math.Max (item_ht,
-							    owner.SmallImageList.ImageSize.Height + 1);
-					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
-				}
-				else
-					icon_rect.Width = 0;
-
-				label_rect.Height = checkbox_rect.Height = icon_rect.Height = item_ht;
-
-				label_rect.X = icon_rect.X + icon_rect.Width;
-				label_rect.Y = icon_rect.Y;
-				label_rect.Width = text_size.Width;
-
-				item_rect = Rectangle.Union (icon_rect, label_rect);
-				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
-				break;
+					goto case View.SmallIcon;
 
 			case View.SmallIcon:
 				icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
-				icon_rect.Y = location.Y;
+				icon_rect.Y = checkbox_rect.Y;
 
-				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth, text_size.Height);
+				item_ht = Math.Max (owner.CheckBoxSize.Height, text_size.Height);
 
 				if (owner.SmallImageList != null) {
 					item_ht = Math.Max (item_ht,
@@ -495,6 +494,7 @@ namespace System.Windows.Forms
 				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
 				break;
 			}
+
 			if (checkbox != null) {
 				checkbox.Location = checkbox_rect.Location;
 				checkbox.Size = checkbox_rect.Size;
@@ -529,12 +529,12 @@ namespace System.Windows.Forms
 			}
 
 			public ListViewSubItem (ListViewItem owner, string text)
+				: this (owner, text, owner.ForeColor, owner.BackColor, owner.Font)
 			{
-				this.owner = owner;
-				this.text = text;
 			}
 
-			public ListViewSubItem (ListViewItem owner, string text, Color foreColor, Color backColor, Font font)
+			public ListViewSubItem (ListViewItem owner, string text, Color foreColor,
+						Color backColor, Font font)
 			{
 				this.owner = owner;
 				this.text = text;
@@ -552,7 +552,13 @@ namespace System.Windows.Forms
 
 			[Localizable (true)]
 			public Font Font {
-				get { return font; }
+				get {
+					if (font != null)
+						return font;
+					else if (owner != null)
+						return owner.Font;
+					return font;
+				}
 				set { font = value; }
 			}
 
@@ -593,6 +599,11 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				this.list = new ArrayList ();
+				ListViewSubItem item = new ListViewSubItem (owner, owner.Text,
+									    owner.ForeColor,
+									    owner.BackColor,
+									    owner.Font);
+				this.list.Add (item);
 			}
 			#endregion // Public Constructors
 
@@ -630,7 +641,7 @@ namespace System.Windows.Forms
 				get { return this [index]; }
 				set {
 					if (! (value is ListViewSubItem))
-						throw new ArgumentException("Not of type ListViewSubItem", "value");
+						throw new ArgumentException ("Not of type ListViewSubItem", "value");
 					this [index] = (ListViewSubItem) value;
 				}
 			}
@@ -651,37 +662,46 @@ namespace System.Windows.Forms
 				return item;
 			}
 
-			public ListViewSubItem Add (string text, Color foreColor, Color backColor, Font font)
+			public ListViewSubItem Add (string text, Color foreColor,
+						    Color backColor, Font font)
 			{
-				ListViewSubItem item = new ListViewSubItem (this.owner, text, foreColor, backColor, font);
+				ListViewSubItem item = new ListViewSubItem (this.owner, text,
+									    foreColor, backColor, font);
 				list.Add (item);
 				return item;
 			}
 
 			public void AddRange (ListViewSubItem [] items)
 			{
-				list.Clear ();
+				this.Clear ();
 				foreach (ListViewSubItem item in items)
 					this.Add (item);
 			}
 
 			public void AddRange (string [] items)
 			{
-				list.Clear ();
+				this.Clear ();
 				foreach (string item in items)
 					this.Add (item);
 			}
 
-			public void AddRange (string [] items, Color foreColor, Color backColor, Font font)
+			public void AddRange (string [] items, Color foreColor,
+					      Color backColor, Font font)
 			{
-				list.Clear ();
+				this.Clear ();
 				foreach (string item in items)
 					this.Add (item, foreColor, backColor, font);
 			}
 
 			public virtual void Clear ()
 			{
-				list.Clear ();
+				// don't clear if there is only one item i.e. owner
+				if (list.Count > 1) {
+					ListViewSubItem item = (ListViewSubItem) list [0];
+					list.Clear ();
+					// keep the owner
+					list.Add (item);
+				}
 			}
 
 			public bool Contains (ListViewSubItem item)
@@ -702,7 +722,7 @@ namespace System.Windows.Forms
 			int IList.Add (object item)
 			{
 				if (! (item is ListViewSubItem)) {
-					throw new ArgumentException("Not of type ListViewSubItem", "item");
+					throw new ArgumentException ("Not of type ListViewSubItem", "item");
 				}
 
 				ListViewSubItem sub_item = (ListViewSubItem) item;
@@ -713,7 +733,7 @@ namespace System.Windows.Forms
 			bool IList.Contains (object subItem)
 			{
 				if (! (subItem is ListViewSubItem)) {
-					throw new ArgumentException("Not of type ListViewSubItem", "subItem");
+					throw new ArgumentException ("Not of type ListViewSubItem", "subItem");
 				}
 
 				return this.Contains ((ListViewSubItem) subItem);
@@ -722,7 +742,7 @@ namespace System.Windows.Forms
 			int IList.IndexOf (object subItem)
 			{
 				if (! (subItem is ListViewSubItem)) {
-					throw new ArgumentException("Not of type ListViewSubItem", "subItem");
+					throw new ArgumentException ("Not of type ListViewSubItem", "subItem");
 				}
 
 				return this.IndexOf ((ListViewSubItem) subItem);
@@ -731,7 +751,7 @@ namespace System.Windows.Forms
 			void IList.Insert (int index, object item)
 			{
 				if (! (item is ListViewSubItem)) {
-					throw new ArgumentException("Not of type ListViewSubItem", "item");
+					throw new ArgumentException ("Not of type ListViewSubItem", "item");
 				}
 
 				this.Insert (index, (ListViewSubItem) item);
@@ -740,7 +760,7 @@ namespace System.Windows.Forms
 			void IList.Remove (object item)
 			{
 				if (! (item is ListViewSubItem)) {
-					throw new ArgumentException("Not of type ListViewSubItem", "item");
+					throw new ArgumentException ("Not of type ListViewSubItem", "item");
 				}
 
 				this.Remove ((ListViewSubItem) item);
