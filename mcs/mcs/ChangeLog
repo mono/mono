@@ -1,5 +1,10 @@
 2002-01-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs: Enable IndexerPropertyName again.  It does not
+	work for TYpeBuilders though.  Ravi, can you please fix this?
+
+	* cs-tokenizer.cs: Accept _ as a name in pp-expressions.
+
 	* expression.cs (Argument.Emit): Handle the case of ref objects
 	being passed to ref functions;  
 
