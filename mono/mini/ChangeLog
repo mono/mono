@@ -1,5 +1,7 @@
 2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_cprop_copy_values): Fix crash.
+
 	* aot.c: Set verbosity back to 0.
 	
 Wed Dec 3 15:42:27 CET 2003 Paolo Molaro <lupus@ximian.com>
