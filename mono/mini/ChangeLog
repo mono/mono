@@ -1,5 +1,8 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_get_inst_for_method): Implement more 
+	functions as inline ops.
+
 	* mini-ops.h inssel-amd64.brg cpu-amd64.md mini-amd64.c: Implement
 	some Interlocked functions as inline ops.
 
