@@ -138,7 +138,7 @@ namespace System.ComponentModel
 			get {
 				Attribute attr = null;
 				foreach (Attribute a in attrList) {
-					if (a.GetType () == type){
+					if (type.IsAssignableFrom (a.GetType ())) {
 						attr = a;
 						break;
 					}
