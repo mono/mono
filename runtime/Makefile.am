@@ -46,7 +46,7 @@ assemblies_DATA =	\
 	System.Windows.Forms.dll				\
 	System.Xml.dll
 
-monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe sqlsharp.exe ilasm.exe cilc.exe
+monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe
 
 EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
 
