@@ -1,3 +1,7 @@
+2005-03-28  Raja R Harinath  <rharinath@novell.com>
+
+	* enum.cs (Enum.LookupEnumValue): Remove debugging code.
+
 2005-03-26  Raja R Harinath  <harinath@acm.org>
 
 	Fix #73038.
