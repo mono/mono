@@ -1,5 +1,5 @@
 Commons.Xml/XmlDefaultReader.cs
-Commons.Xml.Relaxng/Util.cs
+Commons.Xml.Relaxng/Misc.cs
 Commons.Xml.Relaxng/RelaxngReader.cs
 Commons.Xml.Relaxng/RelaxngValidatingReader.cs
 Commons.Xml.Relaxng/RngGrammar.cs
