@@ -18,23 +18,26 @@ namespace Mono.ILASM {
                 private IMethodRef method_ref;
                 private ITypeRef type_ref;
 
-                public LdtokenInstr (IFieldRef field_ref)
+                public LdtokenInstr (IFieldRef field_ref, Location loc)
+			: base (loc)
                 {
                         this.field_ref = field_ref;
                 }
 
-                public LdtokenInstr (IMethodRef method_ref)
+                public LdtokenInstr (IMethodRef method_ref, Location loc)
+			: base (loc)
                 {
                         this.method_ref = method_ref;
                 }
 
-                public LdtokenInstr (ITypeRef type_ref)
+                public LdtokenInstr (ITypeRef type_ref, Location loc)
+			: base (loc)
                 {
                         this.type_ref = type_ref;
                 }
 
-                public void Emit (CodeGen code_gen, MethodDef meth,
-				  PEAPI.CILInstructions cil)
+                public override void Emit (CodeGen code_gen, MethodDef meth,
+					   PEAPI.CILInstructions cil)
                 {
                         if (field_ref != null) {
                                 field_ref.Resolve (code_gen);

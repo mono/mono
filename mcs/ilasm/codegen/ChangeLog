@@ -1,3 +1,21 @@
+2004-07-27  Martin Baulig  <martin@ximian.com>
+
+	* IInstr.cs (IInstr): Made this an abstract class and not an
+	interface, added a .ctor which takes a Location.
+	(IInstr.Location): New public readonly field.
+
+	* CodeGen.cs (CodeGen.SymbolWriter): New public property.
+	(CodeGen.BeginSourceFile, EndSourceFile): New public methods.
+	(CodeGen.EndMethodDef): Take a `Location' argument.
+	(CodeGen.Write): Create debugging info if the user requested it.
+
+	* MethodDef.cs (MethodDef.ctor): Added `CodeGen codegen' and
+	`Location start' arguments.  If the user requested debugging
+	information, register ourselves with the symbol writer.
+	(MethodDef.WriteCode): Emit debugging information.
+
+	* DebuggingInfo.cs: New file.
+
 2004-07-23  Jackson Harper  <jackson@ximian.com>
 
 	* MethodDef.cs: Params are 1 based if the method is instance

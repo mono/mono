@@ -18,7 +18,8 @@ namespace Mono.ILASM {
                 private HandlerBlock block;
                 private ArrayList clause_list;
 
-                public TryBlock (HandlerBlock block)
+                public TryBlock (HandlerBlock block, Location loc)
+			: base (loc)
                 {
 			this.block = block;
 			clause_list = new ArrayList ();
@@ -29,8 +30,8 @@ namespace Mono.ILASM {
                         clause_list.Add (clause);
                 }
 
-                public void Emit (CodeGen code_gen, MethodDef meth,
-				  PEAPI.CILInstructions cil)
+                public override void Emit (CodeGen code_gen, MethodDef meth,
+					   PEAPI.CILInstructions cil)
                 {
                         PEAPI.CILLabel from = block.GetFromLabel (code_gen, meth);
                         PEAPI.CILLabel to = block.GetToLabel (code_gen, meth);

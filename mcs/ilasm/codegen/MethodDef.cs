@@ -50,10 +50,12 @@ namespace Mono.ILASM {
                 private ExternModule pinvoke_mod;
                 private string pinvoke_name;
                 private PEAPI.PInvokeAttr pinvoke_attr;
+		private SourceMethod source;
 
-                public MethodDef (PEAPI.MethAttr meth_attr, PEAPI.CallConv call_conv,
-                                PEAPI.ImplAttr impl_attr, string name,
-                                ITypeRef ret_type, ArrayList param_list)
+                public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
+				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
+				  string name, ITypeRef ret_type, ArrayList param_list,
+				  Location start)
                 {
                         this.meth_attr = meth_attr;
                         this.call_conv = call_conv;
@@ -81,6 +83,11 @@ namespace Mono.ILASM {
                         is_resolved = false;
                         CreateSignature ();
                         CreateNamedParamTable ();
+
+			codegen.BeginMethodDef (this);
+
+			if (codegen.SymbolWriter != null)
+				source = codegen.SymbolWriter.BeginMethod (this, start);
                 }
 
                 public string Name {
@@ -431,8 +438,13 @@ namespace Mono.ILASM {
                                         if (label_pos >= label_info.Length)
                                                 next_label_pos = -1;
                                 }
+				if (source != null)
+					source.MarkLocation (instr.Location.line, cil.Offset);
                                 instr.Emit (code_gen, this, cil);
                         }
+
+			if (source != null)
+				source.MarkLocation (source.EndLine, cil.Offset);
 
                         // Generic type parameters
                         if (typar_list != null) {

@@ -18,7 +18,8 @@ namespace Mono.ILASM {
                 private PEAPI.MethodOp op;
                 private IMethodRef operand;
 
-                public MethodInstr (PEAPI.MethodOp op, IMethodRef operand)
+                public MethodInstr (PEAPI.MethodOp op, IMethodRef operand, Location loc)
+			: base (loc)
                 {
                         this.op = op;
                         this.operand = operand;
@@ -27,8 +28,8 @@ namespace Mono.ILASM {
                                 operand.CallConv |= PEAPI.CallConv.Instance;
                 }
 
-                public void Emit (CodeGen code_gen, MethodDef meth,
-                                  PEAPI.CILInstructions cil)
+                public override void Emit (CodeGen code_gen, MethodDef meth,
+					   PEAPI.CILInstructions cil)
                 {
                         operand.Resolve (code_gen);
                         cil.MethInst (op, operand.PeapiMethod);

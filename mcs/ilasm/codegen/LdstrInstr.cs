@@ -17,18 +17,20 @@ namespace Mono.ILASM {
                 private string operand;
                 private byte[] b_operand;
                 
-                public LdstrInstr (string operand)
+                public LdstrInstr (string operand, Location loc)
+			: base (loc)
                 {
                         this.operand = operand;
                 }
 
-                public LdstrInstr (byte[] b_operand)
+                public LdstrInstr (byte[] b_operand, Location loc)
+			: base (loc)
                 {
                         this.b_operand = b_operand;
                 }
                 
-                public void Emit (CodeGen code_gen, MethodDef meth,
-				  PEAPI.CILInstructions cil)
+                public override void Emit (CodeGen code_gen, MethodDef meth,
+					   PEAPI.CILInstructions cil)
                 {
                         if (operand != null)
                                 cil.ldstr (operand);

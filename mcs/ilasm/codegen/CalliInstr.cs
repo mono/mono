@@ -19,15 +19,17 @@ namespace Mono.ILASM {
                 private ITypeRef ret_type;
                 private ITypeRef[] param;
 
-                public CalliInstr (PEAPI.CallConv call_conv, ITypeRef ret_type, ITypeRef[] param)
+                public CalliInstr (PEAPI.CallConv call_conv, ITypeRef ret_type,
+				   ITypeRef[] param, Location loc)
+			: base (loc)
                 {
                         this.call_conv = call_conv;
                         this.ret_type = ret_type;
                         this.param = param;
                 }
 
-                public void Emit (CodeGen code_gen, MethodDef meth,
-				  PEAPI.CILInstructions cil)
+                public override void Emit (CodeGen code_gen, MethodDef meth,
+					   PEAPI.CILInstructions cil)
                 {
                         PEAPI.Type[] param_array;
                         PEAPI.CalliSig callisig;

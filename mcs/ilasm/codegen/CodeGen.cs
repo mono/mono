@@ -29,6 +29,7 @@ namespace Mono.ILASM {
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
                 private Stack typedef_stack;
+		private SymbolWriter symwriter;
 
                 private byte [] assembly_public_key;
                 private int assembly_major_version;
@@ -53,17 +54,22 @@ namespace Mono.ILASM {
                 private long image_base;
 
                 private string output_file;
+		private string debug_file;
                 private bool is_dll;
                 private bool is_assembly;
 
                 private string module_name;
 
-                public CodeGen (string output_file, bool is_dll, bool is_assembly, Report report)
+                public CodeGen (string output_file, bool is_dll, bool is_assembly,
+				bool debugging_info, Report report)
                 {
                         this.output_file = output_file;
                         this.is_dll = is_dll;
                         this.is_assembly = is_assembly;
                         this.report = report;
+
+			if (debugging_info)
+				symwriter = new SymbolWriter (CreateDebugFile (output_file));
 
                         type_manager = new TypeManager (this);
                         extern_table = new ExternTable ();
@@ -80,6 +86,17 @@ namespace Mono.ILASM {
                         image_base = -1;
                 }
 
+		private string CreateDebugFile (string output_file)
+		{
+			int ext_index = output_file.LastIndexOf ('.');
+
+			if (ext_index == -1)
+				ext_index = output_file.Length;
+
+			return String.Format ("{0}.{1}", output_file.Substring (0, ext_index),
+					      "mdb");
+		}
+
                 public PEFile PEFile {
                         get { return pefile; }
                 }
@@ -87,6 +104,10 @@ namespace Mono.ILASM {
                 public Report Report {
                         get { return report; }
                 }
+
+		public SymbolWriter SymbolWriter {
+			get { return symwriter; }
+		}
 
                 public string CurrentNameSpace {
                         get { return current_namespace; }
@@ -157,6 +178,18 @@ namespace Mono.ILASM {
                         return (name == module_name);
                 }
 
+		public void BeginSourceFile (string name)
+		{
+			if (symwriter != null)
+				symwriter.BeginSourceFile (name);
+		}
+
+		public void EndSourceFile ()
+		{
+			if (symwriter != null)
+				symwriter.EndSourceFile ();
+		}
+
                 public void BeginTypeDef (TypeAttr attr, string name, IClassRef parent,
                                 ArrayList impl_list, Location location)
                 {
@@ -225,8 +258,11 @@ namespace Mono.ILASM {
                         current_methoddef = methoddef;
                 }
 
-                public void EndMethodDef ()
+                public void EndMethodDef (Location location)
                 {
+			if (symwriter != null)
+				symwriter.EndMethod (location);
+
                         current_methoddef = null;
                 }
 
@@ -293,6 +329,7 @@ namespace Mono.ILASM {
                         try {
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
                                 pefile = new PEFile (assembly_name, module_name, is_dll, is_assembly, out_stream);
+                                PEAPI.Assembly asmb = pefile.GetThisAssembly ();
 
                                 if (file_ref != null)
                                         file_ref.Resolve (this);
@@ -314,7 +351,7 @@ namespace Mono.ILASM {
 
                                 if (assembly_custom_attributes != null) {
                                         foreach (CustomAttr cattr in assembly_custom_attributes)
-                                                cattr.AddTo (this, pefile.GetThisAssembly ());
+                                                cattr.AddTo (this, asmb);
                                 }
 
                                 if (sub_system != -1)
@@ -322,13 +359,15 @@ namespace Mono.ILASM {
                                 if (cor_flags != -1)
                                         pefile.SetCorFlags (cor_flags);
 
-                                PEAPI.Assembly asmb = pefile.GetThisAssembly ();
                                 asmb.AddAssemblyInfo(assembly_major_version,
                                                 assembly_minor_version, assembly_build_version,
                                                 assembly_revision_version, assembly_public_key,
                                                 (uint) assembly_hash_algorithm, assembly_locale);
 
                                 pefile.WritePEFile ();
+
+				if (symwriter != null)
+					symwriter.Write ();
                         } catch {
                                 throw;
                         } finally {
