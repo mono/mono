@@ -11,6 +11,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
+	[Guid("9e31421c-2f15-4f35-ad20-66fb9d4cd428")]
 	public sealed class RegistrationHelperTx : ServicedComponent {
 
 		#region Constructors
@@ -47,6 +48,14 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public void InstallAssemblyFromConfig (ref RegistrationConfig regConfig, object sync)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MonoTODO]
 		public bool IsInTransaction ()
 		{
@@ -63,6 +72,14 @@ namespace System.EnterpriseServices {
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_1_1
+		[MonoTODO]
+		public void UninstallAssemblyFromConfig (ref RegistrationConfig regConfig, object sync)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Methods
 	}

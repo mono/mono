@@ -1,5 +1,11 @@
 2004-05-13  Mike Kestner <mkestner@ximian.com>
 
+	* RegistrationHelper.cs : add Guid and 2 methods
+	* RegistrationHelperTx.cs : add Guid and 2 methods
+	* SynchronizationAttribute.cs : add ComVisible
+
+2004-05-13  Mike Kestner <mkestner@ximian.com>
+
 	* ContextUtil.cs : fix sigs for 2 methods
 	* RegistrationConfig.cs : impl
 

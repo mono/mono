@@ -11,7 +11,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
-	//[Guid ("")]
+	[Guid("89a86e7b-c229-4008-9baa-2f5c8411d7e0")]
 	public sealed class RegistrationHelper : MarshalByRefObject, IRegistrationHelper {
 
 		#region Constructors
@@ -38,6 +38,14 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public void InstallAssemblyFromConfig (ref RegistrationConfig regConfig)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public void UninstallAssembly (string assembly, string application)
 		{
 			UninstallAssembly (assembly, application, null);
@@ -48,6 +56,14 @@ namespace System.EnterpriseServices {
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_1_1
+		[MonoTODO]
+		public void UninstallAssemblyFromConfig (ref RegistrationConfig regConfig)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Methods
 	}
