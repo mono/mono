@@ -23,18 +23,42 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
-namespace System.Data.OracleClient.Oci {
+namespace System.Data.OracleClient.Oci 
+{
+	internal sealed class OciStatus 
+	{
+		private int status;
+		private int errorCode;
+		private string errorMessage;
+
+		internal OciStatus (int Status, int ErrorCode, string ErrorMessage) {
+			status = Status;
+			errorCode = ErrorCode;
+			errorMessage = ErrorMessage;
+		}
+
+		internal int Status {
+			get { return status; }
+		}
+
+		internal int ErrorCode {
+			get { return errorCode; }
+		}
+
+		internal string ErrorMessage {
+			get { return errorMessage; }
+		}
+	}
+
 	internal sealed class OciGlue 
 	{
-		IntPtr environmentHandle;
-		IntPtr errorHandle;
-		IntPtr serverHandle;
-		IntPtr serviceHandle;
-		IntPtr sessionHandle;
-
-		// TODO: need to clean up, dispose, close, etc...
-
+		IntPtr environmentHandle = IntPtr.Zero;
+		IntPtr errorHandle = IntPtr.Zero;
+		IntPtr serverHandle = IntPtr.Zero;
+		IntPtr serviceHandle = IntPtr.Zero;
+		IntPtr sessionHandle = IntPtr.Zero;
 		
 		// connection parameters
 		string database = "";
@@ -52,11 +76,6 @@ namespace System.Data.OracleClient.Oci {
 		public const int OCI_NEED_DATA = 99;
 		public const int OCI_STILL_EXECUTING = -3123;
 		public const int OCI_CONTINUE = -24200;
-
-		private UInt32 ociGlueConnectionHandle = 0;
-
-		// http://download-west.oracle.com/docs/cd/A87861_01/NT817EE/index.htm
-		// from oracle/ora81/oci/include/oci.h
 
 		[DllImport ("oci", EntryPoint = "OCIAttrSet")]
 		public static extern int OCIAttrSet (IntPtr trgthndlp,
@@ -95,9 +114,9 @@ namespace System.Data.OracleClient.Oci {
 		[DllImport ("oci")]
 		public static extern int OCIErrorGet (IntPtr hndlp,
 							uint recordno,
-							out string sqlstate,
+							IntPtr sqlstate,
 							out int errcodep,
-							out string bufp,
+							IntPtr bufp,
 							uint bufsize,
 							[MarshalAs (UnmanagedType.U4)] OciHandleType type);
 
@@ -111,6 +130,7 @@ namespace System.Data.OracleClient.Oci {
 		[DllImport ("oci")]
 		public static extern int OCIHandleFree (IntPtr hndlp,
 							[MarshalAs (UnmanagedType.U4)] OciHandleType type);
+
 		[DllImport ("oci")]
 		public static extern int OCIServerAttach (IntPtr srvhp, 
 							IntPtr errhp, 
@@ -141,6 +161,12 @@ namespace System.Data.OracleClient.Oci {
 							[MarshalAs (UnmanagedType.U4)] OciExecuteMode mode);
 
 		[DllImport ("oci")]
+		public static extern int OCISessionEnd (IntPtr svchp,
+							IntPtr errhp,
+							IntPtr usrhp,
+							uint mode);
+
+		[DllImport ("oci")]
 		public static extern int OCIStmtPrepare (IntPtr stmthp,
 							IntPtr errhp,
 							string stmt,
@@ -153,33 +179,72 @@ namespace System.Data.OracleClient.Oci {
 							IntPtr errhp,
 							uint timeout,
 							[MarshalAs (UnmanagedType.U4)] OciTransactionFlags flags);
+		
 
-		public string CheckError (Int32 status) 
+		// used for OCIEnvCreate and OCIHandleAlloc
+		public OciStatus CheckEnvOrHandleError (int status) 
 		{
-			IntPtr intptrMsg = IntPtr.Zero;
-			string strMsg = "";
-			string msg = "";
-		/*	
-			intptrMsg = OciGlue_CheckError(status, ociGlueConnectionHandle);
-			if(intptrMsg != IntPtr.Zero)
-				strMsg = Marshal.PtrToStringAnsi(intptrMsg);
-				if(strMsg != null) {
-					msg = String.Copy(strMsg);
-					OciGlue_Free(intptrMsg);
-				}
+			int errcode = 0;
+			int statusFromOciError;
+			IntPtr sqlstate = IntPtr.Zero;
+			int errbufSize = 512;
+			IntPtr errbuf = Marshal.AllocHGlobal (errbufSize);
+			
+			statusFromOciError = OCIErrorGet (environmentHandle, 
+				1, sqlstate, out errcode,
+				errbuf, (uint) errbufSize, 
+				OciHandleType.Environment);
 
-		*/
-			return msg;
+			if(statusFromOciError != 0)
+				Console.WriteLine("Error in the Check Error routine");
+			string errorMessage = "";
+			object err = Marshal.PtrToStringAnsi (errbuf);
+			if (err != null) {
+				string errmsg = (string) err;
+				errorMessage = String.Copy (errmsg);
+				Marshal.FreeHGlobal (errbuf);
+			}
+
+			OciStatus ociStatus = new OciStatus (status, errcode, errorMessage);
+
+			return ociStatus;
 		}
 
-		public int Connect (OracleConnectionInfo conInfo) 
+		public OciStatus CheckError (int status) 
+		{
+			int errcode = 0;
+			int statusFromOciError;
+			IntPtr sqlstate = IntPtr.Zero;
+			int errbufSize = 512;
+			IntPtr errbuf = Marshal.AllocHGlobal (errbufSize);
+
+			statusFromOciError = OCIErrorGet (errorHandle, 
+				1, sqlstate, out errcode,
+				errbuf, (uint) errbufSize, 
+				OciHandleType.Error);
+
+			if(statusFromOciError != 0)
+				Console.WriteLine("Error in the Check Error routine");
+
+			string errorMessage = "";
+			object err = Marshal.PtrToStringAnsi (errbuf);
+			if (err != null) {
+				string errmsg = (string) err;
+				errorMessage = String.Copy (errmsg);
+				Marshal.FreeHGlobal (errbuf);
+			}
+
+			OciStatus ociStatus = new OciStatus (status, errcode, errorMessage);
+
+			return ociStatus;
+		}
+
+		public OciStatus Connect (OracleConnectionInfo conInfo) 
 		{
 			Int32 status = 0;
-			string error = "";
-			int errcode = 0;
 			string errmsg = "";
-			string strMsg = "";
-			
+			OciStatus ociStatus;
+						
 			status = OCIEnvCreate (out environmentHandle, 
 						OciEnvironmentMode.Default | OciEnvironmentMode.NoUserCallback,
 						IntPtr.Zero,
@@ -190,7 +255,9 @@ namespace System.Data.OracleClient.Oci {
 						IntPtr.Zero);
 			if (status != 0) {
 				Console.WriteLine ("ERR1 {0}", status);
-				return status;
+				errmsg = CheckStatus (status);
+				ociStatus = new OciStatus (status, 0, errmsg);
+				return ociStatus;
 			}
 
 			// Allocate the service handle
@@ -203,7 +270,10 @@ namespace System.Data.OracleClient.Oci {
 				
 			if (status != 0) {
 				Console.WriteLine ("ERR2 {0}", status);
-				return status;
+				ociStatus = CheckEnvOrHandleError (status);
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			// Allocate the error handle
@@ -214,8 +284,12 @@ namespace System.Data.OracleClient.Oci {
 						IntPtr.Zero);
 			if (status != 0) {
 				Console.WriteLine ("ERR3");
+				ociStatus = CheckEnvOrHandleError (status);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			// Allocate the server handle
@@ -227,9 +301,14 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR4");
+				ociStatus = CheckEnvOrHandleError (status);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			// Allocate the session handle
@@ -242,10 +321,16 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR5");
+				ociStatus = CheckEnvOrHandleError (status);
 				OCIHandleFree (serverHandle, OciHandleType.Server);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				serverHandle = IntPtr.Zero;
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			/* Attach to Oracle server */
@@ -257,11 +342,18 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR6 {0}", status);
+				ociStatus = CheckError (status);
 				OCIHandleFree (sessionHandle, OciHandleType.Session);
 				OCIHandleFree (serverHandle, OciHandleType.Server);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				sessionHandle = IntPtr.Zero;
+				serverHandle = IntPtr.Zero;
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			/*Set the server attribute in the service context */
@@ -274,11 +366,18 @@ namespace System.Data.OracleClient.Oci {
 						
 			if (status != 0) {
 				Console.WriteLine ("ERR7 {0}", status);
+				ociStatus = CheckError (status);
 				OCIHandleFree (sessionHandle, OciHandleType.Session);
 				OCIHandleFree (serverHandle, OciHandleType.Server);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				sessionHandle = IntPtr.Zero;
+				serverHandle = IntPtr.Zero;
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			/* Set the username attribute */
@@ -291,11 +390,18 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR8 {0}", status);
+				ociStatus = CheckError (status);
 				OCIHandleFree (sessionHandle, OciHandleType.Session);
 				OCIHandleFree (serverHandle, OciHandleType.Server);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				sessionHandle = IntPtr.Zero;
+				serverHandle = IntPtr.Zero;
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			/* Set the password attribute */
@@ -308,11 +414,18 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR9 {0}", status);
+				ociStatus = CheckError (status);
 				OCIHandleFree (sessionHandle, OciHandleType.Session);
 				OCIHandleFree (serverHandle, OciHandleType.Server);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				sessionHandle = IntPtr.Zero;
+				serverHandle = IntPtr.Zero;
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			/* Begin the session */
@@ -324,12 +437,19 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR10 {0}", status);
+				ociStatus = CheckError (status);
 				OCIServerDetach (serverHandle, errorHandle, OCI_DEFAULT);
 				OCIHandleFree (sessionHandle, OciHandleType.Session);
 				OCIHandleFree (serverHandle, OciHandleType.Server);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				sessionHandle = IntPtr.Zero;
+				serverHandle = IntPtr.Zero;
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
 
 			/* Set the session attribute in the service context */
@@ -342,15 +462,25 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR11 {0}", status);
+				ociStatus = CheckError (status);
 				OCIServerDetach (serverHandle, errorHandle, OCI_DEFAULT);
 				OCIHandleFree (sessionHandle, OciHandleType.Session);
 				OCIHandleFree (serverHandle, OciHandleType.Server);
 				OCIHandleFree (errorHandle, OciHandleType.Error);
 				OCIHandleFree (serviceHandle, OciHandleType.Service);
-				return status;
+				OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				sessionHandle = IntPtr.Zero;
+				serverHandle = IntPtr.Zero;
+				errorHandle = IntPtr.Zero;
+				serviceHandle = IntPtr.Zero;
+				environmentHandle = IntPtr.Zero;
+				return ociStatus;
 			}
+
+			// connection was successful
+			ociStatus = new OciStatus (0, 0, String.Empty);
 						
-			return status;
+			return ociStatus;
 		}
 
 		public IntPtr PrepareStatement (string commandText)
@@ -366,7 +496,8 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR12 {0}", status);
-				return IntPtr.Zero;
+				string error = CheckStatus (status);
+				throw new Exception ("Oracle Prepare Error: " + error);
 			}
 
 			status = OCIStmtPrepare (statementHandle,
@@ -378,7 +509,8 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR13 {0}", status);
-				return IntPtr.Zero;
+				string error = CheckStatus (status);
+				throw new Exception ("Oracle Prepare Error: " + error);
 			}
 		
 			return statementHandle;
@@ -405,7 +537,7 @@ namespace System.Data.OracleClient.Oci {
 			return (OciStatementType) statementType;
 		}
 
-		public bool ExecuteStatement (IntPtr statementHandle, OciStatementType statementType)
+		public void ExecuteStatement (IntPtr statementHandle, OciStatementType statementType)
 		{
 			int status = 0;
 			status = OCIStmtExecute (serviceHandle,
@@ -419,10 +551,9 @@ namespace System.Data.OracleClient.Oci {
 
 			if (status != 0) {
 				Console.WriteLine ("ERR15 {0}", status);
-				return false;
+				string error = CheckStatus (status);
+				throw new Exception("Oracle Execute Error: " + error);
 			}
-
-			return true;
 		}
 
 		public IntPtr BeginTransaction () 
@@ -469,85 +600,65 @@ namespace System.Data.OracleClient.Oci {
 			return transactionHandle;
 		}
 
-		public Int32 CommitTransaction () 
+		public int CommitTransaction () 
 		{
-			Int32 status = 0;
-			string msg = "";
-/*
-			Console.WriteLine ("OciGlue_CommitTransaction");
-			Console.WriteLine ("  Handle: " + ociGlueConnectionHandle);
-			status = OciGlue.OciGlue_CommitTransaction (ociGlueConnectionHandle);
-
-			if (status != 0) {
-				msg = CheckStatus (status);
-				throw new Exception (msg);
-			}
-			*/
-
-			return status;
-		}
-
-		public Int32 RollbackTransaction () 
-		{
-			Int32 status = 0;
-			string msg = "";
-
-			/*
-			Console.WriteLine ("OciGlue_RollbackTransaction");
-			Console.WriteLine ("  Handle: " + ociGlueConnectionHandle);
-			status = OciGlue.OciGlue_RollbackTransaction (ociGlueConnectionHandle);
-
-			if (status != 0) {
-				msg = CheckStatus (status);
-				throw new Exception (msg);
-			}
-
-			*/
-
-			return status;
-		}
-
-		public Int32 Disconnect() {
-
-			Int32 status = 0;
-			string msg = "";
-		
-		/*
-			Console.WriteLine("OciGlue_Disconnect");
-			Console.WriteLine("  Handle: " + ociGlueConnectionHandle);
-			status = OciGlue.OciGlue_Disconnect (ociGlueConnectionHandle);
-			ociGlueConnectionHandle = 0;
+			int status = 0;
 			
-			if(status != 0) {
-				msg = CheckStatus(status);
-				throw new Exception(msg);
-			}
-			*/
-						
+			// TODO: commit
+
 			return status;
 		}
 
-
-		// Helper methods
-		public Int32 PrepareAndExecuteNonQuerySimple(string sql) 
+		public int RollbackTransaction () 
 		{
-			Int32 status = 0;
-			int found = 0;
+			int status = 0;
+			
+			// TODO: rollback
 
-/*
-			Console.WriteLine("PrepareAndExecuteNonQuerySimple");
-			status = OciGlue_PrepareAndExecuteNonQuerySimple (
-				ociGlueConnectionHandle, sql, out found);
+			return status;
+		}
 
-			Console.WriteLine("  Handle: " + ociGlueConnectionHandle +
-				" Found: " + found.ToString());
+		public int Disconnect() 
+		{
+			int status = 0;
 
-			CheckStatus(status);
-			*/
+			if (serviceHandle != IntPtr.Zero && 
+				errorHandle != IntPtr.Zero &&
+				sessionHandle != IntPtr.Zero) {
+
+				status = OCISessionEnd (serviceHandle, errorHandle, sessionHandle, 0);
+			}
+
+			if (serverHandle != IntPtr.Zero && errorHandle != IntPtr.Zero) {
+				status = OCIServerDetach (serverHandle, errorHandle, OCI_DEFAULT);
+			}		
+
+			if (sessionHandle != IntPtr.Zero) {
+				status = OCIHandleFree (sessionHandle, OciHandleType.Session);
+				sessionHandle = IntPtr.Zero;
+			}
+			if (serverHandle != IntPtr.Zero) {
+				status = OCIHandleFree (serverHandle, OciHandleType.Server);
+				serverHandle = IntPtr.Zero;
+			}
+			if (errorHandle != IntPtr.Zero) {
+				status = OCIHandleFree (errorHandle, OciHandleType.Error);
+				errorHandle = IntPtr.Zero;
+			}
+			if (serviceHandle != IntPtr.Zero) {
+				status = OCIHandleFree (serviceHandle, OciHandleType.Service);
+				serviceHandle = IntPtr.Zero;
+			}
+			if (environmentHandle != IntPtr.Zero) {
+				status = OCIHandleFree (environmentHandle, OciHandleType.Environment);
+				environmentHandle = IntPtr.Zero;
+			}
+
 			return status;
 		}
 		
-		public string CheckStatus(Int32 status) {		
+		public string CheckStatus(int status)
+		{
 			string msg = "";
 						
 			switch (status) {
@@ -564,22 +675,24 @@ namespace System.Data.OracleClient.Oci {
 				msg = "Error - OCI_NODATA";
 				break;
 			case OCI_ERROR:
-				if(ociGlueConnectionHandle != 0)
-					msg = CheckError(status);
+				if (errorHandle != IntPtr.Zero)
+					msg = CheckError (status).ErrorMessage;
+				else if (environmentHandle != IntPtr.Zero)
+					msg = CheckEnvOrHandleError (status).ErrorMessage;
 				else
-					msg = "OCI_ERROR";
+					msg = "OCI Error";
 				break;
 			case OCI_INVALID_HANDLE:
 				msg = "Error - OCI_INVALID_HANDLE";
 				break;
 			case OCI_STILL_EXECUTING:
-				msg = "Error - OCI_STILL_EXECUTE";
+				msg = "Error - OCI_STILL_EXECUTING";
 				break;
 			case OCI_CONTINUE:
 				msg = "Error - OCI_CONTINUE";
 				break;
 			default:
-				msg = "Default";
+				msg = "Unknown Status: " + status.ToString();
 				break;
 			}
 			return msg;

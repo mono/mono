@@ -1,3 +1,26 @@
+2003-02-12  Daniel Morgan <danmorg@sc.rr.com>
+
+	* README.TXT
+    * System.Data.OracleClient/OciGlueLib_BCC_win32.make
+    * System.Data.OracleClient/OciGlueLib_GCC_linux.make
+    * System.Data.OracleClient/OciGlueLib_MSVC_win32.make
+    * System.Data.OracleClient/ociglue.c
+    * System.Data.OracleClient/ociglue.h
+    * Test/Test.csproj
+    * Test/Test.csproj.user: removed files because System.Data.OracleClient
+    no longer uses a glue library
+    
+    * System.Data.OracleClient/TODOAttribute.cs: added file
+    
+    * System.Data.OracleClient/OracleCommand.cs
+    * System.Data.OracleClient/OracleConnection.cs
+    * System.Data.OracleClient/OciGlue.cs: modified -
+    implement Disconnect and error handling (still need
+    to create OracleException though)
+    
+    * Test/TestOracleClient.cs: clean up and accept
+    connection parameters from command line   
+    
 2003-02-11  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient.Oci/OciAttributeType.cs:
 	* System.Data.OracleClient.Oci/OciCredentialType.cs:

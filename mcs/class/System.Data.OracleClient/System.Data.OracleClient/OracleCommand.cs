@@ -36,7 +36,7 @@ namespace System.Data.OracleClient {
 		OracleParameterCollection parameters;
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
-
+		
 		IntPtr statementHandle;
 		OciStatementType statementType;
 
@@ -152,6 +152,25 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
+		/*
+		[MonoTODO("Still need to Dispose correctly")]
+		public new void Dispose () 
+		{	
+			if (!disposed) {
+				if (statementHandle != IntPtr.Zero) {
+					OciGlue.OCIHandleFree (statementHandle, OciHandleType.Statement);
+					statementHandle = IntPtr.Zero;
+				}
+				//base.Dispose ();
+			}
+		}
+		
+		[MonoTODO("still need to Finalize correctly")]
+		~OracleCommand() {
+			Dispose();
+		}
+		*/
+
 		internal void CloseDataReader ()
 		{
 			Connection.DataReader = null;
@@ -172,20 +191,6 @@ namespace System.Data.OracleClient {
 			statementHandle = Connection.Oci.PrepareStatement (CommandText);
 			statementType = Connection.Oci.GetStatementType (statementHandle);
 			Connection.Oci.ExecuteStatement (statementHandle, statementType);
-
-			/*
-			Int32 status;
-			status = connection.Oci.PrepareAndExecuteNonQuerySimple (commandText);
-			if(status != 0) {
-				string statusText;
-				statusText = connection.Oci.CheckStatus(status);
-				string msg = 
-					"SQL Error: [" + 
-					commandText + "] " +
-					statusText;
-				throw new Exception(msg);
-			}
-			*/
 
 			return rowsAffected;
 		}

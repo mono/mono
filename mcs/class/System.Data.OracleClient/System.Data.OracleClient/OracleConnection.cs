@@ -181,16 +181,21 @@ namespace System.Data.OracleClient
 
 		public void Open () 
 		{
-			Int32 status;
-			
-			status = oci.Connect(conInfo);
-			if(status != 0)
-				throw new Exception("Error: Unable to connect: " + 
-					status.ToString() + 
-					": " +
-					oci.CheckError(status));
-			else
-				state = ConnectionState.Open;
+			OciStatus ociStatus;
+						
+			ociStatus = oci.Connect(conInfo);
+			if(ociStatus.Status != 0) {
+				string errmsg = ociStatus.ErrorMessage;
+				string status = ociStatus.Status.ToString ();
+				string errcode = ociStatus.ErrorCode.ToString ();
+				string msg = "Oracle Error: Unable to connect: " +
+					"status: " + status + 
+					": errcode:" +
+					errcode + " - " + errmsg;
+				throw new Exception (msg);
+			}
+					
+			state = ConnectionState.Open;
 		}
 
 		public void Close () 
@@ -201,7 +206,7 @@ namespace System.Data.OracleClient
 				throw new Exception("Error: Unable to disconnect: " + 
 					status.ToString() + 
 					": " +
-					oci.CheckError(status));
+					oci.CheckStatus (status));
 		}
 
 
@@ -284,7 +289,7 @@ namespace System.Data.OracleClient
 					conInfo.Username = value;
 					break;
 				default:
-					throw new Exception("Connection parameter not supported.");
+					throw new Exception("Connection parameter not supported." + name);
 				}
 			}
 		}

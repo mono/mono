@@ -17,6 +17,9 @@
 // Copyright (C) Daniel Morgan, 2002
 // 
 
+// Expected Results:
+//    3 new rows where ENAME being: 'conn3', 'conn9', and 'conn1'
+
 using System;
 using System.Runtime.InteropServices;
 using System.Data.OracleClient;
@@ -78,12 +81,6 @@ namespace Test.OracleClient
 			cmd.ExecuteNonQuery();
 		}
 
-		static void ConnectionCount() {
-			uint count = OracleConnection.ConnectionCount;
-			string msg = "Connection Count: " + count.ToString();
-			Console.WriteLine(msg);
-		}
-
 		static void Wait(string msg) 
 		{
 			Console.WriteLine(msg);
@@ -94,32 +91,36 @@ namespace Test.OracleClient
 		[STAThread]
 		static void Main(string[] args)
 		{	
-			string connectionString;
-			connectionString = 
-				"Data Source=dansdb;" +
-				"User ID=scott;" +
-				"Password=tiger";
+			if(args.Length != 3) {
+				Console.WriteLine("Usage: mono TestOracleClient database userid password");
+				return;
+			}
+
+			string connectionString = String.Format(
+				"Data Source={0};" +
+				"User ID={1};" +
+				"Password={2}",
+				args[0], args[1], args[2]);
 
 			Wait("Verify database.");
-
-			ConnectionCount(); // should be 0
 
 			OracleConnection con1 = new OracleConnection();
 			con1.ConnectionString = connectionString;
 			con1.Open();
-			ConnectionCount(); // should be 1
 
+			Wait("Verify 1 connection.");
+			
 			OracleConnection con2 = new OracleConnection();
 			con2.ConnectionString = connectionString;
 			con2.Open();
-			ConnectionCount(); // should be 2
+			
+			Wait("Verify 2 connections.");
 
 			OracleConnection con3 = new OracleConnection();
 			con3.ConnectionString = connectionString;
 			con3.Open();
-			ConnectionCount(); // should be 3
-
-			Wait("Verify Connected.");
+			
+			Wait("Verify 3 connections.");
 					
 			DoTest1(con1, 1);
 			DoTest1(con2, 2);
@@ -128,19 +129,18 @@ namespace Test.OracleClient
 			DoTest9(con1);
 
 			Wait("Verify Proper Results.");
-			
-			ConnectionCount(); // should be 3
+						
+			con1.Close();		
 
-			con1.Close();
-			ConnectionCount(); // should be 2
+			Wait("Verify 2 connections left.");
 
 			con2.Close();
-			ConnectionCount(); // should be 1
+
+			Wait("Verify 1 connection left.");
 
 			con3.Close();
-			ConnectionCount(); // should be 0
-
-			Wait("Verify Disconnected");
+			
+			Wait("Verify all disconnected.");
 		}
 	}
 }
