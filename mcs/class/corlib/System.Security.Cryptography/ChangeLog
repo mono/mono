@@ -1,3 +1,13 @@
+2002-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ICryptoTransform.cs: Now inherits from IDisposable
+	* RC2CryptoServiceProvider.cs: Added Dispose() to RC2Impl because it inherits ICryptoTransform
+        * CryptoAPITransform.cs: Added Dispose() to CryptoAPITransform... ICryptoTransform
+        * RijndaelManaged.cs: Added Dispose() to RijndaelController...ICryptoTransform
+        * FromBase64Transform.cs: Added Dispose() to FromBase64Transform...ICryptoTransform
+        * ToBase64Transform.cs: Added Dispose() to ToBase64Transform...ICryptoTransform
+        * DESCryptoServiceProvider.cs: Added Dispose() to DESTransformBase...ICryptoTransform
+
 2002-10-11  Duncan Mak  <duncan@ximian.com>
 
 	* DESCryptoServiceProvider.cs: Removed unnecessary Dispose ().

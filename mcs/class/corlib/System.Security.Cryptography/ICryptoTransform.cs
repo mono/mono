@@ -7,7 +7,6 @@
 // Copyright 2001 by Matthew S. Ford.
 //
 
-
 using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -17,7 +16,7 @@ namespace System.Security.Cryptography {
 	/// This works by stringing together one or more ICryptoTransform classes with a stream.
 	/// Data is passed from one to the next without the need of outside buffering/intervention.
 	/// </summary>
-	public interface ICryptoTransform {
+	public interface ICryptoTransform : IDisposable {
 	
 		/// <summary>
 		/// Whether the function can transform multiple blocks at a time.

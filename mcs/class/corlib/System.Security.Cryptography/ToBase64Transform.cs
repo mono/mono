@@ -57,6 +57,11 @@ namespace System.Security.Cryptography {
 		}
 
 
+                void System.IDisposable.Dispose ()
+                {
+                }
+
+
 		/// <summary>
 		/// </summary>
 		public int TransformBlock (byte [] inputBuffer,

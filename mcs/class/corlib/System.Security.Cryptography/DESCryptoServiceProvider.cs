@@ -79,6 +79,10 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+                void System.IDisposable.Dispose ()
+                {
+                }
+                
 		private void EncPreprocess (byte [] workBuff) 
 		{
 			byte [] iv = this.iv;

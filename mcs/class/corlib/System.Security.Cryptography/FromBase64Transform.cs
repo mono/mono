@@ -82,6 +82,10 @@ namespace System.Security.Cryptography {
 		}
 
 
+                void System.IDisposable.Dispose ()
+                {
+                }
+
 
 		private int Filter (byte [] buffer, int offset, int count)
 		{

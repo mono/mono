@@ -147,6 +147,10 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+                void System.IDisposable.Dispose ()
+                {
+                }
+
 		private void XorInto(byte[] src, byte[] dest) 
 		{
 			if (src.Length != dest.Length) {

@@ -58,6 +58,11 @@ namespace System.Security.Cryptography
 		}
 
 		[MonoTODO]
+                void System.IDisposable.Dispose ()
+                {
+                }
+
+		[MonoTODO]
 		public int TransformBlock(byte[] inputBuffer, int inputOffset, 
 		                          int inputCount, byte[] outputBuffer, int outputOffset)
 		{
