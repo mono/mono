@@ -106,7 +106,10 @@ namespace System.Security.Policy
 
 		public override bool Equals(object o)
 		{
-			if (!(o is CodeGroup))
+			if (!(o is FileCodeGroup))
+				return false;
+
+			if (this.m_access != ((FileCodeGroup)o).m_access)
 				return false;
 
 			return Equals((CodeGroup)o, false);
