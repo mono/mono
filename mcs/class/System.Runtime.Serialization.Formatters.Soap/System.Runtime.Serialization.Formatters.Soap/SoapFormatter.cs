@@ -14,7 +14,8 @@ namespace System.Runtime.Serialization.Formatters.soap
 {
 	public class SoapFormatter
 	{
-		private ObjectSerializer ObjSerializer;		
+		private ObjectSerializer   ObjSerializer;	
+		private ObjectDeserializer ObjDeserializer;
 		/*this is the soapformater's properties               
 		  the Binder, Context and SurrogateSelector properties
 		  have not been declared yet*/
@@ -51,8 +52,8 @@ namespace System.Runtime.Serialization.Formatters.soap
 
 		public object Deserialize(Stream serializationStream)			
 		{
-			return null;
-			//not implented yet
+			ObjDeserializer= new ObjectDeserializer(serializationStream);
+			return ObjDeserializer.Deserialize(serializationStream);
 		}
 		
 	}

@@ -12,7 +12,7 @@ using System.Collections;
 
 namespace System.Runtime.Serialization.Formatters.soap
 {
-	public class ObjectSerializer
+	internal class ObjectSerializer
 	{		
 		/*******const's section******/		
 		const string cStringType       = "System.String";

@@ -13,7 +13,7 @@ using System.IO;
 namespace System.Runtime.Serialization.Formatters.soap
 {
 	
-		public class SoapWriter
+		internal class SoapWriter
 		{		
 			/******const section******/
 			const string cNullObject     = "xsi:null=\"1\"/";
