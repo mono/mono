@@ -166,6 +166,7 @@ namespace System.Collections {
 		public virtual object Clone() {
 			Stack stack = new Stack (contents);
 			stack.current = current;
+			stack.count = count;
 			return stack;
 		}
 
