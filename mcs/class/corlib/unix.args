@@ -476,6 +476,7 @@ System.Runtime.InteropServices/UCOMTypeInfo.cs
 System.Runtime.InteropServices/UCOMTypeLib.cs
 System.Runtime.InteropServices/UnmanagedType.cs
 System.Runtime.InteropServices/VarEnum.cs
+System.Runtime.InteropServices.Expando/IExpando.cs
 System.Runtime.Remoting/ActivatedClientTypeEntry.cs
 System.Runtime.Remoting/ActivatedServiceTypeEntry.cs
 System.Runtime.Remoting/EnvoyInfo.cs
