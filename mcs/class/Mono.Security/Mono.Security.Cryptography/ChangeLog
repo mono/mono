@@ -1,3 +1,9 @@
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS8.cs: Added EncodeRSA, EncodeDSA and completed GetBytes() so it
+	is now possible to encode PKCS8 files (this is required to encode 
+	PKCS12 files).
+
 2004-02-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ARC4Managed.cs: Removed all % 256 (modulo) because typecasting to 
