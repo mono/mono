@@ -1,4 +1,10 @@
 
+Tue Dec 18 18:48:00 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: use mono_metadata_methods_from_property() and
+	mono_metadata_properties_from_typedef() from metadata instead of
+	custom code.
+
 Tue Nov 27 16:31:52 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: output a marker for method (used in debug support).

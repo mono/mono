@@ -1,4 +1,9 @@
 
+Tue Dec 18 18:48:50 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: make segv_handler static, handle runtime methods in stack
+	trace.
+
 Thu Dec 13 20:24:28 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: correctly handle exceptions generated in C code.

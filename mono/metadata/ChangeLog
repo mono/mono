@@ -1,3 +1,20 @@
+
+Tue Dec 18 18:50:00 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix mono_array_element_size() for objects.
+	* class.h, class.c: add properties to MonoClass and load them
+	at init time.
+	* icall.c: check with isinst() when assigning a value to an array
+	instead of requiring the classes to match exactly.
+	Implemented icall for System.Type::GetType().
+	Implemented icalls to get ParameterInfo, ProprtyInfo and info about
+	enums. Handle bindingflags when looking for methods and fields.
+	* metadata.h, metadata.c: implemented mono_metadata_properties_from_typedef()
+	and mono_metadata_methods_from_property().
+	* reflection.h, reflection.c: added structures for propreties,
+	parameters and enums. Implemented mono_property_get_object() and
+	mono_param_get_objects().
+
 2001-12-18  Dick Porter  <dick@ximian.com>
 
 	* file-io.c: Use mono_string_to_utf16() instead of
