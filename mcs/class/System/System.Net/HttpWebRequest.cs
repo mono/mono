@@ -226,7 +226,6 @@ namespace System.Net
 		public override string ContentType { 
 			get { return webHeaders ["Content-Type"]; }
 			set {
-				CheckRequestStarted ();
 				if (value == null || value.Trim().Length == 0) {
 					webHeaders.RemoveInternal ("Content-Type");
 					return;

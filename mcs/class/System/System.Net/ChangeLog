@@ -1,3 +1,8 @@
+2004-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: don't fail if the request has already been sent
+	when accessing ContentType setter. Fixes bug #68848.
+
 2004-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChunkStream.cs:
