@@ -92,6 +92,21 @@ namespace System.Web.Compilation
 			if (culture != null)
 				method.Statements.Add (CreatePropertyAssign ("UICulture", culture));
 
+                        if (pageParser.Trace) {
+                                CodeAssignStatement stmt = new CodeAssignStatement ();
+                                stmt.Left = new CodePropertyReferenceExpression (thisRef, "TraceEnabled");
+                                stmt.Right = new CodePrimitiveExpression (true);
+                                method.Statements.Add (stmt);
+                        }
+
+                        if (pageParser.TraceMode != TraceMode.Default) {
+                                CodeAssignStatement stmt = new CodeAssignStatement ();
+                                CodeTypeReferenceExpression tm = new CodeTypeReferenceExpression ("System.Web.TraceMode");
+                                stmt.Left = new CodePropertyReferenceExpression (thisRef, "TraceModeValue");
+                                stmt.Right = new CodeFieldReferenceExpression (tm, pageParser.TraceMode.ToString ());
+                                method.Statements.Add (stmt);
+                        }
+                        
 			base.AddStatementsToFrameworkInitialize (method);
 		}
 

@@ -1,3 +1,8 @@
+2003-12-15  Jackson Harper <jackson@ximian.com>
+
+	* PageCompiler.cs: Add Trace and TraceMode to framework initialize
+	method if they are set.
+	
 2003-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: ignore <tbody> when we're inside a server table and
