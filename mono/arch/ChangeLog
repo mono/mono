@@ -1,4 +1,9 @@
 
+Tue Jan 21 17:29:53 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ppc/ppc-codegen.h: completed ppc native code generation by
+	Taylor Christopher P <ct@cs.clemson.edu>.
+
 Fri Jan 17 21:14:18 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* ppc/tramp.c: adapted to work for MacOSX (from a patch by 
