@@ -1,3 +1,17 @@
+2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.h (MonoMarshalSpec): Add comment.
+
+	* metadata.h: Add MONO_MARSHAL_CONV_LPTSTR_STR.
+
+	* metadata.c (mono_metadata_parse_marshal_spec): Set param_num and
+	num_elem to -1 if not given.
+
+	* object-internals.h (MonoReflectionMarshal): Add has_size field.
+
+	* reflection.c (encode_marshal_blob): Differentiate between 0 and not
+	given values.
+
 2005-03-01  Marek Safar  <marek.safar@seznam.cz>
 
 	* null-gc.c (mono_gc_free_fixed): Was not compilable.
