@@ -1,8 +1,11 @@
-/**
- * System.Collections.Specialized.NamaValueCollection class implementation
- * 
- * Author: Gleb Novodran
- */
+//
+// System.Collections.Specialized.NameObjectCollectionBase.cs
+//
+// Author:
+//   Gleb Novodran
+//
+// (C) Ximian, Inc.  http://www.ximian.com
+//
 
 using System;
 using System.Collections;
@@ -32,7 +35,7 @@ namespace System.Collections.Specialized
 			get {return m_hashprovider;}
 		}
 
-		internal protected /*?*/ class _Item
+		internal class _Item
 		{
 			public string key;
 			public object value;
@@ -46,7 +49,7 @@ namespace System.Collections.Specialized
 		/// Implements IEnumerable interface for KeysCollection
 		/// </summary>
 		[Serializable]
-		internal protected /*?*/ class _KeysEnumerator : IEnumerator
+		internal class _KeysEnumerator : IEnumerator
 		{
 			private NameObjectCollectionBase m_collection;
 			private int m_position;

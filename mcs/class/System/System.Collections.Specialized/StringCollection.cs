@@ -43,8 +43,7 @@ namespace System.Collections.Specialized {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			foreach (string s in value)
-				Add(s);
+			strings.AddRange (value);
 		}
 		
 		public void Clear () {

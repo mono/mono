@@ -1,4 +1,10 @@
+2003-07-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* NameObjectCollectionBase.cs: Fixed signature to be CLSCompliant, changed/corrected header
+	* StringCollection.cs: Improved implementation (should perform better)
+
 2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* BitVector32.cs: Implemented missing method
 	* NameValueCollection.cs: Fixed public signature, Styleguidelined header
 	* StringDictionary.cs: Added missing attribute, fixed visibilities
