@@ -4,6 +4,7 @@
  * DO NOT MODIFY.
  */
 
+#include <config.h>
 #include "map.h"
 
 #ifndef _GNU_SOURCE

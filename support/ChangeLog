@@ -1,5 +1,9 @@
 2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* map.c: Include <config.h> so we can check for PLATFORM_WIN32.
+
+2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* map.c: Fix Win32 build break.  Win32 doesn't have all the sys/* headers.
 
 2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
