@@ -487,12 +487,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Mark (Location loc)
 		{
-			if ((CodeGen.SymbolWriter != null) && !Location.IsNull (loc)) {
-				ISymbolDocumentWriter doc = loc.SymbolDocument;
-
-				if (doc != null)
-					ig.MarkSequencePoint (doc, loc.Row, 0,  loc.Row, 0);
-			}
+			if ((CodeGen.SymbolWriter != null) && !Location.IsNull (loc))
+				ig.MarkSequencePoint (null, loc.Row, 0, 0, 0);
 		}
 
 		/// <summary>
