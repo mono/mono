@@ -27,7 +27,7 @@ namespace System.Web.UI.WebControls
 		protected override void Render(HtmlTextWriter writer)
 		{
 			SetForeColor();
-			Render(writer);
+			base.Render(writer);
 		}
 
 		private void SetForeColor()

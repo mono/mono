@@ -1,3 +1,13 @@
+2003-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: AutoGenerateColumns defaults to true. Fixed
+	CreateColumnSet. Set the owner of the column when auto generated.
+	In PrepareControlHierarchyForItem, fixed for loop bound.
+
+	* LinkButtonInternal.cs: fixed infinite recursion bug.
+
+	Fixes bug #37124.
+
 2003-01-22  Zdravko Tashev <ztashev@openlinksw.co.uk>
 
 	* Xml.cs: a few fixes.

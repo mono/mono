@@ -141,7 +141,7 @@ namespace System.Web.UI.WebControls
 				object o = ViewState["AutoGenerateColumns"];
 				if(o != null)
 					return (bool)o;
-				return false;
+				return true;
 			}
 			set
 			{
@@ -786,153 +786,145 @@ namespace System.Web.UI.WebControls
 
 		protected override void PrepareControlHierarchy()
 		{
-			if(Controls.Count > 0)
-			{
-				Table display = (Table)Controls[0];
-				display.CopyBaseAttributes(this);
-				if(ControlStyleCreated)
-				{
-					display.ApplyStyle(ControlStyle);
-				} else
-				{
-					display.GridLines   = GridLines.Both;
-					display.CellSpacing = 0;
-				}
-				TableRowCollection rows = display.Rows;
-				if(rows.Count > 0)
-				{
-					int              nCols = Columns.Count;
-					DataGridColumn[] cols = new DataGridColumn[nCols];
-					Style            deployStyle;
-					int              counter;
-					if(nCols > 0)
-					{
-						Columns.CopyTo(cols, 0);
-					}
-					deployStyle = null;
-					if(alternatingItemStyle != null)
-					{
-						deployStyle = new TableItemStyle();
-						deployStyle.CopyFrom(itemStyle);
-						deployStyle.CopyFrom(alternatingItemStyle);
-					} else
-					{
-						deployStyle = itemStyle;
-					}
-					for(counter = 0; counter < rows.Count; counter++)
-					{
-						PrepareControlHierarchyForItem(cols, (DataGridItem) rows[counter], counter, deployStyle);
-					}
-				}
+			if (Controls.Count == 0)
+				return;
+
+			Table display = (Table) Controls [0];
+			display.CopyBaseAttributes (this);
+			if (ControlStyleCreated) {
+				display.ApplyStyle (ControlStyle);
+			} else {
+				display.GridLines   = GridLines.Both;
+				display.CellSpacing = 0;
 			}
+
+			TableRowCollection rows = display.Rows;
+			if (rows.Count == 0)
+				return;
+
+			int nCols = Columns.Count;
+			DataGridColumn [] cols = new DataGridColumn [nCols];
+			Style deployStyle = null;
+
+			if (nCols > 0)
+				Columns.CopyTo (cols, 0);
+
+			if (alternatingItemStyle != null) {
+				deployStyle = new TableItemStyle ();
+				deployStyle.CopyFrom (itemStyle);
+				deployStyle.CopyFrom (alternatingItemStyle);
+			} else {
+				deployStyle = itemStyle;
+			}
+
+			int nrows = rows.Count;
+			for (int counter = 0; counter < nrows; counter++)
+				PrepareControlHierarchyForItem (cols,
+								(DataGridItem) rows [counter],
+								counter,
+								deployStyle);
 		}
 
-		private void PrepareControlHierarchyForItem(DataGridColumn[] cols, DataGridItem item, int index, Style deployStyle)
+		private void PrepareControlHierarchyForItem (DataGridColumn [] cols,
+							     DataGridItem item,
+							     int index,
+							     Style deployStyle)
 		{
-			switch(item.ItemType)
-			{
-				case ListItemType.Header: if(!ShowHeader)
-				                          {
-				                          	item.Visible = false;
-				                          	break;
-				                          }
-				                          if(headerStyle != null)
-				                          {
-				                          	item.MergeStyle(headerStyle);
-				                          }
-							  goto case ListItemType.Separator;
-				case ListItemType.Footer: if(!ShowFooter)
-				                          {
-				                          	item.Visible = false;
-				                          	break;
-				                          }
-				                          if(footerStyle != null)
-				                          {
-				                          	item.MergeStyle(footerStyle);
-				                          }
-				                          goto case ListItemType.Separator;
-				case ListItemType.Item  : item.MergeStyle(itemStyle);
-				                          goto case ListItemType.Separator;
-				case ListItemType.AlternatingItem:
-				                          item.MergeStyle(deployStyle);
-				                          goto case ListItemType.Separator;
-				case ListItemType.SelectedItem:
-				                          Style selStyle = new TableItemStyle();
-				                          if( (item.ItemIndex % 2) == 0)
-				                          {
-				                          	selStyle.CopyFrom(itemStyle);
-				                          } else
-				                          {
-				                          	selStyle.CopyFrom(deployStyle);
-				                          }
-				                          selStyle.CopyFrom(selectedItemStyle);
-				                          item.MergeStyle(selStyle);
-				                          goto case ListItemType.Separator;
-				case ListItemType.EditItem:
-				                          Style edStyle = new TableItemStyle();
-				                          if( (item.ItemIndex % 2) == 0)
-				                          {
-				                          	edStyle.CopyFrom(itemStyle);
-				                          } else
-				                          {
-				                          	edStyle.CopyFrom(deployStyle);
-				                          }
-				                          edStyle.CopyFrom(editItemStyle);
-				                          item.MergeStyle(edStyle);
-				                          goto case ListItemType.Separator;
-				case ListItemType.Pager : if(pagerStyle == null)
-				                          {
-				                          	break;
-				                          }
-				                          if(!pagerStyle.Visible)
-				                          {
-				                          	item.Visible = false;
-				                          }
-				                          if(index == 0)
-				                          {
-				                          	if(!pagerStyle.IsPagerOnTop)
-				                          	{
-				                          		item.Visible = false;
-				                          		break;
-				                          	}
-				                          } else
-				                          {
-				                          	if(!pagerStyle.IsPagerOnBottom)
-				                          	{
-				                          		item.Visible = false;
-				                          		break;
-				                          	}
-				                          }
-				                          item.MergeStyle(pagerStyle);
-				                          goto case ListItemType.Separator;
-				case ListItemType.Separator:
-				                          TableCellCollection cells = item.Cells;
-				                          int cellCount = cells.Count;
-				                          if(cellCount > 0 && item.ItemType != ListItemType.Pager)
-				                          {
-				                          	for(int i = 0; i < cellCount; i++)
-				                          	{
-				                          		Style colStyle = null;
-				                          		if(cols[i].Visible)
-				                          		{
-				                          			switch (item.ItemType)
-				                          			{
-				                          				case ListItemType.Header : colStyle = cols[i].HeaderStyleInternal;
-				                          				                           break;
-				                          				case ListItemType.Footer : colStyle = cols[i].FooterStyleInternal;
-				                          				                           break;
-				                          				default                  : colStyle = cols[i].ItemStyleInternal;
-				                          				                           break;
-				                          			}
-				                          			item.MergeStyle(colStyle);
-				                          		} else
-				                          		{
-				                          			cells[i].Visible = false;
-				                          		}
-				                          	}
-				                          }
-				                          break;
-				default                 : goto case ListItemType.Separator;
+			switch (item.ItemType) {
+			case ListItemType.Header:
+				if (!ShowHeader) {
+					item.Visible = false;
+					break;
+				}
+
+				if (headerStyle != null)
+					item.MergeStyle (headerStyle);
+
+				goto case ListItemType.Separator;
+			case ListItemType.Footer:
+				if (!ShowFooter) {
+					item.Visible = false;
+					break;
+				}
+
+				if (footerStyle != null)
+					item.MergeStyle (footerStyle);
+
+				goto case ListItemType.Separator;
+			case ListItemType.Item  :
+				item.MergeStyle (itemStyle);
+				goto case ListItemType.Separator;
+			case ListItemType.AlternatingItem:
+				item.MergeStyle (deployStyle);
+				goto case ListItemType.Separator;
+			case ListItemType.SelectedItem:
+				Style selStyle = new TableItemStyle ();
+				if ((item.ItemIndex % 2) == 0) {
+					selStyle.CopyFrom (itemStyle);
+				} else {
+					selStyle.CopyFrom (deployStyle);
+				}
+
+				selStyle.CopyFrom (selectedItemStyle);
+				item.MergeStyle (selStyle);
+				goto case ListItemType.Separator;
+			case ListItemType.EditItem:
+				Style edStyle = new TableItemStyle ();
+				if ((item.ItemIndex % 2) == 0) {
+					edStyle.CopyFrom (itemStyle);
+				} else {
+					edStyle.CopyFrom (deployStyle);
+				}
+
+				edStyle.CopyFrom (editItemStyle);
+				item.MergeStyle (edStyle);
+				goto case ListItemType.Separator;
+			case ListItemType.Pager:
+				if (pagerStyle == null)
+					break;
+
+				if (!pagerStyle.Visible)
+					item.Visible = false;
+
+				if (index == 0) {
+					if (!pagerStyle.IsPagerOnTop) {
+						item.Visible = false;
+						break;
+					}
+				} else if (!pagerStyle.IsPagerOnBottom) {
+					item.Visible = false;
+					break;
+				}
+
+				item.MergeStyle (pagerStyle);
+				goto case ListItemType.Separator;
+			case ListItemType.Separator:
+				TableCellCollection cells = item.Cells;
+				int cellCount = cells.Count;
+				if (cellCount > cols.Length)
+					cellCount = cols.Length;
+
+				if (cellCount > 0 && item.ItemType != ListItemType.Pager) {
+					for (int i = 0; i < cellCount; i++) {
+						Style colStyle = null;
+						if (cols [i].Visible) {
+							switch (item.ItemType) {
+							case ListItemType.Header:
+								colStyle = cols [i].HeaderStyleInternal;
+								break;
+							case ListItemType.Footer:
+								colStyle = cols [i].FooterStyleInternal;
+								break;
+							}
+							item.MergeStyle (colStyle);
+						} else {
+							cells [i].Visible = false;
+						}
+					}
+				}
+				break;
+			default:
+				goto case ListItemType.Separator;
 			}
 		}
 
@@ -1005,6 +997,7 @@ namespace System.Web.UI.WebControls
 						throw new HttpException(HttpRuntime.FormatResourceString("DataGrid_Invalid_Current_PageIndex", ID));
 					}
 					columns = CreateColumnSet(pagedDataSource, useDataSource);
+
 					if(storedDataValid)
 					{
 						pageSourceEnumerator = storedData;
@@ -1019,116 +1012,117 @@ namespace System.Web.UI.WebControls
 						itemsArrayList.Capacity = pageDSCount;
 					}
 				}
-				colCount = 0;
-				if(columns != null)
-					colCount = columns.Count;
-				int currentSourceIndex;
-				if(colCount > 0)
+			}
+
+			colCount = 0;
+			if(columns != null)
+				colCount = columns.Count;
+			int currentSourceIndex;
+			if(colCount > 0)
+			{
+				cols = (DataGridColumn []) columns.ToArray (typeof (DataGridColumn));
+				foreach(DataGridColumn current in cols)
 				{
-					cols = (DataGridColumn []) columns.ToArray (typeof (DataGridColumn));
-					foreach(DataGridColumn current in cols)
-					{
-						current.Initialize();
-					}
-					deployTable = new DataGridTableInternal();
-					Controls.Add(deployTable);
-					deployRows = deployTable.Rows;
+					current.Initialize();
+				}
+				deployTable = new DataGridTableInternal();
+				Controls.Add(deployTable);
+				deployRows = deployTable.Rows;
 
-					indexCounter = 0;
-					currentSourceIndex  = 0;
-					dkField = DataKeyField;
+				indexCounter = 0;
+				currentSourceIndex  = 0;
+				dkField = DataKeyField;
 
-					dsUse = (useDataSource) ? (dkField.Length > 0) : false;
-					pgEnabled = pagedDataSource.IsPagingEnabled;
-					editIndex = EditItemIndex;
-					selIndex  = SelectedIndex;
-					if(pgEnabled)
+				dsUse = (useDataSource) ? (dkField.Length > 0) : false;
+				pgEnabled = pagedDataSource.IsPagingEnabled;
+				editIndex = EditItemIndex;
+				selIndex  = SelectedIndex;
+				if(pgEnabled)
+				{
+					currentSourceIndex = pagedDataSource.FirstIndexInPage;
+					CreateItem(-1, -1, ListItemType.Pager, false, null,
+						   cols, deployRows, pagedDataSource);
+				}
+				itemCount = 0;
+				CreateItem(-1, -1, ListItemType.Header, useDataSource, null,
+					   cols, deployRows, null);
+				
+				if(storedDataValid && storedDataFirst != null)
+				{
+					if(dsUse)
 					{
-						currentSourceIndex = pagedDataSource.FirstIndexInPage;
-						CreateItem(-1, -1, ListItemType.Pager, false, null,
-						           cols, deployRows, pagedDataSource);
+						dataKeys.Add(DataBinder.GetPropertyValue(storedDataFirst, dkField));
 					}
-					itemCount = 0;
-					CreateItem(-1, -1, ListItemType.Header, useDataSource, null,
-					           cols, deployRows, null);
-					
-					if(storedDataValid && storedDataFirst != null)
+					deployType = ListItemType.Item;
+					if(indexCounter == editIndex)
 					{
-						if(dsUse)
-						{
-							dataKeys.Add(DataBinder.GetPropertyValue(storedDataFirst, dkField));
-						}
-						deployType = ListItemType.Item;
-						if(indexCounter == editIndex)
-						{
-							deployType = ListItemType.EditItem;
-						} else if(indexCounter == selIndex)
-						{
-							deployType = ListItemType.SelectedItem;
-						}
-						itemsArrayList.Add(CreateItem(0, currentSourceIndex, deployType,
-						                              useDataSource, storedDataFirst,
-						                              cols, deployRows, null));
-						itemCount++;
-						indexCounter++;
-						currentSourceIndex++;
-						storedDataValid = false;
-						storedDataFirst = null;
-					}
-
-					while(pageSourceEnumerator.MoveNext())
+						deployType = ListItemType.EditItem;
+					} else if(indexCounter == selIndex)
 					{
-						object current = pageSourceEnumerator.Current;
-						if(dsUse)
-						{
-							dataKeys.Add(DataBinder.GetPropertyValue(current, dkField));
-						}
-						deployType = ListItemType.Item;
-						if(indexCounter == editIndex)
-						{
-							deployType = ListItemType.EditItem;
-						} else if(indexCounter == selIndex)
-						{
-							deployType = ListItemType.SelectedItem;
-						}
-						itemsArrayList.Add(CreateItem(indexCounter, currentSourceIndex,
-						                              deployType, useDataSource, current,
-						                              cols, deployRows, null));
-						itemCount++;
-						indexCounter++;
-						currentSourceIndex++;
+						deployType = ListItemType.SelectedItem;
 					}
-
-					CreateItem(-1, -1, ListItemType.Footer, useDataSource, null,
-					           cols, deployRows, null);
-
-					if(pgEnabled)
-					{
-						CreateItem(-1, -1, ListItemType.Pager, false, null, cols, deployRows,
-						           pagedDataSource);
-					}
+					itemsArrayList.Add(CreateItem(0, currentSourceIndex, deployType,
+								      useDataSource, storedDataFirst,
+								      cols, deployRows, null));
+					itemCount++;
+					indexCounter++;
+					currentSourceIndex++;
+					storedDataValid = false;
+					storedDataFirst = null;
 				}
 
-				if(useDataSource)
+				while(pageSourceEnumerator.MoveNext())
 				{
-					if(pageSourceEnumerator != null)
+					object current = pageSourceEnumerator.Current;
+					if(dsUse)
 					{
-						ViewState["_!ItemCount"] = itemCount;
-						if(pagedDataSource.IsPagingEnabled)
-						{
-							ViewState["PageCount"] = pagedDataSource.PageCount;
-							ViewState["_!DataSource_ItemCount"] = pagedDataSource.DataSourceCount;
-						} else
-						{
-							ViewState["PageCount"] = 1;
-							ViewState["_!DataSource_ItemCount"] = itemCount;
-						}
+						dataKeys.Add(DataBinder.GetPropertyValue(current, dkField));
+					}
+					deployType = ListItemType.Item;
+					if(indexCounter == editIndex)
+					{
+						deployType = ListItemType.EditItem;
+					} else if(indexCounter == selIndex)
+					{
+						deployType = ListItemType.SelectedItem;
+					}
+					itemsArrayList.Add(CreateItem(indexCounter, currentSourceIndex,
+								      deployType, useDataSource, current,
+								      cols, deployRows, null));
+					itemCount++;
+					indexCounter++;
+					currentSourceIndex++;
+				}
+
+				CreateItem(-1, -1, ListItemType.Footer, useDataSource, null,
+					   cols, deployRows, null);
+
+				if(pgEnabled)
+				{
+					CreateItem(-1, -1, ListItemType.Pager, false, null, cols, deployRows,
+						   pagedDataSource);
+				}
+			}
+
+			if(useDataSource)
+			{
+				if(pageSourceEnumerator != null)
+				{
+					ViewState["_!ItemCount"] = itemCount;
+					if(pagedDataSource.IsPagingEnabled)
+					{
+						ViewState["PageCount"] = pagedDataSource.PageCount;
+						ViewState["_!DataSource_ItemCount"] = pagedDataSource.DataSourceCount;
 					} else
 					{
-						ViewState["_!ItemCount"] = -1;
-						ViewState["_!DataSource_ItemCount"] = -1;
-						ViewState["PageCount"] = 0;
+						ViewState["PageCount"] = 1;
+						ViewState["_!DataSource_ItemCount"] = itemCount;
 					}
+				} else
+				{
+					ViewState["_!ItemCount"] = -1;
+					ViewState["_!DataSource_ItemCount"] = -1;
+					ViewState["PageCount"] = 0;
 				}
 			}
 			pagedDataSource = null;
@@ -1306,34 +1300,26 @@ namespace System.Web.UI.WebControls
 		/// </summary>
 		protected ArrayList CreateColumnSet(PagedDataSource source, bool useDataSource)
 		{
-			DataGridColumn[] cols = new DataGridColumn[Columns.Count];
-			Columns.CopyTo(cols, 0);
-			ArrayList l_columns = new ArrayList();
-			ArrayList auto_columns = null;
+			DataGridColumn[] cols = new DataGridColumn [Columns.Count];
+			Columns.CopyTo (cols, 0);
+			ArrayList l_columns = new ArrayList ();
 
-			foreach(DataGridColumn current in cols)
-			{
-				l_columns.Add(current);
-			}
-			if(AutoGenerateColumns)
-			{
-				l_columns = null;
-				if(useDataSource)
-				{
-					auto_columns = AutoCreateColumns(source);
+			foreach (DataGridColumn current in cols)
+				l_columns.Add (current);
+
+			if (AutoGenerateColumns) {
+				ArrayList auto_columns = null;
+				if (useDataSource) {
+					auto_columns = AutoCreateColumns (source);
 					autoGenColsArrayList = auto_columns;
-				} else
-				{
+				} else {
 					auto_columns = autoGenColsArrayList;
 				}
-				if(auto_columns != null)
-				{
-					foreach(object current in auto_columns)
-					{
-						l_columns.Add(current);
-					}
-				}
+
+				if (auto_columns != null && auto_columns.Count > 0)
+					l_columns.AddRange (auto_columns);
 			}
+
 			return l_columns;
 		}
 
@@ -1384,7 +1370,7 @@ namespace System.Web.UI.WebControls
 								b_col.HeaderText = "Item";
 								b_col.SortExpression = "Item";
 								b_col.DataField  = BoundColumn.thisExpr;
-								//b_col.SetOwner(this);
+								b_col.SetOwner(this);
 								retVal.Add(b_col);
 							} else
 							{
@@ -1408,7 +1394,7 @@ namespace System.Web.UI.WebControls
 								b_col.SortExpression = current.Name;
 								b_col.DataField      = current.Name;
 								// b_col.IsReadOnly     = current.IsReadOnly;
-								// b_col.SetOwner(this);
+								b_col.SetOwner(this);
 								retVal.Add(b_col);
 							}
 						}
