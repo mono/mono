@@ -388,6 +388,7 @@ namespace Mono.CSharp {
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",
 				"System.InvalidOperationException",
+				"System.NotSupportedException",
 				"System.MarshalByRefObject"
 			};
 

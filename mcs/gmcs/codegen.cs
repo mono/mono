@@ -188,7 +188,7 @@ namespace Mono.CSharp {
 		{
 			count++;
 			if (ec.InIterator)
-				fb = IteratorHandler.Current.MapVariable ("s_", count.ToString (), t);
+				fb = ec.CurrentIterator.MapVariable ("s_", count.ToString (), t);
 			else
 				local = ec.ig.DeclareLocal (t);
 			ig = ec.ig;
@@ -381,6 +381,8 @@ namespace Mono.CSharp {
 		///   we relax the rules
 		/// </summary>
 		public bool InEnumContext;
+
+		public Iterator CurrentIterator;
 
 		FlowBranching current_flow_branching;
 		
@@ -706,9 +708,8 @@ namespace Mono.CSharp {
 		//
 		public FieldBuilder MapVariable (string name, Type t)
 		{
-			if (InIterator){
-				return IteratorHandler.Current.MapVariable ("v_", name, t);
-			}
+			if (InIterator)
+				return CurrentIterator.MapVariable ("v_", name, t);
 
 			throw new Exception ("MapVariable for an unknown state");
 		}
@@ -733,14 +734,14 @@ namespace Mono.CSharp {
 
 		public Expression RemapParameter (int idx)
 		{
-			FieldExpr fe = new FieldExprNoAddress (IteratorHandler.Current.parameter_fields [idx], loc);
+			FieldExpr fe = new FieldExprNoAddress (CurrentIterator.parameter_fields [idx].FieldBuilder, loc);
 			fe.InstanceExpression = new ProxyInstance ();
 			return fe.DoResolve (this);
 		}
 
 		public Expression RemapParameterLValue (int idx, Expression right_side)
 		{
-			FieldExpr fe = new FieldExprNoAddress (IteratorHandler.Current.parameter_fields [idx], loc);
+			FieldExpr fe = new FieldExprNoAddress (CurrentIterator.parameter_fields [idx].FieldBuilder, loc);
 			fe.InstanceExpression = new ProxyInstance ();
 			return fe.DoResolveLValue (this, right_side);
 		}
@@ -754,7 +755,7 @@ namespace Mono.CSharp {
 			if (InIterator){
 				ig.Emit (OpCodes.Ldarg_0);
 				if (!IsStatic){
-					FieldBuilder this_field = IteratorHandler.Current.this_field;
+					FieldBuilder this_field = CurrentIterator.this_field.FieldBuilder;
 					if (TypeManager.IsValueType (this_field.FieldType))
 						ig.Emit (OpCodes.Ldflda, this_field);
 					else
