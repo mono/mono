@@ -1,3 +1,7 @@
+2005-02-05  Ben Maurer  <bmaurer@ximian.com>
+
+	* debug-helpers.c: More iters
+
 2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Add brute-force checking for mangled function names
