@@ -102,7 +102,12 @@ namespace System.Web.UI.WebControls
 				return -1;
 			}
 
-			set { ViewState ["EditItemIndex"] = value; }
+			set {
+				if (value < -1)
+					 throw new ArgumentOutOfRangeException("value");
+				 
+				ViewState ["EditItemIndex"] = value; 
+			}
 		}
 
 		[DefaultValue (null)]

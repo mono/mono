@@ -144,7 +144,7 @@ namespace System.Web.UI.WebControls
 
 			set {
 				if (value.Value < 0)
-					throw new ArgumentException();
+					throw new ArgumentOutOfRangeException ("value");
 				ControlStyle.BorderWidth = value;
 			}
 		}
@@ -253,6 +253,8 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if (value.Value < 0)
+					throw new ArgumentOutOfRangeException ("value");
 				ControlStyle.Height = value;
 			}
 		}
@@ -280,8 +282,8 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				if(value < -32768 || value > 32767)
-					throw new ArgumentException();
+				if(value < short.MinValue || value > short.MaxValue)
+					throw new ArgumentOutOfRangeException ("value");
 				ViewState["TabIndex"] = value;
 			}
 		}
@@ -313,6 +315,8 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if (value.Value < 0)
+					throw new ArgumentOutOfRangeException ("value");
 				ControlStyle.Width = value;
 			}
 		}

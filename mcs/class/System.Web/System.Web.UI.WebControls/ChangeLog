@@ -1,5 +1,11 @@
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
+	* DataList.cs:
+	* WebControl.cs: Fix argument out of range exceptions on
+	properties. Patch by Yaron Shkop.
+	
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
 	* TemplateColumn.cs: If the item is selected but there is no
 	editItemTemplate use the itemTemplate. This matches MS behvoir.
 	
