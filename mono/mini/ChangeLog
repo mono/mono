@@ -1,5 +1,7 @@
 2003-05-22  Dietmar Maurer  <dietmar@ximian.com>
 
+	* mini.c (optimize_branches): fix branch to branch optimization 
+
 	* exceptions-x86.c (mono_arch_handle_exception): bug fix.
 
 	* mini-x86.c (mono_arch_output_basic_block): cleanup up exception code
