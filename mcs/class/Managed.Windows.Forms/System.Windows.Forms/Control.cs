@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.36 $
+// $Revision: 1.37 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.37  2004/08/20 20:09:24  pbartok
+// - Added call to set window background color
+//
 // Revision 1.36  2004/08/20 19:18:30  jackson
 // Implement Begininvoke
 //
@@ -690,6 +693,7 @@ namespace System.Windows.Forms
 
 			set {
 				background_color=value;
+				XplatUI.SetWindowBackground(this.window.Handle, value);
 				Refresh();
 			}
 		}
@@ -1207,8 +1211,9 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void Refresh() {			
-			if (IsHandleCreated == true)
+			if (IsHandleCreated == true) {
 				XplatUI.RefreshWindow(window.Handle);
+			}
 		}
 
 		public void SetBounds(int x, int y, int width, int height) {
@@ -1661,6 +1666,7 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_MOUSEHOVER:	{
+Console.WriteLine("hover happening");
 					OnMouseHover(EventArgs.Empty);
 					break;
 				}
