@@ -37,7 +37,7 @@ namespace System.Data.SqlClient {
 			if (base.Unrestricted) {
 				return new SqlClientPermission ( PermissionState.Unrestricted); 
 			}
-			return new SqlClientPermission ( PermissionState.None,AllowBlankPassword); 
+			return new SqlClientPermission ( PermissionState.None); 
 
 		}
 
