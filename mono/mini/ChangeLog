@@ -1,5 +1,11 @@
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (sigsegv_signal_handler): Fix reading of context.
+
+	* mini-exceptions.c: Fix up stack overflow handling.
+
+	* mini-amd64.h mini-amd64.c: Fix up stack overflow handling.
+
 	* tramp-amd64.c (create_specific_trampoline): Optimize trampoline size.
 
 	* exceptions-amd64.c (mono_amd64_exceptions_init): Remove this.
