@@ -14,12 +14,16 @@ TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67
 
 XML_DEP := System.Xml.dll
 XML_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(XML_DEP))
+CYCLIC_DEPS := $(XML_DEP)
+CYCLIC_DEP_FILES := $(XML_DEP_FILE)
 
+ifeq (2.0, $(FRAMEWORK_VERSION))
+# Happens on net_2_0_bootstrap and net_2_0 profiles
 SECURITY_DEP := System.Security.dll
 SECURITY_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SECURITY_DEP))
-
-CYCLIC_DEPS := $(XML_DEP) $(SECURITY_DEP)
-CYCLIC_DEP_FILES := $(XML_DEP_FILE) $(SECURITY_DEP_FILE)
+CYCLIC_DEPS += $(SECURITY_DEP)
+CYCLIC_DEP_FILES += $(SECURITY_DEP_FILE)
+endif
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
@@ -46,15 +50,14 @@ all-local: echo-warning
 
 ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
 echo-warning:
-	@echo "** Warning: System.dll built without parts that depend on System.Xml.dll and System.Security.dll"
+	@echo "** Warning: System.dll built without parts that depend on: $(CYCLIC_DEPS)"
 else     # defined CYCLIC_DEP_FILES
-ifndef     XML_DEP_FILE
-# => defined SECURITY_DEP_FILE
+ifdef      SECURITY_DEP_FILE
 echo-warning:
 	@echo "** Warning: built System.dll with 'System.Security.dll'-dependent parts"
 	@echo "** Warning: ... without 'System.Xml.dll' present: it may not be usable"
 
-else       # defined XML_DEP_FILE
+else
 echo-warning:
 	@echo "** Warning: System.dll built without parts that depend on System.Security.dll"
 endif

@@ -4,7 +4,8 @@
 	* Makefile (XML_DEP, XML_DEP_FILE): Rename from CYCLIC_DEP and
 	CYCLIC_DEP_FILE. 
 	(SECURITY_DEP, SECURITY_DEP_FILE): Parallel defines for expressing
-	cyclic dependency on System.Security.dll.
+	cyclic dependency on System.Security.dll.  Defined only in NET2.0
+	related profiles.
 	(CYCLIC_DEPS, CYCLIC_DEP_FILES): New.  Used to detect which of the
 	dependencies are present.
 	(echo-warning, LIB_MCS_FLAGS): Update to reflect new circular
