@@ -81,6 +81,7 @@ namespace Mono.CSharp
 				mcs_output=mcs.StandardOutput.ReadToEnd();
 				mcs.WaitForExit();
 			} finally {
+				results.NativeCompilerReturnValue = mcs.ExitCode;
 				mcs.Close();
 			}
 			mcs_output_lines=mcs_output.Split(

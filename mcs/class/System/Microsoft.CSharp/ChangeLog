@@ -1,3 +1,7 @@
+2003-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: set NativeCompilerReturnValue.
+
 2003-04-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeGenerator.cs:
