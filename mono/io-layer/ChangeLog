@@ -1,3 +1,12 @@
+2002-08-20  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_scratch_store): Made stored byte lengths
+	multiples of 4 bytes, to keep header structures aligned.  Needed
+	for sparc, at least. (Patch from crichton@gimp.org)
+
+	* handles.c: Removed 'disable_shm' variable (we've defaulted to
+	building with shm enabled for months now)
+
 2002-08-19  Dick Porter  <dick@ximian.com>
 
 	* daemon.c: Rewrote the poll() loop to use GIOChannels instead,
