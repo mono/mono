@@ -1,5 +1,7 @@
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
+	* mono.c (usage): new switch --noinline to disable inlining
+
 	* jit.c (mono_analyze_stack): added a check for (this!=NULL) if we
 	inline methods (to keep semantics)
 
