@@ -288,7 +288,7 @@ namespace System.Data.SqlClient
 		// ExecStatusType PQresultStatus(const PGresult *res);
 
 		[DllImport("pq")]
-		public static extern string PQresStatus (IntPtr status);
+		public static extern string PQresStatus (ExecStatusType status);
 		// char *PQresStatus(ExecStatusType status);
 
 		[DllImport("pq")]

@@ -24,6 +24,8 @@ namespace System.Data.SqlClient
 	// public sealed class SqlCommand : Component, IDbCommand, ICloneable
 	public sealed class SqlCommand : IDbCommand
 	{
+		// FIXME: Console.WriteLine() is used for debugging throughout
+
 		#region Fields
 
 		string sql = "";
@@ -76,6 +78,7 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
+		// FIXME: is this the correct way to return a stronger type?
 		[MonoTODO]
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
@@ -101,6 +104,12 @@ namespace System.Data.SqlClient
 			// exception if the the connection
 			// does not exist or is not open
 
+			// FIXME: PQexec blocks 
+			// while PQsendQuery is non-blocking
+			// which is better to use?
+			// int PQsendQuery(PGconn *conn,
+			//        const char *query);
+
 			// execute SQL command
 			// uses internal property to get the PGConn IntPtr
 			pgResult = PostgresLibrary.
@@ -113,23 +122,47 @@ namespace System.Data.SqlClient
 			/*
 			 * FIXME: get status
 			 */
-                        // execStatus = PostgresLibrary.
-			//		PQresultStatus (pgResult);
-
-			/*
+                        execStatus = PostgresLibrary.
+					PQresultStatus (pgResult);
+			
 			if(execStatus == ExecStatusType.PGRES_COMMAND_OK)
 			{
+				Console.WriteLine("*** SqlCommand Execute " +
+					"got PGRES_COMMAND_OK");
 				rowsAffectedString = PostgresLibrary.
 					PQcmdTuples (pgResult);
+				Console.WriteLine("*** Rows Affected: " + 
+					rowsAffectedString);
 				// FIXME: convert string to number
 			}
 			else
 			{
-			
+				Console.WriteLine("*** Error: SqlCommand " +
+					"did not get PGRES_COMMAND_OK");
+				String statusString;
+				
+				statusString = PostgresLibrary.
+					PQresStatus(execStatus);
+				Console.WriteLine("*** Command Status: " +
+					statusString);
+
+				String errorMessage;
+				errorMessage = PostgresLibrary.
+					PQresultErrorMessage(pgResult);
+
+				Console.WriteLine("*** Error message: " +
+					statusString);				
 			}
 			
+			String cmdStatus;
+			cmdStatus = PostgresLibrary.
+				PQcmdStatus(pgResult);
+
+			Console.WriteLine("*** Command Status: " +
+				cmdStatus);
+
 			PostgresLibrary.PQclear (pgResult);
-			*/
+			
 			// FIXME: get number of rows
 			// affected for INSERT, UPDATE, or DELETE
 			// any other, return -1 (such as, CREATE TABLE)
@@ -327,7 +360,7 @@ namespace System.Data.SqlClient
 		[ClassInterface(ClassInterfaceType.AutoDual)]
 		~SqlCommand()
 		{
-
+			FIXME: need proper way to release resources
 		}
 */
 		#endregion //Destructors

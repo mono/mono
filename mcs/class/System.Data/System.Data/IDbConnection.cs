@@ -7,6 +7,8 @@
 // (C) Chris Podurgiel
 //
 
+using System;
+
 namespace System.Data
 {
 	/// <summary>

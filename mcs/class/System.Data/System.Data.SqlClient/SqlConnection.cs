@@ -8,6 +8,10 @@
 // (C) Ximian, Inc 2002
 //
 
+// FIXME: what is the proper way to debug messages?
+// use #define DEBUG_SqlConnection if you want to spew debug messages for 
+#define DEBUG_SqlConnection
+
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -111,7 +115,7 @@ namespace System.Data.SqlClient
 
 		// aka Finalize
 
-		[MonoTODO]
+
 		/*
 		[ClassInterface(ClassInterfaceType.AutoDual)]
 		~SqlConnection()
@@ -233,24 +237,17 @@ namespace System.Data.SqlClient
 			{
 				// Successfully Connected
 				conState = ConnectionState.Open;
-				Console.WriteLine ("*** Connected " +
-						"Successfully");
 			}
 			else
 			{
-				// Unsuccessfull at Connecting
-				Console.WriteLine ("*** Connected " +
-						"Unsuccessfully");
-
-				// PGconn *
-				// PQconnectStart (const char *conninfo)
-				//
-				// PostgresPollingStatusType 
-				// PQconnectPoll (PGconn *conn)
-
 				String errorMessage = PostgresLibrary.
 					PQerrorMessage (pgConn);
-				Console.WriteLine ("Error: " + errorMessage);
+				// FIXME: use thie WriteLine's until
+				// exceptions have been implemented
+				Console.WriteLine("*** Error: " + 
+					"could not connect to database.");			
+				Console.WriteLine ("Error Message: " + 
+					errorMessage);
 
 				// FIXME: do error checking, 
 				// if could not connect, 
@@ -279,8 +276,8 @@ namespace System.Data.SqlClient
 			// OLE DB format to PostgreSQL 
 			// connection string format
 			//
-			//     OLE DB: "host=localhost;dbname=test;user=joe;password=smoe"
-			// PostgreSQL: "host=localhost dbname=test user=joe password=smoe"
+	//     OLE DB: "host=localhost;dbname=test;user=joe;password=smoe"
+	// PostgreSQL: "host=localhost dbname=test user=joe password=smoe"
 			//
 			// For OLE DB, you would have the additional 
 			// "provider=postgresql"
@@ -298,12 +295,22 @@ namespace System.Data.SqlClient
 			this.connectionString = connectionString;
 			pgConnectionString = ConvertStringToPostgres (
 				connectionString);
+
+#if DEBUG_SqlConnection
+			Console.WriteLine("DEBUG_SqlConnection: " +
+				"SqlConnection.pgConnectionString: " +
+				pgConnectionString);
+			Console.WriteLine("DEBUG_SqlConnection: " +
+				"SqlConnection.connectionString: " +
+				this.connectionString);
+#endif // DEBUG_SqlConnection
 		}
 
 		private String ConvertStringToPostgres (String 
 			oleDbConnectionString)
 		{
-			StringBuilder postgresConnection = new StringBuilder();
+			StringBuilder postgresConnection = 
+				new StringBuilder();
 			string result;
 			string[] connectionParameters;
 
@@ -312,30 +319,37 @@ namespace System.Data.SqlClient
 			
 			// FIXME: what is the max number of value pairs 
 			//        can there be for the OLE DB 
-			//	  connnection string? what about libgda max?  
+			//	  connnection string? what about libgda max?
 			//        what about postgres max?
 
 			// FIXME: currently assuming value pairs are like:
-			//        "keyword1=value1;keyword2=value2;keyword3=value3"
+			//        "key1=value1;key2=value2;key3=value3"
 			//        Need to deal with values that have
 			//        single or double quotes.  And error 
 			//        handling of that too.
-			//        "keyword1=value1;keyword2='value2';keyword3=\"value3\""
+			//        "key1=value1;key2='value2';key=\"value3\""
 
+			// FIXME: put the connection parameters 
+			//        from the connection
+			//        string into a 
+			//        Hashtable (System.Collections)
+			//        instead of using private variables 
+			//        to store them
 			connectionParameters = oleDbConnectionString.
 				Split (semicolon);
 			foreach (string sParameter in connectionParameters) {
 				if(sParameter.Length > 0) {
-					BreakConnectionString (sParameter);
-					postgresConnection.Append (sParameter + 
-						" ");
+					BreakConnectionParameter (sParameter);
+					postgresConnection.
+						Append (sParameter + 
+							" ");
 				}
 			}
 			result = postgresConnection.ToString ();
 			return result;
 		}
 
-		private bool BreakConnectionString (String sParameter)
+		private bool BreakConnectionParameter (String sParameter)
 		{	
 			bool addParm = true;
 			int index;
@@ -347,7 +361,7 @@ namespace System.Data.SqlClient
 				// separate string "key=value" to 
 				// string "key" and "value"
 				parmKey = sParameter.Substring (0, index);
-				parmValue = sParameter.Substring (index + 1, 
+				parmValue = sParameter.Substring (index + 1,
 					sParameter.Length - index - 1);
 
 				switch(parmKey.ToLower()) {
@@ -393,6 +407,8 @@ namespace System.Data.SqlClient
 			trans = new SqlTransaction ();
 			// using internal methods of SqlTransaction
 			trans.SetConnection (this);
+			trans.Begin();
+
 			return trans;
 		}
 
@@ -400,9 +416,7 @@ namespace System.Data.SqlClient
 		{
 			// FIXME: need to keep track of 
 			// transaction in-progress
-			trans = new SqlTransaction ();
-			// using internal methods of SqlTransaction
-			trans.SetConnection (this);
+			TransactionBegin();
 			trans.SetIsolationLevel (il);
 			
 			return trans;

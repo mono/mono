@@ -7,6 +7,7 @@
 // (C) Chris Podurgiel
 //
 
+using System;
 using System.Collections;
 
 namespace System.Data

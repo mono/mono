@@ -1,3 +1,43 @@
+2002-04-17  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/TestSqlInsert.cs: modified - do
+	  a SQL DELETE before SQL INSERT of row so you can use this
+	  test over and over.
+	
+	* System.Data.SqlClient/SqlTransaction.cs: modified - default
+	  IsolationLevel for PostgreSQL is ReadCommitted.  However,
+	  PostgreSQL allows Serializable as well. 
+      (Thanks to Gonzalo for that!)
+	
+	* System.Data.SqlClient/SqlConnection.cs: modified
+	* System.Data.SqlClient/SqlCommand.cs: modified
+	* System.Data.SqlClient/SqlTransaction.cs: modified - got transactions
+	  working; however, we still need to implement SQL errors
+	  and exceptions to properly handle transactions.  Also, added
+	  status and error message support from the PostgreSQL database.
+	  Currently, this does a Console.WriteLine() to display the
+	  status and error messages, but this is a TODO 
+	  for SQL errors and exceptions.
+	
+	* System.Data/TODOAttribute.cs: added - needed MonoTODO
+      attribute for System.Data.dll assembly 
+
+	* System.Data/IDbCommand.cs: modified - commented
+	  overloaded method ExecuteReader 
+	  so System.Data.SqlClient.SqlCommand can compile
+	  
+	* System.Data/IDbCommand.cs: modified
+	* System.Data/IDbConnection.cs: modified - added using System;
+	* System.Data/IDataParameter.cs
+	
+	* System.Data.build: modified - build classes
+	  in System.Data.SqlClient and exclude others in System.Data
+	
+	* System.Data.SqlClient/PostgresLibrary.cs: modified - change
+	  parameter data type from IntPtr to enum ExecStatusType
+	
+	* ChangeLog: modified - corrected previous entries in log
+
 2002-04-16  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.Common/DataColumnMappingCollection.cs: added basic
@@ -5,22 +45,24 @@
 
 2002-04-16  Daniel Morgan <danmorg@sc.rr.com>
 
-	* System.Data/SqlConnection.cs: modified - got to compile,
-	  run, and connect to PostgreSQL database
-	* System.Data/SqlCommand.cs: modified - got to compile,
-	  run, and execute a SQL INSERT command which successfully
-	  inserted a row into the PostgreSQL database
+	* System.Data.SqlClient/SqlConnection.cs: modified - got 
+      to compile, run, and connect to PostgreSQL database
+      
+	* System.Data.SqlClient/SqlCommand.cs: modified - got 
+      to compile, run, and execute a SQL INSERT command 
+      which successfully inserted a row 
+      into the PostgreSQL database
 
-	* System.Data/SqlTransaction.cs: modified
-	* System.Data/SqlParameter.cs: modified
-	* System.Data/SqlParameterCollection.cs: modified
-	* System.Data/SqlError.cs: modified
-	* System.Data/SqlErrorCollection.cs: modified
-	* System.Data/SqlException.cs: modified
-	* System.Data/PostgresLibrary.cs: modified - to compile
+	* System.Data.SqlClient/SqlTransaction.cs: modified
+	* System.Data.SqlClient/SqlParameter.cs: modified
+	* System.Data.SqlClient/SqlParameterCollection.cs: modified
+	* System.Data.SqlClient/SqlError.cs: modified
+	* System.Data.SqlClient/SqlErrorCollection.cs: modified
+	* System.Data.SqlClient/SqlException.cs: modified
+	* System.Data.SqlClient/PostgresLibrary.cs: modified - to compile
 
-	* System.Data/SqlAdapter: modified
-	* System.Data/SqlReader: modified - add more stubs
+	* System.Data.SqlClient/SqlAdapter: modified
+	* System.Data.SqlClient/SqlReader: modified - add more stubs
 	
 2002-04-16  Daniel Morgan <danmorg@sc.rr.com>
 
@@ -28,10 +70,10 @@
 
 2002-04-15  Daniel Morgan <danmorg@sc.rr.com>
 
-	* System.Data/SqlInfoMessageEventArgs.cs: added - using in
-	  SqlConnecition
-	* System.Data/SqlErrorCollection.cs: added
-	* System.Data/SqlErrors.cs: removed - no such class SqlErrors
+	* System.Data.SqlClient/SqlInfoMessageEventArgs.cs: added - using in
+	  class SqlConnecition
+	* System.Data.SqlClient/SqlErrorCollection.cs: added
+	* System.Data.SqlClient/SqlErrors.cs: removed - no such class SqlErrors
 
 2002-04-15  Christopher Podurgiel <cpodurgiel@msn.com>
 	

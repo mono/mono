@@ -22,10 +22,13 @@ namespace System.Data.SqlClient
 		#region Fields
 
 		private SqlConnection conn = null;
-		// FIXME: is the IsolationLevel correct for PostgreSQL?
-		private IsolationLevel isolationLevel =
-			IsolationLevel.ReadCommitted | 
-			IsolationLevel.Serializable;
+		//        How do you get/set the 
+		//        IsolationLevel in PostgreSQL?
+		private IsolationLevel isolationLevel =	
+			IsolationLevel.ReadCommitted;
+		// There are two IsolationLevel's for PostgreSQL:
+		//    ReadCommitted and Serializable, 
+		// but ReadCommitted is the default 
 		
 		#endregion
                
@@ -35,13 +38,24 @@ namespace System.Data.SqlClient
 		public void Commit ()
 		{
 			IntPtr pgResult;
+			ExecStatusType execStatus;
 
 			pgResult = PostgresLibrary.
-					PQexec (conn.PostgresConnection, 
-						"COMMIT");
+				PQexec (conn.PostgresConnection, 
+					"COMMIT");
 			/* FIXME: check result and emit 
 			 * exceptions on errors 
 			 */
+			execStatus = PostgresLibrary.
+				PQresultStatus (pgResult);
+
+			String cmdStatus;
+			cmdStatus = PostgresLibrary.
+				PQcmdStatus(pgResult);
+
+			Console.WriteLine("*** Command Status: " +
+				cmdStatus);
+
 			PostgresLibrary.PQclear (pgResult);
 		}		
 
@@ -49,13 +63,52 @@ namespace System.Data.SqlClient
 		public void Rollback()
 		{
 			IntPtr pgResult;
+			ExecStatusType execStatus;
 
 			pgResult = PostgresLibrary.
-					PQexec (conn.PostgresConnection, 
-						"ROLLBACK");
+				PQexec (conn.PostgresConnection, 
+					"ROLLBACK");
 			/* FIXME: check result and emit 
-			 * exceptions on errors
+			 * exceptions on errors 
 			 */
+			execStatus = PostgresLibrary.
+				PQresultStatus (pgResult);
+
+			String cmdStatus;
+			cmdStatus = PostgresLibrary.
+				PQcmdStatus(pgResult);
+
+			Console.WriteLine("*** Command Status: " +
+				cmdStatus);
+
+			PostgresLibrary.PQclear (pgResult);
+		}
+
+		#endregion // Public Methods
+
+		#region Internal Methods to System.Data.dll Assembly
+
+		internal void Begin()
+		{
+			IntPtr pgResult;
+			ExecStatusType execStatus;
+
+			pgResult = PostgresLibrary.
+				PQexec (conn.PostgresConnection, 
+					"BEGIN");
+			/* FIXME: check result and emit 
+			 * exceptions on errors 
+			 */
+			execStatus = PostgresLibrary.
+				PQresultStatus (pgResult);
+
+			String cmdStatus;
+			cmdStatus = PostgresLibrary.
+				PQcmdStatus(pgResult);
+
+			Console.WriteLine("*** Command Status: " +
+				cmdStatus);
+
 			PostgresLibrary.PQclear (pgResult);
 		}
 
@@ -69,7 +122,7 @@ namespace System.Data.SqlClient
 			this.conn = connection;
 		}
 
-		#endregion
+		#endregion // Internal Methods to System.Data.dll Assembly
 
 		#region Properties
 
@@ -90,8 +143,14 @@ namespace System.Data.SqlClient
 				return isolationLevel; 
 			}
 		}
+
+		[MonoTODO]
+		public void Dispose()
+		{
+			// FIXME: need to properly release resources
+		}
 	
-		#endregion
+		#endregion // Properties
 
 	}
 }
