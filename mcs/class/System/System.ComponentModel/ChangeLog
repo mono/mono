@@ -1,3 +1,10 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* TypeConverter.cs: Added new stubbs
+	* BindableAttribute.cs: Added
+	* BindableSupport.cs: Added
+	* NotifyParentPropertyAttribute.cs: Added
+	* ExpandableObjectConverter.cs: Added
+
 2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MemberDescriptor.cs: implemented Attributes and Category.

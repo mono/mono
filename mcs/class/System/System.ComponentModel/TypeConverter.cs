@@ -130,6 +130,18 @@ public class TypeConverter
 	}
 
 	[MonoTODO]
+	protected Exception GetConvertFromException (object value)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	protected Exception GetConvertToException (object value)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
 	public virtual object CreateInstance (ITypeDescriptorContext context, IDictionary propertyValues)
 	{
 		throw new NotImplementedException ();
