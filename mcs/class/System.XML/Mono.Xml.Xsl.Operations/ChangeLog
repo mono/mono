@@ -1,3 +1,9 @@
+2003-11-09 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslAttribute.cs : namespace should be String.Empty if no specification
+	  exists.
+	* XslNumber.cs : default format string is "1". See XSLT spec. 7.7.1.
+
 2003-11-03 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslCompiledElement.cs, XslAttribute.cs, XslElement.cs :

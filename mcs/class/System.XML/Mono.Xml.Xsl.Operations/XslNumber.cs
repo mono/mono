@@ -83,7 +83,7 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		XslNumberFormatter GetNumberFormatter (XslTransformProcessor p)
 		{
-			string format = "1. ";
+			string format = "1";
 			string lang = null;
 			string letterValue = null;
 			char groupingSeparator = '\0';

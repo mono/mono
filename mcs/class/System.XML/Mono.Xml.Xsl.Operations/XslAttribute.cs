@@ -61,7 +61,7 @@ namespace Mono.Xml.Xsl.Operations {
 			string nm, nmsp, localName, prefix;
 			
 			nm = calcName != null ? calcName : name.Evaluate (p);
-			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
+			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : String.Empty;
 			prefix = calcPrefix != null ? calcPrefix : String.Empty;
 
 			if (nm == "xmlns")
