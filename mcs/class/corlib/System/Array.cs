@@ -63,18 +63,17 @@ namespace System
 		public extern void SetValue (object value, int[] idxs);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static Array CreateInstance(Type elementType, int[] lengths, int [] bounds);
+		internal extern static Array CreateInstanceImpl(Type elementType, int[] lengths, int [] bounds);
 
-		// Methods Implementations
-
-		public int Count {
+		// Properties
+		public virtual int Count {
 			get {
 				return Length;
 			}
 		}
 
 		[MonoTODO]
-		public bool IsSynchronized {
+		public virtual bool IsSynchronized {
 			get {
 				// FIXME?
 				return false;
@@ -82,10 +81,24 @@ namespace System
 		}
 
 		[MonoTODO]
-		public object SyncRoot {
+		public virtual object SyncRoot {
 			get {
 				// FIXME
 				return null;
+			}
+		}
+
+		public virtual bool IsFixedSize 
+		{
+			get {
+				return true;
+			}
+		}
+
+		public virtual bool IsReadOnly 
+		{
+			get{
+				return false;
 			}
 		}
 
@@ -99,7 +112,7 @@ namespace System
 		public int GetUpperBound (int dimension)
 		{
 			return GetLowerBound (dimension) +
-				GetLength (dimension);
+				GetLength (dimension) - 1;
 		}
 
 		public object GetValue (int idx)
@@ -169,7 +182,7 @@ namespace System
 			
 			lengths [0] = length;
 			
-			return CreateInstance (elementType, lengths, bounds);
+			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 		
 		public static Array CreateInstance(Type elementType, int l1, int l2)
@@ -180,7 +193,7 @@ namespace System
 			lengths [0] = l1;
 			lengths [1] = l2;
 			
-			return CreateInstance (elementType, lengths, bounds);
+			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
 		public static Array CreateInstance(Type elementType, int l1, int l2, int l3)
@@ -192,14 +205,22 @@ namespace System
 			lengths [1] = l2;
 			lengths [2] = l3;
 		
-			return CreateInstance (elementType, lengths, bounds);
+			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
 		public static Array CreateInstance(Type elementType, int[] lengths)
 		{
 			int[] bounds = null;
 			
-			return CreateInstance (elementType, lengths, bounds);
+			return CreateInstanceImpl (elementType, lengths, bounds);
+		}
+
+		public static Array CreateInstance(Type elementType, int[] lengths, int [] bounds)
+		{
+			if(bounds == null)
+				throw new ArgumentNullException("bounds");
+
+			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
 		
@@ -233,7 +254,7 @@ namespace System
 			if (index < array.GetLowerBound (0) || length < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (index + length > array.GetUpperBound (0))
+			if (index + length > array.GetUpperBound (0) + 1)
 				throw new ArgumentException ();
 
 			if (comparer == null && !(value is IComparable))
@@ -242,6 +263,9 @@ namespace System
 			// FIXME: Throw an ArgumentException if comparer
 			// is null and value is not of the same type as the
 			// elements of array.
+
+			// FIXME: This is implementing linear search. While it should do a binary one
+			// FIXME: Should not throw exception when values are null 
 
 			for (int i = 0; i < length; i++) 
 			{
@@ -273,17 +297,12 @@ namespace System
 				throw new RankException ();
 
 			if (index < array.GetLowerBound (0) || length < 0 ||
-				index + length > array.GetUpperBound (0))
+				index + length > array.GetUpperBound (0) + 1)
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = 0; i < length; i++) 
 			{
-				if (array.GetValue(index + i) is bool)
-					array.SetValue(false, index + i);
-				else if (array.GetValue(index + i) is ValueType)
-					array.SetValue(0, index + i);
-				else
-					array.SetValue(null, index + i);
+				array.SetValue(null, index + i);
 			}
 		}
 
@@ -312,8 +331,8 @@ namespace System
 				throw new ArgumentNullException ();
 
 			if (source_idx < source.GetLowerBound (0) ||
-			    source_idx + length > source.GetUpperBound (0) ||
-			    dest_idx < dest.GetLowerBound (0) || dest_idx + length > dest.GetUpperBound (0))
+			    source_idx + length > source.GetUpperBound (0) + 1||
+			    dest_idx < dest.GetLowerBound (0) || dest_idx + length > dest.GetUpperBound (0) + 1)
 				throw new ArgumentException ();
 
 			if (source.Rank != dest.Rank)
@@ -349,7 +368,7 @@ namespace System
 
 			for (int i = 0; i < length; i++)
 			{
-				if (array.GetValue(index + i) == value)
+				if (array.GetValue(index + i).Equals(value))
 					return index + i;
 			}
 
@@ -377,7 +396,7 @@ namespace System
 
 			for (int i = length - 1; i >= 0; i--)
 			{
-				if (array.GetValue(index + i) == value)
+				if (array.GetValue(index + i).Equals(value))
 					return index + i;
 			}
 
@@ -400,7 +419,7 @@ namespace System
 			if (index < array.GetLowerBound (0) || length < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (index + length > array.GetUpperBound (0))
+			if (index + length > array.GetUpperBound (0) + 1)
 				throw new ArgumentException ();
 
 			for (int i = 0; i < length/2; i++)

@@ -1,3 +1,16 @@
+2002-02-18  Ajay Kumar Dwivedi <AjayKumar.Dwivedi@dresdner-bank.com>
+
+	* Array.cs:         
+	1. Fix for GetUpperBound to return correct values
+        2. made some Properties virtual
+        3. Adds IsFixedSize and IsReadOnly properties.
+        4. changes CreateInstance(Type,int[],int[]) to throw Exception
+	when third arg is null. InternalCall CreateInstance changed to  
+	CreateInstanceImpl
+        5. Fixed array.GetUpperBound at a couple of places
+        6. IndexOf and LastIndexOf now use Object.Equals instead of "=="
+        7. Added two FIXME's in BinarySearch functions.
+
 2002-02-17  Duncan Mak  <duncan@ximian.com>
 
         * TimeZone.cs:	Applied the rest of Ajay's patch for	
