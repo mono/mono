@@ -1,3 +1,8 @@
+2003-12-19  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* MonoIO.cs: SetFileTime() Failed Open returns InvalidHandle
+	not Zero
+
 2003-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Directory.cs : SetCurrentDirectory() should raise errors for

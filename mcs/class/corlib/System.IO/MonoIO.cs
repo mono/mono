@@ -207,7 +207,7 @@ namespace System.IO
 			handle = Open (path, FileMode.Open,
 				       FileAccess.ReadWrite,
 				       FileShare.ReadWrite, out error);
-			if (handle == IntPtr.Zero)
+			if (handle == MonoIO.InvalidHandle)
 				return false;
 
 			result = SetFileTime (handle, creation_time,
