@@ -381,21 +381,20 @@ namespace System.Xml.Xsl
 		static void Save (XPathNavigator navigator, TextWriter writer)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (writer);
-			XPathNodeType type = XPathNodeType.All;
 
-			WriteTree (navigator, xmlWriter, type);
+			WriteTree (navigator, xmlWriter);
 			xmlWriter.WriteEndDocument ();
 			xmlWriter.Flush ();
 		}
 
 		// Walks the XPathNavigator tree recursively 
-		static void WriteTree (XPathNavigator navigator, XmlTextWriter writer, XPathNodeType type)
+		static void WriteTree (XPathNavigator navigator, XmlTextWriter writer)
 		{
-			WriteCurrentNode (navigator, writer, ref type);
+			WriteCurrentNode (navigator, writer);
 
 			if (navigator.MoveToFirstAttribute ()) {
 				do {
-					WriteCurrentNode (navigator, writer, ref type);
+					WriteCurrentNode (navigator, writer);
 				} while (navigator.MoveToNextAttribute ());
 
 				navigator.MoveToParent ();
@@ -403,7 +402,7 @@ namespace System.Xml.Xsl
 
 			if (navigator.MoveToFirstChild ()) {
 				do {
-					WriteTree (navigator, writer, type);
+					WriteTree (navigator, writer);
 				} while (navigator.MoveToNext ());
 
 				navigator.MoveToParent ();
@@ -415,15 +414,13 @@ namespace System.Xml.Xsl
 		}
 
 		// Format the output  
-		static void WriteCurrentNode (XPathNavigator navigator, XmlTextWriter writer, ref XPathNodeType current_type)
+		static void WriteCurrentNode (XPathNavigator navigator, XmlTextWriter writer)
 		{
 			switch (navigator.NodeType) {
 			case XPathNodeType.Root:
-				current_type = XPathNodeType.Root;
 				writer.WriteStartDocument ();
 				break;
 			case XPathNodeType.Attribute:
-				current_type = XPathNodeType.Attribute;
 				writer.WriteAttributeString (navigator.LocalName, navigator.Value);
 				break;
 
@@ -432,7 +429,6 @@ namespace System.Xml.Xsl
 				break;
 
 			case XPathNodeType.Element:
-				current_type = XPathNodeType.Element;
 				writer.WriteStartElement (navigator.Name);
 				break;
 			

@@ -1,3 +1,7 @@
+2003-02-20  Nick Drochak <ndrochak@gol.com>
+
+	* XslTransform.cs: Remove confusing and unused parameter.
+
 2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XslTransform.cs: don't free the xml document used for the style sheet.
