@@ -1,3 +1,10 @@
+2004-11-01  Ben Maurer  <bmaurer@ximian.com>
+
+	* MonoIOError.cs: All of these fields just take up room in corlib,
+	bloating things up. To make it worse, we need to malloc data at
+	runtime about them. Since most are not used, am commenting them
+	out
+
 2004-09-19  Dick Porter  <dick@ximian.com>
 
 	* UnexceptionalStreamWriter.cs: 
