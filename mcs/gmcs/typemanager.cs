@@ -496,6 +496,14 @@ public class TypeManager {
 	{
 		return builder_to_declspace [t] as TypeContainer;
 	}
+
+	public static TypeContainer LookupGenericTypeContainer (Type t)
+	{
+		while (t.IsGenericInstance)
+			t = t.GetGenericTypeDefinition ();
+
+		return LookupTypeContainer (t);
+	}
 	
 	public static IMemberContainer LookupMemberContainer (Type t)
 	{
