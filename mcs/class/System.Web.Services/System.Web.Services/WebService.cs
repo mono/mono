@@ -92,6 +92,13 @@ namespace System.Web.Services {
 			get { return _context.User; }
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public virtual System.Web.Services.Protocols.SoapProtocolVersion SoapVersion {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		#endregion // Properties
 	}
 }

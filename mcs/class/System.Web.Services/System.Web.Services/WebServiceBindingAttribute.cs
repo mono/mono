@@ -37,6 +37,11 @@ namespace System.Web.Services {
 		string location;
 		string name;
 		string ns;
+		
+#if NET_2_0
+		bool emitConformanceClaims;
+		WsiClaims conformanceClaims;
+#endif
 
 		#endregion // Fields
 
@@ -82,6 +87,20 @@ namespace System.Web.Services {
 			get { return ns; }
 			set { ns = value; }
 		}
+		
+#if NET_2_0
+		public WsiClaims ConformanceClaims {
+			get { return conformanceClaims; }
+			set { conformanceClaims = value; }
+		}
+		
+		public bool EmitConformanceClaims {
+			get { return emitConformanceClaims; }
+			set { emitConformanceClaims = value; }
+		}	
+#endif
+
+
 
 		#endregion // Properties
 	}
