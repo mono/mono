@@ -1,4 +1,9 @@
 
+Mon Jun 3 15:42:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monobitset.c, monobitset.h: documentation and fixes from
+	Dennis Haney.
+
 Sat Jun 1 14:10:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monobitset.c: fix my screwup pointed out by Lawrence Pit
