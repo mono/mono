@@ -4,8 +4,10 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
@@ -119,7 +121,7 @@ namespace System.Data.SqlClient {
 		}
 
 		
-		public int IndexOf(object value)
+		public int IndexOf (object value)
 		{
 			// Check if value is a SqlParameter
 			CheckType(value);
@@ -127,46 +129,35 @@ namespace System.Data.SqlClient {
 		}
 
 		
-		public int IndexOf(string parameterName)
+		public int IndexOf (string parameterName)
 		{
-			int p = -1;
+			return parameterList.IndexOf (parameterName);
+		}
 
-			for(p = 0; p < parameterList.Count; p++) {
-				if(((SqlParameter)parameterList[p]).ParameterName.Equals(parameterName))
-					return p;
-			}
-			return p;
+		public void Insert (int index, object value)
+		{
+			parameterList.Insert (index, value);
+		}
+
+		public void Remove (object value)
+		{
+			parameterList.Remove (value);
+		}
+
+		public void RemoveAt (int index)
+		{
+			parameterList.RemoveAt (index);
 		}
 
 		[MonoTODO]
-		public void Insert(int index, object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Remove(object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RemoveAt(int index)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RemoveAt(string parameterName)
+		public void RemoveAt (string parameterName)
 		{
 			throw new NotImplementedException ();
 		}
 	
 		[MonoTODO]
 		public int Count {
-			get {	
-				return parameterList.Count;
-			}			  
+			get { return parameterList.Count; }			  
 		}
 
 		object IList.this[int index] {

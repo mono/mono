@@ -1,3 +1,16 @@
+2002-11-02  Tim Coleman (tim@timcoleman.com) 
+	* System.Data.SqlClient/SqlCommand.cs:
+		Change to use sp_executesql to run regular text queries.
+		Now, sp_executesql for text, sp_execute for prepared,
+		and execute for SPs means everything runs a procedure.
+	* System.Data.SqlClient/SqlParameter.cs:
+		Allow client to set parameter name in Prepare ()
+	* System.Data.SqlClient/SqlParameterCollection.cs:
+		Implement some methods
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Since everything is an SP now, we know that when
+		we see DoneProc, that we are really done.
+
 2002-11-01  Tim Coleman (tim@timcoleman.com) :
 	* System.Data.Common/DbEnumerator.cs :
 		Throw correct exception on Reset ()

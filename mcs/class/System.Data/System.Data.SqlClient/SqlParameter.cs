@@ -193,10 +193,10 @@ namespace System.Data.SqlClient {
 			throw new NotImplementedException ();
 		}
 
-		internal string Prepare ()
+		internal string Prepare (string name)
 		{
 			StringBuilder result = new StringBuilder ();
-			result.Append (parmName);
+			result.Append (name);
 			result.Append (" ");
 			result.Append (dbtype.ToString ().ToLower ());
 

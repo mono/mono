@@ -38,7 +38,6 @@ namespace System.Data.SqlClient {
 
 		CommandBehavior behavior = CommandBehavior.Default;
 		NameValueCollection preparedStatements = new NameValueCollection ();
-		bool isPrepared;
 
 		#endregion // Fields
 
@@ -161,8 +160,6 @@ namespace System.Data.SqlClient {
 
 		private string BuildCommand ()
 		{
-			isPrepared = true;
-
 			string statementHandle = preparedStatements [commandText];
 			if (statementHandle != null) {
 				string proc = String.Format ("sp_execute {0}", statementHandle);	
@@ -171,26 +168,56 @@ namespace System.Data.SqlClient {
 				return BuildProcedureCall (proc, parameters);
 			}
 
-			isPrepared = false;
-			string sql;
-
-			switch (commandType) {
-			case CommandType.Text :
-				sql = commandText;
-				break;
-			case CommandType.TableDirect :
-				sql = String.Format ("SELECT * FROM {0}", commandText);
-				break;
-			case CommandType.StoredProcedure :
+			if (commandType == CommandType.StoredProcedure)
 				return BuildProcedureCall (commandText, parameters);
-			default :
-				throw new InvalidOperationException ("The CommandType was invalid.");
-			}
 
 			if ((behavior & CommandBehavior.KeyInfo) > 0)
-				sql += " FOR BROWSE";
+				commandText += " FOR BROWSE";
 
-			return sql;
+			if (commandType == CommandType.Text)
+				return BuildExec ();
+
+			if (commandType == CommandType.TableDirect)
+				return BuildExec (String.Format ("select * from {0}", commandText));
+
+			throw new InvalidOperationException ("The CommandType was invalid.");
+		}
+
+		private string BuildExec ()
+		{
+			return BuildExec (commandText);	
+		}
+	
+		private string BuildExec (string sql)
+		{
+			StringBuilder parms = new StringBuilder ();
+			foreach (SqlParameter parameter in parameters) {
+				if (parms.Length > 0)
+					parms.Append (", ");
+				parms.Append (parameter.Prepare (parameter.ParameterName));
+				if (parameter.Direction == ParameterDirection.Output)
+					parms.Append (" output");
+			}
+
+			SqlParameterCollection localParameters = new SqlParameterCollection ();
+			SqlParameter parm;
+		
+			parm = new SqlParameter ("@P1", SqlDbType.NVarChar);
+			parm.Value = sql;
+			parm.Size = ((string) parm.Value).Length;
+			localParameters.Add (parm);
+
+			if (parameters.Count > 0) {
+				parm = new SqlParameter ("@P2", SqlDbType.NVarChar);
+				parm.Value = parms.ToString ();
+				parm.Size = ((string) parm.Value).Length;
+				localParameters.Add (parm);
+			}
+
+			foreach (SqlParameter p in parameters)
+				localParameters.Add (p);
+
+			return BuildProcedureCall ("sp_executesql", localParameters);
 		}
 
 		private string BuildPrepare ()
@@ -199,23 +226,42 @@ namespace System.Data.SqlClient {
 			foreach (SqlParameter parameter in parameters) {
 				if (parms.Length > 0)
 					parms.Append (", ");
-				parms.Append (parameter.Prepare ());
+				parms.Append (parameter.Prepare (parameter.ParameterName));
 				if (parameter.Direction == ParameterDirection.Output)
 					parms.Append (" output");
 			}
 
-			string declare = "declare @p1 int\nset @p1=NULL";
-			string exec = String.Format ("exec sp_prepare @p1 output, N'{0}', N'{1}'", parms.ToString (), commandText);
-			return String.Format ("{0}\n{1}", declare, exec);
+			SqlParameterCollection localParameters = new SqlParameterCollection ();
+			SqlParameter parm;
+		
+			parm = new SqlParameter ("@P1", SqlDbType.Int);
+			parm.Direction = ParameterDirection.Output;
+			localParameters.Add (parm);
+
+			parm = new SqlParameter ("@P2", SqlDbType.NVarChar);
+			parm.Value = parms.ToString ();
+			parm.Size = ((string) parm.Value).Length;
+			localParameters.Add (parm);
+
+			parm = new SqlParameter ("@P3", SqlDbType.NVarChar);
+			parm.Value = commandText;
+			parm.Size = ((string) parm.Value).Length;
+			localParameters.Add (parm);
+
+			return BuildProcedureCall ("sp_prepare", localParameters);
 		}
 
-		private static string BuildProcedureCall (string commandText, SqlParameterCollection parameters)
+		private static string BuildProcedureCall (string procedure, SqlParameterCollection parameters)
 		{
 			StringBuilder parms = new StringBuilder ();
 			StringBuilder declarations = new StringBuilder ();
 			StringBuilder outParms = new StringBuilder ();
+			StringBuilder set = new StringBuilder ();
 
+			int index = 1;
 			foreach (SqlParameter parameter in parameters) {
+				string parmName = String.Format ("@P{0}", index);
+
 				switch (parameter.Direction) {
 				case ParameterDirection.Input :
 					if (parms.Length > 0)
@@ -225,7 +271,7 @@ namespace System.Data.SqlClient {
 				case ParameterDirection.Output :
 					if (parms.Length > 0)
 						parms.Append (", ");
-					parms.Append (parameter.ParameterName);
+					parms.Append (parmName);
 					parms.Append (" output");
 
 					if (outParms.Length > 0) {
@@ -237,15 +283,17 @@ namespace System.Data.SqlClient {
 						declarations.Append ("declare ");
 					}
 
-					declarations.Append (parameter.Prepare ());
-					outParms.Append (parameter.ParameterName);
+					declarations.Append (parameter.Prepare (parmName));
+					set.Append (String.Format ("set {0}=NULL\n", parmName));
+					outParms.Append (parmName);
 					break;
 				default :
 					throw new NotImplementedException ("Only support input and output parameters.");
 				}
+				index += 1;
 			}
 
-			return String.Format ("{0}\nexec {1} {2}\n{3}", declarations.ToString (), commandText, parms.ToString (), outParms.ToString ());
+			return String.Format ("{0}\n{1}exec {2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
 		}
 
 		public void Cancel () 
@@ -273,7 +321,6 @@ namespace System.Data.SqlClient {
 		public int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
-			Console.WriteLine (BuildCommand ());
 			int result = connection.Tds.ExecuteNonQuery (BuildCommand ());
 			connection.CheckForErrors ();
 			GetOutputParameters ();
@@ -358,15 +405,10 @@ namespace System.Data.SqlClient {
 
 		private void GetOutputParameters ()
 		{
-			IList list;
-
 			connection.Tds.SkipToEnd ();
 
-			if (commandType == CommandType.StoredProcedure || isPrepared)
-				list = connection.Tds.ColumnValues;
-			else
-				list = connection.Tds.OutputParameters;
-		
+			IList list = connection.Tds.ColumnValues;
+
 			if (list != null && list.Count > 0) {
 				int index = 0;
 				foreach (SqlParameter parameter in parameters) {
@@ -408,7 +450,6 @@ namespace System.Data.SqlClient {
 		public void Prepare ()
 		{
 			ValidateCommand ("Prepare");
-	Console.WriteLine (BuildPrepare ());
 			connection.Tds.ExecuteNonQuery (BuildPrepare ());
 			connection.CheckForErrors ();
 
