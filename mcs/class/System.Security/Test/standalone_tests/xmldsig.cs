@@ -25,10 +25,18 @@ public class MyClass {
 	static int valid = 0;
 	static int invalid = 0;
 	static int error = 0;
+	static int skip = 0;
+
+	static bool exc14n;
+	static bool hmacmd5;
 
 	public static void Main() 
 	{
 		try {
+			// automagically ajust tests to run depending on system config
+			exc14n = (CryptoConfig.CreateFromName ("http://www.w3.org/2001/10/xml-exc-c14n#WithComments") != null);
+			hmacmd5 = (CryptoConfig.CreateFromName ("HMACMD5") != null);
+
 			Console.WriteLine ("MERLIN");
 			Merlin ();
 			Console.WriteLine ();
@@ -45,6 +53,7 @@ public class MyClass {
 			Console.WriteLine ("TOTAL VALID   {0}", valid);
 			Console.WriteLine ("TOTAL INVALID {0}", invalid);
 			Console.WriteLine ("TOTAL ERROR   {0}", error);
+			Console.WriteLine ("TOTAL SKIP    {0}", skip);
 
 			Console.WriteLine ("Finished.");
 		}
@@ -210,12 +219,19 @@ DumpSignedXml (s);
 		byte[] key = Encoding.ASCII.GetBytes ("test");	
 
 		foreach (FileInfo fi in new DirectoryInfo ("phaos-xmldsig-three").GetFiles ("signature-*.xml")) {
-			if (fi.Name.IndexOf ("exclusive") >= 0) {
+			if ((fi.Name.IndexOf ("exclusive") >= 0) && (!exc14n)) {
 				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll cannot validate exclusive-c14n.");
+				skip++;
 				continue;
 			}
-			if (fi.Name.IndexOf ("md5") >= 0) {
+			if ((fi.Name.IndexOf ("md5") >= 0) && (!hmacmd5)) {
 				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll doesn't support HMAC-MD5.");
+				skip++;
+				continue;
+			}
+			if (fi.Name.IndexOf ("manifest") >= 0) {
+				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll doesn't support <Manifest>.");
+				skip++;
 				continue;
 			}
 			if (fi.Name.IndexOf ("hmac") >= 0) {

@@ -1,5 +1,11 @@
 2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* xmldsig.cs: Added code to automagically ajust for presence of 
+	HMAC-MD5 and ExC14N in the framework and to manualy skip signatures
+	containing <Manifest> (not supported).
+
+2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* xmldsig.cs: Added code to ignore tests using HMAC-MD5 (1 in Phaos
 	suite) as it is	unsupported in Fx 1.0/1.1.
 
