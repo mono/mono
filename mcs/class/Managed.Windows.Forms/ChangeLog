@@ -1,3 +1,8 @@
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.Sources: Added TextBoxBase.cs and
+	  TextControl.cs
+
 2004-12-15  Peter Bartok  <pbartok@novell.com>
 
 	* Design: Updated to reflect Mac Driver; added mention
