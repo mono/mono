@@ -1,3 +1,9 @@
+2002-03-21  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.[ch]: New files to handle debugging information
+	files. There's also support to dynamically update these symbol
+	files to include machine dependent information.
+
 2002-03-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* threads.c (mono_thread_create): new function to create thread
