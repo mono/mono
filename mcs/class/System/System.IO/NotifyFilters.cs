@@ -13,13 +13,13 @@ namespace System.IO {
 	[Flags]
 	[Serializable]
 	public enum NotifyFilters {
-		Attributes,
-		CreationTime,
-		DirectoryName,
-		FileName,
-		LastAccess,
-		LastWrite,
-		Security,
-		Size
+		Attributes = 4,
+		CreationTime = 64,
+		DirectoryName = 2,
+		FileName = 1,
+		LastAccess = 32,
+		LastWrite = 16,
+		Security = 256,
+		Size = 8
 	}
 }

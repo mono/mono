@@ -13,10 +13,10 @@ namespace System.IO {
 	[Flags]
 	[Serializable]
 	public enum WatcherChangeTypes {
-		All,
-		Changed,
-		Created,
-		Deleted,
-		Renamed
+		All = 0xF,
+		Changed = 4,
+		Created = 1,
+		Deleted = 2,
+		Renamed = 8
 	}
 }
