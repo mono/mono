@@ -102,6 +102,64 @@ namespace System.Collections
 				m_Pos = m_Index - 1;
 			}
 		}
+		
+		sealed class SimpleEnumerator : IEnumerator, ICloneable
+		{
+			ArrayList list;
+			int index;
+			int version;
+			object currentElement;
+			static object endFlag = new object ();
+							
+			public SimpleEnumerator (ArrayList list)
+			{
+				this.list = list;
+				index = -1;
+				version = list._version;
+				currentElement = endFlag;
+			}
+
+			public object Clone ()
+			{
+				return MemberwiseClone ();
+			}
+	
+			public bool MoveNext ()
+			{
+				if (version != list._version)
+					throw new InvalidOperationException("List has changed.");
+				
+				if (++index < list.Count) {
+					currentElement = list [index];
+					return true;
+				} else {
+					currentElement = endFlag;
+					return false;
+				}
+			}
+	
+			public object Current {
+				get {
+					if (currentElement == endFlag) {
+						if (index == -1)
+							throw new InvalidOperationException ("Enumerator not started");
+						else
+							throw new InvalidOperationException ("Enumerator ended");						 
+					}
+					
+					return currentElement;
+				}
+			}
+	
+			public void Reset ()
+			{
+				if (version != list._version)
+					throw new InvalidOperationException ("List has changed.");
+				
+				currentElement = endFlag;
+				index = -1;
+			}
+		}
 
 		#endregion
 
@@ -3017,7 +3075,7 @@ namespace System.Collections
 
 		public virtual IEnumerator GetEnumerator() 
 		{
-			return new ArrayListEnumerator(this);
+			return new SimpleEnumerator(this);
 		}
 
 		public virtual IEnumerator GetEnumerator(int index, int count) 

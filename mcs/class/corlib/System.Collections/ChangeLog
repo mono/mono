@@ -1,3 +1,10 @@
+2003-12-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ArrayList.cs: Add class `SimpleEnumerator' this handles the
+	.GetEnumerator We are able to remove fields by doing this, the
+	sizeof the simple version is 75% of that of the complex one, so we
+	get a pretty nice saving.
+
 2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ArrayList.cs: Renamed private fields m_Count, m_Data and m_StateChanges to
