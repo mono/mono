@@ -1,3 +1,7 @@
+2004-05-05  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DataView.cs , DataRowView.cs : Added implementation to basic methods and properties.
+	  
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaDataImporter.cs : 

@@ -36,25 +36,41 @@ namespace System.Data
 
 		#region Constructors
 
-		internal DataRowView (DataView dataView, DataRow row) {
+		internal DataRowView (DataView dataView, DataRow row) : this(dataView, row, false){
+		}
+
+		internal DataRowView (DataView dataView, DataRow row, bool isNew) {
 			this.dataView = dataView;
 			this.dataRow = row;
+			this.isNew = isNew;
 		}
 
 		#endregion // Constructors
 
 		#region Methods
 
+		public override bool Equals(object other)
+		{
+			return (other != null &&
+					other is DataRowView && 
+					((DataRowView)other).dataRow != null && 
+					((DataRowView)other).dataRow.Equals(this.dataRow));
+		}
+
 		[MonoTODO]
 		public void BeginEdit ()
 		{
 			// FIXME:
+			dataRow.BeginEdit();
+			isEdit = true;
 		}
 
 		[MonoTODO]
 		public void CancelEdit ()
 		{
 			// FIXME:
+			dataRow.CancelEdit();
+			isEdit = false;
 		}
 
 		[MonoTODO]
@@ -79,6 +95,8 @@ namespace System.Data
 		public void EndEdit ()
 		{
 			// FIXME:
+			dataRow.EndEdit();
+			isEdit = false;
 		}
 
 		#endregion // Methods
@@ -118,6 +136,7 @@ namespace System.Data
 			set {
 				DataColumn dc = dataView.Table.Columns[column];
 				dataRow[dc] = value;
+				dataView.ChangedList(ListChangedType.ItemChanged,dc.Ordinal,-1);
 			}
 		}
 

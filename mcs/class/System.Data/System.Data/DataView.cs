@@ -230,6 +230,7 @@ namespace System.Data
 				//        has changes via column, row, or constraint
 				//        changed events
 				UpdateIndex ();
+				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
 
@@ -263,13 +264,13 @@ namespace System.Data
 				throw new DataException ("Cannot call AddNew on a DataView where AllowNew is false.");
 			
 			DataRow row = dataTable.NewRow ();
-			DataRowView view = new DataRowView (this, row);
+			DataRowView rowView = new DataRowView (this, row, true);
 			
 			dataTable.Rows.Add (row);
 
 			UpdateIndex ();
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, rowCache.Length));
-			return view;
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, rowCache.Length - 1,-1));
+			return rowView;
 		}
 
 		[MonoTODO]
@@ -437,6 +438,12 @@ namespace System.Data
 					ListChanged (this, e);
 			} catch {
 			}
+		}
+
+		internal void ChangedList(ListChangedType listChangedType, int newIndex,int oldIndex)
+		{
+			ListChangedEventArgs e = new ListChangedEventArgs(listChangedType,newIndex,oldIndex);
+			OnListChanged(e);
 		}
 
 		[MonoTODO]
