@@ -1,3 +1,7 @@
+2004-05-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (ves_icall_System_Threading_Thread_ResetAbort): Fix compilation on gcc-2.95.
+
 2004-05-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* appdomain.c, gc.c: Make use of the new WaitForSingleObjectEx.
