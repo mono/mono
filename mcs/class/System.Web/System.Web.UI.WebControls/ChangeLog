@@ -1,5 +1,9 @@
 2004-11-19 Sanjay Gupta <gsanjay@novell.com>
 
+	* AccessDataSourceView.cs: Added new class.
+
+2004-11-19 Sanjay Gupta <gsanjay@novell.com>
+
 	* SqlDataSourceView.cs: Corrected exception handling in 
 	  ExecuteSelect method.
 
