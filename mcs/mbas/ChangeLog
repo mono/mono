@@ -1,4 +1,7 @@
 2004-03-02 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-tokenizer.cs: Support for '-' delimiter in DateTime
+
+2004-03-02 Anirban Bhattacharjee <banirban@novell.com>
 	* report.cs: Formatted warning thrown
 
 2004-03-02 Anirban Bhattacharjee <banirban@novell.com>

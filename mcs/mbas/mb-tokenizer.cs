@@ -977,6 +977,8 @@ namespace Mono.MonoBASIC
 					ref_line++;
 					break;
 				} 
+				if (c == '-')
+					c = '/';
 				sb.Append((char)c);
 			}
 			return Token.ERROR;
