@@ -1302,10 +1302,12 @@ namespace Mono.CSharp {
 
 				if (parent != null) {
 					locals = new MyBitVector (parent.locals, CountLocals);
-					parameters = new MyBitVector (parent.parameters, num_params);
+					if (num_params > 0)
+						parameters = new MyBitVector (parent.parameters, num_params);
 				} else {
 					locals = new MyBitVector (null, CountLocals);
-					parameters = new MyBitVector (null, num_params);
+					if (num_params > 0)
+						parameters = new MyBitVector (null, num_params);
 				}
 
 				id = ++next_id;
@@ -1501,17 +1503,19 @@ namespace Mono.CSharp {
 					// An `out' parameter must be assigned in all branches which do
 					// not always throw an exception.
 					if (!child.is_finally && (child.Returns != FlowReturns.EXCEPTION)) {
-						if (new_params != null)
-							new_params.And (child.parameters);
-						else {
-							new_params = parameters.Clone ();
-							new_params.Or (child.parameters);
+						if (parameters != null) {
+							if (new_params != null)
+								new_params.And (child.parameters);
+							else {
+								new_params = parameters.Clone ();
+								new_params.Or (child.parameters);
+							}
 						}
 					}
 
 					// If we always return, check whether all `out' parameters have
 					// been assigned.
-					if (child.Returns == FlowReturns.ALWAYS) {
+					if ((child.Returns == FlowReturns.ALWAYS) && (child.parameters != null)) {
 						branching.CheckOutParameters (
 							child.parameters, branching.Location);
 					}
@@ -1592,7 +1596,8 @@ namespace Mono.CSharp {
 					Report.Debug (1, "  MERGING JUMP ORIGIN", vector);
 
 					locals.And (vector.locals);
-					parameters.And (vector.parameters);
+					if (parameters != null)
+						parameters.And (vector.parameters);
 					Breaks = AndFlowReturns (Breaks, vector.Breaks);
 				}
 
@@ -1613,7 +1618,8 @@ namespace Mono.CSharp {
 				foreach (UsageVector vector in finally_vectors) {
 					Report.Debug (1, "  MERGING FINALLY ORIGIN", vector);
 
-					parameters.And (vector.parameters);
+					if (parameters != null)
+						parameters.And (vector.parameters);
 					Breaks = AndFlowReturns (Breaks, vector.Breaks);
 				}
 
@@ -1628,7 +1634,8 @@ namespace Mono.CSharp {
 			public void Or (UsageVector new_vector)
 			{
 				locals.Or (new_vector.locals);
-				parameters.Or (new_vector.parameters);
+				if (parameters != null)
+					parameters.Or (new_vector.parameters);
 			}
 
 			// <summary>
@@ -1644,7 +1651,10 @@ namespace Mono.CSharp {
 			// </summary>
 			public MyBitVector Parameters {
 				get {
-					return parameters.Clone ();
+					if (parameters != null)
+						return parameters.Clone ();
+					else
+						return null;
 				}
 			}
 
@@ -1671,8 +1681,10 @@ namespace Mono.CSharp {
 				sb.Append (Returns);
 				sb.Append (",");
 				sb.Append (Breaks);
-				sb.Append (" - ");
-				sb.Append (parameters);
+				if (parameters != null) {
+					sb.Append (" - ");
+					sb.Append (parameters);
+				}
 				sb.Append (" - ");
 				sb.Append (locals);
 				sb.Append (")");
