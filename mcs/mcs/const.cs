@@ -126,8 +126,17 @@ namespace Mono.CSharp {
 			}
 
 			if (!(Expr is Constant)) {
-				Report.Error (150, Location, "A constant value is expected");
-				return null;
+				UnCheckedExpr un_expr = Expr as UnCheckedExpr;
+				CheckedExpr ch_expr = Expr as CheckedExpr;
+
+				if ((un_expr != null) && (un_expr.Expr is Constant))
+					Expr = un_expr.Expr;
+				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
+					Expr = ch_expr.Expr;
+				else {
+					Report.Error (150, Location, "A constant value is expected");
+					return null;
+				}
 			}
 
 			ConstantValue = ((Constant) Expr).GetValue ();

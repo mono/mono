@@ -1,5 +1,11 @@
 2002-07-17  Martin Baulig  <martin@gnome.org>
 
+	* const.cs (Const.LookupConstantValue): Add support for constant
+	`unchecked' and `checked' expressions.
+	Also adding test case test-140.cs for this.
+
+2002-07-17  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (Foreach.GetEnumeratorFilter): When compiling corlib,
 	check whether mi.ReturnType implements the IEnumerator interface; the
 	`==' and the IsAssignableFrom() will fail in this situation.
