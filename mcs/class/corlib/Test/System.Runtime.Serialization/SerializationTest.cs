@@ -25,12 +25,14 @@ namespace MonoTests.System.Runtime.Serialization
 	public class SerializationTest
 	{
 		MemoryStream ms;
+		string uri;
 
 		[Test]
 		public void TestSerialization ()
 		{
 			MethodTester mt = new MethodTester();
-			RemotingServices.Marshal (mt, "myuri");
+			RemotingServices.Marshal (mt);
+			uri = RemotingServices.GetObjectUri (mt);
 
 			WriteData();
 			ReadData();
@@ -158,7 +160,7 @@ namespace MonoTests.System.Runtime.Serialization
 		{
 			object[][] results = new object[9][];
 
-			AuxProxy prx = new AuxProxy (stream, "myuri");
+			AuxProxy prx = new AuxProxy (stream, uri);
 			MethodTester mt = (MethodTester)prx.GetTransparentProxy();
 			object res;
 

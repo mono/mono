@@ -1,3 +1,7 @@
+2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SerializationTest.cs: Improved test.
+
 2004-12-09  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SerializationTest.cs: Added test for bug #70104.
