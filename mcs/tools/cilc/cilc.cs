@@ -73,6 +73,24 @@ public class cilc
 		makefile.WriteLine ("rm -rf core *~ *.o *.so");
 		makefile.Outdent ();
 		makefile.Close ();
+
+		Console.WriteLine ();
+		Console.WriteLine ("Type registry missed hits (by namespace):");
+		MakeReport (registry_hits);
+	}
+
+	static void MakeReport (Hashtable ctable)
+	{
+		string[] reg_keys = (string[]) (new ArrayList (ctable.Keys)).ToArray (typeof (string));
+		int[] reg_vals = (int[]) (new ArrayList (ctable.Values)).ToArray (typeof (int));
+		Array.Sort (reg_vals, reg_keys);
+
+		Array.Reverse (reg_vals);
+		Array.Reverse (reg_keys);
+
+		for (int i = 0 ; i != reg_keys.Length ; i++) {
+			Console.WriteLine ("  " + reg_keys[i] + ": " + reg_vals[i]);
+		}
 	}
 
 	static void AssemblyGen (Assembly a)
@@ -438,10 +456,23 @@ public class cilc
 
 	//FIXME: this won't work in the general case. arraylist should contain just type names, not Types
 	static ArrayList registered_types = new ArrayList ();
+	static Hashtable registry_hits = new Hashtable ();
 
 	static bool IsRegistered (Type t)
 	{
-		return registered_types.Contains (t);
+		bool isreg = registered_types.Contains (t);
+
+		//TODO: use our list of supported primitive types instead
+		if (!isreg && !t.IsPrimitive) {
+			if (!registry_hits.Contains (t.Namespace)) {
+				int count = 0;
+				registry_hits[t.Namespace] = count;
+			}
+
+			registry_hits[t.Namespace] = (int) registry_hits[t.Namespace] + 1;
+		}
+
+		return isreg;
 	}
 	
 	static void RegisterCsType (Type t)

@@ -11,6 +11,7 @@
 	Name the generated .so according to the input assembly name.
 	Code generator access modifier cleanups.
 	Use base name of input as default output target directory.
+	Report missed type registry hits after generation.
 	* Makefile:
 	Build Demo.dll, not Test.dll.
 
