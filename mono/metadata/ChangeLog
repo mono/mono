@@ -1,3 +1,9 @@
+2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_struct_to_ptr): Call 
+	mono_marshal_load_type_info (). Fixes #69625.
+	(mono_marshal_get_ptr_to_struct): Likewise.
+
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h: Bumped version number to 47.
