@@ -183,7 +183,25 @@ namespace System.Web.Mail {
 			    
 	    if( HasData( msg.Bcc ) ) headers[ "Bcc" ] = msg.Bcc;
 	    
-	    if( HasData( msg.Subject ) ) headers[ "Subject" ] = msg.Subject;
+	    if( HasData( msg.Subject ) ) {
+		
+		// if the BodyEncoding is not 7bit us-ascii then
+		// convert using base64 
+		if( msg.BodyEncoding is ASCIIEncoding ) {
+		
+		    headers[ "Subject" ] = msg.Subject;
+		
+		} else {
+		
+		    byte[] subjectBytes = msg.BodyEncoding.GetBytes( msg.Subject );
+		    // encode the subject with Base64
+		    headers[ "Subject" ] = 
+			String.Format( "=?{0}?{1}?{2}?=" , 
+				       msg.BodyEncoding.BodyName , "B",
+				       Convert.ToBase64String( subjectBytes ) );
+		}
+
+	    }
 	    
 	    if( HasData( msg.UrlContentBase ) ) 
 		headers[ "Content-Base" ] = msg.UrlContentBase;
