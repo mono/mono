@@ -1,5 +1,8 @@
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c (mono_arch_output_basic_block): Implement OP_FCONV_TO_<X>
+	correctly.
+
 	* exceptions.cs: Disable some tests which depend on properties of x86 fp
 	arithmetic.
 
