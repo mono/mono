@@ -330,7 +330,7 @@ namespace System.Text.RegularExpressions {
 					OpCode branch_op;
 					do {
 						int cp = Checkpoint ();
-						if (Eval (mode, ref ptr, pc + 2))
+						if (Eval (Mode.Match, ref ptr, pc + 2))
 							goto Pass;
 						
 						Backtrack (cp);
