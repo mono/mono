@@ -26,3 +26,7 @@ $(the_lib): $(RESX_RES)
 
 $(RESX_RES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
+
+ifeq (net_2_0, $(PROFILE))
+NO_INSTALL = yes
+endif

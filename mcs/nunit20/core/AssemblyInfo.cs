@@ -28,11 +28,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-#if NET_2_0
-[assembly: AssemblyVersion("2.2.0.2")]
-#else
 [assembly: AssemblyVersion("2.2.0.0")]
-#endif
 
 
 //
