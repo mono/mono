@@ -149,10 +149,9 @@ namespace Mono.CSharp {
 		public bool InCatch;
 		
 		/// <summary>
-		///   Whether we are generating code in a finally handler,
-		///   this disallows `return' statements in there.
+		///   Location for this EmitContext
 		/// </summary>
-		Location loc;
+		public Location loc;
 		
 		public EmitContext (TypeContainer parent, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
@@ -206,6 +205,7 @@ namespace Mono.CSharp {
 				// yyparse routine
 				//
 				//Report.Error (161, loc, "Not all code paths return a value");
+
 				return;
 			}
 

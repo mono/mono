@@ -1713,8 +1713,9 @@ namespace Mono.CSharp {
 				//
 				if (expr is EnumConstant)
 					e = ((EnumConstant) expr).Child;
-				else
-					e = new EmptyCast (expr, expr_type.UnderlyingSystemType);
+				else {
+					e = new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type));
+				}
 				
 				e = ConvertImplicit (ec, e, target_type, loc);
 				if (e != null)
@@ -2168,7 +2169,7 @@ namespace Mono.CSharp {
 		//
 		public Constant WidenToCompilerConstant ()
 		{
-			Type t = Child.Type.UnderlyingSystemType;
+			Type t = TypeManager.EnumToUnderlying (Child.Type);
 			object v = ((Constant) Child).GetValue ();;
 			
 			if (t == TypeManager.int32_type)
@@ -2196,7 +2197,7 @@ namespace Mono.CSharp {
 		//
 		public object GetPlainValue ()
 		{
-			Type t = Child.Type.UnderlyingSystemType;
+			Type t = TypeManager.EnumToUnderlying (Child.Type);
 			object v = ((Constant) Child).GetValue ();;
 			
 			if (t == TypeManager.int32_type)
@@ -2278,6 +2279,8 @@ namespace Mono.CSharp {
 			//
 			// Load the object from the pointer
 			//
+		basic_type:
+			
 			if (t == TypeManager.int32_type)
 				ig.Emit (OpCodes.Ldind_I4);
 			else if (t == TypeManager.uint32_type)
@@ -2304,7 +2307,10 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldind_I1);
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldind_I);
-			else 
+			else if (TypeManager.IsEnumType (t)){
+				t = TypeManager.EnumToUnderlying (t);
+				goto basic_type;
+			} else
 				ig.Emit (OpCodes.Ldobj, t);
 		}
 	}

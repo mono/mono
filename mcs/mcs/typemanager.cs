@@ -829,8 +829,45 @@ public class TypeManager {
 		
 		return false;
 	}
-	
 
+	//
+	// This is needed, because enumerations from assemblies
+	// do not report their underlyingtype, but they report
+	// themselves
+	//
+	public static Type EnumToUnderlying (Type t)
+	{
+		t = t.UnderlyingSystemType;
+		if (!TypeManager.IsEnumType (t))
+			return t;
+		
+		TypeCode tc = Type.GetTypeCode (t);
+
+		switch (tc){
+		case TypeCode.Boolean:
+			return TypeManager.bool_type;
+		case TypeCode.Byte:
+			return TypeManager.byte_type;
+		case TypeCode.SByte:
+			return TypeManager.sbyte_type;
+		case TypeCode.Char:
+			return TypeManager.char_type;
+		case TypeCode.Int16:
+			return TypeManager.short_type;
+		case TypeCode.UInt16:
+			return TypeManager.ushort_type;
+		case TypeCode.Int32:
+			return TypeManager.int32_type;
+		case TypeCode.UInt32:
+			return TypeManager.uint32_type;
+		case TypeCode.Int64:
+			return TypeManager.int64_type;
+		case TypeCode.UInt64:
+			return TypeManager.uint64_type;
+		}
+		throw new Exception ("Unhandled typecode in enum" + tc);
+	}
+	
 	/// <summary>
 	///   Returns the name of the indexer in a given type.
 	/// </summary>

@@ -10,6 +10,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Diagnostics;
 
 namespace Mono.CSharp {
 
@@ -241,7 +242,14 @@ namespace Mono.CSharp {
 			ec.InLoop = true;
 
 			ig.MarkLabel (loop);
-			EmitBoolExpression (ec, Test, ec.LoopEnd, false);
+
+			//
+			// If test is null, there is no test, and we are just
+			// an infinite loop
+			//
+			if (Test != null)
+				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
+		
 			Statement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
 			if (!(Increment is EmptyStatement))
@@ -351,9 +359,11 @@ namespace Mono.CSharp {
 	public class Goto : Statement {
 		string target;
 		Location loc;
-			
-		public Goto (string label, Location l)
+		Block block;
+		
+		public Goto (Block parent_block, string label, Location l)
 		{
+			block = parent_block;
 			loc = l;
 			target = label;
 		}
@@ -366,12 +376,53 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
-			// Console.WriteLine ("Attempting to goto to: " + target);
+			LabeledStatement label = block.LookupLabel (target);
 
-			ec.ig.Emit (OpCodes.Nop);
-			return true;
+			if (label == null){
+				//
+				// Maybe we should catch this before?
+				//
+				Report.Error (
+					159, loc,
+					"No such label `" + target + "' in this scope");
+				return false;
+			}
+			Label l = label.LabelTarget (ec);
+			ec.ig.Emit (OpCodes.Br, l);
+			
+			return false;
 		}
 	}
+
+	public class LabeledStatement : Statement {
+		string label_name;
+		bool defined;
+		Label label;
+		
+		public LabeledStatement (string label_name)
+		{
+			this.label_name = label_name;
+		}
+
+		public Label LabelTarget (EmitContext ec)
+		{
+			if (defined)
+				return label;
+			label = ec.ig.DefineLabel ();
+			defined = true;
+
+			return label;
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
+			LabelTarget (ec);
+			ec.ig.MarkLabel (label);
+
+			return false;
+		}
+	}
+	
 
 	/// <summary>
 	///   `goto default' statement
@@ -588,7 +639,6 @@ namespace Mono.CSharp {
 	public class Block : Statement {
 		public readonly Block  Parent;
 		public readonly bool   Implicit;
-		public readonly string Label;
 
 		//
 		// The statements in this block
@@ -650,17 +700,6 @@ namespace Mono.CSharp {
 			this_id = id++;
 		}
 
-		public Block (Block parent, string labeled)
-		{
-			if (parent != null)
-				parent.AddChild (this);
-			
-			this.Parent = parent;
-			this.Implicit = true;
-			Label = labeled;
-			this_id = id++;
-		}
-
 		public int ID {
 			get {
 				return this_id;
@@ -684,17 +723,30 @@ namespace Mono.CSharp {
 		///   otherwise.
 		/// </returns>
 		///
-		public bool AddLabel (string name, Block block)
+		public bool AddLabel (string name, LabeledStatement target)
 		{
 			if (labels == null)
 				labels = new Hashtable ();
 			if (labels.Contains (name))
 				return false;
 			
-			labels.Add (name, block);
+			labels.Add (name, target);
 			return true;
 		}
 
+		public LabeledStatement LookupLabel (string name)
+		{
+			if (labels != null){
+				if (labels.Contains (name))
+					return ((LabeledStatement) labels [name]);
+			}
+
+			if (Parent != null)
+				return Parent.LookupLabel (name);
+
+			return null;
+		}
+		
 		public bool AddVariable (string type, string name, Location l)
 		{
 			if (variables == null)
@@ -1147,9 +1199,9 @@ namespace Mono.CSharp {
 				
 			got_default = false;
 
-			if (TypeManager.IsEnumType (SwitchType))
-				compare_type = SwitchType.UnderlyingSystemType;
-			else
+			if (TypeManager.IsEnumType (SwitchType)){
+				compare_type = TypeManager.EnumToUnderlying (SwitchType);
+			} else
 				compare_type = SwitchType;
 			
 			foreach (SwitchSection ss in Sections){
@@ -1256,7 +1308,7 @@ namespace Mono.CSharp {
 							Elements.Add (v, sl);
 					} else {
 						throw new Exception ("Unknown switch type!" +
-								     SwitchType);
+								     SwitchType + " " + compare_type);
 					}
 
 					if (lname != null){

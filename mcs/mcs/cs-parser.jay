@@ -2564,7 +2564,7 @@ statement
 
 		current_block.AddStatement ((Statement) $1);
 	  }
-	| labeled_statement 	// This adds itself to the list of stat
+	| labeled_statement
 	;
 
 embedded_statement
@@ -2589,21 +2589,17 @@ empty_statement
 	;
 
 labeled_statement
-	: IDENTIFIER COLON statement
+	: IDENTIFIER COLON 
 	  {
-		string lab = (String) $1;
-		Block block;
+		LabeledStatement labeled = new LabeledStatement ((string) $1);
 
-		block = new Block (current_block, lab);
-		block.AddStatement ((Statement) $3);
-
-		if (!current_block.AddLabel (lab, block)){
+		if (!current_block.AddLabel ((string) $1, labeled)){
 			Location l = lexer.Location;
-			Report.Error (140, l, "The label '" + lab + "' is a duplicate");
-			$$ = $3;
+			Report.Error (140, l, "The label '" + ((string) $1) + "' is a duplicate");
 		}	
-		current_block = block;
+		current_block.AddStatement (labeled);
 	  }
+	  statement
 	;
 
 declaration_statement
@@ -2911,7 +2907,7 @@ for_initializer
 	;
 
 opt_for_condition
-	: /* empty */		{ $$ = new BoolLiteral (true); }
+	: /* empty */		{ $$ = null; }
 	| boolean_expression
 	;
 
@@ -2996,7 +2992,7 @@ continue_statement
 goto_statement
 	: GOTO IDENTIFIER SEMICOLON 
 	  {
-		$$ = new Goto ((string) $2, lexer.Location);
+		$$ = new Goto (current_block, (string) $2, lexer.Location);
 	  }
 	| GOTO CASE constant_expression SEMICOLON
 	  {

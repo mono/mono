@@ -290,7 +290,7 @@ namespace Mono.CSharp {
 				break;
 
 			default:
-				if (i > 0 && i < 127){
+				if (i >= -128 && i <= 127){
 					ig.Emit (OpCodes.Ldc_I4_S, (sbyte) i);
 				} else
 					ig.Emit (OpCodes.Ldc_I4, i);

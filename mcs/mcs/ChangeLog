@@ -1,3 +1,22 @@
+2001-12-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (EnumToUnderlying): This function is used to get
+	the underlying type from an enumeration, because it does not
+	always work. 
+
+	* constant.cs: Use the I4_S form for values between -128 and 127.
+
+	* statement.cs (Block.LookupLabel): Looks up a label.
+	(Block): Drop support for labeled blocks.
+
+	(LabeledStatement): New kind of statement that represents a label
+	only.
+
+	(Goto): Finally implement this bad boy.
+	
+	* cs-parser.jay: Update to reflect new mechanism to implement
+	labels.
+
 2001-12-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs (EmitContext.This): a codegen property that keeps the

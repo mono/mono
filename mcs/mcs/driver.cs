@@ -91,6 +91,7 @@ namespace Mono.CSharp
 					Location l = lexer.Location;
 					tokens++;
 				}
+				Console.WriteLine ("Tokenized: " + tokens);
 			}
 			
 			return 0;
