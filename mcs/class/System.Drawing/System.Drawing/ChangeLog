@@ -1,5 +1,9 @@
 2003-11-28  Duncan Mak  <duncan@ximian.com>
 
+	* Pen.cs (CompoundArray): Hide this for now.
+
+2003-11-28  Duncan Mak  <duncan@ximian.com>	
+
 	* Brush.cs (CreateBrush): new internal factory method for creating
 	specific brushes based on the internal (GDI+ C API) BrushType
 	enum.

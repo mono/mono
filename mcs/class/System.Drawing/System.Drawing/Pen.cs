@@ -91,27 +91,29 @@ namespace System.Drawing {
 
                 public float [] CompoundArray {
                         get {
-                                int count;
-                                GDIPlus.GdipGetPenCompoundArrayCount (nativeObject, out count);
+                                throw new NotImplementedException ();
+//                                 int count;
+//                                 GDIPlus.GdipGetPenCompoundArrayCount (nativeObject, out count);
 
-                                IntPtr tmp = Marshal.AllocHGlobal (8 * count);
-                                GDIPlus.GdipGetPenCompoundArray (nativeObject, out tmp, out count);
+//                                 IntPtr tmp = Marshal.AllocHGlobal (8 * count);
+//                                 GDIPlus.GdipGetPenCompoundArray (nativeObject, out tmp, out count);
 
-                                float [] retval = new float [count];
-                                Marshal.Copy (tmp, retval, 0, count);
+//                                 float [] retval = new float [count];
+//                                 Marshal.Copy (tmp, retval, 0, count);
 
-                                Marshal.FreeHGlobal (tmp);
+//                                 Marshal.FreeHGlobal (tmp);
 
-                                return retval;
+//                                 return retval;
                         }
 
                         set {
-                                int length = value.Length;
-                                IntPtr tmp = Marshal.AllocHGlobal (8 * length);
-                                Marshal.Copy (value, 0, tmp, length);
-                                GDIPlus.GdipSetPenCompoundArray (nativeObject, tmp, length);
+                                throw new NotImplementedException ();                                
+//                                 int length = value.Length;
+//                                 IntPtr tmp = Marshal.AllocHGlobal (8 * length);
+//                                 Marshal.Copy (value, 0, tmp, length);
+//                                 GDIPlus.GdipSetPenCompoundArray (nativeObject, tmp, length);
 
-                                Marshal.FreeHGlobal (tmp);
+//                                 Marshal.FreeHGlobal (tmp);
                         }
                 }
 
