@@ -145,14 +145,14 @@ dist-local: dist-default
 
 # plain ol corlib
 
-$(corlib): 
+$(corlib): $(makefrag) $(response) $(stampfile) 
 	@if test $(PROFILE) = "net_2_0" ; then \
 		$(MAKE) corlib_net_2_0 || exit 1 ; \
 	else \
 		$(MAKE) corlib_compile || exit 1 ; \
 	fi
 
-corlib_compile: $(makefrag) $(response) $(stampfile)
+corlib_compile: $(makefrag) $(response) $(stampfile) 
 	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(corlib_flags) /target:library /out:../lib/default/mscorlib.dll @$(response)
 
 # A bootstrap corlib 2.0 needs to be built so gmcs can be built and the full net 2.0 corlib can be built

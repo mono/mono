@@ -1,3 +1,7 @@
+2004-04-30  Jackson Harper  <jackson@ximian.com>
+
+	* Makefile: Add dependancies.
+	
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* Makefile: net_2_0 corlib goes to a special place.
