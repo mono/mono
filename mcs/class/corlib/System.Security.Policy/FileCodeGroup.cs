@@ -68,7 +68,6 @@ namespace System.Security.Policy {
 			get { return "Union";}
 		}
 
-                [MonoTODO ("no children processing")]
 		public override PolicyStatement Resolve (Evidence evidence)
 		{
 			if (null == evidence)
@@ -84,10 +83,12 @@ namespace System.Security.Policy {
 				pst = PolicyStatement.Empty ();
 
 			if (this.Children.Count > 0) {
-				foreach (CodeGroup cg in this.Children) {
-					PolicyStatement child = cg.Resolve (evidence);
-					if (child != null) {
-						// TODO union
+				foreach (CodeGroup child_cg in this.Children) {
+					PolicyStatement child_pst = child_cg.Resolve (evidence);
+					if (child_pst != null) {
+						foreach (IPermission perm in child_pst.PermissionSet) {
+							pst.PermissionSet.AddPermission (perm);
+						}
 					}
 				}
 			}

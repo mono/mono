@@ -128,7 +128,7 @@ namespace System.Security.Policy {
 			if (null == group)
 				throw new ArgumentNullException ("group");
 
-			m_children.Add(group);
+			m_children.Add (group.Copy ());
 		}
 
 		public override bool Equals (object o)
