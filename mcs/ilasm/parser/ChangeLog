@@ -1,3 +1,13 @@
+2003-05-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: When looking up types first check to see if this
+	is actually a primitive object type (System.String,
+	System.Object). Add custom attributes to types. Handle the il
+	keyword the exact same way as cil. Add ellipsises to param and sig
+	lists. Add an optional name to typelists, this is just parsed it
+	is not implemented properly. Add custom attributes to
+	methods. Implement custom types (just methodrefs to ctors).
+		
 2003-05-25 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Pass call conv to methoref constructors. Add the

@@ -560,7 +560,12 @@ class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
 			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET slashed_name
 			| slashed_name
                           {
-                                $$ = new TypeRef ((string) $1, null);
+                                PrimitiveTypeRef prim = PrimitiveTypeRef.GetPrimitiveType ((string) $1);
+
+                                if (prim != null)
+                                        $$ = prim;
+                                else
+                                        $$ = new TypeRef ((string) $1, null);
                           }
 			;
 
@@ -577,6 +582,9 @@ class_decl		: method_all
 			| sec_decl
 			| extsource_spec
 			| customattr_decl
+                          {
+                                codegen.CurrentTypeDef.AddCustomAttribute ((CustomAttr) $1);
+                          }
 			| D_SIZE int32
                           {
                                 codegen.CurrentTypeDef.SetSize ((int) $2);
@@ -1396,6 +1404,7 @@ param_attr		: /* EMPTY */                                   { $$ = new ParamAttr
 impl_attr		: /* EMPTY */                   { $$ = new ImplAttr (); }
 			| impl_attr K_NATIVE            { $$ = (ImplAttr) $1 | ImplAttr.Native; }
 			| impl_attr K_CIL               { $$ = (ImplAttr) $1 | ImplAttr.IL; }
+                        | impl_attr K_IL                { $$ = (ImplAttr) $1 | ImplAttr.IL; }
 			| impl_attr K_OPTIL             { $$ = (ImplAttr) $1 | ImplAttr.Optil; }
 			| impl_attr K_MANAGED           { /* should this reset? */ }
 			| impl_attr K_UNMANAGED         { $$ = (ImplAttr) $1 | ImplAttr.Unmanaged; }
@@ -1433,6 +1442,10 @@ sig_arg			: param_attr type
                           {
                                 $$ = new ParamDef ((ParamAttr) $1, (string) $3, (ITypeRef) $2);
                           }
+                        | ELLIPSIS
+                          {
+                                $$ = ParamDef.Ellipsis;
+                          }
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS id
 			;
@@ -1449,17 +1462,21 @@ type_list               : /* EMPTY */
                                 ArrayList type_list = (ArrayList) $1;
                                 type_list.Add (TypeRef.Ellipsis);
                           }
-                        | type
+                        | type opt_id
                           {
                                 ArrayList type_list = new ArrayList ();
                                 type_list.Add ($1);
                                 $$ = type_list;
                           }
-                        | type_list COMMA type
+                        | type_list COMMA type opt_id
                           {
                                 ArrayList type_list = (ArrayList) $1;
                                 type_list.Add ($3);
                           }
+                        ;
+
+opt_id                  : /* EMPTY */
+                        | id
                         ;
 
 method_decls		: /* EMPTY */
@@ -1504,6 +1521,9 @@ method_decl		: D_EMITBYTE int32
 			| extsource_spec
 			| language_decl
 			| customattr_decl
+                          {
+                                codegen.CurrentMethodDef.AddCustomAttr ((CustomAttr) $1);
+                          }
 			| data_decl
 			;
 
@@ -1535,7 +1555,7 @@ local                   : type
                           }
                         | slot_num type id
                           {
-                                $$ = new Local ((int) $1, (string) $5, (ITypeRef) $2);
+                                $$ = new Local ((int) $1, (string) $3, (ITypeRef) $2);
                           }
                         ;
 
@@ -1761,8 +1781,10 @@ instr			: INSTR_NONE
                                 if ((MiscInstr) $1 == MiscInstr.ldtoken) {
                                         if ($2 is IMethodRef)
                                                 codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IMethodRef) $2));
+                                        else if ($2 is IFieldRef)
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IFieldRef) $2));
                                         else
-                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IMethodRef) $2));
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((ITypeRef) $2));
                                                 
                                 }
                           }
@@ -1835,7 +1857,7 @@ owner_type		: type_spec
 
 member_ref		: K_METHOD method_ref
                           {
-                                $$ = $1;
+                                $$ = $2;
                           }
 			| K_FIELD type type_spec DOUBLE_COLON id
                           {
@@ -1899,16 +1921,48 @@ prop_decl		: D_SET method_ref
 			;
 
 customattr_decl		: D_CUSTOM custom_type
+                          {
+                                $$ = new CustomAttr ((IMethodRef) $2, null);
+                          }
 			| D_CUSTOM custom_type ASSIGN comp_qstring
 			| D_CUSTOM custom_type ASSIGN OPEN_PARENS bytes CLOSE_PARENS
+                          {
+                                $$ = new CustomAttr ((IMethodRef) $2,
+                                        (byte[]) $5);
+                          }
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN comp_qstring
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN
 			  OPEN_PARENS bytes CLOSE_PARENS
 			;
 			
-custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS sig_args CLOSE_PARENS
-			| call_conv type D_CTOR OPEN_PARENS sig_args CLOSE_PARENS
+custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_list CLOSE_PARENS
+                          {
+                                ITypeRef owner = (ITypeRef) $3;
+                                ArrayList arg_list = (ArrayList) $7;
+                                ITypeRef[] param_list;
+  
+                                if (arg_list != null)
+                                        param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+                                else
+                                        param_list = new ITypeRef[0];
+
+                                $$ = owner.AsClassRef (codegen).GetMethodRef ((ITypeRef) $2,
+                                        (CallConv) $1, (string) $5, param_list);
+                          }
+			| call_conv type D_CTOR OPEN_PARENS type_list CLOSE_PARENS
+                          {
+                                ArrayList arg_list = (ArrayList) $5;
+                                ITypeRef[] param_list;
+  
+                                if (arg_list != null)
+                                        param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+                                else
+                                        param_list = new ITypeRef[0];
+
+                                $$ = new GlobalMethodRef ((ITypeRef) $2, (CallConv) $1,
+                                        (string) $3, param_list);
+                          }
 			;
 
 sec_decl		: D_PERMISSION sec_action type_spec OPEN_PARENS nameval_pairs CLOSE_PARENS
