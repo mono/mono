@@ -1,3 +1,11 @@
+2004-07-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs:
+	* WebConnectionStream.cs: when the status code is 1xx, 204 or 304,
+	"responses MUST NOT include a message-body". We tried to read the
+	stream even when getting those codes and considered the 0 length
+	read as a failure.
+
 2004-07-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: removed bogus Monitor.Exit.

@@ -57,6 +57,7 @@ namespace System.Net
 		byte [] headers;
 		bool disposed;
 		bool headersSent;
+		bool forceCompletion;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -113,9 +114,15 @@ namespace System.Net
 			get { return (int) writeBuffer.Length; }
 		}
 
+		internal void ForceCompletion ()
+		{
+			forceCompletion = true;
+		}
+		
 		internal void CheckComplete ()
 		{
-			if (!nextReadCalled && readBufferSize - readBufferOffset == contentLength) {
+			bool nrc = nextReadCalled;
+			if (forceCompletion || (!nrc && readBufferSize - readBufferOffset == contentLength)) {
 				nextReadCalled = true;
 				cnc.NextRead ();
 			}

@@ -268,6 +268,9 @@ namespace System.Net
 
 			data.stream = stream;
 			
+			if (!ExpectContent (data.StatusCode))
+				stream.ForceCompletion ();
+
 			lock (cnc) {
 				lock (cnc.queue) {
 					if (cnc.queue.Count > 0) {
@@ -280,6 +283,11 @@ namespace System.Net
 			}
 			
 			data.request.SetResponseData (data);
+		}
+
+		static bool ExpectContent (int statusCode)
+		{
+			return (statusCode >= 200 && statusCode != 204 && statusCode != 304);
 		}
 
 		internal void GetCertificates () 
