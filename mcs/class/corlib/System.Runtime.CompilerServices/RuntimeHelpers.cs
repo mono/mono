@@ -8,8 +8,8 @@ namespace System.Runtime.CompilerServices
 {
 	public sealed class RuntimeHelpers
 	{
-		public static void InitializeArray (Array array, RuntimeFieldHandle fldHandle)
-		{
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern void InitializeArray (Array array, RuntimeFieldHandle fldHandle);
+
 	}
 }
