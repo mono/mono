@@ -1,4 +1,8 @@
 
+2003-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: #ifdef out latest changes until mcs is fixed.
+
 Thu Jun 19 11:03:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: return members in metadata order.
