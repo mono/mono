@@ -350,6 +350,7 @@ namespace Mono.CSharp {
 				new InternalParameters (container, end_parameters),
 				end_param_types);
 
+			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
 			return true;
 		}
 
