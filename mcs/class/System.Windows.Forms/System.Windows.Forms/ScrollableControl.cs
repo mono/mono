@@ -106,7 +106,7 @@ namespace System.Windows.Forms {
 					wndClass.lpszMenuName = "";
 					wndClass.lpszClassName = "mono_scrollable_control";
     
-					if (Win32.RegisterClassA(ref wndClass) != 0) 
+					if (Win32.RegisterClass(ref wndClass) != 0) 
 						classRegistered = true; 
 				}		
 

@@ -81,7 +81,7 @@ namespace System.Windows.Forms {
 				wndClass.lpszMenuName = "";
 				wndClass.lpszClassName = "mono_native_window";
 
-				if (Win32.RegisterClassA(ref wndClass) != 0) {
+				if (Win32.RegisterClass(ref wndClass) != 0) {
 					registeredClass = true;
 				} else {
 					windowHandle = (IntPtr)0;
@@ -89,7 +89,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			windowHandle = Win32.CreateWindowExA (
+			windowHandle = Win32.CreateWindowEx (
 				(uint) cp.ExStyle, cp.ClassName,
 				cp.Caption,(uint) cp.Style,
 				cp.X, cp.Y, cp.Width, cp.Height,

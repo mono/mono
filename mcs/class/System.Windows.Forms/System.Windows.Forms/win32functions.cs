@@ -552,8 +552,8 @@ namespace System.Windows.Forms{
 		
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
-		internal static extern uint RegisterClassA(ref WNDCLASS wndClass);
+			 CharSet = CharSet.Ansi, EntryPoint = "RegisterClassA")]
+		internal static extern uint RegisterClass(ref WNDCLASS wndClass);
 		
 		#region Added by Dennis hayes 10-20-2002
 		//correct?
@@ -575,8 +575,8 @@ namespace System.Windows.Forms{
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
-		internal static extern IntPtr CreateWindowExA (
+			 CharSet = CharSet.Ansi, EntryPoint = "CreateWindowExA")]
+		internal static extern IntPtr CreateWindowEx (
 			uint dwExStyle, string lpClassName, 
 			string lpWindowName, uint dwStyle, 
 			int x, int y, int nWidth, int nHeight,
