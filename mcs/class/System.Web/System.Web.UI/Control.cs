@@ -520,8 +520,6 @@ namespace System.Web.UI
 			foreach (Control c in Controls) {
 				if (String.Compare (id, c._userId, true) == 0) {
 					if (result != null && result != c) {
-						Console.WriteLine (c.GetHashCode ());
-						Console.WriteLine (result.GetHashCode ());
 						throw new HttpException ("1 Found more than one control with ID '" + id + "'");
 					}
 
