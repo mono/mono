@@ -1377,5 +1377,14 @@ namespace MonoTests.System.Xml
 			Assert ("xmlns:p", xml.IndexOf ("xmlns:p='urn:foo'") > 0);
 			Assert ("remaining", xml.IndexOf ("<out p:foo='xyz'><out p:foo='xyz' /></out></out>") > 0);
 		}
+
+		[Test]
+		public void WriteXmlSpaceIgnoresNS ()
+		{
+			xtw.WriteStartElement ("root");
+			xtw.WriteAttributeString ("xml", "space", "abc", "preserve");
+			xtw.WriteEndElement ();
+			AssertEquals ("<root xml:space='preserve' />", sw.ToString ());
+		}
 	}
 }
