@@ -3488,7 +3488,7 @@ yield_statement
 			$$ = null;
 		} else {
 			iterator_container.SetYields ();
-			$$ = new Yield ((Expression) $3, lexer.Location);
+			$$ = new Yield ((Expression) $3, lexer.Location); 
 		}
 	  }
 	| YIELD expression SEMICOLON 
