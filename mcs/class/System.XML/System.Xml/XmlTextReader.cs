@@ -314,6 +314,8 @@ namespace System.Xml
 			cursorToken.Clear ();
 			currentToken.Clear ();
 			attributeCount = 0;
+			if (reader != null)
+				reader.Close();
 		}
 
 		public override string GetAttribute (int i)
