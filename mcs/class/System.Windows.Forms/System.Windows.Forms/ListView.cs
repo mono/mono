@@ -29,7 +29,7 @@ namespace System.Windows.Forms {
 		
 		private ListViewItemCollection	itemsCollection = null;			     
 		private ColumnHeaderCollection 	columCol = null;						 
-		private bool bInicialised = false;
+		private bool bInitialised = false;					 
 		private View viewMode = View.LargeIcon;
 		private bool bAllowColumnReorder = false;
 		private	SortOrder sortOrder = SortOrder.None;
@@ -39,10 +39,13 @@ namespace System.Windows.Forms {
 		private bool bAutoArrange = true;
 		private bool bLabelWrap = true;
 		private bool bMultiSelect = true;
+		private	bool bCheckBoxes = false;
 		private	Color backColor = SystemColors.Window;
 		private	Color foreColor = SystemColors.WindowText;
 		private SelectedListViewItemCollection selItemsCol = null;
 		private	SelectedIndexCollection	selItemIndexs = null;
+		private CheckedListViewItemCollection chkItemCol = null;
+		private CheckedIndexCollection chkIndexCol = null;
 		private	ItemActivation	activation = ItemActivation.Standard; // todo: check default
 				
 		
@@ -55,6 +58,8 @@ namespace System.Windows.Forms {
 			columCol = new ColumnHeaderCollection(this);
 			selItemsCol = new SelectedListViewItemCollection(this);
 			selItemIndexs = new SelectedIndexCollection(this);
+			chkItemCol = new CheckedListViewItemCollection(this);
+			chkIndexCol =  new CheckedIndexCollection(this);
 			
 			INITCOMMONCONTROLSEX	initEx = new INITCOMMONCONTROLSEX();
 			initEx.dwICC = CommonControlInitFlags.ICC_LISTVIEW_CLASSES;
@@ -132,26 +137,22 @@ namespace System.Windows.Forms {
 				//throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
+		
 		public bool CheckBoxes {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//throw new NotImplementedException ();
-			}
+			
+			get { return bCheckBoxes;  }
+			set { 					
+				ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_CHECKBOXES, value);
+				bCheckBoxes = value; 
+			}			
 		}
-		[MonoTODO]
+		
 		public CheckedIndexCollection CheckedIndices {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {return chkIndexCol;}
 		}
-		[MonoTODO]
+		
 		public  CheckedListViewItemCollection CheckedItems {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {return chkItemCol;}
 		}
 		
 		public ColumnHeaderCollection Columns {
@@ -336,7 +337,7 @@ namespace System.Windows.Forms {
 			itemsCollection.Clear();			     
 			columCol.Clear();						 			
 			
-			if (!bInicialised) return;
+			if (!bInitialised) return;
 			
 			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEALLITEMS, 0,0);
 						
@@ -374,12 +375,13 @@ namespace System.Windows.Forms {
 
 		//
 		//  --- Public Events
-		//
-		[MonoTODO]
+		//		
 		public event LabelEditEventHandler AfterLabelEdit;
 		public event LabelEditEventHandler BeforeLabelEdit;
 		public event ColumnClickEventHandler ColumnClick;
 		public event EventHandler ItemActivate;
+		
+		[MonoTODO]
 		public event ItemCheckEventHandler ItemCheck;
 		public event ItemDragEventHandler ItemDrag;
 		public event EventHandler SelectedIndexChanged;
@@ -417,7 +419,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override void CreateHandle() {
-			//FIXME:
+			base.CreateHandle();
 		}
 
 		[MonoTODO]
@@ -601,7 +603,7 @@ namespace System.Windows.Forms {
 		// Inserts a column in the control
 		internal void InsertColumnInCtrl(ColumnHeader  column)
 		{			
-			if (!bInicialised) return;
+			if (!bInitialised) return;
 			
 			LVCOLUMN lvc = new LVCOLUMN();					
 			
@@ -623,7 +625,7 @@ namespace System.Windows.Forms {
 		// Inserts an item in the control
 		internal void InsertItemInCtrl(ListViewItem listViewItem)
 		{			
-			if (!bInicialised) return;
+			if (!bInitialised) return;
 			
 			LVITEM item = new LVITEM();							
 			
@@ -644,7 +646,7 @@ namespace System.Windows.Forms {
 		// Removes an item in the control
 		internal void RemoveItemInCtrl(int iIndex)
 		{			
-			if (!bInicialised) return;						
+			if (!bInitialised) return;						
 			Console.WriteLine("Deleting " + iIndex); 			
   			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEITEM, iIndex, 0); 						  			
 		}	
@@ -653,7 +655,7 @@ namespace System.Windows.Forms {
 		// Sets a subitem
 		internal void SetItemInCtrl(ListViewItem.ListViewSubItem listViewSubItem, int nPos)
 		{			
-			if (!bInicialised) return;
+			if (!bInitialised) return;
 			
 			LVITEM item = new LVITEM();							
 			
@@ -672,20 +674,31 @@ namespace System.Windows.Forms {
 		// Remove a column from the control
 		internal void RemoveColumnInCtrl(int nIndex){	
 			
-			if (!bInicialised) return;
+			if (!bInitialised) return;
 					
 			Console.WriteLine("Delete column " + nIndex);    											
   			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETECOLUMN, nIndex, 0);  			
-		}			
+		}				
 		
-		// Sets item activation
+		// Get the check status of an item						
+		internal bool GetCheckStateInCtrl(int nIndex){					
+			
+			if (!bInitialised) return false;					
+
+  			if ((Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETITEMSTATE, nIndex, 
+  				(int)ListViewItemState.LVIS_STATEIMAGEMASK) & (int)ListViewItemState.LVIS_CHECKED)==(int)ListViewItemState.LVIS_CHECKED) 
+  				return true;
+  			else
+  				return false;
+		}					  
+  		
 		
-		
+		// Sets item activation	
 		internal void ItemActivationCtrl(){	
 			
 			ListViewExtendedFlags	flags = ItemActivationMsg(Activation);	// Thowns an exception
 			
-			if (!bInicialised) return;
+			if (!bInitialised) return;
 					
 			if (flags==0)	// Standard mode
 			{	
@@ -699,7 +712,7 @@ namespace System.Windows.Forms {
 		// Sets or remove and extended style from the control
 		internal void ExtendedStyleCtrl(ListViewExtendedFlags ExStyle, bool bStatus){	
 			
-			if (!bInicialised) return;
+			if (!bInitialised) return;
 					
 			if (bStatus)			
   				Win32.SendMessage(Handle, (int)ListViewMessages.LVM_SETEXTENDEDLISTVIEWSTYLE, (int)ExStyle, (int)ExStyle);  			
@@ -711,7 +724,7 @@ namespace System.Windows.Forms {
 		// Sets Background color in control
 		internal void SetBkColorCtrl(){	
 			
-			if (!bInicialised) return;					
+			if (!bInitialised) return;					
 			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_SETBKCOLOR, 0, 	(int) (backColor.R | backColor.G<<8 | backColor.B <<16));  			
 		}					
 		
@@ -719,13 +732,14 @@ namespace System.Windows.Forms {
 		//						
 		protected override void WndProc(ref Message m) 	{			
 						
-			if (!bInicialised) {
+			if (!bInitialised) {
 				
-				bInicialised=true;							
+				bInitialised=true;							
 				
 				if (bAllowColumnReorder) ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_HEADERDRAGDROP, bAllowColumnReorder);
 				if (bFullRowSelect)	ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_FULLROWSELECT, bFullRowSelect);
 				if (bGridLines)	ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_GRIDLINES, bGridLines);
+				if (bCheckBoxes) ExtendedStyleCtrl(ListViewExtendedFlags.LVS_EX_CHECKBOXES, bCheckBoxes);
 				
 				SetBkColorCtrl();				
 				ItemActivationCtrl();
@@ -832,22 +846,28 @@ namespace System.Windows.Forms {
 						
 						Console.WriteLine("ListViewMessages.LVN_ITEMCHANGED item:" + NmLstView.iItem + " sub: "+ NmLstView.iSubItem + "att:" +NmLstView.uChanged);    											
 						
-						//	TODO: An alternative implementation: use GetNexItem with the selected item flag
-						//  Currently does not work with Ctrl selection						
-						if ((NmLstView.uChanged & (uint)ListViewItemFlags.LVIF_STATE)==(uint)ListViewItemFlags.LVIF_STATE)
+						selItemsCol.Clear();
+						
+						int nItem = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETNEXTITEM, -1, (int) ListViewNotifyItem.LVNI_SELECTED);
+						
+						while (nItem!=-1)
 						{
-							if ((NmLstView.uNewState & (uint)ListViewItemState.LVIS_SELECTED) == (uint)ListViewItemState.LVIS_SELECTED){
-								Console.WriteLine("Selected! " +  NmLstView.iItem);
-								selItemsCol.Add(NmLstView.iItem);								
-							}
-								
-								
-							if (((NmLstView.uNewState & (uint)ListViewItemState.LVIS_SELECTED)==0)
-							&&((NmLstView.uOldState &  (uint)ListViewItemState.LVIS_SELECTED) !=(uint)ListViewItemState.LVIS_SELECTED)){
-								Console.WriteLine("DeSelected! " +  NmLstView.iItem );
-								selItemsCol.Remove(NmLstView.iItem);
-							}
+							selItemsCol.Add(nItem);								
+							nItem = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETNEXTITEM, nItem, (int) ListViewNotifyItem.LVNI_SELECTED);
 						}
+						
+						int nItems = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETITEMCOUNT, 0, 0);  			
+						
+						Console.WriteLine("Items " + nItems);    											
+						
+						chkItemCol.Clear();
+						
+						for (int i=0; i<nItems; i++)
+							if (GetCheckStateInCtrl(i))
+							{
+								chkItemCol.Add(i);
+								Console.WriteLine("Item checked " + i);    											
+							}
 						
 						
 						break;
@@ -933,8 +953,7 @@ namespace System.Windows.Forms {
 				collection.CopyTo(dest, index);
 			}
 			
-			public override bool Equals(object obj) {
-				
+			public override bool Equals(object obj) {				
 				return collection.Equals(obj);
 			}
 
@@ -943,73 +962,63 @@ namespace System.Windows.Forms {
 				//FIXME add our proprities
 				return base.GetHashCode();
 			}
-			[MonoTODO]
+			
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return collection.GetEnumerator();
 			}
-			[MonoTODO]
+			
 			public int IndexOf(ListViewItem item) {
-				throw new NotImplementedException ();
+				return collection.IndexOf(item);
 			}
 			/// <summary>
 			/// IList Interface implmentation.
 			/// </summary>
 			bool IList.IsReadOnly{
-				get{
-					// We allow addition, removeal, and editing of items after creation of the list.
-					return false;
-				}
+				get{return collection.IsReadOnly;}
 			}
 			bool IList.IsFixedSize{
-				get{
-					// We allow addition and removeal of items after creation of the list.
-					return false;
-				}
+				get{return collection.IsFixedSize;}
 			}
 
-			//[MonoTODO]
+			
 			object IList.this[int index]{
-				get{
-					throw new NotImplementedException ();
-				}
-				set{
-					//FIXME:
-				}
+				get { return collection[index]; }
+				set { collection[index] = value; }
 			}
 		
-			[MonoTODO]
+
 			void IList.Clear(){
-				//FIXME:
+				collection.Clear();
 			}
 		
-			[MonoTODO]
+			
 			int IList.Add( object value){
-				throw new NotImplementedException ();
+				return collection.Add(value);
 			}
 
-			[MonoTODO]
+			
 			bool IList.Contains( object value){
-				throw new NotImplementedException ();
+				return collection.Contains(value);
 			}
 
-			[MonoTODO]
+			
 			int IList.IndexOf( object value){
-				throw new NotImplementedException ();
+				return collection.IndexOf(value);
 			}
 
-			[MonoTODO]
+			
 			void IList.Insert(int index, object value){
-				//FIXME:
+				collection.Insert(index, value);
 			}
 
-			[MonoTODO]
+			
 			void IList.Remove( object value){
-				//FIXME:
+				collection.Remove(value);
 			}
 
-			[MonoTODO]
+			
 			void IList.RemoveAt( int index){
-				//FIXME:
+				collection.RemoveAt(index);
 			}
 			// End of IList interface
 			/// <summary>
@@ -1040,73 +1049,80 @@ namespace System.Windows.Forms {
 		//
 		// Author:
 		//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-		//
-		// (C) 2002 Ximian, Inc
+		//	 implemented by Jordi Mas i Hernàndez <jmas@softcatala.org>
+		//		
+		//	It has been implemented really as an array of indexes of ListViewItemCollection
+		//	to avoid information and item duplication in memory	/ Jordi		
+		// (C) 2002-3 Ximian, Inc
 		//
 		// <summary>
 		// </summary>
 
-		public class CheckedListViewItemCollection : IList, ICollection, IEnumerable {
+		public class CheckedListViewItemCollection : IList, ICollection, IEnumerable { 
+			
+			private ListView container = null;
+			private ArrayList collection = new ArrayList();	
 
 			//
 			//  --- Constructor
-			//
-			[MonoTODO]
-			public CheckedListViewItemCollection(ListView owner) 
-			{
-				
+			//			
+			public CheckedListViewItemCollection(ListView owner) 	{				
+				container = owner;
 			}
 
 			//
 			//  --- Public Properties
-			//
-			[MonoTODO]
+			//			
 			public int Count {
-				get {
-					throw new NotImplementedException ();
-				}
+				get { return collection.Count; } 
 			}
-			[MonoTODO]
+			
 			public bool IsReadOnly {
-				get {
-					throw new NotImplementedException ();
-				}
+				get {return collection.IsReadOnly;}
+			} 			
+			
+			public virtual ListViewItem this[int index] {				
+				get {return  container.Items[(int)collection[index]];}
+				set { collection[index] = value.Index;}	
 			}
-			[MonoTODO]
-			public ListViewItem this[int index] {
-				get {
-					throw new NotImplementedException ();
-				}
+			
+			// Internal
+			public void Clear() {
+				 collection.Clear();  
 			}
+			
+			public void Add (int nIndex) {
+				collection.Add(nIndex);
+			}				
+
 
 			//
 			//  --- Public Methods
-			//
-			[MonoTODO]
+			//			
 			public bool Contains(ListViewItem item) {
-				throw new NotImplementedException ();
+				return collection.Contains(item);
 			}
+			
 			[MonoTODO]
 			public object CopyTo(Array dest, int index) {
 				throw new NotImplementedException ();
 			}
-			[MonoTODO]
+			
 			public override bool Equals(object obj) {
-				//FIXME:
-				return base.Equals(obj);
+				return collection.Equals(obj);
 			}
 			[MonoTODO]
 			public override int GetHashCode() {
 				//FIXME add our proprities
 				return base.GetHashCode();
 			}
-			[MonoTODO]
+			
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return collection.GetEnumerator();
 			}
-			[MonoTODO]
+			
 			public int IndexOf(ListViewItem item) {
-				throw new NotImplementedException ();
+				return collection.IndexOf(item);
 			}
 			/// <summary>
 			/// IList Interface implmentation.
@@ -1149,9 +1165,9 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
+			
 			int IList.IndexOf( object value){
-				throw new NotImplementedException ();
+				return collection.IndexOf(value);
 			}
 
 			[MonoTODO]
@@ -1292,15 +1308,13 @@ namespace System.Windows.Forms {
 				//FIXME add our proprities
 				return base.GetHashCode();
 			}
-			[MonoTODO]
-			public IEnumerator GetEnumerator() 
-			{
-				throw new NotImplementedException ();
+			
+			public IEnumerator GetEnumerator(){
+				return collection.GetEnumerator();
 			}
-			[MonoTODO]
-			public int IndexOf(ColumnHeader value) 
-			{
-				throw new NotImplementedException ();
+			
+			public int IndexOf(ColumnHeader value) {
+				return collection.IndexOf(value);
 			}
 			[MonoTODO]
 			public void Insert(int witdh, ColumnHeader value) {
@@ -1380,9 +1394,9 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
+			
 			int IList.IndexOf( object value){
-				throw new NotImplementedException ();
+				return collection.IndexOf(value);
 			}
 
 			[MonoTODO]
@@ -1513,13 +1527,13 @@ namespace System.Windows.Forms {
 				//FIXME add our proprities
 				return base.GetHashCode();
 			}
-			[MonoTODO]
+			
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return collection.GetEnumerator();
 			}
-			[MonoTODO]
+			
 			public int IndexOf(ListViewItem item) {
-				throw new NotImplementedException ();
+				return collection.IndexOf(item);
 			}
 			[MonoTODO]
 			public virtual void Remove(ListViewItem item) {
@@ -1585,9 +1599,9 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
+			
 			int IList.IndexOf( object value){
-				throw new NotImplementedException ();
+				return collection.IndexOf(value);
 			}
 
 			[MonoTODO]
@@ -1695,7 +1709,7 @@ namespace System.Windows.Forms {
 			public IEnumerator GetEnumerator() {
 				throw new NotImplementedException ();
 			}
-			[MonoTODO]
+			
 			public int IndexOf(int index) {
 				throw new NotImplementedException ();
 			}
@@ -1735,7 +1749,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
+			
 			int IList.IndexOf( object value){
 				throw new NotImplementedException ();
 			}
@@ -1783,52 +1797,41 @@ namespace System.Windows.Forms {
 		//
 		// Author:
 		//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+		//	 Implemented by Jordi Mas i Hernàndez (jmas@softcatala.org)
 		//
-		// (C) 2002 Ximian, Inc
+		// (C) 2002-3 Ximian, Inc
 		//
-
 		// <summary>
 		// </summary>
-
-		public class CheckedIndexCollection :  IList, ICollection, IEnumerable {
+		public class CheckedIndexCollection :  IList, ICollection, IEnumerable { 
+			
+			private ListView container = null;
 
 			//
 			//  --- Constructor
-			//
-			[MonoTODO]
+			//			
 			public CheckedIndexCollection(ListView owner) {
-				
+				container = owner;
 			}
 
 			//
 			//  --- Public Properties
-			//
-			[MonoTODO]
+			//			
 			public int Count {
-				get {
-					throw new NotImplementedException ();
-				}
-				set {
-					//FIXME:
-				}
+				get{return container.CheckedItems.Count;}
 			}
-			[MonoTODO]
+			
 			public bool IsReadOnly {
-				get {
-					throw new NotImplementedException ();
-				}
-			}
-			[MonoTODO]
+				get {return container.CheckedItems.IsReadOnly;}
+			}			
+			
 			public int this[int index] {
-				get {
-					throw new NotImplementedException ();
-				}
+				get {return container.CheckedItems[index].Index;}
 			}
 
 			//
 			//  --- Public Methods
-			//
-			[MonoTODO]
+			//			
 			public bool Contains(int checkedIndex) {
 				throw new NotImplementedException ();
 			}
@@ -1846,7 +1849,7 @@ namespace System.Windows.Forms {
 			public IEnumerator GetEnumerator() {
 				throw new NotImplementedException ();
 			}
-			[MonoTODO]
+			
 			public int IndexOf(int checkedIndex) {
 				throw new NotImplementedException ();
 			}
@@ -1891,7 +1894,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
+			
 			int IList.IndexOf( object value){
 				throw new NotImplementedException ();
 			}

@@ -1085,7 +1085,10 @@ namespace System.Windows.Forms{
 		LVM_GETBKCOLOR  		        = (LVM_FIRST + 0),		
 		LVM_GETTEXTBKCOLOR      		= (LVM_FIRST + 37),
 		LVM_SETTEXTBKCOLOR				= (LVM_FIRST + 38),
-		LVM_DELETEALLITEMS      		= (LVM_FIRST + 9)
+		LVM_DELETEALLITEMS      		= (LVM_FIRST + 9),
+		LVM_GETNEXTITEM         		= (LVM_FIRST + 12),
+		LVM_SETITEMCOUNT        		= (LVM_FIRST + 47),
+		LVM_GETITEMCOUNT        		= (LVM_FIRST + 4)
 	}
 	#endregion
 
@@ -1781,7 +1784,10 @@ namespace System.Windows.Forms{
 		LVIS_DROPHILITED        = 0x0008,
 		LVIS_ACTIVATING         = 0x0020,
 		LVIS_OVERLAYMASK        = 0x0F00,
-		LVIS_STATEIMAGEMASK     = 0xF000
+		LVIS_CHECKED			= 0x2000,	// Microsoft did not think that documenting this value was necessary
+		LVIS_STATEIMAGEMASK     = 0xF000,
+		
+		
 	}
 	#endregion
 
@@ -3058,7 +3064,20 @@ namespace System.Windows.Forms{
 		LVS_EX_UNDERLINECOLD	= 0x00001000,
 		LVS_EX_MULTIWORKAREAS	= 0x00002000
 	}
-
+	
+	public enum ListViewNotifyItem: int 
+	{	
+		LVNI_ALL               	= 0x0000,
+		LVNI_FOCUSED            = 0x0001,
+		LVNI_SELECTED           = 0x0002,
+		LVNI_CUT                = 0x0004,
+		LVNI_DROPHILITED        = 0x0008,
+		LVNI_ABOVE              = 0x0100,
+		LVNI_BELOW              = 0x0200,
+		LVNI_TOLEFT             = 0x0400,
+		LVNI_TORIGHT            = 0x0800
+		
+	}
 
 	
 	public enum ListViewNotifyMsg: int 
