@@ -1,3 +1,7 @@
+2004-11-19  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* mini-s390.c, tramp-s390.c, mini-s390.h: Add LMF processing for trampolines.
+	Check if a trampoline for a synchronized method is required. 
 
 Fri Nov 19 17:34:21 CET 2004 Paolo Molaro <lupus@ximian.com>
 
