@@ -313,5 +313,12 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+
+		//
+		// The following functions are only for the Mono Debugger.
+		//
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern MethodBase MonoDebugger_GetMethod (int token);
 	}
 }
