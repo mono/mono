@@ -1,0 +1,8 @@
+2003-06-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* VBCodeGenerator.cs: Added and nearly completely implemented
+		(it compiles, but the functionallity is completely untested)
+		(also without a working mbas the compilaton options will fail)
+		(once all command line arguments for mbas are final and the warning output is final
+		 change the apropriate code to generate these options)
+	* VBCodeProvider.cs: Added and implemented
