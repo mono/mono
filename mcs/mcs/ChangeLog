@@ -1,5 +1,10 @@
 2003-01-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay (constructor_declaration): Set the
+	Constructor.ModFlags before probing for it.  This makes the
+	compiler report 514, 515 and 132 (the code was there, but got
+	broken). 
+
 	* statement.cs (Goto.Resolve): Set `Returns' to ALWAYS.
 	(GotoDefault.Resolve): Set `Returns' to ALWAYS.
 	(GotoCase.Resolve): Set `Returns' to ALWAYS.
