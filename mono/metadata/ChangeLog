@@ -1,3 +1,20 @@
+2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class-internals.h debug-helpers.c marshal.c: Add new wrapper types 
+	for isinst and castclass wrappers.
+
+	* class-internals.h icall.c: Move registration and lookup of JIT icalls
+	to libmetadata from the JIT, so they could be used by the marshalling
+	code and the interpreter.
+
+	* marshal.c: Register marshalling related JIT icalls here instead of
+	in mini.c. Use CEE_MONO_ICALL instead of the family of 
+	CEE_MONO_PROC<x> opcodes to call marshalling functions.
+
+	* metadata.h: Remove unneeded marshalling conversions.
+
+	* opcodes.c: Update for new opcodes.
+	
 2004-07-08  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c: Check for `handle->symfile' being non-NULL everywhere.
