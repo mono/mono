@@ -449,7 +449,7 @@ classHead               : D_CLASS type_attr id extendsClause implClause
 				currentClass = new Class ($3 as string);
 				currentClass.Attrs = currentTypeAttrs;
 				*/
-				codegen.AddClass ((TypeAttr)$2, (string) $3);
+				codegen.AddClass ((TypeAttr)$2, (string) $3, null);
 				// TODO: extends/implemets
 			}
 			;
@@ -584,7 +584,7 @@ internal_type_ref	: name1
 			;
 
 external_type_ref	: assembly_name namespace_name DOT id
-			  { 
+			  {
 				AssemblyRef asmb_ref;
 				asmb_ref = codegen.PEFile.AddExternAssembly ((string) $1);
 				$$ = asmb_ref.AddClass ($2 as string, $4 as string);
@@ -1096,7 +1096,7 @@ dottedName		: id DOT id	{$$ = ($1 as string) + "." + ($3 as string);}
 
 name1                   : id
 			| dottedName
-			| name1 DOT name1
+			| name1 DOT name1 	{$$ = String.Format ("{0}.{1}", $1, $3); }
 			;
 
 call_name		: 
