@@ -64,7 +64,7 @@ EditCommandColumn
 * LabelControlBuilder
 * LinkButton
 * LinkButtonControlBuilder
-& ListBox
+* ListBox
 * ListControl
 * ListItem
 * ListItemCollection
@@ -86,7 +86,7 @@ Repeater
 RepeaterItemCollection
 * RepeaterItemEventArgs
 & RepeatInfo
-RequiredFieldValidator
+* RequiredFieldValidator
 SelectedDatesCollection
 * ServerValidateEventArgs
 * Style

@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  95%
+ * Status:  100%
  *
  * (C) Gaurav Vaish (2002)
  */
@@ -159,13 +159,54 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			string[] vals = postCollection.GetValues(postDataKey);
-			bool flag = false;
-			
-			throw new NotImplementedException();
+			bool updated = false;
+			ArrayList selected = SelectedIndices;
+			ArrayList final = new ArrayList(vals.Length);
+			if(vals != null)
+			{
+				if(SelectionMode == ListSelectionMode.Single)
+				{
+					int index = Items.FindByValueInternal(vals[0]);
+					if(SelectedIndex != index)
+					{
+						SelectedIndex = index;
+						updated       = true;
+					}
+				} else
+				{
+					foreach(string current in vals)
+					{
+						final.Add(Items.FindByValueInternal(current);
+					}
+					if(selected != null && selected.Count == vals.Length)
+					{
+						for(int ctr = 0; ctr < vals.Length; ctr++)
+						{
+							if(((int)final[ctr]) != ((int)selected[ctr]))
+							{
+								updated = true;
+								break;
+							}
+						}
+					} else
+					{
+						updated = true;
+					}
+				}
+				if(!updated)
+				{
+					SelectInternal(final);
+				}
+			} else
+			{
+				if(SelectedIndex != -1)
+					SelectedIndex = -1;
+				updated = true;
+			}
+			return updated;
 		}
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
