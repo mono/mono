@@ -1,3 +1,8 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* AspNetHostingPermission.cs: Reverted last patch as this was fixed in
+	Fx 1.1 SP1 so we better have this "fixed" behaviour too.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AspNetHostingPermission.cs: Fixed Intersect(null) which has a 
