@@ -1383,11 +1383,17 @@ namespace Commons.Xml.Relaxng.Derivative
 
 
 		bool isExpanded;
+		short expanding; // FIXME: It is totally not required, but there is
+		// some bugs in simplification and without it it causes infinite loop.
 		internal override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded) {
-				isExpanded = true;
+				if (expanding == 100)
+					throw new RelaxngException (String.Format ("Invalid recursion was found. Name is {0}", nameClass));
+				expanding++;
 				children = children.ExpandRef (defs);
+				isExpanded = true;
+				expanding--;
 			}
 			return this;
 		}
