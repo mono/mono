@@ -146,13 +146,13 @@ namespace MonoTests.System.Data
                 	
                 	Rows = Mom.Select ("Name = 'Teresa' or ChildName <> 'Jack'");
                 	AssertEquals ("test#05", 5, Rows.Length);
-
+			
                 	Rows = Child.Select ("age = 20 - 1");
                 	AssertEquals ("test#06", 1, Rows.Length);
-
+			
                 	Rows = Child.Select ("age <= 20");
                 	AssertEquals ("test#07", 3, Rows.Length);
-
+			
                 	Rows = Child.Select ("age >= 20");
                 	AssertEquals ("test#08", 3, Rows.Length);
 			
@@ -162,7 +162,6 @@ namespace MonoTests.System.Data
                 	Rows = Child.Select ("age >= 20 and (name = 'Mack' or name = 'Nick')");
                 	AssertEquals ("test#10", 1, Rows.Length);
                 	AssertEquals ("test#11", "Mack", Rows [0] [0]);
-
                 }
                 
                 public void TestSelect2 ()
@@ -263,8 +262,9 @@ namespace MonoTests.System.Data
 			T.Rows.Add (Row);
 
 			AssertEquals ("test#01", 12, T.Select ("age<=10").Length);
-			AssertEquals ("test#02", 12, T.Select ("age\n\t<\n\t=\t\n10").Length);
 			
+			AssertEquals ("test#02", 12, T.Select ("age\n\t<\n\t=\t\n10").Length);
+
 			try {
 				T.Select ("name = 1human ");
 				Fail ("test#03");
@@ -284,6 +284,7 @@ namespace MonoTests.System.Data
 			}
 			
 			AssertEquals ("test#07", 1, T.Select ("age = '13'").Length);
+
 		}
 
 		public void TestSelectOperators ()
@@ -314,16 +315,20 @@ namespace MonoTests.System.Data
 			Row [1] = 1;
 			Row [2] = 1;
 			T.Rows.Add (Row);
-
+			
 			AssertEquals ("test#01", 11, T.Select ("age < 10").Length);
-			AssertEquals ("test#02", 12, T.Select ("age <= 10").Length);
-			AssertEquals ("test#03", 12, T.Select ("age< =10").Length);
+			AssertEquals ("test#02", 12, T.Select ("age <= 10").Length);			
+			AssertEquals ("test#03", 12, T.Select ("age< =10").Length);			
 			AssertEquals ("test#04", 89, T.Select ("age > 10").Length);
 			AssertEquals ("test#05", 90, T.Select ("age >= 10").Length);			
 			AssertEquals ("test#06", 100, T.Select ("age <> 10").Length);
 			AssertEquals ("test#07", 3, T.Select ("name < 'human10'").Length);
 			AssertEquals ("test#08", 3, T.Select ("id < '10'").Length);
+			// FIXME: Somebody explain how this can be possible.
+			// it seems that it is no matter between 10 - 30. The
+			// result is allways 25 :-P
 			AssertEquals ("test#09", 25, T.Select ("id < 10").Length);
+			
 		}
 
 		public void TestSelectExceptions ()
@@ -503,15 +508,11 @@ namespace MonoTests.System.Data
 			T.Rows.Add (Row);
 
 			//TODO: How to test Convert-function
-			AssertEquals ("test#01", 25, T.Select ("age = 5*5") [0]["age"]);
-			
+			AssertEquals ("test#01", 25, T.Select ("age = 5*5") [0]["age"]);			
 			AssertEquals ("test#02", 901, T.Select ("len(name) > 7").Length);
-			
 			AssertEquals ("test#03", 125, T.Select ("age = 5*5*5 AND len(name)>7") [0]["age"]);
-			
-			AssertEquals ("test#04", 1, T.Select ("isnull(id, 'test') = 'test'").Length);
-			
-			AssertEquals ("test#05", 1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length);
+			AssertEquals ("test#04", 1, T.Select ("isnull(id, 'test') = 'test'").Length);			
+			AssertEquals ("test#05", 1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length);			
 			AssertEquals ("test#06", 1, T.Select ("iif(id = '56', 'test', 'false') = 'test'").Length);
 			AssertEquals ("test#07", 9, T.Select ("substring(id, 2, 3) = '23'").Length);
 			AssertEquals ("test#08", "123", T.Select ("substring(id, 2, 3) = '23'") [0] ["id"]);
@@ -520,12 +521,166 @@ namespace MonoTests.System.Data
 			
 		}
 
+		public void TestSelectRelations ()
+		{
+                        DataSet Set = new DataSet ();
+                        DataTable Mom = new DataTable ("Mom");
+                        DataTable Child = new DataTable ("Child");
+
+                        Set.Tables.Add (Mom);
+                        Set.Tables.Add (Child);
+                        
+                        DataColumn Col = new DataColumn ("Name");
+                        DataColumn Col2 = new DataColumn ("ChildName");
+                        Mom.Columns.Add (Col);
+                        Mom.Columns.Add (Col2);
+                        
+                        DataColumn Col3 = new DataColumn ("Name");
+                        DataColumn Col4 = new DataColumn ("Age");
+                        Col4.DataType = Type.GetType ("System.Int16");
+                        Child.Columns.Add (Col3);
+                        Child.Columns.Add (Col4);
+                        
+                        DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
+                        Set.Relations.Add (Relation);
+
+                        DataRow Row = Mom.NewRow ();
+                        Row [0] = "Laura";
+                        Row [1] = "Nick";
+                        Mom.Rows.Add (Row);
+                        
+                        Row = Mom.NewRow ();
+                        Row [0] = "Laura";
+                        Row [1] = "Dick";
+                        Mom.Rows.Add (Row);
+                        
+                        Row = Mom.NewRow ();
+                        Row [0] = "Laura";
+                        Row [1] = "Mick";
+                        Mom.Rows.Add (Row);
+
+                        Row = Mom.NewRow ();
+                        Row [0] = "Teresa";
+                        Row [1] = "Jack";
+                        Mom.Rows.Add (Row);
+                        
+                        Row = Mom.NewRow ();
+                        Row [0] = "Teresa";
+                        Row [1] = "Mack";
+                        Mom.Rows.Add (Row);
+                        
+                        Row = Child.NewRow ();
+                        Row [0] = "Nick";
+                        Row [1] = 15;
+                        Child.Rows.Add (Row);
+                        
+                        Row = Child.NewRow ();
+                        Row [0] = "Dick";
+                        Row [1] = 25;
+                        Child.Rows.Add (Row);
+                        
+                        Row = Child.NewRow ();
+                        Row [0] = "Mick";
+                        Row [1] = 35;
+                        Child.Rows.Add (Row);
+                        
+                        Row = Child.NewRow ();
+                        Row [0] = "Jack";
+                        Row [1] = 10;
+                        Child.Rows.Add (Row);
+                        
+                        Row = Child.NewRow ();
+                        Row [0] = "Mack";
+                        Row [1] = 19;
+                        Child.Rows.Add (Row);
+                
+                        Row = Child.NewRow ();
+                        Row [0] = "Mack";
+                        Row [1] = 99;
+                        Child.Rows.Add (Row);
+			
+			DataRow [] Rows = Child.Select ("name = Parent.Childname");
+			AssertEquals ("test#01", 6, Rows.Length);
+			Rows = Child.Select ("Parent.childname = 'Jack'");
+			AssertEquals ("test#02", 1, Rows.Length);
+			
+			try {
+				// FIXME: LAMESPEC: Why the exception is thrown why... why... 
+				Mom.Select ("Child.Name = 'Jack'");
+				Fail ("test#03");
+			} catch (Exception e) {
+				AssertEquals ("test#04", typeof (SyntaxErrorException), e.GetType ());
+				AssertEquals ("test#05", "Cannot interpret token 'Child' at position 1.", e.Message);
+			}
+			
+			Rows = Child.Select ("Parent.name = 'Laura'");
+			AssertEquals ("test#06", 3, Rows.Length);
+			
+			DataTable Parent2 = new DataTable ("Parent2");
+                        Col = new DataColumn ("Name");
+                        Col2 = new DataColumn ("ChildName");
+
+                        Parent2.Columns.Add (Col);
+                        Parent2.Columns.Add (Col2);
+                        Set.Tables.Add (Parent2);
+                        
+                        Row = Parent2.NewRow ();
+                        Row [0] = "Laura";
+                        Row [1] = "Nick";
+                        Parent2.Rows.Add (Row);
+                        
+                        Row = Parent2.NewRow ();
+                        Row [0] = "Laura";
+                        Row [1] = "Dick";
+                        Parent2.Rows.Add (Row);
+                        
+                        Row = Parent2.NewRow ();
+                        Row [0] = "Laura";
+                        Row [1] = "Mick";
+                        Parent2.Rows.Add (Row);
+
+                        Row = Parent2.NewRow ();
+                        Row [0] = "Teresa";
+                        Row [1] = "Jack";
+                        Parent2.Rows.Add (Row);
+                        
+                        Row = Parent2.NewRow ();
+                        Row [0] = "Teresa";
+                        Row [1] = "Mack";
+                        Parent2.Rows.Add (Row);
+
+                        Relation = new DataRelation ("Rel2", Parent2.Columns [1], Child.Columns [0]);
+                        Set.Relations.Add (Relation);
+			
+			try {
+				Rows = Child.Select ("Parent.ChildName = 'Jack'");
+				Fail ("test#07");
+			} catch (Exception e) {
+				AssertEquals ("test#08", typeof (EvaluateException), e.GetType ());
+				AssertEquals ("test#09", "The table [Child] involved in more than one relation. You must explicitly mention a relation name in the expression 'parent.[ChildName]'.", e.Message);
+			}
+			
+			Rows = Child.Select ("Parent(rel).ChildName = 'Jack'");
+			AssertEquals ("test#10", 1, Rows.Length);
+
+			Rows = Child.Select ("Parent(Rel2).ChildName = 'Jack'");
+			AssertEquals ("test#10", 1, Rows.Length);
+			
+			try {
+			     	Mom.Select ("Parent.name  = 'John'");
+			} catch (Exception e) {
+				AssertEquals ("test#11", typeof (IndexOutOfRangeException), e.GetType ());
+				AssertEquals ("test#12", "Cannot find relation 0.", e.Message);
+			}
+			
+		}
+
 		public void TestToString()
 		{
 			DataTable dt = new DataTable();
 			dt.Columns.Add("Col1",typeof(int));
 			
-			dt.TableName = "Myzable";
+			dt.TableName = "Mytable";
 			dt.DisplayExpression = "Col1";
 			
 			
