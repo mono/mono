@@ -284,7 +284,7 @@ namespace Mono.Xml.Xsl
 	class XsltElementAvailable : XPathFunction 
 	{
 		Expression arg0;
-		XmlNamespaceManager nsm;
+		IStaticXsltContext ctx;
 		
 		public XsltElementAvailable (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
@@ -292,14 +292,14 @@ namespace Mono.Xml.Xsl
 				throw new XPathException ("element-available takes 1 arg");
 			
 			arg0 = args.Arg;
-			nsm = ctx.GetNsm ();
+			this.ctx = ctx;
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 
 		public override object Evaluate (BaseIterator iter)
 		{
-			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), nsm);
+			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), ctx);
 
 			return (
 				(name.Namespace == Compiler.XsltNamespace) &&
@@ -331,7 +331,7 @@ namespace Mono.Xml.Xsl
 	class XsltFormatNumber : XPathFunction 
 	{
 		Expression arg0, arg1, arg2;
-		XmlNamespaceManager nsm;
+		IStaticXsltContext ctx;
 		
 		public XsltFormatNumber (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
@@ -342,7 +342,7 @@ namespace Mono.Xml.Xsl
 			arg1 = args.Tail.Arg;
 			if (args.Tail.Tail != null) {
 				arg2= args.Tail.Tail.Arg;
-				nsm = ctx.GetNsm ();
+				this.ctx = ctx;
 			}
 		}
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -354,7 +354,7 @@ namespace Mono.Xml.Xsl
 			QName nm = QName.Empty;
 			
 			if (arg2 != null)
-				nm = XslNameUtil.FromString (arg2.EvaluateString (iter), nsm);
+				nm = XslNameUtil.FromString (arg2.EvaluateString (iter), ctx);
 			
 			try {
 				return (iter.NamespaceManager as XsltCompiledContext).Processor.CompiledStyle
@@ -368,7 +368,7 @@ namespace Mono.Xml.Xsl
 	class XsltFunctionAvailable : XPathFunction 
 	{
 		Expression arg0;
-		XmlNamespaceManager nsm;
+		IStaticXsltContext ctx;
 		
 		public XsltFunctionAvailable (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
@@ -376,7 +376,7 @@ namespace Mono.Xml.Xsl
 				throw new XPathException ("element-available takes 1 arg");
 			
 			arg0 = args.Arg;
-			nsm = ctx.GetNsm ();
+			this.ctx = ctx;
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -389,7 +389,7 @@ namespace Mono.Xml.Xsl
 			// extension function
 			if (colon > 0)
 				return (iter.NamespaceManager as XsltCompiledContext).ResolveFunction (
-					XslNameUtil.FromString (name, nsm),
+					XslNameUtil.FromString (name, ctx),
 					null) != null;
 			
 			return (
@@ -490,7 +490,7 @@ namespace Mono.Xml.Xsl
 	class XsltKey : XPathFunction 
 	{
 		Expression arg0, arg1;
-		XmlNamespaceManager nsm;
+		IStaticXsltContext ctx;
 		XslKey key;
 		
 		public XsltKey (FunctionArguments args, IStaticXsltContext ctx) : base (args)
@@ -499,16 +499,15 @@ namespace Mono.Xml.Xsl
 				throw new XPathException ("key takes 2 args");
 			arg0 = args.Arg;
 			arg1 = args.Tail.Arg;
-			nsm = ctx.GetNsm ();
+			this.ctx = ctx;
 		}
 		public Expression KeyName { get { return arg0; } }
 		public Expression Field { get { return arg1; } }
-		public XmlNamespaceManager NamespaceManager { get { return nsm; } }
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
-			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), nsm);
+			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), this.ctx);
 			XsltCompiledContext ctx = iter.NamespaceManager as XsltCompiledContext;
 			if (key == null)
 				key = ctx.Processor.CompiledStyle.Style.FindKey (name);
@@ -569,7 +568,7 @@ namespace Mono.Xml.Xsl
 	class XsltSystemProperty : XPathFunction 
 	{
 		Expression arg0;
-		XmlNamespaceManager nsm;
+		IStaticXsltContext ctx;
 		
 		public XsltSystemProperty (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
@@ -577,13 +576,13 @@ namespace Mono.Xml.Xsl
 				throw new XPathException ("system-property takes 1 arg");
 			
 			arg0 = args.Arg;
-			nsm = ctx.GetNsm ();
+			this.ctx = ctx;
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override object Evaluate (BaseIterator iter)
 		{
-			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), nsm);
+			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), ctx);
 			
 			if (name.Namespace == Compiler.XsltNamespace) {
 				switch (name.Name) {

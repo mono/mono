@@ -106,8 +106,8 @@ namespace Mono.Xml.Xsl
 	internal class Compiler : IStaticXsltContext {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 			
-		ArrayList inputNSResolverStack = new ArrayList ();
-		XPathNavigatorNsm currentNsm;
+		ArrayList inputStack = new ArrayList ();
+		XPathNavigator currentInput;
 		
 		Stack styleStack = new Stack ();
 		XslStylesheet currentStyle;
@@ -175,13 +175,13 @@ namespace Mono.Xml.Xsl
 		
 #region Input
 		public XPathNavigator Input {
-			get { return currentNsm.Navigator; }
+			get { return currentInput; }
 		}
 		
 		public XslStylesheet CurrentStylesheet {
 			get { return currentStyle; }
 		}
-		
+
 		public void PushStylesheet (XslStylesheet style)
 		{
 			if (currentStyle != null) styleStack.Push (currentStyle);
@@ -222,28 +222,27 @@ namespace Mono.Xml.Xsl
 		private void PushInputDocument (XPathNavigator nav)
 		{
 			// Inclusion nest check
-			IXmlLineInfo li = currentNsm != null ?
-				currentNsm.Navigator as IXmlLineInfo : null;
+			IXmlLineInfo li = currentInput as IXmlLineInfo;
 			bool hasLineInfo = (li != null && !li.HasLineInfo ());
-			for (int i = 0; i < inputNSResolverStack.Count; i++) {
-				XPathNavigator cur = ((XPathNavigatorNsm) inputNSResolverStack [i]).Navigator;
+			for (int i = 0; i < inputStack.Count; i++) {
+				XPathNavigator cur = (XPathNavigator) inputStack [i];
 				if (cur.BaseURI == nav.BaseURI) {
 					throw new XsltCompileException (null,
-						currentNsm.Navigator.BaseURI, 
+						currentInput.BaseURI, 
 						hasLineInfo ? li.LineNumber : 0,
 						hasLineInfo ? li.LinePosition : 0);
 				}
 			}
-			if (currentNsm != null)
-				inputNSResolverStack.Add (currentNsm);
-			currentNsm = new XPathNavigatorNsm (nav);
+			if (currentInput != null)
+				inputStack.Add (currentInput);
+			currentInput = nav;
 		}
 		
 		public void PopInputDocument ()
 		{
-			int last = inputNSResolverStack.Count - 1;
-			currentNsm = (XPathNavigatorNsm) inputNSResolverStack [last];
-			inputNSResolverStack.RemoveAt (last);
+			int last = inputStack.Count - 1;
+			currentInput = (XPathNavigator) inputStack [last];
+			inputStack.RemoveAt (last);
 		}
 		
 		public QName ParseQNameAttribute (string localName)
@@ -539,7 +538,7 @@ namespace Mono.Xml.Xsl
 		
 		Expression IStaticXsltContext.TryGetFunction (QName name, FunctionArguments args)
 		{
-			string ns = GetNsm ().LookupNamespace (name.Namespace, false);
+			string ns = LookupNamespace (name.Namespace);
 			if (ns == XslStylesheet.MSXsltNamespace && name.Name == "node-set")
 				return new MSXslNodeSet (args);
 			
@@ -568,16 +567,19 @@ namespace Mono.Xml.Xsl
 		{
 			return XslNameUtil.FromString (s, Input);
 		}
-		/*
-		XmlNamespaceManager IStaticXsltContext.GetNsm ()
+
+		public string LookupNamespace (string prefix)
 		{
-			return currentNsm;
-		}
-		*/
-		
-		public XmlNamespaceManager GetNsm ()
-		{
-			return currentNsm;
+			if (prefix == "" || prefix == null)
+				return "";
+			
+			XPathNavigator n = Input;
+			if (Input.NodeType == XPathNodeType.Attribute) {
+				n = Input.Clone ();
+				n.MoveToParent ();
+			}
+
+			return n.GetNamespace (prefix);
 		}
 #endregion
 		public void CompileOutput ()
@@ -828,6 +830,18 @@ namespace Mono.Xml.Xsl
 				throw new ArgumentException ("Invalid name: " + name);
 		}
 
+		public static QName FromString (string name, IStaticXsltContext ctx)
+		{
+			int colon = name.IndexOf (':');
+			if (colon > 0)
+				return new QName (name.Substring (colon + 1), ctx.LookupNamespace (name.Substring (0, colon)));
+			else if (colon < 0)
+				// Default namespace is not used for unprefixed names.
+				return new QName (name, "");
+			else
+				throw new ArgumentException ("Invalid name: " + name);
+		}
+
 		public static QName FromString (string name, XmlNamespaceManager ctx)
 		{
 			int colon = name.IndexOf (':');
@@ -849,38 +863,6 @@ namespace Mono.Xml.Xsl
 				return name;
 			else
 				throw new ArgumentException ("Invalid name: " + name);
-		}
-	}
-	
-	internal class XPathNavigatorNsm : XmlNamespaceManager {
-		XPathNavigator nsScope;
-		
-		public XPathNavigatorNsm (XPathNavigator n) : base (n.NameTable) {
-			nsScope = n;
-		}
-
-		public XPathNavigator Navigator {
-			get { return nsScope; }
-		}
-
-		public override string DefaultNamespace { get { return String.Empty; }}
-
-#if NET_2_0
-		public override string LookupNamespace (string prefix, bool atomizedNames)
-#else
-		internal override string LookupNamespace (string prefix, bool atomizedNames)
-#endif
-		{
-			if (prefix == "" || prefix == null)
-				return "";
-			
-			XPathNavigator n = nsScope;
-			if (nsScope.NodeType == XPathNodeType.Attribute) {
-				n = nsScope.Clone ();
-				n.MoveToParent ();
-			}
-
-			return n.GetNamespace (prefix);
 		}
 	}
 }

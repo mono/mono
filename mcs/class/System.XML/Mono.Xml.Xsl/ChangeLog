@@ -1,3 +1,12 @@
+2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslFunctions.cs, Compiler.cs : Eliminated XPathNavigatorNsm class
+	  to reduce references to stylesheet XPathNavigator. To accomplish it,
+	  IStaticXsltContext does not declare GetNsm() anymore. All xslt
+	  function types now directly hold IStaticXsltContext.
+	* XslStylesheet.cs : removed "Compiler c" field.
+	  Removed unused properties.
+
 2005-03-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GenericOutputter.cs : When WriteStartElement() requires to add

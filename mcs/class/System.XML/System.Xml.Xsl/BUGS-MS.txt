@@ -75,7 +75,11 @@ No. 0012
 No. 0013
 	When XslTransform output is XmlWriter (not Stream), document()
 	function is not working properly.
-	(copy_copy27, namespace_namespace20, reluri_reluri09 - reluri_reluri11)
+	(copy_copy27, namespace_namespace20, reluri_reluri09 -
+	reluri_reluri11, XSLTFunctions_Bug76054, XSLTFunctions_Bug76984,
+	XSLTFunctions_DocumentFuncWithEmptyArg, XSLTFunctions_DocumentInUnion,
+	XSLTFunctions_DocumentInUnionWithDuplicateNodes,
+	XSLTFunctions_DocumentFunctionNoArg)
 
 No. 0014
 	Standard XSLT function unparsed-entity-uri() is not found.
@@ -90,6 +94,10 @@ No. 0016
 	have null namespace, it must return false. However MS.NET treats
 	such one as XSLT instruction.
 	(XSLTFunctions_ElementAvailFunctionTrue)
+
+No. 0017
+	format-number() does not accept some patterns.
+	(XSLTFunctions_specialCharInPattern)
 
 
 Not sure the reason why:

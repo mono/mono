@@ -1,3 +1,9 @@
+2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltContext.cs : removed GetNsm() from IStaticXsltContext and added
+	  LookupNamespace() instead.
+	* BUGS-MS.txt : more bug info.
+
 2005-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BUGS-MS.txt : more bug info.

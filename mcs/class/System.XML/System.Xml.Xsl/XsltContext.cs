@@ -80,6 +80,6 @@ namespace System.Xml.Xsl
 		Expression TryGetVariable (string nm);
 		Expression TryGetFunction (XmlQualifiedName nm, FunctionArguments args);
 		XmlQualifiedName LookupQName (string s);
-		XmlNamespaceManager GetNsm ();
+		string LookupNamespace (string prefix);
 	}
 }

@@ -48,10 +48,7 @@ namespace Mono.Xml.Xsl {
 	internal class XslStylesheet {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 		public const string MSXsltNamespace = "urn:schemas-microsoft-com:xslt";
-		
-		Compiler c;
 
-//		XslStylesheet importer;
 		// Top-level elements
 		ArrayList imports = new ArrayList ();
 		// [QName]=>XmlSpace
@@ -70,10 +67,6 @@ namespace Mono.Xml.Xsl {
 		XmlQualifiedName [] extensionElementPrefixes;
 		XmlQualifiedName [] excludeResultPrefixes;
 		ArrayList stylesheetNamespaces = new ArrayList ();
-
-		public string BaseUri {
-			get { return c.Input.BaseURI; }
-		}
 
 		public XmlQualifiedName [] ExtensionElementPrefixes {
 			get { return extensionElementPrefixes; }
@@ -103,10 +96,6 @@ namespace Mono.Xml.Xsl {
 			get { return parameters; }
 		}
 
-		public XPathNavigator StyleDocument {
-			get { return c.Input; }
-		}
-
 		public XslTemplateTable Templates {
 			get { return templates; }
 		}
@@ -121,7 +110,6 @@ namespace Mono.Xml.Xsl {
 
 		public XslStylesheet (Compiler c)
 		{
-			this.c = c;
 			c.PushStylesheet (this);
 			
 			templates = new XslTemplateTable (this);
@@ -155,7 +143,7 @@ namespace Mono.Xml.Xsl {
 					} while (c.Input.MoveToNextNamespace (XPathNamespaceScope.Local));
 					c.Input.MoveToParent ();
 				}
-				ProcessTopLevelElements ();
+				ProcessTopLevelElements (c);
 			}
 			
 			c.PopStylesheet ();
@@ -308,7 +296,7 @@ namespace Mono.Xml.Xsl {
 //			this.importer = importer;
 		}
 		
-		private void HandleInclude (string href)
+		private void HandleInclude (Compiler c, string href)
 		{
 			c.PushInputDocument (href);
 
@@ -324,19 +312,19 @@ namespace Mono.Xml.Xsl {
 				Templates.Add (new XslTemplate (c));
 			}
 			else
-				ProcessTopLevelElements ();
+				ProcessTopLevelElements (c);
 
 			c.PopInputDocument ();
 		}
 		
-		private void HandleImport (string href)
+		private void HandleImport (Compiler c, string href)
 		{
 			c.PushInputDocument (href);
 			imports.Add (new XslStylesheet (c, this));
 			c.PopInputDocument ();
 		}
 		
-		private void HandleTopLevelElement ()
+		private void HandleTopLevelElement (Compiler c)
 		{
 			XPathNavigator n = c.Input;
 			switch (n.NamespaceURI)
@@ -346,10 +334,10 @@ namespace Mono.Xml.Xsl {
 				switch (n.LocalName)
 				{
 				case "include":
-					HandleInclude (c.GetAttribute ("href"));
+					HandleInclude (c, c.GetAttribute ("href"));
 					break;
 				case "import":
-					HandleImport (c.GetAttribute ("href"));
+					HandleImport (c, c.GetAttribute ("href"));
 					break;
 				case "preserve-space":
 					AddSpaceControls (c.ParseQNameListAttribute ("elements"), XmlSpace.Preserve, n);
@@ -404,7 +392,7 @@ namespace Mono.Xml.Xsl {
 			}
 		}
 		
-		private void ProcessTopLevelElements ()
+		private void ProcessTopLevelElements (Compiler c)
 		{
 			if (!c.Input.MoveToFirstChild ())
 				return;
@@ -428,7 +416,7 @@ namespace Mono.Xml.Xsl {
 				if (c.Input.NodeType != XPathNodeType.Element)
 					continue;
 				Debug.EnterNavigator (c);
-				this.HandleTopLevelElement ();
+				this.HandleTopLevelElement (c);
 				Debug.ExitNavigator (c);
 			} while (c.Input.MoveToNext ());
 			
