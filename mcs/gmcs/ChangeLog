@@ -1,3 +1,10 @@
+2004-11-20  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.InferType): Correctly infer generic
+	instances; see gen-103.cs.
+	(Invocation.InferTypeArguments): If a generic method doesn't have
+	any unbound type parameters, we don't need to infer anything.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (gmcs.exe): Update to new location of bootstrap mcs.exe.
