@@ -1,3 +1,8 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* list:
+		Added System.Security.Permission/ReflectionPermission.cs and
+		System.Security.Permission/EnvironmentPermission.cs and
+
 2002-07-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list:
