@@ -1,3 +1,10 @@
+2003-02-03  Patrik Torstensson
+
+	* AppDomain.cs: New internalcalls for handling domain/context switches
+	
+	* AppDomain.cs (CreateDomain): Return transparant proxy for appdomain object
+	
+
 2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomain.cs: implemented AppendPrivatePath, ClearPrivatePath

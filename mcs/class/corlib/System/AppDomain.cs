@@ -6,6 +6,7 @@
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Miguel de Icaza (miguel@ximian.com)
 //   Gonzalo Paniagua (gonzalo@ximian.com)
+//   Patrik Torstensson
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 //
@@ -19,6 +20,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Contexts;
 using System.Security.Principal;
 using System.Security.Policy;
 using System.Security;
@@ -530,6 +532,21 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern AppDomain InternalSetDomainByID (int domain_id);
+ 
+		// Changes the active domain and returns the old domain
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern AppDomain InternalSetDomain (AppDomain context);
+			
+		// Changes the active context and returns the old context
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Context InternalSetContext (Context context);
+
+		// Returns the current context
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Context InternalGetContext ();
+
 		public static AppDomain CreateDomain (string friendlyName)
 		{
 			return CreateDomain (friendlyName, new Evidence (), new AppDomainSetup ());
@@ -554,11 +571,8 @@ namespace System {
 			if (info == null)
 				throw new System.ArgumentNullException ("info");
 
-			AppDomain ad = createDomain (friendlyName, info);
-
-			// ad.evidence = securityInfo;
-
-			return ad;
+			// todo: allow setup in the other domain
+			return (AppDomain) RemotingServices.GetDomainProxy( createDomain (friendlyName, info));
 		}
 
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,
@@ -661,6 +675,5 @@ namespace System {
 		public event ResolveEventHandler TypeResolve;
 
 		public event UnhandledExceptionEventHandler UnhandledException;
-    
 	}
 }
