@@ -106,6 +106,8 @@ namespace System.Windows.Forms {
 			return instance;
 		}
 
+		internal override event EventHandler Idle;
+
 		[MonoTODO]
 		public int Reference {
 			get {
