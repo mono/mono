@@ -1,3 +1,11 @@
+2003-10-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_jit_compile_method_inner): Lookup icalls here if not
+	already done.
+	(mono_method_to_ir): Avoid freeing the type created returned from
+	mono_type_create_from_typespec, since it is put into an internal cache
+	by the function. Fixes pointer.exe.
+
 2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Update after appdomain changes.
