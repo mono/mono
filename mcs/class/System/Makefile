@@ -29,17 +29,17 @@ else
 # First pass:
 #   1. Build temporary System.dll without depending on System.Xml.dll
 #   2. Since mcs.exe depends on System.dll, use BOOT_COMPILE to compile System.dll
-all-local:
-	@if test ! -f ../lib/$(PROFILE)/$(CYCLIC_DEP) ; then \
-	    echo "Creating temporary $(LIBRARY) without $(CYCLIC_DEP) reference." ; \
-	    $(MAKE) SECOND_PASS=yes CSCOMPILE='$(BOOT_COMPILE)' || exit 1 ; \
-	    rm -f '$(depsdir)/$(PROFILE)_$(LIBRARY).stamp'; \
-	else \
-	    $(MAKE) SECOND_PASS=yes HAVE_SYSTEM_XML=yes EXTRA_FLAGS="/define:XML_DEP /r:$(CYCLIC_DEP)" || exit 1; \
-	fi
 
 test-local: all-local
 
-install-local test-local run-test-local clean-local:
-	    $(MAKE) SECOND_PASS=yes EXTRA_FLAGS='/r:$(CYCLIC_DEP)' $@
+all-local install-local test-local run-test-local clean-local: 
+	@set -e; \
+	if test ! -f ../lib/$(PROFILE)/$(CYCLIC_DEP) ; then \
+	    echo "Creating temporary $(LIBRARY) without $(CYCLIC_DEP) reference." ; \
+	    $(MAKE) SECOND_PASS=yes CSCOMPILE='$(BOOT_COMPILE)' $@ ; \
+	    rm -f '$(depsdir)/$(PROFILE)_$(LIBRARY).stamp'; \
+	else \
+	    $(MAKE) SECOND_PASS=yes HAVE_SYSTEM_XML=yes EXTRA_FLAGS="/define:XML_DEP /r:$(CYCLIC_DEP)" $@ ; \
+	fi
+
 endif
