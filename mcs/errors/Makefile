@@ -29,7 +29,9 @@ test-local:
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
 
-run-test-local:
+run-test-local: test-multi-local run-mcs-tests run-generics-local
+
+run-mcs-tests:
 	@ ./do-tests.pl mcs "$(CSCOMPILE)" "cs*.cs"
 
 run-generics-local:
@@ -37,17 +39,24 @@ run-generics-local:
 
 test-multi-local:
 	@ failed=false; \
+	testsuite_log=test-multi.log; rm -f $$testsuite_log ; \
 	for i in error-*.cs; do \
+		test_out=`echo $$i | sed 's,.cs$$,.out,'` ; \
+		test_log=`echo $$i | sed 's,.cs$$,.log,'` ; \
 		echo -n "Running test $$i ... "; \
-		if MCS='$(INTERNAL_MCS)' $(RUNTEST_PL) $$i > /dev/null; \
-		then echo OK; \
+		$(INTERNAL_MCS) $$i > $$test_out 2>&1 || : ; \
+		if $(RUNTEST_PL) $$i $$test_out > $$test_log 2>&1 ; \
+		then echo OK; rm -f $$test_out $$test_log ; \
+		     echo "PASS: $$i" >> $$testsuite_log ; \
 		else echo FAILED; \
+		     echo "FAIL: $$i" >> $$testsuite_log ; \
 		     flist="$$flist $$i"; \
 		     failed=true; \
 		fi; \
 	done; \
 	if $$failed; then \
 		echo "The following tests failed: $$flist"; \
+		exit 1; \
 	else \
 		echo All tests passed; \
 	fi
@@ -60,26 +69,8 @@ dist-local: dist-default
 
 install-local uninstall-local:
 
-CS0618-2-lib.dll:
-	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0618-2-lib.cs
+%-lib.dll: %-lib.cs
+	$(BOOTSTRAP_MCS) /target:library /out:$@ $<
 
-CS0619-8-lib.dll:
-	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0619-8-lib.cs
-
-CS0619-17-lib.dll:
-	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0619-17-lib.cs
-
-CS0619-32-lib.dll:
-	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0619-32-lib.cs
-
-CS0619-33-lib.dll:
-	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0619-33-lib.cs
-
-CS0619-36-lib.dll:
-	$(BOOTSTRAP_MCS) /target:library /out:$@ CS0619-36-lib.cs
-
-CS3005-16-lib.dll: 
-	$(BOOTSTRAP_MCS) /target:library /out:$@ CS3005-16-lib.cs
-
-CS3013-module.dll:
-	$(BOOTSTRAP_MCS) /target:module /out:$@ CS3013-module.cs
+%-module.dll: %-module.cs
+	$(BOOTSTRAP_MCS) /target:module /out:$@ $<
