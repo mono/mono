@@ -165,7 +165,14 @@ namespace MonoTests.System
 				uri = new Uri (new Uri("http://www.contoso.com/foo/bar/index.html?x=0"), String.Empty, false);
 				Assertion.AssertEquals("#22", "http://www.contoso.com/foo/bar/index.html?x=0", uri.ToString ());
 			} catch (NullReferenceException) {
-			}			
+			}
+
+			uri = new Uri (new Uri("http://www.xxx.com"), "?x=0");
+			Assertion.AssertEquals ("#rel30", "http://www.xxx.com/?x=0", uri.ToString());
+			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "?x=0");
+			Assertion.AssertEquals ("#rel31", "http://www.xxx.com/?x=0", uri.ToString());
+			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "#here");
+			Assertion.AssertEquals ("#rel32", "http://www.xxx.com/index.htm#here", uri.ToString());
 		}
 		
 		[Test]
