@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 		{
 			TypeAttributes t = 0;
 			bool top_level = caller.IsTopLevel;
-			
+
 			if (top_level){
 				if ((mod_flags & PUBLIC) != 0)
 					t |= TypeAttributes.Public;
@@ -133,13 +133,15 @@ namespace Mono.CSharp {
 				ma |= MethodAttributes.Public;
 			if ((mod_flags & PRIVATE) != 0)
 				ma |= MethodAttributes.Private;
-			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
-				ma |= MethodAttributes.FamORAssem;
-			if ((mod_flags & PROTECTED) != 0)
-				ma |= MethodAttributes.Family;
-			if ((mod_flags & INTERNAL) != 0)
-				ma |= MethodAttributes.Assembly;
-			
+			if ((mod_flags & PROTECTED) != 0){
+				if ((mod_flags & INTERNAL) != 0)
+					ma |= MethodAttributes.FamORAssem;
+				else 
+					ma |= MethodAttributes.Family;
+			} else {
+				if ((mod_flags & INTERNAL) != 0)
+					ma |= MethodAttributes.Assembly;
+			}
 
 			if ((mod_flags & STATIC) != 0)
 				ma |= MethodAttributes.Static;
@@ -149,6 +151,7 @@ namespace Mono.CSharp {
 			}
 			if ((mod_flags & SEALED) != 0)
 				ma |= MethodAttributes.Final;
+
 			if ((mod_flags & VIRTUAL) != 0)
 				ma |= MethodAttributes.Virtual;
 

@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 		public readonly string   Name;
 		public readonly Modifier ModFlags;
 		public Attributes OptAttributes;
-		public Type ParameterType;
+		public Type parameter_type;
 		
 		public Parameter (string type, string name, Modifier mod, Attributes attrs)
 		{
@@ -43,23 +43,42 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
+		// <summary>
+		//   Resolve is used in method definitions
+		// </summary>
 		public bool Resolve (DeclSpace ds, Location l)
 		{
-			ParameterType = RootContext.LookupType (ds, TypeName, false, l);
-			return ParameterType != null;
+			parameter_type = RootContext.LookupType (ds, TypeName, false, l);
+			return parameter_type != null;
 		}
 
+		// <summary>
+		//   ResolveAndDefine is used by delegate declarations, because
+		//   they happen during the initial tree resolution process
+		// </summary>
+		public bool ResolveAndDefine (DeclSpace ds)
+		{
+			parameter_type = ds.FindType (TypeName);
+			return parameter_type != null;
+		}
+		
 		public Type ExternalType (DeclSpace ds, Location l)
 		{
 			if ((ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
-				string n = ParameterType.FullName + "&";
+				string n = parameter_type.FullName + "&";
 
 				Type t = RootContext.LookupType (ds, n, false, l);
 
 				return t;
 			}
 			
-			return ParameterType;
+			return parameter_type;
+		}
+
+		public Type ParameterType {
+			get {
+				return parameter_type;
+			}
 		}
 		
 		public ParameterAttributes Attributes {
@@ -85,7 +104,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string GetSignature (DeclSpace ds, Location loc)
 		{
-			if (ParameterType == null){
+			if (parameter_type == null){
 				if (!Resolve (ds, loc))
 					return null;
 			}
@@ -233,6 +252,56 @@ namespace Mono.CSharp {
 				pc = extra;
 			else
 				pc = extra + FixedParameters.Length;
+
+			types = new Type [pc];
+			
+			if (!VerifyArgs ()){
+				FixedParameters = null;
+				return false;
+			}
+
+			bool failed = false;
+			if (FixedParameters != null){
+				foreach (Parameter p in FixedParameters){
+					Type t = null;
+					
+					if (p.Resolve (ds, loc))
+						t = p.ExternalType (ds, loc);
+					else
+						failed = true;
+					
+					types [i] = t;
+					i++;
+				}
+			}
+			
+			if (failed)
+				types = null;
+			
+			if (extra > 0){
+				if (ArrayParameter.Resolve (ds, loc))
+					types [i] = ArrayParameter.ExternalType (ds, loc);
+				else
+					return false;
+			}
+
+			return true;
+		}
+
+		//
+		// This variant is used by Delegates, because they need to
+		// resolve/define names, instead of the plain LookupType
+		//
+		public bool ComputeAndDefineParameterTypes (DeclSpace ds)
+		{
+			int extra = (ArrayParameter != null) ? 1 : 0;
+			int i = 0;
+			int pc;
+
+			if (FixedParameters == null)
+				pc = extra;
+			else
+				pc = extra + FixedParameters.Length;
 			
 			types = new Type [pc];
 			
@@ -241,12 +310,16 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			bool ok_flag = true;
+			
 			if (FixedParameters != null){
 				foreach (Parameter p in FixedParameters){
 					Type t = null;
 					
-					if (p.Resolve (ds, loc))
+					if (p.ResolveAndDefine (ds))
 						t = p.ExternalType (ds, loc);
+					else
+						ok_flag = false;
 					
 					types [i] = t;
 					i++;
@@ -254,11 +327,20 @@ namespace Mono.CSharp {
 			}
 			
 			if (extra > 0){
-				if (ArrayParameter.Resolve (ds, loc))
+				if (ArrayParameter.ResolveAndDefine (ds))
 					types [i] = ArrayParameter.ExternalType (ds, loc);
+				else
+					ok_flag = false;
 			}
 
-			return true;
+			//
+			// invalidate the cached types
+			//
+			if (!ok_flag){
+				types = null;
+			}
+			
+			return ok_flag;
 		}
 		
 		/// <summary>
@@ -274,9 +356,11 @@ namespace Mono.CSharp {
 			if (FixedParameters == null && ArrayParameter == null)
 				return no_types;
 
-			if (ComputeParameterTypes (ds) == false)
+			if (ComputeParameterTypes (ds) == false){
+				types = null;
 				return null;
-			
+			}
+
 			return types;
 		}
 

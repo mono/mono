@@ -34,86 +34,39 @@ namespace Mono.CSharp
 		TypeContainer root_types;
 
 		// <summary>
-		//   Keeps track of the interfaces defined in the source code
-		// </summary>
-		Hashtable ifaces;
-
-		// <summary>
-		//   Keeps track of the structs defined in the source code
-		// </summary>
-		Hashtable structs;
-
-		// <summary>
-		//   Keeps track of the classes defined in the source code
-		// </summary>
-		Hashtable classes;
-
-		// <summary>
 		//  Keeps track of namespaces defined in the source code
 		// </summary>
 		Hashtable namespaces;
 
 		// <summary>
-		//  Keeps track of enums defined
+		//   Keeps track of all the types definied (classes, structs, ifaces, enums)
 		// </summary>
-		Hashtable enums;
+		Hashtable decls;
 		
 		public Tree ()
 		{
 			root_types = new TypeContainer (null, "", new Location (-1));
+
+			decls = new Hashtable ();
+			namespaces = new Hashtable ();
 		}
 
-		void RecordDecl (Hashtable decl, string name, DeclSpace ds)
+		public void RecordDecl (string name, DeclSpace ds)
 		{
-			if (decl.Contains (name)){
+			if (decls.Contains (name)){
 				Report.Error (
 					101, ds.Location,
 					"There is already a definition for `" + name + "'");
-				DeclSpace other = (DeclSpace) decl [name];
+				DeclSpace other = (DeclSpace) decls [name];
 				Report.Error (0,
 					other.Location, "(Location of symbol related to previous error)");
 				return;
 			}
-			decl.Add (name, ds);
+			decls.Add (name, ds);
 		}
 		
-		public void RecordInterface (string name, Interface iface)
-		{
-			if (ifaces == null)
-				ifaces = new Hashtable ();
-
-			RecordDecl (ifaces, name, iface);
-		}
-		
-		public void RecordStruct (string name, Struct s)
-		{
-			if (structs == null)
-				structs = new Hashtable ();
-
-			RecordDecl (structs, name, s);
-		}
-		
-		public void RecordClass (string name, Class c)
-		{
-			if (classes == null)
-				classes = new Hashtable ();
-
-			RecordDecl (classes, name, c);
-		}
-
-		public void RecordEnum (string name, Enum e)
-		{
-			if (enums == null)
-				enums = new Hashtable ();
-
-			RecordDecl (enums, name, e);
-		}
-
 		public Namespace RecordNamespace (Namespace parent, string file, string name)
 		{
-			if (namespaces == null)
-				namespaces = new Hashtable ();
-												     
 			Namespace ns = new Namespace (parent, name);
 
 			if (namespaces.Contains (file)){
@@ -131,40 +84,25 @@ namespace Mono.CSharp
 
 			return ns;
 		}
-		
-		public TypeContainer Types {
-			get {
-				return root_types;
-			}
-		}
 
-		public Hashtable Interfaces {
-			get {
-				return ifaces;
-			}
-		}
+		//
+		// FIXME: Why are we using Types?
+		//
+                public TypeContainer Types {
+                        get {
+                                return root_types;
+                        }
+                }
 
-		public Hashtable Classes {
+		public Hashtable Decls {
 			get {
-				return classes;
-			}
-		}
-
-		public Hashtable Structs {
-			get {
-				return structs;
+				return decls;
 			}
 		}
 
 		public Hashtable Namespaces {
 			get {
 				return namespaces;
-			}
-		}
-
-		public Hashtable Enums {
-			get {
-				return enums;
 			}
 		}
 	}

@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp {
 
@@ -18,9 +19,11 @@ namespace Mono.CSharp {
 	///    Code generator class.
 	/// </summary>
 	public class CodeGen {
-		AppDomain current_domain;
-		AssemblyBuilder assembly_builder;
-		ModuleBuilder   module_builder;
+		static AppDomain current_domain;
+		public static AssemblyBuilder AssemblyBuilder;
+		public static ModuleBuilder   ModuleBuilder;
+
+		static public ISymbolWriter SymbolWriter;
 
 		public static string Basename (string name)
 		{
@@ -36,16 +39,84 @@ namespace Mono.CSharp {
 			return name;
 		}
 
-		string TrimExt (string name)
+		public static string Dirname (string name)
+		{
+			int pos = name.LastIndexOf ("/");
+
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			pos = name.LastIndexOf ("\\");
+			if (pos != -1)
+				return name.Substring (0, pos);
+
+			return ".";
+		}
+
+		static string TrimExt (string name)
 		{
 			int pos = name.LastIndexOf (".");
 
 			return name.Substring (0, pos);
 		}
 
-		public string FileName;
-		
-		public CodeGen (string name, string output)
+		static public string FileName;
+
+		//
+		// This routine initializes the Mono runtime SymbolWriter.
+		//
+		static void InitMonoSymbolWriter (string basename)
+		{
+			string symbol_output = basename + "-debug.s";
+
+			//
+			// Mono's default symbol writer ignores the first and third argument
+			// of this method.
+			//
+			SymbolWriter.Initialize (new IntPtr (0), symbol_output, true);
+		}
+
+		//
+		// Initializes the symbol writer
+		//
+		static void InitializeSymbolWriter (string basename)
+		{
+			SymbolWriter = ModuleBuilder.GetSymWriter ();
+
+			//
+			// If we got an ISymbolWriter instance, initialize it.
+			//
+			if (SymbolWriter == null)
+				return;
+			
+			//
+			// Due to lacking documentation about the first argument of the
+			// Initialize method, we cannot use Microsoft's default symbol
+			// writer yet.
+			//
+			// If we're using the mono symbol writer, the SymbolWriter object
+			// is of type MonoSymbolWriter - but that's defined in a dynamically
+			// loaded DLL - that's why we're doing a comparision based on the type
+			// name here instead of using `SymbolWriter is MonoSymbolWriter'.
+			//
+			Type sym_type = ((object) SymbolWriter).GetType ();
+			
+			switch (sym_type.Name){
+			case "MonoSymbolWriter":
+				InitMonoSymbolWriter (basename);
+				break;
+
+			default:
+				Report.Error (
+					-18, "Cannot generate debugging information on this platform");
+				break;
+			}
+		}
+
+		//
+		// Initializes the code generator variables
+		//
+		static public void Init (string name, string output, bool want_debugging_support)
 		{
 			AssemblyName an;
 
@@ -53,38 +124,44 @@ namespace Mono.CSharp {
 			an = new AssemblyName ();
 			an.Name = TrimExt (Basename (name));
 			current_domain = AppDomain.CurrentDomain;
-			assembly_builder = current_domain.DefineDynamicAssembly (
-				an, AssemblyBuilderAccess.RunAndSave);
+			AssemblyBuilder = current_domain.DefineDynamicAssembly (
+				an, AssemblyBuilderAccess.RunAndSave, Dirname (name));
 
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how
 			// this copes with output in different directories then.
 			// FIXME: figure out how this copes with --output /tmp/blah
 			//
-			module_builder = assembly_builder.DefineDynamicModule (
-				Basename (name), Basename (output));
+			// If the third argument is true, the ModuleBuilder will dynamically
+			// load the default symbol writer.
+			//
+			ModuleBuilder = AssemblyBuilder.DefineDynamicModule (
+				Basename (name), Basename (output), want_debugging_support);
 
+			if (want_debugging_support)
+				InitializeSymbolWriter (an.Name);
 		}
-		
-		public AssemblyBuilder AssemblyBuilder {
-			get {
-				return assembly_builder;
-			}
-		}
-		
-		public ModuleBuilder ModuleBuilder {
-			get {
-				return module_builder;
-			}
-		}
-		
-		public void Save (string name)
+
+		static public void Save (string name)
 		{
 			try {
-				assembly_builder.Save (Basename (name));
+				AssemblyBuilder.Save (Basename (name));
 			} catch (System.IO.IOException io){
 				Report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
-			} 
+			}
+		}
+
+		static public void SaveSymbols ()
+		{
+			if (SymbolWriter != null) {
+				// If we have a symbol writer, call its Close() method to write
+				// the symbol file to disk.
+				//
+				// When using Mono's default symbol writer, the Close() method must
+				// be called after the assembly has already been written to disk since
+				// it opens the assembly and reads its metadata.
+				SymbolWriter.Close ();
+			}
 		}
 	}
 
@@ -190,6 +267,16 @@ namespace Mono.CSharp {
 		///   path to SimpleName from the cast operation.
 		/// </summary>
 		public bool OnlyLookupTypes;
+
+		/// <summary>
+		///   Inside an enum definition, we do not resolve enumeration values
+		///   to their enumerations, but rather to the underlying type/value
+		///   This is so EnumVal + EnumValB can be evaluated.
+		///
+		///   There is no "E operator + (E x, E y)", so during an enum evaluation
+		///   we relax the rules
+		/// </summary>
+		public bool InEnumContext;
 		
 		public EmitContext (TypeContainer parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
@@ -231,12 +318,19 @@ namespace Mono.CSharp {
 			bool has_ret = false;
 
 //			Console.WriteLine ("Emitting: " + loc);
+
+			if (CodeGen.SymbolWriter != null)
+				Mark (loc);
+
 			if (block != null){
 				int errors = Report.Errors;
-				
+
 				block.EmitMeta (this, block);
-				
+
 				if (Report.Errors == errors){
+					if (!block.Resolve (this))
+						return;
+					
 					has_ret = block.Emit (this);
 
 					if (Report.Errors == errors){
@@ -267,6 +361,20 @@ namespace Mono.CSharp {
 				}
 			}
 		}
+
+		/// <summary>
+		///   This is called immediately before emitting an IL opcode to tell the symbol
+		///   writer to which source line this opcode belongs.
+		/// </summary>
+		public void Mark (Location loc)
+		{
+			if (!Location.IsNull (loc)) {
+				ISymbolDocumentWriter doc = loc.SymbolDocument;
+
+				if (doc != null)
+					ig.MarkSequencePoint (doc, loc.Row, 0,  loc.Row, 0);
+			}		}
+
 
 		/// <summary>
 		///   Returns a temporary storage for a variable of type t as 

@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp {
 	/// <summary>
@@ -26,18 +27,23 @@ namespace Mono.CSharp {
 		public int token; 
 
 		static Hashtable map;
+		static Hashtable sym_docs;
 		static ArrayList list;
 		static int global_count;
 		static int module_base;
 
+		public readonly static Location Null;
+		
 		static Location ()
 		{
 			map = new Hashtable ();
 			list = new ArrayList ();
+			sym_docs = new Hashtable ();
 			global_count = 0;
 			module_base = 0;
+			Null.token = -1;
 		}
-	
+
 		static public void Push (string name)
 		{
 			map.Remove (global_count);
@@ -70,12 +76,6 @@ namespace Mono.CSharp {
 			return l.token == -1;
 		}
 
-		static public Location Null {
-			get {
-				return new Location (-1);
-			}
-		}
-
 		public string Name {
 			get {
 				int best = 0;
@@ -103,6 +103,48 @@ namespace Mono.CSharp {
 						best = b;
 				}
 				return token - best;
+			}
+		}
+
+		// The ISymbolDocumentWriter interface is used by the symbol writer to
+		// describe a single source file - for each source file there's exactly
+		// one corresponding ISymbolDocumentWriter instance.
+		//
+		// This class has an internal hash table mapping source document names
+		// to such ISymbolDocumentWriter instances - so there's exactly one
+		// instance per document.
+		//
+		// This property returns the ISymbolDocumentWriter instance which belongs
+		// to the location's source file.
+		//
+		// If we don't have a symbol writer, this property is always null.
+		public ISymbolDocumentWriter SymbolDocument {
+			get {
+				ISymbolWriter sw = CodeGen.SymbolWriter;
+				ISymbolDocumentWriter doc;
+
+				if (token < 0)
+					return null;
+
+				// If we don't have a symbol writer, return null.
+				if (sw == null)
+					return null;
+
+				if (sym_docs.Contains (Name))
+					// If we already created an ISymbolDocumentWriter
+					// instance for this document, return it.
+					doc = (ISymbolDocumentWriter) sym_docs [Name];
+				else {
+					// Create a new ISymbolDocumentWriter instance and
+					// store it in the hash table.
+					doc = sw.DefineDocument (Name, SymLanguageType.CSharp,
+								 SymLanguageVendor.Microsoft,
+								 SymDocumentType.Text);
+
+					sym_docs.Add (Name, doc);
+				}
+
+				return doc;
 			}
 		}
 	}

@@ -2,6 +2,7 @@
 // rootcontext.cs: keeps track of our tree representation, and assemblies loaded.
 //
 // Author: Miguel de Icaza (miguel@ximian.com)
+//         Ravi Pratap     (ravi@ximian.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -22,27 +23,12 @@ namespace Mono.CSharp {
 		//
 		static Tree tree;
 
-		//
-		// Contains loaded assemblies and our generated code as we go.
-		//
-		static public TypeManager TypeManager;
-
-		//
-		// The System.Reflection.Emit CodeGenerator
-		//
-		static CodeGen cg;
-
 		static public bool Optimize;
 		
 		//
-		// The module builder pointer.
-		//
-		static ModuleBuilder mb;
-
-		//
 		// The list of global attributes (those that target the assembly)
 		//
-		static Attributes global_attributes;
+		static Hashtable global_attributes = new Hashtable ();
 		
 		//
 		// Whether we are being linked against the standard libraries.
@@ -62,6 +48,7 @@ namespace Mono.CSharp {
 		//
 		static ArrayList type_container_resolve_order;
 		static ArrayList interface_resolve_order;
+		static ArrayList attribute_types;
 
 		//
 		// Holds a reference to the Private Implementation Details
@@ -77,7 +64,8 @@ namespace Mono.CSharp {
 		static RootContext ()
 		{
 			tree = new Tree ();
-			TypeManager = new TypeManager ();
+			interface_resolve_order = new ArrayList ();
+			type_container_resolve_order = new ArrayList ();
 		}
 
 		static public Tree Tree {
@@ -88,22 +76,6 @@ namespace Mono.CSharp {
 
 		static public string MainClass;
 		
-		static public CodeGen CodeGen {
-			get {
-				return cg;
-			}
-
-			set {
-				//
-				// Temporary hack, we should probably
-				// intialize `cg' rather than depending on
-				// external initialization of it.
-				//
-				cg = value;
-				mb = cg.ModuleBuilder;
-			}
-		}
-
 		public static void RegisterOrder (Interface iface)
 		{
 			interface_resolve_order.Add (iface);
@@ -112,6 +84,14 @@ namespace Mono.CSharp {
 		public static void RegisterOrder (TypeContainer tc)
 		{
 			type_container_resolve_order.Add (tc);
+		}
+
+		public static void RegisterAttribute (TypeContainer tc)
+		{
+			if (attribute_types == null)
+				attribute_types = new ArrayList ();
+			
+			attribute_types.Add (tc);
 		}
 		
 		// 
@@ -141,34 +121,240 @@ namespace Mono.CSharp {
 		static public void ResolveTree ()
 		{
 			//
-			// Interfaces are processed first, as classes and
+			// Process the attribute types separately and before anything else
+			//
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.DefineType ();
+			
+			//
+			// Interfaces are processed next, as classes and
 			// structs might inherit from an object or implement
 			// a set of interfaces, we need to be able to tell
 			// them appart by just using the TypeManager.
 			//
-
 			TypeContainer root = Tree.Types;
 
 			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
-				interface_resolve_order = new ArrayList ();
 				foreach (Interface i in ifaces) 
-					i.DefineInterface (mb);
+					i.DefineType ();
 			}
-						
-			type_container_resolve_order = new ArrayList ();
+
 			
 			foreach (TypeContainer tc in root.Types) 
-				tc.DefineType (mb);
+				tc.DefineType ();
 
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
-					d.DefineDelegate (mb);
+					d.DefineType ();
 
 			if (root.Enums != null)
 				foreach (Enum e in root.Enums)
-					e.DefineEnum (mb);
+					e.DefineType ();
 			
+		}
+
+		static void Error_TypeConflict (string name, Location loc)
+		{
+			Report.Error (
+				520, loc, "`" + name + "' conflicts with a predefined type");
+		}
+
+		static void Error_TypeConflict (string name)
+		{
+			Report.Error (
+				520, "`" + name + "' conflicts with a predefined type");
+		}
+
+		//
+		// Resolves a single class during the corlib bootstrap process
+		//
+		static TypeBuilder BootstrapCorlib_ResolveClass (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				return null;
+			}
+
+			if (!(o is Class)){
+				if (o is DeclSpace){
+					DeclSpace d = (DeclSpace) o;
+
+					Error_TypeConflict (name, d.Location);
+				} else
+					Error_TypeConflict (name);
+
+				return null;
+			}
+
+			return ((DeclSpace) o).DefineType ();
+		}
+
+		//
+		// Resolves a struct during the corlib bootstrap process
+		//
+		static void BootstrapCorlib_ResolveStruct (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				return;
+			}
+
+			if (!(o is Struct)){
+				if (o is DeclSpace){
+					DeclSpace d = (DeclSpace) o;
+
+					Error_TypeConflict (name, d.Location);
+				} else
+					Error_TypeConflict (name);
+
+				return;
+			}
+
+			((DeclSpace) o).DefineType ();
+		}
+
+		//
+		// Resolves a struct during the corlib bootstrap process
+		//
+		static void BootstrapCorlib_ResolveInterface (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				return;
+			}
+
+			if (!(o is Interface)){
+				if (o is DeclSpace){
+					DeclSpace d = (DeclSpace) o;
+
+					Error_TypeConflict (name, d.Location);
+				} else
+					Error_TypeConflict (name);
+
+				return;
+			}
+
+			((DeclSpace) o).DefineType ();
+		}
+
+		//
+		// Resolves a delegate during the corlib bootstrap process
+		//
+		static void BootstrapCorlib_ResolveDelegate (TypeContainer root, string name)
+		{
+			object o = root.GetDefinition (name);
+			if (o == null){
+				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				Environment.Exit (0);
+			}
+
+			if (!(o is Delegate)){
+				Error_TypeConflict (name);
+				return;
+			}
+
+			((DeclSpace) o).DefineType ();
+		}
+		
+
+		/// <summary>
+		///    Resolves the core types in the compiler when compiling with --nostdlib
+		/// </summary>
+		static public void ResolveCore ()
+		{
+			TypeContainer root = Tree.Types;
+
+			TypeManager.object_type = BootstrapCorlib_ResolveClass (root, "System.Object");
+			TypeManager.value_type = BootstrapCorlib_ResolveClass (root, "System.ValueType");
+			TypeManager.attribute_type = BootstrapCorlib_ResolveClass (root, "System.Attribute");
+			
+			string [] interfaces_first_stage = {
+				"System.IComparable", "System.ICloneable",
+				"System.IConvertible",
+				
+				"System.Collections.IEnumerable",
+				"System.Collections.ICollection",
+				"System.Collections.IEnumerator",
+				"System.Collections.IList", 
+				"System.IAsyncResult",
+				"System.IDisposable",
+				
+				"System.Runtime.Serialization.ISerializable",
+
+				"System.Reflection.IReflect",
+				"System.Reflection.ICustomAttributeProvider"
+			};
+
+			foreach (string iname in interfaces_first_stage)
+				BootstrapCorlib_ResolveInterface (root, iname);
+
+			//
+			// These are the base value types
+			//
+			string [] structs_first_stage = {
+				"System.Byte",    "System.SByte",
+				"System.Int16",   "System.UInt16",
+				"System.Int32",   "System.UInt32",
+				"System.Int64",   "System.UInt64",
+			};
+
+			foreach (string cname in structs_first_stage)
+				BootstrapCorlib_ResolveStruct (root, cname);
+
+			//
+			// Now, we can load the enumerations, after this point,
+			// we can use enums.
+			//
+			TypeManager.InitEnumUnderlyingTypes ();
+
+			string [] structs_second_stage = {
+				"System.Single",  "System.Double",
+				"System.Char",    "System.Boolean",
+				"System.Decimal", "System.Void",
+				"System.RuntimeFieldHandle",
+				"System.RuntimeTypeHandle",
+				"System.IntPtr"
+			};
+			
+			foreach (string cname in structs_second_stage)
+				BootstrapCorlib_ResolveStruct (root, cname);
+			
+			//
+			// These are classes that depends on the core interfaces
+			//
+			string [] classes_second_stage = {
+				"System.String", "System.Enum",
+				"System.Array",  "System.MulticastDelegate",
+				"System.Delegate",
+
+				"System.Reflection.MemberInfo",
+				"System.Type",
+
+				//
+				// These are not really important in the order, but they
+				// are used by the compiler later on (typemanager/CoreLookupType-d)
+				//
+				"System.Runtime.CompilerServices.RuntimeHelpers",
+				"System.Reflection.DefaultMemberAttribute",
+				"System.Threading.Monitor",
+				
+				"System.AttributeUsageAttribute",
+				"System.Runtime.InteropServices.DllImportAttribute",
+				"System.Runtime.CompilerServices.MethodImplAttribute",
+				"System.Runtime.InteropServices.MarshalAsAttribute",
+				"System.ParamArrayAttribute",
+				"System.Security.UnverifiableCodeAttribute",
+			};
+			
+			foreach (string cname in classes_second_stage)
+				BootstrapCorlib_ResolveClass (root, cname);
+
+			BootstrapCorlib_ResolveDelegate (root, "System.AsyncCallback");
 		}
 			
 		// <summary>
@@ -191,10 +377,12 @@ namespace Mono.CSharp {
 				foreach (Enum en in root.Enums)
 					en.CloseType ();
 
-			if (interface_resolve_order != null){
-				foreach (Interface iface in interface_resolve_order)
-					iface.CloseType ();
-			}
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.CloseType ();
+			
+			foreach (Interface iface in interface_resolve_order)
+				iface.CloseType ();
 
 			//
 			// We do this in two passes, first we close the structs,
@@ -202,17 +390,15 @@ namespace Mono.CSharp {
 			// way.  If this is really what is going on, we should probably
 			// make sure that we define the structs in order as well.
 			//
-			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order){
-					if (tc is Struct && tc.Parent == tree.Types){
-						tc.CloseType ();
-					}
+			foreach (TypeContainer tc in type_container_resolve_order){
+				if (tc is Struct && tc.Parent == tree.Types){
+					tc.CloseType ();
 				}
+			}
 
-				foreach (TypeContainer tc in type_container_resolve_order){
-					if (!(tc is Struct && tc.Parent == tree.Types))
-						tc.CloseType ();					
-				}
+			foreach (TypeContainer tc in type_container_resolve_order){
+				if (!(tc is Struct && tc.Parent == tree.Types))
+					tc.CloseType ();					
 			}
 			
 			if (root.Delegates != null)
@@ -263,6 +449,21 @@ namespace Mono.CSharp {
 			t = TypeManager.LookupType (name); 
 			if (t != null)
 				return t;
+
+			//
+			// Try the aliases in the current namespace
+			//
+			string alias = curr_ns.LookupAlias (name);
+
+			if (alias != null) {
+				t = TypeManager.LookupType (alias);
+				if (t != null)
+					return t;
+
+				t = TypeManager.LookupType (MakeFQN (alias, name));
+				if (t != null)
+					return t;
+			}
 			
 			for (Namespace ns = curr_ns; ns != null; ns = ns.Parent) {
 				//
@@ -280,8 +481,22 @@ namespace Mono.CSharp {
 				if (using_list == null)
 					continue;
 
-				foreach (string n in using_list){
+				foreach (string n in using_list) {
 					t = TypeManager.LookupType (MakeFQN (n, name));
+					if (t != null)
+						return t;
+				}
+
+				//
+				// Try with aliases
+				//
+				string a = ns.LookupAlias (name);
+				if (a != null) {
+					t = TypeManager.LookupType (a);
+					if (t != null)
+						return t;
+
+					t = TypeManager.LookupType (MakeFQN (a, name));
 					if (t != null)
 						return t;
 				}
@@ -296,32 +511,47 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
+		// Come to think of it, this should be a DeclSpace
+		//
 		static public Type LookupType (DeclSpace ds, string name, bool silent, Location loc)
 		{
 			Type t;
 
-			//
-			// For the case the type we are looking for is nested within this one
-			// or is in any base class
-			//
-			DeclSpace containing_ds = ds;
-			while (containing_ds != null){
-				Type current_type = containing_ds.TypeBuilder;
-
-				while (current_type != null) {
-					t = TypeManager.LookupType (current_type.FullName + "+" + name);
-					if (t != null)
-						return t;
-
-					current_type = current_type.BaseType;
+			if (ds.Cache.Contains (name)){
+				t = (Type) ds.Cache [name];
+				if (t != null)
+					return t;
+			} else {
+				//
+				// For the case the type we are looking for is nested within this one
+				// or is in any base class
+				//
+				DeclSpace containing_ds = ds;
+				while (containing_ds != null){
+					Type current_type = containing_ds.TypeBuilder;
+					
+					while (current_type != null) {
+						//
+						// nested class
+						//
+						t = TypeManager.LookupType (current_type.FullName + "+" + name);
+						if (t != null){
+							ds.Cache [name] = t;
+							return t;
+						}
+						
+						current_type = current_type.BaseType;
+					}
+					
+					containing_ds = containing_ds.Parent;
 				}
-
-				containing_ds = containing_ds.Parent;
+				
+				t = NamespaceLookup (ds.Namespace, name);
+				if (t != null){
+					ds.Cache [name] = t;
+					return t;
+				}
 			}
-
-			t = NamespaceLookup (ds.Namespace, name);
-			if (t != null)
-				return t;
 
 			if (!silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
@@ -357,6 +587,22 @@ namespace Mono.CSharp {
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
 		}
 		
+		static public void PopulateCoreType (TypeContainer root, string name)
+		{
+			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
+
+			ds.Define (root);
+		}
+		
+		static public void BootCorlib_PopulateCoreTypes ()
+		{
+			TypeContainer root = tree.Types;
+
+			PopulateCoreType (root, "System.Object");
+			PopulateCoreType (root, "System.ValueType");
+			PopulateCoreType (root, "System.Attribute");
+		}
+		
 		// <summary>
 		//   Populates the structs and classes with fields and methods
 		// </summary>
@@ -367,6 +613,10 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.Define (root);
+			
 			if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
@@ -405,23 +655,37 @@ namespace Mono.CSharp {
 
 		static public void EmitCode ()
 		{
-			if (type_container_resolve_order != null){
+			//
+			// Because of the strange way in which we do things, global
+			// attributes must be processed first.
+			//
+			if (global_attributes.Count > 0){
+				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
+				TypeContainer dummy = new TypeContainer (null, "", new Location (-1));
+				EmitContext temp_ec = new EmitContext (
+					dummy, Mono.CSharp.Location.Null, null, null, 0, false);
+			
+				foreach (DictionaryEntry de in global_attributes){
+					Namespace ns = (Namespace) de.Key;
+					Attributes attrs = (Attributes) de.Value;
+					
+					dummy.Namespace = ns;
+					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs, attrs.Location);
+				}
+			}
+			
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.Emit ();
+			
+			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitConstants ();
 				
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Emit ();
 			}
-
-			if (global_attributes != null){
-				EmitContext ec = new EmitContext (
-					tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
-				AssemblyBuilder ab = cg.AssemblyBuilder;
-
-				Attribute.ApplyAttributes (ec, ab, ab, global_attributes,
-							   global_attributes.Location);
-			} 
-
+			
 			if (Unsafe) {
 				ConstructorInfo ci = TypeManager.unverifiable_code_type.GetConstructor (new Type [0]);
 					
@@ -431,21 +695,20 @@ namespace Mono.CSharp {
 				}
 				
 				CustomAttributeBuilder cb = new CustomAttributeBuilder (ci, new object [0]);
-				mb.SetCustomAttribute (cb);
+				CodeGen.ModuleBuilder.SetCustomAttribute (cb);
 			}
 		}
 		
-		static public ModuleBuilder ModuleBuilder {
-			get {
-				return mb;
-			}
-		}
-
 		//
 		// Public Field, used to track which method is the public entry
 		// point.
 		//
 		static public MethodInfo EntryPoint;
+
+                //
+                // Track the location of the entry point.
+                //
+                static public Location EntryPointLocation;
 
 		//
 		// These are used to generate unique names on the structs and fields.
@@ -472,7 +735,7 @@ namespace Mono.CSharp {
 			int size = data.Length;
 			
 			if (impl_details_class == null)
-				impl_details_class = mb.DefineType (
+				impl_details_class = CodeGen.ModuleBuilder.DefineType (
 					"<PrivateImplementationDetails>", TypeAttributes.NotPublic);
 
 			fb = impl_details_class.DefineInitializedData (
@@ -482,12 +745,20 @@ namespace Mono.CSharp {
 			return fb;
 		}
 
-		static public void AddGlobalAttributes (AttributeSection sect, Location loc)
+		//
+		// Adds a global attribute that was declared in `container', 
+		// the attribute is in `attr', and it was defined at `loc'
+		//
+		static public void AddGlobalAttribute (TypeContainer container,
+						       AttributeSection attr, Location loc)
 		{
-			if (global_attributes == null)
-				global_attributes = new Attributes (sect, loc);
+			Namespace ns = container.Namespace;
+			Attributes a = (Attributes) global_attributes [ns];
 
-			global_attributes.AddAttribute (sect);
+			if (a == null)
+				global_attributes [ns] = new Attributes (attr, loc);
+			else
+				a.AddAttribute (attr);
 		}
 	}
 }

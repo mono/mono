@@ -27,7 +27,20 @@ namespace Mono.CSharp {
 	///   invoking this method.
 	/// </remarks>
 	public interface IAssignMethod {
+		//
+		// This method will emit the code for the actual assignment
+		//
 		void EmitAssign (EmitContext ec, Expression source);
+
+		//
+		// This method is invoked before any code generation takes
+		// place, and it is a mechanism to inform that the expression
+		// will be invoked more than once, and that the method should
+		// use temporary values to avoid having side effects
+		//
+		// Example: a [ g () ] ++
+		//
+		void CacheTemporaries (EmitContext ec);
 	}
 
 	/// <summary>
@@ -91,8 +104,8 @@ namespace Mono.CSharp {
 	///   the expression represented by target. 
 	/// </summary>
 	public class Assign : ExpressionStatement {
-		Expression target, source;
-		Location l;
+		protected Expression target, source;
+		public Location l;
 
 		public Assign (Expression target, Expression source, Location l)
 		{
@@ -128,6 +141,9 @@ namespace Mono.CSharp {
 				      " used from within the type '" + ei.DeclaringType + "')");
 		}
 
+		//
+		// Will return either `this' or an instance of `New'.
+		//
 		public override Expression DoResolve (EmitContext ec)
 		{
 			source = source.Resolve (ec);
@@ -144,7 +160,7 @@ namespace Mono.CSharp {
 
 			type = target_type;
 			eclass = ExprClass.Value;
-			
+
 			//
 			// If we are doing a property assignment, then
 			// set the `value' field on the property, and Resolve
@@ -162,11 +178,8 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			if (target is IndexerAccess){
-				IndexerAccess ia = (IndexerAccess) target;
-
+			if (target is IndexerAccess)
 				return this;
-			}
 
 			if (target is EventExpr) {
 
@@ -175,7 +188,7 @@ namespace Mono.CSharp {
 
 
 				Expression ml = MemberLookup (
-					ec, ec.TypeContainer.TypeBuilder, ei.Name,
+					ec, ec.ContainerType, ei.Name,
 					MemberTypes.Event, AllBindingFlags, l);
 
 				if (ml == null) {
@@ -211,18 +224,53 @@ namespace Mono.CSharp {
 				return n;
 			}
 
-			if (target_type != source_type){
-				source = ConvertImplicitRequired (ec, source, target_type, l);
-				if (source == null)
-					return null;
-			}
-
 			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
 				Report.Error (131, l,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");
 				return null;
 			}
+
+			if (target_type == source_type)
+				return this;
+			
+			//
+			// If this assignemnt/operator was part of a compound binary
+			// operator, then we allow an explicit conversion, as detailed
+			// in the spec. 
+			//
+
+			if (this is CompoundAssign){
+				CompoundAssign a = (CompoundAssign) this;
+				
+				Binary b = source as Binary;
+				if (b != null && b.IsBuiltinOperator){
+					//
+					// 1. if the source is explicitly convertible to the
+					//    target_type
+					//
+					
+					source = ConvertExplicit (ec, source, target_type, l);
+					if (source == null){
+						Error_CannotConvertImplicit (l, source_type, target_type);
+						return null;
+					}
+				
+					//
+					// 2. and the original right side is implicitly convertible to
+					// the type of target_type.
+					//
+					if (StandardConversionExists (a.original_source, target_type))
+						return this;
+
+					Error_CannotConvertImplicit (l, a.original_source.Type, target_type);
+					return null;
+				}
+			}
+			
+			source = ConvertImplicitRequired (ec, source, target_type, l);
+			if (source == null)
+				return null;
 
 			return this;
 		}
@@ -239,6 +287,10 @@ namespace Mono.CSharp {
 			// just use `dup' to propagate the result
 			// 
 			IAssignMethod am = (IAssignMethod) target;
+
+			if (this is CompoundAssign){
+				am.CacheTemporaries (ec);
+			}
 			
 			if (is_statement)
 				am.EmitAssign (ec, source);
@@ -263,6 +315,42 @@ namespace Mono.CSharp {
 		public override void EmitStatement (EmitContext ec)
 		{
 			Emit (ec, true);
+		}
+	}
+
+	
+	//
+	// This is just a class used to flag that the assignment was part of a
+	// compound assignment, hence allowing a set of extra rules to be used.
+	//
+	class CompoundAssign : Assign {
+		Binary.Operator op;
+		public Expression original_source;
+		
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Location l)
+			: base (target, source, l)
+		{
+			original_source = source;
+			this.op = op;
+		}
+
+		public Expression ResolveSource (EmitContext ec)
+		{
+			return original_source.Resolve (ec);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			target = target.ResolveLValue (ec, source);
+			if (target == null)
+				return null;
+
+			original_source = original_source.Resolve (ec);
+			if (original_source == null)
+				return null;
+			
+			source = new Binary (op, target, original_source, l);
+			return base.DoResolve (ec);
 		}
 	}
 }

@@ -57,6 +57,17 @@ namespace Mono.CSharp {
 			return "`" + mb.ReflectedType.Name + "." + mb.Name + "'";
 		}
 
+		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method)
+		{
+			//
+			// FIXME: report the old/new permissions?
+			//
+			Report.Error (
+				507, "`" + parent_method + "." + Name +
+				": can't change the access modifiers from `" +
+				parent_method.DeclaringType.Name + "." + parent_method.Name + "'");
+		}
+		
 		//
 		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
 		// that have been defined.
@@ -64,7 +75,8 @@ namespace Mono.CSharp {
 		// `name' is the user visible name for reporting errors (this is used to
 		// provide the right name regarding method names and properties)
 		//
-		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodInfo mb)
+		protected bool CheckMethodAgainstBase (TypeContainer parent,
+						       MethodAttributes my_attrs, MethodInfo mb)
 		{
 			bool ok = true;
 			
@@ -84,6 +96,17 @@ namespace Mono.CSharp {
 					Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
 						      "override inherited member " + MethodBaseName (mb) +
 						      " because it is sealed.");
+					ok = false;
+				}
+
+				//
+				// Check that the permissions are not being changed
+				//
+				MethodAttributes thisp = my_attrs & MethodAttributes.MemberAccessMask;
+				MethodAttributes parentp = mb.Attributes & MethodAttributes.MemberAccessMask;
+
+				if (thisp != parentp){
+					Error_CannotChangeAccessModifiers (parent, mb);
 					ok = false;
 				}
 			}
@@ -183,7 +206,11 @@ namespace Mono.CSharp {
 		///   this points to the actual definition that is being
 		///   created with System.Reflection.Emit
 		/// </summary>
-		TypeBuilder definition;
+		public TypeBuilder TypeBuilder;
+
+		/// <summary>
+		///   This variable tracks whether we have Closed the type
+		/// </summary>
 		public bool Created = false;
 		
 		//
@@ -192,6 +219,8 @@ namespace Mono.CSharp {
 		//
 		public Namespace Namespace;
 
+		public Hashtable Cache = new Hashtable ();
+		
 		public string Basename;
 		
 		/// <summary>
@@ -234,6 +263,15 @@ namespace Mono.CSharp {
 			defined_names.Add (name, o);
 		}
 
+		/// <summary>
+		///   Returns the object associated with a given name in the declaration
+		///   space.  This is the inverse operation of `DefineName'
+		/// </summary>
+		public object GetDefinition (string name)
+		{
+			return defined_names [name];
+		}
+		
 		bool in_transit = false;
 		
 		/// <summary>
@@ -250,19 +288,24 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeBuilder TypeBuilder {
-			get {
-				return definition;
-			}
-
-			set {
-				definition = value;
-			}
-		}
-
 		public TypeContainer Parent {
 			get {
 				return parent;
+			}
+		}
+
+		// 
+		// root_types contains all the types.  All TopLevel types
+		// hence have a parent that points to `root_types', that is
+		// why there is a non-obvious test down here.
+		//
+		public bool IsTopLevel {
+			get {
+				if (parent != null){
+					if (parent.parent == null)
+						return true;
+				}
+				return false;
 			}
 		}
 
@@ -270,7 +313,7 @@ namespace Mono.CSharp {
 		{
 			if (!Created){
 				try {
-					definition.CreateType ();
+					TypeBuilder.CreateType ();
 				} catch {
 					//
 					// The try/catch is needed because
@@ -287,6 +330,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		/// <remarks>
+		///  Should be overriten by the appropriate declaration space
+		/// <remarks>
+		public abstract TypeBuilder DefineType ();
+		
 		//
 		// Whether this is an `unsafe context'
 		//
@@ -300,5 +348,137 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public static string MakeFQN (string nsn, string name)
+		{
+			string prefix = (nsn == "" ? "" : nsn + ".");
+
+			return prefix + name;
+		}
+
+		Type LookupInterfaceOrClass (string ns, string name, out bool error)
+		{
+			DeclSpace parent;
+			Type t;
+
+			error = false;
+			name = MakeFQN (ns, name);
+			
+			t  = TypeManager.LookupType (name);
+			if (t != null)
+				return t;
+
+			parent = (DeclSpace) RootContext.Tree.Decls [name];
+			if (parent == null)
+				return null;
+			
+			t = parent.DefineType ();
+			if (t == null){
+				Report.Error (146, "Class definition is circular: `"+name+"'");
+				error = true;
+				return null;
+			}
+			return t;
+		}
+		
+		/// <summary>
+		///   GetType is used to resolve type names at the DeclSpace level.
+		///   Use this to lookup class/struct bases, interface bases or 
+		///   delegate type references
+		/// </summary>
+		///
+		/// <remarks>
+		///   Contrast this to LookupType which is used inside method bodies to 
+		///   lookup types that have already been defined.  GetType is used
+		///   during the tree resolution process and potentially define
+		///   recursively the type
+		/// </remarks>
+		public Type FindType (string name)
+		{
+			Type t;
+			bool error;
+
+			//
+			// For the case the type we are looking for is nested within this one
+			// or is in any base class
+			//
+			DeclSpace containing_ds = this;
+
+			while (containing_ds != null){
+				Type current_type = containing_ds.TypeBuilder;
+
+				while (current_type != null) {
+					string pre = current_type.FullName;
+					
+					t = LookupInterfaceOrClass (pre, name, out error);
+					if (error)
+						return null;
+				
+					if (t != null) 
+						return t;
+
+					current_type = current_type.BaseType;
+				}
+				containing_ds = containing_ds.Parent;
+			}
+			
+			//
+			// Attempt to lookup the class on our namespace and all it's implicit parents
+			//
+			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)) {
+
+				t = LookupInterfaceOrClass (ns, name, out error);
+				if (error)
+					return null;
+				
+				if (t != null) 
+					return t;
+			}
+			
+			//
+			// Attempt to do a direct unqualified lookup
+			//
+			t = LookupInterfaceOrClass ("", name, out error);
+			if (error)
+				return null;
+			
+			if (t != null)
+				return t;
+			
+			//
+			// Attempt to lookup the class on any of the `using'
+			// namespaces
+			//
+
+			for (Namespace ns = Namespace; ns != null; ns = ns.Parent){
+
+				t = LookupInterfaceOrClass (ns.Name, name, out error);
+				if (error)
+					return null;
+
+				if (t != null)
+					return t;
+
+				//
+				// Now check the using clause list
+				//
+				ArrayList using_list = ns.UsingTable;
+				
+				if (using_list == null)
+					continue;
+
+				foreach (string n in using_list){
+					t = LookupInterfaceOrClass (n, name, out error);
+					if (error)
+						return null;
+
+					if (t != null)
+						return t;
+				}
+				
+			}
+
+			Report.Error (246, Location, "Can not find type `"+name+"'");
+			return null;
+		}
 	}
 }

@@ -170,16 +170,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsTopLevel {
-			get {
-				if (Parent != null){
-					if (Parent.Parent == null)
-						return true;
-				}
-				return false;
-			}
-		}
-
 		public virtual TypeAttributes InterfaceAttr {
 			get {
 				TypeAttributes x = TypeAttributes.Interface | TypeAttributes.Abstract;
@@ -284,7 +274,7 @@ namespace Mono.CSharp {
 		//
 		// Populates the methods in the interface
 		//
-		void PopulateMethod (InterfaceMethod im)
+		void PopulateMethod (TypeContainer parent, DeclSpace decl_space, InterfaceMethod im)
 		{
 			Type return_type = RootContext.LookupType (this, im.ReturnType, false, im.Location);
 			Type [] arg_types = im.ParameterTypes (this);
@@ -333,12 +323,18 @@ namespace Mono.CSharp {
 				if (i != arg_types.Length)
 					Console.WriteLine ("Implement the type definition for params");
 			}
+
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  return_type, ModFlags, false);
+
+			if (im.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, mb, im, im.OptAttributes, Location);
 		}
 
 		//
 		// Populates the properties in the interface
 		//
-		void PopulateProperty (InterfaceProperty ip)
+		void PopulateProperty (TypeContainer parent, DeclSpace decl_space, InterfaceProperty ip)
 		{
 			PropertyBuilder pb;
 			MethodBuilder get = null, set = null;
@@ -397,13 +393,19 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (ip.Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ipp = new InternalParameters (
-					Parent, new Parameters (parms, null, Location.Null));
+					this, new Parameters (parms, null, Location.Null));
 					
 				if (!RegisterMethod (set, ipp, setter_args)) {
 					Error111 (ip);
 					return;
 				}
 			}
+
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+			if (ip.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, pb, ip, ip.OptAttributes, Location);
 
 			TypeManager.RegisterProperty (pb, get, set);
 			property_builders.Add (pb);
@@ -412,7 +414,7 @@ namespace Mono.CSharp {
 		//
 		// Populates the events in the interface
 		//
-		void PopulateEvent (InterfaceEvent ie)
+		void PopulateEvent (TypeContainer parent, DeclSpace decl_space, InterfaceEvent ie)
 		{
 			//
 		        // FIXME: We need to do this after delegates have been
@@ -423,7 +425,7 @@ namespace Mono.CSharp {
 		//
 		// Populates the indexers in the interface
 		//
-		void PopulateIndexer (InterfaceIndexer ii)
+		void PopulateIndexer (TypeContainer parent, DeclSpace decl_space, InterfaceIndexer ii)
 		{
 			PropertyBuilder pb;
 			Type prop_type = RootContext.LookupType (this, ii.Type, false, ii.Location);
@@ -459,9 +461,9 @@ namespace Mono.CSharp {
 			pb = TypeBuilder.DefineProperty (
 				"Item", PropertyAttributes.None,
 				prop_type, arg_types);
-
+			
+			MethodBuilder set_item = null, get_item = null;
 			if (ii.HasGet){
-				MethodBuilder get_item;
 				Parameter [] p = ii.Parameters.FixedParameters;
 				
 				get_item = TypeBuilder.DefineMethod (
@@ -488,7 +490,6 @@ namespace Mono.CSharp {
 
 			if (ii.HasSet){
 				Parameter [] p = ii.Parameters.FixedParameters;
-				MethodBuilder set_item;
 				int i = 0;
 				
 				set_item = TypeBuilder.DefineMethod (
@@ -514,6 +515,12 @@ namespace Mono.CSharp {
 				
 				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
 			}
+
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+			if (ii.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes, Location);
 		}
 
 		/// <summary>
@@ -548,68 +555,29 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		//
-		// Returns the Type that represents the interface whose name
-		// is `name'.
-		//
-		
-		Type GetInterfaceTypeByName (object builder, string name)
+		Type GetInterfaceTypeByName (string name)
 		{
-			Interface parent;
-			Type t = RootContext.LookupType (this, name, false, Location);
+			Type t = FindType (name);
+
+			if (t == null)
+				return null;
 			
-			if (t != null) {
-				if (t.IsInterface)
-					return t;
+			if (t.IsInterface)
+				return t;
 				
-				string cause;
-				
-				if (t.IsValueType)
-					cause = "is a struct";
-				else if (t.IsClass) 
-					cause = "is a class";
-				else
-					cause = "Should not happen.";
-
-				Report.Error (527, Location, "`"+name+"' " + cause +
-					      ", need an interface instead");
-				
-				return null;
-			}
-
-			Tree tree = RootContext.Tree;
-			parent = (Interface) tree.Interfaces [name];
-			if (parent == null){
-				string cause = null;
-				Hashtable container;
-				
-				container = tree.Classes;
-				if (container != null && container [name] != null)
-					cause = "is a class";
-				else {
-					container = tree.Structs;
-					
-					if (container != null && container [name] != null)
-						cause = "is a struct";
-				}
-
-				if (cause == null){
-					Report.Error (246, Location, "Can not find type `"+name+"'");
-				} else {
-					Report.Error (527, Location, "`"+name+"' " + cause +
-						      ", need an interface instead");
-				}
-				return null;
-			}
+			string cause;
 			
-			t = parent.DefineInterface (builder);
-			if (t == null){
-				Report.Error (529,
-					      "Inherited interface `"+name+"' is circular");
-				return null;
-			}
-
-			return t;
+			if (t.IsValueType)
+				cause = "is a struct";
+			else if (t.IsClass) 
+				cause = "is a class";
+			else
+				cause = "Should not happen.";
+			
+			Report.Error (527, Location, "`"+name+"' " + cause +
+				      ", need an interface instead");
+			
+			return null;
 		}
 		
 		//
@@ -618,7 +586,7 @@ namespace Mono.CSharp {
 		//
 		// Sets the error boolean accoringly.
 		//
-		Type [] GetInterfaceBases (object builder, out bool error)
+		Type [] GetInterfaceBases (out bool error)
 		{
 			Type [] tbases;
 			int i;
@@ -632,8 +600,8 @@ namespace Mono.CSharp {
 
 			foreach (string name in Bases){
 				Type t;
-				
-				t = GetInterfaceTypeByName (builder, name);
+
+				t = GetInterfaceTypeByName (name);
 				if (t == null){
 					error = true;
 					return null;
@@ -649,29 +617,33 @@ namespace Mono.CSharp {
 		// <summary>
 		//  Defines the Interface in the appropriate ModuleBuilder or TypeBuilder
 		// </summary>
+		//
 		// TODO:
 		//   Rework the way we recurse, because for recursive
 		//   definitions of interfaces (A:B and B:A) we report the
 		//   error twice, rather than once.  
 		
-		public TypeBuilder DefineInterface (object parent_builder)
+		public override TypeBuilder DefineType ()
 		{
 			Type [] ifaces;
 			bool error;
 
+			if (TypeBuilder != null)
+				return TypeBuilder;
+			
 			if (InTransit)
 				return null;
 			
 			InTransit = true;
 			
-			ifaces = GetInterfaceBases (parent_builder, out error);
+			ifaces = GetInterfaceBases (out error);
 
 			if (error)
 				return null;
 
-			if (parent_builder is ModuleBuilder) {
-				ModuleBuilder builder = (ModuleBuilder) parent_builder;
-				
+			if (IsTopLevel) {
+				ModuleBuilder builder = CodeGen.ModuleBuilder;
+
 				TypeBuilder = builder.DefineType (
 					Name,
 					InterfaceAttr,
@@ -679,7 +651,7 @@ namespace Mono.CSharp {
 					ifaces);
 				RootContext.RegisterOrder (this);
 			} else {
-				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
+				TypeBuilder builder = Parent.TypeBuilder;
 
 				TypeBuilder = builder.DefineNestedType (
 					Basename,
@@ -690,8 +662,8 @@ namespace Mono.CSharp {
 				TypeContainer tc = TypeManager.LookupTypeContainer (builder);
 				tc.RegisterOrder (this);
 			}
-			
-			RootContext.TypeManager.AddUserInterface (Name, TypeBuilder, this);
+
+			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);
 			InTransit = false;
 			
 			return TypeBuilder;
@@ -707,30 +679,37 @@ namespace Mono.CSharp {
 
 			if (defined_method != null){
 				foreach (InterfaceMethod im in defined_method)
-					PopulateMethod (im);
+					PopulateMethod (parent, this, im);
 			}
 
 			if (defined_properties != null){
 				foreach (InterfaceProperty ip in defined_properties)
-					PopulateProperty (ip);
+					PopulateProperty (parent, this, ip);
 			}
 
 			if (defined_events != null)
 				foreach (InterfaceEvent ie in defined_events)
-					PopulateEvent (ie);
+					PopulateEvent (parent, this, ie);
 
+			//
+			// FIXME: Pull the right indexer name out of the `IndexerName' attribute
+			//
 			if (defined_indexer != null) {
 				foreach (InterfaceIndexer ii in defined_indexer)
-					PopulateIndexer (ii);
+					PopulateIndexer (parent, this, ii);
 
-				CustomAttributeBuilder cb = EmitDefaultMemberAttr (parent, ModFlags, Location);
-				TypeBuilder.SetCustomAttribute (cb);
-			}
+				CustomAttributeBuilder cb = EmitDefaultMemberAttr (
+					parent, "Item", ModFlags, Location);
+				if (cb != null)
+					TypeBuilder.SetCustomAttribute (cb);
+ 			}
 			
 			return true;
 		}
 
-		public static CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent, int flags,
+		public static CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent,
+									    string name,
+									    int flags,
 									    Location loc)
 		{
 			EmitContext ec = new EmitContext (parent, loc, null, null, flags);
@@ -749,9 +728,14 @@ namespace Mono.CSharp {
 
 			MethodBase constructor = mg.Methods [0];
 
-			string [] vals = { "Item" };
+			string [] vals = { name };
 
-			CustomAttributeBuilder cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, vals);
+			CustomAttributeBuilder cb = null;
+			try {
+				cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, vals);
+			} catch {
+				Report.Warning (-100, "Can not set the indexer default member attribute");
+			}
 
 			return cb;
 		}

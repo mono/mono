@@ -3,3 +3,7 @@ mbas.exe
 mb-parser.cs
 y.output
 *.pdb
+mbas.csproj.user
+mbas.suo
+bin/*
+obj/*

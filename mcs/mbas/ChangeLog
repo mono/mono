@@ -1,0 +1,6 @@
+2002-05-27  Rafael Teixeira  <rafelteixeirabr@hotmail.com>
+
+	* merged all I could from mcs source files into mbas
+	* added VS.NET Solution and Project Files for mbas
+	* added icon file and a vb-sources-filled testmbas directory
+	* started this ChangeLog

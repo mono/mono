@@ -4,6 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full /optimize /target:exe /r:System.dll /out:mb
 VERSION=0.13
 
 COMPILER_SOURCES = \
+      AssemblyInfo.cs   \
 	assign.cs		\
 	attribute.cs		\
 	cfold.cs		\

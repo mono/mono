@@ -313,10 +313,12 @@ namespace Mono.CSharp {
 				return new ByteConstant ((byte)v);
 			else if (t == TypeManager.char_type)
 				return new CharConstant ((char)v);
+			else if (t == TypeManager.bool_type)
+				return new BoolConstant ((bool) v);
 			else if (TypeManager.IsEnumType (t)){
-				Expression e = Constantify (v, v.GetType ());
+				Constant e = Constantify (v, v.GetType ());
 
-				return new EnumConstant ((Constant) e, t);
+				return new EnumConstant (e, t);
 			} else
 				throw new Exception ("Unknown type for constant (" + t +
 						     "), details: " + v);
@@ -340,67 +342,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		//
-		// Returns whether the array of memberinfos contains the given method
-		//
-		static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
-		{
-			Type [] new_args = TypeManager.GetArgumentTypes (new_method);
-
-			foreach (MethodBase method in array){
-				if (method.Name != new_method.Name)
-					continue;
-				
-				Type [] old_args = TypeManager.GetArgumentTypes (method);
-				int old_count = old_args.Length;
-				int i;
-
-				if (new_args.Length != old_count)
-					continue;
-				
-				for (i = 0; i < old_count; i++){
-					if (old_args [i] != new_args [i])
-						break;
-				}
-				if (i != old_count)
-					continue;
-
-				if (!(method is MethodInfo && new_method is MethodInfo))
-					return true;
-				
-				if (((MethodInfo) method).ReturnType == ((MethodInfo) new_method).ReturnType)
-					return true;
-			}
-			return false;
-		}
-		
-		//
-		// We copy methods from `new_members' into `target_list' if the signature
-		// for the method from in the new list does not exist in the target_list
-		//
-		// The name is assumed to be the same.
-		//
-		public static ArrayList CopyNewMethods (ArrayList target_list, MemberInfo [] new_members)
-		{
-			if (target_list == null){
-				target_list = new ArrayList ();
-
-				target_list.AddRange (new_members);
-				return target_list;
-			}
-			
-			MemberInfo [] target_array = new MemberInfo [target_list.Count];
-			target_list.CopyTo (target_array, 0);
-			
-			foreach (MemberInfo mi in new_members){
-				MethodBase new_method = (MethodBase) mi;
-
-				if (!ArrayContainsMethod (target_array, new_method))
-					target_list.Add (new_method);
-			}
-			return target_list;
-		}
-		
 		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
 		//
@@ -432,76 +373,20 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			Type source_type = ec.ContainerType;
+			MemberInfo [] mi = TypeManager.MemberLookup (ec.ContainerType, t, mt, bf, name);
 
-			if (source_type != null){
-				if (source_type == t || source_type.IsSubclassOf (t))
-					bf |= BindingFlags.NonPublic;
-			}
+			if (mi == null)
+				return null;
 
-			//
-			// Lookup for members starting in the type requested and going
-			// up the hierarchy until a match is found.
-			//
-			// As soon as a non-method match is found, we return.
-			//
-			// If methods are found though, then the search proceeds scanning
-			// for more public methods in the hierarchy with signatures that
-			// do not match any of the signatures found so far.
-			//
-			ArrayList method_list = null;
-			Type current_type = t;
-			bool searching = true;
-			do {
-				MemberInfo [] mi;
+			int count = mi.Length;
 
-				mi = RootContext.TypeManager.FindMembers (
-					current_type, mt, bf | BindingFlags.DeclaredOnly,
-					System.Type.FilterName, name);
-				
-				if (current_type == TypeManager.object_type)
-					searching = false;
-				else {
-					current_type = current_type.BaseType;
+			if (count > 1)
+				return new MethodGroupExpr (mi, loc);
 
-					//
-					// This happens with interfaces, they have a null
-					// basetype
-					//
-					if (current_type == null)
-						searching = false;
-				}
+			if (mi [0] is MethodBase)
+				return new MethodGroupExpr (mi, loc);
 
-				if (mi == null)
-					continue;
-				
-				int count = mi.Length;
-
-				if (count == 0)
-					continue;
-
-				//
-				// Events are returned by both `static' and `instance'
-				// searches, which means that our above FindMembers will
-				// return two copies of the same.
-				//
-				if (count == 1 && !(mi [0] is MethodBase))
-					return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
-				if (count == 2 && (mi [0] is EventInfo))
-					return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
-
-				//
-				// We found methods, turn the search into "method scan"
-				// mode.
-				//
-				method_list = CopyNewMethods (method_list, mi);
-				mt &= (MemberTypes.Method | MemberTypes.Constructor);
-			} while (searching);
-
-			if (method_list != null && method_list.Count > 0)
-				return new MethodGroupExpr (method_list);
-
-			return null;
+			return ExprClassFromMemberInfo (ec, mi [0], loc);
 		}
 
 		public const MemberTypes AllMemberTypes =
@@ -522,6 +407,11 @@ namespace Mono.CSharp {
 			return MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
+		public static Expression MethodLookup (EmitContext ec, Type t, string name, Location loc)
+		{
+			return MemberLookup (ec, t, name, MemberTypes.Method, AllBindingFlags, loc);
+		}
+
 		/// <summary>
 		///   This is a wrapper for MemberLookup that is not used to "probe", but
 		///   to find a final definition.  If the final definition is not found, we
@@ -531,9 +421,15 @@ namespace Mono.CSharp {
 		public static Expression MemberLookupFinal (EmitContext ec, Type t, string name, 
 							    Location loc)
 		{
+			return MemberLookupFinal (ec, t, name, MemberTypes.Method, AllBindingFlags, loc);
+		}
+
+		public static Expression MemberLookupFinal (EmitContext ec, Type t, string name,
+							    MemberTypes mt, BindingFlags bf, Location loc)
+		{
 			Expression e;
 
-			e = MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
+			e = MemberLookup (ec, t, name, mt, bf, loc);
 
 			if (e != null)
 				return e;
@@ -551,12 +447,19 @@ namespace Mono.CSharp {
 			}
 			
 			return null;
-		}
+		}			
 		
+		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
+			if (expr_type == null && expr.eclass == ExprClass.MethodGroup){
+				// if we are a method group, emit a warning
+
+				expr.Emit (null);
+			}
+			
 			if (target_type == TypeManager.object_type) {
 				//
 				// A pointer type cannot be converted to object
@@ -839,6 +742,101 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// Tests whether an implicit reference conversion exists between expr_type
+		// and target_type
+		//
+		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
+		{
+			Type expr_type = expr.Type;
+			
+			//
+			// This is the boxed case.
+			//
+			if (target_type == TypeManager.object_type) {
+				if ((expr_type.IsClass) ||
+				    (expr_type.IsValueType) ||
+				    (expr_type.IsInterface))
+					return true;
+				
+			} else if (expr_type.IsSubclassOf (target_type)) {
+				return true;
+				
+			} else {
+				// Please remember that all code below actually comes
+				// from ImplicitReferenceConversion so make sure code remains in sync
+				
+				// from any class-type S to any interface-type T.
+				if (expr_type.IsClass && target_type.IsInterface) {
+					if (TypeManager.ImplementsInterface (expr_type, target_type))
+						return true;
+				}
+				
+				// from any interface type S to interface-type T.
+				if (expr_type.IsInterface && target_type.IsInterface)
+					if (TypeManager.ImplementsInterface (expr_type, target_type))
+						return true;
+				
+				// from an array-type S to an array-type of type T
+				if (expr_type.IsArray && target_type.IsArray) {
+					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
+						
+						Type expr_element_type = expr_type.GetElementType ();
+
+						if (MyEmptyExpr == null)
+							MyEmptyExpr = new EmptyExpression ();
+						
+						MyEmptyExpr.SetType (expr_element_type);
+						Type target_element_type = target_type.GetElementType ();
+						
+						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
+							if (StandardConversionExists (MyEmptyExpr,
+										      target_element_type))
+								return true;
+					}
+				}
+				
+				// from an array-type to System.Array
+				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+					return true;
+				
+				// from any delegate type to System.Delegate
+				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
+				    target_type == TypeManager.delegate_type)
+					if (target_type.IsAssignableFrom (expr_type))
+						return true;
+					
+				// from any array-type or delegate type into System.ICloneable.
+				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
+					if (target_type == TypeManager.icloneable_type)
+						return true;
+				
+				// from the null type to any reference-type.
+				if (expr is NullLiteral && !target_type.IsValueType)
+					return true;
+				
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		///  Same as StandardConversionExists except that it also looks at
+		///  implicit user defined conversions - needed for overload resolution
+		/// </summary>
+		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
+		{
+			if (StandardConversionExists (expr, target_type) == true)
+				return true;
+
+			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
+
+			if (dummy != null)
+				return true;
+
+			return false;
+		}
+		
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
@@ -851,7 +849,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// First numeric conversions 
-			
+
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to short, int, long, float, double.
@@ -956,154 +954,289 @@ namespace Mono.CSharp {
 					return true;
 			}	
 			
-			// Next reference conversions
-
-			if (target_type == TypeManager.object_type) {
-				if ((expr_type.IsClass) ||
-				    (expr_type.IsValueType))
-					return true;
-				
-			} else if (expr_type.IsSubclassOf (target_type)) {
+			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
-				
-			} else {
-				// Please remember that all code below actually comes
-				// from ImplicitReferenceConversion so make sure code remains in sync
-				
-				// from any class-type S to any interface-type T.
-				if (expr_type.IsClass && target_type.IsInterface) {
-					if (TypeManager.ImplementsInterface (expr_type, target_type))
-						return true;
-				}
-				
-				// from any interface type S to interface-type T.
-				// FIXME : Is it right to use IsAssignableFrom ?
-				if (expr_type.IsInterface && target_type.IsInterface)
-					if (target_type.IsAssignableFrom (expr_type))
-						return true;
-				
-				// from an array-type S to an array-type of type T
-				if (expr_type.IsArray && target_type.IsArray) {
-					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
-						
-						Type expr_element_type = expr_type.GetElementType ();
+			
+			if (expr is IntConstant){
+				int value = ((IntConstant) expr).Value;
 
-						if (MyEmptyExpr == null)
-							MyEmptyExpr = new EmptyExpression ();
-						
-						MyEmptyExpr.SetType (expr_element_type);
-						Type target_element_type = target_type.GetElementType ();
-						
-						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-							if (StandardConversionExists (MyEmptyExpr,
-										      target_element_type))
-								return true;
-					}
+				if (target_type == TypeManager.sbyte_type){
+					if (value >= SByte.MinValue && value <= SByte.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.byte_type){
+					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.short_type){
+					if (value >= Int16.MinValue && value <= Int16.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.ushort_type){
+					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.uint32_type){
+					if (value >= 0)
+						return true;
+				} else if (target_type == TypeManager.uint64_type){
+					 //
+					 // we can optimize this case: a positive int32
+					 // always fits on a uint64.  But we need an opcode
+					 // to do it.
+					 //
+					if (value >= 0)
+						return true;
 				}
 				
-				// from an array-type to System.Array
-				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+				if (value == 0 && expr is IntLiteral && TypeManager.IsEnumType (target_type))
 					return true;
-				
-				// from any delegate type to System.Delegate
-				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
-				    target_type == TypeManager.delegate_type)
-					if (target_type.IsAssignableFrom (expr_type))
-						return true;
-					
-				// from any array-type or delegate type into System.ICloneable.
-				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
-					if (target_type == TypeManager.icloneable_type)
-						return true;
-				
-				// from the null type to any reference-type.
-				if (expr is NullLiteral && !target_type.IsValueType)
-					return true;
-				
 			}
 
+			if (expr is LongConstant && target_type == TypeManager.uint64_type){
+				//
+				// Try the implicit constant expression conversion
+				// from long to ulong, instead of a nice routine,
+				// we just inline it
+				//
+				long v = ((LongConstant) expr).Value;
+				if (v > 0)
+					return true;
+			}
+			
+			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
+				IntLiteral i = (IntLiteral) expr;
+
+				if (i.Value == 0)
+					return true;
+			}
 			return false;
 		}
 
-		static EmptyExpression MyEmptyExpr;
-		/// <summary>
-		///   Tells whether an implicit conversion exists from expr_type to
-		///   target_type
-		/// </summary>
-		public bool ImplicitConversionExists (EmitContext ec, Type expr_type, Type target_type,
-						      Location l)
-		{
-			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression (expr_type);
-			else
-				MyEmptyExpr.SetType (expr_type);
-
-			return ConvertImplicit (ec, MyEmptyExpr, target_type, l) != null;
-		}
+		//
+		// Used internally by FindMostEncompassedType, this is used
+		// to avoid creating lots of objects in the tight loop inside
+		// FindMostEncompassedType
+		//
+		static EmptyExpression priv_fmet_param;
 		
 		/// <summary>
 		///  Finds "most encompassed type" according to the spec (13.4.2)
-		///  amongst the methods in the MethodGroupExpr which convert from a
-		///  type encompassing source_type
+		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		static Type FindMostEncompassedType (MethodGroupExpr me, Type source_type)
+		static Type FindMostEncompassedType (ArrayList types)
 		{
 			Type best = null;
-			
-			for (int i = me.Methods.Length; i > 0; ) {
-				i--;
 
-				MethodBase mb = me.Methods [i];
-				ParameterData pd = Invocation.GetParameterData (mb);
-				Type param_type = pd.ParameterType (0);
+			if (priv_fmet_param == null)
+				priv_fmet_param = new EmptyExpression ();
 
-				Expression source = new EmptyExpression (source_type);
-				Expression param = new EmptyExpression (param_type);
-
-				if (StandardConversionExists (source, param_type)) {
-					if (best == null)
-						best = param_type;
-					
-					if (StandardConversionExists (param, best))
-						best = param_type;
+			foreach (Type t in types){
+				priv_fmet_param.SetType (t);
+				
+				if (best == null) {
+					best = t;
+					continue;
 				}
+				
+				if (StandardConversionExists (priv_fmet_param, best))
+					best = t;
 			}
 
 			return best;
 		}
+
+		//
+		// Used internally by FindMostEncompassingType, this is used
+		// to avoid creating lots of objects in the tight loop inside
+		// FindMostEncompassingType
+		//
+		static EmptyExpression priv_fmee_ret;
 		
 		/// <summary>
 		///  Finds "most encompassing type" according to the spec (13.4.2)
-		///  amongst the methods in the MethodGroupExpr which convert to a
-		///  type encompassed by target_type
+		///  amongst the types in the given set
 		/// </summary>
-		static Type FindMostEncompassingType (MethodGroupExpr me, Type target)
+		static Type FindMostEncompassingType (ArrayList types)
 		{
 			Type best = null;
-			
-			for (int i = me.Methods.Length; i > 0; ) {
-				i--;
-				
-				MethodInfo mi = (MethodInfo) me.Methods [i];
-				Type ret_type = mi.ReturnType;
 
-				Expression ret = new EmptyExpression (ret_type);
-				
-				if (StandardConversionExists (ret, target)) {
-					if (best == null)
-						best = ret_type;
+			if (priv_fmee_ret == null)
+				priv_fmee_ret = new EmptyExpression ();
 
-					if (!StandardConversionExists (ret, best))
-						best = ret_type;
+			foreach (Type t in types){
+				priv_fmee_ret.SetType (best);
+
+				if (best == null) {
+					best = t;
+					continue;
 				}
-				
+
+				if (StandardConversionExists (priv_fmee_ret, t))
+					best = t;
 			}
 			
 			return best;
+		}
 
+		//
+		// Used to avoid creating too many objects
+		//
+		static EmptyExpression priv_fms_expr;
+		
+		/// <summary>
+		///   Finds the most specific source Sx according to the rules of the spec (13.4.4)
+		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
+		///   for explicit and implicit conversion operators.
+		/// </summary>
+		static public Type FindMostSpecificSource (MethodGroupExpr me, Type source_type,
+							   bool apply_explicit_conv_rules,
+							   Location loc)
+		{
+			ArrayList src_types_set = new ArrayList ();
+			
+			if (priv_fms_expr == null)
+				priv_fms_expr = new EmptyExpression ();
+			
+			//
+			// If any operator converts from S then Sx = S
+			//
+			foreach (MethodBase mb in me.Methods){
+				ParameterData pd = Invocation.GetParameterData (mb);
+				Type param_type = pd.ParameterType (0);
+
+				if (param_type == source_type)
+					return param_type;
+
+				if (apply_explicit_conv_rules) {
+					//
+					// From the spec :
+					// Find the set of applicable user-defined conversion operators, U.  This set
+					// consists of the
+					// user-defined implicit or explicit conversion operators declared by
+					// the classes or structs in D that convert from a type encompassing
+					// or encompassed by S to a type encompassing or encompassed by T
+					//
+					priv_fms_expr.SetType (param_type);
+					if (StandardConversionExists (priv_fms_expr, source_type))
+						src_types_set.Add (param_type);
+					else {
+						priv_fms_expr.SetType (source_type);
+						if (StandardConversionExists (priv_fms_expr, param_type))
+							src_types_set.Add (param_type);
+					}
+				} else {
+					//
+					// Only if S is encompassed by param_type
+					//
+					priv_fms_expr.SetType (source_type);
+					if (StandardConversionExists (priv_fms_expr, param_type))
+						src_types_set.Add (param_type);
+				}
+			}
+			
+			//
+			// Explicit Conv rules
+			//
+			if (apply_explicit_conv_rules) {
+				ArrayList candidate_set = new ArrayList ();
+
+				foreach (Type param_type in src_types_set){
+					priv_fms_expr.SetType (source_type);
+					
+					if (StandardConversionExists (priv_fms_expr, param_type))
+						candidate_set.Add (param_type);
+				}
+
+				if (candidate_set.Count != 0)
+					return FindMostEncompassedType (candidate_set);
+			}
+
+			//
+			// Final case
+			//
+			if (apply_explicit_conv_rules)
+				return FindMostEncompassingType (src_types_set);
+			else
+				return FindMostEncompassedType (src_types_set);
+		}
+
+		//
+		// Useful in avoiding proliferation of objects
+		//
+		static EmptyExpression priv_fmt_expr;
+		
+		/// <summary>
+		///  Finds the most specific target Tx according to section 13.4.4
+		/// </summary>
+		static public Type FindMostSpecificTarget (MethodGroupExpr me, Type target,
+							   bool apply_explicit_conv_rules,
+							   Location loc)
+		{
+			ArrayList tgt_types_set = new ArrayList ();
+			
+			if (priv_fmt_expr == null)
+				priv_fmt_expr = new EmptyExpression ();
+			
+			//
+			// If any operator converts to T then Tx = T
+			//
+			foreach (MethodInfo mi in me.Methods){
+				Type ret_type = mi.ReturnType;
+
+				if (ret_type == target)
+					return ret_type;
+
+				if (apply_explicit_conv_rules) {
+					//
+					// From the spec :
+					// Find the set of applicable user-defined conversion operators, U.
+					//
+					// This set consists of the
+					// user-defined implicit or explicit conversion operators declared by
+					// the classes or structs in D that convert from a type encompassing
+					// or encompassed by S to a type encompassing or encompassed by T
+					//
+					priv_fms_expr.SetType (ret_type);
+					if (StandardConversionExists (priv_fms_expr, target))
+						tgt_types_set.Add (ret_type);
+					else {
+						priv_fms_expr.SetType (target);
+						if (StandardConversionExists (priv_fms_expr, ret_type))
+							tgt_types_set.Add (ret_type);
+					}
+				} else {
+					//
+					// Only if T is encompassed by param_type
+					//
+					priv_fms_expr.SetType (ret_type);
+					if (StandardConversionExists (priv_fms_expr, target))
+						tgt_types_set.Add (ret_type);
+				}
+			}
+
+			//
+			// Explicit conv rules
+			//
+			if (apply_explicit_conv_rules) {
+				ArrayList candidate_set = new ArrayList ();
+
+				foreach (Type ret_type in tgt_types_set){
+					priv_fmt_expr.SetType (ret_type);
+					
+					if (StandardConversionExists (priv_fmt_expr, target))
+						candidate_set.Add (ret_type);
+				}
+
+				if (candidate_set.Count != 0)
+					return FindMostEncompassingType (candidate_set);
+			}
+			
+			//
+			// Okay, final case !
+			//
+			if (apply_explicit_conv_rules)
+				return FindMostEncompassedType (tgt_types_set);
+			else
+				return FindMostEncompassingType (tgt_types_set);
 		}
 		
-
 		/// <summary>
 		///  User-defined Implicit conversions
 		/// </summary>
@@ -1121,6 +1254,82 @@ namespace Mono.CSharp {
 		{
 			return UserDefinedConversion (ec, source, target, loc, true);
 		}
+
+		/// <summary>
+		///   Computes the MethodGroup for the user-defined conversion
+		///   operators from source_type to target_type.  `look_for_explicit'
+		///   controls whether we should also include the list of explicit
+		///   operators
+		/// </summary>
+		static MethodGroupExpr GetConversionOperators (EmitContext ec,
+							       Type source_type, Type target_type,
+							       Location loc, bool look_for_explicit)
+		{
+			Expression mg1 = null, mg2 = null;
+			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
+			string op_name;
+
+			//
+			// FIXME : How does the False operator come into the picture ?
+			// This doesn't look complete and very correct !
+			//
+			if (target_type == TypeManager.bool_type && !look_for_explicit)
+				op_name = "op_True";
+			else
+				op_name = "op_Implicit";
+
+			MethodGroupExpr union3;
+			
+			mg1 = MethodLookup (ec, source_type, op_name, loc);
+			if (source_type.BaseType != null)
+				mg2 = MethodLookup (ec, source_type.BaseType, op_name, loc);
+
+			if (mg1 == null)
+				union3 = (MethodGroupExpr) mg2;
+			else if (mg2 == null)
+				union3 = (MethodGroupExpr) mg1;
+			else
+				union3 = Invocation.MakeUnionSet (mg1, mg2, loc);
+
+			mg1 = MethodLookup (ec, target_type, op_name, loc);
+			if (mg1 != null){
+				if (union3 != null)
+					union3 = Invocation.MakeUnionSet (union3, mg1, loc);
+				else
+					union3 = (MethodGroupExpr) mg1;
+			}
+
+			if (target_type.BaseType != null)
+				mg1 = MethodLookup (ec, target_type.BaseType, op_name, loc);
+			
+			if (mg1 != null){
+				if (union3 != null)
+					union3 = Invocation.MakeUnionSet (union3, mg1, loc);
+				else
+					union3 = (MethodGroupExpr) mg1;
+			}
+
+			MethodGroupExpr union4 = null;
+
+			if (look_for_explicit) {
+				op_name = "op_Explicit";
+
+				mg5 = MemberLookup (ec, source_type, op_name, loc);
+				if (source_type.BaseType != null)
+					mg6 = MethodLookup (ec, source_type.BaseType, op_name, loc);
+				
+				mg7 = MemberLookup (ec, target_type, op_name, loc);
+				if (target_type.BaseType != null)
+					mg8 = MethodLookup (ec, target_type.BaseType, op_name, loc);
+				
+				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6, loc);
+				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8, loc);
+
+				union4 = Invocation.MakeUnionSet (union5, union6, loc);
+			}
+			
+			return Invocation.MakeUnionSet (union3, union4, loc);
+		}
 		
 		/// <summary>
 		///   User-defined conversions
@@ -1129,124 +1338,72 @@ namespace Mono.CSharp {
 								Type target, Location loc,
 								bool look_for_explicit)
 		{
-			Expression mg1 = null, mg2 = null, mg3 = null, mg4 = null;
-			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
-			Expression e;
-			MethodBase method = null;
+			MethodGroupExpr union;
 			Type source_type = source.Type;
-
-			string op_name;
+			MethodBase method = null;
 			
-			// If we have a boolean type, we need to check for the True operator
+			union = GetConversionOperators (ec, source_type, target, loc, look_for_explicit);
+			if (union == null)
+				return null;
+			
+			Type most_specific_source, most_specific_target;
 
-			// FIXME : How does the False operator come into the picture ?
-			// FIXME : This doesn't look complete and very correct !
-			if (target == TypeManager.bool_type)
-				op_name = "op_True";
+#if BLAH
+			foreach (MethodBase m in union.Methods){
+				Console.WriteLine ("Name: " + m.Name);
+				Console.WriteLine ("    : " + ((MethodInfo)m).ReturnType);
+			}
+#endif
+			
+			most_specific_source = FindMostSpecificSource (union, source_type, look_for_explicit, loc);
+			if (most_specific_source == null)
+				return null;
+
+			most_specific_target = FindMostSpecificTarget (union, target, look_for_explicit, loc);
+			if (most_specific_target == null) 
+				return null;
+			
+			int count = 0;
+
+			foreach (MethodBase mb in union.Methods){
+				ParameterData pd = Invocation.GetParameterData (mb);
+				MethodInfo mi = (MethodInfo) mb;
+				
+				if (pd.ParameterType (0) == most_specific_source &&
+				    mi.ReturnType == most_specific_target) {
+					method = mb;
+					count++;
+				}
+			}
+			
+			if (method == null || count > 1) {
+				Report.Error (-11, loc, "Ambiguous user defined conversion");
+				return null;
+			}
+			
+			//
+			// This will do the conversion to the best match that we
+			// found.  Now we need to perform an implict standard conversion
+			// if the best match was not the type that we were requested
+			// by target.
+			//
+			if (look_for_explicit)
+				source = ConvertExplicitStandard (ec, source, most_specific_source, loc);
 			else
-				op_name = "op_Implicit";
-			
-			mg1 = MemberLookup (ec, source_type, op_name, loc);
+				source = ConvertImplicitStandard (ec, source, most_specific_source, loc);
 
-			if (source_type.BaseType != null)
-				mg2 = MemberLookup (ec, source_type.BaseType, op_name, loc);
-			
-			mg3 = MemberLookup (ec, target, op_name, loc);
+			if (source == null)
+				return null;
 
-			if (target.BaseType != null)
-				mg4 = MemberLookup (ec, target.BaseType, op_name, loc);
-
-			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2);
-			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4);
-
-			MethodGroupExpr union3 = Invocation.MakeUnionSet (union1, union2);
-
-			MethodGroupExpr union4 = null;
-
-			if (look_for_explicit) {
-
-				op_name = "op_Explicit";
-				
-				mg5 = MemberLookup (ec, source_type, op_name, loc);
-
-				if (source_type.BaseType != null)
-					mg6 = MemberLookup (ec, source_type.BaseType, op_name, loc);
-				
-				mg7 = MemberLookup (ec, target, op_name, loc);
-				
-				if (target.BaseType != null)
-					mg8 = MemberLookup (ec, target.BaseType, op_name, loc);
-				
-				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6);
-				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8);
-
-				union4 = Invocation.MakeUnionSet (union5, union6);
-			}
-			
-			MethodGroupExpr union = Invocation.MakeUnionSet (union3, union4);
-
-			if (union != null) {
-
-				Type most_specific_source, most_specific_target;
-
-				most_specific_source = FindMostEncompassedType (union, source_type);
-				if (most_specific_source == null)
-					return null;
-
-				most_specific_target = FindMostEncompassingType (union, target);
-				if (most_specific_target == null) 
-					return null;
-				
-				int count = 0;
-				
-				for (int i = union.Methods.Length; i > 0;) {
-					i--;
-
-					MethodBase mb = union.Methods [i];
-					ParameterData pd = Invocation.GetParameterData (mb);
-					MethodInfo mi = (MethodInfo) union.Methods [i];
-
-					if (pd.ParameterType (0) == most_specific_source &&
-					    mi.ReturnType == most_specific_target) {
-						method = mb;
-						count++;
-					}
-				}
-
-				if (method == null || count > 1) {
-					Report.Error (-11, loc, "Ambiguous user defined conversion");
-					return null;
-				}
-				
-				//
-				// This will do the conversion to the best match that we
-				// found.  Now we need to perform an implict standard conversion
-				// if the best match was not the type that we were requested
-				// by target.
-				//
-				if (look_for_explicit)
-					source = ConvertExplicitStandard (ec, source, most_specific_source, loc);
+			Expression e;
+			e =  new UserCast ((MethodInfo) method, source);
+			if (e.Type != target){
+				if (!look_for_explicit)
+					e = ConvertImplicitStandard (ec, e, target, loc);
 				else
-					source = ConvertImplicitStandard (ec, source,
-									  most_specific_source, loc);
-
-				if (source == null)
-					return null;
-
-				e =  new UserCast ((MethodInfo) method, source);
-				
-				if (e.Type != target){
-					if (!look_for_explicit)
-						e = ConvertImplicitStandard (ec, e, target, loc);
-					else
-						e = ConvertExplicitStandard (ec, e, target, loc);
-
-					return e;
-				} else
-					return e;
-			}
-			
-			return null;
+					e = ConvertExplicitStandard (ec, e, target, loc);
+			} 
+			return e;
 		}
 		
 		/// <summary>
@@ -1630,7 +1787,7 @@ namespace Mono.CSharp {
 		///  Returns whether an explicit reference conversion can be performed
 		///  from source_type to target_type
 		/// </summary>
-		static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
+		public static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
 		{
 			bool target_is_value_type = target_type.IsValueType;
 			
@@ -1658,11 +1815,11 @@ namespace Mono.CSharp {
 			}
 			    
 			//
-			// From any class type S to any interface T, provides S is not sealed
+			// From any class type S to any interface T, provided S is not sealed
 			// and provided S does not implement T.
 			//
 			if (target_type.IsInterface && !source_type.IsSealed &&
-			    !target_type.IsAssignableFrom (source_type))
+			    !TypeManager.ImplementsInterface (source_type, target_type))
 				return true;
 
 			//
@@ -1670,9 +1827,10 @@ namespace Mono.CSharp {
 			// sealed, or provided T implements S.
 			//
 			if (source_type.IsInterface &&
-			    (!target_type.IsSealed || source_type.IsAssignableFrom (target_type)))
+			    (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type)))
 				return true;
-
+			
+			
 			// From an array type S with an element type Se to an array type T with an 
 			// element type Te provided all the following are true:
 			//     * S and T differe only in element type, in other words, S and T
@@ -1725,7 +1883,7 @@ namespace Mono.CSharp {
 		{
 			Type source_type = source.Type;
 			bool target_is_value_type = target_type.IsValueType;
-			
+
 			//
 			// From object to any reference type
 			//
@@ -1754,7 +1912,6 @@ namespace Mono.CSharp {
 			// and provided S does not implement T.
 			//
 			if (target_type.IsInterface && !source_type.IsSealed) {
-				
 				if (TypeManager.ImplementsInterface (source_type, target_type))
 					return null;
 				else
@@ -1767,11 +1924,7 @@ namespace Mono.CSharp {
 			// sealed, or provided T implements S.
 			//
 			if (source_type.IsInterface) {
-
-				if (target_type.IsSealed)
-					return null;
-				
-				if (TypeManager.ImplementsInterface (target_type, source_type))
+				if (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type))
 					return new ClassCast (source, target_type);
 				else
 					return null;
@@ -1927,7 +2080,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Same as ConverExplicit, only it doesn't include user defined conversions
+		///   Same as ConvertExplicit, only it doesn't include user defined conversions
 		/// </summary>
 		static public Expression ConvertExplicitStandard (EmitContext ec, Expression expr,
 								  Type target_type, Location l)
@@ -2271,16 +2424,9 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Load the object from the pointer.  The `IsReference' is used
-		// to control whether we should use Ldind_Ref or LdObj if the
-		// value is not a `core' type.
+		// Load the object from the pointer.  
 		//
-		// Maybe we should try to extract this infromation form the type?
-		// TODO: Maybe this is a bug.  The reason we have this flag is because
-		// I had almost identical code in ParameterReference (for handling
-		// references) and in UnboxCast.
-		//
-		public static void LoadFromPtr (ILGenerator ig, Type t, bool IsReference)
+		public static void LoadFromPtr (ILGenerator ig, Type t)
 		{
 			if (t == TypeManager.int32_type)
 				ig.Emit (OpCodes.Ldind_I4);
@@ -2308,14 +2454,12 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldind_I1);
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldind_I);
-			else if (TypeManager.IsEnumType (t)){
-				LoadFromPtr (ig, TypeManager.EnumToUnderlying (t), IsReference);
-			} else {
-				if (IsReference)
-					ig.Emit (OpCodes.Ldind_Ref);
-				else 
-					ig.Emit (OpCodes.Ldobj, t);
-			}
+			else if (TypeManager.IsEnumType (t))
+				LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
+			else if (t.IsValueType)
+				ig.Emit (OpCodes.Ldobj, t);
+			else
+				ig.Emit (OpCodes.Ldind_Ref);
 		}
 
 		//
@@ -2339,6 +2483,8 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stind_I1);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stind_I);
+			else if (type.IsValueType)
+				ig.Emit (OpCodes.Stobj);
 			else
 				ig.Emit (OpCodes.Stind_Ref);
 		}
@@ -2366,6 +2512,13 @@ namespace Mono.CSharp {
 				return 2;
 			else
 				return 0;
+		}
+
+		//
+		// Default implementation of IAssignMethod.CacheTemporaries
+		//
+		public void CacheTemporaries (EmitContext ec)
+		{
 		}
 	}
 
@@ -2599,7 +2752,7 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 			ig.Emit (OpCodes.Unbox, t);
 
-			LoadFromPtr (ig, t, false);
+			LoadFromPtr (ig, t);
 		}
 	}
 	
@@ -2966,12 +3119,18 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return SimpleNameResolve (ec, false);
+			return SimpleNameResolve (ec, null, false);
 		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return SimpleNameResolve (ec, right_side, false);
+		}
+		
 
 		public Expression DoResolveAllowStatic (EmitContext ec)
 		{
-			return SimpleNameResolve (ec, true);
+			return SimpleNameResolve (ec, null, true);
 		}
 
 		/// <remarks>
@@ -2991,7 +3150,7 @@ namespace Mono.CSharp {
 		///   Type is both an instance variable and a Type;  Type.GetType
 		///   is the static method not an instance method of type.
 		/// </remarks>
-		Expression SimpleNameResolve (EmitContext ec, bool allow_static)
+		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
 		{
 			Expression e = null;
 
@@ -3004,8 +3163,11 @@ namespace Mono.CSharp {
 					LocalVariableReference var;
 					
 					var = new LocalVariableReference (ec.CurrentBlock, Name, Location);
-					
-					return var.Resolve (ec);
+
+					if (right_side != null)
+						return var.ResolveLValue (ec, right_side);
+					else
+						return var.Resolve (ec);
 				}
 			
 				//
@@ -3013,13 +3175,30 @@ namespace Mono.CSharp {
 				//
 
 				//
-				// For enums, the TypeBuilder is not ec.TypeContainer.TypeBuilder
+				// For enums, the TypeBuilder is not ec.DeclSpace.TypeBuilder
 				// Hence we have two different cases
 				//
-				e = MemberLookup (ec, ec.DeclSpace.TypeBuilder, Name, Location);
+
+				DeclSpace lookup_ds = ec.DeclSpace;
+				do {
+					if (lookup_ds.TypeBuilder == null)
+						break;
+
+					e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, Location);
+					if (e != null)
+						break;
+
+					//
+					// Classes/structs keep looking, enums break
+					//
+					if (lookup_ds is TypeContainer)
+						lookup_ds = ((TypeContainer) lookup_ds).Parent;
+					else
+						break;
+				} while (lookup_ds != null);
 				
-				if (e == null && ec.TypeContainer.TypeBuilder != null)
-					e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, Location);
+				if (e == null && ec.ContainerType != null)
+					e = MemberLookup (ec, ec.ContainerType, Name, Location);
 			}
 
 			// Continuation of stage 2
@@ -3098,6 +3277,35 @@ namespace Mono.CSharp {
 					}
 				}
 
+				if (fi.IsLiteral) {
+					Type t = fi.FieldType;
+					Type decl_type = fi.DeclaringType;
+					object o;
+
+					if (fi is FieldBuilder)
+						o = TypeManager.GetValue ((FieldBuilder) fi);
+					else
+						o = fi.GetValue (fi);
+					
+					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
+						Expression enum_member = MemberLookup (
+							ec, decl_type, "value__", MemberTypes.Field,
+							AllBindingFlags, Location); 
+
+						Enum en = TypeManager.LookupEnum (decl_type);
+
+						Constant c;
+						if (en != null)
+							c = Constantify (o, en.UnderlyingType);
+						else 
+							c = Constantify (o, enum_member.Type);
+						
+						return new EnumConstant (c, decl_type);
+					}
+					
+					Expression exp = Constantify (o, t);
+				}
+					
 				return e;
 			} 				
 
@@ -3201,23 +3409,26 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MethodGroupExpr : Expression {
 		public MethodBase [] Methods;
+		Location loc;
 		Expression instance_expression = null;
 		
-		public MethodGroupExpr (MemberInfo [] mi)
+		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
 			Methods = new MethodBase [mi.Length];
 			mi.CopyTo (Methods, 0);
 			eclass = ExprClass.MethodGroup;
+			type = TypeManager.object_type;
+			loc = l;
 		}
 
-		public MethodGroupExpr (ArrayList l)
+		public MethodGroupExpr (ArrayList list, Location l)
 		{
-			Methods = new MethodBase [l.Count];
+			Methods = new MethodBase [list.Count];
 
 			try {
-				l.CopyTo (Methods, 0);
+				list.CopyTo (Methods, 0);
 			} catch {
-				foreach (MemberInfo m in l){
+				foreach (MemberInfo m in list){
 					if (!(m is MethodBase)){
 						Console.WriteLine ("Name " + m.Name);
 						Console.WriteLine ("Found a: " + m.GetType ().FullName);
@@ -3225,7 +3436,9 @@ namespace Mono.CSharp {
 				}
 				throw;
 			}
+			loc = l;
 			eclass = ExprClass.MethodGroup;
+			type = TypeManager.object_type;
 		}
 		
 		//
@@ -3246,20 +3459,22 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public void ReportUsageError ()
+		{
+			Report.Error (654, loc, "Method `" + Methods [0].DeclaringType + "." +
+				      Methods [0].Name + "()' is referenced without parentheses");
+		}
+
 		override public void Emit (EmitContext ec)
 		{
-			throw new Exception ("This should never be reached");
+			ReportUsageError ();
 		}
 
 		bool RemoveMethods (bool keep_static)
 		{
 			ArrayList smethods = new ArrayList ();
-			int top = Methods.Length;
-			int i;
-			
-			for (i = 0; i < top; i++){
-				MethodBase mb = Methods [i];
 
+			foreach (MethodBase mb in Methods){
 				if (mb.IsStatic == keep_static)
 					smethods.Add (mb);
 			}
@@ -3325,6 +3540,20 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		void Report_AssignToReadonly (bool is_instance)
+		{
+			string msg;
+			
+			if (is_instance)
+				msg = "Readonly field can not be assigned outside " +
+				"of constructor or variable initializer";
+			else
+				msg = "A static readonly field can only be assigned in " +
+				"a static constructor";
+
+			Report.Error (is_instance ? 191 : 198, loc, msg);
+		}
+		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			Expression e = DoResolve (ec);
@@ -3342,9 +3571,7 @@ namespace Mono.CSharp {
 			if (ec.IsConstructor)
 				return this;
 
-			Report.Error (191, loc,
-				      "Readonly field can not be assigned outside " +
-				      "of constructor or variable initializer");
+			Report_AssignToReadonly (true);
 			
 			return null;
 		}
@@ -3355,13 +3582,12 @@ namespace Mono.CSharp {
 			bool is_volatile = false;
 				
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
-				if (f != null){
-					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-						is_volatile = true;
+				FieldBase f = TypeManager.GetField (FieldInfo);
+
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+					is_volatile = true;
 				
-					f.status |= Field.Status.USED;
-				}
+				f.status |= Field.Status.USED;
 			}
 			
 			if (FieldInfo.IsStatic){
@@ -3397,8 +3623,15 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			bool is_static = FieldInfo.IsStatic;
+			FieldAttributes fa = FieldInfo.Attributes;
+			bool is_static = (fa & FieldAttributes.Static) != 0;
+			bool is_readonly = (fa & FieldAttributes.InitOnly) != 0;
 			ILGenerator ig = ec.ig;
+
+			if (is_readonly && !ec.IsConstructor){
+				Report_AssignToReadonly (!is_static);
+				return;
+			}
 			
 			if (!is_static){
 				Expression instance = InstanceExpression;
@@ -3419,8 +3652,9 @@ namespace Mono.CSharp {
 			source.Emit (ec);
 
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
-				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
+				FieldBase f = TypeManager.GetField (FieldInfo);
+				
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					ig.Emit (OpCodes.Volatile);
 			}
 			
@@ -3430,7 +3664,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stfld, FieldInfo);
 
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
+				FieldBase f = TypeManager.GetField (FieldInfo);
 
 				f.status |= Field.Status.ASSIGNED;
 			}
@@ -3441,13 +3675,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
-				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
+				FieldBase f = TypeManager.GetField (FieldInfo);
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					ig.Emit (OpCodes.Volatile);
 			}
 
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
+				FieldBase f = TypeManager.GetField (FieldInfo);
 
 				if ((mode & AddressOp.Store) != 0)
 					f.status |= Field.Status.ASSIGNED;
@@ -3503,9 +3737,9 @@ namespace Mono.CSharp {
 			Accessors = TypeManager.GetAccessors (pi);
 
 			if (Accessors != null)
-				for (int i = 0; i < Accessors.Length; i++){
-					if (Accessors [i] != null)
-						if (Accessors [i].IsStatic)
+				foreach (MethodInfo mi in Accessors){
+					if (mi != null)
+						if (mi.IsStatic)
 							IsStatic = true;
 				}
 			else
@@ -3556,7 +3790,26 @@ namespace Mono.CSharp {
 
 		override public void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, Accessors [0], null);
+			MethodInfo method = Accessors [0];
+
+			//
+			// Special case: length of single dimension array is turned into ldlen
+			//
+			if (method == TypeManager.int_array_get_length){
+				Type iet = instance_expr.Type;
+
+				//
+				// System.Array.Length can be called, but the Type does not
+				// support invoking GetArrayRank, so test for that case first
+				//
+				if (iet == TypeManager.array_type || (iet.GetArrayRank () == 1)){
+					instance_expr.Emit (ec);
+					ec.ig.Emit (OpCodes.Ldlen);
+					return;
+				}
+			}
+
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, method, null);
 			
 		}
 

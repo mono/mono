@@ -20,11 +20,10 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Holds Delegates
 	/// </summary>
-	public class Delegate : MemberCore {
+	public class Delegate : DeclSpace {
 		public readonly string ReturnType;
 		public Parameters      Parameters;
 		public Attributes      OptAttributes;
-		public TypeBuilder     TypeBuilder;
 
 		public ConstructorBuilder ConstructorBuilder;
 		public MethodBuilder      InvokeBuilder;
@@ -45,9 +44,10 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
-		public Delegate (string type, int mod_flags, string name, Parameters param_list,
+		public Delegate (TypeContainer parent, string type, int mod_flags,
+				 string name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (name, l)
+			: base (parent, name, l)
 		{
 			this.ReturnType = type;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC, l);
@@ -55,37 +55,41 @@ namespace Mono.CSharp {
 			OptAttributes   = attrs;
 		}
 
-		public void DefineDelegate (object parent_builder)
+		public override TypeBuilder DefineType ()
 		{
 			TypeAttributes attr;
-			string name = Name.Substring (1 + Name.LastIndexOf ('.'));
+
+			if (TypeBuilder != null)
+				return TypeBuilder;
 			
-			if (parent_builder is ModuleBuilder) {
-				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+			if (IsTopLevel) {
+				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				attr = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
 				TypeBuilder = builder.DefineType (
-					name, attr, TypeManager.multicast_delegate_type);
+					Name, attr, TypeManager.multicast_delegate_type);
 			} else {
-				// FIXME: We could just use TypeBuilder here.
-				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
+				TypeBuilder builder = Parent.TypeBuilder;
 				attr = TypeAttributes.NestedPublic | TypeAttributes.Class |
 					TypeAttributes.Sealed;
 
+				string name = Name.Substring (1 + Name.LastIndexOf ('.'));
 				TypeBuilder = builder.DefineNestedType (
 					name, attr, TypeManager.multicast_delegate_type);
 			}
 
-			RootContext.TypeManager.AddDelegateType (Name, TypeBuilder, this);
+			TypeManager.AddDelegateType (Name, TypeBuilder, this);
+
+			return TypeBuilder;
 		}
 
 		public override bool Define (TypeContainer parent)
 		{
 			MethodAttributes mattr;
 			int i;
-			
+
 			// FIXME: POSSIBLY make this static, as it is always constant
-			// 
+			//
 			Type [] const_arg_types = new Type [2];
 			const_arg_types [0] = TypeManager.object_type;
 			const_arg_types [1] = TypeManager.intptr_type;
@@ -116,22 +120,30 @@ namespace Mono.CSharp {
 				
 			
 			ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
-			
+
+			//
 			// Here the various methods like Invoke, BeginInvoke etc are defined
+			//
+			// First, call the `out of band' special method for
+			// defining recursively any types we need:
+			
+			if (!Parameters.ComputeAndDefineParameterTypes (this))
+				return false;
+			
+ 			param_types = Parameters.GetParameterInfo (this);
+			if (param_types == null)
+				return false;
 
 			//
 			// Invoke method
 			//
- 			param_types = Parameters.GetParameterInfo (parent);
-			if (param_types == null)
-				return false;
-
+			
 			// Check accessibility
 			foreach (Type partype in param_types)
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					return false;
 			
-  			ret_type = RootContext.LookupType (parent, ReturnType, false, Location);
+  			ret_type = FindType (ReturnType);
 			if (ret_type == null)
 				return false;
 
@@ -153,10 +165,23 @@ namespace Mono.CSharp {
  								  ret_type,		     
  								  param_types);
 
-			for (i = 0 ; i < param_types.Length; i++) {
-				Parameter p = Parameters.FixedParameters [i];
-				string name = p.Name;
-				ParameterBuilder pb = InvokeBuilder.DefineParameter (i+1, p.Attributes, name); 
+			i = 0;
+			if (Parameters.FixedParameters != null){
+				int top = Parameters.FixedParameters.Length;
+				Parameter p;
+				
+				for (; i < top; i++) {
+					p = Parameters.FixedParameters [i];
+
+					InvokeBuilder.DefineParameter (
+						i+1, p.Attributes, p.Name);
+				}
+			}
+			if (Parameters.ArrayParameter != null){
+				Parameter p = Parameters.ArrayParameter;
+				
+				InvokeBuilder.DefineParameter (
+					i+1, p.Attributes, p.Name);
 			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
@@ -176,8 +201,8 @@ namespace Mono.CSharp {
 			async_param_types [params_num] = TypeManager.asynccallback_type;
 			async_param_types [params_num + 1] = TypeManager.object_type;
 
-			mattr = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual |
-				MethodAttributes.NewSlot;
+			mattr = MethodAttributes.Public | MethodAttributes.HideBySig |
+				MethodAttributes.Virtual | MethodAttributes.NewSlot;
 			
 			BeginInvokeBuilder = TypeBuilder.DefineMethod ("BeginInvoke",
 								       mattr,
@@ -185,30 +210,50 @@ namespace Mono.CSharp {
 								       TypeManager.iasyncresult_type,
 								       async_param_types);
 
-			for (i = 0 ; i < param_types.Length; i++) {
-				Parameter p = Parameters.FixedParameters [i];
-				string name = p.Name;
-				BeginInvokeBuilder.DefineParameter (i + 1, p.Attributes, name); 
+			i = 0;
+			if (Parameters.FixedParameters != null){
+				int top = Parameters.FixedParameters.Length;
+				Parameter p;
+				
+				for (i = 0 ; i < top; i++) {
+					p = Parameters.FixedParameters [i];
+
+					BeginInvokeBuilder.DefineParameter (
+						i+1, p.Attributes, p.Name);
+				}
 			}
-			
+			if (Parameters.ArrayParameter != null){
+				Parameter p = Parameters.ArrayParameter;
+				
+				BeginInvokeBuilder.DefineParameter (
+					i+1, p.Attributes, p.Name);
+				i++;
+			}
+
 			BeginInvokeBuilder.DefineParameter (i + 1, ParameterAttributes.None, "callback");
 			BeginInvokeBuilder.DefineParameter (i + 2, ParameterAttributes.None, "object");
 			
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			Parameter [] async_params = new Parameter [params_num + 2];
-			if (params_num > 0)
+			int n = 0;
+			if (Parameters.FixedParameters != null){
 				Parameters.FixedParameters.CopyTo (async_params, 0);
-
+				n = Parameters.FixedParameters.Length;
+			}
+			if (Parameters.ArrayParameter != null)
+				async_params [n] = Parameters.ArrayParameter;
+			
 			async_params [params_num] = new Parameter ("System.AsyncCallback", "callback",
 								   Parameter.Modifier.NONE, null);
-			async_params [params_num + 1] = new Parameter ("System.IAsyncResult", "object",
+			async_params [params_num + 1] = new Parameter ("System.Object", "object",
 								   Parameter.Modifier.NONE, null);
 
+			Parameters async_parameters = new Parameters (async_params, null, Location);
+			
+			async_parameters.ComputeAndDefineParameterTypes (this);
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
-						    new InternalParameters (
-							    parent,
-							    new Parameters (async_params, null, Location)),
+						    new InternalParameters (parent, async_parameters),
 						    async_param_types);
 
 			//
@@ -248,6 +293,8 @@ namespace Mono.CSharp {
 		{
 			ParameterData pd = Invocation.GetParameterData (mb);
 
+			int pd_count = pd.Count;
+
 			Expression ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
 
@@ -260,8 +307,11 @@ namespace Mono.CSharp {
 
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
+			if (invoke_pd.Count != pd_count)
+				return null;
+
 			bool mismatch = false;
-			for (int i = pd.Count; i > 0; ) {
+			for (int i = pd_count; i > 0; ) {
 				i--;
 
 				if (invoke_pd.ParameterType (i) == pd.ParameterType (i))
@@ -299,7 +349,9 @@ namespace Mono.CSharp {
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
 		// </summary>
-		public static bool VerifyApplicability (EmitContext ec, Type delegate_type, ArrayList args,
+		public static bool VerifyApplicability (EmitContext ec,
+							Type delegate_type,
+							ArrayList args,
 							Location loc)
 		{
 			int arg_count;
@@ -318,47 +370,23 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
-
 			ParameterData pd = Invocation.GetParameterData (mb);
-			
-			if (pd.Count != arg_count) {
+
+			int pd_count = pd.Count;
+
+			bool not_params_method = (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS);
+
+			if (not_params_method && pd_count != arg_count) {
 				Report.Error (1593, loc,
 					      "Delegate '" + delegate_type.ToString ()
 					      + "' does not take '" + arg_count + "' arguments");
 				return false;
 			}
 
-			for (int i = arg_count; i > 0;) {
-				i--;
-				Expression conv;
-				Argument a = (Argument) args [i];
-				Expression a_expr = a.Expr;
-				
-				if (pd.ParameterType (i) != a_expr.Type) {
-					
-					conv = Expression.ConvertImplicitStandard (ec, a_expr, pd.ParameterType (i), loc);
-
-					if (conv == null) {
-						Report.Error (1594, loc,
-							      "Delegate '" + delegate_type.ToString () +
-							      "' has some invalid arguments.");
-
-						Report.Error (1503, loc,
-						       "Argument " + (i+1) +
-						       ": Cannot convert from '" +
-						       TypeManager.CSharpName (a_expr.Type)
-						       + "' to '" + TypeManager.CSharpName (pd.ParameterType (i)) + "'");
-						return false;
-					}
-
-					if (a_expr != conv)
-						a.Expr = conv;
-				}
-			}
-
-			return true;
+			return Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, !not_params_method,
+								 delegate_type, loc);
 		}
-
+		
 		/// <summary>
 		///  Verifies whether the delegate in question is compatible with this one in
 		///  order to determine if instantiation from the same is possible.
@@ -517,7 +545,7 @@ namespace Mono.CSharp {
 					      "Delegate creation expression takes only one argument");
 				return null;
 			}
-			
+
 			if (Arguments.Count != 1) {
 				Report.Error (-11, Location,
 					      "Delegate creation expression takes only one argument");
@@ -533,7 +561,6 @@ namespace Mono.CSharp {
 			}
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
-			
 			Argument a = (Argument) Arguments [0];
 			
 			if (!a.Resolve (ec, Location))
@@ -544,16 +571,18 @@ namespace Mono.CSharp {
 			if (e is MethodGroupExpr) {
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
-				if (mg.Methods.Length > 1) {
+				foreach (MethodInfo mi in mg.Methods){
+					delegate_method  = Delegate.VerifyMethod (ec, type, mi, Location);
+
+					if (delegate_method != null)
+						break;
+				}
+					
+				if (delegate_method == null) {
 					Report.Error (-14, Location, "Ambiguous method reference in delegate creation");
 					return null;
 				}
-				
-				delegate_method  = Delegate.VerifyMethod (ec, type, mg.Methods [0], Location);
-				
-				if (delegate_method == null)
-					return null;
-
+						
 				if (mg.InstanceExpression != null)
 					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
 				else {
@@ -606,7 +635,8 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (delegate_instance_expr == null)
+			if (delegate_instance_expr == null ||
+			    delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				delegate_instance_expr.Emit (ec);
@@ -634,15 +664,11 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Type del_type = InstanceExpr.Type;
-
 			if (del_type == null)
 				return null;
 			
 			if (Arguments != null){
-				for (int i = Arguments.Count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-					
+				foreach (Argument a in Arguments){
 					if (!a.Resolve (ec, Location))
 						return null;
 				}
@@ -652,16 +678,13 @@ namespace Mono.CSharp {
 				return null;
 
 			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", Location);
-			
 			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, Location, "Internal error : could not find Invoke method!");
 				return null;
 			}
 			
 			method = ((MethodGroupExpr) ml).Methods [0];
-			
 			type = ((MethodInfo) method).ReturnType;
-			
 			eclass = ExprClass.Value;
 			
 			return this;

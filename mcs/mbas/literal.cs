@@ -170,11 +170,6 @@ namespace Mono.CSharp {
 			type = TypeManager.decimal_type;
 			return this;
 		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Implement me");
-		}
 	}
 
 	public class StringLiteral : StringConstant {

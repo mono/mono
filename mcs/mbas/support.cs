@@ -25,29 +25,33 @@ namespace Mono.CSharp {
 
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
-		bool last_arg_is_params;
+		bool last_arg_is_params = false;
 		
 		public ReflectionParameters (ParameterInfo [] pi)
 		{
-			object [] a;
+			object [] attrs;
 			
 			this.pi = pi;
 
 			int count = pi.Length-1;
 
-			if (count > 0) {
-				a = pi [count].GetCustomAttributes (TypeManager.param_array_type, false);
+			if (count >= 0) {
+				attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
 
-				if (a != null)
-					if (a.Length != 0)
-						last_arg_is_params = true;
-			} 
+				if (attrs == null)
+					return;
+				
+				if (attrs.Length == 0)
+					return;
+
+				last_arg_is_params = true;
+			}
 		}
 		       
 		public Type ParameterType (int pos)
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
-				return pi [pi.Length -1].ParameterType;
+				return pi [pi.Length - 1].ParameterType;
 			else 
 				return pi [pos].ParameterType;
 		}
@@ -73,10 +77,12 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (pos >= pi.Length - 1) 
+			int len = pi.Length;
+			
+			if (pos >= len - 1)
 				if (last_arg_is_params)
 					return Parameter.Modifier.PARAMS;
-
+			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef)
 				return Parameter.Modifier.OUT;
@@ -103,8 +109,8 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 		}
 
-		public InternalParameters (TypeContainer tc, Parameters parameters)
-			: this (parameters.GetParameterInfo (tc), parameters)
+		public InternalParameters (DeclSpace ds, Parameters parameters)
+			: this (parameters.GetParameterInfo (ds), parameters)
 		{
 		}
 
@@ -135,7 +141,7 @@ namespace Mono.CSharp {
 
 		public string ParameterDesc (int pos)
 		{
-			string tmp = null;
+			string tmp = String.Empty;
 			Parameter p;
 
 			if (pos >= parameters.FixedParameters.Length)
@@ -157,8 +163,12 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (parameters.FixedParameters == null)
-				return parameters.ArrayParameter.ModFlags;
+			if (parameters.FixedParameters == null) {
+				if (parameters.ArrayParameter != null) 
+					return parameters.ArrayParameter.ModFlags;
+				else
+					return Parameter.Modifier.NONE;
+			}
 			
 			if (pos >= parameters.FixedParameters.Length)
 				return parameters.ArrayParameter.ModFlags;

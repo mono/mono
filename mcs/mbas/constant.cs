@@ -914,7 +914,26 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Implement me");
+			int [] words = Decimal.GetBits (Value);
+			
+			//
+			// FIXME: we could optimize this, and call a better 
+			// constructor
+			//
+
+			ILGenerator ig = ec.ig;
+			
+			IntConstant.EmitInt (ig, words [0]);
+			IntConstant.EmitInt (ig, words [1]);
+			IntConstant.EmitInt (ig, words [2]);
+
+			// sign
+			IntConstant.EmitInt (ig, words [3] >> 31);
+
+			// power
+			IntConstant.EmitInt (ig, (words [3] >> 16) & 0xff);
+
+			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}
 	}
 

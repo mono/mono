@@ -73,14 +73,46 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public Type DefineEnum (object parent_builder)
+		//
+		// This is used by corlib compilation: we map from our
+		// type to a type that is consumable by the DefineField
+		//
+		Type MapToInternalType (Type t)
+		{
+			if (t == TypeManager.int32_type)
+				return typeof (int);
+			if (t == TypeManager.int64_type)
+				return typeof (long);
+			if (t == TypeManager.uint32_type)
+				return typeof (uint);
+			if (t == TypeManager.uint64_type)
+				return typeof (ulong);
+			if (t == TypeManager.float_type)
+				return typeof (float);
+			if (t == TypeManager.double_type)
+				return typeof (double);
+			if (t == TypeManager.byte_type)
+				return typeof (byte);
+			if (t == TypeManager.sbyte_type)
+				return typeof (sbyte);
+			if (t == TypeManager.char_type)
+				return typeof (char);
+			if (t == TypeManager.short_type)
+				return typeof (short);
+			if (t == TypeManager.ushort_type)
+				return typeof (ushort);
+
+			throw new Exception ();
+		}
+		
+		public override TypeBuilder DefineType ()
 		{
 			if (TypeBuilder != null)
 				return TypeBuilder;
 			
 			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
 
-			UnderlyingType = RootContext.TypeManager.LookupType (BaseType);
+			UnderlyingType = TypeManager.LookupType (BaseType);
 			
 			if (UnderlyingType != TypeManager.int32_type &&
 			    UnderlyingType != TypeManager.uint32_type &&
@@ -92,12 +124,13 @@ namespace Mono.CSharp {
 			    UnderlyingType != TypeManager.sbyte_type) {
 				Report.Error (1008, Location,
 					      "Type byte, sbyte, short, ushort, int, uint, " +
-					      "long, or ulong expected");
+					      "long, or ulong expected (got: " +
+					      TypeManager.CSharpName (UnderlyingType) + ")");
 				return null;
 			}
 
-			if (parent_builder is ModuleBuilder) {
-				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+			if (IsTopLevel) {
+				ModuleBuilder builder = CodeGen.ModuleBuilder;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					attr |= TypeAttributes.Public;
@@ -106,7 +139,7 @@ namespace Mono.CSharp {
 				
 				TypeBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
 			} else {
-				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
+				TypeBuilder builder = Parent.TypeBuilder;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					attr |= TypeAttributes.NestedPublic;
@@ -118,11 +151,14 @@ namespace Mono.CSharp {
 					Basename, attr, TypeManager.enum_type);
 			}
 
+			//
+			// Call MapToInternalType for corlib
+			//
 			TypeBuilder.DefineField ("value__", UnderlyingType,
 						 FieldAttributes.Public | FieldAttributes.SpecialName
 						 | FieldAttributes.RTSpecialName);
 
-			RootContext.TypeManager.AddEnumType (Name, TypeBuilder, this);
+			TypeManager.AddEnumType (Name, TypeBuilder, this);
 
 			return TypeBuilder;
 		}
@@ -260,7 +296,10 @@ namespace Mono.CSharp {
 				}
 				
 			} else {
+				bool old = ec.InEnumContext;
+				ec.InEnumContext = true;
 				val = val.Resolve (ec);
+				ec.InEnumContext = old;
 				
 				if (val == null) {
 					Report.Error (-12, loc, "Definition is circular.");
@@ -280,7 +319,7 @@ namespace Mono.CSharp {
 					Report.Error (
 						1008, loc,
 						"Type byte, sbyte, short, ushort, int, uint, long, or " +
-						"ulong expected");
+						"ulong expected (have: " + val + ")");
 					return null;
 				}
 			}
@@ -289,7 +328,7 @@ namespace Mono.CSharp {
 					| FieldAttributes.Literal;
 			
 			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, attr);
-			
+
 			try {
 				default_value = Convert.ChangeType (default_value, UnderlyingType);
 			} catch {

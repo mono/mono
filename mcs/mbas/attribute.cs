@@ -31,14 +31,15 @@ namespace Mono.CSharp {
 		// The following are only meaningful when the attribute
 		// being emitted is one of the builtin ones
 		//
-		public AttributeTargets Targets;
-		public bool AllowMultiple;
-		public bool Inherited;
+		AttributeTargets Targets;
+		bool AllowMultiple;
+		bool Inherited;
 
-		public bool UsageAttr = false;
+		bool UsageAttr = false;
 		
-		public MethodImplOptions ImplOptions;
-		public UnmanagedType     UnmanagedType;
+		MethodImplOptions ImplOptions;
+		UnmanagedType     UnmanagedType;
+		CustomAttributeBuilder cb;
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -47,7 +48,7 @@ namespace Mono.CSharp {
 			Location = loc;
 		}
 
-		void error617 (string name)
+		void Error_InvalidNamedArgument (string name)
 		{
 			Report.Error (617, Location, "'" + name + "' is not a valid named attribute " +
 				      "argument. Named attribute arguments must be fields which are not " +
@@ -55,34 +56,65 @@ namespace Mono.CSharp {
 				      "are not static.");
 		}
 
-		void error182 ()
+		void Error_AttributeArgumentNotValid ()
 		{
 			Report.Error (182, Location,
 				      "An attribute argument must be a constant expression, typeof " +
 				      "expression or array creation expression");
 		}
 
+		static void Error_AttributeConstructorMismatch (Location loc)
+		{
+			Report.Error (
+					-6, loc,
+					"Could not find a constructor for this argument list.");
+		}
+		
+		private Type CheckAttributeType (EmitContext ec) {
+			Type t;
+			bool isattributeclass = true;
+			
+			t = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			if (t != null) {
+				isattributeclass = t.IsSubclassOf (TypeManager.attribute_type);
+				if (isattributeclass)
+					return t;
+			}
+			t = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
+			if (t != null) {
+				if (t.IsSubclassOf (TypeManager.attribute_type))
+					return t;
+			}
+			if (!isattributeclass) {
+				Report.Error (616, Location, "'" + Name + "': is not an attribute class");
+				return null;
+			}
+			if (t != null) {
+				Report.Error (616, Location, "'" + Name + "Attribute': is not an attribute class");
+				return null;
+			}
+			Report.Error (
+				246, Location, "Could not find attribute '" + Name + "' (are you" +
+				" missing a using directive or an assembly reference ?)");
+			return null;
+		}
+
+		public Type ResolveType (EmitContext ec)
+		{
+			Type = CheckAttributeType (ec);
+			return Type;
+		}
+
+		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			string name = Name;
+			if (Type == null)
+				Type = CheckAttributeType (ec);
+
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 
 			UsageAttr = false;
-
-			if (Name.IndexOf ("Attribute") == -1)
-				name = Name + "Attribute";
-			else if (Name.LastIndexOf ("Attribute") == 0)
-				name = Name + "Attribute";
-
-			Type = RootContext.LookupType (ec.DeclSpace, name, false, Location);
-
-			if (Type == null) {
-				Report.Error (
-					246, Location, "Could not find attribute '" + Name + "' (are you" +
-					" missing a using directive or an assembly reference ?)");
-				return null;
-			}
 
 			if (Type == TypeManager.attribute_usage_type)
 				UsageAttr = true;
@@ -90,27 +122,29 @@ namespace Mono.CSharp {
 				MethodImplAttr = true;
 			if (Type == TypeManager.marshal_as_attr_type)
 				MarshalAsAttr = true;
-			
 
 			// Now we extract the positional and named arguments
 			
 			ArrayList pos_args = new ArrayList ();
 			ArrayList named_args = new ArrayList ();
+			int pos_arg_count = 0;
 			
 			if (Arguments != null) {
 				pos_args = (ArrayList) Arguments [0];
+				if (pos_args != null)
+					pos_arg_count = pos_args.Count;
 				if (Arguments.Count > 1)
 					named_args = (ArrayList) Arguments [1];
 			}
-				
-			object [] pos_values = new object [pos_args.Count];
+
+			object [] pos_values = new object [pos_arg_count];
 
 			//
 			// First process positional arguments 
 			//
 			
 			int i;
-			for (i = 0; i < pos_args.Count; i++) {
+			for (i = 0; i < pos_arg_count; i++) {
 				Argument a = (Argument) pos_args [i];
 				Expression e;
 
@@ -120,20 +154,22 @@ namespace Mono.CSharp {
 				e = a.Expr;
 				if (e is Constant) {
 					pos_values [i] = ((Constant) e).GetValue ();
-
-					if (UsageAttr)
-						this.Targets = (AttributeTargets) pos_values [0];
-
-					if (MethodImplAttr)
-						this.ImplOptions = (MethodImplOptions) pos_values [0];
-
-					if (MarshalAsAttr)
-						this.UnmanagedType = (System.Runtime.InteropServices.UnmanagedType) pos_values [0];
-					
-				} else { 
-					error182 ();
+				} else if (e is TypeOf) {
+					pos_values [i] = ((TypeOf) e).TypeArg;
+				} else {
+					Error_AttributeArgumentNotValid ();
 					return null;
 				}
+				
+				if (UsageAttr)
+					this.Targets = (AttributeTargets) pos_values [0];
+				
+				if (MethodImplAttr)
+					this.ImplOptions = (MethodImplOptions) pos_values [0];
+				
+				if (MarshalAsAttr)
+					this.UnmanagedType =
+					(System.Runtime.InteropServices.UnmanagedType) pos_values [0];
 			}
 
 			//
@@ -161,7 +197,7 @@ namespace Mono.CSharp {
 					Location);
 
 				if (member == null || !(member is PropertyExpr || member is FieldExpr)) {
-					error617 (member_name);
+					Error_InvalidNamedArgument (member_name);
 					return null;
 				}
 
@@ -171,7 +207,7 @@ namespace Mono.CSharp {
 					PropertyInfo pi = pe.PropertyInfo;
 
 					if (!pi.CanWrite) {
-						error617 (member_name);
+						Error_InvalidNamedArgument (member_name);
 						return null;
 					}
 
@@ -187,7 +223,7 @@ namespace Mono.CSharp {
 						}
 						
 					} else { 
-						error182 ();
+						Error_AttributeArgumentNotValid ();
 						return null;
 					}
 					
@@ -198,29 +234,32 @@ namespace Mono.CSharp {
 					FieldInfo fi = fe.FieldInfo;
 
 					if (fi.IsInitOnly) {
-						error617 (member_name);
+						Error_InvalidNamedArgument (member_name);
 						return null;
 					}
 
-					if (e is Constant)
-						field_values.Add (((Constant) e).GetValue ());
-					else { 
-						error182 ();
+					//
+					// Handle charset here, and set the TypeAttributes
+					
+					if (e is Constant){
+						object value = ((Constant) e).GetValue ();
+						
+						field_values.Add (value);
+					} else { 
+						Error_AttributeArgumentNotValid ();
 						return null;
 					}
 					
 					field_infos.Add (fi);
 				}
 			}
-			
+
 			Expression mg = Expression.MemberLookup (
 				ec, Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance, Location);
 
 			if (mg == null) {
-				Report.Error (
-					-6, Location,
-					"Could not find a constructor for this argument list.");
+				Error_AttributeConstructorMismatch (Location);
 				return null;
 			}
 
@@ -228,9 +267,7 @@ namespace Mono.CSharp {
 				ec, (MethodGroupExpr) mg, pos_args, Location);
 
 			if (constructor == null) {
-				Report.Error (
-					-6, Location,
-					"Could not find a constructor for this argument list.");
+				Error_AttributeConstructorMismatch (Location);
 				return null;
 			}
 			
@@ -244,11 +281,24 @@ namespace Mono.CSharp {
 
 			prop_values.CopyTo  (prop_values_arr, 0);
 			prop_infos.CopyTo   (prop_info_arr, 0);
-			
-			CustomAttributeBuilder cb = new CustomAttributeBuilder (
-				(ConstructorInfo) constructor, pos_values,
-				prop_info_arr, prop_values_arr,
-				field_info_arr, field_values_arr); 
+
+			try {
+				cb = new CustomAttributeBuilder (
+					(ConstructorInfo) constructor, pos_values,
+					prop_info_arr, prop_values_arr,
+					field_info_arr, field_values_arr); 
+			} catch {
+				//
+				// Sample:
+				// using System.ComponentModel;
+				// [DefaultValue (CollectionChangeAction.Add)]
+				// class X { static void Main () {} }
+				//
+				Report.Warning (
+					-23, Location,
+					"The compiler can not encode this attribute in .NET due to\n" +
+					"\ta bug in the .NET runtime.  Try the Mono runtime");
+			}
 			
 			return cb;
 		}
@@ -261,8 +311,19 @@ namespace Mono.CSharp {
 			TypeContainer a = TypeManager.LookupAttr (attr.Type);
 
 			if (a == null) {
-				System.Attribute [] attrs = System.Attribute.GetCustomAttributes (attr.Type);
 				
+				System.Attribute [] attrs = null;
+				
+				try {
+					attrs = System.Attribute.GetCustomAttributes (attr.Type);
+					
+				} catch {
+					Report.Error (-20, attr.Location, "Cannot find attribute type " + attr.Name +
+						      " (maybe you forgot to set the usage using the" +
+						      " AttributeUsage attribute ?).");
+					return null;
+				}
+					
 				foreach (System.Attribute tmp in attrs)
 					if (tmp is AttributeUsageAttribute) 
 						targets = ((AttributeUsageAttribute) tmp).ValidOn;
@@ -316,7 +377,7 @@ namespace Mono.CSharp {
 
 		}
 
-		public static void error592 (Attribute a, Location loc)
+		public static void Error_AttributeNotValidForElement (Attribute a, Location loc)
 		{
 			Report.Error (
 				592, loc, "Attribute '" + a.Name +
@@ -328,10 +389,22 @@ namespace Mono.CSharp {
 		{
 			TypeContainer attr = TypeManager.LookupAttr (a.Type);
 			AttributeTargets targets = 0;
+
 			
 			if (attr == null) {
-				System.Attribute [] attrs = System.Attribute.GetCustomAttributes (a.Type);
 
+				System.Attribute [] attrs = null;
+				
+				try {
+					attrs = System.Attribute.GetCustomAttributes (a.Type);
+
+				} catch {
+					Report.Error (-20, a.Location, "Cannot find attribute type " + a.Name +
+						      " (maybe you forgot to set the usage using the" +
+						      " AttributeUsage attribute ?).");
+					return false;
+				}
+					
 				foreach (System.Attribute tmp in attrs)
 					if (tmp is AttributeUsageAttribute) 
 						targets = ((AttributeUsageAttribute) tmp).ValidOn;
@@ -364,7 +437,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Event) {
+			} else if (element is Event || element is InterfaceEvent) {
 				if ((targets & AttributeTargets.Event) != 0)
 					return true;
 				else
@@ -379,7 +452,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Method || element is Operator) {
+			} else if (element is Method || element is Operator || element is InterfaceMethod) {
 				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
@@ -389,7 +462,8 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Property) {
+			} else if (element is Property || element is Indexer ||
+				   element is InterfaceProperty || element is InterfaceIndexer) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
@@ -404,33 +478,93 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		//
+		// This method should be invoked to pull the IndexerName attribute from an
+		// Indexer if it exists.
+		//
+		public static string ScanForIndexerName (EmitContext ec, Attributes opt_attrs)
+		{
+			if (opt_attrs == null)
+				return null;
+			if (opt_attrs.AttributeSections == null)
+				return null;
+
+			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+				if (asec.Attributes == null)
+					continue;
+
+				foreach (Attribute a in asec.Attributes){
+					if (a.ResolveType (ec) == null)
+						return null;
+					
+					if (a.Type != TypeManager.indexer_name_type)
+						continue;
+
+					//
+					// So we have found an IndexerName, pull the data out.
+					//
+					if (a.Arguments == null || a.Arguments [0] == null){
+						Error_AttributeConstructorMismatch (a.Location);
+						return null;
+					}
+					ArrayList pos_args = (ArrayList) a.Arguments [0];
+					if (pos_args.Count == 0){
+						Error_AttributeConstructorMismatch (a.Location);
+						return null;
+					}
+					
+					Argument arg = (Argument) pos_args [0];
+					if (!arg.Resolve (ec, a.Location))
+						return null;
+					
+					Expression e = arg.Expr;
+					if (!(e is StringConstant)){
+						Error_AttributeConstructorMismatch (a.Location);
+						return null;
+					}
+
+					//
+					// Remove the attribute from the list
+					//
+					asec.Attributes.Remove (a);
+
+					return (((StringConstant) e).Value);
+				}
+			}
+			return null;
+		}
+		
+		//
+		// Applies the attributes to the `builder'.
+		//
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs, Location loc)
 		{
 			if (opt_attrs == null)
 				return;
-
 			if (opt_attrs.AttributeSections == null)
 				return;
 
 			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-
 				if (asec.Attributes == null)
 					continue;
 
+				if (asec.Target == "assembly" && !(builder is AssemblyBuilder))
+					continue;
+				
 				foreach (Attribute a in asec.Attributes) {
 					CustomAttributeBuilder cb = a.Resolve (ec);
+
 					if (cb == null)
 						continue;
 
 					if (!(kind is TypeContainer))
 						if (!CheckAttribute (a, kind)) {
-							error592 (a, loc);
+							Error_AttributeNotValidForElement (a, loc);
 							return;
 						}
 
-					
-					if (kind is Method || kind is Operator) {
+					if (kind is Method || kind is Operator || kind is InterfaceMethod) {
 
 						if (a.Type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
@@ -444,10 +578,11 @@ namespace Mono.CSharp {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Field) {
 						((FieldBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Property || kind is Indexer) {
+					} else if (kind is Property || kind is Indexer ||
+						   kind is InterfaceProperty || kind is InterfaceIndexer) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Event) {
-						((EventBuilder) builder).SetCustomAttribute (cb);
+					} else if (kind is Event || kind is InterfaceEvent) {
+						((MyEventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder) {
 
 						if (a.Type == TypeManager.marshal_as_attr_type) {
@@ -462,7 +597,6 @@ namespace Mono.CSharp {
 						((TypeBuilder) builder).SetCustomAttribute (cb); 
 
 					} else if (kind is TypeContainer) {
-
 						TypeContainer tc = (TypeContainer) kind;
 						
 						if (a.UsageAttr) {
@@ -470,25 +604,32 @@ namespace Mono.CSharp {
 							tc.AllowMultiple = a.AllowMultiple;
 							tc.Inherited = a.Inherited;
 							
-							RootContext.TypeManager.RegisterAttrType (
-										 (TypeBuilder) builder, tc);
-
 						} else if (a.Type == TypeManager.default_member_type) {
 							if (tc.Indexers != null) {
 								Report.Error (646, loc,
-								      "Cannot specify the DefaultMember attribute on " +
+								      "Cannot specify the DefaultMember attribute on" +
 								      " a type containing an indexer");
 								return;
 							}
 
 						} else {
 							if (!CheckAttribute (a, kind)) {
-								error592 (a, loc);
+								Error_AttributeNotValidForElement (a, loc);
 								return;
 							}
 						}
-						
-						((TypeBuilder) builder).SetCustomAttribute (cb);
+
+						try {
+							((TypeBuilder) builder).SetCustomAttribute (cb);
+						} catch (System.ArgumentException) {
+							Report.Warning (
+								-21, loc,
+						"The CharSet named property on StructLayout\n"+
+						"\tdoes not work correctly on Microsoft.NET\n"+
+						"\tYou might want to remove the CharSet declaration\n"+
+						"\tor compile using the Mono runtime instead of the\n"+
+						"\tMicrosoft .NET runtime");
+						}
 						
 					} else if (kind is AssemblyBuilder){
 						((AssemblyBuilder) builder).SetCustomAttribute (cb);
@@ -512,20 +653,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			string attr_name = Name;
-
-			if (Name.IndexOf ("Attribute") == -1)
-				attr_name = Name + "Attribute";
-			else if (Name.LastIndexOf ("Attribute") == 0)
-				attr_name = Name + "Attribute";
-			
-			Type = RootContext.LookupType (ec.DeclSpace, attr_name, false, Location);
-
-			if (Type == null) {
-				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +
-					      " missing a using directive or an assembly reference ?)");
+			Type = CheckAttributeType (ec);
+			if (Type == null)
 				return null;
-			}
 			
 			ArrayList named_args = new ArrayList ();
 			
@@ -544,7 +674,7 @@ namespace Mono.CSharp {
 			if (tmp.Expr is Constant)
 				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
 			else { 
-				error182 ();
+				Error_AttributeArgumentNotValid ();
 				return null;
 			}
 
@@ -573,7 +703,7 @@ namespace Mono.CSharp {
 					Location);
 
 				if (member == null || !(member is FieldExpr)) {
-					error617 (member_name);
+					Error_InvalidNamedArgument (member_name);
 					return null;
 				}
 
@@ -582,7 +712,7 @@ namespace Mono.CSharp {
 					FieldInfo fi = fe.FieldInfo;
 
 					if (fi.IsInitOnly) {
-						error617 (member_name);
+						Error_InvalidNamedArgument (member_name);
 						return null;
 					}
 
@@ -602,7 +732,7 @@ namespace Mono.CSharp {
 						else if (member_name == "PreserveSig")
 							preserve_sig = (bool) c.GetValue ();
 					} else { 
-						error182 ();
+						Error_AttributeArgumentNotValid ();
 						return null;
 					}
 					
