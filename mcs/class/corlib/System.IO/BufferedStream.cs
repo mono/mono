@@ -5,7 +5,10 @@
 //   Matt Kimball (matt@kimball.net)
 //   Ville Palo <vi64pa@kolumbus.fi>
 //
+// Copyright (C) 2004 Novell (http://www.novell.com)
+//
 
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.IO {
@@ -17,20 +20,24 @@ namespace System.IO {
 		bool m_buffer_reading;
 		private bool disposed = false;
 
-		public BufferedStream(Stream stream) : this(stream, 4096) {
+		public BufferedStream (Stream stream) : this (stream, 4096) 
+		{
 		}
 
-		public BufferedStream(Stream stream, int buffer_size) {
-
+		public BufferedStream (Stream stream, int buffer_size) 
+		{
 			if (stream == null)
-				throw new ArgumentNullException ("stream was null");
-			if (buffer_size < 0)
-				throw new ArgumentOutOfRangeException ();
-			if (!stream.CanRead && !stream.CanWrite)
-				throw new ObjectDisposedException ("Cannot access a closed Stream.");
+				throw new ArgumentNullException ("stream");
+			// LAMESPEC: documented as < 0
+			if (buffer_size <= 0)
+				throw new ArgumentOutOfRangeException ("buffer_size", "<= 0");
+			if (!stream.CanRead && !stream.CanWrite) {
+				throw new ObjectDisposedException (
+					Locale.GetText ("Cannot access a closed Stream."));
+			}
 
 			m_stream = stream;
-			m_buffer = new byte[buffer_size];
+			m_buffer = new byte [buffer_size];
 		}
 
 		public override bool CanRead {
@@ -78,8 +85,8 @@ namespace System.IO {
 			}
 		}
 
-		public override void Close() {
-			
+		public override void Close ()
+		{
 			if (m_buffer != null)
 				Flush();
 
@@ -88,8 +95,8 @@ namespace System.IO {
 			disposed = true;
 		}
 
-		public override void Flush() {
-			
+		public override void Flush ()
+		{
 			CheckObjectDisposedException ();
 
 			if (m_buffer_reading) {
@@ -103,17 +110,19 @@ namespace System.IO {
 			m_buffer_pos = 0;
 		}
 
-		public override long Seek(long offset, SeekOrigin origin) {
+		public override long Seek (long offset, SeekOrigin origin)
+		{
 			Flush();
 			return m_stream.Seek(offset, origin);
 		}
 
-		public override void SetLength(long value) {
+		public override void SetLength (long value)
+		{
 			m_stream.SetLength(value);
 		}
 
-		public override int ReadByte() {
-
+		public override int ReadByte ()
+		{
 			CheckObjectDisposedException ();
 			
 			byte[] b = new byte[1];
@@ -125,8 +134,8 @@ namespace System.IO {
 			}
 		}
 
-		public override void WriteByte(byte value) {
-
+		public override void WriteByte (byte value) 
+		{
 			CheckObjectDisposedException ();
 			byte[] b = new byte[1];
 
@@ -134,14 +143,22 @@ namespace System.IO {
 			Write(b, 0, 1);
 		}
 
-		public override int Read([In,Out] byte[] array, int offset, int count) {
-
+		public override int Read ([In,Out] byte[] array, int offset, int count) 
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			CheckObjectDisposedException ();
-
-			if (array.Length < offset + count)
-				throw new ArgumentException ();
+			if (!m_stream.CanWrite) {
+				throw new NotSupportedException (
+					Locale.GetText ("Cannot read from stream"));
+			}
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("Offset was negative value.");
+				throw new ArgumentOutOfRangeException ("offset", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (array.Length - offset < count)
+				throw new ArgumentException ("array.Length - offset < count");
 
 			if (!m_buffer_reading) {
 				Flush();
@@ -186,14 +203,22 @@ namespace System.IO {
 			return ret;
 		}
 
-		public override void Write(byte[] array, int offset, int count) {
-
+		public override void Write (byte[] array, int offset, int count)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			CheckObjectDisposedException ();
-
-			if (!m_stream.CanWrite)
-				throw new NotSupportedException ();
+			if (!m_stream.CanWrite) {
+				throw new NotSupportedException (
+					Locale.GetText ("Cannot write to stream"));
+			}
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("offset", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// avoid possible integer overflow
+			if (array.Length - offset < count)
+				throw new ArgumentException ("array.Length - offset < count");
 
 			if (m_buffer_reading) {
 				Flush();
@@ -211,8 +236,10 @@ namespace System.IO {
 
 		private void CheckObjectDisposedException () 
 		{
-			if (disposed) 
-				throw new ObjectDisposedException ("BufferedStream", "Stream is closed");
+			if (disposed) {
+				throw new ObjectDisposedException ("BufferedStream", 
+					Locale.GetText ("Stream is closed"));
+			}
 		}			
 	}
 }

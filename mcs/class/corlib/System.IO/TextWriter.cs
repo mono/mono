@@ -161,8 +161,10 @@ namespace System.IO {
 				throw new ArgumentNullException ("buffer");
 			if (index < 0 || index > buffer.Length)
 				throw new ArgumentOutOfRangeException ("index");
-			if (count < 0 || (index + count) > buffer.Length)
+			// re-ordered to avoid possible integer overflow
+			if (count < 0 || (index > buffer.Length - count))
 				throw new ArgumentOutOfRangeException ("count");
+
 			for (; count > 0; --count, ++index) {
 				Write (buffer [index]);
 			}

@@ -1,3 +1,9 @@
+2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BufferedStream.cs: Added globalization and fixed exceptions and 
+	possible integer overflow.
+	* TextWriter.cs: Fixed possible integer	overflow.
+
 2004-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FileInfo.cs,
