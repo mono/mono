@@ -1,3 +1,12 @@
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
+	* debug-private.h (AssemblyDebugInfo): Added `_priv'.
+
+	* debug-dwarf2-plus.c
+	(mono_debug_open_assembly_dwarf2_plus): Open the symbol file here.
+	(mono_debug_close_assembly_dwarf2_plus): Close the symbol file here.
+	(mono_debug_write_assembly_dwarf2_plus): Only call
+	mono_debug_update_symbol_file() here.
 
 Thu Mar 21 17:35:48 CET 2002 Paolo Molaro <lupus@ximian.com>
 
