@@ -483,11 +483,19 @@ namespace C5
 				lowmask = (1 << bits) - 1;
 				himask = ~lowmask;
 				target = taggroup.tag & himask;
+#if FIXME
 				while ((tmp = pred.first.prev.taggroup).first != null && (tmp.tag & himask) == target)
 				{ count++; pred = tmp; }
 
 				while ((tmp = succ.last.next.taggroup).last != null && (tmp.tag & himask) == target)
 				{ count++; succ = tmp; }
+#else
+				for (tmp = pred.first.prev.taggroup; (tmp.first != null) && ((tmp.tag & himask) == target);)
+				{ count++; pred = tmp; }
+
+				for (tmp = succ.last.next.taggroup; (tmp..last != null) && ((tmp.tag & himask) == target);)
+				{ count++; succ = tmp; }
+#endif
 
 				limit *= bigt;
 			} while (count > limit);
