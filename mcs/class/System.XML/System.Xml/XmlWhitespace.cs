@@ -33,7 +33,7 @@ namespace System.Xml
 			get { return XmlNodeType.Whitespace; }
 		}
 
-		internal override XPathNodeType XPathNodeType {
+		internal protected override XPathNodeType XPathNodeType {
 			get { return XPathNodeType.Whitespace; }
 		}
 

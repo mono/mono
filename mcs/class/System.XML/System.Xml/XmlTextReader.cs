@@ -515,11 +515,11 @@ namespace System.Xml
 			// attributeString which may be used next time.
 
 			if (attributeValuePos < 0) {
-				SetProperties (XmlNodeType.None,
-					String.Empty,
-					false,
-					String.Empty,
-					false);
+//				SetProperties (XmlNodeType.None,
+//					String.Empty,
+//					false,
+//					String.Empty,
+//					false);
 				return false;
 			}
 
@@ -699,13 +699,19 @@ namespace System.Xml
 					String.Empty,
 					XmlSpace.None);
 			}
-			if (url != null && url != String.Empty)
-				parserContext.BaseURI = url;
+
+			if (url != null && url != String.Empty) {
+				string path = Path.GetFullPath (".");
+				UriBuilder ub = new UriBuilder (path);
+				ub.Scheme = "file";
+				parserContext.BaseURI = new Uri (ub.Uri, url).ToString ();
+			}
+
 			Init ();
 
 			switch (fragType) {
 			case XmlNodeType.Attribute:
-				value = "''";
+				value = fragment.ReadToEnd ();
 				break;
 			case XmlNodeType.Element:
 				allowMultipleRoot = true;
@@ -868,7 +874,18 @@ namespace System.Xml
 				localName = name;
 			}
 
-			namespaceURI = LookupNamespace (prefix);
+			switch (nodeType) {
+			case XmlNodeType.Attribute:
+			case XmlNodeType.Element:
+			case XmlNodeType.EndElement:
+				namespaceURI = LookupNamespace (prefix);
+				if (localName == "xmlns" && prefix == "")
+					namespaceURI = "http://www.w3.org/2000/xmlns/";
+				break;
+			default:
+				namespaceURI = "";
+				break;
+			}
 		}
 
 		private void SaveProperties ()
@@ -1021,12 +1038,12 @@ namespace System.Xml
 				throw ReaderError("document has terminated, cannot open new element");
 
 			haveEnteredDocument = true;
-			SkipWhitespace ();
 
 			bool isEmptyElement = false;
 
 			ClearAttributes ();
 
+			SkipWhitespace ();
 			if (XmlConstructs.IsNameStart (PeekChar ()))
 				ReadAttributes (false);
 
@@ -1269,13 +1286,15 @@ namespace System.Xml
 		private void ReadAttributes (bool allowPIEnd)
 		{
 			int peekChar = -1;
+			bool requireWhitespace = false;
 			do {
+				if (!SkipWhitespace () && requireWhitespace)
+					throw new XmlException ("Unexpected token. Name is required here.");
 				string name = ReadName ();
 				SkipWhitespace ();
 				Expect ('=');
 				SkipWhitespace ();
 				string value = ReadAttribute ();
-				SkipWhitespace ();
 
 				if (name == "xmlns")
 					parserContext.NamespaceManager.AddNamespace (String.Empty, UnescapeAttributeValue (value));
@@ -1283,6 +1302,11 @@ namespace System.Xml
 					parserContext.NamespaceManager.AddNamespace (name.Substring (6), UnescapeAttributeValue (value));
 
 				AddAttribute (name, value);
+
+				if (XmlConstructs.IsSpace (PeekChar ()))
+					SkipWhitespace ();
+				else
+					requireWhitespace = true;
 				peekChar = PeekChar ();
 				if (peekChar == '?' && allowPIEnd)
 					break;
@@ -1330,11 +1354,11 @@ namespace System.Xml
 		private void ReadProcessingInstruction ()
 		{
 			string target = ReadName ();
-			SkipWhitespace ();
 			if (target == "xml") {
 				ReadXmlDeclaration ();
 				return;
 			}
+			SkipWhitespace ();
 
 			valueLength = 0;
 
@@ -1363,8 +1387,7 @@ namespace System.Xml
 		{
 			ClearAttributes ();
 
-			if (XmlConstructs.IsNameStart (PeekChar ()))
-				ReadAttributes (true);
+			ReadAttributes (true);	// They must have "version."
 			Expect ("?>");
 
 			SetProperties (
@@ -1529,7 +1552,7 @@ namespace System.Xml
 					this.ReaderError ("INCLUDE section is not ended correctly.");
 				currentInput = original;
 			}
-			if (systemId != String.Empty) {
+			if (systemId != String.Empty && resolver != null) {
 				pushParserInput (systemId);
 				do {
 					this.CompileDTDSubset ();
@@ -1885,7 +1908,6 @@ namespace System.Xml
 				switch (skip ? PeekChar () : ReadChar ()) {
 				case -1:
 					throw ReaderError ("Unexpected IGNORE section end.");
-					break;
 				case '<':
 					if (ReadChar () == '!' && ReadChar () == '[')
 						dtdIgnoreSect++;
@@ -2559,11 +2581,13 @@ namespace System.Xml
 		}
 
 		// Does not consume the first non-whitespace character.
-		private void SkipWhitespace ()
+		private bool SkipWhitespace ()
 		{
 			//FIXME: Should not skip if whitespaceHandling == WhiteSpaceHandling.None
+			bool skipped = XmlConstructs.IsSpace (PeekChar ());
 			while (XmlConstructs.IsSpace (PeekChar ()))
 				ReadChar ();
+			return skipped;
 		}
 
 		private bool ReadWhitespace ()

@@ -28,15 +28,26 @@ namespace System.Xml
 
 		#region Constructor
 
-		[MonoTODO("need to set namespaceURI if prefix is recognized built-in ones like xmlns")]
 		protected internal XmlAttribute (
 			string prefix, 
 			string localName, 
 			string namespaceURI, 
 			XmlDocument doc) : base (doc)
 		{
-			// What to be recognized is: xml:space, xml:lang, xml:base, and
-			// xmlns and xmlns:* (when XmlDocument.Namespaces = true only)
+			// I think prefix "xml" should be checked as same, but
+			// MS.NET ignores such case.
+			if (prefix == "xmlns" || (prefix == "" && localName == "xmlns"))
+				if (namespaceURI != "http://www.w3.org/2000/xmlns/")
+					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
+
+			// There are no means to identify the DOM is namespace-
+			// aware or not, so we can only check Name validity.
+			Exception ex;
+			if (prefix != "" && !XmlConstructs.IsValidName (prefix, out ex))
+				throw ex;
+			else if (!XmlConstructs.IsValidName (localName, out ex))
+				throw ex;
+
 			this.prefix = prefix;
 			this.localName = localName;
 			this.namespaceURI = namespaceURI;
@@ -116,7 +127,7 @@ namespace System.Xml
 			}
 		}
 
-		internal override XPathNodeType XPathNodeType {
+		internal protected override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.Attribute;
 			}
@@ -151,13 +162,11 @@ namespace System.Xml
 		// (5)when argument is 'xml' or 'xmlns' and namespaceURI doesn't match
 		public override string Prefix {
 			set {
-				if(IsReadOnly)
+				if (IsReadOnly)
 					throw new XmlException ("This node is readonly.");
-
-				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
-				string nsuri = nsmgr.LookupNamespace (value);
-				if(nsuri == null)
-					throw new XmlException ("Namespace URI not found for this prefix");
+				Exception ex;
+				if (!XmlConstructs.IsValidNCName (value, out ex))
+					throw ex;
 
 				prefix = value;
 			}
@@ -191,11 +200,11 @@ namespace System.Xml
 			}
 		}
 
-		internal override string XmlLang {
+		internal protected override string XmlLang {
 			get { return OwnerElement.XmlLang; }
 		}
 
-		internal override XmlSpace XmlSpace {
+		internal protected override XmlSpace XmlSpace {
 			get { return OwnerElement.XmlSpace; }
 		}
 
@@ -237,7 +246,7 @@ namespace System.Xml
 
 		#endregion
 
-		internal override XmlLinkedNode LastLinkedChild {
+		internal protected override XmlLinkedNode LastLinkedChild {
 			get { return lastChild; }
 
 			set { lastChild = value; }

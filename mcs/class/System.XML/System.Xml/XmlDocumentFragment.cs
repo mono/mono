@@ -84,7 +84,7 @@ namespace System.Xml
 
 		// It is really not a type of XmlLinkedNode,
 		//   but I copied this way from XmlElement. I looks good.
-		internal override XmlLinkedNode LastLinkedChild
+		internal protected override XmlLinkedNode LastLinkedChild
 		{
 			get { return lastLinkedChild; }
 			set { lastLinkedChild = value; }

@@ -35,6 +35,7 @@ namespace System.Xml
 		XmlImplementation implementation;
 		bool preserveWhitespace = false;
 		WeakReference reusableXmlTextReader;
+		XmlResolver resolver;
 
 		#endregion
 
@@ -139,7 +140,7 @@ namespace System.Xml
 			get { return false; }
 		}
 
-		internal override XmlLinkedNode LastLinkedChild {
+		internal protected override XmlLinkedNode LastLinkedChild {
 			get	{
 				return lastLinkedChild;
 			}
@@ -165,7 +166,7 @@ namespace System.Xml
 			get { return XmlNodeType.Document; }
 		}
 
-		internal override XPathNodeType XPathNodeType {
+		internal protected override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.Root;
 			}
@@ -180,16 +181,15 @@ namespace System.Xml
 			set { preserveWhitespace = value; }
 		}
 
-		internal override string XmlLang {
+		internal protected override string XmlLang {
 			get { return String.Empty; }
 		}
 
-		[MonoTODO]
 		public virtual XmlResolver XmlResolver {
-			set { throw new NotImplementedException (); }
+			set { resolver = value; }
 		}
 
-		internal override XmlSpace XmlSpace {
+		internal protected override XmlSpace XmlSpace {
 			get {
 				return XmlSpace.None;
 			}
@@ -199,10 +199,11 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO("Should BaseURI be cloned?")]
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlDocument doc = implementation.CreateDocument ();
+			doc.baseURI = baseURI;
+
 			doc.PreserveWhitespace = PreserveWhitespace;	// required?
 			if(deep)
 			{
@@ -214,7 +215,8 @@ namespace System.Xml
 
 		public XmlAttribute CreateAttribute (string name)
 		{
-			return CreateAttribute (name, String.Empty);
+			return CreateAttribute (name,
+				name == "xmlns" ? "http://www.w3.org/2000/xmlns/" : String.Empty);
 		}
 
 		public XmlAttribute CreateAttribute (string qualifiedName, string namespaceURI)

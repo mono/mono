@@ -442,10 +442,11 @@ namespace System.Xml
 			namespaceManager.PopScope();
 		}
 
-		[MonoTODO]
 		public override void WriteEntityRef (string name)
 		{
-			throw new NotImplementedException ();
+			WriteRaw ("&");
+			WriteStringInternal (name, true);
+			WriteRaw (";");
 		}
 
 		public override void WriteFullEndElement ()
@@ -499,9 +500,9 @@ namespace System.Xml
 			string prefix = namespaceManager.LookupPrefix (ns);
 			w.Write ("{0}:{1}", prefix, localName);
 		}
+
 		public override void WriteRaw (string data)
 		{
-//			WriteRawInternal (data);
 			WriteStringInternal (data, false);
 		}
 
@@ -509,14 +510,6 @@ namespace System.Xml
 		{
 //			WriteRawInternal (new string (buffer, index, count));
 			WriteStringInternal (new string (buffer, index, count), false);
-		}
-
-		private void WriteRawInternal (string text)
-		{
-			if (text == null)
-				return;
-
-			w.Write (text);
 		}
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
@@ -548,7 +541,7 @@ namespace System.Xml
 			{
 				string existingPrefix = namespaceManager.LookupPrefix (ns);
 
-				if (prefix == String.Empty)
+				if (prefix == String.Empty && ns != "http://www.w3.org/2000/xmlns/")
 					prefix = (existingPrefix == null) ?
 						String.Empty : existingPrefix;
 			}

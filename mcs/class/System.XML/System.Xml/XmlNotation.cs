@@ -49,7 +49,7 @@ namespace System.Xml
 			get { return true; } // Notation nodes are always read-only
 		}
 
-		internal override XmlLinkedNode LastLinkedChild {
+		internal protected override XmlLinkedNode LastLinkedChild {
 			get { return lastChild; }
 
 			set { lastChild = value; }

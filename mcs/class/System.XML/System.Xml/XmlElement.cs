@@ -25,6 +25,7 @@ namespace System.Xml
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
+		private bool isNotEmpty;
 
 		#endregion
 
@@ -104,10 +105,11 @@ namespace System.Xml
 
 		public bool IsEmpty {
 			get {
-				return (FirstChild == null);
+				return !isNotEmpty && (FirstChild == null);
 			}
 
 			set {
+				isNotEmpty = !value;
 				if(value)
 					RemoveAll();
 			}
@@ -143,7 +145,7 @@ namespace System.Xml
 			}
 		}
 
-		internal override XPathNodeType XPathNodeType {
+		internal protected override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.Element;
 			}
@@ -158,7 +160,15 @@ namespace System.Xml
 
 		public override string Prefix {
 			get { return prefix; }
-			set { prefix = value; }
+			set {
+				if (IsReadOnly)
+					throw new XmlException ("This node is readonly.");
+				Exception ex;
+				if (!XmlConstructs.IsValidNCName (value, out ex))
+					throw ex;
+
+				prefix = value;
+			}
 		}
 
 		#endregion
@@ -379,9 +389,12 @@ namespace System.Xml
 					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);
 			}
 
-			WriteContentTo(w);
-
-			w.WriteEndElement();
+			if (IsEmpty)
+				w.WriteEndElement ();
+			else {
+				WriteContentTo(w);
+				w.WriteFullEndElement();
+			}
 		}
 
 		#endregion

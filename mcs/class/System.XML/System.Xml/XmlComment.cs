@@ -37,7 +37,7 @@ namespace System.Xml
 			get { return XmlNodeType.Comment; }
 		}
 		
-		internal override XPathNodeType XPathNodeType {
+		internal protected override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.Comment;
 			}

@@ -1,3 +1,25 @@
+2003-05-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* changed XPathNodeType modifier to internal *protected* override.
+	* XmlAttribute.cs : .ctor() now checks name validity e.g. xmlns.
+	* XmlAttribute.cs, XmlElement.cs : set_Prefix checks NCName validity.
+	* XmlAttributeCollection.cs : removed some incorrect TODO attributes.
+	* XmlDocument.cs ; CreateAttribute(name) now auto-completes xmlns NSURI
+	  when the argument is "xmlns".
+	* XmlElement.cs : more compliant IsEmpty support. See also WriteTo().
+	* XmlNamespaceManager.cs : added initial "xml" and "xmlns" namespaces.
+	* XmlNode.cs : ser_InnerXml() throws InvalidOperationException.
+	* XmlNodeReader.cs : LookupNamespace() refactory. Fixed ReadInnerXml()
+	  not to set error state for non-started XmlNodeReader.
+	* XmlTextReader.cs : fixed ReadAttributeValue() not to reset state.
+	  BaseURI support. Fixed Initialize() to handle Attribute correctly.
+	  SetProperty for attribute auto-completes xmlns NSURI.
+	  Attribute and whitespace handling became more correct.
+	  Don't parse external DTD if XmlResolver is null.
+	* XmlTextWriter.cs : implemented WriteEntityRef().
+	  WriteStartAttribute() checks if ns does not equal to that of xmlns.
+	* XmlWriter.cs : trivial refactoring (WriteNode() xmldecl output).
+
 2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlConvert.cs : IsInvalid() Now uses XmlConstructs.IsName(Start).
@@ -180,7 +202,7 @@
 	* XmlInputStream.cs : Changed namespace. Added XmlStreamReader(stream)
 	  and XmlStreamReader (string). Fixed XmlInputStream(url) not to use
 	  System.Net.WebClient directly.
-	* XmlParserContext.cs : baseURI don't be null.
+	* XmlParserContext.cs : baseURI never be null.
 	* XmlTextWriter.cs : use WebName for Encoding instead of HeaderName.
 	* XmlUrlResolver.cs : namespace change for XmlInputStream.
 

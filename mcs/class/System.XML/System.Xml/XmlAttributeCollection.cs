@@ -37,7 +37,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
 		public virtual XmlAttribute this [string name] {
 			get {
@@ -45,7 +44,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
 		public virtual XmlAttribute this [int i] {
 			get {
@@ -53,7 +51,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
 		public virtual XmlAttribute this [string localName, string namespaceURI] {
 			get {
@@ -81,7 +78,6 @@ namespace System.Xml
 				array [index + i] = Nodes [i] as XmlAttribute;
 		}
 
-		[MonoTODO] // I don't know why this method is required...
 		void ICollection.CopyTo (Array array, int index)
 		{
 			// assuming that Nodes is a correct collection.
@@ -155,21 +151,20 @@ namespace System.Xml
 
 		public virtual XmlAttribute Remove (XmlAttribute node) 
 		{
-			if(node == null || node.OwnerDocument != this.ownerElement.OwnerDocument)
-				throw new ArgumentException ("node is null or different document created this node.");
+			if (node == null)
+				throw new ArgumentException ("Specified node is null.");
+			if (node.OwnerDocument != this.ownerElement.OwnerDocument)
+				throw new ArgumentException ("Specified node is in a different document.");
 
 			XmlAttribute retAttr = null;
-			foreach(XmlAttribute attr in Nodes)
-			{
-				if(attr == node)
-				{
+			foreach (XmlAttribute attr in Nodes) {
+				if (attr == node) {
 					retAttr = attr;
 					break;
 				}
 			}
 
-			if(retAttr != null)
-			{
+			if(retAttr != null) {
 				ownerElement.OwnerDocument.onNodeRemoving (node, null);
 				base.RemoveNamedItem (retAttr.LocalName, retAttr.NamespaceURI);
 				ownerElement.OwnerDocument.onNodeRemoved (node, null);

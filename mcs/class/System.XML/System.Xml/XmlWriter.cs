@@ -52,16 +52,6 @@ namespace System.Xml
 
 			switch (reader.NodeType) {
 			case XmlNodeType.XmlDeclaration:
-				string val = reader ["version"];
-				if (val != String.Empty)
-					WriteAttributeString ("version", val);
-				val = reader ["encoding"];
-				if (val != String.Empty)
-					WriteAttributeString ("encoding", val);
-				val = reader ["standalone"];
-				if(val != String.Empty)
-					WriteAttributeString ("standalone", val);
-				break;
 			case XmlNodeType.Element:
 				if (reader.MoveToFirstAttribute ())
 					goto case XmlNodeType.Attribute;
@@ -185,7 +175,7 @@ namespace System.Xml
 					do {
 						WriteNode (reader, defattr);
 					} while (depth < reader.Depth);
-					WriteEndElement ();
+					WriteFullEndElement ();
 				}
 				break;
 			// In case of XmlAttribute, don't proceed reader.

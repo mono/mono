@@ -45,14 +45,7 @@ namespace System.Xml
 			get {
 				// Isn't it conformant to W3C XML Base Recommendation?
 				// As far as I tested, there are not...
-				string result = (ParentNode != null) ? ParentNode.BaseURI : OwnerDocument.BaseURI;
-				try {
-					Uri test = new Uri(result);
-				}
-				catch {
-					result = "file://" + result;
-				}
-				return result;
+				return (ParentNode != null) ? ParentNode.BaseURI : OwnerDocument.BaseURI;
 			}
 		}
 
@@ -100,7 +93,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("Setter.")]
 		public virtual string InnerXml {
 			get {
 				StringWriter sw = new StringWriter ();
@@ -111,7 +103,9 @@ namespace System.Xml
 				return sw.GetStringBuilder ().ToString ();
 			}
 
-			set { throw new NotImplementedException (); }
+			set {
+				throw new InvalidOperationException ("This node is readonly or doesn't have any children.");
+			}
 		}
 
 		public virtual bool IsReadOnly {
@@ -151,7 +145,7 @@ namespace System.Xml
 			get { return LastLinkedChild; }
 		}
 
-		internal virtual XmlLinkedNode LastLinkedChild {
+		internal protected virtual XmlLinkedNode LastLinkedChild {
 			get { return null; }
 			set { }
 		}
@@ -170,7 +164,7 @@ namespace System.Xml
 
 		public abstract XmlNodeType NodeType { get;	}
 
-		internal virtual XPathNodeType XPathNodeType {
+		internal protected virtual XPathNodeType XPathNodeType {
 			get {
 				return (XPathNodeType) (-1);
 			}
@@ -209,7 +203,7 @@ namespace System.Xml
 			set { throw new InvalidOperationException ("This node does not have a value"); }
 		}
 
-		internal virtual string XmlLang {
+		internal protected virtual string XmlLang {
 			get {
 				if(Attributes != null)
 					foreach(XmlAttribute attr in Attributes)
@@ -219,7 +213,7 @@ namespace System.Xml
 			}
 		}
 
-		internal virtual XmlSpace XmlSpace {
+		internal protected virtual XmlSpace XmlSpace {
 			get {
 				if(Attributes != null) {
 					foreach(XmlAttribute attr in Attributes) {

@@ -60,7 +60,7 @@ namespace System.Xml
 			get { return XmlNodeType.ProcessingInstruction; }
 		}
 
-		internal override XPathNodeType XPathNodeType {
+		internal protected override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.ProcessingInstruction;
 			}

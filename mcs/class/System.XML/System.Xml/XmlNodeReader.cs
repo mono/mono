@@ -27,6 +27,7 @@ namespace System.Xml
 		bool nextIsEndElement;	// used for ReadString()
 		bool alreadyRead;
 		StringBuilder valueBuilder = new StringBuilder ();
+		XmlNamespaceManager defaultNsmgr;
 
 		private XmlNode ownerElement {
 			get {
@@ -42,6 +43,7 @@ namespace System.Xml
 			if (node.NodeType != XmlNodeType.Document
 				&& node.NodeType != XmlNodeType.DocumentFragment)
 				alreadyRead = true;
+			defaultNsmgr = new XmlNamespaceManager (this.NameTable);
 		}
 		
 		#endregion
@@ -352,11 +354,31 @@ namespace System.Xml
 			return this [name, namespaceURI];
 		}
 
-		// FIXME: Its performance is not good.
 		public override string LookupNamespace (string prefix)
 		{
-			XmlNamespaceManager nsmgr = current.ConstructNamespaceManager();
-			return nsmgr.LookupNamespace (prefix);
+			if (current == null)
+				return null;
+
+			XmlAttribute curAttr = current as XmlAttribute;
+			XmlNode target = curAttr != null ? curAttr.OwnerElement : current;
+
+			if (prefix == "") {
+				do {
+					XmlAttribute attr = target.Attributes ["xmlns"];
+					if (attr != null)
+						return attr.Value;
+					target = current.ParentNode;
+				} while (target.NodeType != XmlNodeType.Document);
+			} else {
+				string name = "xmlns:" + prefix;
+				do {
+					XmlAttribute attr = target.Attributes [name];
+					if (attr != null)
+						return attr.Value;
+					target = current.ParentNode;
+				} while (target.NodeType != XmlNodeType.Document);
+			}
+			return defaultNsmgr.LookupNamespace (prefix);
 		}
 
 		public override void MoveToAttribute (int attributeIndex)
@@ -557,21 +579,9 @@ namespace System.Xml
 				return false;
 		}
 
-		[MonoTODO("Need to move to next content.")]
 		// Its traversal behavior is almost same as Read().
 		public override string ReadInnerXml ()
 		{
-			if (ReadState == ReadState.Initial) {
-				state = ReadState.Error;
-				return String.Empty;
-			}
-/*
-			if (current.NodeType != XmlNodeType.Attribute &&
-			    current.NodeType != XmlNodeType.Element)
-				return String.Empty;
-			else
-				return current.InnerXml;
-*/
 			XmlNode initial = current;
 			// Almost copied from XmlTextReader.
 			switch (NodeType) {
