@@ -1,5 +1,7 @@
 2002-07-12  Dietmar Maurer  <dietmar@ximian.com>
 
+	* marshal.c: better debugging support (DEBUG_RUNTIME_CODE)
+
 	* debug-helpers.c (mono_method_full_name): print the type of the
 	runtime wrapper
 
