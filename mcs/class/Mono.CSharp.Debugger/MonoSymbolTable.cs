@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int Version = 21;
+		public const int Version = 22;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int total_file_size;
@@ -91,6 +91,49 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
+	public class VariableInfo
+	{
+		public readonly int Index;
+		public readonly int Offset;
+		public readonly AddressMode Mode;
+		public readonly int BeginScope;
+		public readonly int EndScope;
+
+		public enum AddressMode : long
+		{
+			Stack		= 0,
+			Register	= 0x10000000,
+			TwoRegisters	= 0x20000000
+		}
+
+		const long AddressModeFlags = 0xf0000000;
+
+		public static int Size {
+			get {
+				return 16;
+			}
+		}
+
+		public VariableInfo (IMonoBinaryReader reader)
+		{
+			Index = reader.ReadInt32 ();
+			Offset = reader.ReadInt32 ();
+			BeginScope = reader.ReadInt32 ();
+			EndScope = reader.ReadInt32 ();
+
+			Mode = (AddressMode) (Index & AddressModeFlags);
+			Index = (int) ((long) Index & ~AddressModeFlags);
+
+			Console.WriteLine (this);
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("[VariableInfo {0}:{1:x}:{2:x}:{3:x}:{4:x}]",
+					      Mode, Index, Offset, BeginScope, EndScope);
+		}
+	}
+
 	public class MethodAddress
 	{
 		public readonly long StartAddress;
@@ -99,7 +142,7 @@ namespace Mono.CSharp.Debugger
 
 		public static int Size {
 			get {
-				return 3 * 8;
+				return 20;
 			}
 		}
 
@@ -125,20 +168,27 @@ namespace Mono.CSharp.Debugger
 		public readonly int StartRow;
 		public readonly int EndRow;
 		public readonly int NumLineNumbers;
+		public readonly int HasThis;
+		public readonly int NumParameters;
+		public readonly int NumLocals;
 
 		public readonly int SourceFileOffset;
 		public readonly int LineNumberTableOffset;
 		public readonly int AddressTableOffset;
+		public readonly int VariableTableOffset;
 		public readonly int AddressTableSize;
 
 		public readonly string SourceFile = null;
 		public readonly LineNumberEntry[] LineNumbers = null;
 		public readonly MethodAddress Address = null;
+		public readonly VariableInfo ThisVariable = null;
+		public readonly VariableInfo[] Parameters = null;
+		public readonly VariableInfo[] Locals = null;
 
 		public static int Size
 		{
 			get {
-				return 32;
+				return 48;
 			}
 		}
 
@@ -147,11 +197,15 @@ namespace Mono.CSharp.Debugger
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
 			EndRow = reader.ReadInt32 ();
-			NumLineNumbers = reader.ReadInt32 ();
+			HasThis = reader.ReadInt32 ();
+			NumParameters = reader.ReadInt32 ();
+			NumLocals = reader.ReadInt32 ();
 
+			NumLineNumbers = reader.ReadInt32 ();
 			SourceFileOffset = reader.ReadInt32 ();
 			LineNumberTableOffset = reader.ReadInt32 ();
 			AddressTableOffset = reader.ReadInt32 ();
+			VariableTableOffset = reader.ReadInt32 ();
 			AddressTableSize = reader.ReadInt32 ();
 
 			if (SourceFileOffset != 0) {
@@ -163,18 +217,14 @@ namespace Mono.CSharp.Debugger
 				reader.Position = old_pos;
 			}
 
-			// Console.WriteLine ("METHOD ENTRY: " + this);
-
 			if (LineNumberTableOffset != 0) {
 				long old_pos = reader.Position;
 				reader.Position = LineNumberTableOffset;
 
 				LineNumbers = new LineNumberEntry [NumLineNumbers];
 
-				for (int i = 0; i < NumLineNumbers; i++) {
+				for (int i = 0; i < NumLineNumbers; i++)
 					LineNumbers [i] = new LineNumberEntry (reader);
-					// Console.WriteLine ("LINE: " + LineNumbers [i]);
-				}
 
 				reader.Position = old_pos;
 			}
@@ -183,26 +233,38 @@ namespace Mono.CSharp.Debugger
 				long old_pos = address_reader.Position;
 				address_reader.Position = AddressTableOffset;
 				int is_valid = address_reader.ReadInt32 ();
-				if (is_valid != 0) {
+				if (is_valid != 0)
 					Address = new MethodAddress (this, address_reader);
-					// Console.WriteLine ("ADDRESS: " + Address);
-				}
+				address_reader.Position = VariableTableOffset;
+				if (HasThis != 0)
+					ThisVariable = new VariableInfo (address_reader);
+				Parameters = new VariableInfo [NumParameters];
+				for (int i = 0; i < NumParameters; i++)
+					Parameters [i] = new VariableInfo (address_reader);
+				Locals = new VariableInfo [NumLocals];
+				for (int i = 0; i < NumLocals; i++)
+					Locals [i] = new VariableInfo (address_reader);
 				address_reader.Position = old_pos;
 			}
 		}
 
 		internal MethodEntry (int token, int sf_offset, string source_file,
+				      bool has_this, int num_params, int num_locals,
 				      LineNumberEntry[] lines, int lnt_offset,
-				      int addrtab_offset, int addrtab_size,
+				      int addrtab_offset, int vartab_offset, int addrtab_size,
 				      int start_row, int end_row)
 		{
 			this.Token = token;
 			this.StartRow = start_row;
 			this.EndRow = end_row;
 			this.NumLineNumbers = lines.Length;
+			this.HasThis = has_this ? 1 : 0;
+			this.NumParameters = num_params;
+			this.NumLocals = num_locals;
 			this.SourceFileOffset = sf_offset;
 			this.LineNumberTableOffset = lnt_offset;
 			this.AddressTableOffset = addrtab_offset;
+			this.VariableTableOffset = vartab_offset;
 			this.AddressTableSize = addrtab_size;
 			this.SourceFile = source_file;
 			this.LineNumbers = lines;
@@ -213,10 +275,14 @@ namespace Mono.CSharp.Debugger
 			bw.Write (Token);
 			bw.Write (StartRow);
 			bw.Write (EndRow);
+			bw.Write (HasThis);
+			bw.Write (NumParameters);
+			bw.Write (NumLocals);
 			bw.Write (NumLineNumbers);
 			bw.Write (SourceFileOffset);
 			bw.Write (LineNumberTableOffset);
 			bw.Write (AddressTableOffset);
+			bw.Write (VariableTableOffset);
 			bw.Write (AddressTableSize);
 		}
 

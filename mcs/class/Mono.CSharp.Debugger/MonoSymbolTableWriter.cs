@@ -79,6 +79,15 @@ namespace Mono.CSharp.Debugger
 				int my_size = (int) (MethodAddress.Size + count * 8);
 				address_table_size += my_size;
 
+				int num_params = method.Parameters.Length;
+				int num_locals = method.Locals.Length;
+
+				int variable_table_offset = address_table_size;
+				int my_size2 = VariableInfo.Size * (num_params + num_locals);
+				if (!method.MethodBase.IsStatic)
+					my_size2 += VariableInfo.Size;
+				address_table_size += my_size2;
+
 				for (int i = 0; i < count; i++) {
 					lines [i] = new LineNumberEntry (method.Lines [i]);
 					lines [i].Write (bw);
@@ -86,8 +95,10 @@ namespace Mono.CSharp.Debugger
 
 				MethodEntry entry = new MethodEntry (
 					(int) method.Token, (int) sources [method.SourceFile],
-					method.SourceFile.FileName, lines, pos, address_table_offset,
-					my_size, (int) method.Start.Row, (int) method.End.Row);
+					method.SourceFile.FileName, !method.MethodBase.IsStatic,
+					num_params, num_locals, lines, pos, address_table_offset,
+					variable_table_offset, my_size + my_size2,
+					(int) method.Start.Row, (int) method.End.Row);
 
 				methods.Add (method, entry);
 
