@@ -18,13 +18,13 @@ namespace System.Xml.Schema
 		private XmlSchemaObject sourceObj;
 		private string sourceUri;
 
-		[MonoTODO ("sourceObj needs to be serialized")]
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			this.lineNumber = info.GetInt32 ("lineNumber");
 			this.linePosition = info.GetInt32 ("linePosition");
 			this.sourceUri = info.GetString ("sourceUri");
+			this.sourceObj = info.GetValue ("sourceObj", typeof (XmlSchemaObject)) as XmlSchemaObject;
 		}
 		
 		
@@ -68,14 +68,27 @@ namespace System.Xml.Schema
 			get{ return this.sourceUri; } 
 		}
 
+		public override string Message
+		{
+			get {
+				string msg = base.Message;
+				if (sourceUri != null)
+					msg = String.Format ("XmlSchema error: {0}\n" +
+							     "URI: {1}, line {2}, position {3}",
+							     msg, sourceUri, lineNumber, linePosition);
+
+				return msg;
+			}
+		}
+
 		// Methods
-		[MonoTODO ("sourceObj needs to be serialized")]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 			info.AddValue ("lineNumber", lineNumber);
 			info.AddValue ("linePosition", linePosition);
-			info.AddValue ("SourceUri", sourceUri);
+			info.AddValue ("sourceUri", sourceUri);
+			info.AddValue ("sourceObj", sourceObj);
 		}
 	}
 }

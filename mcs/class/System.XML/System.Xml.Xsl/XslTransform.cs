@@ -9,7 +9,7 @@ using System.IO;
 
 namespace System.Xml.Xsl
 {
-	public class XslTransform
+	public sealed class XslTransform
 	{
 		#region Fields
 
@@ -28,7 +28,7 @@ namespace System.Xml.Xsl
 
 		#region Properties
 
-		XmlResolver XmlResolver {
+		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
 		}
 

@@ -20,7 +20,7 @@ namespace System.Xml.Serialization
 	{
 		private string ns;
 		private string typeName;
-		private bool includeInSchema;
+		private bool includeInSchema = true;
 
 		public SoapTypeAttribute ()
 		{

@@ -181,10 +181,6 @@ namespace System.Xml.Serialization
 			{
 				return xmlChoiceIdentifier;
 			}
-			set 
-			{
-				xmlChoiceIdentifier = value;
-			}
 		}
 		public object XmlDefaultValue 
 		{

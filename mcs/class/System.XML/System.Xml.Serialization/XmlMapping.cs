@@ -16,5 +16,8 @@ namespace System.Xml.Serialization
 	/// </summary>
 	public abstract class XmlMapping
 	{
+		internal XmlMapping ()
+		{
+		}
 	}
 }

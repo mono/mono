@@ -14,17 +14,18 @@ namespace System.Xml.Schema
 	{
 		//private fields
 		private Hashtable htable;
+		private Hashtable uriTable;
 		private XmlNameTable ntable;
 
-		[MonoTODO]
 		public XmlSchemaCollection()
+			: this (new NameTable ())
 		{
-			htable = new Hashtable();
-			ntable = new NameTable();
 		}
+
 		public XmlSchemaCollection(XmlNameTable nametable)
 		{
 			htable = new Hashtable();
+			uriTable = new Hashtable ();
 			ntable = nametable;
 		}
 
@@ -58,26 +59,37 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		public XmlSchema Add(string ns, XmlReader reader)
 		{
-			return null;
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public XmlSchema Add(string ns, string uri)
 		{
-			return null;
+			if (uri == null || uri == String.Empty)
+				throw new ArgumentNullException ("uri");
+
+			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		public XmlSchema Add(XmlSchema schema)
 		{
-			return null;
+			if (schema == null)
+				throw new ArgumentNullException ("schema");
+
+			throw new NotImplementedException ();
 		}
 
 		public void Add(XmlSchemaCollection schema)
 		{
-			XmlSchemaCollectionEnumerator xenum = schema.GetEnumerator();
-			while(xenum.MoveNext())
-			{
-				this.Add(xenum.Current);
-			}
+			if (schema == null)
+				throw new ArgumentNullException ("schema");
+
+			foreach (XmlSchema s in schema)
+				Add (s);
 		}
 
 		public bool Contains(string ns)

@@ -49,8 +49,7 @@ namespace System.Xml.Schema
 			this.List.CopyTo(array,index);
 		}
 		
-		[MonoTODO]
-		public new XmlSchemaObjectEnumerator GetEnumerator()
+		public new XmlSchemaObjectEnumerator GetEnumerator ()
 		{
 			return new XmlSchemaObjectEnumerator(this.List);
 		}
@@ -65,14 +64,21 @@ namespace System.Xml.Schema
 			this.List.Insert(index, item);
 		}
 		
-		[MonoTODO]
-		protected override void OnClear(){}
-		[MonoTODO]
-		protected override void OnInsert(int index,object item){}
-		[MonoTODO]
-		protected override void OnRemove(int index,object item){}
-		[MonoTODO]
-		protected override void OnSet(int index,object oldValue,object newValue){}
+		protected override void OnClear()
+		{
+		}
+
+		protected override void OnInsert(int index,object item)
+		{
+		}
+
+		protected override void OnRemove(int index,object item)
+		{
+		}
+
+		protected override void OnSet(int index,object oldValue,object newValue)
+		{
+		}
 
 		public void Remove(XmlSchemaObject item)
 		{

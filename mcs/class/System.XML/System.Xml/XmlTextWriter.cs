@@ -330,10 +330,10 @@ namespace System.Xml
 
 		public override void WriteEndDocument ()
 		{
+			CloseOpenAttributeAndElements ();
+
 			if ((ws == WriteState.Start) || (ws == WriteState.Prolog))
 				throw new ArgumentException ("This document does not have a root element.");
-
-			CloseOpenAttributeAndElements ();
 
 			ws = WriteState.Start;
 		}

@@ -245,6 +245,12 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual XmlNode CreateNode (
 			string nodeTypeString,
 			string name,

@@ -202,7 +202,7 @@ namespace System.Xml {
 			get { throw new NotImplementedException (); }
 		}
 
-		XmlResolver XmlResolver {
+		public XmlResolver XmlResolver {
 			[MonoTODO]
 			set { throw new NotImplementedException (); }
 		}
@@ -314,6 +314,12 @@ namespace System.Xml {
 
 		[MonoTODO]
 		public override string ReadString ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object ReadTypedValue ()
 		{
 			throw new NotImplementedException ();
 		}

@@ -31,9 +31,10 @@ namespace System.Xml.Serialization {
 		Type[] extraTypes;
 		XmlRootAttribute rootAttribute;
 		string defaultNamespace;
-		static Hashtable typeTable;
+		Hashtable typeTable;
 		bool useOrder;
 		bool isNullable;
+		Hashtable typeMappings = new Hashtable ();
 
 		#endregion // Fields
 
@@ -48,9 +49,9 @@ namespace System.Xml.Serialization {
 		{
 		}
 
-		[MonoTODO]
-		public XmlSerializer (XmlTypeMapping xmltypemapping)
+		public XmlSerializer (XmlTypeMapping xmlTypeMapping)
 		{
+			typeMappings.Add (xmlTypeMapping.TypeFullName, xmlTypeMapping);
 		}
 
 		public XmlSerializer (Type type, string defaultNamespace)
@@ -75,14 +76,32 @@ namespace System.Xml.Serialization {
 
 		internal XmlSerializer (Hashtable typeTable)
 		{
-			typeTable = typeTable;
+			this.typeTable = typeTable;
 		}
 
-		public XmlSerializer (Type type, XmlAttributeOverrides overrides, Type[] extraTypes, XmlRootAttribute root, string defaultNamespace)
+		public XmlSerializer (Type type,
+				      XmlAttributeOverrides overrides,
+				      Type [] extraTypes,
+				      XmlRootAttribute root,
+				      string defaultNamespace)
 		{
 			if (type == null)
-				throw new ArgumentNullException ("type", "XmlSerializer can't be constructed with a null type");
+				throw new ArgumentNullException ("type");
 
+			XmlReflectionImporter ri = new XmlReflectionImporter (overrides, defaultNamespace);
+			TypeData td = TypeTranslator.GetTypeData (type);
+			typeMappings.Add (td.FullTypeName, ri.ImportTypeMapping (type, root, defaultNamespace));
+			ri.IncludeTypes (type);
+
+			if (extraTypes != null) {
+				foreach (Type t in extraTypes) {
+					td = TypeTranslator.GetTypeData (t);
+					string n = td.FullTypeName;
+					typeMappings.Add (n, ri.ImportTypeMapping (type, root, defaultNamespace));
+					ri.IncludeTypes (t);
+				}
+			}
+			
 			this.type = type;
 			this.overrides = overrides;
 			this.extraTypes = (extraTypes == null ? new Type[0] : extraTypes);
@@ -131,15 +150,15 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual XmlSerializationReader CreateReader ()
 		{
+			// This is what MS does!!!
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual XmlSerializationWriter CreateWriter ()
 		{
+			// This is what MS does!!!
 			throw new NotImplementedException ();
 		}
 
@@ -159,9 +178,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual object Deserialize (XmlSerializationReader reader)
 		{
+			// This is what MS does!!!
 			throw new NotImplementedException ();
 		}
 
@@ -199,7 +218,7 @@ namespace System.Xml.Serialization {
 		
 		public void Serialize (XmlWriter xmlWriter, object o)
 		{
-			Serialize (xmlWriter, o);
+			Serialize (xmlWriter, o, null);
 		}
 		
 		public void Serialize (Stream stream, object o, XmlSerializerNamespaces namespaces)
@@ -222,6 +241,7 @@ namespace System.Xml.Serialization {
 			string rootName = objType.Name;
 			string rootNs = String.Empty;
 			string rootPrefix = String.Empty;
+			bool isBuiltIn = IsInbuiltType (objType);
 
 			if (namespaces == null)
 				namespaces = new XmlSerializerNamespaces ();
@@ -234,14 +254,21 @@ namespace System.Xml.Serialization {
 			XmlSerializerNamespaces nss = new XmlSerializerNamespaces ();
 			XmlQualifiedName[] qnames;
 
-			writer.WriteStartDocument ();
+			if (isBuiltIn) {
+				writer.WriteStartDocument ();
+				SerializeBuiltIn (writer, o);
+				writer.WriteEndDocument ();
+				return;
+			}
 			
-			object[] memberObj = (object[]) typeTable[objType];
+			writer.WriteStartDocument ();
+			object [] memberObj = (object []) typeTable [objType];
 			if (memberObj == null)
-				throw new Exception ("Unknown Type " + objType + " encountered during Serialization");
+				throw new Exception ("Unknown Type " + objType +
+						     " encountered during Serialization");
 
-			Hashtable memberTable = (Hashtable) memberObj[0];
-			XmlAttributes xmlAttributes = (XmlAttributes) memberTable[""];
+			Hashtable memberTable = (Hashtable) memberObj [0];
+			XmlAttributes xmlAttributes = (XmlAttributes) memberTable [""];
 
 			//If we have been passed an XmlRoot, set it on the base class
 			if (rootAttribute != null)
@@ -254,11 +281,12 @@ namespace System.Xml.Serialization {
 				rootNs	= xmlAttributes.XmlRoot.Namespace;
 			}
 
-			if (namespaces.GetPrefix (rootNs) != null)
+			if (namespaces != null && namespaces.GetPrefix (rootNs) != null)
 				rootPrefix = namespaces.GetPrefix (rootNs);
 
 			//XMLNS attributes in the Root
 			XmlAttributes XnsAttrs = (XmlAttributes) ((object[]) typeTable[objType])[1];
+
 			if (XnsAttrs != null) {
 				MemberInfo member = XnsAttrs.MemberInfo;
 				FieldInfo fieldInfo = member as FieldInfo;
@@ -293,7 +321,14 @@ namespace System.Xml.Serialization {
 				writer.WriteAttributeString (String.Empty, "xmlns", null, rootNs);
 
 			SerializeMembers (writer, o, true);//, namespaces);
+
 			writer.WriteEndDocument ();
+		}
+
+		private void SerializeBuiltIn (XmlWriter writer, object o)
+		{
+			TypeData td = TypeTranslator.GetTypeData (o.GetType ());
+			writer.WriteElementString (td.ElementName, o.ToString ());
 		}
 
 		private void SerializeMembers (XmlWriter writer, object o, bool isRoot)
@@ -732,6 +767,9 @@ namespace System.Xml.Serialization {
 				return false;
 			if (type.IsValueType || type == typeof (string) || type.IsPrimitive)
 				return true;
+			if (type == typeof (DateTime) || type == typeof (XmlNode))
+				return true;
+				
 			return false;
 		}
 
