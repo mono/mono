@@ -1,3 +1,6 @@
+2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* invoke.c (arch_create_delegate_trampoline): impl.
 
 Thu Mar 28 11:58:53 CET 2002 Paolo Molaro <lupus@ximian.com>
 
