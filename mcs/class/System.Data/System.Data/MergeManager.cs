@@ -229,9 +229,9 @@ namespace System.Data
 						targetColumn.Unique = sourceColumn.Unique;
 					}
 					catch(Exception e){
-						Console.WriteLine("targetColumn : {0}   targetTable : {1} ",targetColumn.ColumnName,table.TableName);
+//						Console.WriteLine("targetColumn : {0}   targetTable : {1} ",targetColumn.ColumnName,table.TableName);
 						foreach(DataRow row in table.Rows) {
-							Console.WriteLine(row[targetColumn]);
+//							Console.WriteLine(row[targetColumn]);
 						}
 						throw e;
 					}

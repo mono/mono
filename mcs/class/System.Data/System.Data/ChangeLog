@@ -1,5 +1,9 @@
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MergeManager.cs : don't output debug message to Console.
+
+2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDataInferenceLoader.cs : Namespace are not imported to the table
 	  structure. Thanks to Boris Kirzner for the fix.
 
