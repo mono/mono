@@ -1,5 +1,9 @@
 2004-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlFactory.cs : removed (obsolete).
+
+2004-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlNamespaceManager.cs : GetNamespacesInScope() ignored default
 	  namespace when scope is .ExcludeXml or .All.
 	* XmlReader.cs : Implemented ValueType, SchemaInfo, ReadAsObject().
