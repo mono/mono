@@ -146,7 +146,7 @@ namespace Mono.CSharp
 			} finally {
 				input.Close ();
 			}
-			
+
 			return errors;
 		}
 		
@@ -760,7 +760,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				CompileFiles (arg, false); 
+				errors += CompileFiles (arg, false); 
 			}
 
 			if (tokenize)
