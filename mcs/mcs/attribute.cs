@@ -232,7 +232,7 @@ namespace Mono.CSharp {
 
 		public virtual Type ResolveType (EmitContext ec)
 		{
-			if (Type == null)
+			if (Type == null && !resolve_error)
 				Type = CheckAttributeType (ec);
 			return Type;
 		}

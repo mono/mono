@@ -1,3 +1,9 @@
+2005-02-21  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #72732.
+	* attribute.cs (Attribute.ResolveType): If a 'resolve_error' had
+	occured previously, don't resolve again.
+
 2005-02-21  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #69949
