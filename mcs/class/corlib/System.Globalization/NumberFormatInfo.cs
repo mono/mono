@@ -267,9 +267,9 @@ namespace System.Globalization {
 			if (partOne.Length == 2) {
 				// assumed same for both positive and negative
 				// decimal digit side
-				numberDecimalDigits = 0;
+				percentDecimalDigits = 0;
 				for (int i = 0; i < partOne [1].Length; i ++) {
-					if (partOne [1][i] == zeroPattern [0])
+					if (partOne [1][i] == digitPattern [0])
 						percentDecimalDigits ++;
 					else
 						break;
@@ -278,7 +278,7 @@ namespace System.Globalization {
 				// percent grouping side
 				partTwo = partOne [0].Split (',');
 				if (partTwo.Length > 1) {
-					numberGroupSizes = new int [partTwo.Length - 1];
+					percentGroupSizes = new int [partTwo.Length - 1];
 					for (int i = 0; i < percentGroupSizes.Length; i ++) {
 						string pat = partTwo [i + 1];
 						percentGroupSizes [i] = pat.Length;

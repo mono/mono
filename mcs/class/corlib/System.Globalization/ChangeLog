@@ -1,3 +1,10 @@
+2004-02-08 David Sheldon <dave-mono@earth.li>
+
+  * NumberFormatInfo.cs: When parsing the percentages, put the data 
+   into PercentDecimalDigits/PercentGroupLengths, rather than trashing
+   the NumberDecimatDigits etc. This also means that the percent format
+   info gets set.
+
 2004-01-27  David Sheldon <dave-mono@earth.li>
 
   * NumberFormatInfo.cs: InitPatterns: it seems that the patterns in 
