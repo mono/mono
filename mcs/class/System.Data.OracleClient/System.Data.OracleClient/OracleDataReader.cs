@@ -127,6 +127,7 @@ namespace System.Data.OracleClient {
 			schemaTable.Columns.Add ("AllowDBNull", booleanType);
 			schemaTable.Columns.Add ("IsUnique", booleanType);
 			schemaTable.Columns.Add ("IsKey", booleanType);
+			schemaTable.Columns.Add ("IsReadOnly", booleanType);
 			schemaTable.Columns.Add ("BaseSchemaTable", stringType);
 			schemaTable.Columns.Add ("BaseCatalogName", stringType);
 			schemaTable.Columns.Add ("BaseTableName", stringType);
@@ -321,13 +322,15 @@ namespace System.Data.OracleClient {
 		{
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
-			
+
 			dataTypeNames = new ArrayList ();
 
 			for (int i = 0; i < statement.ColumnCount; i += 1) {
 				DataRow row = schemaTable.NewRow ();
 
 				OciParameterDescriptor parameter = statement.GetParameter (i);
+
+				dataTypeNames.Add(parameter.GetDataTypeName());
 
 				row ["ColumnName"]		= parameter.GetName ();
 				row ["ColumnOrdinal"]		= i + 1;
@@ -339,6 +342,7 @@ namespace System.Data.OracleClient {
 				row ["DataType"]		= typeof(string);
 				row ["AllowDBNull"]		= parameter.GetIsNull ();
 				row ["BaseColumnName"]		= parameter.GetName ();
+				row ["IsReadOnly"] 		= true;
 
 				schemaTable.Rows.Add (row);
 			}
