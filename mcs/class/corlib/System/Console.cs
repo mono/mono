@@ -326,7 +326,8 @@ namespace System
 			stdout.WriteLine (format, arg0, arg1, arg2);
 		}
 
-		[CLSCompliant (false)]
+		// uncomment this if you make the method public
+		//[CLSCompliant (false)]
 		internal static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3)
 		{
 			stdout.WriteLine (String.Format (format, arg0, arg1, arg2, arg3));

@@ -1,3 +1,9 @@
+2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomain.cs: set the _principal to null when changing the policy.
+	* Console.cs: remove ClsCompliant attribute from a method marked as
+	internal and added comment.
+
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Delegate.cs: marked protected fields private to match public

@@ -464,6 +464,7 @@ namespace System
 				throw new AppDomainUnloadedException ();
 
 			_principalPolicy = policy;
+			_principal = null;
 		}
 
 		public void SetShadowCopyFiles()
