@@ -1,3 +1,7 @@
+2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HtmlEmitter.cs : Correct URL escape implementation.
+
 2004-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformProcessor.cs : On document() function, close the 

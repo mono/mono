@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -282,9 +283,94 @@ namespace Mono.Xml.Xsl
 
 			writer.Write ("=\"");
 			openAttribute = true;
+
+			// URI attribute should be escaped.
+			string element = ((string) elementNameStack.Peek ()).ToLower (CultureInfo.InvariantCulture);
+			string attrName = null;
+			string [] attrNames = null;
+			switch (element) {
+			case "q":
+			case "blockquote":
+			case "ins":
+			case "del":
+				attrName = "cite";
+				break;
+			case "form":
+				attrName = "action";
+				break;
+			case "a":
+			case "area":
+			case "link":
+			case "base":
+				attrName = "href";
+				break;
+			case "head":
+				attrName = "profile";
+				break;
+			case "input":
+				attrNames = new string [] {"src", "usemap"};
+				break;
+			case "img":
+				attrNames = new string [] {"src", "usemap", "longdesc"};
+				break;
+			case "object":
+				attrNames = new string [] {"classid", "codebase", "data", "archive", "usemap"};
+				break;
+			case "script":
+				attrNames = new string [] {"src", "for"};
+				break;
+			}
+			if (attrNames != null) {
+				string attr = localName.ToLower (CultureInfo.InvariantCulture);
+				foreach (string a in attrNames) {
+					if (a == attr) {
+						value = UriEx.EscapeUri (value);
+						break;
+					}
+				}
+			}
+			else if (attrName != null && attrName == localName.ToLower (CultureInfo.InvariantCulture))
+				value = UriEx.EscapeUri (value);
 			WriteFormattedString (value);
 			openAttribute = false;
 			writer.Write ('\"');
+		}
+
+		class UriEx : Uri
+		{
+			private UriEx () : base ("urn:foo") {}
+
+			public static string EscapeUri (string input)
+			{
+				StringBuilder sb = new StringBuilder ();
+				int start = 0;
+				for (int i = 0; i < input.Length; i++) {
+					char c = input [i];
+					if (c < 32 || c > 127)
+						continue;
+					bool preserve = false;
+					switch (c) {
+					case '&':
+					case '<':
+					case '>':
+					case '"':
+					case '\'':
+						preserve = true;
+						break;
+					default:
+						preserve = UriEx.IsExcludedCharacter (c);
+						break;
+					}
+					if (preserve) {
+						sb.Append (EscapeString (input.Substring (start, i - start)));
+						sb.Append (c);
+						start = i + 1;
+					}
+				}
+				if (start < input.Length)
+					sb.Append (EscapeString (input.Substring (start)));
+				return sb.ToString ();
+			}
 		}
 
 		public override void WriteComment (string text) {
