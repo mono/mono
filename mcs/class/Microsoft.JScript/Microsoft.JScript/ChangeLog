@@ -1,3 +1,9 @@
+2004-04-26  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* FunctionDeclaration.cs: let's make function name formation
+	(get_name ()) a little bit less dumb. We cache the prefix now so
+	we don't have to recalculate it everytime.
+
 2004-04-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Literal.cs: emit the correct code for negative numbers.

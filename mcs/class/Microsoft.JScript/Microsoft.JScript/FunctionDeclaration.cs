@@ -4,7 +4,7 @@
 // Author:
 //	 Cesar Octavio Lopez Nataren
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, 2004 Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
 using System;
@@ -22,6 +22,7 @@ namespace Microsoft.JScript {
 		internal DictionaryEntry [] locals;
 		internal LocalBuilder local_func;
 		internal JSFunctionAttributeEnum func_type;
+		internal string prefix;
 
 		internal FunctionDeclaration (AST parent, string name, 
 					      FormalParameterList p,
@@ -29,6 +30,15 @@ namespace Microsoft.JScript {
 					      Block body)
 		{
 			this.parent = parent;
+			if (parent != null) {
+				FunctionDeclaration tmp;
+				tmp = (FunctionDeclaration) parent;
+				if (tmp.prefix != String.Empty)
+					prefix = tmp.prefix + "." + tmp.Function.name;
+				else
+					prefix = tmp.Function.name;
+			} else
+				prefix = String.Empty;
 			Function = new FunctionObject (name, p, return_type, body);
 		}
 
@@ -53,24 +63,13 @@ namespace Microsoft.JScript {
 			return Function.ToString ();
 		}
 
-		internal string get_name ()
-		{
-			if (parent == null)
-				return Function.name;
-			
-			string parent_name, full_name;
-			FunctionDeclaration p = parent as FunctionDeclaration;
-			parent_name = p.get_name ();
-			full_name = parent_name + "." + Function.name;
-			return full_name;
-		}
-
 		internal override void Emit (EmitContext ec)
 		{			
-			string name = get_name ();
+			string name = Function.name;
+			string full_name = prefix == String.Empty ? full_name = name : full_name = prefix + "." + name;
 			TypeBuilder type = ec.type_builder;
 			ILGenerator ig = ec.ig;
-			MethodBuilder method_builder = type.DefineMethod (name, Function.attr, 
+			MethodBuilder method_builder = type.DefineMethod (full_name, Function.attr, 
 									  Function.return_type,
 									  Function.params_types ());
 			set_custom_attr (method_builder);
@@ -81,20 +80,21 @@ namespace Microsoft.JScript {
 						  FieldAttributes.Public | FieldAttributes.Static);
 			else
 				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
-			build_closure (ec);
+			build_closure (ec, full_name);
 			Function.body.Emit (new_ec);
 			new_ec.ig.Emit (OpCodes.Ret);
 		}
 		
-		internal void build_closure (EmitContext ec)
+		internal void build_closure (EmitContext ec, string full_name)
 		{
 			ILGenerator ig = ec.ig;
-			string name = get_name ();
+			string name = Function.name;
 
 			Type t = ec.mod_builder.GetType ("JScript 0");
 			ig.Emit (OpCodes.Ldtoken, t);
-			ig.Emit (OpCodes.Ldstr, Function.name);
 			ig.Emit (OpCodes.Ldstr, name);
+			ig.Emit (OpCodes.Ldstr, full_name);
+
 			Function.parameters.Emit (ec);
 			build_local_fields (ig);
 
