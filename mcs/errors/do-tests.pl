@@ -65,12 +65,12 @@ my $RESULT_UNEXPECTED_CRASH		= 7;
 
 my @statuses = (
 	"UNEXPECTED TEST HARNESS INTERNAL ERROR",
-	"UNEXPECTED SUCCESS",
-	"SUCCESS",
-	"UNEXPECTED INCORRECT ERROR",
-	"INCORRECT ERROR",
-	"UNEXPECTED NO ERROR",
-	"NO ERROR",
+	"OK (still listed as a failure)",
+	"OK",
+	"REGRESSION: An incorrect error was reported",
+	"KNOWN ISSUE: Incorrect error reported",
+	"REGRESSION: No error reported", 
+	"KNOWN ISSUE: No error reported",
 	"UNEXPECTED CRASH"
 );
 
@@ -87,18 +87,19 @@ my @status_items = (
 
 my %results_map = ();
 my $total = 0;
+my $textmsg = "";
 
 open (PROFILELOG, ">$profile.log") or die "Cannot open log file $profile.log";
 
 foreach (glob ($files)) {
-        print PROFILELOG "$_"; print "$_";
+        my $tname = $_;
 	my ($error_number) = (/[a-z]*(\d+)(-\d+)?\.cs/);
 	my $options = `sed -n 's,^// Compiler options:,,p' $_`;
 	chomp $options;
-	print PROFILELOG "..."; print "...";
 
 	if (exists $ignore_map {$_}) {
-	    print "IGNORED\n";
+	    print "IGNORED: $_\n";
+	    print PROFILELOG "IGNORED: $_\n";
 	    next;
 	}
 
@@ -127,8 +128,16 @@ foreach (glob ($files)) {
 		    ? $RESULT_EXPECTED_INCORRECT_ERROR : $RESULT_UNEXPECTED_CRASH;
         }
 
+	$textmsg = "FAIL";
+
+	if ($status == $RESULT_EXPECTED_NO_ERROR ||
+	    $status == $RESULT_UNEXPECTED_CORRECT_ERROR ||
+	    $status == $RESULT_EXPECTED_INCORRECT_ERROR ||
+	    $status == $RESULT_CORRECT_ERROR){
+	    $textmsg = "PASS";
+	}
 	push @{$status_items [$status]}, $_;
-	print PROFILELOG "$statuses[$status]\n"; print "$statuses[$status]\n";
+	print PROFILELOG "$textmsg: $tname $statuses[$status]\n"; print "$textmsg: $tname $statuses[$status]\n";
 	$results_map{$_} = $status;
 }
 print "\n";
