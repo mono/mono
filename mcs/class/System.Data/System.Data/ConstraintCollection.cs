@@ -264,6 +264,9 @@ namespace System.Data {
                                 _mostRecentConstraints = constraints;
                                 return;
                         }
+
+                        if ( (constraints == null) || (constraints.Length == 0))
+                                return;
                         
                         // Check whether the constraint is UniqueConstraint
                         // And whether it was initialized with the special ctor
@@ -287,17 +290,9 @@ namespace System.Data {
 	
                         }
                                                                                                     
-                        if ( (constraints == null) || (constraints.Length == 0))
-                                throw new ArgumentNullException ("Cannot add null");
-
-			 else {
-                                foreach (Constraint constraint in constraints)
-                                         Add (constraint);
-                                       
-                               }
-
-				
-		}
+                        foreach (Constraint constraint in constraints)
+                                Add (constraint);
+                }
 
 		// Helper AddRange() - Call this function when EndInit is called
                 internal void PostEndInit()
