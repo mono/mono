@@ -22,6 +22,8 @@ namespace Microsoft.JScript {
 		internal ILGenerator ig;
 		internal ModuleBuilder mod_builder;
 
+		internal Label LoopBegin, LoopEnd;
+
 		internal EmitContext (TypeBuilder type)
 		{
 			type_builder = type;
@@ -297,7 +299,9 @@ namespace Microsoft.JScript {
 			if (ast == null)
 				return false;
 
-			if (ast is Expression) {
+			if (ast is Identifier)
+				return true;
+			else if (ast is Expression) {
 				Expression exp = ast as Expression;
 				int n = exp.exprs.Count - 1;
 				AST tmp = (AST) exp.exprs [n];
