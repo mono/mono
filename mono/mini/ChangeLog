@@ -1,3 +1,8 @@
+2004-11-23  Geoff Norton  <gnorton@customerdna.com>
+
+	* inssel-ppc.brg, mini-ppc.c: Use mono_class_from_mono_type instead of
+	vt->inst_vtype->data.klass.  This fixes generic structs and bug #69766
+
 2004-11-23  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (MCS,ILASM): Don't refer to runtime/ directory.
