@@ -206,6 +206,8 @@ public class ASCIIEncoding : Encoding
 		if (count < 0 || count > (bytes.Length - index)) {
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
+		if (count == 0)
+		    return String.Empty;
 		unsafe {
 			fixed (byte *ss = &bytes [0]) {
 				return new String ((sbyte*)ss, index, count);
@@ -218,6 +220,8 @@ public class ASCIIEncoding : Encoding
 			throw new ArgumentNullException ("bytes");
 		}
 		int count = bytes.Length;
+		if (count == 0)
+		    return String.Empty;
 		unsafe {
 			fixed (byte *ss = &bytes [0]) {
 				return new String ((sbyte*)ss, 0, count);

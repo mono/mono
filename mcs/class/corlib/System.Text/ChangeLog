@@ -1,3 +1,9 @@
+2003-03-05  Aleksey Demakov <avd@openlinksw.com>
+
+	* ASCIIEncoding.cs:
+	* Latin1Encoding.cs: fix GetString (byte[]) and
+	GetString (byte[], int, int) for zero-length case.
+
 2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Latin1Encoding.cs: added Serializable attribute.
