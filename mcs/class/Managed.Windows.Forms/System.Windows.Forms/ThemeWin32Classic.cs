@@ -1542,21 +1542,13 @@ namespace System.Windows.Forms
 			DateTime current_date = mc.GetFirstDateInMonthGrid ( new DateTime (this_month.Year, this_month.Month, 1));
 			for (int i=0; i < 6; i++) 
 			{
-				// if we are drawing the lead and trailing dates
-				bool draw_other_dates = false;
 				// draw the week number if required
 				if (mc.ShowWeekNumbers) 
 				{
 					// get the week for this row
 					int week = mc.GetWeekOfYear (current_date);	
 					// determine if we are drawing this week number
-					bool draw_week_num = false;					
-					if (current_date.Year <= this_month.Year || (current_date.Year == this_month.Year && current_date.Month <= this_month.Month)) {
-						draw_week_num = true;
-					} else {
-						// find out if we are the lead of the first calendar or the trail of the last calendar						
-						draw_week_num = ((row == mc.CalendarDimensions.Height-1 && col == mc.CalendarDimensions.Width-1) && (this_month.AddMonths(1).Year == current_date.Year && this_month.AddMonths(1).Month == current_date.Month)) ;
-					}
+					bool draw_week_num = mc.IsValidWeekToDraw (this_month, current_date, row, col);
 
 					if (draw_week_num) {
 						dc.DrawString (
@@ -1571,6 +1563,10 @@ namespace System.Windows.Forms
 					} else {
 						// leave the loop
 						break;
+					}
+				} else {
+					if (mc.IsValidWeekToDraw (this_month, current_date, row, col)) {
+						month_row_count = i;
 					}
 				}
 				
@@ -1593,7 +1589,8 @@ namespace System.Windows.Forms
 					}
 
 					// shift the rectangle down one row
-					date_rect.Offset(-8*date_cell_size.Width, date_cell_size.Height);
+					int offset = (mc.ShowWeekNumbers) ? -8 : -7;
+					date_rect.Offset(offset*date_cell_size.Width, date_cell_size.Height);
 				}
 			}
 

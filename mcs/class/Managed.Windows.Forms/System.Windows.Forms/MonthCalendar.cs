@@ -567,7 +567,9 @@ namespace System.Windows.Forms {
 
 				// get the height
 				int height = calendar_dimensions.Height * single_month.Height;
-				height += date_cell_size.Height + 2;		// add the height of the "Today: " ...
+				if (this.ShowToday) {
+					height += date_cell_size.Height + 2;		// add the height of the "Today: " ...
+				}
 				if (calendar_dimensions.Height > 1) {
 					height += (calendar_dimensions.Height - 1) * calendar_spacing.Height;
 				}
@@ -633,7 +635,7 @@ namespace System.Windows.Forms {
 				ClientRectangle.Bottom - date_cell_size.Height,
 				7 * date_cell_size.Width,
 				date_cell_size.Height);
-			if (today_rect.Contains (point)) {
+			if (today_rect.Contains (point) && this.ShowToday) {
 				return new HitTestInfo(HitArea.TodayLink, point, DateTime.Now);
 			}
 
@@ -1084,6 +1086,27 @@ namespace System.Windows.Forms {
 				year_size);
 		}
 
+		// determine if date is allowed to be drawn in month
+		internal bool IsValidWeekToDraw (DateTime month, DateTime date, int row, int col) {
+			if (month.Year == date.Year && month.Month == date.Month) {
+				return true;
+			}
+
+			// check start border regions
+			if (row == 0 && col == 0) {
+				DateTime tocheck = month.AddMonths (-1);
+				return (tocheck.Year == date.Year && tocheck.Month == date.Month);
+			}
+
+			// check end border region
+			if (row == CalendarDimensions.Height - 1 && col == CalendarDimensions.Width - 1) {
+				DateTime tocheck = month.AddMonths (1);
+				return (tocheck.Year == date.Year && tocheck.Month == date.Month);
+			}
+
+			return false;			
+		}
+
 		// set one item clicked and all others off
 		private void SetItemClick(HitTestInfo hti) 
 		{
@@ -1181,9 +1204,7 @@ namespace System.Windows.Forms {
 		// raised by any key down events
 		private void KeyDownHandler (object sender, KeyEventArgs e) {
 System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
-System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
-System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
-System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
+
 			if (!is_shift_pressed && e.Shift) {
 				shift_select_start_date = SelectionStart;
 				is_shift_pressed = e.Shift;
