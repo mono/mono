@@ -13,8 +13,11 @@ namespace Mono.CSharp {
 
 	/// <summary>
 	///   Keeps track of the namespaces defined in the C# code.
+	///
+	///   This is an Expression to allow it to be referenced in the
+	///   compiler parse/intermediate tree during name resolution.
 	/// </summary>
-	public class Namespace : IAlias {
+	public class Namespace : FullNamedExpression, IAlias {
 		static ArrayList all_namespaces = new ArrayList ();
 		static Hashtable namespaces_map = new Hashtable ();
 		
@@ -31,6 +34,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Namespace (Namespace parent, string name)
 		{
+			// Expression members.
+			this.eclass = ExprClass.Namespace;
+			this.Type = null;
+			this.loc = Location.Null;
+
 			this.parent = parent;
 
 			string pname = parent != null ? parent.Name : "";
@@ -48,6 +56,16 @@ namespace Mono.CSharp {
 			if (namespaces_map.Contains (fullname))
 				return;
 			namespaces_map [fullname] = true;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("Expression tree referenced namespace " + fullname + " during Emit ()");
 		}
 
 		public static bool IsNamespace (string name)
@@ -88,9 +106,9 @@ namespace Mono.CSharp {
 			return Root.GetNamespace (name, create);
 		}
 
-		public IAlias Lookup (DeclSpace ds, string name, Location loc)
+		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
 		{
-			IAlias o = Lookup (name);
+			IAlias o = (IAlias) defined_names [name];
 
 			Type t;
 			DeclSpace tdecl = o as DeclSpace;
@@ -98,7 +116,7 @@ namespace Mono.CSharp {
 				t = tdecl.DefineType ();
 
 				if ((ds == null) || ds.CheckAccessLevel (t))
-					return new TypeExpression (t, loc);
+					return new TypeExpression (t, Location.Null);
 			}
 
 			Namespace ns = GetNamespace (name, false);
@@ -109,7 +127,7 @@ namespace Mono.CSharp {
 			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
 				return null;
 
-			return new TypeExpression (t, loc);
+			return new TypeExpression (t, Location.Null);
 		}
 
 		public void AddNamespaceEntry (NamespaceEntry entry)
@@ -122,11 +140,6 @@ namespace Mono.CSharp {
 			defined_names.Add (name, o);
 		}
 
-		public IAlias Lookup (string name)
-		{
-			return (IAlias) defined_names [name];
-		}
-
 		static public ArrayList UserDefinedNamespaces {
 			get {
 				return all_namespaces;
@@ -137,6 +150,12 @@ namespace Mono.CSharp {
 		///   The qualified name of the current namespace
 		/// </summary>
 		public string Name {
+			get {
+				return fullname;
+			}
+		}
+
+		public override string FullName {
 			get {
 				return fullname;
 			}
@@ -226,7 +245,7 @@ namespace Mono.CSharp {
 				if (resolved_ns != null)
 					return resolved_ns;
 
-				object resolved = NamespaceEntry.LookupForUsing (Name, Location);
+				FullNamedExpression resolved = NamespaceEntry.LookupForUsing (Name, Location);
 				resolved_ns = resolved as Namespace;
 				return resolved_ns;
 			}
@@ -246,9 +265,9 @@ namespace Mono.CSharp {
 				Location = loc;
 			}
 
-			IAlias resolved;
+			FullNamedExpression resolved;
 
-			public IAlias Resolve ()
+			public FullNamedExpression Resolve ()
 			{
 				if (resolved != null)
 					return resolved;
@@ -362,26 +381,13 @@ namespace Mono.CSharp {
 			aliases [name] = new AliasEntry (this, name, alias, loc);
 		}
 
-		protected AliasEntry GetAliasEntry (string alias)
+		public FullNamedExpression LookupAlias (string alias)
 		{
 			AliasEntry entry = null;
-
 			if (aliases != null)
 				entry = (AliasEntry) aliases [alias];
-			if (entry == null && Parent != null)
-				entry = Parent.GetAliasEntry (alias);
 
-			return entry;
-		}
-
-		public IAlias LookupAlias (string alias)
-		{
-			AliasEntry entry = GetAliasEntry (alias);
-
-			if (entry == null)
-				return null;
-
-			return entry.Resolve ();
+			return entry == null ? null : entry.Resolve ();
 		}
 
 		//
@@ -391,7 +397,7 @@ namespace Mono.CSharp {
 		// Section 16.3.2 says that the same rule is applied when resolving the namespace-name
 		// in the using-namespace-directive.
 		//
-		public IAlias LookupForUsing (string dotted_name, Location loc)
+		public FullNamedExpression LookupForUsing (string dotted_name, Location loc)
 		{
 			int pos = dotted_name.IndexOf ('.');
 			string simple_name = dotted_name;
@@ -401,7 +407,7 @@ namespace Mono.CSharp {
 				rest = dotted_name.Substring (pos + 1);
 			}
 
-			IAlias o = NS.Lookup (null, simple_name, loc);
+			FullNamedExpression o = NS.Lookup (null, simple_name, loc);
 			if (o == null && ImplicitParent != null)
 				o = ImplicitParent.LookupNamespaceOrType (null, simple_name, loc);
 
@@ -412,16 +418,16 @@ namespace Mono.CSharp {
 			if (ns != null)
 				return ns.Lookup (null, rest, loc);
 			
-			Type nested = TypeManager.LookupType (o.Name + "." + rest);
+			Type nested = TypeManager.LookupType (o.FullName + "." + rest);
 			if (nested == null)
 				return null;
 
-			return new TypeExpression (nested, loc);
+			return new TypeExpression (nested, Location.Null);
 		}
 
-		public IAlias LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
+		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
 		{
-			IAlias resolved = null;
+			FullNamedExpression resolved = null;
 			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
 				if ((resolved = curr_ns.Lookup (ds, name, loc)) != null)
 					break;
@@ -429,9 +435,9 @@ namespace Mono.CSharp {
 			return resolved;
 		}
 
-		private IAlias Lookup (DeclSpace ds, string name, Location loc)
+		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
 		{
-			IAlias o;
+			FullNamedExpression o;
 			Namespace ns;
 
 			//
@@ -455,11 +461,11 @@ namespace Mono.CSharp {
 				if (ns != null)
 					return ns.Lookup (ds, last, loc);
 
-				Type nested = TypeManager.LookupType (o.Name + "." + last);
+				Type nested = TypeManager.LookupType (o.FullName + "." + last);
 				if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
 					return null;
 
-				return new TypeExpression (nested, loc);
+				return new TypeExpression (nested, Location.Null);
 			}
 
 			//
@@ -472,12 +478,9 @@ namespace Mono.CSharp {
 			//
 			// Check aliases.
 			//
-			AliasEntry entry = GetAliasEntry (name);
-			if (entry != null) {
-				o = entry.Resolve ();
-				if (o != null)
-					return o;
-			}
+			o = LookupAlias (name);
+			if (o != null)
+				return o;
 
 			if (name.IndexOf ('.') > 0)
 				return null;
@@ -485,12 +488,12 @@ namespace Mono.CSharp {
 			//
 			// Check using entries.
 			//
-			IAlias t = null, match = null;
+			FullNamedExpression t = null, match = null;
 			foreach (Namespace using_ns in GetUsingTable ()) {
 				match = using_ns.Lookup (ds, name, loc);
-				if ((match != null) && match.IsType){
+				if ((match != null) && (match is TypeExpr)) {
 					if (t != null) {
-						DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
+						DeclSpace.Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
 						return null;
 					} else {
 						t = match;
@@ -507,9 +510,11 @@ namespace Mono.CSharp {
 		{
 			if (namespace_using_table != null)
 				return namespace_using_table;
-			
-			if (using_clauses == null)
-				return new Namespace [0];
+
+			if (using_clauses == null) {
+				namespace_using_table = new Namespace [0];
+				return namespace_using_table;
+			}
 
 			ArrayList list = new ArrayList (using_clauses.Count);
 

@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 		//
 		public NamespaceEntry NamespaceEntry;
 
-		public Hashtable Cache = new Hashtable ();
+		private Hashtable Cache = new Hashtable ();
 		
 		public string Basename;
 		
@@ -520,17 +520,6 @@ namespace Mono.CSharp {
 			set {
 				in_transit = value;
 			}
-		}
-
-		/// <summary>
-		///   Looks up the alias for the name
-		/// </summary>
-		public IAlias LookupAlias (string name)
-		{
-			if (NamespaceEntry != null)
-				return NamespaceEntry.LookupAlias (name);
-			else
-				return null;
 		}
 		
 		// 
@@ -823,9 +812,10 @@ namespace Mono.CSharp {
 			return tc.DefineType ();
 		}
 		
-		Type LookupInterfaceOrClass (string ns, string name, out bool error)
+		FullNamedExpression LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;
+			FullNamedExpression result;
 			Type t;
 			object r;
 			
@@ -833,7 +823,7 @@ namespace Mono.CSharp {
 			int p = name.LastIndexOf ('.');
 
 			if (dh.Lookup (ns, name, out r))
-				return (Type) r;
+				return (FullNamedExpression) r;
 			else {
 				//
 				// If the type is not a nested type, we do not need `LookupType's processing.
@@ -854,8 +844,23 @@ namespace Mono.CSharp {
 			}
 			
 			if (t != null) {
-				dh.Insert (ns, name, t);
-				return t;
+				result = new TypeExpression (t, Location.Null);
+				dh.Insert (ns, name, result);
+				return result;
+			}
+
+			if (ns != "" && Namespace.IsNamespace (ns)) {
+				result = Namespace.LookupNamespace (ns, false).Lookup (this, name, Location.Null);
+				if (result != null) {
+					dh.Insert (ns, name, result);
+					return result;
+				}
+			}
+
+			if (ns == "" && Namespace.IsNamespace (name)) {
+				result = Namespace.LookupNamespace (name, false);
+				dh.Insert (ns, name, result);
+				return result;
 			}
 
 			//
@@ -866,7 +871,10 @@ namespace Mono.CSharp {
 				ns = MakeFQN (ns, name.Substring (0, p));
 				name = name.Substring (p+1);
 			}
-			
+
+			if (ns.IndexOf ('+') != -1)
+				ns = ns.Replace ('+', '.');
+
 			parent = RootContext.Tree.LookupByNamespace (ns, name);
 			if (parent == null) {
 				dh.Insert (ns, name, null);
@@ -879,8 +887,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			dh.Insert (ns, name, t);
-			return t;
+			result = new TypeExpression (t, Location.Null);
+			dh.Insert (ns, name, result);
+			return result;
 		}
 
 		public static void Error_AmbiguousTypeReference (Location loc, string name, string t1, string t2)
@@ -902,15 +911,16 @@ namespace Mono.CSharp {
 		///   during the tree resolution process and potentially define
 		///   recursively the type
 		/// </remarks>
-		public Type FindType (Location loc, string name)
+		public FullNamedExpression FindType (Location loc, string name)
 		{
-			Type t;
+			FullNamedExpression t;
 			bool error;
 
 			//
 			// For the case the type we are looking for is nested within this one
 			// or is in any base class
 			//
+
 			DeclSpace containing_ds = this;
 
 			while (containing_ds != null){
@@ -924,7 +934,7 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 				
-					if ((t != null) && containing_ds.CheckAccessLevel (t))
+					if ((t != null) && containing_ds.CheckAccessLevel (t.Type))
 						return t;
 
 					current_type = current_type.BaseType;
@@ -971,34 +981,27 @@ namespace Mono.CSharp {
 				if (name.IndexOf ('.') > 0)
 					continue;
 
-				IAlias alias_value = ns.LookupAlias (name);
-				if (alias_value != null) {
-					t = LookupInterfaceOrClass ("", alias_value.Name, out error);
-					if (error)
-						return null;
-
-					if (t != null)
-						return t;
-				}
+				t = ns.LookupAlias (name);
+				if (t != null)
+					return t;
 
 				//
 				// Now check the using clause list
 				//
-				Type match = null;
+				FullNamedExpression match = null;
 				foreach (Namespace using_ns in ns.GetUsingTable ()) {
 					match = LookupInterfaceOrClass (using_ns.Name, name, out error);
 					if (error)
 						return null;
 
-					if (match != null){
-						if (t != null){
-							if (CheckAccessLevel (match)) {
-								Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
-								return null;
-							}
+					if ((match != null) && (match is TypeExpr)) {
+						Type matched = ((TypeExpr) match).Type;
+						if (!CheckAccessLevel (matched))
 							continue;
+						if (t != null){
+							Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
+							return null;
 						}
-						
 						t = match;
 					}
 				}
@@ -1008,6 +1011,74 @@ namespace Mono.CSharp {
 
 			//Report.Error (246, Location, "Can not find type `"+name+"'");
 			return null;
+		}
+
+		//
+		// Public function used to locate types, this can only
+		// be used after the ResolveTree function has been invoked.
+		//
+		// Returns: Type or null if they type can not be found.
+		//
+		// Come to think of it, this should be a DeclSpace
+		//
+		public FullNamedExpression LookupType (string name, bool silent, Location loc)
+		{
+			FullNamedExpression e;
+
+			if (Cache.Contains (name)) {
+				e = (FullNamedExpression) Cache [name];
+			} else {
+				//
+				// For the case the type we are looking for is nested within this one
+				// or is in any base class
+				//
+				DeclSpace containing_ds = this;
+				while (containing_ds != null){
+					
+					// if the member cache has been created, lets use it.
+					// the member cache is MUCH faster.
+					if (containing_ds.MemberCache != null) {
+						Type t = containing_ds.MemberCache.FindNestedType (name);
+						if (t == null) {
+							containing_ds = containing_ds.Parent;
+							continue;
+						}
+
+						e = new TypeExpression (t, Location.Null);
+						Cache [name] = e;
+						return e;
+					}
+					
+					// no member cache. Do it the hard way -- reflection
+					Type current_type = containing_ds.TypeBuilder;
+					
+					while (current_type != null &&
+					       current_type != TypeManager.object_type) {
+						//
+						// nested class
+						//
+						Type t = TypeManager.LookupType (current_type.FullName + "." + name);
+						if (t != null){
+							e = new TypeExpression (t, Location.Null);
+							Cache [name] = e;
+							return e;
+						}
+						
+						current_type = current_type.BaseType;
+					}
+					
+					containing_ds = containing_ds.Parent;
+				}
+				
+				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc);
+				if (!silent || e != null)
+					Cache [name] = e;
+			}
+
+			if (e == null && !silent)
+				Report.Error (246, loc, "Cannot find type `"+name+"'");
+			
+			return e;
 		}
 
 		/// <remarks>

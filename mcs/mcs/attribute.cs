@@ -157,14 +157,20 @@ namespace Mono.CSharp {
 		{
 			string NameAttribute = Name + "Attribute";
 
-			Type t1 = ec.ResolvingTypeTree
+			FullNamedExpression n1 = ec.ResolvingTypeTree
 				? ec.DeclSpace.FindType (Location, Name)
-				: RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+				: ec.DeclSpace.LookupType (Name, true, Location);
 
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
-			Type t2 = ec.ResolvingTypeTree
+			FullNamedExpression n2 = ec.ResolvingTypeTree
 				? ec.DeclSpace.FindType (Location, NameAttribute)
-				: RootContext.LookupType (ec.DeclSpace, NameAttribute, true, Location);
+				: ec.DeclSpace.LookupType (NameAttribute, true, Location);
+
+			TypeExpr e1 = n1 == null ? null : n1 as TypeExpr;
+			TypeExpr e2 = n2 == null ? null : n2 as TypeExpr;			
+
+			Type t1 = e1 == null ? null : e1.ResolveType (ec);
+			Type t2 = e2 == null ? null : e2.ResolveType (ec);
 
 			String err0616 = null;
 
