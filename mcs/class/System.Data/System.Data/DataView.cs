@@ -5,6 +5,7 @@
 //    Daniel Morgan <danmorg@sc.rr.com>
 //    Tim Coleman (tim@timcoleman.com)
 //
+// Copyright (C) Daniel Morgan, 2002, 2003
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
 //
@@ -14,7 +15,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace System.Data {
+namespace System.Data 
+{
 	/// <summary>
 	/// A DataView is used in the binding of data between
 	/// a DataTable and Windows Forms or Web Forms allowing
@@ -27,11 +29,11 @@ namespace System.Data {
 	[DefaultProperty ("Table")]
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
 	{
-
 		DataTable dataTable = null;
 		string rowFilter = "";
 		string sort = "";
 		DataViewRowState rowState;
+		DataRowView[] rowCache = null;
 		
 		// FIXME: what are the default values?
 		bool allowNew = true; 
@@ -42,30 +44,32 @@ namespace System.Data {
 
 		bool isOpen = false;
 
+		bool bInit = false;
+		
 		internal DataViewManager dataViewManager = null;
 
-		[MonoTODO]	
-		public DataView () {
+		public DataView () 
+		{
 			dataTable = new DataTable ();
 			rowState = DataViewRowState.None;
+			Open ();
 		}
 
-		[MonoTODO]
-		public DataView (DataTable table) {
-
+		public DataView (DataTable table) 
+		{
 			dataTable = table;
 			rowState = DataViewRowState.None;
 			Open ();
 		}
 
-		[MonoTODO]
 		public DataView (DataTable table, string RowFilter,
-			string Sort, DataViewRowState RowState) : this (table) {
-			
+				string Sort, DataViewRowState RowState) 
+		{
+			dataTable = table;
+			rowState = DataViewRowState.None;
 			rowFilter = RowFilter;
 			sort = Sort;
 			rowState = RowState;
-
 			Open();
 		}
 
@@ -127,6 +131,11 @@ namespace System.Data {
 			[MonoTODO]
 			set {
 				applyDefaultSort = value;
+				// FIXME: update the index cache to the DataTable, and 
+				//        only refresh the index when the DataTable
+				//        has changes via column, row, or constraint
+				//        changed events
+				UpdateIndex ();
 			}
 		}
 
@@ -137,9 +146,11 @@ namespace System.Data {
 		public int Count {
 			[MonoTODO]
 			get {
-				// TODO: apply RowFilter
-				// TODO: apply RowStateFilter
-				return dataTable.Rows.Count;				
+				// FIXME: remove this line once collection change
+				//        events from the DataTable are handled
+				UpdateIndex ();
+
+				return rowCache.Length;;
 			}
 		}
 
@@ -159,7 +170,14 @@ namespace System.Data {
 		public DataRowView this[int recordIndex] {
 			[MonoTODO]
 			get {
-				return new DataRowView(this, recordIndex);
+				// FIXME: use index cache to the DataTable, and 
+				//        only refresh the index when the DataTable
+				//        has changes via column, row, or constraint
+				//        changed events
+				// Remove this line once changed events are handled
+				UpdateIndex ();
+				
+				return rowCache[recordIndex];
 			}
 		}
 
@@ -175,6 +193,11 @@ namespace System.Data {
 			[MonoTODO]
 			set {
 				rowFilter = value;
+				// FIXME: update the index cache to the DataTable, and 
+				//        only refresh the index when the DataTable
+				//        has changes via column, row, or constraint
+				//        changed events
+				UpdateIndex ();
 			}
 		}
 
@@ -190,6 +213,11 @@ namespace System.Data {
 			[MonoTODO]
 			set {
 				rowState = value;
+				// FIXME: update the index cache to the DataTable, and 
+				//        only refresh the index when the DataTable
+				//        has changes via column, row, or constraint
+				//        changed events
+				UpdateIndex ();
 			}
 		}
 
@@ -205,6 +233,11 @@ namespace System.Data {
 			[MonoTODO]
 			set {
 				sort = value;
+				// FIXME: update the index cache to the DataTable, and 
+				//        only refresh the index when the DataTable
+				//        has changes via column, row, or constraint
+				//        changed events
+				UpdateIndex ();
 			}
 		}
 
@@ -221,66 +254,114 @@ namespace System.Data {
 			[MonoTODO]
 			set {
 				dataTable = value;
+				// FIXME: update the index cache to the DataTable, and 
+				//        only refresh the index when the DataTable
+				//        has changes via column, row, or constraint
+				//        changed events
+				UpdateIndex ();
 			}
 		}
 
 		[MonoTODO]
-		public virtual DataRowView AddNew() {
+		public virtual DataRowView AddNew() 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void BeginInit() {
+		public void BeginInit() 
+		{
+			bInit = true; 
 			// FIXME:
 		}
 
 		[MonoTODO]
-		public void CopyTo(Array array,	int index) {
-			// TODO: apply RowFilter
-			// TODO: apply RowStateFilter
-			for (int row = 0; row < dataTable.Rows.Count; row++) {
-				array.SetValue(this[row], index + row);
+		public void CopyTo (Array array, int index) 
+		{
+			// FIXME: use index cache to the DataTable, and 
+			//        only refresh the index when the DataTable
+			//        has changes via column, row, or constraint
+			//        changed events
+			UpdateIndex ();
+			
+			int row = 0;
+			for (; row < rowCache.Length && row < array.Length; row++) {
+				array.SetValue (rowCache[row], index + row);
+			}
+			if (row < array.Length) {
+				for (int r = 0; r < array.Length; r++) {
+					array.SetValue (null, index + r);
+				}
 			}
 		}
 
 		[MonoTODO]
-		public void Delete(int index) {
+		public void Delete(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void EndInit() {
+		public void EndInit() 
+		{
+			bInit = false;
 			// FIXME:
 		}
 
 		[MonoTODO]
-		public int Find(object key) {
+		public int Find(object key) 
+		{
+			// FIXME: use index cache to the DataTable, and 
+			//        only refresh the index when the DataTable
+			//        has changes via column, row, or constraint
+			//        changed events
+
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Find(object[] key) {
+		public int Find(object[] key) 
+		{
+			// FIXME: use an index cache to the DataTable, and 
+			//        only refresh the index when the DataTable
+			//        has changes via column, row, or constraint
+			//        changed events
+
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataRowView[] FindRows(object key) {
+		public DataRowView[] FindRows(object key) 
+		{
+			// FIXME: use an index cache to the DataTable, and 
+			//        only refresh the index when the DataTable
+			//        has changes via column, row, or constraint
+			//        changed events
+
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataRowView[] FindRows(object[] key) {
+		public DataRowView[] FindRows(object[] key) 
+		{
+			// FIXME: use an index cache to the DataTable, and 
+			//        only refresh the index when the DataTable
+			//        has changes via column, row, or constraint
+			//        changed events
+			
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public IEnumerator GetEnumerator() {
-			// TODO: apply RowFilter
-			// TODO: apply RowStateFilter
-			DataRowView[] dataRowViews;
-			dataRowViews = new DataRowView[dataTable.Rows.Count];
-			this.CopyTo (dataRowViews, 0);
-			return new DataViewEnumerator (dataRowViews);
+		public IEnumerator GetEnumerator() 
+		{
+			// FIXME: use an index cache to the DataTable, and 
+			//        only refresh the index when the DataTable
+			//        has changes via column, row, or constraint
+			//        changed events
+			UpdateIndex ();					
+
+			return new DataViewEnumerator (rowCache);
 		}
 		
 		[MonoTODO]
@@ -296,19 +377,21 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		protected void Close() {
+		protected void Close() 
+		{
 			// FIXME:
 			isOpen = false;
 		}
 
 		[MonoTODO]
-		protected virtual void ColumnCollectionChanged(
-			object sender, CollectionChangeEventArgs e) {
-
+		protected virtual void ColumnCollectionChanged (object sender, 
+							CollectionChangeEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
-		protected override void Dispose (bool disposing) {
+		protected override void Dispose (bool disposing) 
+		{
 			if (disposing)
 				Close ();
 
@@ -316,25 +399,82 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		protected virtual void IndexListChanged(object sender, ListChangedEventArgs e) {
+		protected virtual void IndexListChanged(object sender, ListChangedEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual void OnListChanged(ListChangedEventArgs e) {
+		protected virtual void OnListChanged(ListChangedEventArgs e) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void Open() {
-			// FIXME:
+		protected void Open() 
+		{
+			// FIXME: create the initial index cache to the DataTable, and 
+			//        only refresh the index when the DataTable
+			//        has changes via column, row, or constraint
+			//        changed events. the index cache is generally
+			//        a DataViewRow array that points to the actual
+			//        DataRows in the this DataTable's DataRowCollection;
+			//        this index is really a cache that gets 
+			//        created during Open(), gets Updated 
+			//        when various properties of this view
+			//        changes, gets Updated when this DataTable's 
+			//        row, column, or constraint collections have changed.
+			//        I'm not sure what else.
+			//        The data view will know one of the DataTable's
+			//        collections have changed via one of 
+			//        its changed events.
+			//        Otherwise, if getting a/the DataRowView(s),
+			//        Count, or other properties, then just use the
+			//        index cache.
+			UpdateIndex (true);
 			isOpen = true;
 		}
-		
-		[MonoTODO]
-		PropertyDescriptorCollection ITypedList.GetItemProperties (
-			PropertyDescriptor[] listAccessors) {
 
+		// internal use by Mono
+		protected void Reset() 
+		{
+			// TODO: what really happens?
+			Close ();
+			rowCache = null;
+			Open ();
+		}
+
+		// internal use by Mono
+		protected virtual void UpdateIndex () 
+		{
+			UpdateIndex (false);
+		}
+
+		// This is method is internal to 
+		// the Mono implementation of DataView; it
+		// is not to be used from your code.
+		//
+		// Update the DataRowView array which is an index cache
+		// into the DataTable's DataRowCollection.
+		//
+		// I assume this is what UpdateIndex is used for
+		protected virtual void UpdateIndex(bool force) 
+		{
+			DataRowView[] newRowCache = null;
+			DataRow[] rows = null;
+			
+			rows = dataTable.Select (RowFilter, Sort, RowStateFilter);
+
+			newRowCache = new DataRowView[rows.Length];
+			for (int r = 0; r < rows.Length; r++) {
+				newRowCache[r] = new DataRowView (this, rows[r]);
+			}
+			rowCache = newRowCache;
+		}
+
+		[MonoTODO]
+		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor[] listAccessors) 
+		{
 			// FIXME: use listAccessors somehow
 
 			DataColumnPropertyDescriptor[] descriptors = 
@@ -342,14 +482,14 @@ namespace System.Data {
 
 			DataColumnPropertyDescriptor descriptor;
 			DataColumn dataColumn;
-			for(int col = 0; col < dataTable.Columns.Count; col++)
+			for (int col = 0; col < dataTable.Columns.Count; col ++)
 			{
 				dataColumn = dataTable.Columns[col];
 				
 				descriptor = new DataColumnPropertyDescriptor(
 					dataColumn.ColumnName, col, null);
-				descriptor.SetComponentType(typeof(System.Data.DataRowView));
-				descriptor.SetPropertyType(dataColumn.DataType);
+				descriptor.SetComponentType (typeof (System.Data.DataRowView));
+				descriptor.SetPropertyType (dataColumn.DataType);
 				
 				descriptors[col] = descriptor;
 			}
@@ -358,7 +498,8 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		string ITypedList.GetListName (PropertyDescriptor[] listAccessors) {
+		string ITypedList.GetListName (PropertyDescriptor[] listAccessors) 
+		{
 			return "";
 		}
 
@@ -383,7 +524,8 @@ namespace System.Data {
 			}
 		}
 
-		//void ICollection.CopyTo (Array array, int index) {
+		//void ICollection.CopyTo (Array array, int index) 
+		//{
 		//	CopyTo (array, index);
 		//}
 
@@ -414,69 +556,82 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		int IList.Add (object value) {
+		int IList.Add (object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void IList.Clear () {
+		void IList.Clear () 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		bool IList.Contains (object value) {
+		bool IList.Contains (object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		int IList.IndexOf (object value) {
+		int IList.IndexOf (object value) 
+		{
 			throw new NotImplementedException ();
 		}
 			
 		[MonoTODO]
-		void IList.Insert(int index,object value) {
+		void IList.Insert(int index,object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void IList.Remove(object value) {
+		void IList.Remove(object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void IList.RemoveAt(int index) {
+		void IList.RemoveAt(int index) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		#region IBindingList implementation
 
 		[MonoTODO]
-		void IBindingList.AddIndex (PropertyDescriptor property) {
+		void IBindingList.AddIndex (PropertyDescriptor property) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		object IBindingList.AddNew () {
+		object IBindingList.AddNew () 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void IBindingList.ApplySort (PropertyDescriptor property, ListSortDirection direction) {
+		void IBindingList.ApplySort (PropertyDescriptor property, ListSortDirection direction) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		int IBindingList.Find (PropertyDescriptor property, object key) {
+		int IBindingList.Find (PropertyDescriptor property, object key) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void IBindingList.RemoveIndex (PropertyDescriptor property) {
+		void IBindingList.RemoveIndex (PropertyDescriptor property) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void IBindingList.RemoveSort () {
+		void IBindingList.RemoveSort () 
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -547,27 +702,30 @@ namespace System.Data {
 
 		#endregion // IBindingList implementation
 
-		private class DataViewEnumerator : IEnumerator {
+		private class DataViewEnumerator : IEnumerator 
+		{
 			private DataRowView[] rows;
 			int on = -1;
 
-			internal DataViewEnumerator (DataRowView[] dataRowViews) {
+			internal DataViewEnumerator (DataRowView[] dataRowViews) 
+			{
 				rows = dataRowViews;
 			}
 
 			public object Current {
 				get {
-					if(on == -1 || on >= rows.Length)
+					if (on == -1 || on >= rows.Length)
 						throw new InvalidOperationException ();
 					return rows[on];
 				}
 			}
 
-			public bool MoveNext() {
+			public bool MoveNext () 
+			{
 				// TODO: how do you determine
 				// if a collection has been
 				// changed?
-				if(on < rows.Length - 1) {
+				if (on < rows.Length - 1) {
 					on++;
 					return true;
 				}
@@ -575,9 +733,10 @@ namespace System.Data {
 				return false; // EOF
 			}
 
-			public void Reset() {
+			public void Reset () {
 				on = -1;
 			}
 		}
 	}
 }
+

@@ -12,6 +12,7 @@
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Daniel Morgan, 2002-2003
 //
 
 using System;
@@ -27,7 +28,7 @@ namespace System.Data {
 	[DefaultProperty ("TableName")]
 	[DesignTimeVisible (false)]
 	[Serializable]
-	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable	
+	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable 
 	{
 		internal DataSet dataSet;   
 		
@@ -61,7 +62,7 @@ namespace System.Data {
 		/// Initializes a new instance of the DataTable class with no arguments.
 		/// </summary>
 		
-		public DataTable()
+		public DataTable () 
 		{
 			dataSet = null;
 			_columnCollection = new DataColumnCollection(this);
@@ -89,8 +90,7 @@ namespace System.Data {
 		/// <summary>
 		/// Intitalizes a new instance of the DataTable class with the specified table name.
 		/// </summary>
-		
-		public DataTable(string tableName) : this ()
+		public DataTable (string tableName) : this () 
 		{
 			_tableName = tableName;
 		}
@@ -98,10 +98,9 @@ namespace System.Data {
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with the SerializationInfo and the StreamingContext.
 		/// </summary>
-		
 		[MonoTODO]
-		protected DataTable(SerializationInfo info, StreamingContext context)
-			: this ()
+		protected DataTable (SerializationInfo info, StreamingContext context)
+			: this () 
 		{
 			//
 			// TODO: Add constructor logic here
@@ -125,25 +124,25 @@ namespace System.Data {
 			set { _virginCaseSensitive = value; }
 		}
 
-		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv)
+		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv) 
 		{
 			DataColumnChangeEventArgs e = new DataColumnChangeEventArgs (dr, dc, pv);
 			OnColumnChanged(e);
 		}
 
-		internal void ChangingDataColumn (DataRow dr, DataColumn dc, object pv)
+		internal void ChangingDataColumn (DataRow dr, DataColumn dc, object pv) 
 		{
 			DataColumnChangeEventArgs e = new DataColumnChangeEventArgs (dr, dc, pv);
 			OnColumnChanging (e);
 		}
 
-		internal void DeletedDataRow (DataRow dr, DataRowAction action)
+		internal void DeletedDataRow (DataRow dr, DataRowAction action) 
 		{
 			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
 			OnRowDeleted (e);
 		}
 
-		internal void ChangedDataRow (DataRow dr, DataRowAction action)
+		internal void ChangedDataRow (DataRow dr, DataRowAction action) 
 		{
 			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
 			OnRowChanged (e);
@@ -301,8 +300,7 @@ namespace System.Data {
 		/// </summary>
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the column(s) that represent the primary key for this table.")]
-		public DataColumn[] PrimaryKey
-		{
+		public DataColumn[] PrimaryKey {
 			get {
 				UniqueConstraint uc = UniqueConstraint.GetPrimaryKeyConstraint( Constraints);
 				if (null == uc) return new DataColumn[] {};
@@ -314,8 +312,7 @@ namespace System.Data {
 				//when a new pk is set 
 
 				//clear Primary Key if value == null
-				if (null == value)
-				{
+				if (null == value) {
 					UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
 					return;
 				}
@@ -323,16 +320,14 @@ namespace System.Data {
 
 				//Does constraint exist for these columns
 				UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
-						this.Constraints, (DataColumn[]) value);
+					this.Constraints, (DataColumn[]) value);
 
 				//if constraint doesn't exist for columns
 				//create new unique primary key constraint
-				if (null == uc)
-				{
+				if (null == uc) {
 					uc = new UniqueConstraint( (DataColumn[]) value, true);
 				}
-				else //set existing constraint as the new primary key
-				{
+				else { //set existing constraint as the new primary key
 					UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
 				}
 				
@@ -382,18 +377,14 @@ namespace System.Data {
 		/// Commits all the changes made to this table since the 
 		/// last time AcceptChanges was called.
 		/// </summary>
-		
-		public void AcceptChanges()
+		public void AcceptChanges () 
 		{
-
 			//FIXME: Do we need to validate anything here or
 			//try to catch any errors to deal with them?
 
-			foreach(DataRow myRow in _rows)
-			{
+			foreach(DataRow myRow in _rows) {
 				myRow.AcceptChanges();
 			}
-
 		}
 
 		/// <summary>
@@ -401,8 +392,7 @@ namespace System.Data {
 		/// on a form or used by another component. The initialization
 		/// occurs at runtime.
 		/// </summary>
-		
-		public void BeginInit()
+		public void BeginInit () 
 		{
 		}
 
@@ -410,18 +400,15 @@ namespace System.Data {
 		/// Turns off notifications, index maintenance, and 
 		/// constraints while loading data.
 		/// </summary>
-		
 		[MonoTODO]
-		public void BeginLoadData()
+		public void BeginLoadData () 
 		{
 		}
 
 		/// <summary>
 		/// Clears the DataTable of all data.
 		/// </summary>
-		
-		public void Clear()
-		{
+		public void Clear () {
 			_rows.Clear ();
 		}
 
@@ -429,9 +416,8 @@ namespace System.Data {
 		/// Clones the structure of the DataTable, including
 		///  all DataTable schemas and constraints.
 		/// </summary>
-		
 		[MonoTODO]
-		public virtual DataTable Clone()
+		public virtual DataTable Clone () 
 		{
 			DataTable Copy = new DataTable ();			
 			CopyProperties (Copy);
@@ -442,10 +428,9 @@ namespace System.Data {
 		/// Computes the given expression on the current_rows that 
 		/// pass the filter criteria.
 		/// </summary>
-		
 		[MonoTODO]
-		public object Compute(string expression, string filter)
-		{			
+		public object Compute (string expression, string filter) 
+		{
 			//FIXME: //Do a real compute
 			object obj = "a";
 			return obj;
@@ -455,11 +440,9 @@ namespace System.Data {
 		/// Copies both the structure and data for this DataTable.
 		/// </summary>
 		[MonoTODO]	
-		public DataTable Copy()
+		public DataTable Copy () 
 		{
 			DataTable Copy = new DataTable ();
-
-
 			CopyProperties (Copy);
 
 			foreach (DataRow Row in Rows) {
@@ -475,7 +458,7 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		private void CopyProperties (DataTable Copy)
+		private void CopyProperties (DataTable Copy) 
 		{
 			Copy.CaseSensitive = CaseSensitive;
 			Copy.VirginCaseSensitive = VirginCaseSensitive;
@@ -507,18 +490,18 @@ namespace System.Data {
 		/// on a form or used by another component. The 
 		/// initialization occurs at runtime.
 		/// </summary>
-		
-		public void EndInit()
+		[MonoTODO]
+		public void EndInit () 
 		{
+
 		}
 
 		/// <summary>
 		/// Turns on notifications, index maintenance, and 
 		/// constraints after loading data.
 		/// </summary>
-		
 		[MonoTODO]
-		public void EndLoadData()
+		public void EndLoadData() 
 		{
 		}
 
@@ -528,7 +511,7 @@ namespace System.Data {
 		///  AcceptChanges was last called.
 		/// </summary>
 		[MonoTODO]
-		public DataTable GetChanges()
+		public DataTable GetChanges() 
 		{
 			//TODO:
 			return this;
@@ -540,7 +523,7 @@ namespace System.Data {
 		/// since AcceptChanges was called, filtered by DataRowState.
 		/// </summary>
 		[MonoTODO]	
-		public DataTable GetChanges(DataRowState rowStates)
+		public DataTable GetChanges(DataRowState rowStates) 
 		{
 			//TODO:
 			return this;
@@ -549,43 +532,37 @@ namespace System.Data {
 		/// <summary>
 		/// Gets an array of DataRow objects that contain errors.
 		/// </summary>
-		
 		[MonoTODO]
-		public DataRow[] GetErrors()
+		public DataRow[] GetErrors () 
 		{
 			throw new NotImplementedException ();
 		}
-
+	
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure
-		/// and is not intended to be used directly from your code.
+		/// This member is only meant to support Mono's infrastructure 
 		/// </summary>
-		
-		protected virtual DataTable CreateInstance()
+		protected virtual DataTable CreateInstance () 
 		{
-                        return Activator.CreateInstance(this.GetType(), true) as DataTable;
+			return Activator.CreateInstance (this.GetType (), true) as DataTable;
 		}
 
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure
-		/// and is not intended to be used directly from your code.
+		/// This member is only meant to support Mono's infrastructure 
 		/// </summary>
-		
-		protected virtual Type GetRowType()
+		protected virtual Type GetRowType () 
 		{
-                        return typeof (DataRow);
+			return typeof (DataRow);
 		}
 
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure 
-		/// and is not intended to be used directly from your code.
+		/// This member is only meant to support Mono's infrastructure 
 		/// 
 		/// Used for Data Binding between System.Web.UI. controls 
 		/// like a DataGrid
 		/// or
 		/// System.Windows.Forms controls like a DataGrid
 		/// </summary>
-		IList IListSource.GetList()
+		IList IListSource.GetList () 
 		{
 			IList list = (IList) _defaultView;
 			return list;
@@ -596,17 +573,15 @@ namespace System.Data {
 		/// property settings, as well as original and current values.
 		/// </summary>
 		[MonoTODO]
-		public void ImportRow(DataRow row)
+		public void ImportRow (DataRow row) 
 		{
 		}
 
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure
-		///  and is not intended to be used directly from your code.
+		/// This member is only meant to support Mono's infrastructure 		
 		/// </summary>
-		
 		[MonoTODO]
-		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
 		}
 
@@ -615,7 +590,7 @@ namespace System.Data {
 		///  is found, a new row is created using the given values.
 		/// </summary>
 		[MonoTODO]
-		public DataRow LoadDataRow(object[] values, bool fAcceptChanges)
+		public DataRow LoadDataRow (object[] values, bool fAcceptChanges) 
 		{
 			DataRow row = null;
 			if (PrimaryKey.Length == 0) {
@@ -631,7 +606,7 @@ namespace System.Data {
 		/// <summary>
 		/// Creates a new DataRow with the same schema as the table.
 		/// </summary>
-		public DataRow NewRow()
+		public DataRow NewRow () 
 		{
 			return this.NewRowFromBuilder (new DataRowBuilder (this, 0, 0));
 		}
@@ -640,16 +615,15 @@ namespace System.Data {
 		/// This member supports the .NET Framework infrastructure
 		///  and is not intended to be used directly from your code.
 		/// </summary>
-		protected internal DataRow[] NewRowArray(int size)
+		protected internal DataRow[] NewRowArray (int size) 
 		{
-			return (DataRow[]) Array.CreateInstance (GetRowType(), size);
+			return (DataRow[]) Array.CreateInstance (GetRowType (), size);
 		}
 
 		/// <summary>
 		/// Creates a new row from an existing row.
 		/// </summary>
-		
-		protected virtual DataRow NewRowFromBuilder(DataRowBuilder builder)
+		protected virtual DataRow NewRowFromBuilder (DataRowBuilder builder) 
 		{
 			return new DataRow (builder);
 		}
@@ -660,11 +634,9 @@ namespace System.Data {
 		/// table since it was loaded, or the last time AcceptChanges
 		///  was called.
 		/// </summary>
-		
 		[MonoTODO]
-		public void RejectChanges()
-		{
-			
+		public void RejectChanges () 
+		{	
 			//foreach(DataRow myRow in _rows)
 			//{
 			for (int i = _rows.Count - 1; i >= 0; i--) {
@@ -676,22 +648,19 @@ namespace System.Data {
 
 		/// <summary>
 		/// Resets the DataTable to its original state.
-		/// </summary>
-		
+		/// </summary>		
 		[MonoTODO]
-		public virtual void Reset()
+		public virtual void Reset () 
 		{
 		}
 
 		/// <summary>
 		/// Gets an array of all DataRow objects.
 		/// </summary>
-		
-		[MonoTODO]
-		public DataRow[] Select()
+		public DataRow[] Select () 
 		{
-			//FIXME:
-			DataRow[] dataRows = {null};
+			DataRow[] dataRows = new DataRow[_rows.Count];
+			_rows.CopyTo (dataRows, 0);
 			return dataRows;
 		}
 
@@ -700,9 +669,7 @@ namespace System.Data {
 		/// the filter criteria in order of primary key (or 
 		/// lacking one, order of addition.)
 		/// </summary>
-		
-		[MonoTODO]
-		public DataRow[] Select(string filterExpression)
+		public DataRow[] Select (string filterExpression) 
 		{
 			ExpressionElement Expression = new ExpressionMainElement (filterExpression);
 
@@ -721,10 +688,31 @@ namespace System.Data {
 		/// match the filter criteria, in the the 
 		/// specified sort order.
 		/// </summary>
-		[MonoTODO]
-		public DataRow[] Select(string filterExpression, string sort)
+		public DataRow[] Select (string filterExpression, string sort) 
 		{
-			DataRow[] dataRows = {null};
+			DataRow[] dataRows = null;
+
+			if (filterExpression != null && filterExpression.Equals (String.Empty) == false)
+				dataRows = Select (filterExpression);
+			else
+				dataRows = Select ();
+
+			if (sort != null && !sort.Equals (String.Empty)) {
+				SortableColumn[] sortableColumns = null;
+
+				sortableColumns = ParseTheSortString (sort);
+				if (sortableColumns == null)
+					throw new Exception ("sort expression result is null");
+				if (sortableColumns.Length == 0)
+					throw new Exception("sort expression result is 0");
+
+				RowSorter rowSorter = new RowSorter (dataRows, sortableColumns);
+				dataRows = rowSorter.SortRows ();
+			
+				sortableColumns = null;
+				rowSorter = null;
+			}
+
 			return dataRows;
 		}
 
@@ -734,9 +722,13 @@ namespace System.Data {
 		/// the specified state.
 		/// </summary>
 		[MonoTODO]
-		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates)
+		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates) 
 		{
-			DataRow[] dataRows = {null};
+			DataRow[] dataRows = null;
+
+			// TODO: do something with recordStates
+			dataRows = Select (filterExpression, sort);
+
 			return dataRows;
 		}
 
@@ -744,7 +736,7 @@ namespace System.Data {
 		/// Gets the TableName and DisplayExpression, if 
 		/// there is one as a concatenated string.
 		/// </summary>
-		public override string ToString()
+		public override string ToString() 
 		{
 			//LAMESPEC: spec says concat the two. impl puts a 
 			//plus sign infront of DisplayExpression
@@ -757,22 +749,18 @@ namespace System.Data {
 		/// <summary>
 		/// Raises the ColumnChanged event.
 		/// </summary>
-		protected virtual void OnColumnChanged(DataColumnChangeEventArgs e)
-		{
-			if (null != ColumnChanged)
-			{
-				ColumnChanged(this, e);
+		protected virtual void OnColumnChanged (DataColumnChangeEventArgs e) {
+			if (null != ColumnChanged) {
+				ColumnChanged (this, e);
 			}
 		}
 
 		/// <summary>
 		/// Raises the ColumnChanging event.
 		/// </summary>
-		protected virtual void OnColumnChanging(DataColumnChangeEventArgs e)
-		{
-			if (null != ColumnChanging)
-			{
-				ColumnChanging(this, e);
+		protected virtual void OnColumnChanging (DataColumnChangeEventArgs e) {
+			if (null != ColumnChanging) {
+				ColumnChanging (this, e);
 			}
 		}
 
@@ -780,34 +768,29 @@ namespace System.Data {
 		/// Raises the PropertyChanging event.
 		/// </summary>
 		[MonoTODO]
-		protected internal virtual void OnPropertyChanging(PropertyChangedEventArgs pcevent)
-		{
-//			if (null != PropertyChanging)
-//			{
-//				PropertyChanging(this, e);
-//			}
+		protected internal virtual void OnPropertyChanging (PropertyChangedEventArgs pcevent) {
+			//	if (null != PropertyChanging)
+			//	{
+			//		PropertyChanging (this, e);
+			//	}
 		}
 
 		/// <summary>
 		/// Notifies the DataTable that a DataColumn is being removed.
 		/// </summary>
 		[MonoTODO]
-		protected internal virtual void OnRemoveColumn(DataColumn column)
-		{
-//			if (null != RemoveColumn)
-//			{
-//				RemoveColumn(this, e);
-//			}
+		protected internal virtual void OnRemoveColumn (DataColumn column) {
+			//	if (null != RemoveColumn)
+			//	{
+			//		RemoveColumn(this, e);
+			//	}
 		}
 
 		/// <summary>
 		/// Raises the RowChanged event.
 		/// </summary>
-		
-		protected virtual void OnRowChanged(DataRowChangeEventArgs e)
-		{
-			if (null != RowChanged)
-			{
+		protected virtual void OnRowChanged (DataRowChangeEventArgs e) {
+			if (null != RowChanged) {
 				RowChanged(this, e);
 			}
 		}
@@ -816,11 +799,8 @@ namespace System.Data {
 		/// <summary>
 		/// Raises the RowChanging event.
 		/// </summary>
-		
-		protected virtual void OnRowChanging(DataRowChangeEventArgs e)
-		{
-			if (null != RowChanging)
-			{
+		protected virtual void OnRowChanging (DataRowChangeEventArgs e) {
+			if (null != RowChanging) {
 				RowChanging(this, e);
 			}
 		}
@@ -828,10 +808,8 @@ namespace System.Data {
 		/// <summary>
 		/// Raises the RowDeleted event.
 		/// </summary>
-		protected virtual void OnRowDeleted(DataRowChangeEventArgs e)
-		{
-			if (null != RowDeleted)
-			{
+		protected virtual void OnRowDeleted (DataRowChangeEventArgs e) {
+			if (null != RowDeleted) {
 				RowDeleted(this, e);
 			}
 		}
@@ -839,17 +817,14 @@ namespace System.Data {
 		/// <summary>
 		/// Raises the RowDeleting event.
 		/// </summary>
-		protected virtual void OnRowDeleting(DataRowChangeEventArgs e)
-		{
-			if (null != RowDeleting)
-			{
+		protected virtual void OnRowDeleting (DataRowChangeEventArgs e) {
+			if (null != RowDeleting) {
 				RowDeleting(this, e);
 			}
 		}
 
 		[MonoTODO]
-		private DataColumn CopyColumn (DataColumn Column)
-		{
+		private DataColumn CopyColumn (DataColumn Column) {
 			DataColumn Copy = new DataColumn ();
 
 			// Copy all the properties of column
@@ -919,7 +894,167 @@ namespace System.Data {
 		[DataSysDescription ("Occurs when a row in the table marked for deletion. Throw an exception to cancel the deletion.")]
 		public event DataRowChangeEventHandler RowDeleting;
 		
-		#endregion //Events
-	}
+		#endregion // Events
 
+		// to parse the sort string for DataTable:Select(expression,sort)
+		// into sortable columns (think ORDER BY, 
+		// such as, "customer ASC, price DESC" )
+		private SortableColumn[] ParseTheSortString (string sort) 
+		{
+			SortableColumn[] sortColumns = null;
+			ArrayList columns = null;
+		
+			if (sort != null && !sort.Equals ("")) {
+				columns = new ArrayList ();
+				string[] columnExpression = sort.Trim ().Split (new char[1] {','});
+			
+				for (int c = 0; c < columnExpression.Length; c++) {
+					string[] columnSortInfo = columnExpression[c].Trim ().Split (new char[1] {' '});
+				
+					string columnName = columnSortInfo[0].Trim ();
+					string sortOrder = "ASC";
+					if (columnSortInfo.Length > 1) 
+						sortOrder = columnSortInfo[1].Trim ().ToUpper ();
+					
+					ListSortDirection sortDirection = ListSortDirection.Ascending;
+					switch (sortOrder) {
+					case "ASC":
+						sortDirection = ListSortDirection.Ascending;
+						break;
+					case "DESC":
+						sortDirection = ListSortDirection.Descending;
+						break;
+					default:
+						throw new IndexOutOfRangeException ("Could not find column: " + columnExpression[c]);
+					}
+					Int32 ord = 0;
+					try {
+						ord = Int32.Parse (columnName);
+					}
+					catch (FormatException) {
+						ord = -1;
+					}
+					DataColumn dc = null;
+					if (ord == -1)				
+						dc = _columnCollection[columnName];
+					else
+						dc = _columnCollection[ord];
+					SortableColumn sortCol = new SortableColumn (dc,sortDirection);
+					columns.Add (sortCol);
+				}	
+				sortColumns = (SortableColumn[]) columns.ToArray (typeof (SortableColumn));
+			}		
+			return sortColumns;
+		}
+	
+		private class SortableColumn 
+		{
+			private DataColumn col;
+			private ListSortDirection dir;
+
+			internal SortableColumn (DataColumn column, 
+						ListSortDirection direction) 
+			{
+				col = column;
+				dir = direction;
+			}
+
+			public DataColumn Column {
+				get {
+					return col;
+				}
+			}
+
+			public ListSortDirection SortDirection {
+				get {
+					return dir;
+				}
+			}
+		}
+
+		private class RowSorter : IComparer 
+		{
+			private SortableColumn[] sortColumns;
+			private DataRow[] rowsToSort;
+			
+			internal RowSorter(DataRow[] unsortedRows, 
+					SortableColumn[] sortColumns) 
+			{
+				this.sortColumns = sortColumns;
+				this.rowsToSort = unsortedRows;
+			}
+
+			public SortableColumn[] SortColumns {
+				get {
+					return sortColumns;
+				}
+			}
+			
+			public DataRow[] SortRows () 
+			{
+				Array.Sort (rowsToSort, this);
+				return rowsToSort;
+			}
+
+			int IComparer.Compare (object x, object y) 
+			{
+				if(x == null)
+					throw new Exception ("Object to compare is null: x");
+				if(y == null)
+					throw new Exception ("Object to compare is null: y");
+				if(!(x is DataRow))
+					throw new Exception ("Object to compare is not DataRow: x is " + x.GetType().ToString());
+				if(!(y is DataRow))
+					throw new Exception ("Object to compare is not DataRow: y is " + x.GetType().ToString());
+
+				DataRow rowx = (DataRow) x;
+				DataRow rowy = (DataRow) y;
+
+				for(int i = 0; i < sortColumns.Length; i++) {
+					SortableColumn sortColumn = sortColumns[i];
+					DataColumn dc = sortColumn.Column;
+
+					IComparable objx = (IComparable) rowx[dc];
+					object objy = rowy[dc];
+
+					int result = CompareObjects (objx, objy);
+					if (result != 0) {
+						if (sortColumn.SortDirection == ListSortDirection.Ascending) {
+							return result;
+						}
+						else {
+							return -result;
+						}
+					}
+				}
+				return 0;
+			}
+
+			private int CompareObjects (object a, object b) 
+			{
+				if (a == b)
+					return 0;
+				else if (a == null)
+					return -1;
+				else if (a == DBNull.Value)
+					return -1;
+				else if (b == null)
+					return 1;
+				else if (b == DBNull.Value)
+					return 1;
+
+				if((a is string) && (b is string)) {
+					a = ((string) a).ToUpper ();
+					b = ((string) b).ToUpper ();			
+				}
+
+				if (a is IComparable)
+					return ((a as IComparable).CompareTo (b));
+				else if (b is IComparable)
+					return -((b as IComparable).CompareTo (a));
+
+				throw new ArgumentException ("Neither a nor b IComparable");
+			}
+		}
+	}
 }

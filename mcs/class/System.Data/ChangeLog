@@ -1,3 +1,18 @@
+2003-03-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/DataRowView.cs: in the constructor pass
+	DataRow in instead of int index of the DataRow
+	in DataTable.Rows
+	
+	* System.Data/DataTable.cs: implement sorting
+	for method Select(filterExpression,sort)
+	
+	* System.Data/DataView.cs: more implementation -
+	Now, If Sort, RowFilter, or RowStateFilter is set, an 
+	enumerated DataRowViews will be a view with those
+	properties applied.  Still need to implement event handling
+	though.
+
 2003-03-13  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlCommandBuilder.cs:
 		Change "where" variable name to "whereClause" at the

@@ -36,9 +36,9 @@ namespace System.Data
 
 		#region Constructors
 
-		internal DataRowView (DataView dataView, int rowIndex) {
+		internal DataRowView (DataView dataView, DataRow row) {
 			this.dataView = dataView;
-			this.dataRow = dataView.Table.Rows[rowIndex];
+			this.dataRow = row;
 		}
 
 		#endregion // Constructors
