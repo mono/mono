@@ -1,3 +1,8 @@
+2003-07-9  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializationWriter.cs: WriteStartElement(): Do not write xsd and xsi 
+	  namespace declarations if they have already been defined.
+
 2003-07-2  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationReaderInterpreter.cs: Use the parameter type when getting the Add method

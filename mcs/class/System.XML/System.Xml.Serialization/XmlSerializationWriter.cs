@@ -678,8 +678,10 @@ namespace System.Xml.Serialization {
 				Writer.WriteStartElement (name, ns);
 
 			if (topLevelElement) {
-				WriteAttribute ("xmlns","xsd",xmlNamespace,XmlSchema.Namespace);
-				WriteAttribute ("xmlns","xsi",xmlNamespace,XmlSchema.InstanceNamespace);
+				if (Writer.LookupPrefix (XmlSchema.Namespace) == null)
+					WriteAttribute ("xmlns","xsd",xmlNamespace,XmlSchema.Namespace);
+				if (Writer.LookupPrefix (XmlSchema.InstanceNamespace) == null)
+					WriteAttribute ("xmlns","xsi",xmlNamespace,XmlSchema.InstanceNamespace);
 			}
 			topLevelElement = false;
 		}
