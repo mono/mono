@@ -1,3 +1,8 @@
+2004-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSet.cs: Fixed RemovePermission and Intersect (due to typos
+	in unit tests). Fixed SetPermission (null).
+
 2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NamedPermissionSet.cs: Fixed Description in copies, GetHashCode and

@@ -97,7 +97,7 @@ namespace System.Security {
 
 			// we can't add two permissions of the same type in a set
 			// so we remove an existing one, union with it and add it back
-			IPermission existing = Remove (perm.GetType ());
+			IPermission existing = RemovePermission (perm.GetType ());
 			if (existing != null) {
 				perm = perm.Union (existing);
 			}
@@ -152,7 +152,7 @@ namespace System.Security {
 				if (!t.IsSubclassOf (typeof (CodeAccessPermission))) {
 					p.Demand ();
 					// we wont have to process this one in the stack walk
-					cas.Remove (t);
+					cas.RemovePermission (t);
 				}
 			}
 			// don't start the walk if the permission set only contains non CAS permissions
@@ -328,30 +328,41 @@ namespace System.Security {
 			if ((other == null) || (other.IsEmpty ()) || (this.IsEmpty ()))
 				return null;
 
-			// FIXME: in this case this optimization IS BAD because some permissions, like identity
-			// permissions, do not implement the IUnrestrictedPermission interface. This can results
-			// in case where (a N b) != (b N a)
-			// MS has the same "bad optimization" - reported as FDBK14612
-			if (other.IsUnrestricted ())
-				return this.Copy ();
-			if (this.IsUnrestricted ())
-				return other.Copy ();
-
 			PermissionState state = PermissionState.None;
 			if (this.IsUnrestricted () && other.IsUnrestricted ())
 				state = PermissionState.Unrestricted;
 
 			PermissionSet interSet = new PermissionSet (state);
-			foreach (IPermission p in other.list) {
+			if (state == PermissionState.Unrestricted) {
+				InternalIntersect (interSet, this, other, true);
+				InternalIntersect (interSet, other, this, true);
+			}
+			else if (this.IsUnrestricted ()) {
+				InternalIntersect (interSet, this, other, true);
+			}
+			else if (other.IsUnrestricted ()) {
+				InternalIntersect (interSet, other, this, true);
+			}
+			else {
+				InternalIntersect (interSet, this, other, false);
+			}
+			return interSet;
+		}
+
+		internal void InternalIntersect (PermissionSet intersect, PermissionSet a, PermissionSet b, bool unrestricted)
+		{
+			foreach (IPermission p in b.list) {
 				// for every type in both list
-				IPermission i = this.GetPermission (p.GetType ());
+				IPermission i = a.GetPermission (p.GetType ());
 				if (i != null) {
 					// add intersection for this type
-					interSet.AddPermission (p.Intersect (i));
+					intersect.AddPermission (p.Intersect (i));
+				}
+				else if (unrestricted && (p is IUnrestrictedPermission)) {
+					intersect.AddPermission (p);
 				}
 				// or reject!
 			}
-			return interSet;
 		}
 
 		public virtual bool IsEmpty () 
@@ -369,18 +380,6 @@ namespace System.Security {
 
 		public virtual IPermission RemovePermission (Type permClass) 
 		{
-			// FIXME: this is *not right* because we can't remove permissions not implementing
-			// IUnrestrictedPermission interface (e.g. identity permissions) but compatible 
-			// with MS (FDBK14622)
-			// Note: it also makes it unusable within the class (e.g. SetPermission)
-			if (IsUnrestricted ())
-				return null;
-
-			return Remove (permClass);
-		}
-
-		internal IPermission Remove (Type permClass)
-		{
 			if (permClass == null)
 				return null;
 
@@ -395,9 +394,11 @@ namespace System.Security {
 
 		public virtual IPermission SetPermission (IPermission perm) 
 		{
+			if (perm == null)
+				return null;
 			if (perm is IUnrestrictedPermission)
 				state = PermissionState.None;
-			Remove (perm.GetType ());
+			RemovePermission (perm.GetType ());
 			list.Add (perm);
 			return perm;
 		}
