@@ -1,3 +1,7 @@
+2004-10-19    <vargaz@freemail.hu>
+
+	* main.c: Applied patch from Alexandre Rocha Lima e Marcondes  (alexandremarcondes@psl-pr.softwarelivre.org). Really fix 2.95 build.
+
 2004-10-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* dump.c: Added new "internal" security actions for non-CAS demands:
