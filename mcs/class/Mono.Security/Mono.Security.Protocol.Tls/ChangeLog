@@ -1,3 +1,17 @@
+2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherSuiteFactory.cs: Activated RSA_WITH_AES_256_CBC_SHA as it is
+	supported by some browsers.
+	* ContentType.cs: Removed ClientHelloV2 from the enum as it is not a
+	"true" content type (it just looks so where we're processing it).
+	* Context.cs: Added support to switch protocol (e.g. SSL2->SSL3 or 
+	SSL2->TLS1). Contributed by Carlos Guzman Alvarez.
+	* RecordProtocol.cs: Added support for ClientHelloV2 message 
+	(contributed by Carlos Guzman Alvarez). This is	a Handshake message
+	so it must be MACed. Also fixed the challenge length because some
+	browsers implementation don't interpret "This value must be 32." as
+	having 32 bytes.
+
 2004-10-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: Changed InputBuffer to internal (was protected).

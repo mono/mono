@@ -406,6 +406,24 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		public void ChangeProtocol(short protocol)
+		{
+			SecurityProtocolType protocolType = this.DecodeProtocolCode(protocol);
+
+			if ((protocolType & this.SecurityProtocolFlags) == protocolType ||
+				(this.SecurityProtocolFlags & SecurityProtocolType.Default) == SecurityProtocolType.Default)
+			{
+				this.SecurityProtocol = protocolType;
+				this.SupportedCiphers.Clear();
+				this.SupportedCiphers = null;
+				this.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(protocolType);
+			}
+			else
+			{
+				throw new TlsException(AlertDescription.ProtocolVersion, "Incorrect protocol version received from server");
+			}
+		}
+
 		#endregion
 	}
 }

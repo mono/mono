@@ -29,7 +29,6 @@ namespace Mono.Security.Protocol.Tls
 	[Serializable]
 	internal enum ContentType : byte
 	{
-		ClientHelloV2		= 1,
 		ChangeCipherSpec	= 20,
 		Alert				= 21,
 		Handshake			= 22,

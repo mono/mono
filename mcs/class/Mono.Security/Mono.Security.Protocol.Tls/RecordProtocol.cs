@@ -89,7 +89,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			ContentType	contentType	= (ContentType)type;
-			byte[] buffer = this.ReadRecordBuffer(contentType);
+			byte[] buffer = this.ReadRecordBuffer(type);
 
 			TlsStream message = new TlsStream(buffer);
 		
@@ -115,12 +115,6 @@ namespace Mono.Security.Protocol.Tls
 
 			switch (contentType)
 			{
-				case ContentType.ClientHelloV2:
-					// Set the last handshake message received as the standard ClientHello
-					this.context.LastHandshakeMsg = HandshakeType.ClientHello;
-					result = null;
-					break;
-
 				case ContentType.Alert:
 					this.ProcessAlert((AlertLevel)message.ReadByte(), (AlertDescription)message.ReadByte());
 					result = null;
@@ -143,24 +137,34 @@ namespace Mono.Security.Protocol.Tls
 					this.context.HandshakeMessages.Write(message.ToArray());
 					break;
 
+// FIXME / MCS bug - http://bugzilla.ximian.com/show_bug.cgi?id=67711
+//				case (ContentType)0x80:
+//					this.context.HandshakeMessages.Write (result);
+//					break;
+
 				default:
-					throw new TlsException(
-						AlertDescription.UnexpectedMessage,
-						"Unknown record received from server.");
+					if (contentType != (ContentType)0x80)
+					{
+						throw new TlsException(
+							AlertDescription.UnexpectedMessage,
+							"Unknown record received from server.");
+					}
+					this.context.HandshakeMessages.Write (result);
+					break;
 			}
 
 			return result;
 		}
 
-		private byte[] ReadRecordBuffer(ContentType contentType)
+		private byte[] ReadRecordBuffer(int contentType)
 		{
 			switch (contentType)
 			{
-				case ContentType.ClientHelloV2:
+				case 0x80:
 					return this.ReadClientHelloV2();
 
 				default:
-					if (!Enum.IsDefined(typeof(ContentType), contentType))
+					if (!Enum.IsDefined(typeof(ContentType), (ContentType)contentType))
 					{
 						throw new TlsException(AlertDescription.DecodeError);
 					}
@@ -170,31 +174,32 @@ namespace Mono.Security.Protocol.Tls
 
 		private byte[] ReadClientHelloV2()
 		{
-			short protocol			= this.ReadShort();
-			short cipherSpecLength	= this.ReadShort();
-			short sessionIdLength	= this.ReadShort();
-			short challengeLength	= this.ReadShort();
-			short length = (challengeLength > 32) ? (short)32 : challengeLength;
+			int msgLength			= this.innerStream.ReadByte();
+			byte[] message = new byte [msgLength];
+			this.innerStream.Read (message, 0, msgLength);
+
+			int msgType		= message [0];
+			if (msgType != 1)
+			{
+				throw new TlsException(AlertDescription.DecodeError);
+			}
+			int protocol = (message [1] << 8 | message [2]);
+			int cipherSpecLength = (message [3] << 8 | message [4]);
+			int sessionIdLength = (message [5] << 8 | message [6]);
+			int challengeLength = (message [7] << 8 | message [8]);
+			int length = (challengeLength > 32) ? 32 : challengeLength;
 
 			// Read CipherSpecs
 			byte[] cipherSpecV2 = new byte[cipherSpecLength];
-			this.innerStream.Read(cipherSpecV2, 0, cipherSpecV2.Length);			
+			Buffer.BlockCopy (message, 9, cipherSpecV2, 0, cipherSpecLength);
 
 			// Read session ID
 			byte[] sessionId = new byte[sessionIdLength];
-			this.innerStream.Read(sessionId, 0, sessionId.Length);
+			Buffer.BlockCopy (message, 9 + cipherSpecLength, sessionId, 0, sessionIdLength);
 
 			// Read challenge ID
 			byte[] challenge = new byte[challengeLength];
-			this.innerStream.Read(challenge, 0, challenge.Length);
-
-			// Check that the message has a valid protocol version
-			SecurityProtocolType protocolType = this.context.DecodeProtocolCode(protocol);
-			if (protocolType != SecurityProtocolType.Ssl3 && protocolType != SecurityProtocolType.Tls)
-			{
-				throw new TlsException(
-					AlertDescription.ProtocolVersion, "Invalid protocol version on message received");
-			}
+			Buffer.BlockCopy (message, 9 + cipherSpecLength + sessionIdLength, challenge, 0, challengeLength);
 		
 			if (challengeLength < 16 || cipherSpecLength == 0 || (cipherSpecLength % 3) != 0)
 			{
@@ -207,17 +212,23 @@ namespace Mono.Security.Protocol.Tls
 				this.context.SessionId = sessionId;
 			}
 
-			// Select the cipher suite collection
-			this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(protocolType);
+			// Update the protocol version
+			this.Context.ChangeProtocol((short)protocol);
 
 			// Select the Cipher suite
-			this.ProcessCipherSpecV2Buffer(protocolType, cipherSpecV2);
+			this.ProcessCipherSpecV2Buffer(this.Context.SecurityProtocol, cipherSpecV2);
 
 			// Updated the Client Random
-			this.context.ClientRandom = new byte[32];			
-			Buffer.BlockCopy(challenge, 0, this.context.ClientRandom, 0, length);
+			this.context.ClientRandom = new byte [32]; // Always 32
+			// 1. if challenge is bigger than 32 bytes only use the last 32 bytes
+			// 2. right justify (0) challenge in ClientRandom if less than 32
+			Buffer.BlockCopy (challenge, challenge.Length - length, this.context.ClientRandom, 32 - length, length);
 
-			return new byte[0];
+			// Set 
+			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
+			this.context.ProtocolNegotiated = true;
+
+			return message;
 		}
 
 		private byte[] ReadStandardRecordBuffer()
