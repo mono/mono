@@ -203,3 +203,15 @@
 	stating that they implement a specific interface method.
 
 	We currently fail to parse it.
+
+* Namespaces
+
+	Apparently:
+
+		namespace X {
+		}
+
+		namespace X {
+		}
+
+	Is failing to create a single namespace

@@ -86,13 +86,19 @@ namespace CIR
 			classes.Add (name, c);
 		}
 
-		public void RecordNamespace (string name, Namespace ns)
+		public Namespace AddNamespace(Namespace parent, string name)
 		{
 			if (namespaces == null)
 				namespaces = new Hashtable ();
 
-			namespaces.Add (name, ns);
-
+			Namespace ns = new Namespace(parent, name);
+			if (namespaces.ContainsKey(ns.Name))
+				return (Namespace)namespaces[ns.Name];
+			else
+			{
+				namespaces.Add (ns.Name, ns);
+				return ns;
+			}
 		}
 		
 		public TypeContainer Types {
