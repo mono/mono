@@ -1,3 +1,10 @@
+2004-12-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* main.c: Rename compilercontrolled to privatescope
+
+	* get.c (get_class_name): Correct implementation that correctly
+	handles nested classes.
+
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c: Better implementation of the quote keyword, list all of
