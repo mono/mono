@@ -1,3 +1,7 @@
+2004-11-30  Peter Bartok  <pbartok@novell.com>
+
+	* CharacterCasing.cs: Added
+
 2004-11-29  Peter Bartok  <pbartok@novell.com>
 
 	* TreeNode.cs, TreeNodeCollection.cs, TreeView.cs,
