@@ -1,5 +1,10 @@
 2003-10-10  cesar lopez nataren <cesar@ciencias.unam.mx>
 
+	* JSparser.cs: Updated the constructor to not receiving params.
+	* JScriptLexer.cs, JScriptParser.cs, JScriptParserTokenTypes.cs,
+	JScriptParserTokenTypes.txt: update of antlr generated files from
+	grammar changes. 
+
 	* jscript-lexer-parser.g: Rewrote the EcmaScript grammar. Now we
 	can parse a little bit more useful programs like:
 
