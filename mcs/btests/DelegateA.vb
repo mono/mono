@@ -1,7 +1,5 @@
 Imports System
 
-
-
 Module M
 	Delegate Sub SD()
 	sub f()
@@ -17,9 +15,9 @@ Module M
 		d1 = new SD(AddressOf f)
 		d1.Invoke()
 
-		'dim d2 as SD
-		'd2 = AddressOf f  ''//this invocation is not functional yet
-		'd2.Invoke()
+		dim d2 as SD
+		d2 = AddressOf f 
+		d2.Invoke()
 
 		dim d3 as new SD(AddressOf f)
 		d3.Invoke()
@@ -28,8 +26,8 @@ Module M
 		d4 = new SF(AddressOf f1)
 		Dim i as Integer = d4.Invoke(10)
 		if i <> 10 then
-			Throw new System.Exception ("#A1, Unexpected result")
-		end if
+         		Throw new System.Exception ("#A1, Unexpected result")
+                end if
 
 		
 	End Sub
