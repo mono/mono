@@ -1,0 +1,10 @@
+Mono.Http assembly
+--------------------
+This assembly holds a number of classes that provide additional features to
+existing Http protocol related ones, such as support for gzip compression of
+pages when hosting ASP.NET pages (xsp uses it) and others.
+
+Watch out the NEWS file.
+
+-Gonzalo
+

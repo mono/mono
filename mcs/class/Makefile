@@ -44,6 +44,7 @@ SUBDIRS = \
 	System.Messaging	\
 	System.ServiceProcess \
 	System.Drawing.Design		\
+	Mono.Http			\
 	Microsoft.Vsa			
 #	Microsoft.JScript		\
 
