@@ -1,3 +1,10 @@
+2004-07-16  Ravindra  <rkumar@novell.com>
+
+	* GraphicsPathIterator.cs: New implementation using GDI+ APIs.
+	This change makes this class fit into the rest of the design well
+	and also it takes care of a scenario when path gets modified. Old
+	implementation was not taking care of this.
+
 2004-07-15  Ravindra  <rkumar@novell.com>
 
 	* GraphicsPath.cs: Implemented PathData property and some formatting.

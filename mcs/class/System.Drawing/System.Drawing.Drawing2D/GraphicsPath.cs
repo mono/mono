@@ -598,7 +598,7 @@ namespace System.Drawing.Drawing2D
 
                         return retval;
                 }
-                		
+
 		public bool IsOutlineVisible (Point point, Pen pen)
 		{
                         return IsOutlineVisible (point.X, point.Y, pen, null);
@@ -640,7 +640,7 @@ namespace System.Drawing.Drawing2D
 
                         return result;
                 }  		
-		
+
 		[MonoTODO]
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{

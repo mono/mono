@@ -4,10 +4,9 @@
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Ravindra (rkumar@novell.com)
 //
-// (C) 2002/3 Ximian, Inc
-//
-
+// Copyright (C) 2002/3 Ximian, Inc (http://www.ximian.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -37,108 +36,167 @@ namespace System.Drawing.Drawing2D
 {
 	public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable
 	{
-		private PointF [] _points;
-		private byte [] _types;
-		private int _count;
-		private int _current;
+		private IntPtr nativeObject = IntPtr.Zero;
 
 		// Constructors
+		internal GraphicsPathIterator (IntPtr native)
+		{
+			this.nativeObject = native;
+		}
+
 		public GraphicsPathIterator (GraphicsPath path)
 		{
-			this._points = path.PathPoints;
-			this._types = path.PathTypes;
-			this._count = path.PointCount;
-			this._current = 0;
+			Status status = GDIPlus.GdipCreatePathIter (out nativeObject, path.NativeObject);
+			GDIPlus.CheckStatus (status);
+		}
+
+		internal IntPtr NativeObject {
+			get {
+				return nativeObject;
+			}
+			set {
+				nativeObject = value;
+			}
 		}
 
 		// Public Properites
+
 		public int Count {
 			get {
-				return _count;
+				int count;
+				Status status = GDIPlus.GdipPathIterGetCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
+
+				return count;
 			}
 		}
 
 		public int SubpathCount {
 			get {
-				int count = 0;
+				int count;
+				Status status = GDIPlus.GdipPathIterGetSubpathCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
 
-				foreach (byte b in _types)
-					if (b == (byte) PathPointType.Start)
-						count++;
-				
 				return count;
 			}
 		}
 
+		internal void Dispose (bool disposing)
+		{
+			Status status;
+			if (nativeObject != IntPtr.Zero) {
+				status = GDIPlus.GdipDeletePathIter (nativeObject);
+				GDIPlus.CheckStatus (status);
+
+				nativeObject = IntPtr.Zero;
+			}
+		}
+
 		// Public Methods.
+
 		public int CopyData (ref PointF [] points, ref byte [] types, int startIndex, int endIndex)
 		{
-			for (int i = 0, j = startIndex; j < endIndex; i++, j++) {
-				points [i] = _points [j];
-				types [i] = _types [j];
-			}
+			Status status;
+			int resultCount;
 
-			return endIndex - startIndex;
+			if (points.Length != types.Length)
+				throw new ArgumentException ("Invalid arguments passed. Both arrays should have the same length.");
+
+			status = GDIPlus.GdipPathIterCopyData (nativeObject, out resultCount, ref points, ref types, startIndex, endIndex);
+			GDIPlus.CheckStatus (status);
+
+			return resultCount;
 		}
 
 		public void Dispose ()
 		{
+			Dispose (true);
+			System.GC.SuppressFinalize (this);
 		}
 
 		~GraphicsPathIterator ()
 		{
+			Dispose (false);
 		}
 
 		public int Enumerate (ref PointF [] points, ref byte [] types)
 		{
-			points = _points;
-			types = _types;
+			Status status;
+			int resultCount;
+			int count = points.Length;
 
-			return _count;
+			if (count != types.Length)
+				throw new ArgumentException ("Invalid arguments passed. Both arrays should have the same length.");
+
+			status = GDIPlus.GdipPathIterEnumerate (nativeObject, out resultCount, ref points, ref types, count);
+			GDIPlus.CheckStatus (status);
+
+			return resultCount;
 		}
 
 		public bool HasCurve ()
 		{
-			foreach (byte b in _types)
-				if (b == (byte) PathPointType.Bezier)
-					return true;
+			bool curve;
+			Status status = GDIPlus.GdipPathIterHasCurve (nativeObject, out curve);
+			GDIPlus.CheckStatus (status);
 
-			return false;
+			return curve;
 		}
 
-		[MonoTODO]
 		public int NextMarker (GraphicsPath path)
 		{
-			throw new NotImplementedException ();
+			Status status;
+			int resultCount;
+			status = GDIPlus.GdipPathIterNextMarkerPath (nativeObject, out resultCount, path.NativeObject);
+			GDIPlus.CheckStatus (status);
+
+			return resultCount;
 		}
 
-		[MonoTODO]
 		public int NextMarker (out int startIndex, out int endIndex)
 		{
-			throw new NotImplementedException ();
+			Status status;
+			int resultCount;
+			status = GDIPlus.GdipPathIterNextMarker (nativeObject, out resultCount, out startIndex, out endIndex);
+			GDIPlus.CheckStatus (status);
+
+			return resultCount;
 		}
 
-		[MonoTODO]
 		public int NextPathType (out byte pathType, out int startIndex, out int endIndex)
 		{
-			throw new NotImplementedException ();
+			Status status;
+			int resultCount;
+			status = GDIPlus.GdipPathIterNextPathType (nativeObject, out resultCount, out pathType, out startIndex, out endIndex);
+			GDIPlus.CheckStatus (status);
+
+			return resultCount;
 		}
 
-		[MonoTODO]
 		public int NextSubpath (GraphicsPath path, out bool isClosed)
 		{
-			throw new NotImplementedException ();
+			Status status;
+			int resultCount;
+			status = GDIPlus.GdipPathIterNextSubpathPath (nativeObject, out resultCount, path.NativeObject, out isClosed);
+			GDIPlus.CheckStatus (status);
+
+			return resultCount;
 		}
 
-		[MonoTODO]
 		public int NextSubpath (out int startIndex, out int endIndex, out bool isClosed)
 		{
-			throw new NotImplementedException ();
+			Status status;
+			int resultCount;
+			status = GDIPlus.GdipPathIterNextSubpath (nativeObject, out resultCount, out startIndex, out endIndex, out isClosed);
+			GDIPlus.CheckStatus (status);
+
+			return resultCount;
 		}
 
 		public void Rewind ()
 		{
-			_current = 0;
+			Status status = GDIPlus.GdipPathIterRewind (nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 	}
 }
