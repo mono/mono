@@ -1,3 +1,7 @@
+2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodInfoTest.cs: Disable code causing mcs to fail.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyAlgorithmIdAttributeTest.cs: Removed CLSCompliant(false) 
