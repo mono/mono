@@ -1731,12 +1731,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			else if ((tc1 == TypeCode.Boolean && tc2 == TypeCode.String)||
 				(tc2 == TypeCode.Boolean && tc1 == TypeCode.String) )
 				return getObjTstBoolean(o1,o2,tc1,tc2);      
-			else if (tc1 == TypeCode.String || tc2 == TypeCode.String)
-				return getObjTstStringObject(o1,o2,tc1,tc2);
-			else if (tc1 == TypeCode.Double || tc2 == TypeCode.Double)
-				return getObjTstStringObject(o1,o2,tc1,tc2);
-			else if (tc1 == TypeCode.String || tc2 == TypeCode.String)
-				return getObjTstStringObject(o1,o2,tc1,tc2);
 			else if (tc1 == TypeCode.Double || tc2 == TypeCode.Double)
 				return getObjTstDouble(o1,o2,tc1,tc2);
 			else if (tc1 == TypeCode.Single || tc2 == TypeCode.Single)
@@ -1751,8 +1745,16 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				return getObjTstInt16(o1,o2,tc1,tc2);
 			else if (tc1 == TypeCode.Byte && tc2 == TypeCode.Byte)
 				return getObjTstByte(o1,o2,tc1,tc2);
+			else if (tc1 == TypeCode.String || tc2 == TypeCode.String)
+				return getObjTstString(o1,o2,tc1,tc2);
 			else
 				return getObjTstInt16(o1,o2,tc1,tc2);
+		}
+
+		private static int getObjTstString(object o1,object o2,TypeCode tc1,TypeCode tc2) {
+			string s1 = (tc1 == TypeCode.String)?(string)o1:o1.ToString();
+			string s2 = (tc2 == TypeCode.String)?(string)o2:o2.ToString();
+			return s1.CompareTo(s2);
 		}
 
 		private static int getObjTstBoolean(object o1,object o2,TypeCode tc1,TypeCode tc2) {
