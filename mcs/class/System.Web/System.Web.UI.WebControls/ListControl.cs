@@ -194,6 +194,32 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_1_1
+		public virtual string SelectedValue {
+			get {
+				int idx = SelectedIndex;
+				if (idx == -1)
+					return "";
+
+				return Items [idx].Value;
+			}
+
+			set {
+				ListItem item = null;
+
+				if (value != null) {
+					item = Items.FindByValue (value);
+					if (item == null)
+						throw new ArgumentOutOfRangeException (value);
+				}
+
+				ClearSelection ();
+				if (item != null)
+					item.Selected = true;
+			}
+		}
+#endif
+		
 		internal virtual ArrayList SelectedIndices
 		{
 			get
