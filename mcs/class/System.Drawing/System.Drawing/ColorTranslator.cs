@@ -66,7 +66,7 @@ namespace System.Drawing {
 			string result;
 
 			if (c.IsNamedColor)
-				result = c.ToString ();
+				result = c.Name;
 			else
 				result = String.Format ("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
 
