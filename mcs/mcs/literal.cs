@@ -36,6 +36,16 @@ namespace System {
 	
 namespace Mono.CSharp {
 
+	//
+	// The NullType just exists to compare type equality, and for
+	// expressions that might have the `null type'
+	//
+	public class NullType {
+	}
+
+	//
+	// The null Literal constant
+	//
 	public class NullLiteral : Constant {
 		public static readonly NullLiteral Null;
 
@@ -61,7 +71,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = typeof (System.Null); 
+			type = TypeManager.null_type;
 			return this;
 		}
 

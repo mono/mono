@@ -981,7 +981,8 @@ namespace Mono.CSharp {
 			ReadOnly = 2,
 			Pinned = 4,
 			IsThis = 8,
-			Captured = 16
+			Captured = 16,
+			AddressTaken = 32
 		}
 
 		Flags flags;
@@ -1066,6 +1067,16 @@ namespace Mono.CSharp {
 
 			set {
 				flags |= Flags.Captured;
+			}
+		}
+
+		public bool AddressTaken {
+			get {
+				return (flags & Flags.AddressTaken) != 0;
+			}
+
+			set {
+				flags |= Flags.AddressTaken;
 			}
 		}
 

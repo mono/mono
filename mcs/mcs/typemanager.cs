@@ -55,6 +55,7 @@ public class TypeManager {
 	static public Type delegate_type;
 	static public Type multicast_delegate_type;
 	static public Type void_type;
+	static public Type null_type;
 	static public Type enumeration_type;
 	static public Type array_type;
 	static public Type runtime_handle_type;
@@ -1206,6 +1207,7 @@ public class TypeManager {
 		// These are only used for compare purposes
 		//
 		anonymous_method_type = typeof (AnonymousMethod);
+		null_type = typeof (NullType);
 	}
 
 	//

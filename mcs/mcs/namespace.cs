@@ -524,9 +524,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static void Msgtry (string s)
+		static void MsgtryRef (string s)
 		{
 			Console.WriteLine ("    Try using -r:" + s);
+		}
+		
+		static void MsgtryPkg (string s)
+		{
+			Console.WriteLine ("    Try using -pkg:" + s);
 		}
 
 		protected void error246 (Location loc, string name)
@@ -540,35 +545,35 @@ namespace Mono.CSharp {
 
 				switch (name){
 				case "Gtk": case "GtkSharp":
-					Msgtry ("gtk-sharp");
+					MsgtryPkg ("gtk-sharp");
 					break;
 
 				case "Gdk": case "GdkSharp":
-					Msgtry ("gdk-sharp");
+					MsgtryPkg ("gdk-sharp");
 					break;
 
 				case "Glade": case "GladeSharp":
-					Msgtry ("glade-sharp");
+					MsgtryPkg ("glade-sharp");
 					break;
 							
 				case "System.Drawing":
-					Msgtry ("System.Drawing");
+					MsgtryRef ("System.Drawing");
 					break;
 							
 				case "System.Web.Services":
-					Msgtry ("System.Web.Services");
+					MsgtryRef ("System.Web.Services");
 					break;
 
 				case "System.Web":
-					Msgtry ("System.Web");
+					MsgtryRef ("System.Web");
 					break;
 							
 				case "System.Data":
-					Msgtry ("System.Data");
+					MsgtryRef ("System.Data");
 					break;
 
 				case "System.Windows.Forms":
-					Msgtry ("System.Windows.Forms");
+					MsgtryRef ("System.Windows.Forms");
 					break;
 				}
 			}

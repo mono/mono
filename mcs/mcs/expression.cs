@@ -433,16 +433,26 @@ namespace Mono.CSharp {
 					       "of a fixed statement initializer");
 					return null;
 				}
-				
+
 				if (ec.InFixedInitializer && ((variable != null) && variable.VerifyFixed (false))) {
 					Error (213, "You can not fix an already fixed expression");
 					return null;
 				}
 
+				LocalVariableReference lr = Expr as LocalVariableReference;
+				if (lr != null){
+					if (lr.local_info.IsCaptured){
+						AnonymousMethod.Error_AddressOfCapturedVar (lr.Name, loc);
+						return null;
+					}
+					lr.local_info.AddressTaken = true;
+				}
+
 				// According to the specs, a variable is considered definitely assigned if you take
 				// its address.
-				if ((variable != null) && (variable.VariableInfo != null))
+				if ((variable != null) && (variable.VariableInfo != null)){
 					variable.VariableInfo.SetAssigned (ec);
+				}
 
 				type = TypeManager.GetPointerType (Expr.Type);
 				return this;
@@ -2236,8 +2246,8 @@ namespace Mono.CSharp {
 			// Special cases: string comapred to null
 			//
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if ((!TypeManager.IsValueType (l) && (right is NullLiteral)) ||
-				    (!TypeManager.IsValueType (r) && (left is NullLiteral))) {
+				if ((!TypeManager.IsValueType (l) && r == TypeManager.null_type) ||
+				    (!TypeManager.IsValueType (r) && l == TypeManager.null_type)) {
 					Type = TypeManager.bool_type;
 					
 					return this;
@@ -3465,9 +3475,6 @@ namespace Mono.CSharp {
 			if (trueExpr == null || falseExpr == null)
 				return null;
 
-			if ((trueExpr is NullLiteral) && (falseExpr is NullLiteral))
-				return trueExpr;
-
 			eclass = ExprClass.Value;
 			if (trueExpr.Type == falseExpr.Type)
 				type = trueExpr.Type;
@@ -3617,8 +3624,11 @@ namespace Mono.CSharp {
 				// flag it for capturing
 				//
 				if (local_info.Block.Toplevel != ec.CurrentBlock.Toplevel){
+					if (local_info.AddressTaken){
+						AnonymousMethod.Error_AddressOfCapturedVar (local_info.Name, loc);
+						return null;
+					}
 					ec.CaptureVariable (local_info);
-					//Console.WriteLine ("Capturing at " + loc);
 				}
 			}
 
@@ -4288,9 +4298,9 @@ namespace Mono.CSharp {
 				//   * There is no implicit conversion from type 'object' to other reference types
 				//  => Conversion of 'null' to a reference type is better than conversion to 'object'
 				//
-				//  FIXME: This probably isn't necessary, since the type of a NullLiteral is 'System.Null'.
-				//         I think it used to be 'object' and thus needed a special case to avoid the
-				//         immediately following two checks.
+				//  FIXME: This probably isn't necessary, since the type of a NullLiteral is the 
+				//         null type. I think it used to be 'object' and thus needed a special 
+				//         case to avoid the immediately following two checks.
 				//
 				if (!p.IsValueType && q == TypeManager.object_type)
 					return p;

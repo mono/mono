@@ -1,3 +1,24 @@
+* Value Parameter
+
+	I believe that `Value Parameter' might have been introduced
+	after C# 1.0, also notice than in the treatment of Value Parameter
+	the parameters are defined in four categories:
+
+	Section 9.3 in the latest spec.
+
+
+* Review
+--------
+
+	Reference type equality operators (15.9.6) introduced
+	operator == (C x, C y) where C is a reference type.
+
+	Our compiler used:
+
+	operator == (object a, object b)
+
+	Review our implementation.
+
 New
 ---
 
