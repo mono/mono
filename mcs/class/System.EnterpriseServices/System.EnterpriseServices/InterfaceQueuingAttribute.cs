@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Interface)]
+	[ComVisible(false)]
 	public sealed class InterfaceQueuingAttribute : Attribute {
 
 		#region Fields

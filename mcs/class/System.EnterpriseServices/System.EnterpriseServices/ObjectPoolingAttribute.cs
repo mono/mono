@@ -9,9 +9,11 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Class)]
+	[ComVisible(false)]
 	public sealed class ObjectPoolingAttribute : Attribute {
 
 		#region Fields
