@@ -2,11 +2,16 @@
  * Namespace: System.Web
  * Class:     HttpServerUtility
  *
- * Author:  Wictor Wilén
- * Contact: <wictor@ibizkit.se>, <patrik.torstensson@labs2.com>
- * Status:  ?%
+ * Authosr:
+ *	Wictor Wilén (wictor@ibizkit.se)
+ *	Patrik Torstensson (patrik.torstensson@labs2.com)
+ *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
  *
- * (C) Wictor Wilén (2002)
+ * (c) Wictor Wilén (2002)
+ * (c) 2002 Patrik Torstensson
+ * (c) 2003 Ximian, Inc. (http://www.ximian.com)
+ *
+ * (This log is no longer maintained)
  * ---------------------------------------
  * 2002-03-27  Wictor      Started implementation
  * 2002-04-09  Patrik      Added HttpContext constructor
@@ -17,12 +22,14 @@
  */
 using System;
 using System.IO;
+using System.Text;
+using System.Web.Hosting;
 
 namespace System.Web
 {
 	public sealed class HttpServerUtility
 	{
-		private static string _name = "";
+		private static string _name;
 
 		private HttpContext _Context;
 		private HttpApplication _Application;
@@ -45,7 +52,7 @@ namespace System.Web
 		/// </summary>
 		public string MachineName {
 			get {
-				if(_name.Length == 0)
+				if(_name == null)
 					_name = Environment.MachineName;
 
 				return _name;
@@ -127,10 +134,9 @@ namespace System.Web
 		/// Executes a request to another page using the specified URL path to the page.
 		/// </summary>
 		/// <param name="path">The URL path of the new request. </param>
-		[MonoTODO()]
 		public void Execute (string path)
 		{
-			throw new NotImplementedException ();
+			Execute (path, null);
 		}
 
 
@@ -140,20 +146,67 @@ namespace System.Web
 		/// </summary>
 		/// <param name="path">The URL path of the new request. </param>
 		/// <param name="writer">The TextWriter to capture the output. </param>
-		[MonoTODO()]
 		public void Execute (string path, TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			if (_Context == null)
+				throw new HttpException ("No context available.");
+
+			if (path.IndexOf (':') != -1)
+				throw new ArgumentException ("Invalid path.");
+
+			int qmark = path.IndexOf ('?');
+			string query;
+			if (qmark != -1) {
+				path = path.Substring (0, qmark);
+				query = path.Substring (qmark + 1);
+			} else {
+				query = "";
+			}
+			
+			string filePath = _Context.Request.MapPath (path);
+			HttpResponse response = _Context.Response;
+			TextWriter output = writer;
+			if (output == null)
+			 	output = response.Output;
+
+			HttpRequest request = _Context.Request;
+			string oldFilePath = request.FilePath;
+			request.SetFilePath (path);
+			string oldQuery = request.QueryStringRaw;
+			request.QueryStringRaw = query;
+			IHttpHandler handler = _Context.ApplicationInstance.CreateHttpHandler (_Context,
+											       request.RequestType,
+											       path,
+											       filePath);
+			try {
+				if (!(handler is IHttpAsyncHandler)) {
+					handler.ProcessRequest (_Context);
+				} else {
+					IHttpAsyncHandler asyncHandler = (IHttpAsyncHandler) handler;
+					IAsyncResult ar = asyncHandler.BeginProcessRequest (_Context, null, null);
+					ar.AsyncWaitHandle.WaitOne ();
+					asyncHandler.EndProcessRequest (ar);
+				}
+			} finally {
+				request.SetFilePath (oldFilePath);
+				request.QueryStringRaw = oldQuery;
+			}
+
 		}
 
 		/// <summary>
 		/// Returns the previous exception.
 		/// </summary>
 		/// <returns>The previous exception that was thrown.</returns>
-		[MonoTODO()]
 		public Exception GetLastError ()
 		{
-			throw new NotImplementedException ();
+			if (_Context == null)
+				return null;
+
+			return _Context.Error;
 		}
 
 
