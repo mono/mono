@@ -1,5 +1,10 @@
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSet.cs : Use NameTable.Get() before calling LookupNamespace()
+	  in XmlNamespaceManager.
+
+2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSet.cs : complex table content child was not properly added
 	  when it is the only one child in the parent table. Fixed bug #53959.
 

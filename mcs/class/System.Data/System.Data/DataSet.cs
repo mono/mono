@@ -1316,7 +1316,7 @@ namespace System.Data {
 			if (ns == String.Empty)
 				return;
 			if (ns != nsmgr.DefaultNamespace) {
-				if (nsmgr.LookupNamespace (prefix) != ns) {
+				if (nsmgr.LookupNamespace (nsmgr.NameTable.Get (prefix)) != ns) {
 					for (int i = 1; i < int.MaxValue; i++) {
 						string p = nsmgr.NameTable.Add ("app" + i);
 						if (!nsmgr.HasNamespace (p)) {
@@ -1418,7 +1418,7 @@ namespace System.Data {
 			
 			AddConstraintsToSchema (elem, constraintPrefix, tables, relations);
 			foreach (string prefix in nsmgr) {
-				string ns = nsmgr.LookupNamespace (prefix);
+				string ns = nsmgr.LookupNamespace (nsmgr.NameTable.Get (prefix));
 				if (prefix != "xmlns" && prefix != "xml" && ns != null && ns != String.Empty)
 					schema.Namespaces.Add (prefix, ns);
 			}
