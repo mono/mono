@@ -12,8 +12,7 @@ namespace Mono.PEToolkit {
 	public class Section {
 
 		// IMAGE_SECTION_HEADER
-		[StructLayoutAttribute(LayoutKind.Sequential)]
-		public struct Header {
+		protected class Header {
 			internal uint  phAddr_virtSize;
 			internal RVA   virtAddr;
 			internal uint  rawSize;
@@ -23,10 +22,28 @@ namespace Mono.PEToolkit {
 			internal short relocNum;
 			internal short linenumNum;
 			internal SectionCharacteristics flags;
+			
+			public Header (BinaryReader reader)
+			{
+				Read (reader);
+			}
+
+			public void Read (BinaryReader reader)
+			{
+				phAddr_virtSize = reader.ReadUInt32 ();
+				virtAddr = new RVA (reader.ReadUInt32 ());
+				rawSize = reader.ReadUInt32 ();
+				rawDataPtr = new RVA (reader.ReadUInt32 ());
+				relocPtr = new RVA (reader.ReadUInt32 ());
+				lineNumPtr = new RVA (reader.ReadUInt32 ());
+				relocNum = reader.ReadInt16 ();
+				linenumNum = reader.ReadInt16 ();
+				flags = (SectionCharacteristics) reader.ReadUInt32 ();
+			}
 		}
 
 		private string name;
-		internal Header hdr;
+		private Header hdr;
 
 		public readonly static Section Invalid;
 
@@ -164,9 +181,7 @@ namespace Mono.PEToolkit {
 
 			reader.BaseStream.Position += 8 - len - 1;
 
-			fixed (void* pHdr = &this.hdr) {
-				PEUtils.ReadStruct(reader, pHdr, sizeof (Header), typeof (Header));
-			}
+			hdr = new Header (reader);
 		}
 
 	}
