@@ -10,7 +10,7 @@
 using System.ComponentModel;
 
 namespace System.Web.Services {
-	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Event)]
+	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Event, Inherited = true)]
 	internal class WebServicesDescriptionAttribute : DescriptionAttribute {
 
 		#region Constructors

@@ -10,7 +10,7 @@
 using System.EnterpriseServices;
 
 namespace System.Web.Services {
-	[AttributeUsage(AttributeTargets.Method)]
+	[AttributeUsage(AttributeTargets.Method, Inherited = true)]
 	public sealed class WebMethodAttribute : Attribute {
 
 		#region Fields
