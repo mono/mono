@@ -8,6 +8,7 @@ LIB_MCS_FLAGS = \
 	/r:$(corlib)	 		\
 	/r:System.dll 			\
 	/r:System.Drawing.dll 		\
+	/r:System.Data.dll		\
 	/r:System.Xml.dll
 NO_TEST = yes
 
