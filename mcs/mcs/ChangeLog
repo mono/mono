@@ -8,6 +8,9 @@
 
 2004-08-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* cfold.cs: Synchronize the folding with the code in expression.cs
+	Binary.DoNumericPromotions for uint operands.
+
 	* attribute.cs: Revert patch from Raja, it introduced a regression
 	while building Blam-1.2.1 (hard to isolate a test case).
 
