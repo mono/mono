@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 		// Public Instance Members
 		// -----------------------
 
-		public Msg Msg {
+		public int Msg {
 			get{
 				return msg;
 			}
@@ -112,7 +112,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Message create(IntPtr hWnd, Msg msg, IntPtr wparam, IntPtr lparam)
+		public static Message create(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
 		{
 			Message NewMessage =  new Message();
 			NewMessage.msg = msg;
