@@ -40,6 +40,7 @@ namespace System.Net
 		int length;
 		int pos;
 		static string [] keywords = { "realm", "opaque", "nonce", "algorithm", "qop" };
+		static char [] endSeparator = new char[] { '"', ',' };
 		string [] values = new string [keywords.Length];
 
 		public DigestHeaderParser (string header)
@@ -142,8 +143,11 @@ namespace System.Net
 				return false;
 
 			SkipWhitespace ();
-			if (pos + 1 >= length || header [pos++] != '"')
+			// note: Apache doesn't use " in all case (like algorithm)
+			if (pos + 1 >= length)
 				return false;
+			if (header [pos] == '"')
+				pos++;
 
 			int beginQ = pos;
 			pos = header.IndexOf ('"', pos);

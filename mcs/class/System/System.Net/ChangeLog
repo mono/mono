@@ -1,3 +1,8 @@
+2004-02-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DigestClient.cs: Fixed issue with Apache server which do not use "
+	for specifying the digest algorithm (.e.g. algorithm=MD5 not ="MD5").
+
 2004-02-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: arghhh. I used the server response headers instead
