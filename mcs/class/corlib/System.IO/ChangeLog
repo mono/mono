@@ -1,5 +1,25 @@
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
+	* FileInfo.c (CopyTo, MoveTo): Implement.
+
+	* FileStream.cs: Add argument checking to the constructor.
+
+	* File.cs: Rewrote most of the file.  Implement Copy, Open, Create,
+	OpenText, OpenWrite, Move.  Made pending methods flagged as MonoTODO. 
+	
+	* Directory.cs (Delete): reimplement without using DirectoryInfo.
+	(Delete): Implement the recursive version.
+	(GetCreationTime, GetLastWriteTime, GetLastAccessTime): Implement.
+	(Move): Reimplement.
+	(getNames): dead code removal.
+
+	* Path.cs: define an internal DirectorySeparatorStr that we use in
+	a few spots.
+
+	* Wrapper.cs: Updated to new version.
+	
+	* DirectoryInfo (Delete): Implement using the Directory API.
+
 	* DirectoryInfo.cs (GetFiles, GetDirectories, GetFileSystemInfos,
 	Delete, Create, Parent, Exists, MoveTo): Implement. 
 

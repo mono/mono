@@ -22,6 +22,7 @@ namespace System.IO
 		public static readonly char DirectorySeparatorChar = _os.DirectorySeparator;
 		public static readonly char[] InvalidPathChars = _os.InvalidPathChars;
 		public static readonly char PathSeparator = _os.PathSeparator;
+		internal static readonly string DirectorySeparatorStr = _os.DirectorySeparator + "";
 		public static readonly char VolumeSeparatorChar = _os.VolumeSeparator;
 
 		private static readonly char[] PathSeparatorChars = {	DirectorySeparatorChar, 

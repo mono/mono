@@ -31,6 +31,12 @@ namespace System
 		// w32 file time starts counting from 1/1/1601 00:00 GMT
 		// which is the constant ticks from the .NET epoch
 		private const long w32file_epoch = 504911232000000000L;
+
+		//
+		// The UnixEpoch, it begins on Jan 1, 1970 at 0:0:0, expressed
+		// in Ticks
+		//
+		internal const long UnixEpoch = 621355968000000000L;
 		
 		public static readonly DateTime MaxValue = new DateTime (MaxTicks);
 		public static readonly DateTime MinValue = new DateTime (MinTicks);

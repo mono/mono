@@ -231,5 +231,17 @@ public class Wrapper {
 	[DllImport("monowrapper", EntryPoint="mono_wrapper_rename", CharSet=CharSet.Ansi)]
 	public unsafe static extern int rename (string source, string target);
 
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_utime", CharSet=CharSet.Ansi)]
+	public unsafe static extern int utime (string path, int atime, int mtime);
+
+	[DllImport("monowrapper", EntryPoint="mono_glob_compile", CharSet=CharSet.Ansi)]
+	public unsafe static extern IntPtr mono_glob_compile (string glob);
+
+	[DllImport("monowrapper", EntryPoint="mono_glob_match", CharSet=CharSet.Ansi)]
+	public unsafe static extern int mono_glob_match (IntPtr handle, string str);
+
+	[DllImport("monowrapper", EntryPoint="mono_glob_dispose", CharSet=CharSet.Ansi)]
+	public unsafe static extern void mono_glob_dispose (IntPtr handle);
+
 }
 }

@@ -1,16 +1,17 @@
-//------------------------------------------------------------------------------
 // 
 // System.IO.File.cs 
 //
-// Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // 
-// Author:         Jim Richardson, develop@wtfo-guru.com
-// Created:        Monday, August 22, 2001 
+// Authors:
+//   Miguel de Icaza (miguel@ximian.com)
+//   Jim Richardson  (develop@wtfo-guru.com)
 //
-// TODO: Research exceptions for all methods
-//------------------------------------------------------------------------------
+// Copyright 2002 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
+//
 
 using System;
+using System.Private;
 
 namespace System.IO
 {
@@ -18,194 +19,172 @@ namespace System.IO
 	/// 
 	/// </summary>
 	public sealed class File : Object
-	{ 
-		/// <summary>
-		/// Creates a StreamWriter that appends text to a file creating the file if needed
-		/// </summary>
-		[MonoTODO]
-		public static StreamWriter AppendText(string path)
-		{	// TODO: Implement
-			return null;
+	{
+		const int COPY_BLOCK_SIZE = 32 * 1024;
+		
+		public static StreamWriter AppendText (string path)
+		{	
+			return new StreamWriter (path, true);
 		}
 		 
-		/// <summary>
-		/// Copies a file overwriting existing if necessary
-		/// </summary>
-		public static void Copy(string sourceFilename, string destFilename)
+		public static void Copy (string sourceFilename, string destFilename)
 		{
-			Copy(sourceFilename, destFilename, true);
+			Copy (sourceFilename, destFilename, true);
 		}
 		 
-		/// <summary>
-		/// Copies a file overwriting existing if specified
-		/// </summary>
-		[MonoTODO]
-		public static void Copy(string sourceFilename, string destFilename, bool bOverwrite)
-		{	// TODO: Implement
+		public static void Copy (string src, string dest, bool overrite)
+		{	
+			if (src == null || dest == null)
+				throw new ArgumentNullException ();
+			if (src == "" || dest == null ||
+			    src.IndexOfAny (Path.InvalidPathChars) != -1 ||
+			    dest.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+
+			using (FileStream src_stream = new FileStream (
+				src, FileMode.Open, FileAccess.Read, FileShare.Read, COPY_BLOCK_SIZE),
+			       dst_stream = new FileStream (
+				       dest, FileMode.CreateNew, FileAccess.Write, FileShare.None,
+				       COPY_BLOCK_SIZE)){
+				byte [] buffer = new byte [COPY_BLOCK_SIZE];
+				int count;
+			
+				while ((count = src_stream.Read (buffer, 0, COPY_BLOCK_SIZE)) != 0)
+					dst_stream.Write (buffer, 0, count);
+			}
 		}
 
-		/// <summary>
-		/// Creates a file given the fully qualified path
-		/// </summary>
-		[MonoTODO]
-		public static FileStream Create(string path)
-		{	// TODO: Research default buffersize
-			return Create(path, 1024);
+		public static FileStream Create (string path)
+		{
+			return Create (path, 8192);
 		}
 
-		/// <summary>
-		/// Creates a file given the fully qualified path using specified buffersize
-		/// </summary>
-		[MonoTODO]
-		public static FileStream Create(string path, int buffersize)
-		{	// TODO: Implement
-			return null;
-		}
-		
-		/// <summary>
-		/// Delete a file
-		/// </summary>
-		[MonoTODO]
-		public static void Delete(string path)
-		{	// TODO: Implement
-		}
-		
-		/// <summary>
-		/// Returns true if file exists on disk
-		/// </summary>
-		[MonoTODO]
-		public static bool Exists(string path)
-		{	// TODO: Implement
-			return false;
-		}
-		
-		/// <summary>
-		/// Returns the date and time the file specified by path was created
-		/// </summary>
-		public static FileAttributes GetAttributes(string path)
+		public static FileStream Create (string path, int buffersize)
 		{
-			FileInfo fInfo = new FileInfo(path);
-			return fInfo.Attributes;
+			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
+					       FileShare.None, buffersize);
+		}
+		
+		public static void Delete (string path)
+		{
+			int code;
+			
+			if (path == null)
+				throw new ArgumentNullException ();
+			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+			
+			code = Wrapper.unlink (path);
+			if (code == Wrapper.EISDIR)
+				throw new UnauthorizedAccessException ();
+			else
+				throw new IOException (Errno.Message (code));
+		}
+		
+		public static bool Exists (string path)
+		{
+			unsafe {
+				stat s;
+				
+				if (Wrapper.stat (path, &s) == 0)
+					return true;
+				return false;
+			}
 		}
 
-		/// <summary>
-		/// Returns the date and time the directory specified by path was created
-		/// </summary>
-		public static DateTime GetCreationTime(string path)
-		{
-			return getInfo(path).CreationTime;
-		}
-
-		/// <summary>
-		/// Returns the date and time the directory specified by path was last accessed
-		/// </summary>
-		public static DateTime GetLastAccessTime(string path)
-		{
-			return getInfo(path).LastAccessTime;
-		}
-
-		/// <summary>
-		/// Returns the date and time the directory specified by path was last modified
-		/// </summary>
-		public static DateTime GetLastWriteTime(string path)
-		{
-			return getInfo(path).LastWriteTime;
-		}
-		
-		/// <summary>
-		/// Moves a file
-		/// </summary>
-		public static void Move(string srcFilename, string destFilename)
-		{
-			getInfo(srcFilename).MoveTo(destFilename);
-		}
-		
-		/// <summary>
-		/// Open a file for exclusive reading and writing
-		/// </summary>
 		[MonoTODO]
-		public static FileStream Open(string path, FileMode mode)
-		{	// TODO: research if exclusive is the correct default
-			return getInfo(path).Open(mode, FileAccess.ReadWrite);
-		}
-		
-		/// <summary>
-		/// Open a file for exclusive access specified by mode
-		/// </summary>
-		[MonoTODO]
-		public static FileStream Open(string path, FileMode mode, FileAccess access)
-		{	// TODO: research if exclusive is the correct default
-			return getInfo(path).Open(mode, access, FileShare.None);
-		}
-		
-		/// <summary>
-		/// Open a file access specified by mode, sharing specified by share
-		/// </summary>
-		public static FileStream Open(string path, FileMode mode, FileAccess access, FileShare share)
+		public static FileAttributes GetAttributes (string path)
 		{
-			return getInfo(path).Open(mode, access, share);
-		}
-		
-		/// <summary>
-		/// Open a FileStream for reading and writing
-		/// </summary>
-		[MonoTODO]
-		public static FileStream OpenRead(string path)
-		{	// TODO: find out what default share should be
-			return getInfo(path).OpenRead();
-		}
-		
-		/// <summary>
-		/// Open a StreamReader
-		/// </summary>
-		public static StreamReader OpenText(string path)
-		{
-			return getInfo(path).OpenText();
+			throw new Exception ("Unimplemented");
 		}
 
-		/// <summary>
-		/// Open a FileStream for reading and writing
-		/// </summary>
-		public FileStream OpenWrite(string path)
+		[MonoTODO]
+		public static DateTime GetCreationTime (string path)
 		{
-			return getInfo(path).OpenWrite();
-		}
-		
-		/// <summary>
-		/// Sets the attributes of file specified by path
-		/// </summary>
-		public static void SetAttributes(string path, FileAttributes attributes)
-		{
-			getInfo(path).Attributes = attributes;
-		}
-		
-		/// <summary>
-		/// Sets the creation time of the directory specified by path
-		/// </summary>
-		public static void SetCreationTime(string path, DateTime creationTime)
-		{
-			getInfo(path).CreationTime = creationTime;
+			throw new Exception ("Unimplemented");
 		}
 
-		/// <summary>
-		/// Sets the last access time of the directory specified by path
-		/// </summary>
-		public static void SetLastAccessTime(string path, DateTime accessTime)
+		[MonoTODO]
+		public static DateTime GetLastAccessTime (string path)
 		{
-			getInfo(path).LastAccessTime = accessTime;
+			throw new Exception ("Unimplemented");
+		}
+
+		[MonoTODO]
+		public static DateTime GetLastWriteTime (string path)
+		{
+			throw new Exception ("Unimplemented");
+		}
+
+
+		public static void Move (string src, string dest)
+		{
+			if (src == null || dest == null)
+				throw new ArgumentNullException ();
+			if (src == "" || dest == null ||
+			    src.IndexOfAny (Path.InvalidPathChars) != -1 ||
+			    dest.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+
+			int code = Wrapper.rename (src, dest);
+			if (code == 0)
+				return;
+			throw new Exception (Errno.Message (code));
 		}
 		
-		/// <summary>
-		/// Sets the last write time of the directory specified by path
-		/// </summary>
-		public static void SetLastWriteTime(string path, DateTime modifiedTime)
-		{
-			getInfo(path).LastWriteTime = modifiedTime;
+		public static FileStream Open (string path, FileMode mode)
+		{	
+			return new FileStream (path, mode, FileAccess.ReadWrite, FileShare.None);
 		}
 		
-		private static FileInfo getInfo(string path)
+		public static FileStream Open (string path, FileMode mode, FileAccess access)
+		{	
+			return new FileStream (path, mode, access, FileShare.None);
+		}
+
+		public static FileStream Open (string path, FileMode mode, FileAccess access,
+					       FileShare share)
 		{
-			return new FileInfo(path);
+			return new FileStream (path, mode, access, share);
+		}
+		
+		public static FileStream OpenRead (string path)
+		{	
+			return new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.Read);
+		}
+
+		public static StreamReader OpenText (string path)
+		{
+			return new StreamReader (path);
+		}
+
+		public FileStream OpenWrite (string path)
+		{
+			return new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+		}
+
+		[MonoTODO]
+		public static void SetAttributes (string path, FileAttributes attributes)
+		{
+			throw new Exception ("Unimplemented");
+		}
+
+		[MonoTODO]
+		public static void SetCreationTime (string path, DateTime creationTime)
+		{
+			throw new Exception ("Unimplemented");
+		}
+
+		[MonoTODO]
+		public static void SetLastAccessTime (string path, DateTime accessTime)
+		{
+			throw new Exception ("Unimplemented");
+		}
+
+		[MonoTODO]
+		public static void SetLastWriteTime (string path, DateTime modifiedTime)
+		{
+			throw new Exception ("Unimplemented");
 		}
 	}
 }

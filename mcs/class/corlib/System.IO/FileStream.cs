@@ -59,6 +59,11 @@ namespace System.IO
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share,
 				   int buferSize, bool useAsync)
 		{
+			if (name == null)
+				throw new ArgumentNullException ();
+			if (name == "" || name.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+
 			fdhandle = _os.OpenFile (name, mode, access, share);
 			
 			/* Implement error checking, with some sort of access

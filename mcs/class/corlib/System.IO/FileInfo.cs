@@ -120,22 +120,18 @@ namespace System.IO
 
 		[MonoTODO]
    		public StreamWriter AppendText ()
-		{	// TODO: verify using correct FileMode here might be Create & Append
-			return new StreamWriter (Open (FileMode.Append, FileAccess.Write));
+		{	
+			return File.AppendText (OriginalPath);
 		}
 
-		[MonoTODO]
 		public FileStream Create ()
 		{
-			// TODO: verify using correct FileMode here
-			return Open (FileMode.OpenOrCreate, FileAccess.ReadWrite);
+			return File.Create (OriginalPath);
 		}
 
 		[MonoTODO]
 		public StreamWriter CreateText ()
-		{	//TODO: According to doc even CreateText throws a file not found ex
-			//      sounds suspicious so i'll have to check it out later
-			//existsOnDisk (true, true); // throw not found, is directory
+		{	
 			return new StreamWriter (Open (FileMode.Create, FileAccess.Write));
 		}
 		
@@ -153,19 +149,19 @@ namespace System.IO
 		{
 			bool bExists = existsOnDisk (false, true); // throw is directory;
 			string path = getPathName ();
-		    CheckPermission.ModeAccess (mode, access, path, bExists);			
+			CheckPermission.ModeAccess (mode, access, path, bExists);			
 			return new FileStream (path, mode, access, share);
 		}
 
 		[MonoTODO]
 		public FileStream OpenRead ()
-		{	// TODO: find out what default share should be
+		{	
 			return Open (FileMode.Open, FileAccess.Read, FileShare.Read);
 		}
 
 		[MonoTODO]
 		public StreamReader OpenText ()
-		{	// TODO: verify mode and access values
+		{	
 			return new StreamReader (Open (FileMode.OpenOrCreate, FileAccess.ReadWrite));
 		}
 
@@ -179,10 +175,10 @@ namespace System.IO
 			return CopyTo (destFile, false);
 		}
 
-		[MonoTODO]
 		public FileInfo CopyTo (string destFile, bool bOverwrite)
-		{	// TODO: Implement
-			return null;
+		{
+			File.Copy (OriginalPath, destFile);
+			return new FileInfo (destFile);
 		}
 
 		public override void Delete ()
@@ -192,9 +188,9 @@ namespace System.IO
 			_os.DeleteFile (getPathName ());
 		}
 
-		[MonoTODO]
 		public void MoveTo (string destName)
-		{	// TODO: Implement
+		{
+			File.Move (OriginalPath, destName);
 		}
 	}
 }

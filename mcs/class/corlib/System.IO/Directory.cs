@@ -21,41 +21,133 @@ namespace System.IO
 {
 	public sealed class Directory : Object
 	{
-
 		public static DirectoryInfo CreateDirectory (string path)
-		{	
-			DirectoryInfo dInfo = getInfo (path);
-			if (!dInfo.Exists)
-			{
-				dInfo.Create ();
-			}
-			return dInfo;
+		{
+			if (path == null)
+				throw new ArgumentNullException ();
+			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+
+			int code;
+			
+			if ((code = Wrapper.mkdir (path, 0777)) != 0)
+				throw new IOException (Errno.Message (code));
+
+			return new DirectoryInfo (path);
 		}
-		
+
 		public static void Delete (string path)
-		{	
-			DirectoryInfo dInfo = getInfo (path);
-			if (dInfo.Exists)
-				dInfo.Delete ();
+		{
+			if (path == null)
+				throw new ArgumentNullException ();
+			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+
+			int code = Wrapper.rmdir (path);
+
+			if (code != 0)
+				throw new IOException (Errno.Message (code));
+		}
+
+		static void RecursiveDelete (string path)
+		{
+			ArrayList list = GetListing (path, "*");
+			if (list == null)
+				throw new DirectoryNotFoundException ();
+
+			if (!path.EndsWith (Path.DirectorySeparatorStr))
+				path = path + Path.DirectorySeparatorChar;
+			
+			foreach (string n in list){
+				string full = path + n;
+				
+				unsafe {
+					stat s;
+					
+					if (Wrapper.stat (full, &s) != 0)
+						continue;
+
+					if ((s.st_mode & Wrapper.S_IFDIR) != 0){
+						RecursiveDelete (full);
+					} else {
+						Wrapper.unlink (full);
+					}
+				}
+			}
 		}
 		
-		public static void Delete (string path, bool bRecurse)
-		{	
-			DirectoryInfo dInfo = getInfo (path);
-			if (dInfo.Exists)
-			{
-				dInfo.Delete (bRecurse);
+		public static void Delete (string path, bool recurse)
+		{
+			if (path == null)
+				throw new ArgumentNullException ();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid characters");
+
+			if (recurse == false){
+				Delete (path);
+				return;
 			}
+
+			RecursiveDelete (path);
 		}
 		
 		public static bool Exists (string path)
 		{
-			return getInfo (path).Exists;
+			unsafe {
+				stat s;
+
+				if (Wrapper.stat (path, &s) == 0)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		enum Time { Creation, Modified, Access }
+			
+		static DateTime GetTime (string path, Time kind)
+		{
+			
+			if (path == null)
+				throw new ArgumentNullException ();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid characters");
+
+			unsafe {
+				stat s;
+				int code;
+
+				code = Wrapper.stat (path, &s);
+
+				if (code == 0){
+					switch (kind){
+					case Time.Creation:
+						return new DateTime (DateTime.UnixEpoch + s.st_ctime);
+					case Time.Modified:
+						return new DateTime (DateTime.UnixEpoch + s.st_mtime);
+					case Time.Access:
+						return new DateTime (DateTime.UnixEpoch + s.st_atime);
+					}
+				}
+				if (code == Wrapper.ENOTDIR)
+					throw new DirectoryNotFoundException ();
+				throw new IOException (Errno.Message (code));
+			}
+		}
+		
+		public static DateTime GetLastAccessTime (string path)
+		{
+			return GetTime (path, Time.Access);
+		}
+		
+		public static DateTime GetLastWriteTime (string path)
+		{
+			return GetTime (path, Time.Modified);
 		}
 		
 		public static DateTime GetCreationTime (string path)
 		{
-			return getInfo (path).CreationTime;
+			return GetTime (path, Time.Creation);
 		}
 		
 		public static string GetCurrentDirectory ()
@@ -67,30 +159,35 @@ namespace System.IO
 			return str;	
 		}
 
-		static bool Matches (string name, string pattern)
-		{
-			return true;
-		}
-		
 		internal static ArrayList GetListing (string path, string pattern)
 		{
-			IntPtr handle = Wrapper.opendir (path);
+			IntPtr dir_handle;
+			IntPtr glob_handle = (IntPtr) 0;
 			ArrayList list;
 			string name;
 			
 			if (path == null)
 				return null;
 
+			if (pattern == "*")
+				pattern = null;
+			else
+				glob_handle = Wrapper.mono_glob_compile (pattern);
+			
+			dir_handle = Wrapper.opendir (path);
 			list = new ArrayList ();
-			while ((name = Wrapper.readdir (handle)) != null){
+			while ((name = Wrapper.readdir (dir_handle)) != null){
 				if (pattern == null){
 					list.Add (name);
 					continue;
 				}
-				if (Matches (name, pattern))
+
+				if (Wrapper.mono_glob_match (glob_handle, name) != 0)
 					list.Add (name);
 			}
-			Wrapper.closedir (handle);
+			if (pattern != null)
+				Wrapper.mono_glob_dispose (glob_handle);
+			Wrapper.closedir (dir_handle);
 
 			return list;
 		}
@@ -109,8 +206,12 @@ namespace System.IO
 		static string [] GetFileListing (ArrayList list, string path, Kind kind)
 		{
 			ArrayList result_list = new ArrayList ();
+
+			if (!path.EndsWith (Path.DirectorySeparatorStr))
+				path = path + Path.DirectorySeparatorChar;
+
 			foreach (string name in list){
-				string full = path + Path.DirectorySeparatorChar + name;
+				string full = path + name;
 
 				unsafe {
 					stat s;
@@ -148,7 +249,7 @@ namespace System.IO
 		
 		public static string GetDirectoryRoot (string path)
 		{
-			return getInfo (path).Root.FullName;
+			return "" + Path.DirectorySeparatorChar;
 		}
 		
 		public static string[] GetFiles (string path)
@@ -189,20 +290,9 @@ namespace System.IO
 			return GetFileListing (list, path, Kind.All);
 		}
 		
-		public static DateTime GetLastAccessTime (string path)
-		{
-			return getInfo (path).LastAccessTime;
-		}
-		
-		public static DateTime GetLastWriteTime (string path)
-		{
-			return getInfo (path).LastWriteTime;
-		}
-		
-		[MonoTODO]
 		public static string[] GetLogicalDrives ()
-		{	// TODO: Implement
-			return null;
+		{	
+			return new string [] { "A:\\", "C:\\" };
 		}
 
 		[MonoTODO]
@@ -213,12 +303,38 @@ namespace System.IO
 
 		public static void Move (string src, string dst)
 		{
-			 getInfo (src).MoveTo (dst);
+			if (src == null || dst == null)
+				throw new ArgumentNullException ();
+			if (src.IndexOfAny (Path.InvalidPathChars) != -1 ||
+			    dst.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+			
+			int code;
+			
+			code = Wrapper.rename (src, dst);
+			if (code == 0)
+				return;
+			
+			throw new IOException (Errno.Message (code));
 		}
-		
+
+		[MonoTODO]
 		public static void SetCreationTime (string path, DateTime creationTime)
 		{
-			getInfo (path).CreationTime = creationTime;
+			if (path == null)
+				throw new ArgumentNullException ();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ();
+
+			long ticks = creationTime.Ticks;
+			if (ticks < DateTime.UnixEpoch)
+				throw new ArgumentOutOfRangeException ();
+
+			long res = ticks - DateTime.UnixEpoch;
+			if (res > UInt32.MaxValue)
+				throw new ArgumentOutOfRangeException ();
+
+			throw new Exception ("Unimplemented");
 		}
 		
 		public static void SetCurrentDirectory (string path)
@@ -232,32 +348,22 @@ namespace System.IO
 			}
 			Environment.CurrentDirectory = path;
 		}
-		
+
+		[MonoTODO]
 		public static void SetLastAccessTime (string path, DateTime accessTime)
 		{
-			getInfo (path).LastAccessTime = accessTime;
+			throw new Exception ("Unimplemented");
 		}
 		
+		[MonoTODO]
 		public static void SetLastWriteTime (string path, DateTime modifiedTime)
 		{
-			getInfo (path).LastWriteTime = modifiedTime;
+			throw new Exception ("Unimplemented");
 		}
 		
 		private static DirectoryInfo getInfo (string path)
 		{
 			return new DirectoryInfo (path);
-		}
-		
-		private static string[] getNames (FileSystemInfo[] arInfo)
-		{
-			int index = 0;
-			string[] ar = new string[arInfo.Length];
-						
-			foreach (FileInfo fi in arInfo)
-			{
-				ar[index++] = fi.FullName;
-			}
-			return ar;
 		}
 	}
 }
