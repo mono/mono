@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Fri, 7 Sep 2001 16:31:48 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,90 +14,68 @@ namespace System {
 
 
 	/// <summary>
-	/// <para> Enumerates the application elements to which it is valid to attach
-	///       an attribute.</para>
 	/// </summary>
-	/// <remarks>
-	/// <para>
-	/// <see cref="T:System.AttributeTargets" /> is used as a parameter for <see cref="T:System.AttributeUsageAttribute" /> to enable an attribute to be
-	///    associated with one or more kinds of application elements.</para>
-	/// </remarks>
-	/// <example>
-	/// <para>The following code sample demonstrates how <see cref="T:System.AttributeTargets" /> can be
-	///    used with <see cref="T:System.AttributeUsageAttribute" /> so that a user-defined attribute class, <paramref name="Author" />,
-	///    may be applied to structures and classes. The <paramref name="Author" /> attribute is then
-	///    applied to a class.</para>
-	/// <code lang="C#">[AttributeUsageAttribute(AttributeTargets.Class|AttributeTargets.Struct)]
-	/// public class Author : Attribute {
-	///    public Author(string Name) { this.name = Name; }
-	///    string name;
-	/// }
-	/// [Author("John Q Public")]
-	/// class JohnsClass {
-	/// }
-	/// </code>
-	/// </example>
-	/// <seealso cref="T:System.AttributeUsageAttribute" />
 	[Flags]
 	public enum AttributeTargets {
 
-		/// <summary><para>       Attribute can be applied to an assembly.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Assembly = 0x00000001,
 
-		/// <summary><para>       Attribute can be applied to a module.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Module = 0x00000002,
 
-		/// <summary><para>       Attribute can be applied to a class.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Class = 0x00000004,
 
-		/// <summary><para>       Attribute can be applied to a value type.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Struct = 0x00000008,
 
-		/// <summary><para>       Attribute can be applied to an enumeration.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Enum = 0x00000010,
 
-		/// <summary><para>       Attribute can be applied to a constructor.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Constructor = 0x00000020,
 
-		/// <summary><para>       Attribute can be applied to a method.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Method = 0x00000040,
 
-		/// <summary><para>       Attribute can be applied to a property.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Property = 0x00000080,
 
-		/// <summary><para>       Attribute can be applied to a field.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Field = 0x00000100,
 
-		/// <summary><para>       Attribute can be applied to an event.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Event = 0x00000200,
 
-		/// <summary><para>       Attribute can be applied to an interface.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Interface = 0x00000400,
 
-		/// <summary><para>       Attribute can be applied to a parameter.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Parameter = 0x00000800,
 
-		/// <summary><para>       Attribute can be applied to a delegate.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		Delegate = 0x00001000,
 
-		/// <summary><para>Attribute can be applied to a Return value.</para></summary>
+		/// <summary>
+		/// </summary>
 		ReturnValue = 0x00002000,
 
-		/// <summary><para> Attribute can be applied to any element.
-		///       </para></summary>
+		/// <summary>
+		/// </summary>
 		All = Assembly | Class | Struct | Enum | Constructor | Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue,
 	} // AttributeTargets
 
