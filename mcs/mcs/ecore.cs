@@ -735,7 +735,7 @@ namespace Mono.CSharp {
 				//
 				if (expr_type.IsEnum)
 					return new BoxedCast (expr);
-			
+
 				return new EmptyCast (expr, target_type);
 			} else {
 
@@ -746,7 +746,7 @@ namespace Mono.CSharp {
 				
 				// from the null type to any reference-type.
 				if (expr is NullLiteral && !target_type.IsValueType)
-					return new EmptyCast (expr, target_type);
+					return new NullLiteralTyped (target_type);
 
 				// from any class-type S to any interface-type T.
 				if (target_type.IsInterface) {
@@ -824,24 +824,27 @@ namespace Mono.CSharp {
 			//
 			// Attempt to do the implicit constant expression conversions
 
-			if (expr is IntConstant){
-				Expression e;
+			if (expr is Constant){
 				
-				e = TryImplicitIntConversion (target_type, (IntConstant) expr);
-
-				if (e != null)
-					return e;
-			} else if (expr is LongConstant && target_type == TypeManager.uint64_type){
-				//
-				// Try the implicit constant expression conversion
-				// from long to ulong, instead of a nice routine,
-				// we just inline it
-				//
-				long v = ((LongConstant) expr).Value;
-				if (v > 0)
-					return new ULongConstant ((ulong) v);
+				if (expr is IntConstant){
+					Expression e;
+					
+					e = TryImplicitIntConversion (target_type, (IntConstant) expr);
+					
+					if (e != null)
+						return e;
+				} else if (expr is LongConstant && target_type == TypeManager.uint64_type){
+					//
+					// Try the implicit constant expression conversion
+					// from long to ulong, instead of a nice routine,
+					// we just inline it
+					//
+					long v = ((LongConstant) expr).Value;
+					if (v > 0)
+						return new ULongConstant ((ulong) v);
+				} 
 			}
-
+			
  			Type real_target_type = target_type;
 
 			if (expr_type == TypeManager.sbyte_type){
@@ -1708,14 +1711,14 @@ namespace Mono.CSharp {
 			e = ImplicitReferenceConversion (expr, target_type);
 			if (e != null)
 				return e;
-
+			
 			if ((target_type == TypeManager.enum_type ||
 			     target_type.IsSubclassOf (TypeManager.enum_type)) &&
 			    expr is IntLiteral){
 				IntLiteral i = (IntLiteral) expr;
 
 				if (i.Value == 0)
-					return new EmptyCast (expr, target_type);
+					return new EnumConstant ((Constant) expr, target_type);
 			}
 
 			if (ec.InUnsafe) {
@@ -1754,9 +1757,6 @@ namespace Mono.CSharp {
 		{
 			int value = ic.Value;
 
-			//
-			// FIXME: This could return constants instead of EmptyCasts
-			//
 			if (target_type == TypeManager.sbyte_type){
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
 					return new SByteConstant ((sbyte) value);
@@ -2934,13 +2934,6 @@ namespace Mono.CSharp {
 			this.child = child;
 		}
 
-		public Expression Peel ()
-		{
-			if (child is EmptyCast)
-				return ((EmptyCast) child).Peel ();
-			return child;
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
 			// This should never be invoked, we are born in fully
@@ -3089,10 +3082,10 @@ namespace Mono.CSharp {
 	public class BoxedCast : EmptyCast {
 
 		public BoxedCast (Expression expr)
-			: base (expr, TypeManager.object_type)
+			: base (expr, TypeManager.object_type) 
 		{
 		}
-
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			// This should never be invoked, we are born in fully

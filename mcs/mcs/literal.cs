@@ -34,8 +34,6 @@ namespace Mono.CSharp {
 			
 		public NullLiteral ()
 		{
-			if (Null != null)
-				throw new Exception ("More than one null has been created!");
 			eclass = ExprClass.Value;
 		}
 		
@@ -61,6 +59,23 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// This is just a Null literal whose type has been set (this avoid an
+	// EmptyCast wrapper around the Null literal, and maintains the
+	// `is Literal' nature of it.
+	//
+	public class NullLiteralTyped : NullLiteral {
+		public NullLiteralTyped (Type t)
+		{
+			type = t;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+	}
+	
 	public class BoolLiteral : BoolConstant {
 		public BoolLiteral (bool val) : base (val)
 		{
