@@ -147,8 +147,6 @@ PENDING TASKS
 
 * Implement (fixed case 3: string)
 
-* Implement stackalloc.
-	
 * Revisit
 
 	Primary-expression, as it has now been split into 
@@ -171,6 +169,8 @@ PENDING TASKS
 * Emit `pinned' for pinned local variables.
 
 	Both `modreq' and pinned will require special hacks in the compiler.
+
+* Make sure that we are pinning the right variable
 
 OPTIMIZATIONS
 -------------

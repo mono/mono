@@ -5783,6 +5783,38 @@ namespace Mono.CSharp {
 	}
 
 	//
+	// Used by the fixed statement
+	//
+	public class StringPtr : Expression {
+		LocalBuilder b;
+		
+		public StringPtr (LocalBuilder b)
+		{
+			this.b = b;
+			eclass = ExprClass.Value;
+			type = TypeManager.char_ptr_type;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldloc, b);
+			ig.Emit (OpCodes.Conv_I);
+			ig.Emit (OpCodes.Call, TypeManager.int_get_offset_to_string_data);
+			ig.Emit (OpCodes.Add);
+		}
+	}
+	
+	//
 	// Implements the `stackalloc' keyword
 	//
 	public class StackAlloc : Expression {

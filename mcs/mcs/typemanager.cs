@@ -30,6 +30,7 @@ public class TypeManager {
 	static public Type float_type;
 	static public Type double_type;
 	static public Type char_type;
+	static public Type char_ptr_type;
 	static public Type short_type;
 	static public Type decimal_type;
 	static public Type bool_type;
@@ -81,6 +82,7 @@ public class TypeManager {
 	static public MethodInfo int_getlength_int;
 	static public MethodInfo delegate_combine_delegate_delegate;
 	static public MethodInfo delegate_remove_delegate_delegate;
+	static public MethodInfo int_get_offset_to_string_data;
 	
 	//
 	// The attribute constructors.
@@ -394,6 +396,7 @@ public class TypeManager {
 		byte_type     = CoreLookupType ("System.Byte");
 		sbyte_type    = CoreLookupType ("System.SByte");
 		char_type     = CoreLookupType ("System.Char");
+		char_ptr_type = CoreLookupType ("System.Char*");
 		short_type    = CoreLookupType ("System.Int16");
 		ushort_type   = CoreLookupType ("System.UInt16");
 		decimal_type  = CoreLookupType ("System.Decimal");
@@ -464,6 +467,8 @@ public class TypeManager {
 			ienumerator_type, "MoveNext", void_arg);
 		void_dispose_void = GetMethod (
 			idisposable_type, "Dispose", void_arg);
+		int_get_offset_to_string_data = GetMethod (
+			runtime_helpers_type, "get_OffsetToStringData", void_arg);
 
 		//
 		// object arguments
@@ -957,6 +962,13 @@ public class TypeManager {
 		return "Item";
 	}
 
+	public static void MakePinned (LocalBuilder builder)
+	{
+		//
+		// FIXME: Flag the "LocalBuilder" type as being
+		// pinned.  Figure out API.
+		//
+	}
 }
 
 }

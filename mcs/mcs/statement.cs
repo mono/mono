@@ -661,10 +661,7 @@ namespace Mono.CSharp {
 
 		public void MakePinned ()
 		{
-			//
-			// FIXME: Flag the "LocalBuilder" type as being
-			// pinned.  Figure out API.
-			//
+			TypeManager.MakePinned (LocalBuilder);
 		}				
 	}
 		
@@ -1739,8 +1736,6 @@ namespace Mono.CSharp {
 				VariableInfo vi = (VariableInfo) p.First;
 				Expression e = (Expression) p.Second;
 
-				vi.MakePinned ();
-				
 				//
 				// The rules for the possible declarators are pretty wise,
 				// but the production on the grammar is more concise.
@@ -1758,6 +1753,7 @@ namespace Mono.CSharp {
 				if (e is Unary && ((Unary) e).Oper == Unary.Operator.AddressOf){
 					Expression child = ((Unary) e).Expr;
 
+					vi.MakePinned ();
 					if (child is ParameterReference || child is LocalVariableReference){
 						Report.Error (
 							213, loc, 
@@ -1802,6 +1798,7 @@ namespace Mono.CSharp {
 				if (e.Type.IsArray){
 					Type array_type = e.Type.GetElementType ();
 					
+					vi.MakePinned ();
 					//
 					// Provided that array_type is unmanaged,
 					//
@@ -1834,6 +1831,33 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 
 					continue;
+				}
+
+				//
+				// Case 3: string
+				//
+				if (e.Type == TypeManager.string_type){
+					LocalBuilder pinned_string = ig.DeclareLocal (TypeManager.string_type);
+					TypeManager.MakePinned (pinned_string);
+					
+					e.Emit (ec);
+					ig.Emit (OpCodes.Stloc, pinned_string);
+
+					Expression sptr = new StringPtr (pinned_string);
+					Expression converted = Expression.ConvertImplicitRequired (
+						ec, sptr, vi.VariableType, loc);
+					
+					if (converted == null)
+						continue;
+
+					converted.Emit (ec);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+					
+					statement.Emit (ec);
+
+					// Clear the pinned variable
+					ig.Emit (OpCodes.Ldnull);
+					ig.Emit (OpCodes.Stloc, pinned_string);
 				}
 			}
 
