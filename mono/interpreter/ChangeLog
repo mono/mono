@@ -1,3 +1,7 @@
+2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c - set large stack size on HP 64bit
+
 2003-10-02  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* hacks.h - work round HP 64 bit problem with isunordered
