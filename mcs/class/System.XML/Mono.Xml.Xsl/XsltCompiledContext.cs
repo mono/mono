@@ -190,11 +190,21 @@ namespace Mono.Xml.Xsl
 			get { return scopes [scopeAt].PreserveWhitespace; }
 			set { scopes [scopeAt].PreserveWhitespace = value; }
 		}
+		public string ElementPrefix {
+			get { return scopes [scopeAt].ElementPrefix; }
+			set { scopes [scopeAt].ElementPrefix = value; }
+		}
+		public string ElementNamespace {
+			get { return scopes [scopeAt].ElementNamespace; }
+			set { scopes [scopeAt].ElementNamespace = value; }
+		}
 
 		struct XsltContextInfo
 		{
 			public bool IsCData;
 			public bool PreserveWhitespace;
+			public string ElementPrefix;
+			public string ElementNamespace;
 		}
 		
 		XsltContextInfo [] scopes = new XsltContextInfo [40];

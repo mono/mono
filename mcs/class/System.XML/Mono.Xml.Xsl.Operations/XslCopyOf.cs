@@ -58,12 +58,18 @@ namespace Mono.Xml.Xsl.Operations {
 				
 			case XPathNodeType.Element:
 				bool isCData = p.InsideCDataElement;
-				p.PushElementState (nav.LocalName, nav.NamespaceURI, false);
-				outputter.WriteStartElement (nav.Prefix, nav.LocalName, nav.NamespaceURI);
+				string prefix = nav.Prefix;
+				string ns = nav.NamespaceURI;
+				p.PushElementState (prefix, nav.LocalName, ns, false);
+				outputter.WriteStartElement (prefix, nav.LocalName, ns);
 				
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml))
 				{
 					do {
+						if (prefix == nav.Name)
+							continue;
+						if (nav.Name.Length == 0 && ns.Length == 0)
+							continue;
 						outputter.WriteNamespaceDecl (nav.Name, nav.Value);
 					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 					nav.MoveToParent ();
@@ -93,7 +99,9 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 				
 			case XPathNodeType.Namespace:
-				outputter.WriteNamespaceDecl (nav.Name, nav.Value);
+				if (nav.Name != p.XPathContext.ElementPrefix &&
+					(p.XPathContext.ElementNamespace.Length > 0 || nav.Name.Length > 0))
+					outputter.WriteNamespaceDecl (nav.Name, nav.Value);
 				break;
 			case XPathNodeType.Attribute:
 				outputter.WriteAttributeString (nav.Prefix, nav.LocalName, nav.NamespaceURI, nav.Value);

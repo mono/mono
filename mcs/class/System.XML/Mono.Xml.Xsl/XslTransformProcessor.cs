@@ -319,6 +319,11 @@ namespace Mono.Xml.Xsl {
 
 		internal void TryElementNamespacesOutput (Hashtable nsDecls, ArrayList excludedPrefixes)
 		{
+			TryElementNamespacesOutput (nsDecls, excludedPrefixes, null);
+		}
+
+		internal void TryElementNamespacesOutput (Hashtable nsDecls, ArrayList excludedPrefixes, string localPrefixInCopy)
+		{
 			if (nsDecls == null)
 				return;
 
@@ -326,15 +331,23 @@ namespace Mono.Xml.Xsl {
 				string name = (string)cur.Key;
 				string value = (string)cur.Value;
 
+				// See XSLT 1.0 errata E25
+				if (localPrefixInCopy == name)
+					continue;
+				if (localPrefixInCopy != null &&
+					name.Length == 0 &&
+					XPathContext.ElementNamespace.Length == 0)
+					continue;
+
 				if (style.NamespaceAliases [name] != null)
 					continue;
 
 				switch (value) {//FIXME: compare names by reference
 				case "http://www.w3.org/1999/XSL/Transform":
-					if ("xsl" == name)
+//					if ("xsl" == name)
 						continue;
-					else
-						goto default;
+//					else
+//						goto default;
 				case XmlNamespaceManager.XmlnsXml:
 					if (XmlNamespaceManager.PrefixXml == name)
 						continue;
@@ -555,12 +568,14 @@ namespace Mono.Xml.Xsl {
 		}
 		#endregion
 
-		public bool PushElementState (string name, string ns, bool preserveWhitespace)
+		public bool PushElementState (string prefix, string name, string ns, bool preserveWhitespace)
 		{
 			bool b = IsCData (name, ns);
 			XPathContext.PushScope ();
 			Out.InsideCDataSection = XPathContext.IsCData = b;
 			XPathContext.WhitespaceHandling = preserveWhitespace;
+			XPathContext.ElementPrefix = prefix;
+			XPathContext.ElementNamespace = ns;
 			return b;
 		}
 

@@ -1,3 +1,14 @@
+2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledContext.cs, XslTransformProcessor.cs :
+	  According to errata E25, those namespaces 1) that has the same
+	  name as current element's prefix, or an empty name when current
+	  element's namespace URI is empty, are not written to output.
+	  So added current element information to XPathContext and added
+	  prefix parameter to PushElementState(), added xsl:copy check to
+	  TryElementNamespacesOutput().
+	  http://www.w3.org/1999/11/REC-xslt-19991116-errata/
+
 2005-02-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslFunctions.cs : unparsed-entity-uri() should return SYSTEM ID

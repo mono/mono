@@ -120,9 +120,9 @@ namespace Mono.Xml.Xsl.Operations {
 			XmlConvert.VerifyName (nm);
 
 			bool isCData = p.InsideCDataElement;
-			p.PushElementState (localName, nmsp, false);
+			p.PushElementState (prefix, localName, nmsp, false);
 			p.Out.WriteStartElement (prefix, localName, nmsp);
-			p.TryElementNamespacesOutput (null, null);
+//			p.TryElementNamespacesOutput (null, null, null);
 
 			if (useAttributeSets != null)
 				foreach (XmlQualifiedName s in useAttributeSets)

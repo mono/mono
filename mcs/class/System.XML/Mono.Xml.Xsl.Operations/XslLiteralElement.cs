@@ -120,7 +120,7 @@ namespace Mono.Xml.Xsl.Operations {
 				GetCorrectNames ();
 
 			bool isCData = p.InsideCDataElement;
-			p.PushElementState (localname, nsUri, true);
+			p.PushElementState (prefix, localname, nsUri, true);
 			p.Out.WriteStartElement (prefix, localname, nsUri);
 
 			if (useAttributeSets != null)
@@ -133,7 +133,7 @@ namespace Mono.Xml.Xsl.Operations {
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 
-			p.TryElementNamespacesOutput (nsDecls, null);
+			p.TryElementNamespacesOutput (nsDecls, null, null);
 
 			if (children != null) children.Evaluate (p);
 

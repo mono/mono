@@ -83,16 +83,19 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 			case XPathNodeType.Element:
 				bool isCData = p.InsideCDataElement;
-				p.PushElementState (p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, true);
-				p.Out.WriteStartElement (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
+				string prefix = p.CurrentNode.Prefix;
+				p.PushElementState (prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, true);
+				p.Out.WriteStartElement (prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				
-				p.TryElementNamespacesOutput (nsDecls, null);
+				p.TryElementNamespacesOutput (nsDecls, null, prefix);
 				if (useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);
 
 				if (p.CurrentNode.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 					do {
+						if (p.CurrentNode.LocalName == prefix)
+							continue;
 						p.Out.WriteNamespaceDecl (p.CurrentNode.LocalName, p.CurrentNode.Value);
 					} while (p.CurrentNode.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 					p.CurrentNode.MoveToParent ();
@@ -127,7 +130,8 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 
 			case XPathNodeType.Namespace:
-				p.Out.WriteNamespaceDecl (p.CurrentNode.Name, p.CurrentNode.Value);
+				if (p.XPathContext.ElementPrefix != p.CurrentNode.Name)
+					p.Out.WriteNamespaceDecl (p.CurrentNode.Name, p.CurrentNode.Value);
 				break;
 
 			default:
