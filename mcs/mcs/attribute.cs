@@ -287,7 +287,7 @@ namespace Mono.CSharp {
 
 			ParameterData pd = Invocation.GetParameterData (constructor);
 
-			for (int j = 0; j < pos_args.Count; ++j) {
+			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) pos_args [j];
 				
 				if (a.Expr is NullLiteral && pd.ParameterType (j) == TypeManager.object_type) {
