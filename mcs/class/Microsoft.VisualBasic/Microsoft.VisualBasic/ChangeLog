@@ -1,3 +1,9 @@
+2004-08-16  Jambunathan K  <kjambunathan@novell.com>
+	* Interaction.cs: 
+	* Information.cs: 
+	* ErrObject.cs: 
+	* FileSystem.cs: Aesthetic changes.
+
 2004-08-11 Anirban Bhattachartjee <banirban@novell.com>
 	* Strings.cs: - Bug fix (#62235) - by Rob Tillie<Rob.Tillie@student.tul.EDU>
 		      - Excetion handling in Join

@@ -36,6 +36,8 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Microsoft.VisualBasic
@@ -230,8 +232,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static System.Int32 UBound (System.Array Array, 
-						   [System.Runtime.InteropServices.Optional] 
-						   [System.ComponentModel.DefaultValue(1)] 
+						   [Optional, DefaultValue(1)] 
 						   System.Int32 Rank) 
 		{ 
 			Exception e;
@@ -255,8 +256,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static System.Int32 LBound (System.Array Array, 
-						   [System.Runtime.InteropServices.Optional] 
-						   [System.ComponentModel.DefaultValue(1)] 
+						   [Optional, DefaultValue(1)] 
 						   System.Int32 Rank) 
 		{ 
 			Exception e;
