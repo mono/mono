@@ -147,24 +147,30 @@ namespace System.Data.SqlClient {
 		public bool GetBoolean (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is bool))
+			if (!(value is bool)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (bool) value;
 		}
 
 		public byte GetByte (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is byte))
+			if (!(value is byte)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (byte) value;
 		}
 
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is byte []))
+			if (!(value is byte [])) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			
 			if ( buffer == null ) {
 				// Return length of data
@@ -181,8 +187,10 @@ namespace System.Data.SqlClient {
 		public char GetChar (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is char))
+			if (!(value is char)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (char) value;
 		}
 
@@ -195,8 +203,10 @@ namespace System.Data.SqlClient {
 				valueBuffer = (char[])value;
 			else if (value is string)
 				valueBuffer = ((string)value).ToCharArray();
-			else
+			else {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			
 			if ( buffer == null ) {
 				// Return length of data
@@ -223,24 +233,30 @@ namespace System.Data.SqlClient {
 		public DateTime GetDateTime (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is DateTime))
-				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			if (!(value is DateTime)) {
+				if (value is DBNull) throw new SqlNullValueException ();
+				else throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (DateTime) value;
 		}
 
 		public decimal GetDecimal (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is decimal))
+			if (!(value is decimal)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (decimal) value;
 		}
 
 		public double GetDouble (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is double))
+			if (!(value is double)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (double) value;
 		}
 
@@ -252,40 +268,50 @@ namespace System.Data.SqlClient {
 		public float GetFloat (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is float))
+			if (!(value is float)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (float) value;
 		}
 
 		public Guid GetGuid (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is Guid))
+			if (!(value is Guid)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (Guid) value;
 		}
 
 		public short GetInt16 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is short))
+			if (!(value is short)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (short) value;
 		}
 
 		public int GetInt32 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is int))
+			if (!(value is int)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (int) value;
 		}
 
 		public long GetInt64 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is long))
+			if (!(value is long)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (long) value;
 		}
 
@@ -625,18 +651,18 @@ namespace System.Data.SqlClient {
 
 			switch (type) {
 			case SqlDbType.BigInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlInt64.Null;
 				return (SqlInt64) ((long) value);
 			case SqlDbType.Binary:
 			case SqlDbType.Image:
 			case SqlDbType.VarBinary:
 			case SqlDbType.Timestamp:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlBinary.Null;
 				return (SqlBinary) ((byte[]) value);
 			case SqlDbType.Bit:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlBoolean.Null;
 				return (SqlBoolean) ((bool) value);
 			case SqlDbType.Char:
@@ -645,47 +671,47 @@ namespace System.Data.SqlClient {
 			case SqlDbType.NVarChar:
 			case SqlDbType.Text:
 			case SqlDbType.VarChar:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlString.Null;
 				return (SqlString) ((string) value);
 			case SqlDbType.DateTime:
 			case SqlDbType.SmallDateTime:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlDateTime.Null;
 				return (SqlDateTime) ((DateTime) value);
 			case SqlDbType.Decimal:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlDecimal.Null;
 				if (value is TdsBigDecimal)
 					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
 				return (SqlDecimal) ((decimal) value);
 			case SqlDbType.Float:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlDouble.Null;
 				return (SqlDouble) ((double) value);
 			case SqlDbType.Int:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlInt32.Null;
 				return (SqlInt32) ((int) value);
 			case SqlDbType.Money:
 			case SqlDbType.SmallMoney:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlMoney.Null;
 				return (SqlMoney) ((decimal) value);
 			case SqlDbType.Real:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlSingle.Null;
 				return (SqlSingle) ((float) value);
 			case SqlDbType.UniqueIdentifier:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlGuid.Null;
 				return (SqlGuid) ((Guid) value);
 			case SqlDbType.SmallInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlInt16.Null;
 				return (SqlInt16) ((short) value);
 			case SqlDbType.TinyInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SqlByte.Null;
 				return (SqlByte) ((byte) value);
 			}
@@ -713,8 +739,10 @@ namespace System.Data.SqlClient {
 		public string GetString (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is string))
+			if (!(value is string)) {
+				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+			}
 			return (string) value;
 		}
 
@@ -750,7 +778,7 @@ namespace System.Data.SqlClient {
 
 		public bool IsDBNull (int i)
 		{
-			return GetValue (i) == null;
+			return GetValue (i) == DBNull.Value;
 		}
 
 		public bool NextResult ()

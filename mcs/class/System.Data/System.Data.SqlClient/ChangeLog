@@ -1,3 +1,8 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SqlDataReader.cs: Null values are now represented with DBNull instances.
+	  Deal with this.
+
 2004-03-14  Tim Coleman <tim@timcoleman.com>
 	* SqlCommand.cs SqlConnection.cs:
 		Changes from two patches by Andres Taylor
