@@ -1,3 +1,7 @@
+2003-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: fixed bug #40182 and made more unit test pass.
+
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileStream.cs: Added new methods Lock () and Unlock ()

@@ -31,15 +31,20 @@ namespace System.IO
 
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
 		{
+			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
+				throw new ArgumentOutOfRangeException ("access");
+
 			this.handle = handle;
 			this.access = access;
 			this.owner = ownsHandle;
 			this.async = isAsync;
 
 			MonoIOError error;
+			MonoFileType ftype = MonoIO.GetFileType (handle, out error);
 			
-			if(MonoIO.GetFileType (handle, out error) ==
-			   MonoFileType.Disk) {
+			if (ftype == MonoFileType.Unknown) {
+				throw new IOException ("Invalid handle.");
+			} else if (ftype == MonoFileType.Disk) {
 				this.canseek = true;
 			} else {
 				this.canseek = false;
@@ -75,6 +80,15 @@ namespace System.IO
 				throw new ArgumentException ("Name is empty");
 			}
 
+			if (mode < FileMode.CreateNew || mode > FileMode.Append)
+				throw new ArgumentOutOfRangeException ("mode");
+
+			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
+				throw new ArgumentOutOfRangeException ("access");
+
+			if (share < FileShare.None || share > FileAccess.ReadWrite)
+				throw new ArgumentOutOfRangeException ("share");
+
 			if (name.IndexOfAny (Path.InvalidPathChars) != -1) {
 				throw new ArgumentException ("Name has invalid chars");
 			}
@@ -90,6 +104,10 @@ namespace System.IO
 			    (access&FileAccess.Read)==FileAccess.Read) {
 				throw new ArgumentException("Append streams can not be read");
 			}
+
+			if ((access & FileAccess.Write) == 0 &&
+			    (mode != FileMode.Open && mode != FileMode.OpenOrCreate))
+				throw new ArgumentException ("access and mode not compatible");
 
 			this.name = name;
 
@@ -162,6 +180,12 @@ namespace System.IO
 
 		public override long Length {
 			get {
+				if (handle == MonoIO.InvalidHandle)
+					throw new ObjectDisposedException ("Stream has been closed");
+
+				if (!canseek)
+					throw new NotSupportedException ("The stream does not support seeking");
+
 				MonoIOError error;
 				
 				return MonoIO.GetLength (handle, out error);
@@ -170,9 +194,11 @@ namespace System.IO
 
 		public override long Position {
 			get {
-				if(CanSeek == false) {
+				if (handle == MonoIO.InvalidHandle)
+					throw new ObjectDisposedException ("Stream has been closed");
+
+				if(CanSeek == false)
 					throw new NotSupportedException("The stream does not support seeking");
-				}
 				
 				lock(this) {
 					return(buf_start + buf_offset);
@@ -203,6 +229,9 @@ namespace System.IO
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
+
+			if (!CanRead)
+				throw new NotSupportedException ("Stream does not support reading");
 			
 			lock(this) {
 				if (buf_offset >= buf_length) {
@@ -219,6 +248,12 @@ namespace System.IO
 
 		public override void WriteByte (byte value)
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+
+			if (!CanWrite)
+				throw new NotSupportedException ("Stream does not support writing");
+
 			lock(this) {
 				if (buf_offset == buf_size) {
 					FlushBuffer ();
@@ -293,8 +328,22 @@ namespace System.IO
 
 		public override void Write (byte[] src, int src_offset, int count)
 		{
-			int copied = 0;
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
 
+			if (src == null)
+				throw new ArgumentNullException ("src");
+
+			if (src_offset < 0)
+				throw new ArgumentOutOfRangeException ("src_offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if (!CanWrite)
+				throw new NotSupportedException ("Stream does not support writing");
+
+			int copied = 0;
 			while (count > 0) {
 				int n = WriteSegment (src, src_offset + copied, count);
 				copied += n;
@@ -349,7 +398,7 @@ namespace System.IO
 					/* LAMESPEC: shouldn't this be
 					 * ArgumentOutOfRangeException?
 					 */
-					throw new ArgumentException("Attempted to Seek before the beginning of the stream");
+					throw new IOException("Attempted to Seek before the beginning of the stream");
 				}
 
 				if(pos < this.append_startpos) {
@@ -398,6 +447,9 @@ namespace System.IO
 
 		public override void Flush ()
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+
 			lock(this) {
 				FlushBuffer ();
 			}
@@ -447,6 +499,8 @@ namespace System.IO
 				handle = MonoIO.InvalidHandle;
 			}
 
+			canseek = false;
+			access = 0;
 			if (disposing) {
 				buf = null;
 			}
