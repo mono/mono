@@ -1,0 +1,3 @@
+2002-05-09  Lawrence Pit <loz@cable.a2000.nl>
+
+	* Moved StringCollectionTest.cs and NameValueCollectionTest to this dir
