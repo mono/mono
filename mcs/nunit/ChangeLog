@@ -1,0 +1,13 @@
+2002-02-27  Martin Baulig  <martin@gnome.org>
+
+	Imported NUnit 1.11.
+
+	* nunit.build: Added NAnt build file for NUnit. In addition to
+	NUnitConsole.exe and NUnitCore.dll, we also create a small
+	NUnitBase.dll which just contains the source files which are needed
+	to run the tests on Linux.
+
+	* makefile: Just call NAnt here.
+
+	* NUnitGUI.exe, NUnitTests.dll: Removed binaries.
+
