@@ -137,6 +137,8 @@ namespace System.Xml.Serialization
 		void WriteObjectElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
 			ClassMap map = (ClassMap)typeMap.ObjectMap;
+			if (map.NamespaceDeclarations != null)
+				WriteNamespaceDeclarations ((XmlSerializerNamespaces) map.NamespaceDeclarations.GetValue (ob));
 			WriteMembers (map, ob, false);
 		}
 

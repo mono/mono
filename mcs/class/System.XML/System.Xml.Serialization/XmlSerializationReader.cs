@@ -252,15 +252,15 @@ namespace System.Xml.Serialization {
 		protected bool GetNullAttr ()
 		{
 			string na = reader.GetAttribute (nullX, w3InstanceNS);
-			if (na == string.Empty) {
+			if (na == null) {
 				na = reader.GetAttribute (nil, w3InstanceNS);
-				if (na == string.Empty) {
+				if (na == null) {
 					na = reader.GetAttribute (nullX, w3InstanceNS2000);
-					if (na == string.Empty)
+					if (na == null)
 						na = reader.GetAttribute (nullX, w3InstanceNS1999);
 				}
 			}
-			return (na != string.Empty);
+			return (na != null);
 		}
 
 		protected object GetTarget (string id)

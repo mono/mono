@@ -104,6 +104,7 @@ namespace System.Xml.Serialization
 		ArrayList _flatLists;
 		XmlTypeMapMemberAnyElement _defaultAnyElement;
 		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
+		XmlTypeMapMemberNamespaces _namespaceDeclarations;
 		XmlTypeMapMember _xmlTextCollector;
 
 		public void AddMember (XmlTypeMapMember member)
@@ -128,6 +129,11 @@ namespace System.Xml.Serialization
 			else if (member is XmlTypeMapMemberAnyAttribute)
 			{
 				_defaultAnyAttribute = (XmlTypeMapMemberAnyAttribute) member;
+				return;
+			}
+			else if (member is XmlTypeMapMemberNamespaces)
+			{
+				_namespaceDeclarations = (XmlTypeMapMemberNamespaces) member;
 				return;
 			}
 
@@ -182,6 +188,11 @@ namespace System.Xml.Serialization
 		public XmlTypeMapMemberAnyAttribute DefaultAnyAttributeMember
 		{
 			get { return _defaultAnyAttribute; }
+		}
+
+		public XmlTypeMapMemberNamespaces NamespaceDeclarations
+		{
+			get { return _namespaceDeclarations; }
 		}
 
 		public ICollection AttributeMembers

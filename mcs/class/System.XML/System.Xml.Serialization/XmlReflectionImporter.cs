@@ -179,18 +179,18 @@ namespace System.Xml.Serialization {
 
 			// Import members
 
-			try
-			{
+//			try
+//			{
 				ICollection members = GetReflectionMembers (type);
 				foreach (XmlReflectionMember rmember in members)
 				{
 					if (rmember.XmlAttributes.XmlIgnore) continue;
 					classMap.AddMember (CreateMapMember (rmember, map.Namespace));
 				}
-			}
-			catch (Exception ex) {
-				throw helper.CreateError (map, ex.Message);
-			}
+//			}
+//			catch (Exception ex) {
+//				throw helper.CreateError (map, ex.Message);
+//			}
 
 			// Import derived classes
 
@@ -436,6 +436,11 @@ namespace System.Xml.Serialization {
 				}
 				else
 					throw new InvalidOperationException ("XmlAnyElementAttribute can only be applied to members of type XmlElement, XmlElement[] or XmlNode[]");
+			}
+			else if (atts.Xmlns)
+			{
+				XmlTypeMapMemberNamespaces mapNamespaces = new XmlTypeMapMemberNamespaces ();
+				mapMember = mapNamespaces;
 			}
 			else if (atts.XmlAttribute != null)
 			{

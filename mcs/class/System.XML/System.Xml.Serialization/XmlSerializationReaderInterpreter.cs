@@ -176,7 +176,20 @@ namespace System.Xml.Serialization
 					}
 					else if (IsXmlnsAttribute(Reader.Name)) 
 					{
-						// Ignore
+						// If the map has NamespaceDeclarations,
+						// then store this xmlns to the given member.
+						// If the instance doesn't exist, then create.
+						if (map.NamespaceDeclarations != null) {
+							XmlSerializerNamespaces nss = this.GetMemberValue (map.NamespaceDeclarations, ob, isValueList) as XmlSerializerNamespaces;
+							if (nss == null) {
+								nss = new XmlSerializerNamespaces ();
+								SetMemberValue (map.NamespaceDeclarations, ob, nss, isValueList);
+							}
+							if (Reader.Prefix == "xmlns")
+nss.Add (Reader.LocalName, Reader.Value);
+							else
+								nss.Add ("", Reader.Value);
+						}
 					}	
 					else if (anyAttrMember != null) 
 					{

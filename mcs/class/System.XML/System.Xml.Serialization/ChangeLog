@@ -1,5 +1,15 @@
 2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlSerializationReader.cs : Synchronous fix with 
+	  XmlElement.GetAttribute(name, ns) fix for GetNullAttr().
+	* added XmlTypeMapMemberNamespace.cs.
+	* XmlReflectionImporter,
+	  XmlSerializationReaderInterpreter.cs,
+	  XmlSerializationWriterInterpreter.cs,
+	  XmlTypeMapping.cs : support for XmlNamespaceDeclarationAttribute.
+
+2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlSerializationWriter.cs : some QName handling fix.
 
 2003-06-13  Lluis Sanchez Gual <lluis@ximian.com>
