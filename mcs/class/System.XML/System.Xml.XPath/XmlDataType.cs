@@ -11,7 +11,7 @@ namespace System.Xml.XPath
 {
 	public enum XmlDataType
 	{
-		Number,
-		Text
+		Text = 1,
+		Number = 2,
 	}
 }

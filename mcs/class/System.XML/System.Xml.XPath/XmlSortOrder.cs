@@ -11,7 +11,7 @@ namespace System.Xml.XPath
 {
 	public enum XmlSortOrder
 	{
-		Ascending,
-		Descending
+		Ascending = 1,
+		Descending = 2,
 	}
 }

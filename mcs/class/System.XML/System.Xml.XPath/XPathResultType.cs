@@ -11,12 +11,12 @@ namespace System.Xml.XPath
 {
 	public enum XPathResultType
 	{
-		Any,
-		Boolean,
-		Error,
-		Navigator,
-		NodeSet,
-		Number,
-		String 
+		Number = 0,
+		String = 1,
+		Boolean = 2,
+		NodeSet = 3,
+		Navigator = 4, // [MonoTODO]
+		Any = 5,
+		Error = 6,
 	}
 }

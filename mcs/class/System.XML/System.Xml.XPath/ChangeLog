@@ -1,3 +1,13 @@
+2002-03-08  Duncan Mak  <duncan@ximian.com>
+
+	* XPathNamespaceScope.cs:
+	* XPathNodeType.cs:
+	* XPathResultType.cs:
+	* XmlDataType.cs:
+	* XmlSortOrder.cs: Used EnumCheck and realigned elements to be compatible with MS
+	implementation. XPathResultType is interesting as EnumCheck does
+	not show the Navigator element, but shows the String element twice.
+
 2002-03-08  Jason Diamond  <jason@injektilo.org>
 
 	* XmlDataType.cs, XmlSortOrder.cs, XPathNodeType.cs: Added files.

@@ -11,8 +11,8 @@ namespace System.Xml.XPath
 {
 	public enum XPathNamespaceScope
 	{
-		All,
-		ExcludeXml,
-		Local
+		All = 0,
+		ExcludeXml = 1,
+		Local =2,
 	}
 }
