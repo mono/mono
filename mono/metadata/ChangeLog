@@ -1,3 +1,8 @@
+
+Sat Apr 26 19:25:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: fix off by one when loading parameters attributes.
+
 2003-04-24  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (mono_debugger_io_layer): Put this back.
