@@ -1,4 +1,8 @@
 2004-07-14 Umadevi S <sumadevi@novell.com>
+	* SqlMoney.cs, SqlSingle.cs - Added CompareTo method from .NET2.0
+	* Added new Enum StorageState.cs
+
+2004-07-14 Umadevi S <sumadevi@novell.com>
 	* SqlString.cs :Fixed + operator for null, CompareTo to throw SqlTypeException
 			Implemented Add and CompareTo methods from .NET2.0
 

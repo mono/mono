@@ -105,11 +105,23 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlMoney))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlMoney"));
-			else if (((SqlMoney)value).IsNull)
+			return CompareSqlMoney ((SqlMoney)value);
+		}
+		
+		private int CompareSqlMoney (SqlMoney value)
+		{
+			if (value.IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((SqlMoney)value).Value);
+				return this.value.CompareTo (value.Value);
 		}
+
+		#if NET_2_0
+		public int CompareTo (SqlMoney value)
+		{
+			return CompareSqlMoney (value);
+		}
+		#endif
 
 		public static SqlMoney Divide (SqlMoney x, SqlMoney y)
 		{

@@ -97,10 +97,23 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlSingle))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlSingle"));
-			else if (((SqlSingle)value).IsNull)
+
+			return CompareSqlSingle ((SqlSingle) value);
+		}
+
+		#if NET_2_0
+		public int CompareTo (SqlSingle value)
+		{
+			return CompareSqlSingle (value);
+		}
+		#endif
+		
+		private int CompareSqlSingle (SqlSingle value)
+		{
+			if (value.IsNull)
 				return 1;
 			else
-				return this.value.CompareTo (((SqlSingle)value).Value);
+				return this.value.CompareTo (value.Value);
 		}
 
 		public static SqlSingle Divide (SqlSingle x, SqlSingle y)
