@@ -120,15 +120,15 @@ namespace System.Windows.Forms {
 			return base.ToString();
 		}
 
-		protected override void OnMouseEnter (EventArgs mevent) {
-			base.OnMouseEnter(mevent);
-		}
+		//protected virtual void OnMouseEnter (EventArgs mevent) {
+		//	base.OnMouseEnter(mevent);
+		//}
     
-		protected override void OnMouseLeave (EventArgs mevent) {
-			base.OnMouseLeave(mevent);
-		}
+		//protected virtual void OnMouseLeave (EventArgs mevent) {
+		//	base.OnMouseLeave(mevent);
+		//}
 
-		protected override void OnPaint (PaintEventArgs e) {
+		protected virtual void OnPaint (PaintEventArgs e) {
 
 			Rectangle paintBounds = ClientRectangle;
 			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);

@@ -144,7 +144,8 @@ namespace System.Windows.Forms {
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected override void Dispose(bool);
-		/// - protected void ResetFlagsandPaint();
+		protected void ResetFlagsandPaint(){
+		}
 		
 		
 		// I do not think this is part of the spec.
