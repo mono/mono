@@ -1,5 +1,12 @@
 2002-7-7  DennisHayes <dennish@raytek.com>
 
+* ToolBarButtonClickEventArgs.cs 
+* UpDownEventArgs.cs 
+* KeyPressEventHandler.cs
+* Added new files.
+
+2002-7-7  DennisHayes <dennish@raytek.com>
+
 * AccessibleEvents.cs
 * AccessibleNavigation.cs
 * AccessibleObject.cs
