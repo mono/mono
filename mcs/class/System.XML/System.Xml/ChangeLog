@@ -1,3 +1,8 @@
+2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlValidatingReader.cs : Throw exception only in case of errors.
+	  Added NET_1_2 Evidences property.
+
 2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlElement.cs : Fixed .ctor(). Default attribute was not treated as

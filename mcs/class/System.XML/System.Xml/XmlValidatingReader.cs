@@ -10,6 +10,7 @@
 //
 
 using System.IO;
+using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
@@ -94,6 +95,14 @@ namespace System.Xml {
 		public override bool EOF { 
 			get { return validatingReader == null ? false : validatingReader.EOF; }
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public virtual Evidence [] Evidences {
+			get { throw new NotImplementedException ();
+			}
+		}
+#endif
 
 		public override bool HasValue { 
 			get { return validatingReader == null ? false : validatingReader.HasValue; }
@@ -473,7 +482,7 @@ namespace System.Xml {
 		{
 			if (ValidationEventHandler != null)
 				ValidationEventHandler (o, e);
-			else if (ValidationType != ValidationType.None)
+			else if (ValidationType != ValidationType.None && e.Severity == XmlSeverityType.Error)
 				throw e.Exception;
 		}
 		#endregion // Methods
