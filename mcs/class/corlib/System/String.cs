@@ -977,12 +977,12 @@ namespace System {
 
 		public int LastIndexOf (string value)
 		{
-			return LastIndexOf (value, this.length, this.length);
+			return LastIndexOf (value, this.length - 1, this.length);
 		}
 
 		public int LastIndexOf (char value, int startIndex)
 		{
-			if (startIndex < 0 || startIndex > this.length)
+			if (startIndex < 0 || startIndex >= this.length)
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = startIndex; i >= 0; i--) {
@@ -995,7 +995,7 @@ namespace System {
 
 		public int LastIndexOf (string value, int startIndex)
 		{
-			return LastIndexOf (value, startIndex, this.length);
+			return LastIndexOf (value, startIndex, startIndex + 1);
 		}
 
 		public int LastIndexOf (char value, int startIndex, int count)
@@ -1003,10 +1003,10 @@ namespace System {
 			if (startIndex < 0 || count < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (startIndex > this.length || startIndex - count < 0)
+			if (startIndex >= this.length || startIndex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = startIndex; i >= startIndex - count; i--) {
+			for (int i = startIndex; i > startIndex - count; i--) {
 				if (this.c_str[i] == value)
 					return i;
 			}
@@ -1024,10 +1024,10 @@ namespace System {
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			if (startIndex < 0 || startIndex > this.length)
+			if (startIndex < 0 || startIndex >= this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			if (count < 0 || startIndex - count < 0)
+			if (count < 0 || startIndex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ();
 
 			if (value == String.Empty)
@@ -1044,7 +1044,7 @@ namespace System {
 
 			// FIXME: use a reversed-unicode-safe-Boyer-Moore?
 			len = value.length - 1;
-			for (i = startIndex; i >= startIndex - count; i--) {
+			for (i = startIndex; i > startIndex - count; i--) {
 				if (this.c_str[i + len] == value.c_str[len]) {
 					bool equal = true;
 					int j;
@@ -1062,12 +1062,12 @@ namespace System {
 
 		public int LastIndexOfAny (char[] values)
 		{
-			return LastIndexOfAny (values, this.length, this.length);
+			return LastIndexOfAny (values, this.length - 1, this.length);
 		}
 
 		public int LastIndexOfAny (char[] values, int startIndex)
 		{
-			return LastIndexOfAny (values, startIndex, startIndex);
+			return LastIndexOfAny (values, startIndex, startIndex + 1);
 		}
 
 		public int LastIndexOfAny (char[] values, int startIndex, int count)
@@ -1077,10 +1077,10 @@ namespace System {
 			if (values == null)
 				throw new ArgumentNullException ();
 
-			if (startIndex < 0 || count < 0 || startIndex - count < 0)
+			if (startIndex < 0 || count < 0 || startIndex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			for (i = startIndex; i >= startIndex - count; i--) {
+			for (i = startIndex; i > startIndex - count; i--) {
 				for (int j = 0; j < strlen (values); j++) {
 					if (this.c_str[i] == values[j])
 						return i;

@@ -1,3 +1,6 @@
+Tue Jan  8 23:30:19 EST 2002 Matt Kimball <matt@kimball.net>
+	* String.cs: Fixed several off-by-one errors in LastIndexOf* methods
+
 2002-01-09  Nick Drochak  <ndrochak@gol.com>
 	
 	* Environment.cs: Comment out Security attribute and put a MonoTODO
