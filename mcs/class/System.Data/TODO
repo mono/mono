@@ -53,6 +53,7 @@ Other classes, structs, etc. that are missing:
 
 Exceptions that still need to be stubbed:
 	(need to see what exceptions need to be done)
+	DuplicateNameException
 	ConstraintException
 	DataException
 	DBConcurrencyException

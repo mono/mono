@@ -35,6 +35,7 @@ namespace System.Data
 		public bool AllowDelete {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -45,6 +46,7 @@ namespace System.Data
 		public bool AllowEdit {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -55,6 +57,7 @@ namespace System.Data
 		public bool AllowNew {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -65,6 +68,7 @@ namespace System.Data
 		public bool ApplyDefaultSort {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -75,12 +79,14 @@ namespace System.Data
 		public int Count {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public DataViewManager DataViewManager {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -88,12 +94,14 @@ namespace System.Data
 		public DataRowView this[int recordIndex] {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public virtual string RowFilter {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -104,6 +112,7 @@ namespace System.Data
 		public DataViewRowState RowStateFilter {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -114,6 +123,7 @@ namespace System.Data
 		public string Sort {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -124,6 +134,7 @@ namespace System.Data
 		public DataTable Table {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -133,6 +144,7 @@ namespace System.Data
 
 		[MonoTODO]
 		public virtual DataRowView AddNew() {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -153,22 +165,27 @@ namespace System.Data
 
 		[MonoTODO]
 		public int Find(object key) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public int Find(object[] key) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public DataRowView[] FindRows(object key) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public DataRowView[] FindRows(object[] key) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public IEnumerator GetEnumerator() {
+			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
@@ -177,6 +194,7 @@ namespace System.Data
 		protected bool IsOpen {
 			[MonoTODO]
 			get {
+			throw new NotImplementedException ();
 			}
 		}
 

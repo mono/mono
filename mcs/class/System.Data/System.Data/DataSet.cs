@@ -50,6 +50,7 @@ namespace System.Data
 		public bool CaseSensitive {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			} 
 			
 			[MonoTODO]
@@ -60,6 +61,7 @@ namespace System.Data
 		public string DataSetName {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			} 
 			
 			[MonoTODO]
@@ -70,6 +72,7 @@ namespace System.Data
 		public DataViewManager DefaultViewManager {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			} 
 			
 			[MonoTODO]
@@ -80,6 +83,7 @@ namespace System.Data
 		public bool EnforceConstraints {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			} 
 			
 			[MonoTODO]
@@ -90,18 +94,21 @@ namespace System.Data
 		public PropertyCollection ExtendedProperties {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool HasErrors {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public CultureInfo Locale {
 			[MonoTODO]
 			get { 
+				throw new NotImplementedException ();
 			}
 			
 			[MonoTODO]
@@ -112,6 +119,7 @@ namespace System.Data
 		public string Namespace {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			} 
 			
 			[MonoTODO]
@@ -122,6 +130,7 @@ namespace System.Data
 		public string Prefix {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			} 
 			
 			[MonoTODO]
@@ -132,12 +141,14 @@ namespace System.Data
 		public DataRelationCollection Relations {
 			[MonoTODO]
 			get{
+				throw new NotImplementedException ();
 			}
 		}
 
 		public override ISite Site {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			} 
 			
 			[MonoTODO]
@@ -148,6 +159,7 @@ namespace System.Data
 		public DataTableCollection Tables {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
