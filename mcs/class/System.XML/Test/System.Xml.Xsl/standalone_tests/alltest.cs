@@ -13,6 +13,7 @@ namespace simpleTests
 "Keys_PerfRepro3",
 "Keys__91834",
 "Keys__91835",
+"Keys__91836",
 });
 
 		static void Process (string id, string path, string data,

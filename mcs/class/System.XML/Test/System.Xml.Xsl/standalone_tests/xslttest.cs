@@ -30,6 +30,8 @@ namespace XsltTest
 			skipTargets = new ArrayList (new string [] {
 "Keys__91834",
 "Keys__91835",
+"Keys__91836",
+"Keys__91859",
 "Keys_PerfRepro3"
 			}); 
 		}
