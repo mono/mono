@@ -1,3 +1,5 @@
+// Important test: compare this to gcs0408-*.cs; these are the allowed cases.
+
 class X<T>
 {
 	void A (T t)

@@ -1,3 +1,8 @@
+// Static fields in generic types: this is a runtime/JIT-only test
+//
+// We need to make sure that we're instantiating each closed generic
+// type (ie. "Test<int>") only once.
+
 using System;
 
 public class Test<T>

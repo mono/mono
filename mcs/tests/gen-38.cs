@@ -1,3 +1,7 @@
+//
+// Another important test: nested generic types.
+//
+
 using System;
 
 class Queue<T>

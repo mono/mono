@@ -1,3 +1,6 @@
+// Note how the order of type parameters is different
+// in the base class.
+
 class Foo<T>
 {
 	public Foo ()

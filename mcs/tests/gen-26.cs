@@ -1,3 +1,5 @@
+// Test access to class fields outside the generic type declaration.
+
 class Foo<T>
 {
 	public T Hello;

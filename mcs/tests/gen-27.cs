@@ -1,3 +1,5 @@
+// A generic type declaration may have a non-generic base type.
+
 class TheBase
 {
 	public void BaseFunc ()

@@ -1,3 +1,5 @@
+// Type inference when creating delegates
+
 using System;
 
 delegate int D (string s, int i);

@@ -1,3 +1,5 @@
+// A non-generic type may have a closed constructed type as its parent
+
 class Foo<T>
 {
 	public void Hello ()

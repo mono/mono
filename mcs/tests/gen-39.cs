@@ -1,3 +1,8 @@
+//
+// Important test for the runtime: check whether we're correctly
+// creating the vtable for nested types.
+//
+
 using System;
 
 interface IMonkey<T>

@@ -1,3 +1,5 @@
+// Generic interfaces
+
 interface Foo<R,S>
 {
 	void Hello (R r, S s);

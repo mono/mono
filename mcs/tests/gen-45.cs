@@ -1,3 +1,5 @@
+// Important test: Type inference
+
 class Test<A,B>
 {
 	public void Foo<U> (U u)

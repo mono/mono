@@ -1,3 +1,6 @@
+// A generic type definition may have another generic type
+// definition as its parent.
+
 class Stack<S>
 {
 	public void Hello (S s)

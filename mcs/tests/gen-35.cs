@@ -1,3 +1,5 @@
+// May use a constructed type as constraint.
+
 class Test<T>
 { }
 

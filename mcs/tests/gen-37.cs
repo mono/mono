@@ -1,3 +1,8 @@
+//
+// Check whether we're correctly handling `this'.
+//
+//
+
 public class Foo<T,U>
 {
 	public void Hello (Foo<T,U> foo)
@@ -6,6 +11,9 @@ public class Foo<T,U>
 
 	public virtual void Test ()
 	{
+		//
+		// Again, this must be encoded as a TypeSpec (Foo<!0,!1>)
+		// instead of a TypeDef.
 		Hello (this);
 	}
 }

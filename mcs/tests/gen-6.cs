@@ -1,3 +1,5 @@
+// Using an array of a type parameter.
+
 class Stack<T>
 {
 	int size;

@@ -1,3 +1,5 @@
+// Compare this to gcs0695-*.cs: these are the allowed cases.
+
 interface I<X>
 { }
 

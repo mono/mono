@@ -9,6 +9,7 @@ class Stack<T>
 
 	public object Test ()
 	{
+		// Boxing the type parameter `T' to an object.
 		return t;
 	}
 }

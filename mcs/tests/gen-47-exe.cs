@@ -1,3 +1,8 @@
+// Important test: verify our namespace lookup rules
+//
+// There's a generic and a non-generic `List' type in two
+// different namespaces: make sure we pick the correct one.
+
 using Foo;
 using Bar;
 

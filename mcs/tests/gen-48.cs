@@ -1,3 +1,5 @@
+// This fixed a problem in the JIT.
+
 public class Stack<T>
 {
 	T[] data;

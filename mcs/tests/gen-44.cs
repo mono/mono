@@ -1,3 +1,5 @@
+// Operators and generic types.
+
 using System;
 
 class X<T>

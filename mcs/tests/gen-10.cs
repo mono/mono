@@ -1,3 +1,6 @@
+// Type parameters with constraints: check whether we can invoke
+// things on the constrained type.
+
 using System;
 
 interface I

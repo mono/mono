@@ -1,3 +1,5 @@
+// Generic delegates.
+
 using System;
 
 delegate void Test<T> (T t);

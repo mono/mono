@@ -1,3 +1,5 @@
+// We may use type parameters as `params' type.
+
 class Stack<T>
 {
 	public void Hello (int a, params T[] args)

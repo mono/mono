@@ -5,6 +5,7 @@ class Foo
 
 	public void Hello<T> (T t)
 	{
+		// We're boxing the type parameter `T' to an object here.
 		Whatever (t);
 	}
 
