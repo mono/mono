@@ -1038,6 +1038,13 @@ namespace Mono.CSharp {
 				return null;
 
 			if ((parent != null) && (Kind == Kind.Class)){
+
+				if (parent.Type.IsArray || parent.Type.IsPointer) {
+					Report.Error (1521, parent.Location, "Invalid base type");
+					error = true;
+					return null;
+				}
+
 				if (parent.IsSealed){
 					error = true;
 					Report.SymbolRelatedToPreviousError (parent.Type);
@@ -2184,36 +2191,34 @@ namespace Mono.CSharp {
 		// Performs the validation on a Method's modifiers (properties have
 		// the same properties).
 		//
-		public bool MethodModifiersValid (int flags, string n, Location loc)
+		public bool MethodModifiersValid (MemberCore mc)
 		{
 			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
 			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 			bool ok = true;
+			int flags = mc.ModFlags;
 			
 			//
 			// At most one of static, virtual or override
 			//
 			if ((flags & Modifiers.STATIC) != 0){
 				if ((flags & vao) != 0){
-					Report.Error (
-						112, loc, "static method " + MakeName (n) + "can not be marked " +
-						"as virtual, abstract or override");
+					Report.Error (112, mc.Location, "static method '{0}' can not be marked as virtual, abstract or override",
+						GetSignatureForError ());
 					ok = false;
 				}
 			}
 
 			if (Kind == Kind.Struct){
 				if ((flags & va) != 0){
-					Modifiers.Error_InvalidModifier (loc, "virtual or abstract");
+					Modifiers.Error_InvalidModifier (mc.Location, "virtual or abstract");
 					ok = false;
 				}
 			}
 
 			if ((flags & Modifiers.OVERRIDE) != 0 && (flags & nv) != 0){
-				Report.Error (
-					113, loc, MakeName (n) +
-					" marked as override cannot be marked as new or virtual");
+				Report.Error (113, mc.Location, "'{0}' marked as override cannot be marked as new or virtual", mc.GetSignatureForError ());
 				ok = false;
 			}
 
@@ -2224,39 +2229,36 @@ namespace Mono.CSharp {
 			if ((flags & Modifiers.ABSTRACT) != 0){
 				if ((flags & Modifiers.EXTERN) != 0){
 					Report.Error (
-						180, loc, MakeName (n) + " can not be both abstract and extern");
+						180, mc.Location, "'{0}' can not be both abstract and extern", mc.GetSignatureForError ());
+					ok = false;
+				}
+
+				if ((flags & Modifiers.SEALED) != 0) {
+					Report.Error (502, mc.Location, "'{0}' cannot be both abstract and sealed", mc.GetSignatureForError ());
 					ok = false;
 				}
 
 				if ((flags & Modifiers.VIRTUAL) != 0){
-					Report.Error (
-						503, loc, MakeName (n) + " can not be both abstract and virtual");
+					Report.Error (503, mc.Location, "'{0}' can not be both abstract and virtual", mc.GetSignatureForError ());
 					ok = false;
 				}
 
 				if ((ModFlags & Modifiers.ABSTRACT) == 0){
-					Report.Error (
-						513, loc, MakeName (n) +
-						" is abstract but its container class is not");
+					Report.Error (513, mc.Location, "'{0}' is abstract but its container class is not", mc.GetSignatureForError ());
 					ok = false;
-
 				}
 			}
 
 			if ((flags & Modifiers.PRIVATE) != 0){
 				if ((flags & vao) != 0){
-					Report.Error (
-						621, loc, MakeName (n) +
-						" virtual or abstract members can not be private");
+					Report.Error (621, mc.Location, "'{0}' virtual or abstract members can not be private", mc.GetSignatureForError ());
 					ok = false;
 				}
 			}
 
 			if ((flags & Modifiers.SEALED) != 0){
 				if ((flags & Modifiers.OVERRIDE) == 0){
-					Report.Error (
-						238, loc, MakeName (n) +
-						" cannot be sealed because it is not an override");
+					Report.Error (238, mc.Location, "'{0}' cannot be sealed because it is not an override", mc.GetSignatureForError ());
 					ok = false;
 				}
 			}
@@ -2685,11 +2687,18 @@ namespace Mono.CSharp {
 	public sealed class StaticClass: Class {
 		public StaticClass (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
 			Attributes attrs, Location l)
-			: base (ns, parent, name, mod & ~Modifiers.STATIC, attrs, l)
+			: base (ns, parent, name, mod, attrs, l)
 		{
 			if (RootContext.Version == LanguageVersion.ISO_1) {
 				Report.FeatureIsNotStandardized (l, "static classes");
 				Environment.Exit (1);
+			}
+		}
+
+		protected override int AllowedModifiersProp {
+			get {
+				return Modifiers.NEW | Modifiers.PUBLIC | Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE |
+					Modifiers.STATIC | Modifiers.UNSAFE;
 			}
 		}
 
@@ -2725,6 +2734,11 @@ namespace Mono.CSharp {
 
 		public override TypeBuilder DefineType()
 		{
+			if ((ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) == (Modifiers.SEALED | Modifiers.STATIC)) {
+				Report.Error (441, Location, "'{0}': a class cannot be both static and sealed", GetSignatureForError ());
+				return null;
+			}
+
 			TypeBuilder tb = base.DefineType ();
 			if (tb == null)
 				return null;
@@ -2750,9 +2764,7 @@ namespace Mono.CSharp {
 	}
 
 	public class Class : ClassOrStruct {
-		// <summary>
-		//   Modifiers allowed in a class declaration
-		// </summary>
+		// TODO: remove this and use only AllowedModifiersProp to fix partial classes bugs
 		public const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -2770,19 +2782,14 @@ namespace Mono.CSharp {
 			      Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, Kind.Class, l)
 		{
-			int accmods;
-
-			if (parent.Parent == null)
-				accmods = Modifiers.INTERNAL;
-			else
-				accmods = Modifiers.PRIVATE;
-
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
-			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.SEALED)) == (Modifiers.ABSTRACT | Modifiers.SEALED)) {
-				Report.Error (502, Location, "'{0}' cannot be both abstract and sealed", GetSignatureForError ());
-			}
-
+			this.ModFlags = mod;
 			attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
+		}
+
+		virtual protected int AllowedModifiersProp {
+			get {
+				return AllowedModifiers;
+			}
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -2812,6 +2819,19 @@ namespace Mono.CSharp {
 
 		public const TypeAttributes DefaultTypeAttributes =
 			TypeAttributes.AutoLayout | TypeAttributes.Class;
+
+		public override TypeBuilder DefineType()
+		{
+			if ((ModFlags & Modifiers.ABSTRACT) == Modifiers.ABSTRACT && (ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) != 0) {
+				Report.Error (418, Location, "'{0}': an abstract class cannot be sealed or static", GetSignatureForError ());
+				return null;
+			}
+
+			int accmods = Parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
+			ModFlags = Modifiers.Check (AllowedModifiersProp, ModFlags, accmods, Location);
+
+			return base.DefineType ();
+		}
 
 		//
 		// FIXME: How do we deal with the user specifying a different
@@ -4495,7 +4515,7 @@ namespace Mono.CSharp {
 				if (member.InterfaceType != null){
 					if (implementing == null){
 						Report.Error (539, method.Location,
-							      "'{0}' in explicit interface declaration is not an interface", method_name);
+							      "'{0}' in explicit interface declaration is not a member of interface", member.GetSignatureForError () );
 						return false;
 					}
 					method_name = member.InterfaceType.FullName + "." + name;
@@ -4912,7 +4932,7 @@ namespace Mono.CSharp {
 					MethodAttributes.NewSlot |
 					MethodAttributes.Virtual;
 			} else {
-				if (!Parent.MethodModifiersValid (ModFlags, Name, Location))
+				if (!Parent.MethodModifiersValid (this))
 					return false;
 
 				flags = Modifiers.MethodAttr (ModFlags);
@@ -4938,11 +4958,12 @@ namespace Mono.CSharp {
 			
 			// verify accessibility
 			if (!Parent.AsAccessible (MemberType, ModFlags)) {
+				Report.SymbolRelatedToPreviousError (MemberType);
 				if (this is Property)
 					Report.Error (53, Location,
 						      "Inconsistent accessibility: property type `" +
 						      TypeManager.CSharpName (MemberType) + "' is less " +
-						      "accessible than property `" + Name + "'");
+						      "accessible than property `" + GetSignatureForError () + "'");
 				else if (this is Indexer)
 					Report.Error (54, Location,
 						      "Inconsistent accessibility: indexer return type `" +

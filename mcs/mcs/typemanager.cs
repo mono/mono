@@ -89,6 +89,7 @@ public class TypeManager {
 	static public Type obsolete_attribute_type;
 	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
+	static public Type out_attribute_type;
 	static public Type anonymous_method_type;
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
@@ -849,7 +850,7 @@ public class TypeManager {
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
 			@"Boolean|String|Void|Null)" +
 			@"(\W+|\b)", 
-			new MatchEvaluator (CSharpNameMatch));
+			new MatchEvaluator (CSharpNameMatch)).Replace ('+', '.');
 	}	
 	
 	static String CSharpNameMatch (Match match) 
@@ -1096,6 +1097,7 @@ public class TypeManager {
 		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
+		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices.OutAttribute");
 		typed_reference_type = CoreLookupType ("System.TypedReference");
 		arg_iterator_type    = CoreLookupType ("System.ArgIterator");
 		mbr_type             = CoreLookupType ("System.MarshalByRefObject");

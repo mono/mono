@@ -1,3 +1,24 @@
+2004-12-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.GetClassBases): Add error 1521 report.
+	(TypeContainer.MethodModifiersValid): Refactored to use MemberCore.
+	Add error 502 report.
+	(StaticClass.DefineType): Add error 441 report.
+	(Class.AllowedModifiersProp): New virtual property as temporary
+	extension to AllowedModifiers.
+	(Class.DefineType): Add error 418 report. Moved ModFlags check here
+	to share implementation with StaticClass and don't call virtual
+	methods from ctor.
+	
+	* driver.cs (MainDriver): Add error 1558 test.
+
+	* parameter.cs (Parameter.ApplyAttributeBuilder): Add error 662
+	report. Moved error 36 test here.
+
+	* statement.cs (Throw.Resolve): Add error 724 report.
+
+	* typemanager.cs: Add out_attribute_type core type.
+	
 2004-12-13  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (TypeContainer.VerifyClsCompliance): Add error

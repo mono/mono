@@ -463,7 +463,7 @@ namespace Mono.CSharp {
 		{
 			if (basename == Basename && !(this is Interface)) {
 				Report.SymbolRelatedToPreviousError (this);
-				Report.Error (542, "'{0}': member names cannot be the same as their enclosing type", symbol.Location, symbol.GetSignatureForError ());
+				Report.Error (542,  symbol.Location, "'{0}': member names cannot be the same as their enclosing type", symbol.GetSignatureForError ());
 				return false;
 			}
 

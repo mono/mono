@@ -192,6 +192,7 @@ namespace Mono.CSharp {
 				      "Could not find attribute '" + Name 
 				      + "' (are you missing a using directive or an assembly reference ?)");
 
+			resolve_error = true;
 			return null;
 		}
 

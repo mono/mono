@@ -381,6 +381,7 @@ namespace Mono.CSharp {
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.CompilerServices.DecimalConstantAttribute",
 				"System.Runtime.InteropServices.InAttribute",
+				"System.Runtime.InteropServices.OutAttribute",
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",
 				"System.InvalidOperationException",
