@@ -1,3 +1,7 @@
+2003-12-08  Patrik Torstensson  <p@rxc.se>
+
+    * rand.c (InternalGetBytes): Implemented win32 version with cryptapi
+
 2003-12-08  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_TypeBuilder_define_generic_parameter): Return
