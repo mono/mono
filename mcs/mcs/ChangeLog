@@ -1,5 +1,13 @@
 2002-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* class.cs:
+	* codegen.cs:
+	* driver.cs: issue a warning instead of an error if we don't support
+	debugging for the platform. Also ignore a couple of errors that may
+	arise when trying to write the symbols. Undo my previous patch.
+
+2002-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* driver.cs: ignore /debug switch except for Unix platforms.
 
 2002-10-23  Nick Drochak  <ndrochak@gol.com>

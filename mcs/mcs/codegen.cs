@@ -103,7 +103,7 @@ namespace Mono.CSharp {
 			// If we got an ISymbolWriter instance, initialize it.
 			//
 			if (SymbolWriter == null) {
-				Report.Error (
+				Report.Warning (
 					-18, "Cannot find any symbol writer");
 				return;
 			}
@@ -124,12 +124,12 @@ namespace Mono.CSharp {
 			case "MonoSymbolWriter":
 				if (!InitMonoSymbolWriter (basename, symbol_output,
 							   exe_output_file, args))
-					Report.Error (
+					Report.Warning (
 						-18, "Cannot initialize the symbol writer");
 				break;
 
 			default:
-				Report.Error (
+				Report.Warning (
 					-18, "Cannot generate debugging information on this platform");
 				break;
 			}

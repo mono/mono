@@ -769,8 +769,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--debug": case "-g":
-				if (Environment.OSVersion.Platform.ToString () == "Unix")
-					want_debugging_support = true;
+				want_debugging_support = true;
 				return true;
 				
 			case "--debug-args":
@@ -930,8 +929,7 @@ namespace Mono.CSharp
 				
 			case "/debug":
 			case "/debug+":
-				if (Environment.OSVersion.Platform.ToString () == "Unix")
-					want_debugging_support = true;
+				want_debugging_support = true;
 				return true;
 
 			case "/checked":
@@ -1337,7 +1335,11 @@ namespace Mono.CSharp
 			Timer.ShowTimers ();
 			
 			if (want_debugging_support) {
-				CodeGen.SaveSymbols ();
+				// Avoid error if we don't support debugging for the platform
+				try {
+					CodeGen.SaveSymbols ();
+				} catch (Exception) { }
+
 				if (timestamps)
 					ShowTime ("Saved symbols");
 			}

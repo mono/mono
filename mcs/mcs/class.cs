@@ -3072,10 +3072,14 @@ namespace Mono.CSharp {
 					Location end = block.EndLocation;
 					MethodToken token = MethodBuilder.GetToken ();
 					sw.OpenMethod (new SymbolToken (token.Token));
-					sw.SetMethodSourceRange (Location.SymbolDocument,
-								 Location.Row, 0,
-								 end.SymbolDocument,
-								 end.Row, 0);
+					// Avoid error if we don't support debugging for the platform
+					try {
+						sw.SetMethodSourceRange (Location.SymbolDocument,
+									 Location.Row, 0,
+									 end.SymbolDocument,
+									 end.Row, 0);
+					} catch (Exception) {
+					}
 
 					ec.EmitTopBlock (block, ParameterInfo, Location);
 
