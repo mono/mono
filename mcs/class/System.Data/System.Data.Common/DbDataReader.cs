@@ -73,7 +73,7 @@ namespace System.Data.Common {
 		public abstract object GetValue (int i);
 		public abstract int GetValues (object[] values);
 
-		private IDataReader IDataRecord.GetData (int i)
+		IDataReader IDataRecord.GetData (int i)
 		{
 			return ((IDataReader) this).GetData (i);
 		}
