@@ -1,6 +1,7 @@
 //
-// Test for bug reported on the mono-devel-list 
-//
+// Test for bug reported on the list.  The bug was that the 
+// compiler was generating copies of the static variable, before
+// passing it.  A trick that we do for readonly variables
 using System;
 
 namespace BadRefTest
