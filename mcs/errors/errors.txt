@@ -126,3 +126,4 @@ the Microsoft C# compiler:
 
 -219	Type argument doesn't meet constraints.
 
+-220	Cannot resolve constructed type
