@@ -1,3 +1,12 @@
+2003-12-23  Duncan Mak  <duncan@ximian.com>
+
+	* graphics-path.c:
+	* graphics-path.h: Implemented GraphicsPath.
+
+	* Makefile: Added graphics-path.c.
+
+	* gdip.h (GpPathPointType, GpWarpMode): Added.
+
 2003-12-21  Duncan Mak  <duncan@ximian.com>
 
 	* graphics.c (C1): Made it more precise.

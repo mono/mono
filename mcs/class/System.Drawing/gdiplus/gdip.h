@@ -26,6 +26,9 @@
 #define PI 3.14159265358979323846
 #define DEGTORAD PI / 180.0
 
+typedef unsigned char byte;
+typedef int bool;
+
 /*
  * Enums
  *
@@ -162,6 +165,21 @@ typedef enum {
         BrushTypeLinearGradient = 4
 } GpBrushType, BrushType;
 
+typedef enum {
+        PathPointTypeStart = 0,
+        PathPointTypeLine = 1,
+        PathPointTypeBezier = 3,
+        PathPointTypePathTypeMask = 0x7,
+        PathPointTypePathDashMode = 0x10,
+        PathPointTypePathMarker = 0x20,
+        PathPointTypeCloseSubpath = 0x80,
+        PathPointTypeBezier3 = 3
+} GpPathPointType, PathPointType;
+
+typedef enum {
+        WarpModePerspective = 0,
+        WarpModeBilinear = 1
+} GpWarpMode, WarpMode;
 /*
  * Structures
  *
@@ -179,7 +197,7 @@ typedef struct {
 	int left, top, right, bottom;
 } GpRect, Rect;
 
-typedef struct tagRectF{
+typedef struct {
 	float left, top, right, bottom;
 } GpRectF, RectF;
 
@@ -243,11 +261,17 @@ typedef struct {
 } GpBitmap;
 
 typedef struct {
-        GpFillMode fillMode;
+        GpFillMode fill_mode;
         int count;
-        GpPointF *float_points;
-        GpPoint *int_points;
+        GByteArray *types;
+        GArray *points;
 } GpPath;
+
+typedef struct {
+        int Count;
+        PointF *Points;
+        byte *Types;
+} GpPathData;
 
 /*
  * Functions

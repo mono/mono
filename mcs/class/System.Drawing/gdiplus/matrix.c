@@ -325,4 +325,3 @@ GdipIsMatrixEqual (GpMatrix *matrix, GpMatrix *matrix2, int *result)
         *result = matrix_equals (matrix, matrix2);
         return Ok;
 }
-

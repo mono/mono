@@ -10,6 +10,7 @@ local_sources = bitmap.c \
 	brush.c \
 	general.c \
 	graphics.c \
+        graphics-path.c \
 	image.c \
 	matrix.c \
 	pen.c \
