@@ -46,7 +46,7 @@ endif
 all-local: $(the_lib)
 
 install-local: $(the_lib) $(gacutil)
-	$(RUNTIME)  $(gacutil) -i $(the_lib) -f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE) || exit 1 ; \
+	$(RUNTIME)  $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package 1.0 
 
 uninstall-local: $(gacutil)
 	$(RUNTIME)  $(gacutil) /u $$(basename $(the_lib) .dll) ; \
