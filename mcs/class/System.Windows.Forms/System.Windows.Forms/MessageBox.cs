@@ -6,7 +6,7 @@
 //   Dennis Hayes (dennish@Raytek.com)
 //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 
 using System;
@@ -33,10 +33,10 @@ namespace System.Windows.Forms {
 			    Win32.MessageBoxA ((IntPtr) 0, text, "", (uint)(WB_MessageBox_Types.MB_OK | WB_MessageBox_Types.MB_TASKMODAL));
 		}
                 
-		public static DialogResult Show (IWin32Window w, string text) 
+		public static DialogResult Show (IWin32Window owner, string text) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, "", (uint)WB_MessageBox_Types.MB_OK);
+			    Win32.MessageBoxA (owner.Handle, text, "", (uint)WB_MessageBox_Types.MB_OK);
 		}
                 
 		//Compact Framework
@@ -46,84 +46,84 @@ namespace System.Windows.Forms {
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, (uint)WB_MessageBox_Types.MB_OK);
 		}
                 
-		public static DialogResult Show (IWin32Window w, string text, string caption)
+		public static DialogResult Show (IWin32Window owner, string text, string caption)
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, caption, (uint)WB_MessageBox_Types.MB_OK);
+			    Win32.MessageBoxA (owner.Handle, text, caption, (uint)WB_MessageBox_Types.MB_OK);
 		}
                 
 		public static DialogResult Show (string text, string caption, 
-						 MessageBoxButtons mb) 
+						 MessageBoxButtons buttons) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA ((IntPtr) 0, text, caption, (uint) mb);
+			    Win32.MessageBoxA ((IntPtr) 0, text, caption, (uint) buttons);
 		}
                 
 		public static DialogResult Show (
-			IWin32Window w, string text, 
-			string caption, MessageBoxButtons mb) 
+			IWin32Window owner, string text, 
+			string caption, MessageBoxButtons buttons) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, caption, (uint) mb);
+			    Win32.MessageBoxA (owner.Handle, text, caption, (uint) buttons);
 		}
                 
 		public static DialogResult Show (
-			string text, string caption, MessageBoxButtons mb, 
-			MessageBoxIcon mi) 
+			string text, string caption, MessageBoxButtons buttons, 
+			MessageBoxIcon icon) 
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, 
-					       (uint) ((uint)mb | (uint)mi) );
+					       (uint) ((uint)buttons | (uint)icon) );
 		}
                 
 		public static DialogResult Show (
-			IWin32Window w, string text, string caption, 
-			MessageBoxButtons mb, MessageBoxIcon mi) 
+			IWin32Window owner, string text, string caption, 
+			MessageBoxButtons buttons, MessageBoxIcon icon) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, caption, 
-					       (uint) ((uint)mb |(uint) mi) );
+			    Win32.MessageBoxA (owner.Handle, text, caption, 
+					       (uint) ((uint)buttons |(uint) icon) );
 		}
                 
 		//Compact Framework
 		public static DialogResult Show (
-			string text, string caption, MessageBoxButtons mb, 
-			MessageBoxIcon mi, MessageBoxDefaultButton md) 
+			string text, string caption, MessageBoxButtons buttons, 
+			MessageBoxIcon icon, MessageBoxDefaultButton defaultButton) 
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, 
-					       (uint) ((uint)mb | (uint)mi | (uint)md) );
+					       (uint) ((uint)buttons | (uint)icon | (uint)defaultButton) );
 
 		}
                 
 		public static DialogResult Show (
-			IWin32Window w, string text, string caption, 
-			MessageBoxButtons mb, MessageBoxIcon mi, 
-			MessageBoxDefaultButton md) 
+			IWin32Window owner, string text, string caption, 
+			MessageBoxButtons buttons, MessageBoxIcon icon, 
+			MessageBoxDefaultButton defaultButton) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, caption, 
-					       (uint) ((uint)mb | (uint)mi | (uint)md) );
+			    Win32.MessageBoxA (owner.Handle, text, caption, 
+					       (uint) ((uint)buttons | (uint)icon | (uint)defaultButton) );
 		}
                 
 		public static DialogResult 
 			Show (string text, string caption, 
-			      MessageBoxButtons mb, MessageBoxIcon mi, 
-			      MessageBoxDefaultButton md, MessageBoxOptions mo)
+			      MessageBoxButtons buttons, MessageBoxIcon icon, 
+			      MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
 		{
 			return (DialogResult) 
 			    Win32.MessageBoxA ((IntPtr) 0, text, caption, 
-					       (uint) ((uint)mb | (uint)mi | (uint)md |(uint) mo) );
+					       (uint) ((uint)buttons | (uint)icon | (uint)defaultButton |(uint) options) );
 		}
                 
 		public static DialogResult Show (
-			IWin32Window w, string text, string caption, 
-			MessageBoxButtons mb, MessageBoxIcon mi, 
-			MessageBoxDefaultButton md, MessageBoxOptions mo) 
+			IWin32Window owner, string text, string caption, 
+			MessageBoxButtons buttons, MessageBoxIcon icon, 
+			MessageBoxDefaultButton defaultButton, MessageBoxOptions options) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, caption, 
-					       (uint) ((uint)mb | (uint)mi | (uint)md | (uint)mo) );
+			    Win32.MessageBoxA (owner.Handle, text, caption, 
+					       (uint) ((uint)buttons | (uint)icon | (uint)defaultButton | (uint)options) );
 		}
 	}
 }

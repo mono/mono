@@ -299,19 +299,19 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		[MonoTODO]
-		public int FindString(string str) {
+		public int FindString(string s) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int FindString(string str, int val) {
+		public int FindString(string s, int startIndex) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int FindStringExact(string str) {
+		public int FindStringExact(string s) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int FindStringExact(string str, int val) {
+		public int FindStringExact(string s, int startIndex) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]

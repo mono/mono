@@ -319,11 +319,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public Rectangle RetItemRect(int val) {
+		public Rectangle RetItemRect(int index) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public Rectangle RetItemRect(int val, ItemBoundsPortion portion) {
+		public Rectangle RetItemRect(int index, ItemBoundsPortion portion) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
@@ -415,7 +415,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		protected virtual void  OnItemActivate(EventArgs e) {
+		protected virtual void  OnItemActivate(EventArgs ice) {
 			//FIXME:
 		}
 		[MonoTODO]

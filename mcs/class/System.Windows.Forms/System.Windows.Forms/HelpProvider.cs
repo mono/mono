@@ -4,7 +4,7 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 
 namespace System.Windows.Forms {
@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public virtual  void SetHelpNavigator(Control ctl, HelpNavigator nav) {
+		public virtual  void SetHelpNavigator(Control ctl, HelpNavigator navigator) {
 			//FIXME:
 		}
 
@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public virtual  void SetShowHelp(Control ctl, bool val) {
+		public virtual  void SetShowHelp(Control ctl, bool value) {
 			//FIXME:
 		}
 

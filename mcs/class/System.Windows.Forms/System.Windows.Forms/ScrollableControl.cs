@@ -19,6 +19,12 @@ namespace System.Windows.Forms {
 	public class ScrollableControl : Control {
 
 		private ScrollableControl.DockPaddingEdges dockPadding;
+		protected  const int ScrollStateAutoScrolling = 1;
+		protected  const int ScrollStateFullDrag = 16;
+		protected  const int ScrollStateHScrollVisible = 2;
+		
+		protected  const int ScrollStateUserHasSCrolled = 8;
+		protected  const int ScrollStateVScrollVisible = 4;
 
 		//
 		//  --- Constructor
@@ -27,6 +33,7 @@ namespace System.Windows.Forms {
 			dockPadding = new ScrollableControl.DockPaddingEdges();
 			TabStop = false;
 		}
+
 		//
 		//  --- Public Properties
 		//

@@ -6,7 +6,7 @@
 //	 Partially completed by Dennis Hayes (dennish@raytek.com)
 //   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Globalization;
 using System.ComponentModel;
@@ -16,7 +16,7 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-	public class InputLanguageChangingEventArgs : EventArgs {
+	public class InputLanguageChangingEventArgs : CancelEventArgs {
 
 		#region Fields
 		private CultureInfo culture;

@@ -6,7 +6,7 @@
 //	Dennis Hayes (dennish@raytek.com)
 //	Alexandre Pigolkine (pigolkine@gmx.de)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 
 using System;
@@ -71,19 +71,19 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public override ObjRef CreateObjRef(Type t) {
-			throw new NotImplementedException ();
-		}
+		//public override ObjRef CreateObjRef(Type t) {
+		//	throw new NotImplementedException ();
+		//}
 
-		public override bool Equals(object o) {
-			return base.Equals(o);
-		}
+		//public override bool Equals(object o) {
+		//	return base.Equals(o);
+		//}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
+		//[MonoTODO]
+		//public override int GetHashCode() {
+		//	//FIXME add our proprities
+		//	return base.GetHashCode();
+		//}
 
 		public virtual MenuItem MergeMenu() {
 			throw new NotImplementedException ();

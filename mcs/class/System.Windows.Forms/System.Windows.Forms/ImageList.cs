@@ -120,13 +120,13 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public void Draw(Graphics g, Point pt, int n)
+		public void Draw(Graphics g, Point pt, int index)
 		{
 			//FIXME:
 		}
 
 		[MonoTODO]
-		public void Draw(Graphics g, int n1, int n2, int n3)
+		public void Draw(Graphics g, int x, int y, int index)
 		{
 			//FIXME:
 		}

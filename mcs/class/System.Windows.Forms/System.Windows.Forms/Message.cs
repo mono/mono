@@ -4,7 +4,7 @@
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 //TODO uncomment and implment GetLParam.
 using System;
@@ -154,12 +154,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this Message and another object.
 		/// </remarks>
 		
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			if (!(obj is Message))
+			if (!(o is Message))
 				return false;
 
-			return (this == (Message) obj);
+			return (this == (Message) o);
 		}
 
 		/// <summary>

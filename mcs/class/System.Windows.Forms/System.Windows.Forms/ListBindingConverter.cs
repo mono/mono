@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Globalization;
 using System.ComponentModel;
@@ -32,23 +32,23 @@ namespace System.Windows.Forms {
 		//
 		
 		[MonoTODO]
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type t) 
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) 
 		{
 			//FIXME:
-			return base.CanConvertTo(context, t);
+			return base.CanConvertTo(context, destinationType);
 		}
 
 		[MonoTODO]
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object o, Type t) 
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) 
 		{
 			//FIXME:
-			return base.ConvertTo(context, culture,o, t);
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 		[MonoTODO]
-		public override object CreateInstance(ITypeDescriptorContext context, IDictionary dict) 
+		public override object CreateInstance(ITypeDescriptorContext context, IDictionary propertyValues) 
 		{
 			//FIXME:
-			return base.CreateInstance(context, dict);;
+			return base.CreateInstance(context, propertyValues);;
 		}
 
 		[MonoTODO]

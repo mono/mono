@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Collections;
 namespace System.Windows.Forms {
@@ -31,7 +31,7 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public bool Contains(InputLanguage lang) {
+		public bool Contains(InputLanguage value) {
 			throw new NotImplementedException ();
 		}
 
@@ -41,7 +41,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public int IndexOf(InputLanguage lang) {
+		public int IndexOf(InputLanguage value) {
 			throw new NotImplementedException ();
 		}
 

@@ -5,7 +5,7 @@
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //	Dennis Hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
 using System.ComponentModel;
@@ -30,300 +30,301 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public void AddAnnuallyBoldedDate(DateTime date) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void AddBoldedDate(DateTime date) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void AddMonthlyBoldedDate(DateTime date) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void RemoveAllAnnuallyBoldedDates() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
-		[MonoTODO]
-		public void BringToFront() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void CreateControl() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Hide() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(bool b) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Rectangle r) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Region rg) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Rectangle r, bool b) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Invalidate(Region rg, bool b) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void PerformLayout() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void PerformLayout(Control ctl, string s) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public void BringToFront() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void CreateControl() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Hide() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Invalidate() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Invalidate(bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Invalidate(Rectangle r) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Invalidate(Region rg) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Invalidate(Rectangle r, bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Invalidate(Region rg, bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void PerformLayout() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void PerformLayout(Control ctl, string s) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public void RemoveAllBoldedDates() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void RemoveAllMonthlyBoldedDates() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
-		public void RemoveAnnuallyBoldedDate(DateTime Date) {
-			throw new NotImplementedException ();
+		public void RemoveAnnuallyBoldedDate(DateTime date) {
+			//FIXME:
 		}
 		[MonoTODO]
-		public void RemoveBoldedDate(DateTime Date) {
-			throw new NotImplementedException ();
+		public void RemoveBoldedDate(DateTime date) {
+			//FIXME:
 		}
 		[MonoTODO]
-		public void RemoveMonthlyBoldedDate(DateTime Date) {
-			throw new NotImplementedException ();
+		public void RemoveMonthlyBoldedDate(DateTime date) {
+			//FIXME:
 		}
-		[MonoTODO]
-		public void ResetBindings() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void ResetImeMode() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void ResumeLayout() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void ResumeLayout(bool b) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Scale(float ft) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Scale(float ft, float ft1) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Select() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void SendToBack() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void SetBounds(int i, int i1, int i2, int i3) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public void ResetBindings() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void ResetImeMode() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void ResumeLayout() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void ResumeLayout(bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Scale(float ft) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Scale(float ft, float ft1) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Select() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void SendToBack() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void SetBounds(int i, int i1, int i2, int i3) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public void SetCalendarDimensions(int x, int y) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
-		public void SetDate(DateTime Date) {
-			throw new NotImplementedException ();
+		public void SetDate(DateTime date) {
+			//FIXME:
 		}
 		[MonoTODO]
-		public void SetSelectionRange(DateTime Date, DateTime Date1) {
-			throw new NotImplementedException ();
+		public void SetSelectionRange(DateTime date1, DateTime date2) {
+			//FIXME:
 		}
-		[MonoTODO]
-		public void Show() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void SuspendLayout() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void Update() {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public void Show() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void SuspendLayout() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Update() {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public void UpdateBoldedDates() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
-		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate dels) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public IAsyncResult BeginInvoke(Delegate dels, object[] objs) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public bool Contains(Control ctl) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Graphics CreateGraphics() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public DragDropEffects DoDragDrop(object o, DragDropEffects dde) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public IAsyncResult BeginInvoke(Delegate dels) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public IAsyncResult BeginInvoke(Delegate dels, object[] objs) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public bool Contains(Control ctl) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Graphics CreateGraphics() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public DragDropEffects DoDragDrop(object o, DragDropEffects dde) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public object EndEnvoke(IAsyncResult asyncResult) {
 			throw new NotImplementedException ();
 		}
+		//[MonoTODO]
+		//public static bool Equals(object o, object o1) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Form FindForm() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public bool Focus() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Control GetChildAtPoint(Point pt) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public IContainerControl GetContainerControl() {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		public static bool Equals(object o, object o1) {
+		public SelectionRange GetDisplayRange(bool visible) {
+			throw new NotImplementedException ();
+		}
+		//[MonoTODO]
+		//public virtual int GetHashCode() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public object GetLifetimeService() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Control GetNextControl(Control ctl, bool b) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Type GetType() {
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		public HitTestInfo HitTest(Point point) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public Form FindForm() {
+		public HitTestInfo HitTest(int x, int y) {
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public bool Focus() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Control GetChildAtPoint(Point pt) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public IContainerControl GetContainerControl() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public SelectionRange GetDisplayRange(bool b) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual int GetHashCode() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object GetLifetimeService() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Control GetNextControl(Control ctl, bool b) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Type GetType() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public HitTestInfo HitTest(Point pt) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public HitTestInfo HitTest(int i, int i1) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual object InitializeLifetimeService() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object Invoke(Delegate d) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public object Invoke(Delegate d, object[] obj) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Point PointToClient(Point pt) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Point PointToScreen(Point pt) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Rectangle RectangleToClient(Rectangle r) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public Rectangle RectangleToScreen(Rectangle r) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public bool SelectNextControl(Control ctl, bool b, bool b1, bool b2, bool b3) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public virtual object InitializeLifetimeService() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public object Invoke(Delegate d) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public object Invoke(Delegate d, object[] obj) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Point PointToClient(Point pt) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Point PointToScreen(Point pt) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Rectangle RectangleToClient(Rectangle r) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Rectangle RectangleToScreen(Rectangle r) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public bool SelectNextControl(Control ctl, bool b, bool b1, bool b2, bool b3) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
-		[MonoTODO]
-		public virtual ObjRef CreateObjRef(Type reqType) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual bool Equals(object o) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual bool PreProcessMessage(ref Message msg) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void Refresh() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void ResetBackColor() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void ResetCursor() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void ResetFont() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void ResetForeColor() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void ResetRightToLeft() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void ResetText() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public virtual void Select(bool b, bool b1) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public virtual ObjRef CreateObjRef(Type reqType) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual bool PreProcessMessage(ref Message msg) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void Refresh() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void ResetBackColor() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void ResetCursor() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void ResetFont() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void ResetForeColor() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void ResetRightToLeft() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void ResetText() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void Select(bool b, bool b1) {
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
@@ -340,7 +341,6 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
@@ -349,25 +349,25 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
-		[MonoTODO]
-		public string AccessibleName  {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		//[MonoTODO]
+		//public string AccessibleName  {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		//FIXME:
+		//	}
+		//}
 		[MonoTODO]
 		public AccessibleRole AccessibleRole  {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -376,7 +376,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -385,7 +385,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -394,7 +394,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -403,7 +403,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -412,7 +412,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -421,7 +421,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -430,7 +430,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -445,7 +445,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -454,7 +454,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -475,7 +475,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -484,7 +484,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -499,7 +499,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -526,7 +526,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -547,7 +547,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -574,7 +574,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -583,7 +583,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -592,7 +592,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -607,7 +607,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -616,7 +616,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -637,7 +637,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -652,7 +652,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -673,7 +673,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -691,7 +691,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -700,7 +700,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -709,7 +709,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -718,7 +718,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -736,7 +736,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -763,7 +763,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -778,7 +778,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -787,7 +787,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -796,7 +796,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -805,7 +805,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -814,7 +814,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -823,7 +823,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -832,7 +832,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -856,7 +856,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -865,7 +865,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -883,7 +883,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -892,7 +892,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -912,7 +912,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -921,7 +921,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -930,7 +930,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -945,7 +945,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -960,7 +960,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -969,7 +969,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -978,7 +978,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -990,399 +990,399 @@ namespace System.Windows.Forms {
 			//FIXME:
 			base.CreateHandle();
 		}
+		//[MonoTODO]
+		//protected bool GetStyle(ControlStyles flag) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected bool GetTopLevel() {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
-		protected bool GetStyle(ControlStyles flag) {
+		protected override bool IsInputKey(Keys keyData) {
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected bool GetTopLevel() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected override bool IsInputKey(Keys KeyData) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected object MemberwiseClone() {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//protected object MemberwiseClone() {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected internal virtual bool ProcessKeyMessage(ref Message m) {
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected ContentAlignment RtlTranslateAlignment(ContentAlignment align) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment align) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment align) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected ContentAlignment RtlTranslateContent(ContentAlignment align) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected HorizontalAlignment RtlTranslateHorizontal(HorizontalAlignment align) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected LeftRightAlignment RtlTranslateLeftRight(LeftRightAlignment align) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected override void WndProc(ref Message m) {
-			throw new NotImplementedException ();
-		}
-		//protected virtual void Dispose(bool disposed)
-		//{
+		//[MonoTODO]
+		//protected ContentAlignment RtlTranslateAlignment(ContentAlignment align) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment align) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment align) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected ContentAlignment RtlTranslateContent(ContentAlignment align) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected HorizontalAlignment RtlTranslateHorizontal(HorizontalAlignment align) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected LeftRightAlignment RtlTranslateLeftRight(LeftRightAlignment align) {
 		//	throw new NotImplementedException ();
 		//}
 		[MonoTODO]
-		protected virtual void InitLayout() {
-			throw new NotImplementedException ();
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			//FIXME:
 		}
 		[MonoTODO]
-		protected virtual void OnBackgroundImageChanged(EventArgs e) {
-			throw new NotImplementedException ();
+		protected override void WndProc(ref Message m) {
+			//FIXME:
 		}
-		[MonoTODO]
-		protected virtual void OnBindingContextChanged(EventArgs e) {
-			throw new NotImplementedException ();
+		protected override void Dispose(bool disposing)
+		{
+			//FIXME:
 		}
-		[MonoTODO]
-		protected virtual void OnCausesValidationChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnChangeUICues(UICuesEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnClick(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnContextMenuChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnControlAdded(ControlEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnControlRemoved(ControlEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnCreateControl() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnCursorChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//protected virtual void InitLayout() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnBackgroundImageChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnBindingContextChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnCausesValidationChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnChangeUICues(UICuesEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnClick(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnContextMenuChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnControlAdded(ControlEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnControlRemoved(ControlEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnCreateControl() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnCursorChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected virtual void OnDateChanged(DateRangeEventArgs drevent) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnDateSelected(DateRangeEventArgs drevent) {
-			throw new NotImplementedException ();
+			//FIXME:
+		}
+		//[MonoTODO]
+		//protected virtual void OnDockChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnDoubleClick(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnDragDrop(DragEventArgs drgevent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnDragEnter(DragEventArgs drgevent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnDragLeave(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnDragOver(DragEventArgs drgevent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnEnabledChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnEnter(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		[MonoTODO]
+		protected override void OnFontChanged(EventArgs e) {
+			//FIXME:
 		}
 		[MonoTODO]
-		protected virtual void OnDockChanged(EventArgs e) {
-			throw new NotImplementedException ();
+		protected override void OnForeColorChanged(EventArgs e) {
+			//FIXME:
 		}
-		[MonoTODO]
-		protected virtual void OnDoubleClick(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnDragDrop(DragEventArgs drgevent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnDragEnter(DragEventArgs drgevent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnDragLeave(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnDragOver(DragEventArgs drgevent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnEnabledChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnEnter(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnFontChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnForeColorChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnGiveFeedback(GiveFeedbackEventArgs gfbevent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnGotFocus(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnHandleDestroyed(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnHelpRequested(HelpEventArgs hevent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnImeModeChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnInvalidated(InvalidateEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnKeyDown(KeyEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnKeyPress(KeyPressEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnKeyUp(KeyEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnLayout(LayoutEventArgs levent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnLeave(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnLocationChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnLostFocus(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMouseDown(MouseEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMouseEnter(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMouseHover(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMouseLeave(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMouseMove(MouseEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMouseUp(MouseEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMouseWheel(MouseEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnMove(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnNotifyMessage(Message m) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnPaint(PaintEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnPaintBackground(PaintEventArgs pevent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentBackColorChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentBackgroundImageChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentBindingContextChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentEnabledChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentFontChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentForeColorChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentRightToLeftChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnParentVisibleChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnQueryContinueDrag(QueryContinueDragEventArgs qcdevent) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnResize(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnRightToLeftChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnSizeChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnStyleChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnSystemColorsChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnTabIndexChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnTabStopChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnTextChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnValidated(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnValidating(CancelEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnVisibleChanged(EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void ScaleCore(float dx,float dy) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//protected virtual void OnGiveFeedback(GiveFeedbackEventArgs gfbevent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnGotFocus(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnHandleDestroyed(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnHelpRequested(HelpEventArgs hevent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnImeModeChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnInvalidated(InvalidateEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnKeyDown(KeyEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnKeyPress(KeyPressEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnKeyUp(KeyEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnLayout(LayoutEventArgs levent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnLeave(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnLocationChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnLostFocus(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMouseDown(MouseEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMouseEnter(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMouseHover(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMouseLeave(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMouseMove(MouseEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMouseUp(MouseEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMouseWheel(MouseEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnMove(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnNotifyMessage(Message m) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnPaint(PaintEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnPaintBackground(PaintEventArgs pevent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentBackColorChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentBackgroundImageChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentBindingContextChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentEnabledChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentFontChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentForeColorChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentRightToLeftChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnParentVisibleChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnQueryContinueDrag(QueryContinueDragEventArgs qcdevent) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnResize(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnRightToLeftChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnSizeChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnStyleChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnSystemColorsChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnTabIndexChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnTabStopChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnTextChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnValidated(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnValidating(CancelEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void OnVisibleChanged(EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void ScaleCore(float dx,float dy) {
+		//	throw new NotImplementedException ();
+		//}
 		//		[MonoTODO]
 		//		protected virtual void Select(bool b, bool b1)
 		//		{
 		//			throw new NotImplementedException ();
 		//		}
-		[MonoTODO]
-		protected virtual void SetClientSizeCore(int x, int y) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void SetVisibleCore(bool value) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void AccessibilityNotifyClients(AccessibleEvents accEvent, int i) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void InvokeGotFocus(Control toInvoke, EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void InvokeLostFocus(Control toInvoke, EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void InvokeOnClick(Control toInvoke, EventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void InvokePaint(Control c, PaintEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void InvokePaintBackground(Control c, PaintEventArgs e) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void RecreateHandle() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void SetStyle(ControlStyles flag, bool value) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void SetTopLevel(bool value) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void UpdateBounds() {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//protected virtual void SetClientSizeCore(int x, int y) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void SetVisibleCore(bool value) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void AccessibilityNotifyClients(AccessibleEvents accEvent, int i) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void InvokeGotFocus(Control toInvoke, EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void InvokeLostFocus(Control toInvoke, EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void InvokeOnClick(Control toInvoke, EventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void InvokePaint(Control c, PaintEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void InvokePaintBackground(Control c, PaintEventArgs e) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void RecreateHandle() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void SetStyle(ControlStyles flag, bool value) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void SetTopLevel(bool value) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void UpdateBounds() {
+		//	throw new NotImplementedException ();
+		//}
 		//		[MonoTODO]
 		//		protected void UpdateBounds(int x, int y, int width, int height);
 		//		{
@@ -1393,62 +1393,62 @@ namespace System.Windows.Forms {
 		//		{
 		//			throw new NotImplementedException ();
 		//		}
-		[MonoTODO]
-		protected void UpdateStyles() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected void UpdateZOrder() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual AccessibleObject CreateAccessibilityInstance() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual ControlCollection CreateControlsInstance() {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void DefWndProc(ref Message m) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void DestroyHandle() {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//protected void UpdateStyles() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected void UpdateZOrder() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual AccessibleObject CreateAccessibilityInstance() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual ControlCollection CreateControlsInstance() {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void DefWndProc(ref Message m) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual void DestroyHandle() {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected virtual object GetService(Type service) {
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected virtual bool IsInputChar(char charCode) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual bool ProcessCmdKey(ref Message msg, Keys keyData) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual bool ProcessDialogChar(char charCode) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual bool ProcessDialogKey(Keys keyData) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual bool ProcessKeyEventArgs(ref Message m) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual bool ProcessKeyPreview(ref Message m) {
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual bool ProcessMnemonic(char charCode) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//protected virtual bool IsInputChar(char charCode) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual bool ProcessCmdKey(ref Message msg, Keys keyData) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual bool ProcessDialogChar(char charCode) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual bool ProcessDialogKey(Keys keyData) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual bool ProcessKeyEventArgs(ref Message m) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual bool ProcessKeyPreview(ref Message m) {
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//protected virtual bool ProcessMnemonic(char charCode) {
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Protected Properties
@@ -1505,7 +1505,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 		[MonoTODO]
@@ -1514,6 +1514,23 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
+		public enum HitArea {
+			Nowhere = 0,
+			TitleBackground = 1,
+			TitleMonth = 2,
+			TitleYear = 3,
+			NextMonthButton = 4,
+			PrevMonthButton = 5,
+			CalendarBackground = 6,
+			Date = 7,
+			NextMonthDate = 8,
+			PrevMonthDate = 9,
+			DayOfWeek = 10,
+			WeekNumbers = 11,
+			TodayLink = 12
+		}
+
 
 		//
 		//  --- Public Events

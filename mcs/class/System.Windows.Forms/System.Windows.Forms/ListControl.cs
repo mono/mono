@@ -4,7 +4,7 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System;
 using System.Drawing;
@@ -103,7 +103,7 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public string GetItemText(object Item)
+		public string GetItemText(object item)
 		{
 			throw new NotImplementedException ();
 		}
@@ -163,6 +163,8 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 
+		public event EventHandler SelectedValueChanged;
+		public event EventHandler ValueMemberChanged;
 		
 		[MonoTODO]
 		protected override void OnBindingContextChanged(EventArgs e)

@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Globalization;
 using System.ComponentModel;
@@ -28,15 +28,15 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 
-		public override bool CanConvertTo(ITypeDescriptorContext context, Type type)
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
 			//FIXME:
-			return base.CanConvertTo(context, type);
+			return base.CanConvertTo(context, destinationType);
 		}
-		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object obj, Type type)
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			//FIXME:
-			return base.ConvertTo(context, type);
+			return base.ConvertTo(context, destinationType);
 		}
 	 }
 }
