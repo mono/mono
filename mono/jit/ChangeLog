@@ -1,3 +1,11 @@
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_source_location_from_address): New function.
+	(mono_debug_il_offset_from_address): New function.
+
+	* exception.c (arch_handle_exception): If we have debugging support, include
+	information about the source location and IL offset in the stack trace.
+
 2002-05-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (stmt): removed unnecessary assertion
