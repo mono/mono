@@ -94,9 +94,9 @@ namespace System.Windows.Forms {
 			rc.top = rectangle.Top;
 			rc.right = rectangle.Right;
 			rc.bottom = rectangle.Bottom;
-			IntPtr hdc = graphics.GetHdc();
-			int res = Win32.DrawEdge( hdc, ref rc, Style, Sides);
-			graphics.ReleaseHdc(hdc);
+			//IntPtr hdc = graphics.GetHdc();
+			//int res = Win32.DrawEdge( hdc, ref rc, Style, Sides);
+			//graphics.ReleaseHdc(hdc);
 		}
 		
 		[MonoTODO]
@@ -134,10 +134,10 @@ namespace System.Windows.Forms {
 			rc.top = rectangle.Top;
 			rc.right = rectangle.Right;
 			rc.bottom = rectangle.Bottom;
-			IntPtr hdc = graphics.GetHdc();
-			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, 
-				(uint)state | (uint)DrawFrameControl.DFCS_BUTTONPUSH);
-			graphics.ReleaseHdc(hdc);
+			//IntPtr hdc = graphics.GetHdc();
+			//int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, 
+			//	(uint)state | (uint)DrawFrameControl.DFCS_BUTTONPUSH);
+			//graphics.ReleaseHdc(hdc);
 		}
 		
 		[MonoTODO]

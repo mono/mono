@@ -656,10 +656,10 @@ namespace System.Windows.Forms {
 				[MonoTODO] get { return collection_.IsFixedSize; }
 			}
 			
-			object IList.this[int index] {
-				get { return collection_[index]; }
-				set { collection_[index] = value; }
-			}
+			//object IList.this[int index] {
+			//	get { return collection_[index]; }
+		//		set { collection_[index] = value; }
+		//	}
 	
 			object ICollection.SyncRoot {
 				get { return collection_.SyncRoot; }

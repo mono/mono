@@ -1,7 +1,7 @@
 CSC=mcs
 X11R6_INCLUDE=/usr/X11R6/include
 WINE_INCLUDE=/usr/local/include/wine
-WINE_LIB=/usr/local/lib/wine
+WINE_LIB=/usr/lib/wine
 GLIB20_CFLAGS=`pkg-config --cflags glib-2.0` `pkg-config --cflags gmodule-2.0`
 GLIB20_LIBS=`pkg-config --libs glib-2.0` `pkg-config --libs gmodule-2.0`
 MONO_CFLAGS=`pkg-config --cflags mono`

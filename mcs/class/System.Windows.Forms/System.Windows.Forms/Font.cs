@@ -8,5 +8,7 @@ namespace System.Windows.Forms {
 		{
 			return null;
 		}	
+
+		public IntPtr ToHfont () { return (IntPtr) 0; }
 	}
 }
