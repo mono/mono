@@ -175,7 +175,11 @@ namespace System.Web
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			string date = DateTime.Now.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ");
-			oHeaders.Add (new HttpResponseHeader ("Date", date + "GMT"));
+			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date + "GMT");
+			oHeaders.Add (date_header);
+			
+			if (IsCached)
+				cached_response.DateHeader = date_header;
 
 			Thread.CurrentThread.CurrentCulture = oSavedInfo;
 

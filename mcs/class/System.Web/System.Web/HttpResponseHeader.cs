@@ -36,6 +36,9 @@ namespace System.Web {
          get {
             return _sValue;
          }
+	 set {
+		_sValue = value;
+	 }
       }
 
       internal void SendContent(HttpWorkerRequest WorkerRequest) {
