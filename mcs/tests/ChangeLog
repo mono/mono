@@ -1,3 +1,7 @@
+2004-12-09  Marek Safar <marek.safar@seznam.cz>
+
+	* test-329.cs: New test for #67412.
+
 2004-12-09  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Disabled xml-022.cs and xml-028.cs.
