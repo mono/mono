@@ -162,6 +162,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "MonodocFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "NamingFlags.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

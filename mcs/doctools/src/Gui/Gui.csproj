@@ -197,16 +197,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "TestingForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestingForm.resx"
-                    DependentUpon = "TestingForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "TextResources.resx"
                     Link = "..\..\etc\gui\TextResources.resx"
                     BuildAction = "EmbeddedResource"

@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Xml.Serialization;
 
 namespace Mono.Doc.Core
 {
@@ -45,33 +46,31 @@ namespace Mono.Doc.Core
 		{
 		}
 
+		[XmlElement(ElementName = "summary")]
 		public string Summary
 		{
 			get { return this.summary;  }
 			set { this.summary = value; }
 		}
 
+		[XmlElement(ElementName = "remarks")]
 		public string Remarks
 		{
 			get { return this.remarks;  }
 			set { this.remarks = value; }
 		}
 
+		[XmlAttribute(AttributeName = "name")]
 		public string Name
 		{
 			get { return this.name;  }
 			set { this.name = value; }
 		}
 
+		// TODO: correct xml serialization
 		public StringCollection SeeAlso
 		{
 			get { return this.seeAlso; }
-		}
-
-		public string Language
-		{
-			get { return this.language;  }
-			set { this.language = value; }
 		}
 	}
 }

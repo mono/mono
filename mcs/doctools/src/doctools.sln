@@ -3,6 +3,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gui", "Gui\Gui.csproj", "{B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{73F5A60D-A5E3-4852-B4C6-478275E733F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xmltest", "xmltest\xmltest.csproj", "{D83D563A-46E7-4CBA-87EE-FEA674A0CACE}"
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
@@ -19,6 +21,10 @@ Global
 		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Debug.Build.0 = Release|.NET
 		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Release.ActiveCfg = Release|.NET
 		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Release.Build.0 = Release|.NET
+		{D83D563A-46E7-4CBA-87EE-FEA674A0CACE}.Debug.ActiveCfg = Debug|.NET
+		{D83D563A-46E7-4CBA-87EE-FEA674A0CACE}.Debug.Build.0 = Debug|.NET
+		{D83D563A-46E7-4CBA-87EE-FEA674A0CACE}.Release.ActiveCfg = Release|.NET
+		{D83D563A-46E7-4CBA-87EE-FEA674A0CACE}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
