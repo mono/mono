@@ -32,7 +32,7 @@ NEW_TEST_SOURCES_common = \
 	a-capture10	a-capture6    a-nested-anon2  					\
 	a-capture1	a-capture7    a-nested-anon3    a-parameter4			\
 	a-capture2	a-capture8    a-nested-anon4  	a-parameter			\
-	a-capture3	a-capture9    a-nested-anonb   	a-simple2				\
+	a-capture3	a-capture9    a-nested-anon   	a-simple2				\
 	a-capture4	a-event       a-nested		a-simple
 
 #
