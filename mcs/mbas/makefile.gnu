@@ -57,13 +57,12 @@ install: all
 	$(INSTALL) -m 755 mbas.exe $(prefix)/bin/
 
 test: mbas.exe
-	$(RUNTIME) mbas.exe  --verbosegetoptions --stacktrace  /r:Mono.GetOptions.dll /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	$(RUNTIME) mbas.exe  --stacktrace  /r:Mono.GetOptions.dll /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
 	$(RUNTIME) testmbas/WriteOK.exe
 
 verbose: mbas.exe
-	$(RUNTIME) mbas.exe  --stacktrace --verbose --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs | less
+	$(RUNTIME) mbas.exe  --verbosegetoptions --stacktrace --verbose --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs | less
 
 test-gtk: mbas.exe
 	$(RUNTIME) mbas.exe testmbas/gtk.vb -r gtk-sharp
 	$(RUNTIME) testmbas/gtk.exe
-

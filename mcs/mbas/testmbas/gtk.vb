@@ -9,11 +9,10 @@ Module GtkTest
         
         Application.Init ()
         Win = new Window ("VB Gtk+ Hello World")
-        Btn = new Button ("Click Me!") 
+        Btn = new Button ("Click Me! Nothing will happen but I'm here...") 
         Win.Add (Btn) 
         Win.ShowAll()
         Application.Run ()
     End Sub
 
 End Module
-
