@@ -1,3 +1,8 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fixed a bug when offset > 0 in destination
+	buffer. Changed Array.Copy to Buffer.BlockCopy.
+
 2004-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistence.cs: Completed key pair protection for both

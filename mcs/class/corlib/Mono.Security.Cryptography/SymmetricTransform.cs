@@ -42,7 +42,7 @@ namespace Mono.Security.Cryptography {
 			BlockSizeByte = (algo.BlockSize >> 3);
 			// mode buffers
 			temp = new byte [BlockSizeByte];
-			Array.Copy (rgbIV, 0, temp, 0, BlockSizeByte);
+			Buffer.BlockCopy (rgbIV, 0, temp, 0, BlockSizeByte);
 			temp2 = new byte [BlockSizeByte];
 			FeedBackByte = (algo.FeedbackSize >> 3);
 			FeedBackIter = (int) BlockSizeByte / FeedBackByte;
@@ -129,14 +129,14 @@ namespace Mono.Security.Cryptography {
 				for (int i = 0; i < BlockSizeByte; i++)
 					temp[i] ^= input[i];
 				ECB (temp, output);
-				Array.Copy (output, 0, temp, 0, BlockSizeByte);
+				Buffer.BlockCopy (output, 0, temp, 0, BlockSizeByte);
 			}
 			else {
-				Array.Copy (input, 0, temp2, 0, BlockSizeByte);
+				Buffer.BlockCopy (input, 0, temp2, 0, BlockSizeByte);
 				ECB (input, output);
 				for (int i = 0; i < BlockSizeByte; i++)
 					output[i] ^= temp[i];
-				Array.Copy (temp2, 0, temp, 0, BlockSizeByte);
+				Buffer.BlockCopy (temp2, 0, temp, 0, BlockSizeByte);
 			}
 		}
 
@@ -150,8 +150,8 @@ namespace Mono.Security.Cryptography {
 
 					for (int i = 0; i < FeedBackByte; i++)
 						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
-					Array.Copy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Array.Copy (output, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+					Buffer.BlockCopy (output, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
 				}
 			}
 			else {
@@ -162,8 +162,8 @@ namespace Mono.Security.Cryptography {
 					ECB (temp, temp2);
 					encrypt = false;
 
-					Array.Copy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Array.Copy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+					Buffer.BlockCopy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
 					for (int i = 0; i < FeedBackByte; i++)
 						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
 				}
@@ -207,9 +207,9 @@ namespace Mono.Security.Cryptography {
 
 			int total = 0;
 			for (int i = 0; i < full; i++) {
-				Array.Copy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
+				Buffer.BlockCopy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
 				Transform (workBuff, workout);
-				Array.Copy (workout, 0, outputBuffer, outputOffset, BlockSizeByte);
+				Buffer.BlockCopy (workout, 0, outputBuffer, outputOffset, BlockSizeByte);
 				offs += BlockSizeByte;
 				outputOffset += BlockSizeByte;
 				total += BlockSizeByte;
@@ -246,11 +246,13 @@ namespace Mono.Security.Cryptography {
 			}
 
 			byte[] res = new byte [total];
+			int outputOffset = 0;
 
 			// process all blocks except the last (final) block
 			while (total > BlockSizeByte) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
+				outputOffset += BlockSizeByte;
 				total -= BlockSizeByte;
 			}
 
@@ -259,12 +261,12 @@ namespace Mono.Security.Cryptography {
 				byte padding = (byte) (BlockSizeByte - rem);
 				for (int i = res.Length; --i >= (res.Length - padding);) 
 					res [i] = padding;
-				Array.Copy (inputBuffer, inputOffset, res, full, rem);
+				Buffer.BlockCopy (inputBuffer, inputOffset, res, full, rem);
 				// the last padded block will be transformed in-place
 				TransformBlock (res, full, BlockSizeByte, res, full);
 			}
 			else
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 
 			return res;
 		}
@@ -276,9 +278,11 @@ namespace Mono.Security.Cryptography {
 
 			int total = inputCount;
 			byte[] res = new byte [total];
+			int outputOffset = 0;
 			while (inputCount > 0) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
+				outputOffset += BlockSizeByte;
 				inputCount -= BlockSizeByte;
 			}
 
@@ -294,7 +298,7 @@ namespace Mono.Security.Cryptography {
 			// return output without padding
 			if (total > 0) {
 				byte[] data = new byte [total];
-				Array.Copy (res, 0, data, 0, total);
+				Buffer.BlockCopy (res, 0, data, 0, total);
 				// zeroize decrypted data (copy with padding)
 				Array.Clear (res, 0, res.Length);
 				return data;
