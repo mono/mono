@@ -1,7 +1,8 @@
 2004-08-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Added System.Security.Permissions/
-	SiteIdentityPermissionTest.cs to unit tests.
+	SiteIdentityPermissionTest.cs and UrlIdentityPermissionTest.cs
+	to unit tests.
 
 2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
 
