@@ -1,3 +1,31 @@
+2005-03-29  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #47991.  Remove a TODO.
+	* statement.cs (Block.Toplevel): Make into a field.
+	(Block.Parameters): Move into ToplevelBlock.
+	(Block.known_variables): Rename from child_variable_names.
+	(Block.Block): Remove variants that take Parameters.  Initialize
+	'Toplevel' with the immediately surrounding toplevel block.
+	(Block.AddKnownVariable): Rename from AddChildVariableName.  Add a
+	LocalInfo parameter.
+	(Block.GetKnownVariableInfo): New.
+	(Block.IsVariableNameUsedInChildBlock): Update.
+	(Block.IsVariableNameUsedInBlock): New.  Checks if a name is used in
+	the block, even though it may not be in scope.
+	(Block.AddVariable): Remove Parameters parameter.  Use
+	Toplevel.Parameters instead.
+	(Block.AddConstant): Remove Parameters parameter.
+	(Block.GetParameterReference): Update to use Toplevel.Parameters.
+	(Block.IsParamaterReference): Likewise.
+	(Block.IsLocalParameter): Likewise.  Simplify a lot.
+	(ToplevelBlock.Parameters): New.  Moved from Block.
+	(ToplevelBlock.ToplevelBlock): Update to changes.  Always
+	initialize Parameters to a non-null value.
+	* cs-parser.jay: Update to changes.
+	* ecore.cs (SimpleName.SimpleNameResolve): Emit cs0136 error for
+	simple names that mean different things in the same block.  Use
+	Block.IsVariableNameUsedInBlock.
+
 2005-03-28  Raja R Harinath  <rharinath@novell.com>
 
 	* typemanager.cs (TypeHandle.BaseType): Make into an IMemberContainer.

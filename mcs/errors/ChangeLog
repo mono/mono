@@ -1,3 +1,7 @@
+2005-03-29  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0136-3.cs, cs0136-4.cs: New tests from #47991.
+
 2005-03-18  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (DISTFILES): Don't distribute TestRunner.exe.

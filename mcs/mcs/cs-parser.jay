@@ -3515,8 +3515,7 @@ block
 			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, lexer.Location);
 			top_current_block = current_block;
 		} else {
-		current_block = new Block (current_block, current_local_parameters,
-					   lexer.Location, Location.Null);
+		current_block = new Block (current_block, lexer.Location, Location.Null);
 		}
 	  } 
 	  opt_statement_list CLOSE_BRACE 
@@ -3928,8 +3927,7 @@ for_statement
 
 				LocalInfo vi;
 
-				vi = current_block.AddVariable (
-					type, decl.identifier, current_local_parameters, decl.Location);
+				vi = current_block.AddVariable (type, decl.identifier, decl.Location);
 				if (vi == null)
 					continue;
 
@@ -4039,7 +4037,7 @@ foreach_statement
 		Location l = lexer.Location;
 		LocalInfo vi;
 
-		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, current_local_parameters, l);
+		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, l);
 		if (vi != null) {
 			vi.ReadOnly = true;
 
@@ -4341,7 +4339,7 @@ fixed_statement
 			Pair p = (Pair) list [i];
 			LocalInfo v;
 
-			v = current_block.AddVariable (type, (string) p.First,current_local_parameters, l);
+			v = current_block.AddVariable (type, (string) p.First, l);
 			if (v == null)
 				continue;
 
@@ -4426,9 +4424,7 @@ using_statement
 
 			foreach (VariableDeclaration decl in var_declarators){
 
-				LocalInfo vi	= current_block.AddVariable (
-					type, decl.identifier, 
-					current_local_parameters, decl.Location);
+				LocalInfo vi = current_block.AddVariable (type, decl.identifier, decl.Location);
 				if (vi == null)
 					continue;
 				vi.ReadOnly = true;
@@ -4668,7 +4664,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 
 	foreach (VariableDeclaration decl in variable_declarators){
 
-		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, decl.Location) != null) {
+		if (implicit_block.AddVariable (type, decl.identifier, decl.Location) != null) {
 			if (decl.expression_or_array_initializer != null){
 				if (inits == null)
 					inits = new ArrayList (4);
@@ -4714,8 +4710,7 @@ Block declare_local_constants (Expression type, ArrayList declarators)
 		implicit_block = current_block;
 
 	foreach (VariableDeclaration decl in declarators){
-		implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer,
-						  current_local_parameters, decl.Location);
+		implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer, decl.Location);
 	}
 	
 	return implicit_block;

@@ -81,6 +81,11 @@ numbers, as they look nicer on the debugging output.
 
 -27	Attribute resolved to two different types
 
+-28	(warning) Somehow there's a function marked override, and
+	doesn't override anything.  Warn that this method will be
+	ignored during overload resolution.  (marked override == in IL,
+	it has a 'virtual', but no 'newslot')
+
 ----------
 
 Errors that we have allocated that will have corresponding errors in

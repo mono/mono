@@ -2079,6 +2079,15 @@ namespace Mono.CSharp {
 						      "'{0}' has a different meaning in a child block", Name);
 					return null;
 				}
+
+				if (!(e is LocalVariableReference) && current_block.IsVariableNameUsedInBlock (Name)) {
+					// Catch some false positives, e.g., when a local variable resolves to a constant.
+					LocalInfo vi = current_block.GetLocalInfo (Name);
+					if (vi == null) {
+						Report.Error (136, Location, "'{0}' has a different meaning later in the block", Name);
+						return null;
+					}
+				}
 			}
 
 			return e;
