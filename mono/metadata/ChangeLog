@@ -1,3 +1,8 @@
+
+Wed Jul 31 16:49:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: don't set the pinvoke bit on icalls.
+
 2002-07-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* debug-helpers.c (mono_method_full_name): only print a number to
