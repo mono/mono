@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Text;
 using System.Xml;
+using System.Xml.Xsl;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -63,6 +64,10 @@ public class Driver
 		else if (args[0] == "clean")
 		{
 			Clean ();
+		}
+		else if (args[0] == "checkdiff")
+		{
+			CheckDiff (GetArg (args,1));
 		}
 		
 		SaveInfo ();
@@ -475,21 +480,26 @@ public class Driver
 		Console.WriteLine ("Generating proxies");
 		Console.WriteLine ("------------------");
 		
+		XmlDocument doc = new XmlDocument ();
+		XmlElement ele = doc.CreateElement ("errors");
+		doc.AppendChild (ele);
+		
 		ArrayList proxies = new ArrayList ();
 		
 		foreach (ServiceData fd in services.services)
-			BuildProxy (fd, buildAll, proxies);
+			BuildProxy (fd, buildAll, proxies, ele);
 		
 		StreamWriter sw = new StreamWriter (Path.Combine (basePath, "proxies.sources"));
 		foreach (string f in proxies)
 			sw.WriteLine (f);
 		sw.Close ();
 		
+		doc.Save ("proxy-gen-error.xml");		
 		Console.WriteLine ("Done");
 		Console.WriteLine ();
 	}
 	
-	static void BuildProxy (ServiceData fd, bool rebuild, ArrayList proxies)
+	static void BuildProxy (ServiceData fd, bool rebuild, ArrayList proxies, XmlElement errdoc)
 	{
 		string wsdl = GetWsdlFile (fd);
 		if (!File.Exists (wsdl)) 
@@ -547,14 +557,31 @@ public class Driver
 						File.Delete (pfile);
 				}
 				
-				ReportError ("Errors found while generating " + prot + " proxy for WSDL: " + wsdl, err);
+				WriteError (errdoc, ns, "Errors found while generating " + prot + " proxy for WSDL: " + wsdl, err);
 			}
 			else
 			{
-				Console.WriteLine ("OK");
-				proxies.Add (pfile);
+				if (File.Exists (pfile)) {
+					Console.WriteLine ("OK");
+					proxies.Add (pfile);
+				}
+				else {
+					Console.WriteLine ("FAIL");
+					string err = proc.StandardOutput.ReadToEnd ();
+					err += "\n" + proc.StandardError.ReadToEnd ();
+					WriteError (errdoc, ns, "Errors found while generating " + prot + " proxy for WSDL: " + wsdl, err);
+				}
 			}
 		}
+	}
+	
+	static void WriteError (XmlElement err, string ns, string error, string detail)
+	{
+		XmlElement ele = err.OwnerDocument.CreateElement ("error");
+		ele.SetAttribute ("ns",ns);
+		XmlText text = err.OwnerDocument.CreateTextNode (error + "<br/>" + detail);
+		ele.AppendChild (text);
+		err.AppendChild (ele);
 	}
 	
 	static void BuildClients (string wsdl)
@@ -607,6 +634,99 @@ public class Driver
 		sw.Close ();
 		
 		Console.WriteLine ("Written file '" + file + "'");
+	}
+	
+	public static void CheckDiff (string diffFile)
+	{
+		int suc=0, tot=0;
+		XmlDocument doc = new XmlDocument ();
+		doc.Load (diffFile);
+		
+		XmlDocument errdoc = new XmlDocument ();
+		errdoc.Load ("proxy-gen-error.xml");
+		
+		XmlDocument result = new XmlDocument ();
+		XmlElement res = result.CreateElement ("test-results");
+		res.SetAttribute ("name", "wsdl tests");
+		res.SetAttribute ("date", DateTime.Now.ToShortDateString ());
+		res.SetAttribute ("time", DateTime.Now.ToShortTimeString ());
+		result.AppendChild (res);
+		
+		XmlElement ts = result.CreateElement ("test-suite");
+		ts.SetAttribute ("name", "wsdl");
+		ts.SetAttribute ("asserts", "0");
+		ts.SetAttribute ("time", "0");
+		res.AppendChild (ts);
+
+		XmlElement tsres = result.CreateElement ("results");
+		ts.AppendChild (tsres);
+		
+		XslTransform xsl = new XslTransform ();
+		xsl.Load ("cormissing.xsl");
+		
+		foreach (ServiceData sd in services.services)
+		{
+			if (sd.Protocols == null) continue;
+
+			foreach (string prot in sd.Protocols)
+			{
+				string ns = sd.Namespace + "." + prot;
+				tot++;
+				
+				XmlElement elem = doc.SelectSingleNode ("assemblies/assembly/namespaces/namespace[@name='" + ns + "']") as XmlElement;
+				XmlElement errelem = errdoc.SelectSingleNode ("/errors/error[@ns='" + ns + "']") as XmlElement;
+				
+				if (errelem != null) {
+					WriteResult (tsres, ns, false, sd.Wsdl + "<br/>" + errelem.InnerText);
+					continue;
+				}
+				
+				if (elem == null) {
+					WriteResult (tsres, ns, false, sd.Wsdl + "<br/>Proxy not generated");
+					continue;
+				}
+
+				if (elem.GetAttribute ("error") != "" || elem.GetAttribute ("missing") != "" || elem.GetAttribute ("extra") != "") {
+					StringWriter str = new StringWriter ();
+					xsl.Transform (elem, null, str, null);
+					WriteResult (tsres, ns, false, sd.Wsdl + "<br/>" + str.ToString ());
+				}
+				else {
+					suc++;
+					WriteResult (tsres, ns, true, sd.Wsdl);
+				}
+				
+			}
+		}
+		ts.SetAttribute ("success", (suc < tot).ToString());
+		
+		res.SetAttribute ("total", tot.ToString());
+		res.SetAttribute ("failures", (tot-suc).ToString());
+		res.SetAttribute ("not-run", "0");
+
+		result.Save ("WsdlTestResult.xml");
+		Console.WriteLine ("Total:" + tot + " Sucess:" + suc + " Fail:" + (tot - suc));
+	}
+	
+	static void WriteResult (XmlElement res, string name, bool success, string msg)
+	{
+		XmlDocument doc = res.OwnerDocument;
+		XmlElement test = doc.CreateElement ("test-case");
+		test.SetAttribute ("name", name);
+		test.SetAttribute ("executed", "True");
+		test.SetAttribute ("success", success.ToString());
+		test.SetAttribute ("time", "0");
+		test.SetAttribute ("asserts", "0");
+		
+		if (!success) {
+			XmlElement fail = doc.CreateElement ("failure");
+			test.AppendChild (fail);
+			XmlElement xmsg = doc.CreateElement ("message");
+			fail.AppendChild (xmsg);
+			xmsg.AppendChild (doc.CreateCDataSection (msg));
+			fail.AppendChild (doc.CreateElement ("stack-trace"));
+		}
+		res.AppendChild (test);
 	}
 	
 	static void RegisterFailure (ServiceData sd)
@@ -695,6 +815,11 @@ public class Driver
 	}
 	
 	static string GetWsdlPath ()
+	{
+		return Path.Combine (basePath, "wsdlcache");
+	}
+	
+	static string GetTempWsdlPath ()
 	{
 		return Path.Combine (basePath, "wsdlcache");
 	}

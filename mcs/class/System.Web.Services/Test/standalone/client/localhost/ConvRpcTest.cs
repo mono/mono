@@ -84,7 +84,7 @@ namespace Localhost.ConvRpcTests
 	public class ConverterServiceExtraTest : System.Web.Services.Protocols.SoapHttpClientProtocol
 	{
 		public ConverterServiceExtraTest() {
-			this.Url = "http://192.168.1.3:8080/ConvRpc.asmx";
+			this.Url = "http://localhost:8080/ConvRpc.asmx";
 		}
 	
 		[System.Web.Services.Protocols.SoapRpcMethodAttribute("urn:mono-ws-tests/GetTestInfo", RequestNamespace="urn:mono-ws-tests", ResponseNamespace="urn:mono-ws-tests")]

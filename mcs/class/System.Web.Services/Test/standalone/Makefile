@@ -1,8 +1,6 @@
 MCS=mcs -g
 sourcefile = proxies.sources
 
-all: tools update gen proxies tests
-
 tools: wstest.exe
 
 proxies: proxies.dll
@@ -20,12 +18,14 @@ proxies.dll:
 	$(MCS) /r:System.Web.Services.dll /r:System.Data /target:library -out:proxies.dll @proxies.sources
 
 tests: proxies
-	$(MCS) /r:proxies.dll /r:System.Web.Services.dll /r:NUnit.Framework.dll /r:System.Data /target:library -out:testclient.dll @client.sources WebServiceTest.cs
+	$(MCS) /r:proxies.dll /r:System.Web.Services.dll /r:nunit.framework.dll /r:System.Data /target:library -out:testclient.dll @client.sources WebServiceTest.cs
 
 update:
 	mono --debug wstest.exe ur http://www.xmethods.net/default.disco wsdl.ignore
 	mono --debug wstest.exe ur http://localhost:8080/xsp.vsdisco
 	mono --debug wstest.exe dw
+	rm -f wsdlfiles.tar.gz
+	tar --gzip -cf wsdlfiles.tar.gz wsdl
 
 gen:
 	mono --debug wstest.exe gp
@@ -36,3 +36,46 @@ regen:
 
 cls:
 	mono --debug wstest.exe clean
+
+pack:
+	tar --gzip -cf wsdlfiles.tar.gz wsdlcache
+	gzip proxies.net.xml
+	
+winbase:
+	csc wstest.cs
+	rm -rf wsdl
+	rm -rf proxies
+	rm -f proxies.dll
+	tar xvfz wsdlfiles.tar.gz
+	wstest.exe gp
+	csc /r:System.Web.Services.dll /r:System.Data /target:library -out:proxies.dll @proxies.sources
+	mono ../../../../tools/corcompare/mono-api-info.exe proxies.net.dll > proxies.net.xml
+	
+test-wsdl: tools
+	rm -rf wsdlcache
+	rm -rf proxies
+	rm -f proxies.dll
+	tar xvfz wsdlfiles.tar.gz
+	gunzip -c proxies.net.xml.gz > proxies.net.xml
+	mono wstest.exe gp
+	mcs /r:System.Web.Services.dll /r:System.Data /target:library -out:proxies.dll @proxies.sources
+	mono ../../../../tools/corcompare/mono-api-info.exe proxies.dll > proxies.mono.xml
+	mono ../../../../tools/corcompare/mono-api-diff.exe proxies.net.xml proxies.mono.xml > proxies.diff.xml
+	mono wstest.exe checkdiff proxies.diff.xml
+	
+kk:
+	gunzip -c proxies.net.xml.gz > proxies.net.xml
+	
+test-clients: tests
+	rm -f somefile && touch somefile
+	(tail -f somefile | xsp --root server)&
+	sleep 2
+	-mono ../../../lib/nunit-console.exe testclient.dll
+	echo "" >> somefile
+
+test: test-wsdl test-clients
+	
+respage:
+	mono transform.exe proxies.diff.xml ../../../../tools/corcompare/mono-api.xsl > proxies.data.html
+	cat header.html proxies.data.html > proxies.html
+	rm proxies.data.html

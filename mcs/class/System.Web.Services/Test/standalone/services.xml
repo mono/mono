@@ -1087,15 +1087,6 @@
     <clientTest>false</clientTest>
   </service>
   <service>
-    <wsdl>http://smsserver.dotnetisp.com/servicesms.asmx?WSDL</wsdl>
-    <name>servicesmsTest</name>
-    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
-    <protocols>
-      <protocol>Soap</protocol>
-    </protocols>
-    <clientTest>false</clientTest>
-  </service>
-  <service>
     <wsdl>http://ws2.serviceobjects.net/ds/domainspy.asmx?WSDL</wsdl>
     <name>domainspyTest</name>
     <serverType>Microsoft-IIS/5.0 # </serverType>
@@ -2327,17 +2318,6 @@
     <serverType>Microsoft-IIS/5.0 # </serverType>
     <protocols>
       <protocol>Soap</protocol>
-    </protocols>
-    <clientTest>false</clientTest>
-  </service>
-  <service>
-    <wsdl>http://www.xeeinc.com/RateInformation/RateInfo.asmx?WSDL</wsdl>
-    <name>RateInfoTest</name>
-    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
-    <protocols>
-      <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
@@ -4246,6 +4226,10 @@
   <service>
     <wsdl>http://addressmeister.bizware.com/service/wsdl/server.soap.wsdl</wsdl>
     <name>serverTest2</name>
+    <serverType>Apache/1.3.26 (Unix) mod_ssl/2.8.10 OpenSSL/0.9.6b PHP/4.3.6 # PHP/4.3.6</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
     <clientTest>false</clientTest>
   </service>
   <service>
@@ -4359,5 +4343,63 @@
       <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>true</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.xignite.com/xIndices.asmx?WSDL</wsdl>
+    <name>xIndicesTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://smsserver.dotnetisp.com/servicesms.asmx?WSDL</wsdl>
+    <name>servicesmsTest</name>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://services.aonaware.com/DictService/DictService.asmx?WSDL</wsdl>
+    <name>DictServiceTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.xignite.com/xCurrencies.asmx?WSDL</wsdl>
+    <name>xCurrenciesTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://xml.whereisthatip.com/ip-location-service.wsdl</wsdl>
+    <name>iplocationserviceTest</name>
+    <serverType>Apache/2.0.49 (Unix) PHP/5.0.0RC2 # PHP/5.0.0RC2</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.xignite.com/xHistorical.asmx?WSDL</wsdl>
+    <name>xHistoricalTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
   </service>
 </services>
