@@ -1,7 +1,12 @@
+2004-06-04  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SqlClientPermission.cs: removed extra CreateInstance
+	method
+
 2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
 
-       * SQLDebugging.cs: added missing attributes, marked ctor
-       public to match MS.NET
+        * SQLDebugging.cs: added missing attributes, marked ctor
+        public to match MS.NET
 
 2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
 

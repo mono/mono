@@ -56,11 +56,6 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		protected override DBDataPermission CreateInstance ()
-		{
-			return (DBDataPermission) new SqlClientPermission (PermissionState.None);
-		}
-
 		public override IPermission Copy()
 		{
 			return new SqlClientPermission ( state);			
