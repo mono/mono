@@ -1,3 +1,8 @@
+2004-04-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* liveness.c: Mark variables as volatile in all basic blocks reachable
+	from exception clauses.
+
 2004-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions.cs (test_0_rethow_stacktrace): Make this work with
