@@ -1,3 +1,7 @@
+2002-10-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: I was chekcing the key, not the file.
+
 2002-10-19  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (UserDefinedConversion): Get rid of the bogus error

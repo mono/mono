@@ -1319,10 +1319,10 @@ namespace Mono.CSharp
 						} else
 							margs [0] = margs [1] = spec;
 
-						if (File.Exists ((string) margs [0]))
+						if (File.Exists ((string) margs [1]))
 							embed_res.Invoke (CodeGen.AssemblyBuilder, margs);
 						else {
-							Report.Error (1566, "Can not find the resource " + margs [0]);
+							Report.Error (1566, "Can not find the resource " + margs [1]);
 						}
 					}
 				}
