@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.13  2004/10/18 04:49:06  pbartok
+// - Added ToolTip abstracts
+//
 // Revision 1.12  2004/10/15 15:08:49  ravindra
 // Added ColumnHeaderHeight property in Theme for ListView.
 //
@@ -388,6 +391,11 @@ namespace System.Windows.Forms
 		public abstract int ToolBarDropDownArrowHeight { get; }  // height for the dropdown arrow on the ToolBarButton
 		public abstract Size ToolBarDefaultSize{get;}
 		#endregion	// ToolBar
+
+		#region ToolTip
+		public abstract void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip tt);
+		public abstract Size ToolTipSize(ToolTip tt, string text);
+		#endregion	// ToolTip
 
 		#region TrackBar
 		// Drawing
