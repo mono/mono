@@ -224,6 +224,45 @@ testing.
 				void Method (string lpstrArgument)
 				void Method (string my_string)
 
+		* Empty methods: They should have the body of code using two 	
+		  lines, in consistency with the rest:
+
+			good:
+				void EmptyMethod ()
+				{
+				}
+
+			bad:
+				void EmptyMethod () {}
+
+				void EmptyMethod () 
+				{}
+		
+		* Line length: The line length for C# source code is 134 columns.
+
+
+		  If your function declaration arguments go beyond
+		  this point, please align your arguments to match the
+		  opening brace, like this:
+
+	 		void Function (int arg, string argb,
+	 			       int argc)
+	 		{
+	 		}
+	 
+	  	  When invoking functions, the rule is different, the
+		  arguments are not aligned with the previous
+		  argument, instead they begin at the tabbed position,
+		  like this:
+	  
+			void M ()
+			{
+				MethodCall ("Very long string that will force",
+					"Next argument on the 8-tab pos",
+					"Just like this one")
+		
+			}
+		
 	Here are a couple of examples:
 
 class X : Y {
