@@ -1,3 +1,8 @@
+2002-01-23  Duncan Mak  <duncan@ximian.com>
+
+	* DebuggerStepThroughAttribute.cs:
+	* DebuggerHiddenAttribte.cs: Add to CVS.
+
 2002-01-04  Ravi Pratap <ravi@ximian.com>
 
 	* StackFrame.cs : Use the MonoTODO attribute to mark
