@@ -7,28 +7,40 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodePrimitiveExpression : CodeExpression {
-		object value;
-		
-		public CodePrimitiveExpression () {}
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodePrimitiveExpression
+		: CodeExpression 
+	{
+		private object value;
+
+		//
+		// Constructors
+		//
+		public CodePrimitiveExpression ()
+		{
+		}
 
 		public CodePrimitiveExpression (Object value)
 		{
 			this.value = value;
 		}
 
+		//
+		// Properties
+		//
 		public object Value {
 			get {
-				return value;
+				return this.value;
 			}
-
 			set {
 				this.value = value;
 			}
 		}
 	}
 }
-

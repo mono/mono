@@ -7,10 +7,15 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeBaseReferenceExpression : CodeExpression {
-		public CodeBaseReferenceExpression () {}
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeBaseReferenceExpression
+		: CodeExpression 
+	{
 	}
 }

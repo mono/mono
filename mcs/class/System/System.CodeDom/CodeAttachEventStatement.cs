@@ -3,60 +3,65 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
-namespace System.CodeDom {
 
+using System.Runtime.InteropServices;
+
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeAttachEventStatement : CodeStatement {
-		CodeExpression targetObject;
-		string eventName;
-		CodeExpression newListener;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeAttachEventStatement
+		: CodeStatement 
+	{
+		private CodeEventReferenceExpression eventRef;
+		private CodeExpression listener;
 		
+		//
+		// Constructors
+		//
 		public CodeAttachEventStatement ()
 		{
 		}
 
-		public CodeAttachEventStatement (CodeExpression targetObject,
-						 string eventName,
-						 CodeExpression newListener)
+		public CodeAttachEventStatement (CodeEventReferenceExpression eventRef,
+						 CodeExpression listener)
 		{
-			this.targetObject = targetObject;
-			this.eventName = eventName;
-			this.newListener = newListener;
+			this.eventRef = eventRef;
+			this.listener = listener;
 		}
 
+		public CodeAttachEventStatement (CodeExpression targetObject,
+						 string eventName, 
+						 CodeExpression listener)
+		{
+			this.eventRef = new CodeEventReferenceExpression( targetObject,
+									  eventName );
+			this.listener = listener;
+		}
+								  
 		//
 		// Properties
 		//
-		public string EventName {
+		public CodeEventReferenceExpression Event {
 			get {
-				return eventName;
+				return eventRef;
 			}
-
 			set {
-				eventName = value;
+				eventRef = value;
 			}
 		}
 
-		public CodeExpression NewListener {
+		public CodeExpression Listener {
 			get {
-				return newListener; 
+				return listener; 
 			}
-
 			set {
-				newListener = value;
-			}
-		}
-
-		public CodeExpression TargetObject {
-			get {
-				return targetObject;
-			}
-
-			set {
-				targetObject = value;
+				listener = value;
 			}
 		}
 	}

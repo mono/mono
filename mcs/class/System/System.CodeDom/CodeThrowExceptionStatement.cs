@@ -7,23 +7,37 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeThrowExceptionStatement : CodeStatement {
-		CodeExpression toThrow;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeThrowExceptionStatement
+		: CodeStatement 
+	{
+		private CodeExpression toThrow;
 		
-		public CodeThrowExceptionStatement () {}
+		//
+		// Constructors
+		//
+		public CodeThrowExceptionStatement ()
+		{
+		}
+
 		public CodeThrowExceptionStatement (CodeExpression toThrow)
 		{
 			this.toThrow = toThrow;
 		}
 
+		//
+		// Properties
+		//
 		public CodeExpression ToThrow {
 			get {
 				return toThrow;
 			}
-
 			set {
 				toThrow = value;
 			}

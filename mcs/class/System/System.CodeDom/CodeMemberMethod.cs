@@ -3,72 +3,102 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeMemberMethod : CodeTypeMember {
-		CodeParameterDeclarationExpressionCollection parameters;
-		CodeStatementCollection statements;
-		string implementsType;
-		string returnType;
-		bool   privateImplements;
-		
-		public CodeMemberMethod ()
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeMemberMethod
+		: CodeTypeMember 
+	{
+		private CodeTypeReferenceCollection implementationTypes;
+		private CodeParameterDeclarationExpressionCollection parameters;
+		private CodeTypeReference privateImplementationType;
+		private CodeTypeReference returnType;
+		private CodeStatementCollection statements;
+		private CodeAttributeDeclarationCollection returnTypeCustomAttributes;
+
+		//
+		// Constructors
+		//
+		public CodeMemberMethod()
 		{
 		}
 
-		public string ImplementsType {
+		//
+		// Properties
+		// 
+		public CodeTypeReferenceCollection ImplementationTypes {
 			get {
-				return implementsType;
-			}
-
-			set {
-				implementsType = value;
-			}
-		}
-
-		public bool PrivateImplements {
-			get {
-				return privateImplements;
-			}
-
-			set {
-				privateImplements = value;
-			}
-		}
-
-		public string ReturnType {
-			get {
-				return returnType;
-			}
-
-			set {
-				returnType = value;
+				if ( implementationTypes == null ) {
+					implementationTypes = new CodeTypeReferenceCollection();
+					PopulateImplementationTypes( this, EventArgs.Empty );
+				}
+				return implementationTypes;
 			}
 		}
 
 		public CodeParameterDeclarationExpressionCollection Parameters {
 			get {
+				if ( parameters == null ) {
+					parameters = new CodeParameterDeclarationExpressionCollection();
+					PopulateParameters( this, EventArgs.Empty );
+				}
 				return parameters;
 			}
+		}
 
+		public CodeTypeReference PrivateImplementationType {
+			get {
+				return privateImplementationType;
+			}
 			set {
-				parameters = value;
+				privateImplementationType = value;
+			}
+		}
+
+		public CodeTypeReference ReturnType {
+			get {
+				return returnType;
+			}
+			set {
+				returnType = value;
 			}
 		}
 
 		public CodeStatementCollection Statements {
 			get {
+				if ( statements == null ) {
+					statements = new CodeStatementCollection();
+					PopulateStatements( this, EventArgs.Empty );
+				}
 				return statements;
 			}
+		}
 
-			set {
-				statements = value;
+		public CodeAttributeDeclarationCollection ReturnTypeCustomAttributes {
+			get {
+				if ( returnTypeCustomAttributes == null )
+					returnTypeCustomAttributes = new CodeAttributeDeclarationCollection();
+				
+				return returnTypeCustomAttributes;
 			}
 		}
+
+		//
+		// Events
+		//
+		public event EventHandler PopulateImplementationTypes;
+
+		public event EventHandler PopulateParameters;
+
+		public event EventHandler PopulateStatements;
 	}
 }

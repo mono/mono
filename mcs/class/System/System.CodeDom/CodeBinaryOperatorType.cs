@@ -7,24 +7,29 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
+
+namespace System.CodeDom 
+{
+	[Serializable]
+	[ComVisible(true)]
 	public enum CodeBinaryOperatorType {
 		Add,
-		Subtract,
-		Multiply,
-		Divide,
-		Modulus,
 		Assign,
-		IdentityInequality,
-		IdentityEquality,
-		ValueEquality,
-		BitwiseOr,
 		BitwiseAnd,
-		BooleanOr,
+		BitwiseOr,
 		BooleanAnd,
-		LessThan,
-		LessThanOrEqual,
+		BooleanOr,
+		Divide,
 		GreaterThan,
 		GreaterThanOrEqual,
+		IdentityEquality,
+		IdentityInequality,
+		LessThan,
+		LessThanOrEqual,
+		Modulus,
+		Multiply,
+		Subtract,
+		ValueEquality
 	}
 }

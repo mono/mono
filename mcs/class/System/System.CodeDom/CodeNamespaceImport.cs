@@ -3,17 +3,30 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeNamespaceImport : CodeObject {
-		string nameSpace;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeNamespaceImport
+		: CodeObject 
+	{
+		private CodeLinePragma linePragma;
+		private string nameSpace;
 		
-		public CodeNamespaceImport () {}
+		//
+		// Constructors
+		//
+		public CodeNamespaceImport ()
+		{
+		}
 
 		public CodeNamespaceImport (string nameSpace)
 		{
@@ -23,12 +36,19 @@ namespace System.CodeDom {
 		//
 		// Properties
 		//
+		public CodeLinePragma LinePragma {
+			get {
+				return linePragma;
+			}
+			set {
+				linePragma = value;
+			}
+		}
 
 		public string Namespace {
 			get {
 				return nameSpace;
 			}
-
 			set {
 				nameSpace = value;
 			}

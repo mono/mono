@@ -3,21 +3,33 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeDelegateCreateExpression : CodeExpression {
-		string delegateType, methodName;
-		CodeExpression targetObject;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeDelegateCreateExpression
+		: CodeExpression 
+	{
+		private CodeTypeReference delegateType;
+		private string methodName;
+		private CodeExpression targetObject;
 
 		//
 		// Constructors
 		//
-		public CodeDelegateCreateExpression (string delegateType,
+		public CodeDelegateCreateExpression ()
+		{
+		}
+
+		public CodeDelegateCreateExpression (CodeTypeReference delegateType,
 						     CodeExpression targetObject,
 						     string methodName)
 		{
@@ -26,39 +38,32 @@ namespace System.CodeDom {
 			this.methodName = methodName;
 		}
 
-		public CodeDelegateCreateExpression ()
-		{
-		}
 
 		//
 		// Properties
 		//
-
-		public string DelegateType {
+		public CodeTypeReference DelegateType {
 			get {
 				return delegateType;
 			}
-
 			set {
 				delegateType = value;
 			}
 		}
 
-		string MethodName {
+		public string MethodName {
 			get {
 				return methodName;
 			}
-
 			set {
 				methodName = value;
 			}
 		}
 
-		CodeExpression TargetObject {
+		public CodeExpression TargetObject {
 			get {
 				return targetObject;
 			}
-
 			set {
 				targetObject = value;
 			}

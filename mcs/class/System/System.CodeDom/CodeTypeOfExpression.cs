@@ -3,28 +3,52 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeTypeOfExpression : CodeExpression {
-		string type;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeTypeOfExpression
+		: CodeExpression 
+	{
+		private CodeTypeReference type;
 			
-		public CodeTypeOfExpression () {}
+		//
+		// Constructors
+		//
+		public CodeTypeOfExpression () 
+		{
+		}
 
-		public CodeTypeOfExpression (string type)
+		public CodeTypeOfExpression (CodeTypeReference type)
 		{
 			this.type = type;
 		}
 
-		public string Type {
+		public CodeTypeOfExpression (string type)
+		{
+			this.type = new CodeTypeReference( type );
+		}
+		
+		public CodeTypeOfExpression (Type type)
+		{
+			this.type = new CodeTypeReference( type );
+		}
+
+		//
+		// Properties
+		//
+		public CodeTypeReference Type {
 			get {
 				return type;
 			}
-
 			set {
 				type = value;
 			}

@@ -3,16 +3,23 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeIndexerExpression : CodeExpression {
-		CodeExpression targetObject;
-		CodeExpression index;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeIndexerExpression
+		: CodeExpression 
+	{
+		private CodeExpression targetObject;
+		private CodeExpressionCollection indices;
 
 		//
 		// Constructors
@@ -21,15 +28,31 @@ namespace System.CodeDom {
 		{
 		}
 		
-		public CodeIndexerExpression (CodeExpression targetObject, CodeExpression index)
+		public CodeIndexerExpression (CodeExpression targetObject, params CodeExpression[] indices)
 		{
-			this.index = index;
 			this.targetObject = targetObject;
+			this.Indices.AddRange( indices );
 		}
 
 		//
 		// Properties
 		//
+		public CodeExpressionCollection Indices {
+			get {
+				if ( indices == null )
+					indices = new CodeExpressionCollection();
+
+				return indices;
+			}
+		}
+
+		public CodeExpression TargetObject {
+			get {
+				return targetObject;
+			}
+			set {
+				targetObject = value;
+			}
+		}
 	}
 }
-

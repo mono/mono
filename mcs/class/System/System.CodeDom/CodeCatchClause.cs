@@ -3,44 +3,78 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeCatchClause {
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeCatchClause
+	{
+		private CodeTypeReference catchExceptionType;
+		private string localName;
+		private CodeStatementCollection statements;
 
-		CodeParameterDeclarationExpression condition;
-		CodeStatementCollection statements;
-		
+		//
+		// Constructors
+		//
 		public CodeCatchClause ()
 		{
-			this.statements = new CodeStatementCollection ();
 		}
 
-		public CodeCatchClause (CodeParameterDeclarationExpression condition,
-					CodeStatement [] statements)
+		public CodeCatchClause ( string localName )
 		{
-			this.condition = condition;
-			this.statements = new CodeStatementCollection ();
-			this.statements.AddRange (statements);
+			this.localName = localName;
+		}
+
+		public CodeCatchClause ( string localName,
+					 CodeTypeReference catchExceptionType )
+		{
+			this.localName = localName;
+			this.catchExceptionType = catchExceptionType;
+		}
+
+		public CodeCatchClause ( string localName,
+					 CodeTypeReference catchExceptionType,
+					 CodeStatement[] statements )
+		{
+			this.localName = localName;
+			this.catchExceptionType = catchExceptionType;
+			this.Statements.AddRange( statements );
+		}
+
+		//
+		// Properties
+		//
+		public CodeTypeReference CatchExceptionType {
+			get {
+				return catchExceptionType;
+			}
+			set {
+				catchExceptionType = value;
+			}
+		}
+
+		public string LocalName {
+			get {
+				return localName;
+			}
+			set {
+				localName = value;
+			}
 		}
 
 		public CodeStatementCollection Statements {
 			get {
+				if ( statements == null )
+					statements = new CodeStatementCollection();
 				return statements;
-			}
-		}
-
-		public CodeParameterDeclarationExpression Condition {
-			get {
-				return condition;
-			}
-
-			set {
-				condition = value;
 			}
 		}
 	}

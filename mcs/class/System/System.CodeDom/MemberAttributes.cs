@@ -3,28 +3,36 @@
 //
 // Author:
 //   Sean MacIsaac (macisaac@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
-	public enum MemberAttributes {
-		Abstract = 0x1,
-		Final,
-		Static,
-		Override,
-		Const,
-		New = 0x10,
-		Overloaded = 0x100,
-		Assembly = 0x1000,
-		FamilyAndAssembly = 0x2000,
-		Family = 0x3000,
-		FamilyOrAssembly = 0x4000,
-		Private = 0x5000,
-		Public = 0x6000,
+using System.Runtime.InteropServices;
 
-		ScopeMask = 0xf,
-		VTableMask = 0xf0,
-		AccessMask = 0xf000,
+namespace System.CodeDom {
+
+	[Serializable]
+	[ComVisible(true)]
+	public enum MemberAttributes {
+		Abstract =		0x00000001,
+		Final =			0x00000002,
+		Static =		0x00000003,
+		Override =		0x00000004,
+		Const =			0x00000005,
+		ScopeMask =		0x0000000F,
+
+		New =			0x00000010,
+		VTableMask =		0x000000F0,
+
+		Overloaded =		0x00000100,
+
+		Assembly =		0x00001000, // internal
+		FamilyAndAssembly =	0x00002000,
+		Family =		0x00003000, // protected
+		FamilyOrAssembly =	0x00004000, // protected internal
+		Private =		0x00005000, // private
+		Public =		0x00006000, // public
+		AccessMask =		0x0000F000
 	}
 }

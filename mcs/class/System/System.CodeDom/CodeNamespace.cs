@@ -3,25 +3,34 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeNamespace : CodeObject {
-		CodeClassCollection classes;
-		CodeNamespaceImportCollection imports;
-		bool allowLateBound, requireVariableDeclaration;
-		string name;
-		object userData;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeNamespace
+		: CodeObject
+	{
+		private CodeCommentStatementCollection comments;
+		private CodeNamespaceImportCollection imports;
+		private CodeTypeDeclarationCollection types;
+		private string name;
 
-		public CodeNamespace  ()
+		//
+		// Constructors
+		//
+		public CodeNamespace()
 		{
 		}
 
-		public CodeNamespace (string name)
+		public CodeNamespace(string name)
 		{
 			this.name = name;
 		}
@@ -29,34 +38,23 @@ namespace System.CodeDom {
 		//
 		// Properties
 		//
-
-		public bool AllowLateBound {
+		public CodeCommentStatementCollection Comments {
 			get {
-				return allowLateBound;
-			}
-
-			set {
-				allowLateBound = value;
-			}
-		}
-
-		public CodeClassCollection Classes {
-			get {
-				return classes;
-			}
-
-			set {
-				classes = value;
+				if ( comments == null ) {
+					comments = new CodeCommentStatementCollection();
+					PopulateComments( this, EventArgs.Empty );
+				}
+				return comments;
 			}
 		}
 
 		public CodeNamespaceImportCollection Imports {
 			get {
+				if ( imports == null ) {
+					imports = new CodeNamespaceImportCollection();
+					PopulateImports( this, EventArgs.Empty );
+				}
 				return imports;
-			}
-
-			set {
-				imports = value;
 			}
 		}
 
@@ -64,30 +62,28 @@ namespace System.CodeDom {
 			get {
 				return name;
 			}
-
 			set {
 				name = value;
 			}
 		}
 
-		public bool RequireVariableDeclaration {
+		public CodeTypeDeclarationCollection Types {
 			get {
-				return requireVariableDeclaration;
-			}
-
-			set {
-				requireVariableDeclaration = value;
+				if ( types == null ) {
+					types = new CodeTypeDeclarationCollection();
+					PopulateTypes( this, EventArgs.Empty );
+				}
+				return types;
 			}
 		}
 
-		public object UserData {
-			get {
-				return userData;
-			}
-
-			set {
-				userData = value;
-			}
-		}
+		//
+		// Events
+		//
+		public event EventHandler PopulateComments;
+		
+		public event EventHandler PopulateImports;
+		
+		public event EventHandler PopulateTypes;
 	}
 }

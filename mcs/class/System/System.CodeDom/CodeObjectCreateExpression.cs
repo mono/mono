@@ -3,39 +3,59 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeObjectCreateExpression : CodeExpression {
-		string createType;
-		CodeExpressionCollection parameters;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeObjectCreateExpression
+		: CodeExpression 
+	{
+		private CodeTypeReference createType;
+		private CodeExpressionCollection parameters;
 		
-		public CodeObjectCreateExpression () {}
-
-		public CodeObjectCreateExpression (string createType)
+		//
+		// Constructors
+		//
+		public CodeObjectCreateExpression () 
 		{
-			this.createType = createType;
 		}
 
-		public CodeObjectCreateExpression (string createType, CodeExpression [] parameters)
+		public CodeObjectCreateExpression (CodeTypeReference createType, 
+						   params CodeExpression [] parameters)
 		{
 			this.createType = createType;
-			this.parameters = new CodeExpressionCollection ();
-			this.parameters.AddRange (parameters);
+			this.Parameters.AddRange( parameters );
+		}
+
+		public CodeObjectCreateExpression (string createType, 
+						   params CodeExpression [] parameters)
+		{
+			this.createType = new CodeTypeReference( createType );
+			this.Parameters.AddRange( parameters );
+		}
+
+		public CodeObjectCreateExpression (Type createType, 
+						   params CodeExpression [] parameters)
+		{
+			this.createType = new CodeTypeReference( createType );
+			this.Parameters.AddRange( parameters );
 		}
 
 		//
 		// Properties
 		//
-		public string CreateType {
+		public CodeTypeReference CreateType {
 			get {
 				return createType;
 			}
-
 			set {
 				createType = value;
 			}
@@ -43,13 +63,10 @@ namespace System.CodeDom {
 
 		public CodeExpressionCollection Parameters {
 			get {
+				if ( parameters == null )
+					parameters = new CodeExpressionCollection();
 				return parameters;
 			}
-
-			set {
-				parameters = value;
-			}
 		}
-		
 	}
 }

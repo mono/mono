@@ -3,17 +3,22 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeAttributeDeclaration {
-
-		string name;
-		CodeAttributeArgumentCollection arguments;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeAttributeDeclaration 
+	{
+		private string name;
+		private CodeAttributeArgumentCollection arguments;
 		
 		//
 		// Constructors
@@ -30,8 +35,7 @@ namespace System.CodeDom {
 		public CodeAttributeDeclaration (string name, CodeAttributeArgument [] arguments)
 		{
 			this.name = name;
-			this.arguments = new CodeAttributeArgumentCollection ();
-			this.arguments.AddRange (arguments);
+			Arguments.AddRange (arguments);
 		}
 
 		//
@@ -39,11 +43,10 @@ namespace System.CodeDom {
 		//
 		public CodeAttributeArgumentCollection Arguments {
 			get {
-				return arguments;
-			}
+				if ( arguments == null )
+					arguments = new CodeAttributeArgumentCollection();
 
-			set {
-				arguments = value;
+				return arguments;
 			}
 		}
 
@@ -51,7 +54,6 @@ namespace System.CodeDom {
 			get {
 				return name;
 			}
-
 			set {
 				name = value;
 			}

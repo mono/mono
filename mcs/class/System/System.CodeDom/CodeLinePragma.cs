@@ -6,19 +6,26 @@
 //
 // (C) 2001 Ximian, Inc.
 //
-using System;
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	// <summary>
 	//    Use objects of this class to keep track of locations where
 	//    statements are defined
 	// </summary>
 	[Serializable]
-	public class CodeLinePragma {
-		string fileName;
-		int    lineNumber;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeLinePragma 
+	{
+		private string fileName;
+		private int lineNumber;
 		
+		//
+		// Constructors
+		//
 		public CodeLinePragma (string fileName, int lineNumber)
 		{
 			this.fileName = fileName;
@@ -32,7 +39,6 @@ namespace System.CodeDom {
 			get {
 				return fileName;
 			}
-			
 			set {
 				fileName = value;
 			}
@@ -42,7 +48,6 @@ namespace System.CodeDom {
 			get {
 				return lineNumber;
 			}
-			
 			set {
 				lineNumber = value;
 			}

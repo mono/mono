@@ -3,165 +3,98 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
+using System.Collections;
 
-	using System.Collections;
-	
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeAttributeArgumentCollection : IList, ICollection, IEnumerable {
-
-		ArrayList attributeArgs;
-		
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeAttributeArgumentCollection
+		: CollectionBase
+	{
 		//
 		// Constructors
 		//
-		public CodeAttributeArgumentCollection ()
+		public CodeAttributeArgumentCollection()
 		{
-			attributeArgs = new ArrayList ();
+		}
+
+		public CodeAttributeArgumentCollection( CodeAttributeArgument[] value )
+		{
+			AddRange( value );
+		}
+
+		public CodeAttributeArgumentCollection( CodeAttributeArgumentCollection value )
+		{
+			AddRange( value );
 		}
 
 		//
 		// Properties
 		//
-		public int Count {
+		public CodeAttributeArgument this[int index]
+		{
 			get {
-				return attributeArgs.Count;
+				return (CodeAttributeArgument)List[index];
 			}
-		}
-
-		public bool IsFixedSize {
-			get {	
-				return true;
+			set {
+				List[index] = value;
 			}
 		}
 
 		//
 		// Methods
 		//
-
 		public void Add (CodeAttributeArgument value)
 		{
-			attributeArgs.Add (value);
+			List.Add( value );
 		}
 
-		public void AddRange (CodeAttributeArgument [] values)
+		public void AddRange (CodeAttributeArgument [] value )
 		{
-			foreach (CodeAttributeArgument ca in values) 
-				attributeArgs.Add (ca);
-
-		}
-
-		public void Clear ()
-		{
-			attributeArgs.Clear ();
-		}
-
-		private class Enumerator : IEnumerator {
-			private CodeAttributeArgumentCollection collection;
-			private int currentIndex = -1;
-
-			internal Enumerator (CodeAttributeArgumentCollection collection)
-			{
-				this.collection = collection;
-			}
-
-			public object Current {
-				get {
-					if (currentIndex == collection.Count)
-						throw new InvalidOperationException ();
-					return collection [currentIndex];
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (currentIndex > collection.Count)
-					throw new InvalidOperationException ();
-				return ++currentIndex < collection.Count;
-			}
-
-			public void Reset ()
-			{
-				currentIndex = -1;
-			}
+			foreach ( CodeAttributeArgument elem in value )
+				Add( elem );
 		}
 		
-		public IEnumerator GetEnumerator ()
+		public void AddRange (CodeAttributeArgumentCollection value)
 		{
-			return new CodeAttributeArgumentCollection.Enumerator (this);
+			foreach ( CodeAttributeArgument elem in value )
+				Add( elem );
 		}
 
-		//
-		// IList method implementations
-		//
-		public int Add (object value)
+		public bool Contains( CodeAttributeArgument value )
 		{
-			return attributeArgs.Add (value);
+			return List.Contains( value );
 		}
-
-		public bool Contains (Object value)
+		
+		public void CopyTo( CodeAttributeArgument[] array, int index )
 		{
-			return attributeArgs.Contains (value);
+			List.CopyTo( array, index );
 		}
 
-		public int IndexOf (Object value)
+		public int IndexOf( CodeAttributeArgument value )
 		{
-			return attributeArgs.IndexOf (value);
+			return List.IndexOf( value );
 		}
 
-		public void Insert (int index, Object value)
+		public void Insert( int index, CodeAttributeArgument value )
 		{
-			attributeArgs [index] = value;
+			List.Insert( index, value );
 		}
 
-		public object this[int index] {
-			get {
-				return attributeArgs [index];
-			}
-
-			set {
-				attributeArgs [index] = value;
-			}
-		}
-
-		public void Remove (object value)
+		public void Remove( CodeAttributeArgument value )
 		{
-			attributeArgs.Remove (value);
-		}
-
-		public void RemoveAt (int index)
-		{
-			attributeArgs.RemoveAt (index);
-		}
-
-		//
-		// ICollection method implementations
-		//
-		public void CopyTo (Array array, int index)
-		{
-			attributeArgs.CopyTo (array, index);
-		}
-
-		public object SyncRoot {
-			get {
-				return attributeArgs.SyncRoot;
-			}
-		}
-
-		public bool IsReadOnly {
-			get {
-				return false;
-			}
-		}
-
-		public bool IsSynchronized {
-			get {
-				return attributeArgs.IsSynchronized;
-			}
+			int index = IndexOf( value );
+			if ( index < 0 )
+				throw( new ArgumentException( "The specified object is not found in the collection" ) );
+			RemoveAt( index );
 		}
 	}
 }

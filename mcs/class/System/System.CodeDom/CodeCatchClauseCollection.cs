@@ -7,36 +7,44 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
+using System.Collections;
 
-	using System.Collections;
-	
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeCatchClauseCollection : IList, ICollection, IEnumerable {
-
-		ArrayList catchClauses;
-		
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeCatchClauseCollection
+		: CollectionBase
+	{
 		//
 		// Constructors
 		//
-		public CodeCatchClauseCollection ()
+		public CodeCatchClauseCollection()
 		{
-			catchClauses = new ArrayList ();
+		}
+
+		public CodeCatchClauseCollection( CodeCatchClause[] value )
+		{
+			AddRange( value );
+		}
+
+		public CodeCatchClauseCollection( CodeCatchClauseCollection value )
+		{
+			AddRange( value );
 		}
 
 		//
 		// Properties
 		//
-		public int Count {
-			get {
-				return catchClauses.Count;
-			}
-		}
-
-                public bool IsFixedSize {
+                public CodeCatchClause this[int index] {
                         get {
-                                return true;
+                                return (CodeCatchClause)List[index];
                         }
+			set {
+				List[index] = value;
+			}
                 }
 
 		//
@@ -44,123 +52,47 @@ namespace System.CodeDom {
 		//
 		public void Add (CodeCatchClause value)
 		{
-			catchClauses.Add (value);
+			List.Add (value);
 		}
 
-		public void AddRange (CodeCatchClause [] values)
+		public void AddRange (CodeCatchClause [] value)
 		{
-			foreach (CodeCatchClause ca in values) 
-				catchClauses.Add (ca);
-
+			foreach (CodeCatchClause ca in value) 
+				Add (ca);
 		}
 
-		public void Clear ()
+		public void AddRange (CodeCatchClauseCollection value )
 		{
-			catchClauses.Clear ();
+			foreach (CodeCatchClause ca in value)
+				Add (ca);
 		}
 
-		private class Enumerator : IEnumerator {
-			private CodeCatchClauseCollection collection;
-			private int currentIndex = -1;
-
-			internal Enumerator (CodeCatchClauseCollection collection)
-			{
-				this.collection = collection;
-			}
-
-			public object Current {
-				get {
-					if (currentIndex == collection.Count)
-						throw new InvalidOperationException ();
-					return collection [currentIndex];
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (currentIndex > collection.Count)
-					throw new InvalidOperationException ();
-				return ++currentIndex < collection.Count;
-			}
-
-			public void Reset ()
-			{
-				currentIndex = -1;
-			}
+		public bool Contains( CodeCatchClause value )
+		{
+			return List.Contains( value );
 		}
 		
-		public IEnumerator GetEnumerator ()
+		public void CopyTo( CodeCatchClause[] array, int index )
 		{
-			return new CodeCatchClauseCollection.Enumerator (this);
+			List.CopyTo( array, index );
 		}
 
-		//
-		// IList method implementations
-		//
-		public int Add (object value)
+		public int IndexOf( CodeCatchClause value )
 		{
-			return catchClauses.Add (value);
+			return List.IndexOf( value );
 		}
 
-		public bool Contains (Object value)
+		public void Insert( int index, CodeCatchClause value )
 		{
-			return catchClauses.Contains (value);
+			List.Insert( index, value );
 		}
 
-		public int IndexOf (Object value)
+		public void Remove( CodeCatchClause value )
 		{
-			return catchClauses.IndexOf (value);
-		}
-
-		public void Insert (int index, Object value)
-		{
-			catchClauses [index] = value;
-		}
-
-		public object this[int index] {
-			get {
-				return catchClauses [index];
-			}
-
-			set {
-				catchClauses [index] = value;
-			}
-		}
-
-		public void Remove (object value)
-		{
-			catchClauses.Remove (value);
-		}
-
-		public void RemoveAt (int index)
-		{
-			catchClauses.RemoveAt (index);
-		}
-
-		//
-		// ICollection method implementations
-		//
-		public void CopyTo (Array array, int index)
-		{
-			catchClauses.CopyTo (array, index);
-		}
-
-		public object SyncRoot {
-			get {
-				return catchClauses.SyncRoot;
-			}
-		}
-
-		public bool IsReadOnly {
-			get {
-				return false;
-			}
-		}
-
-		public bool IsSynchronized {
-			get {
-				return catchClauses.IsSynchronized;
-			}
+			int index = IndexOf( value );
+			if ( index < 0 )
+				throw( new ArgumentException( "The specified object is not found in the collection" ) );
+			RemoveAt( index );
 		}
 	}
 }

@@ -7,51 +7,54 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeParameterDeclarationExpression : CodeExpression {
-		FieldDirection direction;
-		CodeAttributeBlock customAttributes;
-		string type, name;
-		
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeParameterDeclarationExpression
+		: CodeExpression 
+	{
+		private CodeAttributeDeclarationCollection customAttributes;
+		private FieldDirection direction;
+		private string name;
+		private CodeTypeReference type;
+
+		//
+		// Constructors
+		//
 		public CodeParameterDeclarationExpression ()
 		{
 		}
 
-		public CodeParameterDeclarationExpression (string type, string name)
+		public CodeParameterDeclarationExpression( CodeTypeReference type, string name )
 		{
 			this.type = type;
 			this.name = name;
 		}
 
-		public string Type {
-			get {
-				return type;
-			}
-
-			set {
-				type = value;
-			}
+		public CodeParameterDeclarationExpression (string type, string name)
+		{
+			this.type = new CodeTypeReference( type );
+			this.name = name;
 		}
 
-		public string Name {
-			get {
-				return name;
-			}
-
-			set {
-				name = value;
-			}
+		public CodeParameterDeclarationExpression (Type type, string name)
+		{
+			this.type = new CodeTypeReference( type );
+			this.name = name;
 		}
 
-		public CodeAttributeBlock CustomAttributes {
+		//
+		// Properties
+		//
+		public CodeAttributeDeclarationCollection CustomAttributes {
 			get {
+				if ( customAttributes == null )
+					customAttributes = new CodeAttributeDeclarationCollection();
 				return customAttributes;
-			}
-
-			set {
-				customAttributes = value;
 			}
 		}
 
@@ -59,11 +62,27 @@ namespace System.CodeDom {
 			get {
 				return direction;
 			}
-
 			set {
 				direction = value;
 			}
 		}
+
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+			}
+		}
+
+		public CodeTypeReference Type {
+			get {
+				return type;
+			}
+			set {
+				type = value;
+			}
+		}
 	}
 }
-

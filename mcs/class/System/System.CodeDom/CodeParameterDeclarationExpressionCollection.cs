@@ -3,164 +3,98 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
+using System.Collections;
 
-	using System.Collections;
-	
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeParameterDeclarationExpressionCollection : IList, ICollection, IEnumerable {
-
-		ArrayList parameterDeclExprs;
-		
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeParameterDeclarationExpressionCollection
+		: CollectionBase
+	{
 		//
 		// Constructors
 		//
-		public CodeParameterDeclarationExpressionCollection ()
+		public CodeParameterDeclarationExpressionCollection()
 		{
-			parameterDeclExprs = new ArrayList ();
+		}
+
+		public CodeParameterDeclarationExpressionCollection( CodeParameterDeclarationExpression[] value )
+		{
+			AddRange( value );
+		}
+		
+		public CodeParameterDeclarationExpressionCollection( CodeParameterDeclarationExpressionCollection value )
+		{
+			AddRange( value );
 		}
 
 		//
 		// Properties
 		//
-		public int Count {
+		public CodeParameterDeclarationExpression this[int index]
+		{
 			get {
-				return parameterDeclExprs.Count;
+				return (CodeParameterDeclarationExpression)List[index];
+			}
+			set {
+				List[index] = value;
 			}
 		}
-
-                public bool IsFixedSize {
-                        get {
-                                return true;
-                        }
-                }
 
 		//
 		// Methods
 		//
 		public void Add (CodeParameterDeclarationExpression value)
 		{
-			parameterDeclExprs.Add (value);
+			List.Add( value );
 		}
 
-		public void AddRange (CodeParameterDeclarationExpression [] values)
+		public void AddRange (CodeParameterDeclarationExpression [] value )
 		{
-			foreach (CodeParameterDeclarationExpression ca in values) 
-				parameterDeclExprs.Add (ca);
-
-		}
-
-		public void Clear ()
-		{
-			parameterDeclExprs.Clear ();
-		}
-
-		private class Enumerator : IEnumerator {
-			private CodeParameterDeclarationExpressionCollection collection;
-			private int currentIndex = -1;
-
-			internal Enumerator (CodeParameterDeclarationExpressionCollection collection)
-			{
-				this.collection = collection;
-			}
-
-			public object Current {
-				get {
-					if (currentIndex == collection.Count)
-						throw new InvalidOperationException ();
-					return collection [currentIndex];
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (currentIndex > collection.Count)
-					throw new InvalidOperationException ();
-				return ++currentIndex < collection.Count;
-			}
-
-			public void Reset ()
-			{
-				currentIndex = -1;
-			}
+			foreach ( CodeParameterDeclarationExpression elem in value )
+				Add( elem );
 		}
 		
-		public IEnumerator GetEnumerator ()
+		public void AddRange (CodeParameterDeclarationExpressionCollection value)
 		{
-			return new CodeParameterDeclarationExpressionCollection.Enumerator (this);
+			foreach ( CodeParameterDeclarationExpression elem in value )
+				Add( elem );
 		}
 
-		//
-		// IList method implementations
-		//
-		public int Add (object value)
+		public bool Contains( CodeParameterDeclarationExpression value )
 		{
-			return parameterDeclExprs.Add (value);
+			return List.Contains( value );
 		}
-
-		public bool Contains (Object value)
+		
+		public void CopyTo( CodeParameterDeclarationExpression[] array, int index )
 		{
-			return parameterDeclExprs.Contains (value);
+			List.CopyTo( array, index );
 		}
 
-		public int IndexOf (Object value)
+		public int IndexOf( CodeParameterDeclarationExpression value )
 		{
-			return parameterDeclExprs.IndexOf (value);
+			return List.IndexOf( value );
 		}
 
-		public void Insert (int index, Object value)
+		public void Insert( int index, CodeParameterDeclarationExpression value )
 		{
-			parameterDeclExprs [index] = value;
+			List.Insert( index, value );
 		}
 
-		public object this[int index] {
-			get {
-				return parameterDeclExprs [index];
-			}
-
-			set {
-				parameterDeclExprs [index] = value;
-			}
-		}
-
-		public void Remove (object value)
+		public void Remove( CodeParameterDeclarationExpression value )
 		{
-			parameterDeclExprs.Remove (value);
-		}
-
-		public void RemoveAt (int index)
-		{
-			parameterDeclExprs.RemoveAt (index);
-		}
-
-		//
-		// ICollection method implementations
-		//
-		public void CopyTo (Array array, int index)
-		{
-			parameterDeclExprs.CopyTo (array, index);
-		}
-
-		public object SyncRoot {
-			get {
-				return parameterDeclExprs.SyncRoot;
-			}
-		}
-
-		public bool IsReadOnly {
-			get {
-				return false;
-			}
-		}
-
-		public bool IsSynchronized {
-			get {
-				return parameterDeclExprs.IsSynchronized;
-			}
+			int index = IndexOf( value );
+			if ( index < 0 )
+				throw( new ArgumentException( "The specified object is not found in the collection" ) );
+			RemoveAt( index );
 		}
 	}
 }

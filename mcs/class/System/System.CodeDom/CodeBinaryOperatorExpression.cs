@@ -7,34 +7,19 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeBinaryOperatorExpression : CodeExpression {
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeBinaryOperatorExpression
+		: CodeExpression 
+	{
+		private CodeExpression left, right;
+		private CodeBinaryOperatorType op;
 
-		CodeExpression left, right;
-		CodeBinaryOperatorType oper;
-
-		public enum CodeBinaryOperatorType {
-			Add,
-			Substract,
-			Multiply,
-			Divide,
-			Modulus,
-			Assign,
-			IdentityInequality,
-			IdentityEquality,
-			ValueEquality,
-			BitwiseOr,
-			BitwiseAnd,
-			BooleanOr,
-			BooleanAnd,
-			LessThan,
-			LessThanOrEqual,
-			GreatherThan,
-			GreatherThanOrEqual,
-		}
-		
 		//
 		// Constructors
 		//
@@ -42,13 +27,12 @@ namespace System.CodeDom {
 		{
 		}
 
-
 		public CodeBinaryOperatorExpression (CodeExpression left,
-						     CodeBinaryOperatorType oper,
+						     CodeBinaryOperatorType op,
 						     CodeExpression right)
 		{
 			this.left = left;
-			this.oper = oper;
+			this.op = op;
 			this.right = right;
 		}
 
@@ -59,9 +43,17 @@ namespace System.CodeDom {
 			get {
 				return left;
 			}
-
 			set {
 				left = value;
+			}
+		}
+
+		public CodeBinaryOperatorType Operator {
+			get {
+				return op;
+			}
+			set {
+				op = value;
 			}
 		}
 
@@ -69,21 +61,9 @@ namespace System.CodeDom {
 			get {
 				return right;
 			}
-
 			set {
 				right = value;
 			}
 		}
-
-		public CodeBinaryOperatorType Operator {
-			get {
-				return oper;
-			}
-
-			set {
-				oper = value;
-			}
-		}
 	}
 }
-

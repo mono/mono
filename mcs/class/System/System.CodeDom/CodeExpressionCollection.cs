@@ -3,163 +3,98 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
+using System.Collections;
 
-	using System.Collections;
-	
-	public class CodeExpressionCollection : IList, ICollection, IEnumerable {
-
-		ArrayList expressions;
-		
+namespace System.CodeDom 
+{
+	[Serializable]
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeExpressionCollection
+		: CollectionBase
+	{
 		//
 		// Constructors
 		//
-		public CodeExpressionCollection ()
+		public CodeExpressionCollection()
 		{
-			expressions = new ArrayList ();
+		}
+		
+		public CodeExpressionCollection( CodeExpression[] value )
+		{
+			AddRange( value );
+		}
+
+		public CodeExpressionCollection( CodeExpressionCollection value )
+		{
+			AddRange( value );
 		}
 
 		//
 		// Properties
 		//
-		public int Count {
+		public CodeExpression this[int index]
+		{
 			get {
-				return expressions.Count;
+				return (CodeExpression)List[index];
+			}
+			set {
+				List[index] = value;
 			}
 		}
-
-                public bool IsFixedSize {
-                        get {
-                                return true;
-                        }
-                }
 
 		//
 		// Methods
 		//
 		public void Add (CodeExpression value)
 		{
-			expressions.Add (value);
+			List.Add( value );
 		}
 
-		public void AddRange (CodeExpression [] values)
+		public void AddRange (CodeExpression [] value )
 		{
-			foreach (CodeExpression ca in values) 
-				expressions.Add (ca);
-
-		}
-
-		public void Clear ()
-		{
-			expressions.Clear ();
-		}
-
-		private class Enumerator : IEnumerator {
-			private CodeExpressionCollection collection;
-			private int currentIndex = -1;
-
-			internal Enumerator (CodeExpressionCollection collection)
-			{
-				this.collection = collection;
-			}
-
-			public object Current {
-				get {
-					if (currentIndex == collection.Count)
-						throw new InvalidOperationException ();
-					return collection [currentIndex];
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (currentIndex > collection.Count)
-					throw new InvalidOperationException ();
-				return ++currentIndex < collection.Count;
-			}
-
-			public void Reset ()
-			{
-				currentIndex = -1;
-			}
+			foreach ( CodeExpression elem in value )
+				Add( elem );
 		}
 		
-		public IEnumerator GetEnumerator ()
+		public void AddRange (CodeExpressionCollection value)
 		{
-			return new CodeExpressionCollection.Enumerator (this);
+			foreach ( CodeExpression elem in value )
+				Add( elem );
 		}
 
-		//
-		// IList method implementations
-		//
-		public int Add (object value)
+		public bool Contains( CodeExpression value )
 		{
-			return expressions.Add (value);
+			return List.Contains( value );
 		}
-
-		public bool Contains (Object value)
+		
+		public void CopyTo( CodeExpression[] array, int index )
 		{
-			return expressions.Contains (value);
+			List.CopyTo( array, index );
 		}
 
-		public int IndexOf (Object value)
+		public int IndexOf( CodeExpression value )
 		{
-			return expressions.IndexOf (value);
+			return List.IndexOf( value );
 		}
 
-		public void Insert (int index, Object value)
+		public void Insert( int index, CodeExpression value )
 		{
-			expressions [index] = value;
+			List.Insert( index, value );
 		}
 
-		public object this[int index] {
-			get {
-				return expressions [index];
-			}
-
-			set {
-				expressions [index] = value;
-			}
-		}
-
-		public void Remove (object value)
+		public void Remove( CodeExpression value )
 		{
-			expressions.Remove (value);
-		}
-
-		public void RemoveAt (int index)
-		{
-			expressions.RemoveAt (index);
-		}
-
-		//
-		// ICollection method implementations
-		//
-		public void CopyTo (Array array, int index)
-		{
-			expressions.CopyTo (array, index);
-		}
-
-		public object SyncRoot {
-			get {
-				return expressions.SyncRoot;
-			}
-		}
-
-		public bool IsReadOnly {
-			get {
-				return false;
-			}
-		}
-
-		public bool IsSynchronized {
-			get {
-				return expressions.IsSynchronized;
-			}
+			int index = IndexOf( value );
+			if ( index < 0 )
+				throw( new ArgumentException( "The specified object is not found in the collection" ) );
+			RemoveAt( index );
 		}
 	}
 }

@@ -3,41 +3,42 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeConstructor : CodeMemberMethod {
-		CodeExpressionCollection baseConstructorArgs;
-		CodeExpressionCollection chainedConstructorArgs;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeConstructor
+		: CodeMemberMethod 
+	{
+		private CodeExpressionCollection baseConstructorArgs;
+		private CodeExpressionCollection chainedConstructorArgs;
 		
 		//
-		// Constructors
+		// Properties
 		//
-		public CodeConstructor ()
-		{
-		}
-
 		public CodeExpressionCollection BaseConstructorArgs {
 			get {
-				return baseConstructorArgs;
-			}
+				if ( baseConstructorArgs == null )
+					baseConstructorArgs = new CodeExpressionCollection();
 
-			set {
-				baseConstructorArgs = value;
+				return baseConstructorArgs;
 			}
 		}
 
 		public CodeExpressionCollection ChainedConstructorArgs {
 			get {
-				return chainedConstructorArgs;
-			}
+				if ( chainedConstructorArgs == null )
+					chainedConstructorArgs = new CodeExpressionCollection();
 
-			set {
-				chainedConstructorArgs = value;
+				return chainedConstructorArgs;
 			}
 		}
 	}

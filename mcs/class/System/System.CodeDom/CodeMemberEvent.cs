@@ -3,46 +3,57 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeMemberEvent : CodeTypeMember {
-		string implementsType, type;
-		bool   privateImplements;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeMemberEvent
+		: CodeTypeMember
+	{
+		private CodeTypeReference implementationType;
+		private CodeTypeReference privateImplementationType;
+		private CodeTypeReference type;
 		
+		//
+		// Constructors
+		//
 		public CodeMemberEvent ()
 		{
 		}
 
-		public string ImplementsType {
+		//
+		// Properties
+		//
+		public CodeTypeReference ImplementationTypes {
 			get {
-				return implementsType;
+				return implementationType;
 			}
-
 			set {
-				implementsType = value;
+				implementationType = value;
 			}
 		}
 
-		public bool PrivateImplements {
+		public CodeTypeReference PrivateImplementationType {
 			get {
-				return privateImplements;
+				return privateImplementationType;
 			}
-
 			set {
-				privateImplements = value;
+				privateImplementationType = value;
 			}
 		}
 
-		public string Type {
+		public CodeTypeReference Type {
 			get {
 				return type;
 			}
-
 			set {
 				type = value;
 			}

@@ -3,66 +3,62 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom 
+{
 	[Serializable]
-	public class CodeMethodInvokeExpression : CodeExpression {
-		string methodName;
-		CodeExpression targetObject;
-		CodeExpressionCollection parameters;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeMethodInvokeExpression
+		: CodeExpression 
+	{
+		private CodeMethodReferenceExpression method;
+		private CodeExpressionCollection parameters;
 		
 		//
 		// Constructors
 		//
-		public CodeMethodInvokeExpression () {}
-
-		public CodeMethodInvokeExpression (CodeExpression targetObject, string methodName)
+		public CodeMethodInvokeExpression () 
 		{
-			this.targetObject = targetObject;
-			this.methodName = methodName;
 		}
 
-		public CodeMethodInvokeExpression (CodeExpression targetObject,
-						   string methodName,
-						   CodeExpression [] parameters)
+		public CodeMethodInvokeExpression (CodeMethodReferenceExpression method, params CodeExpression[] parameters)
 		{
-			this.targetObject = targetObject;
-			this.methodName = methodName;
-			this.parameters = new CodeExpressionCollection ();
-			this.parameters.AddRange (parameters);
+			this.method = method;
+			this.Parameters.AddRange( parameters );
 		}
 
-		public string MethodName {
+		public CodeMethodInvokeExpression ( CodeExpression targetObject,
+						    string methodName,
+						    CodeExpression [] parameters)
+		{
+			this.method = new CodeMethodReferenceExpression( targetObject, methodName );
+			this.Parameters.AddRange (parameters);
+		}
+
+		//
+		// Properties
+		//
+		public CodeMethodReferenceExpression Method {
 			get {
-				return methodName;
+				return method;
 			}
-
 			set {
-				methodName = value;
+				method = value;
 			}
 		}
 
 		public CodeExpressionCollection Parameters {
 			get {
+				if ( parameters == null )
+					parameters = new CodeExpressionCollection();
 				return parameters;
-			}
-
-			set {
-				parameters = value;
-			}
-		}
-
-		public CodeExpression TargetObject {
-			get {
-				return targetObject;
-			}
-
-			set {
-				targetObject = value;
 			}
 		}
 	}

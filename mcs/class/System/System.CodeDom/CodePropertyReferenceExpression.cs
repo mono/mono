@@ -3,19 +3,30 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodePropertyReferenceExpression : CodeExpression {
-		CodeExpressionCollection parameters;
-		CodeExpression targetObject;
-		string propertyName;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodePropertyReferenceExpression
+		: CodeExpression 
+	{
+		private CodeExpression targetObject;
+		private string propertyName;
 		
-		public CodePropertyReferenceExpression () {}
+		//
+		// Constructors
+		//
+		public CodePropertyReferenceExpression () 
+		{
+		}
 
 		public CodePropertyReferenceExpression (CodeExpression targetObject,
 							string propertyName)
@@ -27,21 +38,10 @@ namespace System.CodeDom {
 		//
 		// Properties
 		//
-		public CodeExpressionCollection Parameter {
-			get {
-				return parameters;
-			}
-
-			set {
-				parameters = value;
-			}
-		}
-
 		public string PropertyName {
 			get {
 				return propertyName;
 			}
-
 			set {
 				propertyName = value;
 			}
@@ -51,7 +51,6 @@ namespace System.CodeDom {
 			get {
 				return targetObject;
 			}
-
 			set {
 				targetObject = value;
 			}

@@ -7,11 +7,15 @@
 // (C) 2001 Ximian, Inc.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.CodeDom {
-
 	[Serializable]
-	public class CodeAssignStatement : CodeStatement {
-
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeAssignStatement
+		: CodeStatement 
+	{
 		CodeExpression left, right;
 
 		//
@@ -34,7 +38,6 @@ namespace System.CodeDom {
 			get {
 				return left;
 			}
-
 			set {
 				left = value;
 			}
@@ -44,7 +47,6 @@ namespace System.CodeDom {
 			get {
 				return right;
 			}
-
 			set {
 				right = value;
 			}

@@ -3,15 +3,22 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
-// (C) 2001 Ximian, Inc.
+// (C) 2001, 2002 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeCommentStatement : CodeStatement {
-		string text;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeCommentStatement
+		: CodeStatement
+	{
+		private CodeComment comment;
 		
 		//
 		// Constructors
@@ -20,21 +27,31 @@ namespace System.CodeDom {
 		{
 		}
 
-		public CodeCommentStatement (string text)
+		public CodeCommentStatement (CodeComment comment)
 		{
-			this.text = text;
+			this.comment = comment;
 		}
 
-		string Text {
-			get {
-				return text;
-			}
+		public CodeCommentStatement (string text)
+		{
+			this.comment = new CodeComment( text );
+		}
+		
+		public CodeCommentStatement (string text, bool docComment)
+		{
+			this.comment = new CodeComment( text, docComment );
+		}
 
+		//
+		// Properties
+		//
+		public CodeComment Comment {
+			get {
+				return comment;
+			}
 			set {
-				text = value;
+				comment = value;
 			}
 		}
 	}
 }
-
-			

@@ -3,25 +3,35 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
+using System.Collections;
 
-	using System.Collections;
-	
+namespace System.CodeDom
+{
+	/*
+	 * Should probably be derived from CollectionBase like any
+	 * other System.CodeDom.*Collection. MS docs say it currently
+	 * is not, for whichever reason.
+	 */
 	[Serializable]
-	public class CodeNamespaceImportCollection : IList, ICollection, IEnumerable {
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeNamespaceImportCollection
+		: IList, ICollection, IEnumerable
+	{
+		private ArrayList namespaceImports;
 
-		ArrayList namespaceImports;
-		
 		//
 		// Constructors
 		//
 		public CodeNamespaceImportCollection ()
 		{
-			namespaceImports = new ArrayList ();
+			namespaceImports = new ArrayList();
 		}
 
 		//
@@ -33,10 +43,13 @@ namespace System.CodeDom {
 			}
 		}
 
-                public bool IsFixedSize {
+                public CodeNamespaceImport this [int index] {
                         get {
-                                return true;
+                                return (CodeNamespaceImport)namespaceImports[index];
                         }
+			set {
+				namespaceImports[index] = value;
+			}
                 }
 
 		//
@@ -47,11 +60,10 @@ namespace System.CodeDom {
 			namespaceImports.Add (value);
 		}
 
-		public void AddRange (CodeNamespaceImport [] values)
+		public void AddRange (CodeNamespaceImport [] value)
 		{
-			foreach (CodeNamespaceImport ca in values) 
-				namespaceImports.Add (ca);
-
+			foreach (CodeNamespaceImport elem in value) 
+				namespaceImports.Add (elem);
 		}
 
 		public void Clear ()
@@ -59,108 +71,80 @@ namespace System.CodeDom {
 			namespaceImports.Clear ();
 		}
 
-		private class Enumerator : IEnumerator {
-			private CodeNamespaceImportCollection collection;
-			private int currentIndex = -1;
-
-			internal Enumerator (CodeNamespaceImportCollection collection)
-			{
-				this.collection = collection;
-			}
-
-			public object Current {
-				get {
-					if (currentIndex == collection.Count)
-						throw new InvalidOperationException ();
-					return collection [currentIndex];
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (currentIndex > collection.Count)
-					throw new InvalidOperationException ();
-				return ++currentIndex < collection.Count;
-			}
-
-			public void Reset ()
-			{
-				currentIndex = -1;
-			}
-		}
-		
-		public IEnumerator GetEnumerator ()
-		{
-			return new CodeNamespaceImportCollection.Enumerator (this);
-		}
-
-		//
-		// IList method implementations
-		//
-		public int Add (object value)
-		{
-			return namespaceImports.Add (value);
-		}
-
-		public bool Contains (Object value)
-		{
-			return namespaceImports.Contains (value);
-		}
-
-		public int IndexOf (Object value)
-		{
-			return namespaceImports.IndexOf (value);
-		}
-
-		public void Insert (int index, Object value)
-		{
-			namespaceImports [index] = value;
-		}
-
-		public object this[int index] {
-			get {
-				return namespaceImports [index];
-			}
-
-			set {
-				namespaceImports [index] = value;
-			}
-		}
-
-		public void Remove (object value)
-		{
-			namespaceImports.Remove (value);
-		}
-
-		public void RemoveAt (int index)
-		{
-			namespaceImports.RemoveAt (index);
-		}
-
-		//
-		// ICollection method implementations
-		//
-		public void CopyTo (Array array, int index)
-		{
-			namespaceImports.CopyTo (array, index);
-		}
-
-		public object SyncRoot {
-			get {
-				return namespaceImports.SyncRoot;
-			}
-		}
-
-		public bool IsReadOnly {
+		// IList implementation
+		bool IList.IsFixedSize {
 			get {
 				return false;
 			}
 		}
 
-		public bool IsSynchronized {
+		bool IList.IsReadOnly {
+			get {
+				return false;
+			}
+		}
+
+		object IList.this[int index] {
+			get {
+				return namespaceImports[index];
+			}
+			set {
+				namespaceImports[index] = value;
+			}
+		}
+
+		int IList.Add( object value )
+		{
+			return namespaceImports.Add( value );
+		}
+		
+		bool IList.Contains( object value )
+		{
+			return namespaceImports.Contains( value );
+		}
+		
+		int IList.IndexOf( object value )
+		{
+			return namespaceImports.IndexOf( value );
+		}
+
+		void IList.Insert( int index, object value )
+		{
+			namespaceImports.Insert( index, value );
+		}
+
+		void IList.Remove( object value )
+		{
+			namespaceImports.Remove( value );
+		}
+		
+		void IList.RemoveAt( int index )
+		{
+			namespaceImports.RemoveAt( index );
+		}
+
+		// ICollection implementation
+		object ICollection.SyncRoot {
+			get {
+				return namespaceImports.SyncRoot;
+			}
+		}
+
+		bool ICollection.IsSynchronized {
 			get {
 				return namespaceImports.IsSynchronized;
 			}
+		}
+
+		void ICollection.CopyTo( Array array, int index )
+		{
+			namespaceImports.CopyTo( array, index );
+		}
+
+		// IEnumerable implementation
+		public IEnumerator GetEnumerator ()
+		{
+			return namespaceImports.GetEnumerator();
 		}
 	}
 }

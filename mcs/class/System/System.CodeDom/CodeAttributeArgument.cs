@@ -7,12 +7,17 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom {
+using System.Runtime.InteropServices;
 
+namespace System.CodeDom
+{
 	[Serializable]
-	public class CodeAttributeArgument {
-		string name;
-		CodeExpression val;
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	public class CodeAttributeArgument
+	{
+		private string name;
+		private CodeExpression value;
 		
 		//
 		// Constructors
@@ -23,23 +28,22 @@ namespace System.CodeDom {
 
 		public CodeAttributeArgument (CodeExpression value)
 		{
+			this.value = value;
 		}
 
-		public CodeAttributeArgument (string name, CodeExpression val)
+		public CodeAttributeArgument (string name, CodeExpression value)
 		{
 			this.name = name;
-			this.val = val;
+			this.value = value;
 		}
 
 		//
 		// Properties
 		//
-
 		public string Name {
 			get {
 				return name;
 			}
-
 			set {
 				name = value;
 			}
@@ -47,15 +51,11 @@ namespace System.CodeDom {
 
 		public CodeExpression Value {
 			get {
-				return val;
+				return this.value;
 			}
-
 			set {
-				val = value;
+				this.value = value;
 			}
 		}
-
-		
 	}
-
 }
