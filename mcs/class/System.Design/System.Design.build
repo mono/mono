@@ -2,7 +2,7 @@
 
 <!-- NAnt build file for System.Design.dll -->
 
-<project name="System" default="build">
+<project name="System.Design" default="build">
 	<property name="debug" value="false"/>
 
 	<target name="build">
