@@ -757,21 +757,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Handles expressions like this: decimal d; d = 1;
-		///   and changes them into: decimal d; d = new System.Decimal (1);
-		/// </summary>
-		static Expression InternalTypeConstructor (EmitContext ec, Expression expr, Type target)
-		{
-			ArrayList args = new ArrayList ();
-
-			args.Add (new Argument (expr, Argument.AType.Expression));
-
-			Expression ne = new New (new TypeExpr (target, Location.Null), args, Location.Null);
-
-			return ne.Resolve (ec);
-		}
-
-		/// <summary>
 		///   Implicit Numeric Conversions.
 		///
 		///   expr is the expression to convert, returns a new expression of type
@@ -819,8 +804,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.short_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double
@@ -839,8 +822,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to int, long, float, double
@@ -853,8 +834,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to int, uint, long, ulong, float, double
@@ -872,8 +851,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to long, float, double
@@ -884,8 +861,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to long, ulong, float, double
@@ -900,8 +875,6 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long/ulong to float, double
@@ -910,8 +883,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);	
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.uint64_type){
 				//
 				// From ulong to float, double
@@ -922,8 +893,6 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);	
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to ushort, int, uint, long, ulong, float, double
@@ -940,8 +909,6 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// float to double
@@ -1981,8 +1948,6 @@ namespace Mono.CSharp {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U8);
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_CH);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} else if (expr_type == TypeManager.double_type){
 				//
 				// From double to byte, byte, short,
@@ -2009,8 +1974,6 @@ namespace Mono.CSharp {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_CH);
 				if (real_target_type == TypeManager.float_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (ec, expr, target_type);
 			} 
 
 			// decimal is taken care of by the op_Explicit methods.

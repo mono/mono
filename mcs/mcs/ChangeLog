@@ -1,5 +1,10 @@
 2002-10-03  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (Expression.ConvertNumericExplicit,
+	Expression.ImplicitNumericConversion): Remove the code that
+	manually wrapped decimal (InternalTypeConstructor call is now gone
+	as well).
+
 	* expression.cs (Cast.TryReduce): Also handle decimal types when
 	trying to perform a constant fold on the type.
 
