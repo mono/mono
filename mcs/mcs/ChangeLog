@@ -1,7 +1,12 @@
+2004-06-15  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #59781
+	* expression.cs: (Binary.DoNumericPromotions): Added conversion for
+	ulong.
+
 2004-06-14  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #58254 & cs1555.cs, cs1556.cs
-
 	* driver.cs (MainDriver): Added tests for errors CS1555, CS1556.
 
 2004-06-14  Marek Safar  <marek.safar@seznam.cz>

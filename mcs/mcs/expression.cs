@@ -2138,6 +2138,10 @@ namespace Mono.CSharp {
 				    (other == TypeManager.int32_type) ||
 				    (other == TypeManager.int64_type))
 					Error_OperatorAmbiguous (loc, oper, l, r);
+				else {
+					left = ForceConversion (ec, left, TypeManager.uint64_type);
+					right = ForceConversion (ec, right, TypeManager.uint64_type);
+				}
 				type = TypeManager.uint64_type;
 			} else if (IsOfType (ec, l, r, TypeManager.int64_type, check_user_conv)){
 				//
