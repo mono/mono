@@ -1,3 +1,8 @@
+2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: use the Cache to store compiled Types. Don't parse
+	pages more than once. Thanks to Eric Lindvall for pointing this out.
+
 2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: allow handling subproperties for other

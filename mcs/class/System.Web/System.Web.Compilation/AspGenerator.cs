@@ -11,6 +11,7 @@ using System.Collections;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
+using System.Web.Caching;
 using System.Web.UI;
 using System.Web.Util;
 
@@ -176,6 +177,11 @@ namespace System.Web.Compilation
 
 		public Type GetCompiledType ()
 		{
+			Type type = (Type) HttpRuntime.Cache.Get (tparser.InputFile);
+			if (type != null) {
+				return type;
+			}
+
 			InitParser (Path.GetFullPath (tparser.InputFile));
 			DoParse ();
 #if DEBUG
@@ -188,7 +194,12 @@ namespace System.Web.Compilation
 
 			BaseCompiler compiler = GetCompilerFromType ();
 
-			return compiler.GetCompiledType ();
+			type = compiler.GetCompiledType ();
+			CacheDependency cd = new CacheDependency ((string[])
+							tparser.Dependencies.ToArray (typeof (string)));
+
+			HttpRuntime.Cache.Insert (tparser.InputFile, type, cd);
+			return type;
 		}
 
 #if DEBUG
