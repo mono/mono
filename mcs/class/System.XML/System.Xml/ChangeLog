@@ -1,6 +1,7 @@
 2004-02-11  Atsushi Enomoto <atsushi@ximian.com>
 
-	* XmlTextWriter.cs, XmlTextWriterOpenElement.cs.
+	* XmlTextWriter.cs, XmlTextWriterOpenElement.cs :
+	  Reduced creation of openlElement. It also saves much memory.
 
 2004-02-10  Atsushi Enomoto <atsushi@ximian.com>
 
