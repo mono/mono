@@ -155,7 +155,7 @@ namespace Mono.CSharp {
 					return null;
 
 				e = a.Expr;
-				if (e is EnumConstant) {
+				if ((e is EnumConstant) && !(e.Type is TypeBuilder)) {
 					pos_values [i] = System.Enum.ToObject (
 						e.Type, ((Constant) e).GetValue ());
 				} else if (e is Constant) {
