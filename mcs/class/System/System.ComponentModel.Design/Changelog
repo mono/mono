@@ -1,0 +1,16 @@
+2002-11-30  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+
+	* System.ComponentModel.Design/CommandID.cs
+	  System.ComponentModel.Design/DesignerTransactionCloseEventArgs.cs
+	  System.ComponentModel.Design/DesignerTransactionCloseEventHandler.cs
+	  System.ComponentModel.Design/DesignerTransaction.cs
+	  System.ComponentModel.Design/DesignerVerbCollection.cs
+	  System.ComponentModel.Design/DesignerVerb.cs
+	  System.ComponentModel.Design/IDesigner.cs  
+	  System.ComponentModel.Design/IDesignerHost.cs
+	  System.ComponentModel.Design/IResourceService.cs
+	  System.ComponentModel.Design/ISelectionService.cs
+	  System.ComponentModel.Design/IServiceContainer.cs
+	  System.ComponentModel.Design/MenuCommand.cs
+	  System.ComponentModel.Design/ServiceCreatorCallback.cs : Added.
+	
