@@ -311,7 +311,7 @@ namespace System.Web.Security
 				return tOld;
 
 			FormsAuthenticationTicket tNew = tOld.Clone ();
-			tNew.SetDates (now, now - toExpiration + toIssue);
+			tNew.SetDates (now, now + (tOld.Expiration - tOld.IssueDate));
 			return tNew;
 		}
 
