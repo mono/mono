@@ -1,5 +1,7 @@
 2004-07-23  zovarga  <vargaz@freemail.hu>
 
+	* mini-sparc.c (mono_arch_is_inst_imm): New arch dependent function.
+
 	* mini.h: Add new arch dependent function mono_arch_is_inst_imm.
 
 	* mini-ops.h: Add new opcodes.
