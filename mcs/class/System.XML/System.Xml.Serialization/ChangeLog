@@ -1,3 +1,8 @@
+2002-08-14  Tim Coleman <tim@timcoleman.com>
+	* XmlSerializer.cs:
+		More reformatting of source code so I can
+		better understand what it does.
+
 2002-08-06  Tim Coleman <tim@timcoleman.com>
 	* XmlSerializer.cs:
 		Some reformatting of code for readability.
