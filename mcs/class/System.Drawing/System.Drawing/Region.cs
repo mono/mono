@@ -12,11 +12,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing
 {
-	[ComVisible(false)]
+	[ComVisible (false)]
 	[MonoTODO ("Not implemented")]
 	public sealed class Region : MarshalByRefObject, IDisposable
 	{
-		public Region()
+		public Region ()
 		{
 			// Initialize region with infinite interior.
 		}
@@ -157,77 +157,77 @@ namespace System.Drawing
 		//
 		// IsVisible
 		//
-		public bool IsVisible(int x, int y, Graphics g)
+		public bool IsVisible (int x, int y, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(int x, int y, int width, int height)
+		public bool IsVisible (int x, int y, int width, int height)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(int x, int y, int width, int height, Graphics g)
+		public bool IsVisible (int x, int y, int width, int height, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(Point point)
+		public bool IsVisible (Point point)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(PointF point)
+		public bool IsVisible (PointF point)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(Point point, Graphics g)
+		public bool IsVisible (Point point, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(PointF point, Graphics g)
+		public bool IsVisible (PointF point, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(Rectangle rect)
+		public bool IsVisible (Rectangle rect)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(RectangleF rect)
+		public bool IsVisible (RectangleF rect)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(Rectangle rect, Graphics g)
+		public bool IsVisible (Rectangle rect, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(RectangleF rect, Graphics g)
+		public bool IsVisible (RectangleF rect, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(float x, float y)
+		public bool IsVisible (float x, float y)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(float x, float y, Graphics g)
+		public bool IsVisible (float x, float y, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(float x, float y, float width, float height)
+		public bool IsVisible (float x, float y, float width, float height)
 		{
 		    throw new NotImplementedException ();
 		}
 
-		public bool IsVisible(float x, float y, float width, float height, Graphics g)
+		public bool IsVisible (float x, float y, float width, float height, Graphics g)
 		{
 		    throw new NotImplementedException ();
 		}
@@ -257,7 +257,8 @@ namespace System.Drawing
 		}
 		
 		
-		public Region Clone()
+		[ComVisible (false)]
+		public Region Clone ()
 		{
 			return this;
 		}

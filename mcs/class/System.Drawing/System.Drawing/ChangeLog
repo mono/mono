@@ -1,5 +1,7 @@
 2004-03-04  Duncan Mak  <duncan@ximian.com>
 
+	* Region.cs: Indentation.
+
 	* RectangleF.cs: Changed the internal structure from a PointF,
 	SizeF to floats in order to match the layout from the C API.
 
