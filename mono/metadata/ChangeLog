@@ -1,4 +1,11 @@
 
+Thu Feb 21 16:45:34 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, icall.c, metadata.c: better support for pointer types.
+	Create a class for them as suggested by dietmar. Fix TYPE_ARRAY class.
+	* reflection.c: Add support for getting custom attrs for properties
+	and simplify some code.
+
 Wed Feb 20 22:20:29 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: change getToken () and add custom attribute GetBlob()helper
