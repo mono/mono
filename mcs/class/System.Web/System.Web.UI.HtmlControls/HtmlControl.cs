@@ -23,7 +23,7 @@ namespace System.Web.UI.HtmlControls{
 	{
 		internal string _tagName;
 		private AttributeCollection _attributes;
-		private bool _disabled = false;
+
 		
 		public HtmlControl() : this ("span") {}
 		
@@ -106,8 +106,16 @@ namespace System.Web.UI.HtmlControls{
 		[WebCategory("Behavior")]
 		public bool Disabled
 		{
-			get { return _disabled; }
-			set { _disabled = value; }
+			get {
+				string disableAttr = Attributes["disabled"] as string;
+				return (disableAttr != null);
+                        }
+			set {
+                                if (value)
+                                        Attributes.Remove ("disabled");
+                                else
+                                        Attributes["disabled"] = "disabled";
+                        }
 		}
 
 		[Browsable(false)]

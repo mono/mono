@@ -1,3 +1,9 @@
+2003-10-29 Jackson Harper <jackson@ximian.com>
+
+	* HtmlControl.cs: Make disabled an attribute of the control so it
+	is rendered. This is a slightly modifed version of a patch
+	by Yaron Shkop. Fixes bug #50160.
+	
 2003-10-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextArea.cs: fixed infinite recursion.
