@@ -1,5 +1,9 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* gcs3024.cs: New test.
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
 	* cs3002-4.cs: Renamed to cs3003-2.cs.
 	* cs3002-7.cs: Renamed to cs3003-3.cs.
 	* cs3002-8.cs: Renamed to cs3003-4.cs.
