@@ -1,3 +1,8 @@
+
+Tue Aug 3 01:35:44 PDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: mul.ovf.un exception name fix.
+
 2004-08-03  Martin Baulig  <martin@ximian.com>
 
 	* mini-x86.c (mono_arch_call_opcode): Correctly handle generic
