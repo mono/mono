@@ -1,3 +1,13 @@
+2003-06-28  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_test.args: Added PermissionSetTest.cs and NamedPermissionSetTest.cs
+	in System.Security. Added EnvironmentPermissionAttributeTest.cs,
+	EnvironmentPermissionTest.cs, FileDialogPermissionAttributeTest.cs,
+	FileDialogPermissionTest.cs, FileIOPermissionAttributeTest.cs,
+	PublisherIdentityPermissionAttributeTest.cs, 
+	PublisherIdentityPermissionTest.cs in System.Security.Permissions
+	* corlib_test.args: Same.
+
 2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib_test.args: Added PropertyBuilderTest.cs.
