@@ -1,3 +1,7 @@
+2002-07-02  Ajay kumar Dwivedi <adwiv@yahoo.com>
+	
+	* XmlSeriailizer: Updated Serialize() method.
+
 2002-06-27 Ajay kumar Dwivedi <adwiv@yahoo.com>
 	* XmlSerializer: Serialize() method Partially Implemented.
 

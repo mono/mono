@@ -38,7 +38,7 @@ namespace System.Xml.Serialization
 		private FieldInfo  finfo;
 		private PropertyInfo pinfo;
 		internal ArrayList XmlIncludes;
-		internal string ElementName;
+		//internal string ElementName;
 
 		//The element Order in serialization.
 		internal int order;
@@ -63,7 +63,6 @@ namespace System.Xml.Serialization
 					if(atty.isAttribute)
 						return 1;
 					int diff = attx.order - atty.order;
-					Console.WriteLine("Diff is "+diff);
 					if(diff == 0)
 						return 0;
 					if(diff > 0)
@@ -299,15 +298,11 @@ namespace System.Xml.Serialization
 			object[] attributes = classType.GetCustomAttributes(false);
 			foreach(object obj in attributes)
 			{
-				Console.WriteLine(obj);
 				if(obj is XmlRootAttribute)
 					XmlAttr.xmlRoot = (XmlRootAttribute) obj;
 				else if(obj is XmlIncludeAttribute)
 					XmlAttr.XmlIncludes.Add(obj);
-				else
-					throw new Exception("Should never happen. Only XmlRoot and XmlInclude attributes can be applied to a Class");
 			}
-			XmlAttr.ElementName = "";
 			return XmlAttr;
 		}
 
@@ -319,7 +314,6 @@ namespace System.Xml.Serialization
 
 			XmlAttr.minfo = member;
 			XmlAttr.finfo = finfo;
-			XmlAttr.ElementName = member.Name;
 
 			return XmlAttr;
 		}
@@ -327,14 +321,13 @@ namespace System.Xml.Serialization
 		
 		internal static XmlAttributes FromProperty(MemberInfo member, PropertyInfo pinfo)
 		{
+
 			XmlAttributes XmlAttr = new XmlAttributes();
 			object[] attributes = member.GetCustomAttributes(false);
-			Console.WriteLine(member.Name + ":"+ attributes.Length);
 			XmlAttr.AddMemberAttributes(attributes);
 
 			XmlAttr.minfo = member;
 			XmlAttr.pinfo = pinfo;
-			XmlAttr.ElementName = member.Name;
 			return XmlAttr;
 		}
 
@@ -389,7 +382,7 @@ namespace System.Xml.Serialization
 				}
 				else if(obj is DefaultValueAttribute)
 				{
-					xmlDefaultValue = obj;
+					xmlDefaultValue = ((DefaultValueAttribute ) obj).Value;
 				}
 				else if(obj is XmlEnumAttribute)
 				{
@@ -408,6 +401,43 @@ namespace System.Xml.Serialization
 					xmlType = (XmlTypeAttribute) obj;
 				}
 			}
+		}
+
+		internal string GetAttributeName(Type type, string defaultName)
+		{
+			if(XmlAttribute != null && XmlAttribute.AttributeName != null && XmlAttribute.AttributeName != "")
+				return XmlAttribute.AttributeName;
+			return defaultName;
+		}
+
+		internal string GetElementName(Type type, string defaultName)
+		{
+			foreach(XmlElementAttribute elem in XmlElements)
+			{
+				if(elem.Type == type && elem.ElementName != null && elem.ElementName != "")
+					return elem.ElementName;
+				else if(elem.Type == null && elem.ElementName != null && elem.ElementName != "")
+					return elem.ElementName;
+			}
+			return defaultName;
+		}
+
+		internal string GetAttributeNamespace(Type type)
+		{
+			if(XmlAttribute != null)
+				return XmlAttribute.Namespace;
+			return null;
+		}
+		internal string GetElementNamespace(Type type)
+		{
+			foreach(XmlElementAttribute elem in XmlElements)
+			{
+				if(elem.Type == type )
+					return elem.Namespace;
+				else if(elem.Type == null)
+					return elem.Namespace;
+			}
+			return null;
 		}
 	}
 }
