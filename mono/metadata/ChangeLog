@@ -1,3 +1,6 @@
+2002-02-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* appdomain.c (mono_init): Be even more descriptive about the error.
 
 Tue Feb 26 16:18:07 CET 2002 Paolo Molaro <lupus@ximian.com>
 
