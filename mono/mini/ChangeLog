@@ -1,3 +1,8 @@
+2004-09-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (mini_regression_list): Do not call mono_assembly_close 
+	since assemblies can't be unloaded.
+	
 2004-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md: Fix more instruction lengths.
