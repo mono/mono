@@ -1,5 +1,11 @@
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (MemberBase.DoDefine): When reporting a wrong
+	accessibility level, we use MethodCore to compare instead of
+	Method (this was a regression in some refactoring effort).
+
+	So now we correctly report cs0056 again.
+
 	* convert.cs (ImplicitReferenceConversion): Corrected typo, I was
 	testing the target_type (which was known to be object_type) and
 	not the source type (which is anonymous_method).

@@ -4888,8 +4888,8 @@ namespace Mono.CSharp {
 						      "Inconsistent accessibility: indexer return type `" +
 						      TypeManager.CSharpName (MemberType) + "' is less " +
 						      "accessible than indexer `" + Name + "'");
-				else if (this is Method) {
-					if (((Method) this).IsOperator)
+				else if (this is MethodCore) {
+					if (this is Operator)
 						Report.Error (56, Location,
 							      "Inconsistent accessibility: return type `" +
 							      TypeManager.CSharpName (MemberType) + "' is less " +
@@ -4899,11 +4899,12 @@ namespace Mono.CSharp {
 							      "Inconsistent accessibility: return type `" +
 							      TypeManager.CSharpName (MemberType) + "' is less " +
 							      "accessible than method `" + Name + "'");
-				} else
+				} else {
 					Report.Error (52, Location,
 						      "Inconsistent accessibility: field type `" +
 						      TypeManager.CSharpName (MemberType) + "' is less " +
 						      "accessible than field `" + Name + "'");
+				}
 				return false;
 			}
 
