@@ -225,10 +225,10 @@ public class StreamWriterTest : TestCase
 			w.Write(3);
 			w.Write(4);
 			AssertEquals("Should be nothing before flush",
-				     0, m.Length);
+				     0L, m.Length);
 			w.Flush();
 			AssertEquals("Should be something after flush",
-				     4, m.Length);
+				     4L, m.Length);
 		}		
 		{
 			MemoryStream m = new MemoryStream();
@@ -239,10 +239,10 @@ public class StreamWriterTest : TestCase
 			w.Write(3);
 			w.Write(4);
 			AssertEquals("Should be something before flush",
-				     4, m.Length);
+				     4L, m.Length);
 			w.Flush();
 			AssertEquals("Should be something after flush",
-				     4, m.Length);
+				     4L, m.Length);
 		}		
 	}
 
@@ -307,10 +307,10 @@ public class StreamWriterTest : TestCase
 			w.Write(3);
 			w.Write(4);
 			AssertEquals("Should be nothing before flush",
-				     0, m.Length);
+				     0L, m.Length);
 			w.Flush();
 			AssertEquals("Should be something after flush",
-				     4, m.Length);
+				     4L, m.Length);
 		}		
 	}
 

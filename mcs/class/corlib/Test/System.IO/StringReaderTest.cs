@@ -28,16 +28,16 @@ public class StringReaderTest : TestCase {
 	public void TestPeekRead() {
 		StringReader reader = new StringReader( "Test String" );
 
-		int c = reader.Peek();
-		AssertEquals( c, 'T' );
+		char c = (char)reader.Peek();
+		AssertEquals("A1", 'T', c );
 
-		int read = reader.Read();
+		char read = (char)reader.Read();
 
-		AssertEquals( read, 'T' );
+		AssertEquals("A2", 'T', read );
 		
-		c = reader.Peek();
+		c = (char)reader.Peek();
 
-		AssertEquals( c, 'e' );
+		AssertEquals("A3", 'e', c );
 	}
 
 	public void TestRead() {

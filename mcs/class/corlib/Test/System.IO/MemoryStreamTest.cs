@@ -64,14 +64,14 @@ public class MemoryStreamTest : TestCase {
 	public void TestConstructors() {
                 MemoryStream ms = new MemoryStream();
 
-                AssertEquals( 0, ms.Length );
-                AssertEquals( 0, ms.Capacity );
-                AssertEquals( true, ms.CanWrite );
+                AssertEquals("A1", 0L, ms.Length );
+                AssertEquals("A2", 0, ms.Capacity );
+                AssertEquals("A3", true, ms.CanWrite );
                 
                 ms = new MemoryStream( 10 );
 
-                AssertEquals( 0, ms.Length );
-                AssertEquals( 10, ms.Capacity );
+                AssertEquals("A4", 0L, ms.Length );
+                AssertEquals("A5", 10, ms.Capacity );
         }
 
         public void TestRead() {
