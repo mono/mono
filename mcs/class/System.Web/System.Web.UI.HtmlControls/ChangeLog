@@ -1,3 +1,8 @@
+2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlGenericControl.cs: ConstructorNeedsTag defaults to false so we
+	need to pass true here. Fixes bug #47918.
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* HtmlContainerControl.cs: Added attributes

@@ -16,7 +16,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
-	[ConstructorNeedsTag]
+	[ConstructorNeedsTag(true)]
 	public class HtmlGenericControl : HtmlContainerControl {
 		public HtmlGenericControl() :
 			this ("span")
