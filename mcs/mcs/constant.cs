@@ -1,11 +1,13 @@
 namespace CIR {
 
 	using System;
+	using System.Reflection;
 	
 	public class Constant : Expression {
-		public string     name;
-		public Expression expr;
-		public string     type;
+		string     name;
+		Expression expr;
+		string     type;
+		int        mod_flags;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -14,16 +16,12 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Constant (string type, string name, Expression expr)
+		public Constant (string type, string name, Expression expr, int mod_flags)
 		{
 			this.type = type;
 			this.name = name;
 			this.expr = expr;
-		}
-
-		public void Reduce ()
-		{
-			
+			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
 		}
 
 		public string Name {
@@ -43,6 +41,13 @@ namespace CIR {
 				return expr;
 			}
 		}
+
+		public FieldAttributes FieldAttr {
+			get {
+				return FieldAttributes.Literal | Modifiers.Map (mod_flags) ;
+			}
+		}
 	}
 }
+
 

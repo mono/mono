@@ -73,6 +73,20 @@ namespace CIR {
 
 			return t;
 		}
+
+		public static FieldAttributes Map (int mod_flags)
+		{
+			FieldAttributes fa = 0;
+
+			if ((mod_flags & Modifiers.PUBLIC) != 0)
+				fa |= FieldAttributes.Public;
+			if ((mod_flags & Modifiers.PRIVATE) != 0)
+				fa |= FieldAttributes.Private;
+			if ((mod_flags & Modifiers.STATIC) != 0)
+				fa |= FieldAttributes.Static;
+
+			return fa;
+		}
 		
 		// <summary>
 		//   Checks the object @mod modifiers to be in @allowed.

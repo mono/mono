@@ -265,7 +265,8 @@ namespace CIR {
 		}
 		
 		//
-		// returns the type for an interface or a class
+		// returns the type for an interface or a class, this will recursively
+		// try to define the types that it depends on.
 		//
 		Type GetInterfaceOrClass (TypeContainer tc, string name, bool is_class)
 		{
@@ -515,6 +516,73 @@ namespace CIR {
 			}
 		}
 
+		//
+		// Public function used to locate types, this can only
+		// be used after the ResolveTree function has been invoked.
+		//
+		// Returns: Type or null if they type can not be found.
+		//
+		public Type LookupType (TypeContainer tc, string name, bool silent)
+		{
+			Type t;
+
+			t = type_manager.LookupType (MakeFQN (tc.Namespace.Name, name));
+			if (t != null)
+				return t;
+
+			for (Namespace ns = tc.Namespace; ns != null; ns = ns.Parent){
+				ArrayList using_list = ns.UsingTable;
+
+				if (using_list == null)
+					continue;
+
+				foreach (string n in using_list){
+					t = type_manager.LookupType (MakeFQN (n, name));
+					if (t != null)
+						return t;
+				}
+			}
+
+			if (!silent)
+				report.Error (246, "Can not find type `"+name+"'");
+			
+			return null;
+		}
+
+		public Type LookupType (TypeContainer tc, string name)
+		{
+			return LookupType (tc, name, true);
+		}
+		
+		public void PopulateInterface (Interface ifacex)
+		{
+			
+		}
+
+		// <summary>
+		//   Populates the structs and classes with fields and methods
+		// </summary>
+		//
+		// This is invoked after all interfaces, structs and classes
+		// have been defined through `ResolveTree' 
+		public void PopulateTypes ()
+		{
+			Hashtable ifaces, classes;
+			
+			if ((ifaces = tree.Interfaces) != null)
+				foreach (DictionaryEntry de in ifaces)
+					PopulateInterface ((Interface) de.Value);
+
+			if ((classes = tree.Classes) != null){
+				foreach (DictionaryEntry de in classes){
+					TypeContainer tc = (TypeContainer) de.Value;
+
+					tc.Populate (this);
+				}
+			}
+				
+		}
+		
 		// <summary>
 		//   Compiling against Standard Libraries property.
 		// </summary>

@@ -292,7 +292,8 @@ namespace CIR
 			// The second pass of the compiler
 			//
 			context.ResolveTree ();
-
+			context.PopulateTypes ();
+			
 			if (context.Report.Errors > 0){
 				error ("Compilation failed");
 				return;

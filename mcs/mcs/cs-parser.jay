@@ -552,7 +552,7 @@ constant_declaration
 		foreach (DictionaryEntry constant in (ArrayList) $5){
 			Constant c = new Constant (
 				(string) $4, (string) constant.Key, 
-				(Expression) constant.Value);
+				(Expression) constant.Value, (int) $2);
 
 			CheckDef (current_container.AddConstant (c), c.Name);
 		}

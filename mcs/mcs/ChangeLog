@@ -1,3 +1,10 @@
+2001-08-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MakeConstant): Code to define constants.
+
+	* rootcontext.cs (LookupType): New function.  Used to locate types 
+
+	
 2001-08-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs: OH MY!  My trick works!   It is amazing how nice

@@ -852,7 +852,7 @@ namespace Generator {
 
 					space ();
 
-					output ("const " + c.ConstantType + " " + c.name + " = " +
+					output ("const " + c.ConstantType + " " + c.Name + " = " +
 						GetExpression (c.Expr, 0) + ";");
 					newline ();
 				}

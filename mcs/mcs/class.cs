@@ -354,6 +354,28 @@ namespace CIR {
 				return x;
 			}
 		}
+
+		void MakeConstant (RootContext rc, Constant c)
+		{
+			FieldBuilder fb;
+
+			fb = Definition.DefineField (c.Name,
+						     rc.LookupType (this, c.ConstantType),
+						     c.FieldAttr);
+
+			
+		}
+		
+		//
+		// Populates our TypeBuilder with fields and methods
+		//
+		public void Populate (RootContext rc)
+		{
+			if (Constants != null){
+				foreach (DictionaryEntry cde in Constants)
+					MakeConstant (rc, (Constant) cde.Value);
+			}
+		}
 	}
 
 	public class Class : TypeContainer {
