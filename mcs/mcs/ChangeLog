@@ -1,3 +1,9 @@
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-08-01  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.GetClassBases): Don't set the default
@@ -38,12 +44,6 @@
 	* mcs.exe.config: Added supportedRuntime entry to make sure it runs in the
 	correct runtime version.
 	
-2004-07-25  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
-
 2004-07-25  Martin Baulig  <martin@ximian.com>
 
 	* class.cs
