@@ -1,3 +1,9 @@
+
+Fri Dec 19 21:17:16 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: exception handling support wip:
+	finally handlers get run on exception.
+
 2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_aot_get_method_inner): Avoid loading AOT code while 
