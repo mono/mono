@@ -1,3 +1,8 @@
+2004-08-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevelTest.cs: Added new policy resolution tests (related to
+	Zone). Converted existing unit tests to NUnit 2.2 format.
+
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GacMembershipConditionTest.cs: New. Unit tests in NUnit 2.2 format.

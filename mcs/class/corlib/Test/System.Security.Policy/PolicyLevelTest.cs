@@ -2,9 +2,29 @@
 // PolicyLevelTest.cs - NUnit Test Cases for PolicyLevel
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -17,7 +37,7 @@ using System.Security.Policy;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class PolicyLevelTest : Assertion {
+	public class PolicyLevelTest {
 
 		static string minimal = null;
 		static string minimal_policy = null;
@@ -54,11 +74,11 @@ namespace MonoTests.System.Security.Policy {
 
 			StrongName sn = new StrongName (new StrongNamePublicKeyBlob (snPublicKey), "First", new Version (1, 2, 3, 4)); 
 			pl.AddFullTrustAssembly (sn);
-			AssertEquals ("FullTrustAssemblies.Count+1", n+1, pl.FullTrustAssemblies.Count);
+			Assert.AreEqual (n + 1, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count+1");
 
 			StrongNameMembershipCondition snmc = new StrongNameMembershipCondition (new StrongNamePublicKeyBlob (snPublicKey), "Second", new Version ("0.1.2.3"));
 			pl.AddFullTrustAssembly (snmc);
-			AssertEquals ("FullTrustAssemblies.Count+2", n+2, pl.FullTrustAssemblies.Count);
+			Assert.AreEqual (n + 2, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count+2");
 		}
 
 		[Test]
@@ -109,7 +129,7 @@ namespace MonoTests.System.Security.Policy {
 			NamedPermissionSet nps = new NamedPermissionSet ("Mono", PermissionState.Unrestricted);
 			pl.AddNamedPermissionSet (nps);
 			// ExecutionEngineException here!
-			AssertEquals ("NamedPermissionSets.Count+1", n+1, pl.NamedPermissionSets.Count);
+			Assert.AreEqual (n + 1, pl.NamedPermissionSets.Count, "NamedPermissionSets.Count+1");
 		}
 
 		[Test]
@@ -239,10 +259,10 @@ namespace MonoTests.System.Security.Policy {
 		public void CreateAppDomainLevel () 
 		{
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
-			AssertEquals ("Label", "AppDomain", pl.Label);
-			AssertEquals ("RootCodeGroup==FullTrust", "FullTrust", pl.RootCodeGroup.PermissionSetName);
-			AssertEquals ("RootCodeGroup/NoChildren", 0, pl.RootCodeGroup.Children.Count);
-			Assert ("RootCodeGroup.PolicyStatement.PermissionSet.IsUnrestricted", pl.RootCodeGroup.PolicyStatement.PermissionSet.IsUnrestricted ());
+			Assert.AreEqual ("AppDomain", pl.Label, "Label");
+			Assert.AreEqual ("FullTrust", pl.RootCodeGroup.PermissionSetName, "RootCodeGroup==FullTrust");
+			Assert.AreEqual (0, pl.RootCodeGroup.Children.Count, "RootCodeGroup/NoChildren");
+			Assert.IsTrue (pl.RootCodeGroup.PolicyStatement.PermissionSet.IsUnrestricted (), "RootCodeGroup.PolicyStatement.PermissionSet.IsUnrestricted");
 		}
 
 		[Test]
@@ -251,10 +271,10 @@ namespace MonoTests.System.Security.Policy {
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
 			SecurityElement se = pl.ToXml ();
 			pl.FromXml (se);
-			AssertEquals ("Label", "AppDomain", pl.Label);
-			AssertEquals ("RootCodeGroup", "All_Code", pl.RootCodeGroup.Name);
-			AssertEquals ("RootCodeGroup", "FullTrust", pl.RootCodeGroup.PermissionSetName);
-			AssertEquals ("RootCodeGroup", 0, pl.RootCodeGroup.Children.Count);
+			Assert.AreEqual ("AppDomain", pl.Label, "Label");
+			Assert.AreEqual ("All_Code", pl.RootCodeGroup.Name, "RootCodeGroup");
+			Assert.AreEqual ("FullTrust", pl.RootCodeGroup.PermissionSetName, "PermissionSetName");
+			Assert.AreEqual (0, pl.RootCodeGroup.Children.Count, "Children");
 		}
 
 		[Test]
@@ -288,12 +308,12 @@ namespace MonoTests.System.Security.Policy {
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
 			NamedPermissionSet nps = pl.GetNamedPermissionSet ("Mono");
-			AssertNull ("GetNamedPermissionSet(notfound)", nps);
+			Assert.IsNull (nps, "GetNamedPermissionSet(notfound)");
 			nps = new NamedPermissionSet ("Mono", PermissionState.None);
 			pl.AddNamedPermissionSet (nps);
 			// ExecutionEngineException here!
 			nps = pl.GetNamedPermissionSet ("Mono");
-			AssertNotNull ("GetNamedPermissionSet(found)", nps);
+			Assert.IsNotNull (nps, "GetNamedPermissionSet(found)");
 		}
 
 		[Test]
@@ -308,16 +328,16 @@ namespace MonoTests.System.Security.Policy {
 		public void Label () 
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.AppDomain);
-			AssertEquals ("Label.AppDomain", "AppDomain", pl.Label);
+			Assert.AreEqual ("AppDomain", pl.Label, "Label.AppDomain");
 			pl = Load (minimal, PolicyLevelType.Enterprise);
-			AssertEquals ("Label.Enterprise", "Enterprise", pl.Label);
+			Assert.AreEqual ("Enterprise", pl.Label, "Label.Enterprise");
 			pl = Load (minimal, PolicyLevelType.Machine);
-			AssertEquals ("Label.Machine", "Machine", pl.Label);
+			Assert.AreEqual ("Machine", pl.Label, "Label.Machine");
 			pl = Load (minimal, PolicyLevelType.User);
-			AssertEquals ("Label.User", "User", pl.Label);
+			Assert.AreEqual ("User", pl.Label, "Label.User");
 			// static method
 			pl = PolicyLevel.CreateAppDomainLevel ();
-			AssertEquals ("Label.AppDomain", "AppDomain", pl.Label);
+			Assert.AreEqual ("AppDomain", pl.Label, "Label.AppDomain");
 		}
 
 		[Test]
@@ -334,17 +354,17 @@ namespace MonoTests.System.Security.Policy {
 
 			StrongName sn = new StrongName (new StrongNamePublicKeyBlob (snPublicKey), "First", new Version (1, 2, 3, 4)); 
 			pl.AddFullTrustAssembly (sn);
-			AssertEquals ("FullTrustAssemblies.Count+1", n+1, pl.FullTrustAssemblies.Count);
+			Assert.AreEqual (n + 1, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count+1");
 
 			StrongNameMembershipCondition snmc = new StrongNameMembershipCondition (new StrongNamePublicKeyBlob (snPublicKey), "Second", new Version ("0.1.2.3"));
 			pl.AddFullTrustAssembly (snmc);
-			AssertEquals ("FullTrustAssemblies.Count+2", n+2, pl.FullTrustAssemblies.Count);
+			Assert.AreEqual (n + 2, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count+2");
 
 			pl.RemoveFullTrustAssembly (sn);
-			AssertEquals ("FullTrustAssemblies.Count-1", n+1, pl.FullTrustAssemblies.Count);
+			Assert.AreEqual (n + 1, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count-1");
 
 			pl.RemoveFullTrustAssembly (snmc);
-			AssertEquals ("FullTrustAssemblies.Count-2", n, pl.FullTrustAssemblies.Count);
+			Assert.AreEqual (n, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count-2");
 		}
 
 		[Test]
@@ -392,7 +412,7 @@ namespace MonoTests.System.Security.Policy {
 			pl.AddNamedPermissionSet (nps);
 			// ExecutionEngineException here!
 			pl.RemoveNamedPermissionSet (nps);
-			AssertEquals ("NamedPermissionSets.Count", n, pl.NamedPermissionSets.Count);
+			Assert.AreEqual (n, pl.NamedPermissionSets.Count, "NamedPermissionSets.Count");
 		}
 
 		[Test]
@@ -422,7 +442,7 @@ namespace MonoTests.System.Security.Policy {
 			pl.AddNamedPermissionSet (nps);
 			// ExecutionEngineException here!
 			pl.RemoveNamedPermissionSet ("Mono");
-			AssertEquals ("NamedPermissionSets.Count", n, pl.NamedPermissionSets.Count);
+			Assert.AreEqual (n, pl.NamedPermissionSets.Count, "NamedPermissionSets.Count");
 		}
 
 		[Test]
@@ -442,7 +462,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		[Ignore ("not yet implement in Mono - CAS related")]
+//		[Ignore ("not yet implement in Mono - CAS related")]
 		public void Reset () 
 		{
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
@@ -450,18 +470,17 @@ namespace MonoTests.System.Security.Policy {
 			int n = pl.FullTrustAssemblies.Count;
 			StrongName sn = new StrongName (new StrongNamePublicKeyBlob (snPublicKey), "First", new Version (1, 2, 3, 4)); 
 			pl.AddFullTrustAssembly (sn);
-			AssertEquals ("FullTrustAssemblies.Count+1", n+1, pl.FullTrustAssemblies.Count);
+			Assert.AreEqual (n + 1, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count+1");
 
 			int m = pl.NamedPermissionSets.Count;
 
 			NamedPermissionSet nps = new NamedPermissionSet ("Mono");
-			// ExecutionEngineException here!
-			//AssertEquals ("NamedPermissionSets.Count+1", m+1, pl.NamedPermissionSets.Count);
+			pl.AddNamedPermissionSet (nps);
+			Assert.AreEqual (m + 1, pl.NamedPermissionSets.Count, "NamedPermissionSets.Count+1");
 
 			pl.Reset ();
-			AssertEquals ("FullTrustAssemblies.Count", n, pl.FullTrustAssemblies.Count);
-			// ExecutionEngineException here!
-			AssertEquals ("NamedPermissionSets.Count", m, pl.NamedPermissionSets.Count);
+			Assert.AreEqual (n, pl.FullTrustAssemblies.Count, "FullTrustAssemblies.Count");
+			Assert.AreEqual (m, pl.NamedPermissionSets.Count, "NamedPermissionSets.Count");
 		}
 
 		[Test]
@@ -470,6 +489,73 @@ namespace MonoTests.System.Security.Policy {
 		{
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
 			pl.Resolve (null);
+		}
+
+		private void Resolve_Zone (PolicyLevel level, SecurityZone z, PolicyStatementAttribute attr, bool unrestricted, int count)
+		{
+			string prefix = z.ToString () + "-" + attr.ToString () + "-";
+			Evidence e = new Evidence ();
+			e.AddHost (new Zone (z));
+			PolicyStatement result = level.Resolve (e);
+			if (unrestricted) {
+				Assert.AreEqual (attr, result.Attributes, prefix + "Attributes");
+				switch (attr) {
+					case PolicyStatementAttribute.Nothing:
+						Assert.AreEqual (String.Empty, result.AttributeString, prefix + "AttributeString");
+						break;
+					case PolicyStatementAttribute.Exclusive:
+						Assert.AreEqual ("Exclusive", result.AttributeString, prefix + "AttributeString");
+						break;
+					case PolicyStatementAttribute.LevelFinal:
+						Assert.AreEqual ("LevelFinal", result.AttributeString, prefix + "AttributeString");
+						break;
+					case PolicyStatementAttribute.All:
+						Assert.AreEqual ("Exclusive LevelFinal", result.AttributeString, prefix + "AttributeString");
+						break;
+				}
+			}
+			else {
+				Assert.AreEqual (PolicyStatementAttribute.Nothing, result.Attributes, prefix + "Attributes");
+				Assert.AreEqual (String.Empty, result.AttributeString, prefix + "AttributeString");
+			}
+			Assert.AreEqual (unrestricted, result.PermissionSet.IsUnrestricted (), prefix + "IsUnrestricted");
+			Assert.AreEqual (count, result.PermissionSet.Count, prefix + "Count");
+		}
+
+		private void Resolve_Zone_Unrestricted_Attribute (SecurityZone zone, PolicyStatementAttribute attr)
+		{
+			IMembershipCondition mc = new ZoneMembershipCondition (zone);
+			PolicyStatement ps = new PolicyStatement (new PermissionSet (PermissionState.Unrestricted));
+			ps.Attributes = attr;
+			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
+			pl.RootCodeGroup = new UnionCodeGroup (mc, ps);
+
+			Resolve_Zone (pl, SecurityZone.Internet, attr, (zone == SecurityZone.Internet), 0);
+			Resolve_Zone (pl, SecurityZone.Intranet, attr, (zone == SecurityZone.Intranet), 0);
+			Resolve_Zone (pl, SecurityZone.MyComputer, attr, (zone == SecurityZone.MyComputer), 0);
+			Resolve_Zone (pl, SecurityZone.NoZone, attr, (zone == SecurityZone.NoZone), 0);
+			Resolve_Zone (pl, SecurityZone.Trusted, attr, (zone == SecurityZone.Trusted), 0);
+			Resolve_Zone (pl, SecurityZone.Untrusted, attr, (zone == SecurityZone.Untrusted), 0);
+		}
+
+		[Test]
+		public void Resolve_MyComputerUnrestricted ()
+		{
+			SecurityZone z = SecurityZone.MyComputer;
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.Nothing);
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.Exclusive);
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.LevelFinal);
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.All);
+		}
+
+		[Test]
+		public void Resolve_InternetUnrestricted ()
+		{
+			SecurityZone z = SecurityZone.Internet;
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.Nothing);
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.Exclusive);
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.LevelFinal);
+			Resolve_Zone_Unrestricted_Attribute (z, PolicyStatementAttribute.All);
 		}
 
 		[Test]
@@ -485,14 +571,14 @@ namespace MonoTests.System.Security.Policy {
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
 			// loaded from a string - no store
-			AssertNull ("StoreLocation(string)", pl.StoreLocation);
+			Assert.IsNull (pl.StoreLocation, "StoreLocation(string)");
 
 			string filename = Path.GetFullPath ("unittest.config");
 			using (StreamWriter sw = new StreamWriter (filename, false)) {
 				sw.Write (minimal);
 			}
 			pl = SecurityManager.LoadPolicyLevelFromFile (filename, PolicyLevelType.Machine);
-			AssertEquals ("StoreLocation(file)", filename, pl.StoreLocation);
+			Assert.AreEqual (filename, pl.StoreLocation, "StoreLocation(file)");
 		}
 
 		[Test]
@@ -503,10 +589,10 @@ namespace MonoTests.System.Security.Policy {
 			SecurityElement se = pl.ToXml ();
 			pl2.FromXml (se);
 
-			AssertEquals ("ToXml-FullTrustAssemblies", pl.FullTrustAssemblies.Count, pl2.FullTrustAssemblies.Count);
-			AssertEquals ("ToXml-NamedPermissionSets", pl.NamedPermissionSets.Count, pl2.NamedPermissionSets.Count);
-			Assert ("ToXml-RootCodeGroup", pl.RootCodeGroup.Equals (pl2.RootCodeGroup, true));
-			AssertEquals ("ToXml-StoreLocation", pl.StoreLocation, pl2.StoreLocation);
+			Assert.AreEqual (pl.FullTrustAssemblies.Count, pl2.FullTrustAssemblies.Count, "ToXml-FullTrustAssemblies");
+			Assert.AreEqual (pl.NamedPermissionSets.Count, pl2.NamedPermissionSets.Count, "ToXml-NamedPermissionSets");
+			Assert.IsTrue (pl.RootCodeGroup.Equals (pl2.RootCodeGroup, true), "ToXml-RootCodeGroup");
+			Assert.AreEqual (pl.StoreLocation, pl2.StoreLocation, "ToXml-StoreLocation");
 		}
 	}
 }
