@@ -988,10 +988,10 @@ namespace System.Windows.Forms
 				this.clicked_item.Selected = true;
 				this.selected_items.list.Add (this.clicked_item);
 				this.selected_indices.list.Add (this.clicked_item.Index);
-				
+
 				if (this.CanMultiselect)
 					this.OnSelectedIndexChanged (new EventArgs ());
-				
+
 				this.Redraw (false);
 			}
 
@@ -1076,7 +1076,8 @@ namespace System.Windows.Forms
 					rect = this.clicked_item.EntireRect;
 
 				// We handle double click in a separate handler
-				if (rect.Contains (hit)) {
+				if (this.activation != ItemActivation.Standard &&
+				    rect.Contains (hit)) {
 					if (this.activation == ItemActivation.OneClick)
 						this.ItemActivate (this, EventArgs.Empty);
 

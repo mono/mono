@@ -1297,9 +1297,10 @@ namespace System.Windows.Forms
 					     control.Columns.Count : subItems.Count);
 
 				if (count > 0) {
-					Rectangle sub_item_rect = item.LabelRect;
-					ListViewItem.ListViewSubItem subItem;
 					ColumnHeader col;
+					ListViewItem.ListViewSubItem subItem;
+					Rectangle sub_item_rect = item.LabelRect;
+					sub_item_rect.X = item.LabelRect.Right;
 
 					// set the format for subitems
 					format.FormatFlags = StringFormatFlags.NoWrap;
@@ -1311,31 +1312,38 @@ namespace System.Windows.Forms
 						col = control.Columns [index];
 						sub_item_rect.Width = col.Wd;
 
+						SolidBrush sub_item_back_br = null;
+						SolidBrush sub_item_fore_br = null;
+						Font sub_item_font = null;
+
+						if (item.UseItemStyleForSubItems) {
+							sub_item_back_br = this.ResPool.GetSolidBrush
+								(item.BackColor);
+							sub_item_fore_br = this.ResPool.GetSolidBrush
+								(item.ForeColor);
+							sub_item_font = item.Font;
+						}
+						else {
+							sub_item_back_br = this.ResPool.GetSolidBrush
+								(subItem.BackColor);
+							sub_item_fore_br = this.ResPool.GetSolidBrush
+								(subItem.ForeColor);
+							sub_item_font = subItem.Font;
+						}
+
 						// In case of fullrowselect, background is filled
 						// for the entire rect above
 						if (item.Selected && control.FullRowSelect) {
 							if (subItem.Text != null && subItem.Text.Length > 0)
-								dc.DrawString (subItem.Text, item.Font,
+								dc.DrawString (subItem.Text, sub_item_font,
 									       SystemBrushes.HighlightText,
 									       sub_item_rect, format);
 						}
-						else if (item.UseItemStyleForSubItems) {
-							dc.FillRectangle (this.ResPool.GetSolidBrush
-									  (item.BackColor), sub_item_rect);
-							if (subItem.Text != null && subItem.Text.Length > 0)
-								dc.DrawString (subItem.Text, item.Font,
-									       this.ResPool.GetSolidBrush
-									       (item.ForeColor),
-									       sub_item_rect, format);
-						}
 						else {
-							dc.FillRectangle (this.ResPool.GetSolidBrush
-									  (subItem.BackColor),
-									  sub_item_rect);
+							dc.FillRectangle (sub_item_back_br, sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)
-								dc.DrawString (subItem.Text, subItem.Font,
-									       this.ResPool.GetSolidBrush
-									       (subItem.ForeColor),
+								dc.DrawString (subItem.Text, sub_item_font,
+									       sub_item_fore_br,
 									       sub_item_rect, format);
 						}
 						sub_item_rect.X += col.Wd;

@@ -1,3 +1,8 @@
+2004-11-22  Ravindra <rkumar@novell.com>
+
+	* ThemeWin32Classic.cs: Fixed ListViewDrawing with 'UseItemStyleForSubItems'
+	property.
+
 2004-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* NumericUpDown.cs: Added new implementation.
