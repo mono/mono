@@ -62,6 +62,7 @@ Mono.Xml/XmlNodeWriter.cs
 System.Xml/IHasXmlNode.cs
 System.Xml/DTDAutomata.cs
 System.Xml/DTDObjectModel.cs
+System.Xml/DTDReader.cs
 System.Xml/DTDValidatingReader.cs
 System.Xml/EntityHandling.cs
 System.Xml/Formatting.cs
