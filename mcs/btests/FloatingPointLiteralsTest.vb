@@ -1,0 +1,3 @@
+Module FloatingPointLiteralsTest
+    
+End Module
