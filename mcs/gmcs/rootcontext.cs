@@ -382,6 +382,7 @@ namespace Mono.CSharp {
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Security.Permissions.SecurityAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
+				"System.Runtime.CompilerServices.DecimalConstantAttribute",
 				"System.Runtime.InteropServices.InAttribute",
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",

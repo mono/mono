@@ -501,6 +501,8 @@ namespace Mono.CSharp {
 				return new CharConstant ((char)v);
 			else if (t == TypeManager.bool_type)
 				return new BoolConstant ((bool) v);
+			else if (t == TypeManager.decimal_type)
+				return new DecimalConstant ((decimal) v);
 			else if (TypeManager.IsEnumType (t)){
 				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
 				if (real_type == t)

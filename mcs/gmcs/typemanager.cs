@@ -74,6 +74,7 @@ public class TypeManager {
 	static public Type runtime_argument_handle_type;
 	static public Type attribute_type;
 	static public Type attribute_usage_type;
+	static public Type decimal_constant_attribute_type;
 	static public Type dllimport_type;
 	static public Type unverifiable_code_type;
 	static public Type methodimpl_attr_type;
@@ -186,9 +187,11 @@ public class TypeManager {
 	static public ConstructorInfo object_ctor;
 	static public ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
+	static public ConstructorInfo void_decimal_ctor_int_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
 	static public ConstructorInfo invalid_operation_ctor;
 	static public ConstructorInfo default_member_ctor;
+	static public ConstructorInfo decimal_constant_attribute_ctor;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -1185,6 +1188,7 @@ public class TypeManager {
 		typed_reference_type = CoreLookupType ("System.TypedReference");
 		arg_iterator_type    = CoreLookupType ("System.ArgIterator");
 		mbr_type             = CoreLookupType ("System.MarshalByRefObject");
+		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices.DecimalConstantAttribute");
 
 		//
 		// Sigh. Remove this before the release.  Wonder what versions of Mono
@@ -1427,6 +1431,8 @@ public class TypeManager {
 		void_decimal_ctor_five_args = GetConstructor (
 			decimal_type, dec_arg);
 		
+		void_decimal_ctor_int_arg = GetConstructor (decimal_type, int_arg);
+
 		//
 		// Attributes
 		//
@@ -1435,6 +1441,9 @@ public class TypeManager {
 
 		unverifiable_code_ctor = GetConstructor (
 			unverifiable_code_type, void_arg);
+
+		decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
+			{ byte_type, byte_type, uint32_type, uint32_type, uint32_type } );
 
 		default_member_ctor = GetConstructor (default_member_type, string_);
 
@@ -2566,7 +2575,7 @@ public class TypeManager {
 				return (object)(convert_value.ToChar (nf_provider));
 			else if (conversionType.Equals (typeof (DateTime)))
 				return (object)(convert_value.ToDateTime (nf_provider));
-			else if (conversionType.Equals (typeof (Decimal)))
+			else if (conversionType.Equals (TypeManager.decimal_type)) // typeof (Decimal)))
 				return (object)(convert_value.ToDecimal (nf_provider));
 			else if (conversionType.Equals (typeof (Double)))
 				return (object)(convert_value.ToDouble (nf_provider));
@@ -2686,12 +2695,14 @@ public class TypeManager {
 			return TypeManager.int64_type;
 		case TypeCode.UInt64:
 			return TypeManager.uint64_type;
-                case TypeCode.Single:
-                        return TypeManager.float_type;
-                case TypeCode.Double:
-                        return TypeManager.double_type;
+		case TypeCode.Single:
+			return TypeManager.float_type;
+		case TypeCode.Double:
+			return TypeManager.double_type;
 		case TypeCode.String:
 			return TypeManager.string_type;
+		case TypeCode.Decimal:
+			return TypeManager.decimal_type;
 		default:
 			if (t == typeof (void))
 				return TypeManager.void_type;

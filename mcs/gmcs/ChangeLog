@@ -1,3 +1,35 @@
+2004-11-23  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #69177 (Implemented decimal constant support)
+
+	* cfold.cs (DoConstantNumericPromotions: Add DecimalConstant.
+	(BinaryFold): Add DecimalConstant.
+
+	* const.cs (Define): Decimal constant 
+	(is not constant.
+	(ChangeType): Add decimal type handling.
+	(LookupConstantValue): Don't set value for decimal type but
+	emit DecimalConstantAttribute. Needed for constant optimization.
+
+	* constant.cs (ToDecimal): New method.
+	(ConvertToDecimal): New method.
+	(IntConstant): Implemented ConvertToDecimal.
+	(DecimalConstant.Emit): Emit optimized version for decimals in
+	int range.
+
+	* expression.cs (ResolveOperator): Changed order of constant
+	reduction to work correctly with native types which have
+	overloaded operators.
+	(ResolveMemberAccess): Extract constant value from attribute
+	for decimal type.
+
+	* rootcontext.cs (ResolveCore): Add DecimalConstantAttribute.
+
+	* typemanager.cs (TypeManager): Add decimal_constant_attribute_type,
+	void_decimal_ctor_int_arg, decimal_constant_attribute_ctor.
+	(ChangeType): Decimal is special.
+	(TypeToCoreType): Add decimal type.
+
 2004-11-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* convert.cs (ImplicitConversionRequired): Add error cs0642 for

@@ -323,11 +323,22 @@ namespace Mono.CSharp {
 
 		Expression ResolveOperator (EmitContext ec)
 		{
-			Type expr_type = Expr.Type;
+			//
+			// Step 1: Default operations on CLI native types.
+			//
+
+			// Attempt to use a constant folding operation.
+			if (Expr is Constant){
+				Expression result;
+				
+				if (Reduce (ec, (Constant) Expr, out result))
+					return result;
+			}
 
 			//
-			// Step 1: Perform Operator Overload location
+			// Step 2: Perform Operator Overload location
 			//
+			Type expr_type = Expr.Type;
 			Expression mg;
 			string op_name;
 			
@@ -353,18 +364,6 @@ namespace Mono.CSharp {
 			if (expr_type == null)
 				return null;
 			
-			//
-			// Step 2: Default operations on CLI native types.
-			//
-
-			// Attempt to use a constant folding operation.
-			if (Expr is Constant){
-				Expression result;
-				
-				if (Reduce (ec, (Constant) Expr, out result))
-					return result;
-			}
-
 			switch (Oper){
 			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
@@ -7458,6 +7457,8 @@ namespace Mono.CSharp {
 			return RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc) != null;
 		}
 		
+		// TODO: possible optimalization
+		// Cache resolved constant result in FieldBuilder <-> expresion map
 		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
 							      Expression left, Location loc,
 							      Expression left_original)
@@ -7483,7 +7484,10 @@ namespace Mono.CSharp {
 				FieldInfo fi = fe.FieldInfo.Mono_GetGenericFieldDefinition ();
 				Type decl_type = fi.DeclaringType;
 
-				if (fi is FieldBuilder) {
+				bool is_emitted = fi is FieldBuilder;
+				Type t = fi.FieldType;
+
+				if (is_emitted) {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
 					if (c != null) {
@@ -7493,16 +7497,21 @@ namespace Mono.CSharp {
 
 						object real_value = ((Constant) c.Expr).GetValue ();
 
-						return Constantify (real_value, fi.FieldType);
+						return Constantify (real_value, t);
 					}
 				}
 
+				// IsInitOnly is because of MS compatibility, I don't know why but they emit decimal constant as InitOnly
+				if (fi.IsInitOnly && !is_emitted && t == TypeManager.decimal_type) {
+					object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
+					if (attrs.Length == 1)
+						return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
+				}
+
 				if (fi.IsLiteral) {
-					Type t = fi.FieldType;
-					
 					object o;
 
-					if (fi is FieldBuilder)
+					if (is_emitted)
 						o = TypeManager.GetValue ((FieldBuilder) fi);
 					else
 						o = fi.GetValue (fi);
@@ -7539,7 +7548,7 @@ namespace Mono.CSharp {
 					return exp;
 				}
 
-				if (fi.FieldType.IsPointer && !ec.InUnsafe){
+				if (t.IsPointer && !ec.InUnsafe){
 					UnsafeError (loc);
 					return null;
 				}
