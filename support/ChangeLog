@@ -1,3 +1,11 @@
+2004-11-16  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Remove sys-mount.c from the build.
+	* sys-mount.c: Delete.  We're not exporting mount-related functionality
+	  anymore.  It's not remotely portable, and trying to make it portable is a
+	  doomed idea.
+	* map.c: Remove mount- and umount-related conversion functions.
+
 2004-11-14  Geoff Norton  <gnorton@customerdna.com>
 	
 	* mph.h:  Revernt jonp's removal of MPH_ON_BSD define as sys-mount.c
