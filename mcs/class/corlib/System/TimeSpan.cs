@@ -5,26 +5,37 @@
 //   Duco Fijma (duco@lorentz.xs4all.nl)
 //
 //   (C) 2001 Duco Fijma
+//
+// version: 07312001
 
 namespace System {
 	
 	public struct TimeSpan :  IComparable  {
-		private long ticks;
+		private long _ticks;
 
 		// Ctors
 
-		public TimeSpan (long value) { ticks = value; }
+		public TimeSpan (long value) { _ticks = value; }
 		public TimeSpan (int hours, int minutes, int seconds) 
-			: this(0, hours, minutes, seconds, 0) {}
+			: this(false, 0, hours, minutes, seconds, 0, 0) {}
 		public TimeSpan (int days, int hours, int minutes, int seconds) 
-			: this(days, hours, minutes, seconds, 0) {}
+			: this(false, days, hours, minutes, seconds, 0, 0) {}
 		public TimeSpan (int days, int hours, int minutes, int seconds, int milliseconds)
+			: this(false, days, hours, minutes, seconds, milliseconds, 0) {}
+
+		internal TimeSpan (bool sign, int days, int hours, int minutes, int seconds, int milliseconds, long ticks)
 		{
-			ticks = TicksPerDay * days + 
-				TicksPerHour * hours +
-				TicksPerMinute * minutes +
-				TicksPerSecond * seconds +
-				TicksPerMillisecond * milliseconds;
+			checked {
+				_ticks = TicksPerDay * days + 
+					TicksPerHour * hours +
+					TicksPerMinute * minutes +
+					TicksPerSecond * seconds +
+					TicksPerMillisecond * milliseconds +
+					ticks;
+				if ( sign ) {
+					_ticks = -_ticks;
+				}
+			}
 		}
 		
 		// Fields
@@ -50,7 +61,7 @@ namespace System {
 		public int Hours
 		{
 			get {
-				return (int) (ticks % TicksPerDay / TicksPerHour);
+				return (int) (_ticks % TicksPerDay / TicksPerHour);
 			}
 		}
 
@@ -58,7 +69,7 @@ namespace System {
 		{
 			get
 			{
-				return (int) (ticks % TicksPerSecond / TicksPerMillisecond);
+				return (int) (_ticks % TicksPerSecond / TicksPerMillisecond);
 			}
 		}
 
@@ -66,7 +77,7 @@ namespace System {
 		{
 			get
 			{
-				return (int) (ticks % TicksPerHour / TicksPerMinute);
+				return (int) (_ticks % TicksPerHour / TicksPerMinute);
 			}
 		}
 
@@ -74,7 +85,7 @@ namespace System {
 		{
 			get
 			{
-				return (int) (ticks % TicksPerMinute / TicksPerSecond);
+				return (int) (_ticks % TicksPerMinute / TicksPerSecond);
 			}
 		}
 
@@ -82,7 +93,7 @@ namespace System {
 		{ 
 			get
 			{
-				return ticks;
+				return _ticks;
 			}
 		}
 
@@ -90,7 +101,7 @@ namespace System {
 		{
 			get
 			{
-				return (double) ticks / TicksPerDay;
+				return (double) _ticks / TicksPerDay;
 			}
 		}
 
@@ -98,7 +109,7 @@ namespace System {
 		{
 			get
 			{
-				return (double) ticks / TicksPerHour;
+				return (double) _ticks / TicksPerHour;
 			}
 		}
 
@@ -106,21 +117,21 @@ namespace System {
 		{
 			get
 			{
-				return (double) ticks  / TicksPerMillisecond;
+				return (double) _ticks  / TicksPerMillisecond;
 			}
 		}
 
 		public double TotalMinutes
 		{
 			get {
-				return (double) ticks / TicksPerMinute;
+				return (double) _ticks / TicksPerMinute;
 			}
 		}
 
 		public double TotalSeconds
 		{
 			get {
-				return (double) ticks / TicksPerSecond;
+				return (double) _ticks / TicksPerSecond;
 			}
 		}
 
@@ -129,16 +140,16 @@ namespace System {
 		public TimeSpan Add (TimeSpan ts)
 		{
 			checked {
-				return new TimeSpan (ticks+ts.Ticks);
+				return new TimeSpan (_ticks + ts.Ticks);
 			}
 		}
 
 		public static int Compare (TimeSpan t1, TimeSpan t2)
 		{
-			if (t1.ticks < t2.ticks) {
+			if (t1._ticks < t2._ticks) {
 				return -1;
 			}
-			else if (t1.ticks > t2.ticks) {
+			else if (t1._ticks > t2._ticks) {
 				return 1;
 			}
 			else {
@@ -154,89 +165,85 @@ namespace System {
 			}
 
 			if (!(value is TimeSpan)) {
-				throw new ArgumentException("Argument of System.TimeSpan.CompareTo should be a TimeSpan");
+				throw new ArgumentException ("Argument of System.TimeSpan.CompareTo should be a TimeSpan");
 			}
 		
 			return Compare(this, (TimeSpan) value);
 		}
 
-		// Overflow issue for Duration is like for Negate.
 		public TimeSpan Duration ()
 		{
 			checked {
-				return new TimeSpan (Math.Abs (ticks));
+				return new TimeSpan (Math.Abs (_ticks));
 			}
 		}
 
-		// TODO: Consider implementing this version
-		// in terms of Equals(TimeSPan, TimeSpan)
 		public override bool Equals (object value)
 		{
-			if (value == null || !(value is TimeSpan)) {
+			if (!(value is TimeSpan)) {
 				return false;
 			}
-			return ticks == ((TimeSpan) (value)).ticks;
+			return Equals (this, (TimeSpan) value);
 		}
 
-		public static new bool Equals(TimeSpan t1, TimeSpan t2)
+		public static bool Equals (TimeSpan t1, TimeSpan t2)
 		{
-			return t1.Equals (t2);
+			return t1._ticks == t2._ticks;
 		}
 
 		// Implementing FromDays -> FromHours -> FromMinutes -> FromSeconds ->
 		// FromMilliseconds as done here is probably not the most efficient
 		// way. 
-
 		public static TimeSpan FromDays (double value)
 		{
-			if (Double.IsNaN(value) || Double.IsNegativeInfinity(value)) {
+			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
 				return MinValue;
 			}
 
-			if (Double.IsPositiveInfinity(value)) {
+			if (Double.IsPositiveInfinity (value)) {
 				return MaxValue;
 			}
 
-			return new TimeSpan((int) value,0,0,0,0) + FromHours ((value - ((int) value)) * 24);
+			return new TimeSpan ((int) value,0,0,0,0) + FromHours ((value - ((int) value)) * 24);
 		}
 
 		public static TimeSpan FromHours (double value)
 		{
-			if (Double.IsNaN(value) || Double.IsNegativeInfinity(value)) {
+			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
 				return MinValue;
 			}
 
-			if (Double.IsPositiveInfinity(value)) {
+			if (Double.IsPositiveInfinity (value)) {
 				return MaxValue;
 			}
 
 			return new TimeSpan ((int) value,0,0) + FromMinutes ((value - ((int) value)) * 60);
 		}
 
-		public static TimeSpan FromMinutes(double value)
+		public static TimeSpan FromMinutes (double value)
 		{
-			if (Double.IsNaN(value) || Double.IsNegativeInfinity(value)) {
+			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
 				return MinValue;
 			}
 
-			if (Double.IsPositiveInfinity(value)) {
+			if (Double.IsPositiveInfinity (value)) {
 				return MaxValue;
 			}
 
-			return new TimeSpan (0,(int) value,0) + FromSeconds((value - ((int) value)) * 60);
+			return new TimeSpan (0, (int) value, 0) + FromSeconds((value - ((int) value)) * 60);
 		}
 
-		public static TimeSpan FromSeconds(double value)
+		public static TimeSpan FromSeconds (double value)
 		{
-			if (Double.IsNaN(value) || Double.IsNegativeInfinity(value)) {
+			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
 				return MinValue;
 			}
 
-			if (Double.IsPositiveInfinity(value)) {
+			if (Double.IsPositiveInfinity (value)) {
 				return MaxValue;
 			}
 
-			return new TimeSpan (0,0,0,(int) value,((int) ((value - ((int) value)) * 1000)));
+			return new TimeSpan (0, 0, 0, (int) value, ((int) ((value - ((int) value)) * 1000)));
 
 		}
 
@@ -245,39 +252,40 @@ namespace System {
 			return new TimeSpan (value);
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			return ticks.GetHashCode();
+			return _ticks.GetHashCode ();
 		}
 
-		// TODO: It makes sense that Negate can throw an overflow
-		// exception (if negating MinValue). Is this specified
-		// somewhere?
-		public TimeSpan Negate()
+		public TimeSpan Negate ()
 		{
 			checked {
-				return new TimeSpan(- ticks);
+				return new TimeSpan (-_ticks);
 			}
 		}
 
-		// TODO: implement
-		public static TimeSpan Parse(string s) 
+		public static TimeSpan Parse (string s)
 		{
-			return Zero;
+			if (s == null) {
+				throw new ArgumentNullException ("null reference passed to TimeSpan.Parse");
+			}
+
+			Parser p = new Parser (s); 
+			return p.Execute ();
 		}
 
-		public TimeSpan Subtract(TimeSpan ts)
+		public TimeSpan Subtract (TimeSpan ts)
 		{
 			checked {
-				return new TimeSpan(ticks - ts.Ticks);
+				return new TimeSpan (_ticks - ts.Ticks);
 			}
 		}
 
-		public override string ToString()
+		public override string ToString ()
 		{
 			string res = "";	
 
-			if (ticks < 0) {
+			if (_ticks < 0) {
 				res += "-";
 			}
 
@@ -285,70 +293,248 @@ namespace System {
 			// Can't handle negative timespans by negating the TimeSpan
 			// as a whole. This would lead to an overflow for the 
 			// degenerate case "TimeSpan.MinValue.ToString()".
-
 			if (Days != 0) {
-				res += Math.Abs(Days) + "." ;
+				res += Math.Abs (Days) + "." ;
 			}
 
-			res += string.Format("{0:00}:{1:00}:{2:00}", Math.Abs(Hours), Math.Abs(Minutes), Math.Abs(Seconds));
+			res += string.Format ("{0:00}:{1:00}:{2:00}", Math.Abs(Hours), Math.Abs(Minutes), Math.Abs(Seconds));
 
-			int fractional = (int) Math.Abs(ticks % TicksPerSecond);
+			int fractional = (int) Math.Abs (_ticks % TicksPerSecond);
 			if (fractional != 0) {
-				res += string.Format(".{0:0000000}", fractional);
+				res += string.Format (".{0:0000000}", fractional);
 			}
  
 			return res;
 		}
 
-		public static TimeSpan operator +(TimeSpan t1, TimeSpan t2)
+		public static TimeSpan operator + (TimeSpan t1, TimeSpan t2)
 		{
-			return t1.Add(t2);
+			return t1.Add (t2);
 		}
 
-		public static bool operator ==(TimeSpan t1, TimeSpan t2)
+		public static bool operator == (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare(t1, t2) == 0;
+			return Compare (t1, t2) == 0;
 		}
 
-		public static bool operator >(TimeSpan t1, TimeSpan t2)
+		public static bool operator > (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare(t1, t2) == 1;
+			return Compare (t1, t2) == 1;
 		}
 
-		public static bool operator >=(TimeSpan t1, TimeSpan t2)
+		public static bool operator >= (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare(t1, t2) != -1;
+			return Compare (t1, t2) != -1;
 		}
 
-		public static bool operator !=(TimeSpan t1, TimeSpan t2)
+		public static bool operator != (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare(t1, t2) != 0;
+			return Compare (t1, t2) != 0;
 		}
 
-		public static bool operator <(TimeSpan t1, TimeSpan t2)
+		public static bool operator < (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare(t1, t2) == -1;
+			return Compare (t1, t2) == -1;
 		}
 
-		public static bool operator <=(TimeSpan t1, TimeSpan t2)
+		public static bool operator <= (TimeSpan t1, TimeSpan t2)
 		{
-			return Compare(t1, t2) != 1;
+			return Compare (t1, t2) != 1;
 		}
 
-		public static TimeSpan operator -(TimeSpan t1, TimeSpan t2)
+		public static TimeSpan operator - (TimeSpan t1, TimeSpan t2)
 		{
-			return t1.Subtract(t2);
+			return t1.Subtract (t2);
 		}
 
-		public static TimeSpan operator -(TimeSpan t)
+		public static TimeSpan operator - (TimeSpan t)
 		{
-			return t.Negate();
+			return t.Negate ();
 		}
 
-		public static TimeSpan operator +(TimeSpan t)
+		public static TimeSpan operator + (TimeSpan t)
 		{
 			return t;
 		}
 	}
+
+	// Class Parser implements simple parser for TimeSpan::Parse
+	internal class Parser {
+
+		private string _src;
+		private int _cur;
+		private int _length;
+	
+		public Parser (string src)
+		{
+			_src = src;
+			Reset ();
+		}
+
+		public void Reset ()
+		{
+			_cur = 0;
+			_length = _src.Length;
+		}
+
+		public bool AtEnd
+		{
+			get {
+				return _cur >= _length;
+			}
+		}
+
+		private void ThrowFormatException() 
+		{
+			throw new FormatException ("Invalid format for TimeSpan.Parse");
+		}
+
+		// All "Parse" functions throw a FormatException on syntax error.
+		// Their return value is semantic value of the item parsed.
+
+		// Range checking is spread over three different places:
+		// 1) When parsing "int" values, an exception is thrown immediately
+		//    when the value parsed exceeds the maximum value for an int.
+		// 2) An explicit check is built in that checks for hours > 23 and
+		//    for minutes and seconds > 59.
+		// 3) Throwing an exceptions for a final TimeSpan value > MaxValue
+		//    or < MinValue is left to the TimeSpan constructor called.
+
+		// Parse zero or more whitespace chars.
+		private void ParseWhiteSpace ()
+		{
+			while (!AtEnd && Char.IsWhiteSpace (_src, _cur)) {
+				_cur++; 
+			}
+		}
+
+		// Parse optional sign character.
+		private bool ParseSign () 
+		{
+			bool res = false;
+
+			if (!AtEnd && _src[_cur] == '-') { 
+				res = true;
+				_cur++;
+			}
+
+			return res;
+		}
+
+		// Parse simple int value
+		private int ParseInt ()
+		{
+			int res = 0;
+			int count = 0;
+
+			while (!AtEnd && Char.IsDigit (_src, _cur)) {
+				checked {
+					res = res*10 + _src[_cur] - '0';
+				}
+				_cur++;
+				count++;
+			}
+			
+			if (count == 0) {
+				ThrowFormatException ();
+			}
+
+			return res;
+		}
+
+		// Parse optional dot
+		private bool ParseOptDot ()
+		{
+			if (AtEnd) {
+				return false;
+			}
+			
+			if (_src[_cur] == '.') {
+				_cur++;
+				return true;
+			}
+			else {
+				return false;
+			}
+		}	
+		
+		// Parse NON-optional colon 
+		private void ParseColon ()
+		{
+			if (!AtEnd && _src[_cur] == ':') {
+				_cur++;
+			}
+			else {
+				ThrowFormatException ();
+			}
+		}
+
+		// Parse [1..7] digits, representing fractional seconds (ticks)
+		private long ParseTicks ()
+		{
+			long mag = 1000000;
+			long res = 0;
+			bool digitseen = false;
+			
+			while ( mag > 0 && !AtEnd && Char.IsDigit (_src, _cur) ) {
+				res = res + (_src[_cur] - '0') * mag;
+				_cur++;
+				mag = mag / 10;
+				digitseen = true;
+			}
+
+			if (!digitseen) {
+				ThrowFormatException ();
+			}
+
+			return res;
+		}
+
+		public TimeSpan Execute ()
+		{
+			bool sign;
+			int days;
+			int hours;
+			int minutes;
+			int seconds;
+			long ticks;
+
+			// Parse [ws][dd.]hh:mm:ss[.ff][ws]
+			ParseWhiteSpace ();
+			sign = ParseSign ();
+			days = ParseInt ();
+			if (ParseOptDot ()) {
+				hours = ParseInt ();
+			}
+			else {
+				hours = days;
+				days = 0;
+			}
+			ParseColon();
+			minutes = ParseInt ();
+			ParseColon();
+			seconds = ParseInt ();
+			if ( ParseOptDot () ) {
+				ticks = ParseTicks ();
+			}	
+			else {
+				ticks = 0;
+			}
+			ParseWhiteSpace ();
+
+			if ( !AtEnd ) {
+				ThrowFormatException ();
+			}
+
+			if ( hours > 23 || minutes > 59 || seconds > 59 ) {
+				throw new OverflowException ( "Value outside range in TimeSpan.Parse" );
+			}
+
+			TimeSpan ts = new TimeSpan (sign, days, hours, minutes, seconds, 0, ticks);
+
+			return ts;
+		}	
+	}
 }
+
 
