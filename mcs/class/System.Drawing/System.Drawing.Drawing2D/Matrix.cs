@@ -1,12 +1,14 @@
 //
 // System.Drawing.Drawing2D.Matrix.cs
 //
-// Author:
+// Authors:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
 //   Dennis Hayes (dennish@Raytek.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Ravindra (rkumar@novell.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) Novell, Inc.  http://www.novell.com
 //
 
 using System;
@@ -27,22 +29,26 @@ namespace System.Drawing.Drawing2D
                 
                 public Matrix ()
                 {
-                        Status s = GDIPlus.GdipCreateMatrix (out nativeMatrix);
+			Status status = GDIPlus.GdipCreateMatrix (out nativeMatrix);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public Matrix (Rectangle rect , Point[] plgpts)
                 {
-                        GDIPlus.GdipCreateMatrix3I (rect, plgpts, out nativeMatrix);
+			Status status = GDIPlus.GdipCreateMatrix3I (rect, plgpts, out nativeMatrix);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public Matrix (RectangleF rect , PointF[] pa)
                 {
-                        GDIPlus.GdipCreateMatrix3 (rect, pa, out nativeMatrix);
+			Status status = GDIPlus.GdipCreateMatrix3 (rect, pa, out nativeMatrix);
+			GDIPlus.CheckStatus (status);
                 }
 
                 public Matrix (float m11, float m12, float m21, float m22, float dx, float dy)
                 {
-                        GDIPlus.GdipCreateMatrix2 (m11, m12, m21, m22, dx, dy, out nativeMatrix);
+			Status status = GDIPlus.GdipCreateMatrix2 (m11, m12, m21, m22, dx, dy, out nativeMatrix);
+			GDIPlus.CheckStatus (status);
                 }
         
                 // properties
@@ -51,7 +57,8 @@ namespace System.Drawing.Drawing2D
                                 IntPtr tmp = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (float)) * 6);
                                 float [] retval = new float [6];
 
-                                Status s = GDIPlus.GdipGetMatrixElements (nativeMatrix, tmp);
+				Status status = GDIPlus.GdipGetMatrixElements (nativeMatrix, tmp);
+				GDIPlus.CheckStatus (status);
 
                                 Marshal.Copy (tmp, retval, 0, 6);
 
@@ -63,8 +70,8 @@ namespace System.Drawing.Drawing2D
                 public bool IsIdentity {
                         get {
                                 bool retval;
-                                GDIPlus.GdipIsMatrixIdentity (nativeMatrix, out retval);
-
+				Status status = GDIPlus.GdipIsMatrixIdentity (nativeMatrix, out retval);
+				GDIPlus.CheckStatus (status);
                                 return retval;
                         }
                 }
@@ -72,8 +79,8 @@ namespace System.Drawing.Drawing2D
                 public bool IsInvertible {
                         get {
                                 bool retval;
-                                GDIPlus.GdipIsMatrixInvertible (nativeMatrix, out retval);
-
+				Status status = GDIPlus.GdipIsMatrixInvertible (nativeMatrix, out retval);
+				GDIPlus.CheckStatus (status);
                                 return retval;
                         }
                 }
@@ -93,14 +100,16 @@ namespace System.Drawing.Drawing2D
                 public Matrix Clone()
                 {
                         IntPtr retval;
-                        Status s = GDIPlus.GdipCloneMatrix (nativeMatrix, out retval);
+                        Status status = GDIPlus.GdipCloneMatrix (nativeMatrix, out retval);
+			GDIPlus.CheckStatus (status);
                         return new Matrix (retval);
                 }
                 
         
                 public void Dispose ()
                 {
-                        GDIPlus.GdipDeleteMatrix (nativeMatrix); 
+			Status status = GDIPlus.GdipDeleteMatrix (nativeMatrix);
+			GDIPlus.CheckStatus (status);
                 }                       
         
                 public override bool Equals (object obj)
@@ -109,8 +118,8 @@ namespace System.Drawing.Drawing2D
 
                         if (m != null) {
                                 bool retval;
-                                GDIPlus.GdipIsMatrixEqual (nativeMatrix, m.nativeMatrix, out retval);
-
+				Status status = GDIPlus.GdipIsMatrixEqual (nativeMatrix, m.nativeMatrix, out retval);
+				GDIPlus.CheckStatus (status);
                                 return retval;
 
                         } else
@@ -129,7 +138,8 @@ namespace System.Drawing.Drawing2D
         
                 public void Invert ()
                 {
-                        GDIPlus.GdipInvertMatrix (nativeMatrix);
+			Status status = GDIPlus.GdipInvertMatrix (nativeMatrix);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void Multiply (Matrix matrix)
@@ -139,12 +149,14 @@ namespace System.Drawing.Drawing2D
         
                 public void Multiply (Matrix matrix, MatrixOrder order)
                 {
-                        GDIPlus.GdipMultiplyMatrix (nativeMatrix, matrix.nativeMatrix, order);
+			Status status = GDIPlus.GdipMultiplyMatrix (nativeMatrix, matrix.nativeMatrix, order);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void Reset()
                 {
-                        GDIPlus.GdipSetMatrixElements (nativeMatrix, 1, 0, 0, 1, 0, 0);
+			Status status = GDIPlus.GdipSetMatrixElements (nativeMatrix, 1, 0, 0, 1, 0, 0);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void Rotate (float angle)
@@ -154,7 +166,8 @@ namespace System.Drawing.Drawing2D
         
                 public void Rotate (float angle, MatrixOrder order)
                 {
-                        GDIPlus.GdipRotateMatrix (nativeMatrix, angle, order);
+			Status status = GDIPlus.GdipRotateMatrix (nativeMatrix, angle, order);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void RotateAt (float angle, PointF point)
@@ -171,22 +184,25 @@ namespace System.Drawing.Drawing2D
                         float e5 = -point.X * sin - point.Y * cos + point.Y;
                         float[] m = this.Elements;
 
+			Status status;
+
                         if (order == MatrixOrder.Prepend)
-                                GDIPlus.GdipSetMatrixElements (nativeMatrix,
-                                                cos * m[0] + sin * m[2],
-                                                cos * m[1] + sin * m[3],
-                                                -sin * m[0] + cos * m[2],
-                                                -sin * m[1] + cos * m[3],
-                                                e4 * m[0] + e5 * m[2] + m[4],
-                                                e4 * m[1] + e5 * m[3] + m[5]);
+				status = GDIPlus.GdipSetMatrixElements (nativeMatrix,
+								cos * m[0] + sin * m[2],
+								cos * m[1] + sin * m[3],
+								-sin * m[0] + cos * m[2],
+								-sin * m[1] + cos * m[3],
+								e4 * m[0] + e5 * m[2] + m[4],
+								e4 * m[1] + e5 * m[3] + m[5]);
                         else
-                                GDIPlus.GdipSetMatrixElements (nativeMatrix,
-                                                m[0] * cos + m[1] * -sin,
-                                                m[0] * sin + m[1] * cos,
-                                                m[2] * cos + m[3] * -sin,
-                                                m[2] * sin + m[3] * cos,
-                                                m[4] * cos + m[5] * -sin + e4,
-                                                m[4] * sin + m[5] * cos + e5);
+				status = GDIPlus.GdipSetMatrixElements (nativeMatrix,
+								m[0] * cos + m[1] * -sin,
+								m[0] * sin + m[1] * cos,
+								m[2] * cos + m[3] * -sin,
+								m[2] * sin + m[3] * cos,
+								m[4] * cos + m[5] * -sin + e4,
+								m[4] * sin + m[5] * cos + e5);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void Scale (float scaleX, float scaleY)
@@ -196,7 +212,8 @@ namespace System.Drawing.Drawing2D
         
                 public void Scale (float scaleX, float scaleY, MatrixOrder order)
                 {
-                        GDIPlus.GdipScaleMatrix (nativeMatrix, scaleX, scaleY, order);
+			Status status = GDIPlus.GdipScaleMatrix (nativeMatrix, scaleX, scaleY, order);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void Shear (float shearX, float shearY)
@@ -206,27 +223,32 @@ namespace System.Drawing.Drawing2D
         
                 public void Shear (float shearX, float shearY, MatrixOrder order)
                 {
-                        GDIPlus.GdipShearMatrix (nativeMatrix, shearX, shearY, order);
+			Status status = GDIPlus.GdipShearMatrix (nativeMatrix, shearX, shearY, order);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void TransformPoints (Point[] pts)
                 {
-                        GDIPlus.GdipTransformMatrixPointsI (nativeMatrix, pts, pts.Length);
+			Status status = GDIPlus.GdipTransformMatrixPointsI (nativeMatrix, pts, pts.Length);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void TransformPoints (PointF[] pts)
                 {
-                        GDIPlus.GdipTransformMatrixPoints (nativeMatrix, pts, pts.Length);
+			Status status = GDIPlus.GdipTransformMatrixPoints (nativeMatrix, pts, pts.Length);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void TransformVectors (Point[] pts)
                 {
-                        GDIPlus.GdipVectorTransformMatrixPointsI (nativeMatrix, pts, pts.Length);
+			Status status = GDIPlus.GdipVectorTransformMatrixPointsI (nativeMatrix, pts, pts.Length);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void TransformVectors (PointF[] pts)
                 {
-                        GDIPlus.GdipVectorTransformMatrixPoints (nativeMatrix, pts, pts.Length);                        
+			Status status = GDIPlus.GdipVectorTransformMatrixPoints (nativeMatrix, pts, pts.Length);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void Translate (float offsetX, float offsetY)
@@ -236,7 +258,8 @@ namespace System.Drawing.Drawing2D
         
                 public void Translate (float offsetX, float offsetY, MatrixOrder order)
                 {
-                        GDIPlus.GdipTranslateMatrix (nativeMatrix, offsetX, offsetY, order);
+			Status status = GDIPlus.GdipTranslateMatrix (nativeMatrix, offsetX, offsetY, order);
+			GDIPlus.CheckStatus (status);
                 }
         
                 public void VectorTransformPoints (Point[] pts)
