@@ -1,5 +1,12 @@
 2003-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* mono-api-diff.cs: fixed nullref and add warning when class type do not
+	match.
+
+	* mono-api-info.cs: ignore private classes.
+
+2003-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CorCompare.exe.sources: not needed now.
 	 
 	* Makefile: updated to build the 3 exes we have now.

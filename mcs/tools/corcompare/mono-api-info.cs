@@ -156,6 +156,9 @@ namespace Mono.AssemblyInfo
 				if (t.Namespace == null || t.Namespace == "")
 					continue;
 
+				if (t.IsNotPublic)
+					continue;
+
 				if (t.IsNestedPublic || t.IsNestedAssembly || t.IsNestedFamANDAssem ||
 				    t.IsNestedFamORAssem || t.IsNestedPrivate)
 					continue;

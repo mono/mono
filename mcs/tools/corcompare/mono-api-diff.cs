@@ -305,7 +305,7 @@ namespace Mono.AssemblyCompare
 				group = doc.CreateElement (GroupName, null);
 
 			ArrayList odata = null;
-			if (other == null) {
+			if (other == null || ((XMLNameGroup) other).data == null) {
 				odata = new ArrayList (1);
 			} else {
 				odata = ((XMLNameGroup) other).data;
@@ -698,6 +698,9 @@ namespace Mono.AssemblyCompare
 					AddAttribute (parent, "error", "todo");
 				}
 			}
+
+			if (type != oclass.type)
+				AddWarning (parent, "Class type is wrong: {0} != {1}", type, oclass.type);
 
 			if (baseName != oclass.baseName)
 				AddWarning (parent, "Base class is wrong: {0} != {1}", baseName, oclass.baseName);
