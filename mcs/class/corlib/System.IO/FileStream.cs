@@ -415,6 +415,18 @@ namespace System.IO
 			GC.SuppressFinalize (this);	// remove from finalize queue
 		}
 
+		[MonoTODO]
+		public virtual void Lock (long position, long length)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void Unlock (long position, long length)
+		{
+			throw new NotImplementedException ();
+		}
+
 		// protected
 
 		~FileStream ()

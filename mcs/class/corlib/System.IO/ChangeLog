@@ -1,5 +1,9 @@
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
 
+	* FileStream.cs: Added new methods Lock () and Unlock ()
+	
+2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
+
 	* StringReader.cs: Throws exceptions if constructor parameter is null.
 	
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
