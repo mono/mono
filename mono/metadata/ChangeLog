@@ -1,3 +1,8 @@
+2003-10-13 Bernie Solomon  <bernard@ugsolutions.com>
+
+	* marshal.c (emit_struct_conv): if native size is 0
+	emit no code.
+
 2003-10-14  Martin Baulig  <martin@ximian.com>
 
 	* icall.c: The generics API has changed in the spec since it was
