@@ -1,3 +1,7 @@
+2003-12-03 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* HtmlEmitter.cs : CloseStartElement is needed almost everywhere.
+
 2003-12-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Compiler.cs : In FromListString(), it should use default ns,

@@ -231,6 +231,8 @@ namespace Mono.Xml.Xsl
 		}
 
 		public override void WriteComment (string text) {
+			if (openElement)
+				CloseStartElement ();
 			writer.Write ("<!--");
 			writer.Write (text);
 			writer.Write ("-->");
@@ -240,6 +242,8 @@ namespace Mono.Xml.Xsl
 		{
 			if ((text.IndexOf("?>") > 0))
 				throw new ArgumentException ("Processing instruction cannot contain \"?>\" as its value.");
+			if (openElement)
+				CloseStartElement ();
 			writer.Write ("<?");
 			writer.Write (name);
 			if (text != null && text != String.Empty) {
@@ -308,10 +312,14 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteRaw (string data)
 		{
+			if (openElement)
+				CloseStartElement ();
 			writer.Write (data);
 		}
 
 		public override void WriteCDataSection (string text) {
+			if (openElement)
+				CloseStartElement ();
 			writer.Write ("<![CDATA[");
 			writer.Write (text);
 			writer.Write ("]]>");
