@@ -1,5 +1,12 @@
 2003-08-19 Jackson Harper <jackson@latitudegeo.com>
 
+	* DataDef.cs: Make name public so data names can be looked up
+	* FieldDef.cs: Stub method for adding data values
+	* TypeDef.cs: Implement long form overrides, fix some backwords
+	variable naming, add a method to lookup data definitions.
+	
+2003-08-19 Jackson Harper <jackson@latitudegeo.com>
+
 	* IClassRef.cs: Removed methods that have been moved into ITypeRef
 	* MethodDef.cs: Make some properties public, Add method to get a
 	list of parameter types. This is used to build signatures. Alow

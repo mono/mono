@@ -31,6 +31,7 @@ namespace Mono.ILASM {
                 private ArrayList property_list;
                 private ArrayList typar_list;
                 private ArrayList override_list;
+                private ArrayList override_long_list;
                 private Hashtable constraint_table;
                 private TypeDef outer;
 
@@ -103,12 +104,20 @@ namespace Mono.ILASM {
                 }
 
 
-                public void AddOverride (MethodDef decl, ITypeRef parent, string name)
+                public void AddOverride (MethodDef body, ITypeRef parent, string name)
                 {
                         if (override_list == null)
                                 override_list = new ArrayList ();
-                        override_list.Add (new DictionaryEntry (decl,
+                        override_list.Add (new DictionaryEntry (body,
                                            new DictionaryEntry (parent, name)));
+                }
+
+                public void AddOverride (string sig, IMethodRef decl)
+                {
+                        if (override_long_list == null)
+                                override_long_list = new ArrayList ();
+                        override_long_list.Add (new DictionaryEntry (sig,
+                                                                decl));
                 }
 
                 public void MakeValueClass ()
@@ -139,6 +148,15 @@ namespace Mono.ILASM {
                 public void AddDataDef (DataDef datadef)
                 {
                         data_list.Add (datadef);
+                }
+
+                public DataDef GetDataDef (string name)
+                {
+                        foreach (DataDef def in data_list) {
+                                if (def.Name == name)
+                                        return def;
+                        }
+                        return null;
                 }
 
                 public void AddMethodDef (MethodDef methoddef)
@@ -307,16 +325,27 @@ namespace Mono.ILASM {
 
                         if (override_list != null) {
                                 foreach (DictionaryEntry entry in override_list) {
-                                        MethodDef decl = (MethodDef) entry.Key;
-                                        DictionaryEntry body = (DictionaryEntry) entry.Value;
-                                        ITypeRef parent_type = (ITypeRef) body.Key;
+                                        MethodDef body = (MethodDef) entry.Key;
+                                        DictionaryEntry decl = (DictionaryEntry) entry.Value;
+                                        ITypeRef parent_type = (ITypeRef) decl.Key;
                                         parent_type.Resolve (code_gen);
-                                        string over_name = (string) body.Value;
-                                        IMethodRef over_meth = parent_type.GetMethodRef (decl.RetType,
-                                                        decl.CallConv, over_name, decl.ParamTypeList ());
+                                        string over_name = (string) decl.Value;
+                                        IMethodRef over_meth = parent_type.GetMethodRef (body.RetType,
+                                                        body.CallConv, over_name, body.ParamTypeList ());
                                         over_meth.Resolve (code_gen);
                                         classdef.AddMethodOverride (over_meth.PeapiMethod,
-                                                        decl.PeapiMethodDef);
+                                                        body.PeapiMethodDef);
+                                }
+                        }
+
+                        if (override_long_list != null) {
+                                foreach (DictionaryEntry entry in override_long_list) {
+                                        string sig = (string) entry.Key;
+                                        IMethodRef decl = (IMethodRef) entry.Value;
+                                        MethodDef body = (MethodDef) method_table[sig];
+                                        decl.Resolve (code_gen);
+                                        classdef.AddMethodOverride (decl.PeapiMethod,
+                                                        body.PeapiMethodDef);
                                 }
                         }
                 }

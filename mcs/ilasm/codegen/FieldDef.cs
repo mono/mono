@@ -62,6 +62,11 @@ namespace Mono.ILASM {
                         this.constant = constant;
                 }
 
+                public void AddDataValue (PEAPI.DataConstant constant)
+                {
+
+                }
+
                 public PEAPI.FieldDef Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
