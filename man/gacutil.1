@@ -1,28 +1,87 @@
-.TH "gacutil" 1
+..\" 
+.\" gacutil manual page.
+.\" (C) 2004 Novell, Inc.
+.\" Author:
+.\"   Miguel de Icaza (miguel@gnu.org)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH gacutil "Mono 1.0"
 .SH NAME
-gacutil \- Mono Global Assembly Cache Utility
+gacutil \- Global Asssembly Cache management utility.
 .SH SYNOPSIS
-.B gacutil
-<commands> [ <options> ]
+.PP
+.B gacutil [-user] [command] [options] 
 .SH DESCRIPTION
-gacutil in the Mono Global Assembly Cache Utility. This utility allows
-you to install, remove and list Assemblies in the Global Assembly Cache.
-.SH OPTIONS
-.TP
-.B \//i <assembly_path> [ /f ]
-Installs an assembly into the global assembly cache.
-.TP
-.B \//il <assembly_path_list_file> [ /f ]
-Installs one or more assemblies into the global assembly cache
-.TP
-.B \//u <assembly_display_name>
-Uninstalls an assembly from the global assembly cache
-.TP
-.B \//ul <assembly_display_name_list_file>
-Uninstalls one or more assemblies from the global assembly cache
-.TP
-.B \//l
-List the global assembly cache
-.TP
-.B \//?
-Displays a detailed help screen
+\fIgacutil\fP is a tool used by developers to install assemblies into
+the system Global Assembly Cache (GAC) to become part of the
+assemblies that are available for all applications at runtime.
+.PP
+Notice that they are not directly available to the compiler, the
+convention is that assemblies must also be placed in a separate
+directory for being accessed to the compiler.  This is done with the
+-package directive to gacutil.
+.PP
+The tool allows for installationl, removal, and listing of the
+contents of the assembly cache.
+.PP
+The GAC is relative to the Mono installation prefix:
+mono_prefix/lib/mono.
+.SH FLAGS
+The "-user" flag enables you to install/remove the assembly into the
+user's assembly cache, as opposed to the global one.
+.PP
+.SH COMMANDS
+.I "-i path_to_assembly" [-f] [-root ROOTDIR] [-package NAME]
+.Sp
+The above installs the assembly into the GAC, use the -f flag to force
+an installation an overwrite anything in there.  
+.Sp
+The -package option can be used to also create a directory in in
+prefix/lib/mono with the name NAME, and a symlink is created from
+NAME/assembly_name to the assembly on the GAC.  This is used so
+developers can reference a set of libraries at once.
+.Sp
+The -root option is used by developers integrating this with automake
+tools or packaging tools that require a prefix directory to be
+specified.  The root represents the "libdir" component of a prefix
+(typically prefix/lib).  
+.fi
+.PP
+.I "-l"
+.Sp
+Lists the contents of the Global Assembly Cache
+.PP
+.I "-u assembly_name [-root]"
+.Sp
+The above removes the given assembly name from the Global Assembly
+Cache.  As opposed to the install option that takes a filename, this
+takes as an argument the assembly name, which looks like this:
+.nf
+	MyLibrary.Something, version=1.0.0.0, publicKeyToken=xxxx,culture=neutral
+.fi
+.Sp
+Notice that you can have spaces in the command line, there is no need
+to quote them.
+.Sp
+The removal performs a greedy removal, if you only specifiy one
+component like, "MyLibrary.Something", it will remove all versions of
+the library.
+.SH FILES
+On Unix assemblies are loaded from the installation lib directory.  If you set
+`prefix' to /usr, the assemblies will be located in /usr/lib.  On
+Windows, the assemblies are loaded from the directory where mono and
+mint live.
+.PP
+/etc/mono/config, ~/.mono/config
+.PP
+Mono runtime configuration file.  See the mono-config(5) manual page
+for more information.
+.SH WEB SITE
+Visit: http://www.go-mono.com for details
+.SH SEE ALSO
+.BR mcs(1), mono(1)
+
+
