@@ -68,10 +68,6 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/ilasm/ilasm.exe . || cp $(monobinsdir)/ilasm.exe .
 	-cp $(top_srcdir)/../mcs/tools/cilc/cilc.exe . || cp $(monobinsdir)/cilc.exe .
 
-Accessibility.dll: $(top_srcdir)/../mcs/class/lib/Accessibility.dll
-	cp $(top_srcdir)/../mcs/class/lib/Accessibility.dll .
-
-
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
 		if test ! -s $(srcdir)/$$i; then echo $$i is empty && exit 1; fi	\
