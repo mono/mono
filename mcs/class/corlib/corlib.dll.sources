@@ -911,7 +911,6 @@ System.Security.Cryptography/CryptoStreamMode.cs
 System.Security.Cryptography/CspKeyContainerInfo.cs
 System.Security.Cryptography/CspParameters.cs
 System.Security.Cryptography/CspProviderFlags.cs
-System.Security.Cryptography/DataProtectionScope.cs
 System.Security.Cryptography/DeriveBytes.cs
 System.Security.Cryptography/DES.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
@@ -938,12 +937,9 @@ System.Security.Cryptography/MACTripleDES.cs
 System.Security.Cryptography/MaskGenerationMethod.cs
 System.Security.Cryptography/MD5.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
-System.Security.Cryptography/MemoryProtectionScope.cs
 System.Security.Cryptography/PaddingMode.cs
 System.Security.Cryptography/PasswordDeriveBytes.cs
 System.Security.Cryptography/PKCS1MaskGenerationMethod.cs
-System.Security.Cryptography/ProtectedData.cs
-System.Security.Cryptography/ProtectedMemory.cs
 System.Security.Cryptography/RandomNumberGenerator.cs
 System.Security.Cryptography/RC2.cs
 System.Security.Cryptography/RC2CryptoServiceProvider.cs

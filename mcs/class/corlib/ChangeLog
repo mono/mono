@@ -1,3 +1,12 @@
+2004-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Removed System.Security.Cryptography/
+	ProtectedData.cs, ProtectedMemory.cs, DataProtectionScope.cs and
+	MemoryProtectionScope.cs as they are now part of the System.Security
+	assembly.
+	* corlib_test.dll.sources : Removed Test/System.Security.Cryptography/
+	ProtectedDataTest.cs and ProtectedMemoryTest.cs for the same reason.
+
 2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added System.Security/SecurityFrame.cs to the build.
