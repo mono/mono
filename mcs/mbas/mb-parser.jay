@@ -3672,9 +3672,6 @@ primary_expression
 	  }
 	//FIXME: address_of_expression is apparently missing here
 	| get_type_expression
-	  {
-	  	// TODO
-	  }
 	| member_access
 	| invocation_expression
 	//| element_access
@@ -3912,7 +3909,7 @@ cast_operator
 get_type_expression
 	: GETTYPE OPEN_PARENS type CLOSE_PARENS
 	  {
-	  	//TODO
+		$$ = new TypeOf ((Expression) $3, lexer.Location);
   	  }
 	;
 	

@@ -1,3 +1,6 @@
+2004-08-07 Bernie Solomon <bernard@ugsolutions.com>
+	* mb-parser.jay: Implement GetType(x) 
+
 2004-08-07 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Check for empty enum declaration
 
