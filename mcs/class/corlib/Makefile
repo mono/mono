@@ -21,7 +21,9 @@ sourcefile = corlib.dll.sources
 response = $(depsdir)/corlib.dll.response
 makefrag = $(depsdir)/corlib.dll.makefrag
 stampfile = $(depsdir)/corlib.dll.stamp
-corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
+# disable, until people fix their code...
+#corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
+corlib_flags = /unsafe /nostdlib
 
 test_sourcefile = corlib_test.dll.sources
 test_response = $(depsdir)/$(testlib).response
