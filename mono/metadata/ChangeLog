@@ -1,3 +1,8 @@
+2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (mono_gc_enable): New helper function.
+	* gc.c (mono_gc_disable): New helper function.
+
 2004-02-23  Martin Baulig  <martin@ximian.com>
 
 	* icall.c: I must have been really stupid - make it actually work
