@@ -1,5 +1,13 @@
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* threads.c (mono_thread_attach): Allow this to be called multiple
+	times for a thread.
+	
+	* threads.c (build_wait_tids): Do not wait for ourselves.
+
+	* threads.c (mono_thread_pop_appdomain_ref): Avoid crash if the 
+	appdomain list is empty.
+
 	* marshal.c (mono_marshal_get_native_wrapper): Do not free the
 	memory returned by mono_string_builder_to_utf16, since it points into
 	managed memory. Thanks to Bernie Solomon for noticing this.
