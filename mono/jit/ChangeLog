@@ -2,6 +2,8 @@
 
 	* jit.c (OPT_BOOL): new. opt. for boolean variables - we simply
 	store them as 32 bit integers.
+	(mono_analyze_stack): we need to generate a temporary var for
+	SHL/SHR because the tree allocator can fail otherwise 
 
 	* exception.c (arch_handle_exception): EIP now points to the call
 	instruction, not to the instruction after the call. This fixes the
