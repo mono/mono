@@ -402,9 +402,8 @@ namespace System.Collections {
 		public virtual object Clone ()
 		{
 			Hashtable ht = new Hashtable (Count, hcp, comparer);
-			ht.modificationCount = this.modificationCount;
-			ht.inUse = this.inUse;
-			ht.AdjustThreshold ();
+			ht.inUse = 0;
+			ht.loadFactor = this.loadFactor;
 
 			// FIXME: maybe it's faster to simply
 			//        copy the back-end array?
