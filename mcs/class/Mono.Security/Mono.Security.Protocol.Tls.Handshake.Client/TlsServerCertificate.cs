@@ -102,7 +102,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 						buffer);
 				}
 			}
-			
+
 			this.validateCertificates(certificates);
 		}
 
@@ -223,7 +223,18 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			chain.Remove (leaf);
 			X509Chain verify = new X509Chain (chain);
 
-			if (!verify.Build (leaf)) 
+			bool result = false;
+
+			try
+			{
+				result = verify.Build (leaf);
+			}
+			catch (Exception)
+			{
+				result = false;
+			}
+
+			if (!result) 
 			{
 				switch (verify.Status) 
 				{
@@ -244,25 +255,25 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 					
 					case X509ChainStatusFlags.NotTimeValid:
 						// WinError.h CERT_E_EXPIRED 0x800B0101
-						description	= AlertDescription.CertificateExpired;
+						description = AlertDescription.CertificateExpired;
 						errors.Add ((int)-2146762495);
 						break;
 					
 					case X509ChainStatusFlags.PartialChain:
 						// WinError.h CERT_E_CHAINING 0x800B010A
-						description	= AlertDescription.UnknownCA;
+						description = AlertDescription.UnknownCA;
 						errors.Add ((int)-2146762486);
 						break;
 					
 					case X509ChainStatusFlags.UntrustedRoot:
 						// WinError.h CERT_E_UNTRUSTEDROOT 0x800B0109
-						description	= AlertDescription.UnknownCA;
+						description = AlertDescription.UnknownCA;
 						errors.Add ((int)-2146762487);
 						break;
 					
 					default:
 						// unknown error
-						description	= AlertDescription.CertificateUnknown;
+						description = AlertDescription.CertificateUnknown;
 						errors.Add ((int)verify.Status);
 						break;
 				}
