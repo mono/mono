@@ -1,3 +1,8 @@
+2003-11-12 Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Environment.cs: Added internal method for getting the path to 
+	machine.config.
+	
 2003-11-12 Jackson Harper <jackson@ximian.com>
 
 	* Environment.cs: Add MyMusic and MyPictures to the SpecialFolder

@@ -332,6 +332,8 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string GetMachineConfigPath ();
 	}
 }
 
