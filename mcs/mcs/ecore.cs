@@ -302,7 +302,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns a fully formed expression after a MemberLookup
 		/// </summary>
-		static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
+		public static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
 				return new EventExpr ((EventInfo) mi, loc);
@@ -463,7 +463,7 @@ namespace Mono.CSharp {
 			MemberTypes.NestedType  |
 			MemberTypes.Property;
 		
-		public const BindingFlags AllBindingsFlags =
+		public const BindingFlags AllBindingFlags =
 			BindingFlags.Public |
 			BindingFlags.Static |
 			BindingFlags.Instance;
@@ -471,7 +471,7 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
 						       bool same_type, Location loc)
 		{
-			return MemberLookup (ec, t, name, same_type, AllMemberTypes, AllBindingsFlags, loc);
+			return MemberLookup (ec, t, name, same_type, AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
@@ -2106,13 +2106,6 @@ namespace Mono.CSharp {
 		{
 			child.Emit (ec);
 		}
-
-		public Expression Child {
-			get {
-				return child;
-			}
-		}
-
 	}
 
 	/// <summary>
@@ -2732,6 +2725,42 @@ namespace Mono.CSharp {
 				}
 			} 				
 
+			if (e is EventExpr) {
+				//
+				// If the event is local to this class, we transform ourselves into
+				// a FieldExpr
+				//
+				EventExpr ee = (EventExpr) e;
+
+				Expression ml = MemberLookup (ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
+							      true, MemberTypes.Event, AllBindingFlags, Location);
+
+				if (ml != null) {
+					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
+
+					ml = ExprClassFromMemberInfo (ec, mi, Location);
+					
+					if (ml == null) {
+						Report.Error (-200, Location, "Internal error!!");
+						return null;
+					}
+
+					Expression instance_expr;
+					
+					FieldInfo fi = ((FieldExpr) ml).FieldInfo;
+
+					if (fi.IsStatic)
+						instance_expr = null;
+					else
+						instance_expr = new This (Location.Null);
+
+					instance_expr = instance_expr.Resolve (ec);
+
+					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, Location);
+				}
+			}
+				
+			
 			if (ec.IsStatic)
 				return MemberStaticCheck (e);
 			else
@@ -3073,7 +3102,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to an Event
 	/// </summary>
-	public class EventExpr : Expression, IAssignMethod {
+	public class EventExpr : Expression {
 		public readonly EventInfo EventInfo;
 		Location loc;
 		public Expression InstanceExpression;
@@ -3108,10 +3137,10 @@ namespace Mono.CSharp {
 
 		override public void Emit (EmitContext ec)
 		{
-			// FIXME : Implement
+			throw new Exception ("Should not happen I think");
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source)
+		public void EmitAddOrRemove (EmitContext ec, Expression source)
 		{
 			Expression handler = ((Binary) source).Right;
 			

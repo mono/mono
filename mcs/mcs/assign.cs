@@ -157,38 +157,32 @@ namespace Mono.CSharp {
 
 			if (target is EventExpr) {
 
-				Binary tmp = null;
+				Binary tmp;
 				EventInfo ei = ((EventExpr) target).EventInfo;
 
-				Expression ml = MemberLookup (ec, ec.TypeContainer.TypeBuilder, ei.Name, true,
-							      MemberTypes.Event,
-							      AllBindingsFlags, l);
+				//
+				// If this is the case, then the Event does not belong 
+				// to this TypeContainer and so, according to the spec
+				// is allowed to only appear on the left hand of
+				// the += and -= operators
+				//
+				// Note that if target will not appear as an EventExpr
+				// in the case it is being referenced within the same type container;
+				// it will appear as a FieldExpr in that case.
 				
-				if (ml == null) {
-					//
-					// If this is the case, then the Event does not belong 
-					// to this TypeContainer and so, according to the spec
-					// is allowed to only appear on the left hand of
-					// the += and -= operators
-					//
-					
-					if (!(source is Binary)) {
+				if (!(source is Binary)) {
+					error70 (ei);
+					return null;
+				} else {
+					tmp = ((Binary) source);
+					if (tmp.Oper != Binary.Operator.Addition &&
+					    tmp.Oper != Binary.Operator.Subtraction) {
 						error70 (ei);
 						return null;
-					} else {
-						tmp = ((Binary) source);
-						if (tmp.Oper != Binary.Operator.Addition &&
-						    tmp.Oper != Binary.Operator.Subtraction) {
-							error70 (ei);
-							return null;
-						}
 					}
-
-					return this;
-				} else
-					throw new Exception ("Unhandle case ! Implement me !");
-
-				// return this;
+				}
+				
+				return this;
 			}
 
 			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){
@@ -217,6 +211,11 @@ namespace Mono.CSharp {
 
 		void Emit (EmitContext ec, bool is_statement)
 		{
+			if (!EventIsLocal && target is EventExpr) {
+				((EventExpr) target).EmitAddOrRemove (ec, source);
+				return;
+			}
+			
 			//
 			// FIXME! We need a way to "probe" if the process can
 			// just use `dup' to propagate the result

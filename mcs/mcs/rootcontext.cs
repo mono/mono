@@ -222,12 +222,13 @@ namespace Mono.CSharp {
 			// or any base class
 			//
 			Type current_type = ds.TypeBuilder;
-			do {
+
+			while (current_type != null) {
 				t = TypeManager.LookupType (current_type.FullName + "+" + name);
 				if (t != null)
 					return t;
 				current_type = current_type.BaseType;
-			} while (current_type != null);
+			} 
 
 			t = TypeManager.LookupType (MakeFQN (ds.Namespace.Name, name));
 			if (t != null)

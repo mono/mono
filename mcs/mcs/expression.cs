@@ -3338,7 +3338,7 @@ namespace Mono.CSharp {
 			Expression ml;
 			
 			ml = MemberLookup (ec, type, ".ctor", false,
-					   MemberTypes.Constructor, AllBindingsFlags, loc);
+					   MemberTypes.Constructor, AllBindingFlags, loc);
 			
 			bool is_struct = false;
 			is_struct = type.IsSubclassOf (TypeManager.value_type);
@@ -3687,7 +3687,7 @@ namespace Mono.CSharp {
 				Expression ml;
 				
 				ml = MemberLookup (ec, type, ".ctor", false, MemberTypes.Constructor,
-						   AllBindingsFlags, loc);
+						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)){
 					report118 (loc, ml, "method group");
@@ -4272,7 +4272,29 @@ namespace Mono.CSharp {
 			}
 
 			if (member_lookup is EventExpr) {
+
 				EventExpr ee = (EventExpr) member_lookup;
+				
+				//
+				// If the event is local to this class, we transform ourselves into
+				// a FieldExpr
+				//
+
+				Expression ml = MemberLookup (ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
+							      true, MemberTypes.Event, AllBindingFlags, loc);
+
+				if (ml != null) {
+					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
+
+					ml = ExprClassFromMemberInfo (ec, mi, loc);
+					
+					if (ml == null) {
+						Report.Error (-200, loc, "Internal error!!");
+						return null;
+					}
+
+					return ResolveMemberAccess (ec, ml, left, loc);
+				}
 
 				if (left is TypeExpr) {
 					if (!ee.IsStatic) {

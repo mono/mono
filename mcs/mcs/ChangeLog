@@ -1,3 +1,23 @@
+2001-12-23  Ravi Pratap  <ravi@ximian.com>
+
+	* rootcontext.cs (LookupType): Check that current_type is not null before
+	going about looking at nested types.
+
+	* ecore.cs (EventExpr.EmitAddOrRemove): Rename from EmitAssign as we do
+	not implement the IAssignMethod interface any more.
+
+	* expression.cs (MemberAccess.ResolveMemberAccess): Handle EventExprs specially
+	where we tranform them into FieldExprs if they are being resolved from within
+	the declaring type.
+
+	* ecore.cs (SimpleName.DoResolve): Do the same here.
+
+	* assign.cs (DoResolve, Emit): Clean up code considerably. 
+
+	* ../errors/bug10.cs : Add.
+
+	* ../errors/cs0070.cs : Add.
+	
 2001-12-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (ConvertIntLiteral): finished the implementation.

@@ -1219,7 +1219,7 @@ namespace Mono.CSharp {
 				        foreach (Event e in Events) {
 						if (filter (e.EventBuilder, criteria) == true)
 						        members.Add (e.EventBuilder);
-				          }
+					}
 			}
 			
 			if ((mt & MemberTypes.Property) != 0){
@@ -1278,6 +1278,17 @@ namespace Mono.CSharp {
 				members.CopyTo (mi);
 				return mi;
 			}
+
+			return null;
+		}
+
+		public MemberInfo GetFieldFromEvent (EventExpr event_expr)
+		{
+			EventInfo ei = event_expr.EventInfo;
+
+			foreach (Event e in events) 
+				if (Type.FilterName (e.FieldBuilder, ei.Name))
+					return e.FieldBuilder;
 
 			return null;
 		}
@@ -3021,11 +3032,12 @@ namespace Mono.CSharp {
 		public readonly Block     Add;
 		public readonly Block     Remove;
 		public MyEventBuilder     EventBuilder;
+		public FieldBuilder       FieldBuilder;
 		public Attributes         OptAttributes;
 
 		Type EventType;
 		MethodBuilder AddBuilder, RemoveBuilder;
-		FieldBuilder  FieldBuilder;
+		
 
 		public Event (string type, string name, Object init, int flags, Block add_block,
 			      Block rem_block, Attributes attrs, Location loc)

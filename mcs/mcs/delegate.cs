@@ -79,7 +79,6 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
-
 			MethodAttributes mattr;
 			int i;
 			
