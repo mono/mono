@@ -455,8 +455,7 @@ namespace Mono.CSharp {
 		protected Type [] ifaces;
 		protected Type ptype;
 
-		// The parent member container and our member cache
-		IMemberContainer parent_container;
+		// The parent member cache and our member cache
 		MemberCache parent_cache;
 		MemberCache member_cache;
 
@@ -1311,13 +1310,11 @@ namespace Mono.CSharp {
 			//
 			// We need to be able to use the member cache while we are checking/defining
 			//
-			if (TypeBuilder.BaseType != null) {
-				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
-				parent_cache = parent_container.MemberCache;
-			}
+			if (TypeBuilder.BaseType != null)
+				parent_cache = TypeManager.LookupMemberCache (TypeBuilder.BaseType);
 
 			if (TypeBuilder.IsInterface)
-				parent_cache = TypeManager.LookupInterfaceCache (this, TypeBuilder);
+				parent_cache = TypeManager.LookupParentInterfacesCache (TypeBuilder);
 
  			if (IsTopLevel) {
  				if ((ModFlags & Modifiers.NEW) != 0)
@@ -2277,9 +2274,9 @@ namespace Mono.CSharp {
 
 			VerifyClsName ();
 
-			// parent_container is null for System.Object
-			if (parent_container != null && !AttributeTester.IsClsCompliant (parent_container.Type)) {
-				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (parent_container.Type));
+			Type base_type = TypeBuilder.BaseType;
+			if (base_type != null && !AttributeTester.IsClsCompliant (base_type)) {
+				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
 			}
 			return true;
 		}

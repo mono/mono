@@ -1,3 +1,20 @@
+2004-11-17  Raja R Harinath  <rharinath@novell.com>
+
+	* typemanager.cs (TypeHandle.GetTypeHandle): Make private.
+	(TypeHandle.GetMemberCache): New.
+	(TypeHandle.TypeHandle): Update.
+	(TypeManager.LookupMemberCache): Rewritten from LookupMemberContainer.
+	(TypeManager.LookupParentInterfacesCache):
+	Rename from LookupInterfaceCache.  Optimize slightly.
+	(TypeManager.MemberLookup_FindMembers): Update.
+	* decl.cs (MemberCache.MemberCache): Set Container to null in the
+	multi-type variant.
+	(AddCacheContents): Rename from AddHashtable.
+	* class.cs (TypeContainer.parent_container): Remove.
+	(TypeContainer.VerifyClsCompliance): Don't use parent_container.
+	(TypeContainer.DoDefineMembers): Don't initialize it.
+	Update to name changes.
+	
 2004-11-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MethodCore.CheckAccessModifiers): New helper routine
