@@ -1,3 +1,12 @@
+2003-01-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* makefile.gnu: compile and run with debugging enabled.
+
+	* makefile.gnu: added SUBDIR variable to enable building a subset of
+	the tests, saving on compilation time during development.
+
+	* run_test.sh: updated to nunit2.
+
 2003-01-12  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_linux_test.args: added MACTripleDES test file.
