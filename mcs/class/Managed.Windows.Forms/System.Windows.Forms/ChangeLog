@@ -1,5 +1,19 @@
 2005-01-05  Peter Bartok <pbartok@novell.com>
 
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs, XplatUIX11.cs,
+	  XplatUIOSX.cs: Added GetActive method to return the currently
+	  active window for the application (or null, if none is active)
+	* Form.cs:
+	  - Implemented ActiveForm
+	  - Commented out owner assignment for modal dialogs (causes problems
+	    on Win32, since the owner will be disabled)
+	  - Reworked some Active/Focus handling (still incomplete)
+	* CommonDialog.cs: Commented out owner assignment for modal dialogs 
+	  (causes problems on Win32, since the owner will be disabled)
+	* IWin32Window: Added ComVisible attribute
+
+2005-01-05  Peter Bartok <pbartok@novell.com>
+
 	* ToolTip.cs (WndProc): Enable setting focus now that we have the
 	  required XplatUI functions.
 

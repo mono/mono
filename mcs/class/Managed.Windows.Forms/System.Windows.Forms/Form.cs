@@ -35,7 +35,7 @@ using System.Threading;
 namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		#region Local Variables
-		internal Form			active_form;
+		internal static Form		active_form;
 		internal bool			closing;
 		FormBorderStyle			formBorderStyle;
 		private static bool		autoscale;
@@ -166,22 +166,37 @@ namespace System.Windows.Forms {
 						}
 						break;
 					}
-
 					case Msg.WM_ACTIVATEAPP: {
 						if (m.WParam == (IntPtr)1) {
 Console.WriteLine("App activated");
-							owner.active_form = owner;
 							owner.OnActivated(EventArgs.Empty);
-						} else {
-Console.WriteLine("App de-activated");
-							owner.OnDeactivate(EventArgs.Empty);
-							owner.active_form = null;
+//						} else {
+//Console.WriteLine("App de-activated");
+//							owner.OnDeactivate(EventArgs.Empty);
 						}
 						break;
 					}
-
+#if not
 					case Msg.WM_ACTIVATE: {
-						Console.WriteLine("WM_ACTIVATE received");
+						if (m.WParam == (IntPtr)WindowActiveFlags.WA_INACTIVE) {
+							if (active_form == owner) {
+								owner.OnDeactivate(EventArgs.Empty);
+								active_form = null;
+							}
+						}
+						break;
+					}
+#endif
+
+					case Msg.WM_SETFOCUS: {
+						owner.OnActivated(EventArgs.Empty);
+						base.WndProc(ref m);
+						break;
+					}
+
+					case Msg.WM_KILLFOCUS: {
+						owner.OnDeactivate(EventArgs.Empty);
+						base.WndProc(ref m);
 						break;
 					}
 					
@@ -281,7 +296,29 @@ Console.WriteLine("App de-activated");
 
 		public static Form ActiveForm {
 			get {
-				//FIXME: create next driver call
+				Control	active;
+
+				active = FromHandle(XplatUI.GetActive());
+
+				if (active != null) {
+					if ( !(active is Form)) {
+						if (active is FormParentWindow) {
+							return ((FormParentWindow)active).owner;
+						} else {
+							Control	parent;
+
+							parent = active.Parent;
+							while (parent != null) {
+								if (parent is Form) {
+									return (Form)parent;
+								}
+								parent = parent.Parent;
+							}
+						}
+					} else {
+						return (Form)active;
+					}
+				}
 				return null;
 			}
 		}
@@ -636,11 +673,13 @@ Console.WriteLine("App de-activated");
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
+			#if broken
 			Control		owner = null;
 
 			if (ownerWin32 != null) {
 				owner = Control.FromHandle(ownerWin32.Handle);
 			}
+			#endif
 
 			if (is_modal) {
 				return DialogResult.None;
@@ -650,7 +689,10 @@ Console.WriteLine("App de-activated");
 				throw new InvalidOperationException("Already visible forms cannot be displayed as a modal dialog. Set the Visible property to 'false' prior to calling Form.ShowDialog.");
 			}
 
+			#if broken
+			// Can't do this, will screw us in the modal loop
 			form_parent_window.Parent = owner;
+			#endif
 
 			if (!IsHandleCreated) {
 				CreateControl();

@@ -315,6 +315,10 @@ namespace System.Windows.Forms {
 			driver.SetFocus(hwnd);
 		}
 
+		internal static IntPtr GetActive() {
+			return driver.GetActive();
+		}
+
 		internal static bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			return driver.GetFontMetrics(g, font, out ascent, out descent);
 		}

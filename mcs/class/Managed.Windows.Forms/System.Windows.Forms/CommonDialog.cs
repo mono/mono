@@ -124,11 +124,13 @@ namespace System.Windows.Forms {
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
+			#if broken
 			Control		owner = null;
 
 			if (ownerWin32 != null) {
 				owner = Control.FromHandle(ownerWin32.Handle);
 			}
+			#endif
 
 			RunDialog(form.Handle);
 
@@ -140,7 +142,9 @@ namespace System.Windows.Forms {
 				form.CreateControl();
 			}
 
+			#if broken
 			form.form_parent_window.Parent = owner;
+			#endif
 
 			XplatUI.SetModal(form.form_parent_window.Handle, true);
 

@@ -1000,6 +1000,10 @@ namespace System.Windows.Forms {
 			Win32SetFocus(hwnd);
 		}
 
+		internal override IntPtr GetActive() {
+			return Win32GetActiveWindow();
+		}
+
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			IntPtr		dc;
 			TEXTMETRIC	tm;
@@ -1250,6 +1254,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, IntPtr prcScroll, IntPtr prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);
+
+		[DllImport ("user32.dll", EntryPoint="GetActiveWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetActiveWindow();
 		#endregion
 	}
 }

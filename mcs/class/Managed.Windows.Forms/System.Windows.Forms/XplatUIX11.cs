@@ -1169,30 +1169,18 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.FocusIn: {
-					if (xevent.FocusChangeEvent.detail == NotifyDetail.NotifyNonlinear) {
-						msg.message=Msg.WM_ACTIVATEAPP;
-						msg.wParam=(IntPtr)1;
-						msg.lParam=IntPtr.Zero;
-					} else {
-						Console.WriteLine("Received focus: {0}", xevent.FocusChangeEvent.detail);
-						msg.message=Msg.WM_SETFOCUS;
-						msg.wParam=IntPtr.Zero;
-						msg.lParam=IntPtr.Zero;
-					}
+					Console.WriteLine("Received focus: {0}", xevent.FocusChangeEvent.detail);
+					msg.message=Msg.WM_SETFOCUS;
+					msg.wParam=IntPtr.Zero;
+					msg.lParam=IntPtr.Zero;
 					break;
 				}
 
 				case XEventName.FocusOut: {
-					if (xevent.FocusChangeEvent.detail == NotifyDetail.NotifyNonlinear) {
-						msg.message=Msg.WM_ACTIVATEAPP;
-						msg.wParam=IntPtr.Zero;
-						msg.lParam=IntPtr.Zero;
-					} else {
-						Console.WriteLine("Lost focus: {0}", xevent.FocusChangeEvent.detail);
-						msg.message=Msg.WM_KILLFOCUS;
-						msg.wParam=IntPtr.Zero;
-						msg.lParam=IntPtr.Zero;
-					}
+					Console.WriteLine("Lost focus: {0}", xevent.FocusChangeEvent.detail);
+					msg.message=Msg.WM_KILLFOCUS;
+					msg.wParam=IntPtr.Zero;
+					msg.lParam=IntPtr.Zero;
 					break;
 				}
 
@@ -1668,6 +1656,23 @@ namespace System.Windows.Forms {
 
 		internal override void SetFocus(IntPtr hwnd) {
 			XSetInputFocus(DisplayHandle, hwnd, RevertTo.None, IntPtr.Zero);
+		}
+
+		internal override IntPtr GetActive() {
+			Atom	actual_atom;
+			int	actual_format;
+			int	nitems;
+			int	bytes_after;
+			IntPtr	prop = IntPtr.Zero;
+			IntPtr	active_window = IntPtr.Zero;
+
+			XGetWindowProperty(DisplayHandle, root_window, net_active_window, 0, 1, false, Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			if ((nitems > 0) && (prop != IntPtr.Zero)) {
+				active_window = (IntPtr)Marshal.ReadInt32(prop);
+				XFree(prop);
+			}
+
+			return active_window;
 		}
 
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {

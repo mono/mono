@@ -1190,7 +1190,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetFocus(IntPtr hwnd) {
-			;
+			throw new NotImplementedException();
+		}
+
+		internal override IntPtr GetActive() {
+			throw new NotImplementedException();
 		}
 
 

@@ -27,7 +27,12 @@
 
 // COMPLETE
 
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
+	[ComVisible(true)]
+	[Guid("458AB8A2-A1EA-4d7b-8EBE-DEE5D3D9442C")]
+	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IWin32Window {
 		#region Public Instance Properties
 		IntPtr Handle {

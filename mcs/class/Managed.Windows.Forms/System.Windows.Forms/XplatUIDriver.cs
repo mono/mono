@@ -145,6 +145,7 @@ namespace System.Windows.Forms {
 		internal abstract void CaretVisible(IntPtr hwnd, bool visible);
 
 		internal abstract void SetFocus(IntPtr hwnd);
+		internal abstract IntPtr GetActive();
 
 		internal abstract void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount);
 
