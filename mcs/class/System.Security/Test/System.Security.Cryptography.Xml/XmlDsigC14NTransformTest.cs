@@ -83,8 +83,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 		private string Stream2String (Stream s) 
 		{
-			StreamReader sr = new StreamReader (s);
-			return sr.ReadToEnd ();
+			StringBuilder sb = new StringBuilder ();
+			int b = s.ReadByte ();
+			while (b != -1) {
+				sb.Append (Convert.ToChar (b));
+				b = s.ReadByte ();
+			}
+			return sb.ToString ();
 		}
 
 		static string xml = "<Test  attrib='at ' xmlns=\"http://www.go-mono.com/\" > \r\n <Toto/> text &amp; </Test   >";
@@ -187,6 +192,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        }
 	    
 	        [Test]
+//		[Ignore ("This test should be fine, but it does not pass under MS.NET")]
 	        public void C14NSpecExample4 ()
 	        {
 	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample4Input);
@@ -202,6 +208,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	    				C14NSpecExample5Output, res);
 	        }
     
+		[Test]
 	        public void C14NSpecExample6 ()
 	        {
 	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample6Input);

@@ -1,3 +1,13 @@
+2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigC14NTransformTest.cs : Stream2String() should consider utf-8
+	  escaping (i.e. it must be the same as with-comments test).
+	  Enabled example6 (encoding test).
+	* XmlDsigXsltTransformTest.cs :
+	  GetXslDoc() now works (xmlns for dsig was missing).
+	  Added EmptyXslt(), EmbeddedStylesheet() and InvalidXslt().
+	  Activated ignored LoadInputAsXXX() and Load2() by supplying xsl.
+
 2004-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignatureTest.cs : added some malformed xml tests.

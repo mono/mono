@@ -92,26 +92,42 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			return sb.ToString ();
 		}
 
+
 		[Test]
-		// can't use ExpectedException as XsltCompileException doesn't have a constructor with 0 parameters
-		// [ExpectedException (typeof (XsltCompileException))]
-		public void InvalidXslt () 
+		[ExpectedException (typeof (NullReferenceException))]
+		public void EmptyXslt () 
+		{
+			string test = "<Test>XmlDsigXsltTransform</Test>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (test);
+
+			transform.LoadInput (doc.ChildNodes);
+			Stream s = (Stream) transform.GetOutput ();
+		}
+
+		[Test]
+		// Note that this is _valid_ as an "embedded stylesheet".
+		// (see XSLT spec 2.7)
+		public void EmbeddedStylesheet () 
 		{
 			string test = "<Test>XmlDsigXsltTransform</Test>";
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 
 			transform.LoadInnerXml (doc.ChildNodes);
-			try {
-				Stream s = (Stream) transform.GetOutput ();
-				Fail ("Expected XsltCompileException but got none");
-			}
-			catch (XsltCompileException) {
-				// expected
-			}
-			catch (Exception e) {
-				Fail ("Expected XsltCompileException but got :" + e.ToString ());
-			}
+			Stream s = (Stream) transform.GetOutput ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (XsltCompileException))]
+		public void InvalidXslt () 
+		{
+			string test = "<xsl:element name='foo' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>XmlDsigXsltTransform</xsl:element>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (test);
+
+			transform.LoadInnerXml (doc.ChildNodes);
+			Stream s = (Stream) transform.GetOutput ();
 		}
 
 		[Test]
@@ -134,7 +150,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 		private XmlDocument GetXslDoc () 
 		{
-			string test = "<Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xslt-19991116\">";
+			string test = "<Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xslt-19991116\" xmlns='http://www.w3.org/2000/09/xmldsig#'>";
 			test += "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns=\"http://www.w3.org/TR/xhtml1/strict\" version=\"1.0\">";
 			test += "<xsl:output encoding=\"UTF-8\" indent=\"no\" method=\"xml\" />";
 			test += "<xsl:template match=\"/\"><html><head><title>Notaries</title>";
@@ -147,30 +163,30 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Ignore ("not working")]
 		public void LoadInputAsXmlDocument () 
 		{
 			XmlDocument doc = GetXslDoc ();
+			transform.LoadInnerXml (doc.DocumentElement.ChildNodes);
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2Array (s);
 		}
 
 		[Test]
-		[Ignore ("not working")]
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetXslDoc ();
+			transform.LoadInnerXml (doc.DocumentElement.ChildNodes);
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2Array (s);
 		}
 
 		[Test]
-		[Ignore ("not working")]
 		public void LoadInputAsStream () 
 		{
 			XmlDocument doc = GetXslDoc ();
+			transform.LoadInnerXml (doc.DocumentElement.ChildNodes);
 			MemoryStream ms = new MemoryStream ();
 			doc.Save (ms);
 			ms.Position = 0;
@@ -191,17 +207,16 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void LoadInnerXml () 
 		{
 			XmlDocument doc = GetXslDoc ();
-			transform.LoadInnerXml (doc.ChildNodes);
+			transform.LoadInnerXml (doc.DocumentElement.ChildNodes);
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertEquals ("LoadInnerXml", doc.ChildNodes, xnl);
+			AssertEquals ("LoadInnerXml", doc.DocumentElement.ChildNodes, xnl);
 		}
 
 		[Test]
-		[Ignore ("not working")]
 		public void Load2 () 
 		{
 			XmlDocument doc = GetXslDoc ();
-			transform.LoadInnerXml (doc.ChildNodes);
+			transform.LoadInnerXml (doc.DocumentElement.ChildNodes);
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2Array (s);
