@@ -23,6 +23,7 @@
 #include "inssel.h"
 #include "cpu-pentium.h"
 
+/* On windows, these hold the key returned by TlsAlloc () */
 static gint lmf_tls_offset = -1;
 static gint appdomain_tls_offset = -1;
 static gint thread_tls_offset = -1;
@@ -238,6 +239,7 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
 		case MONO_TYPE_PTR:
+		case MONO_TYPE_FNPTR:
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_OBJECT:
 		case MONO_TYPE_SZARRAY:
@@ -331,6 +333,7 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
 		case MONO_TYPE_PTR:
+		case MONO_TYPE_FNPTR:
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_OBJECT:
 		case MONO_TYPE_STRING:
@@ -356,6 +359,7 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 			add_float (&fr, &stack_size, ainfo, TRUE);
 			break;
 		default:
+			g_error ("unexpected type 0x%x", ptype->type);
 			g_assert_not_reached ();
 		}
 	}
@@ -591,6 +595,7 @@ is_regsize_var (MonoType *t) {
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
 		return TRUE;
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_STRING:
@@ -2702,6 +2707,27 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	return code;
 }
 
+static guint8*
+emit_tls_get (guint8* code, int dreg, int tls_offset)
+{
+#ifdef PLATFORM_WIN32
+	/* 
+	 * See the Under the Hood article in the May 1996 issue of Microsoft Systems 
+	 * Journal and/or a disassembly of the TlsGet () function.
+	 */
+	g_assert (tls_offset < 64);
+	x86_prefix (code, X86_FS_PREFIX);
+	x86_mov_reg_mem (code, dreg, 0x18, 4);
+	/* Dunno what this does but TlsGetValue () contains it */
+	x86_alu_membase_imm (code, X86_AND, dreg, 0x34, 0);
+	x86_mov_reg_membase (code, dreg, dreg, 3600 + (tls_offset * 4), 4);
+#else
+	x86_prefix (code, X86_GS_PREFIX);
+	x86_mov_reg_mem (code, dreg, tls_offset, 4);			
+#endif
+	return code;
+}
+
 #define REAL_PRINT_REG(text,reg) \
 mono_assert (reg >= 0); \
 x86_push_reg (code, X86_EAX); \
@@ -3958,8 +3984,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_TLS_GET: {
-			x86_prefix (code, X86_GS_PREFIX);
-			x86_mov_reg_mem (code, ins->dreg, ins->inst_offset, 4);			
+			code = emit_tls_get (code, ins->dreg, ins->inst_offset);
 			break;
 		}
 		case OP_ATOMIC_ADD_I4: {
@@ -4175,8 +4200,12 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		if (lmf_tls_offset != -1) {
 			guint8 *buf;
 
-			x86_prefix (code, X86_GS_PREFIX);
-			x86_mov_reg_mem (code, X86_EAX, lmf_tls_offset, 4);
+			code = emit_tls_get ( code, X86_EAX, lmf_tls_offset);
+#ifdef PLATFORM_WIN32
+			/* The TLS key actually contains a pointer to the MonoJitTlsData structure */
+			/* FIXME: Add a separate key for LMF to avoid this */
+			x86_alu_reg_imm (code, X86_ADD, X86_EAX, G_STRUCT_OFFSET (MonoJitTlsData, lmf));
+#endif
 			x86_test_reg_reg (code, X86_EAX, X86_EAX);
 			buf = code;
 			x86_branch8 (code, X86_CC_NE, 0, 0);
@@ -4214,8 +4243,12 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		 */
 		if (lmf_tls_offset != -1) {
 			/* Load lmf quicky using the GS register */
-			x86_prefix (code, X86_GS_PREFIX);
-			x86_mov_reg_mem (code, X86_EAX, lmf_tls_offset, 4);
+			code = emit_tls_get (code, X86_EAX, lmf_tls_offset);
+#ifdef PLATFORM_WIN32
+			/* The TLS key actually contains a pointer to the MonoJitTlsData structure */
+			/* FIXME: Add a separate key for LMF to avoid this */
+			x86_alu_reg_imm (code, X86_ADD, X86_EAX, G_STRUCT_OFFSET (MonoJitTlsData, lmf));
+#endif
 		}
 		else {
 			if (cfg->compile_aot) {
@@ -4622,11 +4655,29 @@ mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 #endif
 
 	if (!tls_offset_inited) {
-		tls_offset_inited = TRUE;
 		if (!getenv ("MONO_NO_TLS")) {
+#ifdef PLATFORM_WIN32
+			/* 
+			 * We need to init this multiple times, since when we are first called, the key might not
+			 * be initialized yet.
+			 */
+			appdomain_tls_offset = mono_domain_get_tls_key ();
+			lmf_tls_offset = mono_get_jit_tls_key ();
+			thread_tls_offset = mono_thread_get_tls_key ();
+
+			/* Only 64 tls entries can be accessed using inline code */
+			if (appdomain_tls_offset >= 64)
+				appdomain_tls_offset = -1;
+			if (lmf_tls_offset >= 64)
+				lmf_tls_offset = -1;
+			if (thread_tls_offset >= 64)
+				thread_tls_offset = -1;
+#else
+			tls_offset_inited = TRUE;
 			appdomain_tls_offset = mono_domain_get_tls_offset ();
 			lmf_tls_offset = mono_get_lmf_tls_offset ();
 			thread_tls_offset = mono_thread_get_tls_offset ();
+#endif
 		}
 	}		
 
@@ -4810,7 +4861,7 @@ MonoInst* mono_arch_get_domain_intrinsic (MonoCompile* cfg)
 	
 	if (appdomain_tls_offset == -1)
 		return NULL;
-	
+
 	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
 	ins->inst_offset = appdomain_tls_offset;
 	return ins;
@@ -4819,10 +4870,10 @@ MonoInst* mono_arch_get_domain_intrinsic (MonoCompile* cfg)
 MonoInst* mono_arch_get_thread_intrinsic (MonoCompile* cfg)
 {
 	MonoInst* ins;
-	
+
 	if (thread_tls_offset == -1)
 		return NULL;
-	
+
 	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
 	ins->inst_offset = thread_tls_offset;
 	return ins;

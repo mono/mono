@@ -1,3 +1,42 @@
+2005-03-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (emit_tls_get): Move tls handling into a separate helper function.
+
+2005-03-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c: Add mono_get_jit_tls_key ().
+
+	* mini-x86.c: Enable fast TLS support on windows.
+
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Renamed aptc to allowpartiallytrustedcallers.
+	* mini.c: Check for p/invoke method when generating code. If a
+	p/invoke method, or it's class, isn't decorated with [Suppress
+	UnmanagedCodeSecurity] then generate code to call System.Security.
+	UnmanagedDemand (only if the security manager is active).
+
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-amd64.c (create_specific_trampoline): Revert parts of the 
+	last change as it seems to cause strange crashes.
+	
+Wed Mar 16 16:24:11 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* *.c: handle unsafe function pointers where needed.
+
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_jit_free_method): Remove the fixme too.
+
+2005-03-15  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c: As discussed, make the code actually free the delegate
+	thunk now, to enable the debugging of delegate problems, use
+	MONO_DEBUG=1 when running Mono. 
+
+	This takes also care of parts of the leaks as seen by Joe.
+
 2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c: Rework local register allocator to unify the fp+non fp

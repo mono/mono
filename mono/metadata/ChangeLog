@@ -1,3 +1,32 @@
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-manager.c|h: Added demandunmanaged method and 
+	suppressunmanagedcodesecurity class to MonoSecurityManager.
+	Renamed aptc class to allowpartiallytrustedcallers.
+
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_type): Add MONO_TYPE_ARRAY.
+
+2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.c: disabled file async. IO using aio_*. It uses the
+	threadpool now. Workaround for bug #73718.
+
+Wed Mar 16 18:08:00 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.h, mono-config.c: added code to deal with bundled configs
+	for bundled assemblies.
+
+Wed Mar 16 16:34:38 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* *.c, private.h: cleanup, removing old private.h header file.
+
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_image_get_method_info): Encode best_fit_mapping
+	and throw_on_unmappable_char attributes.
+
 2005-03-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* process.c: Fix buffer length in ves_icall_System_Diagnostics_Process

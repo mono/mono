@@ -98,6 +98,8 @@ mcs-compileall: mono-wrapper wrapper-config
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
+CLEANFILES = wrapper-config
+
 wrapper-config: ../data/config
 	d=`cd ../support && pwd`; \
 	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@
