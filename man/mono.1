@@ -203,7 +203,10 @@ System.String except for the System.String:Concat method.
 .nf
 	mono --trace=T:System.String,-M:System.String:Concat
 .fi
-
+Finally, namespaces can be specified using the N: prefix:
+.nf
+	mono --trace=N:System.Xml
+.fi
 .SH ENVIRONMENT VARIABLES
 .TP
 .I "GC_DONT_GC"
