@@ -1,4 +1,8 @@
 2004-10-14 Umadevi S <sumadevi@novell.com>
+        * DataTable.cs : Corrected the Clone method to use  Activator.CreateInstance so that the
+        correct subclass is returned. This fixes bug #67631
+                                                                                        
+2004-10-14 Umadevi S <sumadevi@novell.com>
 	* DataSet.cs : Corrected the Clone method to use  Activator.CreateInstance so that the 	
 	correct subclass is returned. This fixes bug #67627
 

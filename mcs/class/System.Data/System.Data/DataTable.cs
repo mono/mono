@@ -687,8 +687,8 @@ namespace System.Data {
 		/// </summary>
 		public virtual DataTable Clone () 
 		{
-			DataTable Copy = new DataTable ();			
-			
+			 // Use Activator so we can use non-public constructors.
+			DataTable Copy = (DataTable) Activator.CreateInstance(GetType(), true);			
 			CopyProperties (Copy);
 			return Copy;
 		}
@@ -773,8 +773,9 @@ namespace System.Data {
 
 			// Copy columns
 			foreach (DataColumn Column in Columns) {
-				
-				Copy.Columns.Add (CopyColumn (Column));	
+				// When cloning a table, the columns may be added in the default
+			        // constructor.
+				if (!Copy.Columns.Contains(Column.ColumnName)) 							        Copy.Columns.Add (CopyColumn (Column));	
 			}
 
 			CopyConstraints(Copy);
