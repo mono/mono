@@ -1,3 +1,12 @@
+2003-06-09  Dick Porter  <dick@ximian.com>
+
+	* daemon.c: Lookup env as a string array.  Fixes bug 44289.  Also
+	make setting the process handle value in the environment actually
+	work.
+
+	* processes.c: Pretty up the process name, if it happens to be
+	"mono" such as when another mono process forks "mono foo.exe"
+
 2003-06-05  Dick Porter  <dick@ximian.com>
 
 	* processes.c (process_set_current): Don't do an expensive handle
