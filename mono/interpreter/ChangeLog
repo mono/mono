@@ -1,3 +1,7 @@
+2004-05-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* interp.c, interp.h: Use the new methods for handling thread.abort.
+
 2004-05-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (ves_exec_method_with_context): Disable explicit assignment
