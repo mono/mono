@@ -42,6 +42,9 @@ clean:
 		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
 	done
 
+corlib:
+	$(MAKE) -C class/corlib -f makefile.gnu
+
 # Please do only use `binary-snapshot', the `dist' target will disappear really soon !
 binary-snapshot: dist
 
