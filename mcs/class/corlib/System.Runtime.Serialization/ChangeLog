@@ -1,3 +1,8 @@
+2002-02-18  Duncan Mak  <duncan@ximian.com>
+
+	* SerializationInfo.cs: Converted Type.GetType calls to the faster
+	typeof operator.
+
 2002-02-16  Duncan Mak  <duncan@ximian.com>
 
 	* SurrogateSelector.cs: Stubbed out. Gonna be working on this

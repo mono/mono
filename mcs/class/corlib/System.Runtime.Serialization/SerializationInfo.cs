@@ -105,75 +105,75 @@ namespace System.Runtime.Serialization
 		[CLSCompliant(false)]
 		public void AddValue (string name, short value)
 		{
-			AddValue (name, value, Type.GetType ("System.Int16"));
+			AddValue (name, value, typeof (System.Int16));
 		}
 
 		[CLSCompliant(false)]
 		public void AddValue (string name, UInt16 value)
 		{
-			AddValue (name, value, Type.GetType ("System.UInt16"));
+			AddValue (name, value, typeof (System.UInt16));
 		}
 		
 		public void AddValue (string name, int value)
 		{
-			AddValue (name, value, Type.GetType ("System.Int32"));
+			AddValue (name, value, typeof (System.Int32));
 		}
 		
 		public void AddValue (string name, byte value)
 		{
-			AddValue (name, value, Type.GetType ("System.Byte"));
+			AddValue (name, value, typeof (System.Byte));
 		}
 		
 		public void AddValue (string name, bool value)
 		{
-			AddValue (name, value, Type.GetType ("System.Boolean"));
+			AddValue (name, value, typeof (System.Boolean));
 		}
 	       
 	        public void AddValue (string name, char value)
 		{
-			AddValue (name, value, Type.GetType ("System.Char"));
+			AddValue (name, value, typeof (System.Char));
 		}
 
 		[CLSCompliant(false)]
 	        public void AddValue (string name, SByte value)
 		{
-			AddValue (name, value, Type.GetType ("System.SByte"));
+			AddValue (name, value, typeof (System.SByte));
 		}
 		
 	        public void AddValue (string name, double value)
 		{
-			AddValue (name, value, Type.GetType ("System.Double"));
+			AddValue (name, value, typeof (System.Double));
 		}
 		
 	        public void AddValue (string name, Decimal value)
 		{
-			AddValue (name, value, Type.GetType ("System.Decimal"));
+			AddValue (name, value, typeof (System.Decimal));
 		}
 		
 	        public void AddValue (string name, DateTime value)
 		{
-			AddValue (name, value, Type.GetType ("System.DateTime"));
+			AddValue (name, value, typeof (System.DateTime));
 		}
 		
 	        public void AddValue (string name, float value)
 		{
-			AddValue (name, value, Type.GetType ("System.Single"));
+			AddValue (name, value, typeof (System.Single));
 		}
 
 		[CLSCompliant(false)]
 	        public void AddValue (string name, UInt32 value)
 		{
-			AddValue (name, value, Type.GetType ("System.UInt32"));
+			AddValue (name, value, typeof (System.UInt32));
 		}
 	       
 	        public void AddValue (string name, long value)
 		{
-			AddValue (name, value, Type.GetType ("System.Int64"));
+			AddValue (name, value, typeof (System.Int64));
 		}
 		[CLSCompliant(false)]
 	        public void AddValue (string name, UInt64 value)
 		{
-			AddValue (name, value, Type.GetType ("System.UInt64"));
+			AddValue (name, value, typeof (System.UInt64));
 		}
 		
 	        public void AddValue (string name, object value)
@@ -183,80 +183,80 @@ namespace System.Runtime.Serialization
 		
 		public bool GetBoolean (string name)
 		{
-			return (bool) GetValue (name, Type.GetType ("System.Boolean")); 
+			return (bool) GetValue (name, typeof (System.Boolean)); 
 		}
 		
 	        public byte GetByte (string name)
 		{
-			return (byte) GetValue (name, Type.GetType ("System.Byte"));
+			return (byte) GetValue (name, typeof (System.Byte));
 		}
 		
 	        public char GetChar (string name)
 		{
-			return (char) GetValue (name, Type.GetType ("System.Char"));
+			return (char) GetValue (name, typeof (System.Char));
 		}
 
 	        public DateTime GetDateTime (string name)
 		{
-			return (DateTime) GetValue (name, Type.GetType ("System.DateTime"));
+			return (DateTime) GetValue (name, typeof (System.DateTime));
 		}
 		
 		public Decimal GetDecimal (string name)
 		{
-			return (Decimal) GetValue (name, Type.GetType ("System.Decimal"));
+			return (Decimal) GetValue (name, typeof (System.Decimal));
 		}
 		
 		public double GetDouble (string name)
 		{
-			return (double) GetValue (name, Type.GetType ("System.Double"));
+			return (double) GetValue (name, typeof (System.Double));
 		}
 						
 		public short GetInt16 (string name)
 		{
-			return (short) GetValue (name, Type.GetType ("System.Int16"));
+			return (short) GetValue (name, typeof (System.Int16));
 		}
 		
 		public int GetInt32 (string name)
 		{
-			return (int) GetValue (name, Type.GetType ("System.Int32"));
+			return (int) GetValue (name, typeof (System.Int32));
 		}
 	       
 		public long GetInt64 (string name)
 		{
-			return (long) GetValue (name, Type.GetType ("System.Int64"));
+			return (long) GetValue (name, typeof (System.Int64));
 		}
 
 		[CLSCompliant(false)]
 		public SByte GetSByte (string name)
 		{
-			return (sbyte) GetValue (name, Type.GetType ("System.SByte"));
+			return (sbyte) GetValue (name, typeof (System.SByte));
 		}
 		
 		public float GetSingle (string name)
 		{
-			return (float) GetValue (name, Type.GetType ("System.SIngle"));
+			return (float) GetValue (name, typeof (System.Single));
 		}
 		
 		public string GetString (string name)
 		{
-			return (string) GetValue (name, Type.GetType ("System.String"));
+			return (string) GetValue (name, typeof (System.String));
 		}
 
 		[CLSCompliant(false)]
 		public UInt16 GetUInt16 (string name)
 		{
-			return (UInt16) GetValue (name, Type.GetType ("System.UInt16"));
+			return (UInt16) GetValue (name, typeof (System.UInt16));
 		}
 		
 		[CLSCompliant(false)]
 		public UInt32 GetUInt32 (string name)
 		{
-			return (UInt32) GetValue (name, Type.GetType ("System.UInt32"));
+			return (UInt32) GetValue (name, typeof (System.UInt32));
 		}
 		[CLSCompliant(false)]
 		public UInt64 GetUInt64 (string name)
 		{
-			return (UInt64) GetValue (name, Type.GetType ("System.UInt64"));
+			return (UInt64) GetValue (name, typeof (System.UInt64));
 		}
 	}
 }
