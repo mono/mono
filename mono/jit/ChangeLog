@@ -1,3 +1,7 @@
+2002-05-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_emit_prologue): check if live_in_set != NULL
+
 2002-05-11  Sergey Chaban <serge@wildwestsoftware.com>
 
 	* mono.c: new --fast-iconv command line option
