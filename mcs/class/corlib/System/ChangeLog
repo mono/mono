@@ -1,6 +1,8 @@
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
-	* Object.cs: changed MemberWiseClone to MemberwiseClone
+	* Object.cs: changed MemberWiseClone to MemberwiseClone, and
+	marked it as InternalCall
+	
 
 	* common.src: removed UriFormatException.cs because the file is
 	not there.
