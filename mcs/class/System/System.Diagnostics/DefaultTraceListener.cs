@@ -12,9 +12,8 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
-
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace System.Diagnostics {
 
@@ -32,6 +31,8 @@ namespace System.Diagnostics {
  	/// </remarks>
 	[ComVisible(false)]
 	public class DefaultTraceListener : TraceListener {
+
+		private string logFileName = null;
 
 		public DefaultTraceListener () : base ("Default")
 		{
@@ -51,8 +52,8 @@ namespace System.Diagnostics {
  		/// </value>
 		[MonoTODO]
 		public string LogFileName {
-			get {return "";}
-			set {/* ignore */}
+			get {return logFileName;}
+			set {logFileName = value;}
 		}
 
  		/// <summary>
@@ -98,6 +99,45 @@ namespace System.Diagnostics {
 
 		#endif
 
+		private void WriteImpl (string message)
+		{
+			if (NeedIndent)
+				WriteIndent ();
+
+			OutputDebugString (message);
+
+			if (Debugger.IsLogging())
+				Debugger.Log (0, null, message);
+
+			WriteLogFile (message);
+		}
+
+		private void WriteLogFile (string message)
+		{
+			string fname = LogFileName;
+			if (fname != null && fname.Length != 0) {
+				FileInfo info = new FileInfo (fname);
+				StreamWriter sw = null;
+
+				// Open the file
+				try {
+					if (info.Exists)
+						sw = info.AppendText ();
+					else
+						sw = info.CreateText ();
+				}
+				catch {
+					// We weren't able to open the file for some reason.
+					// We can't write to the log file; so give up.
+					return;
+				}
+
+				using (sw) {
+					sw.Write (message);
+				}
+			}
+		}
+
  		/// <summary>
  		/// Writes the output to the Console
  		/// </summary>
@@ -106,9 +146,7 @@ namespace System.Diagnostics {
  		/// </param>
 		public override void Write (string message)
 		{
-			if (NeedIndent)
-				WriteIndent ();
-			OutputDebugString (message);
+			WriteImpl (message);
 		}
 
  		/// <summary>
@@ -119,9 +157,8 @@ namespace System.Diagnostics {
  		/// </param>
 		public override void WriteLine (string message)
 		{
-			if (NeedIndent)
-				WriteIndent ();
-			OutputDebugString (message + Environment.NewLine);
+			string msg = message + Environment.NewLine;
+			WriteImpl (msg);
 			NeedIndent = true;
 		}
 	}
