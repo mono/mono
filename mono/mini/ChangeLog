@@ -1,5 +1,7 @@
 2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* basic.cs: Add a new test.
+
 	* mini-amd64.c aot.c cpu-amd64.md: Add support for tracing, profiling 
 	and AOT. Various fixes and optimizations.
 
