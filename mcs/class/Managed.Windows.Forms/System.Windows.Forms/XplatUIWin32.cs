@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.5  2004/08/09 16:05:16  jackson
+// These properties are handled by the theme now.
+//
 // Revision 1.4  2004/08/06 15:53:39  jordi
 // X11 keyboard navigation
 //
@@ -335,24 +338,6 @@ namespace System.Windows.Forms {
 		#endregion	// Private Support Methods
 
 		#region Static Properties
-		internal override Color BackColor {
-			get {
-				return Color.Red;
-			}
-		}
-
-		internal override Color ForeColor {
-			get {
-				return Color.White;
-			}
-		}
-
-		internal override Font Font {
-			get {
-				return new Font (FontFamily.GenericSansSerif, 8.25f);
-			}
-		}
-
 		internal override Keys ModifierKeys {
 			get {
 				return key_state;

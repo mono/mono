@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.10  2004/08/09 16:05:16  jackson
+// These properties are handled by the theme now.
+//
 // Revision 1.9  2004/08/08 21:08:10  jordi
 // fixes keyboard crash
 //
@@ -81,24 +84,6 @@ namespace System.Windows.Forms {
 		internal static Rectangle	paint_area;
 		internal static	bool		is_visible;
 		#endregion	// Local Variables
-
-		internal override Color BackColor {
-			get {
-				return Color.DarkCyan;
-			}
-		}
-
-		internal override Color ForeColor {
-			get {
-				return Color.White;
-			}
-		}
-
-		internal override Font Font {
-			get {
-				return new Font("Arial", 12);
-			}
-		}
 
 		internal override Keys ModifierKeys {
 			get {
