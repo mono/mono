@@ -1,0 +1,4 @@
+2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AcceptEncodingModule.cs: moved this file here.
+
