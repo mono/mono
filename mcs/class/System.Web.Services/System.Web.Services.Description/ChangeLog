@@ -1,3 +1,8 @@
+2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ServiceDescription.cs, SoapBinding.cs, SoapHeaderBinding.cs,
+	  SoapHeaderFaultBinding.cs: Removed some TODOs and FIXMEs.
+
 2003-10-20  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ServiceDescription.cs: Fixed implementation of CanRead.

@@ -30,11 +30,10 @@ namespace System.Web.Services.Description {
 
 		#region Constructors
 	
-		[MonoTODO]	
 		public SoapHeaderBinding ()
 		{
 			encoding = String.Empty;
-			mapToProperty = false; // FIXME: is this right?
+			mapToProperty = false;
 			message = XmlQualifiedName.Empty;
 			ns = String.Empty;
 			part = String.Empty;

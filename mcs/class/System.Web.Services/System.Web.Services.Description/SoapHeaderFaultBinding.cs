@@ -19,7 +19,6 @@ namespace System.Web.Services.Description {
 		#region Fields
 
 		string encoding;
-		bool mapToProperty;
 		XmlQualifiedName message;
 		string ns;
 		string part;
@@ -33,7 +32,6 @@ namespace System.Web.Services.Description {
 		public SoapHeaderFaultBinding ()
 		{
 			encoding = String.Empty;
-			mapToProperty = false; // FIXME: is this right?
 			message = XmlQualifiedName.Empty;
 			ns = String.Empty;
 			part = String.Empty;

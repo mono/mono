@@ -14,8 +14,6 @@ using System.Xml.Serialization;
 namespace System.Web.Services.Description {
 	[XmlFormatExtensionPrefix ("soap", "http://schemas.xmlsoap.org/wsdl/soap/")]
 	[XmlFormatExtension ("binding", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (Binding))]
-	// FIXME: this won't compile! 
-	// [XmlFormatExtensionPrefix ("soapenc", "http://schemas.xmlsoap.org/soap/encoding/")]
 	public sealed class SoapBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields

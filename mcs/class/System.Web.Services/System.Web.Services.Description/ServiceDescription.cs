@@ -48,7 +48,6 @@ namespace System.Web.Services.Description {
 			serializer = new ServiceDescriptionSerializer ();
 		}
 
-		[MonoTODO ("Move namespaces to subtype, use ServiceDescriptionSerializer")]	
 		public ServiceDescription ()
 		{
 			bindings = new BindingCollection (this);
