@@ -1,3 +1,8 @@
+2002-02-07  Duncan Mak  <duncan@ximian.com>
+
+	* Hashtable.cs: Implemented parts of the ISerializable
+	interface. GetObjectData () is good, but serialization constructor
+	needs some more love.
 
 Sat Jan 5 15:56:54 CET 2002 Paolo Molaro <lupus@ximian.com>
 

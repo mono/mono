@@ -1,3 +1,4 @@
+
 //
 // System.Reflection/AssemblyName.cs
 //
@@ -13,7 +14,8 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
-	public class AssemblyName /* : ICloneable, ISerializable, IDeserializationCallback */ {
+	public class AssemblyName  : ISerializable // ICloneable, , IDeserializationCallback
+	{
 		string name;
 		string codebase;
 		Version version;
@@ -25,6 +27,9 @@ namespace System.Reflection {
 
 		public AssemblyName (SerializationInfo si, StreamingContext sc)
 		{
+			name = si.GetString ("_Name");
+			codebase = si.GetString ("_CodeBase");
+			version = (Version)si.GetValue ("_Version", typeof (Version));
 		}
 
 		public virtual string Name {
@@ -74,6 +79,11 @@ namespace System.Reflection {
 			return false;
 		}
 
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("_Name", name);
+			info.AddValue ("_CodeBase", codebase);
+			info.AddValue ("_Version", version);
+		}
 	}
-
 }

@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Runtime.Serialization;
 
 
 // TODO: 1. Interfaces to implement: ISerializable and IDeserializationCallback;
@@ -21,7 +22,7 @@ namespace System.Collections {
 
 	[MonoTODO]
 	public class Hashtable : IDictionary, ICollection, 
-	                         IEnumerable, ICloneable
+		IEnumerable, ICloneable, ISerializable
 	{
 
 		internal struct Slot {
@@ -190,6 +191,17 @@ namespace System.Collections {
 		                 : this (1, 1.0f, hcp, comparer)
 		{
 		}
+
+		[MonoTODO]
+		protected Hashtable (SerializationInfo info, StreamingContext context)
+		{
+//			loadFactor = info.GetValue ("LoadFactor", Type.GetType ("System.Float"));
+//			comparerRef = info.GetValue ("Comparer", typeof (object));
+//			hcpRef = info.GetValue ("HashCodeProvider", typeof (object));
+//			this.Count = info.GetValue ("HashSize");
+// 			this.Keys = info.GetValue ("Keys");
+// 			this.Values = info.GetValue ("Values");
+ 		}
 
 		//
 		// Properties
@@ -391,10 +403,17 @@ namespace System.Collections {
 			return ht;
 		}
 
-
-
-		//[MonoTODO]
-		//public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {}
+		[MonoTODO]
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("LoadFactor", loadFactor);
+			info.AddValue ("Version", 0); // TODO?
+			info.AddValue ("Comparer", comparerRef);
+			info.AddValue ("HashCodeProvider", hcpRef);
+			info.AddValue ("HashSize", this.Count );
+			info.AddValue ("Keys", this.Keys);
+			info.AddValue ("Values", this.Values);
+		}
 
 		//[MonoTODO]
 		//public virtual void OnDeserialization (object sender);

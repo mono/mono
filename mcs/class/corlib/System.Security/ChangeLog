@@ -1,3 +1,8 @@
+2002-02-07  Duncan Mak  <duncan@ximian.com>
+
+	* SecurityException.cs: Reformatted to fit the form of other
+	Exceptions. Added serialization bits.
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* SecurityElement.cs : Insert MonoTODO attribute.
