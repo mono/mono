@@ -1,0 +1,6 @@
+2002-01-24  Nick Drochak  <ndrochak@gol.com>
+
+	* ResourceReaderTest.cs: Add new file. This test is not done yet.
+	Wanted to save it in cvs for 'disaster recovery' purposes.
+	Just in case.
+
