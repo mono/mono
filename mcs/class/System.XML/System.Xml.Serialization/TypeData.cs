@@ -106,6 +106,7 @@ namespace System.Xml.Serialization
 				return (SchemaType == SchemaTypes.Class || 
 					      SchemaType == SchemaTypes.Array ||
 					      SchemaType == SchemaTypes.Enum ||
+					      SchemaType == SchemaTypes.XmlNode ||
 						  SchemaType == SchemaTypes.XmlSerializable ); 
 			}
 		}
@@ -175,4 +176,3 @@ namespace System.Xml.Serialization
 		}
 	}
 }
-

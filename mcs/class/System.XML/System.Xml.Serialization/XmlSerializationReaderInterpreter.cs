@@ -332,7 +332,10 @@ namespace System.Xml.Serialization
 					if (map.XmlTextCollector is XmlTypeMapMemberExpandable)
 					{
 						XmlTypeMapMemberExpandable mem = (XmlTypeMapMemberExpandable)map.XmlTextCollector;
-						object val = (mem.TypeData.ListItemType == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (false);
+						XmlTypeMapMemberFlatList flatl = mem as XmlTypeMapMemberFlatList;
+						Type itype = (flatl == null) ? mem.TypeData.ListItemType : flatl.ListMap.FindTextElement().TypeData.Type;
+
+						object val = (itype == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (false);
 						AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, val, true);
 					}
 					else

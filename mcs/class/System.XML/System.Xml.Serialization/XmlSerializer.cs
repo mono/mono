@@ -209,7 +209,9 @@ namespace System.Xml.Serialization
 		{
 			XmlSerializer [] sers = new XmlSerializer [mappings.Length];
 			for (int n=0; n<mappings.Length; n++)
-				sers[n] = new XmlSerializer (mappings[n]);
+				if (mappings[n] != null)
+					sers[n] = new XmlSerializer (mappings[n]);
+					
 			return sers;
 		}
 

@@ -1,3 +1,11 @@
+2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 
+	  Fixed handling of members with XmlTextAttribute that are arrays.
+	* TypeData.cs: IsComplexType now returns true for XmlNode.
+	* XmlSerializer.cs: Added check for null mapping in FromMappings.
+	* XmlTypeMapping.cs: Added helper method FindTextElement.
+
 2003-09-28  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* SoapReflectionImporter.cs, XmlReflectionImporter.cs, XmlSchemaExporter.cs:

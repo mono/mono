@@ -1346,8 +1346,11 @@ namespace System.Xml.Serialization
 					if (map.XmlTextCollector is XmlTypeMapMemberExpandable)
 					{
 						XmlTypeMapMemberExpandable mem = (XmlTypeMapMemberExpandable)map.XmlTextCollector;
+						XmlTypeMapMemberFlatList flatl = mem as XmlTypeMapMemberFlatList;
+						Type itype = (flatl == null) ? mem.TypeData.ListItemType : flatl.ListMap.FindTextElement().TypeData.Type;
+						
 						if (!GenerateReadArrayMemberHook (typeMap.TypeData.Type, map.XmlTextCollector, indexes[mem.FlatArrayIndex])) {
-							string val = (mem.TypeData.ListItemType == typeof (string)) ? "Reader.ReadString()" : "ReadXmlNode (false)";
+							string val = (itype == typeof (string)) ? "Reader.ReadString()" : "ReadXmlNode (false)";
 							GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], val, true);
 							GenerateEndHook ();
 						}

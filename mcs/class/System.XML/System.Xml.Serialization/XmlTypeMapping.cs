@@ -367,6 +367,13 @@ namespace System.Xml.Serialization
 			return null;
 		}
 		
+		public XmlTypeMapElementInfo FindTextElement ()
+		{
+			foreach (XmlTypeMapElementInfo elem in _itemInfo)
+				if (elem.IsTextElement) return elem;
+			return null;
+		}
+		
 		public string GetSchemaArrayName ()
 		{
 			XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) _itemInfo[0];
