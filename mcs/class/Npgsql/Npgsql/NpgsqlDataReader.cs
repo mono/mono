@@ -376,13 +376,14 @@ namespace Npgsql
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetFloat(Int32)", LogLevel.Debug);
-	  	try
+	  	/*try
 	  	{
 	  		return Single.Parse((String) this[i]);
 	  	} catch (System.FormatException)
 	  	{
 	  		throw new System.InvalidCastException();
-	  	}
+	  	}*/
+	  	return (Single) GetValue(i);
 	  }
 	  
 	  public Double GetDouble(Int32 i)
@@ -390,13 +391,14 @@ namespace Npgsql
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetDouble(Int32)", LogLevel.Debug);
-	  	try
+	  	/*try
 	  	{
 		    return Double.Parse((String) this[i]);
 	  	} catch (System.FormatException)
 	  	{
 	  		throw new System.InvalidCastException();
-	  	}
+	  	}*/
+	  	return (Double) GetValue(i);
 	  }
 	  
 	  public String GetString(Int32 i)
