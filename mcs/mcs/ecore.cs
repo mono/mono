@@ -746,7 +746,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// First numeric conversions 
-			
+
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to short, int, long, float, double.
@@ -917,6 +917,55 @@ namespace Mono.CSharp {
 				
 			}
 
+			if (expr is IntConstant){
+				int value = ((IntConstant) expr).Value;
+
+				if (target_type == TypeManager.sbyte_type){
+					if (value >= SByte.MinValue && value <= SByte.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.byte_type){
+					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.short_type){
+					if (value >= Int16.MinValue && value <= Int16.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.ushort_type){
+					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
+						return true;
+				} else if (target_type == TypeManager.uint32_type){
+					if (value >= 0)
+						return true;
+				} else if (target_type == TypeManager.uint64_type){
+					 //
+					 // we can optimize this case: a positive int32
+					 // always fits on a uint64.  But we need an opcode
+					 // to do it.
+					 //
+					if (value >= 0)
+						return true;
+				}
+				
+				if (value == 0 && expr is IntLiteral && TypeManager.IsEnumType (target_type))
+					return true;
+			}
+
+			if (expr is LongConstant && target_type == TypeManager.uint64_type){
+				//
+				// Try the implicit constant expression conversion
+				// from long to ulong, instead of a nice routine,
+				// we just inline it
+				//
+				long v = ((LongConstant) expr).Value;
+				if (v > 0)
+					return true;
+			}
+			
+			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
+				IntLiteral i = (IntLiteral) expr;
+
+				if (i.Value == 0)
+					return true;
+			}
 			return false;
 		}
 

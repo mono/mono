@@ -1,5 +1,8 @@
 2002-05-06  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (StandardConversionExists): Augment with missing code:
+	deal with IntConstant, LongConstants and Enumerations.
+
 	* assign.cs: Report the error, instead of failing silently
 
 	* rootcontext.cs (AddGlobalAttributes): Track attributes on the

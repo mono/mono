@@ -260,7 +260,7 @@ namespace Mono.CSharp {
 					if (StandardConversionExists (a.original_source, target_type))
 						return this;
 
-					Error_CannotConvertImplicit (l, source_type, target_type);
+					Error_CannotConvertImplicit (l, a.original_source.Type, target_type);
 					return null;
 				}
 			}
