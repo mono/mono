@@ -1,3 +1,8 @@
+2003-06-20  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUG_VAR_ADDRESS_MODE_STACK): Removed.  We
+	just distinguish between variables in registers and variables at
+	an offset relative to a register.
 
 2003-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
