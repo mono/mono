@@ -1,3 +1,26 @@
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	* namespace.cs (NamespaceEntry.NamespaceEntry): Simplify, and
+	split into two.
+	(NamespaceEntry.ImplicitParent): Compute on demand.
+	(NamespaceEntry.Doppelganger): New implicit namespace-entry that
+	parallels the current.
+	(NamespaceEntry.LookupForUsing): Use it.
+	(NamespaceEntry.Lookup): If the current namespace-entry is
+	implicit, don't search aliases and using tables.
+
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #31984.
+	* class.cs (TypeContainer.DoDefineMembers): Don't initialize
+	BaseCache here.
+	(TypeContainer.BaseCache): Compute on demand.
+	(TypeContainer.FindMembers): Define constants and types if they're
+	not already created.
+	(FieldMember.Define): Move resetting of ec.InUnsafe before error
+	check.
+	* const.cs (Constant.Define): Make idempotent.
+
 2005-01-29  Miguel de Icaza  <miguel@novell.com>
 
 	* pending.cs: Produce better code (no nops produced by using Ldarg
