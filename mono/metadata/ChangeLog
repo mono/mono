@@ -1,3 +1,11 @@
+2003-02-18  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c (ves_icall_MonoDebugger_GetMethodToken):
+	New interncall to get a method's metadata token.
+
+	* icall.c ("System.Reflection.Assembly::MonoDebugger_GetMethodToken"):
+	New interncall for the debugger.
+
 2003-02-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_setup_vtable): allocate supertype array
