@@ -8,11 +8,12 @@
 //
 
 using System.Text;
+using System;
 
 namespace System.IO {
 	
 	[Serializable]
-        public class StreamWriter : TextWriter {
+	public class StreamWriter : TextWriter {
 
 		private Encoding internalEncoding;
 
@@ -21,17 +22,33 @@ namespace System.IO {
 
 		private bool iflush;
 		
-                // new public static readonly StreamWriter Null;
+		private const int DefaultBufferSize = 1024;
+		private const int DefaultFileBufferSize = 4096;
+		private const int MinimumBufferSize = 2;
+
+		private int pos;
+		private int BufferSize;
+		private byte[] TheBuffer;
+
+		private bool DisposedAlready = false;
+
+		// new public static readonly StreamWriter Null;
 
 		public StreamWriter (Stream stream)
-			: this (stream, Encoding.UTF8, 0) {}
+			: this (stream, Encoding.UTF8, DefaultBufferSize) {}
 
 		public StreamWriter (Stream stream, Encoding encoding)
-			: this (stream, encoding, 0) {}
+			: this (stream, encoding, DefaultBufferSize) {}
 
-		[MonoTODO("Nothing is done with bufferSize")]
-		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
-		{
+		protected void Initialize(Encoding encoding, int bufferSize) {
+			internalEncoding = encoding;
+			pos = 0;
+			BufferSize = Math.Max(bufferSize, MinimumBufferSize);
+			TheBuffer = new byte[BufferSize];
+		}
+
+		//[MonoTODO("Nothing is done with bufferSize")]
+		public StreamWriter (Stream stream, Encoding encoding, int bufferSize) {
 			if (null == stream)
 				throw new ArgumentNullException("stream");
 			if (null == encoding)
@@ -42,20 +59,20 @@ namespace System.IO {
 				throw new ArgumentException("bufferSize");
 
 			internalStream = stream;
-			internalEncoding = encoding;
+
+			Initialize(encoding, bufferSize);
 		}
 
 		public StreamWriter (string path)
-			: this (path, false, Encoding.UTF8, 0) {}
+			: this (path, false, Encoding.UTF8, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append)
-			: this (path, append, Encoding.UTF8, 0) {}
+			: this (path, append, Encoding.UTF8, DefaultFileBufferSize) {}
 
 		public StreamWriter (string path, bool append, Encoding encoding)
-			: this (path, append, encoding, 0) {}
+			: this (path, append, encoding, DefaultFileBufferSize) {}
 		
-		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize)
-		{
+		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize) {
 			if (null == path)
 				throw new ArgumentNullException("path");
 			if (String.Empty == path)
@@ -86,77 +103,103 @@ namespace System.IO {
 			else
 				internalStream.SetLength (0);
 
-			internalEncoding = encoding;
-			
+			Initialize(encoding, bufferSize);
 		}
 
-		public virtual bool AutoFlush
-		{
-
+		public virtual bool AutoFlush {
 			get {
 				return iflush;
 			}
-
 			set {
 				iflush = value;
 			}
 		}
 
-		public virtual Stream BaseStream
-		{
+		public virtual Stream BaseStream {
 			get {
 				return internalStream;
 			}
 		}
 
-		public override Encoding Encoding
-		{
+		public override Encoding Encoding {
 			get {
 				return internalEncoding;
 			}
 		}
 
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing && internalStream != null) {
+		public void Dispose() {
+			Dispose(true);
+			// Take yourself off of the Finalization queue 
+			// to prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		protected override void Dispose (bool disposing) {
+			if (!DisposedAlready && disposing && internalStream != null) {
+				Flush();
 				internalStream.Close ();
 				internalStream = null;
+				TheBuffer = null;
+			}
+			DisposedAlready = true;
+		}
+
+		public override void Flush () {
+			if (DisposedAlready)
+				throw new ObjectDisposedException("StreamWriter");
+
+			if (pos > 0) {
+				internalStream.Write (TheBuffer, 0, pos);
+				internalStream.Flush ();
+				pos = 0;
 			}
 		}
-
-		public override void Flush ()
-		{
-			if (closed)
-				throw new ObjectDisposedException("TextWriter");
-
-			internalStream.Flush ();
-		}
 		
-		public override void Write (char[] buffer, int index, int count)
-		{
+		public override void Write (char[] buffer, int index, int count) {
+			if (DisposedAlready)
+				throw new ObjectDisposedException("StreamWriter");
+
 			byte[] res = new byte [internalEncoding.GetMaxByteCount (buffer.Length)];
 			int len;
+			int BytesToBuffer;
+			int resPos = 0;
 
 			len = internalEncoding.GetBytes (buffer, index, count, res, 0);
 
-			internalStream.Write (res, 0, len);
-
-			if (iflush)
-				Flush ();
-			
+			// if they want AutoFlush, don't bother buffering
+			if (iflush) {
+				Flush();
+				internalStream.Write (res, 0, len);
+				internalStream.Flush ();
+			} else {
+				// otherwise use the buffer.
+				// NOTE: this logic is not optimized for performance.
+				while (resPos < len) {
+					// fill the buffer if we've got more bytes than will fit
+					BytesToBuffer = Math.Min(BufferSize - pos, len - resPos);
+					Array.Copy(res, resPos, TheBuffer, pos, BytesToBuffer);
+					resPos += BytesToBuffer;
+					pos += BytesToBuffer;
+					// if the buffer is full, flush it out.
+					if (pos == BufferSize) Flush();
+				}
+			}
 		}
 
-		public override void Write(string value)
-		{
+		public override void Write(string value) {
+			if (DisposedAlready)
+				throw new ObjectDisposedException("StreamWriter");
+
 			Write (value.ToCharArray (), 0, value.Length);
 		}
 
-		public override void Close()
-		{
-			Dispose(true);
-			closed = true;
+		public override void Close() {
+			Dispose();
 		}
-        }
+
+		~StreamWriter() {
+			Dispose(false);
+		}
+	}
 }
-                        
-                        

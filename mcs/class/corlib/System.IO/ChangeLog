@@ -1,3 +1,9 @@
+2002-05-17  Nick Drochak  <ndrochak@gol.com>
+
+	* StreamWriter.cs: Implement buffering.  Also implemented dispose
+	pattern as recommended by the MS docs.  Must call Close() now
+	to ensure the buffer is flushed.
+
 2002-05-15  Nick Drochak  <ndrochak@gol.com>
 
 	* Path.cs (GetDirectoryName): Return String.Empty if there is no
