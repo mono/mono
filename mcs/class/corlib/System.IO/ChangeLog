@@ -1,3 +1,11 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* FileSystemInfo.cs: Added InternalRefresh, a virtual method that derived
+	  classes can override to perform class specific refreshing.
+	* FileInfo.cs: Refresh existence flag when Refresh is called.
+	* TextWriter.cs: Applied patch by Benjamin Jemlich for bug #52512.
+	  The method Write(char) should do nothing by default.
+
 2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BinaryReader.cs: don't modify the underlying stream in Peek(). Fixes

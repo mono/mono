@@ -18,15 +18,20 @@ namespace System.IO {
 	public sealed class FileInfo : FileSystemInfo {
 	
 
-                private bool exists = false;
+		private bool exists;
 
 		public FileInfo (string path) {
 			CheckPath (path);
 		
 			OriginalPath = path;
 			FullPath = Path.GetFullPath (path);
-			exists = File.Exists (path);
 		}
+		
+		internal override void InternalRefresh ()
+		{
+			exists = File.Exists (FullPath);
+		}
+
 
 		// public properties
 

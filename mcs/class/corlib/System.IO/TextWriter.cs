@@ -80,7 +80,7 @@ namespace System.IO {
 		
                 public virtual void Write (char value)
 		{
-			Write (value.ToString (internalFormatProvider));
+			// Do nothing
 		}
 
                 public virtual void Write (char[] value)

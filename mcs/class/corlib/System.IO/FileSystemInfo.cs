@@ -169,6 +169,12 @@ namespace System.IO {
 			
 			MonoIO.GetFileStat (FullName, out stat, out error);
 			valid = true;
+			
+			InternalRefresh ();
+		}
+		
+		internal virtual void InternalRefresh ()
+		{
 		}
 
 		internal void CheckPath (string path)
