@@ -54,7 +54,7 @@ namespace System.Drawing
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
 		{
-			if ((val is Image) && (destType == typeof (string)))
+			if ((val is System.Drawing.Image) && (destType == typeof (System.String)))
 				return val.ToString ();
 			else if (CanConvertTo (null, destType)){
 				//came here means destType is byte array ;
@@ -65,16 +65,36 @@ namespace System.Drawing
 				return new NotSupportedException ("ImageConverter can not convert from " + val.GetType ());				
 		}
 
-		[MonoTODO ("Implement")]
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object val, Attribute[] attribs )
 		{
-			throw new NotImplementedException (); 
+			Type type = typeof (System.Drawing.Image);
+			PropertyDescriptorCollection pdc = TypeDescriptor.GetProperties (type); 
+			PropertyDescriptorCollection returnPDC = pdc;
+			if (attribs !=null) {
+				int length = attribs.Length;
+				foreach (PropertyDescriptor pd in pdc) {
+					bool found = false;
+					AttributeCollection attributes = pd.Attributes;
+					//Apply the filter on the PropertyDescriptor
+					//If any attribute is found from attribs, in 
+					//PropertyDescriptor then retain that particular
+					//PropertyDescriptor else discard it.
+					for (int i=0; i<length; i++) {
+						if (attributes.Contains (attribs [i])) {
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+						returnPDC.Remove (pd);
+				}
+			}
+			return returnPDC;	
 		}
 
-		[MonoTODO ("Implement")]
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context )
 		{
-			throw new NotImplementedException (); 
+			return true; 
 		}
 	}
 }
