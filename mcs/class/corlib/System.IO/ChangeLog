@@ -1,3 +1,9 @@
+2003-04-21  Ville Palo <vi64pa@kolumbus.fi>
+
+	* Directory.cs: lots of fixes. 
+	  - Added GetXXXtimeUtc () (v1.1) methods.
+	  - Added SetXXXtimeUtc () (v1.1) methods.	
+	
 2003-04-20  Igor Nosyryev <nosyryev@attbi.com>
 
 	* StringReader.cs (Read): Increment nextChar by charsToRead

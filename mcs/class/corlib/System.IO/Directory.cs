@@ -6,6 +6,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Dan Lewis       (dihlewis@yahoo.co.uk)
 //   Eduardo Garcia  (kiwnix@yahoo.es)
+//   Ville Palo      (vi64pa@kolumbus.fi)
 //
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // Copyright (C) 2002 Ximian, Inc.
@@ -39,8 +40,10 @@ namespace System.IO
 			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
 			
+			// LAMESPEC: with .net 1.0 version this throw NotSupportedException and msdn says so too
+			// byt v1.1 throws ArgumentException.
 			if (path == ":")
-				throw new NotSupportedException ("Only ':' In path");
+				throw new ArgumentException ("Only ':' In path");
 			
 			return CreateDirectoriesInternal (path);
 		}
@@ -76,14 +79,20 @@ namespace System.IO
 			if (path.Trim().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
 			if (path == ":")
-				throw new NotSupportedException ("Only ':' In path");
-
-			
+				throw new NotSupportedException ("Only ':' In path");		       
 
 			MonoIOError error;
 			
 			if (!MonoIO.RemoveDirectory (path, out error)) {
-				throw MonoIO.GetException (error);
+				/*
+				 * FIXME:
+				 * In io-layer/io.c rmdir returns error_file_not_found if directory does not exists.
+				 * So maybe this could be handled somewhere else?
+				 */
+				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) 
+					throw new DirectoryNotFoundException ("Directory '" + path + "' doesnt exists.");
+				else
+					throw MonoIO.GetException (error);
 			}
 		}
 
@@ -100,17 +109,7 @@ namespace System.IO
 		
 		public static void Delete (string path, bool recurse)
 		{
-			if (path == null)
-				throw new ArgumentNullException ();
-			if (path == "")
-				throw new System.ArgumentException("Path is Empty");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-			if (path.Trim().Length == 0)
-				throw new ArgumentException ("Only blank characters in path");
-			if (path == ":")
-				throw new NotSupportedException ("Only ':' In path");			
-			
+			CheckPathExceptions (path);
 			
 			if (recurse == false){
 				Delete (path);
@@ -132,32 +131,47 @@ namespace System.IO
 
 		public static DateTime GetLastAccessTime (string path)
 		{
+			CheckPathExceptions (path);
+			if (!Exists (path))
+				throw new IOException ("Directory '" + path + "' does not exists");
+
 			return File.GetLastAccessTime (path);
 		}
 		
+		public static DateTime GetLastAccessTimeUtc (string path)
+		{
+			return GetLastAccessTime (path).ToUniversalTime ();
+		}
+		      
 		public static DateTime GetLastWriteTime (string path)
 		{
+			CheckPathExceptions (path);
+			if (!Exists (path))
+				throw new IOException ("Directory '" + path + "' does not exists");
+
 			return File.GetLastWriteTime (path);
 		}
 		
+		public static DateTime GetLastWriteTimeUtc (string path)
+		{
+			return GetLastWriteTime (path).ToUniversalTime ();
+		}
+
 		public static DateTime GetCreationTime (string path)
 		{
-			if (path == null)
-				throw new System.ArgumentNullException("Path is Null");
-			if (path == "")
-				throw new System.ArgumentException("Path is Empty");
-			if (path.Trim().Length == 0)
-				throw new ArgumentException ("Only blank characters in path");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid chars");
-			if (path == ":")
-				throw new NotSupportedException ("Only ':' In path");
+			CheckPathExceptions (path);
 
-			
+			if (!Exists (path))
+				throw new IOException ("Directory '" + path + "' does not exists");
 
-			return File.GetLastWriteTime (path);
+			return File.GetCreationTime (path);
 		}
-		
+
+		public static DateTime GetCreationTimeUtc (string path)
+		{
+			return GetCreationTime (path).ToUniversalTime ();
+		}
+
 		public static string GetCurrentDirectory ()
 		{
 			/*
@@ -240,6 +254,12 @@ namespace System.IO
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Invalid target directory name: " + dest, "dest");
 
+			if (src == dest)
+				throw new IOException ("Source directory cannot be same as a target directory.");
+
+			if (Exists (dest))
+				throw new IOException (dest + " already exists.");
+
 			if (!Exists (src))
 				throw new DirectoryNotFoundException (src + " does not exist");
 
@@ -250,9 +270,18 @@ namespace System.IO
 
 		public static void SetCreationTime (string path, DateTime creation_time)
 		{
+			CheckPathExceptions (path);
+			if (!Exists (path))
+				throw new FileNotFoundException ("Directory '" + path + "' not found.");
+
 			File.SetCreationTime (path, creation_time);
 		}
-		
+
+		public static void SetCreationTimeUtc (string path, DateTime creation_time)
+		{
+			SetCreationTime (path, creation_time.ToLocalTime ());
+		}
+
 		public static void SetCurrentDirectory (string path)
 		{
 			/*
@@ -270,15 +299,47 @@ namespace System.IO
 
 		public static void SetLastAccessTime (string path, DateTime last_access_time)
 		{
+			CheckPathExceptions (path); 
+			if (!Exists (path))
+				throw new FileNotFoundException ("Directory '" + path + "' does not exists");
+
 			File.SetLastAccessTime (path, last_access_time);
 		}
-		
+
+		public static void SetLastAccessTimeUtc (string path, DateTime last_access_time)
+		{
+			SetLastAccessTime (path, last_access_time.ToLocalTime ());
+		}
+
 		public static void SetLastWriteTime (string path, DateTime last_write_time)
 		{
+			CheckPathExceptions (path);
+			if (!Exists (path))
+				throw new FileNotFoundException ("Directory '" + path + "' does not exists");
+
 			File.SetLastWriteTime (path, last_write_time);
 		}
-		
+
+		public static void SetLastWriteTimeUtc (string path, DateTime last_write_time)
+		{
+			SetLastWriteTime (path, last_write_time.ToLocalTime ());
+		}
+
 		// private
+		
+		private static void CheckPathExceptions (string path)
+		{
+			if (path == null)
+				throw new System.ArgumentNullException("Path is Null");
+			if (path == "")
+				throw new System.ArgumentException("Path is Empty");
+			if (path.Trim().Length == 0)
+				throw new ArgumentException ("Only blank characters in path");
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid chars");
+			if (path == ":")
+				throw new NotSupportedException ("Only ':' In path");
+		}
 
 		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)
 		{
