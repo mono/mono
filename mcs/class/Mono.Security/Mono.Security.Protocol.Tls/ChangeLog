@@ -1,3 +1,10 @@
+2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslClientStream.cs: Changed lock to "new object()" and not 
+	String.Empty (as the read/write locks points becomes the same).
+	* SslServerStream.cs: Changed lock to "new object()" and not 
+	String.Empty (as the read/write locks points becomes the same).
+
 2004-07-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpsClientStream.cs: get an HttpWebRequest so that we can use the
