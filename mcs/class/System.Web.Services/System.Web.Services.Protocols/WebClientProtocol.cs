@@ -26,8 +26,18 @@ namespace System.Web.Services.Protocols {
 		int timeout;
 		string url;
 		bool abort;
-		static HybridDictionary cache;
 
+		//
+		// Used by SoapHttpClientProtocol, use this to avoid creating a new Uri on each invocation.
+		//
+		protected internal Uri uri;
+			
+		//
+		// Points to the current request, so we can call Abort() on it
+		//
+		WebRequest current_request;
+		
+		static HybridDictionary cache;
 		#endregion
 
 		#region Constructors
@@ -91,7 +101,10 @@ namespace System.Web.Services.Protocols {
 		[WebServicesDescription ("The base URL to the server to use for requests.")]
 		public string Url {
 			get { return url; }
-			set { url = value; }
+			set {
+				url = value;
+				uri = new Uri (url);
+			}
 		}
 
 		#endregion // Properties
@@ -100,6 +113,10 @@ namespace System.Web.Services.Protocols {
 
 		public virtual void Abort ()
 		{
+			if (current_request != null){
+				current_request.Abort ();
+				current_request = null;
+			}
 			abort = true;
 		}
 
@@ -115,7 +132,15 @@ namespace System.Web.Services.Protocols {
 
 		protected virtual WebRequest GetWebRequest (Uri uri)
 		{
-			return WebRequest.Create (uri);
+			current_request = WebRequest.Create (uri);
+			current_request.Timeout = Timeout;
+
+			if (credentials != null)
+				current_request.Credentials = credentials;
+			if (connectionGroupName != String.Empty)
+				current_request.ConnectionGroupName = connectionGroupName;
+
+			return current_request;
 		}
 
 		protected virtual WebResponse GetWebResponse (WebRequest request)

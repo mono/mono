@@ -6,6 +6,9 @@
 //
 // Copyright (C) Tim Coleman, 2002
 //
+// TODO:
+//    Need to set the stream variable from the outside, or the constructor.
+//
 
 using System.IO;
 using System.Web.Services;
@@ -19,7 +22,8 @@ namespace System.Web.Services.Protocols {
 		SoapException exception = null;
 		SoapHeaderCollection headers = null;
 		SoapMessageStage stage;
-
+		Stream stream;
+		
 		#endregion // Fields
 
 		#region Constructors
@@ -62,8 +66,9 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public Stream Stream {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return stream;
+			}
 		}
 
 		public abstract string Url {

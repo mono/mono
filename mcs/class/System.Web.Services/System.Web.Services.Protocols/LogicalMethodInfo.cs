@@ -1,35 +1,75 @@
 // 
 // System.Web.Services.Protocols.LogicalMethodInfo.cs
 //
-// Author:
+// Authors:
+//   Miguel de Icaza (miguel@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Ximian, Inc,  2003
+//
+// TODO:
+//    Pairing of begin/end methods in Create ()
+//    Fix whether end_method_info is valid as the single element of the stuff.
+//    AsyncResultParameter
 //
 
 using System.Reflection;
+using System.Collections;
+using System.Text;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
 	public sealed class LogicalMethodInfo {
+                #region Fields
 
-		#region Fields
+		MethodInfo method_info, end_method_info;
+		ParameterInfo [] parameters;
+		ParameterInfo [] out_parameters;
+		ParameterInfo [] in_parameters;
 
-		#endregion // Fields
-
+		#endregion // Fields.
+		
 		#region Constructors
 	
-		public LogicalMethodInfo (MethodInfo methodInfo)
+		public LogicalMethodInfo (MethodInfo method_info)
 		{
+			if (method_info == null)
+				throw new ArgumentNullException ("method_info should be non-null");
+			if (method_info.IsStatic)
+				throw new InvalidOperationException ("method is static");
+			
+			this.method_info = method_info;
+		}
+
+		//
+		// Only an internal contructor, called from "Create"
+		//
+		LogicalMethodInfo (MethodInfo method_info, MethodInfo end_method_info)
+		{
+			if (method_info == null)
+				throw new ArgumentNullException ("method_info should be non-null");
+			if (method_info.IsStatic)
+				throw new InvalidOperationException ("method is static");
+			
+			this.end_method_info = end_method_info;
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
+		//
+		// Signatures for Begin/End methods:
+		//
+		//        public System.IAsyncResult BeginHelloWorld(ARG1, ARG2, System.AsyncCallback callback, object asyncState) {
+		//        public string EndHelloWorld(System.IAsyncResult asyncResult) {
+
 		public ParameterInfo AsyncCallbackParameter {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				ParameterInfo [] pi = method_info.GetParameters ();
+				return pi [pi.Length-2];
+			}
 		}
 
 		public ParameterInfo AsyncResultParameter {
@@ -38,13 +78,18 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public ParameterInfo AsyncStateParameter {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				ParameterInfo [] pi = method_info.GetParameters ();
+				return pi [pi.Length-1];
+			}
 		}
 
 		public MethodInfo BeginMethodInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (IsBeginMethod (method_info))
+					return method_info;
+				return null;
+			}
 		}
 
 		public ICustomAttributeProvider CustomAttributeProvider {
@@ -53,33 +98,45 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public Type DeclaringType {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return method_info.DeclaringType;
+			}
 		}
 
 		public MethodInfo EndMethodInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (end_method_info != null)
+					return end_method_info;
+				if (IsEndMethod (method_info))
+					return method_info;
+				return null;
+			}
 		}
 
 		public ParameterInfo[] InParameters {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (parameters == null)
+					ComputeParameters ();
+				return in_parameters;
+			}
 		}
 
 		public bool IsAsync {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return IsBeginMethod (method_info) || IsEndMethod (method_info);
+			}
 		}
 
 		public bool IsVoid {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return method_info.ReturnType == typeof (System.Void);
+			}
 		}
 
 		public MethodInfo MethodInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return method_info;
+			}
 		}
 
 		public string Name {
@@ -87,24 +144,64 @@ namespace System.Web.Services.Protocols {
 			get { throw new NotImplementedException (); }
 		}
 
+		void ComputeParameters ()
+		{
+			parameters = method_info.GetParameters ();
+			int out_count = 0;
+			int in_count = 0;
+			
+			foreach (ParameterInfo p in parameters){
+				Type ptype = p.ParameterType;
+				if (ptype.IsByRef){
+					out_count++;
+					if (!p.IsOut)
+						in_count++;
+				} else
+					in_count++;
+			}
+			out_parameters = new ParameterInfo [out_count];
+			int i = 0;
+			for (int j = 0; j < parameters.Length; j++){
+				if (parameters [j].ParameterType.IsByRef)
+					out_parameters [i++] = parameters [j];
+			}
+			in_parameters = new ParameterInfo [in_count];
+			i = 0;
+			for (int j = 0; j < parameters.Length; j++){
+				if (parameters [j].ParameterType.IsByRef){
+					if (!parameters [j].IsOut)
+						in_parameters [i++] = parameters [j];
+				} else
+					in_parameters [i++] = parameters [j];
+			}
+		}
+		
 		public ParameterInfo[] OutParameters {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (parameters == null)
+					ComputeParameters ();
+				return out_parameters;
+			}
 		}
 
 		public ParameterInfo[] Parameters {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (parameters == null)
+					ComputeParameters ();
+				return parameters;
+			}
 		}
 
 		public Type ReturnType {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return method_info.ReturnType;
+			}
 		}
 
 		public ICustomAttributeProvider ReturnTypeCustomAttributeProvider {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return method_info.ReturnTypeCustomAttributes;
+			}
 		}
 
 		#endregion // Properties
@@ -117,16 +214,32 @@ namespace System.Web.Services.Protocols {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static LogicalMethodInfo[] Create (MethodInfo[] methodInfos)
+		public static LogicalMethodInfo[] Create (MethodInfo[] method_infos)
 		{
-			throw new NotImplementedException ();
+			return Create (method_infos, LogicalMethodTypes.Sync | LogicalMethodTypes.Async);
 		}
 
-		[MonoTODO]
-		public static LogicalMethodInfo[] Create (MethodInfo[] methodInfos, LogicalMethodTypes types)
+		public static LogicalMethodInfo[] Create (MethodInfo[] method_infos, LogicalMethodTypes types)
 		{
-			throw new NotImplementedException ();
+			throw new Exception ("We do not perform begin/end pair matching yet");
+			
+			ArrayList group = new ArrayList ();
+
+			foreach (MethodInfo mi in method_infos){
+				if (IsBeginMethod (mi)  || IsEndMethod (mi)){
+					if ((types & LogicalMethodTypes.Sync) != 0)
+						continue;
+					group.Add (mi);
+				} else {
+					if ((types & LogicalMethodTypes.Async) != 0)
+						continue;
+					group.Add (mi);
+				}
+			}
+			LogicalMethodInfo [] res = new LogicalMethodInfo [group.Count];
+			group.CopyTo (res);
+
+			return res;
 		}
 
 		[MonoTODO]
@@ -135,40 +248,82 @@ namespace System.Web.Services.Protocols {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public object GetCustomAttribute (Type type)
 		{
-			throw new NotImplementedException ();
+			return method_info.GetCustomAttributes (type, true) [0];
 		}
 
-		[MonoTODO]
 		public object[] GetCustomAttributes (Type type)
 		{
-			throw new NotImplementedException ();
+			return method_info.GetCustomAttributes (type, true);
 		}
 
-		[MonoTODO]
 		public object[] Invoke (object target, object[] values)
 		{
-			throw new NotImplementedException ();
+			if (parameters == null)
+				ComputeParameters ();
+			
+			object [] ret = new object [1 + out_parameters.Length];
+			ret [0] = method_info.Invoke (target, values);
+
+			int j = 1;
+			for (int i = 0; i < parameters.Length; i++){
+				if (parameters [i].ParameterType.IsByRef)
+					ret [j++] = values [i];
+			}
+
+			return ret;
 		}
 
-		[MonoTODO]
-		public static bool IsBeginMethod (MethodInfo methodInfo)
+		public static bool IsBeginMethod (MethodInfo method_info)
 		{
-			throw new NotImplementedException ();
+			if (method_info == null)
+				throw new ArgumentNullException ("method_info can not be null");
+
+			if (method_info.ReturnType != typeof (IAsyncResult))
+				return false;
+
+			if (method_info.Name.StartsWith ("Begin"))
+				return true;
+
+			return false;
 		}
 
-		[MonoTODO]
-		public static bool IsEndMethod (MethodInfo methodInfo)
+		public static bool IsEndMethod (MethodInfo method_info)
 		{
-			throw new NotImplementedException ();
+			if (method_info == null)
+				throw new ArgumentNullException ("method_info can not be null");
+
+			ParameterInfo [] parameter_info = method_info.GetParameters ();
+			if (parameter_info.Length != 1)
+				return false;
+			if (parameter_info [0].ParameterType != typeof (IAsyncResult))
+				return false;
+			if (method_info.Name.StartsWith ("End"))
+				return true;
+
+			return false;
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			StringBuilder sb = new StringBuilder ();
+			if (parameters == null)
+				ComputeParameters ();
+			
+			for (int i = 0; i < parameters.Length; i++){
+				sb.Append (parameters [i].ParameterType);
+				if (parameters [i].ParameterType.IsByRef)
+					sb.Append (" ByRef");
+				
+				if (i+1 != parameters.Length)
+					sb.Append (", ");
+			}
+			
+			return String.Format (
+                        	"{0} {1} ({2})",
+				method_info.ReturnType, method_info.Name,
+				sb.ToString ());
 		}
 
 		#endregion // Methods

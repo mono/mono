@@ -1,3 +1,18 @@
+2003-04-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* LogicalMethodInfo.cs: Most of this is implemented.  Its only
+	missing a few bits in the Create() method.
+
+	* SoapHttpClientProtocol.cs: Begin implementation of Invoke, which
+	lead to other dependencies to be implemented.
+
+	* LogicalMethodInfo.cs: Mostly complete.  It is only missing the
+	async features (BeginInvoke/EndInvoke) on a LogicalMethodInfo.
+
+	* WebClientProtocol.cs (GetWebRequest): Track the web request, so
+	we can abort it later.
+	(Abort): Call abort on the underlying transport.
+
 2002-08-24  Tim Coleman <tim@timcoleman.com>
 	* HttpServerProtocol.cs:
 	* WebServiceHandler.cs:

@@ -7,6 +7,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.IO;
 using System.Net;
 using System.Web;
 using System.Web.Services;
@@ -47,10 +48,31 @@ namespace System.Web.Services.Protocols {
 			return WebRequest.Create (uri);
 		}
 
-		[MonoTODO]
-		protected object[] Invoke (string methodName, object[] parameters)
+		SoapClientMessage CreateMessage (string method_name, object [] parameters)
 		{
-			throw new NotImplementedException ();
+			//SoapClientMessage message = new SoapClientMessage (this);
+
+			return null;
+		}
+		
+		void SendMessage (WebRequest request, SoapClientMessage message)
+		{
+			
+		}
+		
+		protected object[] Invoke (string method_name, object[] parameters)
+		{
+			SoapClientMessage message = CreateMessage (method_name, parameters);
+			WebRequest request = GetWebRequest (uri);
+			Stream s = request.GetRequestStream ();
+			
+			try {
+				SendMessage (request, message);
+			} finally {
+				s.Close ();
+			}
+
+			return null;
 		}
 
 		#endregion // Methods
