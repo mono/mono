@@ -1,5 +1,10 @@
 2004-02-06  Jackson Harper  <jackson@ximian.com>
 
+	* Uri.cs: Do not escape querys or fragements. Only reduce certain
+	schemes.
+	
+2004-02-06  Jackson Harper  <jackson@ximian.com>
+
 	* Uri.cs: Use UTF8 characters when escaping. Reduce paths. This
 	method is taken from System.Web.Utils.UrlUtils.
 	* UriBuilder.cs: Do not escape fragments or queries, but do a utf8

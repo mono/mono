@@ -96,8 +96,6 @@ namespace System
 
 			host = EscapeString (host, false, true, false);
 			path = EscapeString (path);
-			query = EscapeString (query);
-			fragment = EscapeString (fragment, false, false, true);
 		}
 
 		public Uri (Uri baseUri, string relativeUri) 
@@ -147,8 +145,6 @@ namespace System
 
 					host = EscapeString (host, false, true, false);
 					path = EscapeString (path);
-					query = EscapeString (query);
-					fragment = EscapeString (fragment, false, false, true);
 					return;
 				}
 			}
@@ -157,8 +153,6 @@ namespace System
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {
 				fragment = relativeUri.Substring (pos);
-				if (!userEscaped)
-					fragment = EscapeString (fragment, false, false, true);
 				relativeUri = relativeUri.Substring (0, pos);
 			}
 
@@ -928,6 +922,9 @@ namespace System
 				isUnc = true;
 			}
 
+			if ((scheme != Uri.UriSchemeMailto) &&
+					(scheme != Uri.UriSchemeNews) &&
+					(scheme != Uri.UriSchemeFile))
 			path = Reduce (path);
 		}
 
