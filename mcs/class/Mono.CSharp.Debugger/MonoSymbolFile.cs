@@ -385,6 +385,18 @@ namespace Mono.CSharp.Debugger
 			return source;
 		}
 
+		public SourceFileEntry[] Sources {
+			get {
+				if (reader == null)
+					throw new InvalidOperationException ();
+
+				SourceFileEntry[] retval = new SourceFileEntry [SourceCount];
+				for (int i = 0; i < SourceCount; i++)
+					retval [i] = GetSourceFile (i + 1);
+				return retval;
+			}
+		}
+
 		public MethodEntry GetMethod (int index)
 		{
 			if ((index < 1) || (index > ot.MethodCount))
@@ -402,6 +414,18 @@ namespace Mono.CSharp.Debugger
 			entry = new MethodEntry (this, reader, index);
 			method_hash.Add (index, entry);
 			return entry;
+		}
+
+		public MethodEntry[] Methods {
+			get {
+				if (reader == null)
+					throw new InvalidOperationException ();
+
+				MethodEntry[] retval = new MethodEntry [MethodCount];
+				for (int i = 0; i < MethodCount; i++)
+					retval [i] = GetMethod (i + 1);
+				return retval;
+			}
 		}
 
 		public int FindMethod (string full_name)
