@@ -46,10 +46,10 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
- 		public Delegate (TypeContainer parent, Expression type, int mod_flags,
-				 string name, Parameters param_list,
+ 		public Delegate (NamespaceEntry ns, TypeContainer parent, Expression type,
+				 int mod_flags, string name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (parent, name, l)
+			: base (ns, parent, name, l)
 		{
 			this.ReturnType = type;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,

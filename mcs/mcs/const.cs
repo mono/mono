@@ -24,10 +24,9 @@ namespace Mono.CSharp {
 	using System.Reflection.Emit;
 	using System.Collections;
 
-	public class Const : MemberCore {
+	public class Const : MemberBase {
 		public Expression ConstantType;
 		public Expression Expr;
-		public Attributes  OptAttributes;
 		public FieldBuilder FieldBuilder;
 		EmitContext const_ec;
 
@@ -45,13 +44,11 @@ namespace Mono.CSharp {
 
 		public Const (Expression constant_type, string name, Expression expr, int mod_flags,
 			      Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (constant_type, mod_flags, AllowedModifiers, Modifiers.PRIVATE, name, attrs, loc)
 		{
 			ConstantType = constant_type;
 			Name = name;
 			Expr = expr;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE, loc);
-			OptAttributes = attrs;
 		}
 
 		public FieldAttributes FieldAttr {
@@ -98,7 +95,7 @@ namespace Mono.CSharp {
 			if (ptype != null) {
 				MemberList list = TypeContainer.FindMembers (
 					ptype, MemberTypes.Field, BindingFlags.Public,
-					Type.FilterName, Name);
+					System.Type.FilterName, Name);
 				
 				if (list.Count == 0)
 					if ((ModFlags & Modifiers.NEW) != 0)

@@ -71,8 +71,9 @@ namespace Mono.CSharp {
 		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (parent, name, l)
+		public Interface (NamespaceEntry ns, TypeContainer parent, string name, int mod,
+				  Attributes attrs, Location l)
+			: base (ns, parent, name, l)
 		{
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
 			OptAttributes = attrs;

@@ -45,7 +45,7 @@ namespace Mono.CSharp
 		
 		public Tree ()
 		{
-			root_types = new TypeContainer (null, "", new Location (-1));
+			root_types = new TypeContainer (null, null, "", new Location (-1));
 
 			decls = new Hashtable ();
 			namespaces = new Hashtable ();
@@ -83,21 +83,21 @@ namespace Mono.CSharp
 			return (DeclSpace) res;
 		}
 		
-		public NamespaceEntry RecordNamespace (NamespaceEntry parent, SourceFile file, string name)
+		public NamespaceEntry RecordNamespace (NamespaceEntry parent, SourceFile file, string name, Location loc)
 		{
-			NamespaceEntry ns = new NamespaceEntry (parent, file, name);
+			NamespaceEntry ns = new NamespaceEntry (parent, file, name, loc);
 
 			if (namespaces.Contains (file)){
 				Hashtable ns_ns = (Hashtable) namespaces [file];
 
-				if (ns_ns.Contains (ns.Name))
-					return (NamespaceEntry) ns_ns [ns.Name];
-				ns_ns.Add (ns.Name, ns);
+				if (ns_ns.Contains (ns.FullName))
+					return (NamespaceEntry) ns_ns [ns.FullName];
+				ns_ns.Add (ns.FullName, ns);
 			} else {
 				Hashtable new_table = new Hashtable ();
 				namespaces [file] = new_table;
 
-				new_table.Add (ns.Name, ns);
+				new_table.Add (ns.FullName, ns);
 			}
 
 			return ns;
