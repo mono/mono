@@ -1,3 +1,7 @@
+2003-06-22 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Factories.cs
+	* FontFamily.cs		more implementation
+
 2003-06-20 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Font.cs
 	* FontFamily.cs		more implementation

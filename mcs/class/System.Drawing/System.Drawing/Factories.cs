@@ -12,7 +12,9 @@ using System.Drawing;
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.Drawing.Text;
 
+namespace System.Drawing {
 internal class Factories {
 	internal static string DefaultImplementationNamespace = "Win32Impl";
 	private static string FactoryClassNameBase = "System.Drawing.Win32Impl.";
@@ -46,6 +48,14 @@ internal class Factories {
 	internal static ISolidBrushFactory GetSolidBrushFactory () {
 		return CreateObjectOfType("SolidBrushFactory") as ISolidBrushFactory;
 	}
+	
+	internal static IFontCollectionFactory GetFontCollectionFactory() {
+		return CreateObjectOfType("FontCollectionFactory") as IFontCollectionFactory;
+	}
+
+	internal static IFontFamilyFactory GetFontFamilyFactory() {
+		return CreateObjectOfType("FontFamilyFactory") as IFontFamilyFactory;
+	}
 
 	static Factories ()
 	{
@@ -58,6 +68,9 @@ internal class Factories {
 				if (sysdrawconfig["Implementation"] != null) {
 					implNamespace = sysdrawconfig["Implementation"];
 				}
+				else {
+					Console.WriteLine("sysdrawconfig[\"Implementation\"] is null");
+				}
 			}
 			else {
 				Console.WriteLine("NameValueCollection is null");
@@ -66,4 +79,4 @@ internal class Factories {
 		FactoryClassNameBase = "System.Drawing." + implNamespace + ".";
 	}
 }
-
+}
