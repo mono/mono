@@ -1,3 +1,6 @@
+2004-09-08 Bernie Solomon <bernard@ugsolutions.com>
+	* threads.c appdomain.c: fix typo in GC macro
+
 2004-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threads.c: don't call mono_thread_detach() in start_wrapper(),
