@@ -76,7 +76,7 @@ namespace System.Data {
                 /// </summary>
                 public enum initStatus { NotInitialized, BeginInit, EndInit };
         
-	        public initStatus _initStatus;
+	        private initStatus _initStatus;
         
 		private delegate void PostEndInit();
                 
