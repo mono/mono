@@ -4,14 +4,16 @@
 //
 // Author:
 //   Sean MacIsaac (macisaac@ximian.com)
+//   Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.CompilerServices;
 
 namespace System.Text {
 
-        public abstract class Encoding {
+	public abstract class Encoding {
                 private static ASCIIEncoding ascii_encoding;
                 private static UnicodeEncoding big_endian_unicode;
                 private static UnicodeEncoding unicode_encoding;
@@ -19,9 +21,25 @@ namespace System.Text {
                 private static UTF8Encoding utf8_encoding;
 
                 private int codepage;
+   
                 protected string body_name;
                 protected string encoding_name;
                 protected string header_name;
+                protected string web_name;
+
+		protected bool is_browser_display = false;
+		protected bool is_browser_save = false;
+		protected bool is_mail_news_display = false;
+		protected bool is_mail_news_save = false;
+		
+		private Encoder default_encoder = null;
+		private Decoder default_decoder = null;
+		
+		// used for iconv 
+		private string  iconv_name;
+		private bool    big_endian;
+		private Encoder iconv_encoder = null;
+		private Decoder iconv_decoder = null;
 
                 protected Encoding()
 		{
@@ -30,6 +48,42 @@ namespace System.Text {
                 protected Encoding (int codepage)
 		{
                         this.codepage = codepage;
+                }
+
+		internal protected Encoding (string name, bool big_endian)
+		{
+			this.iconv_name = name;
+			this.big_endian = big_endian;
+			
+			iconv_decoder = new IConvDecoder (iconv_name, big_endian);
+			iconv_encoder = new IConvEncoder (iconv_name, big_endian);
+		}
+
+                public static Encoding Unicode {
+                        get {
+                                if (unicode_encoding == null) {
+                                        unicode_encoding = new UnicodeEncoding();
+                                }
+                                return unicode_encoding;
+                        }
+                }
+
+                public static Encoding UTF7 {
+                        get {
+                                if (utf7_encoding == null) {
+                                        utf7_encoding = new UTF7Encoding();
+                                }
+                                return utf7_encoding;
+                        }
+                }
+
+                public static Encoding UTF8 {
+                        get {
+                                if (utf8_encoding == null) {
+                                        utf8_encoding = new UTF8Encoding();
+                                }
+                                return utf8_encoding;
+                        }
                 }
 
                 public static Encoding ASCII {
@@ -80,63 +134,31 @@ namespace System.Text {
 
                 public virtual bool IsBrowserDisplay {
                         get {
-                                // FIXME
-                                return false;
+                                return is_browser_display;
                         }
                 }
 
                 public virtual bool IsBrowserSave {
                         get {
-                                // FIXME
-                                return false;
+				return is_browser_save;
                         }
                 }
 
                 public virtual bool IsMailNewsDisplay {
                         get {
-                                // FIXME
-                                return false;
+                                return is_mail_news_display;
                         }
                 }
 
                 public virtual bool IsMailNewsSave {
                         get {
-                                // FIXME
-                                return false;
-                        }
-                }
-
-                public static Encoding Unicode {
-                        get {
-                                if (unicode_encoding == null) {
-                                        unicode_encoding = new UnicodeEncoding();
-                                }
-                                return unicode_encoding;
-                        }
-                }
-
-                public static Encoding UTF7 {
-                        get {
-                                if (utf7_encoding == null) {
-                                        utf7_encoding = new UTF7Encoding();
-                                }
-                                return utf7_encoding;
-                        }
-                }
-
-                public static Encoding UTF8 {
-                        get {
-                                if (utf8_encoding == null) {
-                                        utf8_encoding = new UTF8Encoding();
-                                }
-                                return utf8_encoding;
+                                return is_mail_news_save;
                         }
                 }
 
                 public virtual string WebName {
                         get {
-                                // FIXME
-                                return "";
+                                return web_name;
                         }
                 }
 
@@ -149,15 +171,13 @@ namespace System.Text {
 
                 public static byte[] Convert(Encoding srcEncoding, Encoding dstEncoding, byte[] bytes)
 		{
-                        // FIXME
-                        return null;
+			return dstEncoding.GetBytes (srcEncoding.GetChars (bytes));
                 }
 
                 public static byte[] Convert(Encoding srcEncoding, Encoding dstEncoding,
 					     byte[] bytes, int index, int count)
 		{
-                        // FIXME
-                        return null;
+			return dstEncoding.GetBytes (srcEncoding.GetChars (bytes, index, count));
                 }
 
                 public override bool Equals (object value)
@@ -182,84 +202,112 @@ namespace System.Text {
                         return true;
                 }
 
-                public virtual int GetByteCount(char[] chars)
+                public virtual int GetByteCount (char[] chars)
 		{
-                        // FIXME
-                        return 0;
+			return GetByteCount (chars, 0, chars.Length);
                 }
 
-                public virtual int GetByteCount(string s)
+                public virtual int GetByteCount (string s)
 		{
-                        // FIXME
-                        return 0;
+			char [] chars = s.ToCharArray ();
+			
+ 			return GetByteCount (chars, 0, chars.Length);
                 }
 
-                public abstract int GetByteCount (char[] chars, int index, int count);
+                public virtual int GetByteCount (char[] chars, int index, int count)
+		{
+			return iconv_encoder.GetByteCount (chars, index, count, false);
+		}
 
                 public virtual byte[] GetBytes(char[] chars)
 		{
-                        // FIXME
-                        return null;
+			return GetBytes (chars, 0, chars.Length);
                 }
 
                 public virtual byte[] GetBytes(string s)
 		{
-                        // FIXME
-                        return null;
+                        char [] chars = s.ToCharArray (); 
+                        return GetBytes (chars, 0, chars.Length);
                 }
 
                 public virtual byte[] GetBytes(char[] chars, int index, int count)
 		{
-                        // FIXME
-                        return null;
+			int bc = GetMaxByteCount (count - index);
+			byte [] bytes = new byte [bc];
+			
+			int len = GetBytes (chars, index, count, bytes, 0);
+			byte [] res = new byte [len];
+
+			Array.Copy (bytes, res, len);
+			
+			return res;
                 }
 
-                public abstract int GetBytes (char[] chars, int charIndex, int charCount,
-					      byte[] bytes, int byteIndex);
+                public int GetBytes (char[] chars, int charIndex, int charCount,
+				     byte[] bytes, int byteIndex)
+		{
+			return iconv_encoder.GetBytes (chars, charIndex, charCount, bytes, byteIndex, true);
+		}
 
                 public virtual int GetBytes(string s, int charIndex, int charCount,
 					    byte[] bytes, int byteIndex)
 		{
-                        // FIXME
-                        return 0;
+			return GetBytes (s.ToCharArray (), charIndex, charCount, bytes, byteIndex);
                 }
 
                 public virtual int GetCharCount (byte[] bytes)
 		{
-                        // FIXME
-                        return 0;
+			return GetCharCount (bytes, 0, bytes.Length);
                 }
 
                 public virtual int GetCharCount (byte[] bytes, int index, int count)
 		{
-                        // FIXME
-                        return 0;
-                }
+			return iconv_decoder.GetCharCount (bytes, index, count);
+		}
 
                 public virtual char[] GetChars (byte[] bytes)
 		{
-                        // FIXME
-                        return null;
+			return GetChars (bytes, 0, bytes.Length);
                 }
 
                 public virtual char[] GetChars (byte[] bytes, int index, int count)
 		{
-                        // FIXME
-                        return null;
-                }
+			int cc = GetMaxCharCount (count - index);
+			char [] chars = new char [cc];
 
-                public abstract int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);
+			int len = GetChars (bytes, index, count, chars, 0);
+			char [] res = new char [len];
+			
+			Array.Copy (chars, res, len);
+
+			return res;
+		}
+
+                public virtual int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
+		{
+			return iconv_decoder.GetChars (bytes, byteIndex, byteCount, chars, charIndex);
+		}
 
                 public virtual Decoder GetDecoder()
 		{
-                        // FIXME
-                        return null;
+			if (iconv_name != null)
+				return new IConvDecoder (iconv_name, big_endian);
+			
+			if (default_decoder == null)
+				default_decoder = new DefaultDecoder (this);
+			
+                        return default_decoder;
                 }
 
                 public virtual Encoder GetEncoder() 
 		{
-                        // FIXME
-                        return null;
+			if (iconv_name != null)
+				return new IConvEncoder (iconv_name, big_endian);
+
+			if (default_encoder == null)
+				default_encoder = new DefaultEncoder (this);
+			
+                        return default_encoder;
                 }
 
                 public virtual Encoding GetEncoding (int codepage)
@@ -270,6 +318,7 @@ namespace System.Text {
 
                 public virtual Encoding GetEncoding (string name)
 		{
+                        // FIXME
                         return null;
                 }
 
@@ -291,14 +340,39 @@ namespace System.Text {
 
                 public virtual string GetString(byte[] bytes)
 		{
-                        // FIXME
-                        return null;
+                        return GetString (bytes, 0, bytes.Length);
                 }
 
                 public virtual string GetString(byte[] bytes, int index, int count)
 		{
-                        // FIXME
-                        return null;
+			char [] chars = GetChars (bytes, index, count);
+
+                        return chars.ToString ();
                 }
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		internal extern static IntPtr IConvNewEncoder (string name, bool big_endian);
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		internal extern static IntPtr IConvNewDecoder (string name, bool big_endian);
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		internal extern static void IConvReset (IntPtr converter);
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		internal extern static int IConvGetByteCount (IntPtr converter, char[] chars,
+							      int index, int count);
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		internal extern static int IConvGetBytes (IntPtr converter, char[] chars, int charIndex,
+							  int charCount, byte[] bytes, int byteIndex);
+		
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		internal extern static int IConvGetCharCount (IntPtr converter, byte[] bytes,
+							      int index, int count);
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		internal extern static int IConvGetChars (IntPtr converter, byte[] bytes, int byteIndex,
+							  int byteCount, char[] chars, int charIndex);
         }
 }

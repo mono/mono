@@ -15,6 +15,7 @@
 // doesn't list this class as implementing IFormattable.
 
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System {
 	
@@ -57,12 +58,8 @@ namespace System {
 			return value;
 		}
 
-		public static double GetNumericValue (char c)
-		{
-			if ((c >= 48) && (c <= 57))
-				return (double) (c - '0');
-			return -1;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern double GetNumericValue (char c);
 
 		public static double GetNumericValue (string str, int index)
 		{
@@ -77,11 +74,8 @@ namespace System {
 			return GetNumericValue (str[index]);
 		}
 
-		public static UnicodeCategory GetUnicodeCategory (char c) 
-		{ 
-			// TODO: Implement me
-			return UnicodeCategory.OtherSymbol;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern UnicodeCategory GetUnicodeCategory (char c); 
 
 		public static UnicodeCategory GetUnicodeCategory (string str, int index) {
 			if (str == null) 
@@ -93,11 +87,8 @@ namespace System {
 			return GetUnicodeCategory (str[index]);
 		}
 
-		public static bool IsControl (char c)
-		{
-			// TODO: Make me Unicode aware
-			return ((c > 1) && (c < 32));
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsControl (char c);
 
 		public static bool IsControl (string str, int index)
 		{
@@ -111,10 +102,8 @@ namespace System {
 			return IsControl (str[index]);
 		}
 		
-		public static bool IsDigit (char c)
-		{
-			return ((c >= '0') && (c <= '9'));
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsDigit (char c);
 
 		public static bool IsDigit (string str, int index)
 		{
@@ -128,11 +117,8 @@ namespace System {
 			return IsDigit (str[index]);
 		}
 
-		public static bool IsLetter (char c)
-		{
-			// TODO: Make me Unicode aware
-			return (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')));
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsLetter (char c);
 
 		public static bool IsLetter (string str, int index)
 		{
@@ -166,11 +152,8 @@ namespace System {
 			return IsLetterOrDigit (str[index]);
 		}
 		
-		public static bool IsLower (char c)
-		{
-			// TODO: Make me Unicode aware.
-			return ((c >= 97) && (c <= 126));
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsLower (char c);
 		
 		public static bool IsLower (string str, int index)
 		{
@@ -184,10 +167,8 @@ namespace System {
 			return IsLower (str[index]);
 		}
 
-		public static bool IsNumber (char c)
-		{
-			return ((c >= 48) && (c <= 57));
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsNumber (char c);
 		
 		public static bool IsNumber (string str, int index)
 		{
@@ -201,15 +182,8 @@ namespace System {
 			return IsNumber (str[index]);
 		}
 
-		public static bool IsPunctuation (char c)
-		{
-			if (c == ',' || c == '.' || c == ';' || c == ':' ||
-			    c == '\'' || c == '\"' || c == '(' || c == ')' ||
-			    c == ')')
-				return true;
-			else
-				return false;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsPunctuation (char c);
 		
 		public static bool IsPunctuation (string str, int index)
 		{
@@ -223,11 +197,8 @@ namespace System {
 			return IsPunctuation (str[index]);
 		}
 
-		public static bool IsSeparator (char c)
-		{
-			// TODO: Implement me
-			return false;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsSeparator (char c);
 		
 		public static bool IsSeparator (string str, int index)
 		{
@@ -241,11 +212,8 @@ namespace System {
 			return IsSeparator (str[index]);
 		}
 
-		public static bool IsSurrogate (char c)
-		{
-			// TODO: Implement me
-			return false;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsSurrogate (char c);
 		
 		public static bool IsSurrogate (string str, int index)
 		{
@@ -259,11 +227,8 @@ namespace System {
 			return IsSurrogate (str[index]);
 		}
 
-		public static bool IsSymbol (char c)
-		{
-			// TODO: Implement me
-			return false;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsSymbol (char c);
 		
 		public static bool IsSymbol (string str, int index)
 		{
@@ -277,11 +242,8 @@ namespace System {
 			return IsSymbol (str[index]);
 		}
 
-		public static bool IsUpper (char c)
-		{
-			// TODO : Make me Unicode aware
-			return ((c >= 65) && (c <= 90));
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsUpper (char c);
 		
 		public static bool IsUpper (string str, int index)
 		{
@@ -295,13 +257,8 @@ namespace System {
 			return IsUpper (str[index]);
 		}
 
-		public static bool IsWhiteSpace (char c)
-		{
-			if (c == ' ' || c == '\n' || c == '\t' || c == '\r')
-				return true;
-			else
-				return false;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern bool IsWhiteSpace (char c);
 		
 		public static bool IsWhiteSpace (string str, int index)
 		{
@@ -330,17 +287,11 @@ namespace System {
 			return str [0];
 		}
 
-		public static char ToLower (char c)
-		{
-			// TODO: make me unicode aware
-			return (c >= 'A' && c <= 'Z') ? (char) (c + 32) : c;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern char ToLower (char c);
 
-		public static char ToUpper (char c)
-		{
-			// TODO: make me unicode aware
-			return (char) ((c >= 'a' && c <= 'z') ? c - 32 : c);
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public static extern char ToUpper (char c);
 
 		public override string ToString ()
 		{

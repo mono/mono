@@ -3,6 +3,7 @@
 //
 // Author:
 //   Sean MacIsaac (macisaac@ximian.com)
+//   Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -10,38 +11,30 @@
 
 namespace System.Text {
         
-        public class ASCIIEncoding : Encoding {
-                public override int GetByteCount (char[] chars, int index, int count)
+	public class ASCIIEncoding : Encoding
+	{
+		public ASCIIEncoding () : base ("ASCII", false)
 		{
-                        // FIXME
-                        return 0;
-                }
+			encoding_name = "US-ASCII";
+			body_name = "us-ascii";
+			header_name = "us-ascii";
+			web_name = "us-ascii";
+			is_browser_display = false;
+			is_browser_save = false;
+			is_mail_news_display = true;
+			is_mail_news_save = true;
+		}
+		
+		public override int GetMaxByteCount (int charCount)
+		{
+			// FIXME: this is wrong, dont know the right value
+			return charCount*6;
+		}
 
-                public override int GetBytes(char[] chars, int charIndex, int charCount,
-					     byte[] bytes, int byteIndex)
+		public override int GetMaxCharCount (int byteCount)
 		{
-                        // FIXME
-                        return 0;
-                }
-
-                public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
-					     char[] chars, int charIndex)
-		{
-                        // FIXME
-                        return 0;
-                }
-
-                public override int GetMaxByteCount (int charCount)
-		{
-                        // FIXME
-                        return 0;
-                }
-
-                public override int GetMaxCharCount (int byteCount)
-		{
-                        // FIXME
-                        return 0;
-                }
-        }
+			return byteCount;
+		}
+	}
 }
 
