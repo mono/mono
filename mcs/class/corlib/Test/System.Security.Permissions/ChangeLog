@@ -1,3 +1,9 @@
+2004-01-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* FileIOPermissionAttributeTest.cs: Removed GetTempPath from the tests
+	as the introduced failures weren't related to the class (test moved to
+	FileIOPermissionTest.cs).
+
 2003-12-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* EnvironmentPermissionAttributeTest.cs: Updated to test default
