@@ -1,3 +1,10 @@
+2002-04-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): only use MB_TERM_CHECKTHIS when necessary
+
+	* x86.brg (stmt): removed stmt: STIND_I4 (addr, coni4) rule
+	because it slows down performance.
+
 2002-04-21  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* emit-x86.c: enter_method handles 8-byte aligned parameters.
