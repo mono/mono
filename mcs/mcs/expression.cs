@@ -2742,18 +2742,19 @@ namespace Mono.CSharp {
 			// but on top of that we want for == and != to use a special path
 			// if we are comparing against null
 			//
-			if (oper == Operator.Equality || oper == Operator.Inequality) {
+			if ((oper == Operator.Equality || oper == Operator.Inequality) && (left is Constant || right is Constant)) {
 				bool my_on_true = oper == Operator.Inequality ? onTrue : !onTrue;
-
-				if (left is NullLiteral || left is IntConstant && ((IntConstant) left).Value == 0) {
-					right.Emit (ec);
-					if (my_on_true)
-						ig.Emit (OpCodes.Brtrue, target);
-					else
-						ig.Emit (OpCodes.Brfalse, target);
-					
-					return;
-				} else if (right is NullLiteral || right is IntConstant && ((IntConstant) right).Value == 0){
+				
+				//
+				// put the constant on the rhs, for simplicity
+				//
+				if (left is Constant) {
+					Expression swap = right;
+					right = left;
+					left = swap;
+				}
+				
+				if (((Constant) right).IsZeroInteger) {
 					left.Emit (ec);
 					if (my_on_true)
 						ig.Emit (OpCodes.Brtrue, target);
@@ -2761,15 +2762,7 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Brfalse, target);
 					
 					return;
-				} else if (left is BoolConstant){
-					right.Emit (ec);
-					if (my_on_true != ((BoolConstant) left).Value)
-						ig.Emit (OpCodes.Brtrue, target);
-					else
-						ig.Emit (OpCodes.Brfalse, target);
-					
-					return;
-				} else if (right is BoolConstant){
+				} else if (right is BoolConstant) {
 					left.Emit (ec);
 					if (my_on_true != ((BoolConstant) right).Value)
 						ig.Emit (OpCodes.Brtrue, target);

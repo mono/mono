@@ -1,5 +1,12 @@
 2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* constant.cs, ecore.cs, literal.cs: New prop IsZeroInteger that
+	checks if we can use brtrue/brfalse to test for 0.
+	* expression.cs: use the above in the test for using brtrue/brfalse.
+	cleanup code a bit.
+
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* expression.cs: Rewrite string concat stuff. Benefits:
 
 	- "a" + foo + "b" + "c" becomes "a" + foo + "bc"

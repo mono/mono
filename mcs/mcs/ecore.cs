@@ -1515,6 +1515,10 @@ namespace Mono.CSharp {
 		{
 			return Child.ConvertToInt ();
 		}
+		
+		public override bool IsZeroInteger {
+			get { return Child.IsZeroInteger; }
+		}
 	}
 
 	/// <summary>
