@@ -35,7 +35,6 @@ using System.Collections; // for IList
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Security;
 using System.Security.Permissions;
 
 using Mono.Xml;
@@ -94,7 +93,7 @@ namespace System.Security.Policy {
 					Save ();
 				}
 			}
-/*			catch (Exception) {
+			catch {
 				// this can fail in many ways include
 				// * can't lookup policy (path discovery);
 				// * can't copy default file to policy
@@ -103,7 +102,7 @@ namespace System.Security.Policy {
 				// * can't decode policy file
 				if (!loaded)
 					CreateFromHardcodedDefault (_type);
-			}*/
+			}
 			finally {
 				_location = filename;
 			}

@@ -1,3 +1,7 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevel.cs: Fixed warning by re-activating safeguard
+
 2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeGroup.cs: Creates an empty PermissionSet (and not an empty 
