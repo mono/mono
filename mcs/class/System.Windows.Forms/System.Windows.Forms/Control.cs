@@ -2762,6 +2762,14 @@ namespace System.Windows.Forms {
 				UpdateBounds ();
 				CallControlWndProc (ref m);
 				break;
+			case Msg.WM_CTLCOLOREDIT :
+				if ( !Control.ReflectMessage ( m.LParam, ref m ) ) 
+					CallControlWndProc ( ref m );
+			break;
+			//case Msg.WM_CTLCOLORSTATIC:
+			//	if ( !Control.ReflectMessage ( m.LParam, ref m ) ) 
+			//		CallControlWndProc ( ref m );
+			break;
 				case Msg.WM_NOTIFY:
 					NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure (m.LParam,
 									typeof (NMHDR));

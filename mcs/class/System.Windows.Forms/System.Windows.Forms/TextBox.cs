@@ -19,6 +19,9 @@ namespace System.Windows.Forms {
      public class TextBox : TextBoxBase {
 
 		HorizontalAlignment textAlign;
+		bool acceptsReturn;
+		CharacterCasing characterCasing;
+		char passwordChar;
 		//
 		//  --- Public Constructor
 		//
@@ -26,42 +29,45 @@ namespace System.Windows.Forms {
 		public TextBox()
 		{
 			textAlign = HorizontalAlignment.Left;
+			acceptsReturn = true;
+			characterCasing = CharacterCasing.Normal;
+			passwordChar = (char)0;
 		}
 		
 		//  --- Public Properties
 		
 		[MonoTODO]
 		public bool AcceptsReturn  {
-
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				return acceptsReturn;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				acceptsReturn = value;
 			}
 		}
 		[MonoTODO]
 		public CharacterCasing CharacterCasing {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				return characterCasing;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				if ( !Enum.IsDefined ( typeof(CharacterCasing), value ) )
+					throw new InvalidEnumArgumentException( "CharacterCasing",
+						(int)value,
+						typeof(CharacterCasing));
+
+				characterCasing = value;
 			}
 		}
 		[MonoTODO]
 		public char PasswordChar {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				return passwordChar;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				passwordChar = value;
+				if ( IsHandleCreated )
+					Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETPASSWORDCHAR, passwordChar, 0 );
 			}
 		}
 		[MonoTODO]
@@ -144,6 +150,8 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.OnHandleCreated(e);
+			if ( PasswordChar != 0 )
+				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETPASSWORDCHAR, PasswordChar, 0 );
 		}
 		[MonoTODO]
 		protected override void OnMouseUp(MouseEventArgs e)

@@ -33,6 +33,8 @@ namespace System.Windows.Forms {
 		private static readonly int readOnly      = BitVector32.CreateMask( multiline );
 		private static readonly int wordWrap      = BitVector32.CreateMask( readOnly );
 
+		private IntPtr backgrBrush;
+
 		internal TextBoxBase ( ) {
 			SubClassWndProc_ = true;
 
@@ -47,6 +49,13 @@ namespace System.Windows.Forms {
 
 			base.foreColor = SystemColors.WindowText;
 			base.backColor = SystemColors.Window;
+			backgrBrush = IntPtr.Zero;
+		}
+
+		~TextBoxBase ( )
+		{
+			if ( backgrBrush != IntPtr.Zero )
+				Win32.DeleteObject ( backgrBrush );
 		}
 
 		[MonoTODO]
@@ -73,14 +82,13 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public override Color BackColor {
-			get {
-				//FIXME:
-				return base.BackColor;
-			}
-			set
-			{
-				//FIXME:
-				base.BackColor = value;
+			get { return base.BackColor; }
+			set {
+				if ( base.BackColor != value ) {
+					base.BackColor = value;
+					createBackgroundBrush ( );
+					Refresh ( );
+				}
 			}
 		}
 
@@ -117,15 +125,14 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public override Color ForeColor {
-			get
-			{
-				//FIXME:
-				return base.ForeColor;
-			}
-			set
-			{
-				//FIXME:
+			get { return base.ForeColor; }
+			set {
+				if ( base.ForeColor == value )
+					return;
+
 				base.ForeColor = value;
+				createBackgroundBrush ( );
+				Refresh ( );
 			}
 		}
 
@@ -527,8 +534,15 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m)
 		{
 			switch ( m.Msg ) {
-			case Msg.WM_CTLCOLOR:
-				CallControlWndProc ( ref m );
+			case Msg.WM_CTLCOLOREDIT:
+			case Msg.WM_CTLCOLORSTATIC:
+				if ( backgrBrush != IntPtr.Zero ) {
+					Win32.SetTextColor ( m.WParam, Win32.RGB ( ForeColor ) );
+					Win32.SetBkColor ( m.WParam, (uint)Win32.RGB ( BackColor ) );
+					m.Result = backgrBrush;
+				}
+				else
+					CallControlWndProc ( ref m );
 			break;
 			case Msg.WM_COMMAND:
 				if ( m.HiWordWParam == (int) EditControlNotifications.EN_CHANGE )
@@ -550,7 +564,14 @@ namespace System.Windows.Forms {
 				selectionLength = length;
 			}
 		}
-
+		
+		private void createBackgroundBrush ( )
+		{
+			if ( backgrBrush != IntPtr.Zero )
+				Win32.DeleteObject ( backgrBrush );
+			
+			backgrBrush = Win32.CreateSolidBrush ( Win32.RGB ( BackColor ) );
+		}
 	}
 }
 
