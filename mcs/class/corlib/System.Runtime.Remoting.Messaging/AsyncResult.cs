@@ -29,6 +29,10 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	IMessageCtrl message_ctrl;
 	IMessage reply_message;
 	
+	internal AsyncResult ()
+	{
+	}
+	
 	public virtual object AsyncState
 	{
 		get {

@@ -23,6 +23,10 @@ namespace System.Runtime.Remoting.Messaging
 	{
 		internal const string HeadersKey = "__Headers";
 		internal const string ContextKey = "__CallContext";
+		
+		private CallContext ()
+		{
+		}
 
 		// public methods
 		public static void FreeNamedDataSlot (string name) 

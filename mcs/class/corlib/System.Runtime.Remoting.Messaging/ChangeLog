@@ -1,3 +1,8 @@
+2003-11-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* AsyncResult.cs, CallContext.cs: Added private constructor.
+	* ReturnMessage.cs: Added parameter array length check.
+
 2003-11-18  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ArgInfo.cs, ClientContextTerminatorSink.cs, ErrorMessage.cs, MethodCall.cs,
