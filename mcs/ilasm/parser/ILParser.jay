@@ -1335,7 +1335,7 @@ method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
 method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                           typars_clause OPEN_PARENS sig_args CLOSE_PARENS impl_attr
                           {
-                                MethodDef methdef = new MethodDef ((MethAttr) $2,
+                                MethodDef methdef = new MethodDef ((MethAttr) $2, (CallConv) $3,
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
                                         (ArrayList) $9);
                                 codegen.BeginMethodDef (methdef);
@@ -1438,6 +1438,17 @@ sig_arg			: param_attr type
 			;
 
 type_list               : /* EMPTY */
+                        | ELLIPSIS
+                          {
+                                ArrayList type_list = new ArrayList ();
+                                type_list.Add (TypeRef.Ellipsis);
+                                $$ = type_list;
+                          }
+                        | type_list COMMA ELLIPSIS
+                          {
+                                ArrayList type_list = (ArrayList) $1;
+                                type_list.Add (TypeRef.Ellipsis);
+                          }
                         | type
                           {
                                 ArrayList type_list = new ArrayList ();
@@ -1788,7 +1799,8 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 else
                                         param_list = new ITypeRef[0];
 
-                                $$ = new GlobalMethodRef ((ITypeRef) $2, (string) $3, param_list);
+                                $$ = new GlobalMethodRef ((ITypeRef) $2, (CallConv) $1,
+                                        (string) $3, param_list);
                           }
 			;
 

@@ -1,3 +1,8 @@
+2003-05-25 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Pass call conv to methoref constructors. Add the
+	ELLIPSIS to type_lists, this is for vararg methods
+		
 2003-05-23 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Remove top secret debugging code.
