@@ -29,11 +29,11 @@ namespace System.Drawing
 		bool isnamedcolor;
 		bool issystemcolor;
 
-		string name;
+		string myname;
 
 		public string Name {
 			get{
-				return name;
+				return myname;
 			}
 		}
 
@@ -51,7 +51,7 @@ namespace System.Drawing
 
 		public bool IsNamedColor {
 			get{
-				return isNamedcolor;
+				return isnamedcolor;
 			}
 		}
 
@@ -59,12 +59,12 @@ namespace System.Drawing
 		public static Color FromArgb (int red, int green, int blue)
 		{
 			//TODO: convert rgb to name format "12345678"
-			isknowncolor = false;
-			isnamedcolor = false;
-			issystemcolor = false;
-
 			CheckRGBValues(red, green, blue);
 			Color color;
+			color.myname = "";
+			color.isknowncolor = false;
+			color.isnamedcolor = false;
+			color.issystemcolor = false;
 			color.a = 255;
 			color.r = (byte)red;
 			color.g = (byte)green;
@@ -75,11 +75,12 @@ namespace System.Drawing
 		public static Color FromArgb (int alpha, int red, int green, int blue)
 		{
 			//TODO: convert rgb to name format "12345678"
-			isknowncolor = false;
-			isnamedcolor = false;
-			issystemcolor = false;
 			CheckARGBValues(alpha, red, green, blue);
 			Color color;
+			color.isknowncolor = false;
+			color.isnamedcolor = false;
+			color.issystemcolor = false;
+			color.myname = "";
 			color.a = (byte)alpha;
 			color.r = (byte)red;
 			color.g = (byte)green;
@@ -94,12 +95,13 @@ namespace System.Drawing
 		public static Color FromArgb (int alpha, Color baseColor)
 		{
 			//TODO: convert basecolor rgb to name
-			isknowncolor = false;
-			isnamedcolor = false;
-			issystemcolor = false;
 			//check alpha, use valid dummy values for rgb.
 			CheckARGBValues(alpha, 0, 0, 0);
 			Color color;
+			color.isknowncolor = false;
+			color.isnamedcolor = false;
+			color.issystemcolor = false;
+			color.myname = "";
 			color.a = (byte)alpha;
 			color.r = baseColor.r;
 			color.g = baseColor.g;
@@ -110,10 +112,11 @@ namespace System.Drawing
 		public static Color FromArgb (int argb)
 		{
 			//TODO: convert irgb to name
-			isknowncolor = false;
-			isnamedcolor = false;
-			issystemcolor = false;
 			Color color;
+			color.isknowncolor = false;
+			color.isnamedcolor = false;
+			color.issystemcolor = false;
+			color.myname = "";
 			color.a = (byte) (argb >> 24);
 			color.r = (byte) (argb >> 16);
 			color.g = (byte) (argb >> 8);
@@ -123,11 +126,11 @@ namespace System.Drawing
 
 		public static Color FromKnownColor (KnownColor KnownColorToConvert)
 		{
-			isknowncolor = true;
-			isnamedcolor = true;
-			issystemcolor = true;
+//			isknowncolor = true;
+//			isnamedcolor = true;
+//			issystemcolor = true;
 
-			name = KnownColorToConvert.ToString();
+//			name = KnownColorToConvert.ToString();
 
 			return FromName(KnownColorToConvert.ToString());
 		}
@@ -135,20 +138,20 @@ namespace System.Drawing
 		public KnownColor ToKnownColor () {
 			if(isknowncolor){
 				// TODO: return correct enumeration of knowncolor. note the return 0 in the else block is correct.
-				return (knownColor)0;
+				return (KnownColor)0;
 			}
 			else{
-				return (knownColor)0;
+				return (KnownColor)0;
 			}
-			return FromName(KnownColorToConvert.ToString());
+			//return KnownColor.FromName(KnownColorToConvert.ToString());
 		}
 		public static Color FromName( string ColorName ) 
 		{
-			isknowncolor = true;
-			isnamedcolor = true;
-			issystemcolor = true;
+//			isknowncolor = true;
+//			isnamedcolor = true;
+//			issystemcolor = true;
 			
-			name = ColorName;
+			string name = ColorName;
 
 			Type colorType = typeof( Color );
 			PropertyInfo[] properties =
@@ -242,6 +245,10 @@ namespace System.Drawing
 			r = (byte)red;
 			g = (byte)green;
 			b = (byte)blue;
+			isknowncolor = false;
+			isnamedcolor = false;
+			issystemcolor = false;
+			myname = "";
 		}
 
 		// -----------------------
