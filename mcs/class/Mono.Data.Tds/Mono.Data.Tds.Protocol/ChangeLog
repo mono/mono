@@ -1,3 +1,10 @@
+2003-10-19  Joerg Rosenkranz <joergr@voelcker.com>
+
+	* Tds.cs (GetStringValue): A string length of 0xFF (255) is not
+	misinterpreted as special value anymore.
+	
+	This is a fix to bug #49835.
+
 2003-10-03  Diego Caravana  <diego@toth.it>
 
 	* Tds70.cs: Now handles parameters of type ReturnValue and

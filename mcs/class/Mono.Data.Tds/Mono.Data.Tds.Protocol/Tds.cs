@@ -685,7 +685,7 @@ namespace Mono.Data.Tds.Protocol {
 
 			int len = shortLen ? comm.GetTdsShort () : (comm.GetByte () & 0xff);
 
-			if ((tdsVersion < TdsVersion.tds70 && len == 0) || (tdsVersion == TdsVersion.tds70 && len == 0xff))
+			if (tdsVersion < TdsVersion.tds70 && len == 0)
 				result = null;
 			else if (len >= 0) {
 				if (wideChars)
