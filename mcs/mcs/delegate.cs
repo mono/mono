@@ -25,7 +25,6 @@ namespace Mono.CSharp {
 	public class Delegate : DeclSpace {
  		public Expression ReturnType;
 		public Parameters      Parameters;
-		public Attributes      OptAttributes;
 
 		public ConstructorBuilder ConstructorBuilder;
 		public MethodBuilder      InvokeBuilder;
@@ -49,15 +48,14 @@ namespace Mono.CSharp {
  		public Delegate (NamespaceEntry ns, TypeContainer parent, Expression type,
 				 int mod_flags, string name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
+
 		{
 			this.ReturnType = type;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PRIVATE, l);
-			Parameters      = param_list;
-			OptAttributes   = attrs;
-		}
+			Parameters      = param_list;		}
 
 		public override TypeBuilder DefineType ()
 		{

@@ -113,9 +113,6 @@ namespace Mono.CSharp {
 
 		ArrayList type_bases;
 
-		// Attributes for this type
-		protected Attributes attributes;
-
 		// Information in the case we are an attribute type
 
 		public AttributeTargets Targets = AttributeTargets.All;
@@ -134,8 +131,12 @@ namespace Mono.CSharp {
 		//
 		public string IndexerName;
 
-		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Location l)
-			: base (ns, parent, name, l)
+		public TypeContainer ():
+			this (null, null, "", null, new Location (-1)) {
+		}
+
+		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+			: base (ns, parent, name, attrs, l)
 		{
 			types = new ArrayList ();
 
@@ -496,12 +497,6 @@ namespace Mono.CSharp {
 		public ArrayList Delegates {
 			get {
 				return delegates;
-			}
-		}
-		
-		public Attributes OptAttributes {
-			get {
-				return attributes;
 			}
 		}
 		
@@ -1753,7 +1748,7 @@ namespace Mono.CSharp {
 			default_constructor = null;
 			default_static_constructor = null;
 			type_bases = null;
-			attributes = null;
+			OptAttributes = null;
 			ifaces = null;
 			parent_container = null;
 			member_cache = null;
@@ -2139,7 +2134,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE;
 
 		public Class (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
 		{
 			int accmods;
 
@@ -2149,7 +2144,6 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
-			this.attributes = attrs;
 		}
 
 		//
@@ -2176,7 +2170,7 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Struct (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
 		{
 			int accmods;
 			
@@ -2188,8 +2182,6 @@ namespace Mono.CSharp {
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 
 			this.ModFlags |= Modifiers.SEALED;
-			this.attributes = attrs;
-			
 		}
 
 		//
@@ -2751,7 +2743,6 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		new public Attributes OptAttributes;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -3495,7 +3486,6 @@ namespace Mono.CSharp {
 	
 	abstract public class MemberBase : MemberCore {
 		public Expression Type;
-		public readonly Attributes OptAttributes;
 
 		protected MethodAttributes flags;
 			
@@ -3542,12 +3532,11 @@ namespace Mono.CSharp {
 		//
 		protected MemberBase (Expression type, int mod, int allowed_mod, int def_mod, string name,
 				      Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (name, attrs, loc)
 		{
 			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
-			OptAttributes = attrs;
 		}
 
 		protected virtual bool CheckBase (TypeContainer container)

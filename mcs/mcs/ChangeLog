@@ -1,4 +1,13 @@
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+        * class.cs : Implemented parameter-less constructor for TypeContainer
+        
+        * decl.cs: Attributes are now stored here. New property OptAttributes
+        
+        * delegate.cs, enum.cs, interface.cs: Removed attribute member.
+        
+        * rootcontext.cs, tree.cs: Now use parameter-less constructor of TypeContainer
+
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* typemanager.cs (CSharpSignature): Now reports also inner class name.
           (CSharpSignature): New method for indexer and property signature.

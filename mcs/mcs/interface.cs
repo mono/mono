@@ -46,7 +46,6 @@ namespace Mono.CSharp {
 		ArrayList property_builders;
 		ArrayList event_builders;
 		
-		Attributes OptAttributes;
 
 		public string IndexerName;
 
@@ -73,10 +72,9 @@ namespace Mono.CSharp {
 
 		public Interface (NamespaceEntry ns, TypeContainer parent, string name, int mod,
 				  Attributes attrs, Location l)
-			: base (ns, parent, name, l)
+			: base (ns, parent, name, attrs, l)
 		{
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
-			OptAttributes = attrs;
 			
 			method_builders = new ArrayList ();
 			property_builders = new ArrayList ();
