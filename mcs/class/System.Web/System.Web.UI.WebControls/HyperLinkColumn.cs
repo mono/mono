@@ -188,10 +188,8 @@ namespace System.Web.UI.WebControls
 
 			if (textFieldDescriptor != null) {
 				link.Text = FormatDataTextValue (textFieldDescriptor.GetValue (item));
-			} else if ( Text != String.Empty ) {
-				link.Text = Text;
 			} else {
-				link.Text = "Sample_DataBound_Text";
+				link.Text = Text;
 			}
 
 			if (urlFieldDescriptor != null) {
