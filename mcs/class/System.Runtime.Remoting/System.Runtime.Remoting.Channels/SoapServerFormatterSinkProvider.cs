@@ -19,8 +19,7 @@ namespace System.Runtime.Remoting.Channels
 
 #if NET_1_0
 		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
-#endif
-#if NET_1_1
+#else
 		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
 #endif
 

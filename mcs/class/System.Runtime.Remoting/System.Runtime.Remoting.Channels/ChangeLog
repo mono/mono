@@ -1,3 +1,8 @@
+﻿2003-12-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryServerFormatterSinkProvider.cs, SoapServerFormatterSinkProvider.cs:
+	  Changed some ifdefs for allowedProperties field.
+
 ﻿2003-12-11  Patrik Torstensson  <p@rxc.se>
 
 	* SoapMessageFormater.cs: Use GetMethod with signature if possible, solves
