@@ -32,6 +32,7 @@ namespace System.Data.SqlClient
 {
         using System.Data;
         using System.Data.Common;
+        using System.Data.ProviderBase;
         
         public class SqlClientFactory : DbProviderFactory
         {
@@ -70,7 +71,8 @@ namespace System.Data.SqlClient
 
                 public override DbConnection CreateConnection ()
                 {
-                        SqlConnection connection = new SqlConnection ();
+                        DbConnectionFactory connFactory = SqlConnectionFactory.GetSingleton (Instance /* provider factory */);
+                        SqlConnection connection = new SqlConnection (connFactory);
                         return (DbConnection) connection;
                 }
                 

@@ -112,12 +112,26 @@ namespace System.Data.SqlClient {
 	
 		public SqlConnection (string connectionString)
 		{
+                        Init (connectionString);
+		}
+
+#if NET_2_0
+                internal SqlConnection (DbConnectionFactory connectionFactory) : base (connectionFactory)
+                {
+                        Init (String.Empty);
+                }
+
+#endif //NET_2_0
+
+                private void Init (string connectionString)
+                {
                         connectionTimeout       = 15; // default timeout
                         dataSource              = ""; // default datasource
                         packetSize              = 8192; // default packetsize
+                        ConnectionString        = connectionString;
+                }
+                
 
-			ConnectionString        = connectionString;
-		}
 
 		#endregion // Constructors
 

@@ -1,3 +1,8 @@
+2005-03-02  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.dll.sources: Added
+	System.Data.SqlClient/SqlConnectionFactory.cs.
+
 2005-03-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.dll.sources: Added System.Data.Common/

@@ -314,6 +314,9 @@ System.Data.SqlClient/SqlRowUpdatingEventHandler.cs
 System.Data.SqlClient/SqlTransaction.cs
 System.Data.SqlClient/SqlXmlTextReader.cs
 System.Data.SqlClient/SQLDebugging.cs
+System.Data.SqlClient/SqlClientFactory.cs
+System.Data.SqlClient/SqlConnectionFactory.cs
+System.Data.SqlClient/SqlDataSourceEnumerator.cs
 System.Data/XmlDataLoader.cs
 System.Data/XmlSchemaDataImporter.cs
 System.Data/XmlSchemaWriter.cs
@@ -342,5 +345,3 @@ Mono.Data.SqlExpressions/Functions.cs
 Mono.Data.SqlExpressions/Like.cs
 Mono.Data.SqlExpressions/In.cs
 Mono.Data.SqlExpressions/Aggregation.cs
-System.Data.SqlClient/SqlClientFactory.cs
-System.Data.SqlClient/SqlDataSourceEnumerator.cs

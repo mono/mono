@@ -1,3 +1,15 @@
+2005-03-03  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlClientFactory.cs: While creating command, create using
+	DbConnectionFactory as DbConnectionBase.CreateDbCommand needs to
+	have a connection factory.
+
+	* SqlConnection.cs: Added an internal constructor which takes
+	DbConnectionFactory.
+
+	* SqlConnectionFactory.cs: Added. Concrete class for abstract
+	factory DbConnectionFactory.
+
 2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlDataReader.cs: GetBytes: return the length of the data if

@@ -155,7 +155,9 @@ namespace System.Data.ProviderBase {
 
 		protected override DbCommand CreateDbCommand ()
 		{
-			return (DbCommand) ConnectionFactory.ProviderFactory.CreateCommand ();
+			DbCommand cmd = (DbCommand) ConnectionFactory.ProviderFactory.CreateCommand ();
+                        cmd.Connection = this;
+                        return cmd;
 		}
 
 		protected override void Dispose (bool disposing)
