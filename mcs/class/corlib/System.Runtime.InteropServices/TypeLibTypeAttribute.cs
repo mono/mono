@@ -15,9 +15,9 @@ namespace System.Runtime.InteropServices {
 	{
 		TypeLibTypeFlags flags;
 		
-		[MonoTODO]
 		public TypeLibTypeAttribute (short flags)
 		{
+			this.flags = (TypeLibTypeFlags) flags;
 		}
 
 		public TypeLibTypeAttribute (TypeLibTypeFlags flags)

@@ -1,5 +1,19 @@
 2002-04-22  Duncan Mak  <duncan@ximian.com>
 
+	* ComConventionLossAttribute.cs: Removed, there's a typo.
+	* ComConversionLossAttribute.cs: Same attribute, slight change of name.
+
+	* PreserveSigAttribute.cs:
+	* ImportedFromTypeLibAttribute.cs: Added missing AttributeUsage
+	attribute.
+
+	* TypeLibFuncAttribute.cs:
+	* TypeLibTypeAttribute.cs:
+	* TypeLibVarAttribute.cs: Added missing constructors. 
+	
+	
+2002-04-22  Duncan Mak  <duncan@ximian.com>
+
 	* AutomationProxyAttribute.cs: 
 	* CoClassAttribute.cs: 
 	* ComAliasNameAttribute.cs: 

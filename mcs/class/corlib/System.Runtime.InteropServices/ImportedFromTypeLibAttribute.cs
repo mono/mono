@@ -9,7 +9,8 @@
 using System;
 
 namespace System.Runtime.InteropServices {
-
+	
+	[AttributeUsage (AttributeTargets.Assembly)]
 	public sealed class ImportedFromTypeLibAttribute : Attribute
 	{
 		string TlbFile;

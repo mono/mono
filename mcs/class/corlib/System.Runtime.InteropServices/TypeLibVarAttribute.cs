@@ -15,9 +15,9 @@ namespace System.Runtime.InteropServices {
 	{
 		TypeLibVarFlags flags;
 		
-		[MonoTODO]
 		public TypeLibVarAttribute (short flags)
 		{
+			this.flags = (TypeLibVarFlags) flags;
 		}
 
 		public TypeLibVarAttribute (TypeLibVarFlags flags)
