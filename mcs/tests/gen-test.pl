@@ -6,7 +6,7 @@ my $mono = "mono";
 
 my @normal = qw[gen-1 gen-2 gen-3 gen-4 gen-5 gen-6 gen-7 gen-8 gen-9 gen-10 gen-11 gen-12
 		gen-14 gen-15 gen-16 gen-18 gen-19 gen-20 gen-21 gen-22 gen-23 gen-24 gen-25
-		gen-26 gen-27 gen-28 gen-29 gen-30 gen-32 gen-33 gen-34];
+		gen-26 gen-27 gen-28 gen-29 gen-30 gen-32 gen-33 gen-34 gen-35];
 my @library = qw[gen-13 gen-17 gen-31];
 
 sub RunTest
@@ -16,11 +16,11 @@ sub RunTest
 
     $cmdline .= " > /dev/null" if $quiet;
 
-    print STDERR "Running $cmdline\n";
+    print "Running $cmdline\n";
 
     my $exitcode = system $cmdline;
     if ($exitcode != 0) {
-	print STDERR "Command failed!\n";
+	print "Command failed!\n";
 	return 0;
     }
 
@@ -58,7 +58,7 @@ sub LibraryTest
 }
 
 foreach my $file (@normal) {
-    print STDERR "RUNNING TEST: $file\n";
+    print "RUNNING TEST: $file\n";
     if (NormalTest ($file)) {
 	print STDERR "TEST SUCCEEDED: $file\n";
     } else {
@@ -67,7 +67,7 @@ foreach my $file (@normal) {
 }
 
 foreach my $file (@library) {
-    print STDERR "RUNNING LIBRARY TEST: $file\n";
+    print "RUNNING LIBRARY TEST: $file\n";
     if (LibraryTest ($file)) {
 	print STDERR "TEST SUCCEEDED: $file\n";
     } else {
