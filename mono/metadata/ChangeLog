@@ -1,5 +1,7 @@
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* loader.c (mono_lookup_pinvoke_call): Try the underscore prefixed name as well.
+	
 	* loader.c (mono_lookup_pinvoke_call): Add support for stdcall name mangling.
 
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
