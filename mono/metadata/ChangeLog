@@ -1,5 +1,8 @@
 2005-01-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_image_create_pefile): Only set the pe_offset
+	inside the MSDOS header. Fixes #71201.
+
 	* gc.c (mono_gc_cleanup): Handle the case when this is called from the
 	gc thread.
 	(mono_domain_finalize): Ditto.
