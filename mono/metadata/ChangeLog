@@ -1,3 +1,6 @@
+2003-05-14  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* object.c: mono_store_remote_field: little fix to previous patch.
 
 Wed May 14 18:10:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
