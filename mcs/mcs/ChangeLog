@@ -1,3 +1,8 @@
+2003-02-27  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.MemberLookup): Don't create a
+	MethodGroupExpr for something which is not a method.  Fixes #38291.
+
 2003-02-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MemberBase.CheckParameters): Also check that the type
