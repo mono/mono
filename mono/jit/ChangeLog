@@ -1,3 +1,8 @@
+
+Mon Feb 18 15:51:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: intern command line arguments.
+
 2002-02-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): use the magic trampoline for all
