@@ -70,6 +70,8 @@ namespace System.ComponentModel
 				       Locale.GetText("Access denied"));
 			w32_errors.Add(10022,
 				       Locale.GetText("Invalid arguments"));
+			w32_errors.Add(10035,
+				       Locale.GetText("Operation on non-blocking socket would block"));
 			w32_errors.Add(10036,
 				       Locale.GetText("Operation in progress"));
 			w32_errors.Add(10038,
