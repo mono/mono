@@ -1,3 +1,26 @@
+2005-01-12  Peter Bartok  <pbartok@novell.com>
+
+	* OSXStrucs.cs: Added
+
+2005-01-12  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs:
+	  - Removed PeekMessageFlags
+	  - Implemented SetWindowStyle() method
+	* XplatUIStructs.cs: Added PeekMessageFlags
+	* X11Structs: Added missing border_width field to XWindowChanges struct
+	* XplatUIX11.cs:
+	  - PeekMessage: Now throws exception if flags which are not yet 
+	    supported are passed
+	  - Implemented SetWindowStyle() method
+	  - Fixed SetZOrder to handle AfterHwnd properly
+	* XplatUI.cs: Added SetWindowStyle() method
+	* XplatUIDriver.cs: Added SetWindowStyle() abstract
+	* Control.cs:
+	  - Implemented UpdateStyles() method
+	  - Implemented UpdateZOrder() method
+	* XplatUIOSX.cs: Added SetWindowStyle() stub
+
 2005-01-12  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Fix SetZOrder (this needs more testing with a 3 
