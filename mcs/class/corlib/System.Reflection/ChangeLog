@@ -1,3 +1,6 @@
+2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* EventInfo.cs: implemented (Add|Remove)EventHandler.
 
 Mon Nov 18 17:52:56 CET 2002 Paolo Molaro <lupus@ximian.com>
 

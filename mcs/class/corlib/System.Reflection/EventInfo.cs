@@ -39,8 +39,15 @@ namespace System.Reflection {
 		protected EventInfo() {
 		}
 
-		public void AddEventHandler( object target, Delegate handler) {
+		public void AddEventHandler (object target, Delegate handler)
+		{
+			MethodInfo add = GetAddMethod ();
+			if (add == null)
+				throw new Exception ("No add method!?");
+
+			add.Invoke (target, new object [] {handler});
 		}
+
 		public MethodInfo GetAddMethod() {
 			return GetAddMethod (false);
 		}
@@ -53,7 +60,14 @@ namespace System.Reflection {
 			return GetRemoveMethod (false);
 		}
 		public abstract MethodInfo GetRemoveMethod( bool nonPublic);
-		public void RemoveEventHandler( object target, Delegate handler) {
+
+		public void RemoveEventHandler (object target, Delegate handler)
+		{
+			MethodInfo remove = GetRemoveMethod ();
+			if (remove == null)
+				throw new Exception ("No remove method!?");
+
+			remove.Invoke (target, new object [] {handler});
 		}
 
 		public override bool IsDefined (Type attributeType, bool inherit) {
