@@ -1,5 +1,11 @@
 2003-02-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h reflection.c: Encode already created dynamic methods 
+	and fields correctly as a DEF instead of a REF.
+
+	* reflection.c: Get rid of the force_ref argument to 
+	mono_image_typedef_or_ref since it was wrong in the first place.
+
 	* string-icalls.c: add error checking to string constructors according
 	to the MSDN docs.
 
