@@ -2,6 +2,7 @@ INSTALL = /usr/bin/install
 prefix = /usr
 
 DIRS =	corlib				\
+	I18N				\
 	System				\
 	System.XML			\
 	System.Drawing			\

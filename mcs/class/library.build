@@ -9,6 +9,7 @@
 
 	<target name="build">
 		<nant basedir="corlib" target="build"/>
+		<nant basedir="I18N" target="build"/>
 		<nant basedir="System" target="build"/>
 		<nant basedir="System.Drawing" target="build"/>
 		<nant basedir="System.EnterpriseServices" target="build"/>
@@ -38,6 +39,7 @@
 			</fileset>
 		</delete>
 		<nant basedir="corlib" target="clean"/>
+		<nant basedir="I18N" target="clean"/>
 		<nant basedir="System" target="clean"/>
 		<nant basedir="System.Drawing" target="clean"/>
 		<nant basedir="System.XML" target="clean"/>
