@@ -9,6 +9,7 @@
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002
 // Copyright (C) Tim Coleman, 2002
+//
 
 using Mono.Data.TdsClient.Internal;
 using System;
@@ -17,11 +18,6 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.SqlClient {
-	/// <summary>
-	/// Provides a means of reading one or more forward-only streams
-	/// of result sets obtained by executing a command 
-	/// at a SQL database.
-	/// </summary>
 	public sealed class SqlDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 	{
 		#region Fields
@@ -268,56 +264,55 @@ namespace System.Data.SqlClient {
 			return schemaTable;
 		}		
 
-		public int GetInt32 (int i)
+		public string GetString (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is int))
+			if (!(value is string))
 				throw new InvalidCastException ();
-			return (int) value;
+			return (string) value;
 		}
 
-		public long GetInt64 (int i)
+		public object GetValue (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is long))
-				throw new InvalidCastException ();
-			return (long) value;
+			return command.Tds.ColumnValues[i];
 		}
 
-		public string GetName (int i)
+		public int GetValues (object[] values)
 		{
-			return (string) schemaTable.Rows[i]["ColumnName"];
+			int len = values.Length;
+			command.Tds.ColumnValues.CopyTo (0, values, 0, len);
+			return (len > FieldCount ? len : FieldCount);
 		}
 
 		[MonoTODO]
-		public int GetOrdinal (string name)
+		void IDisposable.Dispose ()
 		{
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (schemaRow ["ColumnName"] == name)
-					return (int) schemaRow ["ColumnOrdinal"];
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
-					return (int) schemaRow ["ColumnOrdinal"];
-			throw new IndexOutOfRangeException ();
+			throw new NotImplementedException ();
 		}
 
-		public DataTable GetSchemaTable ()
+		[MonoTODO]
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
-				return schemaTable;
-			fieldCount = 0;
-
-			foreach (TdsColumnSchema schemaObject in command.Tds.ColumnInfo) {
-				DataRow schemaRow = schemaTable.NewRow ();
-				schemaRow ["ColumnName"] = schemaObject.ColumnName;
-				schemaRow ["ColumnOrdinal"] = schemaObject.ColumnOrdinal;
-				schemaRow ["BaseTableName"] = schemaObject.TableName;
-				schemaRow ["AllowDBNull"] = schemaObject.Nullable;
-				schemaRow ["IsReadOnly"] = !schemaObject.Writable;
-				schemaTable.Rows.Add (schemaRow);
-				fieldCount += 1;
-			}
-			return schemaTable;
+			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		public bool IsDBNull (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool NextResult ()
+		{
+			schemaTable.Rows.Clear ();
+			return command.Tds.NextResult ();
+		}
+
+		public bool Read ()
+		{
+			return command.Tds.NextRow ();
+		}
+
+		#endregion // Methods
 	}
 }
