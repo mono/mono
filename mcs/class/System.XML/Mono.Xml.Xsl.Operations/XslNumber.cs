@@ -66,10 +66,6 @@ namespace Mono.Xml.Xsl.Operations {
 			from = c.CompilePattern (c.GetAttribute ("from"));
 			value = c.CompileExpression (c.GetAttribute ("value"));
 			
-			// This may result in NodeSet.
-//			if (value != null && value.ReturnType != XPathResultType.Number && value.ReturnType != XPathResultType.Any)
-//				throw new Exception ("The expression for attribute 'value' must return a number");
-			
 			format = c.ParseAvtAttribute ("format");
 			lang = c.ParseAvtAttribute ("lang");
 			letterValue = c.ParseAvtAttribute ("letter-value");
@@ -89,7 +85,7 @@ namespace Mono.Xml.Xsl.Operations {
 			string format = "1";
 			string lang = null;
 			string letterValue = null;
-			char groupingSeparator = '\0';
+			char groupingSeparatorChar = '\0';
 			int groupingSize = 0;
 			
 			if (this.format != null)
@@ -101,13 +97,13 @@ namespace Mono.Xml.Xsl.Operations {
 			if (this.letterValue != null)
 				letterValue = this.letterValue.Evaluate (p);
 			
-			if (this.groupingSeparator != null)
-				groupingSeparator = this.groupingSeparator.Evaluate (p) [0];
+			if (groupingSeparator != null)
+				groupingSeparatorChar = this.groupingSeparator.Evaluate (p) [0];
 			
 			if (this.groupingSize != null)
 				groupingSize = int.Parse (this.groupingSize.Evaluate (p));
 			
-			return new XslNumberFormatter (format, lang, letterValue, groupingSeparator, groupingSize);
+			return new XslNumberFormatter (format, lang, letterValue, groupingSeparatorChar, groupingSize);
 		}
 		
 		string GetFormat (XslTransformProcessor p)
@@ -170,15 +166,26 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			int i = 0;
 			XPathNavigator n = p.CurrentNode.Clone ();
+			n.MoveToRoot ();
+			bool countable = (from == null);
 			do {
-				do {
-					if (MatchesCount (n, p))
-						i++;
-					if (MatchesFrom (n, p) && n.IsDescendant (p.CurrentNode))
-						return i;
-				} while (n.MoveToPrevious ());
-			} while (n.MoveToParent ());
-			return 0;
+				if (from != null && MatchesFrom (n, p)) {
+					countable = true;
+					i = 0;
+				}
+				// Here this *else* is important
+				else if (countable && MatchesCount (n, p))
+					i++;
+				if (n.IsSamePosition (p.CurrentNode))
+					return i;
+
+				if (!n.MoveToFirstChild ()) {
+					while (!n.MoveToNext ()) {
+						if (!n.MoveToParent ()) // returned to Root
+							return 0;
+					};
+				}
+			} while (true);
 		}
 
 		int NumberSingle (XslTransformProcessor p)
@@ -237,9 +244,8 @@ namespace Mono.Xml.Xsl.Operations {
 		}
 		
 		class XslNumberFormatter {
-			string firstSep = "", lastSep = "";
+			string firstSep, lastSep;
 			ArrayList fmtList = new ArrayList ();
-			FormatItem defaultFormat;
 			
 			public XslNumberFormatter (string format, string lang, string letterValue, char groupingSeparator, int groupingSize)
 			{
@@ -249,27 +255,28 @@ namespace Mono.Xml.Xsl.Operations {
 				else {
 					NumberFormatterScanner s = new NumberFormatterScanner (format);
 					
-					string sep, itm;
+					string itm;
+					string sep = ".";
 					
-					sep = s.Advance (false);
+					firstSep = s.Advance (false);
 					itm = s.Advance (true);
 					
-					if (itm == null) {
-						lastSep = sep;
-						fmtList.Add (FormatItem.GetItem (null, "1", groupingSeparator, groupingSize));
+					if (itm == null) { // Only separator is specified
+						sep = firstSep;
+						firstSep = null;
+						fmtList.Add (FormatItem.GetItem (sep, "1", groupingSeparator, groupingSize));
 					} else {
-						firstSep = sep;
-						sep = null;
-					
-						while (itm != null) {
-							fmtList.Add (FormatItem.GetItem (sep, itm, groupingSeparator, groupingSize));
+						// The first format item.
+						fmtList.Add (FormatItem.GetItem (".", itm, groupingSeparator, groupingSize));
+						do {
 							sep = s.Advance (false);
 							itm = s.Advance (true);
-							if (defaultFormat == null)
-								defaultFormat = FormatItem.GetItem (sep, "1", groupingSeparator, groupingSize);
-						}
-						
-						lastSep = sep;
+							if (itm == null) {
+								lastSep = sep;
+								break;
+							}
+							fmtList.Add (FormatItem.GetItem (sep, itm, groupingSeparator, groupingSize));
+						} while (itm != null);
 					}
 				}
 			}
@@ -297,15 +304,23 @@ namespace Mono.Xml.Xsl.Operations {
 				StringBuilder b = new StringBuilder ();
 				if (firstSep != null) b.Append (firstSep);
 				
-				int i = 0;
-				foreach (int v in values) {
-					FormatItem itm = (FormatItem)fmtList [i];
-					if (i > 0) b.Append (itm.sep);
+				int formatIndex = 0;
+				int formatMax  = fmtList.Count - 1;
+				if (values.Length > 0) {
+					if (fmtList.Count > 0) {
+						FormatItem itm = (FormatItem)fmtList [formatIndex];
+						itm.Format (b, values [0]);
+					}
+					if (formatIndex < formatMax)
+						formatIndex++;
+				}
+				for (int i = 1; i < values.Length; i++) {
+					FormatItem itm = (FormatItem)fmtList [formatIndex];
+					b.Append (itm.sep);
+					int v = values [i];
 					itm.Format (b, v);
-					
-					if (++i == fmtList.Count)
-						i--;
-//					++i;
+					if (formatIndex < formatMax)
+						formatIndex++;
 				}
 				
 				if (lastSep != null) b.Append (lastSep);
@@ -428,8 +443,11 @@ namespace Mono.Xml.Xsl.Operations {
 				{
 					nfi = new System.Globalization.NumberFormatInfo  ();
 					nfi.NumberDecimalDigits = 0;
-					nfi.NumberGroupSizes = new int [] {gpSize};
-					nfi.NumberGroupSeparator = gpSep.ToString ();
+					if (gpSep != '\0' && gpSize > 0) {
+						// ignored if either of them doesn't exist.
+						nfi.NumberGroupSeparator = gpSep.ToString ();
+						nfi.NumberGroupSizes = new int [] {gpSize};
+					}
 					decimalSectionLength = len;
 				}
 				
@@ -445,6 +463,7 @@ namespace Mono.Xml.Xsl.Operations {
 							numberBuilder.Append ('0');
 						numberBuilder.Append (number.Length <= len ? number : number.Substring (number.Length - len, len));
 						number = numberBuilder.ToString ();
+						numberBuilder.Length = 0;
 					}
 					b.Append (number);
 				}

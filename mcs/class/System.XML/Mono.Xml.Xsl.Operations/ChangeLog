@@ -1,3 +1,10 @@
+2003-12-20 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslLiteralElement.cs : considering xsl:imports, we have to evaluate
+	  namespace aliases at the first evaluation.
+	* XslNumber.cs : Fixed incorrect "any" level numbering (and 
+	  optimization), format string handling, grouping-separator.
+
 2003-12-16 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslLiteralElement.cs : Pretty fix for prefix.

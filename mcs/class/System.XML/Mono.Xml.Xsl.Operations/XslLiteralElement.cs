@@ -26,6 +26,9 @@ namespace Mono.Xml.Xsl.Operations {
 		string excludeResultPrefixes;
 		string extensionElementPrefixes;
 		ArrayList excludedPrefixes;
+		bool requireNameFix;
+		XPathNavigator stylesheetNode;
+		XslStylesheet stylesheet;
 
 		public XslLiteralElement (Compiler c) : base (c) {}
 			
@@ -49,16 +52,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
-			this.prefix = c.Input.Prefix;
-
-			string alias = c.CurrentStylesheet.PrefixInEffect (c.Input.Prefix, null);
-			if (alias != c.Input.Prefix) {
-				nsUri = c.Input.GetNamespace (alias);
-				if (alias != null)
-					prefix = alias;
-			}
-			else
-				nsUri = c.Input.NamespaceURI;
+			requireNameFix = true;
+			stylesheetNode = c.Input.Clone ();
+			stylesheet = c.CurrentStylesheet;
 
 			this.localname = c.Input.LocalName;
 			this.useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets", XsltNamespace);
@@ -85,9 +81,29 @@ namespace Mono.Xml.Xsl.Operations {
 			children = c.CompileTemplateContent ();
 			c.Input.MoveToParent ();
 		}
+
+		private void GetCorrectNames ()
+		{
+			requireNameFix = false;
+			prefix = stylesheetNode.Prefix;
+			string alias = stylesheet.PrefixInEffect (prefix, null);
+			if (alias != stylesheetNode.Prefix) {
+				nsUri = stylesheetNode.GetNamespace (alias);
+				if (alias != null)
+					prefix = alias;
+			}
+			else
+				nsUri = stylesheetNode.NamespaceURI;
+
+		}
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			// Since namespace-alias might be determined after compilation
+			// of import-ing stylesheets, this must be determined later.
+			if (requireNameFix)
+				GetCorrectNames ();
+
 			bool isCData = p.InsideCDataElement;
 			p.PushElementState (localname, nsUri, true);
 			p.Out.WriteStartElement (prefix, localname, nsUri);
