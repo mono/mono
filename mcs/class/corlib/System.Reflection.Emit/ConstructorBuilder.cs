@@ -16,6 +16,7 @@ using System.Security.Permissions;
 
 namespace System.Reflection.Emit {
 	public sealed class ConstructorBuilder : ConstructorInfo {
+		private RuntimeMethodHandle mhandle;
 		private ILGenerator ilgen;
 		private Type[] parameters;
 		private MethodAttributes attrs;

@@ -1,4 +1,8 @@
 
+Tue Sep 10 12:12:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ConstructorBuilder.cs: added a field to hold the handle.
+
 Mon Sep 9 17:31:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* TypeBuilder.cs: prepare for the real CreateType implementation.
