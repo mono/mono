@@ -1,3 +1,9 @@
+
+Sat Dec 13 17:49:10 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, basic-long.cs: fix jumps to known labels.
+	Don't overwrite return register in some corner cases.
+
 2003-12-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h mini.c driver.c mini-x86.c mini-ppc.c aot.c: Do not run
