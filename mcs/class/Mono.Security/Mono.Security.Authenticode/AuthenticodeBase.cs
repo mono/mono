@@ -17,13 +17,23 @@ namespace Mono.Security.Authenticode {
 	// References:
 	// a.	http://www.cs.auckland.ac.nz/~pgut001/pubs/authenticode.txt
 
-	public enum Authority {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	enum Authority {
 		Individual,
 		Commercial,
 		Maximum
 	}
 
-	public class AuthenticodeBase {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class AuthenticodeBase {
 
 		public const string spcIndirectDataContext = "1.3.6.1.4.1.311.2.1.4";
 
