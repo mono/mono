@@ -136,8 +136,12 @@ namespace System {
 		{
 			Version v;
 			
+			// LAMESPEC: Docs are unclear whether an 
+			// ArgumentNullException should be thrown are 
+			// that a value > 0 should be returned.
 			if (version == null)
-				throw new ArgumentNullException ("version");
+				return 1;
+			//	throw new ArgumentNullException ("version");
 			
 			if (! (version is Version))
 				throw new ArgumentException (Locale.GetText ("Argument to Version.CompareTo must be a Version"));

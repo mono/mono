@@ -59,8 +59,8 @@ namespace System
 			
 			idx++;
 			
-			if (idx > len) {
-				idx = -2;
+			if (idx >= len) {
+				idx = -1;
 				return false;
 			}
 			
