@@ -2,6 +2,7 @@
 
 	* exception.c (ves_icall_get_frame_info): skip one more frame and also
 	MONO_WRAPPER_RUNTIME_INVOKE wrappers
+	(x86_unwind_native_frame): disable unnecessary assertion
 
 2003-01-07  Dietmar Maurer  <dietmar@ximian.com>
 
