@@ -301,10 +301,6 @@ namespace System.Web.Services.Protocols
 			SoapException soex = ex as SoapException;
 			if (soex == null) soex = new SoapException (ex.Message, SoapException.ServerFaultCode, ex);
 
-			MethodStubInfo stubInfo;
-			object server;
-			Stream stream;
-
 			SoapServerMessage faultMessage;
 			if (requestMessage != null)
 				faultMessage = new SoapServerMessage (context.Request, soex, requestMessage.MethodStubInfo, requestMessage.Server, requestMessage.Stream);

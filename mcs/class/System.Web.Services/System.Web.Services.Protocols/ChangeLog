@@ -1,3 +1,8 @@
+2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* HttpSoapWebServiceHandler.cs: Removed unused variables.
+	* SoapHeaderAttribute.cs: Added Obsolete attribute.
+
 2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapClientMessage.cs: Get the MethodInfo from the corresponding

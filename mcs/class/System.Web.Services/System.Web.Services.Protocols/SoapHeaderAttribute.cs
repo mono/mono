@@ -42,6 +42,11 @@ namespace System.Web.Services.Protocols {
 			set { memberName = value; }
 		}
 
+#if NET_1_1
+               [Obsolete ("This property will be removed from a future"
+                       + " version. The presence of a particular header"
+                       + " in a SOAP message is no longer enforced", false)]
+#endif
 		public bool Required {
 			get { return required; }
 			set { required = value; }
