@@ -3312,6 +3312,15 @@ namespace Mono.CSharp {
 			if (argument_type == null)
 				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
 
+			//
+			// This is a special case since csc behaves this way. I can't find
+			// it anywhere in the spec but oh well ...
+			//
+			if (argument_expr is NullLiteral && p == TypeManager.string_type && q == TypeManager.object_type)
+				return 1;
+			else if (argument_expr is NullLiteral && p == TypeManager.object_type && q == TypeManager.string_type)
+				return 0;
+			
 			if (p == q)
 				return 0;
 			
@@ -3793,6 +3802,10 @@ namespace Mono.CSharp {
 			}
 
 			if (method == null) {
+				//
+				// Okay so we have failed to find anything so we
+				// return by providing info about the closest match
+				//
 				for (int i = 0; i < me.Methods.Length; ++i) {
 
 					MethodBase c = (MethodBase) me.Methods [i];

@@ -155,6 +155,7 @@ namespace Mono.CSharp {
 					return null;
 
 				e = a.Expr;
+
 				if (e is Constant) {
 					pos_values [i] = ((Constant) e).GetValue ();
 				} else if (e is TypeOf) {
@@ -295,11 +296,7 @@ namespace Mono.CSharp {
 					prop_info_arr, prop_values_arr,
 					field_info_arr, field_values_arr); 
 			} catch (NullReferenceException) {
-				Report.Warning (
-					-23, Location,
-					"The compiler can not encode this attribute in the Mono runtime\n" +
-					"\tdue to a known bug in it.  We know about the problem and will\n" +
-					"\tfix it as soon as possible.");
+				Error_AttributeArgumentNotValid ();
 			} catch {
 				//
 				// Sample:

@@ -1,3 +1,15 @@
+2002-09-06  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (BetterConversion): Special case for when we have
+	a NullLiteral as the argument and we have to choose between string
+	and object types - we choose string the way csc does.
+
+	* attribute.cs (Attribute.Resolve): Catch the
+	NullReferenceException and report error #182 since the Mono
+	runtime no more has the bug and having this exception raised means
+	we tried to select a constructor which takes an object and is
+	passed a null.
+
 2002-09-05  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Flag a nicer error
