@@ -1,3 +1,16 @@
+2002-07-02  Martin Baulig  <martin@gnome.org>
+
+	* AssemblyBuilder.cs (corlib_object_type, corlib_value_type): New
+	internal fields.  When compiling corlib, they point to the newly
+	created System.Object and System.ValueType types.
+	(SetCorlibTypeBuilders): New public function.  This will be
+	dynamically called from MCS when compiling corlib.
+
+	* TypeBuilder.cs (DefineInitializedData): Use the AssemblyBuilder's
+	`corlib_value_type' as parent type instead of `typeof (System.ValueType)'
+	to make it work when compiling corlib.
+
+	* ModuleBuilder.cs (assemblyb): Made this field internal, not private.
 
 Tue Jul 2 18:34:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -28,6 +28,8 @@ namespace System.Reflection.Emit {
 		private CustomAttributeBuilder[] cattrs;
 		private int[] table_indexes;
 		internal ArrayList methods;
+		internal Type corlib_object_type = typeof (System.Object);
+		internal Type corlib_value_type = typeof (System.ValueType);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -239,5 +241,9 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
+		public void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type) {
+			this.corlib_object_type = corlib_object_type;
+			this.corlib_value_type = corlib_value_type;
+		}
 	}
 }

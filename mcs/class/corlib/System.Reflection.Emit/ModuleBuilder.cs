@@ -22,7 +22,7 @@ namespace System.Reflection.Emit {
 		private CustomAttributeBuilder[] cattrs;
 		private byte[] guid;
 		private int table_idx;
-		private AssemblyBuilder assemblyb;
+		internal AssemblyBuilder assemblyb;
 		private ISymbolWriter symbol_writer;
 		private MethodInfo symwriter_define_local;
 		Hashtable name_cache;

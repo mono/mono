@@ -700,7 +700,7 @@ namespace System.Reflection.Emit {
 		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
 			TypeBuilder datablobtype = pmodule.DefineType ("$ArrayType$"+InitializedDataCount.ToString(),
 				TypeAttributes.Public|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
-				typeof (System.ValueType), PackingSize.Size1, data.Length);
+				pmodule.assemblyb.corlib_value_type, PackingSize.Size1, data.Length);
 			datablobtype.packing_size = PackingSize.Size1;
 			datablobtype.class_size = data.Length;
 			datablobtype.CreateType ();
