@@ -1,5 +1,9 @@
 2004-10-12  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (MemberCache.FindMemberToOverride): Use
+	TypeManager.IsEqual() to compare the parameters and Type.Equals()
+	to compare the invocationType.
+
 	* typemanager.cs (TypeManager.IsEqual): Added support for arrays.
 	When comparing two type parameters, only do the signature-only
 	comparision for method type parameters.

@@ -2201,7 +2201,7 @@ namespace Mono.CSharp {
 					continue;
 
 				for (int j = cmpAttrs.Length - 1; j >= 0; j --) {
-					if (!paramTypes [j].Equals (cmpAttrs [j]))
+					if (!TypeManager.IsEqual (paramTypes [j], cmpAttrs [j]))
 						goto next;
 				}
 				
@@ -2223,7 +2223,7 @@ namespace Mono.CSharp {
 					// A private method is Ok if we are a nested subtype.
 					// The spec actually is not very clear about this, see bug 52458.
 					//
-					if (invocationType == entry.Container.Type ||
+					if (invocationType.Equals (entry.Container.Type) ||
 					    TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
 						return entry.Member;
 					
