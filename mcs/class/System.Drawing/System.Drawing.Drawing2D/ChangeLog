@@ -1,5 +1,9 @@
 2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* ColorBlend.cs (Positions): another one.
+
+2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Blend.cs (Positions): recursion in prop.
 
 2003-10-24  Miguel de Icaza  <miguel@ximian.com>

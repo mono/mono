@@ -68,7 +68,7 @@ namespace System.Drawing.Drawing2D
 
 		public float [] Positions{
 			get {
-				return Positions;
+				return positions;
 			}
 			set{
 				count = value.GetUpperBound(0) + 1;
