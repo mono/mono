@@ -456,7 +456,7 @@ namespace System.Drawing
 		//			Color c = (Color) method.Invoke( null, new object[0] );
 		//			Console.WriteLine("static public Color " + property.Name);
 		//			Console.WriteLine("{\t\n\tget {");
-		//			Console.WriteLine("\t\treturn Color.FromArgbNamed ({0}, {1}, {2}, {3}, \"{4}\");",
+		//			Console.WriteLine("\t\treturn Color.FromArgbNamed ({0}, {1}, {2}, {3}, \"{4}\", KnownColor.{4});",
 		//						c.A, c.R, c.G, c.B, property.Name);
 		//			Console.WriteLine("\t}");
 		//			Console.WriteLine("}\n");
