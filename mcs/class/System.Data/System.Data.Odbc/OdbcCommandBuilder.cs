@@ -39,7 +39,12 @@ namespace System.Data.Odbc
 	/// <summary>
 	/// Provides a means of automatically generating single-table commands used to reconcile changes made to a DataSet with the associated database. This class cannot be inherited.
 	/// </summary>
+
+#if ONLY_1_1
 	public sealed class OdbcCommandBuilder : Component
+#else // NET_2_0 and higher
+        public sealed class OdbcCommandBuilder : DbCommandBuilder
+#endif // ONLY_1_1
 	{
 		#region Fields
 
@@ -70,7 +75,11 @@ namespace System.Data.Odbc
 
 		[OdbcDescriptionAttribute ("The DataAdapter for which to automatically generate OdbcCommands")]
 		[DefaultValue (null)]
-		public OdbcDataAdapter DataAdapter {
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcDataAdapter DataAdapter {
 			get {
 				return adapter;
 			}
@@ -82,7 +91,11 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
 		[OdbcDescriptionAttribute ("The prefix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public string QuotePrefix {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                string QuotePrefix {
 			get {
 				return quotePrefix;
 			}
@@ -94,7 +107,11 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
                 [OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public string QuoteSuffix {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                string QuoteSuffix {
 			get {
 				return quoteSuffix;
 			}
@@ -119,28 +136,79 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
-		public OdbcCommand GetDeleteCommand ()
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcCommand GetDeleteCommand ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public OdbcCommand GetInsertCommand ()
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcCommand GetInsertCommand ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public OdbcCommand GetUpdateCommand ()
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcCommand GetUpdateCommand ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void RefreshSchema ()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void RefreshSchema ()
 		{
 			throw new NotImplementedException ();
 		}
+                
+#if NET_2_0
+                [MonoTODO]
+                protected override void ApplyParameterInfo (IDbDataParameter dbParameter, DataRow row)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                [MonoTODO]
+                protected override string GetParameterName (int position)
+                {
+                        throw new NotImplementedException ();                        
+                }
+                
+
+                [MonoTODO]
+                protected override string GetParameterPlaceholder (int position)
+                {
+                        throw new NotImplementedException ();                        
+                }
+                
+                [MonoTODO]
+                protected override DbProviderFactory ProviderFactory
+                {
+                        get {throw new NotImplementedException ();}
+                }
+
+                [MonoTODO]
+                protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
+                {
+                        throw new NotImplementedException ();
+                }
+
+#endif // NET_2_0
+
 
 		#endregion // Methods
 	}

@@ -228,6 +228,8 @@ System.Data.SqlTypes/SqlXmlReader.cs
 System.Data.SqlTypes/StorageState.cs
 System.Data.SqlTypes/SqlAlreadyFilledException.cs
 System.Data.SqlTypes/SqlNotFilledException.cs
+System.Data.Odbc/OdbcConnectionFactory.cs
+System.Data.Odbc/OdbcFactory.cs
 System.Data.Odbc/OdbcParameterConverter.cs
 System.Data.Odbc/OdbcCategoryAttribute.cs
 System.Data.Odbc/OdbcDescriptionAttribute.cs

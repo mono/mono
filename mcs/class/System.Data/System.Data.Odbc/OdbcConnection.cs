@@ -33,16 +33,26 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
 using System.EnterpriseServices;
 
 namespace System.Data.Odbc
 {
 	[DefaultEvent("InfoMessage")]
+#if NET_2_0
+        public sealed class OdbcConnection : DbConnectionBase, ICloneable
+#else
 	public sealed class OdbcConnection : Component, ICloneable, IDbConnection
+#endif //NET_2_0
 	{
 		#region Fields
 
+#if ONLY_1_1
 		string connectionString;
+#endif //ONLY_1_1
+
 		int connectionTimeout;
 		internal OdbcTransaction transaction;
 		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
@@ -52,16 +62,30 @@ namespace System.Data.Odbc
 
 		#region Constructors
 		
-		public OdbcConnection ()
+		public OdbcConnection () : this (String.Empty)
 		{
-			connectionTimeout = 15;
-			connectionString = null;
 		}
 
-		public OdbcConnection (string connectionString) : this ()
+		public OdbcConnection (string connectionString)
 		{
-			ConnectionString = connectionString;
+                        Init (connectionString);
 		}
+
+                public void Init (string connectionString)
+                {
+                        connectionTimeout = 15;
+                        ConnectionString = connectionString;
+                }
+
+#if NET_2_0
+                internal OdbcConnection (OdbcConnectionFactory factory) 
+                        : base ( (DbConnectionFactory) factory)
+                {
+                        Init (String.Empty);
+                }
+                
+#endif //NET_2_0
+                
 
 		#endregion // Constructors
 
@@ -71,7 +95,8 @@ namespace System.Data.Odbc
 		{
 			get { return hdbc; }
 		}
-	
+
+#if ONLY_1_1
 		[OdbcCategoryAttribute ("DataCategory_Data")]		
 		[DefaultValue ("")]
 		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]	
@@ -86,10 +111,15 @@ namespace System.Data.Odbc
 				connectionString = value;
 			}
 		}
+#endif // ONLY_1_1
 		
 		[OdbcDescriptionAttribute ("Current connection timeout value, not settable  in the ConnectionString")]
 		[DefaultValue (15)]	
-		public int ConnectionTimeout {
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                int ConnectionTimeout {
 			get {
 				return connectionTimeout;
 			}
@@ -103,7 +133,11 @@ namespace System.Data.Odbc
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("Current data source Catlog value, 'Database=X' in the ConnectionString")]
-		public string Database {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                string Database {
 			get {
                                 return GetInfo (OdbcInfo.DatabaseName);
 			}
@@ -112,7 +146,11 @@ namespace System.Data.Odbc
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed")]
                 [BrowsableAttribute (false)]		
-		public ConnectionState State
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                ConnectionState State
 		{
 			get {
 				if (hdbc!=IntPtr.Zero) {
@@ -126,7 +164,11 @@ namespace System.Data.Odbc
 		[MonoTODO]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("Current data source, 'Server=X' in the ConnectionString")]
-		public string DataSource {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                string DataSource {
 			get {
                                 return GetInfo (OdbcInfo.DataSourceName);
 			}
@@ -145,7 +187,11 @@ namespace System.Data.Odbc
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
                 [OdbcDescriptionAttribute ("Version of the product accessed by the ODBC Driver")]
                 [BrowsableAttribute (false)]
-                public string ServerVersion {
+                public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                string ServerVersion {
                         get {
                                 return GetInfo (OdbcInfo.DbmsVersion);
                         }
@@ -156,17 +202,27 @@ namespace System.Data.Odbc
 	
 		#region Methods
 	
-		public OdbcTransaction BeginTransaction ()
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcTransaction BeginTransaction ()
 		{
 			return BeginTransaction(IsolationLevel.Unspecified);
-        }
-              
+                }
+
+#if ONLY_1_1              
 		IDbTransaction IDbConnection.BeginTransaction ()
 		{
 			return (IDbTransaction) BeginTransaction();
 		}
+#endif // ONLY_1_1
 		
-		public OdbcTransaction BeginTransaction (IsolationLevel level)
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcTransaction BeginTransaction (IsolationLevel level)
 		{
 			if (transaction==null)
 			{
@@ -177,12 +233,18 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException();
 		}
 
+#if ONLY_1_1
 		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
 		{
 			return (IDbTransaction) BeginTransaction(level);
 		}
+#endif // ONLY_1_1
 
-		public void Close ()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void Close ()
 		{
 			OdbcReturn ret = OdbcReturn.Error;
 			if (State == ConnectionState.Open) {
@@ -210,13 +272,21 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public OdbcCommand CreateCommand ()
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcCommand CreateCommand ()
 		{
 			return new OdbcCommand("", this, transaction); 
 		}
 
 		[MonoTODO]
-		public void ChangeDatabase(string Database)
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void ChangeDatabase(string Database)
 		{
 			throw new NotImplementedException ();
 		}
@@ -244,12 +314,18 @@ namespace System.Data.Odbc
 			throw new NotImplementedException();
 		}
 
+#if ONLY_1_1
 		IDbCommand IDbConnection.CreateCommand ()
 		{
 			return (IDbCommand) CreateCommand ();
 		}
+#endif //ONLY_1_1
 
-		public void Open ()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void Open ()
 		{
 			if (State == ConnectionState.Open)
 				throw new InvalidOperationException ();
@@ -271,10 +347,10 @@ namespace System.Data.Odbc
 				throw new OdbcException (new OdbcError ("SQLAllocHandle",OdbcHandleType.Env,henv));
 			
 			// DSN connection
-			if (connectionString.ToLower().IndexOf("dsn=")>=0)
+			if (ConnectionString.ToLower().IndexOf("dsn=")>=0)
 			{
 				string _uid="", _pwd="", _dsn="";
-				string[] items=connectionString.Split(new char[1]{';'});
+				string[] items=ConnectionString.Split(new char[1]{';'});
 				foreach (string item in items)
 				{
 					string[] parts=item.Split(new char[1] {'='});
@@ -300,7 +376,7 @@ namespace System.Data.Odbc
 				// DSN-less Connection
 				string OutConnectionString=new String(' ',1024);
 				short OutLen=0;
-				ret=libodbc.SQLDriverConnect(hdbc, IntPtr.Zero, connectionString, -3, 
+				ret=libodbc.SQLDriverConnect(hdbc, IntPtr.Zero, ConnectionString, -3, 
 					OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException(new OdbcError("SQLDriverConnect",OdbcHandleType.Dbc,hdbc));
@@ -315,7 +391,11 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
-		public void EnlistDistributedTransaction ( ITransaction transaction) {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void EnlistDistributedTransaction ( ITransaction transaction) {
 			throw new NotImplementedException ();
 		}
 
@@ -343,9 +423,11 @@ namespace System.Data.Odbc
 
 		#region Events and Delegates
 
+#if ONLY_1_1
 		[OdbcDescription ("DbConnection_StateChange")]
                 [OdbcCategory ("DataCategory_StateChange")]
 		public event StateChangeEventHandler StateChange;
+#endif // ONLY_1_1
 
  		[OdbcDescription ("DbConnection_InfoMessage")]
                 [OdbcCategory ("DataCategory_InfoMessage")]

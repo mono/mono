@@ -1,5 +1,31 @@
 2005-03-10  Sureshkumar T  <tsureshkumar@novell.com>
 
+	Migrated core classes to derive from ProviderBase instead of
+	implementing IDb* interfaces. Most part of these files have been
+	branched with #if NET_2_0/ONLY_1_1. Make sure any changes works
+	with both the profiles.
+
+	* OdbcFactory.cs: Concrete Factory for DbProviderFactory. Factory
+	to generate Connection,Command,etc.
+
+	* OdbcConnectionFactory.cs: Concrete factory for DbConnectionFactory.
+
+	* OdbcTransaction.cs: migration and overrides.
+	* OdbcCommandBuilder.cs: migration and overrides.
+	* OdbcDataReader.cs: --do--. no command behavior member as it will
+	be maintained in base provider class.
+	* OdbcParameterCollection.cs: --do--. Now, local ArrayList is not
+	maintained here, instead it is in base class. Most of the methods
+	which operated on this list are not needed in NET_2_0.
+	* OdbcConnection.cs: Migration. connectionString is maintained in
+	DbConnectionBase class.
+	* OdbcParameter.cs: Migration. Many of the local members like
+	value,sourceColumn are maintained in DbParameterBase.
+	* OdbcCommand.cs: Migration. commandText,timeout and
+	commandTimeOut are maintained in DbCommandBase class.
+
+2005-03-10  Sureshkumar T  <tsureshkumar@novell.com>
+
 	* OdbcType.cs: Added enums for SQL_TYPE & SQL_C_TYPE.
 	
 	* libodbc.cs: Accept SQL_C_TYPE for driver

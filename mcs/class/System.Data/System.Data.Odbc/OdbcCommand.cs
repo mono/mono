@@ -30,29 +30,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
 using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Odbc
 {
-	/// <summary>
+        /// <summary>
 	/// Represents an SQL statement or stored procedure to execute against a data source.
 	/// </summary>
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
         [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
+#if NET_2_0
+        public sealed class OdbcCommand : DbCommandBase, ICloneable
+#else
 	public sealed class OdbcCommand : Component, ICloneable, IDbCommand
+#endif //NET_2_0
 	{
 		#region Fields
 
+#if ONLY_1_1
 		string commandText;
 		int timeout;
 		CommandType commandType;
+#endif // ONLY_1_1
+
 		OdbcConnection connection;
-		OdbcParameterCollection parameters;
 		OdbcTransaction transaction;
+		OdbcParameterCollection _parameters;
+
 		bool designTimeVisible;
 		bool prepared=false;
 		OdbcDataReader dataReader;
@@ -64,12 +76,12 @@ namespace System.Data.Odbc
 
 		public OdbcCommand ()
 		{
-			commandText = String.Empty;
-			timeout = 30; // default timeout 
-			commandType = CommandType.Text;
-			connection = null;
-			parameters = new OdbcParameterCollection ();
-			transaction = null;
+			this.CommandText = String.Empty;
+			this.CommandTimeout = 30; // default timeout 
+			this.CommandType = CommandType.Text;
+			Connection = null;
+			_parameters = new OdbcParameterCollection ();
+			Transaction = null;
 			designTimeVisible = false;
 			dataReader = null;
 		}
@@ -89,7 +101,7 @@ namespace System.Data.Odbc
 				     OdbcConnection connection,
 				     OdbcTransaction transaction) : this (cmdText, connection)
 		{
-			this.transaction = transaction;
+			this.Transaction = transaction;
 		}
 
 		#endregion // Constructors
@@ -102,6 +114,7 @@ namespace System.Data.Odbc
 		}
 		
 
+#if ONLY_1_1
                 [OdbcCategory ("Data")]
                 [DefaultValue ("")]
                 [OdbcDescriptionAttribute ("Command text to execute")]
@@ -118,7 +131,25 @@ namespace System.Data.Odbc
 			}
 		}
 
+#else
+                [OdbcCategory ("Data")]
+                [DefaultValue ("")]
+                [OdbcDescriptionAttribute ("Command text to execute")]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+                [RefreshPropertiesAttribute (RefreshProperties.All)]
+		public override string CommandText
+		{
+			get {
+				return base.CommandText;
+			}
+			set {
+				prepared=false;
+				base.CommandText = value;
+			}
+		}
+#endif // ONLY_1_1
 
+#if ONLY_1_1
 		[OdbcDescriptionAttribute ("Time to wait for command to execute")]
                 [DefaultValue (30)]
 		public int CommandTimeout {
@@ -155,7 +186,18 @@ namespace System.Data.Odbc
 				connection = value;
 			}
 		}
+#endif // ONLY_1_1
 
+#if NET_2_0
+                public new OdbcConnection Connection
+                {
+                        get { return DbConnection as OdbcConnection; }
+                        set { DbConnection = value; }
+                }
+                
+#endif // NET_2_0
+
+#if  ONLY_1_1
 		[BrowsableAttribute (false)]
                 [DesignOnlyAttribute (true)]
                 [DefaultValue (true)]
@@ -168,19 +210,34 @@ namespace System.Data.Odbc
 			}
 		}
 
+#endif // ONLY_1_1
+
 		[OdbcCategory ("Data")]
                 [OdbcDescriptionAttribute ("The parameters collection")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-		public OdbcParameterCollection Parameters {
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcParameterCollection Parameters {
 			get {
-				return parameters;
+#if ONLY_1_1
+				return _parameters;
+#else
+                                return base.Parameters as OdbcParameterCollection;
+#endif // ONLY_1_1
+
 			}
 		}
 		
 		[BrowsableAttribute (false)]
                 [OdbcDescriptionAttribute ("The transaction used by the command")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		public OdbcTransaction Transaction {
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcTransaction Transaction {
 			get {
 				return transaction;
 			}
@@ -188,6 +245,8 @@ namespace System.Data.Odbc
 				transaction = value;
 			}
 		}
+
+#if ONLY_1_1
 		
 		[OdbcCategory ("Behavior")]
                 [DefaultValue (UpdateRowSource.Both)]
@@ -211,13 +270,33 @@ namespace System.Data.Odbc
 				Connection = (OdbcConnection) value;
 			}
 		}
+#endif // ONLY_1_1
+#if NET_2_0
+                protected override DbConnection DbConnection 
+                {
+                        get { return connection; }
+                        set { 
+                                connection = (OdbcConnection) value; 
+                        }                        
+                }
 
+#endif // NET_2_0
+
+#if ONLY_1_1
 		IDataParameterCollection IDbCommand.Parameters  {
 			get {
 				return Parameters;
 			}
 		}
+#else
+                protected override DbParameterCollection DbParameterCollection
+                {
+                        get { return _parameters as DbParameterCollection;}
+                }
+                
+#endif // NET_2_0
 
+#if ONLY_1_1
 		IDbTransaction IDbCommand.Transaction  {
 			get {
 				return (IDbTransaction) Transaction;
@@ -233,12 +312,27 @@ namespace System.Data.Odbc
                                 }
 			}
 		}
+#else
+		protected override DbTransaction DbTransaction 
+                {
+			get { return transaction; }
+			set {
+                                transaction = (OdbcTransaction)value;
+			}
+		}
+#endif // ONLY_1_1
+
+
 
 		#endregion // Properties
 
 		#region Methods
 
-		public void Cancel () 
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void Cancel () 
 		{
 			if (hstmt!=IntPtr.Zero)
 			{
@@ -250,15 +344,24 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException();
 		}
 
-		public OdbcParameter CreateParameter ()
-		{
-			return new OdbcParameter ();
-		}
-
+#if ONLY_1_1
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
 			return CreateParameter ();
 		}
+
+		public OdbcParameter CreateParameter ()
+		{
+			return new OdbcParameter ();
+		}
+#else
+                protected override DbParameter CreateDbParameter ()
+                {
+                        return CreateParameter ();
+                }
+                
+#endif // ONLY_1_1
+
 		
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
@@ -269,7 +372,7 @@ namespace System.Data.Odbc
 		{
 			OdbcReturn ret;
 
-			if ((parameters.Count>0) && !prepared)
+			if ((Parameters.Count>0) && !prepared)
 				Prepare();
 	
 			if (prepared)
@@ -290,7 +393,11 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public int ExecuteNonQuery ()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                int ExecuteNonQuery ()
 		{
 			return ExecuteNonQuery (true);
 		}
@@ -298,9 +405,9 @@ namespace System.Data.Odbc
 		private int ExecuteNonQuery (bool freeHandle) 
 		{
 			int records = 0;
-			if (connection == null)
+			if (Connection == null)
 				throw new InvalidOperationException ();
-			if (connection.State == ConnectionState.Closed)
+			if (Connection.State == ConnectionState.Closed)
 				throw new InvalidOperationException ();
 			// FIXME: a third check is mentioned in .NET docs
 
@@ -328,7 +435,11 @@ namespace System.Data.Odbc
 			return records;
 		}
 
-		public void Prepare()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void Prepare()
 		{
 			OdbcReturn ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
@@ -339,7 +450,7 @@ namespace System.Data.Odbc
 				throw new OdbcException(new OdbcError("SQLPrepare",OdbcHandleType.Stmt,hstmt));
 
 			int i=1;
-			foreach (OdbcParameter p in parameters)
+			foreach (OdbcParameter p in Parameters)
 			{
 				p.Bind(hstmt, i);
 				i++;
@@ -348,28 +459,48 @@ namespace System.Data.Odbc
 			prepared=true;
 		}
 
-		public OdbcDataReader ExecuteReader ()
+
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
+#if ONLY_1_1
 		IDataReader IDbCommand.ExecuteReader ()
 		{
 			return ExecuteReader ();
 		}
+#else
+                protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
+                {
+                        return ExecuteReader (behavior);
+                }
+                
+#endif // ONLY_1_1
 
-		public OdbcDataReader ExecuteReader (CommandBehavior behavior)
+		public
+#if NET_2_0
+                new
+#endif // NET_2_0
+                OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ExecuteNonQuery(false);
 			dataReader=new OdbcDataReader(this,behavior);
 			return dataReader;
 		}
 
-		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
+#if ONLY_1_1
+                IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
 		{
 			return ExecuteReader (behavior);
 		}
-		
+#endif // ONLY_1_1
+
+#if ONLY_1_1
 		public object ExecuteScalar ()
 		{
 			object val = null;
@@ -385,6 +516,7 @@ namespace System.Data.Odbc
 			}
 			return val;
 		}
+#endif // ONLY_1_1
 
 		[MonoTODO]
 		object ICloneable.Clone ()
@@ -392,9 +524,13 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();	
 		}
 
-		public void ResetCommandTimeout ()
+		public 
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void ResetCommandTimeout ()
 		{
-			timeout = 30;
+			CommandTimeout = 30;
 		}
 
 		#endregion

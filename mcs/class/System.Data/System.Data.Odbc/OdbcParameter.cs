@@ -3,6 +3,7 @@
 //
 // Authors:
 //   Brian Ritchie (brianlritchie@hotmail.com)
+//   Sureshkumar T <tsureshkumar@novell.com>  2004.
 //
 // Copyright (C) Brian Ritchie, 2002
 //
@@ -33,24 +34,33 @@
 using System;
 using System.Data;
 using System.Data.Common;
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
 using System.ComponentModel;
 
 namespace System.Data.Odbc
 {
-	[TypeConverterAttribute (typeof (OdbcParameterConverter))]	
+	[TypeConverterAttribute (typeof (OdbcParameterConverter))]
+#if NET_2_0
+        public sealed class OdbcParameter : DbParameterBase, ICloneable
+#else
 	public sealed class OdbcParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+#endif // NET_2_0
 	{
 		#region Fields
 
+#if ONLY_1_1
 		string name;
-		object ParamValue;
-		int size;
+		ParameterDirection direction;
 		bool isNullable;
+		int size;
 		byte precision;
 		byte scale;
+		object paramValue;
 		DataRowVersion sourceVersion;
 		string sourceColumn;
-		ParameterDirection direction;
+#endif // ONLY_1_1
 		OdbcType odbcType = OdbcType.NVarChar;
 		DbType dbType = DbType.String;
 		OdbcParameterCollection container = null;	
@@ -67,28 +77,28 @@ namespace System.Data.Odbc
 		
 		public OdbcParameter ()
 		{
-			name = String.Empty;
-			ParamValue = null;
-			size = 0;
-			isNullable = true;
-			precision = 0;
-			scale = 0;
-			sourceColumn = String.Empty;
+			ParameterName = String.Empty;
+			Value = null;
+			Size = 0;
+			IsNullable = true;
+			Precision = 0;
+			Scale = 0;
+			SourceColumn = String.Empty;
 		}
 
 		public OdbcParameter (string name, object value) 
 			: this ()
 		{
-			this.name = name;
-			this.ParamValue = value;
+			this.ParameterName = name;
+			this.Value = value;
                         
                         if (value != null && !value.GetType ().IsValueType) {
                                 Type type = value.GetType ();
                                 if (type.IsArray)
-                                        size = type.GetElementType () == typeof (byte) ? 
+                                        Size = type.GetElementType () == typeof (byte) ? 
                                                 ((Array) value).Length : 0;
                                 else
-                                        size = value.ToString ().Length;
+                                        Size = value.ToString ().Length;
                         }
 
 
@@ -97,32 +107,32 @@ namespace System.Data.Odbc
 		public OdbcParameter (string name, OdbcType dataType) 
 			: this ()
 		{
-			this.name = name;
+			this.ParameterName = name;
 			OdbcType = dataType;
 		}
 
 		public OdbcParameter (string name, OdbcType dataType, int size)
 			: this (name, dataType)
 		{
-			this.size = size;
+			this.Size = size;
 		}
 
 		public OdbcParameter (string name, OdbcType dataType, int size, string srcColumn)
 			: this (name, dataType, size)
 		{
-			this.sourceColumn = srcColumn;
+			this.SourceColumn = srcColumn;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public OdbcParameter(string name, OdbcType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 			: this (name, dataType, size, srcColumn)
 		{
-			this.direction = direction;
-			this.isNullable = isNullable;
-			this.precision = precision;
-			this.scale = scale;
-			this.sourceVersion = srcVersion;
-			this.ParamValue = value;
+			this.Direction = direction;
+			this.IsNullable = isNullable;
+			this.Precision = precision;
+			this.Scale = scale;
+			this.SourceVersion = srcVersion;
+			this.Value = value;
 		}
 
 		#endregion
@@ -141,13 +151,18 @@ namespace System.Data.Odbc
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[OdbcCategory ("Data")]
-		public DbType DbType {
+		public 
+#if NET_2_0
+                override 
+#endif // NET_2_0
+                DbType DbType {
 			get { return dbType; }
 			set { 
 				dbType = value;
 			}
 		}
 		
+#if ONLY_1_1
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("Input, output, or bidirectional parameter")]  
 		[DefaultValue (ParameterDirection.Input)]
@@ -165,6 +180,8 @@ namespace System.Data.Odbc
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
+#endif // ONLY_1_1
+
 
 		[DefaultValue (OdbcType.NChar)]
                 [OdbcDescriptionAttribute ("The parameter native type")]
@@ -177,6 +194,7 @@ namespace System.Data.Odbc
 			}
 		}
 		
+#if ONLY_1_1
  		[OdbcDescription ("DataParameter_ParameterName")]
                 [DefaultValue ("")]	
 		public string ParameterName {
@@ -230,13 +248,32 @@ namespace System.Data.Odbc
                 [DefaultValue (null)]		
 		public object Value {
 			get { 
-				return ParamValue;
+				return paramValue;
 			}
 			set { 
-				this.ParamValue = value;
+				paramValue = value;
 				bufferIsSet = false;
 			}
 		}
+#endif // ONLY_1_1
+
+#if NET_2_0
+		[TypeConverter (typeof(StringConverter))]
+                [OdbcDescription ("DataParameter_Value")]
+                [OdbcCategory ("DataCategory_Data")]
+                [DefaultValue (null)]		
+		public override object Value {
+			get { 
+				return base.Value;
+			}
+			set { 
+				base.Value = value;
+				bufferIsSet = false;
+			}
+		}
+
+#endif // NET_2_0
+
 
 		#endregion // Properties
 
@@ -249,7 +286,7 @@ namespace System.Data.Odbc
 				setBuffer();
 
 			// Convert System.Data.ParameterDirection into odbc enum
-			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection(this.direction);
+			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection(this.Direction);
 
                         SQL_C_TYPE ctype = OdbcTypeConverter.ConvertToSqlCType (odbcType);
                         SQL_TYPE   sqltype = OdbcTypeConverter.ConvertToSqlType (odbcType);
@@ -257,11 +294,11 @@ namespace System.Data.Odbc
 			// Bind parameter based on type
 			if (odbcType == OdbcType.Int)
                                 ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
-                                                               ctype, sqltype, Convert.ToUInt32(size),
+                                                               ctype, sqltype, Convert.ToUInt32(Size),
                                                                0, ref intbuf, 0, 0);
 			else
                                 ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
-                                                               ctype, sqltype, Convert.ToUInt32(size),
+                                                               ctype, sqltype, Convert.ToUInt32(Size),
                                                                0, buffer, 0, 0);
 
                                 
@@ -273,17 +310,17 @@ namespace System.Data.Odbc
 		private void setBuffer() {
 			// Load buffer with new value
 			if (odbcType == OdbcType.Int)
-                                intbuf = ParamValue == null ? new int () : (int) ParamValue;
+                                intbuf = Value == null ? new int () : (int) Value;
                         else {
-				string paramValueString = ParamValue.ToString();
+				string paramValueString = Value.ToString();
 				// Treat everything else as a string
 				// Init string buffer
-				 if (ParamValue is String)
+				 if (Value is String)
                                         paramValueString = "\'"+paramValueString+"\'";
 
-                                 int minSize = size;
-                                 minSize = size > 20 ? size : 20;
-                                 if (ParamValue is String)
+                                 int minSize = Size;
+                                 minSize = Size > 20 ? Size : 20;
+                                 if (Value is String)
                                          minSize += 2; // for enclosing apos
 				 if (buffer == null || buffer.Length < minSize)
                                          buffer = new byte[minSize];
@@ -307,6 +344,39 @@ namespace System.Data.Odbc
 		{
 			return ParameterName;
 		}
+
+#if NET_2_0
+                [MonoTODO]
+                public override void PropertyChanging () 
+                {
+                        throw new NotImplementedException ();
+                }
+                
+                [MonoTODO]
+		protected override byte ValuePrecision (object value) 
+                {
+                        throw new NotImplementedException ();
+                }
+
+                [MonoTODO]
+                protected override byte ValueScale (object value)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                [MonoTODO]
+		protected override int ValueSize (object value)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                [MonoTODO]
+                public override void ResetDbType () 
+                {
+                        throw new NotImplementedException ();
+                }
+
+#endif // NET_2_0
 		#endregion
 	}
 }

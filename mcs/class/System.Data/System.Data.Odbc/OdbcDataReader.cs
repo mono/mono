@@ -37,11 +37,18 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
 using System.Text;
 
 namespace System.Data.Odbc
 {
+#if NET_2_0
+        public sealed class OdbcDataReader : DbDataReaderBase
+#else
 	public sealed class OdbcDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
+#endif
 	{
 		#region Fields
 		
@@ -50,16 +57,23 @@ namespace System.Data.Odbc
 		private int currentRow;
 		private OdbcColumn[] cols;
 		private IntPtr hstmt;
+#if ONLY_1_1
 		private CommandBehavior behavior;
+#endif // ONLY_1_1
 
 		#endregion
 
 		#region Constructors
 
-		internal OdbcDataReader (OdbcCommand command, CommandBehavior behavior) 
+		internal OdbcDataReader (OdbcCommand command, CommandBehavior behavior)
+#if NET_2_0
+                        : base (behavior)
+#endif // NET_2_0
 		{
 			this.command = command;
-			this.behavior=behavior;
+#if ONLY_1_1
+			this.CommandBehavior=behavior;
+#endif // ONLY_1_1
 			open = true;
 			currentRow = -1;
 			hstmt=command.hStmt;
@@ -74,25 +88,63 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-		public int Depth {
+#if ONLY_1_1
+                private CommandBehavior CommandBehavior 
+                {
+                        get { return behavior; }
+                        set { value = behavior; }
+                }
+#endif // ONLY_1_1
+                
+#if NET_2_0
+                [MonoTODO]
+                public override int VisibleFieldCount
+                {
+                        get { throw new NotImplementedException (); }
+                }
+
+                [MonoTODO]
+                protected override bool IsValidRow 
+                {
+                        get { throw new NotImplementedException (); }
+                }
+
+#endif // NET_2_0
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                int Depth {
 			get {
 				return 0; // no nested selects supported
 			}
 		}
 
-		public int FieldCount {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                int FieldCount {
 			get {
 				return cols.Length;
 			}
 		}
 
-		public bool IsClosed {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                bool IsClosed {
 			get {
 				return !open;
 			}
 		}
 
-		public object this[string name] {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                object this[string name] {
 			get {
 				int pos;
 
@@ -108,20 +160,33 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public object this[int index] {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                object this[int index] {
 			get {
 				return (object) GetValue (index);
 			}
 		}
 
-		public int RecordsAffected {
+                [MonoTODO]
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                int RecordsAffected {
 			get {
 				return -1;
 			}
 		}
 
 		[MonoTODO]
-		public bool HasRows {
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                bool HasRows {
 			get { throw new NotImplementedException(); }
 		}
 
@@ -169,7 +234,11 @@ namespace System.Data.Odbc
 			return cols[ordinal];
 		}
 
-		public void Close ()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void Close ()
 		{
 			// FIXME : have to implement output parameter binding
 			OdbcReturn ret = libodbc.SQLFreeStmt (hstmt, libodbc.SQLFreeStmtOptions.Close);
@@ -183,7 +252,7 @@ namespace System.Data.Odbc
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
 
-                        if ((behavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
+                        if ((this.CommandBehavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
 				this.command.Connection.Close();
 		}
 
@@ -193,17 +262,29 @@ namespace System.Data.Odbc
 				Close ();
 		}
 
-		public bool GetBoolean (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool GetBoolean (int ordinal)
 		{
 			return (bool) GetValue(ordinal);
 		}
 
-		public byte GetByte (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		byte GetByte (int ordinal)
 		{
 			return (byte) Convert.ToByte(GetValue(ordinal));
 		}
 
-		public long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
                         OdbcReturn ret = OdbcReturn.Error;
                         bool copyBuffer = false;
@@ -257,25 +338,41 @@ namespace System.Data.Odbc
 		}
 		
 		[MonoTODO]
-		public char GetChar (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		char GetChar (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		public IDataReader GetData (int ordinal)
+		public 
+#if NET_2_0
+		new
+#endif // NET_2_0
+		IDataReader GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public string GetDataTypeName (int index)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		string GetDataTypeName (int index)
 		{
 			return GetColumn(index).OdbcType.ToString();
 		}
@@ -284,59 +381,103 @@ namespace System.Data.Odbc
 			return GetDateTime(ordinal);
 		}
 
-		public DateTime GetDateTime (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		DateTime GetDateTime (int ordinal)
 		{
 			return (DateTime) GetValue(ordinal);
 		}
 
 		[MonoTODO]
-		public decimal GetDecimal (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		decimal GetDecimal (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public double GetDouble (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		double GetDouble (int ordinal)
 		{
 			return (double) GetValue(ordinal);
 		}
 
-		public Type GetFieldType (int index)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		Type GetFieldType (int index)
 		{
 			return GetColumn(index).DataType;
 		}
 
-		public float GetFloat (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		float GetFloat (int ordinal)
 		{
 			return (float) GetValue(ordinal);
 		}
 
 		[MonoTODO]
-		public Guid GetGuid (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		Guid GetGuid (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public short GetInt16 (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		short GetInt16 (int ordinal)
 		{
 			return (short) GetValue(ordinal);
 		}
 
-		public int GetInt32 (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int GetInt32 (int ordinal)
 		{
 			return (int) GetValue(ordinal);
 		}
 
-		public long GetInt64 (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		long GetInt64 (int ordinal)
 		{
 			return (long) GetValue(ordinal);
 		}
 
-		public string GetName (int index)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		string GetName (int index)
 		{
 			return GetColumn(index).ColumnName;
 		}
 
-		public int GetOrdinal (string name)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int GetOrdinal (string name)
 		{
 			int i=ColIndex(name);
 
@@ -347,7 +488,11 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
-		public DataTable GetSchemaTable() 
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                DataTable GetSchemaTable() 
 		{	
 
 			DataTable dataTableSchema = null;
@@ -434,7 +579,11 @@ namespace System.Data.Odbc
                         return dataTableSchema;
 		}
 
-		public string GetString (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		string GetString (int ordinal)
 		{
 			return (string) GetValue(ordinal);
 		}
@@ -445,7 +594,11 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-		public object GetValue (int ordinal)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		object GetValue (int ordinal)
 		{
 			if (currentRow == -1)
 				throw new IndexOutOfRangeException ();
@@ -562,7 +715,11 @@ namespace System.Data.Odbc
 			return col.Value;
 		}
 		
-		public int GetValues (object[] values)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int GetValues (object[] values)
 		{
 			int numValues = 0;
 
@@ -587,7 +744,9 @@ namespace System.Data.Odbc
 			return numValues;
 		}
 
-		[MonoTODO]
+#if ONLY_1_1
+
+                [MonoTODO]
 		IDataReader IDataRecord.GetData (int ordinal)
 		{
 			throw new NotImplementedException ();
@@ -598,13 +757,17 @@ namespace System.Data.Odbc
 		{
 		}
 
-		[MonoTODO]
-		IEnumerator IEnumerable.GetEnumerator ()
+                IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new DbEnumerator (this);
 		}
+#endif // ONLY_1_1
 
-		public bool IsDBNull (int ordinal)
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                bool IsDBNull (int ordinal)
 		{
 			return (GetValue(ordinal) is DBNull);
 		}
@@ -612,7 +775,11 @@ namespace System.Data.Odbc
 		/// <remarks>
 		/// 	Move to the next result set.
 		/// </remarks>
-		public bool NextResult ()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                bool NextResult ()
 		{
 			OdbcReturn ret = OdbcReturn.Success;
 			ret = libodbc.SQLMoreResults (hstmt);
@@ -645,10 +812,36 @@ namespace System.Data.Odbc
 			return (ret == OdbcReturn.Success);
 		}
 
-		public bool Read ()
+		public
+#if NET_2_0
+                override
+#endif // NET_2_0
+                bool Read ()
 		{
 			return NextRow ();
 		}
+
+#if NET_2_0
+                [MonoTODO]
+		public override object GetProviderSpecificValue (int i)
+                {
+                       throw new NotImplementedException ();
+                }
+                
+                [MonoTODO]
+		public override int GetProviderSpecificValues (object[] values)
+                {
+                       throw new NotImplementedException ();
+                }
+
+                [MonoTODO]
+		public override Type GetFieldProviderSpecificType (int i)
+                {
+                       throw new NotImplementedException ();
+                }
+                
+#endif // NET_2_0
+
 
 		#endregion
 	}

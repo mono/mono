@@ -32,9 +32,19 @@
 using System;
 using System.Data;
 
+#if NET_2_0
+using System.Data.Common;
+#endif // NET_2_0
+
+
 namespace System.Data.Odbc
 {
+
+#if NET_2_0
+	public sealed class OdbcTransaction : DbTransaction
+#else
 	public sealed class OdbcTransaction : MarshalByRefObject, IDbTransaction
+#endif // NET_2_0
 	{
 		private bool disposed = false;
 		private OdbcConnection connection;
@@ -86,16 +96,29 @@ namespace System.Data.Odbc
 			}
 		}
 
+#if ONLY_1_1
 		void IDisposable.Dispose() {
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+#else
+                public override void Dispose ()
+                {
+                        Dispose (true);
+                        GC.SuppressFinalize (this);
+                }
+#endif // ONLY_1_1
+
 
 		#endregion Implementation of IDisposable
 
 		#region Implementation of IDbTransaction
 
-		public void Commit()
+		public 
+#if NET_2_0
+                override
+#endif //NET_2_0
+                void Commit()
 		{
 			if (connection.transaction==this)
 			{
@@ -108,7 +131,11 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException();
 		}
 
-		public void Rollback()
+		public 
+#if NET_2_0
+                override
+#endif //NET_2_0
+                void Rollback()
 		{
 			if (connection.transaction==this)
 			{
@@ -121,6 +148,7 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException();
 		}
 
+#if ONLY_1_1
 		IDbConnection IDbTransaction.Connection
 		{
 			get
@@ -129,7 +157,19 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public IsolationLevel IsolationLevel
+#endif // ONLY_1_1
+#if NET_2_0
+                protected override DbConnection DbConnection 
+                { 
+                        get {return Connection;}
+                }
+#endif // NET_2_0
+
+		public 
+#if NET_2_0
+                override
+#endif //NET_2_0
+                IsolationLevel IsolationLevel
 		{
 			get
 			{
@@ -141,6 +181,7 @@ namespace System.Data.Odbc
 
 		#region Public Instance Properties
 
+#if ONLY_1_1
 		public OdbcConnection Connection
 		{
 			get
@@ -149,6 +190,7 @@ namespace System.Data.Odbc
 			}
 		}
 
+#endif // ONLY_1_1
 		#endregion Public Instance Properties
 	}
 }
