@@ -201,6 +201,9 @@ namespace Mono.Tools
 				Hashtable info = GetAssemblyInfo (Path.Combine (dir, "__AssemblyInfo__"));
 				if(Convert.ToInt32 (info["RefCount"]) == 1) {
 					Directory.Delete (dir, true);
+					if (package_name != String.Empty) {
+						File.Delete (libdir + package_name + Path.DirectorySeparatorChar + (string)paramInfo["assembly"] + ".dll");
+					}
 					Console.WriteLine ("Assembly removed from the gac.");
 				} else {
 					info["RefCount"] = ((int) Convert.ToInt32 (info["RefCount"]) - 1).ToString ();
