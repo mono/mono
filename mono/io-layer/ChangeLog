@@ -1,3 +1,7 @@
+2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* system.h (struct _WapiSystemInfo ): Fix warnings when using gcc-3.3.
+
 2003-06-11  Dick Porter  <dick@ximian.com>
 
 	* shared.c: Fix shared directory creation.  Patch from
