@@ -15,26 +15,21 @@ namespace System.Data.SqlClient
 {
 	public sealed class SqlInfoMessageEventArgs : EventArgs
 	{
-		public SqlErrorCollection Errors 
-		{
-			get 
-			{ 
+		public SqlErrorCollection Errors {
+			get { 
 				throw new NotImplementedException (); 
 			}
 		}	
 
 		public string Message 
 		{
-			get 
-			{ 
+			get { 
 				throw new NotImplementedException (); 
 			}
 		}	
 
-		public string Source 
-		{
-			get 
-			{ 
+		public string Source {
+			get { 
 				throw new NotImplementedException (); 
 			}
 		}

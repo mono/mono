@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlErrorCollection
+// System.Data.SqlClient.SqlError.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -10,74 +10,129 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Runtime.InteropServices;
 
 namespace System.Data.SqlClient
 {
 	/// <summary>
-	/// Provides a means of reading one or more forward-only streams of result sets obtained by executing a command at a SQL database.
+	/// Describes an error from a SQL database.
 	/// </summary>
+	[MonoTODO]
 	public sealed class SqlErrorCollection : ICollection, IEnumerable
 	{
 		#region Properties
 
 		[MonoTODO]
-		public int Count 
-		{
-			get 
-			{ 
+		public byte Class {
+			get { 
 				throw new NotImplementedException ();
 			}
 		}
 
-		bool ICollection.IsSynchronized {
-			get 
-			{ 
-				throw new NotImplementedException ();
+		[MonoTODO]
+		public int LineNumber {
+			get { 
+			   throw new NotImplementedException ();
 			}
 		}
 
-		object ICollection.SyncRoot {
-			get 
-			{ 
+		[MonoTODO]
+		public string Message {
+			get { 
 				throw new NotImplementedException ();
 			}
 		}
 		
 		[MonoTODO]
-		public SqlError this[int index]
-		{
-			get
-			{
+		public int Number {
+			get { 
 				throw new NotImplementedException ();
 			}
+		}
+
+		[MonoTODO]
+		public string Procedure {
+			get { 
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public string Server {
+			get { 
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public string Source {
+			get { 
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public byte State {
+			get { 
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public int Count {
+			get {	
+				throw new NotImplementedException ();
+			}			  
+		}
+
+		[MonoTODO]
+		public void CopyTo(Array array,	int index) {
+			throw new NotImplementedException ();
+		}
+
+		// [MonoTODO]
+		bool ICollection.IsSynchronized {
+			get {	
+				throw new NotImplementedException ();
+			}			  
+		}
+
+		// [MonoTODO]
+		object ICollection.SyncRoot {
+			get {	
+				throw new NotImplementedException ();
+			}			  
+		}
+
+		[MonoTODO]
+		public IEnumerator GetEnumerator() {
+			throw new NotImplementedException ();
 		}
 
 		#endregion
 
 		#region Methods
-
-		public void CopyTo (Array array, int index)
+		
+		[MonoTODO]
+		public override string ToString()
 		{
 			throw new NotImplementedException ();
 		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			throw new NotImplementedException ();
-		}
-
 		#endregion
 
-		#region Deconstructors
+		#region Destructors
 
-		// FIXME: do the deconstructor
+		// FIXME: do the destructor
 /*
 		[MonoTODO]
-		~SqlErrorCollection()
+		[ClassInterface(ClassInterfaceType.AutoDual)]
+		~SqlError()
 		{
-			throw new NotImplementedException ();
+
 		}
 */
+
 		#endregion
+		
 	}
 }

@@ -1,3 +1,15 @@
+2002-04-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/TestSqlInsert.cs: added 
+
+2002-04-15  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/SqlInfoMessageEventArgs.cs: added - using in
+	  SqlConnecition
+	* System.Data/SqlErrorCollection.cs: added
+	* System.Data/SqlErrors.cs: removed - no such class SqlErrors
+
+
 2002-04-15  Christopher Podurgiel <cpodurgiel@msn.com>
 	
 	* System.Data.IDbDataParameter: Added Interface to IDataParameter.

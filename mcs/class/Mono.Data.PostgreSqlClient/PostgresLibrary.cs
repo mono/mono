@@ -1,15 +1,17 @@
 //
-// System.Data.SqlClient.libpq.cs - PInvoke methods to libpq
-//                                  which is PostgreSQL client library
+// System.Data.SqlClient.PostgresLibrary.cs  
 //
-//                                  May also contain enumerations,
-//                                  data types, or wrapper methods.
+// PInvoke methods to libpq
+// which is PostgreSQL client library
+//
+// May also contain enumerations,
+// data types, or wrapper methods.
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //
-// (C) Ximian, Inc
+// (C) Ximian, Inc 2002
 //
 
 using System;
@@ -20,7 +22,7 @@ using System.Diagnostics;
 namespace System.Data.SqlClient
 {
 	/* IMPORTANT: DO NOT CHANGE ANY OF THESE ENUMS */
-
+	
 	internal enum ConnStatusType
 	{
 		CONNECTION_OK,
@@ -53,7 +55,8 @@ namespace System.Data.SqlClient
 		PGRES_FATAL_ERROR
 	}
 
-	internal class PostgresLibrary
+	// FIXME: should be sealed internal class
+	sealed internal class PostgresLibrary
 	{
 		#region PInvoke Functions
 
@@ -65,7 +68,7 @@ namespace System.Data.SqlClient
 		// PGconn *PQconnectStart(const char *conninfo);
 
 		[DllImport("pq")]
-		public static extern IntPtr PQconnectPoll (IntPtr conn);
+		public static extern PostgresPollingStatusType PQconnectPoll (IntPtr conn);
 		// PostgresPollingStatusType PQconnectPoll(PGconn *conn);	
 
 		[DllImport("pq")]
@@ -139,7 +142,7 @@ namespace System.Data.SqlClient
 		// char *PQoptions(const PGconn *conn);
 
 		[DllImport("pq")]
-		public static extern IntPtr PQstatus (IntPtr conn);
+		public static extern ConnStatusType PQstatus (IntPtr conn);
 		// ConnStatusType PQstatus(const PGconn *conn);
 
 		[DllImport("pq")]
@@ -164,8 +167,9 @@ namespace System.Data.SqlClient
 		// int PQsetClientEncoding(PGconn *conn, 
 		//		const char *encoding);
 
-		[DllImport("pq")]
-		public static extern IntPtr PQgetssl (IntPtr conn);
+		//FIXME: when loading, causes runtime exception
+		//[DllImport("pq")]
+		//public static extern IntPtr PQgetssl (IntPtr conn);
 		// SSL *PQgetssl(PGconn *conn);
 
 		[DllImport("pq")]
@@ -280,7 +284,7 @@ namespace System.Data.SqlClient
                 //      int nargs);
 
 		[DllImport("pq")]
-		public static extern IntPtr PQresultStatus (IntPtr res);
+		public static extern ExecStatusType PQresultStatus (IntPtr res);
 		// ExecStatusType PQresultStatus(const PGresult *res);
 
 		[DllImport("pq")]
