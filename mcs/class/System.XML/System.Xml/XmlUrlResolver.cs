@@ -57,14 +57,26 @@ namespace System.Xml
 
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
+			// Don't expect baseUri is not null here.
+//			if (relativeUri == null)
+//				return baseUri;
+
+			if (baseUri == null) {
+				// Don't ignore such case that relativeUri is in fact absolute uri.
+//				return new Uri (Path.GetFullPath (relativeUri));
+
+				// extraneous "/a" is required because current Uri stuff 
+				// seems ignorant of difference between "." and "./". 
+				// I'd be appleciate if it is fixed with better solution.
+				return new Uri (new Uri (Path.GetFullPath ("./a")), relativeUri);
+			}
+
+			// Do not expect relativeUri.Length > 2.
+//			if (relativeUri.IndexOf ("://") >= 0)
+//				return new Uri (relativeUri);
+
 			if (relativeUri == null)
 				return baseUri;
-			
-			if (baseUri == null)
-				return new Uri (Path.GetFullPath (relativeUri));
-			
-			if (relativeUri.IndexOf ("://") >= 0)
-				return new Uri (relativeUri);
 
 			return new Uri (baseUri, relativeUri);
 		}

@@ -1,3 +1,7 @@
+2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlUrlResolver.cs : several ResolveUri() fix. e.g. for external URIs.
+
 2003-06-16  Ben Maurer <bmaurer@users.sourceforge.net>
 	* XmlUrlResolver.cs: really fixed #44231
 
