@@ -36,7 +36,7 @@ using System.Xml;
 
 namespace Mono.Xml
 {
-	public class XmlFilterReader : XmlReader, IXmlLineInfo
+	internal class XmlFilterReader : XmlReader, IXmlLineInfo
 	{
 		XmlReader reader;
 		XmlReaderSettings settings;

@@ -34,7 +34,7 @@ using System.Xml;
 
 namespace Mono.Xml
 {
-	public class SubtreeXmlReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver
+	internal class SubtreeXmlReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver
 	{
 		int startDepth;
 		bool eof;
