@@ -1,3 +1,15 @@
+2005-02-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* corlib.dll.sources: added WindowsConsoleDriver.cs
+
+	* System/ConsoleDriver.cs: use WindowsConsoleDriver on windows and
+	implemented the few missing properties/methods.
+
+	* System/IConsoleDriver.cs: uncommented all methods/properties.
+	* System/TermInfoDriver.cs: implement changes from IConsoleDriver.
+	* System/WindowsConsoleDriver.cs: implemented IConsoleDriver for
+	windows. Only missing MoveBufferArea by now.
+
 2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs (IsAssignableFrom): Add support for TypeBuilders.

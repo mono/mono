@@ -39,6 +39,7 @@ namespace System {
 		{
 			string term = Environment.GetEnvironmentVariable ("TERM");
 			if (term == null && Environment.IsRunningOnWindows) {
+				driver = new WindowsConsoleDriver ();
 			} else {
 				driver = new TermInfoDriver (term);
 			}
@@ -73,14 +74,19 @@ namespace System {
 			set { driver.BufferWidth = value; }
 		}
 
-		//bool CapsLock { get; }
+		public static bool CapsLock {
+			get { return driver.CapsLock; }
+		}
 
 		public static int CursorLeft {
 			get { return driver.CursorLeft; }
 			set { driver.CursorLeft = value; }
 		}
 
-		//int CursorSize { get; set; }
+		public static int CursorSize {
+			get { return driver.CursorSize; }
+			set { driver.CursorSize = value; }
+		}
 
 		public static int CursorTop {
 			get { return driver.CursorTop; }
@@ -106,9 +112,18 @@ namespace System {
 			}
 		}
 
-		//int LargestWindowHeight { get; set; }
-		//int LargestWindowWidth { get; set; }
-		//bool NumberLock { get; }
+		public static int LargestWindowHeight {
+			get { return driver.LargestWindowHeight; }
+		}
+
+		public static int LargestWindowWidth {
+			get { return driver.LargestWindowWidth; }
+		}
+
+		public static bool NumberLock {
+			get { return driver.NumberLock; }
+		}
+
 		public static string Title {
 			get { return driver.Title; }
 			set { driver.Title = value; }
@@ -149,11 +164,20 @@ namespace System {
 			driver.Clear ();
 		}
 
-		//void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
-	//				int targetLeft, int targetTop);
-	//	void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
-	//				int targetLeft, int targetTop, Char sourceChar,
-					//ConsoleColor sourceForeColor, ConsoleColor sourceBackColor);
+		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
+					int targetLeft, int targetTop)
+		{
+			MoveBufferArea (sourceLeft, sourceTop, sourceWidth, sourceHeight,
+					targetLeft, targetTop, ' ', 0, 0);
+		}
+
+		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
+					int targetLeft, int targetTop, char sourceChar,
+					ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)
+		{
+			driver.MoveBufferArea (sourceLeft, sourceTop, sourceWidth, sourceHeight,
+					targetLeft, targetTop, sourceChar, sourceForeColor, sourceBackColor);
+		}
 
 		public static ConsoleKeyInfo ReadKey (bool intercept)
 		{

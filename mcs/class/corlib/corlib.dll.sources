@@ -228,6 +228,7 @@ System/ValueType.cs
 System/Version.cs
 System/Void.cs
 System/WeakReference.cs
+System/WindowsConsoleDriver.cs
 System/_AppDomain.cs
 System/__ComObject.cs
 System.Collections/ArrayList.cs

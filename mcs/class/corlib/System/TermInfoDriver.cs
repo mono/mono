@@ -314,6 +314,10 @@ namespace System {
 			}
 		}
 
+		public bool CapsLock {
+			get { throw new NotSupportedException (); }
+		}
+
 		public int CursorLeft {
 			get {
 				Init ();
@@ -352,6 +356,13 @@ namespace System {
 			}
 		}
 
+		// we have CursorNormal vs. CursorVisible...
+		[MonoTODO]
+		public int CursorSize {
+			get { return 1; }
+			set {}
+		}
+
 		public bool Echo {
 			get { return !noEcho; }
 			set {
@@ -368,6 +379,19 @@ namespace System {
 				Init ();
 				return (ConsoleDriver.InternalKeyAvailable (0) > 0);
 			}
+		}
+
+		// We don't know these next 2 values, so return something reasonable
+		public int LargestWindowHeight {
+			get { return WindowHeight; }
+		}
+
+		public int LargestWindowWidth {
+			get { return WindowWidth; }
+		}
+
+		public bool NumberLock {
+			get { throw new NotSupportedException (); }
 		}
 
 		public string Title {
@@ -471,6 +495,13 @@ namespace System {
 		{
 			Init ();
 			WriteConsole (bell);
+		}
+
+		public void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
+					int targetLeft, int targetTop, Char sourceChar,
+					ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public ConsoleKeyInfo ReadKey (bool intercept)

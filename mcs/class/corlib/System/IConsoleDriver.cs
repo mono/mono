@@ -32,18 +32,18 @@ namespace System {
 		ConsoleColor BackgroundColor { get; set; }
 		int BufferHeight { get; set; }
 		int BufferWidth { get; set; }
-		//bool CapsLock { get; }
+		bool CapsLock { get; }
 		int CursorLeft { get; set; } 
-		//int CursorSize { get; set; } 
+		int CursorSize { get; set; } 
 		int CursorTop { get; set; }
 		bool CursorVisible { get; set; }
 		bool Echo { get; set; }  // mono
 		ConsoleColor ForegroundColor { get; set; }
 		bool KeyAvailable { get; }
 		bool Initialized { get; }
-		//int LargestWindowHeight { get; set; }
-		//int LargestWindowWidth { get; set; }
-		//bool NumberLock { get; }
+		int LargestWindowHeight { get; }
+		int LargestWindowWidth { get; }
+		bool NumberLock { get; }
 		string Title { get; set; }
 		bool TreatControlCAsInput { get; set; } 
 		int WindowHeight { get; set; }
@@ -53,11 +53,9 @@ namespace System {
 
 		void Beep (int frequency, int duration);
 		void Clear ();
-		//void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
-	//				int targetLeft, int targetTop);
-	//	void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
-	//				int targetLeft, int targetTop, Char sourceChar,
-					//ConsoleColor sourceForeColor, ConsoleColor sourceBackColor);
+		void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
+					int targetLeft, int targetTop, Char sourceChar,
+					ConsoleColor sourceForeColor, ConsoleColor sourceBackColor);
 
 		ConsoleKeyInfo ReadKey (bool intercept);
 		void ResetColor ();
