@@ -8,9 +8,8 @@
 //
 
 using System;
-using System.Diagnostics;
 
-namespace System.Diagnostics {
+namespace System.Configuration.Install {
 
 	[Serializable]
 	public enum UninstallAction {
