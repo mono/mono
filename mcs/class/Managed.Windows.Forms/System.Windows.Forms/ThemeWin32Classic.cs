@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.2  2004/08/07 00:01:39  pbartok
+// - Fixed some rounding issues with float/int
+//
 // Revision 1.1  2004/07/26 17:42:03  jordi
 // Theme support
 //
@@ -1020,8 +1023,8 @@ namespace System.Windows.Forms
 				if (ticks_to_draw < 0)
 					ticks_to_draw = 1;
 
-				for (int inc = 0; inc < pixel_len; inc += (int) ticks_to_draw){
-					if (inc == 0 || (inc + (int) ticks_to_draw) >= pixel_len)
+				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw){
+					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
 						dc.DrawLine (pen_ticks,  thumb_pos.X + 23, thumb_area.Y + space_from_bottom - 2 + inc,
 							thumb_pos.X + 26, thumb_area.Y + space_from_bottom - 2 + inc);
 					else
@@ -1040,8 +1043,8 @@ namespace System.Windows.Forms
 				if (ticks_to_draw < 0)
 					ticks_to_draw = 1;
 
-				for (int inc = 0; inc < pixel_len; inc += (int) ticks_to_draw)
-					if (inc == 0 || (inc + (int) ticks_to_draw) >= pixel_len)
+				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw)
+					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
 						dc.DrawLine (pen_ticks, area.X + 4, thumb_area.Y + 5 + inc,  area.X + 8,  thumb_area.Y + 5 + inc);
 					else
 						dc.DrawLine (pen_ticks, area.X + 5, thumb_area.Y + 5 + inc,  area.X + 8,  thumb_area.Y + 5 + inc);
@@ -1173,8 +1176,8 @@ namespace System.Windows.Forms
 				if (ticks_to_draw < 0)
 					ticks_to_draw = 1;
 
-				for (int inc = 0; inc < pixel_len; inc += (int) ticks_to_draw)
-					if (inc == 0 || (inc + (int) ticks_to_draw) >= pixel_len)
+				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw)
+					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
 						dc.DrawLine (pen_ticks, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 25, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 28);
 					else
 						dc.DrawLine (pen_ticks, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 25, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 27);
@@ -1190,8 +1193,8 @@ namespace System.Windows.Forms
 				if (ticks_to_draw < 0)
 					ticks_to_draw = 1;
 
-				for (int inc = 0; inc < pixel_len; inc += (int) ticks_to_draw)
-					if (inc == 0 || (inc + (int) ticks_to_draw) >= pixel_len)
+				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw)
+					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
 						dc.DrawLine (pen_ticks, thumb_area.X + 5 + inc, area.Y + 5, thumb_area.X + 5 + inc, area.Y + 9);
 					else
 						dc.DrawLine (pen_ticks, thumb_area.X + 5 + inc, area.Y + 6, thumb_area.X + 5 + inc, area.Y + 8);
