@@ -140,9 +140,6 @@ namespace System.Web.Configuration
 				return (ConfigurationData) fileToConfig [WebConfigurationSettings.MachineConfigPath];
 
 			string dir = UrlUtils.GetDirectory (filepath);
-			if (dir == "/")
-				dir = "";
-
 			ConfigurationData data = (ConfigurationData) fileToConfig [dir];
 			if (data != null)
 				return data;
@@ -156,7 +153,8 @@ namespace System.Web.Configuration
 				throw new ConfigurationException ("Both web.config and Web.config exist for " + dir);
 
 			string wcfile = (isUpper) ? upper : (isLower) ? lower : null;
-			ConfigurationData parent = GetConfigFromFileName (dir, context);
+			string tempDir = (dir == "/") ? "" : dir;
+			ConfigurationData parent = GetConfigFromFileName (tempDir, context);
 			if (wcfile == null) {
 				data = new ConfigurationData (parent, null, realpath);
 				data.DirName = dir;

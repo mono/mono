@@ -1,3 +1,7 @@
+2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConfigurationSettings.cs: fixes bug 56267.
+
 2004-03-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: use FileSystemWatcher and really reload
