@@ -5,7 +5,6 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -121,7 +120,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+#if ! NET_2_0
+		[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
+#endif
 		public void AddNamedPermissionSet () 
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
@@ -143,7 +144,9 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+#if ! NET_2_0
+		[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
+#endif
 		public void AddNamedPermissionSet_Duplicate () 
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
@@ -155,7 +158,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+#if ! NET_2_0
+		[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
+#endif
 		public void ChangeNamedPermissionSet () 
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
@@ -304,7 +309,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+#if ! NET_2_0
+		[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
+#endif
 		public void GetNamedPermissionSet () 
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
@@ -404,7 +411,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+#if ! NET_2_0
+		[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
+#endif
 		public void RemoveNamedPermissionSet () 
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
@@ -434,7 +443,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+#if ! NET_2_0
+		[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
+#endif
 		public void RemoveNamedPermissionSet_String () 
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);

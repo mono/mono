@@ -1,3 +1,8 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevelTest.cs: Removed [Ignore] from tests as they now execute
+	properly on 2.0. For 1.x the tests are added to the NotDotNet category.
+
 2004-09-19  Alexis Christoforides <alexis@thenull.net>
 
 	* UnionCodeGroupTest.cs: Added ResolveWithChildren test.
