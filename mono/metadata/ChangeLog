@@ -1,3 +1,13 @@
+2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c appdomain.h icall.c: Get rid of the InvokeInDomain 
+	icalls. Instead, do everything in managed code. This is needed since
+	it is hard to restore the original domain etc. in unmanaged code in the
+	presence of undeniable exceptions.
+
+	* appdomain.c (ves_icall_System_AppDomain_InternalPushDomainRef): 
+	New icalls to push and pop appdomain refs.
+
 2003-10-31  Martin Baulig  <martin@ximian.com>
 
 	* class.c (inflate_generic_type): Renamed to
