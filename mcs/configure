@@ -37,8 +37,8 @@ for a in $*; do
 done
 
 echo "prefix=$prefix" > build/config.make
-echo "PROFILE=$profile" >> build/config.make
 echo "MCS_FLAGS = \$(PLATFORM_DEBUG_FLAGS)" >> build/config.make
+echo "PROFILE=$profile" >> build/pre-config.make
 
 echo ""
 echo "MCS module configured"
