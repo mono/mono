@@ -183,7 +183,7 @@ namespace Mono.Xml.Xsl {
 		public QName [] ParseQNameListAttribute (string localName, string ns)
 		{
 			string s = GetAttribute (localName, ns);
-			if (s == null || s == "") return null;
+			if (s == null) return null;
 				
 			string [] names = s.Split (new char [] {' ', '\r', '\n', '\t'});
 			QName [] ret = new QName [names.Length];
@@ -204,7 +204,7 @@ namespace Mono.Xml.Xsl {
 			string s = GetAttribute (localName, ns);
 
 			switch (s) {
-			case "": return defaultVal;
+			case null: return defaultVal;
 			case "yes": return true;
 			case "no": return false;
 			default: throw new Exception ("invalid value for " + localName);
@@ -218,7 +218,12 @@ namespace Mono.Xml.Xsl {
 		
 		public string GetAttribute (string localName, string ns)
 		{
-			return Input.GetAttribute (localName, ns);
+			if (!Input.MoveToAttribute (localName, ns))
+				return null;
+			
+			string ret = Input.Value;
+			Input.MoveToParent ();
+			return ret;
 		}
 		public XslAvt ParseAvtAttribute (string localName)
 		{
@@ -235,13 +240,13 @@ namespace Mono.Xml.Xsl {
 		}
 		public void AssertAttribute (string localName, string ns)
 		{
-			if (Input.GetAttribute (localName, ns) == String.Empty)
+			if (Input.GetAttribute (localName, ns) == null)
 				throw new Exception ("Was expecting the " + localName + " attribute.");
 		}
 		
 		public XslAvt ParseAvt (string s)
 		{
-			if (s == null || s == string.Empty) return null;
+			if (s == null) return null;
 			return new XslAvt (s, this);
 		}
 		
@@ -374,8 +379,10 @@ namespace Mono.Xml.Xsl {
 							nav.NamespaceURI == (isXslt ? String.Empty : XsltNamespace))
 						{
 							foreach (string ns in nav.Value.Split (' ')) {
-								if ((string)ret [ns] == nsScope.GetNamespace (ns == "#default" ? "" : ns))
-									ret.Remove (ns);
+								string realNs = ns == "#default" ? "" : ns;
+								
+								if ((string)ret [realNs] == nsScope.GetNamespace (realNs))
+									ret.Remove (realNs);
 							}
 						}
 					} while (nav.MoveToNextAttribute ());

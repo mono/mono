@@ -1,3 +1,9 @@
+2003-09-16 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Compiler.cs: 
+	- Better handling of empty attributes (vs not being specified)
+	- Bug in handling #default
+	
 2003-09-15 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Compiler.cs: Off by one when parsing localname of QName 
