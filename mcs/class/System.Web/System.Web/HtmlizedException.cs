@@ -33,6 +33,10 @@ namespace System.Web
 		public abstract string Description { get; }
 		public abstract string ErrorMessage { get; }
 		public abstract string FileName { get; }
+		public abstract string SourceFile { get; }
+		public abstract string FileText { get; }
+		public abstract int [] ErrorLines { get; }
+		public abstract bool ErrorLinesPaired { get; }
 	}
 }
 

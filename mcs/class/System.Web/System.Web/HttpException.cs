@@ -10,8 +10,8 @@
 //
 using System;
 using System.IO;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Web.Compilation;
 using System.Web.Util;
 
@@ -91,7 +91,7 @@ namespace System.Web
 
 			Exception e = (InnerException != null) ? InnerException : this;
 			builder.Append ("<table summary=\"Stack Trace\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
-			FormatReader (builder, new StringReader (e.ToString ()), 0, false);
+			WriteTextAsCode (builder, e.ToString ());
 			builder.Append ("</td></tr>\n</table>\n<p>\n");
 
 			builder.Append ("<hr>\n</body>\n</html>\n");
@@ -102,6 +102,9 @@ namespace System.Web
 
 		static string HtmlEncode (string s)
 		{
+			if (s == null)
+				return s;
+
 			string res = HttpUtility.HtmlEncode (s);
 			return res.Replace ("\n", "<br />");
 		}
@@ -120,83 +123,125 @@ namespace System.Web
 			builder.AppendFormat ("<b>Description: </b>{0}\n<p>\n", HtmlEncode (exc.Description));
 			builder.AppendFormat ("<b>Error message: </b>{0}\n<p>\n", HtmlEncode (exc.ErrorMessage));
 
-			if (exc is ParseException)
-				builder.Append ("<b>File name: </b>" + exc.FileName);
-			else if (exc is CompilationException) {
-				builder.Append ("<table summary=\"Source file\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
-				FormatReader (builder, ((CompilationException) exc).File, 0);
-				builder.Append ("</td></tr>\n</table>\n<p>\n");
-			}
-			/*
-			if (exc.HaveSourceError) {
-				builder.Append ("<b>Source Error: </b>\n<p>\n");
-				builder.Append ("<table summary=\"Source error\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
-				FormatReader (builder, exc.SourceError, exc.SourceErrorLine);
-				builder.Append ("</td></tr>\n</table>\n<p>\n");
-			}
+			if (exc.FileName != null)
+				builder.AppendFormat ("<b>File name: </b> {0}", HtmlEncode (exc.FileName));
 
-			builder.AppendFormat ("<b>Source File: </b>{0}", exc.FileName);
-			if (exc.SourceErrorLine != -1)
-				builder.AppendFormat ("&nbsp;&nbsp;&nbsp;&nbsp;<b>Line:</b>{0}", exc.SourceErrorLine);
+			if (exc.FileText != null) {
+				if (exc.SourceFile != exc.FileName)
+					builder.AppendFormat ("<p><b>Source File: </b>{0}", exc.SourceFile);
 
-			builder.Append ("\n<p>\n");
+				if (exc is ParseException) {
+					builder.Append ("&nbsp;&nbsp;&nbsp;&nbsp;<b>Line: <b>");
+					builder.Append (exc.ErrorLines [0]);
+				}
 
-			if (exc.HaveSourceFile) {
-				builder.Append ("<table summary=\"Source file\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
-				FormatReader (builder, exc.SourceFile, 0);
-				builder.Append ("</td></tr>\n</table>\n<p>\n");
+				builder.Append ("\n<p>\n");
+
+				if (exc is ParseException) {
+					builder.Append ("<b>Source Error: </b>\n");
+					builder.Append ("<table summary=\"Source error\" width=\"100%\"" +
+							" bgcolor=\"#ffffc\">\n<tr><td>");
+					WriteSource (builder, exc);
+					builder.Append ("</td></tr>\n</table>\n<p>\n");
+				} else {
+					builder.Append ("<table summary=\"Source file\" width=\"100%\" " +
+							"bgcolor=\"#ffffc\">\n<tr><td>");
+					WriteSource (builder, exc);
+					builder.Append ("</td></tr>\n</table>\n<p>\n");
+				}
 			}
 			
-			*/
 			builder.Append ("<hr>\n</body>\n</html>\n");
-			builder.AppendFormat ("<!--\n{0}\n-->\n", HtmlEncode (exc.ToString ()));
+			builder.AppendFormat ("<!--\n{0}\n-->\n", exc.ToString ());
 			return builder.ToString ();
 		}
 
-		static void FormatReader (StringBuilder builder, string text, int errorLine)
+		static void WriteTextAsCode (StringBuilder builder, string text)
 		{
-			FormatReader (builder, new StringReader (text), errorLine, true);
-		}
-		
-		static void FormatReader (StringBuilder builder, TextReader reader, int errorLine)
-		{
-			FormatReader (builder, reader, errorLine, true);
-		}
-		
-		static void FormatReader (StringBuilder builder, TextReader reader, int errorLine, bool lines)
-		{
-			int current = (errorLine > 0) ? errorLine : 1;
-			string s;
 			builder.Append ("<code><pre>\n");
-			while ((s = reader.ReadLine ()) != null) {
-				if (current == errorLine)
-					builder.Append ("<span style=\"color: red\">");
-
-				if (lines)
-					builder.AppendFormat ("Line {0}: {1}\n", current++, HtmlEncode (s));
-				else
-					builder.AppendFormat ("{1}\n", current++, HtmlEncode (s));
-
-				if (current == errorLine + 1)
-					builder.Append ("</span>");
-			}
-
+			builder.AppendFormat ("{0}", HtmlEncode (text));
 			builder.Append ("</pre></code>\n");
 		}
 
+		static void WriteSource (StringBuilder builder, HtmlizedException e)
+		{
+			builder.Append ("<code><pre>");
+			if (e is CompilationException)
+				WriteCompilationSource (builder, e);
+			else
+				WritePageSource (builder, e);
+
+			builder.Append ("</pre></code>\n");
+		}
+		
+		static void WriteCompilationSource (StringBuilder builder, HtmlizedException e)
+		{
+			int [] a = e.ErrorLines;
+			string s;
+			int line = 0;
+			int index = 0;
+			int errline = 0;
+
+			if (a != null && a.Length > 0)
+				errline = a [0];
+			
+			TextReader reader = new StringReader (e.FileText);
+			while ((s = reader.ReadLine ()) != null) {
+				line++;
+
+				if (errline == line)
+					builder.Append ("<span style=\"color: red\">");
+
+				builder.AppendFormat ("Line {0}: {1}\n", line, HtmlEncode (s));
+
+				if (line == errline) {
+					builder.Append ("</span>");
+					errline = (++index < a.Length) ? a [index] : 0;
+				}
+			}
+		}
+
+		static void WritePageSource (StringBuilder builder, HtmlizedException e)
+		{
+			string s;
+			int line = 0;
+			int beginerror = e.ErrorLines [0];
+			int enderror = e.ErrorLines [1];
+			int begin = beginerror - 3;
+			int end = enderror + 3;
+			if (begin <= 0)
+				begin = 1;
+			
+			TextReader reader = new StringReader (e.FileText);
+			while ((s = reader.ReadLine ()) != null) {
+				line++;
+				if (line < begin)
+					continue;
+
+				if (line > end)
+					break;
+
+				if (beginerror == line)
+					builder.Append ("<span style=\"color: red\">");
+
+				builder.AppendFormat ("{0}\n", HtmlEncode (s));
+
+				if (enderror <= line) {
+					builder.Append ("</span>");
+					enderror = end + 1; // one shot
+				}
+			}
+		}
+		
 		[MonoTODO("Check error type and Set the correct error code")]
 		public int GetHttpCode ()
 		{
 			return _HttpCode;
 		}
 
-/*		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int GetLastError_internal ();*/
-
 		public static HttpException CreateFromLastError (string message)
 		{
 			WebTrace.WriteLine ("CreateFromLastError");
-			//return new HttpException (message, GetLastError_internal ());
 			return new HttpException (message, 0);
 		}
 	}

@@ -14,15 +14,20 @@ namespace System.Web.Compilation
 {
 	internal class ParseException : HtmlizedException
 	{
-		string message;
 		ILocation location;
+		string fileText;
 
 		public ParseException (ILocation location, string message)
+			: this (location, message, null)
 		{
-			if (location == null)
-				throw new Exception ();
+			location = new Location (location);
+		}
+
+
+		public ParseException (ILocation location, string message, Exception inner)
+			: base (message, inner)
+		{
 			this.location = location;
-			this.message = message;
 		}
 
 		public override string Title {
@@ -37,11 +42,48 @@ namespace System.Web.Compilation
 		}
 
 		public override string ErrorMessage {
-			get { return message; }
+			get { return Message; }
 		}
 
+		public override string SourceFile {
+			get { return FileName; }
+		}
+		
 		public override string FileName {
-			get { return location.Filename; }
+			get {
+				if (location == null)
+					return null;
+
+				return location.Filename;
+			}
+		}
+
+		public override string FileText {
+			get {
+				if (fileText != null)
+					return fileText;
+
+				if (FileName == null)
+					return null;
+
+				//FIXME: encoding
+				TextReader reader = new StreamReader (FileName);
+				fileText = reader.ReadToEnd ();				
+				return fileText;
+			}
+		}
+
+		public override int [] ErrorLines {
+			get {
+				if (location == null)
+					return null;
+
+				return new int [] {location.BeginLine, location.EndLine};
+			}
+		}
+
+		public override bool ErrorLinesPaired {
+			get { return true; }
 		}
 	}
 }

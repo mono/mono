@@ -29,6 +29,8 @@ namespace System.Web.Compilation
 
 		TemplateControlParser parser;
 		int dataBoundAtts;
+		ILocation currentLocation;
+
 		static TypeConverter colorConverter;
 
 		static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
@@ -49,6 +51,7 @@ namespace System.Web.Compilation
 
 		void CreateField (ControlBuilder builder, bool check)
 		{
+			currentLocation = builder.location;
 			if (check && CheckBaseFieldOrProperty (builder.ID, builder.ControlType))
 				return; // The field or property already exists in a base class and is accesible.
 
@@ -81,7 +84,7 @@ namespace System.Web.Compilation
 				string msg = String.Format ("The base class includes the field '{0}', but its " +
 							    "type '{1}' is not compatible with {2}",
 							    id, other, type);
-				throw new HttpException (msg);
+				throw new ParseException (currentLocation, msg);
 			}
 
 			return true;
@@ -245,6 +248,7 @@ namespace System.Web.Compilation
 
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, var_name);
+			currentLocation = builder.location;
 			assign.Right = GetExpressionFromString (type, att);
 
 			method.Statements.Add (assign);
@@ -707,12 +711,9 @@ namespace System.Web.Compilation
 		{
 			string name = tag.ObjectID;
 			string className = tag.ClassName;
-			Type t = null;
-			try {
-				t = parser.LoadType (className);
-			} catch (Exception e) {
+			Type t = parser.LoadType (className);
+			if (t == null)
 				throw new ParseException (tag.location, "Error loading type " + className);
-			}
 
 			string fieldName = "cached" + name;
 			CodeMemberField f = new CodeMemberField (t, fieldName);
@@ -825,7 +826,8 @@ namespace System.Web.Compilation
 				else if (0 == String.Compare (str, "false", true))
 					return new CodePrimitiveExpression (false);
 				else
-					throw new HttpException ("Value '" + str  + "' is not a valid boolean.");
+					throw new ParseException (currentLocation,
+							"Value '" + str  + "' is not a valid boolean.");
 			}
 
 			if (str == null)
@@ -839,7 +841,8 @@ namespace System.Web.Compilation
 				try {
 					val = Enum.Parse (type, str, true);
 				} catch (Exception) {
-					throw new HttpException (str + " is not a valid value for enum '" + type + "'");
+					throw new ParseException (currentLocation,
+							str + " is not a valid value for enum '" + type + "'");
 				}
 				CodeFieldReferenceExpression expr = new CodeFieldReferenceExpression ();
 				expr.TargetObject = new CodeTypeReferenceExpression (type);
@@ -855,7 +858,8 @@ namespace System.Web.Compilation
 				try {
 					c = (Color) colorConverter.ConvertFromString (str);
 				} catch (Exception e){
-					throw new HttpException ("Color " + str + " is not a valid color.", e);
+					throw new ParseException (currentLocation,
+							"Color " + str + " is not a valid color.", e);
 				}
 
 				if (c.IsKnownColor){
@@ -893,11 +897,11 @@ namespace System.Web.Compilation
 					else
 						o = parse.Invoke (null, new object [] { str });
 				} catch (Exception e) {
-					throw new HttpException ("Cannot parse " + str + " as " + type, e);
+					throw new ParseException (currentLocation, "Cannot parse " + str + " as " + type, e);
 				}
 				
 				if (o == null)
-					throw new HttpException (str + " as " + type + " is null");
+					throw new ParseException (currentLocation, str + " as " + type + " is null");
 
 				CodeTypeReferenceExpression exprType = new CodeTypeReferenceExpression (type);
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (exprType, "Parse");

@@ -35,7 +35,6 @@ namespace System.Web.UI
 		bool debug;
 		string compilerOptions;
 		string language;
-		ILocation location;
 
 		public TemplateParser ()
 		{
@@ -69,7 +68,7 @@ namespace System.Web.UI
 		{
 		}
 
-		internal string GetOneKey (Hashtable tbl)
+		internal static string GetOneKey (Hashtable tbl)
 		{
 			foreach (object key in tbl.Keys)
 				return key.ToString ();
@@ -81,7 +80,7 @@ namespace System.Web.UI
 		{
 			if (String.Compare (directive, DefaultDirectiveName, true) == 0) {
 				if (mainAttributes != null)
-					throw new HttpException ("Only 1 " + DefaultDirectiveName + " is allowed");
+					ThrowParseException ("Only 1 " + DefaultDirectiveName + " is allowed");
 
 				mainAttributes = atts;
 				ProcessMainAttributes (mainAttributes);
@@ -94,13 +93,13 @@ namespace System.Web.UI
 				string src = GetString (atts, "Src", null);
 
 				if (atts.Count > 0)
-					throw new HttpException ("Attribute " + GetOneKey (atts) + " unknown.");
+					ThrowParseException ("Attribute " + GetOneKey (atts) + " unknown.");
 
 				if (name == null && src == null)
-					throw new HttpException ("You gotta specify Src or Name");
+					ThrowParseException ("You gotta specify Src or Name");
 					
 				if (name != null && src != null)
-					throw new HttpException ("Src and Name cannot be used together");
+					ThrowParseException ("Src and Name cannot be used together");
 
 				if (name != null) {
 					AddAssemblyByName (name);
@@ -115,7 +114,7 @@ namespace System.Web.UI
 			if (cmp == 0) {
 				string namesp = GetString (atts, "Namespace", null);
 				if (atts.Count > 0)
-					throw new HttpException ("Attribute " + GetOneKey (atts) + " unknown.");
+					ThrowParseException ("Attribute " + GetOneKey (atts) + " unknown.");
 				
 				if (namesp != null && namesp != "")
 					AddImport (namesp);
@@ -127,20 +126,20 @@ namespace System.Web.UI
 				string ifacename = GetString (atts, "Interface", "");
 
 				if (atts.Count > 0)
-					throw new HttpException ("Attribute " + GetOneKey (atts) + " unknown.");
+					ThrowParseException ("Attribute " + GetOneKey (atts) + " unknown.");
 				
 				Type iface = LoadType (ifacename);
 				if (iface == null)
-					throw new HttpException ("Cannot find type " + ifacename);
+					ThrowParseException ("Cannot find type " + ifacename);
 
 				if (!iface.IsInterface)
-					throw new HttpException (iface + " is not an interface");
+					ThrowParseException (iface + " is not an interface");
 
 				AddInterface (iface.FullName);
 				return;
 			}
 
-			throw new HttpException ("Unknown directive: " + directive);
+			ThrowParseException ("Unknown directive: " + directive);
 		}
 		
 		internal Type LoadType (string typeName)
@@ -268,7 +267,7 @@ namespace System.Web.UI
 				string loc = assembly.Location;
 				fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
 			} catch (Exception e) {
-				throw new ParseException (location, "Assembly " + name + " not found");
+				ThrowParseException ("Assembly " + name + " not found", e);
 			}
 
 			AddAssembly (assembly, fullpath);
@@ -284,7 +283,7 @@ namespace System.Web.UI
 			compilerOptions = GetString (atts, "CompilerOptions", null);
 			language = GetString (atts, "Language", "C#");
 			if (String.Compare (language, "c#", true) != 0)
-				throw new HttpException ("Only C# supported.");
+				ThrowParseException ("Only C# supported.");
 
 			string src = GetString (atts, "Src", null);
 			Assembly srcAssembly = null;
@@ -300,17 +299,17 @@ namespace System.Web.UI
 					parent = LoadType (inherits);
 
 				if (parent == null)
-					throw new HttpException ("Cannot find type " + inherits);
+					ThrowParseException ("Cannot find type " + inherits);
 
 				if (!DefaultBaseType.IsAssignableFrom (parent))
-					throw new HttpException ("The parent type does not derive from " + DefaultBaseType);
+					ThrowParseException ("The parent type does not derive from " + DefaultBaseType);
 
 				baseType = parent;
 			}
 
 			className = GetString (atts, "ClassName", null);
 			if (atts.Count > 0)
-				throw new HttpException ("Unknown attribute: " + GetOneKey (atts));
+				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 		}
 
 		Assembly GetAssemblyFromSource (string vpath)
@@ -318,7 +317,7 @@ namespace System.Web.UI
 			vpath = UrlUtils.Combine (BaseVirtualDir, vpath);
 			string realPath = MapPath (vpath, false);
 			if (!File.Exists (realPath))
-				throw new HttpException ("File " + realPath + " not found");
+				ThrowParseException ("File " + vpath + " not found");
 
 			AddDependency (realPath);
 
@@ -397,10 +396,6 @@ namespace System.Web.UI
 			}
 		}
 
-		internal ILocation Location {
-			get { return location; }
-			set { location = value; }
-		}
 		internal ArrayList Imports {
 			get { return imports; }
 		}

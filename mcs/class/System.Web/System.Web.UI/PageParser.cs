@@ -37,7 +37,7 @@ namespace System.Web.UI
 				} else if (String.Compare (enabless, "false", true) == 0) {
 					enableSessionState = false;
 				} else {
-					throw new HttpException ("Invalid value for EnableSessionState: " + enabless);
+					ThrowParseException ("Invalid value for EnableSessionState: " + enabless);
 				}
 			}
 

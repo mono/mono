@@ -1,5 +1,14 @@
 2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseParser.cs: Location property is now here. Added a couple of
+	convenience methods to throw a ParseException.
+
+	* TemplateParser.cs:
+	* TemplateControlParser.cs:
+	* PageParser.cs: throw ParseException where appropiate.
+
+2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ApplicationFileParser.cs: use the generator to actually parse the
 	file.
 

@@ -159,7 +159,7 @@ namespace System.Web.Compilation
 
 		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 		{
-			this.location = location;
+			this.location = new Location (location);
 			if (tparser != null)
 				tparser.Location = location;
 

@@ -140,15 +140,10 @@ namespace System.Web.Compilation
 		{
 			if (results.NativeCompilerReturnValue == 0)
 				return;
+
 			StringWriter writer = new StringWriter();
 			provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
-			StringBuilder sb = new StringBuilder ();
-			foreach (CompilerError error in results.Errors) {
-				sb.Append (error);
-				sb.Append ('\n');
-			}
-
-			throw new CompilationException (parser.InputFile, sb.ToString (), writer.ToString ());
+			throw new CompilationException (parser.InputFile, results.Errors, writer.ToString ());
 		}
 
 		public virtual Type GetCompiledType () 

@@ -8,7 +8,9 @@
 //
 
 using System;
+using System.Collections;
 using System.CodeDom.Compiler;
+using System.Text;
 using System.Web;
 
 namespace System.Web.Compilation
@@ -16,16 +18,27 @@ namespace System.Web.Compilation
 	internal class CompilationException : HtmlizedException
 	{
 		string filename;
-		string errors;
-		string file;
+		CompilerErrorCollection errors;
+		string fileText;
+		string errmsg;
+		int [] errorLines;
 
-		public CompilationException (string filename, string errors, string file)
+		public CompilationException (string filename, CompilerErrorCollection errors, string fileText)
 		{
 			this.filename = filename;
 			this.errors = errors;
-			this.file = file;
+			this.fileText = fileText;
 		}
 
+		public override string SourceFile {
+			get {
+				if (errors == null || errors.Count == 0)
+					return filename;
+
+				return errors [0].FileName;
+			}
+		}
+		
 		public override string FileName {
 			get { return filename; }
 		}
@@ -42,11 +55,42 @@ namespace System.Web.Compilation
 		}
 
 		public override string ErrorMessage {
-			get { return errors; }
+			get {
+				if (errmsg == null && errors != null) {
+					StringBuilder sb = new StringBuilder ();
+					foreach (CompilerError err in errors) {
+						sb.Append (err);
+						sb.Append ("\n");
+					}
+					errmsg = sb.ToString ();
+				}
+
+				return errmsg;
+			}
 		}
 
-		public string File {
-			get { return file; }
+		public override string FileText {
+			get { return fileText; }
+		}
+
+		public override int [] ErrorLines {
+			get {
+				if (errorLines == null && errors != null) {
+					ArrayList list = new ArrayList ();
+					foreach (CompilerError err in errors) {
+						if (err.Line != 0)
+							list.Add (err.Line);
+					}
+					errorLines = (int []) list.ToArray (typeof (int));
+					Array.Sort (errorLines);
+				}
+
+				return errorLines;
+			}
+		}
+
+		public override bool ErrorLinesPaired {
+			get { return false; }
 		}
 	}
 }

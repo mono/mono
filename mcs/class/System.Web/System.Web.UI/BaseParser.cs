@@ -12,15 +12,17 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Web;
+using System.Web.Compilation;
 using System.Web.Util;
 
 namespace System.Web.UI
 {
 	public class BaseParser
 	{
-		private HttpContext context;
-		private string baseDir;
-		private string baseVDir;
+		HttpContext context;
+		string baseDir;
+		string baseVDir;
+		ILocation location;
 
 		internal string MapPath (string path)
 		{
@@ -51,18 +53,16 @@ namespace System.Web.UI
 
 			hash.Remove (key);
 
-			bool result;
+			bool result = false;
 			if (String.Compare (val, "true", true) == 0)
 				result = true;
-			else if (String.Compare (val, "false", true) == 0)
-				result = false;
-			else
-				throw new HttpException ("Invalid value for " + key);
+			else if (String.Compare (val, "false", true) != 0)
+				ThrowParseException ("Invalid value for " + key);
 
 			return result;
 		}
 
-		internal string GetString (Hashtable hash, string key, string deflt)
+		internal static string GetString (Hashtable hash, string key, string deflt)
 		{
 			string val = hash [key] as string;
 			if (val == null)
@@ -72,8 +72,21 @@ namespace System.Web.UI
 			return val;
 		}
 		
-		//
+		internal void ThrowParseException (string message)
+		{
+			throw new ParseException (location, message);
+		}
 		
+		internal void ThrowParseException (string message, Exception inner)
+		{
+			throw new ParseException (location, message, inner);
+		}
+		
+		internal ILocation Location {
+			get { return location; }
+			set { location = value; }
+		}
+
 		internal HttpContext Context {
 			get { return context; }
 			set { context = value; }

@@ -1,5 +1,22 @@
 2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: copy the location before setting the value for the
+	control builders.
+
+	* BaseCompiler.cs: changed parameters for CompilationException.
+
+	* CompilationException.cs: it takes now line numbers and error
+	descriptions from the CompilerErrorCollection.
+
+	* Location.cs: used when a copy of an ILocation is needed.
+
+	* ParseException.cs: implemented new methods to provide line numbers
+	and souce file.
+
+	* TemplateControlCompiler.cs: throw a ParseException where appropiate.
+
+2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: also support data bind syntax inside tags not
 	processed as controls. Added debugging method.
 

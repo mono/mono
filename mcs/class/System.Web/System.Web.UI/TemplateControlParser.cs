@@ -52,20 +52,20 @@ namespace System.Web.UI
 			if (cmp == 0) {
 				string tagprefix = GetString (atts, "TagPrefix", null);
 				if (tagprefix == null || tagprefix.Trim () == "")
-					throw new ParseException (Location, "No TagPrefix attribute found.");
+					ThrowParseException ("No TagPrefix attribute found.");
 
 				string ns = GetString (atts, "Namespace", null);
 				string assembly = GetString (atts, "Assembly", null);
 
 				if (ns != null && assembly == null)
-					throw new ParseException (Location, "Need an Assembly attribute with Namespace.");
+					ThrowParseException ("Need an Assembly attribute with Namespace.");
 
 				if (ns == null && assembly != null)
-					throw new ParseException (Location, "Need a Namespace attribute with Assembly.");
+					ThrowParseException ("Need a Namespace attribute with Assembly.");
 				
 				if (ns != null) {
 					if (atts.Count != 0)
-						throw new HttpException ("Unknown attribute: " + GetOneKey (atts));
+						ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 
 					AddImport (ns);
 					Assembly ass = AddAssemblyByName (assembly);
@@ -78,21 +78,19 @@ namespace System.Web.UI
 				string src = GetString (atts, "Src", null);
 
 				if (tagname == null && src != null)
-					throw new ParseException (Location, "Need a TagName attribute with Src.");
+					ThrowParseException ("Need a TagName attribute with Src.");
 
 				if (tagname != null && src == null)
-					throw new ParseException (Location, "Need a Src attribute with TagName.");
+					ThrowParseException ("Need a Src attribute with TagName.");
 
 				if (!src.EndsWith (".ascx"))
-					throw new ParseException (Location, "Source file extension for controls " + 
-									    "must be .ascx");
+					ThrowParseException ("Source file extension for controls must be .ascx");
 
 				
 				AddDependency (Path.Combine (MapPath (BaseVirtualDir), src));
 				Type type = UserControlParser.GetCompiledType (BaseVirtualDir, src, Context);
 				AddAssembly (type.Assembly, true);
 				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);
-				return;
 			}
 
 			cmp = String.Compare ("Reference", directive, true);
@@ -104,7 +102,7 @@ namespace System.Web.UI
 				Console.WriteLine ("WARNING: Reference is not supported yet!");
 				
 				if (atts.Count != 0)
-					throw new HttpException ("Unknown attribute: " + GetOneKey (atts));
+					ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 
 				return;
 			}

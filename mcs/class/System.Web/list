@@ -77,6 +77,7 @@ System.Web.Compilation/CompilationException.cs
 System.Web.Compilation/UserControlCompiler.cs
 System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/ILocation.cs
+System.Web.Compilation/Location.cs
 System.Web.Compilation/ParseException.cs
 System.Web.Compilation/TagAttributes.cs
 System.Web.Compilation/TagType.cs
