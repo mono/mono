@@ -589,7 +589,7 @@ namespace System.Web {
 			if (offset < 0 || offset >= len)
 				throw new ArgumentOutOfRangeException("offset");
 
-			if (count < 0 || offset <= len - count)
+			if (count < 0 || offset < len - count)
 				throw new ArgumentOutOfRangeException("count");
 
 			ArrayList result = new ArrayList ();

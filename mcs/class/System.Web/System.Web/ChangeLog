@@ -1,3 +1,8 @@
+2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: fixed bug #36038. Thanks to juancri@tagnet.org for
+	reporting the bug and how to fix it.
+
 2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCookie.cs: send 'expires' in the header.
