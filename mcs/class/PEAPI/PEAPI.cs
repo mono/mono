@@ -2309,25 +2309,25 @@ namespace PEAPI
 
     public IntConst(sbyte val) {
       this.val = val;
-      size = 8;
+      size = 1;
       type = PrimitiveType.Int8;
     }
 
     public IntConst(short val) {
       this.val = val;
-      size = 16;
+      size = 2;
       type = PrimitiveType.Int16;
     }
 
     public IntConst(int val) {
       this.val = val;
-      size = 32;
+      size = 4;
       type = PrimitiveType.Int32;
     }
 
     public IntConst(long val) {
       this.val = val;
-      size = 64;
+      size = 8;
       type = PrimitiveType.Int64;
     }
 
@@ -2360,22 +2360,22 @@ namespace PEAPI
 
     public UIntConst(sbyte val) {
       this.val = val;
-      size = 8;
+      size = 1;
       type = PrimitiveType.UInt8;
     }
     public UIntConst(short val) {
       this.val = val;
-      size = 16;
+      size = 2;
       type = PrimitiveType.UInt16;
     }
     public UIntConst(int val) {
       this.val = val;
-      size = 32;
+      size = 4;
       type = PrimitiveType.UInt32;
     }
     public UIntConst(long val) {
       this.val = val;
-      size = 64;
+      size = 8;
       type = PrimitiveType.UInt64;
     }
 
@@ -3338,7 +3338,7 @@ if (rsrc != null)
                                 initDataSize += sdata.Size();
       }
       if (rsrc != null) { 
-                                rsrc.SetSize(NumToAlign(rsrc.Tide(),fileAlign));
+                     rsrc.SetSize(NumToAlign(rsrc.Tide(),fileAlign));
                                 rsrc.SetOffset(offset);
         rsrc.SetRVA(rva);
         offset += rsrc.Size();
@@ -4395,7 +4395,6 @@ if (rsrc != null)
     }
 
     internal uint Size() {
-      //Console.WriteLine("metaData size = " + metaDataSize);
       return metaDataSize;
     }
 
@@ -4626,12 +4625,9 @@ if (rsrc != null)
         sizeOfHeaders += streams[i].headerSize();
       }
       metaDataSize = MetaDataHeaderSize + sizeOfHeaders;
-      // Console.WriteLine("Size of meta data headers (tildeStart) = " + metaDataSize);
       tildeStart = metaDataSize;
       metaDataSize += tildeTide + tildePadding;
-      //Console.WriteLine(tildeName + " - size = " + (tildeTide + tildePadding));
       for (int i=1; i < numStreams; i++) {
-        // Console.WriteLine("Stream " + i + " starts at " + metaDataSize);
         streams[i].Start = metaDataSize;
         metaDataSize += streams[i].Size();
         streams[i].WriteDetails();
@@ -6410,8 +6406,8 @@ if (rsrc != null)
                 uint[] relocs; 
 
                 internal Section(string sName, uint sFlags) {
-                        name = sName.ToCharArray();
-                        flags = sFlags;
+                  name = sName.ToCharArray();
+                  flags = sFlags;
                 }
 
                 internal uint Tide() { return tide; }

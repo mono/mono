@@ -1,3 +1,7 @@
+2003-10-19 Jackson Harper <jackson@ximian.com>
+
+	* PEAPI.cs: Use bytes not bits for constant sizes.
+	
 2003-10-18 Jackson Harper <jackson@ximian.com>
 
 	* PEAPI.cs: Add proper support for short instructions, removing
