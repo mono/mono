@@ -1739,11 +1739,16 @@ namespace Mono.CSharp {
 				Statement s = (Statement) statements [ix];
 
 				if (unreachable && !(s is LabeledStatement)) {
+					if (s == EmptyStatement.Value)
+						s.loc = EndLocation;
+
 					if (!s.ResolveUnreachable (ec, !warning_shown))
 						ok = false;
 
 					if (s != EmptyStatement.Value)
 						warning_shown = true;
+					else
+						s.loc = Location.Null;
 
 					statements [ix] = EmptyStatement.Value;
 					continue;

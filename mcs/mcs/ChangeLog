@@ -1,3 +1,8 @@
+2004-05-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* statement.cs: When checking for unreachable code on an EmptyStatement,
+	set the location. Fixes bug #58488.
+
 2004-05-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Add -pkg handling.
