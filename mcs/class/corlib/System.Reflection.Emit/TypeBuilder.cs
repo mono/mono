@@ -816,8 +816,6 @@ namespace System.Reflection.Emit {
 			TypeBuilder datablobtype = DefineNestedType ("$ArrayType$"+InitializedDataCount.ToString(),
 				TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
 				pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, data.Length);
-			datablobtype.packing_size = PackingSize.Size1;
-			datablobtype.class_size = data.Length;
 			datablobtype.CreateType ();
 			FieldBuilder res = DefineField (name, datablobtype, attributes|FieldAttributes.Assembly|FieldAttributes.Static|FieldAttributes.HasFieldRVA);
 			res.SetRVAData (data);

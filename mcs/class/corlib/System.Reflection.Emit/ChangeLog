@@ -1,3 +1,13 @@
+2003-02-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs (DefineInitializedData): Removed unnecessary assignments.
+
+	* ModuleBuilder.cs (DefineInitializedData): Do not call 
+	TypeBuilder::DefineInitializedData since that would mean defining a
+	nested type of the global type, which is wrong. Instead define a
+	new public type as MS does.
+
+	* ModuleBuilder.cs (DefineUninitializedData): Ditto.
 
 Thu Feb 13 18:40:52 CET 2003 Paolo Molaro <lupus@ximian.com>
 

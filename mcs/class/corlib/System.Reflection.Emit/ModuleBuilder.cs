@@ -95,6 +95,8 @@ namespace System.Reflection.Emit {
 				global_type_created = global_type.CreateType ();
 		}
 
+		// Same as under MS.NET
+		static int GlobalDataCount = 10000;
 
 		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
 			if (name == null)
@@ -104,7 +106,14 @@ namespace System.Reflection.Emit {
 			if (global_type == null)
 				global_type = new TypeBuilder (this, 0);
 
-			FieldBuilder fb = global_type.DefineInitializedData (name, data, attributes);
+			TypeBuilder datablobtype = DefineType (
+				"$ArrayType$" + GlobalDataCount.ToString(),
+				TypeAttributes.Public|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
+				assemblyb.corlib_value_type, null, PackingSize.Size1, data.Length);
+			datablobtype.CreateType ();
+			GlobalDataCount ++;
+			FieldBuilder fb = global_type.DefineField (name, datablobtype, attributes|FieldAttributes.Assembly|FieldAttributes.Static|FieldAttributes.HasFieldRVA);
+			fb.SetRVAData (data);
 
 			if (global_fields != null) {
 				FieldBuilder[] new_fields = new FieldBuilder [global_fields.Length+1];
@@ -126,8 +135,16 @@ namespace System.Reflection.Emit {
 			if (global_type == null)
 				global_type = new TypeBuilder (this, 0);
 
-			FieldBuilder fb = global_type.DefineUninitializedData (name, size, attributes);
+			TypeBuilder datablobtype = DefineType (
+				"$ArrayType$" + GlobalDataCount.ToString(),
+				TypeAttributes.Public|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
+				assemblyb.corlib_value_type, null, PackingSize.Size1, size);
+			datablobtype.CreateType ();
+			GlobalDataCount ++;
 
+			throw new NotImplementedException ();
+
+			/*
 			if (global_fields != null) {
 				FieldBuilder[] new_fields = new FieldBuilder [global_fields.Length+1];
 				System.Array.Copy (global_fields, new_fields, global_fields.Length);
@@ -138,6 +155,7 @@ namespace System.Reflection.Emit {
 				global_fields [0] = fb;
 			}
 			return fb;
+			*/
 		}
 
 		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes)
