@@ -1,3 +1,8 @@
+2004-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XQueryCommand.cs : Reverted. "context item is nothing" should be
+	  differentiate from "context item is document".
+
 2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XQueryCommand.cs : use new XPathDocument() for empty contextdocument.

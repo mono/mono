@@ -177,7 +177,7 @@ namespace System.Xml.Query
 			XmlArgumentList args,
 			XmlWriter results)
 		{
-			Execute (new XPathDocument (), dataSources, args, results);
+			Execute ((XPathNavigator) null, dataSources, args, results);
 		}
 
 		[MonoTODO]
@@ -187,7 +187,7 @@ namespace System.Xml.Query
 			XmlArgumentList args,
 			XmlWriter results)
 		{
-			Execute (contextDocument.CreateNavigator (), dataSources, args, results);
+			Execute (contextDocument != null ? contextDocument.CreateNavigator () : null, dataSources, args, results);
 		}
 
 		[MonoTODO]
