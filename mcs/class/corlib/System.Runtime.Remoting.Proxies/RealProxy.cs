@@ -24,6 +24,7 @@ namespace System.Runtime.Remoting.Proxies
 	internal class TransparentProxy {
 		public RealProxy _rp;
 		IntPtr _class;
+		bool _custom_type_info;
 	}
 	
 	public abstract class RealProxy {
@@ -33,6 +34,7 @@ namespace System.Runtime.Remoting.Proxies
 		MarshalByRefObject _server;
 		internal Identity _objectIdentity;
 		Object _objTP;
+		object _stubData;
 
 		protected RealProxy ()
 		{
@@ -79,6 +81,34 @@ namespace System.Runtime.Remoting.Proxies
 		internal Identity ObjectIdentity
 		{
 			get { return _objectIdentity; }
+		}
+		
+		[MonoTODO]
+		public virtual IntPtr GetCOMIUnknown (bool fIsMarshalled)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public virtual void SetCOMIUnknown (IntPtr i)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public virtual IntPtr SupportsInterface (Guid iid)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static object GetStubData (RealProxy rp)
+		{
+			return rp._stubData;
+		}
+		
+		public static void SetStubData (RealProxy rp, object stubData)
+		{
+			rp._stubData = stubData;
 		}
 
 		public abstract IMessage Invoke (IMessage msg);

@@ -1,3 +1,9 @@
+2003-11-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RealProxy.cs: Added some missing methods.
+	* RemotingProxy.cs: ActivateRemoteObject() must return a ConstructionResponse
+	  instead of a ReturnMessage.
+
 2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingProxy.cs: Do not dispose proxy identity when it is a local

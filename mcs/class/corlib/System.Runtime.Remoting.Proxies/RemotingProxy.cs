@@ -122,7 +122,7 @@ namespace System.Runtime.Remoting.Proxies
 		IMessage ActivateRemoteObject (IMethodMessage request)
 		{
 			if (_ctorCall == null)	// It must be a WKO
-				return new ReturnMessage (this, new object[0], 0, null, (IMethodCallMessage) request);	// Ignore constructor call for WKOs
+				return new ConstructionResponse (this, null, (IMethodCallMessage) request);	// Ignore constructor call for WKOs
 
 			_ctorCall.CopyFrom (request);
 			return ActivationServices.Activate (this, _ctorCall);
