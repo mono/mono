@@ -47,21 +47,21 @@ namespace System.Xml {
 		public XmlDataDocument() {
 
 			dataSet = new DataSet();
-			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
 			//this.NodeChanging += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
 			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
-			this.NodeRemoved += new XmlNodeChangedEventHandler (OnXmlDataChanged);
-			this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			this.NodeRemoved += new XmlNodeChangedEventHandler (OnNodeRemoved);
+			this.NodeInserted += new XmlNodeChangedEventHandler (OnNodeInserted);
 		}
 
 		public XmlDataDocument(DataSet dataset) {
 
 			this.dataSet = dataset;
-			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
 			//this.NodeChanging += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
 			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
-			this.NodeRemoved += new XmlNodeChangedEventHandler (OnXmlDataChanged);
-			this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			this.NodeRemoved += new XmlNodeChangedEventHandler (OnNodeRemoved);
+			this.NodeInserted += new XmlNodeChangedEventHandler (OnNodeInserted);
 		}
 
 		#endregion // Constructors
@@ -264,8 +264,7 @@ namespace System.Xml {
 		public override void Load(XmlReader reader) {
 
 			// dont listen these events
-      			this.NodeInserted -= new XmlNodeChangedEventHandler (OnXmlDataChanged);		       
-			this.NodeInserting -= new XmlNodeChangedEventHandler (OnNodeInserting);
+			RemoveXmlDocumentListeners ();
 
 			DataTable dt = null;
 
@@ -332,8 +331,7 @@ namespace System.Xml {
 
 			base.Load (textReader);
 
-			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
-			this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataChanged);
+			AddXmlDocumentListeners ();
 		}
 		
 		#endregion // overloaded Load methods
@@ -369,7 +367,7 @@ namespace System.Xml {
 		
 		// Invoked when XmlNode is changed colum is changed
 		[MonoTODO]
-		private void OnXmlChanged (object sender, XmlNodeChangedEventArgs args)
+		private void OnNodeChanged (object sender, XmlNodeChangedEventArgs args)
 		{
 			if (args.Node == null)
 				return;
@@ -385,7 +383,7 @@ namespace System.Xml {
 
 		// Invoked when XmlNode is removed
 		[MonoTODO]
-		private void OnXmlRemoved (object sender, XmlNodeChangedEventArgs args)
+		private void OnNodeRemoved (object sender, XmlNodeChangedEventArgs args)
 		{
 			if (args.OldParent == null)
 				return;
@@ -397,7 +395,7 @@ namespace System.Xml {
 			}
 
 			// Dont trig event again
-			//row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
 			row [args.Node.Name] = null;
 
 			// if all columns are "nulled" we can remove the row. 
@@ -416,7 +414,7 @@ namespace System.Xml {
 				row.Delete ();
 			}
 
-			//row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
 		}
 
 		private void OnNodeInserting (object sender, XmlNodeChangedEventArgs args) {
@@ -469,44 +467,28 @@ namespace System.Xml {
 			} 
 		}
 
-		// this changed datatable values when some of xmldocument elements is changed
-		[MonoTODO("Insert")]
-		private void OnXmlDataChanged (object sender, XmlNodeChangedEventArgs args)
-		{
-			if (args == null)
-				return ;
-
-			switch  (args.Action) {
-				
-			        case XmlNodeChangedAction.Change:
-					OnXmlChanged (sender, args);
-					break;
-			        case XmlNodeChangedAction.Remove:
-					OnXmlRemoved (sender, args);
-					break;
-			        case XmlNodeChangedAction.Insert:
-					OnNodeInserted (sender, args);
-					break;
-			}
-		}
-
 		[MonoTODO]
 		private void OnDataTableColumnChanged(object sender, 
 							     DataColumnChangeEventArgs eventArgs)
 		{
+			RemoveXmlDocumentListeners ();
+
 			// row is not yet in datatable
 			if (eventArgs.Row.XmlRowID == 0)
 				return;
 
 			// TODO: Here should be some kind of error checking.
 			GetElementsByTagName (eventArgs.Column.ToString ()) [dataRowIDList.IndexOf (
-				eventArgs.Row.XmlRowID)].InnerText = (string)eventArgs.ProposedValue;
+				eventArgs.Row.XmlRowID)].InnerText = eventArgs.ProposedValue.ToString ();
+
+			AddXmlDocumentListeners ();
 		}
 	
 		[MonoTODO]
 		private void OnDataTableRowDeleted(object sender,
 							  DataRowChangeEventArgs eventArgs)
 		{
+
 			DataRow deletedRow = null;
 			deletedRow = eventArgs.Row;
 
@@ -514,7 +496,8 @@ namespace System.Xml {
 				return;
 			
 			int rowIndex = dataRowIDList.IndexOf (eventArgs.Row.XmlRowID);
-			if (rowIndex <= 0 || rowIndex > GetElementsByTagName (deletedRow.Table.TableName).Count - 1)
+			if (rowIndex == -1 || eventArgs.Row.XmlRowID == 0 || 
+			    rowIndex > GetElementsByTagName (deletedRow.Table.TableName).Count - 1)
 				return;
 			
 			// Remove element from xmldocument and row indexlist
@@ -551,6 +534,8 @@ namespace System.Xml {
 		[MonoTODO]
 		private void OnDataTableRowAdded (DataRowChangeEventArgs args)
 		{
+			RemoveXmlDocumentListeners ();
+
 			// If XmlRowID is != 0 then it is already added
 			if (args.Row.XmlRowID != 0)
 				return;
@@ -563,34 +548,43 @@ namespace System.Xml {
 			DocumentElement.AppendChild (element);
 			
 			XmlElement rowElement = null;			
+
 			for (int i = 0; i < row.Table.Columns.Count; i++) {
-				//this.NodeInserted -= new XmlNodeChangedEventHandler (OnXmlDataChanged);
+				
 				rowElement = CreateElement (row.Table.Columns [i].ToString ());
 				rowElement.InnerText = (string)row [i];
 				element.AppendChild (rowElement);
 				
 			}
+			
+			AddXmlDocumentListeners ();
 		}
 
 		// Rollback
 		[MonoTODO]
 		private void OnDataTableRowRollback (DataRowChangeEventArgs args)
 		{
-			DataRow row = args.Row;
-			
-			int rowid = dataRowIDList.IndexOf (row.XmlRowID);
-			
-			// find right element in xmldocument
-			XmlNode node = GetElementsByTagName (row.Table.TableName) [rowid];
+			RemoveXmlDocumentListeners ();
 
+			DataRow row = args.Row;			
+			int rowid = dataRowIDList.IndexOf (row.XmlRowID);
+
+			// find right element in xmldocument
+			if (rowid == 0 || rowid >= GetElementsByTagName (row.Table.TableName).Count)
+				return;
+
+			XmlNode node = GetElementsByTagName (row.Table.TableName) [rowid];
+			
 			int rowValue = 0;
 			for (int i = 0; i < node.ChildNodes.Count; i++) {
-
-				XmlNode child = node.ChildNodes [i];
-				if (child.NodeType != XmlNodeType.Whitespace)				
-					child.InnerText = (string)row [rowValue++];
 				
+				XmlNode child = node.ChildNodes [i];
+				if (child.NodeType != XmlNodeType.Whitespace) {
+					child.InnerText = (string)row [rowValue++];
+				}
 			}
+
+			AddXmlDocumentListeners ();
 		}
 
 		#endregion // DataSet event handlers
@@ -619,6 +613,17 @@ namespace System.Xml {
 			}
 		}
 		
+		private void RemoveXmlDocumentListeners ()
+		{
+			this.NodeInserting -= new XmlNodeChangedEventHandler (OnNodeInserting);
+			this.NodeInserted -= new XmlNodeChangedEventHandler (OnNodeInserted);
+		}
+
+		private void AddXmlDocumentListeners ()
+		{
+			this.NodeInserting += new XmlNodeChangedEventHandler (OnNodeInserting);
+			this.NodeInserted += new XmlNodeChangedEventHandler (OnNodeInserted);
+		}
 		#endregion // Private methods
 	}
 }
