@@ -1,5 +1,11 @@
 2003-08-12  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlSchemaImporter.cs: ImportTypeMapping doesn't need to check if the
+	  schema type it is importing is a class or an array. It will always
+	  be a class.
+
+2003-08-12  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlSerializationWriterInterpreter.cs: any element members can be serialized
 	  as text nodes. Support it.
 

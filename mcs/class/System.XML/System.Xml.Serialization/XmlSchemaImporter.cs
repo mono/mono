@@ -126,7 +126,10 @@ namespace System.Xml.Serialization {
 
 			if (stype is XmlSchemaSimpleType) return null;
 
-			XmlTypeMapping map = ImportType (qname, (XmlSchemaComplexType)stype, name);
+			XmlTypeMapping map = CreateTypeMapping (qname, SchemaTypes.Class, name);
+			map.Documentation = GetDocumentation (stype);
+			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
+			
 			BuildPendingMaps ();
 			return map;
 		}
@@ -435,6 +438,7 @@ namespace System.Xml.Serialization {
 			}
 		}
 
+
 		void ImportChoiceContent (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaChoice choice, CodeIdentifiers classIds, bool multiValue)
 		{
 			XmlTypeMapElementInfoList choices = new XmlTypeMapElementInfoList ();
@@ -478,6 +482,7 @@ namespace System.Xml.Serialization {
 				{
 					// When comparing class types, use the most generic class in the
 					// inheritance hierarchy
+
 
 					XmlTypeMapping choiceMap = GetTypeMapping (choiceType);
 					BuildPendingMap (choiceMap);
@@ -717,6 +722,7 @@ namespace System.Xml.Serialization {
 				TypeData arrayTypeData = FindBuiltInType (slist.ItemTypeName, stype);
 
 				ListMap listMap = new ListMap ();
+
 				listMap.ItemInfo = new XmlTypeMapElementInfoList ();
 				listMap.ItemInfo.Add (CreateElementInfo (typeQName.Namespace, null, "Item", arrayTypeData.ListItemTypeData, false));
 
