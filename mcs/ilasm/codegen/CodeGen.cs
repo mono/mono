@@ -28,8 +28,8 @@ namespace Mono.ILASM {
 
                 private TypeManager type_manager;
                 private ExternTable extern_table;
-                private ArrayList global_field_list;
-                private ArrayList global_method_list;
+                private Hashtable global_field_table;
+                private Hashtable global_method_table;
                 private ArrayList global_data_list;
 
                 private ArrayList defcont_list;
@@ -40,8 +40,8 @@ namespace Mono.ILASM {
                         type_manager = new TypeManager (this);
                         extern_table = new ExternTable (pefile);
                         typedef_stack = new Stack ();
-                        global_field_list = new ArrayList ();
-                        global_method_list = new ArrayList ();
+                        global_field_table = new Hashtable ();
+                        global_method_table = new Hashtable ();
                         global_data_list = new ArrayList ();
 
                         defcont_list = new ArrayList ();
@@ -107,7 +107,8 @@ namespace Mono.ILASM {
                         if (current_typedef != null) {
                                 current_typedef.AddFieldDef (fielddef);
                         } else {
-                                global_field_list.Add (fielddef);
+                                global_field_table.Add (fielddef.Name,
+                                                fielddef);
                         }
                 }
 
@@ -125,7 +126,8 @@ namespace Mono.ILASM {
                         if (current_typedef != null) {
                                 current_typedef.AddMethodDef (methoddef);
                         } else {
-                                global_method_list.Add (methoddef);
+                                global_method_table.Add (methoddef.Signature,
+                                                methoddef);
                         }
 
                         current_methoddef = methoddef;
@@ -151,11 +153,11 @@ namespace Mono.ILASM {
                 {
                         type_manager.DefineAll ();
 
-                        foreach (FieldDef fielddef in global_field_list) {
+                        foreach (FieldDef fielddef in global_field_table.Values) {
                                 fielddef.Define (this);
                         }
 
-                        foreach (MethodDef methoddef in global_method_list) {
+                        foreach (MethodDef methoddef in global_method_table.Values) {
                                 methoddef.Define (this);
                         }
 
@@ -164,6 +166,13 @@ namespace Mono.ILASM {
                         }
 
                         pefile.WritePEFile ();
+                }
+
+                public PEAPI.Method ResolveMethod (string signature)
+                {
+                        MethodDef methoddef = (MethodDef) global_method_table[signature];
+
+                        return methoddef.Resolve (this);
                 }
 
         }
