@@ -1,3 +1,8 @@
+2002-02-12  Duncan Mak  <duncan@ximian.com>
+
+	* CultureInfo.cs: Added the Calendar property to make the TimeZone
+	class build. It's marked as MonoTODO.
+
 2002-02-12  Nick Drochak  <ndrochak@gol.com>
 
 	* UnicodeCategory.cs: Fix typo.

@@ -735,6 +735,12 @@ namespace System.Globalization
 			}
 		}
 
+		[MonoTODO]
+		public virtual Calendar Calendar
+		{
+			get { return null; }
+		}
+
 		internal static bool IsIDNeutralCulture (int lcid) {
 			return (lcid & 0xff00) == 0;
 		}
