@@ -1,3 +1,9 @@
+2002-05-24  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c
+	(ves_icall_Debugger_MonoSymbolWriter_get_local_type_from_sig): Removed.
+	(ves_icall_Debugger_MonoSymbolWriter_method_from_token): Renamed to
+	`ves_icall_Debugger_MonoSymbolWriter_method_builder_from_token'.
 
 Thu May 23 18:44:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
