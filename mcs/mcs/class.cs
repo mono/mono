@@ -952,7 +952,7 @@ namespace Mono.CSharp {
 			IndexerName = class_indexer_name;
 		}
 
-		static void Report1530 (Location loc)
+		static void Error_KeywordNotAllowed (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
 		}
@@ -969,7 +969,7 @@ namespace Mono.CSharp {
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
 						iface.DefineMembers (this);
 					else
-						Report1530 (iface.Location);
+						Error_KeywordNotAllowed (iface.Location);
 			}
 
 			if (RootContext.WarningLevel > 1){
@@ -1045,8 +1045,11 @@ namespace Mono.CSharp {
 			} else
 				IndexerName = "Item";
 
-			if (operators != null)
+			if (operators != null){
 				DefineMembers (operators, null);
+
+				CheckPairedOperators ();
+			}
 
 			if (enums != null)
 				DefineMembers (enums, defined_names);
@@ -1821,6 +1824,131 @@ namespace Mono.CSharp {
 		{
 			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
 		}
+
+		//
+		// Operator pair checking
+		//
+
+		class OperatorEntry {
+			public int flags;
+			public Type ret_type;
+			public Type type1, type2;
+			public Operator op;
+			public Operator.OpType ot;
+			
+			public OperatorEntry (int f, Operator o)
+			{
+				flags = f;
+
+				ret_type = o.OperatorMethod.GetReturnType ();
+				Type [] pt = o.OperatorMethod.ParameterTypes;
+				type1 = pt [0];
+				type2 = pt [1];
+				op = o;
+				ot = o.OperatorType;
+			}
+
+			public override int GetHashCode ()
+			{	
+				return ret_type.GetHashCode ();
+			}
+
+			public override bool Equals (object o)
+			{
+				OperatorEntry other = (OperatorEntry) o;
+
+				if (other.ret_type != ret_type)
+					return false;
+				if (other.type1 != type1)
+					return false;
+				if (other.type2 != type2)
+					return false;
+				return true;
+			}
+		}
+				
+		//
+		// Checks that some operators come in pairs:
+		//  == and !=
+		// > and <
+		// >= and <=
+		//
+		// They are matched based on the return type and the argument types
+		//
+		void CheckPairedOperators ()
+		{
+			Hashtable pairs = new Hashtable (null, null);
+
+			// Register all the operators we care about.
+			foreach (Operator op in operators){
+				int reg = 0;
+				
+				switch (op.OperatorType){
+				case Operator.OpType.Equality:
+					reg = 1; break;
+				case Operator.OpType.Inequality:
+					reg = 2; break;
+					
+				case Operator.OpType.GreaterThan:
+					reg = 1; break;
+				case Operator.OpType.LessThan:
+					reg = 2; break;
+					
+				case Operator.OpType.GreaterThanOrEqual:
+					reg = 1; break;
+				case Operator.OpType.LessThanOrEqual:
+					reg = 2; break;
+				}
+				if (reg == 0)
+					continue;
+
+				OperatorEntry oe = new OperatorEntry (reg, op);
+
+				object o = pairs [oe];
+				if (o == null)
+					pairs [oe] = oe;
+				else {
+					oe = (OperatorEntry) o;
+					oe.flags |= reg;
+				}
+			}
+
+			//
+			// Look for the mistakes.
+			//
+			foreach (DictionaryEntry de in pairs){
+				OperatorEntry oe = (OperatorEntry) de.Key;
+
+				if (oe.flags == 3)
+					continue;
+
+				string s = "";
+				switch (oe.ot){
+				case Operator.OpType.Equality:
+					s = "!=";
+					break;
+				case Operator.OpType.Inequality: 
+					s = "==";
+					break;
+				case Operator.OpType.GreaterThan: 
+					s = "<";
+					break;
+				case Operator.OpType.LessThan:
+					s = ">";
+					break;
+				case Operator.OpType.GreaterThanOrEqual:
+					s = "<=";
+					break;
+				case Operator.OpType.LessThanOrEqual:
+					s = ">=";
+					break;
+				}
+				Report.Error (216, oe.op.Location,
+					      "The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
+			}
+		}
+		
+		
 	}
 
 	public class Class : TypeContainer {
@@ -2065,7 +2193,7 @@ namespace Mono.CSharp {
 		// function.  Provides a nice cache.  (used between semantic analysis
 		// and actual code generation
 		//
-		public Type GetReturnType (TypeContainer parent)
+		public Type GetReturnType ()
 		{
 			return MemberType;
 		}
@@ -4194,7 +4322,7 @@ namespace Mono.CSharp {
 
 			Type [] param_types = OperatorMethod.ParameterTypes;
 			Type declaring_type = OperatorMethodBuilder.DeclaringType;
-			Type return_type = OperatorMethod.GetReturnType (parent);
+			Type return_type = OperatorMethod.GetReturnType ();
 			Type first_arg_type = param_types [0];
 
 			// Rules for conversion operators
@@ -4303,6 +4431,84 @@ namespace Mono.CSharp {
 			
 			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (parent);
+		}
+
+		public static string GetName (OpType ot)
+		{
+			switch (ot){
+			case OpType.LogicalNot:
+				return "!";
+			case OpType.OnesComplement:
+				return "~";
+			case OpType.Increment:
+				return "++";
+			case OpType.Decrement:
+				return "--";
+			case OpType.True:
+				return "true";
+			case OpType.False:
+				return "false";
+			case OpType.Addition:
+				return "+";
+			case OpType.Subtraction:
+				return "-";
+			case OpType.UnaryPlus:
+				return "+";
+			case OpType.UnaryNegation:
+				return "-";
+			case OpType.Multiply:
+				return "*";
+			case OpType.Division:
+				return "/";
+			case OpType.Modulus:
+				return "%";
+			case OpType.BitwiseAnd:
+				return "&";
+			case OpType.BitwiseOr:
+				return "|";
+			case OpType.ExclusiveOr:
+				return "^";
+			case OpType.LeftShift:
+				return "<<";
+			case OpType.RightShift:
+				return ">>";
+			case OpType.Equality:
+				return "==";
+			case OpType.Inequality:
+				return "!=";
+			case OpType.GreaterThan:
+				return ">";
+			case OpType.LessThan:
+				return "<";
+			case OpType.GreaterThanOrEqual:
+				return ">=";
+			case OpType.LessThanOrEqual:
+				return "<=";
+			case OpType.Implicit:
+				return "implicit";
+			case OpType.Explicit:
+				return "explicit";
+			default: return "";
+			}
+		}
+		
+		public override string ToString ()
+		{
+			Type return_type = OperatorMethod.GetReturnType();
+			Type [] param_types = OperatorMethod.ParameterTypes;
+			
+			if (SecondArgType == null)
+				return String.Format (
+					"{0} operator {1}({2})",
+					TypeManager.CSharpName (return_type),
+					GetName (OperatorType),
+					param_types [0]);
+			else
+				return String.Format (
+					"{0} operator {1}({2}, {3})",
+					TypeManager.CSharpName (return_type),
+					GetName (OperatorType),
+					param_types [0], param_types [1]);
 		}
 	}
 
