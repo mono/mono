@@ -14,6 +14,7 @@
 			<arg value="/nowarn:0679"/>
 			<arg value="/nowarn:0649"/>
 			<arg value="/nowarn:0168"/>
+			<arg value="/nowarn:0067"/>
 			<arg value="/noconfig"/>
 			<arg value="/r:Accessibility.dll"/>
 			<arg value="/r:System.dll"/>
@@ -30,7 +31,6 @@
 			</sources>
 		</csc>
 		<copy file="../lib/System.Windows.Forms.dll" tofile="Test/System.Windows.Forms.dll"/>
-		<nant basedir="Test" target="build"/>
 	</target>
 
 	<target name="test" depends="build">
