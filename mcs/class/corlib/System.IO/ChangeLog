@@ -1,3 +1,8 @@
+2002-12-07  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* Directory.cs: Now the creation of a new directory works recursively
+	it will make parents as needed.
+
 2002-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BufferedStream.cs: applied patch from <carlosga@telefonica.net> that

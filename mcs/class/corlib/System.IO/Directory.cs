@@ -16,6 +16,7 @@
 using System;
 using System.Security.Permissions;
 using System.Collections;
+using System.Text;
 
 namespace System.IO
 {
@@ -25,18 +26,50 @@ namespace System.IO
 
 		public static DirectoryInfo CreateDirectory (string path)
 		{
+			StringBuilder pathsumm = new StringBuilder();
+			DirectoryInfo tmpinfo = null;
+			
 			if (path == null) {
 				throw new ArgumentNullException ("path");
 			}
 			
 			if (path == "") {
 				throw new ArgumentException ("Path is empty");
-			}
+			}	
 			
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
 				throw new ArgumentException ("Path contains invalid chars");
 			}
 
+			string[] pathcomponents = path.Split(new char[] { Path.DirectorySeparatorChar });
+
+			
+			if (pathcomponents.Length == 1) {
+				tmpinfo = Directory.RealCreateDirectory(pathsumm.ToString());
+			} 
+			else {
+				foreach(string dir in pathcomponents)
+				{
+					if (dir.Length != 0) {
+						if (pathsumm.Length == 0) {
+							pathsumm.Append(dir);
+						} 
+						else {
+							pathsumm.Append(Path.DirectorySeparatorChar + dir);
+						}
+					}
+					
+
+					if (!Directory.Exists (pathsumm.ToString())) {
+						tmpinfo = Directory.RealCreateDirectory (pathsumm.ToString());
+					}
+				}
+			}
+			return tmpinfo;
+		}
+		
+		private static DirectoryInfo RealCreateDirectory (string path)
+		{
 			MonoIOError error;
 			
 			if (!MonoIO.CreateDirectory (path, out error)) {
