@@ -1,3 +1,16 @@
+
+Thu Mar 7 17:23:26 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c, object.c: Boehm-GC enable.
+	* icall.c: make get_data_chunk() support split data requests.
+	Ensure a class is initialized in more cases. Return only the first
+	property found in GetProperties() or the compiler gets confused. 
+	Implemented GetEvents(). Temporary fix to GetType(), needs rewriting.
+	* reflection.h, reflection.c: add fixup mechanism for field and method
+	tokens. Initialize assembly->typeref in a single place. Output
+	properties after events. Support custom attributes for events, too.
+	Typo fix for paramter custom attrs.
+
 2002-03-07  Martin Baulig  <martin@gnome.org>
 
 	* icall.c (ves_icall_System_Array_FastCopy): Small fix.
