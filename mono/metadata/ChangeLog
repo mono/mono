@@ -1,5 +1,11 @@
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
+	* metadata.c (mono_metadata_parse_method_signature): When parsing
+	a MethodDef which has VarArgs, also set sentinelpos if we don't
+	have any parameters.
+
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
 	* verify.c (mono_method_verify): In CEE_CALL, use
 	mono_method_get_signature() to get the method's signature, unless
 	we're a PInvoke method.
