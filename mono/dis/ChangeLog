@@ -1,3 +1,10 @@
+2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* dump.c dump.h main.c: Added support for dumping the ImplMap table
+	(--implmap).
+
+	* main.c (dis_method_list): Avoid disassembling native code.
+
 2003-11-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (dis_stringify_modifiers): Fix display of modreq and modopt.
