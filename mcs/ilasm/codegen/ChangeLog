@@ -1,5 +1,9 @@
 2004-12-02  Jackson Harper  <jackson@ximian.com>
 
+	* ExternTypeRefInst.cs: When converting to arrays we loose our valuetypedness.
+
+2004-12-02  Jackson Harper  <jackson@ximian.com>
+
 	* MethodDef.cs: Abstract methods don't get bodies. Even if there
 	are bodies there.
 

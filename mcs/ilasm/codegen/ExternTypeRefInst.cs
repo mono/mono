@@ -66,11 +66,13 @@ namespace Mono.ILASM {
 
 		public void MakeArray ()
 		{
+			is_valuetypeinst = false;
 			type_ref.MakeArray ();
 		}
 
 		public void MakeBoundArray (ArrayList bounds)
 		{
+			is_valuetypeinst = false;
 			type_ref.MakeBoundArray (bounds);
 		}
 
