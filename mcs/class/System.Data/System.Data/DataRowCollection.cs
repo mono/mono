@@ -42,7 +42,7 @@ namespace System.Data
 		/// <summary>
 		/// This member overrides InternalDataCollectionBase.List
 		/// </summary>
-		protected override ArrayList List 
+		protected internal override ArrayList List 
 		{
 			get { return list; }
 		}		

@@ -315,7 +315,7 @@ namespace System.Data
 		}
 
 
-		protected override ArrayList List {
+		protected internal override ArrayList List {
 			get{
 				return base.List;
 			}

@@ -75,7 +75,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets the items of the collection as a list.
 		/// </summary>
-		protected virtual ArrayList List {
+		protected internal virtual ArrayList List {
 			get { return list; }
 		}
 

@@ -71,7 +71,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets a list of the DataColumnCollection items.
 		/// </summary>
-		protected override ArrayList List 
+		protected internal override ArrayList List 
 		{
 			get
 			{

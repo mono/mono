@@ -1,3 +1,12 @@
+2002-10-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Data/ConstraintCollection.cs:
+	* System.Data/DataColumnCollection.cs:
+	* System.Data/DataRowCollection.cs:
+	* System.Data/DataTableCollection.cs:
+	* System.Data/InternalDataCollectionBase.cs: made List internal to fix
+	the build with csc. It must be a mcs bug. I will try to get a test case.
+
 2002-10-06  Luis Fernandez <luifer@onetel.net.uk>
 
 	* System.Data/Constraint.cs (AssertConstraint): added overloaded

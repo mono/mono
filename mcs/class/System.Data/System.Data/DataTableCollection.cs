@@ -50,7 +50,7 @@ namespace System.Data
 			get { return (DataTable)(tables[name]); }
 		}
 
-		protected override ArrayList List {
+		protected internal override ArrayList List {
 			get { return list; }
 		}
 
