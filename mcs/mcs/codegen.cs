@@ -497,6 +497,7 @@ namespace Mono.CSharp {
 				Mark (loc);
 
 			if (block != null){
+				try {
 				int errors = Report.Errors;
 
 				block.EmitMeta (this, block);
@@ -530,6 +531,13 @@ namespace Mono.CSharp {
 						if (RootContext.WarningLevel >= 3)
 							block.UsageWarning ();
 					}
+				}
+				} catch {
+					Console.WriteLine ("Exception caught by the compiler while compiling:");
+					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
+					Console.WriteLine ("                     Block being compiled: [{0},{1}]",
+							   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
+					throw;
 				}
 			}
 

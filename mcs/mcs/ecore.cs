@@ -3431,11 +3431,24 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class SimpleName : Expression, ITypeExpression {
 		public readonly string Name;
+
+		//
+		// If true, then we are a simple name, not composed with a ".
+		//
+		bool is_base;
+
+		public SimpleName (string a, string b, Location l)
+		{
+			Name = String.Concat (a, ".", b);
+			loc = l;
+			is_base = false;
+		}
 		
 		public SimpleName (string name, Location l)
 		{
 			Name = name;
 			loc = l;
+			is_base = true;
 		}
 
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
@@ -3488,14 +3501,26 @@ namespace Mono.CSharp {
 
 		public Expression DoResolveType (EmitContext ec)
 		{
-			//
-			// Stage 3: Lookup symbol in the various namespaces. 
-			//
 			DeclSpace ds = ec.DeclSpace;
+			Namespace ns = ds.Namespace;
 			Type t;
 			string alias_value;
 
+			//
+			// Since we are cheating: we only do the Alias lookup for
+			// namespaces if the name does not include any dots in it
+			//
+			if (ns != null && is_base)
+				alias_value = ns.LookupAlias (Name);
+			else
+				alias_value = null;
+				
 			if (ec.ResolvingTypeTree){
+				if (alias_value != null){
+					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+						return new TypeExpr (t, loc);
+				}
+				
 				int errors = Report.Errors;
 				Type dt = ec.DeclSpace.FindType (loc, Name);
 				if (Report.Errors != errors)
@@ -3505,27 +3530,24 @@ namespace Mono.CSharp {
 					return new TypeExpr (dt, loc);
 			}
 
-			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-				return new TypeExpr (t, loc);
-				
-
 			//
-			// Stage 2 part b: Lookup up if we are an alias to a type
-			// or a namespace.
+			// First, the using aliases
 			//
-			// Since we are cheating: we only do the Alias lookup for
-			// namespaces if the name does not include any dots in it
-			//
-				
-			alias_value = ec.DeclSpace.LookupAlias (Name);
-				
-			if (Name.IndexOf ('.') == -1 && alias_value != null) {
+			if (alias_value != null){
 				if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
 					return new TypeExpr (t, loc);
-					
+				
 				// we have alias value, but it isn't Type, so try if it's namespace
 				return new SimpleName (alias_value, loc);
 			}
+			
+			//
+			// Stage 2: Lookup up if we are an alias to a type
+			// or a namespace.
+			//
+				
+			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+				return new TypeExpr (t, loc);
 				
 			// No match, maybe our parent can compose us
 			// into something meaningful.

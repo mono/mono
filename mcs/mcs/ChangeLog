@@ -1,3 +1,15 @@
+2002-12-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (SimpleName.DoResolve): First perform lookups on using
+	definitions, instead of doing that afterwards.  
+
+	Also we use a nice little hack, depending on the constructor, we
+	know if we are a "composed" name or a simple name.  Hence, we
+	avoid the IndexOf test, and we avoid 
+
+	* codegen.cs: Add code to assist in a bug reporter to track down
+	the source of a compiler crash. 
+
 2002-12-07  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (Attribute.ApplyAttributes) : Keep track of which attribute
