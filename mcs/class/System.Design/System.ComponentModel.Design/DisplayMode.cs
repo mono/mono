@@ -12,9 +12,9 @@ namespace System.ComponentModel.Design
 	[Serializable]
         public enum DisplayMode
 	{
-		Ansi,
-		Auto,
-		Hexdump,
-		Unicode,
+		Ansi = 2,
+		Auto = 4,
+		Hexdump = 1,
+		Unicode = 3
 	}
 }

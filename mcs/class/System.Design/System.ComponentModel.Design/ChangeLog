@@ -1,3 +1,7 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DisplayMode.cs: changed enum field values to match MS.NET
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ArrayEditor.cs: removed extra finalizer
