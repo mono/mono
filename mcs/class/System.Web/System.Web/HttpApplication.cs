@@ -734,7 +734,7 @@ namespace System.Web
 			if (handler == null)
 				throw new HttpException ("Cannot get system.web/httpHandlers handler.");
 
-			object result = handler.FindHandler (type, path).Create ();
+			object result = handler.FindHandler (type, file).Create ();
 			if (result is IHttpHandler)
 				return (IHttpHandler) result;
 

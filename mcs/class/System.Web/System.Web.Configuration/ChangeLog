@@ -1,3 +1,7 @@
+2003-10-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerItem.cs: make it work for file names without wildcards.
+
 2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ModuleItem.cs: it's not public.
