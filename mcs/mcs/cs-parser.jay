@@ -418,25 +418,13 @@ namespace_member_declarations
 namespace_member_declaration
 	: type_declaration
 	  {
-		string name = "";
-		int mod_flags;
+		if ($1 != null) {
+			DeclSpace ds = (DeclSpace)$1;
 
-		if ($1 is Class){
-			Class c = (Class) $1;
-			mod_flags = c.ModFlags;
-			name = c.Name;
-		} else if ($1 is Struct){
-			Struct s = (Struct) $1;
-			mod_flags = s.ModFlags;
-			name = s.Name;
-		} else
-			break;
-
-		if ((mod_flags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
-			Report.Error (
-				1527, lexer.Location, 
-				"Namespace elements cant be explicitly " +
-			        "declared private or protected in `" + name + "'");
+			if ((ds.ModFlags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
+				Report.Error (1527, lexer.Location, 
+				"Namespace elements cannot be explicitly declared as private, protected or protected internal");
+			}
 		}
 		current_namespace.DeclarationFound = true;
 	  }
@@ -2316,6 +2304,7 @@ enum_declaration
 		string name = full_name.GetName ();
 		current_container.AddEnum (e);
 		RootContext.Tree.RecordDecl (name, e);
+		$$ = e;
 
 	  }
 	;
@@ -2416,6 +2405,7 @@ delegate_declaration
 
 		current_container.AddDelegate (del);
 		RootContext.Tree.RecordDecl (name.GetName (true), del);
+		$$ = del;
 	  }	
 	;
 

@@ -580,6 +580,12 @@ namespace Mono.CSharp {
 					return false;
 				}
 
+				if (ec.InIterator) {
+					Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
+						"statement to return a value, or yield break to end the iteration");
+					return false;
+				}
+
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
 					return false;

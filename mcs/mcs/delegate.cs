@@ -692,21 +692,27 @@ namespace Mono.CSharp {
 		public static void Error_NoMatchingMethodForDelegate (EmitContext ec, MethodGroupExpr mg, Type type, Location loc)
 		{
 			string method_desc;
+			MethodInfo found_method = (MethodInfo)mg.Methods [0];
 			
 			if (mg.Methods.Length > 1)
-				method_desc = mg.Methods [0].Name;
+				method_desc = found_method.Name;
 			else
-				method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
+				method_desc = Invocation.FullMethodDesc (found_method);
 
 			Expression invoke_method = Expression.MemberLookup (
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
-			MethodBase method = ((MethodGroupExpr) invoke_method).Methods [0];
+			MethodInfo method = ((MethodGroupExpr) invoke_method).Methods [0] as MethodInfo;
+
 			ParameterData param = TypeManager.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
-			
-			Report.Error (123, loc, "Method '" + method_desc + "' does not " +
-				      "match delegate '" + delegate_desc + "'");
+
+			if (method.ReturnType != found_method.ReturnType) {
+				Report.Error (407, loc, "'{0}' has the wrong return type to match delegate '{1}'", method_desc, delegate_desc);
+			} else {
+				Report.Error (123, loc, "Method '" + method_desc + "' does not " +
+					"match delegate '" + delegate_desc + "'");
+			}
 		}
 		
 		public override void Emit (EmitContext ec)
