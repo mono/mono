@@ -1953,6 +1953,7 @@ namespace Mono.CSharp {
 			Hashtable pairs = new Hashtable (null, null);
 			Operator true_op = null;
 			Operator false_op = null;
+			bool has_equality_or_inequality = false;
 			
 			// Register all the operators we care about.
 			foreach (Operator op in operators){
@@ -1960,9 +1961,13 @@ namespace Mono.CSharp {
 				
 				switch (op.OperatorType){
 				case Operator.OpType.Equality:
-					reg = 1; break;
+					reg = 1;
+					has_equality_or_inequality = true;
+					break;
 				case Operator.OpType.Inequality:
-					reg = 2; break;
+					reg = 2;
+					has_equality_or_inequality = true;
+					break;
 
 				case Operator.OpType.True:
 					true_op = op;
@@ -2033,6 +2038,34 @@ namespace Mono.CSharp {
 				}
 				Report.Error (216, oe.op.Location,
 					      "The operator `" + oe.op + "' requires a matching operator `" + s + "' to also be defined");
+			}
+
+			if ((has_equality_or_inequality) && (RootContext.WarningLevel >= 2)) {
+				MethodSignature equals_ms = new MethodSignature (
+					"Equals", TypeManager.bool_type, new Type [] { TypeManager.object_type });
+				MethodSignature hash_ms = new MethodSignature (
+					"GetHashCode", TypeManager.int32_type, new Type [0]);
+
+				MemberList equals_ml = FindMembers (MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance |
+								    BindingFlags.DeclaredOnly, MethodSignature.method_signature_filter,
+								    equals_ms);
+				MemberList hash_ml = FindMembers (MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance |
+								  BindingFlags.DeclaredOnly, MethodSignature.method_signature_filter,
+								  hash_ms);
+
+				bool equals_ok = false;
+				if ((equals_ml != null) && (equals_ml.Count == 1))
+					equals_ok = equals_ml [0].DeclaringType == TypeBuilder;
+				bool hash_ok = false;
+				if ((hash_ml != null) && (hash_ml.Count == 1))
+					hash_ok = hash_ml [0].DeclaringType == TypeBuilder;
+
+				if (!equals_ok)
+					Report.Warning (660, Location, "`" + Name + "' defines operator == or operator != but does " +
+							"not override Object.Equals (object o)");
+				if (!hash_ok)
+					Report.Warning (661, Location, "`" + Name + "' defines operator == or operator != but does " +
+							"not override Object.GetHashCode ()");
 			}
 		}
 		

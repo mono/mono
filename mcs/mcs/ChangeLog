@@ -1,5 +1,10 @@
 2003-07-21  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.CheckPairedOperators): Added CS0660 and
+	CS0661 checks; fixes bug #30442.
+
+2003-07-21  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (AdditionResult): Added `Error'.
 
 	* enum.cs (AddEnumMember): Report a CS0076 if name is `value__'.
