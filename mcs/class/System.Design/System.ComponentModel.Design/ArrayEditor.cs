@@ -29,15 +29,9 @@ namespace System.ComponentModel.Design
 		}
 
 		[MonoTODO]
-		protected override object SetItems (object editValue, 
-						    object[] value)
+		protected override object SetItems (object editValue, object[] value)
 		{
 			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ArrayEditor ()
-		{
 		}
 	}
 }

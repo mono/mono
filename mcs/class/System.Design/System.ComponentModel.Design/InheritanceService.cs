@@ -51,12 +51,5 @@ namespace System.ComponentModel.Design
 		{
 			throw new NotImplementedException();
 		}
-
-
-		[MonoTODO]
-		~InheritanceService()
-		{
-		}
-
 	}
 }

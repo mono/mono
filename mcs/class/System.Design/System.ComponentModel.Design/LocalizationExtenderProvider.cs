@@ -14,8 +14,7 @@ namespace System.ComponentModel.Design
 	[ProvideProperty("Localizable", typeof(object))]
 	[ProvideProperty("Language", typeof(object))]
 	[ProvideProperty("LoadLanguage", typeof(object))]
-	public class LocalizationExtenderProvider : IExtenderProvider,
-	                                            IDisposable
+	public class LocalizationExtenderProvider : IExtenderProvider, IDisposable
 	{
 		[MonoTODO]
 		public LocalizationExtenderProvider (ISite serviceProvider,
@@ -36,18 +35,25 @@ namespace System.ComponentModel.Design
 		}
 
 		[MonoTODO]
+		[Localizable (true)]
+		[DesignOnly (true)]
 		public CultureInfo GetLanguage (object o)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
+		[DesignOnly (true)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public CultureInfo GetLoadLanguage (object o)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
+		[Localizable (true)]
+		[DesignOnly (true)]
 		public bool GetLocalizable (object o)
 		{
 			throw new NotImplementedException();
@@ -75,11 +81,6 @@ namespace System.ComponentModel.Design
 		public bool ShouldSerializeLanguage (object o)
 		{
 			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~LocalizationExtenderProvider()
-	        {
 		}
 	}
 }

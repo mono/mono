@@ -81,8 +81,9 @@ namespace System.ComponentModel.Design
 		}
 
 		[MonoTODO]
-		~ByteViewer()
+		protected virtual void ScrollChanged (object source, EventArgs e)
 		{
+			throw new NotImplementedException ();
 		}
 	}
 
