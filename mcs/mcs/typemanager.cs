@@ -1235,7 +1235,7 @@ public class TypeManager {
 	//
 	public static Type TypeToCoreType (Type t)
 	{
-		if (RootContext.StdLib)
+		if (RootContext.StdLib || (t is TypeBuilder))
 			return t;
 
 		TypeCode tc = Type.GetTypeCode (t);

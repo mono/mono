@@ -3763,7 +3763,7 @@ namespace Mono.CSharp {
 			else
 				Accessors = new MethodInfo [2];
 			
-			type = pi.PropertyType;
+			type = TypeManager.TypeToCoreType (pi.PropertyType);
 		}
 
 		//

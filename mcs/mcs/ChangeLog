@@ -1,5 +1,13 @@
 2002-06-27  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (PropertyExpr.PropertyExpr): Call
+	TypeManager.TypeToCoreType() on the `pi.PropertyType'.
+
+	* typemanager.cs (TypeManager.TypeToCoreType): Return if the type
+	is already a TypeBuilder.
+
+2002-06-27  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (Expression.ImplicitReferenceConversionExists): Use
 	`target_type == TypeManager.array_type', not IsAssignableFrom() in
 	the "from an array-type to System.Array" case.  This makes it work
