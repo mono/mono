@@ -15,6 +15,9 @@ namespace System.Windows.Forms {
 
 	public class InputLanguageCollection : ReadOnlyCollectionBase {
 
+		private InputLanguageCollection(){//For signiture compatablity. Prevents the auto creation of public construct
+		}
+
 		//
 		//  --- Public Properties
 		//

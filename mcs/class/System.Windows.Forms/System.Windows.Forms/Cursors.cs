@@ -22,6 +22,9 @@ namespace System.Windows.Forms {
 
 	public sealed class Cursors{
 
+		private Cursors(){//for signtute compatablity
+		}
+
 		public static Cursor AppStarting {
 			get { return new Cursor ( CursorType.IDC_APPSTARTING ); }
 		}

@@ -19,6 +19,9 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	public class CurrencyManager : BindingManagerBase {
 
+		private CurrencyManager(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		#region Fields
 		/* uncomment if needed
 		protected Type finalType;

@@ -15,6 +15,9 @@ namespace System.Windows.Forms {
 
     public class Help {
 
+		private Help(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		//
 		//  --- Public Methods
 		//
@@ -26,7 +29,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public static void ShowHelp(Control parent, string url, HelpNavigator command)
+		public static void ShowHelp(Control parent, string url, HelpNavigator navigator)
 		{
 			//FIXME:
 		}

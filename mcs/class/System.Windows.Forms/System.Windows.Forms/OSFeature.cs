@@ -13,7 +13,10 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-        public class OSFeature : FeatureSupport {
+	public class OSFeature : FeatureSupport {
+
+		private OSFeature(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
 
 		//
 		//	 --- Public Fields
@@ -36,19 +39,16 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public override Version GetVersionPresent(object feature)
-		{
+		public override Version GetVersionPresent(object feature) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual bool IsPresent(object o)
-		{
+		public virtual bool IsPresent(object o) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual bool IsPresent(object o, Version v)
-		{
+		public virtual bool IsPresent(object o, Version v) {
 			throw new NotImplementedException ();
 		}
-	 }
+	}
 }

@@ -21,6 +21,9 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	public sealed class ControlPaint {
 
+		private ControlPaint(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		#region Properties
 		[MonoTODO]
 		public static Color ContrastControlDark {

@@ -15,6 +15,9 @@ namespace System.Windows.Forms {
 
     public sealed class InputLanguage {
 
+		private InputLanguage(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		//
 		//  --- Public Properties
 		//

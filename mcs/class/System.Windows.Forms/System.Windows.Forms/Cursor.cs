@@ -32,7 +32,9 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Constructors
-		internal Cursor ( CursorType type )
+		private Cursor(){
+		}
+		internal Cursor ( CursorType type )//For signiture compatablity.
 		{
 			handle = Win32.LoadCursor ( IntPtr.Zero, type );
 			fromResource = true;

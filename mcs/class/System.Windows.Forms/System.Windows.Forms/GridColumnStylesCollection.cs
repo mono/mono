@@ -15,6 +15,10 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public class GridColumnStylesCollection : BaseCollection, IList {
+
+		private GridColumnStylesCollection(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		//
 		//  --- Public Methods
 		//

@@ -37,6 +37,11 @@ namespace System.Windows.Forms
 		static private bool messageLoopStopRequest = false;
 		static private  ArrayList messageFilters = new ArrayList ();
 		static private string safeTopLevelCaptionFormat;
+
+
+		private Application(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		// --- (public) Properties ---
 		public static bool AllowQuit 
 		{

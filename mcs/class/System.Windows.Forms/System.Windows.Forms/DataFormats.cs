@@ -19,6 +19,9 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	public class DataFormats {
 
+		private DataFormats(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		#region Fields
 		public static readonly string Bitmap="Bitmap";
 		public static readonly string CommaSeparatedValue="Csv";

@@ -17,6 +17,9 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	public sealed class Clipboard {
 
+		private Clipboard(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		// --- Methods ---
 		[MonoTODO]
 		public static IDataObject GetDataObject() 

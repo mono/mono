@@ -15,6 +15,9 @@ namespace System.Windows.Forms {
 
     public class SendKeys {
 
+		private SendKeys(){//for signitour compatablity
+		}
+
 		//
 		//  --- Public Methods
 		//

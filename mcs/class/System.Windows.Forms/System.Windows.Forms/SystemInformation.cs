@@ -19,6 +19,9 @@ namespace System.Windows.Forms {
 
 	public class SystemInformation {
 
+		private SystemInformation(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
+
 		//
 		//  --- Public Properties
 		//

@@ -14,7 +14,10 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-    public class GridTableStylesCollection : BaseCollection, IList {
+	public class GridTableStylesCollection : BaseCollection, IList {
+		
+		private GridTableStylesCollection(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
 
 		//
 		//  --- Public Properties
@@ -49,7 +52,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public virtual void Clear()
+		public void Clear()
 		{
 			//FIXME:
 		}
@@ -92,7 +95,7 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected void OnCollectionChanged(CollectionChangeEventArgs cevent)
+		protected void OnCollectionChanged(CollectionChangeEventArgs ccevent)
 		{
 			//FIXME:
 		}

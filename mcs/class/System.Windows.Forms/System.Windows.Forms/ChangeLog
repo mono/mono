@@ -1,3 +1,26 @@
+2003-09-01  Dennis Hayes <dennish@raytek.com>
+	* Application.cs
+	* Cursor.cs
+	* Clipboard.cs
+	* CurrencyManager.cs
+	* DataFormats.cs
+	* GridTableStylesCollection.cs
+	* GridColumnStylesCollection.cs
+	* ControlPaint.cs
+	* GroupBox.cs
+	* Help.cs
+	* SystemInformation.cs
+	* OSFeature.cs
+	* MessageBox.cs
+	* ItemChangedEventArgs.cs
+	* InputLanguageCollection.cs
+	* InputLanguage.cs
+	* Cursors.cs
+	* SendKeys.cs
+	
+	* Signiture fixes. Mostly adding private 
+	* construtors to prevent auto generation of default public constructors.
+
 2003-09-21 Alexandre Pigolkine <pigolkine@gmx.de>
  	* small fix to FontDialog
 

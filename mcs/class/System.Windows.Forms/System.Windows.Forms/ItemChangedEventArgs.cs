@@ -17,6 +17,8 @@ namespace System.Windows.Forms {
 
 	public class ItemChangedEventArgs : EventArgs {
 
+		private ItemChangedEventArgs(){//For signiture compatablity. Prevents the auto creation of public constructor
+		}
 		#region Fields
 		// After looking at ItemChangedEvent, It seems index is always zero.
 		// The ItemChangedEventhandler quierys the sender object to find the item changed.
