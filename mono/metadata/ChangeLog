@@ -1,3 +1,8 @@
+2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_InternalInvoke): Throw an exception when calling
+	constructor of abstract class. Fixes #61689.
+
 2004-10-04  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (MonoGenericContainer): New type.
