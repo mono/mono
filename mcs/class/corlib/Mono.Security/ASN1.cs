@@ -6,12 +6,8 @@
 //	Jesper Pedersen  <jep@itplus.dk>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-// (C) 2004 IT+ A/S (http://www.itplus.dk)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004 IT+ A/S (http://www.itplus.dk)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -80,6 +76,10 @@ namespace Mono.Security {
 					nLength *= 256;
 					nLength += data [i + 2];
 				}
+			}
+			else if (nLength == 0x80) {
+				// undefined length encoding
+				throw new NotSupportedException ("Undefined length encoding.");
 			}
 
 			m_aValue = new byte [nLength];
@@ -186,21 +186,41 @@ namespace Mono.Security {
 				int nLength = val.Length;
 				// special for length > 127
 				if (nLength > 127) {
-					if (nLength < 256) {
+					if (nLength <= Byte.MaxValue) {
 						der = new byte [3 + nLength];
 						Buffer.BlockCopy (val, 0, der, 3, nLength);
-						nLengthLen += 0x81;
+						nLengthLen = 0x81;
 						der[2] = (byte)(nLength);
 					}
-					else {
+					else if (nLength <= UInt16.MaxValue) {
 						der = new byte [4 + nLength];
 						Buffer.BlockCopy (val, 0, der, 4, nLength);
-						nLengthLen += 0x82;
-						der[2] = (byte)(nLength / 256);
-						der[3] = (byte)(nLength % 256);
+						nLengthLen = 0x82;
+						der[2] = (byte)(nLength >> 8);
+						der[3] = (byte)(nLength);
+					}
+					else if (nLength <= 0xFFFFFF) {
+						// 24 bits
+						der = new byte [5 + nLength];
+						Buffer.BlockCopy (val, 0, der, 5, nLength);
+						nLengthLen = 0x83;
+						der [2] = (byte)(nLength >> 16);
+						der [3] = (byte)(nLength >> 8);
+						der [4] = (byte)(nLength);
+					}
+					else {
+						// max (Length is an integer) 32 bits
+						der = new byte [6 + nLength];
+						Buffer.BlockCopy (val, 0, der, 6, nLength);
+						nLengthLen = 0x84;
+						der [2] = (byte)(nLength >> 24);
+						der [3] = (byte)(nLength >> 16);
+						der [4] = (byte)(nLength >> 8);
+						der [5] = (byte)(nLength);
 					}
 				}
 				else {
+					// basic case (no encoding)
 					der = new byte [2 + nLength];
 					Buffer.BlockCopy (val, 0, der, 2, nLength);
 					nLengthLen = nLength;
@@ -289,27 +309,21 @@ namespace Mono.Security {
 
 		public override string ToString()
 		{
-			string lineSeperator = Environment.NewLine;
-
 			StringBuilder hexLine = new StringBuilder ();
             
 			// Add tag
-			hexLine.Append ("Tag: ");
-			hexLine.Append (System.Convert.ToString (Tag, 16));
-			hexLine.Append (lineSeperator);
+			hexLine.AppendFormat ("Tag: {0} {1}", m_nTag.ToString ("X2"), Environment.NewLine);
+
+			// Add length
+			hexLine.AppendFormat ("Length: {0} {1}", Value.Length, Environment.NewLine);
 
 			// Add value
 			hexLine.Append ("Value: ");
-			hexLine.Append (lineSeperator);
+			hexLine.Append (Environment.NewLine);
 			for (int i = 0; i < Value.Length; i++) {
-				if (Value[i] < 16) {
-					hexLine.Append ("0");
-				}
-				hexLine.Append (System.Convert.ToString (Value [i], 16));
-				hexLine.Append (" ");
-				if ((i+1) % 16 == 0) {
-					hexLine.Append (lineSeperator);
-				}
+				hexLine.AppendFormat ("{0} ", Value [i].ToString ("X2"));
+				if ((i+1) % 16 == 0)
+					hexLine.AppendFormat (Environment.NewLine);
 			}
 			return hexLine.ToString ();
 		}

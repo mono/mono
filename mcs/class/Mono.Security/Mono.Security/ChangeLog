@@ -1,3 +1,10 @@
+2004-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Throw an NotSupportedException when "undefined length 
+	encoding" is used (#68903 but it's not a fix ;-). Fixed GetBytes to
+	encode structures bigger than 64k (fix #68907). Simplified ToString
+	and added Length to help debugging.
+
 2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongName.cs: Synch with corlib (the new code isn't even compiled)
