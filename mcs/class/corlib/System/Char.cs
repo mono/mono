@@ -138,8 +138,10 @@ namespace System {
 
 		public static bool IsLetterOrDigit (char c)
 		{
-			// TODO: Implement me
-			return false;
+			if (IsLetter (c) == false && IsDigit (c) == false)
+				return false;
+			else
+				return true;
 		}
 
 		public static bool IsLetterOrDigit (string str, int index)
@@ -156,8 +158,8 @@ namespace System {
 		
 		public static bool IsLower (char c)
 		{
-			// TODO: Implement me
-			return false;
+			// TODO: Make me Unicode aware.
+			return ((c >= 97) && (c <= 126));
 		}
 		
 		public static bool IsLower (string str, int index)
@@ -174,8 +176,7 @@ namespace System {
 
 		public static bool IsNumber (char c)
 		{
-			// TODO: Implement me
-			return false;
+			return ((c >= 48) && (c <= 57));
 		}
 		
 		public static bool IsNumber (string str, int index)
@@ -192,8 +193,12 @@ namespace System {
 
 		public static bool IsPunctuation (char c)
 		{
-			// TODO: Implement me
-			return false;
+			if (c == ',' || c == '.' || c == ';' || c == ':' ||
+			    c == '\'' || c == '\"' || c == '(' || c == ')' ||
+			    c == ')')
+				return true;
+			else
+				return false;
 		}
 		
 		public static bool IsPunctuation (string str, int index)
@@ -264,8 +269,8 @@ namespace System {
 
 		public static bool IsUpper (char c)
 		{
-			// TODO: Implement me
-			return false;
+			// TODO : Make me Unicode aware
+			return ((c >= 65) && (c <= 90));
 		}
 		
 		public static bool IsUpper (string str, int index)
@@ -282,8 +287,10 @@ namespace System {
 
 		public static bool IsWhiteSpace (char c)
 		{
-			// TODO: Implement me
-			return false;
+			if (c == ' ' || c == '\n' || c == '\t' || c == '\r')
+				return true;
+			else
+				return false;
 		}
 		
 		public static bool IsWhiteSpace (string str, int index)
@@ -307,13 +314,13 @@ namespace System {
 		public static char ToLower (char c)
 		{
 			// TODO: make me unicode aware
-			return (c >= 'A' && c <= 'Z') ? (char) (c + 33) : c;
+			return (c >= 'A' && c <= 'Z') ? (char) (c + 32) : c;
 		}
 
 		public static char ToUpper (char c)
 		{
 			// TODO: make me unicode aware
-			return (char) ((c >= 'a' && c <= 'z') ? c - 33 : c);
+			return (char) ((c >= 'a' && c <= 'z') ? c - 32 : c);
 		}
 
 		public override string ToString ()

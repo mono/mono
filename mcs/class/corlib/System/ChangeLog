@@ -1,3 +1,13 @@
+2001-09-07  Ravi Pratap  <ravi@ximian.com>
+
+	* Char.cs (IsLetterOrDigit): Implement.
+	(IsLower): Implement, but we need to be Unicode aware.
+	(IsNumber): Implement.
+	(IsPunctuation): Implement.
+	(IsWhiteSpace): Implement.
+	(ToUpper): Fix to subtract 32 from the ASCII value, not 33 :)
+	(ToLower): Same here.
+
 2001-09-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* Object.cs: Shortcut, if (a == b) then return true.

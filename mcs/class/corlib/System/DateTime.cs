@@ -13,7 +13,8 @@ using System.Globalization ;
 namespace System
 {
 	/// <summary>
-	/// The DateTime structure represents dates and time ranging from 1-1-0001 12:00:00 AM to 31-12-9999 23:59:00 Common Era.
+	/// The DateTime structure represents dates and time ranging from
+	/// 1-1-0001 12:00:00 AM to 31-12-9999 23:59:00 Common Era.
 	/// </summary>
 	/// 
 	public struct DateTime : IComparable , IFormattable  , IConvertible
