@@ -17,7 +17,8 @@ namespace System.Windows.Forms{
 		String text, text2;
 		int check1;
 		bool blChecked;
-		
+		private Shortcut shortcut;
+
 		public class MenuItemCollection{
 
 			MenuItem owner;
@@ -76,10 +77,13 @@ namespace System.Windows.Forms{
 		
 		public Shortcut Shortcut {
 			get{
-				throw new NotImplementedException ();
+				return this.shortcut;
 			}
 			set{
-				ShortcutHelper.AddShortcutToWidget (file_item, new Gtk.AccelGroup(), Shortcut.CtrlN, "activate");
+				if (this.shortcut != value) {
+					this.shortcut = value;
+					ShortcutHelper.AddShortcutToWidget (file_item, new Gtk.AccelGroup(), this.shortcut, "activate");
+				}
 			}
 		}
 		
