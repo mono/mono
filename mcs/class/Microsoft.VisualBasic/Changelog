@@ -1,11 +1,7 @@
-2003-12-02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-	* Microsoft.VisualBasic: Strings.cs 
-		Simplified Asc(string) by using Asc(char)
-		Simplified AscW(string) by using AscW(char)
-		Simplified StrReverse
+2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Microsoft.VisualBasic_test.dll.sources: Added new test files
 
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
-
 	* Microsoft.VisualBasic.dll.sources: Added Assembly files
 
 2003-03-12  Martin Willemoes Hansen <mwh@sysrq.dk>
@@ -17,12 +13,9 @@
 		Added files to allow build on linux.
 
 2002-05-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-
 	* Microsoft.VisualBasic: Strings.cs - Merged all method implementations provided 
           by Martin Adoue, with method signatures (specially attributes) provided 
           by Chris J. Breisch. Some tweaking for the Mid member (two overloads versus third optional parameter).
-
-
 
 2002-05-18  Chris J Breisch <cjbreisch@altavista.net>
 
