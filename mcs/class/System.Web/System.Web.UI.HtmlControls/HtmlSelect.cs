@@ -209,10 +209,11 @@ namespace System.Web.UI.HtmlControls{
 					for (int i = 0; i < postedValueCount; i++)
 						arr[i] = Items.IndexOf(Items.FindByValue(postedValueColl[i]));
 					//test if everything went fine
-					if( postedValueCount == SelectedIndices.Length)
+					if( postedValueCount == SelectedIndices.Length){
 						for (int i = 0; i < postedValueCount; i++)
 							if(arr[i] == SelectedIndices[i])
 								changed = true;
+					}
 					else
 						changed = true;
 					//commit the posted Values
