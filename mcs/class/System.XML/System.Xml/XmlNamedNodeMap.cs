@@ -17,6 +17,7 @@ namespace System.Xml
 	{
 		XmlNode parent;
 		ArrayList nodeList;
+		bool readOnly;
 
 		internal XmlNamedNodeMap (XmlNode parent)
 		{
@@ -62,16 +63,14 @@ namespace System.Xml
 		}
 
 		public virtual XmlNode RemoveNamedItem (string name)
-		{
-			XmlNode removed = null;
-
+		{			
 			foreach (XmlNode node in nodeList)
 				if (node.Name == name) {
-					removed = node;
 					nodeList.Remove (node);
+					return node;
 				}
 			
-			return removed;
+			return null;
 		}
 
 		public virtual XmlNode RemoveNamedItem (string localName, string namespaceURI)
@@ -88,16 +87,18 @@ namespace System.Xml
 
 		public virtual XmlNode SetNamedItem (XmlNode node)
 		{
-			XmlNode replaced = null;
-			
+			if (readOnly || (node.OwnerDocument != parent.OwnerDocument))
+				throw new ArgumentException ("Cannot add to NodeMap.");
+						
 			foreach (XmlNode x in nodeList)
 				if (x.Name == node.Name) {
 					nodeList.Remove (x);
-					replaced = x;
+					nodeList.Add (x);
+					return x;
 				}
 			
 			nodeList.Add (node);
-			return replaced;
+			return null;
 		}
 	}
 }
