@@ -1,3 +1,14 @@
+<%
+//
+// DefaultWsdlHelpGenerator.aspx: 
+//
+// Author:
+//   Lluis Sanchez Gual (lluis@ximian.com)
+//
+// (C) 2003 Ximian, Inc.  http://www.ximian.com
+//
+%>
+
 ﻿<%@ Import Namespace="System.Collections" %>
 <%@ Import Namespace="System.IO" %>
 <%@ Import Namespace="System.Xml.Serialization" %>
@@ -13,6 +24,7 @@
 <%@ Import Namespace="System.CodeDom.Compiler" %>
 <%@ Import Namespace="Microsoft.CSharp" %>
 <%@ Import Namespace="Microsoft.VisualBasic" %>
+<%@ Import Namespace="System.Text.RegularExpressions" %>
 <%@ Assembly name="System.Web.Services" %>
 <%@ Page debug="true" %>
 
@@ -37,6 +49,7 @@ bool CurrentOperationSupportsTest;
 ArrayList InParams;
 ArrayList OutParams;
 string CurrentOperationProtocols;
+int CodeTextColumns = 95;
 
 void Page_Load(object sender, EventArgs e)
 {
@@ -306,7 +319,7 @@ string GetTestResult ()
 		StreamReader sr = new StreamReader (resp.GetResponseStream());
 		string s = sr.ReadToEnd ();
 		sr.Close ();
-		return "<xmp class='code-xml'>" + s + "</xmp>";
+		return "<div class='code-xml'>" + ColorizeXml(WrapText(s,CodeTextColumns)) + "</div>";
 	}
 	catch (Exception ex)
 	{ 
@@ -319,7 +332,7 @@ string GetTestResult ()
 				StreamReader sr = new StreamReader (resp.GetResponseStream());
 				string s = sr.ReadToEnd ();
 				sr.Close ();
-				res += "<xmp class='code-xml'>" + s + "</xmp>";
+				res += "<div class='code-xml'>" + ColorizeXml(WrapText(s,CodeTextColumns)) + "</div>";
 			}
 		}
 		return res;
@@ -355,7 +368,8 @@ string GetProxyCode ()
 	
 	StringWriter sw = new StringWriter ();
 	generator.GenerateCodeFromCompileUnit(codeUnit, sw, options);
-	return sw.ToString ();
+
+	return Colorize (WrapText (sw.ToString (), CodeTextColumns), langId);
 }
 
 public string CurrentLanguage
@@ -398,7 +412,7 @@ string GenerateDocument ()
 	else if (CurrentDocType == "schema")
 		schemas [CurrentDocInd].Write (sw);
 		
-	return sw.ToString ();
+	return Colorize (WrapText (sw.ToString (), CodeTextColumns), "xml");
 }
 
 public string CurrentDocType
@@ -473,6 +487,119 @@ string GetPageContext (string pag)
 	return "page=" + pag + "&"; 
 }
 
+class Tab
+{
+	public string Id;
+	public string Label;
+}
+
+//
+// Syntax coloring
+//
+
+static string keywords_cs =
+	"(\\babstract\\b|\\bevent\\b|\\bnew\\b|\\bstruct\\b|\\bas\\b|\\bexplicit\\b|\\bnull\\b|\\bswitch\\b|\\bbase\\b|\\bextern\\b|" +
+	"\\bobject\\b|\\bthis\\b|\\bbool\\b|\\bfalse\\b|\\boperator\\b|\\bthrow\\b|\\bbreak\\b|\\bfinally\\b|\\bout\\b|\\btrue\\b|" +
+	"\\bbyte\\b|\\bfixed\\b|\\boverride\\b|\\btry\\b|\\bcase\\b|\\bfloat\\b|\\bparams\\b|\\btypeof\\b|\\bcatch\\b|\\bfor\\b|" +
+	"\\bprivate\\b|\\buint\\b|\\bchar\\b|\\bforeach\\b|\\bprotected\\b|\\bulong\\b|\\bchecked\\b|\\bgoto\\b|\\bpublic\\b|" +
+	"\\bunchecked\\b|\\bclass\\b|\\bif\\b|\\breadonly\\b|\\bunsafe\\b|\\bconst\\b|\\bimplicit\\b|\\bref\\b|\\bushort\\b|" +
+	"\\bcontinue\\b|\\bin\\b|\\breturn\\b|\\busing\\b|\\bdecimal\\b|\\bint\\b|\\bsbyte\\b|\\bvirtual\\b|\\bdefault\\b|" +
+	"\\binterface\\b|\\bsealed\\b|\\bvolatile\\b|\\bdelegate\\b|\\binternal\\b|\\bshort\\b|\\bvoid\\b|\\bdo\\b|\\bis\\b|" +
+	"\\bsizeof\\b|\\bwhile\\b|\\bdouble\\b|\\block\\b|\\bstackalloc\\b|\\belse\\b|\\blong\\b|\\bstatic\\b|\\benum\\b|" +
+	"\\bnamespace\\b|\\bstring\\b)";
+
+static string keywords_vb =
+	"(\\bAddHandler\\b|\\bAddressOf\\b|\\bAlias\\b|\\bAnd\\b|\\bAndAlso\\b|\\bAnsi\\b|\\bAs\\b|\\bAssembly\\b|" +
+	"\\bAuto\\b|\\bBoolean\\b|\\bByRef\\b|\\bByte\\b|\\bByVal\\b|\\bCall\\b|\\bCase\\b|\\bCatch\\b|" +
+	"\\bCBool\\b|\\bCByte\\b|\\bCChar\\b|\\bCDate\\b|\\bCDec\\b|\\bCDbl\\b|\\bChar\\b|\\bCInt\\b|" +
+	"\\bClass\\b|\\bCLng\\b|\\bCObj\\b|\\bConst\\b|\\bCShort\\b|\\bCSng\\b|\\bCStr\\b|\\bCType\\b|" +
+	"\\bDate\\b|\\bDecimal\\b|\\bDeclare\\b|\\bDefault\\b|\\bDelegate\\b|\\bDim\\b|\\bDirectCast\\b|\\bDo\\b|" +
+	"\\bDouble\\b|\\bEach\\b|\\bElse\\b|\\bElseIf\\b|\\bEnd\\b|\\bEnum\\b|\\bErase\\b|\\bError\\b|" +
+	"\\bEvent\\b|\\bExit\\b|\\bFalse\\b|\\bFinally\\b|\\bFor\\b|\\bFriend\\b|\\bFunction\\b|\\bGet\\b|" +
+	"\\bGetType\\b|\\bGoSub\\b|\\bGoTo\\b|\\bHandles\\b|\\bIf\\b|\\bImplements\\b|\\bImports\\b|\\bIn\\b|" +
+	"\\bInherits\\b|\\bInteger\\b|\\bInterface\\b|\\bIs\\b|\\bLet\\b|\\bLib\\b|\\bLike\\b|\\bLong\\b|" +
+	"\\bLoop\\b|\\bMe\\b|\\bMod\\b|\\bModule\\b|\\bMustInherit\\b|\\bMustOverride\\b|\\bMyBase\\b|\\bMyClass\\b|" +
+	"\\bNamespace\\b|\\bNew\\b|\\bNext\\b|\\bNot\\b|\\bNothing\\b|\\bNotInheritable\\b|\\bNotOverridable\\b|\\bObject\\b|" +
+	"\\bOn\\b|\\bOption\\b|\\bOptional\\b|\\bOr\\b|\\bOrElse\\b|\\bOverloads\\b|\\bOverridable\\b|\\bOverrides\\b|" +
+	"\\bParamArray\\b|\\bPreserve\\b|\\bPrivate\\b|\\bProperty\\b|\\bProtected\\b|\\bPublic\\b|\\bRaiseEvent\\b|\\bReadOnly\\b|" +
+	"\\bReDim\\b|\\bREM\\b|\\bRemoveHandler\\b|\\bResume\\b|\\bReturn\\b|\\bSelect\\b|\\bSet\\b|\\bShadows\\b|" +
+	"\\bShared\\b|\\bShort\\b|\\bSingle\\b|\\bStatic\\b|\\bStep\\b|\\bStop\\b|\\bString\\b|\\bStructure\\b|" +
+	"\\bSub\\b|\\bSyncLock\\b|\\bThen\\b|\\bThrow\\b|\\bTo\\b|\\bTrue\\b|\\bTry\\b|\\bTypeOf\\b|" +
+	"\\bUnicode\\b|\\bUntil\\b|\\bVariant\\b|\\bWhen\\b|\\bWhile\\b|\\bWith\\b|\\bWithEvents\\b|\\bWriteOnly\\b|\\bXor\\b)";
+
+string Colorize (string text, string lang)
+{
+	if (lang == "xml") return ColorizeXml (text);
+	else if (lang == "cs") return ColorizeCs (text);
+	else if (lang == "vb") return ColorizeVb (text);
+	else return text;
+}
+
+string ColorizeXml (string text)
+{
+	text = text.Replace (" ", "&nbsp;");
+	Regex re = new Regex ("\r\n|\r|\n");
+	text = re.Replace (text, "_br_");
+	
+	re = new Regex ("<\\s*(\\/?)\\s*([\\s\\S]*?)\\s*(\\/?)\\s*>");
+	text = re.Replace (text,"{blue:&lt;$1}{maroon:$2}{blue:$3&gt;}");
+	
+	re = new Regex ("\\{(\\w*):([\\s\\S]*?)\\}");
+	text = re.Replace (text,"<span style='color:$1'>$2</span>");
+
+	re = new Regex ("\"(.*?)\"");
+	text = re.Replace (text,"\"<span style='color:purple'>$1</span>\"");
+
+	
+	text = text.Replace ("\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	text = text.Replace ("_br_", "<br>");
+	return text;
+}
+
+string ColorizeCs (string text)
+{
+	text = text.Replace (" ", "&nbsp;");
+
+	text = text.Replace ("<", "&lt;");
+	text = text.Replace (">", "&gt;");
+
+	Regex re = new Regex ("\"((((?!\").)|\\\")*?)\"");
+	text = re.Replace (text,"<span style='color:purple'>\"$1\"</span>");
+
+	re = new Regex ("//(((.(?!\"</span>))|\"(((?!\").)*)\"</span>)*)(\r|\n|\r\n)");
+	text = re.Replace (text,"<span style='color:green'>//$1</span><br/>");
+	
+	re = new Regex (keywords_cs);
+	text = re.Replace (text,"<span style='color:blue'>$1</span>");
+	
+	text = text.Replace ("\t","&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	text = text.Replace ("\n","<br/>");
+	
+	return text;
+}
+
+string ColorizeVb (string text)
+{
+	text = text.Replace (" ", "&nbsp;");
+	
+/*	Regex re = new Regex ("\"((((?!\").)|\\\")*?)\"");
+	text = re.Replace (text,"<span style='color:purple'>\"$1\"</span>");
+
+	re = new Regex ("'(((.(?!\"\\<\\/span\\>))|\"(((?!\").)*)\"\\<\\/span\\>)*)(\r|\n|\r\n)");
+	text = re.Replace (text,"<span style='color:green'>//$1</span><br/>");
+	
+	re = new Regex (keywords_vb);
+	text = re.Replace (text,"<span style='color:blue'>$1</span>");
+*/	
+	text = text.Replace ("\t","&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	text = text.Replace ("\n","<br/>");
+	return text;
+}
+
+//
+// Helper methods and classes
+//
+
 string GetDataContext ()
 {
 	return "op=" + CurrentOperationName + "&bnd=" + CurrentOperationBinding + "&";
@@ -485,10 +612,69 @@ string GetOptionSel (string v1, string v2)
 	return op + "value='" + v1 + "'>";
 }
 
-class Tab
+string WrapText (string text, int maxChars)
 {
-	public string Id;
-	public string Label;
+	text =  text.Replace(" />","/>");
+	
+	string linspace = null;
+	int lincount = 0;
+	int breakpos = 0;
+	int linstart = 0;
+	bool inquotes = false;
+	char lastc = ' ';
+	string sublineIndent = "";
+	System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+	for (int n=0; n<text.Length; n++)
+	{
+		char c = text [n];
+		
+		if (c=='\r' || c=='\n' || n==text.Length-1)
+		{
+			sb.Append (linspace + sublineIndent + text.Substring (linstart, n-linstart+1));
+			linspace = null;
+			lincount = 0;
+			linstart = n+1;
+			breakpos = linstart;
+			sublineIndent = "";
+			lastc = c;
+			continue;
+		}
+		
+		if (lastc==',' || lastc=='(')
+		{
+			if (!inquotes) breakpos = n;
+		}
+		
+		if (lincount > maxChars && breakpos >= linstart)
+		{
+			if (linspace != null)
+				sb.Append (linspace + sublineIndent);
+			sb.Append (text.Substring (linstart, breakpos-linstart));
+			sb.Append ("\n");
+			sublineIndent = "     ";
+			lincount = linspace.Length + sublineIndent.Length + (n-breakpos);
+			linstart = breakpos;
+		}
+		
+		if (c==' ' || c=='\t')
+		{
+			if (!inquotes)
+				breakpos = n;
+		}
+		else if (c=='"')
+		{
+			inquotes = !inquotes;
+		}
+		else 
+			if (linspace == null) {
+				linspace = text.Substring (linstart, n-linstart);
+				linstart = n;
+			}
+
+		lincount++;
+		lastc = c;
+	}
+	return sb.ToString ();
 }
 
 class Parameter
@@ -505,6 +691,7 @@ class Parameter
 </script>
 
 <head>
+	<title><%=WebServiceName%> Web Service</title>
     <style type="text/css">
 		BODY { font-family: Arial; margin-left: 20px; margin-top: 20px; font-size: x-small}
 		TABLE { font-size: x-small }
@@ -540,141 +727,9 @@ function clearForm ()
 }
 </script>
 
-<!--
-	**********************************************************
-	Pretty print for code and xml
--->
-
-<script>
-var keywords = "";
-
-var keywordArray = new Array (
-			"abstract","event","new","struct","as","explicit","null","switch","base","extern",
-			"object","this","bool","false","operator","throw","break","finally","out","true",
-			"byte","fixed","override","try","case","float","params","typeof","catch","for",
-			"private","uint","char","foreach","protected","ulong","checked","goto","public",
-			"unchecked","class","if","readonly","unsafe","const","implicit","ref","ushort",
-			"continue","in","return","using","decimal","int","sbyte","virtual","default",
-			"interface","sealed","volatile","delegate","internal","short","void","do","is",
-			"sizeof","while","double","lock","stackalloc","else","long","static","enum",
-			"namespace","string");
-
-
-function paintColors ()
-{
-	keywords = "(";
-	for (n=0; n<keywordArray.length; n++)
-		keywords += "\\b" + keywordArray[n] + "\\b|";
-	keywords += "string)";
-	
-	var elems = document.getElementsByTagName ("xmp");
-	for (n=elems.length - 1; n>=0; n--)
-	{
-		if (elems[n].className == "code-cs") {
-			format (elems [n], formatCs);
-		}
-		else if (elems[n].className == "code-xml") {
-			format (elems [n], formatXml);
-		}
-	}
-}
-
-function format (node, func)
-{
-	text = node.innerHTML;
-
-	div = document.createElement("div");
-	var className = node.className;
-	
-	// remove trailing/leading lines
-	while (text.charAt (0) == "\n" || text.charAt (0) == "\r" )
-		text = text.substr (1);
-	
-	while (text.charAt (text.length) == "\n" || text.charAt (text.length) == "\r" )
-		text = text.splice (0, -1);
-
-	div.innerHTML = func (text);
-	node.parentNode.replaceChild(div, node);
-	div.className = className;
-}
-
-function formatCs (text)
-{
-
-	var re = / /g;
-	text = text.replace (re, "&nbsp;");
-
-	re = /<(.*?)>/g;
-	text = text.replace (re, "<___span style='color:red'_!_$1___/span_!_>");
-
-	re = /</g;
-	text = text.replace (re, "&lt;");
-
-	re = />/g;
-	text = text.replace (re, "&gt;");
-
-	re = /___/g;
-	text = text.replace (re, "<");
-
-	re = /_!_/g;
-	text = text.replace (re, ">");
-
-	// cant get this one to work in the good syntax
-	re = new RegExp ("\"((((?!\").)|\\\")*?)\"","g");
-	text = text.replace (re,"<span style='color:purple'>\"$1\"</span>");
-
-	re = /\/\/(((.(?!\"\<\/span\>))|"(((?!").)*)"\<\/span\>)*)(\r|\n|\r\n)/g;
-	text = text.replace (re,"<span style='color:green'>//$1</span><br/>");
-	
-	re = new RegExp (keywords,"g");
-	text = text.replace (re,"<span style='color:blue'>$1</span>");
-	
-	re = /\t/g;
-	text = text.replace (re,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-	
-	re = /\n/g;
-	text = text.replace (re,"<br/>");
-	
-	div = document.createElement("div");
-	div.innerHTML = text;
-	
-	spans = div.getElementsByTagName ("span")
-	for (i = 0; i < spans.length; i++) {
-		if (spans [i].parentNode.nodeName == "SPAN") {
-			spans [i].style.color = "";
-		}
-	}
-	
-	return div.innerHTML;
-}
-
-function formatXml (text)
-{	
-	var re = / /g;
-	text = text.replace (re, "&nbsp;");
-
-	re = /\t/g;
-	text = text.replace (re, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-	
-	re = /\<\s*(\/?)\s*(.*?)\s*(\/?)\s*\>/g;
-	text = text.replace (re,"{blue:&lt;$1}{maroon:$2}{blue:$3&gt;}");
-	
-	re = /{(\w*):(.*?)}/g;
-	text = text.replace (re,"<span style='color:$1'>$2</span>");
-
-	re = /"(.*?)"/g;
-	text = text.replace (re,"\"<span style='color:purple'>$1</span>\"");
-
-	re = /\r\n|\r|\n/g;
-	text = text.replace (re, "<br/>");
-	
-	return text;
-}
-</script>
-
 </head>
 
-<body onload='paintColors();'>
+<body>
 <div class="title" style="margin-left:20px">
 <span class="label">Web Service</span><br>
 <%=WebServiceName%>
@@ -687,6 +742,7 @@ function formatXml (text)
 
 <table border="0" width="100%" cellpadding="15px" cellspacing="15px">
 <tr valign="top"><td width="150px" class="panel">
+<div style="width:150px"></div>
 <a class="method" href='<%=PageName%>'>Overview</a><br>
 <div class="smallSeparator"></div>
 <a class="method" href='<%=PageName + "?" + GetPageContext("wsdl")%>'>Service Description</a>
@@ -798,7 +854,7 @@ function formatXml (text)
 			</form>
 			<div id="testFormResult" style="display:<%# (HasFormResult?"block":"none") %>">
 			The web service returned the following result:<br/><br/>
-			<div class="codePanel" style="width:550;  overflow:auto"><%#GetTestResult()%></div>
+			<div class="codePanel"><%#GetTestResult()%></div>
 			</div>
 		<% } else {%>
 		The test form is not available for this operation because it has parameters with a complex structure.
@@ -828,7 +884,7 @@ function formatXml (text)
 	<a href="<%#PageName + "?code=" + CurrentLanguage%>">Download</a>
 	<br><br>
 	<div class="codePanel">
-	<xmp class="code-<%#CurrentLanguage%>"><%#GetProxyCode ()%></xmp>
+	<div class="code-<%#CurrentLanguage%>"><%#GetProxyCode ()%></div>
 	</div>
 <%}%>
 
@@ -856,7 +912,7 @@ function formatXml (text)
 	<a href="<%=PageName + "?" + CurrentDocType + "=" + CurrentDocInd %>">Download</a>
 	<br><br>
 	<div class="codePanel">
-	<xmp class="code-xml"><%#GenerateDocument ()%></xmp>
+	<div class="code-xml"><%#GenerateDocument ()%></div>
 	</div>
 
 <%}%>
