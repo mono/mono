@@ -1,3 +1,12 @@
+2002-03-24  Nick Drochak  <ndrochak@gol.com>
+
+	* ILGenerator.cs: Use #if-#endif instead of if(false){} to disable
+	code.  This way there is no compiler warning.
+
+	* TypeBuilder.cs: Removed the returns that came after the throws.
+	This removes a few more compiler warnings. Also marked with MonoTODO
+	all places where we throw NotImplemented exceptions.
+
 2002-03-23  Martin Baulig  <martin@gnome.org>
 
 	* SignatureHelper.cs (GetFieldSignatureHelper, GetLocalSignatureHelper):

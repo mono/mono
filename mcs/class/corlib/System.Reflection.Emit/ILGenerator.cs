@@ -76,11 +76,11 @@ namespace System.Reflection.Emit {
 		}
 
 		internal void Debug () {
-			if (false) {
+#if NO
 			System.Console.WriteLine ("Handler at "+start.ToString()+ " len: "+len.ToString());
 			for (int i = 0; i < handlers.Length; ++i)
 				handlers [i].Debug ();
-			}
+#endif
 		}
 
 		void add_block (int offset) {

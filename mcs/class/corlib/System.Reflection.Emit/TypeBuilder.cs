@@ -119,14 +119,17 @@ namespace System.Reflection.Emit {
 			get {return MemberTypes.TypeInfo;}
 		}
 
+		[MonoTODO]
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void AddInterfaceImplementation( Type interfaceType) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
 			throw new NotImplementedException ();
 		}
@@ -269,6 +272,7 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		[MonoTODO]
 		public ConstructorBuilder DefineTypeInitializer() {
 			throw new NotImplementedException ();
 		}
@@ -325,6 +329,7 @@ namespace System.Reflection.Emit {
 
 		public override Type GetElementType () { return null; }
 
+		[MonoTODO]
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
 			throw new NotImplementedException ();
 		}
@@ -333,6 +338,7 @@ namespace System.Reflection.Emit {
 			return new EventInfo [0];
 		}
 
+		[MonoTODO]
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
 			//FIXME
 			throw new NotImplementedException ();
@@ -374,6 +380,7 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
+		[MonoTODO]
 		public override Type GetInterface (string name, bool ignoreCase) {
 			throw new NotImplementedException ();
 		}
@@ -388,6 +395,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		[MonoTODO]
 		public override MemberInfo[] GetMembers( BindingFlags bindingAttr) {
 			// FIXME
 			throw new NotImplementedException ();
@@ -429,22 +437,22 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
+		[MonoTODO]
 		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
 			// FIXME
 			throw new NotImplementedException ();
-			return null;
 		}
 		
+		[MonoTODO]
 		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
 			// FIXME
 			throw new NotImplementedException ();
-			return null;
 		}
 
+		[MonoTODO]
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
 			// FIXME
 			throw new NotImplementedException ();
-			return null;
 		}
 
 		public override PropertyInfo[] GetProperties( BindingFlags bindingAttr) {
@@ -489,20 +497,20 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 		
+		[MonoTODO]
 		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
 			// FIXME
 			throw new NotImplementedException ();
-			return null;
 		}
 
 		protected override bool HasElementTypeImpl () {
 			return IsArrayImpl() || IsByRefImpl() || IsPointerImpl ();
 		}
 
+		[MonoTODO]
 		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
 			// FIXME
 			throw new NotImplementedException ();
-			return null;
 		}
 
 		protected override bool IsArrayImpl () {
@@ -575,9 +583,9 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		[MonoTODO]
 		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
 			throw new NotImplementedException ();
-			return null;
 		}
 
 		public void SetParent (Type parentType) {
