@@ -22,9 +22,12 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
+// Revision 1.3  2004/10/15 15:05:09  ravindra
+// Implemented GetBounds method and fixed coding style.
+//
 // Revision 1.2  2004/10/02 11:57:56  ravindra
 // Added attributes.
 //
@@ -50,25 +53,31 @@ namespace System.Windows.Forms
 	public class ListViewItem : ICloneable, ISerializable
 	{
 		#region Instance Variables
-		private Color backColor;
+		private Color back_color;
 		private Font font = ThemeEngine.Current.DefaultFont;
-		private Color foreColor;
-		private int imageIndex = -1;
-		private bool isChecked = false;
-		private bool isFocused = false;
+		private Color fore_color;
+		private int image_index = -1;
+		private bool is_checked = false;
+		private bool is_focused = false;
 		internal ListView owner;
 		private bool selected;
-		private int stateImageIndex = -1;
-		private ListViewSubItemCollection subItems;
+		private int state_image_index = -1;
+		private ListViewSubItemCollection sub_items;
 		private object tag;
 		private string text;
-		private bool useItemStyle = true;
+		private bool use_item_style = true;
+
+		internal Point location;
+		internal Rectangle icon_rect;
+		internal Rectangle label_rect;
+		internal Rectangle item_rect;
+		internal Rectangle entire_rect;
 		#endregion Instance Variables
 
 		#region Public Constructors
 		public ListViewItem ()
 		{
-			this.subItems = new ListViewSubItemCollection (this);
+			this.sub_items = new ListViewSubItemCollection (this);
 		}
 
 		public ListViewItem (string text) : this (text, -1)
@@ -81,33 +90,33 @@ namespace System.Windows.Forms
 
 		public ListViewItem (ListViewItem.ListViewSubItem [] subItems, int imageIndex)
 		{
-			this.subItems = new ListViewSubItemCollection (this);
-			this.subItems.AddRange (subItems);
-			this.imageIndex = imageIndex;
+			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items.AddRange (subItems);
+			this.image_index = imageIndex;
 		}
 
 		public ListViewItem (string text, int imageIndex)
 		{
 			this.text = text;
-			this.imageIndex = imageIndex;
-			this.subItems = new ListViewSubItemCollection (this);
+			this.image_index = imageIndex;
+			this.sub_items = new ListViewSubItemCollection (this);
 		}
 
 		public ListViewItem (string [] items, int imageIndex)
 		{
-			this.subItems = new ListViewSubItemCollection (this);
-			this.subItems.AddRange (items);
-			this.imageIndex = imageIndex;
+			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items.AddRange (items);
+			this.image_index = imageIndex;
 		}
 
 		public ListViewItem (string [] items, int imageIndex, Color foreColor, 
 				     Color backColor, Font font)
 		{
-			this.subItems = new ListViewSubItemCollection (this);
-			this.subItems.AddRange (items);
-			this.imageIndex = imageIndex;
-			this.foreColor = foreColor;
-			this.backColor = backColor;
+			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items.AddRange (items);
+			this.image_index = imageIndex;
+			this.fore_color = foreColor;
+			this.back_color = backColor;
 			this.font = font;
 		}
 		#endregion	// Public Constructors
@@ -115,8 +124,8 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color BackColor {
-			get { return backColor; }
-			set { this.backColor = value; }
+			get { return back_color; }
+			set { this.back_color = value; }
 		}
 
 		[Browsable (false)]
@@ -129,15 +138,15 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public bool Checked {
-			get { return isChecked; }
-			set { isChecked = value; }
+			get { return is_checked; }
+			set { is_checked = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Focused {
-			get { return isFocused; }
-			set { isFocused = value; }
+			get { return is_focused; }
+			set { is_focused = value; }
 		}
 
 		[Localizable (true)]
@@ -149,8 +158,8 @@ namespace System.Windows.Forms
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color ForeColor {
-			get { return foreColor; }
-			set { foreColor = value; }
+			get { return fore_color; }
+			set { fore_color = value; }
 		}
 
 		[DefaultValue (-1)]
@@ -159,11 +168,11 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
 		public int ImageIndex {
-			get { return imageIndex; }
+			get { return image_index; }
 			set {
 				if (value < -1)
 					throw new ArgumentException ("Invalid ImageIndex. It must be greater than or equal to -1.");
-				imageIndex = value;
+				image_index = value;
 			}
 		}
 
@@ -173,9 +182,9 @@ namespace System.Windows.Forms
 				if (owner == null)
 					return null;
 				else if (owner.View == View.LargeIcon)
-					return owner.largeImageList;
+					return owner.large_image_list;
 				else
-					return owner.smallImageList;
+					return owner.small_image_list;
 			}
 		}
 
@@ -217,18 +226,18 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
 		public int StateImageIndex {
-			get { return stateImageIndex; }
+			get { return state_image_index; }
 			set {
 				if (value < -1 || value > 14)
 					throw new ArgumentOutOfRangeException ("Invalid StateImageIndex. It must be in the range of [-1, 14].");
 
-				stateImageIndex = value;
+				state_image_index = value;
 			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewSubItemCollection SubItems {
-			get { return subItems; }
+			get { return sub_items; }
 		}
 
 		[Bindable (true)]
@@ -249,8 +258,8 @@ namespace System.Windows.Forms
 
 		[DefaultValue (true)]
 		public bool UseItemStyleForSubItems {
-			get { return useItemStyle; }
-			set { useItemStyle = value; }
+			get { return use_item_style; }
+			set { use_item_style = value; }
 		}
 		#endregion	// Public Instance Properties
 
@@ -258,7 +267,8 @@ namespace System.Windows.Forms
 		public void BeginEdit ()
 		{
 			// FIXME: TODO
-			// if (owner != null && owner.LabelEdit)
+			// if (owner != null && owner.LabelEdit 
+			//    && owner.Activation == ItemActivation.Standard)
 			// allow editing
 			// else
 			// throw new InvalidOperationException ();
@@ -277,8 +287,26 @@ namespace System.Windows.Forms
 
 		public Rectangle GetBounds (ItemBoundsPortion portion)
 		{
-			// FIXME: TODO
-			return new Rectangle (0, 0, 0, 0);
+			if (owner == null)
+				return Rectangle.Empty;
+
+			switch (portion) {
+
+			case ItemBoundsPortion.Icon:
+				return icon_rect;
+
+			case ItemBoundsPortion.Label:
+				return label_rect;
+
+			case ItemBoundsPortion.ItemOnly:
+				return item_rect;
+
+			case ItemBoundsPortion.Entire:
+				return entire_rect;
+
+			default:
+				throw new ArgumentException ("Invalid value for portion.");
+			}
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
@@ -321,9 +349,9 @@ namespace System.Windows.Forms
 		//[TypeConverter (typeof (ListViewSubItemConverter))]
 		public class ListViewSubItem
 		{
-			private Color backColor;
+			private Color back_color;
 			private Font font;
-			private Color foreColor;
+			private Color fore_color;
 			internal ListViewItem owner;
 			private string text;
 			
@@ -342,16 +370,16 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				this.text = text;
-				this.foreColor = foreColor;
-				this.backColor = backColor;
+				this.fore_color = foreColor;
+				this.back_color = backColor;
 				this.font = font;
 			}
 			#endregion // Public Constructors
 
 			#region Public Instance Properties
 			public Color BackColor {
-				get { return backColor; }
-				set { backColor = value; }
+				get { return back_color; }
+				set { back_color = value; }
 			}
 
 			[Localizable (true)]
@@ -361,8 +389,8 @@ namespace System.Windows.Forms
 			}
 
 			public Color ForeColor {
-				get { return foreColor; }
-				set { foreColor = value; }
+				get { return fore_color; }
+				set { fore_color = value; }
 			}
 
 			[Localizable (true)]
@@ -376,8 +404,8 @@ namespace System.Windows.Forms
 			public void ResetStyle ()
 			{
 				font = ThemeEngine.Current.DefaultFont;
-				backColor = ThemeEngine.Current.DefaultControlBackColor;
-				foreColor = ThemeEngine.Current.DefaultControlForeColor;
+				back_color = ThemeEngine.Current.DefaultControlBackColor;
+				fore_color = ThemeEngine.Current.DefaultControlForeColor;
 			}
 
 			public override string ToString ()
@@ -509,9 +537,9 @@ namespace System.Windows.Forms
 					throw new ArgumentException("Not of type ListViewSubItem", "item");
 				}
 
-				ListViewSubItem subItem = (ListViewSubItem) item;
-				subItem.owner = this.owner;
-				return list.Add (subItem);
+				ListViewSubItem sub_item = (ListViewSubItem) item;
+				sub_item.owner = this.owner;
+				return list.Add (sub_item);
 			}
 
 			bool IList.Contains (object subItem)
