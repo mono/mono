@@ -42,7 +42,11 @@ namespace Microsoft.Web.Services.Routing {
 			set { vid = value; }
 		}
 
+#if WSE1
+		public object Clone ()
+#else
 		public virtual object Clone ()
+#endif
 		{
 			return new Via (val, vid);
 		}

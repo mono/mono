@@ -17,12 +17,17 @@ namespace Microsoft.Web.Services.Routing {
         public class Path : SoapHeader, ICloneable
         {
                 XmlElement element;
-                
-                public Path ()
-                {
-                }
+#if WSE1
+		internal Path () {}
+#else
+		public Path () {}
+#endif
 
+#if WSE1
+                internal Path (XmlElement element)
+#else
                 public Path (XmlElement element)
+#endif
                 {
                         this.element = element;
                 }
@@ -30,7 +35,6 @@ namespace Microsoft.Web.Services.Routing {
                 [MonoTODO]
                 public void CheckValid ()
                 {
-                        
                 }
 
                 [MonoTODO]
@@ -51,9 +55,73 @@ namespace Microsoft.Web.Services.Routing {
                 }
 
                 [MonoTODO]
+#if WSE1
+                public object Clone ()
+#else
                 public virtual object Clone ()
+#endif
                 {
                         throw new NotImplementedException ();
                 }
+
+#if !WSE1	
+		[Obsolete]
+#endif
+		[MonoTODO]
+		public string Action { 
+			get { return null; }
+			set { ; }
+		}
+
+		[MonoTODO]
+		public RoutingFault Fault {
+			get { return null; }
+			set { ; }
+		}
+
+#if !WSE1	
+		[Obsolete]
+#endif
+		[MonoTODO]
+		public Uri From { 
+			get { return null; }
+			set { ; }
+		}
+
+		[MonoTODO]
+		public ViaCollection Fwd { 
+			get { return null; }
+		}
+
+#if !WSE1	
+		[Obsolete]
+#endif
+		[MonoTODO]
+		public Uri Id { 
+			get { return null; }
+		}
+
+#if !WSE1	
+		[Obsolete]
+#endif
+		[MonoTODO]
+		public Uri RelatesTo { 
+			get { return null; }
+			set { ; }
+		}
+
+		[MonoTODO]
+		public ViaCollection Rev { 
+			get { return null; }
+			set { ; }
+		}
+
+#if !WSE1	
+		[Obsolete]
+#endif
+		[MonoTODO]
+		public Uri To { 
+			get { return null; }
+		}
         }
 }
