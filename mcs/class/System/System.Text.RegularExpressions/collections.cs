@@ -104,7 +104,12 @@ namespace System.Text.RegularExpressions {
 	[Serializable]
 	public class GroupCollection : RegexCollectionBase, ICollection, IEnumerable {
 		public Group this[int i] {
-			get { return (Group)list[i]; }
+			get { 
+				if (i < list.Count && i >= 0) 
+					return (Group)list[i]; 
+				else
+					return new Group ();
+			}
 		}
 		
 		public Group this[string groupName] {
@@ -118,7 +123,7 @@ namespace System.Text.RegularExpressions {
 						return this [index];
 				}
 
-				return null;
+				return new Group ();
 			}
 		}
 		

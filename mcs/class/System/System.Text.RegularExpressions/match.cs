@@ -85,6 +85,11 @@ namespace System.Text.RegularExpressions {
 				captures.Add (new Capture (text, caps[i], caps[i + 1]));
 			captures.Reverse ();
 		}
+		
+		internal Group (): base ("")
+		{
+			captures = new CaptureCollection ();
+		}
 
 		private bool success;
 		private CaptureCollection captures;

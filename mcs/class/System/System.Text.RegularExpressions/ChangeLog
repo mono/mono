@@ -1,3 +1,9 @@
+2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* collections.cs: In the indexer, return an empty group if the requested
+	group is not found.
+	* match.cs: Added default constructor for Group.
+	
 2004-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* parser.cs: fixed group numbering.
