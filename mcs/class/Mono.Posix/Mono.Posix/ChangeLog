@@ -1,3 +1,7 @@
+2004-09-18  Jackson Harper  <jackson@ximian.com>
+
+	* make-map.cs: Use field value not name for #defines.
+		
 2004-09-14  Loren Bandiera <lorenb@mmgsecurity.com>
 
 	* Syscall.cs: Added method for getpwnam which uses Passwd

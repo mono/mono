@@ -79,10 +79,11 @@ class MakeMap {
 				continue;
 			
 			string n = t.FullName.Replace (".", "_");
+			object inst = Activator.CreateInstance (t);
 			foreach (FieldInfo fi in t.GetFields ()){
 				if (!fi.IsLiteral)
 					continue;
-				sh.WriteLine ("#define {0}_{1} {1}", n, fi.Name);
+				sh.WriteLine ("#define {0}_{1} 0x{2:x}", n, fi.Name, fi.GetValue (inst));
 			}
 			sh.WriteLine ();
 			
