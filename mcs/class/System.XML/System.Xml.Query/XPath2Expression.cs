@@ -73,7 +73,7 @@ namespace Mono.Xml.XPath2
 		}
 	}
 
-	public abstract class ExprSingle
+	public abstract partial class ExprSingle
 	{
 		internal abstract void CheckReference (XQueryASTCompiler compiler);
 
@@ -111,7 +111,7 @@ namespace Mono.Xml.XPath2
 				ArrayList al = new ArrayList ();
 				foreach (XPathItem item in Evaluate (iter))
 					al.Add (item);
-				return new ListIterator (iter, al);
+				return new ListIterator (iter.Context, al);
 			}
 			else
 				return Evaluate (iter);
@@ -242,7 +242,7 @@ namespace Mono.Xml.XPath2
 
 	// FLWORExpr
 
-	internal class FLWORExpr : ExprSingle
+	internal partial class FLWORExpr : ExprSingle
 	{
 		public FLWORExpr (ForLetClauseCollection forlet, ExprSequence whereClause, OrderSpecList orderBy, ExprSingle ret)
 		{

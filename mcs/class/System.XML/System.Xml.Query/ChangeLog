@@ -1,3 +1,19 @@
+2004-10-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPath2Expression.cs, XPathSequence.cs :
+	  Changed ListIterator.ctor() signature not to demand current sequence.
+	* XQueryCliFunction.cs, XQueryFunctionCliImpl.cs :
+	  Now, to represent a sequence, IEnumerable is not used anymore (it is
+	  confusing because System.String is also IEnumerable). So those native
+	  functions should just require XPathSequence (for user functions?
+	  not idea how MS will solve the "problem").
+
+	  If a native function method has [XQueryFunctionContext] attribute,
+	  then it means that the function requires current sequence, so fill
+	  it before invoking the method.
+	* XQueryFunctionContextAttribute.cs : added, to mark "it needs
+	  current sequence" for fn:position() and fn:count().
+
 2004-10-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathSequence.cs, XQueryTokenizer.cs :

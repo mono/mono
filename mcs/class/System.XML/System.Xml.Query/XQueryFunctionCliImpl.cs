@@ -177,18 +177,13 @@ namespace Mono.Xml.XPath2
 				return new XPathEmptySequence (ctx);
 			XPathSequence seq = value as XPathSequence;
 			if (seq == null) {
-				IEnumerable list = value as IEnumerable;
-				if (list != null)
-					seq = new EnumeratorIterator (ctx, list);
-				else {
-					XPathAtomicValue av = value as XPathAtomicValue;
-					if (av == null)
-						av = new XPathAtomicValue (value,
-							XmlSchemaType.GetBuiltInType (
-								XPathAtomicValue.XmlTypeCodeFromRuntimeType (
-									value.GetType (), true)));
-					seq = new SingleItemIterator (av, ctx);
-				}
+				XPathAtomicValue av = value as XPathAtomicValue;
+				if (av == null)
+					av = new XPathAtomicValue (value,
+						XmlSchemaType.GetBuiltInType (
+							XPathAtomicValue.XmlTypeCodeFromRuntimeType (
+								value.GetType (), true)));
+				seq = new SingleItemIterator (av, ctx);
 			}
 			return new TracingIterator (seq, label);
 		}
@@ -605,12 +600,12 @@ namespace Mono.Xml.XPath2
 			return XQueryConvert.ItemToBoolean (item);
 		}
 
-		public static IEnumerable FnIndexOf (XQueryContext ctx, IEnumerable e, XPathItem item)
+		public static XPathSequence FnIndexOf (XQueryContext ctx, XPathSequence items, XPathItem item)
 		{
-			return FnIndexOf (e, item, ctx.DefaultCollation);
+			return FnIndexOf (ctx, items, item, ctx.DefaultCollation);
 		}
 
-		public static IEnumerable FnIndexOf (IEnumerable items, XPathItem item, CultureInfo ci)
+		public static XPathSequence FnIndexOf (XQueryContext ctx, XPathSequence items, XPathItem item, CultureInfo ci)
 		{
 			ArrayList al = new ArrayList ();
 			IEnumerator e = items.GetEnumerator ();
@@ -626,17 +621,17 @@ namespace Mono.Xml.XPath2
 						al.Add (i);
 				}
 			}
-			return al;
+			return new ListIterator (ctx, al);
 		}
 
-		public static bool FnEmpty (IEnumerable e)
+		public static bool FnEmpty (XPathSequence e)
 		{
 			if (e is XPathEmptySequence)
 				return true;
 			return !e.GetEnumerator ().MoveNext ();
 		}
 
-		public static object FnExists (IEnumerable e)
+		public static object FnExists (XPathSequence e)
 		{
 			if (e is XPathEmptySequence)
 				return false;
@@ -644,139 +639,129 @@ namespace Mono.Xml.XPath2
 		}
 
 		[MonoTODO]
-		public static object FnDistinctValues (XQueryContext ctx, IEnumerable items)
+		public static object FnDistinctValues (XQueryContext ctx, XPathSequence items)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnDistinctValues (XQueryContext ctx, IEnumerable items, string collation)
+		public static object FnDistinctValues (XQueryContext ctx, XPathSequence items, string collation)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IEnumerable FnInsertBefore (IEnumerable target, int position, IEnumerable inserts)
+		public static XPathSequence FnInsertBefore (XPathSequence target, int position, XPathSequence inserts)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IEnumerable FnRemove (IEnumerable target, int position)
+		public static XPathSequence FnRemove (XPathSequence target, int position)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IEnumerable FnReverse (IEnumerable arg)
+		public static XPathSequence FnReverse (XPathSequence arg)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnSubsequence (IEnumerable sourceSeq, double startingLoc)
+		public static object FnSubsequence (XPathSequence sourceSeq, double startingLoc)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnSubsequence (IEnumerable sourceSeq, double startingLoc, double length)
+		public static object FnSubsequence (XPathSequence sourceSeq, double startingLoc, double length)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		// Basically it should be optimized by XQueryASTCompiler
-		public static IEnumerable FnUnordered (IEnumerable e)
+		public static XPathSequence FnUnordered (XPathSequence e)
 		{
 			return e;
 		}
 
 		[MonoTODO]
-		public static object FnZeroOrMore (IEnumerable e)
+		public static object FnZeroOrMore (XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnOneOrMore (IEnumerable e)
+		public static object FnOneOrMore (XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnExactlyOne (IEnumerable e)
+		public static object FnExactlyOne (XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnDeepEqual (XQueryContext ctx, IEnumerable p1, IEnumerable p2)
+		public static object FnDeepEqual (XQueryContext ctx, XPathSequence p1, XPathSequence p2)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnDeepEqual (XQueryContext ctx, IEnumerable p1, IEnumerable p2, string collation)
+		public static object FnDeepEqual (XQueryContext ctx, XPathSequence p1, XPathSequence p2, string collation)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static int FnCount (IEnumerable e)
+		public static int FnCount (XPathSequence e)
 		{
 			if (e == null)
 				return 0;
-			XPathSequence seq = e as XPathSequence;
-			if (seq != null)
-				return seq.Count;
-			ICollection col = e as ICollection;
-			if (col != null)
-				return col.Count;
-			int count = 0;
-			IEnumerator en = e.GetEnumerator ();
-			while (en.MoveNext ())
-				count++;
-			return count;
+			return e.Count;
 		}
 
 		[MonoTODO]
-		public static object FnAvg (IEnumerable e)
+		public static object FnAvg (XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnMax (XQueryContext ctx, IEnumerable e)
+		public static object FnMax (XQueryContext ctx, XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnMax (XQueryContext ctx, IEnumerable e, string collation)
+		public static object FnMax (XQueryContext ctx, XPathSequence e, string collation)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnMin (XQueryContext ctx, IEnumerable e)
+		public static object FnMin (XQueryContext ctx, XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnMin (XQueryContext ctx, IEnumerable e, string collation)
+		public static object FnMin (XQueryContext ctx, XPathSequence e, string collation)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnSum (IEnumerable e)
+		public static object FnSum (XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object FnSum (IEnumerable e, XPathItem zero)
+		public static object FnSum (XPathSequence e, XPathItem zero)
 		{
 			throw new NotImplementedException ();
 		}
@@ -821,22 +806,21 @@ namespace Mono.Xml.XPath2
 			}
 		}
 
-		public static IEnumerable FnCollection (XQueryContext ctx, string name)
+		public static XPathSequence FnCollection (XQueryContext ctx, string name)
 		{
 			return ctx.ResolveCollection (name);
 		}
 
-		// FIXME: It does not point to the expected sequence.
-		// Either the argument must be XPathSequence, or context
-		// must always have the expected CurrentSequence.
+		[XQueryFunctionContext]
 		public static int FnPosition (XPathSequence current)
 		{
 			return current.Position;
 		}
 
-		public static int FnLast (XQueryContext ctx)
+		[XQueryFunctionContext]
+		public static int FnLast (XPathSequence current)
 		{
-			return ctx.CurrentSequence.Count;
+			return current.Count;
 		}
 
 		public static DateTime FnCurrentDateTime ()
