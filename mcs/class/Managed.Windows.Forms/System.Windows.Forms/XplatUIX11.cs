@@ -59,6 +59,7 @@ namespace System.Windows.Forms {
 
 		private static Hashtable	handle_data;
 		private Queue message_queue;
+		private ArrayList timer_list;
 
 		private static readonly EventMask  SelectInputMask = EventMask.ButtonPressMask | 
 				EventMask.ButtonReleaseMask | 
@@ -111,6 +112,7 @@ namespace System.Windows.Forms {
 			ref_count=0;
 
 			message_queue = new Queue ();
+			timer_list = new ArrayList ();
 
 			// Now regular initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
@@ -554,16 +556,24 @@ namespace System.Windows.Forms {
 			XEvent	xevent = new XEvent();
 			bool queued_message = false;
 
-		begin:
 			lock (message_queue) {
 				if (message_queue.Count > 0) {
 					xevent = (XEvent) message_queue.Dequeue ();
 					queued_message = true;
 				}
 			}
+
 			if (!queued_message) {
 				lock (this) {
 					if (!XCheckMaskEvent (DisplayHandle, SelectInputMask, ref xevent)) {
+						for (int i = 0; i < timer_list.Count; i++) {
+							Timer timer = (Timer) timer_list [i];
+							DateTime now = DateTime.Now;
+							if (timer.Enabled && timer.Expires <= now) {
+								timer.FireTick ();
+								timer.Update ();
+							}
+						}
 						msg.message = Msg.WM_ENTERIDLE;
 						return true;
 					}
@@ -702,11 +712,6 @@ namespace System.Windows.Forms {
 
 					data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
 							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-
-					// Only paint on the last of a series of expose events
-					if (xevent.ExposeEvent.count > 0) {
-						goto begin;
-					}
 
 					lock (this) {
 						// Try combining expose events to reduce drawing	
@@ -927,6 +932,20 @@ namespace System.Windows.Forms {
 
 			lock (message_queue) {
                                 message_queue.Enqueue (xevent);
+			}
+		}
+
+		internal override void SetTimer (Timer timer)
+		{
+			lock (timer_list) {
+				timer_list.Add (timer);
+			}
+		}
+
+		internal override void KillTimer (Timer timer)
+		{
+			lock (timer_list) {
+				timer_list.Add (timer);
 			}
 		}
 

@@ -24,19 +24,20 @@
 
 
 using System;
+using System.Threading;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
 	public class Timer : Component {
 
-		private System.Timers.Timer timer;
+		private bool enabled;
 		private IContainer container;
+		private int interval = 100;
+		private DateTime expires;
 
 		public Timer ()
 		{
-			timer = new System.Timers.Timer ();
-			timer.Elapsed += new System.Timers.ElapsedEventHandler (ElapsedEventHandler);
 		}
 
 		public Timer (IContainer container) : this ()
@@ -45,23 +46,45 @@ namespace System.Windows.Forms {
 		}
 
 		public bool Enabled {
-			get { return timer.Enabled; }
-			set { timer.Enabled = value; }
+			get {
+				return enabled;
+			}
+			set {
+				enabled = value;
+				if (value) {
+					Console.WriteLine ("Setting timer");
+					XplatUI.SetTimer (this);
+				} else {
+					XplatUI.KillTimer (this);
+				}
+			}
 		}
 
 		public int Interval {
-			get { return (int) timer.Interval; }
-			set { timer.Interval = (int) value; }
+			get {
+				return interval;
+			}
+			set {
+				interval = value;
+				// Use AddTicks so we get some rounding
+				expires = DateTime.Now.AddMilliseconds (interval);
+			}
 		}
 
 		public void Start ()
 		{
-			timer.Start ();
+			Enabled = true;
 		}
 
 		public void Stop ()
 		{
-			timer.Stop ();
+			Enabled = false;
+		}
+
+		internal DateTime Expires {
+			get {
+				return expires;
+			}
 		}
 
 		public event EventHandler Tick;
@@ -71,28 +94,34 @@ namespace System.Windows.Forms {
 			return base.ToString () + ", Interval: " + Interval;
 		}
 
+		internal void Update ()
+		{
+			expires = DateTime.Now.AddMilliseconds (interval);
+		}
+
+		internal void FireTick ()
+		{
+			OnTick (EventArgs.Empty);
+		}
+
+
 		protected virtual void OnTick (EventArgs e)
 		{
-			if (Tick != null)
-				Tick (this, e);
+			lock (this) {
+				if (Tick != null)
+					Tick (this, e);
+			}
 		}
 
 		protected override void Dispose (bool disposing)
 		{
 			Enabled = false;
-			timer.Dispose ();
 		}
 
 		private void TickHandler (object sender, EventArgs e)
 		{
 			OnTick (e);
 		}
-
-		private void ElapsedEventHandler (object sender, System.Timers.ElapsedEventArgs e)
-		{
-			Control.BeginInvokeInternal (new EventHandler (TickHandler), new object [] { this, e });
-		}
-		
 	}
 }
 

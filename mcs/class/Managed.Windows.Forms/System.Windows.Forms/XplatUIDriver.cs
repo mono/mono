@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.19 $
+// $Revision: 1.20 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.20  2004/08/24 11:29:44  jackson
+// Move timers to the driver level. On X they are queued by the driver and checked on idle.
+//
 // Revision 1.19  2004/08/23 19:39:30  pbartok
 // - Added method to move mouse cursor
 //
@@ -193,6 +196,10 @@ namespace System.Windows.Forms {
 		internal abstract void ReleaseWindow(IntPtr hWnd);
 
 		internal abstract void SendAsyncMethod (AsyncMethodData method);
+		internal abstract void SetTimer (Timer timer);
+		internal abstract void KillTimer (Timer timer);
+
+
 #endregion	// XplatUI Driver Methods
 	}
 }

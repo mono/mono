@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.29 $
+// $Revision: 1.30 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.30  2004/08/24 11:29:44  jackson
+// Move timers to the driver level. On X they are queued by the driver and checked on idle.
+//
 // Revision 1.29  2004/08/24 00:19:36  ravindra
 // Removed the unwanted destructor.
 //
@@ -1018,6 +1021,16 @@ namespace System.Windows.Forms {
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
 			Win32PostMessage(FosterParent, Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
+		}
+
+		internal override void SetTimer (Timer timer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal override void KillTimer (Timer timer)
+		{
+			throw new NotImplementedException ();
 		}
 
 		// Santa's little helper
