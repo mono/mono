@@ -41,5 +41,12 @@ namespace MonoTests.System
 			s = 0.0.ToString(".0################;-.0#######;+-0", ci);
 			AssertEquals ("#3", "+-0", s);
 		}
+
+		[Test]
+		public void Permille ()
+		{
+			CultureInfo ci = CultureInfo.InvariantCulture;
+			AssertEquals ("485.7\u2030", (0.4857).ToString ("###.###\u2030"));
+		}
         }
 }
