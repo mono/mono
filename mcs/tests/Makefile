@@ -25,7 +25,8 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 test-318 mtest-5-dll mtest-5-exe
+NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 test-318 mtest-5-dll mtest-5-exe \
+			test-319-dll test-319-exe
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
