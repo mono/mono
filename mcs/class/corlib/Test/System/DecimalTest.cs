@@ -732,43 +732,60 @@ namespace MonoTests.System {
         public void TestConstructDoubleRound()
         {
             decimal d;
+	    int TestNum = 1;
             
-            d = new Decimal(1765.231234567857);
-            Assert(d == 1765.23123456786m);
+	    try {
+			d = new Decimal(1765.231234567857);
+			AssertEquals("A01", 1765.23123456786m, d);
 
-            d = new Decimal(1765.2312345678554);
-            Assert("failed banker's rule rounding test 1", d == 1765.23123456786m);
-            Assert(1765.23123456786 == (double)d);
+			TestNum++;
+			d = new Decimal(1765.2312345678554);
+			AssertEquals("A02, failed banker's rule rounding test 1", 1765.23123456786m, d);
+			AssertEquals("A03", 1765.23123456786, (double)d);
 
-            d = new Decimal(1765.231234567853);
-            Assert(d == 1765.23123456785m);
+			TestNum++;
+			d = new Decimal(1765.231234567853);
+			Assert(d == 1765.23123456785m);
 
-            d = new Decimal(1765.231234567847);
-            Assert(d == 1765.23123456785m);
+			TestNum++;
+			d = new Decimal(1765.231234567847);
+			Assert(d == 1765.23123456785m);
 
-            d = new Decimal(1765.231234567843);
-            Assert(d == 1765.23123456784m);
+			TestNum++;
+			d = new Decimal(1765.231234567843);
+			Assert(d == 1765.23123456784m);
 
-            d = new Decimal(1.765231234567857e-9);
-            Assert(d == 1.76523123456786e-9m);
+			TestNum++;
+			d = new Decimal(1.765231234567857e-9);
+			Assert(d == 1.76523123456786e-9m);
 
-            d = new Decimal(1.7652312345678554e-9);
-            Assert("failed banker's rule rounding test 3", d == 1.76523123456786e-9m);
+			TestNum++;
+			d = new Decimal(1.7652312345678554e-9);
+			Assert("failed banker's rule rounding test 3", d == 1.76523123456786e-9m);
 
-            d = new Decimal(1.765231234567853e-9);
-            Assert(d == 1.76523123456785e-9m);
+			TestNum++;
+			d = new Decimal(1.765231234567853e-9);
+			Assert(d == 1.76523123456785e-9m);
 
-            d = new Decimal(1.765231234567857e+24);
-            Assert(d == 1.76523123456786e+24m);
+			TestNum++;
+			d = new Decimal(1.765231234567857e+24);
+			Assert(d == 1.76523123456786e+24m);
 
-            d = new Decimal(1.7652312345678554e+24);
-            Assert("failed banker's rule rounding test 4", d == 1.76523123456786e+24m);
+			TestNum++;
+			d = new Decimal(1.7652312345678554e+24);
+			Assert("failed banker's rule rounding test 4", d == 1.76523123456786e+24m);
 
-            d = new Decimal(1.765231234567853e+24);
-            Assert(d == 1.76523123456785e+24m);
+			TestNum++;
+			d = new Decimal(1.765231234567853e+24);
+			Assert(d == 1.76523123456785e+24m);
 
-            d = new Decimal(1765.2312345678454);
-            Assert(d == 1765.23123456785m);
+			TestNum++;
+			d = new Decimal(1765.2312345678454);
+			Assert(d == 1765.23123456785m);
+		}
+		catch (Exception e) {
+			Fail("At TestNum = " + TestNum + " unexpected exception. e = " + e);
+		}
         }
 
         public void TestNegate()
