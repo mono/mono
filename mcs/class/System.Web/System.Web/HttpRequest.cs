@@ -1176,6 +1176,8 @@ namespace System.Web {
 		internal void SetFilePath (string filePath)
 		{
 			_sFilePath = filePath;
+			_sRequestRootVirtualDir = null;
+			baseVirtualDir = null;
 		}
 
 		internal void SetPathInfo (string pathInfo)
