@@ -796,7 +796,7 @@ namespace Mono.CSharp
 				static_cmd_arg.Append ((char) c);
 			}
 
-			cmd = static_cmd_arg.ToString ().Trim ();
+			cmd = static_cmd_arg.ToString ();
 
 			if (c == '\n'){
 				line++;
@@ -907,6 +907,11 @@ namespace Mono.CSharp
 		//
 		bool eval (string s)
 		{
+			Console.WriteLine ("Evaluating  : " + s);
+
+// 			String [] a = s.Split (' ');
+// 			foreach (string t in a)
+// 				Console.WriteLine (t);
 			return eval_val (s);
 		}
 

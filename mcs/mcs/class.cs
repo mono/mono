@@ -1237,14 +1237,18 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Property) != 0){
 				if (Properties != null)
 					foreach (Property p in Properties) {
-						if (filter (p.PropertyBuilder, criteria) == true)
+						if (filter (p.PropertyBuilder, criteria) == true) {
 							members.Add (p.PropertyBuilder);
+							Console.WriteLine ("Added " + p.PropertyBuilder);
+						}
 					}
 
 				if (Indexers != null)
 					foreach (Indexer ix in Indexers) {
-						if (filter (ix.PropertyBuilder, criteria) == true)
+						if (filter (ix.PropertyBuilder, criteria) == true) {
 							members.Add (ix.PropertyBuilder);
+							Console.WriteLine ("Indexer add " + ix.PropertyBuilder.DeclaringType);
+						}
 					}
 			}
 			
@@ -3252,16 +3256,29 @@ namespace Mono.CSharp {
 			}
 
 			if (is_get){
+
+				string meth_name = "get_Item";
+				if (iface_type != null)
+ 					meth_name = iface_type + ".get_Item";
+				
 				GetBuilder = parent.TypeBuilder.DefineMethod (
-					"get_Item", attr, IndexerType, parameters);
-				if (implementing != null)
+					meth_name, attr, IndexerType, parameters);
+
+				if (implementing != null) 
 					parent.TypeBuilder.DefineMethodOverride (
 						GetBuilder, implementing);
-
+				
+				
 				PropertyBuilder.SetGetMethod (GetBuilder);
 			} else {
+
+				string meth_name = "set_Item";
+
+				if (iface_type != null)
+					meth_name = iface_type + ".set_Item";
+				
 				SetBuilder = parent.TypeBuilder.DefineMethod (
-					"set_Item", attr, null, parameters);
+				        meth_name, attr, null, parameters);
 				if (implementing != null)
 					parent.TypeBuilder.DefineMethodOverride (
 						SetBuilder, implementing);

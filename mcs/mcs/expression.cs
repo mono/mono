@@ -2602,51 +2602,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Tells whether a user defined conversion from Type `from' to
-		///   Type `to' exists.
-		///
-		///   FIXME: we could implement a cache here. 
-		/// </summary>
-		static bool ConversionExists (EmitContext ec, Type from, Type to, Location loc)
-		{
-			// Locate user-defined implicit operators
-
-			Expression mg;
-			
-			mg = MemberLookup (ec, to, "op_Implicit", false, loc);
-
-			if (mg != null) {
-				MethodGroupExpr me = (MethodGroupExpr) mg;
-				
-				for (int i = me.Methods.Length; i > 0;) {
-					i--;
-					MethodBase mb = me.Methods [i];
-					ParameterData pd = GetParameterData (mb);
-					
-					if (from == pd.ParameterType (0))
-						return true;
-				}
-			}
-
-			mg = MemberLookup (ec, from, "op_Implicit", false, loc);
-
-			if (mg != null) {
-				MethodGroupExpr me = (MethodGroupExpr) mg;
-
-				for (int i = me.Methods.Length; i > 0;) {
-					i--;
-					MethodBase mb = me.Methods [i];
-					MethodInfo mi = (MethodInfo) mb;
-					
-					if (mi.ReturnType == to)
-						return true;
-				}
-			}
-			
-			return false;
-		}
-		
-		/// <summary>
 		///  Determines "better conversion" as specified in 7.4.2.3
 		///  Returns : 1 if a->p is better
 		///            0 if a->q or neither is better 
@@ -2739,8 +2694,8 @@ namespace Mono.CSharp {
 
 			}
 
-			if (ConversionExists (ec, p, q, loc) == true &&
-			    ConversionExists (ec, q, p, loc) == false)
+			if (StandardConversionExists (p, q) == true &&
+			    StandardConversionExists (q, p) == false)
 				return 1;
 
 			if (p == TypeManager.sbyte_type)
@@ -3041,9 +2996,6 @@ namespace Mono.CSharp {
 		///   loc: The location if we want an error to be reported, or a Null
 		///        location for "probing" purposes.
 		///
-		///   use_standard: controls whether OverloadResolve should use the 
-		///   ConvertImplicit or ConvertImplicitStandard during overload resolution.
-		///
 		///   Returns: The MethodBase (either a ConstructorInfo or a MethodInfo)
 		///            that is the best match of me on Arguments.
 		///
@@ -3147,9 +3099,10 @@ namespace Mono.CSharp {
 
  			for (int i = 0; i < candidates.Count; ++i) {
  				MethodBase candidate = (MethodBase) candidates [i];
-				
+
  				if (candidate == method)
  					continue;
+
 
 				int x = BetterFunction (ec, Arguments, method, candidate,
 							chose_params_expanded, loc);
@@ -3160,7 +3113,7 @@ namespace Mono.CSharp {
  					Report.Error (
  						121, loc,
  						"Ambiguous call when selecting function due to implicit casts");
- 					return null;
+					return null;
  				}
 			}
 			
