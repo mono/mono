@@ -1,5 +1,13 @@
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
+	* metadata.h (MONO_CLASS_IS_INTERFACE): New macro.
+
+	* class.c (mono_class_from_generic_parameter): Don't set 
+	TYPE_ATTRIBUTE_INTERFACE.
+	(my_mono_class_from_generic_parameter): Likewise.
+
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
 	* loader.c (find_method): Added an optional `MonoClass *ic'
 	argument to search in a specific interface.
 	(mono_get_method_constrained): New public function.
