@@ -1,3 +1,8 @@
+2004-09-09  Tim Coleman <tim@timcoleman.com>
+	* Base64FormattingOptions.cs: New enum
+	* Convert.cs: Add new ToBase64String methods for Fx 2.0
+
+
 2004-09-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* Console.cs,

@@ -91,6 +91,7 @@
 //
 
 using System.Globalization;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -230,6 +231,54 @@ namespace System {
 			
 			return (new ASCIIEncoding ().GetString (outArr));
 		}
+
+#if NET_2_0
+		public static string ToBase64String (byte[] inArray, Base64FormattingOptions options)
+		{
+			if (inArray == null)
+				throw new ArgumentNullException ("inArray");
+			return ToBase64String (inArray, 0, inArray.Length, options);
+		}
+
+		public static string ToBase64String (byte[] inArray, bool insertLineBreaks)
+		{
+			Base64FormattingOptions options = insertLineBreaks ? Base64FormattingOptions.InsertLineBreaks : Base64FormattingOptions.None;
+			return ToBase64String (inArray, options);
+		}
+
+		public static string ToBase64String (byte[] inArray, int offset, int length, Base64FormattingOptions options)
+		{
+			if (inArray == null)
+				throw new ArgumentNullException ("inArray");
+			if (offset < 0 || length < 0)
+				throw new ArgumentOutOfRangeException ("offset < 0 || length < 0");
+			// avoid integer overflow
+			if (offset > inArray.Length - length)
+				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
+
+			Encoding encoding = new ASCIIEncoding ();
+			StringBuilder sb = new StringBuilder ();
+			BinaryReader reader = new BinaryReader (new MemoryStream (inArray, offset, length));
+			byte[] b = null;
+
+			do {
+				// 54 bytes of input makes for 72 bytes of output.
+				b = reader.ReadBytes (54);
+				if (b.Length > 0)
+					sb.AppendLine (encoding.GetString (toBase64Transform.InternalTransformFinalBlock (b, 0, b.Length)));
+			} while (b.Length > 0);
+
+			return sb.ToString ();
+		}
+
+		public static string ToBase64String (byte[] inArray, int offset, int length, bool insertLineBreaks)
+		{
+			Base64FormattingOptions options = insertLineBreaks ? Base64FormattingOptions.InsertLineBreaks : Base64FormattingOptions.None;
+			return ToBase64String (inArray, offset, length, options);
+		}
+#endif
+
+
 		
 		// ========== Boolean Conversions ========== //
 	
