@@ -519,8 +519,12 @@ namespace Mono.Xml.Xsl.Functions {
 			if (arg2 != null)
 				nm = XslNameUtil.FromString (arg2.EvaluateString (iter), nsm);
 			
-			return (iter.NamespaceManager as XsltCompiledContext).Processor.CompiledStyle
+			try {
+				return (iter.NamespaceManager as XsltCompiledContext).Processor.CompiledStyle
 				.LookupDecimalFormat (nm).FormatNumber (d, s);
+			} catch (ArgumentException ex) {
+				throw new XsltException (ex.Message, ex, iter.Current);
+			}
 		}
 	}
 	

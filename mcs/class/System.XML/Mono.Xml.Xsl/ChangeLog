@@ -1,3 +1,10 @@
+2003-12-26 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslDecimalFormat.cs : implemented format-number() other than number
+	  grouping.
+	* XsltCompiledContext.cs : Modified XsltFormatNumber.Evaluate() to
+	  catch ArgumentException which will be thrown by formatting process.
+
 2003-12-23 Atsushi Enomoto <atsushi@ximian.com>
 
 	* ScriptCompilerInfo.cs : Use "mjs" as JScript compiler.
