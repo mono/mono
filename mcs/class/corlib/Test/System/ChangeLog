@@ -1,3 +1,7 @@
+2002-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringTest.cs: added 1 more check.
+
 2002-10-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* EnumTest.cs: Added tests for whitespaces in Enum:Parse().

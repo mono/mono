@@ -216,6 +216,7 @@ public class StringTest : TestCase
 		string yes = "original";
 		object y = yes;
 		string no = "copy";
+		string s1s1 = s1 + s1;
 
 		Assert("No match for null", !s1.Equals(null));
 		Assert("Should match object", s1.Equals(y));
@@ -225,6 +226,8 @@ public class StringTest : TestCase
 		Assert("Static nulls should match", String.Equals(null, null));
 		Assert("Should match", String.Equals(s1, yes));
 		Assert("Shouldn't match", !String.Equals(s1, no));
+
+		AssertEquals ("Equals (object)", false, s1s1.Equals (yes));
 	}
 
 	public void TestFormat ()
