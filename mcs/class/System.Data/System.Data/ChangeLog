@@ -1,5 +1,11 @@
 2004-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDiffLoader.cs : Ankit Jain <radical@imt.ac.in> has a conflicting
+	  patches and some good catches. Some attributes should be skipped,
+	  and loaded value must be typed.
+
+2004-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConstants.cs,
 	  XmlDataInferenceLoader.cs, 
 	  XmlDataReader.cs : use common const for http://www.w3.org/2000/xmlns/.

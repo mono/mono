@@ -39,6 +39,7 @@
 using System;
 using System.Data;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Collections;
 using System.Globalization;
@@ -221,17 +222,29 @@ namespace System.Data {
 		private void LoadColumnAttributes (DataTable Table, DataRow Row,
 			XmlReader reader, DataRowVersion loadType)
 		{
-			if (!reader.MoveToFirstAttribute ())
+			if (!reader.HasAttributes // this check will be faster
+				|| !reader.MoveToFirstAttribute ())
 				return;
 			do {
-				if (reader.NamespaceURI == XmlConstants.XmlnsNS)
+				switch (reader.NamespaceURI) {
+				case XmlConstants.XmlnsNS:
+				case XmlConstants.DiffgrNamespace:
+				case XmlConstants.MsdataNamespace:
+				case XmlConstants.MspropNamespace:
+				case XmlSchema.Namespace:
 					continue;
+				}
 				DataColumn c = Table.Columns [reader.LocalName];
 				if (c == null ||
 					c.ColumnMapping != MappingType.Attribute)					continue;
 				if (c.Namespace == null && reader.NamespaceURI == String.Empty ||
-					c.Namespace == reader.NamespaceURI)
-					Row [c] = reader.Value;
+					c.Namespace == reader.NamespaceURI) {
+					object data = XmlDataLoader.StringToObject (c.DataType, reader.Value);
+					if (loadType == DataRowVersion.Current)
+						Row [c] = data;
+					else
+						Row.SetOriginalValue (c.ColumnName, data);
+				} // otherwise just ignore as well as unknown elements.
 			} while (reader.MoveToNextAttribute ());
 			reader.MoveToElement ();
 		}
