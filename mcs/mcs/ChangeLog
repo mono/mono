@@ -1,5 +1,11 @@
 2002-01-16  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (For.Emit): If the test is null, then report that
+	we do `return', as we wont reach anything afterwards.
+
+	(Switch.SwitchGoverningType): Track the expression that matched
+	the conversion.
+
 	* driver.cs: Allow negative numbers as an error code to flag.
 
 	* cs-parser.jay: Handle 1551.

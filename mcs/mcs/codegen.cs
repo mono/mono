@@ -211,13 +211,10 @@ namespace Mono.CSharp {
 			if (ReturnType != null && !has_ret){
 				//
 				// FIXME: we need full flow analysis to implement this
-				// correctly.
+				// correctly and emit an error instead of a warning.
 				//
-				// Otherwise we report a non-existant error on cs-parser.cs
-				// yyparse routine
 				//
-				//Report.Error (161, loc, "Not all code paths return a value");
-
+				Report.Error (161, loc, "Not all code paths return a value");
 				return;
 			}
 

@@ -260,7 +260,8 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
-			return false;
+
+			return Test == null;
 		}
 	}
 	
@@ -1179,7 +1180,8 @@ namespace Mono.CSharp {
 						      " type exists for type `" +
 						      TypeManager.CSharpName (Expr.Type)+"'");
 					return null;
-				}
+				} else
+					converted = e;
 			}
 			return converted;
 		}

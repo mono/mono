@@ -147,7 +147,7 @@ namespace Mono.CSharp
 				"   -o FNAME        Specifies output file\n" +
 				"   --optimize      Optimizes\n" +
 				"   --parse         Only parses the source file\n" +
-				"   --probe X L     Probes for the source to generate code X on line L\n" +
+				"   --probe X       Probes for the source to generate code X on line L\n" +
 				"   --target KIND   Specifies the target (KIND is one of: exe, winexe, " +
 				                    "library, module)\n" +
 				"   --timestamp     Displays time stamps of various compiler events\n" +
@@ -375,12 +375,15 @@ namespace Mono.CSharp
 						continue;
 						
 					case "--probe": {
-						int code, line;
-						
-						code = Int32.Parse (
-							args [++i], NumberStyles.AllowLeadingSign);
-						line = Int32.Parse (args [++i], 0);
-						Report.SetProbe (code, line);
+						int code = 0;
+
+						try {
+							code = Int32.Parse (
+								args [++i], NumberStyles.AllowLeadingSign);
+							Report.SetProbe (code);
+						} catch {
+							Report.Error (-14, "Invalid number specified");
+						} 
 						continue;
 					}
 

@@ -38,3 +38,5 @@ numbers to match the Microsoft numbers:
 -13	No return with a value found.  Warning, since we currently
 	do not perform flow analysis, and can not tell whether a
 	ret is required or not.
+
+-14     Invalid number passed to probe

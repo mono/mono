@@ -48,7 +48,6 @@ namespace Mono.CSharp {
 		// Used for the test suite to excercise the error codes
 		//
 		static int probe_error = 0;
-		static int probe_line = 0;
 
 		//
 		// Keeps track of the warnings that we are ignoring
@@ -136,10 +135,9 @@ namespace Mono.CSharp {
 			warning_ignore_table [code] = true;
 		}
 		
-		static public void SetProbe (int code, int line)
+		static public void SetProbe (int code)
 		{
 			probe_error = code;
-			probe_line = line;
 		}
 
 		static public int ProbeCode {

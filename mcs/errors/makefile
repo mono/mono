@@ -3,8 +3,15 @@ MCS=../mcs/mcs.exe
 all:
 	failed=false; \
 	for i in cs*.cs; do \
-		error=`echo $$i | sed -e 's/cs0*//' -e 's/.cs//'`; \
-		echo $(MCS) --probe $$error 1 $$i; \
+		case $$i in \
+			cs[0-9]*-[0-9]*cs) \
+			error=`echo $$i | sed -e 's/cs*//' -e 's/.cs//' -e 's/-.*//'`; \
+			;;\
+			cs[0-9-]*cs)  \
+			error=`echo $$i | sed -e 's/cs*//' -e 's/.cs//'`; \
+			;;\
+		esac; \
+		echo $(MCS) --probe $$error $$i; \
 		$(MCS) --probe $$error 1 $$i > /dev/null; \
 		code=$$?; \
 		if test $$code != 123; then \
