@@ -177,9 +177,6 @@ namespace System.Web.Mail {
 	
 	// send the standard headers
 	// and the custom in MailMessage
-	// FIXME: more headers needs to be added so
-	// that all properties from MailMessage are sent..
-	// missing: Priority , UrlContentBase,UrlContentLocation
 	private IDictionary CreateHeaders( MailMessage msg ) {
 	    Hashtable headers = new Hashtable(); 
 	    
