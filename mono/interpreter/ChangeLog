@@ -1,3 +1,8 @@
+
+Sat Jul 13 19:54:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: advance ip in conv.r.un.
+
 2002-07-01  Dick Porter  <dick@ximian.com>
 
 	* interp.c (ves_exec): Removed unneeded argument to
