@@ -1,5 +1,12 @@
 2004-05-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* CaseInsensitiveComparer.cs: Fix the default constructor (needs to
+	  set CurrentCulture, ensure culture is set to null for invariant case,
+	  construct early
+	* Comparer.cs: Restyle, change lineendings
+
+2004-05-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* CaseInsensitiveHashCodeProvider.cs
 	* CaseInsensitiveComparer.cs: Change lineendings
 	* CaseInsensitiveComparer.cs: Restyle

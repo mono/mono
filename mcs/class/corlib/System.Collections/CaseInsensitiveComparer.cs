@@ -4,9 +4,9 @@
 // Authors:
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //   Eduardo Garcia Cebollero (kiwnix@yahoo.es)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 
-using System.Threading;
 using System.Globalization;
 
 namespace System.Collections
@@ -14,42 +14,39 @@ namespace System.Collections
 	[Serializable]
 	public class CaseInsensitiveComparer : IComparer
 	{
-		private static CaseInsensitiveComparer default_comparer, default_invariant_comparer;
+		private static CaseInsensitiveComparer defaultComparer = new CaseInsensitiveComparer ();
+		private static CaseInsensitiveComparer defaultInvariantComparer = new CaseInsensitiveComparer (true);
 
-		private CultureInfo cinfo;
+		private CultureInfo culture;
 
 		// Public instance constructor
 		public CaseInsensitiveComparer ()
 		{
+			LAMESPEC: This seems to be encoded while the object is created while Comparer does this at runtime.
+			culture = CultureInfo.CurrentCulture;
+		}
+
+		private CaseInsensitiveComparer (bool invariant)
+		{
+			// leave culture == null
 		}
 
 		public CaseInsensitiveComparer (CultureInfo culture)
 		{
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
-			cinfo = culture;
+
+			if (culture.LCID != CultureInfo.InvariantCulture.LCID)
+				this.culture = culture;
+			// else leave culture == null
 		}
 
 		//
 		// Public static properties
 		//
-
-		/* Don't do this in the class constructor, because
-		 * CultureInfo needs to be able to use
-		 * CaseInsensitiveComparer (Invariant), and the
-		 * default CIC needs to construct a CultureInfo.
-		 */
 		public static CaseInsensitiveComparer Default {
 			get {
-				if (default_comparer == null) {
-					lock (typeof (CaseInsensitiveComparer)) {
-						if (default_comparer == null) {
-							default_comparer=new CaseInsensitiveComparer ();
-						}
-					}
-				}
-				
-				return(default_comparer);
+				return defaultComparer;
 			}
 		}
 
@@ -60,15 +57,7 @@ namespace System.Collections
 #endif
 		static CaseInsensitiveComparer DefaultInvariant {
 			get {
-				if (default_invariant_comparer == null) {
-					lock (typeof (CaseInsensitiveComparer)) {
-						if (default_invariant_comparer == null) {
-							default_invariant_comparer=new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
-						}
-					}
-				}
-				
-				return(default_invariant_comparer);
+				return defaultInvariantComparer;
 			}
 		}
 
@@ -81,13 +70,14 @@ namespace System.Collections
 			string sb = b as string;
 
 			if ((sa != null) && (sb != null)) {
-				if (cinfo != null)
-					return cinfo.CompareInfo.Compare (sa, sb, CompareOptions.IgnoreCase);
+				if (culture != null)
+					return culture.CompareInfo.Compare (sa, sb, CompareOptions.IgnoreCase);
 				else
-					return Thread.CurrentThread.CurrentCulture.CompareInfo.Compare (sa, sb, CompareOptions.IgnoreCase);
+					// FIXME: We should call directly into an invariant compare once available in string
+					return CultureInfo.InvariantCulture.CompareInfo.Compare (sa, sb, CompareOptions.IgnoreCase);
 			}
 			else
-				return Comparer.Default.Compare (a,b);
+				return Comparer.Default.Compare (a, b);
 		}
 	}
 }

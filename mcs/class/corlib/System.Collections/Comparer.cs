@@ -1,32 +1,27 @@
 //
-// System.Collections.Comparer
+// System.Collections.Comparer.cs
 //
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //
-
 
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Threading;
 
-
-namespace System.Collections {
-
+namespace System.Collections
+{
 	[Serializable]
-	public sealed class Comparer : IComparer {
-
+	public sealed class Comparer : IComparer
+	{
 		public static readonly Comparer Default;
-
 #if NET_1_1
 		public static readonly Comparer DefaultInvariant;
 #endif
-
 		CultureInfo _culture;
 
 		// Class constructor
-
 		static Comparer ()
 		{
 			Default = new Comparer ();
@@ -37,11 +32,10 @@ namespace System.Collections {
 		
 
 		// Public instance constructor
-
 		private Comparer ()
 		{
+			LAMESPEC: This seems to be encoded at runtime while CaseInsensitiveComparer does at creation.
 		}
-
 #if NET_1_1
 		public Comparer (CultureInfo culture)
 		{
@@ -49,9 +43,7 @@ namespace System.Collections {
 		}
 #endif
 
-
 		// IComparer
-
 		public int Compare (object a, object b)
 		{
 			if (a == b)
