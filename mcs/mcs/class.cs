@@ -1689,11 +1689,12 @@ namespace Mono.CSharp {
 		
 		public override void CloseType ()
 		{
+			if (Created)
+				return;
+			
 			try {
-				if (!Created){
-					Created = true;
-					TypeBuilder.CreateType ();
-				}
+				Created = true;
+				TypeBuilder.CreateType ();
 			} catch (TypeLoadException){
 				//
 				// This is fine, the code still created the type
@@ -1727,6 +1728,29 @@ namespace Mono.CSharp {
 			if (Delegates != null)
 				foreach (Delegate d in Delegates)
 					d.CloseType ();
+			
+			types = null;
+			properties = null;
+			enums = null;
+			delegates = null;
+			fields = null;
+			initialized_fields = null;
+			initialized_static_fields = null;
+			constants = null;
+			interfaces = null;
+			interface_order = null;
+			methods = null;
+			events = null;
+			indexers = null;
+			operators = null;
+			ec = null;
+			default_constructor = null;
+			default_static_constructor = null;
+			type_bases = null;
+			attributes = null;
+			ifaces = null;
+			parent_container = null;
+			member_cache = null;
 		}
 
 		public string MakeName (string n)
@@ -2616,6 +2640,7 @@ namespace Mono.CSharp {
 		{
 			MethodData.Emit (container, Block, this);
 			Block = null;
+			MethodData = null;
 		}
 
 		void IIteratorContainer.SetYields ()

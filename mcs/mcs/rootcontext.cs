@@ -438,6 +438,13 @@ namespace Mono.CSharp {
 				foreach (TypeBuilder type_builder in helper_classes)
 					type_builder.CreateType ();
 			}
+			
+			attribute_types = null;
+			interface_resolve_order = null;
+			type_container_resolve_order = null;
+			helper_classes = null;
+			tree = null;
+			TypeManager.CleanUp ();
 		}
 
 		/// <summary>

@@ -240,6 +240,35 @@ public class TypeManager {
 		public string name;
 		public Type [] args;
 	}
+	
+	public static void CleanUp ()
+	{
+		// Lets get everything clean so that we can collect before generating code
+		assemblies = null;
+		modules = null;
+		types = null;
+		typecontainers = null;
+		user_types = null;
+		builder_to_declspace = null;
+		builder_to_ifaces = null;
+		method_arguments = null;
+		indexer_arguments = null;
+		method_internal_params = null;
+		builder_to_attr = null;
+		builder_to_method = null;
+		
+		fields = null;
+		references = null;
+		negative_hits = null;
+		attr_to_allowmult = null;
+		builder_to_constant = null;
+		fieldbuilders_to_fields = null;
+		events = null;
+		priv_fields_events = null;
+		properties = null;
+		
+		TypeHandle.CleanUp ();
+	}
 
 	/// <summary>
 	///   A filter for Findmembers that uses the Signature object to
@@ -2695,6 +2724,11 @@ public sealed class TypeHandle : IMemberContainer {
 		handle = new TypeHandle (t);
 		type_hash.Add (t, handle);
 		return handle;
+	}
+	
+	public static void CleanUp ()
+	{
+		type_hash = null;
 	}
 
 	/// <summary>

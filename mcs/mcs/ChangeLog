@@ -1,3 +1,8 @@
+2003-12-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs, rootcontext.cs, typmanager.cs: do not
+	leak pointers.
+
 2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* codegen.cs: remove stack for the ec flow branching.
