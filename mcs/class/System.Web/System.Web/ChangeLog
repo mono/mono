@@ -1,3 +1,9 @@
+2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* HttpUtility.cs: Moved entities hashtable into main
+		class as a static object, so we don't instantiate
+		a new one every time.  Also put the hashtable
+		building into a lock block.
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* HttpUtility.cs: Cleanup of the code, implementation
 		of HtmlDecode/HtmlEncode functions
