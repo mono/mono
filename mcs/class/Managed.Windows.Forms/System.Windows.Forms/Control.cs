@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.55 $
+// $Revision: 1.56 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.56  2004/09/01 13:19:19  jordi
+// Init string variables with an empty object
+//
 // Revision 1.55  2004/09/01 10:20:57  jordi
 // fires OnFontChanged event
 //
@@ -586,6 +589,8 @@ namespace System.Windows.Forms
 
 			parent = null;
 			background_image = null;
+			text = string.Empty;
+			name = string.Empty;			
 		}
 
 		public Control(Control parent, string text) : this() {
