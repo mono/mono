@@ -4,3 +4,4 @@ lib
 makefile
 .makefrag
 .response
+library-deps.stamp

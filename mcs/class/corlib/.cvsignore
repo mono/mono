@@ -2,3 +2,4 @@ corlib.dll
 corlib.pdb
 .makefrag
 .response
+library-deps.stamp

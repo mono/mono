@@ -6,3 +6,4 @@ bin
 obj
 .makefrag
 .response
+library-deps.stamp
