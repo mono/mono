@@ -52,7 +52,7 @@ namespace Microsoft.JScript {
 
 		private bool InLoop {
 			get {
-				if (parent == null)
+				if (parent == null || parent is ScriptBlock)
 					return false;
 				else if (parent is DoWhile || parent is While || parent is For || parent is ForIn)
 					return true;
