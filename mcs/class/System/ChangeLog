@@ -1,3 +1,7 @@
+2004-09-13  Tim Coleman <tim@timcoleman.com>
+	* System.dll.sources: Add new classes in System.Net.Security and 
+		System.Security.Authentication for Fx 2.0
+
 2004-09-12  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System.dll.sources: removed duplicate entry for System.Net.

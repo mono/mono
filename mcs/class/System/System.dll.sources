@@ -524,6 +524,13 @@ System.Net/NetworkAccess.cs
 System.Net/NetworkCredential.cs
 System.Net/NtlmClient.cs
 System.Net/ProtocolViolationException.cs
+System.Net.Security/AuthenticatedStream.cs
+System.Net.Security/AuthenticationLevel.cs
+System.Net.Security/LocalCertSelectionCallback.cs
+System.Net.Security/NegotiateStream.cs
+System.Net.Security/ProtectionLevel.cs
+System.Net.Security/RemoteCertValidationCallback.cs
+System.Net.Security/SslStream.cs
 System.Net/SecurityProtocolType.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
@@ -579,6 +586,10 @@ System.Net.Mime/ContentType.cs
 System.Net.Mime/DispositionTypeNames.cs
 System.Net.Mime/MediaTypeNames.cs
 System.Net.Mime/TransferEncoding.cs
+System.Security.Authentication/CipherAlgorithmType.cs
+System.Security.Authentication/ExchangeAlgorithmType.cs
+System.Security.Authentication/HashAlgorithmType.cs
+System.Security.Authentication/SslProtocolType.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 System.Security.Permissions/PermissionHelper.cs
 System.Security.Permissions/ResourcePermissionBase.cs
