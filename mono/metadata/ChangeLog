@@ -1,3 +1,9 @@
+
+Mon Jun 16 18:11:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c, profiler.h, profiler-private.h: added basic block 
+	coverage profiling API.
+
 2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_create_runtime_class): Add support
