@@ -1,7 +1,12 @@
+2003-05-13 Nick Drochak <ndrochak@gol.com>
+
+	* DictionaryEntry.cs: Added test
+
 2003-05-03 Ben Maurer <bmaurer@users.sourceforge.net>
-* ArrayListTest.cs
-	Tests for the above* ArrayList.cs
-	Added methods to support IList wrappers
+	
+	* ArrayListTest.cs:
+		Tests for the above* ArrayList.cs
+		Added methods to support IList wrappers
 
 2003-04-15  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
