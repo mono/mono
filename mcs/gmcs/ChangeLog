@@ -1,3 +1,8 @@
+2005-03-22  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.LookupMemberCache): Add support for
+	generic instances.
+
 2005-02-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Atttribute.Resolve): Add cache for parameter-less

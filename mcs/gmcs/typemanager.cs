@@ -510,6 +510,9 @@ public partial class TypeManager {
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
+		if (t.IsGenericInstance)
+			return LookupMemberCache (t.GetGenericTypeDefinition ());
+
 		if (t is TypeBuilder) {
 			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
 			if (container != null)
