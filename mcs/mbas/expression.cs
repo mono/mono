@@ -2088,7 +2088,26 @@ namespace Mono.MonoBASIC {
 			Expression left_expr, right_expr;
 				
 			string op = oper_names [(int) oper];
-				
+			//Catch this case before OverLoad Resolve is called
+			//String and date 	
+			if (oper == Operator.Equality || oper == Operator.Inequality){
+				if (l == TypeManager.string_type && r == TypeManager.date_type){
+					left = ConvertImplicit(ec, left, r, loc);
+					if (left == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
+				} else if (r == TypeManager.string_type && l == TypeManager.date_type) {
+					right = ConvertImplicit(ec, right, l, loc);
+					if (right == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
+				}
+			}
+
 			MethodGroupExpr union;
 			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
 			if (r != l){
@@ -2173,7 +2192,22 @@ namespace Mono.MonoBASIC {
 						return ResolveOperator(ec);
 					}	
 				}
+				//if char + char convert to string and so string concat
 
+				if (l == TypeManager.char_type && r == TypeManager.char_type) {
+					left = ConvertImplicit (ec, left, TypeManager.string_type, loc);
+						if (left == null){
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+					right = ConvertImplicit (ec, right, TypeManager.string_type, loc);
+						if (left == null){
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+						return ResolveOperator(ec);
+
+					}
 				//
 				// Transform a + ( - b) into a - b
 				//
@@ -2205,6 +2239,8 @@ namespace Mono.MonoBASIC {
 					}
 					return ResolveOperator(ec);
 				}
+
+
 				//
 				// operator != (object a, object b)
 				// operator == (object a, object b)
@@ -2217,13 +2253,31 @@ namespace Mono.MonoBASIC {
 				//
 				if (!(l.IsValueType || r.IsValueType)){
 					type = TypeManager.bool_type;
+				//Both are object type
+					if (l == r){
+					type = TypeManager.bool_type;
 
-					if (l == r)
-						return this;
+					Expression etmp;
+                       		 	ArrayList args;
+                       		 	Argument arg1, arg2,arg3;
+					Expression e = null;
+					eclass = ExprClass.Value;
+
+                        		etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.ObjectType.ObjTst", loc);
+                        		args = new ArrayList();
+                        		arg1 = new Argument (left, Argument.AType.Expression);
+                        		arg2 = new Argument (right, Argument.AType.Expression);
+                        		arg3 = new Argument (new BoolConstant(false), Argument.AType.Expression);
+                        		args.Add (arg1);
+                        		args.Add (arg2);
+                        		args.Add (arg3);
+                        		e = (Expression) new Invocation (etmp, args, loc);
+                        		e = new Binary(oper,e.Resolve(ec),new IntConstant(0),loc);
+                        		return e.Resolve(ec);
+				}
 					
 					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
 						return this;
-
 					//
 					// Also, a standard conversion must exist from either one
 					//
@@ -2249,9 +2303,22 @@ namespace Mono.MonoBASIC {
 				//
 				// One of them is a valuetype, but the other one is not.
 				//
-				if (!l.IsValueType || !r.IsValueType) {
-					Error_OperatorCannotBeApplied ();
-					return null;
+				if (l.IsValueType && r == TypeManager.object_type) {
+					type = TypeManager.bool_type;
+					left = ConvertImplicit(ec, left, r, loc);
+					if (left == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
+				} else if (r.IsValueType && l == TypeManager.object_type) {
+					type = TypeManager.bool_type;
+					right = ConvertImplicit(ec, right, l, loc);
+					if (right == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
 				}
 			}
 			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){

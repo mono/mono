@@ -1,4 +1,10 @@
 2005-02-22 Manjula GHM <mmanjula@novell.com>
+	*expression.cs: Handle String and date before Overloadresolve
+			Added code for char + char
+			Handle One of operands is value type in Relational operators 
+			Handle when both are Object types
+
+2005-02-22 Manjula GHM <mmanjula@novell.com>
 	*expression.cs: Handle Bool w.r.t Logical operators 
 
 2005-02-21 Manjula GHM <mmanjula@novell.com>
