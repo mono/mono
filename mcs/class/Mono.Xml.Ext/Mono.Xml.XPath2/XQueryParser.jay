@@ -80,6 +80,7 @@ namespace Mono.Xml.XQuery.Parser
 
 		private XQueryParser ()
 		{
+			ErrorOutput = TextWriter.Null;
 		}
 
 		// FIXME: we don't need Evidence here at all. It is used only

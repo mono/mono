@@ -1,3 +1,7 @@
+2004-11-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryParser.jay : don't output parser error by default.
+
 2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* .cvsignore : should be here ;-)
