@@ -67,10 +67,9 @@ namespace System.Xml
 			baseStream = w;
 		}
 
-		public XmlTextWriter (string filename, Encoding encoding) : base ()
+		public XmlTextWriter (string filename, Encoding encoding) :
+			this (new FileStream (filename, FileMode.Create, FileAccess.Write, FileShare.None), encoding)
 		{
-			this.w = new StreamWriter(filename, false, encoding);
-			baseStream = ((StreamWriter)w).BaseStream;
 		}
 
 		#endregion
