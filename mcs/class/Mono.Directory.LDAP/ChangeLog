@@ -1,3 +1,8 @@
+2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Test/Mono.Directory.LDAP/BindSimpleTest.cs: Removed unused setup and teardown methods
+	  Test/Mono.Directory.LDAP/QueryRootDSETest.cs: Removed unused setup and teardown methods
+
+
 2003-03-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Credited myself in Test/Mono.Directory.LDAP/BindSimpleTest.cs and
 	  Test/Mono.Directory.LDAP/QueryRootDSE.cs

@@ -6,20 +6,14 @@
 // (C) 2003 Martin Willemoes Hansen
 // 
 
-using NUnit.Framework;
 using System;
+using NUnit.Framework;
 using Mono.Directory.LDAP;
 
 namespace MonoTests.Directory.LDAP
 {
 	[TestFixture]
 	public class QueryRootDSETest {
-
-		[SetUp]
-		public void GetReady () {}
-
-		[TearDown]
-		public void Clear () {}
 
 		[Test]
 		public void Stuff() 

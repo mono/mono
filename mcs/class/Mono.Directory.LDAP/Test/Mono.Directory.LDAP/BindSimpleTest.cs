@@ -15,12 +15,6 @@ namespace MonoTests.Directory.LDAP
 	[TestFixture]
 	public class BindSimpleTest {
 
-		[SetUp]
-		public void GetReady () {}
-
-		[TearDown]
-		public void Clear () {}
-
 		[Test]
 		public void Stuff() 
 		{
