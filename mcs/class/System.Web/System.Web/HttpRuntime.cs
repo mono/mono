@@ -136,6 +136,7 @@ namespace System.Web {
 				WebTrace.WriteLine (error.ToString ());
 
 				context.Response.Clear ();
+				context.Response.ClearHeaders ();
 				if (!(error is HttpException)) {
 					error = new HttpException (String.Empty, error);
 				}

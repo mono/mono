@@ -1,5 +1,10 @@
 2003-07-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpRuntime.cs: also clear the headers that may have been set upon
+	error processing the request.
+
+2003-07-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponseStreamProxy.cs: reformatted. Fixed infinite recursion in
 	Write method.
 
