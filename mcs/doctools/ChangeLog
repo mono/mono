@@ -1,3 +1,9 @@
+2002-03-28  John Barnette <jbarn@httcb.net>
+
+	* makefile: added gui target, no longer uses CVS NAnt
+
+	* doctools.build: Reworked, added gui target.
+
 2002-02-24  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: have 'clean' target remove the build directory

@@ -1,10 +1,8 @@
+docstub:
+	NAnt docstub
 
-all: linux
-
-windows: linux
-
-linux:
-	../nant/NAnt.exe linux
+gui:
+	NAnt gui
 
 clean:
 	rm -rf build
