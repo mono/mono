@@ -18,9 +18,11 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/24/2002 10:43:57 PM
 	/// </remarks>
-	class MissingEvent : MissingProperty {
+	class MissingEvent : MissingMember {
 		// e.g. <method name="Equals" status="missing"/>
 		public MissingEvent (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
+		MissingMethod mmAdd;
+		MissingMethod mmRemove;
 		MissingMethod mmRaise;
 
 		public override string Type {
@@ -28,20 +30,50 @@ namespace Mono.Util.CorCompare {
 				return "event";
 			}
 		}
-		/// <summary>
-		/// a place holder for the method used to set the value of this property
-		/// </summary>
-		public virtual MissingMethod RaiseMethod
+
+		public override NodeStatus Analyze ()
 		{
-			get { return mmRaise; }
-			set
+			m_nodeStatus = base.Analyze ();
+
+			EventInfo eiMono = (EventInfo) mInfoMono;
+			EventInfo eiMS   = (EventInfo) mInfoMS;
+
+			MemberInfo miAddMono, miRemoveMono, miRaiseMono;
+			if (eiMono == null)
+				miAddMono = miRemoveMono = miRaiseMono = null;
+			else
 			{
-				if (mmRaise != null)
-					m_nodeStatus.SubChildren (mmRaise.Status);
-				mmRaise = value;
-				if (mmRaise != null)
-					m_nodeStatus.AddChildren (mmRaise.Status);
+				miAddMono = eiMono.GetAddMethod ();
+				miRemoveMono = eiMono.GetRemoveMethod ();
+				miRaiseMono = eiMono.GetRaiseMethod ();
 			}
+
+			MemberInfo miAddMS, miRemoveMS, miRaiseMS;
+			if (eiMS == null)
+				miAddMS = miRemoveMS = miRaiseMS = null;
+			else
+			{
+				miAddMS = eiMS.GetAddMethod ();
+				miRemoveMS = eiMS.GetRemoveMethod ();
+				miRaiseMS = eiMS.GetRaiseMethod ();
+			}
+
+			if (miAddMono != null || miAddMS != null)
+			{
+				mmAdd = new MissingMethod (miAddMono, miAddMS);
+				m_nodeStatus.AddChildren (mmAdd.Analyze ());
+			}
+			if (miRemoveMono != null || miRemoveMS != null)
+			{
+				mmRemove = new MissingMethod (miRemoveMono, miRemoveMS);
+				m_nodeStatus.AddChildren (mmRemove.Analyze ());
+			}
+			if (miRaiseMono != null || miRaiseMS != null)
+			{
+				mmRaise = new MissingMethod (miRemoveMono, miRemoveMS);
+				m_nodeStatus.AddChildren (mmRaise.Analyze ());
+			}
+			return m_nodeStatus;
 		}
 
 		public override XmlElement CreateXML (XmlDocument doc)
@@ -56,7 +88,16 @@ namespace Mono.Util.CorCompare {
 					eltAccessors = doc.CreateElement ("accessors");
 					eltMember.AppendChild (eltAccessors);
 				}
-
+				if (mmAdd != null)
+				{
+					XmlElement eltAdd = mmAdd.CreateXML (doc);
+					eltAccessors.AppendChild (eltAdd);
+				}
+				if (mmRemove != null)
+				{
+					XmlElement eltRemove = mmRemove.CreateXML (doc);
+					eltAccessors.AppendChild (eltRemove);
+				}
 				if (mmRaise != null)
 				{
 					XmlElement eltRaise = mmRaise.CreateXML (doc);

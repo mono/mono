@@ -173,13 +173,7 @@ namespace Mono.Util.CorCompare
 		public override XmlElement CreateXML (XmlDocument doc)
 		{
 			XmlElement eltClass = base.CreateXML (doc);
-			//m_nodeStatus.SetAttributes (eltClass);
-
 			XmlElement eltMember;
-
-//			eltMember = MissingBase.CreateMemberCollectionElement ("attributes", rgAttributes, nsAttributes, doc);
-//			if (eltMember != null) 
-//				eltClass.AppendChild (eltMember);
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("methods", rgMethods, nsMethods, doc);
 			if (eltMember != null) 
@@ -217,21 +211,78 @@ namespace Mono.Util.CorCompare
 			Hashtable htMono = new Hashtable ();
 			if (typeMono != null)
 			{
+				ArrayList rgIgnoreMono = new ArrayList ();
 				foreach (MemberInfo miMono in typeMono.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
 				{
 					if (typeMono == miMono.DeclaringType)
 					{
 						string strName = MissingMember.GetUniqueName (miMono);
 						htMono.Add (strName, miMono);
+
+						// ignore any property/event accessors
+						if (miMono.MemberType == MemberTypes.Property)
+						{
+							PropertyInfo pi = (PropertyInfo) miMono;
+							MemberInfo miGet = pi.GetGetMethod ();
+							if (miGet != null)
+								rgIgnoreMono.Add (miGet);
+							MemberInfo miSet = pi.GetSetMethod ();
+							if (miSet != null)
+								rgIgnoreMono.Add (miSet);
+						}
+						else if (miMono.MemberType == MemberTypes.Event)
+						{
+							EventInfo ei = (EventInfo) miMono;
+							MemberInfo miAdd = ei.GetAddMethod ();
+							if (miAdd != null)
+								rgIgnoreMono.Add (miAdd);
+							MemberInfo miRemove = ei.GetRemoveMethod ();
+							if (miRemove != null)
+								rgIgnoreMono.Add (miRemove);
+							MemberInfo miRaise = ei.GetRaiseMethod ();
+							if (miRaise != null)
+								rgIgnoreMono.Add (miRaise);
+						}
 					}
 				}
+				foreach (MemberInfo miIgnore in rgIgnoreMono)
+					htMono.Remove (MissingMember.GetUniqueName (miIgnore));
 			}
 			Hashtable htMethodsMS = new Hashtable ();
 			if (typeMS != null)
 			{
-				foreach (MemberInfo miMS in typeMS.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+				ICollection colMembersMS = typeMS.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				Hashtable htIgnoreMS = new Hashtable ();
+				foreach (MemberInfo miMS in colMembersMS)
 				{
-					if (miMS != null && miMS.DeclaringType == typeMS)
+					// ignore any property/event accessors
+					if (miMS.MemberType == MemberTypes.Property)
+					{
+						PropertyInfo pi = (PropertyInfo) miMS;
+						MemberInfo miGet = pi.GetGetMethod ();
+						if (miGet != null)
+							htIgnoreMS.Add (miGet, miMS);
+						MemberInfo miSet = pi.GetSetMethod ();
+						if (miSet != null)
+							htIgnoreMS.Add (miSet, miMS);
+					}
+					else if (miMS.MemberType == MemberTypes.Event)
+					{
+						EventInfo ei = (EventInfo) miMS;
+						MemberInfo miAdd = ei.GetAddMethod ();
+						if (miAdd != null)
+							htIgnoreMS.Add (miAdd, miMS);
+						MemberInfo miRemove = ei.GetRemoveMethod ();
+						if (miRemove != null)
+							htIgnoreMS.Add (miRemove, miMS);
+						MemberInfo miRaise = ei.GetRaiseMethod ();
+						if (miRaise != null)
+							htIgnoreMS.Add (miRaise, miMS);
+					}
+				}
+				foreach (MemberInfo miMS in colMembersMS)
+				{
+					if (miMS != null && miMS.DeclaringType == typeMS && !htIgnoreMS.Contains (miMS))
 					{
 						string strNameUnique = MissingMember.GetUniqueName (miMS);
 						MemberInfo miMono = (MemberInfo) htMono [strNameUnique];
@@ -248,6 +299,7 @@ namespace Mono.Util.CorCompare
 						{
 							bool fVisibleMono = IsVisible (miMono);
 
+					/*
 							if (fVisibleMS != fVisibleMono)
 							{
 								if (fVisibleMS)
@@ -255,6 +307,7 @@ namespace Mono.Util.CorCompare
 								else
 									mm.Status.AddWarning ("Should be hidden");
 							}
+					*/
 
 							if (miMono.MemberType != miMS.MemberType)
 							{
@@ -317,86 +370,6 @@ namespace Mono.Util.CorCompare
 				}
 			}
 
-			// sort out the properties
-			foreach (MissingProperty property in rgProperties)
-			{
-				MemberInfo infoBest = property.BestInfo;
-				if (infoBest is PropertyInfo)
-				{
-					PropertyInfo pi = (PropertyInfo) property.BestInfo;
-					MethodInfo miGet = pi.GetGetMethod (true);
-					MethodInfo miSet = pi.GetSetMethod (true);
-
-					if (miGet == null)
-						miGet = ((PropertyInfo) property.Info).GetGetMethod (true);
-
-					if (miSet == null)
-						miSet = ((PropertyInfo) property.Info).GetSetMethod (true);
-
-					MissingMethod mmGet = FindMethod (miGet);
-					MissingMethod mmSet = FindMethod (miSet);
-					
-					if (mmGet != null)
-					{
-						nsMethods.SubChildren (mmGet.Status);
-						rgMethods.Remove (mmGet);
-						property.GetMethod = mmGet;
-					}
-					if (mmSet != null)
-					{
-						nsMethods.SubChildren (mmSet.Status);
-						rgMethods.Remove (mmSet);
-						property.SetMethod = mmSet;
-					}
-				}
-				else
-				{
-					// TODO: handle the mistmatch case.
-					Console.WriteLine ("FIXME: unhandled property mismatch.");
-				}
-			}
-
-			// sort out the events
-			foreach (MissingEvent evt in rgEvents)
-			{
-				MemberInfo infoBest = evt.BestInfo;
-				if (infoBest is EventInfo)
-				{
-					EventInfo ei = (EventInfo) evt.BestInfo;
-					MethodInfo miGet = ei.GetAddMethod ();
-					MethodInfo miSet = ei.GetRemoveMethod ();
-					MethodInfo miRaise = ei.GetRaiseMethod ();
-
-					MissingMethod mmGet = FindMethod (miGet);
-					MissingMethod mmSet = FindMethod (miSet);
-					MissingMethod mmRaise = FindMethod (miRaise);
-					
-					if (mmGet != null)
-					{
-						nsMethods.SubChildren (mmGet.Status);
-						rgMethods.Remove (mmGet);
-						evt.GetMethod = mmGet;
-					}
-					if (mmSet != null)
-					{
-						nsMethods.SubChildren (mmSet.Status);
-						rgMethods.Remove (mmSet);
-						evt.SetMethod = mmSet;
-					}
-					if (mmRaise != null)
-					{
-						nsMethods.SubChildren (mmRaise.Status);
-						rgMethods.Remove (mmRaise);
-						evt.RaiseMethod = mmRaise;
-					}
-				}
-				else
-				{
-					// TODO: handle the mistmatch case.
-					Console.WriteLine ("FIXME: unhandled event mismatch.");
-				}
-			}
-
 			// compare the attributes
 			rgAttributes = new ArrayList ();
 			nsAttributes = MissingAttribute.AnalyzeAttributes (
@@ -453,6 +426,17 @@ namespace Mono.Util.CorCompare
 
 				// serializable attribute
 				AddFakeAttribute (typeMono.IsSerializable, typeMS.IsSerializable, "System.SerializableAttribute");
+				AddFakeAttribute (typeMono.IsAutoLayout, typeMS.IsAutoLayout, "System.AutoLayoutAttribute");
+				AddFakeAttribute (typeMono.IsExplicitLayout, typeMS.IsExplicitLayout, "System.ExplicitLayoutAttribute");
+				AddFakeAttribute (typeMono.IsLayoutSequential, typeMS.IsLayoutSequential, "System.SequentialLayoutAttribute");
+
+				Accessibility accessibilityMono = GetAccessibility (typeMono);
+				Accessibility accessibilityMS   = GetAccessibility (typeMS);
+				if (accessibilityMono != accessibilityMS)
+					m_nodeStatus.AddWarning ("Should be "+AccessibilityToString (accessibilityMono));
+
+				AddFlagWarning (typeMono.IsSealed, typeMS.IsSealed, "sealed");
+				AddFlagWarning (typeMono.IsAbstract, typeMS.IsAbstract, "abstract");
 			}
 
 			// sum up the sub-sections
@@ -484,6 +468,7 @@ namespace Mono.Util.CorCompare
 
 		static bool IsVisible (MemberInfo mi)
 		{
+			// this is just embarrasing, couldn't they have virtualized this?
 			switch (mi.MemberType)
 			{
 				case MemberTypes.Constructor:
@@ -493,12 +478,36 @@ namespace Mono.Util.CorCompare
 					return !((FieldInfo) mi).IsPrivate && !((FieldInfo) mi).IsFamilyAndAssembly && !((FieldInfo) mi).IsAssembly;
 				case MemberTypes.NestedType:
 					return !((Type) mi).IsNestedPrivate;
-				case MemberTypes.Event:
-				case MemberTypes.Property:
-					return true;
+				case MemberTypes.Property:	// great, now we have to look at the methods
+					PropertyInfo pi = (PropertyInfo) mi;
+					MethodInfo miAccessor = pi.GetGetMethod ();
+					if (miAccessor == null)
+						miAccessor = pi.GetSetMethod ();
+					if (miAccessor == null)
+						return false;
+					return IsVisible (miAccessor);
+				case MemberTypes.Event:	// ditto
+					EventInfo ei = (EventInfo) mi;
+					MethodInfo eiAccessor = ei.GetAddMethod ();
+					if (eiAccessor == null)
+						eiAccessor = ei.GetRemoveMethod ();
+					if (eiAccessor == null)
+						eiAccessor = ei.GetRaiseMethod ();
+					if (eiAccessor == null)
+						return false;
+					return IsVisible (eiAccessor);
 				default:
 					throw new Exception ("Missing handler for MemberType: "+mi.MemberType.ToString ());
 			}
+		}
+
+		static Accessibility GetAccessibility (Type type)
+		{
+			if (type.IsPublic)
+				return Accessibility.Public;
+			else if (type.IsNotPublic)
+				return Accessibility.Private;
+			return MissingMember.GetAccessibility (type);
 		}
 	}
 }

@@ -32,37 +32,44 @@ namespace Mono.Util.CorCompare {
 		protected MissingMethod mmGet;
 		protected MissingMethod mmSet;
 
-		/// <summary>
-		/// a place holder for the method used to get the value of this property
-		/// </summary>
-		public virtual MissingMethod GetMethod
+		public override NodeStatus Analyze ()
 		{
-			get { return mmGet; }
-			set
+			m_nodeStatus = base.Analyze ();
+
+			PropertyInfo piMono = (PropertyInfo) mInfoMono;
+			PropertyInfo piMS   = (PropertyInfo) mInfoMS;
+
+			MemberInfo miGetMono, miSetMono;
+			if (piMono == null)
+				miGetMono = miSetMono = null;
+			else
 			{
-				if (mmGet != null)
-					m_nodeStatus.SubChildren (mmGet.Status);
-				mmGet = value;
-				if (mmGet != null)
-					m_nodeStatus.AddChildren (mmGet.Status);
+				miGetMono = piMono.GetGetMethod ();
+				miSetMono = piMono.GetSetMethod ();
 			}
+
+			MemberInfo miGetMS, miSetMS;
+			if (piMS == null)
+				miGetMS = miSetMS = null;
+			else
+			{
+				miGetMS = piMS.GetGetMethod ();
+				miSetMS = piMS.GetSetMethod ();
+			}
+
+			if (miGetMono != null || miGetMS != null)
+			{
+				mmGet = new MissingMethod (miGetMono, miGetMS);
+				m_nodeStatus.AddChildren (mmGet.Analyze ());
+			}
+			if (miSetMono != null || miSetMS != null)
+			{
+				mmSet = new MissingMethod (miSetMono, miSetMS);
+				m_nodeStatus.AddChildren (mmSet.Analyze ());
+			}
+			return m_nodeStatus;
 		}
 
-		/// <summary>
-		/// a place holder for the method used to set the value of this property
-		/// </summary>
-		public virtual MissingMethod SetMethod
-		{
-			get { return mmSet; }
-			set
-			{
-				if (mmSet != null)
-					m_nodeStatus.SubChildren (mmSet.Status);
-				mmSet = value;
-				if (mmSet != null)
-					m_nodeStatus.AddChildren (mmSet.Status);
-			}
-		}
 		public override XmlElement CreateXML (XmlDocument doc)
 		{
 			XmlElement eltMember = base.CreateXML (doc);

@@ -40,6 +40,15 @@ namespace Mono.Util.CorCompare
 					(mInfoMono == null) ? null : mInfoMono.GetCustomAttributes (false),
 					(mInfoMS   == null) ? null :   mInfoMS.GetCustomAttributes (false),
 					rgAttributes);
+
+				if (mInfoMono != null && mInfoMS != null)
+				{
+					Accessibility acMono = GetAccessibility (mInfoMono);
+					Accessibility acMS = GetAccessibility (mInfoMS);
+					if (acMono != acMS)
+						Status.AddWarning ("Should be "+AccessibilityToString (acMS));
+				}
+
 				m_nodeStatus.Add (nsAttributes);
 			}
 			return m_nodeStatus;
@@ -67,5 +76,63 @@ namespace Mono.Util.CorCompare
 			return (mi.MemberType).ToString () + mi.ToString ();
 		}
 
+		public static Accessibility GetAccessibility (MemberInfo mi)
+		{
+			switch (mi.MemberType)
+			{
+				case MemberTypes.Constructor:
+				case MemberTypes.Method:
+					MethodBase mb = (MethodBase) mi;
+					if (mb.IsPublic)
+						return Accessibility.Public;
+					else if (mb.IsAssembly)
+						return Accessibility.Assembly;
+					else if (mb.IsFamilyOrAssembly)
+						return Accessibility.FamilyOrAssembly;
+					else if (mb.IsFamily)
+						return Accessibility.Family;
+					else if (mb.IsFamilyAndAssembly)
+						return Accessibility.FamilyAndAssembly;
+					else if (mb.IsPrivate)
+						return Accessibility.Private;
+					break;
+				case MemberTypes.Field:
+					FieldInfo fi = (FieldInfo) mi;
+					if (fi.IsPublic)
+						return Accessibility.Public;
+					else if (fi.IsAssembly)
+						return Accessibility.Assembly;
+					else if (fi.IsFamilyOrAssembly)
+						return Accessibility.FamilyOrAssembly;
+					else if (fi.IsFamily)
+						return Accessibility.Family;
+					else if (fi.IsFamilyAndAssembly)
+						return Accessibility.FamilyAndAssembly;
+					else if (fi.IsPrivate)
+						return Accessibility.Private;
+					break;
+				case MemberTypes.NestedType:
+					Type ti = (Type) mi;
+					if (ti.IsNestedPublic)
+						return Accessibility.Public;
+					if (ti.IsNestedAssembly)
+						return Accessibility.Assembly;
+					else if (ti.IsNestedFamORAssem)
+						return Accessibility.FamilyOrAssembly;
+					else if (ti.IsNestedFamily)
+						return Accessibility.Family;
+					else if (ti.IsNestedFamANDAssem)
+						return Accessibility.FamilyAndAssembly;
+					else if (ti.IsNestedPrivate)
+						return Accessibility.Private;
+					break;
+				case MemberTypes.Event:
+				case MemberTypes.Property:
+					return Accessibility.Public;
+				default:
+					throw new Exception ("Missing handler for MemberType: "+mi.MemberType.ToString ());
+			}
+			throw new Exception ("Invalid accessibility: "+mi.ToString ());
+		}
 	}
 }

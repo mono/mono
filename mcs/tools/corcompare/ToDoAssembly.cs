@@ -27,6 +27,8 @@ namespace Mono.Util.CorCompare {
 		ArrayList MissingTypes = new ArrayList();
 		ArrayList rgNamespaces = new ArrayList();
 		string strName;
+		Assembly assMono;
+		Assembly assMS;
 		Type [] rgTypesMono;
 		Type [] rgTypesMS;
 
@@ -47,20 +49,20 @@ namespace Mono.Util.CorCompare {
 		public static ToDoAssembly Load (string strFileMono, string strName, string strNameMS)
 		{
 			Assembly assemblyMono = Assembly.LoadFrom (strFileMono);
-			Type [] rgTypesMono = assemblyMono.GetTypes ();
-
 			Assembly assemblyMS = Assembly.LoadWithPartialName (strNameMS);
-			Type [] rgTypesMS = assemblyMS.GetTypes ();
 
-			return new ToDoAssembly (strName, rgTypesMono, rgTypesMS);
+			return new ToDoAssembly (strName, assemblyMono, assemblyMS);
 		}
 
-		public ToDoAssembly (string _strName, Type [] _rgTypesMono, Type [] _rgTypesMS)
+		public ToDoAssembly (string _strName, Assembly _assMono, Assembly _assMS)
 		{
 			strName = _strName;
-			rgTypesMono = _rgTypesMono;
-			rgTypesMS = _rgTypesMS;
-			m_nodeStatus = new NodeStatus (_rgTypesMono, _rgTypesMS);
+			assMono = _assMono;
+			assMS = _assMS;
+
+			rgTypesMono = assMono.GetTypes ();
+			rgTypesMS = assMS.GetTypes ();
+			m_nodeStatus = new NodeStatus (_assMono, _assMS);
 		}
 
 		public override string Name {
@@ -132,6 +134,13 @@ namespace Mono.Util.CorCompare {
 				}
 			}
 
+			rgAttributes = new ArrayList ();
+			NodeStatus nsAttributes = MissingAttribute.AnalyzeAttributes (
+				assMono.GetCustomAttributes (true),
+				assMS.GetCustomAttributes (true),
+				rgAttributes);
+			m_nodeStatus.Add (nsAttributes);
+
 			return m_nodeStatus;
 		}
 
@@ -155,7 +164,6 @@ namespace Mono.Util.CorCompare {
 		public override XmlElement CreateXML (XmlDocument doc)
 		{
 			XmlElement assemblyElem = base.CreateXML (doc);
-//			m_nodeStatus.SetAttributes (assemblyElem);
 
 			if (rgNamespaces.Count > 0)
 			{

@@ -37,6 +37,11 @@ namespace Mono.Util.CorCompare {
 				FieldInfo fiMS   = (FieldInfo) mInfoMS;
 
 				AddFakeAttribute (fiMono.IsNotSerialized, fiMS.IsNotSerialized, "System.NonSerializedAttribute");
+				AddFakeAttribute (fiMono.IsPinvokeImpl, fiMS.IsPinvokeImpl, "System.PInvokeImplAttribute");
+
+				AddFlagWarning (fiMono.IsStatic, fiMS.IsStatic, "static");
+				AddFlagWarning (fiMono.IsLiteral, fiMS.IsLiteral, "const");
+				AddFlagWarning (fiMono.IsInitOnly, fiMS.IsInitOnly, "readonly");
 			}
 			return m_nodeStatus;
 		}

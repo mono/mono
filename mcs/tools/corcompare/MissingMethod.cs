@@ -36,5 +36,23 @@ namespace Mono.Util.CorCompare {
 				return "method";
 			}
 		}
+
+		public override NodeStatus Analyze ()
+		{
+			m_nodeStatus = base.Analyze ();
+
+			if (mInfoMono != null && mInfoMS != null)
+			{
+				MethodBase miMono = (MethodBase) mInfoMono;
+				MethodBase miMS   = (MethodBase) mInfoMS;
+
+				AddFlagWarning (miMono.IsAbstract, miMS.IsAbstract, "abstract");
+				AddFlagWarning (miMono.IsStatic, miMS.IsStatic, "static");
+				AddFlagWarning (miMono.IsVirtual && !miMono.IsFinal, miMS.IsVirtual && !miMS.IsFinal, "virtual");
+				AddFlagWarning (miMono.IsConstructor, miMS.IsConstructor, "a constructor");
+				//AddFlagWarning (miMono.IsFinal, miMS.IsFinal, "sealed");
+			}
+			return m_nodeStatus;
+		}
 	}
 }

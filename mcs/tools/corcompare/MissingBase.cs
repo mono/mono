@@ -24,6 +24,16 @@ namespace Mono.Util.CorCompare
 		protected ArrayList rgAttributes;
 		protected NodeStatus nsAttributes;
 
+		public enum Accessibility
+		{
+			Public,
+			Assembly,
+			FamilyOrAssembly,
+			Family,
+			FamilyAndAssembly,
+			Private,
+		}
+
 		/// <summary>
 		/// The name of the element (eg "System.Xml")
 		/// </summary>
@@ -91,6 +101,34 @@ namespace Mono.Util.CorCompare
 				rgAttributes.Add (ma);
 				nsAttributes.AddChildren (ma.Status);
 			}
+		}
+
+		protected void AddFlagWarning (bool fMono, bool fMS, string strName)
+		{
+			if (!fMono && fMS)
+				m_nodeStatus.AddWarning ("Should be " + strName);
+			else if (fMono && !fMS)
+				m_nodeStatus.AddWarning ("Should not be " + strName);
+		}
+
+		protected string AccessibilityToString (Accessibility ac)
+		{
+			switch (ac)
+			{
+				case Accessibility.Public:
+					return "public";
+				case Accessibility.Assembly:
+					return "internal";
+				case Accessibility.FamilyOrAssembly:
+					return "protected internal";
+				case Accessibility.Family:
+					return "protected";
+				case Accessibility.FamilyAndAssembly:
+					return "protected";	// TODO:
+				case Accessibility.Private:
+					return "private";
+			}
+			throw new Exception ("Invalid accessibility: "+ac.ToString ());
 		}
 	}
 }
