@@ -1630,7 +1630,6 @@ scope_block_begin       : OPEN_BRACE
 seh_block		: try_block seh_clauses
                           {
                                 TryBlock try_block = (TryBlock) $1;
-                                try_block.SetMethod (codegen.CurrentMethodDef);
 
                                 ArrayList clause_list = (ArrayList) $2;
                                 foreach (object clause in clause_list)
@@ -1792,7 +1791,7 @@ instr			: INSTR_NONE
 			| INSTR_BRTARGET id
                           {
                                 codegen.CurrentMethodDef.AddInstr (new BranchInstr ((BranchOp) $1,
-                                        codegen.CurrentMethodDef, (string) $2));
+                                        			   (string) $2));
                           }
 			| INSTR_METHOD method_ref
                           {
@@ -1851,8 +1850,7 @@ instr			: INSTR_NONE
                           }
 			| INSTR_SWITCH OPEN_PARENS labels CLOSE_PARENS
                           {
-                                codegen.CurrentMethodDef.AddInstr (new SwitchInstr ((ArrayList) $3,
-                                        codegen.CurrentMethodDef));
+                                codegen.CurrentMethodDef.AddInstr (new SwitchInstr ((ArrayList) $3));
                           }
 			;
 

@@ -1,4 +1,9 @@
-2003-07-287 Jackson Harper <jackson@latitudegeo.com>
+2003-07-29 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: No longer need to supply method references
+	to instructions, they get that when emitting now.
+	
+2003-07-28 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Use TypeRef.Ellipsis instead of null for a 
 	placeholder in bound arrays. Do not use AsClassRef anymore.
