@@ -1,3 +1,9 @@
+2004-09-06  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): When initializing locals, handle a
+	generic instances like a valuetype if it's a valuetype and like a
+	class if it's a class.
+
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-x86.c (mono_arch_find_jit_info): Pop arguments off the
