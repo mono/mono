@@ -1,9 +1,6 @@
 Imports System
 Module ConditionalCompilation
 	Sub Main()
-	                                         
-                                                                   
-                                           
                 'Testing line continuation within conditional compilation statement
                 #If _
                 True _

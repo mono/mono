@@ -1,8 +1,15 @@
 Imports System
+#Region "RegionDirectives"
 Module RegionDirectives
-	#Region
-	Sub Main()
+		Sub Main()
+		
+		End Sub
+
+	#Region "S"		
+	Sub S()
 		
 	End Sub
 	#End Region
 End Module
+#End Region
+
