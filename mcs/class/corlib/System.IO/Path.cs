@@ -175,8 +175,7 @@ namespace System.IO
 			if (path == String.Empty)
 				throw new ArgumentException ("The path is not of a legal form", "path");
 
-			if (path.StartsWith (new string (DirectorySeparatorChar, 1)) ||
-						path.StartsWith (new string (AltDirectorySeparatorChar, 1)))
+			if (IsPathRooted (path))
 				return path;
 
 			return Directory.GetCurrentDirectory () + new string (DirectorySeparatorChar, 1) + path;
