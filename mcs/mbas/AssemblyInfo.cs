@@ -46,7 +46,7 @@ using System.Runtime.CompilerServices;
 //[assembly: Mono.ForMoreInformation("http://www.go-mono.com")]
 //[assembly: Mono.UsageClause("mbas [options] source-files")]
 
-[assembly: AssemblyVersion("0.96.0.0")]
+[assembly: AssemblyVersion("0.96.1.0")]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]

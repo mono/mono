@@ -1,3 +1,6 @@
+2005-03-25:3 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* AssemblyInfo.cs: Small increment in the version number to publicize --codepage support
+
 2005-03-25:2 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* genericparser.cs: another static Parse overload to support specifying encoding when parsing from a file.
 	* driver.cs: obsoletes --tokenize, record currentEncoding for each source-file to be processed, call the new Parse overload
