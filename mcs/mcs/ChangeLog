@@ -1,5 +1,20 @@
 2001-09-28  Ravi Pratap  <ravi@ximian.com>
 
+	* expression.cs (Invocation::ConversionExists): Re-write to use
+	the conversion cache
+	
+	(Expression::ConvertImplicit): Automatic bailing out if level != 0. Also
+	cache all conversions done, not just user-defined ones.
+
+	(Invocation::BetterConversion): The real culprit. Use ConversionExists
+	to determine if a conversion exists instead of acutually trying to 
+	perform the conversion. It's faster too.
+
+	(Expression::ConvertExplicit): Modify to use ConversionExists to check
+	and only then attempt the implicit conversion.
+
+2001-09-28  Ravi Pratap  <ravi@ximian.com>
+
 	* expression.cs (ConvertImplicit): Use a cache for conversions
 	already found. Check level of recursion and bail out if necessary.
 	

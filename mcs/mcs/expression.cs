@@ -341,7 +341,7 @@ namespace CIR {
 
 		static int level = 0;
 
-		static Hashtable conversion_cache;
+		protected static Hashtable conversion_cache;
 		// <summary>
 		//   Converts implicitly the resolved expression `expr' into the
 		//   `target_type'.  It returns a new expression that can be used
@@ -351,20 +351,20 @@ namespace CIR {
 							  Type target_type)
 		{
 			Type expr_type = expr.Type;
-
-			Console.WriteLine ("ConvertImplicit " + expr_type + " => " + target_type);
-
-			if (expr_type == target_type)
-				return expr;
+			Expression e = null;
 			
-			if (level != 0) {
-				if (conversion_cache == null)
-					conversion_cache = new Hashtable ();
-				
-				Expression conv = (Expression) conversion_cache [expr_type + "=>" + target_type];
+			if (conversion_cache == null)
+				conversion_cache = new Hashtable ();
+			
+			if (expr_type == target_type)
+				e = expr;
 
-				return conv;
+			if (e != null) {
+				if (conversion_cache.Contains (expr_type + "=>" + target_type) == false)
+					conversion_cache.Add (expr_type + "=>" + target_type, e);
+				return e;
 			}
+
 			
 			//
 			// Step 1: Built-in conversions.
@@ -374,17 +374,17 @@ namespace CIR {
 				// From sbyte to short, int, long, float, double.
 				//
 				if (target_type == TypeManager.int32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double
@@ -393,92 +393,92 @@ namespace CIR {
 				    (target_type == TypeManager.ushort_type) ||
 				    (target_type == TypeManager.int32_type) ||
 				    (target_type == TypeManager.uint32_type))
-					return new EmptyCast (expr, target_type);
+					e = new EmptyCast (expr, target_type);
 
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to int, long, float, double
 				// 
 				if (target_type == TypeManager.int32_type)
-					return new EmptyCast (expr, target_type);
+					e = new EmptyCast (expr, target_type);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to int, uint, long, ulong, float, double
 				//
 				if ((target_type == TypeManager.uint32_type) ||
 				    (target_type == TypeManager.uint64_type))
-					return new EmptyCast (expr, target_type);
+					e = new EmptyCast (expr, target_type);
 					
 				if (target_type == TypeManager.int32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to long, float, double
 				//
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to long, ulong, float, double
 				//
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} else if ((expr_type == TypeManager.uint64_type) ||
 				   (expr_type == TypeManager.int64_type)){
 				//
 				// From long to float, double
 				//
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);	
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to ushort, int, uint, long, ulong, float, double
@@ -486,38 +486,46 @@ namespace CIR {
 				if ((target_type == TypeManager.ushort_type) ||
 				    (target_type == TypeManager.int32_type) ||
 				    (target_type == TypeManager.uint32_type))
-					return new EmptyCast (expr, target_type);
+					e = new EmptyCast (expr, target_type);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+					e = new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.decimal_type)
-					return InternalTypeConstructor (tc, expr, target_type);
+					e = InternalTypeConstructor (tc, expr, target_type);
 			} 
 
-			Expression e;
+			if (e != null) {
+				if (conversion_cache.Contains (expr_type + "=>" + target_type) == false)
+					conversion_cache.Add (expr_type + "=>" + target_type, e);
+				return e;
+			}
 			
 			e = ImplicitReferenceConversion (expr, target_type);
 			if (e != null){
+				if (conversion_cache.Contains (expr_type + "=>" + target_type) == false)
+					conversion_cache.Add (expr_type + "=>" + target_type, e);
 				return e;
 			}
 
+			if (level != 0) 
+				throw new Exception ("Lame loop detected");
+			
+			
 			level++;
 			e = UserImplicitCast.CanConvert (tc, expr, target_type);
 			level--;
 
 			if (e != null) {
-
-				if (conversion_cache == null)
-					conversion_cache = new Hashtable ();
-				
-				conversion_cache.Add (expr_type.ToString () + "=>" + target_type.ToString (), e);
+				if (conversion_cache.Contains (expr_type + "=>" + target_type) == false)
+					conversion_cache.Add (expr_type + "=>" + target_type, e);
 				return e;
 			}
+			
 			//
 			//  Could not find an implicit cast.
 			//
@@ -815,15 +823,19 @@ namespace CIR {
 		static public Expression ConvertExplicit (TypeContainer tc, Expression expr,
 							  Type target_type)
 		{
-			Expression ne = ConvertImplicit (tc, expr, target_type);
+			Expression ne;
 
-			if (ne != null)
-				return ne;
-
+			if (Invocation.ConversionExists (tc, expr.Type, target_type) == true) {
+				ne = ConvertImplicit (tc, expr, target_type);
+				
+				if (ne != null)
+					return ne;
+			}
+			
 			ne = ConvertNumericExplicit (tc, expr, target_type);
 			if (ne != null)
 				return ne;
-
+			
 			
 			return expr;
 		}
@@ -1818,7 +1830,7 @@ namespace CIR {
 			string op = "op_" + oper;
 
 			left_expr = MemberLookup (tc, l, op, false);
-
+			
 			right_expr = MemberLookup (tc, r, op, false);
 
 			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
@@ -2707,42 +2719,16 @@ namespace CIR {
 			}
 		}
 
-		static bool ConversionExists (TypeContainer tc, Type from, Type to)
+		public static bool ConversionExists (TypeContainer tc, Type from, Type to)
 		{
-			// Locate user-defined implicit operators
+			if (conversion_cache == null)
+				return false;
 
-			Expression mg;
-			
-			mg = MemberLookup (tc, to, "op_Implicit", false);
+			Expression e = (Expression) conversion_cache [from + "=>" + to];
 
-			if (mg != null) {
-				MethodGroupExpr me = (MethodGroupExpr) mg;
-				
-				for (int i = me.Methods.Length; i > 0;) {
-					i--;
-					MethodBase mb = me.Methods [i];
-					ParameterData pd = GetParameterData (mb);
-					
-					if (from == pd.ParameterType (0))
-						return true;
-				}
-			}
-
-			mg = MemberLookup (tc, from, "op_Implicit", false);
-
-			if (mg != null) {
-				MethodGroupExpr me = (MethodGroupExpr) mg;
-
-				for (int i = me.Methods.Length; i > 0;) {
-					i--;
-					MethodBase mb = me.Methods [i];
-					MethodInfo mi = (MethodInfo) mb;
-					
-					if (mi.ReturnType == to)
-						return true;
-				}
-			}
-			
+			if (e != null)
+				return true;
+						
 			return false;
 		}
 		
@@ -2828,25 +2814,16 @@ namespace CIR {
 			}
 
 			if (q == null) {
-
-				Expression tmp;
-
-				tmp = ConvertImplicit (tc, argument_expr, p);
-
-				if (tmp != null)
+				if (ConversionExists (tc, argument_type, p) == true)
 					return 1;
 				else
 					return 0;
-
 			}
 
-			Expression p_tmp, q_tmp;
-
-			p_tmp = ConvertImplicit (tc, argument_expr, p);
-			q_tmp = ConvertImplicit (tc, argument_expr, q);
-
-			if (p_tmp != null && q_tmp == null)
+			if (ConversionExists (tc, p, q) == true &&
+			    ConversionExists (tc, q, p) == false)
 				return 1;
+			
 
 			if (p == TypeManager.sbyte_type)
 				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
