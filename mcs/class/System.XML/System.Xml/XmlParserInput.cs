@@ -175,30 +175,6 @@ namespace System.Xml
 		bool initialState = true;
 		int peBufferIndex;
 
-		private int ParseCharReference (string name)
-		{
-			int ret = -1;
-			if (name.Length > 0 && name [0] == '#') {
-				if (name [1] == 'x')
-					ret = int.Parse (name.Substring (2, name.Length - 2), NumberStyles.None & NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-				else
-					ret = int.Parse (name.Substring (1, name.Length - 1), CultureInfo.InvariantCulture);
-			}
-			return ret;
-		}
-
-		private int ParseKnownEntityReference (string name)
-		{
-			switch (name) {
-			case "quot": return '"';
-			case "lt": return '<';
-			case "gt": return '>';
-			case "amp": return '&';
-			case "apos": return '\'';
-			}
-			return -1;
-		}
-
 		private XmlException ReaderError (string message)
 		{
 			return new XmlException (message, null, line, column);

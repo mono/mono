@@ -37,14 +37,6 @@ namespace System.Xml
 	{
 		// Field
 		ICredentials credential;
-		WebClient webClientInternal;
-		WebClient webClient {
-			get {
-				if (webClientInternal == null)
-					webClientInternal = new WebClient ();
-				return webClientInternal;
-			}
-		}
 
 		// Constructor
 		public XmlUrlResolver ()

@@ -347,10 +347,12 @@ namespace Mono.Xml
 				return false;
 		}
 
+		/*
 		private void OnValidationEvent (object o, ValidationEventArgs e)
 		{
 			this.HandleError (e.Exception, e.Severity);
 		}
+		*/
 
 		public override bool Read ()
 		{

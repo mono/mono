@@ -711,7 +711,7 @@ namespace System.Xml
 			
 			XmlNode next = oldChild.NextSibling;
 			RemoveChild (oldChild);
-			XmlNode node = InsertBefore (newChild, next);
+			InsertBefore (newChild, next);
 			return oldChild;
 		}
 
