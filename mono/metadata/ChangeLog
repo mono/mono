@@ -1,3 +1,9 @@
+
+Mon Feb 18 15:52:20 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c, object.c: fix intern pool implementation.
+	* class.c: fix alignment code.
+
 2002-02-16  Radek Doulik  <rodo@ximian.com>
 
 	* icall.c (ves_icall_System_Enum_ToObject): in case of big endian
