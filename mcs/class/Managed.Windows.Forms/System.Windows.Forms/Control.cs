@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.56 $
+// $Revision: 1.57 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.57  2004/09/02 20:26:21  pbartok
+// - Added missing Control.ControlAccessibleObject class
+// - Started to implement Select()ion mechanisms, still very incomplete
+//
 // Revision 1.56  2004/09/01 13:19:19  jordi
 // Init string variables with an empty object
 //
@@ -266,6 +270,7 @@ namespace System.Windows.Forms
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
+		internal bool			is_selected;		// true if control is selected
 		internal bool			is_captured;		// tracks if the control has captured the mouse
 		internal bool			causes_validation;	// tracks if validation is executed on changes
 		internal int			tab_index;		// position in tab order of siblings
@@ -321,6 +326,83 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Public Classes
+		public class ControlAccessibleObject : AccessibleObject {			
+			#region ControlAccessibleObject Local Variables
+			private Control	owner;
+			#endregion	// ControlAccessibleObject Local Variables
+
+			#region ControlAccessibleObject Constructors
+			public ControlAccessibleObject(Control ownerControl) {
+				this.owner = ownerControl;
+			}
+			#endregion	// ControlAccessibleObject Constructors
+
+			#region ControlAccessibleObject Public Instance Properties
+			public override string DefaultAction {
+				get {
+					return base.DefaultAction;
+				}
+			}
+
+			public override string Description {
+				get {
+					return base.Description;
+				}
+			}
+
+			public IntPtr Handle {
+				get {
+					return owner.Handle;
+				}
+
+				set {
+					// We don't want to let them set it
+				}
+			}
+
+			public override string Help {
+				get {
+					return base.Help;
+				}
+			}
+
+			public override string KeyboardShortcut {
+				get {
+					return base.KeyboardShortcut;
+				}
+			}
+
+			public override string Name {
+				get {
+					return base.Name;
+				}
+
+				set {
+					base.Name = value;
+				}
+			}
+
+			public Control Owner {
+				get {
+					return owner;
+				}
+			}
+
+			public override AccessibleRole Role {
+				get {
+					return base.Role;
+				}
+			}
+			#endregion	// ControlAccessibleObject Public Instance Properties
+
+			#region ControlAccessibleObject Public Instance Methods
+			public override int GetHelpTopic(out string FileName) {
+				return base.GetHelpTopic (out FileName);
+			}
+
+			#endregion	// ControlAccessibleObject Public Instance Methods
+		}
+
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 			#region	ControlCollection Local Variables
 			private ArrayList	list;
@@ -640,7 +722,7 @@ namespace System.Windows.Forms
 		#region Internal Properties
 		#endregion	// Internal Properties
 
-		#region Internal Methods
+		#region Private & Internal Methods
 		internal static void SetChildColor(Control parent) {
 			Control	child;
 
@@ -655,7 +737,38 @@ namespace System.Windows.Forms
 			}
 				
 		}
-		#endregion	// Internal Methods
+
+		private bool Select(Control control) {
+			Control	parent;
+
+			if (control == null) {
+				return false;
+			}
+
+			parent = control.parent;
+
+			if (((control.control_style & ControlStyles.Selectable) !=0)  && (parent != null)) {
+				while (parent != null) {
+					if (!parent.is_visible || !parent.is_enabled) {
+						return false;
+					}
+				}
+			}
+
+			control.is_selected = true;
+
+			return true;
+		}
+
+		private Control FindTabStop(Control control, bool forward) {
+			if (control == null) {
+				return null;
+			}
+
+			return null;
+		}
+
+		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
 		public static Color DefaultBackColor {
@@ -984,11 +1097,14 @@ namespace System.Windows.Forms
 		}
 
 		public virtual DockStyle Dock {
-			get { return dock_style;}
+			get {
+				return dock_style;
+			}
 
 			set {
-				if (dock_style == value)
+				if (dock_style == value) {
 					return;
+				}
 
 				dock_style = value;
 
@@ -1006,8 +1122,9 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (is_enabled == value)
+				if (is_enabled == value) {
 					return;
+				}
 
 				is_enabled = value;	
 				OnEnabledChanged (EventArgs.Empty);				
@@ -1034,8 +1151,9 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (font == value)
+				if (font == value) {
 					return;
+				}
 
 				font = value;	
 				OnFontChanged (EventArgs.Empty);				
@@ -1374,6 +1492,15 @@ namespace System.Windows.Forms
 			if (IsHandleCreated == true) {
 				XplatUI.RefreshWindow(window.Handle);
 			}
+		}
+
+		public void Select() {
+			Select(false, false);
+		}
+
+		[MonoTODO("Finish")]
+		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
+			return false;
 		}
 
 		public void SetBounds(int x, int y, int width, int height) {
@@ -2007,7 +2134,39 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void Select(bool directed, bool forward) {
-			throw new NotImplementedException();
+			int	index;
+			bool	result;
+
+			if (!directed) {
+				// Select this control
+				Select(this);
+			}
+
+			if (parent == null) {
+				return;
+			}
+
+			index = parent.child_controls.IndexOf(this);
+			result = false;
+
+			
+
+			do {
+				if (forward) {
+					if ((index+1) < parent.child_controls.Count) {
+						index++;
+					} else {
+						index = 0;
+					}
+				} else {
+					if (index>0) {
+						index++;
+					} else {
+						index = parent.child_controls.Count-1;
+					}
+				}
+				result = Select(parent.child_controls[index]);
+			} while (!result && parent.child_controls[index] != this);
 		}
 
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
