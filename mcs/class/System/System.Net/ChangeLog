@@ -1,3 +1,8 @@
+2003-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebClient.cs: implemented UploadFile. Fixed SetupRequest to set the
+	special headers *after* the others.
+
 2003-06-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: when the read is partially filled from the

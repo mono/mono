@@ -169,10 +169,63 @@ namespace System.Net
 			return UploadFile (address, "POST", fileName);
 		}
 		
-		[MonoTODO]
-		public byte[] UploadFile (string address, string method, string fileName)
+		public byte [] UploadFile (string address, string method, string fileName)
 		{
-			throw new NotImplementedException ();
+			string fileCType = Headers ["Content-Type"];
+			if (fileCType != null) {
+				string lower = fileCType.ToLower ();
+				if (lower.StartsWith ("multipart/"))
+					throw new WebException ("Content-Type cannot be set to a multipart" +
+								" type for this request.");
+			} else {
+				fileCType = "application/octet-stream";
+			}
+
+			string boundary = "------------" + DateTime.Now.Ticks.ToString ("x");
+			Headers ["Content-Type"] = String.Format ("multipart/form-data; boundary={0}", boundary);
+			WebRequest request = SetupRequest (address, method);
+			Stream reqStream = null;
+			Stream fStream = null;
+			byte [] resultBytes = null;
+
+			try {
+				fStream = File.OpenRead (fileName);
+				reqStream = request.GetRequestStream ();
+				byte [] realBoundary = Encoding.ASCII.GetBytes ("--" + boundary + "\r\n");
+				reqStream.Write (realBoundary, 0, realBoundary.Length);
+				string partHeaders = String.Format ("Content-Disposition: form-data; " +
+								    "name=\"file\"; filename=\"{0}\"\r\n" +
+								    "Content-Type: {1}\r\n\r\n",
+								    Path.GetFileName (fileName), fileCType);
+
+				byte [] partHeadersBytes = Encoding.UTF8.GetBytes (partHeaders);
+				reqStream.Write (partHeadersBytes, 0, partHeadersBytes.Length);
+				int nread;
+				byte [] buffer = new byte [4096];
+				while ((nread = fStream.Read (buffer, 0, 4096)) != 0)
+					reqStream.Write (buffer, 0, nread);
+
+				reqStream.WriteByte ((byte) '\r');
+				reqStream.WriteByte ((byte) '\n');
+				reqStream.Write (realBoundary, 0, realBoundary.Length);
+				reqStream.Close ();
+				reqStream = null;
+				WebResponse response = request.GetResponse ();
+				Stream st = ProcessResponse (response);
+				resultBytes = ReadAll (st, (int) response.ContentLength);
+			} catch (WebException) {
+				throw;
+			} catch (Exception e) {
+				throw new WebException ("Error uploading file.", e);
+			} finally {
+				if (fStream != null)
+					fStream.Close ();
+
+				if (reqStream != null)
+					reqStream.Close ();
+			}
+			
+			return resultBytes;	
 		}
 		
 		public byte[] UploadValues (string address, NameValueCollection data)
@@ -260,43 +313,37 @@ namespace System.Net
 			// What do we do with other requests differnt from HttpWebRequest?
 			if (headers != null && headers.Count != 0 && (request is HttpWebRequest)) {
 				HttpWebRequest req = (HttpWebRequest) request;
-				string val = headers ["Expect"];
-				if (val != null && val != "") {
-					req.Expect = val;
-					headers.RemoveInternal ("Expect");
-				}
-
-				val = headers ["Accept"];
-				if (val != null && val != "") {
-					req.Accept = val;
-					headers.RemoveInternal ("Accept");
-				}
-
-				val = headers ["Content-Type"];
-				if (val != null && val != "") {
-					req.ContentType = val;
-					headers.RemoveInternal ("Content-Type");
-				}
-
-				val = headers ["Connection"];
-				if (val != null && val != "") {
-					req.Connection = val;
-					headers.RemoveInternal ("Connection");
-				}
-
-				val = headers ["User-Agent"];
-				if (val != null && val != "") {
-					req.UserAgent = val;
-					headers.RemoveInternal ("User-Agent");
-				}
-
-				val = headers ["Referer"];
-				if (val != null && val != "") {
-					req.Referer = val;
-					headers.RemoveInternal ("Referer");
-				}
-
+				string expect = headers ["Expect"];
+				string contentType = headers ["Content-Type"];
+				string accept = headers ["Accept"];
+				string connection = headers ["Connection"];
+				string userAgent = headers ["User-Agent"];
+				string referer = headers ["Referer"];
+				headers.RemoveInternal ("Expect");
+				headers.RemoveInternal ("Content-Type");
+				headers.RemoveInternal ("Accept");
+				headers.RemoveInternal ("Connection");
+				headers.RemoveInternal ("Referer");
+				headers.RemoveInternal ("User-Agent");
 				request.Headers = headers;
+
+				if (expect != null && expect != "")
+					req.Expect = expect;
+
+				if (accept != null && accept != "")
+					req.Accept = accept;
+
+				if (contentType != null && contentType != "")
+					req.ContentType = contentType;
+
+				if (connection != null && connection != "")
+					req.Connection = connection;
+
+				if (userAgent != null && userAgent != "")
+					req.UserAgent = userAgent;
+
+				if (referer != null && referer != "")
+					req.Referer = referer;
 			}
 
 			responseHeaders = null;
