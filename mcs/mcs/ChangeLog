@@ -1,3 +1,10 @@
+2004-08-03  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Don't abort if we can't
+	use a user-defined operator; we still need to do numeric
+	promotions in case one argument is a builtin type and the other
+	one has an implicit conversion to that type.  Fixes #62322.
+
 2004-07-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Resolve the constant expression before returning
