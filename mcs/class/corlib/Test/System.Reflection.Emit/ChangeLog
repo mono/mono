@@ -1,3 +1,8 @@
+2005-03-23  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilderTest.cs: Disable last test again since the bug report
+	is reopened.
+
 2005-03-21  Nick Drochak <ndrochak@ieee.org>
 
 	* TypeBuilderTest.cs: Move asserts which fail on .NET to a new
