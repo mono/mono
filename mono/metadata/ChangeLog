@@ -1,3 +1,8 @@
+2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* string-icalls.{h,c} icalls.c: Add new icalls for Strcpy which take
+	a char array as parameter.
+
 2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* image.c: In mono_image_open(), always use an absolute path name to
