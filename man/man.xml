@@ -15,4 +15,7 @@
 <manpage name="chktrust" page="chktrust.1" />
 <manpage name="signcode" page="signcode.1" />
 <manpage name="sn" page="sn.1" />
+<manpage name="wsdl" page="wsdl.1" />
+<manpage name="disco" page="disco.1" />
+<manpage name="soapsuds" page="soapsuds.1" />
 </manpages>
