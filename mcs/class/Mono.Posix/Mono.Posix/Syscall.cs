@@ -298,7 +298,7 @@ namespace Mono.Posix {
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int setgid (int gid);
 		[DllImport ("libc", SetLastError=true)]
-		public static extern int getgid (int gid);
+		public static extern int getgid ();
 
 		
 		public delegate void sighandler_t (int v);
@@ -345,6 +345,17 @@ namespace Mono.Posix {
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int setregid (int rgid, int egid);
 
+		// these don't exactly match POSIX, but it's a nice way to get user/group names
+		
+		[DllImport ("MonoPosixHelper", SetLastError=true)]
+		private static extern string helper_Mono_Posix_GetUserName (int uid);
+
+		[DllImport ("MonoPosixHelper", SetLastError=true)]
+		private static extern string helper_Mono_Posix_GetGroupName (int gid);
+		
+		public static string getusername(int uid) { return helper_Mono_Posix_GetUserName(uid); }
+		public static string getgroupname(int gid) { return helper_Mono_Posix_GetGroupName(gid); }
+		
 		// TODO: sigsuspend
 		// TODO: sigpending
 		// TODO: setrlimit
@@ -375,21 +386,6 @@ namespace Mono.Posix {
 			return GetHostName ();
 		}
 		
-		[Flags]
-		public enum FileMode {
-			S_ISUID   = 04000,
-			S_ISGID   = 02000,
-			S_ISVTX   = 01000,
-			S_IRUSR   = 00400,
-			S_IWUSR   = 00200,
-			S_IXUSR   = 00100,
-			S_IRGRP   = 00040,
-			S_IWGRP   = 00020,
-			S_IXGRP   = 00010,
-			S_IROTH   = 00004,
-			S_IWOTH   = 00002,
-			S_IXOTH   = 00001
-		}
 
 		[DllImport ("libc", EntryPoint="isatty")]
 		static extern int syscall_isatty (int desc);
@@ -402,5 +398,123 @@ namespace Mono.Posix {
 			else
 				return false;
 		}
+		
+
+		[DllImport ("MonoPosixHelper")]
+		internal extern static int helper_Mono_Posix_Stat (string filename, bool dereference,
+			out int device, out int inode, out int mode,
+			out int nlinks, out int uid, out int gid,
+			out int rdev, out long size, out long blksize, out long blocks,
+			out long atime, out long mtime, out long ctime);
+		
+		private static int stat2(string filename, bool dereference, out Stat stat) {
+			int device, inode, mode;
+			int nlinks, uid, gid, rdev;
+			long size, blksize, blocks;
+			long atime, mtime, ctime;
+
+			int ret = helper_Mono_Posix_Stat(filename, dereference,
+				out device, out inode, out mode,
+				out nlinks, out uid, out gid,
+				out rdev, out size, out blksize, out blocks,
+				out atime, out mtime, out ctime);
+				
+			stat = new Stat(
+				device, inode, mode,
+				nlinks, uid, gid,
+				rdev, size, blksize, blocks,
+				atime, mtime, ctime);
+
+			if (ret != 0) return ret;
+
+			return 0;
+		}
+
+		public static int stat(string filename, out Stat stat) {
+			return stat2(filename, false, out stat);
+		}
+
+		public static int lstat(string filename, out Stat stat) {
+			return stat2(filename, true, out stat);
+		}
 	}
+	
+	public enum StatModeMasks {
+		TypeMask = 0xF000, // bitmask for the file type bitfields
+		OwnerMask = 0x1C0, // mask for file owner permissions
+		GroupMask = 0x38, // mask for group permissions
+		OthersMask = 0x7, // mask for permissions for others (not in group)
+	}
+	
+	[Flags]
+	public enum StatMode {
+		Socket = 0xC000, // socket
+		SymLink = 0xA000, // symbolic link
+		Regular = 0x8000, // regular file
+		BlockDevice = 0x6000, // block device
+		Directory = 0x4000, // directory
+		CharDevice = 0x2000, // character device
+		FIFO = 0x1000, // fifo
+		SUid = 0x800, // set UID bit
+		SGid = 0x400, // set GID bit
+		Sticky = 0x200, // sticky bit
+		OwnerRead = 0x100, // owner has read permission
+		OwnerWrite = 0x80, // owner has write permission
+		OwnerExecute = 0x40, // owner has execute permission
+		GroupRead = 0x20, // group has read permission
+		GroupWrite = 0x10, // group has write permission
+		GroupExecute = 0x8, // group has execute permission
+		OthersRead = 0x4, // others have read permission
+		OthersWrite = 0x2, // others have write permisson
+		OthersExecute = 0x1, // others have execute permission	
+	}
+	
+	public struct Stat {
+		public readonly int Device;
+		public readonly int INode;
+		public readonly StatMode Mode;
+		public readonly int NLinks;
+		public readonly int Uid;
+		public readonly int Gid;
+		public readonly long DeviceType;
+		public readonly long Size;
+		public readonly long BlockSize;
+		public readonly long Blocks;
+		public readonly DateTime ATime;
+		public readonly DateTime MTime;
+		public readonly DateTime CTime;
+		
+		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1).ToLocalTime();	
+
+		internal Stat(
+			int device, int inode, int mode,
+			int nlinks, int uid, int gid,
+			int rdev, long size, long blksize, long blocks,
+			long atime, long mtime, long ctime) {
+			Device = device;
+			INode = inode;
+			Mode = (StatMode)mode;
+			NLinks = nlinks;
+			Uid = uid;
+			Gid = gid;
+			DeviceType = rdev;
+			Size = size;
+			BlockSize = blksize;
+			Blocks = blocks;
+			if (atime != 0)
+				ATime = UnixEpoch.Add(TimeSpan.FromSeconds(atime));
+			else
+				ATime = new DateTime();
+			if (mtime != 0)
+				MTime = UnixEpoch.Add(TimeSpan.FromSeconds(mtime));
+			else
+				MTime = new DateTime();
+			if (ctime != 0)
+				CTime = UnixEpoch.Add(TimeSpan.FromSeconds(ctime));
+			else
+				CTime = new DateTime();
+		}
+	}
+	
+
 }

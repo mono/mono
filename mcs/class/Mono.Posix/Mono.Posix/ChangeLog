@@ -1,3 +1,13 @@
+2004-03-11  Joshua Tauberer <tauberer@for.net>
+
+	* Syscall.cs: Removed argument to getgid that shouldn't be there.
+		Added getusername, getgroupname which wrap getpwuid, getgrgid
+		without dealing with pointers to structures.
+		Removed duplicate FileMode enum nested in Syscall class.
+		Added stat and lstat, which use StatMode enumeration
+		(like FileMode but nicer and complete) and Stat struct.
+	* macros.c: Helper functions for getpwuid, getgrgid, stat, lstat.
+
 2004-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Syscall.cs: moved the assembly attribute to a proper place
