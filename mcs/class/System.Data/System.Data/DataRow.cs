@@ -8,7 +8,7 @@
 //   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Ximian, Inc 2002
-// (C) Daniel Morgan 2002
+// (C) Daniel Morgan 2002, 2003
 // Copyright (C) 2002 Tim Coleman
 //
 
@@ -51,6 +51,10 @@ namespace System.Data {
 			original = null; 
 			proposed = null;
 			current = new object[_table.Columns.Count];
+			// initialize to DBNull.Value
+			for(int c = 0; c < _table.Columns.Count; c++) {
+				current[c] = DBNull.Value;
+			}
 
 			columnErrors = new string[_table.Columns.Count];
 			rowError = String.Empty;
@@ -99,20 +103,13 @@ namespace System.Data {
 								
 			[MonoTODO]
 			set {
-				value = (value == null) ? DBNull.Value : value;
-				bool objIsDBNull = value.Equals(DBNull.Value);
+				object v = null;
+
 				if (column == null)
 					throw new ArgumentNullException (Locale.GetText ("'column' argument cannot be null."));
 				int columnIndex = _table.Columns.IndexOf (column);
 				if (columnIndex == -1)
 					throw new ArgumentException ();
-				if(column.DataType != value.GetType ()) {
-					if(objIsDBNull == true && column.AllowDBNull == false)
-						throw new InvalidCastException ();
-					//else if(objIsDBNull == false)
-					//	throw new InvalidCastException ();
-				}
-
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
@@ -123,25 +120,22 @@ namespace System.Data {
 				//DataTable and AcceptChanges() has not been called yet.
 
 				if(rowState == DataRowState.Detached || rowState == DataRowState.Added) {
-					if(objIsDBNull)
-						current[columnIndex] = DBNull.Value;
-					else
-						current[columnIndex] = value;
-					_table.ChangedDataColumn (this, column, value);
+					v = SetColumnValue (value, columnIndex);
+					current[columnIndex] = v;
+					_table.ChangedDataColumn (this, column, v);
 				}
 				else {
 					BeginEdit ();  // implicitly called
 
-					if(objIsDBNull)
-						proposed[columnIndex] = DBNull.Value;
-					else
-						proposed[columnIndex] = value;
-
-					_table.ChangedDataColumn (this, column, value);
+					v = SetColumnValue (value, columnIndex);
+					proposed[columnIndex] = v;
+					_table.ChangedDataColumn (this, column, v);
 
 					rowState = DataRowState.Modified;
 					current [columnIndex] = proposed[columnIndex];
 					proposed[columnIndex] = null;
+
+					//EndEdit ();
 				}
 
 				//Don't know if this is the rigth thing to do,
@@ -233,39 +227,148 @@ namespace System.Data {
 		/// </summary>
 		[MonoTODO]
 		public object[] ItemArray {
-			get { return current; }
+			get { 
+				return current; 
+			}
 			set {
 				if (value.Length > _table.Columns.Count)
 					throw new ArgumentException ();
 
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
+				
+				object[] newItems = new object[_table.Columns.Count];			
+				object v = null;
+				int i = 0;
+				while(i < _table.Columns.Count) {
 
-				for (int i = 0; i < value.Length; i += 1)
-				{
-					if (_table.Columns[i].ReadOnly && value[i] != this[i])
-						throw new ReadOnlyException ();
+					if (i < value.Length)
+						v = value[i];
+					else
+						v = null;
 
-					if (value[i] == null)
-					{
-						if (!_table.Columns[i].AllowDBNull)
-							throw new NoNullAllowedException ();
-						continue;
-					}
-						
-					//FIXME: int strings can be converted to ints
-					if (_table.Columns[i].DataType != value[i].GetType())
-						throw new InvalidCastException ();
+					newItems[i] = SetColumnValue (v, i);
+					i ++;
 				}
 
 				//FIXME: BeginEdit() not correct 
 				BeginEdit ();  // implicitly called
 				rowState = DataRowState.Modified;
-
-				//FIXME: this isn't correct.  a shorter array can set the first few values
-				//and not touch the rest.  So not all the values will get replaced
-				proposed = value;
+				proposed = newItems;
+				EndEdit ();
 			}
+		}
+
+		private object SetColumnValue (object v, int index) 
+		{		
+			object newval = null;
+			
+			if (_table.Columns[index].ReadOnly && v != this[index])
+				throw new ReadOnlyException ();
+
+			if (v == null) {
+				if(_table.Columns[index].DefaultValue != DBNull.Value) {
+					newval = _table.Columns[index].DefaultValue;
+				}
+				else if(_table.Columns[index].AutoIncrement == true) {
+					newval = _table.Columns[index].AutoIncrementValue();
+				}
+				else {
+					if (!_table.Columns[index].AllowDBNull)
+						throw new NoNullAllowedException ();
+					newval = DBNull.Value;
+				}
+			}
+			else if (v == DBNull.Value) {
+				if (!_table.Columns[index].AllowDBNull)
+					throw new NoNullAllowedException ();
+				if(_table.Columns[index].AutoIncrement == true) {
+					_table.Columns[index].AutoIncrementValue();
+				}
+				newval = DBNull.Value;
+			}
+			else {	
+				Type vType = v.GetType(); // data type of value
+				Type cType = _table.Columns[index].DataType; // column data type
+				if (_table.Columns[index].DataType != vType) {
+					TypeCode typeCode = Type.GetTypeCode(cType);
+					switch(typeCode) {
+					case TypeCode.Boolean :
+						v = Convert.ToBoolean (v);
+						break;
+					case TypeCode.Byte  :
+						v = Convert.ToByte (v);
+						break;
+					case TypeCode.Char  :
+						v = Convert.ToChar (v);
+						break;
+					case TypeCode.DateTime  :
+						v = Convert.ToDateTime (v);
+						break;
+					case TypeCode.Decimal  :
+						v = Convert.ToDecimal (v);
+						break;
+					case TypeCode.Double  :
+						v = Convert.ToDouble (v);
+						break;
+					case TypeCode.Int16  :
+						v = Convert.ToInt16 (v);
+						break;
+					case TypeCode.Int32  :
+						v = Convert.ToInt32 (v);
+						break;
+					case TypeCode.Int64  :
+						v = Convert.ToInt64 (v);
+						break;
+					case TypeCode.SByte  :
+						v = Convert.ToSByte (v);
+						break;
+					case TypeCode.Single  :
+						v = Convert.ToSingle (v);
+						break;
+					case TypeCode.String  :
+						v = Convert.ToString (v);
+						break;
+					case TypeCode.UInt16  :
+						v = Convert.ToUInt16 (v);
+						break;
+					case TypeCode.UInt32  :
+						v = Convert.ToUInt32 (v);
+						break;
+					case TypeCode.UInt64  :
+						v = Convert.ToUInt64 (v);
+						break;
+					default :
+						switch(cType.ToString()) {
+						case "System.TimeSpan" :
+							v = (System.TimeSpan) v;
+							break;
+						case "System.Type" :
+							v = (System.Type) v;
+							break;
+						case "System.Object" :
+							v = (System.Object) v;
+							break;
+						default:
+							// FIXME: is exception correct?
+							throw new InvalidCastException("Type not supported.");
+						}
+						break;
+					}
+					vType = v.GetType();
+				}
+				newval = v;
+				if(_table.Columns[index].AutoIncrement == true) {
+					if(Type.GetTypeCode(vType) == TypeCode.Int16)
+						_table.Columns[index].UpdateAutoIncrementValue ((long) ((short)v));
+					else if(Type.GetTypeCode(vType) == TypeCode.Int32)
+						_table.Columns[index].UpdateAutoIncrementValue ((long) ((int)v));
+					else if(Type.GetTypeCode(vType) == TypeCode.Int64)
+						_table.Columns[index].UpdateAutoIncrementValue ((long)v);
+				}
+			}
+			_table.Columns[index].DataHasBeenSet = true;
+			return newval;
 		}
 
 		/// <summary>

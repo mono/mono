@@ -13,6 +13,7 @@
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Daniel Morgan, 2002, 2003
 //
 
 using System;
@@ -47,6 +48,8 @@ namespace System.Data {
 		private bool _autoIncrement = false;
 		private long _autoIncrementSeed = 0;
 		private long _autoIncrementStep = 1;
+		private long _nextAutoIncrementValue = 0;
+		private bool dataHasBeenSet = false;
 		private string _caption = null;
 		private MappingType _columnMapping = MappingType.Element;
 		private string _columnName = null;
@@ -124,6 +127,15 @@ namespace System.Data {
 				{
 					if (_table.Rows.Count > 0)
 					{
+						bool nullsFound = false;
+						for(int r = 0; r < _table.Rows.Count; r++) {
+							DataRow row = _table.Rows[r];
+							if(row.IsNull(this)) {
+								nullsFound = true;
+								break;
+							}
+						}
+						
 						//TODO: Validate no null values exist
 						//do we also check different versions of the row??
 					}
@@ -155,16 +167,17 @@ namespace System.Data {
 				if(value == true)
 				{
 					//Can't be true if this is a computed column
-					if(Expression != null)
+					if(!Expression.Equals(String.Empty))
 					{
-						throw new ArgumentException("Can't Auto Increment a computed column."); 
+						throw new ArgumentException("Can not Auto Increment a computed column."); 
 					}
 
 					//If the DataType of this Column isn't an Int
 					//Make it an int
-					if(Type.GetTypeCode(_dataType) != TypeCode.Int16 && 
-					   Type.GetTypeCode(_dataType) != TypeCode.Int32 && 
-					   Type.GetTypeCode(_dataType) != TypeCode.Int64)
+					TypeCode typeCode = Type.GetTypeCode(_dataType);
+					if(typeCode != TypeCode.Int16 && 
+					   typeCode != TypeCode.Int32 && 
+					   typeCode != TypeCode.Int64)
 					{
 						_dataType = typeof(Int32); 
 					}
@@ -183,6 +196,7 @@ namespace System.Data {
 			}
 			set {
 				_autoIncrementSeed = value;
+				_nextAutoIncrementValue = _autoIncrementSeed;
 			}
 		}
 
@@ -196,6 +210,30 @@ namespace System.Data {
 			}
 			set {
 				_autoIncrementStep = value;
+			}
+		}
+
+		internal void UpdateAutoIncrementValue (long value) 
+		{
+			if(value > _nextAutoIncrementValue) {
+				_nextAutoIncrementValue = value;
+				AutoIncrementValue ();
+			}
+		}
+
+		internal long AutoIncrementValue () 
+		{
+			long currentValue = _nextAutoIncrementValue;
+			_nextAutoIncrementValue += AutoIncrementStep;
+			return currentValue;
+		}
+
+		internal bool DataHasBeenSet {
+			get {
+				return dataHasBeenSet;
+			}
+			set {
+				dataHasBeenSet = value;
 			}
 		}
 
@@ -251,16 +289,48 @@ namespace System.Data {
 				return _dataType;
 			}
 			set {
-				//TODO: check if data already exists can we change the datatype
+				// check if data already exists can we change the datatype
+				if(DataHasBeenSet == true)
+					throw new ArgumentException("The column already has data stored.");
 
-				//TODO: we want to check that the datatype is supported?
+				// we want to check that the datatype is supported?
+				TypeCode typeCode = Type.GetTypeCode(value);
+				switch(typeCode) {
+				case TypeCode.Boolean :
+				case TypeCode.Byte  :
+				case TypeCode.Char  :
+				case TypeCode.DateTime  :
+				case TypeCode.Decimal  :
+				case TypeCode.Double  :
+				case TypeCode.Int16  :
+				case TypeCode.Int32  :
+				case TypeCode.Int64  :
+				case TypeCode.SByte  :
+				case TypeCode.Single  :
+				case TypeCode.String  :
+				case TypeCode.UInt16  :
+				case TypeCode.UInt32  :
+				case TypeCode.UInt64  :
+					break;
+				default :
+					switch(value.ToString()) {
+					case "System.TimeSpan" :
+					case "System.Type" :
+					case "System.Object" :
+						break;
+					default:
+						// FIXME: is exception correct?
+						throw new ArgumentException("Type not supported.");
+					}
+					break;
+				}
 				
 				//Check AutoIncrement status, make compatible datatype
-				//TODO: Check for other int values i.e. Int16 etc
-				if(AutoIncrement == true && 
-				   Type.GetTypeCode(value) != TypeCode.Int32)
-				{
-					throw new Exception(); //TODO: correction exception type
+				if(AutoIncrement == true) {
+					if(typeCode != TypeCode.Int16 &&
+					   typeCode != TypeCode.Int32 &&
+					   typeCode != TypeCode.Int64)
+						throw new ArgumentException("AutoIncrement is true, but the value is set to a type a unsupported by AutoIncrement.");
 				}
 				_dataType = value;
 			}

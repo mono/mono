@@ -8,6 +8,7 @@
 //
 // (C) Chris Podurgiel
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Daniel Morgan, 2003
 //
 
 using System;
@@ -90,14 +91,21 @@ namespace System.Data {
 		public virtual DataColumn Add()
 		{
 			//FIXME:
-			DataColumn column = new DataColumn("Column" + defaultNameIndex.ToString());
+			string defaultName = GetNextDefaultColumnName ();
+			DataColumn column = new DataColumn (defaultName);
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 			
 			column.SetTable(parentTable);
 			base.List.Add(column);
 			OnCollectionChanged(e);
-			defaultNameIndex++;
 			return column;
+		}
+
+		private string GetNextDefaultColumnName ()
+		{
+			string defColumnName = "Column" + defaultNameIndex.ToString();
+			defaultNameIndex++;
+			return defColumnName;
 		}
 
 		/// <summary>
@@ -107,6 +115,10 @@ namespace System.Data {
 		[MonoTODO]
 		public void Add(DataColumn column)
 		{	
+			if(column.ColumnName.Equals(String.Empty)) {
+				column.ColumnName = GetNextDefaultColumnName ();
+			}
+					
 			//FIXME:
 			if(Contains(column.ColumnName))
 			{
@@ -147,8 +159,7 @@ namespace System.Data {
 			//"ColumnXX" where XX is a number these two will conflict.
 			if (columnName == null || columnName == String.Empty)
 			{
-				columnName = "Column" + defaultNameIndex.ToString();
-				defaultNameIndex++;
+				columnName = GetNextDefaultColumnName ();
 			}
 			
 			if(Contains(columnName))
@@ -180,8 +191,7 @@ namespace System.Data {
 			{
 				//FIXME: this wont work.  If the user decides to add a column named
 				//"ColumnXX" where XX is a number these two will conflict.
-				columnName = "Column" + defaultNameIndex.ToString();
-				defaultNameIndex++;
+				columnName = GetNextDefaultColumnName ();
 			}
 
 			if(Contains(columnName))
@@ -212,8 +222,7 @@ namespace System.Data {
 			//FIXME: See Add Logic
 			if (columnName == null || columnName == "")
 			{
-				columnName = "Column" + defaultNameIndex.ToString();
-				defaultNameIndex++;
+				columnName = GetNextDefaultColumnName ();
 			}
 			
 			if(Contains(columnName))
