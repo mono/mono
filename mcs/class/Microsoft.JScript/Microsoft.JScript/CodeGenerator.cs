@@ -327,9 +327,11 @@ namespace Microsoft.JScript {
 				emit_default_case (ec, ast, OpCodes.Brfalse, lbl);
 		}
 
-		static void ff_emit_relational (ILGenerator ig, AST ast, Label lbl)
+		static void ff_emit_relational (EmitContext ec, AST ast, Label lbl)
 		{
+			ILGenerator ig = ec.ig;
 			Relational r = ast as Relational;
+			r.Emit (ec);
 
 			switch (r.op) {
 			case JSToken.LessThan:
@@ -360,6 +362,20 @@ namespace Microsoft.JScript {
 			}
 		}
 
+		static void ff_emit_equality_cond (EmitContext ec, AST ast, Label lbl)
+		{
+			ILGenerator ig = ec.ig;
+			Equality eq = ast as Equality;
+			eq.Emit (ec);
+
+			switch (eq.op) {
+			case JSToken.NotEqual:
+			case JSToken.Equal:
+				ig.Emit (OpCodes.Brfalse, lbl);
+				break;
+			}
+		}
+			
 		internal static void fall_false (EmitContext ec, AST ast, Label lbl)
 		{
 			ILGenerator ig = ec.ig;
@@ -367,13 +383,24 @@ namespace Microsoft.JScript {
 
 			if (type == typeof (Expression)) {  
 				Expression exp = ast as Expression;
-				exp.Emit (ec);
+
+				if (exp.Size > 1)
+					exp.Emit (ec);
+
 				AST last_exp = (AST) exp.exprs [exp.exprs.Count - 1];
 
 				if (last_exp is Relational)
-					ff_emit_relational (ec.ig, last_exp, lbl);
+					ff_emit_relational (ec, last_exp, lbl);
 				else if (last_exp is Binary)
 					ff_binary_recursion (ec, last_exp, lbl);
+				else if (last_exp is Identifier || last_exp is BooleanLiteral)
+					emit_default_case (ec, last_exp, OpCodes.Brtrue, lbl);
+ 				else if (last_exp is Equality) 
+					ff_emit_equality_cond (ec, last_exp, lbl);
+				else {
+					Console.WriteLine ("fall_false, last_exp.GetType () == {0}", last_exp);
+ 					throw new Exception ("uknown type: " + last_exp.GetType ().ToString ());
+				}
 			} else if (type == typeof (Binary))
 				ff_binary_recursion (ec, ast, lbl);
 			else 

@@ -1,5 +1,10 @@
 2004-11-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* CodeGenerator.cs: (ff_emit_relational) receive a full
+	EmitContext as parameter. Added
+	ff_emit_equality_cond. (fall_false) take where of the case where
+	an expression is received.
+	
 	* Parser.cs: use ToJSToken for building the Relational
 	object. Map relational Token's to JSToken's.
 	* expression.cs: Added Size property to class
