@@ -84,8 +84,8 @@ namespace System.Web.Caching
 		{
 			Hashtable objTable;
 
-			//Locking with 0 provides a non-expiring lock.
-			_lockEntries.AcquireReaderLock (0);
+			//Locking with -1 provides a non-expiring lock.
+			_lockEntries.AcquireReaderLock (-1);
 			try {
 				// Create a new hashtable to return as collection of public items
 				objTable = new Hashtable (_arrEntries.Count);
@@ -474,7 +474,7 @@ namespace System.Web.Caching
 				boolGetItem = true;
 
 			// TODO: Optimize this method, move out functionality outside the lock
-			_lockEntries.AcquireReaderLock (0);
+			_lockEntries.AcquireReaderLock (-1);
 			try {
 				if (boolGetItem) {
 					objEntry = (CacheEntry) _arrEntries [strKey];
@@ -496,7 +496,7 @@ namespace System.Web.Caching
 				// Check if we going to modify the hashtable
 				if (boolWrite || (boolOverwrite && !boolExpiried)) {
 					// Upgrade our lock to write
-					Threading.LockCookie objCookie = _lockEntries.UpgradeToWriterLock (0);
+					Threading.LockCookie objCookie = _lockEntries.UpgradeToWriterLock (-1);
 					try {
 						// Check if we going to just modify an existing entry (or add)
 						if (boolOverwrite && objEntry != null) {

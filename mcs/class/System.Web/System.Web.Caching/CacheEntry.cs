@@ -125,7 +125,7 @@ namespace System.Web.Caching
 		internal void Close(CacheItemRemovedReason enumReason)
 		{	
 			//HACK: optimized locks. [DHC]
-			_lock.AcquireWriterLock(0);
+			_lock.AcquireWriterLock(-1);
 			try
 			{
 				// Check if the item already is removed
@@ -168,7 +168,7 @@ namespace System.Web.Caching
 		/// <returns>Returns true if the flag is set.</returns>
 		internal bool TestFlag(Flags oFlag)
 		{
-			_lock.AcquireReaderLock(0);
+			_lock.AcquireReaderLock(-1);
 			try
 			{
 				if ((_enumFlags & oFlag) != 0)
@@ -190,7 +190,7 @@ namespace System.Web.Caching
 		/// <param name="oFlag">Flag to set.</param>
 		internal void SetFlag(Flags oFlag)
 		{
-			_lock.AcquireWriterLock(0);
+			_lock.AcquireWriterLock(-1);
 			try
 			{
 				_enumFlags |= oFlag;
@@ -259,7 +259,7 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				_lock.AcquireReaderLock(0);
+				_lock.AcquireReaderLock(-1);
 				try
 				{
 					return _byteExpiresBucket; 
@@ -271,7 +271,7 @@ namespace System.Web.Caching
 			}
 			set 
 			{ 
-				_lock.AcquireWriterLock(0);
+				_lock.AcquireWriterLock(-1);
 				try
 				{
 					_byteExpiresBucket = value; 
@@ -290,7 +290,7 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				_lock.AcquireReaderLock(0);
+				_lock.AcquireReaderLock(-1);
 				try
 				{
 					return _intExpiresIndex; 
@@ -303,7 +303,7 @@ namespace System.Web.Caching
 			
 			set 
 			{ 
-				_lock.AcquireWriterLock(0);
+				_lock.AcquireWriterLock(-1);
 				try
 				{
 					_intExpiresIndex = value; 
@@ -322,7 +322,7 @@ namespace System.Web.Caching
 		{
 			get 
 			{ 
-				_lock.AcquireReaderLock(0);
+				_lock.AcquireReaderLock(-1);
 				try
 				{
 					return _ticksExpires; 
@@ -334,7 +334,7 @@ namespace System.Web.Caching
 			}
 			set 
 			{ 
-				_lock.AcquireWriterLock(0);
+				_lock.AcquireWriterLock(-1);
 				try
 				{
 					_ticksExpires = value; 
@@ -387,7 +387,7 @@ namespace System.Web.Caching
 			// todo: Could be optimized by using interlocked methods..
 			get 
 			{
-				_lock.AcquireReaderLock(0);
+				_lock.AcquireReaderLock(-1);
 				try
 				{
 					return _longHits; 
@@ -399,7 +399,7 @@ namespace System.Web.Caching
 			}
 			set 
 			{ 
-				_lock.AcquireWriterLock(0);
+				_lock.AcquireWriterLock(-1);
 				try
 				{
 					_longHits = value; 

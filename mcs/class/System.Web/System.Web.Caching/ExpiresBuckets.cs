@@ -90,7 +90,7 @@ namespace System.Web.Caching
 		private void Expand() 
 		{
 			//HACK: [DHC] MAJOR performance improvement by using Array.CopyTo method. Better locking added.
-			_lock.AcquireReaderLock(0);
+			_lock.AcquireReaderLock(-1);
 			try
 			{
 				int oldsize = _intSize;
@@ -115,7 +115,7 @@ namespace System.Web.Caching
 				newlist[_intSize - 1]._intNext = -1;
 
 				// Replace the existing list.
-				_lock.UpgradeToWriterLock(0);
+				_lock.UpgradeToWriterLock(-1);
 				_arrEntries = newlist;
 			}
 			finally
@@ -176,7 +176,7 @@ namespace System.Web.Caching
 				}
 				else
 				{
-					_lock.AcquireReaderLock(0);
+					_lock.AcquireReaderLock(-1);
 					try
 					{
 						// Elements may have been removed before the lock statement.
@@ -199,7 +199,7 @@ namespace System.Web.Caching
 
 			if (dogrow) Expand();
 			
-			_lock.AcquireWriterLock(0);
+			_lock.AcquireWriterLock(-1);
 			try
 			{
 				_arrEntries[_intNext]._ticksExpires = objEntry.Expires;
@@ -247,7 +247,7 @@ namespace System.Web.Caching
 		internal void Remove(CacheEntry objEntry)
 		{
 			//HACK: optimized locks. [DHC]
-			_lock.AcquireReaderLock(0);
+			_lock.AcquireReaderLock(-1);
 			try
 			{
 				// Check if this is our bucket
@@ -256,7 +256,7 @@ namespace System.Web.Caching
 				if (_arrEntries.Length < objEntry.ExpiresIndex) return;
 
 				// Proceed to removal.
-				_lock.UpgradeToWriterLock(0);
+				_lock.UpgradeToWriterLock(-1);
 				_intCount--;
 
 				// Push the index as a free one.
@@ -284,7 +284,7 @@ namespace System.Web.Caching
 		internal void Update(CacheEntry objEntry, long ticksExpires)
 		{
 			//HACK: optimized locks. [DHC]
-			_lock.AcquireReaderLock(0);
+			_lock.AcquireReaderLock(-1);
 			try
 			{
 				// Check if this is our bucket
@@ -293,7 +293,7 @@ namespace System.Web.Caching
 				if (_arrEntries.Length < objEntry.ExpiresIndex) return;
 
 				// Proceed to update.
-				_lock.UpgradeToWriterLock(0);
+				_lock.UpgradeToWriterLock(-1);
 				_arrEntries[objEntry.ExpiresIndex]._ticksExpires = ticksExpires;
 				_arrEntries[objEntry.ExpiresIndex]._objEntry.Expires = ticksExpires;
 			}
@@ -322,7 +322,7 @@ namespace System.Web.Caching
 
 			// Lookup all items that needs to be removed, this is done in a two part
 			// operation to minimize the locking time.
-			_lock.AcquireReaderLock(0);
+			_lock.AcquireReaderLock(-1);
 			try
 			{
 				arrCacheEntries = new CacheEntry[_intSize];
@@ -335,7 +335,7 @@ namespace System.Web.Caching
 					{
 						if (objEntry._ticksExpires < ticksNow)
 						{
-							System.Threading.LockCookie ck = _lock.UpgradeToWriterLock(0);
+							System.Threading.LockCookie ck = _lock.UpgradeToWriterLock(-1);
 							try
 							{
 								//push the index for reuse
