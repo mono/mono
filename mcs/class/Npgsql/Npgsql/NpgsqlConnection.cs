@@ -54,26 +54,26 @@ namespace Npgsql
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlConnection))]
     public sealed class NpgsqlConnection : Component, IDbConnection, ICloneable
     {
+        // Logging related values
+        private readonly String CLASSNAME = "NpgsqlConnection";
+
         //Changed the Name of this event because events usually don't start with 'On' in the .Net-Framework
         // (but their handlers do ;-)
         /// <summary>
         /// Occurs on NotificationResponses from the PostgreSQL backend.
         /// </summary>
-        public event NotificationEventHandler Notification;
-
+        public event NotificationEventHandler   Notification;
 
         // Public properties for ssl callbacks
-        public CertificateValidationCallback CertificateValidationCallback;
-        public CertificateSelectionCallback CertificateSelectionCallback;
-        public PrivateKeySelectionCallback PrivateKeySelectionCallback;
+        public CertificateValidationCallback    CertificateValidationCallback;
+        public CertificateSelectionCallback     CertificateSelectionCallback;
+        public PrivateKeySelectionCallback      PrivateKeySelectionCallback;
 
+        private NpgsqlState			                state;
 
-
-        private NpgsqlState			state;
-
-        private ConnectionState	connection_state;
-        private String					connection_string;
-        internal ListDictionary	connection_string_values;
+        private ConnectionState                 connection_state;
+        private String                          connection_string;
+        internal ListDictionary                 connection_string_values;
         // some of the following constants are needed
         // for designtime support so I made them 'internal'
         // as I didn't want to add another interface for internal access
@@ -104,35 +104,26 @@ namespace Npgsql
 
 
         // Values for possible CancelRequest messages.
-        private NpgsqlBackEndKeyData backend_keydata;
+        private NpgsqlBackEndKeyData            backend_keydata;
 
         // Flag for transaction status.
-        private Boolean							_inTransaction = false;
+        private Boolean                         _inTransaction = false;
 
         // Mediator which will hold data generated from backend
-        private NpgsqlMediator	_mediator;
+        private NpgsqlMediator                  _mediator;
+        private Stream                          stream;
+        private Connector                       _connector;
+        private Encoding                        connection_encoding;
 
-        // Logging related values
-        private readonly String CLASSNAME = "NpgsqlConnection";
+        private ServerVersion                   _serverVersion;
+        private ProtocolVersion                 _backendProtocolVersion;
+        private Int32                           _connectionTimeout;
 
-        private Stream					stream;
+        private Boolean                         _supportsPrepare = false;
 
-        private Connector               _connector;
-
-        private Encoding				connection_encoding;
-
-        private Boolean					_supportsPrepare = false;
-
-        private String 					_serverVersion; // Contains string returned from select version();
-
-        private Hashtable				_oidToNameMapping;
+        private Hashtable                       _oidToNameMapping;
 
         private System.Resources.ResourceManager resman;
-
-        private Int32                   _backendProtocolVersion;
-
-        private Int32                   _connectionTimeout;
-
 
         /// <summary>
         /// Initializes a new instance of the
@@ -155,7 +146,7 @@ namespace Npgsql
             connection_state = ConnectionState.Closed;
             state = NpgsqlClosedState.Instance;
             connection_string = ConnectionString;
-            connection_string_values = new ListDictionary();
+            connection_string_values = new ListDictionary(CaseInsensitiveComparer.Default);
             connection_encoding = Encoding.Default;
             _backendProtocolVersion = ProtocolVersion.Version3;
 
@@ -167,10 +158,8 @@ namespace Npgsql
             CertificateValidationCallback = new CertificateValidationCallback(DefaultCertificateValidationCallback);
 
 
-            if (connection_string != String.Empty)
-                ParseConnectionString();
+            ParseAndSetConnectionString(ConnectionString);
         }
-
 
         /// <summary>
         /// Gets or sets the string used to open a SQL Server database.
@@ -190,9 +179,7 @@ namespace Npgsql
             set
             {
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "ConnectionString", value);
-                connection_string = value;
-                if (connection_string != String.Empty)
-                    ParseConnectionString();
+                ParseAndSetConnectionString(value);
             }
         }
 
@@ -331,7 +318,7 @@ namespace Npgsql
             if(this.connection_state != ConnectionState.Open)
                 throw new InvalidOperationException(resman.GetString("Exception_ChangeDatabaseOnOpenConn"));
 
-            String oldDatabaseName = (String)connection_string_values[CONN_DATABASE];
+            String oldDatabaseName = ConnectStringValueToString(CONN_DATABASE);
             Close();
 
             connection_string_values[CONN_DATABASE] = dbName;
@@ -361,10 +348,12 @@ namespace Npgsql
                 throw new InvalidOperationException(resman.GetString("Exception_ConnStrEmpty"));
             if (connection_string_values[CONN_SERVER] == null)
                 throw new ArgumentException(resman.GetString("Exception_MissingConnStrArg"), CONN_SERVER);
-            if ((connection_string_values[CONN_USERID] == null) & (connection_string_values[ODBC_USERID] == null))
+            if (connection_string_values[CONN_USERID] == null)
                 throw new ArgumentException(resman.GetString("Exception_MissingConnStrArg"), CONN_USERID);
-            if ((connection_string_values[CONN_PASSWORD] == null) & (connection_string_values[ODBC_PASSWORD] == null))
+            if (connection_string_values[CONN_PASSWORD] == null)
                 throw new ArgumentException(resman.GetString("Exception_MissingConnStrArg"), CONN_PASSWORD);
+
+            // Check and use defaults for these missing arguments.
             if (connection_string_values[CONN_DATABASE] == null)
                 // Database is optional. "[...] defaults to the user name if empty"
                 connection_string_values[CONN_DATABASE] = connection_string_values[CONN_USERID];
@@ -384,6 +373,7 @@ namespace Npgsql
 
             try
             {
+                String       ServerVersionString = String.Empty;
 
                 // Check if the connection is already open.
                 if (connection_state == ConnectionState.Open)
@@ -392,15 +382,14 @@ namespace Npgsql
                 lock(ConnectorPool.ConnectorPoolMgr)
                 {
                     Connector = ConnectorPool.ConnectorPoolMgr.RequestConnector(ConnectionString,
-                                Int32.Parse((String)connection_string_values[MAX_POOL_SIZE]),
-                                Int32.Parse((String)connection_string_values[CONN_TIMEOUT]),
+                                ConnectStringValueToInt32(MAX_POOL_SIZE),
+                                ConnectStringValueToInt32(CONN_TIMEOUT),
                                 false);
                     Connector.InUse = true;
                 }
 
                 if (!Connector.IsInitialized)
                 {
-
                     // Reset state to initialize new connector in pool.
                     CurrentState = NpgsqlClosedState.Instance;
 
@@ -427,29 +416,38 @@ namespace Npgsql
                         }
 
                         // Keep checking for errors...
-                        if(_mediator.Errors.Count > 0)
+                        if(_mediator.Errors.Count > 0) {
                             throw new NpgsqlException(_mediator.Errors);
-
+                        }
                     }
 
-                    backend_keydata = _mediator.GetBackEndKeyData();
+                    backend_keydata = _mediator.BackendKeyData;
 
-                    // Get version information to enable/disable server version features.
-                    // Only for protocol 2.0.
-                    if (BackendProtocolVersion == ProtocolVersion.Version2)
+                    // First try to determine backend server version using the newest method.
+                    try {
+                        ServerVersionString = ((NpgsqlParameterStatus)_mediator.Parameters["__npgsql_server_version"]).ParameterValue;
+                    } catch {}
+
+                    // Fall back to the old way, SELECT VERSION().
+                    // This should not happen for protocol version 3+.
+                    if (ServerVersionString.Length == 0)
                     {
                         NpgsqlCommand command = new NpgsqlCommand("select version();set DATESTYLE TO ISO;", this);
-                        _serverVersion = (String) command.ExecuteScalar();
+                        ServerVersionString = ExtractServerVersion( (String)command.ExecuteScalar() );
                     }
+
+                    // Cook version string so we can use it for enabling/disabling things based on
+                    // backend version.
+                    _serverVersion = ParseServerVersion(ServerVersionString);
 
                     // Adjust client encoding.
 
                     //NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
                     //String clientEncoding = (String)commandEncoding.ExecuteScalar();
 
-                    if (connection_string_values[CONN_ENCODING].Equals("UNICODE"))
+                    if (ConnectStringValueToString(CONN_ENCODING).ToUpper() == "UNICODE") {
                         connection_encoding = Encoding.UTF8;
-
+                    }
 
                     Connector.ServerVersion = ServerVersion;
                     Connector.BackendProtocolVersion = BackendProtocolVersion;
@@ -461,6 +459,7 @@ namespace Npgsql
                 // Do a mini initialization in the state machine.
 
                 connection_state = ConnectionState.Open;
+
                 ServerVersion = Connector.ServerVersion;
                 BackendProtocolVersion = Connector.BackendProtocolVersion;
                 Encoding = Connector.Encoding;
@@ -469,10 +468,6 @@ namespace Npgsql
 
                 ProcessServerVersion();
                 _oidToNameMapping = NpgsqlTypesHelper.LoadTypesMapping(this);
-
-
-
-
             }
 
             catch(IOException e)
@@ -560,10 +555,13 @@ namespace Npgsql
             return new NpgsqlConnection(ConnectionString);
         }
 
+
+        //         
         // Private util methods
+        //
 
         /// <summary>
-        /// This method parses the connection string.
+        /// This method parses, cleans, and assigns the connection string.
         /// It translates it to a list of key-value pairs.
         /// Valid values are:
         /// Server 		- Address/Name of Postgresql Server
@@ -575,43 +573,122 @@ namespace Npgsql
         /// MaxPoolSize - Max size of connection pool
         /// Encoding    - Encoding to be used
         /// Timeout     - Time to wait for connection open. In seconds.
+        /// The resulting cleaned connection string will have all key names
+        /// upper-cased for consistency and to help ensure proper operation
+        /// with the connection pool (which is keyed on connection string).
+        /// If any errors occur, the entire operation is aborted and the
+        /// connection state will be left unchanged.
         /// </summary>
-        private void ParseConnectionString()
+        private void ParseAndSetConnectionString(String CS)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ParseConnectionString");
 
-            connection_string_values.Clear();
+            ListDictionary new_values = new ListDictionary(CaseInsensitiveComparer.Default);
+            StringBuilder CleanedConnectionString = new StringBuilder();
+            String[] pairs;
+            String[] keyvalue;
 
             // Get the key-value pairs delimited by CONN_DELIM
-            String[] pairs = connection_string.Split(new Char[] {CONN_DELIM});
+            pairs = CS.Split(new Char[] {CONN_DELIM});
 
-            String[] keyvalue;
             // Now, for each pair, get its key-value.
-            foreach(String s in pairs)
+            foreach(String sraw in pairs)
             {
-                // This happen when there are trailling/empty CONN_DELIMs
-                // Just ignore them.
-                if (s == "")
-                    continue;
+                String s = sraw.Trim();
+                String Key = "", Value = "";
 
-                keyvalue = s.Split(new Char[] {CONN_ASSIGN});
+                // This happens when there are trailing/empty CONN_DELIMs
+                // Just ignore them.
+                if (s == "") {
+                    continue;
+                }
+
+                // Split this chunk on the first CONN_ASSIGN only.
+                keyvalue = s.Split(new Char[] {CONN_ASSIGN}, 2);
+
+                // Always trim things.
+                // Keys get uppercased for a numner of reasons
+                // (but NOT to enable case insensative comparisons).
+                Key = keyvalue[0].Trim().ToUpper();
+
+                // We don't expect keys this long, and it might be about to be put
+                // in an error message, so makes sure it is a sane length.
+                if (Key.Length > 20) {
+                    Key = Key.Substring(0, 20);
+                }
 
                 // Check if there is a key-value pair.
-                if (keyvalue.Length != 2)
-                    throw new ArgumentException(resman.GetString("Exception_WrongKeyVal"), connection_string);
+                if (keyvalue.Length != 2) {
+                    throw new ArgumentException(resman.GetString("Exception_WrongKeyVal"), Key);
+                }
 
-                // Shift the key to upper case, and substitute ODBC style keys
-                keyvalue[0] = keyvalue[0].ToUpper();
-                if (keyvalue[0] == ODBC_USERID)
-                    keyvalue[0] = CONN_USERID;
-                if (keyvalue[0] == ODBC_PASSWORD)
-                    keyvalue[0] = CONN_PASSWORD;
+                // Always trim things.
+                Value = keyvalue[1].Trim();
 
-                // Add the pair to the dictionary. The key is shifted to upper
-                // case for case insensitivity.
+                // Do some ODBC related substitions
+                if (Key == ODBC_USERID) {
+                    Key = CONN_USERID;
+                } else if (Key == ODBC_PASSWORD) {
+                    Key = CONN_PASSWORD;
+                }
 
-                NpgsqlEventLog.LogMsg(resman, "Log_ConnectionStringValues", LogLevel.Debug, keyvalue[0], keyvalue[1]);
-                connection_string_values.Add(keyvalue[0], keyvalue[1]);
+                NpgsqlEventLog.LogMsg(resman, "Log_ConnectionStringValues", LogLevel.Debug, Key, Value);
+
+                // Add the pair to the dictionary..
+                new_values.Add(Key, Value);
+
+                // Add the pair to the cleaned list. The key is shifted to upper case.
+                CleanedConnectionString.AppendFormat("{0}{1}{2}{3}", Key, CONN_ASSIGN, Value, CONN_DELIM);
+            }
+
+            // Finally assign the real containers from our scratch ones.
+            connection_string_values = new_values;
+						connection_string = CleanedConnectionString.ToString();
+        }
+
+        /// <summary>
+        /// This method takes a version string as returned by SELECT VERSION() and returns
+        /// a valid version string ("7.2.2" for example).
+        /// This is only needed when running protocol version 2.
+        /// This does not do any validity checks.
+        /// </summary>
+        private string ExtractServerVersion (string VersionString)
+        {
+            Int32               Start = 0, End = 0;
+
+            // find the first digit and assume this is the start of the version number
+            for ( ; Start < VersionString.Length && ! char.IsDigit(VersionString[Start]) ; Start++);
+
+            End = Start;
+
+            // read until hitting whitespace, which should terminate the version number
+            for ( ; End < VersionString.Length && ! char.IsWhiteSpace(VersionString[End]) ; End++);
+
+            return VersionString.Substring(Start, End - Start + 1);
+        }
+
+        /// <summary>
+        /// This method takes a version string ("7.4.1" for example) and produces
+        /// the required integer version numbers (7, 4, and 1).
+        /// </summary>
+        private ServerVersion ParseServerVersion (string VersionString)
+        {
+            String[]        Parts;
+
+            Parts = VersionString.Split('.');
+
+            if (Parts.Length != 3) {
+                throw new FormatException("Internal: Backend sent bad version string");
+            }
+
+            try {
+                return new ServerVersion(
+                    Convert.ToInt32(Parts[0]),
+                    Convert.ToInt32(Parts[1]),
+                    Convert.ToInt32(Parts[2])
+                );
+            } catch (Exception E) {
+                throw new FormatException("Internal: Backend sent bad version string", E);
             }
         }
 
@@ -623,21 +700,8 @@ namespace Npgsql
         private void ProcessServerVersion ()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessServerVersion");
-            // FIXME: Do a better parsing of server version to avoid
-            // hardcode version numbers.
 
-            if (BackendProtocolVersion == ProtocolVersion.Version2)
-            {
-                // With protocol version 2, only 7.3 version supports prepare.
-                SupportsPrepare = (_serverVersion.IndexOf("PostgreSQL 7.3") != -1);
-            }
-            else
-            {
-                // 3.0+ version is set by ParameterStatus message.
-                // On protocol 3.0, 7.4 and above support it.
-                SupportsPrepare = (_serverVersion.IndexOf("7.4") != -1)
-                                  || (_serverVersion.IndexOf("7.5") != -1);
-            }
+            SupportsPrepare = ServerVersion.GreaterOrEqual(7, 3, 0);
         }
 
         internal Stream Stream {
@@ -830,7 +894,7 @@ namespace Npgsql
             }
         }
 
-        internal String ServerVersion {
+        internal ServerVersion ServerVersion {
             get
             {
                 return _serverVersion;
@@ -853,7 +917,7 @@ namespace Npgsql
 
         }
 
-        internal Int32 BackendProtocolVersion {
+        internal ProtocolVersion BackendProtocolVersion {
             get
             {
                 return _backendProtocolVersion;
@@ -878,6 +942,26 @@ namespace Npgsql
             }
         }
 
-    }
+        public Int32 ConnectStringValueToInt32(String Key)
+        {
+            if (! connection_string_values.Contains(Key)) {
+                return 0;
+            }
 
+            try {
+                return Convert.ToInt32(connection_string_values[Key]);
+            } catch (Exception E) {
+                throw new ArgumentException(resman.GetString("Exception_InvalidIntegerKeyVal"), Key, E);
+            }
+        }
+
+        public String ConnectStringValueToString(String Key)
+        {
+            if (! connection_string_values.Contains(Key)) {
+                return "";
+            }
+
+            return Convert.ToString(connection_string_values[Key]);
+        }
+    }
 }

@@ -47,12 +47,8 @@ namespace Npgsql
 
         private Stream _stream;
 
-        // This is information about the connection
-        // this connector is holding. For while only the server version is used.
-        // Change later for a more generic way to keep it. (Hashtable)
-        private String _serverVersion;
-
-        private Int32 _backendProtocolVersion;
+        private ProtocolVersion _backendProtocolVersion;
+        private ServerVersion _serverVersion;
 
         private Encoding _encoding;
 
@@ -89,7 +85,7 @@ namespace Npgsql
             }
         }
 
-        internal String ServerVersion
+        internal ServerVersion ServerVersion
         {
             get
             {
@@ -115,7 +111,7 @@ namespace Npgsql
             }
         }
 
-        internal Int32 BackendProtocolVersion
+        internal ProtocolVersion BackendProtocolVersion
         {
             get
             {
@@ -176,30 +172,6 @@ namespace Npgsql
         /// connector is to be moved to the PooledConnectors list.</value>
         internal int mShareCount;
 
-        /// <value>Private Buffer for the connection string property.</value>
-        /// <remarks>Compared to the requested connection string in the
-        /// ConnectorPool.RequestConnector() function.
-        /// Should not be modified if physical connection is open.</remarks>
-        private string mConnectString;
-
-        /// <summary>Used to connect to the database server. </summary>
-        public string ConnectString
-        {
-            get
-            {
-                return mConnectString;
-            }
-            set
-            {
-                if ( this.mOpen ) // uuuuugh, bad habits...
-                {
-                    throw new InvalidOperationException( "Connection strings "
-                                                      + " cannot be modified if connection is open." );
-                }
-                mConnectString = value;
-            }
-        }
-
         /// <value>Provides physical access to the server</value>
         // !!! to be fixed
         //private Npgsql.Socket Socket;
@@ -217,9 +189,8 @@ namespace Npgsql
         /// <summary>
         /// Construcor, initializes the Connector object.
         /// </summary>
-        internal Connector( string ConnectString, bool Shared )
+        internal Connector( bool Shared )
         {
-            ConnectString = ConnectString;
             Shared = Shared;
             Pooled = true;
         }

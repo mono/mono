@@ -135,8 +135,7 @@ namespace Npgsql
 
         protected virtual void ProcessBackendResponses( NpgsqlConnection context )
         {
-            switch (context.BackendProtocolVersion)
-            {
+            switch (context.BackendProtocolVersion) {
             case ProtocolVersion.Version2 :
                 ProcessBackendResponses_Ver_2(context);
                 break;
@@ -172,7 +171,7 @@ namespace Npgsql
                 // Check the first Byte of response.
                 switch ( stream.ReadByte() )
                 {
-                case NpgsqlMessageTypes.ErrorResponse :
+                case NpgsqlMessageTypes_Ver_2.ErrorResponse :
 
                     {
                         NpgsqlError error = new NpgsqlError(context.BackendProtocolVersion);
@@ -197,7 +196,7 @@ namespace Npgsql
                     break;
 
 
-                case NpgsqlMessageTypes.AuthenticationRequest :
+                case NpgsqlMessageTypes_Ver_2.AuthenticationRequest :
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AuthenticationRequest");
 
@@ -205,14 +204,14 @@ namespace Npgsql
 
                     authType = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(inputBuffer, 0));
 
-                    if ( authType == NpgsqlMessageTypes.AuthenticationOk )
+                    if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationOk )
                     {
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
 
                         break;
                     }
 
-                    if ( authType == NpgsqlMessageTypes.AuthenticationClearTextPassword )
+                    if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationClearTextPassword )
                     {
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationClearTextRequest", LogLevel.Debug);
 
@@ -225,7 +224,7 @@ namespace Npgsql
                     }
 
 
-                    if ( authType == NpgsqlMessageTypes.AuthenticationMD5Password )
+                    if ( authType == NpgsqlMessageTypes_Ver_2.AuthenticationMD5Password )
                     {
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationMD5Request", LogLevel.Debug);
                         // Now do the "MD5-Thing"
@@ -287,7 +286,7 @@ namespace Npgsql
                     mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
                     return;
 
-                case NpgsqlMessageTypes.RowDescription:
+                case NpgsqlMessageTypes_Ver_2.RowDescription:
                     // This is the RowDescription message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "RowDescription");
                     rd = new NpgsqlRowDescription(context.BackendProtocolVersion);
@@ -303,7 +302,7 @@ namespace Npgsql
                     // Now wait for the AsciiRow messages.
                     break;
 
-                case NpgsqlMessageTypes.AsciiRow:
+                case NpgsqlMessageTypes_Ver_2.AsciiRow:
 
                     // This is the AsciiRow message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AsciiRow");
@@ -318,7 +317,7 @@ namespace Npgsql
                     // Now wait for CompletedResponse message.
                     break;
 
-                case NpgsqlMessageTypes.BinaryRow:
+                case NpgsqlMessageTypes_Ver_2.BinaryRow:
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "BinaryRow");
                     NpgsqlBinaryRow binaryRow = new NpgsqlBinaryRow(rd);
@@ -328,27 +327,27 @@ namespace Npgsql
 
                     break;
 
-                case NpgsqlMessageTypes.ReadyForQuery :
+                case NpgsqlMessageTypes_Ver_2.ReadyForQuery :
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "ReadyForQuery");
                     readyForQuery = true;
                     ChangeState( context, NpgsqlReadyState.Instance );
                     break;
 
-                case NpgsqlMessageTypes.BackendKeyData :
+                case NpgsqlMessageTypes_Ver_2.BackendKeyData :
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "BackendKeyData");
                     // BackendKeyData message.
                     NpgsqlBackEndKeyData backend_keydata = new NpgsqlBackEndKeyData(context.BackendProtocolVersion);
                     backend_keydata.ReadFromStream(stream);
-                    mediator.AddBackendKeydata(backend_keydata);
+                    mediator.SetBackendKeydata(backend_keydata);
 
 
                     // Wait for ReadForQuery message
                     break;
                     ;
 
-                case NpgsqlMessageTypes.NoticeResponse :
+                case NpgsqlMessageTypes_Ver_2.NoticeResponse :
 
                     {
                         NpgsqlError notice = new NpgsqlError(context.BackendProtocolVersion);
@@ -362,7 +361,7 @@ namespace Npgsql
                     // Wait for ReadForQuery message
                     break;
 
-                case NpgsqlMessageTypes.CompletedResponse :
+                case NpgsqlMessageTypes_Ver_2.CompletedResponse :
                     // This is the CompletedResponse message.
                     // Get the string returned.
 
@@ -377,7 +376,7 @@ namespace Npgsql
                     // Now wait for ReadyForQuery message.
                     break;
 
-                case NpgsqlMessageTypes.CursorResponse :
+                case NpgsqlMessageTypes_Ver_2.CursorResponse :
                     // This is the cursor response message.
                     // It is followed by a C NULL terminated string with the name of
                     // the cursor in a FETCH case or 'blank' otherwise.
@@ -389,21 +388,7 @@ namespace Npgsql
                     // Continue waiting for ReadyForQuery message.
                     break;
 
-                case NpgsqlMessageTypes.ParseComplete :
-                    NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "ParseComplete");
-                    // Just read up the message length.
-                    PGUtil.ReadInt32(stream, new Byte[4]);
-                    readyForQuery = true;
-                    break;
-
-                case NpgsqlMessageTypes.BindComplete :
-                    NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "BindComplete");
-                    // Just read up the message length.
-                    PGUtil.ReadInt32(stream, new Byte[4]);
-                    readyForQuery = true;
-                    break;
-
-                case NpgsqlMessageTypes.EmptyQueryResponse :
+                case NpgsqlMessageTypes_Ver_2.EmptyQueryResponse :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "EmptyQueryResponse");
                     // This is the EmptyQueryResponse.
                     // [FIXME] Just ignore it this way?
@@ -412,7 +397,7 @@ namespace Npgsql
                     PGUtil.ReadString(stream, context.Encoding);
                     break;
 
-                case NpgsqlMessageTypes.NotificationResponse  :
+                case NpgsqlMessageTypes_Ver_2.NotificationResponse  :
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "NotificationResponse");
 
@@ -425,18 +410,17 @@ namespace Npgsql
                     // Wait for ReadForQuery message
                     break;
 
-                case NpgsqlMessageTypes.ParameterStatus :
-                    NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "ParameterStatus");
-                    NpgsqlParameterStatus parameterStatus = new NpgsqlParameterStatus();
-                    parameterStatus.ReadFromStream(stream, context.Encoding);
+                default :
+                    // This could mean a number of things
+                    //   We've gotten out of sync with the backend?
+                    //   We need to implement this type?
+                    //   Backend has gone insane?
+                    // FIXME
+                    // what exception should we really throw here?
+                    throw new NotSupportedException("Backend sent unrecognized response type");
 
-                    NpgsqlEventLog.LogMsg(resman, "Log_ParameterStatus", LogLevel.Debug, parameterStatus.Parameter, parameterStatus.ParameterValue);
-                    if (parameterStatus.Parameter == "server_version")
-                        context.ServerVersion = parameterStatus.ParameterValue;
-                    break;
                 }
             }
-
         }
 
         protected virtual void ProcessBackendResponses_Ver_3( NpgsqlConnection context )
@@ -465,7 +449,7 @@ namespace Npgsql
                 // Check the first Byte of response.
                 switch ( stream.ReadByte() )
                 {
-                case NpgsqlMessageTypes.ErrorResponse :
+                case NpgsqlMessageTypes_Ver_3.ErrorResponse :
 
                     {
                         NpgsqlError error = new NpgsqlError(context.BackendProtocolVersion);
@@ -490,7 +474,7 @@ namespace Npgsql
                     break;
 
 
-                case NpgsqlMessageTypes.AuthenticationRequest :
+                case NpgsqlMessageTypes_Ver_3.AuthenticationRequest :
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AuthenticationRequest");
 
@@ -499,14 +483,14 @@ namespace Npgsql
 
                     authType = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(inputBuffer, 0));
 
-                    if ( authType == NpgsqlMessageTypes.AuthenticationOk )
+                    if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationOk )
                     {
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
 
                         break;
                     }
 
-                    if ( authType == NpgsqlMessageTypes.AuthenticationClearTextPassword )
+                    if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationClearTextPassword )
                     {
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationClearTextRequest", LogLevel.Debug);
 
@@ -519,7 +503,7 @@ namespace Npgsql
                     }
 
 
-                    if ( authType == NpgsqlMessageTypes.AuthenticationMD5Password )
+                    if ( authType == NpgsqlMessageTypes_Ver_3.AuthenticationMD5Password )
                     {
                         NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationMD5Request", LogLevel.Debug);
                         // Now do the "MD5-Thing"
@@ -581,7 +565,7 @@ namespace Npgsql
                     mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
                     return;
 
-                case NpgsqlMessageTypes.RowDescription:
+                case NpgsqlMessageTypes_Ver_3.RowDescription:
                     // This is the RowDescription message.
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "RowDescription");
                     rd = new NpgsqlRowDescription(context.BackendProtocolVersion);
@@ -597,10 +581,10 @@ namespace Npgsql
                     // Now wait for the AsciiRow messages.
                     break;
 
-                case NpgsqlMessageTypes.AsciiRow:
+                case NpgsqlMessageTypes_Ver_3.DataRow:
 
                     // This is the AsciiRow message.
-                    NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "AsciiRow");
+                    NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "DataRow");
                     NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(rd, context.OidToNameMapping, context.BackendProtocolVersion);
                     asciiRow.ReadFromStream(stream, context.Encoding);
 
@@ -612,7 +596,7 @@ namespace Npgsql
                     // Now wait for CompletedResponse message.
                     break;
 
-                case NpgsqlMessageTypes.ReadyForQuery :
+                case NpgsqlMessageTypes_Ver_3.ReadyForQuery :
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "ReadyForQuery");
 
@@ -629,19 +613,19 @@ namespace Npgsql
 
                     break;
 
-                case NpgsqlMessageTypes.BackendKeyData :
+                case NpgsqlMessageTypes_Ver_3.BackendKeyData :
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "BackendKeyData");
                     // BackendKeyData message.
                     NpgsqlBackEndKeyData backend_keydata = new NpgsqlBackEndKeyData(context.BackendProtocolVersion);
                     backend_keydata.ReadFromStream(stream);
-                    mediator.AddBackendKeydata(backend_keydata);
+                    mediator.SetBackendKeydata(backend_keydata);
 
 
                     // Wait for ReadForQuery message
                     break;
 
-                case NpgsqlMessageTypes.NoticeResponse :
+                case NpgsqlMessageTypes_Ver_3.NoticeResponse :
 
                     // Notices and errors are identical except that we
                     // just throw notices away completely ignored.
@@ -657,7 +641,7 @@ namespace Npgsql
                     // Wait for ReadForQuery message
                     break;
 
-                case NpgsqlMessageTypes.CompletedResponse :
+                case NpgsqlMessageTypes_Ver_3.CompletedResponse :
                     // This is the CompletedResponse message.
                     // Get the string returned.
 
@@ -671,33 +655,21 @@ namespace Npgsql
 
                     break;
 
-                case NpgsqlMessageTypes.CursorResponse :
-                    // This is the cursor response message.
-                    // It is followed by a C NULL terminated string with the name of
-                    // the cursor in a FETCH case or 'blank' otherwise.
-                    // In this case it should be always 'blank'.
-                    // [FIXME] Get another name for this function.
-                    NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "CursorResponse");
-
-                    PGUtil.ReadString(stream, context.Encoding);
-                    // Continue waiting for ReadyForQuery message.
-                    break;
-
-                case NpgsqlMessageTypes.ParseComplete :
+                case NpgsqlMessageTypes_Ver_3.ParseComplete :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "ParseComplete");
                     // Just read up the message length.
                     PGUtil.ReadInt32(stream, Buff);
                     readyForQuery = true;
                     break;
 
-                case NpgsqlMessageTypes.BindComplete :
+                case NpgsqlMessageTypes_Ver_3.BindComplete :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "BindComplete");
                     // Just read up the message length.
                     PGUtil.ReadInt32(stream, Buff);
                     readyForQuery = true;
                     break;
 
-                case NpgsqlMessageTypes.EmptyQueryResponse :
+                case NpgsqlMessageTypes_Ver_3.EmptyQueryResponse :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "EmptyQueryResponse");
                     // This is the EmptyQueryResponse.
                     // [FIXME] Just ignore it this way?
@@ -706,8 +678,7 @@ namespace Npgsql
                     PGUtil.ReadInt32(stream, Buff);
                     break;
 
-                case NpgsqlMessageTypes.NotificationResponse  :
-
+                case NpgsqlMessageTypes_Ver_3.NotificationResponse  :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "NotificationResponse");
 
                     // Eat the length
@@ -724,15 +695,34 @@ namespace Npgsql
                     // Wait for ReadForQuery message
                     break;
 
-                case NpgsqlMessageTypes.ParameterStatus :
+                case NpgsqlMessageTypes_Ver_3.ParameterStatus :
                     NpgsqlEventLog.LogMsg(resman, "Log_ProtocolMessage", LogLevel.Debug, "ParameterStatus");
                     NpgsqlParameterStatus parameterStatus = new NpgsqlParameterStatus();
                     parameterStatus.ReadFromStream(stream, context.Encoding);
 
                     NpgsqlEventLog.LogMsg(resman, "Log_ParameterStatus", LogLevel.Debug, parameterStatus.Parameter, parameterStatus.ParameterValue);
-                    if (parameterStatus.Parameter == "server_version")
-                        context.ServerVersion = parameterStatus.ParameterValue;
+
+                    mediator.AddParameterStatus(parameterStatus.Parameter, parameterStatus);
+
+                    if (parameterStatus.Parameter == "server_version") {
+                        // Add this one under our own name so that if the parameter name
+                        // changes in a future backend version, we can handle it here in the 
+                        // protocol handler and leave everybody else put of it.
+                        mediator.AddParameterStatus("__npgsql_server_version", parameterStatus);
+//                        context.ServerVersionString = parameterStatus.ParameterValue;
+                    }
+
                     break;
+
+                default :
+                    // This could mean a number of things
+                    //   We've gotten out of sync with the backend?
+                    //   We need to implement this type?
+                    //   Backend has gone insane?
+                    // FIXME
+                    // what exception should we really throw here?
+                    throw new NotSupportedException("Backend sent unrecognized response type");
+
                 }
             }
         }

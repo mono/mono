@@ -35,8 +35,8 @@ namespace Npgsql
 {
 
     /// <summary>
-    /// This class represents the AsciiRow message sent from PostgreSQL
-    /// server.
+    /// This class represents the BinaryRow message sent from PostgreSQL
+    /// server.  This is unused as of protocol version 3.
     /// </summary>
     ///
     internal sealed class NpgsqlBinaryRow
@@ -44,9 +44,8 @@ namespace Npgsql
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlBinaryRow";
 
-        private ArrayList							data;
-        //        private readonly Int16	READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
-        private NpgsqlRowDescription row_desc;
+        private ArrayList                  data;
+        private NpgsqlRowDescription       row_desc;
 
         public NpgsqlBinaryRow(NpgsqlRowDescription rowDesc)
         {
@@ -54,7 +53,6 @@ namespace Npgsql
 
             data = new ArrayList();
             row_desc = rowDesc;
-
         }
 
 

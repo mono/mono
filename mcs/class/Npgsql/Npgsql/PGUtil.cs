@@ -34,20 +34,59 @@ using System.Resources;
 namespace Npgsql
 {
 
-
-    internal struct ProtocolVersion
+    /// <summary>
+    /// Represent the frontend/backend protocol version in use.
+    /// </summary>
+    internal enum ProtocolVersion
     {
-        public const Int32 Version2 = 131072;
-        public const Int32 Version3 = 196608;
+        Version2,
+        Version3
     }
 
-internal enum FormatCode:
+    /// <summary>
+    /// Represent the backend server version.
+    /// </summary>
+    internal class ServerVersion
+    {
+        public static readonly Int32 ProtocolVersion2 = 2 << 16; // 131072
+        public static readonly Int32 ProtocolVersion3 = 3 << 16; // 196608
+
+        public String  Raw;
+        public Int32   Major;
+        public Int32   Minor;
+        public Int32   Patch;
+
+        private ServerVersion()
+        {}
+
+        public ServerVersion(Int32 Major, Int32 Minor, Int32 Patch)
+        {
+            this.Raw = string.Format("{0}.{1}.{2}", Major, Minor, Patch);
+            this.Major = Major;
+            this.Minor = Minor;
+            this.Patch = Patch;
+        }
+
+        public bool GreaterOrEqual(Int32 Major, Int32 Minor, Int32 Patch)
+        {
+            return
+                (this.Major > Major) ||
+                (this.Major == Major && this.Minor > Minor) ||
+                (this.Major == Major && this.Minor == Minor && this.Patch >= Patch);
+        }
+
+        public new String ToString()
+        {
+            return Raw;
+        }
+    }
+
+    internal enum FormatCode:
     short
     {
         Text = 0,
         Binary = 1
     }
-
 
     ///<summary>
     /// This class provides many util methods to handle
@@ -57,13 +96,34 @@ internal enum FormatCode:
     /// Should it be abstract or with a private constructor to prevent
     /// creating instances?
 
-    //
     internal sealed class PGUtil
     {
 
         // Logging related values
         private static readonly String CLASSNAME = "PGUtil";
         private static ResourceManager resman = new ResourceManager(typeof(PGUtil));
+
+        ///<summary>
+        /// This method takes a ProtocolVersion and returns an integer
+        /// version number that the Postgres backend will recognize in a
+        /// startup packet.
+        /// </summary>
+
+        public static Int32 ConvertProtocolVersion(ProtocolVersion Ver)
+        {
+            switch (Ver) {
+            case ProtocolVersion.Version2 :
+                return ServerVersion.ProtocolVersion2;
+
+            case ProtocolVersion.Version3 :
+                return ServerVersion.ProtocolVersion3;
+
+            }
+
+            // CHECKME
+            // should we throw?
+            return 0;
+        }
 
         ///<summary>
         /// This method gets a C NULL terminated string from the network stream.

@@ -35,6 +35,7 @@ namespace Npgsql
 
         private NpgsqlConnectedState()
         {}
+
         public static NpgsqlConnectedState Instance
         {
             get
@@ -46,41 +47,19 @@ namespace Npgsql
                 return _instance;
             }
         }
+
         public override void Startup(NpgsqlConnection context)
         {
-            if (context.BackendProtocolVersion == ProtocolVersion.Version3)
-            {
+            NpgsqlStartupPacket startupPacket  = new NpgsqlStartupPacket(296, //Not used.
+                                                  context.BackendProtocolVersion,
+                                                  context.DatabaseName,
+                                                  context.UserName,
+                                                  "",
+                                                  "",
+                                                  "");
 
-                NpgsqlStartupPacket startupPacket  = new NpgsqlStartupPacket(296, //Not used.
-                                                     3,
-                                                     0,
-                                                     context.DatabaseName,
-                                                     context.UserName,
-                                                     "",
-                                                     "",
-                                                     "");
-
-                startupPacket.WriteToStream( new BufferedStream(context.Stream), context.Encoding );
-                ProcessBackendResponses( context );
-            }
-            else if (context.BackendProtocolVersion == ProtocolVersion.Version2)
-            {
-
-                NpgsqlStartupPacket startupPacket  = new NpgsqlStartupPacket(296,
-                                                     2,
-                                                     0,
-                                                     context.DatabaseName,
-                                                     context.UserName,
-                                                     "",
-                                                     "",
-                                                     "");
-
-                startupPacket.WriteToStream( new BufferedStream(context.Stream), context.Encoding );
-                ProcessBackendResponses( context );
-
-
-            }
-
+            startupPacket.WriteToStream( new BufferedStream(context.Stream), context.Encoding );
+            ProcessBackendResponses( context );
         }
 
     }

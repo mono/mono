@@ -40,7 +40,7 @@ namespace Npgsql
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlError";
 
-        private Int32 protocol_version;
+        private ProtocolVersion protocol_version;
         private String _severity = "";
         private String _code = "";
         private String _message = "";
@@ -187,7 +187,7 @@ namespace Npgsql
         {}
 
 
-        internal NpgsqlError(Int32 protocolVersion)
+        internal NpgsqlError(ProtocolVersion protocolVersion)
         {
             protocol_version = protocolVersion;
 
@@ -195,18 +195,22 @@ namespace Npgsql
 
         internal void ReadFromStream(Stream inputStream, Encoding encoding)
         {
-            if (protocol_version == ProtocolVersion.Version2)
-            {
+            switch (protocol_version) {
+            case ProtocolVersion.Version2 :
                 ReadFromStream_Ver_2(inputStream, encoding);
-            }
-            else
-            {
+                break;
+
+            case ProtocolVersion.Version3 :
                 ReadFromStream_Ver_3(inputStream, encoding);
+                break;
+
             }
         }
 
         private void ReadFromStream_Ver_2(Stream inputStream, Encoding encoding)
         {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_2");
+
             String Raw;
             String[] Parts;
 
@@ -227,6 +231,8 @@ namespace Npgsql
 
         private void ReadFromStream_Ver_3(Stream inputStream, Encoding encoding)
         {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_3");
+
             Int32 messageLength = PGUtil.ReadInt32(inputStream, new Byte[4]);
 
             //[TODO] Would this be the right way to do?

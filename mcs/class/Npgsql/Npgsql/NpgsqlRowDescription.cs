@@ -67,82 +67,92 @@ namespace Npgsql
 
         private ArrayList   fields_index = new ArrayList();
 
-        private Int32 protocol_version;
+        private ProtocolVersion protocol_version;
 
-        public NpgsqlRowDescription(Int32 protocolVersion)
+        public NpgsqlRowDescription(ProtocolVersion protocolVersion)
         {
             protocol_version = protocolVersion;
         }
 
         public void ReadFromStream(Stream input_stream, Encoding encoding)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream");
+            switch (protocol_version) {
+            case ProtocolVersion.Version2 :
+                ReadFromStream_Ver_2(input_stream, encoding);
+                break;
 
-
-            if (protocol_version == ProtocolVersion.Version2)
-            {
-                Byte[] input_buffer = new Byte[10]; // Max read will be 4 + 2 + 4
-
-                // Read the number of fields.
-                input_stream.Read(input_buffer, 0, 2);
-                Int16 num_fields = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(input_buffer, 0));
-
-
-                // Temporary FieldData object to get data from stream and put in array.
-                NpgsqlRowDescriptionFieldData fd;
-
-                // Now, iterate through each field getting its data.
-                for (Int16 i = 0; i < num_fields; i++)
-                {
-                    fd = new NpgsqlRowDescriptionFieldData();
-
-                    // Set field name.
-                    fd.name = PGUtil.ReadString(input_stream, encoding);
-
-                    // Read type_oid(Int32), type_size(Int16), type_modifier(Int32)
-                    input_stream.Read(input_buffer, 0, 4 + 2 + 4);
-
-                    fd.type_oid = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
-                    fd.type_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(input_buffer, 4));
-                    fd.type_modifier = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 6));
-
-                    // Add field data to array.
-                    fields_data.Add(fd);
-
-                    fields_index.Add(fd.name);
-                }
-            }
-            else
-            {
-                Byte[] input_buffer = new Byte[4]; // Max read will be 4 + 2 + 4 + 2 + 4 + 2
-
-                // Read the length of message.
-                // [TODO] Any use for now?
-                PGUtil.ReadInt32(input_stream, input_buffer);
-                Int16 num_fields = PGUtil.ReadInt16(input_stream, input_buffer);
-
-                // Temporary FieldData object to get data from stream and put in array.
-                NpgsqlRowDescriptionFieldData fd;
-
-                for (Int16 i = 0; i < num_fields; i++)
-                {
-                    fd = new NpgsqlRowDescriptionFieldData();
-
-                    fd.name = PGUtil.ReadString(input_stream, encoding);
-                    fd.table_oid = PGUtil.ReadInt32(input_stream, input_buffer);
-                    fd.column_attribute_number = PGUtil.ReadInt16(input_stream, input_buffer);
-                    fd.type_oid = PGUtil.ReadInt32(input_stream, input_buffer);
-                    fd.type_size = PGUtil.ReadInt16(input_stream, input_buffer);
-                    fd.type_modifier = PGUtil.ReadInt32(input_stream, input_buffer);
-                    fd.format_code = (FormatCode)PGUtil.ReadInt16(input_stream, input_buffer);
-
-                    fields_data.Add(fd);
-                    fields_index.Add(fd.name);
-                }
+            case ProtocolVersion.Version3 :
+                ReadFromStream_Ver_3(input_stream, encoding);
+                break;
 
             }
+        }
+
+        public void ReadFromStream_Ver_2(Stream input_stream, Encoding encoding)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_2");
+
+            Byte[] input_buffer = new Byte[10]; // Max read will be 4 + 2 + 4
+
+            // Read the number of fields.
+            input_stream.Read(input_buffer, 0, 2);
+            Int16 num_fields = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(input_buffer, 0));
 
 
+            // Temporary FieldData object to get data from stream and put in array.
+            NpgsqlRowDescriptionFieldData fd;
+
+            // Now, iterate through each field getting its data.
+            for (Int16 i = 0; i < num_fields; i++)
+            {
+                fd = new NpgsqlRowDescriptionFieldData();
+
+                // Set field name.
+                fd.name = PGUtil.ReadString(input_stream, encoding);
+
+                // Read type_oid(Int32), type_size(Int16), type_modifier(Int32)
+                input_stream.Read(input_buffer, 0, 4 + 2 + 4);
+
+                fd.type_oid = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
+                fd.type_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(input_buffer, 4));
+                fd.type_modifier = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 6));
+
+                // Add field data to array.
+                fields_data.Add(fd);
+
+                fields_index.Add(fd.name);
+            }
+        }
+
+        public void ReadFromStream_Ver_3(Stream input_stream, Encoding encoding)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_3");
+
+            Byte[] input_buffer = new Byte[4]; // Max read will be 4 + 2 + 4 + 2 + 4 + 2
+
+            // Read the length of message.
+            // [TODO] Any use for now?
+            PGUtil.ReadInt32(input_stream, input_buffer);
+            Int16 num_fields = PGUtil.ReadInt16(input_stream, input_buffer);
+
+            // Temporary FieldData object to get data from stream and put in array.
+            NpgsqlRowDescriptionFieldData fd;
+
+            for (Int16 i = 0; i < num_fields; i++)
+            {
+                fd = new NpgsqlRowDescriptionFieldData();
+
+                fd.name = PGUtil.ReadString(input_stream, encoding);
+                fd.table_oid = PGUtil.ReadInt32(input_stream, input_buffer);
+                fd.column_attribute_number = PGUtil.ReadInt16(input_stream, input_buffer);
+                fd.type_oid = PGUtil.ReadInt32(input_stream, input_buffer);
+                fd.type_size = PGUtil.ReadInt16(input_stream, input_buffer);
+                fd.type_modifier = PGUtil.ReadInt32(input_stream, input_buffer);
+                fd.format_code = (FormatCode)PGUtil.ReadInt16(input_stream, input_buffer);
+
+                fields_data.Add(fd);
+                fields_index.Add(fd.name);
+            }
         }
 
         public NpgsqlRowDescriptionFieldData this[Int32 index]
@@ -151,7 +161,6 @@ namespace Npgsql
             {
                 return (NpgsqlRowDescriptionFieldData)fields_data[index];
             }
-
         }
 
         public Int16 NumFields
@@ -177,7 +186,6 @@ namespace Npgsql
             }
 
             return -1;
-
         }
 
     }

@@ -109,9 +109,9 @@ namespace Npgsql
         }*/
 
 
-        internal Int32 GetPoolSize(String connectionString)
+        internal Int32 GetPoolSize(String PoolKey)
         {
-            ArrayList pool = (ArrayList)PooledConnectors[connectionString];
+            ArrayList pool = (ArrayList)PooledConnectors[PoolKey];
             if (pool == null)
                 return 0;
             else
@@ -124,12 +124,12 @@ namespace Npgsql
         /// Searches the shared and pooled connector lists for a
         /// matching connector object or creates a new one.
         /// </summary>
-        /// <param name="ConnectString">used to connect to the
-        /// database server</param>
+        /// <param name="PoolKey">A unique key (actually the connection string)
+        /// used to identify a connection</param>
         /// <param name="Shared">Allows multiple connections
         /// on a single connector. </param>
         /// <returns>A pooled connector object.</returns>
-        internal Npgsql.Connector RequestConnector (String connectionString,
+        internal Npgsql.Connector RequestConnector (String PoolKey,
                 Int32 maxPoolSize,
                 Int32 timeout,
                 Boolean shared )
@@ -162,12 +162,12 @@ namespace Npgsql
                 // (unused) connectors are beeing searched.
 
 
-                connectorPool = (ArrayList)PooledConnectors[connectionString];
+                connectorPool = (ArrayList)PooledConnectors[PoolKey];
 
                 if (connectorPool == null)
                 {
                     connectorPool = new ArrayList();
-                    PooledConnectors[connectionString] = connectorPool;
+                    PooledConnectors[PoolKey] = connectorPool;
                 }
 
 
@@ -182,7 +182,7 @@ namespace Npgsql
 
                 if (connectorPool.Count < maxPoolSize)
                 {
-                    connector = new Npgsql.Connector(connectionString, shared);
+                    connector = new Npgsql.Connector(shared);
 
                     connectorPool.Add(connector);
 

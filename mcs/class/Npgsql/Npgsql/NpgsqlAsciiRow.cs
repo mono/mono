@@ -44,15 +44,15 @@ namespace Npgsql
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlAsciiRow";
 
-        private ArrayList							data;
-        private readonly Int16	READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
-        private NpgsqlRowDescription row_desc;
-        private Hashtable							oid_to_name_mapping;
-        private Int32                 protocol_version;
+        private ArrayList             data;
+        private readonly Int16        READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
+        private NpgsqlRowDescription  row_desc;
+        private Hashtable             oid_to_name_mapping;
+        private ProtocolVersion       protocol_version;
 
 
 
-        public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, Hashtable oidToNameMapping, Int32 protocolVersion)
+        public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, Hashtable oidToNameMapping, ProtocolVersion protocolVersion)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
 
@@ -60,24 +60,25 @@ namespace Npgsql
             row_desc = rowDesc;
             oid_to_name_mapping = oidToNameMapping;
             protocol_version = protocolVersion;
-
         }
 
         public void ReadFromStream(Stream inputStream, Encoding encoding)
         {
-            if (protocol_version == ProtocolVersion.Version2)
-            {
+            switch (protocol_version) {
+            case ProtocolVersion.Version2 :
                 ReadFromStream_Ver_2(inputStream, encoding);
-            }
-            else
-            {
+                break;
+
+            case ProtocolVersion.Version3 :
                 ReadFromStream_Ver_3(inputStream, encoding);
+                break;
+
             }
         }
 
         private void ReadFromStream_Ver_2(Stream inputStream, Encoding encoding)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_2()");
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_2");
 
             Byte[]       input_buffer = new Byte[READ_BUFFER_SIZE];
             Byte[]       null_map_array = new Byte[(row_desc.NumFields + 7)/8];
@@ -136,7 +137,7 @@ namespace Npgsql
 
         private void ReadFromStream_Ver_3(Stream inputStream, Encoding encoding)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_3()");
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream_Ver_3");
 
             Byte[] input_buffer = new Byte[READ_BUFFER_SIZE];
 

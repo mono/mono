@@ -348,12 +348,12 @@ namespace Npgsql
             // The only expected result is the CompletedResponse result.
             // If nothing is returned, just return -1.
 
-            if(connection.Mediator.GetCompletedResponses().Count == 0)
+            if(connection.Mediator.CompletedResponses.Count == 0)
                 return -1;
 
 
             // Check if the response is available.
-            String firstCompletedResponse = (String)connection.Mediator.GetCompletedResponses()[0];
+            String firstCompletedResponse = (String)connection.Mediator.CompletedResponses[0];
 
             if (firstCompletedResponse == null)
                 return -1;
@@ -452,7 +452,7 @@ namespace Npgsql
 
 
             // Get the resultsets and create a Datareader with them.
-            return new NpgsqlDataReader(connection.Mediator.GetResultSets(), connection.Mediator.GetCompletedResponses(), connection, cb);
+            return new NpgsqlDataReader(connection.Mediator.ResultSets, connection.Mediator.CompletedResponses, connection, cb);
         }
 
 
@@ -520,7 +520,7 @@ namespace Npgsql
             // Only the first column of the first row must be returned.
 
             // Get ResultSets.
-            ArrayList resultSets = connection.Mediator.GetResultSets();
+            ArrayList resultSets = connection.Mediator.ResultSets;
 
 
             // First data is the RowDescription object.

@@ -35,9 +35,9 @@ namespace Npgsql
     internal sealed class NpgsqlQuery
     {
         private String _commandText;
-        private Int32 _protocolVersion;
+        private ProtocolVersion _protocolVersion;
 
-        public NpgsqlQuery(String commandText, Int32 protocolVersion)
+        public NpgsqlQuery(String commandText, ProtocolVersion protocolVersion)
         {
             _commandText = commandText;
             _protocolVersion = protocolVersion;
@@ -52,21 +52,14 @@ namespace Npgsql
             // Write the byte 'Q' to identify a query message.
             outputStream.WriteByte((Byte)'Q');
 
-
-            if (_protocolVersion == ProtocolVersion.Version3)
+            if (_protocolVersion == ProtocolVersion.Version3) {
                 // Write message length. Int32 + string length + null terminator.
                 PGUtil.WriteInt32(outputStream, 4 + encoding.GetByteCount(_commandText) + 1);
-
-
-
+            }
 
             // Write the query. In this case it is the CommandText text.
             // It is a string terminated by a C NULL character.
-
             PGUtil.WriteString(_commandText, outputStream, encoding);
-
-
-
         }
     }
 }

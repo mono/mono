@@ -42,10 +42,10 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlPasswordPacket";
 
         private String password;
-        private Int32 protocolVersion;
+        private ProtocolVersion protocolVersion;
 
 
-        public NpgsqlPasswordPacket(String password, Int32 protocolVersion)
+        public NpgsqlPasswordPacket(String password, ProtocolVersion protocolVersion)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
 
@@ -57,27 +57,28 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "WriteToStream");
 
-            if (protocolVersion == ProtocolVersion.Version2)
-            { // Write the size of the packet.
+            switch (protocolVersion) {
+            case ProtocolVersion.Version2 :
+                // Write the size of the packet.
                 // 4 + (passwordlength + 1) -> Int32 + NULL terminated string.
-                //output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(4 + (password.Length + 1))), 0, 4);
-
+                // output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(4 + (password.Length + 1))), 0, 4);
                 PGUtil.WriteInt32(outputStream, 4 + encoding.GetByteCount(password) + 1);
 
                 // Write String.
                 PGUtil.WriteString(password, outputStream, encoding);
-            }
-            else
-            {
+
+                break;
+
+            case ProtocolVersion.Version3 :
                 outputStream.WriteByte((Byte)'p');
                 PGUtil.WriteInt32(outputStream, 4 + encoding.GetByteCount(password) + 1);
 
                 // Write String.
                 PGUtil.WriteString(password, outputStream, encoding);
+
+                break;
+
             }
-
-
         }
     }
-
 }

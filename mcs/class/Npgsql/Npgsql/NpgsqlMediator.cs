@@ -26,6 +26,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace Npgsql
 {
@@ -43,6 +44,8 @@ namespace Npgsql
         private	ArrayList							_resultSets;
         private ArrayList							_responses;
         private ArrayList             _notifications;
+        private ListDictionary        _parameters;
+        private NpgsqlBackEndKeyData  _backend_key_data;
 
         private NpgsqlRowDescription	_rd;
         private ArrayList							_rows;
@@ -55,6 +58,8 @@ namespace Npgsql
             _resultSets = new ArrayList();
             _responses = new ArrayList();
             _notifications = new ArrayList();
+            _parameters = new ListDictionary(CaseInsensitiveComparer.Default);
+            _backend_key_data = null;
         }
 
         public void Reset()
@@ -64,7 +69,25 @@ namespace Npgsql
             _resultSets.Clear();
             _responses.Clear();
             _notifications.Clear();
+            _parameters.Clear();
+            _backend_key_data = null;
             _rd = null;
+        }
+
+        public ArrayList ResultSets
+        {
+            get
+            {
+                return _resultSets;
+            }
+        }
+
+        public ArrayList CompletedResponses
+        {
+            get
+            {
+                return _responses;
+            }
         }
 
         public ArrayList Errors
@@ -89,15 +112,28 @@ namespace Npgsql
             {
                 return _notifications;
             }
+        }
 
+        public ListDictionary Parameters
+        {
+            get
+            {
+                return _parameters;
+            }
+        }
+
+        public NpgsqlBackEndKeyData BackendKeyData
+        {
+            get
+            {
+                return _backend_key_data;
+            }
         }
 
         public void AddNotification(NpgsqlNotificationEventArgs data)
         {
             _notifications.Add(data);
         }
-
-
 
         public void AddCompletedResponse(String response)
         {
@@ -139,26 +175,14 @@ namespace Npgsql
         }
 
 
-        public void AddBackendKeydata(NpgsqlBackEndKeyData keydata)
+        public void SetBackendKeydata(NpgsqlBackEndKeyData keydata)
         {
-            _responses.Add(keydata);	//hack
+            _backend_key_data = keydata;
         }
 
-        public ArrayList GetResultSets()
+        public void AddParameterStatus(String Key, NpgsqlParameterStatus PS)
         {
-            return _resultSets;
+            _parameters[Key] = PS;
         }
-
-        public ArrayList GetCompletedResponses()
-        {
-            return _responses;
-        }
-
-        public NpgsqlBackEndKeyData GetBackEndKeyData()
-        {
-            return (NpgsqlBackEndKeyData)_responses[0];	//hack
-        }
-
-
     }
 }

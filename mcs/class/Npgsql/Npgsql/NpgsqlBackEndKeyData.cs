@@ -44,9 +44,9 @@ namespace Npgsql
         private Int32 _processId;
         private Int32 _secretKey;
 
-        private Int32 _protocolVersion;
+        private ProtocolVersion _protocolVersion;
 
-        public NpgsqlBackEndKeyData(Int32 protocolVersion)
+        public NpgsqlBackEndKeyData(ProtocolVersion protocolVersion)
         {
             _protocolVersion = protocolVersion;
             _processId = -1;
