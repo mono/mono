@@ -74,9 +74,9 @@ static void main_thread_handler (gpointer user_data)
 {
 	MainThreadArgs *main_args=(MainThreadArgs *)user_data;
 	MonoAssembly *assembly;
+	int i;
 
 	printf ("opening assembly \"%s\", argc %d\n", main_args->file, main_args->argc);
-	int i;
 	for( i = 0; i < main_args->argc; i++) {
 		printf ("param %d  = \"%s\"\n", i, main_args->argv[i]);
 	}
@@ -104,6 +104,14 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	MonoDomain *domain = NULL;
 	MainThreadArgs main_args;
 	int retval = 0;
+	size_t len;
+	char *CommandLine;
+	char *argv [MAX_ARGV_IDX] = { 0};
+	int argc = 0;
+	char *argv_ptr = 0;
+	char *argv_start;
+	char *argv_end;
+	int isInsideQuote = 0;
 
 	applicationInstance = hInstance;
 
@@ -114,19 +122,15 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	domain = mono_jit_init (lpszCmdLine);
 
 	printf ("parsing command line \"%s\"\n", lpszCmdLine);
-	size_t len = strlen(lpszCmdLine);
-	char *CommandLine = (char*)malloc(len + 1);
+	len = strlen(lpszCmdLine);
+	CommandLine = (char*)malloc(len + 1);
 	memset(CommandLine, 0,len + 1);
 	strncpy(CommandLine, lpszCmdLine, len);
 
-	char *argv[MAX_ARGV_IDX] = { 0 };
-	int  argc = 0;
-	char *argv_ptr = 0;
-	char *argv_start = CommandLine;
-	char *argv_end = CommandLine + len;
+	argv_start = CommandLine;
+	argv_end = CommandLine + len;
 
 	// FIXME: remove "" from arguments
-	int  isInsideQuote = 0;
 	for( argv_ptr = argv_start; argv_ptr < argv_end; ) {
 		if( argc == MAX_ARGV_IDX) {
 			break;
