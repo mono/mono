@@ -150,9 +150,8 @@ namespace Mono.ILASM {
 					else
 						continue;
 				}
-				
 				int size = param_info.Length;
-				if (param_info.Length != size)
+				if (param_type_list.Length != size)
 					continue;
 				for (int i=0; i<size; i++) {
 					if (param_type_list[i] != param_info[i].ParameterType)

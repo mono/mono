@@ -77,6 +77,7 @@ namespace Mono.ILASM {
 		private MethodBuilder method_builder;
 		private bool entry_point = false;
 
+		private ArrayList param_list;
 		private ArrayList instructions;
 		private ArrayList local_list;
 
@@ -194,6 +195,11 @@ namespace Mono.ILASM {
 	
 		}
 
+		public void SetParamList (ArrayList param_list)
+		{
+			this.param_list = param_list;
+		}
+
 		/// <summary>
 		/// </summary>
 		public int InstrCount {
@@ -220,7 +226,8 @@ namespace Mono.ILASM {
 		public void Resolve (Class host)
 		{
 			Type return_type = host.CodeGen.TypeManager[RetType];
-			method_builder = host.TypeBuilder.DefineMethod (Name, Attrs, CallConv, return_type, null);
+			method_builder = host.TypeBuilder.DefineMethod (Name, Attrs, 
+				CallConv, return_type, CreateTypeList (host.CodeGen.TypeManager));
 		}
 
 		/// <summary>
@@ -250,6 +257,21 @@ namespace Mono.ILASM {
 						instr.Emit (ilgen, host);
 				}
 			}
+		}
+
+		private Type[] CreateTypeList (TypeManager type_manager)
+		{
+			if (param_list == null)
+				return new Type[0];
+
+			int count = param_list.Count;
+			Type[] type_list = new Type[count];
+			
+			for (int i=0; i<count; i++) {
+				type_list[i] = type_manager[(string) param_list[i]];
+			}
+		
+			return type_list;
 		}
 
 	}
