@@ -1,3 +1,8 @@
+2004-05-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* location.cs: In the new compiler listing a file twice is a
+	warning, not an error.
+
 2004-05-24  Martin Baulig  <martin@ximian.com>
 
 	* enum.cs (Enum.DefineType): For the `BaseType' to be a
