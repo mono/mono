@@ -120,7 +120,9 @@ namespace System.Reflection.Emit {
 		private int num_labels;
 		private LabelFixup[] fixups;
 		private int num_fixups;
+		private ModuleBuilder module;
 		private AssemblyBuilder abuilder;
+		private ISymbolWriter sym_writer;
 		private int cur_block;
 		private int open_blocks;
 
@@ -137,10 +139,12 @@ namespace System.Reflection.Emit {
 			token_fixups = new ILTokenInfo [16];
 			num_token_fixups = 0;
 			if (mb is MethodBuilder) {
-				abuilder = (AssemblyBuilder)((MethodBuilder)mb).TypeBuilder.Module.Assembly;
+				module = (ModuleBuilder)((MethodBuilder)mb).TypeBuilder.Module;
 			} else if (mb is ConstructorBuilder) {
-				abuilder = (AssemblyBuilder)((ConstructorBuilder)mb).TypeBuilder.Module.Assembly;
+				module = (ModuleBuilder)((ConstructorBuilder)mb).TypeBuilder.Module;
 			}
+			abuilder = (AssemblyBuilder)module.Assembly;
+			sym_writer = module.GetSymWriter ();
 		}
 
 		private void add_token_fixup (MemberInfo mi) {
@@ -295,7 +299,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 		public virtual LocalBuilder DeclareLocal (Type localType) {
-			LocalBuilder res = new LocalBuilder (localType);
+			LocalBuilder res = new LocalBuilder (sym_writer, localType);
 			if (locals != null) {
 				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
 				System.Array.Copy (locals, new_l, locals.Length);
@@ -495,8 +499,19 @@ namespace System.Reflection.Emit {
 				throw new System.ArgumentException ("The label was already defined");
 			label_to_addr [loc.label] = code_len;
 		}
-		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int EndColumn) {
-			throw new NotImplementedException ();
+		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine,
+						       int startColumn, int endLine, int endColumn) {
+			if (sym_writer == null)
+				return;
+
+			int[] offsets = { code_len };
+			int[] startLines = { startLine };
+			int[] startColumns = { startColumn };
+			int[] endLines = { endLine };
+			int[] endColumns = { endColumn };
+
+			sym_writer.DefineSequencePoints (document, offsets, startLines, startColumns,
+							 endLines, endColumns);
 		}
 		public virtual void ThrowException (Type exceptionType) {
 			throw new NotImplementedException ();

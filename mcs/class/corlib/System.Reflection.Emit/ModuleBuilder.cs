@@ -13,6 +13,8 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Diagnostics.SymbolStore;
+using System.IO;
 
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
@@ -20,14 +22,47 @@ namespace System.Reflection.Emit {
 		private CustomAttributeBuilder[] cattrs;
 		private int table_idx;
 		private AssemblyBuilder assemblyb;
+		private ISymbolWriter symbol_writer;
 		Hashtable name_cache;
 
-		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname) {
+		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
 			table_idx = get_next_table_index (0x00, true);
 			name_cache = new Hashtable ();
+
+			if (emitSymbolInfo)
+				symbol_writer = GetSymbolWriter ();
+		}
+
+		internal ISymbolWriter GetSymbolWriter ()
+		{
+			Assembly assembly;
+			try {
+				assembly = Assembly.Load ("Mono.CSharp.Debugger");
+			} catch (FileNotFoundException) {
+				return null;
+			}
+
+			Type type = assembly.GetType ("Mono.CSharp.Debugger.MonoSymbolWriter");
+			if (type == null)
+				return null;
+
+			Type[] arg_types = new Type [0];
+			ConstructorInfo constructor = type.GetConstructor (arg_types);
+
+			if (constructor == null)
+				return null;
+
+			Object instance = constructor.Invoke (null);
+			if (instance == null)
+				return null;
+
+			if (!(instance is ISymbolWriter))
+				return null;
+
+			return (ISymbolWriter) instance;
 		}
 	
 		public override string FullyQualifiedName {get { return fqname;}}
@@ -160,6 +195,10 @@ namespace System.Reflection.Emit {
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
+		}
+
+		public ISymbolWriter GetSymWriter () {
+			return symbol_writer;
 		}
 	}
 }

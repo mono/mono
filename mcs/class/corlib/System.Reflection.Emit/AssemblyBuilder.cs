@@ -92,7 +92,7 @@ namespace System.Reflection.Emit {
 		public ModuleBuilder DefineDynamicModule (string name, string fileName,
 							  bool emitSymbolInfo)
 		{
-			ModuleBuilder r = new ModuleBuilder (this, name, fileName);
+			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo);
 
 			if (modules != null) {
 				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];

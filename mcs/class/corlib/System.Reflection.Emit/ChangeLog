@@ -1,3 +1,25 @@
+2002-03-20  Martin Baulig  <martin@gnome.org>
+
+	* ModuleBuilder.cs (GetSymbolWriter): New internal function. Dynamically
+	loads the default symbol writer, catch all possible exceptions and return
+	null on failure.
+	(ModuleBuilder): Added `bool emitSymbolInfo' argument to this internal
+	constructor; if set, call GetSymbolWriter ().
+	(GetSymWriter): Implemented.
+
+	* LocalBuilder.cs (LocalBuilder): Added ISymbolWriter argument to this
+	internal method.
+	(SetLocalSymInfo): Implemented, call ISymbolWriter.DefineLocalVariable ()
+	if the symbol writer is not null.
+
+	* ILGenerator.cs (ILGenerator): Call ModuleBuilder.GetSymWriter () to get
+	and store the symbol writer.
+	(DeclareLocal): Pass the symbol writer to LocalBuilder's constructor.
+	(MarkSequencePoint): Implemented, call ISymbolWriter.DefineSequencePoints ()
+	if the symbol writer is not null.
+
+	* AssemblyBuilder.cs (DefineDynamicModule): Pass the `bool emitSymbolInfo'
+	to ModuleBuilder's constructor.
 
 Sat Mar 16 19:11:47 CET 2002 Paolo Molaro <lupus@ximian.com>
 
