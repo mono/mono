@@ -86,7 +86,7 @@ namespace System.Reflection.Emit {
 				return parent;
 			}
 		}
-		public override Type DeclaringType {get {return null;}}
+		public override Type DeclaringType {get {return nesting_type;}}
 		public override Type UnderlyingSystemType {
 			get {
 				if (fields != null) {
