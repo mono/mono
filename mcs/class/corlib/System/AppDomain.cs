@@ -10,10 +10,6 @@
 //   Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -68,8 +64,6 @@ namespace System
 		[ThreadStatic]
 		static Hashtable assembly_resolve_in_progress;
 
-		// Evidence evidence;
-
 		private PrincipalPolicy _principalPolicy;
 
 		[ThreadStatic]
@@ -82,34 +76,40 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern AppDomainSetup getSetup ();
 
+		AppDomainSetup SetupInformationNoCopy {
+			get { return getSetup (); }
+		}
+
 		public AppDomainSetup SetupInformation {
 			get {
-				return getSetup ();
+				AppDomainSetup setup = getSetup ();
+				return new AppDomainSetup (setup);
 			}
 		}
 
 		public string BaseDirectory {
 			get {
-				return SetupInformation.ApplicationBase;
+				return SetupInformationNoCopy.ApplicationBase;
 			}
 		}
 
 		public string RelativeSearchPath {
 			get {
-				return SetupInformation.PrivateBinPath;
+				return SetupInformationNoCopy.PrivateBinPath;
 			}
 		}
 
 		public string DynamicDirectory {
 			get {
-				if (SetupInformation.DynamicBase == null) return null;
-				return Path.Combine (SetupInformation.DynamicBase, SetupInformation.ApplicationName);
+				AppDomainSetup setup = SetupInformationNoCopy;
+				if (setup.DynamicBase == null) return null;
+				return Path.Combine (setup.DynamicBase, setup.ApplicationName);
 			}
 		}
 
 		public bool ShadowCopyFiles {
 			get {
-				return (SetupInformation.ShadowCopyFiles == "true");
+				return (SetupInformationNoCopy.ShadowCopyFiles == "true");
 			}
 		}
 
@@ -126,7 +126,6 @@ namespace System
 		public Evidence Evidence {
 			get {
 				return null;
-				//return evidence;
 			}
 		}
 
@@ -161,7 +160,7 @@ namespace System
 			if (path == null || path.Length == 0)
 				return;
 
-			AppDomainSetup setup = SetupInformation;
+			AppDomainSetup setup = SetupInformationNoCopy;
 
 			string pp = setup.PrivateBinPath;
 			if (pp == null || pp.Length == 0) {
@@ -178,12 +177,12 @@ namespace System
 
 		public void ClearPrivatePath ()
 		{
-			SetupInformation.PrivateBinPath = String.Empty;
+			SetupInformationNoCopy.PrivateBinPath = String.Empty;
 		}
 
 		public void ClearShadowCopyPath ()
 		{
-			SetupInformation.ShadowCopyDirectories = String.Empty;
+			SetupInformationNoCopy.ShadowCopyDirectories = String.Empty;
 		}
 
 		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
@@ -321,38 +320,38 @@ namespace System
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, null, null, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, null, evidence, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, dir, null, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions)
+		                                              PermissionSet refusedPermissions)
 		{
 			return DefineDynamicAssembly (name, access, dir, evidence, requiredPermissions, optionalPermissions,
-				refusedPersmissions, false);
+				refusedPermissions, false);
 		}
 
 		[MonoTODO ("FIXME: examine all other parameters")]
@@ -360,7 +359,7 @@ namespace System
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
-		                                              PermissionSet refusedPersmissions, bool isSynchronized)
+		                                              PermissionSet refusedPermissions, bool isSynchronized)
 		{
 			// FIXME: examine all other parameters
 			
@@ -477,7 +476,7 @@ namespace System
 
 		public void SetCachePath (string path)
 		{
-			SetupInformation.CachePath = path;
+			SetupInformationNoCopy.CachePath = path;
 		}
 
 		public void SetPrincipalPolicy (PrincipalPolicy policy)
@@ -492,12 +491,12 @@ namespace System
 
 		public void SetShadowCopyFiles()
 		{
-			SetupInformation.ShadowCopyFiles = "true";
+			SetupInformationNoCopy.ShadowCopyFiles = "true";
 		}
 
 		public void SetShadowCopyPath (string path)
 		{
-			SetupInformation.ShadowCopyDirectories = path;
+			SetupInformationNoCopy.ShadowCopyDirectories = path;
 		}
 
 		public void SetThreadPrincipal (IPrincipal principal)
@@ -595,28 +594,28 @@ namespace System
 
 		public static AppDomain CreateDomain (string friendlyName)
 		{
-			return CreateDomain (friendlyName, new Evidence (), new AppDomainSetup ());
+			return CreateDomain (friendlyName, null, null);
 		}
 		
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo)
 		{
-			return CreateDomain (friendlyName, securityInfo, new AppDomainSetup ());
+			return CreateDomain (friendlyName, securityInfo, null);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain createDomain (string friendlyName, AppDomainSetup info);
 
-		[MonoTODO]
+		[MonoTODO ("allow setup in the other domain")]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
-			//TODO: treat securityInfo (can be null)
 			if (friendlyName == null)
 				throw new System.ArgumentNullException ("friendlyName");
 
 			if (info == null)
-				throw new System.ArgumentNullException ("info");
+				throw new ArgumentNullException ("info");
 
 			// todo: allow setup in the other domain
+
 			return (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
 		}
 
@@ -667,9 +666,12 @@ namespace System
 
 		public void SetDynamicBase (string path)
 		{
-			SetupInformation.DynamicBase = path;
+			SetupInformationNoCopy.DynamicBase = path;
 		}
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public static int GetCurrentThreadId ()
 		{
 			return Thread.CurrentThreadId;

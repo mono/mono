@@ -61,6 +61,25 @@ namespace System
 		{
 		}
 
+		internal AppDomainSetup (AppDomainSetup setup)
+		{
+			application_base = setup.application_base;
+			application_name = setup.application_name;
+			cache_path = setup.cache_path;
+			configuration_file = setup.configuration_file;
+			dynamic_base = setup.dynamic_base;
+			license_file = setup.license_file;
+			private_bin_path = setup.private_bin_path;
+			private_bin_path_probe = setup.private_bin_path_probe;
+			shadow_copy_directories = setup.shadow_copy_directories;
+			shadow_copy_files = setup.shadow_copy_files;
+			publisher_policy = setup.publisher_policy;
+			path_changed = setup.path_changed;
+			loader_optimization = setup.loader_optimization;
+			disallow_binding_redirects = setup.disallow_binding_redirects;
+			disallow_code_downloads = setup.disallow_code_downloads;
+		}
+
 		static string GetAppBase (string appBase)
 		{
 			if (appBase == null) return null;
