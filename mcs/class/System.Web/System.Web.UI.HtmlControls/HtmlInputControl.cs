@@ -34,7 +34,7 @@ namespace System.Web.UI.HtmlControls
 		public virtual string Name
 		{
 			get { return UniqueID; }
-			set { ID = value; } // Is this ok?
+			set { }
 		}
 		
 		protected virtual string RenderedName
