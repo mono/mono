@@ -1,3 +1,18 @@
+2004-08-05  Duncan Mak  <duncan@ximian.com>
+
+	This patch is based on an idea of Ben's to reduce the code size
+	in MCS. 
+
+	* OpCodes.cs: Instead pushing the data onto the stack when each
+	OpCode is initialized, pack the data into 2 ints and store only
+	that.  Furthermore, the names of each OpCode are stored in a
+	separate string array in the new OpCodeNames class.
+
+	* OpCodeNames.cs: The names of each OpCode are moved here to delay
+	the initialization of the strings, as they are not used frequently.
+
+	* OpCode.cs: Rewrote this to take in everything as 2 ints.
+
 2004-07-29  Martin Baulig  <martin@ximian.com>
 
 	* ILGenerator.cs (ILGenerator.Mono_GetCurrentOffset): New static

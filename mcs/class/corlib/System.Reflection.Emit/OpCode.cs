@@ -2,11 +2,7 @@
 // System.Reflection.Emit.OpCode
 //
 // Author:
-//   Sergey Chaban (serge@wildwestsoftware.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,43 +23,37 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-
 namespace System.Reflection.Emit {
 
 	public struct OpCode {
 
-		string name;
-		internal byte op1;
-		internal byte op2;
-		byte size;
-		byte type;
-		byte flowCtrl;
-		byte pop;
-		byte push;
-		byte operandType;
+		internal byte op1, op2;
+		byte push, pop, size, type, args, flow;
 
-		internal OpCode (string name, int size,
-		                 OpCodeType opcodeType,
-		                 OperandType operandType,
-                                 StackBehaviour pop,
-                                 StackBehaviour push,
-		                 FlowControl flowCtrl,
-		                 byte op1, byte op2)
+		//
+		// The order is:
+		//	 Op1, Op2, StackBehaviourPush, StackBehaviourPop
+		//	 Size, OpCodeType, OperandType, FlowControl
+		//
+		internal OpCode (int p, int q)
 		{
-			this.name = name;
-			this.size = (byte)size;
-			this.type = (byte)opcodeType;
-			this.operandType = (byte)operandType;
-			this.pop = (byte)pop;
-			this.push = (byte)push;
-			this.flowCtrl = (byte)flowCtrl;
-			this.op1 = op1;
-			this.op2 = op2;
+
+			op1  = (byte) ((p >> 0)  & 0xFF);
+			op2  = (byte) ((p >> 8)  & 0xFF);
+			push = (byte) ((p >> 16) & 0xFF);
+			pop  = (byte) ((p >> 24) & 0xFF);
+
+			size = (byte) ((q >> 0)  & 0xFF);
+			type = (byte) ((q >> 8)  & 0xFF);
+			args = (byte) ((q >> 16) & 0xFF);
+			flow = (byte) ((q >> 24) & 0xFF);
 		}
 
 
@@ -76,72 +66,62 @@ namespace System.Reflection.Emit {
 		{
 			if (obj == null || !(obj is OpCode))
 				return false;
-			OpCode v = (OpCode)obj;
+
+			OpCode v = (OpCode) obj;
+
 			return v.op1 == op1 && v.op2 == op2;
 		}
 
-		/// <summary>
-		/// </summary>
+		public override string ToString ()
+		{
+			return Name;
+		}
+
 		public string Name {
 			get {
-				return name;
+				if (op1 == 0xFF)
+					return OpCodeNames.names [op2];
+
+				return OpCodeNames.names [256 + op2];
 			}
 		}
 
-		/// <summary>
-		/// </summary>
 		public int Size {
 			get {
-				return size;
+				return (int) size;
 			}
 		}
 
-
-		/// <summary>
-		/// </summary>
 		public OpCodeType OpCodeType {
 			get {
-				return (OpCodeType)type;
+				return (OpCodeType) type;
 			}
 		}
 
-		/// <summary>
-		/// </summary>
 		public OperandType OperandType {
 			get {
-				return (OperandType)operandType;
+				return (OperandType) args;
 			}
 		}
 
-		/// <summary>
-		/// </summary>
 		public FlowControl FlowControl {
 			get {
-				return (FlowControl)flowCtrl;
+				return (FlowControl) flow;
 			}
 		}
 
-
-		/// <summary>
-		/// </summary>
 		public StackBehaviour StackBehaviourPop {
 			get {
-				return (StackBehaviour)pop;
+				return (StackBehaviour) pop;
 			}
 		}
 
-
-		/// <summary>
-		/// </summary>
 		public StackBehaviour StackBehaviourPush {
 			get {
-				return (StackBehaviour)push;
+				return (StackBehaviour) push;
 			}
 		}
 
-
-		/// <summary>
-		/// </summary>
 		public short Value {
 			get {
 				if (size == 1) {
@@ -153,11 +133,5 @@ namespace System.Reflection.Emit {
 				}
 			}
 		}
-
-		public override string ToString()
-		{
-			return Name;
-		}
-	} // OpCode
-
-} // System.Reflection.Emit
+	}
+} 
