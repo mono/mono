@@ -1,3 +1,8 @@
+2002-10-03  ville <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlClient/AllTests.cs:
+	* System.Data.SqlClient/SqlByteTest.cs: added SqlByte test suite.
+
 2002-10-01  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.SqlClient/AllTests.cs: added SqlBoolean test.
