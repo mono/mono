@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
 
@@ -78,27 +78,18 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 		[MonoTODO]
 		public void PerformClick()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO]// we need to implment this
+			//Compact Framework
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			return base.ToString();
 		}
 
 		//
@@ -158,7 +149,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new Size(104,24);
 			}
 		}
 

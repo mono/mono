@@ -1,3 +1,10 @@
+2003-04-6  DennisHayes <dennish@raytek.com>
+	* CheckOutList Update, removed everyone from list, active developers need to readd.
+	* Binding.cs Marked some funmctions for Compact frame work
+	* RadioButton.cs //removed inherited members 
+	* RichTextBox.cs //removed inherited members
+	* Splitter.cs //removed a throw not implmented so some samples could run.
+	
 2003-04-06 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Control.cs
 	* Form.cs

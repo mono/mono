@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
 using System.IO;
@@ -350,11 +350,6 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public bool CanPaste(DataFormats.Format clipFormat)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}

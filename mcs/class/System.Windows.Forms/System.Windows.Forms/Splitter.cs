@@ -5,7 +5,7 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
 using System.ComponentModel;
@@ -212,7 +212,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void SetBoundsCore( int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 		bool IMessageFilter.PreFilterMessage(ref Message m){
 			throw new NotImplementedException ();

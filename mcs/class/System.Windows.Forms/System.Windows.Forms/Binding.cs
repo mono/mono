@@ -5,7 +5,7 @@
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //	Dennis hayes (dennish@raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 
 namespace System.Windows.Forms {
@@ -20,6 +20,7 @@ namespace System.Windows.Forms {
 
 		// --- Constructor
 		//
+		//Needed for CE
 		public Binding(string propertyName,object dataSource,string dataMember)
 		{
 			
@@ -28,12 +29,16 @@ namespace System.Windows.Forms {
 		//
 		// --- Public Properties
 		//
+
+		//Most functions needed for compact frame work
+
+		//Needed for CE
 		[MonoTODO]
 		public BindingManagerBase BindingManagerBase  {
 
 			get { throw new NotImplementedException (); }
 		}
-		
+		//Needed for CE		
 		[MonoTODO]
 		public BindingMemberInfo BindingMemberInfo  {
 
