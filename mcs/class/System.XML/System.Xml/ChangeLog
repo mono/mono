@@ -1,3 +1,8 @@
+2002-07-26  Tim Coleman <tim@timcoleman.com>
+	* XmlTextWriter.cs:
+		When given a textwriter, check to see if it has a
+		null encoding. This was being done for other inputs
+		than a textwriter.
 
 Wed Jul 24 13:16:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -48,6 +48,7 @@ namespace System.Xml
 		public XmlTextWriter (TextWriter w) : base ()
 		{
 			this.w = w;
+			nullEncoding = (w.Encoding == null);
 			
 			try {
 				baseStream = ((StreamWriter)w).BaseStream;
@@ -494,7 +495,7 @@ namespace System.Xml
 
 			string encodingFormatting = "";
 
-			if (!nullEncoding)
+			if (!nullEncoding) 
 				encodingFormatting = String.Format (" encoding={0}{1}{0}", quoteChar, w.Encoding.HeaderName);
 
 			w.Write("<?xml version={0}1.0{0}{1}{2}?>", quoteChar, encodingFormatting, standaloneFormatting);
@@ -548,6 +549,7 @@ namespace System.Xml
 			}
 
 			w.Write ("{0}<{1}{2}{3}", indentFormatting, formatPrefix, localName, formatXmlns);
+	
 
 			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
 			ws = WriteState.Element;
