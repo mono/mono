@@ -268,7 +268,7 @@ namespace System.Web.UI.WebControls
 		protected override void Render(HtmlTextWriter writer)
 		{
 			PrepareControlHierarchy();
-			base.RenderContents(writer);
+			RenderContents(writer);
 		}
 
 		protected abstract void PrepareControlHierarchy();

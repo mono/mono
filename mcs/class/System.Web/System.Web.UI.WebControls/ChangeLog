@@ -1,3 +1,20 @@
+2002-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseDataList.cs:
+	(Render): call RenderContents (), not base.RenderContents ().
+
+	* DataList.cs: style.
+
+	But I still haven't found what i'm looking for....
+
+2002-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: fixed loading/saving selected dates.
+	* SelectedDatesCollection.cs: added internal function to get the
+	underlying ArrayList.
+
+	Calendar navigation works again. Selecting dates too.
+
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: added a few attributes and fixed infinite recursion.
