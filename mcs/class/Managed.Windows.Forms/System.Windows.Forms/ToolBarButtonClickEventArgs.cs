@@ -26,9 +26,12 @@
 //	Ravindra (rkumar@novell.com)
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ToolBarButtonClickEventArgs.cs,v $
+// Revision 1.2  2004/08/21 21:52:54  pbartok
+// - Added missing base class
+//
 // Revision 1.1  2004/08/15 23:13:15  ravindra
 // First Implementation of ToolBar control.
 //
@@ -38,7 +41,7 @@
 
 namespace System.Windows.Forms
 {
-	public class ToolBarButtonClickEventArgs
+	public class ToolBarButtonClickEventArgs : EventArgs
 	{
 		#region Local Variables
 		private ToolBarButton button;
