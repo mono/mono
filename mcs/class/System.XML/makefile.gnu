@@ -1,5 +1,6 @@
 topdir = ../..
 
+TEST_DIR = Test
 LIBRARY = $(topdir)/class/lib/System.Xml.dll
 
 LIB_LIST = list.unix

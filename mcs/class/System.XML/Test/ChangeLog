@@ -1,3 +1,8 @@
+2002-10-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.XML_linux_test.args: added XPathNavigatorEvaluateTests.cs
+	* makefile.gnu: pass MONO_PATH when running the tests.
+
 2002-10-24  Nick Drochak  <ndrochak@gol.com>
 
 	* System.XML_test.build: remove legacy build of a standalone exe of the

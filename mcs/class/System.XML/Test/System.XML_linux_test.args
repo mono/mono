@@ -25,5 +25,6 @@ XmlTextReaderTests.cs
 XmlTextTests.cs
 XmlTextWriterTests.cs
 XmlWhiteSpaceTests.cs
+XPathNavigatorEvaluateTests.cs
 XPathNavigatorTests.cs
 XPathNavigatorMatchesTests.cs

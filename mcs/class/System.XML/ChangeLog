@@ -1,3 +1,7 @@
+2002-10-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* makefile.gnu: added test target.
+
 2002-08-22  Tim Coleman <tim@timcoleman.com>
 	* list.unix:
 		Add System.Xml.Serialization/XmlCustomFormatter.cs

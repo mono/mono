@@ -19,4 +19,4 @@ TEST_SUITE_PREFIX = MonoTests.System.Xml.
 TEST_SUITE = AllTests
 
 test: $(LIBRARY)
-	mono $(topdir)/class/lib/NUnitConsole_mono.exe $(TEST_SUITE_PREFIX)$(TEST_SUITE),System.XML_linux_test.dll
+	-MONO_PATH=$(MONO_PATH) mono $(topdir)/class/lib/NUnitConsole_mono.exe $(TEST_SUITE_PREFIX)$(TEST_SUITE),System.XML_linux_test.dll
