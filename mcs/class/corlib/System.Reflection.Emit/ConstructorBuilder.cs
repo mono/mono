@@ -29,8 +29,10 @@ namespace System.Reflection.Emit {
 		private ParameterBuilder[] pinfo;
 		private CustomAttributeBuilder[] cattrs;
 		private bool init_locals = true;
+		private Type[][] paramModReq;
+		private Type[][] paramModOpt;
 
-		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
+		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
 			attrs = attributes | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
 			call_conv = callingConvention;
 			if (parameterTypes != null) {
@@ -39,6 +41,8 @@ namespace System.Reflection.Emit {
 			}
 			type = tb;
 			table_idx = get_next_table_index (this, 0x06, true);
+			this.paramModReq = paramModReq;
+			this.paramModOpt = paramModOpt;
 		}
 		
 		public bool InitLocals {

@@ -28,11 +28,15 @@ namespace System.Reflection.Emit {
 		private CustomAttributeBuilder[] cattrs;
 		private UnmanagedMarshal marshal_info;
 		private RuntimeFieldHandle handle;
+		private Type[] modReq;
+		private Type[] modOpt;
 
-		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes) {
+		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes, Type[] modReq, Type[] modOpt) {
 			attrs = attributes;
 			name = fieldName;
 			this.type = type;
+			this.modReq = modReq;
+			this.modOpt = modOpt;
 			offset = -1;
 			typeb = tb;
 			table_idx = tb.get_next_table_index (this, 0x04, true);

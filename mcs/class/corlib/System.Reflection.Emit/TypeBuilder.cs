@@ -317,11 +317,20 @@ namespace System.Reflection.Emit {
 			return DefineNestedType (name, attr, parent, null, packsize, UnspecifiedTypeSize);
 		}
 
-		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes)
+		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
+			return DefineConstructor (attributes, callingConvention, parameterTypes, null, null);
+		}
+
+#if NET_1_2
+		public
+#else
+		internal
+#endif
+		ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
 			if (is_created)
 				throw not_after_created ();
-			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes);
+			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes, requiredCustomModifiers, optionalCustomModifiers);
 			if (ctors != null) {
 				ConstructorBuilder[] new_ctors = new ConstructorBuilder [ctors.Length+1];
 				System.Array.Copy (ctors, new_ctors, ctors.Length);
@@ -376,6 +385,15 @@ namespace System.Reflection.Emit {
 		}
 
 		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
+			return DefineMethod (name, attributes, callingConvention, returnType, null, null, parameterTypes, null, null);
+		}
+
+#if NET_1_2
+		public
+#else
+		internal
+#endif
+		MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {
 			check_name ("name", name);
 			if (is_created)
 				throw not_after_created ();
@@ -386,12 +404,33 @@ namespace System.Reflection.Emit {
 
 			if (returnType == null)
 				returnType = pmodule.assemblyb.corlib_void_type;
-			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, parameterTypes);
+			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, returnTypeRequiredCustomModifiers, returnTypeOptionalCustomModifiers, parameterTypes, parameterTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers);
 			append_method (res);
 			return res;
 		}
 
 		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet) {
+			return DefinePInvokeMethod (name, dllName, entryName, attributes, callingConvention, returnType, null, null, parameterTypes, null, null, nativeCallConv, nativeCharSet);
+		}
+
+#if NET_1_2
+		public
+#else
+		internal
+#endif
+		MethodBuilder DefinePInvokeMethod (
+						string name, 
+						string dllName, 
+						string entryName, MethodAttributes attributes, 
+						CallingConventions callingConvention, 
+						Type returnType, 
+						Type[] returnTypeRequiredCustomModifiers, 
+						Type[] returnTypeOptionalCustomModifiers, 
+						Type[] parameterTypes, 
+						Type[][] parameterTypeRequiredCustomModifiers, 
+						Type[][] parameterTypeOptionalCustomModifiers, 
+						CallingConvention nativeCallConv, 
+						CharSet nativeCharSet) {
 			check_name ("name", name);
 			check_name ("dllName", dllName);
 			check_name ("entryName", entryName);
@@ -402,8 +441,22 @@ namespace System.Reflection.Emit {
 			if (is_created)
 				throw not_after_created ();
 
-			MethodBuilder res = new MethodBuilder (this, name, attributes, callingConvention, returnType, parameterTypes,
-				dllName, entryName, nativeCallConv, nativeCharSet);
+			MethodBuilder res 
+				= new MethodBuilder (
+						this, 
+						name, 
+						attributes, 
+						callingConvention,
+						returnType, 
+						returnTypeRequiredCustomModifiers, 
+						returnTypeOptionalCustomModifiers, 
+						parameterTypes, 
+						parameterTypeRequiredCustomModifiers, 
+						parameterTypeOptionalCustomModifiers,
+						dllName, 
+						entryName, 
+						nativeCallConv, 
+						nativeCharSet);
 			append_method (res);
 			return res;
 		}
@@ -428,13 +481,22 @@ namespace System.Reflection.Emit {
 		}
 
 		public FieldBuilder DefineField( string fieldName, Type type, FieldAttributes attributes) {
+			return DefineField (fieldName, type, null, null, attributes);
+		}
+
+#if NET_1_2
+		public
+#else
+		internal
+#endif
+	    FieldBuilder DefineField( string fieldName, Type type, Type[] requiredCustomAttributes, Type[] optionalCustomAttributes, FieldAttributes attributes) {
 			check_name ("fieldName", fieldName);
 			if (type == typeof (void))
 				throw new ArgumentException ("type",  "Bad field type in defining field.");
 			if (is_created)
 				throw not_after_created ();
 
-			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes);
+			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes, requiredCustomAttributes, optionalCustomAttributes);
 			if (fields != null) {
 				FieldBuilder[] new_fields = new FieldBuilder [fields.Length+1];
 				System.Array.Copy (fields, new_fields, fields.Length);

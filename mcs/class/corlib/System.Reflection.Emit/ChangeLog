@@ -1,5 +1,7 @@
 2003-11-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TypeBuilder.cs FieldBuilder.cs MethodBuilder.cs ConstructorBuilder.cs:  Add support for custom modifiers from NET 1.2.
+
 	* ILGenerator.cs: Remove unused abuilder member.
 
 2003-11-19  Andreas Nahr <ClassDevelopment@A-SoftTech.com>

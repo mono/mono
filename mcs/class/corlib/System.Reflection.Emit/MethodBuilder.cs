@@ -38,12 +38,20 @@ namespace System.Reflection.Emit {
 		private CallingConventions call_conv;
 		private bool init_locals = true;
 		private	TypeBuilder.MonoGenericParam[] generic_params;
+		private Type[] returnModReq;
+		private Type[] returnModOpt;
+		private Type[][] paramModReq;
+		private Type[][] paramModOpt;
 
-		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
+		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
 			this.name = name;
 			this.attrs = attributes;
 			this.call_conv = callingConvention;
 			this.rtype = returnType;
+			this.returnModReq = returnModReq;
+			this.returnModOpt = returnModOpt;
+			this.paramModReq = paramModReq;
+			this.paramModOpt = paramModOpt;
 			// The MSDN docs does not specify this, but the MS MethodBuilder
 			// appends a HasThis flag if the method is not static
 			if ((attributes & MethodAttributes.Static) == 0)
@@ -58,9 +66,9 @@ namespace System.Reflection.Emit {
 		}
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, 
-			CallingConventions callingConvention, Type returnType, Type[] parameterTypes, 
+								CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt, 
 			String dllName, String entryName, CallingConvention nativeCConv, CharSet nativeCharset) 
-			: this (tb, name, attributes, callingConvention, returnType, parameterTypes) {
+			: this (tb, name, attributes, callingConvention, returnType, returnModReq, returnModOpt, parameterTypes, paramModReq, paramModOpt) {
 			pi_dll = dllName;
 			pi_entry = entryName;
 			native_cc = nativeCConv;
