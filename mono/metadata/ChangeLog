@@ -1,3 +1,9 @@
+2001-07-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* metadata.h: More macros.
+
+	* tokentype.h: New file.
+
 Fri Jul  6 11:30:53 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: added a consistency check and initialize
