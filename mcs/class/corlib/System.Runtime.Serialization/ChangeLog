@@ -1,7 +1,12 @@
+2002-02-16  Duncan Mak  <duncan@ximian.com>
+
+	* SurrogateSelector.cs: Stubbed out. Gonna be working on this
+	tomorrow.
+
 2002-02-15  Duncan Mak  <duncan@ximian.com>
 
 	* SerializationEntry.cs: Added internal constructor for writing
-	bits for SerializationInfoEnumerator.
+	bits in SerializationInfoEnumerator.
 	* SerializationInfo.cs: Completed.
 	* SerializationInfoEnumerator.cs: Implemented. Piggybacking on
 	Hashtable's GetEnumerator method.
