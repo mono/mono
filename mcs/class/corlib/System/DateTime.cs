@@ -471,36 +471,48 @@ namespace System
 			return  ( (year % 4 == 0 && year % 100 != 0) || year % 400 == 0) ;
 		}
 
-		[MonoTODO]
 		public static DateTime Parse (string s)
 		{
-			// TODO: Implement me
-			return new DateTime (0);
+			return Parse (s, null);
 		}
 
-		[MonoTODO]
 		public static DateTime Parse (string s, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			return new DateTime (0);
+			return Parse (s, null, DateTimeStyles.AllowWhiteSpaces);
 		}
 
-		[MonoTODO]
-		public static DateTime Parse (string s, NumberStyles style, IFormatProvider fp)
+		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
 		{
-			// TODO: Implement me
-			return new DateTime (0);
+			string[] formats = {
+				// Full date and time
+				"F", "G", "r", "s", "u", "U",
+				// Full date and time, but no seconds
+				"f", "g",
+				// Only date
+				"d", "D",
+				// Only time
+				"T", "t",
+				// Only date, but no year
+				"m", "M",
+				// Only date, but no day
+				"y", "Y"
+			};
+
+			return ParseExact (s, formats, fp, styles);
 		}
 
-		[MonoTODO]
 		public static DateTime ParseExact (string s, string format, IFormatProvider fp)
 		{
 			return ParseExact (s, format, fp, DateTimeStyles.None);
 		}
 
-		internal static int _ParseNumber (string s, int digits, bool leadingzero, out int num_parsed)
+		internal static int _ParseNumber (string s, int digits, bool leadingzero,
+						  bool sloppy_parsing, out int num_parsed)
 		{
 			int number = 0, i;
+
+			if (sloppy_parsing)
+				leadingzero = false;
 
 			if (!leadingzero) {
 				int real_digits = 0;
@@ -512,6 +524,11 @@ namespace System
 				}
 
 				digits = real_digits;
+			}
+
+			if (s.Length < digits) {
+				num_parsed = -1;
+				return 0;
 			}
 
 			for (i = 0; i < digits; i++) {
@@ -532,11 +549,11 @@ namespace System
 		{
 			int i;
 
-			for (i = 0; i < values.Length; i++)
-			{
+			for (i = 0; i < values.Length; i++) {
+				if (s.Length < values[i].Length)
+					continue;
 				String tmp = s.Substring (0, values[i].Length);
-				if (String.Compare (tmp, values[i], true) == 0)
-				{
+				if (String.Compare (tmp, values[i], true) == 0) {
 					num_parsed = values[i].Length;
 					return i;
 				}
@@ -553,8 +570,7 @@ namespace System
 
 			s = s.Substring (0, value.Length);
 
-			if (String.Compare (s, value, true) == 0)
-			{
+			if (String.Compare (s, value, true) == 0) {
 				num_parsed = value.Length;
 				return true;
 			}
@@ -569,6 +585,7 @@ namespace System
 					       DateTimeStyles style)
 		{
 			bool useutc = false, use_localtime = true;
+			bool sloppy_parsing = false;
 
 			if (format.Length == 1)
 				format = _GetStandardPattern (format[0], dfi, out useutc);
@@ -583,6 +600,9 @@ namespace System
 				s = s.TrimEnd (null);
 			}
 
+			if ((style & DateTimeStyles.AllowInnerWhite) != 0)
+				sloppy_parsing = true;
+
 			char[] chars = format.ToCharArray ();
 			int len = format.Length, pos = 0, num = 0;
 
@@ -595,6 +615,9 @@ namespace System
 
 			while (pos+num < len)
 			{
+				if (s.Length == 0)
+					return false;
+
 				if (Char.IsWhiteSpace (s[0])) {
 					s = s.Substring (1);
 
@@ -657,9 +680,9 @@ namespace System
 					if (day != -1)
 						return false;
 					if (num == 0)
-						day = _ParseNumber (s, 2, false, out num_parsed);
+						day = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						day = _ParseNumber (s, 2, true, out num_parsed);
+						day = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 					else if (num == 2)
 						dayofweek = _ParseEnum (s, dfi.AbbreviatedDayNames, out num_parsed);
 					else
@@ -672,9 +695,9 @@ namespace System
 					if (month != -1)
 						return false;
 					if (num == 0)
-						month = _ParseNumber (s, 2, false, out num_parsed);
+						month = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						month = _ParseNumber (s, 2, true, out num_parsed);
+						month = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 					else if (num == 2)
 						month = _ParseEnum (s, dfi.AbbreviatedMonthNames , out num_parsed) + 1;
 					else
@@ -689,12 +712,12 @@ namespace System
 					if (year != -1)
 						return false;
 					if (num == 0)
-						year = _ParseNumber (s, 2, false, out num_parsed) + century;
+						year = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed) + century;
 					else if (num < 3)
-						year = _ParseNumber (s, 2, true, out num_parsed) + century;
+						year = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed) + century;
 					else
 					{
-						year = _ParseNumber (s, 4, false, out num_parsed);
+						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;
 					}
 					break;
@@ -702,10 +725,10 @@ namespace System
 					if (hour != -1)
 						return false;
 					if (num == 0)
-						hour = _ParseNumber (s, 2, false, out num_parsed);
+						hour = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						hour = _ParseNumber (s, 2, true, out num_parsed);
+						hour = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 					if (hour >= 12)
@@ -715,10 +738,10 @@ namespace System
 					if ((hour != -1) || (ampm >= 0))
 						return false;
 					if (num == 0)
-						hour = _ParseNumber (s, 2, false, out num_parsed);
+						hour = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						hour = _ParseNumber (s, 2, true, out num_parsed);
+						hour = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 					if (hour >= 24)
@@ -729,10 +752,10 @@ namespace System
 					if (minute != -1)
 						return false;
 					if (num == 0)
-						minute = _ParseNumber (s, 2, false, out num_parsed);
+						minute = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						minute = _ParseNumber (s, 2, true, out num_parsed);
+						minute = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 					if (minute >= 60)
@@ -740,26 +763,26 @@ namespace System
 					break;
 				case 's':
 					if (second != -1)
-						throw new FormatException ();
+						return false;
 					if (num == 0)
-						second = _ParseNumber (s, 2, false, out num_parsed);
+						second = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						second = _ParseNumber (s, 2, true, out num_parsed);
+						second = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 					if (second >= 60)
-						throw new FormatException (Locale.GetText ("The DateTime represented by the string is out of range."));
+						return false;
 					break;
 				case 'f':
 					if (millisecond != -1)
-						throw new FormatException ();
+						return false;
 					num = Math.Min (num, 6);
-					millisecond = _ParseNumber (s, num+1, true, out num_parsed);
+					millisecond = _ParseNumber (s, num+1, true, sloppy_parsing, out num_parsed);
 					break;
 				case 't':
 					if (ampm != -1)
-						throw new FormatException ();
+						return false;
 					if (num == 0)
 					{
 						if (_ParseString (s, 1, dfi.AMDesignator, out num_parsed))
@@ -767,7 +790,7 @@ namespace System
 						else if (_ParseString (s, 1, dfi.PMDesignator, out num_parsed))
 							ampm = 1;
 						else
-							throw new FormatException ();
+							return false;
 					}
 					else
 					{
@@ -776,57 +799,57 @@ namespace System
 						else if (_ParseString (s, 0, dfi.PMDesignator, out num_parsed))
 							ampm = 1;
 						else
-							throw new FormatException ();
+							return false;
 						num = 1;
 					}
 					break;
 				case 'z':
 					if (tzsign != -1)
-						throw new FormatException ();
+						return false;
 					if (s[0] == '+')
 						tzsign = 0;
 					else if (s[0] == '-')
 						tzsign = 1;
 					else
-						throw new FormatException ();
+						return false;
 					s = s.Substring (1);
 					if (num == 0)
-						tzoffset = _ParseNumber (s, 2, false, out num_parsed);
+						tzoffset = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						tzoffset = _ParseNumber (s, 2, true, out num_parsed);
+						tzoffset = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 					else
 					{
-						tzoffset = _ParseNumber (s, 2, true, out num_parsed);
+						tzoffset = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 						if (num_parsed < 0)
-							throw new FormatException ();
+							return false;
 						s = s.Substring (num_parsed);
 						if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
-							throw new FormatException ();
+							return false;
 						s = s.Substring (num_parsed);
-						tzoffmin = _ParseNumber (s, 2, true, out num_parsed);
+						tzoffmin = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
 						if (num_parsed < 0)
-							throw new FormatException ();
+							return false;
 						num = 2;
 					}
 					break;
 				case ':':
 					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
-						throw new FormatException ();
+						return false;
 					break;
 				case '/':
 					if (!_ParseString (s, 0, dfi.DateSeparator, out num_parsed))
-						throw new FormatException ();
+						return false;
 					break;
 				default:
 					if (s[0] != chars[pos])
-						throw new FormatException ();
+						return false;
 					num = 0;
 					num_parsed = 1;
 					break;
 				}
 
 				if (num_parsed < 0)
-					throw new FormatException ();
+					return false;
 
 				s = s.Substring (num_parsed);
 
@@ -904,7 +927,6 @@ namespace System
 		}
 
 
-		[MonoTODO]
 		public static DateTime ParseExact (string s, string format,
 						   IFormatProvider fp, DateTimeStyles style)
 		{
@@ -916,7 +938,6 @@ namespace System
 			return ParseExact (s, formats, fp, style);
 		}
 
-		[MonoTODO]
 		public static DateTime ParseExact (string s, string[] formats,
 						   IFormatProvider fp,
 						   DateTimeStyles style)
@@ -1037,6 +1058,7 @@ namespace System
 			case 'r':
 			case 'R':
 				pattern = dfi.RFC1123Pattern;
+				useutc= true;
 				break;
 			case 's':
 				pattern = dfi.SortableDateTimePattern;
@@ -1048,10 +1070,8 @@ namespace System
 				pattern = dfi.LongTimePattern;
 				break;
 			case 'u':
-				// FIXME: The Microsoft runtime doesn't seem to convert
-				//        this to universal time here, but just assume that
-				//        the time is already in universal time.
 				pattern = dfi.UniversalSortableDateTimePattern;
+				useutc = true;
 				break;
 			case 'U':
 				pattern = dfi.LongDatePattern + " " + dfi.LongTimePattern;

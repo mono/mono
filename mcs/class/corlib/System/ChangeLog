@@ -1,5 +1,11 @@
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
+	* DateTime.cs: Implemented Parse and fixed a few bugs.
+
+	* String.cs (TrimStart): Small fix.
+
+2002-02-26  Martin Baulig  <martin@gnome.org>
+
 	* DateTime.cs: ParseExact is now fully functional.
 
 	* String.cs (TrimEnd): Small fix.

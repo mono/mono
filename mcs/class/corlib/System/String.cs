@@ -1688,10 +1688,15 @@ namespace System {
 				} else {
 					matches = is_lwsp (this.c_str[begin]);
 				}
+
+				if (!matches)
+					return Substring (begin, this.length - begin);
 			}
 
 			if (begin == this.length)
 				return String.Empty;
+
+			throw new FormatException ();
 
 			return Substring (begin, this.length - begin);
 		}
