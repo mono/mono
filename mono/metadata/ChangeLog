@@ -1,5 +1,7 @@
 2003-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_reflection_parse_type): Fix #49114.
+
 	* file-io.c (ves_icall_System_IO_MonoIO_GetFileAttributes): Add
 	temporary workaround for cygwin header problem.
 
