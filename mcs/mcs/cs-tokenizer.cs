@@ -1949,9 +1949,9 @@ namespace Mono.CSharp
 								warn_incorrect_doc_comment ();
 						}
 
-						int currentCommentStart = 0;
+						int current_comment_start = 0;
 						if (docAppend) {
-							currentCommentStart = xml_comment_buffer.Length;
+							current_comment_start = xml_comment_buffer.Length;
 							xml_comment_buffer.Append (Environment.NewLine);
 						}
 
@@ -1974,7 +1974,7 @@ namespace Mono.CSharp
 							}
 						}
 						if (docAppend)
-							update_formatted_doc_comment (currentCommentStart);
+							update_formatted_doc_comment (current_comment_start);
 						continue;
 					}
 					goto is_punct_label;
@@ -2143,12 +2143,13 @@ namespace Mono.CSharp
 		//
 		// Remove heading "*" in Javadoc-like xml documentation.
 		//
-		private void update_formatted_doc_comment (int currentCommentStart)
+		private void update_formatted_doc_comment (int current_comment_start)
 		{
-			int length = xml_comment_buffer.Length - currentCommentStart;
+			int length = xml_comment_buffer.Length - current_comment_start;
 			string [] lines = xml_comment_buffer.ToString (
-				currentCommentStart,
+				current_comment_start,
 				length).Replace ("\r", "").Split ('\n');
+			
 			// The first line starts with /**, thus it is not target
 			// for the format check.
 			for (int i = 1; i < lines.Length; i++) {
@@ -2159,18 +2160,15 @@ namespace Mono.CSharp
 					if (i < lines.Length - 1)
 						return;
 					head = s;
-				}
-				else
+				} else
 					head = s.Substring (0, idx);
 				foreach (char c in head)
 					if (c != ' ')
 						return;
 				lines [i] = s.Substring (idx + 1);
 			}
-			xml_comment_buffer.Remove (currentCommentStart, length);
-			xml_comment_buffer.Insert (
-				currentCommentStart,
-				String.Join (Environment.NewLine, lines));
+			xml_comment_buffer.Remove (current_comment_start, length);
+			xml_comment_buffer.Insert (current_comment_start, String.Join (Environment.NewLine, lines));
 		}
 
 		//
