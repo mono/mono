@@ -1,3 +1,7 @@
+2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* config-default.make (TEST_RUNTIME): Add TEST_MONO_PATH variable.
+
 2004-09-27  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make ($(test_nunit_dep)): Make sure NUnit is built for

@@ -15,7 +15,7 @@ CFLAGS = -g -O2
 INSTALL = /usr/bin/install
 prefix = /usr/local
 RUNTIME = mono $(RUNTIME_FLAGS)
-TEST_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) --debug
+TEST_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) --debug
 
 # In case you want to add MCS_FLAGS, this lets you not have to
 # keep track of the default value
