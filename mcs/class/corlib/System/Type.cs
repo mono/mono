@@ -473,6 +473,9 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool type_is_subtype_of (Type a, Type b, bool check_interfaces);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern bool type_is_assignable_from (Type a, Type b);
 		
 		public virtual bool IsSubclassOf (Type c)
 		{
@@ -530,14 +533,7 @@ namespace System {
 			if (Equals (c))
 				return true;
 
-			if (type_is_subtype_of (c, this, true))
-				return true;
-
-			if (!IsInterface)
-				return false;
-
-			Type [] ifaces = c.GetInterfaces ();
-			return (Array.IndexOf (ifaces, this) != -1);
+			return type_is_assignable_from (this, c);
 		}
 
 		public virtual bool IsInstanceOfType (object o) {
