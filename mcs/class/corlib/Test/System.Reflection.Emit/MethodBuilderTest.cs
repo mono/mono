@@ -497,5 +497,33 @@ public class MethodBuilderTest : Assertion
 		mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 		mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 	}
+
+	[AttributeUsage (AttributeTargets.Parameter)]
+	class ParamAttribute : Attribute {
+
+		public ParamAttribute () {
+		}
+	}
+
+	[Test]
+	public void TestDynamicParams () {
+		string mname = genMethodName ();
+
+		MethodBuilder mb = genClass.DefineMethod (
+			mname, MethodAttributes.Public, typeof (void), 
+			new Type [] { typeof (string) });
+		ParameterBuilder pb = mb.DefineParameter (1, 0, "foo");
+		pb.SetCustomAttribute (new CustomAttributeBuilder (typeof (ParamAttribute).GetConstructors () [0], new object [] { }));
+
+		Type t = genClass.CreateType ();
+		MethodInfo m = t.GetMethod (mname);
+		ParameterInfo pi = m.GetParameters ()[0];
+
+		AssertEquals ("foo", pi.Name);
+
+		object[] cattrs = pi.GetCustomAttributes (true);
+		AssertEquals (1, cattrs.Length);
+		AssertEquals (typeof (ParamAttribute), cattrs [0].GetType ());
+	}
 }
 }
