@@ -1,3 +1,8 @@
+2005-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CultureInfo.cs: the InvariantCulture returns false for
+	IsNeutralCulture. Fixes bug #59716.
+
 2004-12-13  Ben Maurer  <bmaurer@ximian.com>
 
 	* CultureInfo.cs: Store TextInfo data. Hand it over to TextInfo.

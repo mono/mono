@@ -334,6 +334,9 @@ namespace System.Globalization
 		public virtual bool IsNeutralCulture {
 			get {
 				if (!constructed) Construct ();
+				if (cultureID == 0x7f)
+					return false;
+
 				return ((cultureID & 0xff00) == 0 || specific_lcid == 0);
 			}
 		}
@@ -341,7 +344,7 @@ namespace System.Globalization
 		public virtual NumberFormatInfo NumberFormat {
 			get {
 				if (!constructed) Construct ();
-				if (IsNeutralCulture && cultureID != 0x7f) {
+				if (IsNeutralCulture) {
 					throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
 							"a neutral culture. It can not be used in formatting " +
 							"and parsing and therefore cannot be set as the thread's " +
@@ -375,7 +378,7 @@ namespace System.Globalization
 			get 
 			{
 				if (!constructed) Construct ();
-				if (IsNeutralCulture && cultureID != 0x7f) {
+				if (IsNeutralCulture) {
 					throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
 							"a neutral culture. It can not be used in formatting " +
 							"and parsing and therefore cannot be set as the thread's " +
