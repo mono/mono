@@ -1,3 +1,8 @@
+2003-04-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* WebClient.cs (DownloadData): Close the underlyng stream.
+	(DownloadFile): Use using, so the file gets closed.
+
 2003-04-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* WebClient.cs (DownloadData): Instead of using a MemoryStream,

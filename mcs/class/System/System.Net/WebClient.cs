@@ -59,7 +59,6 @@ namespace System.Net
 
 		// Methods
 		
-		[MonoTODO("depends on OpenRead")]
 		public byte [] DownloadData (string address)
 		{
 			const int readSize = 8192;
@@ -68,14 +67,19 @@ namespace System.Net
 			byte[] buf = new byte [readSize];
 			int size = 0;
 			int total_size = 0;
-			do {
-				size = networkStream.Read (buf, 0, readSize);
-				byte [] copy = new byte [size];
-				Array.Copy (buf, 0, copy,0, size);
-				chunks.Add (copy);
-				total_size += size;
-			} while (size != 0);
 
+			try {
+				do {
+					size = networkStream.Read (buf, 0, readSize);
+					byte [] copy = new byte [size];
+					Array.Copy (buf, 0, copy,0, size);
+					chunks.Add (copy);
+					total_size += size;
+				} while (size != 0);
+			} finally {
+				networkStream.Close ();
+			}
+			
 			byte [] result = new byte [total_size];
 			int target = 0;
 			foreach (byte [] block in chunks){
@@ -83,18 +87,17 @@ namespace System.Net
 				Array.Copy (block, 0, result, target, len);
 				target += len;
 			}
-			networkStream.Close ();
 			return result;
 		}
 		
-		[MonoTODO("depends on DownloadData")]
 		public void DownloadFile (string address, string fileName)
 		{
 			byte[] buf = DownloadData (address);
-			new FileStream (fileName, FileMode.CreateNew).Write (buf, 0, buf.Length);
+			using (FileStream f = new FileStream (fileName, FileMode.CreateNew)){
+				f.Write (buf, 0, buf.Length);
+			}
 		}
 		
-		[MonoTODO("some tests are required")]
 		public Stream OpenRead (string address)
 		{
 			Uri uri = new Uri (address);
