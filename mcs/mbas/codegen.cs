@@ -776,7 +776,7 @@ namespace Mono.MonoBASIC {
 	{
 		public AssemblyBuilder Builder;
 
-		public AttributeTargets AttributeTargets {
+		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Assembly;
 			}
@@ -796,7 +796,7 @@ namespace Mono.MonoBASIC {
 		{
 		}
 	
-		public AttributeTargets AttributeTargets {
+		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Module;
 			}

@@ -24,7 +24,6 @@ namespace Mono.MonoBASIC {
 		ArrayList ordered_enums;
 		
 		public Expression BaseType;
-		public Attributes  OptAttributes;
 		
 		public Type UnderlyingType;
 
@@ -51,18 +50,23 @@ namespace Mono.MonoBASIC {
 			Modifiers.PRIVATE;
 
 		public Enum (TypeContainer parent, Expression type, int mod_flags, string name, Attributes attrs, Location l)
-			: base (parent, name, l)
+			: base (parent, name, attrs, l)
 		{
 			this.BaseType = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,
 						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PUBLIC, l);
-			OptAttributes = attrs;
 
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();
 			member_to_value = new Hashtable ();
 			in_transit = new Hashtable ();
 			field_builders = new ArrayList ();
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Enum;
+			}
 		}
 
 		/// <summary>

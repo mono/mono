@@ -20,7 +20,7 @@ namespace Mono.MonoBASIC {
 	/// <summary>
 	///   Represents a single method parameter
 	/// </summary>
-	public class Parameter {
+	public class Parameter : Attributable {
 		[Flags]
 		public enum Modifier : byte {
 			NONE    = 0,
@@ -35,43 +35,47 @@ namespace Mono.MonoBASIC {
 
 		public readonly Expression TypeName;
 		public readonly Modifier ModFlags;
-		public Attributes OptAttributes;
 		public readonly string Name;
 		public Type parameter_type;
 		public readonly Expression ParameterInitializer;
 		public readonly bool IsOptional;
 
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
+			: base (attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			TypeName = type;
-			OptAttributes = attrs;
 			ParameterInitializer = null;
 			IsOptional = false;
 		}
 
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Expression pi)
+			: base (attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			TypeName = type;
-			OptAttributes = attrs;
 			ParameterInitializer = pi;
 			IsOptional = false;
 		}
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Expression pi, bool opt)
+			: base (attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			TypeName = type;
-			OptAttributes = attrs;
 			ParameterInitializer = pi;
 			IsOptional = opt;
 		}
-		
 
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Parameter;
+			}
+		}
+		
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>

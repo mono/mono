@@ -45,7 +45,7 @@ namespace Mono.MonoBASIC
 		
 		public Tree ()
 		{
-			root_types = new TypeContainer (null, "", new Location (-1, 0));
+			root_types = new TypeContainer (null, "", null, new Location (-1, 0));
 
 			decls = new Hashtable ();
 			namespaces = new Hashtable ();

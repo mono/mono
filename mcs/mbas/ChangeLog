@@ -1,3 +1,20 @@
+2004-11-09  Jambunathan K  <kjambunathan@novell.com>
+	* attribute.cs: Injected a new virtual property
+	Attributable.AttributeTargets
+
+	* decl.cs: Made MemeberCore a derived class of
+	Attributable.
+
+	* parameter.cs: Made Parameter a derived class of
+	Attributable.
+	
+	* class.cs: Commented out the "never used" class Indexer. I
+	suspect that the class will never be required in VB.NET context
+	and can possibly be stripped off after careful inspection.
+
+	* tree.cs, module.cs, interface.cs, enum.cs, delegate.cs,
+	const.cs, codegen.cs: Changes necessiated by the above changes.
+
 2004-11-07  Jambunathan K  <kjambunathan@novell.com>
 	* typemanager.cs: Removed TypeManager.builder_to_attr which was
 	redundant and replaced LookupAttr with LookupClass.

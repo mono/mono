@@ -43,6 +43,11 @@ namespace Mono.MonoBASIC {
 				attributes = value;
 			}
 		}
+		
+		/// <summary>
+		/// Returns one AttributeTarget for this element.
+		/// </summary>
+		public abstract AttributeTargets AttributeTargets { get; }
 	};
 	public class Attribute {
 		public readonly string ExplicitTarget;
@@ -429,6 +434,7 @@ namespace Mono.MonoBASIC {
 			TypeContainer attr = TypeManager.LookupClass (a.Type);
 			AttributeTargets targets = a.GetAttributeUsage ().ValidOn;
 
+
 			if (element is Class) {
 				if ((targets & AttributeTargets.Class) != 0)
 					return true;
@@ -480,7 +486,7 @@ namespace Mono.MonoBASIC {
 					return true;
 				else
 					return false;
-			} else if (element is Property || element is Indexer /*||
+			} else if (element is Property /* || element is Indexer ||
 				   element is InterfaceProperty || element is InterfaceIndexer*/) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
@@ -663,7 +669,7 @@ namespace Mono.MonoBASIC {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 				} else if (kind is Field) {
 						((FieldBuilder) builder).SetCustomAttribute (cb);
-				} else if (kind is Property || kind is Indexer) {
+				} else if (kind is Property /* || kind is Indexer */) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
 				} else if (kind is Event) {
 						((MyEventBuilder) builder).SetCustomAttribute (cb);
@@ -681,10 +687,13 @@ namespace Mono.MonoBASIC {
 					if (a.UsageAttribute != null) {
 						tc.AttributeUsage = a.UsageAttribute;
 					} else if (a.Type == TypeManager.default_member_type) {
+						/*
 						if (tc.Indexers != null) {
 							Report.Error (646, loc, "Cannot specify the DefaultMember attribute on" + " a type containing an indexer");
 							return;
 						}
+						*/
+						
 					} else {
 						if (!CheckAttribute (a, kind)) {
 							Error_AttributeNotValidForElement (a, loc);

@@ -28,7 +28,6 @@ namespace Mono.MonoBASIC {
 	public class Const : MemberCore {
 		public Expression ConstantType;
 		public Expression Expr;
-		public Attributes  OptAttributes;
 		public FieldBuilder FieldBuilder;
 
 		object ConstantValue = null;
@@ -45,13 +44,18 @@ namespace Mono.MonoBASIC {
 
 		public Const (Expression constant_type, string name, Expression expr, int mod_flags,
 			      Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (name, attrs, loc)
 		{
 			ConstantType = constant_type;
 			Name = name;
 			Expr = expr;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE, loc);
-			OptAttributes = attrs;
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Field;
+			}
 		}
 
 		public FieldAttributes FieldAttr {

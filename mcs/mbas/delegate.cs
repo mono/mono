@@ -23,7 +23,6 @@ namespace Mono.MonoBASIC {
 	public class Delegate : DeclSpace {
  		public Expression ReturnType;
 		public Parameters      Parameters;
-		public Attributes      OptAttributes;
 
 		public ConstructorBuilder ConstructorBuilder;
 		public MethodBuilder      InvokeBuilder;
@@ -47,7 +46,7 @@ namespace Mono.MonoBASIC {
  		public Delegate (TypeContainer parent, Expression type, int mod_flags,
 				 string name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (parent, name, l)
+			: base (parent, name, attrs, l)
 		{
 			this.ReturnType = type;
 
@@ -55,7 +54,12 @@ namespace Mono.MonoBASIC {
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PUBLIC, l);
 			Parameters      = param_list;
-			OptAttributes   = attrs;
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Delegate;
+			}
 		}
 
 		public override TypeBuilder DefineType ()

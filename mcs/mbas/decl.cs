@@ -21,7 +21,8 @@ namespace Mono.MonoBASIC {
 	///   Base representation for members.  This is only used to keep track
 	///   of Name, Location and Modifier flags.
 	/// </summary>
-	public abstract class MemberCore {
+	public abstract class MemberCore : Attributable
+	{
 		/// <summary>
 		///   Public name
 		/// </summary>
@@ -37,7 +38,8 @@ namespace Mono.MonoBASIC {
 		/// </summary>
 		public readonly Location Location;
 
-		public MemberCore (string name, Location loc)
+		public MemberCore (string name, Attributes attrs, Location loc)
+			: base (attrs)
 		{
 			Name = name;
 			Location = loc;
@@ -257,8 +259,8 @@ namespace Mono.MonoBASIC {
 
 		TypeContainer parent;		
 
-		public DeclSpace (TypeContainer parent, string name, Location l)
-			: base (name, l)
+		public DeclSpace (TypeContainer parent, string name, Attributes attrs, Location l)
+			: base (name, attrs, l)
 		{
 			Basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();

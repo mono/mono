@@ -84,7 +84,7 @@ namespace Mono.MonoBASIC {
 		ArrayList events;
 
 		// Holds the indexers
-		ArrayList indexers;
+		/* ArrayList indexers; */
 
 		// Holds AddHandlers stements for events
 		ArrayList handlers;
@@ -116,9 +116,6 @@ namespace Mono.MonoBASIC {
 
 		ArrayList type_bases;
 
-		// Attributes for this type
-		protected Attributes attributes;
-
 		// Information in the case we are an attribute type
 
 		AttributeUsageAttribute attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
@@ -145,8 +142,8 @@ namespace Mono.MonoBASIC {
 		//
 		public string IndexerName;
 
-		public TypeContainer (TypeContainer parent, string name, Location l)
-			: base (parent, name, l)
+		public TypeContainer (TypeContainer parent, string name, Attributes attrs, Location l)
+			: base (parent, name, attrs, l)
 		{
 			string n;
 			types = new ArrayList ();
@@ -159,6 +156,12 @@ namespace Mono.MonoBASIC {
 			base_class_name = null;
 			
 			//Console.WriteLine ("New class " + name + " inside " + n);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				throw new NotSupportedException ();
+			}
 		}
 
 		public AdditionResult AddConstant (Const constant)
@@ -401,6 +404,7 @@ namespace Mono.MonoBASIC {
 			return AdditionResult.Success;
 		}
 
+		/*
 		public AdditionResult AddIndexer (Indexer i)
 		{
 			if (indexers == null)
@@ -413,6 +417,7 @@ namespace Mono.MonoBASIC {
 
 			return AdditionResult.Success;
 		}
+		*/		
 
 		public AdditionResult AddEventHandler (Statement stmt)
 		{
@@ -505,21 +510,17 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
+		/* 
 		public ArrayList Indexers {
 			get {
 				return indexers;
 			}
 		}
+		*/ 
 
 		public ArrayList Delegates {
 			get {
 				return delegates;
-			}
-		}
-		
-		public Attributes OptAttributes {
-			get {
-				return attributes;
 			}
 		}
 		
@@ -1022,7 +1023,8 @@ namespace Mono.MonoBASIC {
 		void DefineIndexers ()
 		{
 			string class_indexer_name = null;
-			
+
+			/*
 			foreach (Indexer i in Indexers){
 				string name;
 				
@@ -1045,6 +1047,8 @@ namespace Mono.MonoBASIC {
 					668, "Two indexers have different names, " +
 					" you should use the same name for all your indexers");
 			}
+			*/
+			
 			if (class_indexer_name == null)
 				class_indexer_name = "Item";
 			IndexerName = class_indexer_name;
@@ -1138,9 +1142,11 @@ namespace Mono.MonoBASIC {
 			if (events != null)
 				DefineMembers (events, defined_names);
 
+			/*
 			if (indexers != null) {
 				DefineIndexers ();
 			} else
+			*/
 				IndexerName = "Item";
 
 			if (enums != null)
@@ -1310,6 +1316,7 @@ namespace Mono.MonoBASIC {
 					}
 				}
 
+				/*
 				if (indexers != null){
 					foreach (Indexer ix in indexers){
 						if ((ix.ModFlags & modflags) == 0)
@@ -1328,6 +1335,7 @@ namespace Mono.MonoBASIC {
 							members.Add (b);
 					}
 				}
+				*/
 			}
 
 			if ((mt & MemberTypes.Event) != 0) {
@@ -1358,6 +1366,7 @@ namespace Mono.MonoBASIC {
 							members.Add (p.PropertyBuilder);
 					}
 
+				/* 
 				if (indexers != null)
 					foreach (Indexer ix in indexers) {
 						if ((ix.ModFlags & modflags) == 0)
@@ -1370,6 +1379,7 @@ namespace Mono.MonoBASIC {
 							members.Add (ix.PropertyBuilder);
 						}
 					}
+				*/					
 			}
 			
 			if ((mt & MemberTypes.NestedType) != 0) {
@@ -1516,14 +1526,16 @@ namespace Mono.MonoBASIC {
 				foreach (Property p in properties)
 					p.Emit (this);
 
+			/*
 			if (indexers != null){
 				foreach (Indexer ix in indexers)
 					ix.Emit (this);
 				
-				/*CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (
+				CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (
 					this, IndexerName, ModFlags, Location);
-				TypeBuilder.SetCustomAttribute (cb);*/
+				TypeBuilder.SetCustomAttribute (cb);
 			}
+			*/
 			
 			if (fields != null)
 				foreach (Field f in fields)
@@ -1953,7 +1965,7 @@ namespace Mono.MonoBASIC {
 			Modifiers.SEALED ;
 		
 		public Class (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (parent, name, l)
+			: base (parent, name, attrs, l)
 		{
 			int accmods;
 
@@ -1963,7 +1975,12 @@ namespace Mono.MonoBASIC {
 				accmods = Modifiers.PUBLIC;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
-			this.attributes = attrs;
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Class;
+			}
 		}
 
 		//
@@ -1990,7 +2007,7 @@ namespace Mono.MonoBASIC {
 			Modifiers.PRIVATE;
 
 		public Struct (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (parent, name, l)
+			: base (parent, name, attrs, l)
 		{
 			int accmods;
 			
@@ -2002,8 +2019,12 @@ namespace Mono.MonoBASIC {
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 
 			this.ModFlags |= Modifiers.SEALED;
-			this.attributes = attrs;
-			
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Struct;
+			}
 		}
 
 		//
@@ -2207,7 +2228,13 @@ namespace Mono.MonoBASIC {
 		{ 
 			Implements = impl_what;
 		}
-
+		
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Method;
+			}
+		}
+		
 		//
 		// Returns the `System.Type' for the ReturnType of this
 		// function.  Provides a nice cache.  (used between semantic analysis
@@ -2549,7 +2576,6 @@ namespace Mono.MonoBASIC {
 	public class Constructor : MethodCore {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		new public Attributes OptAttributes;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -2577,6 +2603,12 @@ namespace Mono.MonoBASIC {
 			: base (null, mod, AllowedModifiers, name, null, args, l)
 		{
 			Initializer = init;
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Constructor;
+			}
 		}
 
 		//
@@ -2964,10 +2996,12 @@ namespace Mono.MonoBASIC {
 			bool IsImplementing = false;
 			Type current_iface_type = iface_type;
 
+				/*
 				if (member is Indexer)
 					implementing = parent.Pending.IsAbstractIndexer (
 					current_iface_type , ReturnType, ParameterTypes);
 				else
+				*/
 					implementing = parent.Pending.IsAbstractMethod (
 					current_iface_type, method_name, ReturnType, ParameterTypes);
 
@@ -3018,10 +3052,12 @@ namespace Mono.MonoBASIC {
 			if ((member.ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (parent.Pending == null)
 					implementing = null;
+				/*
 				else if (member is Indexer)
 					implementing = parent.Pending.IsAbstractIndexer (
 						(Type) parent.TypeBuilder.BaseType, 
 						ReturnType, ParameterTypes);
+				*/						
 				else
 					implementing = parent.Pending.IsAbstractMethod (
 						(Type) parent.TypeBuilder.BaseType, name, 
@@ -3136,12 +3172,14 @@ namespace Mono.MonoBASIC {
 				// implement abstract methods from abstract classes
 				//
 				if ((member.ModFlags & Modifiers.OVERRIDE) != 0) {
+					/*
 					if (member is Indexer)
 						parent.Pending.ImplementIndexer (
 							(Type) parent.TypeBuilder.BaseType, 
 							builder, ReturnType,
 							ParameterTypes, true);
 					else
+					*/
 						parent.Pending.ImplementMethod (
 							(Type) parent.TypeBuilder.BaseType, 
 							name, ReturnType,
@@ -3154,12 +3192,15 @@ namespace Mono.MonoBASIC {
 				if (member.Implements != null)	{
 					pos = 0;
 					foreach (MethodInfo Impl in implementing_list)	{
+
+						/* 
 						if (member is Indexer)
 							parent.Pending.ImplementIndexer (
 								(Type) implementing_iface[pos++],
 								builder, ReturnType,
 								ParameterTypes, true);
 						else
+						*/
 							parent.Pending.ImplementMethod (
 								(Type) implementing_iface[pos++],
 								Impl.Name, ReturnType,
@@ -3316,7 +3357,6 @@ namespace Mono.MonoBASIC {
 
 	abstract public class MemberBase : MemberCore {
 		public Expression Type;
-		public readonly Attributes OptAttributes;
 		public ArrayList Implements;
 
 		protected MethodAttributes flags;
@@ -3363,11 +3403,10 @@ namespace Mono.MonoBASIC {
 		//
 		protected MemberBase (Expression type, int mod, int allowed_mod, string name,
 				      Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (name, attrs, loc)
 		{
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, Modifiers.PUBLIC, loc);
-			OptAttributes = attrs;
 		}
 
 		protected virtual bool CheckBase (TypeContainer parent)
@@ -3386,12 +3425,14 @@ namespace Mono.MonoBASIC {
 				if (parent.AsAccessible (partype, ModFlags))
 					continue;
 
+				/*
 				if (this is Indexer)
 					Report.Error (55, Location,
 						      "Inconsistent accessibility: parameter type `" +
 						      TypeManager.MonoBASIC_Name (partype) + "' is less " +
 						      "accessible than indexer `" + Name + "'");
 				else
+				*/
 					Report.Error (51, Location,
 						      "Inconsistent accessibility: parameter type `" +
 						      TypeManager.MonoBASIC_Name (partype) + "' is less " +
@@ -3464,11 +3505,13 @@ namespace Mono.MonoBASIC {
 						      "Inconsistent accessibility: property type `" +
 						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than property `" + Name + "'");
+				/*
 				else if (this is Indexer)
 					Report.Error (54, Location,
 						      "Inconsistent accessibility: indexer return type `" +
 						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than indexer `" + Name + "'");
+				*/						      
 				else if (this is Method)
 					Report.Error (50, Location,
 						      "Inconsistent accessibility: return type `" +
@@ -3520,6 +3563,13 @@ namespace Mono.MonoBASIC {
 		{
 			this.init = init;
 		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Field;
+			}
+		}
+
 
 		//
 		// Whether this field has an initializer.
@@ -3583,6 +3633,12 @@ namespace Mono.MonoBASIC {
 			      Attributes attrs, Location loc)
 			: base (type, mod, AllowedModifiers, name, expr_or_array_init, attrs, loc)
 		{
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Field;
+			}
 		}
 
 		public override bool Define (TypeContainer parent)
@@ -3726,6 +3782,12 @@ namespace Mono.MonoBASIC {
 			Set = set_block;
 		}
 
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Property;
+			}
+		}
+
 		protected override bool DoDefine (TypeContainer parent)
 		{
 			if (!base.DoDefine (parent))
@@ -3779,6 +3841,8 @@ namespace Mono.MonoBASIC {
 
 			string report_name;
 			MethodSignature base_ms;
+			
+			/*
 			if (this is Indexer) {
 				string name, base_name;
 
@@ -3787,7 +3851,7 @@ namespace Mono.MonoBASIC {
 				ms = new MethodSignature (name, null, ParameterTypes);
 				base_name = TypeManager.IndexerPropertyName (container.TypeBuilder.BaseType);
 				base_ms = new MethodSignature (base_name, retval, ParameterTypes);
-			} else {
+			} else */ {
 				report_name = Name;
 				ms = base_ms = new MethodSignature (Name, retval, ParameterTypes);
 			}
@@ -3863,11 +3927,14 @@ namespace Mono.MonoBASIC {
 					WarningNotHiding (container);
 				*/
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+
+					/*
 					if (this is Indexer)
 						Report.Error (115, Location,
 							container.MakeName (Name) +
 							" no suitable indexers found to override");
 					else
+					*/
 						Report.Error (115, Location,
 							container.MakeName (Name) +
 							" no suitable properties found to override");
@@ -4278,8 +4345,13 @@ namespace Mono.MonoBASIC {
 			Remove = remove;
 			Implements = impl_what;
 		}
-		
 
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Event;
+			}
+		}
+		
 		public override bool Define (TypeContainer parent)
 		{
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
@@ -4420,7 +4492,9 @@ namespace Mono.MonoBASIC {
 	// Only:
 	// 
 	// int this [ args ]
- 
+
+
+	/*
 	public class Indexer : PropertyBase {
 
 		const int AllowedModifiers =
@@ -4523,7 +4597,7 @@ namespace Mono.MonoBASIC {
 
 				fixed_parms.CopyTo (tmp, 0);
 				tmp [fixed_parms.Length] = new Parameter (
-					Type, /* was "value" */ this.Name, Parameter.Modifier.NONE, null);
+					Type, this.Name, Parameter.Modifier.NONE, null);
 
 				Parameters set_formal_params = new Parameters (tmp, null, Location);
 				
@@ -4559,7 +4633,7 @@ namespace Mono.MonoBASIC {
 
 				if (Set != null)
 					SetBuilder.DefineParameter (
-						i + 1, ParameterAttributes.None, /* was "value" */ this.Name);
+						i + 1, ParameterAttributes.None, this.Name);
 					
 				if (i != ParameterTypes.Length) {
 					Parameter array_param = Parameters.ArrayParameter;
@@ -4596,6 +4670,7 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 	}
+	*/
 
 	struct MethodSignature {
 		public string Name;

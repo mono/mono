@@ -45,7 +45,7 @@ namespace Mono.MonoBASIC {
 
 		public Interface (TypeContainer parent, string name, int mod,
 							Attributes attrs, Location l)
-			: base (parent, name, 0, null, l)
+			: base (parent, name, 0, attrs, l)
 		{
 			int accmods;
 
@@ -56,16 +56,13 @@ namespace Mono.MonoBASIC {
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 			this.ModFlags |= Modifiers.ABSTRACT;
-			this.attributes = attrs;
 		}
 
-		/*public override AttributeTargets AttributeTargets 
-		{
-			get 
-			{
+		public override AttributeTargets AttributeTargets {
+			get {
 				return AttributeTargets.Interface;
 			}
-		}*/
+		}
 
 		public override TypeAttributes TypeAttr 
 		{

@@ -45,7 +45,7 @@ namespace Mono.MonoBASIC
 			;
 
 		public Module(TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (parent, name, 0, null, l)
+			: base (parent, name, 0, attrs, l)
 		{
 			if (parent.Parent != null)
 				Report.Error (30617, l,
@@ -56,7 +56,6 @@ namespace Mono.MonoBASIC
 
 			// add specialized attribute
 			Utils.AddSpecializedAttribute(ref attrs, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", null, l);
-			this.attributes = attrs;
 		}
 
 		//
