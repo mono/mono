@@ -15,17 +15,18 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the Microsoft.VisualBasic assembly
-
-#if (NET_1_0)
-	[assembly: AssemblyVersion("7.0.3300.0")]
-	[assembly: SatelliteContractVersion("7.0.3300.0")]
-#endif
-#if (NET_1_1)
+#if (NET_2_0)
+	[assembly: AssemblyVersion ("2.0.3600.0")]
+#elif (NET_1_1)
 	[assembly: AssemblyVersion("7.0.5000.0")]
 	[assembly: SatelliteContractVersion("7.0.5000.0")]
 	[assembly: ComCompatibleVersion(7, 0, 3300, 0)]
 	[assembly: TypeLibVersion(7, 1)]
+#else
+	[assembly: AssemblyVersion("7.0.3300.0")]
+	[assembly: SatelliteContractVersion("7.0.3300.0")]
 #endif
+
 
 [assembly: AssemblyTitle("Microsoft.VisualBasic.dll")]
 [assembly: AssemblyDescription("Microsoft.VisualBasic.dll")]

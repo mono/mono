@@ -55,8 +55,13 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.1.4.0")]
-
+#if (NET_2_0)
+	[assembly: AssemblyVersion ("2.0.3600.0")]
+#elif (NET_1_1)
+	[assembly: AssemblyVersion ("1.0.5000.0")]
+#else
+	[assembly: AssemblyVersion ("1.0.3300.0")]
+#endif
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
 // Microsoft .NET Framework documentation for more information on assembly signing.
