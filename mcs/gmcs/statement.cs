@@ -3531,15 +3531,14 @@ namespace Mono.CSharp {
 			foreach (DictionaryEntry e in var_list){
 				Expression var = resolved_vars [--i];
 				Label skip = ig.DefineLabel ();
-				i--;
 				
 				ig.BeginFinallyBlock ();
 				
 				if (!var.Type.IsValueType) {
-				var.Emit (ec);
-				ig.Emit (OpCodes.Brfalse, skip);
-				converted_vars [i].Emit (ec);
-				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+					var.Emit (ec);
+					ig.Emit (OpCodes.Brfalse, skip);
+					converted_vars [i].Emit (ec);
+					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				} else {
 					Expression ml = Expression.MemberLookup(ec, TypeManager.idisposable_type, var.Type, "Dispose", Mono.CSharp.Location.Null);
 
