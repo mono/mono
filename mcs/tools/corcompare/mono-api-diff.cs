@@ -623,6 +623,7 @@ namespace Mono.AssemblyCompare
 		string baseName;
 		bool isSealed;
 		bool isSerializable;
+		bool isAbstract;
 		string charSet;
 		string layout;
 		XMLAttributes attributes;
@@ -647,6 +648,9 @@ namespace Mono.AssemblyCompare
 
 			xatt = node.Attributes ["sealed"];
 			isSealed = (xatt != null && xatt.Value == "true");
+
+			xatt = node.Attributes ["abstract"];
+			isAbstract = (xatt != null && xatt.Value == "true");
 
 			xatt = node.Attributes["serializable"];
 			isSerializable = (xatt != null && xatt.Value == "true");
@@ -745,8 +749,14 @@ namespace Mono.AssemblyCompare
 			if (baseName != oclass.baseName)
 				AddWarning (parent, "Base class is wrong: {0} != {1}", baseName, oclass.baseName);
 
-			if (isSealed != oclass.isSealed)
-				AddWarning (parent, "Should {0}be sealed", isSealed ? "" : "not ");
+			if (isAbstract != oclass.isAbstract || isSealed != oclass.isSealed) {
+				if ((isAbstract && isSealed) || (!oclass.isAbstract && !oclass.isSealed))
+					AddWarning (parent, "Should {0}be static", isAbstract ? "" : "not ");
+				else if (isAbstract != oclass.isAbstract)
+					AddWarning (parent, "Should {0}be abstract", isAbstract ? "" : "not ");
+				else if (isSealed != oclass.isSealed)
+					AddWarning (parent, "Should {0}be sealed", isSealed ? "" : "not ");
+			}
 
 			if (isSerializable != oclass.isSerializable)
 				AddWarning (parent, "Should {0}be serializable", isSerializable ? "" : "not ");

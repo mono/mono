@@ -269,6 +269,9 @@ namespace Mono.AssemblyInfo
 			if (type.IsSealed)
 				AddAttribute (nclass, "sealed", "true");
 
+			if (type.IsAbstract)
+				AddAttribute (nclass, "abstract", "true");
+
 			if (type.IsSerializable)
 				AddAttribute (nclass, "serializable", "true");
 
