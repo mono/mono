@@ -2,6 +2,7 @@
 // Author: Sergey Chaban (serge@wildwestsoftware.com)
 
 using System;
+using System.Text;
 using System.Globalization;
 
 namespace Mono.ILASM {
@@ -43,11 +44,23 @@ namespace Mono.ILASM {
 		{
 			ILReader reader = host.Reader;
 			reader.MarkLocation ();
-			string num = reader.ReadToWhitespace ();
+			StringBuilder num_builder = new StringBuilder ();
+			string num;
+			int ch;
 
 			NumberStyles nstyles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint;
 
-			try {
+			do {
+				ch = reader.Read ();
+				int peek = reader.Peek ();
+				num_builder.Append ((char) ch);
+				if (!Char.IsDigit ((char) peek) && !(ch == '.'))
+					break;	
+			} while (ch != -1);
+
+			num = num_builder.ToString ();
+			
+		//	try {
 				if (num.IndexOf ('.') != -1) {
 					double d = Double.Parse (num, nstyles, NumberFormatInfo.InvariantInfo);
 					result.token = Token.FLOAT64;
@@ -62,13 +75,13 @@ namespace Mono.ILASM {
 						result.val = (int) i;
 					}
 				}
-			} catch {
-				reader.Unread (num.ToCharArray ());
-				reader.RestoreLocation ();
-				num = String.Empty;
-				Reset ();
-				throw new ILSyntaxError ("Bad number format!");
-			}
+			// } catch {
+			//	reader.Unread (num.ToCharArray ());
+			//	reader.RestoreLocation ();
+			//	num = String.Empty;
+			//	Reset ();
+			//	throw new ILSyntaxError ("Bad number format!");
+			// }
 			return num;
 		}
 

@@ -1,3 +1,7 @@
+2003-03-19 Jackson Harper <jackson@latitudegeo.com>
+
+	* NumberHelper.cs: Handle strange number situations like 8:99:0
+
 2003-03-16 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTokenizer.cs: Append tail to values so opcodes like ldarg.s 
