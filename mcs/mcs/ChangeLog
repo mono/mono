@@ -1,3 +1,8 @@
+2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* codegen.cs: remove stack for the ec flow branching.
+	It is already a linked list, so no need.
+
 2003-12-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Makefile: Allow custom profiler here.

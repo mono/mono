@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InEnumContext;
 
-		protected Stack FlowStack;
+		FlowBranching current_flow_branching;
 		
 		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
@@ -350,8 +350,6 @@ namespace Mono.CSharp {
 					InUnsafe = (code_flags & Modifiers.UNSAFE) != 0;
 			}
 			loc = l;
-
-			FlowStack = new Stack ();
 			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
@@ -371,7 +369,7 @@ namespace Mono.CSharp {
 
 		public FlowBranching CurrentBranching {
 			get {
-				return (FlowBranching) FlowStack.Peek ();
+				return current_flow_branching;
 			}
 		}
 
@@ -381,11 +379,8 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
 		{
-			FlowBranching cfb = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
-
-			FlowStack.Push (cfb);
-
-			return cfb;
+			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
+			return current_flow_branching;
 		}
 
 		// <summary>
@@ -393,7 +388,6 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching StartFlowBranching (Block block)
 		{
-			FlowBranching cfb;
 			FlowBranching.BranchingType type;
 
 			if (CurrentBranching.Type == FlowBranching.BranchingType.Switch)
@@ -401,11 +395,8 @@ namespace Mono.CSharp {
 			else
 				type = FlowBranching.BranchingType.Block;
 
-			cfb = FlowBranching.CreateBranching (CurrentBranching, type, block, block.StartLocation);
-
-			FlowStack.Push (cfb);
-
-			return cfb;
+			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, block, block.StartLocation);
+			return current_flow_branching;
 		}
 
 		// <summary>
@@ -414,9 +405,10 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching.UsageVector DoEndFlowBranching ()
 		{
-			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
+			FlowBranching old = current_flow_branching;
+			current_flow_branching = current_flow_branching.Parent;
 
-			return CurrentBranching.MergeChild (cfb);
+			return current_flow_branching.MergeChild (old);
 		}
 
 		// <summary>
@@ -436,7 +428,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public void KillFlowBranching ()
 		{
-			FlowStack.Pop ();
+			current_flow_branching = current_flow_branching.Parent;
 		}
 
 		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
@@ -456,19 +448,18 @@ namespace Mono.CSharp {
 					bool old_do_flow_analysis = DoFlowAnalysis;
 					DoFlowAnalysis = true;
 
-					FlowBranching cfb = FlowBranching.CreateBranching (
+					current_flow_branching = FlowBranching.CreateBranching (
 						null, FlowBranching.BranchingType.Block, block, loc);
-					FlowStack.Push (cfb);
 
 					if (!block.Resolve (this)) {
-						FlowStack.Pop ();
+						current_flow_branching = null;
 						DoFlowAnalysis = old_do_flow_analysis;
 						return;
 					}
-
-					cfb = (FlowBranching) FlowStack.Pop ();
-					FlowBranching.Reachability reachability = cfb.MergeTopBlock ();
-
+					
+					FlowBranching.Reachability reachability = current_flow_branching.MergeTopBlock ();
+					current_flow_branching = null;
+					
 					DoFlowAnalysis = old_do_flow_analysis;
 
 					block.Emit (this);
