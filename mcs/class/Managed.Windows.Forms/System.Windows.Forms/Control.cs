@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.38 $
+// $Revision: 1.39 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.39  2004/08/21 16:54:11  jackson
+// Implement EndInvoke
+//
 // Revision 1.38  2004/08/20 23:38:54  ravindra
 // Made RightToLeft property virtual and removed a Console.WriteLine.
 //
@@ -1372,11 +1375,9 @@ namespace System.Windows.Forms
 			return result;
 		}
 
-		[MonoTODO]
-		public object EndInvoke(IAsyncResult async_result) {			// ISynchronizeInvoke
-			object result = null;
-
-			return result;
+		public object EndInvoke (IAsyncResult async_result) {
+			AsyncMethodResult result = (AsyncMethodResult) async_result;
+			return result.EndInvoke ();
 		}
 
 		public void PerformLayout() {
