@@ -58,11 +58,11 @@ namespace System.Xml.Xsl
 			Save (stylesheet, stylesheet_file);
 		}
 
-		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the XPathNavigator
 		public void Load (XPathNavigator stylesheet)
 		{
-			throw new NotImplementedException ();
+			stylesheet_file = Path.GetTempFileName ();
+			Save (stylesheet, stylesheet_file);
 		}
 
 		[MonoTODO]
@@ -236,6 +236,79 @@ namespace System.Xml.Xsl
 			}
 
 			writer.Close ();
+		}
+
+		static void Save (XPathNavigator navigator, string filename)
+		{
+			XmlTextWriter writer = new XmlTextWriter (filename, new UTF8Encoding ());
+			XPathNodeType type = XPathNodeType.All;
+
+			WriteTree (navigator, writer, type);
+		}
+
+		// Walks the XPathNavigator tree recursively 
+		static void WriteTree (XPathNavigator navigator, XmlTextWriter writer, XPathNodeType type)
+		{
+			WriteCurrentNode (navigator, writer, ref type);
+
+			if (navigator.HasAttributes) {
+				navigator.MoveToFirstAttribute ();
+				
+				do {
+					WriteCurrentNode (navigator, writer, ref type);
+				} while ( navigator.MoveToNextAttribute ());
+
+				navigator.MoveToParent ();
+			} 
+
+			if (navigator.HasChildren) {
+				navigator.MoveToFirstChild ();
+
+				do {
+					WriteTree (navigator, writer, type);
+				} while (navigator.MoveToNext ());
+
+				navigator.MoveToParent ();
+			}
+		}
+
+		// Format the output  
+		static void WriteCurrentNode (XPathNavigator navigator, XmlTextWriter writer, ref XPathNodeType current_type)
+		{
+			switch (navigator.NodeType) {
+			case XPathNodeType.Attribute:
+				current_type = XPathNodeType.Attribute;
+				writer.WriteAttributeString (navigator.LocalName, navigator.Value);
+				break;
+
+			case XPathNodeType.Comment:
+				writer.WriteComment (navigator.Value);
+				break;
+
+			case XPathNodeType.Element:
+				current_type = XPathNodeType.Element;
+				writer.WriteStartElement (navigator.Name);
+				break;
+			
+			case XPathNodeType.ProcessingInstruction:
+				writer.WriteProcessingInstruction (navigator.Name, navigator.Value);
+				break;
+
+			case XPathNodeType.Text:
+				writer.WriteString (navigator.Value);
+
+				if (current_type == XPathNodeType.Element) {
+					writer.WriteEndElement ();
+					current_type = XPathNodeType.All;
+				}
+
+				break;
+
+			case XPathNodeType.SignificantWhitespace:
+			case XPathNodeType.Whitespace:
+				writer.WriteWhitespace (navigator.Value);
+				break;
+			}
 		}
 		#endregion
 	}
