@@ -1,4 +1,0 @@
-2004-09-13  Tim Coleman <tim@timcoleman.com>
-	* AuthenticatedStream.cs AuthenticationLevel.cs LocalCertSelectionCallback.cs
-	* NegotiateStream.cs ProtectionLevel.cs RemoteCertValidationCallback.cs
-	* SslStream.cs: New stubs for Fx 2.0

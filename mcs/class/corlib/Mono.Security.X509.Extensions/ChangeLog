@@ -1,8 +1,0 @@
-2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* BasicConstaintExtension.cs: New in corlib. In sync with 
-	Mono.Security.dll version.
-	* KeyUsageExtension.cs: New in corlib. In sync with Mono.Security.dll
-	version.
-	* SubjectKeyIdentifierExtension.cs: New in corlib. In sync with 
-	Mono.Security.dll version.

@@ -1,7 +1,0 @@
-Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
-System.Runtime.Serialization.Formatters.Soap/SoapWriter.cs
-System.Runtime.Serialization.Formatters.Soap/SoapReader.cs
-System.Runtime.Serialization.Formatters.Soap/SoapTypeMapper.cs
-System.Runtime.Serialization.Formatters.Soap/SoapFormatter.cs
-System.Runtime.Serialization.Formatters.Soap/TODOAttribute.cs

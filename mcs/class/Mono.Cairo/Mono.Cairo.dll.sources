@@ -1,9 +1,0 @@
-./Assembly/AssemblyInfo.cs
-./Assembly/Locale.cs
-./Mono.Cairo/Cairo.cs
-./Mono.Cairo/Matrix.cs
-./Mono.Cairo/Graphics.cs
-./Mono.Cairo/Surface.cs
-./Mono.Cairo/Font.cs
-./Mono.Cairo/Pattern.cs
-

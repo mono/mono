@@ -1,4 +1,0 @@
-2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* OraclePermissionAttributeTest.cs: New. Unit tests for class
-	OraclePermissionAttribute.

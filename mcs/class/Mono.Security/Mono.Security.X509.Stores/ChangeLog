@@ -1,4 +1,0 @@
-2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* ICertificateStore.cs: Interface for certificate stores.
-	* FileCertificateStore.cs: File-based certificate stores using SPC (PKCS7) files.

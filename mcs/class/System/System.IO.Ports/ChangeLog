@@ -1,3 +1,0 @@
-2004-12-26  Zoltan Varga  <vargaz@freemail.hu>
-
-	* System.IO.Ports/SerialPort.cs: Fix build under csc.

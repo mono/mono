@@ -1,8 +1,0 @@
-*.mdb
-.makefrag
-.response
-System.dll
-System_test*
-TestResult.xml
-library-deps.stamp
-list

@@ -1,6 +1,0 @@
-2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AssemblyInfo.cs: Added
-	* ChangeLog: Added
-	* Locale.cs: Added
-	* TODOAttribute.cs: Added

@@ -1,7 +1,0 @@
-2004-12-15	Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
-
-	* s390x-codegen.h: Add some new instructions (CS, CSG, CSY, CDS, CDSG, CDSY)
-
-2004-08-03	Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
-
-	* s390x-codegen.h Makefile.am tramp.c: S/390 64-bit interpreter

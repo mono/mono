@@ -1,6 +1,0 @@
-2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
-
-	* LogConverter.cs: stubbed
-	* ProcessDesigner.cs: stubbed
-	* ProcessModuleDesigner.cs: stubbed
-	* ProcessThreadDesigner.cs: stubbed

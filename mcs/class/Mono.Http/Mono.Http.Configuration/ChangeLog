@@ -1,5 +1,0 @@
-2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* AcceptEncodingConfig.cs:
-	* AcceptEncodingSectionHandler.cs: moved these files here.
-

@@ -1,7 +1,0 @@
-*~
-.makefrag
-.response
-*.dll
-*.mdb
-TestResult*.xml
-library-deps.stamp

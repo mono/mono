@@ -1,7 +1,0 @@
-2003-11-15  Richard Thombs <stony@stony.org>
-
-	* Added class and constructor stubs for all classes
-
-2003-11-16  Richard Thombs <stony@stony.org>
-
-	* Added 'using System' to all files to pick up the change in namespace of MonoTODO()

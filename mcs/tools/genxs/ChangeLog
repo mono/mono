@@ -1,7 +1,0 @@
-2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* README: added description about new <namespaceImports> feature.
-
-2003-09-17  Lluis Sanchez Gual  <lluis@ximian.com>
-
-	* genxs.cs, Makefile, README, wsdl.exe.sources: New files

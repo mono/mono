@@ -1,7 +1,0 @@
-2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* ChangeLog: New.
-	* DirectoryServicesPermissionAttributeTest.cs: New. Unit tests for 
-	DirectoryServicesPermissionAttribute.
-	* DirectoryServicesPermissionTest.cs: New. Unit tests for Directory
-	ServicesPermission.

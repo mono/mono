@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /mono/bin/mono /mono/lib/mono/1.0/dtd2xsd.exe "$@"

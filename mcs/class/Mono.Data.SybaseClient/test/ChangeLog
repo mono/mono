@@ -1,8 +1,0 @@
-2005-01-16  Daniel Morgan <danielmorgan@verizon.net>
-
-	* test: added this directory
-	
-	* SybaseTest.cs: added tests for Mono.Data.SybaseClient
-	based on the SqlTest.cs at System.Data/Test
-	
-	* ChangeLog: added file

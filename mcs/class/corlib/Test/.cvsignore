@@ -1,6 +1,0 @@
-*.dll
-*.pdb
-*.temp
-.makefrag
-.response
-NUnit.Prefs

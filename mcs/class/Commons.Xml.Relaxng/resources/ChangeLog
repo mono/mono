@@ -1,5 +1,0 @@
-2004-12-06  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* relaxng.rng, copying.html : added. relaxng.rng is from Jing, so
-	  check copying.html for the details (it is MIT/X11 compatible).
-
