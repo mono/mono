@@ -4,7 +4,8 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
+linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe
+#linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
 GenerateDelegate.exe: GenerateDelegate.cs
 	$(CSC) $(CSCFLAGS) /out:$@ $<
@@ -12,9 +13,7 @@ GenerateDelegate.exe: GenerateDelegate.cs
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
 
-./corcompare/CorCompare.exe: CorCompare.exe
-
-CorCompare.exe:
+./corcompare/CorCompare.exe: dummy
 	(cd corcompare; make CorCompare.exe)
 
 update: ../../mono/doc/pending-classes
@@ -39,3 +38,5 @@ clean:
 	rm -f *.exe *.pdb *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in
+
+dummy:
