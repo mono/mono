@@ -227,20 +227,9 @@ namespace System.Web
 			}
 		}
 
-		//FIXME: We should remove this hack
-		void CreateDefaultUser ()
-		{
-			IIdentity identity = new GenericIdentity ("");
-			IPrincipal user = new GenericPrincipal (identity, new string [0]);
-			_User = user;
-		}
-		
 		public IPrincipal User
 		{
 			get {
-				if (_User == null)
-					CreateDefaultUser ();
-
 				return _User;
 			}
 			set {

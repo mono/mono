@@ -1,5 +1,9 @@
 2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpContext.cs: removed hack to get the User.
+
+2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpUtility.cs: fixed bug #36038. Thanks to juancri@tagnet.org for
 	reporting the bug and how to fix it.
 
