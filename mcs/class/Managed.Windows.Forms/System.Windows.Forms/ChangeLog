@@ -1,3 +1,9 @@
+2005-03-18  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs: Use the proper func for drawing the focus
+	rect, make sure to de-adjust the interior rect after drawing the
+	tab text.
+
 2005-03-18  Peter Bartok  <pbartok@novell.com>
 
 	* MenuAPI.cs: Remove menu *before* executing selected action to

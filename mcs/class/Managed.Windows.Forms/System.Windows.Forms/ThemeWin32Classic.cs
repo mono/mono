@@ -2984,6 +2984,7 @@ namespace System.Windows.Forms
 						string_format.FormatFlags = StringFormatFlags.NoWrap;
 						interior.Y++;
 						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+						interior.Y--;
 					}
 
 					break;
@@ -3011,6 +3012,7 @@ namespace System.Windows.Forms
 						string_format.FormatFlags = StringFormatFlags.NoWrap;
 						interior.Y++;
 						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+						interior.Y--;
 					}
 
 					break;
@@ -3071,6 +3073,7 @@ namespace System.Windows.Forms
 						string_format.FormatFlags = StringFormatFlags.DirectionVertical;
 						interior.X++;
 						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+						interior.X--;
 					}
 
 					break;
@@ -3078,10 +3081,7 @@ namespace System.Windows.Forms
 			}
 
 			if (page.Focused) {
-				using (Pen pen = new Pen (Color.Black, 1) ) {
-					pen.DashStyle = DashStyle.Dot;
-					dc.DrawRectangle (pen, interior);
-				}
+				CPDrawFocusRectangle (dc, interior, tab.ForeColor, tab.BackColor);
 			}
 
 			return res;
