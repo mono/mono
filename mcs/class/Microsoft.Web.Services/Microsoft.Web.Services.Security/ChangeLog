@@ -1,3 +1,19 @@
+2003-10-31  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* IReplayCache.cs: New. Interface for ReplayCache.
+	* OASIS.cs: New. Implementation for OASIS WS-Security (prefix "wsse").
+	* ReplayCacheManager.cs: New. Stub, with MonoTODO, for WSE2.
+	* SaML.cs: New. SAML description (prefix/ns) for WS-Security.
+	* SecurityTokenCache.cs: New. Stub, with MonoTODO, for WSE2.
+	* SecurityTokenReferenceType.cs: New. Stub, with MonoTODO, for WSE2.
+	* SMSecurity.cs: New. Implementation for WS-Security ("wsse" and
+	"http://schemas.xmlsoap.org/ws/2002/12/secext").
+	* SMSecurityBase.cs: New. Abstract class to retrieve Prefix and Namespace.
+	* SynchronizedSecurityTokenCache.cs: New. Stub, with MonoTODO, for WSE2.
+	* WSEReplayCache.cs: New. Stub, with MonoTODO, for WSE2.
+	* Xmltok.cs: New. WS-Security Profile for XML-based Tokens (descriptions).
+	* XrML.cs: New. eXtensible rights Markup Language descriptions for WS-Security.
+
 2003-10-26  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricDecryptionKey.cs: Added internal property to the 
