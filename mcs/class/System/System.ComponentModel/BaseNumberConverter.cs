@@ -46,7 +46,7 @@ namespace System.ComponentModel
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
 			if (sourceType == typeof (string)) 
-			return true;
+				return true;
 			return base.CanConvertFrom (context, sourceType);
 		}
 
@@ -60,7 +60,10 @@ namespace System.ComponentModel
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			if (value.GetType() == typeof (string)) {
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
+
+			if (value is string) {
 				try {
 					return Convert.ChangeType (value, InnerType, culture.NumberFormat);
 				} catch (Exception e) {
@@ -79,6 +82,9 @@ namespace System.ComponentModel
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
+
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
 
 			if (destinationType == typeof (string) && value.GetType() == InnerType)
 				return Convert.ChangeType (value, typeof (string), culture.NumberFormat);
