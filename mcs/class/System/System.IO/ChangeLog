@@ -1,3 +1,8 @@
+2004-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultWatcher.cs: don't use Directory.GetFileSystemEntries when the
+	pattern has no wildcards. Fixes bug #67447.
+
 2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FAMWatcher.cs: s/fam/libfam.so.0/ so that g_module finds it even
