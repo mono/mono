@@ -32,9 +32,9 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using Mono.Data.PostgreSqlClient;
 
-namespace TestSystemDataSqlClient {
+namespace Test.Mono.Data.PostgreSqlClient {
 
 	class PostgresTest {
 
@@ -410,7 +410,7 @@ namespace TestSystemDataSqlClient {
 				DropTable (cnc);
 				Console.WriteLine ("OK");
 			}
-			catch (SqlException e) {
+			catch (PgSqlException e) {
 				Console.WriteLine("Error (don't worry about this one)" + e);
 			}
 			
@@ -470,7 +470,7 @@ namespace TestSystemDataSqlClient {
 				Console.WriteLine("Result: " + obj);
 
 				Console.WriteLine("Database Server Version: " + 
-					((SqlConnection)cnc).ServerVersion);
+					((PgSqlConnection)cnc).ServerVersion);
 
 				/* Clean up */
 				Console.WriteLine ("Clean up...");
@@ -485,7 +485,7 @@ namespace TestSystemDataSqlClient {
 
 		[STAThread]
 		static void Main(string[] args) {
-			SqlConnection cnc = new SqlConnection ();
+			PgSqlConnection cnc = new PgSqlConnection ();
 
 			/*
 			string connectionString = 
