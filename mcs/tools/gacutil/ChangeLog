@@ -1,5 +1,9 @@
 2004-05-03  Todd Berman  <tberman@sevenl.net>
 
+	* gacutil.cs: potential fix for miguel.
+
+2004-05-03  Todd Berman  <tberman@sevenl.net>
+
 	* gacutil.cs: support /package in /u now as well.
 
 2004-05-03  Todd Berman  <tberman@sevenl.net>

@@ -51,8 +51,6 @@ namespace Mono.Tools
 			if (args.Length >= 2 && (args[args.Length - 2] == "/root" || args[args.Length - 2] == "-root" || args[args.Length - 2] == "--root")) {
 				gac_path = Path.Combine (Path.Combine (args[args.Length - 1], "mono"), "gac");
 				gac_path += Path.DirectorySeparatorChar;
-				libdir = Path.Combine (args[args.Length - 1], "mono");
-				libdir += Path.DirectorySeparatorChar;
 
 				string[] stripped = new string[args.Length - 2];				Array.Copy (args, 0, stripped, 0, args.Length - 2);
 				args = stripped;
