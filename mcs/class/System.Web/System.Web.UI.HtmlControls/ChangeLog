@@ -1,5 +1,9 @@
 2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlInputButton.cs: fixed bug #35677.
+
+2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlInputControl.cs: fixed bug #35673.
 
 2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>

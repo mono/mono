@@ -25,10 +25,31 @@ namespace System.Web.UI.HtmlControls{
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender(e);
+			if (Page != null && Events [EventServerClick] != null)
+				Page.RequiresPostBackScript ();
 		}
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
+			if (Page != null && CausesValidation) {
+				string type = Type;
+				if (String.Compare (type, "button", true) == 0 || String.Compare (type, "submit", true) == 0) {
+					string script = Page.GetPostBackClientEvent (this, String.Empty);
+					AttributeCollection coll = Attributes;
+					if (coll ["language"] != null)
+						coll.Remove ("language");
+					writer.WriteAttribute ("language", "javascript");
+
+					string onclick;
+					if ((onclick = coll ["onclick"]) != null) {
+						script = onclick + " " + script;
+						coll.Remove ("onclick");
+					}
+
+					writer.WriteAttribute ("onclick", script);
+				}
+			}
+			
 			base.RenderAttributes (writer);
 		}
 
