@@ -1,3 +1,9 @@
+2003-06-28  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeData.cs: Type of item of ICollections is now taken from the Item(int) property. Add() can
+	  be overlodaded, so it is not good for this.
+	* XmlSerializationWriterInterpreter.cs: Fix ambiguity bug when getting Item property of a collection.
+
 2003-06-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlTypeMapElementInfo.cs: no need to compare nesting level in Equals.

@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 
 namespace System.Xml.Serialization
 {
@@ -18,6 +19,7 @@ namespace System.Xml.Serialization
 		Type type;
 		string elementName;
 		SchemaTypes sType;
+		Type listItemType;
 
 		public TypeData (Type type, string elementName, bool isPrimitive)
 		{
@@ -96,12 +98,21 @@ namespace System.Xml.Serialization
 		{
 			get
 			{
+				if (listItemType != null) return listItemType;
+
 				if (SchemaType != SchemaTypes.Array)
 					throw new InvalidOperationException (Type.FullName + " is not a collection");
 				else if (type.IsArray) 
-					return type.GetElementType ();
+					listItemType = type.GetElementType ();
+				else if (type.GetInterface ("ICollection") != null)
+				{
+					PropertyInfo prop = type.GetProperty ("Item", new Type[] { typeof (int) });
+					return prop.PropertyType;
+				}
 				else
 					return type.GetMethod ("Add").GetParameters()[0].ParameterType;
+
+				return listItemType;
 			}
 		}
 	}

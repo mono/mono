@@ -225,7 +225,7 @@ namespace System.Xml.Serialization
 			}
 			else if (member.DefaultValue != null) {
 				object val = GetMemberValue (member, ob, isValueList);
-				if (val != null && val.Equals (member.DefaultValue)) return false;
+				if (val != null && member.DefaultValue != null && val.Equals (member.DefaultValue)) return false;
 			}
 			return true;
 		}
@@ -340,7 +340,7 @@ namespace System.Xml.Serialization
 			else if (ob is ICollection)
 			{
 				int count = (int) listType.Type.GetProperty ("Count").GetValue(ob,null);
-				PropertyInfo itemProp = listType.Type.GetProperty ("Item");
+				PropertyInfo itemProp = listType.Type.GetProperty ("Item", new Type[] { typeof(int) });
 				object[] index = new object[1];
 				for (int n=0; n<count; n++)
 				{
