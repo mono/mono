@@ -1,5 +1,9 @@
 2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Path.cs: readonlyificate.
+
+2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* FileStream.cs: constify.
 
 2004-04-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>

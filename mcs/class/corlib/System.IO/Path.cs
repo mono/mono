@@ -29,7 +29,7 @@ namespace System.IO
 		public static readonly char VolumeSeparatorChar;
 
 		private static readonly char[] PathSeparatorChars;
-		private static bool dirEqualsVolume;
+		private static readonly bool dirEqualsVolume;
 
 		private Path ()
 		{
