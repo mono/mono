@@ -74,10 +74,9 @@ namespace System.Resources
 				    if (Table == null) {
 						  ReadResources ();
 						  return Table[name];
-				    } else
+				    } else 
 						  return Table[name];
 			 }
-
 			 public virtual object GetObject (string name, bool ignoreCase)
 			 {
 				    if (name == null)
@@ -91,10 +90,8 @@ namespace System.Resources
 								string key = (string) de.Key;
 								if (String.Compare (key, name, true) == 0)
 									   return de.Value;
-								else
-									   return null;
 						  }
-						  
+						  return null;
 				    } else
 						  return Table[name];
 			 }
