@@ -1,3 +1,8 @@
+2002-07-02  Nick Drochak  <ndrochak@gol.com>
+
+	* SortedListTest.cs: Fix some expected/actual value parameters for
+	AssertEquals().
+
 2002-06-30  Nick Drochak  <ndrochak@gol.com>
 
 	* SortedListTest.cs: Fix some expected/actual value parameters in the

@@ -47,14 +47,14 @@ public class SortedListTest : TestCase {
 	public void TestConstructor1() {
 		SortedList temp1 = new SortedList();
 		AssertNotNull("sl.constructor-1: returns null", temp1);
-		AssertEquals("sl.constructor-1: incorrect initial capacity", temp1.Capacity, icap);
+		AssertEquals("sl.constructor-1: incorrect initial capacity", icap, temp1.Capacity);
 	}
 	
 	public void TestConstructor2() {
 		Comparer c = Comparer.Default;
 		SortedList temp1 = new SortedList(c);
 		AssertNotNull("sl.constructor-2: returns null", temp1);
-		AssertEquals("sl.constructor-2: incorrect initial capacity", temp1.Capacity, icap);
+		AssertEquals("sl.constructor-2: incorrect initial capacity", icap, temp1.Capacity);
 	}
 
 	public void TestConstructor3() {
@@ -234,18 +234,15 @@ public class SortedListTest : TestCase {
 		}
 	}
 	
-	
 	public void TestClear() {
-		{
-			SortedList sl1 = new SortedList(10);
-			sl1.Add("kala",'c');
-			sl1.Add("kala2",'d');
-			AssertEquals("sl.Clear: capacity is incorrect",10, sl1.Capacity);
-			AssertEquals("sl.Clear: should have one element",	2, sl1.Count);
-			sl1.Clear();
-			AssertEquals("sl.Clear: is not cleared",0, sl1.Count);
-			AssertEquals("sl.Clear: capacity is altered",16, sl1.Capacity);
-		}
+		SortedList sl1 = new SortedList(10);
+		sl1.Add("kala", 'c');
+		sl1.Add("kala2", 'd');
+		AssertEquals("sl.Clear: capacity is incorrect", 10, sl1.Capacity);
+		AssertEquals("sl.Clear: should have one element", 2, sl1.Count);
+		sl1.Clear();
+		AssertEquals("sl.Clear: is not cleared", 0, sl1.Count);
+		AssertEquals("sl.Clear: capacity is altered", 16, sl1.Capacity);
 	}
 
 	public void TestClone() {
