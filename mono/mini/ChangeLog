@@ -1,3 +1,7 @@
+2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c: Reenable sse2.
+
 2005-03-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c: Disable sse2 until some regressions are fixed.
