@@ -1,5 +1,9 @@
 2004-12-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTMXPathNavigator.cs : added more constant fields to utility class.
+
+2004-12-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTMXPathDocument2.cs,
 	  DTMXPathNavigator2.cs,
 	  DTMXPathDocumentBuilder2.cs,
