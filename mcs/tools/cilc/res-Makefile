@@ -2,7 +2,8 @@ include defs.mk
 
 #LIBNAME = $(basename $(SONAME))
 LIBNAME = $(shell echo $(basename $(SONAME)) | sed -e 's/^lib//')
-HTARGET = $(prefix)/include/$(LIBNAME)
+HTARGET = $(prefix)/include/$(LIBNAME)/
+LIBTARGET = $(prefix)/lib/
 
 CFLAGS = -static -fpic $(shell pkg-config --cflags glib-2.0 gobject-2.0 mono) -I.
 
@@ -32,7 +33,8 @@ bundle.o bundle.h: $(ASSEMBLY)
 	rm -f bundle.c.tmp
 
 install_libs: $(SONAME)
-	install -s $(SONAME) $(prefix)
+	mkdir -p $(LIBTARGET)
+	install -s $(SONAME) $(LIBTARGET)
 
 install_headers: *.h
 	mkdir -p $(HTARGET)

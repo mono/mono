@@ -15,6 +15,7 @@
 	Include res-Makefile as a resource for cilc.exe
 	* res-Makefile:
 	The static makefile resource
+	Tweak the library output directory.
 
 2004-12-09  Alp Toker  <alp@atoker.com>
 
