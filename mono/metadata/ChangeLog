@@ -1,4 +1,8 @@
 
+Sat Jul 13 17:34:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c: don't include the mark byte in the string hash.
+
 Sat Jul 13 15:06:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.cs: icall for Type.GetTypeCode ().
