@@ -1,3 +1,7 @@
+2003-02-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Graphics.cs: stubbed out all the methods.
+
 2003-02-08 Piers Haken <piersh@friskit.com>
 
 	* fixed case of pens.cs and font.cs

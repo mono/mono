@@ -1,3 +1,7 @@
+2003-02-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list.unix: added ImageAttributes.cs.
+
 2003-02-07 Alexandre Pigolkine <pigolkine@gmx.de>
 	* list.unix		changed
 

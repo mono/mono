@@ -85,6 +85,7 @@ System.Drawing.Imaging/EmfType.cs
 System.Drawing.Imaging/EncoderParameterValueType.cs
 System.Drawing.Imaging/EncoderValue.cs
 System.Drawing.Imaging/FrameDimension.cs
+System.Drawing.Imaging/ImageAttributes.cs
 System.Drawing.Imaging/ImageCodecFlags.cs
 System.Drawing.Imaging/ImageCodecInfo.cs
 System.Drawing.Imaging/ImageFlags.cs
