@@ -1,0 +1,8 @@
+2003-12-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ChallengeResponse.cs: New. Implements the NTLM (v1) Challenge Response.
+	* MessageBase.cs: New. Abstract base class for NTLM messages.
+	* NtlmFlags.cs: New. All known flags for NTLM.
+	* Type1Message.cs: New. Negotiation message.
+	* Type2Message.cs: New. Challenge message.
+	* Type3Message.cs: New. Authentication message.
