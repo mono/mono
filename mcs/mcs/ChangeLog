@@ -1,5 +1,9 @@
 2003-07-14  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (FieldExpr.DoResolveLValue): Fixed bug #46198.
+
+2003-07-14  Martin Baulig  <martin@ximian.com>
+
 	* codegen.cs (EmitContext.InFixedInitializer): New public field.
 
 	* ecore.cs (IVariable.VerifyFixed): New interface method.

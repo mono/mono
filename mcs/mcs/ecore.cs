@@ -2475,7 +2475,13 @@ namespace Mono.CSharp {
 
 			if (e == null)
 				return null;
-			
+
+			if (!FieldInfo.IsStatic && (instance_expr.Type.IsValueType && !(instance_expr is IMemoryLocation))) {
+				// FIXME: Provide better error reporting.
+				Error (1612, "Cannot modify expression because it is not a variable.");
+				return null;
+			}
+
 			if (!FieldInfo.IsInitOnly)
 				return this;
 
@@ -2569,15 +2575,9 @@ namespace Mono.CSharp {
 				Expression instance = instance_expr;
 
 				if (instance.Type.IsValueType){
-					if (instance is IMemoryLocation){
-						IMemoryLocation ml = (IMemoryLocation) instance;
+					IMemoryLocation ml = (IMemoryLocation) instance;
 
-						ml.AddressOf (ec, AddressOp.Store);
-					} else
-						throw new Exception ("The " + instance + " of type " +
-								     instance.Type +
-								     " represents a ValueType and does " +
-								     "not implement IMemoryLocation");
+					ml.AddressOf (ec, AddressOp.Store);
 				} else {
 					if (ec.RemapToProxy)
 						ec.EmitThis ();
