@@ -325,35 +325,35 @@ namespace Mono.Xml.XPath
 		private void SetObjectArrayLength (ref object [] a, int length)
 		{
 			object [] arr = new object [length];
-			Array.Copy (a, arr, Math.Min (a.Length, length));
+			Array.Copy (a, arr, System.Math.Min (a.Length, length));
 			a = arr;
 		}
 
 		private void SetBoolArrayLength (ref bool [] a, int length)
 		{
 			bool [] bArr = new bool [length];
-			Array.Copy (a, bArr, Math.Min (a.Length, length));
+			Array.Copy (a, bArr, System.Math.Min (a.Length, length));
 			a = bArr;
 		}
 
 		private void SetXPathNodeTypeArrayLength (ref XPathNodeType [] a, int length)
 		{
 			XPathNodeType [] arr = new XPathNodeType [length];
-			Array.Copy (a, arr, Math.Min (a.Length, length));
+			Array.Copy (a, arr, System.Math.Min (a.Length, length));
 			a = arr;
 		}
 
 		private void SetIntArrayLength (ref int [] a, int length)
 		{
 			int [] intArr = new int [length];
-			Array.Copy (a, intArr, Math.Min (a.Length, length));
+			Array.Copy (a, intArr, System.Math.Min (a.Length, length));
 			a = intArr;
 		}
 
 		private void SetStringArrayLength (ref string [] a, int length)
 		{
 			string [] strArr = new string [length];
-			Array.Copy (a, strArr, Math.Min (a.Length, length));
+			Array.Copy (a, strArr, System.Math.Min (a.Length, length));
 			a = strArr;
 		}
 
