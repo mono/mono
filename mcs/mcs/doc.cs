@@ -172,13 +172,11 @@ namespace Mono.CSharp {
 
 				n.WriteTo (RootContext.Documentation.XmlCommentOutput);
 			}
-			else if (mc.IsExposedFromAssembly (ds) &&
-				// There are no warnings when the container also
-				// misses documentations.
-				(ds == null || ds.DocComment != null))
-			{
-				Report.Warning (1591, 4, mc.Location,
-					"Missing XML comment for publicly visible type or member '{0}'", mc.GetSignatureForError ());
+			else if (mc.IsExposedFromAssembly (ds)) {
+				Constructor c = mc as Constructor;
+				if (c == null || !c.IsDefault ())
+					Report.Warning (1591, 4, mc.Location,
+						"Missing XML comment for publicly visible type or member '{0}'", mc.GetSignatureForError ());
 			}
 		}
 
