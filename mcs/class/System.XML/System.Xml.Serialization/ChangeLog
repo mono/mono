@@ -1,3 +1,11 @@
+2004-05-07  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs: Don't reset the internal tables at every
+	  ImportMembersMapping call. This fixes bug #58112. The problem is that
+	  it imported two different arrays (only different in the array item
+	  namespace) with the same name. Not sure what was this Reset needed for,
+	  everyting seems to work without it.
+
 2004-05-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 

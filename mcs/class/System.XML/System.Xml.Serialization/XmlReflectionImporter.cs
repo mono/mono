@@ -83,7 +83,8 @@ namespace System.Xml.Serialization {
 			XmlReflectionMember [] members,
 			bool hasWrapperElement)
 		{
-			Reset ();
+//			Reset ();	Disabled. See ChangeLog
+
 			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
 			for (int n=0; n<members.Length; n++)
 			{
