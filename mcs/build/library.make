@@ -178,7 +178,7 @@ run-test-lib: test-local
 
 run-test-ondotnet-lib: test-local
 	ok=:; \
-	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /exclude=NotDotNet /output:TestResult-ondotnet-$(PROFILE).log /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies) || ok=false; \
+	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /exclude=NotDotNet,CAS /output:TestResult-ondotnet-$(PROFILE).log /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies) || ok=false; \
 	sed '1,/^Tests run: /d' TestResult-ondotnet-$(PROFILE).log; \
 	$$ok
 endif
