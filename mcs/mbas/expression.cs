@@ -5692,12 +5692,16 @@ namespace Mono.MonoBASIC {
 						Enum en = TypeManager.LookupEnum (decl_type);
 
 						Constant c;
-						if (en != null)
+						if (en != null) {
 							c = Constantify (o, en.UnderlyingType);
-						else 
+							return new EnumConstant (c, en.UnderlyingType);
+						}
+						else {
 							c = Constantify (o, enum_member.Type);
+							return new EnumConstant (c, enum_member.Type);
+						}
 						
-						return new EnumConstant (c, decl_type);
+						
 					}
 					
 					Expression exp = Constantify (o, t);
@@ -5852,15 +5856,14 @@ namespace Mono.MonoBASIC {
 			
 			Type expr_type = expr.Type;
 			if ((expr is TypeExpr) && (expr_type.IsSubclassOf (TypeManager.enum_type))){
-				
 				Enum en = TypeManager.LookupEnum (expr_type);
 				
 				if (en != null) {
 					object value = en.LookupEnumValue (ec, Identifier, loc);
-
+					expr_type = TypeManager.int32_type;
 					if (value != null){
 						Constant c = Constantify (value, en.UnderlyingType);
-						return new EnumConstant (c, expr_type);
+						return new EnumConstant (c, en.UnderlyingType);
 					}
 				}
 			}

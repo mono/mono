@@ -1,3 +1,9 @@
+2004-04-28 Anirban Bhattacharjee <banirban@novell.com>
+	* expression.cs: fixed bug to get enum running
+	* enum.cs: handling several negative scenarios 
+		   Changed several exception numbers
+	* assign.cs: Changed exception number
+
 2004-04-26  Jackson Harper  <jackson@ximian.com>
 
 	* Makefile: Get libs from default profile directory.

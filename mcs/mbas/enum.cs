@@ -138,7 +138,7 @@ namespace Mono.MonoBASIC {
 			    UnderlyingType != TypeManager.ushort_type &&
 			    UnderlyingType != TypeManager.byte_type  &&
 			    UnderlyingType != TypeManager.sbyte_type) {
-				Report.Error (1008, Location,
+				Report.Error (30650, Location,
 					      "Type byte, sbyte, short, ushort, int, uint, " +
 					      "long, or ulong expected (got: " +
 					      TypeManager.MonoBASIC_Name (UnderlyingType) + ")");
@@ -168,7 +168,7 @@ namespace Mono.MonoBASIC {
 			return TypeBuilder;
 		}
 
-	        bool IsValidEnumConstant (Expression e)
+	    bool IsValidEnumConstant (Expression e)
 		{
 			if (!(e is Constant))
 				return false;
@@ -247,11 +247,11 @@ namespace Mono.MonoBASIC {
 		void Error_ConstantValueCannotBeConverted (object val, Location loc)
 		{
 			if (val is Constant)
-				Report.Error (31, loc, "Constant value '" + ((Constant) val).AsString () +
+				Report.Error (30439, loc, "Constant value '" + ((Constant) val).AsString () +
 					      "' cannot be converted" +
 					      " to a " + TypeManager.MonoBASIC_Name (UnderlyingType));
 			else 
-				Report.Error (31, loc, "Constant value '" + val +
+				Report.Error (30439, loc, "Constant value '" + val +
 					      "' cannot be converted" +
 					      " to a " + TypeManager.MonoBASIC_Name (UnderlyingType));
 			return;
@@ -388,9 +388,16 @@ namespace Mono.MonoBASIC {
 		{
 			object default_value = null;
 			Constant c = null;
+			TypeContainer parent = ec.TypeContainer;
+
+			// first check whether the requested name is there
+			// in the member list of enum
+			if (!(ordered_enums.Contains(name)))
+				Report.Error (30456, loc,
+					name + " is not found in member list of enum " + this.Name);
 
 			default_value = member_to_value [name];
-
+			
 			if (default_value != null)
 				return default_value;
 
@@ -412,10 +419,11 @@ namespace Mono.MonoBASIC {
 			// We now proceed to define it 
 			//
 			Expression val = this [name];
+			int idx = ordered_enums.IndexOf (name);
 
 			if (val == null) {
 				
-				int idx = ordered_enums.IndexOf (name);
+				//int idx = ordered_enums.IndexOf (name);
 
 				if (idx == 0)
 					default_value = 0;
@@ -435,6 +443,16 @@ namespace Mono.MonoBASIC {
 				}
 				
 			} else {
+				// check for any cyclic dependency
+				if (val is Mono.MonoBASIC.SimpleName){
+					int var_idx = ordered_enums.IndexOf (val.ToString());
+
+					if (idx <= var_idx)
+						Report.Error(30500, loc,
+							"The evaluation of the constant value for `" +
+					      Name + "." + name + "' involves a circular definition");
+				}
+
 				bool old = ec.InEnumContext;
 				ec.InEnumContext = true;
 				in_transit.Add (name, true);
@@ -447,13 +465,14 @@ namespace Mono.MonoBASIC {
 
 				if (!IsValidEnumConstant (val)) {
 					Report.Error (
-						1008, loc,
+						30650, loc,
 						"Type byte, sbyte, short, ushort, int, uint, long, or " +
 						"ulong expected (have: " + val + ")");
 					return null;
 				}
 
 				c = (Constant) val;
+				
 				default_value = c.GetValue ();
 
 				if (default_value == null) {
@@ -526,6 +545,7 @@ namespace Mono.MonoBASIC {
 				//
 				// Have we already been defined, thanks to some cross-referencing ?
 				// 
+
 				if (member_to_value.Contains (name))
 					continue;
 				
@@ -542,7 +562,7 @@ namespace Mono.MonoBASIC {
 						name, UnderlyingType, attr);
 					
 					if (default_value == null) {
-					   Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
+					   Report.Error (30439, loc, "Enumerator value for '" + name + "' is too large to " +
 							      "fit in its type");
 						return false;
 					}
@@ -557,7 +577,7 @@ namespace Mono.MonoBASIC {
 					fb.SetConstant (default_value);
 					field_builders.Add (fb);
 					member_to_value [name] = default_value;
-					
+
 					if (!TypeManager.RegisterFieldValue (fb, default_value))
 						return false;
 

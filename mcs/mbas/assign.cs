@@ -305,7 +305,7 @@ namespace Mono.MonoBASIC {
 			}
 
 			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
-				Report.Error (131, loc,
+				Report.Error (30074, loc,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");
 				return null;
