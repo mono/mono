@@ -25,7 +25,7 @@ public class RandomTest : TestCase
                 double c=0;
                 for (i=0; i<20; i++) c+=r.NextDouble();
                 c/=i;
-                Assert (c < .7 && c > .3);
+                Assert (c.ToString() + " is out of range.", c < .7 && c > .3);
         }
         public void TestSeed()
         {
