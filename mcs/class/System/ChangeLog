@@ -1,5 +1,9 @@
 2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* README: removed (contained only obsolete build instructions)
+
+2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* System.dll.sources: EventLogImpl.cs added
 
 2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
