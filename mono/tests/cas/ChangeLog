@@ -1,3 +1,7 @@
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Added tests from demand directory to execution.
+
 2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: This makefiles calls all CAS tests (in subdirectories) 
