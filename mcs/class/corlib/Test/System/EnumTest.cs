@@ -371,7 +371,7 @@ public class EnumTest : TestCase
 			Enum t1 = new TestShortEnum();
 			Array a1 = Enum.GetValues(t1.GetType());
 			for (short i= 0; i < a1.Length; i++) {
-				AssertEquals("wrong enum value",
+				AssertEquals("wrong short enum value",
 					     (TestShortEnum)i,
 					     a1.GetValue(i));
 			}
