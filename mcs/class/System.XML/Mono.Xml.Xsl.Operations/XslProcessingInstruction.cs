@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -50,7 +51,7 @@ namespace Mono.Xml.Xsl.Operations {
 			p.PopOutput ();
 			
 			string actualName = name.Evaluate (p);
-			if (actualName.ToLower () == "xml")
+			if (String.Compare (actualName, "xml", true, CultureInfo.InvariantCulture) == 0)
 				throw new XsltException ("Processing instruction name was evaluated to \"xml\"", null, p.CurrentNode);
 			p.Out.WriteProcessingInstruction (actualName, s.ToString ());
 		}

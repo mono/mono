@@ -1,3 +1,7 @@
+2004-04-24 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslProcessingInstruction.cs : Culture independency fix.
+
 2004-04-01 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslVariable.cs : When evaluated variable was BaseIterator, its
