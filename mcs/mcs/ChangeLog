@@ -1,5 +1,9 @@
 2002-10-03  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (ConstructorInitializer.Emit): simplify code by using
+	Invocation.EmitCall, and at the same time, fix the bugs in calling
+	parent constructors that took variable arguments. 
+
 	* ecore.cs (Expression.ConvertNumericExplicit,
 	Expression.ImplicitNumericConversion): Remove the code that
 	manually wrapped decimal (InternalTypeConstructor call is now gone

@@ -2442,12 +2442,12 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			if (parent_constructor != null)
-				ec.ig.Emit (OpCodes.Ldarg_0);
-			if (argument_list != null)
-				Invocation.EmitArguments (ec, null, argument_list);
-			if (parent_constructor != null)
-				ec.ig.Emit (OpCodes.Call, parent_constructor);
+			if (parent_constructor != null){
+				if (ec.IsStatic)
+					Invocation.EmitCall (ec, true, true, null, parent_constructor, argument_list, loc);
+				else
+					Invocation.EmitCall (ec, true, false, ec.This, parent_constructor, argument_list, loc);
+			}
 		}
 	}
 
