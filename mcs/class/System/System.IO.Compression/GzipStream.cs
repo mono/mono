@@ -99,9 +99,6 @@ namespace System.IO.Compression {
 			get {
 				return deflateStream.Length;
 			}
-			set {
-				deflateStream.Length = value;
-			}
 		}
 		public override long Position {
 			get {

@@ -1,3 +1,8 @@
+2004-11-10  Martin Baulig  <martin@localhost>
+
+	* DeflateStream.cs, GzipStream.cs: `System.IO.Stream.Length' doesn't
+	have any setter.	
+
 2004-10-02  Christopher Lahey (clahey@ximian.com)
 
 	* DeflateStream.cs GzipStream.cs: Implemented the DeflateStream

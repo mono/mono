@@ -386,9 +386,6 @@ namespace System.IO.Compression {
 			get {
 				throw new System.NotSupportedException();
 			}
-			set {
-				throw new System.NotSupportedException();
-			}
 		}
 		public override long Position {
 			get {
