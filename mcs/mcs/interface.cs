@@ -674,7 +674,7 @@ namespace Mono.CSharp {
 
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
-				
+
 				TypeBuilder = builder.DefineType (
 					Name,
 					InterfaceAttr,
