@@ -1,3 +1,8 @@
+2004-09-07  Carlos Alberto Cortez <carlos@unixmexico.org>
+
+	* ReadOnlyCollection.cs: New file and changes to 
+	Collection.cs tu support it.
+
 2004-09-05  Marek Safar <marek.safar@seznam.cz>
 
 	* Dictionary.cs: Added new file (no implementation).

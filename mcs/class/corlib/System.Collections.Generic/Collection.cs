@@ -56,15 +56,18 @@ namespace System.Collections.Generic
 			contents = new T [defaultLength];
 		}
 
-		public Collection (List <T> list)
+		public Collection (List <T> list) : this (list, list.Count * 2)
+		{
+		}
+
+		internal Collection (IList <T> list, int length)
 		{
 			if (list == null)
 				throw new ArgumentNullException ("list");
 
-			contents = new T [list.Count * 2];
+			contents = new T [length];
 			list.CopyTo (contents, 0);
 			count = list.Count;
-
 		}
 		
 		public void Add (T item)
@@ -283,7 +286,7 @@ namespace System.Collections.Generic
 		// We could try to make List.contents internal,
 		// avoiding the box and unbox when copying
 		//
-		protected List <T> Items {
+		protected internal List <T> Items {
 
 			get {
 				return new List <T> (this);
