@@ -1,3 +1,15 @@
+2003-06-19  Nick Drochak <ndrochak@gol.com>
+
+	* RemotingServicesTest.cs: Lazy fix/workaround for "can't reuse 
+	channel" errors. Tests now pass.
+
+	* RemotingConfigurationTest.cs: Don't rely on test order, and wrap some
+	.NET 1.1 stuff.
+
+2003-06-18  Nick Drochak <ndrochak@gol.com>
+
+	* RemotingServicesTest.cs: Change to nunit v2 format.
+
 2003-03-11  Jean-Marc Andre <jean-marc.andre@polymtl.ca>
 
 	* RemotingConfigurationTest.cs: New unit test added

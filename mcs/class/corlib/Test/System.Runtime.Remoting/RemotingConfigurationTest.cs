@@ -6,6 +6,9 @@
 // 
 
 using System;
+#if NET_1_1
+	using System.Net.Sockets;
+#endif
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -187,7 +190,11 @@ namespace MonoTests.System.Runtime.Remoting
 		
 		// tests the CAO related methods
 		[Test]
+#if NET_1_1
+		[ExpectedException(typeof(SocketException))]
+#else
 		[ExpectedException(typeof(RemotingException))]
+#endif
 		public void RegisterActivatedType()
 		{
 			TcpChannel chn = null;
@@ -253,6 +260,8 @@ namespace MonoTests.System.Runtime.Remoting
 		[Test]
 		public void IsActivationAllowed()
 		{
+			// register the CAO
+			RemotingConfiguration.RegisterActivatedServiceType(typeof(ActivatedObject));
 			// ActivatedObject was previously registered as a CAO on the server
 			// so IsActivationAllowed() should return TRUE
 			Assertion.Assert("#A10", RemotingConfiguration.IsActivationAllowed(typeof(ActivatedObject)));
@@ -265,6 +274,9 @@ namespace MonoTests.System.Runtime.Remoting
 			AssemblyName assName = ass.GetName();
 			
 			ActivatedClientTypeEntry acte = null;
+
+			RemotingConfiguration.RegisterActivatedClientType(typeof(DerivedActivatedObject), "tcp://localhost:1234");
+				
 			// DerivedActivatedObject was registered as a CAO on the client
 			acte = RemotingConfiguration.IsRemotelyActivatedClientType(typeof(DerivedActivatedObject));
 			
