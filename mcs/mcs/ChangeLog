@@ -1,3 +1,7 @@
+2002-05-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Add support for boolean static initializers.
+
 2002-05-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: Use proper cast for Events, since we use a MyEventBuilder.

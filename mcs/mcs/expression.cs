@@ -4482,6 +4482,11 @@ namespace Mono.CSharp {
 						byte val = (byte) v;
 						data [idx] = (byte) val;
 					}
+				} else if (underlying_type == TypeManager.bool_type) {
+					if (!(v is Expression)){
+						bool val = (bool) v;
+						data [idx] = (byte) (val ? 1 : 0);
+					}
 				} else
 					throw new Exception ("Unrecognized type in MakeByteBlob");
 
