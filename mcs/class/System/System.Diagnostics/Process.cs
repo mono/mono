@@ -50,6 +50,11 @@ namespace System.Diagnostics {
 		private struct ProcInfo 
 		{
 			public IntPtr process_handle;
+			/* If thread_handle is ever needed for
+			 * something, take out the CloseHandle() in
+			 * the Start_internal icall in
+			 * mono/metadata/process.c
+			 */
 			public IntPtr thread_handle;
 			public int pid; // Contains -GetLastError () on failure.
 			public int tid;
@@ -901,7 +906,7 @@ namespace System.Diagnostics {
 		
 		protected override void Dispose(bool disposing) {
 			// Check to see if Dispose has already been called.
-			if(this.disposed) {
+			if(this.disposed == false) {
 				this.disposed=true;
 				// If this is a call to Dispose,
 				// dispose all managed resources.
