@@ -1,5 +1,9 @@
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
+	* test-295.cs: Added Geoff Norton's patch for #62984.
+
+2004-09-21  Martin Baulig  <martin@ximian.com>
+
 	* gen-77.cs: New test for #66014.
 
 2004-09-16  Martin Baulig  <martin@ximian.com>
