@@ -1,3 +1,7 @@
+2005-02-07  Lluis Sanchez Gual <lluis@novell.com>
+
+	* client/localhost/TestBinding4Test.cs: Fix build.
+
 2004-11-08  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-clients): Refer to 'nunit-console.exe' in

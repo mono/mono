@@ -4,8 +4,6 @@
 using System;
 using NUnit.Framework;
 using TestBinding4Tests.Soap;
-using TestBinding4Tests.HttpGet;
-using TestBinding4Tests.HttpPost;
 using System.Xml;
 
 namespace Localhost.TestBinding4Tests
@@ -16,7 +14,7 @@ namespace Localhost.TestBinding4Tests
 		[Test]
 		public void TestService ()
 		{
-			TestBinding4Tests.Soap.GetData data = new TestBinding4Tests.Soap.GetData ();
+			GetData data = new GetData ();
 			
 			XmlDocument doc = new XmlDocument ();
 			XmlElement elem1 = doc.CreateElement ("one");
