@@ -1,3 +1,11 @@
+2005-03-10  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added SaveFileDialog.cs
+
+2005-03-09  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added MdiClient.cs
+
 2005-02-24  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Removed HandleData.cs

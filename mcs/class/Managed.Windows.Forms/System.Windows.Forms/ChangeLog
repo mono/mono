@@ -1,3 +1,7 @@
+2005-03-10  Peter Bartok  <pbartok@novell.com>
+
+	* SaveFileDialog.cs: Added emtpy file
+
 2005-03-08  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs: Fixed bug #73190; now invokes CreateControl (which
