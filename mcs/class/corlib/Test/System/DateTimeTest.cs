@@ -617,7 +617,7 @@ public class DateTimeTest : Assertion
 	{
 		// Following string is not a correct French date i.e. dd/mm/yyyy.
 		String frDateTime = "11/13/2003 11:28:15";
-	        IFormatProvider format = new System.Globalization.CultureInfo("fr-FR", true);
+	        IFormatProvider format = new CultureInfo("fr-FR", true);
 		DateTime t1 = DateTime.Parse(frDateTime, format);
 	}
 

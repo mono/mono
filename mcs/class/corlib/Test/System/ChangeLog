@@ -1,3 +1,8 @@
+2003-12-08  Nick Drochak <ndrochak@gol.com>
+
+	* DateTimeTest.cs: Little build fix for csc. It doesn't like the
+	fully qualified name.
+
 2003-12-06  Ravindra <rkumar@novell.com>
 
 	* DateTimeTest.cs: Added a test case for Parse(String, format).
