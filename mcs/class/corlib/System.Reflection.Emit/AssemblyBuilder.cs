@@ -17,6 +17,9 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+
+using Mono.Security.Cryptography;
 
 namespace System.Reflection.Emit {
 
@@ -442,9 +445,23 @@ namespace System.Reflection.Emit {
 					byte[] snkeypair = new byte [fs.Length];
 					fs.Read (snkeypair, 0, snkeypair.Length);
 
-					/* FIXME: Extract public key from the keypair */
-					public_key = snkeypair;
+					// this will import public or private/public keys
+					RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
+					// and export only the public part
+					public_key = CryptoConvert.ToCapiPublicKeyBlob (rsa);
 				}
+				return;
+			} else if (attrname == "System.Reflection.AssemblyKeyNameAttribute") {
+				data = customBuilder.Data;
+				pos = 2;
+				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
+				string key_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				if (key_name == String.Empty)
+					return;
+				CspParameters csparam = new CspParameters ();
+				csparam.KeyContainerName = key_name;
+				RSA rsacsp = new RSACryptoServiceProvider (csparam);
+				public_key = CryptoConvert.ToCapiPublicKeyBlob (rsacsp);
 				return;
 			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
 				data = customBuilder.Data;
