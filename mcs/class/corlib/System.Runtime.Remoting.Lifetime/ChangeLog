@@ -1,3 +1,10 @@
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* LifetimeServices.cs: Implemented all methods.
+	* LeaseSink.cs: implemented renewal of lease.
+	* Lease.cs: Added. It is an implementation of ILease.
+	* LeaseManager.cs: Added. Tracks lifetime of remote objects.
+
 2003-01-29  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* LifetimeServices.cs: Implemented some basic properties.

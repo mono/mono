@@ -1,7 +1,7 @@
 //
 // System.Runtime.Remoting.LeaseSink.cs
 //
-// Author: Lluis Sanchez Gual (lsg@ctv.es)
+// Author: Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) 2002, Lluis Sanchez Gual
 //
@@ -23,16 +23,25 @@ namespace System.Runtime.Remoting.Lifetime
 			_nextSink = nextSink;
 		}
 
-		[MonoTODO("Manage leases")]
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
+			RenewLease (msg);
 			return _nextSink.SyncProcessMessage (msg);
 		}
 
-		[MonoTODO("Manage leases")]
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
+			RenewLease (msg);
 			return _nextSink.AsyncProcessMessage (msg, replySink);
+		}
+
+		void RenewLease (IMessage msg)
+		{
+			ServerIdentity identity = RemotingServices.GetMessageTargetIdentity (msg);
+
+			ILease lease = identity.Lease;
+			if (lease != null && lease.CurrentLeaseTime < lease.RenewOnCallTime)
+				lease.Renew (lease.RenewOnCallTime);
 		}
 
 		public IMessageSink NextSink 
