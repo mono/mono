@@ -1,3 +1,9 @@
+
+Thu Nov 13 16:14:41 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: fix build on Linux/ppc from Jeroen@xs4all.nl
+	(Jeroen Zwartepoorte).
+
 2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Use CEE_JMP only if the signature of
