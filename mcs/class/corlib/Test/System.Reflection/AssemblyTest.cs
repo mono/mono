@@ -99,9 +99,10 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (corlib.GlobalAssemblyCache, "GlobalAssemblyCache");
 			Assert.AreEqual (0, corlib.HostContext, "HostContext");
 			Assert.AreEqual ("v2.0.40607", corlib.ImageRuntimeVersion, "ImageRuntimeVersion");
-			Assert.IsNotNull (corlib.ManifestModule, "ManifestModule");
 			Assert.AreEqual (PortableExecutableKind.ILOnly | PortableExecutableKind.Required32Bit, corlib.PortableExecutableKind, "PortableExecutableKind");
 			Assert.IsFalse (corlib.ReflectionOnly, "ReflectionOnly");
+			Assert.AreEqual (0x20000001, corlib.MetadataToken);
+			Assert.AreEqual (0x1, corlib.ManifestModule.MetadataToken);
 #elif NET_1_1
 			Assert.IsFalse (corlib.GlobalAssemblyCache, "GlobalAssemblyCache");
 			Assert.AreEqual ("mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", corlib.FullName, "FullName");

@@ -1,3 +1,7 @@
+2004-09-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyTest.cs: Add tests for MetadataToken and ManifestModule.
+
 2004-08-29  Nick Drochak <ndrochak@ieee.org>
 
 	* BinderTests.cs: Make tests pass on MS.NET 1.1.
