@@ -619,7 +619,7 @@ namespace Mono.CSharp {
 				tbases [i++] = t;
 			}
 			
-			return tbases;
+			return TypeManager.ExpandInterfaces (tbases);
 		}
 		
 		//

@@ -1036,6 +1036,42 @@ public class TypeManager {
 	}
 
 	/// <summary>
+	///   Given an array of interface types, expand and eliminate repeated ocurrences
+	///   of an interface.  
+	/// </summary>
+	///
+	/// <remarks>
+	///   This expands in context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
+	///   be IA, IB, IC.
+	/// </remarks>
+	public static Type [] ExpandInterfaces (Type [] base_interfaces)
+	{
+		ArrayList new_ifaces = new ArrayList ();
+		
+		foreach (Type iface in base_interfaces){
+			new_ifaces.Add (iface);
+			
+			Type [] implementing = TypeManager.GetInterfaces (iface);
+			
+			foreach (Type imp in implementing){
+				bool found = false;
+				
+				foreach (Type ni in new_ifaces){
+					if (ni == imp){
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					new_ifaces.Add (imp);
+			}
+		}
+		Type [] ret = new Type [new_ifaces.Count];
+		new_ifaces.CopyTo (ret, 0);
+		return ret;
+	}
+		
+	/// <summary>
 	///   This function returns the interfaces in the type `t'.  Works with
 	///   both types and TypeBuilders.
 	/// </summary>
@@ -1054,9 +1090,24 @@ public class TypeManager {
 		if (t.IsArray)
 			t = TypeManager.array_type;
 		
-		if (t is TypeBuilder)
-			return (Type []) builder_to_ifaces [t];
-		else
+		if (t is TypeBuilder){
+			Type [] parent_ifaces;
+			
+			if (t.BaseType == null)
+				parent_ifaces = NoTypes;
+			else
+				parent_ifaces = GetInterfaces (t.BaseType);
+			Type [] type_ifaces = (Type []) builder_to_ifaces [t];
+			if (type_ifaces == null)
+				type_ifaces = NoTypes;
+
+			int parent_count = parent_ifaces.Length;
+			Type [] result = new Type [parent_count + type_ifaces.Length];
+			parent_ifaces.CopyTo (result, 0);
+			type_ifaces.CopyTo (result, parent_count);
+
+			return result;
+		} else
 			return t.GetInterfaces ();
 	}
 	

@@ -190,10 +190,19 @@ namespace Mono.CSharp {
 		static public PendingImplementation GetPendingImplementations (TypeContainer container)
 		{
 			TypeBuilder type_builder = container.TypeBuilder;
-			Type [] ifaces = type_builder.GetInterfaces ();
+			Type [] ifaces;
 			Type b = type_builder.BaseType;
 			int icount = 0;
 
+			//
+			// Notice that TypeBuilders will only return the interfaces that the Type
+			// is supposed to implement, not all the interfaces that the type implements.
+			//
+			// Completely broken.  Anyways, we take advantage of this, so we only register
+			// the implementations that we need, as they are those that are listed by the
+			// TypeBuilder.
+			//
+			ifaces = type_builder.GetInterfaces ();
 #if DEBUG
 			{
 				Type x = type_builder;

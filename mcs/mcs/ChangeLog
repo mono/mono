@@ -1,3 +1,21 @@
+2002-06-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer.GetClassBases): Use ExpandInterfaces on
+	the interface types found.
+
+	* interface.cs (Interface.GetInterfaceBases): Use ExpandInterfaces on the
+	interface types found.
+
+	* typemanager.cs (GetInterfaces): Make this routine returns alll
+	the interfaces and work around the lame differences between
+	System.Type and System.Reflection.Emit.TypeBuilder in the results
+	result for GetInterfaces.
+	
+	(ExpandInterfaces): Given an array of interface types, expand and
+	eliminate repeated ocurrences of an interface.  This expands in
+	context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
+	be IA, IB, IC.
+	
 2002-06-21  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (TypeManager.TypeToCoreType): New function.  When compiling corlib

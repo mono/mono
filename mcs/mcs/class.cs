@@ -688,7 +688,7 @@ namespace Mono.CSharp {
 				ifaces [j] = t;
 			}
 
-			return ifaces;
+			return TypeManager.ExpandInterfaces (ifaces);
 		}
 		
 		//
