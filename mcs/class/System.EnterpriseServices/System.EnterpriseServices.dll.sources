@@ -21,6 +21,7 @@ System.EnterpriseServices/EventClassAttribute.cs
 System.EnterpriseServices/EventTrackingEnabledAttribute.cs
 System.EnterpriseServices/ExceptionClassAttribute.cs
 System.EnterpriseServices/IAsyncErrorNotify.cs
+System.EnterpriseServices/IConfigurationAttribute.cs
 System.EnterpriseServices/IISIntrinsicsAttribute.cs
 System.EnterpriseServices/ImpersonationLevelOption.cs
 System.EnterpriseServices/InheritanceOption.cs
