@@ -1,3 +1,7 @@
+2002-03-12  Duncan Mak  <duncan@ximian.com>
+
+	* ObsoleteAttribute.cs: Made Message and IsError properties
+	instead of fields.
 
 Tue Mar 12 19:21:18 CET 2002 Paolo Molaro <lupus@ximian.com>
 

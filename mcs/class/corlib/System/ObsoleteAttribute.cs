@@ -16,23 +16,33 @@ namespace System
 	     [Serializable]
 	     public class ObsoleteAttribute : Attribute
 	     {
-		     private string Message;
-		     private bool IsError = false;
+		     private string message;
+		     private bool isError = false;
 		     
 		     //	 Constructors
-		     public ObsoleteAttribute () : base ()
-			     {
-			     }
+		     public ObsoleteAttribute ()
+			     : base ()
+		     {
+		     }
 		     
 		     public ObsoleteAttribute (string message)
-			     {
-				     Message = message;
-			     }
+		     {
+			     this.message = message;
+		     }
 		     
 		     public ObsoleteAttribute (string message, bool error)
 		     {
-				     Message = message;
-				     IsError = error;
+			     this.message = message;
+			     this.isError = error;
+		     }
+
+		     // Properties
+		     public string Message {
+			     get { return message; }
+		     }
+
+		     public bool IsError {
+			     get { return isError; }
 		     }
 	     }
 }

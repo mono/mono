@@ -1,3 +1,7 @@
+2002-03-12  Duncan Mak  <duncan@ximian.com>
+
+	* IFormatter.cs: Fix the return type of the Serialize method.
+
 2002/03/07  Nick Drochak <ndrochak@gol.com>
 
 	* StreamingContextStates.cs: Add missing value (CrossAppDomain) and

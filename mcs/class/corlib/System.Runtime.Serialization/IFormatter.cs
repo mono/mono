@@ -57,7 +57,7 @@ namespace System.Runtime.Serialization {
 		/// Serialize the specified object to the specified stream.
 		/// Object may be the root of a graph of objects to be
 		/// serialized</summary>
-		object Serialize( 
+		void Serialize( 
 			Stream serializationStream,
 			object graph
 		);
