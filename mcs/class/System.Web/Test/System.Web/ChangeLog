@@ -1,3 +1,8 @@
+2005-02-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HttpRequestTest.cs: Added another XSS case that was found on ASP.NET
+	(fixed now) but didn't affect Mono.
+
 2005-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpRequestTest.cs: New. Test that ValidateInput throw exceptions

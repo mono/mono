@@ -68,7 +68,23 @@ namespace MonoTests.System.Web {
 			HttpRequest request = new HttpRequest (null, decoded.Substring (0,n), decoded.Substring (n+1));
 			request.ValidateInput ();
 			// the next statement throws
-			Assert.AreEqual ("\xff1cscript\xff1ealert('vulnerability')\xff1c/script\xff1e", request.QueryString ["test"], "QueryString-after");
+			Assert.AreEqual ("\xff1cscript\xff1ealert('vulnerability')\xff1c/script\xff1e", request.QueryString ["test"], "QueryString");
+		}
+
+		// This has affected ASP.NET 1.1 but it seems fixed now
+		// http://secunia.com/advisories/9716/
+		// http://weblogs.asp.net/kaevans/archive/2003/11/12/37169.aspx
+		[Test]
+		[ExpectedException (typeof (HttpRequestValidationException))]
+		public void ValidateInput_XSS_Null ()
+		{
+			string problem = "http://secunia.com/?test=<%00SCRIPT>alert(document.cookie)</SCRIPT>";
+			string decoded = HttpUtility.UrlDecode (problem);
+			int n = decoded.IndexOf ('?');
+			HttpRequest request = new HttpRequest (null, decoded.Substring (0,n), decoded.Substring (n+1));
+			request.ValidateInput ();
+			// the next statement throws
+			Assert.AreEqual ("<SCRIPT>alert(document.cookie)</SCRIPT>", request.QueryString ["test"], "QueryString");
 		}
 #endif
 	}
