@@ -46,7 +46,7 @@ namespace System.Data
 		internal int GetBalance()
 		{
 			if (_iBalance == -2)
-				throw new Exception ("Node is deleted.");
+				throw new SystemException ("Node is deleted.");
 
 			return _iBalance;
 		}
@@ -71,14 +71,14 @@ namespace System.Data
 		{
 			get {
 				if (_iBalance == -2)
-					throw new Exception ("Node is deleted.");
+					throw new SystemException ("Node is deleted.");
 
 				return _nLeft;
 			}
 
 			set {
 				if (_iBalance == -2)
-					throw new Exception ("Node is deleted.");
+					throw new SystemException ("Node is deleted.");
 
 				_nLeft = value;
 			}
@@ -88,13 +88,13 @@ namespace System.Data
 		{
 			get {
 				if (_iBalance == -2)
-					throw new Exception ("Node is deleted.");
+					throw new SystemException ("Node is deleted.");
 				return _nRight;
 			}
 
 			set {
 				if (_iBalance == -2)
-					throw new Exception ("Node is deleted.");
+					throw new SystemException ("Node is deleted.");
 
 				_nRight = value;
 			}
@@ -105,14 +105,14 @@ namespace System.Data
 		{
 			get {
 				if (_iBalance == -2)
-					throw new Exception ("Node is deleted.");
+					throw new SystemException ("Node is deleted.");
 
 				return _nParent;
 			}
 
 			set {
 				if (_iBalance == -2)
-					throw new Exception ("Node is deleted.");
+					throw new SystemException ("Node is deleted.");
 				_nParent = value;
 			}
 		}
@@ -127,7 +127,7 @@ namespace System.Data
 		{
 
 			if (_iBalance == -2)
-				throw new Exception ("Node is deleted.");
+				throw new SystemException ("Node is deleted.");
 
 			_iBalance = b;
 		}
@@ -140,7 +140,7 @@ namespace System.Data
 			}
 
 			if (_iBalance == -2)
-				throw new Exception ("Node is deleted.");
+				throw new SystemException ("Node is deleted.");
 			Node parent = Parent;
 
 			return Equals(parent.Left);
@@ -150,7 +150,7 @@ namespace System.Data
 		{
 
 			if (_iBalance == -2)
-				throw new Exception ("Node is deleted.");
+				throw new SystemException ("Node is deleted.");
 			return _row.ItemArray;
 		}
 
@@ -158,7 +158,7 @@ namespace System.Data
 		{
 
 			if (_iBalance == -2)
-				throw new Exception ("Node is deleted.");
+				throw new SystemException ("Node is deleted.");
 
 			return n == this;
 		}

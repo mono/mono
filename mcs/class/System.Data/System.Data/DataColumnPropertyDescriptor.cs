@@ -81,7 +81,7 @@ namespace System.Data
 			// FIXME: what do I do if a DefaultMemeberAttribute is not found?
 			//        should I try looking for DefaultPropertyAttribute?
 			if (defaultMemberName.Equals(""))
-				throw new Exception("Default property not found.");
+				throw new SystemException("Default property not found.");
 
 			Type[] parmTypes = new Type[1];
 			parmTypes[0] = propertyType;

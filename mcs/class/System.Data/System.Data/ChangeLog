@@ -1,3 +1,8 @@
+2005-01-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Node.cs, DataColumnPropertyDescriptor.cs, DataTable.cs :
+	  Eliminate "throw new Exception".
+
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRow.cs : (set_Item) RowNotInTableExeption check should be done

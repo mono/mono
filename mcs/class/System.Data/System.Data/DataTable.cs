@@ -1693,13 +1693,13 @@ namespace System.Data {
 			int IComparer.Compare (object x, object y) 
 			{
 				if(x == null)
-					throw new Exception ("Object to compare is null: x");
+					throw new SystemException ("Object to compare is null: x");
 				if(y == null)
-					throw new Exception ("Object to compare is null: y");
+					throw new SystemException ("Object to compare is null: y");
 				if(!(x is DataRow))
-					throw new Exception ("Object to compare is not DataRow: x is " + x.GetType().ToString());
+					throw new SystemException ("Object to compare is not DataRow: x is " + x.GetType().ToString());
 				if(!(y is DataRow))
-					throw new Exception ("Object to compare is not DataRow: y is " + x.GetType().ToString());
+					throw new SystemException ("Object to compare is not DataRow: y is " + x.GetType().ToString());
 
 				DataRow rowx = (DataRow) x;
 				DataRow rowy = (DataRow) y;
@@ -1902,9 +1902,9 @@ namespace System.Data {
 
 			if (rejectNoResult) {
 				if (sortColumns == null)
-					throw new Exception ("sort expression result is null");
+					throw new SystemException ("sort expression result is null");
 				if (sortColumns.Length == 0)
-					throw new Exception("sort expression result is 0");
+					throw new SystemException("sort expression result is 0");
 			}
 			return sortColumns;
 		}
