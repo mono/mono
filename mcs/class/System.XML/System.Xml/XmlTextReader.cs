@@ -381,7 +381,10 @@ namespace System.Xml
 			}
 
 			while (attributeEnumerator.MoveNext ()) {
-				if(name == attributeEnumerator.Key as string) match = true; break;
+				if(name == attributeEnumerator.Key as string) {
+					match = true;
+					break;
+				}
 			}
 
 			if (match) {
