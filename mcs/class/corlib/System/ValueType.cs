@@ -24,32 +24,24 @@ namespace System {
 		{
 		}
 
-		// <summary>
-		//   True if this instance and o represent the same type
-		//   and have the same value.
-		// </summary>
-		public override bool Equals (object o)
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool InternalEquals (object o1, object o2, out object[] fields);
+
+		// This is also used by RuntimeHelpers
+		internal static bool DefaultEquals (object o1, object o2)
 		{
-			if (o == null)
+			object[] fields;
+
+			if (o2 == null)
 				return false;
 
-			bool result = InternalEquals (this, o);
-			if (result)
-				return result;
+			bool res = InternalEquals (o1, o2, out fields);
+			if (fields == null)
+				return res;
 
-			Type me = GetType ();
-			Type you = o.GetType ();
-			if (me != you)
-				return false;
-
-			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
-					     BindingFlags.Instance;
-
-			FieldInfo [] meFlds = me.GetFields (flags);
-			FieldInfo [] youFlds = you.GetFields (flags);
-			for (int i = meFlds.Length - 1; i >= 0; i--) {
-				object meVal = meFlds [i].GetValue (this);
-				object youVal = youFlds [i].GetValue (o);
+			for (int i = 0; i < fields.Length; i += 2) {
+				object meVal = fields [i];
+				object youVal = fields [i + 1];
 				if (meVal == null) {
 					if (youVal == null)
 						continue;
@@ -57,13 +49,23 @@ namespace System {
 					return false;
 				}
 
-				result = meVal.Equals (youVal);
-				if (!result)
-					return false;
+				if (!meVal.Equals (youVal))
+					return false;				
 			}
 
 			return true;
 		}
+
+		// <summary>
+		//   True if this instance and o represent the same type
+		//   and have the same value.
+		// </summary>
+		public override bool Equals (object o) {
+			return DefaultEquals (this, o);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static int InternalGetHashCode (object o, out object[] fields);
 
 		// <summary>
 		//   Gets a hashcode for this value type using the
@@ -71,20 +73,14 @@ namespace System {
 		// </summary>
 		public override int GetHashCode ()
 		{
-			Type me = GetType ();
-			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
-					     BindingFlags.Instance;
+			object[] fields;
+			int result = InternalGetHashCode (this, out fields);
 
-			FieldInfo [] meFlds = me.GetFields (flags);
-			if (meFlds.Length == 0)
-				return base.GetHashCode ();
-
-			int result = 0;
-			foreach (object o in meFlds) {
-				if (o != null)
-					result ^= o.GetHashCode ();
-			}
-
+			if (fields != null)
+				for (int i = 0; i < fields.Length; ++i)
+					if (fields [i] != null)
+						result ^= fields [i].GetHashCode ();
+				
 			return result;
 		}
 
@@ -97,8 +93,5 @@ namespace System {
 		{
 			return GetType().FullName;
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static bool InternalEquals (object o1, object o2);
 	}
 }

@@ -1,3 +1,7 @@
+2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ValueType.cs: New optimized implementation for Equals and GetHashCode.
+
 2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs: use Directory in CurrentDirectory property.
