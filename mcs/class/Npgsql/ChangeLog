@@ -1,5 +1,12 @@
 2003-11-08  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* Npgsql/NpgsqlCommand.cs: Removed try-catch for Resource Manager
+	calls, the problem is fixed.
+
+	* Makefile: Fix one bug in the build of resources.
+
+2003-11-08  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* Npgsql/NpgsqlCommandBuilder.cs: Added the command builder.
 
 	* Npgsql/NpgsqlDataAdapter.cs: Added the CommandBuilder stuff. When

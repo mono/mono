@@ -320,12 +320,7 @@ namespace Npgsql {
 			// Check if there were any errors.
 			if (connection.Mediator.Errors.Count > 0) {
 				StringWriter sw = new StringWriter();
-				try {
-					sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteNonQuery"));
-				}
-				catch (System.Resources.MissingManifestResourceException mmre) {
-					sw.WriteLine(String.Format("Exception_MediatorErrors", "ExecuteNonQuery"));
-				}
+				sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteNonQuery"));
 				uint i = 1;
 				foreach(string error in connection.Mediator.Errors){
 					sw.WriteLine("{0}. {1}", i++, error);
@@ -437,12 +432,7 @@ namespace Npgsql {
 			// Check if there were any errors.
 			if (connection.Mediator.Errors.Count > 0) {
 				StringWriter sw = new StringWriter();
-				try {
-					sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors_1P"), "ExecuteReader", cb));
-				}
-				catch (System.Resources.MissingManifestResourceException) {
-					sw.WriteLine(String.Format("Exception_MediatorErrors_1P", "ExecuteReader", cb));
-				}
+				sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors_1P"), "ExecuteReader", cb));
 				uint i = 1;
 				foreach(string error in connection.Mediator.Errors){
 					sw.WriteLine("{0}. {1}", i++, error);
@@ -512,12 +502,7 @@ namespace Npgsql {
 			// [FIXME] Just check the first error.
 			if (connection.Mediator.Errors.Count > 0) {
 				StringWriter sw = new StringWriter();
-				try {
-					sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteScalar"));
-				}
-				catch (System.Resources.MissingManifestResourceException) {
-					sw.WriteLine(String.Format("Exception_MediatorErrors", "ExecuteScalar"));
-				}
+				sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteScalar"));
 				uint i = 1;
 				foreach(string error in connection.Mediator.Errors){
 					sw.WriteLine("{0}. {1}", i++, error);
