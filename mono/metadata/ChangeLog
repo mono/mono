@@ -1,3 +1,8 @@
+
+Mon Feb 14 15:39:56 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: remove libmetadata: we build just libmonoruntime now.
+
 2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tabledefs.h (MANIFEST_RESOURCE_VISIBILITY_MASK): Add flags for ManifestResource.
