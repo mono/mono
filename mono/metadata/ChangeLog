@@ -1,4 +1,11 @@
 
+Wed Apr 3 19:49:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: the values array fro enums is of the correct type, now.
+	Implement (correctly) getFullName instead of assQualifiedName for
+	MonoType.
+	* reflection.h, reflection.c: added mono_type_get_name ().
+
 Wed Apr 3 17:56:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c, image.h: for each MonoImage, record from wich assembly
