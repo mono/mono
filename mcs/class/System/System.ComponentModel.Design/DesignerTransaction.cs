@@ -36,7 +36,10 @@ namespace System.ComponentModel.Design
 			this.Dispose (true); 
 		}
 		
-		public abstract void Dispose (bool disposing);
+		public virtual void Dispose (bool disposing)
+		{
+			this.Cancel ();
+		}
 
 		protected abstract void OnCancel ();
 
@@ -82,6 +85,7 @@ namespace System.ComponentModel.Design
 
 		~DesignerTransaction ()
 		{
+			Dispose (false);
 		}
 	}
 }

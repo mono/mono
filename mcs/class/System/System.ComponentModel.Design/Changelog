@@ -1,3 +1,8 @@
+2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CheckoutException.cs: Removed unneeded member
+	* DesignerTransaction.cs: Added destruction code, corrected interface signature
+
 2003-06-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ActiveDesignerEventArgs.cs: Fixed property access

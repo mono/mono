@@ -31,10 +31,5 @@ namespace System.ComponentModel.Design
 			: base (message, errorCode)
 		{
 		}
-
-		public override string ToString()
-		{
-			return base.ToString ();
-		}
 	}
 }
