@@ -1,5 +1,8 @@
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
 
+	* *.[ch]: Clean up all the pesky warnings. gcc now only gives
+	three warnings, which are actual bugs (see 69206).
+
 	* class-internals.h (MonoMethod): Remove remoting_tramp. It is
 	unused. Saves a cool 4 bytes / method.
 
