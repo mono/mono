@@ -805,9 +805,8 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 
-			if (count < 0 ||
-				startIndex < array.GetLowerBound (0) || startIndex > array.GetUpperBound (0) ||
-				startIndex - count + 1 < array.GetLowerBound (0) || startIndex > array.GetUpperBound (0))
+			if (count < 0 || startIndex < array.GetLowerBound (0) ||
+				startIndex > array.GetUpperBound (0) ||	startIndex - count + 1 < array.GetLowerBound (0))
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
