@@ -418,9 +418,6 @@ namespace Mono.CSharp {
 		// Holds the parts of a partial class;
 		ArrayList parts;
 
-		// The emit context for toplevel objects.
-		EmitContext ec;
-		
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -1379,6 +1376,7 @@ namespace Mono.CSharp {
 				foreach (ClassPart part in Parts) {
 					part.TypeBuilder = TypeBuilder;
 					part.parent_type = parent_type;
+					part.ec = new EmitContext (part, Mono.CSharp.Location.Null, null, null, ModFlags);
 				}
 			}
 
@@ -3314,14 +3312,22 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefineParameters ()
 		{
+			EmitContext ec = ds.EmitContext;
+			if (ec == null)
+				throw new InternalErrorException ("DoDefineParameters invoked too early");
+
+			bool old_unsafe = ec.InUnsafe;
+			ec.InUnsafe = InUnsafe;
 			// Check if arguments were correct
-			parameter_types = Parameters.GetParameterInfo (ds);
+			parameter_types = Parameters.GetParameterInfo (ec);
+			ec.InUnsafe = old_unsafe;
+
 			if ((parameter_types == null) ||
 			    !CheckParameters (ds, parameter_types))
 				return false;
 
 			TypeParameter[] tparam = ds.IsGeneric ? ds.TypeParameters : null;
-			parameter_info = new InternalParameters (ds, Parameters, tparam);
+			parameter_info = new InternalParameters (parameter_types, Parameters, tparam);
 
 			Parameter array_param = Parameters.ArrayParameter;
 			if ((array_param != null) &&
@@ -3808,7 +3814,7 @@ namespace Mono.CSharp {
 			if (GenericMethod != null) {
 				string mname = MemberName.GetMethodName ();
 				mb = Parent.TypeBuilder.DefineGenericMethod (mname, flags);
-				if (!GenericMethod.Define (mb))
+				if (!GenericMethod.Define (mb, ReturnType))
 					return false;
 			}
 
@@ -5111,8 +5117,9 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefineBase ()
 		{
-			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
-			ec.InUnsafe = InUnsafe;
+			EmitContext ec = Parent.EmitContext;
+			if (ec == null)
+				throw new InternalErrorException ("MemberBase.DoDefine called too early");
 
 			if (Name == null)
 				throw new InternalErrorException ();
@@ -5143,7 +5150,15 @@ namespace Mono.CSharp {
 			ec.InUnsafe = InUnsafe;
 
 			// Lookup Type, verify validity
-			MemberType = decl.ResolveType (Type, false, Location);
+			bool old_unsafe = ec.InUnsafe;
+			ec.InUnsafe = InUnsafe;
+			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
+			ec.InUnsafe = old_unsafe;
+
+			if (texpr == null)
+				return false;
+
+			MemberType = texpr.ResolveType (ec);
 			if (MemberType == null)
 				return false;
 
@@ -5190,11 +5205,11 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = ExplicitInterfaceName.GetTypeExpression (Location);
-				TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
-				if (texpr == null)
+				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec, false);
+				if (iface_texpr == null)
 					return false;
 
-				InterfaceType = texpr.ResolveType (ec);
+				InterfaceType = iface_texpr.ResolveType (ec);
 
 				if (InterfaceType.IsClass) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
@@ -5451,10 +5466,14 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
-			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
+			EmitContext ec = Parent.EmitContext;
+			if (ec == null)
+				throw new InternalErrorException ("FieldMember.Define called too early");
+
+			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
-			
 			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
+			ec.InUnsafe = old_unsafe;
 			if (texpr == null)
 				return false;
 
@@ -5862,17 +5881,20 @@ namespace Mono.CSharp {
 				base.ApplyAttributeBuilder (a, cb);
 			}
 
-			protected virtual InternalParameters GetParameterInfo (TypeContainer container)
+			protected virtual InternalParameters GetParameterInfo (EmitContext ec)
 			{
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (method.Type, "value", Parameter.Modifier.NONE, null);
-				return new InternalParameters (
-					container, new Parameters (parms, null, method.Location));
+				Parameters parameters = new Parameters (parms, null, method.Location);
+				Type [] types = parameters.GetParameterInfo (ec);
+				return new InternalParameters (types, parameters);
 			}
 
 			public override MethodBuilder Define(TypeContainer container)
 			{
-				method_data = new MethodData (method, GetParameterInfo (container), method.ModFlags, method.flags, this);
+				if (container.EmitContext == null)
+					throw new InternalErrorException ("SetMethod.Define called too early");
+				method_data = new MethodData (method, GetParameterInfo (container.EmitContext), method.ModFlags, method.flags, this);
 
 				if (!method_data.Define (container))
 					return null;
@@ -6652,7 +6674,7 @@ namespace Mono.CSharp {
 		{
 			EventAttributes e_attr;
 			e_attr = EventAttributes.None;
-;
+
 			if (!DoDefineBase ())
 				return false;
 
@@ -6671,10 +6693,19 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			EmitContext ec = Parent.EmitContext;
+			if (ec == null)
+				throw new InternalErrorException ("Event.Define called too early?");
+			bool old_unsafe = ec.InUnsafe;
+			ec.InUnsafe = InUnsafe;
+
 			Parameter [] parms = new Parameter [1];
 			parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
-			InternalParameters ip = new InternalParameters (
-				Parent, new Parameters (parms, null, Location)); 
+			Parameters parameters = new Parameters (parms, null, Location);
+			Type [] types = parameters.GetParameterInfo (ec);
+			InternalParameters ip = new InternalParameters (types, parameters);
+
+			ec.InUnsafe = old_unsafe;
 
 			if (!CheckBase ())
 				return false;
@@ -6802,7 +6833,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			protected override InternalParameters GetParameterInfo (TypeContainer container)
+			protected override InternalParameters GetParameterInfo (EmitContext ec)
 			{
 				Parameter [] fixed_parms = parameters.FixedParameters;
 
@@ -6829,8 +6860,9 @@ namespace Mono.CSharp {
 					method.Type, "value", Parameter.Modifier.NONE, null);
 
 				Parameters set_formal_params = new Parameters (tmp, null, method.Location);
+				Type [] types = set_formal_params.GetParameterInfo (ec);
 				
-				return new InternalParameters (container, set_formal_params);
+				return new InternalParameters (types, set_formal_params);
 			}
 
 		}
@@ -7327,7 +7359,8 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError (TypeContainer tc)
 		{
 			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("{0}.operator {1} {2}({3}", tc.Name, GetName (OperatorType), Type.ToString (), Parameters.FixedParameters [0].GetSignatureForError ());
+			sb.AppendFormat ("{0}.operator {1} {2}({3}", tc.Name, GetName (OperatorType), Type.Type == null ? Type.ToString () : TypeManager.CSharpName (Type.Type),
+				Parameters.FixedParameters [0].GetSignatureForError ());
 			
 			if (Parameters.FixedParameters.Length > 1) {
 				sb.Append (",");

@@ -497,6 +497,13 @@ namespace Mono.CSharp {
 		readonly bool is_generic;
 		readonly int count_type_params;
 
+		// The emit context for toplevel objects.
+		protected EmitContext ec;
+		
+		public EmitContext EmitContext {
+			get { return ec; }
+		}
+
 		//
 		// Whether we are Generic
 		//

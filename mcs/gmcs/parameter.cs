@@ -136,7 +136,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "param" };
 
-		public readonly Expression TypeName;
+		public Expression TypeName;
 		public readonly Modifier ModFlags;
 		public readonly string Name;
 		GenericConstraints constraints;
@@ -162,9 +162,9 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
-		public bool Resolve (DeclSpace ds, Location l)
+		public bool Resolve (EmitContext ec, Location l)
 		{
-			TypeExpr texpr = ds.ResolveTypeExpr (TypeName, false, l);
+			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return false;
 
@@ -172,8 +172,8 @@ namespace Mono.CSharp {
 			if (tparam != null)
 				constraints = tparam.TypeParameter.Constraints;
 
-			parameter_type = ds.ResolveType (texpr, l);
-
+			parameter_type = texpr.ResolveType (ec);
+			
 			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
 				Report.Error (721, l, "'{0}': static types cannot be used as parameters", GetSignatureForError ());
 				return false;
@@ -244,10 +244,10 @@ namespace Mono.CSharp {
 		///   Returns the signature for this parameter evaluating it on the
 		///   @tc context
 		/// </summary>
-		public string GetSignature (DeclSpace ds, Location loc)
+		public string GetSignature (EmitContext ec, Location loc)
 		{
 			if (parameter_type == null){
-				if (!Resolve (ds, loc))
+				if (!Resolve (ec, loc))
 					return null;
 			}
 
@@ -256,7 +256,14 @@ namespace Mono.CSharp {
 
 		public string GetSignatureForError ()
 		{
-			string typeName = TypeManager.CSharpName (parameter_type);
+			string typeName;
+			if (parameter_type != null)
+				typeName = TypeManager.CSharpName (parameter_type);
+			else if (TypeName.Type != null)
+				typeName = TypeManager.CSharpName (TypeName.Type);
+			else
+				typeName = TypeName.ToString ();
+
 			switch (ModFlags & ~Modifier.ISBYREF) {
 				case Modifier.OUT:
 					return "out " + typeName;
@@ -340,14 +347,14 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public void ComputeSignature (DeclSpace ds)
+		public void ComputeSignature (EmitContext ec)
 		{
 			signature = "";
 			if (FixedParameters != null){
 				for (int i = 0; i < FixedParameters.Length; i++){
 					Parameter par = FixedParameters [i];
 					
-					signature += par.GetSignature (ds, loc);
+					signature += par.GetSignature (ec, loc);
 				}
 			}
 			//
@@ -372,9 +379,9 @@ namespace Mono.CSharp {
 			
 			count = FixedParameters.Length;
 			string array_par_name = ArrayParameter != null ? ArrayParameter.Name : null;
+
 			for (i = 0; i < count; i++){
 				string base_name = FixedParameters [i].Name;
-				
 				for (j = i + 1; j < count; j++){
 					if (base_name != FixedParameters [j].Name)
 						continue;
@@ -392,13 +399,13 @@ namespace Mono.CSharp {
 		
 		/// <summary>
 		///    Returns the signature of the Parameters evaluated in
-		///    the @tc environment
+		///    the @ec EmitContext
 		/// </summary>
-		public string GetSignature (DeclSpace ds)
+		public string GetSignature (EmitContext ec)
 		{
 			if (signature == null){
 				VerifyArgs ();
-				ComputeSignature (ds);
+				ComputeSignature (ec);
 			}
 			
 			return signature;
@@ -432,7 +439,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		bool ComputeParameterTypes (DeclSpace ds)
+		bool ComputeParameterTypes (EmitContext ec)
 		{
 			int extra = (ArrayParameter != null) ? 1 : 0;
 			int i = 0;
@@ -455,7 +462,7 @@ namespace Mono.CSharp {
 				foreach (Parameter p in FixedParameters){
 					Type t = null;
 					
-					if (p.Resolve (ds, loc))
+					if (p.Resolve (ec, loc))
 						t = p.ExternalType ();
 					else
 						failed = true;
@@ -466,7 +473,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (extra > 0){
-				if (ArrayParameter.Resolve (ds, loc))
+				if (ArrayParameter.Resolve (ec, loc))
 					types [i] = ArrayParameter.ExternalType ();
 				else 
 					failed = true;
@@ -484,55 +491,13 @@ namespace Mono.CSharp {
 		// This variant is used by Delegates, because they need to
 		// resolve/define names, instead of the plain LookupType
 		//
-		public bool ComputeAndDefineParameterTypes (DeclSpace ds)
+		public bool ComputeAndDefineParameterTypes (EmitContext ec)
 		{
-			int extra = (ArrayParameter != null) ? 1 : 0;
-			int i = 0;
-			int pc;
-
-			if (FixedParameters == null)
-				pc = extra;
-			else
-				pc = extra + FixedParameters.Length;
-			
-			types = new Type [pc];
-			
-			if (!VerifyArgs ()){
-				FixedParameters = null;
-				return false;
-			}
-
-			bool ok_flag = true;
-			
-			if (FixedParameters != null){
-				foreach (Parameter p in FixedParameters){
-					Type t = null;
-					
-					if (p.Resolve (ds, loc))
-						t = p.ExternalType ();
-					else
-						ok_flag = false;
-					
-					types [i] = t;
-					i++;
-				}
-			}
-			
-			if (extra > 0){
-				if (ArrayParameter.Resolve (ds, loc))
-					types [i] = ArrayParameter.ExternalType ();
-				else
-					ok_flag = false;
-			}
-
-			//
-			// invalidate the cached types
-			//
-			if (!ok_flag){
-				types = null;
-			}
-			
-			return ok_flag;
+			bool old_type_resolving = ec.ResolvingTypeTree;
+			ec.ResolvingTypeTree = true;
+			bool retval = ComputeParameterTypes (ec);
+			ec.ResolvingTypeTree = old_type_resolving;
+			return retval;
 		}
 		
 		/// <summary>
@@ -540,7 +505,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Type [] no_types = new Type [0];
 		
-		public Type [] GetParameterInfo (DeclSpace ds)
+		public Type [] GetParameterInfo (EmitContext ec)
 		{
 			if (types != null)
 				return types;
@@ -548,7 +513,7 @@ namespace Mono.CSharp {
 			if (FixedParameters == null && ArrayParameter == null)
 				return no_types;
 
-			if (ComputeParameterTypes (ds) == false){
+			if (ComputeParameterTypes (ec) == false){
 				types = null;
 				return null;
 			}
@@ -563,7 +528,7 @@ namespace Mono.CSharp {
 		///   Note that the returned type will not contain any dereference in this
 		///   case (ie, you get "int" for a ref int instead of "int&"
 		/// </summary>
-		public Type GetParameterInfo (DeclSpace ds, int idx, out Parameter.Modifier mod)
+		public Type GetParameterInfo (EmitContext ec, int idx, out Parameter.Modifier mod)
 		{
 			mod = Parameter.Modifier.NONE;
 			
@@ -576,7 +541,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (types == null)
-				if (ComputeParameterTypes (ds) == false)
+				if (ComputeParameterTypes (ec) == false)
 					return null;
 
 			//
