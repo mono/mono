@@ -1,3 +1,11 @@
+2004-12-14  Patrik Torstensson  <patrik.torstensson@gmail.com>
+
+	* mini-x86.c, inssel-x86.brg, cpu-pentium.md: removed _imm 
+	interlocked optimization due lack of support on x86, rewrote 
+	exchange to take into account that base may be in eax.
+	
+	xsp works again; activated Interlocked optimizing code.
+	
 2004-12-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file version.
