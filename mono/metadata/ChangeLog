@@ -1,3 +1,8 @@
+2004-09-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threads.c: call thread_cleanup before finishing the thread if we get
+	there.
+
 2004-09-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (ves_icall_System_AppDomain_createDomain): Load all
