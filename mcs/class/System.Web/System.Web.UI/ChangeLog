@@ -1,3 +1,9 @@
+2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: make it fire the LoadData related events also for controls
+	such as ImageButton, whose variable(s) in the query string are of the
+	form ctrl_name.x and only fire them once per control.
+
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataBinder.cs:

@@ -408,11 +408,22 @@ public class Page : TemplateControl, IHttpHandler
 		if (data == null)
 			return;
 
+		Hashtable used = new Hashtable ();
 		foreach (string id in data.AllKeys){
 			if (id == "__VIEWSTATE")
 				continue;
 
-			Control ctrl = FindControl (id);
+			string real_id = id;
+			int dot = real_id.IndexOf ('.');
+			if (dot >= 1)
+				real_id = real_id.Substring (0, dot);
+			
+			if (used.ContainsKey (real_id))
+				continue;
+
+			used.Add (real_id, real_id);
+
+			Control ctrl = FindControl (real_id);
 			if (ctrl != null){
 				IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
 				IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
@@ -423,7 +434,7 @@ public class Page : TemplateControl, IHttpHandler
 					continue;
 				}
 		
-				if (pbdh.LoadPostData (id, data) == true) {
+				if (pbdh.LoadPostData (real_id, data) == true) {
 					if (requiresPostDataChanged == null)
 						requiresPostDataChanged = new ArrayList ();
 					requiresPostDataChanged.Add (pbdh);
@@ -431,7 +442,7 @@ public class Page : TemplateControl, IHttpHandler
 			} else if (!second) {
 				if (secondPostData == null)
 					secondPostData = new NameValueCollection ();
-				secondPostData.Add (id, null);
+				secondPostData.Add (real_id, null);
 			}
 		}
 	}
@@ -562,6 +573,7 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		if (requiresRaiseEvent == null)
 			requiresRaiseEvent = new ArrayList ();
+
 		requiresRaiseEvent.Add (control);
 	}
 
