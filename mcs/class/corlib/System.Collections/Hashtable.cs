@@ -113,16 +113,17 @@ namespace System.Collections {
 		}
 
 		public Hashtable (int capacity, 
-		                 IHashCodeProvider hcp, 
-		                 IComparer comparer)
+		                  IHashCodeProvider hcp, 
+		                  IComparer comparer)
 			: this (capacity, 1.0f, hcp, comparer)
 		{
 		}
 
 
 		public Hashtable (IDictionary d, float loadFactor, 
-		                 IHashCodeProvider hcp, IComparer comparer)
-			: this (0, loadFactor, hcp, comparer)
+		                  IHashCodeProvider hcp, IComparer comparer)
+			: this (d!=null ? d.Count : 0,
+		                loadFactor, hcp, comparer)
 		{
 
 			if (d  ==  null)
@@ -676,7 +677,7 @@ namespace System.Collections {
 			{
 				FailFast ();
 
-				if (pos < size)
+				if (pos < size) {
 					while (++pos < size) {
 						slot entry = host.table [pos];
 
@@ -686,6 +687,8 @@ namespace System.Collections {
 							return true;
 						}
 					}
+				}
+
 				currentKey = null;
 				currentValue = null;
 				return false;
