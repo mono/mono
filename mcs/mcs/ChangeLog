@@ -1,3 +1,8 @@
+2003-07-13  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.IsNestedChildOf): Make this actually
+	work to fix bug #46088.
+
 2003-07-13  Ravi Pratap <ravi@ximian.com>
 
 	* class.cs (Operator.Emit): Do not emit attributes here - it is

@@ -1384,7 +1384,7 @@ public class TypeManager {
 
 		type = type.DeclaringType;
 		while (type != null) {
-			if ((type == parent) || type.IsSubclassOf (parent))
+			if (type == parent)
 				return true;
 
 			type = type.DeclaringType;
