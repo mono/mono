@@ -1,3 +1,7 @@
+2003-10-08 Jackson Harper <jackson@ximian.com>
+
+	* get.c: simplify get_typd_or_methdef
+	
 2003-10-07 Jackson Harper <jackson@ximian.com>
 
 	* main.c: When dis. generic parameters the TypeOrMethodDef token
