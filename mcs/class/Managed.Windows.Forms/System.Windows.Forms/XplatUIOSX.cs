@@ -417,7 +417,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override void Activate(IntPtr handle) {
-			throw new NotImplementedException ();
+			ActivateWindow (GetControlOwner (handle), true);
 		}
 
 		[MonoTODO]
@@ -889,9 +889,8 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		[MonoTODO]
 		internal override bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled) {
-			// FIXME
+			HIViewSetZOrder (hWnd, 1, IntPtr.Zero);
 			return true;
 		}
 
@@ -1266,6 +1265,8 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewScrollRect (IntPtr vHnd, IntPtr rect, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewSetZOrder (IntPtr hWnd, int cmd, IntPtr oHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewSetBoundsOrigin (IntPtr vHnd, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewConvertRect (ref HIRect r, IntPtr a, IntPtr b);
@@ -1281,6 +1282,8 @@ namespace System.Windows.Forms {
                 static extern int InstallEventHandler (IntPtr window, CarbonEventHandler handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetControlOwner (IntPtr aView);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int ActivateWindow (IntPtr windowHnd, bool inActivate);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern bool IsWindowActive (IntPtr windowHnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
