@@ -33,6 +33,27 @@ namespace MonoTests.System.IO
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 		}
+		
+		bool Windows
+		{
+			get {
+				return Path.DirectorySeparatorChar == '\\';
+			}
+		}
+
+		bool Unix
+		{
+			get {
+				return Path.DirectorySeparatorChar == '/';
+			}
+		}
+
+		bool Mac
+		{
+			get {
+				return Path.DirectorySeparatorChar == ':';
+			}
+		}
 
 		private void DeleteFile (string path)
 		{
@@ -51,7 +72,9 @@ namespace MonoTests.System.IO
 		{
 			string path = TempFolder + "/FSIT.CreationTime.Test";
 			DeleteFile (path);
-
+			if (Unix) {  // Unix doesn't support CreationTimes
+			  return;
+			}
 			try {
 				File.Create (path).Close ();
 				FileSystemInfo info = new FileInfo (path);
@@ -101,6 +124,9 @@ namespace MonoTests.System.IO
 		{
 			string path = TempFolder + "/FSIT.CreationTimeDirectory.Test";
 			DeleteDir (path);
+			if (Unix) {  // Unix doesn't support CreationTimes
+			  return;
+			}
 			
 			try {				
 				FileSystemInfo info = Directory.CreateDirectory (path);
