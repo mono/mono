@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		protected virtual void SetItemType(ListItemType itemType)
+		protected internal virtual void SetItemType(ListItemType itemType)
 		{
 			if(Enum.IsDefined(typeof(ListItemType), itemType))
 			{

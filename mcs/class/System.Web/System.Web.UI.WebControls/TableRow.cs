@@ -68,7 +68,7 @@ namespace System.Web.UI.WebControls
 
 		protected class CellControlCollection : ControlCollection
 		{
-			CellControlCollection (Control owner) : base (owner)
+			internal CellControlCollection (Control owner) : base (owner)
 			{
 			}
 
