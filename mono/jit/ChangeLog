@@ -1,4 +1,8 @@
 
+Wed Apr 17 12:34:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* emit-x86.c, invoke.c: track time spent compiling.
+
 Wed Apr 17 10:58:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* emit-x86.c, invoke.c: call profile callbacks if needed.
