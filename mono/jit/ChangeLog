@@ -1,5 +1,7 @@
 2002-05-24  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_stack): moved const. folding from x86.brg
+
 	* x86.brg: CPBLK impl.
 
 	* emit-x86.c (tree_emit): modified to support 3 nonterminals per
