@@ -3,18 +3,19 @@
 TOPDIR=~/mono
 INSTALL=$TOPDIR/install
 BACKUP=$TOPDIR/install.bak
-SENDMAIL=$TOPDIR/mono/mcs/tools/tinderbox/smtp
+SENDMAIL=$TOPDIR/mcs/tools/tinderbox/smtp
 
 LOGBASE=$TOPDIR/.build.log
 LOG=$LOGBASE.txt
-LOGPREV=$LOGBASE.prev.txt
-LOGFATAL=$LOGBASE.fatal.txt
+LOGPREV=$LOGBASE.prev
+LOGFATAL=$LOGBASE.fatal
 LOGDATE=$TOPDIR/.build.date
-LOGLOG=$TOPDIR/.build.log.log.txt
+LOGLOG=$TOPDIR/.build.log.log
+BUILDMSG=$TOPDIR/.build.msg
 export LOGDATE
 
 EMAIL_FATAL="piersh@friskit.com"
-EMAIL_MESSAGE="piersh@friskit.com"
+EMAIL_MESSAGE="mono-patches@ximian.com"
 #EMAIL_MESSAGE="mono-hackers-list@ximian.com"
 EMAIL_FROM="piersh@friskit.com"
 EMAIL_HOST="zeus.sfhq.friskit.com"
@@ -29,7 +30,7 @@ FILTER_LOG="sed -e 's/^in <0x[0-9a-z]*>//' -e 's/(process:[0-9]*)://' -e 's/^\[[
 
 function fatal ()
 {
-	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_FATAL -c $EMAIL_CC -a $LOGFATAL -s "[MONOBUILD] FATAL ERROR"
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_FATAL -a $LOGFATAL -s "[MONOBUILD] FATAL ERROR (`uname -s -m`)"
 	echo FATAL: `date` >> $LOGLOG
 	echo FATAL ERROR
 	exit 1
@@ -147,8 +148,7 @@ function build_mono ()
 
 function compare_logs ()
 {
-	touch $LOG
-	touch $LOGPREV
+	touch $LOG $LOGPREV
 	echo Comparing build logs
 	eval $FILTER_LOG $LOG > $LOG.tmp
 	eval $FILTER_LOG $LOGPREV > $LOGPREV.tmp
@@ -157,27 +157,29 @@ function compare_logs ()
 
 function build_fixed ()
 {
-	echo "Build fixed:       `date`" > .build.msg
-	echo "Previous breakage: `cat .build.date.last_fail`" >> .build.msg
-	echo "Previous build:    `cat .build.date.last_success`" >> .build.msg
-	echo >> .build.msg
+	echo "Build fixed:       `date`" > $BUILDMSG
+	echo "Previous breakage: `cat .build.date.last_fail`" >> $BUILDMSG
+	echo "Previous build:    `cat .build.date.last_success`" >> $BUILDMSG
+	echo >> $BUILDMSG
 
-	cat .build.msg | $SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE -c $EMAIL_CC -s "[MONOBUILD] fixed"
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE -c $EMAIL_CC -s "[MONOBUILD] fixed (`uname -s -m`)" -m $BUILDMSG
+	rm -f $BUILDMSG
 }
 
 function build_failed ()
 {
-	echo "Build broken:   `date`" > .build.msg
-	echo "Broken since:   `cat .build.date.last_fail`" >> .build.msg
-	echo "Previous build: `cat .build.date.last_success`" >> .build.msg
-	echo >> .build.msg
+	echo "Build broken:   `date`" > $BUILDMSG
+	echo "Broken since:   `cat .build.date.last_fail`" >> $BUILDMSG
+	echo "Previous build: `cat .build.date.last_success`" >> $BUILDMSG
+	echo >> $BUILDMSG
 
-	cat .build.msg | $SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE -c $EMAIL_CC -a $LOG -s "[MONOBUILD] broken"
+	$SENDMAIL -h $EMAIL_HOST -f $EMAIL_FROM -t $EMAIL_MESSAGE -c $EMAIL_CC -a $LOG -s "[MONOBUILD] broken (`uname -s -m`)" -m $BUILDMSG
+	rm -f $BUILDMSG
 }
 
-#rm -f $LOG $LOGPREV
-
 while [ 1 ] ; do
+
+	cd $TOPDIR
 	
 	if build_mono ; then
 
@@ -188,6 +190,7 @@ while [ 1 ] ; do
 		echo "|||||||||||||||||||||||||"
 		echo SUCCESS: `date` >> $LOGLOG
 		date > $LOGDATE.last_success
+		echo sleeping for $DELAY_SUCCESS
 		sleep $DELAY_SUCCESS
 
 	else
@@ -211,6 +214,7 @@ while [ 1 ] ; do
 				echo "|||||||||||||||||||||"
 				echo FIXED: `date` >> $LOGLOG
 				date > $LOGDATE.last_success
+				echo sleeping for $DELAY_SUCCESS
 				sleep $DELAY_SUCCESS
 				break 2
 			fi
@@ -226,6 +230,7 @@ while [ 1 ] ; do
 		echo "||||||||||||||||||||||"
 		echo BROKEN: `date` >> $LOGLOG
 		date > $LOGDATE.last_fail
+		echo sleeping for $DELAY_BROKEN
 		sleep $DELAY_BROKEN
 
 		until build_mono ; do
@@ -236,6 +241,7 @@ while [ 1 ] ; do
 			echo "||||||||||||||||||||||||||||"
 			echo STILL BROKEN: `date` >> $LOGLOG
 			date > $LOGDATE.last_fail
+			echo sleeping for $DELAY_STILL_BROKEN
 			sleep $DELAY_STILL_BROKEN
 
 		done
@@ -247,6 +253,7 @@ while [ 1 ] ; do
 		echo "|||||||||||||||||||||"
 		echo FIXED: `date` >> $LOGLOG
 		date > $LOGDATE.last_success
+		echo sleeping for $DELAY_SUCCESS
 		sleep $DELAY_SUCCESS
 
 	fi
