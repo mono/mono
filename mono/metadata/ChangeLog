@@ -1,3 +1,14 @@
+
+Wed Jun 16 14:33:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: removed monosn from compilation.
+	* appdomain.c, assembly.c, assembly.h, blob.h, class.c,
+	debug-helpers.c, debug-mono-symfile.c, domain.c, icall.c,
+	image.c, image.h, loader.c, marshal.c, metadata-internals.h,
+	metadata.c, metadata.h, mono-config.c, mono-debug-debugger.c,
+	mono-debug.c, object.c, opcodes.c, opcodes.h, pedump.c, process.c,
+	reflection.c, reflection.h, verify.c: more API cleanups and fixes.
+
 2004-06-15  Jackson Harper  <jackson@ximian.com>
 
 	* assembly.c: Make locales lower case when searching the GAC for
