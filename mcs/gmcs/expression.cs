@@ -416,11 +416,6 @@ namespace Mono.CSharp {
 				return this;
 
 			case Operator.AddressOf:
-				if (Expr.eclass != ExprClass.Variable){
-					Error (211, "Cannot take the address of non-variables");
-					return null;
-				}
-				
 				if (!ec.InUnsafe) {
 					UnsafeError (loc); 
 					return null;
@@ -575,8 +570,14 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (Oper == Operator.AddressOf)
-				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
+			if (Oper == Operator.AddressOf) {
+				Expr = Expr.DoResolveLValue (ec, new EmptyExpression ());
+
+				if (Expr == null || Expr.eclass != ExprClass.Variable){
+					Error (211, "Cannot take the address of non-variables");
+					return null;
+				}
+			}
 			else
 				Expr = Expr.Resolve (ec);
 			
@@ -593,10 +594,8 @@ namespace Mono.CSharp {
 		public override Expression DoResolveLValue (EmitContext ec, Expression right)
 		{
 			if (Oper == Operator.Indirection)
-				return base.DoResolveLValue (ec, right);
+				return DoResolve (ec);
 
-			Error (131, "The left-hand side of an assignment must be a " +
-			       "variable, property or indexer");
 			return null;
 		}
 
@@ -723,6 +722,11 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
 			expr.Emit (ec);
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -854,16 +858,15 @@ namespace Mono.CSharp {
 
 			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 
-			if (mg == null && expr_type.BaseType != null)
-				mg = MemberLookup (ec, expr_type.BaseType, op_name,
-						   MemberTypes.Method, AllBindingFlags, loc);
-			
 			if (mg != null) {
 				method = StaticCallExpr.MakeSimpleCall (
 					ec, (MethodGroupExpr) mg, expr, loc);
 
 				type = method.Type;
-				return this;
+			} else if (!IsIncrementableNumber (expr_type)) {
+				Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
+				       TypeManager.CSharpName (expr_type) + "'");
+				   return null;
 			}
 
 			//
@@ -874,35 +877,20 @@ namespace Mono.CSharp {
 			type = expr_type;
 			if (expr.eclass == ExprClass.Variable){
 				LocalVariableReference var = expr as LocalVariableReference;
-				if ((var != null) && var.IsReadOnly)
+				if ((var != null) && var.IsReadOnly) {
 					Error (1604, "cannot assign to `" + var.Name + "' because it is readonly");
-				if (IsIncrementableNumber (expr_type) ||
-				    expr_type == TypeManager.decimal_type){
-					return this;
+					return null;
 				}
-			} else if (expr.eclass == ExprClass.IndexerAccess){
-				IndexerAccess ia = (IndexerAccess) expr;
-				
-				expr = ia.ResolveLValue (ec, this);
+			} else if (expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess){
+				expr = expr.ResolveLValue (ec, this);
 				if (expr == null)
 					return null;
-
-				return this;
-			} else if (expr.eclass == ExprClass.PropertyAccess){
-				PropertyExpr pe = (PropertyExpr) expr;
-
-				if (pe.VerifyAssignable ())
-					return this;
-
-				return null;
 			} else {
 				expr.Error_UnexpectedKind ("variable, indexer or property access", loc);
 				return null;
 			}
 
-			Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
-			       TypeManager.CSharpName (expr_type) + "'");
-			return null;
+			return this;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -4220,6 +4208,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
+		void Error_LValueRequired (Location loc)
+		{
+			Report.Error (1510, loc, "An lvalue is required as an argument to out or ref");
+		}
+
 		public bool Resolve (EmitContext ec, Location loc)
 		{
 			if (ArgType == AType.Ref) {
@@ -4237,14 +4230,45 @@ namespace Mono.CSharp {
 						return false;
 					}
 				}
-				Expr = Expr.ResolveLValue (ec, Expr);
-			} else if (ArgType == AType.Out)
-				Expr = Expr.ResolveLValue (ec, EmptyExpression.Null);
+				Expr = Expr.DoResolveLValue (ec, Expr);
+				if (Expr == null)
+					Error_LValueRequired (loc);
+			} else if (ArgType == AType.Out) {
+				Expr = Expr.DoResolveLValue (ec, EmptyExpression.Null);
+				if (Expr == null)
+					Error_LValueRequired (loc);
+			}
 			else
 				Expr = Expr.Resolve (ec);
 
 			if (Expr == null)
 				return false;
+
+			if (Expr is IMemberExpr) {
+				IMemberExpr me = Expr as IMemberExpr;
+
+				//
+				// This can happen with the following code:
+				//
+				//   class X {}
+				//   class Y {
+				//     public Y (X x) {}
+			        //   }
+				//   class Z : Y {
+				//     X X;
+				//     public Z () : base (X) {}
+				//   }
+				//
+				// SimpleNameResolve is conservative about flagging the X as
+				// an error since it has identical name and type.  However,
+				// because there's no MemberAccess, that is not really justified.
+				// It is still simpler to fix it here, rather than in SimpleNameResolve.
+				//
+				if (me.IsInstance && me.InstanceExpression == null) {
+					SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
+					return false;
+				}
+			}
 
 			if (ArgType == AType.Expression)
 				return true;
@@ -4279,9 +4303,7 @@ namespace Mono.CSharp {
 						"A property or indexer can not be passed as an out or ref " +
 						"parameter");
 				} else {
-					Report.Error (
-						1510, loc,
-						"An lvalue is required as an argument to out or ref");
+					Error_LValueRequired (loc);
 				}
 				return false;
 			}
@@ -5020,17 +5042,6 @@ namespace Mono.CSharp {
 							continue;
 
 						candidates [k++] = candidates [i];
-
-#if false
-						//
-						// Methods marked 'override' don't take part in 'applicable_type'
-						// computation.
-						//
-						if (!me.IsBase &&
-						    candidate.IsVirtual &&
-						    (candidate.Attributes & MethodAttributes.NewSlot) == 0)
-							continue;
-#endif
 
 						if (next_applicable_type == null ||
 						    IsAncestralType (next_applicable_type, decl_type))
@@ -8050,6 +8061,11 @@ namespace Mono.CSharp {
 			ea = ea_data;
 			eclass = ExprClass.Variable;
 			loc = l;
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

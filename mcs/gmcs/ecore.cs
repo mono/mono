@@ -299,7 +299,7 @@ namespace Mono.CSharp {
 
 		public virtual Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolve (ec);
+			return null;
 		}
 
 		//
@@ -451,16 +451,16 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public Expression ResolveLValue (EmitContext ec, Expression right_side)
 		{
+			int errors = Report.Errors;
 			Expression e = DoResolveLValue (ec, right_side);
 
-			if (e != null){
-				if (e is SimpleName){
-					SimpleName s = (SimpleName) e;
-					MemberLookupFailed (ec, null, ec.ContainerType, s.Name,
-							    ec.DeclSpace.Name, loc);
-					return null;
-				}
+			if (e == null) {
+				if (errors == Report.Errors)
+					Report.Error (131, Location, "The left-hand side of an assignment or mutating operation must be a variable, property or indexer");
+				return null;
+			}
 
+			if (e != null){
 				if (e.eclass == ExprClass.Invalid)
 					throw new Exception ("Expression " + e +
 							     " ExprClass is Invalid after resolve");
@@ -1444,6 +1444,7 @@ namespace Mono.CSharp {
 		public EmptyCast (Expression child, Type return_type)
 		{
 			eclass = child.eclass;
+			loc = child.Location;
 			type = return_type;
 			this.child = child;
 		}
@@ -1497,6 +1498,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
+		}
+
+		public override bool IsDefaultValue {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public override bool IsNegative {
@@ -1635,7 +1642,13 @@ namespace Mono.CSharp {
 		{
 			return Child.ConvertToInt ();
 		}
-		
+
+		public override bool IsDefaultValue {
+			get {
+				return Child.IsDefaultValue;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Child.IsZeroInteger; }
 		}
@@ -3656,6 +3669,11 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
