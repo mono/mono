@@ -1,29 +1,35 @@
+2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: throw an exception when the executable cannot be found.
+
 2002-12-20  Jonathan Pryor <jonpryor@vt.edu>
 	* DiagnosticsConfigurationHandler.cs: 
 	  - Don't assume that optional attributes are always present
-		- <assert/> can't have any child nodes
-		- Change in semantics: if the attribute isn't present, GetAttribute()
-		  returns null, not "".  This allows us to differentiate between an
-		  attribute not being present and an attribute with an empty value.
-		- Translate exceptions if a TraceListener type is invalid
+	  - <assert/> can't have any child nodes
+	  - Change in semantics: if the attribute isn't present,
+	    GetAttribute() returns null, not "".  This allows us to
+	    differentiate between an attribute not being present and an
+	    attribute with an empty value.
+	  - Translate exceptions if a TraceListener type is invalid
 
 2002-12-19  Jonathan Pryor <jonpryor@vt.edu>
 	* TraceListenerCollection.cs: IndentLevel and IndentSize shouldn't be 
-	  hardcoded; they should be set to whatever TraceImpl is using (which in 
-	  turn may have been set by the .config file, so we should get the 
+	  hardcoded; they should be set to whatever TraceImpl is using (which
+	  in turn may have been set by the .config file, so we should get the
 	  user-specified values in added listeners).
 	* TraceListener.cs: Make sure that indents are initially written.  This 
 	  allows code that uses Trace.Indent() before a Trace.WriteLine() to be 
 	  indented properly.
 	* TraceImpl.cs: provide a static constructor to explicitly specify the
-	  ordering of initialization, in particular the ordering of 
-	  TraceImpl.Listeners and the reading of the .config file (by accessing
-	  DiagnosticsConfiguration.Settings).  This (hopefully) ensures that the
-	  Listeners collection is initialized before the .config file is read in, as
-	  the DiagnosticsConfigurationHandler will directly modify the listeners
-	  collection.
-	  The DiagnosticsConfigurationHandler assumes this so that it can <add/> and
-	  <remove/> trace listeners and set the logfile for the DefaultTraceListener.
+	  ordering of initialization, in particular the ordering of
+	  TraceImpl.Listeners and the reading of the .config file (by
+	  accessing DiagnosticsConfiguration.Settings).  This (hopefully)
+	  ensures that the Listeners collection is initialized before the
+	  .config file is read in, as the DiagnosticsConfigurationHandler will
+	  directly modify the listeners collection.
+	  The DiagnosticsConfigurationHandler assumes this so that it can
+	  <add/> and <remove/> trace listeners and set the logfile for the
+	  DefaultTraceListener.
 
 
 2002-12-18  Jonathan Pryor <jonpryor@vt.edu>
@@ -33,16 +39,16 @@
 	  - Give `AssertUiEnabled' an actual backing member
 	* DiagnosticsConfigurationHandler.cs: To avoid race conditions, let the
 	  configuration handler set .config-specified properties on
-		DefaultTraceListener (AssertUiEnabled, LogFileName) and TraceImpl
+	  DefaultTraceListener (AssertUiEnabled, LogFileName) and TraceImpl
 	  (AutoFlush, IndentSize).
 	* Switch.cs: Near complete re-write.  Actually works, and is (should be)
-	  comformant with .NET behavior.  Changed member names because they were
-		confusing me.  (Yes, that doesn't say much about my memory.)
-	* TextWriterTraceListener.cs: Append text to already existing files, don't
-	  overwrite them.
+	  comformant with .NET behavior.  Changed member names because they
+	  were confusing me.  (Yes, that doesn't say much about my memory.)
+	* TextWriterTraceListener.cs: Append text to already existing files,
+	  don't overwrite them.
 	* TraceImpl.cs:
 	  - Added private destructor, to ensure no instances are created.
-		- Move members declarations to be closer to each other.
+	  - Move members declarations to be closer to each other.
 	* TraceSwitch.cs: Complete re-write.  It works now.
 
 2002-12-17  Jonathan Pryor <jonpryor@vt.edu>

@@ -587,10 +587,23 @@ namespace System.Diagnostics {
 					   stdin_rd, stdout_wr, stderr_wr,
 					   ref proc_info);
 
+			MonoIOError error;
+			
+			if (!ret) {
+				if (stdin_rd != IntPtr.Zero)
+					MonoIO.Close (stdin_rd, out error);
+
+				if (stdout_wr != IntPtr.Zero)
+					MonoIO.Close (stdout_wr, out error);
+
+				if (stderr_wr != IntPtr.Zero)
+					MonoIO.Close (stderr_wr, out error);
+
+				throw new Win32Exception ();
+			}
+			
 			process.process_handle=proc_info.process_handle;
 			process.pid=proc_info.pid;
-			
-			MonoIOError error;
 			
 			if(startInfo.RedirectStandardInput==true) {
 				MonoIO.Close(stdin_rd, out error);
