@@ -37,9 +37,12 @@
 //		- GTK paints controls into a window no a device context. We should inverstigate if we 
 //		we can encapsulate a dc in a gtkwindow.
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ThemeGtk.cs,v $
+// Revision 1.4  2004/08/24 18:37:02  jordi
+// fixes formmating, methods signature, and adds missing events
+//
 // Revision 1.3  2004/08/20 20:39:51  jordi
 // use style_attach
 //
@@ -295,7 +298,7 @@ namespace System.Windows.Forms
 		}
 		
 		public override void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
-			Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
+			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
 			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
 			ref int scrollbutton_height, bool vert)
 		{

@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.4  2004/08/24 18:37:02  jordi
+// fixes formmating, methods signature, and adds missing events
+//
 // Revision 1.3  2004/08/24 16:16:46  jackson
 // Handle drawing picture boxes in the theme now. Draw picture box borders and obey sizing modes
 //
@@ -258,7 +261,7 @@ namespace System.Windows.Forms
 			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled);
 
 		public abstract void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
-			Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
+			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
 			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
 			ref int scrollbutton_height, bool vert);
 

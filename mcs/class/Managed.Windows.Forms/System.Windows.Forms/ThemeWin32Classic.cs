@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.27 $
+// $Revision: 1.28 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.28  2004/08/24 18:37:02  jordi
+// fixes formmating, methods signature, and adds missing events
+//
 // Revision 1.27  2004/08/24 16:16:46  jackson
 // Handle drawing picture boxes in the theme now. Draw picture box borders and obey sizing modes
 //
@@ -154,8 +157,7 @@ namespace System.Windows.Forms
 		
 		static protected Pen pen_ticks;
 		static protected Pen pen_disabled;
-		static protected SolidBrush br_arrow;
-		static protected SolidBrush br_disabled;
+		static protected SolidBrush br_arrow;		
 		static protected HatchBrush br_focus;		
 		static protected SolidBrush br_progressbarblock;		
 		static protected Pen pen_arrow;
@@ -214,6 +216,7 @@ namespace System.Windows.Forms
 			pen_buttonface = new Pen (ColorButtonFace);
 			pen_buttontext = new Pen (ColorButtonText);
 			pen_windowframe = new Pen (ColorWindowFrame);
+			pen_disabled = new Pen (ColorGrayText);			
 
 			defaultWindowBackColor = Color.FromArgb (255, 10, 10, 10);
 			defaultWindowForeColor = ColorButtonText;
@@ -906,7 +909,7 @@ namespace System.Windows.Forms
 
 
 		/* Scroll button: regular button + direction arrow */
-		public  override void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
+		public override void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
 		{
 			bool enabled = (state == ButtonState.Inactive) ? false: true;			
 					
@@ -925,11 +928,8 @@ namespace System.Windows.Forms
 					else
 						dc.DrawLine (pen_disabled, x + i, y - i, x + i + 6 - 2*i, y - i);
 
-				if (enabled)
-					dc.FillRectangle (br_arrow, x + 3, area.Y + 6, 1, 1);
-				else
-					dc.FillRectangle (br_disabled, x + 3, area.Y + 6, 1, 1);
-
+				
+				dc.FillRectangle (br_arrow, x + 3, area.Y + 6, 1, 1);				
 				break;
 			}
 			case ScrollButton.Down:
@@ -943,11 +943,8 @@ namespace System.Windows.Forms
 					else
 						dc.DrawLine (pen_disabled, x + i, y + i, x + i + 8 - 2*i, y + i);
 
-				if (enabled)
-					dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);
-				else
-					dc.FillRectangle (br_disabled, x + 4, y + 4, 1, 1);
-
+				
+				dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);
 				break;
 			}
 
@@ -962,11 +959,7 @@ namespace System.Windows.Forms
 					else
 						dc.DrawLine (pen_disabled, x - i, y + i, x - i, y + i + 6 - 2*i);
 
-				if (enabled)
-					dc.FillRectangle (br_arrow, x - 3, y + 3, 1, 1);
-				else
-					dc.FillRectangle (br_disabled, x - 3, y + 3, 1, 1);
-
+				dc.FillRectangle (br_arrow, x - 3, y + 3, 1, 1);
 				break;
 			}
 
@@ -981,11 +974,7 @@ namespace System.Windows.Forms
 					else
 						dc.DrawLine (pen_disabled, x + i, y + i, x + i, y + i + 8 - 2*i);
 
-				if (enabled)
-					dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);
-				else
-					dc.FillRectangle (br_disabled, x + 3, y + 3, 1, 1);
-
+				dc.FillRectangle (br_arrow, x + 4, y + 4, 1, 1);				
 				break;
 			}
 
@@ -1045,7 +1034,7 @@ namespace System.Windows.Forms
 
 
 		public override void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
-			Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
+			ref Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
 			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
 			ref int scrollbutton_height, bool vert)
 		{
@@ -1056,13 +1045,14 @@ namespace System.Windows.Forms
 			if (vert) {		
 
 				first_arrow_area.X = first_arrow_area. Y = 0;
-				first_arrow_area.Width = scrollbutton_width;
+				first_arrow_area.Width = bar.Width;
 				first_arrow_area.Height = scrollbutton_height;
 
 				second_arrow_area.X = 0;
 				second_arrow_area.Y = area.Height - scrollbutton_height;
-				second_arrow_area.Width = scrollbutton_width;
+				second_arrow_area.Width = bar.Width;
 				second_arrow_area.Height = scrollbutton_height;
+				thumb_pos.Width = bar.Width;
 
 				/* Buttons */
 				DrawScrollButton (dc, first_arrow_area, ScrollButton.Up, first_arrow);
@@ -1076,12 +1066,13 @@ namespace System.Windows.Forms
 				
 				first_arrow_area.X = first_arrow_area. Y = 0;
 				first_arrow_area.Width = scrollbutton_width;
-				first_arrow_area.Height = scrollbutton_height;
+				first_arrow_area.Height = bar.Height;
 
 				second_arrow_area.Y = 0;
 				second_arrow_area.X = area.Width - scrollbutton_width;
 				second_arrow_area.Width = scrollbutton_width;
-				second_arrow_area.Height = scrollbutton_height;
+				second_arrow_area.Height = bar.Height;
+				thumb_pos.Height = bar.Height;
 
 				/* Buttons */
 				DrawScrollButton (dc, first_arrow_area, ScrollButton.Left, first_arrow );
@@ -2359,34 +2350,34 @@ namespace System.Windows.Forms
 
 				dc.DrawRectangle (pen_buttonshadow, area.X,
 					area.Y, area.Width, area.Height);
-			}
 
-			if (state == ButtonState.Normal) {
+				return;
+			}			
 
-				dc.FillRectangle (new SolidBrush (Color.Blue), area);
-				
-				dc.FillRectangle (br_buttonface, area.X, area.Y, area.Width, 1);
-				dc.FillRectangle (br_buttonface, area.X, area.Y, 1, area.Height);
+			dc.FillRectangle (new SolidBrush (Color.Blue), area);
+			
+			dc.FillRectangle (br_buttonface, area.X, area.Y, area.Width, 1);
+			dc.FillRectangle (br_buttonface, area.X, area.Y, 1, area.Height);
 
-				dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 1, area.Width - 1, 1);
-				dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 2, 1,
-					area.Height - 4);
+			dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 1, area.Width - 1, 1);
+			dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 2, 1,
+				area.Height - 4);
 
-				dc.FillRectangle (br_buttonshadow, area.X + 1, area.Y + area.Height - 2,
-					area.Width - 2, 1);
+			dc.FillRectangle (br_buttonshadow, area.X + 1, area.Y + area.Height - 2,
+				area.Width - 2, 1);
 
-				dc.FillRectangle (br_buttondkshadow, area.X, area.Y + area.Height -1,
-					area.Width , 1);
+			dc.FillRectangle (br_buttondkshadow, area.X, area.Y + area.Height -1,
+				area.Width , 1);
 
-				dc.FillRectangle (br_buttonshadow, area.X + area.Width - 2,
-					area.Y + 1, 1, area.Height -3);
+			dc.FillRectangle (br_buttonshadow, area.X + area.Width - 2,
+				area.Y + 1, 1, area.Height -3);
 
-				dc.FillRectangle (br_buttondkshadow, area.X + area.Width -1,
-					area.Y, 1, area.Height - 1);
+			dc.FillRectangle (br_buttondkshadow, area.X + area.Width -1,
+				area.Y, 1, area.Height - 1);
 
-				dc.FillRectangle (br_buttonface, area.X + 2,
-					area.Y + 2, area.Width - 4, area.Height - 4);
-			}
+			dc.FillRectangle (br_buttonface, area.X + 2,
+				area.Y + 2, area.Width - 4, area.Height - 4);
+			
 		}
 
 		
