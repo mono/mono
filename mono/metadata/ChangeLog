@@ -1,3 +1,14 @@
+2004-12-29  Martin Baulig  <martin@ximian.com>
+
+	* icall.c
+	(ves_icall_MonoGenericMethod_get_reflected_type): New interncall.
+
+	* reflection.c (mono_method_get_object): Create a
+	"System.Reflection.MonoGenericMethod" for inflated methods; don't
+	call mono_get_inflated_method().
+
+	* class-internals.h (MonoStats): Added `inflated_method_count_2'.
+
 2004-12-27  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (MonoMethod): Added `is_inflated' flag.
