@@ -5,7 +5,6 @@
 //      Mark Crichton (crichton@gimp.org)
 //
 
-
 using System;
 using System.Security.Cryptography;
 
@@ -13,30 +12,49 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography {
 
-	public class RNGCryptoServiceProviderTest : TestCase {
+	[TestFixture]
+	public class RNGCryptoServiceProviderTest : Assertion {
+
 		private RNGCryptoServiceProvider _algo;
 		
-		protected override void SetUp() {
-			_algo = new RNGCryptoServiceProvider();
+		[SetUp]
+		private void SetUp () 
+		{
+			_algo = new RNGCryptoServiceProvider ();
 		}
 
-		private void SetDefaultData() {
-		}
-		
-		public void TestProperties() {
-			Assert("Properties (1)", _algo != null);
-			
-			byte[] random = new Byte[25];
-
+		[Test]
+		public void GetBytes () 
+		{
+			byte[] random = new byte [25];
 			// The C code doesn't throw an exception yet.
-			_algo.GetBytes(random);
-			
+			_algo.GetBytes (random);
+		}
+
+		[Test]
+		public void GetNonZeroBytes () 
+		{
+			byte[] random = new byte [25];
 			// This one we can check...
-			_algo.GetNonZeroBytes(random);
+			_algo.GetNonZeroBytes (random);
 			
 			foreach (Byte rnd_byte in random) {
 				Assert("Properties (2)", rnd_byte != 0);
 			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetBytesNull () 
+		{
+			_algo.GetBytes (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetNonZeroBytesNull () 
+		{
+			_algo.GetNonZeroBytes (null);
 		}
 	}
 }

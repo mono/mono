@@ -2,7 +2,7 @@
 // RSATest.cs - NUnit Test Cases for RSA
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
@@ -232,6 +232,31 @@ public class RSATest : Assertion {
 	public void FromXmlStringNull () 
 	{
 		rsa.FromXmlString (null);
+	}
+
+	[Test]
+	public void FromXmlStringBadCase () 
+	{
+		string xml = "<rsakEYvALUE><Modulus>u/gvCQaCzpwjOKwrnahx9zaNB+7UEEOkQNa28HRU9R+437qvA1wCq2HqSM7rb81Idu1SDWDh7EYZcZ2KW4uAf6+44KPfxzdyPua0t9k6JYTuamSdBglTdIg0skVFmDlO4KqxLXthpR9SeppB9sFof+JTcpjKKo9ZRvjl/Qkdvcs=</Modulus><Exponent>EQ==</Exponent></rsakEYvALUE>";
+		rsa.FromXmlString (xml);
+		AssertEquals ("BadCase", xmlPublic, rsa.ToXmlString (false));
+	}
+
+	[Test]
+	public void FromXmlStringBadTop () 
+	{
+		string xml = "<MonoKeyValue><Modulus>u/gvCQaCzpwjOKwrnahx9zaNB+7UEEOkQNa28HRU9R+437qvA1wCq2HqSM7rb81Idu1SDWDh7EYZcZ2KW4uAf6+44KPfxzdyPua0t9k6JYTuamSdBglTdIg0skVFmDlO4KqxLXthpR9SeppB9sFof+JTcpjKKo9ZRvjl/Qkdvcs=</Modulus><Exponent>EQ==</Exponent></MonoKeyValue>";
+		rsa.FromXmlString (xml);
+		AssertEquals ("BadTop", xmlPublic, rsa.ToXmlString (false));
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void FromXmlStringBadItemCase ()
+	{
+		string xml = "<RSAKeyValue><mODULUS>u/gvCQaCzpwjOKwrnahx9zaNB+7UEEOkQNa28HRU9R+437qvA1wCq2HqSM7rb81Idu1SDWDh7EYZcZ2KW4uAf6+44KPfxzdyPua0t9k6JYTuamSdBglTdIg0skVFmDlO4KqxLXthpR9SeppB9sFof+JTcpjKKo9ZRvjl/Qkdvcs=</mODULUS><eXPONENT>EQ==</eXPONENT></RSAKeyValue>";
+		rsa.FromXmlString (xml);
+		AssertEquals ("BadItemCase", xmlPublic, rsa.ToXmlString (false));
 	}
 }
 

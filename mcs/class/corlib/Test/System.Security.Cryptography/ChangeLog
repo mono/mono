@@ -2,7 +2,15 @@
 
 	* RC2Test.cs: Converted to NUnit 2. Uncommented some tests that throw 
 	exceptions to test exception handling (and get more coverage).
+	* RNGCryptoServiceProviderTest.cs: Updated unit tests for exception 
+	testing.
+	* RSATest.cs: Updated unit tests for importing XML key pairs.
 	* SHA256Test.cs: Corrected Setup attribtue (was [Test]).
+	* SymmetricAlgorithm2Test.cs: New. Non generated unit test for better
+	coverage (like exception testing).
+	* ToBase64TransformTest.cs: New. Unit tests to complete coverage of
+	ToBase64Transform.
+	* TripleDESTest.cs: New. Unit tests to complete coverage of TripleDES.
 
 2004-04-29  Sebastien Pouliot  <sebastien@ximian.com>
 
