@@ -1,3 +1,10 @@
+
+Wed Nov 26 19:18:29 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, inssel.brg, mini-x86.c, mini-ppc.c, mini-sparc.c: move
+	arch-specific handling for 'this' and struct return type to
+	arch-specific code.
+
 2003-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* aot.c: prevent divide by zero error when reporting (it happened with
