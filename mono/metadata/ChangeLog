@@ -1,3 +1,9 @@
+2005-01-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (mono_gc_cleanup): Handle the case when this is called from the
+	gc thread.
+	(mono_domain_finalize): Ditto.
+
 2005-01-12  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (mono_class_create_generic_2): Removed
