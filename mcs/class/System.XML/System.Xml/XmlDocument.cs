@@ -862,6 +862,23 @@ namespace System.Xml
 					throw new XmlException ("Reference to undeclared entity was found.");
 
 				n = CreateEntityReference (reader.Name);
+				// IF argument XmlReader can resolve entity,
+				// ReadNode() also fills children _from it_.
+				// In this case, it is not from doctype node.
+				// (it is kind of sucky design, but it happens
+				// anyways when we modify doctype node).
+				//
+				// It does not happen when !CanResolveEntity.
+				// (In such case AppendChild() will resolve
+				// entity content, as XmlEntityReference does.)
+				if (reader.CanResolveEntity)
+				{
+					reader.ResolveEntity ();
+					reader.Read ();
+					for (XmlNode child; reader.NodeType != XmlNodeType.EndEntity && ((child = ReadNode (reader)) != null);)
+						n.InsertBefore (child, null, false, false);
+					reader.Read (); // skip EndEntity
+				}
 				break;
 
 			case XmlNodeType.SignificantWhitespace:

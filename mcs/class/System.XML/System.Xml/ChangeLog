@@ -1,5 +1,11 @@
 2005-03-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocument.cs : In ReadNode(), on EntityReference node, when 
+	  XmlReader can resolve entity, it expands entity and apppend 
+	  children into the entity reference. Patch by Konstantin Triger.
+
+2005-03-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : For duplicating namespace mapping, it should
 	  create another prefix without throwing an exception.
 
