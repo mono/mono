@@ -2569,7 +2569,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			// TypeManager.AddMethod (builder, this);
+			TypeManager.AddMethod (builder, this);
 
 			return true;
 		}

@@ -1,3 +1,11 @@
+2002-07-27  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (MethodData.Define): Put back call to
+	TypeManager.AddMethod(), accidentally commented this out.
+
+	* report.cs (Debug): New public method to print debugging information,
+	this is `[Conditional ("DEBUG")]'.
+
 2002-07-26  Martin Baulig  <martin@gnome.org>
 
 	* cs-parser.jay (CSharpParser): Added `Stack switch_stack'.
