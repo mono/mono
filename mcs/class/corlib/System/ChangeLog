@@ -1,3 +1,9 @@
+2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Activator.cs MonoType.cs: Applied patch from Carlos Alberto Cortez
+	(carlos@unixmexico.org). Allow creation of valuetypes with no ctor.
+	Fixes #73432.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version.

@@ -329,8 +329,12 @@ namespace System
 				ConstructorInfo[] ctors = GetConstructors (invokeAttr);
 				object state = null;
 				MethodBase ctor = binder.BindToMethod (invokeAttr, ctors, ref args, modifiers, culture, namedParameters, out state);
-				if (ctor == null)
-					throw new MissingMethodException ();
+				if (ctor == null) {
+					if (this.IsValueType && args == null)
+						return Activator.CreateInstanceInternal (this);
+					
+					throw new MissingMethodException ("Constructor on type '" + FullName + "' not found.");
+				}
 				object result = ctor.Invoke (target, invokeAttr, binder, args, culture);
 				binder.ReorderArgumentArray (ref args, state);
 				return result;
