@@ -1,3 +1,8 @@
+2004-02-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsServerCertificate.cs: Added code to validate the server X.509
+	certificate (identity, usage) and it's chain to a trusted root.
+	Note that the verification is commented for the time being.
 
 2004-02-14 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
