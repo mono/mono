@@ -1,4 +1,8 @@
 
+Wed May 14 13:35:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: properly encode charset for ddlimport.
+
 Wed May 14 11:14:54 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: allow compiling without GC.
