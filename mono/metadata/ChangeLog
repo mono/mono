@@ -1,3 +1,9 @@
+2002-07-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_string_utf8_to_builder): impl.
+	(mono_string_builder_to_utf8): impl.
+	(mono_marshal_get_native_wrapper): impl. StringBuilder marshaling
+
 2002-07-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): impl. byref types
