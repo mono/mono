@@ -1,3 +1,11 @@
+2005-01-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_global_codeman_reserve): New function to allocate code memory from a global
+	code manager.
+
+	* tramp-x86.c mini-x86.c exceptions-x86.c: Allocate all code memory so mono works with
+	WinXP DEP. Fixes #71244.
+
 2005-01-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel.brg: Allways convert CEE_CONV_OVF_I4 to a move on 64 bit platforms. Fixes #71236.
