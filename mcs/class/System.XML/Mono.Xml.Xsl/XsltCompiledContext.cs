@@ -44,15 +44,13 @@ namespace Mono.Xml.Xsl {
 		}
 			
 		XslTransformProcessor p;
-		VariableScope v;
 		XPathNavigator doc;
 			
 		public XslTransformProcessor Processor { get { return p; }}
 			
-		public XsltCompiledContext (XslTransformProcessor p, VariableScope v, XPathNavigator doc)
+		public XsltCompiledContext (XslTransformProcessor p, XPathNavigator doc)
 		{
 			this.p = p;
-			this.v = v;
 			this.doc = doc;
 		}
 
@@ -154,13 +152,6 @@ namespace Mono.Xml.Xsl {
 		public override System.Xml.Xsl.IXsltContextVariable ResolveVariable(string prefix, string name)
 		{
 			QName varName = new QName (name, LookupNamespace (prefix));
-			
-			if (v != null) {
-				XslGeneralVariable var = v.Resolve (p, varName);
-	
-				if (var != null)
-					return var;
-			}
 			return p.CompiledStyle.ResolveVariable (varName);
 		}
 

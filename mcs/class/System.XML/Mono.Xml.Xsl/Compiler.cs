@@ -571,15 +571,11 @@ namespace Mono.Xml.Xsl {
 	}
 	
 	public class ExpressionStore {
-	
-		Hashtable exprToVarCtx = new Hashtable ();
-		Hashtable exprToSorts = new Hashtable ();
+		Hashtable exprToSorts;
 		Hashtable exprToDocument = new Hashtable ();
 		
 		public void AddExpression (XPathExpression e, Compiler c)
-		{
-			exprToVarCtx [e] = c.CurrentVariableScope;
-			
+		{		
 			XPathNavigator nsScope = c.Input.Clone ();
 			if (nsScope.NodeType == XPathNodeType.Attribute)
 				nsScope.MoveToParent ();
@@ -589,8 +585,6 @@ namespace Mono.Xml.Xsl {
 		
 		public void AddPattern (Pattern p, Compiler c)
 		{
-			exprToVarCtx [p] = c.CurrentVariableScope;
-			
 			XPathNavigator nsScope = c.Input.Clone ();
 			if (nsScope.NodeType == XPathNodeType.Attribute)
 				nsScope.MoveToParent ();
@@ -600,6 +594,9 @@ namespace Mono.Xml.Xsl {
 		
 		public void AddSort (XPathExpression e, Sort s)
 		{
+			if (exprToSorts == null)
+				exprToSorts = new Hashtable ();
+			
 			if (exprToSorts.Contains (e))
 				((ArrayList)exprToSorts [e]).Add (s);
 			else {
@@ -613,8 +610,8 @@ namespace Mono.Xml.Xsl {
 		{
 			XPathExpression expr = e.Clone ();
 
-			expr.SetContext (new XsltCompiledContext (p, (VariableScope)exprToVarCtx [e], (XPathNavigator)exprToDocument [e]));
-			if (exprToSorts.Contains (e))
+			expr.SetContext (new XsltCompiledContext (p, (XPathNavigator)exprToDocument [e]));
+			if (exprToSorts != null && exprToSorts.Contains (e))
 			{
 				foreach (Sort s in (ArrayList)exprToSorts [e])
 					s.AddToExpr (expr,p);
@@ -624,7 +621,7 @@ namespace Mono.Xml.Xsl {
 		
 		public bool PatternMatches (Pattern p, XslTransformProcessor proc, XPathNavigator n)
 		{
-			XsltContext c = new XsltCompiledContext (proc, (VariableScope)exprToVarCtx [p], (XPathNavigator)exprToDocument [p]);
+			XsltContext c = new XsltCompiledContext (proc, (XPathNavigator)exprToDocument [p]);
 			
 			return p.Matches (n, c);
 		}

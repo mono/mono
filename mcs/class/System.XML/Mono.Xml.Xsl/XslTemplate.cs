@@ -315,8 +315,9 @@ namespace Mono.Xml.Xsl {
 					int len = parameters.Count;
 					for (int i = 0; i < len; i++) {
 						XslLocalParam param = (XslLocalParam)parameters [i];
-						if (withParams.Contains (param.Name))
-							param.Override (p, withParams [param.Name]);
+						object o = withParams [param.Name];
+						if (o != null)
+							param.Override (p, o);
 						else
 							param.Evaluate (p);
 					}

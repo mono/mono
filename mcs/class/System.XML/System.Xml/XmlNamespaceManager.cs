@@ -130,8 +130,10 @@ namespace System.Xml
 			NamespaceScope scope = currentScope;
 
 			while (scope != null) {
-				if (scope.Namespaces != null && scope.Namespaces.Contains (prefix))
-					return scope.Namespaces[prefix] as string;
+				if (scope.Namespaces != null) {
+					string s = scope.Namespaces [prefix] as string;
+					if (s != null) return s;
+				}
 				scope = scope.Next;
 			}
 
