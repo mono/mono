@@ -1,3 +1,10 @@
+2005-01-29  Miguel de Icaza  <miguel@novell.com>
+
+	* pending.cs (PendingImplementation.DefineProxy): It was not `arg
+	i - 1' it should be arg + 1.
+
+	Fixes bug #71819.
+
 2005-01-28  Raja R Harinath  <rharinath@novell.com>
 
 	* attribute.cs (Attribute.CheckAttributeType): Make private
