@@ -2334,14 +2334,11 @@ AttributeValueContentSequence // returns ExprSequence
 	;
 
 AttributeValueContent // returns ExprSingle
-	: ATT_VALUE_LITERAL // including "{{", "}}" and char/predefined entities 
+	: ATT_VALUE_LITERAL // including "{{", "}}" and char/predefined entities
 	{
-		$$ = new ExprLiteral ((string) $1);
+		$$ = new StringLiteralExpr ((string) $1);
 	}
 	| EnclosedExpr
-	{
-		$$ = $1;
-	}
 	;
 
 EnclosedExpr // returns EnclosedExpr 
