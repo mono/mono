@@ -1,3 +1,7 @@
+2005-01-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c: Add support for returning structs in registers from pinvoke functions on WIN32.
+
 Mon Jan 10 16:11:16 EST 2005 Neale Ferguson <nealeferguson@earthlink.net>
 
 	* mini-ops.h, inssel-s390.brg, cpu-s390.md: Support OP_ATOMIC__xxx 
