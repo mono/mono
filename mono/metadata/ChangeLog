@@ -1,3 +1,12 @@
+2004-12-18  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_type): If we're inflating a generic
+	instance, set `ngclass->context->container = context->container';
+	ie. the container we inflated into.
+
+	* metadata.c (mono_metadata_parse_generic_param): Reflect above
+	inflate_generic_type() changes.
+
 2004-12-17  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h
