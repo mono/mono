@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------------
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,8 +39,9 @@
 //
 
 using System;
-using System.Security.Permissions;
 using System.Collections;
+using System.Security;
+using System.Security.Permissions;
 using System.Text;
 
 namespace System.IO
@@ -208,20 +209,15 @@ namespace System.IO
 
 		public static string GetCurrentDirectory ()
 		{
-			/*
-			// Implementation complete 08/25/2001 14:24 except for
-			// LAMESPEC: documentation specifies invalid exceptions (i think)
-			//           also shouldn't need Write to getcurrrent should we?
-			string str = Environment.CurrentDirectory;
-			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, str);
-			*/
-
 			MonoIOError error;
 				
 			string result = MonoIO.GetCurrentDirectory (out error);
 			if (error != MonoIOError.ERROR_SUCCESS)
 				throw MonoIO.GetException (error);
 
+			if ((result != null) && (result.Length > 0) && SecurityManager.SecurityEnabled) {
+				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, result).Demand ();
+			}
 			return result;
 		}
 		
@@ -333,14 +329,9 @@ namespace System.IO
 			SetCreationTime (path, creation_time.ToLocalTime ());
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void SetCurrentDirectory (string path)
 		{
-			/*
-			// Implementation complete 08/25/2001 14:24 except for
-			// LAMESPEC: documentation specifies invalid exceptions IOException (i think)
-			CheckArgument.Path (path, true);
-			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, path);	
-			*/
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			if (path.Trim () == String.Empty)

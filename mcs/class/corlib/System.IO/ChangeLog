@@ -1,3 +1,8 @@
+2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Directory.cs: Added CAS security to Get|SetCurrentDirectory to 
+	complete Environment security checks.
+
 2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BufferedStream.cs: use Buffer.BlockCopyInternal instead of Array.Copy.
