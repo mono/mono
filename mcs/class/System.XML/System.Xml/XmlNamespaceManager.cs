@@ -215,7 +215,13 @@ namespace System.Xml
 		internal virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
 #endif
 		{
-			throw new NotImplementedException ();
+			Hashtable table = new Hashtable ();
+			int stop = (scope == XmlNamespaceScope.Local) ? declPos - count : 0;
+			for (int i = declPos; i > stop; i--)
+				table.Add (decls [i].Prefix, decls [i].Uri);
+			if (scope == XmlNamespaceScope.All)
+				table.Add ("xml", XmlNamespaceManager.XmlnsXml);
+			return table;
 		}
 
 		public virtual bool HasNamespace (string prefix)

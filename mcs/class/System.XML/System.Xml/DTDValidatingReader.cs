@@ -37,7 +37,11 @@ using System.Xml.Schema;
 
 namespace Mono.Xml
 {
+#if NET_2_0
+	internal class DTDValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext, IHasXmlSchemaInfo, IXmlNamespaceResolver
+#else
 	internal class DTDValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext, IHasXmlSchemaInfo
+#endif
 	{
 		public DTDValidatingReader (XmlReader reader)
 			: this (reader, null)
@@ -162,6 +166,14 @@ namespace Mono.Xml
 			return reader.GetAttribute ((string) attributeLocalNames [name], ns);
 		}
 
+#if NET_2_0
+		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
+			return res != null ? res.GetNamespacesInScope (scope) : new Hashtable ();
+		}
+#endif
+
 		bool IXmlLineInfo.HasLineInfo ()
 		{
 			IXmlLineInfo ixli = reader as IXmlLineInfo;
@@ -176,6 +188,20 @@ namespace Mono.Xml
 			// Does it mean anything with DTD?
 			return reader.LookupNamespace (prefix);
 		}
+
+#if NET_2_0
+		string IXmlNamespaceResolver.LookupPrefix (string ns)
+		{
+			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
+			return res != null ? res.LookupPrefix (ns) : null;
+		}
+
+		string IXmlNamespaceResolver.LookupPrefix (string ns, bool atomizedNames)
+		{
+			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
+			return res != null ? res.LookupPrefix (ns, atomizedNames) : null;
+		}
+#endif
 
 		public override void MoveToAttribute (int i)
 		{

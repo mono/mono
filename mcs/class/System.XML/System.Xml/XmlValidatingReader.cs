@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.IO;
 using System.Security.Policy;
 using System.Text;
@@ -37,8 +38,14 @@ using System.Xml.Schema;
 using Mono.Xml;
 using Mono.Xml.Schema;
 
-namespace System.Xml {
-	public class XmlValidatingReader : XmlReader, IXmlLineInfo {
+namespace System.Xml
+{
+#if NET_2_0
+	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver
+#else
+	public class XmlValidatingReader : XmlReader, IXmlLineInfo
+#endif
+	{
 
 		#region Fields
 
@@ -367,6 +374,13 @@ namespace System.Xml {
 		}
 
 #if NET_2_0
+		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			return GetInternalParserContext ().NamespaceManager.GetNamespacesInScope (scope);
+		}
+#endif
+
+#if NET_2_0
 		public bool HasLineInfo ()
 #else
 		bool IXmlLineInfo.HasLineInfo ()
@@ -383,6 +397,33 @@ namespace System.Xml {
 			else
 				return validatingReader.LookupNamespace (prefix);
 		}
+
+#if NET_2_0
+		string IXmlNamespaceResolver.LookupPrefix (string ns)
+		{
+			IXmlNamespaceResolver res = null;
+			if (validatingReader != null)
+				res = sourceReader as IXmlNamespaceResolver;
+			else
+				res = validatingReader as IXmlNamespaceResolver;
+			return res != null ?
+				res.LookupNamespace (ns) :
+				null;
+		}
+
+		string IXmlNamespaceResolver.LookupPrefix (string ns, bool atomizedNames)
+		{
+			IXmlNamespaceResolver res = null;
+			if (validatingReader != null)
+				res = sourceReader as IXmlNamespaceResolver;
+			else
+				res = validatingReader as IXmlNamespaceResolver;
+			return res != null ?
+				res.LookupNamespace (ns, atomizedNames) :
+				null;
+		}
+#endif
+
 
 		public override void MoveToAttribute (int i)
 		{

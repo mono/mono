@@ -543,10 +543,25 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			throw new NotImplementedException ();
+			Hashtable table = new Hashtable ();
+			XmlNode n = current;
+			do {
+				if (n.NodeType == XmlNodeType.Document)
+					break;
+				for (int i = 0; i < current.Attributes.Count; i++) {
+					XmlAttribute a = current.Attributes [i];
+					if (a.NamespaceURI == XmlNamespaceManager.XmlnsXmlns)
+						table.Add (a.Prefix == "xmlns" ? a.LocalName : String.Empty, a.Value);
+				}
+				if (scope == XmlNamespaceScope.Local)
+					return table;
+				n = n.ParentNode;
+			} while (n != null);
+			if (scope == XmlNamespaceScope.All)
+				table.Add ("xml", XmlNamespaceManager.XmlnsXml);
+			return table;
 		}
 #endif
 

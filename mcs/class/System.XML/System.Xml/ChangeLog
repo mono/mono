@@ -1,5 +1,12 @@
 2004-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DTDValidatingReader.cs,
+	  XmlValidatingReader.cs : implemented IXmlNamespaceResolver.
+	* XmlNamespaceManager.cs,
+	  XmlNodeReader.cs : implemented GetNamespacesInScope().
+
+2004-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlCharacterData.cs,
 	  XmlDocument.cs,
 	  XmlNodeChangedEventArgs.cs : 
