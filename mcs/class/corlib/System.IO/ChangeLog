@@ -1,7 +1,12 @@
 
+Sun Aug 26 23:01:41 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* FileAccess.cs, FileMode.cs: change values to be compatible with
+	the ms ones.
+	
 Sun Aug 26 11:47:56 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
-	* IoException.cs: Implemented System.IO.Exception.
+	* IOException.cs: Implemented System.IO.Exception.
 
 2001-07-18  Michael Lambert <michaellambert@email.com>
 

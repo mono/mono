@@ -14,9 +14,9 @@ namespace System.IO
 
 public enum FileAccess
 {
-    Read,
-    ReadWrite,
+    Read = 1,
     Write,
+    ReadWrite,
 }
 
 } // Namespace

@@ -14,12 +14,12 @@ namespace System.IO
 
 public enum FileMode
 {
-    Append,
+    CreateNew = 1,
     Create,
-    CreateNew,
     Open,
     OpenOrCreate,
     Truncate,
+    Append,
 }
 
 } // Namespace
