@@ -80,7 +80,8 @@ namespace Mono.ILASM {
 
 						int escaped = Escape (ch);
 						if (escaped == -1) {
-							throw new ILSyntaxError("Invalid escape sequence.");
+                                                        ch = '\\';
+                                                        // throw new ILSyntaxError("Invalid escape sequence.");
 						}
 					}
 

@@ -1,3 +1,7 @@
+2003-08-10 Jackson Harper <jackson@latitudegeo.com>
+
+	* StringHelper.cs: If an escape is not valid just use the \ character.
+		
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
 	* NumberHelper.cs: All numbers should allways be Int64
