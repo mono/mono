@@ -2345,11 +2345,6 @@ namespace Mono.CSharp {
 			if (ptype != null){
 				MemberList mi, mi_static, mi_instance;
 
-				mi_static = TypeContainer.FindMembers (
-					ptype, MemberTypes.Method,
-					BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-					MethodSignature.inheritable_method_signature_filter, ms);
-
 				mi_instance = TypeContainer.FindMembers (
 					ptype, MemberTypes.Method,
 					BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
@@ -2358,10 +2353,17 @@ namespace Mono.CSharp {
 
 				if (mi_instance.Count > 0){
 					mi = mi_instance;
-				} else if (mi_static.Count > 0)
-					mi = mi_static;
-				else
-					mi = null;
+				} else {
+					mi_static = TypeContainer.FindMembers (
+						ptype, MemberTypes.Method,
+						BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
+						MethodSignature.inheritable_method_signature_filter, ms);
+
+					if (mi_static.Count > 0)
+						mi = mi_static;
+					else
+						mi = null;
+				}
 
 				if (mi != null && mi.Count > 0){
 					parent_method = (MethodInfo) mi [0];
@@ -3434,8 +3436,8 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected readonly Object init;
 		// Private.
-		readonly Object init;
 		Expression init_expr;
 		bool init_expr_initialized = false;
 
