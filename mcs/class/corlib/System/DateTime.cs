@@ -191,7 +191,8 @@ namespace System
 				day < 1 || day > DaysInMonth(year, month) ||
 				hour < 0 || hour > 23 ||
 				minute < 0 || minute > 59 ||
-				second < 0 || second > 59 )
+				second < 0 || second > 59 ||
+				millisecond < 0 || millisecond > 999)
 				throw new ArgumentOutOfRangeException ("Parameters describe an " +
 									"unrepresentable DateTime.");
 
@@ -1776,9 +1777,19 @@ namespace System
 			throw new InvalidCastException();
 		}
 
-		object IConvertible.ToType(Type conversionType,IFormatProvider provider)
+		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			if (conversionType == null)
+				throw new ArgumentNullException ("conversionType");
+
+			if (conversionType == typeof (DateTime))
+				return this;
+			else if (conversionType == typeof (String))
+				return this.ToString (provider);
+			else if (conversionType == typeof (Object))
+				return this;
+			else
+				throw new InvalidCastException();
 		}
 
 		UInt16 IConvertible.ToUInt16(IFormatProvider provider)
@@ -1792,7 +1803,6 @@ namespace System
 		}
 
 		UInt64 IConvertible.ToUInt64(IFormatProvider provider)
-
 		{
 			throw new InvalidCastException();
 		}

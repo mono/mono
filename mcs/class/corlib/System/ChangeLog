@@ -1,6 +1,8 @@
 2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* DateTime.cs: Fixed FromFileTime for negative values.
+	* DateTime.cs: Fixed FromFileTime for negative values. Fixed 
+	constructor to limit range of milliseconds from 0,999. Fixed
+	ToType method to work for object, string and DateTime.
 
 2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
