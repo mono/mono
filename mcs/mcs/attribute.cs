@@ -120,21 +120,22 @@ namespace Mono.CSharp {
 				e = a.Expr;
 				if (e is Constant) {
 					pos_values [i] = ((Constant) e).GetValue ();
-
-					if (UsageAttr)
-						this.Targets = (AttributeTargets) pos_values [0];
-
-					if (MethodImplAttr)
-						this.ImplOptions = (MethodImplOptions) pos_values [0];
-
-					if (MarshalAsAttr)
-						this.UnmanagedType =
-							(System.Runtime.InteropServices.UnmanagedType) pos_values [0];
-					
-				} else { 
+				} else if (e is TypeOf) {
+					pos_values [i] = ((TypeOf) e).typearg;
+				} else {
 					error182 ();
 					return null;
 				}
+				
+				if (UsageAttr)
+					this.Targets = (AttributeTargets) pos_values [0];
+				
+				if (MethodImplAttr)
+					this.ImplOptions = (MethodImplOptions) pos_values [0];
+				
+				if (MarshalAsAttr)
+					this.UnmanagedType =
+					(System.Runtime.InteropServices.UnmanagedType) pos_values [0];
 			}
 
 			//

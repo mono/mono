@@ -1,3 +1,8 @@
+2002-04-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: Add support for typeof in attribute invocations.
+	I am not sure that this is right though.
+
 2002-04-14  Duncan Mak  <duncan@ximian.com>
 
 	* cfold.cs (BinaryFold): Catch DivideByZeroException in the
