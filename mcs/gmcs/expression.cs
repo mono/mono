@@ -1162,6 +1162,9 @@ namespace Mono.CSharp {
 
 				warning_always_matches = true;
 			} else if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
+				if (etype.IsGenericParameter)
+					expr = new BoxedCast (expr, etype);
+
 				//
 				// Second case: explicit reference convresion
 				//
@@ -1174,15 +1177,15 @@ namespace Mono.CSharp {
 				warning_never_matches = true;
 			}
 			
-				if (warning_always_matches)
+			if (warning_always_matches)
 				Warning (183, "The given expression is always of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
-				else if (warning_never_matches){
-					if (!(probe_type.IsInterface || expr.Type.IsInterface))
+			else if (warning_never_matches){
+				if (!(probe_type.IsInterface || expr.Type.IsInterface))
 					Warning (184, "The given expression is never of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
 			}
 
 			return this;
-		}				
+		}
 	}
 
 	/// <summary>
@@ -1240,6 +1243,9 @@ namespace Mono.CSharp {
 			}
 
 			if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
+				if (etype.IsGenericParameter)
+					expr = new BoxedCast (expr, etype);
+
 				do_isinst = true;
 				return this;
 			}

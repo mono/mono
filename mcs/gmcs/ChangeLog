@@ -1,5 +1,10 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Is.DoResolve, As.DoResolve): If we're a type
+	parameter, box it.  Fixes #69233.
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (ConstructedType.CheckConstraints): Valuetypes always
 	have the ctor constraint.  Fixes #68326.
 
