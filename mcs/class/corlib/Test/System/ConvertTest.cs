@@ -1360,9 +1360,9 @@ namespace MonoTests.System
 		}
 		public void TestToInt64() {
 			decimal longMax = long.MaxValue;
-			longMax += 1;
+			longMax += 1000000;
 			decimal longMin = long.MinValue;
-			longMin -= 1;
+			longMin -= 1000000;
 
 			AssertEquals("#L01", (long)0, Convert.ToInt64(boolFalse));
 			AssertEquals("#L02", (long)1, Convert.ToInt64(boolTrue));
@@ -1413,7 +1413,7 @@ namespace MonoTests.System
 				Fail();
 			}
 			catch (Exception e) {
-				AssertEquals("#L25", typeof(OverflowException), e.GetType());
+				AssertEquals("#L25:"+longMax, typeof(OverflowException), e.GetType());
 			}
 
 			try {
@@ -1433,15 +1433,15 @@ namespace MonoTests.System
 			}
 
 			try {
-				Convert.ToInt64((float)longMax);
+				Convert.ToInt64(((float)longMax)*100);
 				Fail();
 			}
 			catch (Exception e) {
-				AssertEquals("#L28", typeof(OverflowException), e.GetType());
+				AssertEquals("#L28:"+longMax, typeof(OverflowException), e.GetType());
 			}
 
 			try {
-				Convert.ToInt64((float)longMin);
+				Convert.ToInt64(((float)longMin)*100);
 				Fail();
 			}
 			catch (Exception e) {
@@ -1461,7 +1461,7 @@ namespace MonoTests.System
 				Fail();
 			}
 			catch (Exception e) {
-				AssertEquals("#L31", typeof(OverflowException), e.GetType());
+				AssertEquals("#L31:", typeof(OverflowException), e.GetType());
 			}
 
 			try {

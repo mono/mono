@@ -51,8 +51,14 @@ namespace MonoTests.System
 
         private void ReportOpError(string msg, int i, int j, decimal d1, decimal d2, decimal d3, decimal d3b)
         {
-            Fail ("*** " + msg + " for d1=" + d1 + " i=" + i + " d2=" + d2 + " j=" + j + " d3=" + d3 + " d3b=" + d3b + "\n"
-		+ "Ist:" + d3 +  "  Soll:" + d3b + "  delta=" + (d3 - d3b) + " == " + (d3 == d3b));
+		decimal delta = 0;
+		try {
+			delta = d3 - d3b;
+		} catch (Exception e) {
+			Fail("ReportOpError: Unexpected exception on " + d3 + " - " + d3b + ". e:" + e);
+		}
+		Fail ("*** " + msg + " for d1=" + d1 + " i=" + i + " d2=" + d2 + " j=" + j + " d3=" + d3 + " d3b=" + d3b + "\n"
+			+ "Ist:" + d3 +  "  Soll:" + d3b + "  delta=" + (delta) + " == " + (d3 == d3b));
         }
 
         public void TestCompare()
