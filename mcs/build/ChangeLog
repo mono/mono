@@ -1,3 +1,9 @@
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
+	* profiles/generics.make: Renamed to `martin-generics.make' and
+	added a comment to the file.  I'll rename this back when it's
+	ready for public use.
+
 2003-12-17  Jackson Harper <jackson@ximian.com>
 
 	* profiles/default.make:
