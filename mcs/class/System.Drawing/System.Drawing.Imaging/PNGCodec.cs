@@ -198,23 +198,24 @@ namespace System.Drawing.Imaging
 			fs.Flush();
 		}
 		
-		internal static void DecodeDelegate (Stream stream, InternalImageInfo info) 
+		internal static void DecodeDelegate (Image image, Stream stream, BitmapData info) 
 		{
 			PNGCodec png = new PNGCodec();
-			png.Decode (stream, info);
+			png.Decode (image, stream, info);
 		}
 
-		internal static void EncodeDelegate (Stream stream, InternalImageInfo info) 
+		internal static void EncodeDelegate (Image image, Stream stream, BitmapData info) 
 		{
 			PNGCodec png = new PNGCodec();
-			png.Encode (stream, info);
+			png.Encode (image, stream, info);
 		}
 
-		internal unsafe void switch_color_bytes( byte[] image) {
+		internal unsafe void switch_color_bytes (byte[] image)
+		{
 			fixed(byte* start = image) {
 				byte *pb = start;
 				byte t1;
-				for( int ic = 0; ic < image.Length; ic +=3) {
+				for (int ic = 0; ic < image.Length; ic +=3) {
 					t1 = *pb;
 					*(pb) = *(pb+2);
 					*(pb+2) = t1;
@@ -223,8 +224,9 @@ namespace System.Drawing.Imaging
 			}
 		}
 
-		internal bool Decode( Stream stream, InternalImageInfo info) 
+		internal bool Decode (Image image, Stream stream, BitmapData info) 
 		{
+#if false
 			fs = stream;
 		
 			IntPtr png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, IntPtr.Zero, 
@@ -266,7 +268,7 @@ namespace System.Drawing.Imaging
 			IntPtr row_data = Marshal.AllocHGlobal (row_width);
 			int outputIndex = info.RawImageBytes.Length - row_width;
 			for (int row = 0; row < height; row++) {
-				png_read_row ( png_ptr, row_data, IntPtr.Zero);
+				png_read_row (png_ptr, row_data, IntPtr.Zero);
 				Marshal.Copy (row_data, info.RawImageBytes, outputIndex, row_width);
 				outputIndex -= row_width;
 			}
@@ -278,14 +280,15 @@ namespace System.Drawing.Imaging
  			
 			// FIXME: not sure if this always works, and use PNG library transformation
 			switch_color_bytes(info.RawImageBytes);
- 			
+#endif
 			return true;
 		}
 
-		internal unsafe bool Encode( Stream stream, InternalImageInfo info) 
+		internal unsafe bool Encode (Image image, Stream stream, BitmapData info) 
 		{
+#if false
 			int bpp = Image.GetPixelFormatSize(info.PixelFormat) / 8;
-			if( bpp != 3 && bpp != 4) {
+			if (bpp != 3 && bpp != 4) {
 				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.PixelFormat, Image.GetPixelFormatSize(info.PixelFormat)));
 			}
 
@@ -325,13 +328,13 @@ namespace System.Drawing.Imaging
 			int outputIndex = info.RawImageBytes.Length - src_row_bytes_width;
 			byte[] buffer = new byte[row_bytes_width];
 
-			fixed( byte *psrc = info.RawImageBytes, pbuf = buffer) {
+			fixed (byte *psrc = info.RawImageBytes, pbuf = buffer) {
 				byte* curSrc = null;
 				byte* curDst = null;
 				for (int row = 0; row < info.Size.Height; row++) {
 					curSrc = psrc + outputIndex;
 					curDst = pbuf;
-					for( int i = 0; i < row_width; i++) {
+					for (int i = 0; i < row_width; i++) {
 						*curDst++ = *(curSrc+2);
 						*curDst++ = *(curSrc+1);
 						*curDst++ = *curSrc;
@@ -348,7 +351,7 @@ namespace System.Drawing.Imaging
 					}
 					Marshal.Copy (buffer, 0, row_data, row_bytes_width);
 					outputIndex -= src_row_bytes_width;
-					png_write_row ( png_ptr, row_data);
+					png_write_row (png_ptr, row_data);
 				}
 			}
 
@@ -357,7 +360,7 @@ namespace System.Drawing.Imaging
 			png_write_end (png_ptr, info_ptr);
 			
  			png_destroy_write_struct (ref png_ptr, ref info_ptr);			
- 			
+#endif
 			return true;
 		}
 	}

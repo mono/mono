@@ -1,5 +1,24 @@
 2003-10-23  Miguel de Icaza  <miguel@ximian.com>
 
+	* Image.cs: Kill the InternalImageInfo, everything is now done in
+	terms of Image and BitmapData.
+
+	* Rectangle.cs: Make this one also sequential, change from using
+	Point + Size to use x, y, width, height;  So we can use GdiPlus.
+
+	* gdipFunctions.cs (GdipBitmapLockBits): Remove the ref from the
+	BitmapData class argument, and instead use the [In,Out]
+	attributes, which will do struct marshalling on the fields.   Now
+	we can use C#'s BitmapData directly to talk to Gdiplus.
+
+	* gdipStructs.cs: Every internal structure that has to talk to
+	Gdi+ is properly prefixed, to minimize the confussion.
+
+	* Bitmap.cs Bitmap (int width, int height, PixelFormat format):
+	Compute the stride here where we have the BPP information,
+	allocate a buffer of the proper size, and pass this to
+	GdipCreateBitmapFromScan0 
+
 	* Image.cs: Implement Dispose pattern.
 
 2003-10-14  Alexandre Pigolkine <pigolkine@gmx.de>

@@ -132,22 +132,25 @@ namespace System.Drawing.Imaging
 				internal int INPUT_COMPONENTS;
 				internal int IN_COLOR_SPACE;
 				internal int NEXT_SCAN_LINE;
+				internal int REC_OUTBUF_HEIGHT;
 			};
 
 			structure_fields[] known_libraries;
 			int current_library_index;
 			
-			public jpeg_compress_decompress_base(structure_fields[] known_libraries, int start_index) {
+			public jpeg_compress_decompress_base (structure_fields[] known_libraries, int start_index)
+			{
 				this.known_libraries = known_libraries;
 				current_library_index = start_index;
 				raw_struct_array = new byte[known_libraries[current_library_index].structure_size];
 			}
 
-			public void switch_to_struct_size(int size) {
+			public void switch_to_struct_size (int size)
+			{
 				if (raw_struct_array.Length == size) return;
 
 				bool structureFound = false;
-				for( int i = 0; i < known_libraries.Length; i++) {
+				for (int i = 0; i < known_libraries.Length; i++) {
 					if( known_libraries[i].structure_size == size) {
 						current_library_index = i;
 						raw_struct_array = new byte[known_libraries[current_library_index].structure_size];
@@ -166,15 +169,15 @@ namespace System.Drawing.Imaging
 				}
 			}
 
-			unsafe protected void copyToStruct( int value, int offset) {
-				fixed( byte* pd = raw_struct_array) {
+			unsafe protected void copyToStruct (int value, int offset) {
+				fixed (byte* pd = raw_struct_array) {
 					*((int*)(pd + offset)) = value;
 				}
 			}
 
-			unsafe protected int copyFromStruct( int offset) {
+			unsafe protected int copyFromStruct (int offset) {
 				int result = 0;
-				fixed( byte* pd = raw_struct_array) {
+				fixed (byte* pd = raw_struct_array) {
 					result = *((int*)(pd + offset));
 				}
 				return result;
@@ -190,16 +193,16 @@ namespace System.Drawing.Imaging
 
 			public jpeg_source_mgr jpeg_source_mgr {
 				set {
-					raw_source_mgr = Marshal.AllocHGlobal( Marshal.SizeOf(value));
-					Marshal.StructureToPtr( value, raw_source_mgr, false);
+					raw_source_mgr = Marshal.AllocHGlobal (Marshal.SizeOf(value));
+					Marshal.StructureToPtr (value, raw_source_mgr, false);
 					copyToStruct(raw_source_mgr.ToInt32(), 24);
 				}
 			}
 
 			public jpeg_destination_mgr jpeg_destination_mgr {
 				set {
-					raw_destination_mgr = Marshal.AllocHGlobal( Marshal.SizeOf(value));
-					Marshal.StructureToPtr( value, raw_destination_mgr, false);
+					raw_destination_mgr = Marshal.AllocHGlobal (Marshal.SizeOf(value));
+					Marshal.StructureToPtr (value, raw_destination_mgr, false);
 					copyToStruct(raw_destination_mgr.ToInt32(), 24);
 				}
 			}
@@ -217,7 +220,7 @@ namespace System.Drawing.Imaging
 					Color[] map = new Color[actual_number_of_colors];
 					if (nativeMap != IntPtr.Zero) {
 						byte[] byteMap = new byte[OutColorComponents * actual_number_of_colors];
-						Marshal.Copy( (IntPtr)Marshal.ReadInt32(nativeMap), byteMap, 0, byteMap.Length);
+						Marshal.Copy ((IntPtr)Marshal.ReadInt32(nativeMap), byteMap, 0, byteMap.Length);
 					}
 					return map;
 				}
@@ -253,6 +256,12 @@ namespace System.Drawing.Imaging
 				}
 			}
 
+			public int RecOutputHeight {
+				get {
+					return copyFromStruct(known_libraries[current_library_index].REC_OUTBUF_HEIGHT);
+				}
+			}
+			
 			public int OutColorComponents {
 				get {
 					return copyFromStruct(known_libraries[current_library_index].OUT_COLOR_COMPONENT);
@@ -330,6 +339,12 @@ namespace System.Drawing.Imaging
 					known_jpeg_libraries[GNU_JPEG_DLL_WINDOWS].OUTPUT_SCANLINE = 120;
 					known_jpeg_libraries[GNU_JPEG_DLL_WINDOWS].OUT_COLORMAP = 116;
 
+					//
+					// Wild guess: in Unix this comes after the OUTPUT_COMPONENTS, so I have
+					// made up this offset
+					//
+					known_jpeg_libraries[GNU_JPEG_DLL_WINDOWS].REC_OUTBUF_HEIGHT = 108;
+
 					// libjpeg Linux version
 					known_jpeg_libraries[LINUX_LIBJPEG].structure_size = 464;
 					known_jpeg_libraries[LINUX_LIBJPEG].QUANTIZE_COLORS = 84;
@@ -339,6 +354,7 @@ namespace System.Drawing.Imaging
 					known_jpeg_libraries[LINUX_LIBJPEG].OUTPUT_HEIGHT = 116;
 					known_jpeg_libraries[LINUX_LIBJPEG].OUT_COLOR_COMPONENT = 120;
 					known_jpeg_libraries[LINUX_LIBJPEG].OUTPUT_COMPONENTS = 124;
+					known_jpeg_libraries[LINUX_LIBJPEG].REC_OUTBUF_HEIGHT = 128;
 					known_jpeg_libraries[LINUX_LIBJPEG].OUTPUT_SCANLINE = 140;
 					known_jpeg_libraries[LINUX_LIBJPEG].OUT_COLORMAP = 136;
 
@@ -396,34 +412,15 @@ namespace System.Drawing.Imaging
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		internal struct JSAMPARRAY {
-			// FIXME: This code is not working on Mono(** ERROR **: Invalid IL code at...). Report a bug and change it later.
-			//const int MAX_SCAN_LINES = 10;
-			//[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=MAX_SCAN_LINES)]
-			//internal  IntPtr[] JSAMPLES;
-			internal IntPtr JSAMPLE0;
-			internal IntPtr JSAMPLE1;
-
-			internal  JSAMPARRAY(int len) {
-/*
-				JSAMPLES = new IntPtr[MAX_SCAN_LINES];
-				for (int i = 0; i < MAX_SCAN_LINES; i++) {
-					JSAMPLES[i] = Marshal.AllocHGlobal(len);
-				}
-*/				
-				JSAMPLE0 = Marshal.AllocHGlobal(len);
-				JSAMPLE1 = Marshal.AllocHGlobal(len);
-			}
-
-			internal  void Dispose() {
-/*
-				for (int i = 0; i < MAX_SCAN_LINES; i++) {
-					Marshal.FreeHGlobal(JSAMPLES[i]);
-				}
-*/				
-				Marshal.FreeHGlobal(JSAMPLE0);
-				Marshal.FreeHGlobal(JSAMPLE1);
-			}
+		unsafe internal struct JSAMPARRAY {
+			//
+			// Use to expand the rows: notice that the spec says that rec_outbuf_height
+			// will be either 1, 2 or 4
+			//
+			internal void *JSAMPLE0;
+			internal void *JSAMPLE1;
+			internal void *JSAMPLE2;
+			internal void *JSAMPLE3;
 		}
 
 		const string JPEGLibrary = "jpeg";
@@ -455,10 +452,10 @@ namespace System.Drawing.Imaging
 		internal static extern int jpeg_start_decompress(byte[] cinfo);
 		
 		[DllImport(JPEGLibrary, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int jpeg_read_scanlines(byte[] cinfo, ref JSAMPARRAY buffer, int num);
+		internal static extern int jpeg_read_scanlines(byte[] cinfo, ref JSAMPARRAY scanlines, int num);
 
 		[DllImport(JPEGLibrary, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int jpeg_write_scanlines(byte[] cinfo, ref JSAMPARRAY scanlines, int num_lines);
+		internal static extern int jpeg_write_scanlines(byte[] cinfo, ref IntPtr scanlines, int num_lines);
 		
 		[DllImport(JPEGLibrary, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int jpeg_finish_compress(byte[] cinfo);
@@ -477,11 +474,11 @@ namespace System.Drawing.Imaging
 		int readwriteSize = 4096;
 
 		// Source manager callbacks
-		void init_source( IntPtr cinfo) {
+		void init_source (IntPtr cinfo) {
 			buffer = Marshal.AllocHGlobal(readwriteSize);
 		}
 
-		int fill_input_buffer( IntPtr cinfo) {
+		int fill_input_buffer (IntPtr cinfo) {
 			byte[] result = new byte[readwriteSize];
 			int readed = fs.Read(result, 0, readwriteSize);
 			Marshal.Copy(result, 0, buffer, readed);
@@ -491,29 +488,29 @@ namespace System.Drawing.Imaging
 			return 1;
 		}
 
-		void skip_input_data( IntPtr cinfo, int num_bytes) {
+		void skip_input_data (IntPtr cinfo, int num_bytes) {
 			//byte[] result = new byte[num_bytes];
 			//fs.Read(result, 0, num_bytes);
 			fs.Seek(num_bytes, SeekOrigin.Current);
 		}
 
-		int resync_to_restart( IntPtr cinfo, int desired){
+		int resync_to_restart (IntPtr cinfo, int desired){
 			return 0;
 		}
 
-		void term_source( IntPtr cinfo) {
+		void term_source (IntPtr cinfo) {
 			Marshal.FreeHGlobal(buffer);
 		}
 
 		// Destination manager callbacks
-		void init_destination( IntPtr cinfo) {
+		void init_destination (IntPtr cinfo) {
 			buffer = Marshal.AllocHGlobal(readwriteSize);
 			IntPtr srcAddr = (IntPtr)Marshal.ReadInt32(cinfo, 24);
 			Marshal.WriteInt32(srcAddr, 0, buffer.ToInt32());
 			Marshal.WriteInt32(srcAddr, 4, readwriteSize);
 		}
 
-		int empty_output_buffer( IntPtr cinfo) {
+		int empty_output_buffer (IntPtr cinfo) {
 			IntPtr srcAddr = (IntPtr)Marshal.ReadInt32(cinfo, 24);
 			IntPtr bufferPtr = (IntPtr)Marshal.ReadInt32(srcAddr, 0);
 			int bytes = readwriteSize - Marshal.ReadInt32(srcAddr, 4);
@@ -527,7 +524,7 @@ namespace System.Drawing.Imaging
 			return 1;
 		}
 
-		void term_destination( IntPtr cinfo) {
+		void term_destination (IntPtr cinfo) {
 			IntPtr srcAddr = (IntPtr)Marshal.ReadInt32(cinfo, 24);
 			IntPtr bufferPtr = (IntPtr)Marshal.ReadInt32(srcAddr, 0);
 			int bytes = readwriteSize - Marshal.ReadInt32(srcAddr, 4);
@@ -553,11 +550,12 @@ namespace System.Drawing.Imaging
 			JERR_BAD_STRUCT_SIZE = 21
 		}
 
-		void error_exit( IntPtr cinfo) {
+		void error_exit (IntPtr cinfo)
+		{
 			jpeg_error_mgr mgr = new jpeg_error_mgr();
 			IntPtr err_raw = (IntPtr)Marshal.ReadInt32(cinfo, 0);
 			mgr = (jpeg_error_mgr)Marshal.PtrToStructure(err_raw, mgr.GetType());
-			if ( mgr.msg_code == (int)JPEGErrorCodes.JERR_BAD_STRUCT_SIZE) {
+			if (mgr.msg_code == (int)JPEGErrorCodes.JERR_BAD_STRUCT_SIZE) {
 				throw new RetryInitializationException(mgr.param_array[0]);
 			}
 			throw new Exception();
@@ -586,21 +584,23 @@ namespace System.Drawing.Imaging
 			}
 		}
 
-		internal static void DecodeDelegate (Stream stream, InternalImageInfo info) {
+		internal static void DecodeDelegate (Image image, Stream stream, BitmapData info)
+		{
 			JPEGCodec jpeg = new JPEGCodec();
-			jpeg.Decode (stream, info);
+			jpeg.Decode (image, stream, info);
 		}
 
-		internal static void EncodeDelegate (Stream stream, InternalImageInfo info) {
+		internal static void EncodeDelegate (Image image, Stream stream, BitmapData info)
+		{
 			JPEGCodec jpeg = new JPEGCodec();
-			jpeg.Encode (stream, info);
+			jpeg.Encode (image, stream, info);
 		}
 
-		internal unsafe void switch_color_bytes( byte[] image) {
+		internal unsafe void switch_color_bytes (byte[] image) {
 			fixed(byte* start = image) {
 				byte *pb = start;
 				byte t1;
-				for( int ic = 0; ic < image.Length; ic +=3) {
+				for (int ic = 0; ic < image.Length; ic +=3) {
 					t1 = *pb;
 					*(pb) = *(pb+2);
 					*(pb+2) = t1;
@@ -609,12 +609,13 @@ namespace System.Drawing.Imaging
 			}
 		}
 
-		internal bool Decode( Stream stream, InternalImageInfo info) {
+		internal unsafe bool Decode (Image image, Stream stream, BitmapData info)
+		{
 			fs = stream;
 
 			jpeg_error_mgr_get mgr = new jpeg_error_mgr_get();
 			mgr.param_array = new int[20];
-			jpeg_std_error( ref mgr);
+			jpeg_std_error (ref mgr);
 			jpeg_error_mgr mgr_real = new jpeg_error_mgr();
 			mgr_real.param_array = new int[20];
 			mgr_real.error_exit = new cdeclCallback.cdeclRedirector.MethodVoidIntPtr(this.error_exit);
@@ -638,12 +639,12 @@ namespace System.Drawing.Imaging
 					jpeg_create_decompress(cinfo.raw_struct, 62, cinfo.raw_struct.Length);
 					initializedOk = true;
 				}
-				catch( RetryInitializationException ex) {
+				catch (RetryInitializationException ex) {
 					initializedOk = false;
 					cinfo.switch_to_struct_size(ex.LibraryStructureSize);
 					cinfo.jpeg_error_mgr = mgr_real;
 				}
-			}while( !initializedOk);
+			}while (!initializedOk);
 
 			jpeg_source_mgr smgr = new jpeg_source_mgr();
 			smgr.next_input_byte = IntPtr.Zero;
@@ -656,15 +657,20 @@ namespace System.Drawing.Imaging
 			smgr.term_source = new cdeclRedirector.MethodVoidIntPtr(this.term_source);
 			cinfo.jpeg_source_mgr = smgr;
 
-			jpeg_read_header( cinfo.raw_struct, 1);
+			jpeg_read_header (cinfo.raw_struct, 1);
 
 			jpeg_calc_output_dimensions(cinfo.raw_struct);
 			jpeg_start_decompress(cinfo.raw_struct);
 
-			int row_width = cinfo.Stride;
-			while ((row_width & 3) != 0) row_width++;
-			int pad_bytes = (row_width - cinfo.Stride);
+			int stride = (cinfo.Stride + 3) & ~3;
+			int pad_bytes = (stride - cinfo.Stride);
 
+			//
+			// FIXME:
+			//
+			//    The following code checks various input formats, but only generates
+			//    a single format below (see the info.PixelFormat override later on)
+			//
 			if (cinfo.OutColorSpace == J_COLOR_SPACE.JCS_RGB) {
 				if (cinfo.QuantizeColors) {
 					info.PixelFormat = PixelFormat.Format8bppIndexed;
@@ -672,48 +678,66 @@ namespace System.Drawing.Imaging
 				else {
 					info.PixelFormat = PixelFormat.Format24bppRgb;
 				}
-			}
-			else {
+			} else {
 				info.PixelFormat = PixelFormat.Format8bppIndexed;
 			}
-			info.Size = new Size(cinfo.OutputWidth,cinfo.OutputHeight);
-			info.Stride = row_width;
-			info.Palette = new ColorPalette(1, cinfo.ColorMap);
+			info.Width = cinfo.OutputWidth;
+			info.Height = cinfo.OutputHeight;
+			info.Stride = stride;
+			image.Palette = new ColorPalette(1, cinfo.ColorMap);
 			info.PixelFormat = PixelFormat.Format24bppRgb;
-			info.RawImageBytes = new byte[(cinfo.OutputHeight) * row_width];
+			info.Scan0 = Marshal.AllocHGlobal (cinfo.OutputHeight * stride);
 
-			JSAMPARRAY outbuf = new JSAMPARRAY(cinfo.Stride);
-			int outputIndex = info.RawImageBytes.Length - row_width;
+			JSAMPARRAY outbuf = new JSAMPARRAY ();
 
-			while (cinfo.OutputScanLine < cinfo.OutputHeight) {
-				// FIXME: switch to the Length after fixing a run-time error
-				int readed = jpeg_read_scanlines(cinfo.raw_struct, ref outbuf, 1 /*outbuf.JSAMPLES.Length*/);
-				for (int i = 0; i < readed; i++) {
-					// FIXME: switch to .JSAMPLES[i] after fix of run-time error
-					//Marshal.Copy(outbuf.JSAMPLES[i], info.RawImageBytes, outputIndex, cinfo.Stride);
-					Marshal.Copy(outbuf.JSAMPLE0, info.RawImageBytes, outputIndex, cinfo.Stride);
-					outputIndex -= row_width;
+			//
+			// FIXME: Decompress the image, this works only for the JCS_RGB mode
+			// 
+			int output_scan_line = cinfo.OutputScanLine;
+			int output_height = cinfo.OutputHeight;
+			int rec_outbuf_height = cinfo.RecOutputHeight;
+
+			void *scan0ptr = (void *) info.Scan0;
+			byte *start = (byte *) ((void *) scan0ptr);
+			while (cinfo.OutputScanLine < output_height) {
+				//
+				// Setup the pointers
+				//
+				unsafe {
+					fixed (void **p = &outbuf.JSAMPLE0){
+						for (int i = 0; i < rec_outbuf_height; i++){
+							p [i] = start;
+							start += stride;
+						}
+					}
 				}
+				
+				int readed = jpeg_read_scanlines(cinfo.raw_struct, ref outbuf, rec_outbuf_height);
 			}
-			// FIXME: not sure if this always works
-			switch_color_bytes(info.RawImageBytes);
 			jpeg_finish_decompress(cinfo.raw_struct);
 			jpeg_destroy_decompress(cinfo.raw_struct);
 			return true;
 		}
 
-		internal unsafe bool Encode( Stream stream, InternalImageInfo info) {
 		
+		internal unsafe bool Encode (Image image, Stream stream, BitmapData info)
+		{
+			if (info.Scan0 == (IntPtr) 0)
+				throw new Exception ("No data on the Bitmap");
+			
 			int bpp = Image.GetPixelFormatSize(info.PixelFormat) / 8;
-			if( bpp != 3 && bpp != 4) {
-				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.PixelFormat, Image.GetPixelFormatSize(info.PixelFormat)));
+			if (bpp != 3){
+				throw new ArgumentException(
+					String.Format(
+						"Supplied pixel format is not yet supported: {0}, {1} bpp",
+						info.PixelFormat, Image.GetPixelFormatSize(info.PixelFormat)));
 			}
 
 			fs = stream;
 
 			jpeg_error_mgr_get mgr = new jpeg_error_mgr_get();
 			mgr.param_array = new int[20];
-			jpeg_std_error( ref mgr);
+			jpeg_std_error (ref mgr);
 			jpeg_error_mgr mgr_real = new jpeg_error_mgr();
 			mgr_real.param_array = new int[20];
 			mgr_real.error_exit = new cdeclCallback.cdeclRedirector.MethodVoidIntPtr(this.error_exit);
@@ -737,12 +761,12 @@ namespace System.Drawing.Imaging
 					jpeg_create_compress(cinfo.raw_struct, 62, cinfo.raw_struct.Length);
 					initializedOk = true;
 				}
-				catch( RetryInitializationException ex) {
+				catch (RetryInitializationException ex) {
 					initializedOk = false;
 					cinfo.switch_to_struct_size(ex.LibraryStructureSize);
 					cinfo.jpeg_error_mgr = mgr_real;
 				}
-			}while( !initializedOk);
+			}while (!initializedOk);
 
 			jpeg_destination_mgr dmgr = new jpeg_destination_mgr();
 			dmgr.next_output_byte = IntPtr.Zero;
@@ -753,42 +777,34 @@ namespace System.Drawing.Imaging
 			dmgr.term_destination = new cdeclRedirector.MethodVoidIntPtr(this.term_destination);
 			cinfo.jpeg_destination_mgr = dmgr;
 
-			int row_width = info.Size.Width;
-			while ((row_width & 3) != 0) row_width++;
-
-			cinfo.ImageWidth = info.Size.Width;
-			cinfo.ImageHeight = info.Size.Height;
+			cinfo.ImageWidth = info.Width;
+			cinfo.ImageHeight = info.Height;
 			cinfo.InputComponents = 3;
 			cinfo.InColorSpace = J_COLOR_SPACE.JCS_RGB;
 
-			jpeg_set_defaults( cinfo.raw_struct);
+			jpeg_set_defaults (cinfo.raw_struct);
 
-			jpeg_start_compress( cinfo.raw_struct, 1);
+			jpeg_start_compress (cinfo.raw_struct, 1);
 
-			int row_bytes_width = row_width * 3;
-			int src_row_bytes_width = row_width * bpp;
-			JSAMPARRAY inbuf = new JSAMPARRAY(row_bytes_width);
-
-			int outputIndex = info.RawImageBytes.Length - src_row_bytes_width;
-			byte[] buffer = new byte[row_bytes_width];
-			fixed( byte *psrc = info.RawImageBytes, pbuf = buffer) {
-				byte* curSrc = null;
-				byte* curDst = null;
-				while (cinfo.NextScanLine < cinfo.ImageHeight) {
-					curSrc = psrc + outputIndex;
-					curDst = pbuf;
-					for( int i = 0; i < row_width; i++) {
-						*curDst++ = *(curSrc+2);
-						*curDst++ = *(curSrc+1);
-						*curDst++ = *curSrc;
-						curSrc += bpp;
-					}
-					Marshal.Copy( buffer, 0, inbuf.JSAMPLE0, row_bytes_width);
-					outputIndex -= src_row_bytes_width;
-					jpeg_write_scanlines(cinfo.raw_struct, ref inbuf, 1 /*inbuf.JSAMPLES.Length*/);
+			byte *start;
+			IntPtr scanline;
+			int stride;
+			
+			switch (info.PixelFormat){
+			case PixelFormat.Format24bppRgb:
+				start = (byte *) (void *) info.Scan0;
+				stride = info.Stride;
+				while (cinfo.NextScanLine < cinfo.ImageHeight){
+					scanline = (IntPtr) start;
+					start += stride;
+					jpeg_write_scanlines (cinfo.raw_struct, ref scanline, 1);
 				}
-			}
+				break;
 
+			default:
+				throw new Exception ("Unhandled PixelFormat: " + info.PixelFormat);
+			}
+			
 			jpeg_finish_compress(cinfo.raw_struct);
 			jpeg_destroy_compress(cinfo.raw_struct);
 
@@ -796,3 +812,32 @@ namespace System.Drawing.Imaging
 		}
 	}
 }
+
+
+#if false
+			int row_bytes_width = row_width * 3;
+			int src_row_bytes_width = row_width * bpp;
+
+			byte *start = (byte *) (void *) info.Scan0;
+
+			byte[] buffer = new byte[row_bytes_width];
+			
+			byte *psrc = (byte *) info.Scan0;
+			fixed (byte *pbuf = buffer) {
+				byte* curSrc = null;
+				byte* curDst = null;
+				while (cinfo.NextScanLine < cinfo.ImageHeight) {
+					curSrc = psrc + outputIndex;
+					curDst = pbuf;
+					for (int i = 0; i < row_width; i++) {
+						*curDst++ = *(curSrc+2);
+						*curDst++ = *(curSrc+1);
+						*curDst++ = *curSrc;
+						curSrc += bpp;
+					}
+					Marshal.Copy (buffer, 0, inbuf.JSAMPLE0, row_bytes_width);
+					outputIndex -= src_row_bytes_width;
+					jpeg_write_scanlines(cinfo.raw_struct, ref inbuf, 1 /*inbuf.JSAMPLES.Length*/);
+				}
+			}
+#endif

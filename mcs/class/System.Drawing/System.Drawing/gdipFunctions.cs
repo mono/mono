@@ -74,7 +74,7 @@ namespace System.Drawing {
 		static internal extern Status GdipFillRectangle (IntPtr graphics, IntPtr brush, float x1, float y1, float x2, float y2);
 
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref RectF rc, IntPtr format, IntPtr brush);
+		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref GdipRectF rc, IntPtr format, IntPtr brush);
 
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetDC (IntPtr graphics, out int hdc);
@@ -99,9 +99,12 @@ namespace System.Drawing {
 		internal static extern Status GdipCreateBitmapFromGraphics (int width, int height, IntPtr target, out int bitmap);
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref Rect rc, ImageLockMode flags, PixelFormat format, ref BitmapData_RAW bmpData);
+		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref GdipRect rc, ImageLockMode flags, PixelFormat format, [In, Out] BitmapData bmpData);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipBitmapUnlockBits (IntPtr bmp, ref BitmapData_RAW bmpData);
+		internal static extern Status ____BitmapLockBits (IntPtr bmp, ref GdipRect rc, ImageLockMode flags, PixelFormat format, ref int width, ref int height, ref int stride, ref int format2, ref int reserved, ref IntPtr scan0);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipBitmapUnlockBits (IntPtr bmp, [In,Out] BitmapData bmpData);
 
 		// Image functions
 		[DllImport("gdiplus.dll")]

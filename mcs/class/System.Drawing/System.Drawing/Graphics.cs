@@ -582,7 +582,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			RectF rc = new RectF ();
+			GdipRectF rc = new GdipRectF ();
 			rc.left = x;
 			rc.top = y;
 			rc.right = 0;

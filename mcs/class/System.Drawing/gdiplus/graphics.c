@@ -26,7 +26,7 @@
 #include "gdip_main.h"
 #include "gdip_win32.h"
 
-void _init_graphics (gdip_graphics_ptr graphics)
+void gdip_graphics_init (gdip_graphics_ptr graphics)
 {
 	graphics->ct = cairo_create ();
 	graphics->copy_of_ctm = cairo_matrix_create ();
@@ -38,34 +38,35 @@ void _init_graphics (gdip_graphics_ptr graphics)
 	cairo_select_font (graphics->ct, "serif:12");
 }
 
-gdip_graphics_ptr _new_graphics ()
+gdip_graphics_ptr gdip_graphics_new ()
 {
 	gdip_graphics_ptr result = (gdip_graphics_ptr)GdipAlloc(sizeof(gdip_graphics));
-	_init_graphics (result);
+	gdip_graphics_init (result);
 	return result;
 }
 
-void _attach_bitmap (gdip_graphics_ptr graphics, gdip_bitmap_ptr image)
+void gdip_graphics_attach_bitmap (gdip_graphics_ptr graphics, gdip_bitmap_ptr image)
 {
-    cairo_set_target_image (graphics->ct, image->data.Scan0, image->cairo_format,
-		      image->data.Width, image->data.Height, image->data.Stride);
+	cairo_set_target_image (graphics->ct, image->data.Scan0, image->cairo_format,
+				image->data.Width, image->data.Height, image->data.Stride);
 	graphics->image = image;
 	graphics->type = gtMemoryBitmap;
 }
 
-void _detach_bitmap (gdip_graphics_ptr graphics, gdip_bitmap_ptr image)
+void gdip_graphics_detach_bitmap (gdip_graphics_ptr graphics, gdip_bitmap_ptr image)
 {
+	printf ("Implement graphics_detach_bitmap");
 	//FIXME: implement me
 }
 
-Status GdipCreateFromHDC(int hDC, gdip_graphics_ptr *graphics)
+Status GdipCreateFromHDC (int hDC, gdip_graphics_ptr *graphics)
 {
 	DC* dc = _get_DC_by_HDC (hDC);
 	
 	//printf ("GdipCreateFromHDC. in %d, DC %p\n", hDC, dc);
 	if (dc == 0) return NotImplemented;
 	
-	*graphics = _new_graphics();
+	*graphics = gdip_graphics_new ();
 	cairo_set_target_drawable ((*graphics)->ct, GDIP_display, dc->physDev->drawable);
 	_release_hdc (hDC);
 	(*graphics)->hdc = (void*)hDC;
@@ -89,7 +90,7 @@ Status GdipGetDC(gdip_graphics_ptr graphics, int *hDC)
 	if (graphics->hdc == 0) {
 		if (graphics->image != 0) {
 			// Create DC
-			graphics->hdc = _create_Win32_HDC (graphics->image);
+			graphics->hdc = gdip_image_create_Win32_HDC (graphics->image);
 			if (graphics->hdc != 0) {
 				++graphics->hdc_busy_count;
 			}
@@ -106,7 +107,7 @@ Status GdipReleaseDC(gdip_graphics_ptr graphics, int hDC)
 		--graphics->hdc_busy_count;
 		if (graphics->hdc_busy_count == 0) {
 			// Destroy DC
-			_destroy_Win32_HDC (graphics->image, (void*)hDC);
+			gdip_image_destroy_Win32_HDC (graphics->image, (void*)hDC);
 			graphics->hdc = 0;
 		}
 	}
@@ -176,7 +177,7 @@ Status GdipDrawLine (gdip_graphics_ptr graphics, gdip_pen_ptr pen, float x1, flo
 
 Status GdipFillRectangle (gdip_graphics_ptr graphics, gdip_brush_ptr brush, float x1, float y1, float x2, float y2)
 {
-	_setup_brush (graphics, brush);
+	gdip_brush_setup (graphics, brush);
 	cairo_rectangle (graphics->ct, x1, y1, x2 - x1, y2 - y1);
 	cairo_fill (graphics->ct);
 	return Ok;
@@ -184,17 +185,16 @@ Status GdipFillRectangle (gdip_graphics_ptr graphics, gdip_brush_ptr brush, floa
 
 Status GdipDrawString (gdip_graphics_ptr graphics, const char *string, int len, void *font, RectF *rc, void *format, gdip_brush_ptr brush)
 {
-    cairo_save(graphics->ct);
+	cairo_save(graphics->ct);
 	if (brush) {
-		_setup_brush (graphics, brush);
-	}
-	else {
+		gdip_brush_setup (graphics, brush);
+	} else {
 		cairo_set_rgb_color (graphics->ct, 0., 0., 0.);
 	}
 	cairo_move_to (graphics->ct, rc->left, rc->top + 12);
-    cairo_scale_font (graphics->ct, 12);
+	cairo_scale_font (graphics->ct, 12);
 	cairo_show_text (graphics->ct, string);
-    cairo_restore(graphics->ct);
+	cairo_restore(graphics->ct);
 	return Ok;
 }
 

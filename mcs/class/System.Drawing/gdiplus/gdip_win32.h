@@ -10,11 +10,7 @@
 
 #include <cairo.h>
 #include <cairo-xlib.h>
-
-typedef unsigned char BYTE;
-typedef unsigned long DWORD;
-typedef long LONG;
-typedef unsigned short WORD;
+#include <mono/jit/jit.h>
 
 // sizeof (GDIOBJHDR) = 12 (2 + 2 + 4 + 4)
 // offsetof (DC, physDev) = 20 (12 + 4 + 4)

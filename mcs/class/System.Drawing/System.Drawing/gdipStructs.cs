@@ -16,7 +16,7 @@ namespace System.Drawing {
 	{
     	uint 		GdiplusVersion;
     	IntPtr 		DebugEventCallback;
-    	int			SuppressBackgroundThread;
+    	int             SuppressBackgroundThread;
     	int 		SuppressExternalCodecs;
     
     	internal static GdiplusStartupInput MakeGdiplusStartupInput ()
@@ -46,18 +46,7 @@ namespace System.Drawing {
 	}
 	
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct BitmapData_RAW
-	{
-		internal int 		width;
-    	internal int 		height;
-    	internal int 		stride;
-    	internal int 		pixelFormat;
-    	internal IntPtr 	scan0;
-    	internal int 		reserved;
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct Rect
+	internal struct GdipRect
 	{
 		internal int left;
 		internal int top;
@@ -66,7 +55,7 @@ namespace System.Drawing {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct RectF
+	internal struct GdipRectF
 	{
 		internal float left;
 		internal float top;

@@ -36,10 +36,10 @@ namespace System.Drawing.Imaging {
 			allCodecs.Add(PNGCodec.CodecInfo);
 		}
 
-		internal delegate void DecodeFromStream( Stream stream, InternalImageInfo info);
+		internal delegate void DecodeFromStream (Image image, Stream stream, BitmapData info);
 		internal DecodeFromStream decode;
 
-		internal delegate void EncodeToStream( Stream stream, InternalImageInfo info);
+		internal delegate void EncodeToStream (Image image, Stream stream, BitmapData info);
 		internal EncodeToStream encode;
 
 		// methods

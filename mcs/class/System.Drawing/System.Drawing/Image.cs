@@ -17,195 +17,17 @@ using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
 using System.IO;
 
-internal class InternalImageInfo : IDisposable 
-{
-/*
-	Size	     	imageSize;
-	PixelFormat  	pixelFormat;
-	int	     		stride;
-*/
-	IntPtr		 	unmanagedImagePtr;	// We own the image memory
-	BitmapData		bmpData;	
-	ColorPalette 	palette;
-	byte[]	     	image;
-	ImageFormat  	rawFormat;
-
-	internal InternalImageInfo()
-	{
-		palette = new ColorPalette();
-		bmpData = new BitmapData ();
-		bmpData.Height = bmpData.Width = 0;
-		//imageSize = new Size(0,0);
-		//pixelFormat = PixelFormat.Format32bppArgb;
-		bmpData.PixelFormat = PixelFormat.Format32bppArgb;
-		image = new byte[0];
-		//stride = 0;
-		bmpData.Stride = 0;
-		unmanagedImagePtr = IntPtr.Zero;
-		bmpData.Scan0 = IntPtr.Zero;
-		rawFormat = ImageFormat.Bmp;
-	}
-
-	internal InternalImageInfo(BitmapData bmpDataSrc)
-	{
-		palette = new ColorPalette();
-		bmpData = new BitmapData ();
-		bmpData.Height = bmpDataSrc.Height;
-		bmpData.Width = bmpDataSrc.Width;
-		//imageSize = new Size(0,0);
-		//pixelFormat = PixelFormat.Format32bppArgb;
-		bmpData.PixelFormat = bmpDataSrc.PixelFormat;
-		image = new byte[0];
-		//stride = 0;
-		bmpData.Stride = bmpDataSrc.Stride;
-		unmanagedImagePtr = IntPtr.Zero;
-		bmpData.Scan0 = bmpDataSrc.Scan0;
-		rawFormat = ImageFormat.Bmp;
-	}
-
-	internal Size Size {
-/*
-		get { return imageSize; }
-		set { imageSize = value; }
-*/
-		get { return new Size (bmpData.Width, bmpData.Height); }
-		set { bmpData.Width = value.Width; bmpData.Height = value.Height; }
-	}
-
-	internal PixelFormat PixelFormat {
-/*
-		get { return pixelFormat; }
-		set { pixelFormat = value; }
-*/
-		get { return bmpData.PixelFormat; }
-		set { bmpData.PixelFormat = value; }
-	}
-
-	internal ColorPalette Palette {
-		get { return palette; }
-		set { palette = value; }
-	}
-
-	internal byte[] RawImageBytes {
-		get { 
-			if (image.Length == 0) {
-				ReadSoureUnmanagedPtr ();
-			}
-			return image; 
-		}
-		set { 
-			image = value; 
-			FreeUnmanagedPtr();
-		}
-	}
-	
-	internal IntPtr UnmanagedImagePtr {
-		get { 
-			if (unmanagedImagePtr == IntPtr.Zero) {
-				unmanagedImagePtr = Marshal.AllocHGlobal (image.Length);
-				Marshal.Copy (image, 0, unmanagedImagePtr, image.Length);
-			}
-			return unmanagedImagePtr; 
-		}
-	}
-
-	protected void ReadSoureUnmanagedPtr() 
-	{
-		if (bmpData.Scan0 != IntPtr.Zero) {
-			image = new byte[bmpData.Stride * bmpData.Height];
-			Marshal.Copy (bmpData.Scan0, image, 0, image.Length);	
-		}
-	}
-	
-	protected void FreeUnmanagedPtr() 
-	{
-		if (unmanagedImagePtr != IntPtr.Zero) {
-			Marshal.FreeHGlobal (unmanagedImagePtr);
-		}
-	}
-	
-	internal int Stride {
-/*
-		get { return stride; }
-		set { stride = value; }
-*/
-		get { return bmpData.Stride; }
-		set { bmpData.Stride = value; }
-	}
-
-	internal ImageFormat RawFormat {
-		get { return rawFormat; }
-		set { rawFormat = value; }
-	}
-	
-	internal unsafe void ChangePixelFormat (PixelFormat destPixelFormat)
-	{
-		//Console.WriteLine ("{0}.ChangePixelFormat to {1}", ToString(), destPixelFormat);
-		if (PixelFormat == destPixelFormat) return;
-		if (destPixelFormat != PixelFormat.Format32bppArgb &&
-			destPixelFormat != PixelFormat.Format24bppRgb) {
-			Console.WriteLine ("This format is not supported {0}", destPixelFormat);
-			throw new NotImplementedException();
-		}
-		
-		FreeUnmanagedPtr();
-		
-		int sourcePixelIncrement = (PixelFormat == PixelFormat.Format32bppArgb) ? 1 : 0;
-		int destinationPixelIncrement = (destPixelFormat == PixelFormat.Format32bppArgb) ? 1 : 0;
-
-		Size ourSize = Size;
-		int destStride = (Image.GetPixelFormatSize(destPixelFormat) >> 3 ) * ourSize.Width;
-		byte[] temp = new byte [destStride * ourSize.Height];
-		fixed (byte *psrc = image, pbuf = temp) {
-			byte* curSrc = psrc;
-			byte* curDst = pbuf;
-			for  (int i = 0; i < ourSize.Height; i++) {
-				for (int j = 0; j < ourSize.Width; j++) {
-					*curDst++ = *curSrc++;
-					*curDst++ = *curSrc++;
-					*curDst++ = *curSrc++;
-					curSrc += sourcePixelIncrement;
-					curDst += destinationPixelIncrement;
-				}
-			}
-		}
-		image = temp;
-		PixelFormat = destPixelFormat;
-		Stride = destStride;
-	}
-	
-	public override string ToString()
-	{
-		return String.Format("InternalImageInfo. Size {0}, PixelFormat {1}, Stride {2}, Image size {3}",
-			Size, PixelFormat, Stride, image.Length);
-	}
-	
-	public void Dispose ()
-	{
-		Dispose (true);
-		GC.SuppressFinalize (this);
-	}
-
-	~InternalImageInfo ()
-	{
-		Dispose (false);
-	}
-
-	void Dispose (bool disposing)
-	{
-		FreeUnmanagedPtr();
-	}
-}
-
 [Serializable]
-//[ComVisible(true)]
 public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable 
 {
+	public delegate bool GetThumbnailImageAbort ();
+	
 	internal IntPtr nativeObject = IntPtr.Zero;
 	protected Size image_size;
 	protected PixelFormat pixel_format;
+	protected ColorPalette palette;
 
-	public delegate bool GetThumbnailImageAbort ();	       
+	ImageFormat raw_format;
 	
 	// constructor
 	public Image ()
@@ -245,10 +67,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		throw new NotImplementedException ();
 	}
 
-	internal static InternalImageInfo Decode (Stream streamIn) 
+	internal BitmapData Decode (Stream streamIn) 
 	{
 		Stream stream = streamIn;
-		InternalImageInfo result = new InternalImageInfo();
+		BitmapData result = new BitmapData ();
 		if (!stream.CanSeek) {
 			// FIXME: if stream.CanSeek == false, copy to a MemoryStream and read nicely 
 		}
@@ -275,7 +97,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 		stream.Seek (pos, SeekOrigin.Begin);
 		if (codecToUse != null && codecToUse.decode != null) {
-			codecToUse.decode (stream, result);
+			codecToUse.decode (this, stream, result);
 		}
 		return result;
 	}
@@ -389,27 +211,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Save (filename, RawFormat);
 	}
 
-	internal virtual InternalImageInfo ConvertToInternalImageInfo() 
-	{
-		//return implementation.ConvertToInternalImageInfo();
-		throw new NotImplementedException ();
-	}
-
 	public void Save (Stream stream, ImageFormat format)
 	{
 		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
+
 		foreach (ImageCodecInfo encoder in encoders) {
-			if (encoder.FormatID == format.Guid) {
-				if(encoder.encode != null) {
-					if (this is Bitmap) {
-						BitmapData bmpData = ((Bitmap)this).LockBits (new Rectangle (new Point (0,0), Size), ImageLockMode.ReadOnly, PixelFormat);
-						InternalImageInfo imageInfo = new InternalImageInfo(bmpData);
-						encoder.encode(stream, imageInfo);
-						((Bitmap)this).UnlockBits (bmpData);
-					}
-				}
-				break;
-			}
+			if (encoder.FormatID != format.Guid)
+				continue;
+			
+			if (encoder.encode == null)
+				continue;
+			if (!(this is Bitmap))
+				continue;
+			
+			BitmapData bitmap_data = ((Bitmap)this).LockBits (new Rectangle (new Point (0,0), Size),
+									  ImageLockMode.ReadOnly, PixelFormat);
+			encoder.encode(this, stream, bitmap_data);
+			((Bitmap)this).UnlockBits (bitmap_data);
+			break;
 		}
 	}
 
@@ -427,9 +246,6 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	//public void SaveAdd(Image image, EncoderParameters_ encoderParams);
 	//public int SelectActiveFrame(FrameDimension dimension, int frameIndex);
 	//public void SetPropertyItem(PropertyItem propitem);
-
-	// destructor
-	~Image() {}
 
 	// properties
 	public int Flags {
@@ -456,14 +272,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-//	public ColorPalette Palette {
-//		get {
-//			throw new NotImplementedException ();
-//		}
-//		set {
-//			throw new NotImplementedException ();
-//		}
-//	}
+	public ColorPalette Palette {
+		get {
+			return palette;
+		}
+		set {
+			palette = value;
+		}
+	}
 	
 	public SizeF PhysicalDimension {
 		get {
@@ -491,8 +307,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public ImageFormat RawFormat {
 		get {
-			throw new NotImplementedException ();
+			return raw_format;
 		}
+	}
+
+	internal void SetRawFormat (ImageFormat format)
+	{
+		raw_format = format;
 	}
 
 	public Size Size {
@@ -515,8 +336,26 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public void Dispose ()
 	{
+		Dispose (true);
 	}
 
+	~Image ()
+	{
+		Dispose (false);
+	}
+
+	protected virtual void DisposeResources ()
+	{
+		GDIPlus.GdipDisposeImage (nativeObject);
+	}
+	
+	void Dispose (bool disposing)
+	{
+		if (nativeObject != (IntPtr) 0){
+			DisposeResources ();
+		}
+	}
+	
 	[MonoTODO]
 	object ICloneable.Clone()
 	{

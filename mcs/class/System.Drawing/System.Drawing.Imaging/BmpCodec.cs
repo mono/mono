@@ -2,9 +2,9 @@
 // System.Drawing.Imaging.BMPCodec.cs
 //
 // Author: 
-//		Alexandre Pigolkine (pigolkine@gmx.de)
-//	BITMAPINFOHEADER,Decode functions implemented using code/ideas from
-//  CxImage (c)  07/Aug/2001 <ing.davide.pizzolato@libero.it>
+//    Alexandre Pigolkine (pigolkine@gmx.de)
+//    BITMAPINFOHEADER,Decode functions implemented using code/ideas from
+//    CxImage (c)  07/Aug/2001 <ing.davide.pizzolato@libero.it>
 //
 // (C) 2002/2003 Ximian, Inc.
 
@@ -92,14 +92,15 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		public void Initialize( InternalImageInfo info) {
+		public void Initialize (BitmapData info)
+		{
 			biSize = 40;
-			biWidth = info.Size.Width;
-			biHeight = info.Size.Height;
+			biWidth = info.Width;
+			biHeight = info.Height;
 			biPlanes = 1;
-			biBitCount = (short)System.Drawing.Image.GetPixelFormatSize(info.PixelFormat);
+			biBitCount = (short)System.Drawing.Image.GetPixelFormatSize (info.PixelFormat);
 			biCompression = (int)BitmapCompression.BI_RGB;
-			biSizeImage = (int)info.RawImageBytes.Length;
+			biSizeImage = (int) info.Height * info.Width * Image.GetPixelFormatSize (info.PixelFormat) / 8;
 			biXPelsPerMeter = 0;
 			biYPelsPerMeter = 0;
 			biClrUsed = 0;
@@ -114,8 +115,10 @@ namespace System.Drawing.Imaging {
 		
 		internal static ImageCodecInfo CodecInfo {
 			get {
-				ImageCodecInfo info = new ImageCodecInfo();
-				info.Flags = ImageCodecFlags.Encoder | ImageCodecFlags.Decoder | ImageCodecFlags.Builtin | ImageCodecFlags.SupportBitmap;
+				ImageCodecInfo info = new ImageCodecInfo ();
+				info.Flags = ImageCodecFlags.Encoder | ImageCodecFlags.Decoder |
+					ImageCodecFlags.Builtin | ImageCodecFlags.SupportBitmap;
+
 				info.FormatDescription = "BITMAP file format";
 				info.FormatID = System.Drawing.Imaging.ImageFormat.Bmp.Guid;
 				info.MimeType = "image/bmp";
@@ -136,9 +139,10 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		bool ReadFileHeader( Stream stream, out BITMAPFILEHEADER bmfh) {
+		bool ReadFileHeader (Stream stream, out BITMAPFILEHEADER bmfh) {
 			bmfh = new BITMAPFILEHEADER();
 			BinaryReader bs = new BinaryReader(stream);
+
 			bmfh.bfType = bs.ReadUInt16();
 			if(bmfh.bfType != (ushort)BitmapFileType.BFT_BITMAP) return false;
 			bmfh.bfSize = bs.ReadUInt32();
@@ -148,7 +152,7 @@ namespace System.Drawing.Imaging {
 			return true;
 		}
 		
-		bool ReadInfoHeader( Stream stream, out BITMAPINFOHEADER_FLAT bmih) {
+		bool ReadInfoHeader (Stream stream, out BITMAPINFOHEADER_FLAT bmih) {
 			bmih = new BITMAPINFOHEADER_FLAT();
 			try {
 				BinaryReader bs = new BinaryReader(stream);
@@ -165,7 +169,7 @@ namespace System.Drawing.Imaging {
 				bmih.biClrImportant = bs.ReadInt32();
 				
 				// Currently only BITMAPINFOHEADER
-				if( bmih.biSize != 40) return false;
+				if (bmih.biSize != 40) return false;
 				
 				bmih.FixBitmapInfo();
 
@@ -178,77 +182,101 @@ namespace System.Drawing.Imaging {
 					bmih.bmiColors[index++] = (byte)stream.ReadByte();
 				}
 			}
-			catch( Exception e) {
+			catch (Exception e) {
 				return false;
 			}
 			return true;
 		}
 		
-		internal static void DecodeDelegate (Stream stream, InternalImageInfo info) {
+		internal static void DecodeDelegate (Image image, Stream stream, BitmapData info)
+		{
 			BMPCodec bmp = new BMPCodec();
-			bmp.Decode (stream, info);
+			bmp.Decode (image, stream, info);
 		}
 		
-		internal bool Decode( Stream stream, InternalImageInfo info) {
-			if( stream.Length < 14 + 40/* sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)*/)
+		internal bool Decode (Image image, Stream stream, BitmapData info)
+		{
+#if false
+			if (stream.Length < 14 + 40/* sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)*/)
 				return false;
 			long startPosition = stream.Position;
 			
 			BITMAPFILEHEADER	bmfh;
 			BITMAPINFOHEADER_FLAT	bmih;
-			if (!ReadFileHeader (stream, out bmfh)) return false;
-			if (!ReadInfoHeader (stream, out bmih)) return false;
+			
+			if (!ReadFileHeader (stream, out bmfh))
+				return false;
+			if (!ReadInfoHeader (stream, out bmih))
+				return false;
+			
 			Color[] colorEntries = new Color[bmih.DibNumColors()];
 			int index = 0;
-			for( int colorEntryIdx = 0; colorEntryIdx < colorEntries.Length; colorEntryIdx++) {
+			for (int colorEntryIdx = 0; colorEntryIdx < colorEntries.Length; colorEntryIdx++) {
 				// FIXME: is alpha can be used here
 				colorEntries[colorEntryIdx] = Color.FromArgb(bmih.bmiColors[index+3], bmih.bmiColors[index+2], bmih.bmiColors[index+1], bmih.bmiColors[index]);
 				index += 4;
 				colorEntryIdx++;
 			}
-			info.Palette = new ColorPalette(1, colorEntries);
-			info.Size = new Size(bmih.biWidth, bmih.biHeight);
+			image.Palette = new ColorPalette(1, colorEntries);
+			image.SetRawFormat (System.Drawing.Imaging.ImageFormat.Bmp);
+			info.Width = bmih.biWidth;
+			info.Height = bmih.biHeight;
 			info.Stride = (int)bmih.DibWidthBytes();
-			info.RawFormat = System.Drawing.Imaging.ImageFormat.Bmp;
 
 			switch (bmih.biBitCount) {
-				case 24:
+			case 24:
 				info.PixelFormat = PixelFormat.Format24bppRgb;
-				if (bmfh.bfOffBits != 0L) stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
+				if (bmfh.bfOffBits != 0L)
+					stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
+
 				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
 					info.RawImageBytes = new byte[bmih.biSizeImage];
 					stream.Read(info.RawImageBytes, 0, (int)bmih.biSizeImage);
-				}
-				else {
+				} else {
+					//
+					// FIXME
+					// 
+					Console.WriteLine ("BmpCodec: The {0} compression is not supported", bmih.biCompression);
 				}
 				break;
-				case 32:
+			case 32:
 				info.PixelFormat = PixelFormat.Format32bppArgb;
-				if (bmfh.bfOffBits != 0L) stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
+				if (bmfh.bfOffBits != 0L)
+					stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
 				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
 					info.RawImageBytes = new byte[bmih.biSizeImage];
 					stream.Read(info.RawImageBytes, 0, (int)bmih.biSizeImage);
-				}
-				else {
+				} else {
+					//
+					// FIXME
+					// 
+					Console.WriteLine ("BmpCodec: The {0} compression is not supported", bmih.biCompression);
 				}
 				break;
-				default:
-					throw new NotImplementedException(String.Format("This format is not yet supported : {0} bpp", bmih.biBitCount));
+			default:
+				throw new NotImplementedException(String.Format("This format is not yet supported : {0} bpp", bmih.biBitCount));
 			}
+#endif
 			return true;
 		}
 
-		internal static void EncodeDelegate (Stream stream, InternalImageInfo info) {
+		internal static void EncodeDelegate (Image image, Stream stream, BitmapData info)
+		{
 			BMPCodec bmp = new BMPCodec();
-			bmp.Encode (stream, info);
+			bmp.Encode (image, stream, info);
 		}
 		
-		internal bool Encode( Stream stream, InternalImageInfo info) {
+		internal bool Encode (Image image, Stream stream, BitmapData info)
+		{
+#if false
+
 			BITMAPFILEHEADER bmfh = new BITMAPFILEHEADER();
 			bmfh.bfReserved1 = bmfh.bfReserved2 = 0;
 			bmfh.bfType = (ushort)BitmapFileType.BFT_BITMAP;
-			bmfh.bfOffBits = (uint)(14 + 40 + info.Palette.Entries.Length * 4);
-			bmfh.bfSize = (uint)(bmfh.bfOffBits + info.RawImageBytes.Length);
+			bmfh.bfOffBits = (uint)(14 + 40 + image.Palette.Entries.Length * 4);
+			int line_size = info.Width * Image.GetPixelFormatSize (info.PixelFormat) / 8;
+			bmfh.bfSize = (uint)(bmfh.bfOffBits + info.Height * line_size);
+					     
 			BinaryWriter bw = new BinaryWriter(stream);
 			bw.Write(bmfh.bfType);
 			bw.Write(bmfh.bfSize);
@@ -269,8 +297,17 @@ namespace System.Drawing.Imaging {
 			bw.Write(bmih.biYPelsPerMeter);
 			bw.Write(bmih.biClrUsed);
 			bw.Write(bmih.biClrImportant);
-			// FIXME: write palette here
-			stream.Write(info.RawImageBytes, 0, info.RawImageBytes.Length);
+			Console.WriteLine ("FIXME: BmpCodec: Write palette here");
+
+			byte [] line_buffer = new byte [line_size];
+			int stride = info.Stride;
+			int start = 0;
+			for (line = 0; line < info.Height; line++){
+				Marshal.Copy (info.Scan0, line_buffer, start, line_size);
+				stream.Write(line_buffer, 0, line_size);
+				start += stride;
+			}
+#endif
 			return true;
 		}
 	}

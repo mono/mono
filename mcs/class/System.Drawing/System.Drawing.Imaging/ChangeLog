@@ -1,3 +1,27 @@
+2003-10-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* JPEGCodec.cs (JSAMPARRAY): Do not allocate memory here anymore,
+	we will just have the JPEG library copy directly into our buffer. 
+
+	(Encode, Decode): Ported to the new model which avoid copies, and
+	eliminates InternalImageInfo.
+
+	TODO: need to port the PNG coder/decoder, and add support for RGBA
+	images which got dropped from this version
+
+	* BmpCodec.cs: Rework this one to use BitmapData and Image.  Do
+	not use the RawBytes property, instead pull the data one line at a
+	time, and write that out.
+
+	* ImageCodecInfo.cs: Make the encoding and decoding delegates take
+	a Image parameter;  
+	
+	* BmpCodec.cs: 
+
+	* BitmapData.cs: Make this one sequential, and also mimic the
+	layout of GdiPlus.h so we can use this instead of making copies
+	back and forth.
+
 2003-10-12 Alexandre Pigolkine
 	* BmpCodec.cs		warning removed
 

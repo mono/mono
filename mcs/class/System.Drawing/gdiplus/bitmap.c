@@ -21,7 +21,7 @@
 // Authors:
 //   Alexandre Pigolkine(pigolkine@gmx.de)
 //
-
+#include <glib.h>
 #include "gdip_main.h"
 #include "gdip_win32.h"
 #include <string.h>
@@ -31,10 +31,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
-void _init_bitmap (gdip_bitmap_ptr bitmap)
+void gdip_bitmap_init (gdip_bitmap_ptr bitmap)
 {
-	_init_image (&bitmap->image);
+	gdip_image_init (&bitmap->image);
 	bitmap->image.type = imageBitmap;
 	bitmap->cairo_format = 0;
 	bitmap->data.Width = 0;
@@ -49,14 +48,23 @@ void _init_bitmap (gdip_bitmap_ptr bitmap)
 	bitmap->hBitmap = 0;
 }
 
-gdip_bitmap_ptr _new_bitmap ()
+gdip_bitmap_ptr gdip_bitmap_new ()
 {
 	gdip_bitmap_ptr result = (gdip_bitmap_ptr)GdipAlloc(sizeof(gdip_bitmap));
-	_init_bitmap (result);
+	gdip_bitmap_init (result);
 	return result;
 }
 
-static void _fillBitmapInfoHeader (gdip_bitmap_ptr bitmap, PBITMAPINFOHEADER bmi)
+/*
+ * This should only be called from GdipDisposeImage, and it should *not* free
+ * the structure, that one is freed by GdipDisposeImage
+ */
+void gdip_bitmap_dispose (gdip_bitmap_ptr bitmap)
+{
+	
+}
+
+void gdip_bitmap_fill_info_header (gdip_bitmap_ptr bitmap, PBITMAPINFOHEADER bmi)
 {
 	int  bitmapLen = bitmap->data.Stride * bitmap->data.Height;
 	memset (bmi, 0, 40);
@@ -69,25 +77,26 @@ static void _fillBitmapInfoHeader (gdip_bitmap_ptr bitmap, PBITMAPINFOHEADER bmi
 	bmi->biSizeImage = bitmapLen; 
 }
 
-static void _saveBmp (const char *name, gdip_bitmap_ptr bitmap)
+void gdip_bitmap_save_bmp (const char *name, gdip_bitmap_ptr bitmap)
 {
-	BITMAPFILEHEADER	bmfh;
-	BITMAPINFOHEADER	bmi;
+	BITMAPFILEHEADER bmfh;
+	BITMAPINFOHEADER bmi;
 	int  bitmapLen = bitmap->data.Stride * bitmap->data.Height;
 	FILE *fp;
+	
 	bmfh.bfReserved1 = bmfh.bfReserved2 = 0;
 	bmfh.bfType = BFT_BITMAP;
 	bmfh.bfOffBits = (14 + 40 + 0 * 4);
 	bmfh.bfSize = (bmfh.bfOffBits + bitmapLen);
 	fp = fopen (name, "w+b");
 	fwrite (&bmfh, 1, sizeof (bmfh), fp);
-	_fillBitmapInfoHeader (bitmap, &bmi);
+	gdip_bitmap_fill_info_header (bitmap, &bmi);
 	fwrite (&bmi, 1, sizeof (bmi), fp);
 	fwrite (bitmap->data.Scan0, 1, bitmapLen, fp);
 	fclose (fp);
 }
 
-void *_bitmap_create_Win32_HDC (gdip_bitmap_ptr bitmap)
+void *gdip_bitmap_create_Win32_HDC (gdip_bitmap_ptr bitmap)
 {
 	void * result = 0;
 	void * hdc = CreateCompatibleDC_pfn (0);
@@ -97,7 +106,7 @@ void *_bitmap_create_Win32_HDC (gdip_bitmap_ptr bitmap)
 	hbitmap = CreateCompatibleBitmap_pfn (hdcDesc, bitmap->data.Width, bitmap->data.Height);
 	if (hbitmap != 0) {
 		BITMAPINFO	bmi;
-		_fillBitmapInfoHeader (bitmap, &bmi.bmiHeader);
+		gdip_bitmap_fill_info_header (bitmap, &bmi.bmiHeader);
 		//_saveBmp ("file1.bmp", bitmap);
 		SetDIBits_pfn (hdc, hbitmap, 0, bitmap->data.Height, bitmap->data.Scan0, &bmi, 0);
 		holdbitmap = SelectObject_pfn (hdc, hbitmap);
@@ -113,7 +122,7 @@ void *_bitmap_create_Win32_HDC (gdip_bitmap_ptr bitmap)
 	return result;
 }
 
-void _bitmap_destroy_Win32_HDC (gdip_bitmap_ptr bitmap, void *hdc)
+void gdip_bitmap_destroy_Win32_HDC (gdip_bitmap_ptr bitmap, void *hdc)
 {
 	if (bitmap->hBitmapDC == hdc) {
 		
@@ -123,7 +132,7 @@ void _bitmap_destroy_Win32_HDC (gdip_bitmap_ptr bitmap, void *hdc)
 			
 		SelectObject_pfn (bitmap->hBitmapDC, bitmap->hInitialBitmap);
 			
-		_fillBitmapInfoHeader (bitmap, &bmi.bmiHeader);
+		gdip_bitmap_fill_info_header (bitmap, &bmi.bmiHeader);
 		res = GetDIBits_pfn (bitmap->hBitmapDC, bitmap->hBitmap, 0, bitmap->data.Height, bitmap->data.Scan0, &bmi, 0);
 		if (bitmap->cairo_format == CAIRO_FORMAT_ARGB32) {
 			array = bitmap->data.Scan0;
@@ -143,39 +152,34 @@ void _bitmap_destroy_Win32_HDC (gdip_bitmap_ptr bitmap, void *hdc)
 	}
 }
 
-Status GdipCreateBitmapFromScan0 (int width, int height, int strideIn, int format, void * scan0, gdip_bitmap_ptr * bitmap)
+Status GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void * scan0, gdip_bitmap_ptr *bitmap)
 {
 	gdip_bitmap_ptr result = 0;
-	int 			bmpSize = 0;
-	int				cairo_format = 0;
-	
-	int				stride = strideIn;
-	if (stride == 0) {
-		stride = width;
-		while (stride % 4) stride++;
-	}
-	
+	int cairo_format = 0;
+
+	if (stride == 0)
+		return InvalidParameter;
+	if (scan0 == NULL)
+		return InvalidParameter;
+			
 	switch (format) {
 	case Format24bppRgb:
-		stride *= 3;
 		cairo_format = CAIRO_FORMAT_RGB24;	
 	break;
 	case Format32bppArgb:
-		stride *= 4;
 		cairo_format = CAIRO_FORMAT_ARGB32;	
 	break;
 	default:
 		*bitmap = 0;
 		return NotImplemented;
 	}
-	bmpSize = stride * height;
-	result = _new_bitmap ();
+	result = gdip_bitmap_new ();
 	result->cairo_format = cairo_format;
 	result->data.Width = width;
 	result->data.Height = height;
 	result->data.Stride = stride;
 	result->data.PixelFormat = format;
-	result->data.Scan0 = GdipAlloc (bmpSize);
+	result->data.Scan0 = scan0;
 	
 	*bitmap = result;
 	return Ok;
@@ -184,41 +188,79 @@ Status GdipCreateBitmapFromScan0 (int width, int height, int strideIn, int forma
 Status GdipCreateBitmapFromGraphics (int width, int height, gdip_graphics_ptr graphics, gdip_bitmap_ptr * bitmap)
 {
 	gdip_bitmap_ptr result = 0;
-	int 			bmpSize = 0;
-	int				cairo_format = 0;
+	int bmpSize = 0;
+	int cairo_format = 0;
+	int stride = width;
+
+	/*
+	 * FIXME: should get the stride based on the format of the graphics object.
+	 */
+	fprintf (stderr, "GdipCreateBitmapFromGraphics: This routine has not been checked for stride size\n");
+	while (stride % 4)
+		stride++;
 	
-	int				stride = width;
-	while (stride % 4) stride++;
 	stride *= 4;
 	cairo_format = CAIRO_FORMAT_ARGB32;	
 	bmpSize = stride * height;
-	result = _new_bitmap ();
+	result = gdip_bitmap_new ();
 	result->cairo_format = cairo_format;
 	result->data.Width = width;
 	result->data.Height = height;
 	result->data.Stride = stride;
 	result->data.PixelFormat = Format32bppArgb;
 	result->data.Scan0 = GdipAlloc (bmpSize);
-	
+	result->data.Reserved = 1;
 	*bitmap = result;
 	return Ok;
 }
 
-Status GdipBitmapLockBits (gdip_bitmap_ptr bmp, Rect *rc, int flags, int format, BitmapData * bmpData)
+Status GdipBitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int format, GdipBitmapData *result)
 {
-	if (bmp == 0) return InvalidParameter;
-	if (bmp->data.PixelFormat != format) return InvalidParameter;
-	bmpData->Width = bmp->data.Width; 
-	bmpData->Height = bmp->data.Height; 
-	bmpData->Stride = bmp->data.Stride; 
-	bmpData->PixelFormat = bmp->data.PixelFormat; 
-	bmpData->Reserved = bmp->data.Reserved; 
-	bmpData->Scan0 = bmp->data.Scan0; 
+	if (bitmap == 0)
+		return InvalidParameter;
+
+	/* Special case: the entire image is requested */
+	if (rc->left == 0 && rc->right == bitmap->data.Width &&
+	    rc->top == 0 && rc->bottom == bitmap->data.Height &&
+	    format == bitmap->data.PixelFormat){
+		*result = bitmap->data;
+		result->Reserved = result->Reserved & ~1;
+		return Ok;
+	}
+	
+	if (bitmap->data.PixelFormat != format)
+		return InvalidParameter;
+	
+	result->Width = bitmap->data.Width; 
+	result->Height = bitmap->data.Height; 
+	result->Stride = bitmap->data.Stride; 
+	result->PixelFormat = bitmap->data.PixelFormat; 
+	result->Reserved = bitmap->data.Reserved; 
+	result->Scan0 = bitmap->data.Scan0;
+
 	return Ok;
 }
 
-Status GdipBitmapUnlockBits (gdip_bitmap_ptr bmp, BitmapData * bmpData)
+Status ____BitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int format, int *width, int *height, int *stride, int *fptr, int *res, int *scan0)
 {
-	return NotImplemented;
+	GdipBitmapData d;
+	int s;
+	
+	s = GdipBitmapLockBits (bitmap, rc, flags, format, &d);
+	*width = d.Width;
+	*height = d.Height;
+	*stride = d.Stride;
+	*fptr = d.PixelFormat;
+	*res = d.Reserved;
+	*scan0 = d.Scan0;
+	
+	return s;
+}
+
+Status GdipBitmapUnlockBits (gdip_bitmap_ptr bitmap, GdipBitmapData *bitmap_data)
+{
+	if (bitmap_data->Reserved & 1)
+		GdipFree (bitmap_data->Scan0);
+	return Ok;
 }
 

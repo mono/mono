@@ -26,48 +26,65 @@
 
 #include <math.h>
 
-void _init_image (gdip_image_ptr image)
+void gdip_image_init (gdip_image_ptr image)
 {
 	image->type = imageUndefined;
 	image->surface = 0;
 	image->graphics = 0;
 }
 
-void *_create_Win32_HDC (gdip_image_ptr image)
+void *gdip_image_create_Win32_HDC (gdip_image_ptr image)
 {
 	void *result = 0;
 	switch (image->type) {
-		case imageBitmap:
-		result = _bitmap_create_Win32_HDC ((gdip_bitmap_ptr)image);
+	case imageBitmap:
+		result = gdip_bitmap_create_Win32_HDC ((gdip_bitmap_ptr)image);
 		break;
-		case imageMetafile:
+	case imageMetafile:
+		break;
+	case imageUndefined:
 		break;
 	}
 	return result;
 }
 
-void _destroy_Win32_HDC (gdip_image_ptr image, void *hdc)
+void gdip_image_destroy_Win32_HDC (gdip_image_ptr image, void *hdc)
 {
 	switch (image->type) {
-		case imageBitmap:
-		_bitmap_destroy_Win32_HDC ((gdip_bitmap_ptr)image, hdc);
+	case imageBitmap:
+		gdip_bitmap_destroy_Win32_HDC ((gdip_bitmap_ptr)image, hdc);
 		break;
-		case imageMetafile:
+	case imageMetafile:
+		break;
+	case imageUndefined:
 		break;
 	}
 }
 
 Status GdipDisposeImage (gdip_image_ptr image)
 {
-	return NotImplemented;
+	switch (image->type){
+	case imageBitmap:
+		gdip_bitmap_dispose ((gdip_bitmap_ptr) image);
+		break;
+	case imageMetafile:
+		break;
+	case imageUndefined:
+		break;
+	}
+	cairo_surface_destroy (image->surface);
+	image->surface = 0;
+	GdipFree (image);
+	
+	return Ok;
 }
 
 Status GdipGetImageGraphicsContext ( gdip_image_ptr image, gdip_graphics_ptr * graphics)
 {
 	if (image->graphics == 0) {
-		image->graphics = _new_graphics ();
+		image->graphics = gdip_graphics_new ();
 		if (image->type == imageBitmap) {
-			_attach_bitmap (image->graphics, (gdip_bitmap_ptr)image);
+			gdip_graphics_attach_bitmap (image->graphics, (gdip_bitmap_ptr)image);
 		}
 		else if (image->type == imageMetafile) {
 		}
@@ -84,9 +101,11 @@ Status GdipDrawImageI (gdip_graphics_ptr graphics, gdip_image_ptr image, int x, 
 
 Status GdipDrawImageRectI (gdip_graphics_ptr graphics, gdip_image_ptr image, int x, int y, int width, int height)
 {
-	gdip_graphics_ptr 	image_graphics = 0;
-	cairo_surface_t 	*image_surface = 0;
-	if (image->type != imageBitmap) return InvalidParameter;
+	gdip_graphics_ptr image_graphics = 0;
+	cairo_surface_t *image_surface = 0;
+
+	if (image->type != imageBitmap)
+		return InvalidParameter;
 	
 	//printf("GdipDrawImageRectI. %p (type %d), %p, (%d,%d) (%d,%d)\n", graphics, graphics->type, image, x, y, width, height);
 	

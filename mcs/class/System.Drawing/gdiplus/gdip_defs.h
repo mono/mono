@@ -84,8 +84,8 @@ enum ImageLockMode {
 
 Status GdipCreateBitmapFromScan0 (int width, int height, int strideIn, int format, void * scan0, gdip_bitmap_ptr * bitmap);
 Status GdipCreateBitmapFromGraphics (int width, int height, gdip_graphics_ptr graphics, gdip_bitmap_ptr * bitmap);
-Status GdipBitmapLockBits (gdip_bitmap_ptr bmp, Rect *rc, int flags, int format, BitmapData * bmpData);
-Status GdipBitmapUnlockBits (gdip_bitmap_ptr bmp, BitmapData * bmpData);
+Status GdipBitmapLockBits (gdip_bitmap_ptr bmp, Rect *rc, int flags, int format, GdipBitmapData * bmpData);
+Status GdipBitmapUnlockBits (gdip_bitmap_ptr bmp, GdipBitmapData * bmpData);
 
 Status GdipCreateFromHDC(int hDC, gdip_graphics_ptr *graphics);
 Status GdipDeleteGraphics(gdip_graphics_ptr graphics);

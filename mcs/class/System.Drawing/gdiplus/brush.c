@@ -24,7 +24,7 @@
 
 #include "gdip_main.h"
 
-void _setup_brush (gdip_graphics_ptr graphics, gdip_brush_ptr brush)
+void gdip_brush_setup (gdip_graphics_ptr graphics, gdip_brush_ptr brush)
 {
 	int R = (brush->color & 0x00FF0000 ) >> 16;
 	int G = (brush->color & 0x0000FF00 ) >> 8;

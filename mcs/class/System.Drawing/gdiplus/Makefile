@@ -3,8 +3,8 @@ SUBDIRS :=
 include ../../../build/rules.make
 
 MoreWarnings = -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls
-LOCAL_CFLAGS=-g -Wall  `pkg-config --cflags cairo`
-LOCAL_LDFLAGS=`pkg-config --libs cairo`
+LOCAL_CFLAGS=-g -Wall  `pkg-config --cflags cairo mono`
+LOCAL_LDFLAGS=`pkg-config --libs cairo mono`
 
 gdiplus = $(topdir)/class/lib/libgdiplus.dll.so
 local_sources = bitmap.c \
@@ -31,17 +31,26 @@ all-local: $(gdiplus)
 clean-local:
 	rm -f *.o
 	rm -f $(gdiplus)
+#	rm -f detect.h detect.libs detect-stamp 
 
-install-local:
+install-local: all-local
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(gdiplus) $(DESTDIR)$(prefix)/lib
 
 dist-local: dist-default
 
-$(gdiplus) : $(local_sources:.c=.o)
+$(gdiplus) : $(local_sources:.c=.o) detect.h detect.libs
 	gcc -shared -Wl,-soname,libgdiplus.dll.so -o $(gdiplus) $(local_objs) $(LOCAL_LDFLAGS)
 
 %.o: %.c
 	$(CCOMPILE) -c -o $@ $^
 
 test-local: 
+
+#detect.h detect.libs: detect-stamp
+#	sh detect
+#
+#detect-stamp: 
+#	touch detect-stamp
+#
+

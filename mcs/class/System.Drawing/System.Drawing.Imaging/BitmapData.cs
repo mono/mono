@@ -8,13 +8,16 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging
 {
+	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
-		int width, height, stride, reserved;
+		int width, height, stride;
 		PixelFormat pixel_format;
 		IntPtr address;
+		int reserved;
 		
 		public int Height {
 			get {

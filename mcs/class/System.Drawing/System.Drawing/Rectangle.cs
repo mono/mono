@@ -8,14 +8,13 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing {
 	
+	[StructLayout(LayoutKind.Sequential)]
 	public struct Rectangle { 
-		
-		// Private position and size fields.
-		private Point loc;
-		private Size sz;
+		int x, y, width, height;
 
 		/// <summary>
 		///	Empty Shared Field
@@ -105,9 +104,10 @@ namespace System.Drawing {
 		
 		public void Inflate (Size sz)
 		{
-			loc -= sz;
-			Size ds = new Size (sz.Width * 2, sz.Height * 2);
-			this.sz += ds;
+			x -= sz.Width;
+			y -= sz.Height;
+			Width = sz.Width * 2;
+			Height = sz.Height * 2;
 		}
 
 		/// <summary>
@@ -138,14 +138,16 @@ namespace System.Drawing {
 		public void Intersect (Rectangle r)
 		{
 			if (!IntersectsWith (r)) {
-				loc = Point.Empty;
-				sz = Size.Empty;
+				x = 0;
+				y = 0;
+				width = 0;
+				height = 0;
 			}
 
-			X = Math.Max (Left, r.Left);
-			Y = Math.Max (Top, r.Top);
-			Width = Math.Min (Right, r.Right) - X;
-			Height = Math.Min (Bottom, r.Bottom) - Y;
+			x = Math.Max (Left, r.Left);
+			y = Math.Max (Top, r.Top);
+			width = Math.Min (Right, r.Right) - X;
+			height = Math.Min (Bottom, r.Bottom) - Y;
 		}
 
 		/// <summary>
@@ -258,8 +260,10 @@ namespace System.Drawing {
 		
 		public Rectangle (Point loc, Size sz)
 		{
-			this.loc = loc;
-			this.sz = sz;
+			x = loc.X;
+			y = loc.Y;
+			width = sz.Width;
+			height = sz.Height;
 		}
 
 		/// <summary>
@@ -273,8 +277,10 @@ namespace System.Drawing {
 		
 		public Rectangle (int x, int y, int width, int height)
 		{
-			loc = new Point (x, y);
-			sz = new Size (width, height);
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
 		}
 
 
@@ -290,7 +296,7 @@ namespace System.Drawing {
 		
 		public int Bottom {
 			get {
-				return Y + Height;
+				return y + height;
 			}
 		}
 
@@ -304,10 +310,10 @@ namespace System.Drawing {
 		
 		public int Height {
 			get {
-				return sz.Height;
+				return height;
 			}
 			set {
-				sz.Height = value;
+				height = value;
 			}
 		}
 
@@ -321,7 +327,7 @@ namespace System.Drawing {
 		
 		public bool IsEmpty {
 			get {
-				return ((sz.Width == 0) || (sz.Height == 0));
+				return ((width == 0) || (height == 0));
 			}
 		}
 
@@ -350,10 +356,11 @@ namespace System.Drawing {
 		
 		public Point Location {
 			get {
-				return loc;
+				return new Point (x, y);
 			}
 			set {
-				loc = value;
+				x = value.X;
+				y = value.Y;
 			}
 		}
 
@@ -382,10 +389,11 @@ namespace System.Drawing {
 		
 		public Size Size {
 			get {
-				return sz;
+				return new Size (Width, Height);
 			}
 			set {
-				sz = value;
+				Width = value.Width;
+				Height = value.Height;
 			}
 		}
 
@@ -400,7 +408,7 @@ namespace System.Drawing {
 		
 		public int Top {
 			get {
-				return Y;
+				return y;
 			}
 		}
 
@@ -414,10 +422,10 @@ namespace System.Drawing {
 		
 		public int Width {
 			get {
-				return sz.Width;
+				return width;
 			}
 			set {
-				sz.Width = value;
+				width = value;
 			}
 		}
 
@@ -431,10 +439,10 @@ namespace System.Drawing {
 		
 		public int X {
 			get {
-				return loc.X;
+				return x;
 			}
 			set {
-				loc.X = value;
+				x = value;
 			}
 		}
 
@@ -448,10 +456,10 @@ namespace System.Drawing {
 		
 		public int Y {
 			get {
-				return loc.Y;
+				return y;
 			}
 			set {
-				loc.Y = value;
+				y = value;
 			}
 		}
 
@@ -522,7 +530,7 @@ namespace System.Drawing {
 		
 		public override int GetHashCode ()
 		{
-			return loc.GetHashCode()^sz.GetHashCode();
+			return (height + width) ^ x + y;
 		}
 
 		/// <summary>
@@ -549,8 +557,8 @@ namespace System.Drawing {
 
 		public void Offset (int dx, int dy)
 		{
-			X += dx;
-			Y += dy;
+			x += dx;
+			y += dy;
 		}
 		
 		/// <summary>
@@ -563,7 +571,8 @@ namespace System.Drawing {
 
 		public void Offset (Point pt)
 		{
-			loc.Offset(pt.X, pt.Y);
+			x += pt.X;
+			y += pt.Y;
 		}
 		
 		/// <summary>
@@ -577,7 +586,7 @@ namespace System.Drawing {
 		public override string ToString ()
 		{
 			return String.Format ("[{0},{1},{2},{3}]", 
-					      X, Y, Width, Height);
+					      x, y, width, height);
 		}
 
 	}

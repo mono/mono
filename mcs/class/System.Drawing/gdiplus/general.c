@@ -29,24 +29,24 @@
 
 struct startupInput
 {
-    unsigned int 	version;             
-    void 			* ptr; 
-    int 			threadOpt;
-    int 			codecOpt;
+	unsigned int version;             
+	void       * ptr; 
+	int          threadOpt;
+	int          codecOpt;
 };
 
 
 struct startupOutput
 {
-    void * hook;
-    void * unhook;
+	void *hook;
+	void *unhook;
 };
 
-
-Display 	*GDIP_display = 0;
-int			closeDisplay = 0;
+Display *GDIP_display = 0;
+int      closeDisplay = 0;
 
 static void * x11drvHandle = 0;
+
 static void _load_x11drv ()
 {
 	if (x11drvHandle == 0) {
@@ -103,7 +103,7 @@ void GdiplusShutdown(unsigned long * token)
 
 
 // Memory
-void * GdipAlloc (int size)
+void *GdipAlloc (int size)
 {
 	return malloc (size);
 }
