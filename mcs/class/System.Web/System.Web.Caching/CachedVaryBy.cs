@@ -28,14 +28,21 @@ namespace System.Web.Caching {
 		{
 			StringBuilder builder = new StringBuilder ();
 
+			builder.Append ("CachedRawResponse\n");
 			builder.Append (file_path);
+			builder.Append ('\n');
+			builder.Append ("METHOD:" + request.HttpMethod);
+			builder.Append ('\n');
 
 			if (prms != null) {
 				for (int i=0; i<prms.Length; i++) {
-					builder.Append ("&VP:");
+					if (request.Params [prms [i]] == null)
+						continue;
+					builder.Append ("VP:");
 					builder.Append (prms [i]);
 					builder.Append ('=');
 					builder.Append (request.Params [prms [i]]);
+					builder.Append ('\n');
 				}
 			}
 

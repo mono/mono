@@ -1,5 +1,13 @@
 2003-11-21  Jackson Harper <jackson@ximian.com>
 
+	* OutputCacheModule.cs: Only cache a page if it has a 200 status
+	code. Fix tabbing.
+	* CachedVaryBy.cs: Give raw response keys a name, use the
+	httpmethod in the key, and delimit items with \n so it is easier
+	to read when debugging.
+	
+2003-11-21  Jackson Harper <jackson@ximian.com>
+
 	* OutputCacheModule.cs: Store a CachedVaryBy object for each
 	cached page. Then store a CachedRawResponse for each combination
 	of varried parameters for a page.
