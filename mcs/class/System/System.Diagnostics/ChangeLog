@@ -1,3 +1,10 @@
+2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* InstanceDataCollectionCollection.cs: Corrected wrong signature
+	* EventLog.cs: Missing attributes added, redirected some class members
+	* EventLogEntry.cs: Missing attributes added
+	* EventLogInstaller.cs: Made internal
+	
 2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* CounterCreationData.cs: Added missing attributes

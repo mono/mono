@@ -15,7 +15,7 @@ using System.Diagnostics;
 namespace System.Diagnostics {
 
 	[MonoTODO]
-	public class EventLogInstaller 
+	internal class EventLogInstaller
 //		: ComponentInstaller
 	{
 //		[MonoTODO]

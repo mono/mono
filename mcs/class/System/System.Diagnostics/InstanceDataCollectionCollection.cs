@@ -49,7 +49,7 @@ namespace System.Diagnostics {
 			return Dictionary.Contains (counterName);
 		}
 
-		public void CopyTo (InstanceData[] counters, int index)
+		public void CopyTo (InstanceDataCollection[] counters, int index)
 		{
 			Dictionary.CopyTo (counters, index);
 		}
