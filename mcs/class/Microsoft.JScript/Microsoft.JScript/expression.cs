@@ -1221,9 +1221,28 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (exp != null)
+				exp.Emit (ec);
+			if (args != null)
+				emit_args (ec);
 		}
 		
+		void emit_args (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			int n = args.Size;
+			ig.Emit (OpCodes.Ldc_I4, args.Size);
+			ig.Emit (OpCodes.Newarr, typeof (object));
+
+			for (int i = 0; i < n; i++) {
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Ldc_I4, i);
+				args.get_element (i).Emit (ec);
+				ig.Emit (OpCodes.Stelem_Ref);
+			}
+
+			ig.Emit (OpCodes.Call, typeof (ArrayConstructor).GetMethod ("CreateInstance"));
+		}
 	}
 	
 	internal interface IAssignable {
