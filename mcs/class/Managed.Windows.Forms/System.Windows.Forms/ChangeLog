@@ -1,3 +1,13 @@
+2005-02-24  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Control.cs: Call DefWndProc at WM_PAINT only if UserPaint not defined
+	* GroupBox.cs: Add control styles
+	* Label.cs: Add control styles	
+	* UpDownBase.cs: Add control styles
+	* ListBox.cs: Add control styles
+	* XplatUIWin32.cs: Fixes wrong parameter order
+
+
 2005-02-23  Chris Bacon  <chris.bacon@docobo.co.uk>
 
 	* ListView.cs: Assign owner for ColumnHeader. Patch by Chris Bacon

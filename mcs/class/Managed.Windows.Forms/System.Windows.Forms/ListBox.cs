@@ -196,6 +196,8 @@ namespace System.Windows.Forms
 			KeyUp += new KeyEventHandler (OnKeyUpLB);
 			GotFocus += new EventHandler (OnGotFocus);
 			LostFocus += new EventHandler (OnLostFocus);
+			
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 		}
 
 		#region Events

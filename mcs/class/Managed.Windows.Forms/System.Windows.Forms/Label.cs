@@ -108,6 +108,7 @@ namespace System.Windows.Forms
 
 			SetStyle (ControlStyles.ResizeRedraw, true);
 			SetStyle (ControlStyles.Selectable, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			
 			HandleCreated += new EventHandler (OnHandleCreatedLB);
 		}

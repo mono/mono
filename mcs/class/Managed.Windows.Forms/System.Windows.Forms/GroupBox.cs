@@ -98,6 +98,7 @@ namespace System.Windows.Forms
 
 			SetStyle(ControlStyles.ContainerControl, true);
 			SetStyle(ControlStyles.Selectable, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 		}
 
 		#region Public Properties

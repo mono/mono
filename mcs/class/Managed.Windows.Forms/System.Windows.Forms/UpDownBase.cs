@@ -261,6 +261,7 @@ namespace System.Windows.Forms {
 			entry.LostFocus += new EventHandler (OnTextBoxLostFocus);
 			entry.Resize += new EventHandler (OnTextBoxResize);
 			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			
 			entry.ReadOnly = false;
 			Controls.Add (entry);

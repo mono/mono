@@ -849,7 +849,7 @@ namespace System.Windows.Forms {
 
 				// FIXME: Figure out why the rectangle is always 0 size
 				clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
-//				clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
+//				clip_rect = new Rectangle(rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top);
 
 				if (ps.fErase!=0) {
 					EraseWindowBackground(handle, hdc);

@@ -3155,7 +3155,11 @@ namespace System.Windows.Forms
 					}
 					OnPaint(paint_event);
 					XplatUI.PaintEventEnd(Handle);
-					DefWndProc(ref m);	
+					
+					if (!GetStyle(ControlStyles.UserPaint)) {
+						DefWndProc(ref m);
+					}
+					
 					return;
 				}
 					
