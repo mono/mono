@@ -1,3 +1,12 @@
+2004-08-28  Jambunathan K  <kjambunathan@novell.com>
+	* main.c: modified cattrs_for_method so that
+	  emitting of ".param[] = ..." is complete.
+	
+	* get.c: Modified get_constant() so that
+	  1. MONO_TYPE_CHAR now handles unicode characters
+	  2. MONO_TYPE_I8 now emits int64(...)
+	  3. MONO_TYPE_STRING emits a bytearray()
+
 2004-08-18  Jambunathan K  <kjambunathan@novell.com>
 	* get.c: Changed dis_stringify_param to emit [opt] for parameters
 	  that are marked as Optional.
