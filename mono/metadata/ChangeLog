@@ -1,3 +1,7 @@
+2003-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* class.c: fixed test for public method when overriding interfaces.
+	Closes bug #40970.
 
 Wed Apr 9 15:19:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
