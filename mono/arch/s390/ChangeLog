@@ -1,4 +1,7 @@
+2004-11-15	Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* s390-codegen.h: Minor macro modifications
+
 2004-07-30	Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* s390-codegen.h: reworked macros for code generation.
-
