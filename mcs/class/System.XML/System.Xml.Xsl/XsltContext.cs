@@ -36,4 +36,10 @@ namespace System.Xml.Xsl
 
 		#endregion
 	}
+	
+	// The static XSLT context, will try to simplify what it can
+	internal interface IStaticXsltContext
+	{
+		Expression TryGetVariable (string nm);
+	}
 }

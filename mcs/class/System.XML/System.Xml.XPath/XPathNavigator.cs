@@ -151,6 +151,16 @@ namespace System.Xml.XPath
 //			Expression expr = (Expression) parser.yyparseDebug (tokenizer);
 			return new CompiledExpression (expr);
 		}
+		
+		internal virtual XPathExpression Compile (string xpath, System.Xml.Xsl.IStaticXsltContext ctx)
+		{
+			Tokenizer tokenizer = new Tokenizer (xpath);
+			XPathParser parser = new XPathParser ();
+			parser.Context = ctx;
+			Expression expr = (Expression) parser.yyparseSafe (tokenizer);
+//			Expression expr = (Expression) parser.yyparseDebug (tokenizer);
+			return new CompiledExpression (expr);
+		}
 
 		public virtual object Evaluate (string xpath)
 		{

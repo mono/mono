@@ -22,8 +22,7 @@ using Mono.Xml.XPath;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
-	public class XslTransformProcessor 
-	{
+	public class XslTransformProcessor {
 		CompiledStylesheet compiledStyle;
 		
 		XslStylesheet style;

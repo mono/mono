@@ -12,6 +12,9 @@ namespace Mono.Xml.XPath
 {
 	public class XPathParser
 	{
+	
+		internal System.Xml.Xsl.IStaticXsltContext Context;
+		
 		internal object yyparseSafe (Tokenizer tok)
 		{
 			return yyparseSafe (tok, null);
@@ -333,7 +336,11 @@ FilterExpr
 PrimaryExpr
 	: DOLLAR QName
 	{
-		$$ = new ExprVariable ((XmlQualifiedName) $2);
+		if (Context != null)
+			$$ = Context.TryGetVariable (((XmlQualifiedName) $2).ToString ());
+		
+		if ($$ == null)
+			$$ = new ExprVariable ((XmlQualifiedName) $2);
 	}
 	| PAREN_OPEN Expr PAREN_CLOSE
 	{

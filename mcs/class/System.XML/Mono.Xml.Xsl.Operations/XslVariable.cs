@@ -182,4 +182,23 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override bool IsParam { get { return true; }}
 	}
+	
+	internal class XPathVariableBinding : Expression {
+		XslGeneralVariable v;
+		public XPathVariableBinding (XslGeneralVariable v)
+		{
+			this.v = v;
+		}
+		public override String ToString () { return "$" + v.Name.ToString (); }
+		public override XPathResultType ReturnType { get { return XPathResultType.Any; }}
+		public override XPathResultType GetReturnType (BaseIterator iter)
+		{
+			return XPathResultType.Any;
+		}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			return v.Evaluate (iter.NamespaceManager as XsltContext);
+		}
+	}
 }

@@ -26,7 +26,7 @@ using Mono.Xml.XPath;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
-	public class CompiledStylesheet	{
+	public class CompiledStylesheet {
 		XslStylesheet style;
 		Hashtable globalVariables;
 		Hashtable attrSets;
@@ -73,7 +73,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 	
-	public class Compiler {
+	public class Compiler : IStaticXsltContext {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 			
 		Stack inputStack = new Stack ();
@@ -260,7 +260,7 @@ namespace Mono.Xml.Xsl {
 		public XPathExpression CompileExpression (string expression)
 		{
 			if (expression == null || expression == "") return null;
-			XPathExpression e = Input.Compile (expression);
+			XPathExpression e = Input.Compile (expression, this);
 			
 			
 			exprStore.AddExpression (e, this);
@@ -408,7 +408,14 @@ namespace Mono.Xml.Xsl {
 				decimalFormats [nm] = new XslDecimalFormat (this);
 		}
 #endregion
-		
+#region Static XSLT context
+		Expression IStaticXsltContext.TryGetVariable (string nm)
+		{
+			XslLocalVariable var = curVarScope.ResolveStatic (XslNameUtil.FromString (nm, Input));
+			if (var == null) return null;
+			return new XPathVariableBinding (var);
+		}
+#endregion
 		public void CompileOutput ()
 		{
 			XPathNavigator n = Input;
@@ -452,6 +459,16 @@ namespace Mono.Xml.Xsl {
 			
 			variables [v.Name] = v;
 			return nextSlot++;
+		}
+		
+		public XslLocalVariable ResolveStatic (QName name)
+		{
+			for (VariableScope s = this; s != null; s = s.Parent) {
+				if (s.variables == null) continue;
+				XslLocalVariable v = s.variables [name] as XslLocalVariable;
+				if (v != null) return v;
+			}
+			return null;
 		}
 		
 		public XslLocalVariable Resolve (XslTransformProcessor p, QName name)
