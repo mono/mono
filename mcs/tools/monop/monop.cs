@@ -68,10 +68,49 @@ class MonoP {
 		Console.WriteLine ("\nTotal: {0} types.", types.Length);
 	}
 	
+	static void Completion (string prefix)
+	{
+		foreach (Type t in typeof (object).Assembly.GetExportedTypes ()) {
+			if (t.Name.StartsWith (prefix)) {
+				if (Array.IndexOf (v_common_ns, t.Namespace) != -1) {
+					Console.WriteLine (t.Name);
+					return;
+				}
+			}
+			
+			if (t.FullName.StartsWith (prefix)) {
+				Console.WriteLine (t.FullName);
+			}
+		}
+		
+		foreach (string assm in common_assemblies) {
+			try {
+				
+				Assembly a = Assembly.Load (assm);
+				foreach (Type t in a.GetExportedTypes ()) {
+					
+					if (t.Name.StartsWith (prefix)) {
+						if (Array.IndexOf (common_ns, t.Namespace) != -1) {
+							Console.WriteLine (t.Name);
+							return;
+						}
+					}
+					
+					if (t.FullName.StartsWith (prefix)) {
+						Console.WriteLine (t.FullName);
+					}
+				}
+				
+			} catch {
+			}
+		}
+		
+	}
+	
 	static void Main (string [] args)
 	{
 		if (args.Length < 1) {
-			Console.WriteLine ("monop [-r:Assembly] [class-name]");
+			Console.WriteLine ("monop [-c] [-r:Assembly] [class-name]");
 			return;
 		}
 		
@@ -86,6 +125,11 @@ class MonoP {
 				PrintTypes (assembly);
 				return;
 			}
+		}
+		
+		if (args [0] == "-c") {
+			Completion (args [1]);
+			return;
 		}
 
 		if (args.Length < i+1){
