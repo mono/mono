@@ -5,6 +5,7 @@ using System.Windows.Forms;
 class FormTest : Form {
 
 	Label label;
+	Button button;
 
 	public FormTest () : base ()
 	{
@@ -14,7 +15,15 @@ class FormTest : Form {
 		label.Width = 50;
 		label.Height = 50;
 		label.Parent = this;
-		label.Text = "Hello";
+		label.Text = "Label";
+
+		button = new Button ();
+		button.Top = 120;
+		button.Left = 120;
+		button.Width = 50;
+		button.Height = 50;
+		button.Parent = this;
+		button.Text = "Button";
 	}
 
 	// - verifies the WndProc can be overridden propery 

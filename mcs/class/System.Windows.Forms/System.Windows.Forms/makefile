@@ -96,6 +96,8 @@ SOURCES = \
 	Form.cs \
 	Application.cs \
 	NativeWindow.cs \
+	ButtonBase.cs \
+	Button.cs \
 	MessageBox.cs
 
 all:	monostub.exe.so System.Windows.Forms.dll NativeWindowTest.exe \

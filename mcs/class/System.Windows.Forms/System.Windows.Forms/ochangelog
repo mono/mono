@@ -1,4 +1,10 @@
 2002-10-12 John Sohn <jsohn@columbus.rr.com>
+	* ButtonBase.cs:
+	* Button.cs:  initial implementation of Button class
+	* FormTest.cs: added Button to form
+	* makefile: added Button.cs and ButtonBase.cs to makefile
+	
+2002-10-12 John Sohn <jsohn@columbus.rr.com>
 	* Control.cs: 
 	* Label.cs: changed CreateHandle method to use CreateParams property
 	* README: added instructions for building and using project
