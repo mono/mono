@@ -140,7 +140,6 @@ Microsoft.JScript/StringLiteral.cs
 Microsoft.JScript/StringObject.cs
 Microsoft.JScript/StringPrototype.cs
 Microsoft.JScript/SuperTypeMembersSorter.cs
-Microsoft.JScript/SymbolTable.cs
 Microsoft.JScript/SyntaxErrorObject.cs
 Microsoft.JScript/TODOAttribute.cs
 Microsoft.JScript/Throw.cs
