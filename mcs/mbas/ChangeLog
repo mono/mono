@@ -1,4 +1,9 @@
 2005-03-24 Manjula GHM <mmanjula@novell.com>
+           Sudharsan V <vsudharsan@novell.com>
+          * mb-parser.jay,mb-tokenizer.cs:
+		Revamped end of block logic 
+
+2005-03-24 Manjula GHM <mmanjula@novell.com>
         * statement.cs: Fix bug in 'Exit Function'
 
 

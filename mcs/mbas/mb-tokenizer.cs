@@ -784,6 +784,10 @@ namespace Mono.MonoBASIC
 
 			return Token.EOL;
 		}	
+	 	
+		public bool putbacktoken = false;
+		public bool flag = false;		
+		int next_token;
 			
 		public int token ()
 		{
@@ -791,6 +795,18 @@ namespace Mono.MonoBASIC
 			do
 			{
 				current_token = xtoken ();
+				if(current_token == Token.END) {
+					// In case of any more addition in end block it got to be added here
+					next_token = xtoken();
+					if (next_token == Token.EOL) 
+						return Token.END_EOL;
+					else if (next_token == Token.IDENTIFIER) {
+						next_token=Token.EOL ; 
+						Report.Error(30678,Location,"'End' statement is not accepted") ; 
+						return Token.END_EOL;
+					 } else 
+						return Token.END;
+				}	
 				if (current_token == 0) 
 					return Token.EOF;
 				if (current_token == Token.REM)
@@ -860,6 +876,11 @@ namespace Mono.MonoBASIC
 			bool doread = false;
 			int c;
 
+			if (putbacktoken == true) {
+				putbacktoken = false;
+				return next_token;
+			}
+	
 			val = null;
 			for (;(c = getChar ()) != -1; col++) {
 			
@@ -872,7 +893,8 @@ namespace Mono.MonoBASIC
 						c = getChar ();			
 					}		
 				}
-
+					
+				
 				// white space
 				if (is_whitespace(c)) {
 					// expand tabs for location
@@ -1051,7 +1073,7 @@ namespace Mono.MonoBASIC
 		{
 			int t;
 			
-			for(t = token(); t != Token.HASH && t != Token.EOF; t = token());
+			for(t = token(); t != Token.HASH && t != Token.EOF ; t = token()); 
 
 			if(t == Token.EOF)
 				throw new ApplicationException("Unexpected EOF while looking for a pre-processor directive");

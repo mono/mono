@@ -138,15 +138,96 @@ namespace Mono.MonoBASIC
                // some cases parser will come out without proceeding further
                // if it comes acorss error.
 
-                public string[] end_blocks = {"Nothing", "Next", "Loop", "End If", "End Sub", "End Module", "End Namespace", "End Class", "End Function", "End Structure", "End Enum", "End Interface", "End Property", "End With", "End Synclock", "End Try", "End While", "End Select", "End Set", "End Get"};
-                
-		public string[] open_blocks = {"Block", "For", "Do", "If", "Sub", "Module", "Namespace", "Class", "Function", "Structure", "Enum", "Interface", "Property", "With", "Synclock", "Try", "While", "Select", "Set", "Get","\nCompilation failed"};
+		// Used to store
+		//	1) The value for corresponding blocks with which it will be accessed...
+		// In case of any more addition to end of blocks... add it at the end	
+		
+		public enum Start_block {
+				NOTHING,
+				FOR,
+				DO,
+				IF,
+				SUB,
+				MODULE,
+				NAMESPACE,
+				CLASS,
+				FUNCTION,
+				STRUCTURE,
+				ENUM,
+				INTERFACE,
+				PROPERTY,
+				WITH,
+				SYNCLOCK,
+				TRY,
+				WHILE,
+				SELECT,
+				SET,
+				GET
+		}
 
-		public int[] error_numbers = {29999, 30092, 30091, 30087, 30429, 30622, 30623, 30460, 30430, 30621, 30184, 30252, 30431, 30093, 30674, 30383, 30090, 30088, 30632, 30630, 29999};
+		// Used to store
+		//	1) Start of block
+		// 	2) End of Block
+		// In case of any more addition to end of blocks... add it at the end	
 
-                public int[] end_priority = {0,1,1,1,2,3,4,3,2,3,1,2,2,1,1,1,1,1,1,1,1};
-                                                                                                                             
-		int Parent = 0;
+		public string[,] end_blocks = {
+			 { "empty"     , "empty"             },
+			 { "For"       , "Next"           },
+			 { "Do"        , "Loop"           },
+			 { "If"        , "End If"         },
+			 { "Sub"       , "End Sub"        },
+			 { "Module"    , "End Module"     },
+			 { "NameSpace" , "End NameSpace"  },
+			 { "Class"     , "End Class"      },
+			 { "Function"  , "End Function"   },
+			 { "Structure" , "End Structure"  },
+			 { "Enum"      , "End Enum"       },
+			 { "Interface" , "End Interface"  },
+			 { "Property"  , "End Property"   },
+			 { "With"      , "End With"       },
+			 { "SyncLock"  , "End SyncLock"   },
+			 { "Try"       , "End Try"        },
+			 { "While"     , "End While"      },
+			 { "Select"    , "End Select"     },
+			 { "Set"       , "End Set"        },
+			 { "Get"       , "End Get"        }
+			};
+			
+		
+		// Used to store
+		//	1) Error number for End of block missing 
+		// 	2) Extra End of Block  
+		// 	3) Priority for the end 0f blocks
+		// In case of any more addition to end of blocks... add it at the end	
+
+		public int[,] error_end_blocks = {
+			 { 29999 , 29999 , 0 },
+			 { 30084 , 30092 , 1 },
+			 { 30083 , 30091 , 1 },
+			 { 30081 , 30087 , 1 },
+			 { 30289 , 30429 , 3 },
+			 { 30625 , 30622 , 5 },
+			 { 30626 , 30623 , 6 },
+			 { 30481 , 30460 , 4 },
+			 { 30027 , 30430 , 3 },
+			 { 30624 , 30621 , 4 },
+			 { 30185 , 30184 , 1 },
+			 { 30253 , 30252 , 3 },
+			 { 30025 , 30431 , 3 },
+			 { 30085 , 30093 , 1 },
+			 { 30675 , 30674 , 1 },
+			 { 30384 , 30383 , 1 },
+			 { 30082 , 30090 , 1 },
+			 { 30095 , 30088 , 1 },
+			 { 30633 , 30632 , 2 },
+			 { 30631 , 30630 , 2 }
+ 			};
+
+		Stack end_of_block;
+		Stack temp_block;
+		Stack loc_end_of_block;
+		Stack loc_temp_block;
+
 		Location try_top;
 
 		DoOptions do_type;
@@ -447,6 +528,7 @@ namespace Mono.MonoBASIC
 %token ELSE
 %token ELSEIF
 %token END
+%token END_EOL
 %token ENDIF
 %token ENUM	
 %token EOL
@@ -863,25 +945,25 @@ imports_term
 	;
 
 opt_params
-	: /* empty */	{ $$ = Parameters.EmptyReadOnlyParameters; }
-	| OPEN_PARENS CLOSE_PARENS	{ $$ = Parameters.EmptyReadOnlyParameters; }
-	| OPEN_PARENS _mark_ opt_formal_parameter_list CLOSE_PARENS	{ $$ = $3; }
-	| OPEN_PARENS _mark_ error
-	  {
-		Report.Error(30203,(Location)$2, "Identifier Expected"); 
-		$$ = Parameters.EmptyReadOnlyParameters;
-   	  }
-	| OPEN_PARENS _mark_ opt_formal_parameter_list error
-	  {
-		Report.Error(30198,(Location)$2, "'(' is not having a matching ')'"); 
-		$$ = $3;
-	  }
-	| error _mark_ opt_formal_parameter_list CLOSE_PARENS 
-	  {
-		Report.Error(30205,(Location)$2, "')' is not having a matching '('"); 
-		$$ = $3;
-	  }
-	;
+        : /* empty */   { $$ = Parameters.EmptyReadOnlyParameters; }
+        | OPEN_PARENS CLOSE_PARENS      { $$ = Parameters.EmptyReadOnlyParameters; }
+        | OPEN_PARENS _mark_ opt_formal_parameter_list CLOSE_PARENS     { $$ = $3; }
+        | OPEN_PARENS _mark_ error
+          {
+                Report.Error(30203,(Location)$2, "Identifier Expected");
+                $$ = Parameters.EmptyReadOnlyParameters;
+          }
+        | OPEN_PARENS _mark_ opt_formal_parameter_list error
+          {
+                Report.Error(30198,(Location)$2, "'(' is not having a matching ')'");
+                $$ = $3;
+          }
+        | error _mark_ opt_formal_parameter_list CLOSE_PARENS
+          {
+                Report.Error(30205,(Location)$2, "')' is not having a matching '('");
+                $$ = $3;
+          }
+        ;
 
 opt_attributes
  	: /* empty */
@@ -1146,27 +1228,14 @@ named_argument
 namespace_declaration
 	: NAMESPACE _mark_ qualified_identifier logical_end_of_line
 	  {
+		push_into_stack((int)Start_block.NAMESPACE, (Location)$2);
 		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$3);
 		
 	  } 
 	  opt_declarations
 	  opt_end_block
 	  {
-		int i = (int)$7;
-		if (end_priority[6]>=end_priority[i] && i!=6)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=6 && Parent!=6) 
-			{
-			Report.Error(30626,(Location)$2,"'NameSpace' is not having a matching 'End NameSpace'"); 
-			Parent=i;
-			}
-		if(i!=6)
-			Parent=i;
-		if(Parent==6)
-			Parent=0;
+		pop_out_of_stack((int)$7, lexer.Location);	
 	  }
 	  logical_end_of_line
 	  { 
@@ -1198,6 +1267,8 @@ class_declaration
 		// Module members are static by default, but Class *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
 		// instead of triggering an error.
+		push_into_stack((int)Start_block.CLASS, (Location)$3);
+		
 		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
 			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
 	  
@@ -1215,21 +1286,7 @@ class_declaration
 	  opt_class_member_declarations
 	  opt_end_block
 	  {
-		int i = (int)$9;
-		if (end_priority[7]>=end_priority[i] && i!=7)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=7 && Parent!=7) 
-			{
-			Report.Error(30481,(Location)$3,"'Class' is not having a matching 'End Class'"); 
-			Parent=i;
-			}
-		if(i!=7)
-			Parent=i;
-		if(Parent==7)
-			Parent=0;
+		pop_out_of_stack((int)$9, lexer.Location);
 	  }
 	  logical_end_of_line
 	  {
@@ -1304,6 +1361,7 @@ modifier
 module_declaration
 	: MODULE _mark_ identifier logical_end_of_line
 	  { 
+		push_into_stack((int)Start_block.MODULE, (Location)$2);	
 		Module new_module;
 		string name;
 		name = MakeName((string) $3);
@@ -1319,21 +1377,7 @@ module_declaration
 	  opt_module_member_declarations
 	  opt_end_block
 	  {
-		int i = (int)$7;
-		if (end_priority[5]>=end_priority[i] && i!=5)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=5 && Parent!=5) 
-			{
-			Report.Error(30625,(Location)$2,"'Module' is not having a matching 'End Module'"); 
-			Parent=i;
-			}
-		if(i!=5)
-			Parent=i;
-		if(Parent==5)
-			Parent=0;
+		pop_out_of_stack((int)$7, lexer.Location);	
 	  }
 	  logical_end_of_line
 	  {
@@ -1522,6 +1566,7 @@ must_override_func_declaration
 sub_declaration
 	: SUB identifier _mark_ opt_params opt_evt_handler opt_implement_clause logical_end_of_line
 	  { 
+		push_into_stack((int)Start_block.SUB, (Location)$3);
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
 
@@ -1533,21 +1578,7 @@ sub_declaration
 	  opt_statement_list 
 	  opt_end_block 
 	  {
-		int i = (int)$10;
-		if (end_priority[4]>=end_priority[i] && i!=4)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=4 && Parent!=4) 
-			{
-			Report.Error(30289,(Location)$3,"'Sub' is not having a matching 'End Sub'"); 
-			Parent=i;
-			}
-		if(i!=4)
-			Parent=i;
-		if(Parent==4)
-			Parent=0;
+		pop_out_of_stack((int)$10, lexer.Location);
 	  }
 	  logical_end_of_line
 	  {
@@ -1606,6 +1637,7 @@ func_declaration
 	: FUNCTION identifier opt_type_character
 	  opt_params _mark_ opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  { 
+		push_into_stack((int)Start_block.FUNCTION, (Location)$5);
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
 				
@@ -1623,21 +1655,7 @@ func_declaration
 	  opt_statement_list
 	  opt_end_block 
 	  {
-		int i = (int)$11;
-		if (end_priority[8]>=end_priority[i] && i!=8)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=8 && Parent!=8) 
-			{
-			Report.Error(30027,(Location)$5,"'Function' is not having a matching 'End Function'"); 
-			Parent=i;
-			}
-		if(i!=8)
-			Parent=i;
-		if(Parent==8)
-			Parent=0;
+		pop_out_of_stack((int)$11, lexer.Location);
 	  }
 	  logical_end_of_line
 	  {
@@ -1655,6 +1673,7 @@ struct_declaration
 	: STRUCTURE _mark_ identifier end_of_stmt
 	  opt_implement_clause
 	  {
+		push_into_stack((int)Start_block.STRUCTURE, (Location)$2);
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $3);
 		
@@ -1684,22 +1703,7 @@ struct_declaration
 	  }
 	  opt_end_block 
 	  {
-		int i = (int)$9;
-		if (end_priority[9]>=end_priority[i] && i!=9)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=9 && Parent!=9) 
-			{
-			
-			Report.Error(30624,(Location)$2,"'Structure' is not having a matching 'End Structure'"); 
-			Parent=i;
-			}
-		if(i!=9)
-			Parent=i;
-		if(Parent==9)
-			Parent=0;
+		pop_out_of_stack((int)$9, lexer.Location);
 	  }
 	  logical_end_of_line
 	;
@@ -1794,6 +1798,7 @@ enum_declaration
 	: ENUM _mark_ identifier opt_type_spec logical_end_of_line
 	  opt_enum_member_declarations 
 	  { 
+		push_into_stack((int)Start_block.ENUM, (Location)$2);
 		Location enum_location = (Location)$2;
 		string full_name = MakeName ((string) $3);
 		Expression enum_type = ($4 == null) ? TypeManager.system_int32_expr : (Expression) $4;
@@ -1829,22 +1834,8 @@ enum_declaration
 	  }
 	  opt_end_block 
 	  {
-		int i = (int)$8;
-		if (end_priority[10]>=end_priority[i] && i!=10)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=10 && Parent!=10) 
-			{
-			Report.Error(30185,(Location)$2,"'ENUM' is not having a matching 'End ENUM'"); 
-			Parent=i;
-			}
-		if(i!=10)
-			Parent=i;
-		if(Parent==10)
-			Parent=0;
-	 }
+		pop_out_of_stack((int)$8,lexer.Location);
+	  }
   	  logical_end_of_line
 	;
 
@@ -1889,6 +1880,7 @@ enum_member_declaration
 interface_declaration
 	: INTERFACE _mark_ identifier logical_end_of_line
 	  {
+		push_into_stack((int)Start_block.INTERFACE, (Location)$2);
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $3);
 
@@ -1916,21 +1908,7 @@ interface_declaration
 	  }
 	  opt_end_block 
 	  {
-		int i = (int)$9;
-		if (end_priority[11]>=end_priority[i] && i!=11)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=11 && Parent!=11) 
-			{
-			Report.Error(30253,(Location)$2,"'INTERFACE' is not having a matching 'End INTERFACE'"); 
-			Parent=i;
-			}
-		if(i!=11)
-			Parent=i;
-		if(Parent==11)
-			Parent=0;
+		pop_out_of_stack((int)$9, lexer.Location);
 	 }
 	  logical_end_of_line
 	;
@@ -2161,6 +2139,7 @@ abstract_propery_declaration
 	    opt_type_with_ranks
 	    opt_implement_clause 
 	  {
+		push_into_stack((int)Start_block.PROPERTY, (Location)$5);
 		if ((current_modifiers & Modifiers.DEFAULT) > 0) {
 			if (current_container.DefaultPropName != null 
 				  && current_container.DefaultPropName != (string) $2)
@@ -2195,21 +2174,7 @@ abstract_propery_declaration
 	  accessor_declarations 
 	  opt_end_block 
 	  {
-		int i = (int)$11;
-		if (end_priority[12]>=end_priority[i] && i!=12)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=12 && Parent!=12) 
-			{
-			Report.Error(30025,(Location)$5,"'Property' is not having a matching 'End Property'"); 
-			Parent=i;
-			}
-		if(i!=12)
-			Parent=i;
-		if(Parent==12)
-			Parent=0;
+		pop_out_of_stack((int)$11,lexer.Location);
 	 }
           logical_end_of_line
 	  {
@@ -2311,6 +2276,7 @@ opt_set_accessor_declaration
 get_accessor_declaration
 	: opt_attributes GET _mark_ logical_end_of_line
 	  {
+		push_into_stack((int)Start_block.GET, (Location)$3);
 		if ((current_modifiers & Modifiers.WRITEONLY) != 0)
 	  		Report.Error (30023, (Location)$3, "'WriteOnly' properties cannot have a 'Get' accessor");
 	  
@@ -2328,21 +2294,7 @@ get_accessor_declaration
 	  opt_statement_list
           opt_end_block
           {
-                int i = (int)$7;
-		if (end_priority[19]>=end_priority[i] && i!=19)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=19 && Parent!=19)
-                        {
-                        Report.Error(30631,(Location)$3,"'GET' is not having a matching 'End Get'");
-                        Parent=i;
-                        }
-                if(i!=19)
-                        Parent=i;
-                if(Parent==19)
-                        Parent=0;
+		pop_out_of_stack((int)$7,lexer.Location);
           }
 	  logical_end_of_line
 	  {
@@ -2355,7 +2307,8 @@ get_accessor_declaration
 set_accessor_declaration
 	: opt_attributes SET opt_set_parameter _mark_ logical_end_of_line
 	  {
-        if ((current_modifiers & Modifiers.READONLY) != 0)
+		push_into_stack((int)Start_block.SET, (Location)$4);
+	        if ((current_modifiers & Modifiers.READONLY) != 0)
 	  		Report.Error (30022,
 				      (Location)$4,
 			              "'ReadOnly' properties cannot have a 'Set' accessor");
@@ -2374,21 +2327,7 @@ set_accessor_declaration
 	  opt_statement_list
           opt_end_block
           {
-                int i = (int)$8;
-		if (end_priority[18]>=end_priority[i] && i!=18)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=18 && Parent!=18)
-                        {
-                        Report.Error(30633,(Location)$4,"'SET' is not having a matching 'End Set'");
-                        Parent=i;
-                        }
-                if(i!=18)
-                        Parent=i;
-                if(Parent==18)
-                        Parent=0;
+		pop_out_of_stack((int)$8,lexer.Location);
           }
 
           logical_end_of_line
@@ -2581,6 +2520,7 @@ evt_handler
 constructor_declaration
 	: SUB _mark_ NEW opt_params logical_end_of_line
 	  {
+		push_into_stack((int)Start_block.SUB, (Location)$2);
 	  	current_local_parameters = (Parameters) $4;
 	  	start_block();
 		oob_stack.Push (lexer.Location);
@@ -2603,21 +2543,7 @@ constructor_declaration
 	  }
 	  opt_end_block 
 	  {
-		int i = (int)$9;
-		if (end_priority[4]>=end_priority[i] && i!=4)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=4 && Parent!=4) 
-			{
-			Report.Error(30289,(Location)$2,"'Sub' is not having a matching 'End Sub'"); 
-			Parent=i;
-			}
-		if(i!=4)
-			Parent=i;
-		if(Parent==4)
-			Parent=0;
+		pop_out_of_stack((int)$9, lexer.Location);
 	 }
           logical_end_of_line
 	;
@@ -2742,10 +2668,10 @@ opt_statement_list
 
 statement_list
 	: statement 
-	| statement_list end_of_stmt 
+	| statement_list end_of_stmt  
 	  statement
 	;
-	
+
 statement 
 	  : declaration_statement
 	    {
@@ -2777,8 +2703,13 @@ statement
 	    {
 	      current_block.AddStatement ((Statement) $1);
 	    }	  
+	  | opt_end_stmt {/*changes to be done here. End caught here*/}  
 	  ;	
 	  
+opt_end_stmt
+	: END_EOL  
+	;
+	
 opt_raise_event_args 
 	: /* empty */	{ $$ = null; }
 	| OPEN_PARENS opt_argument_list CLOSE_PARENS
@@ -2841,6 +2772,7 @@ with_statement
 	: WITH _mark_ expression end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
 	  {
 	  	// was : Expression e = DecomposeQI ((string) $3, (Location)$2);
+		push_into_stack((int)Start_block.WITH, (Location)$2);
 	  	Expression e = (Expression) $3;
 		with_stack.Push(e);
 		start_block();
@@ -2848,21 +2780,7 @@ with_statement
 	  opt_statement_list
 	  opt_end_block 
 	  {
-		int i = (int)$7;
-		if (end_priority[13]>=end_priority[i] && i!=13)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=13 && Parent!=13) 
-			{
-			Report.Error(30085,(Location)$2,"'With' is not having a matching 'End With'"); 
-			Parent=i;
-			}
-		if(i!=13)
-			Parent=i;
-		if(Parent==13)
-			Parent=0;
+		pop_out_of_stack((int)$7,lexer.Location);
 	  	Block b = end_block();
 		with_stack.Pop();
 		$$ = b;
@@ -3009,6 +2927,7 @@ foreach_statement
 	  expression end_of_stmt
 	  {
 		Location l = (Location)$4;		
+		push_into_stack((int)Start_block.FOR, l);
 		LocalVariableReference v = null;
 		VariableInfo vi;
 
@@ -3058,21 +2977,7 @@ foreach_statement
 	  opt_statement_list
 	  opt_end_block
           {
-                int i = (int)$11;
-		if (end_priority[1]>=end_priority[i] && i!=1)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=1 && Parent!=1)
-                        {
-                        Report.Error(30084,(Location)$4,"'For' is not having a matching 'Next'");
-                        Parent=i;
-                        }
-                if(i!=1)
-                        Parent=i;
-                if(Parent==1)
-                        Parent=0;
+		pop_out_of_stack((int)$11,lexer.Location);
           }
 	   _mark_ opt_identifier
 	  {
@@ -3139,26 +3044,13 @@ yield_statement
 synclock_statement
 	: SYNCLOCK _mark_ expression end_of_stmt
 	  {   
+		push_into_stack((int)Start_block.SYNCLOCK, (Location)$2);
 		start_block();  
 	  }
 	  opt_statement_list 
 	  opt_end_block 
 	  {
-		int i = (int)$7;
-		if (end_priority[14]>=end_priority[i] && i!=14)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=14 && Parent!=14) 
-			{
-			Report.Error(30675,(Location)$2,"'Synclock' is not having a matching 'End SyncLock'"); 
-			Parent=i;
-			}
-		if(i!=14)
-			Parent=i;
-		if(Parent==14)
-			Parent=0;
+		pop_out_of_stack((int)$7,lexer.Location);
 		$$ = new Lock ((Expression) $3, (Statement) (Block) end_block(), (Location)$2);
 	  }
 	;
@@ -3171,6 +3063,7 @@ try_statement
 try_header
 	: TRY _mark_ end_of_stmt
 	  {   
+		push_into_stack((int)Start_block.TRY, (Location)$2);
 		try_top=(Location)$2;
 		start_block();  
 	  }
@@ -3187,21 +3080,7 @@ try_catch
 	: try_header 	
 	  _mark_ opt_end_block 
 	  {
-		int i = (int)$3;
-		if (end_priority[15]>=end_priority[i] && i!=15)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=15 && Parent!=15) 
-			{
-			Report.Error(30384,try_top,"'Try' is not having a matching 'End Try'"); 
-			Parent=i;
-			}
-		if(i!=15)
-			Parent=i;
-		if(Parent==15)
-			Parent=0;
+		pop_out_of_stack((int)$3,lexer.Location);
 		Catch g = null;
 		ArrayList s = new ArrayList ();
 
@@ -3232,22 +3111,7 @@ try_catch_finally
 	  opt_statement_list 
 	  _mark_ opt_end_block 
 	  {
- 		int i = (int)$8;
-		if (end_priority[15]>=end_priority[i] && i!=15)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=15 && Parent!=15)
-                        {
-                        Report.Error(30384,try_top,"'Try' is not having a matching 'End Try'");
-                        Parent=i;
-                        }
-                if(i!=15)
-                        Parent=i;
-                if(Parent==15)
-                        Parent=0;
-
+		pop_out_of_stack((int)$8,lexer.Location);
 		Catch g = null;
 		ArrayList s = new ArrayList ();
 		ArrayList catch_list = (ArrayList) tmp_catch_clauses;
@@ -3362,7 +3226,7 @@ catch_args
 		Report.Error(30203, (Location)$2, "Identifier Expected");
 		$$ = null;
 	}
-	| identifier AS _mark_ error  
+	| identifier AS _mark_ error 
 	{
 		Report.Error(30182, (Location)$3, "Type Expected");
 		$$ = null;
@@ -3373,26 +3237,13 @@ catch_args
 do_statement
 	: DO _mark_ opt_do_construct end_of_stmt
 	  {
+		push_into_stack((int)Start_block.DO, (Location)$2);
 		start_block();
 	  }	
 	  opt_statement_list
 	  opt_end_block
           {
-                int i = (int)$7;
-		if (end_priority[2]>=end_priority[i] && i!=2)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=2 && Parent!=2)
-                        {
-                        Report.Error(30083,(Location)$2,"'Do' is not having a matching 'Loop'");
-                        Parent=i;
-                        }
-                if(i!=2)
-                        Parent=i;
-                if(Parent==2)
-                        Parent=0;
+		pop_out_of_stack((int)$7,lexer.Location);
 	  }
 	  _mark_ opt_do_construct
 	  {
@@ -3435,6 +3286,7 @@ while_or_until
 while_statement
 	: WHILE
 	{
+		push_into_stack((int)Start_block.WHILE, lexer.Location);
 		start_block();
 		oob_stack.Push (lexer.Location);
 	}
@@ -3443,21 +3295,7 @@ while_statement
 	opt_end_block
           {
 		Location l = (Location) oob_stack.Pop ();
-                int i = (int)$6;
-		if (end_priority[16]>=end_priority[i] && i!=16)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=16 && Parent!=16)
-                        {
-                        Report.Error(30082,l,"'While' is not having a matching 'End While'");
-                        Parent=i;
-                        }
-                if(i!=16)
-                        Parent=i;
-                if(Parent==16)
-                        Parent=0;
+		pop_out_of_stack((int)$6,lexer.Location);
 		Block b = end_block();
 		Expression e = (Expression) $3;
 		$$ = new While ((Expression) e, (Statement) b, l);
@@ -3467,6 +3305,7 @@ while_statement
 for_statement
 	: FOR _mark_ identifier opt_type_spec ASSIGN expression TO expression opt_step end_of_stmt
 	  {
+		push_into_stack((int)Start_block.FOR, (Location)$2);
 		if ($4 != null)
 		{
 			start_block();
@@ -3483,21 +3322,7 @@ for_statement
 	  opt_statement_list
    	  opt_end_block
           {
-                int i = (int)$13;
-		if (end_priority[1]>=end_priority[i] && i!=1)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=1 && Parent!=1)
-                        {
-                        Report.Error(30084,(Location)$2,"'For' is not having a matching 'Next'");
-                        Parent=i;
-                        }
-                if(i!=1)
-                        Parent=i;
-                if(Parent==1)
-                        Parent=0;
+		pop_out_of_stack((int)$13,lexer.Location);
   	  }
           _mark_ opt_identifier 
 	  {
@@ -3545,10 +3370,14 @@ selection_statement
 	;
 
 if_statement
-	: if_statement_open opt_then end_of_stmt opt_statement_list if_statement_rest
-	  {
-		$$ = $5;
-	  }
+	: if_statement_open opt_then end_of_stmt opt_statement_list 
+	   {
+		push_into_stack((int)Start_block.IF, (Location)$1);
+	   }	
+	   if_statement_rest
+	   {
+		$$ = $6;
+	   }
 	| if_statement_open THEN pre_embedded_statement opt_else_pre_embedded_statement
 	  {
 		if ($4 == null)
@@ -3606,15 +3435,16 @@ else_pre_embedded_statement
 
 /*FIXME:if without end if not working. Error line shown is nor correct*/
 if_statement_open
-	: IF 
+	: IF _mark_
 	  {
 	   	oob_stack.Push (lexer.Location);
 	  }
 		boolean_expression 
 	  {
 	   	start_block();
-	   	tmp_expr = (Expression) $3;
+	   	tmp_expr = (Expression) $4;
 	   	expr_stack.Push(tmp_expr);
+		$$ = (Location)$2;
 	  }
 	 ;
 
@@ -3628,21 +3458,7 @@ if_statement_rest
 	  opt_end_block 
 	  { 
 		Location l = (Location) oob_stack.Pop ();
-		int i = (int)$1;
-		if (end_priority[3]>=end_priority[i] && i!=3)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=3 && Parent!=3) 
-			{
-				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
-				Parent = i;
-			}
-		if(i!=3)
-			Parent=i;
-		if(Parent==3)
-			Parent=0;
+		pop_out_of_stack((int)$1,lexer.Location);
        		Expression expr = (Expression)expr_stack.Pop(); 
 		$$ = new If ((Expression) expr, (Statement) end_block(), l);
 	  }	  
@@ -3657,21 +3473,7 @@ if_statement_rest
 	  opt_end_block	
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		int i = (int)$5;
-		if (end_priority[3]>=end_priority[i] && i!=3)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=3 && Parent!=3) 
-			{
-				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
-				Parent = i;
-			}
-		if(i!=3)
-			Parent=i;
-		if(Parent==3)
-			Parent=0;
+		pop_out_of_stack((int)$5,lexer.Location);
                 tmp_expr = (Expression)expr_stack.Pop(); 
                 tmp_block = (Block) tmp_blocks.Pop(); 
 		$$ = new If ((Expression) tmp_expr, (Statement) tmp_block, (Statement) end_block(), l);
@@ -3709,21 +3511,7 @@ else_if_statement_rest
 	  opt_end_block	
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		int i = (int)$5;
-		if (end_priority[3]>=end_priority[i] && i!=3)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=3 && Parent!=3) 
-			{
-				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
-				Parent = i;
-			}
-		if(i!=3)
-			Parent=i;
-		if(Parent==3)
-			Parent=0;
+		pop_out_of_stack((int)$5,lexer.Location);
 		oob_stack.Push (l);
 	   	Expression expr = (Expression)expr_stack.Pop(); 
 	   	Block bl = (Block)tmp_blocks.Pop(); 
@@ -3753,21 +3541,7 @@ else_if_statement_rest
 	  opt_end_block
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		int i = (int)$1;
-		if (end_priority[3]>=end_priority[i] && i!=3)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-		if (i!=3 && Parent!=3) 
-			{
-				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
-				Parent = i;
-			}
-		if(i!=3)
-			Parent=i;
-		if(Parent==3)
-			Parent=0;
+		pop_out_of_stack((int)$1,lexer.Location);
 		oob_stack.Push (l);
 	   	Expression expr = (Expression)expr_stack.Pop(); 
                 Statement stmt = (Statement) new If ((Expression) expr, (Statement)  end_block(), l);
@@ -3780,27 +3554,14 @@ select_statement
 	: SELECT 
 	  _mark_ opt_case expression end_of_stmt
 	  { 
+		push_into_stack((int)Start_block.SELECT, (Location)$2);
 		oob_stack.Push (lexer.Location);
 		switch_stack.Push (current_block);
 	  }	
 	  opt_case_sections
 	  opt_end_block
           {
-                int i = (int)$8;
-		if (end_priority[17]>=end_priority[i] && i!=17)
-			{
-				Report.Error(error_numbers[i],lexer.Location,"'"+end_blocks[i]+"' found without a matching '"+open_blocks[i]+"'"+open_blocks[20]);
-				Environment.Exit(1);
-			}
-                if (i!=17 && Parent!=17)
-                        {
-                                Report.Error(30095,(Location)$2,"'Select' is not having a matching 'End Select'");
-                                Parent = i;
-                        }
-                if(i!=17)
-                        Parent=i;
-                if(Parent==17)
-                        Parent=0;
+		pop_out_of_stack((int)$8,lexer.Location);
 		current_block = (Block) switch_stack.Pop ();
 		$$ = new Switch ((Expression) $4, (ArrayList) $7, (Location) oob_stack.Pop ());
 	  }	  
@@ -4629,7 +4390,9 @@ this_access
 	  }
 	| MYCLASS
 	  {
-		$$ = new This (This.TypeOfAccess.MyClass, current_block, lexer.Location);
+		// FIXME: This is actually somewhat different from Me
+		// because it is for accessing static (classifier) methods/properties/fields
+		$$ = new This (current_block, lexer.Location);
 	  }
 	;
 
@@ -5114,7 +4877,7 @@ pp_directive
 			  ifElseStateMachine.HandleToken(tok);
 		  }
 		  catch(ApplicationException) {
-			  throw new MBASException(ifElseStateMachine.Error, (Location)$4, ifElseStateMachine.ErrString);
+			  throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		  }
 	  }
 	  EOL 
@@ -5145,51 +4908,54 @@ opt_elseif
 
 // Changed so as to check if every block is closed or not... 
 opt_end_block
-	: END opt_block_types 
+	: opt_block_types 
 	  {
-		$$ = 2 + (int)$2 ;
+		$$ = 2 + (int)$1 ;
 	  }
 	| NEXT
 	  {$$ = 1;}
 	| LOOP
 	  {$$ = 2;}
+	| EOF
+	  {$$ = Token.EOF;}	
 	;
 
 opt_block_types
-	: IF
+	: END IF
 	  {$$ = 1;}
-	| SUB
+	| END SUB
 	  {$$ = 2;}
-	| MODULE
+	| END MODULE
 	  {$$ = 3;}
-	| NAMESPACE
+	| END NAMESPACE
 	  {$$ = 4;}
-	| CLASS
+	| END CLASS
 	  {$$ = 5;}
-	| FUNCTION 
+	| END FUNCTION 
 	  {$$ = 6;}
-	| STRUCTURE 
+	| END STRUCTURE 
 	  {$$ = 7;}
-	| ENUM
+	| END ENUM
 	  {$$ = 8;}
-	| INTERFACE 
+	| END INTERFACE 
 	  {$$ = 9;}
-	| PROPERTY 
+	| END PROPERTY 
 	  {$$ = 10;}
-	| WITH 
+	| END WITH 
 	  {$$ = 11;}
-	| SYNCLOCK
+	| END SYNCLOCK
 	  {$$ = 12;}
-	| TRY 
+	| END TRY 
 	  {$$ = 13;}
-	| WHILE 
+	| END WHILE 
 	  {$$ = 14;}
-	| SELECT 
+	| END SELECT 
 	  {$$ = 15;}
-	| SET 
+	| END SET 
 	  {$$ = 16;}
-	| GET 
+	| END GET 
 	  {$$ = 17;}
+	/*In case of any new end block please add it here.. after END_GET as single token... and please continue the numbering from 17...*/
 	;
 
 %%
@@ -5584,6 +5350,84 @@ Block end_block ()
 	return (res);
 }
 
+void push_into_stack(int BlockStart, Location l)
+{
+	end_of_block.Push(BlockStart);	
+	loc_end_of_block.Push(l);
+}
+
+void pop_out_of_stack(int BlockEnd, Location l)
+{
+	if(BlockEnd != Token.EOF) {
+		int current = (int)end_of_block.Pop();
+ 		Location current_loc = (Location)loc_end_of_block.Pop();
+		if(BlockEnd != current) {
+			// Block end is missing
+			// eg: For 'Sub' BlockEnd should be 'End Sub'	
+			
+			if(error_end_blocks[BlockEnd,2] > error_end_blocks[current,2]) {
+				while(error_end_blocks[BlockEnd,2] > error_end_blocks[current,2])
+				{
+					if(error_end_blocks[BlockEnd,2] > error_end_blocks[current,2])
+						Report.Error(error_end_blocks[current,0],current_loc,"'"+end_blocks[current,0]+"' is not having matching '"+end_blocks[current,1]+"'");
+					current = (int)end_of_block.Pop();
+ 					current_loc = (Location)loc_end_of_block.Pop();
+				}
+			}
+			
+			// Extra end is present, but works for lesser priority 
+			// (for priority see opt_end_block opt_block_types return values 
+			// eg: 'EndIf' without 'If' inside 'Sub'
+			// Also certain other errors like 'Sub' having a 'End Module' etc 
+			// can be handled here
+
+			if(error_end_blocks[BlockEnd,2] < error_end_blocks[current,2]) {
+				Report.Error(error_end_blocks[BlockEnd,1],l,"'"+end_blocks[BlockEnd,1]+"' is not having  a corresponding '"+end_blocks[BlockEnd,0]+"'");
+				end_of_block.Push(current);	
+				loc_end_of_block.Push(current_loc);
+			}	
+			// Extra end is present but with equal priorty
+
+			if((error_end_blocks[BlockEnd,2] == error_end_blocks[current,2]) && BlockEnd != current) {
+				while((error_end_blocks[BlockEnd,2] == error_end_blocks[current,2]) && BlockEnd != current) {
+					temp_block.Push(current);
+					loc_temp_block.Push(current_loc);
+					current = (int)end_of_block.Pop();
+ 					current_loc = (Location)loc_end_of_block.Pop();
+				}
+			
+				if(BlockEnd == current) {
+				        while(temp_block.Count !=0)
+				        {
+				                int lapse = (int) temp_block.Pop();
+			                        Location lapse_location = (Location)loc_temp_block.Pop();
+						Report.Error(error_end_blocks[lapse,0],lapse_location,"'"+end_blocks[lapse,0]+"' is not having matching '"+end_blocks[lapse,1]+"'");
+			                }
+				}
+				
+				else {
+					Report.Error(error_end_blocks[BlockEnd,1],l,"'"+end_blocks[BlockEnd,1]+"' is not having  a corresponding '"+end_blocks[BlockEnd,0]+"'");
+					end_of_block.Push(current);	
+					loc_end_of_block.Push(current_loc);
+				        while(temp_block.Count !=0) {
+				                int lapse = (int) temp_block.Pop();
+			                        Location lapse_location = (Location)loc_temp_block.Pop();
+						end_of_block.Push(lapse);	
+						loc_end_of_block.Push(lapse_location);
+				        }
+				}
+			}
+		}
+	}	
+	else {
+	        while(end_of_block.Count !=0) {
+	                int lapse = (int) end_of_block.Pop();
+                        Location lapse_location = (Location)loc_end_of_block.Pop();
+			Report.Error(error_end_blocks[lapse,0],lapse_location,"'"+end_blocks[lapse,0]+"' is not having matching '"+end_blocks[lapse,1]+"'");
+                }
+	}		
+}
+
 private void AddHandler (Expression evt_definition, Expression handler_exp)
 {
 	AddHandler (current_block, evt_definition, handler_exp);
@@ -5708,6 +5552,10 @@ protected override int parse ()
 	tmp_blocks = new Stack(); 
 	with_stack = new Stack();
 	statement_stack = new Stack(); 	
+	end_of_block = new Stack ();
+	loc_end_of_block = new Stack ();
+	temp_block = new Stack();
+	loc_temp_block = new Stack();
 
 	allow_global_attribs = true;
 	expecting_global_attribs = false;
