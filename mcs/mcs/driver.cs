@@ -82,6 +82,7 @@ namespace Mono.CSharp
 				"   --checked       Set default context to checked\n" +
 				"   --define SYM    Defines the symbol SYM\n" + 
 				"   --fatal         Makes errors fatal\n" +
+				"   --stacktrace    Shows stack trace at error location\n" +
 				"   -L PATH         Adds PATH to the assembly link path\n" +
 				"   --nostdlib      Does not load core libraries\n" +
 				"   --nowarn XXX    Ignores warning number XXX\n" +
@@ -177,10 +178,9 @@ namespace Mono.CSharp
 		static public int LoadReferences ()
 		{
 			int errors = 0;
-			
-			foreach (string r in references){
+
+			foreach (string r in references)
 				errors += LoadAssembly (r);
-			}
 
 			return errors;
 		}
@@ -248,10 +248,12 @@ namespace Mono.CSharp
 
 				if (arg.StartsWith ("@")){
 					string [] new_args, extra_args;
-
-					extra_args = LoadArgs (arg.Substring (1));
+					string response_file = arg.Substring (1);
+					
+					extra_args = LoadArgs (response_file);
 					if (extra_args == null){
-						Usage (true);
+						Report.Error (2011, "Unable to open response file: " +
+							      response_file);
 						return;
 					}
 
@@ -320,6 +322,10 @@ namespace Mono.CSharp
 						
 					case "--checked":
 						RootContext.Checked = true;
+						continue;
+
+					case "--stacktrace":
+						Report.Stacktrace = true;
 						continue;
 						
 					case "--target":

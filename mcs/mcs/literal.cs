@@ -169,11 +169,7 @@ namespace Mono.CSharp {
 
 		public override object GetValue ()
 		{
-			if (Value <= System.Int32.MaxValue &&
-			    Value >= System.Int32.MinValue)
-				return (object) Value;
-			else
-				return null;
+			return (object) Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -258,12 +254,7 @@ namespace Mono.CSharp {
 
 		public override object GetValue ()
 		{
-			if (Value <= System.UInt32.MaxValue &&
-			    Value >= System.UInt32.MinValue)
-				return (object) Value;
-			else
-				return null;
-
+			return (object) Value;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -297,11 +288,7 @@ namespace Mono.CSharp {
 
 		public override object GetValue ()
 		{
-			if (Value <= System.Int64.MaxValue &&
-			    Value >= System.Int64.MinValue)
-				return (object) Value;
-			else
-				return null;
+			return (object) Value;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -339,11 +326,7 @@ namespace Mono.CSharp {
 
 		public override object GetValue ()
 		{
-			if (Value <= System.UInt64.MaxValue &&
-			    Value >= System.UInt64.MinValue)
-				return (object) Value;
-			else
-				return null;
+			return (object) Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)

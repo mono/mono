@@ -338,8 +338,10 @@ public class TypeManager {
 	{
 		Type t = LookupType (name);
 
-		if (t == null)
-			throw new Exception ("Can not find core type " + name);
+		if (t == null){
+			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
+			Environment.Exit (0);
+		}
 
 		return t;
 	}
@@ -771,29 +773,21 @@ public class TypeManager {
 	// </remarks>
 
 	static Hashtable type_interface_cache;
-
 	public static bool ImplementsInterface (Type t, Type iface)
 	{
-		Type [] interfaces = (Type []) type_interface_cache [t];
+		Type [] interfaces;
 
-		if (interfaces == null) {
-			if (type_interface_cache.Contains (t))
-				return false;
-			
+		do {
 			interfaces = t.GetInterfaces ();
 
-			type_interface_cache [t] = interfaces;
-		}
-
-		if (interfaces == null)
-			return false;
-
-		for (int i = interfaces.Length; i > 0; ) {
-			i--;
-			if (interfaces [i] == iface)
-				return true;
-		}
-
+			for (int i = interfaces.Length; i > 0; ){
+				i--;
+				if (interfaces [i] == iface)
+					return true;
+			}
+			t = t.BaseType;
+		} while (t != null);
+		
 		return false;
 	}
 	

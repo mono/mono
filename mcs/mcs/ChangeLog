@@ -1,5 +1,12 @@
 2001-12-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* literal.cs: Revert code from ravi that checked the bounds.  The
+	bounds are sane by the definition of the type itself. 
+
+	* typemanager.cs: Fix implementation of ImplementsInterface.  We
+	need to actually look up in our parent hierarchy for interfaces
+	implemented. 
+
 	* const.cs: Use the underlying type for enumerations
 
 	* delegate.cs: Compute the basename for the delegate creation,

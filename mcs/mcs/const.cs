@@ -8,6 +8,15 @@
 //
 //
 
+//
+// This is needed because the following situation arises:
+//
+//     The FieldBuilder is declared with the real type for an enumeration
+//
+//     When we attempt to set the value for the constant, the FieldBuilder.SetConstant
+//     function aborts because it requires its argument to be of the same type
+//
+
 namespace Mono.CSharp {
 
 	using System;
@@ -49,6 +58,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		void dump_tree (Type t)
+		{
+			Console.WriteLine ("Dumping hierarchy");
+			while (t != null){
+				Console.WriteLine ("   " + t.FullName + " " +
+					(t.GetType ().IsEnum ? "yes" : "no"));
+				t = t.BaseType;
+			}
+		}
+
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
@@ -81,10 +100,6 @@ namespace Mono.CSharp {
 			} else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
 
-			if (type.IsSubclassOf (TypeManager.enum_type)){
-				type = System.Enum.GetUnderlyingType (type);
-			}
-			
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);
@@ -116,6 +131,14 @@ namespace Mono.CSharp {
 			}
 
 			ConstantValue = ((Literal) Expr).GetValue ();
+
+			if (type.IsEnum){
+				//
+				// This sadly does not work for our user-defined enumerations types ;-(
+				//
+				ConstantValue = System.Enum.ToObject (
+					type, ConstantValue);
+			}
 			
 			FieldBuilder.SetConstant (ConstantValue);
 

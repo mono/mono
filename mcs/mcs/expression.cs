@@ -1316,20 +1316,48 @@ namespace Mono.CSharp {
 				return new StringLiteral (ls.Value + rs.Value);
 			}
 
-			if (left is EnumLiteral)
-				left = ((EnumLiteral) left).WidenToCompilerLiteral ();
-			if (right is EnumLiteral)
-				right = ((EnumLiteral) right).WidenToCompilerLiteral ();
+			Type result_type = null;
+			object l, r;
 			
+			//
+			// Enumerator folding
+			//
+			if (left.Type == right.Type && left is EnumLiteral){
+				result_type = left.Type;
+
+				l = ((EnumLiteral)left).GetPlainValue ();
+				r = ((EnumLiteral)right).GetPlainValue ();
+			} else {
+				l = left;
+				r = right;
+			}
+
 			switch (oper){
-				case Operator.BitwiseOr:
-					if (left is IntLiteral && right is IntLiteral){
-						IntLiteral ll = (IntLiteral) left;
-						IntLiteral rl = (IntLiteral) right;
-						
-						return new IntLiteral (ll.Value | rl.Value).Resolve (ec);
-					}
-					break;
+			case Operator.BitwiseOr:
+				if ((l is int) && (r is int)){
+					IntLiteral v;
+					int res = (int)l | (int)r;
+					
+					v = new IntLiteral (res);
+					if (result_type == null)
+						return v.Resolve (ec);
+					else
+						return new EnumLiteral (v.Resolve (ec), result_type);
+				}
+				break;
+				
+			case Operator.BitwiseAnd:
+				if ((l is int) && (r is int)){
+					IntLiteral v;
+					int res = (int)l & (int)r;
+					
+					v = new IntLiteral (res);
+					if (result_type == null)
+						return v.Resolve (ec);
+					else
+						return new EnumLiteral (v.Resolve (ec), result_type);
+				}
+				break;
 			}
 					
 			return null;
@@ -4032,8 +4060,8 @@ namespace Mono.CSharp {
 					return ee;
 				}
 			}
-			
-			Console.WriteLine ("Support for [" + member_lookup + "] is not present yet");
+
+			Report.Error (-100, loc, "Support for [" + member_lookup + "] is not present yet");
 			Environment.Exit (0);
 			return null;
 		}

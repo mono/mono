@@ -305,7 +305,11 @@ namespace Mono.CSharp {
 				return new IntLiteral ((int) ((byte)v));
 			else if (t == TypeManager.char_type)
 				return new IntLiteral ((int) ((char)v));
-			else
+			else if (TypeManager.IsEnumType (t)){
+				Expression e = Literalize (v, v.GetType ());
+
+				return new EnumLiteral (e, t);
+			} else
 				throw new Exception ("Unknown type for literal (" + t +
 						     "), details: " + v);
 		}
@@ -322,7 +326,7 @@ namespace Mono.CSharp {
 			else if (mi is PropertyInfo)
 				return new PropertyExpr ((PropertyInfo) mi, loc);
 		        else if (mi is Type){
-				return new TypeExpr ((Type) mi);
+				return new TypeExpr ((System.Type) mi);
 			}
 
 			return null;
@@ -2064,6 +2068,34 @@ namespace Mono.CSharp {
 			throw new Exception ("Invalid enumeration underlying type: " + t);
 		}
 
+		//
+		// Extracts the value in the enumeration on its native representation
+		//
+		public object GetPlainValue ()
+		{
+			Type t = Child.Type.UnderlyingSystemType;
+			object v = ((Literal) Child).GetValue ();;
+			
+			if (t == TypeManager.int32_type)
+				return (int) v;
+			if (t == TypeManager.uint32_type)
+				return (uint) v;
+			if (t == TypeManager.int64_type)
+				return (long) v;
+			if (t == TypeManager.uint64_type)
+				return (ulong) v;
+			if (t == TypeManager.short_type)
+				return (short) v;
+			if (t == TypeManager.ushort_type)
+				return (ushort) v;
+			if (t == TypeManager.byte_type)
+				return (byte) v;
+			if (t == TypeManager.sbyte_type)
+				return (sbyte) v;
+
+			return null;
+		}
+		
 		public override string AsString ()
 		{
 			return ((Literal) Child).AsString ();
@@ -2581,7 +2613,8 @@ namespace Mono.CSharp {
 					
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);
-						Expression l = Literalize (o, fi.FieldType);
+						object real_value = ((Literal)c.Expr).GetValue ();
+						Expression l = Literalize (real_value, fi.FieldType);
 						l = l.Resolve (ec);
 						return ((Literal) l);
 					}

@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Mono.CSharp {
 
@@ -15,15 +16,30 @@ namespace Mono.CSharp {
 	///   This class is used to report errors and warnings t te user.
 	/// </summary>
 	public class Report {
-		static int errors;
-		static int warnings;
+		/// <summary>  
+		///   Errors encountered so far
+		/// </summary>
+		static public int Errors;
 
-		// whether errors are fatal (they throw an exception), useful
-		// for debugging the compiler
-		static bool fatal;
+		/// <summary>  
+		///   Warnings encountered so far
+		/// </summary>
+		static public int Warnings;
 
-		// whether we consider warnings to be errors.
-		static bool warnings_are_errors;
+		/// <summary>  
+		///   Whether errors should be throw an exception
+		/// </summary>
+		static public bool Fatal;
+		
+		/// <summary>  
+		///   Whether warnings should be considered errors
+		/// </summary>
+		static public bool WarningsAreErrors;
+
+		/// <summary>  
+		///   Whether to dump a stack trace on errors. 
+		/// </summary>
+		static public bool Stacktrace;
 		
 		//
 		// If the error code is reported on the given line,
@@ -48,10 +64,12 @@ namespace Mono.CSharp {
 		
 		static public void RealError (string msg)
 		{
-			errors++;
+			Errors++;
 			Console.WriteLine (msg);
 
-			if (fatal)
+			if (Stacktrace)
+				Console.WriteLine (new StackTrace ().ToString ());
+			if (Fatal)
 				throw new Exception (msg);
 		}
 		       
@@ -71,7 +89,7 @@ namespace Mono.CSharp {
 					return;
 			}
 			
-			if (warnings_are_errors)
+			if (WarningsAreErrors)
 				Error (code, l, text);
 			else {
 				string row;
@@ -82,7 +100,7 @@ namespace Mono.CSharp {
 					row = l.Row.ToString ();
 				
 				Console.WriteLine (l.Name + "(" + row + "): warning CS"+code+": " + text);
-				warnings++;
+				Warnings++;
 				Check (code);
 			}
 		}
@@ -125,34 +143,6 @@ namespace Mono.CSharp {
 		static public int ProbeCode {
 			get {
 				return probe_error;
-			}
-		}
-		
-		static public int Errors {
-			get {
-				return errors;
-			}
-		}
-
-		static public int Warnings {
-			get {
-				return warnings;
-			}
-		}
-
-		static public bool Fatal {
-			set {
-				fatal = true;
-			}
-
-			get {
-				return fatal;
-			}
-		}
-
-		static public bool WarningsAreErrors {
-			set {
-				warnings_are_errors = true;
 			}
 		}
 	}
