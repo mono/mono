@@ -36,6 +36,9 @@ namespace System.Reflection {
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_location ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern string InternalImageRuntimeVersion ();
 		
 		public virtual string CodeBase {
 			get {
@@ -90,6 +93,14 @@ namespace System.Reflection {
 				return get_location ();
 			}
 		}
+
+#if NET_1_1
+		public virtual string ImageRuntimeVersion {
+			get {
+				return InternalImageRuntimeVersion ();
+			}
+		}
+#endif
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
