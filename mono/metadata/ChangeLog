@@ -1,5 +1,7 @@
 2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_image_basic_init): Initialize basedir and culture.
+
 	* icall.c loader.c reflection.c: Use ModuleBuilder->dynamic_image 
 	instead of AssemblyBuilder->dynamic_assembly in the appropriate places.
 
