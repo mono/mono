@@ -1,5 +1,11 @@
 2004-07-23  zovarga  <vargaz@freemail.hu>
 
+	* mini.h: Add new arch dependent function mono_arch_is_inst_imm.
+
+	* mini-ops.h: Add new opcodes.
+
+	* Makefile.am: Add AMD64 support.
+
 	* inssel.brg inssel-long32.brg inssel-long.brg: Move mul/div and shift
 	rules into the inssel-long*.brg files.
 
