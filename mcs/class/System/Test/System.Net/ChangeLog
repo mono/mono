@@ -1,3 +1,7 @@
+2005-01-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPAddressTest.cs: this test fails with a FormatException.
+
 2005-01-10  Nick Drochak  <ndrochak@ieee.org>
 
 	* IPAddressTest.cs: Make tests pass on Fx1.1

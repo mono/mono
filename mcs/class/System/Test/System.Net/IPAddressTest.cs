@@ -129,8 +129,11 @@ public class IPAddressTest
 		IPAddress ip = IPAddress.Parse ("127.0.0.1");
 		Assertion.AssertEquals ("IsLoopback #1", true, IPAddress.IsLoopback (ip));
 
-		ip = IPAddress.Parse ("::101");
-		Assertion.AssertEquals ("IsLoopback #2", false, IPAddress.IsLoopback (ip));
+		try {
+			ip = IPAddress.Parse ("::101");
+			Assertion.Fail ("#2 should have thrown a FormatException");
+		} catch {
+		}
 
 #if NET_1_1
 		ip = IPAddress.IPv6Loopback;
