@@ -1,3 +1,7 @@
+2004-11-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_array_full_copy): Fix warning.
+
 2004-11-10  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* appdomain.c: Removed look_for_method_by_name(). Use the new method
