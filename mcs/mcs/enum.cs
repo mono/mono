@@ -495,7 +495,7 @@ namespace Mono.CSharp {
 			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
 					| FieldAttributes.Literal;
 			
-			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, attr);
+			FieldBuilder fb = TypeBuilder.DefineField (name, TypeBuilder, attr);
 
 			bool fail;
 			default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
@@ -563,7 +563,7 @@ namespace Mono.CSharp {
 					}
 
 					FieldBuilder fb = TypeBuilder.DefineField (
-						name, UnderlyingType, attr);
+						name, TypeBuilder, attr);
 					
 					if (default_value == null) {
 					   Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
