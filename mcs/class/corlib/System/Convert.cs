@@ -2379,6 +2379,7 @@ namespace System {
 			typeof (Double),   // 14 TypeCode.Double
 			typeof (Decimal),  // 15 TypeCode.Decimal
 			typeof (DateTime), // 16 TypeCode.DateTime
+			null,              // 17 null.
 			typeof (String),   // 18 TypeCode.String
 		};
 
@@ -2399,13 +2400,13 @@ namespace System {
 				IConvertible convertValue = (IConvertible) value;
 
 				if (conversionType == conversionTable[0]) // 0 Empty
-					return null;
+					throw new ArgumentNullException ();
 				
 				else if (conversionType == conversionTable[1]) // 1 TypeCode.Object
 					return (object) value;
 					
-				// else if (conversionType == conversionTable[2]) // 2 TypeCode.DBNull
-				//	return null;                           // It's not IConvertible
+				else if (conversionType == conversionTable[2]) // 2 TypeCode.DBNull
+					throw new InvalidCastException ();     // It's not IConvertible
 		  
 				else if (conversionType == conversionTable[3]) // 3 TypeCode.Boolean
 					return (object) convertValue.ToBoolean (provider);
@@ -2452,11 +2453,11 @@ namespace System {
 				else if (conversionType == conversionTable[18]) // 18 TypeCode.String
 					return (object) convertValue.ToString (provider);
 				else
-					throw new InvalidCastException (Locale.GetText ("Unknown target conversion type"));
+					throw new ArgumentException (Locale.GetText ("Unknown target conversion type"));
 			} else
 				// Not in the conversion table
-				throw new ArgumentException ((Locale.GetText (
-					"Value is not a convertible object: " + value.GetType().ToString() + " to " + conversionType.ToString())));
+				throw new InvalidCastException ((Locale.GetText (
+					"Value is not a convertible object: " + value.GetType().ToString() + " to " + conversionType.FullName)));
 		}
 	}
 }

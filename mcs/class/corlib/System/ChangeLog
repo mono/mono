@@ -1,7 +1,10 @@
 2002-06-10  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToDouble): Remove rounding in ToDouble (float).
-
+	(ToType): Added null field in conversionTable to avoid
+	IndexOutOfRangeException. Changed what exceptions we throw to match
+	the spec.
+	
 2002-06-11  Nick Drochak  <ndrochak@gol.com>
 
 	* Int64.cs (Parse): Added unique strings to the messages where we throw
