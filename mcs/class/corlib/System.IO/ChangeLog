@@ -1,3 +1,8 @@
+2002-05-01  Duncan Mak  <duncan@ximian.com>
+
+	* DirectoryNotFoundException.cs (constructor): Added missing
+	serialization constructor.
+
 2002-04-30  Duncan Mak  <duncan@ximian.com>
 
 	* FileLoadException.cs (constructors): Added missing (string,
