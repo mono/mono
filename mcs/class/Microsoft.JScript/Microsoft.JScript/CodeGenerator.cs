@@ -20,7 +20,6 @@ namespace Microsoft.JScript {
 
 		internal TypeBuilder type_builder;
 		internal ILGenerator ig;
-		internal ILGenerator gc_ig;
 		internal ModuleBuilder mod_builder;
 
 		internal EmitContext (TypeBuilder type)
@@ -33,16 +32,15 @@ namespace Microsoft.JScript {
 									MethodAttributes.Public,
 									typeof (System.Object),
 									new Type [] {});
-				gc_ig = global_code.GetILGenerator ();
+				ig = global_code.GetILGenerator ();
 			}
 		}
 
-		internal EmitContext (TypeBuilder type_builder, ModuleBuilder mod_builder, ILGenerator gc_ig, ILGenerator loc_ig)
+		internal EmitContext (TypeBuilder type_builder, ModuleBuilder mod_builder, ILGenerator ig)
 		{
 			this.type_builder = type_builder;
 			this.mod_builder = mod_builder;
-			this.gc_ig = gc_ig;
-			this.ig = loc_ig;			
+			this.ig = ig;
 		}
 	}
 
@@ -82,7 +80,7 @@ namespace Microsoft.JScript {
 
  		internal static string trim_extension (string file_name)
 		{
-			int index = file_name.IndexOf ('.');
+			int index = file_name.LastIndexOf ('.');
 
 			if (index < 0)
 				return file_name;
@@ -109,7 +107,7 @@ namespace Microsoft.JScript {
 
 			EmitContext ec = new EmitContext (type_builder);
 			ec.mod_builder = module_builder;
-			ILGenerator global_code = ec.gc_ig;
+			ILGenerator global_code = ec.ig;
 
 			emit_default_script_constructor (ec);
 			emit_default_init_global_code (global_code);
