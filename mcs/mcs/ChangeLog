@@ -1,3 +1,11 @@
+2005-01-24  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	merging an implicit block, just use its reachability.
+
+	* statement.cs (Block.Resolve): Make the unreachable code check
+	work wrt. implicit blocks; see test-337 from #63842.
+
 2005-01-21  Alp Toker  <alp@atoker.com>
  
  	* cs-parser.jay: destructor_declaration's container is PartialContainer

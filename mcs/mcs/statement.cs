@@ -1947,7 +1947,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
-			bool unreachable = false;
+			bool unreachable = unreachable_shown;
 
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
@@ -1965,8 +1965,10 @@ namespace Mono.CSharp {
 					else
 						s.loc = Location.Null;
 
-					statements [ix] = EmptyStatement.Value;
-					continue;
+					if (ok && !(s is Block)) {
+						statements [ix] = EmptyStatement.Value;
+						continue;
+					}
 				}
 
 				if (s.Resolve (ec) == false) {
@@ -2023,7 +2025,18 @@ namespace Mono.CSharp {
 		public override bool ResolveUnreachable (EmitContext ec, bool warn)
 		{
 			unreachable_shown = true;
-			return base.ResolveUnreachable (ec, warn);
+
+			if (warn && (RootContext.WarningLevel >= 2))
+				Report.Warning (162, loc, "Unreachable code detected");
+
+			if (Implicit)
+				return Resolve (ec);
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			bool ok = Resolve (ec);
+			ec.KillFlowBranching ();
+
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -2034,7 +2047,7 @@ namespace Mono.CSharp {
 				// Check whether we are the last statement in a
 				// top-level block.
 
-				if ((Parent == null) && (ix+1 == num_statements))
+				if (((Parent == null) || Implicit) && (ix+1 == num_statements) && !(s is Block))
 					ec.IsLastStatement = true;
 				else
 					ec.IsLastStatement = false;

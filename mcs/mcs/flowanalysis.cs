@@ -692,7 +692,10 @@ namespace Mono.CSharp
 				if (result.ParameterVector != null)
 					parameters.Or (result.ParameterVector);
 
-				reachability.Or (new_r);
+				if ((branching.Type == BranchingType.Block) && branching.Block.Implicit)
+					reachability = new_r.Clone ();
+				else
+					reachability.Or (new_r);
 
 				Report.Debug (2, "  MERGING CHILD DONE", this, result,
 					      new_r, reachability);
@@ -1138,7 +1141,7 @@ namespace Mono.CSharp
 				throw new NotSupportedException ();
 
 			UsageVector vector = new UsageVector (
-				SiblingType.Conditional, null, Block, Location,
+				SiblingType.Block, null, Block, Location,
 				param_map.Length, local_map.Length);
 
 			UsageVector result = vector.MergeChild (this);
