@@ -1,6 +1,8 @@
 2004-11-16  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Rename Mono.Posix to Mono.Unix.
+	* Mono.Posix.dll.sources: Rename Mono.Posix to Mono.Unix.
+	* Makefile: Update file paths to build from Mono.Unix.
 
 2004-11-05  Jonathan Pryor  <jonpryor@vt.edu>
 

@@ -1,0 +1,66 @@
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* PeerCred.cs: Get the unix socket peer credentials.
+
+2004-05-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* Syscall.cs: Do not let the runtime handle strings, as we do not
+	own those strings, we must transform the char * into a string
+	ourselves. 
+
+2004-05-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* Syscall.cs: Add symlink
+
+2004-04-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* Syscall.cs: Use hex values for FileMode, since C# does not have
+	an octal integer mode.
+
+2004-03-30  Joshua Tauberer <tauberer@for.net>
+
+	* Added readlink, strerror, opendir, readdir, closedir
+	* Added Mono.Posix.Stat.UnixToDateTime(long unixtime) --> DateTime
+
+2004-03-11  Joshua Tauberer <tauberer@for.net>
+
+	* Syscall.cs: Removed argument to getgid that shouldn't be there.
+		Added getusername, getgroupname which wrap getpwuid, getgrgid
+		without dealing with pointers to structures.
+		Removed duplicate FileMode enum nested in Syscall class.
+		Added stat and lstat, which use StatMode enumeration
+		(like FileMode but nicer and complete) and Stat struct.
+	* macros.c: Helper functions for getpwuid, getgrgid, stat, lstat.
+
+2004-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Syscall.cs: moved the assembly attribute to a proper place
+	and added 'signal.h'
+	* make-map.cs: use reflection to invoke the properties, as it
+	fails under MS runtime.
+	
+
+2004-01-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Syscall.cs: moved assembly attribute and added unsafe block to fix
+	the build on windows.
+
+2003-11-11  Wojciech Polak <polak@gnu.org
+
+	* Syscall.cs: Applied patch from Wojciech Polak <polak@gnu.org> to
+	support IsAtty.
+
+2003-05-16  Dick Porter  <dick@ximian.com>
+
+	* UnixEndPoint.cs: New property to get and set the filename, like
+	the IPEndPoint has for the IP address.  Also implement ToString().
+
+Tue Apr 29 16:53:56 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Syscall.cs: remove the unsafe mess.
+
+2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Check in.
+	* UnixEndPoint.cs: first file.
+
