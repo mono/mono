@@ -35,10 +35,10 @@ namespace System.Net
 		{
 			hexBytes = new byte [16];
 			int index = 0;
-			for (int i = '0'; i < '9'; i++, index++)
+			for (int i = '0'; i <= '9'; i++, index++)
 				hexBytes [index] = (byte) i;
 
-			for (int i = 'A'; i < 'F'; i++, index++)
+			for (int i = 'A'; i <= 'F'; i++, index++)
 				hexBytes [index] = (byte) i;
 		}
 		

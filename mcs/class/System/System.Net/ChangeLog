@@ -1,5 +1,9 @@
 2003-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebClient.cs: Small fix by Sebastian <scut@nb.in-berlin.de>.
+
+2003-06-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* WebConnection.cs: fixed header writing the reusing a connection and
 	the server does not send 100-continue response.
 
