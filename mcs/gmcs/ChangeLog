@@ -1,3 +1,8 @@
+2003-12-04  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Use
+	`Type.MakeArrayType()' for array types.
+
 2003-11-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.VerifyArgumentsCompat): Remove

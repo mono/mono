@@ -8007,16 +8007,29 @@ namespace Mono.CSharp {
 			if (ltype == null)
 				return null;
 
-			if (ltype.IsGenericParameter) {
-				int rank = dim.Length-2;
-				if ((rank < 0) || (dim [0] != '[') || (dim [rank+1] != ']'))
+			int pos = 0;
+			while ((pos < dim.Length) && (dim [pos] == '[')) {
+				pos++;
+				if (dim [pos] == ']') {
+					ltype = ltype.MakeArrayType ();
+					pos++;
+
+					if (pos < dim.Length)
+						continue;
+
+					type = ltype;
+					eclass = ExprClass.Type;
+					return this;
+				}
+
+				int rank = 0;
+				while (dim [pos++] == ',')
+					rank++;
+
+				if ((dim [pos] != ']') || (pos != dim.Length-1))
 					return null;
-				for (int i = 0; i < rank; i++)
-					if (dim [i+1] != ',')
-						return null;
-
-				type = Array.CreateInstance (ltype, rank).GetType ();
-
+						
+				type = ltype.MakeArrayType (rank + 1);
 				eclass = ExprClass.Type;
 				return this;
 			}
