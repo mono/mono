@@ -1,3 +1,10 @@
+2005-02-11  Sureshkumar T  <tsureshkumar@novell.com>
+	    Ankit Jain	   <radical@corewars.org>
+
+	* SqlGuid.cs: Fixed CompareTo to compare all the 16 digits. This
+	is a LAMESPEC and current implementation matches ms.net. This
+	actually reverts Uma's patch with revison 29013.
+
 2005-02-03  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlDateTime.cs : Parse : try with local culture first, then try

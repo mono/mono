@@ -43,7 +43,6 @@ namespace System.Data.SqlTypes
 	        Guid value;
 
 		private bool notNull;
-		private byte[] lastSixBytes;
 
 		public static readonly SqlGuid Null;
 
@@ -53,7 +52,6 @@ namespace System.Data.SqlTypes
 
 		public SqlGuid (byte[] value) 
 		{
-			lastSixBytes = new byte[6];
 			this.value = new Guid (value);
 			notNull = true;
 		}
@@ -61,21 +59,18 @@ namespace System.Data.SqlTypes
 		public SqlGuid (Guid g) 
 		{
 			this.value = g;
-			lastSixBytes = new byte[6];
 			notNull = true;
 		}
 
 		public SqlGuid (string s) 
 		{
 			this.value = new Guid (s);
-			lastSixBytes = new byte[6];
 			notNull = true;
 		}
 
 		public SqlGuid (int a, short b, short c, byte d, byte e, byte f, byte g, byte h, byte i, byte j, byte k) 
 		{
 			this.value = new Guid (a, b, c, d, e, f, g, h, i, j, k);
-			lastSixBytes = new byte[6];
 			notNull = true;
 		}
 
@@ -98,7 +93,7 @@ namespace System.Data.SqlTypes
 
 		private byte[] GetLastSixBytes()
 		{
-			lastSixBytes = new byte[6];
+			byte [] lastSixBytes = new byte[6];
 			
 			byte[] guidArray = value.ToByteArray();
 			lastSixBytes[0] = guidArray[10];
@@ -124,9 +119,13 @@ namespace System.Data.SqlTypes
 			else if (((SqlGuid)value).IsNull)
 				return 1;
 			else
+                                // LAMESPEC : ms.net implementation actually compares all the 16 bytes.
+                                // This code is kept for future changes, if required.
+                                /*
 				{
 					//MSDN documentation says that CompareTo is different from 
-					//Guid's CompareTo. It uses the SQL Server behavior where					    //only the last 6 bytes of value are evaluated	
+					//Guid's CompareTo. It uses the SQL Server behavior where
+                                        //only the last 6 bytes of value are evaluated	
 					byte[] compareValue = ((SqlGuid)value).GetLastSixBytes();
 					byte[] currentValue = GetLastSixBytes();
 					for (int i = 0; i < 6; i++)
@@ -137,6 +136,8 @@ namespace System.Data.SqlTypes
 					}
 			                return 0;
 				}
+                                */
+                                return this.value.CompareTo (((SqlGuid)value).Value);
 				
 		}
 
