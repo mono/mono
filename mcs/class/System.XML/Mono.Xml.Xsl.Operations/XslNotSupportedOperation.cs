@@ -42,6 +42,7 @@ namespace Mono.Xml.Xsl.Operations
 	internal class XslNotSupportedOperation : XslCompiledElement
 	{
 		string name;
+		ArrayList fallbacks;
 
 		public XslNotSupportedOperation (Compiler c)
 			: base (c)
@@ -51,11 +52,28 @@ namespace Mono.Xml.Xsl.Operations
 		protected override void Compile (Compiler c)
 		{
 			name = c.Input.LocalName;
+			if (c.Input.MoveToFirstChild ()) {
+				do {
+					if (c.Input.NodeType != XPathNodeType.Element ||
+						c.Input.LocalName != "fallback" ||
+						c.Input.NamespaceURI != XslStylesheet.XsltNamespace)
+						continue;
+					if (fallbacks == null)
+						fallbacks = new ArrayList ();
+					fallbacks.Add (new XslFallback (c));
+				} while (c.Input.MoveToNext ());
+				c.Input.MoveToParent ();
+			}
 		}
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			throw new XsltException (String.Format ("'{0}' element is not supported as a template content in XSLT 1.0.", name), null);
+			if (fallbacks != null) {
+				foreach (XslFallback f in fallbacks)
+					f.Evaluate (p);
+			}
+			else
+				throw new XsltException (String.Format ("'{0}' element is not supported as a template content in XSLT 1.0.", name), null);
 		}
 	}
 }
