@@ -1,3 +1,10 @@
+2005-01-13  Jackson Harper  <jackson@ximian.com>
+
+	* PictureBox.cs: Implement missing methods (except ToString, need
+	to test that on windows) and events. When visibility is changed we
+	need to redraw the image because the buffers are killed. When size
+	is changed refresh if the sizemode needs it.	
+
 2005-01-13  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs (SelectNextControl): Was using wrong method to select

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
@@ -55,6 +55,8 @@ namespace System.Windows.Forms {
 				UpdateSize ();
 				Redraw (true);
 				Invalidate ();
+
+				OnSizeModeChanged (EventArgs.Empty);
 			}
 		}
 
@@ -155,6 +157,37 @@ namespace System.Windows.Forms {
 			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
+		protected override void OnVisibleChanged (EventArgs e)
+		{
+			base.OnVisibleChanged (e);
+			Redraw (true);
+		}
+
+		protected virtual void OnSizeModeChanged (EventArgs e)
+		{
+			if (SizeModeChanged != null)
+				SizeModeChanged (this, e);
+		}
+
+		protected override void OnEnabledChanged (EventArgs e)
+		{
+			base.OnEnabledChanged (e);
+		}
+
+		protected override void OnParentChanged (EventArgs e)
+		{
+			base.OnParentChanged (e);
+		}
+
+		protected override void OnResize (EventArgs e)
+		{
+			base.OnResize (e);
+			redraw = true;
+
+			if (size_mode == PictureBoxSizeMode.CenterImage || size_mode == PictureBoxSizeMode.StretchImage)
+				Refresh ();
+		}
+
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			if (size_mode == PictureBoxSizeMode.AutoSize && image != null) {
@@ -200,7 +233,7 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
-                [MonoTODO ("Borders and stuff, and move into the Theme")]
+		[MonoTODO ("Borders and stuff, and move into the Theme")]
 		private void Draw ()
 		{
 			if (redraw) {
@@ -208,6 +241,74 @@ namespace System.Windows.Forms {
 			}
 			redraw = false;
 		}
+
+		public new event EventHandler CausesValidationChanged {
+			add { base.CausesValidationChanged += value; }
+			remove { base.CausesValidationChanged -= value; }
+		}
+
+		public new event EventHandler Enter {
+			add { base.Enter += value; }
+			remove { base.Enter -= value; }
+		}
+
+		public new event EventHandler FontChanged {
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
+
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
+
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
+
+		public new event KeyEventHandler KeyDown {
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
+
+		public new event KeyPressEventHandler KeyPress {
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
+
+		public new event KeyEventHandler KeyUp {
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
+
+		public new event EventHandler Leave {
+			add { base.Leave += value; }
+			remove { base.Leave -= value; }
+		}
+
+		public new event EventHandler RightToLeftChanged {
+			add { base.RightToLeftChanged += value; }
+			remove { base.RightToLeftChanged -= value; }
+		}
+
+		public new event EventHandler TabIndexChanged {
+			add { base.TabIndexChanged += value; }
+			remove { base.TabIndexChanged -= value; }
+		}
+
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
+
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+
+		public event EventHandler SizeModeChanged;
+
 	}
 }
 
