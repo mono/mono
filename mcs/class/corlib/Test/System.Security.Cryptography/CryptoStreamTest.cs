@@ -206,7 +206,7 @@ namespace MonoTests.System.Security.Cryptography {
 			string f = Path.GetTempFileName ();
 			FileStream fs = new FileStream (f, FileMode.OpenOrCreate, FileAccess.Write);
 			try {
-				cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Read);
+				cs = new CryptoStream (fs, encryptor, CryptoStreamMode.Read);
 			} finally {
 				fs.Close ();
 				File.Delete (f);
