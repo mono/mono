@@ -1,3 +1,8 @@
+
+Tue Sep 18 13:15:12 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* monoburg.y: fix ANSI C issue.
+
 2001-09-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c (emit_prototypes): add an additional argument to the
