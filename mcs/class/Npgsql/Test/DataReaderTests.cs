@@ -1,10 +1,30 @@
 // created on 27/12/2002 at 17:05
+// 
+// Author:
+// 	Francisco Figueiredo Jr. <fxjrlists@yahoo.com>
+//
+//	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 using System;
 using System.Data;
 using System.Web.UI.WebControls;
 using Npgsql;
-
-using NpgsqlTypes;
 
 using NUnit.Framework;
 using NUnit.Core;
@@ -276,6 +296,44 @@ namespace NpgsqlTests
 		  
 			
 		}
+		
+		
+		[Test]
+		public void TestOverlappedParameterNames()
+		{
+		  _conn.Open();
+		 
+		  NpgsqlCommand command = new NpgsqlCommand("select * from tablea where field_serial = :a or field_serial = :aa", _conn);
+		  command.Parameters.Add(new NpgsqlParameter("a", DbType.Int32, 4, "a"));
+		  command.Parameters.Add(new NpgsqlParameter("aa", DbType.Int32, 4, "aa"));
+		  
+		  command.Parameters[0].Value = 2;
+		  command.Parameters[1].Value = 3;
+		  
+		  NpgsqlDataReader dr = command.ExecuteReader();
+		  
+		}
+		
+		[Test]
+		[ExpectedException(typeof(NpgsqlException))]
+		public void TestNonExistentParameterName()
+		{
+		  _conn.Open();
+		  
+		  NpgsqlCommand command = new NpgsqlCommand("select * from tablea where field_serial = :a or field_serial = :aa", _conn);
+		  command.Parameters.Add(new NpgsqlParameter(":b", DbType.Int32, 4, "b"));
+		  command.Parameters.Add(new NpgsqlParameter(":aa", DbType.Int32, 4, "aa"));
+		  
+		  command.Parameters[0].Value = 2;
+		  command.Parameters[1].Value = 3;
+		  
+		  NpgsqlDataReader dr = command.ExecuteReader();
+		  
+		  
+		}
+		
+			
+		
 		
 		[Test]
 		public void UseDataAdapter()

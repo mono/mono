@@ -1,4 +1,26 @@
 // created on 30/11/2002 at 22:35
+// 
+// Author:
+// 	Francisco Figueiredo Jr. <fxjrlists@yahoo.com>
+//
+//	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 using System;
 using Npgsql;
 using NUnit.Framework;
@@ -38,26 +60,35 @@ namespace NpgsqlTests
 			NpgsqlCommand command = new NpgsqlCommand();
 			
 			// Add parameters.
-			command.Parameters.Add(new NpgsqlParameter("Parameter1", DbType.Boolean));
-			command.Parameters.Add(new NpgsqlParameter("Parameter2", DbType.Int32));
-			command.Parameters.Add(new NpgsqlParameter("Parameter3", DbType.DateTime));
+			command.Parameters.Add(new NpgsqlParameter(":Parameter1", DbType.Boolean));
+			command.Parameters.Add(new NpgsqlParameter(":Parameter2", DbType.Int32));
+			command.Parameters.Add(new NpgsqlParameter(":Parameter3", DbType.DateTime));
 			
 			
 			// Get by indexers.
 			
-			Assertion.AssertEquals("ParametersGetName", "Parameter1", command.Parameters["Parameter1"].ParameterName);
-			Assertion.AssertEquals("ParametersGetName", "Parameter2", command.Parameters["Parameter2"].ParameterName);
-			Assertion.AssertEquals("ParametersGetName", "Parameter3", command.Parameters["Parameter3"].ParameterName);
+			Assertion.AssertEquals("ParametersGetName", ":Parameter1", command.Parameters[":Parameter1"].ParameterName);
+			Assertion.AssertEquals("ParametersGetName", ":Parameter2", command.Parameters[":Parameter2"].ParameterName);
+			Assertion.AssertEquals("ParametersGetName", ":Parameter3", command.Parameters[":Parameter3"].ParameterName);
 						                 
 
-			Assertion.AssertEquals("ParametersGetName", "Parameter1", command.Parameters[0].ParameterName);
-			Assertion.AssertEquals("ParametersGetName", "Parameter2", command.Parameters[1].ParameterName);
-			Assertion.AssertEquals("ParametersGetName", "Parameter3", command.Parameters[2].ParameterName);						             
+			Assertion.AssertEquals("ParametersGetName", ":Parameter1", command.Parameters[0].ParameterName);
+			Assertion.AssertEquals("ParametersGetName", ":Parameter2", command.Parameters[1].ParameterName);
+			Assertion.AssertEquals("ParametersGetName", ":Parameter3", command.Parameters[2].ParameterName);						             
 			
 			
 			
 		}
 		
+		[Test]
+		public void EmptyQuery()
+		{
+			_conn.Open();
+		
+			NpgsqlCommand command = new NpgsqlCommand(";", _conn);
+			command.ExecuteNonQuery();
+			
+		}
 		[Test]
 		[ExpectedException(typeof(NpgsqlException))]
 		public void NoNameParameterAdd()
