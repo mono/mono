@@ -48,10 +48,13 @@ namespace System.Xml
 		}
 
 		// Methods
-		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			return null;
+			
+			// API docs: "The replacement text is not included." XmlNode.CloneNode
+			// "The replacement text is set when node is inserted." XmlEntityReference.CloneNode
+			//
+			return new XmlEntityReference ("", OwnerDocument);
 		}
 
 		[MonoTODO]

@@ -1,10 +1,12 @@
 2002-03-20  Duncan Mak  <duncan@ximian.com>
 
+	* XmlEntityReference.cs (CloneNode): Implemented.
+
 	* XmlException.cs (Message): Implemented. We need to cache the
 	message string because SystemException doesn't expose 'message'
 	from Exception.
 
-	* XmlText.cs (Value): Added in missing the Value property.
+	* XmlText.cs (Value): Added in the missing Value property.
 
 2002-03-20  Duncan Mak  <duncan@ximian.com>	
 
