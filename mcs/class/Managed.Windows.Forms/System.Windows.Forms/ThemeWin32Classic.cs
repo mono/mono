@@ -2183,7 +2183,7 @@ namespace System.Windows.Forms
 		public override void DrawPictureBox (Graphics dc, PictureBox pb) {
 			Rectangle client = pb.ClientRectangle;
 
-			dc.FillRectangle (new SolidBrush (pb.BackColor), client);
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (pb.BackColor), client);
 
 			if (pb.Image != null) {
 				switch (pb.SizeMode) {
@@ -2440,10 +2440,9 @@ namespace System.Windows.Forms
 				text_rectangle.Inflate(-4,-4);
 			} 
 			
-			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */
-			sb=new SolidBrush(radio_button.ForeColor);
-			dc.DrawString (radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);
-			sb.Dispose();
+			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */			
+			dc.DrawString (radio_button.Text, radio_button.Font, ThemeEngine.Current.ResPool.GetSolidBrush (radio_button.ForeColor), text_rectangle, text_format);
+			
 			if (radio_button.Enabled) {
 				sb = ResPool.GetSolidBrush(radio_button.ForeColor);
 				dc.DrawString(radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);				
@@ -2988,7 +2987,7 @@ namespace System.Windows.Forms
 						string_format.LineAlignment = StringAlignment.Center;
 						string_format.FormatFlags = StringFormatFlags.NoWrap;
 						interior.Y++;
-						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
 						interior.Y--;
 					}
 
@@ -3016,7 +3015,7 @@ namespace System.Windows.Forms
 						string_format.LineAlignment = StringAlignment.Center;
 						string_format.FormatFlags = StringFormatFlags.NoWrap;
 						interior.Y++;
-						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
 						interior.Y--;
 					}
 
@@ -3048,7 +3047,7 @@ namespace System.Windows.Forms
 						int ho = interior.Height / 2;
 						dc.TranslateTransform (interior.X + wo, interior.Y + ho);
 						dc.RotateTransform (180);
-						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), 0, 0, string_format);
+						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
 						dc.ResetTransform ();
 					}
 
@@ -3077,7 +3076,7 @@ namespace System.Windows.Forms
 						string_format.FormatFlags = StringFormatFlags.NoWrap;
 						string_format.FormatFlags = StringFormatFlags.DirectionVertical;
 						interior.X++;
-						dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
 						interior.X--;
 					}
 
@@ -3241,7 +3240,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, 
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom);
 						}
@@ -3259,7 +3258,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							ControlPaint.DrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom);
 						}
@@ -3278,7 +3277,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 						}
@@ -3297,7 +3296,7 @@ namespace System.Windows.Forms
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
 								imgRect.Height, button.ImageIndex);
 						else {
-							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+							dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 								Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 						}
@@ -3331,7 +3330,7 @@ namespace System.Windows.Forms
 						button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width, imgRect.Height,
 							button.ImageIndex);
 					else {
-						dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
+						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ColorGrayText), imgRect);
 						CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
 							Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 					}
@@ -4299,7 +4298,7 @@ namespace System.Windows.Forms
 			} else {
 				pen=new Pen(Color.White, 1);
 				if (enabled==true) {
-					sb=new SolidBrush(Color.Black);
+					sb=ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black);
 				} else {
 					sb=ResPool.GetSolidBrush (ColorButtonFace);
 				}
@@ -4840,18 +4839,16 @@ namespace System.Windows.Forms
 			}
 
 			case CaptionButton.Help: {
-				StringFormat	sf = new StringFormat();
-				SolidBrush		sb = new SolidBrush(color);
+				StringFormat	sf = new StringFormat();				
 				Font				font = new Font("Microsoft Sans Serif", captionRect.Height, FontStyle.Bold, GraphicsUnit.Pixel);
 
 				sf.Alignment=StringAlignment.Center;
 				sf.LineAlignment=StringAlignment.Center;
 
 
-				graphics.DrawString("?", font, sb, captionRect.X+captionRect.Width/2+shift, captionRect.Y+captionRect.Height/2+shift+lineWidth/2, sf);
+				graphics.DrawString("?", font, ThemeEngine.Current.ResPool.GetSolidBrush (color), captionRect.X+captionRect.Width/2+shift, captionRect.Y+captionRect.Height/2+shift+lineWidth/2, sf);
 
-				sf.Dispose();
-				sb.Dispose();
+				sf.Dispose();				
 				font.Dispose();
 
 				return;
@@ -5068,7 +5065,7 @@ namespace System.Windows.Forms
 				return;
 			}			
 
-			dc.FillRectangle (new SolidBrush (Color.Blue), area);
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Color.Blue), area);
 			
 			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X, area.Y, area.Width, 1);
 			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X, area.Y, 1, area.Height);

@@ -1275,7 +1275,7 @@ namespace System.Windows.Forms
 					{
 						Graphics gr = pe.Graphics;
 						
-						gr.FillRectangle( new SolidBrush( BackColor ), ClientRectangle );
+						gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush ( BackColor ), ClientRectangle );
 						
 						// draw image
 						if ( image != null )
@@ -1289,23 +1289,23 @@ namespace System.Windows.Forms
 						{
 							Rectangle text_rect = Rectangle.Inflate( ClientRectangle, -4, -4 );
 							
-							gr.DrawString( Text, Font, new SolidBrush( ForeColor ), text_rect, text_format );
+							gr.DrawString( Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor ), text_rect, text_format );
 						}
 						
 						switch ( popupButtonState )
 						{
 							case PopupButtonState.Up:
-								gr.DrawLine( new Pen( Color.White ), 0, 0, ClientSize.Width - 1, 0 );
-								gr.DrawLine( new Pen( Color.White ), 0, 0, 0, ClientSize.Height - 1 );
-								gr.DrawLine( new Pen( Color.Black ), ClientSize.Width - 1, 0, ClientSize.Width - 1, ClientSize.Height - 1 );
-								gr.DrawLine( new Pen( Color.Black ), 0, ClientSize.Height - 1, ClientSize.Width - 1, ClientSize.Height - 1 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.White ), 0, 0, ClientSize.Width - 1, 0 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.White ), 0, 0, 0, ClientSize.Height - 1 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.Black ), ClientSize.Width - 1, 0, ClientSize.Width - 1, ClientSize.Height - 1 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.Black ), 0, ClientSize.Height - 1, ClientSize.Width - 1, ClientSize.Height - 1 );
 								break;
 								
 							case PopupButtonState.Down:
-								gr.DrawLine( new Pen( Color.Black ), 0, 0, ClientSize.Width - 1, 0 );
-								gr.DrawLine( new Pen( Color.Black ), 0, 0, 0, ClientSize.Height - 1 );
-								gr.DrawLine( new Pen( Color.White ), ClientSize.Width - 1, 0, ClientSize.Width - 1, ClientSize.Height - 1 );
-								gr.DrawLine( new Pen( Color.White ), 0, ClientSize.Height - 1, ClientSize.Width - 1, ClientSize.Height - 1 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.Black ), 0, 0, ClientSize.Width - 1, 0 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.Black ), 0, 0, 0, ClientSize.Height - 1 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.White ), ClientSize.Width - 1, 0, ClientSize.Width - 1, ClientSize.Height - 1 );
+								gr.DrawLine( ThemeEngine.Current.ResPool.GetPen( Color.White ), 0, ClientSize.Height - 1, ClientSize.Width - 1, ClientSize.Height - 1 );
 								break;
 						}
 					}
@@ -2081,9 +2081,9 @@ namespace System.Windows.Forms
 				foreColor = Color.White;
 			}
 			
-			gr.FillRectangle( new SolidBrush( backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
+			gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush (backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
 			
-			gr.DrawString( dcbi.Name, e.Font , new SolidBrush( foreColor ), new Point( 24 + xPos, ( bmp.Height - e.Font.Height ) / 2 ) );
+			gr.DrawString( dcbi.Name, e.Font , ThemeEngine.Current.ResPool.GetSolidBrush (foreColor ), new Point( 24 + xPos, ( bmp.Height - e.Font.Height ) / 2 ) );
 			gr.DrawImage( imageList.Images[ dcbi.ImageIndex ], new Rectangle( new Point( xPos + 2, 0 ), new Size( 16, 16 ) ) );
 			
 			e.Graphics.DrawImage( bmp, e.Bounds.X, e.Bounds.Y );

@@ -1,3 +1,15 @@
+2005-04-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ColorDialog.cs: Use cached objects instead of creating them
+	* LinkLabel.cs: Use cached objects instead of creating them
+	* Splitter.cs: Use cached objects instead of creating them
+	* FontDialog.cs: Use cached objects instead of creating them
+	* PropertyGridView.cs: Use cached objects instead of creating them
+	* MessageBox.cs: Use cached objects instead of creating them
+	* FileDialog.cs: Use cached objects instead of creating them
+	* ThemeWin32Classic.cs: Use cached objects instead of creating them
+	* TreeView.cs: Use cached objects instead of creating them
+	
 2005-04-04  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Control.cs: use Equals to compare the font since no == op

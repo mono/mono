@@ -1659,7 +1659,7 @@ namespace System.Windows.Forms
 			
 			private void Draw( PaintEventArgs e )
 			{
-				DeviceContext.FillRectangle( new SolidBrush( BackColor ), ClientRectangle );
+				DeviceContext.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle );
 				e.Graphics.DrawImage( ImageBuffer, e.ClipRectangle, e.ClipRectangle, GraphicsUnit.Pixel );
 				
 				ControlPaint.DrawBorder(
@@ -1784,7 +1784,7 @@ namespace System.Windows.Forms
 				
 				public void Draw( )
 				{
-					Pen pen = new Pen( new SolidBrush( cursorColor ), 3 );
+					Pen pen = new Pen(ThemeEngine.Current.ResPool.GetSolidBrush (cursorColor), 3 );
 					
 					Graphics graphics = Graphics.FromImage( bitmap );
 					
@@ -2129,7 +2129,7 @@ namespace System.Windows.Forms
 					new Point( 8, currentTrianglePosition + 8 )
 				};
 				
-				e.Graphics.FillPolygon( new SolidBrush( Color.Black ), trianglePoints );
+				e.Graphics.FillPolygon( ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black ), trianglePoints );
 			}
 			
 			protected override void OnMouseDown( MouseEventArgs e )

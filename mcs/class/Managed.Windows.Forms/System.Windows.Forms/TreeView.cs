@@ -656,7 +656,7 @@ namespace System.Windows.Forms {
 			add_vscroll = false;
 			add_hscroll = false;
 			
-			DeviceContext.FillRectangle (new SolidBrush (BackColor), fill);
+			DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), fill);
 
 			int depth = 0;
 			int item_height = ItemHeight;
@@ -696,7 +696,7 @@ namespace System.Windows.Forms {
 			if (add_hscroll && add_vscroll) {
 				Rectangle corner = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
 				if (clip.IntersectsWith (corner))
-					DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorButtonFace), corner);
+					DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), corner);
 			}
 		}
 
@@ -887,7 +887,7 @@ namespace System.Windows.Forms {
 				Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
 				if (Focused) {
 					if (SelectedNode == node)
-						DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorHilight), r);
+						DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
 					if (focused_node == node) {
 						Pen dot_pen = new Pen (ThemeEngine.Current.ColorButtonHilight, 1);
 						dot_pen.DashStyle = DashStyle.Dot;
@@ -897,9 +897,9 @@ namespace System.Windows.Forms {
 					}
 				} else {
 					if (!HideSelection && SelectedNode == node)
-						DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorButtonFace), node.Bounds);
+						DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), node.Bounds);
 				}
-				DeviceContext.DrawString (node.Text, font, new SolidBrush (text_color), r, format);
+				DeviceContext.DrawString (node.Text, font, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
 				y += item_height + 1;
 			} else if (visible && bounds_in_clip) {
 				DrawEditNode (node);

@@ -145,7 +145,7 @@ namespace System.Windows.Forms
 
 			private void MessageBoxForm_Paint (object sender, PaintEventArgs e)
 			{
-				e.Graphics.DrawString (msgbox_text, this.Font, new SolidBrush(Color.Black), textleft_up);
+				e.Graphics.DrawString (msgbox_text, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black), textleft_up);
 				if (icon_image != null) {
 					e.Graphics.DrawImage(icon_image, new Point(space_border, space_border));
 				}

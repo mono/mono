@@ -256,7 +256,7 @@ namespace System.Windows.Forms {
 		#region Internal & Private Methods
 		private void Draw () {
 			using (Graphics pdc = Parent.CreateGraphics ()) {
-				pdc.FillRectangle (new SolidBrush (Color.Red), ClientRectangle);
+				pdc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Color.Red), ClientRectangle);
 			}
 		}
 

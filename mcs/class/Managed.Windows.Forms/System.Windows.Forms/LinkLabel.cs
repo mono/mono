@@ -527,7 +527,7 @@ namespace System.Windows.Forms
 			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1) {
 
 				color = GetLinkColor (pieces[0], 0);
-				DeviceContext.DrawString (Text, Font, new SolidBrush (color),
+				DeviceContext.DrawString (Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (color),
 					ClientRectangle, string_format);
 				return;
 			}
@@ -537,10 +537,10 @@ namespace System.Windows.Forms
 				color = GetLinkColor (pieces[i], i);
 
 				if (pieces[i].link == null)
-					DeviceContext.DrawString (pieces[i].text, Font, new SolidBrush (Color.Black),
+					DeviceContext.DrawString (pieces[i].text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black),
 						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 				else
-					DeviceContext.DrawString (pieces[i].text, link_font, new SolidBrush (color),
+					DeviceContext.DrawString (pieces[i].text, link_font, ThemeEngine.Current.ResPool.GetSolidBrush ()color),
 						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 			}
 

@@ -235,7 +235,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 				Rectangle fill = ClientRectangle;
 				// draw grid outline
-				DeviceContext.FillRectangle (new SolidBrush (BackColor), fill);
+				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), fill);
 				DeviceContext.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(SystemColors.ControlDark),fill);
 
 				int depth = 0;

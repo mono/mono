@@ -684,7 +684,7 @@ namespace System.Windows.Forms
 		
 		void OnPaintExamplePanel( object sender, PaintEventArgs e )
 		{
-			SolidBrush brush = new SolidBrush( currentColor );
+			SolidBrush brush = ThemeEngine.Current.ResPool.GetSolidBrush (currentColor);
 			
 			// FIXME: need to find a better algorithm to display the font
 			
@@ -869,17 +869,17 @@ namespace System.Windows.Forms
 				
 				if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
 				{
-					e.Graphics.FillRectangle( new SolidBrush( Color.Blue ), e.Bounds ); // bot blue
-					e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
-					e.Graphics.DrawRectangle( new Pen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
-					e.Graphics.DrawString( ccbi.Name, this.Font, new SolidBrush( Color.White ), r );
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush ( Color.Blue ), e.Bounds ); // bot blue
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush ( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
+					e.Graphics.DrawRectangle( ThemeEngine.Current.ResPool.GetPen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
+					e.Graphics.DrawString( ccbi.Name, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush ( Color.White ), r );
 				}
 				else
 				{
-					e.Graphics.FillRectangle( new SolidBrush( Color.White ), e.Bounds );
-					e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
-					e.Graphics.DrawRectangle( new Pen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
-					e.Graphics.DrawString( ccbi.Name, this.Font, new SolidBrush( Color.Black ), r );
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush (Color.White ), e.Bounds );
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush (ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
+					e.Graphics.DrawRectangle( ThemeEngine.Current.ResPool.GetPen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
+					e.Graphics.DrawString( ccbi.Name, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black ), r );
 				}
 			}
 			
