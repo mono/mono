@@ -9,6 +9,12 @@ Major tasks:
 	Implement base indexer access.
 
 readonly variables and ref/out
+
+Important:
+----------
+
+	During enumeration definition, a set of extra operators are 
+	allowed.
 	
 BUGS
 ----
@@ -146,6 +152,7 @@ PENDING TASKS
 * Maybe track event usage?  Currently I am not tracking these, although they
   are fields.
 
+* Merge tree.cs, rootcontext.cs
 
 OPTIMIZATIONS
 -------------

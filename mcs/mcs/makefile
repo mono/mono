@@ -50,6 +50,8 @@ mcs2.exe: mcs.exe
 mcs3.exe: mcs2.exe
 	$(TIME) ./mcs2 --target exe -o mcs3.exe $(COMPILER_SOURCES)
 
+mcs-mono.exe: cs-parser.cs $(COMPILER_SOURCES) 
+	mono mcs.exe --timestamp -o mcs-mono.exe $(COMPILER_SOURCES) 
 mm:
 	mint $(MINTFLAGS) ./mcs.exe $(MCSFLAGS) --target exe -o mcs4.exe $(COMPILER_SOURCES)
 
