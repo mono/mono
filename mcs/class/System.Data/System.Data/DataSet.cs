@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Threading;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -31,7 +32,7 @@ namespace System.Data {
 	public class DataSet : MarshalByValueComponent, IListSource,
 		ISupportInitialize, ISerializable {
 
-		private string dataSetName;
+		private string dataSetName = "NewDataSet";
 		private string _namespace = "";
 		private string prefix;
 		private bool caseSensitive;
@@ -672,11 +673,8 @@ namespace System.Data {
 		private void DoWriteXmlSchema( XmlWriter writer )
 		{
 			//Create the root element and declare all the namespaces etc
-			writer.WriteStartElement( 	XmlConstants.SchemaPrefix,
-			                         	XmlConstants.SchemaElement,			                         											 
+			writer.WriteStartElement(XmlConstants.SchemaPrefix, XmlConstants.SchemaElement,
 										XmlConstants.SchemaNamespace );
-			
-			writer.WriteAttributeString( XmlConstants.Id, DataSetName );
 			writer.WriteAttributeString( XmlConstants.TargetNamespace, Namespace );
 			writer.WriteAttributeString( "xmlns:" + XmlConstants.TnsPrefix, Namespace );
 			writer.WriteAttributeString( "xmlns", Namespace );
@@ -702,7 +700,8 @@ namespace System.Data {
 			writer.WriteAttributeString( XmlConstants.Name, DataSetName );
 			writer.WriteAttributeString( XmlConstants.MsdataPrefix,  XmlConstants.IsDataSet, XmlConstants.MsdataNamespace, "true" );
 			//FIXME - sort out the locale string!
-			writer.WriteAttributeString( XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace, "en-us" );
+
+			writer.WriteAttributeString( XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace, Thread.CurrentThread.CurrentCulture.Name);
 			
 			//<xs:complexType>
 			writer.WriteStartElement( XmlConstants.SchemaPrefix,
@@ -751,6 +750,7 @@ namespace System.Data {
 			//</xs:element>
 			writer.WriteEndElement();
 			
+			
 			//</schema>
 			writer.WriteEndElement();
 		}
@@ -777,7 +777,7 @@ namespace System.Data {
 			
 			//TODO - what about the simple content?
 			if( elements.Count == 0 )				
-			{			
+			{				
 			}
 			else
 			{				
@@ -794,16 +794,33 @@ namespace System.Data {
 			                         XmlConstants.SchemaNamespace );
 				
 				writer.WriteAttributeString( XmlConstants.Name, col.ColumnName );
+				
+				if (col.ColumnName != col.Caption && col.Caption != string.Empty)
+					writer.WriteAttributeString( XmlConstants.MsdataPrefix, XmlConstants.Caption, 
+								     XmlConstants.MsdataNamespace, col.Caption); 
+
+				if (col.DefaultValue.ToString () != string.Empty)
+					writer.WriteAttributeString( XmlConstants.Default, col.DefaultValue.ToString ());
+
 				writer.WriteAttributeString( XmlConstants.Type, MapType( col.DataType ) );
+
 				if( col.AllowDBNull )
 				{
 					writer.WriteAttributeString( XmlConstants.MinOccurs, "0" );
 				}
-				writer.WriteAttributeString( XmlConstants.MsdataPrefix,
-				                            XmlConstants.Ordinal,
-				                            XmlConstants.MsdataNamespace,
-				                            col.Ordinal.ToString() );
+
+				//writer.WriteAttributeString( XmlConstants.MsdataPrefix,
+				//                            XmlConstants.Ordinal,
+				//                            XmlConstants.MsdataNamespace,
+				//                            col.Ordinal.ToString() );
+
+				// Write SimpleType if column have MaxLength
+				if (col.MaxLength > -1) {
+
+					WriteTableSimpleType (writer, col);
+				}
 				
+
 				//</xs:element>
 				writer.WriteEndElement();
 			}
@@ -830,6 +847,31 @@ namespace System.Data {
 			writer.WriteEndElement();
 			
 			//</xs:element>
+			writer.WriteEndElement();
+		}
+
+		private void WriteTableSimpleType (XmlWriter writer, DataColumn col)
+		{
+			// SimpleType
+			writer.WriteStartElement( XmlConstants.SchemaPrefix, XmlConstants.SimpleType, 
+						  XmlConstants.SchemaNamespace);
+			
+			// Restriction
+			writer.WriteStartElement( XmlConstants.SchemaPrefix, XmlConstants.Restriction, 
+						  XmlConstants.SchemaNamespace);
+			
+			writer.WriteAttributeString( XmlConstants.Base, MapType( col.DataType ) );
+			
+			// MaxValue
+			writer.WriteStartElement( XmlConstants.SchemaPrefix, XmlConstants.MaxLength, 
+						  XmlConstants.SchemaNamespace);
+			writer.WriteAttributeString( XmlConstants.Value, col.MaxLength.ToString ());
+			
+			
+			writer.WriteEndElement();
+			
+			writer.WriteEndElement();
+			
 			writer.WriteEndElement();
 		}
 
@@ -873,10 +915,14 @@ namespace System.Data {
 			}
 		}
 		
+		[MonoTODO]
 		private string MapType( Type type )
 		{
-			//TODO - 
-			return "xs:string";
+			string Result;
+
+			Result = "xs:string";
+
+			return Result;
 		}
 
 		#endregion //Private Xml Serialisation

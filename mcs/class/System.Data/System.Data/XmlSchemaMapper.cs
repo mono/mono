@@ -51,9 +51,8 @@ namespace System.Data {
 			XmlSchema Schema = XmlSchema.Read (Reader, new ValidationEventHandler (OnXmlSchemaValidation));
 			
 			// read items
-			foreach (XmlSchemaObject Item in Schema.Items) {
+			foreach (XmlSchemaObject Item in Schema.Items)
 				ReadXmlSchemaItem (Item);
-			}
 		}
 
 		#endregion // Public methods
@@ -170,13 +169,12 @@ namespace System.Data {
 			DataColumn Column = new DataColumn (Element.Name);
 			Table.Columns.Add (Column);
 
-			if (Element.UnhandledAttributes == null)
-				return;
+			if (Element.UnhandledAttributes != null) {
 
-			foreach (XmlAttribute Attr in Element.UnhandledAttributes) {
-
-				switch (Attr.LocalName) {
-
+				foreach (XmlAttribute Attr in Element.UnhandledAttributes) {
+					
+					switch (Attr.LocalName) {
+						
 				        case "Caption":
 						Column.Caption = Attr.Value;
 						break;
@@ -185,10 +183,10 @@ namespace System.Data {
 						break;
 				        case "type":
 						// FIXME:
-
 						break;						
 				        default:
 						break;
+					}
 				}
 			}
 
@@ -196,7 +194,6 @@ namespace System.Data {
 			// Handel rest of the parameters
 			//
 
-			// FIXME: Default columntype is string???
 			if (Column.DataType == null)
 				Column.DataType = Type.GetType ("System.String");
 			
@@ -358,21 +355,23 @@ namespace System.Data {
 		{
 			XmlSchemaComplexType ComplexType = Type as XmlSchemaComplexType;
 
-			if (ElementCollection.Contains (ComplexType.Name)) {
-
-				XmlSchemaParticle Particle;
-				if ((Particle = ComplexType.Particle as XmlSchemaChoice) != null) {
-					ReadXmlSchemaChoice (Particle as XmlSchemaChoice);
+			if (ComplexType.Name != null && ComplexType.Name != string.Empty) {
+				if (ElementCollection.Contains (ComplexType.Name)) {
+					
+					XmlSchemaParticle Particle;
+					if ((Particle = ComplexType.Particle as XmlSchemaChoice) != null) {
+						ReadXmlSchemaChoice (Particle as XmlSchemaChoice);
+					}
+					else if ((Particle = ComplexType.Particle as XmlSchemaSequence) != null) {
+						DataTable TempTable = ElementCollection [ComplexType.Name] as DataTable;
+						ElementCollection.Remove (ComplexType.Name);
+						ReadXmlSchemaSequence (Particle as XmlSchemaSequence, TempTable);
+					}
+					
 				}
-				else if ((Particle = ComplexType.Particle as XmlSchemaSequence) != null) {
-					DataTable TempTable = ElementCollection [ComplexType.Name] as DataTable;
-					ElementCollection.Remove (ComplexType.Name);
-					ReadXmlSchemaSequence (Particle as XmlSchemaSequence, TempTable);
+				else if (ComplexType.Name != null && !TypeCollection.Contains (ComplexType.Name)) {
+					TypeCollection.Add (ComplexType.Name, ComplexType);
 				}
-
-			}
-			else if (ComplexType.Name != null && !TypeCollection.Contains (ComplexType.Name)) {
-				TypeCollection.Add (ComplexType.Name, ComplexType);
 			}
 			else {
 				XmlSchemaParticle Particle;

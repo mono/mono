@@ -33,6 +33,9 @@ internal class XmlConstants
 	public const string Element = "element";
 	public const string Choice = "choice";
 	public const string ComplexType = "complexType";
+	public const string SimpleType = "simpleType";
+	public const string Restriction = "restriction";
+	public const string MaxLength = "maxLength";
 	public const string Sequence = "sequence";
 	public const string MaxOccurs = "maxOccurs";
 	public const string MinOccurs = "minOccurs";
@@ -43,7 +46,11 @@ internal class XmlConstants
 	public const string TargetNamespace = "targetNamespace";
 	public const string Form = "form";
 	public const string Attribute = "attribute";
-	
+	public const string Default = "default";
+	public const string Caption = "Caption";
+	public const string Base = "base";
+	public const string Value = "value";
+
 	//ms schema objects	
 	public const string MsdataPrefix = "msdata";	
 	public const string MsdataNamespace = "urn:schemas-microsoft-com:xml-msdata";
