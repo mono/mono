@@ -1,3 +1,7 @@
+2004-10-29  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_2_0_bootstrap_SUBDIRS): New.
+
 2004-10-22  Daniel Morgan <danielmorgan@verizon.net>
 
 	* Mono.Data/.cvsignore
@@ -19,9 +23,9 @@
 
 2004-10-11  Duncan Mak  <duncan@ximian.com>
 
-        * Makefile: Move Microsoft.VisualBasic.dll to be built after
-        System.Windows.Forms.dll is built, because VB now requires SWF. This
-        fixes the build.
+	* Makefile: Move Microsoft.VisualBasic.dll to be built after
+	System.Windows.Forms.dll is built, because VB now requires SWF. This
+	fixes the build.
 
 2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 

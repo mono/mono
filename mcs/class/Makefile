@@ -1,8 +1,16 @@
 thisdir = class
-include ../build/rules.make
 
-MONO_POSIX = Mono.Posix
-MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
+MONO_POSIX := Mono.Posix
+MONO_CSHARP_DEBUGGER := Mono.CSharp.Debugger
+
+net_2_0_bootstrap_SUBDIRS := \
+	corlib 					\
+	System					\
+	System.XML				\
+	System					\
+	$(MONO_CSHARP_DEBUGGER)
+
+include ../build/rules.make
 
 SUBDIRS = \
 	corlib				\
@@ -79,7 +87,9 @@ DISTFILES = \
 	doc/notes		\
 	notes/BitVecto32.txt
 
-all-local install-local test-local run-test-local clean-local uninstall-local:
+.PHONY: all-local $(STD_TARGETS:=-local)
+all-local $(STD_TARGETS:=-local):
+	@:
 
 dist-local: dist-default
-	-mkdir $(distdir)/lib
+	-$(MKINSTALLDIRS) $(distdir)/lib
