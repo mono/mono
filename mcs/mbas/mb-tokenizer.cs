@@ -412,11 +412,7 @@ namespace Mono.MonoBASIC
 					return Token.LONGTYPECHAR;
 				t = handle_integer_literal_in_other_bases(d);
 				if (t == Token.NONE) {
-					if (d == '=') {
-						doread = true;
-						t = Token.OP_CONCAT_ASSIGN;
-					} else 
-						t = Token.OP_CONCAT;
+					t = Token.OP_CONCAT;
 				}
 				return t;			
 			}
@@ -424,20 +420,13 @@ namespace Mono.MonoBASIC
 			if (c == '+'){
 				if (d == '+')
 					t = Token.OP_INC;
-				else if (d == '=')
-					t = Token.OP_ADD_ASSIGN;
-				else
+				else 
 					return Token.PLUS;
 				doread = true;
 				return t;
 			}
 			if (c == '-'){
-				if (d == '=')
-					t = Token.OP_SUB_ASSIGN;
-				else
-					return Token.MINUS;
-				doread = true;
-				return t;
+				return Token.MINUS;
 			}
 
 			if (c == '='){
@@ -445,34 +434,18 @@ namespace Mono.MonoBASIC
 			}
 
 			if (c == '*'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_MULT_ASSIGN;
-				}
 				return Token.STAR;
 			}
 
 			if (c == '/'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_DIV_ASSIGN;
-				}
 				return Token.DIV;
 			}
 
 			if (c == '\\'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_IDIV_ASSIGN;
-				}
 				return Token.OP_IDIV;
 			}
 
 			if (c == '^'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_EXP_ASSIGN;
-				}
 				return Token.OP_EXP;
 			}
 

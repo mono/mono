@@ -1,4 +1,9 @@
 2004-09-07 Bernie Solomon <bernard@ugsolutions.com>
+	* mb-parser.jay:
+	* mb-tokenizer.cs: first cut at implementing
+	op assign
+
+2004-09-07 Bernie Solomon <bernard@ugsolutions.com>
 	* ecore.cs:
 	* enum.cs:
 	* expression.cs:

@@ -565,13 +565,6 @@ namespace Mono.MonoBASIC
 %token OP_NE                  "<>"
 %token OP_XOR                 "xor"
 //%token OP_MODULUS             //"mod"
-%token OP_MULT_ASSIGN         "*="
-%token OP_DIV_ASSIGN          "/="
-%token OP_IDIV_ASSIGN         "\\="
-%token OP_ADD_ASSIGN          "+="
-%token OP_SUB_ASSIGN          "-="
-%token OP_CONCAT_ASSIGN       "&="
-%token OP_EXP_ASSIGN          "^="
 
 /* VB.NET 2003 new bit-shift operators */
 %token OP_SHIFT_LEFT		  "<<"
@@ -4071,6 +4064,63 @@ assignment_expression
 	: prefixed_unary_expression ASSIGN expression
 	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| prefixed_unary_expression STAR ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Multiply, (Expression) $1, (Expression) $4, l);
+	  }
+	| prefixed_unary_expression DIV ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Division, (Expression) $1, (Expression) $4, l);
+	  }
+	| prefixed_unary_expression PLUS ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Addition, (Expression) $1, (Expression) $4, l);
+	  }
+	| prefixed_unary_expression MINUS ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Subtraction, (Expression) $1, (Expression) $4, l);
+	  }
+	| prefixed_unary_expression OP_SHIFT_LEFT ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.LeftShift, (Expression) $1, (Expression) $4, l);
+	  }
+	| prefixed_unary_expression OP_SHIFT_RIGHT ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.RightShift, (Expression) $1, (Expression) $4, l);
+	  }
+	| prefixed_unary_expression OP_CONCAT ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		// FIXME should be strings only
+		$$ = new CompoundAssign (
+			Binary.Operator.Addition, (Expression) $1, (Expression) $4, l);
+	  }
+	| prefixed_unary_expression OP_EXP ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		/* TODO: $$ = new CompoundAssign (
+			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $4, l); */
 	  }
 	| prefixed_unary_expression ASSIGN ADDRESSOF expression
 	  { 
