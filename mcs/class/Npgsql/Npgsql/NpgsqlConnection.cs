@@ -698,6 +698,17 @@ namespace Npgsql
                     
                     throw new FormatException(String.Format("Internal: Backend sent bad version string: {0}", VersionString));
                 }
+
+		// workaround for 7.3.4-RH version from RedHat
+
+
+                int ndx = Parts[2].IndexOf("-");
+
+                if (ndx != -1)
+                {
+                    Parts[2] = Parts[2].Substring(0, ndx);
+                }
+
                 
                 return new ServerVersion(
                     Convert.ToInt32(Parts[0]),

@@ -1,3 +1,13 @@
+2004-05-29  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+	* Npgsql/NpgsqlConnection.cs: Added workaround for redhat server versions.
+	It returns 7.3.4-RH as its server version. Thanks Jaroslaw Kowalski 
+(jaak@zd.com.pl) for the patch.
+
+2004-05-24  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+	* Npgsql/NpgsqlConnection.cs: Fixed bug when handling Unicode connections.
+	Fixes Gborg bug 752.
+	Thanks stehule@kix.fsv.cvut.cz for the patch.
+
 2004-05-23  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 	
 	* Npgsql/NpgsqlConnection.cs: Fixed bug which prevented Npgsql to
