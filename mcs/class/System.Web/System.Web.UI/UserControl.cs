@@ -7,11 +7,14 @@
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.Web.Caching;
+using System.Web.SessionState;
 
 namespace System.Web.UI
 {
 	public class UserControl : TemplateControl, IAttributeAccessor
 	{
+		private bool initialized;
 		private AttributeCollection attributes;
 
 		public UserControl ()
@@ -19,7 +22,7 @@ namespace System.Web.UI
 			//??
 		}
 
-		public HttpApplication Application
+		public HttpApplicationState Application
 		{
 			get {
 				Page p = Page;
@@ -53,7 +56,7 @@ namespace System.Web.UI
 			get {
 				Page p = Page;
 				if (p == null)
-					return null;
+					return false;
 				return p.IsPostBack;
 			}
 		}
@@ -111,7 +114,7 @@ namespace System.Web.UI
 		[MonoTODO]
 		public void DesignerInitialize ()
 		{
-			throw NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void InitializeAsUserControl (Page page)
@@ -137,7 +140,7 @@ namespace System.Web.UI
 		protected override void OnInit (EventArgs e)
 		{
 			if (Page != null)
-				InitializeAsUserControlInternal (Page);
+				InitializeAsUserControl (Page);
 
 			base.OnInit(e);
 		}
@@ -155,7 +158,7 @@ namespace System.Web.UI
 			return attributes [name];
 		}
 		
-		string IAttributeAccessor.SetAttribute (string name, string value)
+		void IAttributeAccessor.SetAttribute (string name, string value)
 		{
 			Attributes [name] = value;
 		}
