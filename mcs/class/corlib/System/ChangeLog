@@ -1,3 +1,10 @@
+2002-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Int32.cs:
+	* UInt32.cs:
+	* Int64.cs: 
+	* UInt64.cs: fixed error when testing for validity of flags.
+
 2002-04-11  Nick Drochak  <ndrochak@gol.com>
 
 	* Double.cs: Use an internal call for ToString(). This is just a simple

@@ -72,13 +72,18 @@ namespace System {
 
 		private static void CheckStyle (NumberStyles style)
 		{
-			if ((style & NumberStyles.AllowHexSpecifier) != 0 &&
-			    ((style | ~NumberStyles.AllowLeadingWhite) != 0 || 
-			     (style | ~NumberStyles.AllowTrailingWhite) != 0))
-				throw new ArgumentException (
-					"With AllowHexSpecifier only " + 
-					"AllowLeadingWhite and AllowTrailingWhite " + 
-					"are permitted.");
+			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
+				NumberStyles ne = style ^ NumberStyles.AllowHexSpecifier;
+				if ((ne & NumberStyles.AllowLeadingWhite) != 0)
+					ne ^= NumberStyles.AllowLeadingWhite;
+				if ((ne & NumberStyles.AllowTrailingWhite) != 0)
+					ne ^= NumberStyles.AllowTrailingWhite;
+				if (ne != 0)
+					throw new ArgumentException (
+						"With AllowHexSpecifier only " + 
+						"AllowLeadingWhite and AllowTrailingWhite " + 
+						"are permitted.");
+			}
 		}
 	
 		private static int JumpOverWhite (int pos, string s, bool excp)
@@ -252,6 +257,7 @@ namespace System {
 					break;
 				}
 				else if (AllowHexSpecifier) {
+					nDigits++;
 					hexDigit = s [pos++];
 					if (Char.IsDigit (hexDigit))
 						digitValue = (ulong) (hexDigit - '0');
