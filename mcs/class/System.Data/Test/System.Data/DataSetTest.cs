@@ -22,7 +22,8 @@ namespace MonoTests.System.Data
 	[TestFixture]
         public class DataSetTest : Assertion
         {
-        
+        	string EOL = Environment.NewLine;
+
 		[SetUp]
                 public void GetReady()
                 {
@@ -147,176 +148,176 @@ namespace MonoTests.System.Data
 			ds.WriteXmlSchema (writer);
 		
 			string TextString = writer.ToString ();
-			string substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#03", "  <xs:element name=\"test_dataset\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "    <xs:complexType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#06", "        <xs:element name=\"test_table\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#07", "          <xs:complexType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#08", "            <xs:sequence>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#09", "              <xs:element name=\"first\" msdata:Caption=\"test\" default=\"test_default_value\" minOccurs=\"0\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#10", "                <xs:simpleType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#11", "                  <xs:restriction base=\"xs:string\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#12", "                    <xs:maxLength value=\"100\" />", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#13", "                  </xs:restriction>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#14", "                </xs:simpleType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#15", "              </xs:element>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#16", "              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#17", "            </xs:sequence>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#18", "          </xs:complexType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#19", "        </xs:element>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#20", "        <xs:element name=\"second_test_table\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#21", "          <xs:complexType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#22", "            <xs:sequence>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#23", "              <xs:element name=\"second_first\" default=\"default_value\" minOccurs=\"0\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#24", "                <xs:simpleType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#25", "                  <xs:restriction base=\"xs:string\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#26", "                    <xs:maxLength value=\"100\" />", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#27", "                  </xs:restriction>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#28", "                </xs:simpleType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#29", "              </xs:element>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#30", "            </xs:sequence>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#31", "          </xs:complexType>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#32", "        </xs:element>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#33", "      </xs:choice>", substring);
 
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#34", "    </xs:complexType>", substring);
 
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#36", "    <xs:unique name=\"Constraint1\">", substring);
 
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#37", "      <xs:selector xpath=\".//test_table\" />", substring);
 
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#38", "      <xs:field xpath=\"first\" />", substring);
 
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#39", "    </xs:unique>", substring);
 
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#40", "    <xs:unique name=\"second_test_table_Constraint1\" msdata:ConstraintName=\"Constraint1\">", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#41", "      <xs:selector xpath=\".//second_test_table\" />", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#42", "      <xs:field xpath=\"second_first\" />", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#43", "    </xs:unique>", substring);
 			
-			substring = TextString.Substring (0, TextString.IndexOf("\n"));
-			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#44", "  </xs:element>", substring);			
 			AssertEquals ("test#45", "</xs:schema>", TextString);
 		}
@@ -325,53 +326,54 @@ namespace MonoTests.System.Data
 		public void ReadWriteXml ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXml ("System.Data/region.xml");
+			ds.ReadXml ("Test/System.Data/region.xml");
 			TextWriter writer = new StringWriter ();
 			ds.WriteXml (writer);
 		
 			string TextString = writer.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#01", "<Root>", substring);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#02", "  <Region>", substring);
 			
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#03", "    <RegionID>1</RegionID>", substring);
-
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			// Here the end of line is text markup "\n"
+                        substring = TextString.Substring (0, TextString.IndexOf('\n'));
+                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
                         AssertEquals ("test#04", "    <RegionDescription>Eastern", substring);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#05", "   </RegionDescription>", substring);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#06", "  </Region>", substring);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#07", "  <Region>", substring);
 			
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#08", "    <RegionID>2</RegionID>", substring);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			// Here the end of line is text markup "\n"
+                        substring = TextString.Substring (0, TextString.IndexOf('\n'));
+                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
                         AssertEquals ("test#09", "    <RegionDescription>Western", substring);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#10", "   </RegionDescription>", substring);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         AssertEquals ("test#11", "  </Region>", substring);
 
                         AssertEquals ("test#11", "</Root>", TextString);
@@ -381,7 +383,7 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlDiffGram ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXml ("System.Data/region.xml", XmlReadMode.DiffGram);
+			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.DiffGram);
 			TextWriter writer = new StringWriter ();
 			ds.WriteXml (writer);
 		
@@ -395,63 +397,65 @@ namespace MonoTests.System.Data
 
 			
 			ds = new DataSet ();
-			ds.ReadXml ("System.Data/region.xml");
+			ds.ReadXml ("Test/System.Data/region.xml");
 			DataTable table = ds.Tables ["Region"];
 			table.Rows [0] [0] = "64";
-			ds.ReadXml ("System.Data/region.xml", XmlReadMode.DiffGram);
+			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.DiffGram);
 			ds.WriteXml (writer, XmlWriteMode.DiffGram);
 			
 			TextString = writer.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#03", "<NewDataSet /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\" /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\">",substring);
 
-                      	substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+                      	substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "  <Root>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#05", "    <Region diffgr:id=\"Region1\" msdata:rowOrder=\"0\" diffgr:hasChanges=\"inserted\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#06", "      <RegionID>64</RegionID>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			// not EOL but literal '\n'
+		        substring = TextString.Substring (0, TextString.IndexOf('\n'));
+                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
 			AssertEquals ("test#07", "      <RegionDescription>Eastern", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#07", "   </RegionDescription>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#08", "    </Region>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#09", "    <Region diffgr:id=\"Region2\" msdata:rowOrder=\"1\" diffgr:hasChanges=\"inserted\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#10", "      <RegionID>2</RegionID>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			// not EOL but literal '\n'
+		        substring = TextString.Substring (0, TextString.IndexOf('\n'));
+                        TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
 			AssertEquals ("test#11", "      <RegionDescription>Western", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#12", "   </RegionDescription>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#13", "    </Region>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#14", "  </Root>", substring);
 			
 			AssertEquals ("test#15", "</diffgr:diffgram>", TextString);
@@ -461,74 +465,74 @@ namespace MonoTests.System.Data
 		public void WriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();			
-			ds.ReadXml ("System.Data/region.xml");
+			ds.ReadXml ("Test/System.Data/region.xml");
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
 		
 			string TextString = writer.ToString ();
 		        
-		        string substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#03", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "    <xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#06", "        <xs:element name=\"Region\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#07", "          <xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#08", "            <xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#09", "              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#10", "              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#11", "            </xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#12", "          </xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#13", "        </xs:element>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#14", "      </xs:choice>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#15", "    </xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#16", "  </xs:element>", substring);
 
 			AssertEquals ("test#17", "</xs:schema>", TextString);
@@ -538,127 +542,127 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlSchemaIgnoreSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("System.Data/store.xsd");
-			ds.ReadXml ("System.Data/region.xml", XmlReadMode.IgnoreSchema);
+			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.IgnoreSchema);
 			TextWriter writer = new StringWriter ();
 			
 			ds.WriteXmlSchema (writer);
 			string TextString = writer.ToString ();
 			
-		        string substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#03", "  <xs:complexType name=\"bookstoreType\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "    <xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#06", "    </xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#07", "  </xs:complexType>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#08", "  <xs:complexType name=\"bookType\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#09", "    <xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#13", "    </xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#14", "    <xs:attribute name=\"genre\" type=\"xs:string\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#15", "  </xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#16", "  <xs:complexType name=\"authorName\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#17", "    <xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#18", "      <xs:element name=\"first-name\" type=\"xs:string\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#19", "      <xs:element name=\"last-name\" type=\"xs:string\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#20", "    </xs:sequence>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#21", "  </xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#22", "  <xs:element name=\"bookstore\" type=\"bookstoreType\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#23", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#24", "    <xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#26", "        <xs:element ref=\"bookstore\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#27", "      </xs:choice>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#28", "    </xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#29", "  </xs:element>", substring);
 
 			AssertEquals ("test#30", "</xs:schema>", TextString);
@@ -668,159 +672,159 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("System.Data/store.xsd");
-			ds.ReadXml ("System.Data/region.xml", XmlReadMode.InferSchema);
+			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.InferSchema);
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
 		
 			string TextString = writer.ToString ();
 		        
-		        string substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#03", "  <xs:complexType name=\"bookstoreType\">", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "    <xs:sequence>", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#06", "    </xs:sequence>", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#07", "  </xs:complexType>", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#08", "  <xs:complexType name=\"bookType\">", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#09", "    <xs:sequence>", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
 		        
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#13", "    </xs:sequence>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#14", "    <xs:attribute name=\"genre\" type=\"xs:string\" />", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#15", "  </xs:complexType>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#16", "  <xs:complexType name=\"authorName\">", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#17", "    <xs:sequence>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#18", "      <xs:element name=\"first-name\" type=\"xs:string\" />", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#19", "      <xs:element name=\"last-name\" type=\"xs:string\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#20", "    </xs:sequence>", substring);
 		
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#21", "  </xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#22", "  <xs:element name=\"bookstore\" type=\"bookstoreType\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#23", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#24", "    <xs:complexType>", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#26", "        <xs:element ref=\"bookstore\" />", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#27", "        <xs:element name=\"Region\">", substring);
 
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#28", "          <xs:complexType>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#29", "            <xs:sequence>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#30", "              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#31", "              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#32", "            </xs:sequence>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#33", "          </xs:complexType>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#34", "        </xs:element>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#35", "      </xs:choice>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#36", "    </xs:complexType>", substring);
 			
-		        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#37", "  </xs:element>", substring);
 
 			AssertEquals ("test#38", "</xs:schema>", TextString);
