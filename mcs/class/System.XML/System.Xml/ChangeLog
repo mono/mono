@@ -1,5 +1,7 @@
 2002-03-13  Duncan Mak  <duncan@ximian.com>
 
+	* XmlNamedNodeMap.cs (SetNamedItem): Check for the Name property.
+
 	* XmlNamedNodeMap.cs (GetEnumerator): piggyback on the ArrayList implementation.
 	(GetNamedItem (string, string)): implemented.
 	(RemoveNamedItem): implemented.

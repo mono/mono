@@ -76,16 +76,14 @@ namespace System.Xml
 
 		public virtual XmlNode RemoveNamedItem (string localName, string namespaceURI)
 		{
-			XmlNode removed = null;
-
 			foreach (XmlNode node in nodeList)
 				if ((node.Name == localName)
 				    && (parent.NamespaceURI == namespaceURI)) {
-					removed = node;
 					nodeList.Remove (node);
+					return node;
 				}
 
-			return removed;
+			return null;
 		}
 
 		public virtual XmlNode SetNamedItem (XmlNode node)
@@ -93,9 +91,11 @@ namespace System.Xml
 			XmlNode replaced = null;
 			
 			foreach (XmlNode x in nodeList)
-				if (x == node)
+				if (x.Name == node.Name) {
+					nodeList.Remove (x);
 					replaced = x;
-					
+				}
+			
 			nodeList.Add (node);
 			return replaced;
 		}
