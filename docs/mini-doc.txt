@@ -489,7 +489,9 @@
 	operations if possible.
 
 	The rest of the code generation is fairly simple: a switch
-	statement is used to generate code for each of the MonoInsts
+	statement is used to generate code for each of the MonoInsts,
+	in the mono/mini/mini-ARCH.c files, the method is called
+	"mono_arch_output_basic_block".
 
 	We always try to allocate code in sequence, instead of just using
 	malloc. This way we increase spatial locality which gives a massive
