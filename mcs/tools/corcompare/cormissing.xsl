@@ -50,6 +50,51 @@
 				<DIV ID="ROOT">
 					<xsl:apply-templates/>
 				</DIV>
+				<P>
+					Legend :<BR/>
+					<TABLE>
+						<TR>
+							<TD> <IMG src="cm/y.gif"/> </TD>
+							<TD> Assembly </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/n.gif"/> </TD>
+							<TD> Namespace </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/c.gif"/> </TD>
+							<TD> Class </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/s.gif"/> </TD>
+							<TD> Struct </TD>
+						<TR>
+						</TR>
+							<TD> <IMG src="cm/i.gif"/> </TD>
+							<TD> Interface </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/d.gif"/> </TD>
+							<TD> Delegate </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/en.gif"/> </TD>
+							<TD> Enum </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/m.gif"/> </TD>
+							<TD> Method </TD>
+						</TR>
+						<TR>
+							<TD> <IMG src="cm/f.gif"/> </TD>
+							<TD> Field </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/p.gif"/> </TD>
+							<TD> Property </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/e.gif"/> </TD>
+							<TD> Event </TD>
+							<TD width="20"/>
+							<TD> <IMG src="cm/r.gif"/> </TD>
+							<TD> Attribute </TD>
+						</TR>
+					</TABLE>
+
+				</P>
 <!--
 			</BODY>
 		</HTML>
