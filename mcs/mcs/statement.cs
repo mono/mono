@@ -1239,6 +1239,7 @@ namespace Mono.CSharp {
 		//
 		InternalParameters param_info;
 		int[] param_map;
+		MyStructInfo[] struct_params;
 		int num_params;
 		ArrayList finally_vectors;
 
@@ -1391,8 +1392,10 @@ namespace Mono.CSharp {
 
 			//
 			// State of the local variable `vi'.
+			// If the local variable is a struct, use a non-zero `field_idx'
+			// to check an individual field in it.
 			//
-			public bool this [VariableInfo vi]
+			public bool this [VariableInfo vi, int field_idx]
 			{
 				get {
 					if (vi.Number == -1)
@@ -1400,7 +1403,7 @@ namespace Mono.CSharp {
 					else if (vi.Number == 0)
 						throw new ArgumentException ();
 
-					return locals [vi.Number - 1];
+					return locals [vi.Number + field_idx - 1];
 				}
 
 				set {
@@ -1409,7 +1412,7 @@ namespace Mono.CSharp {
 					else if (vi.Number == 0)
 						throw new ArgumentException ();
 
-					locals [vi.Number - 1] = value;
+					locals [vi.Number + field_idx - 1] = value;
 				}
 			}
 
@@ -1761,17 +1764,26 @@ namespace Mono.CSharp {
 			Block = block;
 			Parent = null;
 
+			int count = (ip != null) ? ip.Count : 0;
+
 			param_info = ip;
-			param_map = new int [(param_info != null) ? param_info.Count : 0];
+			param_map = new int [count];
+			struct_params = new MyStructInfo [count];
 			num_params = 0;
 
-			for (int i = 0; i < param_map.Length; i++) {
+			for (int i = 0; i < count; i++) {
 				Parameter.Modifier mod = param_info.ParameterModifier (i);
 
 				if ((mod & Parameter.Modifier.OUT) == 0)
 					continue;
 
 				param_map [i] = ++num_params;
+
+				Type param_type = param_info.ParameterType (i);
+
+				struct_params [i] = MyStructInfo.GetStructInfo (param_type);
+				if (struct_params [i] != null)
+					num_params += struct_params [i].Count;
 			}
 
 			Siblings = new ArrayList ();
@@ -1794,6 +1806,7 @@ namespace Mono.CSharp {
 			if (parent != null) {
 				param_info = parent.param_info;
 				param_map = parent.param_map;
+				struct_params = parent.struct_params;
 				num_params = parent.num_params;
 			}
 
@@ -1858,15 +1871,38 @@ namespace Mono.CSharp {
 				return;
 
 			for (int i = 0; i < param_map.Length; i++) {
-				if (param_map [i] == 0)
+				int index = param_map [i];
+
+				if (index == 0)
 					continue;
 
-				if (!parameters [param_map [i] - 1]) {
+				if (parameters [index - 1])
+					continue;
+
+				// If it's a struct, we must ensure that all its fields have
+				// been assigned.  If the struct has any non-public fields, this
+				// can only be done by assigning the whole struct.
+
+				MyStructInfo struct_info = struct_params [index - 1];
+				if ((struct_info == null) || struct_info.HasNonPublicFields) {
 					Report.Error (
 						177, loc, "The out parameter `" +
-						param_info.ParameterName (i) + "` must be " +
+						param_info.ParameterName (i) + "' must be " +
 						"assigned before control leave the current method.");
 					param_map [i] = 0;
+					continue;
+				}
+
+
+				for (int j = 0; j < struct_info.Count; j++) {
+					if (!parameters [index + j]) {
+						Report.Error (
+							177, loc, "The out parameter `" +
+							param_info.ParameterName (i) + "' must be " +
+							"assigned before control leave the current method.");
+						param_map [i] = 0;
+						break;
+					}
 				}
 			}
 		}
@@ -1927,44 +1963,93 @@ namespace Mono.CSharp {
 
 		public bool IsVariableAssigned (VariableInfo vi)
 		{
-			Report.Debug (2, "CHECK VARIABLE ACCESS", this, vi);
-
 			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
 				return true;
 			else
-				return CurrentUsageVector [vi];
+				return CurrentUsageVector [vi, 0];
+		}
+
+		public bool IsVariableAssigned (VariableInfo vi, int field_idx)
+		{
+			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+				return true;
+			else
+				return CurrentUsageVector [vi, field_idx];
 		}
 
 		public void SetVariableAssigned (VariableInfo vi)
 		{
-			Report.Debug (2, "SET VARIABLE ACCESS", this, vi, CurrentUsageVector);
-
 			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
 				return;
 
-			CurrentUsageVector [vi] = true;
+			CurrentUsageVector [vi, 0] = true;
+		}
+
+		public void SetVariableAssigned (VariableInfo vi, int field_idx)
+		{
+			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+				return;
+
+			CurrentUsageVector [vi, field_idx] = true;
 		}
 
 		public bool IsParameterAssigned (int number)
 		{
-			Report.Debug (2, "IS PARAMETER ASSIGNED", this, number);
+			int index = param_map [number];
 
-			if (param_map [number] == 0)
+			if (index == 0)
 				return true;
-			else
-				return CurrentUsageVector [param_map [number]];
+
+			if (CurrentUsageVector [index])
+				return true;
+
+			// Parameter is not assigned, so check whether it's a struct.
+			// If it's either not a struct or a struct which non-public
+			// fields, return false.
+			MyStructInfo struct_info = struct_params [number];
+			if ((struct_info == null) || struct_info.HasNonPublicFields)
+				return false;
+
+			// Ok, so each field must be assigned.
+			for (int i = 0; i < struct_info.Count; i++)
+				if (!CurrentUsageVector [index + i])
+					return false;
+
+			return true;
+		}
+
+		public bool IsParameterAssigned (int number, string field_name)
+		{
+			int index = param_map [number];
+
+			if (index == 0)
+				return true;
+
+			int field_idx = struct_params [number] [field_name];
+
+			return CurrentUsageVector [index + field_idx];
 		}
 
 		public void SetParameterAssigned (int number)
 		{
-			Report.Debug (2, "SET PARAMETER ACCESS", this, number, param_map [number],
-				      CurrentUsageVector);
-
 			if (param_map [number] == 0)
 				return;
 
 			if (CurrentUsageVector.Breaks == FlowReturns.NEVER)
 				CurrentUsageVector [param_map [number]] = true;
+		}
+
+		public void SetParameterAssigned (int number, string field_name)
+		{
+			int index = param_map [number];
+
+			if (index == 0)
+				return;
+
+			int field_idx = struct_params [number] [field_name];
+
+			if (CurrentUsageVector.Breaks == FlowReturns.NEVER)
+				CurrentUsageVector [index + field_idx] = true;
 		}
 
 		public override string ToString ()
@@ -1988,11 +2073,95 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 	}
+
+	public class MyStructInfo {
+		public readonly Type Type;
+		public readonly FieldInfo[] Fields;
+		public readonly FieldInfo[] NonPublicFields;
+		public readonly int Count;
+		public readonly int CountNonPublic;
+		public readonly bool HasNonPublicFields;
+
+		private static Hashtable field_type_hash = new Hashtable ();
+		private Hashtable field_hash;
+
+		// Private constructor.  To save memory usage, we only need to create one instance
+		// of this class per struct type.
+		private MyStructInfo (Type type)
+		{
+			this.Type = type;
+			this.Fields = type.GetFields (BindingFlags.Instance|BindingFlags.Public);
+
+			int number = 0;
+			field_hash = new Hashtable ();
+			foreach (FieldInfo field in Fields)
+				field_hash.Add (field.Name, ++number);
+
+			Count = Fields.Length;
+
+			NonPublicFields = type.GetFields (BindingFlags.Instance|BindingFlags.NonPublic);
+			if (NonPublicFields.Length != 0)
+				HasNonPublicFields = true;
+
+			CountNonPublic = NonPublicFields.Length;
+			Count += NonPublicFields.Length;
+
+			foreach (FieldInfo field in NonPublicFields)
+				field_hash.Add (field.Name, ++number);
+		}
+
+		public int this [string name] {
+			get {
+				if (field_hash.Contains (name))
+					return (int) field_hash [name];
+				else
+					return 0;
+			}
+		}
+
+		public FieldInfo this [int index] {
+			get {
+				if (index >= Fields.Length)
+					return NonPublicFields [index - Fields.Length];
+				else
+					return Fields [index];
+			}
+		}		       
+
+		public static MyStructInfo GetStructInfo (Type type)
+		{
+			if (!TypeManager.IsValueType (type))
+				return null;
+
+			if (!(type is TypeBuilder) && TypeManager.IsBuiltinType (type))
+				return null;
+
+			MyStructInfo info = (MyStructInfo) field_type_hash [type];
+			if (info != null)
+				return info;
+
+			info = new MyStructInfo (type);
+			field_type_hash.Add (type, info);
+			return info;
+		}
+
+		public static MyStructInfo GetStructInfo (TypeContainer tc)
+		{
+			MyStructInfo info = (MyStructInfo) field_type_hash [tc.TypeBuilder];
+			if (info != null)
+				return info;
+
+			info = new MyStructInfo (tc.TypeBuilder);
+			field_type_hash.Add (tc.TypeBuilder, info);
+			return info;
+		}
+	}
 	
-	public class VariableInfo {
+	public class VariableInfo : IVariable {
 		public Expression Type;
 		public LocalBuilder LocalBuilder;
 		public Type VariableType;
+		public readonly string Name;
 		public readonly Location Location;
 		public readonly int Block;
 
@@ -2002,12 +2171,113 @@ namespace Mono.CSharp {
 		public bool Assigned;
 		public bool ReadOnly;
 		
-		public VariableInfo (Expression type, int block, Location l)
+		public VariableInfo (Expression type, string name, int block, Location l)
 		{
 			Type = type;
+			Name = name;
 			Block = block;
 			LocalBuilder = null;
 			Location = l;
+		}
+
+		public VariableInfo (TypeContainer tc, int block, Location l)
+		{
+			VariableType = tc.TypeBuilder;
+			struct_info = MyStructInfo.GetStructInfo (tc);
+			Block = block;
+			LocalBuilder = null;
+			Location = l;
+		}
+
+		MyStructInfo struct_info;
+		public MyStructInfo StructInfo {
+			get {
+				return struct_info;
+			}
+		}
+
+		public bool IsAssigned (EmitContext ec, Location loc)
+		{
+			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsVariableAssigned (this))
+				return true;
+
+			MyStructInfo struct_info = StructInfo;
+			if ((struct_info == null) || (struct_info.HasNonPublicFields && (Name != null))) {
+				Report.Error (165, loc, "Use of unassigned local variable `" + Name + "'");
+				ec.CurrentBranching.SetVariableAssigned (this);
+				return false;
+			}
+
+			int count = struct_info.Count;
+
+			for (int i = 0; i < count; i++) {
+				if (!ec.CurrentBranching.IsVariableAssigned (this, i+1)) {
+					if (Name != null) {
+						Report.Error (165, loc,
+							      "Use of unassigned local variable `" +
+							      Name + "'");
+						ec.CurrentBranching.SetVariableAssigned (this);
+						return false;
+					}
+
+					FieldInfo field = struct_info [i];
+					Report.Error (171, loc,
+						      "Field `" + TypeManager.CSharpName (VariableType) +
+						      "." + field.Name + "' must be fully initialized " +
+						      "before control leaves the constructor");
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
+		{
+			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsVariableAssigned (this) ||
+			    (struct_info == null))
+				return true;
+
+			int field_idx = StructInfo [name];
+			if (field_idx == 0)
+				return true;
+
+			if (!ec.CurrentBranching.IsVariableAssigned (this, field_idx)) {
+				Report.Error (170, loc,
+					      "Use of possibly unassigned field `" + name + "'");
+				ec.CurrentBranching.SetVariableAssigned (this, field_idx);
+				return false;
+			}
+
+			return true;
+		}
+
+		public void SetAssigned (EmitContext ec)
+		{
+			if (ec.DoFlowAnalysis)
+				ec.CurrentBranching.SetVariableAssigned (this);
+		}
+
+		public void SetFieldAssigned (EmitContext ec, string name)
+		{
+			if (ec.DoFlowAnalysis && (struct_info != null))
+				ec.CurrentBranching.SetVariableAssigned (this, StructInfo [name]);
+		}
+
+		public bool Resolve (DeclSpace decl)
+		{
+			if (struct_info != null)
+				return true;
+
+			if (VariableType == null)
+				VariableType = decl.ResolveType (Type, false, Location);
+
+			if (VariableType == null)
+				return false;
+
+			struct_info = MyStructInfo.GetStructInfo (VariableType);
+
+			return true;
 		}
 
 		public void MakePinned ()
@@ -2126,7 +2396,7 @@ namespace Mono.CSharp {
 					return this_id;
 			}
 		}
-		
+
 		void AddChild (Block b)
 		{
 			if (children == null)
@@ -2173,6 +2443,44 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		VariableInfo this_variable = null;
+
+		// <summary>
+		//   Returns the "this" instance variable of this block.
+		//   See AddThisVariable() for more information.
+		// </summary>
+		public VariableInfo ThisVariable {
+			get {
+				if (this_variable != null)
+					return this_variable;
+				else if (Parent != null)
+					return Parent.ThisVariable;
+				else
+					return null;
+			}
+		}
+
+		// <summary>
+		//   This is used by non-static `struct' constructors which do not have an
+		//   initializer - in this case, the constructor must initialize all of the
+		//   struct's fields.  To do this, we add a "this" variable and use the flow
+		//   analysis code to ensure that it's been fully initialized before control
+		//   leaves the constructor.
+		// </summary>
+		public VariableInfo AddThisVariable (TypeContainer tc, Location l)
+		{
+			if (this_variable != null)
+				return this_variable;
+
+			this_variable = new VariableInfo (tc, ID, l);
+
+			if (variables == null)
+				variables = new Hashtable ();
+			variables.Add ("this", this_variable);
+
+			return this_variable;
+		}
+
 		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
@@ -2205,7 +2513,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			vi = new VariableInfo (type, ID, l);
+			vi = new VariableInfo (type, name, ID, l);
 
 			variables.Add (name, vi);
 
@@ -2367,25 +2675,15 @@ namespace Mono.CSharp {
 			count_variables = first_variable;
 			if (variables != null) {
 				foreach (VariableInfo vi in variables.Values) {
-					Report.Debug (2, "VARIABLE", vi);
-
-					Type type = ds.ResolveType (vi.Type, false, vi.Location);
-					if (type == null) {
+					if (!vi.Resolve (ds)) {
 						vi.Number = -1;
 						continue;
 					}
 
-					vi.VariableType = type;
+					vi.Number = ++count_variables;
 
-					Report.Debug (2, "VARIABLE", vi, type, type.IsValueType,
-						      TypeManager.IsValueType (type),
-						      TypeManager.IsBuiltinType (type));
-
-					// FIXME: we don't have support for structs yet.
-					if (TypeManager.IsValueType (type) && !TypeManager.IsBuiltinType (type))
-						vi.Number = -1;
-					else
-						vi.Number = ++count_variables;
+					if (vi.StructInfo != null)
+						count_variables += vi.StructInfo.Count;
 				}
 			}
 
@@ -2523,6 +2821,11 @@ namespace Mono.CSharp {
 			}
 
 			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation);
+
+			// If we're a non-static `struct' constructor which doesn't have an
+			// initializer, then we must initialize all of the struct's fields.
+			if ((this_variable != null) && !this_variable.IsAssigned (ec, loc))
+				ok = false;
 
 			ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;

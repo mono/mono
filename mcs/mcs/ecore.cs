@@ -54,7 +54,11 @@ namespace Mono.CSharp {
 		// Allows SimpleNames to be returned.
 		// This is used by MemberAccess to construct long names that can not be
 		// partially resolved (namespace-qualified names for example).
-		SimpleName		= 8
+		SimpleName		= 8,
+
+		// Disable control flow analysis while resolving the expression.
+		// This is used when resolving the instance expression of a field expression.
+		DisableFlowAnalysis	= 16
 	}
 
 	//
@@ -83,6 +87,42 @@ namespace Mono.CSharp {
 		///   reporting, and should have no other side effects. 
 		/// </summary>
 		void AddressOf (EmitContext ec, AddressOp mode);
+	}
+
+	/// <summary>
+	///   This interface is implemented by variables
+	/// </summary>
+	public interface IVariable {
+		/// <summary>
+		///   Checks whether the variable has already been assigned at
+		///   the current position of the method's control flow and
+		///   reports an appropriate error message if not.
+		///
+		///   If the variable is a struct, then this call checks whether
+		///   all of its fields (including all private ones) have been
+		///   assigned.
+		/// </summary>
+		bool IsAssigned (EmitContext ec, Location loc);
+
+		/// <summary>
+		///   Checks whether field `name' in this struct has been assigned.
+		/// </summary>
+		bool IsFieldAssigned (EmitContext ec, string name, Location loc);
+
+		/// <summary>
+		///   Tells the flow analysis code that the variable has already
+		///   been assigned at the current code position.
+		///
+		///   If the variable is a struct, this call marks all its fields
+		///   (including private fields) as being assigned.
+		/// </summary>
+		void SetAssigned (EmitContext ec);
+
+		/// <summary>
+		///   Tells the flow analysis code that field `name' in this struct
+		///   has already been assigned atthe current code position.
+		/// </summary>
+		void SetFieldAssigned (EmitContext ec, string name);
 	}
 
 	/// <summary>
@@ -230,10 +270,16 @@ namespace Mono.CSharp {
 		{
 			Expression e;
 
+			bool old_do_flow_analysis = ec.DoFlowAnalysis;
+			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
+				ec.DoFlowAnalysis = false;
+
 			if (this is SimpleName)
 				e = ((SimpleName) this).DoResolveAllowStatic (ec);
 			else 
 				e = DoResolve (ec);
+
+			ec.DoFlowAnalysis = old_do_flow_analysis;
 
 			if (e == null)
 				return null;
@@ -3478,8 +3524,27 @@ namespace Mono.CSharp {
 			if (ec.OnlyLookupTypes)
 				return null;
 
-			if (e is IMemberExpr)
-				return MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
+			if (e is IMemberExpr) {
+				e = MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
+				if (e == null)
+					return null;
+
+				IMemberExpr me = e as IMemberExpr;
+				if (me == null)
+					return e;
+
+				// This fails if ResolveMemberAccess() was unable to decide whether
+				// it's a field or a type of the same name.
+				if (!me.IsStatic && (me.InstanceExpression == null))
+					return e;
+
+				if (right_side != null)
+					e = e.DoResolveLValue (ec, right_side);
+				else
+					e = e.DoResolve (ec);
+
+				return e;				
+			}
 
 			if (ec.IsStatic || ec.IsFieldInitializer){
 				if (allow_static)
@@ -3743,10 +3808,19 @@ namespace Mono.CSharp {
 							     "Of the FieldExpr to set this\n");
 				}
 
-				instance_expr = instance_expr.Resolve (ec);
+				// Resolve the field's instance expression while flow analysis is turned
+				// off: when accessing a field "a.b", we must check whether the field
+				// "a.b" is initialized, not whether the whole struct "a" is initialized.
+				instance_expr = instance_expr.Resolve (ec, ResolveFlags.VariableOrValue |
+								       ResolveFlags.DisableFlowAnalysis);
 				if (instance_expr == null)
 					return null;
 			}
+
+			// If the instance expression is a local variable or parameter.
+			IVariable var = instance_expr as IVariable;
+			if ((var != null) && !var.IsFieldAssigned (ec, FieldInfo.Name, loc))
+				return null;
 
 			return this;
 		}
@@ -3767,6 +3841,10 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			IVariable var = instance_expr as IVariable;
+			if (var != null)
+				var.SetFieldAssigned (ec, FieldInfo.Name);
+
 			Expression e = DoResolve (ec);
 
 			if (e == null)
@@ -3791,7 +3869,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			bool is_volatile = false;
-				
+
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);
 
@@ -4017,8 +4095,6 @@ namespace Mono.CSharp {
 					      "this context because it lacks a get accessor");
 				return null;
 			}
-
-			type = PropertyInfo.PropertyType;
 
 			return this;
 		}

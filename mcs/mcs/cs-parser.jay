@@ -2056,7 +2056,7 @@ expression_list
 this_access
 	: THIS
 	  {
-		$$ = new This (lexer.Location);
+		$$ = new This (current_block, lexer.Location);
 	  }
 	;
 

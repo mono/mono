@@ -2359,6 +2359,12 @@ namespace Mono.CSharp {
 
 			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
 
+			// If this is a non-static `struct' constructor and doesn't have any
+			// initializer, it must initialize all of the struct's fields.
+			if ((parent is Struct) && ((ModFlags & Modifiers.STATIC) == 0) &&
+			    (Initializer == null))
+				Block.AddThisVariable (parent, Location);
+
 			ec.EmitTopBlock (Block, ParameterInfo, Location);
 		}
 	}

@@ -2769,7 +2769,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Local variables
 	/// </summary>
-	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation {
+	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		public readonly string Name;
 		public readonly Block Block;
 		VariableInfo variable_info;
@@ -2803,6 +2803,26 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsAssigned (EmitContext ec, Location loc)
+		{
+			return VariableInfo.IsAssigned (ec, loc);
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
+		{
+			return VariableInfo.IsFieldAssigned (ec, name, loc);
+		}
+
+		public void SetAssigned (EmitContext ec)
+		{
+			VariableInfo.SetAssigned (ec);
+		}
+
+		public void SetFieldAssigned (EmitContext ec, string name)
+		{
+			VariableInfo.SetFieldAssigned (ec, name);
+		}
+
 		public bool IsReadOnly {
 			get {
 				if (variable_info == null) {
@@ -2824,13 +2844,8 @@ namespace Mono.CSharp {
 				return e;
 			}
 
-			if (!ec.IsVariableAssigned (vi)) {
-				Error (
-					165,
-					"Use of unassigned local variable `" + Name + "'");
-				ec.SetVariableAssigned (vi);
+			if (ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
-			}
 
 			type = vi.VariableType;
 			return this;
@@ -2840,7 +2855,8 @@ namespace Mono.CSharp {
 		{
 			VariableInfo vi = VariableInfo;
 
-			ec.SetVariableAssigned (vi);
+			if (ec.DoFlowAnalysis)
+				ec.SetVariableAssigned (vi);
 
 			Expression e = DoResolve (ec);
 
@@ -2848,9 +2864,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (is_readonly){
-				Error (
-					1604,
-					"cannot assign to `" + Name + "' because it is readonly");
+				Error (1604, "cannot assign to `" + Name + "' because it is readonly");
 				return null;
 			}
 			
@@ -2890,12 +2904,12 @@ namespace Mono.CSharp {
 	///   This represents a reference to a parameter in the intermediate
 	///   representation.
 	/// </summary>
-	public class ParameterReference : Expression, IAssignMethod, IMemoryLocation {
+	public class ParameterReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		Parameters pars;
 		String name;
 		int idx;
 		public Parameter.Modifier mod;
-		public bool is_ref;
+		public bool is_ref, is_out;
 		
 		public ParameterReference (Parameters pars, int idx, string name, Location loc)
 		{
@@ -2904,6 +2918,49 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.loc = loc;
 			eclass = ExprClass.Variable;
+		}
+
+		public bool IsAssigned (EmitContext ec, Location loc)
+		{
+			if (!is_out || !ec.DoFlowAnalysis)
+				return true;
+
+			if (!ec.CurrentBranching.IsParameterAssigned (idx)) {
+				Report.Error (165, loc,
+					      "Use of unassigned local variable `" + name + "'");
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
+		{
+			if (!is_out || !ec.DoFlowAnalysis)
+				return true;
+
+			if (ec.CurrentBranching.IsParameterAssigned (idx))
+				return true;
+
+			if (!ec.CurrentBranching.IsParameterAssigned (idx, field_name)) {
+				Report.Error (170, loc,
+					      "Use of possibly unassigned field `" + field_name + "'");
+				return false;
+			}
+
+			return true;
+		}
+
+		public void SetAssigned (EmitContext ec)
+		{
+			if (is_out && ec.DoFlowAnalysis)
+				ec.CurrentBranching.SetParameterAssigned (idx);
+		}
+
+		public void SetFieldAssigned (EmitContext ec, string field_name)
+		{
+			if (is_out && ec.DoFlowAnalysis)
+				ec.CurrentBranching.SetParameterAssigned (idx, field_name);
 		}
 
 		//
@@ -2922,14 +2979,11 @@ namespace Mono.CSharp {
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
+			is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
 
-			if (((mod & (Parameter.Modifier.OUT)) != 0) && !ec.IsParameterAssigned (idx)) {
-				Error (
-					165,
-					"Use of unassigned local variable `" + name + "'");
+			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
-			}
 
 			return this;
 		}
@@ -2938,9 +2992,10 @@ namespace Mono.CSharp {
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
+			is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
 
-			if ((mod & Parameter.Modifier.OUT) != 0)
+			if (is_out && ec.DoFlowAnalysis)
 				ec.SetParameterAssigned (idx);
 
 			return this;
@@ -5068,11 +5123,48 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Represents the `this' construct
 	/// </summary>
-	public class This : Expression, IAssignMethod, IMemoryLocation {
+	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
+
+		Block block;
+		VariableInfo vi;
 		
+		public This (Block block, Location loc)
+		{
+			this.loc = loc;
+			this.block = block;
+		}
+
 		public This (Location loc)
 		{
 			this.loc = loc;
+		}
+
+		public bool IsAssigned (EmitContext ec, Location loc)
+		{
+			if (vi == null)
+				return true;
+
+			return vi.IsAssigned (ec, loc);
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
+		{
+			if (vi == null)
+				return true;
+
+			return vi.IsFieldAssigned (ec, field_name, loc);
+		}
+
+		public void SetAssigned (EmitContext ec)
+		{
+			if (vi != null)
+				vi.SetAssigned (ec);
+		}
+
+		public void SetFieldAssigned (EmitContext ec, string field_name)
+		{	
+			if (vi != null)
+				vi.SetFieldAssigned (ec, field_name);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -5081,17 +5173,23 @@ namespace Mono.CSharp {
 			type = ec.ContainerType;
 
 			if (ec.IsStatic){
-				Error (26,
-					      "Keyword this not valid in static code");
+				Error (26, "Keyword this not valid in static code");
 				return null;
 			}
-			
+
+			if (block != null)
+				vi = block.ThisVariable;
+
 			return this;
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			DoResolve (ec);
+
+			VariableInfo vi = ec.CurrentBlock.ThisVariable;
+			if (vi != null)
+				vi.SetAssigned (ec);
 			
 			if (ec.TypeContainer is Class){
 				Error (1604, "Cannot assign to `this'");
@@ -5429,17 +5527,20 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public Expression DoResolve (EmitContext ec, Expression right_side)
 		{
 			if (type != null)
 				throw new Exception ();
 			//
-			// We are the sole users of ResolveWithSimpleName (ie, the only
-			// ones that can cope with it)
+			// Resolve the expression with flow analysis turned off, we'll do the definite
+			// assignment checks later.  This is because we don't know yet what the expression
+			// will resolve to - it may resolve to a FieldExpr and in this case we must do the
+			// definite assignment check on the actual field and not on the whole struct.
 			//
+
 			Expression original = expr;
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.SimpleName |
-					     ResolveFlags.Type);
+					     ResolveFlags.Type | ResolveFlags.DisableFlowAnalysis);
 
 			if (expr == null)
 				return null;
@@ -5532,7 +5633,29 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return ResolveMemberAccess (ec, member_lookup, expr, loc, original);
+			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
+			if (member_lookup == null)
+				return null;
+
+			// The following DoResolve/DoResolveLValue will do the definite assignment
+			// check.
+
+			if (right_side != null)
+				member_lookup = member_lookup.DoResolveLValue (ec, right_side);
+			else
+				member_lookup = member_lookup.DoResolve (ec);
+
+			return member_lookup;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return DoResolve (ec, null);
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec, right_side);
 		}
 
 		public override void Emit (EmitContext ec)

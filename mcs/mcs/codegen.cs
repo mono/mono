@@ -631,8 +631,14 @@ namespace Mono.CSharp {
 		public Expression my_this;
 		public Expression This {
 			get {
-				if (my_this == null)
-					my_this = new This (loc).Resolve (this);
+				if (my_this == null) {
+					if (CurrentBlock != null)
+						my_this = new This (CurrentBlock, loc);
+					else
+						my_this = new This (loc);
+
+					my_this = my_this.Resolve (this);
+				}
 
 				return my_this;
 			}

@@ -1,3 +1,57 @@
+2002-08-11  Martin Baulig  <martin@gnome.org>
+
+	Added control flow analysis support for structs.
+
+	* ecore.cs (ResolveFlags): Added `DisableFlowAnalysis' to resolve
+	with control flow analysis turned off.
+	(IVariable): New interface.
+	(SimpleName.SimpleNameResolve): If MemberAccess.ResolveMemberAccess
+	returns an IMemberExpr, call DoResolve/DoResolveLValue on it.
+	(FieldExpr.DoResolve): Resolve the instance expression with flow
+	analysis turned off and do the definite assignment check after the
+	resolving when we know what the expression will resolve to.
+
+	* expression.cs (LocalVariableReference, ParameterReference):
+	Implement the new IVariable interface, only call the flow analysis
+	code if ec.DoFlowAnalysis is true.
+	(This): Added constructor which takes a Block argument.  Implement
+	the new IVariable interface.
+	(MemberAccess.DoResolve, MemberAccess.DoResolveLValue): Call
+	DoResolve/DoResolveLValue on the result of ResolveMemberLookup().
+	This does the definite assignment checks for struct members.
+
+	* class.cs (Constructor.Emit): If this is a non-static `struct'
+	constructor which doesn't have any initializer, call
+	Block.AddThisVariable() to tell the flow analysis code that all
+	struct elements must be initialized before control returns from
+	the constructor.
+
+	* statement.cs (MyStructInfo): New public class.
+	(UsageVector.this [VariableInfo vi]): Added `int field_idx'
+	argument to this indexer.  If non-zero, check an individual struct
+	member, not the whole struct.
+	(FlowBranching.CheckOutParameters): Check struct members.
+	(FlowBranching.IsVariableAssigned, SetVariableAssigned): Added
+	overloaded versions of these methods which take an additional
+	`int field_idx' argument to check struct members.
+	(FlowBranching.IsParameterAssigned, SetParameterAssigned): Added
+	overloaded versions of these methods which take an additional
+	`string field_name' argument to check struct member.s
+	(VariableInfo): Implement the IVariable interface.
+	(VariableInfo.StructInfo): New public property.  Returns the
+	MyStructInfo instance of the variable if it's a struct or null.
+	(Block.AddThisVariable): New public method.  This is called from
+	Constructor.Emit() for non-static `struct' constructor which do
+	not have any initializer.  It creates a special variable for the
+	"this" instance variable which will be checked by the flow
+	analysis code to ensure that all of the struct's fields are
+	initialized before control returns from the constructor.
+	(UsageVector): Added support for struct members.  If a
+	variable/parameter is a struct with N members, we reserve a slot
+	in the usage vector for each member.  A struct is considered fully
+	initialized if either the struct itself (slot 0) or all its
+	members are initialized.
+
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
 	* driver.cs (Driver.MainDriver): Only report an error CS5001
