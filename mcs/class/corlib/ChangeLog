@@ -1,0 +1,6 @@
+2001-12-05  Nick Drochak <ndrochak@gol.com>
+
+	* ChangeLog: Add the change log to this directory
+
+	* corlib.build: Add dependancy on linux target to test target. Need to have the dll before we can test it, right?  Plus is encourages other to try 'make test'.
+
