@@ -365,6 +365,8 @@ System.Configuration/IgnoreSectionHandler.cs
 System.Configuration/IntegerConfigurationProperty.cs
 System.Configuration/NameValueFileSectionHandler.cs
 System.Configuration/NameValueSectionHandler.cs
+System.Configuration/NonEmptyStringConfigurationProperty.cs
+System.Configuration/NonEmptyStringFlags.cs
 System.Configuration/PathLevel.cs
 System.Configuration/ProtectedConfigurationProvider.cs
 System.Configuration/ProviderBase.cs
