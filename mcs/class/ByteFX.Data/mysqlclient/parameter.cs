@@ -24,25 +24,37 @@ using System.Reflection;
 
 namespace ByteFX.Data.MySqlClient
 {
+	/// <summary>
+	/// Represents a parameter to a <see cref="MySqlCommand"/>, and optionally, its mapping to <see cref="DataSet"/> columns. This class cannot be inherited.
+	/// </summary>
 	[TypeConverter(typeof(MySqlParameter.MySqlParameterConverter))]
 	public sealed class MySqlParameter : MarshalByRefObject, IDataParameter, IDbDataParameter, ICloneable
 	{
-		MySqlDbType			dbType  = MySqlDbType.Null;
-		DbType				genericType;
-		ParameterDirection	direction = ParameterDirection.Input;
-		bool				isNullable  = false;
-		string				paramName;
-		string				sourceColumn;
-		DataRowVersion		sourceVersion = DataRowVersion.Current;
-		object				paramValue = DBNull.Value;
-		int					size;
-		byte				precision=0, scale=0;
+		private MySqlDbType			dbType  = MySqlDbType.Null;
+		private DbType				genericType;
+		private ParameterDirection	direction = ParameterDirection.Input;
+		private bool				isNullable  = false;
+		private string				paramName;
+		private string				sourceColumn;
+		private DataRowVersion		sourceVersion = DataRowVersion.Current;
+		private object				paramValue = DBNull.Value;
+		private int					size;
+		private byte				precision=0, scale=0;
 
 		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the MySqlParameter class.
+		/// </summary>
 		public MySqlParameter()
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MySqlParameter"/> class with the parameter name and a value of the new MySqlParameter.
+		/// </summary>
+		/// <param name="parameterName">The name of the parameter to map. </param>
+		/// <param name="value">An <see cref="Object"/> that is the value of the <see cref="MySqlParameter"/>. </param>
 		public MySqlParameter(string parameterName, object value)
 		{
 			ParameterName = parameterName;
@@ -51,34 +63,54 @@ namespace ByteFX.Data.MySqlClient
 			genericType = GetGenericType( paramValue.GetType() );
 		}
 
-		public MySqlParameter( string parameterName, MySqlDbType type)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MySqlParameter"/> class with the parameter name and the data type.
+		/// </summary>
+		/// <param name="parameterName">The name of the parameter to map. </param>
+		/// <param name="dbType">One of the <see cref="MySqlDbType"/> values. </param>
+		public MySqlParameter( string parameterName, MySqlDbType dbType)
 		{
 			ParameterName = parameterName;
-			dbType   = type;
+			this.dbType   = dbType;
 		}
 
-		public MySqlParameter( string parameterName, MySqlDbType type, int size )
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MySqlParameter"/> class with the parameter name, the <see cref="MySqlDbType"/>, and the size.
+		/// </summary>
+		/// <param name="parameterName">The name of the parameter to map. </param>
+		/// <param name="dbType">One of the <see cref="MySqlDbType"/> values. </param>
+		/// <param name="size">The length of the parameter. </param>
+		public MySqlParameter( string parameterName, MySqlDbType dbType, int size )
 		{
 			ParameterName = parameterName;
-			dbType = type;
+			this.dbType = dbType;
 			this.size = size;
 		}
 
-		public MySqlParameter( string name, MySqlDbType dbType, int size, string sourceCol )
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MySqlParameter"/> class with the parameter name, the <see cref="MySqlDbType"/>, the size, and the source column name.
+		/// </summary>
+		/// <param name="parameterName">The name of the parameter to map. </param>
+		/// <param name="dbType">One of the <see cref="MySqlDbType"/> values. </param>
+		/// <param name="size">The length of the parameter. </param>
+		/// <param name="sourceColumn">The name of the source column. </param>
+		public MySqlParameter( string parameterName, MySqlDbType dbType, int size, string sourceColumn )
 		{
-			ParameterName = name;
+			ParameterName = parameterName;
 			this.dbType = dbType;
 			this.size = size;
 			this.direction = ParameterDirection.Input;
 			this.precision = 0;
 			this.scale = 0;
-			this.sourceColumn = sourceCol;
+			this.sourceColumn = sourceColumn;
 			this.sourceVersion = DataRowVersion.Current;
 			this.paramValue =null;
 		}
 
-		public MySqlParameter(string name, MySqlDbType type, ParameterDirection dir, string col, DataRowVersion ver, object val)
+		internal MySqlParameter(string name, MySqlDbType type, ParameterDirection dir, string col, DataRowVersion ver, object val)
 		{
+			if (direction != ParameterDirection.Input)
+				throw new ArgumentException("Only input parameters are supported by MySql");
 			dbType = type;
 			direction = dir;
 			ParameterName = name;
@@ -87,10 +119,27 @@ namespace ByteFX.Data.MySqlClient
 			paramValue = val;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MySqlParameter"/> class with the parameter name, the type of the parameter, the size of the parameter, a <see cref="ParameterDirection"/>, the precision of the parameter, the scale of the parameter, the source column, a <see cref="DataRowVersion"/> to use, and the value of the parameter.
+		/// </summary>
+		/// <param name="parameterName">The name of the parameter to map. </param>
+		/// <param name="dbType">One of the <see cref="MySqlDbType"/> values. </param>
+		/// <param name="size">The length of the parameter. </param>
+		/// <param name="direction">One of the <see cref="ParameterDirection"/> values. </param>
+		/// <param name="isNullable">true if the value of the field can be null, otherwise false. </param>
+		/// <param name="precision">The total number of digits to the left and right of the decimal point to which <see cref="MySqlParameter.Value"/> is resolved.</param>
+		/// <param name="scale">The total number of decimal places to which <see cref="MySqlParameter.Value"/> is resolved. </param>
+		/// <param name="sourceColumn">The name of the source column. </param>
+		/// <param name="sourceVersion">One of the <see cref="DataRowVersion"/> values. </param>
+		/// <param name="value">An <see cref="Object"/> that is the value of the <see cref="MySqlParameter"/>. </param>
+		/// <exception cref="ArgumentException"/>
 		public MySqlParameter( string parameterName, MySqlDbType dbType, int size, ParameterDirection direction,
 			bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion,
 			object value)
 		{
+			if (direction != ParameterDirection.Input)
+				throw new ArgumentException("Only input parameters are supported by MySql");
+
 			ParameterName = parameterName;
 			this.dbType = dbType;
 			this.size = size;
@@ -104,6 +153,10 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		#region Properties
+
+		/// <summary>
+		/// Gets or sets the <see cref="DbType"/> of the parameter.
+		/// </summary>
 		public DbType DbType 
 		{
 			get 
@@ -133,11 +186,11 @@ namespace ByteFX.Data.MySqlClient
 
 					case DbType.Int32:
 					case DbType.UInt32:
-						MySqlDbType = MySqlDbType.Long; break;
+						MySqlDbType = MySqlDbType.Int; break;
 						
 					case DbType.Int64:
 					case DbType.UInt64:
-						MySqlDbType = MySqlDbType.LongLong; break;
+						MySqlDbType = MySqlDbType.BigInt; break;
 
 					case DbType.DateTime:
 						MySqlDbType = MySqlDbType.Datetime;	break;
@@ -165,6 +218,29 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the parameter is input-only, output-only, bidirectional, or a stored procedure return value parameter.
+		/// As of MySql version 4.1 and earlier, input-only is the only valid choice.
+		/// </summary>
+		[Category("Data")]
+		public ParameterDirection Direction 
+		{
+			get { return direction; }
+			set { direction = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the parameter accepts null values.
+		/// </summary>
+		[Browsable(false)]
+		public Boolean IsNullable 
+		{
+			get { return isNullable; }
+		}
+
+		/// <summary>
+		/// Gets or sets the MySqlDbType of the parameter.
+		/// </summary>
 		[Category("Data")]
 		public MySqlDbType MySqlDbType 
 		{
@@ -178,19 +254,9 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
-		[Category("Data")]
-		public ParameterDirection Direction 
-		{
-			get { return direction; }
-			set { direction = value; }
-		}
-
-		[Browsable(false)]
-		public Boolean IsNullable 
-		{
-			get { return isNullable; }
-		}
-
+		/// <summary>
+		/// Gets or sets the name of the MySqlParameter.
+		/// </summary>
 		[Category("Misc")]
 		public String ParameterName 
 		{
@@ -203,6 +269,39 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the maximum number of digits used to represent the <see cref="Value"/> property.
+		/// </summary>
+		[Category("Data")]
+		public byte Precision 
+		{
+			get { return precision; }
+			set { precision = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the number of decimal places to which <see cref="Value"/> is resolved.
+		/// </summary>
+		[Category("Data")]
+		public byte Scale 
+		{
+			get { return scale; }
+			set { scale = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the maximum size, in bytes, of the data within the column.
+		/// </summary>
+		[Category("Data")]
+		public int Size 
+		{
+			get { return size; }
+			set { size = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the name of the source column that is mapped to the <see cref="DataSet"/> and used for loading or returning the <see cref="Value"/>.
+		/// </summary>
 		[Category("Data")]
 		public String SourceColumn 
 		{
@@ -210,6 +309,9 @@ namespace ByteFX.Data.MySqlClient
 			set { sourceColumn = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="DataRowVersion"/> to use when loading <see cref="Value"/>.
+		/// </summary>
 		[Category("Data")]
 		public DataRowVersion SourceVersion 
 		{
@@ -217,6 +319,9 @@ namespace ByteFX.Data.MySqlClient
 			set { sourceVersion = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the value of the parameter.
+		/// </summary>
 		[TypeConverter(typeof(StringConverter))]
 		[Category("Data")]
 		public object Value 
@@ -233,27 +338,6 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
-		// implement methods of IDbDataParameter
-		[Category("Data")]
-		public byte Precision 
-		{
-			get { return precision; }
-			set { precision = value; }
-		}
-
-		[Category("Data")]
-		public byte Scale 
-		{
-			get { return scale; }
-			set { scale = value; }
-		}
-
-		[Category("Data")]
-		public int Size 
-		{
-			get { return size; }
-			set { size = value; }
-		}
 		#endregion
 
 		private void EscapeByteArray( byte[] bytes, System.IO.MemoryStream s )
@@ -279,6 +363,10 @@ namespace ByteFX.Data.MySqlClient
 			s.Write( newbytes, 0, newx );
 		}
 
+		/// <summary>
+		/// Overridden. Gets a string containing the <see cref="ParameterName"/>.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString() 
 		{
 			return paramName;
@@ -297,7 +385,7 @@ namespace ByteFX.Data.MySqlClient
 			return sb.ToString();
 		}
 
-		public void SerializeToBytes( System.IO.MemoryStream s, MySqlConnection conn )
+		internal void SerializeToBytes( System.IO.MemoryStream s, MySqlConnection conn )
 		{
 			string	parm_string = null;
 			byte[]	bytes = null;
@@ -424,9 +512,9 @@ namespace ByteFX.Data.MySqlClient
 				case TypeCode.Int16:
 				case TypeCode.UInt16: return MySqlDbType.Int24;
 				case TypeCode.Int32:
-				case TypeCode.UInt32: return MySqlDbType.Long;
+				case TypeCode.UInt32: return MySqlDbType.Int;
 				case TypeCode.Int64:
-				case TypeCode.UInt64: return MySqlDbType.LongLong;
+				case TypeCode.UInt64: return MySqlDbType.BigInt;
 				case TypeCode.Single: return MySqlDbType.Float;
 				case TypeCode.Double: return MySqlDbType.Double;
 				case TypeCode.Decimal: return MySqlDbType.Decimal;
@@ -440,7 +528,7 @@ namespace ByteFX.Data.MySqlClient
 
 
 		#region ICloneable
-		public object Clone() 
+		object System.ICloneable.Clone() 
 		{
 			MySqlParameter clone = new MySqlParameter( paramName, dbType, direction,
 				sourceColumn, sourceVersion, paramValue );

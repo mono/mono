@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ByteFX.Data.MySqlClient
 {
-	internal enum PacketType 
+/*	internal enum PacketType 
 	{
 		None,
 		UpdateOrOk,
@@ -14,32 +14,28 @@ namespace ByteFX.Data.MySqlClient
 		Error,
 		LoadDataLocal,
 		Other
-	}
+	}*/
 
 	/// <summary>
 	/// Summary description for Packet.
 	/// </summary>
-	internal class Packet
+	internal class Packet : MemoryStream
 	{
-		MemoryStream	data;
-		PacketType		type = PacketType.None;
 		Encoding		encoding;
+		private static int	HEADER_LEN = 7;
 
-		public Packet()
+		public Packet() : base(256+HEADER_LEN)
 		{
-			data = new MemoryStream();
+			Position = HEADER_LEN;
 		}
 
-		public Packet(int len)
+		public Packet(int len) : base(len+HEADER_LEN)
 		{
-			data = new MemoryStream(len);
+			Position = HEADER_LEN;
 		}
 
-		public Packet(byte[] bytes)
+		public Packet(byte[] bytes) : base(bytes, 0, bytes.Length, true, true)
 		{
-			data = new MemoryStream( bytes.Length );
-			data.Write( bytes, 0, bytes.Length );
-			data.Position = 0;
 		}
 
 		public Encoding Encoding 
@@ -48,73 +44,30 @@ namespace ByteFX.Data.MySqlClient
 			get { return encoding; }
 		}
 
-		public int Length 
+		public byte this[int index] 
 		{
-			get { return (int)data.Length; }
+			get { return GetBuffer()[index]; }
 		}
 
-		public PacketType Type
+		public new int Length 
 		{
-			get { if (type == PacketType.None) ParseType(); return type; }
-			set { type = value; }
+			get { return (int)base.Length; }
 		}
 
-		public long Position
+		public bool IsLastPacket()
 		{
-			get { return data.Position; }
-			set { data.Position = value; }
+			if (Length == 1 && this[0] == 0xfe) return true;
+			return false;
 		}
 
-		public void AppendPacket( Packet newPacket )
+		public byte[] GetBytes( byte packetSeq ) 
 		{
-			data.Position = data.Length;
-			byte[] bytes = newPacket.GetBytes();
-			data.Write( bytes, 0, bytes.Length );
-		}
-
-		private PacketType ParseType()
-		{
-			byte b = ReadByte();
-
-			// a 1 byte packet with byte 0xfe means last packet
-			if ( data.Length == 1 && b == 0xfe)
-				type = PacketType.Last;
-			
-			// a first byte of 0xff means the packet is an error message
-			else if ( b == 0xff )
-				type = PacketType.Error;
-
-			// the first byte == 0 means an update packet or column count
-			else if ( b == 0 ) 
-				type = PacketType.UpdateOrOk;
-			else
-				type = PacketType.Other;
-			return type;
-		}
-
-		public byte[] GetBytes()
-		{
-			return data.ToArray();
-		}
-
-		public void WriteByte( byte b )
-		{
-			data.WriteByte( b );
-		}
-
-		public byte ReadByte()
-		{
-			return (byte)data.ReadByte();
-		}
-
-		public void ReadBytes( byte[] buffer, int offset, int len )
-		{
-			data.Read( buffer, offset, len );
-		}
-
-		public void WriteBytes( byte[] bytes, int offset, int len )
-		{
-			data.Write( bytes, offset, len );
+			long oldPos = Position;
+			Position = 3;
+			WriteInteger( Length-HEADER_LEN, 3 );
+			WriteByte( packetSeq );
+			Position = oldPos;
+			return GetBuffer();
 		}
 
 		public int ReadNBytes()
@@ -129,7 +82,7 @@ namespace ByteFX.Data.MySqlClient
 			int len = ReadLenInteger();
 
 			byte[] buffer = new Byte[len];
-			ReadBytes(buffer, 0, len);
+			Read(buffer, 0, len);
 			return encoding.GetString( buffer, 0, len);
 		}
 
@@ -148,7 +101,7 @@ namespace ByteFX.Data.MySqlClient
 
 			for (int x=0; x < numbytes; x++)
 			{
-				data.WriteByte( (byte)(val&0xff) );
+				WriteByte( (byte)(val&0xff) );
 				val >>= 8;
 			}
 		}
@@ -164,7 +117,7 @@ namespace ByteFX.Data.MySqlClient
 			int raise = 1;
 			for (int x=0; x < numbytes; x++)
 			{
-				int b = data.ReadByte();
+				int b = ReadByte();
 				val += (b*raise);
 				raise *= 256;
 			}
@@ -189,9 +142,9 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
-		public bool CanRead
+		public bool HasMoreData
 		{
-			get { return data.Position < data.Length; }
+			get { return Position < Length; }
 		}
 
 		#region String Functions
@@ -199,9 +152,9 @@ namespace ByteFX.Data.MySqlClient
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-			while ( CanRead )
+			while ( HasMoreData )
 			{
-				byte b = ReadByte();
+				byte b = (byte)ReadByte();
 				if (b == 0) break;
 				sb.Append( Convert.ToChar( b ));
 			}
@@ -212,13 +165,13 @@ namespace ByteFX.Data.MySqlClient
 		public void WriteString(string v, Encoding encoding)
 		{
 			WriteStringNoNull(v, encoding);
-			data.WriteByte(0);
+			WriteByte(0);
 		}
 
 		public void WriteStringNoNull(string v, Encoding encoding)
 		{
 			byte[] bytes = encoding.GetBytes(v);
-			data.Write(bytes, 0, bytes.Length);
+			Write(bytes, 0, bytes.Length);
 		}
 
 		#endregion

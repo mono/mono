@@ -21,6 +21,10 @@ using System.ComponentModel;
 
 namespace ByteFX.Data.MySqlClient
 {
+	/// <summary>
+	/// Represents a set of data commands and a database connection that are used to fill a dataset and update a MySQL database. This class cannot be inherited.
+	/// </summary>
+	/// <include file='docs/MySqlDataAdapter.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
 	[System.Drawing.ToolboxBitmap( typeof(MySqlDataAdapter), "Designers.dataadapter.bmp")]
 	[System.ComponentModel.DesignerCategory("Code")]
 	public sealed class MySqlDataAdapter : DbDataAdapter, IDbDataAdapter
@@ -40,27 +44,79 @@ namespace ByteFX.Data.MySqlClient
 		static private readonly object EventRowUpdating = new object(); 
 
 
+		/// <summary>
+		/// Initializes a new instance of the MySqlDataAdapter class.
+		/// </summary>
 		public MySqlDataAdapter()
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the MySqlDataAdapter class with the specified MySqlCommand as the SelectCommand property.
+		/// </summary>
+		/// <param name="selectCommand"></param>
 		public MySqlDataAdapter( MySqlCommand selectCommand ) 
 		{
 			SelectCommand = selectCommand;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the MySqlDataAdapter class with a SelectCommand and a MySqlConnection object.
+		/// </summary>
+		/// <param name="selectCommandText"></param>
+		/// <param name="conn"></param>
+		public MySqlDataAdapter( string selectCommandText, MySqlConnection conn) 
+		{
+			SelectCommand = new MySqlCommand( selectCommandText, conn );
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the MySqlDataAdapter class with a SelectCommand and a connection string.
+		/// </summary>
+		/// <param name="selectCommandText"></param>
+		/// <param name="selectConnString"></param>
 		public MySqlDataAdapter( string selectCommandText, string selectConnString) 
 		{
 			SelectCommand = new MySqlCommand( selectCommandText, 
 				new MySqlConnection(selectConnString) );
 		}
 
-		public MySqlDataAdapter( string selectCommandText, MySqlConnection conn) 
+		#region Properties
+		/// <summary>
+		/// Gets or sets a SQL statement to delete records from the data set.
+		/// </summary>
+		[DataSysDescription("Used during Update for deleted rows in Dataset.")]
+		public MySqlCommand DeleteCommand 
 		{
-			SelectCommand = new MySqlCommand( selectCommandText, conn );
+			get { return m_deleteCommand; }
+			set { m_deleteCommand = value; }
 		}
 
-		#region Properties
+		IDbCommand IDbDataAdapter.DeleteCommand 
+		{
+			get { return m_deleteCommand; }
+			set { m_deleteCommand = (MySqlCommand)value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a SQL statement to insert new records into the data source.
+		/// </summary>
+		[DataSysDescription("Used during Update for new rows in Dataset.")]
+		public MySqlCommand InsertCommand 
+		{
+			get { return m_insertCommand; }
+			set { m_insertCommand = value; }
+		}
+
+		IDbCommand IDbDataAdapter.InsertCommand 
+		{
+			get { return m_insertCommand; }
+			set { m_insertCommand = (MySqlCommand)value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a SQL statement used to select records in the data source.
+		/// </summary>
 		[DataSysDescription("Used during Fill/FillSchema")]
 		[Category("Fill")]
 		public MySqlCommand SelectCommand 
@@ -75,19 +131,9 @@ namespace ByteFX.Data.MySqlClient
 			set { m_selectCommand = (MySqlCommand)value; }
 		}
 
-		[DataSysDescription("Used during Update for new rows in Dataset.")]
-		public MySqlCommand InsertCommand 
-		{
-			get { return m_insertCommand; }
-			set { m_insertCommand = value; }
-		}
-
-		IDbCommand IDbDataAdapter.InsertCommand 
-		{
-			get { return m_insertCommand; }
-			set { m_insertCommand = (MySqlCommand)value; }
-		}
-
+		/// <summary>
+		/// Gets or sets a SQL statement used to update records in the data source.
+		/// </summary>
 		[DataSysDescription("Used during Update for modified rows in Dataset.")]
 		public MySqlCommand UpdateCommand 
 		{
@@ -101,33 +147,41 @@ namespace ByteFX.Data.MySqlClient
 			set { m_updateCommand = (MySqlCommand)value; }
 		}
 
-		[DataSysDescription("Used during Update for deleted rows in Dataset.")]
-		public MySqlCommand DeleteCommand 
-		{
-			get { return m_deleteCommand; }
-			set { m_deleteCommand = value; }
-		}
-
-		IDbCommand IDbDataAdapter.DeleteCommand 
-		{
-			get { return m_deleteCommand; }
-			set { m_deleteCommand = (MySqlCommand)value; }
-		}
 		#endregion
 
 		/*
 			* Implement abstract methods inherited from DbDataAdapter.
 			*/
+		/// <summary>
+		/// Overridden. See <see cref="DbDataAdapter.CreateRowUpdatedEvent"/>.
+		/// </summary>
+		/// <param name="dataRow"></param>
+		/// <param name="command"></param>
+		/// <param name="statementType"></param>
+		/// <param name="tableMapping"></param>
+		/// <returns></returns>
 		override protected RowUpdatedEventArgs CreateRowUpdatedEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 		{
 			return new MySqlRowUpdatedEventArgs(dataRow, command, statementType, tableMapping);
 		}
 
+		/// <summary>
+		/// Overridden. See <see cref="DbDataAdapter.CreateRowUpdatingEvent"/>.
+		/// </summary>
+		/// <param name="dataRow"></param>
+		/// <param name="command"></param>
+		/// <param name="statementType"></param>
+		/// <param name="tableMapping"></param>
+		/// <returns></returns>
 		override protected RowUpdatingEventArgs CreateRowUpdatingEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 		{
 			return new MySqlRowUpdatingEventArgs(dataRow, command, statementType, tableMapping);
 		}
 
+		/// <summary>
+		/// Overridden. Raises the RowUpdating event.
+		/// </summary>
+		/// <param name="value">A MySqlRowUpdatingEventArgs that contains the event data.</param>
 		override protected void OnRowUpdating(RowUpdatingEventArgs value)
 		{
 			MySqlRowUpdatingEventHandler handler = (MySqlRowUpdatingEventHandler) Events[EventRowUpdating];
@@ -137,6 +191,10 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Overridden. Raises the RowUpdated event.
+		/// </summary>
+		/// <param name="value">A MySqlRowUpdatedEventArgs that contains the event data. </param>
 		override protected void OnRowUpdated(RowUpdatedEventArgs value)
 		{
 			MySqlRowUpdatedEventHandler handler = (MySqlRowUpdatedEventHandler) Events[EventRowUpdated];
@@ -146,12 +204,18 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Occurs during Update before a command is executed against the data source. The attempt to update is made, so the event fires.
+		/// </summary>
 		public event MySqlRowUpdatingEventHandler RowUpdating
 		{
 			add { Events.AddHandler(EventRowUpdating, value); }
 			remove { Events.RemoveHandler(EventRowUpdating, value); }
 		}
 
+		/// <summary>
+		/// Occurs during Update after a command is executed against the data source. The attempt to update is made, so the event fires.
+		/// </summary>
 		public event MySqlRowUpdatedEventHandler RowUpdated
 		{
 			add { Events.AddHandler(EventRowUpdated, value); }
@@ -159,17 +223,36 @@ namespace ByteFX.Data.MySqlClient
 		}
 	}
 
+	/// <summary>
+	/// Represents the method that will handle the <see cref="MySqlDataAdapter.RowUpdating"/> event of a <see cref="MySqlDataAdapter"/>.
+	/// </summary>
 	public delegate void MySqlRowUpdatingEventHandler(object sender, MySqlRowUpdatingEventArgs e);
+
+	/// <summary>
+	/// Represents the method that will handle the <see cref="MySqlDataAdapter.RowUpdated"/> event of a <see cref="MySqlDataAdapter"/>.
+	/// </summary>
 	public delegate void MySqlRowUpdatedEventHandler(object sender, MySqlRowUpdatedEventArgs e);
 
-	public class MySqlRowUpdatingEventArgs : RowUpdatingEventArgs
+	/// <summary>
+	/// Provides data for the RowUpdating event. This class cannot be inherited.
+	/// </summary>
+	public sealed class MySqlRowUpdatingEventArgs : RowUpdatingEventArgs
 	{
+		/// <summary>
+		/// Initializes a new instance of the MySqlRowUpdatingEventArgs class.
+		/// </summary>
+		/// <param name="row">The <see cref="DataRow"/> to <see cref="DbDataAdapter.Update"/>.</param>
+		/// <param name="command">The <see cref="IDbCommand"/> to execute during <see cref="DbDataAdapter.Update"/>.</param>
+		/// <param name="statementType">One of the <see cref="StatementType"/> values that specifies the type of query executed.</param>
+		/// <param name="tableMapping">The <see cref="DataTableMapping"/> sent through an <see cref="DbDataAdapter.Update"/>.</param>
 		public MySqlRowUpdatingEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 			: base(row, command, statementType, tableMapping) 
 		{
 		}
 
-		// Hide the inherited implementation of the command property.
+		/// <summary>
+		/// Gets or sets the MySqlCommand to execute when performing the Update.
+		/// </summary>
 		new public MySqlCommand Command
 		{
 			get  { return (MySqlCommand)base.Command; }
@@ -177,14 +260,26 @@ namespace ByteFX.Data.MySqlClient
 		}
 	}
 
-	public class MySqlRowUpdatedEventArgs : RowUpdatedEventArgs
+	/// <summary>
+	/// Provides data for the RowUpdated event. This class cannot be inherited.
+	/// </summary>
+	public sealed class MySqlRowUpdatedEventArgs : RowUpdatedEventArgs
 	{
+		/// <summary>
+		/// Initializes a new instance of the MySqlRowUpdatedEventArgs class.
+		/// </summary>
+		/// <param name="row">The <see cref="DataRow"/> sent through an <see cref="DbDataAdapter.Update"/>.</param>
+		/// <param name="command">The <see cref="IDbCommand"/> executed when <see cref="DbDataAdapter.Update"/> is called.</param>
+		/// <param name="statementType">One of the <see cref="StatementType"/> values that specifies the type of query executed.</param>
+		/// <param name="tableMapping">The <see cref="DataTableMapping"/> sent through an <see cref="DbDataAdapter.Update"/>.</param>
 		public MySqlRowUpdatedEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 			: base(row, command, statementType, tableMapping) 
 		{
 		}
 
-		// Hide the inherited implementation of the command property.
+		/// <summary>
+		/// Gets or sets the MySqlCommand executed when Update is called.
+		/// </summary>
 		new public MySqlCommand Command
 		{
 			get  { return (MySqlCommand)base.Command; }

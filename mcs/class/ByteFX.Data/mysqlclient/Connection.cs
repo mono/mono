@@ -37,9 +37,12 @@ namespace ByteFX.Data.MySqlClient
 		internal ConnectionState			state;
 		private  MySqlInternalConnection	internalConnection;
 		private  MySqlDataReader			dataReader;
-		private  NumberFormatInfo		numberFormat;
-		private  MySqlConnectionString	settings;
+		private  NumberFormatInfo			numberFormat;
+		private  MySqlConnectionString		settings;
 
+		/// <summary>
+		/// Occurs when the state of the connection changes.
+		/// </summary>
 		public event StateChangeEventHandler	StateChange;
 
 
@@ -149,17 +152,17 @@ namespace ByteFX.Data.MySqlClient
 		[Browsable(false)]
 		public string ServerVersion 
 		{
-			get { return ""; } //internalConnection.GetServerVersion(); }
+			get { return  internalConnection.Driver.Version; }
 		}
 
 		internal Encoding Encoding 
 		{
 			get 
 			{
-//TODO				if (encoding == null)
+				if (internalConnection == null)
 					return System.Text.Encoding.Default;
-//				else 
-//					return encoding;
+				else 
+					return internalConnection.Driver.Encoding;
 			}
 		}
 
@@ -167,6 +170,7 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// Gets or sets the string used to connect to a MySQL Server database.
 		/// </summary>
+		/// <include file='docs/MySqlConnection.xml' path='MyDocs/MyMembers[@name="ConnectionString"]/*'/>
 #if WINDOWS
 		[Editor(typeof(Designers.ConnectionStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
 #endif
@@ -340,7 +344,11 @@ namespace ByteFX.Data.MySqlClient
 		}
 
 		#region ICloneable
-		public object Clone()
+		/// <summary>
+		/// Creates a new MySqlConnection object with the exact same ConnectionString value
+		/// </summary>
+		/// <returns>A cloned MySqlConnection object</returns>
+		object ICloneable.Clone()
 		{
 			MySqlConnection clone = new MySqlConnection();
 			clone.ConnectionString = this.ConnectionString;

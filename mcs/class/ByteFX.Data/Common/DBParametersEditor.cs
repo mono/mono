@@ -24,7 +24,7 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for DBParametersEditor.
 	/// </summary>
-	public class DBParametersEditor : CollectionEditor
+	internal class DBParametersEditor : CollectionEditor
 	{
 		public DBParametersEditor(Type t) : base(t)
 		{

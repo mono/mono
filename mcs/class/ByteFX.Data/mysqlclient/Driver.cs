@@ -37,11 +37,11 @@ namespace ByteFX.Data.MySqlClient
 		protected MySqlStream		stream;
 		protected Encoding			encoding;
 		protected byte				packetSeq;
-		protected int				timeOut;
 		protected long				maxPacketSize;
 		protected Packet			peekedPacket = null;
 		protected ByteFX.Data.Common.Version	serverVersion;
 		protected bool				isOpen;
+		protected string			versionString;
 
 		int		protocol;
 		uint	threadID;
@@ -69,41 +69,33 @@ namespace ByteFX.Data.MySqlClient
 			set { maxPacketSize = value; }
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="host"></param>
-		/// <param name="port"></param>
-		/// <param name="userid"></param>
-		/// <param name="password"></param>
-		public void Open( String host, int port, String userid, String password, 
-			bool UseCompression, int connectTimeout ) 
+		public string Version 
 		{
-			timeOut = connectTimeout;
-			stream = new MySqlStream( host, port, timeOut );
+			get { return versionString; }
+		}
+
+		public void Open( MySqlConnectionString settings )
+		{
+			stream = new MySqlStream( settings.Host, settings.Port, 30, settings.ConnectTimeout );
 
 			Packet packet = ReadPacket();
 
 			// read off the protocol version
 			protocol = packet.ReadByte();
-			serverVersion = ByteFX.Data.Common.Version.Parse( packet.ReadString() );
+			versionString = packet.ReadString();
+			serverVersion = ByteFX.Data.Common.Version.Parse( versionString );
 			threadID = (uint)packet.ReadInteger(4);
 			encryptionSeed = packet.ReadString();
 
 			// read in Server capabilities if they are provided
 			serverCaps = 0;
-			if (packet.CanRead)
+			if (packet.HasMoreData)
 				serverCaps = (int)packet.ReadInteger(2);
 
-			Authenticate( userid, password, UseCompression );
+			Authenticate( settings.Username, settings.Password, settings.UseCompression );
 			isOpen = true;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="userid"></param>
-		/// <param name="password"></param>
 		private void Authenticate( String userid, String password, bool UseCompression )
 		{
 			ClientParam clientParam = ClientParam.CLIENT_FOUND_ROWS | ClientParam.CLIENT_LONG_FLAG;
@@ -156,7 +148,8 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// AuthenticateSecurity implements the new 4.1 authentication scheme
 		/// </summary>
-		/// <param name="password"></param>
+		/// <param name="packet">The in-progress packet we use to complete the authentication</param>
+		/// <param name="password">The password of the user to use</param>
 		private void AuthenticateSecurely( Packet packet, string password )
 		{
 			packet.WriteString("xxxxxxxx", encoding );
@@ -169,7 +162,7 @@ namespace ByteFX.Data.MySqlClient
 			SHA1 sha = new SHA1CryptoServiceProvider(); 
 			byte[] firstPassBytes = sha.ComputeHash( System.Text.Encoding.Default.GetBytes(newPass));
 
-			byte[] salt = packet.GetBytes();
+			byte[] salt = packet.GetBuffer();
 			byte[] input = new byte[ firstPassBytes.Length + 4 ];
 			salt.CopyTo( input, 0 );
 			firstPassBytes.CopyTo( input, 4 );
@@ -183,10 +176,9 @@ namespace ByteFX.Data.MySqlClient
 
 			// send the packet
 			packet = new Packet();
-			packet.WriteBytes( firstPassBytes, 0, 20 );
+			packet.Write( firstPassBytes, 0, 20 );
 			SendPacket(packet);
 		}
-
 
 		/// <summary>
 		/// 
@@ -272,35 +264,15 @@ namespace ByteFX.Data.MySqlClient
 
 			Packet packet = ReadRawPacket();
 
-			if (packet.Type == PacketType.Error)
+			// if this is an error packet, then throw the exception
+			if (packet[0] == 0xff)
 			{
+				packet.ReadByte();
 				int errorCode = (int)packet.ReadInteger(2);
 				string msg = packet.ReadString();
 				throw new MySqlException( msg, errorCode );
 			}
-			else if (packet.Type != PacketType.UpdateOrOk)
-				packet.Position = 0;
 
-			return packet;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="packet"></param>
-		private Packet LoadSchemaIntoPacket( Packet packet, int count )
-		{
-			for (int i=0; i < count; i++) 
-			{
-				Packet colPacket = ReadRawPacket();
-				packet.AppendPacket( colPacket );
-			}
-			Packet lastPacket = ReadRawPacket();
-			if (lastPacket.Type != PacketType.Last)
-				throw new MySqlException("Last packet not received when expected");
-
-			packet.Type = PacketType.ResultSchema;
-			packet.Position = 0;
 			return packet;
 		}
 
@@ -338,7 +310,7 @@ namespace ByteFX.Data.MySqlClient
 
 			byte[] compressed_buffer = new byte[packet.Length * 2];
 			Deflater deflater = new Deflater();
-			deflater.SetInput( packet.GetBytes(), 0, packet.Length );
+			deflater.SetInput( packet.GetBuffer(), 0, packet.Length );
 			deflater.Finish();
 			int comp_len = deflater.Deflate( compressed_buffer, 0, compressed_buffer.Length );
 			if (comp_len > packet.Length) return null;
@@ -368,7 +340,7 @@ namespace ByteFX.Data.MySqlClient
 					header.WriteInteger( packet.Length + HEADER_LEN, 3 );
 					header.WriteByte( packetSeq );
 					header.WriteInteger( 0, 3 );
-					buffer = packet.GetBytes();
+					buffer = packet.GetBuffer();
 				}
 				// now write the internal header
 				header.WriteInteger( packet.Length, 3 );
@@ -376,16 +348,14 @@ namespace ByteFX.Data.MySqlClient
 			}
 			else 
 			{
-				header = new Packet();
-				header.WriteInteger( packet.Length, 3 );
-				header.WriteByte( packetSeq );
-				buffer = packet.GetBytes();
+				buffer = packet.GetBytes( packetSeq );
 			}
 			packetSeq++;
 
 			// send the data to eth server
-			stream.Write( header.GetBytes(), 0, header.Length );
-			stream.Write( buffer, 0, buffer.Length );
+			int start = 0;
+			if (! useCompression) start = 3;
+			stream.Write( buffer, start, packet.Length - start ); 
 			stream.Flush();
 		}
 
@@ -412,7 +382,7 @@ namespace ByteFX.Data.MySqlClient
 			SendPacket(packet);
 			
 			packet = ReadPacket();
-			if (packet.Type != PacketType.UpdateOrOk)
+			if (packet[0] != 0)
 				throw new MySqlException("SendCommand failed for command " + text );
 		}
 
@@ -423,42 +393,28 @@ namespace ByteFX.Data.MySqlClient
 		/// <returns>A packet containing the bytes returned by the server</returns>
 		public Packet SendQuery( byte[] sql )
 		{
+			string s = encoding.GetString(sql);
+
 			Packet packet = new Packet();
 			packetSeq = 0;
 			packet.WriteByte( (byte)DBCmd.QUERY );
-			packet.WriteBytes( sql, 0, sql.Length );
+			packet.Write( sql, 0, sql.Length );
 
 			SendPacket( packet );
 			return ReadPacket();
 		}
 
-		public Packet SendSql( string sql )
-		{
-			byte[] bytes = encoding.GetBytes(sql);
+		
 
+		public Packet SendSql( byte[] bytes )
+		{
 			Packet packet = new Packet();
 			packetSeq = 0;
 			packet.WriteByte( (byte)DBCmd.QUERY );
-			packet.WriteBytes( bytes, 0, bytes.Length );
+			packet.Write( bytes, 0, bytes.Length );
 
 			SendPacket( packet );
 			packet = ReadPacket();
-
-			switch (packet.Type)
-			{
-				case PacketType.LoadDataLocal:
-					SendFileToServer();
-					return null;
-
-				case PacketType.Other:
-					packet.Position = 0;
-					int count = (int)packet.ReadLenInteger();
-					if (count > 0) 
-						return LoadSchemaIntoPacket( packet, count );
-					else
-						return packet;
-			}
-
 			return packet;
 		}
 
@@ -472,10 +428,11 @@ namespace ByteFX.Data.MySqlClient
 		}
 
 		/// <summary>
-		/// 
+		/// Encrypts a password using the MySql encryption scheme
 		/// </summary>
-		/// <param name="password"></param>
-		/// <param name="seed"></param>
+		/// <param name="password">The password to encrypt</param>
+		/// <param name="message">The encryption seed the server gave us</param>
+		/// <param name="new_ver">Indicates if we should use the old or new encryption scheme</param>
 		/// <returns></returns>
 		public static String EncryptPassword(String password, String message, bool new_ver)
 		{

@@ -40,12 +40,13 @@ namespace ByteFX.Data.MySqlClient
 			Packet packet;
 			try 
 			{
-				packet = driver.SendSql( "show status like 'uptime'" );
+				byte[] bytes = driver.Encoding.GetBytes("show status like 'uptime'");
+				packet = driver.SendSql( bytes );
 				// we have to read for two last packets since MySql sends
 				// us a last packet after schema and again after rows
 				// I will likely change this later to have the driver just
 				// return schema in one very large packet.
-				while (packet.Type != PacketType.Last)
+				while (! packet.IsLastPacket())
 					packet = driver.ReadPacket();
 			}
 			catch
@@ -74,10 +75,13 @@ namespace ByteFX.Data.MySqlClient
 			if (serverVariablesSet) return;
 
 			// retrieve the encoding that should be used for character data
-			MySqlCommand cmd = new MySqlCommand("select @@max_allowed_packet", connection);
+			MySqlCommand cmd = new MySqlCommand("show variables like 'max_allowed_packet'", connection);
 			try 
 			{
-				driver.MaxPacketSize = Convert.ToInt64(cmd.ExecuteScalar());
+				MySqlDataReader reader = cmd.ExecuteReader();
+				reader.Read();
+				driver.MaxPacketSize = reader.GetInt64( 1 );
+				reader.Close();
 			}
 			catch 
 			{
@@ -94,7 +98,10 @@ namespace ByteFX.Data.MySqlClient
 					driver.Encoding = CharSetMap.GetEncoding( reader.GetString(1) );
 				reader.Close();
 			}
-			catch { }
+			catch 
+			{ 
+				throw new MySqlException("Failure to initialize connection");
+			}
 
 			serverVariablesSet = true;
 		}
@@ -102,8 +109,7 @@ namespace ByteFX.Data.MySqlClient
 		public void Open() 
 		{
 			driver = new Driver();
-			driver.Open( settings.Host, settings.Port, settings.Username, settings.Password,
-				settings.UseCompression, settings.ConnectTimeout );
+			driver.Open( settings );
 
 			createTime = DateTime.Now;
 		}

@@ -25,7 +25,7 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for API.
 	/// </summary>
-	public class NamedPipeStream : Stream
+	internal class NamedPipeStream : Stream
 	{
 		[DllImport("kernel32.dll", EntryPoint="CreateFile", SetLastError=true)]
 		private static extern IntPtr CreateFile(String lpFileName, 

@@ -9,26 +9,43 @@ namespace ByteFX.Data.MySqlClient
 	/// </summary>
 	internal sealed class MySqlPool
 	{
-		private ArrayList			inUsePool;
-		private ArrayList			idlePool;
-		private int					minSize;
-		private int					maxSize;
+		private ArrayList				inUsePool;
+		private ArrayList				idlePool;
+		private MySqlConnectionString	settings;
+		private int						minSize;
+		private int						maxSize;
 
-		public MySqlPool(int minSize, int maxSize)
+		public MySqlPool(MySqlConnectionString settings)
 		{
-			this.minSize = minSize;
-			this.maxSize = maxSize;
-			inUsePool =new ArrayList(minSize);
-			idlePool = new ArrayList(minSize);
+			minSize = settings.MinPoolSize;
+			maxSize = settings.MaxPoolSize;
+			this.settings = settings;
+			inUsePool =new ArrayList();
+			idlePool = new ArrayList( settings.MinPoolSize );
+
+			// prepopulate the idle pool to minSize
+			for (int i=0; i < minSize; i++) 
+				CreateNewPooledConnection();
+		}
+
+		private void CheckOutConnection(MySqlInternalConnection conn) 
+		{
 		}
 
 		private MySqlInternalConnection GetPooledConnection()
 		{
+			MySqlInternalConnection conn = null;
+
+			// if there are no idle connections and the in use pool is full
+			// then return null to indicate that we cannot provide a connection
+			// at this time.
+			if (idlePool.Count == 0 && inUsePool.Count == maxSize) return null;
+
 			lock (idlePool.SyncRoot) 
 			{
 				for (int i=idlePool.Count-1; i >=0; i--)
 				{
-					MySqlInternalConnection conn = (idlePool[i] as MySqlInternalConnection);
+					conn = (idlePool[i] as MySqlInternalConnection);
 					if (conn.IsAlive()) 
 					{
 						lock (inUsePool) 
@@ -45,20 +62,44 @@ namespace ByteFX.Data.MySqlClient
 					}
 				}
 			}
-			return null;
+
+			// if we couldn't get a pooled connection and there is still room
+			// make a new one
+			if (conn == null && (idlePool.Count+inUsePool.Count) < maxSize)
+			{
+				conn = CreateNewPooledConnection();
+				if (conn == null) return null;
+
+				lock (idlePool.SyncRoot)
+					lock (inUsePool.SyncRoot) 
+					{
+						idlePool.Remove( conn );
+						inUsePool.Add( conn );
+					}
+			}
+
+			return conn;
 		}
 
-		private MySqlInternalConnection CreateNewPooledConnection( MySqlConnectionString settings )
+		private MySqlInternalConnection CreateNewPooledConnection()
 		{
-			MySqlInternalConnection conn = new MySqlInternalConnection( settings );
-			conn.Open();
-			return conn;
+			lock(idlePool.SyncRoot) 
+				lock (inUsePool.SyncRoot)
+				{
+					// first we check if we are allowed to create another
+					if ((inUsePool.Count + idlePool.Count) == maxSize) return null;
+
+					MySqlInternalConnection conn = new MySqlInternalConnection( settings );
+					conn.Open();
+					idlePool.Add( conn );
+					return conn;
+				}
 		}
 
 		public void ReleaseConnection( MySqlInternalConnection connection )
 		{
-			lock (inUsePool.SyncRoot)
-				lock (idlePool.SyncRoot) 
+			lock (idlePool.SyncRoot)
+				lock (inUsePool.SyncRoot) 
 				{
 					inUsePool.Remove( connection );
 					if (connection.Settings.ConnectionLifetime != 0 && connection.IsTooOld())
@@ -68,20 +109,16 @@ namespace ByteFX.Data.MySqlClient
 				}
 		}
 
-		public MySqlInternalConnection GetConnection(MySqlConnectionString settings) 
+		public MySqlInternalConnection GetConnection() 
 		{
-			MySqlInternalConnection conn;
+			MySqlInternalConnection conn = null;
 
-			DateTime start = DateTime.Now;
-			TimeSpan ts;
-			do 
-			{
+			int start = Environment.TickCount;
+			int ticks = settings.ConnectTimeout * 1000;
+
+			// wait timeOut seconds at most to get a connection
+			while (conn == null && (Environment.TickCount - start) < ticks)
 				conn = GetPooledConnection();
-				if (conn == null)
-					conn = CreateNewPooledConnection( settings );
-				ts = DateTime.Now.Subtract( start );
-			} while (conn == null && ts.Seconds < settings.ConnectTimeout );
-
 					 
 			// if pool size is at maximum, then we must have reached our timeout so we simply
 			// throw our exception

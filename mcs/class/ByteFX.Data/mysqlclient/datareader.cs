@@ -21,6 +21,10 @@ using System.Collections;
 
 namespace ByteFX.Data.MySqlClient
 {
+	/// <summary>
+	/// Provides a means of reading a forward-only stream of rows from a MySQL database. This class cannot be inherited.
+	/// </summary>
+	/// <include file='docs/MySqlDataReader.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
 	public sealed class MySqlDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 	{
 		// The DataReader should always be open when returned to the user.
@@ -33,7 +37,6 @@ namespace ByteFX.Data.MySqlClient
 		private MySqlCommand	command;
 		private bool			canRead;
 		private bool			hasRows;
-//		private Packet			rowPacket = null;
 
 		/* 
 		 * Keep track of the connection in order to implement the
@@ -54,14 +57,12 @@ namespace ByteFX.Data.MySqlClient
 			commandBehavior = behavior;
 		}
 
-		/****
-		 * METHODS / PROPERTIES FROM IDataReader.
-		 ****/
+		/// <summary>
+		/// Gets a value indicating the depth of nesting for the current row.  This method is not 
+		/// supported currently and always returns 0.
+		/// </summary>
 		public int Depth 
 		{
-			/*
-			 * Always return a value of zero if nesting is not supported.
-			 */
 			get { return 0;  }
 		}
 
@@ -73,7 +74,7 @@ namespace ByteFX.Data.MySqlClient
 			get  { return ! isOpen; }
 		}
 
-		public void Dispose() 
+		void IDisposable.Dispose() 
 		{
 			if (isOpen)
 				Close();
@@ -146,6 +147,10 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
+		/// <summary>
+		/// Gets the value of a column in its native format.
+		///	[C#] In C#, this property is the indexer for the MySqlDataReader class.
+		/// </summary>
 		public object this [ String name ]
 		{
 			// Look up the ordinal and return 
@@ -183,13 +188,13 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// Reads a stream of bytes from the specified column offset into the buffer an array starting at the given buffer offset.
 		/// </summary>
-		/// <param name="i"></param>
-		/// <param name="fieldOffset"></param>
-		/// <param name="buffer"></param>
-		/// <param name="bufferoffset"></param>
-		/// <param name="length"></param>
-		/// <returns></returns>
-		public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+		/// <param name="i">The zero-based column ordinal. </param>
+		/// <param name="dataIndex">The index within the field from which to begin the read operation. </param>
+		/// <param name="buffer">The buffer into which to read the stream of bytes. </param>
+		/// <param name="bufferIndex">The index for buffer to begin the read operation. </param>
+		/// <param name="length">The maximum length to copy into the buffer. </param>
+		/// <returns>The actual number of bytes read.</returns>
+		public long GetBytes(int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			if (i >= _fields.Length) 
 				throw new IndexOutOfRangeException();
@@ -199,15 +204,15 @@ namespace ByteFX.Data.MySqlClient
 			if (buffer == null) 
 				return bytes.Length;
 
-			/// adjust the length so we don't run off the end
-			if (bytes.Length < (fieldOffset+length)) 
+			// adjust the length so we don't run off the end
+			if (bytes.Length < (dataIndex+length)) 
 			{
-				length = (int)(bytes.Length - fieldOffset);
+				length = (int)(bytes.Length - dataIndex);
 			}
 
 			for (int x=0; x < length; x++)
 			{
-				buffer[bufferoffset+x] = bytes[fieldOffset+x];	
+				buffer[bufferIndex+x] = bytes[dataIndex+x];	
 			}
 
 			return length;
@@ -247,7 +252,7 @@ namespace ByteFX.Data.MySqlClient
 			if (buffer == null) 
 				return chars.Length;
 
-			/// adjust the length so we don't run off the end
+			// adjust the length so we don't run off the end
 			if (chars.Length < (fieldOffset+length)) 
 			{
 				length = (int)(chars.Length - fieldOffset);
@@ -547,13 +552,8 @@ namespace ByteFX.Data.MySqlClient
 
 		#endregion
 
-		public IDataReader GetData(int i)
+		IDataReader IDataRecord.GetData(int i)
 		{
-			/*
-			* The sample code does not support this method. Normally,
-			* this would be used to expose nested tables and
-			* other hierarchical data.
-			*/
 			throw new NotSupportedException("GetData not supported.");
 		}
 
@@ -578,13 +578,19 @@ namespace ByteFX.Data.MySqlClient
 
 			Driver driver = connection.InternalConnection.Driver;
 
+			// clear any rows that have not been read from the last rowset
 			ClearCurrentResult();
 
-			// tell our command to execute the next sql batch
+			// tell our command to continue execution of the SQL batch until it its
+			// another resultset
 			Packet packet = command.ExecuteBatch(true);
 
-			// if there was no more batches, then signal done
-			if (packet == null) return false;
+			// if there was no more resultsets, then signal done
+			if (packet == null) 
+			{
+				canRead = false;
+				return false;
+			}
 
 			// When executing query statements, the result byte that is returned
 			// from MySql is the column count.  That is why we reference the LastResult
@@ -594,14 +600,20 @@ namespace ByteFX.Data.MySqlClient
 			_fields = new MySqlField[ packet.ReadLenInteger() ];
 			for (int x=0; x < _fields.Length; x++) 
 			{
+				packet = driver.ReadPacket();
 				_fields[x] = new MySqlField();
 				_fields[x].ReadSchemaInfo( packet );
 			}
 
+			// read off the end of schema packet
+			packet = driver.ReadPacket();
+			if ( ! packet.IsLastPacket())
+				throw new MySqlException("Expected end of schema packet");
+
 			// now take a quick peek at the next packet to see if we have rows
 			// 
 			packet = driver.PeekPacket();
-			hasRows = packet.Type != PacketType.Last;
+			hasRows = ! packet.IsLastPacket();
 			canRead = hasRows;
 
 			connection.SetState( ConnectionState.Open );
@@ -625,7 +637,7 @@ namespace ByteFX.Data.MySqlClient
 			try 
 			{
 				Packet rowPacket = driver.ReadPacket();
-				if (rowPacket.Type == PacketType.Last) 
+				if (rowPacket.IsLastPacket())
 				{
 					canRead = false;
 					return false;
@@ -665,16 +677,18 @@ namespace ByteFX.Data.MySqlClient
 		{
 			if (! canRead) return;
 
-			Packet packet = connection.InternalConnection.Driver.ReadPacket();
+			Driver driver = connection.InternalConnection.Driver;
+
+			Packet packet = driver.ReadPacket();
 			// clean out any current resultset
-			while (packet.Type != PacketType.Last)
-				packet = connection.InternalConnection.Driver.ReadPacket();
+			while (! packet.IsLastPacket())
+				packet = driver.ReadPacket();
 		}
 
 		#endregion
 
 		#region IEnumerator
-		public IEnumerator	GetEnumerator()
+		IEnumerator	IEnumerable.GetEnumerator()
 		{
 			return new System.Data.Common.DbEnumerator(this);
 		}

@@ -10,6 +10,7 @@
 ./Common/SqlCommandTextEditor.cs
 ./Common/StringUtility.cs
 ./Common/Version.cs
+./Common/MultiHostStream.cs
 ./mysqlclient/CharSetMap.cs
 ./mysqlclient/CommandBuilder.cs
 ./mysqlclient/command.cs

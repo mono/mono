@@ -21,25 +21,30 @@ using System.Runtime.Serialization;
 namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
-	/// Summary description for MySqlException.
+	/// The exception that is thrown when MySQL returns an error. This class cannot be inherited.
 	/// </summary>
+	/// <include file='docs/MySqlException.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
 	[Serializable]
-	public sealed class MySqlException : Exception
+	public sealed class MySqlException : SystemException
 	{
-		public MySqlException(string msg) : base(msg)
+		internal MySqlException(string msg) : base(msg)
+		{
+		}
+		
+		internal MySqlException( string msg, Exception ex ) : base(msg, ex)
 		{
 		}
 
-		public MySqlException() 
+		internal MySqlException() 
 		{
 		}
 
-		public MySqlException(string msg, int errno) : base(msg)
+		internal MySqlException(string msg, int errno) : base(msg)
 		{
 			
 		}
 
-		public MySqlException(SerializationInfo info,
+		internal MySqlException(SerializationInfo info,
 					StreamingContext context) : base(info, context)
 		{
 		}

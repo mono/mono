@@ -81,14 +81,14 @@ namespace ByteFX.Data.MySqlClient
 		public int NumericPrecision()
 		{
 			if (colType == MySqlDbType.Decimal)
-				return ((SqlDecimal)value).Precision;
+				return colLen;
 			return -1;
 		}
 
 		public int NumericScale()
 		{
 			if (colType == MySqlDbType.Decimal)
-				return ((SqlDecimal)value).Scale; 
+				return colDecimals;
 			return -1;
 		}
 
@@ -143,7 +143,7 @@ namespace ByteFX.Data.MySqlClient
 
 			// read in the data
 			byte[] data = new byte[ len ];
-			p.ReadBytes( data, 0, len );
+			p.Read( data, 0, len );
 
 			// if it is a blob and binary, then GetBytes is the way to go
 			if ( IsBlob() && IsBinary() ) 
@@ -172,7 +172,7 @@ namespace ByteFX.Data.MySqlClient
 						value = Int16.Parse( sValue );
 					break;
 					
-				case MySqlDbType.Long : 
+				case MySqlDbType.Int : 
 				case MySqlDbType.Int24:
 					if (IsUnsigned())
 						value = UInt32.Parse( sValue );
@@ -180,7 +180,7 @@ namespace ByteFX.Data.MySqlClient
 						value = Int32.Parse( sValue );
 					break;
 
-				case MySqlDbType.LongLong:
+				case MySqlDbType.BigInt:
 					if (IsUnsigned())
 						value = UInt64.Parse( sValue );
 					else
@@ -264,12 +264,12 @@ namespace ByteFX.Data.MySqlClient
 				case MySqlDbType.Decimal:		return "DECIMAL";
 				case MySqlDbType.Byte:			return "TINY";
 				case MySqlDbType.Short:			return "SHORT";
-				case MySqlDbType.Long:			return "LONG";
+				case MySqlDbType.Int:			return "INTEGER";
 				case MySqlDbType.Float:			return "FLOAT";
 				case MySqlDbType.Double:		return "DOUBLE";
 				case MySqlDbType.Null:			return "NULL";
 				case MySqlDbType.Timestamp:		return "TIMESTAMP";
-				case MySqlDbType.LongLong:		return "LONGLONG";
+				case MySqlDbType.BigInt:		return "BIGINT";
 				case MySqlDbType.Int24:			return "INT24";
 				case MySqlDbType.Date:			return "DATE";
 				case MySqlDbType.Time:			return "TIME";
@@ -297,10 +297,10 @@ namespace ByteFX.Data.MySqlClient
 
 				case MySqlDbType.Short:		return IsUnsigned() ? typeof(System.UInt16) : typeof(System.Int16);
 
-				case MySqlDbType.Long:
+				case MySqlDbType.Int:
 				case MySqlDbType.Int24:		return IsUnsigned() ? typeof(System.UInt32) : typeof(System.Int32);
 
-				case MySqlDbType.LongLong:	return IsUnsigned() ? typeof(System.UInt64) : typeof(System.Int64);
+				case MySqlDbType.BigInt:	return IsUnsigned() ? typeof(System.UInt64) : typeof(System.Int64);
 
 				case MySqlDbType.Float:		return typeof(System.Single);
 				case MySqlDbType.Double:		return typeof(System.Double);
@@ -343,7 +343,7 @@ namespace ByteFX.Data.MySqlClient
 					else
 						return DbType.Int16;
 
-				case MySqlDbType.Long:			
+				case MySqlDbType.Int:			
 					if (IsUnsigned())
 						return DbType.UInt32;
 					else
@@ -353,7 +353,7 @@ namespace ByteFX.Data.MySqlClient
 				case MySqlDbType.Double:		return DbType.Double;
 				case MySqlDbType.Null:			return DbType.Object;
 
-				case MySqlDbType.LongLong:		
+				case MySqlDbType.BigInt:		
 					if (IsUnsigned())
 						return DbType.UInt64;
 					else

@@ -25,7 +25,7 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for MySqlConnectionDesign.
 	/// </summary>
-	public class SqlCommandTextEditor : UITypeEditor
+	internal class SqlCommandTextEditor : UITypeEditor
 	{
 		public override System.Drawing.Design.UITypeEditorEditStyle GetEditStyle(System.ComponentModel.ITypeDescriptorContext context)
 		{

@@ -1,3 +1,39 @@
+11/30/2003
+MySql - Fixed ConnectionSTring editor dialog (thanks marco p (pomarc))
+Common - UserId now supported in connection strings (thanks Jeff Neeley)
+MySql - Attempting to create a parameter that is not input throws an exception (thanks Ryan Gregg)
+
+11/29/2003 
+MySql - Added much documentation
+
+11/26/2003
+MySql - checked in new MultiHostStream capability.  Big thanks to Dan Guisinger for this.  he originally submitted the code and idea of supporting multiple machines on the connect string.
+
+11/25/2003
+MySql - Added alot of documentation.  Still alot to do.
+
+11/24/2003
+MySql - Fixed speed issue with 0.73
+
+11/14/2003
+MySql - changed to Thread.Sleep(0) in MySqlDataStream to help optimize the case where it doesn't need to wait (thanks Todd German)
+11/1/2003
+MySql - Prepopulating the idlepools to MinPoolSize
+
+10/31/2003
+MySql - Fixed MySqlPool deadlock condition as well as stupid bug where CreateNewPooledConnection
+        was not ever adding new connections to the pool.
+	Also fixed MySqlStream.ReadBytes and ReadByte to not use TicksPerSecond which does not appear
+	to always be right.
+	(thanks Matthew J. Peddlesden)
+MySql - Fix for precision and scale (thanks Matthew J. Peddlesden)
+
+10/28/2003
+MySql - Added Thread.Sleep(1) to stream reading methods to be more cpu friendly (thanks Sean McGinnis)
+
+10/24/2003
+MySql - Fixed problem where ExecuteReader would sometime return null (thanks Lloyd Dupont )
+
 10/17/2003
 MySql - Fixed major bug with null field handling (thanks Naucki)
 

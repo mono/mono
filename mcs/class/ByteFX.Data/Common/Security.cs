@@ -5,7 +5,7 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for Security.
 	/// </summary>
-	public class Security
+	internal class Security
 	{
 		public Security()
 		{

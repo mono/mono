@@ -22,10 +22,13 @@ using System.Collections;
 
 namespace ByteFX.Data.MySqlClient
 {
+	/// <summary>
+	/// Represents a SQL statement to execute against a MySQL database. This class cannot be inherited.
+	/// </summary>
+	/// <include file='docs/MySqlCommand.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
 #if WINDOWS
 	[System.Drawing.ToolboxBitmap( typeof(MySqlCommand), "Designers.command.bmp")]
 #endif
-
 	[System.ComponentModel.DesignerCategory("Code")]
 	public sealed class MySqlCommand : Component, IDbCommand, ICloneable
 	{
@@ -44,31 +47,43 @@ namespace ByteFX.Data.MySqlClient
 		{
 		}
 
-		// Implement other constructors here.
+		/// <summary>
+		/// Overloaded. Initializes a new instance of the MySqlCommand class.
+		/// </summary>
 		public MySqlCommand(string cmdText)
 		{
 			this.cmdText = cmdText;
 		}
 
+		/// <summary>
+		/// Overloaded. Initializes a new instance of the MySqlCommand class.
+		/// </summary>
 		public MySqlCommand(System.ComponentModel.IContainer container)
 		{
-			/// <summary>
-			/// Required for Windows.Forms Class Composition Designer support
-			/// </summary>
+			// Required for Windows.Forms Class Composition Designer support
 			container.Add(this);
 		}
 
+		/// <summary>
+		/// Overloaded. Initializes a new instance of the MySqlCommand class.
+		/// </summary>
 		public MySqlCommand(string cmdText, MySqlConnection connection)
 		{
 			this.cmdText    = cmdText;
 			this.connection  = connection;
 		}
 
+		/// <summary>
+		/// Disposes of this instance of MySqlCommand
+		/// </summary>
 		public new void Dispose() 
 		{
 			base.Dispose();
 		}
 
+		/// <summary>
+		/// Overloaded. Initializes a new instance of the MySqlCommand class.
+		/// </summary>
 		public MySqlCommand(string cmdText, MySqlConnection connection, MySqlTransaction txn)
 		{
 			this.cmdText	= cmdText;
@@ -92,7 +107,7 @@ namespace ByteFX.Data.MySqlClient
 			set  { cmdText = value;  }
 		}
 
-		public int UpdateCount 
+		internal int UpdateCount 
 		{
 			get { return updateCount; }
 		}
@@ -207,6 +222,10 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		#region Methods
+		/// <summary>
+		/// Attempts to cancel the execution of a MySqlCommand.  This operation is not supported.
+		/// </summary>
+		/// <exception cref="NotSupportedException">This operation is not supported.</exception>
 		public void Cancel()
 		{
 			throw new NotSupportedException();
@@ -229,7 +248,7 @@ namespace ByteFX.Data.MySqlClient
 		private ArrayList SplitSql(string sql)
 		{
 			ArrayList commands = new ArrayList();
-			System.IO.MemoryStream ms = new System.IO.MemoryStream();
+			System.IO.MemoryStream ms = new System.IO.MemoryStream(sql.Length);
 
 			// first we tack on a semi-colon, if not already there, to make our
 			// sql processing code easier.  Then we ask our encoder to give us
@@ -292,7 +311,7 @@ namespace ByteFX.Data.MySqlClient
 						if (cmdByte != ' ') { goodcmd = true; break; }
 
 					if (goodcmd)
-						commands.Add( ms.ToArray() );
+						commands.Add( byteArray );
 					ms.SetLength(0);
 				}
 				else if (parm_start == -1)
@@ -304,6 +323,21 @@ namespace ByteFX.Data.MySqlClient
 			}
 
 			return commands;
+		}
+
+		private void ReadOffResultSet()
+		{
+			Driver driver = connection.InternalConnection.Driver;
+
+			// first read off the schema
+			Packet packet = driver.ReadPacket();
+			while (! packet.IsLastPacket())
+				packet = driver.ReadPacket();
+
+			// now read off the data
+			packet = driver.ReadPacket();
+			while (! packet.IsLastPacket())
+				packet = driver.ReadPacket();
 		}
 
 		/// <summary>
@@ -318,16 +352,20 @@ namespace ByteFX.Data.MySqlClient
 				byte[] sql = (byte[])arraySql[0];
 				arraySql.RemoveAt(0);
 
-				string s = connection.Encoding.GetString(sql);
-				Packet packet =  driver.SendSql( s );
-				if (packet.Type == PacketType.UpdateOrOk)
+				Packet packet =  driver.SendSql( sql );
+				byte b = (byte)packet.ReadByte();
+				if (b == 0) 
+				{
+					if (updateCount == -1) updateCount = 0;
 					updateCount += (int)packet.ReadLenInteger();
-				else if (packet.Type == PacketType.ResultSchema && stopAtResultSet)
+				}
+				else if (stopAtResultSet) 
+				{
+					packet.Position--;
 					return packet;
-				else do 
-					 {
-						packet = driver.ReadPacket();
-					 } while (packet.Type != PacketType.Last);
+				}
+				else
+					ReadOffResultSet();
 			}
 			return null;
 		}
@@ -347,7 +385,7 @@ namespace ByteFX.Data.MySqlClient
 				throw new MySqlException("There is already an open DataReader associated with this Connection which must be closed first.");
 
 			// execute any commands left in the queue from before.
-			ExecuteBatch(false);
+			//ExecuteBatch(false);
 			
 			arraySql = SplitSql( cmdText );
 			updateCount = 0;
@@ -376,14 +414,13 @@ namespace ByteFX.Data.MySqlClient
 			return ExecuteReader(CommandBehavior.Default);
 		}
 
+
+		/// <summary>
+		/// Overloaded. Sends the CommandText to the Connection and builds a MySqlDataReader.
+		/// </summary>
+		/// <returns></returns>
 		public MySqlDataReader ExecuteReader(CommandBehavior behavior)
 		{
-			/*
-			* ExecuteReader should retrieve results from the data source
-			* and return a DataReader that allows the user to process 
-			* the results.
-			*/
-
 			// There must be a valid and open connection.
 			if (connection == null || connection.State != ConnectionState.Open)
 				throw new InvalidOperationException("Connection must be valid and open");
@@ -415,27 +452,15 @@ namespace ByteFX.Data.MySqlClient
 				sql = String.Format("SET SQL_SELECT_LIMIT=1;{0};SET sql_select_limit=-1;", cmdText);
 			}
 
-			// execute any commands left in the queue from before.
-			ExecuteBatch(false);
-
 			arraySql = SplitSql( sql );
 
+			updateCount = -1;
 			MySqlDataReader reader = new MySqlDataReader(this, behavior);
 
-			try 
-			{
-				if (reader.NextResult()) 
-				{
-					connection.Reader = reader;
-					return reader;
-				}
-				return null;
-			}
-			catch (Exception e) 
-			{
-				System.Diagnostics.Trace.WriteLine("Exception in ExecuteReader: " + e.Message);
-				throw e;
-			}
+			// move to the first resultset
+			reader.NextResult();
+			connection.Reader = reader;
+			return reader;
 		}
 
 		/// <summary>
@@ -453,11 +478,9 @@ namespace ByteFX.Data.MySqlClient
 			if (connection.Reader != null)
 				throw new MySqlException("There is already an open DataReader associated with this Connection which must be closed first.");
 
-			// execute any commands left in the queue from before.
-			ExecuteBatch(false);
-
 			arraySql = SplitSql( cmdText );
 
+			updateCount = -1;
 			MySqlDataReader reader = new MySqlDataReader(this, 0);
 			reader.NextResult();
 			object val = null;
@@ -477,12 +500,17 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		#region ICloneable
+		/// <summary>
+		/// Creates a clone of this MySqlCommand object.  CommandText, Connection, and Transaction properties
+		/// are included as well as the entire parameter list.
+		/// </summary>
+		/// <returns>The cloned MySqlCommand object</returns>
 		public object Clone() 
 		{
 			MySqlCommand clone = new MySqlCommand(cmdText, connection, curTransaction);
 			foreach (MySqlParameter p in parameters) 
 			{
-				clone.Parameters.Add(p.Clone());
+				clone.Parameters.Add((p as ICloneable).Clone());
 			}
 			return clone;
 		}

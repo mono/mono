@@ -36,7 +36,7 @@ namespace ByteFX.Data.MySqlClient
 				MySqlPool pool;
 				if (!pools.Contains( text )) 
 				{
-					pool = new MySqlPool( settings.MinPoolSize, settings.MaxPoolSize );
+					pool = new MySqlPool( settings );
 					pools.Add( text, pool );
 				}
 				else 
@@ -44,7 +44,7 @@ namespace ByteFX.Data.MySqlClient
 					pool = (pools[text] as MySqlPool);
 				}
 
-				return pool.GetConnection( settings );
+				return pool.GetConnection();
 			}
 		}
 

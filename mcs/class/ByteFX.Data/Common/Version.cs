@@ -5,7 +5,7 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for Version.
 	/// </summary>
-	public struct Version
+	internal struct Version
 	{
 		private int	major;
 		private int minor;

@@ -23,8 +23,9 @@ using System.Text;
 namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
-	/// Summary description for CommandBuilder.
+	/// Automatically generates single-table commands used to reconcile changes made to a DataSet with the associated MySQL database. This class cannot be inherited.
 	/// </summary>
+	/// <include file='docs/MySqlCommandBuilder.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
 	[ToolboxItem(false)]
 	[System.ComponentModel.DesignerCategory("Code")]
 	public sealed class MySqlCommandBuilder : Component
@@ -40,10 +41,16 @@ namespace ByteFX.Data.MySqlClient
 		private MySqlCommand		_deleteCmd;
 
 		#region Constructors
+		/// <summary>
+		/// Overloaded. Initializes a new instance of the SqlCommandBuilder class.
+		/// </summary>
 		public MySqlCommandBuilder()
 		{
 		}
 
+		/// <summary>
+		/// Overloaded. Initializes a new instance of the SqlCommandBuilder class.
+		/// </summary>
 		public MySqlCommandBuilder( MySqlDataAdapter adapter )
 		{
 			_adapter = adapter;
@@ -90,6 +97,12 @@ namespace ByteFX.Data.MySqlClient
 		#endregion
 
 		#region Public Methods
+		/// <summary>
+		/// Retrieves parameter information from the stored procedure specified in the MySqlCommand and populates the Parameters collection of the specified MySqlCommand object.
+		/// This method is not currently supported since stored procedures are not available in MySql.
+		/// </summary>
+		/// <param name="command">The MySqlCommand referencing the stored procedure from which the parameter information is to be derived. The derived parameters are added to the Parameters collection of the MySqlCommand.</param>
+		/// <exception cref="InvalidOperationException">The command text is not a valid stored procedure name.</exception>
 		public static void DeriveParameters(MySqlCommand command)
 		{
 			throw new MySqlException("DeriveParameters is not supported (due to MySql not supporting SP)");

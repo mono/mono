@@ -119,7 +119,10 @@ namespace ByteFX.Data.Common
 					!persistSecurityInfo) continue;
 				str.AppendFormat("{0}={1};", key, keyValues[key]);
 			}
-			str.Remove( str.Length-1, 1 );
+
+			if (str.Length > 0)
+				str.Remove( str.Length-1, 1 );
+
 			return str.ToString();
 		}
 
@@ -138,6 +141,7 @@ namespace ByteFX.Data.Common
 				case "username":
 				case "user id":
 				case "user name": 
+				case "userid":
 					username = value;
 					break;
 
@@ -215,6 +219,8 @@ namespace ByteFX.Data.Common
 					newkeyvalues[x-1] += keyvalue;
 				}
 			}
+
+			keyValues.Clear();
 
 			// now we run through our normalized key-values, splitting on equals
 			for (int y=0; y < x; y++) 

@@ -20,50 +20,89 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using ByteFX.Data.Common;
+using System.Threading;
 
 namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
 	/// Summary description for API.
 	/// </summary>
-	internal class MySqlStream : Stream
+	internal class MySqlStream : MultiHostStream
 	{
-		Stream	stream;
-		Socket	socket;
-		int		timeOut;
+		public MySqlStream( string hostList, int port, int readTimeOut, int connectTimeOut ) :
+			base( hostList, port, readTimeOut, connectTimeOut )
 
-		public MySqlStream( string host, int port, int timeout )
+		{
+		}
+
+		protected override void Error(string msg)
+		{
+			throw new MySqlException( msg, baseException );
+		}
+
+		protected override void TimeOut(MultiHostStreamErrorType error) 
+		{
+			switch (error) 
+			{
+				case MultiHostStreamErrorType.Connecting:
+					throw new MySqlException("Timed out creating a new MySqlConnection");
+				case MultiHostStreamErrorType.Reading:
+					throw new MySqlException("Timed out reading from MySql");
+			}
+		}
+
+		protected override bool CreateStream( IPAddress ip, string hostname, int port )
 		{
 			if (port == -1)
-				Create( host );
+				return CreatePipeStream(ip, hostname);
 			else
-				Create( host, port );
-			timeOut = timeout;
+				return CreateSocketStream(ip, port);
 		}
 
-		private void Create( string host, int port )
-		{
-			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			IPHostEntry he = Dns.GetHostByName( host );
-			IPEndPoint serverAddr = new IPEndPoint(he.AddressList[0], port);
-
-			socket.Connect(serverAddr);
-			stream = new NetworkStream(socket, true);
-		}
-
-		private void Create( string host )
+		private bool CreatePipeStream( IPAddress ip, string hostname )
 		{
 			string pipeName;
 
-			if (host.ToLower().Equals("localhost"))
+			if (hostname.ToLower().Equals("localhost"))
 				pipeName = @"\\.\pipe\MySql";
 			else
-				pipeName = String.Format(@"\\{0}\pipe\MySql", host);
+				pipeName = String.Format(@"\\{0}\pipe\MySql", ip.ToString());
 
-			stream = new ByteFX.Data.Common.NamedPipeStream(pipeName, FileAccess.ReadWrite);
+			try 
+			{
+				stream = new NamedPipeStream(pipeName, FileAccess.ReadWrite);
+				return true;
+			}
+			catch (Exception ex) 
+			{
+				baseException = ex;
+				return false;
+			}
 		}
 
-		public bool DataAvailable
+		private bool CreateSocketStream( IPAddress ip, int port )
+		{
+			Socket socket = new Socket(AddressFamily.InterNetwork, 
+				SocketType.Stream, ProtocolType.Tcp);
+
+			try
+			{
+				//
+				// Lets try to connect
+				IPEndPoint endPoint	= new IPEndPoint( ip, port);
+				socket.Connect(endPoint);
+				socket.SetSocketOption( SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1 );
+				stream = new NetworkStream( socket, true );
+				return true;
+			}
+			catch (Exception ex)
+			{
+				baseException = ex;
+				return false;
+			}
+		}
+
+		protected override bool DataAvailable
 		{
 			get 
 			{
@@ -71,73 +110,6 @@ namespace ByteFX.Data.MySqlClient
 					return ((NetworkStream)stream).DataAvailable;
 				else return (stream as NamedPipeStream).DataAvailable;
 			}
-	}
-
-		public override bool CanRead
-		{
-			get { return stream.CanRead; }
-		}
-
-		public override bool CanWrite
-		{
-			get { return stream.CanWrite; }
-		}
-
-		public override bool CanSeek
-		{
-			get { return stream.CanSeek; }
-		}
-
-		public override long Length
-		{
-			get { return stream.Length; }
-		}
-
-		public override long Position 
-		{
-			get { return stream.Position; }
-			set { stream.Position = value; }
-		}
-
-		public override void Flush() 
-		{
-			stream.Flush();
-		}
-
-		public override int ReadByte()
-		{
-			long start = Environment.TickCount;
-			long timeout_ticks = timeOut * TimeSpan.TicksPerSecond;
-
-			while (((Environment.TickCount - start) < timeout_ticks))
-			{
-				if (DataAvailable)
-				{
-					int b = stream.ReadByte();
-					return b;
-				}
-			}
-			throw new Exception("Timeout waiting for response from server");
-		}
-
-		public override int Read(byte[] buffer, int offset, int count)
-		{
-			long start = Environment.TickCount;
-			int  numToRead = count;
-			long timeout_ticks = timeOut * TimeSpan.TicksPerSecond;
-
-			while (numToRead > 0 && ((Environment.TickCount - start) < timeout_ticks))
-			{
-				if (DataAvailable)
-				{
-					int bytes_read = stream.Read(buffer, offset, numToRead);
-					offset += bytes_read;
-					numToRead -= bytes_read;
-				}
-			}
-			if (numToRead > 0)
-				throw new Exception("Timeout waiting for response from server");
-			return count;
 		}
 
 		public int ReadInt24()
@@ -152,20 +124,6 @@ namespace ByteFX.Data.MySqlClient
 			stream.Close();
 		}
 
-		public override void SetLength(long length)
-		{
-			stream.SetLength( length );
-		}
-
-		public override void Write(byte[] buffer, int offset, int count)
-		{
-			stream.Write( buffer, offset, count );
-		}
-
-		public override long Seek( long offset, SeekOrigin origin )
-		{
-			return stream.Seek( offset, origin );
-		}
 	}
 }
 

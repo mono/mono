@@ -8,7 +8,7 @@ namespace ByteFX.Data.MySqlClient
 	/// </summary>
 	internal sealed class MySqlConnectionString : DBConnectionString
 	{
-		private bool useCompression;
+		private bool useCompression = false;
 
 		public MySqlConnectionString() 
 		{
