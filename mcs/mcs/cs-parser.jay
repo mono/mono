@@ -2959,13 +2959,15 @@ for_statement
 
 			foreach (VariableDeclaration decl in var_declarators){
 
-				if (!current_block.AddVariable (type, decl.identifier, current_local_parameters,
-								decl.Location)) {
-					Report.Error (128, decl.Location, 
-						      "A local variable `" + decl.identifier + "' is already" +
-						      "defined in this scope");
-				} else {
+				VariableInfo vi;
 
+				vi = current_block.AddVariable (
+					type, decl.identifier, current_local_parameters, decl.Location);
+				if (vi == null){
+					Report.Error (128, decl.Location, 
+						      "A local variable `" + decl.identifier + 
+						      "' is already defined in this scope");
+				} else {
 					Location l = lexer.Location;
 					Expression expr;
 					if (decl.expression_or_array_initializer is Expression){
@@ -3061,24 +3063,35 @@ foreach_statement
 	  }
 	  expression CLOSE_PARENS 
 	  {
+		oob_stack.Push (current_block);
+
 		Block foreach_block = new Block (current_block, true);
 		LocalVariableReference v;
 		Location l = lexer.Location;
+		VariableInfo vi;
 
-		foreach_block.AddVariable ((string) $3, (string) $4, current_local_parameters, l);
+		vi = foreach_block.AddVariable ((string) $3, (string) $4, current_local_parameters, l);
+		if (vi == null){
+			Report.Error (
+				128, l, "A local variable `" + (string) $4 + "' is already "+
+				"defined in this scope");
+		}
+
 		v = new LocalVariableReference (foreach_block, (string) $4, l);
 
 		current_block.AddStatement (foreach_block);
 		current_block = foreach_block;
 
-		oob_stack.Push (foreach_block);
 		oob_stack.Push (v);
 	  } 
 	  embedded_statement 
 	  {
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
-		Block foreach_block = (Block) oob_stack.Pop ();
+		Block prev_block = (Block) oob_stack.Pop ();
 		Location l = (Location) oob_stack.Pop ();
+
+		while (current_block != prev_block)
+			current_block = current_block.Parent;
 
 		$$ = new Foreach ((string) $3, v, (Expression) $7, (Statement) $10, l);
 	  }
@@ -3288,25 +3301,59 @@ unsafe_statement
 
 fixed_statement
 	: FIXED OPEN_PARENS 
-	  // FIXME: pointer_type fixed_pointer_declarators 
-	  CLOSE_PARENS embedded_statement
+	  pointer_type fixed_pointer_declarators 
+	  CLOSE_PARENS 
 	  {
-		// $$ = new Fixed ((string) $3, $4, (Statement) $6, lexer.Location);
+		Block assign_block = new Block (current_block, true);
+
+		string type = (string) $3;
+		Location l = lexer.Location;
+
+		foreach (Pair p in (ArrayList) $4){
+			VariableInfo v;
+
+			v = current_block.AddVariable (type, (string) p.First,current_local_parameters, l);
+			if (v == null){
+				Report.Error (
+					128, l, "A local variable `" + (string) p.First + "' is already "+
+					"defined in this scope");
+			}
+			v.ReadOnly = true;
+			// Replace the name with the VariableInfo.
+			p.SetFirst (v);
+		}
+		current_block.AddStatement (assign_block);
+		current_block = assign_block;
+		oob_stack.Push (l);
+	  }
+	  embedded_statement 
+	  {
+		Block assign_block = (Block) oob_stack.Pop ();
+		Location l = (Location) oob_stack.Pop ();
+
+		$$ = new Fixed ((string) $3, (ArrayList) $4, (Statement) $6, l);
 	  }
 	;
 
 fixed_pointer_declarators
-	: fixed_pointer_declarator
+	: fixed_pointer_declarator	{ 
+	   	ArrayList declarators = new ArrayList (); 
+		declarators.Add ($1);
+		$$ = declarators;
+	  }
 	| fixed_pointer_declarators COMMA fixed_pointer_declarator
+	  {
+		ArrayList declarators = (ArrayList) $1;
+		declarators.Add ($3);
+		$$ = declarators;
+	  }
 	;
 
 fixed_pointer_declarator
-	: IDENTIFIER EQUALS fixed_pointer_initializer
-	;
-
-fixed_pointer_initializer
-	: BITWISE_AND variable_reference
-	| expression
+	: IDENTIFIER EQUALS expression
+	  {	
+		$$ = new Pair ($1, $3);
+	  }
 	;
 
 lock_statement
@@ -3336,8 +3383,9 @@ using_statement
 			ArrayList var_declarators = (ArrayList) de.Value;
 
 			foreach (VariableDeclaration decl in var_declarators){
-				if (!current_block.AddVariable (type, decl.identifier, current_local_parameters,
-								decl.Location)){
+				if (current_block.AddVariable (
+					type, decl.identifier, 
+					current_local_parameters, decl.Location) == null){
 					Report.Error (128, decl.Location, 
 					"A local variable `" + decl.identifier + "' is already" +
 					"defined in this scope");
@@ -3611,7 +3659,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators, Loca
 
 	foreach (VariableDeclaration decl in variable_declarators){
 
-		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, decl.Location)) {
+		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, decl.Location) != null) {
 			if (decl.expression_or_array_initializer != null){
 				if (inits == null)
 					inits = new ArrayList ();

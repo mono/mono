@@ -222,9 +222,14 @@ namespace Mono.CSharp {
 		public object Second;
 		
 		public Pair (object f, object s)
-			{
-				First = f;
-				Second = s;
-			}
+		{
+			First = f;
+			Second = s;
+		}
+
+		public void SetFirst (object n)
+		{
+			First = n;
+		}
 	}
 }

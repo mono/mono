@@ -1,3 +1,22 @@
+2002-01-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* support.cs: Api for Pair to set a value.  Despite the fact that
+	the variables are public the MS C# compiler refuses to compile
+	code that accesses the field if the variable is part of a foreach
+	statement. 
+
+	* statement.cs (Fixed): Begin implementation of the fixed
+	statement.
+
+	(Block.AddVariable): Return the VariableInfo on success and null
+	on failure instead of true/false. 
+
+	* cs-parser.jay (foreach): Catch errors on variables already
+	defined (we were ignoring this value before) and properly unwind
+	the block hierarchy
+
+	(fixed_statement): grammar for the fixed statement.
+
 2002-01-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (UnaryMutator.IsIncrementableNumber): Allow also

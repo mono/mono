@@ -783,31 +783,31 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public bool AddVariable (string type, string name, Parameters pars, Location l)
+		public VariableInfo AddVariable (string type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
 
 			if (GetVariableType (name) != null)
-				return false;
+				return null;
 
 			if (pars != null) {
 				int idx = 0;
 				Parameter p = pars.GetParameterByName (name, out idx);
 				if (p != null) 
-					return false;
+					return null;
 			}
 			
 			VariableInfo vi = new VariableInfo (type, l);
 
 			variables.Add (name, vi);
 
-			return true;
+			return vi;
 		}
 
 		public bool AddConstant (string type, string name, Expression value, Parameters pars, Location l)
 		{
-			if (!AddVariable (type, name, pars, l))
+			if (AddVariable (type, name, pars, l) == null)
 				return false;
 			
 			if (constants == null)
@@ -1702,6 +1702,44 @@ namespace Mono.CSharp {
 		}
 	}
 
+	// 
+	// Fixed statement
+	//
+	public class Fixed : Statement {
+		string    type;
+		ArrayList declarators;
+		Statement statement;
+		Location  loc;
+
+		public Fixed (string type, ArrayList decls, Statement stmt, Location l)
+		{
+			this.type = type;
+			declarators = decls;
+			statement = stmt;
+			loc = l;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			Type t;
+			
+			t = RootContext.LookupType (ec.TypeContainer, type, false, loc);
+			if (t == null)
+				return false;
+
+			foreach (Pair p in declarators){
+				VariableInfo vi = (VariableInfo) p.First;
+				Expression e = (Expression) p.Second;
+
+				e = e.Resolve (ec);
+				if (e == null)
+					continue;
+			}
+
+			return false;
+		}
+	}
+	
 	public class Catch {
 		public readonly string Type;
 		public readonly string Name;
