@@ -1777,7 +1777,9 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
-			bool unreachable = false, warning_shown = false;
+			bool unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
+			bool warning_shown = false;
+
 
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
@@ -2016,6 +2018,8 @@ namespace Mono.CSharp {
 		bool got_default;
 		Label default_target;
 		Expression new_expr;
+		bool is_constant;
+		SwitchSection constant_section;
 
 		//
 		// The types allowed to be implicitly cast from
@@ -2639,6 +2643,36 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end_of_switch);
 		}
 
+		SwitchSection FindSection (SwitchLabel label)
+		{
+			foreach (SwitchSection ss in Sections){
+				foreach (SwitchLabel sl in ss.Labels){
+					if (label == sl)
+						return ss;
+				}
+			}
+
+			return null;
+		}
+
+		bool ResolveConstantSwitch (EmitContext ec)
+		{
+			object key = ((Constant) new_expr).GetValue ();
+			SwitchLabel label = (SwitchLabel) Elements [key];
+
+			if (label == null)
+				return true;
+
+			constant_section = FindSection (label);
+			if (constant_section == null)
+				return true;
+
+			if (constant_section.Block.Resolve (ec) != true)
+				return false;
+
+			return true;
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			Expr = Expr.Resolve (ec);
@@ -2664,6 +2698,14 @@ namespace Mono.CSharp {
 			Report.Debug (1, "START OF SWITCH BLOCK", loc, ec.CurrentBranching);
 			ec.StartFlowBranching (FlowBranching.BranchingType.Switch, loc);
 
+			is_constant = new_expr is Constant;
+			if (is_constant) {
+				object key = ((Constant) new_expr).GetValue ();
+				SwitchLabel label = (SwitchLabel) Elements [key];
+
+				constant_section = FindSection (label);
+			}
+
 			bool first = true;
 			foreach (SwitchSection ss in Sections){
 				if (!first)
@@ -2672,10 +2714,16 @@ namespace Mono.CSharp {
 				else
 					first = false;
 
+				if (is_constant && (ss != constant_section)) {
+					// If we're a constant switch, we're only emitting
+					// one single section - mark all the others as
+					// unreachable.
+					ec.CurrentBranching.CurrentUsageVector.Goto ();
+				}
+
 				if (ss.Block.Resolve (ec) != true)
 					return false;
 			}
-
 
 			if (!got_default)
 				ec.CurrentBranching.CreateSibling (
@@ -2692,12 +2740,16 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			// Store variable for comparission purposes
-			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
-			new_expr.Emit (ec);
-			ec.ig.Emit (OpCodes.Stloc, value);
-
 			ILGenerator ig = ec.ig;
+
+			// Store variable for comparission purposes
+			LocalBuilder value;
+			if (!is_constant) {
+				value = ig.DeclareLocal (SwitchType);
+				new_expr.Emit (ec);
+				ig.Emit (OpCodes.Stloc, value);
+			} else
+				value = null;
 
 			default_target = ig.DefineLabel ();
 
@@ -2711,7 +2763,10 @@ namespace Mono.CSharp {
 			ec.Switch = this;
 
 			// Emit Code.
-			if (SwitchType == TypeManager.string_type)
+			if (is_constant) {
+				if (constant_section != null)
+					constant_section.Block.Emit (ec);
+			} else if (SwitchType == TypeManager.string_type)
 				SimpleSwitchEmit (ec, value);
 			else
 				TableSwitchEmit (ec, value);

@@ -1,3 +1,8 @@
+2004-08-23  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Switch): Added support for constant switches; see
+	#59428 or test-285.cs.
+
 2004-08-22  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed bug #62740.
