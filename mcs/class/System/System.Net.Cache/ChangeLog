@@ -1,0 +1,4 @@
+2004-09-10  Tim Coleman <tim@timcoleman.com>
+	* HttpCacheAgeControl.cs HttpRequestCacheLevel.cs HttpRequestCachePolicy.cs 
+	* RequestCacheLevel.cs RequestCachePolicy.cs:
+		New classes for Fx 2.0
