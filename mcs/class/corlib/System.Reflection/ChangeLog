@@ -1,3 +1,6 @@
+2002-08-12  Tim Coleman <tim@timcoleman.com>
+	* MonoProperty.cs:
+		Allow multiple parameters for GetValue ()
 
 Thu Aug 8 13:05:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

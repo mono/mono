@@ -141,14 +141,13 @@ namespace System.Reflection {
 
 		public override object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
 			object ret = null;
+
+			MethodInfo method = GetGetMethod (false);
 			
-			if (index == null || index.Length == 0) {
-				MethodInfo method = GetGetMethod(false);
-
-				ret = method.Invoke(obj, invokeAttr, binder, null, culture);
-			}
-
-			// fixme: support indexed parameters..
+			if (index == null || index.Length == 0) 
+				ret = method.Invoke (obj, invokeAttr, binder, null, culture);
+			else
+				ret = method.Invoke (obj, invokeAttr, binder, index, culture);
 
 			return ret;
 		}
