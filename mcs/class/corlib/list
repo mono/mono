@@ -88,6 +88,7 @@ System.IO/FileStream.cs
 System.IO/FileSystemInfo.cs
 System.IO/IOException.cs
 System.IO/MemoryStream.cs
+System.IO/MonoIOStat.cs
 System.IO/Path.cs
 System.IO/PathTooLongException.cs
 System.IO/SeekOrigin.cs
