@@ -1,5 +1,9 @@
 2004-09-22  Martin Baulig  <martin@ximian.com>
 
+	* gen-78.cs: New test for #65521.
+
+2004-09-22  Martin Baulig  <martin@ximian.com>
+
 	* Makefile: Added some Makefile love :-)
 
 2004-09-22  Martin Baulig  <martin@ximian.com>
