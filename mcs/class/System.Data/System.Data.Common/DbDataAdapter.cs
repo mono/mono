@@ -777,9 +777,21 @@ namespace System.Data.Common {
                                                                 if (columnMappings != null &&
                                                                     columnMappings.Contains(columnName))
                                                                         dstColumnName = columnMappings [dstColumnName].DataSetColumn;
+                                                                DataColumn dstColumn = row.Table.Columns [dstColumnName];
+                                                                if (dstColumn == null
+                                                                    || (dstColumn.Expression != null
+                                                                    && dstColumn.Expression.Length > 0))
+                                                                        continue;
+                                                                // info from : http://www.error-bank.com/microsoft.public.dotnet.framework.windowsforms.databinding/
+                                                                // _35_hcsyiv0dha.2328@tk2msftngp10.phx.gbl_Thread.aspx
+                                                                // disable readonly for non-expression columns.
+                                                                bool readOnlyState = dstColumn.ReadOnly;
+                                                                dstColumn.ReadOnly = false;
                                                                 try {
                                                                         row [dstColumnName] = reader [columnName];
-                                                                }catch (Exception) {} // column is not available here
+                                                                } finally {
+                                                                        dstColumn.ReadOnly = readOnlyState;
+                                                                }
                                                         
                                                         }
                                                 }
@@ -798,7 +810,6 @@ namespace System.Data.Common {
                                             command.UpdatedRowSource == UpdateRowSource.OutputParameters) {
                                                 // Update output parameters to row values
                                                 foreach (IDataParameter parameter in command.Parameters) {
-
                                                         if (parameter.Direction != ParameterDirection.InputOutput
                                                             && parameter.Direction != ParameterDirection.Output
                                                             && parameter.Direction != ParameterDirection.ReturnValue)
@@ -808,7 +819,19 @@ namespace System.Data.Common {
                                                         if (columnMappings != null &&
                                                             columnMappings.Contains(parameter.SourceColumn))
                                                                 dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
-                                                        row [dsColumnName] = parameter.Value;
+                                                        DataColumn dstColumn = row.Table.Columns [dsColumnName];
+                                                        if (dstColumn == null
+                                                            || (dstColumn.Expression != null 
+                                                            && dstColumn.Expression.Length > 0))
+                                                                continue;
+                                                        bool readOnlyState = dstColumn.ReadOnly;
+                                                        dstColumn.ReadOnly  = false;
+                                                        try {
+                                                                row [dsColumnName] = parameter.Value;
+                                                        } finally {
+                                                                dstColumn.ReadOnly = readOnlyState;
+                                                        }
+                                                        
                                                 }
                                         }
                                         
@@ -817,14 +840,12 @@ namespace System.Data.Common {
                                         OnRowUpdated(updatedArgs);
                                         switch(updatedArgs.Status) {
                                         case UpdateStatus.Continue:
-                                                row.AcceptChanges();
                                                 break;
                                         case UpdateStatus.ErrorsOccurred:
                                                 throw(updatedArgs.Errors);
                                         case UpdateStatus.SkipCurrentRow:
                                                 continue;
                                         case UpdateStatus.SkipAllRemainingRows:
-                                                row.AcceptChanges ();
                                                 return updateCount;
                                         }
 					row.AcceptChanges ();

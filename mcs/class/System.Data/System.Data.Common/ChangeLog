@@ -1,3 +1,9 @@
+2005-03-23  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbDataAdapter.cs: For Update, disable ReadOnly constraint
+	temporarily before updating the row. Info from Ingo Bauersachs.
+	SkipAllRemainingRows should also skip current row (msdn).
+
 2005-03-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs: Update (): update the rows based on the
