@@ -1249,8 +1249,6 @@ namespace Mono.CSharp {
 		protected Hashtable member_hash;
 		protected Hashtable method_hash;
 		
-		Hashtable interface_hash;
-
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
 		/// </summary>
@@ -1267,7 +1265,6 @@ namespace Mono.CSharp {
 			// TypeManager.object_type), we deep-copy its MemberCache here.
 			if (Container.IsInterface) {
 				MemberCache parent;
-				interface_hash = new Hashtable ();
 				
 				if (Container.Parent != null)
 					parent = Container.Parent.MemberCache;
@@ -1312,15 +1309,20 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Add the contents of `new_hash' to `hash'.
 		/// </summary>
-		void AddHashtable (Hashtable hash, Hashtable new_hash)
+		void AddHashtable (Hashtable hash, MemberCache cache)
 		{
+			Hashtable new_hash = cache.member_hash;
 			IDictionaryEnumerator it = new_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				ArrayList list = (ArrayList) hash [it.Key];
-				if (list != null)
-					list.AddRange ((ArrayList) it.Value);
-				else
-					hash [it.Key] = ((ArrayList) it.Value).Clone ();
+				if (list == null)
+					hash [it.Key] = list = new ArrayList ();
+
+				foreach (CacheEntry entry in (ArrayList) it.Value) {
+					if (entry.Container != cache.Container)
+						break;
+					list.Add (entry);
+				}
 			}
 		}
 
@@ -1337,23 +1339,12 @@ namespace Mono.CSharp {
 			foreach (TypeExpr iface in ifaces) {
 				Type itype = iface.Type;
 
-				if (interface_hash.Contains (itype))
-					continue;
-				
-				interface_hash [itype] = null;
-
 				IMemberContainer iface_container =
 					TypeManager.LookupMemberContainer (itype);
 
 				MemberCache iface_cache = iface_container.MemberCache;
 
-				AddHashtable (hash, iface_cache.member_hash);
-				
-				if (iface_cache.interface_hash == null)
-					continue;
-				
-				foreach (Type parent_contains in iface_cache.interface_hash.Keys)
-					interface_hash [parent_contains] = null;
+				AddHashtable (hash, iface_cache);
 			}
 
 			return hash;
@@ -1627,7 +1618,7 @@ namespace Mono.CSharp {
 				applicable = (ArrayList) method_hash [name];
 			else
 				applicable = (ArrayList) member_hash [name];
-			
+
 			if (applicable == null)
 				return emptyMemberInfo;
 
@@ -1646,6 +1637,7 @@ namespace Mono.CSharp {
 			EntryType type = GetEntryType (mt, bf);
 
 			IMemberContainer current = Container;
+
 
 			// `applicable' is a list of all members with the given member name `name'
 			// in the current class and all its parent classes.  The list is sorted in
