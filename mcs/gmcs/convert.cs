@@ -1344,6 +1344,13 @@ namespace Mono.CSharp {
 
 		static public void Error_CannotImplicitConversion (Location loc, Type source, Type target)
 		{
+			if (source.Name == target.Name){
+				Report.ExtraInformation (loc,
+					 String.Format (
+						"The type {0} has two conflicting definitons, one comes from {0} and the other from {1}",
+						source.Assembly.FullName, target.Assembly.FullName));
+							 
+			}
 			Report.Error (29, loc, "Cannot convert implicitly from {0} to `{1}'",
 				      source == TypeManager.anonymous_method_type ?
 				      "anonymous method" : "`" + TypeManager.CSharpName (source) + "'",

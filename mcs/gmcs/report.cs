@@ -94,7 +94,7 @@ namespace Mono.CSharp {
 				Console.Error.WriteLine (msg.ToString ());
 
 				foreach (string s in extra_information) 
-					Console.Error.WriteLine (s + MessageType + ")");
+					Console.Error.WriteLine (s + MessageType);
 
 				extra_information.Clear ();
 

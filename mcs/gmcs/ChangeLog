@@ -1,3 +1,10 @@
+2004-12-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* report.cs: Remove extra closing parenthesis.
+
+	* convert.cs (Error_CannotImplicitConversion): If the name of the
+	types are the same, provide some extra information.
+
 2004-12-02  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #70102
