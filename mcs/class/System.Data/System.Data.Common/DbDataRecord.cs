@@ -163,9 +163,14 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public int GetValues (object[] values)
 		{
-			object[] newArray = new object[this.values.Length];
-			values.CopyTo (newArray, 0);
-			return values.Length;
+			if(values == null)
+				throw new ArgumentNullException("values");
+			
+			int count = values.Length > this.values.Length ? this.values.Length : values.Length;
+			for(int i = 0; i < count; i++)
+				values[i] = this.values[i];
+
+			return count;
 		}
 
 		[MonoTODO]

@@ -1,3 +1,9 @@
+2003-09-21  eran <erand@mainsoft.com>
+
+	* DbDataRecord.cs: The method
+	System.Data.Common.DbDataRecord.GetValues(object[] values) did not
+	put the values of the DbDataRecord into values parameter.
+
 2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DbDataAdapter.cs: provide a Type for ToArray to avoid invalid cast
