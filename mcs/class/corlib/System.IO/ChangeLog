@@ -1,3 +1,9 @@
+2002-08-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* Path.cs (GetTempFileName): Make this routine atomic by not
+	testing and then creating, but using the create call to ensure
+	that we own the filename.
+
 2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileLoadException.cs: implemented ToString.

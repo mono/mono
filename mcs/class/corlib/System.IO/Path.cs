@@ -188,17 +188,23 @@ namespace System.IO
 
 		public static string GetTempFileName ()
 		{
+			FileStream f = null;
 			string path;
 			Random rnd;
-			int num;
+			int num = 0;
+
 			rnd = new Random ();
-			num = rnd.Next ();
-			path = GetTempPath() + DirectorySeparatorChar + "tmp" + num.ToString("x");
-			while (File.Exists(path) || Directory.Exists(path)) {    
+			do {
 				num = rnd.Next ();
+				num++;
 				path = GetTempPath() + DirectorySeparatorChar + "tmp" + num.ToString("x");
-			}
-			FileStream f = File.Create(path);
+
+				try {
+					f = new FileStream (path, FileMode.CreateNew);
+				} catch {
+				}
+			} while (f == null);
+			
 			f.Close();
 			return path;
 		}
