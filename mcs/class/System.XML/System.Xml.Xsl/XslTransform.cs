@@ -461,7 +461,7 @@ namespace System.Xml.Xsl
 				writer.WriteStartDocument ();
 				break;
 			case XPathNodeType.Attribute:
-				writer.WriteAttributeString (navigator.LocalName, navigator.Value);
+				writer.WriteAttributeString (navigator.Name, navigator.Value);
 				break;
 
 			case XPathNodeType.Comment:
