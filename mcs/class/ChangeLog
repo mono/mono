@@ -1,3 +1,7 @@
+2003-03-22  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* Stubed Custommarshalers
+
 2003-03-20  Piers Haken  <piersh@friskit.com>
 
 	* makefile.gnu: really fix the System.Management build problems
