@@ -295,12 +295,18 @@ namespace System.Data.OracleClient {
 
 		public int GetOrdinal (string name)
 		{
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (((string) schemaRow ["ColumnName"]).Equals (name))
-					return (int) schemaRow ["ColumnOrdinal"];
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
-					return (int) schemaRow ["ColumnOrdinal"];
+			int i;
+			
+			for (i = 0; i < statement.ColumnCount; i += 1) {
+				if (String.Compare (statement.GetParameter(i).GetName(), name, false) == 0)
+					return i;
+			}
+
+			for (i = 0; i < statement.ColumnCount; i += 1) {
+				if (String.Compare (statement.GetParameter(i).GetName(), name, true) == 0)
+					return i;
+			}
+
 			throw new IndexOutOfRangeException ();
 		}
 
