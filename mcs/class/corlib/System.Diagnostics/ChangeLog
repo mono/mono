@@ -1,3 +1,11 @@
+2005-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackFrame.cs: Add path discovery permission check for GetFilename 
+	method. Changed ToString to use a StringBuilder and report correctly
+	(i.e. without exception) if filename is restricted. Removed dead code
+	(Equals/GetHashCode).
+	* StackTrace.cs: Removed dead code (Equals/GetHashCode).
+
 2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackTrace.cs: Added missing exceptions. Added globalization. Now 

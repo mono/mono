@@ -6,10 +6,7 @@
 //      Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,9 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security;
+using System.Security.Permissions;
+using System.Text;
 
 namespace System.Diagnostics {
         /// <summary>
@@ -102,7 +102,8 @@ namespace System.Diagnostics {
                 /// <param name="needFileInfo">
                 ///   TODO:
                 /// </param>
-                public StackFrame(bool needFileInfo) : this() {
+		public StackFrame (bool needFileInfo)
+		{
 			get_frame_info (2, needFileInfo, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
 					out columnNumber);			
@@ -225,6 +226,10 @@ namespace System.Diagnostics {
                 /// </returns> 
                 public virtual string GetFileName()
                 {
+			if (SecurityManager.SecurityEnabled && (fileName != null) && (fileName.Length > 0)) {
+				string fn = Path.GetFullPath (fileName);
+				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fn).Demand ();
+			}
                         return fileName;
                 }
                 
@@ -273,67 +278,42 @@ namespace System.Diagnostics {
                 /// <returns>
                 ///   A readable representation of the stack frame.
                 /// </returns>
-                public override string ToString() {
-                        string methodNameString =
-                                (GetMethod() == null)
-                                        ? "<unknown method>"
-                                          : GetMethod().Name;
-                        string offsetString =
-                                (GetILOffset() == OFFSET_UNKNOWN)
-                                        ? "<unknown offset>"
-                                          : "offset " + GetILOffset();
-                        string fileNameString =
-                                (GetFileName() == null)
-                                        ? "<filename unknown>" : GetFileName();
-                        return methodNameString + " at " + offsetString
-                                + " in file:line:column " + fileNameString
-                                + ":" + GetFileLineNumber()
-                                + ":" + GetFileColumnNumber();
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			if (methodBase == null) {
+				sb.Append (Locale.GetText ("<unknown method>"));
+			} else {
+				sb.Append (methodBase.Name);
+			}
+
+			sb.Append (Locale.GetText (" at "));
+
+			if (ilOffset == OFFSET_UNKNOWN) {
+				sb.Append (Locale.GetText ("<unknown offset>"));
+			} else {
+				sb.Append (Locale.GetText ("offset "));
+				sb.Append (ilOffset);
+			}
+
+			sb.Append (Locale.GetText (" in file:line:column "));
+
+			if (fileName == null) {
+				sb.Append (Locale.GetText ("<filename unknown>"));
+			} else {
+				try {
+					// need security check
+					sb.Append (GetFileName ());
+				}
+				catch (SecurityException) {
+					sb.Append (Locale.GetText ("<filename unknown>"));
+				}
+			}
+
+			sb.AppendFormat (":{0}:{1}", lineNumber, columnNumber);
+			return sb.ToString ();
                 }
-                
-		//
-		// These are not on the Framework
-		//
-#if false
-                public override bool Equals(Object obj) {
-                        if ((obj == null) || (!(obj is StackFrame))) {
-                                return false;
-                        }
-                        
-                        StackFrame rhs = (StackFrame) obj;
-                        
-                        if (!ObjectsEqual(GetMethod(), rhs.GetMethod())) {
-                                return false;
-                        }
-                        
-                        if (!ObjectsEqual(GetFileName(), rhs.GetFileName())) {
-                                return false;
-                        }
-                        
-                        if (GetFileLineNumber() != rhs.GetFileLineNumber()) {
-                                return false;
-                        }
-                        
-                        if (GetFileColumnNumber() != rhs.GetFileColumnNumber()) {
-                                return false;
-                        }
-                        
-                        if (GetILOffset() != rhs.GetILOffset()) {
-                                return false;
-                        }
-                        
-                        if (GetNativeOffset() != rhs.GetNativeOffset()) {
-                                return false;
-                        }
-                        
-                        return true;
-                        
-                }
-                
-                public override int GetHashCode() {
-                        return GetFileLineNumber();
-                }
-#endif
                 
                 /// <summary>
                 ///   Checks whether two objects are equal.

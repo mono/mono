@@ -6,7 +6,7 @@
 //      Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
@@ -175,36 +174,5 @@ namespace System.Diagnostics {
 
 			return sb.ToString ();
 		}
-
-		//
-		// These are not on the Framework
-		//
-#if false
-		public override bool Equals (Object obj)
-		{
-			if ((obj == null) || (!(obj is StackTrace))) {
-				return false;
-			}
-
-			StackTrace rhs = (StackTrace) obj;
-
-			if (FrameCount != rhs.FrameCount) {
-				return false;
-			}
-
-			for (int i = 0; i < FrameCount; i++) {
-				if (!GetFrame (i).Equals (rhs.GetFrame (i))) {
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		public override int GetHashCode ()
-		{
-			return FrameCount;
-		}
-#endif
 	}
 }
