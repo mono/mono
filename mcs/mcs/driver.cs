@@ -1052,6 +1052,10 @@ namespace Mono.CSharp
 			case "/fullpaths":
 				return true;
 
+			case "/win32icon":
+				Report.Error (5, "/win32icon is currently not supported");
+				return true;
+				
 			case "/v2":
 				SetupV2 ();
 				return true;

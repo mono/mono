@@ -1,4 +1,5 @@
-%{
+
+        %{
 //
 // cs-parser.jay: The Parser for the C# compiler
 //
@@ -1487,27 +1488,41 @@ constructor_initializer
 	  }
 	;
 
+opt_finalizer
+        : /* EMPTY */           { $$ = 0; }
+        | UNSAFE		{ $$ = Modifiers.UNSAFE; }
+	| EXTERN		{ $$ = Modifiers.EXTERN; }
+        ;
+        
 destructor_declaration
-	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
+	: opt_attributes opt_finalizer TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		if ((string) $3 != current_container.Basename){
+		if ((string) $4 != current_container.Basename){
 			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
 		} else if (!(current_container is Class)){
 			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
 		} else {
 			Location l = lexer.Location;
 
-			int m;
+			int m = (int) $2;
 			if (!RootContext.StdLib && current_container.Name == "System.Object")
-				m = Modifiers.PROTECTED | Modifiers.VIRTUAL;
+				m |= Modifiers.PROTECTED | Modifiers.VIRTUAL;
 			else
-				m = Modifiers.PROTECTED | Modifiers.OVERRIDE;
-
+				m |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
+                        
+                        if ((m & Modifiers.UNSAFE) != 0){
+                                if (!RootContext.Unsafe){
+                                        Report.Error (227, l,
+					      "Unsafe code requires the --unsafe command " +
+					      "line option to be specified");
+                                }
+                        }
+                        
 			Method d = new Method (
 				TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
-			d.Block = (Block) $6;
+			d.Block = (Block) $7;
 			CheckDef (current_container.AddMethod (d), d.Name, d.Location);
 		}
 	  }

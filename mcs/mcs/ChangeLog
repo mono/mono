@@ -1,5 +1,8 @@
 2003-06-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay: Applied patch from Jackson that adds support for
+	extern and unsafe modifiers to destructor declarations.
+
 	* expression.cs: Report error 21 if the user is trying to index a
 	System.Array.
 
