@@ -29,6 +29,7 @@
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 using System;
+
 namespace Novell.Directory.Ldap.Utilclass
 {
 	
@@ -36,7 +37,7 @@ namespace Novell.Directory.Ldap.Utilclass
 	/// so that it can be used to maintain a list of currently
 	/// registered extended responses.
 	/// </summary>
-	public class RespExtensionSet:SupportClass.AbstractSetSupport
+	public class RespExtensionSet:AbstractSetSupport
 	{
 		/// <summary> Returns the number of extensions in this set.
 		/// 
