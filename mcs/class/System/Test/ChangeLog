@@ -1,5 +1,8 @@
 2002-02-27  Martin Baulig  <martin@gnome.org>
 
+	* System.Text.RegularExpressions/*.cs: Put everything into namespace
+	Ximian.Mono.Tests.System.Text.RegularExpressions.
+
 	* System_test.build: Build new executable RunTests.System.exe which you can
 	use to run the tests on Linux.
 

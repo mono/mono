@@ -9,7 +9,7 @@
 using System;
 using NUnit.Framework;
 
-namespace MonoTests.System.Text.RegularExpressions {
+namespace Ximian.Mono.Tests.System.Text.RegularExpressions {
 	
 	public class AllTests : TestCase {
 		public AllTests (string name) : base (name) { }

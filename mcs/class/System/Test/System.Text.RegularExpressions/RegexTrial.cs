@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace MonoTests.System.Text.RegularExpressions {
+namespace Ximian.Mono.Tests.System.Text.RegularExpressions {
 
 	class RegexTrial {
 		public string pattern;
