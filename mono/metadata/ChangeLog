@@ -1,3 +1,10 @@
+2003-08-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Web_Util_ICalls_get_machine_install_dir): 
+	(ves_icall_System_Configuration_DefaultConfig_get_machine_config_path):
+	Avoid caching the result since strings must be domain specific.	Fixes
+	#48050.
+
 2003-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_init): Make this callable multiple times
