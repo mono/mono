@@ -253,6 +253,21 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public void ResolveMethod ()
 		{
+			if (_uri != null)
+			{
+				Type type = RemotingServices.GetServerTypeForUri (_uri);
+
+				int i = _typeName.IndexOf(",");
+				string clientTypeName = (i != -1) ? _typeName.Substring (0,i).Trim() : _typeName;
+
+				if (clientTypeName == type.FullName)
+				{
+					BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+					if (_methodSignature == null) _methodBase = type.GetMethod (_methodName, bflags);
+					else _methodBase = type.GetMethod (_methodName, bflags, null, _methodSignature, null);
+					return;
+				}
+			}
 			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
 		}
 

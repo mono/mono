@@ -1,3 +1,9 @@
+2003-05-13  Lluis Sanchez Gual <lluis@ideary.com>
+	
+	* MethodCall.cs: ResolveMethod now uses the type of the target object (identified
+	  by the uri) instead of the type specified by TypeName (only if both types have
+	  the same name).
+
 2003-04-10  Lluis Sanchez Gual <lluis@ideary.com>
 	
 	* AsyncResult.cs: implemented some methods.
