@@ -162,7 +162,7 @@ namespace System.Threading
 				throw new SynchronizationLockException("Object is not synchronised");
 			}
 
-			return(Monitor_wait(obj, 0));
+			return(Monitor_wait(obj, Timeout.Infinite));
 		}
 
 		public static bool Wait(object obj, int millisecondsTimeout) {

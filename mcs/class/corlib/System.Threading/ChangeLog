@@ -1,3 +1,7 @@
+2003-02-11  Dick Porter  <dick@ximian.com>
+
+	* Monitor.cs: Infinite wait is Infinite, not 0 ms
+
 2003-02-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Thread.cs: fixed bug #37759.
