@@ -31,7 +31,7 @@ else
 	cat $^ |egrep '\.cs$$' >$@
 
 .makefrag: $(LIB_LIST) $(topdir)/class/library.make
-	echo -n "library-deps.stamp: " >$@.new
+	echo -n "library-deps.stamp: $(LIB_LIST) " >$@.new
 	cat $< |egrep '\.cs$$' | sed -e 's,\.cs,.cs \\,' >>$@.new
 	cat $@.new |sed -e '$$s, \\$$,,' >$@
 	echo -e "\ttouch library-deps.stamp" >>$@
