@@ -18,6 +18,9 @@
                         .entrypoint
                         .locals init (class Mono.ILASM.Tests.Set<int32>)
                   
+                        newobj instance void class Mono.ILASM.Tests.Set<int32>::.ctor ()
+                        stloc.0
+                        
                         ldloc.0
                         call void [mscorlib]System.Console::WriteLine (object)
 

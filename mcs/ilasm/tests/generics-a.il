@@ -5,6 +5,11 @@
 
                 .constraint !0 is class [mscorlib]System.IComparable
 
+                .method public void .ctor ()
+                {
+
+                }
+                
                 .method int32 Compare (!0 a, !0 b)
                 {
                         ldarg.0
@@ -21,6 +26,10 @@
                 {
                         .entrypoint
                         .locals init (class Mono.ILASM.Test.GenComp<int32>)
+
+                        newobj instance void class Mono.ILASM.Test.GenComp<int32>::.ctor ()
+                        stloc.0
+
                         ldloc.0
                         ldc.i4.1
                         ldc.i4.1
