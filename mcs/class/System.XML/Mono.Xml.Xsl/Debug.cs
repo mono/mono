@@ -43,7 +43,7 @@ namespace Mono.Xml.Xsl {
 		internal static void Assert (bool condition, string message)
 		{
 			if (!condition)
-				throw new Exception (message);
+				throw new XsltException (message, null);
 		}
 
 		[System.Diagnostics.Conditional("_DEBUG")]

@@ -156,7 +156,7 @@ namespace Mono.Xml.Xsl {
 		{
 			#if DEBUG
 				if (avtSBlock)
-					throw new Exception ("String Builder was locked");
+					throw new XsltException ("String Builder was locked", null);
 				avtSBlock = true;
 			#endif
 			
@@ -170,7 +170,7 @@ namespace Mono.Xml.Xsl {
 		{
 			#if DEBUG
 				if (!avtSBlock)
-					throw new Exception ("you never locked the string builder");
+					throw new XsltException ("you never locked the string builder", null);
 				avtSBlock = false;
 			#endif
 			

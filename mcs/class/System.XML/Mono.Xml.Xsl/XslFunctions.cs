@@ -602,4 +602,39 @@ namespace Mono.Xml.Xsl
 				return ent.BaseURI;
 		}
 	}
+
+	class MSXslNodeSet : XPathFunction
+	{
+		Expression arg0;
+
+		public MSXslNodeSet (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail != null)
+				throw new XPathException ("element-available takes 1 arg");
+			
+			arg0 = args.Arg;
+		}
+
+		public override XPathResultType ReturnType {
+			get {
+				return XPathResultType.NodeSet;
+			}
+		}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			XsltCompiledContext ctx = iter.NamespaceManager as XsltCompiledContext;
+			XPathNavigator loc = iter.Current != null ? iter.Current.Clone () : null;
+			XPathNavigator nav = arg0.EvaluateAs (iter, XPathResultType.Navigator) as XPathNavigator;
+			if (nav == null) {
+				if (loc != null)
+					return new XsltException ("Cannot convert the XPath argument to a result tree fragment.", null, loc);
+				else
+					return new XsltException ("Cannot convert the XPath argument to a result tree fragment.", null);
+			}
+			ArrayList al = new ArrayList ();
+			al.Add (nav);
+			return new ListIterator (al, ctx, false);
+		}
+	}
 }

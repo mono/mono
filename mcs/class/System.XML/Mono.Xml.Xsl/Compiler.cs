@@ -302,11 +302,12 @@ namespace Mono.Xml.Xsl
 		
 #endregion
 #region Compile
-		public Pattern CompilePattern (string pattern)
+		public Pattern CompilePattern (string pattern, XPathNavigator loc)
 		{
 			if (pattern == null || pattern == "") return null;
 			Pattern p = Pattern.Compile (pattern, this);
-			
+			if (p == null)
+				throw new XsltCompileException (String.Format ("Invalid pattern '{0}'.", pattern), null, loc);
 			exprStore.AddPattern (p, this);
 			
 			return p;
@@ -495,9 +496,13 @@ namespace Mono.Xml.Xsl
 		
 		Expression IStaticXsltContext.TryGetFunction (QName name, FunctionArguments args)
 		{
-			if (name.Namespace != null && name.Namespace != "")
-				return null;
+			string ns = GetNsm ().LookupNamespace (name.Namespace);
+			if (ns == XslStylesheet.MSXsltNamespace && name.Name == "node-set")
+				return new MSXslNodeSet (args);
 			
+			if (ns != "")
+				return null;
+
 			switch (name.Name) {
 				case "current": return new XsltCurrent (args);
 				case "unparsed-entity-uri": return new XsltUnparsedEntityUri (args);

@@ -241,7 +241,7 @@ namespace Mono.Xml.Xsl {
 				this.mode = QName.Empty;
 			} else {
 				this.name = c.ParseQNameAttribute ("name");
-				this.match = c.CompilePattern (c.GetAttribute ("match"));
+				this.match = c.CompilePattern (c.GetAttribute ("match"), c.Input);
 				this.mode = c.ParseQNameAttribute ("mode");
 				
 				string pri = c.GetAttribute ("priority");

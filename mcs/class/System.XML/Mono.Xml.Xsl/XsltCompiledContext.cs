@@ -42,7 +42,7 @@ namespace Mono.Xml.Xsl
 
 		public override string LookupNamespace (string prefix)
 		{
-			throw new Exception ("we should never get here");
+			throw new InvalidOperationException ("we should never get here");
 		}
 		
 		internal override IXsltContextFunction ResolveFunction (XmlQualifiedName name, XPathResultType [] argTypes)
@@ -134,12 +134,12 @@ namespace Mono.Xml.Xsl
 			
 		public override IXsltContextVariable ResolveVariable (string prefix, string name)
 		{
-			throw new Exception ("shouldn't get here");
+			throw new InvalidOperationException ("shouldn't get here");
 		}
 		
 		public override IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] ArgTypes)
 		{
-			throw new Exception ("shouldn't get here");
+			throw new InvalidOperationException ("XsltCompiledContext exception: shouldn't get here.");
 		}
 		
 		internal override System.Xml.Xsl.IXsltContextVariable ResolveVariable(QName q)
