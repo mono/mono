@@ -37,7 +37,7 @@ namespace Microsoft.JScript.Tmp
 		public new object constructor;
 		public new object toExponential;
 		public new object toFixed;
-		public object toLocaleString;
+		public new object toLocaleString;
 		public new object toPrecision;
 		public new object toString;
 		public new object valueOf;
