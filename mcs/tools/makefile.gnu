@@ -5,7 +5,7 @@ INSTALL = /usr/bin/install
 
 MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe secutil.exe Cert2Spc.exe
 
-DIRS = type-reflector
+DIRS = 
 
 # tools commented here because they were unable to build under linux
 #MONO_TOOLS = monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/SqlSharpCli.exe
