@@ -1,5 +1,6 @@
 ./Assembly/AssemblyInfo.cs
 ./Assembly/Locale.cs
+./Mono.Posix/Catalog.cs
 ./Mono.Posix/IncludeAttribute.cs
 ./Mono.Posix/MapAttribute.cs
 ./Mono.Posix/PeerCred.cs
