@@ -30,6 +30,7 @@ namespace System {
 	/// <summary>
 	/// Represents the boolean values of logical true and false.
 	/// </summary>
+	[Serializable]
 	public struct Boolean : IComparable, IConvertible {
 		
 		/// <value>
