@@ -1,5 +1,9 @@
 2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
+	* Correct name to MonoTODO everywhere.
+
+2002-01-04  Ravi Pratap  <ravi@ximian.com>
+
 	* ArrayList.cs : Setting an index does not implicitly
 	extend the arraylist : remove FIXME.
 

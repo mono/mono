@@ -392,11 +392,11 @@ namespace System.Collections {
 		}
 
 
-		[MonoTODO]
-		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {}
+		//[MonoTODO]
+		//public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {}
 
-		[MonoTODO]
-		public virtual void OnDeserialization (object sender);
+		//[MonoTODO]
+		//public virtual void OnDeserialization (object sender);
 
 		[MonoTODO]
 		public override string ToString ()
