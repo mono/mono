@@ -1,3 +1,8 @@
+2004-01-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (mono_main): Remove call to mono_verify_corlib (), since
+	the verification code is not up-to-date.
+
 2004-01-19  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c (ves_exec_method_with_context):
