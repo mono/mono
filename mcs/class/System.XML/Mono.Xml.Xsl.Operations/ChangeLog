@@ -1,3 +1,8 @@
+2003-12-03 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslNumber.cs : Fixed GetFormatNumber() not to emit number (0) in
+	  case of count 0.  Improved format-string, but still wondering.
+
 2003-12-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslElement.cs, XslCopy.cs, XslCopyOf.cs, XslLiteralElement.cs :

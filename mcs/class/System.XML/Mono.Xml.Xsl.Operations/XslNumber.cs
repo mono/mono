@@ -79,7 +79,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			p.Out.WriteString (GetFormat (p));
+			string formatted = GetFormat (p);
+			if (formatted != String.Empty)
+				p.Out.WriteString (formatted);
 		}
 		
 		XslNumberFormatter GetNumberFormatter (XslTransformProcessor p)
@@ -116,14 +118,15 @@ namespace Mono.Xml.Xsl.Operations {
 				return nf.Format ((int)p.EvaluateNumber (this.value)); // TODO: Correct rounding
 			
 			switch (this.level) {
-				case XslNumberingLevel.Single:
-					return nf.Format (NumberSingle (p));
-				case XslNumberingLevel.Multiple:
-					return nf.Format (NumberMultiple (p));
-				case XslNumberingLevel.Any:
-					return nf.Format (NumberAny (p));
-				default:
-					throw new Exception ("Should not get here");
+			case XslNumberingLevel.Single:
+				int hit = NumberSingle (p);
+				return nf.Format (hit, hit != 0);
+			case XslNumberingLevel.Multiple:
+				return nf.Format (NumberMultiple (p));
+			case XslNumberingLevel.Any:
+				return nf.Format (NumberAny (p));
+			default:
+				throw new Exception ("Should not get here");
 			}
 		}
 		
@@ -227,6 +230,7 @@ namespace Mono.Xml.Xsl.Operations {
 		class XslNumberFormatter {
 			string firstSep = "", lastSep = "";
 			ArrayList fmtList = new ArrayList ();
+			FormatItem defaultFormat;
 			
 			public XslNumberFormatter (string format, string lang, string letterValue, char groupingSeparator, int groupingSize)
 			{
@@ -252,6 +256,8 @@ namespace Mono.Xml.Xsl.Operations {
 							fmtList.Add (FormatItem.GetItem (sep, itm, groupingSeparator, groupingSize));
 							sep = s.Advance (false);
 							itm = s.Advance (true);
+							if (defaultFormat == null)
+								defaultFormat = FormatItem.GetItem (sep, "1", groupingSeparator, groupingSize);
 						}
 						
 						lastSep = sep;
@@ -262,11 +268,17 @@ namespace Mono.Xml.Xsl.Operations {
 			// return the format for a single value, ie, if using Single or Any
 			public string Format (int value)
 			{
+				return Format (value, true);
+			}
+
+			public string Format (int value, bool formatContent)
+			{
 				StringBuilder b = new StringBuilder ();
 				if (firstSep != null) b.Append (firstSep);
-				((FormatItem)fmtList [0]).Format (b, value);
+				if (formatContent)
+					((FormatItem)fmtList [0]).Format (b, value);
 				if (lastSep != null) b.Append (lastSep);
-				
+
 				return b.ToString ();
 			}
 			
@@ -278,12 +290,13 @@ namespace Mono.Xml.Xsl.Operations {
 				
 				int i = 0;
 				foreach (int v in values) {
-					FormatItem itm = (FormatItem)fmtList [i];
+					FormatItem itm = fmtList.Count > i ? (FormatItem)fmtList [i] : defaultFormat;
 					if (i > 0) b.Append (itm.sep);
 					itm.Format (b, v);
 					
-					if (++i == fmtList.Count)
-						i--;
+//					if (++i == fmtList.Count)
+//						i--;
+					++i;
 				}
 				
 				if (lastSep != null) b.Append (lastSep);
@@ -399,6 +412,8 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			class DigitItem : FormatItem {
 				System.Globalization.NumberFormatInfo nfi;
+				int decimalSectionLength;
+				string format;
 				
 				public DigitItem (string sep, int len, char gpSep, int gpSize) : base (sep)
 				{
@@ -406,11 +421,23 @@ namespace Mono.Xml.Xsl.Operations {
 					nfi.NumberDecimalDigits = 0;
 					nfi.NumberGroupSizes = new int [] {gpSize};
 					nfi.NumberGroupSeparator = gpSep.ToString ();
-					// TODO use len to get min number of digits.
+
+					/*
+					FIXME: This washes other format specifications away ;-(
+					decimalSectionLength = len;
+					StringBuilder sb = new StringBuilder ();
+					if (len > 0) {
+						sb.Append ("D");
+						sb.Append ('0');
+						sb.Append (len);
+						format = sb.ToString ();
+					}
+					*/
 				}
 				
 				public override void Format (StringBuilder b, int num)
 				{
+//					b.Append (num.ToString (format, nfi));
 					b.Append (num.ToString ("N", nfi));
 				}
 			}
