@@ -172,6 +172,7 @@ public class Wrapper {
 	public const int ESTALE               = 133;
 	public const int EDQUOT               = 132;
 	public const int ENOMEDIUM            = 135;
+	public const int ENOTDIR              = 20;
 
 
 	[DllImport("monowrapper", EntryPoint="mono_wrapper_seek", CharSet=CharSet.Ansi)]
@@ -194,6 +195,12 @@ public class Wrapper {
 
 	[DllImport("monowrapper", EntryPoint="mono_wrapper_close", CharSet=CharSet.Ansi)]
 	public unsafe static extern int close (IntPtr fd);
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_stat", CharSet=CharSet.Ansi)]
+	public unsafe static extern int stat (string path, stat * buf);
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_unlink", CharSet=CharSet.Ansi)]
+	public unsafe static extern int unlink (string path);
 
 }
 }
