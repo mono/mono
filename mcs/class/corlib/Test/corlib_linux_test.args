@@ -115,6 +115,7 @@ System.Security.Cryptography/SHA512ManagedTest.cs
 System.Security.Cryptography/SHA512Test.cs
 System.Security.Cryptography/SignatureDescriptionTest.cs
 System.Security.Cryptography/SymmetricAlgorithmTest.cs
+System.Security.Cryptography.X509Certificates/X509CertificateTest.cs
 System.Security.Permissions/AllTests.cs
 System.Security.Permissions/FileIOPermissionTest.cs
 System.Security.Permissions/StrongNamePublicKeyBlobTest.cs

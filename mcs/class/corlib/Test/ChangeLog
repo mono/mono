@@ -1,3 +1,7 @@
+2003-04-06  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_linux_test.args: added X509CertificateTest.cs 
+
 2003-04-05  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile.gnu: revert. debugger support not installed by default in mcs
