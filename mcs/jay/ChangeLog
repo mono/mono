@@ -1,3 +1,7 @@
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
+	* output.c: Use `#line default' instead of source file "-".
+
 2003-01-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* skeleton.cs: Remove cleanup stuff, it has been moved to a better spot.

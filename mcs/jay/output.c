@@ -838,7 +838,7 @@ char *name;
 	    ++outline;
     	putchar(c);
       }
-      printf(line_format, ++outline + 1, "-");
+      printf(default_line_format, ++outline + 1);
     }
     fclose(in);
 }
@@ -1095,7 +1095,7 @@ output_trailing_text()
 	++outline;
 	putchar('\n');
     }
-    printf(line_format, ++outline + 1, "-");
+    printf(default_line_format, ++outline + 1);
 }
 
 
@@ -1129,7 +1129,7 @@ output_semantic_actions()
 	putchar('\n');
     }
 
-    printf(line_format, ++outline + 1, "-");
+    printf(default_line_format, ++outline + 1);
 }
 
 

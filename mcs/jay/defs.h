@@ -243,6 +243,7 @@ extern int nvars;
 extern int ntags;
 
 extern char *line_format;
+extern char *default_line_format;
 
 extern int   start_symbol;
 extern char  **symbol_name;

@@ -72,6 +72,7 @@ int name_pool_size;
 char *name_pool;
 
 char *line_format = "\t\t\t\t\t// line %d \"%s\"\n";
+char *default_line_format = "\t\t\t\t\t// line %d\n";
 
 
 cachec(c)

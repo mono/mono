@@ -175,6 +175,7 @@ char *argv[];
 	case 'c':
 	    csharp = 1;
 	    line_format = "#line %d \"%s\"\n";
+	    default_line_format = "#line default\n";
 	    break;
 	    
 	case 'v':
