@@ -26,7 +26,8 @@ namespace System.Data.Common
 		public DataColumnMappingCollection () {
 		}
 
-		public int Add (object obj) {
+		public int Add (object obj)
+		{
 			DataColumnMapping[] tmp = new DataColumnMapping[size + 1];
 
 			if (size > 0)

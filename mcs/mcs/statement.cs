@@ -741,6 +741,7 @@ namespace Mono.CSharp {
 			}
 			
 			ig.Emit (OpCodes.Br, ec.LoopEnd);
+
 			return false;
 		}
 	}

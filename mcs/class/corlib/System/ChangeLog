@@ -1,3 +1,5 @@
+2002-03-24  Miguel de Icaza  <miguel@ximian.com>
+	
 2002-05-12  Daniel Morgan <danmorg@sc.rr.com>
 
 	* IServiceProvider.cs: added using System
@@ -340,8 +342,17 @@ Wed Apr 3 19:46:00 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 2002-03-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* String.cs (System): Removed internal enumeration, because
+	bootstrapping the corlib at this point does not support
+	enumerations. 
+
 	* IntPtr.cs: Temporary work-around until I fix the assembly
 	attributes bug.
+
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
+	* Enum.cs (GetValues): According to the docu this is sorted after
+	values, not names.
 
 	* String.cs (System): Removed enumeration, because it is pretty
 	hard to support enumerations in /nostdlib mode for the core types.
