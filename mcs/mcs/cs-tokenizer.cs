@@ -681,7 +681,16 @@ namespace Mono.CSharp
 							"the 'l' suffix is easily confused with digit `1'," +
 							" use 'L' for clarity");
 						}
-						goto case 'L';
+						//
+						// This goto statement causes the MS CLR 2.0 beta 1 csc to report an error, so
+						// work around that.
+						//
+						//goto case 'L';
+						if (is_long)
+							scanning = false;
+						is_long = true;
+						getChar ();
+						break;
 						
 					case 'L': 
 						if (is_long)

@@ -1,3 +1,7 @@
+2004-12-08 Zoltan Varga <vargaz@freemail.hu>
+
+	* cs-tokenizer.cs: Add workaround for NET 2.0 beta 1 csc bug.
+
 2004-12-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* cfold.cs (ConstantFold.DoConstantNumericPromotions): After
