@@ -1,3 +1,7 @@
+2003-01-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* driver.cs: fixed bug #37187.
+
 2003-01-27  Pedro Martinez Juliá  <yoros@wanadoo.es>
 
 	* expression.cs (IndexerAccess.DoResolve): Before trying to resolve
