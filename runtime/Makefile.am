@@ -52,10 +52,21 @@ fx11dir = $(libdir)/mono/1.1/
 fx20dir = $(libdir)/mono/2.0/
 endif
 
+$(fx11_DATA):
+	if test -f $(mcs_topdir)/mcs/mcs.exe; then f=$(mcs_topdir)/mcs/mcs.exe; else f=$(fx11dir)/mcs.exe; fi; \
+	echo "cp -f $$f $(srcdir)"; \
+	cp -f $$f $(srcdir)
+	if test -f $(mcs_topdir)/mcs/mbas.exe; then f=$(mcs_topdir)/mcs/mbas.exe; else f=$(fx11dir)/mbas.exe; fi; \
+	echo "cp -f $$f $(srcdir)"; \
+	cp -f $$f $(srcdir)
+
+$(fx20_DATA):
+	if test -f $(mcs_topdir)/gmcs/gmcs.exe; then f=$(mcs_topdir)/gmcs/gmcs.exe; else f=$(fx20dir)/gmcs.exe; fi; \
+	echo "cp -f $$f $(srcdir)"; \
+	cp -f $$f $(srcdir)
+
 $(monobins_DATA):
 	@case "$@" in \
-	mcs.exe)                 d=mcs                          ;; \
-	mbas.exe)                d=mbas                         ;; \
 	monoresgen.exe)          d=monoresgen                   ;; \
 	ilasm.exe)               d=ilasm                        ;; \
 	cilc.exe)                d=tools/cilc                   ;; \
