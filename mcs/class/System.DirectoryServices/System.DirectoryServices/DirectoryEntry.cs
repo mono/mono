@@ -54,8 +54,8 @@ namespace System.DirectoryServices
 		private string _Path="";
 		private string _Name=null;
 		private DirectoryEntry _Parent=null;
-		private string _Username="";
-		private string _Password="";
+		private string _Username;
+		private string _Password;
 		//private string _Nativeguid;
 		private PropertyCollection _Properties = null;
 		private string _SchemaClassName=null;
