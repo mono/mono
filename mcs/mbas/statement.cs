@@ -5463,7 +5463,7 @@ namespace Mono.MonoBASIC {
 			EvtHandler = EvtHandler.Resolve(ec,ResolveFlags.MethodGroup);
 			EvtTarget = EvtTarget.Resolve (ec,ResolveFlags.VariableOrValue);
 			if (EvtId == null || (!(EvtId is EventExpr))) {
-				Report.Error (999, "'AddHandler' statement needs an event designator.");
+				Report.Error (30676, "Need an event designator.");
 				return false;
 			}
 

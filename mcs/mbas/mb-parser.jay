@@ -1116,19 +1116,28 @@ sub_declaration
 			string evt_def = ((MemberAccess)$6).ToString();
 			int pos = evt_def.LastIndexOf (".");
 			string evt_target = evt_def.Substring (0, pos);
+			bool found = false;
 		
-			foreach (Property p in current_container.Properties) {
-				if (p.Name == evt_target) {
-					Location loc = lexer.Location;
+			if (current_container.Properties != null) {
+				foreach (Property p in current_container.Properties) {
+					if (p.Name == evt_target) {
+						Location loc = lexer.Location;
 
-					Statement addhnd = (Statement) new AddHandler ((Expression) $6, 
-										DecomposeQI((string) $2, loc), 
-										DecomposeQI(evt_target, loc), loc);
+						Statement addhnd = (Statement) new AddHandler ((Expression) $6, 
+											DecomposeQI((string) $2, loc), 
+											DecomposeQI(evt_target, loc), loc);
 
-					current_container.AddEventHandler (addhnd);
-					break;
-				}
-			}				
+						current_container.AddEventHandler (addhnd);
+						found = true;
+						break;
+					}
+				}		
+			}
+
+			if (!found){
+				Report.Error(30506, lexer.Location,
+						evt_target + " is not declared with WithEvents");
+			}
 		}	
 	  }	  
 	;

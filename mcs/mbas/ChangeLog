@@ -1,3 +1,8 @@
+2004-06-08 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay:
+	* statement.cs:
+		Few exception checks for Event
+
 2004-06-07 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Resolved the problem in Sub statement with Handles cluse
 	* class.cs: Added a AddEventHandler function and a EventHandler readonly property. Also modified define of constructor to accommodate Handlers clause.		
