@@ -445,6 +445,10 @@ public class List : IEnumerable {
 	}
 }
 
+test-231.cs:
+------------
+Test for emitting callvirt when we need it.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
