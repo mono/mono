@@ -1,3 +1,8 @@
+2005-03-20  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilder.cs (set_Length): If we set the length, we must
+	clobber the cached string.
+
 2005-03-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UnicodeEncoding.cs: same fix (\uFEFF) but for Unicode. Patch by

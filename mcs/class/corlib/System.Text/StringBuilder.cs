@@ -142,15 +142,16 @@ namespace System.Text {
 				if (value == _length)
 					return;
 
-				if( value < _length ) 
-				{
+				if (value < _length) {
 					// LAMESPEC:  The spec is unclear as to what to do
 					// with the capacity when truncating the string.
 
 					// Do as MS, keep the capacity
+					
+					// Make sure that we invalidate any cached string.
+					InternalEnsureCapacity (value);
 					_length = value;
-				} else 
-				{
+				} else {
 					// Expand the capacity to the new length and
 					// pad the string with spaces.
 					
