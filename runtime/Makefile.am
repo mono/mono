@@ -17,8 +17,10 @@ etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
+SUPPORT_FILES = $(symlinks) mono-wrapper wrapper-config
+
 # The write check is to foil 'make distcheck'
-all-local: $(symlinks) mono-wrapper wrapper-config
+all-local: $(SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' all-profiles
 
@@ -32,7 +34,7 @@ endif
 install: install-exec install-data
 
 # override automake
-install-exec:
+install-exec: $(SUPPORT_FILES)
 	d=`pwd`; \
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' \
 				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes install-profiles
