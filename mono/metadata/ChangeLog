@@ -1,5 +1,7 @@
 2003-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c: Fix warnings.
+
 	* icall.c (ves_icall_Type_Get...): Only consider inherited static
 	members if FlattenHierarchy is set.
 
