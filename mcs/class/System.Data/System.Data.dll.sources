@@ -70,6 +70,7 @@ System.Data/IDbDataParameter.cs
 System.Data/IDbExecutionContext.cs
 System.Data/IDbTransaction.cs
 System.Data/IGetTypedData.cs
+System.Data/Index.cs
 System.Data/InRowChangingEventException.cs
 System.Data/InternalDataCollectionBase.cs
 System.Data/InvalidConstraintException.cs
