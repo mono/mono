@@ -18,7 +18,6 @@ namespace Mono.CSharp
 	using System.IO;
 	using System.Text;
 	using System.Globalization;
-	using System.Xml;
 	using System.Diagnostics;
 
 	public enum Target {

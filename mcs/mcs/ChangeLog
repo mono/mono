@@ -1,3 +1,14 @@
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
+	Disable XML documentation support in 'basic' profile.
+	* decl.cs, class.cs [BOOTSTRAP_WITH_OLDLIB]: Don't import System.Xml.
+	Redirect XmlElement to System.Object.
+	* driver.cs, enum.cs, rootcontext.cs: Don't reference System.Xml.
+	* doc.cs [BOOTSTRAP_WITH_OLDLIB]: Disable compile.
+	* mcs.exe.sources: Add doc-bootstrap.cs.
+	* doc-bootstrap.cs: New file.  Contains empty stub implementation
+	of doc.cs.
+
 2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-tokenizer.cs : Only '////' is rejected. Other non-whitespace

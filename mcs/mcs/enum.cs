@@ -14,7 +14,6 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
-using System.Xml;
 
 namespace Mono.CSharp {
 

@@ -41,7 +41,12 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+
+#if BOOTSTRAP_WITH_OLDLIB
+using XmlElement = System.Object;
+#else
 using System.Xml;
+#endif
 
 using Mono.CompilerServices.SymbolWriter;
 

@@ -17,7 +17,12 @@ using System.Collections;
 using System.Globalization;
 using System.Reflection.Emit;
 using System.Reflection;
+
+#if BOOTSTRAP_WITH_OLDLIB
+using XmlElement = System.Object;
+#else
 using System.Xml;
+#endif
 
 namespace Mono.CSharp {
 

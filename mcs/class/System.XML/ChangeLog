@@ -1,3 +1,7 @@
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Remove support for being in bootstrap build.
+
 2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources: removed old IXPathChangeNavigable.cs,

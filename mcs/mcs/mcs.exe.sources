@@ -13,6 +13,7 @@ convert.cs
 decl.cs
 delegate.cs
 doc.cs
+doc-bootstrap.cs
 enum.cs
 ecore.cs
 expression.cs

@@ -9,6 +9,8 @@
 // (C) 2004 Novell, Inc.
 //
 //
+
+#if ! BOOTSTRAP_WITH_OLDLIB
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -807,3 +809,5 @@ namespace Mono.CSharp {
 		}
 	}
 }
+
+#endif
