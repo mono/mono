@@ -1169,7 +1169,7 @@ namespace Mono.CSharp {
 			if (!gc.HasConstructorConstraint)
 				return true;
 
-			if (TypeManager.IsBuiltinType (atype))
+			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
 				return true;
 
 			MethodGroupExpr mg = Expression.MemberLookup (

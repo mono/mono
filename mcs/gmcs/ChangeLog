@@ -1,3 +1,8 @@
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.CheckConstraints): Valuetypes always
+	have the ctor constraint.  Fixes #68326.
+
 2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-parser.jay : interface comment was not consumed because of
