@@ -1,4 +1,7 @@
 2004-06-13 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Small correction in delegate declaration grammar
+
+2004-06-13 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: modified RemoveHandler function
 	* statement.cs: Added RemoveHandler statement class
 

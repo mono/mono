@@ -1846,7 +1846,7 @@ delegate_declaration
 	| DELEGATE FUNCTION	  
 	  identifier OPEN_PARENS 
 	  opt_formal_parameter_list
-	  CLOSE_PARENS AS type EOL
+	  CLOSE_PARENS opt_type_spec EOL
 	  {
 		Location l = lexer.Location;
 		
@@ -1856,9 +1856,11 @@ delegate_declaration
 		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
 			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
 			
+		Expression ftype = ($7 == null) ? TypeManager.system_object_expr : (Expression) $7;
+			
 		Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate (
 			current_container,
-			(Expression) $8, (int) current_modifiers, MakeName ((string) $3), 
+			ftype, (int) current_modifiers, MakeName ((string) $3), 
 			(Parameters) $5, (Attributes) current_attributes, l);
 
 		del.Namespace = current_namespace;
