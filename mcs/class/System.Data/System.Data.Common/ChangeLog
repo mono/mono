@@ -1,3 +1,7 @@
+2004-03-03  Eran Domb  <erand@miansoft.com>
+	
+	* ComparerFactory.cs : Added.
+	
 2004-01-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbDataPermission.cs : tiny fix to pass OleDbPermission.
