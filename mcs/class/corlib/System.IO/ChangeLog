@@ -1,3 +1,10 @@
+2004-06-07  Duncan Mak  <duncan@ximian.com>
+
+	* FileStream.cs (SetLength): The other exceptions have precendence
+	over ObjectDisposedException, which is not one of the exceptions
+	listed in the documentation). Also, instead of throwing an
+	ObjectDisposedException, throw an IOException.
+
 2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BufferedStream.cs: fixed typo that prevented Read() from working.

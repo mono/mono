@@ -976,6 +976,17 @@ namespace MonoTests.System.IO
 				stream.Close ();
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void SetLengthWithClosedBaseStream ()
+		{
+			FileSteam fs = new FileSteam ("temp", FileMode.Create);
+			BufferStream bs = new BufferStream (fs);
+			fs.Close ();
+			
+			bs.SetLength (1000);
+		}
         }
 }
 

@@ -709,9 +709,6 @@ namespace System.IO
 
 		public override void SetLength (long length)
 		{
-			if (handle == MonoIO.InvalidHandle)
-				throw new ObjectDisposedException ("Stream has been closed");
-
 			if(CanSeek == false) {
 				throw new NotSupportedException("The stream does not support seeking");
 			}
@@ -723,6 +720,9 @@ namespace System.IO
 			if(length < 0) {
 				throw new ArgumentOutOfRangeException("Length is less than 0");
 			}
+
+			if (handle == MonoIO.InvalidHandle)
+				throw new IOException ("Stream has been closed");
 			
 			Flush ();
 

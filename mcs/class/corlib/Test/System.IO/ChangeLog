@@ -1,3 +1,9 @@
+2004-06-07  Duncan Mak  <duncan@ximian.com>
+
+	* FileStreamTest.cs (SetLengthWithClosedBaseStream): New test for
+	checking that the correct exception is thrown when the base stream
+	is closed.
+
 2004-06-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BufferedStreamTest.cs: Modified two tests (using newer helper 
