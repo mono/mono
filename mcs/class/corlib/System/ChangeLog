@@ -1,3 +1,9 @@
+2003-04-18  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* Array.cs: Deleted the exception in Array.Initialize(), it looks
+	like the method do nothing for C#, is still a MonoTODO until
+	we find a compiler that uses that.
+
 2003-04-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Delegate.cs (Delegate): Seems like a typo, we were checking the

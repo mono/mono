@@ -1,4 +1,3 @@
-
 // System.Array.cs
 //
 // Authors:
@@ -585,7 +584,9 @@ namespace System
 		[MonoTODO]
 		public void Initialize()
 		{
-			throw new NotImplementedException();
+			//FIXME: We would like to find a compiler that uses
+			// this method. It looks like this method do nothing
+			// in C# so no exception is trown by the moment.
 		}
 
 		public static int LastIndexOf (Array array, object value)
