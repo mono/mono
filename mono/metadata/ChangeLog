@@ -1,4 +1,9 @@
 
+Sat Jun 14 13:16:17 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: ensure streams and tables are first allocated with
+	ALLOC_ATOMIC (GC_realloc uses plain GC_malloc otherwise).
+
 Sat Jun 14 13:13:20 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fixed GetElementType for byrefs (bug# 44792).
