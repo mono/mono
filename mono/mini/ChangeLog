@@ -1,5 +1,11 @@
 2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c: Fix warnings.
+
+	* driver.c (mono_main): If running under valgrind, instruct glib to use
+	the system allocation functions so valgrind can track the memory
+	allocated by the g_... functions.
+
 	* inssel.brg (stmt): Add DUMMY rule for OP_DUMMY_STORE.
 
 	* mini-ops.h: Add OP_DUMMY_STORE opcode.
