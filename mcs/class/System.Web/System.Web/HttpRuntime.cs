@@ -1,11 +1,11 @@
 /**
  * Namespace: System.Web
  * Class:     HttpRuntime
- * 
+ *
  * Author:  Gaurav Vaish
  * Contact: <gvaish@iitk.ac.in>
  * Status:  ?%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -25,14 +25,14 @@ namespace System.Web
 		private static bool        initialized;
 		private static string      installDir;
 		private static HttpRuntime runtime;
-		
+
 		/// <summary>
 		/// Loading of ISAPI
 		/// </summary>
 		private static bool        isapiLoaded;
-		
+
 		private Cache cache;
-		
+
 		// Security permission helper objects
 		private static IStackWalk appPathDiscoveryStackWalk;
 		private static IStackWalk ctrlPrincipalStackWalk;
@@ -40,14 +40,14 @@ namespace System.Web
 		private static IStackWalk unmgdCodeStackWalk;
 		private static IStackWalk unrestrictedStackWalk;
 		private static IStackWalk reflectionStackWalk;
-				
+
 		private string appDomainAppPath;
 		private string appDomainAppVirtualPath;
-		
+
 		private FileChangesMonitor fcm;
-		
+
 		private Exception initErrorException;
-		
+
 		static HttpRuntime()
 		{
 			autogenKeys = new byte[88];
@@ -59,14 +59,14 @@ namespace System.Web
 			sensitiveInfoStackWalk    = null;
 			unmgdCodeStackWalk        = null;
 			unrestrictedStackWalk     = null;
-			
+
 			if(!DesignTimeParseData.InDesigner)
 				Initialize();
 			runtime     = new HttpRuntime();
 			if(!DesignTimeParseData.InDesigner)
 				runtime.Init();
 		}
-		
+
 		//FIXME: IIS specific code. Need information on what to do for Apache?
 		internal static void Initialize()
 		{
@@ -115,7 +115,7 @@ namespace System.Web
 				initialized = true;
 			}
 		}
-		
+
 		[MonoTODO("Init")]
 		private void Init()
 		{
@@ -136,12 +136,11 @@ namespace System.Web
 			}
 		}
 
-		[MonoTODO("FormatResourceString(string, string, string)")]
-		internal static string FormatResourceString(string key, string arg0, string type)
+		internal static string FormatResourceString(string key)
 		{
-			throw new NotImplementedException();
+			return GetResourceString(key);
 		}
-		
+
 		internal static string FormatResourceString(string key, string arg0)
 		{
 			string format = GetResourceString(key);
@@ -149,23 +148,39 @@ namespace System.Web
 				return null;
 			return String.Format(format, arg0);
 		}
-		
-		internal static string FormatResourceString(string key)
+
+		[MonoTODO("FormatResourceString(string, string, string)")]
+		internal static string FormatResourceString(string key, string arg0, string type)
 		{
-			return GetResourceString(key);
+			// String.Format(string, object, object);
+			throw new NotImplementedException();
 		}
-		
+
+		[MonoTODO("FormatResourceString(string, string, string, string)")]
+		internal static string FormatResourceString(string key, string arg0, string arg1, string arg2)
+		{
+			// String.Format(string, object, object, object);
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("FormatResourceString(string, string[]")]
+		internal static string FormatResourceString(string key, string[] args)
+		{
+			// String.Format(string, object[]);
+			throw new NotImplementedException();
+		}
+
 		private static string GetResourceString(string key)
 		{
 			return runtime.GetResourceStringFromResourceManager(key);
 		}
-		
+
 		[MonoTODO("GetResourceStringFromResourceManager(string)")]
 		private string GetResourceStringFromResourceManager(string key)
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		public static Cache Cache
 		{
 			get
@@ -173,7 +188,7 @@ namespace System.Web
 				return runtime.cache;
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string AppDomainAppId
 		{
@@ -182,7 +197,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string AppDomainAppPath
 		{
@@ -191,7 +206,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string AppDomainAppVirtualPath
 		{
@@ -200,7 +215,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string AppDomainId
 		{
@@ -209,7 +224,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string AspInstallDirectory
 		{
@@ -218,7 +233,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string BinDirectory
 		{
@@ -227,7 +242,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string ClrInstallDirectory
 		{
@@ -236,7 +251,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string CodegenDir
 		{
@@ -245,7 +260,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static bool IsOnUNCShare
 		{
@@ -254,7 +269,7 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static string MachineConfigurationDirectory
 		{
@@ -263,13 +278,13 @@ namespace System.Web
 				throw new NotImplementedException();
 			}
 		}
-		
+
 		[MonoTODO]
 		public static void Close()
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		internal static IStackWalk AppPathDiscovery
 		{
 			get
@@ -281,7 +296,7 @@ namespace System.Web
 				return appPathDiscoveryStackWalk;
 			}
 		}
-		
+
 		internal static IStackWalk ControlPrincipal
 		{
 			get
@@ -293,7 +308,7 @@ namespace System.Web
 				return ctrlPrincipalStackWalk;
 			}
 		}
-		
+
 		internal static IStackWalk Reflection
 		{
 			get
@@ -305,7 +320,7 @@ namespace System.Web
 				return reflectionStackWalk;
 			}
 		}
-		
+
 		internal static IStackWalk SensitiveInformation
 		{
 			get
@@ -317,7 +332,7 @@ namespace System.Web
 				return sensitiveInfoStackWalk;
 			}
 		}
-		
+
 		internal static IStackWalk UnmanagedCode
 		{
 			get
@@ -329,7 +344,7 @@ namespace System.Web
 				return unmgdCodeStackWalk;
 			}
 		}
-		
+
 		internal static IStackWalk Unrestricted
 		{
 			get
@@ -341,12 +356,12 @@ namespace System.Web
 				return unrestrictedStackWalk;
 			}
 		}
-				
+
 		internal static IStackWalk FileReadAccess(string file)
 		{
 			return new FileIOPermission(FileIOPermissionAccess.Read, file);
 		}
-		
+
 		internal static IStackWalk PathDiscoveryAccess(string path)
 		{
 			return new FileIOPermission(FileIOPermissionAccess.PathDiscovery, path);
