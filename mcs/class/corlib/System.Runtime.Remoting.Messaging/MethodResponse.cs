@@ -105,6 +105,8 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			foreach (SerializationEntry entry in info)
 				InitMethodProperty (entry.Name, entry.Value);
+
+			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
 		}
 
 		internal void InitMethodProperty (string key, object value) 
