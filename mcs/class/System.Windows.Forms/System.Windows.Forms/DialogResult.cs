@@ -19,13 +19,13 @@ namespace System.Windows.Forms
 	[ComVisible(true)]
 	public enum DialogResult
 	{
-		Abort = 1,
-		Cancel = 2,
-		Ignore = 3,
-		No = 4,
 		None = 0,
-		OK = 5,
-		Retry = 6,
-		Yes = 7
+		OK = 1,
+		Cancel = 2,
+		Abort = 3,
+		Retry = 4,
+		Ignore = 5,
+		Yes = 6,
+		No = 7,
 	}
 }

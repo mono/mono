@@ -18,11 +18,11 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum DockStyle
 	{
-		Bottom = 1,
-		Fill = 2,
-		Left = 3,
 		None = 0,
+		Top = 1,
+		Bottom = 2,
+		left = 3,		
 		Right = 4,
-		Top = 5
+		Fill = 5,
 	}
 }

@@ -19,10 +19,10 @@ namespace System.Windows.CaptionButton
 	[Serializable]
 	public enum CaptionButton
 	{
-		Close,
-		Help,
-		Maximize,
-		Minimize,
-		Restore
+		Close = 0,
+		Minimize = 1,
+		Minimize = 2,
+		Restore = 3,
+		Help = 4,
 	}
 }

@@ -19,12 +19,12 @@ namespace System.Windows.Forms
 	[ComVisible(true)]
 	public enum FormBorderStyle
 	{
-		Fixed3D = 1,
-		FixedDialog = 2,
-		FixedSingle = 3,
-		FixedToolWindow = 4,
 		None = 0,
-		Sizable = 5,
+		FixedSingle = 1,
+		Fixed3D = 2,
+		FixedDialog = 3,
+		Sizable = 4,
+		FixedToolWindows = 5,
 		SizableToolWindow = 6
 	}
 }

@@ -18,8 +18,8 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum CharacterCasing
 	{
-		Lower,
-		Normal,
-		Upper
+		Normal = 0,
+		Upper = 1,
+		Lower = 2,
 	}
 }

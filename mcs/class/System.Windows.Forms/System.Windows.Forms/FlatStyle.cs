@@ -18,9 +18,9 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum FlatStyle
 	{
-		Flat,
-		Popup,
-		Standard,
-		System
+		Flat = 0,
+		Popup = 1,
+		Standard = 2,
+		System = 3,
 	}
 }

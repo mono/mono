@@ -1,0 +1,20 @@
+2002-04-10  Duncan Mak  <duncan@ximian.com>
+
+	* CaptionButton.cs:
+	* CharacterCasing.cs: 
+	* CheckState.cs: 
+	* DataGridParentRowsLabelStyle.cs: 
+	* DialogResult.cs: 
+	* DockStyle.cs: 
+	* DragAction.cs: 
+	* DragDropEffects.cs: 
+	* DrawItemState.cs: 
+	* DrawMode.cs: 
+	* ErrorBlinkStyle.cs: 
+	* ErrorIconAlignment.cs: 
+	* FlatStyle.cs: 
+	* FormBorderStyle.cs: 
+	* FormStartPosition.cs: 
+	* FormWindowState.cs: 
+	* FrameStyle.cs: Fixed enum layouts with EnumCheck.
+

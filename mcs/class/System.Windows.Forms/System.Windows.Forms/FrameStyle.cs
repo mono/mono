@@ -18,7 +18,7 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum FrameStyle
 	{
-		Dashed,
-		Thick
+		Dashed = 0,
+		Thick = 1,
 	}
 }

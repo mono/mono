@@ -19,10 +19,10 @@ namespace System.Windows.Forms
 //	[ComVisible(true)]
 	public enum FormStartPosition
 	{
-		CenterParent,
-		CenterScreen,
-		Manual,
-		WindowsDefaultBounds,
-		WindowsDefaultLocation
+		Manual = 0,
+		CenterScreen = 1,
+		WindowsDefaultLocation = 2,
+		WindowsDefaultBounds = 3,
+		CenterParent = 4,		
 	}
 }

@@ -20,17 +20,17 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum DrawItemState
 	{
-		Checked = 1,
-		ComboBoxEdit = 2,
-		Default = 4,
-		Disabled = 8,
+		None = 0,
+		Selected = 1,
+		Grayed = 2,
+		Disabled = 4,
+		Checked = 8,
 		Focus = 16,
-		Grayed = 32,
+		Default = 32,
 		HotLight = 64,
 		Inactive = 128,
 		NoAccelerator = 256,
 		NoFocusRect = 512,
-		None = 0,
-		Selected = 1024,
+		ComboBoxEdit = 1024,
 	}
 }

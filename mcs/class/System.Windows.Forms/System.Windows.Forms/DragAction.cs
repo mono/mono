@@ -19,8 +19,8 @@ namespace System.Windows.Forms
 //	[ComVisible(true)]
 	public enum DragAction
 	{
-		Cancel,
-		Continue,
-		Drop 
+		Continue = 0,
+		Drop = 1,
+		Cancel = 2,
 	}
 }

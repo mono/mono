@@ -18,9 +18,9 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum DataGridParentRowsLabelStyle
 	{
-		Both = 1,
-		ColumnName = 2,
 		None = 0,
-		TableName = 3
+		TableName = 1,
+		ColumnName = 2,
+		Both = 3,
 	}
 }

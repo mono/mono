@@ -19,8 +19,8 @@ namespace System.Windows.Forms
 //	[ComVisible(true)]
 	public enum FormWindowState
 	{
-		Maximized,
-		Minimized,
-		Normal
+		Normal = 0,
+		Maximized = 1,
+		Minimized = 2,
 	}
 }

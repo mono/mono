@@ -18,8 +18,8 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum DrawMode
 	{
-		Normal,
-		OwnerDrawFixed,
-		OwnerDrawVariable 
+		Normal = 0,
+		OwnerDrawFixed = 1,
+		OwnerDrawVariable = 2,
 	}
 }

@@ -19,8 +19,8 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum ErrorBlinkStyle
 	{
-		AlwaysBlink,
-		BlinkIfDifferentError,
-		NeverBlink 
+		BlinkIfDifferentError = 0,
+		AlwaysBlink = 1,
+		NeverBlink = 2,
 	}
 }

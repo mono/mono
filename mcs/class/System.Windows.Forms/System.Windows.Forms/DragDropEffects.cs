@@ -20,11 +20,11 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum DragDropEffects
 	{
-		All = 1,
-		Copy = 2,
-		Link = 4,
-		Move = 8,
 		None = 0,
-		Scroll = 16
+		Copy = 1,
+		Move = 2,
+		Link = 4,
+		Scroll = -2147483648,
+		All = -2147483645,
 	}
 }

@@ -19,8 +19,8 @@ namespace System.Windows.Forms
 	[Serializable]
 	public enum CheckState
 	{
-		Checked,
-		Indeterminate,
-		Unchecked
+		Unchecked = 0,
+		Checked = 1,
+		Indeterminate = 2,
 	}
 }
