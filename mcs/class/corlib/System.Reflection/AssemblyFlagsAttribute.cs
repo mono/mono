@@ -21,6 +21,13 @@ namespace System.Reflection
 			this.flags = flags;
 		}
 
+#if NET_1_1
+		public AssemblyFlagsAttribute (int flags)
+		{
+			this.flags = (uint)flags;
+		}
+#endif
+
 		// Property
  		[CLSCompliant (false)]
 		public uint Flags
