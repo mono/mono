@@ -18,7 +18,7 @@ namespace System.Drawing {
 	[TypeConverter (typeof (FontConverter))]
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
-		IntPtr	fontObject = IntPtr.Zero;
+		private IntPtr	fontObject = IntPtr.Zero;
 		
        		private Font (SerializationInfo info, StreamingContext context)
 		{

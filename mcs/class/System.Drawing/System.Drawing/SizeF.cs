@@ -19,7 +19,7 @@ namespace System.Drawing
 	public struct SizeF
 	{
 		// Private height and width fields.
-		float wd, ht;
+		private float wd, ht;
 
 		// -----------------------
 		// Public Shared Members

@@ -101,7 +101,7 @@ namespace System.Drawing
     		
     		internal static void MarshalTo (GdipImageCodecInfo gdipcodec, ImageCodecInfo codec)
     		{
-    			// See run-time bug 57706. When fixed, we should be able to remove the if(s)    			
+    			// FIXME: See run-time bug 57706. When fixed, we should be able to remove the if(s)    			
     			if (gdipcodec.CodecName != IntPtr.Zero)
     				codec.CodecName = Marshal.PtrToStringUni (gdipcodec.CodecName);  			    			
     			

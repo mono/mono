@@ -56,6 +56,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[MonoTODO]	
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
+		throw new NotImplementedException();
 	}
     
 	// public methods

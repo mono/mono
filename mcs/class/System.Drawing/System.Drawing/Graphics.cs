@@ -22,9 +22,10 @@ namespace System.Drawing
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
-		internal static float defDpiX = 0;
-		internal static float defDpiY = 0;
 
+		private static float defDpiX = 0;
+		private static float defDpiY = 0;
+	
 		[ComVisible(false)]
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
@@ -182,7 +183,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-                [MonoTODO]
 		public void DrawBeziers (Pen pen, Point [] points)
 		{
                         int length = points.Length;
@@ -205,7 +205,6 @@ namespace System.Drawing
                         }
 		}
 
-                [MonoTODO]
 		public void DrawBeziers (Pen pen, PointF [] points)
 		{
 			int length = points.Length;
@@ -1472,7 +1471,6 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO]
 		public void Restore (GraphicsState gstate)
 		{
 			Transform = gstate.matrix.Clone ();
@@ -1480,13 +1478,12 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO]
+
 		public void RotateTransform (float angle)
 		{
 			RotateTransform (angle, MatrixOrder.Prepend);
 		}
 
-		[MonoTODO]
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
 
@@ -1494,10 +1491,8 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO]
 		public GraphicsState Save ()
 		{
-			//return implementation.Save();
 			GraphicsState state = new GraphicsState ();
 			state.matrix = Transform.Clone ();
 			uint saveState;
@@ -1568,6 +1563,7 @@ namespace System.Drawing
 		public void SetClip (Region region, CombineMode combineMode)
 		{
 			//GDIPlus.GdipSetClipRegion(nativeObject,  region.NativeObject, combineMode); //TODO: Region not implemented yet
+			throw new NotImplementedException();
 		}
 
 		

@@ -19,7 +19,7 @@ namespace System.Drawing
 	[TypeConverter (typeof (RectangleConverter))]
 	public struct Rectangle
 	{
-		int x, y, width, height;
+		private int x, y, width, height;
 
 		/// <summary>
 		///	Empty Shared Field

@@ -30,21 +30,21 @@ namespace System.Drawing
 		static Color [] knownColors;
 		
 		// Private transparancy (A) and R,G,B fields.
-		byte a;
-		byte r;
-		byte g;
-		byte b;
+		private byte a;
+		private byte r;
+		private byte g;
+		private byte b;
 		private static string creatingColorNames = "creatingColorNames";
 
 		// The specs also indicate that all three of these propities are true
 		// if created with FromKnownColor or FromNamedColor, false otherwise (FromARGB).
 		// Per Microsoft and ECMA specs these varibles are set by which constructor is used, not by their values.
-		bool isknowncolor;
-		bool isnamedcolor;
-		bool issystemcolor;
-		KnownColor knownColor;
+		private bool isknowncolor;
+		private bool isnamedcolor;
+		private bool issystemcolor;
+		private KnownColor knownColor;
 
-		string myname;
+		private string myname;
 
 		public string Name {
 			get{

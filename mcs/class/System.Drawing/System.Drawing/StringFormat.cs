@@ -20,8 +20,8 @@ namespace System.Drawing
 	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable
 	{
 		private static StringFormat genericDefault;
-		IntPtr nativeStrFmt = IntPtr.Zero;
-                int language = GDIPlus.LANG_NEUTRAL;
+		private IntPtr nativeStrFmt = IntPtr.Zero;
+                private int language = GDIPlus.LANG_NEUTRAL;
 		
 		public StringFormat() : this (0, GDIPlus.LANG_NEUTRAL)
 		{					   

@@ -14,21 +14,21 @@ namespace System.Drawing
 {
 	public sealed class SystemPens
 	{
-		static Pen active_caption_text;
-		static Pen control;
-		static Pen control_dark;
-		static Pen control_dark_dark;
-		static Pen control_light;
-		static Pen control_light_light;
-		static Pen control_text;
-		static Pen gray_text;
-		static Pen highlight;
-		static Pen highlight_text;
-		static Pen inactive_caption_text;
-		static Pen info_text;
-		static Pen menu_text;
-		static Pen window_frame;
-		static Pen window_text;
+		static private Pen active_caption_text;
+		static private Pen control;
+		static private Pen control_dark;
+		static private Pen control_dark_dark;
+		static private Pen control_light;
+		static private Pen control_light_light;
+		static private Pen control_text;
+		static private Pen gray_text;
+		static private Pen highlight;
+		static private Pen highlight_text;
+		static private Pen inactive_caption_text;
+		static private Pen info_text;
+		static private Pen menu_text;
+		static private Pen window_frame;
+		static private Pen window_text;
 		
 		private SystemPens () {	}
 		

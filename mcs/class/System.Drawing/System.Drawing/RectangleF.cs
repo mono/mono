@@ -16,7 +16,7 @@ namespace System.Drawing
 	[Serializable]
 	public struct RectangleF
 	{
-                float x, y, width, height;
+                private float x, y, width, height;
 
 		/// <summary>
 		///	Empty Shared Field

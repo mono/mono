@@ -10,7 +10,6 @@
 using System;
 using System.Drawing.Imaging;
 using System.Threading;
-//using System.Windows.Forms;
 
 namespace System.Drawing
 {
@@ -19,9 +18,9 @@ namespace System.Drawing
 	/// </summary>
 	public sealed class ImageAnimator
 	{
-		static bool isAnimating = false;
-		static Thread thread;
-		static int activeFrame;
+		static private bool isAnimating = false;
+		static private Thread thread;
+		static private int activeFrame;
 
 		private ImageAnimator ()
 		{
@@ -108,13 +107,7 @@ namespace System.Drawing
 			  It surely requires something else also, as my application
 			  shows only a static image */
 
-			//Console.WriteLine ("Updating Frame "+activeFrame);
-			//MessageBox.Show ("Updating Frame "+activeFrame);
-			
-			int fc = img.SelectActiveFrame (FrameDimension.Time, activeFrame);						
-			
-			//Console.WriteLine ("Updated Frame "+ fc);
-			//MessageBox.Show ("Updated Frame "+ fc);
+			throw new NotImplementedException();
 		}	
 
 		// The callback method must match the signature of the
@@ -133,10 +126,10 @@ namespace System.Drawing
 
 	class WorkerThread
 	{
-		Image image;
-		int activeFrameCount;
-		int frameCount;
-		ActiveFrameCountCallBack afc;
+		private Image image;
+		private int activeFrameCount;
+		private int frameCount;
+		private ActiveFrameCountCallBack afc;
 				
 		public WorkerThread(Image img, ActiveFrameCountCallBack afCount)
 		{

@@ -16,7 +16,7 @@ namespace System.Drawing
 	public sealed class SolidBrush : Brush {
 		
 		internal bool isModifiable = true;
-		Color color;
+		private Color color;
 
                 internal SolidBrush (IntPtr ptr)
                         : base (ptr)

@@ -67,11 +67,11 @@ namespace System.Drawing
 			internal byte []		iconAND;	//bits for AND mask
 		};	
 
-		Size iconSize;
-		IntPtr winHandle = IntPtr.Zero;
-		IconDir	iconDir ;
-		ushort id;
-		IconImage [] imageData;
+		private Size iconSize;
+		private IntPtr winHandle = IntPtr.Zero;
+		private IconDir	iconDir;
+		private ushort id;
+		private IconImage [] imageData;
 			
 		private Icon ()
 		{

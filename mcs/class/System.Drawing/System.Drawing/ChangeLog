@@ -1,3 +1,25 @@
+
+2004-05-12  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Color.cs: work for API compatibilty: private date, todos
+	* Font.cs: work for API compatibilty: private date, todos
+	* FontFamily.cs: work for API compatibilty: private date, todos
+	* Graphics.cs: work for API compatibilty: private date, todos
+	* Icon.cs: work for API compatibilty: private date, todos 
+	* Image.cs: work for API compatibilty: private date, todos
+	* ImageAnimator.cs: work for API compatibilty: private date, todos
+	* Point.cs: work for API compatibilty: private date, todos
+	* PointF.cs: work for API compatibilty: private date, todos
+	* Rectangle.cs: work for API compatibilty: private date, todos
+	* RectangleF.cs: work for API compatibilty: private date, todos
+	* Region.cs: work for API compatibilty: private date, todos
+	* Size.cs: work for API compatibilty: private date, todos
+	* SizeF.cs: work for API compatibilty: private date, todos
+	* SolidBrush.cs: work for API compatibilty: private date, todos
+	* StringFormat.cs: work for API compatibilty: private date, todos
+	* SystemPens.cs: work for API compatibilty: private date, todos
+	* TextureBrush.cs: work for API compatibilty: private date, todos
+	* gdipStructs.cs: work for API compatibilty: private date, todos
+
 2004-05-12  Ravindra <rkumar@novell.com>
 
 	* Bitmap.cs, Font.cs, FontConverter.cs, Graphics.cs, Icon.cs, Image.cs

@@ -16,10 +16,10 @@ namespace System.Drawing {
 	public sealed class FontFamily : MarshalByRefObject, IDisposable 
 	{
 		
-		static FontFamily genericMonospace;
-		static FontFamily genericSansSerif;
-		static FontFamily genericSerif;
-		string name;
+		static private FontFamily genericMonospace;
+		static private FontFamily genericSansSerif;
+		static private FontFamily genericSerif;
+		private string name;
 		internal IntPtr nativeFontFamily = IntPtr.Zero;
 				
 		internal FontFamily(IntPtr fntfamily)

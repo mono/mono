@@ -19,7 +19,7 @@ namespace System.Drawing
 	public struct PointF
 	{
 		// Private x and y coordinate fields.
-		float cx, cy;
+		private float cx, cy;
 
 		// -----------------------
 		// Public Shared Members

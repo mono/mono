@@ -18,7 +18,7 @@ namespace System.Drawing
 	[ComVisible (false)]
 	public sealed class Region : MarshalByRefObject, IDisposable
 	{
-                internal IntPtr nativeRegion = IntPtr.Zero;
+                private IntPtr nativeRegion = IntPtr.Zero;
                 
 		public Region()
 		{                        

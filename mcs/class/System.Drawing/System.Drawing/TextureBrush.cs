@@ -20,7 +20,7 @@ namespace System.Drawing
 	/// </summary>
 	public sealed class TextureBrush : Brush
 	{
-		Image image;
+		private Image image;
 
 		internal TextureBrush (IntPtr ptr) : base (ptr)
 		{

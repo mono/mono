@@ -20,7 +20,7 @@ namespace System.Drawing
 	public struct Point
 	{
 		// Private x and y coordinate fields.
-		int x, y;
+		private int x, y;
 
 		// -----------------------
 		// Public Shared Members

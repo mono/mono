@@ -22,7 +22,7 @@ namespace System.Drawing
 	{ 
 		
 		// Private Height and width fields.
-		int width, height;
+		private int width, height;
 
 		// -----------------------
 		// Public Shared Members
