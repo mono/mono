@@ -167,11 +167,11 @@ namespace System.Net
 			if (remaining > 0) {
 				int copy = (remaining > size) ? size : remaining;
 				Buffer.BlockCopy (readBuffer, readBufferOffset, buffer, offset, copy);
-				totalRead += copy;
 				readBufferOffset += copy;
 				offset += copy;
 				size -= copy;
 				if (size == 0 || totalRead >= contentLength) {
+					totalRead += copy;
 					result.SetCompleted (true, copy);
 					result.DoCallback ();
 					return result;
