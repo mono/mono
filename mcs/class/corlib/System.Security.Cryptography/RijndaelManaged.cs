@@ -119,8 +119,8 @@ internal class RijndaelTransform : SymmetricTransform
 		}
 
 		this.key = key;
-		this.Nb = blockSize / 32;
-		this.Nk = keySize / 32;
+		this.Nb = (blockSize >> 5); // div 32
+		this.Nk = (keySize >> 5); // div 32
 		this.state = new byte[4, Nb];
 
 		if (Nb == 8 || Nk == 8) {
@@ -133,19 +133,19 @@ internal class RijndaelTransform : SymmetricTransform
 
 		shifts = new int[2,4];
 		// Encryption
-		shifts[0,0] = -1; // Not used
-		shifts[0,1] = 1;
-		shifts[0,2] = (Nb == 8) ? 3 : 2;
-		shifts[0,3] = (Nb == 8) ? 4 : 3;
+		shifts [0,0] = -1; // Not used
+		shifts [0,1] = 1;
+		shifts [0,2] = (Nb == 8) ? 3 : 2;
+		shifts [0,3] = (Nb == 8) ? 4 : 3;
 
 		// Decryption
-		shifts[1,0] = -1; // Not used
-		shifts[1,1] = 3;
-		shifts[1,2] = (Nb == 8) ? 1 : 2;
-		shifts[1,3] = (Nb == 8) ? 0 : 1;
+		shifts [1,0] = -1; // Not used
+		shifts [1,1] = 3;
+		shifts [1,2] = (Nb == 8) ? 1 : 2;
+		shifts [1,3] = (Nb == 8) ? 0 : 1;
 
 		int rcon_entries = (Nb * (Nr+1)) / Nk;
-		rcon = new Int32[rcon_entries + 1];
+		rcon = new Int32 [rcon_entries + 1];
 		Byte curr = 0x1;
 		for (int i=1; i < rcon.Length; i++) {
 			rcon[i] = curr << 24;
@@ -158,23 +158,24 @@ internal class RijndaelTransform : SymmetricTransform
 	private void SetupExpandedKey()
 	{
 		expandedKey = new Int32[Nb * (Nr+1)];
+		int pos = 0;
 		for (int i=0; i < Nk; i++) {
-			Int32 value =
-				(key[i*4] << 24) | 
-				(key[i*4+1] << 16) | 
-				(key[i*4+2] << 8) |
-				(key[i*4+3]);
-			expandedKey[i] = value;
+			Int32 value = (key [pos++] << 24);
+			value |= (key [pos++] << 16);
+			value |= (key [pos++] << 8);
+			value |= (key [pos++]);
+			expandedKey [i] = value;
 		}
 
 		for (int i = Nk; i < Nb * (Nr+1); i++) {
-			Int32 temp = expandedKey[i-1];
+			Int32 temp = expandedKey [i-1];
 			if (i % Nk == 0) {
-				temp = SubByte(RotByte(temp)) ^ rcon[i / Nk];
+				Int32 rot = (Int32) ((temp << 8) | ((temp >> 24) & 0xff));
+				temp = SubByte (rot) ^ rcon [i / Nk];
 			} else if (Nk > 6 && (i % Nk) == 4) {
-				temp = SubByte(temp);
+				temp = SubByte (temp);
 			}
-			expandedKey[i] = expandedKey[i-Nk] ^ temp;
+			expandedKey [i] = expandedKey [i-Nk] ^ temp;
 		}
 	}
 
@@ -185,10 +186,10 @@ internal class RijndaelTransform : SymmetricTransform
 		int pos = 0;
 		for (int col = 0; col < Nb; col++) {	
 			// loop unrooling, elimitated mul/add
-			state[0, col] = input[pos++];
-			state[1, col] = input[pos++];
-			state[2, col] = input[pos++];
-			state[3, col] = input[pos++];
+			state [0, col] = input [pos++];
+			state [1, col] = input [pos++];
+			state [2, col] = input [pos++];
+			state [3, col] = input [pos++];
 		} 
 
 		AddRoundKey (0, encrypt);
@@ -202,7 +203,7 @@ internal class RijndaelTransform : SymmetricTransform
 			ShiftRow (false);
 			ByteSub (false);
 
-			for (int round=1; round < Nr; round++)
+			for (int round = 1; round < Nr; round++)
 				Round (round, false);
 		}
 		AddRoundKey (Nr, encrypt);
@@ -210,10 +211,10 @@ internal class RijndaelTransform : SymmetricTransform
 		pos = 0;
 		for (int col = 0; col < Nb; col++) {	
 			// loop unrooling, elimitated mul/add
-			output[pos++] = state[0, col];
-			output[pos++] = state[1, col];
-			output[pos++] = state[2, col];
-			output[pos++] = state[3, col];
+			output [pos++] = state [0, col];
+			output [pos++] = state [1, col];
+			output [pos++] = state [2, col];
+			output [pos++] = state [3, col];
 		} 
 	}
 
@@ -223,24 +224,24 @@ internal class RijndaelTransform : SymmetricTransform
 		byte[] box = ((encrypt) ? sbox : invSbox);
 		for (int col = 0; col < Nb; col++) {
 			// unrolled loop
-			state [0, col] = box [state[0, col]];
-			state [1, col] = box [state[1, col]];
-			state [2, col] = box [state[2, col]];
-			state [3, col] = box [state[3, col]];
+			state [0, col] = box [state [0, col]];
+			state [1, col] = box [state [1, col]];
+			state [2, col] = box [state [2, col]];
+			state [3, col] = box [state [3, col]];
 		} 
 	}
 
 	private void ShiftRow (bool encrypt)
 	{
 		int shift_index = encrypt ? 0 : 1;
-		byte[] temp = new byte[Nb];
+		byte[] temp = new byte [Nb];
 		for (int row = 1; row < 4; row++) {
 			for (int col = 0; col < Nb; col++) {
-				int source_col = (col + shifts[shift_index, row]) % Nb;
+				int source_col = (col + shifts [shift_index, row]) % Nb;
 				temp[col] = state[row, source_col];
 			}
 			for (int col = 0; col < Nb; col++) {
-				state[row,col] = temp[col];
+				state[row, col] = temp[col];
 			}
 		} 
 	}
@@ -265,19 +266,27 @@ internal class RijndaelTransform : SymmetricTransform
 		}
 	}
 
-
 	private void MixColumn ()
 	{
 		int[,] tmp = new int[4, Nb];
 		for (int col = 0; col < Nb; col++) {
-			for (int row = 0; row < 4; row++) {
-				tmp[row,col] = 
-					Mult2_GF(state[row, col]) ^
-					Mult_GF(3, state[(row+1) % 4, col]) ^
-					state[(row+2) % 4, col] ^
-					state[(row+3) % 4, col];
-							
-			}
+			// unrolled loop (removed modulo)
+			tmp[0,col] = Mult2_GF(state[0, col]) ^
+				Mult_GF(3, state[1, col]) ^
+				state[2, col] ^
+				state[3, col];
+			tmp[1,col] = Mult2_GF(state[1, col]) ^
+				Mult_GF(3, state[2, col]) ^
+				state[3, col] ^
+				state[0, col];
+			tmp[2,col] = Mult2_GF(state[2, col]) ^
+				Mult_GF(3, state[3, col]) ^
+				state[0, col] ^
+				state[1, col];
+			tmp[3,col] = Mult2_GF(state[3, col]) ^
+				Mult_GF(3, state[0, col]) ^
+				state[1, col] ^
+				state[2, col];
 		}
 
 		for (int col = 0; col < Nb; col++) {
@@ -293,14 +302,23 @@ internal class RijndaelTransform : SymmetricTransform
 	{
 		int[,] tmp = new int[4, Nb];
 		for (int col = 0; col < Nb; col++) {
-			for (int row = 0; row < 4; row++) {
-				tmp[row,col] = 
-					Mult_GF(0xe, state[row, col]) ^
-					Mult_GF(0xb, state[(row+1) % 4, col]) ^
-					Mult_GF(0xd, state[(row+2) % 4, col]) ^
-					Mult_GF(0x9, state[(row+3) % 4, col]);
-							
-			}
+			// unrolled loop (removed modulo)
+			tmp[0,col] = Mult_GF(0xe, state [0, col]) ^
+				Mult_GF(0xb, state [1, col]) ^
+				Mult_GF(0xd, state [2, col]) ^
+				Mult_GF(0x9, state [3, col]);
+			tmp[1,col] = Mult_GF(0xe, state [1, col]) ^
+				Mult_GF(0xb, state [2, col]) ^
+				Mult_GF(0xd, state [3, col]) ^
+				Mult_GF(0x9, state [0, col]);
+			tmp[2,col] = Mult_GF(0xe, state [2, col]) ^
+				Mult_GF(0xb, state [3, col]) ^
+				Mult_GF(0xd, state [0, col]) ^
+				Mult_GF(0x9, state [1, col]);
+			tmp[3,col] = Mult_GF(0xe, state [3, col]) ^
+				Mult_GF(0xb, state [0, col]) ^
+				Mult_GF(0xd, state [1, col]) ^
+				Mult_GF(0x9, state [2, col]);
 		}
 
 		for (int col = 0; col < Nb; col++) {
@@ -316,11 +334,11 @@ internal class RijndaelTransform : SymmetricTransform
 	{
 		int roundoffset = encrypt ? (Nb * round) : (Nb * (Nr-round));
 		for (int col = 0; col < Nb; col++) {
-			Int32 keyword = expandedKey[roundoffset + col];
-			state[0,col] ^= (byte) ((keyword >> 24) & 0xff);
-			state[1,col] ^= (byte) ((keyword >> 16) & 0xff);
-			state[2,col] ^= (byte) ((keyword >> 8) & 0xff);
-			state[3,col] ^= (byte) (keyword & 0xff);
+			Int32 keyword = expandedKey [roundoffset + col];
+			state [0,col] ^= (byte) ((keyword >> 24) & 0xff);
+			state [1,col] ^= (byte) ((keyword >> 16) & 0xff);
+			state [2,col] ^= (byte) ((keyword >> 8) & 0xff);
+			state [3,col] ^= (byte) (keyword & 0xff);
 		}
 	}
 
@@ -328,7 +346,7 @@ internal class RijndaelTransform : SymmetricTransform
 	{
 		if (encrypt) {
 			ByteSub (true);
-			ShiftRow (encrypt);
+			ShiftRow (true);
 			MixColumn ();
 			AddRoundKey (round, true);
 		} else {
@@ -341,20 +359,22 @@ internal class RijndaelTransform : SymmetricTransform
 
 	private Int32 SubByte (Int32 a)
 	{
-		Int32 result = 0;
-		for (int i=0; i < 4; i++) {
-			Int32 value = 0xff & (a >> (8*i));
-			Int32 curr = sbox[value] << (i*8); 
-			result |= curr;
-		}
+		// unrolled loop (no more multiply)
+		Int32 value = 0xff & a;
+		Int32 curr = sbox [value]; 
+		Int32 result = curr;
+		value = 0xff & (a >> 8);
+		curr = sbox [value] << 8; 
+		result |= curr;
+		value = 0xff & (a >> 16);
+		curr = sbox [value] << 16; 
+		result |= curr;
+		value = 0xff & (a >> 24);
+		curr = sbox [value] << 24; 
+		result |= curr;
 		return result;
 	}
 
-	private Int32 RotByte (Int32 a)
-	{
-		return (a << 8) | ((a >> 24) & 0xff) ;
-	}
-		
 	// Constant tables used in the cipher
 	static byte[] sbox = {
 	99, 124, 119, 123, 242, 107, 111, 197,  48,   1, 103,  43, 254, 215, 171, 118, 

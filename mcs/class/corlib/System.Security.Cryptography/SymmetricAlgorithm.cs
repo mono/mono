@@ -28,6 +28,7 @@ namespace System.Security.Cryptography {
 		private byte[] temp;
 		private byte[] temp2;
 		private int FeedBackByte;
+		private bool m_disposed = false;
 
 		public SymmetricTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] rgbIV) 
 		{
@@ -40,8 +41,31 @@ namespace System.Security.Cryptography {
 			FeedBackByte = (algo.FeedbackSize >> 3);
 		}
 
+		~SymmetricTransform () 
+		{
+			Dispose (false);
+		}
+
 		public void Dispose () 
 		{
+			Dispose (true);
+			GC.SuppressFinalize (this);  // Finalization is now unnecessary
+		}
+
+		// MUST be overriden by classes using unmanaged ressources
+		// the override method must call the base class
+		protected void Dispose (bool disposing) 
+		{
+			if (!m_disposed) {
+				if (disposing) {
+					// dispose managed object: zeroize and free
+					Array.Clear (temp, 0, BlockSizeByte);
+					temp = null;
+					Array.Clear (temp2, 0, BlockSizeByte);
+					temp2 = null;
+				}
+				m_disposed = true;
+			}
 		}
 
 		public virtual bool CanTransformMultipleBlocks {
@@ -49,7 +73,7 @@ namespace System.Security.Cryptography {
 		}
 
 		public bool CanReuseTransform {
-			get { return true; }
+			get { return false; }
 		}
 
 		public virtual int InputBlockSize {
@@ -81,12 +105,14 @@ namespace System.Security.Cryptography {
 				CTS (input, output);
 				break;
 			default:
-				throw new NotImplementedException ("Unkown CipherMode");
+				throw new NotImplementedException ("Unkown CipherMode" + algo.Mode.ToString ());
 			}
 		}
 
+		// Electronic Code Book (ECB)
 		protected abstract void ECB (byte[] input, byte[] output); 
 
+		// Cipher-Block-Chaining (CBC)
 		protected virtual void CBC (byte[] input, byte[] output) 
 		{
 			if (encrypt) {
@@ -104,23 +130,31 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		// Cipher-FeedBack (CFB)
 		protected virtual void CFB (byte[] input, byte[] output) 
 		{
-			throw new NotImplementedException ("CFB not yet supported");
+		        ECB (temp, temp2);
+
+			if (encrypt) {
+				for (int i = 0; i < BlockSizeByte; i++)
+					output[i] = (byte)(temp2[i] ^ input[i]);
+				Array.Copy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+				Array.Copy (output, 0, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+			}
+			else {
+				Array.Copy (input, 0, temp, 0, BlockSizeByte);
+				for (int i = 0; i < BlockSizeByte; i++)
+					output[i] = (byte)(temp2[i] ^ input[i]);
+			}
 		}
 
 		// Output-FeedBack (OFB)
 		protected virtual void OFB (byte[] input, byte[] output) 
 		{
-			ECB (temp, temp2);
-
-			for (int i = 0; i < BlockSizeByte; i++) 
-				output[i] = (byte) (temp2[i] ^ input[i]);
-
-			Array.Copy(temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-			Array.Copy(temp2, 0, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+			throw new NotImplementedException ("OFB not yet supported");
 		}
 
+		// Cipher Text Stealing (CTS)
 		protected virtual void CTS (byte[] input, byte[] output) 
 		{
 			throw new NotImplementedException ("CTS not yet supported");
@@ -128,6 +162,9 @@ namespace System.Security.Cryptography {
 
 		public virtual int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset) 
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("Object is disposed");
+
 			// if ((inputCount & (BlockSizeByte-1)) != 0) didn't work for Rijndael block = 192
 			if ((inputCount % BlockSizeByte) != 0)
 				throw new CryptographicException ("Invalid input block size.");
@@ -155,6 +192,9 @@ namespace System.Security.Cryptography {
 
 		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount) 
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("Object is disposed");
+
 			int num = (inputCount + BlockSizeByte) & (~(BlockSizeByte-1));
 			byte [] res = new byte [num];
 			//int full = (num - BlockSizeByte); // didn't work for bs 192
@@ -241,6 +281,7 @@ namespace System.Security.Cryptography {
 		~SymmetricAlgorithm () 
 		{
 			if (KeyValue != null) {
+				// Zeroize the secret key and free
 				Array.Clear (KeyValue, 0, KeyValue.Length);
 				KeyValue = null;
 			}

@@ -23,24 +23,22 @@ namespace System.Security.Cryptography {
 		protected int EffectiveKeySizeValue;
 		public virtual int EffectiveKeySize {
 			get {
-				return EffectiveKeySizeValue;
+				if (EffectiveKeySizeValue == 0)
+					return KeySizeValue;
+				else
+					return EffectiveKeySizeValue;
 			}
-			set {
-				EffectiveKeySizeValue = value;
-			}
+			set { EffectiveKeySizeValue = value; }
 		}
 
 		// Overridden, which makes me suspect it changes effective keysize too?
 		public override int KeySize {
-			get {
-				return KeySizeValue;
-			}
-			set {
-				KeySizeValue = value;
-			}
+			get { return KeySizeValue; }
+			set { KeySizeValue = value; }
 		}
 				
-		public RC2 () {
+		public RC2 () 
+		{
 			KeySizeValue = 128;
 			BlockSizeValue = 64;
 			FeedbackSizeValue = 64;

@@ -1,3 +1,16 @@
+2002-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SymmetricAlgorithm.cs: Added better Dispose support
+	* DES.cs: Now only contains the abstract DES class.
+	* DESCryptoServiceProvider.cs: Added the DESTransform class (inherited
+	from SymmetricTransform) based the old DESCore and DESTransformBase code
+	* RC2.cs: Fixed EffectiveKeySize == 0
+	* RC2CryptoServiceProvider.cs: Added the RC2Transform class (inherited
+	from SymmetricTransform) based on the old RC2lImpl code. Unrolled some loops.
+	* RjindaelManaged.cs: Few more optimizations while looking for decrypting bug
+	* TripleDESCryptoServiceProvider.cs: New. Implement TripleDESTransform from 
+	DESTransform (non-optimal but working :-).
+
 2002-10-19  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SymmetricAlgorithm.cs: Added new class SymmetricTransform to avoid
