@@ -75,7 +75,7 @@ namespace System.Security.Permissions
 		}
 
 		[MonoTODO]
-		public override bool IsUnrestricted ()
+		public bool IsUnrestricted ()
 		{
 			throw new NotImplementedException ();
 		}

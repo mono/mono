@@ -1,6 +1,11 @@
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* ReflectionPermission.cs:
 	* EnvironmentPermission.cs:
+		bad place for an override keyword :(
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* ReflectionPermission.cs:
+	* EnvironmentPermission.cs:
 		Stubbs added because these are referenced
 		in System.Web.
 
