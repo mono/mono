@@ -49,8 +49,17 @@ namespace System.Windows.Forms {
 			// ControlCollection
 			public virtual void Add (Control value)
 			{
-				// TODO: Throz
-				if (value.GetType() == typeof(System.Windows.Forms.StatusBar))
+				if (this.owner.GetType() == typeof (System.Windows.Forms.Button))
+				{ // This makes Gtk throw a warning about a label already being added
+				  // This is actually support that Gtk just does not have :(
+				  // Should we reinvent the Button-object for that? (Inherit from Gtk.Container
+				  // and implement our own OnClicked handlers and stuff like that)
+
+					Gtk.Button gtkbutton = (Gtk.Button)this.owner.widget;
+					gtkbutton.Add (value.widget);
+					list.Add (value);
+				} 
+				else if (value.GetType() == typeof(System.Windows.Forms.StatusBar))
 				{
 					this.owner.vbox.PackEnd(value.widget, false, false, 0);
 					// this.vbox.ReorderChild (value.widget, 0);

@@ -98,6 +98,7 @@ namespace System.Windows.Forms
 //		*/
 
 		internal override Gtk.Widget CreateWidget () {
+			
 			Gtk.Button button = new Gtk.Button ();
 			button.Add (label.Widget);
 			return button;

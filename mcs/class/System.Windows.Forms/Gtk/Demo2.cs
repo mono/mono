@@ -27,6 +27,7 @@ namespace demo2
 		private MenuItem menuItem5 = new MenuItem();
 		private StatusBar statusBar1 = new StatusBar();
 		private StatusBar statusBar2 = new StatusBar();
+		private StatusBar statusBar3 = new StatusBar();
 
 		private void InitializeWidgets()
 		{
@@ -41,6 +42,12 @@ namespace demo2
 			this.statusBar2.Size = new System.Drawing.Size(292, 22);
 			this.statusBar2.TabIndex = 0;
 			this.statusBar2.Text = "statusBar2";
+
+			this.statusBar3.Location = new System.Drawing.Point(0, 251);
+			this.statusBar3.Name = "statusBar3";
+			this.statusBar3.Size = new System.Drawing.Size(292, 22);
+			this.statusBar3.TabIndex = 0;
+			this.statusBar3.Text = "statusBar3";
 
 			button1.Location = new Point(150, 28);
 			button1.Name = "button1";
@@ -88,6 +95,8 @@ namespace demo2
 
 			this.Size = new Size(512, 250);
 			this.Menu = mainMenu1;
+			// Freaky stuff
+			this.button1.Controls.Add (this.statusBar3);
 		}
 
 		public GtkForm()
