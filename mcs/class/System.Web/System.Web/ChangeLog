@@ -1,3 +1,12 @@
+2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CapabilitiesLoader.cs: loads browser detection and capabilities data
+	from browscap.ini file by Gary J. Keith.
+
+	* HttpBrowserCapabilities.cs: removed almost all TODOs.
+
+	* HttpRequest.cs: fixed Browser property.
+
 2003-12-15  Jackson Harper <jackson@ximian.com>
 
 	* TraceContext.cs: Initial implementation of storing data.

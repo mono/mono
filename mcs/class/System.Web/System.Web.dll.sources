@@ -2,6 +2,7 @@ Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
 Assembly/Locale.cs
 System.Web/BeginEventHandler.cs
+System.Web/CapabilitiesLoader.cs
 System.Web/EndEventHandler.cs
 System.Web/HttpContext.cs
 System.Web/HttpApplication.cs

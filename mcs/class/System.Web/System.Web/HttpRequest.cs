@@ -325,8 +325,10 @@ namespace System.Web {
 
 		public HttpBrowserCapabilities Browser {
 			get {
-				if (_browser == null)
-					_browser = new HttpBrowserCapabilities ();
+				if (_browser == null) {
+					_browser = (HttpBrowserCapabilities)
+						    HttpCapabilitiesBase.GetConfigCapabilities (null, this);
+				}
 
 				return _browser;
 			}

@@ -1,3 +1,7 @@
+2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCapabilitiesBase.cs: use the new loader.
+
 2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: also cache parents when building the
