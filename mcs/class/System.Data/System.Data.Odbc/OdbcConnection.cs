@@ -10,6 +10,7 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.EnterpriseServices;
 
 namespace System.Data.Odbc
 {
@@ -57,7 +58,13 @@ namespace System.Data.Odbc
 		{
 			get { return hdbc; }
 		}
-		
+	
+		[DataCategory ("Data")]
+		[DefaultValue ("")]
+		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]	
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+                [RecommendedAsConfigurableAttribute (true)]
 		public string ConnectionString {
 			get {
 				return connectionString;
@@ -66,7 +73,9 @@ namespace System.Data.Odbc
 				connectionString = value;
 			}
 		}
-
+		
+		[OdbcDescriptionAttribute ("Current connection timeout value, not settable  in the ConnectionString")]
+		[DefaultValue (15)]	
 		public int ConnectionTimeout {
 			get {
 				return connectionTimeout;
@@ -87,13 +96,18 @@ namespace System.Data.Odbc
 //					return null;
 //			}
 //		}
-
+		
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [OdbcDescriptionAttribute ("Current data source Catlog value, 'Database=X' in the ConnectionString")]
 		public string Database {
 			get {
 				return "";
 			}
 		}
 
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [OdbcDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed")]
+                [BrowsableAttribute (false)]		
 		public ConnectionState State
 		{
 			get {
@@ -105,6 +119,35 @@ namespace System.Data.Odbc
 			}
 		}
 
+		[MonoTODO]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [OdbcDescriptionAttribute ("Current data source, 'Server=X' in the ConnectionString")]
+		public string DataSource {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [OdbcDescriptionAttribute ("Current ODBC Driver")]
+                public string Driver {
+                        get {
+                                throw new NotImplementedException ();
+                        }
+                }
+		
+		[MonoTODO]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [OdbcDescriptionAttribute ("Version of the product accessed by the ODBC Driver")]
+                [BrowsableAttribute (false)]
+                public string ServerVersion {
+                        get {
+                                throw new NotImplementedException ();
+                        }
+                }
+
+		
 		#endregion // Properties
 	
 		#region Methods
@@ -227,11 +270,19 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public void EnlistDistributedTransaction ( ITransaction transaction) {
+			throw new NotImplementedException ();
+		}
+
+
 		#endregion
 
 		#region Events and Delegates
 
 		public event StateChangeEventHandler StateChange;
+
+		public event OdbcInfoMessageEventHandler InfoMessage;
 
 		#endregion
 	}
