@@ -1,3 +1,7 @@
+2002-04-27	Patrik Torstensson <patrik.torstensson@intel.com>
+
+	* x86.brg: fixed bug in CONV_I8 (invalid stack correction)
+
 2002-04-27  Martin Baulig  <martin@gnome.org>
 
 	* jit.h (MonoFlowGrap): Renamed `epilogue_begin' to `epilogue_end',
