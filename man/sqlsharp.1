@@ -1,13 +1,26 @@
-.TH sqlsharpcli 1 "30 November 2002"
+.TH sqlsharp 1 "10 December 2002"
 .SH NAME 
-sqlsharpcli \- Mono SQL# Command Line SQL Query tool
+sqlsharp \- Mono SQL# command-line SQL Query tool
 .SH SYNOPSIS
-.B sqlsharpcli 
-[option] [source-files]
+.B sqlsharp 
+[\-f filename] [\-o filename] [\-s]
 .SH DESCRIPTION
-sqlsharpcli is the Mono SQL# tool used for entering SQL queries
+sqlsharp is the Mono SQL# tool used for entering SQL queries
 to a database using Mono ADO.NET providers.
 .PP
+.SH OPTIONS
+The following options are supported:
+.TP
+.I "-f filename"
+Output file to load SQL# commands from.
+.TP
+.I "-o filename"
+Output file to send results.
+.TP
+.I "-s"
+Silent mode.
+.PP
+.SH HOW TO USE
 The SQL# tool accepts commands via its command line interface.  Commands
 begin with a backslash followed by the command name.
 .PP
@@ -46,35 +59,6 @@ To connect to a database, you need to do the following:
 		
 .fi
 .PP
-.SH COMMANDS
-The following commands are supported:
-.PP
-.TP
-.I "Open"
-Opens connection to database.
-.nf
-
-Example:
-	SQL# \\open
-	
-.fi
-.TP
-.I "ConnectionString"
-Sets the Connection String.
-.nf
-
-Example:
-	SQL# \\connectionstring Database=test
-.fi
-.TP
-.I "Provider"
-Sets the data provider.
-.nf
-
-Example:
-	SQL# \\provider mysql
-	
-.fi
 .SH CONNECTION AND PROVIDER COMMANDS
 These commands are used to setup the provider, 
 connection string, and open/close the database connnection
@@ -427,30 +411,34 @@ which connects to a PostgreSQL database:
 .fi
 .SH DEBUGGING SUPPORT
 No debugging support.
-.SH NOTES
-No notes.
 .SH AUTHORS
 The Mono SQL# Tool was written 
+.nf
 by Daniel Morgan <danmorg@sc.rr.com>
+.fi
 .PP
 .SH LICENSE
 The Mono SQL# Tool is released under the terms of the GNU GPL.
 Please read the accompanying `COPYING' file for details.  Alternative
 licenses are available from Ximian or Daniel Morgan.
-.PP
-.SH SEE ALSO
-mono(1), mint(1), mcs(1)
-.PP
 .SH BUGS
 To report bugs in the compiler, you can use `bug-buddy', or you can
 file bug reports in our bug tracking system:
+.nf
 http://bugzilla.ximian.com.
-.SH MAILING LIST
-The Mono Mailing List is available at: mono-list-request@ximian.com
-.SH MORE INFORMATION
-The Mono C# compiler is developed by Ximian, Inc
-(http://www.ximian.com) (http://www.ximian.com) and is based on the
-ECMA C# language standard available here:
-http://www.ecma.ch/ecma1/STAND/ecma-334.htm
-
+.fi
+.PP
+.SH MAILING LISTS
+For details, visit:
+.nf
+http://mail.ximian.com/mailman/mono-list 
+.fi
+.SH WEB SITE
+For details, visit: 
+.nf
+http://www.go-mono.com 
+.fi
+.PP
+.SH SEE ALSO
+mono(1), mint(1)
 
