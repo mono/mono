@@ -1,3 +1,7 @@
+2002-04-25  Nick Drochak <ndrochak@gol.com>
+
+	* icall.c: Fix typo in map for GetNonZeroBytes
+
 2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* string-icalls.c : String does now passes unit tests without any 
