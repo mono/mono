@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	[MonoTODO ("This class is based on conjecture and guesswork.")]
-	internal sealed class SoapProtocolReflector : ProtocolReflector {
+	internal class SoapProtocolReflector : ProtocolReflector {
 
 		#region Fields
 
@@ -32,10 +32,6 @@ namespace System.Web.Services.Description {
 		#endregion // Constructors
 
 		#region Properties
-
-		public SoapBinding SoapBinding {
-			get { return soapBinding; }
-		}
 
 		public override string ProtocolName {
 			get { return "Soap"; }

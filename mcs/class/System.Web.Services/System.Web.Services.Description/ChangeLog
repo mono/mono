@@ -1,4 +1,9 @@
 2002-08-03  Tim Coleman <tim@timcoleman.com>
+	* SoapProtocolReflector.cs:
+		Removed SoapBinding property and made the class
+		not sealed to agree with class reference page.
+
+2002-08-03  Tim Coleman <tim@timcoleman.com>
 	* ServiceDescriptionBaseCollection.cs:
 		Removed some NotImplementedException()'s so that
 		it runs.
