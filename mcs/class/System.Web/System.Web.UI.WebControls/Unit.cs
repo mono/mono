@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(IsEmpty)
 				return String.Empty;
-			return ( val.ToString(culture) + GetStringFromPixel(type) );
+			return ( val.ToString(culture.NumberFormat) + GetStringFromPixel(type) );
 		}
 	}
 }

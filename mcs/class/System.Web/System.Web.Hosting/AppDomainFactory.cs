@@ -109,9 +109,9 @@ namespace System.Web.Hosting
 			setup.ApplicationName = appName;
 			string webConfigName = Path.Combine (appPath, "Web.config");
 			if (File.Exists (webConfigName))
-				setup.ConfigurationFile = "Web.config";
+				setup.ConfigurationFile = webConfigName;
 			else
-				setup.ConfigurationFile = "web.config";
+				setup.ConfigurationFile = Path.Combine (appPath, "web.config");
 
 			if (dict != null) {
 				dict.Add (domainData [0], "*");

@@ -1,3 +1,7 @@
+2003-03-17 George Kodinov <gkodinov@openlinksw.co.uk>
+
+        * BaseCompiler.cs: Removed a FIXME: and added a correct calculation of app's private bin path
+
 2003-03-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs:

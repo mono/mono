@@ -64,10 +64,8 @@ namespace System.Web.Compilation
 		public virtual string CompilerOptions {
 			get {
 				string assemblies = default_assemblies;
-				string privatePath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
-				//FIXME: remove the next line once multiple appdomains can work together
-				if (privatePath == null) privatePath = "bin";
-				//
+				string privatePath = Path.Combine (
+                                  new Uri (AppDomain.CurrentDomain.SetupInformation.ApplicationBase).LocalPath, privatePath);
 				if (privatePath != null && Directory.Exists (privatePath)) {
 					StringBuilder sb = new StringBuilder (assemblies);
 					foreach (string fileName in Directory.GetFiles (privatePath, "*.dll"))
