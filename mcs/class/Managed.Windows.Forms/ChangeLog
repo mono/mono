@@ -1,3 +1,7 @@
+2005-02-22  Jackson Harper  <jackson@ximian.com>
+
+	* System.Windows.Forms.dll.sources: Add databinding classes
+
 2005-02-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add 'build-csproj'.
