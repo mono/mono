@@ -1,3 +1,7 @@
+2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.cs: Implement /win32res and /win32icon.
+
 2004-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Add a rule to improve error handling for the
