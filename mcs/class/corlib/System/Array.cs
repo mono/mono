@@ -661,45 +661,40 @@ namespace System
 
 		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
 		{
-			int pivot;
-			int low = low0;
-			int high = high0;
-			
 			if (keys == null)
 				throw new ArgumentNullException ();
 
 			if (keys.Rank > 1 || (items != null && items.Rank > 1))
 				throw new RankException ();
 
-			if (low >= high)
+			if (low0 >= high0)
 				return;
 
-			pivot = (low + high) / 2;
+			int low = low0;
+			int high = high0;
 
-			if (compare (keys.GetValue (low), keys.GetValue (pivot), comparer) > 0)
-				swap (keys, items, low, pivot);
-			
-			if (compare (keys.GetValue (pivot), keys.GetValue (high), comparer) > 0)
-				swap (keys, items, pivot, high);
+			object objPivot = keys.GetValue ((low + high) / 2);
 
-			while (low < high)
+			while (low <= high)
 			{
 				// Move the walls in
-				while (low < high && compare (keys.GetValue (low), keys.GetValue (pivot), comparer) < 0)
-					low++;
-				while (low < high && compare (keys.GetValue (pivot), keys.GetValue (high), comparer) < 0)
-					high--;
+				while (low < high0 && compare (keys.GetValue (low), objPivot, comparer) < 0)
+					++low;
+				while (high > low0 && compare (objPivot, keys.GetValue (high), comparer) < 0)
+					--high;
 
-				if (low < high)
+				if (low <= high)
 				{
 					swap (keys, items, low, high);
-					low++;
-					high--;
+					++low;
+					--high;
 				}
 			}
 
-			qsort (keys, items, low0, low - 1, comparer);
-			qsort (keys, items, high + 1, high0, comparer);
+			if (low0 < high)
+				qsort (keys, items, low0, high, comparer);
+			if (low < high0)
+				qsort (keys, items, low, high0, comparer);
 		}
 
 		private static void swap (Array keys, Array items, int i, int j)
