@@ -1,3 +1,6 @@
+2004-01-21  Jordi Mas i Hernàndez
+	* Bitmap.cs: Several new methods added.
+		
 2004-01-21  Duncan Mak  <duncan@ximian.com>
 
 	* gdipFunctions.cs (GdipGetPathTypes, GdipGetPathPoints): Add
@@ -24,6 +27,7 @@
 
 	* gdipFunctions.cs: Import functions for GraphicsPath.
 
+>>>>>>> 1.89
 2004-01-14  Ravindra <rkumar@novell.com>
                                                                                 
         * SolidBrush.cs: Made SolidBrush to initialize its color

@@ -3,6 +3,7 @@
 //
 // Author: 
 // Alexandre Pigolkine (pigolkine@gmx.de)
+// Jordi Mas i Hernàndez (jmas@softcatala.org)
 //
 
 using System;
@@ -129,7 +130,9 @@ namespace System.Drawing {
 		[DllImport ("gdiplus.dll")]
 		static internal extern Status GdipSetRenderingOrigin (IntPtr graphics, int x, int y);
  		[DllImport("gdiplus.dll")]
- 		internal static extern Status GdipCloneBitmapAreaI (int x, int y, int width, int height, PixelFormat format, IntPtr original, out int bitmap);
+ 		internal static extern Status GdipCloneBitmapArea (float x, float y, float width, float height, PixelFormat format, IntPtr original, out IntPtr bitmap);
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipCloneBitmapAreaI (int x, int y, int width, int height, PixelFormat format, IntPtr original, out IntPtr bitmap);
  		[DllImport("gdiplus.dll")]
  		internal static extern Status GdipResetWorldTransform (IntPtr graphics);
  		[DllImport("gdiplus.dll")]
@@ -138,6 +141,9 @@ namespace System.Drawing {
  		internal static extern Status GdipGetWorldTransform (IntPtr graphics, IntPtr matrix);
  		[DllImport("gdiplus.dll")]
  		internal static extern Status GdipScaleWorldTransform (IntPtr graphics, float sx, float sy, MatrixOrder order);
+ 		
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipGraphicsClear(IntPtr graphics, int argb);
 		
 		// Pen functions
 		[DllImport("gdiplus.dll")]
@@ -228,13 +234,17 @@ namespace System.Drawing {
 		
 		// Bitmap functions
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreateBitmapFromScan0 (int width, int height, int stride, PixelFormat format, IntPtr scan0, out int bitmap);
+		internal static extern Status GdipCreateBitmapFromScan0 (int width, int height, int stride, PixelFormat format, IntPtr scan0, out IntPtr bmp);
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreateBitmapFromGraphics (int width, int height, IntPtr target, out int bitmap);
+		internal static extern Status GdipCreateBitmapFromGraphics (int width, int height, IntPtr target, out IntPtr bitmap);
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref Rectangle rc, ImageLockMode flags, PixelFormat format, [In, Out] IntPtr bmpData);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipBitmapSetResolution(IntPtr bmp, float xdpi, float ydpi);
+
 		
 		// This an internal GDIPlus Cairo function, not part GDIPlus interface
 		//[DllImport("gdiplus.dll")]
@@ -255,7 +265,30 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImageI( IntPtr graphics, IntPtr image, int x, int y);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageGraphicsContext( IntPtr image, out int graphics);
+		internal static extern Status GdipGetImageGraphicsContext( IntPtr image, out int graphics);		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipDrawImage(IntPtr graphics, IntPtr image, float x, float y);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipDrawImageRectRectI(IntPtr graphics, IntPtr image,
+							int dstx, int dsty, int dstwidth, int dstheight,
+                       		int srcx, int srcy, int srcwidth, int srcheight,
+                       		GraphicsUnit srcUnit, IntPtr imageattr, IntPtr callback, int callbackData);                      		
+		
+		[DllImport("gdiplus.dll")]		
+		internal static extern Status GdipCreateHBITMAPFromBitmap(IntPtr bmp, out IntPtr HandleBmp, int clrbackground);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateHICONFromBitmap(IntPtr bmp, out IntPtr HandleIcon);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateBitmapFromHICON(IntPtr  hicon,  out IntPtr bitmap);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateBitmapFromResource(IntPtr hInstance,
+                             string lpBitmapName, out IntPtr bitmap);
+
+
 
                 // Matrix functions
                 [DllImport ("gdiplus.dll")]
@@ -393,8 +426,25 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipIsOutlineVisiblePathPoint (IntPtr path, float x, float y, IntPtr graphics, out bool result);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result);
-                
+                internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result); 
+                                             
+				// ImageAttributes
+				[DllImport ("gdiplus.dll")]     
+				internal static extern Status GdipCreateImageAttributes(out IntPtr imageattr);
+				
+				[DllImport ("gdiplus.dll")]     
+				internal static extern Status GdipSetImageAttributesColorKeys(IntPtr imageattr,
+                                ColorAdjustType type, bool enableFlag, int colorLow, int colorHigh);
+                                
+                [DllImport ("gdiplus.dll")]     
+				internal static extern Status GdipDisposeImageAttributes(IntPtr imageattr);
+				
+				[DllImport ("gdiplus.dll")]     
+				internal static extern Status GdipSetImageAttributesColorMatrix(IntPtr imageattr,
+                             ColorAdjustType type, bool enableFlag, ColorMatrix colorMatrix,
+                               ColorMatrix grayMatrix,  ColorMatrixFlag flags);                                
+				
+
 #endregion      
 	}               
 }               

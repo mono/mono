@@ -18,7 +18,7 @@ namespace System.Drawing
 	[ComVisible(false)]
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
-		internal IntPtr nativeObject;
+		internal IntPtr nativeObject = IntPtr.Zero;
 		
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
@@ -57,10 +57,13 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public void Clear (Color color)
-		{
-			throw new NotImplementedException ();
+		{			
+ 			Status status = GDIPlus.GdipGraphicsClear(nativeObject, color.ToArgb());
+ 			
+ 			if (status != Status.Ok)
+				throw new Exception ("Error calling GDIPlus.GdipGraphicsClear:" +status);
 		}
 
 		[MonoTODO]
@@ -260,10 +263,13 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, PointF point)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipDrawImage(nativeObject, image.NativeObject, point.X, point.Y);
+ 			
+ 			if (status != Status.Ok)
+				throw new Exception ("Error calling GDIPlus.DrawImage (Image image, PointF point):" +status);					
 		}
 
 		[MonoTODO]
@@ -403,11 +409,16 @@ namespace System.Drawing
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
-		{
-			throw new NotImplementedException ();
+		{			
+			Status status =  GDIPlus.GdipDrawImageRectRectI(nativeObject, image.NativeObject, //aki
+								destRect.X, destRect.Y, destRect.Width, destRect.Height,
+								srcX, srcY, srcWidth, srcHeight,
+								srcUnit, imageAttr.NativeObject, IntPtr.Zero, 0);
+								 			
+ 			if (status != Status.Ok)
+				throw new Exception ("Error calling GDIPlus.DrawImage(Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)" +status);		
 		}
 
 		[MonoTODO]
@@ -601,8 +612,8 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, 
 				ref rc, IntPtr.Zero, brush.nativeObject);
 			
-			if (status != Status.Ok)
-				throw new Exception ("Cannot DrawString (string s, Font font, Brush brush, float x, float y):");
+			if (status != Status.Ok)				
+				throw new Exception ("Error calling GDIPlus.GdipDrawString(string s, Font font, Brush brush, float x, float y):" +s);
 		}
 
 		[MonoTODO]

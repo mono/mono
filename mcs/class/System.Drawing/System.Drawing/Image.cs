@@ -32,7 +32,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	protected PixelFormat pixel_format;
 	protected ColorPalette colorPalette;
 
-	ImageFormat raw_format;
+	protected ImageFormat raw_format;
 	
 	// constructor
 	public Image ()
@@ -44,6 +44,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	private Image (SerializationInfo info, StreamingContext context)
 	{
 	}
+	
+	
 
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
@@ -333,6 +335,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public int Width {
 		get {
 			return image_size.Width;
+		}
+	}
+	
+	internal IntPtr NativeObject{
+		get{
+			return nativeObject;
+		}
+		set	{
+			nativeObject = value;
 		}
 	}
 	

@@ -9,6 +9,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace System.Drawing.Imaging
 {
@@ -18,6 +19,17 @@ namespace System.Drawing.Imaging
 		internal PixelFormat pixel_format;
 		internal IntPtr address;
 		internal int reserved;
+		private	 bool bAllocated = false;
+		
+		~BitmapData()
+		{			
+			if (bAllocated)
+				Marshal.FreeHGlobal(address);						
+		}
+		
+		internal bool Allocated {
+			set {bAllocated = value;}
+		}
 		
 		public int Height {
 			get {
@@ -41,6 +53,7 @@ namespace System.Drawing.Imaging
 
 		public PixelFormat PixelFormat {
 			get {
+				
 				return pixel_format;
 			}
 
@@ -65,6 +78,13 @@ namespace System.Drawing.Imaging
 			}
 
 			set {
+				
+				if (bAllocated)
+				{
+					Marshal.FreeHGlobal(address);				
+					bAllocated = false;
+				}
+				
 				address = value;
 			}
 		}

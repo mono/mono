@@ -59,8 +59,8 @@ public class BmpPaint {
 		CreateBitmap ("file.bmp", ImageFormat.Bmp);
 		PaintOnBitmap ("file.bmp", "file-painted.bmp");
 		CreateBitmap ("file.jpg", ImageFormat.Jpeg);
-		PaintOnBitmap ("file.jpg", "file-painted.jpg");
-		CreateBitmap ("file.png", ImageFormat.Png);
-		PaintOnBitmap ("file.png", "file-painted.png");
+		//PaintOnBitmap ("file.jpg", "file-painted.jpg");
+		//CreateBitmap ("file.png", ImageFormat.Png);
+		//PaintOnBitmap ("file.png", "file-painted.png");
 	}
 };

@@ -7,6 +7,7 @@
 //   Alexandre Pigolkine (pigolkine@gmx.de)
 //   Christian Meyer (Christian.Meyer@cs.tum.edu)
 //   Miguel de Icaza (miguel@ximian.com)
+//	 Jordi Mas i Hernàdez (jmas@softcatala.org)
 //
 using System;
 using System.IO;
@@ -26,12 +27,14 @@ namespace System.Drawing {
 		// constructors
 		public Bitmap (int width, int height) : this (width, height, PixelFormat.Format32bppArgb)
 		{
+			raw_format = ImageFormat.Bmp;
 		}
 
 		public Bitmap (int width, int height, Graphics g)
 		{
+			raw_format = ImageFormat.Bmp;
 			image_size = new Size(width, height);
-			int bmp = 0;
+			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
 			if (s != Status.Ok)
 				throw new Exception ("Could not create Bitmap from Graphics: " + s);
@@ -41,6 +44,7 @@ namespace System.Drawing {
 
 		public Bitmap (int width, int height, PixelFormat format)
 		{
+			raw_format = ImageFormat.Bmp;
 			image_size = new Size(width, height);
 			pixel_format = format;
 			int bpp = 32;
@@ -48,7 +52,7 @@ namespace System.Drawing {
 			stride = (stride + 3) & ~3;
 			int bmp_size = stride * height;			
 			
-			int bmp = 0;
+			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, PixelFormat.Format32bppArgb, IntPtr.Zero, 
 				out bmp);
 				
@@ -66,13 +70,38 @@ namespace System.Drawing {
 
 		public Bitmap (string filename) : this (filename, false) {}
 
-		public Bitmap (Image original, Size newSize)
+		public Bitmap (Image original, Size newSize) 
 		{
+			raw_format = ImageFormat.Bmp;
+			BitmapFromImage(original, newSize);
+		}
+		
+		internal Bitmap (int width, int height, PixelFormat pixel, IntPtr bmp)
+		{
+			image_size = new Size(width, height);			
+			nativeObject = (IntPtr)bmp;
+			pixel_format = pixel;
+			raw_format = ImageFormat.Bmp;
+		}
+		
+		internal Bitmap (float width, float height, PixelFormat pixel, IntPtr bmp)
+		{
+			image_size = new Size((int)width, (int)height);			
+			nativeObject = (IntPtr)bmp;
+			pixel_format = pixel;
+			raw_format = ImageFormat.Bmp;
+		}
+		
+		internal void BitmapFromImage(Image original, Size newSize){
+			
 			if (original is Bitmap) {
+				
+				if (nativeObject!=IntPtr.Zero) Dispose();
+				
 				Bitmap bmpOriginal = (Bitmap) original;
 				image_size = bmpOriginal.Size;
 				pixel_format = bmpOriginal.pixel_format;
-				int bmp = 0;
+				IntPtr bmp;
 				Status s = GDIPlus.GdipCloneBitmapAreaI (0, 0, newSize.Width, newSize.Height, bmpOriginal.PixelFormat, bmpOriginal.nativeObject, out bmp);
 				if (s != Status.Ok)
 					throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
@@ -85,6 +114,8 @@ namespace System.Drawing {
 
 		void InitFromStream (Stream stream)
 		{
+			Console.WriteLine("Bitmap.InitFromStream");
+			
 			BitmapData bd = Decode (stream);
 			if (bd == null)
 				throw new ArgumentException ("Stream could not be decoded");
@@ -92,8 +123,7 @@ namespace System.Drawing {
 			image_size = new Size (bd.Width, bd.Height);
 			pixel_format = bd.PixelFormat;
 
-			int bmp = 0;
-			//buffer = bd.Scan0;
+			IntPtr bmp;			
 			Console.WriteLine ("Stride: {0} ", bd.Stride);
 			Console.WriteLine ("Scan0: {0:x}" , (long) bd.Scan0);
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (bd.Width, bd.Height, bd.Stride, bd.PixelFormat, bd.Scan0, out bmp);
@@ -120,14 +150,28 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 
-		public Bitmap (Image original, int width, int heigth)
+		public Bitmap (Image original, int width, int heigth) 
 		{
-			throw new NotImplementedException ();
+			Size newSize = new Size();
+			newSize.Height=heigth;
+			newSize.Width=width;
+			
+			BitmapFromImage(original,newSize);
 		}
 
 		public Bitmap (int width, int height, int stride, PixelFormat format, IntPtr scan0)
-		{
-			throw new NotImplementedException ();
+		{						
+			IntPtr bmp;
+			
+			Status status = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, scan0, out bmp);
+			
+			if (status != Status.Ok)
+				throw new ArgumentException ("Could not allocate the GdiPlus image: " + status);
+				
+			nativeObject = (IntPtr)bmp;			
+			pixel_format = format;
+			raw_format = ImageFormat.Bmp;
+			image_size = new Size(width, height);
 		}
 
 		private Bitmap (SerializationInfo info, StreamingContext context)
@@ -157,38 +201,83 @@ namespace System.Drawing {
 		}
 
 		public Bitmap Clone (Rectangle rect,PixelFormat format)
-		{
-			throw new NotImplementedException ();
-		}
+		{				
+			IntPtr bmp;			
+   			Status status = GDIPlus.GdipCloneBitmapAreaI(rect.X, rect.Top, rect.Width, rect.Height,
+                               PixelFormat, nativeObject,  out bmp);
+                               
+			if (status != Status.Ok)
+				throw new Exception ("Error calling GdipBitmapUnlockBits " +status);		
+
+			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
+       		return bmpnew;
+       	}
 		
 		public Bitmap Clone (RectangleF rect, PixelFormat format)
 		{
-			throw new NotImplementedException ();
+			IntPtr bmp;			
+   			Status status = GDIPlus.GdipCloneBitmapArea(rect.X, rect.Top, rect.Width, rect.Height,
+                               PixelFormat, nativeObject,  out bmp);
+                               
+			if (status != Status.Ok)
+				throw new Exception ("Error calling GdipBitmapUnlockBits " +status);		
+
+			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
+       		return bmpnew;
 		}
 
-		public static Bitmap FromHicon (IntPtr hicon)
-		{
-			throw new NotImplementedException ();
+		public static Bitmap FromHicon (IntPtr hicon)	//TODO: Untested
+		{	
+			IntPtr bitmap;	
+				
+			Status status = GDIPlus.GdipCreateBitmapFromHICON(hicon, out bitmap);
+			    
+			if (status != Status.Ok)
+				throw new Exception ("Error calling GdipCreateBitmapFromHICON " +status);		
+				
+			
+			return new Bitmap (0,0, PixelFormat.Format32bppArgb, bitmap);	// FIXME
 		}
 
-		public static Bitmap FromResource (IntPtr hinstance, string bitmapName)
+		public static Bitmap FromResource (IntPtr hinstance, string bitmapName)	//TODO: Untested
 		{
-			throw new NotImplementedException ();
+			IntPtr bitmap;	
+				
+			Status status = GDIPlus.GdipCreateBitmapFromResource(hinstance, bitmapName, out bitmap);
+			    
+			if (status != Status.Ok)
+				throw new Exception ("Error calling GdipCreateBitmapFromResource " +status);		
+			
+			return new Bitmap (0,0, PixelFormat.Format32bppArgb, bitmap); // FIXME
 		}
 
 		public IntPtr GetHbitmap ()
 		{
-			throw new NotImplementedException ();
+			return GetHbitmap(Color.Gray);
 		}
 
 		public IntPtr GetHbitmap (Color background)
 		{
-			throw new NotImplementedException ();
+			IntPtr HandleBmp;
+			
+			Status status = GDIPlus.GdipCreateHBITMAPFromBitmap(nativeObject, out HandleBmp, background.ToArgb());
+                               
+			if (status != Status.Ok)
+				throw new Exception ("GdipCreateHBITMAPFromBitmap " +status);				
+				
+			return  HandleBmp;
 		}
 
 		public IntPtr GetHicon ()
 		{
-			throw new NotImplementedException ();
+			IntPtr HandleIcon;
+			
+			Status status = GDIPlus.GdipCreateHICONFromBitmap(nativeObject, out HandleIcon);
+                               
+			if (status != Status.Ok)
+				throw new Exception ("GdipCreateHICONFromBitmap " +status);				
+				
+			return  HandleIcon;			
 		}
 
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format)
@@ -206,7 +295,8 @@ namespace System.Drawing {
 			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  lfBuffer);
 			
 			result = (BitmapData) Marshal.PtrToStructure(lfBuffer,  typeof(BitmapData));											
-			Marshal.FreeHGlobal (lfBuffer);
+			Marshal.FreeHGlobal (lfBuffer);			
+			//NOTE: scan0 points to piece of memory allocated in the unmanaged space
 			
 			if (status != Status.Ok)
 				throw new Exception ("Could not lock bits: " + status);
@@ -218,25 +308,46 @@ namespace System.Drawing {
 
 		public void MakeTransparent ()
 		{
-			throw new NotImplementedException ();
+			Color clr = GetPixel(0,0);			
+			MakeTransparent (clr);
 		}
 
 		public void MakeTransparent (Color transparentColor)
-		{
-			throw new NotImplementedException ();
+		{				
+			Bitmap	bmp = new Bitmap(Width, Height, PixelFormat);		
+			Graphics gr = Graphics.FromImage(bmp);
+			Rectangle destRect = new Rectangle(0,0, Width, Height);
+			ImageAttributes imageAttr = new ImageAttributes();			
+						
+			gr.Clear(Color.Transparent);					
+			
+			imageAttr.SetColorKey(transparentColor,	transparentColor);
+
+			gr.DrawImage (this, destRect, 0, 0, Width, Height, 	GraphicsUnit.Pixel, imageAttr);					
+			
+			Size newSize = new Size();
+			newSize.Height=Height;
+			newSize.Width=Width;			
+			BitmapFromImage(bmp,newSize);			
+			
+			gr.Dispose();
+			bmp.Dispose();
 		}
 
 		public void SetResolution (float xDpi, float yDpi)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipBitmapSetResolution(nativeObject, xDpi, yDpi);
+			
+			if (status != Status.Ok)
+				throw new Exception ("Error calling GdipBitmapSetResolution " +status);		
 		}
 
 		public void UnlockBits (BitmapData bitmap_data)
 		{
-			Status s = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmap_data);
+			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmap_data);
 
-			if (s != Status.Ok)
-				throw new Exception ("Could not unlock bits: " + s);
+			if (status != Status.Ok)
+				throw new Exception ("Error calling GdipBitmapUnlockBits " +status);		
 		}
 
 		// properties

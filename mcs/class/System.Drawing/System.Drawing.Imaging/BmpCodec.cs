@@ -3,6 +3,7 @@
 //
 // Author: 
 //    Alexandre Pigolkine (pigolkine@gmx.de)
+//	  Jordi Mas i Hernàndez (jmas@softcatala.org>, 2004
 //    BITMAPINFOHEADER,Decode functions implemented using code/ideas from
 //    CxImage (c)  07/Aug/2001 <ing.davide.pizzolato@libero.it>
 //
@@ -200,9 +201,7 @@ namespace System.Drawing.Imaging {
 		}
 		
 		internal bool Decode (Image image, Stream stream, BitmapData info)
-		{
-								
-#if false
+		{							
 			if (stream.Length < 14 + BITMAPINFOHEADER_SIZE/* sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)*/)
 				return false;
 			long startPosition = stream.Position;
@@ -231,13 +230,30 @@ namespace System.Drawing.Imaging {
 
 			switch (bmih.biBitCount) {
 			case 24:
+				Console.WriteLine ("BmpCodec: 24 bits bitmap", bmih.biSizeImage);
 				info.PixelFormat = PixelFormat.Format24bppRgb;
 				if (bmfh.bfOffBits != 0L)
 					stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
 
 				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
-					info.RawImageBytes = new byte[bmih.biSizeImage];
-					stream.Read(info.RawImageBytes, 0, (int)bmih.biSizeImage);
+					
+					IntPtr lfBuffer = Marshal.AllocHGlobal(bmih.biSizeImage);	
+					byte[] bt = new byte[info.Stride];					
+					int offset = (info.Height-1) * info.Stride;						
+					int baseadr = lfBuffer.ToInt32();
+										
+					//	DIB are stored upside down. That means that the uppest row which 
+					//	appears on the screen actually is the lowest row stored in the bitmap 					
+					while(offset>=0){									
+						stream.Read(bt, 0, info.Stride); 
+						Marshal.Copy (bt, 0, (IntPtr)( baseadr + offset), info.Stride);						
+						offset -= info.Stride;				
+					}										
+					
+					Console.WriteLine ("BmpCodec: 24 bits bitmap", bmih.biSizeImage);
+					info.Scan0 = lfBuffer;
+					info.Allocated=true;		
+			
 				} else {
 					//
 					// FIXME
@@ -247,11 +263,27 @@ namespace System.Drawing.Imaging {
 				break;
 			case 32:
 				info.PixelFormat = PixelFormat.Format32bppArgb;
+				Console.WriteLine ("BmpCodec: 32 bits bitmap", bmih.biSizeImage);
 				if (bmfh.bfOffBits != 0L)
 					stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
 				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
-					info.RawImageBytes = new byte[bmih.biSizeImage];
-					stream.Read(info.RawImageBytes, 0, (int)bmih.biSizeImage);
+					
+					IntPtr lfBuffer = Marshal.AllocHGlobal(bmih.biSizeImage);	
+					byte[] bt = new byte[info.Stride];					
+					int offset = (info.Height-1) * info.Stride;						
+					int baseadr = lfBuffer.ToInt32();
+										
+					//	DIB are stored upside down. That means that the uppest row which 
+					//	appears on the screen actually is the lowest row stored in the bitmap 					
+					while(offset>=0){									
+						stream.Read(bt, 0, info.Stride); 
+						Marshal.Copy (bt, 0, (IntPtr)( baseadr + offset), info.Stride);						
+						offset -= info.Stride;				
+					}													
+					
+					info.Scan0 = lfBuffer;
+					info.Allocated=true;						
+					
 				} else {
 					//
 					// FIXME
@@ -262,7 +294,7 @@ namespace System.Drawing.Imaging {
 			default:
 				throw new NotImplementedException(String.Format("This format is not yet supported : {0} bpp", bmih.biBitCount));
 			}
-#endif
+
 			return true;
 		}
 

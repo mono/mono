@@ -1,3 +1,7 @@
+2004-01-21 Jordi Mas i Hernàdez <jmas@softcatala.org>
+	* BmpBitmap.cs: fixed encoding and decoding problems
+	* ImageAttributes.cs: implemented
+
 2004-01-19  Ravindra <rkumar@novell.com>
 
 	* Encoder.cs: Implemented.
