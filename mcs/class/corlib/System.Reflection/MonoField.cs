@@ -121,5 +121,10 @@ namespace System.Reflection {
 			}
 			SetValueInternal (this, obj, val);
 		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public override extern FieldInfo Mono_GetGenericFieldDefinition ();
+#endif
 	}
 }

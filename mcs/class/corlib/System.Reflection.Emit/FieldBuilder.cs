@@ -184,6 +184,13 @@ namespace System.Reflection.Emit {
 			if (typeb.is_created)
 				throw new InvalidOperationException ("Unable to change after type has been created.");
 		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		public override FieldInfo Mono_GetGenericFieldDefinition ()
+		{
+			return this;
+		}
+#endif
 	}
 }
 
