@@ -774,7 +774,7 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5}]",
+			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {6}:{7}:{8}:{9} - {5}]",
 					      Index, Token, SourceFileIndex, StartRow, EndRow,
 					      SourceFile, ClassTypeIndex, NumParameters,
 					      NumLocals, NumLineNumbers);
