@@ -289,8 +289,21 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-		public override string ToString() {
+		public override string ToString()
+		{
 			return "MethodBuilder [" + type.Name + "::" + name + "]";
+		}
+
+		[MonoTODO]
+		public override bool Equals (object obj)
+		{
+			return base.Equals (obj);
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
 		}
 
 		internal override int get_next_table_index (object obj, int table, bool inc) {
