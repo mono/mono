@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Mono.Data.Tds/TdsMetaParameter.cs
 Mono.Data.Tds/TdsMetaParameterCollection.cs
 Mono.Data.Tds/TdsParameterDirection.cs

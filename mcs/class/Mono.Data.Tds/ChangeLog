@@ -1,3 +1,8 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Data.Tds.dll.sources: Added Assembly/AssemblyInfo.cs and
+	Locale.cs to the build.
+
 2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Mono.Data.Tds.dll.sources: Added TdsConnectionPool.cs.
