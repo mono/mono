@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     PagedDataSource
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -33,7 +33,7 @@ namespace System.Web.UI.WebControls
 		{
 			Initialize();
 		}
-		
+
 		private void Initialize()
 		{
 			pageSize          = 10;
@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
 			allowCustomPaging = false;
 			virtualCount      = 0;
 		}
-		
+
 		public bool AllowCustomPaging
 		{
 			get
@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 				allowCustomPaging = value;
 			}
 		}
-		
+
 		public bool AllowPaging
 		{
 			get
@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls
 				allowPaging = value;
 			}
 		}
-		
+
 		public int Count
 		{
 			get
@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 		}
-		
+
 		public int CurrentPageIndex
 		{
 			get
@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls
 				return currentPageIndex;
 			}
 		}
-		
+
 		public IEnumerable DataSource
 		{
 			get
@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls
 				dataSource = value;
 			}
 		}
-		
+
 		public int DataSourceCount
 		{
 			get
@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 		}
-		
+
 		public int FirstIndexInPage
 		{
 			get
@@ -142,7 +142,7 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 		}
-		
+
 		public bool IsCustomPagingEnabled
 		{
 			get
@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls
 				return (IsPagingEnable && allowCustomPaging);
 			}
 		}
-		
+
 		public bool IsFirstPage
 		{
 			get
@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls
 				return (!IsPagingEnabled || (CurrentPageIndex == 0));
 			}
 		}
-		
+
 		public bool IsLastPage
 		{
 			get
@@ -166,7 +166,7 @@ namespace System.Web.UI.WebControls
 				return (!IsPagingEnabled || (CurrentPageIndex == PageCount));
 			}
 		}
-		
+
 		public bool IsPagingEnabled
 		{
 			get
@@ -174,7 +174,7 @@ namespace System.Web.UI.WebControls
 				return (allowPaging && pageSize != 0);
 			}
 		}
-		
+
 		public bool IsReadOnly
 		{
 			get
@@ -182,7 +182,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		public bool IsSynchronized
 		{
 			get
@@ -190,7 +190,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		public int PageCount
 		{
 			get
@@ -207,7 +207,7 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 		}
-		
+
 		public int PageSize
 		{
 			get
@@ -219,7 +219,7 @@ namespace System.Web.UI.WebControls
 				pageCount = value;
 			}
 		}
-		
+
 		public object SyncRoot
 		{
 			get
@@ -227,7 +227,7 @@ namespace System.Web.UI.WebControls
 				return this;
 			}
 		}
-		
+
 		public int VirtualCount
 		{
 			get
@@ -239,7 +239,7 @@ namespace System.Web.UI.WebControls
 				virtualCount = value;
 			}
 		}
-		
+
 		public void CopyTo(Array array, int index)
 		{
 			foreach(object current in this)
@@ -247,49 +247,52 @@ namespace System.Web.UI.WebControls
 				array.SetValue(array, index++);
 			}
 		}
-		
+
 		public IEnumerator GetEnumerator
 		{
-			int fInd = FirstIndexInPage;
-			int count = -1;
-			if(dataSource is ICollection)
+			get
 			{
-				count = dataSource.Count;
-			}
+				int fInd = FirstIndexInPage;
+				int count = -1;
+				if(dataSource is ICollection)
+				{
+					count = dataSource.Count;
+				}
 
-			if(dataSource is IList)
-			{
-				return (new PrivateListEnumerator((IList)dataSource, fInd, count));
+				if(dataSource is IList)
+				{
+					return (new PrivateListEnumerator((IList)dataSource, fInd, count));
+				}
+				if(dataSource is Array)
+				{
+					return (new PrivateArrayEnumerator((object[])dataSource, fInd, count));
+				}
+				if(dataSource is ICollection)
+				{
+					return (new PrivateICollectionEnumerator((ICollection)dataSource, fInd, count));
+				}
+				if(allowCustomPaging)
+				{
+					return (new PrivateIEnumeratorEnumerator(dataSource, Count));
+				}
+				return dataSource.GetEnumerator();
 			}
-			if(dataSource is Array)
-			{
-				return (new PrivateArrayEnumerator((object[])dataSource, fInd, count));
-			}
-			if(dataSource is ICollection)
-			{
-				return (new PrivateICollectionEnumerator((ICollection)dataSource, fInd, count));
-			}
-			if(allowCustomPaging)
-			{
-				return (new PrivateIEnumeratorEnumerator(dataSource, Count));
-			}
-			return dataSource.GetEnumerator();
 		}
-		
+
 		private class PrivateIEnumeratorEnumerator
 		{
 			private int index;
 			private int max;
 
 			private IEnumerator enumerator;
-			
+
 			public PrivateIEnumeratorEnumerator(IEnumerator enumerator, int count)
 			{
 				this.enumerator = enumerator;
 				index = -1;
 				max   = count;
 			}
-			
+
 			public bool MoveNext()
 			{
 				enumerator.MoveNext();
@@ -311,7 +314,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		private class PrivateICollectionEnumerator
 		{
 			private int index;
@@ -320,7 +323,7 @@ namespace System.Web.UI.WebControls
 
 			private ICollection collection;
 			private IEnumerator collEnum;
-			
+
 			public PrivateICollectionEnumerator(ICollection collection, int start, int count)
 			{
 				this.collection = collection;
@@ -332,7 +335,7 @@ namespace System.Web.UI.WebControls
 					max = collection.Count;
 				}
 			}
-			
+
 			public bool MoveNext()
 			{
 				if(collEnum == null)
@@ -363,14 +366,14 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		private class PrivateArrayEnumerator
 		{
 			private int index;
 			private int start;
 			private int max;
 			private object[] values;
-			
+
 			public PrivateArrayEnumerator(object[] values, int start, int count)
 			{
 				this.values = values;
@@ -382,7 +385,7 @@ namespace System.Web.UI.WebControls
 					max = this.values.Length;
 				}
 			}
-			
+
 			public bool MoveNext()
 			{
 				index++;
@@ -406,7 +409,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		private class PrivateListEnumerator : IEnumerator
 		{
 			private int   index;
@@ -425,18 +428,18 @@ namespace System.Web.UI.WebControls
 					max = list.Count;
 				}
 			}
-			
+
 			public bool MoveNext()
 			{
 				index++;
 				return (index + start < max);
 			}
-			
+
 			public void Reset()
 			{
 				index = -1;
 			}
-			
+
 			public object Current
 			{
 				get

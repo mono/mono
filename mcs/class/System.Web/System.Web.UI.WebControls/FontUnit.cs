@@ -30,10 +30,10 @@ namespace System.Web.UI.WebControls
 		public static readonly FontUnit XSmall  = new FontUnit(FontSize.XSmall);
 		public static readonly FontUnit XXLarge = new FontUnit(FontSize.XXLarge);
 		public static readonly FontUnit XXSmall = new FontUnit(FontSize.XXSmall);
-		
+
 		private FontSize type;
 		private Unit     val;
-		
+
 		public FontUnit(FontSize type)
 		{
 			if(!Enum.IsDefined(typeof(FontSize), type))
@@ -47,17 +47,17 @@ namespace System.Web.UI.WebControls
 				val = Unit.Empty;
 			}
 		}
-		
+
 		public FontUnit(int value)
 		{
 			type = FontSize.AsUnit;
 			val = Unit.Point(value);
 		}
-		
+
 		public FontUnit(string value): this(value, CultureInfo.CurrentCulture)
 		{
 		}
-		
+
 		public FontUnit(Unit value)
 		{
 			if(val.IsEmpty)
@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls
 				val  = value;
 			}
 		}
-		
+
 		public FontUnit(string value, CultureInfo culture)
 		{
 			type = FontSize.NotSet;
@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		private int GetTypeFromString(string strVal)
 		{
 			string[] values = {
@@ -115,36 +115,37 @@ namespace System.Web.UI.WebControls
 			}
 			return -1;
 		}
-		
-		public static FontUnit Parse(string s): Parse(s, CultureInfo.CurrentCulture)
+
+		public static FontUnit Parse(string s)
 		{
+			Parse(s, CultureInfo.CurrentCulture);
 		}
-		
+
 		public static FontUnit Parse(string s, CultureInfo culture)
 		{
 			return new FontUnit(s, culture);
 		}
-		
+
 		public static FontUnit Point(int n)
 		{
 			return new FontUnit(n);
 		}
-		
+
 		public static bool operator ==(FontUnit left, FontUnit right)
 		{
 			return (left.type == right.type && left.val == right.val);
 		}
-		
+
 		public static bool operator !=(FontUnit left, FontUnit right)
 		{
 			return !(left == right);
 		}
-		
+
 		public static implicit operator FontUnit(int n)
 		{
 			return FontUnit.Point(n);
 		}
-		
+
 		public override bool Equals(object obj)
 		{
 			if(obj!= null && obj is FontUnit)
@@ -154,16 +155,17 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		public override int GetHashCode()
 		{
 			return ( (type.GetHashCode() << 2) | val.GetHashCode() );
 		}
-		
-		public override string ToString(): ToString(CultureInfo.CurrentCulture)
+
+		public override string ToString()
 		{
+			ToString(CultureInfo.CurrentCulture);
 		}
-		
+
 		public override string ToString(CultureInfo culture)
 		{
 			if(IsEmpty)
@@ -181,7 +183,7 @@ namespace System.Web.UI.WebControls
 				default:               return PropertyConverter.EnumToString(typeof(FontSize), type);
 			}
 		}
-		
+
 		public bool IsEmpty
 		{
 			get
@@ -189,7 +191,7 @@ namespace System.Web.UI.WebControls
 				return (type == FontSize.NotSet);
 			}
 		}
-		
+
 		public FontSize Type
 		{
 			get
@@ -197,7 +199,7 @@ namespace System.Web.UI.WebControls
 				return type;
 			}
 		}
-		
+
 		public Unit Unit
 		{
 			get

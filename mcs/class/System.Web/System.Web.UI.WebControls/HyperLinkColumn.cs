@@ -22,11 +22,11 @@ namespace System.Web.UI.WebControls
 	{
 		PropertyDescriptor textFieldDescriptor;
 		PropertyDescriptor urlFieldDescriptor;
-		
+
 		public HyperLinkColumn(): base()
 		{
 		}
-		
+
 		public virtual string DataNavigateUrlField
 		{
 			get
@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataNavigateUrlField"] = value;
 			}
 		}
-		
+
 		public virtual string DataNavigateUrlFormatString
 		{
 			get
@@ -56,7 +56,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataNavigateUrlFormatString"] = value;
 			}
 		}
-		
+
 		public virtual string DataTextField
 		{
 			get
@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataTextField"] = value;
 			}
 		}
-		
+
 		public virtual string DataTextFormatString
 		{
 			get
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataTextFormatString"] = value;
 			}
 		}
-		
+
 		public virtual string NavigateUrl
 		{
 			get
@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls
 				ViewState["NavigateUrl"] = value;
 			}
 		}
-		
+
 		public virtual string Target
 		{
 			get
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Target"] = value;
 			}
 		}
-		
+
 		public virtual string Text
 		{
 			get
@@ -131,16 +131,16 @@ namespace System.Web.UI.WebControls
 				ViewState["Text"] = value;
 			}
 		}
-		
+
 		public override void Initialize()
 		{
 			textFieldDescriptor = null;
 			urlFieldDescriptor  = null;
 		}
-		
-		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType):
-			InitializeCell(cell, columnIndex, itemType)
+
+		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
+			InitializeCell(cell, columnIndex, itemType);
 			if(Enum.IsDefined(ListItemType, itemType) && itemType != ListItemType.Footer)
 			{
 				HyperLink toDisplay = new HyperLink();
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls
 				cell.Controls.Add(toDisplay);
 			}
 		}
-		
+
 		private void OnDataBindHyperLinkColumn(object sender, EventArgs e)
 		{
 			HyperLink link = (HyperLink)sender;
@@ -169,7 +169,7 @@ namespace System.Web.UI.WebControls
 				if(urlFieldDescriptor == null && !DesignMode)
 					throw new HttpException(HttpRuntime.FormatResourceString("Field_Not_Found", DataNavigateUrlField));
 			}
-			
+
 			if(textFieldDescritor != null)
 			{
 				link.Text = FormatDataTextValue(textFieldDescritor.GetValue(item));
@@ -177,7 +177,7 @@ namespace System.Web.UI.WebControls
 			{
 				link.Text = "Sample_DataBound_Text";
 			}
-			
+
 			if(urlFieldDescriptor != null)
 			{
 				link.NavigateUrl = FormatDataNavigateUrlValue(urlFieldDescriptor.GetValue(item));
@@ -186,7 +186,7 @@ namespace System.Web.UI.WebControls
 				link.NavigateUrl = "url";
 			}
 		}
-		
+
 		protected virtual string FormatDataNavigateUrlValue(object dataUrlValue)
 		{
 			string retVal = String.Empty;
@@ -202,7 +202,7 @@ namespace System.Web.UI.WebControls
 			}
 			return retVal;
 		}
-		
+
 		protected virtual string FormatDataTextValue(object dataTextValue)
 		{
 			string retVal = String.Empty;

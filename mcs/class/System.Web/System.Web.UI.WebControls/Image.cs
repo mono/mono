@@ -88,8 +88,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected override void AddAttributesToRender(HtmlTextWriter writer): AddAttributesToRender(writer)
+		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
+			AddAttributesToRender(writer);
 			if(ImageUrl.Length > 0)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl(ImageUrl));
@@ -107,8 +108,8 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute(HtmlTextWriterAttribute.Align, Enum.Format(typeof(ImageAlign), ImageAling, "G"));
 			}
 		}
-		
-		protected override void RenderContents(HtmlTextWriterAttribute)
+
+		protected override void RenderContents(HtmlTextWriterAttribute attribute)
 		{
 		}
 	}

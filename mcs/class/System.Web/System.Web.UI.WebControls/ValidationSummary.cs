@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     ValidationSummary
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  ??%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -21,13 +21,13 @@ namespace System.Web.UI.WebControls
 	public class ValidationSummary : WebControl
 	{
 		private bool uplevelRender;
-		
+
 		public ValidationSummary(): base(HtmlTextWriterTag.Div)
 		{
 			uplevelRender = false;
 			ForeColor     = Color.Red;
 		}
-		
+
 		public ValidationSummaryDisplayMode DisplayMode
 		{
 			get
@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DisplayMode"] = value;
 			}
 		}
-		
+
 		public bool EnableClientScript
 		{
 			get
@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls
 				ViewState["EnableClientScript"] = value;
 			}
 		}
-		
+
 		public override Color ForeColor
 		{
 			get
@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls
 				ForeColor = value;
 			}
 		}
-		
+
 		public bool ShowMessageBox
 		{
 			get
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ShowMessageBox"] = value;
 			}
 		}
-		
+
 		public bool ShowSummary
 		{
 			get
@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ShowSummary"] = value;
 			}
 		}
-		
+
 		public string HeaderText
 		{
 			get
@@ -116,8 +116,8 @@ namespace System.Web.UI.WebControls
 				ViewState["HeaderText"] = value;
 			}
 		}
-		
-		[MonoTODO("FIXME_See_Comments"}]
+
+		[MonoTODO("FIXME_See_Comments")]
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);

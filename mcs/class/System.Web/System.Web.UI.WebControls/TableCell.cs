@@ -25,13 +25,13 @@ namespace System.Web.UI.WebControls
 		{
 			//TODO: What's the function to prevent Control to give _auto_generated_id
 		}
-		
+
 		[MonoTODO]
 		internal TableCell(HtmlTextWriterTag tag): base(tag)
 		{
 			//TODO: What's the function to prevent Control to give _auto_generated_id
 		}
-		
+
 		public virtual int ColumnSpan
 		{
 			get
@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ColumnSpan"] = value;
 			}
 		}
-		
+
 		public virtual int RowSpan
 		{
 			get
@@ -61,7 +61,7 @@ namespace System.Web.UI.WebControls
 				ViewState["RowSpan"] = value;
 			}
 		}
-		
+
 		public virtual string Text
 		{
 			get
@@ -76,7 +76,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Text"] = value;
 			}
 		}
-		
+
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls
 				((TableItemStyle)ControlStyle).HorizontalAlign = value;
 			}
 		}
-		
+
 		public virtual VerticalAlign VerticalAlign
 		{
 			get
@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls
 				((TableItemStyle)ControlStyle).VerticalAlign = value;
 			}
 		}
-		
+
 		public virtual bool Wrap
 		{
 			get
@@ -118,15 +118,16 @@ namespace System.Web.UI.WebControls
 				((TableItemStyle)ControlStyle).Wrap = value;
 			}
 		}
-		
-		protected override void AddAttributesToRender(HtmlTextWriter writer): AddAttributesToRender(writer)
+
+		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
+			AddAttributesToRender(writer);
 			if(ColumnSpan > 0)
 				writer.AddAttribute(HtmlTextWriterAttribute.Colspan, Colspan.ToString(NumberFormatInfo.InvariantInfo));
 			if(RowSpan > 0)
 				writer.AddAttribute(HtmlTextWriterAttribute.Rowspan, Rowspan.ToString(NumberFormatInfo.InvariantInfo));
 		}
-		
+
 		protected override void AddParsedSubObject(object obj)
 		{
 			if(HasControls())
@@ -147,12 +148,12 @@ namespace System.Web.UI.WebControls
 			}
 			AddParsedSubObject(obj);
 		}
-		
+
 		protected override Style CreateControlStyle()
 		{
 			return new TableItemStyle(ViewState);
 		}
-		
+
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			if(HasControls())

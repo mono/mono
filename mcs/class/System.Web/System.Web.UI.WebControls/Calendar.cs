@@ -599,7 +599,7 @@ namespace System.Web.UI.WebControls
 			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
 			DateTime visDate   = GetEffectiveVisibleDate()
 			DateTime firstDate = GetFirstCalendarDay(visDate);
-			
+
 			bool isEnabled = false;
 			bool isHtmlTextWriter = false;
 			if(Page == null || Site == null || Site.DesignMode == null )
@@ -614,7 +614,7 @@ namespace System.Web.UI.WebControls
 			defaultTextColor = ForeColor;
 			if(defaultTextColor == Color.Empty)
 				defaultTextColor = Color.Black;
-			
+
 			Table calTable = new Table();
 			calTable.ID = ID;
 			calTable.CopyBaseAttributes(this);
@@ -624,7 +624,7 @@ namespace System.Web.UI.WebControls
 			calTable.Height = Height;
 			calTable.CellSpacing = CellSpacing;
 			calTable.CellPadding = CellPadding;
-			
+
 			if(ControlStyleCreated && ControlStyle.IsSet(Style.BORDERWIDTH) && BorderWidth != Unit.Empty)
 			{
 				calTable.BorderWidth = BorderWidth;
@@ -632,19 +632,19 @@ namespace System.Web.UI.WebControls
 			{
 				calTable.BorderWidth = Unit.Pixel(1);
 			}
-			
+
 			if(ShowGridLines)
 				calTable.GridLines = GridLines.Both;
 			else
 				calTable.GridLines = GridLines.None;
-			
+
 			calTable.RenderBeginTag(writer);
 			if(ShowTitle)
 				RenderTitle(writer, visDate, SelectionMode, isEnabled);
 			if(ShowDayHeader)
 				RenderHeader(writer, firstDate, SelectionMode, isEnabled, isHtmlTextWriter);
 			RenderAllDays(writer, firstDate, visDate, SelectionMode, isEnabled, isHtmlTextWriter);
-			
+
 			calTable.RenderEndTag(writer);
 		}
 
@@ -706,8 +706,9 @@ namespace System.Web.UI.WebControls
 			return null;
 		}
 
-		protected override void TrackViewState(): TrackViewState()
+		protected override void TrackViewState()
 		{
+			TrackViewState();
 			if(titleStyle!=null)
 			{
 				titleStyle.TrackViewState();
@@ -781,7 +782,7 @@ namespace System.Web.UI.WebControls
 			{
 				selectDayBool = true;
 			}
-			
+
 			for(int crr = 0; crr < 6; crr++)
 			{
 				writer.Write("<tr>");
@@ -812,7 +813,7 @@ namespace System.Web.UI.WebControls
 
 			throw new NotImplementedException();
 		}
-		
+
 		private int GetMask(CalendarDay day)
 		{
 			int retVal = MASK_DAY;
@@ -847,7 +848,7 @@ namespace System.Web.UI.WebControls
 				headerCell.ApplyStyle(DayHeaderStyle);
 			}
 			RenderCalendarCell(writer, headerCell, selMthText);
-			
+
 			TableCell dayHeaderCell = new TableCell();
 			dayHeaderCell.HorizontalAlign = HorizontalAlign.Center;
 			string content = null;
@@ -891,15 +892,15 @@ namespace System.Web.UI.WebControls
 			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek || mode == CalendarSelectionMode.DayWeekMonth);
 			titleCell.ColumnSpan = (isWeekMode ? 8 : 7);
 			titleCell.BackColor = "Silver";
-			
+
 			innerTable.GridLines = GridLine.None;
 			innerTable.Width = Unit.Percentage(100);
 			innerTable.CellSpacing = 0;
 			ApplyTitleStyle(innerTable, titleCell, TitleStyle);
-			
+
 			innerTable.RenderBeginTag(writer);
 			titleCell.RenderBeginTag(writer);
-			
+
 			writer.Write("<tr>");
 			string prevContent = String.Empty;
 			if(ShowNextPrevMonth)
@@ -961,11 +962,11 @@ namespace System.Web.UI.WebControls
 				nextCell.ApplyStyle(NextPrevStyle);
 				RenderCalendarCell(writer, nextCell, GetCalendarLinkText("nextMonth", nextContent, isActive, NextPrevStyle.ForeColor));
 			}
-			
+
 			writer.Write("</tr>");
 			titleCell.RenderEndTag(writer);
 			innerTable.RenderEndTag(writer);
-			
+
 			writer.Write("</tr>");
 		}
 
@@ -995,7 +996,7 @@ namespace System.Web.UI.WebControls
 			{
 				cell.VerticalAlign = style.VerticalAlign;
 			}
-			
+
 			if(style.ForeColor != Color.Empty)
 			{
 				table.ForeColor = style.ForeColor;
@@ -1003,7 +1004,7 @@ namespace System.Web.UI.WebControls
 			{
 				table.ForeColor = ForeColor;
 			}
-			
+
 			table.Font.CopyFrom(style.Font);
 			table.Font.MergeWith(Font);
 		}

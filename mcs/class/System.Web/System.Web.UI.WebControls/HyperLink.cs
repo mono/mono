@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     HyperLink
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: gvaish@iitk.ac.in, myscripts_2001@yahoo.com
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -18,7 +18,7 @@ namespace System.Web.UI.WebControls
 		public HyperLink(): base()
 		{
 		}
-		
+
 		public virtual string ImageUrl
 		{
 			get
@@ -33,7 +33,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ImageUrl"] = value;
 			}
 		}
-		
+
 		public string NavigateUrl
 		{
 			get
@@ -48,7 +48,7 @@ namespace System.Web.UI.WebControls
 				ViewState["NavigateUrl"] = value;
 			}
 		}
-		
+
 		public string Target
 		{
 			get
@@ -63,7 +63,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Target"] = value;
 			}
 		}
-		
+
 		public virtual string Text
 		{
 			get
@@ -78,9 +78,10 @@ namespace System.Web.UI.WebControls
 				ViewState["Text"] = value;
 			}
 		}
-		
-		protected override void AddAttributesToRender(HtmlTextWriter writer) : AddAttributesToRender(writer)
+
+		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
+			AddAttributesToRender(writer);
 			if(NavigateUrl.Length > 0)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Href, NavigateUrl);
@@ -90,7 +91,7 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute(HtmlTextWriterAttribute.Target, Target);
 			}
 		}
-		
+
 		protected override void AddParsedSubObject(object obj)
 		{
 			if(HasControls())
@@ -110,7 +111,7 @@ namespace System.Web.UI.WebControls
 			}
 			AddParsedSubObject(obj);
 		}
-		
+
 		protected override void LoadViewState(object savedState)
 		{
 			if(savedState != null)
@@ -121,7 +122,7 @@ namespace System.Web.UI.WebControls
 					Text = (string)o;
 			}
 		}
-		
+
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			if(ImageUrl.Length > 0)

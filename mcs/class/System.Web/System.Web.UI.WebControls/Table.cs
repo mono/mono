@@ -22,13 +22,13 @@ namespace System.Web.UI.WebControls
 	public class Table: WebControl
 	{
 		private TableRowCollection rows;
-		
+
 		private class TableRowControlCollection : ControlCollection
 		{
 			public TableRowControlCollection(Control owner): base(owner)
 			{
 			}
-			
+
 			public override void Add(Control child)
 			{
 				if(child is TableRow)
@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls
 				}
 				throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "Table", child.GetType().Name.ToString()));
 			}
-			
+
 			public override void AddAt(int index, Control child)
 			{
 				if(child is TableRow)
@@ -49,11 +49,11 @@ namespace System.Web.UI.WebControls
 				throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "Table", child.GetType().Name.ToString()));
 			}
 		}
-		
+
 		public Table(): base(HtmlTextWriterTag.Table)
 		{
 		}
-		
+
 		public virtual string BackImageUrl
 		{
 			get
@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).BackImageUrl = value;
 			}
 		}
-		
+
 		public virtual int CellPadding
 		{
 			get
@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).CellPadding = value;
 			}
 		}
-		
+
 		public virtual int CellSpacing
 		{
 			get
@@ -92,7 +92,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).CellSpacing = value;
 			}
 		}
-		
+
 		public virtual GridLines GridLines
 		{
 			get
@@ -105,7 +105,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).GridLines = value;
 			}
 		}
-		
+
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -118,7 +118,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).HorizontalAlign = value;
 			}
 		}
-		
+
 		public virtual TableRowCollection Rows
 		{
 			get
@@ -130,14 +130,15 @@ namespace System.Web.UI.WebControls
 				return rows;
 			}
 		}
-		
-		protected override void AddAttributesToRender(HtmlTextWriter writer): AddAttributesToRender(writer)
+
+		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
+			AddAttributesToRender(writer);
 			if(!BorderColor.IsEmpty)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Bordercolor, ColorTranslator.ToHtml(BorderColor));
 			}
-			
+
 			Unit bw = BorderWidth;
 			if(GridLines == GridLines.None)
 			{
@@ -148,17 +149,17 @@ namespace System.Web.UI.WebControls
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Border, ((int)bw.Value).ToString(NumberFormatInfo.InvariantInfo));
 		}
-		
+
 		protected override ControlCollection CreateControlCollection()
 		{
 			return new TableRowControlCollection(this);
 		}
-		
+
 		protected override Style CreateControlStyle()
 		{
 			return new TableStyle(ViewState);
 		}
-		
+
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			foreach(object current in Rows)
