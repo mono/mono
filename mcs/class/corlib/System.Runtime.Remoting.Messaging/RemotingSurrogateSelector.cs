@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Messaging.RemotingSurrogateSelector.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -13,6 +14,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 	public class RemotingSurrogateSelector : ISurrogateSelector
 	{
+		ISurrogateSelector _next;
+		static ObjRefSurrogate _objRefSurrogate = new ObjRefSurrogate();
+
 		public RemotingSurrogateSelector ()
 		{
 		}
@@ -23,16 +27,15 @@ namespace System.Runtime.Remoting.Messaging {
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public virtual void ChainSelector (ISurrogateSelector selector)
 		{
-			throw new NotImplementedException ();
+			if (_next != null) selector.ChainSelector (_next);
+			_next = selector;
 		}
 
-		[MonoTODO]
 		public virtual ISurrogateSelector GetNextSelector()
 		{
-			throw new NotImplementedException ();
+			return _next;
 		}
 
 		[MonoTODO]
@@ -41,11 +44,18 @@ namespace System.Runtime.Remoting.Messaging {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual ISerializationSurrogate GetSurrogate (
 			Type type, StreamingContext context, out ISurrogateSelector ssout)
 		{
-			throw new NotImplementedException ();
+			if (type.IsSubclassOf (typeof(MarshalByRefObject)))
+			{
+				ssout = this;
+				return _objRefSurrogate;
+			}
+			if (_next != null) return _next.GetSurrogate (type, context, out ssout);
+
+			ssout = null;
+			return null;
 		}
 
 		[MonoTODO]
@@ -61,6 +71,21 @@ namespace System.Runtime.Remoting.Messaging {
 		public virtual void UseSoapFormat ()
 		{
 			throw new NotImplementedException ();
+		}
+	}
+
+	public class ObjRefSurrogate : ISerializationSurrogate
+	{
+		public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+		{
+			RemotingServices.GetObjectData (obj, info, context);
+			info.AddValue ("fIsMarshalled", 0);
+		}
+
+		public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+		{
+			// ObjRef is deserialized using the IObjectReference interface
+			throw new NotSupportedException ("Do not use RemotingSurrogateSelector when deserializating");
 		}
 	}
 }

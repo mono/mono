@@ -22,11 +22,13 @@ namespace System.Runtime.Remoting.Messaging {
 			       int outArgCount, LogicalCallContext callCtx,
 			       IMethodCallMessage request)
 		{
+			// fixme: request can be null
 			// fixme: why do we need outArgCount?
 			msg = new MonoMethodMessage ((MonoMethod)request.MethodBase, outArgs);
 			this.request = request;
 			msg.rval = returnValue;
 			msg.ctx = callCtx;
+			msg.Uri = request.Uri;
 		}
 
 		public ReturnMessage (Exception exc, IMethodCallMessage request)
@@ -79,10 +81,9 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 		}
 
-		[MonoTODO]
 		public virtual IDictionary Properties {
 			get {
-				return null;
+				return msg.Properties;
 			}
 		}
 
@@ -146,5 +147,16 @@ namespace System.Runtime.Remoting.Messaging {
 			return msg.GetOutArgName (arg_num);
 		}
 
+
+		class InternalDictionary : MethodReturnDictionary
+		{
+			public InternalDictionary(ReturnMessage message) : base (message) { }
+
+			protected override void SetMethodProperty (string key, object value)
+			{
+				if (key == "__Uri") ((ReturnMessage)_message).Uri = (string)value;
+				else base.SetMethodProperty (key, value);
+			}
+		}
 	}
 }

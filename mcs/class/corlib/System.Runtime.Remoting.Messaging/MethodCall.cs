@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Messaging.MethodCall.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -16,25 +17,52 @@ namespace System.Runtime.Remoting.Messaging {
 	[Serializable] [CLSCompliant (false)]
 	public class MethodCall : IMethodCallMessage, IMethodMessage, IMessage, ISerializable
 	{
+		string _uri;
+		string _typeName;
+		string _methodName;
+		object[] _args;
+		Type[] _methodSignature;
+		MethodBase _methodBase;
+		LogicalCallContext _callContext;
+		ArgInfo _inArgInfo;
+		InternalDictionary _properties;
+
 		public MethodCall (Header [] headers)
 		{
+			if (headers == null || headers.Length == 0) return;
+
+			foreach (Header header in headers)
+			{
+				switch (header.Name)
+				{
+					case "__TypeName" : _typeName = (string)header.Value; break;
+					case "__MethodName" : _methodName = (string)header.Value; break;
+					case "__MethodSignature" : _methodSignature = (Type[])header.Value; break;
+					case "__Args" : _args = (object[])header.Value; break;
+					case "__CallContext" : _callContext = (LogicalCallContext)header.Value; break;
+				}
+			}
+
+			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
+			Init();
 		}
 
+		[MonoTODO]
 		public MethodCall (IMessage msg)
 		{
+			Init();
+			throw new NotImplementedException ();
 		}
 
 		protected IDictionary ExternalProperties;
 		protected IDictionary InternalProperties;
 
-		[MonoTODO]
 		public int ArgCount {
-			get { throw new NotImplementedException (); }
+			get { return _args.Length; }
 		}
 
-		[MonoTODO]
 		public object[] Args {
-			get { throw new NotImplementedException (); }
+			get { return _args; }
 		}
 		
 		[MonoTODO]
@@ -42,74 +70,84 @@ namespace System.Runtime.Remoting.Messaging {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public int InArgCount {
-			get { throw new NotImplementedException (); }
+		public int InArgCount 
+		{
+			get 
+			{ 
+				if (_inArgInfo == null) _inArgInfo = new ArgInfo (_methodBase, ArgInfoType.In);
+				return _inArgInfo.GetInOutArgCount();
+			}
 		}
 
-		[MonoTODO]
-		public object[] InArgs {
-			get { throw new NotImplementedException (); }
+		public object[] InArgs 
+		{
+			get 
+			{ 
+				if (_inArgInfo == null) _inArgInfo = new ArgInfo (_methodBase, ArgInfoType.In);
+				return _inArgInfo.GetInOutArgs (_args);
+			}
 		}
 		
-		[MonoTODO]
 		public LogicalCallContext LogicalCallContext {
-			get { throw new NotImplementedException (); }
+			get { return _callContext; }
 		}
 		
-		[MonoTODO]
 		public MethodBase MethodBase {
-			get { throw new NotImplementedException (); }
+			get { return _methodBase; }
 		}
 
-		[MonoTODO]
 		public string MethodName {
-			get { throw new NotImplementedException (); }
+			get { return _methodName; }
 		}
 
-		[MonoTODO]
-		public object MethodSignature {
-			get { throw new NotImplementedException (); }
+		public object MethodSignature 
+		{
+			get 
+			{ 
+				if (_methodSignature == null && _methodBase != null)
+				{
+					ParameterInfo[] parameters = _methodBase.GetParameters();
+					_methodSignature = new Type[parameters.Length];
+					for (int n=0; n<parameters.Length; n++)
+						_methodSignature[n] = parameters[n].ParameterType;
+				}
+				return _methodSignature;
+			}
 		}
-		
-		[MonoTODO]
+
 		public virtual IDictionary Properties {
-			get { throw new NotImplementedException (); }
+			get { return _properties; }
 		}
 
-		[MonoTODO]
 		public string TypeName {
-			get { throw new NotImplementedException (); }
+			get { return _typeName; }
 		}
 
-		[MonoTODO]
 		public string Uri {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _uri; }
+			set { _uri = value; }
 		}
 
-		[MonoTODO]
 		public object GetArg (int argNum)
 		{
-			throw new NotImplementedException ();
+			return _args[argNum];
 		}
 
-		[MonoTODO]
 		public string GetArgName (int index)
 		{
-			throw new NotImplementedException ();
+			return _methodBase.GetParameters()[index].Name;
 		}
 
-		[MonoTODO]
 		public object GetInArg (int argNum)
 		{
-			throw new NotImplementedException ();
+			if (_inArgInfo == null) _inArgInfo = new ArgInfo (_methodBase, ArgInfoType.In);
+			return _args[_inArgInfo.GetInOutArgIndex (argNum)];
 		}
 
-		[MonoTODO]
 		public string GetInArgName (int index)
 		{
-			throw new NotImplementedException ();
+			if (_inArgInfo == null) _inArgInfo = new ArgInfo (_methodBase, ArgInfoType.In);
+			return _inArgInfo.GetInOutArgName(index);
 		}
 
 		[MonoTODO]
@@ -124,10 +162,11 @@ namespace System.Runtime.Remoting.Messaging {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void Init ()
 		{
-			throw new NotImplementedException ();
+			_properties = new InternalDictionary (this);
+			ExternalProperties = _properties;
+			InternalProperties = _properties.GetInternalProperties();
 		}
 
 		[MonoTODO]
@@ -140,6 +179,17 @@ namespace System.Runtime.Remoting.Messaging {
 		public void RootSetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
-		} 
+		}
+
+		class InternalDictionary : MethodCallDictionary
+		{
+			public InternalDictionary(MethodCall message) : base (message) { }
+
+			protected override void SetMethodProperty (string key, object value)
+			{
+				if (key == "__Uri") ((MethodCall)_message).Uri = (string)value;
+				else base.SetMethodProperty (key, value);
+			}
+		}
 	}
 }

@@ -24,10 +24,10 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		public Header (string name, object value, bool must_understand, string header_namespace) {
-			this.name = name;
-			this.value = value;
-			this.must_understand = must_understand;
-			this.header_namespace = header_namespace;
+			this.Name = name;
+			this.Value = value;
+			this.MustUnderstand = must_understand;
+			this.HeaderNamespace = header_namespace;
 		}
 
 		// fields
@@ -39,12 +39,5 @@ namespace System.Runtime.Remoting.Messaging {
 		public string Name;
 
 		public object Value;
-
-		// private
-
-		private string name;
-		private object value;
-		private bool must_understand;
-		private string header_namespace;
 	}
 }

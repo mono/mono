@@ -32,6 +32,10 @@ namespace System.Runtime.Remoting.Messaging {
 
 		string uri;
 
+		InternalDictionary properties;
+
+		Type[] methodSignature;
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void InitMessage (MonoMethod method, object [] out_args);
 
@@ -55,7 +59,8 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public IDictionary Properties {
 			get {
-				return null;
+				if (properties == null) properties = new InternalDictionary (this);
+				return properties;
 			}
 		}
 
@@ -97,13 +102,19 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object MethodSignature {
 			get {
-				return null;
+				if (methodSignature == null) {
+					ParameterInfo[] parameters = method.GetParameters();
+					methodSignature = new Type[parameters.Length];
+					for (int n=0; n<parameters.Length; n++)
+						methodSignature[n] = parameters[n].ParameterType;
+				}
+				return methodSignature;
 			}
 		}
 
 		public string TypeName {
 			get {
-				return null;
+				return method.DeclaringType.AssemblyQualifiedName;
 			}
 		}
 
@@ -245,6 +256,22 @@ namespace System.Runtime.Remoting.Messaging {
 				i++;
 			}
 			return null;
+		}
+
+		class InternalDictionary : MethodDictionary
+		{
+			static string[] _keys = new string[] {"__Uri", "__MethodName", "__TypeName", "__MethodSignature", "__Args", "__OutArgs", "__Return", "__CallContext"};
+
+			public InternalDictionary(MonoMethodMessage message) : base (message) 
+			{ 
+				MethodKeys = _keys;
+			}
+
+			protected override void SetMethodProperty (string key, object value)
+			{
+				if (key == "__Uri") ((MonoMethodMessage)_message).Uri = (string)value;
+				else base.SetMethodProperty (key, value);
+			}
 		}
 
 	}

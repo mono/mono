@@ -1,8 +1,22 @@
-2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
+2002-12-26  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ReturnMessage.cs: Implemented property Properties
+	* RemotingSurrogateSelector.cs: Implemented serialization support for ObjRef.
+	* MonoMethodMessage.cs: Implemented Properties and MethodSignature properties.
+	* MethodReturnMessageWrapper.cs: Implemented.
+	* MethodCallMessageWrapper.cs: Implemented.
+	* MethodCall.cs: Implemented.
+	* Header.cs: Small corrections to make it work.
+	* MethodDictionary.cs: Added.
+	* MethodCallDictionary.cs: Added.
+	* MethodReturnDictionary.cs: Added.
+	* ArgInfo.cs: Added.
+
+2002-12-20  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* MonoMethodMessage.cs: Implemented property Uri
 
-2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
+2002-12-20  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* ServerContextTerminatorSink.cs: Added
 	* ServerObjectTerminatorSink.cs: Added

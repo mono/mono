@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Messaging.MethodCallMessageWrapper.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -14,96 +15,119 @@ namespace System.Runtime.Remoting.Messaging {
 
 	public class MethodCallMessageWrapper : InternalMessageWrapper, IMethodCallMessage, IMethodMessage, IMessage
 	{
+		object[] _args;
+		ArgInfo _inArgInfo;
+		DictionaryWrapper _properties;
+
 		public MethodCallMessageWrapper (IMethodCallMessage msg)
 			: base (msg)
 		{
-			throw new NotImplementedException ();
+			_args = ((IMethodCallMessage)WrappedMessage).Args;
+			_inArgInfo = new ArgInfo (msg.MethodBase, ArgInfoType.In);
 		}
 		
-		[MonoTODO]
 		public virtual int ArgCount {
-			get { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).ArgCount; }
 		}
 
-		[MonoTODO]
 		public virtual object [] Args {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _args; }
+			set { _args = value; }
 		}
 		
-		[MonoTODO]
 		public virtual bool HasVarArgs {
-			get { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).HasVarArgs; }
 		}
 
-		[MonoTODO]
-		public virtual int InArgCount {
-			get { throw new NotImplementedException (); }
+		public int InArgCount {
+			get  { return _inArgInfo.GetInOutArgCount(); }
 		}
 
-		[MonoTODO]
-		public virtual object [] InArgs {
-			get { throw new NotImplementedException (); }
+		public object[] InArgs {
+			get { return _inArgInfo.GetInOutArgs (_args); }
 		}
 		
-		[MonoTODO]
 		public virtual LogicalCallContext LogicalCallContext {
-			get { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).LogicalCallContext; }
 		}
 		
-		[MonoTODO]
 		public virtual MethodBase MethodBase {
-			get { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).MethodBase; }
 		}
 
-		[MonoTODO]
 		public virtual string MethodName {
-			get { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).MethodName; }
 		}
 
-		[MonoTODO]
 		public virtual object MethodSignature {
-			get { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).MethodSignature; }
 		}
 		
-		[MonoTODO]
-		public virtual IDictionary Properties {
-			get { throw new NotImplementedException (); }
+		public virtual IDictionary Properties 
+		{
+			get 
+			{ 
+				if (_properties == null) _properties = new DictionaryWrapper(this, WrappedMessage.Properties);
+				return _properties; 
+			}
 		}
 
-		[MonoTODO]
 		public virtual string TypeName {
-			get { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).TypeName; }
 		}
 
-		[MonoTODO]
 		public virtual string Uri {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return ((IMethodCallMessage)WrappedMessage).Uri; }
+			set { Properties["__Uri"] = value; }
 		}
 
-		[MonoTODO]
 		public virtual object GetArg (int argNum)
 		{
-			throw new NotImplementedException ();
+			return _args[argNum];
 		}
 
-		[MonoTODO]
 		public virtual string GetArgName (int index)
 		{
-			throw new NotImplementedException ();
+			return ((IMethodCallMessage)WrappedMessage).GetArgName (index);
 		}
 
-		[MonoTODO]
-		public virtual object GetInArg (int argNum)
+		public object GetInArg (int argNum)
 		{
-			throw new NotImplementedException ();
+			return _args[_inArgInfo.GetInOutArgIndex (argNum)];
 		}
 
-		[MonoTODO]
-		public virtual string GetInArgName (int index)
+		public string GetInArgName (int index)
 		{
-			throw new NotImplementedException ();
+			return _inArgInfo.GetInOutArgName(index);
+		}
+
+		class DictionaryWrapper : MethodCallDictionary
+		{
+			IDictionary _wrappedDictionary;
+			static string[] _keys = new string[] {"__Args"};
+
+			public DictionaryWrapper(IMethodMessage message, IDictionary wrappedDictionary) : base (message)
+			{
+				_wrappedDictionary = wrappedDictionary;
+				MethodKeys = _keys;
+			}
+
+			protected override IDictionary AllocInternalProperties()
+			{
+				return _wrappedDictionary;
+			}
+
+			protected override void SetMethodProperty (string key, object value)
+			{
+				if (key == "__Args") ((MethodCallMessageWrapper)_message)._args = (object[])value;
+				else base.SetMethodProperty (key, value);
+			}
+
+			protected override object GetMethodProperty (string key)
+			{
+				if (key == "__Args") return ((MethodCallMessageWrapper)_message)._args;
+				else return base.GetMethodProperty (key);
+			}
 		}
 	}
 }
