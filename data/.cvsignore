@@ -2,4 +2,3 @@ Makefile.in
 Makefile
 config
 .cvsignore
-browscap.ini
