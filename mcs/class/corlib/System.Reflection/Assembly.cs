@@ -101,7 +101,11 @@ namespace System.Reflection {
 
 		public virtual string EscapedCodeBase {
 			get {
+#if BOOTSTRAP_WITH_OLDLIB
+				return get_code_base ();
+#else
 				return Uri.EscapeString (get_code_base (), false, true, true);
+#endif
 			}
 		}
 
