@@ -453,5 +453,92 @@ namespace MonoTests.System.Threading {
 			t.Start ();
 			t.Join ();
 		}
+		
+		int counter = 0;
+		
+		public void TestSuspend ()
+		{
+			Thread t = new Thread (new ThreadStart (DoCount));
+			t.Start ();
+			
+			CheckIsRunning ("t1", t);
+			
+			t.Suspend ();
+			WaitSuspended ("t2", t);
+			
+			CheckIsNotRunning ("t3", t);
+			
+			t.Resume ();
+			WaitResumed ("t4", t);
+			
+			CheckIsRunning ("t5", t);
+			
+			t.Abort ();
+			while(t.IsAlive);
+			CheckIsNotRunning ("t6", t);
+		}
+		
+		public void TestSuspendAbort ()
+		{
+			Thread t = new Thread (new ThreadStart (DoCount));
+			t.Start ();
+			
+			CheckIsRunning ("t1", t);
+			
+			t.Suspend ();
+			WaitSuspended ("t2", t);
+			
+			CheckIsNotRunning ("t3", t);
+			
+			t.Abort ();
+			while(t.IsAlive);
+			CheckIsNotRunning ("t6", t);
+		}		
+		
+		void CheckIsRunning (string s, Thread t)
+		{
+			int c = counter;
+			Thread.Sleep (100);
+			Assert (s, counter > c);
+		}
+		
+		void CheckIsNotRunning (string s, Thread t)
+		{
+			int c = counter;
+			Thread.Sleep (100);
+			Assert (s, counter == c);
+		}
+		
+		void WaitSuspended (string s, Thread t)
+		{
+			int n=0;
+			ThreadState state = t.ThreadState;
+			while ((state & ThreadState.Suspended) == 0) {
+				Assert (s + ": expected SuspendRequested state", (state & ThreadState.SuspendRequested) != 0);
+				Thread.Sleep (10);
+				n++;
+				Assert (s + ": failed to suspend", n < 100);
+				state = t.ThreadState;
+			}
+			Assert (s + ": SuspendRequested state not expected", (state & ThreadState.SuspendRequested) == 0);
+		}
+		
+		void WaitResumed (string s, Thread t)
+		{
+			int n=0;
+			while ((t.ThreadState & ThreadState.Suspended) != 0) {
+				Thread.Sleep (10);
+				n++;
+				Assert (s + ": failed to resume", n < 100);
+			}
+		}
+		
+		public void DoCount ()
+		{
+			while (true) {
+				counter++;
+				Thread.Sleep (1);
+			}
+		}
 	}
 }

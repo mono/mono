@@ -1,3 +1,8 @@
+2004-06-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TimerTest.cs: Added more tests.
+	* ThreadTest.cs: Added new tests for Thread.Suspend.
+
 2004-06-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ThreadTest.cs: Removed Ignore attribute from several threading tests that
