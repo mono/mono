@@ -1,4 +1,8 @@
 
+Wed Feb 2 16:32:08 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: disable recording statistical events at report time.
+
 Wed Feb 2 14:14:00 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: patch from Geoff Norton <gnorton@customerdna.com>
