@@ -1,3 +1,8 @@
+2002-05-01  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayListTest.cs (TestBinarySearch) : accomodate possible bug in
+	.NET runtime.
+
 2002/05/01  Nick Drochak <ndrochak@gol.com>
 
 	* ArrayListTest.cs (TestCopyTo) : Make assert messages unique and

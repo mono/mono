@@ -304,6 +304,10 @@ public class ArrayListTest : TestCase {
 			al1.AddRange(s1);
 			al1.BinarySearch(42);
 		} catch (InvalidOperationException) {
+			// this is what .NET throws
+			errorThrown = true;
+		} catch (ArgumentException) {
+			// this is what the docs say it should throw
 			errorThrown = true;
 		} catch (Exception e) {
 			Fail ("Incorrect exception thrown at 1: " + e.ToString());
