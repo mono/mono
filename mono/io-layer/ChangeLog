@@ -1,3 +1,11 @@
+2002-03-28  Dick Porter  <dick@ximian.com>
+
+	* sockets.h: 
+	* sockets.c: 
+	* io.c: 
+	* handles.h: 
+	* handles.c: Warning cleanups
+
 2002-03-27  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* unicode.h, unicode.c: changed to gunichar2
