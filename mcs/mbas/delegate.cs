@@ -598,7 +598,7 @@ namespace Mono.MonoBASIC {
 					ParameterData param = Invocation.GetParameterData (dm);
 					string delegate_desc = Delegate.FullDelegateDesc (type, dm, param);
 
-					Report.Error (123, loc, "Method '" + method_desc + "' does not " +
+					Report.Error (30408, loc, "Method '" + method_desc + "' does not " +
 						      "match delegate '" + delegate_desc + "'");
 
 					return null;

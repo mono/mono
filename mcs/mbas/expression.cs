@@ -4052,8 +4052,8 @@ namespace Mono.MonoBASIC {
 
 				if (method == null)
 				{
-					Error (-6,
-						"Could not find any applicable function for this argument list");
+					Error (30455,
+						"Could not find any applicable function to invoke for this argument list");
 					return null;
 				}
 
