@@ -1,5 +1,8 @@
 2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am (libtest_la_LDFLAGS): Add -Wl,--kill-at so the names exported from the DLL
+	can be found by the runtime.
+
 	* pinvoke13.cs: Fix test.
 
 	* libtest.c pinvoke13.cs: Fix test on big-endian machines.
