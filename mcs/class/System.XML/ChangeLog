@@ -1,3 +1,7 @@
+2004-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added SchemaDataValueType.cs
+
 2004-01-07  Nick Drochak <ndrochak@ieee.org>
 
 	* Makefile: Don't hide behind the /nowarns.  Fix them.
