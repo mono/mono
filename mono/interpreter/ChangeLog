@@ -1,3 +1,6 @@
+2001-09-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* interp.c (ves_exec_method): implement conv.u8 opcode. 
 
 Mon Sep 10 20:20:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
