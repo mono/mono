@@ -28,6 +28,7 @@ using System.Resources;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace Npgsql
 {
@@ -35,7 +36,7 @@ namespace Npgsql
     /// The exception that is thrown when the PostgreSQL backend reports errors.
     /// </summary>
     [Serializable]
-    public sealed class NpgsqlException : Exception
+    public sealed class NpgsqlException : ApplicationException
     {
         private IList errors;
 
@@ -43,6 +44,9 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlException";
         private static ResourceManager resman = new ResourceManager(typeof(NpgsqlException));
 
+		// To allow deserialization.
+		private NpgsqlException(SerializationInfo info, StreamingContext context) : base(info, context) {}
+		
         /// <summary>
         /// Construct a backend error exception based on a list of one or more
         /// backend errors.  The basic Exception.Message will be built from the
@@ -52,6 +56,7 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, Message);
             this.errors = errors;
+            
         }
 
         /// <summary>
