@@ -1,5 +1,7 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (move_basic_block_to_end): Fix bug in last patch.
+
 	* mini.h (MonoBasicBlock): Reorganize fields a bit.
 
 	* mini-ops.h inssel.brg: Add OP_NOT_REACHED.
