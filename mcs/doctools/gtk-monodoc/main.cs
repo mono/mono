@@ -63,7 +63,7 @@ class DocumentationEditor {
 		//
 		// Customize the TreeView
 		Gtk.Container tc = (Gtk.Container) gxml ["tree-container"];
-		store = new TreeStore ((int)TypeFundamentals.TypeString);
+		store = new TreeStore ((int)TypeFundamentals.TypeString, (int)TypeFundamentals.TypeObject);
 		tv = new TreeView (store);
 		tv.Selection.Mode = SelectionMode.Single;
 		tv.Selection.Changed += new EventHandler (TreeSelectionChanged);
@@ -96,7 +96,9 @@ class DocumentationEditor {
 		Gtk.TreeModel model;
 
 		if (tv.Selection.GetSelected (out model, ref iter)){
-			Console.WriteLine ("YAY");
+			GLib.Value val = new GLib.Value ();
+			
+			store.GetValue (iter, 1, val);
 		}
 	}
 	
@@ -171,6 +173,7 @@ class DocumentationEditor {
 			GLib.Value str_namespace = new GLib.Value (k);
 			store.Append (out ns_iter);
 			store.SetValue (ns_iter, 0, str_namespace);
+			//store.SetValue (ns_iter, 1, new GLib.Value (k));
 
 			ArrayList ch = new ArrayList ();
 			foreach (DictionaryEntry de in h)
@@ -181,6 +184,7 @@ class DocumentationEditor {
 				GLib.Value str_class = new GLib.Value (n);
 				store.Append (out class_iter, ns_iter);
 				store.SetValue (class_iter, 0, str_class);
+				//store.SetValue (class_iter, 1, new GLib.Value (k + "." + str_class));
 
 				DocType type = (DocType) h [n];
 				PopulateMember (class_iter, type, tree_label_constructors, type.Constructors, true);
@@ -201,6 +205,7 @@ class DocumentationEditor {
 		TreeIter group_iter = new TreeIter ();
 		store.Append (out group_iter, parent);
 		store.SetValue (group_iter, 0, label);
+//		store.SetValue (group_iter, 1, null);
 
 		TreeIter item_iter = new TreeIter ();
 		foreach (DocMember member in array){
@@ -213,6 +218,7 @@ class DocumentationEditor {
 
 			store.Append (out item_iter, group_iter);
 			store.SetValue (item_iter, 0, caption);
+			//store.SetValue (group_iter, 1, null);
 		}
 	}
 	
@@ -254,5 +260,26 @@ class DocumentationEditor {
 	void Run ()
 	{
 		program.Run ();
+	}
+}
+
+public class DocumentableObject {
+	protected string name;
+
+	public DocumentableObject (string name)
+	{
+		this.name = name;
+	}
+}
+
+public class Class : DocumentableObject {
+	public Class (string name) : base (name)
+	{
+	}
+}
+
+public class Namespace : DocumentableObject {
+	public Namespace (string name) : base (name)
+	{
 	}
 }
