@@ -52,8 +52,11 @@ namespace System.Web.UI {
 
 		protected override void LoadViewState (object savedState)
 		{
-			if (savedState != null)
-				dataBoundLiterals = (string []) savedState;
+			if (savedState != null) {
+				Array source = (Array) savedState;
+				dataBoundLiterals = new string [source.Length];
+				source.CopyTo (dataBoundLiterals, 0);
+			}
 		}
 
 		protected override void Render (HtmlTextWriter output)

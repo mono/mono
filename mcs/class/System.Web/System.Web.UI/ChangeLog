@@ -1,3 +1,16 @@
+2003-09-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(ClearChildViewState): doh! Don't clear control viewstate but the
+	viewstate of possible children.
+	(LoadViewStateRecursive): load viewstate even when control is not
+	visible.
+	Fixes bug #49024.
+	The rest are just dangling ^M removed.
+
+	* DataBoundLiteralControl.cs:
+	(LoadViewState): we get an object [], not a string [].
+
 2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: implemented ClearChildViewState ().

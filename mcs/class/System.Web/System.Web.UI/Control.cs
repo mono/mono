@@ -412,7 +412,7 @@ namespace System.Web.UI
 
                 protected void ClearChildViewState ()
                 {
-			_viewState = null;
+			pendingVS = null;
                 }
 
                 protected virtual void CreateChildControls() {} //DIT
@@ -576,7 +576,7 @@ namespace System.Web.UI
                                 foreach (Control c in _controls)
                                         c.RenderControl(writer);
                 }
-		
+
                 protected virtual object SaveViewState ()
                 {
 			if (_viewState == null)
@@ -703,12 +703,9 @@ namespace System.Web.UI
                 public void RenderControl(HtmlTextWriter writer)
                 {
                         if (_visible)
-                        {
-                                //TODO: Something about tracing here.
                                 Render(writer);
-                        }
                 }
-                
+
                 public string ResolveUrl(string relativeUrl)
                 {
 			if (relativeUrl == null)
@@ -830,7 +827,7 @@ namespace System.Web.UI
                 
 		internal void LoadViewStateRecursive (object savedState)
                 {
-			if (!EnableViewState || !Visible || savedState == null)
+			if (!EnableViewState || savedState == null)
 				return;
 
 			Triplet savedInfo = (Triplet) savedState;
