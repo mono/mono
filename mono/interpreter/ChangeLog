@@ -1,3 +1,10 @@
+2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* interp.c (ves_exec_method): replace 
+	'g_assert (sp->type = VAL_VALUETA)' with 
+	'g_assert (sp->type == VAL_VALUETA)' otherwise
+	the assert always passes. FIXME: should the test have been !=?
+
 2002-02-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (stackval_from_data): fix for MONO_TYPE_PTR
