@@ -1,3 +1,4 @@
+// Compiler options: -t:library
 //
 // First file of a 2-test file to check for #69361
 // 

@@ -25,7 +25,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307
+NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 pover-a pover-b
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -191,7 +191,7 @@ test-harness-run:
 #
 # Tests that require separate compilation
 #
-multi: multi-2 multi-3 ilasm
+multi: multi-2 ilasm
 	echo Multi-assembly test passes
 
 #
@@ -205,10 +205,6 @@ multi-2:
 	$(CSCOMPILE) -target:library pp.cs
 	$(CSCOMPILE) pu.cs -r:pi.dll -r:pp.dll
 	$(CSCOMPILE) pu.cs -r:pp.dll -r:pi.dll
-
-multi-3:
-	$(CSCOMPILE) -target:library pover-a.cs
-	$(CSCOMPILE) -target:library pover-b.cs -r:pover-a.dll
 
 ilasm:
 	$(INTERNAL_ILASM) /dll property-il.il
