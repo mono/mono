@@ -1,3 +1,9 @@
+2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : string() function expects "Infinity" and "-Infinity"
+	  instead of "INF" for conversion from number. XmlConvert is for XSD,
+	  not for XSLT.
+
 2004-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : RelationalExpr was comparing number and node in

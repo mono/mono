@@ -480,7 +480,13 @@ namespace System.Xml.XPath
 			switch (type)
 			{
 				case XPathResultType.Number:
-					return (string) XmlConvert.ToString ((double)result);
+					double d = (double) result;
+					// See XPath 1.0 section 4.2
+					if (d == Double.NegativeInfinity)
+						return "-Infinity";
+					if (d == Double.PositiveInfinity)
+						return "Infinity";
+					return (string) XmlConvert.ToString (d);
 				case XPathResultType.Boolean:
 					return ((bool) result) ? "true" : "false";
 				case XPathResultType.String:
