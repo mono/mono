@@ -1,3 +1,9 @@
+
+Wed Feb 23 17:23:52 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: properly encode custom attrs of type object
+	(bug #72649).
+
 2005-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_delegate_free_ftnptr): Make this thread safe.
