@@ -1,4 +1,11 @@
 
+Sat Apr 20 13:37:39 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: destroy the mutex at thread destruction
+	(if/when thread destruction code will be actually called).
+	When protecting a tls data pointer from the gc, use also the 
+	thread id in the key.
+	
 Wed Apr 17 18:36:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* timed-thread.c: avoid race condition when setting the thread to
