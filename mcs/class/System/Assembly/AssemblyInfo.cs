@@ -45,5 +45,7 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: ComVisible(false)]
 
+#if ! BOOTSTRAP_WITH_OLDLIB
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../ecma.pub")]
+#endif
