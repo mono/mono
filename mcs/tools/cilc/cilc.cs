@@ -75,12 +75,13 @@ public class cilc
 		makefile.Close ();
 
 		Console.WriteLine ();
-		Console.WriteLine ("Type registry missed hits (by namespace):");
-		MakeReport (registry_hits);
+		MakeReport (registry_hits, "Type registry missed hits", 20);
+		Console.WriteLine ();
 	}
 
-	static void MakeReport (Hashtable ctable)
+	static void MakeReport (Hashtable ctable, string desc, int num)
 	{
+		Console.WriteLine (desc + " (top " + (registry_hits.Count > num ? num : registry_hits.Count) + " of " + registry_hits.Count + "):");
 		string[] reg_keys = (string[]) (new ArrayList (ctable.Keys)).ToArray (typeof (string));
 		int[] reg_vals = (int[]) (new ArrayList (ctable.Values)).ToArray (typeof (int));
 		Array.Sort (reg_vals, reg_keys);
@@ -88,7 +89,7 @@ public class cilc
 		Array.Reverse (reg_vals);
 		Array.Reverse (reg_keys);
 
-		for (int i = 0 ; i != reg_keys.Length ; i++) {
+		for (int i = 0 ; i != reg_keys.Length && i != num ; i++) {
 			Console.WriteLine ("  " + reg_keys[i] + ": " + reg_vals[i]);
 		}
 	}
@@ -464,22 +465,26 @@ public class cilc
 
 		//TODO: use our list of supported primitive types instead
 		if (!isreg && !t.IsPrimitive) {
-			//Console.WriteLine ("hit: " + t.Namespace + " " + t.Name + " : " + t.FullName);
-			string tns = t.Namespace;
-			if (tns == null || tns == "")
-				tns = t.FullName;
 
-			if (!registry_hits.Contains (tns)) {
-				int count = 0;
-				registry_hits[tns] = count;
-			}
+			if (t.Namespace != null && t.Namespace != "")
+				HitRegistry (t.Namespace + " (namespace)");
 
-			registry_hits[tns] = (int) registry_hits[tns] + 1;
+			HitRegistry (t.FullName + " (type)");
 		}
 
 		return isreg;
 	}
 	
+	static void HitRegistry (string tns)
+	{
+		if (!registry_hits.Contains (tns)) {
+			int count = 0;
+			registry_hits[tns] = count;
+		}
+
+		registry_hits[tns] = (int) registry_hits[tns] + 1;
+	}
+
 	static void RegisterCsType (Type t)
 	{
 		if (IsRegistered (t))
