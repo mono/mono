@@ -50,7 +50,7 @@ Specifies the namespace of the XML schema element for which a class or a dataset
 Specifies the programming language to use for the generated code. The only supported languages are CS (C#) and VB (Visual Basic.NET).
 .TP 
 .I "/generator:type,assembly" "/g:type,assembly"
-Indicates xsd.exe to use custom CodeDomProvider to generate code. Type name must be full name. Assembly name is file name that xsd.exe tries to load.
+Indicates xsd.exe to use custom CodeDomProvider to generate code. The type name must be full name. Assembly name is a local file name that is going to be loaded. The specified Type must have the default constructor.
 .TP 
 .I "/outputdir:path" "/o:path"
 Specifies the directory where to generate the code or schemas.
