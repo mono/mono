@@ -1,3 +1,10 @@
+2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security.dll.sources: Added support for SHA224 hash algorithm
+	in Mono.Security.Cryptography.
+	* Mono.Security_test.dll.sources: Added unit tests for SHA224 hash
+	algorithm.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security_test.dll.sources: Added unit tests for Authenticode
