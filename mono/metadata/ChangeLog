@@ -1,3 +1,12 @@
+Fri Sep 28 19:26:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: fix type comparison for arrays.
+	* loader.h, loader.c: half-assed fix to get more tests work in cygwin.
+	Added a couple of new classes to monodefaults.
+	* icall.c: added a couple of Reflection-related internalcalls.
+	* class.h, class.c: implemented mono_ldtoken () for RuntimeTypeHandles.
+	Added a byval_arg MonoType to MonoClass.
+
 2001-09-28  Dick Porter  <dick@ximian.com>
 
 	* icall.c:

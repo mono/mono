@@ -1,4 +1,8 @@
 
+Fri Sep 28 19:43:12 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: marshal valuetypes that are enums.
+
 Thu Sep 27 15:34:37 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h: in memindex operand you can use X86_NOBASEREG
