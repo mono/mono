@@ -44,4 +44,4 @@ using System.Web.UI;
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
 
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+[assembly: AssemblyKeyFile("../msfinal.pub")]

@@ -42,4 +42,4 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+[assembly: AssemblyKeyFile("../msfinal.pub")]

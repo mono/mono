@@ -40,4 +40,5 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+[assembly: AssemblyKeyFile("../msfinal.pub")]
+
