@@ -1,5 +1,10 @@
 2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CachingCompiler.cs: don't try to watch for changes in system
+	assemblies. Fixes bug #64871.
+
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: handle builders that need to process inner text
 	with tags.
 
