@@ -11,12 +11,8 @@ using System.ComponentModel.Design.Serialization;
 
 namespace System.Collections.Specialized
 {
-#if (NET_1_0)
-	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-#endif
-#if (NET_1_1)
-    	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-#endif
+
+	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 	public class StringDictionary : IEnumerable
 	{
 		private Hashtable table;
