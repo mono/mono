@@ -172,6 +172,7 @@ namespace Mono.CSharp {
 				return true;
 			
 			count = FixedParameters.Length;
+			string array_par_name = ArrayParameter != null ? ArrayParameter.Name : null;
 			for (i = 0; i < count; i++){
 				string base_name = FixedParameters [i].Name;
 				
@@ -182,7 +183,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (base_name == ArrayParameter.Name){
+				if (base_name == array_par_name){
 					error100 (base_name);
 					return false;
 				}
