@@ -213,9 +213,7 @@ namespace System.Web.UI.WebControls
 			button.TextAlign = TextAlign;
 			button.AutoPostBack = AutoPostBack;
 			button.ID = ClientID + "_" + repeatIndex.ToString (NumberFormatInfo.InvariantInfo);;
-			object view_state = ViewState ["TabIndex"];
-			if (view_state != null)
-				button.TabIndex = (short) view_state;
+			button.TabIndex = tabIndex;
 			ListItem current = Items [repeatIndex];
 			button.Text = current.Text;
 			button.Attributes ["value"] = current.Value;
