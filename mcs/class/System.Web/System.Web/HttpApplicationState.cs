@@ -2,84 +2,76 @@
 // System.Web.HttpApplicationState
 //
 // Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//   Patrik Torstensson
 //
 using System;
 using System.Threading;
 using System.Web;
 using System.Collections.Specialized;
 
-namespace System.Web {
+namespace System.Web 
+{
 
-	[MonoTODO("Performance - Use SWMR lock here")]
-	public sealed class HttpApplicationState : NameObjectCollectionBase {
+	public sealed class HttpApplicationState : NameObjectCollectionBase 
+	{
 		private HttpStaticObjectsCollection _AppObjects;
 		private HttpStaticObjectsCollection _SessionObjects;
 
-		// TODO : Change to ReadWriteLock when ready
-		private Mutex _Lock; 
-
-		private void LockRead ()
-		{
-			Monitor.Enter (this);
-		}
-
-		private void LockWrite ()
-		{
-			Monitor.Enter (this);
-		}
-
-		private void UnlockRead ()
-		{
-			Monitor.Exit (this);
-		}
-
-		private void UnlockWrite ()
-		{
-			Monitor.Exit (this);
-		}
+		private ReaderWriterLock _Lock; 
 
 		internal HttpApplicationState ()
 		{
 			_AppObjects = new HttpStaticObjectsCollection ();
 			_SessionObjects = new HttpStaticObjectsCollection ();
-			_Lock = new Mutex ();
+			_Lock = new ReaderWriterLock ();
 		}
 
 		internal HttpApplicationState (HttpStaticObjectsCollection AppObj,
-						HttpStaticObjectsCollection SessionObj)
+			HttpStaticObjectsCollection SessionObj)
 		{
-			if (null != AppObj) {
+			if (null != AppObj) 
+			{
 				_AppObjects = AppObj;
-			} else {
+			} 
+			else 
+			{
 				_AppObjects = new HttpStaticObjectsCollection ();
 			}
 
-			if (null != SessionObj) {
+			if (null != SessionObj) 
+			{
 				_SessionObjects = SessionObj;
-			} else {
+			} 
+			else 
+			{
 				_SessionObjects = new HttpStaticObjectsCollection ();
 			}
-			_Lock = new Mutex ();
+			_Lock = new ReaderWriterLock ();
 		}
 
 		public void Add (string name, object value)
 		{
-			LockWrite (); 
-			try {
+			_Lock.AcquireWriterLock (-1); 
+			try 
+			{
 				BaseAdd (name, value);
-			} finally {
-				UnlockWrite ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseWriterLock ();
 			}
 		}
 
 		public void Clear ()
 		{
-			LockWrite (); 
-			try {
+			_Lock.AcquireWriterLock (-1); 
+			try 
+			{
 				BaseClear ();
-			} finally {
-				UnlockWrite ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseWriterLock ();
 			}
 		} 
 
@@ -87,11 +79,14 @@ namespace System.Web {
 		{
 			object ret = null;
 
-			LockRead (); 
-			try {
+			_Lock.AcquireReaderLock (-1); 
+			try 
+			{
 				ret = BaseGet (name);
-			} finally {
-				UnlockRead ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseReaderLock ();
 			}
 
 			return ret;
@@ -101,11 +96,14 @@ namespace System.Web {
 		{
 			object ret = null;
 
-			LockRead (); 
-			try {
+			_Lock.AcquireReaderLock (-1); 
+			try 
+			{
 				ret = BaseGet (index);
-			} finally {
-				UnlockRead ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseReaderLock ();
 			}
 
 			return ret;
@@ -115,11 +113,14 @@ namespace System.Web {
 		{
 			string ret = null;
 
-			LockRead (); 
-			try {
+			_Lock.AcquireReaderLock (-1); 
+			try 
+			{
 				ret = BaseGetKey (index);
-			} finally {
-				UnlockRead ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseReaderLock ();
 			}
 
 			return ret;
@@ -127,16 +128,19 @@ namespace System.Web {
 
 		public void Lock ()
 		{
-			LockWrite ();
+			_Lock.AcquireWriterLock (-1);
 		}
 
 		public void Remove (string name)
 		{
-			LockWrite (); 
-			try {
+			_Lock.AcquireWriterLock (-1); 
+			try 
+			{
 				BaseRemove (name);
-			} finally {
-				UnlockWrite ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseWriterLock ();
 			}      
 		}
 
@@ -147,79 +151,100 @@ namespace System.Web {
 
 		public void RemoveAt (int index)
 		{
-			LockWrite (); 
-			try {
+			_Lock.AcquireWriterLock (-1); 
+			try 
+			{
 				BaseRemoveAt (index);
-			} finally {
-				UnlockWrite ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseWriterLock ();
 			}      
 		}
 
 		public void Set (string name, object value)
 		{
-			LockWrite (); 
-			try {
+			_Lock.AcquireWriterLock (-1); 
+			try 
+			{
 				BaseSet (name, value);
-			} finally {
-				UnlockWrite ();
+			} 
+			finally 
+			{
+				_Lock.ReleaseWriterLock ();
 			}      
 		}   
 
 		public void UnLock ()
 		{
-			UnlockWrite ();
+			_Lock.ReleaseWriterLock ();
 		}
 
-		public string [] AllKeys {
-			get {
+		public string [] AllKeys 
+		{
+			get 
+			{
 				string [] ret = null;
 
-				LockRead (); 
-				try {
+				_Lock.AcquireReaderLock (-1); 
+				try 
+				{
 					ret = BaseGetAllKeys ();
-				} finally {
-					UnlockRead ();
+				} 
+				finally 
+				{
+					_Lock.ReleaseReaderLock ();
 				}     
 
 				return ret;
 			}
 		}
 
-		public HttpApplicationState Contents {
+		public HttpApplicationState Contents 
+		{
 			get { return this; }
 		}
 
-		public override int Count {
-			get {
+		public override int Count 
+		{
+			get 
+			{
 				int ret = 0;
 
-				LockRead(); 
-				try {
+				_Lock.AcquireReaderLock (-1); 
+				try 
+				{
 					ret = base.Count;
-				} finally {
-					UnlockRead ();
+				} 
+				finally 
+				{
+					_Lock.ReleaseReaderLock ();
 				}     
 
 				return ret;
 			}
 		}   
 
-		public object this [string name] {
+		public object this [string name] 
+		{
 			get { return Get (name); }
 			set { Set (name, value); }
 		}
 
-		public object this [int index] {
+		public object this [int index] 
+		{
 			get { return Get (index); }
 		}
 
 		//  ASP Session based objects
-		internal HttpStaticObjectsCollection SessionObjects {
+		internal HttpStaticObjectsCollection SessionObjects 
+		{
 			get { return _SessionObjects; }
 		}
 
 		//  ASP App based objects
-		public HttpStaticObjectsCollection StaticObjects {
+		public HttpStaticObjectsCollection StaticObjects 
+		{
 			get { return _AppObjects; }
 		}
 	}

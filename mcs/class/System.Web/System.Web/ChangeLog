@@ -1,3 +1,8 @@
+2004-04-28	Patrik Torstensson
+
+	* HttpApplicationState.cs: Performance, usage of ReaderWriter lock,
+	removed MonoTodo
+
 2004-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: return null in HtmlDecode for null input instead of
