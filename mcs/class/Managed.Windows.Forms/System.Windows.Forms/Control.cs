@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.9  2004/08/04 21:14:26  pbartok
+// - Fixed Invalidation bug (calculated wrong client area)
+// - Added ClientSize setter
+//
 // Revision 1.8  2004/08/04 20:11:24  pbartok
 // - Added Invalidate handling
 //
@@ -692,7 +696,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				throw new NotImplementedException();
+				this.SetClientSizeCore(value.Width, value.Height);
 			}
 		}
 
@@ -1165,11 +1169,11 @@ namespace System.Windows.Forms
 		}
 
 		public void Invalidate() {
-			Invalidate(bounds, false);
+			Invalidate(new Rectangle(0, 0, bounds.Width, bounds.Height), false);
 		}
 
 		public void Invalidate(bool invalidateChildren) {
-			Invalidate(bounds, invalidateChildren);
+			Invalidate(new Rectangle(0, 0, bounds.Width, bounds.Height), invalidateChildren);
 		}
 
 		public void Invalidate(System.Drawing.Rectangle rc) {
@@ -1433,6 +1437,12 @@ namespace System.Windows.Forms
 
 		protected virtual void Select(bool directed, bool forward) {
 			throw new NotImplementedException();
+		}
+
+		protected virtual void SetClientSizeCore(int x, int y) {
+			bounds.Width=x;
+			bounds.Height=y;
+			XplatUI.SetWindowPos(Handle, bounds);
 		}
 
 		protected void SetStyle(ControlStyles flag, bool value) {
