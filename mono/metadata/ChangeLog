@@ -1,3 +1,8 @@
+
+Thu Aug 22 18:49:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fixed field_get_value() for reference types.
+
 2002-08-22  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (ves_icall_System_Net_Sockets_Socket_RecvFrom_internal):
