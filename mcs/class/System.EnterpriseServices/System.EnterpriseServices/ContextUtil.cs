@@ -19,6 +19,14 @@ namespace System.EnterpriseServices {
 
 		#endregion // Fields
 
+		#region Constructors
+
+		internal ContextUtil ()
+		{
+		}
+
+		#endregion // Constructors
+
 		#region Properties
 
 		public static Guid ActivityId {
@@ -78,5 +86,45 @@ namespace System.EnterpriseServices {
 		}
 
 		#endregion // Properties
+
+		#region Methods
+
+		[MonoTODO]
+		public static void DisableCommit ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void EnableCommit ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static object GetNamedProperty ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static bool IsCallerInRole ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SetAbort ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SetComplete ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion // Methods
 	}
 }

@@ -1,3 +1,33 @@
+2002-08-08  Tim Coleman <tim@timcoleman.com>
+        * ISecurityCallContext.cs:
+        * ISecurityCallersColl.cs:
+        * ISecurityIdentityColl.cs:
+        * ISharedProperty.cs:
+        * ISharedPropertyGroup.cs:
+        * RegistrationHelperTx.cs:
+        * ResourcePool.cs:
+        * SecureMethodAttribute.cs:
+        * SecurityCallContext.cs:
+        * SecurityCallers.cs:
+        * SecurityIdentity.cs:
+        * SecurityRoleAttribute.cs:
+        * ServicedComponentException.cs:
+        * SharedProperty.cs:
+        * SharedPropertyGroup.cs:
+        * SharedPropertyGroupManager.cs:
+        * SynchronizationAttribute.cs:
+        * SynchronizationOption.cs:
+        * TransactionAttribute.cs:
+        * TransactionIsolationLevel.cs:
+                New files added.
+        * ContextUtil.cs:
+                New internal constructor added, methods added.
+        * IRemoteDispatch.cs:
+                AutoComplete attributes added to methods
+        * TODOAttribute.cs:
+                Namespace adjusted.
+
+
 2002-08-07  Tim Coleman <tim@timcoleman.com>
 	* RegistrationErrorInfo.cs:
 	* RegistrationException.cs:

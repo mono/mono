@@ -16,7 +16,10 @@ namespace System.EnterpriseServices {
 
 		#region Methods
 
+		[AutoComplete]
 		string RemoteDispatchAutoDone (string s);
+
+		[AutoComplete]
 		string RemoteDispatchNotAutoDone (string s);
 
 		#endregion // Methods
