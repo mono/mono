@@ -1,3 +1,6 @@
+2004-02-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* basic-calls.cs basic-float.cs basic-long.cs objects.cs: New regression tests.
 
 Tue Feb 17 21:41:20 CET 2004 Paolo Molaro <lupus@ximian.com>
 
