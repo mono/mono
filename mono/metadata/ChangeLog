@@ -1,3 +1,6 @@
+2002-03-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_InternalInvoke): impl.
 
 Wed Mar 13 00:27:30 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,7 @@
+2002-03-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86/tramp.c (mono_create_trampoline): dont use fld/fst to copy
+	R8 values
 
 Mon Mar 11 16:14:29 CET 2002 Paolo Molaro <lupus@ximian.com>
 

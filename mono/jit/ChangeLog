@@ -1,3 +1,8 @@
+2002-03-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_create_native_wrapper): new code to generate
+	wrappers for calling native functions.
+
 2002-03-14  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (MonoDebugFormat): New public enums specifying which debugging
