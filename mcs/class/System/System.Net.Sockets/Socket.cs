@@ -1448,21 +1448,18 @@ namespace System.Net.Sockets
 		private bool disposed;
 		
 		protected virtual void Dispose(bool explicitDisposing) {
-			// Check to see if Dispose has already been called
-			if(!this.disposed) {
-				// If this is a call to Dispose,
-				// dispose all managed resources.
-				if(explicitDisposing) {
-					// Free up stuff here
+			if (!disposed) {
+				disposed = true;
+				connected = false;
+				if (!explicitDisposing) {
+					closed = true;
+					Close_internal (socket);
+					return;
 				}
-
-				// Release unmanaged resources
-				this.disposed=true;
 			
-				connected=false;
 				if (Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
 					closed = true;
-					Close_internal(socket);
+					Close_internal (socket);
 				} else {
 					Interlocked.CompareExchange (ref closeDelayed, 1, 0);
 				}
