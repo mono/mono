@@ -1,5 +1,10 @@
 2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdValidatingReader.cs :
+	  Dependent change with XmlSchemaElement internal property.
+
+2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs : Throw exception only in case of errors.
 
 2004-01-08  Lluis Sanchez Gual  <lluis@ximian.com>

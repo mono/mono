@@ -828,10 +828,10 @@ namespace Mono.Xml.Schema
 			if (element == null)
 				HandleError ("Element declaration is required for " + qname);
 			// 2.
-			if (element.actualIsAbstract)
+			if (element.ActualIsAbstract)
 				HandleError ("Abstract element declaration was specified for " + qname);
 			// 3.1.
-			if (!element.actualIsNillable && xsiNilValue != null)
+			if (!element.ActualIsNillable && xsiNilValue != null)
 				HandleError ("This element declaration is not nillable: " + qname);
 			// 3.2.
 			// Note that 3.2.1 xsi:nil constraints are to be validated in
