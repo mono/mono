@@ -1,3 +1,6 @@
+2002-03-21  Mike Kestner  <mkestner@speakeasy.net>
+
+	* ASCIIEncoding.cs : Fix off by one error in Get(Char|Byte)Count.
 
 Thu Mar 21 17:38:19 CET 2002 Paolo Molaro <lupus@ximian.com>
 

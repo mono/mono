@@ -1,3 +1,7 @@
+2002-03-21  Mike Kestner <mkestner@speakeasy.net>
+
+	* StreamReader.cs : Fill out, add buffering, and use encoding.
+
 2002-03-19  Martin Baulig  <martin@gnome.org>
 
 	* StreamWriter.cs (StreamWriter (string)): The default is to override

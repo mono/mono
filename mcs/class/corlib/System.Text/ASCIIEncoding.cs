@@ -46,7 +46,7 @@ namespace System.Text {
 			if (chars == null) 
 				throw new ArgumentNullException ();
 
-			if ((index < 0) || (count <= 0) || ((index + count) >= chars.Length))
+			if ((index < 0) || (count <= 0) || ((index + count) > chars.Length))
 				throw new ArgumentOutOfRangeException ();
 
 			return count;
@@ -95,7 +95,7 @@ namespace System.Text {
 			if (bytes == null) 
 				throw new ArgumentNullException ();
 
-			if ((index < 0) || (count <= 0) || ((index + count) >= bytes.Length))
+			if ((index < 0) || (count <= 0) || ((index + count) > bytes.Length))
 				throw new ArgumentOutOfRangeException ();
 
 			return count;
