@@ -28,16 +28,14 @@ namespace System.Data
 			if(sourceTable == null)
 				throw new ArgumentNullException("sourceTable");
 
-			
-			if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction))
+			DataTable targetTable = null;
+			if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction,ref targetTable)) {
 				return;
-			DataTable targetTable = targetSet.Tables[sourceTable.TableName];
-			if (targetTable != null)
-			{
+			}
+			if (targetTable != null) {
 				checkColumnTypes(targetTable, sourceTable); // check that the colums datatype is the same
 				fillData(targetTable, sourceTable, preserveChanges);
-			}
-			
+			}			
 		}
 
 		internal static void Merge(DataSet targetSet, DataRow[] sourceRows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
@@ -47,15 +45,14 @@ namespace System.Data
 			if(sourceRows == null)
 				throw new ArgumentNullException("sourceRows");
 
-			for (int i = 0; i < sourceRows.Length; i++)
-			{
+			for (int i = 0; i < sourceRows.Length; i++) {
 				DataRow row = sourceRows[i];
 				DataTable sourceTable = row.Table;
-				if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction))
+				DataTable targetTable = null;
+				if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction,ref targetTable)) {
 					return;
-				DataTable targetTable = targetSet.Tables[row.Table.TableName];
-				if (targetTable != null)
-				{
+				}
+				if (targetTable != null) {
 					checkColumnTypes(targetTable, row.Table);
 					MergeRow(targetTable, row, preserveChanges);
 				}
@@ -185,7 +182,7 @@ namespace System.Data
 		
 		// adjust the table schema according to the missingschemaaction param.
 		// return false if adjusting fails.
-		private static bool AdjustSchema(DataSet targetSet, DataTable sourceTable, MissingSchemaAction missingSchemaAction)
+		private static bool AdjustSchema(DataSet targetSet, DataTable sourceTable, MissingSchemaAction missingSchemaAction, ref DataTable newTable)
 		{
 			string tableName = sourceTable.TableName;
 			
@@ -195,12 +192,14 @@ namespace System.Data
 			// we need to check if it is equals names
 			if (tmp != -1 && !targetSet.Tables[tmp].TableName.Equals(tableName))
 				tmp = -1;
-			if (tmp == -1)
-			{
-				if (missingSchemaAction == MissingSchemaAction.Ignore)
+			if (tmp == -1) {
+				if (missingSchemaAction == MissingSchemaAction.Ignore) {
 					return true;
-				if (missingSchemaAction == MissingSchemaAction.Error)
+				}
+				if (missingSchemaAction == MissingSchemaAction.Error) {
 					throw new ArgumentException("Target DataSet missing definition for "+ tableName + ".");
+				}
+				
 				DataTable cloneTable = (DataTable)sourceTable.Clone();
 				targetSet.Tables.Add(cloneTable);
 				tableName = cloneTable.TableName;
@@ -208,24 +207,25 @@ namespace System.Data
 			
 			DataTable table = targetSet.Tables[tableName];
 			
-			for (int i = 0; i < sourceTable.Columns.Count; i++)
-			{
+			for (int i = 0; i < sourceTable.Columns.Count; i++) {
 				DataColumn sourceColumn = sourceTable.Columns[i];
 				// if a column from the source table doesn't exists in the target table
 				// we act according to the missingschemaaction param.
 				DataColumn targetColumn = table.Columns[sourceColumn.ColumnName];
 				if(targetColumn == null) {
-					if (missingSchemaAction == MissingSchemaAction.Ignore)
+					if (missingSchemaAction == MissingSchemaAction.Ignore) {
 						continue;
-					if (missingSchemaAction == MissingSchemaAction.Error)
+					}
+					if (missingSchemaAction == MissingSchemaAction.Error) {
 						throw new ArgumentException(("Column '" + sourceColumn.ColumnName + "' does not belong to table Items."));
+					}
 					
 					targetColumn = new DataColumn(sourceColumn.ColumnName, sourceColumn.DataType, sourceColumn.Expression, sourceColumn.ColumnMapping);
 					table.Columns.Add(targetColumn);
 				}
 
 				if (sourceColumn.Unique) {
-					try{
+					try {
 						targetColumn.Unique = sourceColumn.Unique;
 					}
 					catch(Exception e){
@@ -244,9 +244,11 @@ namespace System.Data
 				}
 			}
 
-			if (!AdjustPrimaryKeys(table, sourceTable))
+			if (!AdjustPrimaryKeys(table, sourceTable)) {
 				return false;
+			}
 
+			newTable = table;
 			return true;
 		}
 		

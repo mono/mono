@@ -1,4 +1,9 @@
 2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
+	* MergeManager.cs : AdjustSchema now updates by reference new created table,
+	so in Merge you do not need to lookup for it (were unable to do this for unnamed tables).
+	Code styling.
+	
+2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DataColumn.cs : In set_Item[int] - if autoincrement, adjust next autoincrement value.
 	* DataColumnCollection.cs : fixed parantethes.
