@@ -17,6 +17,7 @@ namespace MonoTests.System
 
 public class TimeZoneTest : TestCase
 {
+	public TimeZoneTest() : base ("MonoTests.System.TimeZoneTest testcase") {}
         public TimeZoneTest (string name): base(name) {}
 
 	public static ITest Suite

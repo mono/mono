@@ -15,6 +15,7 @@ namespace MonoTests.System
 
 public class StringTest : TestCase
 {
+	public StringTest() : base ("MonoTests.System.StringTest testcase") {}
 	public StringTest (string name) : base (name) {}
 
 	protected override void SetUp ()

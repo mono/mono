@@ -37,6 +37,7 @@ public class ByteTest : TestCase
 
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
+	public ByteTest() : base ("MonoTests.System.ByteTests testcase") {}
 	public ByteTest(string name) : base(name) {}
 
 	protected override void SetUp() 

@@ -26,6 +26,7 @@ public class DateTimeTest : TestCase
 		631502079130000000L	// 25 Feb 2002 - 04:25:13
 	};
 
+	public DateTimeTest() : base ("MonoTests.System.DateTimeTest testcase") {}
         public DateTimeTest (string name): base(name) {}
 
 	public static ITest Suite

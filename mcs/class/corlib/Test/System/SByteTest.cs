@@ -36,6 +36,7 @@ public class SByteTest : TestCase
 					"127", "127.00000", "12,700.00000 %", "0007f"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
+	public SByteTest() : base ("MonoTests.System.SByteTest testcase") {}
 	public SByteTest(string name) : base(name) {}
 
 	protected override void SetUp() 

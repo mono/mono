@@ -32,6 +32,7 @@ public class BitArrayTest : TestCase
       AssertEquals(ba[i], pattern[i]);
   }
 
+  public BitArrayTest() : base ("MonoTests.System.Collections.BitArrayTest testcase") {}
   public BitArrayTest( string name ) : base(name) { }	
   
   protected override void SetUp()

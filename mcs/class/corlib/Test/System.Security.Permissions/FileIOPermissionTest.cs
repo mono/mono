@@ -18,6 +18,7 @@ namespace MonoTests.System.Security.Permissions {
 
 	public class FileIOPermissionTest : TestCase {
 		
+		public FileIOPermissionTest() : base ("MonoTests.System.Security.Permissions.FileIOPermissionTest testcase") { }
 		public FileIOPermissionTest(String name) : base(name) {
 		}
 		

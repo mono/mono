@@ -17,6 +17,7 @@ public class ResolveEventArgsTest : TestCase
 		}
 	}
 
+	public ResolveEventArgsTest() : base ("MonoTests.System.ResolveEventArgsTest testcase") {}
         public ResolveEventArgsTest(string name): base(name){}
 
 	public void TestTheWholeThing()

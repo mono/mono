@@ -39,6 +39,7 @@ public class UInt64Test : TestCase
 
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
+	public UInt64Test() : base ("MonoTests.System.UInt64Test testcase") {}
 	public UInt64Test(string name) : base(name) {}
 
 	protected override void SetUp() 

@@ -22,6 +22,7 @@ namespace MonoTests.System.Resources {
 		private static string m_ResourceFile = "System.Resources\\MyResources.resources";
 		private static string m_BadResourceFile = "System.Resources\\Empty.resources";
 		
+		public ResourceReaderTest() : base ("MonoTests.System.Resources.ResourceReaderTest testcase") { }
 		public ResourceReaderTest(String name) : base(name) {
 		}
 		

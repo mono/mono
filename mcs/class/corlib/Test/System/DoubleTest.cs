@@ -23,6 +23,7 @@ public class DoubleTest : TestCase
 	private const Double d_ninf = Double.NegativeInfinity;
 	private const String s = "What Ever";
 	
+	public DoubleTest() : base ("MonoTests.System.DoubleTest testcase") {}
 	public DoubleTest (string name) : base (name) {}
 	
 

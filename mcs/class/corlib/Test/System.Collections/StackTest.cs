@@ -264,6 +264,7 @@ namespace MonoTests.System.Collections
                         }
                 }
 
+		public StackTest() : base ("MonoTests.System.Collections.StackTest testcase") {}
                 public StackTest(string name): base(name) {}
         }
 }

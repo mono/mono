@@ -12,6 +12,8 @@ namespace MonoTests.System.Collections {
 
 	/// <summary>CaseInsensitiveHashCodeProvider test suite.</summary>
 	public class CaseInsensitiveHashCodeProviderTest : TestCase {
+		public CaseInsensitiveHashCodeProviderTest() : base ("MonoTests.System.Collections.CaseInsensitiveHashCodeProviderTest testcase") {}
+
 		public CaseInsensitiveHashCodeProviderTest(String name) : base(name)
 		{
 		}

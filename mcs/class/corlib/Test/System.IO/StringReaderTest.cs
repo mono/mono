@@ -22,6 +22,7 @@ public class StringReaderTest : TestCase {
 		}
 	}
 
+	public StringReaderTest() : base ("MonoTests.System.IO.StringReaderTest testcase") { }
 	public StringReaderTest( string name ): base(name) { }
 
 	public void TestPeekRead() {

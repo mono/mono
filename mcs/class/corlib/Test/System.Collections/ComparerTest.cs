@@ -12,6 +12,7 @@ namespace MonoTests.System.Collections {
 
 	/// <summary>Comparer test suite.</summary>
 	public class ComparerTest : TestCase {
+		public ComparerTest() : base ("MonoTests.System.Collections.ComparerTest testcase") {}
 		public ComparerTest(String name) : base(name)
 		{
 		}

@@ -21,6 +21,7 @@ public class StringWriterTest : TestCase {
 		}
 	}
 
+	public StringWriterTest() : base ("MonoTests.System.IO.StringWriterTest testcase") { }
 	public StringWriterTest( string name ): base(name) { }
 
 	public void TestConstructors() {

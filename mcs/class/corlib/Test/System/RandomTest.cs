@@ -17,6 +17,7 @@ public class RandomTest : TestCase
 		}
 	}
 
+	public RandomTest() : base ("MonoTests.System.RandomTest testcase") {}
         public RandomTest(string name): base(name){}
         public void TestDouble()
         {

@@ -471,6 +471,7 @@ public class HashtableTest : TestCase {
 	protected Hashtable ht;
 	private static Random rnd;
 	
+	public HashtableTest() : base ("MonoTests.System.Collections.HashtableTest testcase") {}
 	public HashtableTest(String name) : base(name) {}
 	
 	protected override void SetUp() {

@@ -15,6 +15,7 @@ namespace MonoTests.System
 
 public class TimeSpanTest : TestCase
 {
+	public TimeSpanTest() : base ("MonoTests.System.TimeSpanTest testcase") {}
         public TimeSpanTest (string name): base(name) {}
 
 	public static ITest Suite

@@ -18,6 +18,8 @@ namespace MonoTests.System.Collections {
 			}
 		}
 
+		public CaseInsensitiveComparerTest() : base ("MonoTests.System.Collections.CaseInsensitiveComparerTest testcase") {}
+
 		public CaseInsensitiveComparerTest(String name) : base(name)
 		{
 		}

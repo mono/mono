@@ -14,6 +14,7 @@ namespace MonoTests.System
 
 public class BooleanTest : TestCase
 {
+	public BooleanTest () : base ("MonoTests.System.BooleanTests testcase") {}
 	public BooleanTest (string name) : base (name) {}
 
 	protected override void SetUp ()

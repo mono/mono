@@ -36,6 +36,7 @@ public class Int32Test : TestCase
 					"2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
+	public Int32Test() : base ("MonoTests.System.Int32Test testcase") {}
 	public Int32Test(string name) : base(name) {}
 
 	protected override void SetUp() 

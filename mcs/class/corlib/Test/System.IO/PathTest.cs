@@ -28,6 +28,7 @@ public class PathTest : TestCase {
 		}
 	}
 
+	public PathTest() : base ("MonoTests.System.IO.PathTest testcase") { }
 	public PathTest( string name ): base(name) { }
 
         protected override void SetUp() {

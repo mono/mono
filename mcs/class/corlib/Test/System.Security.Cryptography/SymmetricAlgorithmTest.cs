@@ -16,6 +16,9 @@ namespace MonoTests.System.Security.Cryptography {
 	public class SymmetricAlgorithmTest : TestCase {
 		private SymmetricAlgorithm _algo;
 		
+		public SymmetricAlgorithmTest() : base ("MonoTests.System.Security.Cryptography.SymmetricAlgorithmTest testcase") {
+			_algo = null;
+		}
 		public SymmetricAlgorithmTest(String name) : base(name) {
 			_algo = null;
 		}
