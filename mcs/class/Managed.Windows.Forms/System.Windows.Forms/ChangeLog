@@ -1,3 +1,8 @@
+2005-03-18  Peter Bartok  <pbartok@novell.com>
+
+	* MenuAPI.cs: Remove menu *before* executing selected action to
+	  prevent the menu from 'hanging around'
+	  
 2005-03-17  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Implemented WorkingArea property

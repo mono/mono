@@ -912,10 +912,10 @@ namespace System.Windows.Forms
 			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 
 			if (item != null) {
-				item.item.PerformClick ();
 				if (item.item.Enabled) {
 					HideWindow ();
 				}
+				item.item.PerformClick ();
 			}
 		}
 
