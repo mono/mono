@@ -53,7 +53,8 @@ namespace System.Windows.Forms
 			listbox_info.item_height = FontHeight + 2;
 		}
 
-		#region Events
+		#region events
+		public new event EventHandler Click;
 		public new event EventHandler DataSourceChanged;
 		public new event EventHandler DisplayMemberChanged;
 		public new event DrawItemEventHandler DrawItem;
@@ -81,15 +82,15 @@ namespace System.Windows.Forms
 			get { return base.CreateParams;}
 		}
 		
-		/*public new object DataSource {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public new object DataSource {
+			get { return base.DataSource; }
+			set { DataSource = value; }
 		}
 
 		public new string DisplayMember {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
-		}*/
+		}
 
 		public override DrawMode DrawMode {
 			get { return DrawMode.Normal; }
@@ -126,7 +127,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-		//public new string ValueMember {get; set;}
+		public new string ValueMember {
+			get { return base.ValueMember; }
+			set { base.ValueMember = value; }			
+		}
+		
 		#endregion Public Properties
 
 		#region Public Methods
@@ -162,14 +167,24 @@ namespace System.Windows.Forms
 		protected override void OnClick (EventArgs e)
 		{
 			base.OnClick (e);
+			
+			if (check_onclick) {
+				if (focused_item != -1) {
+					SetItemChecked (focused_item, !GetItemChecked (focused_item));
+				}
+			}
+			
+			if (Click != null)			
+				Click (this, EventArgs.Empty);
 		}
 		
 		protected override void OnDrawItem (DrawItemEventArgs e)
 		{
+			Color back_color, fore_color;
 			Rectangle item_rect = e.Bounds;
-
-			/* Draw checkbox */
 			ButtonState state;
+
+			/* Draw checkbox */		
 
 			if ((Items.GetListBoxItem (e.Index)).State == CheckState.Checked)
 				state = ButtonState.Checked;
@@ -186,23 +201,27 @@ namespace System.Windows.Forms
 
 			item_rect.X += checkbox_rect.Width + checkbox_rect.X * 2;
 			item_rect.Width -= checkbox_rect.Width + checkbox_rect.X * 2;
-
-			/* Draw item */
+			
+			/* Draw text*/
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorHilight), item_rect);
-
-				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilightText),
-					item_rect, string_format);
+				back_color = ThemeEngine.Current.ColorHilight;
+				fore_color = ThemeEngine.Current.ColorHilightText;
 			}
 			else {
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(e.BackColor), item_rect);
+				back_color = e.BackColor;
+				fore_color = e.ForeColor;
+			}
+			
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				(back_color), item_rect);
 
-				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (e.ForeColor),
-					item_rect, string_format);
+			e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
+				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+				item_rect, string_format);
+					
+			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
+				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, item_rect,
+					fore_color, back_color);
 			}
 		}
 
@@ -225,11 +244,18 @@ namespace System.Windows.Forms
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
 			base.OnKeyPress (e);
+			
+			if (e.KeyChar == ' ') { // Space should check focused item				
+				if (focused_item != -1) {
+					SetItemChecked (focused_item, !GetItemChecked (focused_item));
+				}
+			}
 		}
 
 		protected override void OnMeasureItem (MeasureItemEventArgs e)
 		{
-
+			if (MeasureItem != null)
+				MeasureItem (this, e);
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -313,16 +339,12 @@ namespace System.Windows.Forms
 			if ((Items.GetListBoxItem (index)).State == CheckState.Checked)
 					value = CheckState.Unchecked;
 
-
 			if (hit_rect.Contains (e.X, e.Y) == true)  {				
 				set_value = true;
 
 			} else {
 				if (item_rect.Contains (e.X, e.Y) == true) {
-					if (check_onclick) {
-						set_value = true;
-					}
-					else {
+					if (!check_onclick) {
 						if ((Items.GetListBoxItem (index)).Selected == true)
 							set_value = true;
 					}
@@ -516,7 +538,7 @@ namespace System.Windows.Forms
 			private CheckedListBox owner;
 			private ArrayList object_items = new ArrayList ();
 
-			public CheckedItemCollection (CheckedListBox owner)
+			internal CheckedItemCollection (CheckedListBox owner)
 			{
 				this.owner = owner;
 			}

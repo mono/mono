@@ -102,8 +102,7 @@ namespace System.Windows.Forms
 		private bool integral_height;
 		private bool multicolumn;
 		private bool scroll_always_visible;
-		private int selected_index;
-		private int focused_item;
+		private int selected_index;		
 		private SelectedIndexCollection selected_indices;		
 		private SelectedObjectCollection selected_items;
 		private SelectionMode selection_mode;
@@ -118,7 +117,8 @@ namespace System.Windows.Forms
 		private bool ctrl_pressed;
 		private bool shift_pressed;
 		private bool has_focus;
-
+		
+		internal int focused_item;
 		internal StringFormat string_format;
 		internal ListBoxInfo listbox_info;
 		internal ObjectCollection items;
