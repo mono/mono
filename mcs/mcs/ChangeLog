@@ -1,5 +1,11 @@
 2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* attribute.cs: Handle MarshalAs attributes as pseudo, and
+	set the correct information via SRE. This prevents
+	hanging on the MS runtime. Fixes #29374.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* convert.cs: correctly handle conversions to value types
 	from Enum and ValueType as unboxing conversions.
 
