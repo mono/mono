@@ -1,3 +1,6 @@
+2004-08-20 Umadevi S <sumadevi@novell.com>
+        * Added testcase in SqlDataAdapter.cs for Fillschema
+
 2004-08-19 Gert Driesen <drieseng@users.souceforge.net>
 	* SqlConnectionTest.cs: Added testcases for bug #63165.
 

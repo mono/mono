@@ -51,6 +51,10 @@ namespace MonoTests.System.Data.SqlClient
           }
 
 	 [Test]
+	  /**
+	  The below test will not run everytime, since the region id column is unique
+	   so change the regionid if you want the test to pass.
+	  **/	
           public void UpdateTest () {
 		try    {
 			DataTable dt = new DataTable();
@@ -60,16 +64,17 @@ namespace MonoTests.System.Data.SqlClient
 			SqlCommandBuilder cb = new SqlCommandBuilder (da);
 			DataRow dr = dt.NewRow();
 
-			dr["RegionID"] = 221;
-			dr["RegionDescription"] = "Bangalore";
-		
+			dr["RegionID"] = 101;
+			dr["RegionDescription"] = "Boston";
+	
 			dt.Rows.Add(dr);
 			da.Update(dt);
 	
 
                         }
 		catch  (Exception e) {
-			Assertion.Assert("Got an exception",true);
+			Assert.Fail("A#01 Got an exception");
+			//Console.WriteLine(e.StackTrace);
 			
 		}
                  
@@ -78,5 +83,45 @@ namespace MonoTests.System.Data.SqlClient
                         CloseConnection ();
                 }
           }
+
+
+	[Test]
+	public void FillSchemaTest() {
+		try {
+			
+
+			string sql = "select * from Region;";
+			SqlCommand c = conn.CreateCommand();
+			c.CommandText = sql;
+			SqlDataReader dr =
+c.ExecuteReader(CommandBehavior.KeyInfo|CommandBehavior.SchemaOnly);
+			DataTable schema = dr.GetSchemaTable();
+			// check the schema details. 
+			/*foreach (DataColumn col in schema.Columns)
+				Console.Write(col.ColumnName+' ');*/
+			DataRowCollection drc = schema.Rows;
+			DataRow r = drc[0];
+			Assert.AreEqual("RegionID",r[0].ToString());
+                                                                                                    
+                }
+                                                                   
+                catch (Exception e) {
+                        Assert.Fail("A#02 : Got an exception");
+			Console.WriteLine(e.StackTrace);
+                                                                                                    
+                }
+                                                                                                    
+                finally { // try/catch is necessary to gracefully close connections^M
+                                                                                                    
+                        CloseConnection ();
+                }
+
+		
+
+	}
+
+
+	
+	
     }
 }
