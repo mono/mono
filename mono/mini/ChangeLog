@@ -1,5 +1,7 @@
 2004-05-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.h (MONO_ARCH_NEED_DIV_CHECK): Define this.
+
 	* cpu-sparc.md mini-sparc.c: Add overflow detection to div opcodes.
 
 2004-05-28	Patrik Torstensson <totte@hiddenpeaks.com>
