@@ -46,7 +46,6 @@ Other classes, structs, etc. that are missing:
 	DataSysDescriptionAttribute
 	DataViewManager
 	DataViewSetting
-	DataViewSettingCollection
 	FillErrorEventArgs
 	MergeFailedEventArgs
 	TypedDataSetGenerator
@@ -71,7 +70,7 @@ Exceptions that still need to be stubbed:
 	TypedDataSetGeneratorException
 	VersionNotFoundException
  
-The additional System.Data.SqlTypes classes need to be stubbed:
+The additional System.Data.SqlTypes classes need to be implemented:
 	SqlByte
 	SqlDataTime
 	SqlDecimal
