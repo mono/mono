@@ -456,3 +456,4 @@ System.Web.UI/IDataSource.cs
 System.Web.UI/IHierarchicalDataSource.cs
 System.Web.UI/ListSourceHelper.cs
 System.Web.UI.WebControls/SiteMapDataSourceView.cs
+System.Web.UI/XPathBinder.cs
