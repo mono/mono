@@ -37,76 +37,93 @@ run-test-local: test-compiler-jit
 test-compiler-jit: test-compiler-jit-real test-compiler-jit-ngtive_compile \
 test-compiler-jit-ngtive_run
 
+TEST_TAG = mbas-positive
 
 test-compiler-jit-real:
-	@rm -f *.exe *.out ; \
-	/bin/echo "********** Positive Tests ************" > results.out; \
-	/bin/echo "********** Positive Tests ************" ; \
+	@logpath=./logs ; \
+	logfile="$$logpath/$(TEST_TAG).results"; \
+	rm -f *.exe $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
+	echo "********** Positive Tests ************" > $$logfile ; \
+	echo "********** Positive Tests ************" ; \
 	for i in $(TEST_SOURCES) ; do \
-		/bin/echo -n -e "========================\n$$i: " >> results.out; \
-	    /bin/echo -n "$$i: "; \
-	    if $(INTERNAL_MBAS) $$i.vb 1>output ; then \
-            /bin/echo -n "COMPILED OK : " >> results.out; \
-	        /bin/echo -n "COMPILED OK : " ;\
-			true ; \
+	    echo -n -e "========================\n$$i: " >> $$logfile; \
+	    testlogfile="$$logpath/$(TEST_TAG)-$$i.log" ; \
+	    echo -n "$$i: "; \
+	    echo "*** $(INTERNAL_MBAS) $$i.vb" > $$testlogfile ; \
+	    if $(INTERNAL_MBAS) $$i.vb >> $$testlogfile 2>&1 ; then \
+		echo -n "COMPILED OK : " ; \
 	    else \
-			/bin/echo -n -e "FAILED COMPILATION\n---\n" >> results.out; \
-			cat output >> results.out; \
-	        /bin/echo FAILED COMPILATION ;  \
-			continue;\
+		echo "Exit code: $$?" >> $$testlogfile ; \
+		failed="$$failed $$i" ; \
+		echo "FAILED: $$i: COMPILATION" >> $$logfile; \
+		echo FAILED COMPILATION ; \
+		continue; \
 	    fi ; \
-	    if $(TEST_RUNTIME) ./$$i.exe 1>output ; then \
-			/bin/echo "EXECUTED OK" >> results.out; \
-	        /bin/echo "EXECUTED OK" ; \
+	    echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
+	    if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
+		echo "EXECUTED OK: $$i" >> $$logfile ; \
+	        echo "EXECUTED OK" ; rm -f $$testlogfile ; \
 	    else \
-			/bin/echo -n -e "$$i : FAILED AT RUNTIME\n---\n" >> results.out; \
-			cat output >> results.out; \
-	        /bin/echo "FAILED AT RUNTIME"; \
+		echo "$$i : FAILED AT RUNTIME Exit code: $$?" >> $$testlogfile ; \
+		failed="$$failed $$i" ; \
+		echo "FAILED AT RUNTIME"; \
 	    fi ; \
-	    rm -f ./$$i.exe output; \
-	done; \
-	/bin/echo "========================" >> results.out
+	    rm -f ./$$i.exe ; \
+	done ; \
 
-test-compiler-jit-ngtive_compile:
-	@rm -f *.exe ; \
-	/bin/echo "********** Negative Compilation Tests ************" >> results.out; \
-	/bin/echo "********** Negative Compilation Tests ************" ; \
+test-compiler-jit-ngtive_compile: TEST_TAG = mbas-negative-compile
+test-compiler-jit-ngtive_compile: 
+	@logpath=./logs ; \
+	logfile="$$logpath/$(TEST_TAG).results"; \
+	rm -f *.exe $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
+	echo "********** Negative Compilation Tests ************" >> $$logfile; \
+	echo "********** Negative Compilation Tests ************" ; \
 	for i in $(TEST_NGTIVE_COMPILATION_SOURCES) ; do \
-		/bin/echo -n -e "========================\n$$i: " >> results.out; \
-		/bin/echo -n "$$i: "; \
-	    if $(INTERNAL_MBAS) $$i.vb > /dev/null ; then \
-			/bin/echo "UNEXPECTED BEHAVIOUR" >> results.out; \
-	        /bin/echo UNEXPECTED BEHAVIOUR ; \
+	    echo -n -e "========================\n$$i: " >> $$logfile; \
+	    testlogfile="$$logpath/$(TEST_TAG)-$$i.log" ; \
+	    echo -n "$$i: "; \
+	    echo "*** $(INTERNAL_MBAS) $$i.vb" > $$testlogfile ; \
+	    if $(INTERNAL_MBAS) $$i.vb >> $$testlogfile 2>&1 ; then \
+		echo "UNEXPECTED BEHAVIOUR" >> $$logfile ; \
+	        echo UNEXPECTED BEHAVIOUR ; \
 	    else \
-			/bin/echo OK >> results.out; \
-			/bin/echo OK; \
-	        continue;\
+		echo "Exit code: $$?" >> $$testlogfile ; \
+		echo "OK" >> $$logfile ; \
+		echo OK; \
 	    fi ; \
-	    rm -f ./$$i.exe output; \
+	    rm -f ./$$i.exe ; \
 	done
 
+
+test-compiler-jit-ngtive_run: TEST_TAG = mbas-negative-runtime
 test-compiler-jit-ngtive_run:
-	@rm -f *.exe; \
-	/bin/echo "********** Negative Execution Tests ************" >> results.out; \
-	/bin/echo "********** Negative Execution Tests ************" ; \
+	@logpath=./logs ; \
+	logfile="$$logpath/$(TEST_TAG).results"; \
+	rm -f *.exe $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
+	echo "****** Negative Execution Tests ********" >> $$logfile; \
+	echo "****** Negative Execution Tests ********" ; \
 	for i in $(TEST_NGTIVE_RUNTIME_SOURCES) ; do \
-	    /bin/echo -n "$$i: "; \
-	    if $(INTERNAL_MBAS) $$i.vb 1>output ; then \
-			true ; \
+	    testlogfile="$$logpath/$(TEST_TAG)-$$i.log" ; \
+	    echo -n "$$i: "; \
+	    echo "*** $(INTERNAL_MBAS) $$i.vb" > $$testlogfile ; \
+	    if $(INTERNAL_MBAS) $$i.vb >> $$testlogfile 2>&1 ; then \
+		true ; \
 	    else \
-			/bin/echo -n -e "\n$$i : FAILED COMPILATION\n " >> results.out; \
-			cat output >> results.out; \
-			/bin/echo -n -e "\n========================" >> results.out; \
-	        /bin/echo FAILED COMPILATION ; \
-	        continue;\
+		echo "Exit code: $$?" >> $$testlogfile ; \
+		failed="$$failed $$i" ; \
+		echo -n -e "\n$$i : FAILED COMPILATION\n " >> $$logfile; \
+		echo FAILED COMPILATION ; \
+	        continue; \
 	    fi ; \
-	    if $(TEST_RUNTIME) ./$$i.exe > /dev/null ; then \
-			/bin/echo -n -e "\n$$i : UNEXPECTED BEHAVIOUR\n " >> results.out; \
-			/bin/echo -n -e "\n========================" >> results.out; \
-	        /bin/echo UNEXPECTED BEHAVIOUR ; \
+	    echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
+	    if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
+		echo -n -e "\n$$i : UNEXPECTED BEHAVIOUR\n " >> $$logfile; \
+		echo -n -e "\n========================" >> $$logfile; \
+	        echo UNEXPECTED BEHAVIOUR ; rm -f $$testlogfile ; \
 	    else \
-			/bin/echo OK >> results.out; \
-			/bin/echo OK; \
+		echo OK >> $$logfile; \
+		echo OK; \
 	    fi ; \
-	    rm -f ./$$i.exe output; \
+	    rm -f ./$$i.exe ; \
 	done
+

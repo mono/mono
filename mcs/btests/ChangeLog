@@ -1,3 +1,7 @@
+2004-08-04 Sachin Kumar <skumar1@novell.com>
+	* Makefile: Create clean set of test results log files
+	* Readme: Updated readme appropriately.
+
 2004-08-03  Jambunathan K  <kjambunathan@novell.com>
 	* Readme: Reworded and Reformatted.
 

@@ -26,9 +26,15 @@
 
 * Running Test Cases: 
 
-  	* To run tests do a 'make'. All the console messages get
-    	  redirected to results.out file.
-
+	* To run tests do a 'make'.
+	* All log messages are stored in mcs/btests/logs directory.  
+	* Positive tests messages are stored in mbas-positive.results
+	* Negative compilation tests messages are stored in 
+	  mbas-negative-compile.results file
+	* Negative execution tests messages are stored in
+           mbas-negative-runtime.results file
+	* Log messages for any failed test are stored in corresponding 
+	  test log file, say, <mbas-*>-<testname>.log.
 
 
 
