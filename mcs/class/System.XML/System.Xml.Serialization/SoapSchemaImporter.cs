@@ -62,20 +62,23 @@ namespace System.Xml.Serialization
 
 #if NET_2_0
 
-		[MonoTODO]
 		public SoapSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
 		{
+			_importer = new XmlSchemaImporter (schemas, options, context);
+			_importer.UseEncodedFormat = true;
 		}
 		
-		[MonoTODO]
 		public SoapSchemaImporter (XmlSchemas schemas, CodeIdentifiers typeIdentifiers, CodeGenerationOptions options)
 		{
+			_importer = new XmlSchemaImporter (schemas, typeIdentifiers, options);
+			_importer.UseEncodedFormat = true;
 		}
 		
-		[MonoTODO]
 		public SoapSchemaImporter (XmlSchemas schemas,CodeGenerationOptions options, 
 									ICodeGenerator codeGenerator, ImportContext context)
 		{
+			_importer = new XmlSchemaImporter (schemas, options, codeGenerator, context);
+			_importer.UseEncodedFormat = true;
 		}
 
 #endif

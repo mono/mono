@@ -259,7 +259,7 @@ namespace System.Xml.Serialization {
 		{
 			CodeMemberField codeField = null;
 			CodeTypeMember codeProp = null;
-
+			
 			if ((options & CodeGenerationOptions.GenerateProperties) > 0) {
 				string field = CodeIdentifier.MakeCamel (name + "Field");
 				codeField = new CodeMemberField (type, field);
@@ -388,7 +388,6 @@ namespace System.Xml.Serialization {
 		{
 			CodeTypeMember codeField = CreateFieldMember (codeClass, member.TypeData, member.Name);
 			codeField.Attributes = MemberAttributes.Public;
-			codeClass.Members.Add (codeField);
 			
 			CodeAttributeDeclarationCollection attributes = new CodeAttributeDeclarationCollection ();
 			AddArrayAttributes (attributes, member, defaultNamespace, false);
