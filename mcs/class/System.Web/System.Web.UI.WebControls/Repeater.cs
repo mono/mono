@@ -144,7 +144,7 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				if (!(value is IListSource) && !(value is IEnumerable))
+				if ((value!=null) && !(value is IListSource) && !(value is IEnumerable))
 					throw new ArgumentException ("An invalid data source is being used for " +
 						ID + ". A valid data source must implement either " +
 						"IListSource or IEnumerable.");
@@ -294,7 +294,8 @@ namespace System.Web.UI.WebControls
 					throw new HttpException ("Unknown ListItemType: " + item.ItemType);
 			}
 
-			template.InstantiateIn (item);
+			if (template != null)
+				template.InstantiateIn (item);
 		}
 
 		protected virtual void CreateControlHierarchy (bool useDataSource)

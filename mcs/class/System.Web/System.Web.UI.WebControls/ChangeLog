@@ -1,3 +1,9 @@
+2004-04-18 Alon Gazit <along@mainsoft.com>
+	* Repeater.cs: fixed InstantiateItem() and DataSource property.
+	The change in DataSource prevents throwing ArgumentException while
+	setting property value to null.
+	The change in InstantiateItem() prevents NullReferenceException.
+
 2004-04-07  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BaseValidator.cs: Store Display property in the correct ViewState
