@@ -1,3 +1,7 @@
+2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* AuthenticodeBase.cs: Use BitConverterLE
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>	
 
 	* AuthenticodeDeformatter.cs: Now throw a COMException for invalid 

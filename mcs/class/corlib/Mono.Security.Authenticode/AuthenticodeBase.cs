@@ -50,21 +50,21 @@ namespace Mono.Security.Authenticode {
 			fs.Close ();
 
 			// MZ - DOS header
-			if (BitConverter.ToUInt16 (file, 0) != 0x5A4D)
+			if (BitConverterLE.ToUInt16 (file, 0) != 0x5A4D)
 				return null;
 
 			// find offset of PE header
-			int peOffset = BitConverter.ToInt32 (file, 60);
+			int peOffset = BitConverterLE.ToInt32 (file, 60);
 			if (peOffset > file.Length)
 				return null;
 
 			// PE - NT header
-			if (BitConverter.ToUInt16 (file, peOffset) != 0x4550)
+			if (BitConverterLE.ToUInt16 (file, peOffset) != 0x4550)
 				return null;
 
 			// IMAGE_DIRECTORY_ENTRY_SECURITY
-			int dirSecurityOffset = BitConverter.ToInt32 (file, peOffset + 152);
-			int dirSecuritySize = BitConverter.ToInt32 (file, peOffset + 156);
+			int dirSecurityOffset = BitConverterLE.ToInt32 (file, peOffset + 152);
+			int dirSecuritySize = BitConverterLE.ToInt32 (file, peOffset + 156);
 
 			if (dirSecuritySize > 8) {
 				rawData = new byte [dirSecuritySize - 8];
