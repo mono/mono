@@ -75,6 +75,7 @@ public class Manager
 			}
 
 	// Normalize a name.
+	// FIXME: This means, we accept invalid names such as "euc_jp"
 	private static String Normalize(String name)
 			{
 			#if ECMA_COMPAT
