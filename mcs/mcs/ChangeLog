@@ -1,3 +1,8 @@
+2004-09-10  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (fixed_statement): Introduce a scope for the
+	declaration in the 'fixed' statement.
+
 2004-09-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Added CS0230 error report.
