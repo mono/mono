@@ -1,3 +1,7 @@
+2003-11-19  Todd Berman <tberman@gentoo.org>
+
+	* System.Web.dll.sources: Add KeyedList.cs and KeyedListEnumerator.cs
+
 2003-11-18  Todd Berman <tberman@gentoo.org>
 
 	* System.Web.dll.sources: Add ParameterCollection.cs

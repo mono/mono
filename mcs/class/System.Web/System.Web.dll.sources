@@ -469,6 +469,9 @@ System.Web.UI.WebControls/ControlParameter.cs
 System.Web.UI.WebControls/CookieParameter.cs
 System.Web.UI.WebControls/FormParameter.cs
 System.Web.UI.WebControls/Parameter.cs
+System.Web.UI.WebControls/ParameterCollection.cs
 System.Web.UI.WebControls/QueryStringParameter.cs
 System.Web.UI.WebControls/SessionParameter.cs
 System.Web.UI/StateManagedCollection.cs
+System.Web.UI/KeyedList.cs
+System.Web.UI/KeyedListEnumerator.cs
