@@ -20,34 +20,11 @@ namespace System {
 	public sealed class String : IConvertible, IComparable, ICloneable, IEnumerable {
 		private int length;
 
+		static private int COMPARE_CASE = 0;
+		static private int COMPARE_INCASE = 1;
+		static private int COMPARE_ORDINAL = 2;
+
 		public static readonly String Empty = "";
-
-		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe public extern String(char *value);
-
-		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe public extern String(char *value, int sindex, int length);
-    
-		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe public extern String(sbyte *value);
-
-		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe public extern String(sbyte *value, int sindex, int length);
-
-		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe public extern String(sbyte *value, int sindex, int length, Encoding enc);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern String(char [] val, int sindex, int length);
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern String(char [] val);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern String(char c, int count);
-	
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override int GetHashCode();
 
 		public static bool Equals(String str1, String str2) {
 			if ((str1 as object) == (str2 as object))
@@ -224,7 +201,7 @@ namespace System {
 			} else if (null == s2)
 				return 1;
 
-			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), inCase);
+			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), (inCase == true) ? COMPARE_INCASE : COMPARE_CASE);
 		}
 		
 		[MonoTODO()]
@@ -254,7 +231,7 @@ namespace System {
 			if (length == 0)
 				return 0;
 
-			return InternalCompare(s1, i1, s2, i2, length, inCase);
+			return InternalCompare(s1, i1, s2, i2, length, (inCase == true) ? COMPARE_INCASE : COMPARE_CASE);
 		}
 
 		[MonoTODO()]
@@ -288,7 +265,7 @@ namespace System {
 				return (s1 == null) ? -1 : 1;
 			}
 
-			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), false);
+			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), COMPARE_ORDINAL);
 		}
 
 		public static int CompareOrdinal(String s1, int i1, String s2, int i2, int length) {
@@ -306,7 +283,7 @@ namespace System {
 			if (i1 > s1.length || i2 > s2.length)
 				throw new ArgumentOutOfRangeException ();
 
-			return InternalCompare(s1, i1, s2, i2, length, false);
+			return InternalCompare(s1, i1, s2, i2, length, COMPARE_ORDINAL);
 		}
 
 		public bool EndsWith(String value) {
@@ -1066,6 +1043,33 @@ namespace System {
 			return n;
 		}
 		
+		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
+		unsafe public extern String(char *value);
+
+		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
+		unsafe public extern String(char *value, int sindex, int length);
+    
+		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
+		unsafe public extern String(sbyte *value);
+
+		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
+		unsafe public extern String(sbyte *value, int sindex, int length);
+
+		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
+		unsafe public extern String(sbyte *value, int sindex, int length, Encoding enc);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern String(char [] val, int sindex, int length);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern String(char [] val);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern String(char c, int count);
+	
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override int GetHashCode();
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static string InternalJoin(string separator, string[] value, int sindex, int count);
 		
@@ -1133,7 +1137,7 @@ namespace System {
 		private extern static string InternalIsInterned(string str);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int InternalCompare(String s1, int i1, String s2, int i2, int length, bool inCase);
+		private extern static int InternalCompare(String s1, int i1, String s2, int i2, int length, int mode);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool InternalEquals(String s1, String s2);

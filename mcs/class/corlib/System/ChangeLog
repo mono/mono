@@ -1,3 +1,6 @@
+2003-01-12  Patrik Torstensson <totte@race-x-change.com>
+
+	* String.cs: Fixed bug with CompareOrdinal
 
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
