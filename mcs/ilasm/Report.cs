@@ -37,9 +37,6 @@ namespace Mono.ILASM {
                 public void AssembleFile (string file, string listing,
                                           string target, string output)
                 {
-                        if (quiet)
-                                return;
-
                         Console.WriteLine ("Assembling '{0}' , {1}, to {2} --> '{3}'", file,
                                            GetListing (listing), target, output);
                         Console.WriteLine ();
@@ -53,6 +50,8 @@ namespace Mono.ILASM {
 
                 public void Message (string message)
                 {
+                        if (quiet)
+                                return;
                         Console.WriteLine (message);
                 }
                 

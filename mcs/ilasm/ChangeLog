@@ -1,3 +1,7 @@
+2004-06-26  Jackson Harper  <jackson@ximian.com>
+
+	* Report.cs: Fix quiet.
+	
 2004-06-24  Jackson Harper  <jackson@ximian.com>
 
 	* Report.cs: Add new mehtod for displaying messages.
