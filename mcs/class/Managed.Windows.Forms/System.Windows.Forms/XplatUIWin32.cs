@@ -468,6 +468,7 @@ namespace System.Windows.Forms {
 			DCX_EXCLUDEUPDATE    		= 0x00000100,
 			DCX_INTERSECTUPDATE  		= 0x00000200,
 			DCX_LOCKWINDOWUPDATE 		= 0x00000400,
+			DCX_USESTYLE			= 0x00010000,
 			DCX_VALIDATE         		= 0x00200000
 		}
 		#endregion
@@ -1475,18 +1476,28 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
-			throw new NotImplementedException();
+			// Trigger WM_NCCALC
+			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SetWindowPosFlags.SWP_FRAMECHANGED);
 		}
 
 
 		internal override Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region) {
-			IntPtr	hdc;
+			IntPtr		hdc;
+			Graphics	g;
 
-			hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW | DCExFlags.DCX_INTERSECTRGN);
-			return Graphics.FromHdc(hdc);
+			// GDI+ Broken:
+			// hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW | DCExFlags.DCX_INTERSECTRGN | DCExFlags.DCX_USESTYLE);
+			hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW);
+
+			g = Graphics.FromHdc(hdc);
+
+			Win32ReleaseDC(hwnd, hdc);
+
+			return g;
 		}
 
 		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
+			
 			dc.Dispose();
 		}
 
@@ -1743,6 +1754,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("shell32.dll", EntryPoint="Shell_NotifyIconW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32Shell_NotifyIcon(NotifyIconMessage dwMessage, ref NOTIFYICONDATA lpData);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreateRectRgn", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 		#endregion
 	}
 }

@@ -467,18 +467,17 @@ namespace System.Windows.Forms {
 
 			set {				
 				if (menu != value) {					
-					// To simulate the non-client are for menus we create a 
-					// new control as the 'client area' of our form.  This
-					// way, the origin stays 0,0 and we don't have to fiddle with
-					// coordinates. The menu area is part of the original container
-
 					menu = value;
 
 					menu.SetForm (this);
 					MenuAPI.SetMenuBarWindow (menu.Handle, this);
 					
-					// Force Msg.WM_NCCALCSIZE
-					SetBoundsCore (0, 0,0,0, BoundsSpecified.None);					
+					XplatUI.SetMenu(window.Handle, menu.Handle);
+
+					// FIXME - Do we still need this?
+					this.SetBoundsCore(0, 0, 0, 0, BoundsSpecified.None);
+
+					MenuAPI.MenuBarCalcSize(DeviceContext, menu.Handle, ClientSize.Width);
 				}
 			}
 		}
@@ -927,8 +926,7 @@ namespace System.Windows.Forms {
 					if (this.menu != null) {
 						int x = LowOrder ((int) m.LParam.ToInt32 ()) ;
 						int y = HighOrder ((int) m.LParam.ToInt32 ());						
-						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							mouse_clicks, x, y, 0));
+						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, x, y, 0));
 					}
 					base.WndProc(ref m);
 					return;
@@ -937,9 +935,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_NCMOUSEMOVE: {
 					if (this.menu != null) {
 						menu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							mouse_clicks, 
-							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-							0));
+							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
 					base.WndProc(ref m);
 					return;
@@ -951,12 +947,12 @@ namespace System.Windows.Forms {
 						Rectangle	rect;
 
 						hdc = XplatUI.GetMenuDC(window.Handle, m.WParam);
-						rect = new Rectangle (0, ThemeEngine.Current.CaptionHeight + 
-						ThemeEngine.Current.FixedFrameBorderSize.Height, Width, 0);
-						
-						MenuAPI.DrawMenuBar (hdc, menu.Handle, rect);						
+						rect = new Rectangle (0, ThemeEngine.Current.CaptionHeight + ThemeEngine.Current.FixedFrameBorderSize.Height, Width, 0);
+
+						MenuAPI.DrawMenuBar (hdc, menu.Handle, rect);
 						XplatUI.ReleaseMenuDC(window.Handle, hdc);
 					}
+
 					base.WndProc(ref m);
 					return;
 				}
@@ -968,10 +964,10 @@ namespace System.Windows.Forms {
 					if ((menu != null) && (m.WParam == (IntPtr)1)) {
 						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 
-						// Adjust for menu						
+						// Adjust for menu
 						ncp.rgrc1.top += MenuAPI.MenuBarCalcSize(DeviceContext, menu.menu_handle, ClientSize.Width);
 						Marshal.StructureToPtr(ncp, m.LParam, true);
-					} 
+					}
 					DefWndProc(ref m);
 					break;
 				}
