@@ -1,3 +1,7 @@
+2003-09-06  Martin Baulig  <martin@ximian.com>
+
+	* errors.txt: Added -216.
+
 2003-08-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* cs0666.xml: added sample xml file for monodoc error provider.

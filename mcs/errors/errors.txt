@@ -117,3 +117,5 @@ the Microsoft C# compiler:
 -214    Generic class can not have attribute as its parent class
 
 -215    Taking the address of a parameter in an iterator is not allowed.
+
+-216    Can not use a type parameters as base class
