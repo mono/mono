@@ -1,3 +1,38 @@
+2003-07-21 Cesar Lopez Nataren <cesar@ciencias.unam.mx>
+	* Added files:
+	ArrayPrototype.cs, ArrayWrapper.cs, BitwiseBinary.cs, 
+	BlockScope.cs, BooleanPrototype.cs, BreakOutOfFinally.cs, 
+	CmdLineException.cs, CmdLineOptionParser.cs, 
+	ContinueOutOfFinally.cs, Convert.cs, DatePrototype.cs, 
+	DocumentContext.cs, EnumeratorPrototype.cs, Equality.cs, 
+	ErrorPrototype.cs, EvalErrorObject.cs, Expando.cs, 
+	FieldAccessor.cs, FunctionPrototype.cs, FunctionWrapper.cs, 
+	Globals.cs, In.cs, InstanceOf.cs, JSConstructor.cs, 
+	JScriptException.cs, JSFieldInfo.cs, JSMethodInfo.cs, JSParser.cs, 
+	JSPrototypeObject.cs, JSScanner.cs, LateBinding.cs, 
+	LenientArrayPrototype.cs, LenientBooleanPrototype.cs, 
+	LenientDateConstructor.cs, LenientDatePrototype.cs, 
+	LenientEnumeratorPrototype.cs, LenientErrorPrototype.cs, 
+	LenientFunctionPrototype.cs, LenientMathObject.cs, 
+	LenientNumberPrototype.cs, LenientObjectPrototype.cs, 
+	LenientRegExpPrototype.cs, LenientStringConstructor.cs, 
+	LenientStringPrototype.cs, LenientVBArrayPrototype.cs, 
+	MemberInfoList.cs, MethodInvoker.cs, Missing.cs, Namespace.cs, 
+	NotRecommendedAttribute.cs, NumberPrototype.cs, NumericBinary.cs, 
+	NumericUnary.cs, ObjectPrototype.cs, Plus.cs, 
+	PostOrPrefixOperator.cs, RangeErrorObject.cs, 
+	ReferenceAttribute.cs, ReferenceErrorObject.cs, RegExpMatch.cs, 
+	RegExpPrototype.cs, Relational.cs, ResInfo.cs, 
+	ReturnOutOfFinally.cs, ScriptStream.cs, SimpleHashtable.cs, 
+	StackFrame.cs, StrictEquality.cs, StringPrototype.cs, 
+	SuperTypeMembersSorter.cs, SyntaxErrorObject.cs, TypedArray.cs, 
+	TypeErrorObject.cs, TypeOf.cs, TypeReflector.cs, 
+	URIErrorObject.cs, VBArrayObject.cs, VBArrayPrototype.cs, 
+	VersionableAttribute.cs 
+
+	Now, I must fill in the blanks :-)
+
+
 2003-07-09  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 	* jscript-lexer-parser.g: Added conditional_compilation_directive,
 	which is the beginning of our support for conditional compilation
