@@ -1,3 +1,8 @@
+
+Fri Mar 8 16:29:29 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fixup tokens in methods with small header size, too.
+
 2002-03-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.c (mono_string_to_utf8): remove assert(!error), instead
