@@ -24,7 +24,9 @@ namespace Mono.Xml.Xsl.Operations {
 		XmlQualifiedName [] useAttributeSets;
 		Hashtable nsDecls;
 		string excludeResultPrefixes;
-		
+		string extensionElementPrefixes;
+		ArrayList excludedPrefixes;
+
 		public XslLiteralElement (Compiler c) : base (c) {}
 			
 		class XslLiteralAttribute {
@@ -64,7 +66,10 @@ namespace Mono.Xml.Xsl.Operations {
 			if (nsDecls.Count == 0) nsDecls = null;
 			this.isEmptyElement = c.Input.IsEmptyElement;
 			this.excludeResultPrefixes = c.Input.GetAttribute ("exclude-result-prefixes", XsltNamespace);
-			
+			this.extensionElementPrefixes = c.Input.GetAttribute ("extension-element-prefixes", XsltNamespace);
+			excludedPrefixes = new ArrayList (excludeResultPrefixes.Split (XmlChar.WhitespaceChars));
+			excludedPrefixes.AddRange (extensionElementPrefixes.Split (XmlChar.WhitespaceChars));
+
 			if (c.Input.MoveToFirstAttribute ())
 			{
 				attrs = new ArrayList ();
@@ -84,7 +89,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public override void Evaluate (XslTransformProcessor p)
 		{
 			bool isCData = p.InsideCDataElement;
-			p.PushCDataState (localname, nsUri);
+			p.PushElementState (localname, nsUri, true);
 			p.Out.WriteStartElement (prefix, localname, nsUri);
 
 			if (useAttributeSets != null)
@@ -96,11 +101,15 @@ namespace Mono.Xml.Xsl.Operations {
 				for (int i = 0; i < len; i++)
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
-			
-			p.TryStylesheetNamespaceOutput (new ArrayList (excludeResultPrefixes.Split (XmlChar.WhitespaceChars)));
-			if (nsDecls != null)
-				foreach (DictionaryEntry de in nsDecls)
-					p.Out.WriteNamespaceDecl ((string)de.Key, (string)de.Value);
+
+			p.TryStylesheetNamespaceOutput (excludedPrefixes);
+			if (nsDecls != null) {
+				foreach (DictionaryEntry de in nsDecls) {
+					string actualPrefix = p.CompiledStyle.Style.PrefixInEffect (de.Key as String, excludedPrefixes);
+					if (prefix != null)
+						p.Out.WriteNamespaceDecl (actualPrefix, (string)de.Value);
+				}
+			}
 			
 			if (children != null) children.Evaluate (p);
 

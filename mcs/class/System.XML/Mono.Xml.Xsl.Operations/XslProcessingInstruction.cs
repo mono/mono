@@ -26,9 +26,18 @@ namespace Mono.Xml.Xsl.Operations {
 		protected override void Compile (Compiler c)
 		{
 			name = c.ParseAvtAttribute ("name");
+
+			if (c.Input.MoveToFirstAttribute ()) {
+				do {
+					if (c.Input.NamespaceURI == String.Empty && c.Input.LocalName != "name")
+						throw new XsltCompileException ("Invalid attribute \"" + c.Input.Name + "\"", null, c.Input);
+				} while (c.Input.MoveToNextAttribute ());
+				c.Input.MoveToParent ();
+			}
+
 			if (!c.Input.MoveToFirstChild ()) return;
 			
-			value = c.CompileTemplateContent ();
+			value = c.CompileTemplateContent (XPathNodeType.ProcessingInstruction);
 			c.Input.MoveToParent ();
 		}
 
@@ -40,7 +49,10 @@ namespace Mono.Xml.Xsl.Operations {
 			value.Evaluate (p);
 			p.PopOutput ();
 			
-			p.Out.WriteProcessingInstruction (name.Evaluate (p), s.ToString ());
+			string actualName = name.Evaluate (p);
+			if (actualName.ToLower () == "xml")
+				throw new XsltException ("Processing instruction name was evaluated to \"xml\"", null, p.CurrentNode);
+			p.Out.WriteProcessingInstruction (actualName, s.ToString ());
 		}
 	}
 }

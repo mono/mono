@@ -37,7 +37,7 @@ namespace Mono.Xml.Xsl.Operations {
 				
 			case XPathNodeType.Element:
 				bool isCData = p.InsideCDataElement;
-				p.PushCDataState (nav.LocalName, nav.NamespaceURI);
+				p.PushElementState (nav.LocalName, nav.NamespaceURI, false);
 				outputter.WriteStartElement (nav.Prefix, nav.LocalName, nav.NamespaceURI);
 				
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local))
@@ -79,6 +79,11 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 			case XPathNodeType.Whitespace:
 			case XPathNodeType.SignificantWhitespace:
+				bool cdata = outputter.InsideCDataSection;
+				outputter.InsideCDataSection = false;
+				outputter.WriteString (nav.Value);
+				outputter.InsideCDataSection = cdata;
+				break;
 			case XPathNodeType.Text:
 				outputter.WriteString (nav.Value);
 				break;

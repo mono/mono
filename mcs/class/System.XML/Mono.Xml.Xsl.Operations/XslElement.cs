@@ -45,6 +45,14 @@ namespace Mono.Xml.Xsl.Operations {
 				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
 				if (ns == null)
 					calcNs = c.Input.GetNamespace (calcPrefix);
+
+				try {
+					XmlConvert.VerifyNCName (calcName);
+					if (calcPrefix != String.Empty)
+						XmlConvert.VerifyNCName (calcPrefix);
+				} catch (XmlException ex) {
+					throw new XsltCompileException ("Invalid attribute name.", ex, c.Input);
+				}
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			
@@ -56,7 +64,7 @@ namespace Mono.Xml.Xsl.Operations {
 			isEmptyElement = c.Input.IsEmptyElement;
 
 			if (c.Input.MoveToFirstChild ()) {
-				value = c.CompileTemplateContent ();
+				value = c.CompileTemplateContent (XPathNodeType.Element);
 				c.Input.MoveToParent ();
 			}
 		}
@@ -95,7 +103,7 @@ namespace Mono.Xml.Xsl.Operations {
 			XmlConvert.VerifyName (nm);
 
 			bool isCData = p.InsideCDataElement;
-			p.PushCDataState (localName, nmsp);
+			p.PushElementState (localName, nmsp, false);
 			p.Out.WriteStartElement (prefix, localName, nmsp);
 			p.TryStylesheetNamespaceOutput (null);
 

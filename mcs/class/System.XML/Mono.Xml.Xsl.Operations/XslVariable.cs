@@ -29,6 +29,11 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			c.AssertAttribute ("name");
 			name = c.ParseQNameAttribute ("name");
+			try {
+				XmlConvert.VerifyName (name.Name);
+			} catch (XmlException ex) {
+				throw new XsltCompileException ("Variable name is not qualified name.", ex, c.Input);
+			}
 			
 			string sel = c.GetAttribute ("select");
 			if (sel != null && sel != "" ) {

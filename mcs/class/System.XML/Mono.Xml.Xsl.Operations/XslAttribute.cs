@@ -34,6 +34,8 @@ namespace Mono.Xml.Xsl.Operations {
 			nav = c.Input.Clone ();
 			
 			name = c.ParseAvtAttribute ("name");
+			if (name == null)
+				throw new XsltCompileException ("attribute \"name\" is required on XSLT attribute element.", null, c.Input);
 			ns = c.ParseAvtAttribute ("namespace");
 
 			calcName = XslAvt.AttemptPreCalc (ref name);
@@ -43,6 +45,14 @@ namespace Mono.Xml.Xsl.Operations {
 				int colonAt = calcName.IndexOf (':');
 				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
 				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
+
+				try {
+					XmlConvert.VerifyNCName (calcName);
+					if (calcPrefix != String.Empty)
+						XmlConvert.VerifyNCName (calcPrefix);
+				} catch (XmlException ex) {
+					throw new XsltCompileException ("Invalid attribute name.", ex, c.Input);
+				}
 			}
 			if (calcPrefix != String.Empty && ns == null)
 				calcNs = nav.GetNamespace (calcPrefix);
@@ -64,7 +74,7 @@ namespace Mono.Xml.Xsl.Operations {
 				nsm = c.GetNsm ();
 				
 			if (c.Input.MoveToFirstChild ()) {
-				value = c.CompileTemplateContent ();
+				value = c.CompileTemplateContent (XPathNodeType.Attribute);
 				c.Input.MoveToParent ();
 			}
 

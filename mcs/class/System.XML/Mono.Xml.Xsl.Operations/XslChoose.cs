@@ -46,7 +46,9 @@ namespace Mono.Xml.Xsl.Operations {
 					break;
 
 				default:
-					break; // TODO: forwards compat
+					if (c.CurrentStylesheet.Version == "1.0")
+						throw new XsltCompileException ("XSLT choose element accepts only when and otherwise elements.", null, c.Input);
+					break;
 				}
 			} while (c.Input.MoveToNext ());
 			

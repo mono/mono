@@ -19,8 +19,12 @@ namespace Mono.Xml.Xsl.Operations {
 	public class XslText : XslCompiledElement {
 		bool disableOutputEscaping = false;
 		string text = "";
+		bool isWhitespace;
 		
-		public XslText (Compiler c) : base (c) {}
+		public XslText (Compiler c, bool isWhitespace) : base (c)
+		{
+			this.isWhitespace = isWhitespace;
+		}
 
 		protected override void Compile (Compiler c)
 		{
@@ -33,8 +37,14 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			if (!disableOutputEscaping)
-				p.Out.WriteString (text);
+			if (isWhitespace && !p.PreserveWhitespace ())
+				return; // write nothing
+			if (!disableOutputEscaping) {
+				if (isWhitespace)
+					p.Out.WriteWhitespace (text);
+				else
+					p.Out.WriteString (text);
+			}
 			else
 				p.Out.WriteRaw (text);
 		}

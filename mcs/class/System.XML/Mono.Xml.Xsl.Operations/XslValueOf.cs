@@ -27,6 +27,8 @@ namespace Mono.Xml.Xsl.Operations {
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
 			disableOutputEscaping = c.ParseYesNoAttribute ("disable-output-escaping", false);
+			if (c.CurrentStylesheet.Version == "1.0" && c.Input.MoveToFirstChild ())
+				throw new XsltCompileException ("XSLT value-of element cannot contain any child.", null, c.Input);
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)

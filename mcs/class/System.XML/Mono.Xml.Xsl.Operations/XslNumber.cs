@@ -124,7 +124,8 @@ namespace Mono.Xml.Xsl.Operations {
 			case XslNumberingLevel.Multiple:
 				return nf.Format (NumberMultiple (p));
 			case XslNumberingLevel.Any:
-				return nf.Format (NumberAny (p));
+				hit = NumberAny (p);
+				return nf.Format (hit, hit != 0);
 			default:
 				throw new Exception ("Should not get here");
 			}
@@ -161,18 +162,22 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			return ret;
 		}
+
 		int NumberAny (XslTransformProcessor p)
 		{
 			int i = 0;
 			XPathNavigator n = p.CurrentNode.Clone ();
 			do {
 				do {
-					if (MatchesCount (n, p)) i++;
-					if (MatchesFrom (n, p)) return i;
+					if (MatchesCount (n, p))
+						i++;
+					if (MatchesFrom (n, p) && n.IsDescendant (p.CurrentNode))
+						return i;
 				} while (n.MoveToPrevious ());
 			} while (n.MoveToParent ());
 			return 0;
 		}
+
 		int NumberSingle (XslTransformProcessor p)
 		{
 			XPathNavigator n = p.CurrentNode.Clone ();
@@ -213,7 +218,8 @@ namespace Mono.Xml.Xsl.Operations {
 		bool MatchesCount (XPathNavigator item, XslTransformProcessor p)
 		{
 			if (count == null)
-				return item.LocalName == p.CurrentNode.LocalName &&
+				return item.NodeType == p.CurrentNode.NodeType &&
+					item.LocalName == p.CurrentNode.LocalName &&
 					item.NamespaceURI == p.CurrentNode.NamespaceURI;
 			else
 				return p.Matches (count, item);
@@ -290,13 +296,13 @@ namespace Mono.Xml.Xsl.Operations {
 				
 				int i = 0;
 				foreach (int v in values) {
-					FormatItem itm = fmtList.Count > i ? (FormatItem)fmtList [i] : defaultFormat;
+					FormatItem itm = (FormatItem)fmtList [i];
 					if (i > 0) b.Append (itm.sep);
 					itm.Format (b, v);
 					
-//					if (++i == fmtList.Count)
-//						i--;
-					++i;
+					if (++i == fmtList.Count)
+						i--;
+//					++i;
 				}
 				
 				if (lastSep != null) b.Append (lastSep);

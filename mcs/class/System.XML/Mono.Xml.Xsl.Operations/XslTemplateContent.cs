@@ -22,7 +22,22 @@ namespace Mono.Xml.Xsl.Operations {
 		bool hasStack;
 		int stackSize;
 		
-		public XslTemplateContent (Compiler c) : base (c) {}
+		public XslTemplateContent (Compiler c, XPathNodeType parentType)
+			: base (c, parentType) 
+		{
+		}
+
+		private void ThrowIfNotElement (Compiler c)
+		{
+			switch (ParentType) {
+			case XPathNodeType.All:
+			case XPathNodeType.Element:
+					break;
+			default:
+					throw new XsltCompileException ("Cannot contain attribute from this parent node " + ParentType, null, c.Input);
+			}
+		}
+
 		protected override void Compile (Compiler c)
 		{
 			hasStack = (c.CurrentVariableScope == null);
@@ -43,6 +58,7 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslApplyTemplates (c));
 							break;
 						case "attribute":
+							ThrowIfNotElement (c);
 							content.Add (new XslAttribute (c));
 							break;
 						case "call-template":
@@ -52,6 +68,7 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslChoose (c));
 							break;
 						case "comment":
+							ThrowIfNotElement (c);
 							content.Add (new XslComment (c));
 							break;
 						case "copy":
@@ -61,6 +78,7 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslCopyOf (c));
 							break;
 						case "element":
+							ThrowIfNotElement (c);
 							content.Add (new XslElement (c));
 							break;
 						case "fallback":
@@ -79,10 +97,11 @@ namespace Mono.Xml.Xsl.Operations {
 							content.Add (new XslNumber(c));
 							break;
 						case "processing-instruction":
+							ThrowIfNotElement (c);
 							content.Add (new XslProcessingInstruction(c));
 							break;
 						case "text":
-							content.Add (new XslText(c));
+							content.Add (new XslText(c, false));
 							break;
 						case "value-of":
 							content.Add (new XslValueOf(c));
@@ -110,10 +129,12 @@ namespace Mono.Xml.Xsl.Operations {
 						break;
 					}
 					break;
-					
-				case XPathNodeType.Text:
+
 				case XPathNodeType.SignificantWhitespace:
-					content.Add (new XslText(c));
+					content.Add (new XslText(c, true));
+					break;
+				case XPathNodeType.Text:
+					content.Add (new XslText(c, false));
 					break;
 				default:
 					break;

@@ -25,8 +25,16 @@ namespace Mono.Xml.Xsl.Operations {
 
 		protected override void Compile (Compiler c)
 		{
+			if (c.Input.MoveToFirstAttribute ()) {
+				do {
+					if (c.Input.NamespaceURI == String.Empty)
+						throw new XsltCompileException ("Invalid attribute \"" + c.Input.Name + "\"", null, c.Input);
+				} while (c.Input.MoveToNextAttribute ());
+				c.Input.MoveToParent ();
+			}
+
 			if (c.Input.MoveToFirstChild ()) {
-				value = c.CompileTemplateContent ();
+				value = c.CompileTemplateContent (XPathNodeType.Comment);
 				c.Input.MoveToParent ();
 			}
 		}

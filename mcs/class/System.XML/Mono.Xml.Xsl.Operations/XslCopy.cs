@@ -24,6 +24,14 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			if (c.Input.MoveToFirstAttribute ()) {
+				do {
+					if (c.Input.NamespaceURI == String.Empty && c.Input.LocalName != "use-attribute-sets")
+						throw new XsltCompileException ("Unrecognized attribute \"" + c.Input.Name + "\" in XSLT copy element.", null, c.Input);
+				} while (c.Input.MoveToNextAttribute ());
+				c.Input.MoveToParent ();
+			}
+
 			useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets");
 			
 			if (!c.Input.MoveToFirstChild ()) return;
@@ -37,14 +45,18 @@ namespace Mono.Xml.Xsl.Operations {
 			{
 			case XPathNodeType.Root:
 				if (p.Out.CanProcessAttributes && useAttributeSets != null)
-					foreach (XmlQualifiedName s in useAttributeSets)
-						p.ResolveAttributeSet (s).Evaluate (p);
+					foreach (XmlQualifiedName s in useAttributeSets) {
+						XslAttributeSet attset = p.ResolveAttributeSet (s);
+						if (attset == null)
+							throw new XsltException ("Attribute set was not found.", null, p.CurrentNode);
+						attset.Evaluate (p);
+					}
 
 				if (children != null) children.Evaluate (p);
 				break;
 			case XPathNodeType.Element:
 				bool isCData = p.InsideCDataElement;
-				p.PushCDataState (p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
+				p.PushElementState (p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, true);
 				p.Out.WriteStartElement (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				
 				p.TryStylesheetNamespaceOutput (null);
@@ -69,8 +81,13 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 			
 			case XPathNodeType.SignificantWhitespace:
-			case XPathNodeType.Text:
 			case XPathNodeType.Whitespace:
+				bool cdata = p.Out.InsideCDataSection;
+				p.Out.InsideCDataSection = false;
+				p.Out.WriteString (p.CurrentNode.Value);
+				p.Out.InsideCDataSection = cdata;
+				break;
+			case XPathNodeType.Text:
 				p.Out.WriteString (p.CurrentNode.Value);
 				break;
 			

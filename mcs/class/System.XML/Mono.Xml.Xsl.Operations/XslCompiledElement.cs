@@ -24,9 +24,15 @@ namespace Mono.Xml.Xsl.Operations {
 		int stackSize;
 		int lineNumber;
 		int linePosition;
+		XPathNodeType parentType;
 		
-		public XslCompiledElement (Compiler c)
+		public XslCompiledElement (Compiler c) : this (c, XPathNodeType.Root)
 		{
+		}
+
+		public XslCompiledElement (Compiler c, XPathNodeType parentType)
+		{
+			this.parentType = parentType;
 			IXmlLineInfo li = c.Input as IXmlLineInfo;
 			if (li != null) {
 				lineNumber = li.LineNumber;
@@ -43,6 +49,10 @@ namespace Mono.Xml.Xsl.Operations {
 
 		public int LinePosition {
 			get { return linePosition; }
+		}
+
+		public XPathNodeType ParentType {
+			get { return parentType; }
 		}
 	}
 }
