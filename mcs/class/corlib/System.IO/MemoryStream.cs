@@ -332,9 +332,9 @@ namespace System.IO {
                 
                 
                 public virtual byte[] ToArray() { 
-                        byte[] outBuffer = new byte[capacity];
+                        byte[] outBuffer = new byte[(int)position];
 			
-			Buffer.BlockCopyInternal (internalBuffer, 0, outBuffer, 0, capacity);
+			Buffer.BlockCopyInternal (internalBuffer, 0, outBuffer, 0, (int)position);
                         return outBuffer; 
                 }
 

@@ -1,3 +1,11 @@
+2003-02-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MemoryStream.cs:
+	(ToArray): return only the portion of the buffer that contains
+	data, not the whole buffer. (note: this makes XmlDocument.Load work
+	again with documents that have a <?xml without the 'encoding'
+	attribute, which makes gtk-sharp generator work again).
+
 2003-02-25  Nick Drochak <ndrochak@gol.com>
 
 	* File.cs (GetCreationTime): Throw proper execption when path is not
