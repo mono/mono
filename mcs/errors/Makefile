@@ -26,15 +26,14 @@ DISTFILES = \
 	$(wildcard *.response)	\
 	mcs-expect-no-error mcs-expect-wrong-error mcs-ignore-tests \
 	gmcs-expect-no-error gmcs-expect-wrong-error gmcs-ignore-tests \
-	generics-expect-no-error generics-expect-wrong-error \
-	TestRunner.exe know-issues-*
+	generics-expect-no-error generics-expect-wrong-error
 
 #all-local: run-test-local test-multi-local
 all-local: CS0118-2-lib.dll CS0122-10-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
 	CS3005-16-lib.dll CS3013-module.dll
 
-test-local: TestRunner.exe
+test-local:
 
 run-test-ondotnet-local:
 
@@ -55,7 +54,8 @@ test-everything:
 	$(MAKE) PROFILE=net_2_0 run-test
 
 run-mcs-tests:
-	$(RUNTIME) TestRunner.exe '.' $(topdir)/class/lib/$(PROFILE)/mcs.exe know-issues-mcs
+	-rm -f $(TEST_PROFILE).log
+	@./do-tests.pl $(TEST_PROFILE) '$(CSCOMPILE)' "cs*.cs"
 
 run-generics-tests:
 	-rm -f generics.log
@@ -97,6 +97,3 @@ install-local uninstall-local:
 
 %-module.dll: %-module.cs
 	$(BOOTSTRAP_MCS) /target:module /out:$@ $<
-
-TestRunner.exe:
-	$(CSCOMPILE) TestRunner.cs

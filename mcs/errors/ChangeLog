@@ -1,8 +1,7 @@
-2005-03-11 Marek Safar <marek.safar@seznam.cz>
+2005-03-13  Martin Baulig  <martin@ximian.com>
 
-	* Makefile: Use new test-runner for mcs compiler.
-	
-	* mcs-*-error: Merged into know-issues-mcs
+	Reverted things back to revision 41701, which was the last one
+	before Marek's changes.
 
 2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
