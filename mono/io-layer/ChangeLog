@@ -1,3 +1,8 @@
+2003-06-11  Dick Porter  <dick@ximian.com>
+
+	* shared.c: Fix shared directory creation.  Patch from
+	Pablo Baena <pbaena@uol.com.ar>
+
 2003-06-10  Dick Porter  <dick@ximian.com>
 
 	* atomic.c: Delete the useless compile warning
