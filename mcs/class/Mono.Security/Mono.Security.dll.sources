@@ -73,6 +73,7 @@
 ./Mono.Security.Protocol.Tls/Context.cs
 ./Mono.Security.Protocol.Tls/ExchangeAlgorithmType.cs
 ./Mono.Security.Protocol.Tls/HashAlgorithmType.cs
+./Mono.Security.Protocol.Tls/HttpsClientStream.cs
 ./Mono.Security.Protocol.Tls/RecordProtocol.cs
 ./Mono.Security.Protocol.Tls/RSASslSignatureDeformatter.cs
 ./Mono.Security.Protocol.Tls/RSASslSignatureFormatter.cs
