@@ -1,3 +1,86 @@
+
+Tue Aug 3 17:54:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: make GC warning messages use the trace API, they are just
+	noise to most of the users.
+
+Tue Aug 3 16:40:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, object.h: mono_gc_handle_*() interface and
+	AddrOfPinnedObject fixes. GC handle support even without GC.
+
+Fri Jul 30 16:49:05 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: always create an object if null is passed
+	to Invoke() where a valuetype is expected.
+
+2004-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: hack to build correctly the private bin path on windows.
+	Fixes bug #61991.
+
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_RecvFrom_internal): Check
+	returned sockaddr size before creating the remote address object.
+	Patch by Nick Vaughan (dev@6wardlaw.freeserve.co.uk), fixes bug
+	61608.
+
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* locales.c (string_invariant_compare_char): Fix invariant char
+	compares between upper and lower cases.  Fixes bug 61458.
+
+Tue Jul 27 15:58:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* debug-mono-symfile.c: fix one more endianess issue, from a patch
+	by Geoff Norton (<gnorton@customerdna.com>).
+
+Tue Jul 27 15:47:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix class loads for pointer types (typeof(int) !=
+	typeof(int*)).
+
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_get_type_info): Only write a class
+	layout entry if we actually have a size or a packing size.
+
+2004-07-13  Peter Williams  <peter@newton.cx>
+ 
+ 	* process.c (complete_path): Make sure we don't attempt to execute
+ 	directories.
+  
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* debug-helpers.c: undo my previous patch and fixed the real issue in
+	../mini/exceptions-x86.c
+
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* debug-helpers.c: prevent SIGSEGV. It happened running xsp on monodoc
+	when no HOME env. variable was set and a NullRef was thrown in a .cctor
+	called from other .cctors.
+
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* locales.c (ves_icall_System_String_InternalReplace_Str_Comp):
+	Don't do any more processing if the matched length was 0.  It was
+	increasing the size of the string before.  Fixes bug 61167.
+
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* socket-io.h:
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal):
+	Add support for SO_PEERCRED if its available.
+
+2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
+
+      * marshal.c: Fix managed->native stringbuilder marshalling. Implement
+      marshalling of stringbuilder arrays. Fixes #59900.
+
 2004-06-29  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_add_method): Protect the whole function

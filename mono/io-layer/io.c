@@ -617,6 +617,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 	if(ok==FALSE) {
 		g_warning (G_GNUC_PRETTY_FUNCTION
 			   ": error looking up file handle %p", handle);
+		SetLastError (ERROR_INVALID_HANDLE);
 		return(INVALID_SET_FILE_POINTER);
 	}
 	
@@ -627,6 +628,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 		g_message(G_GNUC_PRETTY_FUNCTION ": handle %p fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", handle, file_private_handle->fd, file_handle->fileaccess);
 #endif
 
+		SetLastError (ERROR_ACCESS_DENIED);
 		return(INVALID_SET_FILE_POINTER);
 	}
 
@@ -646,6 +648,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 			  method);
 #endif
 
+		SetLastError (ERROR_INVALID_PARAMETER);
 		return(INVALID_SET_FILE_POINTER);
 	}
 
@@ -658,7 +661,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 			  movedistance);
 #endif
 	} else {
-		offset=((gint64) *highmovedistance << 32) | movedistance;
+		offset=((gint64) *highmovedistance << 32) | (unsigned long)movedistance;
 		
 #ifdef DEBUG
 		g_message(G_GNUC_PRETTY_FUNCTION ": setting offset to %lld 0x%llx (high %d 0x%x, low %d 0x%x)", offset, offset, *highmovedistance, *highmovedistance, movedistance, movedistance);
@@ -688,6 +691,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 			  handle, file_private_handle->fd, strerror(errno));
 #endif
 
+		_wapi_set_last_error_from_errno ();
 		return(INVALID_SET_FILE_POINTER);
 	}
 
@@ -986,6 +990,7 @@ static gboolean file_setfiletime(gpointer handle,
 	if(ok==FALSE) {
 		g_warning (G_GNUC_PRETTY_FUNCTION
 			   ": error looking up file handle %p", handle);
+		SetLastError (ERROR_INVALID_HANDLE);
 		return(FALSE);
 	}
 	
@@ -995,6 +1000,7 @@ static gboolean file_setfiletime(gpointer handle,
 		g_message(G_GNUC_PRETTY_FUNCTION ": handle %p fd %d doesn't have GENERIC_WRITE access: %u", handle, file_private_handle->fd, file_handle->fileaccess);
 #endif
 
+		SetLastError (ERROR_ACCESS_DENIED);
 		return(FALSE);
 	}
 
@@ -1005,6 +1011,7 @@ static gboolean file_setfiletime(gpointer handle,
 			  file_private_handle->fd);
 #endif
 
+		SetLastError (ERROR_INVALID_HANDLE);
 		return(FALSE);
 	}
 	
@@ -1019,12 +1026,25 @@ static gboolean file_setfiletime(gpointer handle,
 			  file_private_handle->fd, strerror(errno));
 #endif
 
+		SetLastError (ERROR_INVALID_PARAMETER);
 		return(FALSE);
 	}
 
 	if(last_access!=NULL) {
 		access_ticks=((guint64)last_access->dwHighDateTime << 32) +
 			last_access->dwLowDateTime;
+		/* This is (time_t)0.  We can actually go to INT_MIN,
+		 * but this will do for now.
+		 */
+		if (access_ticks < 116444736000000000ULL) {
+#ifdef DEBUG
+			g_message (G_GNUC_PRETTY_FUNCTION
+				   ": attempt to set access time too early");
+#endif
+			SetLastError (ERROR_INVALID_PARAMETER);
+			return(FALSE);
+		}
+		
 		utbuf.actime=(access_ticks - 116444736000000000ULL) / 10000000;
 	} else {
 		utbuf.actime=statbuf.st_atime;
@@ -1033,6 +1053,18 @@ static gboolean file_setfiletime(gpointer handle,
 	if(last_write!=NULL) {
 		write_ticks=((guint64)last_write->dwHighDateTime << 32) +
 			last_write->dwLowDateTime;
+		/* This is (time_t)0.  We can actually go to INT_MIN,
+		 * but this will do for now.
+		 */
+		if (write_ticks < 116444736000000000ULL) {
+#ifdef DEBUG
+			g_message (G_GNUC_PRETTY_FUNCTION
+				   ": attempt to set write time too early");
+#endif
+			SetLastError (ERROR_INVALID_PARAMETER);
+			return(FALSE);
+		}
+		
 		utbuf.modtime=(write_ticks - 116444736000000000ULL) / 10000000;
 	} else {
 		utbuf.modtime=statbuf.st_mtime;
@@ -1055,6 +1087,7 @@ static gboolean file_setfiletime(gpointer handle,
 
 #endif
 		g_free (name);
+		SetLastError (ERROR_INVALID_PARAMETER);
 		return(FALSE);
 	}
 

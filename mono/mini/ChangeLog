@@ -1,4 +1,44 @@
 
+Tue Aug 3 11:20:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: mul.ovf.un exception name fix.
+
+Tue Aug 3 11:19:07 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: reg allocator fix.
+
+Tue Aug 3 11:17:07 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: make sure temp regs are not used for global reg
+	allocation.
+
+Tue Jul 27 16:05:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-sparc.c, mini-s390.c: keep track of line
+	numbers in the debug info (spotted by Geoff Norton,
+	<gnorton@customerdna.com>).
+
+Mon Jul 12 17:47:00 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-ppc.brg: arguments on the stack are always
+	relative to the stack pointer (spotted by Neale Ferguson).
+
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+ 
+ 	* exceptions-x86.c: delay appending the method name to the trace until
+ 	after mono_jit_info_table_find is called, as this gets the real
+ 	MonoMethod.
+ 
+2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (handle_stack_args): Handle some corner cases. Fixes 
+	58863.
+
+2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (optimize_branches): Fix linking of bblocks in branch->branch
+	optimization.
+	
 Mon Jun 28 18:05:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: reinstated mono_compile_get_interface_var()
