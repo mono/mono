@@ -1,3 +1,6 @@
+2005-02-21 Manjula GHM <mmanjula@novell.com>
+	*mb-parser.jay: Throws error for missing END statements - by Sudharsan V
+
 2005-02-18 Satya Sudha K <ksathyasudha@novell.com>
 	* ecore.cs :
 		 Modified Implicit Constant conversions to :

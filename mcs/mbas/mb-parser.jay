@@ -5,6 +5,8 @@
 // Authors: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
 //	    Anirban Bhattacharjee (banirban@novell.com)
 //          Jambunathan K (kjambunathan@novell.com)
+//          Manjula GHM (mmanjula@novell.com)
+//          Sudharsan V (vsudharsan@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -129,6 +131,8 @@ namespace Mono.MonoBASIC
 		Stack oob_stack;
 		
 		ArrayList current_rank_specifiers;
+		int Parent = 0;
+		Location try_top;
 
 		DoOptions do_type;
 		//
@@ -623,7 +627,7 @@ logical_end_of_line
 	;
 
 compilation_unit
-	: logical_end_of_line
+	: _mark_ logical_end_of_line
 	  opt_option_directives
 	  opt_imports_directives 
 	  declarations 
@@ -631,7 +635,7 @@ compilation_unit
 	  {
 		$$=$4;
 	  }
-	|logical_end_of_line
+	|_mark_ logical_end_of_line
 	  opt_option_directives
 	  opt_imports_directives 
 	  opt_attributes
@@ -1094,12 +1098,26 @@ named_argument
 	;
 				
 namespace_declaration
-	: NAMESPACE qualified_identifier logical_end_of_line
+	: NAMESPACE _mark_ qualified_identifier logical_end_of_line
 	  {
-		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$2);
+		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$3);
+		
 	  } 
 	  opt_declarations
-	  END NAMESPACE logical_end_of_line
+	  opt_end_block
+	  {
+		int i = (int)$7;
+		if (i!=6 && Parent!=6) 
+			{
+			Report.Error(30626,(Location)$2,"'NameSpace' is not having a matching 'End NameSpace'"); 
+			Parent=i;
+			}
+		if(i!=6)
+			Parent=i;
+		if(Parent==6)
+			Parent=0;
+	  }
+	  logical_end_of_line
 	  { 
 		current_namespace = current_namespace.Parent;
 	  }
@@ -1144,7 +1162,20 @@ class_declaration
 		RootContext.Tree.RecordDecl (name, new_class);
 	  }
 	  opt_class_member_declarations
-	  END CLASS logical_end_of_line
+	  opt_end_block
+	  {
+		int i = (int)$9;
+		if (i!=7 && Parent!=7) 
+			{
+			Report.Error(30481,(Location)$3,"'Class' is not having a matching 'End Class'"); 
+			Parent=i;
+			}
+		if(i!=7)
+			Parent=i;
+		if(Parent==7)
+			Parent=0;
+	  }
+	  logical_end_of_line
 	  {
 		Class new_class = (Class) current_container;
 		
@@ -1230,7 +1261,20 @@ module_declaration
 		RootContext.Tree.RecordDecl(name, new_module);
 	  }
 	  opt_module_member_declarations
-	  END MODULE logical_end_of_line
+	  opt_end_block
+	  {
+		int i = (int)$7;
+		if (i!=5 && Parent!=5) 
+			{
+			Report.Error(30625,(Location)$2,"'Module' is not having a matching 'End Module'"); 
+			Parent=i;
+			}
+		if(i!=5)
+			Parent=i;
+		if(Parent==5)
+			Parent=0;
+	  }
+	  logical_end_of_line
 	  {
 		Module new_module = (Module)current_container;
 
@@ -1426,7 +1470,20 @@ sub_declaration
 
 	  }
 	  opt_statement_list 
-	  END SUB logical_end_of_line
+	  opt_end_block 
+	  {
+		int i = (int)$10;
+		if (i!=4 && Parent!=4) 
+			{
+			Report.Error(30289,(Location)$3,"'Sub' is not having a matching 'End Sub'"); 
+			Parent=i;
+			}
+		if(i!=4)
+			Parent=i;
+		if(Parent==4)
+			Parent=0;
+	  }
+	  logical_end_of_line
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes, 
@@ -1479,7 +1536,6 @@ sub_declaration
 	  }	  
 	;
 
-/*Till here*/	
 func_declaration
 	: FUNCTION identifier opt_type_character
 	  opt_params _mark_ opt_type_with_ranks opt_implement_clause logical_end_of_line
@@ -1499,7 +1555,20 @@ func_declaration
 		declare_local_variables ((Expression) ftype, retval, (Location)$5);
 	  }	  
 	  opt_statement_list
-	  END FUNCTION logical_end_of_line
+	  opt_end_block 
+	  {
+		int i = (int)$11;
+		if (i!=8 && Parent!=8) 
+			{
+			Report.Error(30027,(Location)$5,"'Function' is not having a matching 'End Function'"); 
+			Parent=i;
+			}
+		if(i!=8)
+			Parent=i;
+		if(Parent==8)
+			Parent=0;
+	  }
+	  logical_end_of_line
 	  {
 		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
 
@@ -1542,7 +1611,21 @@ struct_declaration
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
 		$$ = new_struct;
 	  }
-	  END STRUCTURE logical_end_of_line
+	  opt_end_block 
+	  {
+		int i = (int)$9;
+		if (i!=9 && Parent!=9) 
+			{
+			
+			Report.Error(30624,(Location)$2,"'Structure' is not having a matching 'End Structure'"); 
+			Parent=i;
+			}
+		if(i!=9)
+			Parent=i;
+		if(Parent==9)
+			Parent=0;
+	  }
+	  logical_end_of_line
 	;
 	
 opt_struct_member_declarations
@@ -1632,13 +1715,13 @@ event_declaration
 	;
 	
 enum_declaration
-	: ENUM identifier opt_type_spec logical_end_of_line
+	: ENUM _mark_ identifier opt_type_spec logical_end_of_line
 	  opt_enum_member_declarations 
 	  { 
 		Location enum_location = lexer.Location;
-		string full_name = MakeName ((string) $2);
-		Expression enum_type = ($3 == null) ? TypeManager.system_int32_expr : (Expression) $3;
-		ArrayList enum_members = (ArrayList) $5;
+		string full_name = MakeName ((string) $3);
+		Expression enum_type = ($4 == null) ? TypeManager.system_int32_expr : (Expression) $4;
+		ArrayList enum_members = (ArrayList) $6;
 		
 		if (enum_members.Count == 0)
 			Report.Error (30280, enum_location,
@@ -1668,7 +1751,20 @@ enum_declaration
 		RootContext.Tree.RecordDecl (full_name, e);
 
 	  }
-	  END ENUM logical_end_of_line
+	  opt_end_block 
+	  {
+		int i = (int)$8;
+		if (i!=10 && Parent!=10) 
+			{
+			Report.Error(30185,(Location)$2,"'ENUM' is not having a matching 'End ENUM'"); 
+			Parent=i;
+			}
+		if(i!=10)
+			Parent=i;
+		if(Parent==10)
+			Parent=0;
+	 }
+  	  logical_end_of_line
 	;
 
 opt_enum_member_declarations
@@ -1737,7 +1833,20 @@ interface_declaration
 			  new_interface.Name, new_interface.Location);
 
 	  }
-	  END INTERFACE logical_end_of_line
+	  opt_end_block 
+	  {
+		int i = (int)$9;
+		if (i!=11 && Parent!=11) 
+			{
+			Report.Error(30253,(Location)$2,"'INTERFACE' is not having a matching 'End INTERFACE'"); 
+			Parent=i;
+			}
+		if(i!=11)
+			Parent=i;
+		if(Parent==11)
+			Parent=0;
+	 }
+	  logical_end_of_line
 	;
 
 opt_interface_base
@@ -1998,7 +2107,20 @@ abstract_propery_declaration
 	  }
 	  logical_end_of_line
 	  accessor_declarations 
-	  END PROPERTY logical_end_of_line
+	  opt_end_block 
+	  {
+		int i = (int)$11;
+		if (i!=12 && Parent!=12) 
+			{
+			Report.Error(30025,(Location)$5,"'Property' is not having a matching 'End Property'"); 
+			Parent=i;
+			}
+		if(i!=12)
+			Parent=i;
+		if(Parent==12)
+			Parent=0;
+	 }
+          logical_end_of_line
 	  {
 		lexer.PropertyParsing = false;
 
@@ -2113,7 +2235,20 @@ get_accessor_declaration
 		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);	
 	  }
 	  opt_statement_list
-	  END GET logical_end_of_line
+          opt_end_block
+          {
+                int i = (int)$7;
+                if (i!=19 && Parent!=19)
+                        {
+                        Report.Error(30631,(Location)$3,"'GET' is not having a matching 'End Get'");
+                        Parent=i;
+                        }
+                if(i!=19)
+                        Parent=i;
+                if(Parent==19)
+                        Parent=0;
+          }
+	  logical_end_of_line
 	  {
 		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
 		current_local_parameters = null;
@@ -2141,7 +2276,21 @@ set_accessor_declaration
 		lexer.PropertyParsing = false;
 	  }
 	  opt_statement_list
-	  END SET logical_end_of_line
+          opt_end_block
+          {
+                int i = (int)$8;
+                if (i!=18 && Parent!=18)
+                        {
+                        Report.Error(30633,(Location)$4,"'SET' is not having a matching 'End Set'");
+                        Parent=i;
+                        }
+                if(i!=18)
+                        Parent=i;
+                if(Parent==18)
+                        Parent=0;
+          }
+
+          logical_end_of_line
 	  {
 		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
 		current_local_parameters = null;
@@ -2329,14 +2478,14 @@ evt_handler
 	;
 
 constructor_declaration
-	: SUB NEW opt_params logical_end_of_line
+	: SUB _mark_ NEW opt_params logical_end_of_line
 	  {
-	  	current_local_parameters = (Parameters) $3;
+	  	current_local_parameters = (Parameters) $4;
 	  	start_block();
 		oob_stack.Push (lexer.Location);
 
 		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor ((string) "New", (Parameters) $3, (ConstructorInitializer) null, l);
+		$$ = new Constructor ((string) "New", (Parameters) $4, (ConstructorInitializer) null, l);
 		$1 = $$;
 	  }
 	  opt_statement_list
@@ -2351,7 +2500,20 @@ constructor_declaration
 		CheckDef (current_container.AddConstructor(c), c.Name, c.Location);
 		current_local_parameters = null;
 	  }
-	  END SUB logical_end_of_line
+	  opt_end_block 
+	  {
+		int i = (int)$9;
+		if (i!=4 && Parent!=4) 
+			{
+			Report.Error(30289,(Location)$2,"'Sub' is not having a matching 'End Sub'"); 
+			Parent=i;
+			}
+		if(i!=4)
+			Parent=i;
+		if(Parent==4)
+			Parent=0;
+	 }
+          logical_end_of_line
 	;
 	
 opt_formal_parameter_list
@@ -2577,8 +2739,18 @@ with_statement
 		start_block();
 	  }
 	  opt_statement_list
-	  END WITH
+	  opt_end_block 
 	  {
+		int i = (int)$7;
+		if (i!=13 && Parent!=13) 
+			{
+			Report.Error(30085,(Location)$2,"'With' is not having a matching 'End With'"); 
+			Parent=i;
+			}
+		if(i!=13)
+			Parent=i;
+		if(Parent==13)
+			Parent=0;
 	  	Block b = end_block();
 		with_stack.Pop();
 		$$ = b;
@@ -2772,7 +2944,20 @@ foreach_statement
 		start_block();	
 	  } 	  
 	  opt_statement_list
-	  NEXT opt_identifier
+	  opt_end_block
+          {
+                int i = (int)$11;
+                if (i!=1 && Parent!=1)
+                        {
+                        Report.Error(30084,(Location)$4,"'For' is not having a matching 'Next'");
+                        Parent=i;
+                        }
+                if(i!=1)
+                        Parent=i;
+                if(Parent==1)
+                        Parent=0;
+          }
+	   opt_identifier
 	  {
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
 		Block foreach_block = end_block();
@@ -2827,14 +3012,24 @@ yield_statement
 	;
 
 synclock_statement
-	: SYNCLOCK expression end_of_stmt
+	: SYNCLOCK _mark_ expression end_of_stmt
 	  {   
 		start_block();  
 	  }
 	  opt_statement_list 
-	  END SYNCLOCK
+	  opt_end_block 
 	  {
-		$$ = new Lock ((Expression) $2, (Statement) (Block) end_block(), lexer.Location);
+		int i = (int)$7;
+		if (i!=14 && Parent!=14) 
+			{
+			Report.Error(30675,(Location)$2,"'Synclock' is not having a matching 'End SyncLock'"); 
+			Parent=i;
+			}
+		if(i!=14)
+			Parent=i;
+		if(Parent==14)
+			Parent=0;
+		$$ = new Lock ((Expression) $3, (Statement) (Block) end_block(), (Location)$2);
 	  }
 	;
 
@@ -2844,14 +3039,15 @@ try_statement
 	;
 				
 try_header
-	: TRY end_of_stmt
+	: TRY _mark_ end_of_stmt
 	  {   
+		try_top=(Location)$2;
 		start_block();  
 	  }
 	  opt_statement_list 
 	  opt_catch_clauses
 	  {
-	  	tmp_catch_clauses = (ArrayList) $5;
+	  	tmp_catch_clauses = (ArrayList) $6;
 	  }
 	;
 	
@@ -2859,8 +3055,18 @@ try_header
 /*FIXME: Try block without a end try is throwing error at a wrong place*/				
 try_catch
 	: try_header 	
-	  END TRY
+	  _mark_ opt_end_block 
 	  {
+		int i = (int)$3;
+		if (i!=15 && Parent!=15) 
+			{
+			Report.Error(30441,try_top,"'Try' is not having a matching 'End Try'"); 
+			Parent=i;
+			}
+		if(i!=15)
+			Parent=i;
+		if(Parent==15)
+			Parent=0;
 		Catch g = null;
 		ArrayList s = new ArrayList ();
 
@@ -2875,7 +3081,7 @@ try_catch
 		// and g contains the general one.
 		Block b = end_block();
 
-		$$ = new Try ((Block) b, s, g, null, lexer.Location);
+		$$ = new Try ((Block) b, s, g, null, try_top);
 	  }	  
 	;	
 	  
@@ -2889,8 +3095,19 @@ try_catch_finally
 		start_block(); 
 	  }	  
 	  opt_statement_list 
-	  END TRY
+	  _mark_ opt_end_block 
 	  {
+ 		int i = (int)$8;
+                if (i!=15 && Parent!=15)
+                        {
+                        Report.Error(30441,try_top,"'Try' is not having a matching 'End Try'");
+                        Parent=i;
+                        }
+                if(i!=15)
+                        Parent=i;
+                if(Parent==15)
+                        Parent=0;
+
 		Catch g = null;
 		ArrayList s = new ArrayList ();
 		ArrayList catch_list = (ArrayList) tmp_catch_clauses;
@@ -2904,7 +3121,7 @@ try_catch_finally
 			}
 		}
 
-		$$ = new Try ((Block) tmp_block, s, g, (Block) end_block(), lexer.Location);
+		$$ = new Try ((Block) tmp_block, s, g, (Block) end_block(), try_top);
 	
 	  }	
 	  ;	  	
@@ -3002,21 +3219,34 @@ catch_args
 	}
         ;
         
-        
+       
 do_statement
 	: DO _mark_ opt_do_construct end_of_stmt
 	  {
 		start_block();
 	  }	
 	  opt_statement_list
-	  LOOP _mark_ opt_do_construct
+	  opt_end_block
+          {
+                int i = (int)$7;
+                if (i!=20 && Parent!=20)
+                        {
+                        Report.Error(30083,(Location)$2,"'Do' is not having a matching 'Loop'");
+                        Parent=i;
+                        }
+                if(i!=20)
+                        Parent=i;
+                if(Parent==20)
+                        Parent=0;
+	  }
+	  _mark_ opt_do_construct
 	  {
 	  	Expression t_before = (Expression) $3;
-		Expression t_after = (Expression) $9;
+		Expression t_after = (Expression) $10;
 		Expression t;
 
 		if  ((t_before != null) && (t_after != null))
-			Report.Error (30238, (Location)$8, "'Loop' cannot have a condition if matching 'Do' has one.");
+			Report.Error (30238, (Location)$9, "'Loop' cannot have a condition if matching 'Do' has one.");
 
 		if ((t_before == null) && (t_after == null))
 			t = new BoolLiteral (true);
@@ -3055,9 +3285,19 @@ while_statement
 	}
 	boolean_expression end_of_stmt
 	opt_statement_list
-	END WHILE
-	{
+	opt_end_block
+          {
 		Location l = (Location) oob_stack.Pop ();
+                int i = (int)$6;
+                if (i!=16 && Parent!=16)
+                        {
+                        Report.Error(30082,l,"'While' is not having a matching 'End While'");
+                        Parent=i;
+                        }
+                if(i!=16)
+                        Parent=i;
+                if(Parent==16)
+                        Parent=0;
 		Block b = end_block();
 		Expression e = (Expression) $3;
 		$$ = new While ((Expression) e, (Statement) b, l);
@@ -3081,7 +3321,20 @@ for_statement
 		start_block();
 	  }
 	  opt_statement_list
-	  NEXT opt_identifier 
+   	  opt_end_block
+          {
+                int i = (int)$13;
+                if (i!=1 && Parent!=1)
+                        {
+                        Report.Error(30084,(Location)$2,"'For' is not having a matching 'Next'");
+                        Parent=i;
+                        }
+                if(i!=1)
+                        Parent=i;
+                if(Parent==1)
+                        Parent=0;
+  	  }
+          opt_identifier 
 	  {
 			Block inner_statement = end_block();
 			Location l = (Location)$2;
@@ -3118,9 +3371,9 @@ selection_statement
 	;
 
 if_statement
-	: if_statement_open opt_then if_statement_rest
+	: if_statement_open opt_then end_of_stmt opt_statement_list if_statement_rest
 	  {
-		$$ = $3;
+		$$ = $5;
 	  }
 	| if_statement_open THEN pre_embedded_statement opt_else_pre_embedded_statement
 	  {
@@ -3179,11 +3432,14 @@ else_pre_embedded_statement
 
 /*FIXME:if without end if not working. Error line shown is nor correct*/
 if_statement_open
-	: IF boolean_expression 
+	: IF 
 	  {
 	   	oob_stack.Push (lexer.Location);
+	  }
+		boolean_expression 
+	  {
 	   	start_block();
-	   	tmp_expr = (Expression) $2;
+	   	tmp_expr = (Expression) $3;
 	   	expr_stack.Push(tmp_expr);
 	  }
 	 ;
@@ -3194,41 +3450,59 @@ opt_then
 	;
 	
 if_statement_rest
-	: end_of_stmt
-	  opt_statement_list
-	  END IF
+	: 
+	  opt_end_block 
 	  { 
 		Location l = (Location) oob_stack.Pop ();
-        Expression expr = (Expression)expr_stack.Pop(); 
+		int i = (int)$1;
+		if (i!=3 && Parent!=3) 
+			{
+				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
+				Parent = i;
+			}
+		if(i!=3)
+			Parent=i;
+		if(Parent==3)
+			Parent=0;
+       		Expression expr = (Expression)expr_stack.Pop(); 
 		$$ = new If ((Expression) expr, (Statement) end_block(), l);
 	  }	  
-	| end_of_stmt
-	  opt_statement_list
+	| 
 	  ELSE end_of_stmt 
 	  { 
 	  	Block bl = end_block(); 
-        tmp_blocks.Push(bl); 
+	        tmp_blocks.Push(bl); 
 	  	start_block();
 	  }
 	  opt_statement_list
-	  END IF	
+	  opt_end_block	
 	  {
 		Location l = (Location) oob_stack.Pop ();
+		int i = (int)$5;
+		if (i!=3 && Parent!=3) 
+			{
+				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
+				Parent = i;
+			}
+		if(i!=3)
+			Parent=i;
+		if(Parent==3)
+			Parent=0;
                 tmp_expr = (Expression)expr_stack.Pop(); 
                 tmp_block = (Block) tmp_blocks.Pop(); 
 		$$ = new If ((Expression) tmp_expr, (Statement) tmp_block, (Statement) end_block(), l);
 	  }	
-	| end_of_stmt
-	  opt_statement_list 
-	  ELSEIF boolean_expression opt_then 
+	|	
+	  opt_elseif boolean_expression opt_then 
 	  { 
-    	        tmp_expr = (Expression) $4;                                                  
+    	        tmp_expr = (Expression) $2;                                                  
                 expr_stack.Push(tmp_expr);                                                 
 	  	tmp_block = end_block();
                 tmp_blocks.Push(tmp_block);
 	  	start_block();
 	  }
-	  else_if_statement_rest 
+	  end_of_stmt opt_statement_list	
+	  else_if_statement_rest
 	  {
 		Statement stmt = (Statement) statement_stack.Pop();
                 Block bl = (Block) tmp_blocks.Pop();  
@@ -3240,18 +3514,7 @@ if_statement_rest
 	
 	
 else_if_statement_rest
-	: end_of_stmt
-	  opt_statement_list 
-	  END IF
-	  { 
-		Location l = (Location) oob_stack.Pop ();
-		oob_stack.Push (l);
-	   	Expression expr = (Expression)expr_stack.Pop(); 
-                Statement stmt = (Statement) new If ((Expression) expr, (Statement)  end_block(), l);
-                statement_stack.Push(stmt);
-	  }
-	| end_of_stmt
-	  opt_statement_list
+	:
 	  ELSE end_of_stmt 
 	  { 
 	  	Block bl = end_block();
@@ -3259,25 +3522,35 @@ else_if_statement_rest
 	  	start_block();
 	  }
 	  opt_statement_list
-	  END IF	
+	  opt_end_block	
 	  {
 		Location l = (Location) oob_stack.Pop ();
+		int i = (int)$5;
+		if (i!=3 && Parent!=3) 
+			{
+				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
+				Parent = i;
+			}
+		if(i!=3)
+			Parent=i;
+		if(Parent==3)
+			Parent=0;
 		oob_stack.Push (l);
 	   	Expression expr = (Expression)expr_stack.Pop(); 
 	   	Block bl = (Block)tmp_blocks.Pop(); 
                 Statement stmt = (Statement) new If ((Expression) expr,  (Statement) bl , (Statement)  end_block(), l);
                 statement_stack.Push(stmt);
 	  }	
- 	| end_of_stmt
-	  opt_statement_list 
-	  ELSEIF boolean_expression opt_then 
+ 	| 
+	  opt_elseif boolean_expression opt_then 
 	  { 
-                expr_stack.Push((Expression) $4);                                                 
+                expr_stack.Push((Expression) $2);                                                 
 	  	Block bl = end_block();
                 tmp_blocks.Push(bl);
 	  	start_block();
 	  }
-	  else_if_statement_rest 
+	  end_of_stmt opt_statement_list	
+	  else_if_statement_rest
 	  {
 		Location l = (Location) oob_stack.Pop ();
 		oob_stack.Push (l);
@@ -3287,6 +3560,25 @@ else_if_statement_rest
 		Statement stmt = (Statement) new If ((Expression) expr, (Statement) bl, tmp_stmt , l);
                 statement_stack.Push(stmt);
 	  }	     
+        |
+	  opt_end_block
+	  {
+		Location l = (Location) oob_stack.Pop ();
+		int i = (int)$1;
+		if (i!=3 && Parent!=3) 
+			{
+				Report.Error(30081,l,"'If' is not having a matching 'EndIf'"); 
+				Parent = i;
+			}
+		if(i!=3)
+			Parent=i;
+		if(Parent==3)
+			Parent=0;
+		oob_stack.Push (l);
+	   	Expression expr = (Expression)expr_stack.Pop(); 
+                Statement stmt = (Statement) new If ((Expression) expr, (Statement)  end_block(), l);
+                statement_stack.Push(stmt);
+	  }
 	;
 
 /*FIXME:Select without an expression is showing a parser error instead of a expression missing error*/	
@@ -3298,8 +3590,18 @@ select_statement
 		switch_stack.Push (current_block);
 	  }	
 	  opt_case_sections
-	  END SELECT 
-	  {
+	  opt_end_block
+          {
+                int i = (int)$8;
+                if (i!=17 && Parent!=17)
+                        {
+                                Report.Error(30095,(Location)$2,"'Select' is not having a matching 'End Select'");
+                                Parent = i;
+                        }
+                if(i!=17)
+                        Parent=i;
+                if(Parent==17)
+                        Parent=0;
 		current_block = (Block) switch_stack.Pop ();
 		$$ = new Switch ((Expression) $4, (ArrayList) $7, (Location) oob_stack.Pop ());
 	  }	  
@@ -4536,7 +4838,7 @@ pp_directive
 	  {
 	  	HandleConditionalDirective(IfElseStateMachine.Token.IF, (BoolLiteral)$5);
 	  }
-	| HASH ELSEIF _mark_ 
+	| HASH opt_elseif _mark_ 
 	  {
 		      IfElseStateMachine.Token tok = IfElseStateMachine.Token.ELSEIF;
 		      try {
@@ -4594,7 +4896,65 @@ pp_directive
 _mark_
         : /* empty */
         { $$ = lexer.Location; }
-                                                                                                                             
+	;
+
+// Changed to accept "Else If" also along with "ElseIf" 
+opt_elseif
+        : ELSEIF
+        | ELSE IF
+	;
+
+// Changed so as to check if every block is closed or not... 
+opt_end_block
+	: END opt_block_types 
+	  {
+		$$ = 2 + (int)$2 ;
+	  }
+	| NEXT
+	  {$$ = 1;}
+	| LOOP
+	  {$$ = 20;}
+	| /* empty */ 
+	  {$$ = 0;} 
+	;
+
+opt_block_types
+	: IF
+	  {$$ = 1;}
+	| ENUM
+	  {$$ = 8;}
+	| TRY 
+	  {$$ = 13;}
+	| SELECT 
+	  {$$ = 15;}
+	| SET 
+	  {$$ = 16;}
+	| GET 
+	  {$$ = 17;}
+	| WHILE 
+	  {$$ = 14;}
+	| SUB
+	  {$$ = 2;}
+	| FUNCTION 
+	  {$$ = 6;}
+	| INTERFACE 
+	  {$$ = 9;}
+	| PROPERTY 
+	  {$$ = 10;}
+	| SYNCLOCK
+	  {$$ = 12;}
+	| WITH 
+	  {$$ = 11;}
+	| MODULE
+	  {$$ = 3;}
+	| CLASS
+	  {$$ = 5;}
+	| STRUCTURE 
+	  {$$ = 7;}
+	| NAMESPACE
+	  {$$ = 4;}
+	| /* empty */
+	  {$$ = 0;}
 
 %%
 
