@@ -13,7 +13,7 @@ namespace ConvRpcTests
 		[Test]
 		public void TestService ()
 		{
-			ConverterServiceSoap cs = new ConverterServiceSoap ();
+			ConverterService cs = new ConverterService ();
 			cs.Login ("lluis");
 			cs.SetCurrencyRate ("EUR", 0.5);
 			AssertEquals ("#1", 0.5, cs.GetCurrencyRate ("EUR"));
