@@ -1,3 +1,10 @@
+2001-12-27      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* Calendar.cs                 - Completed the functions of Render*,
+	                                ViewStates (Track/View/Save),
+	                                RaisePostBackEvent.
+	                                Left: RenderAllDays (partially)
+
 2001-12-21      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* Calendar.cs                 - Added some more functions

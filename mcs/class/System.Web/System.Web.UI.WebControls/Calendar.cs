@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     Calendar
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  60%
- * 
+ * Status:  98%
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -25,7 +25,7 @@ namespace System.Web.UI.WebControls
 	public class Calendar : WebControl, IPostBackEventHandler
 	{
 		//
-		
+
 		private TableItemStyle          dayHeaderStyle;
 		private TableItemStyle          dayStyle;
 		private TableItemStyle          nextPrevStyle;
@@ -41,15 +41,22 @@ namespace System.Web.UI.WebControls
 		private static readonly object DayRenderEvent           = new object();
 		private static readonly object SelectionChangedEvent    = new object();
 		private static readonly object VisibleMonthChangedEvent = new object();
-		
+
 		private Color defaultTextColor;
 		private System.Globalization.Calendar globCal;
+
+		private static int MASK_WEEKEND  = (0x01 << 0);
+		private static int MASK_OMONTH   = (0x01 << 1);
+		private static int MASK_TODAY    = (0x01 << 2);
+		private static int MASK_SELECTED = (0x01 << 3);
+		private static int MASK_DAY      = (0x01 << 4);
+		private static int MASK_UNIQUE = MASK_WEEKEND | MASK_OMONTH | MASK_TODAY | MASK_SELECTED;
 
 		public Calendar(): base()
 		{
 			//TODO: Initialization
 		}
-		
+
 		public int CellPadding
 		{
 			get
@@ -81,7 +88,7 @@ namespace System.Web.UI.WebControls
 				ViewState["CellSpacing"] = value;
 			}
 		}
-		
+
 		public TableItemStyle DayHeaderStyle
 		{
 			get
@@ -122,7 +129,7 @@ namespace System.Web.UI.WebControls
 				return dayStyle;
 			}
 		}
-		
+
 		public FirstDayOfWeek FirstDayOfWeek
 		{
 			get
@@ -139,7 +146,7 @@ namespace System.Web.UI.WebControls
 				ViewState["FirstDayOfWeek"] = value;
 			}
 		}
-		
+
 		public string NextMonthText
 		{
 			get
@@ -154,7 +161,7 @@ namespace System.Web.UI.WebControls
 				ViewState["NextMonthText"] = value;
 			}
 		}
-		
+
 		public NextPrevFormat NextPrevFormat
 		{
 			get
@@ -171,7 +178,7 @@ namespace System.Web.UI.WebControls
 				ViewState["NextPrevFormat"] = value;
 			}
 		}
-		
+
 		public TableItemStyle NextPrevStyle
 		{
 			get
@@ -183,7 +190,7 @@ namespace System.Web.UI.WebControls
 				return nextPrevStyle;
 			}
 		}
-		
+
 		public TableItemStyle OtherMonthDayStyle
 		{
 			get
@@ -195,7 +202,7 @@ namespace System.Web.UI.WebControls
 				return otherMonthDayStyle;
 			}
 		}
-		
+
 		public string PrevMonthText
 		{
 			get
@@ -210,7 +217,7 @@ namespace System.Web.UI.WebControls
 				ViewState["PrevMonthText"] = value;
 			}
 		}
-		
+
 		public DateTime SelectedDate
 		{
 			get
@@ -232,7 +239,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public SelectedDatesCollection SelectedDates
 		{
 			get
@@ -246,7 +253,7 @@ namespace System.Web.UI.WebControls
 				return selectedDates;
 			}
 		}
-		
+
 		public TableItemStyle SelectedDayStyle
 		{
 			get
@@ -275,7 +282,7 @@ namespace System.Web.UI.WebControls
 				ViewState["SelectionMode"] = value;
 			}
 		}
-		
+
 		public string SelectedMonthText
 		{
 			get
@@ -300,7 +307,7 @@ namespace System.Web.UI.WebControls
 				return selectorStyle;
 			}
 		}
-		
+
 		public string SelectWeekText
 		{
 			get
@@ -315,7 +322,7 @@ namespace System.Web.UI.WebControls
 				ViewState["SelectWeekText"] = value;
 			}
 		}
-		
+
 		public bool ShowDayHeader
 		{
 			get
@@ -330,7 +337,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ShowDayHeader"] = value;
 			}
 		}
-		
+
 		public bool ShowGridLines
 		{
 			get
@@ -345,7 +352,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ShowGridLines"] = value;
 			}
 		}
-		
+
 		public bool ShowNextPrevMonth
 		{
 			get
@@ -360,7 +367,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ShowNextPrevMonth"] = value;
 			}
 		}
-		
+
 		public bool ShowTitle
 		{
 			get
@@ -392,7 +399,7 @@ namespace System.Web.UI.WebControls
 				ViewState["TitleFormat"] = value;
 			}
 		}
-		
+
 		public TableItemStyle TitleStyle
 		{
 			get
@@ -404,7 +411,7 @@ namespace System.Web.UI.WebControls
 				return titleStyle;
 			}
 		}
-		
+
 		public TableItemStyle TodayDayStyle
 		{
 			get
@@ -416,7 +423,7 @@ namespace System.Web.UI.WebControls
 				return todayDayStyle;
 			}
 		}
-		
+
 		public DateTime TodaysDate
 		{
 			get
@@ -431,7 +438,7 @@ namespace System.Web.UI.WebControls
 				ViewState["TodaysDate"] = value;
 			}
 		}
-		
+
 		public DateTime VisibleDate
 		{
 			get
@@ -446,7 +453,7 @@ namespace System.Web.UI.WebControls
 				ViewState["VisibleDate"] = value;
 			}
 		}
-		
+
 		public TableItemStyle WeekendDayStyle
 		{
 			get
@@ -460,7 +467,7 @@ namespace System.Web.UI.WebControls
 				return weekendDayStyle;
 			}
 		}
-		
+
 		public event DayRenderEventHandler DayRender
 		{
 			add
@@ -472,7 +479,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(DayRenderEvent, value);
 			}
 		}
-		
+
 		public event EventHandler SelectionChanged
 		{
 			add
@@ -496,7 +503,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(VisibleMonthChangedEvent, value);
 			}
 		}
-		
+
 		protected virtual void OnDayRender(TableCell cell, CalendarDay day)
 		{
 			if(Events!=null)
@@ -506,7 +513,7 @@ namespace System.Web.UI.WebControls
 					dreh(this, new DayRenderEventArgs(cell, day));
 			}
 		}
-		
+
 		protected virtual void OnSelectionChanged()
 		{
 			if(Events!=null)
@@ -516,7 +523,7 @@ namespace System.Web.UI.WebControls
 					eh(this, new EventArgs());
 			}
 		}
-		
+
 		protected virtual void OnVisibleMonthChanged(DateTime newDate, DateTime prevDate)
 		{
 			if(Events!=null)
@@ -585,38 +592,67 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			//TODO: Implement me
-			throw new NotImplementedException();
 			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
 			DateTime visDate   = GetEffectiveVisibleDate()
 			DateTime firstDate = GetFirstCalendarDay(visDate);
 			
-			/*
-			 * ForeColor else defaultTextColor
-			 * Draw a table
-			 * if(ControlStyleCreated())
-			 * 	then
-			 * {
-			 *	 ApplyStyle(ControlStyle)
-			 * }
-			 * GridLines?
-			 * RenderBeginTag(writer)
-			 * RenderTitle(writer, visibleDate from GetEffectiveVisibleDate, this.SelectionMode, IsEnabled)
-			 * if(ShowHeader)
-			 *  RenderHeader(writer, visibleDate, SelectionMode, IsEnabled, 
-			 * RenderAllDays
-			 * RenderEndTag(writer)
-			 */
+			bool isEnabled = false;
+			bool isHtmlTextWriter = false;
+			if(Page == null || Site == null || Site.DesignMode == null )
+			{
+				isEnabled = false;
+				isHtmlTextWriter = false;
+			} else
+			{
+				isEnabled = Enabled;
+				isHtmlTextWriter = (writer.GetType() != typeof(HtmlTextWriter));
+			}
+			defaultTextColor = ForeColor;
+			if(defaultTextColor == Color.Empty)
+				defaultTextColor = Color.Black;
+			
+			Table calTable = new Table();
+			calTable.ID = ID;
+			calTable.CopyBaseAttributes(this);
+			if(ControlStyleCreated)
+				ApplyStyle(ControlStyle);
+			calTable.Width = Width;
+			calTable.Height = Height;
+			calTable.CellSpacing = CellSpacing;
+			calTable.CellPadding = CellPadding;
+			
+			if(ControlStyleCreated && ControlStyle.IsSet(Style.BORDERWIDTH) && BorderWidth != Unit.Empty)
+			{
+				calTable.BorderWidth = BorderWidth;
+			} else
+			{
+				calTable.BorderWidth = Unit.Pixel(1);
+			}
+			
+			if(ShowGridLines)
+				calTable.GridLines = GridLines.Both;
+			else
+				calTable.GridLines = GridLines.None;
+			
+			calTable.RenderBeginTag(writer);
+			if(ShowTitle)
+				RenderTitle(writer, visDate, SelectionMode, isEnabled);
+			if(ShowDayHeader)
+				RenderHeader(writer, firstDate, SelectionMode, isEnabled, isHtmlTextWriter);
+			RenderAllDays(writer, firstDate, visDate, SelectionMode, isEnabled, isHtmlTextWriter);
+			
+			calTable.RenderEndTag(writer);
 		}
-		
+
 		protected override ControlCollection CreateControlCollection()
 		{
 			return new EmptyControlCollection(this);
 		}
-		
+
 		protected override void LoadViewState(object savedState)
 		{
 			if(savedState!=null)
@@ -647,7 +683,7 @@ namespace System.Web.UI.WebControls
 					WeekendDayStyle.LoadViewState(states[9]);
 			}
 		}
-		
+
 		protected override object SaveViewState()
 		{
 			ViewState["_CalendarSelectedDates"] = (SelectedDates.Count > 0 ? selectedDates : null);
@@ -669,7 +705,7 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
+
 		protected override void TrackViewState(): TrackViewState()
 		{
 			if(titleStyle!=null)
@@ -709,78 +745,275 @@ namespace System.Web.UI.WebControls
 				selectorStyle.TrackViewState();
 			}
 		}
-		
+
 		private void RenderAllDays(HtmlTextWriter writer, DateTime firstDay, DateTime activeDate, CalendarSelectionMode mode, bool isActive, bool isDownLevel)
 		{
+			TableCell weeksCell;
+			string weeksCellData;
+			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek || mode == CalendarSelectionMode.DayWeekMonth);
+			if(isWeekMode)
+			{
+				weeksCell = new TableCell();
+				weeksCell.Width = Unit.Percentage(12);
+				weeksCell.HorizontalAlign = HorizontalAlign.Center;
+				weeksCell.ApplyStyle(SelectorStyle);
+				if(!isDownLevel)
+					weeksCellData = GetHtmlForCell(weeksCell, isActive);
+			}
+			bool dayRenderBool = false;
+			if(GetType() != typeof(Calendar) || Events[DayRenderEvent] != null || !isDownLevel)
+				dayRenderBool = true;
+
+			string[] content = new string[0x01 << 4];
+			int definedStyles = MASK_SELECTED;
+			if(weekendStyle != null && !weekendStyle.IsEmpty)
+				definedStyles |= MASK_WEEKEND;
+			if(otherMonthStyle != null && !otherMonthStyle.IsEmpty)
+				definedStyles |= MASK_OMONTH;
+			if(todayDayStyle != null && todayDayStyle.IsEmpty)
+				definedStyles |= MASK_TODAY;
+			if(dayStyle != null && !dayStyle.IsEmpty)
+				definedStyles |= MASK_DAY;
+
+			bool selectDayBool = false;
+			if(isActive && mode != CalendarSelectionMode.None)
+			{
+				selectDayBool = true;
+			}
+			
+			for(int crr = 0; crr < 6; crr++)
+			{
+				writer.Write("<tr>");
+				if(isWeekMode)
+				{
+					if(isDownLevel)
+					{
+						string cellText = GetCalendarLinkText("selectWeek" + crr.ToString(), SelectWeekText, isActive, weeksCell.ForeColor);
+						weeksCell.Text = cellText;
+						RenderCalendarCell(writer, weeksCell, cellText);
+					} else
+					{
+						if(isActive)
+						{
+							writer.Write(String.Format(weeksCellData, "selectWeek" + crr.ToString(), SelectWeekText));
+						} else
+						{
+							writer.Write(String.Format(weeksCellData, "selectWeek" + crr.ToString()));
+						}
+					}
+				}
+				for(int crc = 0; crc < 7; crc++)
+				{
+					// have to display for each day in the week.
+					throw new NotImplementedException();
+				}
+			}
+
 			throw new NotImplementedException();
-			//TODO: Implement me
-			/*
-			 * "<tr>"
-			 * "</tr>"
-			 */
 		}
 		
+		private int GetMask(CalendarDay day)
+		{
+			int retVal = MASK_DAY;
+			if(day.IsSelected)
+				retVal |= MASK_SELECTED;
+			if(day.IsToday)
+				retVal |= MASK_TODAY;
+			if(day.IsOtherMonth)
+				retVal |= MASK_OMONTH;
+			if(day.IsWeekend)
+				retVal |= MASK_WEEKEND;
+			return retVal;
+		}
+
+		/// <remarks>
+		/// Refers to the second line of the calendar, that contains a link
+		/// to select whole month, and weekdays as defined by DayNameFormat
+		/// </remarks>
 		private void RenderHeader(HtmlTextWriter writer, DateTime firstDay, CalendarSelectionMode mode, bool isActive, bool isDownLevel)
 		{
-			throw new NotImplementedException();
-			//TODO: Implement Me
-			/*
-			 * "<tr>"
-			 * "</tr>"
-			 */
+			writer.Write("<tr>");
+			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek || mode == CalendarSelectionMode.DayWeekMonth);
+			TableCell headerCell = new TableCell();
+			headerCell.HorizontalAlign = HorizontalAlign.Center;
+			string selMthText = String.Empty;
+			if(isWeekMode)
+			{
+				headerCell.ApplyStyle(SelectorStyle);
+				selMthText = GetCalendarLinkText("selectMonth", SelectMonthText, isActive, SelectorStyle.ForeColor);
+			} else
+			{
+				headerCell.ApplyStyle(DayHeaderStyle);
+			}
+			RenderCalendarCell(writer, headerCell, selMthText);
+			
+			TableCell dayHeaderCell = new TableCell();
+			dayHeaderCell.HorizontalAlign = HorizontalAlign.Center;
+			string content = null;
+			if(!isDownLevel)
+			{
+				content = GetHtmlForCell(dayHeaderCell, isActive);
+			}
+			int dayOfWeek = (int)globCal.GetDayOfWeek(firstDay);
+			for(int currDay = dayOfWeek; currDay < dayOfWeek + 7; currDay++)
+			{
+				int effDay = (currDay % 7);
+				string currDayContent = String.Empty;
+				switch(DayNameFormat)
+				{
+					DayNameFormat.Full:            currDayContent = DateTimeFormatInfo.GetDayName(effDay);
+					                               break;
+					DayNameFormat.FirstLetter:     currDayContent = DateTimeFormatInfo.GetDayName(effDay).Substring(0,1);
+					                               break;
+					DayNameFormat.FirstTwoLetters: currDayContent = DateTimeFormatInfo.GetDayName(effDay).Substring(0,2);
+					                               break;
+					DayNameFormat.Short:
+					default:                       currDayContent = DateTimeFormatInfo.GetAbbreviatedDayName(effDay);
+					                               break;
+				}
+				if(isDownLevel)
+				{
+					RenderCalendarCell(writer, dayHeaderCell, currDayContent);
+				} else
+				{
+					writer.Write(String.Format(content, currDayContent);
+				}
+			}
+			writer.Write("</tr>");
 		}
-		
+
 		private void RenderTitle(HtmlTextWriter writer, DateTime visibleDate, CalendarSelectionMode mode, bool isActive)
 		{
-			throw new NotImplementedException();
-			//TODO: Implement me
-			/*
-			 * Make a row with the following contents: "<tr>"
-			 * Draw a table, with cell having the following properties
-			 * if(mode==CalendarSelectionMode.DayWeek || mode==CalendarSelectionMode.DayWeekMonth)
-			 *	then draw a column with colspan=8
-			 * else
-			 *	draw with colspan=7
-			 * set gridlines?
-			 * set width
-			 * set cellspacing
-			 * ApplyStyleToTitle(table, cell, style)
-			 * RenderBeginTag(writer)
-			 * RenderBeginTag(writer)
-			 * "<tr>"
-			 * -> The next/previous months things
-			 * GetCalendarText("previousMonth", PrevMonthText, NextPrevStyle.ForeColor, isActive)
-			 * RenderCalendarCell(writer, cell, ^^^)
-			 * ..
-			 * ..
-			 * Then for NextMonthText
-			 * "</tr>"
-			 * "</tr>"
-			 */
+			writer.Write("<tr>");
+			Table innerTable = new Table();
+			TableCell titleCell = new TableCell();
+			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek || mode == CalendarSelectionMode.DayWeekMonth);
+			titleCell.ColumnSpan = (isWeekMode ? 8 : 7);
+			titleCell.BackColor = "Silver";
+			
+			innerTable.GridLines = GridLine.None;
+			innerTable.Width = Unit.Percentage(100);
+			innerTable.CellSpacing = 0;
+			ApplyTitleStyle(innerTable, titleCell, TitleStyle);
+			
+			innerTable.RenderBeginTag(writer);
+			titleCell.RenderBeginTag(writer);
+			
+			writer.Write("<tr>");
+			string prevContent = String.Empty;
+			if(ShowNextPrevMonth)
+			{
+				TableCell prevCell = new TableCell();
+				prevCell.Width = Unit.Percentage(15);
+				prevCell.HorizontalAlign = HorizontalAlign.Left;
+				if(NextPrevFormat == NextPrevFormat.CustomText)
+				{
+					prevContent = PrevMonthText;
+				} else
+				{
+					int pMthInt = globCal.GetMonth(globCal.AddMonths(visibleDate, -1));
+					if(NextPrevFormat == NextPrevFormat.FullText)
+						prevContent = DateTimeFormatInfo.CurrentInfo.GetMonthName(pMthInt);
+					else
+						prevContent = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(pMthInt);
+				}
+				prevCell.ApplyStyle(NextPrevStyle);
+				RenderCalendarCell(writer, prevCell, GetCalendarLinkText("prevMonth", prevContent, isActive, NextPrevStyle.ForeColor));
+			}
+			TableCell currCell = new TableCell();
+			currCell.Width = Unit.Percentage(70);
+			if(TitleStyle.HorizontalAlign == HorizontalAlign.NotSet)
+				currCell.HorizontalAlign = HorizontalAlign.Center;
+			else
+				currCell.HorizontalAlign = TitleStyle.HorizontalAlign;
+			currCell.Wrap = TitleStyle.Wrap;
+			string currMonthContent = String.Empty;
+			if(TitleFormat == TitleFormat.Month)
+			{
+				currMonthContent = visibleDate.ToString("MMMM");
+			} else
+			{
+				string cmcFmt = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
+				if(cmcFmt.IndexOf(',') >= 0)
+				{
+					cmcFmt = "MMMM yyyy";
+				}
+				currMonthContent = visibleDate.ToString(cmcFmt);
+			}
+			string nextContent = String.Empty;
+			if(ShowNextPrevMonth)
+			{
+				TableCell nextCell = new TableCell();
+				nextCell.Width = Unit.Percentage(15);
+				nextCell.HorizontalAlign = HorizontalAlign.Left;
+				if(NextPrevFormat == NextPrevFormat.CustomText)
+				{
+					nextContent = PrevMonthText;
+				} else
+				{
+					int nMthInt = globCal.GetMonth(globCal.AddMonths(visibleDate, 1));
+					if(NextPrevFormat == NextPrevFormat.FullText)
+						nextContent = DateTimeFormatInfo.CurrentInfo.GetMonthName(nMthInt);
+					else
+						nextContent = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(nMthInt);
+				}
+				nextCell.ApplyStyle(NextPrevStyle);
+				RenderCalendarCell(writer, nextCell, GetCalendarLinkText("nextMonth", nextContent, isActive, NextPrevStyle.ForeColor));
+			}
+			
+			writer.Write("</tr>");
+			titleCell.RenderEndTag(writer);
+			innerTable.RenderEndTag(writer);
+			
+			writer.Write("</tr>");
 		}
-		
-		private void ApplyStyleToTitle(Table table, TableCell cell, TableItemStyle style)
+
+		private void ApplyTitleStyle(Table table, TableCell cell, TableItemStyle style)
 		{
-			throw new NotImplementedException();
-			//TODO: Implement me
-			/*
-			 * Font
-			 * Background color
-			 * Foreground color
-			 * Border color
-			 * Border width
-			 * Border style
-			 * Vertical alignment
-			 */
+			if(style.BackColor != Color.Empty)
+			{
+				cell.BackColor = style.BackColor;
+			}
+			if(style.BorderStyle != BorderStyle.NotSet)
+			{
+				cell.BorderStyle = style.BorderStyle;
+			}
+			if(style.BorderColor != Color.Empty)
+			{
+				cell.BorderColor = style.BorderColor;
+			}
+			if(style.BorderWidth != Unit.Empty)
+			{
+				cell.BorderWidth = style.BorderWidth;
+			}
+			if(style.Height != Unit.Empty)
+			{
+				cell.Height = style.Height;
+			}
+			if(style.VerticalAlign != VerticalAlign.NotSet)
+			{
+				cell.VerticalAlign = style.VerticalAlign;
+			}
+			
+			if(style.ForeColor != Color.Empty)
+			{
+				table.ForeColor = style.ForeColor;
+			} else if(ForeColor != Color.Empty)
+			{
+				table.ForeColor = ForeColor;
+			}
+			
+			table.Font.CopyFrom(style.Font);
+			table.Font.MergeWith(Font);
 		}
-		
+
 		private void RenderCalendarCell(HtmlTextWriter writer, TableCell cell, string text)
 		{
 			cell.RenderBeginTag(writer);
 			writer.Write(text);
 			cell.RenderEndTag(writer);
 		}
-		
+
 		private DateTime GetFirstCalendarDay(DateTime visibleDate)
 		{
 			DayOfWeek firstDay = ( FirstDayOfWeek == FirstDayOfWeek.Default ? DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek : FirstDayOfWeek);
@@ -792,7 +1025,7 @@ namespace System.Web.UI.WebControls
 			}
 			return globCal.AddDays(visibleDate, -days);
 		}
-		
+
 		private DateTime GetEffectiveVisibleDate()
 		{
 			DateTime dt = VisibleDate;
@@ -802,12 +1035,12 @@ namespace System.Web.UI.WebControls
 			}
 			return new DateTime(globCal.GetYear(dt), globCal.GetMonth(dt), globCal.GetDayOfMonth(dt), globCal);
 		}
-		
+
 		/// <summary>
 		/// Creates text to be displayed, with all attributes if to be
 		/// shown as a hyperlink
 		/// </summary>
-		private string GetCalendarText(string eventArg, string text, Color foreground, bool isLink)
+		private string GetCalendarLinkText(string eventArg, string text, Color foreground, bool isLink)
 		{
 			if(isLink)
 			{
@@ -834,15 +1067,18 @@ namespace System.Web.UI.WebControls
 		{
 			StringWriter sw = new StringWriter();
 			HtmlTextWriter htw = new HtmlTextWriter(sw);
-			RenderBeginTag(htw);
+			cell.RenderBeginTag(htw);
 			if(showLinks)
 			{
-				//sw.Write(GetCalendarText(,,ForeColor, true));
-				//TODO: Implement me
+				htw.Write(GetCalendarLinkText("{0}", "{1}", cell.ForeColor, showLinks));
+			} else
+			{
+				htw.Write("{0}");
 			}
-			throw new NotImplementedException();
+			cell.RenderEndTag(htw);
+			return sw.ToString();
 		}
-		
+
 		internal DateTime SelectRangeInternal(DateTime fromDate, DateTime toDate, DateTime visibleDate)
 		{
 			TimeSpan span = fromDate - toDate;
