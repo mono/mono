@@ -246,11 +246,13 @@ namespace Mono.Security.Cryptography {
 			}
 
 			byte[] res = new byte [total];
+			int outputOffset = 0;
 
 			// process all blocks except the last (final) block
 			while (total > BlockSizeByte) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
+				outputOffset += BlockSizeByte;
 				total -= BlockSizeByte;
 			}
 
@@ -264,7 +266,7 @@ namespace Mono.Security.Cryptography {
 				TransformBlock (res, full, BlockSizeByte, res, full);
 			}
 			else
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 
 			return res;
 		}
@@ -276,9 +278,11 @@ namespace Mono.Security.Cryptography {
 
 			int total = inputCount;
 			byte[] res = new byte [total];
+			int outputOffset = 0;
 			while (inputCount > 0) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
+				outputOffset += BlockSizeByte;
 				inputCount -= BlockSizeByte;
 			}
 

@@ -1,3 +1,8 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fixed bug when offset > 0 in destination 
+	buffer.
+
 2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: FxCop-ized. Sealed class. Use Buffer.BlockCopy.
