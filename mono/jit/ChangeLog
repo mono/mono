@@ -2,6 +2,7 @@
 
 	* emit-x86.c (arch_emit_prologue): make the call to
 	mono_get_lmf_addr relocatable.
+	(arch_jit_compile_cfg): do not waste memory
 
 2002-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
