@@ -653,8 +653,6 @@ namespace CIR {
 				foreach (Delegate d in Delegates)
 					d.Define (this);
 			}
-			
-			
 		}
 
 		//
@@ -677,13 +675,19 @@ namespace CIR {
 				foreach (Constructor c in Constructors)
 					c.Emit (this);
 			
-			if (Methods != null)
-				foreach (Method m in Methods)
+			if (methods != null)
+				foreach (Method m in methods)
 					m.Emit (this);
 
-			if (Operators != null)
-				foreach (Operator o in Operators)
+			if (operators != null)
+				foreach (Operator o in operators)
 					o.Emit (this);
+
+			if (properties != null)
+				foreach (Property p in properties)
+					p.Emit (this);
+
+			
 		}
 		
 		public delegate void ExamineType (TypeContainer container, object cback_data);
@@ -1316,7 +1320,9 @@ namespace CIR {
 		public Block           Get, Set;
 		public PropertyBuilder PropertyBuilder;
 		public Attributes OptAttributes;
+		MethodBuilder GetBuilder, SetBuilder;
 		
+
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -1354,25 +1360,44 @@ namespace CIR {
 			Type [] prop_type = new Type [1];
 			prop_type [0] = tp;
 
-			MethodBuilder mb;
-			
 			PropertyBuilder = parent.TypeBuilder.DefineProperty(Name, prop_attr, tp, null);
 					
 			if (Get != null)
 			{
-				mb = parent.TypeBuilder.DefineMethod("get_" + Name, method_attr, tp, null);
-				PropertyBuilder.SetGetMethod (mb);
+				GetBuilder = parent.TypeBuilder.DefineMethod (
+					"get_" + Name, method_attr, tp, null);
+				PropertyBuilder.SetGetMethod (GetBuilder);
 			}
 			
 			if (Set != null)
 			{
-				mb = parent.TypeBuilder.DefineMethod("set_" + Name, method_attr, null, prop_type);
-				mb.DefineParameter(1, ParameterAttributes.None, "value"); 
-				PropertyBuilder.SetSetMethod (mb);
+				SetBuilder = parent.TypeBuilder.DefineMethod (
+					"set_" + Name, method_attr, null, prop_type);
+				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
+				PropertyBuilder.SetSetMethod (SetBuilder);
 			}
 
 		}
 
+		public void Emit (TypeContainer tc)
+		{
+			ILGenerator ig;
+			EmitContext ec;
+
+			if (Get != null){
+				ig = GetBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, ig);
+				
+				ec.EmitTopBlock (Get);
+			}
+
+			if (Set != null){
+				ig = SetBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, ig);
+				
+				ec.EmitTopBlock (Set);
+			}
+		}
 	}
 
 	public class Event {

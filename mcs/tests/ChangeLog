@@ -1,3 +1,7 @@
+2001-10-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* makefile (test-compiler): Add rm *.exe before launching tests.
+
 2001-10-02  Ravi Pratap  <ravi@ximian.com>
 
 	* test-13.cs : Added. 

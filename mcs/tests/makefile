@@ -8,6 +8,7 @@ TEST_NOPASS = \
 	test-5
 
 test-compiler:
+	rm *.exe
 	for i in $(TEST_SOURCES); do \
 		if $(MCS) $$i.cs > /dev/null; then \
 			if ./$$i.exe; then \
@@ -38,3 +39,9 @@ msc-casts.out: casts.exe
 
 test-casts: csc-casts.out msc-casts.out
 	cmp csc-casts.out msc-casts.out
+
+clean:
+	rm *.exe
+	rm *.out
+	rm casts.cs
+

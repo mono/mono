@@ -38,12 +38,14 @@ public class TypeManager {
 	static public Type void_type;
 	static public Type enumeration_type;
 	static public Type array_type;
-
+	static public Type runtime_handle_type;
 	static public Type cloneable_interface;
+	static public Type type_type;
 	
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_object_object;
-
+	static public MethodInfo system_type_get_type_from_handle;
+	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
 	//   (either because it is the default or the user used the
@@ -212,7 +214,9 @@ public class TypeManager {
 		delegate_type = CoreLookupType ("System.Delegate");
 		array_type    = CoreLookupType ("System.Array");
 		void_type     = CoreLookupType ("System.Void");
-
+		type_type     = CoreLookupType ("System.Type");
+		runtime_handle_type = CoreLookupType ("System.RuntimeTypeHandle");
+		
 		cloneable_interface = CoreLookupType ("System.ICloneable");
 
 		//
@@ -220,9 +224,14 @@ public class TypeManager {
 		//
 		Type [] string_string = { string_type, string_type };
 		Type [] object_object = { object_type, object_type };
-
-		string_concat_string_string = GetMethod (string_type, "Concat", string_string);
-		string_concat_object_object = GetMethod (string_type, "Concat", object_object);
+		Type [] runtime_type_handle = { runtime_handle_type };
+		
+		string_concat_string_string = GetMethod (
+			string_type, "Concat", string_string);
+		string_concat_object_object = GetMethod (
+			string_type, "Concat", object_object);
+		system_type_get_type_from_handle = GetMethod (
+			type_type, "GetTypeFromHandle", runtime_type_handle);
 	}
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)

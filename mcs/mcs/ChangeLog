@@ -1,3 +1,11 @@
+2001-10-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (TypeOf::Emit): Implement.
+
+	* typemanager.cs: runtime_handle_type, new global type.
+
+	* class.cs (Property::Emit): Generate code for properties.
+
 2001-10-02  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Unary::ResolveOperator): Find operators on base type

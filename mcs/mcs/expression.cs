@@ -15,9 +15,9 @@
 //
 
 namespace CIR {
+	using System;
 	using System.Collections;
 	using System.Diagnostics;
-	using System;
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Text;
@@ -325,9 +325,13 @@ namespace CIR {
 			string right = name.Substring (dot_pos + 1);
 			Type t;
 
-			if ((t = tc.LookupType (left, false)) != null)
+			if ((t = tc.LookupType (left, false)) != null){
+				Expression e;
+				
 				left_e = new TypeExpr (t);
-			else {
+				e = new MemberAccess (left_e, right);
+				return e.Resolve (tc);
+			} else {
 				//
 				// FIXME: IMplement:
 				
@@ -434,7 +438,6 @@ namespace CIR {
 
 			args.Add (new Argument (expr, Argument.AType.Expression));
 
-			Console.WriteLine ("The InternalTypeConstructor is: " + expr);
 			Expression ne = new New (target.FullName, args,
 						 new Location (-1));
 
@@ -978,7 +981,6 @@ namespace CIR {
 				// ushort, int, uint, long, ulong,
 				// char, float or decimal
 				//
-				Console.WriteLine ("Ok, I am a double " + target_type);
 				if (target_type == TypeManager.sbyte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
 				if (target_type == TypeManager.byte_type)
@@ -3590,8 +3592,12 @@ namespace CIR {
 		}
 	}
 
+	// <summary>
+	//   Implements the typeof operator
+	// </summary>
 	public class TypeOf : Expression {
 		public readonly string QueriedType;
+		Type typearg;
 		
 		public TypeOf (string queried_type)
 		{
@@ -3600,19 +3606,20 @@ namespace CIR {
 
 		public override Expression DoResolve (TypeContainer tc)
 		{
-			type = tc.LookupType (QueriedType, false);
+			typearg = tc.LookupType (QueriedType, false);
 
-			if (type == null)
+			if (typearg == null)
 				return null;
-			
+
+			type = TypeManager.type_type;
 			eclass = ExprClass.Type;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Implement me");
-			// FIXME: Implement.
+			ec.ig.Emit (OpCodes.Ldtoken, typearg);
+			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 	}
 

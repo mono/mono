@@ -6,8 +6,8 @@ class Stress {
 		"int",   "uint",
 		"short", "ushort",
 		"long",  "ulong",
-		"sbyte", "byte",
-		"char" };
+		"sbyte", "byte", "char"
+		};
 	
 
 	static void w (string s)
@@ -52,7 +52,7 @@ class Stress {
 
 			wl ("\t\tConsole.WriteLine (\"Testing: " + type + "\");\n");
 			foreach (string t in types){
-				wl ("\t\tConsole.WriteLine (\"   arg: " + t + "\");\n");
+				wl ("\t\tConsole.WriteLine (\"   arg: " + t + " (" + type + ")\");\n");
 				call (t, "zero");
 				call (t, "min");
 				call (t, "max");
