@@ -1,3 +1,6 @@
+2002-05-29  Jonathan Pryor <jonpryor@vt.edu>
+  * DefaultTraceListener.xml: Update with information about MONO_TRACE.
+
 2002-05-27  Jonathan Pryor <jonpryor@vt.edu>
   * ChangeLog: Added this file
   * Moved public documentation from the source code into the appropriate XML
