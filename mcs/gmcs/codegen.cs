@@ -765,19 +765,23 @@ namespace Mono.CSharp {
 
 
 	public abstract class CommonAssemblyModulClass: Attributable {
+		static string[] attribute_targets = new string [] { "assembly", "module" };
 
 		protected CommonAssemblyModulClass ():
 			base (null)
 		{
 		}
 
-		public void AddAttribute (AttributeSection attr)
+		// TODO: The error can be reported more than once
+		public void AddAttributes (ArrayList attrs)
 		{
 			if (OptAttributes == null) {
-				OptAttributes = new Attributes (attr);
+				OptAttributes = new Attributes (attrs);
+				OptAttributes.CheckTargets (ValidAttributeTargets);
 				return;
 			}
-			OptAttributes.AddAttributeSection (attr);
+			OptAttributes.AddAttributes (attrs);
+			OptAttributes.CheckTargets (ValidAttributeTargets);
 		}
 
 		public virtual void Emit (TypeContainer tc) 
@@ -800,6 +804,12 @@ namespace Mono.CSharp {
 				a.Resolve (temp_ec);
 			}
 			return a;
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
 		}
 	}
 
@@ -844,11 +854,11 @@ namespace Mono.CSharp {
 		public AssemblyName GetAssemblyName (string name, string output) 
 		{
 			if (OptAttributes != null) {
-				foreach (AttributeSection asect in OptAttributes.AttributeSections) {
-					if (asect.Target != "assembly")
+				foreach (Attribute a in OptAttributes.AttributeSections) {
+					if (a.Target != "assembly")
 						continue;
 					// strongname attributes don't support AllowMultiple
-					Attribute a = (Attribute) asect.Attributes [0];
+					//Attribute a = (Attribute) asect.Attributes [0];
 					switch (a.Name) {
 						case "AssemblyKeyFile":
 							if (RootContext.StrongNameKeyFile != null) {
@@ -973,7 +983,6 @@ namespace Mono.CSharp {
 	public class ModuleClass: CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public ModuleBuilder Builder;
-            
 		bool m_module_is_unsafe;
 
 		public ModuleClass (bool is_unsafe)

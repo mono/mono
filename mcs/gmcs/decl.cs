@@ -542,6 +542,8 @@ namespace Mono.CSharp {
 
 		TypeContainer parent;
 
+		static string[] attribute_targets = new string [] { "type" };
+
 		public DeclSpace (NamespaceEntry ns, TypeContainer parent, MemberName name,
 				  Attributes attrs, Location l)
 			: base (name, attrs, l)
@@ -1570,6 +1572,12 @@ namespace Mono.CSharp {
 					return CurrentType;
 
 				return new TypeExpression (TypeBuilder, Location);
+			}
+		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
 			}
 		}
 	}

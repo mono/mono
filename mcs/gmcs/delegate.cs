@@ -35,8 +35,11 @@ namespace Mono.CSharp {
 		Type [] param_types;
 		Type ret_type;
 
+		static string[] attribute_targets = new string [] { "type", "return" };
+
 		Expression instance_expr;
 		MethodBase delegate_method;
+		ReturnParameter return_attributes;
 	
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -57,6 +60,19 @@ namespace Mono.CSharp {
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PRIVATE, l);
 			Parameters      = param_list;
+		}
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Target == "return") {
+				if (return_attributes == null)
+					return_attributes = new ReturnParameter (InvokeBuilder, Location);
+
+				return_attributes.ApplyAttributeBuilder (a, cb);
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, cb);
 		}
 
 		public override TypeBuilder DefineType ()
@@ -378,11 +394,18 @@ namespace Mono.CSharp {
  		{
  			if (OptAttributes != null) {
  				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
+				Parameters.LabelParameters (ec, InvokeBuilder, Location);
 				OptAttributes.Emit (ec, this);
  			}
 
 			base.Emit (tc);
  		}
+
+		protected override string[] ValidAttributeTargets {
+			get {
+				return attribute_targets;
+			}
+		}
 
  		//TODO: duplicate
  		protected override bool VerifyClsCompliance (DeclSpace ds)

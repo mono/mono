@@ -1,3 +1,32 @@
+2004-05-18  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #52585 (Implemented explicit attribute declaration)
+
+	* attribute.cs:
+	(Attributable.ValidAttributeTargets): New abstract method. It gets
+	list of valid attribute targets for explicit target declaration.
+	(Attribute.Target): It holds target itself.
+	(AttributeSection): Removed.
+	(Attribute.CheckTargets): New method. It checks whether attribute
+	target is valid for the current element.
+
+	* class.cs:
+	(EventProperty): New class. For events that are declared like
+	property (with add and remove accessors).
+	(EventField): New class. For events that are declared like field.
+	class.cs
+
+	* cs-parser.jay: Implemented explicit attribute target declaration.
+
+	* class.cs, decl.cs, delegate.cs, enum.cs, parameter.cs:        
+	Override ValidAttributeTargets.
+
+	* parameter.cs:
+	(ReturnParameter): Class for applying custom attributes on 
+	the return type.
+	(ParameterAtribute): New class. Class for applying custom
+	attributes on the parameter type.
+
 2004-05-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MemberBase.DoDefine): Pass UNSAFE on interface
@@ -514,6 +543,12 @@
 	verify applicability ignoring  any 'params' modifier on the last
 	parameter.
 	Fixes #56442.
+
+2004-04-08  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
 
 2004-04-16  Raja R Harinath  <rharinath@novell.com>
 
