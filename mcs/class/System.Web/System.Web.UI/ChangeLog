@@ -1,5 +1,9 @@
 2004-09-24 Sanjay Gupta <gsanjay@novell.com>
 
+	* ControlValuePropertyAttribute.cs: Initial implementation.
+
+2004-09-24 Sanjay Gupta <gsanjay@novell.com>
+
 	* IPaginationContainer.cs: Corrected name of class.
 
 2004-09-24 Sanjay Gupta <gsanjay@novell.com>
