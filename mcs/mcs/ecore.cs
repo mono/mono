@@ -2786,7 +2786,6 @@ namespace Mono.CSharp {
 
 
 			if (FieldInfo.IsStatic){
-				Console.WriteLine (Environment.StackTrace, ec.loc);
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			} else {
 				//
