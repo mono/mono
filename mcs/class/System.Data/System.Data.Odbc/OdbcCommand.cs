@@ -18,6 +18,8 @@ namespace System.Data.Odbc
 	/// <summary>
 	/// Represents an SQL statement or stored procedure to execute against a data source.
 	/// </summary>
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+        [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 	public sealed class OdbcCommand : Component, ICloneable, IDbCommand
 	{
 		#region Fields
@@ -75,7 +77,13 @@ namespace System.Data.Odbc
 		{
 			get { return hstmt; }
 		}
+		
 
+                [OdbcCategory ("Data")]
+                [DefaultValue ("")]
+                [OdbcDescriptionAttribute ("Command text to execute")]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+                [RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string CommandText 
 		{
 			get {
@@ -87,6 +95,9 @@ namespace System.Data.Odbc
 			}
 		}
 
+
+		[OdbcDescriptionAttribute ("Time to wait for command to execute")]
+                [DefaultValue (30)]
 		public int CommandTimeout {
 			get {
 				return timeout;
@@ -96,6 +107,10 @@ namespace System.Data.Odbc
 			}
 		}
 
+		[OdbcCategory ("Data")]
+                [DefaultValue ("Text")]
+                [OdbcDescriptionAttribute ("How to interpret the CommandText")]
+                [RefreshPropertiesAttribute (RefreshProperties.All)]
 		public CommandType CommandType { 
 			get {
 				return commandType;
@@ -105,6 +120,10 @@ namespace System.Data.Odbc
 			}
 		}
 
+		[OdbcCategory ("Behavior")]
+                [OdbcDescriptionAttribute ("Connection used by the command")]
+                [DefaultValue (null)]
+                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OdbcConnection Connection { 
 			get {
 				return connection;
@@ -114,6 +133,9 @@ namespace System.Data.Odbc
 			}
 		}
 
+		[BrowsableAttribute (false)]
+                [DesignOnlyAttribute (true)]
+                [DefaultValue (true)]
 		public bool DesignTimeVisible { 
 			get {
 				return designTimeVisible;
@@ -123,12 +145,18 @@ namespace System.Data.Odbc
 			}
 		}
 
+		[OdbcCategory ("Data")]
+                [OdbcDescriptionAttribute ("The parameters collection")]
+                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public OdbcParameterCollection Parameters {
 			get {
 				return parameters;
 			}
 		}
-
+		
+		[BrowsableAttribute (false)]
+                [OdbcDescriptionAttribute ("The transaction used by the command")]
+                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public OdbcTransaction Transaction {
 			get {
 				return transaction;
@@ -137,7 +165,10 @@ namespace System.Data.Odbc
 				transaction = value;
 			}
 		}
-
+		
+		[OdbcCategory ("Behavior")]
+                [DefaultValue (UpdateRowSource.Both)]
+                [OdbcDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
 		public UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
 			get {
