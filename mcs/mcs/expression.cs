@@ -3757,7 +3757,7 @@ namespace Mono.CSharp {
 			}
 
 			if (method is MethodInfo)
-				type = ((MethodInfo)method).ReturnType;
+				type = TypeManager.TypeToCoreType (((MethodInfo)method).ReturnType);
 
 			if (type.IsPointer){
 				if (!ec.InUnsafe){

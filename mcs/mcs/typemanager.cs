@@ -1443,6 +1443,8 @@ public class TypeManager {
 				return TypeManager.void_type;
 			if (t == typeof (object))
 				return TypeManager.object_type;
+			if (t == typeof (System.Type))
+				return TypeManager.type_type;
 			return t;
 		}
 	}
@@ -1543,12 +1545,8 @@ public class TypeManager {
 			}
 			if (i != old_count)
 				continue;
-			
-			if (!(method is MethodInfo && new_method is MethodInfo))
-				return true;
-			
-			if (((MethodInfo) method).ReturnType == ((MethodInfo) new_method).ReturnType)
-				return true;
+
+			return true;
 		}
 		return false;
 	}
@@ -1827,7 +1825,7 @@ public class TypeManager {
 			//
 			if (mi [0] is PropertyInfo)
 				return mi;
-			
+
 			//
 			// We found methods, turn the search into "method scan"
 			// mode.
