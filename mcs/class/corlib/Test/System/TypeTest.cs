@@ -73,6 +73,13 @@ namespace MonoTests.System
 			AssertEquals (typeof (Object[][]).IsAssignableFrom (typeof (Duper[][])) , true);
 			AssertEquals (typeof (ICloneable[][]).IsAssignableFrom (typeof (Duper[][])) , true);
 
+			// Tests for vectors<->one dimensional arrays */
+			Array arr1 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0});
+			Array arr2 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {10});
+
+			AssertEquals (typeof (int[]).IsAssignableFrom (arr1.GetType ()), true);
+			AssertEquals (typeof (int[]).IsAssignableFrom (arr2.GetType ()), false);
+
 			// Test that arrays of enums can be cast to their base types
 			AssertEquals (typeof (int[]).IsAssignableFrom (typeof (TypeCode[])) , true);
 

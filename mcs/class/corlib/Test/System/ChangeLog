@@ -1,3 +1,7 @@
+2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add Tests for vectors<->one dim. arrays.
+
 2003-01-11 David Sheldon <dave-mono@earth.li>
 
   * DateTimeTest.cs: Tests for bug 52274 fix, formats such as 
