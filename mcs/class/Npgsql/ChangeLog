@@ -1,4 +1,8 @@
 
+2004-02-29  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	* Npgsql/NpgsqlConnection.cs: Better handling of connection encoding. Added support for encoding and connection timeout in connection string.
+	* Npgsql/NpgsqlConnectorPool.cs: Added support for timeout and max connection pool.
+
 2004-02-28  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
 	* Npgsql/NpgsqlConnector.cs: Added support for connection encoding.

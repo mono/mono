@@ -88,6 +88,11 @@ namespace Npgsql
         // These are for the connection pool
         internal readonly String MIN_POOL_SIZE = "MINPOOLSIZE";
         internal readonly String MAX_POOL_SIZE = "MAXPOOLSIZE";
+        
+        internal readonly String CONN_ENCODING = "ENCODING";
+        
+        internal readonly String CONN_TIMEOUT = "TIMEOUT";
+        
 
         // Values for possible CancelRequest messages.
         private NpgsqlBackEndKeyData backend_keydata;
@@ -115,7 +120,9 @@ namespace Npgsql
 
         private System.Resources.ResourceManager resman;
 
-        private Int32          _backendProtocolVersion;
+        private Int32                   _backendProtocolVersion;
+        
+        private Int32                   _connectionTimeout;
 
 
         /// <summary>
@@ -145,6 +152,9 @@ namespace Npgsql
 
             _mediator = new NpgsqlMediator();
             _oidToNameMapping = new Hashtable();
+            
+            _connectionTimeout = 15;
+            
 
             if (connection_string != String.Empty)
                 ParseConnectionString();
@@ -180,12 +190,11 @@ namespace Npgsql
         /// before terminating the attempt and generating an error.
         /// </summary>
         /// <value>The time (in seconds) to wait for a connection to open. The default value is 15 seconds.</value>
-        /// <remarks>This property currently always returns zero</remarks>
         [NpgsqlSysDescription("Description_ConnectionTimeout", typeof(NpgsqlConnection))]
         public Int32 ConnectionTimeout {
             get
             {
-                return 0;
+                return _connectionTimeout;
             }
         }
 
@@ -358,7 +367,11 @@ namespace Npgsql
                 connection_string_values[MIN_POOL_SIZE] = "1";
             if (connection_string_values[MAX_POOL_SIZE] == null)
                 connection_string_values[MAX_POOL_SIZE] = "20";
-                
+            if (connection_string_values[CONN_ENCODING] == null)
+                connection_string_values[CONN_ENCODING] = "SQL_ASCII";
+            if (connection_string_values[CONN_TIMEOUT] == null)
+                connection_string_values[CONN_TIMEOUT] = "15";                
+            
             try
             {
             
@@ -368,7 +381,10 @@ namespace Npgsql
 
                 lock(ConnectorPool.ConnectorPoolMgr)
                 {
-                    Connector = ConnectorPool.ConnectorPoolMgr.RequestConnector(ConnectionString, false);
+                    Connector = ConnectorPool.ConnectorPoolMgr.RequestConnector(ConnectionString, 
+                                                                                Int32.Parse((String)connection_string_values[MAX_POOL_SIZE]),
+                                                                                Int32.Parse((String)connection_string_values[CONN_TIMEOUT]),
+                                                                                false);
                     Connector.InUse = true;
                 }
                 
@@ -428,11 +444,11 @@ namespace Npgsql
                     
                     // Adjust client encoding. 
                 
-                    NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
-                    String clientEncoding = (String)commandEncoding.ExecuteScalar();
+                    //NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
+                    //String clientEncoding = (String)commandEncoding.ExecuteScalar();
     
-                    if (clientEncoding.Equals("UNICODE"))
-                      connection_encoding = Encoding.UTF8;
+                    if (connection_string_values[CONN_ENCODING].Equals("UNICODE"))
+                        connection_encoding = Encoding.UTF8;
                   
                     
                     Connector.ServerVersion = ServerVersion;
@@ -554,6 +570,8 @@ namespace Npgsql
         /// Password	- Password for clear text authentication
         /// MinPoolSize - Min size of connection pool
         /// MaxPoolSize - Max size of connection pool
+        /// Encoding    - Encoding to be used
+        /// Timeout     - Time to wait for connection open. In seconds.
         /// </summary>
         private void ParseConnectionString()
         {

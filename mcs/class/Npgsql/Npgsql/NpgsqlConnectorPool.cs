@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using Npgsql;
+using System.Threading;
 
 namespace Npgsql
 {
@@ -128,13 +129,15 @@ namespace Npgsql
         /// <param name="Shared">Allows multiple connections
         /// on a single connector. </param>
         /// <returns>A pooled connector object.</returns>
-        internal Npgsql.Connector RequestConnector ( String connectionString,
-                bool Shared )
+        internal Npgsql.Connector RequestConnector (String connectionString,
+                                                    Int32 maxPoolSize,
+                                                    Int32 timeout,
+                                                    Boolean shared )
         {
             Connector connector;
             ArrayList connectorPool = null;
 
-            if ( Shared )
+            if ( shared )
             {
                 // if a shared connector is requested then the
                 // Shared Connector List is searched first
@@ -170,27 +173,56 @@ namespace Npgsql
                 
                 // Now look for an available connector.
                 
-                
-                foreach (Connector c in connectorPool)
-                {
-                    if (!c.InUse)
-                        return c;
-                }
+                Connector freeConnector = FindFreeConnector(connectorPool);
+                if (freeConnector != null)
+                    return freeConnector;
                 
                 // No suitable connector could be found, so create new one
-                connector = new Npgsql.Connector( connectionString, Shared );
+                // if there is room available.
+                
+                if (connectorPool.Count < maxPoolSize)
+                {
+                    connector = new Npgsql.Connector(connectionString, shared);
 
-            connectorPool.Add(connector);
+                    connectorPool.Add(connector);
             
 
-            // and then returned to the caller
-            return connector;
-                
-                
+                    // and then returned to the caller
+                    return connector;                
+                }
+                else
+                {
+                    // keep checking in the pool until some connector is available or
+                    // a timeout occurs.
+                    Int32 timeoutMilliseconds = timeout * 1000;
+                    
+                    while (timeoutMilliseconds > 0)
+                    {
+                        Connector freeConnector2 = FindFreeConnector(connectorPool);
+                        if (freeConnector2 != null)
+                            return freeConnector2;
+                        else
+                            Thread.Sleep(timeoutMilliseconds % 900);
+                        timeoutMilliseconds -= 900;
+                    }
+                    
+                    throw new NpgsqlException("Timeout while getting a connection from pool.");
+                    
+                }
                 
             }
 
+        }
+        
+        private Connector FindFreeConnector(ArrayList connectorPool)
+        {
+            foreach (Connector c in connectorPool)
+            {
+                if (!c.InUse)
+                    return c;
+            }
             
+            return null;
         }
     }
 }
