@@ -1,4 +1,17 @@
-The SOAP Serialization Formatter is maintained by
-Jesus Suarez <gsus@brujula.net>
+Build instruction:
+extract the archive to the mcs/class/ dir
 
-Contact him regarding questions about this module.
+to build it on windows:
+	nant
+
+to build it on linux:
+	make -f makefile.gnu install prefix=/pathtoyourmonoinstallationdir/
+
+to run tests on windows:
+	nant test
+
+to run tests on linux:
+	cd Test
+	make -f makefile.gnu test
+
+If you want to use it with other applications, you have to reference it with "-r System.Runtime.Serialization.Formatters.Soap1.dll" 

@@ -1,0 +1,20 @@
+<Combine fileversion="1.0" name="Soap" description="">
+  <StartMode startupentry="Test" single="True">
+    <Execute entry="SoapFormatter" type="None" />
+    <Execute entry="Test" type="None" />
+  </StartMode>
+  <Entries>
+    <Entry filename=".\System.Runtime.Serialization.Formatters.Soap\SoapFormatter.prjx" />
+    <Entry filename=".\Test\Test.prjx" />
+  </Entries>
+  <Configurations active="Debug">
+    <Configuration name="Release">
+      <Entry name="SoapFormatter" configurationname="Debug" build="False" />
+      <Entry name="SoapFormatter" configurationname="Debug" build="False" />
+    </Configuration>
+    <Configuration name="Debug">
+      <Entry name="SoapFormatter" configurationname="Debug" build="False" />
+      <Entry name="SoapFormatter" configurationname="Debug" build="False" />
+    </Configuration>
+  </Configurations>
+</Combine>
