@@ -418,7 +418,7 @@ namespace Mono.CSharp {
 				return null;
 
 			}
-			
+
 			if (target_type == source_type){
 				if (source is New && target_type.IsValueType &&
 				    (target.eclass != ExprClass.IndexerAccess) && (target.eclass != ExprClass.PropertyAccess)){

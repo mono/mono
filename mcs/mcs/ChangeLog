@@ -1,5 +1,10 @@
 2004-12-02  Miguel de Icaza  <miguel@ximian.com>
 
+	* report.cs: Remove extra closing parenthesis.
+
+	* convert.cs (Error_CannotImplicitConversion): If the name of the
+	types are the same, provide some extra information.
+
 	* class.cs (FieldBase): Use an unused bit field from the field to
 	encode the `has_offset' property from the FieldMember.  This saves
 	a couple of Ks on bootstrap compilation.
