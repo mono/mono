@@ -1,3 +1,8 @@
+2003-12-25  Duncan Mak  <duncan@ximian.com>
+
+	* Matrix.cs (ToString): Cache the elements inside a local variable
+	to avoid calling the Elements property repeatedly.
+
 2003-12-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Blend.cs: fix array sizes in the constructors. Closes bug #51564.

@@ -294,10 +294,8 @@ GdipGetPathLastPoint (GpPath *path, GpPointF *lastPoint)
 GpStatus
 GdipAddPathLine (GpPath *path, float x1, float y1, float x2, float y2)
 {
-        PointF p1 = { x1, y1 };
-        PointF p2 = { x2, y2 };        
-        append_point (path, p1, PathPointTypeStart);
-        append_point (path, p2, PathPointTypeLine);
+        append (path, x1, y1, PathPointTypeStart);
+        append (path, x2, y2, PathPointTypeLine);
 
         return Ok;
 }
@@ -545,7 +543,8 @@ GdipAddPathPath (GpPath *path, GpPath *addingPath, bool connect)
 /*
  * GpStatus 
  * GdipAddString (GpPath *path, const char *string, int length, 
- *                const GpFontFamily *family, int style, float emSize, const GpRectF *layoutRect, const GpStringFormat *format)
+ *                const GpFontFamily *family, int style, float emSize, const GpRectF *layoutRect,
+ *                const GpStringFormat *format)
  * { 
  *         return NotImplemented; 
  * }
@@ -554,7 +553,8 @@ GdipAddPathPath (GpPath *path, GpPath *addingPath, bool connect)
 /*
  * GpStatus
  * GdipAddString (GpPath *path, const char *string, int length,
- *                const GpFontFamily *family, int style, float emSize, const GpRect *layoutRect, const GpStringFormat *format)
+ *                const GpFontFamily *family, int style, float emSize, const GpRect *layoutRect,
+ *                const GpStringFormat *format)
  * {
  *          return NotImplemented;
  * }
@@ -714,7 +714,10 @@ GpStatus
 GdipTransformPath (GpPath* path, GpMatrix *matrix)
 {
         PointF *points = g_array_to_array (path->points);
+
         Status s = GdipTransformMatrixPoints (matrix, points, path->count);
+
+        path->points = array_to_g_array (points);
 
         GdipFree (points);
 

@@ -1,5 +1,12 @@
 2003-12-25  Duncan Mak  <duncan@ximian.com>
 
+	* graphics-path.c (GdipAddPathLine): Use append instead of
+	append_point.
+	(GdipTransformPath): Remember to reset the points after the
+	transformation.
+
+2003-12-25  Duncan Mak  <duncan@ximian.com>	
+
 	* graphics.c (DrawBezier, DrawBezierI): Well, it's pretty obvious
 	that the code was incorrect before. After Christmas, I'm gonna
 	hook up the GraphicsPath code and work on testing and making sure

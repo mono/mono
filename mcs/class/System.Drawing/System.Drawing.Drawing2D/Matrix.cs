@@ -154,14 +154,17 @@ namespace System.Drawing.Drawing2D
 
                 public override string ToString ()
                 {
+                        float [] elements = this.Elements;
+                        
                         System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+
                         sb.Append ("(");
-                        sb.Append (Elements [0] + " ");
-                        sb.Append (Elements [1] + " ");
-                        sb.Append (Elements [2] + " ");
-                        sb.Append (Elements [3] + " ");
-                        sb.Append (Elements [4] + " ");
-                        sb.Append (Elements [5] + ")");                        
+                        sb.Append (elements [0] + " ");
+                        sb.Append (elements [1] + " ");
+                        sb.Append (elements [2] + " ");
+                        sb.Append (elements [3] + " ");
+                        sb.Append (elements [4] + " ");
+                        sb.Append (elements [5] + ")");                        
                         return sb.ToString ();
                 }
         
