@@ -1,3 +1,12 @@
+2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: check for missing or wrong URI in Location header
+	when redirecting.
+
+	* WebConnection.cs: if the data read does not contain all the headers,
+	keep it around and read the rest until we get to the response body.
+	Allow response code with no description. Fixed bug #54543.
+
 2004-02-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityProtocolType.cs: Added missing [Serializable] to enum. Added 

@@ -48,6 +48,7 @@ namespace System.Net
 		bool waitingForContinue;
 		Queue queue;
 		bool reused;
+		int position;
 
 		bool ssl;
 		bool certsAvailable;
@@ -231,18 +232,20 @@ namespace System.Net
 				return;
 			}
 
+			//Console.WriteLine (System.Text.Encoding.Default.GetString (cnc.buffer, 0, nread + cnc.position));
 			int pos = -1;
+			nread += cnc.position;
 			if (cnc.readState == ReadState.None) { 
 				Exception exc = null;
 				try {
 					pos = cnc.GetResponse (cnc.buffer, nread);
-					if (data.StatusCode == 100) {
+					if (pos != -1 && data.StatusCode == 100) {
 						cnc.readState = ReadState.None;
 						InitRead (cnc);
 						cnc.sPoint.SendContinue = true;
 						if (cnc.waitingForContinue) {
 							cnc.waitForContinue.Set ();
-						} else if (data.request.ExpectContinue) { // We get a 100 after waiting for it.
+						} else if (data.request.ExpectContinue) {
 							data.request.DoContinueDelegate (data.StatusCode, data.Headers);
 						}
 
@@ -252,16 +255,25 @@ namespace System.Net
 					exc = e;
 				}
 
-				if (pos == -1 || exc != null) {
+				if (exc != null) {
 					cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, exc);
 					return;
 				}
 			}
 
 			if (cnc.readState != ReadState.Content) {
-				cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, null);
+				int est = nread * 2;
+				int max = (est < cnc.buffer.Length) ? cnc.buffer.Length : est;
+				byte [] newBuffer = new byte [max];
+				Buffer.BlockCopy (cnc.buffer, 0, newBuffer, 0, nread);
+				cnc.buffer = newBuffer;
+				cnc.position = nread;
+				cnc.readState = ReadState.None;
+				InitRead (cnc);
 				return;
 			}
+
+			cnc.position = 0;
 
 			WebConnectionStream stream = new WebConnectionStream (cnc);
 
@@ -308,7 +320,8 @@ namespace System.Net
 			Stream ns = cnc.nstream;
 
 			try {
-				ns.BeginRead (cnc.buffer, 0, cnc.buffer.Length, readDoneDelegate, cnc);
+				int size = cnc.buffer.Length - cnc.position;
+				ns.BeginRead (cnc.buffer, cnc.position, size, readDoneDelegate, cnc);
 			} catch (Exception e) {
 				cnc.HandleError (WebExceptionStatus.ReceiveFailure, e);
 			}
@@ -329,7 +342,7 @@ namespace System.Net
 					readState = ReadState.Status;
 
 					string [] parts = line.Split (' ');
-					if (parts.Length < 3)
+					if (parts.Length < 2)
 						return -1;
 
 					if (String.Compare (parts [0], "HTTP/1.1", true) == 0) {
@@ -341,11 +354,13 @@ namespace System.Net
 					}
 
 					Data.StatusCode = (int) UInt32.Parse (parts [1]);
-					Data.StatusDescription = String.Join (" ", parts, 2, parts.Length - 2);
+					if (parts.Length >= 3)
+						Data.StatusDescription = String.Join (" ", parts, 2, parts.Length - 2);
+					else
+						Data.StatusDescription = "";
 
 					if (pos >= max)
 						return pos;
-
 				}
 
 				if (readState == ReadState.Status) {
@@ -375,25 +390,24 @@ namespace System.Net
 						}
 					}
 
-					if (!finished) {
-						// handle the error...
-					} else {
-						foreach (string s in headers)
-							Data.Headers.Add (s);
+					if (!finished)
+						return -1;
 
-						if (Data.StatusCode == (int) HttpStatusCode.Continue) {
-							sPoint.SendContinue = true;
-							if (pos >= max)
-								return pos;
-							if (Data.request.ExpectContinue)
-								Data.request.DoContinueDelegate (Data.StatusCode, Data.Headers);
-							readState = ReadState.None;
-							isContinue = true;
-						}
-						else {
-							readState = ReadState.Content;
+					foreach (string s in headers)
+						Data.Headers.Add (s);
+
+					if (Data.StatusCode == (int) HttpStatusCode.Continue) {
+						sPoint.SendContinue = true;
+						if (pos >= max)
 							return pos;
-						}
+						if (Data.request.ExpectContinue)
+							Data.request.DoContinueDelegate (Data.StatusCode, Data.Headers);
+						readState = ReadState.None;
+						isContinue = true;
+					}
+					else {
+						readState = ReadState.Content;
+						return pos;
 					}
 				}
 			} while (isContinue == true);

@@ -763,8 +763,19 @@ namespace System.Net
 			if (e != null)
 				throw e;
 
+			if (uriString == null)
+				throw new WebException ("No Location header found for " + (int) code,
+							WebExceptionStatus.ProtocolError);
+
 			string host = actualUri.Host;
-			actualUri = new Uri (actualUri, uriString);
+			try {
+				actualUri = new Uri (actualUri, uriString);
+			} catch (Exception) {
+				throw new WebException (String.Format ("Invalid URL ({0}) for {1}",
+									uriString, (int) code),
+									WebExceptionStatus.ProtocolError);
+			}
+
 			hostChanged = (actualUri.Host != host);
 			return true;
 		}
