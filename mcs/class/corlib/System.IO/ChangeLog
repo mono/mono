@@ -1,3 +1,7 @@
+2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BufferedStream.cs: use Buffer.BlockCopyInternal instead of Array.Copy.
+
 2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* File.cs: delegate to the runtime the task of checking for destination
