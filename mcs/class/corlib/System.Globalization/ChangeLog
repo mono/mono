@@ -1,3 +1,7 @@
+2002-06-12  Nick Drochak  <ndrochak@gol.com>
+
+	* DateTimeFormatInfo.cs: Reformat.
+
 2002-06-11  Nick Drochak  <ndrochak@gol.com>
 
 	* NumberFormatInfo.cs: Make NumberNegativePattern = 1 for the ctor

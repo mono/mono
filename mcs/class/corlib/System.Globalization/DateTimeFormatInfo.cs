@@ -1,4 +1,3 @@
-//
 // System.Globalization.DateTimeFormatInfo
 //
 // Some useful functions are missing in the ECMA specs.
@@ -9,12 +8,17 @@
 // (C) Martin Weindel (martin.weindel@t-online.de)
 
 using System;
+
 using System.Threading;
+
 
 namespace System.Globalization 
 {
+
 	[Serializable]
+	
 	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
+
 		private static readonly string MSG_READONLY = "This instance is read only";
 		private static readonly string MSG_ARRAYSIZE_MONTH = "An array with exactly 13 elements is needed";
 		private static readonly string MSG_ARRAYSIZE_DAY = "An array with exactly 7 elements is needed";
@@ -30,92 +34,176 @@ namespace System.Globalization
 		public static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
 		private bool readOnly;
+		
 		private string _AMDesignator;
+		
 		private string _PMDesignator;
+		
 		private string _DateSeparator;
+		
 		private string _TimeSeparator;
+		
 		private string _ShortDatePattern;
+		
 		private string _LongDatePattern;
+		
 		private string _ShortTimePattern;
+		
 		private string _LongTimePattern;
+		
 		private string _MonthDayPattern;
+		
 		private string _YearMonthPattern;
+		
 		private string _FullDateTimePattern;
+		
 		private string _RFC1123Pattern;
+		
 		private string _SortableDateTimePattern;
+		
 		private string _UniversalSortableDateTimePattern;
+		
 		private DayOfWeek _FirstDayOfWeek;
+		
 		private Calendar _Calendar;
+		
 		private CalendarWeekRule _CalendarWeekRule;
+		
 		private string[] _AbbreviatedDayNames;
+		
 		private string[] _DayNames;
+		
 		private string[] _MonthNames;
+		
 		private string[] _AbbreviatedMonthNames;
 
+		
 		public DateTimeFormatInfo()
+		
 		{
+			
 			readOnly = false;
+			
 			_AMDesignator = "AM";
+			
 			_PMDesignator = "PM";
+			
 			_DateSeparator = "/";
+			
 			_TimeSeparator = ":";
+			
 			_ShortDatePattern = "MM/dd/yyyy";
+			
 			_LongDatePattern = "dddd, dd MMMM yyyy";
+			
 			_ShortTimePattern = "HH:mm";
+			
 			_LongTimePattern = "HH:mm:ss";
+			
 			_MonthDayPattern = "MMMM dd";
+			
 			_YearMonthPattern = "yyyy MMMM";
+			
 			_FullDateTimePattern = "dddd, dd MMMM yyyy HH:mm:ss";
 
-			// FIXME for the following three pattern:  "The default value of this property is derived from the calendar that is set for CultureInfo.CurrentCulture or the default calendar of CultureInfo.CurrentCulture."
+			// FIXME for the following three pattern:  "The default value of this property is 
+			//derived from the calendar that is set for CultureInfo.CurrentCulture or the default 
+			//calendar of CultureInfo.CurrentCulture."
+			
 			_RFC1123Pattern = "ddd, dd MMM yyyy HH':'mm':'ss 'GMT'"; 
+			
 			_SortableDateTimePattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss";
+			
 			_UniversalSortableDateTimePattern = "yyyy'-'MM'-'dd HH':'mm':'ss'Z'";
 
+			
+
 			_FirstDayOfWeek = DayOfWeek.Sunday;
+			
 			_Calendar = new GregorianCalendar();
+			
 			_CalendarWeekRule = CalendarWeekRule.FirstDay;
 
+			
 			_AbbreviatedDayNames = INVARIANT_ABBREVIATED_DAY_NAMES;
+			
 			_DayNames = INVARIANT_DAY_NAMES;
+			
 			_AbbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
+			
 			_MonthNames = INVARIANT_MONTH_NAMES;
+		
 		}
 				
+		
+		
 		// LAMESPEC: this is not in ECMA specs
+		
 		public static DateTimeFormatInfo GetInstance(IFormatProvider provider)
+		
 		{
+			
 			if (provider != null) {
+				
 				DateTimeFormatInfo dtfi;
+				
 				dtfi = (DateTimeFormatInfo)provider.GetFormat(typeof(DateTimeFormatInfo));
+				
 				if (dtfi != null)
+					
 					return dtfi;
+			
 			}
 			
+			
 			return CurrentInfo;
+		
 		}
 
+		
+		
 		public bool IsReadOnly {
+			
 			get {
+				
 				return readOnly;
+			
 			}
+		
 		}
 
+		
+		
 		public static DateTimeFormatInfo ReadOnly(DateTimeFormatInfo dtfi)
+		
 		{
+			
 			DateTimeFormatInfo copy = (DateTimeFormatInfo)dtfi.Clone();
+			
 			copy.readOnly = true;
+			
 			return copy;
+		
 		}			
 
+		
+		
 		public object Clone () 
+		
 		{
+			
 			DateTimeFormatInfo clone = (DateTimeFormatInfo) MemberwiseClone();
+			
 			// clone is not read only
+			
 			clone.readOnly = false;
+			
 			return clone;
+		
 		}
 
+		
+		
 		public object GetFormat(Type formatType)
 		{
 			return (formatType == GetType()) ? this : null;
@@ -517,4 +605,5 @@ namespace System.Globalization
 			throw new Exception("Not implemented");
 		}
 	}
+
 }
