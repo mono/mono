@@ -1,3 +1,9 @@
+
+Fri Jul 30 16:49:05 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: always create an object if null is passed
+	to Invoke() where a valuetype is expected.
+
 2004-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: hack to build correctly the private bin path on windows.
