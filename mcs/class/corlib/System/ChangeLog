@@ -1,3 +1,8 @@
+2003-02-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Attribute.cs: fixed all IsDefined overloads. Gotta fix
+	GetCustomAttributes later.
+
 2003-01-31  Patrik Torstensson
 
 	* Buffer.cs: Changed access level of BlockCopyInternal

@@ -4,12 +4,14 @@
 // Authors:
 //   Miguel de Icaza (miguel@ximian.com) - Original
 //   Nick D. Drochak II (ndrochak@gol.com) - Implemented most of the guts
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002, 2003 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
 using System.Globalization;
+using System.Reflection;
 
 namespace System {
 
@@ -32,21 +34,21 @@ namespace System {
 		{
 			// neither parameter is allowed to be null
 			if (null == element) 
-			{
 				throw new ArgumentNullException ("element");
-			}
 
 			if (null == attribute_type) 
-			{
 				throw new ArgumentNullException ("attribute_type");
-			}
+
+			if (!typeof (Attribute).IsAssignableFrom (attribute_type))
+				throw new ArgumentException ("type is not derived from System.Attribute",
+							     "attribute_type");
 		}
 
 		private static System.Attribute FindAttribute (object[] attributes)
 		{
 			// if there exists more than one attribute of the given type, throw an exception
 			if (attributes.Length > 1) {
-				throw new System.Reflection.AmbiguousMatchException (
+				throw new AmbiguousMatchException (
 					Locale.GetText ("<element> has more than one attribute of type <attribute_type>"));
 			}
 
@@ -59,51 +61,33 @@ namespace System {
 			return (System.Attribute) attributes[0];
 		}
 
-		private static void CheckAncestry (Type attribute_type)
+		public static Attribute GetCustomAttribute (ParameterInfo element, Type attribute_type)
 		{
-			// attribute_type must be derived from type System.Attribute
-			Type t = typeof (System.Attribute);
-			
-			/* fixme: thgi does not work for target monolib2
-			if (!attribute_type.IsSubclassOf (t))
-			{
-				throw new ArgumentException ("Parameter is not a type derived from System.Attribute", "attribute_type");
-			}
-			*/
+			return GetCustomAttribute (element, attribute_type, true);
 		}
 
-		public static Attribute GetCustomAttribute (System.Reflection.ParameterInfo element,
+		public static Attribute GetCustomAttribute (MemberInfo element, Type attribute_type)
+		{
+			return GetCustomAttribute (element, attribute_type, true);
+		}
+
+		public static Attribute GetCustomAttribute (Assembly element,
 							    Type attribute_type)
 		{
 			return GetCustomAttribute (element, attribute_type, true);
 		}
 
-		public static Attribute GetCustomAttribute (System.Reflection.MemberInfo element,
+		public static Attribute GetCustomAttribute (Module element,
 							    Type attribute_type)
 		{
 			return GetCustomAttribute (element, attribute_type, true);
 		}
 
-		public static Attribute GetCustomAttribute (System.Reflection.Assembly element,
-							    Type attribute_type)
-		{
-			return GetCustomAttribute (element, attribute_type, true);
-		}
-
-		public static Attribute GetCustomAttribute (System.Reflection.Module element,
-							    Type attribute_type)
-		{
-			return GetCustomAttribute (element, attribute_type, true);
-		}
-
-		public static Attribute GetCustomAttribute (System.Reflection.Module element,
+		public static Attribute GetCustomAttribute (Module element,
 							    Type attribute_type, bool inherit)
 		{
 			// neither parameter is allowed to be null
 			CheckParameters (element, attribute_type);
-
-			// attribute_type must be derived from type System.Attribute
-			CheckAncestry (attribute_type);
 
 			// Module inheritance hierarchies CAN NOT be searched for attributes, so the second
 			// parameter of GetCustomAttributes () is INGNORED.
@@ -112,14 +96,11 @@ namespace System {
 			return FindAttribute (attributes);
 		}
 
-		public static Attribute GetCustomAttribute (System.Reflection.Assembly element,
+		public static Attribute GetCustomAttribute (Assembly element,
 							    Type attribute_type, bool inherit)
 		{
 			// neither parameter is allowed to be null
 			CheckParameters (element, attribute_type);
-
-			// attribute_type must be derived from type System.Attribute
-			CheckAncestry (attribute_type);
 
 			// Assembly inheritance hierarchies CAN NOT be searched for attributes, so the second
 			// parameter of GetCustomAttributes () is INGNORED.
@@ -128,14 +109,11 @@ namespace System {
 			return FindAttribute (attributes);
 		}
 
-		public static Attribute GetCustomAttribute (System.Reflection.ParameterInfo element,
+		public static Attribute GetCustomAttribute (ParameterInfo element,
 							    Type attribute_type, bool inherit)
 		{
 			// neither parameter is allowed to be null
 			CheckParameters (element, attribute_type);
-
-			// attribute_type must be derived from type System.Attribute
-			CheckAncestry (attribute_type);
 
 			// ParameterInfo inheritance hierarchies CAN NOT be searched for attributes, so the second
 			// parameter of GetCustomAttributes () is INGNORED.
@@ -144,14 +122,11 @@ namespace System {
 			return FindAttribute (attributes);
 		}
 
-		public static Attribute GetCustomAttribute (System.Reflection.MemberInfo element,
+		public static Attribute GetCustomAttribute (MemberInfo element,
 							    Type attribute_type, bool inherit)
 		{
 			// neither parameter is allowed to be null
 			CheckParameters (element, attribute_type);
-
-			// attribute_type must be derived from type System.Attribute
-			CheckAncestry (attribute_type);
 
 			// MemberInfo inheritance hierarchies can be searched for attributes, so the second
 			// parameter of GetCustomAttributes () is respected.
@@ -160,49 +135,49 @@ namespace System {
 			return FindAttribute (attributes);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element)
+		public static Attribute[] GetCustomAttributes (Assembly element)
 		{
 			return System.Attribute.GetCustomAttributes (element, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element)
+		public static Attribute[] GetCustomAttributes (ParameterInfo element)
 		{
 			return System.Attribute.GetCustomAttributes (element, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element){
+		public static Attribute[] GetCustomAttributes (MemberInfo element){
 			return System.Attribute.GetCustomAttributes (element, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.Module element){
+		public static Attribute[] GetCustomAttributes (Module element){
 			return System.Attribute.GetCustomAttributes (element, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element,
+		public static Attribute[] GetCustomAttributes (Assembly element,
 							       Type attribute_type)
 		{
 			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.Module element,
+		public static Attribute[] GetCustomAttributes (Module element,
 							       Type attribute_type)
 		{
 			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element,
+		public static Attribute[] GetCustomAttributes (ParameterInfo element,
 							       Type attribute_type)
 		{
 			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element,
+		public static Attribute[] GetCustomAttributes (MemberInfo element,
 							       Type attribute_type)
 		{
 			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element,
+		public static Attribute[] GetCustomAttributes (Assembly element,
 							       Type attribute_type, bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -217,7 +192,7 @@ namespace System {
 			return attributes;
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element,
+		public static Attribute[] GetCustomAttributes (ParameterInfo element,
 							       Type attribute_type, bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -230,7 +205,7 @@ namespace System {
 			return attributes;
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.Module element,
+		public static Attribute[] GetCustomAttributes (Module element,
 							       Type attribute_type, bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -243,7 +218,7 @@ namespace System {
 			return attributes;
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element,
+		public static Attribute[] GetCustomAttributes (MemberInfo element,
 							       Type attribute_type, bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -256,7 +231,7 @@ namespace System {
 			return attributes;
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.Module element,
+		public static Attribute[] GetCustomAttributes (Module element,
 							       bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -269,7 +244,7 @@ namespace System {
 			return attributes;
 		}
 		
-		public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element,
+		public static Attribute[] GetCustomAttributes (Assembly element,
 							       bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -282,7 +257,7 @@ namespace System {
 			return attributes;
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element,
+		public static Attribute[] GetCustomAttributes (MemberInfo element,
 							       bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -295,7 +270,7 @@ namespace System {
 			return attributes;
 		}
 
-		public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element,
+		public static Attribute[] GetCustomAttributes (ParameterInfo element,
 							       bool inherit)
 		{
 			// element parameter is not allowed to be null
@@ -319,52 +294,61 @@ namespace System {
 			return false;
 		}
 		
-		public static bool IsDefined (System.Reflection.Module element, Type attribute_type)
+		public static bool IsDefined (Module element, Type attribute_type)
 		{
-			return (System.Attribute.GetCustomAttributes (element, attribute_type).Length > 0);
+			return IsDefined (element, attribute_type, false);
 		}
 
-		public static bool IsDefined (System.Reflection.ParameterInfo element, Type attribute_type)
+		public static bool IsDefined (ParameterInfo element, Type attribute_type)
 		{
-			return (System.Attribute.GetCustomAttributes (element, attribute_type).Length > 0);
+			return IsDefined (element, attribute_type, true);
 		}
 
-		public static bool IsDefined (System.Reflection.MemberInfo element, Type attribute_type)
+		public static bool IsDefined (MemberInfo element, Type attribute_type)
 		{
-			return (System.Attribute.GetCustomAttributes (element, attribute_type).Length > 0);
+			return IsDefined (element, attribute_type, true);
 		}
 
-		public static bool IsDefined (System.Reflection.Assembly element, Type attribute_type)
+		public static bool IsDefined (Assembly element, Type attribute_type)
 		{
-			return (System.Attribute.GetCustomAttributes (element, attribute_type).Length > 0);
+			return IsDefined (element, attribute_type, true);
 		}
 
-		public static bool IsDefined (System.Reflection.MemberInfo element, Type attribute_type,
-					      bool inherit)
+		public static bool IsDefined (MemberInfo element, Type attribute_type, bool inherit)
 		{
-			return (System.Attribute.GetCustomAttributes (
-				element, attribute_type, inherit).Length > 0);
+			CheckParameters (element, attribute_type);
+
+			MemberTypes mtype = element.MemberType;
+			if (mtype != MemberTypes.Constructor && mtype != MemberTypes.Event &&
+			    mtype != MemberTypes.Field       && mtype != MemberTypes.Method &&
+			    mtype != MemberTypes.Property    && mtype != MemberTypes.TypeInfo &&
+			    mtype != MemberTypes.NestedType)
+			    throw new NotSupportedException ("element is not a constructor, method, property, " +
+			    				     "event, type or field");
+
+			return ((MemberInfo) element).IsDefined (attribute_type, inherit);
 		}
 
-		public static bool IsDefined (System.Reflection.Assembly element, Type attribute_type,
-					      bool inherit)
+		public static bool IsDefined (Assembly element, Type attribute_type, bool inherit)
 		{
-			return (System.Attribute.GetCustomAttributes (
-				element, attribute_type, inherit).Length > 0);
+			CheckParameters (element, attribute_type);
+
+			return element.IsDefined (attribute_type, inherit);
 		}
 
-		public static bool IsDefined (System.Reflection.Module element, Type attribute_type,
-					      bool inherit)
+		public static bool IsDefined (Module element, Type attribute_type, bool inherit)
 		{
-			return (System.Attribute.GetCustomAttributes (
-				element, attribute_type, inherit).Length > 0);
+			CheckParameters (element, attribute_type);
+
+			return element.IsDefined (attribute_type, inherit);
 		}
 
-		public static bool IsDefined (System.Reflection.ParameterInfo element,
-					      Type attribute_type, bool inherit)
+		public static bool IsDefined (ParameterInfo element, Type attribute_type, bool inherit)
 		{
-			return (System.Attribute.GetCustomAttributes (
-				element, attribute_type, inherit).Length > 0);
+			if (element == null)
+				throw new ArgumentNullException ("element");
+
+			return IsDefined (element.Member, attribute_type, inherit);
 		}
 		
 		public virtual bool Match (object obj)
