@@ -1,6 +1,7 @@
 --target library
 --unsafe --nostdlib --noconfig
 -o ../lib/corlib_mcs.dll
+Mono/Runtime.cs
 System/Activator.cs
 System/AppDomain.cs
 System/AppDomainSetup.cs
@@ -18,7 +19,7 @@ System/AssemblyLoadEventHandler.cs
 System/AsyncCallback.cs
 System/Attribute.cs
 System/AttributeTargets.cs
-System/AttributeUsage.cs
+System/AttributeUsageAttribute.cs
 System/BadImageFormatException.cs
 System/BitConverter.cs
 System/Boolean.cs
