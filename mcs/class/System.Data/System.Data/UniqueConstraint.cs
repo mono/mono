@@ -190,11 +190,12 @@ namespace System.Data {
 		internal void UpdatePrimaryKey ()
 		{
 			_isPrimaryKey = __isPrimaryKey;
+			// if unique constraint defined on single column
+			// the column becomes unique
 			if (_dataColumns.Length == 1){
 				// use SetUnique - because updating Unique property causes loop
 				_dataColumns[0].SetUnique();
 			}
-			
 		}
 
 		internal static void SetAsPrimaryKey(ConstraintCollection collection, UniqueConstraint newPrimaryKey)
