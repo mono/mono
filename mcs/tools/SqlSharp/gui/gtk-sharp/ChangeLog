@@ -1,0 +1,17 @@
+2002-10-21  Daniel Morgan <danmorg@sc.rr.com>
+
+	* sqlsharpgtk.cs
+	* SqlEditor.cs: added files for SQL# For GTK#
+	
+	* win32.make: added make file to build on Windows
+	
+	* sql-editor-gtk-widget: added subdirectory
+	
+	* sql-editor-gtk-widget/gnome-db-sqleditor.c
+	* sql-editor-gtk-widget/gnome-db-sqleditor.h: added files for
+	sql editor gtk+ widget
+	
+	* sql-editor-gtk-widget/Win32.make: added make file 
+	to build gtk+ widget on Windows
+	
+	
