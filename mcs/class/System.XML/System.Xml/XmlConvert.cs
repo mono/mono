@@ -26,7 +26,8 @@ namespace System.Xml {
 		{
 			floatStyle = NumberStyles.AllowCurrencySymbol | 
 				NumberStyles.AllowExponent | 
-				NumberStyles.AllowDecimalPoint;
+				NumberStyles.AllowDecimalPoint |
+				NumberStyles.AllowLeadingSign;
 			encodedColon = "_x003A_";
 			datetimeFormats = new string[] {
 			  // dateTime
@@ -238,9 +239,9 @@ namespace System.Xml {
 
 		public static double ToDouble(string s)
 		{
-			if (s == "INF") return System.Double.PositiveInfinity;
-			if (s == "-INF") return System.Double.NegativeInfinity;
-			if (s == "NaN") return System.Double.NaN;
+			if (s == null) {
+				throw new ArgumentNullException();
+			}
 			return Double.Parse (s, floatStyle);
 		}
 
@@ -272,9 +273,9 @@ namespace System.Xml {
 
 		public static float ToSingle(string s)
 		{
-			if (s == "INF") return System.Single.PositiveInfinity;
-			if (s == "-INF") return System.Single.NegativeInfinity;
-			if (s == "NaN") return System.Single.NaN;
+			if (s == null) {
+				throw new ArgumentNullException();
+			}
 			return Single.Parse(s, floatStyle);
 		}
 
