@@ -1,3 +1,6 @@
+2004-08-04 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Introduced check for valid interface name in Implements clause. 
+
 2004-08-04  Jambunathan K  <kjambunathan@novell.com>
 	* mb-tokenizer.cs: 
 	* mb-parser.jay: 

@@ -3117,8 +3117,12 @@ namespace Mono.MonoBASIC {
 			else
 				name = member.ShortName;
 			method_name = prefix + name;
-
+			//string iname = null;
 			if (parent.Pending != null){
+			//if (member.Implements != null) {
+			/*	iname = member.Implements.ToString();
+				iname = iname.Substring(iname.LastIndexOf(".") + 1);
+			*/
 				if (member is Indexer)
 					implementing = parent.Pending.IsInterfaceIndexer (
 						member.InterfaceType, ReturnType, ParameterTypes);
@@ -3476,6 +3480,33 @@ namespace Mono.MonoBASIC {
 			MemberType = parent.ResolveType (Type, false, Location);
 			if (MemberType == null)
 				return false;
+
+			// check for whether the Interface is implemented by the class
+			if (Implements != null) {
+				string iname = Implements.ToString();
+				iname = iname.Substring(0, iname.LastIndexOf("."));
+				bool iface_found = false;
+
+				ArrayList bases = parent.Bases;
+				if (bases != null) {
+					foreach (Expression tbase in bases)	{
+						string bname = tbase.ToString();
+						if (bname.LastIndexOf(".") != -1)
+							bname = bname.Substring(bname.LastIndexOf("."));
+
+						if (bname == iname)	{
+							iface_found = true;
+							break;
+						}
+					}
+				}
+
+				if (!iface_found) {
+					Report.Error (31035, Location,
+						"Class '" + parent.Name + "' doesn't implement interface '" + iname + "'");
+					return false;
+				}
+			}
 
 			// verify accessibility
 			if (!parent.AsAccessible (MemberType, ModFlags)) {
