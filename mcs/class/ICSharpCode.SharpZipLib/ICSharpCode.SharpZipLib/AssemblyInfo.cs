@@ -50,4 +50,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyVersion("0.6.0.0")]
 
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile ("../SharpZipLib.pub")]
+[assembly: AssemblyKeyFile ("SharpZipLib.pub")]
