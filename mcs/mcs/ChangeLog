@@ -1,3 +1,12 @@
+2005-02-07  Abin Thomas (NOSIP)  <projectmonokochi@rediffmail.com>
+	    Anoob V.E (NOSIP)  <projectmonokochi@rediffmail.com>
+	    Harilal P.R (NOSIP)  <projectmonokochi@rediffmail.com>
+
+	Fix cs0164.cs.
+	* statement.cs (LabeledStatement.Resolve): Don't set 'referenced'.
+	(LabeledStatement.AddReference): New.  Set 'referenced'.
+	(Goto.Resolve): Use it.
+
 2005-02-05  John Luke  <john.luke@gmail.com>
 
 	* driver.cs: remove duplicate -doc line in Usage ()
