@@ -386,7 +386,7 @@ namespace Microsoft.JScript {
 		}
 
 		public static MathObject Math {
-			get { throw new NotImplementedException (); }
+			get { return MathObject.Object; }
 		}
 
 		public static NumberConstructor Number {
