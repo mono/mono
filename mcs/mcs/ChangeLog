@@ -1,3 +1,8 @@
+2002-10-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Allow multiple assemblies to be specified in a single
+	/r: argument
+
 2002-10-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Ugly.  We had to add a multiplicative_expression,

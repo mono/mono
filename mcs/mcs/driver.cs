@@ -905,13 +905,18 @@ namespace Mono.CSharp
 				return true;
 
 			case "/r":
-			case "/reference":
+			case "/reference": {
 				if (value == ""){
 					Console.WriteLine ("/reference requires an argument");
 					Environment.Exit (1);
 				}
-				references.Add (value);
+
+				string [] refs = value.Split (new char [] { ';', ',' });
+				foreach (string r in refs){
+					references.Add (r);
+				}
 				return true;
+			}
 
 			case "/lib": {
 				string [] libdirs;
