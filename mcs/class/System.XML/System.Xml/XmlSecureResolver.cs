@@ -1,6 +1,6 @@
-#if USE_VERSION_1_0
+#if NET_1_0
 #endif
-#if USE_VERSION_1_1
+#if NET_1_1
 //
 // System.Xml.XmlSecureResolver.cs
 //

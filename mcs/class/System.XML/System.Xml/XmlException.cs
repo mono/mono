@@ -24,7 +24,7 @@ namespace System.Xml
 
 		#region Constructors
 
-#if USE_VERSION_1_0
+#if NET_1_0
 #else
 		public XmlException () 
 			: base ()
@@ -43,7 +43,7 @@ namespace System.Xml
 			this.linePosition = info.GetInt32 ("linePosition");
 		}
 
-#if USE_VERSION_1_0
+#if NET_1_0
 		internal XmlException (string message)
 #else
 		public XmlException (string message)
@@ -60,7 +60,7 @@ namespace System.Xml
 			}
 		}
 		
-#if USE_VERSION_1_0
+#if NET_1_0
 		internal XmlException (string message, int lineNumber, int linePosition)
 #else
 		public XmlException (string message, int lineNumber, int linePosition)
