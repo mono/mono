@@ -3097,6 +3097,100 @@ namespace MonoTests.System {
 			Convert.ToUInt64 ("-0", null);
 		}
 
+		// min/max unsigned
+
+		[Test]
+		public void ToByte_MaxValue ()
+		{
+			AssertEquals ("ff,16", Byte.MaxValue, Convert.ToByte ("ff", 16));
+			AssertEquals ("255,10", Byte.MaxValue, Convert.ToByte ("255", 10));
+			AssertEquals ("377,8", Byte.MaxValue, Convert.ToByte ("377", 8));
+			AssertEquals ("11111111,2", Byte.MaxValue, Convert.ToByte ("11111111", 2));
+		}
+
+		[Test]
+		public void ToByte_MinValue ()
+		{
+			AssertEquals ("0,16", Byte.MinValue, Convert.ToByte ("0", 16));
+			AssertEquals ("0,10", Byte.MinValue, Convert.ToByte ("0", 10));
+			AssertEquals ("0,8", Byte.MinValue, Convert.ToByte ("0", 8));
+			AssertEquals ("0,2", Byte.MinValue, Convert.ToByte ("0", 2));
+		}
+
+		[Test]
+		public void ToUInt16_MaxValue ()
+		{
+			AssertEquals ("ffff,16", UInt16.MaxValue, Convert.ToUInt16 ("ffff", 16));
+			AssertEquals ("65535,10", UInt16.MaxValue, Convert.ToUInt16 ("65535", 10));
+			AssertEquals ("177777,8", UInt16.MaxValue, Convert.ToUInt16 ("177777", 8));
+			AssertEquals ("1111111111111111,2", UInt16.MaxValue, Convert.ToUInt16 ("1111111111111111", 2));
+		}
+
+		[Test]
+		public void ToUInt16_MinValue ()
+		{
+			AssertEquals ("0,16", UInt16.MinValue, Convert.ToUInt16 ("0", 16));
+			AssertEquals ("0,10", UInt16.MinValue, Convert.ToUInt16 ("0", 10));
+			AssertEquals ("0,8", UInt16.MinValue, Convert.ToUInt16 ("0", 8));
+			AssertEquals ("0,2", UInt16.MinValue, Convert.ToUInt16 ("0", 2));
+		}
+
+		[Test]
+		public void ToUInt32_MaxValue ()
+		{
+			AssertEquals ("ffffffff,16", UInt32.MaxValue, Convert.ToUInt32 ("ffffffff", 16));
+			AssertEquals ("4294967295,10", UInt32.MaxValue, Convert.ToUInt32 ("4294967295", 10));
+			AssertEquals ("37777777777,8", UInt32.MaxValue, Convert.ToUInt32 ("37777777777", 8));
+			AssertEquals ("11111111111111111111111111111111,2", UInt32.MaxValue, Convert.ToUInt32 ("11111111111111111111111111111111", 2));
+		}
+
+		[Test]
+		public void ToUInt32_MinValue ()
+		{
+			AssertEquals ("0,16", UInt32.MinValue, Convert.ToUInt32 ("0", 16));
+			AssertEquals ("0,10", UInt32.MinValue, Convert.ToUInt32 ("0", 10));
+			AssertEquals ("0,8", UInt32.MinValue, Convert.ToUInt32 ("0", 8));
+			AssertEquals ("0,2", UInt32.MinValue, Convert.ToUInt32 ("0", 2));
+		}
+
+		[Test]
+		public void ToUInt64_MaxValue ()
+		{
+			AssertEquals ("ffffffffffffffff,16", UInt64.MaxValue, Convert.ToUInt64 ("ffffffffffffffff", 16));
+			AssertEquals ("18446744073709551615,10", UInt64.MaxValue, Convert.ToUInt64 ("18446744073709551615", 10));
+			AssertEquals ("1777777777777777777777,8", UInt64.MaxValue, Convert.ToUInt64 ("1777777777777777777777", 8));
+			AssertEquals ("1111111111111111111111111111111111111111111111111111111111111111,2", UInt64.MaxValue, Convert.ToUInt64 ("1111111111111111111111111111111111111111111111111111111111111111", 2));
+		}
+
+		[Test]
+		public void ToUInt64_MinValue ()
+		{
+			AssertEquals ("0,16", UInt64.MinValue, Convert.ToUInt64 ("0", 16));
+			AssertEquals ("0,10", UInt64.MinValue, Convert.ToUInt64 ("0", 10));
+			AssertEquals ("0,8", UInt64.MinValue, Convert.ToUInt64 ("0", 8));
+			AssertEquals ("0,2", UInt64.MinValue, Convert.ToUInt64 ("0", 2));
+		}
+
+		// min/max signed
+
+		[Test]
+		public void ToSByte_MaxValue ()
+		{
+			AssertEquals ("7F,16", SByte.MaxValue, Convert.ToSByte ("7f", 16));
+			AssertEquals ("127,10", SByte.MaxValue, Convert.ToSByte ("127", 10));
+			AssertEquals ("177,8", SByte.MaxValue, Convert.ToSByte ("177", 8));
+			AssertEquals ("1111111,2", SByte.MaxValue, Convert.ToSByte ("1111111", 2));
+		}
+
+		[Test]
+		public void ToSByte_MinValue ()
+		{
+			AssertEquals ("80,16", SByte.MinValue, Convert.ToSByte ("80", 16));
+			AssertEquals ("-128,10", SByte.MinValue, Convert.ToSByte ("-128", 10));
+			AssertEquals ("200,8", SByte.MinValue, Convert.ToSByte ("200", 8));
+			AssertEquals ("10000000,2", SByte.MinValue, Convert.ToSByte ("10000000", 2));
+		}
+
 		[Test]
 		public void ToInt16_MaxValue ()
 		{
@@ -3113,6 +3207,42 @@ namespace MonoTests.System {
 			AssertEquals ("-32768,10", Int16.MinValue, Convert.ToInt16 ("-32768", 10));
 			AssertEquals ("100000,8", Int16.MinValue, Convert.ToInt16 ("100000", 8));
 			AssertEquals ("1000000000000000,2", Int16.MinValue, Convert.ToInt16 ("1000000000000000", 2));
+		}
+
+		[Test]
+		public void ToInt32_MaxValue ()
+		{
+			AssertEquals ("7fffffff,16", Int32.MaxValue, Convert.ToInt32 ("7fffffff", 16));
+			AssertEquals ("2147483647,10", Int32.MaxValue, Convert.ToInt32 ("2147483647", 10));
+			AssertEquals ("17777777777,8", Int32.MaxValue, Convert.ToInt32 ("17777777777", 8));
+			AssertEquals ("1111111111111111111111111111111,2", Int32.MaxValue, Convert.ToInt32 ("1111111111111111111111111111111", 2));
+		}
+
+		[Test]
+		public void ToInt32_MinValue ()
+		{
+			AssertEquals ("80000000,16", Int32.MinValue, Convert.ToInt32 ("80000000", 16));
+			AssertEquals ("-2147483648,10", Int32.MinValue, Convert.ToInt32 ("-2147483648", 10));
+			AssertEquals ("20000000000,8", Int32.MinValue, Convert.ToInt32 ("20000000000", 8));
+			AssertEquals ("10000000000000000000000000000000,2", Int32.MinValue, Convert.ToInt32 ("10000000000000000000000000000000", 2));
+		}
+
+		[Test]
+		public void ToInt64_MaxValue ()
+		{
+			AssertEquals ("7fffffffffffffff,16", Int64.MaxValue, Convert.ToInt64 ("7fffffffffffffff", 16));
+			AssertEquals ("9223372036854775807,10", Int64.MaxValue, Convert.ToInt64 ("9223372036854775807", 10));
+			AssertEquals ("777777777777777777777,8", Int64.MaxValue, Convert.ToInt64 ("777777777777777777777", 8));
+			AssertEquals ("111111111111111111111111111111111111111111111111111111111111111,2", Int64.MaxValue, Convert.ToInt64 ("111111111111111111111111111111111111111111111111111111111111111", 2));
+		}
+
+		[Test]
+		public void ToInt64_MinValue ()
+		{
+			AssertEquals ("8000000000000000,16", Int64.MinValue, Convert.ToInt64 ("8000000000000000", 16));
+			AssertEquals ("-9223372036854775808,10", Int64.MinValue, Convert.ToInt64 ("-9223372036854775808", 10));
+			AssertEquals ("1000000000000000000000,8", Int64.MinValue, Convert.ToInt64 ("1000000000000000000000", 8));
+			AssertEquals ("1000000000000000000000000000000000000000000000000000000000000000,2", Int64.MinValue, Convert.ToInt64 ("1000000000000000000000000000000000000000000000000000000000000000", 2));
 		}
 
 		// signed types
@@ -3245,6 +3375,30 @@ namespace MonoTests.System {
 		{
 			string min_minus1 = "-1";
 			Convert.ToUInt64 (min_minus1);
+		}
+
+		[Test]
+		public void To_NullString () 
+		{
+			string s = null;
+			// signed
+			AssertEquals ("ToSByte", 0, Convert.ToSByte (s));
+			AssertEquals ("ToSByte+base", 0, Convert.ToSByte (s, 10));
+			AssertEquals ("ToInt16", 0, Convert.ToInt16 (s));
+			AssertEquals ("ToInt16+base", 0, Convert.ToInt16 (s, 10));
+			AssertEquals ("ToInt32", 0, Convert.ToInt32 (s));
+			AssertEquals ("ToInt32+base", 0, Convert.ToInt32 (s, 10));
+			AssertEquals ("ToInt64", 0, Convert.ToInt64 (s));
+			AssertEquals ("ToInt64+base", 0, Convert.ToInt64 (s, 10));
+			// unsigned
+			AssertEquals ("ToByte", 0, Convert.ToByte (s));
+			AssertEquals ("ToByte+base", 0, Convert.ToByte (s, 10));
+			AssertEquals ("ToUInt16", 0, Convert.ToUInt16 (s));
+			AssertEquals ("ToUInt16+base", 0, Convert.ToUInt16 (s, 10));
+			AssertEquals ("ToUInt32", 0, Convert.ToUInt32 (s));
+			AssertEquals ("ToUInt32+base", 0, Convert.ToUInt32 (s, 10));
+			AssertEquals ("ToUInt64", 0, Convert.ToUInt64 (s));
+			AssertEquals ("ToUInt64+base", 0, Convert.ToUInt64 (s, 10));
 		}
 	}
 }
