@@ -1,3 +1,11 @@
+2004-05-26  Umadevi S <sumadevi@novell.com.
+        * Added files DataTableCollectionTest and DataRelationCollectionTest to the system.data_test.dll.sources
+
+
+2004-05-20 Umadevi S <sumadevi@novell.com>
+	* Fixed bug 58406- implemented the hasrow method, test program used
+	 to test with the bug report
+
 2004-05-19 Boris Kirzner <borisk@mainsoft.com>
 	* System.Data.dll.sources : Added DataContainer.cs
 	
