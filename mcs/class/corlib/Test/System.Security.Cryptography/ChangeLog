@@ -1,3 +1,9 @@
+2002-10-14  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: Added suite for PKCS1MaskGenerationMethod
+	* PKCS1MaskGenerationMethodTest.cs: New. Test work as per PKCS#1 but 
+	result isn't the same as MS implementation !?! is MS using this class ?
+
 2002-10-13  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added suite for HashAlgorithm, KeyedHashAlgorithm and
