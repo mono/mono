@@ -22,3 +22,5 @@ test-local run-test-local all-local install-local:
 
 dist-local: dist-default
 
+clean-local:
+	rm -f *.exe *.dll *.pdb cormissing.xml
