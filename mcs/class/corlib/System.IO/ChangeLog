@@ -1,3 +1,8 @@
+2002-05-07  Mike Gray     <mikeg_us@hotmail.com>
+
+	* File.cs: Implemented CreateText method, and fixed dst compares
+	to compare against "" instead of null twice.
+
 2002-05-05  Nick Drochak  <ndrochak@gol.com>
 
 	* StreamReader.cs: Throw exceptions where needed. Changed Null field to

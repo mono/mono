@@ -36,7 +36,7 @@ namespace System.IO
 		{	
 			if (src == null || dest == null)
 				throw new ArgumentNullException ();
-			if (src == "" || dest == null ||
+			if (src == "" || dest == "" ||
 			    src.IndexOfAny (Path.InvalidPathChars) != -1 ||
 			    dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
@@ -54,6 +54,11 @@ namespace System.IO
 		{
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 					       FileShare.None, buffersize);
+		}
+
+		public static StreamWriter CreateText(string path)
+		{
+			return new StreamWriter (path, false);
 		}
 		
 		public static void Delete (string path)
@@ -105,7 +110,7 @@ namespace System.IO
 		{
 			if (src == null || dest == null)
 				throw new ArgumentNullException ();
-			if (src == "" || dest == null ||
+			if (src == "" || dest == "" ||
 			    src.IndexOfAny (Path.InvalidPathChars) != -1 ||
 			    dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
