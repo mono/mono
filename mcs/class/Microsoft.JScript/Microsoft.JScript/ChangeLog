@@ -1,3 +1,8 @@
+2004-07-19  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Added Token.cs, TokenStream.cs, Parser.cs which are the port of
+	Mozilla/Rhino's  parser.
+
 2004-06-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: added ast building for object_literal,
