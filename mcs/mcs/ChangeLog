@@ -1,5 +1,18 @@
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #72756.
+	* ecore.cs (Expression.MemberLookupFailed): Add argument to
+	disable the error message when the extended MemberLookup also
+	fails.
+	(Expression.MemberLookupFinal): Update.
+	(SimpleName.DoSimpleNameResolve): Update.
+	* expression.cs (MemberAccess.ResolveNamespaceOrType):
+	Don't use MemberLookupFinal.
+	(New.DoResolve): Update.
+	(BaseAccess.CommonResolve): Update.
+
+2005-02-21  Raja R Harinath  <rharinath@novell.com>
+
 	Fix #72732.
 	* attribute.cs (Attribute.ResolveType): If a 'resolve_error' had
 	occured previously, don't resolve again.

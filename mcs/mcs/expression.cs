@@ -5910,7 +5910,7 @@ namespace Mono.CSharp {
 
 			if (method == null) {
 				if (almostMatchedMembers.Count != 0) {
-					MemberLookupFailed (ec, type, type, ".ctor", null, loc);
+					MemberLookupFailed (ec, type, type, ".ctor", null, true, loc);
 					return null;
 				}
 
@@ -7548,10 +7548,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			Expression member_lookup = MemberLookupFinal (ec, expr_type, expr_type, Identifier, loc);
-			if (!silent && member_lookup == null) {
-				Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
-					      Identifier, new_expr.FullName);
+			Expression member_lookup = MemberLookup (ec, expr_type, expr_type, Identifier, loc);
+			if (member_lookup == null) {
+				int errors = Report.Errors;
+				MemberLookupFailed (ec, expr_type, expr_type, Identifier, null, false, loc);
+
+				if (!silent && errors == Report.Errors)
+					Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
+						      Identifier, new_expr.FullName);
 				return null;
 			}
 
@@ -8543,7 +8547,7 @@ namespace Mono.CSharp {
 			member_lookup = MemberLookup (ec, ec.ContainerType, null, base_type, member,
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec, base_type, base_type, member, null, loc);
+				MemberLookupFailed (ec, base_type, base_type, member, null, true, loc);
 				return null;
 			}
 

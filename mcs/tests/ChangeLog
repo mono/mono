@@ -1,3 +1,7 @@
+2005-02-21  Raja R Harinath  <rharinath@novell.com>
+
+	* test-350.cs: New test from #72756.
+
 2005-02-18  Marek Safar <marek.safar@seznam.cz>
 
 	* test-349.cs: New test.

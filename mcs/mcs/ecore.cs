@@ -706,14 +706,15 @@ namespace Mono.CSharp {
 
 			if (e == null && errors == Report.Errors)
 				// No errors were reported by MemberLookup, but there was an error.
-				MemberLookupFailed (ec, qualifier_type, queried_type, name, null, loc);
+				MemberLookupFailed (ec, qualifier_type, queried_type, name, null, true, loc);
 
 			return e;
 		}
 
 		public static void MemberLookupFailed (EmitContext ec, Type qualifier_type,
 						       Type queried_type, string name,
-						       string class_name, Location loc)
+						       string class_name, bool complain_if_none_found, 
+						       Location loc)
 		{
 			if (almostMatchedMembers.Count != 0) {
 				if (qualifier_type == null) {
@@ -760,6 +761,9 @@ namespace Mono.CSharp {
 								  BindingFlags.NonPublic, name, null);
 
 			if (lookup == null) {
+				if (!complain_if_none_found)
+					return;
+
 				if (class_name != null)
 					Report.Error (103, loc, "The name `" + name + "' could not be " +
 						      "found in `" + class_name + "'");
@@ -2164,7 +2168,7 @@ namespace Mono.CSharp {
 					almostMatchedMembers = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				MemberLookupFailed (ec, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, loc);
+				MemberLookupFailed (ec, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, true, loc);
 				return null;
 			}
 
