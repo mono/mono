@@ -11,7 +11,7 @@
 // (C) 2002 John Donagher, Ajay kumar Dwivedi
 // Copyright (C) Tim Coleman, 2002
 // (C) 2003 Elan Feingold
-// 
+//
 
 using System;
 using System.Collections;
@@ -21,7 +21,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Text;
 
-namespace System.Xml.Serialization {    
+namespace System.Xml.Serialization {
         /// <summary>
         /// Summary description for XmlSerializer.
         /// </summary>
@@ -83,10 +83,10 @@ namespace System.Xml.Serialization {
                 }
 
                 public XmlSerializer (Type type,
-				      XmlAttributeOverrides overrides,
-				      Type [] extraTypes,
-				      XmlRootAttribute root,
-				      string defaultNamespace)
+                                      XmlAttributeOverrides overrides,
+                                      Type [] extraTypes,
+                                      XmlRootAttribute root,
+                                      string defaultNamespace)
                 {
                         if (type == null)
                                 throw new ArgumentNullException ("type");
@@ -104,11 +104,11 @@ namespace System.Xml.Serialization {
                                         ri.IncludeTypes (t);
                                 }
                         }
-                        
+
                         this.xsertype = type;
                         this.overrides = overrides;
                         this.extraTypes = (extraTypes == null ? new Type[0] : extraTypes);
-                
+
                         if (root != null)
                                 this.rootAttribute = root;
                         else {
@@ -116,7 +116,7 @@ namespace System.Xml.Serialization {
                                 if (attributes.Length > 0)
                                         this.rootAttribute = (XmlRootAttribute) attributes[0];
                         }
-                        
+
                         this.defaultNamespace = defaultNamespace;
 
                         if (typeTable == null)
@@ -183,7 +183,7 @@ namespace System.Xml.Serialization {
                         bool retVal      = true;
 
                         //Console.WriteLine("DeserializeComposite({0})", objType);
-                        
+
                         // Are we at an empty element?
                         if (xmlReader.IsEmptyElement == true)
                                 return retVal;
@@ -193,7 +193,7 @@ namespace System.Xml.Serialization {
                         {
                                 XmlNodeType xmlNodeType = xmlReader.NodeType;
                                 bool            isEmpty         = xmlReader.IsEmptyElement;
-                                
+
                                 if (xmlNodeType == XmlNodeType.Element)
                                 {
                                         // Read the field.
@@ -207,7 +207,7 @@ namespace System.Xml.Serialization {
                                                 //Console.WriteLine("Empty object deserialized, ignoring.");
                                                 retVal = false;
                                         }
-                                        
+
                                         return retVal;
                                 }
                         }
@@ -238,8 +238,8 @@ namespace System.Xml.Serialization {
                                 }
                         }
 
-			if (fieldType == null)
-				throw new Exception (String.Format ("On type {0} can not identify {1}", theObject.GetType (), fieldName));
+                        if (fieldType == null)
+                                throw new Exception (String.Format ("On type {0} can not identify {1}", theObject.GetType (), fieldName));
 
                         Object    value            = null;
                         bool      isEmptyField = xmlReader.IsEmptyElement;
@@ -263,7 +263,7 @@ namespace System.Xml.Serialization {
                                         if (xmlReader.NodeType == XmlNodeType.Text)
                                         {
                                                 //Console.WriteLine(" -> value is '{0}'", xmlReader.Value);
-                                                
+
                                                 if (fieldType == typeof(Guid))
                                                         value = XmlConvert.ToGuid(xmlReader.Value);
                                                 else if (fieldType == typeof(Boolean))
@@ -282,23 +282,23 @@ namespace System.Xml.Serialization {
                                                         value = XmlConvert.ToInt32 (xmlReader.Value);
                                                 else
                                                         Console.WriteLine("XmlSerializer.DeserializeField, improve routine: Error (type is '{0}')", fieldType);
-                                                
+
                                                 break;
                                         }
                                 }
                         }
                         else if (isEmptyField == true)
                         {
-				if  (fieldType.IsArray)
-				{
-					// Must be a byte array, just create an empty one.
-					value = new byte[0];
-				}
-				else if (fieldType == typeof(string))
-				{
-					// Create a new empty string.
-					value = "";
-				}
+                                if  (fieldType.IsArray)
+                                {
+                                        // Must be a byte array, just create an empty one.
+                                        value = new byte[0];
+                                }
+                                else if (fieldType == typeof(string))
+                                {
+                                        // Create a new empty string.
+                                        value = "";
+                                }
                         }
                         else
                         {
@@ -315,22 +315,22 @@ namespace System.Xml.Serialization {
 
                         // Set the field value.
                         theObject.GetType().InvokeMember(fieldName,
-							 bindingFlags, 
-							 null,
-							 theObject, 
-							 new Object[] { value },
-							 null, null, null);
+                                                         bindingFlags,
+                                                         null,
+                                                         theObject,
+                                                         new Object[] { value },
+                                                         null, null, null);
 
                         // We need to munch the end.
-                        if (IsInbuiltType(fieldType) || 
-			    fieldType.IsEnum                 || 
-			    fieldType == typeof(System.Byte[]))
+                        if (IsInbuiltType(fieldType) ||
+                            fieldType.IsEnum                 ||
+                            fieldType == typeof(System.Byte[]))
                         {
                                 if (isEmptyField == false)
                                         while (xmlReader.Read() && xmlReader.NodeType != XmlNodeType.EndElement)
                                                 ;
                         }
-                        
+
                 }
 
                 public void DeserializeArray(XmlReader xmlReader, ArrayList theList, Type theType)
@@ -361,9 +361,9 @@ namespace System.Xml.Serialization {
                                                 theList.Add(obj);
                                         }
                                 }
-                                
+
                                 if ((xmlNodeType == XmlNodeType.Element && isEmpty) ||
-				    (xmlNodeType == XmlNodeType.EndElement))
+                                    (xmlNodeType == XmlNodeType.EndElement))
                                 {
                                         return;
                                 }
@@ -390,10 +390,10 @@ namespace System.Xml.Serialization {
                                 {
                                         return obj;
                                 }
-                        }                                  
+                        }
 
                         return obj;
-                }  
+                }
 
                 protected virtual object Deserialize (XmlSerializationReader reader)
                 {
@@ -427,7 +427,7 @@ namespace System.Xml.Serialization {
                         xmlWriter.WriteEndDocument();
                         xmlWriter.Flush();
                 }
-                
+
                 public void Serialize (TextWriter textWriter, object o)
                 {
                         XmlTextWriter xmlWriter = new XmlTextWriter (textWriter);
@@ -436,12 +436,12 @@ namespace System.Xml.Serialization {
                         xmlWriter.WriteEndDocument();
                         xmlWriter.Flush();
                 }
-                
+
                 public void Serialize (XmlWriter xmlWriter, object o)
                 {
                         Serialize (xmlWriter, o, null);
                 }
-                
+
                 public void Serialize (Stream stream, object o, XmlSerializerNamespaces namespaces)
                 {
                         XmlTextWriter xmlWriter = new XmlTextWriter (stream, System.Text.Encoding.Default);
@@ -450,7 +450,7 @@ namespace System.Xml.Serialization {
                         xmlWriter.WriteEndDocument();
                         xmlWriter.Flush();
                 }
-                
+
                 public void Serialize (TextWriter textWriter, object o, XmlSerializerNamespaces namespaces)
                 {
                         XmlTextWriter xmlWriter = new XmlTextWriter (textWriter);
@@ -461,10 +461,10 @@ namespace System.Xml.Serialization {
                 }
 
                 public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
-                {       
+                {
                         Type objType = xsertype;//o.GetType ();
 
-                        if (IsInbuiltType(objType)) 
+                        if (IsInbuiltType(objType))
                         {
                                 if (writer.WriteState == WriteState.Start)
                                         writer.WriteStartDocument ();
@@ -489,13 +489,13 @@ namespace System.Xml.Serialization {
 
                         XmlSerializerNamespaces nss = new XmlSerializerNamespaces ();
                         XmlQualifiedName[] qnames;
-                        
+
                         if (writer.WriteState == WriteState.Start)
                                 writer.WriteStartDocument ();
                         object [] memberObj = (object []) typeTable [objType];
                         if (memberObj == null)
                                 throw new Exception ("Unknown Type " + objType +
-						     " encountered during Serialization");
+                                                     " encountered during Serialization");
 
                         Hashtable memberTable = (Hashtable) memberObj [0];
                         XmlAttributes xmlAttributes = (XmlAttributes) memberTable [""];
@@ -503,7 +503,7 @@ namespace System.Xml.Serialization {
                         //If we have been passed an XmlRoot, set it on the base class
                         if (rootAttribute != null)
                                 xmlAttributes.XmlRoot = rootAttribute;
-                        
+
                         if (xmlAttributes.XmlRoot != null) {
                                 isNullable = xmlAttributes.XmlRoot.IsNullable;
                                 if (xmlAttributes.XmlRoot.ElementName != null)
@@ -527,25 +527,27 @@ namespace System.Xml.Serialization {
                                         xns = (XmlSerializerNamespaces) fieldInfo.GetValue (o);
                                 else
                                         xns = (XmlSerializerNamespaces) propertyInfo.GetValue (o, null);
-                                
+
                                 qnames = xns.ToArray ();
 
                                 foreach (XmlQualifiedName qname in qnames)
-				nss.Add (qname.Name, qname.Namespace);
+                                        nss.Add (qname.Name, qname.Namespace);
                         }
 
                         //XmlNs from the namespaces passed
                         qnames = namespaces.ToArray ();
-                        foreach (XmlQualifiedName qname in qnames)
-			if (writer.LookupPrefix (qname.Namespace) != qname.Name)
-				nss.Add (qname.Name, qname.Namespace);
+                        foreach (XmlQualifiedName qname in qnames) {
+                                if (writer.LookupPrefix (qname.Namespace) != qname.Name)
+                                        nss.Add (qname.Name, qname.Namespace);
+                        }
 
                         writer.WriteStartElement (rootPrefix, rootName, rootNs);
 
                         qnames = nss.ToArray();
-                        foreach (XmlQualifiedName qname in qnames)
-			if (writer.LookupPrefix (qname.Namespace) != qname.Name)
-				writer.WriteAttributeString ("xmlns", qname.Name, null, qname.Namespace);
+                        foreach (XmlQualifiedName qname in qnames) {
+                                if (writer.LookupPrefix (qname.Namespace) != qname.Name)
+                                        writer.WriteAttributeString ("xmlns", qname.Name, null, qname.Namespace);
+                        }
 
                         if (rootPrefix == String.Empty && rootNs != String.Empty && rootNs != null)
                                 writer.WriteAttributeString (String.Empty, "xmlns", null, rootNs);
@@ -584,7 +586,7 @@ namespace System.Xml.Serialization {
 
                 private void WriteBuiltinValue(XmlWriter writer, object o)
                 {
-                        if(o == null) 
+                        if(o == null)
                                 WriteNilAttribute(writer);
                         else
                                 writer.WriteString (GetXmlValue(o));
@@ -599,8 +601,8 @@ namespace System.Xml.Serialization {
                         }
 
                         Type objType = o.GetType ();
-                        
-                        if (IsInbuiltType(objType)) 
+
+                        if (IsInbuiltType(objType))
                         {
                                 SerializeBuiltIn (writer, o);
                                 return;
@@ -621,11 +623,11 @@ namespace System.Xml.Serialization {
                                         xns = (XmlSerializerNamespaces) fieldInfo.GetValue (o);
                                 else
                                         xns = (XmlSerializerNamespaces) propertyInfo.GetValue (o, null);
-                                
+
                                 XmlQualifiedName[] qnames = xns.ToArray ();
                                 foreach (XmlQualifiedName qname in qnames)
-				if (writer.LookupPrefix (qname.Namespace) != qname.Name)
-					writer.WriteAttributeString ("xmlns", qname.Name, null, qname.Namespace);
+                                        if (writer.LookupPrefix (qname.Namespace) != qname.Name)
+                                                writer.WriteAttributeString ("xmlns", qname.Name, null, qname.Namespace);
                         }
 
                         //Serialize the Attributes.
@@ -643,7 +645,7 @@ namespace System.Xml.Serialization {
                                 if (fieldInfo != null) {
                                         attributeType = fieldInfo.FieldType;
                                         attributeValue = fieldInfo.GetValue (o);
-                                } 
+                                }
                                 else {
                                         attributeType = propertyInfo.PropertyType;
                                         attributeValue = propertyInfo.GetValue (o, null);
@@ -679,8 +681,9 @@ namespace System.Xml.Serialization {
                                 }
                                 else if (attributeValue is XmlAttribute[]) {
                                         XmlAttribute[] xmlattrs = (XmlAttribute[]) attributeValue;
-                                        foreach (XmlAttribute xmlattr in xmlattrs)
-					xmlattr.WriteTo(writer);
+                                        foreach (XmlAttribute xmlattr in xmlattrs) {
+                                                xmlattr.WriteTo(writer);
+                                        }
                                         continue;
                                 }
 
@@ -719,45 +722,45 @@ namespace System.Xml.Serialization {
                 private void WriteElement (XmlWriter writer, XmlAttributes attrs, string name, string ns, Type type, Object value)
                 {
                         //IF the element has XmlText Attribute, the name of the member is not serialized;
-                        if (attrs.XmlText != null && value != null) 
+                        if (attrs.XmlText != null && value != null)
                         {
-                                if (type == typeof (object[])) 
+                                if (type == typeof (object[]))
                                 {
                                         foreach(object obj in (object[]) value)
-					writer.WriteRaw(""+obj);
+                                                writer.WriteRaw(""+obj);
                                 }
-                                else if (type == typeof (string[])) 
+                                else if (type == typeof (string[]))
                                 {
                                         foreach(string str in (string[]) value)
-					writer.WriteRaw(str);
+                                                writer.WriteRaw(str);
                                 }
-                                else if (type == typeof (XmlNode)) 
+                                else if (type == typeof (XmlNode))
                                 {
                                         ((XmlNode) value).WriteTo (writer);
                                 }
-                                else if (type == typeof (XmlNode[])) 
+                                else if (type == typeof (XmlNode[]))
                                 {
                                         XmlNode[] nodes = (XmlNode[]) value;
                                         foreach (XmlNode node in nodes)
-					node.WriteTo (writer);
+                                                node.WriteTo (writer);
                                 }
                                 return;
                         }
 
                         //If not text, serialize as an element
-                        
+
                         //Start the element tag
                         writer.WriteStartElement  (name, ns);
-                        
-                        if (IsInbuiltType (type)) 
+
+                        if (IsInbuiltType (type))
                         {
                                 WriteBuiltinValue(writer,value);
                         }
-                        else if (type.IsArray && value != null) 
+                        else if (type.IsArray && value != null)
                         {
                                 SerializeArray (writer, value);
                         }
-                        else if (value is ICollection) 
+                        else if (value is ICollection)
                         {
                                 BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -766,13 +769,13 @@ namespace System.Xml.Serialization {
                                 PropertyInfo itemInfo = type.GetProperty ("Item", flags, null, null, new Type[1] {typeof (int)}, null);
                                 int count = (int) countInfo.GetValue (value, null);
 
-                                if (count > 0) 
-                                        for (int i = 0; i < count; i++) 
+                                if (count > 0)
+                                        for (int i = 0; i < count; i++)
                                         {
                                                 object itemValue = itemInfo.GetValue (value, new object[1] {i});
                                                 Type   itemType  = itemInfo.PropertyType;
 
-                                                if (itemValue != null) 
+                                                if (itemValue != null)
                                                 {
                                                         string itemName = attrs.GetElementName (itemValue.GetType (), TypeTranslator.GetTypeData(itemType).ElementName);
                                                         string itemNs = attrs.GetElementNamespace (itemValue.GetType ());
@@ -783,11 +786,11 @@ namespace System.Xml.Serialization {
                                                 }
                                         }
                         }
-                        else if (value is IEnumerable) 
+                        else if (value is IEnumerable)
                         {
                                 // FIXME
                         }
-                        else if (type.IsEnum) 
+                        else if (type.IsEnum)
                         {
                                 writer.WriteString(GetXmlValue(value));
                         }
@@ -810,7 +813,7 @@ namespace System.Xml.Serialization {
 
                         Type arrayType = arr.GetType().GetElementType();
                         string arrayTypeName = TypeTranslator.GetTypeData(arrayType).ElementName;
-                        
+
                         TypeData td = TypeTranslator.GetTypeData (arrayType);
 
                         // Special Treatment for Byte array
@@ -824,7 +827,7 @@ namespace System.Xml.Serialization {
                                 {
                                         writer.WriteStartElement (td.ElementName);
                                         object value = arr.GetValue(i);
-                                        if (IsInbuiltType (arrayType)) 
+                                        if (IsInbuiltType (arrayType))
                                         {
                                                 WriteBuiltinValue(writer, value);
                                         }
@@ -883,7 +886,7 @@ namespace System.Xml.Serialization {
                                 }
                         }
 
-                        
+
                         //Add the Class to the hashtable.
                         //Each value of the hashtable has two objects, one is the hashtable with key of membername (for deserialization)
                         //Other is an Array of XmlSerializernames, Array of XmlAttributes & Array of XmlElements.
@@ -940,7 +943,7 @@ namespace System.Xml.Serialization {
 
                                         //Add in the Hashtable.
                                         memberTable.Add (member.Name, xmlAttributes);
-                                        
+
                                         if (xmlAttributes.XmlAnyAttribute != null  || xmlAttributes.XmlText != null)
                                                 continue;
 
@@ -956,16 +959,16 @@ namespace System.Xml.Serialization {
 
                                         if (!IsInbuiltType (fieldInfo.FieldType))
                                                 FillTypeTable (fieldInfo.FieldType);
-                                } 
+                                }
                                 else if (propertyInfo != null) {
 
                                         //If property is readonly or writeonly, do not serialize it.
                                         //Exceptions are properties whose return type is array, ICollection or IEnumerable
                                         //Indexers are not serialized unless the class Implements ICollection.
-                                        if (!(propertyInfo.PropertyType.IsArray || 
-					      Implements (propertyInfo.PropertyType, typeof (ICollection)) || 
-					      (propertyInfo.PropertyType != typeof (string) && 
-					       Implements (propertyInfo.PropertyType, typeof (IEnumerable)))))
+                                        if (!(propertyInfo.PropertyType.IsArray ||
+                                              Implements (propertyInfo.PropertyType, typeof (ICollection)) ||
+                                              (propertyInfo.PropertyType != typeof (string) &&
+                                               Implements (propertyInfo.PropertyType, typeof (IEnumerable)))))
                                         {
                                                 if(!(propertyInfo.CanRead && propertyInfo.CanWrite) || propertyInfo.GetIndexParameters ().Length != 0)
                                                         continue;
@@ -1036,7 +1039,7 @@ namespace System.Xml.Serialization {
                         //a public Count Property which returns an int.
 
                         BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-                        
+
                         //Find a non indexer Count Property with return type of int
                         PropertyInfo countProp = type.GetProperty ("Count", flags, null, typeof (int), new Type[0], null);
                         if (countProp == null || !countProp.CanRead)
@@ -1052,7 +1055,7 @@ namespace System.Xml.Serialization {
                 private void FillIEnumerableType (Type type)
                 {
                         //Must implement a public Add method that takes a single parameter.
-                        //The Add method's parameter must be of the same type as is returned from 
+                        //The Add method's parameter must be of the same type as is returned from
                         //the Current property on the value returned from GetEnumerator, or one of that type's bases.
 
                         // We currently ignore enumerable types anyway, so this method was junked.
@@ -1088,7 +1091,7 @@ namespace System.Xml.Serialization {
                         ConstructorInfo defaultConstructor = type.GetConstructor (new Type[0]);
                         if (defaultConstructor == null || defaultConstructor.IsAbstract || defaultConstructor.IsStatic || !defaultConstructor.IsPublic)
                                 return false;
-                        
+
                         return true;
                 }
 
@@ -1098,12 +1101,12 @@ namespace System.Xml.Serialization {
                                 return false;
                         if (/* type.IsValueType || */type == typeof (string) || type.IsPrimitive)
                                 return true;
-                        if (type == typeof (DateTime) || 
-			    type == typeof (Guid)     ||
-			    type == typeof (XmlNode)  || 
-			    type.IsSubclassOf (typeof (XmlNode)))
+                        if (type == typeof (DateTime) ||
+                            type == typeof (Guid)     ||
+                            type == typeof (XmlNode)  ||
+                            type.IsSubclassOf (typeof (XmlNode)))
                                 return true;
-                                
+
                         return false;
                 }
 
@@ -1130,10 +1133,10 @@ namespace System.Xml.Serialization {
                         if (value == null)
                                 return null;
 #region enum type
-                        if (value is Enum) 
+                        if (value is Enum)
                         {
                                 Type type = value.GetType ();
-                                
+
                                 if (typeTable.ContainsKey (type)) {
                                         Hashtable memberTable = (Hashtable) (typeTable[type]);
                                         if (type.IsDefined (typeof (FlagsAttribute), false)) {
@@ -1218,15 +1221,15 @@ namespace System.Xml.Serialization {
                         if (attrs.XmlAnyAttribute != null) {
                                 // FIXME
                         }
-                        foreach (XmlAnyElementAttribute anyelem in attrs.XmlAnyElements) 
-			memberTable.Add (new XmlQualifiedName (anyelem.Name, anyelem.Namespace), attrs);
+                        foreach (XmlAnyElementAttribute anyelem in attrs.XmlAnyElements)
+                        memberTable.Add (new XmlQualifiedName (anyelem.Name, anyelem.Namespace), attrs);
 
                         if (attrs.XmlArray != null) {
                                 // FIXME
                         }
 
                         foreach (XmlArrayItemAttribute item in attrs.XmlArrayItems)
-			memberTable.Add (new XmlQualifiedName (item.ElementName, item.Namespace), attrs);
+                        memberTable.Add (new XmlQualifiedName (item.ElementName, item.Namespace), attrs);
 
                         if (attrs.XmlAttribute != null)
                                 memberTable.Add (new XmlQualifiedName (attrs.XmlAttribute.AttributeName,attrs.XmlAttribute.Namespace), attrs);
@@ -1236,7 +1239,7 @@ namespace System.Xml.Serialization {
                         }
 
                         foreach (XmlElementAttribute elem in attrs.XmlElements)
-			memberTable.Add (new XmlQualifiedName (elem.ElementName, elem.Namespace), attrs);
+                        memberTable.Add (new XmlQualifiedName (elem.ElementName, elem.Namespace), attrs);
 
                         if (attrs.XmlEnum != null) {
                                 // FIXME

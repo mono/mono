@@ -1,3 +1,8 @@
+2003-04-02  Duncan Mak  <duncan@ximian.com>
+
+	* mb-parser.jay: Temporarily remove the references to
+	Class.MustOverride to fix the build.
+
 2003/03/29  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay: corrected some module related rules
 	* location.cs : now handles column information

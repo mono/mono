@@ -977,9 +977,10 @@ must_override_sub_declaration
 	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $3,
 					    (Parameters) $5, null, null, lexer.Location);
 					    
-		if (current_container is Class)	    
-			((Class)current_container).MustOverride.Add (method);					    
-		else
+
+//		if (current_container is Class)	    
+//			((Class)current_container).MustOverride.Add (method);
+//		else
 			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");		
 			
 		// FIXME ASAP: This will crash the compiler at resolution time			
@@ -999,9 +1000,9 @@ must_override_func_declaration
 	  	Method method = new Method ((Expression) $8, (int) current_modifiers, (string) $3,
 					    (Parameters) $5, null, null, lexer.Location);
 					    
-		if (current_container is Class)	    
-			((Class)current_container).MustOverride.Add (method);					    
-		else
+//		if (current_container is Class)	    
+//			((Class)current_container).MustOverride.Add (method);
+//		else
 			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");
 			
 		// FIXME ASAP: This will crash the compiler at resolution time			

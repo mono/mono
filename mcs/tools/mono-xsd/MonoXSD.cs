@@ -21,7 +21,7 @@ namespace Mono.Util {
 
         public class Driver {
 
-                public static readonly string helpString = 
+                public static readonly string helpString =
                         "MonoXSD.exe - a utility for generating schema or class files\n\nMonoXSD.exe <assembly>.dll|<assembly>.exe [/output:] [/type]\n";
 
                 static void Main (string [] args) {
@@ -94,7 +94,7 @@ namespace Mono.Util {
 
                                 if (lookup_type != null && t.Name != lookup_type)
                                         continue;
-                                
+
                                 try {
                                         schemaType = WriteSchemaType (t);
                                 } catch (ArgumentException e) {
@@ -132,7 +132,7 @@ namespace Mono.Util {
                         XmlSchemaElement schemaElement = new XmlSchemaElement ();
                         schemaElement.Name = type.Name;
 
-                        if (schemaType.QualifiedName == null || schemaType.QualifiedName == XmlQualifiedName.Empty)
+                        if (schemaType.QualifiedName == null)
                                 schemaElement.SchemaTypeName = new XmlQualifiedName (schemaType.Name);
 
                         else
@@ -487,7 +487,7 @@ namespace Mono.Util {
                          } else if (schema_type_name.Name == "xml") {
                                  element.SchemaType = WriteComplexSchemaType ();
                                  element.SchemaTypeName = XmlQualifiedName.Empty; // 'xml' is just a temporary name
-                         
+
                          } else if (schema_type_name == null) {
                                 throw new ArgumentException (String.Format ("The type '{0}' cannot be represented in XML Schema.", type.FullName));
 
@@ -564,7 +564,7 @@ namespace Mono.Util {
                         // Other derivatives of XmlNode are saved specially,
                         // as indicated by this "xml" flag.
                         //
-                        if (type.Equals (typeof (System.Xml.XmlNode)) 
+                        if (type.Equals (typeof (System.Xml.XmlNode))
                                 || type.IsSubclassOf (typeof (System.Xml.XmlNode)))
                                 return new XmlQualifiedName ("xml");
 
