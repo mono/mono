@@ -1,3 +1,8 @@
+2004-11-25  Ravindra  <rkumar@novell.com>
+
+	* gdipFunctions.cs (GdipCreateFontFromLogfontA): Changed return
+	type from int to Status type.
+
 2004-11-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* Image.cs: Add CheckStatus to SaveAdd.
