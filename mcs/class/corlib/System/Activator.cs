@@ -185,11 +185,11 @@ namespace System
 				throw new ArgumentNullException ("type");
 				
 			ConstructorInfo ctor = type.GetConstructor (Type.EmptyTypes);
-			if (!ctor.IsPublic && nonPublic == false)
+			if (ctor != null && !ctor.IsPublic && nonPublic == false)
 				return null;
 
 			if (ctor == null)
-				return null;
+				throw new MissingMethodException ("Default constructor not found");
 
 			return ctor.Invoke (null);
 		}

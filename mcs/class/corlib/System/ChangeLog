@@ -1,3 +1,9 @@
+
+Mon Nov 18 17:54:22 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Activator.cs: throw a MissingMethodException if the default
+	constructor is not found in CreateInstance.
+
 2002-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* String.cs:
