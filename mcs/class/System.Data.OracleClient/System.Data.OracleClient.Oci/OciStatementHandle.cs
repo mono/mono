@@ -66,44 +66,7 @@ namespace System.Data.OracleClient.Oci {
 		#endregion // Properties
 
 		#region Methods
-
-		[DllImport ("oci")]
-		static extern int OCIDescriptorFree (IntPtr descp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType type);
-
-		[DllImport ("oci")]
-		static extern int OCIParamGet (IntPtr hndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType htype,
-						IntPtr errhp,
-						out IntPtr parmdpp,
-						[MarshalAs (UnmanagedType.U4)] int pos);
-
-		[DllImport ("oci")]
-		static extern int OCIStmtExecute (IntPtr svchp,
-						IntPtr stmthp,
-						IntPtr errhp,
-						[MarshalAs (UnmanagedType.U4)] bool iters,
-						uint rowoff,
-						IntPtr snap_in,
-						IntPtr snap_out,
-						[MarshalAs (UnmanagedType.U4)] OciExecuteMode mode);
-
-		[DllImport ("oci")]
-		public static extern int OCIStmtFetch (IntPtr stmtp,
-							IntPtr errhp,
-							uint nrows,
-							ushort orientation,
-							uint mode);
-							
-
-		[DllImport ("oci")]
-		public static extern int OCIStmtPrepare (IntPtr stmthp,
-							IntPtr errhp,
-							string stmt,
-							[MarshalAs (UnmanagedType.U4)] int stmt_length,
-							[MarshalAs (UnmanagedType.U4)] OciStatementLanguage language,
-							[MarshalAs (UnmanagedType.U4)] OciStatementMode mode);
-
+		
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -117,7 +80,7 @@ namespace System.Data.OracleClient.Oci {
 			IntPtr handle = IntPtr.Zero;
 			int status = 0;
 
-			status = OCIParamGet (this,
+			status = OciCalls.OCIParamGet (this,
 						OciHandleType.Statement,
 						ErrorHandle,
 						out handle,
@@ -165,15 +128,20 @@ namespace System.Data.OracleClient.Oci {
 			columnCount = 0;
 			moreResults = false;
 
-			status = OCIStmtExecute (Service,
-						Handle,
-						ErrorHandle,
-						nonQuery,
-						0,
-						IntPtr.Zero,
-						IntPtr.Zero,
-						OciExecuteMode.Default);
+			if (this.disposed) 
+			{
+				throw new InvalidOperationException ("StatementHandle is already disposed.");
+			}
 
+			status = OciCalls.OCIStmtExecute (Service,
+				Handle,
+				ErrorHandle,
+				nonQuery,
+				0,
+				IntPtr.Zero,
+				IntPtr.Zero,
+				OciExecuteMode.Default);
+		
 			switch (status) {
 			case OciGlue.OCI_DEFAULT:
 				if (!nonQuery) {
@@ -184,6 +152,8 @@ namespace System.Data.OracleClient.Oci {
 				break;
 			case OciGlue.OCI_NO_DATA:
 				break;
+			case OciGlue.OCI_INVALID_HANDLE:
+				throw new OracleException (0, "Invalid handle.");
 			default:
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -204,12 +174,18 @@ namespace System.Data.OracleClient.Oci {
 		public bool Fetch ()
 		{
 			int status = 0;
-			status = OCIStmtFetch (Handle,
-						ErrorHandle.Handle,
-						1,
-						2,
-						0);
 
+			if (this.disposed) 
+			{
+				throw new InvalidOperationException ("StatementHandle is already disposed.");
+			}
+
+			status = OciCalls.OCIStmtFetch (Handle,
+				ErrorHandle.Handle,
+				1,
+				2,
+				0);
+		
 			switch (status) {
 			case OciGlue.OCI_NO_DATA:
 				moreResults = false;
@@ -229,12 +205,16 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 
-			status = OCIStmtPrepare (this,
-						ErrorHandle,
-						commandText,
-						commandText.Length,
-						OciStatementLanguage.NTV,
-						OciStatementMode.Default);
+			if (this.disposed) {
+				throw new InvalidOperationException ("StatementHandle is already disposed.");
+			}
+
+			status = OciCalls.OCIStmtPrepare (this,
+				ErrorHandle,
+				commandText,
+				commandText.Length,
+				OciStatementLanguage.NTV,
+				OciStatementMode.Default);
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);

@@ -165,23 +165,6 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		static extern int OCIBindByName (IntPtr stmtp,
-						out IntPtr bindpp,
-						IntPtr errhp,
-						string placeholder,
-						int placeh_len,
-						IntPtr valuep,
-						int value_sz,
-						[MarshalAs (UnmanagedType.U2)] OciDataType dty,
-						int indp,
-						IntPtr alenp,
-						IntPtr rcodep,
-						uint maxarr_len,
-						IntPtr curelp,
-						uint mode);
-
-
 		private void AssertSizeIsSet ()
 		{
 			if (!sizeSet)
@@ -214,7 +197,7 @@ namespace System.Data.OracleClient {
 				bindSize = value.ToString ().Length;
 			}
 
-			status = OCIBindByName (statement,
+			status = OciCalls.OCIBindByName (statement,
 						out tmpHandle,
 						connection.ErrorHandle,
 						ParameterName,

@@ -34,7 +34,6 @@ namespace System.Data.OracleClient {
 		bool disposed = false;
 		bool isClosed;
 		bool hasRows;
-		bool moreResults;
 		DataTable schemaTable;
 
 		int recordsAffected = -1;
@@ -57,7 +56,7 @@ namespace System.Data.OracleClient {
 
 		~OracleDataReader ()
 		{
-			Dispose ();
+			Dispose (false);
 		}
 
 		#endregion // Constructors
@@ -103,6 +102,7 @@ namespace System.Data.OracleClient {
 
 		public void Close ()
 		{
+			statement.Dispose();
 			if (!isClosed) 
 				command.CloseDataReader ();
 			isClosed = true;

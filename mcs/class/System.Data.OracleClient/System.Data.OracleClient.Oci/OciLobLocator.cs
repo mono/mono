@@ -61,83 +61,10 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		static extern int OCILobClose (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp);
-
-		[DllImport ("oci")]
-		static extern int OCILobCopy (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr dst_locp,
-						IntPtr src_locp,
-						uint amount,
-						uint dst_offset,
-						uint src_offset);
-
-		[DllImport ("oci")]
-		static extern int OCILobErase (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp,
-						ref uint amount,
-						uint offset);
-
-		[DllImport ("oci")]
-		static extern int OCILobGetChunkSize (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp,
-						out uint chunk_size);
-
-		[DllImport ("oci")]
-		static extern int OCILobGetLength (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp,
-						out uint lenp);
-
-		[DllImport ("oci")]
-		static extern int OCILobOpen (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp,
-						byte mode);
-
-		[DllImport ("oci")]
-		static extern int OCILobRead (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp,
-						ref uint amtp,
-						uint offset,
-						byte[] bufp,
-						uint bufl,
-						IntPtr ctxp,
-						IntPtr cbfp,
-						ushort csid,
-						byte csfrm);
-
-		[DllImport ("oci")]
-		static extern int OCILobTrim (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp,
-						uint newlen);
-
-		[DllImport ("oci")]
-		static extern int OCILobWrite (IntPtr svchp,
-						IntPtr errhp,
-						IntPtr locp,
-						ref uint amtp,
-						uint offset,
-						byte[] bufp,
-						uint bufl,
-						byte piece,
-						IntPtr ctxp,
-						IntPtr cbfp,
-						ushort csid,
-						byte csfrm);
-
-
 		public void BeginBatch (OracleLobOpenMode mode)
 		{
 			int status = 0;
-			status = OCILobOpen (Service, 
+			status = OciCalls.OCILobOpen (Service, 
 						ErrorHandle,
 						Handle,
 						(byte) mode);
@@ -150,7 +77,7 @@ namespace System.Data.OracleClient.Oci {
 
 		public uint Copy (OciLobLocator destination, uint amount, uint destinationOffset, uint sourceOffset)
 		{
-			OCILobCopy (Service,
+			OciCalls.OCILobCopy (Service,
 					ErrorHandle,
 					destination,
 					Handle,
@@ -171,7 +98,7 @@ namespace System.Data.OracleClient.Oci {
 		public void EndBatch ()
 		{
 			int status = 0;
-			status = OCILobClose (Service, ErrorHandle, this);
+			status = OciCalls.OCILobClose (Service, ErrorHandle, this);
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
@@ -183,7 +110,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			uint output = amount;
-			status = OCILobErase (Service,
+			status = OciCalls.OCILobErase (Service,
 						ErrorHandle,
 						this,
 						ref output,
@@ -201,7 +128,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			uint output;
-			status = OCILobGetChunkSize (Service,
+			status = OciCalls.OCILobGetChunkSize (Service,
 							ErrorHandle,
 							this,
 							out output);
@@ -218,7 +145,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			uint output;
-			status = OCILobGetLength (Service, 
+			status = OciCalls.OCILobGetLength (Service, 
 						ErrorHandle,
 						this,
 						out output);
@@ -243,7 +170,7 @@ namespace System.Data.OracleClient.Oci {
 			if (!binary) 
 				amount /= 2;
 
-			status = OCILobRead (Service,
+			status = OciCalls.OCILobRead (Service,
 						ErrorHandle,
 						this,
 						ref amount,
@@ -266,7 +193,7 @@ namespace System.Data.OracleClient.Oci {
 		public void Trim (uint newlen)
 		{
 			int status = 0;
-			status = OCILobTrim (Service,
+			status = OciCalls.OCILobTrim (Service,
 						ErrorHandle,
 						this,
 						newlen);
@@ -286,7 +213,7 @@ namespace System.Data.OracleClient.Oci {
 			if (type == OracleType.Clob)
 				amount /= 2;
 
-			status = OCILobWrite (Service,
+			status = OciCalls.OCILobWrite (Service,
 						ErrorHandle,
 						this,
 						ref amount,

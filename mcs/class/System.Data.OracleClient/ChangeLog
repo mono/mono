@@ -1,3 +1,42 @@
+2004-01-09  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* System.Data.OracleClient.Oci/OciCalls.cs:
+		Added. It contains all external OCI calls which are 
+		removed from all other files.
+	* System.Data.OracleClient/OciGlue.cs:
+		Fix for #52699 (OCI not thread safe).
+	* System.Data.OracleClient.Oci/OciHandle.cs:
+		Introduced special handling for Bind, Define and
+		Environment handles in FreeHandle. Revised the handling for
+		other types. Minor change in Dispose.
+		Replaced OCI calls.
+	* System.Data.OracleClient.Oci/OciDescriptorHandle.cs:
+		Special handling for Parameter handles in FreeHandle.
+		Replaced OCI calls.
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+		Character types are converted using the DefaultEncoding.
+		Replaced OCI calls.
+	* System.Data.OracleClient/OracleCommand.cs:
+		Dispose created OciStatementHandles.
+	* System.Data.OracleClient/OracleDataReader.cs:
+		Dispose used OciStatementHandle.
+	* System.Data.OracleClient/OracleTransaction.cs:
+		Dispose transaction handle.
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+		OCI_INVALID_HANDLE results in exception "Invalid handle."
+		Replaced OCI calls.
+	* System.Data.OracleClient.Oci/OciTransactionHandle.cs:
+		Introduced DetachFromServiceContext which is called in Commit
+		and Rollback (Fix for #52702).
+	* System.Data.OracleClient/OracleParameter.cs:
+	* System.Data.OracleClient.Oci/OciEnvironmentHandle.cs:
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs:
+	* System.Data.OracleClient.Oci/OciLobLocator.cs:
+	* System.Data.OracleClient.Oci/OciServerHandle.cs:
+	* System.Data.OracleClient.Oci/OciServiceHandle.cs:
+	* System.Data.OracleClient.Oci/OciSessionHandle.cs:
+		Replaced OCI calls.
+	
 2003-12-16  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* System.Data.OracleClient/OracleCommand.cs:

@@ -62,27 +62,13 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		public static extern int OCISessionBegin (IntPtr svchp,
-							IntPtr errhp,
-							IntPtr usrhp,
-							[MarshalAs (UnmanagedType.U4)] OciCredentialType credt,
-							[MarshalAs (UnmanagedType.U4)] OciSessionMode mode);
-
-		[DllImport ("oci")]
-		public static extern int OCISessionEnd (IntPtr svchp,
-							IntPtr errhp,
-							IntPtr usrhp,
-							uint mode);
-
-
 		public bool BeginSession (OciCredentialType credentialType, OciSessionMode mode, OciErrorHandle error)
 		{
 			errorHandle = error;
 
 			int status = 0;
 
-			status = OciGlue.OCIAttrSetString (this,
+			status = OciCalls.OCIAttrSetString (this,
 							OciHandleType.Session,
 							username,
 							(uint) username.Length,
@@ -92,7 +78,7 @@ namespace System.Data.OracleClient.Oci {
 			if (status != 0) 
 				return false;
 
-			status = OciGlue.OCIAttrSetString (this,
+			status = OciCalls.OCIAttrSetString (this,
 							OciHandleType.Session,
 							password,
 							(uint) password.Length,
@@ -102,7 +88,7 @@ namespace System.Data.OracleClient.Oci {
 			if (status != 0) 
 				return false;
 
-			status = OCISessionBegin (Service,
+			status = OciCalls.OCISessionBegin (Service,
 						errorHandle,
 						Handle,
 						credentialType,
@@ -120,7 +106,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			if (!begun)
 				return;
-			OCISessionEnd (Service, error, this, 0);
+			OciCalls.OCISessionEnd (Service, error, this, 0);
 		}
 
 		protected override void Dispose (bool disposing)

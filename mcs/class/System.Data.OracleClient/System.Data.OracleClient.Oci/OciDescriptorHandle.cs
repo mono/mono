@@ -32,14 +32,12 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		static extern int OCIDescriptorFree (IntPtr hndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType type);
-
 		protected override void FreeHandle ()
 		{
-			int status = 0;
-			status = OCIDescriptorFree (this, HandleType);
+			if (HandleType != OciHandleType.Parameter) {	// Parameter handles are disposed implicitely
+				int status = 0;
+				status = OciCalls.OCIDescriptorFree (this, HandleType);
+			}
 		}
 
 		#endregion // Methods

@@ -71,7 +71,7 @@ namespace System.Data.OracleClient.Oci {
 		public bool SetServer (OciServerHandle handle)
 		{
 			server = handle;
-			int status = OciGlue.OCIAttrSet (this,
+			int status = OciCalls.OCIAttrSet (this,
 							HandleType,
 							server,
 							0,
@@ -83,7 +83,7 @@ namespace System.Data.OracleClient.Oci {
 		public bool SetSession (OciSessionHandle handle)
 		{
 			session = handle;
-			int status = OciGlue.OCIAttrSet (this,
+			int status = OciCalls.OCIAttrSet (this,
 							HandleType,
 							session,
 							0,

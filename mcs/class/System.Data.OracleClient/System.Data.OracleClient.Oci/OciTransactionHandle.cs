@@ -54,26 +54,10 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		public static extern int OCITransCommit (IntPtr svchp,
-							IntPtr errhp,
-							uint flags);
-
-		[DllImport ("oci")]
-		public static extern int OCITransRollback (IntPtr svchp,
-							IntPtr errhp,
-							uint flags);
-
-		[DllImport ("oci")]
-		public static extern int OCITransStart (IntPtr svchp,
-							IntPtr errhp,
-							uint timeout,
-							[MarshalAs (UnmanagedType.U4)] OciTransactionFlags flags);
-
 		public void AttachToServiceContext ()
 		{
 			int status = 0;
-			status = OciGlue.OCIAttrSet (Service,
+			status = OciCalls.OCIAttrSet (Service,
 							OciHandleType.Service,
 							this,
 							0,
@@ -85,13 +69,29 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
+		public void DetachFromServiceContext ()
+		{
+			int status = 0;
+			status = OciCalls.OCIAttrSet (Service,
+				OciHandleType.Service,
+				IntPtr.Zero,
+				0,
+				OciAttributeType.Transaction,
+				ErrorHandle);
+			if (status != 0) 
+			{
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
 		public void Begin ()
 		{
 			int status = 0;
 
 			AttachToServiceContext ();
 
-			status = OCITransStart (Service,
+			status = OciCalls.OCITransStart (Service,
 						ErrorHandle,
 						60,
 						OciTransactionFlags.New);
@@ -106,11 +106,17 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			AttachToServiceContext ();
-			status = OCITransCommit (Service, ErrorHandle, 0);
+			try {
+				status = OciCalls.OCITransCommit (Service, ErrorHandle, 0);
 
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				if (status != 0) 
+				{
+					OciErrorInfo info = ErrorHandle.HandleError ();
+					throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				}
+			}
+			finally {
+				DetachFromServiceContext ();
 			}
 		}
 
@@ -124,13 +130,18 @@ namespace System.Data.OracleClient.Oci {
 
 		public void Rollback ()
 		{
-			int status = 0;
-			AttachToServiceContext ();
-			status = OCITransRollback (Service, ErrorHandle, 0);
+			try {
+				int status = 0;
+				AttachToServiceContext ();
+				status = OciCalls.OCITransRollback (Service, ErrorHandle, 0);
 
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				if (status != 0) {
+					OciErrorInfo info = ErrorHandle.HandleError ();
+					throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				}
+			}
+			finally {
+				DetachFromServiceContext ();
 			}
 		}
 

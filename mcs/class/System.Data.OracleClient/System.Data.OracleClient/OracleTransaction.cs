@@ -82,7 +82,10 @@ namespace System.Data.OracleClient {
 		{
 			if (!disposed) {
 				if (disposing) {
-					Rollback ();
+					if (isOpen)
+						Rollback ();
+
+					transaction.Dispose();
 				}
 				disposed = true;
 			}

@@ -64,90 +64,24 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		static extern int OCIAttrGet (IntPtr trgthndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-						out IntPtr attributep,
-						out int sizep,
-						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-						IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		static extern int OCIAttrGetSByte (IntPtr trgthndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-						out sbyte attributep,
-						IntPtr sizep,
-						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-						IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		static extern int OCIAttrGetByte (IntPtr trgthndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-						out byte attributep,
-						IntPtr sizep,
-						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-						IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		static extern int OCIAttrGetUInt16 (IntPtr trgthndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-						out ushort attributep,
-						IntPtr sizep,
-						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-						IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		static extern int OCIAttrGetInt32 (IntPtr trgthndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-						out int attributep,
-						IntPtr sizep,
-						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-						IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		static extern int OCIAttrGetIntPtr (IntPtr trgthndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-						out IntPtr attributep,
-						IntPtr sizep,
-						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-						IntPtr errhp);
-
-		[DllImport ("oci")]
-		static extern int OCIDescriptorAlloc (IntPtr parenth,
-						out IntPtr hndlpp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType type,
-						int xtramem_sz,
-						IntPtr usrmempp);
-
-		[DllImport ("oci")]
-		static extern int OCIHandleAlloc (IntPtr parenth,
-						out IntPtr descpp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType type,
-						int xtramem_sz,
-						IntPtr usrmempp);
-
-		[DllImport ("oci")]
-		static extern int OCIHandleFree (IntPtr hndlp,
-						[MarshalAs (UnmanagedType.U4)] OciHandleType type);
-
 		public OciHandle Allocate (OciHandleType type)
 		{
 			int status = 0;
 			IntPtr newHandle = IntPtr.Zero;
 
 			if (type < OciHandleType.LobLocator)
-				status = OCIHandleAlloc (this,
-							out newHandle,
-							type,
-							0,
-							IntPtr.Zero);
+				status = OciCalls.OCIHandleAlloc (this,
+					out newHandle,
+					type,
+					0,
+					IntPtr.Zero);
 			else
-				status = OCIDescriptorAlloc (this,
-							out newHandle,
-							type,
-							0,
-							IntPtr.Zero);
-
+				status = OciCalls.OCIDescriptorAlloc (this,
+					out newHandle,
+					type,
+					0,
+					IntPtr.Zero);
+		
 			if (status != 0 && status != 1)
 				throw new Exception (String.Format ("Could not allocate new OCI Handle of type {0}", type));
 
@@ -175,10 +109,10 @@ namespace System.Data.OracleClient.Oci {
 		protected virtual void Dispose (bool disposing)
 		{
 			if (!disposed) {
+				FreeHandle ();
 				if (disposing) {
 					parent = null;
 				}
-				FreeHandle ();
 				disposed = true;
 			}
 		}
@@ -191,7 +125,25 @@ namespace System.Data.OracleClient.Oci {
 
 		protected virtual void FreeHandle ()
 		{
-			OCIHandleFree (Handle, HandleType);
+			switch (type) {
+				case OciHandleType.Bind:
+				case OciHandleType.Define:
+					// Bind and Define handles are freed when Statement handle is disposed
+					break;
+				case OciHandleType.Environment:
+					if (handle != IntPtr.Zero) {
+						OciCalls.OCIHandleFree (handle, type);
+					}
+					break;
+				default:
+					if ( handle != IntPtr.Zero &&
+						 parent != null && 
+						 parent.Handle != IntPtr.Zero )	{
+
+							OciCalls.OCIHandleFree (handle, type);
+					}
+					break;
+			}
 			handle = IntPtr.Zero;
 		}
 
@@ -205,7 +157,7 @@ namespace System.Data.OracleClient.Oci {
 			int status = 0;
 			sbyte output;
 
-			status = OCIAttrGetSByte (Handle,
+			status = OciCalls.OCIAttrGetSByte (Handle,
 						HandleType,
 						out output,
 						IntPtr.Zero,
@@ -225,7 +177,7 @@ namespace System.Data.OracleClient.Oci {
 			int status = 0;
 			byte output;
 
-			status = OCIAttrGetByte (Handle,
+			status = OciCalls.OCIAttrGetByte (Handle,
 						HandleType,
 						out output,
 						IntPtr.Zero,
@@ -245,7 +197,7 @@ namespace System.Data.OracleClient.Oci {
 			int status = 0;
 			ushort output;
 
-			status = OCIAttrGetUInt16 (Handle,
+			status = OciCalls.OCIAttrGetUInt16 (Handle,
 						HandleType,
 						out output,
 						IntPtr.Zero,
@@ -265,7 +217,7 @@ namespace System.Data.OracleClient.Oci {
 			int status = 0;
 			int output;
 
-			status = OCIAttrGetInt32 (Handle,
+			status = OciCalls.OCIAttrGetInt32 (Handle,
 						HandleType,
 						out output,
 						IntPtr.Zero,
@@ -284,7 +236,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			IntPtr output = IntPtr.Zero;
-			status = OCIAttrGetIntPtr (Handle,
+			status = OciCalls.OCIAttrGetIntPtr (Handle,
 						HandleType,
 						out output,
 						IntPtr.Zero,
@@ -306,7 +258,7 @@ namespace System.Data.OracleClient.Oci {
 			int outSize;
 			int status = 0;
 
-			status = OCIAttrGet (Handle,
+			status = OciCalls.OCIAttrGet (Handle,
 					HandleType,
 					out outputPtr,
 					out outSize,

@@ -73,34 +73,10 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci", EntryPoint = "OCIAttrSet")]
-		public static extern int OCIAttrSet (IntPtr trgthndlp,
-							[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-							IntPtr attributep,
-							uint size,
-							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-							IntPtr errhp);
-
-		[DllImport ("oci", EntryPoint = "OCIAttrSet")]
-		public static extern int OCIAttrSetString (IntPtr trgthndlp,
-							[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
-							string attributep,
-							uint size,
-							[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
-							IntPtr errhp);
-
-		[DllImport ("oci")]
-		public static extern int OCIErrorGet (IntPtr hndlp,
-							uint recordno,
-							IntPtr sqlstate,
-							out int errcodep,
-							IntPtr bufp,
-							uint bufsize,
-							[MarshalAs (UnmanagedType.U4)] OciHandleType type);
-
 		public void CreateConnection (OracleConnectionInfo conInfo) 
 		{
-			environment = new OciEnvironmentHandle (OciEnvironmentMode.NoUserCallback);
+			environment = new OciEnvironmentHandle (OciEnvironmentMode.Threaded | OciEnvironmentMode.NoUserCallback);
+
 			if (environment.Handle == IntPtr.Zero)
 				throw new OracleException (0, "Could not allocate the Oracle environment.");
 

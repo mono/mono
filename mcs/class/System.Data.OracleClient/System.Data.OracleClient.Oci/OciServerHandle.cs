@@ -40,23 +40,11 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		static extern int OCIServerAttach (IntPtr srvhp,
-						IntPtr errhp,
-						string dblink,
-						[MarshalAs (UnmanagedType.U4)] int dblink_len,
-						uint mode);
-
-		[DllImport ("oci")]
-		static extern int OCIServerDetach (IntPtr srvhp,
-						IntPtr errhp,
-						uint mode);
-
 		public bool Attach (string tnsname, OciErrorHandle error)
 		{
 			errorHandle = error;
 
-			int status = OCIServerAttach (this, error, tnsname, tnsname.Length, 0);
+			int status = OciCalls.OCIServerAttach (this, error, tnsname, tnsname.Length, 0);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();
@@ -72,7 +60,7 @@ namespace System.Data.OracleClient.Oci {
 			if (!attached) 
 				return;
 
-			int status = OCIServerDetach (this, error, 0);
+			int status = OciCalls.OCIServerDetach (this, error, 0);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();

@@ -98,32 +98,6 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		public static extern int OCIDefineByPos (IntPtr stmtp,
-							out IntPtr defnpp,
-							IntPtr errhp,
-							[MarshalAs (UnmanagedType.U4)] int position,
-							IntPtr valuep,
-							int value_sz,
-							[MarshalAs (UnmanagedType.U2)] OciDataType dty,
-							ref short indp,
-							ref int rlenp,
-							IntPtr rcodep,
-							uint mode);
-
-		[DllImport ("oci", EntryPoint="OCIDefineByPos")]
-		public static extern int OCIDefineByPosPtr (IntPtr stmtp,
-							out IntPtr defnpp,
-							IntPtr errhp,
-							[MarshalAs (UnmanagedType.U4)] int position,
-							ref IntPtr valuep,
-							int value_sz,
-							[MarshalAs (UnmanagedType.U2)] OciDataType dty,
-							ref short indp,
-							ref int rlenp,
-							IntPtr rcodep,
-							uint mode);
-
 		void Define (int position)
 		{
 			switch (definedType) {
@@ -149,7 +123,7 @@ namespace System.Data.OracleClient.Oci {
 
 			int status = 0;
 
-			status = OCIDefineByPos (Parent,
+			status = OciCalls.OCIDefineByPos (Parent,
 						out handle,
 						ErrorHandle,
 						position + 1,
@@ -174,7 +148,7 @@ namespace System.Data.OracleClient.Oci {
 
 			int status = 0;
 
-			status = OCIDefineByPos (Parent,
+			status = OciCalls.OCIDefineByPos (Parent,
 						out handle,
 						ErrorHandle,
 						position + 1,
@@ -210,7 +184,7 @@ namespace System.Data.OracleClient.Oci {
 			lobLocator.ErrorHandle = ErrorHandle;
 			lobLocator.Service = ((OciStatementHandle) Parent).Service;
 
-			status = OCIDefineByPosPtr (Parent,
+			status = OciCalls.OCIDefineByPosPtr (Parent,
 							out handle,
 							ErrorHandle,
 							position + 1,
@@ -256,10 +230,11 @@ namespace System.Data.OracleClient.Oci {
 			case OciDataType.Char:
 			case OciDataType.CharZ:
 			case OciDataType.OciString:
-				tmp = Marshal.PtrToStringAnsi (Value, Size);
-				if (tmp != null)
-					return String.Copy ((string) tmp);
-				break;
+				byte [] buffer = new byte [Size];
+				Marshal.Copy (Value, buffer, 0, Size);
+
+				return Encoding.Default.GetString (buffer);
+
 			case OciDataType.Integer:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
 				if (tmp != null)

@@ -55,7 +55,7 @@ namespace System.Data.OracleClient.Oci {
 			int errbufSize = 512;
 			IntPtr errbuf = Marshal.AllocHGlobal (errbufSize);
 
-			OciGlue.OCIErrorGet (this, 
+			OciCalls.OCIErrorGet (this, 
 						1,
 						IntPtr.Zero,
 						out info.ErrorCode,

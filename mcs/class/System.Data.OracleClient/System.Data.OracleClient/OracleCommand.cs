@@ -27,7 +27,6 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		bool disposed = false;
 		CommandBehavior behavior;
 		string commandText;
 		CommandType commandType;
@@ -212,8 +211,7 @@ namespace System.Data.OracleClient {
 			statement.ExecuteNonQuery ();
 
 			int rowsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, ErrorHandle);
-			
-			statement.Dispose ();
+		
 			return rowsAffected;
 		}
 
@@ -226,7 +224,13 @@ namespace System.Data.OracleClient {
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
 
-			return ExecuteNonQueryInternal (GetStatementHandle ());
+			OciStatementHandle statement = GetStatementHandle ();
+			try {
+				return ExecuteNonQueryInternal (statement);
+			}
+			finally	{
+				SafeDisposeHandle (statement);
+			}
 		}
 
 		public int ExecuteOracleNonQuery (out OracleString rowid)
@@ -240,14 +244,19 @@ namespace System.Data.OracleClient {
 
 			OciStatementHandle statement = GetStatementHandle ();
 
-			int retval = ExecuteNonQueryInternal (statement);
+			try {
+				int retval = ExecuteNonQueryInternal (statement);
 
-			OciRowIdDescriptor descriptor = (OciRowIdDescriptor) Environment.Allocate (OciHandleType.RowId);
-			descriptor.SetHandle (statement.GetAttributeIntPtr (OciAttributeType.RowId, ErrorHandle));
+				OciRowIdDescriptor descriptor = (OciRowIdDescriptor) Environment.Allocate (OciHandleType.RowId);
+				descriptor.SetHandle (statement.GetAttributeIntPtr (OciAttributeType.RowId, ErrorHandle));
 
-			rowid = new OracleString (descriptor.GetRowId (ErrorHandle));
+				rowid = new OracleString (descriptor.GetRowId (ErrorHandle));
 
-			return retval;
+				return retval;
+			}
+			finally	{
+				SafeDisposeHandle (statement);
+			}
 		}
 
 		[MonoTODO]
@@ -268,17 +277,28 @@ namespace System.Data.OracleClient {
 			AssertCommandTextIsSet ();
 			AssertNoDataReader ();
 
-			if (Transaction != null)
+			if (Transaction != null) 
 				Transaction.AttachToServiceContext ();
-
+			
 			OciStatementHandle statement = GetStatementHandle ();
+			OracleDataReader rd = null;
+			try	{
+				if (preparedStatement == null)
+					statement.Prepare (CommandText);
+				else
+					preparedStatement = null;	// OracleDataReader releases the statement handle
 
-			if (preparedStatement == null)
-				statement.Prepare (CommandText);
-			BindParameters (statement);
-			statement.ExecuteQuery ();
+				BindParameters (statement);
+				statement.ExecuteQuery ();
 
-			return new OracleDataReader (this, statement);
+				rd = new OracleDataReader (this, statement);
+			}
+			finally	{
+				if (statement != null && rd == null)
+					statement.Dispose();
+			}
+
+			return rd;
 		}
 
 		public object ExecuteScalar ()
@@ -293,16 +313,21 @@ namespace System.Data.OracleClient {
 				Transaction.AttachToServiceContext ();
 
 			OciStatementHandle statement = GetStatementHandle ();
-			if (preparedStatement == null)
-				statement.Prepare (CommandText);
-			BindParameters (statement);
+			try {
+				if (preparedStatement == null)
+					statement.Prepare (CommandText);
+				BindParameters (statement);
 
-			statement.ExecuteQuery ();
+				statement.ExecuteQuery ();
 
-			if (statement.Fetch ()) 
-				output = ((OciDefineHandle) statement.Values [0]).GetValue ();
-			else
-				output = DBNull.Value;
+				if (statement.Fetch ()) 
+					output = ((OciDefineHandle) statement.Values [0]).GetValue ();
+				else
+					output = DBNull.Value;
+			}
+			finally {
+				SafeDisposeHandle (statement);
+			}
 
 			return output;
 		}
@@ -317,6 +342,12 @@ namespace System.Data.OracleClient {
 			h.ErrorHandle = Connection.ErrorHandle;
 			h.Service = Connection.ServiceContext;
 			return h;
+		}
+
+		private void SafeDisposeHandle (OciStatementHandle h)
+		{
+			if (h != null && h != preparedStatement) 
+				h.Dispose();
 		}
 
 		IDbDataParameter IDbCommand.CreateParameter ()

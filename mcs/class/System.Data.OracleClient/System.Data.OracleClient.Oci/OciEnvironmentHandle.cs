@@ -33,7 +33,7 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			IntPtr newHandle = IntPtr.Zero;
-			status = OCIEnvCreate (out newHandle, 
+			status = OciCalls.OCIEnvCreate (out newHandle, 
 						mode, 
 						IntPtr.Zero, 
 						IntPtr.Zero, 
@@ -49,16 +49,6 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		[DllImport ("oci")]
-		static extern int OCIEnvCreate (out IntPtr envhpp,
-						[MarshalAs (UnmanagedType.U4)] OciEnvironmentMode mode,
-						IntPtr ctxp,
-						IntPtr malocfp,
-						IntPtr ralocfp,
-						IntPtr mfreep,
-						int xtramem_sz,
-						IntPtr usrmempp);
-
 		public OciErrorInfo HandleError ()
 		{
 			int errbufSize = 512;
@@ -68,7 +58,7 @@ namespace System.Data.OracleClient.Oci {
 			info.ErrorCode = 0;
 			info.ErrorMessage = String.Empty;
 
-			OciGlue.OCIErrorGet (Handle,
+			OciCalls.OCIErrorGet (Handle,
 					1,
 					IntPtr.Zero,
 					out info.ErrorCode,
