@@ -1,3 +1,7 @@
+2004-04-12  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* FileSystemInfo.cs: Implemented ISerializable
+
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BufferedStream.cs: On Position change, do not reset the buffer if the
