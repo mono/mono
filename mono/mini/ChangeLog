@@ -1,5 +1,10 @@
 2003-09-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_precompile_assemblies): New function to compile
+	all methods in all loaded assemblies.
+
+	* mini.h driver.c: Added new optimization flag MONO_OPT_PRECOMP.
+
 	* regalloc.h regalloc.c (MonoRegState): Change the type of 
 	iassign and fassign to int*, since they can contain large negative
 	values if the register is spilled. Also added some comments. Fixes
