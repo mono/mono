@@ -1,3 +1,8 @@
+2003-03-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs (Interface.DefineMembers): Avoid defining members
+	twice. 
+
 2003-02-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: handle the +/- options for -noconfig
