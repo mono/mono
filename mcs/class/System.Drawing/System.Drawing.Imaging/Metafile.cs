@@ -44,10 +44,10 @@ namespace System.Drawing.Imaging {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader) {
+		//	throw new NotImplementedException ();
+		//}
 
 		[MonoTODO]
 		public Metafile (Stream stream, IntPtr referenceHtc) {
@@ -74,10 +74,10 @@ namespace System.Drawing.Imaging {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader, bool deleteWmf) {
-			throw new NotImplementedException ();
-		}
+		//[MonoTODO]
+		//public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader, bool deleteWmf) {
+		//	throw new NotImplementedException ();
+		//}
 
 		[MonoTODO]
 		public Metafile (Stream stream, IntPtr referenceHdc, EmfType type) {
