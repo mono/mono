@@ -1,3 +1,7 @@
+2003-07-01  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c (mono_async_invoke): Use mono_g_hash_table_remove when
+	using MonoGHashTables.  Fixes threadpool bug posted to list.
 
 Tue Jul 1 11:45:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
