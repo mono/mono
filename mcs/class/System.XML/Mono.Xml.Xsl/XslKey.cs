@@ -67,10 +67,6 @@ namespace Mono.Xml.Xsl
 		public override XPathResultType ReturnType {
 			get { return expr.ReturnType; }
 		}
-
-		public override bool RequireSorting {
-			get { return true; }
-		}
 	}
 
 	internal class XslKey
@@ -78,8 +74,6 @@ namespace Mono.Xml.Xsl
 		QName name;
 		CompiledExpression useExpr;
 		Pattern matchPattern;
-//		Hashtable map;
-//		Hashtable mappedDocuments;
 
 		public XslKey (Compiler c)
 		{
@@ -215,22 +209,6 @@ namespace Mono.Xml.Xsl
 		public BaseIterator Evaluate (BaseIterator iter,
 			Expression valueExpr)
 		{
-			/*
-			ArrayList result = new ArrayList ();
-			object o = valueExpr.Evaluate (iter);
-			XPathNodeIterator it = o as XPathNodeIterator;
-			XsltContext ctx = iter.NamespaceManager as XsltContext;
-
-			if (it != null) {
-				while (it.MoveNext())
-					FindKeyMatch (it.Current.Value, result, iter.Current, ctx);
-			} else {
-				FindKeyMatch (XPathFunctions.ToString (o), result, iter.Current, ctx);
-			}
-			result.Sort (XPathNavigatorComparer.Instance);
-			return new ListIterator (result, (ctx));
-			*/
-
 			XPathNodeIterator i = iter;
 			if (iter.CurrentPosition == 0) {
 				i = iter.Clone ();
@@ -268,45 +246,5 @@ namespace Mono.Xml.Xsl
 
 			return result != null ? result : new NullIterator (iter);
 		}
-		
-		/*
-		void FindKeyMatch (string value, ArrayList result, XPathNavigator context, XsltContext xsltContext)
-		{
-			XPathNavigator searchDoc = context;//.Clone ();
-			searchDoc.MoveToRoot ();
-			if (key != null) {
-				XPathNodeIterator desc = searchDoc.SelectDescendants (XPathNodeType.All, true);
-
-				while (desc.MoveNext ()) {
-					if (Matches (desc.Current, value, xsltContext))
-						AddResult (result, desc.Current);
-					
-					if (!desc.Current.MoveToFirstAttribute ())
-						continue;
-					do {
-						if (Matches (desc.Current, value, xsltContext))
-							AddResult (result, desc.Current);	
-					} while (desc.Current.MoveToNextAttribute ());
-					
-					desc.Current.MoveToParent ();
-				}
-			}
-		}
-
-		void AddResult (ArrayList result, XPathNavigator nav)
-		{
-			for (int i = 0; i < result.Count; i++) {
-				XmlNodeOrder docOrder = nav.ComparePosition (((XPathNavigator)result [i]));
-				if (docOrder == XmlNodeOrder.Same)
-					return;
-				
-				if (docOrder == XmlNodeOrder.Before) {
-					result.Insert(i, nav.Clone ());
-					return;
-				}
-			}
-			result.Add (nav.Clone ());
-		}
-		*/
 	}
 }
