@@ -1,4 +1,9 @@
 
+Tue Sep 24 12:12:16 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: deal with the <Module> class that may have a NULL vtable.
+	Eliminate warnings.
+
 Tue Sep 24 11:28:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* image.c, image.h: more strong name helpers.
