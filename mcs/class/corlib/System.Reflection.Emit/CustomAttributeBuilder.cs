@@ -117,7 +117,6 @@ namespace System.Reflection.Emit {
 			default:
 				return UnmanagedMarshal.DefineUnmanagedMarshal ((UnmanagedType)utype);
 			}
-			return null;
 		}
 
 	}

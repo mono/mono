@@ -1,3 +1,6 @@
+2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CustomAttributeBuilder.cs: removed compile warning.
 
 Fri Jul 12 11:34:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
