@@ -68,6 +68,13 @@ namespace System.Windows.Forms {
 		internal static bool		grab_confined;		// Is the current grab (if any) confined to grab_area?
 		internal static IntPtr		grab_hwnd;		// The window that is grabbed
 		internal static Rectangle	grab_area;		// The area the current grab is confined to
+		internal static IntPtr		click_pending_hwnd;	// 
+		internal static Msg		click_pending_message;	// 
+		internal static IntPtr		click_pending_lparam;	// 
+		internal static IntPtr		click_pending_wparam;	// 
+		internal static int		click_pending_time;	// Last time we received a mouse click
+		internal static bool		click_pending;		// True if we haven't sent the last mouse click
+		internal static int		double_click_interval;	// in milliseconds, how fast one has to click for a double click
 
 		private static Hashtable	handle_data;
 		private XEventQueue		message_queue;
@@ -146,6 +153,8 @@ namespace System.Windows.Forms {
 
 			wake = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 			wake.Connect (listen.LocalEndPoint);
+
+			double_click_interval = 500;
 
 #if __MonoCS__
 			pollfds = new Pollfd [2];
@@ -887,6 +896,37 @@ namespace System.Windows.Forms {
 					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
 					mouse_position.X=xevent.ButtonEvent.x;
 					mouse_position.Y=xevent.ButtonEvent.y;
+
+					if (!click_pending) {
+						click_pending = true;
+						click_pending_hwnd = msg.hwnd;
+						click_pending_message = msg.message;
+						click_pending_wparam = msg.wParam;
+						click_pending_lparam = msg.lParam;
+						click_pending_time = xevent.ButtonEvent.time;
+					} else {
+						if (((xevent.ButtonEvent.time - click_pending_time)<double_click_interval) && (msg.wParam == click_pending_wparam) && (msg.lParam == click_pending_lparam) && (msg.message == click_pending_message)) {
+							// Looks like a genuine double click, clicked twice on the same spot with the same keys
+							switch(xevent.ButtonEvent.button) {
+								case 1: {
+									msg.message=Msg.WM_LBUTTONDBLCLK;
+									break;
+								}
+
+								case 2: {
+									msg.message=Msg.WM_MBUTTONDBLCLK;
+									break;
+								}
+
+								case 3: {
+									msg.message=Msg.WM_RBUTTONDBLCLK;
+									break;
+								}
+							}
+						}
+						click_pending = false;
+					}
+
 					break;
 				}
 

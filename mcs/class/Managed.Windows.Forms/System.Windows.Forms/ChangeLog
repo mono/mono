@@ -1,3 +1,8 @@
+2004-11-16  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs (GetMessage): Implemented generation of
+	  double click mouse messages
+
 2004-11-12  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	*  Form.cs, MainMenu.cs, MenuAPI.cs: tracker should be for tracking session
