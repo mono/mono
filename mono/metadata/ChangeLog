@@ -1,3 +1,10 @@
+2003-07-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* exception.c:
+	* exception.h:
+	* icall.c:
+	* object.h: fill in the type name for TypeLoadException.
+
 2003-07-23  Ravi Pratap  <ravi@ximian.com>
 
 	* class.c: Fixes from Paolo in response to bug #45415 (Subclass
