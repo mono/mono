@@ -1,0 +1,11 @@
+2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X501Name.cs: New. X.501 Distinguished Names stuff
+	* X509Builder.cs: New. Abstract class for building X.509 related
+	structures (like certificates and CRLs).
+	* X509Certificate.cs: New. A more complete class to handle X.509
+	certificates.
+	* X509CertificateBuilder.cs: New. Class to build X.509 certificates.
+	* X509Extension.cs: New. A base class for all X.509 extensions.
+	* X509Extensions.cs: New. X509Extension collection.
+	* X520Attributes.cs: New. X.520 attributes (mainly for X501 names)
