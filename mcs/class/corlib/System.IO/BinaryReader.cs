@@ -289,7 +289,28 @@ namespace System.IO {
 			decimal ret;
 			byte* ret_ptr = (byte *)&ret;
 			for (int i = 0; i < 16; i++) {
-				ret_ptr[i] = m_buffer[i];
+			  
+				/*
+				 * internal representation of decimal is 
+				 * ss32, hi32, lo32, mi32, 
+				 * but in stream it is 
+				 * lo32, mi32, hi32, ss32
+				 * So we have to rerange this int32 values
+				 */			  
+			  
+			        if (i < 4) {
+				        // lo 8 - 12			  
+				        ret_ptr [i + 8] = m_buffer [i];
+				} else if (i < 8) {
+				        // mid 12 - 16
+				        ret_ptr [i + 8] = m_buffer [i];
+				} else if (i < 12) {
+				        // hi 4 - 8
+				        ret_ptr [i - 4] = m_buffer [i];
+				} else if (i < 16) {
+				        // ss 0 - 4
+				        ret_ptr [i - 12] = m_buffer [i];
+				}				
 			}
 
 			return ret;

@@ -1,5 +1,9 @@
 2003-04-13  Ville Palo <vi64pa@kolumbus.fi>
 
+	* BinaryReader.cs: Fix to ReadDecimal() method.
+	
+2003-04-13  Ville Palo <vi64pa@kolumbus.fi>
+
 	* StringReader.cs: Added some ObjectDisposedExceptions.
 	* StringWriter.cs: Added some ObjectDisposedExceptions.
 	* BinaryReader.cs: Added some ObjectDisposedExceptions.
