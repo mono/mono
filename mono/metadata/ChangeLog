@@ -1,3 +1,8 @@
+2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.h: define here WapiOverlapped on windows. I don't want the
+	regular OVERLAPPED one.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* marshal.c: Marshal.SizeOf throws an exception for AutoLayout. Fixes
