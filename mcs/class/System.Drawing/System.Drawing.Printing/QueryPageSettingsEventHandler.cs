@@ -13,5 +13,5 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for QueryPageSettingsEventHandler.
 	/// </summary>
-	public delegate void QueryPageSettingsEventHandler(object sender, QueryPageSettingsEventArgs e);
+	//public delegate void QueryPageSettingsEventHandler(object sender, QueryPageSettingsEventArgs e);
 }
