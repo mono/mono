@@ -29,7 +29,7 @@ namespace System.Drawing.Printing
 //				throw new NotImplementedException ();
 //			}
 //		}
-		//[MonoTODO]
+		[MonoTODO]
 		public bool Color{
 			get{
 				throw new NotImplementedException ();
@@ -39,7 +39,7 @@ namespace System.Drawing.Printing
 			}
 		}
 
-		//[MonoTODO]
+		[MonoTODO]
 		public bool Landscape {
 			get{
 				throw new NotImplementedException ();
@@ -48,7 +48,7 @@ namespace System.Drawing.Printing
 				throw new NotImplementedException ();
 			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public Margins Margins{
 			get{
 				throw new NotImplementedException ();
@@ -57,7 +57,7 @@ namespace System.Drawing.Printing
 				throw new NotImplementedException ();
 			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public PaperSize PaperSize{
 			get{
 				throw new NotImplementedException ();
@@ -66,7 +66,7 @@ namespace System.Drawing.Printing
 				throw new NotImplementedException ();
 			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public PaperSource PaperSource{
 			get{
 				throw new NotImplementedException ();
@@ -75,7 +75,7 @@ namespace System.Drawing.Printing
 				throw new NotImplementedException ();
 			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public PrinterResolution PrinterResolution{
 			get{
 				throw new NotImplementedException ();
@@ -94,25 +94,25 @@ namespace System.Drawing.Printing
 //			}
 //		}
 		//[ComVisible(false)]
-		//[MonoTODO]
+		[MonoTODO]
 		public object Clone(){
 			throw new NotImplementedException ();
 		}
 
 		//[ComVisible(false)]
-		//[MonoTODO]
+		[MonoTODO]
 		public void CopyToHdevmode(IntPtr hdevmode){
 			throw new NotImplementedException ();
 		}
 
 		//[ComVisible(false)]
-		//[MonoTODO]
+		[MonoTODO]
 		public void SetHdevmode(IntPtr hdevmode){
 			throw new NotImplementedException ();
 		}
 	
 		//[ComVisible(false)]
-		//[MonoTODO]
+		[MonoTODO]
 		public override string ToString(){
 			//FIXME:  //THIS is wrong! This method is to be overridden!
 			return base.ToString();

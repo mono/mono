@@ -41,7 +41,7 @@ namespace System.Drawing.Printing {
 				documentname = value;
 			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public PrintControler PrintControler{
 			get{
 				throw new NotImplementedException ();				
@@ -50,7 +50,7 @@ namespace System.Drawing.Printing {
 				throw new NotImplementedException ();
 			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public PrinterSettings PrinterSettings{
 			get{
 				throw new NotImplementedException ();				
@@ -65,23 +65,23 @@ namespace System.Drawing.Printing {
 		public override string ToString(){
 			throw new NotImplementedException ();
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		protected virtual void OnBeginPrint(PrintEventArgs e){
 			//fire the event
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		protected virtual void OnEndPrint(PrintEventArgs e){
 			//fire the event
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		protected virtual void OnPrintPage(PrintEventArgs e){
 			//fire the event
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		protected virtual void OnQueryPageSettings(PrintEventArgs e){
 			//fire the event
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		protected virtual void OnBeginPaint(PrintEventArgs e){
 			//fire the event
 		}

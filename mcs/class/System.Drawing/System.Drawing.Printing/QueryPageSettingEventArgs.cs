@@ -15,20 +15,20 @@ namespace System.Drawing.Printing
 	/// </summary>
 	public class QueryPageSettingEventArgs : PrintEventArgs
 	{
-		//private pageSettings pageSettings;
+		private PageSettings pageSettings;
 
-//		public QueryPageSettingEventArgs(pageSettings pageSettings)
-//		{
-//			this.pageSettings = pageSettings;
-//		}
-//		public PageSettings PageSettings {
-//			get{
-//			return pageSettings;
-//		}
-//			set{
-//				pageSettings = value;
-//			}
-//		}
+		public QueryPageSettingEventArgs(PageSettings pageSettings)
+		{
+			this.pageSettings = pageSettings;
+		}
+		public PageSettings PageSettings {
+			get{
+			return pageSettings;
+		}
+			set{
+				pageSettings = value;
+			}
+		}
 
 	}
 }

@@ -1,5 +1,19 @@
 2002-9-2  DennisHayes <dennish@raytek.com>
 
+* PageSettings.cs 
+* PaperSize.cs 
+* PaperSource.cs 
+* PrintControler.cs 
+* PrintDocument.cs 
+* PrintingPermission.cs 
+* PrintPageEventHandler.cs 
+* QueryPageSettingEventArgs.cs 
+* QueryPageSettingsEventHandler.cs 
+* added todos back
+* minor bug fixes
+
+2002-9-2  DennisHayes <dennish@raytek.com>
+
 	* Duplex.cs
 	* InvalidPrinterExecption.cs
 	* Margins.cs

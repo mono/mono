@@ -15,17 +15,17 @@ namespace System.Drawing.Printing
 	/// </summary>
 	public class PaperSource
 	{
-		//[MonoTODO]
+		[MonoTODO]
 		public PaperSourceKind Kind{
 			get {
 			throw new NotImplementedException ();			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public string SourceName{
 			get {
 			throw new NotImplementedException ();			}
 		}
-		//[MonoTODO]
+		[MonoTODO]
 		public override string ToString(){
 			return SourceName;
 		}

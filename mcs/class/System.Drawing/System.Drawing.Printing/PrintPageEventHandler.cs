@@ -13,5 +13,5 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PrintPageEventHandler.
 	/// </summary>
-//	public delegate void PrintPageEventHandler(object sender, PrintPageEventHandlerArgs e);
+	public delegate void PrintPageEventHandler(object sender, PrintPageEventArgs e);
 }
