@@ -17,7 +17,7 @@ namespace Microsoft.CSharp {
 
 	public class Compiler {
 		
-		public Compiler()
+		private Compiler()
 		{
 		}
 
