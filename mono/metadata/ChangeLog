@@ -1,3 +1,11 @@
+2004-09-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.c (mono_image_close): Applied patch from 
+	vasantha.paulraj@honeywell.com (Vasantha selvi). Fix crash when an
+	assembly is loaded multiple times from data.
+	
+	* image.c (mono_image_open): Fix warning.
+
 2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_create_runtime_class): Initialize
