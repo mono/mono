@@ -2682,9 +2682,16 @@ namespace Mono.CSharp {
 			if (parent is Class && ((ModFlags & Modifiers.STATIC) == 0)){
 				if (Initializer == null)
 					Initializer = new ConstructorBaseInitializer (null, parent.Location);
-				
+
+
+				//
+				// Spec mandates that Initializers will not have
+				// `this' access
+				//
+				ec.IsStatic = true;
 				if (!Initializer.Resolve (ec))
 					return;
+				ec.IsStatic = false;
 			}
 
 			LabelParameters (ec, ParameterTypes (parent), ConstructorBuilder);
@@ -2695,6 +2702,7 @@ namespace Mono.CSharp {
 			if (parent is Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
 					parent.EmitFieldInitializers (ec);
+
 					Initializer.Emit (ec);
 				}
 			}

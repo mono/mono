@@ -1,3 +1,12 @@
+2002-05-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Constructor.Emit): Set the IsStatic flag in the
+	EmitContext during the instance constructor initializer
+	resolution, to stop access to instance variables.
+
+	This is mandated by the spec, last paragraph of the `constructor
+	initializers' section. 
+
 2002-05-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay, class.cs (Accessor): new class used to represent

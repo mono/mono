@@ -35,23 +35,6 @@ BUGS
 
 * Implement visibility.
 
-* Adding variables.
-
-	We do add variables in a number of places, and this is erroneous:
-
-	void a (int b)
-	{
-		int b;
-	}
-
-	Also:
-
-	void a (int b)
-	{
-		foreach (int b ...)
-			;
-	}
-
 * Visibility
 
 	I am not reporting errors on visibility yet.
