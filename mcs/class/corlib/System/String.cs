@@ -50,10 +50,10 @@ namespace System {
 		public extern override int GetHashCode();
 
 		public static bool Equals(String str1, String str2) {
-			if ((Object) str1 == (Object) str2)
+			if ((str1 as object) == (str2 as object))
 				return true;
 	    
-			if (null == (Object) str1 || null == (Object) str2)
+			if (null == str1 || null == str2)
 				return false;
 
 			if (str1.length != str2.length)
@@ -77,7 +77,11 @@ namespace System {
 			if (!(obj is String))
 				return false;
 
-			return InternalEquals(this, (String) obj);
+			string other = (string) obj;
+			if (length != other.length)
+				return false;
+
+			return InternalEquals(this, other);
 		}
 
 		public bool Equals(String value) {
