@@ -1,3 +1,8 @@
+2004-11-26  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcParameter.cs: Fixed Parameter Size property as well as
+	insufficient buffer errors. bug #68749.
+
 2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OdbcPermission.cs: Added internal constructor accepting an Odbc

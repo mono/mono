@@ -81,6 +81,17 @@ namespace System.Data.Odbc
 		{
 			this.name = name;
 			this.ParamValue = value;
+                        
+                        if (value != null && !value.GetType ().IsValueType) {
+                                Type type = value.GetType ();
+                                if (type.IsArray)
+                                        size = type.GetElementType () == typeof (byte) ? 
+                                                ((Array) value).Length : 0;
+                                else
+                                        size = value.ToString ().Length;
+                        }
+
+
 		}
 
 		public OdbcParameter (string name, OdbcType dataType) 
@@ -263,13 +274,17 @@ namespace System.Data.Odbc
 				// Init string buffer
 				 if (ParamValue is String)
                                         paramValueString = "\'"+paramValueString+"\'";
+
+                                 int minSize = size;
+                                 minSize = size > 20 ? size : 20;
+				 if (buffer == null || buffer.Length < minSize)
+                                         buffer = new byte[minSize];
+                                 else
+                                         buffer.Initialize();
                                  
-				 if (buffer == null || buffer.Length < ((size > 20) ? size : 20))
-					buffer = new byte[(size > 20) ? size : 20];
-				else
-					buffer.Initialize();
-				// Convert value into string and store into buffer
-				System.Text.Encoding.ASCII.GetBytes(paramValueString, 0, paramValueString.Length, buffer, 0);
+                                 // Convert value into string and store into buffer
+                                 minSize = paramValueString.Length < minSize ? paramValueString.Length : minSize;
+                                 System.Text.Encoding.ASCII.GetBytes(paramValueString, 0, minSize, buffer, 0);
 			}
 			bufferIsSet = true;
 		}
