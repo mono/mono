@@ -1,3 +1,11 @@
+2003-07-21  Martin Baulig  <martin@ximian.com>
+
+	* test-206.cs: New test for bug #46502.
+
+2003-07-20  Martin Baulig  <martin@ximian.com>
+
+	* test-205.cs: New test for some namespace stuff.
+
 2003-07-16  Ravi Pratap  <ravi@ximian.com>
 
 	* test-39.cs: Improve test to check emission on interfaces too.
