@@ -1,3 +1,9 @@
+2001-09-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: added some rules to optimize code
+
+	* testjit.c (get_address): use a binary search to get the address
+	(main): added an option to debug the jit (-d)
 
 Tue Sep 18 13:19:16 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
