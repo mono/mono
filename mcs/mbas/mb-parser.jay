@@ -4833,7 +4833,7 @@ protected override int parse ()
 		Report.Error(e.code, e.loc, e.Message);
 	}
 	catch (Exception e) {
-		Report.Error (29999, lexer.Location, lexer.location + "\nParsing error in " + lexer.EffectiveSource + "\n" + e.ToString());
+		Report.Error (29999, lexer.Location, "Parsing error");
 	}
 
 	RootContext.VerifyImports();

@@ -1,3 +1,6 @@
+2004-08-09  Jambunathan K  <kjambunathan@novell.com>
+	* mb-parser.jay: Sanitized parser's generic error message 
+
 2004-08-07 Anirban Bhattacharjee <banirban@novell.com>
 	* enum.cs: Enum members became enum type now, instead of underlying type
 
