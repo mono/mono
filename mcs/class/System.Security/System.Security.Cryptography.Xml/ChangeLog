@@ -1,3 +1,7 @@
+2004-08-29  Tim Coleman <tim@timcoleman.com>
+	* EncryptedData.cs EncryptedXml.cs: 
+		Add .NET 2.0 method stubs.
+
 2004-07-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Signature.cs : Fixed NextElementPos() that incorrectly examined

@@ -32,6 +32,7 @@
 using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
 using System.Xml;
@@ -169,6 +170,24 @@ namespace System.Security.Cryptography.Xml {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public EncryptedData Encrypt (XmlElement inputElement, string keyName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public EncryptedData Encrypt (XmlElement inputElement, X509CertificateEx certificate)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public byte[] EncryptData (byte[] plainText, SymmetricAlgorithm symAlg)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public byte[] EncryptData (XmlElement inputElement, SymmetricAlgorithm symAlg, bool content)
 		{
 			if (content)
@@ -249,6 +268,12 @@ namespace System.Security.Cryptography.Xml {
 				xel = (XmlElement) document.SelectSingleNode ("//*[@Id='" + idValue + "']");
 			}
 			return xel;
+		}
+
+		[MonoTODO]
+		public void ReplaceData (XmlElement inputElement, byte[] decryptedData)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

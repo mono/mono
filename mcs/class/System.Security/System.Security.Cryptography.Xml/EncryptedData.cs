@@ -30,6 +30,7 @@
 
 #if NET_2_0
 
+using System.Security.Cryptography.X509Certificates; 
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -45,6 +46,18 @@ namespace System.Security.Cryptography.Xml {
 		#endregion // Constructors
 
 		#region Methods
+
+		[MonoTODO]
+		public EncryptedData Encrypt (XmlElement inputElement, string keyName)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public EncryptedData Encrypt (XmlElement inputElement, X509CertificateEx certificate)
+		{
+			throw new NotImplementedException();
+		}
 
 		public override XmlElement GetXml ()
 		{
