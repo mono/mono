@@ -1,3 +1,12 @@
+2004-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* mini-x86.c, cpu-pentium.md, inssel-x86.brg:
+	set tree->dreg correctly with tls. Allow any
+	register to be used.
+
+	* mini-x86.c (read_tls_offset_from_method): add new code
+	generation pattern seen with GCC.
+
 
 Thu Aug 19 17:26:55 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
@@ -17,6 +26,8 @@ Thu Aug 19 17:26:55 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 2004-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	This patch inlines tls access, when possible.
+	
 	* mini.h: new arch functions for TLS intrinsics.
 	All platforms updated with a stub.
 
