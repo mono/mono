@@ -79,6 +79,38 @@ namespace System.Web
 		static object PreRequestHandlerExecuteId = new Object ();
 		static object PostRequestHandlerExecuteId = new Object ();
 		static object ErrorId = new Object ();
+		
+#if NET_2_0
+		AsyncEvents _postAcquireRequestStateAsync;
+		AsyncEvents _postAuthenticateRequestAsync;
+		AsyncEvents _postAuthorizeRequestAsync;
+		AsyncEvents _postMapRequestHandlerAsync;
+		AsyncEvents _postReleaseRequestStateAsync;
+		AsyncEvents _postResolveRequestCacheAsync;
+		AsyncEvents _postUpdateRequestCacheAsync;
+		AsyncEvents _preAcquireRequestStateAsync;
+		AsyncEvents _preAuthenticateRequestAsync;
+		AsyncEvents _preAuthorizeRequestAsync;
+		AsyncEvents _preMapRequestHandlerAsync;
+		AsyncEvents _preReleaseRequestStateAsync;
+		AsyncEvents _preResolveRequestCacheAsync;
+		AsyncEvents _preUpdateRequestCacheAsync;
+		
+		static object PostAcquireRequestStateId = new Object ();
+		static object PostAuthenticateRequestId = new Object ();
+		static object PostAuthorizeRequestId = new Object ();
+		static object PostMapRequestHandlerId = new Object ();
+		static object PostReleaseRequestStateId = new Object ();
+		static object PostResolveRequestCacheId = new Object ();
+		static object PostUpdateRequestCacheId = new Object ();
+		static object PreAcquireRequestStateId = new Object ();
+		static object PreAuthenticateRequestId = new Object ();
+		static object PreAuthorizeRequestId = new Object ();
+		static object PreMapRequestHandlerId = new Object ();
+		static object PreReleaseRequestStateId = new Object ();
+		static object PreResolveRequestCacheId = new Object ();
+		static object PreUpdateRequestCacheId = new Object ();
+#endif
 
 		// List of events
 		private EventHandlerList _Events;
@@ -238,6 +270,306 @@ namespace System.Web
 
 			_updateRequestCacheAsync.Add (beg, end);
 		}
+		
+#if NET_2_0
+		public event EventHandler PostAcquireRequestState {
+			add { Events.AddHandler (PostAcquireRequestStateId, value); }
+			remove { Events.RemoveHandler (PostAcquireRequestStateId, value); }
+		}
+
+		public event EventHandler PostAuthenticateRequest {
+			add { Events.AddHandler (PostAuthenticateRequestId, value); }
+			remove { Events.RemoveHandler (PostAuthenticateRequestId, value); }
+		}
+
+		public event EventHandler PostAuthorizeRequest {
+			add { Events.AddHandler (PostAuthorizeRequestId, value); }
+			remove { Events.RemoveHandler (PostAuthorizeRequestId, value); }
+		}
+
+		public event EventHandler PostMapRequestHandler {
+			add { Events.AddHandler (PostMapRequestHandlerId, value); }
+			remove { Events.RemoveHandler (PostMapRequestHandlerId, value); }
+		}
+
+		public event EventHandler PostReleaseRequestState {
+			add { Events.AddHandler (PostReleaseRequestStateId, value); }
+			remove { Events.RemoveHandler (PostReleaseRequestStateId, value); }
+		}
+
+		public event EventHandler PostResolveRequestCache {
+			add { Events.AddHandler (PostResolveRequestCacheId, value); }
+			remove { Events.RemoveHandler (PostResolveRequestCacheId, value); }
+		}
+
+		public event EventHandler PostUpdateRequestCache {
+			add { Events.AddHandler (PostUpdateRequestCacheId, value); }
+			remove { Events.RemoveHandler (PostUpdateRequestCacheId, value); }
+		}
+
+		public void AddOnAcquireRequestStateAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _acquireRequestStateAsync)
+				_acquireRequestStateAsync = new AsyncEvents ();
+
+			_acquireRequestStateAsync.Add (beg, end, state);
+		}
+
+		public void AddOnAuthenticateRequestAsync(BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _authenticateRequestAsync)
+				_authenticateRequestAsync = new AsyncEvents ();
+
+			_authenticateRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnAuthorizeRequestAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _authorizeRequestAsync)
+				_authorizeRequestAsync = new AsyncEvents ();
+
+			_authorizeRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnBeginRequestAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _beginRequestAsync)
+				_beginRequestAsync = new AsyncEvents ();
+
+			_beginRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnEndRequestAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _endRequestAsync)
+				_endRequestAsync = new AsyncEvents ();
+
+			_endRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostAcquireRequestStateAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPostAcquireRequestStateAsync (beg, end, null);
+		}
+
+		public void AddOnPostAcquireRequestStateAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postAcquireRequestStateAsync)
+				_postAcquireRequestStateAsync = new AsyncEvents ();
+
+			_postAcquireRequestStateAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostAuthenticateRequestAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPostAuthenticateRequestAsync (beg, end, null);
+		}
+
+		public void AddOnPostAuthenticateRequestAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postAuthenticateRequestAsync)
+				_postAuthenticateRequestAsync = new AsyncEvents ();
+
+			_postAuthenticateRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostAuthorizeRequestAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPostAuthorizeRequestAsync (beg, end, null);
+		}
+
+		public void AddOnPostAuthorizeRequestAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postAuthorizeRequestAsync)
+				_postAuthorizeRequestAsync = new AsyncEvents ();
+
+			_postAuthorizeRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostMapRequestHandlerAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPostMapRequestHandlerAsync (beg, end, null);
+		}
+
+		public void AddOnPostMapRequestHandlerAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postMapRequestHandlerAsync)
+				_postMapRequestHandlerAsync = new AsyncEvents ();
+
+			_postMapRequestHandlerAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostReleaseRequestStateAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPostReleaseRequestStateAsync (beg, end, null);
+		}
+
+		public void AddOnPostReleaseRequestStateAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postReleaseRequestStateAsync)
+				_postReleaseRequestStateAsync = new AsyncEvents ();
+
+			_postReleaseRequestStateAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostRequestHandlerExecuteAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postRequestHandlerExecuteAsync)
+				_postRequestHandlerExecuteAsync = new AsyncEvents ();
+
+			_postRequestHandlerExecuteAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostResolveRequestCacheAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPostResolveRequestCacheAsync (beg, end, null);
+		}
+
+		public void AddOnPostResolveRequestCacheAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postResolveRequestCacheAsync)
+				_postResolveRequestCacheAsync = new AsyncEvents ();
+
+			_postResolveRequestCacheAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPostUpdateRequestCacheAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPostUpdateRequestCacheAsync (beg, end, null);
+		}
+
+		public void AddOnPostUpdateRequestCacheAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _postUpdateRequestCacheAsync)
+				_postUpdateRequestCacheAsync = new AsyncEvents ();
+
+			_postUpdateRequestCacheAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreAcquireRequestStateAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPreAcquireRequestStateAsync (beg, end, null);
+		}
+
+		public void AddOnPreAcquireRequestStateAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preAcquireRequestStateAsync)
+				_preAcquireRequestStateAsync = new AsyncEvents ();
+
+			_preAcquireRequestStateAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreAuthenticateRequestAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPreAuthenticateRequestAsync (beg, end, null);
+		}
+
+		public void AddOnPreAuthenticateRequestAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preAuthenticateRequestAsync)
+				_preAuthenticateRequestAsync = new AsyncEvents ();
+
+			_preAuthenticateRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreAuthorizeRequestAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPreAuthorizeRequestAsync (beg, end, null);
+		}
+
+		public void AddOnPreAuthorizeRequestAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preAuthorizeRequestAsync)
+				_preAuthorizeRequestAsync = new AsyncEvents ();
+
+			_preAuthorizeRequestAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreMapRequestHandlerAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPreMapRequestHandlerAsync (beg, end, null);
+		}
+
+		public void AddOnPreMapRequestHandlerAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preMapRequestHandlerAsync)
+				_preMapRequestHandlerAsync = new AsyncEvents ();
+
+			_preMapRequestHandlerAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreReleaseRequestStateAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPreReleaseRequestStateAsync (beg, end, null);
+		}
+
+		public void AddOnPreReleaseRequestStateAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preReleaseRequestStateAsync)
+				_preReleaseRequestStateAsync = new AsyncEvents ();
+
+			_preReleaseRequestStateAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreRequestHandlerExecuteAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preRequestHandlerExecuteAsync)
+				_preRequestHandlerExecuteAsync = new AsyncEvents ();
+
+			_preRequestHandlerExecuteAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreResolveRequestCacheAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPreResolveRequestCacheAsync (beg, end, null);
+		}
+
+		public void AddOnPreResolveRequestCacheAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preResolveRequestCacheAsync)
+				_preResolveRequestCacheAsync = new AsyncEvents ();
+
+			_preResolveRequestCacheAsync.Add (beg, end, state);
+		}
+
+		public void AddOnPreUpdateRequestCacheAsync (BeginEventHandler beg, EndEventHandler end)
+		{
+			AddOnPreUpdateRequestCacheAsync (beg, end, null);
+		}
+
+		public void AddOnPreUpdateRequestCacheAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _preUpdateRequestCacheAsync)
+				_preUpdateRequestCacheAsync = new AsyncEvents ();
+
+			_preUpdateRequestCacheAsync.Add (beg, end, state);
+		}
+
+		public void AddOnReleaseRequestStateAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _releaseRequestStateAsync)
+				_releaseRequestStateAsync = new AsyncEvents ();
+
+			_releaseRequestStateAsync.Add (beg, end, state);
+		}
+
+		public void AddOnResolveRequestCacheAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _resolveRequestCacheAsync)
+				_resolveRequestCacheAsync = new AsyncEvents ();
+
+			_resolveRequestCacheAsync.Add (beg, end, state);
+		}
+
+		public void AddOnUpdateRequestCacheAsync (BeginEventHandler beg, EndEventHandler end, object state)
+		{
+			if (null == _updateRequestCacheAsync)
+				_updateRequestCacheAsync = new AsyncEvents ();
+
+			_updateRequestCacheAsync.Add (beg, end, state);
+		}
+#endif
+
 
 #endregion
 
@@ -297,10 +629,12 @@ namespace System.Web
 			EndEventHandler _end;
 			AsyncCallback _callback;
 			bool _async;
+			object _state;
 
 			public AsyncEventState (HttpApplication app,
 						BeginEventHandler begin,
-						EndEventHandler end)
+						EndEventHandler end,
+						object state)
 			{
 				_async = false;
 				_app = app;
@@ -312,7 +646,7 @@ namespace System.Web
 			public void Execute ()
 			{
 				_async = true;
-				IAsyncResult ar = _begin (_app, EventArgs.Empty, _callback, null);
+				IAsyncResult ar = _begin (_app, EventArgs.Empty, _callback, _state);
 				if (ar.CompletedSynchronously) {
 					_async = false;
 					_end (ar);
@@ -353,14 +687,16 @@ namespace System.Web
 		{
 			ArrayList _events;
 			class EventRecord {
-				public EventRecord(BeginEventHandler beg, EndEventHandler end)
+				public EventRecord(BeginEventHandler beg, EndEventHandler end, object state)
 				{
 					Begin = beg;
 					End = end;
+					State = state;
 				}
 
 				public BeginEventHandler	Begin;
 				public EndEventHandler		End;
+				public object				State;
 			}
 
 			public AsyncEvents ()
@@ -370,7 +706,12 @@ namespace System.Web
 
 			public void Add (BeginEventHandler begin, EndEventHandler end)
 			{
-				_events.Add (new EventRecord (begin, end));
+				_events.Add (new EventRecord (begin, end, null));
+			}
+
+			public void Add (BeginEventHandler begin, EndEventHandler end, object state)
+			{
+				_events.Add (new EventRecord (begin, end, state));
 			}
 
 			public void GetAsStates (HttpApplication app, ArrayList states)
@@ -378,7 +719,8 @@ namespace System.Web
 				foreach (object obj in _events)
 					states.Add (new AsyncEventState (app,
 									((EventRecord) obj).Begin,
-									((EventRecord) obj).End));
+									((EventRecord) obj).End,
+									((EventRecord) obj).State));
 			}
 		}
 
@@ -547,6 +889,13 @@ namespace System.Web
 				if (null != _app._beginRequestAsync)
 					_app._beginRequestAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.BeginRequestId, states);
+				
+#if NET_2_0
+				// PreAuthenticateRequest
+				if (null != _app._preAuthenticateRequestAsync)
+					_app._preAuthenticateRequestAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PreAuthenticateRequestId, states);
+#endif
 
 				// AuthenticateRequest
 				if (null != _app._authenticateRequestAsync)
@@ -556,24 +905,79 @@ namespace System.Web
 				// DefaultAuthentication
 				EventHandler defaultAuthHandler = (EventHandler) _app.Events [HttpApplication.DefaultAuthenticationId];
 				states.Add (new EventState (_app, defaultAuthHandler));
+				
+#if NET_2_0
+				// PostAuthenticateRequest
+				if (null != _app._postAuthenticateRequestAsync)
+					_app._postAuthenticateRequestAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PostAuthenticateRequestId, states);
+				
+				// PreAuthorizeRequest
+				if (null != _app._preAuthorizeRequestAsync)
+					_app._preAuthorizeRequestAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PreAuthorizeRequestId, states);
+#endif
 
 				// AuthorizeRequest
 				if (null != _app._authorizeRequestAsync)
 					_app._authorizeRequestAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.AuthorizeRequestId, states);
 
+#if NET_2_0
+				// PostAuthorizeRequest
+				if (null != _app._postAuthorizeRequestAsync)
+					_app._postAuthorizeRequestAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PostAuthorizeRequestId, states);
+				
+				// PreResolveRequestCache
+				if (null != _app._preResolveRequestCacheAsync)
+					_app._preResolveRequestCacheAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PreResolveRequestCacheId, states);
+#endif
+
 				// ResolveRequestCache
 				if (null != _app._resolveRequestCacheAsync)
 					_app._resolveRequestCacheAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.ResolveRequestCacheId, states);
 
+#if NET_2_0
+				// PostResolveRequestCache
+				if (null != _app._postResolveRequestCacheAsync)
+					_app._postResolveRequestCacheAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PostResolveRequestCacheId, states);
+				
+				// PreMapRequestHandler
+				if (null != _app._preMapRequestHandlerAsync)
+					_app._preMapRequestHandlerAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PreMapRequestHandlerId, states);
+#endif
+
 				// [A handler (a page corresponding to the request URL) is created at this point.]
 				states.Add (new CreateHandlerState (_app));
+
+#if NET_2_0
+				// PostMapRequestHandler
+				if (null != _app._postMapRequestHandlerAsync)
+					_app._postMapRequestHandlerAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PostMapRequestHandlerId, states);
+				
+				// PreAcquireRequestState
+				if (null != _app._preAcquireRequestStateAsync)
+					_app._preAcquireRequestStateAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PreAcquireRequestStateId, states);
+#endif
 
 				// AcquireRequestState
 				if (null != _app._acquireRequestStateAsync)
 					_app._acquireRequestStateAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.AcquireRequestStateId, states);
+
+#if NET_2_0
+				// PostAcquireRequestState
+				if (null != _app._postAcquireRequestStateAsync)
+					_app._postAcquireRequestStateAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PostAcquireRequestStateId, states);
+#endif
 
 				// PreRequestHandlerExecute
 				if (null != _app._preRequestHandlerExecuteAsync)
@@ -588,18 +992,46 @@ namespace System.Web
 					_app._postRequestHandlerExecuteAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.PostRequestHandlerExecuteId, states);
 
+#if NET_2_0
+				// PreReleaseRequestState
+				if (null != _app._preReleaseRequestStateAsync)
+					_app._preReleaseRequestStateAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PreReleaseRequestStateId, states);
+#endif
+
 				// ReleaseRequestState
 				if (null != _app._releaseRequestStateAsync)
 					_app._releaseRequestStateAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.ReleaseRequestStateId, states);
 
+#if NET_2_0
+				// PostReleaseRequestState
+				if (null != _app._postReleaseRequestStateAsync)
+					_app._postReleaseRequestStateAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PostReleaseRequestStateId, states);
+#endif
+
 				// [Response filters, if any, filter the output.]
 				states.Add (new FilterHandlerState (_app));
+
+#if NET_2_0
+				// PreUpdateRequestCache
+				if (null != _app._preUpdateRequestCacheAsync)
+					_app._preUpdateRequestCacheAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PreUpdateRequestCacheId, states);
+#endif
 
 				// UpdateRequestCache
 				if (null != _app._updateRequestCacheAsync)
 					_app._updateRequestCacheAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.UpdateRequestCacheId, states);
+
+#if NET_2_0
+				// PostUpdateRequestCache
+				if (null != _app._postUpdateRequestCacheAsync)
+					_app._postUpdateRequestCacheAsync.GetAsStates (_app, states);
+				GetAsStates (HttpApplication.PostUpdateRequestCacheId, states);
+#endif
 
 				// EndRequest
 				_endRequestStateIdx = states.Count;

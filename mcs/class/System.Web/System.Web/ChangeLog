@@ -1,3 +1,8 @@
+2004-11-15 Lluis Sanchez Gual <lluis@novell.com>
+
+	* SiteMapProviderCollection.cs: Fixed warning.
+	* HttpApplication.cs: Added new 2.0 events.
+
 2004-11-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: added internl SetHeadersSent.

@@ -59,7 +59,7 @@ namespace System.Web {
 			}
 		}
 		
-		public ISiteMapProvider this [string name] { get { return (ISiteMapProvider) base [name]; } }
+		public new ISiteMapProvider this [string name] { get { return (ISiteMapProvider) base [name]; } }
 	}
 }
 #endif
