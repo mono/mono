@@ -481,3 +481,4 @@ System.Web.UI.WebControls/SessionParameter.cs
 System.Web.UI/StateManagedCollection.cs
 System.Web.UI/KeyedList.cs
 System.Web.UI/KeyedListEnumerator.cs
+System.Web.UI/ObjectStateFormatter.cs

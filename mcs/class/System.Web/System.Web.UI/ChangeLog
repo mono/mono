@@ -1,3 +1,9 @@
+2003-11-21 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ObjectStateFormatter.cs: v2 file. In v1.x this will be
+	internal as LosFormatter will eventually use it to save
+	the view state.
+
 2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PersistChildrenAttribute.cs:
