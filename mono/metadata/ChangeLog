@@ -1,4 +1,9 @@
 
+Wed Dec 4 16:02:25 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: implemented GetInterfaceMap() related icall.
+	* domain.c, loader.h: load MethodInfo in mono_defaults.
+
 Wed Dec 4 11:02:30 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: disable the finalizer thread for now, untill all the issues
