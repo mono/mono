@@ -1,6 +1,12 @@
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
-	* get.c: simplify get_typd_or_methdef
+	* main.c: NULL cnst_block so we dont explode on interfaces.
+	
+2003-10-08 Jackson Harper <jackson@ximian.com>
+
+	* get.c/get.h add method to get a methoddef from an index, simplify
+	get_typd_or_methdef, use new get_methoddef to get the method
+	because we have a method index not a method token.
 	
 2003-10-07 Jackson Harper <jackson@ximian.com>
 
