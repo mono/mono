@@ -16,3 +16,8 @@ unix:
 
 push:
 	scp */*.dll mono-cvs:libs
+
+clean:
+	for i in $(DIRS); do	\
+		(cd $$i; make clean) || exit 1;\
+	done;

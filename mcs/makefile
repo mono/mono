@@ -11,3 +11,8 @@ windows:
 
 unix:
 	echo "'make unix' is broken for now."
+	
+clean:
+	for i in $(DIRS); do 			\
+		(cd $$i; make clean)		\
+	done

@@ -6,3 +6,8 @@ windows: verifier.exe
 
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
+	
+clean:
+	if test -e verifier.exe; then \
+		rm verifier.exe;  \
+	fi;

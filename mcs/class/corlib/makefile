@@ -36,3 +36,12 @@ make-list:
 		cat $$i/common.src $$i/windows.src | sed "s/^/$$i\\\\/";	\
 	done > list
 
+clean:
+	if test -e list; then \
+		rm list;  \
+	fi;	\
+		\
+		
+	if test -e corlib.dll; then \
+		rm corlib.dll;  \
+	fi;
