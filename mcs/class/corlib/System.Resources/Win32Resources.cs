@@ -360,6 +360,24 @@ internal class Win32VersionResource : Win32Resource {
 		}
 	}
 
+	public virtual string InternalName {
+		get {
+			return (string)properties ["InternalName"];
+		}
+		set {
+			properties ["InternalName"] = value == String.Empty ? " " : value;
+		}
+	}
+
+	public virtual string FileDescription {
+		get {
+			return (string)properties ["FileDescription"];
+		}
+		set {
+			properties ["FileDescription"] = value == String.Empty ? " " : value;
+		}
+	}
+
 	public virtual int FileLanguage {
 		get {
 			return file_lang;
