@@ -1,3 +1,8 @@
+2005-01-13  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* fstab.c: Fix HPUX support.  HPUX includes both <fstab.h> and
+	  <checkpoint.h>, so we need to give preference to <checkpoint.h>.
+
 2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* fstab.c: Add support for HPUX, which uses <checklist.h>.

@@ -15,17 +15,15 @@
 
 #include "mph.h"
 
-#ifdef HAVE_FSTAB_H
+#if defined (HAVE_CHECKLIST_H)
+#include <checklist.h>
+#elif defined (HAVE_FSTAB_H)
 #include <fstab.h>
 #endif /* def HAVE_FSTAB_H */
 
 #ifdef HAVE_SYS_VFSTAB_H
 #include <sys/vfstab.h>
 #endif /* def HAVE_SYS_VFSTAB_H */
-
-#ifdef HAVE_CHECKLIST_H
-#include <checklist.h>
-#endif /* def HAVE_CHECKLIST_H */
 
 G_BEGIN_DECLS
 
@@ -41,7 +39,25 @@ struct Mono_Posix_Syscall__Fstab {
 	char  *_fs_buf_;
 };
 
-#ifdef HAVE_FSTAB_H
+#ifdef HAVE_CHECKLIST_H
+
+typedef struct checklist mph_fstab;
+
+static const size_t
+fstab_offsets[] = {
+	offsetof (struct checklist, fs_spec),
+	offsetof (struct checklist, fs_dir),
+	offsetof (struct checklist, fs_type)
+};
+
+static const size_t
+mph_fstab_offsets[] = {
+	offsetof (struct Mono_Posix_Syscall__Fstab, fs_spec),
+	offsetof (struct Mono_Posix_Syscall__Fstab, fs_file),
+	offsetof (struct Mono_Posix_Syscall__Fstab, fs_type)
+};
+
+#elif defined (HAVE_FSTAB_H)
 
 typedef struct fstab mph_fstab;
 
@@ -64,26 +80,6 @@ mph_fstab_offsets[] = {
 };
 
 #endif /* def HAVE_FSTAB_H */
-
-#ifdef HAVE_CHECKLIST_H
-
-typedef struct checklist mph_fstab;
-
-static const size_t
-fstab_offsets[] = {
-	offsetof (struct checklist, fs_spec),
-	offsetof (struct checklist, fs_dir),
-	offsetof (struct checklist, fs_type)
-};
-
-static const size_t
-mph_fstab_offsets[] = {
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_spec),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_file),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_type)
-};
-
-#endif /* def HAVE_CHECKLIST_H */
 
 #if defined (HAVE_CHECKLIST_H) || defined (HAVE_FSTAB_H)
 
@@ -244,7 +240,7 @@ getfsspec (const char *special_file)
 
 #endif /* def HAVE_SYS_VFSTAB_H */
 
-#if defined (HAVE_FSTAB_H) || defined (HAVE_SYS_VFSTAB_H)
+#if defined (HAVE_FSTAB_H) || defined (HAVE_CHECKPOINT_H) || defined (HAVE_SYS_VFSTAB_H)
 
 void
 Mono_Posix_Syscall_endfsent (void)
@@ -323,7 +319,7 @@ Mono_Posix_Syscall_setfsent (void)
 	return setfsent ();
 }
 
-#endif /* def HAVE_FSTAB_H || def HAVE_SYS_VFSTAB_H */
+#endif /* def HAVE_FSTAB_H || def HAVE_CHECKPOINT_H || def HAVE_SYS_VFSTAB_H */
 
 G_END_DECLS
 
