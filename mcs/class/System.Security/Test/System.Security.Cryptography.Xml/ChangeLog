@@ -1,3 +1,11 @@
+2004-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ReferenceTest.cs : Test for keeping document object identity.
+	* XmlDsigC14NTransformTest.cs : Fixed LoadInputAsXmlNodeList(). Here,
+	  passed XmlNodeList means filtered (e.g. XPath) nodes, which might
+	  contain parent and children as each node in the list.
+	  Added LoadInputAsXmlNodeList2(), which fails in the meantime.
+
 2004-03-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignedInfoTest.cs : assure the owner document object equality /

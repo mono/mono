@@ -136,15 +136,25 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Ignore("FIXME: why doesn't this works with MS ???")]
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();
+			// Argument list just contains element Test.
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			// MS returns "<Test></Test>" ??? doesn't makes sense to me
-			AssertEquals("XmlChildNodes", c14xml3, output);
+			AssertEquals ("XmlChildNodes", "<Test></Test>", output);
+		}
+
+		[Test]
+		public void LoadInputAsXmlNodeList2 () 
+		{
+			XmlDocument doc = GetDoc ();
+			transform.LoadInput (doc.SelectNodes ("//*"));
+			Stream s = (Stream) transform.GetOutput ();
+			string output = Stream2String (s);
+			string expected = @"<Test><Toto xmlns=""http://www.go-mono.com/""></Toto></Test>";
+			AssertEquals ("XmlChildNodes", expected, output);
 		}
 
 		[Test]
