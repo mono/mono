@@ -1,3 +1,9 @@
+2004-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mono-mutex.h: move pthread_mutex_timedlock declaration to...
+	* mono-mutex.c: ...here. It was causing a warning that prevented
+	libgdiplus compilation.
+
 2004-04-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* security.c (GetUserName): Make it work on MacOS X
