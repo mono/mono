@@ -1,5 +1,7 @@
 2003-01-28  Dietmar Maurer  <dietmar@ximian.com>
 
+	* appdomain.h:added fix from Patrik: _MonoAppDomain is a MBR object
+
 	* marshal.c (mono_marshal_get_native_wrapper): generate valid IL code
 
 2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
