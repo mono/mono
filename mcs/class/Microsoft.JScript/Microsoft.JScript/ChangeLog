@@ -1,5 +1,8 @@
 2003-09-20    <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: We are little bit closer to the spec on
+	StringLiteral definition.  
+
 	* jscript-lexer-parser.g: One line patch, the beauty of tests :-)
 
 	* jscript-lexer-parser.g: Build ast for FunctionExpression.

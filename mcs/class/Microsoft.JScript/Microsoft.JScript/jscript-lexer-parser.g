@@ -884,12 +884,11 @@ DECIMAL_LITERAL: ('0'  | ('1'..'9')('0'..'9')*) (DOT ('0'..'9')* | ) (('e' | 'E'
 HEX_INTEGER_LITERAL: '0' ('x' | 'X') ('0'..'9' | 'a'..'f' | 'A'..'F')+
     ;
 
-// FIXME: this just temporal, in order to get into parsing
+// FIXME: specify rule, \ EscapeSequence
 STRING_LITERAL
     : 
-        '"'!('a'..'z' | 'A'..'Z' | '\u0020')+'"'!
+	'"'(~('"' | '\\' | '\u000A' | '\u000D' | '\u2028' | '\u2029'))* '"'
     ;
-
 
 // FIXME: this a temporal definition.
 //        We must handle the UNICODE charset, see section 7.6 of the Ecma-262 spec
