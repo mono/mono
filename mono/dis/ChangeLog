@@ -1,3 +1,9 @@
+Fri Nov 2 19:04:21 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, dump, dump.c: decode the customattr table.
+	* dump.c: handle also field signature when dumping the memberref
+	table.
+
 2001-11-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c (dis_property_methods): Added missing colon which avoided
