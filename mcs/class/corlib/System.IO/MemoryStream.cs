@@ -336,15 +336,12 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ();
 
 			int newSize = (int) value + initialIndex;
-			if (newSize > capacity) {
+			if (newSize > capacity)
 				Capacity = CalculateNewCapacity (newSize);
-			}
-			else if (newSize < length) {
+			else if (newSize < length)
 				// zeroize present data (so we don't get it 
 				// back if we expand the stream using Seek)
-				for (int i = newSize; i < length; i++)
-					Buffer.SetByte (internalBuffer, i, 0);
-			}
+				Array.Clear (internalBuffer, newSize, length - newSize);
 
 			length = newSize;
 			if (position > length)

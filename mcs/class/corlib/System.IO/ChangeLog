@@ -1,3 +1,7 @@
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* MemoryStream.cs (SetLength): Use Array.Clear here
+
 2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Path.cs (Combine): Array.IndexOf is slow (because of the
