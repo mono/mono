@@ -90,44 +90,58 @@ clean-local:
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
 
-test-compiler-jit:
+test-compiler-jit: multi
 	@rm -f *.exe ; \
+	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
 	for i in $(TEST_SOURCES) ; do \
-	    echo -n "Trying to compile $$i.cs ... " ; \
+	    echo -n "$$i: "; \
 	    if $(INTERNAL_MCS) $$i.cs >/dev/null ; then \
-	        echo OK ; \
+		true ; \
 	    else \
-	        echo FAILED ; \
+	        echo FAILED COMPILATION ; exit 1; \
 	    fi ; \
-	    echo -n "Running $$i.exe with \"$(TEST_RUNTIME)\" ... " ; \
 	    if $(TEST_RUNTIME) ./$$i.exe >/dev/null ; then \
 	        echo OK ; \
 	    else \
-	        echo FAILED ; \
+	        echo FAILED ; exit 1; \
 	    fi ; \
 	done
 
 test-unsafe-compiler-jit:
 	@echo "Running UNSAFE tests ..." ; \
+	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
 	for i in $(UNSAFE_SOURCES) ; do \
-	    echo -n "Trying to compile unsafe $$i.cs ... " ; \
+	    echo -n "$$i: "; \
 	    if $(INTERNAL_MCS) /unsafe $$i.cs >/dev/null ; then \
-	        echo OK ; \
+	        true ; \
 	    else \
-	        echo FAILED ; \
+	        echo FAILED COMPILATION ; exit 1\
 	    fi ; \
-	    echo -n "Running $$i.exe with \"$(TEST_RUNTIME)\" ... " ; \
 	    if $(TEST_RUNTIME) ./$$i.exe >/dev/null ; then \
 	        echo OK ; \
 	    else \
-	        echo FAILED ; \
+	        echo FAILED ; exit 1\
 	    fi ; \
 	done
 
 
-# I don't know what this is!
+#
+# Tests that require separate compilation
+#
+multi: multi-1 multi-2
+	echo Multi-assembly test passes
 
-multi:
-	$(CSCOMPILE) /target:library dll-1.cs
-	$(CSCOMPILE) /r:dll-1.dll prog-1.cs /out:prog-1.exe
+multi-1:
+	$(INTERNAL_MCS) /target:library dll-1.cs
+	$(INTERNAL_MCS) /r:dll-1.dll prog-1.cs /out:prog-1.exe
 	$(TEST_RUNTIME) prog-1.exe
+
+#
+# Tests that the order for internal/public in external 
+# assemblies does not affect the outcome of a build.
+#
+multi-2:
+	$(INTERNAL_MCS) /target:library pi.cs
+	$(INTERNAL_MCS) /target:library pp.cs
+	$(INTERNAL_MCS) pu.cs -r:pi.dll -r:pp.dll
+	$(INTERNAL_MCS) pu.cs -r:pp.dll -r:pi.dll
