@@ -1,37 +1,111 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
-// XmlConvert.cs: Xml data type conversion
-// 
+//
+// System.Xml.XmlConvert
+//
+// Authors:
+//      Dwivedi, Ajay kumar (Adwiv@Yahoo.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (C) 2002 Ximian, Inc (http://www.ximian.com)
+//
 using System;
+using System.Text;
 using System.Globalization;
 
 namespace System.Xml {
 
 	public class XmlConvert {
 
+		static string encodedColon = "_x003A_";
+
 		public XmlConvert()
 		{}
 
-		// Methods
-		[MonoTODO]
-		public static string DecodeName(string name)
+		private static string TryDecoding (string s)
 		{
-			return null;
+			if (s == null || s.Length < 6)
+				return s;
+
+			char c = '\uFFFF';
+			try {
+				c = (char) Int32.Parse (s.Substring (1, 4), NumberStyles.HexNumber);
+			} catch {
+				return s [0] + DecodeName (s.Substring (1));
+			}
+			
+			if (s.Length == 6)
+				return c.ToString ();
+			return c + DecodeName (s.Substring (6));
 		}
-		[MonoTODO]
-		public static string EncodeLocalName(string name)
+		
+		public static string DecodeName (string name)
 		{
-			return null;
+			if (name == null || name.Length == 0)
+				return name;
+
+			int pos = name.IndexOf ('_');
+			if (pos == -1 || pos + 6 >= name.Length)
+				return name;
+
+			if (Char.ToUpper (name [pos + 1]) != 'X' || name [pos + 6] != '_')
+				return name [0] + DecodeName (name.Substring (1));
+
+			return name.Substring (0, pos) + TryDecoding (name.Substring (pos + 1));
 		}
-		[MonoTODO]
-		public static string EncodeName(string name)
+
+		public static string EncodeLocalName (string name)
 		{
-			return null;
+			string encoded = EncodeName (name);
+			int pos = encoded.IndexOf (':');
+			if (pos == -1)
+				return encoded;
+			return encoded.Replace (":", encodedColon);
 		}
-		[MonoTODO]
+
+		private static bool IsInvalid (char c, bool firstOnlyLetter)
+		{
+			if (c == ':') // Special case. allowed in EncodeName, but encoded in EncodeLocalName
+				return false;
+			
+			if (firstOnlyLetter && !Char.IsLetter (c) && c != '_')
+				return false;
+			
+			return !Char.IsLetterOrDigit (c);
+		}
+
+		private static string EncodeName (string name, bool nmtoken)
+		{
+			StringBuilder sb = new StringBuilder ();
+			int length = name.Length;
+			for (int i = 0; i < length; i++) {
+				char c = name [i];
+				if (c != '_' || i + 6 >= length) {
+					bool firstOnlyLetter = (i == 0 && !nmtoken);
+					if (IsInvalid (c, firstOnlyLetter)) {
+						sb.AppendFormat ("_x{0:X4}_", (int) c);
+						continue;
+					}
+				} else { 
+					if (Char.ToUpper (name [i + 1]) == 'X' && name [i + 6] == '_') {
+						string decoded = TryDecoding (name.Substring (i + 1, 6));
+						if (decoded.Length == 1) {
+							sb.AppendFormat ("_x{0:X4}_", (int) c);
+							continue;
+						}
+					}
+				}
+				sb.Append (c);
+			}
+			return sb.ToString ();
+		}
+
+		public static string EncodeName (string name)
+		{
+			return EncodeName (name, false);
+		}
+		
 		public static string EncodeNmToken(string name)
 		{
-			return null;
+			return EncodeName (name, true);
 		}
 
 		// {true, false, 1, 0}
@@ -75,10 +149,11 @@ namespace System.Xml {
 			return DateTime.Parse(s, d);
 		}
 
-		[MonoTODO]
 		public static DateTime ToDateTime(string s, string[] formats)
 		{
-			return DateTime.Parse(s);
+			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
+					       DateTimeStyles.AllowTrailingWhite;
+			return DateTime.ParseExact (s, formats, DateTimeFormatInfo.InvariantInfo, style);
 		}
 		
 		public static Decimal ToDecimal(string s)

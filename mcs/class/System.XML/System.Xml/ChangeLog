@@ -1,3 +1,7 @@
+2002-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlConvert.cs: finished implementation.
+
 2002-09-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReader.cs: line and position begin with 1.
