@@ -64,6 +64,15 @@ namespace System.Xml.Serialization
 			set { _dataType = value; }
 		}
 
+		public string DataTypeNamespace
+		{
+			get 
+			{ 
+				if (_mappedType == null) return XmlSchema.Namespace;
+				else return _mappedType.Namespace;
+			}
+		}
+
 		public XmlSchemaForm Form 
 		{
 			get { return _form; }
@@ -97,6 +106,15 @@ namespace System.Xml.Serialization
 		{
 			get { return _nestingLevel; }
 			set { _nestingLevel = value; }
+		}
+
+		internal bool MultiReferenceType
+		{
+			get 
+			{ 
+				if (_mappedType != null) return _mappedType.MultiReferenceType;
+				else return false;
+			}
 		}
 
 		public override bool Equals (object other)

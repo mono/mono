@@ -48,6 +48,8 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
+				if (memberValue == null)
+					return (XmlTypeMapElementInfo) _elementInfo[0];
 				Type type = memberValue.GetType();
 				foreach (XmlTypeMapElementInfo elem in _elementInfo)
 					if (elem.TypeData.Type == type) return elem;
@@ -61,26 +63,19 @@ namespace System.Xml.Serialization
 
 	internal class XmlTypeMapMemberList : XmlTypeMapMemberElement
 	{
-		XmlTypeMapping _listMap;
-		string _elementName;
-		string _namespace;
-
 		public XmlTypeMapping ListTypeMapping
 		{
-			get { return _listMap; }
-			set { _listMap = value; }
+			get { return ((XmlTypeMapElementInfo) ElementInfo[0]).MappedType; }
 		}
 
 		public string ElementName
 		{
-			get { return _elementName; }
-			set { _elementName = value; }
+			get { return ((XmlTypeMapElementInfo) ElementInfo[0]).ElementName; }
 		}
 
 		public string Namespace
 		{
-			get { return _namespace; }
-			set { _namespace = value; }
+			get { return ((XmlTypeMapElementInfo) ElementInfo[0]).Namespace; }
 		}
 	}
 

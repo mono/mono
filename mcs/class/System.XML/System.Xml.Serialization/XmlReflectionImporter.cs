@@ -21,6 +21,7 @@ namespace System.Xml.Serialization {
 		ArrayList includedTypes;
 		Hashtable clrTypes = new Hashtable ();
 		Hashtable schemaTypes = new Hashtable ();
+		ReflectionHelper helper = new ReflectionHelper();
 		int arrayChoiceCount = 1;
 
 		#region Constructors
@@ -68,7 +69,9 @@ namespace System.Xml.Serialization {
 				XmlTypeMapMember mapMem = CreateMapMember (members[n], ns);
 				mapping[n] = new XmlMemberMapping (members[n], mapMem);
 			}
-			return new XmlMembersMapping (elementName, ns, hasWrapperElement, mapping);
+			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, mapping);
+			mps.Format = SerializationFormat.Literal;
+			return mps;
 		}
 
 		public XmlTypeMapping ImportTypeMapping (Type type)
@@ -97,16 +100,21 @@ namespace System.Xml.Serialization {
 			if (defaultNamespace == null) defaultNamespace = initialDefaultNamespace;
 			if (defaultNamespace == null) defaultNamespace = string.Empty;
 
+			XmlTypeMapping map;
+
 			switch (TypeTranslator.GetTypeData(type).SchemaType)
 			{
-				case SchemaTypes.Class: return ImportClassMapping (type, root, defaultNamespace);
-				case SchemaTypes.Array: return ImportListMapping (type, root, defaultNamespace, null, 0);
-				case SchemaTypes.XmlNode: return ImportXmlNodeMapping (type, root, defaultNamespace);
-				case SchemaTypes.Primitive: return ImportPrimitiveMapping (type, root, defaultNamespace);
-				case SchemaTypes.Enum: return ImportEnumMapping (type, root, defaultNamespace);
+				case SchemaTypes.Class: map = ImportClassMapping (type, root, defaultNamespace); break;
+				case SchemaTypes.Array: map = ImportListMapping (type, root, defaultNamespace, null, 0); break;
+				case SchemaTypes.XmlNode: map = ImportXmlNodeMapping (type, root, defaultNamespace); break;
+				case SchemaTypes.Primitive: map = ImportPrimitiveMapping (type, root, defaultNamespace); break;
+				case SchemaTypes.Enum: map = ImportEnumMapping (type, root, defaultNamespace); break;
 				case SchemaTypes.DataSet:
 				default: throw new NotSupportedException ("Type " + type.FullName + " not supported for XML stialization");
 			}
+
+			map.Format = SerializationFormat.Literal;
+			return map;
 		}
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
@@ -155,13 +163,13 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping ImportClassMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
-			XmlTypeMapping map = GetRegisteredClrType (type, defaultNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
 			if (map != null) return map;
 
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			
-			RegisterClrType (map, type, defaultNamespace);
-			RegisterSchemaType (map, map.XmlType, defaultNamespace);
+			helper.RegisterClrType (map, type, defaultNamespace);
+			helper.RegisterSchemaType (map, map.XmlType, defaultNamespace);
 
 			ClassMap classMap = new ClassMap ();
 			map.ObjectMap = classMap;
@@ -178,7 +186,7 @@ namespace System.Xml.Serialization {
 				}
 			}
 			catch (Exception ex) {
-				throw CreateError (map, ex.Message);
+				throw helper.CreateError (map, ex.Message);
 			}
 
 			// Import derived classes
@@ -187,7 +195,7 @@ namespace System.Xml.Serialization {
 			for (int n=0; n<includes.Length; n++)
 			{
 				Type includedType = includes[n].Type;
-				if (!includedType.IsSubclassOf(type)) throw CreateError (map, "Type '" + includedType.FullName + "' is not a subclass of '" + type.FullName + "'");
+				if (!includedType.IsSubclassOf(type)) throw helper.CreateError (map, "Type '" + includedType.FullName + "' is not a subclass of '" + type.FullName + "'");
 				map.DerivedTypes.Add (ImportTypeMapping (includedType, root, defaultNamespace));
 			}
 
@@ -279,7 +287,7 @@ namespace System.Xml.Serialization {
 			string name = baseName;
 
 			do {
-				XmlTypeMapping foundMap = GetRegisteredSchemaType (name, defaultNamespace);
+				XmlTypeMapping foundMap = helper.GetRegisteredSchemaType (name, defaultNamespace);
 				if (foundMap == null) nameCount = -1;
 				else if (obmap.Equals (foundMap.ObjectMap)) return foundMap;
 				else name = baseName + (nameCount++);
@@ -291,7 +299,7 @@ namespace System.Xml.Serialization {
 
 			// Register this map as a derived class of object
 
-			RegisterSchemaType (map, name, defaultNamespace);
+			helper.RegisterSchemaType (map, name, defaultNamespace);
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 
 			return map;
@@ -304,39 +312,39 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping ImportXmlNodeMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = GetRegisteredClrType (type, defaultNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
 			if (map != null) return map;
 
 			// Registers the maps for XmlNode and XmlElement
 
 			XmlTypeMapping nodeMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlNode)), root, null, defaultNamespace);
-			RegisterClrType (nodeMap, typeof(XmlNode), defaultNamespace);
+			helper.RegisterClrType (nodeMap, typeof(XmlNode), defaultNamespace);
 
 			XmlTypeMapping elemMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlElement)), root, null, defaultNamespace);
-			RegisterClrType (elemMap, typeof(XmlElement), defaultNamespace);
+			helper.RegisterClrType (elemMap, typeof(XmlElement), defaultNamespace);
 
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (nodeMap);
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (elemMap);
 			nodeMap.DerivedTypes.Add (elemMap);
 
-			return GetRegisteredClrType (type, defaultNamespace);
+			return helper.GetRegisteredClrType (type, defaultNamespace);
 		}
 
 		XmlTypeMapping ImportPrimitiveMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = GetRegisteredClrType (type, defaultNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
 			if (map != null) return map;
 			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
-			RegisterClrType (map, type, defaultNamespace);
+			helper.RegisterClrType (map, type, defaultNamespace);
 			return map;
 		}
 
 		XmlTypeMapping ImportEnumMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = GetRegisteredClrType (type, defaultNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
 			if (map != null) return map;
 			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
-			RegisterClrType (map, type, defaultNamespace);
+			helper.RegisterClrType (map, type, defaultNamespace);
 
 			string [] names = Enum.GetNames (type);
 			EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember[names.Length];
@@ -424,7 +432,10 @@ namespace System.Xml.Serialization {
 
 				mapAttribute.DataType = atts.XmlAttribute.DataType;
 				mapAttribute.Form = atts.XmlAttribute.Form;
-				mapAttribute.Namespace = (atts.XmlAttribute != null) ? atts.XmlAttribute.Namespace : "";
+				mapAttribute.Namespace = (atts.XmlAttribute.Namespace != null) ? atts.XmlAttribute.Namespace : "";
+				if (typeData.IsComplexType)
+					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, null, mapAttribute.Namespace);
+
 				mapMember = mapAttribute;
 			}
 			else if (typeData.SchemaType == SchemaTypes.Array)
@@ -445,16 +456,13 @@ namespace System.Xml.Serialization {
 					// A list
 
 					XmlTypeMapMemberList member = new XmlTypeMapMemberList ();
-					member.ElementName = (atts.XmlArray != null && atts.XmlArray.ElementName != null) ? atts.XmlArray.ElementName : rmember.MemberName;
-					member.Namespace = (atts.XmlArray != null && atts.XmlArray.Namespace != null) ? atts.XmlArray.Namespace : defaultNamespace;
-					member.ListTypeMapping = ImportListMapping (rmember.MemberType, null, member.Namespace, atts, 0);
 
 					// Creates an ElementInfo that identifies the array instance. 
 					member.ElementInfo = new XmlTypeMapElementInfoList();
 					XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, typeData);
-					elem.ElementName = member.ElementName;
-					elem.Namespace = member.Namespace;
-					elem.MappedType = member.ListTypeMapping;
+					elem.ElementName = (atts.XmlArray != null && atts.XmlArray.ElementName != null) ? atts.XmlArray.ElementName : rmember.MemberName;
+					elem.Namespace = (atts.XmlArray != null && atts.XmlArray.Namespace != null) ? atts.XmlArray.Namespace : defaultNamespace;
+					elem.MappedType = ImportListMapping (rmember.MemberType, null, elem.Namespace, atts, 0);
 					member.ElementInfo.Add (elem);
 					mapMember = member;
 				}
@@ -535,39 +543,6 @@ namespace System.Xml.Serialization {
 
 			if (includedTypes == null) includedTypes = new ArrayList ();
 			includedTypes.Add (type);
-		}
-
-		void RegisterSchemaType (XmlTypeMapping map, string xmlType, string ns)
-		{
-			string mapKey = xmlType + "/" + ns;
-			if (!schemaTypes.ContainsKey (xmlType))
-				schemaTypes.Add (mapKey, map);
-		}
-
-		XmlTypeMapping GetRegisteredSchemaType (string xmlType, string ns)
-		{
-			string mapKey = xmlType + "/" + ns;
-			return schemaTypes[mapKey] as XmlTypeMapping;
-		}
-
-		void RegisterClrType (XmlTypeMapping map, Type type, string ns)
-		{
-			if (type == typeof(object)) ns = "";
-			string mapKey = type.FullName + "/" + ns;
-			if (!clrTypes.ContainsKey (mapKey))
-				clrTypes.Add (mapKey, map);
-		}
-
-		XmlTypeMapping GetRegisteredClrType (Type type, string ns)
-		{
-			if (type == typeof(object)) ns = "";
-			string mapKey = type.FullName + "/" + ns;
-			return clrTypes[mapKey] as XmlTypeMapping;
-		}
-
-		Exception CreateError (XmlTypeMapping map, string message)
-		{
-			return new InvalidOperationException ("There was an error reflecting '" + map.TypeFullName + "': " + message);
 		}
 
 		#endregion // Methods

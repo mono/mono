@@ -69,6 +69,11 @@ namespace System.Xml.Serialization
 			return typeData;
 		}
 
+		public static bool IsPrimitive (Type type)
+		{
+			return GetTypeData (type).SchemaType == SchemaTypes.Primitive;
+		}
+
 		public static TypeData GetPrimitiveTypeData (string typeName)
 		{
 			return (TypeData) primitiveTypes[typeName];

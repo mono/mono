@@ -1,3 +1,22 @@
+2003-06-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs: implemented.
+	* TypeTranslator.cs: added IsPrimitive() method
+	* TypeMapping.cs: Added RelatedMaps property that returns all maps directly or indirectly
+	  used by that one. Also added Format property, that can be literal or encoded.
+	* XmlReflectionImporter.cs: little fixes. Moved some methods to ReflectionHelper.
+	* XmlReflectionMember.cs: added constructor that accepts SoapAttributes
+	* XmlSerializationReader.cs: implemented many methods needed to support encoded format.
+	* XmlSerializationReaderInterpreter.cs: added support for encoded format.
+	* XmlSerializationWriter.cs: added support for encoded format.
+	* XmlSerializationWriterInterpreter.cs: added support for encoded format.
+	* XmlTypeMapElementInfo.cs: added some properties needed to support encoded format
+	* XmlTypeMapMemberAttribute.cs: added MappedType property (enum values can be attributes, 
+	  and a map is needed for them).
+	* XmlTypeMapMemberElement.cs: small fixes.
+	* XmlTypeMapping.cs: added some properties and methods needed to support encoded format
+	* ReflectionHelper.cs: added. Has some methods shared by the reflection importers.
+
 2003-06-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* XmlSerializationReader.cs (UnknownAttribute, UnknownNode,

@@ -16,14 +16,28 @@ namespace System.Xml.Serialization
 	public class XmlSerializationReaderInterpreter: XmlSerializationReader
 	{
 		XmlMapping _typeMap;
+		SerializationFormat _format;
 
 		public XmlSerializationReaderInterpreter(XmlMapping typeMap)
 		{
 			_typeMap = typeMap;
+			_format = typeMap.Format;
 		}
 
 		protected override void InitCallbacks ()
 		{
+			ArrayList maps = _typeMap.RelatedMaps;
+			if (maps != null)
+			{
+				foreach (XmlTypeMapping map in maps)  
+				{
+					if (map.TypeData.SchemaType == SchemaTypes.Class || map.TypeData.SchemaType == SchemaTypes.Enum)
+					{
+						ReaderCallbackInfo info = new ReaderCallbackInfo (this, map);
+						AddReadCallback (map.XmlType, map.Namespace, map.TypeData.Type, new XmlSerializationReadCallback (info.ReadObject));
+					}
+				}
+			}
 		}
 
 		protected override void InitIDs ()
@@ -34,9 +48,32 @@ namespace System.Xml.Serialization
 		{
 			Reader.MoveToContent();
 			if (_typeMap is XmlTypeMapping)
-				return ReadObject ((XmlTypeMapping)_typeMap, true, true);
+			{
+				if (_format == SerializationFormat.Literal)
+					return ReadObject ((XmlTypeMapping)_typeMap, true, true);
+				else
+					return ReadEncodedObject ((XmlTypeMapping)_typeMap);
+			}
 			else
 				return ReadMessage ((XmlMembersMapping)_typeMap);
+		}
+
+		object ReadEncodedObject (XmlTypeMapping typeMap)
+		{
+			object ob = null;
+			Reader.MoveToContent();
+			if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
+			{
+				if (Reader.LocalName == typeMap.ElementName && Reader.NamespaceURI == typeMap.Namespace)
+					ob = ReadReferencedElement();
+				else 
+					throw CreateUnknownNodeException();
+			}
+			else 
+				UnknownNode(null);
+
+			ReadReferencedElements();
+			return ob;
 		}
 
 		object ReadMessage (XmlMembersMapping typeMap)
@@ -64,6 +101,9 @@ namespace System.Xml.Serialization
 			else
 				ReadMembers ((ClassMap)typeMap.ObjectMap, parameters, true);
 
+			if (_format == SerializationFormat.Encoded)
+				ReadReferencedElements();
+
 			return parameters;
 		}
 
@@ -84,7 +124,7 @@ namespace System.Xml.Serialization
 		{
 			if (isNullable && ReadNull()) return null;
 
-            if (checkType) 
+			if (checkType) 
 			{
                 System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t != null) 
@@ -131,7 +171,7 @@ namespace System.Xml.Serialization
 
 					if (member != null) 
 					{
-						SetMemberValue (member, ob, XmlCustomFormatter.FromXmlString (member.TypeData.Type, Reader.Value), isValueList);
+						SetMemberValue (member, ob, GetValueFromXmlString (Reader.Value, member.TypeData, member.MappedType), isValueList);
 					}
 					else if (IsXmlnsAttribute(Reader.Name)) 
 					{
@@ -166,6 +206,7 @@ namespace System.Xml.Serialization
 
 			int[] indexes = null;
 			object[] flatLists = null;
+			Fixup fixup = null;
 
 			if (map.FlatLists != null) 
 			{
@@ -173,6 +214,13 @@ namespace System.Xml.Serialization
 				flatLists = new object[map.FlatLists.Count];
 				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
 					if (IsReadOnly (mem, ob, isValueList)) flatLists[mem.FlatArrayIndex] = mem.GetValue (ob);
+			}
+
+			if (_format == SerializationFormat.Encoded)
+			{
+				FixupCallbackInfo info = new FixupCallbackInfo (this, map, isValueList);
+				fixup = new Fixup(ob, new XmlSerializationFixupCallback(info.FixupMembers), map.ElementMembers.Count);
+				AddFixup (fixup);
 			}
 
 			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
@@ -184,8 +232,31 @@ namespace System.Xml.Serialization
 					{
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))
 						{
-							if (IsReadOnly (info.Member, ob, isValueList)) ReadListElement (info.MappedType, info.IsNullable, info.Member.GetValue (ob), false);
-							else  SetMemberValue (info.Member, ob, ReadListElement (info.MappedType, info.IsNullable, null, true), isValueList);
+							if (_format == SerializationFormat.Encoded && info.MultiReferenceType)
+							{
+								object list = ReadReferencingElement (out fixup.Ids[info.Member.Index]);
+								if (fixup.Ids[info.Member.Index] == null)	// Already read
+								{
+									if (IsReadOnly (info.Member, ob, isValueList)) throw CreateReadOnlyCollectionException (info.TypeData.FullTypeName);
+									else SetMemberValue (info.Member, ob, list, isValueList);
+								}
+								else if (!info.MappedType.TypeData.Type.IsArray)
+								{
+									if (IsReadOnly (info.Member, ob, isValueList)) 
+										list = GetMemberValue (info.Member, ob, isValueList);
+									else { 
+										list = CreateList (info.MappedType.TypeData.Type);
+										SetMemberValue (info.Member, ob, list, isValueList);
+									}
+									AddFixup (new CollectionFixup (list, new XmlSerializationCollectionFixupCallback (FillList), fixup.Ids[info.Member.Index]));
+									fixup.Ids[info.Member.Index] = null;	// The member already has the value, no further fix needed.
+								}
+							}
+							else
+							{
+								if (IsReadOnly (info.Member, ob, isValueList)) ReadListElement (info.MappedType, info.IsNullable, GetMemberValue (info.Member, ob, isValueList), false);
+								else SetMemberValue (info.Member, ob, ReadListElement (info.MappedType, info.IsNullable, null, true), isValueList);
+							}
 							readFlag[info.Member.Index] = true;
 						}
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberFlatList))
@@ -201,8 +272,16 @@ namespace System.Xml.Serialization
 						}
 						else if (info.Member.GetType() == typeof(XmlTypeMapMemberElement))
 						{
-							SetMemberValue (info.Member, ob, ReadObjectElement (info), isValueList);
+							object val;
 							readFlag[info.Member.Index] = true;
+							if (_format == SerializationFormat.Encoded && info.MultiReferenceType) 
+							{
+								val = ReadReferencingElement (out fixup.Ids[info.Member.Index]);
+								if (fixup.Ids[info.Member.Index] == null)	// already read
+									SetMemberValue (info.Member, ob, val, isValueList);
+							}
+							else 
+								SetMemberValue (info.Member, ob, ReadObjectElement (info), isValueList);
 						}
 						else
 							throw new InvalidOperationException ("Unknown member type");
@@ -235,6 +314,18 @@ namespace System.Xml.Serialization
 			}		
 		}
 
+		internal void FixupMembers (ClassMap map, object obfixup, bool isValueList)
+		{
+			Fixup fixup = (Fixup)obfixup;
+			ICollection members = map.ElementMembers;
+			string[] ids = fixup.Ids;
+			foreach (XmlTypeMapMember member in members)
+			{
+				if (ids[member.Index] != null)
+					SetMemberValue (member, fixup.Source, GetTarget(ids[member.Index]), isValueList);
+			}
+		}
+
 		bool IsReadOnly (XmlTypeMapMember member, object ob, bool isValueList)
 		{
 			if (isValueList) return false;
@@ -247,25 +338,42 @@ namespace System.Xml.Serialization
 			else member.SetValue (ob, value);
 		}
 
+		object GetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)
+		{
+			if (isValueList) return ((object[])ob)[member.Index];
+			else return member.GetValue (ob);
+		}
+
 		object ReadObjectElement (XmlTypeMapElementInfo elem)
 		{
-			if (elem.IsPrimitive)
+			switch (elem.TypeData.SchemaType)
 			{
-				if (elem.TypeData.SchemaType == SchemaTypes.XmlNode)
+				case SchemaTypes.XmlNode:
 					return ReadXmlNode (true);
-				else if (elem.IsNullable) 
-					return XmlCustomFormatter.FromXmlString (elem.TypeData.Type, ReadNullableString ());
-				else 
-					return XmlCustomFormatter.FromXmlString (elem.TypeData.Type, Reader.ReadElementString ());
+
+				case SchemaTypes.Primitive:
+				case SchemaTypes.Enum:
+					if (elem.IsNullable) return GetValueFromXmlString (ReadNullableString (), elem.TypeData, elem.MappedType);
+					else return GetValueFromXmlString (Reader.ReadElementString (), elem.TypeData, elem.MappedType);
+
+				case SchemaTypes.Array:
+					return ReadListElement (elem.MappedType, elem.IsNullable, null, true);
+
+				case SchemaTypes.Class:
+				case SchemaTypes.DataSet:
+					return ReadObject (elem.MappedType, elem.IsNullable, true);
+
+				default:
+					throw new NotSupportedException ("Invalid value type");
 			}
-			else if (elem.MappedType.TypeData.SchemaType == SchemaTypes.Array) {
-				return ReadListElement (elem.MappedType, elem.IsNullable, null, true);
-			}
-			else if (elem.MappedType.TypeData.SchemaType == SchemaTypes.Enum) {
-				return GetEnumValue (elem.MappedType, Reader.ReadElementString());
-			}
-			else
-				return ReadObject (elem.MappedType, elem.IsNullable, true);
+		}
+
+		object GetValueFromXmlString (string value, TypeData typeData, XmlTypeMapping typeMap)
+		{
+			if (typeData.SchemaType == SchemaTypes.Enum)
+				return GetEnumValue (typeMap, value);
+			else 
+				return XmlCustomFormatter.FromXmlString (typeData.Type, value);
 		}
 
 		object ReadListElement (XmlTypeMapping typeMap, bool isNullable, object list, bool canCreateInstance)
@@ -339,6 +447,32 @@ namespace System.Xml.Serialization
 				return Activator.CreateInstance (listType);
 		}
 
+		void FillList (object list, object items)
+		{
+			CopyEnumerableList (items, list);
+		}
+
+		void CopyEnumerableList (object source, object dest)
+		{
+			if (dest == null) throw CreateReadOnlyCollectionException (source.GetType().FullName);
+
+			object[] param = new object[1];
+			MethodInfo mi = dest.GetType().GetMethod ("Add");
+			foreach (object ob in (IEnumerable)source)
+			{
+				param[0] = ob;
+				mi.Invoke (dest, param);
+			}
+		}
+
+		int GetListCount (TypeData listType, object ob)
+		{
+			if (listType.Type.IsArray)
+				return ((Array)ob).Length;
+			else
+				return (int) listType.Type.GetProperty ("Count").GetValue(ob,null);
+		}
+
 		object ReadXmlNodeElement (XmlTypeMapping typeMap, bool isNullable)
 		{
 			return ReadXmlNode (false);
@@ -363,6 +497,42 @@ namespace System.Xml.Serialization
 		{
 			EnumMap map = (EnumMap) typeMap.ObjectMap;
 			return Enum.Parse (typeMap.TypeData.Type, map.GetEnumName (val));
+		}
+
+		class FixupCallbackInfo
+		{
+			XmlSerializationReaderInterpreter _sri;
+			ClassMap _map;
+			bool _isValueList;
+
+			public FixupCallbackInfo (XmlSerializationReaderInterpreter sri, ClassMap map, bool isValueList)
+			{
+				_sri = sri;
+				_map = map;
+				_isValueList = isValueList;
+			}
+
+			public void FixupMembers (object fixup)
+			{
+				_sri.FixupMembers (_map, fixup, _isValueList);
+			}
+		}
+
+		class ReaderCallbackInfo
+		{
+			XmlSerializationReaderInterpreter _sri;
+			XmlTypeMapping _typeMap;
+
+			public ReaderCallbackInfo (XmlSerializationReaderInterpreter sri, XmlTypeMapping typeMap)
+			{
+				_sri = sri;
+				_typeMap = typeMap;
+			}
+
+			internal object ReadObject ()
+			{
+				return _sri.ReadObject (_typeMap, true, true);
+			}
 		}
 	}
 }

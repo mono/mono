@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace System.Xml.Serialization {
 	public abstract class XmlSerializationReader {
@@ -22,11 +23,12 @@ namespace System.Xml.Serialization {
 		XmlDocument document;
 		XmlReader reader;
 		ArrayList fixups;
-		ArrayList collFixups;
-		Hashtable readCallbacks;
+		Hashtable collFixups;
+		ArrayList collItemFixups;
 		Hashtable typesCallbacks;
 		ArrayList noIDTargets;
 		Hashtable targets;
+		Hashtable delayedListFixups;
 		XmlSerializer eventSource;
 
 		string w3SchemaNS;
@@ -44,6 +46,7 @@ namespace System.Xml.Serialization {
 		string typeX;
 		string arrayType;
 		string anyType;
+		XmlQualifiedName arrayQName;
 		#endregion
 
 		internal void Initialize (XmlReader reader, XmlSerializer eventSource)
@@ -65,6 +68,7 @@ namespace System.Xml.Serialization {
 			anyType = reader.NameTable.Add ("anyType");
 			this.reader = reader;
 			this.eventSource = eventSource;
+			arrayQName = new XmlQualifiedName ("Array", soapNS);
 			InitIDs ();
 		}
 			
@@ -109,24 +113,34 @@ namespace System.Xml.Serialization {
 
 		protected void AddFixup (CollectionFixup fixup)
 		{
-			collFixups = EnsureArrayList (collFixups);
-			collFixups.Add(fixup);
+			collFixups = EnsureHashtable (collFixups);
+			collFixups [fixup.Id] = fixup;
+
+			if (delayedListFixups != null && delayedListFixups.ContainsKey (fixup.Id))
+				fixup.CollectionItems = delayedListFixups [fixup.Id];
 		}
 
 		protected void AddFixup (Fixup fixup)
 		{
 			fixups = EnsureArrayList (fixups);
-			fixups.Add(fixup);
+			fixups.Add (fixup);
+		}
+
+		void AddFixup (CollectionItemFixup fixup)
+		{
+			collItemFixups = EnsureArrayList (collItemFixups);
+			collItemFixups.Add(fixup);
 		}
 
 		protected void AddReadCallback (string name, string ns, Type type, XmlSerializationReadCallback read)
 		{
-			XmlNameTable nt = reader.NameTable;
-			XmlQualifiedName xqn = new XmlQualifiedName (nt.Add (name), nt.Add (ns));
-			readCallbacks = EnsureHashtable (readCallbacks);
-			readCallbacks.Add (xqn, read);
+			WriteCallbackInfo info = new WriteCallbackInfo ();
+			info.Type = type;
+			info.TypeName = name;
+			info.TypeNs = ns;
+			info.Callback = read;
 			typesCallbacks = EnsureHashtable (typesCallbacks);
-			typesCallbacks.Add (xqn, type);
+			typesCallbacks.Add (new XmlQualifiedName (name, ns), info);
 		}
 
 		protected void AddTarget (string id, object o)
@@ -247,10 +261,16 @@ namespace System.Xml.Serialization {
 			return (na != string.Empty);
 		}
 
-		[MonoTODO ("Implement")]
 		protected object GetTarget (string id)
 		{
-			throw new NotImplementedException ();
+			if (targets == null) return null;
+			return targets [id];
+		}
+
+		bool TargetReady (string id)
+		{
+			if (targets == null) return false;
+			return targets.ContainsKey (id);
 		}
 
 		[MonoTODO ("Implement")]
@@ -370,32 +390,143 @@ namespace System.Xml.Serialization {
 
 		protected object ReadReferencedElement ()
 		{
-			return ReadReferencedElement (null, null);
+			return ReadReferencedElement (Reader.LocalName, Reader.NamespaceURI);
+		}
+
+		WriteCallbackInfo GetCallbackInfo (XmlQualifiedName qname)
+		{
+			if (typesCallbacks == null) 
+			{
+				typesCallbacks = new Hashtable ();
+				InitCallbacks ();
+			}
+			return (WriteCallbackInfo) typesCallbacks[qname];
 		}
 
 		protected object ReadReferencedElement (string name, string ns)
 		{
-			string unused;
-			return ReadReferencingElement (name, ns, false, out unused);
+			XmlQualifiedName qname = GetXsiType ();
+			if (qname == null) qname = new XmlQualifiedName (name, ns);
+
+			string id = Reader.GetAttribute ("id");
+			object ob;
+
+			if (qname == arrayQName)
+			{
+				CollectionFixup fixup = (collFixups != null) ? (CollectionFixup) collFixups[id] : null;
+				if (ReadList (out ob))
+				{
+					// List complete (does not contain references)
+					if (fixup != null)
+					{
+						fixup.Callback (fixup.Collection, ob);
+						collFixups.Remove (id);
+						ob = fixup.Collection;
+					}
+				}
+				else if (fixup != null) 
+				{
+					fixup.CollectionItems = (object[])ob;
+					ob = fixup.Collection;
+				}
+			}
+			else
+			{
+				WriteCallbackInfo info = GetCallbackInfo (qname);
+				if (info == null) throw CreateUnknownTypeException (qname);
+				ob = info.Callback ();
+			}
+			AddTarget (id, ob);
+			return ob;
 		}
 
+		bool ReadList (out object resultList)
+		{
+			string arrayType = Reader.GetAttribute ("arrayType", soapNS);
+			XmlQualifiedName qn = ToXmlQualifiedName (arrayType);
+			int i = qn.Name.LastIndexOf ('[');
+			string dim = qn.Name.Substring (i);
+			string itemType = qn.Name.Substring (0,i);
+			int count = Int32.Parse (dim.Substring (1, dim.Length - 2));
+
+			Array list;
+
+			i = itemType.IndexOf ('['); if (i == -1) i = itemType.Length;
+			string baseType = itemType.Substring (0,i);
+			string arrayTypeName;
+
+			if (qn.Namespace == XmlSchema.Namespace)
+				arrayTypeName = TypeTranslator.GetPrimitiveTypeData (baseType).Type.FullName + itemType.Substring (i);
+			else
+			{
+				WriteCallbackInfo info = GetCallbackInfo (new XmlQualifiedName (baseType,qn.Namespace));
+				arrayTypeName = info.Type.FullName + itemType.Substring (i) + ", " + info.Type.Assembly.FullName;
+			}
+
+			list = Array.CreateInstance (Type.GetType (arrayTypeName), count);
+
+			bool listComplete = true;
+
+			Reader.ReadStartElement ();
+			for (int n=0; n<count; n++)
+			{
+				Reader.MoveToContent ();
+				string refid = Reader.GetAttribute ("href");
+				string id;
+				object item = ReadReferencingElement (itemType, qn.Namespace, out id);
+				if (id == null) 
+					list.SetValue (item,n);
+				else
+				{
+					AddFixup (new CollectionItemFixup (list, n, id));
+					listComplete = false;
+				}
+			}
+			Reader.ReadEndElement ();
+
+			resultList = list;
+			return listComplete;
+		}
+		
 		protected void ReadReferencedElements ()
 		{
-			string unused;
-
 			reader.MoveToContent();
 			XmlNodeType nt = reader.NodeType;
 			while (nt != XmlNodeType.EndElement && nt != XmlNodeType.None) {
-				ReadReferencingElement (null, null, true, out unused);
+				ReadReferencedElement ();
 				reader.MoveToContent ();
 				nt = reader.NodeType;
 			}
+
+			// Fix arrays
+
+			if (collItemFixups != null)
+			{
+				foreach (CollectionItemFixup itemFixup in collItemFixups)
+					itemFixup.Collection.SetValue (GetTarget (itemFixup.Id), itemFixup.Index);
+			}
+
+			// Fills collections
+
+			if (collFixups != null)
+			{
+				ICollection cfixups = collFixups.Values;
+				foreach (CollectionFixup fixup in cfixups)
+					fixup.Callback (fixup.Collection, fixup.CollectionItems);
+			}
+
+			// Fills class instances
+
+			if (fixups != null)
+			{
+				foreach (Fixup fixup in fixups)
+					fixup.Callback (fixup);
+			}
 		}
 
-		[MonoTODO ("Implement")]
 		protected object ReadReferencingElement (out string fixupReference)
 		{
-			return ReadReferencingElement (null, null, false, out fixupReference);
+			return ReadReferencingElement (Reader.LocalName, Reader.NamespaceURI, false, out fixupReference);
 		}
 
 		protected object ReadReferencingElement (string name, string ns, out string fixupReference)
@@ -403,13 +534,60 @@ namespace System.Xml.Serialization {
 			return ReadReferencingElement (name, ns, false, out fixupReference);
 		}
 
-		[MonoTODO]
 		protected object ReadReferencingElement (string name,
 							 string ns,
 							 bool elementCanBeType,
 							 out string fixupReference)
 		{
-			throw new NotImplementedException ();
+			if (ReadNull ())
+			{
+				fixupReference = null;
+				return null;
+			}
+
+			string refid = Reader.GetAttribute ("href");
+
+			if (refid == string.Empty || refid == null)
+			{
+				fixupReference = null;
+
+				XmlQualifiedName qname = GetXsiType ();
+				if (qname == null) qname = new XmlQualifiedName (name, ns);
+
+				if (qname == arrayQName)
+				{
+					delayedListFixups = EnsureHashtable (delayedListFixups);
+					fixupReference = "__<" + delayedListFixups.Count + ">";
+					object items;
+					ReadList (out items);
+					delayedListFixups [fixupReference] = items;
+					return null;
+				}
+				else
+				{
+					WriteCallbackInfo info = GetCallbackInfo (qname);
+					if (info == null)
+						return ReadTypedPrimitive (qname);
+					else
+						return info.Callback();
+				}
+			}
+			else
+			{
+				if (refid.StartsWith ("#")) refid = refid.Substring (1);
+
+				Reader.ReadStartElement ();
+				if (TargetReady (refid))
+				{
+					fixupReference = null;
+					return GetTarget (refid);
+				}
+				else
+				{
+					fixupReference = refid;
+					return null;
+				}
+			}
 		}
 
 		protected IXmlSerializable ReadSerializable (IXmlSerializable serializable)
@@ -426,9 +604,9 @@ namespace System.Xml.Serialization {
 			return (value + reader.ReadString ());
 		}
 
-		protected object ReadTypedPrimitive (XmlQualifiedName type)
+		protected object ReadTypedPrimitive (XmlQualifiedName qname)
 		{
-			XmlQualifiedName qname = GetXsiType ();
+			if (qname == null) qname = GetXsiType ();
 			TypeData typeData = TypeTranslator.GetPrimitiveTypeData (qname.Name);
 			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive) throw new InvalidOperationException ("Unknown type: " + qname.Name);
 			return XmlCustomFormatter.FromXmlString (typeData.Type, Reader.ReadElementString ());
@@ -446,7 +624,6 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void Referenced (object o)
 		{
-			throw new NotImplementedException ();
 		}
 
 		protected Array ShrinkArray (Array a, int length, Type elementType, bool isNullable)
@@ -592,7 +769,19 @@ namespace System.Xml.Serialization {
 			}
 			
 			eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
-			if (Reader.NodeType != XmlNodeType.Attribute)
+			if (Reader.NodeType == XmlNodeType.Attribute)
+			{
+				XmlAttribute att = (XmlAttribute) ReadXmlNode (false);
+				UnknownAttribute (o, att);
+				return;
+			}
+			else if (Reader.NodeType == XmlNodeType.Element)
+			{
+				XmlElement elem = (XmlElement) ReadXmlNode (false);
+				UnknownElement (o, elem);
+				return;
+			}
+			else
 			{
 				Reader.Skip();
 				if (Reader.ReadState == ReadState.EndOfFile) 
@@ -607,29 +796,27 @@ namespace System.Xml.Serialization {
 
 		#endregion // Methods
 
+		class WriteCallbackInfo
+		{
+			public Type Type;
+			public string TypeName;
+			public string TypeNs;
+			public XmlSerializationReadCallback Callback;
+		}
+
 		protected class CollectionFixup {
 			
-			#region Fields
-
 			XmlSerializationCollectionFixupCallback callback;
 			object collection;
 			object collectionItems;
+			string id;
 
-			#endregion // Fields
-
-			#region Constructors
-
-			[MonoTODO]
-			public CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, object collectionItems)
+			public CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, string id)
 			{
 				this.callback = callback;
 				this.collection = collection;
-				this.collectionItems = collectionItems;
+				this.id = id;
 			}
-
-			#endregion // Constructors
-
-			#region Properties
 
 			public XmlSerializationCollectionFixupCallback Callback { 
 				get { return callback; }
@@ -639,40 +826,36 @@ namespace System.Xml.Serialization {
 				get { return collection; }
 			}
 
-			public object CollectionItems {
-				get { return collectionItems; }
+			public object Id {
+				get { return id; }
 			}
 
-			#endregion // Properties
+			internal object CollectionItems
+			{
+				get { return collectionItems; }
+				set { collectionItems = value; }
+			}
 		}
 
 		protected class Fixup {
-
-			#region Fields
 
 			object source;
 			string[] ids;
 			XmlSerializationFixupCallback callback;
 
-			#endregion // Fields
-
-			#region Constructors
-
-			[MonoTODO]
 			public Fixup (object o, XmlSerializationFixupCallback callback, int count) 
 			{
+				this.source = o;
 				this.callback = callback;
+				this.ids = new string[count];
 			}
 
-			[MonoTODO]
 			public Fixup (object o, XmlSerializationFixupCallback callback, string[] ids)
 			{
+				this.source = o;
+				this.ids = ids;
 				this.callback = callback;
 			}
-
-			#endregion // Constructors
-
-			#region Properties
 
 			public XmlSerializationFixupCallback Callback {
 				get { return callback; }
@@ -686,9 +869,37 @@ namespace System.Xml.Serialization {
 				get { return source; }
 				set { source = value; }
 			}
-
-			#endregion // Properties
 		}
+
+		protected class CollectionItemFixup 
+		{
+			Array list;
+			int index;
+			string id;
+
+			public CollectionItemFixup (Array list, int index, string id)
+			{
+				this.list = list;
+				this.index = index;
+				this.id = id;
+			}
+
+			public Array Collection
+			{
+				get { return list; }
+			}
+
+			public int Index
+			{
+				get { return index; }
+			}
+
+			public string Id
+			{
+				get { return id; }
+			}
+		}
+
 	}
 }
 

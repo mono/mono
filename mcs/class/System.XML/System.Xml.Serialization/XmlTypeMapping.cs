@@ -20,6 +20,7 @@ namespace System.Xml.Serialization
 		private string ns;
 		private string xmlType;
 		TypeData type;
+		bool multiReferenceType = false;
 
 		ArrayList _derivedTypes = new ArrayList();
 
@@ -65,6 +66,12 @@ namespace System.Xml.Serialization
 		{
 			get { return _derivedTypes; }
 			set { _derivedTypes = value; }
+		}
+
+		internal bool MultiReferenceType
+		{
+			get { return multiReferenceType; }
+			set { multiReferenceType = value; }
 		}
 
 		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)
@@ -217,6 +224,34 @@ namespace System.Xml.Serialization
 			foreach (XmlTypeMapElementInfo elem in _itemInfo)
 				if (elem.ElementName == elementName && elem.Namespace == ns) return elem;
 			return null;
+		}
+
+		public void GetArrayType (int itemCount, out string localName, out string ns)
+		{
+			string arrayDim;
+			if (itemCount != -1) arrayDim = "[" + itemCount + "]";
+			else arrayDim = "[]";
+
+			XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) _itemInfo[0];
+			if (info.TypeData.SchemaType == SchemaTypes.Array)
+			{
+				string nm;
+				((ListMap)info.MappedType.ObjectMap).GetArrayType (-1, out nm, out ns);
+				localName = nm + arrayDim;
+			}
+			else 
+			{
+				if (info.MappedType != null)
+				{
+					localName = info.MappedType.XmlType + arrayDim;
+					ns = info.MappedType.Namespace;
+				}
+				else 
+				{
+					localName = info.DataType + arrayDim;
+					ns = info.DataTypeNamespace;
+				}
+			}
 		}
 
 		public override bool Equals (object other)

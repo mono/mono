@@ -9,12 +9,15 @@
 //
 
 using System;
+using System.Collections;
 
 namespace System.Xml.Serialization
 {
 	public abstract class XmlMapping
 	{
 		ObjectMap map;
+		ArrayList relatedMaps;
+		SerializationFormat format;
 
 		internal XmlMapping ()
 		{
@@ -25,9 +28,23 @@ namespace System.Xml.Serialization
 			get { return map; }
 			set { map = value; }
 		}
+
+		internal ArrayList RelatedMaps
+		{
+			get { return relatedMaps; }
+			set { relatedMaps = value; }
+		}
+
+		internal SerializationFormat Format
+		{
+			get { return format; }
+			set { format = value; }
+		}
 	}
 
 	internal class ObjectMap
 	{
 	}
+
+	internal enum SerializationFormat { Encoded, Literal }
 }

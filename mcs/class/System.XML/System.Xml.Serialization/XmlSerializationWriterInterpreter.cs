@@ -10,20 +10,32 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
 	internal class XmlSerializationWriterInterpreter: XmlSerializationWriter
 	{
 		XmlMapping _typeMap;
+		SerializationFormat _format;
 
 		public XmlSerializationWriterInterpreter(XmlMapping typeMap)
 		{
 			_typeMap = typeMap;
+			_format = typeMap.Format;
 		}
 
 		protected override void InitCallbacks ()
 		{
+			ArrayList maps = _typeMap.RelatedMaps;
+			if (maps != null)
+			{
+				foreach (XmlTypeMapping map in maps)  {
+					CallbackInfo info = new CallbackInfo (this, map);
+					if (map.TypeData.SchemaType == SchemaTypes.Enum) AddWriteCallback(map.TypeData.Type, map.XmlType, map.Namespace, new XmlSerializationWriteCallback (info.WriteObject));
+					else AddWriteCallback(map.TypeData.Type, map.XmlType, map.Namespace, new XmlSerializationWriteCallback (info.WriteEnum));
+				}
+			}
 		}
 
 		internal override void WriteObject (object ob)
@@ -33,39 +45,65 @@ namespace System.Xml.Serialization
 			if (_typeMap is XmlTypeMapping)
 			{
 				XmlTypeMapping mp = (XmlTypeMapping) _typeMap;
-				WriteObject (mp, ob, mp.ElementName, mp.Namespace, true, false);
+				if (_format == SerializationFormat.Literal)
+					WriteObject (mp, ob, mp.ElementName, mp.Namespace, true, false, true);
+				else
+					WritePotentiallyReferencingElement (mp.ElementName, mp.Namespace, ob, mp.TypeData.Type, true, false);
 			}
 			else if (ob is object[])
 				WriteMessage ((XmlMembersMapping)_typeMap, (object[]) ob);
 			else
 				throw CreateUnknownTypeException (ob);
+
+			WriteReferencedElements ();
 		}
 
-		void WriteObject (XmlTypeMapping typeMap, object ob, string element, string namesp, bool isNullable, bool needType)
+		internal void WriteObject (XmlTypeMapping typeMap, object ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
 		{
 			if (ob == null)
 			{
-				if (isNullable) WriteNullTagLiteral(element, namesp);
+				if (isNullable) 
+				{
+					if (_format == SerializationFormat.Literal) WriteNullTagLiteral(element, namesp);
+					else WriteNullTagEncoded (element, namesp);
+				}
+				return;
+			}
+
+			if (ob is XmlNode)
+			{
+				if (_format == SerializationFormat.Literal) WriteElementLiteral((XmlNode)ob, "", "", true, false);
+				else WriteElementEncoded((XmlNode)ob, "", "", true, false);
 				return;
 			}
 
 			XmlTypeMapping map = typeMap.GetRealTypeMap (ob.GetType().FullName);
-			if (map == null)
+
+			if (map == null) 
 			{
 				WriteTypedPrimitive (element, namesp, ob, true);
+				return;
 			}
-			else 
+
+			if (writeWrappingElem)
 			{
-				if (map != typeMap) needType = true;
-				switch (map.TypeData.SchemaType)
-				{
-					case SchemaTypes.Class: WriteObjectElement (map, ob, element, namesp, needType); break;
-					case SchemaTypes.Array: WriteListElement (map, ob, element, namesp, needType); break;
-					case SchemaTypes.XmlNode: WriteXmlNodeElement (map, ob, element, namesp, needType); break;
-					case SchemaTypes.Primitive: WriteTypedPrimitive (element, namesp, ob, needType); break;
-					case SchemaTypes.Enum: WriteEnumElement (map, ob, element, namesp, needType); break;
-				}
+				if (map != typeMap || _format == SerializationFormat.Encoded) needType = true;
+				WriteStartElement (element, namesp, ob);
 			}
+
+			if (needType) 
+				WriteXsiType(map.XmlType, map.Namespace);
+
+			switch (map.TypeData.SchemaType)
+			{
+				case SchemaTypes.Class: WriteObjectElement (map, ob, element, namesp); break;
+				case SchemaTypes.Array: WriteListElement (map, ob, element, namesp); break;
+				case SchemaTypes.Primitive: WritePrimitiveElement (map, ob, element, namesp); break;
+				case SchemaTypes.Enum: WriteEnumElement (map, ob, element, namesp); break;
+			}
+
+			if (writeWrappingElem)
+				WriteEndElement (ob);
 		}
 
 		void WriteMessage (XmlMembersMapping membersMap, object[] parameters)
@@ -73,7 +111,13 @@ namespace System.Xml.Serialization
 			if (membersMap.HasWrapperElement) {
 				WriteStartDocument();
 				// TopLevelElement();
-				WriteStartElement(membersMap.ElementName, membersMap.Namespace);
+				WriteStartElement(membersMap.ElementName, membersMap.Namespace, (_format == SerializationFormat.Encoded));
+
+				if (Writer.LookupPrefix (XmlSchema.Namespace) == null)
+					WriteAttribute ("xmlns","xsd",XmlSchema.Namespace,XmlSchema.Namespace);
+	
+				if (Writer.LookupPrefix (XmlSchema.InstanceNamespace) == null)
+					WriteAttribute ("xmlns","xsi",XmlSchema.InstanceNamespace,XmlSchema.InstanceNamespace);
 			}
 			
 			WriteMembers ((ClassMap)membersMap.ObjectMap, parameters, true);
@@ -82,15 +126,10 @@ namespace System.Xml.Serialization
 				WriteEndElement();
 		}
 
-		void WriteObjectElement (XmlTypeMapping typeMap, object ob, string element, string namesp, bool needType)
+		void WriteObjectElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
-			WriteStartElement(element, namesp, ob);
-			if (needType) 
-				WriteXsiType(typeMap.XmlType, typeMap.Namespace);
-
 			ClassMap map = (ClassMap)typeMap.ObjectMap;
 			WriteMembers (map, ob, false);
-			WriteEndElement (ob);
 		}
 
 		void WriteMembers (ClassMap map, object ob, bool isValueList)
@@ -102,7 +141,7 @@ namespace System.Xml.Serialization
 			{
 				foreach (XmlTypeMapMemberAttribute attr in attributes) {
 					if (MemberHasValue (attr, ob, isValueList))
-						WriteAttribute(attr.AttributeName, attr.Namespace, XmlCustomFormatter.ToXmlString (GetMemberValue (attr, ob, isValueList)));
+						WriteAttribute (attr.AttributeName, attr.Namespace, GetStringValue (attr.MappedType, GetMemberValue (attr, ob, isValueList)));
 				}
 			}
 
@@ -113,7 +152,7 @@ namespace System.Xml.Serialization
 				if (extraAtts != null) 
 				{
 					foreach (XmlAttribute attr in extraAtts)
-						WriteAttribute(attr.LocalName, attr.NamespaceURI, attr.Value);
+						WriteAttribute (attr.LocalName, attr.NamespaceURI, attr.Value);
 				}
 			}
 
@@ -131,12 +170,7 @@ namespace System.Xml.Serialization
 					if (memType == typeof(XmlTypeMapMemberList))
 					{
 						if (memberValue != null) 
-						{
-							XmlTypeMapMemberList mm = (XmlTypeMapMemberList)member;
-							WriteStartElement(mm.ElementName, mm.Namespace, memberValue);
-							WriteListContent (member.TypeData, (ListMap) mm.ListTypeMapping.ObjectMap, memberValue);
-							WriteEndElement (memberValue);
-						}
+							WriteMemberElement ((XmlTypeMapElementInfo) member.ElementInfo[0], memberValue);
 					}
 					else if (memType == typeof(XmlTypeMapMemberFlatList))
 					{
@@ -182,29 +216,64 @@ namespace System.Xml.Serialization
 
 		void WriteMemberElement (XmlTypeMapElementInfo elem, object memberValue)
 		{
-			if (elem.IsPrimitive)
+			switch (elem.TypeData.SchemaType)
 			{
-				if (elem.TypeData.SchemaType == SchemaTypes.XmlNode)
-					WriteElementLiteral(((XmlNode)memberValue), elem.ElementName, elem.Namespace, elem.IsNullable, false);
-				else if (elem.IsNullable)
-					WriteNullableStringLiteral (elem.ElementName, elem.Namespace, XmlCustomFormatter.ToXmlString (memberValue));
-				else 
-					WriteElementString (elem.ElementName, elem.Namespace, XmlCustomFormatter.ToXmlString (memberValue));
+				case SchemaTypes.XmlNode:
+					if (_format == SerializationFormat.Literal) WriteElementLiteral(((XmlNode)memberValue), elem.ElementName, elem.Namespace, elem.IsNullable, false);
+					else WriteElementEncoded(((XmlNode)memberValue), elem.ElementName, elem.Namespace, elem.IsNullable, false);
+					break;
+
+				case SchemaTypes.Enum:
+				case SchemaTypes.Primitive:
+					if (_format == SerializationFormat.Literal) {
+						if (elem.IsNullable) WriteNullableStringLiteral (elem.ElementName, elem.Namespace, GetStringValue (elem.MappedType, memberValue));
+						else WriteElementString (elem.ElementName, elem.Namespace, GetStringValue (elem.MappedType, memberValue));
+					}
+					else {
+						if (elem.IsNullable) WriteNullableStringEncoded (elem.ElementName, elem.Namespace, GetStringValue (elem.MappedType, memberValue), new XmlQualifiedName (elem.DataType, elem.DataTypeNamespace));
+						else WriteElementString (elem.ElementName, elem.Namespace, GetStringValue (elem.MappedType, memberValue), new XmlQualifiedName (elem.DataType, elem.DataTypeNamespace));
+					}
+					break;
+
+				case SchemaTypes.Array:
+					if (elem.MappedType.MultiReferenceType) 
+						WriteReferencingElement (elem.ElementName, elem.Namespace, memberValue, elem.IsNullable);
+					else {
+						WriteStartElement(elem.ElementName, elem.Namespace, memberValue);
+						WriteListContent (elem.TypeData, (ListMap) elem.MappedType.ObjectMap, memberValue);
+						WriteEndElement (memberValue);
+					}
+					break;
+
+				case SchemaTypes.Class:
+					if (elem.MappedType.MultiReferenceType)	{
+						if (elem.MappedType.TypeData.Type == typeof(object))
+							WritePotentiallyReferencingElement (elem.ElementName, elem.Namespace, memberValue, null, false, elem.IsNullable);
+						else
+							WriteReferencingElement (elem.ElementName, elem.Namespace, memberValue, elem.IsNullable);
+					}
+					else WriteObject (elem.MappedType, memberValue, elem.ElementName, elem.Namespace, elem.IsNullable, false, true);
+					break;
+
+				case SchemaTypes.DataSet:
+					throw new NotSupportedException ("Invalid type");
+
+				default:
+					throw new NotSupportedException ("Invalid value type");
 			}
-			else if (elem.TypeData.SchemaType == SchemaTypes.Enum)
-				WriteElementString(elem.ElementName, elem.Namespace, GetEnumXmlValue (elem.MappedType, memberValue));
-			else
-				WriteObject (elem.MappedType, memberValue, elem.ElementName, elem.Namespace, elem.IsNullable, false);
 		}
 
-		void WriteListElement (XmlTypeMapping typeMap, object ob, string element, string namesp, bool needType)
+		void WriteListElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
-			WriteStartElement(element, namesp, ob);
-			if (needType) 
-				WriteXsiType(typeMap.XmlType, typeMap.Namespace);
-
+			if (_format == SerializationFormat.Encoded)
+			{
+				string n, ns;
+				int itemCount = GetListCount (typeMap.TypeData, ob);
+				((ListMap) typeMap.ObjectMap).GetArrayType (itemCount, out n, out ns);
+				string arrayType = (ns != string.Empty) ? FromXmlQualifiedName (new XmlQualifiedName(n,ns)) : n;
+				WriteAttribute ("arrayType", SoapReflectionImporter.EncodingNamespace, arrayType);
+			}
 			WriteListContent (typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob);
-			WriteEndElement (ob);
 		}
 
 		void WriteListContent (TypeData listType, ListMap map, object ob)
@@ -248,6 +317,14 @@ namespace System.Xml.Serialization
 				throw new Exception ("Unsupported collection type");
 		}
 
+		int GetListCount (TypeData listType, object ob)
+		{
+			if (listType.Type.IsArray)
+				return ((Array)ob).Length;
+			else
+				return (int) listType.Type.GetProperty ("Count").GetValue(ob,null);
+		}
+
 		void WriteAnyElementContent (XmlTypeMapMemberAnyElement member, object memberValue)
 		{
 			if (member.TypeData.Type == typeof (XmlElement)) {
@@ -260,7 +337,10 @@ namespace System.Xml.Serialization
 				if (elem is XmlElement) 
 				{
 					if (member.IsElementDefined (elem.Name, elem.NamespaceURI))
-						WriteElementLiteral(elem, "", "", false, true);
+					{
+						if (_format == SerializationFormat.Literal) WriteElementLiteral (elem, "", "", false, true);
+						else WriteElementEncoded (elem, "", "", false, true);
+					}
 					else
 						throw CreateUnknownAnyElementException (elem.Name, elem.NamespaceURI);
 				}
@@ -269,17 +349,22 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		void WriteXmlNodeElement (XmlTypeMapping typeMap, object ob, string element, string namesp, bool needType)
+		void WritePrimitiveElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
-			WriteElementLiteral((XmlNode)ob, "", "", true, false);
+			Writer.WriteString (GetStringValue (typeMap, ob));
 		}
 
-		void WriteEnumElement (XmlTypeMapping typeMap, object ob, string element, string namesp, bool needType)
+		void WriteEnumElement (XmlTypeMapping typeMap, object ob, string element, string namesp)
 		{
-			Writer.WriteStartElement(element, namesp);
-			if (needType) WriteXsiType(typeMap.XmlType, typeMap.Namespace);
 			Writer.WriteString (GetEnumXmlValue (typeMap, ob));
-			Writer.WriteEndElement();
+		}
+
+		string GetStringValue (XmlTypeMapping typeMap, object value)
+		{
+			if (typeMap != null && typeMap.TypeData.SchemaType == SchemaTypes.Enum)
+				return GetEnumXmlValue (typeMap, value);
+			else
+				return XmlCustomFormatter.ToXmlString (value);
 		}
 
 		string GetEnumXmlValue (XmlTypeMapping typeMap, object ob)
@@ -287,5 +372,28 @@ namespace System.Xml.Serialization
 			EnumMap map = (EnumMap)typeMap.ObjectMap;
 			return map.GetXmlName (ob.ToString ());
 		}
+
+		class CallbackInfo
+		{
+			XmlSerializationWriterInterpreter _swi;
+			XmlTypeMapping _typeMap;
+
+			public CallbackInfo (XmlSerializationWriterInterpreter swi, XmlTypeMapping typeMap)
+			{
+				_swi = swi;
+				_typeMap = typeMap;
+			}
+
+			internal void WriteObject (object ob)
+			{
+				_swi.WriteObject (_typeMap, ob, _typeMap.ElementName, _typeMap.Namespace, false, true, false);
+			}
+
+			internal void WriteEnum (object ob)
+			{
+				_swi.WriteObject (_typeMap, ob, _typeMap.ElementName, _typeMap.Namespace, false, false, false);
+			}
+		}
+
 	}
 }

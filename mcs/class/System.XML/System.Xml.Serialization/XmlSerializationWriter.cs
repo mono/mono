@@ -13,18 +13,20 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+using System.Runtime.Serialization;
 
 namespace System.Xml.Serialization {
 	public abstract class XmlSerializationWriter {
 
 		#region Fields
 
-		Hashtable references;
-		int referenceCount;
+		ObjectIDGenerator idGenerator;
 		int qnameCount;
 
 		ArrayList namespaces;
 		XmlWriter writer;
+		Queue referencedElements;
+		Hashtable callbacks;
 
 		#endregion // Fields
 
@@ -34,8 +36,6 @@ namespace System.Xml.Serialization {
 		protected XmlSerializationWriter ()
 		{
 			qnameCount = 0;
-			references = new Hashtable ();
-			referenceCount = 0;
 		}
 
 		#endregion // Constructors
@@ -66,10 +66,16 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void AddWriteCallback (Type type, string typeName, string typeNs, XmlSerializationWriteCallback callback)
 		{
-			throw new NotImplementedException ();
+			WriteCallbackInfo info = new WriteCallbackInfo ();
+			info.Type = type;
+			info.TypeName = typeName;
+			info.TypeNs = typeNs;
+			info.Callback = callback;
+
+			if (callbacks == null) callbacks = new Hashtable ();
+			callbacks.Add (type, info);
 		}
 
 		protected Exception CreateMismatchChoiceException (string value, string elementName, string enumValue)
@@ -158,28 +164,38 @@ namespace System.Xml.Serialization {
 
 		private string GetId (object o, bool addToReferencesList)
 		{
-			referenceCount += 1;
-			string id = String.Format ("id{0}", referenceCount);
-			if (addToReferencesList)
-				references[o] = id;
-			return id;
+			if (idGenerator == null) idGenerator = new ObjectIDGenerator ();
+
+			bool firstTime;
+			long lid = idGenerator.GetId (o, out firstTime);
+			return String.Format ("id{0}", lid);
+		}
+
+		
+		bool AlreadyQueued (object ob)
+		{
+			if (idGenerator == null) return false;
+
+			bool firstTime;
+			idGenerator.HasId (ob, out firstTime);
+			return !firstTime;
+		}
+
+		private string GetNamespacePrefix (string ns)
+		{
+			string prefix = Writer.LookupPrefix (ns);
+			if (prefix == null) 
+			{
+				prefix = String.Format ("q{0}", ++qnameCount);
+				WriteAttribute ("xmlns", prefix, null, ns);
+			}
+			return prefix;
 		}
 
 		[MonoTODO ("Need to check for namespace conflicts before blindly allocating qN")]
 		private string GetQualifiedName (string name, string ns)
 		{
-			string prefix;
-
-			if (ns == XmlSchema.Namespace)
-				prefix = "xsd";
-			else
-			{
-				qnameCount += 1;
-				prefix = String.Format ("q{0}", qnameCount);
-				WriteAttribute ("xmlns", prefix, null, ns);
-			}
-
-			return String.Format ("{0}:{1}", prefix, name);
+			return String.Format ("{0}:{1}", GetNamespacePrefix (ns), name);
 		}
 
 		protected abstract void InitCallbacks ();
@@ -220,18 +236,29 @@ namespace System.Xml.Serialization {
 			if (value == null)
 				return;
 
-			Writer.WriteStartAttribute (prefix, localName, ns);
-			WriteValue (value);
-			Writer.WriteEndAttribute ();
+			Writer.WriteAttributeString (prefix, localName, ns, value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementEncoded (XmlNode node, string name, string ns, bool isNullable, bool any)
 		{
-			throw new NotImplementedException ();
+			if (name != string.Empty)
+			{
+				if (node == null)
+				{
+					if (isNullable)
+						WriteNullTagEncoded (name, ns);
+				}
+				else
+				{
+					Writer.WriteStartElement (name, ns);
+					node.WriteTo (Writer);
+					Writer.WriteEndElement ();
+				}
+			}
+			else
+				node.WriteTo (Writer);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementLiteral (XmlNode node, string name, string ns, bool isNullable, bool any)
 		{
 			if (name != string.Empty)
@@ -410,10 +437,12 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableStringEncoded (string name, string ns, string value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			if (value != null)
+				WriteElementString (name, ns, value, xsiType);
+			else
+				WriteNullTagEncoded (name, ns);
 		}
 
 		[MonoTODO ("Implement")]
@@ -428,17 +457,12 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullableStringLiteral (string name, string ns, string value)
 		{
 			if (value != null)
 				WriteElementString (name, ns, value, null);
 			else
-			{
-				WriteStartElement (name, ns);
-				WriteAttribute ("xsi","nil", ns, "true");
-				WriteEndElement ();
-			}
+				WriteNullTagLiteral (name, ns);
 		}
 
 		[MonoTODO ("Implement")]
@@ -458,10 +482,11 @@ namespace System.Xml.Serialization {
 			WriteNullTagEncoded (name, String.Empty);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullTagEncoded (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (name, ns);
+			WriteAttribute ("xsi","null", XmlSchema.InstanceNamespace, "1");
+			WriteEndElement ();
 		}
 
 		protected void WriteNullTagLiteral (string name)
@@ -491,16 +516,66 @@ namespace System.Xml.Serialization {
 			WritePotentiallyReferencingElement (n, ns, o, ambientType, suppressReference, false);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WritePotentiallyReferencingElement (string n, string ns, object o, Type ambientType, bool suppressReference, bool isNullable)
 		{
-			throw new NotImplementedException ();
+			if (o == null) 
+			{
+				if (isNullable) WriteNullTagEncoded (n, ns);
+				return;
+			}
+
+			WriteStartElement (n, ns, o, true);
+
+			CheckReferenceQueue ();
+
+			if (callbacks.ContainsKey (o.GetType ()))
+			{
+				WriteCallbackInfo info = (WriteCallbackInfo) callbacks[o.GetType()];
+				if (o.GetType ().IsEnum) {
+					info.Callback (o);
+				}
+				else if (suppressReference) {
+					Writer.WriteAttributeString ("id", GetId (o, false));
+					if (ambientType != o.GetType ()) WriteXsiType(info.TypeName, info.TypeNs);
+					info.Callback (o);
+				}
+				else {
+					if (!AlreadyQueued (o)) referencedElements.Enqueue (o);
+					Writer.WriteAttributeString ("href", "#" + GetId (o, true));
+				}
+			}
+			else
+			{
+				// Must be a primitive type
+				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
+				if (td.SchemaType != SchemaTypes.Primitive)
+					throw new InvalidOperationException ("Invalid type: " + o.GetType().FullName);
+				WriteXsiType(td.XmlType, XmlSchema.Namespace);
+				Writer.WriteString (XmlCustomFormatter.ToXmlString (o));
+			}
+
+			WriteEndElement (o);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteReferencedElements ()
 		{
-			throw new NotImplementedException ();
+			if (referencedElements == null) return;
+			if (callbacks == null) return;
+
+			while (referencedElements.Count > 0)
+			{
+				object o = referencedElements.Dequeue ();
+				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
+				WriteCallbackInfo info = (WriteCallbackInfo) callbacks[o.GetType()];
+				WriteStartElement (info.TypeName, info.TypeNs, o, true);
+				Writer.WriteAttributeString ("id", GetId (o, false));
+
+				if (td.SchemaType != SchemaTypes.Array)	// Array use its own "arrayType" attribute
+					WriteXsiType(info.TypeName, info.TypeNs);
+
+				info.Callback (o);
+				WriteEndElement (o);
+			}
 		}
 
 		protected void WriteReferencingElement (string n, string ns, object o)
@@ -508,11 +583,33 @@ namespace System.Xml.Serialization {
 			WriteReferencingElement (n, ns, o, false);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteReferencingElement (string n, string ns, object o, bool isNullable)
 		{
-			throw new NotImplementedException ();
+			if (o == null) 
+			{
+				if (isNullable) WriteNullTagEncoded (n, ns);
+				return;
+			}
+			else
+			{
+				CheckReferenceQueue ();
+				if (!AlreadyQueued (o)) referencedElements.Enqueue (o);
+
+				Writer.WriteStartElement (n, ns);
+				Writer.WriteAttributeString ("href", "#" + GetId (o, true));
+				Writer.WriteEndElement ();
+			}
 		}
+
+		void CheckReferenceQueue ()
+		{
+			if (referencedElements == null)  
+			{
+				referencedElements = new Queue ();
+				InitCallbacks ();
+			}
+		}
+
 
 		[MonoTODO ("Implement")]
 		protected void WriteSerializable (IXmlSerializable serializable, string name, string ns, bool isNullable)
@@ -551,13 +648,15 @@ namespace System.Xml.Serialization {
 		{
 			WriteState oldState = Writer.WriteState;
 
-			if (writePrefixed) {
+			if (writePrefixed && ns != string.Empty) {
 				name = XmlCustomFormatter.FromXmlName (name);
-				Writer.WriteStartElement (String.Empty, name, ns);
+				string prefix = Writer.LookupPrefix (ns);
+				if (prefix == null) prefix = "q" + (++qnameCount);
+				Writer.WriteStartElement (prefix, name, ns);
 			} else
 				Writer.WriteStartElement (name, ns);
 
-			if (oldState == WriteState.Prolog) {
+			if ((o == null) || (oldState == WriteState.Prolog && !TypeTranslator.IsPrimitive (o.GetType()))) {
 				WriteAttribute ("xmlns","xsd",XmlSchema.Namespace,XmlSchema.Namespace);
 				WriteAttribute ("xmlns","xsi",XmlSchema.InstanceNamespace,XmlSchema.InstanceNamespace);
 			}
@@ -613,11 +712,19 @@ namespace System.Xml.Serialization {
 		protected void WriteXsiType (string name, string ns)
 		{
 			if (ns != null && ns != string.Empty)
-				WriteAttribute ("xsi", "type", ns, GetQualifiedName (name, ns));
+				WriteAttribute (GetNamespacePrefix (XmlSchema.InstanceNamespace), "type", ns, GetQualifiedName (name, ns));
 			else
-				WriteAttribute ("xsi", "type", ns, name);
+				WriteAttribute (GetNamespacePrefix (XmlSchema.InstanceNamespace), "type", ns, name);
 		}
 		
 		#endregion
+
+		class WriteCallbackInfo
+		{
+			public Type Type;
+			public string TypeName;
+			public string TypeNs;
+			public XmlSerializationWriteCallback Callback;
+		}
 	}
 }

@@ -21,6 +21,7 @@ namespace System.Xml.Serialization
 		string _dataType;
 		string _namespace = "";
 		XmlSchemaForm _form;
+		XmlTypeMapping _mappedType;
 
 		public XmlTypeMapMemberAttribute()
 		{
@@ -48,6 +49,12 @@ namespace System.Xml.Serialization
 		{
 			get { return _form; }
 			set { _form = value; }
+		}
+
+		public XmlTypeMapping MappedType
+		{
+			get { return _mappedType; }
+			set { _mappedType = value; }
 		}
 	}
 }

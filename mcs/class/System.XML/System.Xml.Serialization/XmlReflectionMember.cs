@@ -27,11 +27,18 @@ namespace System.Xml.Serialization {
 		{
 		}
 
-		public XmlReflectionMember (string name, Type type, XmlAttributes attributes)
+		internal XmlReflectionMember (string name, Type type, XmlAttributes attributes)
 		{
 			memberName = name;
 			memberType = type;
 			xmlAttributes = attributes;
+		}
+
+		internal XmlReflectionMember (string name, Type type, SoapAttributes attributes)
+		{
+			memberName = name;
+			memberType = type;
+			soapAttributes = attributes;
 		}
 
 		#endregion // Constructors
