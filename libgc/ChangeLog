@@ -1,3 +1,10 @@
+2005-04-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* include/gc_pthread_redirects.h (pthread_detach): Override pthread_detach too.
+
+	* solaris_pthreads.c (GC_pthread_detach): Override pthread_detach too. Fixes
+	#74223.
+
 2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* os_dep.c: Add ability to fall back to mmap-ing memory when sbrk
