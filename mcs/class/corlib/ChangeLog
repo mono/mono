@@ -1,6 +1,7 @@
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
-	* corlib_test.dll.sources: Added unit tests PaddingMode.
+	* corlib_test.dll.sources: Added unit tests PaddingMode and X509 
+	using CryptoAPI.
 
 2003-12-14  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
