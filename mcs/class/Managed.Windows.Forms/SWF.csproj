@@ -119,6 +119,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\Appearance.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\Application.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -211,6 +216,11 @@
                 <File
                     RelPath = "System.Windows.Forms\CaptionButton.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\CheckBox.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -726,6 +736,11 @@
                 <File
                     RelPath = "System.Windows.Forms\QueryContinueDragEventHandler.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\RadioButton.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
