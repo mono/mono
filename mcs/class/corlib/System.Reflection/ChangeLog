@@ -1,5 +1,7 @@
 2004-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Assembly.cs: Add ModuleResolve event.
+
 	* Module.cs (Mono_GetGuid): Make this internal.
 
 	* FieldInfo.cs: Add stubs for {Get,Set}ValueDirect.

@@ -19,18 +19,34 @@ using System.Collections;
 
 namespace System.Reflection {
 
+	internal class ResolveEventHolder {
+		public event ModuleResolveEventHandler ModuleResolve;
+	}
+
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 		private IntPtr _mono_assembly;
-		
-		internal Assembly () {}
 
-		//TODO: when adding this, MonoReflectionAssembly must be modified too.
-		// Probably, adding a delegate field after _mono_assbmely and using it in add/remove 
-		// is the way to go (to avoid the compiler inserting the delegate field before).
-		//public event ModuleResolveEventHandler ModuleResolve;
+		private ResolveEventHolder resolve_event_holder;
+		
+		internal Assembly () {
+			resolve_event_holder = new ResolveEventHolder ();
+		}
+
+		//
+		// We can't store the event directly in this class, since the
+		// compile would silently insert the fields before _mono_assembly
+		//
+		public event ModuleResolveEventHandler ModuleResolve {
+			add {
+				resolve_event_holder.ModuleResolve -= value;
+			}
+			remove {
+				resolve_event_holder.ModuleResolve -= value;
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_code_base ();
