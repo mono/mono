@@ -1,3 +1,7 @@
+2004-06-22  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestIconConverter.cs, TestImageConverter.cs: Commented out some tests.
+
 2004-06-17  Ravindra <rkumar@novell.com>
 
 	* graphicsUi.cs: Formatted and moved to

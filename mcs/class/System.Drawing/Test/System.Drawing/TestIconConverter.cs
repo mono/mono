@@ -262,7 +262,7 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (iconStr, (String) icoConv.ConvertTo (icon, 
 									typeof (String)), "CT#1a");
 				
-			byte [] newIconBytes = (byte []) icoConv.ConvertTo (null, CultureInfo.InvariantCulture,
+			/*byte [] newIconBytes = (byte []) icoConv.ConvertTo (null, CultureInfo.InvariantCulture,
 											icon, iconBytes.GetType ());
 		
 			Assert.AreEqual (iconBytes.Length, newIconBytes.Length, "CT#2");
@@ -271,7 +271,7 @@ namespace MonoTests.System.Drawing
 			
 			Assert.AreEqual (iconBytes.Length, newIconBytes.Length, "CT#2a");
 
-			
+						
 			try {
 				icoConv.ConvertTo (null, CultureInfo.InvariantCulture, 
 						 icon, typeof (Rectangle));
@@ -334,7 +334,7 @@ namespace MonoTests.System.Drawing
 				Assert.Fail ("CT#10: must throw NotSupportedException");
 			} catch (Exception e) {
 				Assert.IsTrue (e is NotSupportedException, "CT#10");
-			}
+			}*/
 
 
 			Assert.AreEqual (iconStr, (String) icoConvFrmTD.ConvertTo (null,
@@ -344,7 +344,7 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (iconStr, (String) icoConvFrmTD.ConvertTo (icon, 
 									typeof (String)), "CT#1aA");
 				
-			newIconBytes = (byte []) icoConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
+			/*newIconBytes = (byte []) icoConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
 											icon, iconBytes.GetType ());
 		
 			Assert.AreEqual (iconBytes.Length, newIconBytes.Length, "CT#2A");
@@ -352,7 +352,7 @@ namespace MonoTests.System.Drawing
 			newIconBytes = (byte []) icoConvFrmTD.ConvertTo (icon, iconBytes.GetType ());
 			
 			Assert.AreEqual (iconBytes.Length, newIconBytes.Length, "CT#2aA");
-
+			
 			try {
 				icoConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, 
 						 icon, typeof (Rectangle));
@@ -415,7 +415,7 @@ namespace MonoTests.System.Drawing
 				Assert.Fail ("CT#10A: must throw NotSupportedException");
 			} catch (Exception e) {
 				Assert.IsTrue (e is NotSupportedException, "CT#10A");
-			}
+			}*/
 		}
 				
 	}
