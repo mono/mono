@@ -78,9 +78,12 @@ namespace System.Web.UI.WebControls {
 			return View.Delete (null, null);
 		}
 		
-		public IEnumerable Select ()
+		public IEnumerable Select (DataSourceSelectArguments args)
 		{
-			return View.Select (null);
+			//View.Selecting;
+			IEnumerable enums = View.Select (null);
+			//View.Selected;
+			return enums;
 		}
 		
 		public int Update ()

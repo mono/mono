@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -32,30 +34,38 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.Data;
 
 namespace System.Web.UI.WebControls {
 	public class SqlDataSourceStatusEventArgs : EventArgs {
-		public SqlDataSourceStatusEventArgs (IOrderedDictionary outputParameters, object returnValue, int rowsAffected)
+		public SqlDataSourceStatusEventArgs (IDbCommand command, int rowsAffected, Exception exception)
 		{
-			this.outputParameters = outputParameters;
-			this.returnValue = returnValue;
+			this.command = command;
 			this.rowsAffected = rowsAffected;
+			this.exception = exception;
+			this.exceptionHandled = false;
 		}
 		
-		IOrderedDictionary outputParameters;
-		object returnValue;
+		IDbCommand command;
+		Exception exception;
 		int rowsAffected;
+		bool exceptionHandled;
 		
-		public IOrderedDictionary OutputParameters {
-			get { return outputParameters; }
+		public IDbCommand Command {
+			get { return command; }
 		}
 		
-		public object ReturnValue {
-			get { return returnValue; }
+		public Exception Exception {
+			get { return exception; }
 		}
 		
-		public int RowsAffected {
+		public int AffectedRows {
 			get { return rowsAffected; }
+		}
+
+		public bool ExceptionHandled {
+			get { return exceptionHandled; }
+			set { exceptionHandled = value; }
 		}
 	}
 }
