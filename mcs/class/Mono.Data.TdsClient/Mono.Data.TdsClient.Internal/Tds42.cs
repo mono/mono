@@ -265,17 +265,15 @@ namespace Mono.Data.TdsClient.Internal {
 					bytesRead += 1;
 				}
 
-				int index = result.Add (new SchemaInfo ());
-				result[index].DataTypeName = columnType.ToString ();
+				int index = result.Add (new TdsSchemaInfo ());
 				result[index].NumericPrecision = precision;
 				result[index].NumericScale = scale;
 				result[index].ColumnSize = bufLength;
 				result[index].ColumnName = ColumnNames[index];
+				result[index].ColumnType = columnType;
 				result[index].TableName = tableName;
-				result[index].Nullable = nullable;
-				result[index].Writable = writable;
-
-				result.Add (columnType);
+				result[index].AllowDBNull = nullable;
+				result[index].IsReadOnly = !writable;
 			}
 
 			//int skipLength = totalLength - bytesRead;

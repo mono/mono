@@ -103,8 +103,8 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return databaseProductVersion; }
 		}
 
-		public SchemaInfo[] Schema {
-			get { return columnInfo.Schema; }
+		public TdsPacketColumnInfoResult Schema {
+			get { return columnInfo; }
 		}
 
 		public TdsPacketRowResult ColumnValues {
@@ -642,8 +642,8 @@ namespace Mono.Data.TdsClient.Internal {
 			TdsPacketRowResult result = new TdsPacketRowResult (context);
 
 			int i = 0;
-			foreach (TdsColumnType type in columnInfo.ColumnTypes) {
-				result.Add (GetColumnValue (type, false, i));
+			foreach (TdsSchemaInfo schema in columnInfo) {
+				result.Add (GetColumnValue (schema.ColumnType, false, i));
 				i += 1;
 			}
 

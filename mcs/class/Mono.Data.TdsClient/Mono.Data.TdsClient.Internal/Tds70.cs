@@ -199,6 +199,7 @@ namespace Mono.Data.TdsClient.Internal {
 				bool caseSensitive = (flagData[2] & 0x02) > 0;
 				bool writable = (flagData[2] & 0x0c) > 0;
 				bool autoIncrement = (flagData[2] & 0x10) > 0;
+				bool isIdentity = (flagData[2] & 0x10) > 0;
 
 				TdsColumnType columnType = (TdsColumnType) (Comm.GetByte () & 0xff);
 				if ((byte) columnType == 0xef)
@@ -213,7 +214,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 				//int dispSize = -1;
 				int bufLength;
-				string tableName = "";
+				string tableName = null;
 
 				if (IsBlobType (columnType)) {
 					bufLength = Comm.GetTdsInt ();
@@ -237,17 +238,16 @@ namespace Mono.Data.TdsClient.Internal {
 				int colNameLength = Comm.GetByte ();
 				string columnName = Comm.GetString (colNameLength);
 
-				int index = result.Add (new SchemaInfo ());
-				result[index].DataTypeName = columnType.ToString ();
+				int index = result.Add (new TdsSchemaInfo ());
+				result[index].AllowDBNull = nullable;
+				result[index].ColumnName = columnName;
+				result[index].ColumnSize = bufLength;
+				result[index].ColumnType = columnType;
+				result[index].IsIdentity = isIdentity;
+				result[index].IsReadOnly = !writable;
 				result[index].NumericPrecision = precision;
 				result[index].NumericScale = scale;
-				result[index].ColumnSize = bufLength;
-				result[index].ColumnName = columnName;
 				result[index].TableName = tableName;
-				result[index].Nullable = nullable;
-				result[index].Writable = writable;
-
-				result.Add (columnType);
 			}
 
 			return result;

@@ -28,7 +28,7 @@ namespace Mono.Data.TdsClient.Internal {
 			get;
 		}
 
-		SchemaInfo[] Schema {
+		TdsPacketColumnInfoResult Schema {
 			get;
 		}
 
