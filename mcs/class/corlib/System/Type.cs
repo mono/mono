@@ -202,7 +202,7 @@ namespace System {
 
 		public bool IsLayoutSequential {
 			get {
-				return (Attributes & TypeAttributes.LayoutMask) == TypeAttributes.LayoutSequential;
+				return (Attributes & TypeAttributes.LayoutMask) == TypeAttributes.SequentialLayout;
 			}
 		}
 

@@ -64,7 +64,7 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
-		LayoutSequential = 8,
+		SequentialLayout = 8,
 
 		/// <summary>
 		/// </summary>

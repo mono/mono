@@ -55,7 +55,7 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
-		OLE = 128,
+		PreserveSig = 128,
 
 		/// <summary>
 		/// </summary>
@@ -68,10 +68,6 @@ namespace System.Reflection {
 		/// <summary>
 		/// </summary>
 		NoInlining = 8,
-
-		/// <summary>
-		/// </summary>
-		OneWay = 64,
 
 		/// <summary>
 		/// </summary>
