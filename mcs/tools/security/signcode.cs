@@ -151,10 +151,10 @@ namespace Mono.Tools {
 								return 1;
 						}
 						break;
-					case "-i":
+					case "-n":
 						af.Description = args [i++];
 						break;
-					case "-n":
+					case "-i":
 						af.Url = new Uri (args [i++]);
 						break;
 					// timestamp options

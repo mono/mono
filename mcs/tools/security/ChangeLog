@@ -1,3 +1,7 @@
+2004-10-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* signcode.cs: -i (url) and -n (description) parameters were inverted.
+
 2004-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* signcode.cs: Better error reporting (e.g. missing files).
