@@ -1,3 +1,8 @@
+2001-11-22  Nick Drochak <ndrochak@gol.com>
+
+	* IPAddress.cs: Fix constructor bug, properly name Address property,
+	and use triple-slash for comments.
+
 2001-11-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* IPAddress.cs: Updated to contain Any, Broadcast, Loopback and
