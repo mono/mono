@@ -1,5 +1,11 @@
 2002-07-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (ArrayAccess.EmitLoadOpcode): I was using the
+	wrong opcode for loading bytes and bools (ldelem.i1 instead of
+	ldelem.u1) and using the opposite for sbytes.
+
+	This fixes Digger, and we can finally run it.
+
 	* driver.cs (UnixParseOption): Move the option parsing here.  
 	(CSCParseOption): Implement CSC-like parsing of options.
 

@@ -5619,9 +5619,9 @@ namespace Mono.CSharp {
 		static public void EmitLoadOpcode (ILGenerator ig, Type type)
 		{
 			if (type == TypeManager.byte_type || type == TypeManager.bool_type)
-				ig.Emit (OpCodes.Ldelem_I1);
-			else if (type == TypeManager.sbyte_type)
 				ig.Emit (OpCodes.Ldelem_U1);
+			else if (type == TypeManager.sbyte_type)
+				ig.Emit (OpCodes.Ldelem_I1);
 			else if (type == TypeManager.short_type)
 				ig.Emit (OpCodes.Ldelem_I2);
 			else if (type == TypeManager.ushort_type)
