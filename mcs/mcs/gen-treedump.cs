@@ -158,27 +158,27 @@ namespace Generator {
 					prec = 9;
 					op = "*"; break;
 
-				case Binary.Operator.Divide:
+			        case Binary.Operator.Division:
 					prec = 9;
 					op = "/"; break;
 				
-				case Binary.Operator.Modulo:
+				case Binary.Operator.Modulus:
 					prec = 9;
 					op = "%"; break;
 				
-				case Binary.Operator.Add:
+				case Binary.Operator.Addition:
 					prec = 8;
 					op = "+"; break;
 				
-				case Binary.Operator.Subtract:
+				case Binary.Operator.Subtraction:
 					prec = 8;
 					op = "-"; break;
 				
-				case Binary.Operator.ShiftLeft:
+				case Binary.Operator.LeftShift:
 					prec = 7;
 					op = "<<"; break;
 				
-				case Binary.Operator.ShiftRight:
+				case Binary.Operator.RightShift:
 					prec = 7;
 					op = ">>"; break;
 				
@@ -190,19 +190,19 @@ namespace Generator {
 					prec = 6;
 					op = ">"; break;
 				
-				case Binary.Operator.LessOrEqual:
+				case Binary.Operator.LessThanOrEqual:
 					prec = 6;
 					op = "<="; break;
 				
-				case Binary.Operator.GreaterOrEqual:
+				case Binary.Operator.GreaterThanOrEqual:
 					prec = 6;
 					op = ">="; break;
 				
-				case Binary.Operator.Equal:
+				case Binary.Operator.Equality:
 					prec = 5;
 					op = "=="; break;
 				
-				case Binary.Operator.NotEqual:
+				case Binary.Operator.Inequality:
 					prec = 5;
 					op = "!="; break;
 				

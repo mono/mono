@@ -1,3 +1,32 @@
+2001-09-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Update operator constants.
+
+	* parameter.cs (Parameters::GetParameterInfo): Hook up VerifyArgs
+	(Parameters::GetSignature): Hook up VerifyArgs here.
+	(Parameters::VerifyArgs): Verifies that no two arguments have the
+	same name. 
+
+	* class.cs (Operator): Update the operator names to reflect the
+	ones that the spec expects (as we are just stringizing the
+	operator names).
+	
+	* expression.cs (Unary::ResolveOperator): Fix bug: Use
+	MethodInfo's ReturnType instead of LookupMethodByBuilder as the
+	previous usage did only work for our methods.
+	(Expression::ConvertImplicit): Handle decimal implicit numeric
+	conversions as well.
+	(Expression::InternalTypeConstructor): Used to invoke constructors
+	on internal types for default promotions.
+
+	(Unary::Emit): Implement special handling for the pre/post
+	increment/decrement for overloaded operators, as they need to have
+	the same semantics as the other operators.
+
+	(Binary::ResolveOperator): ditto.
+	(Invocation::ConversionExists): ditto.
+	(UserImplicitCast::Resolve): ditto.
+	
 2001-09-26  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Unary::Emit and Binary::Emit): If we have an overloaded

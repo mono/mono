@@ -86,7 +86,7 @@ namespace CIR {
 	}
 
 	public class Parameters {
-		public readonly Parameter [] FixedParameters;
+		public Parameter [] FixedParameters;
 		public readonly Parameter    ArrayParameter;
 		string signature;
 		Type [] types;
@@ -119,14 +119,34 @@ namespace CIR {
 			//
 		}
 
+		public bool VerifyArgs (TypeContainer tc)
+		{
+			int count = FixedParameters.Length;
+			int i, j;
+
+			for (i = 0; i < count; i++){
+				for (j = i + 1; j < count; j++){
+					if (FixedParameters [i].Name != FixedParameters [j].Name)
+						continue;
+					tc.RootContext.Report.Error (
+						100, "The parameter name `" + FixedParameters [i].Name +
+						"' is a duplicate");
+					return false;
+				}
+			}
+			return true;
+		}
+		
 		// <summary>
 		//    Returns the signature of the Parameters evaluated in
 		//    the @tc environment
 		// </summary>
 		public string GetSignature (TypeContainer tc)
 		{
-			if (signature == null)
+			if (signature == null){
+				VerifyArgs (tc);
 				ComputeSignature (tc);
+			}
 			
 			return signature;
 		}
@@ -153,6 +173,7 @@ namespace CIR {
 			return null;
 		}
 
+		
 		// <summary>
 		//   Returns the argument types as an array
 		// </summary>
@@ -169,7 +190,12 @@ namespace CIR {
 			int pc = FixedParameters.Length + extra;
 			
 			types = new Type [pc];
-				
+
+			if (!VerifyArgs (tc)){
+				FixedParameters = null;
+				return null;
+			}
+			
 			foreach (Parameter p in FixedParameters){
 				Type t = tc.LookupType (p.Type, false);
 

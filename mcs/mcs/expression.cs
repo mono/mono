@@ -303,7 +303,23 @@ namespace CIR {
 
 			return null;
 		}
-		       
+
+		// <summary>
+		//   Handles expressions like this: decimal d; d = 1;
+		//   and changes them into: decimal d; d = new System.Decimal (1);
+		// </summary>
+		static Expression InternalTypeConstructor (TypeContainer tc, Expression expr, Type target)
+		{
+			ArrayList args = new ArrayList ();
+
+			args.Add (new Argument (expr, Argument.AType.Expression));
+			
+			Expression ne = new New (target.FullName, args,
+						 new Location ("FIXME", 1, 1));
+
+			return ne.Resolve (tc);
+		}
+						    
 		// <summary>
 		//   Converts implicitly the resolved expression `expr' into the
 		//   `target_type'.  It returns a new expression that can be used
@@ -345,6 +361,8 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.short_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double
@@ -364,6 +382,8 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to int, long, float, double
@@ -376,6 +396,8 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to int, uint, long, ulong, float, double
@@ -392,6 +414,8 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to long, float, double
@@ -402,6 +426,8 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to long, ulong, float, double
@@ -416,6 +442,8 @@ namespace CIR {
 				if (target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if ((expr_type == TypeManager.uint64_type) ||
 				   (expr_type == TypeManager.int64_type)){
 				//
@@ -427,6 +455,8 @@ namespace CIR {
 				if (target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);	
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to ushort, int, uint, long, ulong, float, double
@@ -443,6 +473,8 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.decimal_type)
+					return InternalTypeConstructor (tc, expr, target_type);
 			} else
 				return ImplicitReferenceConversion (expr, target_type);
 
@@ -609,7 +641,6 @@ namespace CIR {
 			ec.ig.Emit (OpCodes.Box, child.Type);
 		}
 	}
-	
 
 	// <summary>
 	//   This kind of cast is used to encapsulate a child expression
@@ -784,8 +815,9 @@ namespace CIR {
 				
 				method = Invocation.OverloadResolve (tc, (MethodGroupExpr) mg, Arguments, location);
 				if (method != null) {
-					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
-					type = m.GetReturnType (tc);
+					MethodInfo mi = (MethodInfo) method;
+
+					type = mi.ReturnType;
 					return this;
 				}
 			}
@@ -804,8 +836,10 @@ namespace CIR {
 				if (expr_type != TypeManager.bool_type) {
 					report23 (tc.RootContext.Report, expr.Type);
 					return null;
-				} else
-					type = TypeManager.bool_type;
+				}
+				
+				type = TypeManager.bool_type;
+				return this;
 			}
 
 			if (oper == Operator.BitComplement) {
@@ -973,17 +1007,34 @@ namespace CIR {
 
 				// Note that operators are static anyway
 				
-				if (Arguments != null) {
+				if (Arguments != null) 
 					Invocation.EmitArguments (ec, method, Arguments);
+
+				//
+				// Post increment/decrement operations need a copy at this
+				// point.
+				//
+				if (oper == Operator.PostDecrement || oper == Operator.PostIncrement)
+					ig.Emit (OpCodes.Dup);
+				
+
+				ig.Emit (OpCodes.Call, (MethodInfo) method);
+
+				//
+				// Pre Increment and Decrement operators
+				//
+				if (oper == Operator.PreIncrement || oper == Operator.PreDecrement){
+					ig.Emit (OpCodes.Dup);
 				}
 				
-				if (method is MethodInfo)
-					ig.Emit (OpCodes.Call, (MethodInfo) method);
-				else
-					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-
+				//
+				// Increment and Decrement should store the result
+				//
+				if (oper == Operator.PreDecrement || oper == Operator.PreIncrement ||
+				    oper == Operator.PostDecrement || oper == Operator.PostIncrement){
+					((LValue) expr).Store (ig);
+				}
 				return;
-
 			}
 			
 			switch (oper) {
@@ -1028,8 +1079,8 @@ namespace CIR {
 							ig.Emit (OpCodes.Sub);
 						else
 							ig.Emit (OpCodes.Add);
-						((LValue) expr).Store (ig);
 						ig.Emit (OpCodes.Dup);
+						((LValue) expr).Store (ig);
 					} 
 				} else {
 					throw new Exception ("Handle Indexers and Properties here");
@@ -1171,11 +1222,11 @@ namespace CIR {
 
 	public class Binary : Expression {
 		public enum Operator {
-			Multiply, Divide, Modulo,
-			Add, Subtract,
-			ShiftLeft, ShiftRight,
-			LessThan, GreaterThan, LessOrEqual, GreaterOrEqual, 
-			Equal, NotEqual,
+			Multiply, Division, Modulus,
+			Addition, Subtraction,
+			LeftShift, RightShift,
+			LessThan, GreaterThan, LessThanOrEqual, GreaterThanOrEqual, 
+			Equality, Inequality,
 			BitwiseAnd,
 			ExclusiveOr,
 			BitwiseOr,
@@ -1234,29 +1285,29 @@ namespace CIR {
 			switch (oper){
 			case Operator.Multiply:
 				return "*";
-			case Operator.Divide:
+			case Operator.Division:
 				return "/";
-			case Operator.Modulo:
+			case Operator.Modulus:
 				return "%";
-			case Operator.Add:
+			case Operator.Addition:
 				return "+";
-			case Operator.Subtract:
+			case Operator.Subtraction:
 				return "-";
-			case Operator.ShiftLeft:
+			case Operator.LeftShift:
 				return "<<";
-			case Operator.ShiftRight:
+			case Operator.RightShift:
 				return ">>";
 			case Operator.LessThan:
 				return "<";
 			case Operator.GreaterThan:
 				return ">";
-			case Operator.LessOrEqual:
+			case Operator.LessThanOrEqual:
 				return "<=";
-			case Operator.GreaterOrEqual:
+			case Operator.GreaterThanOrEqual:
 				return ">=";
-			case Operator.Equal:
+			case Operator.Equality:
 				return "==";
-			case Operator.NotEqual:
+			case Operator.Inequality:
 				return "!=";
 			case Operator.BitwiseAnd:
 				return "&";
@@ -1373,6 +1424,13 @@ namespace CIR {
 					right = ForceConversion (tc, left, TypeManager.uint32_type);
 					type = TypeManager.uint32_type;
 				} 
+			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
+				if (l != TypeManager.decimal_type)
+					left = ConvertImplicit (tc, left, TypeManager.decimal_type);
+				if (r != TypeManager.decimal_type)
+					right = ConvertImplicit (tc, right, TypeManager.decimal_type);
+
+				type = TypeManager.decimal_type;
 			} else {
 				left = ForceConversion (tc, left, TypeManager.int32_type);
 				right = ForceConversion (tc, right, TypeManager.int32_type);
@@ -1431,6 +1489,8 @@ namespace CIR {
 
 			right_expr = MemberLookup (tc.RootContext, r, op, false);
 
+			Console.WriteLine ("Looking up: " + op);
+			
 			if (left_expr != null || right_expr != null) {
 				//
 				// Now we need to form the union of these two sets and
@@ -1449,13 +1509,13 @@ namespace CIR {
 					length2 = right_set.Methods.Length;
 				}
 
-				MemberInfo [] mi = new MemberInfo [length1 + length2];
+				MemberInfo [] miset = new MemberInfo [length1 + length2];
 				if (left_set != null)
-					left_set.Methods.CopyTo (mi, 0);
+					left_set.Methods.CopyTo (miset, 0);
 				if (right_set != null)
-					right_set.Methods.CopyTo (mi, length1);
+					right_set.Methods.CopyTo (miset, length1);
 				
-				MethodGroupExpr union = new MethodGroupExpr (mi);
+				MethodGroupExpr union = new MethodGroupExpr (miset);
 				
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
@@ -1464,8 +1524,9 @@ namespace CIR {
 			
 				method = Invocation.OverloadResolve (tc, union, Arguments, location);
 				if (method != null) {
-					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
-					type = m.GetReturnType (tc);
+					MethodInfo mi = (MethodInfo) method;
+					
+					type = mi.ReturnType;
 					return this;
 				}
 			}
@@ -1477,7 +1538,7 @@ namespace CIR {
 			// Only perform numeric promotions on:
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
-			if (oper == Operator.ShiftLeft || oper == Operator.ShiftRight){
+			if (oper == Operator.LeftShift || oper == Operator.RightShift){
 				return CheckShiftArguments (tc);
 			} else if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
 
@@ -1501,11 +1562,11 @@ namespace CIR {
 				}
 			}
 
-			if (oper == Operator.Equal ||
-			    oper == Operator.NotEqual ||
-			    oper == Operator.LessOrEqual ||
+			if (oper == Operator.Equality ||
+			    oper == Operator.Inequality ||
+			    oper == Operator.LessThanOrEqual ||
 			    oper == Operator.LessThan ||
-			    oper == Operator.GreaterOrEqual ||
+			    oper == Operator.GreaterThanOrEqual ||
 			    oper == Operator.GreaterThan){
 				type = TypeManager.bool_type;
 			}
@@ -1526,12 +1587,12 @@ namespace CIR {
 
 		public bool IsBranchable ()
 		{
-			if (oper == Operator.Equal ||
-			    oper == Operator.NotEqual ||
+			if (oper == Operator.Equality ||
+			    oper == Operator.Inequality ||
 			    oper == Operator.LessThan ||
 			    oper == Operator.GreaterThan ||
-			    oper == Operator.LessOrEqual ||
-			    oper == Operator.GreaterOrEqual){
+			    oper == Operator.LessThanOrEqual ||
+			    oper == Operator.GreaterThanOrEqual){
 				return true;
 			} else
 				return false;
@@ -1559,14 +1620,14 @@ namespace CIR {
 			right.Emit (ec);
 			
 			switch (oper){
-			case Operator.Equal:
+			case Operator.Equality:
 				if (close_target)
 					opcode = OpCodes.Beq_S;
 				else
 					opcode = OpCodes.Beq;
 				break;
 
-			case Operator.NotEqual:
+			case Operator.Inequality:
 				if (close_target)
 					opcode = OpCodes.Bne_Un_S;
 				else
@@ -1587,14 +1648,14 @@ namespace CIR {
 					opcode = OpCodes.Bgt;
 				break;
 
-			case Operator.LessOrEqual:
+			case Operator.LessThanOrEqual:
 				if (close_target)
 					opcode = OpCodes.Ble_S;
 				else
 					opcode = OpCodes.Ble;
 				break;
 
-			case Operator.GreaterOrEqual:
+			case Operator.GreaterThanOrEqual:
 				if (close_target)
 					opcode = OpCodes.Bge_S;
 				else
@@ -1648,21 +1709,21 @@ namespace CIR {
 
 				break;
 
-			case Operator.Divide:
+			case Operator.Division:
 				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
 					opcode = OpCodes.Div_Un;
 				else
 					opcode = OpCodes.Div;
 				break;
 
-			case Operator.Modulo:
+			case Operator.Modulus:
 				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
 					opcode = OpCodes.Rem_Un;
 				else
 					opcode = OpCodes.Rem;
 				break;
 
-			case Operator.Add:
+			case Operator.Addition:
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Add_Ovf;
@@ -1674,7 +1735,7 @@ namespace CIR {
 					opcode = OpCodes.Add;
 				break;
 
-			case Operator.Subtract:
+			case Operator.Subtraction:
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Sub_Ovf;
@@ -1686,19 +1747,19 @@ namespace CIR {
 					opcode = OpCodes.Sub;
 				break;
 
-			case Operator.ShiftRight:
+			case Operator.RightShift:
 				opcode = OpCodes.Shr;
 				break;
 				
-			case Operator.ShiftLeft:
+			case Operator.LeftShift:
 				opcode = OpCodes.Shl;
 				break;
 
-			case Operator.Equal:
+			case Operator.Equality:
 				opcode = OpCodes.Ceq;
 				break;
 
-			case Operator.NotEqual:
+			case Operator.Inequality:
 				ec.ig.Emit (OpCodes.Ceq);
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
 				
@@ -1713,14 +1774,14 @@ namespace CIR {
 				opcode = OpCodes.Cgt;
 				break;
 
-			case Operator.LessOrEqual:
+			case Operator.LessThanOrEqual:
 				ec.ig.Emit (OpCodes.Cgt);
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
 				
 				opcode = OpCodes.Ceq;
 				break;
 
-			case Operator.GreaterOrEqual:
+			case Operator.GreaterThanOrEqual:
 				ec.ig.Emit (OpCodes.Clt);
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 				
@@ -2250,9 +2311,9 @@ namespace CIR {
 				for (int i = me.Methods.Length; i > 0;) {
 					i--;
 					MethodBase mb = me.Methods [i];
-					Method method = (Method) TypeContainer.LookupMethodByBuilder (mb);
+					MethodInfo mi = (MethodInfo) mb;
 					
-					if (method.GetReturnType (tc) == to)
+					if (mi.ReturnType == to)
 						return true;
 				}
 			}
@@ -3271,10 +3332,10 @@ namespace CIR {
 				arguments.Add (new Argument (source, Argument.AType.Expression));
 
 				method = Invocation.OverloadResolve (tc, me, arguments, new Location ("", 0,0));
-			
 				if (method != null) {
-					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
-					type = m.GetReturnType (tc);
+					MethodInfo mi = (MethodInfo) method;
+
+					type = mi.ReturnType;
 
 					if (type != target)
 						return null;

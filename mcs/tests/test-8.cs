@@ -15,6 +15,15 @@ class X {
 		if ((b + c) != 24)
 			return 4;
 
+		if (a++ != 10)
+			return 5;
+		if (++a != 12)
+			return 6;
+		if (b-- != 10)
+			return 7;
+		if (--b != 8)
+			return 8;
+				
 		return 0;
 	}
 }

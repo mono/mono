@@ -1107,23 +1107,23 @@ overloadable_operator
         | TRUE   { $$ = Operator.OpType.True; }
         | FALSE  { $$ = Operator.OpType.False; }
 // Unary and binary:
-        | PLUS { $$ = Operator.OpType.Add; }
-        | MINUS { $$ = Operator.OpType.Subtract; }
+        | PLUS { $$ = Operator.OpType.Addition; }
+        | MINUS { $$ = Operator.OpType.Subtraction; }
 // Binary:
         | STAR { $$ = Operator.OpType.Multiply; }
-        | DIV {  $$ = Operator.OpType.Divide; }
-        | PERCENT { $$ = Operator.OpType.Modulo; }
+        | DIV {  $$ = Operator.OpType.Division; }
+        | PERCENT { $$ = Operator.OpType.Modulus; }
         | BITWISE_AND { $$ = Operator.OpType.BitwiseAnd; }
         | BITWISE_OR { $$ = Operator.OpType.BitwiseOr; }
         | CARRET { $$ = Operator.OpType.ExclusiveOr; }
-        | OP_SHIFT_LEFT { $$ = Operator.OpType.ShiftLeft; }
-        | OP_SHIFT_RIGHT { $$ = Operator.OpType.ShiftRight; }
-        | OP_EQ { $$ = Operator.OpType.Equal; }
-        | OP_NE { $$ = Operator.OpType.NotEqual; }
+        | OP_SHIFT_LEFT { $$ = Operator.OpType.LeftShift; }
+        | OP_SHIFT_RIGHT { $$ = Operator.OpType.RightShift; }
+        | OP_EQ { $$ = Operator.OpType.Equality; }
+        | OP_NE { $$ = Operator.OpType.Inequality; }
         | OP_GT { $$ = Operator.OpType.GreaterThan; }
         | OP_LT { $$ = Operator.OpType.LessThan; }
-        | OP_GE { $$ = Operator.OpType.GreaterOrEqual; }
-        | OP_LE { $$ = Operator.OpType.LesserOrEqual; }
+        | OP_GE { $$ = Operator.OpType.GreaterThanOrEqual; }
+        | OP_LE { $$ = Operator.OpType.LessThanOrEqual; }
 	;
 
 conversion_operator_declarator
@@ -1908,12 +1908,12 @@ multiplicative_expression
 	  }
 	| multiplicative_expression DIV unary_expression
 	  {
-		$$ = new Binary (Binary.Operator.Divide, 
+		$$ = new Binary (Binary.Operator.Division, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| multiplicative_expression PERCENT unary_expression 
 	  {
-		$$ = new Binary (Binary.Operator.Modulo, 
+		$$ = new Binary (Binary.Operator.Modulus, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
@@ -1922,12 +1922,12 @@ additive_expression
 	: multiplicative_expression
 	| additive_expression PLUS multiplicative_expression 
 	  {
-		$$ = new Binary (Binary.Operator.Add, 
+		$$ = new Binary (Binary.Operator.Addition, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| additive_expression MINUS multiplicative_expression
 	  {
-		$$ = new Binary (Binary.Operator.Subtract, 
+		$$ = new Binary (Binary.Operator.Subtraction, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
@@ -1936,12 +1936,12 @@ shift_expression
 	: additive_expression
 	| shift_expression OP_SHIFT_LEFT additive_expression
 	  {
-		$$ = new Binary (Binary.Operator.ShiftLeft, 
+		$$ = new Binary (Binary.Operator.LeftShift, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| shift_expression OP_SHIFT_RIGHT additive_expression
 	  {
-		$$ = new Binary (Binary.Operator.ShiftRight, 
+		$$ = new Binary (Binary.Operator.RightShift, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	; 
@@ -1960,12 +1960,12 @@ relational_expression
 	  }
 	| relational_expression OP_LE shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.LessOrEqual, 
+		$$ = new Binary (Binary.Operator.LessThanOrEqual, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| relational_expression OP_GE shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.GreaterOrEqual, 
+		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| relational_expression IS type
@@ -1984,12 +1984,12 @@ equality_expression
 	: relational_expression
 	| equality_expression OP_EQ relational_expression
 	  {
-		$$ = new Binary (Binary.Operator.Equal, 
+		$$ = new Binary (Binary.Operator.Equality, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| equality_expression OP_NE relational_expression
 	  {
-		$$ = new Binary (Binary.Operator.NotEqual, 
+		$$ = new Binary (Binary.Operator.Inequality, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	; 
@@ -2066,7 +2066,7 @@ assignment_expression
 		Location l = lexer.Location;
 
 		$$ = new Assign ((Expression) $1,
-				 new Binary (Binary.Operator.Divide, 
+				 new Binary (Binary.Operator.Division, 
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
@@ -2075,7 +2075,7 @@ assignment_expression
 		Location l = lexer.Location;
 
 		$$ = new Assign ((Expression) $1,
-				 new Binary (Binary.Operator.Modulo, 
+				 new Binary (Binary.Operator.Modulus, 
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
@@ -2084,7 +2084,7 @@ assignment_expression
 		Location l = lexer.Location;
 
 		$$ = new Assign ((Expression) $1,
-				 new Binary (Binary.Operator.Add, 
+				 new Binary (Binary.Operator.Addition, 
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
@@ -2093,7 +2093,7 @@ assignment_expression
 		Location l = lexer.Location;
 
 		$$ = new Assign ((Expression) $1,
-				 new Binary (Binary.Operator.Subtract, 
+				 new Binary (Binary.Operator.Subtraction, 
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
@@ -2102,7 +2102,7 @@ assignment_expression
 		Location l = lexer.Location;
 
 		$$ = new Assign ((Expression) $1,
-				 new Binary (Binary.Operator.ShiftLeft, 
+				 new Binary (Binary.Operator.LeftShift, 
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
@@ -2111,7 +2111,7 @@ assignment_expression
 		Location l = lexer.Location;
 
 		$$ = new Assign ((Expression) $1,
-				 new Binary (Binary.Operator.ShiftRight, 
+				 new Binary (Binary.Operator.RightShift, 
 					     (Expression) $1,
 					     (Expression) $3, l), l);
 	  }
@@ -3080,9 +3080,14 @@ void CheckUnaryOperator (Operator.OpType op)
 {
 	switch (op) {
 		
-	case Operator.OpType.Negate : case Operator.OpType.BitComplement : case Operator.OpType.Increment :
-	case Operator.OpType.Decrement :
-	case Operator.OpType.True : case Operator.OpType.False : case Operator.OpType.Add : case Operator.OpType.Subtract :
+	case Operator.OpType.Negate: 
+	case Operator.OpType.BitComplement: 
+	case Operator.OpType.Increment:
+	case Operator.OpType.Decrement:
+	case Operator.OpType.True: 
+	case Operator.OpType.False: 
+	case Operator.OpType.Addition: 
+	case Operator.OpType.Subtraction:
 		
 		break;
 		
@@ -3098,14 +3103,22 @@ void CheckBinaryOperator (Operator.OpType op)
 {
 	switch (op) {
 		
-	case Operator.OpType.Add : case Operator.OpType.Subtract : case Operator.OpType.Multiply :
-	case Operator.OpType.Divide :
-	case Operator.OpType.Modulo : case Operator.OpType.BitwiseAnd : case Operator.OpType.BitwiseOr :
-	case Operator.OpType.ExclusiveOr : case Operator.OpType.ShiftLeft : case Operator.OpType.ShiftRight :
-	case Operator.OpType.Equal : case Operator.OpType.NotEqual :
-	case Operator.OpType.GreaterThan : case Operator.OpType.LessThan : case Operator.OpType.GreaterOrEqual :
-	case Operator.OpType.LesserOrEqual :
-		
+	case Operator.OpType.Addition: 
+	case Operator.OpType.Subtraction: 
+	case Operator.OpType.Multiply:
+	case Operator.OpType.Division:
+	case Operator.OpType.Modulus: 
+	case Operator.OpType.BitwiseAnd: 
+	case Operator.OpType.BitwiseOr:
+	case Operator.OpType.ExclusiveOr: 
+	case Operator.OpType.LeftShift: 
+	case Operator.OpType.RightShift:
+	case Operator.OpType.Equality: 
+	case Operator.OpType.Inequality:
+	case Operator.OpType.GreaterThan: 
+	case Operator.OpType.LessThan: 
+	case Operator.OpType.GreaterThanOrEqual:
+	case Operator.OpType.LessThanOrEqual:
 		break;
 		
 	default :

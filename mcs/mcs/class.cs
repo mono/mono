@@ -626,7 +626,12 @@ namespace CIR {
 			
 		}
 
-		static public MethodCore LookupMethodByBuilder (object mb)
+		//
+		// the `mb' must be a MethodBuilder or a
+		// ConstructorBuilder, we return the method that
+		// defines it.
+		// 
+		static public MethodCore LookupMethodByBuilder (MethodBase mb)
 		{
 			return (MethodCore) method_builders_to_methods [mb];
 		}
@@ -1404,6 +1409,10 @@ namespace CIR {
 			Modifiers.PUBLIC |
 			Modifiers.STATIC;
 
+		const int RequiredModifiers =
+			Modifiers.PUBLIC |
+			Modifiers.STATIC;
+
 		public enum OpType {
 
 			// Unary operators
@@ -1415,24 +1424,24 @@ namespace CIR {
 			False,
 
 			// Unary and Binary operators
-			Add,
-			Subtract,
+			Addition,
+			Subtraction,
 			
 			// Binary operators
 			Multiply,
-			Divide,
-			Modulo,
+			Division,
+			Modulus,
 			BitwiseAnd,
 			BitwiseOr,
 			ExclusiveOr,
-			ShiftLeft,
-			ShiftRight,
-			Equal,
-			NotEqual,
+			LeftShift,
+			RightShift,
+			Equality,
+			Inequality,
 			GreaterThan,
 			LessThan,
-			GreaterOrEqual,
-			LesserOrEqual,
+			GreaterThanOrEqual,
+			LessThanOrEqual,
 
 			// Implicit and Explicit
 			Implicit,
@@ -1467,6 +1476,12 @@ namespace CIR {
 			OptAttributes = attrs;
 		}
 
+		string Prototype (TypeContainer parent)
+		{
+			return parent.Name + ".operator " + OperatorType + " (" + FirstArgType + "," +
+				SecondArgType + ")";
+		}
+		
 		public void Define (TypeContainer parent)
 		{
 			int length = 1;
@@ -1477,6 +1492,14 @@ namespace CIR {
 			
 			Parameter [] param_list = new Parameter [length];
 
+			if ((ModFlags & RequiredModifiers) != RequiredModifiers){
+				parent.RootContext.Report.Error (
+					558,
+					"User defined operators `" +
+					Prototype (parent) +
+					"' must be declared static and public");
+			}
+			    
 			param_list[0] = new Parameter (FirstArgType, FirstArgName,
 						       Parameter.Modifier.NONE, null);
 			if (SecondArgType != null)

@@ -1,5 +1,5 @@
 TEST_SOURCES = \
-	test-1 test-4 test-6 test-7 test-8
+	test-1 test-4 test-6 test-7 test-8 test-9
 
 TEST_NOPASS = \
 	test-2 test-3 test-5
