@@ -1882,7 +1882,10 @@ namespace System.Windows.Forms{
 		GWL_STYLE           = (-16),
 		GWL_EXSTYLE         = (-20),
 		GWL_USERDATA        = (-21),
-		GWL_ID              = (-12)
+		GWL_ID              = (-12),
+		DWL_MSGRESULT       = 0,
+		DWL_DLGPROC         = 4,
+		DWL_USER            = 8
 	}
 	#endregion
 
@@ -2832,5 +2835,17 @@ namespace System.Windows.Forms{
 		FNERR_SUBCLASSFAILURE        = 0x3001,
 		FNERR_INVALIDFILENAME        = 0x3002,
 		FNERR_BUFFERTOOSMALL         = 0x3003
+	}
+
+	internal enum CommDlgNotifications : int {
+		CDN_FIRST                    = (0-601),
+		CDN_INITDONE                 = (CDN_FIRST - 0x0000),
+		CDN_SELCHANGE                = (CDN_FIRST - 0x0001),
+		CDN_FOLDERCHANGE             = (CDN_FIRST - 0x0002),
+		CDN_SHAREVIOLATION           = (CDN_FIRST - 0x0003),
+		CDN_HELP                     = (CDN_FIRST - 0x0004),
+		CDN_FILEOK                   = (CDN_FIRST - 0x0005),
+		CDN_TYPECHANGE               = (CDN_FIRST - 0x0006),
+		CDN_INCLUDEITEM              = (CDN_FIRST - 0x0007)
 	}
 }

@@ -806,6 +806,13 @@ namespace System.Windows.Forms
 		internal int           lCustData; 
 		internal Win32.FnHookProc lpfnHook; 
 		internal string        lpTemplateName; 
-	}	
+	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	struct OFNOTIFY { 
+		internal NMHDR         hdr; 
+		internal IntPtr        lpOFN; 
+		internal string        pszFile; 
+	} 
 }
 

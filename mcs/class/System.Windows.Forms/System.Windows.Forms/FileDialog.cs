@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//
+	// Displays a dialog window from which the user can select a file.
 	// </summary>
 
     public abstract class FileDialog : CommonDialog {
@@ -28,6 +28,10 @@ namespace System.Windows.Forms {
 		bool checkPathExists;
 		bool dereferenceLinks;
 		bool showHelp;
+		string title;
+		string initialDirectory;
+		bool restoreDirectory;
+		bool validateNames;
 
 		internal FileDialog ( )
 		{
@@ -95,23 +99,14 @@ namespace System.Windows.Forms {
 			set { filterIndex = value; }
 		}
 
-		[MonoTODO]
 		public string InitialDirectory {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return initialDirectory;  }
+			set { initialDirectory = value; }
 		}
-		[MonoTODO]
+
 		public bool RestoreDirectory {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return restoreDirectory;  }
+			set { restoreDirectory = value; }
 		}
 
 		public bool ShowHelp {
@@ -119,23 +114,14 @@ namespace System.Windows.Forms {
 			set { showHelp = value; }
 		}
 
-		[MonoTODO]
 		public string Title {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return title; }
+			set { title = value;}
 		}
-		[MonoTODO]
+
 		public bool ValidateNames {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return validateNames;  }
+			set { validateNames = value; }
 		}
 
 		public override void Reset()
@@ -155,7 +141,28 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected  override IntPtr HookProc( IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam )
 		{
-			//FIXME:
+			switch ( msg ) {
+			case ( int ) Msg.WM_NOTIFY:
+				OFNOTIFY ofnhdr = ( OFNOTIFY )Marshal.PtrToStructure ( lparam, typeof ( OFNOTIFY ) );
+
+				switch ( ofnhdr.hdr.code ) {
+				case ( int ) CommDlgNotifications.CDN_FILEOK:
+					OPENFILENAME ofn = ( OPENFILENAME ) Marshal.PtrToStructure ( ofnhdr.lpOFN, typeof ( OPENFILENAME ) );
+					string oldFileName = FileName;
+					FileName = ofn.lpstrFile;
+					CancelEventArgs e = new CancelEventArgs ( false );
+					OnFileOk ( e );
+					if ( e.Cancel ){
+						Win32.SetWindowLong( hWnd, GetWindowLongFlag.DWL_MSGRESULT, 1 );
+						return ( IntPtr ) 1 ;
+					}
+				break;
+				case ( int ) CommDlgNotifications.CDN_HELP:
+					OnHelpRequest ( EventArgs.Empty );
+				break;
+				}
+			break;
+			}
 			return base.HookProc(hWnd, msg, wparam, lparam);
 		}
 
@@ -200,7 +207,7 @@ namespace System.Windows.Forms {
 			char[] FileNameBuffer = new char[MAX_PATH];
 			opf.lpstrFile = new string( FileNameBuffer );
 			opf.nMaxFile = (uint) opf.lpstrFile.Length;
-			opf.lpfnHook = new Win32.FnHookProc ( base.HookProc );
+			opf.lpfnHook = new Win32.FnHookProc ( this.HookProc );
 			opf.Flags = (int) ( OpenFileDlgFlags.OFN_ENABLEHOOK | OpenFileDlgFlags.OFN_EXPLORER );
 
 			// convert filter to the proper format accepted by GetOpenFileName
@@ -221,6 +228,8 @@ namespace System.Windows.Forms {
 				opf.nFilterIndex = (uint)FilterIndex;
 
 			opf.lpstrDefExt = DefaultExt;
+			opf.lpstrTitle = Title;
+			opf.lpstrInitialDir = InitialDirectory;
 
 			if ( CheckFileExists )
 				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_FILEMUSTEXIST );
@@ -230,18 +239,17 @@ namespace System.Windows.Forms {
 				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NODEREFERENCELINKS );
 			if ( ShowHelp )
 				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_SHOWHELP );
+			if ( RestoreDirectory )
+				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NOCHANGEDIR );
+			if ( !ValidateNames )
+				opf.Flags |= (int) ( OpenFileDlgFlags.OFN_NOVALIDATE );
 		}
 
 		private int getSeparatorsCount ( string filter )
 		{
 			int sepNum = 0;
-			int index = filter.IndexOf ( '|' );
-			while ( index != -1 ) {
-				sepNum ++;
-				if ( index < filter.Length )
-					index ++;
-				index = filter.IndexOf ( '|', index );
-			}
+			foreach ( char c in filter )
+				if ( c == '|' ) sepNum++;
 			return sepNum;
 		}
 		
@@ -256,6 +264,10 @@ namespace System.Windows.Forms {
 			checkPathExists = true;
 			dereferenceLinks = true;
 			showHelp = false;
+			title = string.Empty;
+			initialDirectory = string.Empty;
+			restoreDirectory = false;
+			validateNames = true;
 		}
 	 }
 }

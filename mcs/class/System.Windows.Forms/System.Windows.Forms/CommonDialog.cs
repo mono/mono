@@ -4,7 +4,7 @@
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@Raytek.com)
-//
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 // (C) Ximian, Inc., 2002
 //
 
@@ -19,15 +19,11 @@ namespace System.Windows.Forms {
 	[MonoTODO]
 	public abstract class CommonDialog : Component {
 
-		// private fields
-		
-		/// --- constructor ---
 		[MonoTODO]
 		public CommonDialog() : base () 
 		{
 		}
 		
-		/// --- Methods ---
 		[MonoTODO]
 		protected virtual IntPtr HookProc(IntPtr hWnd,int msg,IntPtr wparam,IntPtr lparam) 
 		{
@@ -35,13 +31,11 @@ namespace System.Windows.Forms {
 			return IntPtr.Zero;
 		}
 		
-		// event methods
-		[MonoTODO]
 		protected virtual void OnHelpRequest(EventArgs e) 
 		{
-			//FIXME:
+			if ( HelpRequest != null )
+				HelpRequest ( this, e );
 		}
-		// end of event methods
 		
 		[MonoTODO]
 		protected virtual IntPtr OwnerWndProc(IntPtr hWnd,int msg,IntPtr wparam,IntPtr lparam) 
@@ -60,15 +54,12 @@ namespace System.Windows.Forms {
 			return res ? DialogResult.OK : DialogResult.Cancel;
 		}
 		
-		[MonoTODO]
 		public DialogResult ShowDialog(IWin32Window owner) 
 		{
 			bool res = RunDialog ( owner.Handle );
 			return res ? DialogResult.OK : DialogResult.Cancel;
 		}
 		
-		/// events
-		[MonoTODO]
 		public event EventHandler HelpRequest;
 	}
 }
