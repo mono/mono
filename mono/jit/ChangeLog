@@ -1,3 +1,9 @@
+2002-08-19  Nick Drochak <ndrochak@gol.com>
+
+	* x86.brg (mono_llmult_ovf): Simplified the code greatly by refactoring
+	the algebraic form we are using.  This also eliminated a silly overflow
+	of the intermediate result that was causing troubles.
+
 2002-08-16  Nick Drochak <ndrochak@gol.com>
 
 	* x86.brg (mono_llmult_ovf): Flip ALL the bits, dummy. Now negative numbers
