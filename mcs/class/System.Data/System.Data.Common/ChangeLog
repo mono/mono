@@ -1,3 +1,7 @@
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbDataPermission.cs : Empty.Union(Empty) is Empty.
+
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbDataPermissionAttribute.cs, PermissionHelper.cs :

@@ -314,7 +314,7 @@ namespace System.Data.Common {
 			if (dbdp == null)
 				return Copy ();
 			if (IsEmpty () && dbdp.IsEmpty ())
-				return null;
+				return Copy ();
 
 			DBDataPermission p = CreateInstance ();
 			if (IsUnrestricted () || dbdp.IsUnrestricted ()) {
