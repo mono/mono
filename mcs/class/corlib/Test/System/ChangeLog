@@ -2,6 +2,7 @@
 
 	* IntPtrTest.cs: New. Tests for 32/64 bits behaviour of IntPtr.
 	* SingleTest.cs: Added tests to compare positive 0 and negative 0.
+	* UIntPtrTest.cs: New. Tests for 32/64 bits behaviour of UIntPtr.
 
 2004-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
