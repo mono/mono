@@ -363,6 +363,19 @@ namespace_member_declarations
 
 namespace_member_declaration
 	: namespace_declaration
+	| module_declaration
+	  {
+		int mod_flags = 0;
+		string name = "";
+
+		if ($1 is Class){
+			Class c = (Class) $1;
+			mod_flags = c.ModFlags;  //TODO: Add ModuleAttribute
+			name = c.Name;
+		} else
+			break;
+
+	  }
 	| type_declaration
 	  {
 		int mod_flags = 0;
@@ -382,9 +395,9 @@ namespace_member_declaration
 	  }
 	;
 
-
 type_declaration
-	: class_declaration		
+	: /* empty */
+	| class_declaration
 	;
 
 
@@ -395,6 +408,17 @@ class_declaration
 	  }
 	  opt_class_member_declarations
 	  END CLASS EOL
+	  {
+	  }
+	;
+
+module_declaration
+	: /* opt_attributes opt_modifiers */
+	  MODULE IDENTIFIER EOL
+	  { 
+	  }
+	  opt_class_member_declarations
+	  END MODULE EOL
 	  {
 	  }
 	;

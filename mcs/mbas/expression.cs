@@ -3841,10 +3841,16 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
-				
+
+			Type decl_type = method.DeclaringType;
+			
+			if (RootContext.DisableTrace && decl_type == TypeManager.trace_type)
+				return;
+			if (RootContext.DisableDebug && decl_type == TypeManager.debug_type)
+				return;
+			
 			if (!is_static){
-				
-				if (method.DeclaringType.IsValueType)
+				if (decl_type.IsValueType)
 					struct_call = true;
 				//
 				// If this is ourselves, push "this"
@@ -3862,7 +3868,7 @@ namespace Mono.CSharp {
 						// to have their value boxed.  
 
 						struct_call = true;
-						if (method.DeclaringType.IsValueType){
+						if (decl_type.IsValueType){
 							//
 							// If the expression implements IMemoryLocation, then
 							// we can optimize and use AddressOf on the
