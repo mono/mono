@@ -12,6 +12,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Drawing
 {
@@ -32,6 +33,15 @@ namespace System.Drawing
 		{
 			nativeObject = nativeGraphics;
 		}
+		
+		internal IntPtr NativeObject{
+			get{
+				return nativeObject;
+			}
+			set	{
+				nativeObject = value;
+			}
+		}
 
 		[MonoTODO]
 		public void AddMetafileComment (byte [] data)
@@ -39,22 +49,34 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public GraphicsContainer BeginContainer ()
 		{
-			throw new NotImplementedException ();
+			int state;
+
+        	GDIPlus.GdipBeginContainer2(nativeObject, out state);
+        	
+        	return new GraphicsContainer(state);
 		}
 
-		[MonoTODO]
+		
 		public GraphicsContainer BeginContainer (Rectangle dstrect, Rectangle srcrect, GraphicsUnit unit)
 		{
-			throw new NotImplementedException ();
+			int state;
+
+        	GDIPlus.GdipBeginContainerI(nativeObject, dstrect, srcrect, unit, out state);        	
+        	
+        	return new GraphicsContainer(state);
 		}
 
-		[MonoTODO]
+		
 		public GraphicsContainer BeginContainer (RectangleF dstrect, RectangleF srcrect, GraphicsUnit unit)
 		{
-			throw new NotImplementedException ();
+			int state;
+
+        	GDIPlus.GdipBeginContainer(nativeObject,  dstrect, srcrect, unit, out state);        	
+        	
+        	return new GraphicsContainer(state);
 		}
 
 		
@@ -407,7 +429,7 @@ namespace System.Drawing
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{			
-			GDIPlus.GdipDrawImageRectRectI(nativeObject, image.NativeObject, //aki
+			GDIPlus.GdipDrawImageRectRectI(nativeObject, image.NativeObject, 
 								destRect.X, destRect.Y, destRect.Width, destRect.Height,
 								srcX, srcY, srcWidth, srcHeight,
 								srcUnit, imageAttr.NativeObject, IntPtr.Zero, 0);				 			
@@ -576,7 +598,8 @@ namespace System.Drawing
 		[MonoTODO("Ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
 		{
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);
+			//FIXME: It seems that Win32 GDI+ does not accept a NULL font
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);			 
 		}
 
 		[MonoTODO("This ignores the font")]
@@ -615,10 +638,10 @@ namespace System.Drawing
 			//throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public void EndContainer (GraphicsContainer container)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipEndContainer(nativeObject, container.NativeObject);
 		}
 
 		[MonoTODO]
@@ -849,40 +872,37 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public void FillClosedCurve (Brush brush, PointF [] points)
 		{
-			throw new NotImplementedException ();
+		       GDIPlus.GdipFillClosedCurve(nativeObject, brush.NativeObject, points, points.Length);
 		}
 
-		[MonoTODO]
+		
 		public void FillClosedCurve (Brush brush, Point [] points)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillClosedCurveI(nativeObject, brush.NativeObject, points, points.Length);
 		}
 
-		[MonoTODO]
+		
 		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode)
 		{
-			throw new NotImplementedException ();
+			FillClosedCurve (brush, points, fillmode, 0.5f);
 		}
-
-		[MonoTODO]
+		
 		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode)
 		{
-			throw new NotImplementedException ();
+			FillClosedCurve (brush, points, fillmode, 0.5f);
 		}
 
-		[MonoTODO]
 		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillClosedCurve2(nativeObject, brush.NativeObject, points, points.Length, tension, fillmode);
 		}
 
-		[MonoTODO]
 		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode, float tension)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillClosedCurve2I(nativeObject, brush.NativeObject, points, points.Length, tension, fillmode);
 		}
 
 		public void FillEllipse (Brush brush, Rectangle rect)
@@ -911,22 +931,20 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void FillPie (Brush brush, Rectangle rect, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPie(nativeObject, brush.NativeObject, rect.X, rect.Y, rect.Width, rect.Height,
+                       startAngle, sweepAngle);
 		}
 
-		[MonoTODO]
 		public void FillPie (Brush brush, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPieI(nativeObject, brush.NativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 
-		[MonoTODO]
 		public void FillPie (Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPie(nativeObject, brush.NativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 
 		public void FillPolygon (Brush brush, PointF [] points)
@@ -999,7 +1017,7 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public static Graphics FromHdc (IntPtr hdc)
 		{
 			int graphics;
@@ -1201,10 +1219,10 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public void ResetClip ()
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipResetClip(nativeObject);
 		}
 
 		public void ResetTransform ()
@@ -1254,58 +1272,58 @@ namespace System.Drawing
                         GDIPlus.GdipScaleWorldTransform (nativeObject, sx, sy, order);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			 SetClip (rect, CombineMode.Replace);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (GraphicsPath path)
 		{
-			throw new NotImplementedException ();
+			SetClip(path, CombineMode.Replace);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			SetClip(rect, CombineMode.Replace);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (Graphics g)
 		{
-			throw new NotImplementedException ();
+			SetClip(g, CombineMode.Replace);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (Graphics g, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipSetClipGraphics(nativeObject, g.NativeObject, combineMode);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (Rectangle rect, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipSetClipRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, combineMode);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (RectangleF rect, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipSetClipRect(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, combineMode);		
 		}
 
 		[MonoTODO]
 		public void SetClip (Region region, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			//GDIPlus.GdipSetClipRegion(nativeObject,  region.NativeObject, combineMode); //TODO: Region not implemented yet
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (GraphicsPath path, CombineMode combineMode)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipSetClipPath(nativeObject, path.NativeObject, combineMode);
 		}
 
 		[MonoTODO]

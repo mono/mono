@@ -23,7 +23,7 @@ namespace System.Drawing.Drawing2D
                 {
                         nativePath = ptr;
                 }
-
+                           		
                 public GraphicsPath ()
                 {
                         GDIPlus.GdipCreatePath (FillMode.Alternate, out nativePath);
@@ -116,6 +116,16 @@ namespace System.Drawing.Drawing2D
                                 return count;
                         }
                 }
+                
+                internal IntPtr NativeObject{
+                
+					get{
+							return nativePath;
+					}
+					set	{
+							nativePath = value;
+					}
+				}
         
                 //
                 // AddArc

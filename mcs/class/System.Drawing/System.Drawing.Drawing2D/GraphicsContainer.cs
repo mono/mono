@@ -14,8 +14,26 @@ namespace System.Drawing.Drawing2D {
 	/// Summary description for GraphicsContainer.
 	/// </summary>
 	public sealed class GraphicsContainer : MarshalByRefObject {
+		
+		internal int nativeState = 0;
+		
 		private GraphicsContainer ()
 		{
+			
 		}
+		
+		internal GraphicsContainer (int state)
+		{
+			nativeState = state;
+		}
+		
+		internal int NativeObject{            
+				get{
+						return nativeState;
+				}
+				set	{
+						nativeState = value;
+				}
+			}
 	}
 }

@@ -24,6 +24,16 @@ namespace System.Drawing {
 		{
                         nativeObject = ptr;
 		}
+		
+		internal IntPtr NativeObject{
+			get{
+				return nativeObject;
+			}
+			set	{
+				nativeObject = value;
+			}
+		}
+	
 
                 internal Brush CreateBrush (IntPtr brush, System.Drawing.BrushType type)
                 {
