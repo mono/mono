@@ -1,3 +1,8 @@
+2003-04-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* makefile: Add instructions to build
+	* makefile.gnu: Add instructions to build
+	
 2003-04-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* makefile: Add DataDef to build

@@ -24,7 +24,11 @@ SOURCES = 				\
         codegen/ExternTypeRef.cs        \
         codegen/PrimitiveTypeRef.cs     \
         codegen/TypeManager.cs          \
-	parser/ILParser.cs		\
+        codegen/IInstr.cs               \
+        codegen/IntInstr.cs             \
+        codegen/LdstrInstr.cs           \
+        codegen/SimpInstr.cs            \
+        parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
 	scanner/ILSyntaxError.cs	\
