@@ -1,3 +1,7 @@
+2005-02-19    <vargaz@freemail.hu>
+
+	* pinvoke3.cs libtest.c: Add more small struct tests.
+
 2005-02-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke3.cs libtest.c: Add tests for passing and returning small 
