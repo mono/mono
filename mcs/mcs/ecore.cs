@@ -4157,9 +4157,11 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
+#if false
 				if (instance_expr is IMemoryLocation)
 					((IMemoryLocation)instance_expr).AddressOf (ec, AddressOp.LoadStore);
 				else
+#endif
 					instance_expr.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
