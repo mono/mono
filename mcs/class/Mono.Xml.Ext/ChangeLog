@@ -1,3 +1,8 @@
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Mono.Xml.Ext.dll.sources : added new files.
+	* .cvsignore : added
+
 2004-10-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* README : new file.

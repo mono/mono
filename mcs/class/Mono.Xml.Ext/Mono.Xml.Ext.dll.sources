@@ -29,5 +29,8 @@ Mono.Xml.XPath2/XmlArgumentList.cs
 Mono.Xml.XPath2/XmlQueryCompileException.cs
 Mono.Xml.XPath2/XmlQueryException.cs
 Mono.Xml/XmlChar.cs
+Mono.Xml/XmlNodeWriter.cs
+Mono.Xml/XmlCachingResolver.cs
 Mono.Xml/XmlStoredResolver.cs
+Mono.Xml/SubtreeXmlReader.cs
 Mono.Xml/InternalPool.cs
