@@ -8,7 +8,6 @@
 	<target name="build">
 		<csc target="library" output="../lib/Cscompmgd.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
-			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/> 

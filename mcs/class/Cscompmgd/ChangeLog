@@ -1,3 +1,7 @@
+2003-07-03  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Cscompmgd.build: Removed unneeded unsafe compiler switch
+
 2002-12-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* Cscompmgd.build: Added file
