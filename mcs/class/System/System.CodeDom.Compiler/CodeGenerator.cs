@@ -854,6 +854,8 @@ namespace System.CodeDom.Compiler {
 			else {
 				if ((attributes & TypeAttributes.Interface) != 0) 
 					output.Write ("interface ");
+				else if (currentType is CodeTypeDelegate)
+					output.Write ("delegate ");
 				else {
 					if ((attributes & TypeAttributes.Sealed) != 0)
 						output.Write ("sealed ");
@@ -940,6 +942,33 @@ namespace System.CodeDom.Compiler {
 		}
 
 		private void GenerateType (CodeTypeDeclaration type)
+		{
+			CodeTypeDelegate del = type as CodeTypeDelegate;
+			if (del != null)
+				GenerateDelegate (del);
+			else
+				GenerateNonDelegateType (type);
+		}
+
+		private void GenerateDelegate (CodeTypeDelegate type)
+		{
+			CodeTypeDeclaration prevType = this.currentType;
+			this.currentType = type;
+
+			InitOutput (output, options);
+
+			foreach (CodeCommentStatement statement in type.Comments)
+				GenerateCommentStatement (statement);
+
+			GenerateTypeStart (type);
+
+			OutputParameters (type.Parameters);
+
+			GenerateTypeEnd (type);
+			this.currentType = prevType;
+		}
+		
+		private void GenerateNonDelegateType (CodeTypeDeclaration type)
 		{
 			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
