@@ -237,6 +237,14 @@ namespace System.Web.Mail {
 	    // set the mailer -- should probably be changed
 	    headers[ "X-Mailer" ] = "Mono (System.Web.Mail.SmtpMail.Send)";
 	    
+	    // Set the transfer encoding.. it seems like only sends 7bit
+	    // if it is ASCII
+	    if( msg.BodyEncoding is ASCIIEncoding ) {
+		headers[ "Content-Transfer-Encoding" ] = "7bit";
+	    } else {
+		headers[ "Content-Transfer-Encoding" ] = "8bit";
+	    }
+	    
 	    
 	    // add the custom headers they will overwrite
 	    // the earlier ones if they are the same
