@@ -1,3 +1,8 @@
+2003-05-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllowPartiallyTrustedCallersAttribute.cs: New. Class was missing
+	from original 1.0 documentation (but inclufed in framework 1.0)
+
 2002-06-10  Duncan Mak  <duncan@ximian.com>
 
 	* IEvidenceFactory.cs (Evidence): Added missing method.
