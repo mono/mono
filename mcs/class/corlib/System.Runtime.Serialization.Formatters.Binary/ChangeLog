@@ -1,3 +1,8 @@
+2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CodeGenerator.cs: Call new DefineInternalDynamicAssembly method to prevent a race
+	condition in the setting of the CorlibInternal flag.
+
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CodeGenerator.cs: Mark the created assembly builder as internal.
