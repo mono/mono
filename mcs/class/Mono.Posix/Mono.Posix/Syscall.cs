@@ -55,7 +55,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
-[assembly:Mono.Posix.IncludeAttribute (new string [] {"sys/types.h", "sys/stat.h", "sys/wait.h", "unistd.h", "fcntl.h", "signal.h"},
+[assembly:Mono.Posix.IncludeAttribute (new string [] {"sys/types.h", "sys/stat.h", "sys/wait.h", "unistd.h", "fcntl.h", "signal.h", "poll.h"},
 				       new string [] {"_GNU_SOURCE"})]
 namespace Mono.Posix {
 
@@ -133,7 +133,24 @@ namespace Mono.Posix {
 		SIGSYS,
 		// SIGRTMIN
 	}
+
+	[Flags][Map]
+	public enum PollEvents : short {
+		POLLIN = 0x002,
+		POLLPRI,
+		POLLOUT,
+		POLLERR,
+		POLLHUP,
+		POLLNVAL
+	}
 	
+	[StructLayout(LayoutKind.Sequential)]
+	public struct pollfd {
+		public int fd;
+		public PollEvents events;
+		public PollEvents revents;
+	}
+
 	public class Syscall {
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int exit (int status);
@@ -146,6 +163,32 @@ namespace Mono.Posix {
 
 		[DllImport ("libc", SetLastError=true)]
 		public unsafe static extern IntPtr write (int fileDescriptor, void *buf, IntPtr count);
+
+		[DllImport ("libc", EntryPoint="poll", SetLastError=true)]
+		public static extern int syscall_poll (pollfd [] fds, int nfds, int timeout);
+
+		public static int poll (pollfd [] fds, int nfds, int timeout)
+		{
+			int res;
+
+			pollfd [] send = new pollfd [nfds];
+
+			for (int i = 0; i < nfds; i++) {
+				send [i].fd = fds [i].fd;
+				send [i].events = (PollEvents) map_Mono_Posix_PollEvents (fds [i].events);
+			}
+
+			res = syscall_poll (send, nfds, timeout);
+
+			for (int i = 0; i < nfds; i++) {
+				fds [i].revents = (PollEvents) map_Mono_Posix_PollEvents (send [i].revents);
+			}
+
+			return res;
+		}
+
+		[DllImport ("MonoPosixHelper")]
+		internal extern static int map_Mono_Posix_PollEvents (PollEvents pe);
 
 		[DllImport ("libc", EntryPoint="open", SetLastError=true)]
 		internal static extern int syscall_open (string pathname, int flags, int mode);
