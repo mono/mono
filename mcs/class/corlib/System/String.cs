@@ -196,69 +196,59 @@ namespace System {
 			else
 				return false;
 		}
-#if XXX
-		unsafe private static int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
+
+		private static int BoyerMoore (char[] haystack, string needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
 			uint[] skiptable = new uint[65536];  /* our unicode-safe skip-table */
-			char *he_ptr;
-			char *ne_ptr;  /* end-of-string pointers */
-			char *hc_ptr;
-			char *nc_ptr;  /* compare pointers */
-			char *h_ptr;
-			char *the_ptr;  /* haystack pointers */
-			int h_len, n_len, n, i;
+			int h, n, he, ne, hc, nc, i;
 
 			if (haystack == null || needle == null)
 				throw new ArgumentNullException ();
 
-			h_len = count;
-			n_len = strlen (needle);
-
 			/* if the search buffer is shorter than the pattern buffer, we can't match */
-			if (h_len < n_len)
+			if (count < needle.Length)
 				return -1;
 
 			/* return an instant match if the pattern is 0-length */
-			if (n_len == 0)
+			if (needle.Length == 0)
 				return startIndex;
 
 			/* set a pointer at the end of each string */
-			ne_ptr = needle + n_len - 1;              /* point to char before '\0' */
-			he_ptr = haystack + startIndex + count;  /* point to last valid char */
+			ne = needle.Length - 1;      /* position of char before '\0' */
+			he = startIndex + count;     /* position of last valid char */
 
 			/* init the skip table with the pattern length */
 			for (i = 0; i < 65536; i++)
-				skiptable[i] = n_len;
+				skiptable[i] = needle.Length;
 
 			/* set the skip value for the chars that *do* appear in the
 			 * pattern buffer (needle) to the distance from the index to
 			 * the end of the pattern buffer. */
-			for (nc_ptr = needle; nc_ptr < ne_ptr; nc_ptr++)
-				skiptable[(uint) *nc_ptr] = ne_ptr - nc_ptr;
+			for (nc = 0; nc < ne; nc++)
+				skiptable[(uint) needle[nc]] = ne - nc;
 
-			h_ptr = haystack + startIndex;
-			while (h_len >= n_len) {
-				the_ptr = h_ptr + n_len - 1;  /* set the temp haystack end pointer */
-				hc_ptr = h_ptr + n_len - 1;   /* set the haystack compare pointer */
-				nc_ptr = ne_ptr;              /* set the needle compare pointer */
+			h = startIndex;
+			while (count >= needle.Length) {
+				hc = h + needle.Length - 1;  /* set the haystack compare pointer */
+				nc = ne;                     /* set the needle compare pointer */
 
 				/* work our way backwards until they don't match */
-				for (i = 0; nc_ptr > needle; nc_ptr--, hc_ptr--, i++)
-					if (*nc_ptr != *hc_ptr)
+				for (i = 0; nc > 0; nc--, hc--, i++)
+					if (needle[nc] != haystack[hc])
 						break;
 
-				if (*nc_ptr != *hc_ptr) {
-					n = skiptable[(uint) *hc_ptr] - i;
-					h_ptr += n;
-					h_len -= n;
+				if (needle[nc] != haystack[hc]) {
+					n = skiptable[(uint) haystack[hc]] - i;
+					h += n;
+					count -= n;
 				} else
-					return h_ptr - haystack;
+					return h;
 			}
 
 			return -1;
 		}
-#endif
+
 		// Methods
 		public object Clone ()
 		{
@@ -793,7 +783,6 @@ namespace System {
 
 		public int IndexOf (string value, int startIndex, int count)
 		{
-			// FIXME: Use a modified Boyer-Moore algorithm to work with unicode?
 			int i;
 
 			if (value == null)
@@ -802,6 +791,8 @@ namespace System {
 			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
 
+			return BoyerMoore (this.c_str, value, startIndex, count);
+#if XXX
 			for (i = startIndex; i - startIndex + value.Length <= count; ) {
 				if (this.c_str[i] == value[0]) {
 					bool equal = true;
@@ -825,6 +816,7 @@ namespace System {
 			}
 
 			return -1;
+#endif
 		}
 
 		public int IndexOfAny (char[] values)
