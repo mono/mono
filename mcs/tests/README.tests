@@ -247,6 +247,11 @@ tests-191.cs
 Some accessibility tests that exist in Corlib and System, to probe the new
 functionality in the compiler for accessibility of private nested classes.
 
+test-192.cs
+-----------
+Fix for bug 41952, basically, we were not using the `unchecked' bit during
+constant resolution due to the nature of EmitMeta.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

@@ -1,8 +1,24 @@
-//
-// This should report: the class containing main can not be generic
-//
-class X<Y> {
-	static void Main  ()
+using System;
+using System.Reflection;
+
+[AttributeUsage (AttributeTargets.All)]
+public class MineAttribute : Attribute {
+	public MineAttribute (Type [] t)
 	{
 	}
 }
+
+
+[Mine(new Type [2,2])]
+public class Foo {	
+	public static int Main ()
+	{
+		return 0;
+	}
+}
+
+
+
+
+
+

@@ -104,3 +104,9 @@ the Microsoft C# compiler:
 -208    Yield statement appears inside finally clause
 
 -209    Yield statment appears in anonymous method.
+
+-210    Fixed code not allowed inside iterators.
+
+-211    Array expression passed to attribute is not unidimensional
+
+-212    An Array creation expression is present, but the array is not initialized.
