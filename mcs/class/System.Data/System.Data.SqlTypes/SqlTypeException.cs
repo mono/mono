@@ -29,5 +29,11 @@ namespace System.Data.SqlTypes {
 			: base (info, context)
 		{
 		}
+
+		public SqlTypeException (string message, Exception inner)
+                        : base (message, inner)
+                {
+                }
+
 	}
 }
