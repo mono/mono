@@ -676,7 +676,7 @@ public class ArrayTest : Assertion
 
 #if NET_1_1
 	[Test]
-        [ExpectedException (typeof (ArgumentNullException))]
+        [ExpectedException (typeof (NullReferenceException))]
         public void TestCreateInstance2b ()
         {
                 Array a = Array.CreateInstance (typeof (Int32), (long[])null);
@@ -1143,7 +1143,7 @@ public class ArrayTest : Assertion
 
 #if NET_1_1
 	[Test]
-        [ExpectedException (typeof (ArgumentNullException))]
+        [ExpectedException (typeof (NullReferenceException))]
 	public void TestGetValueLongArray() {
 		char[] c = new Char[2];
 		c.GetValue((long [])null);
@@ -1738,7 +1738,7 @@ public class ArrayTest : Assertion
 
 #if NET_1_1
 	[Test]
-        [ExpectedException (typeof (ArgumentNullException))]
+        [ExpectedException (typeof (NullReferenceException))]
 	public void TestSetValueLongArray() {
 		char[] c = new Char[2];
 		c.SetValue("buh", (long [])null);
