@@ -1,3 +1,10 @@
+2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RIPEMD160.cs: New (1.2). Abstract class for RIPEMD160 hash from 
+	Pieter Philippaerts (Pieter@mentalis.org)
+	* RIPEMD160Managed.cs: New (1.2). Implementation of the RIPEMD160 hash
+	algorithm from Pieter Philippaerts (Pieter@mentalis.org)
+
 2003-10-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStream.cs: Commented CanTransformMultipleBlocks
