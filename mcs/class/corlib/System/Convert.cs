@@ -2608,8 +2608,18 @@ namespace System {
 				return (long) result;
 		}
 
+		private static void EndianSwap (ref byte[] value)
+		{
+			byte[] buf = new byte[value.Length];
+			for (int i = 0; i < value.Length; i++)
+				buf[i] = value[value.Length-1-i];
+			value = buf;
+		}
+
 		private static string ConvertToBase2 (byte[] value)
 		{
+			if (!BitConverter.IsLittleEndian)
+				EndianSwap (ref value);
 			StringBuilder sb = new StringBuilder ();
 			for (int i = value.Length - 1; i >= 0; i--) {
 				byte b = value [i];
@@ -2629,6 +2639,8 @@ namespace System {
 
 		private static string ConvertToBase8 (byte[] value)
 		{
+			if (!BitConverter.IsLittleEndian)
+				EndianSwap (ref value);
 			ulong l = 0;
 			switch (value.Length) {
 			case 1:
@@ -2661,6 +2673,8 @@ namespace System {
 
 		private static string ConvertToBase16 (byte[] value)
 		{
+			if (!BitConverter.IsLittleEndian)
+				EndianSwap (ref value);
 			StringBuilder sb = new StringBuilder ();
 			for (int i = value.Length - 1; i >= 0; i--) {
 				char high = (char)((value[i] >> 4) & 0x0f);
