@@ -8,15 +8,39 @@
  *             Ximian Inc
  */
 
+using System;
 using System.Web.UI;
 
 namespace System.Web.UI.MobileControls
 {
-	public class MobileListItemCollection : ArrayListCollectionBase//,
-	                                        //IStateManager
+	public class MobileListItemCollection : ArrayListCollectionBase,
+	                                        IStateManager
 	{
 		public MobileListItemCollection()
 		{
+		}
+
+		void IStateManager.LoadViewState(object state)
+		{
+			throw new NotImplementedException();
+		}
+
+		object IStateManager.SaveViewState()
+		{
+			throw new NotImplementedException();
+		}
+
+		void IStateManager.TrackViewState()
+		{
+			throw new NotImplementedException();
+		}
+
+		bool IStateManager.IsTrackingViewState
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }
