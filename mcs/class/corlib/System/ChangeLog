@@ -4,6 +4,8 @@
 	kicks ass, it even found my typos! Woohoo!
 	(ConvertFromBase): Moved the Exception throwing in here and
 	removed the other occurances so it's all centralized now.
+	(ISDBNull): Implemented.
+	(GetTypeCode): Implemented.
 
 2002-02-27  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* Guid.cs: Guid.ToString("") and Guid.ToString(null) is now understood as Guid.ToString("D") 

@@ -107,6 +107,24 @@ namespace System {
 
 			return FromBase64CharArray(inArr, 0, inArr.Length);
 		}
+
+		public static TypeCode GetTypeCode (object value)
+		{
+			if (value == null)
+				return TypeCode.Empty;
+			else 
+				return Type.GetTypeCode (value.GetType ());
+		}
+
+		public static bool ISDBNull (object value)
+		{
+			TypeCode tc = Type.GetTypeCode (value.GetType ());
+			
+			if (tc == TypeCode.DBNull)
+				return true;
+			else
+				return false;
+		}
 		
 		public static int ToBase64CharArray(byte[] inArray, int offsetIn, int length, 
 		                                    char[] outArray, int offsetOut)
