@@ -2547,7 +2547,7 @@ anonymous_method_expression
 		} else {
 			create_toplevel_block = false;
 			if (RootContext.Version == LanguageVersion.ISO_1){
-				Report.FeatureIsNotStandardized ("anonymous methods");
+				Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
 				$$ = null;
 			} else 
 				$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
@@ -3677,7 +3677,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized ("yield statement");
+			Report.FeatureIsNotStandardized (lexer.Location, "yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){
@@ -3696,7 +3696,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized ("yield statement");
+			Report.FeatureIsNotStandardized (lexer.Location, "yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){

@@ -2637,7 +2637,7 @@ namespace Mono.CSharp {
 			: base (ns, parent, name, mod & ~Modifiers.STATIC, attrs, l)
 		{
 			if (RootContext.Version == LanguageVersion.ISO_1) {
-				Report.FeatureIsNotStandardized ("static classes");
+				Report.FeatureIsNotStandardized (l, "static classes");
 				Environment.Exit (1);
 			}
 		}

@@ -1255,6 +1255,60 @@ namespace Mono.CSharp
 			}
 		}
 
+		/// <summary>
+		/// Handles #pragma directive
+		/// </summary>
+		void PreProcessPragma (string arg)
+		{
+			const string disable = "warning disable";
+			const string restore = "warning restore";
+
+			if (arg == disable) {
+				Report.RegisterWarningRegion (Location).WarningDisable (line);
+				return;
+			}
+
+			if (arg == restore) {
+				Report.RegisterWarningRegion (Location).WarningEnable (line);
+				return;
+			}
+
+			if (arg.StartsWith (disable)) {
+				int[] codes = ParseNumbers (arg.Substring (disable.Length));
+				foreach (int code in codes) {
+					if (code != 0)
+						Report.RegisterWarningRegion (Location).WarningDisable (Location, code);
+				}
+				return;
+			}
+
+			if (arg.StartsWith (restore)) {
+				int[] codes = ParseNumbers (arg.Substring (restore.Length));
+				foreach (int code in codes) {
+					Report.RegisterWarningRegion (Location).WarningEnable (Location, code);
+				}
+				return;
+			}
+
+			return;
+		}
+
+		int[] ParseNumbers (string text)
+		{
+			string[] string_array = text.Split (',');
+			int[] values = new int [string_array.Length];
+			int index = 0;
+			foreach (string string_code in string_array) {
+				try {
+					values[index++] = int.Parse (string_code, System.Globalization.CultureInfo.InvariantCulture);
+				}
+				catch (FormatException) {
+					Report.Warning (1692, Location, "Invalid number");
+				}
+			}
+			return values;
+		}
+
 		bool eval_val (string s)
 		{
 			if (s == "true")
@@ -1458,10 +1512,14 @@ namespace Mono.CSharp
 			//
 			switch (cmd){
 			case "pragma":
-				if (RootContext.Version != LanguageVersion.ISO_1)
+				if (RootContext.Version == LanguageVersion.ISO_1) {
+					Report.FeatureIsNotStandardized (Location, "#pragma");
 					return caller_is_taking;
-				break;
-				
+				}
+
+				PreProcessPragma (arg);
+				return caller_is_taking;
+
 			case "line":
 				if (!PreProcessLine (arg))
 					Report.Error (
@@ -1987,4 +2045,3 @@ namespace Mono.CSharp
 		}
 	}
 }
-
