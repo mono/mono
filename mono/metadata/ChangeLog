@@ -1,3 +1,8 @@
+2004-10-22  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c
+	(mono_debugger_runtime_invoke): Don't box valuetypes.
+
 2004-10-22  Chris Toshok  <toshok@ximian.com>
 
 	* mono-debug-debugger.c (do_write_class): handle .cctors too, and
