@@ -94,6 +94,7 @@ System.Data.Common/DbDataAdapter.cs
 System.Data.Common/DbDataPermission.cs
 System.Data.Common/DbDataPermissionAttribute.cs
 System.Data.Common/DbDataRecord.cs
+System.Data.Common/DbEnumerator.cs
 System.Data.Common/FieldNameLookup.cs
 System.Data.Common/RowUpdatedEventArgs.cs
 System.Data.Common/RowUpdatingEventArgs.cs

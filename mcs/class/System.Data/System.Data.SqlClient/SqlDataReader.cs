@@ -326,7 +326,7 @@ namespace System.Data.SqlClient {
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new SqlDataReaderEnumerator (this);
+			return new DbEnumerator (this);
 		}
 
 		public bool IsDBNull (int i)
@@ -371,60 +371,5 @@ namespace System.Data.SqlClient {
 		}
 
 		#endregion // Methods
-
-		private class SqlDataReaderEnumerator : IEnumerator, ICloneable 
-		{
-
-			#region Fields
-
-			SqlDataReader reader;
-			
-			#endregion // Fields
-
-			#region Constructors
-
-			public SqlDataReaderEnumerator (SqlDataReader reader)
-			{
-				this.reader = reader;
-			}
-
-			#endregion // Constructors
-	
-			#region Properties
-
-			public virtual object Current {
-				get { 
-					SchemaInfo[] schema = reader.Schema;
-					object[] values = new object[schema.Length];
-					reader.GetValues (values);
-					return new DbDataRecord (schema, values, reader.Lookup); 
-				}
-			}
-
-			#endregion // Properties
-
-			#region Methods
-
-			object ICloneable.Clone ()
-			{
-				return new SqlDataReaderEnumerator (reader);
-			}
-			
-			public virtual bool MoveNext ()
-			{
-				if (reader.Read ()) 
-					return true;
-				if (reader.NextResult () && reader.Read ())
-					return true;
-				return false;
-			}
-
-			public virtual void Reset ()
-			{
-				throw new InvalidOperationException ("This enumerator can only go forward.");	
-			}
-			
-			#endregion // Methods
-		}
 	}
 }
