@@ -1951,15 +1951,15 @@ namespace System {
 		// discarded.
 		//
 
-		private static string FormatGeneral (byte value, int precision, NumberFormatInfo nfi, bool upper) {
+		internal static string FormatGeneral (byte value, int precision, NumberFormatInfo nfi, bool upper) {
 			return FormatGeneral ((uint)value, precision, nfi, upper);
 		}
 
-		private static string FormatGeneral (short value, int precision, NumberFormatInfo nfi, bool upper) {
+		internal static string FormatGeneral (short value, int precision, NumberFormatInfo nfi, bool upper) {
 			return FormatGeneral ((int)value, precision, nfi, upper);
 		}
 
-		private static string FormatGeneral (int value, int precision, NumberFormatInfo nfi, bool upper) 
+		internal static string FormatGeneral (int value, int precision, NumberFormatInfo nfi, bool upper) 
 		{
 			bool negative = (value < 0);
 			char[] tmp = new char [maxIntLength];
@@ -2066,7 +2066,7 @@ namespace System {
 			return new string (buffy, 0, position);
 		}
 
-		private static string FormatGeneral (long value, int precision, NumberFormatInfo nfi, bool upper) 
+		internal static string FormatGeneral (long value, int precision, NumberFormatInfo nfi, bool upper) 
 		{
 			bool negative = (value < 0);
 			char[] tmp = new char [maxLongLength];
@@ -2172,15 +2172,15 @@ namespace System {
 			return new string (buffy, 0, position);
 		}
 
-		private static string FormatGeneral (sbyte value, int precision, NumberFormatInfo nfi, bool upper) {
+		internal static string FormatGeneral (sbyte value, int precision, NumberFormatInfo nfi, bool upper) {
 			return FormatGeneral ((int)value, precision, nfi, upper);
 		}
 
-		private static string FormatGeneral (ushort value, int precision, NumberFormatInfo nfi, bool upper) {
+		internal static string FormatGeneral (ushort value, int precision, NumberFormatInfo nfi, bool upper) {
 			return FormatGeneral ((uint)value, precision, nfi, upper);
 		}
 
-		private static string FormatGeneral (uint value, int precision, NumberFormatInfo nfi, bool upper) 
+		internal static string FormatGeneral (uint value, int precision, NumberFormatInfo nfi, bool upper) 
 		{
 			char[] tmp = new char [maxIntLength];
 			int exponent = 0;
@@ -2270,7 +2270,7 @@ namespace System {
 			return new string (buffy, 0, position);
 		}
 
-		private static string FormatGeneral (ulong value, int precision, NumberFormatInfo nfi, bool upper) 
+		internal static string FormatGeneral (ulong value, int precision, NumberFormatInfo nfi, bool upper) 
 		{
 			char[] tmp = new char [maxLongLength];
 			int exponent = 0;

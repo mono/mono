@@ -1,3 +1,7 @@
+2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* String.cs: New implementation using internal calls.
+	
 2002-04-16  Nick Drochak  <ndrochak@gol.com>
 
 	* DecimalFormatter.cs: Trim off excess null characters from the string

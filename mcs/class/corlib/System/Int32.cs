@@ -390,7 +390,7 @@ namespace System {
 
 		public override string ToString ()
 		{
-			return ToString (null, null);
+			return IntegerFormatter.FormatGeneral(value, 0, null, true);
 		}
 
 		public string ToString (IFormatProvider fp)
@@ -407,7 +407,7 @@ namespace System {
 		{
 			NumberFormatInfo nfi = NumberFormatInfo.GetInstance( fp );
 			
-			if ( format == null ) 
+			if ( format == null )
 				format = "G";
 
 			return IntegerFormatter.NumberToString (format, nfi, value);
