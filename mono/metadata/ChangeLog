@@ -1,3 +1,8 @@
+2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mempool.h mempool.c (mono_mempool_invalidate): New debugging 
+	function to fill out the mempool with 0x2a.
+
 2003-10-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h (MonoReflectionMethodAux): New structure to store
