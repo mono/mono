@@ -1931,7 +1931,13 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
-			bool unreachable = unreachable_shown;
+			//
+			// This flag is used to notate nested statements as unreachable from the beginning of this block.
+			// For the purposes of this resolution, it doesn't matter that the whole block is unreachable 
+			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
+			// responsible for handling the situation.
+			//
+			bool unreachable = false;
 
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){

@@ -1,3 +1,7 @@
+2005-04-05  Raja R Harinath  <rharinath@novell.com>
+
+	* test-360.cs: New test from #74041.
+
 2005-04-01  Kamil Skalski  <nazgul@omega.pl>
 
 	* test-359.cs: New test from #74309.
