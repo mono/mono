@@ -168,7 +168,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[NotifyParentProperty (true)]
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[WebSysDescription ("The cascading stylesheet class that is associated with this WebControl.")]
 		public string CssClass
 		{
@@ -241,7 +241,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[NotifyParentProperty (true)]
-		[DefaultValue (null), WebCategory ("Appearance")]
+		[WebCategory ("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[WebSysDescription ("The font of this WebControl.")]
 		public FontInfo Font

@@ -1,5 +1,14 @@
 2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* ButtonColumn.cs: Removed additional attributes
+	* CheckBox.cs: Added attribute
+	* DataGrid.cs: Added attributes
+	* HyperLinkColumn.cs: Changed attributes, added lamespec
+	* Style.cs: Removed attributes
+	* TextBox.cs: Added/ removed attributes
+
+2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* AdRotator.cs: Added all attributes
 	* BaseDataList.cs: Added all attributes, added lamespec, removed additional attributes
 	* BaseValidator.cs: Added all attributes

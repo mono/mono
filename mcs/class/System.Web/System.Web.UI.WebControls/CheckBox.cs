@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls
 		}
 
 
-		[DefaultValue (typeof (TextAlign), "Right"), WebCategory ("Appearance")]
+		[DefaultValue (typeof (TextAlign), "Right"), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("The alignment of the text.")]
 		public virtual TextAlign TextAlign
 		{

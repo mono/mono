@@ -119,7 +119,7 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Text"] = value; }
 		}
 
-		[DefaultValue (typeof (TextBoxMode), "SingleLine"), Bindable (true), WebCategory ("Behavior")]
+		[DefaultValue (typeof (TextBoxMode), "SingleLine"), WebCategory ("Behavior")]
 		[WebSysDescription ("A mode of how the control operates.")]
 		public virtual TextBoxMode TextMode
 		{
@@ -147,6 +147,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Wrap"] = value; }
 		}
 
+
+		[WebCategory ("Action")]
+		[WebSysDescription ("Raised when the text is changed.")]
 		public event EventHandler TextChanged
 		{
 			add { Events.AddHandler (TextChangedEvent, value); }

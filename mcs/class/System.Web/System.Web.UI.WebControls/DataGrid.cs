@@ -256,7 +256,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DefaultValue (null), NotifyParentProperty (true), WebCategory ("Style")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[WebSysDescription ("The style applied to the footer.")]
@@ -276,7 +276,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[NotifyParentProperty (true), WebCategory ("Style")]
+		[DefaultValue (null), NotifyParentProperty (true), WebCategory ("Style")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[WebSysDescription ("The style applied to the header.")]

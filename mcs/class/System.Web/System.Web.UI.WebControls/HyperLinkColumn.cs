@@ -43,8 +43,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		// LAMESPEC should use WebSysDescription as all others do, but MS uses Description here
+
 		[DefaultValue (""), WebCategory ("Misc")]
-		[WebSysDescription ("The formatting rule for the text content that gets data-bound to the NavigateUrl.")]
+		[Description ("The formatting rule for the text content that gets data-bound to the NavigateUrl.")]
 		public virtual string DataNavigateUrlFormatString {
 			get {
 				object o = ViewState ["DataNavigateUrlFormatString"];
@@ -74,8 +76,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		// LAMESPEC should use WebSysDescription as all others do, but MS uses Description here
+
 		[DefaultValue (""), WebCategory ("Misc")]
-		[WebSysDescription ("The formatting rule for the text content that gets data-bound to the Text property.")]
+		[Description ("The formatting rule for the text content that gets data-bound to the Text property.")]
 		public virtual string DataTextFormatString {
 			get {
 				object o = ViewState ["DataTextFormatString"];
