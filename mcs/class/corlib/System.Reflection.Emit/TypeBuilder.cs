@@ -649,6 +649,12 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
+		/* Needed to keep signature compatibility with MS.NET */
+		public override EventInfo[] GetEvents ()
+		{
+			return GetEvents (DefaultBindingFlags);
+		}
+
 		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
 			// FIXME: Under MS.NET, this throws a NotImplementedException
 			// But mcs calls this method. How can that be?
