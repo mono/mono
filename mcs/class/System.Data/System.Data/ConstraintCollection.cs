@@ -14,15 +14,14 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Data
-{
+namespace System.Data {
 	[Serializable]
-	internal delegate void DelegateValidateRemoveConstraint(ConstraintCollection sender,
-			Constraint constraintToRemove, ref bool fail,ref string failReason);
+	internal delegate void DelegateValidateRemoveConstraint(ConstraintCollection sender, Constraint constraintToRemove, ref bool fail,ref string failReason);
 	
 	/// <summary>
 	/// hold collection of constraints for data table
 	/// </summary>
+	[DefaultEvent ("CollectionChanged")]
 	[Serializable]
 	public class ConstraintCollection : InternalDataCollectionBase 
 	{
@@ -314,8 +313,7 @@ namespace System.Data
 			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Remove,this));
 		}
 
-
-		protected internal override ArrayList List {
+		protected override ArrayList List {
 			get{
 				return base.List;
 			}

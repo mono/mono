@@ -27,7 +27,7 @@ namespace System.Data
 		/// <summary>
 		/// Internal constructor used to build a DataRowCollection.
 		/// </summary>
-		protected internal DataRowCollection (DataTable table) : base ()
+		internal DataRowCollection (DataTable table) : base ()
 		{
 			this.table = table;
 		}
@@ -43,7 +43,7 @@ namespace System.Data
 		/// <summary>
 		/// This member overrides InternalDataCollectionBase.List
 		/// </summary>
-		protected internal override ArrayList List 
+		protected override ArrayList List 
 		{
 			get { return list; }
 		}		

@@ -123,19 +123,26 @@ namespace System.Data.SqlClient {
 		#region Properties
 
 		[Browsable (false)]
+		[DataCategory ("Data")]
 		[DataSysDescription ("The parameter generic type.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		//[RefreshProperties (RefreshProperties.All)]
+		[RefreshProperties (RefreshProperties.All)]
 		public DbType DbType {
 			get { return theDbType; }
 			set { theDbType = value; }
 		}
 
+		[DataCategory ("Data")]
 		[DataSysDescription ("Input, output, or bidirectional parameter.")]
 		[DefaultValue (ParameterDirection.Input)]
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
+		}
+
+		string IDataParameter.ParameterName {
+			get { return parmName; }
+			set { parmName = value; }
 		}
 
 		[Browsable (false)]
@@ -145,9 +152,11 @@ namespace System.Data.SqlClient {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
 		public bool IsNullable	{
 			get { return isNullable; }
+			set { isNullable = value; }
 		}
 
 		[Browsable (false)]
+		[DataCategory ("Data")]
 		[DataSysDescription ("Offset in variable length data types.")]
 		[DefaultValue (0)]
 		public int Offset {
@@ -155,11 +164,6 @@ namespace System.Data.SqlClient {
 			set { offset = value; }
 		}
 		
-		string IDataParameter.ParameterName {
-			get { return parmName; }
-			set { parmName = value; }
-		}
-	
 		[DataSysDescription ("Name of the parameter, like '@p1'")]
 		[DefaultValue ("")]
 		public string ParameterName {
@@ -167,6 +171,7 @@ namespace System.Data.SqlClient {
 			set { parmName = value; }
 		}
 
+		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
 		public byte Precision {
@@ -174,35 +179,7 @@ namespace System.Data.SqlClient {
 			set { precision = value; }
 		}
 
-		[DataSysDescription ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
-		[DefaultValue ("")]
-		public string SourceColumn {
-			get { return sourceColumn; }
-			set { sourceColumn = value; }
-		}
-
-		[DataSysDescription ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
-		[DefaultValue (DataRowVersion.Current)]
-		public DataRowVersion SourceVersion {
-			get { return sourceVersion; }
-			set { sourceVersion = value; }
-		}
-		
-		[DataSysDescription ("The parameter native type.")]
-		[DefaultValue (SqlDbType.NVarChar)]
-		//[RefreshProperties (RefreshProperties.All)]
-		public SqlDbType SqlDbType {
-			get { return dbtype; }
-			set { dbtype = value; }
-		}
-
-		[DataSysDescription ("Value of the parameter.")]
-		[DefaultValue (null)]
-		public object Value {
-			get { return objValue; }
-			set { objValue = value; }
-		}
-
+		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
                 public byte Scale {
@@ -210,6 +187,7 @@ namespace System.Data.SqlClient {
 			set { scale = value; }
 		}
 
+		[DataCategory ("Data")]
 		[DataSysDescription ("Size of variable length datatypes (strings & arrays).")]
 		[DefaultValue (0)]
                 public int Size {
@@ -218,6 +196,39 @@ namespace System.Data.SqlClient {
 				sizeSet = true;
 				size = value; 
 			}
+		}
+
+		[DataCategory ("Data")]
+		[DataSysDescription ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
+		[DefaultValue ("")]
+		public string SourceColumn {
+			get { return sourceColumn; }
+			set { sourceColumn = value; }
+		}
+
+		[DataCategory ("Data")]
+		[DataSysDescription ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
+		[DefaultValue (DataRowVersion.Current)]
+		public DataRowVersion SourceVersion {
+			get { return sourceVersion; }
+			set { sourceVersion = value; }
+		}
+		
+		[DataCategory ("Data")]
+		[DataSysDescription ("The parameter native type.")]
+		[DefaultValue (SqlDbType.NVarChar)]
+		[RefreshProperties (RefreshProperties.All)]
+		public SqlDbType SqlDbType {
+			get { return dbtype; }
+			set { dbtype = value; }
+		}
+
+		[DataCategory ("Data")]
+		[DataSysDescription ("Value of the parameter.")]
+		[DefaultValue (null)]
+		public object Value {
+			get { return objValue; }
+			set { objValue = value; }
 		}
 
 		#endregion // Properties

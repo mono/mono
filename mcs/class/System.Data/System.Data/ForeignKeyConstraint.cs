@@ -14,12 +14,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace System.Data
-{
-
+namespace System.Data {
+	[DefaultProperty ("ConstraintName")]
 	[Serializable]
-	public class ForeignKeyConstraint : Constraint {
-
+	public class ForeignKeyConstraint : Constraint 
+	{
 		private UniqueConstraint _parentUniqueConstraint;
 		private DataColumn [] _parentColumns;
 		private DataColumn [] _childColumns;
@@ -45,8 +44,7 @@ namespace System.Data
 			_foreignKeyConstraint(null, parentColumns, childColumns);
 		}
 
-		public ForeignKeyConstraint(string constraintName,
-			DataColumn parentColumn, DataColumn childColumn) 
+		public ForeignKeyConstraint(string constraintName, DataColumn parentColumn, DataColumn childColumn) 
 		{
 			if (null == parentColumn || null == childColumn) {
 				throw new ArgumentNullException("Neither parentColumn or" +
@@ -57,21 +55,17 @@ namespace System.Data
 					new DataColumn[] {childColumn});
 		}
 
-		public ForeignKeyConstraint(string constraintName,
-			DataColumn[] parentColumns, DataColumn[] childColumns) 
+		public ForeignKeyConstraint(string constraintName, DataColumn[] parentColumns, DataColumn[] childColumns) 
 		{
 			_foreignKeyConstraint(constraintName, parentColumns, childColumns);
 		}
 		
 		//special case
 		[MonoTODO]
-		public ForeignKeyConstraint(string constraintName,
-			string parentTableName,	string[] parentColumnNames,
-			string[] childColumnNames, 
-			AcceptRejectRule acceptRejectRule, Rule deleteRule,
-			Rule updateRule) {
+		[Browsable (false)]
+		public ForeignKeyConstraint(string constraintName, string parentTableName, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule) 
+		{
 		}
-
 
 		private void _foreignKeyConstraint(string constraintName, DataColumn[] parentColumns,
 				DataColumn[] childColumns)
@@ -211,51 +205,49 @@ namespace System.Data
 		
 		#endregion //Helpers
 		
+		#region Properties
 
-		#region Properites
-
+		[DataCategory ("Data")]
+		[DataSysDescription ("For accept and reject changes, indicates what kind of cascading should take place across this relation.")]
+		[DefaultValue (AcceptRejectRule.None)]
 		public virtual AcceptRejectRule AcceptRejectRule {
-			get {
-				return _acceptRejectRule;
-			}
-			
-			set {
-				_acceptRejectRule = value;
-			}
+			get { return _acceptRejectRule; }
+			set { _acceptRejectRule = value; }
 		}
 
-		public virtual Rule DeleteRule {
-			get {
-				return _deleteRule;
-			}
-			
-			set {
-				_deleteRule = value;
-			}
-		}
-
-		public virtual Rule UpdateRule {
-			get {
-				return _updateRule;
-			}
-			
-			set {
-				_updateRule = value;
-			}
-		}
-		
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the child columns of this constraint.")]
+		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
-			get {
-				return _childColumns;
-			}
+			get { return _childColumns; }
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("For deletions, indicates what kind of cascading should take place across this relation.")]
+		[DefaultValue (Rule.Cascade)]
+		public virtual Rule DeleteRule {
+			get { return _deleteRule; }
+			set { _deleteRule = value; }
+		}
+
+		[DataCategory ("Data")]
+		[DataSysDescription ("For updates, indicates what kind of cascading should take place across this relation.")]
+		[DefaultValue (Rule.Cascade)]
+		public virtual Rule UpdateRule {
+			get { return _updateRule; }
+			set { _updateRule = value; }
+		}
+
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Indicates the parent columns of this constraint.")]
+		[ReadOnly (true)]
 		public virtual DataColumn[] RelatedColumns {
-			get {	
-				return _parentColumns;
-			}
+			get { return _parentColumns; }
 		}
 
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Indicates the child table of this constraint.")]
+		[ReadOnly (true)]
 		public virtual DataTable RelatedTable {
 			get {
 				if (_parentColumns != null)
@@ -266,6 +258,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the table of this constraint.")]
+		[ReadOnly (true)]
 		public override DataTable Table {
 			get {
 				if (_childColumns != null)
@@ -275,8 +270,6 @@ namespace System.Data
 				return null;
 			}
 		}
-
-	
 
 		#endregion // Properties
 

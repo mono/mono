@@ -81,6 +81,7 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
+		[DataCategory ("Data")]
 		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
 		[DefaultValue ("")]
 		[RecommendedAsConfigurable (true)]	
@@ -156,8 +157,13 @@ namespace System.Data.SqlClient {
 		#endregion // Properties
 
 		#region Events
-                
+               
+		[DataCategory ("InfoMessage")]
+		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
 		public event SqlInfoMessageEventHandler InfoMessage;
+
+		[DataCategory ("StateChange")]
+		[DataSysDescription ("Event triggered when the connection changes state.")]
 		public event StateChangeEventHandler StateChange;
 		
 		#endregion // Events

@@ -13,9 +13,7 @@ using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.Common {
-	/// <summary>
-	/// Provides the capability for a .NET data provider to ensure that a user has a security level adequate for accessing data.
-	/// </summary>
+	[Serializable]
 	public abstract class DBDataPermission : CodeAccessPermission, IUnrestrictedPermission
 	{
 		private bool allowBlankPassword;

@@ -14,11 +14,11 @@
 using System;
 using System.Collections;
 
-namespace System.Data
-{
+namespace System.Data {
 	/// <summary>
 	/// Represents a row of data in a DataTable.
 	/// </summary>
+	[Serializable]
 	public class DataRow
 	{
 		#region Fields

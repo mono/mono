@@ -6,6 +6,7 @@
 // (C) Ximian, Inc.
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -19,8 +20,9 @@ namespace System.Data {
 		{
 		}
 
-		public TypedDataSetGeneratorException (string message)
-			: base (message)
+		[MonoTODO]
+		public TypedDataSetGeneratorException (ArrayList list)
+			: base (Locale.GetText ("There is a name conflict"))
 		{
 		}
 

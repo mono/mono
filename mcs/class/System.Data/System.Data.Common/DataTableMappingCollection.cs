@@ -11,12 +11,10 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 
-namespace System.Data.Common
-{
-	/// <summary>
-	/// A collection of DataTableMapping objects. This class cannot be inherited.
-	/// </summary>
+namespace System.Data.Common {
+	[ListBindable (false)]
 	public sealed class DataTableMappingCollection : MarshalByRefObject, ITableMappingCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields
@@ -36,33 +34,38 @@ namespace System.Data.Common
 			dataSetTables = new Hashtable ();
 		}
 
-		#endregion
+		#endregion // Constructors
 
 		#region Properties
 
-		public int Count 
-		{
+		[DataSysDescription ("The number of items in the collection")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public int Count {
 			get { return mappings.Count; }
 		}
 
-		public DataTableMapping this[int index] {
+		[Browsable (false)]
+		[DataSysDescription ("The specified DataTableMapping object")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public DataTableMapping this [int index] {
 			get { return (DataTableMapping)(mappings[index]); }
 			set { 
-				DataTableMapping mapping = (DataTableMapping)(mappings[index]);
-				sourceTables[mapping.SourceTable] = value;
-				dataSetTables[mapping.DataSetTable] = value;
-				mappings[index] = value; 
+				DataTableMapping mapping = (DataTableMapping) mappings[index];
+				sourceTables [mapping.SourceTable] = value;
+				dataSetTables [mapping.DataSetTable] = value;
+				mappings [index] = value; 
 			}
 		}
 
-		[MonoTODO]
-		public DataTableMapping this[string sourceTable] {
-			get { return (DataTableMapping)(sourceTables[sourceTable]); }
-			set { this[mappings.IndexOf(sourceTables[sourceTable])] = value; }
+		[Browsable (false)]
+		[DataSysDescription ("The specified DataTableMapping object")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public DataTableMapping this [string sourceTable] {
+			get { return (DataTableMapping) sourceTables[sourceTable]; }
+			set { this [mappings.IndexOf (sourceTables[sourceTable])] = value; }
 		}
-
 	
-		object IList.this[int index] {
+		object IList.this [int index] {
 			get { return (object)(this[index]); }
 			set { 
 				if (!(value is DataTableMapping))
@@ -71,32 +74,32 @@ namespace System.Data.Common
 			 } 
 		}
 
-		bool IList.IsReadOnly {
-			get { return false; }
-		}
-
-		bool IList.IsFixedSize {
-			get { return false; }
+		bool ICollection.IsSynchronized {
+			get { return mappings.IsSynchronized; }
 		}
 
 		object ICollection.SyncRoot {
 			get { return mappings.SyncRoot; }
 		}
 
-		bool ICollection.IsSynchronized {
-			get { return mappings.IsSynchronized; }
+		bool IList.IsFixedSize {
+			get { return false; }
 		}
 
-		object ITableMappingCollection.this[string sourceTable] {
-			get { return this[sourceTable]; }
+		bool IList.IsReadOnly {
+			get { return false; }
+		}
+
+		object ITableMappingCollection.this [string sourceTable] {
+			get { return this [sourceTable]; }
 			set { 
 				if (!(value is DataTableMapping))
 					throw new ArgumentException ();
-				this[sourceTable] = (DataTableMapping)(value);
+				this [sourceTable] = (DataTableMapping) value;
 			}
 		}
 
-		#endregion
+		#endregion // Properties
 
 		#region Methods
 
@@ -117,13 +120,13 @@ namespace System.Data.Common
 			return mapping;
 		}
 
-		public void AddRange(DataTableMapping[] values) 
+		public void AddRange (DataTableMapping[] values) 
 		{
 			foreach (DataTableMapping dataTableMapping in values)
 				this.Add (dataTableMapping);
 		}
 
-		public void Clear() 
+		public void Clear () 
 		{
 			sourceTables.Clear ();
 			dataSetTables.Clear ();
@@ -140,10 +143,9 @@ namespace System.Data.Common
 			return sourceTables.Contains (value);
 		}
 
-		[MonoTODO]
-		public void CopyTo(Array array, int index) 
+		public void CopyTo (Array array, int index) 
 		{
-			throw new NotImplementedException ();
+			mappings.CopyTo (array, index);
 		}
 
 		public DataTableMapping GetByDataSetTable (string dataSetTable) 
@@ -151,6 +153,7 @@ namespace System.Data.Common
 			return (DataTableMapping)(dataSetTables[dataSetTable]);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static DataTableMapping GetTableMappingBySchemaAction (DataTableMappingCollection tableMappings, string sourceTable, string dataSetTable, MissingMappingAction mappingAction) 
 		{
 			if (tableMappings.Contains (sourceTable))
@@ -182,44 +185,38 @@ namespace System.Data.Common
 			return IndexOf ((DataTableMapping)(dataSetTables[dataSetTable]));
 		}
 
-		[MonoTODO]
 		public void Insert (int index, object value) 
 		{
-			throw new NotImplementedException ();
+			mappings.Insert (index, value);
 		}
 
-		[MonoTODO]
 		ITableMapping ITableMappingCollection.Add (string sourceTableName, string dataSetTableName)
 		{
-			throw new NotImplementedException ();
+			ITableMapping tableMapping = new DataTableMapping (sourceTableName, dataSetTableName);
+			Add (tableMapping);
+			return tableMapping;
 		}
 
-		[MonoTODO]
 		ITableMapping ITableMappingCollection.GetByDataSetTable (string dataSetTableName)
 		{
-			throw new NotImplementedException ();
+			return this [mappings.IndexOf (dataSetTables [dataSetTableName])];
 		}
 
-		[MonoTODO]
 		public void Remove (object value) 
 		{
-			throw new NotImplementedException ();
+			mappings.Remove ((DataTableMapping) value);
 		}
 
-		[MonoTODO]
 		public void RemoveAt (int index) 
 		{
-			throw new NotImplementedException ();
+			mappings.RemoveAt (index);
 		}
 
-		[MonoTODO]
-		public void RemoveAt (string index) 
+		public void RemoveAt (string sourceTable) 
 		{
-			throw new NotImplementedException ();
+			RemoveAt (mappings.IndexOf (sourceTables[sourceTable]));
 		}
-		
 
-
-		#endregion
+		#endregion // Methods
 	}
 }

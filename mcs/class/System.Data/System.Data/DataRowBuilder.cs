@@ -33,7 +33,7 @@ namespace System.Data
 		// DataTable and two Int32.  For consistency, this
 		// class will also take those arguments.
 
-		protected internal DataRowBuilder (DataTable table, Int32 x, Int32 y)
+		internal DataRowBuilder (DataTable table, Int32 x, Int32 y)
 		{
 			this.table = table;
 		}

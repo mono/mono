@@ -57,6 +57,7 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
+		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for deleted rows in DataSet.")]
 		[DefaultValue (null)]
 		public SqlCommand DeleteCommand {
@@ -64,6 +65,7 @@ namespace System.Data.SqlClient {
 			set { deleteCommand = value; }
 		}
 
+		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for new rows in DataSet.")]
 		[DefaultValue (null)]
 		public SqlCommand InsertCommand {
@@ -71,6 +73,7 @@ namespace System.Data.SqlClient {
 			set { insertCommand = value; }
 		}
 
+		[DataCategory ("Fill")]
 		[DataSysDescription ("Used during Fill/FillSchema.")]
 		[DefaultValue (null)]
 		public SqlCommand SelectCommand {
@@ -78,6 +81,7 @@ namespace System.Data.SqlClient {
 			set { selectCommand = value; }
 		}
 
+		[DataCategory ("Update")]
 		[DataSysDescription ("Used during Update for modified rows in DataSet.")]
 		[DefaultValue (null)]
 		public SqlCommand UpdateCommand {
@@ -157,9 +161,11 @@ namespace System.Data.SqlClient {
 
 		#region Events and Delegates
 
+		[DataCategory ("Update")]
 		[DataSysDescription ("Event triggered before every DataRow during Update.")]
 		public event SqlRowUpdatedEventHandler RowUpdated;
 
+		[DataCategory ("Update")]
 		[DataSysDescription ("Event triggered after every DataRow during Update.")]
 		public event SqlRowUpdatingEventHandler RowUpdating;
 

@@ -4,20 +4,22 @@
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Chris Podurgiel
 // (C) 2002 Daniel Morgan
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Data
-{
+namespace System.Data {
 	/// <summary>
 	/// Represents the collection of DataRelation objects for this DataSet.
 	/// </summary>
+	[DefaultEvent ("CollectionChanged")]
 	[Serializable]
 	public abstract class DataRelationCollection : InternalDataCollectionBase
 	{
@@ -27,7 +29,8 @@ namespace System.Data
 		/// <summary>
 		/// Initializes a new instance of the DataRelationCollection class.
 		/// </summary>
-		internal DataRelationCollection() : base()
+		protected DataRelationCollection () 
+			: base ()
 		{
 			defaultNameIndex = 1;
 			inTransition = false;
@@ -282,6 +285,11 @@ namespace System.Data
 			return false;
 		}
 
+		private CollectionChangeEventArgs CreateCollectionChangeEvent (CollectionChangeAction action)
+		{
+			return new CollectionChangeEventArgs (action, this);
+		}
+
 		protected abstract DataSet GetDataSet();
 
 		public virtual int IndexOf(DataRelation relation)
@@ -294,22 +302,33 @@ namespace System.Data
 			return List.IndexOf(this[relationName]);
 		}
 
+		protected virtual void OnCollectionChanged (CollectionChangeEventArgs ccevent)
+		{
+			if (CollectionChanged != null)
+				CollectionChanged (this, ccevent);
+		}
+
 		[MonoTODO]
-		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent)
+		protected internal virtual void OnCollectionChanging (CollectionChangeEventArgs ccevent)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected internal virtual void OnCollectionChanging(CollectionChangeEventArgs ccevent)
+		public void Remove (DataRelation relation)
 		{
-			throw new NotImplementedException ();
+			RemoveCore (relation);
+			List.Remove (relation);
+			OnCollectionChanged (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
 		}
 
-		[MonoTODO]
-		public void RemoveAt(int index)
+		public void Remove (string name)
 		{
-			throw new NotImplementedException ();
+			Remove ((DataRelation) List[IndexOf (name)]);
+		}
+
+		public void RemoveAt (int index)
+		{
+			List.RemoveAt (index);
 		}
 
 		[MonoTODO]
@@ -318,7 +337,7 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
+		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
 		public event CollectionChangeEventHandler CollectionChanged;
-
 	}
 }

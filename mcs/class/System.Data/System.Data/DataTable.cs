@@ -6,9 +6,11 @@
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Rodrigo Moya <rodrigo@ximian.com>
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
@@ -17,14 +19,12 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data
-{
-	/// <summary>
-	/// Represents one table of in-memory data.
-	/// </summary>
+namespace System.Data {
+	[DefaultEvent ("RowChanging")]
+	[DefaultProperty ("TableName")]
+	[DesignTimeVisible (false)]
 	[Serializable]
-	public class DataTable : MarshalByValueComponent, IListSource,
-		ISupportInitialize, ISerializable	
+	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable	
 	{
 		internal DataSet dataSet;   
 		
@@ -105,15 +105,10 @@ namespace System.Data
 		/// <summary>
 		/// Indicates whether string comparisons within the table are case-sensitive.
 		/// </summary>
-		
-		public bool CaseSensitive 
-		{
-			get {
-				return _caseSensitive;
-			}
-			set {
-				_caseSensitive = value;
-			}
+		[DataSysDescription ("Indicates whether comparing strings within the table is case sensitive.")]	
+		public bool CaseSensitive {
+			get { return _caseSensitive; }
+			set { _caseSensitive = value; }
 		}
 
 
@@ -121,8 +116,10 @@ namespace System.Data
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
 		[MonoTODO]	
-		public DataRelationCollection ChildRelations
-		{
+		[Browsable (false)]
+		[DataSysDescription ("Returns the child relations for this table.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public DataRelationCollection ChildRelations {
 			get {
 				// FIXME: temporarily commented to compile
 				// return (DataRelationCollection)_childRelations;
@@ -137,28 +134,29 @@ namespace System.Data
 		/// <summary>
 		/// Gets the collection of columns that belong to this table.
 		/// </summary>
-
-		public DataColumnCollection Columns
-		{
-			get {
-				return _columnCollection;
-			}
+		[DataCategory ("Data")]
+		[DataSysDescription ("The collection that holds the columns for this table.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public DataColumnCollection Columns {
+			get { return _columnCollection; }
 		}
 
 		/// <summary>
 		/// Gets the collection of constraints maintained by this table.
 		/// </summary>
-		
-		public ConstraintCollection Constraints
-		{
-			get {
-				return _constraintCollection;
-			}
+		[DataCategory ("Data")]	
+		[DataSysDescription ("The collection that holds the constraints for this table.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public ConstraintCollection Constraints {
+			get { return _constraintCollection; }
 		}
 
 		/// <summary>
 		/// Gets the DataSet that this table belongs to.
 		/// </summary>
+		[Browsable (false)]
+		[DataSysDescription ("Indicates the DataSet to which this table belongs.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataSet DataSet {
 			get { return dataSet; }
 		}
@@ -170,12 +168,10 @@ namespace System.Data
 		/// include a filtered view, or a cursor position.
 		/// </summary>
 		[MonoTODO]	
-		public DataView DefaultView
-		{
-			get
-			{
-				return _defaultView;
-			}
+		[Browsable (false)]
+		[DataSysDescription ("This is the default DataView for the table.")]
+		public DataView DefaultView {
+			get { return _defaultView; }
 		}
 		
 
@@ -183,25 +179,22 @@ namespace System.Data
 		/// Gets or sets the expression that will return 
 		/// a value used to represent this table in the user interface.
 		/// </summary>
-		
-		public string DisplayExpression 
-		{
-			get {
-				return "" + _displayExpression;
-			}
-			set {
-				_displayExpression = value;
-			}
+		[DataCategory ("Data")]
+		[DataSysDescription ("The expression used to compute the data-bound value of this row.")]	
+		[DefaultValue ("")]
+		public string DisplayExpression {
+			get { return "" + _displayExpression; }
+			set { _displayExpression = value; }
 		}
 
 		/// <summary>
 		/// Gets the collection of customized user information.
 		/// </summary>
-		public PropertyCollection ExtendedProperties
-		{
-			get {
-				return _extendedProperties;
-			}
+		[Browsable (false)]
+		[DataCategory ("Data")]
+		[DataSysDescription ("The collection that holds custom user information.")]
+		public PropertyCollection ExtendedProperties {
+			get { return _extendedProperties; }
 		}
 
 		/// <summary>
@@ -209,52 +202,42 @@ namespace System.Data
 		/// any of the_rows in any of the tables of the DataSet to 
 		/// which the table belongs.
 		/// </summary>
-		public bool HasErrors
-		{
-			get {
-				return _hasErrors;
-			}
+		[Browsable (false)]
+		[DataSysDescription ("Returns whether the table has errors.")]
+		public bool HasErrors {
+			get { return _hasErrors; }
 		}
 
 		/// <summary>
 		/// Gets or sets the locale information used to 
 		/// compare strings within the table.
 		/// </summary>
-		public CultureInfo Locale
-		{
-			get {
-				return _locale;
-			}
-			set {
-				_locale = value;
-			}
+		[DataSysDescription ("Indicates a locale under which to compare strings within the table.")]
+		public CultureInfo Locale {
+			get { return _locale; }
+			set { _locale = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the initial starting size for this table.
 		/// </summary>
-		public int MinimumCapacity
-		{
-			get {
-				return _minimumCapacity;
-			}
-			set {
-				_minimumCapacity = value;
-			}
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates an initial starting size for this table.")]
+		[DefaultValue (50)]
+		public int MinimumCapacity {
+			get { return _minimumCapacity; }
+			set { _minimumCapacity = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the namespace for the XML represenation 
 		/// of the data stored in the DataTable.
 		/// </summary>
-		public string Namespace
-		{
-			get {
-				return "" + _nameSpace;
-			}
-			set {
-				_nameSpace = value;
-			}
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the XML uri namespace for the elements contained in this table.")]
+		public string Namespace {
+			get { return "" + _nameSpace; }
+			set { _nameSpace = value; }
 		}
 
 		/// <summary>
@@ -262,8 +245,10 @@ namespace System.Data
 		/// this DataTable.
 		/// </summary>
 		[MonoTODO]
-		public DataRelationCollection ParentRelations
-		{
+		[Browsable (false)]
+		[DataSysDescription ("Returns the parent relations for this table.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public DataRelationCollection ParentRelations {
 			get {	
 				// FIXME: temporarily commented to compile
 				// return _parentRelations;
@@ -275,20 +260,20 @@ namespace System.Data
 		/// Gets or sets the namespace for the XML represenation
 		///  of the data stored in the DataTable.
 		/// </summary>
-		public string Prefix
-		{
-			get {
-				return "" + _prefix;
-			}
-			set {
-				_prefix = value;
-			}
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the Prefix of the namespace used for this table in XML representation.")]
+		[DefaultValue ("")]
+		public string Prefix {
+			get { return "" + _prefix; }
+			set { _prefix = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets an array of columns that function as 
 		/// primary keys for the data table.
 		/// </summary>
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the column(s) that represent the primary key for this table.")]
 		public DataColumn[] PrimaryKey
 		{
 			get {
@@ -330,9 +315,9 @@ namespace System.Data
 		/// <summary>
 		/// Gets the collection of_rows that belong to this table.
 		/// </summary>
-		
-		public DataRowCollection Rows
-		{
+		[Browsable (false)]
+		[DataSysDescription ("Indicates the collection that holds the rows of data for this table.")]	
+		public DataRowCollection Rows {
 			get { return _rows; }
 		}
 
@@ -340,33 +325,26 @@ namespace System.Data
 		/// Gets or sets an System.ComponentModel.ISite 
 		/// for the DataTable.
 		/// </summary>
-		
-		public override ISite Site
-		{
-			get {
-				return _site;
-			}
-			set {
-				_site = value;
-			}
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override ISite Site {
+			get { return _site; }
+			set { _site = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the name of the the DataTable.
 		/// </summary>
-		
-		public string TableName
-		{
-			get {
-				return "" + _tableName;
-			}
-			set {
-				_tableName = value;
-			}
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the name used to look up this table in the Tables collection of a DataSet.")]
+		[DefaultValue ("")]	
+		[RefreshProperties (RefreshProperties.All)]
+		public string TableName {
+			get { return "" + _tableName; }
+			set { _tableName = value; }
 		}
 		
-		bool IListSource.ContainsListCollection
-		{
+		bool IListSource.ContainsListCollection {
 			get {
 				// the collection is a DataView
 				return false;
@@ -776,38 +754,44 @@ namespace System.Data
 		/// Occurs when after a value has been changed for 
 		/// the specified DataColumn in a DataRow.
 		/// </summary>
-		
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Occurs when a value has been changed for this column.")]
 		public event DataColumnChangeEventHandler ColumnChanged;
 
 		/// <summary>
 		/// Occurs when a value is being changed for the specified 
 		/// DataColumn in a DataRow.
 		/// </summary>
-		
+		[DataCategory ("Data")]
+		[DataSysDescription ("Occurs when a value has been submitted for this column. The user can modify the proposed value and should throw an exception to cancel the edit.")]
 		public event DataColumnChangeEventHandler ColumnChanging;
 
 		/// <summary>
 		/// Occurs after a DataRow has been changed successfully.
 		/// </summary>
-		
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Occurs after a row in the table has been successfully edited.")]
 		public event DataRowChangeEventHandler RowChanged;
 
 		/// <summary>
 		/// Occurs when a DataRow is changing.
 		/// </summary>
-		
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Occurs when the row is being changed so that the event handler can modify or cancel the change. The user can modify values in the row and should throw an  exception to cancel the edit.")]
 		public event DataRowChangeEventHandler RowChanging;
 
 		/// <summary>
 		/// Occurs after a row in the table has been deleted.
 		/// </summary>
-		
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Occurs after a row in the table has been successfully deleted.")] 
 		public event DataRowChangeEventHandler RowDeleted;
 
 		/// <summary>
 		/// Occurs before a row in the table is about to be deleted.
 		/// </summary>
-		
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Occurs when a row in the table marked for deletion. Throw an exception to cancel the deletion.")]
 		public event DataRowChangeEventHandler RowDeleting;
 		
 		#endregion //Events

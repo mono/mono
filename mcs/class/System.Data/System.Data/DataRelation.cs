@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 
 namespace System.Data
@@ -17,48 +18,41 @@ namespace System.Data
 	/// DataRelation is used for a parent/child relationship 
 	/// between two DataTable objects
 	/// </summary>
+	[DefaultProperty ("RelationName")]
 	[Serializable]
 	public class DataRelation {
 
 		#region Constructors
 
 		[MonoTODO]
-		public DataRelation(string relationName,
-			DataColumn parentColumn, DataColumn childColumn) {
+		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public DataRelation (string relationName, DataColumn[] parentColumns, DataColumn[] childColumns) 
+		{
 
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataRelation(string relationName,
-			DataColumn[] parentColumns, 
-			DataColumn[] childColumns) {
-
+		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn, bool createConstraints) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataRelation(string relationName,
-			DataColumn parentColumn, DataColumn childColumn,
-			bool createConstraints) {
-
+		public DataRelation (string relationName, DataColumn[] parentColumns, DataColumn[] childColumns, bool createConstraints) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataRelation(string relationName,
-			DataColumn[] parentColumns, DataColumn[] childColumns,
-			bool createConstraints) {
-
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DataRelation(string relationName,
-			string parentTableName,	string childTableName,
-			string[] parentColumnNames, string[] childColumnNames,
-			bool nested) {
-
+		[Browsable (false)]
+		public DataRelation (string relationName, string parentTableName, string childTableName, string[] parentColumnNames, string[] childColumnNames, bool nested) 
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -66,6 +60,8 @@ namespace System.Data
 
 		#region Properties
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the child columns of this relation.")]
 		public virtual DataColumn[] ChildColumns {
 			[MonoTODO]
 			get {
@@ -87,6 +83,8 @@ namespace System.Data
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataSet DataSet {
 			[MonoTODO]
 			get {
@@ -94,6 +92,9 @@ namespace System.Data
 			}
 		}
 
+		[Browsable (false)]
+		[DataCategory ("Data")]
+		[DataSysDescription ("The collection that holds custom user information.")]
 		public PropertyCollection ExtendedProperties {
 			[MonoTODO]
 			get {
@@ -101,6 +102,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether relations are nested.")]
+		[DefaultValue (false)]
 		public virtual bool Nested {
 			[MonoTODO]
 			get {
@@ -113,6 +117,8 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the parent columns of this relation.")]
 		public virtual DataColumn[] ParentColumns {
 			[MonoTODO]
 			get {
@@ -134,6 +140,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("The name used to look up this relation in the Relations collection of a DataSet.")]
+		[DefaultValue ("")]
 		public virtual string RelationName {
 			[MonoTODO]
 			get {
@@ -151,12 +160,26 @@ namespace System.Data
 		#region Methods
 
 		[MonoTODO]
-		public override string ToString() {
+		protected void CheckStateForProperty () 
+		{
+			throw new NotImplementedException ();
+		}
+	
+		[MonoTODO]
+		protected internal void OnPropertyChanging (PropertyChangedEventArgs pcevent)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void CheckStateForProperty() {
+		protected internal void RaisePropertyChanging (string name)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override string ToString () 
+		{
 			throw new NotImplementedException ();
 		}
 

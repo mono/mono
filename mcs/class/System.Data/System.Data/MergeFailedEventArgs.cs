@@ -3,19 +3,25 @@
 //
 // Author:
 //   Miguel de Icaza <miguel@ximian.com>
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
 
-namespace System.Data
-{
-	public class MergeFailedEventArgs : EventArgs {
+namespace System.Data {
+	public class MergeFailedEventArgs : EventArgs 
+	{
+		#region Fields
+
 		DataTable data_table;
 		string conflict;
-		Exception errors;
-		bool f_continue;
+
+		#endregion // Fields
+
+		#region Constructors
 
 		public MergeFailedEventArgs (DataTable dataTable, string conflict)
 		{
@@ -23,16 +29,18 @@ namespace System.Data
 			this.conflict = conflict;
 		}
 
-		public DataTable DataTable {
-			get {
-				return data_table;
-			}
+		#endregion // Constructors
+
+		#region Properties
+
+		public DataTable Table {
+			get { return data_table; }
 		}
 
 		public string Conflict {
-			get {
-				return conflict;
-			}
+			get { return conflict; }
 		}
+
+		#endregion // Properties
 	}
 }

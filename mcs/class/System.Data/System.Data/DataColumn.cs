@@ -6,24 +6,29 @@
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Copyright 2002, Franklin Wise
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
 using System.ComponentModel;
+using System.Reflection;
 
-namespace System.Data
-{
-	internal delegate void DelegateColumnValueChange(DataColumn column,
-			DataRow row, object proposedValue);
+namespace System.Data {
+	internal delegate void DelegateColumnValueChange(DataColumn column, DataRow row, object proposedValue);
 	
 	/// <summary>
 	/// Summary description for DataColumn.
 	/// </summary>
+
+	[DefaultMember ("Item")]
+	[DefaultProperty ("ColumnName")]
+	[DesignTimeVisible (false)]
 	public class DataColumn : MarshalByValueComponent
 	{		
 		#region Events
@@ -95,7 +100,10 @@ namespace System.Data
 		#endregion
 
 		#region Properties
-		
+
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether null values are allowed in this column.")]
+		[DefaultValue (true)]
 		public bool AllowDBNull
 		{
 			get {
@@ -134,6 +142,10 @@ namespace System.Data
 		///		(that is, the Expression property is set.) The incremented value is used only if the row's value for this column, 
 		///		when added to the columns collection, is equal to the default value.
 		///	</remarks>
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether the column automatically increments itself for new rows added to the table.  The type of this column must be Int16, Int32, or Int64.")]
+		[DefaultValue (false)]
+		[RefreshProperties (RefreshProperties.All)]
 		public bool AutoIncrement
 		{
 			get {
@@ -161,6 +173,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the starting value for an AutoIncrement column.")]
+		[DefaultValue (0)]
 		public long AutoIncrementSeed
 		{
 			get {
@@ -171,6 +186,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the increment used by an AutoIncrement column.")]
+		[DefaultValue (1)]
 		public long AutoIncrementStep
 		{
 			get {
@@ -181,6 +199,8 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the default user-interface caption for this column.")]
 		public string Caption 
 		{
 			get {
@@ -193,7 +213,8 @@ namespace System.Data
 				_caption = value;
 			}
 		}
-
+		[DataSysDescription ("Indicates how this column persists in XML: as an attribute, element, simple content node, or nothing.")]
+		[DefaultValue (MappingType.Element)]
 		public virtual MappingType ColumnMapping
 		{
 			get {
@@ -204,6 +225,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the name used to look up this column in the Columns collection of a DataTable.")]
+		[RefreshProperties (RefreshProperties.All)]
 		public string ColumnName
 		{
 			get {
@@ -217,6 +241,10 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the type of data stored in this column.")]
+		[DefaultValue (typeof (string))]
+		[RefreshProperties (RefreshProperties.All)]
 		public Type DataType
 		{
 			get {
@@ -244,6 +272,8 @@ namespace System.Data
 		/// <remarks>When AutoIncrement is set to true, there can be no default value.</remarks>
 		/// <exception cref="System.InvalidCastException"></exception>
 		/// <exception cref="System.ArgumentException"></exception>
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the default column value used when adding new rows to the table.")]
 		public object DefaultValue
 		{
 			get {
@@ -272,6 +302,10 @@ namespace System.Data
 		}
 
 		[MonoTODO]
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the value that this column computes for each row based on other columns instead of taking user input.")]
+		[DefaultValue ("")]
+		[RefreshProperties (RefreshProperties.All)]
 		public string Expression
 		{
 			get {
@@ -283,6 +317,9 @@ namespace System.Data
 			}
 		}
 
+		[Browsable (false)]
+		[DataCategory ("Data")]
+		[DataSysDescription ("The collection that holds custom user information.")]
 		public PropertyCollection ExtendedProperties
 		{
 			get {
@@ -290,6 +327,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the maximum length of the value this column allows.")]
+		[DefaultValue (-1)]
 		public int MaxLength
 		{
 			get {
@@ -302,6 +342,8 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the XML uri for elements stored in this  column.")]
 		public string Namespace
 		{
 			get {
@@ -313,6 +355,10 @@ namespace System.Data
 		}
 
 		//Need a good way to set the Ordinal when the column is added to a columnCollection.
+		[Browsable (false)]
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the index of this column in the Columns collection.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Ordinal
 		{
 			get {
@@ -326,6 +372,9 @@ namespace System.Data
 			_ordinal = ordinal;
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the prefix used for this DataColumn in the xml representation.")]
+		[DefaultValue ("")]
 		public string Prefix
 		{
 			get {
@@ -336,6 +385,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether this column allows changes once a row has been added to the table.")]
+		[DefaultValue (false)]
 		public bool ReadOnly
 		{
 			get {
@@ -345,7 +397,11 @@ namespace System.Data
 				readOnly = value;
 			}
 		}
-	
+
+		[Browsable (false)]
+		[DataCategory ("Data")]
+		[DataSysDescription ("Returns the DataTable to which this column belongs.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
 		public DataTable Table
 		{
 			get {
@@ -354,7 +410,11 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		public bool Unique
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether this column should restrict its values in the rows of the table to be unique.")]
+		[DefaultValue (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+                public bool Unique 
 		{
 			get {
 				return unique;

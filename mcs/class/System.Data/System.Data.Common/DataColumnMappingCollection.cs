@@ -1,21 +1,20 @@
 //
-// System.Data.Common.DataColumnCollection
+// System.Data.Common.DataColumnMappingCollection
 //
-// Author:
+// Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 
-namespace System.Data.Common
-{
-	/// <summary>
-	/// Contains a collection of DataColumnMapping objects. This class cannot be inherited.
-	/// </summary>
+namespace System.Data.Common {
 	public sealed class DataColumnMappingCollection : MarshalByRefObject, IColumnMappingCollection , IList, ICollection, IEnumerable
 	{
 		#region Fields
@@ -24,7 +23,7 @@ namespace System.Data.Common
 		Hashtable sourceColumns;
 		Hashtable dataSetColumns;
 
-		#endregion
+		#endregion // Fields
 
 		#region Constructors 
 
@@ -35,15 +34,20 @@ namespace System.Data.Common
 			dataSetColumns = new Hashtable ();
 		}
 
-		#endregion
+		#endregion // Constructors
 
 		#region Properties
 
+		[Browsable (false)]
+		[DataSysDescription ("The number of items in the collection")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Count {
 			get { return list.Count; }
 		}
 
-		public DataColumnMapping this[int index] {
+		[Browsable (false)]
+		[DataSysDescription ("The specified DataColumnMapping object.")]
+		public DataColumnMapping this [int index] {
 			get { return (DataColumnMapping)(list[index]); }
 			set { 
 				DataColumnMapping mapping = (DataColumnMapping)(list[index]);
@@ -53,9 +57,9 @@ namespace System.Data.Common
 			}
 		}
 
-		public DataColumnMapping this[string sourceColumn] {
-			get { return (DataColumnMapping)(sourceColumns[sourceColumn]); }
-			set { this[list.IndexOf (sourceColumns[sourceColumn])] = value; }
+		public DataColumnMapping this [string sourceColumn] {
+			get { return (DataColumnMapping) sourceColumns[sourceColumn]; }
+			set { this [list.IndexOf (sourceColumns[sourceColumn])] = value; }
 		}
 
                 object ICollection.SyncRoot {
@@ -66,21 +70,21 @@ namespace System.Data.Common
                         get { return list.IsSynchronized; }
                 }
 
-		object IColumnMappingCollection.this[string sourceColumn] {
-			get { return this[sourceColumn]; }
+		object IColumnMappingCollection.this [string sourceColumn] {
+			get { return this [sourceColumn]; }
 			set {
 				if (!(value is DataColumnMapping))
 					throw new ArgumentException ();
-				this[sourceColumn] = (DataColumnMapping)value;
+				this [sourceColumn] = (DataColumnMapping) value;
 			}
 		}
 
-                object IList.this[int index] {
+                object IList.this [int index] {
                         get { return this[index]; }
                         set {
                                 if (!(value is DataColumnMapping))
                                         throw new ArgumentException ();
-                                this[index] = (DataColumnMapping)value;
+                                this [index] = (DataColumnMapping) value;
                          }
                 }
 
@@ -92,8 +96,7 @@ namespace System.Data.Common
                         get { return false; }
                 }
 		
-
-		#endregion
+		#endregion // Properties
 
 		#region Methods
 
@@ -146,17 +149,15 @@ namespace System.Data.Common
 			return (DataColumnMapping)(dataSetColumns[value]);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static DataColumnMapping GetColumnMappingBySchemaAction (DataColumnMappingCollection columnMappings, string sourceColumn, MissingMappingAction mappingAction) 
 		{
 			if (columnMappings.Contains (sourceColumn))
 				return columnMappings[sourceColumn];
-
 			if (mappingAction == MissingMappingAction.Ignore)
 				return null;
-
 			if (mappingAction == MissingMappingAction.Error)
-				throw new SystemException ();
-
+				throw new InvalidOperationException (String.Format ("Missing SourceColumn mapping for '{0}'", sourceColumn));
 			return new DataColumnMapping (sourceColumn, sourceColumn);
 		}
 
@@ -214,6 +215,6 @@ namespace System.Data.Common
 			RemoveAt (list.IndexOf (sourceColumns[sourceColumn]));
 		}
 
-		#endregion
+	 	#endregion // Methods
 	}
 }

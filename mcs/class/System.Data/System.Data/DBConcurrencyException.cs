@@ -10,9 +10,8 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
-
 	[Serializable]
-	public class DBConcurrencyException : SystemException
+	public sealed class DBConcurrencyException : SystemException
 	{
 		public DBConcurrencyException (string message)
 			: base (message)

@@ -6,8 +6,10 @@
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Stuart Caborn <stuart.caborn@virgin.net>
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc. 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
@@ -18,11 +20,11 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 
-namespace System.Data
-{
+namespace System.Data {
 	/// <summary>
 	/// an in-memory cache of data 
 	/// </summary>
+	[DefaultProperty ("DataSetName")]
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource,
 		ISupportInitialize, ISerializable {
@@ -57,25 +59,24 @@ namespace System.Data
 
 		#region Public Properties
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether comparing strings within the DataSet is case sensitive.")]
+		[DefaultValue (false)]
 		public bool CaseSensitive {
-			get {
-				return caseSensitive;
-			} 
-			set {
-				caseSensitive = value;
-			}
+			get { return caseSensitive; } 
+			set { caseSensitive = value; }
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("The name of this DataSet.")]
+		[DefaultValue ("")]
 		public string DataSetName {
-			get {
-				return dataSetName;
-			} 
-			
-			set {
-				dataSetName = value;
-			}
+			get { return dataSetName; } 
+			set { dataSetName = value; }
 		}
 
+		[DataSysDescription ("Indicates a custom \"view\" of the data contained by the DataSet. This view allows filtering, searching, and navigating through the custom data view.")]
+		[Browsable (false)]
 		public DataViewManager DefaultViewManager {
 			[MonoTODO]
 			get {
@@ -88,23 +89,23 @@ namespace System.Data
 			}
 		}
 
+		[DataSysDescription ("Indicates whether constraint rules are to be followed.")]
+		[DefaultValue (true)]
 		public bool EnforceConstraints {
-			get {
-				return enforceConstraints;
-			} 
-			
-			set {
-				enforceConstraints = value;
-			}
+			get { return enforceConstraints; } 
+			set { enforceConstraints = value; }
 		}
 
+		[Browsable (false)]
+		[DataCategory ("Data")]
+		[DataSysDescription ("The collection that holds custom user information.")]
 		public PropertyCollection ExtendedProperties {
 			[MonoTODO]
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
 
+		[Browsable (false)]
+		[DataSysDescription ("Indicates that the DataSet has errors.")]
 		public bool HasErrors {
 			[MonoTODO]
 			get {
@@ -112,6 +113,8 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
 		public CultureInfo Locale {
 			[MonoTODO]
 			get { 
@@ -124,12 +127,12 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
+		[DefaultValue ("")]
 		public string Namespace {
 			[MonoTODO]
-			get {
-				return _namespace;
-			} 
-			
+			get { return _namespace; } 
 			[MonoTODO]
 			set {
 				//TODO - trigger an event if this happens?
@@ -137,12 +140,12 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the prefix of the namespace used for this DataSet.")]
+		[DefaultValue ("")]
 		public string Prefix {
 			[MonoTODO]
-			get {
-				return prefix;
-			} 
-			
+			get { return prefix; } 
 			[MonoTODO]
 			set {
 				//TODO - trigger an event if this happens?
@@ -150,6 +153,9 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("The collection that holds the relations for this DatSet.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
 			[MonoTODO]
 			get{
@@ -158,6 +164,8 @@ namespace System.Data
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override ISite Site {
 			[MonoTODO]
 			get {
@@ -170,10 +178,11 @@ namespace System.Data
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("The collection that holds the tables for this DataSet.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataTableCollection Tables {
-			get {
-				return tableCollection;
-			}
+			get { return tableCollection; }
 		}
 
 		#endregion // Public Properties
@@ -360,6 +369,8 @@ namespace System.Data
 
 		#region Public Events
 
+		[DataCategory ("Action")]
+		[DataSysDescription ("Occurs when it is not possible to merge schemas for two tables with the same name.")]
 		public event MergeFailedEventHandler MergeFailed;
 
 		#endregion // Public Events

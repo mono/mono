@@ -82,6 +82,7 @@ namespace System.Data.SqlClient {
 			get { return behavior; }
 		}
 
+		[DataCategory ("Data")]
 		[DataSysDescription ("Command text to execute.")]
 		[DefaultValue ("")]
 		[RefreshProperties (RefreshProperties.All)]
@@ -101,6 +102,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		[DataCategory ("Data")]
 		[DataSysDescription ("How to interpret the CommandText.")]
 		[DefaultValue (CommandType.Text)]
 		[RefreshProperties (RefreshProperties.All)]
@@ -113,6 +115,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		[DataCategory ("Behavior")]
 		[DefaultValue (null)]
 		[DataSysDescription ("Connection used by the command.")]
 		public SqlConnection Connection {
@@ -133,6 +136,7 @@ namespace System.Data.SqlClient {
 			set { designTimeVisible = value; }
 		}
 
+		[DataCategory ("Data")]
 		[DataSysDescription ("The parameters collection.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public SqlParameterCollection Parameters {
@@ -173,6 +177,7 @@ namespace System.Data.SqlClient {
 			set { transaction = value; }
 		}	
 
+		[DataCategory ("Behavior")]
 		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
 		[DefaultValue (UpdateRowSource.Both)]
 		public UpdateRowSource UpdatedRowSource	{

@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
@@ -44,7 +45,7 @@ namespace System.Data.Common {
 
 		#region Properties
 
-		public virtual object Current {
+		public object Current {
 			get { 
 				object[] values = new object[fieldCount];
 				reader.GetValues (values);
@@ -56,7 +57,7 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		public void LoadSchema (DataTable schemaTable)
+		private void LoadSchema (DataTable schemaTable)
 		{
 			schema = new SchemaInfo [fieldCount];
 			int index = 0;
@@ -74,22 +75,22 @@ namespace System.Data.Common {
 				columnSchema.IsReadOnly = (bool) row ["IsReadOnly"];
 				columnSchema.TableName = row ["BaseTableName"].ToString ();
 
-				if (row["NumericPrecision"] != DBNull.Value)
-					columnSchema.NumericPrecision = (byte) row["NumericPrecision"];
+				if (row ["NumericPrecision"] != DBNull.Value)
+					columnSchema.NumericPrecision = (byte) row ["NumericPrecision"];
 				else
 					columnSchema.NumericPrecision = (byte) 0;
 
-				if (row["NumericScale"] != DBNull.Value)
-					columnSchema.NumericScale = (byte) row["NumericScale"];
+				if (row ["NumericScale"] != DBNull.Value)
+					columnSchema.NumericScale = (byte) row ["NumericScale"];
 				else
 					columnSchema.NumericScale = (byte) 0;
 
-				schema[index] = columnSchema;
+				schema [index] = columnSchema;
 				index += 1;
 			}
 		}
 
-		public virtual bool MoveNext ()
+		public bool MoveNext ()
 		{
 			if (reader.Read ()) 
 				return true;
@@ -98,7 +99,8 @@ namespace System.Data.Common {
 			return false;
 		}
 
-		public virtual void Reset ()
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public void Reset ()
 		{
 			throw new NotSupportedException ();
 		}

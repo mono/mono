@@ -56,6 +56,8 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
+		[DataSysDescription ("The DataAdapter for which to automatically generate SqlCommands")]
+		[DefaultValue (null)]
 		public SqlDataAdapter DataAdapter {
 			get { return adapter; }
 			set { 
@@ -69,6 +71,9 @@ namespace System.Data.SqlClient {
 			get { return GetQuotedString (tableName); }
 		}
 
+		[Browsable (false)]
+		[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string QuotePrefix {
 			get { return quotePrefix; }
 			set { 
@@ -78,6 +83,9 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		[Browsable (false)]
+		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string QuoteSuffix {
 			get { return quoteSuffix; }
 			set {

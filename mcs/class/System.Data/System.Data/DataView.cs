@@ -3,8 +3,10 @@
 //
 // Author:
 //    Daniel Morgan <danmorg@sc.rr.com>
+//    Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
@@ -18,8 +20,9 @@ namespace System.Data {
 	/// a view of a DataTable for editing, filtering,
 	/// navigation, searching, and sorting.
 	/// </summary>
-	public class DataView : MarshalByValueComponent, IBindingList,
-		IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
+	[DefaultEvent ("PositionChanged")]
+	[DefaultProperty ("Table")]
+	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
 	{
 
 		DataTable dataTable = null;
@@ -49,6 +52,9 @@ namespace System.Data {
 			rowState = RowState;
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows deletes.")]
+		[DefaultValue (true)]
 		public bool AllowDelete {
 			[MonoTODO]
 			get {
@@ -61,6 +67,9 @@ namespace System.Data {
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows edits.")]
+		[DefaultValue (true)]
 		public bool AllowEdit {
 			[MonoTODO]
 			get {
@@ -73,6 +82,9 @@ namespace System.Data {
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows new rows to be added.")]
+		[DefaultValue (true)]
 		public bool AllowNew {
 			[MonoTODO]
 			get {
@@ -85,6 +97,10 @@ namespace System.Data {
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates whether to use the default sort if the Sort property is not set.")]
+		[DefaultValue (false)]
+		[RefreshProperties (RefreshProperties.All)]
 		public bool ApplyDefaultSort {
 			[MonoTODO]
 			get {
@@ -99,6 +115,8 @@ namespace System.Data {
 
 		// get the count of rows in the DataView after RowFilter 
 		// and RowStateFilter have been applied
+		[Browsable (false)]
+		[DataSysDescription ("Returns the number of items currently in this view.")]
 		public int Count {
 			[MonoTODO]
 			get {
@@ -108,6 +126,8 @@ namespace System.Data {
 			}
 		}
 
+		[Browsable (false)]
+		[DataSysDescription ("This returns a pointer to back to the DataViewManager that owns this DataSet (if any).")]
 		public DataViewManager DataViewManager {
 			[MonoTODO]
 			get {
@@ -123,6 +143,9 @@ namespace System.Data {
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates an expression used to filter the data returned by this DataView.")]
+		[DefaultValue ("")]
 		public virtual string RowFilter {
 			[MonoTODO]
 			get {
@@ -135,6 +158,9 @@ namespace System.Data {
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the versions of data returned by this DataView.")]
+		[DefaultValue (DataViewRowState.CurrentRows)]
 		public DataViewRowState RowStateFilter {
 			[MonoTODO]
 			get {
@@ -147,6 +173,9 @@ namespace System.Data {
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the order in which data is returned by this DataView.")]
+		[DefaultValue ("")]
 		public string Sort {
 			[MonoTODO]
 			get {
@@ -159,6 +188,10 @@ namespace System.Data {
 			}
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
+		[DefaultValue (null)]
+		[RefreshProperties (RefreshProperties.All)]
 		public DataTable Table {
 			[MonoTODO]
 			get {
@@ -231,6 +264,8 @@ namespace System.Data {
 		}
 		
 		[MonoTODO]
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the data returned by this DataView has somehow changed.")]
 		public event ListChangedEventHandler ListChanged;
 
 		protected bool IsOpen {

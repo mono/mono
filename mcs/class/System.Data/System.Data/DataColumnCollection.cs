@@ -4,20 +4,18 @@
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Stuart Caborn	<stuart.caborn@virgin.net>
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Chris Podurgiel
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Data
-{
-	/// <summary>
-	/// Represents a collection of DataColumn objects for a DataTable.
-	/// </summary>
-	[Serializable]
+namespace System.Data {
+	[DefaultEvent ("CollectionChanged")]
 	public class DataColumnCollection : InternalDataCollectionBase
 	{
 		// The defaultNameIndex is used to create a default name for a column if one wasn't given.
@@ -65,7 +63,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets a list of the DataColumnCollection items.
 		/// </summary>
-		protected internal override ArrayList List 
+		protected override ArrayList List 
 		{
 			get
 			{

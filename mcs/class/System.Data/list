@@ -71,6 +71,7 @@ System.Data/ParameterDirection.cs
 System.Data/PropertyAttributes.cs
 System.Data/PropertyCollection.cs
 System.Data/ReadOnlyException.cs
+System.Data/ResDescriptionAttribute.cs
 System.Data/RowNotInTableException.cs
 System.Data/Rule.cs
 System.Data/SchemaType.cs

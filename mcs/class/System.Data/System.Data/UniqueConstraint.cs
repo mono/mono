@@ -4,17 +4,19 @@
 // Author:
 //   Franklin Wise <gracenote@earthlink.net>
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Tim Coleman (tim@timcoleman.com)
 //   
 // (C) 2002 Franklin Wise
 // (C) 2002 Daniel Morgan
+// Copyright (C) Tim Coleman, 2002
 
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace System.Data
-{
+namespace System.Data {
+	[DefaultProperty ("ConstraintName")]
 	public class UniqueConstraint : Constraint 
 	{
 		private bool _isPrimaryKey = false;
@@ -28,54 +30,51 @@ namespace System.Data
 
 		#region Constructors
 
-		public UniqueConstraint(DataColumn column) {
-
+		public UniqueConstraint (DataColumn column) 
+		{
 			_uniqueConstraint ("", column, false);
 		}
 
-		public UniqueConstraint(DataColumn[] columns) {
-			
+		public UniqueConstraint (DataColumn[] columns) 
+		{
 			_uniqueConstraint ("", columns, false);
 		}
 
-		public UniqueConstraint(DataColumn column,
-			bool isPrimaryKey) {
-
+		public UniqueConstraint (DataColumn column, bool isPrimaryKey) 
+		{
 			_uniqueConstraint ("", column, isPrimaryKey);
 		}
 
-		public UniqueConstraint(DataColumn[] columns, bool isPrimaryKey) {
-
+		public UniqueConstraint (DataColumn[] columns, bool isPrimaryKey) 
+		{
 			_uniqueConstraint ("", columns, isPrimaryKey);
 		}
 
-		public UniqueConstraint(string name, DataColumn column) {
-
+		public UniqueConstraint (string name, DataColumn column) 
+		{
 			_uniqueConstraint (name, column, false);
 		}
 
-		public UniqueConstraint(string name, DataColumn[] columns) {
-
+		public UniqueConstraint (string name, DataColumn[] columns) 
+		{
 			_uniqueConstraint (name, columns, false);
 		}
 
-		public UniqueConstraint(string name, DataColumn column,
-			bool isPrimaryKey) {
-
+		public UniqueConstraint (string name, DataColumn column, bool isPrimaryKey) 
+		{
 			_uniqueConstraint (name, column, isPrimaryKey);
 		}
 
-		public UniqueConstraint(string name,
-			DataColumn[] columns, bool isPrimaryKey) {
-
+		public UniqueConstraint (string name, DataColumn[] columns, bool isPrimaryKey) 
+		{
 			_uniqueConstraint (name, columns, isPrimaryKey);
 		}
 
 		//Special case.  Can only be added to the Collection with AddRange
 		[MonoTODO]
-		public UniqueConstraint(string name,
-			string[] columnNames, bool isPrimaryKey) {
-
+		[Browsable (false)]
+		public UniqueConstraint (string name, string[] columnNames, bool isPrimaryKey) 
+		{
 			throw new NotImplementedException(); //need to finish related logic
 			/*
 			base.ConstraintName = name;
@@ -91,9 +90,8 @@ namespace System.Data
 		}
 
 		//helper ctor
-		private void _uniqueConstraint(string name, 
-				DataColumn column, bool isPrimaryKey) {
-
+		private void _uniqueConstraint(string name, DataColumn column, bool isPrimaryKey) 
+		{
 			//validate
 			_validateColumn (column);
 
@@ -114,8 +112,8 @@ namespace System.Data
 		}
 
 		//helpter ctor	
-		public void _uniqueConstraint(string name,
-			DataColumn[] columns, bool isPrimaryKey) {
+		private void _uniqueConstraint(string name, DataColumn[] columns, bool isPrimaryKey) 
+		{
 
 			//validate
 			_validateColumns (columns, out _dataTable);
@@ -249,28 +247,29 @@ namespace System.Data
 			return null;
 		}
 			
-		
-			
 		#endregion //Helpers
 
 		#region Properties
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the columns of this constraint.")]
+		[ReadOnly (true)]
 		public virtual DataColumn[] Columns {
-			get {
-				return _dataColumns;
-			}
+			get { return _dataColumns; }
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates if this constraint is a primary key.")]
+		[ReadOnly (true)]
 		public bool IsPrimaryKey {
-			get {
-				return _isPrimaryKey;
-			}
+			get { return _isPrimaryKey; }
 		}
 
+		[DataCategory ("Data")]
+		[DataSysDescription ("Indicates the table of this constraint.")]
+		[ReadOnly (true)]
 		public override DataTable Table {
-			get {
-				return _dataTable;
-			}
+			get { return _dataTable; }
 		}
 
 		#endregion // Properties
@@ -361,33 +360,25 @@ namespace System.Data
 			//validate no duplicates exists.
 			//Only validate when there are at least 2 rows
 			//so that a duplicate migth exist.
-			if(tbl.Rows.Count > 1)
-			{
-
-
+			if(tbl.Rows.Count > 1) {
 				//get copy of rows collection first so that we do not modify the
 				//original.
-				ArrayList clonedDataList = (ArrayList)tbl.Rows.List.Clone();
+				DataRow[] rows = new DataRow [tbl.Rows.Count];
+				tbl.Rows.CopyTo (rows, 0);
+				ArrayList clonedDataList = new ArrayList (rows);
 
 				ArrayList newDataList = new ArrayList();
 
 				//copy to array list only the column we are interested in.
 				foreach (DataRow row in clonedDataList)
-				{
-					newDataList.Add(row[this._dataColumns[0]]);
-				}
+					newDataList.Add (row[this._dataColumns[0]]);
 				
 				//sort ArrayList and check adjacent values for duplicates.
-				newDataList.Sort();
+				newDataList.Sort ();
 
-				for( int i = 0 ; i < newDataList.Count - 1 ; i++)
-				{
-					if( newDataList[i].Equals(newDataList[i+1]) )
-					{
-						string msg = "Column '" + this._dataColumns[0] + "' contains non-unique values";
-						throw new InvalidConstraintException( msg );
-					}
-				}
+				for (int i = 0 ; i < newDataList.Count - 1 ; i++) 
+					if (newDataList[i].Equals (newDataList[i+1])) 
+						throw new InvalidConstraintException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
 			}
 
 

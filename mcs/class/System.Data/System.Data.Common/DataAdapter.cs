@@ -44,38 +44,52 @@ namespace System.Data.Common
 
 		#region Properties
 
+		[DataCategory ("Fill")]
+		[DataSysDescription ("Whether or not Fill will call DataRow.AcceptChanges.")]
+		[DefaultValue (true)]
 		public bool AcceptChangesDuringFill {
 			get { return acceptChangesDuringFill; }
 			set { acceptChangesDuringFill = value; }
 		}
 
+		[DataCategory ("Update")]
+		[DataSysDescription ("Whether or not to continue to the next DataRow when the Update events, RowUpdating and RowUpdated, Status is UpdateStatus.ErrorsOccurred.")]
+		[DefaultValue (false)]
 		public bool ContinueUpdateOnError {
 			get { return continueUpdateOnError; }
 			set { continueUpdateOnError = value; }
-		}
-
-		public MissingMappingAction MissingMappingAction {
-			get { return missingMappingAction; }
-			set { missingMappingAction = value; }
-		}
-
-		public MissingSchemaAction MissingSchemaAction {
-			get { return missingSchemaAction; }
-			set { missingSchemaAction = value; }
-		}
-
-		public DataTableMappingCollection TableMappings {
-			get { return tableMappings; }
 		}
 
 		ITableMappingCollection IDataAdapter.TableMappings {
 			get { return TableMappings; }
 		}
 
+		[DataCategory ("Mapping")]
+		[DataSysDescription ("The action taken when a table or column in the TableMappings is missing.")]
+		[DefaultValue (MissingMappingAction.Passthrough)]
+		public MissingMappingAction MissingMappingAction {
+			get { return missingMappingAction; }
+			set { missingMappingAction = value; }
+		}
+
+		[DataCategory ("Mapping")]
+		[DataSysDescription ("The action taken when a table or column in the DataSet is missing.")]
+		[DefaultValue (MissingSchemaAction.Add)]
+		public MissingSchemaAction MissingSchemaAction {
+			get { return missingSchemaAction; }
+			set { missingSchemaAction = value; }
+		}
+
+		[DataCategory ("Mapping")]
+		[DataSysDescription ("How to map source table to DataSet table.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public DataTableMappingCollection TableMappings {
+			get { return tableMappings; }
+		}
+
 		#endregion
 
 		#region Methods
-		
 
 		[MonoTODO]
 		protected virtual DataAdapter CloneInternals ()

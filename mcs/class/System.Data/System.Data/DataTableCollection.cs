@@ -13,11 +13,13 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Data
-{
+namespace System.Data {
 	/// <summary>
 	/// Represents the collection of tables for the DataSet.
 	/// </summary>
+	[DefaultEvent ("CollectionChanged")]
+	[ListBindable (false)]
+	[Serializable]
 	public class DataTableCollection : InternalDataCollectionBase
 	{
 		DataSet dataSet;
@@ -26,8 +28,7 @@ namespace System.Data
 
 		#region Constructors 
 
-		// LAMESPEC: This constructor is undocumented
-		protected internal DataTableCollection (DataSet dataSet)
+		internal DataTableCollection (DataSet dataSet)
 			: base ()
 		{
 			this.dataSet = dataSet;
@@ -38,10 +39,6 @@ namespace System.Data
 		
 		#region Properties
 
-		public override int Count {
-			get { return list.Count; }
-		}
-
 		public DataTable this[int index] {
 			get { return (DataTable)(list[index]); }
 		}
@@ -50,7 +47,7 @@ namespace System.Data
 			get { return (DataTable)(tables[name]); }
 		}
 
-		protected internal override ArrayList List {
+		protected override ArrayList List {
 			get { return list; }
 		}
 
@@ -130,8 +127,10 @@ namespace System.Data
 		#endregion
 
 		#region Events
-		
+
+		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]		
 		public event CollectionChangeEventHandler CollectionChanged;
+
 		public event CollectionChangeEventHandler CollectionChanging;
 
 		#endregion

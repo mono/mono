@@ -11,13 +11,10 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 
-namespace System.Data.Common
-{
-	/// <summary>
-	/// Aids implementation of the IDbDataAdapter interface. Inheritors of DbDataAdapter  implement a set of functions to provide strong typing, but inherit most of the functionality needed to fully implement a DataAdapter.
-	/// </summary>
+namespace System.Data.Common {
 	public abstract class DbDataAdapter : DataAdapter, ICloneable
 	{
 		#region Fields
@@ -25,7 +22,7 @@ namespace System.Data.Common
 		public const string DefaultSourceTableName = "Table";
 		const string DefaultSourceColumnName = "Column";
 
-		#endregion
+		#endregion // Fields
 		
 		#region Constructors
 
@@ -33,28 +30,36 @@ namespace System.Data.Common
 		{
 		}
 
-		#endregion
+		#endregion // Fields
 
 		#region Properties
 
 		IDbCommand DeleteCommand {
-			get { return ((IDbDataAdapter)this).DeleteCommand; }
+			get { return ((IDbDataAdapter) this).DeleteCommand; }
 		}
 
 		IDbCommand InsertCommand {
-			get { return ((IDbDataAdapter)this).InsertCommand; }
+			get { return ((IDbDataAdapter) this).InsertCommand; }
 		}
 
 		IDbCommand SelectCommand {
-			get { return ((IDbDataAdapter)this).SelectCommand; }
+			get { return ((IDbDataAdapter) this).SelectCommand; }
 		}
 
 
 		IDbCommand UpdateCommand {
-			get { return ((IDbDataAdapter)this).UpdateCommand; }
+			get { return ((IDbDataAdapter) this).UpdateCommand; }
 		}
 
-		#endregion
+	 	#endregion // Properties
+		
+		#region Events
+
+		[DataCategory ("Fill")]
+		[DataSysDescription ("Event triggered when a recoverable error occurs during Fill.")]
+		public event FillErrorEventHandler FillError;
+
+		#endregion // Events
 
 		#region Methods
 
@@ -229,6 +234,7 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override IDataParameter[] GetFillParameters () 
 		{
 			object[] parameters = new object [SelectCommand.Parameters.Count];
@@ -311,7 +317,14 @@ namespace System.Data.Common
 			int index = TableMappings.IndexOfDataSetTable (dataTable.TableName);
 			if (index < 0)
 				throw new ArgumentException ();
-			return Update ((DataRow[]) dataTable.Rows.List.ToArray (typeof (DataRow)), TableMappings[index]);
+			return Update (dataTable, TableMappings [index]);
+		}
+
+		private int Update (DataTable dataTable, DataTableMapping tableMapping)
+		{
+			DataRow[] rows = new DataRow [dataTable.Rows.Count];
+			dataTable.Rows.CopyTo (rows, 0);
+			return Update (rows, tableMapping);
 		}
 
 		[MonoTODO]
@@ -386,8 +399,8 @@ namespace System.Data.Common
 		{
 			int result = 0;
 			DataTableMapping tableMapping = TableMappings [sourceTable];
-			foreach (DataTable table in dataSet.Tables)
-				result += Update ((DataRow[]) table.Rows.List.ToArray (typeof (DataRow)), tableMapping);
+			foreach (DataTable dataTable in dataSet.Tables)
+				result += Update (dataTable, tableMapping);
 			return result;
 		}
 
@@ -401,11 +414,5 @@ namespace System.Data.Common
 		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
 		
 		#endregion // Methods
-		
-		#region Events
-
-		public event FillErrorEventHandler FillError;
-
-		#endregion // Events
 	}
 }
