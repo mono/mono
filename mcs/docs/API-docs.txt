@@ -1,0 +1,28 @@
+This file contains a list of things which are unclear, confusing or
+simply wrong in the microsoft docs. We keep a list of such things
+here so that we can show them to the Microsoft people later on to
+help them fix their documentation and class libraries.
+
+* String.Compare (String, Int32, String, Int32, Int32):
+
+  The documentation is a bit confusing.
+
+  In the "Remarks" section it says
+
+  >> The number of characters compared is the lesser of the length of
+     strA less indexA, the length of strB less indexB, and length.
+
+  In the "Exception" section it says a condition for the
+  ArgumentOutOfRangeException
+
+  >> The sum of indexA and length is greater than strA. Length. 
+  >> -or-
+  >> The sum of indexB and length is greater than strB. Length.
+  >> -or-
+  >> indexA, indexB, or length is negative.
+
+  The latter implies that Compare ("ab", 0, "abcdef", 0, 3) will
+  throw an exception - but the "Remarks" section implies that it will
+  not. Both mscorlib.dll and our class libraries behave according to
+  the "Remarks" section.
+
