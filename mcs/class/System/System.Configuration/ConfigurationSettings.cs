@@ -157,11 +157,12 @@ namespace System.Configuration
 
 			try {
 				try {
-					reader = new XmlTextReader (fileName);
-				} catch {
+					FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
+					reader = new XmlTextReader (fs);
+				} catch (Exception ex) {
 					return false;
 				}
-				
+
 				InitRead (reader);
 				ReadConfigFile (reader);
 			} finally {
@@ -207,7 +208,8 @@ namespace System.Configuration
 		{
 			XmlTextReader reader = null;
 			try {
-				reader = new XmlTextReader (fileName);
+				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
+				reader = new XmlTextReader (fs);
 			} catch {
 				return null;
 			}

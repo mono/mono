@@ -1,3 +1,9 @@
+2003-06-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ConfigurationSettings.cs: Avoid chicken-egg problem when reading machine.config.
+	  Cannot use an uri to read mechine.config because web request module handelrs are
+	  defined in machine.config.
+
 2003-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppSettingsReader.cs: fixed bug #38755.
