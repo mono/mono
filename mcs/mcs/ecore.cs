@@ -2455,9 +2455,12 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldind_I1);
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldind_I);
-			else if (TypeManager.IsEnumType (t))
-				LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
-			else if (t.IsValueType)
+			else if (TypeManager.IsEnumType (t)) {
+				if (t == TypeManager.enum_type)
+					ig.Emit (OpCodes.Ldind_Ref);
+				else
+					LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
+			} else if (t.IsValueType)
 				ig.Emit (OpCodes.Ldobj, t);
 			else
 				ig.Emit (OpCodes.Ldind_Ref);

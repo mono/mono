@@ -1,3 +1,8 @@
+
+Tue Jul 2 19:03:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ecore.cs: handle System.Enum separately in LoadFromPtr().
+
 2002-07-01  Martin Baulig  <martin@gnome.org>
 
 	* class.cs: Make the last change actually work, we need to check
