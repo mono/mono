@@ -1,3 +1,8 @@
+2004-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Inherit
+	application base from the root domain if not set. Fixes #65641.
+
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c: Avoid overwriting values in the loaded_images_hash when an
