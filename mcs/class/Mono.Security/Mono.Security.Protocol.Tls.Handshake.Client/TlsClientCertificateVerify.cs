@@ -166,7 +166,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				// however we can't feed it into RSAParameters or DSAParameters
 				int length = integer.Length - 1;
 				byte[] uinteger = new byte [length];
-				Array.Copy (integer, 1, uinteger, 0, length);
+				Buffer.BlockCopy (integer, 1, uinteger, 0, length);
 				return uinteger;
 			}
 			else

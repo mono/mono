@@ -121,17 +121,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			if (cert.Version < 3)
 				return true;
 
-			KeyUsage ku = KeyUsage.none;
+			KeyUsages ku = KeyUsages.none;
 			switch (context.Cipher.ExchangeAlgorithmType) 
 			{
 				case ExchangeAlgorithmType.RsaSign:
-					ku = KeyUsage.digitalSignature;
+					ku = KeyUsages.digitalSignature;
 					break;
 				case ExchangeAlgorithmType.RsaKeyX:
-					ku = KeyUsage.keyEncipherment;
+					ku = KeyUsages.keyEncipherment;
 					break;
 				case ExchangeAlgorithmType.DiffieHellman:
-					ku = KeyUsage.keyAgreement;
+					ku = KeyUsages.keyAgreement;
 					break;
 				case ExchangeAlgorithmType.Fortezza:
 					return false; // unsupported certificate type
@@ -171,7 +171,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			if (xtn != null) 
 			{
 				NetscapeCertTypeExtension ct = new NetscapeCertTypeExtension (xtn);
-				return ct.Support (NetscapeCertTypeExtension.CertType.SslServer);
+				return ct.Support (NetscapeCertTypeExtension.CertTypes.SslServer);
 			}
 
 			// certificate isn't valid for SSL server usage

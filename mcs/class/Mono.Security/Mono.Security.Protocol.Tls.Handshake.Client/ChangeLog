@@ -1,3 +1,10 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificateVerify.cs: Use Buffer.BlockCopy instead of 
+	Array.Copy.
+	* TlsServerCertificate.cs: Changed KeyUsage to KeyUsages and CertType 
+	to CertTypes.
+
 2004-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientKeyExchange.cs: Fixed key pair used to encrypt pre-master
