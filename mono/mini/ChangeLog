@@ -1,3 +1,13 @@
+2004-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* mini.h: new arch functions for TLS intrinsics.
+	All platforms updated with a stub.
+
+	* mini.c: use the new intrinsics
+
+	* mini-x86.c, cpu-pentium.md, inssel-x86.brg, mini-ops.h:
+	arch specific intrinsic for tls variables
+
 2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (libmono_la_LDFLAGS): Enable creating of libmono dll
