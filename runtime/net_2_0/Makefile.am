@@ -3,6 +3,7 @@
 #
 
 gacutil=$(srcdir)/../gacutil.exe
+framework_version = 2.0
 
 if USE_JIT
 mono_runtime = $(top_builddir)/mono/mini/mono
@@ -73,7 +74,7 @@ gac_assemblies = $(gac_assemblies_list:=.dll)
 local_mscorlib = mscorlib.dll
 endif
 
-corlibdir = $(libdir)/mono/2.0
+corlibdir = $(libdir)/mono/$(framework_version)
 corlib_DATA = $(local_mscorlib)
 
 EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
@@ -90,9 +91,9 @@ if INSTALL_2_0
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
-	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 2.0 /root $(DESTDIR)$(libdir)" ; \
+	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package $(framework_version) /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir)/../net_1_1 \
-	      $(LIBTOOL) --mode=execute $(mono_runtime)	 --config ../../data/config  $(gacutil) /i $(srcdir)/$$i /f /package 2.0 /root $(DESTDIR)$(libdir) || exit 1 ; \
+	      $(LIBTOOL) --mode=execute $(mono_runtime)	 --config ../../data/config  $(gacutil) /i $(srcdir)/$$i /f /package $(framework_version) /root $(DESTDIR)$(libdir) || exit 1 ; \
 	  done; fi
 
 uninstall-local:
