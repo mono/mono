@@ -5,7 +5,7 @@
 <!-- Target test runs tests -->
 
 <project name="corlib_test" default="build">
-	<property name="debug" value="false"/>
+	<property name="debug" value="true"/>
 	<property name="nunit_home" value="..\..\..\nunit"/>
 
 	<target name="build">
