@@ -1,5 +1,9 @@
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.GetClassBases): Fix the CS0528 check.
+
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (Error_TypeParameterAsBase): Use correct error number
 	here (CS0689).	
 

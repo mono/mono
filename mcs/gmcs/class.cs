@@ -760,7 +760,7 @@ namespace Mono.CSharp {
 				}
 
 				for (int x = 0; x < j; x++) {
-					if (resolved == ifaces [x]) {
+					if (resolved.Equals (ifaces [x])) {
 						Report.Error (528, "`" + name + "' is already listed in interface list");
 						error = true;
 						return null;
