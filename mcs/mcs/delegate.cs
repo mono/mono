@@ -245,7 +245,7 @@ namespace Mono.CSharp {
 			
 			async_params [params_num] = new Parameter ("System.AsyncCallback", "callback",
 								   Parameter.Modifier.NONE, null);
-			async_params [params_num + 1] = new Parameter ("System.IAsyncResult", "object",
+			async_params [params_num + 1] = new Parameter ("System.Object", "object",
 								   Parameter.Modifier.NONE, null);
 
 			Parameters async_parameters = new Parameters (async_params, null, Location);
