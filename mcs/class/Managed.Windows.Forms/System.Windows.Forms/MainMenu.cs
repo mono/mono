@@ -88,7 +88,6 @@ namespace System.Windows.Forms
 		internal void SetForm (Form form)
 		{
 			this.form = form;
-			MenuAPI.SetMenuBarWindow (Handle, form);
 		}
 		
 		/* Mouse events from the form */
