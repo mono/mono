@@ -3,6 +3,7 @@
 #
 
 mcs_topdir=$(top_srcdir)/../mcs
+gacutil=$(mcs_topdir)/tools/gacutil/gacutil.exe
 
 gac_assemblies_list = \
 	Accessibility.dll					\
@@ -78,19 +79,19 @@ $(assemblies_DATA):
 	cp -f $$f $(srcdir)
 
 $(gac_assemblies_list):
-	@f=$(mcs_topdir)/class/lib/net_2_0/$@; \
+	@f=$(mcs_topdir)/class/lib/net_1_1/$@; \
 	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
 
 install-data-local: $(gac_assemblies_list)
 	@for i in $(gac_assemblies_list); do	\
-		gacutil /i $$i /f || exit 1 ; \
+		mono $(gacutil) /i $$i /f || exit 1 ; \
 	done
 
 uninstall-local:
 	@for i in $(gac_assemblies_list); do \
-		gacutil /u $$i || exit 1 ; \
+		mono $(gacutil) /u $$i || exit 1 ; \
 	done
 
 dist-hook: $(gac_assemblies_list)

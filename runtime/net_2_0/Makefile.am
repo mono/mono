@@ -3,6 +3,7 @@
 #
 
 mcs_topdir=$(top_srcdir)/../mcs
+gacutil=$(mcs_topdir)/tools/gacutil/gacutil.exe
 
 gac_assemblies_list = \
 	Accessibility.dll					\
@@ -85,12 +86,12 @@ $(gac_assemblies_list):
 
 install-data-local: $(gac_assemblies_list)
 	@for i in $(gac_assemblies_list); do	\
-		gacutil /i $$i /f || exit 1 ; \
+		mono $(gacutil) /i $$i /f || exit 1 ; \
 	done
 
 uninstall-local:
 	@for i in $(gac_assemblies_list); do \
-		gacutil /u $$i || exit 1 ; \
+		mono $(gacutil) gacutil /u $$i || exit 1 ; \
 	done
 
 dist-hook: $(gac_assemblies_list)
