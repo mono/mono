@@ -5,7 +5,7 @@
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System;
 
@@ -15,11 +15,11 @@ namespace System.Drawing.Drawing2D {
 	/// </summary>
     public enum CombineMode
     {
-        Complement = 5,
-        Exclude = 4,
-        Intersect =4,
-        Replace = 0,
-        Union = 2,
-        Xor =3
+        Complement,
+        Exclude,
+        Intersect,
+        Replace,
+        Union,
+        Xor
     }
 }

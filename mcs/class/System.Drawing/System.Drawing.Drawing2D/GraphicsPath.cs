@@ -4,7 +4,7 @@
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System;
 namespace System.Drawing.Drawing2D
@@ -15,8 +15,8 @@ namespace System.Drawing.Drawing2D
 	public sealed class GraphicsPath //: MarshalByRefObject, ICloneable, IDisposable
 	{
 		//[MonoTODO]
-		public GraphicsPath() {
-		}
+		//public GraphicsPath() {
+		//}
 		//[MonoTODO]
 		//public GraphicsPath(FillMode fillMode) : this() {
 		//}

@@ -1,3 +1,10 @@
+2003-3-2  DennisHayes <dennish@raytek.com>
+
+	* Created changelog
+	* updated copyrights to 2002/3
+	* changed namespace from System.Drawing, System.Drawing.Drawing2d to System.Drawing.Drawing2D
+	* cosmetic improvments
+
 2002-10-13  DennisHayes <dennish@raytek.com>
 	* Changed namespace from *2d to *2D
 	* Changed comment header from system.Drawing to System.Drawing.Drawing2D

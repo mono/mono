@@ -1,10 +1,10 @@
 //
-// System.Drawing.Drawing2D.DashStyle.cs
+// System.Drawing.Drawing2D.DashCap.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002/3 Ximian, Inc
 //
 using System;
 

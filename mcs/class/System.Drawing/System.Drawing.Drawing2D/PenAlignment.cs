@@ -4,7 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Dennis Hayes (dennish@Raytek.com)
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002/3 Ximian, Inc  http://www.ximian.com
 //
 
 using System;

@@ -1,12 +1,11 @@
 //
-// System.Drawing.Drawing2D.PenType.cs
+// System.Drawing.Drawing2D.DashCap.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
-//
-using System;
+// (C) 2002/3 Ximian, Inc
+//using System;
 
 namespace System.Drawing.Drawing2D
 {
