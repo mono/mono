@@ -21,16 +21,25 @@ options {
 	defaultErrorHandler = false;
 }
 
-program
-	: source_elements
+program returns [ScriptBlock prog]
+{ prog = new ScriptBlock (); }
+	: source_elements [prog.src_elems]
 	;
 
-source_elements
-	: (source_element)+
+source_elements [Block elems]
+	: (source_element [elems])+
 	;
 
-source_element
-	: statement
+source_element [Block elems]
+{ AST stm = null; }
+	: stm = statement 
+	  { 
+		  if (stm != null) {
+		  	  elems.Add (stm); 
+		  	  Console.WriteLine ("DEBUG::src_elem::Add::{0}", 
+					     stm.ToString ());
+		  }
+	  }
 	| function_decl_or_expr
 	;
 
@@ -41,7 +50,7 @@ function_decl_or_expr
 	;
 
 function_body
-	: source_elements	
+	: source_elements [null]
 	;
 
 formal_param_list
@@ -52,9 +61,10 @@ formal_param_list
 // Statements
 //
 
-statement
-	: expr_stm
-	| var_stm
+statement returns [AST stm]
+{ stm = null; }
+	: stm = expr_stm SEMI_COLON
+	| stm = var_stm
 	| empty_stm
 	| if_stm
 	| iteration_stm
@@ -135,40 +145,65 @@ inside_for
 	: (expr | ) SEMI_COLON (expr | ) SEMI_COLON (expr | )
 	// We must keep a counter c, c tells us how many decls are
 	// done, in order to interrupt if c > 1 and we are inside a "in"
-	| "var" (var_decl_list 
+	| "var" (var_decl_list [null] 
 		  ( SEMI_COLON (expr | ) SEMI_COLON (expr | )
 		  | "in" expr))
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
 
 if_stm
-	: "if" OPEN_PARENS expr CLOSE_PARENS statement 
-	  (("else")=> "else"  statement)?
+	: "if" OPEN_PARENS expr CLOSE_PARENS "else" statement
 	;
 
 empty_stm
 	: SEMI_COLON
 	;
 
-var_stm
-	: "var" var_decl_list SEMI_COLON
+var_stm returns [VariableStatement var_stm]
+{ var_stm = new VariableStatement (); }
+	: "var" var_decl_list [var_stm] SEMI_COLON
 	;
 
-var_decl_list
-	: var_decl (COMMA var_decl)*
+var_decl_list [VariableStatement var_stm]
+{ VariableDeclaration var_decln = null; }
+	: var_decln = var_decl 
+	  { 
+		if (var_decln != null)
+			var_stm.Add (var_decln);
+	  }
+	  (COMMA var_decln = var_decl 
+	  { 
+		  if (var_decln != null) 
+		  	  var_stm.Add (var_decln);
+	  }
+	  )*
 	;
 	
 
-var_decl
-	: IDENTIFIER (initializer | )
+var_decl returns [VariableDeclaration var_decl]
+{ 
+	var_decl = null;
+	AST init = null;
+}
+	: id:IDENTIFIER 
+	  (init = initializer
+	   { 
+		  var_decl = new VariableDeclaration (id.getText (), null, init); 
+	   }
+	  | 
+	   {
+		  var_decl = new VariableDeclaration (id.getText (), null, null);
+	   })
 	;
 
-initializer
-	: ASSIGN assignment_expr
+initializer returns [AST init]
+{ init = null; }
+	: ASSIGN init = assignment_expr
 	;
 
-expr_stm
-	: expr
+expr_stm returns [AST e]
+{ e = null; }
+	: e = expr
    	;
 
 
@@ -176,18 +211,40 @@ statement_list
 	: (statement)*
 	;
 
-expr
-	: assignment_expr (COMMA assignment_expr)*
+expr returns [Expression e]
+{
+	e = new Expression ();
+	AST a = null;
+} 
+	: a = assignment_expr { e.Add (a); } 
+	  (COMMA a = assignment_expr { e.Add (a); } )*
 	;
 
-assignment_expr
-	: ((left_hand_side_expr assignment_op)=> left_hand_side_expr assignment_op assignment_expr
-	| cond_expr)
+assignment_expr returns [AST assign_expr]
+{     
+	assign_expr = null;
+	JSToken op = JSToken.None;
+	AST left, right;
+	left = right = null;
+}
+	: ((left_hand_side_expr assignment_op)=> 
+	    left = left_hand_side_expr op = assignment_op right = assignment_expr
+	    {
+		  Binary a = new Binary (left, right, op);
+		  Console.WriteLine ("\nDEBUG::jscript.g::assign_expr::ToString::" + a.ToString () + "\n");
+		  assign_expr = a;
+	    }
+
+	| assign_expr = cond_expr 
+	)
 	;
 
-member_expr
-	: primary_expr member_aux
-	| "new" member_expr OPEN_PARENS (arguments_list | ) CLOSE_PARENS
+member_expr returns [AST mem_exp]
+{
+	mem_exp = null;
+}
+	: mem_exp = primary_expr member_aux
+	| "new" member_expr OPEN_PARENS (arguments_list [null] | ) CLOSE_PARENS
 	;
 
 member_aux
@@ -198,11 +255,24 @@ member_aux
 	;
 
 
-call_expr
-	: member_expr call_aux;
+call_expr returns [Call func_call]
+{
+	func_call = null;
+	AST member = null;
+	AST args;
+}
+	: member = member_expr args = call_aux
+	  {
+		  func_call = new Call (member, args);
+	  }
+	;
 
-call_aux
-	: (("(" (arguments_list | ) ")"
+call_aux returns [AST args]
+{
+	Args tmp_args = new Args ();
+	args = null;
+}
+	: (("(" (arguments_list [tmp_args] { args = tmp_args; } | ) ")"
 	   | "[" expr "]"
 	   | DOT IDENTIFIER
 	   ) call_aux 
@@ -210,163 +280,474 @@ call_aux
           )
 	;
 
-arguments_list
-	: assignment_expr (COMMA assignment_expr)*
+arguments_list [Args args]
+{
+	AST a = null;
+}
+	: a = assignment_expr { args.Add (a); } 
+	  (COMMA a = assignment_expr { args.Add (a); })*
 	;
 
-left_hand_side_expr
-	: call_expr
+left_hand_side_expr returns [Call call]
+{
+	call = null;
+}
+	: call = call_expr
 	;
 
-postfix_expr
-	: left_hand_side_expr ("++" | "--" | )
+postfix_expr returns [Unary post_expr]
+{
+	post_expr = null;
+	JSToken op = JSToken.None;
+	AST left = null;
+}
+	: left = left_hand_side_expr ( INCREMENT { op = JSToken.Increment; } 
+            			     | DECREMENT { op = JSToken.Decrement; } 
+			      	     | )
+	  {
+		  post_expr = new Unary (left, op);
+	  }
 	;
 
-unary_expr
-	: postfix_expr
-	| unary_op unary_expr
+unary_expr returns [Unary unary_exprn]
+{
+	unary_exprn = null;
+	JSToken op = JSToken.None;
+	AST u_expr = null;
+}
+	: unary_exprn = postfix_expr
+	| op = unary_op u_expr = unary_expr
+	  { 
+		  unary_exprn = new Unary (u_expr, op); 
+	  }
 	;
 
-unary_op
-	: "delete"
-	| "void"
-	| "typeof"
-	| INCREMENT
-	| DECREMENT
-	| PLUS
-	| MINUS
-	| BITWISE_NOT
-	| LOGICAL_NOT 
+unary_op returns [JSToken unary_op]
+{ unary_op = JSToken.None; }
+	: "delete" { unary_op = JSToken.Delete; }
+	| "void" { unary_op = JSToken.Void; }
+	| "typeof" { unary_op = JSToken.Typeof; }
+	| INCREMENT { unary_op = JSToken.Increment; }
+	| DECREMENT { unary_op = JSToken.Decrement; }
+	| PLUS { unary_op = JSToken.Plus; }
+	| MINUS { unary_op = JSToken.Minus; }
+	| BITWISE_NOT { unary_op = JSToken.BitwiseNot; }
+	| LOGICAL_NOT { unary_op = JSToken.LogicalNot; }
 	;
 
-multiplicative_expr
-	: unary_expr multiplicative_aux
+multiplicative_expr returns [AST mult_expr]
+{
+	mult_expr = null;
+	Unary left = null;
+	AST right = null;
+}
+	: left = unary_expr right = multiplicative_aux
+	  {
+		  if (right == null)
+			  mult_expr = left;
+		  else
+		  	  mult_expr = new Binary (left, right, ((Binary) right).old_op);
+	  }
 	;
 
-multiplicative_aux
-	: ((MULT | DIVISION | MODULE) unary_expr multiplicative_aux | )
+multiplicative_aux returns [AST mult_aux]
+{
+	mult_aux = null;
+	JSToken mult_op = JSToken.None;
+	Unary left = null;
+	AST right = null;
+}
+	: (( MULT { mult_op = JSToken.Multiply; }
+	   | DIVISION { mult_op = JSToken.Divide; }
+	   | MODULE { mult_op = JSToken.Modulo; }
+	   ) left = unary_expr right = multiplicative_aux
+	     {
+			  if (right == null)
+				  mult_aux = new Binary (left, null, JSToken.None);
+			  else
+				  mult_aux = new Binary (left, right, ((Binary) right).old_op);
+			  ((Binary) mult_aux).old_op = mult_op;
+	     }
+	  | )
 	;
 
-additive_expr
-	: multiplicative_expr additive_aux
+additive_expr returns [AST add_expr]
+{
+	add_expr = null;
+	AST left, right;
+	left = right = null;
+}
+	: left = multiplicative_expr right = additive_aux
+	  {
+			  if (right == null)
+				  add_expr = left;
+			  else
+				  add_expr = new Binary (left, right, ((Binary) right).old_op);
+	  }
 	;
 
-additive_aux
-	: ((PLUS | MINUS) multiplicative_expr additive_aux | )
+additive_aux returns [AST add_aux]
+{
+	add_aux = null;
+	JSToken op = JSToken.None;
+	AST left, right;
+	left = right = null;
+}
+	: (( PLUS { op = JSToken.Plus; }
+	   | MINUS { op = JSToken.Minus; }
+	   ) left = multiplicative_expr right = additive_aux
+	     {
+		     if (right == null)
+			     add_aux = new Binary (left, null, JSToken.None);
+		     else
+			     add_aux = new Binary (left, right, ((Binary) right).old_op);
+		     ((Binary) add_aux).old_op = op;
+	     }
+	| )
 	;
 
-shift_expr
-	: additive_expr shift_aux
+shift_expr returns [AST shift_expr]
+{
+	shift_expr = null;
+	AST left, right;
+	left = right = null;
+}
+	: left = additive_expr right = shift_aux
+	  {
+		  if (right == null)
+			  shift_expr = left;
+		  else
+			  shift_expr = new Binary (left, right, ((Binary) right).old_op);
+	  }
 	;
 
-shift_aux
-	: (shift_op additive_expr shift_aux | )
+shift_aux returns [AST shift_auxr]
+{ 
+	shift_auxr = null; 
+	JSToken op = JSToken.None;
+	AST left, right;
+	left = right = null;
+}
+	: (op = shift_op left = additive_expr right = shift_aux
+	   {
+		   if (right == null)
+			   shift_auxr = new Binary (left, null, JSToken.None);
+		   else
+			   shift_auxr = new Binary (left, right, ((Binary) right).old_op);
+
+		   ((Binary) shift_auxr).old_op = op;
+	   }
+	  | )
 	;
 
-shift_op
-	: SHIFT_LEFT
-	| SHIFT_RIGHT
-	| UNSIGNED_SHIFT_RIGHT
+shift_op returns [JSToken shift_op]
+{ shift_op = JSToken.None; }
+	: SHIFT_LEFT { shift_op = JSToken.LeftShift; }
+	| SHIFT_RIGHT { shift_op = JSToken.RightShift; }
+	| UNSIGNED_SHIFT_RIGHT { shift_op = JSToken.UnsignedRightShift; }
 	;
 
-relational_expr
-	: shift_expr relational_aux
+relational_expr returns [AST rel_expr]
+{
+	rel_expr = null;
+	AST left = null;
+	Relational right = null;
+}
+	: left = shift_expr right = relational_aux
+	  {
+		  if (right == null)
+			  rel_expr = left;
+		  else
+			  rel_expr = new Relational (left, right, right.old_op);
+	  }
 	;
 
-relational_aux
-	: (relational_op shift_expr relational_aux | )
+relational_aux returns [Relational rel_aux]
+{
+	rel_aux = null;
+	JSToken op = JSToken.None;
+	AST left = null;
+	Relational right = null;
+}
+	: (op = relational_op left = shift_expr right = relational_aux
+	   {
+		   if (right == null)
+			  rel_aux = new Relational (left, null, JSToken.None);
+		   else
+			   rel_aux = new Relational (left, right, right.old_op);
+		   rel_aux.old_op = op;
+
+	   }
+	 | )
 	;
 
-relational_op
-	: LESS_THAN
-	| GREATER_THAN
-	| LESS_EQ
-	| GREATER_EQ
-	| "instanceof"
+relational_op returns [JSToken rel_op]
+{ rel_op = JSToken.None; }
+	: LESS_THAN { rel_op = JSToken.LessThan; }
+	| GREATER_THAN { rel_op = JSToken.GreaterThan; }
+	| LESS_EQ { rel_op = JSToken.LessThanEqual; }
+	| GREATER_EQ { rel_op = JSToken.GreaterThanEqual; }
+	| "instanceof" { rel_op = JSToken.InstanceOf; }
 	;
 
 
-equality_expr
-	: relational_expr equality_aux
+equality_expr returns [AST eq_expr]
+{
+	eq_expr = null;
+	AST left = null;
+	Equality right = null;
+}
+	: left = relational_expr  right = equality_aux
+	  {
+		  if (right == null)
+			  eq_expr = left;
+		  else {
+			  eq_expr = new Equality (left, right, right.old_op);
+		  }
+	  }
 	;
 
-equality_aux
-	: (equality_op relational_expr equality_aux | )
+equality_aux returns [Equality eq_aux]
+{
+	eq_aux = null;
+	AST left = null;
+	Equality right = null;
+	JSToken op = JSToken.None;
+}
+	: (op = equality_op left = relational_expr right = equality_aux
+	   {
+		   if (right == null)
+			  eq_aux = new Equality (left, null, JSToken.None);
+		   else
+			  eq_aux = new Equality (left, right, right.old_op);
+
+		  eq_aux.old_op = op;
+	   }
+	  | )
 	;
 
-equality_op
-	: EQ
-	| NEQ
-	| STRICT_EQ
-	| STRICT_NEQ
+equality_op returns [JSToken eq_op]
+{ eq_op = JSToken.None; }
+	: EQ { eq_op = JSToken.Equal; }
+	| NEQ { eq_op = JSToken.NotEqual; }
+	| STRICT_EQ { eq_op = JSToken.StrictEqual; }
+	| STRICT_NEQ { eq_op = JSToken.StrictNotEqual; }
 	;
 
-bitwise_and_expr
-	: equality_expr bitwise_and_aux
+bitwise_and_expr returns [AST bit_and_expr]
+{
+	bit_and_expr = null;
+    AST left;
+	AST right;
+	left = null;
+	right = null;
+}
+	: left = equality_expr  right = bitwise_and_aux
+	  {
+		  if (right == null)
+			  bit_and_expr = left;
+		  else
+			  bit_and_expr = new Binary (left, right, JSToken.BitwiseAnd);
+	  }
 	;
 
-bitwise_and_aux
-	: (BITWISE_AND equality_expr bitwise_and_aux | )
+bitwise_and_aux returns [AST bit_and_aux]
+{
+	bit_and_aux = null;
+    AST left = null;
+	AST right = null;
+}
+	: (BITWISE_AND left = equality_expr right = bitwise_and_aux
+	   {
+		   if (right == null)
+			   bit_and_aux = left;
+		   else
+			   bit_and_aux = new Binary (left, right, JSToken.BitwiseAnd);
+	   }
+	  | )
+		  
 	;
 
-bitwise_xor_expr
-	: bitwise_and_expr bitwise_xor_aux
+bitwise_xor_expr returns [AST bit_xor_expr]
+{
+	bit_xor_expr = null;
+	AST left, right;
+	left = right = null;
+}
+	: left = bitwise_and_expr right = bitwise_xor_aux
+	  {
+		  if (right == null)
+			  bit_xor_expr = left;
+		  else
+			  bit_xor_expr = new Binary (left, right, JSToken.BitwiseXor);
+	  }
 	;
 
-bitwise_xor_aux
-	: (BITWISE_XOR bitwise_and_expr bitwise_xor_aux | )
+bitwise_xor_aux returns [AST bit_xor_aux]
+{
+	bit_xor_aux = null;
+	AST left, right;
+	left = right = null;
+}
+	: (BITWISE_XOR left = bitwise_and_expr right = bitwise_xor_aux
+	   {
+		  if (right == null)
+			  bit_xor_aux = left;
+		  else
+			  bit_xor_aux = new Binary (left, right, JSToken.BitwiseXor);
+	   }
+	  | )
 	;
 
-bitwise_or_expr
-	: bitwise_xor_expr bitwise_or_aux
+bitwise_or_expr returns [AST bit_or_expr]
+{ 
+	bit_or_expr = null;
+	AST left, right;
+	left = right = null;
+}
+	: left = bitwise_xor_expr right = bitwise_or_aux
+	  {
+	  	  if (right == null)
+			  bit_or_expr = left;
+		  else
+			  bit_or_expr = new Binary (left, right, JSToken.BitwiseOr);
+	  }
 	;
 
-bitwise_or_aux
-	: (BITWISE_OR bitwise_xor_expr bitwise_or_aux | )
+bitwise_or_aux returns [AST bit_or_aux]
+{ 
+	bit_or_aux = null;
+	AST left, right;
+	left = right = null;
+}
+	: (BITWISE_OR left = bitwise_xor_expr right = bitwise_or_aux
+	   {
+		   if (right == null)
+			   bit_or_aux = left;
+ 		   else
+			   bit_or_aux = new Binary (left, right, JSToken.BitwiseOr);
+	   }
+	  | )
 	;
 
-logical_and_expr
-	: bitwise_or_expr logical_and_aux
+logical_and_expr returns [AST log_and_expr]
+{
+	log_and_expr = null;
+	AST left, right;
+	left = right = null;
+}
+	: left = bitwise_or_expr right = logical_and_aux
+	  {
+		  if (right == null)
+			  log_and_expr = left;
+	  	  else
+			  log_and_expr = new Binary (left, right, JSToken.LogicalAnd);
+	  }
 	;
 
-logical_and_aux
-	: (LOGICAL_AND bitwise_or_expr logical_and_aux | )
+logical_and_aux returns [AST log_and_aux]
+{
+	log_and_aux = null;
+	AST left, right;
+	left = right = null;
+}
+	: (LOGICAL_AND left = bitwise_or_expr right = logical_and_aux
+	   {
+	   	   if (right == null)
+			   log_and_aux = left;
+		   else
+			   log_and_aux = new Binary (left, right, JSToken.LogicalAnd);
+	   }
+	  | )
 	;
 
-logical_or_expr
-	:  logical_and_expr logical_or_aux
+logical_or_expr returns [AST log_or_expr]
+{ 
+	log_or_expr = null; 
+	AST left, right;
+	left = right = null;
+}
+	:  left = logical_and_expr right = logical_or_aux
+	   {
+		  if (right == null)
+		  	  log_or_expr = left;
+		  else
+			  log_or_expr = new Binary (left, right, JSToken.LogicalOr);
+	   }
+					    			
 	;
 
-logical_or_aux
-	: (LOGICAL_OR logical_and_expr logical_or_aux | )
+logical_or_aux returns [AST log_or_aux]
+{ 
+	AST left, right;
+	log_or_aux = null;
+	left = right = null;	
+}
+	: (LOGICAL_OR left = logical_and_expr right = logical_or_aux
+	   {
+		  if (right == null)
+		  	  log_or_aux = left; 
+		  else
+			  log_or_aux = new Binary (left, right, JSToken.LogicalOr);
+	   }
+	  | )
 	;
 
-cond_expr
-	: logical_or_expr (INTERR assignment_expr COLON assignment_expr | )
+cond_expr returns [AST conditional]
+{
+	conditional = null; 
+	AST cond;
+	AST trueExpr, falseExpr;
+	cond = null;
+	trueExpr = falseExpr = null;
+}
+	: cond = logical_or_expr 
+	  (INTERR trueExpr = assignment_expr 
+	   COLON falseExpr = assignment_expr 
+	   { 
+	  	  if (trueExpr != null && falseExpr != null) {
+		  	  Conditional c = new Conditional ((AST) cond, trueExpr, falseExpr); 
+			  conditional =  c;
+		  }
+	   }
+	  | { conditional = cond; } )
+
 	;
 
-assignment_op
-	: ASSIGN
-	| MULT_ASSIGN
-	| DIV_ASSIGN
-	| MOD_ASSIGN
-	| ADD_ASSIGN
-	| SUB_ASSIGN
-	| SHIFT_LEFT_ASSIGN
-	| SHIFT_RIGHT_ASSIGN
-	| AND_ASSIGN
-	| XOR_ASSIGN
-	| OR_ASSIGN
+assignment_op returns [JSToken assign_op]
+{
+    assign_op = JSToken.None;
+}
+	: ASSIGN { assign_op = JSToken.Assign; }
+	| MULT_ASSIGN { assign_op = JSToken.MultiplyAssign; }
+	| DIV_ASSIGN { assign_op = JSToken.DivideAssign; }
+	| MOD_ASSIGN { assign_op = JSToken.ModuloAssign; }
+	| ADD_ASSIGN { assign_op = JSToken.PlusAssign; }
+	| SUB_ASSIGN { assign_op = JSToken.MinusAssign; }
+	| SHIFT_LEFT_ASSIGN { assign_op = JSToken.LeftShiftAssign; }
+	| SHIFT_RIGHT_ASSIGN { assign_op = JSToken.RightShiftAssign; }
+	| AND_ASSIGN { assign_op = JSToken.BitwiseAndAssign; }
+	| XOR_ASSIGN { assign_op = JSToken.BitwiseXorAssign; }
+	| OR_ASSIGN { assign_op = JSToken.BitwiseOrAssign; }
 	;
 	
 
-primary_expr
-	:"this"
+primary_expr returns [AST prim_exp]
+{
+	prim_exp = null;
+	Literal l = null;
+	Expression e = null;
+}
+	: p:"this" { prim_exp = new This (); }
 	| object_literal
-	| IDENTIFIER
-	| literal
+	| id:IDENTIFIER 
+	  { 
+		Identifier ident = new Identifier (id.getText ());
+		prim_exp = (AST) ident;
+	  }
+	| l = literal { prim_exp = l; }
 	| array_literal
-	| OPEN_PARENS expr CLOSE_PARENS
+	| OPEN_PARENS e = expr { prim_exp = e; } CLOSE_PARENS
 	; 
 
 object_literal
@@ -377,12 +758,25 @@ object_literal
 
 	;
 
-literal
+literal returns [Literal l]
+{l = null; }
 	: "null"
 	| "true"
+	  {
+		  BooleanLiteral bl = new BooleanLiteral (true);
+		  l = bl;
+	  }
 	| "false"
-	| STRING_LITERAL
-	| numeric_literal
+	  {
+		  BooleanLiteral bl = new BooleanLiteral (false);
+		  l = bl;
+	  }
+	| s:STRING_LITERAL
+	  {
+		  StringLiteral str = new StringLiteral (s.getText ());
+		  l = str;
+	  }      
+	| n:numeric_literal
 	;
 
 property_name_and_value_list
@@ -476,7 +870,7 @@ GREATER_EQ: ">=";
 EQ: "==";
 NEQ: "!=";
 STRICT_EQ: "===";
-STRICT_NEW: "!==";
+STRICT_NEQ: "!==";
 
 MULT_ASSIGN: "*=";
 DIV_ASSIGN: "/=";

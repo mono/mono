@@ -1,7 +1,24 @@
 2003-10-21  cesar lopez nataren  <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: Allow "christmas trees" (aka expression
+	trees) building.
+	
+	* Block.cs, Equality.cs, Relational.cs: modified ToString 
+
+	* Equality.cs, Relational.cs, StringLiteral.cs,
+	VariableDeclaration.cs: Added constructor 
+
+	* VariableStatement.cs, ScriptBlock.cs: changed from hungarian
+	name convetion style to mono style.
+
+	* UnaryOp.cs: added operator and operand fields.
+
+	* VariableDeclaration.cs: chenged field name from assignExp to val.
+
 	*  BinaryOp.cs: Made "internal" the attributes, added the two
 	operators holders.
+
+	* driver.cs: Dump the string representation of the parsed exps.
 
 2003-10-10  cesar lopez nataren <cesar@ciencias.unam.mx>
 
