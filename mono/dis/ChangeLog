@@ -1,4 +1,8 @@
 
+Thu Jun 20 11:50:38 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, dump.c, dump.h: code to dump the MethodImpl table.
+
 Mon Jun 17 17:31:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* get.h, get.c: get_marshal_info() to get a marshal descriptor.
