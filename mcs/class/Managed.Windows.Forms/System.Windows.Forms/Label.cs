@@ -30,6 +30,14 @@
 // Based on work by:
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
 //
+//
+// $Revision: 1.7 $
+// $Modtime: $
+// $Log: Label.cs,v $
+// Revision 1.7  2004/08/08 19:47:41  jordi
+// add cvs header info
+//
+//
 // INCOMPLETE
 
 using System.Drawing;
