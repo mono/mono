@@ -1,3 +1,6 @@
+2003-05-30  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* GroupBox.cs : take BackColor into account
+
 2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : helper method getParentForm
 	* Form.cs : ActiveForm , FormBorderStyle implemented

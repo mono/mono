@@ -114,17 +114,21 @@ namespace System.Windows.Forms {
 				bounds.Y += 5;
 				bounds.Height -= 5;
 
-				ControlPaint.DrawBorder3D( paintOn, bounds, Border3DStyle.Etched, Border3DSide.All );
-				/*
+/*
 				bounds.Inflate(-4,-4);
 				bounds.Y += 2;
-				ControlPaint.DrawBorder(paintOn, bounds, SystemColors.ControlDark, 1, ButtonBorderStyle.Solid,
-					SystemColors.ControlDark, 1, ButtonBorderStyle.Solid, SystemColors.ControlLightLight, 1, ButtonBorderStyle.Solid,
-					SystemColors.ControlLightLight, 1, ButtonBorderStyle.Solid);
+*/
+				Color dark   = ControlPaint.DarkDark ( BackColor );
+				Color light  = ControlPaint.LightLight ( BackColor );
+
+				ControlPaint.DrawBorder(paintOn, bounds, dark, 1, ButtonBorderStyle.Solid,
+					dark, 1, ButtonBorderStyle.Solid, light, 1, ButtonBorderStyle.Solid,
+					light, 1, ButtonBorderStyle.Solid);
 				bounds.Inflate(-1,-1);
-				ControlPaint.DrawBorder(paintOn, bounds, SystemColors.ControlLightLight, 1, ButtonBorderStyle.Solid,
-					SystemColors.ControlLightLight, 1, ButtonBorderStyle.Solid, SystemColors.ControlDark, 1, ButtonBorderStyle.Solid,
-					SystemColors.ControlDark, 1, ButtonBorderStyle.Solid);*/
+				ControlPaint.DrawBorder(paintOn, bounds, light, 1, ButtonBorderStyle.Solid,
+					light, 1, ButtonBorderStyle.Solid, dark, 1, ButtonBorderStyle.Solid,
+					dark, 1, ButtonBorderStyle.Solid);
+
 				SizeF sz = paintOn.MeasureString( Text, Font);
 				sz.Width += 2.0F;
 				paintOn.FillRectangle( br, new RectangleF(new PointF((float)bounds.Left + 3.0F, 0.0F), sz));
@@ -155,5 +159,7 @@ namespace System.Windows.Forms {
 					break;
 			}
 		}
+
+
 	}
 }
