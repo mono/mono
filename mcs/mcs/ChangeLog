@@ -1,3 +1,10 @@
+2004-12-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* location.cs: Provide extra information.
+
+	* statement.cs: The instance is not `ldarg_0.THIS' when accessing
+	variables from the captured environment, it is the ldarg_0.
+
 2004-12-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Changed warning level for 642 to 4 until Miguel
