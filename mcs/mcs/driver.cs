@@ -1073,6 +1073,10 @@ namespace Mono.CSharp
 					link_paths.Add (dir);
 				return true;
 			}
+
+			case "/debug-":
+				want_debugging_support = false;
+				return true;
 				
 			case "/debug":
 			case "/debug+":
