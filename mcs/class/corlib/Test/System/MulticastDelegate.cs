@@ -69,31 +69,55 @@ public class MulticastDelegateTest : TestCase {
 		s += "d";
 		return 'd';
 	}
-	
+
+	public void TestEquals()
+	{
+		MyDelegate dela = new MyDelegate( MethodA );
+		MyDelegate delb = new MyDelegate( MethodB );
+		MyDelegate delc = new MyDelegate( MethodC );
+
+		AssertEquals( "#A01", false, dela == delb );
+		
+		MyDelegate del1, del2;
+
+		del1 = dela + delb;
+		del2 = delb + delc;
+		AssertEquals( "#A02", false, del1 == del2 );
+		
+		del1 += delc;
+		del2 = dela + del2;
+		AssertEquals( "#A03", true, del1 == del2 );
+	}
+
 	public void TestCombineRemove()
 	{
-		string val;
-		char res;
-
 		MyDelegate dela = new MyDelegate( MethodA );
 		MyDelegate delb = new MyDelegate( MethodB );
 		MyDelegate delc = new MyDelegate( MethodC );
 		MyDelegate deld = new MyDelegate( MethodD );
 
+		string val;
+		char res;
+
+		// test combine
 		MyDelegate del1, del2;
 		del1 = dela + delb + delb + delc + delb + delb + deld;
 		val = "";
 		res = del1( ref val );
-		
 		AssertEquals( "#A01", "abbcbbd", val );
 		AssertEquals( "#A02", 'd', res );
-		
+
+		// test remove
 		del2 = del1 - ( delb + delb );
 		val = "";
 		res = del2( ref val );
-		
 		AssertEquals( "#A03", "abbcd", val );
 		AssertEquals( "#A04", 'd', res );
+
+		// we did not affect del1, did we?
+		val = "";
+		res = del1( ref val );
+		AssertEquals( "#A05", "abbcbbd", val );
 	}
 }
 }

@@ -1,3 +1,11 @@
+2002-04-27  Daniel Stodden  <stodden@in.tum.de>
+
+	* System/Delegate.cs: Implemented Remove()
+	* System/MulticastDelegate.cs: Implementation of RemoveImpl()
+	done. Plus a fix for Equals().
+	* Test/System/MulticastDelegate.cs: Added. Should reflect above
+	changes.
+	
 2002-04-27  Martin Baulig  <martin@gnome.org>
 
 	* corlib.build: Added new "mcs-build" target to compile corlib
