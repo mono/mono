@@ -1,3 +1,9 @@
+2004-02-04  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs, decl.cs: Fixed problem where IndexerName attribute was ignored
+        in the member name duplication tests. Property and operator name duplication
+        was missing too (error tests cs0102-{2,3,4,5}.cs, cs0111-{3,4}.cs).
+
 2004-02-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* interface.cs (PopulateMethod): Fixed crash when interface method

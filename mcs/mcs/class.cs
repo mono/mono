@@ -341,11 +341,19 @@ namespace Mono.CSharp {
 		public AdditionResult AddProperty (Property prop)
 		{
 			AdditionResult res;
-			string basename = prop.Name;
-			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
+			if ((res = AddProperty (prop, prop.Name)) != AdditionResult.Success)
 				return res;
+
+			if (prop.Get != null) {
+				if ((res = AddProperty (prop, "get_" + prop.Name)) != AdditionResult.Success)
+					return res;
+			}
+
+			if (prop.Set != null) {
+				if ((res = AddProperty (prop, "set_" + prop.Name)) != AdditionResult.Success)
+				return res;
+			}
 
 			if (properties == null)
 				properties = new ArrayList ();
@@ -354,6 +362,18 @@ namespace Mono.CSharp {
 				properties.Insert (0, prop);
 			else
 				properties.Add (prop);
+
+			return AdditionResult.Success;
+		}
+
+		AdditionResult AddProperty (Property prop, string basename)
+		{
+			AdditionResult res;
+			string fullname = Name + "." + basename;
+
+			if ((res = IsValid (basename, fullname)) != AdditionResult.Success)
+				return res;
+
 			DefineName (fullname, prop);
 
 			return AdditionResult.Success;
@@ -377,7 +397,7 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public AdditionResult AddIndexer (Indexer i)
+		public void AddIndexer (Indexer i)
 		{
 			if (indexers == null)
 				indexers = new ArrayList ();
@@ -386,8 +406,6 @@ namespace Mono.CSharp {
 				indexers.Insert (0, i);
 			else
 				indexers.Add (i);
-
-			return AdditionResult.Success;
 		}
 
 		public AdditionResult AddOperator (Operator op)
@@ -397,6 +415,12 @@ namespace Mono.CSharp {
 
 			operators.Add (op);
 
+			string basename = op.Name;
+			string fullname = Name + "." + basename;
+			if (!defined_names.Contains (fullname))
+			{
+				DefineName (fullname, op);
+			}
 			return AdditionResult.Success;
 		}
 
@@ -4685,6 +4709,9 @@ namespace Mono.CSharp {
 				Name = ShortName;
 			}
 
+			if (!CheckNameCollision (container))
+				return false;
+
 			if (!CheckBase (container))
 				return false;
 
@@ -4798,6 +4825,50 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		bool CheckNameCollision (TypeContainer container) {
+			switch (VerifyName (container)){
+				case DeclSpace.AdditionResult.NameExists:
+					Report.Error (102, Location, "The container '{0}' already contains a definition for '{1}'", container.GetSignatureForError (), Name);
+					return false;
+
+				case DeclSpace.AdditionResult.Success:
+					return true;
+			}
+			throw new NotImplementedException ();
+		}
+
+		DeclSpace.AdditionResult VerifyName (TypeContainer container) {
+			if (!AddIndexer (container, container.Name + "." + Name))
+				return DeclSpace.AdditionResult.NameExists;
+
+			if (Get != null) {
+				if (!AddIndexer (container, container.Name + ".get_" + Name))
+					return DeclSpace.AdditionResult.NameExists;
+			}
+
+			if (Set != null) {
+				if (!AddIndexer (container, container.Name + ".set_" + Name))
+					return DeclSpace.AdditionResult.NameExists;
+			}
+			return DeclSpace.AdditionResult.Success;
+		}
+
+		bool AddIndexer (TypeContainer container, string fullname)
+		{
+			object value = container.GetDefinition (fullname);
+
+			if (value != null) {
+				return value.GetType () != GetType () ? false : true;
+			}
+
+			container.DefineName (fullname, this);
+			return true;
+		}
+
+		public override string GetSignatureForError () {
+			return TypeManager.CSharpSignature (PropertyBuilder, true);
+		}
 	}
 
 	public class Operator : MemberBase {
@@ -4867,6 +4938,7 @@ namespace Mono.CSharp {
 			: base (ret_type, mod_flags, AllowedModifiers, Modifiers.PUBLIC, "", attrs, loc)
 		{
 			OperatorType = type;
+			Name = "op_" + OperatorType;
 			ReturnType = ret_type;
 			FirstArgType = arg1type;
 			FirstArgName = arg1name;
