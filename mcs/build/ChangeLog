@@ -1,3 +1,8 @@
+2003-11-12 Jackson Harper <jackson@ximian.com>
+
+	* rules.make: 
+	* platforms/linux.make: corlib name is now mscorlib.
+	
 2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* profiles/generics.make: add the -2 flag.

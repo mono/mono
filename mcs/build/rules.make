@@ -25,7 +25,7 @@ INSTALL_BIN = $(INSTALL) -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
-corlib = corlib.dll
+corlib = mscorlib.dll
 
 depsdir = $(topdir)/build/deps
 distdir = $(dots)/$(package)/$(thisdir)
