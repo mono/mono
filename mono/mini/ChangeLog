@@ -1,3 +1,12 @@
+2004-08-28  Martin Baulig  <martin@ximian.com>
+
+	* mini-x86.c (mono_arch_instrument_epilog): Added support for
+	generic instances.
+
+	* mini.c
+	(mono_type_to_ldind, mono_type_to_stind, type_to_eval_stack_type):
+	Handle generic instances recursively.
+
 2004-08-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* iltests.il: test for conv.u8 on a constant
