@@ -383,9 +383,6 @@ namespace System.Windows.Forms {
 			OnChanged (source, e);
 		}
 
-		protected virtual void ValidateEditText ()
-		{
-		}
 #endregion
 
 #region UpDownBase Properties
@@ -497,13 +494,31 @@ namespace System.Windows.Forms {
 				user_edit = value;
 			}
 		}
+
+		public override string Text {
+			get {
+				return entry.Text;
+			}
+
+			set {
+				if (UserEdit)
+					UpdateEditText ();
+				else
+					ValidateEditText ();
+			}
+		}
 		
 #endregion
 		
 #region UpDownBase standard methods
 		public void Select (int start, int length)
 		{
-			// Selects text from start for lenght chars.
+			entry.Select (start, length);
+		}
+
+		protected virtual void ValidateEditText ()
+		{
+			// 
 		}
 #endregion
 

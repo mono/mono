@@ -1,3 +1,13 @@
+2005-01-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* NumericUpDown.cs: Minimum, Maximum, Text, Value properties
+	filled in.  Added some basic parsing of text.  
+
+	Still missing the OnXXX method overrides, and figuring out the
+	events that must be emitted.
+
+	* UpDownBase.cs: Handle UserEdit on the Text property.
+	
 2005-01-22  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs
