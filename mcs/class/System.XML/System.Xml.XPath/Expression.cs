@@ -205,7 +205,14 @@ namespace System.Xml.XPath
 					if (cmp != 0)
 						return cmp;
 				}
-				return 0;
+				switch (elt1.Navigator.ComparePosition (elt2.Navigator)) {
+				case XmlNodeOrder.Same:
+					return 0;
+				case XmlNodeOrder.After:
+					return 1;
+				default:
+					return -1;
+				}
 			}
 
 			class XPathSorter

@@ -1,5 +1,10 @@
 2003-12-03 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* Expression.cs : XPathSorters.Compare() should compare document
+	  position. See last sentence of XSLT 1.0 secion 10.
+
+2003-12-03 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* DefaultContext.cs : Overrode all functions' ToString().
 	  XPathFunctions.ToNumber() trims whitespaces at both side.
 	  Fixed NullReferenceException in normalize-space().
