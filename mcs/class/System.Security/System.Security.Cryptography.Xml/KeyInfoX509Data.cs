@@ -1,8 +1,8 @@
 //
 // KeyInfoX509Data.cs - KeyInfoX509Data implementation for XML Signature
 //
-// Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+// Authors:
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
@@ -15,21 +15,7 @@ using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
 
-	// FIXME: framework class isn't documented so compatibility isn't assured!
-	internal class IssuerSerial
-	{
-		public string Issuer;
-		public string Serial;
-
-		public IssuerSerial (string issuer, string serial) 
-		{
-			Issuer = issuer;
-			Serial = serial;
-		}
-	}
-
-	public class KeyInfoX509Data : KeyInfoClause 
-	{
+	public class KeyInfoX509Data : KeyInfoClause {
 
 		private byte[] x509crl;
 		private ArrayList IssuerSerialList;
@@ -83,8 +69,8 @@ namespace System.Security.Cryptography.Xml {
 
 		public void AddIssuerSerial (string issuerName, string serialNumber) 
 		{
-			IssuerSerial isser = new IssuerSerial (issuerName, serialNumber);
-			IssuerSerialList.Add (isser);
+			X509IssuerSerial xis = new X509IssuerSerial (issuerName, serialNumber);
+			IssuerSerialList.Add (xis);
 		}
 
 		public void AddSubjectKeyId (byte[] subjectKeyId) 
@@ -110,13 +96,13 @@ namespace System.Security.Cryptography.Xml {
 			xel.SetAttribute ("xmlns", XmlSignature.NamespaceURI);
 			// <X509IssuerSerial>
 			if (IssuerSerialList.Count > 0) {
-				foreach (IssuerSerial iser in IssuerSerialList) {
+				foreach (X509IssuerSerial iser in IssuerSerialList) {
 					XmlElement isl = document.CreateElement (XmlSignature.ElementNames.X509IssuerSerial, XmlSignature.NamespaceURI);
 					XmlElement xin = document.CreateElement (XmlSignature.ElementNames.X509IssuerName, XmlSignature.NamespaceURI);
-					xin.InnerText = iser.Issuer;
+					xin.InnerText = iser.IssuerName;
 					isl.AppendChild (xin);
  					XmlElement xsn = document.CreateElement (XmlSignature.ElementNames.X509SerialNumber, XmlSignature.NamespaceURI);
-					xsn.InnerText = iser.Serial;
+					xsn.InnerText = iser.SerialNumber;
 					isl.AppendChild (xsn);
 					xel.AppendChild (isl);
 				}
