@@ -10,7 +10,11 @@ CSCOMPILE=mcs
 # features and our build rules are more complicated than it can
 # handle.
 
-EXES = demo.exe Demo2.exe Demo3.exe singlewidget.exe
+EXES = Samples/demo.exe \
+		Samples/Demo2.exe \
+		Samples/Demo3.exe \
+		Samples/singlewidget.exe
+		
 LIBRARY = System.Windows.Forms.dll 
 
 LIB_MCS_FLAGS = /r:Accessibility /r:glib-sharp.dll /r:gdk-sharp.dll /r:gtk-sharp.dll \
@@ -194,7 +198,11 @@ LIB_SOURCES = \
 	MessageBoxDefaultButton.cs	\
 	MessageBoxIcon.cs	\
 	MessageBoxOptions.cs \
-	AssemblyInfo.cs
+	AssemblyInfo.cs \
+	SelectionMode.cs \
+	CheckedListBox.cs \
+	ItemCheckEventHandler.cs \
+	ItemCheckEventArgs.cs
 
 
 
