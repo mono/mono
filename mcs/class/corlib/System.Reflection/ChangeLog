@@ -1,3 +1,7 @@
+2004-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyFileVersionAttribute.cs (.ctor): Add argument checking.
+
 2004-03-23  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs: Added support for events.

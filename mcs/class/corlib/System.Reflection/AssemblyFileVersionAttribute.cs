@@ -17,6 +17,9 @@ namespace System.Reflection
 		// Constructor
 		public AssemblyFileVersionAttribute (string version)
 		{
+			if (version == null)
+				throw new ArgumentNullException ("version");
+
 			name = version;
 		}
 
