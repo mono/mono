@@ -78,7 +78,7 @@ Repeater
 & RepeaterItem
 RepeaterItemCollection
 * RepeaterItemEventArgs
-RepeatInfo
+& RepeatInfo
 RequiredFieldValidator
 SelectedDatesCollection
 * ServerValidateEventArgs
