@@ -143,10 +143,10 @@ namespace Mono.Xml.Xsl
 				Attribute attr = pendingAttributes [i];
 				
 				if (attr.LocalName == localName && attr.Namespace == nsURI) {
-					attr.Value = value;
+					pendingAttributes [i].Value = value;
 					//Keep prefix (e.g. when literal attribute is overriden by xsl:attribute)
 					if (attr.Prefix == String.Empty && prefix != String.Empty)
-						attr.Prefix = prefix;
+						pendingAttributes [i].Prefix = prefix;
 					
 					return;
 				}
