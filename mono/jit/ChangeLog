@@ -1,5 +1,11 @@
 2002-12-30  Martin Baulig  <martin@ximian.com>
 
+	* debug.c (debugger_compile_method): This is a wrapper around
+	mono_compile_method() which always sends a notification to the
+	debugger.
+
+2002-12-30  Martin Baulig  <martin@ximian.com>
+
 	* debug.c: Reload the symbol file table before sending the
 	notification event to the debugger.
 	(MonoDebuggerInfo): Removed `update_symbol_file_table'.
