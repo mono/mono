@@ -1,3 +1,8 @@
+2003-02-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: support AF_UNIX and use the same layout as MS (bytes 0
+	and 1 are the family).
+
 2003-02-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_InternalExecute): removed wrong assertion
