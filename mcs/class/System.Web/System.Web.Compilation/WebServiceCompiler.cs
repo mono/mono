@@ -46,16 +46,38 @@ namespace System.Web.Compilation
 			}
 
 			//FIXME: update when we support other languages
-			string fname = Path.ChangeExtension (Path.GetTempFileName (), ".cs");
+			string fname = GetTempFileNameWithExtension ("cs");
 			StreamWriter sw = new StreamWriter (File.OpenWrite (fname));
 			sw.WriteLine (wService.Program);
 			sw.Close ();
 
 			//TODO: get the compiler and default options from system.web/compileroptions
 			CompilerResults results = CachingCompiler.Compile (wService.PhysicalPath, fname, this);
+			FileInfo finfo = new FileInfo (fname);
+			finfo.Delete ();
 			CheckCompilerErrors (results);
 
 			return results.CompiledAssembly.GetType (wService.ClassName, true);
+		}
+
+		static string GetTempFileNameWithExtension (string extension)
+		{
+			Exception exc;
+			string extFile;
+
+			do {
+				string tmpFile = Path.GetTempFileName ();
+				FileInfo fileInfo = new FileInfo (tmpFile);
+				extFile = Path.ChangeExtension (tmpFile, extension);
+				try {
+					fileInfo.MoveTo (extFile);
+					exc = null;
+				} catch (Exception e) {
+					exc = e;
+				}
+			} while (exc != null);
+
+			return extFile;
 		}
 
 		void CheckCompilerErrors (CompilerResults results)
