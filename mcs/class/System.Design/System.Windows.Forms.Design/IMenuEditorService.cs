@@ -2,10 +2,12 @@ using System;
 
 namespace System.Windows.Forms.Design
 {
-	/// <summary>
-	/// Summary description for IMenuEditorService.
-	/// </summary>
 	public interface IMenuEditorService
 	{
+		Menu GetMenu();
+		bool IsActive();
+		bool MessageFilter(ref Message m);
+		void SetMenu(Menu menu);
+		void SetSelection(MenuItem item);
 	}
 }

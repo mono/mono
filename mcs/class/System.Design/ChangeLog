@@ -1,5 +1,10 @@
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
+	* System.Windows.Forms.Design/IMenuEditorService.cs:
+	fixed signature
+
+2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+
 	* System.Windows.Forms.Design/DocumentDesigner.cs:
 	stubbed
 	* System.Windows.Forms.Design/ParentControlDesigner.cs:
