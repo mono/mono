@@ -351,7 +351,6 @@ namespace Mono.CSharp.Debugger
 		}
 
 		private SourceMethod current_method = null;
-		private string output_filename = null;
 
 		//
 		// Interface IMonoSymbolWriter
@@ -462,11 +461,6 @@ namespace Mono.CSharp.Debugger
 		public void Initialize (IntPtr emitter, string filename, bool fFullBuild)
 		{
 			throw new NotSupportedException ();
-		}
-
-		public void Initialize (string filename)
-		{
-			this.output_filename = filename;
 		}
 
 		public void OpenMethod (SymbolToken symbol_token)

@@ -1,5 +1,8 @@
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolWriter.cs (MonoSymbolWriter.Initialize): Removed the
+	custom initialization function.
+
 	* MonoSymbolTableWriter.cs: Removed; the code is now in
 	MonoSymbolFile.cs and MonoSymbolWriter.cs.
 
