@@ -1577,14 +1577,14 @@ namespace Mono.CSharp {
 
 			if ((flags & Modifiers.INTERNAL) != 0) {
 				if ((flags & Modifiers.PROTECTED) != 0) {
-					if ((int) level < AccessLevel.ProtectedInternal)
+					if ((int) level < (int) AccessLevel.ProtectedInternal)
 						level = AccessLevel.ProtectedInternal;
 				} else {
-					if ((int) level < AccessLevel.Internal)
+					if ((int) level < (int) AccessLevel.Internal)
 						level = AccessLevel.Internal;
 				}
 			} else if ((flags & Modifiers.PROTECTED) != 0) {
-				if ((int) level < AccessLevel.Protected)
+				if ((int) level < (int) AccessLevel.Protected)
 					level = AccessLevel.Protected;
 			} else if ((flags & Modifiers.PRIVATE) != 0)
 				level = AccessLevel.Private;
@@ -1627,17 +1627,17 @@ namespace Mono.CSharp {
 				return level;
 
 			if (t.IsNestedAssembly || t.IsNotPublic) {
-				if (level < (int) AccessLevel.Internal)
+				if ((int) level < (int) AccessLevel.Internal)
 					level = AccessLevel.Internal;
 			}
 
 			if (t.IsNestedFamily) {
-				if (level < (int) AccessLevel.Protected)
+				if ((int) level < (int) AccessLevel.Protected)
 					level = AccessLevel.Protected;
 			}
 
 			if (t.IsNestedFamORAssem) {
-				if (level < (int) AccessLevel.ProtectedInternal)
+				if ((int) level < (int) AccessLevel.ProtectedInternal)
 					level = AccessLevel.ProtectedInternal;
 			}
 
