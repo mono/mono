@@ -214,20 +214,21 @@ namespace System {
 				throw new ArgumentNullException ();
 
 			/* if the search buffer is shorter than the pattern buffer, we can't match */
-			if (count < needle.Length)
+			if (count < needle.length)
 				return -1;
 
 			/* return an instant match if the pattern is 0-length */
-			if (needle.Length == 0)
+			if (needle.length == 0)
 				return startIndex;
 
 			/* set a pointer at the end of each string */
-			ne = needle.Length - 1;      /* position of char before '\0' */
+			ne = needle.length - 1;      /* position of char before '\0' */
 			he = startIndex + count;     /* position of last valid char */
 
 			/* init the skip table with the pattern length */
+			nc = needle.length;
 			for (i = 0; i < 65536; i++)
-				skiptable[i] = needle.Length;
+				skiptable[i] = nc;
 
 			/* set the skip value for the chars that *do* appear in the
 			 * pattern buffer (needle) to the distance from the index to
@@ -236,8 +237,8 @@ namespace System {
 				skiptable[(int) needle[nc]] = ne - nc;
 
 			h = startIndex;
-			while (count >= needle.Length) {
-				hc = h + needle.Length - 1;  /* set the haystack compare pointer */
+			while (count >= needle.length) {
+				hc = h + needle.length - 1;  /* set the haystack compare pointer */
 				nc = ne;                     /* set the needle compare pointer */
 
 				/* work our way backwards until they don't match */

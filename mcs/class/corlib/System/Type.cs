@@ -173,6 +173,13 @@ namespace System {
 			}
 		}
 
+		public bool IsByRef {
+			get {
+				// FIXME
+				return false;
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool type_is_subtype_of (Type a, Type b);
 		
@@ -351,7 +358,12 @@ namespace System {
 
 		public override string ToString()
 		{
-			return FullName;
+			string res = FullName;
+			if (IsArray)
+				res = res + "[]";
+			if (IsByRef)
+				res = res + "&";
+			return res;
 		}
 
 	}

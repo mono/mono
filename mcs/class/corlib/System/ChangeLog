@@ -1,3 +1,10 @@
+
+Thu Jan 10 21:05:23 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: add rank to MonoTypeInfo and implement GetArrayRank.
+	* String.c: eliminate 64k+ method calls in search.
+	* Type.cs: handle byref and array types in ToString ().
+
 2002-01-09  Duco Fijma <duco@lorentz.xs4all.nl>
 
 	* Guid.cs: created first version

@@ -17,6 +17,7 @@ namespace System
 		public Type[] interfaces;
 		public Assembly assembly;
 		public TypeAttributes attrs;
+		public int rank;
 	}
 
 	internal class MonoType : Type
@@ -139,6 +140,12 @@ namespace System
 			get {
 				return _impl;
 			}
+		}
+
+		public override int GetArrayRank () {
+			MonoTypeInfo info;
+			get_type_info (_impl, out info);
+			return info.rank;
 		}
 	}
 }

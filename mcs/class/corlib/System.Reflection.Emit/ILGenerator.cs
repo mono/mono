@@ -299,8 +299,7 @@ namespace System.Reflection.Emit {
 		public virtual void Emit (OpCode opcode, Type type) {
 			make_room (6);
 			ll_emit (opcode);
-			emit_int (0);
-			Console.WriteLine ("Emit (opcode, type) not implemented");
+			emit_int (abuilder.GetToken (type));
 		}
 
 		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes) {

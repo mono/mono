@@ -1,4 +1,8 @@
 
+Thu Jan 10 21:07:54 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: handle type tokens (used for box opcode).
+
 Wed Jan 9 19:37:55 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs: emit float and doubles.
