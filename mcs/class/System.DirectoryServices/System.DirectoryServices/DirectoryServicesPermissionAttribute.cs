@@ -24,48 +24,55 @@
 //
 // System.DirectoryServices.DirectoryEntry.cs
 //
-// Copyright (C) 2004  Novell Inc.
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-// Written by Raja R Harinath <rharinath@novell.com>
+// Authors
+//	Raja R Harinath <rharinath@novell.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.DirectoryServices
-{
+namespace System.DirectoryServices {
+
 	[AttributeUsage(AttributeTargets.Assembly
 			| AttributeTargets.Class | AttributeTargets.Struct
 			| AttributeTargets.Constructor | AttributeTargets.Method
-			| AttributeTargets.Event)]
+			| AttributeTargets.Event, AllowMultiple=true, Inherited=false)]
 	[Serializable]
-	public class DirectoryServicesPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public class DirectoryServicesPermissionAttribute : CodeAccessSecurityAttribute {
+
 		string path;
 		DirectoryServicesPermissionAccess access;
 
 		public DirectoryServicesPermissionAttribute (SecurityAction action)
 			: base (action)
 		{
-			path = "*";
+			path = ResourcePermissionBase.Any;
 			access = DirectoryServicesPermissionAccess.Browse;
 		}
 
-		public string Path
-		{
+		public string Path {
 			get { return path; }
-			set { path = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("Path");
+				path = value;
+			}
 		}
 
-		public DirectoryServicesPermissionAccess PermissionAccess
-		{
+		public DirectoryServicesPermissionAccess PermissionAccess {
 			get { return access; }
 			set { access = value; }
 		}
 
 		public override IPermission CreatePermission ()
 		{
-			return new DirectoryServicesPermission (access, path);
+			if (base.Unrestricted)
+				return new DirectoryServicesPermission (PermissionState.Unrestricted);
+			else
+				return new DirectoryServicesPermission (access, path);
 		}
 	}
 }

@@ -1,3 +1,13 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryServicesPermission.cs: Completed TODO.
+	* DirectoryServicesPermissionAttribute.cs: Added path validation and
+	enable the creation of unrestricted permissions.
+	* DirectoryServicesPermissionEntry.cs: Add internal method to return 
+	an ResourcePermissionBaseEntry instance.
+	* DirectoryServicesPermissionEntryCollection.cs: Allow synchronization
+	of elements with the base permission class (required to enable Copy).
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DirectoryServicesPermission.cs: renamed field to match MS.NET

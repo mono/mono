@@ -24,19 +24,20 @@
 //
 // System.DirectoryServices.DirectoryEntry.cs
 //
-// Copyright (C) 2004  Novell Inc.
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-// Stub implementation written by Raja R Harinath <rharinath@novell.com>
+// Authors
+//	Raja R Harinath <rharinath@novell.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
-using System.Security;
 using System.Security.Permissions;
 
-namespace System.DirectoryServices
-{
+namespace System.DirectoryServices {
+
 	[Serializable]
-	public class DirectoryServicesPermissionEntry
-	{
+	public class DirectoryServicesPermissionEntry {
+
 		DirectoryServicesPermissionAccess permissionAccess;
 		string path;
 
@@ -47,16 +48,18 @@ namespace System.DirectoryServices
 		}
 
 		public string Path {
-			get {
-				return path;
-			}
+			get { return path; }
 		}
 
 		public DirectoryServicesPermissionAccess PermissionAccess {
-			get {
-				return permissionAccess;
-			}
+			get { return permissionAccess; }
+		}
+
+		// look at MSDN library ResourcePermissionBaseEntry sample for the "design"
+
+		internal ResourcePermissionBaseEntry GetBaseEntry ()
+		{
+			return new ResourcePermissionBaseEntry ((int)permissionAccess, new string [1] { path });
 		}
 	}
 }
-

@@ -24,52 +24,85 @@
 //
 // System.DirectoryServices.DirectoryEntry.cs
 //
-// Copyright (C) 2004  Novell Inc.
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-// Stub implementation written by Raja R Harinath <rharinath@novell.com>
+// Authors
+//	Raja R Harinath <rharinath@novell.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
-using System.Security;
 using System.Security.Permissions;
 
-namespace System.DirectoryServices
-{
-	[Serializable()]
-	public sealed class DirectoryServicesPermission : ResourcePermissionBase
-	{
+namespace System.DirectoryServices {
+
+	[Serializable]
+	public sealed class DirectoryServicesPermission : ResourcePermissionBase {
+
 		DirectoryServicesPermissionEntryCollection innerCollection;
 
-		[MonoTODO]
 		public DirectoryServicesPermission ()
 		{
-			throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission()");
+			SetUp ();
 		}
 
-		[MonoTODO]
 		public DirectoryServicesPermission (DirectoryServicesPermissionEntry[] entries)
 		{
-			innerCollection = new DirectoryServicesPermissionEntryCollection ();
+			SetUp ();
+			innerCollection = new DirectoryServicesPermissionEntryCollection (this);
 			innerCollection.AddRange (entries);
 		}
 
- 		[MonoTODO]
- 		public DirectoryServicesPermission (PermissionState ps)
- 		{ 
-			throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission(permission_state)");
+ 		public DirectoryServicesPermission (PermissionState state)
+			: base (state)
+ 		{
+			SetUp ();
 		}
 
-		[MonoTODO]
 		public DirectoryServicesPermission (DirectoryServicesPermissionAccess access, string path)
 		{
-			innerCollection = new DirectoryServicesPermissionEntryCollection ();
+			SetUp ();
+			innerCollection = new DirectoryServicesPermissionEntryCollection (this);
 			innerCollection.Add (new DirectoryServicesPermissionEntry (access, path));
 		}
 
-		public DirectoryServicesPermissionEntryCollection PermissionEntries
+		public DirectoryServicesPermissionEntryCollection PermissionEntries {
+			get {
+				if (innerCollection == null) {
+					// must be here to work with XML deserialization
+					innerCollection = new DirectoryServicesPermissionEntryCollection (this);
+				}
+				return innerCollection;
+			}
+		}
+
+		// helpers
+
+		private void SetUp ()
 		{
-			[MonoTODO]
-			get { return innerCollection; }
+			PermissionAccessType = typeof (DirectoryServicesPermissionAccess);
+			TagNames = new string[1] { "Path" };
+		}
+
+		internal ResourcePermissionBaseEntry[] GetEntries ()
+		{
+			return base.GetPermissionEntries ();
+		}
+
+		internal void ClearEntries ()
+		{
+			base.Clear ();
+		}
+
+		internal void Add (object obj) 
+		{
+			DirectoryServicesPermissionEntry dspe = (obj as DirectoryServicesPermissionEntry);
+			base.AddPermissionAccess (dspe.GetBaseEntry ());
+		}
+
+		internal void Remove (object obj) 
+		{
+			DirectoryServicesPermissionEntry dspe = (obj as DirectoryServicesPermissionEntry);
+			base.RemovePermissionAccess (dspe.GetBaseEntry ());
 		}
 	}
 }
-
