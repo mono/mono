@@ -197,15 +197,19 @@ namespace System.Xml.XPath
 				strArgs = XPathFunctions.ToString (val);
 			
 			XPathNavigator n = iter.Current.Clone ();
-			SortedList rgNodes = new SortedList (XPathComparer.Instance);
+			ArrayList rgNodes = new ArrayList ();
+			// FIXME: sort
+//			SortedList rgNodes = new SortedList (XPathComparer.Instance);
 			foreach (string strArg in strArgs.Split (rgchWhitespace))
 			{
 				if (n.MoveToId (strArg)) {
-					XPathNavigator clone = n.Clone ();
-					rgNodes.Add (clone, clone);
+					rgNodes.Add (n.Clone ());
+//					XPathNavigator clone = n.Clone ();
+//					rgNodes.Add (clone, clone);
 				}
 			}
-			return new EnumeratorIterator (iter, rgNodes.Values.GetEnumerator ());
+			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
+//			return new EnumeratorIterator (iter, rgNodes.Values.GetEnumerator ());
 		}
 	}
 

@@ -1,5 +1,9 @@
 2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* DefaultContext.cs : Imcomplete fix ;-)
+
+2003-11-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* DefaultContext.cs : XPathFunctions.ToNumber() should catch overflow.
 	  XPathFunctionId.cs : Exposed Id expression.
 	* Expression.cs : Added ExprLiteral.Value, and class ExprParens (it
