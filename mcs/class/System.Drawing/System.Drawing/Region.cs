@@ -54,7 +54,7 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 		
-		//                                                                                                     a
+		//                                                                                                     
 		// Union
 		//
 
@@ -67,13 +67,13 @@ namespace System.Drawing
 
 		public void Union (Rectangle rect)
 		{                                    
-                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, rect, CombineMode.Union);
+                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, ref rect, CombineMode.Union);
                         GDIPlus.CheckStatus (status);
 		}
 
 		public void Union (RectangleF rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, rect, CombineMode.Union);
+                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, ref rect, CombineMode.Union);
                         GDIPlus.CheckStatus (status);
 		}
 
@@ -95,13 +95,13 @@ namespace System.Drawing
 
 		public void Intersect (Rectangle rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, rect, CombineMode.Intersect);
+                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, ref rect, CombineMode.Intersect);
                         GDIPlus.CheckStatus (status);
 		}
 
 		public void Intersect (RectangleF rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, rect, CombineMode.Intersect);
+                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, ref rect, CombineMode.Intersect);
                         GDIPlus.CheckStatus (status);
 		}
 
@@ -122,13 +122,13 @@ namespace System.Drawing
 
 		public void Complement (Rectangle rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, rect, CombineMode.Complement);
+                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, ref rect, CombineMode.Complement);
                         GDIPlus.CheckStatus (status);
 		}
 
 		public void Complement (RectangleF rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, rect, CombineMode.Complement);
+                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, ref rect, CombineMode.Complement);
                         GDIPlus.CheckStatus (status);
 		}
 
@@ -149,13 +149,13 @@ namespace System.Drawing
 
 		public void Exclude (Rectangle rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, rect, CombineMode.Exclude);
+                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, ref rect, CombineMode.Exclude);
                         GDIPlus.CheckStatus (status);
 		}
 
 		public void Exclude (RectangleF rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, rect, CombineMode.Exclude);
+                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, ref rect, CombineMode.Exclude);
                         GDIPlus.CheckStatus (status);
 		}
 
@@ -176,13 +176,13 @@ namespace System.Drawing
 
 		public void Xor (Rectangle rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, rect, CombineMode.Xor);
+                        Status status = GDIPlus.GdipCombineRegionRectI (nativeRegion, ref rect, CombineMode.Xor);
                         GDIPlus.CheckStatus (status);
 		}
 
 		public void Xor (RectangleF rect)
 		{
-                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, rect, CombineMode.Xor);
+                        Status status = GDIPlus.GdipCombineRegionRect (nativeRegion, ref rect, CombineMode.Xor);
                         GDIPlus.CheckStatus (status);
 		}
 

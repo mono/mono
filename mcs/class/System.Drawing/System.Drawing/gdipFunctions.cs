@@ -209,11 +209,11 @@ namespace System.Drawing {
 
 
                 [DllImport("gdiplus.dll")]
-		static internal extern Status GdipCombineRegionRect (IntPtr region, RectangleF rect,
+		static internal extern Status GdipCombineRegionRect (IntPtr region, ref RectangleF rect,
                         CombineMode combineMode);
 
                 [DllImport("gdiplus.dll")]
-		static internal extern Status GdipCombineRegionRectI (IntPtr region, Rectangle rect,
+		static internal extern Status GdipCombineRegionRectI (IntPtr region, ref Rectangle rect,
                         CombineMode combineMode);
 
                 [DllImport("gdiplus.dll")]
