@@ -1,4 +1,9 @@
 
+2003-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: patch by Jerome Laban <jlaban@wanadoo.fr> that fixes
+	ves_icall_System_Buffer_ByteLengthInternal.
+
 Tue Apr 15 13:56:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: setup klass->nested_in earlier. Allow
