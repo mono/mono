@@ -16,6 +16,30 @@ namespace Microsoft.Win32 {
 		}
 
 		[MonoTODO]
+		public string Name 
+		{
+			get {
+				return String.Empty;
+			}
+		}
+
+		[MonoTODO]
+		public int SubKeyCount 
+		{
+			get {
+				return 0;
+			}
+		}
+
+		[MonoTODO]
+		public int ValueCount 
+		{
+			get {
+				return 0;
+			}
+		}
+
+		[MonoTODO]
 		public void SetValue (string name, object value)
 		{
 			throw new NotImplementedException ();
@@ -50,6 +74,60 @@ namespace Microsoft.Win32 {
 		{
 			throw new NotImplementedException ();
 		}
+		
+		[MonoTODO]
+		public void DeleteSubKey(string subkey)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void DeleteSubKeyTree(string subkey)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DeleteValue(string value)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void Flush()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void Close()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public string[] GetSubKeyNames()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public string[] GetValueNames()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static RegistryKey OpenRemoteBaseKey(RegistryHive hKey,string machineName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override string ToString()
+		{
+			throw new NotImplementedException ();
+		}
+		
 	}
 }
-

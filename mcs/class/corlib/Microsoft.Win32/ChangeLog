@@ -1,3 +1,14 @@
+  2002-11-27  DennisHayes <dennish@raytek.com>	
+	* checkin for Alexandre Pigolkine (pigolkine@gmx.de) with minor changes
+	* needed for System.Windows.Forms
+	
+	* RegistryHive.cs
+	* Registry.cs
+	* added files, fully implmented?
+	
+	* RegistryKey.cs
+	* added more iplmentation
+
 2002-11-20  Nick Drochak  <ndrochak@gol.com>
 
 	* RegistryKey.cs: Fix typo.
