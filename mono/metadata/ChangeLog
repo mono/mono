@@ -1,3 +1,6 @@
+2002-04-25  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c: Reflect latest MonoString changes.
 
 Thu Apr 25 16:38:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
