@@ -14,8 +14,10 @@ namespace System {
 		public static AppDomain CurrentDomain {
 			get { return getCurDomain ();}
 		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern AssemblyBuilder defineAssembly (AppDomain domain, AssemblyName name, AssemblyBuilderAccess access);
 		public AssemblyBuilder DefineDynamicAssembly( AssemblyName name, AssemblyBuilderAccess access) {
-			return null;
+			return defineAssembly (this, name, access);
 		}
 
 

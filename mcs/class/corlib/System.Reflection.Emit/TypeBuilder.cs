@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection.Emit {
 	public sealed class TypeBuilder : Type {
@@ -30,6 +31,20 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
+		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes) {
+			return DefineMethod (name, attributes, CallingConventions.Standard, returnType, parameterTypes);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern MethodBuilder defineMethod (TypeBuilder typeb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes);
+
+		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
+			return defineMethod (this, name, attributes, callingConvention, returnType, parameterTypes);
+		}
+
+		public Type CreateType() {
+			return null;
+		}
 
 	}
 }

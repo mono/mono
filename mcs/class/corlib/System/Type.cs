@@ -10,6 +10,7 @@
 //
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System {
 
@@ -93,7 +94,8 @@ namespace System {
 		}
 
 
-		public Type GetTypeFromHandle (RuntimeTypeHandle handle) { 
+		//[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static Type GetTypeFromHandle (RuntimeTypeHandle handle) { 
 			
 			// FIXME: implement me
 			

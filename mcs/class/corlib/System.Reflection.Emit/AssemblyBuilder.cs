@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.Policy;
 using System.Runtime.Serialization;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection.Emit {
 	public sealed class AssemblyBuilder : Assembly {
@@ -18,6 +19,9 @@ namespace System.Reflection.Emit {
 		}
 		public void AddResourceFile( string name, string fileName, ResourceAttributes attribute) {
 		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern ModuleBuilder defineModule (AssemblyBuilder ab, string name, string filename);
+		
 		public ModuleBuilder DefineDynamicModule( string name) {
 			return null;
 		}
@@ -25,7 +29,7 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 		public ModuleBuilder DefineDynamicModule( string name, string fileName) {
-			return null;
+			return defineModule (this, name, fileName);
 		}
 		public ModuleBuilder DefineDynamicModule( string name, string fileName, bool emitSymbolInfo) {
 			return null;
@@ -163,8 +167,11 @@ namespace System.Reflection.Emit {
 		public override string ToString() {
 			return "AssemblyBuilder";
 		}
-
-
+		public void Save( string assemblyFileName) {
+		}
+		public void SetEntryPoint( MethodInfo entryMethod) {
+			
+		}
 
 	}
 }
