@@ -96,6 +96,8 @@ namespace System.ComponentModel
 				       Locale.GetText("The socket is not connected"));
 			w32_errors.Add(10058,
 				       Locale.GetText("The socket has been shut down"));
+			w32_errors.Add(10060,
+				       Locale.GetText("Connection timed out"));
 			w32_errors.Add(10061,
 				       Locale.GetText("Connection refused"));
 			w32_errors.Add(10093,
