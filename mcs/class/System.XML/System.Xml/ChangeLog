@@ -1,3 +1,8 @@
+2003-12-07  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlUrlResolver.cs : Update with recent System.Uri change. This fixes
+	  bugzilla #51808 (patch by Jeroen Zwartepoorte, a bit modified).
+
 2003-12-04  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriter.cs : WriteComment() should block "--", not full "-->".

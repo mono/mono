@@ -67,18 +67,21 @@ namespace System.Xml
 
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
-			// Don't expect baseUri is not null here.
-//			if (relativeUri == null)
-//				return baseUri;
-
 			if (baseUri == null) {
-				// Don't ignore such case that relativeUri is in fact absolute uri.
-//				return new Uri (Path.GetFullPath (relativeUri));
+				if (relativeUri == null)
+					throw new NullReferenceException ("Either baseUri or relativeUri are required.");
+				// Don't ignore such case that relativeUri is in fact absolute uri (e.g. ResolveUri (null, "http://foo.com")).
+				if (relativeUri.StartsWith ("http:") ||
+					relativeUri.StartsWith ("https:") ||
+					relativeUri.StartsWith ("file:"))
+					return new Uri (relativeUri);
+				else
+					return new Uri (Path.GetFullPath (relativeUri));
 
 				// extraneous "/a" is required because current Uri stuff 
 				// seems ignorant of difference between "." and "./". 
 				// I'd be appleciate if it is fixed with better solution.
-				return new Uri (new Uri (Path.GetFullPath ("./a")), EscapeRelativeUriBody (relativeUri));
+//				return new Uri (new Uri (Path.GetFullPath ("./a")), EscapeRelativeUriBody (relativeUri));
 			}
 
 			if (relativeUri == null)
