@@ -1,3 +1,4 @@
+Imports System
 Module DoubleTypeCharTest
     Sub Main()
         Try

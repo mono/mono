@@ -1,3 +1,6 @@
+2004-08-23 Bernie Solomon <bernard@ugsolutions.com>
+	* DoubleTypeCharTest.vb: needs an Imports System
+
 2004-08-23 Anirban Bhattacharjee <banirban@novell.com>
 	* Makefile: Trivial bug fixing
 
