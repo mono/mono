@@ -4,9 +4,11 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002 http://www.ximian.com/
 // (C) Daniel Morgan, 2002
+// (C) Copyright 2002 Tim Coleman
 //
 // Credits:
 //    SQL and concepts were used from libgda 0.8.190 (GNOME Data Access)
@@ -699,53 +701,72 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		internal void BuildTableSchema (IntPtr pgResult) {
-			pg_result = pgResult;
+		internal void BuildTableSchema (IntPtr pgResult) 
+		{
+			dataTableSchema = new DataTable ();
+			dataTableSchema.Columns.Add ("ColumnName", typeof (string));
+			dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
+			dataTableSchema.Columns.Add ("ColumnSize", typeof (int));
+			dataTableSchema.Columns.Add ("NumericPrecision", typeof (int));
+			dataTableSchema.Columns.Add ("NumericScale", typeof (int));
+			dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
+			dataTableSchema.Columns.Add ("IsKey", typeof (bool));
+			dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
+			dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
+			dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
+			dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
+			dataTableSchema.Columns.Add ("DataType", typeof (System.Type));
+			dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
+			dataTableSchema.Columns.Add ("ProviderType", typeof (string));
+			dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
+			dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
+			dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
+			dataTableSchema.Columns.Add ("IsAutoIncrement", typeof (bool));
+			dataTableSchema.Columns.Add ("IsRowVersion", typeof (bool));
+			dataTableSchema.Columns.Add ("IsHidden", typeof (bool));
+			dataTableSchema.Columns.Add ("IsLong", typeof (bool));
+			dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
-			int nCol;
-			
-			dataTableSchema = new DataTable();
-
-			rowCount = PostgresLibrary.
-				PQntuples(pgResult);
-
-			fieldCount = PostgresLibrary.
-				PQnfields(pgResult);
-			
+			int fieldCount = PostgresLibrary.PQnfields (pgResult);
+			DataRow schemaRow;
 			int oid;
-			pgtypes = new string[fieldCount];
+			string pgType;
+			DbType dbType;
 			
-			for(nCol = 0; nCol < fieldCount; nCol++) {
-				
-				DbType dbType;
 
-				// get column name
-				String fieldName;
-				fieldName = PostgresLibrary.
-					PQfname(pgResult, nCol);
+			for (int i = 0; i < fieldCount; i += 1 )
+			{
+				oid = PostgresLibrary.PQftype (pgResult, i);
 
-				// get PostgreSQL data type (OID)
-				oid = PostgresLibrary.
-					PQftype(pgResult, nCol);
-				pgtypes[nCol] = PostgresHelper.
-					OidToTypname (oid, con.Types);
-				
-				int definedSize;
-				// get defined size of column
-				definedSize = PostgresLibrary.
-					PQfsize(pgResult, nCol);
-								
-				// build the data column and add it the table
-				DataColumn dc = new DataColumn(fieldName);
+				schemaRow = dataTableSchema.NewRow ();
 
-				dbType = PostgresHelper.
-					TypnameToSqlDbType(pgtypes[nCol]);
-				dc.DataType = PostgresHelper.
-					DbTypeToSystemType(dbType);
-				dc.MaxLength = definedSize;
-				dc.SetTable(dataTableSchema);
+				schemaRow["ColumnName"] = PostgresLibrary.PQfname (pgResult, i);
+				schemaRow["ColumnOrdinal"] = i+1;
+				schemaRow["ColumnSize"] = PostgresLibrary.PQfsize (pgResult, i);
+				schemaRow["NumericPrecision"] = 0; // ? tim
+				schemaRow["NumericScale"] = 0; // ? tim
+				schemaRow["IsUnique"] = false; // ? tim
+				schemaRow["IsKey"] = false; // ? tim
+				schemaRow["BaseCatalogName"] = ""; // ? tim
+				schemaRow["BaseSchemaName"] = ""; // ? tim
+				schemaRow["BaseTableName"]  = ""; // ? tim
 				
-				dataTableSchema.Columns.Add(dc);
+				pgType = PostgresHelper.OidToTypname (oid, con.Types);
+				dbType = PostgresHelper.TypnameToSqlDbType (pgType);
+				//schemaRow["DataType"] = PostgresHelper.DbTypeToSystemType (dbType); ??? this gives a bad cast.
+
+				schemaRow["AllowDBNull"] = false; // ? tim
+				schemaRow["ProviderType"] = ""; // ? tim
+				schemaRow["IsAliased"] = false; // ? tim
+				schemaRow["IsExpression"] = false; // ? tim
+				schemaRow["IsIdentity"] = false; // ? tim
+				schemaRow["IsAutoIncrement"] = false; // ? tim
+				schemaRow["IsRowVersion"] = false; // ? tim
+				schemaRow["IsHidden"] = false; // ? tim
+				schemaRow["IsLong"] = false; // ? tim
+				schemaRow["IsReadOnly"] = false; // ? tim
+
+				dataTableSchema.Rows.Add (schemaRow);
 			}
 		}
 	}

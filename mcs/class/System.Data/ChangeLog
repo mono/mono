@@ -1,3 +1,7 @@
+2002-05-22  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlCommand.cs: preliminary work
+	on getting the schema table correctly built.
+
 2002-05-21  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.SqlClient/ParmUtil.cs: added file - to
