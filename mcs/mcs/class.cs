@@ -1875,7 +1875,6 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
-			
 			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
 				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
 				 	if (asec.Attributes == null)

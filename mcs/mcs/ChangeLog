@@ -1,3 +1,15 @@
+2001-12-04  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation::EmitStaticInitializers): Get rid
+	of the condition for string type.
+
+	(Emit): Move that here. 
+
+	(ArrayCreation::CheckIndices): Keep string literals in their expression
+	form.
+
+	(EmitDynamicInitializers): Handle strings appropriately.
+
 2001-12-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs (EmitContext): Replace multiple variables with a

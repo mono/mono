@@ -3016,7 +3016,8 @@ namespace Mono.CSharp {
 	/// <remarks>
 	///   There are two possible scenarios here: one is an array creation
 	///   expression that specifies the dimensions and optionally the
-	///   initialization data
+	///   initialization data and the other which does not need dimensions
+	///   specified but where initialization data is mandatory.
 	/// </remarks>
 	public class ArrayCreation : ExpressionStatement {
 		string RequestedType;
@@ -3147,7 +3148,9 @@ namespace Mono.CSharp {
 					if (conv == null) 
 						return false;
 
-					if (tmp is Literal)
+					if (tmp is StringLiteral)
+						ArrayData.Add (tmp);
+					else if (tmp is Literal)
 						ArrayData.Add (((Literal) tmp).GetValue ());
 					else
 						ArrayData.Add (tmp);
@@ -3409,24 +3412,22 @@ namespace Mono.CSharp {
 			//
 			// First, the static data
 			//
-			if (underlying_type != TypeManager.string_type) {
-				FieldBuilder fb;
-				ILGenerator ig = ec.ig;
+			FieldBuilder fb;
+			ILGenerator ig = ec.ig;
+			
+			byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
+			
+			if (data != null) {
+				fb = ec.TypeContainer.RootContext.MakeStaticData (data);
 				
-				byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
-				
-				if (data != null) {
-					fb = ec.TypeContainer.RootContext.MakeStaticData (data);
-
-					if (is_expression)
-						ig.Emit (OpCodes.Dup);
-					ig.Emit (OpCodes.Ldtoken, fb);
-					ig.Emit (OpCodes.Call,
-						 TypeManager.void_initializearray_array_fieldhandle);
-				}
+				if (is_expression)
+					ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Ldtoken, fb);
+				ig.Emit (OpCodes.Call,
+					 TypeManager.void_initializearray_array_fieldhandle);
 			}
 		}
-
+		
 		//
 		// Emits pieces of the array that can not be computed at compile
 		// time (variables and string locations).
@@ -3466,11 +3467,17 @@ namespace Mono.CSharp {
 			for (int i = 0; i < top; i++){
 
 				Expression e = null;
+
 				if (ArrayData [i] is Expression)
 					e = (Expression) ArrayData [i];
-
+				
 				if (e != null) {
-					if (!(e is Literal && !(e is StringLiteral))){
+
+					//
+					// Basically we do this for string literals and
+					// other non-literal expressions
+					//
+					if (e is StringLiteral || !(e is Literal)) {
 						
 						ig.Emit (OpCodes.Ldloc, temp);
 						
@@ -3526,8 +3533,10 @@ namespace Mono.CSharp {
 				// FIXME: Set this variable correctly.
 				// 
 				bool dynamic_initializers = true;
-				EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
 
+				if (underlying_type != TypeManager.string_type)
+					EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
+				
 				if (dynamic_initializers)
 					EmitDynamicInitializers (ec, !is_statement);
 			}
