@@ -1,3 +1,8 @@
+2002/01/05  Nick Drochak  <ndrochak@gol.com>
+
+	* Makefile.am: fix list of headers and sources so automake 1.5
+	doesn't complain. Removed \# at end of list.
+
 Thu Jan 3 23:17:17 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: get token for a method ref. Set return type of
