@@ -1,3 +1,30 @@
+2003-05-03  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g:
+	- Deleted the assignment_operator COMPOUND_ASSIGNMENT, and added
+	MULTIPLICATION_ASSIGN, DIVISION_ASSIGN, REMAINDER_ASSIGN,
+	ADDITION_ASSIGN, SUBSTRACTION_ASSIGN, SIGNED_LEFT_SHIFT_ASSIGN,
+	SIGNED_RIGHT_SHIFT_ASSIGN, UNSIGNED_RIGHT_SHIFT_ASSIGN,
+	BITWISE_AND_ASSIGN, BITWISE_OR_ASSIGN.
+	- Changed INTERROGATION to CONDITIONAL.
+	- Changed TRIANGLE to BITWISE_XOR.
+	- Changed SLASH to DIVISION.
+	- Changed PERCENT to REMAINDER.
+	- Changed ADMIRATION to LOGICAL_NOT
+	- Added BITWISE_NOT (~).
+	- Added the INCREMENT and DECREMENT rules for
+	left_hand_side_expression.
+	- Increased lexer lookup from 2 to 4.
+	- Redefined the definitions of: L_THAN, G_THAN, MINUS, TIMES,
+	BITWISE_AND, BITWISE_OR,
+	- Added operator: EQUALS, DOES_NOT_EQUALS, STRICT_EQUALS,
+	REMAINDER, UNSIGNED_RIGHT_SHIFT.
+	- Added the recursion rules for equality_expression.
+	- Added the recursion rules for shift_expression.
+	- Now we skip tabs.
+	- The most important thing, added support for expressions like:
+	sdf.[hgh], cool!
+
 2003-04-20	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
 	* driver.cs: 
