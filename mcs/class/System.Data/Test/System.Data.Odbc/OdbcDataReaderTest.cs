@@ -270,5 +270,35 @@ namespace MonoTests.System.Data.Odbc
                 }
       }
 
+
+      /// <summary>
+      /// This test for the return type &amp; value for GetValue
+      /// in case of Odbc Data type TINYINT
+      /// </summary>
+      [Test]
+      public void TinyIntTest ()
+      {
+                OdbcCommand cmd = conn.CreateCommand ();
+                string sql = "SELECT * FROM test";
+                cmd.CommandText = sql;
+                OdbcDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess);
+                try {
+                        if (reader.Read ()) {
+                                object ob = reader.GetValue (0);
+                                Assertion.AssertEquals ("Type of tinyInt column is wrong!", 
+                                                "System.Byte", ob.GetType ().ToString () );
+                                Assertion.AssertEquals ("Value of tinyInt column is wrong!", 
+                                                1, System.Convert.ToInt16(ob) );
+                        }
+                } finally {
+                        // clean up
+                        if (reader != null && !reader.IsClosed )
+                                reader.Close ();
+                        reader = null;
+                        CleanTestSetup ();
+                        CloseConnection ();
+                }
+      }
+
   }
 }

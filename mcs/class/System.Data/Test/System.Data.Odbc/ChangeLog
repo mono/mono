@@ -1,3 +1,6 @@
+2004-08-27  Sureshkumar T <tsureshkumar@novell.com>
+	* OdbcDataReaderTest.cs - Added a test for TinyInt
+
 2004-08-26  Sureshkumar T <tsureshkumar@novell.com>
         * OdbcDataReaderTest.cs - Added a test for DateTime - GetDateTimeTest
 	* OdbcCommandTest.cs - Syntax Error Fix
