@@ -1,4 +1,12 @@
 
+Mon Dec 15 18:13:57 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md, inssel-ppc.brg: fixed some opcode lengths
+	and integer to fp conversions. Added support for overflowing
+	arguments on the stack. Reserve a couple more registers as temps.
+	Added support for aot compilation (as output still needs to be
+	tweaked, though).
+
 Sat Dec 13 17:49:10 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, basic-long.cs: fix jumps to known labels.
