@@ -1,3 +1,24 @@
+2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-x86.c (x86_magic_trampoline): Tell valgrind to recompile the
+	patched code.
+
+2003-09-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h (MonoCompile): Added 'jit_info' field.
+
+	* mini.c (mini_method_compile): Save the generated MonoJitInfo into
+	the cfg structure, since it is needed by the AOT compiler.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump version number.
+
+	* aot.c: A major rewrite. Changes include:
+	- save exception tables for methods which have them.
+	- cache failed lookups in aot_get_method () to avoid the (slow) calls 
+	to g_module_symbol.
+	- reworked the file format so it is now much smaller and needs
+	fewer relocation entries.
+	
 2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (load_aot_module): Fix build bustage on platforms without
