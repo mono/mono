@@ -1,3 +1,16 @@
+2004-02-23  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_inflate_generic_type): Fixed two bugs.
+	(mono_class_init): If we're a generic instance and an interface,
+	compute `class->interface_id'; also create `class->interfaces'
+	here and inflate them.
+
+	* metadata.c (do_mono_metadata_parse_generic_inst): Compute
+	`ginst->is_open'.
+	(mono_type_stack_size): Fix for MONO_TYPE_GENERICINST.
+
+	* reflection.c (mono_image_create_token): Allow "MonoGenericInst".
+
 2004-02-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* reflection.c (method_encode_code): Improved the error message
