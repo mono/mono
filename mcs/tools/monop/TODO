@@ -9,5 +9,4 @@ TODO
 	* Handle interfaces:
 		* handle explicit vs. implicit impl
 	* Fields
-	* Do enums
 	* Do delegates

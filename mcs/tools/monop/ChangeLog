@@ -1,5 +1,9 @@
 2004-03-15 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* outline.cs: add support for events.
+
+2004-03-15 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* monop.cs: remove printing logic.
 	* outline.cs: new file that just does printing stuff.
 

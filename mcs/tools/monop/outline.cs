@@ -81,8 +81,28 @@ public class Outline {
 			o.WriteLine ();
 		}
 		
+		o.WriteLine ();
+		
+		foreach (EventInfo ei in Comparer.Sort (t.GetEvents ())) {
+			OutlineEvent (ei);
+			
+			o.WriteLine ();
+		}
+		
 		
 		o.Indent--; o.WriteLine ("}");
+	}
+	
+	void OutlineEvent (EventInfo ei)
+	{
+		MethodBase accessor = ei.GetAddMethod ();
+		
+		o.Write (GetMethodVisibility (accessor));
+		o.Write ("event ");
+		o.Write (FormatType (ei.EventHandlerType));
+		o.Write (" ");
+		o.Write (ei.Name);
+		o.Write (";");
 	}
 	
 	void OutlineConstructor (ConstructorInfo ci)
@@ -309,6 +329,30 @@ public class Comparer : IComparer  {
 	public static PropertyInfo [] Sort (PropertyInfo [] inf)
 	{
 		Array.Sort (inf, PropertyInfoComparer);
+		return inf;
+	}
+	
+	static int CompareEventInfo (object a, object b)
+	{
+		EventInfo aa = (EventInfo) a, bb = (EventInfo) b;
+		
+		bool astatic = aa.GetAddMethod (true).IsStatic;
+		bool bstatic = bb.GetAddMethod (true).IsStatic;
+		
+		if (astatic == bstatic)
+			return CompareMemberInfo (a, b);
+		
+		if (astatic)
+			return -1;
+		
+		return 1;
+	}
+	
+	static Comparer EventInfoComparer = new Comparer (new ComparerFunc (CompareEventInfo));
+	
+	public static EventInfo [] Sort (EventInfo [] inf)
+	{
+		Array.Sort (inf, EventInfoComparer);
 		return inf;
 	}
 }
