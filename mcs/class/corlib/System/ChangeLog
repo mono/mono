@@ -1,3 +1,7 @@
+2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomain.cs: check for null in Unload and changed method name.
+
 2003-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoCustomAttrs.cs: fixed bug #38238.

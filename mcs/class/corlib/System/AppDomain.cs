@@ -602,9 +602,13 @@ namespace System {
 			return Thread.GetDomainID ();
 		}
 
-		public static void Unload (AppDomain domain) {
+		public static void Unload (AppDomain domain)
+		{
+			if (domain == null)
+				throw new ArgumentNullException ("domain");
+
 			// fire the event(s) that we are unload the domain
-			domain.DoOnAssemblyUnload ();
+			domain.OnDomainUnload ();
 			
 			// FIX: We need to unload the stuff in another thread
 			// and throw abort exceptions on all threads involved
@@ -618,7 +622,7 @@ namespace System {
 			InternalUnload (domain.getDomainID());
 		}
 
-		private void DoOnAssemblyUnload () {
+		private void OnDomainUnload () {
 			if (DomainUnload != null)
 				DomainUnload(this, null);
 		}
