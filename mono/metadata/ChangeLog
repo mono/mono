@@ -1,3 +1,7 @@
+2005-02-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (emit_marshal_array): Only marshal unicode char arrays as [Out].
+
 2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Fix stdcall name mangling.
