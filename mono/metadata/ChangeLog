@@ -1,4 +1,12 @@
 
+Mon Mar 25 13:08:18 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: use a gc-safe hash for hash tables that
+	hold gc-allocated objects. Make the string heap a stream like the
+	others. Removed duplicated code when writing stream info.
+	Added asserts to catch possible buffer overflows. Set the sorted map
+	for tables that need sorting. Added some documentation.
+
 Mon Mar 25 13:04:56 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.h, appdomain.c, class.c, object.c: use a GC-safe hash table 
