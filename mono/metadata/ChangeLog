@@ -1,3 +1,19 @@
+2005-02-17  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* class.c: Added inheritance check when a method is overloaded (from a
+	virtual method or when implementing an interface) and when a class is
+	inherited. Added functions to set a failure for a class and to 
+	retreive the exception from a failure.
+	* class-internals.h: Added fields to MonoClass to keep the exception
+	information status for inheritance (or other exceptions) to be thrown
+	later (i.e. not at load time).
+	* object.c: Throw the inheritance SecurityException when a type is to 
+	be created with either class or method inheritance violations.
+	* reflection.c|h: Fix when getting declsec from a class. Removed 
+	unrequired code for class. Improved sanity in parameter naming.
+	* security-manager.c|h: Added functions to check for class and method
+	inheritance.
+
 2005-02-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_create_runtime_class): Set has_cctor
