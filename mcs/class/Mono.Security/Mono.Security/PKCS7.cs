@@ -12,7 +12,8 @@
 using System;
 using System.Collections;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+
+using Mono.Security.X509;
 
 namespace Mono.Security {
 
@@ -26,9 +27,10 @@ namespace Mono.Security {
 		// pkcs 9
 		public const string contentType = "1.2.840.113549.1.9.3";
 		public const string messageDigest  = "1.2.840.113549.1.9.4";
+		public const string signingTime = "1.2.840.113549.1.9.5";
+		public const string countersignature = "1.2.840.113549.1.9.6";
 
-		public PKCS7() {
-		}
+		public PKCS7 () {}
 
 		static public ASN1 Attribute (string oid, ASN1 value) 
 		{
@@ -65,11 +67,11 @@ namespace Mono.Security {
 		{
 			ASN1 issuer = null;
 			ASN1 serial = null;
-			ASN1 cert = new ASN1 (x509.GetRawCertData ());
+			ASN1 cert = new ASN1 (x509.RawData);
 			int tbs = 0;
 			bool flag = false;
-			while (tbs < cert[0][0].Count) {
-				ASN1 e = cert[0][0][tbs++];
+			while (tbs < cert[0].Count) {
+				ASN1 e = cert[0][tbs++];
 				if (e.Tag == 0x02)
 					serial = e;
 				else if (e.Tag == 0x30) {
@@ -286,7 +288,7 @@ namespace Mono.Security {
 				if (certs.Count > 0) {
 					ASN1 a0 = signedData.Add (new ASN1 (0xA0));
 					foreach (X509Certificate x in certs)
-						a0.Add (new ASN1 (x.GetRawCertData ()));
+						a0.Add (new ASN1 (x.RawData));
 				}
 				// crls [1] IMPLICIT CertificateRevocationLists OPTIONAL,
 				if (crls.Count > 0) {
@@ -327,6 +329,8 @@ namespace Mono.Security {
 			private ArrayList authenticatedAttributes;
 			private ArrayList unauthenticatedAttributes;
 			private byte[] signature;
+			private string issuer;
+			private byte[] serial;
 
 			public SignerInfo () 
 			{
@@ -338,16 +342,58 @@ namespace Mono.Security {
 			public SignerInfo (byte[] data) 
 				: this (new ASN1 (data)) {}
 
-			public SignerInfo (ASN1 asn1) 
+			// TODO: INCOMPLETE
+			public SignerInfo (ASN1 asn1) : this () 
 			{
 				if ((asn1[0].Tag != 0x30) || (asn1[0].Count < 5))
 					throw new ArgumentException ("Invalid SignedData");
 
+				// version Version
 				if (asn1[0][0].Tag != 0x02)
 					throw new ArgumentException ("Invalid version");
 				version = asn1[0][0].Value[0];
 
-				// TODO: INCOMPLETE
+				// issuerAndSerialNumber IssuerAndSerialNumber
+				ASN1 issuerAndSerialNumber = asn1 [0][1];
+				issuer = X501.ToString (issuerAndSerialNumber [0]);
+				serial = issuerAndSerialNumber [1].Value;
+
+				// digestAlgorithm DigestAlgorithmIdentifier
+				ASN1 digestAlgorithm = asn1 [0][2];
+				hashAlgorithm = ASN1Convert.ToOID (digestAlgorithm [0]);
+
+				// authenticatedAttributes [0] IMPLICIT Attributes OPTIONAL
+				int n = 3;
+				ASN1 authAttributes = asn1 [0][n];
+				if (authAttributes.Tag == 0xA0) {
+					n++;
+					for (int i=0; i < authAttributes.Count; i++)
+						authenticatedAttributes.Add (authAttributes [i]);
+				}
+
+				// digestEncryptionAlgorithm DigestEncryptionAlgorithmIdentifier
+				ASN1 digestEncryptionAlgorithm = asn1 [0][n++];
+				string digestEncryptionAlgorithmOid = ASN1Convert.ToOID (digestEncryptionAlgorithm [0]);
+
+				// encryptedDigest EncryptedDigest
+				ASN1 encryptedDigest = asn1 [0][n++];
+				if (encryptedDigest.Tag == 0x04)
+					signature = encryptedDigest.Value;
+
+				// unauthenticatedAttributes [1] IMPLICIT Attributes OPTIONAL
+				ASN1 unauthAttributes = asn1 [0][n];
+				if ((unauthAttributes != null) && (unauthAttributes.Tag == 0xA1)) {
+					for (int i=0; i < unauthAttributes.Count; i++)
+						unauthenticatedAttributes.Add (unauthAttributes [i]);
+				}
+			}
+
+			public string IssuerName {
+				get { return issuer; }
+			}
+
+			public byte[] SerialNumber {
+				get { return (byte[]) serial.Clone(); }
 			}
 
 			public ASN1 ASN1 {
@@ -365,7 +411,6 @@ namespace Mono.Security {
 
 			public string HashName {
 				get { return hashAlgorithm; }
-				// todo add validation
 				set { hashAlgorithm = value; }
 			}
 

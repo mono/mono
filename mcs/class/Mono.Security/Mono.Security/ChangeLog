@@ -1,3 +1,8 @@
+2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS7.cs: Updated to use Mono.Security.X509.X509Certificate and to
+	support countersignatures.
+
 2003-06-19  Nick Drochak <ndrochak@gol.com>
 
 	* StrongName.cs: Work around for mcs? bug 45127.
