@@ -1,3 +1,7 @@
+2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-logger.h mono-logger.c: Added AOT component.
+
 2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* strtod.c: Use gint32 for 32 bit types.
