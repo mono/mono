@@ -49,7 +49,6 @@ namespace System.Web {
 
       private HttpWorkerRequest _WorkerRequest;
 
-      [MonoTODO("Verify that this really works")]
       public HttpResponse(TextWriter output) {
          _bBuffering = true;
          _bFlushing = false;
@@ -109,6 +108,11 @@ namespace System.Web {
       internal void FinalFlush() {
          Flush(true);
       }
+
+		internal void DoFilter() {
+			if (null != _Writer) 
+				_Writer.FilterData(true);
+		}
 
       [MonoTODO("We need to add cache headers also")]
       private ArrayList GenerateHeaders() {

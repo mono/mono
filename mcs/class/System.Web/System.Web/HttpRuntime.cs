@@ -2,13 +2,14 @@
 // System.Web.HttpRuntime
 //
 // Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//   Patrik Torstensson (ptorsten@hotmail.com)
 //   Gaurav Vaish (gvaish@iitk.ac.in)
 //
 using System;
 using System.Collections;
 using System.Security;
 using System.Security.Permissions;
+using System.Threading;
 using System.Web.UI;
 using System.Web.Utils;
 using System.Web.Caching;
@@ -17,6 +18,7 @@ namespace System.Web {
 
 	[MonoTODO ("Make corrent right now this is a simple impl to give us a base for testing... the methods here are not complete or valid")]	
 	public sealed class HttpRuntime {
+
 		// Security permission helper objects
 		private static IStackWalk appPathDiscoveryStackWalk;
 		private static IStackWalk ctrlPrincipalStackWalk;
@@ -25,11 +27,19 @@ namespace System.Web {
 		private static IStackWalk unrestrictedStackWalk;
 		private static IStackWalk reflectionStackWalk;
 
-		private static HttpRuntime runtime;
-		private Cache cache;
+		private static HttpRuntime _runtime;
+		private Cache _cache;
 
-		// TODO: Temp to test the framework..
-		IHttpHandler   handler;
+		private int _activeRequests;
+		private HttpWorkerRequest.EndOfSendNotification _endOfSendCallback;
+		private AsyncCallback _handlerCallback;
+		private WaitCallback _appDomainCallback;
+
+		private bool _firstRequestStarted;
+		private bool _firstRequestExecuted;
+		private DateTime _firstRequestStartTime;
+
+		private Exception _initError;
 
 		static HttpRuntime ()
 		{
@@ -39,46 +49,187 @@ namespace System.Web {
 			unmgdCodeStackWalk        = null;
 			unrestrictedStackWalk     = null;
          
-			runtime = new HttpRuntime ();
+			_runtime = new HttpRuntime ();
+			_runtime.Init();
 		}
 
 		public HttpRuntime ()
-		{
-			Init ();
+		{	
 		}
 
+		static internal object CreateInternalObject(Type type) {
+			return Activator.CreateInstance(type, true);
+		}
+
+		[MonoTODO()]
 		private void Init ()
 		{
-			cache = new Cache ();
+			try {
+				_cache = new Cache ();
+
+				// TODO: timeout manager
+				// TODO: Load all app domain data
+				// TODO: Trace manager
+				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification(OnEndOfSend);
+				_handlerCallback = new AsyncCallback(OnHandlerReady);
+				_appDomainCallback = new WaitCallback(OnAppDomainUnload);
+			} 
+			catch (Exception error) {
+				_initError = error;
+			}
 		}
 
-		public static IHttpHandler Handler {
-			get {
-				return runtime.handler;
+		private void OnFirstRequestStart() {
+			if (null == _initError) {
+				// TODO: First request initialize (config, trace, request queue)
 			}
 
-			set {
-				runtime.handler = value;
+			// If we got an error during init, throw to client now..
+			if (null != _initError)
+				throw _initError;
+		}
+
+		private void OnFirstRequestEnd() {
+		}
+
+		private void OnHandlerReady(IAsyncResult ar) {
+			HttpContext context = (HttpContext) ar.AsyncState;
+			try {
+				IHttpAsyncHandler handler = context.AsyncHandler;
+
+				try {
+					handler.EndProcessRequest(ar);
+				}
+				catch (Exception error) {
+					context.AddError(error);
+				}
+			}
+			finally {
+				context.AsyncHandler = null;
+			}
+
+			FinishRequest(context, context.Error);
+		}
+
+		private void OnEndOfSend(HttpWorkerRequest request, object data) {
+			HttpContext context = (HttpContext) data;
+
+			context.Request.Dispose();
+			context.Response.Dispose();
+		}
+
+		internal void FinishRequest(HttpContext context, Exception error) {
+			HttpWorkerRequest request = context.WorkerRequest;
+
+			try {
+				context.Response.FlushAtEndOfRequest();
+			}
+			catch (Exception obj) {
+				error = obj;
+			}
+
+			if (null != error) {
+				Console.WriteLine("Error happend during execution: ");
+				Console.WriteLine(error.Message);
+				Console.WriteLine("Trace: " + error.StackTrace);
+				// TODO: Report runtime error
+			}
+
+			if (!_firstRequestExecuted) {
+				lock (this) {
+					if (!_firstRequestExecuted) {
+						OnFirstRequestEnd();
+						_firstRequestExecuted = true;
+					}
+				}
+			}
+
+			Interlocked.Decrement(ref _activeRequests);
+
+			if (null != request)
+				request.EndOfRequest();
+
+			// TODO: Schedule more work in request queue
+		}
+
+		private void OnAppDomainUnload(object state) {
+			Dispose();
+		}
+
+		[MonoTODO]
+		internal void Dispose() {
+			// TODO: Drain Request queue
+			// TODO: Stop request queue
+			// TODO: Move timeout value to config
+			WaitForRequests(5000);
+			
+			_cache.Dispose();
+			HttpApplicationFactory.EndApplication();
+		}
+
+		[MonoTODO]
+		internal void WaitForRequests(int ms) {
+			DateTime timeout = DateTime.Now.AddMilliseconds(ms);
+
+			do {
+				// TODO: We should check the request queue here also
+				if (_activeRequests == 0)
+					return;
+
+				Thread.Sleep(100);
+			} while (timeout > DateTime.Now);
+		}
+
+		internal void InternalExecuteRequest(HttpWorkerRequest request) {
+			IHttpHandler handler;
+			IHttpAsyncHandler async_handler;
+
+			HttpContext context = new HttpContext(request);
+
+			request.SetEndOfSendNotification(_endOfSendCallback, context);
+			
+			Interlocked.Increment(ref _activeRequests);
+
+			try {
+				if (!_firstRequestStarted) {
+					lock (this) {
+						if (!_firstRequestStarted) {
+							_firstRequestStartTime = DateTime.Now;
+
+							OnFirstRequestStart();
+							_firstRequestStarted = true;
+						}						
+					}
+				}
+
+				handler = HttpApplicationFactory.GetInstance(context);
+				if (null == handler)
+					throw new HttpException(FormatResourceString("unable_to_create_app"));
+
+				if (handler is IHttpAsyncHandler) {
+					async_handler = (IHttpAsyncHandler) handler;
+
+					context.AsyncHandler = async_handler;
+					async_handler.BeginProcessRequest(context, _handlerCallback, context);
+				} else {
+					handler.ProcessRequest(context);
+					FinishRequest(context, null);
+				}
+			}
+			catch (Exception error) {
+				FinishRequest(context, error);
 			}
 		}
 
 		public static void ProcessRequest (HttpWorkerRequest Request)
 		{
-			if (runtime.handler == null) 
-				throw new ArgumentException ("No handler");
-
-			// just a test method to test the framework
-
-			HttpContext oContext = new HttpContext (Request);
-			runtime.handler.ProcessRequest (oContext);
-
-			oContext.Response.FlushAtEndOfRequest ();
-			Request.EndOfRequest ();
+			// TODO: Request queue
+			_runtime.InternalExecuteRequest(Request);
 		}
 
 		public static Cache Cache {
 			get {
-				return runtime.cache;
+				return _runtime._cache;
 			}
 		}      
 
@@ -152,10 +303,9 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO]
 		public static void Close ()
 		{
-			throw new NotImplementedException ();
+			_runtime.Dispose();
 		}
 
 		internal static string FormatResourceString (string key)
@@ -175,9 +325,7 @@ namespace System.Web {
 
 		[MonoTODO ("FormatResourceString (string, string, string)")]
 		internal static string FormatResourceString (string key, string arg0, string type) {
-			// By now give some useful info
 			return String.Format ("{0}: {1} {2}", key, arg0, type);
-			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("FormatResourceString (string, string, string, string)")]
@@ -196,16 +344,15 @@ namespace System.Web {
 		}
 
 		private static string GetResourceString (string key) {
-			return runtime.GetResourceStringFromResourceManager (key);
+			return _runtime.GetResourceStringFromResourceManager (key);
 		}
 
 		[MonoTODO ("GetResourceStringFromResourceManager (string)")]
 		private string GetResourceStringFromResourceManager (string key) {
-			// Keep going
 			return "String returned by HttpRuntime.GetResourceStringFromResourceManager";
-			//throw new NotImplementedException ();
 		}
 
+		#region Security Internal Methods (not impl)
 		[MonoTODO ("Get Application path from the appdomain object")]
 		internal static IStackWalk AppPathDiscovery {
 			get {
@@ -277,5 +424,6 @@ namespace System.Web {
 		{
 			return new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path);
 		}
+		#endregion
 	}
 }

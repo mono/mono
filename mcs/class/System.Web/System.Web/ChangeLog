@@ -1,3 +1,19 @@
+2002-08-05  Patrik Torstensson <ptorsten@hotmail.com>
+
+	* HttpApplication.cs: Implemented a state machine to allow handling of HttpModules 
+								 and HttpHandlers. Implementation of async handlers. 
+								 
+	* HttpApplicationFactory.cs: Factory for creating HttpApplication instances, including caching.
+	
+	* HttpRuntime.cs: Usage of the new HttpApplicationFactory to get a application instance to
+							 execute requests in and implementation of request execution (still no request queue). 
+							 
+	* HttpAsyncResult.cs: New file to handle async module results.						
+							 
+	* HttpRequest.cs: Change signature of Dispose
+	* HttpResponse.cs: new internal method allowing filtering to happen during the request flow in the 
+					           state machine.
+
 2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: events were not being initialized.

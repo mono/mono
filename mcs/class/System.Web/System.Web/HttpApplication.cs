@@ -1,100 +1,893 @@
 // 
 // System.Web.HttpApplication
 //
-// Authors:
-// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// Author:
+//   Patrik Torstensson (ptorsten@hotmail.com)
 // 	Tim Coleman (tim@timcoleman.com)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.Threading;
 using System.Security.Principal;
+using System.Runtime.Remoting.Messaging;
+using System.Web;
+using System.Web.Configuration;
 using System.Web.SessionState;
 
 namespace System.Web {
-	[ToolboxItem (true)]
+	[ToolboxItem(true)]
 	[MonoTODO()]
-	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
+   public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
+
+		#region Event Handlers
+
+		// Async event holders
+		AsyncEvents _acquireRequestStateAsync;
+		AsyncEvents _authenticateRequestAsync;
+		AsyncEvents _endRequestAsync;
+		AsyncEvents _beginRequestAsync;
+		AsyncEvents _authorizeRequestAsync;
+		AsyncEvents _updateRequestCacheAsync;
+		AsyncEvents _resolveRequestCacheAsync;
+		AsyncEvents _releaseRequestStateAsync;
+		AsyncEvents _preRequestHandlerExecuteAsync;
+		AsyncEvents _postRequestHandlerExecuteAsync;
+		
+		// ID objects used to indentify the event
+		static object AcquireRequestStateId = new Object();
+		static object AuthenticateRequestId = new Object();
+		static object EndRequestId = new Object();
+		static object DisposedId = new Object();
+		static object BeginRequestId = new Object();
+		static object AuthorizeRequestId = new Object();
+		static object UpdateRequestCacheId = new Object();
+		static object ResolveRequestCacheId = new Object();
+		static object ReleaseRequestStateId = new Object();
+		static object PreSendRequestContentId = new Object();
+		static object PreRequestHandlerExecuteId = new Object();
+		static object PostRequestHandlerExecuteId = new Object();
+		static object ErrorId = new Object();
+
+		// List of events
+		private EventHandlerList _Events;
+
+		public event EventHandler AcquireRequestState {
+			add			{ Events.AddHandler(AcquireRequestStateId, value); }
+			remove	{ Events.RemoveHandler(AcquireRequestStateId, value); }
+		}
+
+		public event EventHandler AuthenticateRequest {
+			add			{ Events.AddHandler(AuthenticateRequestId, value); }
+			remove	{ Events.RemoveHandler(AuthenticateRequestId, value); }
+		}
+		
+		public event EventHandler AuthorizeRequest {
+			add			{ Events.AddHandler(AuthorizeRequestId, value); }
+			remove	{ Events.RemoveHandler(AuthorizeRequestId, value); }
+		}
+		
+		public event EventHandler BeginRequest {
+			add			{ Events.AddHandler(BeginRequestId, value); }
+			remove	{ Events.RemoveHandler(BeginRequestId, value); }
+		}
+
+		public event EventHandler Disposed {
+			add			{ Events.AddHandler(DisposedId, value); }
+			remove	{ Events.RemoveHandler(DisposedId, value); }
+		}
+
+		public event EventHandler EndRequest {
+			add			{ Events.AddHandler(EndRequestId, value); }
+			remove	{ Events.RemoveHandler(EndRequestId, value); }
+		}
+
+		public event EventHandler Error {
+			add			{ Events.AddHandler(ErrorId, value); }
+			remove	{ Events.RemoveHandler(ErrorId, value); }
+		}
+
+		public event EventHandler PostRequestHandlerExecute {
+			add			{ Events.AddHandler(PostRequestHandlerExecuteId, value); }
+			remove	{ Events.RemoveHandler(PostRequestHandlerExecuteId, value); }
+		}
+
+		public event EventHandler PreRequestHandlerExecute {
+			add			{ Events.AddHandler(PreRequestHandlerExecuteId, value); }
+			remove	{ Events.RemoveHandler(PreRequestHandlerExecuteId, value); }
+		}
+
+		public event EventHandler PreSendRequestContent {
+			add			{ Events.AddHandler(PreSendRequestContentId, value); }
+			remove	{ Events.RemoveHandler(PreSendRequestContentId, value); }
+		}
+
+		public event EventHandler ReleaseRequestState {
+			add			{ Events.AddHandler(ReleaseRequestStateId, value); }
+			remove	{ Events.RemoveHandler(ReleaseRequestStateId, value); }
+		}
+
+		public event EventHandler ResolveRequestCache {
+			add			{ Events.AddHandler(ResolveRequestCacheId, value); }
+			remove	{ Events.RemoveHandler(ResolveRequestCacheId, value); }
+		}
+      
+		public event EventHandler UpdateRequestCache {
+			add			{ Events.AddHandler(UpdateRequestCacheId, value); }
+			remove	{ Events.RemoveHandler(UpdateRequestCacheId, value); }
+		}
+	
+		public void AddOnAcquireRequestStateAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _acquireRequestStateAsync)
+				_acquireRequestStateAsync = new AsyncEvents();
+
+			_acquireRequestStateAsync.Add(beg, end);
+		}
+		
+		public void AddOnAuthenticateRequestAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _authenticateRequestAsync)
+				_authenticateRequestAsync = new AsyncEvents();
+
+			_authenticateRequestAsync.Add(beg, end);
+		}
+		
+		public void AddOnAuthorizeRequestAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _authorizeRequestAsync)
+				_authorizeRequestAsync= new AsyncEvents();
+
+			_authorizeRequestAsync.Add(beg, end);
+		}
+		
+		public void AddOnBeginRequestAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _beginRequestAsync)
+				_beginRequestAsync = new AsyncEvents();
+
+			_beginRequestAsync.Add(beg, end);
+		}
+		
+		public void AddOnEndRequestAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _endRequestAsync)
+				_endRequestAsync = new AsyncEvents();
+
+			_endRequestAsync.Add(beg, end);
+		}
+		
+		public void AddOnPostRequestHandlerExecuteAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _postRequestHandlerExecuteAsync)
+				_postRequestHandlerExecuteAsync = new AsyncEvents();
+
+			_postRequestHandlerExecuteAsync.Add(beg, end);
+		}
+		
+		public void AddOnPreRequestHandlerExecuteAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _preRequestHandlerExecuteAsync)
+				_preRequestHandlerExecuteAsync = new AsyncEvents();
+
+			_preRequestHandlerExecuteAsync.Add(beg, end);
+		}
+		
+		public void AddOnReleaseRequestStateAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _releaseRequestStateAsync)
+				_releaseRequestStateAsync = new AsyncEvents();
+
+			_releaseRequestStateAsync.Add(beg, end);
+		}
+		
+		public void AddOnResolveRequestCacheAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _resolveRequestCacheAsync)
+				_resolveRequestCacheAsync = new AsyncEvents();
+
+			_resolveRequestCacheAsync.Add(beg, end);
+		}
+		
+		public void AddOnUpdateRequestCacheAsync(BeginEventHandler beg, EndEventHandler end) {
+			if (null == _updateRequestCacheAsync)
+				_updateRequestCacheAsync = new AsyncEvents();
+
+			_updateRequestCacheAsync.Add(beg, end);
+		}
+
+		#endregion
+
+		#region State Machine 
+
+		interface IStateHandler {
+			void Execute();
+			
+			bool CompletedSynchronously {
+				get;
+			}
+
+			bool PossibleToTimeout {
+				get;
+			}
+		}
+
+
+		class EventState : IStateHandler {
+			private HttpApplication	_app;
+			private EventHandler		_event;
+
+			public EventState(HttpApplication app, EventHandler evt) {
+				_app = app;
+				_event = evt;
+			}
+
+			public void Execute() {
+				if (null != _event) {
+					_event(_app, EventArgs.Empty);	
+				}
+			}
+			
+			public bool CompletedSynchronously {
+				get {
+					return true;
+				}
+			}
+
+			public bool PossibleToTimeout {
+				get {
+					return true;
+				}
+			}
+		}
+
+		class AsyncEventState : IStateHandler {
+			private HttpApplication		_app;
+			private BeginEventHandler	_begin;
+			private EndEventHandler		_end;
+			private AsyncCallback			_callback;
+			private bool _async;
+
+			public AsyncEventState(HttpApplication app, BeginEventHandler begin, EndEventHandler end) {
+				_async = false;
+				_app = app;
+				_begin = begin;
+				_end = end;
+				_callback = new AsyncCallback(OnAsyncReady);
+			}
+			
+			public void Execute() {
+				_async = true;
+				IAsyncResult ar = _begin(_app, EventArgs.Empty, _callback, null);
+				if (ar.CompletedSynchronously) {
+					_async = false;
+					_end(ar);
+				}
+			}
+			
+			public bool CompletedSynchronously {
+				get {
+					return (!_async);
+				}
+			}
+
+			public bool PossibleToTimeout {
+				get {
+					// We can't cancel a async event
+					return false;
+				}
+			}
+
+			private void OnAsyncReady(IAsyncResult ar) {
+				if (ar.CompletedSynchronously) return;
+
+				Exception error = null;
+
+				try {
+					// Invoke end handler
+					_end(ar);
+				}
+				catch (System.Exception exc) {
+					// Flow this error to the next state (handle during state execution)
+					error = exc;
+				}
+
+				_app._state.ExecuteNextAsync(error);
+			}
+		}
+
+		class AsyncEvents {
+			private ArrayList _events;
+			private class EventRecord {
+				public EventRecord(BeginEventHandler beg, EndEventHandler end) {
+					Begin = beg;
+					End = end;
+				}
+
+				public BeginEventHandler	Begin;
+				public EndEventHandler		End;
+			}
+
+			public AsyncEvents() {
+				_events = new ArrayList();
+			}
+	
+			public void Add(BeginEventHandler begin, EndEventHandler end) {
+				_events.Add(new EventRecord(begin, end));
+			}
+
+			public void GetAsStates(HttpApplication app, ArrayList states) {
+				foreach (object obj in _events) {
+					states.Add(new AsyncEventState(app, ((EventRecord) obj).Begin, ((EventRecord) obj).End));
+				}
+			}
+		}
+
+
+		class ExecuteHandlerState : IStateHandler {
+			private HttpApplication			_app;
+			private AsyncCallback				_callback;
+			private IHttpAsyncHandler		_handler;
+			private bool _async;
+
+			public ExecuteHandlerState(HttpApplication app) {
+				_app = app;
+				_callback = new AsyncCallback(OnAsyncReady);
+			}
+
+			private void OnAsyncReady(IAsyncResult ar) {
+				if (ar.CompletedSynchronously) return;
+
+				Exception error = null;
+
+				try {
+					// Invoke end handler
+					_handler.EndProcessRequest(ar);
+				}
+				catch (System.Exception exc) {
+					// Flow this error to the next state (handle during state execution)
+					error = exc;
+				}
+
+				_app._state.ExecuteNextAsync(error);
+			}
+
+			public void Execute() {
+				IHttpHandler handler = _app.Context.Handler;
+				if (null != handler) {
+					// Check if we can execute async
+					if (handler is IHttpAsyncHandler) {
+						_async = true;
+						_handler = (IHttpAsyncHandler) handler;
+						
+						IAsyncResult ar = _handler.BeginProcessRequest(_app.Context, _callback, null);
+						if (ar.CompletedSynchronously) {
+							_async = false;
+							_handler = null;
+							((IHttpAsyncHandler) handler).EndProcessRequest(ar);
+						}
+					} else {
+						_async = false;
+
+						// Sync handler
+						handler.ProcessRequest(	_app.Context);
+					}
+				}
+			}
+			
+			public bool CompletedSynchronously {
+				get {
+					return (!_async);
+				}
+			}
+
+			public bool PossibleToTimeout {
+				get {
+					if (_app.Context.Handler is IHttpAsyncHandler)
+						return false;
+					//else
+
+					return true;
+				}
+			}
+		}
+
+		class CreateHandlerState : IStateHandler {
+			private HttpApplication _app;
+
+			public CreateHandlerState(HttpApplication app) {
+				_app = app;
+			}
+
+			public void Execute() {
+				_app.Context.Handler = _app.CreateHttpHandler(_app.Context, _app.Request.RequestType, _app.Request.FilePath, _app.Request.PhysicalPath);
+			}
+			
+			public bool CompletedSynchronously {
+				get {
+					return true;
+				}
+			}
+
+			public bool PossibleToTimeout {
+				get {
+					return false;
+				}
+			}
+		}
+
+		class FilterHandlerState : IStateHandler  {
+			private HttpApplication _app;
+
+			public FilterHandlerState(HttpApplication app) {
+				_app = app;
+			}
+
+			public void Execute() {
+				_app.Context.Response.DoFilter();
+			}
+			
+			public bool CompletedSynchronously {
+				get {
+					return true;
+				}
+			}
+
+			public bool PossibleToTimeout {
+				get {
+					return true;
+				}
+			}
+		}
+
+		class StateMachine {
+			private HttpApplication _app;
+			private WaitCallback _asynchandler;
+
+			private IStateHandler [] _handlers;
+			private int	_currentStateIdx;
+			private int _endStateIdx;
+			private int _countSteps;
+			private int _countSyncSteps;
+
+			// Helper to create the states for a normal event
+			private void GetAsStates(object Event, ArrayList states) {
+				// Get list of clients for the sync events
+				Delegate evnt = _app.Events[Event];
+				if (null != evnt) {
+					System.Delegate [] clients = evnt.GetInvocationList();
+					
+					foreach (Delegate client in clients) {
+						states.Add(new EventState(_app, (EventHandler) client));
+					}
+				}
+			}
+
+			internal StateMachine(HttpApplication app) {
+				_app = app;
+			}
+
+			internal void Init() {
+				_asynchandler = new WaitCallback(OnAsyncCallback);
+
+				// Create a arraylist of states to execute
+				ArrayList states = new ArrayList();
+
+				// BeginRequest
+				if (null != _app._beginRequestAsync)
+					_app._beginRequestAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.BeginRequestId, states);
+
+				// AuthenticateRequest
+				if (null != _app._authenticateRequestAsync)
+					_app._authenticateRequestAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.AuthenticateRequestId, states);
+
+				// AuthorizeRequest
+				if (null != _app._authorizeRequestAsync)
+					_app._authorizeRequestAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.AuthorizeRequestId, states);
+
+				// ResolveRequestCache
+				if (null != _app._resolveRequestCacheAsync)
+					_app._resolveRequestCacheAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.ResolveRequestCacheId, states);
+
+				// [A handler (a page corresponding to the request URL) is created at this point.]
+				states.Add(new CreateHandlerState(_app));
+
+				// AcquireRequestState
+				if (null != _app._acquireRequestStateAsync)
+					_app._acquireRequestStateAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.AcquireRequestStateId, states);
+
+				// PreRequestHandlerExecute
+				if (null != _app._preRequestHandlerExecuteAsync)
+					_app._preRequestHandlerExecuteAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.PreRequestHandlerExecuteId, states);
+
+				// [The handler is executed.]
+				states.Add(new ExecuteHandlerState(_app));
+
+				// PostRequestHandlerExecute
+				if (null != _app._postRequestHandlerExecuteAsync)
+					_app._postRequestHandlerExecuteAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.PostRequestHandlerExecuteId, states);
+
+				// ReleaseRequestState
+				if (null != _app._releaseRequestStateAsync)
+					_app._releaseRequestStateAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.ReleaseRequestStateId, states);
+
+				// [Response filters, if any, filter the output.]
+				states.Add(new FilterHandlerState(_app));
+
+				// UpdateRequestCache
+				if (null != _app._updateRequestCacheAsync)
+					_app._updateRequestCacheAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.UpdateRequestCacheId, states);
+
+				// EndRequest
+				if (null != _app._updateRequestCacheAsync)
+					_app._updateRequestCacheAsync.GetAsStates(_app, states);
+				GetAsStates(HttpApplication.EndRequestId, states);
+
+				// Make list ready to execute
+				_handlers = new IStateHandler[states.Count];
+				states.CopyTo(_handlers);
+			}
+
+
+			internal void Reset() {
+				_countSyncSteps = 0;
+				_countSteps = 0;
+				_currentStateIdx = -1;
+				_endStateIdx = _handlers.Length - 1;
+			}
+
+			internal void Start() {
+				Reset();
+				ExecuteNextAsync(null);
+			}
+
+			internal void ExecuteNextAsync(Exception lasterror) {
+				if (!Thread.CurrentThread.IsThreadPoolThread) {
+					ThreadPool.QueueUserWorkItem(_asynchandler, lasterror);
+				} else {
+					ExecuteNext(lasterror);
+				}
+			}
+
+			private void ExecuteNext(Exception lasterror) {
+				bool ready_sync = false;
+				IStateHandler handler;
+
+				lock (_app) {
+					_app.OnStateExecuteEnter();
+					try {
+						do {
+							if (null != lasterror)
+								_app.HandleError(lasterror);
+
+							// Check if request flow is to be stopped
+							if (_app._CompleteRequest)
+								_currentStateIdx = _endStateIdx;
+
+							// Get next state handler
+							if (_currentStateIdx < _endStateIdx) {
+								_currentStateIdx++;
+								handler = _handlers[_currentStateIdx];
+
+								_countSteps++;
+								lasterror = ExecuteState(handler, ref ready_sync);
+								if (ready_sync) 
+									_countSyncSteps++;
+							}
+						} while (ready_sync && _currentStateIdx < _endStateIdx);
+					}
+					finally {
+						_app.OnStateExecuteLeave();
+					}
+				}
+
+				// Finish the request off..
+				if (_currentStateIdx == _endStateIdx) {
+					_app._asyncWebResult.Complete((_countSyncSteps == _countSteps),  null, null);
+					_app.Context.Handler = null;
+					_app.Context.ApplicationInstance = null;
+					_app.RecycleHandlers();
+					_app._asyncWebResult = null;
+
+					HttpApplicationFactory.RecycleInstance(_app);
+				}
+			}
+
+			private void OnAsyncCallback(object obj) {
+				ExecuteNext((Exception) obj);
+			}
+
+			[MonoTODO()]
+			private Exception ExecuteState(IStateHandler state, ref bool readysync) {
+				Exception lasterror = null;
+				try {
+					try {
+						if (state.PossibleToTimeout) {
+							// TODO: Start timeout possible
+							try {
+								state.Execute();	
+							} 
+							finally {
+								// TODO: end timeout possible
+							}
+
+							// Check if we have a timeout and wait for the exception.
+						} else {
+							state.Execute();
+						}
+
+						if (state.CompletedSynchronously)
+							readysync = true;
+						else 
+							readysync = false;
+					} 
+					catch (System.Exception obj) {
+						lasterror = obj;
+					}
+				}
+				catch (System.Threading.ThreadAbortException obj) {
+					obj = obj;
+					// TODO!
+					// handle request timeout and return timeout httpexception
+				}
+
+				return lasterror;
+			}
+		}
+
+		#endregion
 
 		#region Fields
 
-		bool _CompleteRequest;
+		private StateMachine _state;
 
-		HttpContext _Context;
-		HttpContext _OverrideContext;
+		private bool _CompleteRequest;
+		private HttpContext _Context;
+		private Exception _lastError;
+
+		private HttpContext _savedContext;
+		private IPrincipal _savedUser;
+		private HttpAsyncResult _asyncWebResult;
          
-		bool _InPreRequestResponseMode;
+		private ISite _Site;
+		private HttpModuleCollection _ModuleCollection;
+		private HttpSessionState _Session;
+		private HttpApplicationState _appState;
 
-		ISite _Site;
-		HttpModuleCollection _ModuleCollection;
-		HttpSessionState _Session;
+		private bool _InPreRequestResponseMode;
+		#endregion
 
-		object evAuthenticateRequest = new object();
-		object evAuthorizeRequest = new object();
-		object evBeginRequest = new object();
-		object evDisposed = new object();
-		object evEndRequest = new object();
-		object evError = new object();
-		object evPostRequestHandlerExecute = new object();
-		object evPreRequestHandlerExecute = new object();
-		object evPreSendRequestContent = new object();
-		object evPreSendRequestHeaders = new object();
-		object evReleaseRequestState = new object();
-		object evResolveRequestCache = new object();
-		object evUpdateRequestCache = new object();
-		object evDefaultAuthentication = new object();
-		object evAcquireRequestState = new object();
-		EventHandlerList events;
+		#region Constructor
+      public HttpApplication() {
+      }
+		#endregion
 
-		#endregion // Fields
-
-		#region Constructors
-
-		public HttpApplication() 
-		{
+		#region Methods
+		[MonoTODO]
+		private IHttpHandler CreateHttpHandler(HttpContext context, string type, string file, string path) {
+			// TODO: Cache factories
+			return (IHttpHandler) HandlerFactoryConfiguration.FindHandler(type, path).Create();
 		}
 
-		#endregion // Constructors
+		[MonoTODO()]
+		internal void RecycleHandlers() {
+			// TODO: Recycle the created handlers (via factory?)
+		}
+
+		internal void InitModules() {
+			ModulesConfiguration modules;
+
+			modules = (ModulesConfiguration) HttpContext.GetAppConfig("system.web/httpmodules");
+			if (null == modules)
+				throw new HttpException(HttpRuntime.FormatResourceString("missing_modules_config"));
+
+			_ModuleCollection = modules.CreateCollection();
+			if (null != _ModuleCollection) {
+				int pos, count;
+
+				count = _ModuleCollection.Count;
+				for (pos = 0; pos != count; pos++) {
+					((IHttpModule) _ModuleCollection.Get(pos)).Init(this);
+				}
+			}
+		}
+
+		internal void InitCulture() {
+			// TODO: Read culture info from globalization from config
+		}
+
+		internal void OnStateExecuteEnter() {
+			// TODO: Set correct culture for the thread
+			// TODO: Register in timeout manager
+
+			_savedContext = HttpContext.Context;
+			HttpContext.Context = _Context;
+
+			_savedUser = System.Threading.Thread.CurrentPrincipal;
+			System.Threading.Thread.CurrentPrincipal = Context.User;	
+		}
+
+		internal void OnStateExecuteLeave() {
+			// TODO: Restore culture for the thread
+			// TODO: Remove from timeout manager
+
+			HttpContext.Context = _savedContext;
+			if (null != _savedUser)  {
+				System.Threading.Thread.CurrentPrincipal = _savedUser;
+				_savedUser = null;
+			}
+		}
+
+		internal void ClearError() {
+			_lastError = null;
+		}
+
+		internal void HandleError(Exception obj) {
+			EventHandler handler;			
+			bool fire = true;
+
+			if (null != _Context) {
+				if (null != _Context.Error) 
+					fire = false;
+
+				_Context.AddError(obj);
+			} else {
+				if (null != _lastError)
+					fire = false;
+			}
+
+			if (fire) {
+				// Fire OnError event here
+				handler = (EventHandler) Events[HttpApplication.ErrorId];
+				if (null != handler) {
+					try {
+						handler(this, EventArgs.Empty);
+					}
+					catch (Exception excp) {
+						if (null != _Context)
+							_Context.AddError(excp);
+					}
+				}
+			}
+		}
+
+		[MonoTODO]
+		internal void Startup(HttpContext context, HttpApplicationState state) {
+			// TODO: Need to attach methods in global.asax to correct events
+			_Context = context;
+
+			_appState = state;
+			_state = new StateMachine(this);
+
+			// Initialize alll IHttpModule(s)
+			InitModules();
+			
+			// Initialize custom application
+			_InPreRequestResponseMode = true;
+			try {
+				Init();
+			}
+			catch (Exception obj) {
+				HandleError(obj);
+			}
+
+			_InPreRequestResponseMode = false;
+
+			_state.Init();
+		}
+
+		internal void Cleanup() {
+			try {
+				Dispose();
+			}
+			catch (Exception obj) {
+				HandleError(obj);
+			}
+
+			if (null != _ModuleCollection) {
+				int pos;
+				int count = _ModuleCollection.Count;
+
+				for (pos = 0; pos != count; pos++) {
+					((IHttpModule) _ModuleCollection.Get(pos)).Dispose();
+				}
+
+				_ModuleCollection = null;
+			}
+
+			_state = null;
+		}
+
+		public void CompleteRequest() {
+			_CompleteRequest = true;
+		}
+
+		public virtual void Dispose() {
+			_Site = null;
+			EventHandler disposed = (EventHandler) Events[HttpApplication.DisposedId];
+			if (null != disposed) 
+				disposed(this, EventArgs.Empty);
+		}
+
+		public virtual void Init() {
+		}
+		
+		public virtual string GetVaryByCustomString(HttpContext context, string custom) {
+         if (custom.ToLower() == "browser") {
+            return context.Request.Browser.Type;
+         }
+
+         return null;
+      }
+
+      IAsyncResult IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData) {
+			_Context = context;
+			Context.ApplicationInstance = this;
+			_CompleteRequest = false;
+
+			_asyncWebResult = new HttpAsyncResult(cb, extraData);
+
+			_state.Start();
+
+			return _asyncWebResult;
+      }
+
+		void IHttpAsyncHandler.EndProcessRequest(IAsyncResult result) {
+         HttpAsyncResult ar = (HttpAsyncResult) result;
+
+			if (null != ar.Error) 
+				throw ar.Error;
+      }
+
+      void IHttpHandler.ProcessRequest(HttpContext context) {
+         throw new NotSupportedException(HttpRuntime.FormatResourceString("sync_not_supported"));
+      }
+
+      bool IHttpHandler.IsReusable {
+         get {
+				return true;
+         }
+      }
+		#endregion 		
 
 		#region Properties
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { 
+				return HttpApplicationFactory.ApplicationState;
+			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpContext Context {
 			get {
-				if (null != _OverrideContext) 
-					return _OverrideContext;
 				return _Context;
 			}
 		}
 
-		protected EventHandlerList Events {
+		public EventHandlerList Events {
 			get {
-				if (events == null)
-					events = new EventHandlerList ();
-				return events;
+				if (null == _Events) {
+					_Events = new EventHandlerList();
+				}
+
+				return _Events;
 			}
 		}
-
-		bool IHttpHandler.IsReusable
-		{
-			get { return true; }
-		}
-
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpModuleCollection Modules {
 			get {
-				if (null == _ModuleCollection) 
+				if (null == _ModuleCollection) {
 					_ModuleCollection = new HttpModuleCollection();
-            			return _ModuleCollection;
+				}
+
+				return _ModuleCollection;
 			}
 		}
 
@@ -102,9 +895,11 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpRequest Request {
 			get {
-				if (null != _Context && (!_InPreRequestResponseMode)) 
+				if (null != _Context && (!_InPreRequestResponseMode)) {
 					return _Context.Request;
-				throw new HttpException("Cant get request object");
+				}
+
+				throw new HttpException("Can't get request object");
 			}
 		}
 
@@ -112,9 +907,11 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpResponse Response {
 			get {
-				if (null != _Context && (!_InPreRequestResponseMode)) 
+				if (null != _Context && (!_InPreRequestResponseMode)) {
 					return _Context.Response;
-				throw new HttpException("Cant get response object");
+				}
+
+				throw new HttpException("Can't get response object");
 			}
 		}
 
@@ -122,8 +919,10 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpServerUtility Server {
 			get {
-				if (null != _Context) 
+				if (null != _Context) {
 					return _Context.Server;
+				}
+
 				return new HttpServerUtility(this);
 			}
 		}
@@ -132,294 +931,37 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpSessionState Session {
 			get {
-				if (null != _Session) 
+				if (null != _Session) {
 					return _Session;
-				if (null != _Context && null != _Context.Session) 
+				}
+
+				if (null != _Context && null != _Context.Session) {
 					return _Context.Session;
+				}
+
 				throw new HttpException("Failed to get session object");
 			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public ISite Site {
-			get { return _Site; }
-			set { _Site = value; }
-		}
-
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IPrincipal User {
-			get { return _Context.User; }
-		}
-
-		#endregion Properties
-
-		#region Methods
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnAcquireRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnAuthenticateRequestAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnAuthorizeRequestAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnBeginRequestAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnEndRequestAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnPostRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnPreRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnReleaseRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnResolveRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("Implementation required.")]
-		public void AddOnUpdateRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal void ClearError() 
-		{
-			// Called from Server Utility
-		}
-
-		public void CompleteRequest () 
-		{
-			_CompleteRequest = true;
-		}
-
-		public virtual void Dispose () 
-		{
-			EventHandler eh = (EventHandler) Events [evDisposed];
-			if (eh != null)
-				eh.Invoke (this, EventArgs.Empty);
-		}
-
-		public virtual string GetVaryByCustomString (HttpContext context, string custom) 
-		{
-			if (custom.ToLower() == "browser") 
-				return context.Request.Browser.Type;
-			return string.Empty;
-		}
-
-		[MonoTODO()]
-		IAsyncResult IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData) 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO()]
-		void IHttpAsyncHandler.EndProcessRequest(IAsyncResult result) 
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO()]
-		void IHttpHandler.ProcessRequest(HttpContext context) 
-		{
-			throw new NotImplementedException();
-		}
-
-		public virtual void Init() 
-		{
-		}
-
-		#endregion // Methods
-
-		#region Events and Delegates
-
-		public event EventHandler AcquireRequestState
-		{
-			add {
-				Events.AddHandler (evAcquireRequestState, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evAcquireRequestState, value);
+			get { 
+				return _Context.User; 
 			}
 		}
 		
-		public event EventHandler AuthenticateRequest
-		{
-			add {
-				Events.AddHandler (evAuthenticateRequest, value);
-			}
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public ISite Site {
+         get {
+            return _Site;
+         }
 
-			remove {
-				Events.RemoveHandler (evAuthenticateRequest, value);
-			}
-		}
-		public event EventHandler AuthorizeRequest
-		{
-			add {
-				Events.AddHandler (evAuthorizeRequest, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evAuthorizeRequest, value);
-			}
-		}
-		public event EventHandler BeginRequest
-		{
-			add {
-				Events.AddHandler (evBeginRequest, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evBeginRequest, value);
-			}
-		}
-		public event EventHandler Disposed
-		{
-			add {
-				Events.AddHandler (evDisposed, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evDisposed, value);
-			}
-		}
-		public event EventHandler EndRequest
-		{
-			add {
-				Events.AddHandler (evEndRequest, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evEndRequest, value);
-			}
-		}
-		public event EventHandler Error
-		{
-			add {
-				Events.AddHandler (evError, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evError, value);
-			}
-		}
-		public event EventHandler PostRequestHandlerExecute
-		{
-			add {
-				Events.AddHandler (evPostRequestHandlerExecute, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evPostRequestHandlerExecute, value);
-			}
-		}
-		public event EventHandler PreRequestHandlerExecute
-		{
-			add {
-				Events.AddHandler (evPreRequestHandlerExecute, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evPreRequestHandlerExecute, value);
-			}
-		}
-		public event EventHandler PreSendRequestContent
-		{
-			add {
-				Events.AddHandler (evPreSendRequestContent, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evPreSendRequestContent, value);
-			}
-		}
-		public event EventHandler PreSendRequestHeaders
-		{
-			add {
-				Events.AddHandler (evPreSendRequestHeaders, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evPreSendRequestHeaders, value);
-			}
-		}
-		public event EventHandler ReleaseRequestState
-		{
-			add {
-				Events.AddHandler (evReleaseRequestState, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evReleaseRequestState, value);
-			}
-		}
-		public event EventHandler ResolveRequestCache
-		{
-			add {
-				Events.AddHandler (evResolveRequestCache, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evResolveRequestCache, value);
-			}
-		}
-		public event EventHandler UpdateRequestCache
-		{
-			add {
-				Events.AddHandler (evUpdateRequestCache, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evUpdateRequestCache, value);
-			}
-		}
-
-		public event EventHandler DefaultAuthentication
-		{
-			add {
-				Events.AddHandler (evDefaultAuthentication, value);
-			}
-
-			remove {
-				Events.RemoveHandler (evDefaultAuthentication, value);
-			}
-		}
-
-		#endregion // Events and Delegates
+         set {
+            _Site = value;
+         }
+      }
+		#endregion Properties
 	}
 }

@@ -1,4 +1,4 @@
-// 
+//
 // System.Web.HttpContext
 //
 // Author:
@@ -7,12 +7,12 @@
 using System;
 using System.Collections;
 using System.Security.Principal;
-using System.Threading;
 using System.Web.Caching;
+using System.Web.Configuration;
 using System.Web.SessionState;
+using System.Threading;
 
 namespace System.Web {
-   [MonoTODO("HttpContext - Should also keep the script timeout info")]
    public sealed class HttpContext : IServiceProvider {
       private Exception []	_arrExceptions;
 
@@ -20,9 +20,12 @@ namespace System.Web {
       private HttpRequest _oRequest;
       private HttpServerUtility _Server;
       private HttpApplication _oApplication;
+		private HttpWorkerRequest _oWorkerRequest;
       private IHttpHandler _Handler;
+		private IHttpAsyncHandler _AsyncHandler;
       private IPrincipal _User;
       
+		private bool _skipauth;
       private Hashtable		_oItems;
       private DateTime		_oTimestamp;
 
@@ -44,7 +47,14 @@ namespace System.Web {
          _oTimestamp = DateTime.Now;
          _oRequest = new HttpRequest(WorkerRequest, this);
          _oResponse = new HttpResponse(WorkerRequest, this);
+			_oWorkerRequest = WorkerRequest;
       }
+
+		internal HttpWorkerRequest WorkerRequest {
+			get {
+				return _oWorkerRequest;
+			}
+		}
       
       [MonoTODO("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
       internal static HttpContext Context {
@@ -63,13 +73,11 @@ namespace System.Web {
          }
       }
 
-      [MonoTODO("HttpApplicationState Application")]
       public HttpApplicationState Application {
          get {
-            // Should get the state from a app factory (or the app it self) static method?
-            throw new NotImplementedException();
+            return HttpApplicationFactory.ApplicationState;
          }
-      }
+		}
 
       public HttpApplication ApplicationInstance {
          get {
@@ -80,12 +88,10 @@ namespace System.Web {
          }
       }
 
-      [MonoTODO("HttpCache Cache")]
       public Cache Cache {
          get {
-            // Get the cache from the runtime
-            throw new NotImplementedException();
-         }
+				return HttpRuntime.Cache;
+			}
       }
 
       public static HttpContext Current {
@@ -96,12 +102,10 @@ namespace System.Web {
 
       public Exception Error {
          get {
-            if (_arrExceptions == null) {
+            if (_arrExceptions == null || _arrExceptions.Length == 0)
                return null;
-            } 
-            else {
+            else
                return _arrExceptions[0];
-            }
          }
       }
 
@@ -115,7 +119,17 @@ namespace System.Web {
          }
       }
 
-      [MonoTODO("bool IsCustomErrorEnabled")]
+		internal IHttpAsyncHandler AsyncHandler {
+			get {    
+				return _AsyncHandler;
+			}
+         
+			set {
+				_AsyncHandler = value;
+			}
+		}
+		
+		[MonoTODO("bool IsCustomErrorEnabled")]
       public bool IsCustomErrorEnabled {
          get {
             throw new NotImplementedException();
@@ -161,21 +175,19 @@ namespace System.Web {
          }
       }
       
-      [MonoTODO("HttpSessionState Session")]
       public HttpSessionState Session {
          get {
-            return null;
+				return (HttpSessionState) Items["sessionstate"];
          }
       }
 
-      [MonoTODO("bool SkipAuthorization")]
       public bool SkipAuthorization {
          get {
-            throw new NotImplementedException();
+				return _skipauth;
          }
 
          set {
-            throw new NotImplementedException();
+				_skipauth = value;
          }
       }
 
@@ -188,7 +200,6 @@ namespace System.Web {
       [MonoTODO("TraceContext Trace")]
       public TraceContext Trace {
          get {
-            // TODO: Should be initialized in the constructor (holds current trace)
             throw new NotImplementedException();
          }
       }
@@ -198,7 +209,6 @@ namespace System.Web {
             return _User;
          }
          set {
-            // TODO: Should check security (ControlPrincipal flag)
             _User = value;
          }
       }
@@ -215,9 +225,11 @@ namespace System.Web {
 
          Exception [] arrNew = new Exception[iSize];
 
-         _arrExceptions.CopyTo(arrNew, 0);
-         _arrExceptions = arrNew;
+			if (null != _arrExceptions)
+				_arrExceptions.CopyTo(arrNew, 0);
 
+			_arrExceptions = arrNew;
+			
          _arrExceptions[iSize - 1] = errorInfo;
       }
 
@@ -232,12 +244,44 @@ namespace System.Web {
 
       [MonoTODO("GetAppConfig(string name)")]
       public static object GetAppConfig(string name) {
-         throw new NotImplementedException();
+			if (null == name)
+				throw new NotImplementedException();
+
+         // This is a temp hack to fix the config stuff
+			if  (name.ToLower() == "system.web/httpmodules") {
+				return new ModulesConfiguration();
+			}
+
+			if (name.ToLower() == "system.web/globalization") {
+				return new System.Web.Configuration.GlobalizationConfiguration();
+			}
+			
+			throw new NotImplementedException();
       }
       
-      [MonoTODO("IServiceProvider.GetService(Type service)")]
-      object IServiceProvider.GetService(Type service) {
-         throw new NotImplementedException();
+		object IServiceProvider.GetService(Type service) {
+			if (service == typeof(HttpWorkerRequest)) 
+				return _oWorkerRequest;
+
+			if (service == typeof(HttpRequest))
+				return Request;
+
+			if (service == typeof(HttpResponse))
+				return Response;
+
+			if (service == typeof(HttpApplication))
+				return ApplicationInstance;
+
+			if (service == typeof(HttpApplicationState))
+				return Application;
+
+			if (service == typeof(HttpSessionState))
+				return Session;
+
+			if (service == typeof(HttpServerUtility))
+				return Server;
+
+			return null;
       }
 
       [MonoTODO("void RewritePath(string path)")]
