@@ -1,3 +1,8 @@
+2002-05-17  Duncan Mak  <duncan@ximian.com>
+
+	* System.Web.build: Added new arguments: "/noconfig",
+	"/r:System.Drawing.dll" and "/r:System.Xml.dll".
+
 2002-05-10  Duncan Mak  <duncan@ximian.com>
 
 	* System.Web.build: Include the System.Web.UI.HtmlControls namespace.

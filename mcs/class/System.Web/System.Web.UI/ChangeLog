@@ -1,3 +1,27 @@
+2002-05-17  Duncan Mak  <duncan@ximian.com>
+
+	* AttributeCollection.cs: 
+	* ControlCollection.cs: 
+	* CssStyleCollection.cs: 
+	* DataBindingCollection.cs: 
+	* EmptyControlCollection.cs: Added missing Collection classes.
+
+2002-05-17  Duncan Mak  <duncan@ximian.com>
+
+	* BaseParser.cs:
+	* TemplateParser.cs:  Implemented. BaseParser is weird because
+	there is no documentation on what it does.
+
+	* ControlBuilder.cs:
+	
+	* DataBinder.cs: 
+	* DataBinding.cs: Added. 
+
+	* DataBoundLiteralControl.cs: 
+	* Triplet.cs: Added.
+
+	* RenderMethod.cs: Added this delegate for Control.cs
+
 2002-05-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ValidationPropertyAttribute.cs: a couple of fixes to make it compile.
