@@ -130,6 +130,11 @@ namespace System.Xml.XPath
 					}
 					else
 					{
+						switch (nav2.NodeType) {
+						case XPathNodeType.Namespace:
+						case XPathNodeType.Attribute:
+							return XmlNodeOrder.After;
+						}
 						// match children
 						while (nav2.MoveToNext ())
 							if (nav2.IsSamePosition (nav1))

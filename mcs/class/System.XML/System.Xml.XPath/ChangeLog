@@ -1,5 +1,11 @@
 2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* Iterator.cs : PrecedingIterator.MoveNext() now breaks up at Root.
+	* XPathNavigator.cs : ComparePosition() didn't handle attributes 
+	  correctly.
+
+2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* Parser.jay, Expression.cs, Iterator.cs :
 	  Added ExprParens and ParensIterator classes which is used to handle
 	  precedence of parenthesized expressions.

@@ -613,8 +613,12 @@ namespace System.Xml.XPath
 			bool loop = true;
 			while (loop) {
 				while (!_nav.MoveToFirstChild ()) {
-					while (!_nav.MoveToNext ())
-						_nav.MoveToParent (); // Should not finish, at least before startPosition.
+					while (!_nav.MoveToNext ()) {
+						if (!_nav.MoveToParent ()) { // Should not finish, at least before startPosition.
+							finished = true;
+							return false;
+						}
+					}
 					break;
 				}
 				if (_nav.IsDescendant (startPosition))
