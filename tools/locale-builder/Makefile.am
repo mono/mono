@@ -2,8 +2,21 @@
 MCS = mcs
 RUNTIME = mono
 MCSFLAGS = -g
+# To build a reduced mono runtime with support only for some locales, # run:
+# 	make minimal
+# To build with a single locale (en_US), run:
+# 	make minimal MINIMAL_LOCALES=en_US
+# MINIMAL_LOCALES is a regular expression over the filenames in locales.
+# make minimal saves about 60 KB of the mono binary size.
+# To create the tables fro all the supported locales, use:
+# 	make culture-table
+# After make minimal or make culture-table, you need to run:
+# 	make install-culture-table
+# to copy the needed files where the mono build will pick them up.
 
-CLEANFILES = locale-builder.exe
+MINIMAL_LOCALES=en
+
+CLEANFILES = locale-builder.exe culture-info-tables.h
 
 locale_builder_sources = Driver.cs		\
 			 CultureInfoEntry.cs	\
@@ -28,6 +41,9 @@ locale-builder.exe: $(locale_builder_sources)
 culture-table: locale-builder.exe lang-data locale-data
 	$(RUNTIME) locale-builder.exe
 
+minimal: locale-builder.exe lang-data locale-data
+	$(RUNTIME) locale-builder.exe --locales '$(MINIMAL_LOCALES)'
+
 lang-data:
 	if ! test -f langs/en.xml ; then \
 		wget http://primates.ximian.com/~jackson/icu_langs.tar.gz ; \
@@ -40,5 +56,6 @@ locale-data:
 		tar xzvf icu_locales.tar.gz ; \
 	fi
 
-install-culture-table: culture-table
+install-culture-table: culture-info-tables.h
 	cp -f culture-info-tables.h ../../mono/metadata/.
+
