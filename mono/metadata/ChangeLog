@@ -1,3 +1,9 @@
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
+	* verify.c (mono_method_verify): In CEE_CALL, use
+	mono_method_get_signature() to get the method's signature, unless
+	we're a PInvoke method.
+
 2004-06-10  Jackson Harper  <jackson@ximian.com>
 
 	* assembly.c: Use <path>/lib/mono/gac for the extra paths
