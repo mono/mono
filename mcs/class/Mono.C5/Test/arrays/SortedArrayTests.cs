@@ -1468,7 +1468,6 @@ namespace nunit.arrays.sorted
 
 	namespace MultiOps
 	{
-#if FIXME
 		[TestFixture]
 		public class AddAll
 		{
@@ -1529,7 +1528,6 @@ namespace nunit.arrays.sorted
 			[TearDown]
 			public void Dispose() { array = null; }
 		}
-#endif
 
 
 

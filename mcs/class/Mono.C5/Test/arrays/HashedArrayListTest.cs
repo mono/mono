@@ -1006,7 +1006,6 @@ namespace nunit.arrays.hashed
 		}
 
 
-#if FIXME
 		[TestFixture]
 		public class Combined
 		{
@@ -1095,7 +1094,6 @@ namespace nunit.arrays.hashed
 				Assert.IsFalse(lst.RemoveWithReturn(ref p));
 			}
 		}
-#endif
 
 		[TestFixture]
 		public class Sorting

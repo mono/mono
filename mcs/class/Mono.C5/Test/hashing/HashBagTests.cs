@@ -26,7 +26,6 @@ using NUnit.Framework;
 using MSG = System.Collections.Generic;
 namespace nunit.hashtable.bag
 {
-#if FIXME
 	[TestFixture]
 	public class Combined
 	{
@@ -126,10 +125,8 @@ namespace nunit.hashtable.bag
 			Assert.IsFalse(lst.RemoveWithReturn(ref p));
 		}
 	}
-#endif
 
 
-#if FIXME
 	[TestFixture]
 	public class CollectionOrSink
 	{
@@ -300,10 +297,8 @@ namespace nunit.hashtable.bag
 		[TearDown]
 		public void Dispose() { hashbag = null; }
 	}
-#endif
 
 
-#if FIXME
 	[TestFixture]
 	public class ArrayTest
 	{
@@ -404,10 +399,8 @@ namespace nunit.hashtable.bag
 			hashbag.CopyTo(a, 9);
 		}
 	}
-#endif
 
 
-#if FIXME
 	[TestFixture]
 	public class HashingEquals
 	{
@@ -466,6 +459,5 @@ namespace nunit.hashtable.bag
 			Assert.IsTrue(h1.Equals(h2));
 		}
 	}
-#endif
 }
 #endif

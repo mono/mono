@@ -782,7 +782,6 @@ namespace nunit.linkedlists.hashed
 		}
 
 
-#if FIXME
 		[TestFixture]
 		public class Combined
 		{
@@ -872,7 +871,6 @@ namespace nunit.linkedlists.hashed
 				Assert.IsFalse(lst.RemoveWithReturn(ref p));
 			}
 		}
-#endif
 
 		[TestFixture]
 		public class Inserting
