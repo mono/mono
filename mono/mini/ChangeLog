@@ -1,3 +1,10 @@
+2004-05-26  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini-x86.c cpu-pentium.md Makefile.am basic-math.cs: Fixed problem
+	with precision of tan, atan, sin and cos, and implemented related
+	regressions tests (fixes bug 54467, but one new problem appeared and
+	is not fixed yet).
+
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cfold.c (FOLD_BINOPZ): Avoid division by zero.
