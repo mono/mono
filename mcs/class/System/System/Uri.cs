@@ -338,9 +338,7 @@ namespace System
 						cachedLocalPath = p.Replace ('/', '\\');
 					else
 						cachedLocalPath = p;
-				}
-
-				else {
+				} else {
 					// support *nix and W32 styles
 					if (path.Length > 1 && path [1] == ':')
 						cachedLocalPath = Unescape (path.Replace ('/', '\\'));
@@ -348,7 +346,7 @@ namespace System
 					else if (System.IO.Path.DirectorySeparatorChar == '\\')
 						cachedLocalPath = "\\\\" + Unescape (host + path.Replace ('/', '\\'));
 					else 
-						cachedLocalPath = "/" + Unescape (host + path);
+						cachedLocalPath = "//" + Unescape (host + path);
 				}
 				return cachedLocalPath;
 			} 

@@ -1,5 +1,9 @@
 2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Uri.cs : Fixed LocalPath. In that condition, path is always UNC.
+
+2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Uri.cs : Reimplemented HexUnescape() (It was too broken to handle
 	  multi-byte utf-8 characters.)
 
