@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.21  2004/08/20 19:14:35  jackson
+// Expose functionality to send async messages through the driver
+//
 // Revision 1.20  2004/08/20 01:37:47  pbartok
 // - Added generation of MouseEnter, MouseLeave and MouseHover events
 // - Added cleanup on EndPaint
@@ -829,6 +832,11 @@ namespace System.Windows.Forms {
 			x = pnt.x;
 			y = pnt.y;
 			
+		}
+
+		internal override void SendAsyncMethod (AsyncMethodData method)
+		{
+			throw new NotImplementedException ();
 		}
 
 		// Santa's little helper

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.15  2004/08/20 19:14:35  jackson
+// Expose functionality to send async messages through the driver
+//
 // Revision 1.14  2004/08/13 21:42:15  pbartok
 // - Changed signature for GetCursorPos
 //
@@ -290,6 +293,9 @@ namespace System.Windows.Forms {
 			driver.ScreenToClient (handle, ref x, ref y);
 		}
 
+		internal static void SendAsyncMethod (AsyncMethodData data) {
+			driver.SendAsyncMethod (data);
+		}
 
 		// Santa's little helper
 		internal static void Where() {

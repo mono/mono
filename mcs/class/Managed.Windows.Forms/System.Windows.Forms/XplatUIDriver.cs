@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.15  2004/08/20 19:19:28  jackson
+// Expose functionality to send async messages through the driver
+//
 // Revision 1.14  2004/08/13 21:42:15  pbartok
 // - Changed signature for GetCursorPos
 //
@@ -170,6 +173,8 @@ namespace System.Windows.Forms {
 
 		internal abstract void GrabWindow(IntPtr hWnd);
 		internal abstract void ReleaseWindow(IntPtr hWnd);
-		#endregion	// XplatUI Driver Methods
+
+		internal abstract void SendAsyncMethod (AsyncMethodData method);
+#endregion	// XplatUI Driver Methods
 	}
 }
