@@ -1,3 +1,10 @@
+Fri Jul  6 11:30:53 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: added a consistency check and initialize
+	some structures with g_new0().
+	* metadata.c: fixed a couple more bugs in table size computation
+	and add other checks for out-of bound access to metadata.
+
 Thu Jul  5 22:34:21 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metatada.c: fix bugs computing table sizes. Spew a
