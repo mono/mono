@@ -31,7 +31,7 @@ using System.Collections;
 
 namespace System.Windows.Forms
 {
-	public abstract class MenuItem : Menu
+	public class MenuItem : Menu
 	{
 		internal Menu parent_menu = null;
 		internal bool separator;
