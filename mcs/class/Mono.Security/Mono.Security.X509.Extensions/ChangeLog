@@ -1,3 +1,7 @@
+2003-09-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* KeyAttributesExtension.cs: New. Added for WSE.
+
 2003-07-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ExtendedKeyUsageExtension.cs: New. Added for makecert.

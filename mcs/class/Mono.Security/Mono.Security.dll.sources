@@ -26,7 +26,9 @@
 ./Mono.Security.X509/X520Attributes.cs
 ./Mono.Security.X509.Extensions/BasicConstraintsExtension.cs
 ./Mono.Security.X509.Extensions/ExtendedKeyUsageExtension.cs
+./Mono.Security.X509.Extensions/KeyAttributesExtension.cs
 ./Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
+
 
 
