@@ -61,7 +61,12 @@ namespace Microsoft.VisualBasic
 				windowsMonoPath = Path.Combine (
 					Path.GetDirectoryName (
 						Path.GetDirectoryName (p)),
-					"bin\\mono.exe");
+					"bin\\mono.bat");
+				if (!File.Exists (windowsMonoPath))
+					windowsMonoPath = Path.Combine (
+						Path.GetDirectoryName (
+							Path.GetDirectoryName (p)),
+						"bin\\mono.exe");
 				windowsMbasPath =
 					Path.Combine (p, "1.0\\mbas.exe");
 			}

@@ -1,3 +1,8 @@
+2004-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* VBCodeCompiler.cs : (only for windows) First check mono.bat, then
+	  check mono.exe. It enables xsp working with mono windows installer.
+
 2004-06-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* VBCodeCompiler.cs : On windows we use fixed mono.exe and mbas.exe
