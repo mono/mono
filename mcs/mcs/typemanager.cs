@@ -9,6 +9,7 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 //
+#define CACHE
 
 using System;
 using System.Collections;
@@ -622,8 +623,8 @@ public class TypeManager {
 	//
 	// FIXME: This can be optimized easily.  speedup by having a single builder mapping
 	//
-	public static MemberInfo [] RealFindMembers (Type t, MemberTypes mt, BindingFlags bf,
-						     MemberFilter filter, object criteria)
+	public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+						 MemberFilter filter, object criteria)
 	{
 		//
 		// We have to take care of arrays specially, because GetType on
@@ -641,10 +642,21 @@ public class TypeManager {
 			if ((bf & instance_and_static) == instance_and_static){
 				MemberInfo [] i_members = t.FindMembers (
 					mt, bf & ~BindingFlags.Static, filter, criteria);
+
+				int i_len = i_members.Length;
+				if (i_len == 1){
+					MemberInfo one = i_members [0];
+
+					//
+					// If any of these are present, we are done!
+					//
+					if ((one is Type) || (one is EventInfo) || (one is FieldInfo))
+						return i_members;
+				}
+				
 				MemberInfo [] s_members = t.FindMembers (
 					mt, bf & ~BindingFlags.Instance, filter, criteria);
 
-				int i_len = i_members.Length;
 				int s_len = s_members.Length;
 				if (i_len > 0 || s_len > 0){
 					MemberInfo [] both = new MemberInfo [i_len + s_len];
@@ -690,52 +702,6 @@ public class TypeManager {
 
 		return null;
 	}
-
-	struct CriteriaKey {
-		public MemberTypes mt;
-		public BindingFlags bf;
-		public MemberFilter filter;
-	}
-	
-	static Hashtable criteria_cache = new PtrHashtable ();
-
-	//
-	// This is a wrapper for RealFindMembers, this provides a front-end cache
-	//
-	public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-						 MemberFilter filter, object criteria)
-	{
-		Hashtable criteria_hash = (Hashtable) criteria_cache [criteria];
-		MemberInfo [] val;
-		Hashtable type_hash;
-		CriteriaKey ck;
-		
-		ck.mt = mt;
-		ck.bf = bf;
-		ck.filter = filter;
-		
-		if (criteria_hash != null){
-			type_hash = (Hashtable) criteria_hash [t];
-
-			if (type_hash != null){
-				if (type_hash.Contains (ck))
-					return (MemberInfo []) type_hash [ck];
-			} else {
-				type_hash = new Hashtable ();
-				criteria_hash [t] = type_hash;
-			}
-		} else {
-			criteria_hash = new Hashtable ();
-			type_hash = new Hashtable ();
-			criteria_cache [criteria] = criteria_hash;
-			criteria_hash [t] = type_hash;
-		}
-		
-		val = RealFindMembers (t, mt, bf, filter, criteria);
-		type_hash [ck] = val;
-		return val;
-	}
-	
 
 	public static bool IsBuiltinType (Type t)
 	{
@@ -1318,10 +1284,30 @@ public class TypeManager {
 		Type current_type = queried_type;
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
 		bool private_ok;
+		bool always_ok_flag = false;
 		
 		closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
+
+		//
+		// If we are a nested class, we always have access to our container
+		// type names
+		//
+		if (invocation_type != null){
+			string invocation_name = invocation_type.FullName;
+			if (invocation_name.IndexOf ('+') != -1){
+				string container = queried_type.FullName + "+";
+				int container_length = container.Length;
+				
+				if (invocation_name.Length > container_length){
+					string shared = invocation_name.Substring (0, container_length);
+				
+					if (shared == container)
+						always_ok_flag = true;
+				}
+			}
+		}
 		
 		do {
 			MemberInfo [] mi;
@@ -1336,10 +1322,10 @@ public class TypeManager {
 			//    equation)
 			//
 			if (invocation_type != null){
-				if (invocation_type == current_type)
+				if (invocation_type == current_type){
 					private_ok = true;
-				else
-					private_ok = false;
+				} else
+					private_ok = always_ok_flag;
 				
 				if (private_ok || invocation_type.IsSubclassOf (current_type))
 					bf = original_bf | BindingFlags.NonPublic;
@@ -1377,16 +1363,13 @@ public class TypeManager {
 				continue;
 			
 			//
-			// Events are returned by both `static' and `instance'
+			// Events and types are returned by both `static' and `instance'
 			// searches, which means that our above FindMembers will
 			// return two copies of the same.
 			//
 			if (count == 1 && !(mi [0] is MethodBase)){
 				return mi;
 			}
-			
-			if (count == 2 && (mi [0] is EventInfo))
-				return mi;
 			
 			//
 			// We found methods, turn the search into "method scan"

@@ -1,5 +1,20 @@
 2002-05-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (CACHE): New define used to control if we want or
+	not the FindMembers cache.  Seems to have a negative impact on
+	performance currently
+
+	(MemberLookup): Nested types have full acess to
+	enclosing type members
+
+	Remove code that coped with instance/static returns for events, we
+	now catch this in RealFindMembers.
+
+	(RealFindMembers): only perform static lookup if the instance
+	lookup did not return a type or an event.  
+
+2002-05-17  Miguel de Icaza  <miguel@ximian.com>
+
 	* assign.cs (CompoundAssign): We pass more semantic information
 	now to Compound Assignments than we did before: now we have all
 	the information at hand, and now we resolve the target *before* we
