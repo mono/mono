@@ -1,3 +1,9 @@
+2003-01-05  Martin Baulig  <martin@ximian.com>
+
+	* debug.h (MonoDebugFormat): Added
+	`MONO_DEBUG_FORMAT_MONO_DEBUGGER'; this allows us to check whether
+	we're running inside the Mono Debugger prior to the args parsing.
+
 2003-01-04  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (release_symbol_file_table): Only call this if we're
