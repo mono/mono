@@ -18,7 +18,7 @@ using Mono.Security.X509.Extensions;
 
 namespace Microsoft.Web.Services.Security.X509 {
 
-	public class X509Certificate : System.Security.Cryptography.X509Certificates.X509Certificate, IDisposable {
+	public sealed class X509Certificate : System.Security.Cryptography.X509Certificates.X509Certificate, IDisposable {
 
 		// do not includes: KeyUsage.keyEncipherment and KeyUsage.keyAgreement (see "OWN.cer")
 		private static KeyUsage[] dataEncryption = new KeyUsage [3] { KeyUsage.dataEncipherment, KeyUsage.decipherOnly, KeyUsage.encipherOnly };
@@ -167,7 +167,17 @@ namespace Microsoft.Web.Services.Security.X509 {
 			SHA1 sha = SHA1.Create ();
 			return sha.ComputeHash (subjectPublicKeyInfo.GetBytes ());
 		}
-
+#if !WSE1
+		public string GetSubjectAlternativeName () 
+		{
+			// if present in certificate return value of the SubjectAltName
+			MX.X509Extension extn = x509.Extensions ["2.5.29.17"];
+			if (extn != null)
+				return null;
+			SubjectAltNameExtension altname = new SubjectAltNameExtension (extn);
+			return ((altname.RFC822.Length > 0) ? altname.RFC822 [0] : null);
+		}
+#endif
 		// overloaded but WHY ?
 		public override int GetHashCode () 
 		{

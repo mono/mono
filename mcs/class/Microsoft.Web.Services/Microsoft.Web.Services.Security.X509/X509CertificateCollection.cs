@@ -23,7 +23,6 @@ namespace Microsoft.Web.Services.Security.X509 {
 					throw new ArgumentOutOfRangeException ("index");
 				return (X509Certificate) InnerList [index]; 
 			}
-			set { InnerList [index] = value; }
 		}
 		
 		public int Add (X509Certificate certificate) 
