@@ -6,4 +6,5 @@
 	* ChangeLog: New.
 	* Makefile: New. Makefile to download, build and run xmldsig tests 
 	(copied from Atsushi - actually this whoile directory is his idea).
+	* xmldsig.cs: New. Test program for Merlin's xmldsig test suite.
 	
