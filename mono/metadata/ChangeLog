@@ -1,3 +1,10 @@
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (mono_get_method_from_token): Also call
+	mono_metadata_load_generic_params () for abstract and interface
+	methods; replace the type arguments in the method signature with
+	the ones which are loaded from the metadata.
+
 2004-03-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* monitor.c: In mono_monitor_exit(), don't throw an exception if the owner
