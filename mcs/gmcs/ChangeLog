@@ -12,9 +12,6 @@
 	* pending.cs (Pending.InterfaceMethod): Call TypeManager.Real_IsEqual()
 	instead of TypeManager.IsEqual().
 
-	* typemanager.cs (TypeManager.Real_IsEqual): New method; this'll
-	soon be renamed to IsEqual() and thus replace the old IsEqual().	
-
 2004-09-28  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs

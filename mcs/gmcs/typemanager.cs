@@ -1761,7 +1761,7 @@ public class TypeManager {
 		return false;
 	}
 
-	public static bool Real_IsEqual (Type a, Type b)
+	public static bool IsEqual (Type a, Type b)
 	{
 		if (a.Equals (b))
 			return true;
@@ -1817,7 +1817,7 @@ public class TypeManager {
 				return false;
 
 			for (int i = 0; i < aargs.Length; i++) {
-				if (Real_IsEqual (aargs [i], bargs [i]))
+				if (!IsEqual (aargs [i], bargs [i]))
 					return false;
 			}
 
@@ -1825,14 +1825,6 @@ public class TypeManager {
 		}
 
 		return false;
-	}
-
-	public static bool IsEqual (Type a, Type b)
-	{
-		if (a.Equals (b))
-			return true;
-		else
-			return IsEqualGenericType (a, b);
 	}
 
 	public static bool MayBecomeEqualGenericTypes (Type a, Type b)
