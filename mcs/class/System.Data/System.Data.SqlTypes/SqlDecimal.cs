@@ -90,7 +90,20 @@ namespace System.Data.SqlTypes
 			precision = GetPrecision (value);
 		}
 				
-		public SqlDecimal (double value) : this ((decimal)value) { }
+		public SqlDecimal (double value) : this ((decimal)value) 
+		{
+			SqlDecimal n = this;
+			int digits = 17 - precision;
+			if (digits > 0)
+				n = AdjustScale (this, digits, false);
+			else
+				n = Round (this, 17);
+			this.notNull = n.notNull;
+			this.positive = n.positive;
+			this.precision = n.precision;
+			this.scale = n.scale;
+			this.value = n.value;
+		}
 		public SqlDecimal (int value) : this ((decimal)value) { }
 		public SqlDecimal (long value) : this ((decimal)value) { }
 
@@ -142,8 +155,12 @@ namespace System.Data.SqlTypes
 			get { 
 				if (this.IsNull)
 					throw new SqlNullValueException ();
-				else
-					return (value);
+				// Data should always return clone, not to be modified
+				int [] ret = new int [4];
+				ret [0] = value [0];
+				ret [1] = value [1];
+				ret [2] = value [2];
+				return ret;
 			}
 		}
 
@@ -197,15 +214,26 @@ namespace System.Data.SqlTypes
 			if (n.IsNull)
 				throw new SqlNullValueException ();
 
-			if (digits > 0)
+			int [] data;
+			if (digits > 0) {
 			        prec = (byte)(prec + digits);
-
-			if (fRound)
-				n = Round (n, digits + n.Scale);
+				decimal d = n.Value;
+				if (digits > 0)
+					for (int i = 0; i < digits; i++)
+						d *= 10;
+				data = Decimal.GetBits (d);
+				data [3] = 0;
+			} else {
+				if (fRound)
+					n = Round (n, digits + n.scale);
+				else
+					n = Truncate (n, digits + n.scale);
+				data = n.Data;
+			}
 
 			return new SqlDecimal (prec, 
 					       (byte)(n.Scale + digits), 
-					       n.IsPositive, n.Data);
+					       n.IsPositive, data);
 		}
 
 		public static SqlDecimal Ceiling (SqlDecimal n)
@@ -313,7 +341,7 @@ namespace System.Data.SqlTypes
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("string s"));
 			else 
-				return SqlDouble.Parse (s).ToSqlDecimal ();
+				return new SqlDecimal (Decimal.Parse (s));
 		}
 
 		public static SqlDecimal Power (SqlDecimal n, double exp)
@@ -329,12 +357,9 @@ namespace System.Data.SqlTypes
 			if (n.IsNull)
 				throw new SqlNullValueException ();
 
-			SqlDecimal result = new SqlDecimal (Math.Round (
-				(double)(n.ToDouble () * Math.Pow (10, position))));
-
-			result = result / new SqlDecimal(Math.Pow (10, position));
-			
-			return result;				
+			decimal d = n.Value;
+			d = Decimal.Round (d, position);
+			return new SqlDecimal (d);
 		}
 
 		public static SqlInt32 Sign (SqlDecimal n)
@@ -428,7 +453,7 @@ namespace System.Data.SqlTypes
 		public override string ToString ()
 		{
 			if (this.IsNull)
-				return String.Empty;
+				return "Null";
 			
 			// convert int [4] --> ulong [2]
 			ulong lo = (uint)this.Data [0];
@@ -1249,7 +1274,7 @@ namespace System.Data.SqlTypes
 				if (x.IsNull) 
 					return Null;
 				else
-					return new SqlDecimal ((decimal)x.Value);
+					return new SqlDecimal ((double)x.Value);
 			}
 		}
 
@@ -1259,7 +1284,7 @@ namespace System.Data.SqlTypes
 				if (x.IsNull) 
 					return Null;
 				else
-					return new SqlDecimal ((decimal)x.Value);
+					return new SqlDecimal ((double)x.Value);
 			}
 		}
 

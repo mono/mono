@@ -1,3 +1,18 @@
+2004-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SqlDecimal.cs :
+	  - .ctor(double) initializes the precision as 17. If not sufficient,
+	    it calls AdjustScale(), and if too much then it calls Round().
+	  - Data should not return the internal array otherwise it might be
+	    modified by outer code.
+	  - Reimplemented AdjustScale() to work fine.
+	  - Reimplemented Parse(). It should rather use Decimal.Parse() 
+	    rather than SqlDouble.Parse() for parsable value range difference.
+	  - Reimplemented Round(). Don't use double.
+	  - Fixed ToString() to return "Null" for null value.
+	  - Fixed explicit let operator to use double .ctor, not decimal
+	    .ctor() so that precision can be handled in the same way as double.
+
 2004-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SqlBinary.cs,
