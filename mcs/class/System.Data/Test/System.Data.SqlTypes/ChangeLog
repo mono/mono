@@ -1,5 +1,9 @@
 2004-04-12  Atsushi Enomoto <atsushi@ximian.com>
 
+	* SqlDateTimeTest.cs : ToStringTest() is locale dependent.
+
+2004-04-12  Atsushi Enomoto <atsushi@ximian.com>
+
 	* SqlStringTest.cs : Removed locale-dependent test.
 	* SqlDecimalTest.cs : Removed runtime-dependent test.
 

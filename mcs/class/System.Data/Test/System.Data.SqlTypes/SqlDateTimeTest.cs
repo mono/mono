@@ -342,6 +342,7 @@ namespace MonoTests.System.Data.SqlTypes
                 }
 
 		[Test]
+		[Ignore ("This test is locale dependent.")]
 		public void ToStringTest()
 		{
 			//
