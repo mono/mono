@@ -50,7 +50,11 @@ namespace System.Web.UI.WebControls
 			                                        "</xsl:template>" +
 			                                        "</xsl:stylesheet>"));
 			defaultTransform = new XslTransform();
-			defaultTransform.Load(reader);
+#if NET_1_0
+			defaultTransform.Load (reader);
+#else
+			defaultTransform.Load (reader, null, null);
+#endif
 		}
 
 		public Xml(): base()
