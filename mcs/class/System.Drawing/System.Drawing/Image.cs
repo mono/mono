@@ -167,7 +167,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return ((pixfmt & PixelFormat.Extended) != 0);
 	}
 
-	internal protected void InitFromStream (Stream stream)
+	internal void InitFromStream (Stream stream)
 	{
 		if (Environment.OSVersion.Platform == (PlatformID) 128) {
 			// Unix, with libgdiplus
@@ -553,7 +553,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Dispose (false);
 	}
 
-	protected internal virtual void DisposeResources ()
+	private void DisposeResources ()
 	{
 		Status status = GDIPlus.GdipDisposeImage (nativeObject);
 		GDIPlus.CheckStatus (status);
