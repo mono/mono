@@ -19,17 +19,40 @@ namespace System {
 		internal Type utype;
 		internal Array values;
 		internal string[] names;
+		static Hashtable cache;
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
 		
-		internal static void GetInfo (Type enumType, out MonoEnumInfo info) {
-			get_enum_info (enumType, out info);
-			Array.Sort (info.values, info.names);
+		private MonoEnumInfo (MonoEnumInfo other)
+		{
+			utype = other.utype;
+			values = other.values;
+			names = other.names;
+		}
+		
+		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
+		{
+			if (cache == null) {
+				cache = new Hashtable ();
+			} else if (cache.ContainsKey (enumType)) {
+				info = (MonoEnumInfo) cache [enumType];
+				return;
+			}
+
+			lock (cache) {
+				if (cache.ContainsKey (enumType)) {
+					info = (MonoEnumInfo) cache [enumType];
+					return;
+				}
+
+				get_enum_info (enumType, out info);
+				Array.Sort (info.values, info.names);
+				cache.Add (enumType, new MonoEnumInfo (info));
+			}
 		}
 	};
 
-	[MonoTODO]
 	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable {
 
 		// IConvertible methods Start -->
