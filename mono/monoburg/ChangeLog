@@ -1,3 +1,7 @@
+2001-09-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.c (create_term): bug fix: g_strdup strings from the parser
+
 2001-09-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* Makefile.am (EXTRA_DIST): Add man page to the distro
