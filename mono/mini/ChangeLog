@@ -1,3 +1,9 @@
+
+Fri Jan 28 18:28:26 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: remove ben's "optimizations" to dup+stloc (bug #71905).
+	* basic-calls.cs: test for the above.
+
 2005-01-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c mini-exceptions.c aot.c exceptions-*.c: Update after 
