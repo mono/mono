@@ -236,11 +236,8 @@ namespace System.Xml.XPath
 					if (expr is CompiledExpression)
 						return ((CompiledExpression) expr)._expr;
 					if (expr is string)
-					{
-						Tokenizer tokenizer = new Tokenizer ((string) expr);
-						XPathParser parser = new XPathParser ();
-						return (Expression) parser.yyparseSafe (tokenizer);
-					}
+						return new XPathParser ().Compile ((string)expr);
+					
 					throw new XPathException ("Invalid query object");
 				}
 

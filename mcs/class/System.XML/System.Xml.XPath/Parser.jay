@@ -15,35 +15,23 @@ namespace Mono.Xml.XPath
 	
 		internal System.Xml.Xsl.IStaticXsltContext Context;
 		
-		internal object yyparseSafe (Tokenizer tok)
+		public XPathParser () : this (null) {}
+		internal XPathParser (System.Xml.Xsl.IStaticXsltContext context)
 		{
-			return yyparseSafe (tok, null);
+			Context = context;
 		}
-
-		internal object yyparseSafe (Tokenizer tok, object yyDebug)
+		
+		internal Expression Compile (string xpath)
 		{
-			//yyDebug = new yydebug.yyDebugSimple ();
-			try
-			{
-				Expression expr = (Expression) yyparse (tok, yyDebug);
-				//Console.WriteLine (expr.ToString ());
-				return expr;
-			}
-			catch (XPathException e)
-			{
+			try {
+				Tokenizer tokenizer = new Tokenizer (xpath);
+				return (Expression) yyparse (tokenizer);
+			} catch (XPathException e) {
 				throw e;
-			}
-			catch (Exception e)
-			{
-				throw new XPathException ("Error during parse", e);
+			} catch (Exception e) {
+				throw new XPathException ("Error during parse of " + xpath, e);
 			}
 		}
-
-		internal object yyparseDebug (Tokenizer tok)
-		{
-			return yyparseSafe (tok, new yydebug.yyDebugSimple ());
-		}
-
 %}
 
 %token ERROR

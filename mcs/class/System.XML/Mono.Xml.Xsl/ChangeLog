@@ -1,3 +1,8 @@
+2003-09-21 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Compiler.cs: save the parser (will reduce memory allocation when
+	Jackson's jay patch is committed).
+
 2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Attribute.cs: Change to struct. Remove QName class.

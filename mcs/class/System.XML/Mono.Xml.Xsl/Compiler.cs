@@ -96,6 +96,7 @@ namespace Mono.Xml.Xsl {
 				
 		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{
+			this.parser = new XPathParser (this);
 			this.res = res;
 			if (res == null)
 				this.res = new XmlUrlResolver ();
@@ -262,12 +263,13 @@ namespace Mono.Xml.Xsl {
 			
 			return p;
 		}
-		
+
+		internal XPathParser parser;
 		public XPathExpression CompileExpression (string expression)
 		{
 			if (expression == null || expression == "") return null;
-			XPathExpression e = Input.Compile (expression, this);
-			
+
+			XPathExpression e = new CompiledExpression (parser.Compile (expression));
 			
 			exprStore.AddExpression (e, this);
 			

@@ -14,18 +14,14 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using Mono.Xml.Xsl;
 
 namespace Mono.Xml.XPath {
 	public abstract class Pattern {
 		
-		internal static Pattern Compile (string s, System.Xml.Xsl.IStaticXsltContext ctx)
-		{
-			Tokenizer tokenizer = new Tokenizer (s);
-			XPathParser parser = new XPathParser ();
-			parser.Context = ctx;
-			Expression expr = (Expression) parser.yyparseSafe (tokenizer);
-			
-			return Compile (expr);
+		internal static Pattern Compile (string s, Compiler comp)
+		{		
+			return Compile (comp.parser.Compile (s));
 		}
 		
 		internal static Pattern Compile (Expression e)
