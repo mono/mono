@@ -1,3 +1,7 @@
+2003-04-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mini_init): use an opcode for get_Chars (OP_GETCHR)
+
 2003-04-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_type_blittable): MONO_TYPE_OBJECT is blittable.
