@@ -1,3 +1,9 @@
+2003-12-08  Patrik Torstensson   <p@rxc.se>
+
+	* Type.cs (GetMethod): Check type arguments within array
+	* MonoType.cs (GetMethodImpl): Handle methods with a new slot
+	(same signature but different classes (derived level)
+
 2003-12-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs (MakeArrayType): Add argument checking.

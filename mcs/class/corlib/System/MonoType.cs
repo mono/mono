@@ -142,7 +142,9 @@ namespace System
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
 			MethodInfo found = null;
 			MethodBase[] match;
+			int typesLen = (types != null) ? types.Length : 0;
 			int count = 0;
+			
 			foreach (MethodInfo m in methods) {
 				if (String.Compare (m.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0)
 					continue;
@@ -152,13 +154,13 @@ namespace System
 				found = m;
 				count++;
 			}
+
 			if (count == 0)
 				return null;
-			if (types == null) {
-				if (count > 1)
-					throw new AmbiguousMatchException ();
+			
+			if (count == 1 && typesLen == 0) 
 				return found;
-			}
+
 			match = new MethodBase [count];
 			if (count == 1)
 				match [0] = found;
@@ -172,8 +174,13 @@ namespace System
 					match [count++] = m;
 				}
 			}
+			
+			if (typesLen == 0) 
+				return (MethodInfo) Binder.FindMostDerivedMatch (match);
+
 			if (binder == null)
 				binder = Binder.DefaultBinder;
+			
 			return (MethodInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
 		}
 

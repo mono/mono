@@ -651,6 +651,10 @@ namespace System {
 			if (types == null)
 				throw new ArgumentNullException ("types");
 
+			for (int i = 0; i < types.Length; i++) 
+				if (types[i] == null)
+					throw new ArgumentNullException ("types");
+
 			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
