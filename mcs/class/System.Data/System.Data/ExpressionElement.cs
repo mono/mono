@@ -1791,7 +1791,6 @@ namespace System.Data
 					value1 = ((string)value1).ToLower ();
 					value2 = ((string)value2).ToLower ();
 				}
-			}
 			} else if (t1 != t2) {
 
 				value2 = Convert.ChangeType (value2, Type.GetTypeCode (t1));
