@@ -1,3 +1,8 @@
+2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Reimplemented HexUnescape() (It was too broken to handle
+	  multi-byte utf-8 characters.)
+
 2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs :

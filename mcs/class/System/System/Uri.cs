@@ -48,7 +48,6 @@ namespace System
 		private string query = String.Empty;
 		private string fragment = String.Empty;
 		private string userinfo = String.Empty;
-		private bool is_root_path = false;
 		private bool isUnc = false;
 		private bool isOpaquePart = false;
 
@@ -349,7 +348,7 @@ namespace System
 					else if (System.IO.Path.DirectorySeparatorChar == '\\')
 						cachedLocalPath = "\\\\" + Unescape (host + path.Replace ('/', '\\'));
 					else 
-						cachedLocalPath = (is_root_path? "/": "") + "/" + Unescape (host + path);
+						cachedLocalPath = "/" + Unescape (host + path);
 				}
 				return cachedLocalPath;
 			} 
@@ -616,18 +615,55 @@ namespace System
 				throw new ArgumentException ("pattern");
 				
 			if (index < 0 || index >= pattern.Length)
-				throw new ArgumentOutOfRangeException ("index");	
-				
-			if (((index + 3) > pattern.Length) ||
-			    (pattern [index] != '%') || 
-			    !IsHexDigit (pattern [index + 1]) || 
-			    !IsHexDigit (pattern [index + 2]))
-			{
-				return pattern[index++];
-			}
+				throw new ArgumentOutOfRangeException ("index");
+
+			int stage = 0;
+			int c = 0;
+			byte [] bytes = new byte [6];
+			do {
+				if (((index + 3) > pattern.Length) ||
+				    (pattern [index] != '%') || 
+				    !IsHexDigit (pattern [index + 1]) || 
+				    !IsHexDigit (pattern [index + 2]))
+				{
+					if (stage == 0)
+						return pattern [index++];
+					break;
+				}
+
+				index++;
+				int msb = FromHex (pattern [index++]);
+				int lsb = FromHex (pattern [index++]);
+				int b = (msb << 4) + lsb;
+
+				if (stage == 0) {
+					if (b < 0xc0)
+						return (char) b;
+					else if (b < 0xE0) {
+						c = b - 0xc0;
+						stage = 2;
+					} else if (b < 0xF0) {
+						c = b - 0xe0;
+						stage = 3;
+					} else if (b < 0xF8) {
+						c = b - 0xf0;
+						stage = 4;
+					} else if (b < 0xFB) {
+						c = b - 0xf8;
+						stage = 5;
+					} else if (b < 0xFE) {
+						c = b - 0xfc;
+						stage = 6;
+					}
+					c <<= (stage - 1) * 6;
+				}
+				else
+					c += (b - 0x80) << ((stage - 1) * 6);
+//Console.WriteLine ("stage {0}: {5:X04} <-- {1:X02}|{2:X01},{3:X01} {4}", new object [] {stage, b, msb, lsb, pattern.Substring (index), c});
+				stage--;
+			} while (stage > 0);
 			
-			index++;
-			return (char) ((FromHex (pattern [index++]) << 4) + FromHex (pattern [index++]));
+			return (char) c;
 		}
 
 		public static bool IsHexDigit (char digit) 
@@ -737,7 +773,6 @@ namespace System
 				    (escapeHex && (c == '#')) ||
 				    (escapeBrackets && (c == '[' || c == ']')) ||
 				    (escapeReserved && (";/?:@&=+$,".IndexOf (c) != -1))) {
-					// FIXME: EscapeString should allow wide characters (> 255). HexEscape rejects it.
 					s.Append (HexEscape (c));
 					continue;
 				}
