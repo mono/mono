@@ -1,5 +1,10 @@
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Cast.TryReduce): If we're in checked syntax,
+	check constant ranges and report a CS0221.  Fixes #33186.
+
+2002-11-24  Martin Baulig  <martin@ximian.com>
+
 	* cs-parser.jay: Make this work for uninitialized variable
 	declarations in the `for' initializer.  Fixes #32416.
 

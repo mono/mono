@@ -1160,6 +1160,51 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool CheckRange (EmitContext ec, long value, Type type, long min, long max)
+		{
+			if (!ec.ConstantCheckState)
+				return true;
+
+			if ((value < min) || (value > max)) {
+				Error (221, "Constant value `" + value + "' cannot be converted " +
+				       "to a `" + TypeManager.CSharpName (type) + "' (use `unchecked' " +
+				       "syntax to override)");
+				return false;
+			}
+
+			return true;
+		}
+
+		bool CheckRange (EmitContext ec, ulong value, Type type, ulong max)
+		{
+			if (!ec.ConstantCheckState)
+				return true;
+
+			if (value > max) {
+				Error (221, "Constant value `" + value + "' cannot be converted " +
+				       "to a `" + TypeManager.CSharpName (type) + "' (use `unchecked' " +
+				       "syntax to override)");
+				return false;
+			}
+
+			return true;
+		}
+
+		bool CheckUnsigned (EmitContext ec, long value, Type type)
+		{
+			if (!ec.ConstantCheckState)
+				return true;
+
+			if (value < 0) {
+				Error (221, "Constant value `" + value + "' cannot be converted " +
+				       "to a `" + TypeManager.CSharpName (type) + "' (use `unchecked' " +
+				       "syntax to override)");
+				return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
 		/// </summary>
@@ -1168,8 +1213,11 @@ namespace Mono.CSharp {
 			if (expr is ByteConstant){
 				byte v = ((ByteConstant) expr).Value;
 	
-				if (target_type == TypeManager.sbyte_type)
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
+						return null;
 					return new SByteConstant ((sbyte) v);
+				}
 				if (target_type == TypeManager.short_type)
 					return new ShortConstant ((short) v);
 				if (target_type == TypeManager.ushort_type)
@@ -1194,64 +1242,104 @@ namespace Mono.CSharp {
 			if (expr is SByteConstant){
 				sbyte v = ((SByteConstant) expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new ByteConstant ((byte) v);
+				}
 				if (target_type == TypeManager.short_type)
 					return new ShortConstant ((short) v);
-				if (target_type == TypeManager.ushort_type)
+				if (target_type == TypeManager.ushort_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new UShortConstant ((ushort) v);
-				if (target_type == TypeManager.int32_type)
+				} if (target_type == TypeManager.int32_type)
 					return new IntConstant ((int) v);
-				if (target_type == TypeManager.uint32_type)
+				if (target_type == TypeManager.uint32_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new UIntConstant ((uint) v);
-				if (target_type == TypeManager.int64_type)
+				} if (target_type == TypeManager.int64_type)
 					return new LongConstant ((long) v);
-				if (target_type == TypeManager.uint64_type)
+				if (target_type == TypeManager.uint64_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new ULongConstant ((ulong) v);
+				}
 				if (target_type == TypeManager.float_type)
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
-				if (target_type == TypeManager.char_type)
+				if (target_type == TypeManager.char_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new CharConstant ((char) v);
+				}
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is ShortConstant){
 				short v = ((ShortConstant) expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
+						return null;
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				}
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
+						return null;
 					return new SByteConstant ((sbyte) v);
-				if (target_type == TypeManager.ushort_type)
+				}
+				if (target_type == TypeManager.ushort_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new UShortConstant ((ushort) v);
+				}
 				if (target_type == TypeManager.int32_type)
 					return new IntConstant ((int) v);
-				if (target_type == TypeManager.uint32_type)
+				if (target_type == TypeManager.uint32_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new UIntConstant ((uint) v);
+				}
 				if (target_type == TypeManager.int64_type)
 					return new LongConstant ((long) v);
-				if (target_type == TypeManager.uint64_type)
+				if (target_type == TypeManager.uint64_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new ULongConstant ((ulong) v);
+				}
 				if (target_type == TypeManager.float_type)
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
-				if (target_type == TypeManager.char_type)
+				if (target_type == TypeManager.char_type) {
+					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
+						return null;
 					return new CharConstant ((char) v);
+				}
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is UShortConstant){
 				ushort v = ((UShortConstant) expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
+						return null;
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				}
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
+						return null;
 					return new SByteConstant ((sbyte) v);
-				if (target_type == TypeManager.short_type)
+				}
+				if (target_type == TypeManager.short_type) {
+					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
+						return null;
 					return new ShortConstant ((short) v);
+				}
 				if (target_type == TypeManager.int32_type)
 					return new IntConstant ((int) v);
 				if (target_type == TypeManager.uint32_type)
@@ -1264,50 +1352,89 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
-				if (target_type == TypeManager.char_type)
+				if (target_type == TypeManager.char_type) {
+					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
+						return null;
 					return new CharConstant ((char) v);
+				}
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is IntConstant){
 				int v = ((IntConstant) expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
+						return null;
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				}
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
+						return null;
 					return new SByteConstant ((sbyte) v);
-				if (target_type == TypeManager.short_type)
+				}
+				if (target_type == TypeManager.short_type) {
+					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
+						return null;
 					return new ShortConstant ((short) v);
-				if (target_type == TypeManager.ushort_type)
+				}
+				if (target_type == TypeManager.ushort_type) {
+					if (!CheckRange (ec, v, target_type, UInt16.MinValue, UInt16.MaxValue))
+						return null;
 					return new UShortConstant ((ushort) v);
-				if (target_type == TypeManager.uint32_type)
+				}
+				if (target_type == TypeManager.uint32_type) {
+					if (!CheckRange (ec, v, target_type, Int32.MinValue, Int32.MaxValue))
+						return null;
 					return new UIntConstant ((uint) v);
+				}
 				if (target_type == TypeManager.int64_type)
 					return new LongConstant ((long) v);
-				if (target_type == TypeManager.uint64_type)
+				if (target_type == TypeManager.uint64_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new ULongConstant ((ulong) v);
+				}
 				if (target_type == TypeManager.float_type)
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
-				if (target_type == TypeManager.char_type)
+				if (target_type == TypeManager.char_type) {
+					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
+						return null;
 					return new CharConstant ((char) v);
+				}
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is UIntConstant){
 				uint v = ((UIntConstant) expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
+						return null;
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				}
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
+						return null;
 					return new SByteConstant ((sbyte) v);
-				if (target_type == TypeManager.short_type)
+				}
+				if (target_type == TypeManager.short_type) {
+					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
+						return null;
 					return new ShortConstant ((short) v);
-				if (target_type == TypeManager.ushort_type)
+				}
+				if (target_type == TypeManager.ushort_type) {
+					if (!CheckRange (ec, v, target_type, UInt16.MinValue, UInt16.MaxValue))
+						return null;
 					return new UShortConstant ((ushort) v);
-				if (target_type == TypeManager.int32_type)
+				}
+				if (target_type == TypeManager.int32_type) {
+					if (!CheckRange (ec, v, target_type, Int32.MinValue, Int32.MaxValue))
+						return null;
 					return new IntConstant ((int) v);
+				}
 				if (target_type == TypeManager.int64_type)
 					return new LongConstant ((long) v);
 				if (target_type == TypeManager.uint64_type)
@@ -1316,60 +1443,111 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
-				if (target_type == TypeManager.char_type)
+				if (target_type == TypeManager.char_type) {
+					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
+						return null;
 					return new CharConstant ((char) v);
+				}
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is LongConstant){
 				long v = ((LongConstant) expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
+						return null;
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				}
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
+						return null;
 					return new SByteConstant ((sbyte) v);
-				if (target_type == TypeManager.short_type)
+				}
+				if (target_type == TypeManager.short_type) {
+					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
+						return null;
 					return new ShortConstant ((short) v);
-				if (target_type == TypeManager.ushort_type)
+				}
+				if (target_type == TypeManager.ushort_type) {
+					if (!CheckRange (ec, v, target_type, UInt16.MinValue, UInt16.MaxValue))
+						return null;
 					return new UShortConstant ((ushort) v);
-				if (target_type == TypeManager.int32_type)
+				}
+				if (target_type == TypeManager.int32_type) {
+					if (!CheckRange (ec, v, target_type, Int32.MinValue, Int32.MaxValue))
+						return null;
 					return new IntConstant ((int) v);
-				if (target_type == TypeManager.uint32_type)
+				}
+				if (target_type == TypeManager.uint32_type) {
+					if (!CheckRange (ec, v, target_type, UInt32.MinValue, UInt32.MaxValue))
+						return null;
 					return new UIntConstant ((uint) v);
-				if (target_type == TypeManager.uint64_type)
+				}
+				if (target_type == TypeManager.uint64_type) {
+					if (!CheckUnsigned (ec, v, target_type))
+						return null;
 					return new ULongConstant ((ulong) v);
+				}
 				if (target_type == TypeManager.float_type)
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
-				if (target_type == TypeManager.char_type)
+				if (target_type == TypeManager.char_type) {
+					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
+						return null;
 					return new CharConstant ((char) v);
+				}
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is ULongConstant){
 				ulong v = ((ULongConstant) expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckRange (ec, v, target_type, Byte.MaxValue))
+						return null;
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				}
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, (ulong) SByte.MaxValue))
+						return null;
 					return new SByteConstant ((sbyte) v);
-				if (target_type == TypeManager.short_type)
+				}
+				if (target_type == TypeManager.short_type) {
+					if (!CheckRange (ec, v, target_type, (ulong) Int16.MaxValue))
+						return null;
 					return new ShortConstant ((short) v);
-				if (target_type == TypeManager.ushort_type)
+				}
+				if (target_type == TypeManager.ushort_type) {
+					if (!CheckRange (ec, v, target_type, UInt16.MaxValue))
+						return null;
 					return new UShortConstant ((ushort) v);
-				if (target_type == TypeManager.int32_type)
+				}
+				if (target_type == TypeManager.int32_type) {
+					if (!CheckRange (ec, v, target_type, Int32.MaxValue))
+						return null;
 					return new IntConstant ((int) v);
-				if (target_type == TypeManager.uint32_type)
+				}
+				if (target_type == TypeManager.uint32_type) {
+					if (!CheckRange (ec, v, target_type, UInt32.MaxValue))
+						return null;
 					return new UIntConstant ((uint) v);
-				if (target_type == TypeManager.int64_type)
+				}
+				if (target_type == TypeManager.int64_type) {
+					if (!CheckRange (ec, v, target_type, (ulong) Int64.MaxValue))
+						return null;
 					return new LongConstant ((long) v);
+				}
 				if (target_type == TypeManager.float_type)
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
-				if (target_type == TypeManager.char_type)
+				if (target_type == TypeManager.char_type) {
+					if (!CheckRange (ec, v, target_type, Char.MaxValue))
+						return null;
 					return new CharConstant ((char) v);
+				}
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
