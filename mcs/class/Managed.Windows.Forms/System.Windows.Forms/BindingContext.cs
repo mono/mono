@@ -39,8 +39,8 @@ namespace System.Windows.Forms {
 		private class ManagerEntry {
 
 			private object source;
-			private string member;
-
+			private WeakReference member_ref;
+			
 			private int member_hash;
 
 			public ManagerEntry (object source, string member)
@@ -48,19 +48,18 @@ namespace System.Windows.Forms {
 				this.source = source;
 				if (member == null)
 					member = String.Empty;
-				this.member = member.ToLower (CultureInfo.InvariantCulture);
-
 				
-				member_hash = this.member.GetHashCode ();
+				member_hash = member.ToLower (CultureInfo.InvariantCulture).GetHashCode ();
 				if (member_hash == 0)
 					member_hash = 1;
+				member_ref = new WeakReference (member, false);
 			}
 
 			public override bool Equals (object b)
 			{
 				ManagerEntry o = (ManagerEntry) b;
 
-				return (o.source == source && o.member_hash == member_hash);
+				return (o.source == source && o.member_ref.Target == member_ref.Target);
 			}
 
 			public override int GetHashCode ()
@@ -70,7 +69,7 @@ namespace System.Windows.Forms {
 
 			public override string ToString ()
 			{
-				return source.ToString () + " + " + member.ToString ();
+				return source.ToString () + " + " + (member_ref.Target == null ? " -- null --" : member_ref.Target.ToString ());
 			}
 		}
 
@@ -94,11 +93,11 @@ namespace System.Windows.Forms {
 		public BindingManagerBase this [object data_source, string data_member] {
 			get {
 				ManagerEntry e = CreateEntry (data_source, data_member);
-				BindingManagerBase res = managers [e] as BindingManagerBase;
+				WeakReference wref = managers [e] as WeakReference;
 
-				if (res != null)
-					return res;
-				res = AddManager (data_source, data_member);
+				if (wref != null && wref.Target != null)
+					return wref.Target as BindingManagerBase;
+				BindingManagerBase res = AddManager (data_source, data_member);
 				return res;
 			}
 		}
@@ -106,8 +105,7 @@ namespace System.Windows.Forms {
 		private BindingManagerBase AddManager (object data_source, string data_member)
 		{
 			BindingManagerBase res = CreateBindingManager (data_source, data_member);
-			managers.Add (CreateEntry (data_source, data_member), res);
-			managers.Add (CreateEntry (data_source, String.Empty), res);
+			managers [CreateEntry (data_source, data_member)] = new WeakReference (res);
 
 			return res;
 		}
@@ -153,7 +151,7 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataSource");
 			if (listManager == null)
 				throw new ArgumentNullException ("listManager");
-			managers.Add (CreateEntry (dataSource, String.Empty), listManager);
+			managers.Add (CreateEntry (dataSource, String.Empty), new WeakReference (listManager));
 		}
 
 		protected internal void Clear ()

@@ -1,5 +1,10 @@
 2005-04-05  Jackson Harper  <jackson@ximian.com>
 
+	* BindingContext.cs: Use weak references so these bad actors don't
+	stay alive longer then they need to.
+
+2005-04-05  Jackson Harper  <jackson@ximian.com>
+
 	* ListControl.cs: Basic implementation of complex databinding.
 	* ComboBox.cs:
 	* ListBox.cs: Add calls to ListControl databinding methods.
