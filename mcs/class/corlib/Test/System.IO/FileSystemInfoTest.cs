@@ -18,6 +18,7 @@ namespace MonoTests.System.IO
         public class FileSystemInfoTest : Assertion
 	{
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		static readonly char DSC = Path.DirectorySeparatorChar;
 
 		[SetUp]
 		protected void SetUp() 
@@ -70,7 +71,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CreationTimeFile ()
 		{
-			string path = TempFolder + "/FSIT.CreationTime.Test";
+			string path = TempFolder + DSC + "FSIT.CreationTime.Test";
 			DeleteFile (path);
 			if (Unix) {  // Unix doesn't support CreationTimes
 			  return;
@@ -122,7 +123,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CreationTimeDirectory ()
 		{
-			string path = TempFolder + "/FSIT.CreationTimeDirectory.Test";
+			string path = TempFolder + DSC + "FSIT.CreationTimeDirectory.Test";
 			DeleteDir (path);
 			if (Unix) {  // Unix doesn't support CreationTimes
 			  return;
@@ -163,7 +164,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void CreationTimeNoFileOrDirectory ()
 		{
-			string path = TempFolder + "/FSIT.CreationTimeNoFile.Test";
+			string path = TempFolder + DSC + "FSIT.CreationTimeNoFile.Test";
 			DeleteFile (path);
 			DeleteDir (path);
 			
@@ -198,7 +199,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Extenssion ()
 		{
-			string path = TempFolder + "/FSIT.Extenssion.Test";
+			string path = TempFolder + DSC + "FSIT.Extenssion.Test";
 			DeleteFile (path);
 			
 			try {
@@ -212,7 +213,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void DefaultLastAccessTime ()
 		{
-			string path = TempFolder + "/FSIT.DefaultLastAccessTime.Test";
+			string path = TempFolder + DSC + "FSIT.DefaultLastAccessTime.Test";
 			DeleteFile (path);
 			
 			try {
@@ -235,7 +236,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void LastAccessTime ()
 		{
-			string path = TempFolder + "/FSIT.LastAccessTime.Test";
+			string path = TempFolder + DSC + "FSIT.LastAccessTime.Test";
 			DeleteFile (path);
 
 			try {
@@ -278,7 +279,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void DefaultLastWriteTime ()
 		{
-			string path = TempFolder + "/FSIT.DefaultLastWriteTime.Test";
+			string path = TempFolder + DSC + "FSIT.DefaultLastWriteTime.Test";
 			DeleteDir (path);
 
 			try {
@@ -301,7 +302,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void LastWriteTime ()
 		{
-			string path = TempFolder + "/FSIT.LastWriteTime.Test";
+			string path = TempFolder + DSC + "FSIT.LastWriteTime.Test";
 			DeleteDir (path);
 			
 			try {

@@ -1,3 +1,11 @@
+2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DirectoryInfoTest.cs,
+	  DirectoryTest.cs,
+	  FileStreamTest.cs,
+	  FileSystemInfoTest.cs:
+	  Replace all '/' in path with Path.DirectorySeparatorChar.
+
 2004-06-08  Duncan Mak  <duncan@ximian.com>
 
 	* DirectoryTest.cs (GetParentOfRootDirectory): Add test for

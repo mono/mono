@@ -14,6 +14,8 @@ namespace MonoTests.System.IO
     	{
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
+		static readonly char DSC = Path.DirectorySeparatorChar;
+
         	[SetUp]
         	protected void SetUp() {
 			if (Directory.Exists (TempFolder))
@@ -30,7 +32,7 @@ namespace MonoTests.System.IO
         	[Test]
         	public void Ctr ()
         	{
-        	    	string path = TempFolder + "/DIT.Ctr.Test";
+        	    	string path = TempFolder + DSC + "DIT.Ctr.Test";
         		DeleteDir (path);
             	
         	    	FileInfo info = new FileInfo (path);
@@ -75,7 +77,7 @@ namespace MonoTests.System.IO
         	[Test]
         	public void Exists ()
         	{
-            	string path = TempFolder + "/DIT.Exists.Test";
+            	string path = TempFolder + DSC + "DIT.Exists.Test";
             	DeleteDir (path);
             
             	try {
@@ -94,7 +96,7 @@ namespace MonoTests.System.IO
         	[Test]
         	public void Name ()
         	{
-        		string path = TempFolder + "/DIT.Name.Test";
+        		string path = TempFolder + DSC + "DIT.Name.Test";
         		DeleteDir (path);
         		
         		try {
@@ -113,7 +115,7 @@ namespace MonoTests.System.IO
         	[Test]
         	public void Parent ()
         	{
-        		string path = TempFolder + "/DIT.Parent.Test";
+        		string path = TempFolder + DSC + "DIT.Parent.Test";
         		DeleteDir (path);
         		
         		try {
@@ -131,7 +133,7 @@ namespace MonoTests.System.IO
         	[Test]
         	public void Create ()
         	{
-            	string path = TempFolder + "/DIT.Create.Test";
+            	string path = TempFolder + DSC + "DIT.Create.Test";
             	DeleteDir (path);
             
             	try {
@@ -163,7 +165,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete1 ()
 		{
-            	string path = TempFolder + "/DIT.Delete1.Test";
+            	string path = TempFolder + DSC + "DIT.Delete1.Test";
             	DeleteDir (path);
 			
 			try {
@@ -184,12 +186,12 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Delete2 ()
 		{
-            	string path = TempFolder + "/DIT.Delete2.Test";
+            	string path = TempFolder + DSC + "DIT.Delete2.Test";
             	DeleteDir (path);
 			
 			try {
 				Directory.CreateDirectory (path);
-				File.Create (path + "/test").Close ();
+				File.Create (path + DSC + "test").Close ();
 				DirectoryInfo info = new DirectoryInfo (path);
 				AssertEquals ("test#01", true, info.Exists);
 				
@@ -207,12 +209,12 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void DeleteIOException1 ()
 		{
-            	string path = TempFolder + "/DIT.DeleteIOException1.Test";
+            	string path = TempFolder + DSC + "DIT.DeleteIOException1.Test";
             	DeleteDir (path);			
 			
 			try {
 				Directory.CreateDirectory (path);
-				File.Create (path + "/test").Close ();
+				File.Create (path + DSC + "test").Close ();
 				DirectoryInfo info = new DirectoryInfo (path);
 				info.Delete ();
 			} finally {
@@ -224,12 +226,12 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void DeleteIOException2 ()
 		{
-            	string path = TempFolder + "/DIT.DeleteIOException2.Test";
+            	string path = TempFolder + DSC + "DIT.DeleteIOException2.Test";
             	DeleteDir (path);			
 			
 			try {
 				Directory.CreateDirectory (path);
-				File.Create (path + "/test").Close ();
+				File.Create (path + DSC + "test").Close ();
 				DirectoryInfo info = new DirectoryInfo (path);
 				info.Delete (false);
 			} finally {
@@ -240,18 +242,18 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetDirectories1 ()
 		{
-			string path = TempFolder + "/DIT.GetDirectories1.Test";
+			string path = TempFolder + DSC + "DIT.GetDirectories1.Test";
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
 				AssertEquals ("test#01", 0, info.GetDirectories ().Length);
 				
-				Directory.CreateDirectory (path + "/" + "1");
-				Directory.CreateDirectory (path + "/" + "2");				
-				File.Create (path + "/" + "filetest").Close ();
+				Directory.CreateDirectory (path + DSC + "1");
+				Directory.CreateDirectory (path + DSC + "2");				
+				File.Create (path + DSC + "filetest").Close ();
 				AssertEquals ("test#02", 2, info.GetDirectories ().Length);
 				
-				Directory.Delete (path + "/" + 2);
+				Directory.Delete (path + DSC + 2);
 				AssertEquals ("test#02", 1, info.GetDirectories ().Length);				
 				
 			} finally {
@@ -262,17 +264,17 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetDirectories2 ()
 		{
-			string path = TempFolder + "/DIT.GetDirectories2.Test";
+			string path = TempFolder + DSC + "DIT.GetDirectories2.Test";
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
 				AssertEquals ("test#01", 0, info.GetDirectories ("*").Length);
 				
-				Directory.CreateDirectory (path + "/" + "test120");
-				Directory.CreateDirectory (path + "/" + "test210");
-				Directory.CreateDirectory (path + "/" + "atest330");
-				Directory.CreateDirectory (path + "/" + "test220");
-				File.Create (path + "/" + "filetest").Close ();
+				Directory.CreateDirectory (path + DSC + "test120");
+				Directory.CreateDirectory (path + DSC + "test210");
+				Directory.CreateDirectory (path + DSC + "atest330");
+				Directory.CreateDirectory (path + DSC + "test220");
+				File.Create (path + DSC + "filetest").Close ();
 				
 				AssertEquals ("test#02", 4, info.GetDirectories ("*").Length);
 				AssertEquals ("test#03", 3, info.GetDirectories ("test*").Length);
@@ -291,7 +293,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]		
 		public void GetDirectoriesDirectoryNotFoundException1 ()
 		{
-            	string path = TempFolder + "/DIT.GetDirectoriesDirectoryNotFoundException1.Test";
+            	string path = TempFolder + DSC + "DIT.GetDirectoriesDirectoryNotFoundException1.Test";
             	DeleteDir (path);
 			
 			try {
@@ -306,7 +308,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]		
 		public void GetDirectoriesDirectoryNotFoundException2 ()
 		{
-            	string path = TempFolder + "/DIT.GetDirectoriesDirectoryNotFoundException2.Test";
+            	string path = TempFolder + DSC + "DIT.GetDirectoriesDirectoryNotFoundException2.Test";
             	DeleteDir (path);
 			
 			try {
@@ -321,7 +323,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetDirectoriesArgumentNullException ()
 		{
-            	string path = TempFolder + "/DIT.GetDirectoriesArgumentNullException.Test";
+            	string path = TempFolder + DSC + "DIT.GetDirectoriesArgumentNullException.Test";
             	DeleteDir (path);
 			
 			try {
@@ -335,15 +337,15 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetFiles1 ()
 		{
-            	string path = TempFolder + "/DIT.GetFiles1.Test";
+            	string path = TempFolder + DSC + "DIT.GetFiles1.Test";
             	DeleteDir (path);
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
 				AssertEquals ("test#01", 0, info.GetFiles ().Length);
-				File.Create (path + "/" + "file1").Close ();
-				File.Create (path + "/" + "file2").Close ();
-				Directory.CreateDirectory (path + "/" + "directory1");
+				File.Create (path + DSC + "file1").Close ();
+				File.Create (path + DSC + "file2").Close ();
+				Directory.CreateDirectory (path + DSC + "directory1");
 				AssertEquals ("test#02", 2, info.GetFiles ().Length);
 				                        
 			} finally {
@@ -354,19 +356,19 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetFiles2()
 		{
-            	string path = TempFolder + "/DIT.GetFiles2.Test";
+            	string path = TempFolder + DSC + "DIT.GetFiles2.Test";
             	DeleteDir (path);
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
 				AssertEquals ("test#01", 0, info.GetFiles ("*").Length);
-				File.Create (path + "/" + "file120file").Close ();
-				File.Create (path + "/" + "file220file").Close ();
-				File.Create (path + "/" + "afile330file").Close ();
-				File.Create (path + "/" + "test.abc").Close ();
-				File.Create (path + "/" + "test.abcd").Close ();
-				File.Create (path + "/" + "test.abcdef").Close ();				
-				Directory.CreateDirectory (path + "/" + "dir");
+				File.Create (path + DSC + "file120file").Close ();
+				File.Create (path + DSC + "file220file").Close ();
+				File.Create (path + DSC + "afile330file").Close ();
+				File.Create (path + DSC + "test.abc").Close ();
+				File.Create (path + DSC + "test.abcd").Close ();
+				File.Create (path + DSC + "test.abcdef").Close ();				
+				Directory.CreateDirectory (path + DSC + "dir");
 				
 				AssertEquals ("test#02", 6, info.GetFiles ("*").Length);
 				AssertEquals ("test#03", 2, info.GetFiles ("file*file").Length);
@@ -383,7 +385,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void GetFilesDirectoryNotFoundException1 ()
 		{
-			string path = TempFolder + "/DIT.GetFilesDirectoryNotFoundException1.Test";
+			string path = TempFolder + DSC + "DIT.GetFilesDirectoryNotFoundException1.Test";
 			DeleteDir (path);
 			
 			try {
@@ -399,7 +401,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void GetFilesDirectoryNotFoundException2 ()
 		{
-			string path = TempFolder + "/DIT.GetFilesDirectoryNotFoundException2.Test";
+			string path = TempFolder + DSC + "DIT.GetFilesDirectoryNotFoundException2.Test";
 			DeleteDir (path);
 			
 			try {
@@ -415,7 +417,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetFilesArgumentNullException ()
 		{
-			string path = TempFolder + "/DIT.GetFilesArgumentNullException.Test";
+			string path = TempFolder + DSC + "DIT.GetFilesArgumentNullException.Test";
 			DeleteDir (path);
 			
 			try {
@@ -429,8 +431,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void MoveTo ()
 		{
-			string path1 = TempFolder + "/DIT.MoveTo.Soucre.Test";
-			string path2 = TempFolder + "/DIT.MoveTo.Dest.Test";
+			string path1 = TempFolder + DSC + "DIT.MoveTo.Soucre.Test";
+			string path2 = TempFolder + DSC + "DIT.MoveTo.Dest.Test";
 			DeleteDir (path1);
 			DeleteDir (path2);
 			
@@ -460,7 +462,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void MoveToArgumentNullException ()
 		{
-			string path = TempFolder + "/DIT.MoveToArgumentNullException.Test";
+			string path = TempFolder + DSC + "DIT.MoveToArgumentNullException.Test";
 			DeleteDir (path);
 			
 			try {
@@ -476,7 +478,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void MoveToIOException1 ()
 		{
-			string path = TempFolder + "/DIT.MoveToIOException1.Test";
+			string path = TempFolder + DSC + "DIT.MoveToIOException1.Test";
 			DeleteDir (path);
 			
 			try {
@@ -491,7 +493,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void MoveToArgumentException1 ()
 		{
-			string path = TempFolder + "/DIT.MoveToArgumentException1.Test";
+			string path = TempFolder + DSC + "DIT.MoveToArgumentException1.Test";
 			DeleteDir (path);
 			
 			try {
@@ -506,7 +508,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void MoveToArgumentException2 ()
 		{
-			string path = TempFolder + "/DIT.MoveToArgumentException2.Test";
+			string path = TempFolder + DSC + "DIT.MoveToArgumentException2.Test";
 			DeleteDir (path);
 			
 			try {
@@ -521,7 +523,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void MoveToArgumentException3 ()
 		{
-			string path = TempFolder + "/DIT.MoveToArgumentException3.Test";
+			string path = TempFolder + DSC + "DIT.MoveToArgumentException3.Test";
 			DeleteDir (path);
 			
 			try {
@@ -536,7 +538,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void MoveToIOException2 ()
 		{
-			string path = TempFolder + "/DIT.MoveToIOException2.Test";
+			string path = TempFolder + DSC + "DIT.MoveToIOException2.Test";
 			DeleteDir (path);
 			
 			try {

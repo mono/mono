@@ -21,6 +21,7 @@ namespace MonoTests.System.IO
         public class FileStreamTest : Assertion
         {
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+		static readonly char DSC = Path.DirectorySeparatorChar;
 
 		[TearDown]
 		public void TearDown()
@@ -40,7 +41,7 @@ namespace MonoTests.System.IO
 
                 public void TestCtr ()
                 {
-			string path = TempFolder + "/testfilestream.tmp.1";
+			string path = TempFolder + DSC + "testfilestream.tmp.1";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
@@ -74,11 +75,11 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void CtorFileNotFoundException1 ()
 		{
-			string path = TempFolder + "/thisfileshouldnotexists.test";
+			string path = TempFolder + DSC + "thisfileshouldnotexists.test";
 			DeleteFile (path);
 			FileStream stream = null;
                 	try {                		
-                		stream = new FileStream (TempFolder + "/thisfileshouldnotexists.test", FileMode.Open);
+                		stream = new FileStream (TempFolder + DSC + "thisfileshouldnotexists.test", FileMode.Open);
                 	} finally {
 				if (stream != null)
 					stream.Close ();
@@ -90,12 +91,12 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void CtorFileNotFoundException2 ()
 		{
-			string path = TempFolder + "/thisfileshouldNOTexists.test";
+			string path = TempFolder + DSC + "thisfileshouldNOTexists.test";
 			DeleteFile (path);
 			FileStream stream = null;
 
                 	try {
-                		stream = new FileStream (TempFolder + "/thisfileshouldNOTexists.test", FileMode.Truncate);
+                		stream = new FileStream (TempFolder + DSC + "thisfileshouldNOTexists.test", FileMode.Truncate);
                 	} finally {
 				if (stream != null)
 					stream.Close ();
@@ -108,7 +109,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (IOException))]
 		public void CtorIOException1 ()
 		{
-			string path = TempFolder + "/thisfileshouldexists.test";
+			string path = TempFolder + DSC + "thisfileshouldexists.test";
 			FileStream stream = null;
 			DeleteFile (path);
                 	try {
@@ -161,13 +162,13 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (DirectoryNotFoundException))]
 		public void CtorDirectoryNotFoundException ()
 		{
-			string path = TempFolder + "/thisDirectoryShouldNotExists";
+			string path = TempFolder + DSC + "thisDirectoryShouldNotExists";
 			if (Directory.Exists (path))
 				Directory.Delete (path, true);
 
 			FileStream stream = null;				
                 	try {
-                		stream = new FileStream (path + "/eitherthisfile.test", FileMode.CreateNew);
+                		stream = new FileStream (path + DSC + "eitherthisfile.test", FileMode.CreateNew);
                 	} finally {
 
 				if (stream != null)
@@ -182,7 +183,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void CtorArgumentOutOfRangeException3 ()
 		{
-			string path = TempFolder + "/CtorArgumentOutOfRangeException1";
+			string path = TempFolder + DSC + "CtorArgumentOutOfRangeException1";
 			DeleteFile (path);
 			
 			FileStream stream = null;
@@ -199,7 +200,7 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void CtorArgumentOutOfRangeException4 ()
 		{
-			string path = TempFolder + "/CtorArgumentOutOfRangeException2";
+			string path = TempFolder + DSC + "CtorArgumentOutOfRangeException4";
 			DeleteFile (path);
 
 			FileStream stream = null;
@@ -305,7 +306,7 @@ namespace MonoTests.System.IO
 		[Test, ExpectedException(typeof(IOException))]
 		public void CtorIOException ()
 		{			
-			string path = TempFolder + "/CTorIOException.Test";
+			string path = TempFolder + DSC + "CTorIOException.Test";
 			FileStream stream = null;
 			FileStream stream2 = null;
 			DeleteFile (path);
@@ -327,7 +328,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Write ()
 		{
-			string path = TempFolder + "/FileStreamTest.Write";
+			string path = TempFolder + DSC + "FileStreamTest.Write";
 
 			DeleteFile (path);
 
@@ -364,7 +365,7 @@ namespace MonoTests.System.IO
 		{
 			// Test that the Length property takes into account the data
 			// in the buffer
-			string path = TempFolder + "/FileStreamTest.Length";
+			string path = TempFolder + DSC + "FileStreamTest.Length";
 
 			DeleteFile (path);
 
@@ -380,7 +381,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Flush ()
 		{
-			string path = TempFolder + "/FileStreamTest.Flush";
+			string path = TempFolder + DSC + "FileStreamTest.Flush";
 			FileStream stream = null;
 			FileStream stream2 = null;
 
@@ -509,7 +510,7 @@ namespace MonoTests.System.IO
                 [Test]
                 public void Seek ()
                 {
-                	string path = TempFolder + "/FST.Seek.Test";
+                	string path = TempFolder + DSC + "FST.Seek.Test";
                 	DeleteFile (path);			
 
                 	FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
