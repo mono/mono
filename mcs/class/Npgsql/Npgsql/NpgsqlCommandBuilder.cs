@@ -159,14 +159,14 @@ namespace Npgsql {
 					if (i != 0) {
 						wheres += " and ";
 					}
-					wheres += String.Format("(({0} is null) or ({0} = :w_param_{0}", column.ColumnName);
+					wheres += String.Format("(({0} is null) or ({0} = :param_{0}))", column.ColumnName);
 				}
 				if (table_name == String.Empty) {
 					table_name = row.Table.TableName;
 				}
 				NpgsqlCommand cmdaux = new NpgsqlCommand("delete from " + table_name + " where ( " + wheres + " )", data_adapter.SelectCommand.Connection);
 				foreach (DataColumn column in row.Table.Columns) {
-					NpgsqlParameter aux = new NpgsqlParameter("param_" + column.ColumnName, row[column]);
+					NpgsqlParameter aux = new NpgsqlParameter("param_" + column.ColumnName, row[column,DataRowVersion.Original]);
 					aux.Direction = ParameterDirection.Input;
 					aux.SourceColumn = column.ColumnName;
 					aux.SourceVersion = DataRowVersion.Original;

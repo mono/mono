@@ -99,13 +99,13 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "OnRowUpdating");
 			switch (value.StatementType) {
 				case StatementType.Insert:
-					value.Command = _insertCommand = cmd_builder.GetInsertCommand(value.Row);
+					value.Command = cmd_builder.GetInsertCommand(value.Row);
 					break;
 				case StatementType.Update:
-					value.Command = _updateCommand = cmd_builder.GetUpdateCommand(value.Row);
+					value.Command = cmd_builder.GetUpdateCommand(value.Row);
 					break;
 				case StatementType.Delete:
-					value.Command = _deleteCommand = cmd_builder.GetDeleteCommand(value.Row);
+					value.Command = cmd_builder.GetDeleteCommand(value.Row);
 					break;
 			}
 			DataColumnMappingCollection columnMappings = value.TableMapping.ColumnMappings;
