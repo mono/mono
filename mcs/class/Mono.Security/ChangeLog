@@ -1,5 +1,9 @@
 2004-02-10 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
+    * Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
+
+        - Throw exception if the Private Key is null.
+
     * Mono.Security.Protocol.Tls/SslServerStream.cs:
 
         - Ssl Server class without implementation ( methods signatures only )

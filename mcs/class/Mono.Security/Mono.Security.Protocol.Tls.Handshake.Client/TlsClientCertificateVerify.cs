@@ -60,23 +60,32 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			AsymmetricAlgorithm privKey = this.Context.SslStream.RaisePrivateKeySelection(
+			AsymmetricAlgorithm privKey = null;
+			
+			privKey = this.Context.SslStream.RaisePrivateKeySelection(
 				this.Context.ClientSettings.ClientCertificate,
 				this.Context.ClientSettings.TargetHost);
 
-			// Compute handshake messages hash
-			MD5SHA1 hash = new MD5SHA1();
-			hash.ComputeHash(
-				this.Context.HandshakeMessages.ToArray(),
-				0,
-				(int)this.Context.HandshakeMessages.Length);
+			if (privKey == null)
+			{
+				throw this.Context.CreateException("Client certificate Private Key unavailable.");
+			}
+			else
+			{
+				// Compute handshake messages hash
+				MD5SHA1 hash = new MD5SHA1();
+				hash.ComputeHash(
+					this.Context.HandshakeMessages.ToArray(),
+					0,
+					(int)this.Context.HandshakeMessages.Length);
 
-			// RSAManaged of the selected ClientCertificate 
-			// (at this moment the first one)
-			RSA rsa = getClientCertRSA((RSA)privKey);
+				// RSAManaged of the selected ClientCertificate 
+				// (at this moment the first one)
+				RSA rsa = this.getClientCertRSA((RSA)privKey);
 
-			// Write message
-			Write(hash.CreateSignature(rsa));
+				// Write message
+				this.Write(hash.CreateSignature(rsa));
+			}
 		}
 
 		#endregion
