@@ -1,3 +1,7 @@
+2004-02-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistenceTest.cs: New. Unit tests for key pair persistence.
+
 2003-11-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* MD4Test.cs: New. Contains all the test vectors provided in RFC1320 
