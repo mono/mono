@@ -1,3 +1,11 @@
+2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataProtectionPermission.cs: Moving to System.Security assembly.
+	* DataProtectionPermissionAttribute.cs: Moving to System.Security.dll.
+	* DataProtectionFlags.cs: Moving to System.Security assembly.
+	* KeyContainerPermissionFlags.cs: Added ViewAcl and ChangeAcl (added
+	after beta1). Corrected AllFlags (with new entries).
+
 2004-11-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermission.cs:

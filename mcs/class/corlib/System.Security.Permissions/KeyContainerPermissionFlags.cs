@@ -4,7 +4,7 @@
 // Author
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,7 +41,9 @@ namespace System.Security.Permissions {
 		Export = 32,
 		Sign = 256,
 		Decrypt = 512,
-		AllFlags = Create | Decrypt | Delete | Export | Import | Open | Sign
+		ViewAcl = 1024,
+		ChangeAcl = 2048
+		AllFlags = Create | Decrypt | Delete | Export | Import | Open | Sign | ViewAcl | ChangeAcl
 	}
 }
 
