@@ -1,9 +1,9 @@
 Test cases listed by Category:
 ==============================
 
-* Binary operators
+* Operators
 
-  test-146.cs test-175.cs
+  test-146.cs test-175.cs test-200.cs
 
 * Overloading
 
@@ -63,7 +63,7 @@ Test cases listed by Category:
 
 * Type resolution and name lookup
 
-  test-198.cs
+  test-198.cs test-201.cs test-202.cs
 
 Test cases listed by Number:
 ============================
@@ -292,6 +292,16 @@ test-199.cs
 -----------
 
 Name resolution wrt. inaccessible types.  Fixes bug #36313.
+
+test-200.cs
+-----------
+
+Compound assignment (x = (y += 3)).  Fixes bug #45854.
+
+test-201.cs
+-----------
+
+Fix for Bug #35631.
 
 verify-1.cs
 -----------

@@ -1,3 +1,15 @@
+2003-07-13  Martin Baulig  <martin@ximian.com>
+
+	* test-202.cs: Added test for bug #41975.
+
+2003-07-13  Martin Baulig  <martin@ximian.com>
+
+	* test-201.cs: Added test for bug #35631.
+
+2003-07-12  Martin Baulig  <martin@ximian.com>
+
+	* test-200.cs: Added test for bug #45854.
+
 2003-07-08  Martin Baulig  <martin@ximian.com>
 
 	* test-198.cs, test-199.cs: New tests for bugs #36316, #36314 and
