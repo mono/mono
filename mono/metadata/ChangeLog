@@ -1,3 +1,8 @@
+2003-12-16  Jackson Harper <jackson@ximian.com>
+
+	* icall.c: comment out call to mono_runtime_is_shutting_down to
+	fix build.
+	
 2003-12-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetManifestResourceInternal): Add support for loading resources from modules.
