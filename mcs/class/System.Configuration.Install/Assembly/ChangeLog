@@ -1,4 +1,8 @@
-2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Consts.cs: Replaced by Consts.cs from System.Messaging
+
+2004-05-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Consts.cs: Added
 

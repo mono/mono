@@ -1,14 +1,13 @@
 //
 // Consts.cs
 //
-// Authors:
-//   Umadevi S (sumadevi@novell.com)
+// Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
-// 
+//
+// (C) 2003 Andreas Nahr
 //
 // NOTE:
 //	Ensure that every constant is defined for every version symbol!
-//	This class is similar to the Consts.cs class at System.Web/Assembly by Andreas Nhar
 //
 
 // This class contains constants that are dependent on the defined symbols
@@ -35,14 +34,24 @@ internal sealed class Consts
 
 #if (NET_1_0)
 
+	public const string AssemblySystem_Design = "System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing = "System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 	public const string AssemblyMicrosoft_VisualStudio = "Microsoft.VisualStudio, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-	public const string AssemblySystem = "System, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 
-//#elif (NET_1_1)
+#elif (NET_2_0)
+
+	public const string AssemblySystem_Design = "System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing = "System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblyMicrosoft_VisualStudio = "Microsoft.VisualStudio, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	
 #else
 	// NET_1_1 is seen as default if somebody 'forgets' to specify any of the symbols
 	// to ensure we are not breaking the build in this case
+
+	public const string AssemblySystem_Design = "System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing = "System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 	public const string AssemblyMicrosoft_VisualStudio = "Microsoft.VisualStudio, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-	public const string AssemblySystem = "System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+
 #endif
+
 }
