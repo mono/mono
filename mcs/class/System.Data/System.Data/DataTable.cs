@@ -51,7 +51,12 @@ namespace System.Data {
 		private string _tableName;
 		private bool _containsListCollection;
 		private string _encodedTableName;
+
 		
+		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
+		// CaseSensitive property. So when you lost you virginity it's gone for ever
+		private bool _virginCaseSensitive = true;
+
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with no arguments.
 		/// </summary>
@@ -109,9 +114,16 @@ namespace System.Data {
 		[DataSysDescription ("Indicates whether comparing strings within the table is case sensitive.")]	
 		public bool CaseSensitive {
 			get { return _caseSensitive; }
-			set { _caseSensitive = value; }
+			set { 
+				_virginCaseSensitive = false;
+				_caseSensitive = value; 
+			}
 		}
 
+		internal bool VirginCaseSensitive {
+			get { return _virginCaseSensitive; }
+			set { _virginCaseSensitive = value; }
+		}
 
 		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv)
 		{
@@ -466,6 +478,8 @@ namespace System.Data {
 		private void CopyProperties (DataTable Copy)
 		{
 			Copy.CaseSensitive = CaseSensitive;
+			Copy.VirginCaseSensitive = VirginCaseSensitive;
+
 			// Copy.ChildRelations
 			// Copy.Constraints
 			// Copy.Container

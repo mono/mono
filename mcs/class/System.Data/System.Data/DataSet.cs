@@ -71,8 +71,10 @@ namespace System.Data {
 		public bool CaseSensitive {
 			get { return caseSensitive; } 
 			set {
-				foreach (DataTable T in Tables)
-					T.CaseSensitive = value;
+				foreach (DataTable T in Tables) {
+					if (T.VirginCaseSensitive)
+						T.CaseSensitive = value;
+				}
 
 				caseSensitive = value; 
 			}

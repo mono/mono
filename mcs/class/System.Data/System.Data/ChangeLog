@@ -1,5 +1,11 @@
 2003-02-19  Ville Palo <vi64pa@kolumbus.fi>
 
+	* DataTable.cs: DataTable.CaseSensitive follows parent 
+	DataSet.CaseSensitive property if DataTable.CaseSensitive has never
+	been changed directly from DataTable
+	
+2003-02-19  Ville Palo <vi64pa@kolumbus.fi>
+
 	* DataSet.cs: When CaseSensitive property is changed all of the Tables
 	of DataSet have to change too
 	
