@@ -3,6 +3,7 @@
 //
 // Author:
 //	Sebastien Pouliot <sebastien@ximian.com>
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2004 Novell (http://www.novell.com)
@@ -110,7 +111,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		// (see XSLT spec 2.7)
 		public void EmbeddedStylesheet () 
 		{
-			string test = "<Test xsl:version='1.0'>XmlDsigXsltTransform</Test>";
+			string test = "<Test xsl:version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>XmlDsigXsltTransform</Test>";
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 
