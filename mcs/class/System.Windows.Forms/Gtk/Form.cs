@@ -22,7 +22,6 @@ namespace System.Windows.Forms {
 		// if the application has a menu and/or a statusbar
 		// then this menu should be added to the vbox before
 		// the layout and the statusbar after the layout
-		Gtk.VBox vbox = null;
 		Control menu = null;
 
 		public Form () : base ()
@@ -31,6 +30,7 @@ namespace System.Windows.Forms {
 
 		static Form ()
 		{
+			// this happens to late (added this to Control's static constructor)
 			Gtk.Application.Init ();
 		}
 		
@@ -53,7 +53,7 @@ namespace System.Windows.Forms {
 			win.Title = Text;
 			vbox = new Gtk.VBox(false, 0);
 			win.Add (vbox);
-			vbox.Show ();
+			vbox.ShowAll ();
 			vbox.PackStart(contents, true, true, 0);
 			return (Widget) win;
 		}
@@ -268,12 +268,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				this.menu = value;
-				MainMenu m = (MainMenu)value;
-				this.vbox.PackStart(m.mb, false, false, 0);
-
-				m.mb.Show();
-				this.vbox.ReorderChild (m.mb, 0);
-				Control.Controls.Add(this.menu, false);
+				Control.Controls.Add(this.menu);
 			}
 		}
 		// [MonoTODO]
@@ -469,13 +464,16 @@ namespace System.Windows.Forms {
 		// [MonoTODO]
 		 public void SuspendLayout()
 		 {
-				throw new NotImplementedException ();
 		 }
 		// [MonoTODO]
 		 public void ResumeLayout()
 		 {
-				throw new NotImplementedException ();
 		 }
+
+		public void ResumeLayout (bool performLayout)
+		{
+		}
+
 		// [MonoTODO]
 		// public void Scale(float f)
 		// {

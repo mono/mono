@@ -206,6 +206,7 @@ namespace demo
 	
 	public class GtkMain
 	{
+		[STAThread]
 		public static void Main()
 		{
 			GtkForm form1 = new GtkForm ();

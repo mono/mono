@@ -30,6 +30,7 @@ namespace System.Windows.Forms {
 		bool tabStop=true;
 		static int init_me;
 		RightToLeft rightToLeft;
+		protected Gtk.VBox vbox = null;
 
 		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable 
 		{
@@ -46,21 +47,38 @@ namespace System.Windows.Forms {
 			}
 
 			// ControlCollection
-			public virtual void Add (Control value, bool doevent) {
-				if (doevent == true) {
-					this.Add (value);
-					return;
+			public virtual void Add (Control value)
+			{
+				if (value.GetType() == typeof(System.Windows.Forms.StatusBar))
+				{
+					this.owner.vbox.PackEnd(value.widget, false, false, 0);
+					// this.vbox.ReorderChild (value.widget, 0);
+					this.owner.vbox.ShowAll();
+					list.Add (value);
 				}
-				list.Add(value);
-			}
-			public virtual void Add (Control value) {
-				list.Add (value);
-				owner.OnControlAdded (new ControlEventArgs (value));
+				else if (value.GetType() == typeof(System.Windows.Forms.MainMenu))
+				{
+					MainMenu m = (MainMenu)value;
+					this.owner.vbox.PackStart(m.mb, false, false, 0);
+					m.mb.ShowAll();
+					this.owner.vbox.ReorderChild (m.mb, 0);
+					this.owner.vbox.ShowAll();
+					list.Add (value);
+				}
+				else {
+					list.Add (value);
+					owner.OnControlAdded (new ControlEventArgs (value));
+				}
 			}
 			public virtual void AddRange (Control[] controls) {
-				list.AddRange (controls);
+				// Because we really do have to check for a few
+				// special cases we cannot use the AddRange and
+				// will have to check each Control that we add
+
+				// list.AddRange (controls);
 				foreach (Control c in controls) 
-					owner.OnControlAdded (new ControlEventArgs (c));
+					this.Add (c);
+				// owner.OnControlAdded (new ControlEventArgs (c));
 			}
 			
 			public bool Contains (Control value) { return list.Contains (value); }

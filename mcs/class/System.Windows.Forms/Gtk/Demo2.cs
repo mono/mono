@@ -25,9 +25,16 @@ namespace demo2
 		private MenuItem menuItem3 = new MenuItem();
 		private MenuItem menuItem4 = new MenuItem();
 		private MenuItem menuItem5 = new MenuItem();
- 
+		private StatusBar statusBar1 = new StatusBar();
+
 		private void InitializeWidgets()
 		{
+                        this.statusBar1.Location = new System.Drawing.Point(0, 251);
+                        this.statusBar1.Name = "statusBar1";
+                        this.statusBar1.Size = new System.Drawing.Size(292, 22);
+                        this.statusBar1.TabIndex = 0;
+                        this.statusBar1.Text = "statusBar1";
+
 			button1.Location = new Point(150, 28);
 			button1.Name = "button1";
 			button1.Size = new Size(128, 44);
@@ -68,7 +75,8 @@ namespace demo2
 									    this.button1,
 									    this.button2,
 									    this.color1,
-									    this.combo1});
+									    this.combo1, 
+									    this.statusBar1});
 
 			this.Size = new Size(512, 250);
 			this.Menu = mainMenu1;
@@ -100,6 +108,7 @@ namespace demo2
 	
 	public class GtkMain
 	{
+		[STAThread]
 		public static void Main()
 		{
 			GtkForm form1 = new GtkForm ();

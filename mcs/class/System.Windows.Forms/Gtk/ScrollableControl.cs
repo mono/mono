@@ -15,7 +15,6 @@ using GtkSharp;
 
 namespace System.Windows.Forms {
 	public class ScrollableControl : Control {
-
 		//
 		//  --- Constructor
 		//
