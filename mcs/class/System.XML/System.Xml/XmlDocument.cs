@@ -359,7 +359,7 @@ namespace System.Xml
 
 		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
 		{
-#if NET_2_0tmp_out
+#if NET_2_0
 			return new XPathEditableDocument (node).CreateNavigator ();
 #else
 			return new XmlDocumentNavigator (node);

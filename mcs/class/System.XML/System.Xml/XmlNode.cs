@@ -730,7 +730,7 @@ namespace System.Xml
 			ArrayList rgNodes = new ArrayList ();
 			while (iter.MoveNext ())
 			{
-				rgNodes.Add (((XmlDocumentNavigator) iter.Current).Node);
+				rgNodes.Add (((IHasXmlNode) iter.Current).GetNode ());
 			}
 			return new XmlNodeArrayList (rgNodes);
 		}
@@ -749,7 +749,10 @@ namespace System.Xml
 			XPathNodeIterator iter = nav.Select (expr);
 			if (!iter.MoveNext ())
 				return null;
-			return ((XmlDocumentNavigator) iter.Current).Node;
+if (iter.Current is IHasXmlNode)
+			return ((IHasXmlNode) iter.Current).GetNode ();
+else
+throw new Exception ("It should be IHasXmlNode: " + iter.Current.GetType ());
 		}
 
 		internal static void SetReadOnly (XmlNode n)

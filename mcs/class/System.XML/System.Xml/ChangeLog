@@ -1,5 +1,11 @@
 2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocument.cs : use XPathEditableDocument again.
+	* XmlNode.cs : To be compatible with XPathEditableDocument, it should
+	  not cast XPathNavigator to XmlDocumentNavigator but to IHasXmlNode.
+
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlChar.cs, XmlConstructs.cs :
 	  Switched again, for reducing per-process memory consumption.
 	* XmlInputStream.cs :
