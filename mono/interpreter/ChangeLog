@@ -1,4 +1,8 @@
 
+Mon Mar 4 11:21:44 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: print the address of 'this' in tracing mode.
+
 Thu Feb 28 19:18:59 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: add checks for more binary consistency.

@@ -1,3 +1,11 @@
+
+Mon Mar 4 11:22:26 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.h: stared adding support for events.
+	* icall.c: split find_members implementation. Added debug icall to get
+	the address of an object.
+	* reflection.c: handle TypeBuilders in mono_type_get_object().
+
 2002-03-01  Martin Baulig  <martin@gnome.org>
 
 	* icall.c (ves_icall_System_Array_GetLength): This must throw an
