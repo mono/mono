@@ -1,5 +1,13 @@
 2002-09-25  Martin Baulig  <martin@gnome.org>
 
+	* debug.h: Removed external declaration of all functions which
+	should only be called from the Mono Debugger and also made them
+	static.  Since the debugger gets their address from the
+	`MONO_DEBUGGER__debugger_info' vtable, there's no need to export
+	these functions.
+
+2002-09-25  Martin Baulig  <martin@gnome.org>
+
 	Improved breakpoint support, we can now dynamically insert and
 	remove breakpoints at runtime and when called from withing the
 	Mono Debugger, we're using a special breakpoint trampoline.
