@@ -8,6 +8,7 @@
 // (c) 2003 Novell, Inc. (http://www.novell.com)
 //
 using System;
+using System.Collections;
 using System.Web.Configuration;
 using System.Web.UI;
 
@@ -64,6 +65,8 @@ namespace System.Web
 		string version;
 		Version w3CDomVersion;
 		bool win16;
+		Version [] clrVersions;
+		internal string useragent;
 
 		public HttpBrowserCapabilities () { }
 
@@ -137,14 +140,8 @@ namespace System.Web
 
 		public Version ClrVersion {
 			get {
-				if (!Get (HaveClrVersion)) {
-					Set (HaveClrVersion);
-					if (ReadBoolean ("netclr", false)) {
-						clrVersion = new Version (1, 0);
-					} else {
-						clrVersion = new Version (0, 0);
-					}
-				}
+				if (clrVersion == null)
+					InternalGetClrVersions ();
 
 				return clrVersion;
 			}
@@ -327,12 +324,49 @@ namespace System.Web
 		}
 
 #if NET_1_1
-		[MonoTODO]
 		public Version [] GetClrVersions ()
 		{
-			throw new NotImplementedException ();
+			if (clrVersions == null)
+				InternalGetClrVersions ();
+
+			return clrVersions;
 		}
 #endif
+
+		void InternalGetClrVersions ()
+		{
+			char [] anychars = new char [] { ';', ')' };
+			string s = useragent;
+			ArrayList list = null;
+			int idx;
+			while ((idx = s.IndexOf (".NET CLR ")) != -1) {
+				int end = s.IndexOfAny (anychars, idx + 9);
+				if (end == -1)
+					break;
+
+				string ver = s.Substring (idx + 9, end - idx - 9);
+				Version v = null;
+				try {
+					v = new Version (ver);
+					if (clrVersion == null || v > clrVersion)
+						clrVersion = v;
+
+					if (list == null)
+						list = new ArrayList (4);
+
+					list.Add (v);
+				} catch { }
+				s = s.Substring (idx + 9);
+			}
+			
+			if (list == null || list.Count == 0) {
+				clrVersion = new Version ();
+				clrVersions = new Version [] { clrVersion };
+			} else {
+				list.Sort ();
+				clrVersions = (Version []) list.ToArray (typeof (Version));
+			}
+		}
 
 		bool ReadBoolean (string key, bool dflt)
 		{

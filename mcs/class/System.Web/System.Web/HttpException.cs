@@ -265,7 +265,6 @@ namespace System.Web
 			}
 		}
 		
-		[MonoTODO("Check error type and Set the correct error code")]
 		public int GetHttpCode ()
 		{
 			return http_code;

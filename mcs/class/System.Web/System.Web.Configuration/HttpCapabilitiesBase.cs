@@ -31,6 +31,7 @@ namespace System.Web.Configuration
 				ua = request.UserAgent;
 
 			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities ();
+			bcap.useragent = ua;
 			bcap.capabilities = CapabilitiesLoader.GetCapabilities (ua);
 			bcap.Init ();
 			return bcap;
