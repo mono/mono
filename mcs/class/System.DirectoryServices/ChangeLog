@@ -4,3 +4,6 @@
 
 2003-02-23  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* added just files enough to compile a dummy DLL for now
+
+2003-11-24  Sunil Kumar  <sunilk@novell.com>
+        * Added class files implementing System.DirectoryServices namespace
