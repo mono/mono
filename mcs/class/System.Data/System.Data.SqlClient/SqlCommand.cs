@@ -86,7 +86,7 @@ namespace System.Data.SqlClient {
 		[DefaultValue ("")]
 		[RefreshProperties (RefreshProperties.All)]
 		public string CommandText {
-			get { return CommandText; }
+			get { return commandText; }
 			set { commandText = value; }
 		}
 
@@ -317,7 +317,7 @@ namespace System.Data.SqlClient {
 				index += 1;
 			}
 
-			return String.Format ("{0}\n{1}exec {2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
+			return String.Format ("{0}\n{1}{2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
 		}
 
 		public void Cancel () 
@@ -339,6 +339,27 @@ namespace System.Data.SqlClient {
 		public SqlParameter CreateParameter () 
 		{
 			return new SqlParameter ();
+		}
+
+		internal void DeriveParameters ()
+		{
+			if (commandType != CommandType.StoredProcedure)
+				throw new InvalidOperationException (String.Format ("SqlCommand DeriveParameters only supports CommandType.StoredProcedure, not CommandType.{0}", commandType));
+			ValidateCommand ("DeriveParameters");
+
+			SqlParameterCollection localParameters = new SqlParameterCollection (this);
+			localParameters.Add ("@P1", SqlDbType.NVarChar, commandText.Length).Value = commandText;
+
+			connection.Tds.ExecuteQuery (BuildProcedureCall ("sp_procedure_params_rowset", localParameters));
+			SqlDataReader reader = new SqlDataReader (this);
+			parameters.Clear ();
+			object[] dbValues = new object[reader.FieldCount];
+
+			while (reader.Read ()) {
+				reader.GetValues (dbValues);
+				parameters.Add (new SqlParameter (dbValues));
+			}
+			reader.Close ();	
 		}
 
 		public int ExecuteNonQuery ()
@@ -461,6 +482,7 @@ namespace System.Data.SqlClient {
 
 		void IDisposable.Dispose ()
 		{
+Console.WriteLine ("Disposing");
 			Dispose (true);
 		}
 

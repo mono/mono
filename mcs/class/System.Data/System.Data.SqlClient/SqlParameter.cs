@@ -85,6 +85,39 @@ namespace System.Data.SqlClient {
 			this.objValue = value;
 		}
 
+		internal SqlParameter (object[] dbValues)
+		{
+			precision = 0;
+			scale = 0;
+			direction = ParameterDirection.Input;
+
+			parmName = (string) dbValues[3];
+
+			switch ((short) dbValues[5]) {
+			case 1:
+				direction = ParameterDirection.Input;
+				break;
+			case 2:
+				direction = ParameterDirection.Output;
+				break;
+			case 3:
+				direction = ParameterDirection.InputOutput;
+				break;
+			case 4:
+				direction = ParameterDirection.ReturnValue;
+				break;
+			}
+
+			isNullable = (bool) dbValues[8];
+
+			if (dbValues[12] != null)
+				precision = (byte) ((short) dbValues[12]);
+			if (dbValues[13] != null)
+				scale = (byte) ((short) dbValues[13]);
+
+			dbtype = TypeNameToSqlDbType ((string) dbValues[16]);
+		}
+
 		#endregion // Constructors
 
 		#region Properties
@@ -229,6 +262,59 @@ namespace System.Data.SqlClient {
                         }
 
                         return result.ToString ();
+		}
+
+		internal static SqlDbType TypeNameToSqlDbType (string typeName)
+		{
+			switch (typeName) {
+			case "bigint":
+				return SqlDbType.BigInt;
+			case "binary":
+				return SqlDbType.Binary;
+			case "bit":
+				return SqlDbType.Bit;
+			case "char":
+				return SqlDbType.Char;
+			case "datetime":
+				return SqlDbType.DateTime;
+			case "decimal":
+				return SqlDbType.Decimal;
+			case "float":
+				return SqlDbType.Float;
+			case "image":
+				return SqlDbType.Image;
+			case "int":
+				return SqlDbType.Int;
+			case "money":
+				return SqlDbType.Money;
+			case "nchar":
+				return SqlDbType.NChar;
+			case "ntext":
+				return SqlDbType.NText;
+			case "nvarchar":
+				return SqlDbType.NVarChar;
+			case "real":
+				return SqlDbType.Real;
+			case "smalldatetime":
+				return SqlDbType.SmallDateTime;
+			case "smallint":
+				return SqlDbType.SmallInt;
+			case "smallmoney":
+				return SqlDbType.SmallMoney;
+			case "text":
+				return SqlDbType.Text;
+			case "timestamp":
+				return SqlDbType.Timestamp;
+			case "tinyint":
+				return SqlDbType.TinyInt;
+			case "uniqueidentifier":
+				return SqlDbType.UniqueIdentifier;
+			case "varbinary":
+				return SqlDbType.VarBinary;
+			case "varchar":
+				return SqlDbType.VarChar;
+			}
+			return SqlDbType.Variant;
 		}
 
 		public override string ToString() 

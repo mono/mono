@@ -1,3 +1,25 @@
+2002-11-07  Tim Coleman <tim@timcoleman.com>
+	* System.Data.Common/DbDataAdapter.cs:
+		Remove NotImplementedException in Dispose
+	* System.Data.Common/FieldNameLookup.cs:
+		Should be sealed
+	* System.Data.SqlClient/SqlCommand.cs:
+		Fix CommandText accessor (stack overflow)
+		Implement DeriveParameters method
+	* System.Data.SqlClient/SqlCommandBuilder.cs:
+		Implement this class
+	* System.Data.SqlClient/SqlConnection.cs:
+		Change application name to "Mono SqlClient Data Provider"
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Add new schema information
+	* System.Data.SqlClient/SqlError.cs:
+	* System.Data.SqlClient/SqlErrorCollection.cs:
+		Remove internal methods, TODO attributes
+	* System.Data.SqlClient/SqlParameter.cs:
+		Add new internal constructor for DeriveParameters use
+	* System.Data.SqlClient/SqlParameterConverter.cs:
+		Add missing methods based on class status
+
 2002-11-07  Nick Drochak <ndrochak@gol.com>
 	* list: add System.Data/ColumnDataPropertyDescriptor.cs
 

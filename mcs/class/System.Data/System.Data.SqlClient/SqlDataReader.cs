@@ -291,18 +291,34 @@ namespace System.Data.SqlClient {
 			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
 				DataRow row = schemaTable.NewRow ();
 
+				// set default values
+				row ["AllowDBNull"] = true;
+				row ["BaseCatalogName"] = DBNull.Value;
+				row ["BaseColumnName"] = DBNull.Value;
+				row ["BaseSchemaName"] = DBNull.Value;
+				row ["BaseTableName"] = DBNull.Value;
+				row ["ColumnName"] = DBNull.Value;
+				row ["IsAutoIncrement"] = false;
+				row ["IsHidden"] = false;
+				row ["IsLong"] = false;
+				row ["IsRowVersion"] = false;
+				row ["IsUnique"] = false;
+				row ["NumericPrecision"] = DBNull.Value;
+				row ["NumericScale"] = DBNull.Value;
 
 				switch (schema.ColumnType) {
 					case TdsColumnType.Image :
 						dataTypeNames.Add ("image");
 						row ["ProviderType"] = (int) SqlDbType.Image;
 						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
 						break;
 					case TdsColumnType.Text :
 						dataTypes.Add (typeof (string));
 						dataTypeNames.Add ("text");
 						row ["ProviderType"] = (int) SqlDbType.Text;
 						row ["DataType"] = typeof (string);
+						row ["IsLong"] = true;
 						break;
 					case TdsColumnType.UniqueIdentifier :
 						dataTypeNames.Add ("uniqueidentifier");
@@ -314,6 +330,7 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("varbinary");
 						row ["ProviderType"] = (int) SqlDbType.VarBinary;
 						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
 						break;
 					case TdsColumnType.IntN :
 					case TdsColumnType.Int4 :
@@ -332,6 +349,7 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("binary");
 						row ["ProviderType"] = (int) SqlDbType.Binary;
 						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
 						break;
 					case TdsColumnType.Char :
 					case TdsColumnType.BigChar :
@@ -384,6 +402,7 @@ namespace System.Data.SqlClient {
 						dataTypeNames.Add ("ntext");
 						row ["ProviderType"] = (int) SqlDbType.NText;
 						row ["DataType"] = typeof (string);
+						row ["IsLong"] = true;
 						break;
 					case TdsColumnType.NVarChar :
 						dataTypeNames.Add ("nvarchar");
@@ -413,16 +432,6 @@ namespace System.Data.SqlClient {
 						break;
 				}
 
-				// set default values
-				row ["AllowDBNull"] = true;
-				row ["BaseCatalogName"] = DBNull.Value;
-				row ["BaseColumnName"] = DBNull.Value;
-				row ["BaseSchemaName"] = DBNull.Value;
-				row ["BaseTableName"] = DBNull.Value;
-				row ["ColumnName"] = DBNull.Value;
-				row ["IsUnique"] = false;
-				row ["NumericPrecision"] = DBNull.Value;
-				row ["NumericScale"] = DBNull.Value;
 
 				// load schema values
 				row ["ColumnOrdinal"] = schema.ColumnOrdinal;
@@ -641,6 +650,8 @@ namespace System.Data.SqlClient {
 			schemaTable.Rows.Clear ();
 
 			moreResults = command.Tds.NextResult ();
+			GetSchemaTable ();
+
 			rowsRead = 0;
 			resultsRead += 1;
 			return moreResults;

@@ -11,7 +11,7 @@ using System.Collections;
 using System.Data;
 
 namespace System.Data.Common {
-	internal class FieldNameLookup : ICollection, IEnumerable
+	internal sealed class FieldNameLookup : ICollection, IEnumerable
 	{
 		#region Fields
 

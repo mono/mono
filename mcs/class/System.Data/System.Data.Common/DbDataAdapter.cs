@@ -62,7 +62,6 @@ namespace System.Data.Common
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
 		}
 
                 public override int Fill (DataSet dataSet)

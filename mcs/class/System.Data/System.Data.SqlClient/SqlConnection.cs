@@ -390,7 +390,7 @@ namespace System.Data.SqlClient {
                 void SetDefaultConnectionParameters (NameValueCollection parameters)
                 {
                         if (null == parameters.Get ("APPLICATION NAME"))
-                                parameters["APPLICATION NAME"] = ".Net SqlClient Data Provider";
+                                parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
                         if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
                                 parameters["CONNECT TIMEOUT"] = "15";
                         if (null == parameters.Get ("CONNECTION LIFETIME"))

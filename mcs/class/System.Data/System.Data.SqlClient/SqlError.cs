@@ -52,45 +52,34 @@ namespace System.Data.SqlClient {
 		
 		#region Properties
 
-		[MonoTODO]
-		/// <summary>
-		/// severity level of the error
-		/// </summary>
 		public byte Class {
 			get { return theClass; }
 		}
 
-		[MonoTODO]
 		public int LineNumber {
 			get { return lineNumber; }
 		}
 
-		[MonoTODO]
 		public string Message {
 			get { return message; }
 		}
 		
-		[MonoTODO]
 		public int Number {
 			get { return number; }
 		}
 
-		[MonoTODO]
 		public string Procedure {
 			get { return procedure; }
 		}
 
-		[MonoTODO]
 		public string Server {
 			get { return server; }
 		}
 
-		[MonoTODO]
 		public string Source {
 			get { return source; }
 		}
 
-		[MonoTODO]
 		public byte State {
 			get { return state; }
 		}
@@ -108,46 +97,6 @@ namespace System.Data.SqlClient {
 			// FIXME: generate the correct SQL error string
 			toStr = "SqlError:" + message + stackTrace;
 			return toStr;
-		}
-
-		internal void SetClass (byte theClass) 
-		{
-			this.theClass = theClass;
-		}
-
-		internal void SetLineNumber (int lineNumber) 
-		{
-			this.lineNumber = lineNumber;
-		}
-
-		internal void SetMessage (string message) 
-		{
-			this.message = message;
-		}
-
-		internal void SetNumber (int number) 
-		{
-			this.number = number;
-		}
-
-		internal void SetProcedure (string procedure) 
-		{
-			this.procedure = procedure;
-		}
-
-		internal void SetServer (string server) 
-		{
-			this.server = server;
-		}
-
-		internal void SetSource (string source) 
-		{
-			this.source = source;
-		}
-
-		internal void SetState (byte state) 
-		{
-			this.state = state;
 		}
 
 		#endregion
