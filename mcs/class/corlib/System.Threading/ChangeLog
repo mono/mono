@@ -1,3 +1,8 @@
+2003-08-14  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Thread.cs: SetData() method: use Hashtable.Contains to check
+	  if a dataslot has been allocated (value could be null).
+
 2003-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* WaitHandle.cs (CheckDisposed): This method is not in the public

@@ -174,7 +174,7 @@ namespace System.Threading
 					   object data) {
 			Hashtable slothash=GetTLSSlotHash();
 
-			if(slothash[slot]!=null) {
+			if(slothash.Contains(slot)) {
 				slothash.Remove(slot);
 			}
 			
