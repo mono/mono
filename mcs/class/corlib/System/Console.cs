@@ -42,11 +42,11 @@ namespace System
 
 			stderr = new StreamWriter (OpenStandardError (0), encoding); 
 			((StreamWriter)stderr).AutoFlush = true;
-			stderr = TextWriter.Synchronized (stderr);
+			stderr = TextWriter.Synchronized (stderr, true);
 
 			stdout = new StreamWriter (OpenStandardOutput (0), encoding);
 			((StreamWriter)stdout).AutoFlush = true;
-			stdout = TextWriter.Synchronized (stdout);
+			stdout = TextWriter.Synchronized (stdout, true);
 
 			stdin  = new StreamReader (OpenStandardInput (0), encoding);
 			stdin = TextReader.Synchronized (stdin);

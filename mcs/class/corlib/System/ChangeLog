@@ -1,3 +1,8 @@
+2004-04-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* Applied patch from Atsushi Enomoto that allows Synchronized
+	writers to have a `dont close' flag, this fixes 52094
+
 2004-04-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoCustomAttrs.cs, MonoType.cs: Property.GetGetMethod() does not return
