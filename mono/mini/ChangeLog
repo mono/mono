@@ -1,5 +1,7 @@
 2005-03-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.h mini-amd64.c (mono_amd64_exceptions_init): Remove this.
+	
 	* mini.c mini-*.h: Remove OUT_OF_LINE_BBLOCK defines since all arches
 	support that now.
 
