@@ -132,34 +132,28 @@ namespace System.IO {
 			int zeroes = 0;
 
 			while (true) {
+				Thread.Sleep (750);
+				
+				Hashtable my_watches;
 				lock (watches) {
-					if (watches.Count > 0) {
-						zeroes = 0;
-						ArrayList removed = null;
-						foreach (DefaultWatcherData data in watches.Values) {
-							bool remove = UpdateDataAndDispatch (data, true);
-							if (remove) {
-								if (removed == null)
-									removed = new ArrayList ();
-
-								removed.Add (data);
-							}
-						}
-
-						if (removed != null) {
-							foreach (DefaultWatcherData data in removed)
-								watches.Remove (data.FSW);
-
-							removed.Clear ();
-							removed = null;
-						}
-					} else {
-						zeroes++;
-						if (zeroes == 20)
+					if (watches.Count == 0) {
+						if (++zeroes == 20)
 							break;
+						continue;
+					}
+					
+					my_watches = (Hashtable) watches.Clone ();
+				}
+				
+				if (watches.Count != 0) {
+					zeroes = 0;
+					foreach (DefaultWatcherData data in my_watches.Values) {
+						bool remove = UpdateDataAndDispatch (data, true);
+						if (remove)
+							lock (watches)
+								watches.Remove (data.FSW);
 					}
 				}
-				Thread.Sleep (750);
 			}
 
 			lock (this) {

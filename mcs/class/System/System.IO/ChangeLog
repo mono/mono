@@ -1,3 +1,8 @@
+2004-11-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* DefaultWatcher.cs: Copy the hashtable when we scan for changes
+	so that you can make modifications in a handler. Fixes 65966.
+
 2004-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultWatcher.cs: if the file is removed between reading the
