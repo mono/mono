@@ -1,5 +1,11 @@
 2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* decl.cs: Rewrite the consistant accessability checking.
+	Accessability is not linear, it must be implemented in
+	a tableish way. Fixes #49704.
+
+2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* expression.cs: Handle negation in a checked context.
 	We must use subtraction from zero. Fixes #38674.
 
