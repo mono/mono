@@ -1,3 +1,8 @@
+2004-08-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: Revert patch from Raja, it introduced a regression
+	while building Blam-1.2.1 (hard to isolate a test case).
+
 2004-08-04  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix for #55382
