@@ -41,7 +41,8 @@ namespace Mono.Security.X509.Extensions {
 		keyCertSign = 0x04,
 		cRLSign = 0x02,
 		encipherOnly = 0x01,
-		decipherOnly = 0x800
+		decipherOnly = 0x800,
+		none = 0x0
 	}
 
 	public class KeyUsageExtension : X509Extension {

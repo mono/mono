@@ -1,3 +1,15 @@
+2004-02-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthorityKeyIdentifierExtension.cs: New. Added for certview.
+	* CRLDistributionPointsExtension.cs: New. Added for certview.
+	* CertificatePoliciesExtension.cs: New. Added for certview.
+	* KeyUsageExtension.cs: Added none as a possible (empty) usage.
+	* NetscapeCertTypeExtension.cs: New. Required for verifying older SSL
+	certificates.
+	* PrivateKeyUsagePeriodExtension.cs: New. Added for certview.
+	* SubjectAltNameExtension.cs: Added support for dNSName.
+	* SubjectKeyIdentifierExtension.cs: New. Added for certview.
+
 2003-09-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyAttributesExtension.cs: New. Added for WSE.

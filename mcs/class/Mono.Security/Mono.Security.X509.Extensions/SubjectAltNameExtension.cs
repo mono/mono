@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Net;
 using System.Collections;
 using System.Text;
 
@@ -46,10 +47,12 @@ namespace Mono.Security.X509.Extensions {
 	 * }
 	 */
 
-	// TODO - incomplete (only rfc822Name is supported)
+	// TODO - incomplete (only rfc822Name, dNSName are supported)
 	public class SubjectAltNameExtension : X509Extension {
 		
 		private ArrayList rfc822Name;
+		private ArrayList dnsName;
+		private ArrayList ipAddr;
 
 		public SubjectAltNameExtension () : base () 
 		{
@@ -72,6 +75,16 @@ namespace Mono.Security.X509.Extensions {
 							rfc822Name = new ArrayList ();
 						rfc822Name.Add (Encoding.ASCII.GetString (sequence [i].Value));
 						break;
+					case 0x82: // dNSName           [2]     IA5String
+						if (dnsName == null)
+							dnsName = new ArrayList ();
+						dnsName.Add (Encoding.ASCII.GetString (sequence [i].Value));
+						break;
+					case 0x87: // iPAddress         [7]     OCTET STRING
+						if (ipAddr == null)
+							ipAddr = new ArrayList ();
+						// TODO - Must find sample certificates
+						break;
 					default:
 						break;
 				}
@@ -91,12 +104,43 @@ namespace Mono.Security.X509.Extensions {
 			}
 		}
 
+		public string[] DNSNames {
+			get {
+				if (dnsName == null)
+					return new string [0];
+				return (string[]) dnsName.ToArray (typeof(string));
+			}
+		}
+
+		// Incomplete support
+		public string[] IPAddresses {
+			get {
+				if (ipAddr == null)
+					return new string [0];
+				return (string[]) ipAddr.ToArray (typeof(string));
+			}
+		}
+
 		public override string ToString () 
 		{
 			StringBuilder sb = new StringBuilder ();
 			if (rfc822Name != null) {
 				foreach (string s in rfc822Name) {
 					sb.Append ("RFC822 Name=");
+					sb.Append (s);
+					sb.Append (Environment.NewLine);
+				}
+			}
+			if (dnsName != null) {
+				foreach (string s in dnsName) {
+					sb.Append ("DNS Name=");
+					sb.Append (s);
+					sb.Append (Environment.NewLine);
+				}
+			}
+			if (ipAddr != null) {
+				foreach (string s in ipAddr) {
+					sb.Append ("IP Address=");
 					sb.Append (s);
 					sb.Append (Environment.NewLine);
 				}
