@@ -1,4 +1,12 @@
 
+Mon Aug 27 12:17:17 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c, metadata.c, metadata.h: Export mono_metadata_type_equal().
+	We don't need a MonoMetadata pointer anymore to compare signatures in
+	mono_metadata_signature_equal (), update callers.
+	Reduced memory usage an number of allocations for MonoMethodHeader and
+	MonoMethodSignature.
+
 Sun Aug 26 23:03:09 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c: added compare for szarray.

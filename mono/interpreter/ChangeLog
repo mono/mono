@@ -1,3 +1,8 @@
+
+Mon Aug 27 12:20:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix compilation and updates for changes in metadata/.
+
 2001-08-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* interp.c (main): Add option handling for the interpreter,
