@@ -3,9 +3,9 @@
 //
 // (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 // Author: Christian Meyer <Christian.Meyer@cs.tum.edu>
-//			Jason Perkins <jason@379.com>
-//			Dennis Hayes <dennish@raytek.com>
-//	    Alexandre Pigolkine <pigolkine@gmx.de>
+//                      Jason Perkins <jason@379.com>
+//                      Dennis Hayes <dennish@raytek.com>
+//          Alexandre Pigolkine <pigolkine@gmx.de>
 //
 using System;
 using System.IO;
@@ -62,25 +62,26 @@ namespace System.Drawing.Cairo {
 
                 float horizontalResolution;
                 float verticalResolution;
-			
+                        
                 internal void CommonInit (int width, int height)
                 {
                         CommonInit (width, height, true);
                 }
 
-                internal void CommonInit (int width, int height, bool allocNativeObject)
+                internal void CommonInit (int width, int height, bool allocate_new)
                 {
                         size = new Size (width, height);
                         imageFormat = ImageFormat.Bmp;
-                        switch( pixelFormat) {
+
+                        switch (pixelFormat) {
                         case PixelFormat.Format32bppArgb:
                                 cairo_format = Format.ARGB32;
-                                if (allocNativeObject)
+                                if (allocate_new)
                                         state = Gdk.Pixbuf.New (0, true, 8, width, height);
                                 break;
                         case PixelFormat.Format24bppRgb:
                                 cairo_format = Format.RGB24;
-                                if (allocNativeObject)
+                                if (allocate_new)
                                         state = Gdk.Pixbuf.New (0, true, 8, width, height);
                                 break;
                         default:
@@ -89,7 +90,7 @@ namespace System.Drawing.Cairo {
 
                         horizontalResolution = verticalResolution = 96.0F;
                 }
-			
+                        
 #region constructors
                 /// <summary>
                 /// Constructors
@@ -121,7 +122,7 @@ namespace System.Drawing.Cairo {
                         throw new NotImplementedException ();
                         //this.original = original;
                 }
-			
+                        
                 unsafe void InitFromStream (Stream stream)
                 {
                         InternalImageInfo info = System.Drawing.Image.Decode (stream);
@@ -150,7 +151,7 @@ namespace System.Drawing.Cairo {
                                 //info.Dispose();
                         }
                 }
-			
+                        
                 internal Bitmap (Stream stream)
                         : this (stream, false)
                 {
@@ -224,7 +225,7 @@ namespace System.Drawing.Cairo {
                 {
                         throw new NotImplementedException ();
                 }
-		
+                
                 IBitmap IBitmap.Clone (RectangleF rect, PixelFormat format)
                 {
                         throw new NotImplementedException ();
@@ -278,7 +279,7 @@ namespace System.Drawing.Cairo {
                         horizontalResolution = xDpi;
                         verticalResolution = yDpi;
                 }
-		
+                
                 //Fixme: gtk should be inherited from Image
                 PixelFormat IImage.PixelFormat {
                         get {
@@ -290,7 +291,7 @@ namespace System.Drawing.Cairo {
                 {
                         // nothing to do!
                 }
-		
+                
                 // properties
                 // needs to be done ###FIXME###
 
@@ -301,17 +302,17 @@ namespace System.Drawing.Cairo {
                 protected override void Dispose (bool disposing)
                 {
                         if (selected_into_graphics == null) 
-                                Gdk.Pixbuf.Finalize (state);			
+                                Gdk.Helpers.Unref (state);                 
 
                         base.Dispose(disposing);
                 }
-			
+                        
                 //FIXME: included with gtk code. should be inherited from Image.
-                //		[MonoTODO]
-                //		public override void RotateFlip (RotateFlipType rotateFlipType) {
-                //			throw new NotImplementedException();
-                //		}
-		
+                //              [MonoTODO]
+                //              public override void RotateFlip (RotateFlipType rotateFlipType) {
+                //                      throw new NotImplementedException();
+                //              }
+                
         }
 }
 

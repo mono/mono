@@ -29,6 +29,9 @@ namespace System.Drawing.Cairo {
 		public static extern IntPtr cairo_destroy (IntPtr cr);
 
 		[DllImport (CairoImp)]
+		public static extern IntPtr cairo_copy (IntPtr cr_other);                
+
+		[DllImport (CairoImp)]
 		public static extern void cairo_save (IntPtr cr);                
 
 		[DllImport (CairoImp)]
@@ -191,55 +194,55 @@ namespace System.Drawing.Cairo {
                 // query
                 //                                
                 [DllImport (CairoImp)]
-		public static extern Operator cairo_get_operator (IntPtr cr);
+		public static extern Operator cairo_current_operator (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_get_rgb_color (
+                public static extern void cairo_current_rgb_color (
                         IntPtr cr, out double red, out double green, out double blue);
 
                 [DllImport (CairoImp)]
-                public static extern double cairo_get_alpha (IntPtr cr);
+                public static extern double cairo_current_alpha (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern double cairo_get_tolerance (IntPtr cr);
+		public static extern double cairo_current_tolerance (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern void cairo_get_current_point (
+		public static extern void cairo_current_point (
                         IntPtr cr, out double x, out double y);
 
 		[DllImport (CairoImp)]
-		public static extern FillRule cairo_get_fill_rule (IntPtr cr);
+		public static extern FillRule cairo_current_fill_rule (IntPtr cr);
 
                 [DllImport (CairoImp)]
-		public static extern double cairo_get_line_width (IntPtr cr);
+		public static extern double cairo_current_line_width (IntPtr cr);
 
                 [DllImport (CairoImp)]
-		public static extern LineCap cairo_get_line_cap (IntPtr cr);
+		public static extern LineCap cairo_current_line_cap (IntPtr cr);
 
        		[DllImport (CairoImp)]
-		public static extern LineJoin cairo_get_line_join (IntPtr cr);
+		public static extern LineJoin cairo_current_line_join (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern double cairo_get_miter_limit (IntPtr cr);
+		public static extern double cairo_current_miter_limit (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_get_matrix (
+                public static extern void cairo_current_matrix (
                         IntPtr cr,
                         out double a, out double b,
                         out double c, out double d,
                         out double tx, out double ty);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_get_target_surface (IntPtr cr);
+                public static extern void cairo_current_target_surface (IntPtr cr);
 
                 //
                 // Error status queries
                 //
                 [DllImport (CairoImp)]
-                public static extern Status cairo_get_status (IntPtr cr);
+                public static extern Status cairo_status (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern string cairo_get_status_string (IntPtr cr);
+                public static extern string cairo_status_string (IntPtr cr);
 
                 //
                 // Surface Manipulation
@@ -267,9 +270,9 @@ namespace System.Drawing.Cairo {
                 [DllImport (CairoImp)]                
                 public static extern void cairo_surface_destroy (IntPtr surface);
 
-                [DllImport (CairoImp)]                
-                public static extern Status cairo_surface_put_image (
-                        IntPtr surface, string data, int width, int height, int stride);
+//                 [DllImport (CairoImp)]                
+//                 public static extern Status cairo_surface_put_image (
+//                         IntPtr surface, string data, int width, int height, int stride);
 
                 [DllImport (CairoImp)]                
                 public static extern Status cairo_surface_set_repeat (

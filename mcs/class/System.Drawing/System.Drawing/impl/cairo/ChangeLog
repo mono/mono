@@ -1,3 +1,19 @@
+2003-09-08  Duncan Mak  <duncan@ximian.com>
+
+	* gdk-helpers.cs: Remember to call gdk_init before hand.
+	(gdk_pixbuf_finalize): Removed, as it is no longer available
+	in the current API.
+	(Helpers): New class to contain other misc. helper functions.
+	(Init): Import gdk_init.
+	(Unref): Import g_object_unref. This should be used in place of
+	gdk_pixbuf_finalize.
+	
+	* cairo-api.cs: Updated to reflect recent API changes.
+	(cairo_copy): New API.
+	(cairo_surface_put_image): Removed to keep updated with current
+	API.
+	(cairo_current_foo): Renamed from the old cairo_get_foo methods.
+
 2003-09-03  Alp Toker  <alp@atoker.com>
 
 	cairo-api.cs: typos: drawble -> drawable, tolerence -> tolerance

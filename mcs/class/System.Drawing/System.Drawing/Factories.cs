@@ -17,7 +17,7 @@ using System.Threading;
 
 namespace System.Drawing {
 internal class Factories {
-	internal static string DefaultImplementationNamespace = "XrImpl";
+	internal static string DefaultImplementationNamespace = "Cairo";
 	private static string FactoryClassNameBase = "System.Drawing.Win32Impl.";
 	private static Assembly FactoryAssembly;
 
