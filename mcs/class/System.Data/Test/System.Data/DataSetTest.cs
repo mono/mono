@@ -829,5 +829,93 @@ namespace MonoTests.System.Data
 
 			AssertEquals ("test#38", "</xs:schema>", TextString);
 		}
+
+		[Test]
+                public void CloneCopy ()
+                {
+                        DataTable table = new DataTable ("pTable");                         DataTable table1 = new DataTable ("cTable");                         DataSet set = new DataSet ();
+                                                                                                    
+                        set.Tables.Add (table);
+                        set.Tables.Add (table1);                         DataColumn col = new DataColumn ();
+                        col.ColumnName = "Id";
+                        col.DataType = System.Type.GetType ("System.Int32");
+                        table.Columns.Add (col);
+                        UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
+                        table.Constraints.Add (uc);
+                                                                                                    
+                        col = new DataColumn ();
+                        col.ColumnName = "Name";
+                        col.DataType = System.Type.GetType ("System.String");
+                        table.Columns.Add (col);
+                                                                                                    
+                        col = new DataColumn ();
+                        col.ColumnName = "Id";
+                        col.DataType = System.Type.GetType ("System.Int32");
+                        table1.Columns.Add (col);
+                                                                                                    
+                        col = new DataColumn ();
+                        col.ColumnName = "Name";
+                        col.DataType = System.Type.GetType ("System.String");
+		        table1.Columns.Add (col);
+			  ForeignKeyConstraint fc = new ForeignKeyConstraint ("FK1", table.Columns[0], table1.Columns[0] );
+                        table1.Constraints.Add (fc);
+                                                                                                    
+                                                                                                    
+                        DataRow row = table.NewRow ();
+                                                                                                    
+                        row ["Id"] = 147;
+                        row ["name"] = "Row1";
+                        row.RowError = "Error#1";
+                        table.Rows.Add (row);
+                                                                                                    
+                        row = table1.NewRow ();
+                        row ["Id"] = 147;
+                        row ["Name"] = "Row1";
+                        table1.Rows.Add (row);
+                                                                                                    
+                        //Setting properties of DataSet
+                        set.CaseSensitive = true;
+                        set.DataSetName = "My DataSet";
+                        set.EnforceConstraints = false;
+                        set.Namespace = "Namespace#1";
+                        set.Prefix = "Prefix:1";
+                        DataRelation dr = new DataRelation ("DR", table.Columns [0],table1.Columns [0]);
+                        set.Relations.Add (dr);
+                        set.ExtendedProperties.Add ("TimeStamp", DateTime.Now);
+                        CultureInfo cultureInfo = new CultureInfo( "ar-SA" );
+                        set.Locale = cultureInfo;
+                                                                                                    
+                        //Testing Copy ()
+                        DataSet copySet = set.Copy ();
+                        AssertEquals ("#A01", set.CaseSensitive, copySet.CaseSensitive);
+			AssertEquals ("#A02", set.DataSetName, copySet.DataSetName);
+                        AssertEquals ("#A03", set.EnforceConstraints, copySet.EnforceConstraints);
+                        AssertEquals ("#A04", set.HasErrors, copySet.HasErrors);
+                        AssertEquals ("#A05", set.Namespace, copySet.Namespace);
+                        AssertEquals ("#A06", set.Prefix, copySet.Prefix);
+                        AssertEquals ("#A07", set.Relations.Count, copySet.Relations.Count);
+                        AssertEquals ("#A08", set.Tables.Count, copySet.Tables.Count);
+                        AssertEquals ("#A09", set.ExtendedProperties ["TimeStamp"], copySet.ExtendedProperties ["TimeStamp"]);
+                        for (int i = 0;i < copySet.Tables.Count; i++) {
+                                AssertEquals ("#A10", set.Tables [i].Rows.Count, copySet.Tables [i].Rows.Count);
+                                AssertEquals ("#A11", set.Tables [i].Columns.Count, copySet.Tables [i].Columns.Count);
+                        }
+                        //Testing Clone ()
+                        copySet = set.Clone ();
+                        AssertEquals ("#A12", set.CaseSensitive, copySet.CaseSensitive);
+                        AssertEquals ("#A13", set.DataSetName, copySet.DataSetName);
+                        AssertEquals ("#A14", set.EnforceConstraints, copySet.EnforceConstraints);
+                        AssertEquals ("#A15", false, copySet.HasErrors);
+                        AssertEquals ("#A16", set.Namespace, copySet.Namespace);
+                        AssertEquals ("#A17", set.Prefix, copySet.Prefix);
+                        AssertEquals ("#A18", set.Relations.Count, copySet.Relations.Count);
+                        AssertEquals ("#A19", set.Tables.Count, copySet.Tables.Count);
+                        AssertEquals ("#A20", set.ExtendedProperties ["TimeStamp"], copySet.ExtendedProperties ["TimeStamp"]);
+                        for (int i = 0;i < copySet.Tables.Count; i++) {
+                                AssertEquals ("#A21", 0, copySet.Tables [i].Rows.Count);
+                                AssertEquals ("#A22", set.Tables [i].Columns.Count, copySet.Tables [i].Columns.Count);
+                        }
+		}
+	
         }
 }

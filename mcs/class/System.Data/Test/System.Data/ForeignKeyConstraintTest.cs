@@ -159,6 +159,75 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());			
 		}
 		
+		[Test]
+                public void TestCtor5()
+                {
+                        DataTable table1 = new DataTable ("Table1");
+                        DataTable table2 = new DataTable ("Table2");
+                        DataSet dataSet = new DataSet();
+                        dataSet.Tables.Add (table1);
+                        dataSet.Tables.Add (table2);
+                        DataColumn column1 = new DataColumn ("col1");
+                        DataColumn column2 = new DataColumn ("col2");
+                        DataColumn column3 = new DataColumn ("col3");
+                        table1.Columns.Add (column1);
+                        table1.Columns.Add (column2);
+                        table1.Columns.Add (column3);
+                        DataColumn column4 = new DataColumn ("col4");
+                        DataColumn column5 = new DataColumn ("col5");
+                        DataColumn column6 = new DataColumn ("col6");
+                        table2.Columns.Add (column4);
+                        table2.Columns.Add (column5);                         
+			table2.Columns.Add (column6);
+                        string []parentColumnNames = {"col1", "col2", "col3"};
+                        string []childColumnNames = {"col4", "col5", "col6"};
+                        string parentTableName = "table1";
+		
+			// Create a ForeingKeyConstraint Object using the constructor
+                        // ForeignKeyConstraint (string, string, string[], string[], AcceptRejectRule, Rule, Rule);
+			 ForeignKeyConstraint fkc = new ForeignKeyConstraint ("hello world", parentTableName, parentColumnNames, childColumnNames, AcceptRejectRule.Cascade, Rule.Cascade, Rule.Cascade);                                                                                                                            // Assert that the Constraint object does not belong to any table yet
+                        Assertion.AssertEquals ("#A01 Table should not be set", fkc.Table, null);
+                                                                                                    
+                        Constraint []constraints = new Constraint[3];
+                        constraints [0] = new UniqueConstraint (column1);
+                        constraints [1] = new UniqueConstraint (column2);
+                        constraints [2] = fkc;
+                                                                                                    
+                        // Try to add the constraint to ConstraintCollection of the DataTable through Add()
+                        try{
+                                table2.Constraints.Add (fkc);
+                                throw new ApplicationException ("An Exception was expected");
+                        }
+                        catch(Exception e){
+                                Assertion.AssertEquals ("#A03", "System.ArgumentException", e.GetType().ToString());
+                        }
+                                                                                                    
+                        // OK - So AddRange() is the only way!
+                        table2.Constraints.AddRange (constraints);
+			   // After AddRange(), Check the properties of ForeignKeyConstraint object
+                        Assertion.Assert("#A04", fkc.RelatedColumns [0].ColumnName.Equals ("col1"));                        Assertion.Assert("#A05", fkc.RelatedColumns [1].ColumnName.Equals ("col2"));                        Assertion.Assert("#A06", fkc.RelatedColumns [2].ColumnName.Equals ("col3"));                        Assertion.Assert("#A07", fkc.Columns [0].ColumnName.Equals ("col4"));
+                        Assertion.Assert("#A08", fkc.Columns [1].ColumnName.Equals ("col5"));
+                        Assertion.Assert("#A09", fkc.Columns [2].ColumnName.Equals ("col6"));
+                                                                                                    
+                        // Try to add columns with names which do not exist in the table
+                        parentColumnNames [2] = "noColumn";
+                        ForeignKeyConstraint foreignKeyConstraint = new ForeignKeyConstraint ("hello world", parentTableName, parentColumnNames, childColumnNames, AcceptRejectRule.Cascade, Rule.Cascade, Rule.Cascade);
+                        constraints [0] = new UniqueConstraint (column1);
+                        constraints [1] = new UniqueConstraint (column2);
+                        constraints [2] = foreignKeyConstraint;
+                        try{
+                                table2.Constraints.AddRange (constraints);
+                                throw new ApplicationException ("An Exception was expected");
+                        }
+                        catch (Exception e){
+                                Assertion.AssertEquals ("#A04", "System.Data.InvalidConstraintException", e.GetType().ToString());
+                        }
+                        // Check whether the child table really contains the foreign key constraint named "hello world"
+                        Assertion.Assert("#A10 ", table2.Constraints.Contains ("hello world"));
+                }
+
+
+
 		//  If Childs and parents are in same table
 		[Test]
 		public void KeyBetweenColumns ()
