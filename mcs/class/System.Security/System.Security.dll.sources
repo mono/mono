@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Mono.Xml/XmlCanonicalizer.cs
 System.Security.Cryptography.Xml/DSAKeyValue.cs
 System.Security.Cryptography.Xml/DataObject.cs
