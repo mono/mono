@@ -415,6 +415,7 @@ System.Web.Util/FileChangeEventHandler.cs
 System.Web.Util/FileChangedEventArgs.cs
 System.Web.Util/FileChangesMonitor.cs
 System.Web.Util/FilePathParser.cs
+System.Web.Util/ICalls.cs
 System.Web.Util/IISVersionInfo.cs
 System.Web.Util/NativeFileChangeEventHandler.cs
 System.Web.Util/UrlUtils.cs

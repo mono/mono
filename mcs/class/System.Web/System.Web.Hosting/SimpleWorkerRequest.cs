@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web.Hosting
 {
@@ -84,16 +85,13 @@ namespace System.Web.Hosting
 				if (_HasInstallInfo)
 					return _AppInstallPath;
 
-				return null;
+				return ICalls.GetMachineInstallDirectory ();
 			}
 		}
 
-		[MonoTODO("Get config path from Web.Config class")]
 		public override string MachineConfigPath
 		{
-			get {
-				return "MachineConfigPath"; //FIXME
-			}
+			get { return ICalls.GetMachineConfigPath (); }
 		}
 
 		public override void EndOfRequest ()

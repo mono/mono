@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.Remoting;
+using System.Web.Util;
 
 namespace System.Web.Hosting
 {
@@ -62,8 +63,7 @@ namespace System.Web.Hosting
 				domain.SetData (key, (string) hTable [key]);
 
 			domain.SetData (".hostingVirtualPath", virtualDir);
-			//FIXME: this should be the directory where dlls reside.
-			domain.SetData (".hostingInstallDir", "FIXME hostingInstallDir");
+			domain.SetData (".hostingInstallDir", ICalls.GetMachineInstallDirectory ());
 			InitConfigInNewAppDomain (domain);
 			ObjectHandle o = domain.CreateInstance (hostType.Assembly.FullName,
 								hostType.FullName);
