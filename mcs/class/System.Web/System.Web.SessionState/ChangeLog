@@ -1,5 +1,10 @@
 2003-10-28 Jackson Harper <jackson@ximian.com>
 
+	* HttpSessionState.cs: Do not allow timeout to be set to less then
+	one.
+	
+2003-10-28 Jackson Harper <jackson@ximian.com>
+
 	* SessionInProcHandler.cs: Compute timeouts
 	correctly. DateTime.Milliseconds is the just the milliseconds part
 	of the time, it is not the entire time as milliseconds.

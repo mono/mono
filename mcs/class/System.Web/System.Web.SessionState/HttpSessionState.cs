@@ -128,7 +128,11 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	public int Timeout {
 		get { return _timeout; }
-		set { _timeout = value; }
+		set {
+                        if (value < 1)
+                                throw new ArgumentException ("The argument to SetTimeout must be greater than 0.");
+                        _timeout = value;
+                }
 	}
 
 	public void Abandon ()
