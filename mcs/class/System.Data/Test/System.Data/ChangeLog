@@ -1,3 +1,8 @@
+2004-04-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataRowTest.cs : Added a test for auto increment column and item
+	  integrity (it caused index out of range exception).
+
 2004-04-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* ConstraintCollectionTest.cs,

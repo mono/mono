@@ -718,5 +718,19 @@ namespace MonoTests.System.Data
 			ValueTest("DR46: array smaller value test", table, 6, 0, abc);
 			ValueTest("DR47: array smaller value test", table, 6, 1, 14);
 		}
+
+		[Test]
+		public void AutoIncrementColumnIntegrity ()
+		{
+			// AutoIncrement-column shouldn't raise index out of range
+			// exception because of size mismatch of internal itemarray.
+			DataTable dt = new DataTable ();
+			dt.Columns.Add ("foo");
+			dt.Rows.Add (new object [] {"value"});
+			DataColumn col = new DataColumn ("bar");
+			col.AutoIncrement = true;
+			dt.Columns.Add (col);
+			dt.Rows [0] [0] = "test";
+		}
 	}
 }
