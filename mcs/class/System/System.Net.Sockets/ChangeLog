@@ -1,3 +1,8 @@
+2003-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TcpListener.cs: various fixes to make the new tests pass. Closes
+	bug #47848.
+
 2003-08-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* UdpClient.cs (Receive): Fix Bug 45633;  We should do a blocking

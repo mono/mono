@@ -1,13 +1,14 @@
 // System.Net.Sockets.TcpListener.cs
 //
-// Author:
+// Authors:
 //    Phillip Pearson (pp@myelin.co.nz)
+//    Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // Copyright (C) 2001, Phillip Pearson
 //    http://www.myelin.co.nz
 //
-
-// NB: This is untested (probably buggy) code - take care using it
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
+//
 
 using System;
 using System.Net;
@@ -22,18 +23,21 @@ namespace System.Net.Sockets
 	{
 		// private data
 		
-		private bool active;
-		private Socket server;
+		bool active;
+		Socket server;
+		EndPoint savedEP;
 		
 		// constructor
 
 		/// <summary>
 		/// Some code that is shared between the constructors.
 		/// </summary>
-		private void Init (AddressFamily family)
+		private void Init (AddressFamily family, EndPoint ep)
 		{
 			active = false;
+			savedEP = ep;
 			server = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
+			server.Bind (ep);
 		}
 		
 		/// <summary>
@@ -41,10 +45,15 @@ namespace System.Net.Sockets
 		/// </summary>
 		/// <param name="port">The port to listen on, e.g. 80 if you 
 		/// are a web server</param>
+#if NET_1_1
+		[Obsolete ("Use TcpListener (IPAddress address, int port) instead")]
+#endif
 		public TcpListener (int port)
 		{
-			Init(AddressFamily.InterNetwork);
-			server.Bind(new IPEndPoint(IPAddress.Any, port));
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port");
+
+			Init (AddressFamily.InterNetwork, new IPEndPoint (IPAddress.Any, port));
 		}
 
 		/// <summary>
@@ -53,8 +62,10 @@ namespace System.Net.Sockets
 		/// <param name="local_end_point">The endpoint</param>
 		public TcpListener (IPEndPoint local_end_point)
 		{
-			Init(local_end_point.AddressFamily);
-			server.Bind(local_end_point);
+			if (local_end_point == null)
+				throw new ArgumentNullException ("local_end_point");
+
+			Init (local_end_point.AddressFamily, local_end_point);
 		}
 		
 		/// <summary>
@@ -65,8 +76,13 @@ namespace System.Net.Sockets
 		/// <param name="port">The port to listen on</param>
 		public TcpListener (IPAddress listen_ip, int port)
 		{
-			Init(listen_ip.AddressFamily);
-			server.Bind(new IPEndPoint(listen_ip, port));
+			if (listen_ip == null)
+				throw new ArgumentNullException ("listen_ip");
+
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port");
+
+			Init (listen_ip.AddressFamily, new IPEndPoint(listen_ip, port));
 		}
 
 
@@ -86,7 +102,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		public EndPoint LocalEndpoint
 		{
-			get { return server.LocalEndPoint; }
+			get { return savedEP; }
 		}
 		
 		/// <summary>
@@ -102,9 +118,13 @@ namespace System.Net.Sockets
 
 		/// <summary>
 		/// Accepts a pending connection
+		/// </summary>
 		/// <returns>A Socket object for the new connection</returns>
 		public Socket AcceptSocket ()
 		{
+			if (!active)
+				throw new InvalidOperationException ("Socket is not listening");
+
 			return server.Accept();
 		}
 		
@@ -115,6 +135,9 @@ namespace System.Net.Sockets
 		/// object made from the new socket.</returns>
 		public TcpClient AcceptTcpClient ()
 		{
+			if (!active)
+				throw new InvalidOperationException ("Socket is not listening");
+
 			TcpClient client = new TcpClient();
 			// use internal method SetTcpClient to make a
 			// client with the specified socket
@@ -127,9 +150,8 @@ namespace System.Net.Sockets
 		/// </summary>
 		~TcpListener ()
 		{
-			if (active == true) {
+			if (active)
 				Stop();
-			}
 		}
 	
 		/// <returns>
@@ -138,6 +160,9 @@ namespace System.Net.Sockets
 		/// </returns>
 		public bool Pending ()
 		{
+			if (!active)
+				throw new InvalidOperationException ("Socket is not listening");
+
 			return server.Poll(1000, SelectMode.SelectRead);
 		}
 		
@@ -147,6 +172,9 @@ namespace System.Net.Sockets
 		[MonoTODO]
 		public void Start ()
 		{
+			if (active)
+				return;
+
 			server.Listen(5);	// According to the
 						// man page some BSD
 						// and BSD-derived
@@ -163,7 +191,10 @@ namespace System.Net.Sockets
 		/// </summary>
 		public void Stop ()
 		{
-			server.Close();
+			if (active)
+				server.Close ();
+
+			Init (AddressFamily.InterNetwork, savedEP);
 		}
 
 	}
