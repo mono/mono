@@ -2151,6 +2151,7 @@ namespace Mono.CSharp {
 					type = l;
 					return this;
 				}
+				Error_OperatorCannotBeApplied ();
 				return null;
 			}
 			
