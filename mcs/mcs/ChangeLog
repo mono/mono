@@ -1,9 +1,16 @@
 2002-07-22  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (Invocation.OverloadedResolve): Do the BetterFunction()
+	lookup on a per-class level; ie. walk up the class hierarchy until we
+	found at least one applicable method, then choose the best among them.
+	Fixes bug #24463 and test-29.cs.
+
+2002-07-22  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs (TypeManager.ArrayContainsMethod): Don't check the
 	return types of the methods.  The return type is not part of the
 	signature and we must not check it to make the `new' modifier work.
-	Fixes bug bug #27999, also added test-147.cs.
+	Fixes bug #27999, also added test-147.cs.
 	(TypeManager.TypeToCoreType): Added TypeManager.type_type.
 
 	* expression.cs (Invocation.DoResolve): Call TypeManager.TypeToCoreType()

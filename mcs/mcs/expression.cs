@@ -3279,7 +3279,7 @@ namespace Mono.CSharp {
 					if (x <= 0)
 						break;
 				}
-				
+
 				if (x > 0)
 					return 1;
 				else
@@ -3543,12 +3543,21 @@ namespace Mono.CSharp {
 		{
 			ArrayList afm = new ArrayList ();
 			MethodBase method = null;
+			Type current_type = null;
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
 			
 
 			foreach (MethodBase candidate in me.Methods){
 				int x;
+
+				// If we're going one level higher in the class hierarchy, abort if
+				// we already found an applicable method.
+				if (candidate.DeclaringType != current_type) {
+					current_type = candidate.DeclaringType;
+					if (method != null)
+						break;
+				}
 
 				// Check if candidate is applicable (section 14.4.2.1)
 				if (!IsApplicable (ec, Arguments, candidate))
