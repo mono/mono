@@ -1,3 +1,8 @@
+2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: check for the existence of 'dest' and set ERROR_ALREADY_EXISTS
+	if it exists and is not the same as 'src'.
+
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* processes.c: unquote the cmd path, allow for ' or " when quoting and
