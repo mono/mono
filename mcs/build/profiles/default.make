@@ -20,8 +20,8 @@ MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_
 MBAS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MBAS)
 else
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
-MCS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MCS) /lib:$(topdir)/class/lib/$(PROFILE)
-MBAS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MBAS) /lib:$(topdir)/class/lib/$(PROFILE)
+MCS = $(PLATFORM_RUNTIME) $(EXTERNAL_MCS) /lib:$(topdir)/class/lib/$(PROFILE)
+MBAS = $(PLATFORM_RUNTIME) $(EXTERNAL_MBAS) /lib:$(topdir)/class/lib/$(PROFILE)
 endif
 
 # nuttzing!
