@@ -1,3 +1,7 @@
+2004/10/08 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* typemanager.cs: Changing StandardModule to use less memory, by doing string 
+		concatenation only once. It was wasting 1 MB on the test case.
+
 2004-10-06 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Added support for Call keyword in invocation statement
 

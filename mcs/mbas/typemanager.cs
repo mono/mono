@@ -474,8 +474,13 @@ public class TypeManager {
 	private class StandardModule {
 		public readonly string Namespace;
 		public readonly string Name;
-		public StandardModule(string _namespace, string name) { Namespace = _namespace; Name = name; }
-		public override string ToString() { return ((Namespace != null && Namespace.Length > 0)?(Namespace + "."):"") + Name; }
+		private readonly string asString;
+		public StandardModule(string _namespace, string name) { 
+			Namespace = _namespace; 
+			Name = name; 
+			asString = ((Namespace != null && Namespace.Length > 0)?(Namespace + "."):"") + Name;
+		}
+		public override string ToString() { return asString; }
 	}
 
 	private static StandardModule[] standardModules;
