@@ -1,3 +1,11 @@
+2001-07-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* interp.c (GET_NATI): Switched from using nati_t to cli/types.h
+	m_i type.  Maybe we should rename the types to be m_i_t instead of
+	m_i alone.
+	
+	Make the code compile after I broke it.
+
 Tue Jul 31 23:46:33 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix cleanup.
@@ -5,7 +13,7 @@ Tue Jul 31 23:46:33 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 2001-07-31  Miguel de Icaza  <miguel@ximian.com>
 
-	* interp.c (ves_exec_method): Cleanup of the source code.
+	(ves_exec_method): Cleanup of the source code.
 
 Tue Jul 31 20:13:59 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
