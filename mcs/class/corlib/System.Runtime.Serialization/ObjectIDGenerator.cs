@@ -28,7 +28,7 @@ namespace System.Runtime.Serialization
 		// The key is then a wrapper of the object that compares object references
 		// instead of object content (unless the object is inmutable, like strings).
 
-		struct InstanceWrapper
+		class InstanceWrapper
 		{
 			object _instance;
 
@@ -40,7 +40,7 @@ namespace System.Runtime.Serialization
 			public override bool Equals (object other)
 			{
 				InstanceWrapper ow = (InstanceWrapper)other;
-				if (_instance.GetType() == typeof(string))
+				if (_instance is string)
 					return _instance.Equals(ow._instance);
 				else 
 					return (_instance == ow._instance);
@@ -68,9 +68,11 @@ namespace System.Runtime.Serialization
 
 			InstanceWrapper iw = new InstanceWrapper(obj);
 
-			if (table.ContainsKey (iw)) {
+			object val = table [iw];
+
+			if (val != null) {
 				firstTime = false;
-				return (long) table [iw];
+				return (long) val;
 
 			} else {
 				firstTime = true;
@@ -84,17 +86,21 @@ namespace System.Runtime.Serialization
 			if (obj == null)
 				throw new ArgumentNullException ("The obj parameter is null.");
 
-			InstanceWrapper iw = new InstanceWrapper(obj);
-
-			if (table.ContainsKey (iw)) 
-			{
-				firstTime = false;
-				return (long) table [iw];
+ 			object val = table [new InstanceWrapper(obj)];
+ 
+ 			if (val != null) {
+ 				firstTime = false;
+ 				return (long) val;
 
 			} else {				
 				firstTime = true;
 				return 0L; // 0 is the null ID
 			}
+		}
+
+		internal long NextId
+		{
+			get { return current ++; }
 		}
 	}
 }

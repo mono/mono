@@ -1,3 +1,10 @@
+2003-07-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ObjectIDGenerator.cs: Optimized access to hashtable and reduced the
+	  number of calls to GetType(). (Patch by Paolo).
+	  Also added a NextId property that returns a new Id without registering
+	  an object.
+
 2003-06-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SerializationInfo.cs: Fixed bug #44955
