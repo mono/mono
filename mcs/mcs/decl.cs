@@ -465,6 +465,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (!CheckAccessLevel (d.Type)) {
+				Report.	Error (122, "`" + d.Type + "' " +
+				       "is inaccessible because of its protection level");
+				return null;
+			}
+
 			return d.Type;
 		}
 
@@ -489,6 +495,19 @@ namespace Mono.CSharp {
 			return d;
 		}
 		
+		bool CheckAccessLevel (Type check_type) 
+		{
+			if (check_type.IsPublic || check_type.IsNestedPublic)
+				return true;
+			
+			if (check_type.Assembly == TypeBuilder.Assembly)
+				return true;
+
+			return false;
+
+		}
+
+
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;
