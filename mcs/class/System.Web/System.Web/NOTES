@@ -1,0 +1,7 @@
+Session notes:
+When a request is finished, the contents of Request.Session are serialized and dumped to the State Server.
+When a request is started, a new Request.Session is created, data is deserialized from the State Server, and the objects are placed back into Request.Session.
+The State Server is accessed via the SessionStateModule which is used for both session ID and state data management.
+HttpApplicationState instance is created the first time a url within the applications virtual directory is accessed. Its accessable through HttpContext.Application.
+HttpApplicationState needs to use lock/unlock explicitly.
+Not shared across machines or multiple processes.
