@@ -34,17 +34,28 @@ namespace Mono.ILASM {
                                 class_table = new Hashtable ();
                         }
 
-                        public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype)
+                        public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype, ExternTable table)
                         {
                                 ExternTypeRef type_ref = typeref_table [full_name] as ExternTypeRef;
                                 
                                 if (type_ref != null)
                                         return type_ref;
 
-                                type_ref = new ExternTypeRef (name, full_name, is_valuetype);
+                                type_ref = new ExternTypeRef (name, full_name, is_valuetype, table);
                                 typeref_table [full_name] = type_ref;
 
                                 return type_ref;
+                        }
+
+                        public void ModifyTypeRefName (string old_name, string new_name)
+                        {
+                                object type_ref = typeref_table [old_name];
+                                
+                                if (type_ref == null)
+                                        throw new Exception ("Modified type name not found. (" + old_name + ")");
+
+                                typeref_table.Remove (old_name);
+                                typeref_table [new_name] = type_ref;
                         }
                         
                         public PEAPI.ClassRef GetType (string name_space, string name)
@@ -119,7 +130,18 @@ namespace Mono.ILASM {
                         if (ext_asmb == null)
                                 throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
 
-                        return ext_asmb.GetTypeRef (full_name, is_valuetype);
+                        return ext_asmb.GetTypeRef (full_name, is_valuetype, this);
+                }
+
+                public void ModifyTypeRefName (string asmb_name, string old_name, string new_name)
+                {
+                        ExternAssembly ext_asmb;
+                        ext_asmb = assembly_table[asmb_name] as ExternAssembly;
+
+                        if (ext_asmb == null)
+                                throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
+
+                        ext_asmb.ModifyTypeRefName (old_name, new_name);
                 }
                 
                 public PEAPI.ClassRef GetClass (string asmb_name, string name_space, string name)

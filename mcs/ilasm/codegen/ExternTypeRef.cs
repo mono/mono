@@ -23,17 +23,20 @@ namespace Mono.ILASM {
                 private string full_name;
                 private string sig_mod;
                 private bool is_valuetype;
+                private ExternTable extern_table;
 
                 private bool is_resolved;
 
                 private Hashtable method_table;
                 private Hashtable field_table;
                 
-                public ExternTypeRef (string assembly_name, string full_name, bool is_valuetype)
+                public ExternTypeRef (string assembly_name, string full_name,
+                                bool is_valuetype, ExternTable extern_table)
                 {
                         this.assembly_name = assembly_name;
                         this.full_name = full_name;
                         this.is_valuetype = is_valuetype;
+                        this.extern_table = extern_table;
                         sig_mod = String.Empty;
 
                         method_table = new Hashtable ();
@@ -57,7 +60,13 @@ namespace Mono.ILASM {
 
                 public override string SigMod {
                         get { return sig_mod; }
-                        set { sig_mod = value; }
+                        set {
+                                string old_name = FullName;
+                                sig_mod = value;
+                                string new_name = FullName;
+                                if (old_name != new_name)
+                                        extern_table.ModifyTypeRefName (assembly_name, old_name, new_name);
+                        }
                 }
 
                 public void Resolve (CodeGen code_gen)
