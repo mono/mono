@@ -1,3 +1,8 @@
+2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Uri.cs: Copied from System.dll assembly and started adaptation for
+	it's reuse inside the security classes (CAS).
+
 2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongName.cs: Added corlib specific code to load configuration
