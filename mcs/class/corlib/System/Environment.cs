@@ -78,13 +78,17 @@ namespace System
 			// [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
 			get
 			{
-				return MonoIO.GetCurrentDirectory ();
+				MonoIOError error;
+				
+				return MonoIO.GetCurrentDirectory (out error);
 			}
 			[MonoTODO("disabled because of compile error. Need mcs magic.")]
 			//[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			set
 			{
-				MonoIO.SetCurrentDirectory (value);
+				MonoIOError error;
+				
+				MonoIO.SetCurrentDirectory (value, out error);
 			}
 		}
 

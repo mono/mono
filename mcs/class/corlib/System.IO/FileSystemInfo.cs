@@ -41,8 +41,12 @@ namespace System.IO {
 			}
 
 			set {
-				if (!MonoIO.SetFileAttributes (FullName, value))
-					throw MonoIO.GetException ();
+				MonoIOError error;
+				
+				if (!MonoIO.SetFileAttributes (FullName,
+							       value,
+							       out error))
+					throw MonoIO.GetException (error);
 			}
 		}
 
@@ -55,8 +59,11 @@ namespace System.IO {
 			set {
 				long filetime = value.ToFileTime ();
 			
-				if (!MonoIO.SetFileTime (FullName, filetime, -1, -1))
-					throw MonoIO.GetException ();
+				MonoIOError error;
+				
+				if (!MonoIO.SetFileTime (FullName, filetime,
+							 -1, -1, out error))
+					throw MonoIO.GetException (error);
 			}
 		}
 
@@ -69,8 +76,12 @@ namespace System.IO {
 			set {
 				long filetime = value.ToFileTime ();
 
-				if (!MonoIO.SetFileTime (FullName, -1, filetime, -1))
-					throw MonoIO.GetException ();
+				MonoIOError error;
+				
+				if (!MonoIO.SetFileTime (FullName, -1,
+							 filetime, -1,
+							 out error))
+					throw MonoIO.GetException (error);
 			}
 		}
 
@@ -83,8 +94,11 @@ namespace System.IO {
 			set {
 				long filetime = value.ToFileTime ();
 
-				if (!MonoIO.SetFileTime (FullName, -1, -1, filetime))
-					throw MonoIO.GetException ();
+				MonoIOError error;
+				
+				if (!MonoIO.SetFileTime (FullName, -1, -1,
+							 filetime, out error))
+					throw MonoIO.GetException (error);
 			}
 		}
 
@@ -115,7 +129,9 @@ namespace System.IO {
 			if (valid && !force)
 				return;
 
-			MonoIO.GetFileStat (FullName, out stat);
+			MonoIOError error;
+			
+			MonoIO.GetFileStat (FullName, out stat, out error);
 			valid = true;
 		}
 

@@ -1,3 +1,18 @@
+2002-10-31  Dick Porter  <dick@ximian.com>
+
+	* FileStream.cs: Fix buffering properly this time.  Also kludge
+	around broken pipe errors, treating them as EOF instead of
+	throwing an IO exception.
+
+	* MonoIO.cs: Return the error status in a parameter, as the
+	GetLastError() value has long since been blown away if we try and
+	look it up in a subsequent internal call invocation.
+
+	* FileSystemInfo.cs: 
+	* FileInfo.cs: 
+	* File.cs: 
+	* Directory.cs: MonoIO methods now have an error parameter
+
 2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TextReader.cs: implemented ReadBlock ().

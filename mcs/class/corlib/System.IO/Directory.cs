@@ -25,26 +25,46 @@ namespace System.IO
 
 		public static DirectoryInfo CreateDirectory (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException ();
-			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ();
+			if (path == null) {
+				throw new ArgumentNullException ("path");
+			}
+			
+			if (path == "") {
+				throw new ArgumentException ("Path is empty");
+			}
+			
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
+				throw new ArgumentException ("Path contains invalid chars");
+			}
 
-			if (!MonoIO.CreateDirectory (path))
-				throw MonoIO.GetException ();
+			MonoIOError error;
+			
+			if (!MonoIO.CreateDirectory (path, out error)) {
+				throw MonoIO.GetException (error);
+			}
 
 			return new DirectoryInfo (path);
 		}
 
 		public static void Delete (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException ();
-			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ();
+			if (path == null) {
+				throw new ArgumentNullException ("path");
+			}
+			
+			if (path == "") {
+				throw new ArgumentException ("Path is empty");
+			}
+			
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
+				throw new ArgumentException ("Path contains invalid chars");
+			}
 
-			if (!MonoIO.RemoveDirectory (path))
-				throw MonoIO.GetException ();
+			MonoIOError error;
+			
+			if (!MonoIO.RemoveDirectory (path, out error)) {
+				throw MonoIO.GetException (error);
+			}
 		}
 
 		static void RecursiveDelete (string path)
@@ -72,10 +92,12 @@ namespace System.IO
 
 			RecursiveDelete (path);
 		}
-		
+
 		public static bool Exists (string path)
 		{
-			return MonoIO.ExistsDirectory (path);
+			MonoIOError error;
+			
+			return MonoIO.ExistsDirectory (path, out error);
 		}
 
 		public static DateTime GetLastAccessTime (string path)
@@ -193,17 +215,21 @@ namespace System.IO
 			MonoIOStat stat;
 			IntPtr find;
 
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
 				throw new ArgumentException ("Path contains invalid characters.");
+			}
 
-			if (!Directory.Exists (path))
+			if (!Directory.Exists (path)) {
 				throw new DirectoryNotFoundException ("Directory '" + path + "' not found.");
+			}
 
 			search = new SearchPattern (pattern);
 
-			find = MonoIO.FindFirstFile (Path.Combine (path , "*"), out stat);
+			MonoIOError error;
+			
+			find = MonoIO.FindFirstFile (Path.Combine (path , "*"), out stat, out error);
 			if (find == MonoIO.InvalidHandle) {
-				switch (MonoIO.GetLastError ()) {
+				switch (error) {
 				case MonoIOError.ERROR_FILE_NOT_FOUND:
 				case MonoIOError.ERROR_PATH_NOT_FOUND:
 					string message = String.Format ("Could not find a part of the path \"{0}\"", path);
@@ -212,7 +238,8 @@ namespace System.IO
 					return new string [0];
 
 				default:
-					throw MonoIO.GetException (path);
+					throw MonoIO.GetException (path,
+								   error);
 				}
 			}
 			
@@ -231,10 +258,11 @@ namespace System.IO
 				    stat.Name != "..")
 					entries.Add (Path.Combine (path, stat.Name));
 
-				if (!MonoIO.FindNextFile (find, out stat))
+				if (!MonoIO.FindNextFile (find, out stat,
+							  out error))
 					break;
 			}
-			MonoIO.FindClose (find);
+			MonoIO.FindClose (find, out error);
 
 			return (string []) entries.ToArray (typeof (string));
 		}

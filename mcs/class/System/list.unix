@@ -293,6 +293,8 @@ System.IO/FileSystemWatcher.cs
 System.IO/InternalBufferOverflowException.cs
 System.IO/IODescriptionAttribute.cs
 System.IO/NotifyFilters.cs
+System.IO/MonoIO.cs
+System.IO/MonoIOError.cs
 System.IO/RenamedEventArgs.cs
 System.IO/RenamedEventHandler.cs
 System.IO/WaitForChangedResult.cs

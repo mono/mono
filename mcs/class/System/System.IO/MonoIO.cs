@@ -23,7 +23,8 @@ namespace System.IO
 		// handle methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool Close (IntPtr handle);
+		public extern static bool Close (IntPtr handle,
+						 out MonoIOError error);
 		
 		// console handles
 

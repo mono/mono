@@ -112,11 +112,17 @@ namespace System.IO {
 		// file methods
 
 		public override void Delete () {
-			if (!MonoIO.Exists (FullPath))		// a weird MS.NET behaviour
+			MonoIOError error;
+			
+			if (!MonoIO.Exists (FullPath, out error)) {
+				// a weird MS.NET behaviour
 				return;
-		
-			if (!MonoIO.DeleteFile (FullPath))
-				throw MonoIO.GetException (OriginalPath);
+			}
+			
+			if (!MonoIO.DeleteFile (FullPath, out error)) {
+				throw MonoIO.GetException (OriginalPath,
+							   error);
+			}
 		}
 		
 		public void MoveTo (string dest) {

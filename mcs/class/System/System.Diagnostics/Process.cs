@@ -590,19 +590,21 @@ namespace System.Diagnostics {
 			process.process_handle=proc_info.process_handle;
 			process.pid=proc_info.pid;
 			
+			MonoIOError error;
+			
 			if(startInfo.RedirectStandardInput==true) {
-				MonoIO.Close(stdin_rd);
+				MonoIO.Close(stdin_rd, out error);
 				process.input_stream=new StreamWriter(new FileStream(stdin_wr, FileAccess.Write, true));
 				process.input_stream.AutoFlush=true;
 			}
 
 			if(startInfo.RedirectStandardOutput==true) {
-				MonoIO.Close(stdout_wr);
+				MonoIO.Close(stdout_wr, out error);
 				process.output_stream=new StreamReader(new FileStream(stdout_rd, FileAccess.Read, true));
 			}
 
 			if(startInfo.RedirectStandardError==true) {
-				MonoIO.Close(stderr_wr);
+				MonoIO.Close(stderr_wr, out error);
 				process.error_stream=new StreamReader(new FileStream(stderr_rd, FileAccess.Read, true));
 			}
 

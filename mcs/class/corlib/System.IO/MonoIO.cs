@@ -22,17 +22,14 @@ namespace System.IO
 
 		// error methods
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static MonoIOError GetLastError ();
-
-		public static Exception GetException ()
+		public static Exception GetException (MonoIOError error)
 		{
-			return GetException (String.Empty);
+			return GetException (String.Empty, error);
 		}
 
-		public static Exception GetException (string path)
+		public static Exception GetException (string path,
+						      MonoIOError error)
 		{
-			MonoIOError error = GetLastError ();
 			string message;
 
 			switch (error) {
@@ -58,58 +55,66 @@ namespace System.IO
 		// directory methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool CreateDirectory (string path);
+		public extern static bool CreateDirectory (string path, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool RemoveDirectory (string path);
+		public extern static bool RemoveDirectory (string path, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static IntPtr FindFirstFile (string path, out MonoIOStat stat);
+		public extern static IntPtr FindFirstFile (string path, out MonoIOStat stat, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool FindNextFile (IntPtr find, out MonoIOStat stat);
+		public extern static bool FindNextFile (IntPtr find, out MonoIOStat stat, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool FindClose (IntPtr find);
+		public extern static bool FindClose (IntPtr find,
+						     out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string GetCurrentDirectory ();
+		public extern static string GetCurrentDirectory (out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetCurrentDirectory (string path);
+		public extern static bool SetCurrentDirectory (string path, out MonoIOError error);
 
 		// file methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool MoveFile (string path, string dest);
+		public extern static bool MoveFile (string path, string dest,
+						    out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool CopyFile (string path, string dest, bool overwrite);
+		public extern static bool CopyFile (string path, string dest,
+						    bool overwrite,
+						    out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool DeleteFile (string path);
+		public extern static bool DeleteFile (string path,
+						      out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static FileAttributes GetFileAttributes (string path);
+		public extern static FileAttributes GetFileAttributes (string path, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetFileAttributes (string path, FileAttributes attrs);
+		public extern static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static MonoFileType GetFileType (IntPtr handle);
+		public extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
 
-		public static bool Exists (string path)
+		public static bool Exists (string path, out MonoIOError error)
 		{
-			FileAttributes attrs = GetFileAttributes (path);
+			FileAttributes attrs = GetFileAttributes (path,
+								  out error);
 			if (attrs == InvalidFileAttributes)
 				return false;
 
 			return true;
 		}
 
-		public static bool ExistsFile (string path)
+		public static bool ExistsFile (string path,
+					       out MonoIOError error)
 		{
-			FileAttributes attrs = GetFileAttributes (path);
+			FileAttributes attrs = GetFileAttributes (path,
+								  out error);
 			if (attrs == InvalidFileAttributes)
 				return false;
 
@@ -119,9 +124,11 @@ namespace System.IO
 			return true;
 		}
 
-		public static bool ExistsDirectory (string path)
+		public static bool ExistsDirectory (string path,
+						    out MonoIOError error)
 		{
-			FileAttributes attrs = GetFileAttributes (path);
+			FileAttributes attrs = GetFileAttributes (path,
+								  out error);
 			if (attrs == InvalidFileAttributes)
 				return false;
 
@@ -132,48 +139,77 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool GetFileStat (string path, out MonoIOStat stat);
+		public extern static bool GetFileStat (string path,
+						       out MonoIOStat stat,
+						       out MonoIOError error);
 
 		// handle methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static IntPtr Open (string filename, FileMode mode, FileAccess access, FileShare share);
+		public extern static IntPtr Open (string filename,
+						  FileMode mode,
+						  FileAccess access,
+						  FileShare share,
+						  out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool Close (IntPtr handle);
+		public extern static bool Close (IntPtr handle,
+						 out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Read (IntPtr handle, byte [] dest, int dest_offset, int count);
+		public extern static int Read (IntPtr handle, byte [] dest,
+					       int dest_offset, int count,
+					       out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Write (IntPtr handle, byte [] src, int src_offset, int count);
+		public extern static int Write (IntPtr handle, byte [] src,
+						int src_offset, int count,
+						out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static long Seek (IntPtr handle, long offset, SeekOrigin origin);
+		public extern static long Seek (IntPtr handle, long offset,
+						SeekOrigin origin,
+						out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool Flush (IntPtr handle);
+		public extern static bool Flush (IntPtr handle,
+						 out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static long GetLength (IntPtr handle);
+		public extern static long GetLength (IntPtr handle,
+						     out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetLength (IntPtr handle, long length);
+		public extern static bool SetLength (IntPtr handle,
+						     long length,
+						     out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetFileTime (IntPtr handle, long creation_time, long last_access_time, long last_write_time);
+		public extern static bool SetFileTime (IntPtr handle,
+						       long creation_time,
+						       long last_access_time,
+						       long last_write_time,
+						       out MonoIOError error);
 
-		public static bool SetFileTime (string path, long creation_time, long last_access_time, long last_write_time)
+		public static bool SetFileTime (string path,
+						long creation_time,
+						long last_access_time,
+						long last_write_time,
+						out MonoIOError error)
 		{
 			IntPtr handle;
 			bool result;
 
-			handle = Open (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			handle = Open (path, FileMode.Open,
+				       FileAccess.ReadWrite,
+				       FileShare.ReadWrite, out error);
 			if (handle == IntPtr.Zero)
 				return false;
 
-			result = SetFileTime (handle, creation_time, last_access_time, last_write_time);
-			Close (handle);
+			result = SetFileTime (handle, creation_time,
+					      last_access_time,
+					      last_write_time, out error);
+			Close (handle, out error);
 			
 			return result;
 		}

@@ -64,8 +64,10 @@ namespace System.IO
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
-			if (!MonoIO.CopyFile (src, dest, overwrite))
-				throw MonoIO.GetException ();
+			MonoIOError error;
+			
+			if (!MonoIO.CopyFile (src, dest, overwrite, out error))
+				throw MonoIO.GetException (error);
 		}
 
 		public static FileStream Create (string path)
@@ -115,56 +117,75 @@ namespace System.IO
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
-			if (!MonoIO.DeleteFile (path)){
-				Exception e = MonoIO.GetException ();
+			MonoIOError error;
+			
+			if (!MonoIO.DeleteFile (path, out error)){
+				Exception e = MonoIO.GetException (error);
 				if (! (e is FileNotFoundException))
 					throw e;
 			}
 		}
-		
+
 		public static bool Exists (string path)
 		{
-			// For security reasons no exceptions are thrown, only false is returned if there
-			// is any problem with the path or permissions.  Minimizes what information can be
+			// For security reasons no exceptions are
+			// thrown, only false is returned if there is
+			// any problem with the path or permissions.
+			// Minimizes what information can be
 			// discovered by using this method.
-			if (null == path || String.Empty == path.Trim() 
-			    || path.IndexOfAny(Path.InvalidPathChars) >= 0)
+			if (null == path || String.Empty == path.Trim()
+			    || path.IndexOfAny(Path.InvalidPathChars) >= 0) {
 				return false;
+			}
 
-			return MonoIO.ExistsFile (path);
+			MonoIOError error;
+			
+			return MonoIO.ExistsFile (path, out error);
 		}
 
 		public static FileAttributes GetAttributes (string path)
 		{
-			if (null == path)
+			if (null == path) {
 				throw new ArgumentNullException("path");
-			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
-				throw new ArgumentException("path");
+			}
+			
+			if (String.Empty == path.Trim()) {
+				throw new ArgumentException("Path is empty");
+			}
 
-			return MonoIO.GetFileAttributes (path);
+			if (path.IndexOfAny(Path.InvalidPathChars) >= 0) {
+				throw new ArgumentException("Path contains invalid chars");
+			}
+
+			MonoIOError error;
+			
+			return MonoIO.GetFileAttributes (path, out error);
 		}
 
 		public static DateTime GetCreationTime (string path)
 		{
 			MonoIOStat stat;
-
-			MonoIO.GetFileStat (path, out stat);
+			MonoIOError error;
+			
+			MonoIO.GetFileStat (path, out stat, out error);
 			return DateTime.FromFileTime (stat.CreationTime);
 		}
 
 		public static DateTime GetLastAccessTime (string path)
 		{
 			MonoIOStat stat;
-
-			MonoIO.GetFileStat (path, out stat);
+			MonoIOError error;
+			
+			MonoIO.GetFileStat (path, out stat, out error);
 			return DateTime.FromFileTime (stat.LastAccessTime);
 		}
 
 		public static DateTime GetLastWriteTime (string path)
 		{
 			MonoIOStat stat;
-
-			MonoIO.GetFileStat (path, out stat);
+			MonoIOError error;
+			
+			MonoIO.GetFileStat (path, out stat, out error);
 			return DateTime.FromFileTime (stat.LastWriteTime);
 		}
 
@@ -191,8 +212,10 @@ namespace System.IO
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
 
-			if (!MonoIO.MoveFile (src, dest))
-				throw MonoIO.GetException ();
+			MonoIOError error;
+			
+			if (!MonoIO.MoveFile (src, dest, out error))
+				throw MonoIO.GetException (error);
 		}
 		
 		public static FileStream Open (string path, FileMode mode)
@@ -226,28 +249,49 @@ namespace System.IO
 			return new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
 
-		public static void SetAttributes (string path, FileAttributes attributes)
+		public static void SetAttributes (string path,
+						  FileAttributes attributes)
 		{
-			if (!MonoIO.SetFileAttributes (path, attributes))
-				throw MonoIO.GetException (path);
+			MonoIOError error;
+			
+			if (!MonoIO.SetFileAttributes (path, attributes,
+						       out error)) {
+				throw MonoIO.GetException (path, error);
+			}
 		}
 
-		public static void SetCreationTime (string path, DateTime creation_time)
+		public static void SetCreationTime (string path,
+						    DateTime creation_time)
 		{
-			if (!MonoIO.SetFileTime (path, creation_time.Ticks, -1, -1))
-				throw MonoIO.GetException (path);
+			MonoIOError error;
+			
+			if (!MonoIO.SetFileTime (path, creation_time.Ticks,
+						 -1, -1, out error)) {
+				throw MonoIO.GetException (path, error);
+			}
 		}
 
-		public static void SetLastAccessTime (string path, DateTime last_access_time)
+		public static void SetLastAccessTime (string path,DateTime last_access_time)
 		{
-			if (!MonoIO.SetFileTime (path, -1, last_access_time.Ticks, -1))
-				throw MonoIO.GetException (path);
+			MonoIOError error;
+			
+			if (!MonoIO.SetFileTime (path, -1,
+						 last_access_time.Ticks, -1,
+						 out error)) {
+				throw MonoIO.GetException (path, error);
+			}
 		}
 
-		public static void SetLastWriteTime (string path, DateTime last_write_time)
+		public static void SetLastWriteTime (string path,
+						     DateTime last_write_time)
 		{
-			if (!MonoIO.SetFileTime (path, -1, -1, last_write_time.Ticks))
-				throw MonoIO.GetException (path);
+			MonoIOError error;
+			
+			if (!MonoIO.SetFileTime (path, -1, -1,
+						 last_write_time.Ticks,
+						 out error)) {
+				throw MonoIO.GetException (path, error);
+			}
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2002-10-31  Dick Porter  <dick@ximian.com>
+
+	* list.unix: Added MonoIO and MonoIOError to the build
+
 2002-10-29  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.ComponentModel/PropertyDescriptor.cs: added

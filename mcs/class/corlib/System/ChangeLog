@@ -1,3 +1,7 @@
+2002-10-31  Dick Porter  <dick@ximian.com>
+
+	* Environment.cs: MonoIO methods now have an error parameter
+
 2002-10-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Enum.cs: Added support for whitespaces in Enum:Parse().
