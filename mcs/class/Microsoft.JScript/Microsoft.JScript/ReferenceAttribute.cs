@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class ReferenceAttribute : Attribute
-	{
+namespace Microsoft.JScript {
+
+	public class ReferenceAttribute : Attribute {
+
 		public string reference;
 		
 		public ReferenceAttribute (string reference)

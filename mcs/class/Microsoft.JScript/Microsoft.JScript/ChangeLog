@@ -1,5 +1,7 @@
 2004-01-15  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* ReferenceAttribute.cs: moved it back to namespace Microsoft.JScript.
+
 	* CodeGenerator.cs: small fixes to generate same things that ms.
 
 2004-01-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
