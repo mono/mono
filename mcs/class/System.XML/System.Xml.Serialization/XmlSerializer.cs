@@ -328,10 +328,22 @@ namespace System.Xml.Serialization {
 
 		private void SerializeBuiltIn (XmlWriter writer, object o)
 		{
-			TypeData td = TypeTranslator.GetTypeData (o.GetType ());
-			writer.WriteStartElement  (td.ElementName);
-			WriteBuiltinValue(writer,o);
-			writer.WriteEndElement();
+			if (o is XmlNode) {
+				XmlNode n = (XmlNode) o;
+				XmlNodeReader nrdr = new XmlNodeReader (n);
+				nrdr.Read ();
+				if (nrdr.NodeType == XmlNodeType.XmlDeclaration)
+					nrdr.Read ();
+				do {
+					writer.WriteNode (nrdr, false);
+				} while (nrdr.Read ());
+			}
+			else {
+				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
+				writer.WriteStartElement  (td.ElementName);
+				WriteBuiltinValue(writer,o);
+				writer.WriteEndElement();
+			}
 		}
 
 		private void WriteNilAttribute(XmlWriter writer)
@@ -629,6 +641,9 @@ namespace System.Xml.Serialization {
 					FillICollectionType (type);
 					return;
 				}
+//				if (type.GetInterface ("IDictionary") == typeof (System.Collections.IDictionary)) {
+//					throw new Exception ("Can't Serialize Type " + type.Name + " since it implements IDictionary");
+//				}
 				if (type.GetInterface ("IEnumerable") == typeof (System.Collections.IEnumerable)) {
 					//FillIEnumerableType(type);
 					//return;
@@ -842,7 +857,7 @@ namespace System.Xml.Serialization {
 				return false;
 			if (type.IsValueType || type == typeof (string) || type.IsPrimitive)
 				return true;
-			if (type == typeof (DateTime) || type == typeof (XmlNode))
+			if (type == typeof (DateTime) || type == typeof (XmlNode) || type.IsSubclassOf (typeof (XmlNode)))
 				return true;
 				
 			return false;
