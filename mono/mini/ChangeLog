@@ -1,3 +1,7 @@
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Fix LDSTR in dynamic methods.
+
 2004-09-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c (mini_regression_list): Do not call mono_assembly_close 
