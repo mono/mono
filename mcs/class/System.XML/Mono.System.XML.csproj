@@ -19,6 +19,7 @@
                 PreBuildEvent = ""
                 PostBuildEvent = ""
                 RootNamespace = "System.XML"
+                RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
                 <Config
@@ -27,7 +28,7 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE;NET_1_1;NET_2_0"
+                    DefineConstants = "Debug; NET_1_1; NET_2_0; MS_NET"
                     DocumentationFile = ""
                     DebugSymbols = "true"
                     FileAlignment = "4096"
@@ -66,7 +67,7 @@
                 <Reference
                     Name = "System"
                     AssemblyName = "System"
-                    HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.1.4322\System.dll"
+                    HintPath = "..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
                 />
             </References>
         </Build>
@@ -134,6 +135,11 @@
                 />
                 <File
                     RelPath = "Mono.Xml.XPath\DTMXPathDocumentBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.XPath\DTMXPathDocumentWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -239,6 +245,11 @@
                 />
                 <File
                     RelPath = "Mono.Xml.Xsl\XslDecimalFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.Xsl\XslFunctions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -388,7 +399,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\AsyncXmlTextWriter.cs"
+                    RelPath = "System.Xml\ConformanceLevel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -443,21 +454,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\IXPathChangeNavigator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\IXPathEditor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\IXPathNavigator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml\NameTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -499,11 +495,6 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlCDataSection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\XmlChangeFilters.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -578,18 +569,25 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlImplementation.cs"
-                    SubType = "Code"
+                    RelPath = "System.Xml\XmlFactory.cs"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlInfoItemType.cs"
+                    RelPath = "System.Xml\XmlImplementation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml\XmlInputStream.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlItemView.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlItemViewCollection.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -639,11 +637,6 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlNodeChangedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\XmlNodeChangeType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -713,6 +706,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlReaderSettings.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlResolver.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -778,38 +775,73 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XPathChangeNavigator.cs"
+                    RelPath = "System.Xml\XmlWriterSettings.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\IXmlCompilerInclude.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\QueryEventArgs.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\QueryEventHandler.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\XmlArgumentList.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\XmlCommand.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\XmlQueryCompileException.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\XmlQueryException.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Query\XPath2Expression.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XPathDocument2.cs"
+                    RelPath = "System.Xml.Query\XQueryContext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XPathDocument2ChangedEventAction.cs"
+                    RelPath = "System.Xml.Query\XQueryModuleProlog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XPathDocument2ChangedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\XPathEditor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\XPathNavigator2.cs"
+                    RelPath = "System.Xml.Query\XsltCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml.Schema\BuiltInDatatype.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\CustomSerializer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\IXmlSchemaInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\IXmlType.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -878,6 +910,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.Schema\XmlSchemaBuiltInType.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Schema\XmlSchemaChoice.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -935,6 +971,10 @@
                 <File
                     RelPath = "System.Xml.Schema\XmlSchemaDatatype.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaDatatypeVariety.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1183,6 +1223,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.Schema\XmlSchemaValidity.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Schema\XmlSchemaWhiteSpaceFacet.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1195,6 +1239,15 @@
                 <File
                     RelPath = "System.Xml.Schema\XmlSeverityType.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlTypeCode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlValueConverter.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1234,6 +1287,11 @@
                 />
                 <File
                     RelPath = "System.Xml.Serialization\SerializationCodeGeneratorConfiguration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\SerializationSource.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1603,8 +1661,24 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\IXPathChangeNavigable.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\IXPathEditable.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.XPath\IXPathNavigable.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\NodeChangedEventArgs.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\NodeChangedEventHandler.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1627,13 +1701,29 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\XmlChangeFilters.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.XPath\XmlDataType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\XmlNodeChangeType.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.XPath\XmlSortOrder.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathAtomicValue.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathChangeNavigator.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1647,6 +1737,15 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.XPath\XPathDocumentNodeChangedAction.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathEditableNavigator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.XPath\XPathException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1654,6 +1753,10 @@
                 <File
                     RelPath = "System.Xml.XPath\XPathExpression.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathItem.cs"
                     BuildAction = "Compile"
                 />
                 <File
