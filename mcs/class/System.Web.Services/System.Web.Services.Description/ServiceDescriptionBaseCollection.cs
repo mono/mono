@@ -41,18 +41,22 @@ namespace System.Web.Services.Description {
 
 		protected override void OnInsertComplete (int index, object value)
 		{
-			Table [GetKey (value)] = value;
+			if (GetKey (value) != null)
+				Table [GetKey (value)] = value;
 		}
 
 		protected override void OnRemove (int index, object value)
 		{
-			Table.Remove (GetKey (value));
+			if (GetKey (value) != null)
+				Table.Remove (GetKey (value));
 		}
 
 		protected override void OnSet (int index, object oldValue, object newValue)
 		{
-			Table.Remove (GetKey (oldValue));
-			Table [GetKey (newValue)] = newValue;
+			if (GetKey (oldValue) != null) 
+				Table.Remove (GetKey (oldValue));
+			if (GetKey (newValue) != null)
+				Table [GetKey (newValue)] = newValue;
 		}
 
 		protected virtual void SetParent (object value, object parent)
