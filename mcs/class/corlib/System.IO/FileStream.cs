@@ -709,20 +709,17 @@ namespace System.IO
 
 		public override void SetLength (long length)
 		{
-			if(CanSeek == false) {
-				throw new NotSupportedException("The stream does not support seeking");
-			}
-
-			if(CanWrite == false) {
-				throw new NotSupportedException("The stream does not support writing");
-			}
-
-			if(length < 0) {
-				throw new ArgumentOutOfRangeException("Length is less than 0");
-			}
-
 			if (handle == MonoIO.InvalidHandle)
-				throw new IOException ("Stream has been closed");
+				throw new ObjectDisposedException ("Stream has been closed");
+
+			if(CanSeek == false)
+				throw new NotSupportedException("The stream does not support seeking");
+
+			if(CanWrite == false)
+				throw new NotSupportedException("The stream does not support writing");
+
+			if(length < 0)
+				throw new ArgumentOutOfRangeException("Length is less than 0");
 			
 			Flush ();
 

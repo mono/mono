@@ -124,6 +124,16 @@ namespace System.IO {
 		public override void SetLength (long value)
 		{
 			CheckObjectDisposedException ();
+
+			if (value < 0)
+				throw new ArgumentOutOfRangeException ("value must be positive");
+
+			if (!m_stream.CanWrite && !m_stream.CanSeek)
+				throw new NotSupportedException ("the stream cannot seek nor write.");
+
+			if ((m_stream == null) || (!m_stream.CanRead && !m_stream.CanWrite))
+				throw new IOException ("the stream is not open");
+			
 			m_stream.SetLength(value);
 			if (Position > value)
 				Position = value;
@@ -250,6 +260,6 @@ namespace System.IO {
 				throw new ObjectDisposedException ("BufferedStream", 
 					Locale.GetText ("Stream is closed"));
 			}
-		}			
+		}
 	}
 }
