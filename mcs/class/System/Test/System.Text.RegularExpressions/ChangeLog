@@ -1,7 +1,14 @@
+2005-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RegexBugs.cs: tests for bug #69065.
+
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* RegexBugs.cs: Add new test.
 
+2005-01-08  Nick Drochak  <ndrochak@ieee.org>
+
+	* RegexTest.cs: Make pass on MS.NET
 
 2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
