@@ -431,7 +431,7 @@ namespace Mono.CSharp {
 
                         //Console.WriteLine ("Expr is {0}", expr);
                         //Console.WriteLine ("{0} -> {1} ?", expr_type, target_type);
-			if (expr_type == target_type)
+			if (expr_type.Equals (target_type))
 				return true;
 
 			// First numeric conversions 

@@ -560,11 +560,11 @@ namespace Mono.CSharp {
 		//
 		public bool AsAccessible (Type parent, int flags)
 		{
-			if (parent.IsGenericParameter)
-				return true; // FIXME
-
 			while (parent.IsArray || parent.IsPointer || parent.IsByRef)
 				parent = TypeManager.GetElementType (parent);
+
+			if (parent.IsGenericParameter)
+				return true; // FIXME
 
 			AccessLevel level = GetAccessLevel (flags);
 			AccessLevel level2 = GetAccessLevel (parent, flags);

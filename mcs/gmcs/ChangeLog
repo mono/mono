@@ -1,3 +1,11 @@
+2003-12-18  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.AsAccessible): Check for array, pointer and
+	byref types first.
+
+	* convert.cs (Convert.ImplicitStandardConversionExists): Use
+	`expr_type.Equals (target_type)' instead of `=='.
+
 2003-12-08  Martin Baulig  <martin@ximian.com>
 
 	* generics.cs (Constraints.Types): Removed.
