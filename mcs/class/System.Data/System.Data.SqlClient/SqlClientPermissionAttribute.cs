@@ -32,10 +32,13 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		[MonoTODO]
 		public override IPermission CreatePermission() 
 		{
-			throw new NotImplementedException ();
+			if (base.Unrestricted) {
+				return new SqlClientPermission ( PermissionState.Unrestricted); 
+			}
+			return new SqlClientPermission ( PermissionState.None,AllowBlankPassword); 
+
 		}
 
 		#endregion // Methods
