@@ -23,17 +23,13 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Peter Bartok, pbartok@novell.com
 //
-// TODO:
-//		- The AutoSize functionality needs missing control functions to be implemented
-//		- Draw BorderStyle and FlatStyle
 //
-// Based on work by:
-//	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
-//
-//
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.12  2004/09/01 15:10:10  jordi
+// fixes method signatures, new methods, events, fixes autosize
+//
 // Revision 1.11  2004/08/21 22:30:53  pbartok
 // - Signature fixes
 //
@@ -61,41 +57,45 @@ namespace System.Windows.Forms
 {
     	public class Label : Control
     	{
-    		private Image background_image;
     		private BorderStyle border_style;
-    		private bool autoSize;
-    		private Image image;    		
+    		private bool autosize;
+    		private Image image;
     		private bool render_transparent;
     		private FlatStyle flat_style;
     		private int preferred_height;
     		private int preferred_width;
-    		private bool tab_stop;    		
     		private bool use_mnemonic;
     		private int image_index = -1;
     		private ImageList image_list;
-		internal Rectangle paint_area;
 		internal ContentAlignment image_align;
-		internal StringFormat string_format;    		
+		internal StringFormat string_format;
     		internal ContentAlignment text_align;
+    		protected Rectangle paint_area = new Rectangle ();
+    		static SizeF req_witdthsize = new SizeF (0,0);
 
     		#region Events
     		public event EventHandler AutoSizeChanged;
+    		public new event EventHandler BackgroundImageChanged;
+    		public new event EventHandler ImeModeChanged;    		
+		public new event KeyEventHandler KeyDown;		
+		public new event KeyPressEventHandler KeyPress;		
+		public new event KeyEventHandler KeyUp;
+		public new event EventHandler TabStopChanged;
     		public event EventHandler TextAlignChanged;
 		#endregion
 
-    		public Label () : base ()
+    		public Label ()
     		{
 			// Defaults in the Spec
-			autoSize = false;
-			border_style = BorderStyle.None;			
+			autosize = false;
+			border_style = BorderStyle.None;
 			string_format = new StringFormat();
 			TextAlign = ContentAlignment.TopLeft;
 			image = null;
-			UseMnemonic = true;		
+			UseMnemonic = true;
 			image_list = null;
-			paint_area = new Rectangle ();
 			image_align = ContentAlignment.MiddleCenter;
-			set_usemnemonic (UseMnemonic);
+			SetUseMnemonic (UseMnemonic);
 
 			BackColor = ThemeEngine.Current.ColorButtonFace;
 			ForeColor = ThemeEngine.Current.ColorWindowText;
@@ -107,17 +107,20 @@ namespace System.Windows.Forms
     			TextAlignChanged = null;
 
 			SetStyle (ControlStyles.ResizeRedraw, true);
+
+			Resize += new EventHandler (OnResizeLB);
+			HandleCreated += new EventHandler (OnHandleCreatedLB);
 		}
 
 		#region Public Properties
 
     		public virtual bool AutoSize {
-    			get { return autoSize; }
+    			get { return autosize; }
     			set {
-    				if (autoSize == value)
+    				if (autosize == value)
     					return;
-    					
-    				autoSize = value;    				
+
+    				autosize = value;
     				CalcAutoSize ();
 				Refresh ();
 
@@ -128,10 +131,16 @@ namespace System.Windows.Forms
 
     		public override Image BackgroundImage {
     			get {
-    				return background_image;
+    				return base.BackgroundImage;
     			}
     			set {
-    				background_image = value;
+    				if (base.BackgroundImage == value)
+					return;
+
+				if (BackgroundImageChanged != null)
+					BackgroundImageChanged (this, EventArgs.Empty);
+
+				base.BackgroundImage = value;
 				Refresh ();
     			}
     		}
@@ -152,18 +161,29 @@ namespace System.Windows.Forms
     			}
     		}
 
+    		protected override CreateParams CreateParams {
+    			get { return base.CreateParams;}
+    		}
+
+    		protected override ImeMode DefaultImeMode {
+    			get { return ImeMode.Disable;}
+    		}
+
+    		protected override Size DefaultSize {
+    			get {return new Size (100,23);}
+    		}
 
     		public FlatStyle FlatStyle {
     			get {
     				return flat_style;
     			}
-    			set {	
+    			set {
 				if (!Enum.IsDefined (typeof (FlatStyle), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for FlatStyle", value));
 
     				if (flat_style == value)
 					return;
-					
+
     				flat_style = value;
 				Refresh ();
     			}
@@ -176,7 +196,7 @@ namespace System.Windows.Forms
     			set {
     				if (image == value)
 					return;
-					
+
     				image = value;
 				Refresh ();
     			}
@@ -192,7 +212,7 @@ namespace System.Windows.Forms
 
     				if (image_align == value)
     					return;
-    				
+
     				image_align = value;
     				Refresh ();
     			}
@@ -202,73 +222,68 @@ namespace System.Windows.Forms
     			get { return image_index;}
     			set {
 
-				if (value < 0 || value>= image_list.Images.Count) 
-					throw new ArgumentException();	
+				if (value < 0 || value>= image_list.Images.Count)
+					throw new ArgumentException();
 
     				if (image_index == value)
-					return;	
-					
+					return;
+
 				image_index = value;
 
 				if (ImageList != null && image_index !=-1)
 					Image = null;
-    					
+
     				Refresh ();
 			}
     		}
-
 
     		public ImageList ImageList {
     			get { return image_list;}
     			set {
     				if (image_list == value)
-					return;	
+					return;
 
 				if (ImageList != null && image_index !=-1)
 					Image = null;
-    					
+
     				Refresh ();
 			}
     		}
 
-		private void CalcPreferredHeight ()
-		{
-			if (font == null) { 
-				preferred_height = 0;
-				return;
+    		public new ImeMode ImeMode {
+			get { return base.ImeMode; }
+			set {
+				if (value == ImeMode)
+					return;
+				base.ImeMode = value;
+				if (ImeModeChanged != null)
+					ImeModeChanged (this, EventArgs.Empty);
 			}
-
-			preferred_height = Font.Height;
-
-			if (border_style == BorderStyle.None)
-				preferred_height += 3;
 		}
-    		
+
     		public virtual int PreferredHeight {
     			get { return preferred_height; }
     		}
-
-		private void CalcPreferredWidth ()
-		{
-			if (font == null) { 
-				preferred_width = 0;
-				return;
-			}
-
-			SizeF size;    			
-    		 	size = DeviceContext.MeasureString (Text, Font, new SizeF (paint_area.Width,
-    		 		paint_area.Height), string_format);
-    		 	
-    		 	preferred_width = Size.Width;
-		}
 
     		public virtual int PreferredWidth {
     			get {return preferred_width; }
     		}
 
-    		public bool TabStop {
-    			get { return tab_stop; }
-    			set { tab_stop = value; }
+    		protected virtual bool RenderTransparent {
+			get { return render_transparent; }
+			set { render_transparent = value;}
+		}
+    		
+		public new bool TabStop  {
+    			get { return base.TabStop; }
+    			set {
+				if (value == base.TabStop)
+					return;
+
+				base.TabStop = value;
+				if (TabStopChanged != null)
+					TabStopChanged (this, EventArgs.Empty);
+			}
     		}
 
     		public virtual ContentAlignment TextAlign {
@@ -331,14 +346,13 @@ namespace System.Windows.Forms
 				}
 			}
     		}
-    		
-    		
+
     		public bool UseMnemonic {
     			get { return use_mnemonic; }
    			set {
     				if (use_mnemonic != value) {
 					use_mnemonic = value;
-					set_usemnemonic (use_mnemonic);
+					SetUseMnemonic (use_mnemonic);
 	    				Refresh ();
     				}
     			}
@@ -346,46 +360,12 @@ namespace System.Windows.Forms
 
     		#endregion
 
-    		protected override CreateParams CreateParams {
-    			get {
-				CreateParams createParams = base.CreateParams;
-				createParams.ClassName = XplatUI.DefaultClassName;
-				createParams.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_VISIBLE |(int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
-				return createParams;
-    			}
-    		}
 
-    		protected override Size DefaultSize {
-    			get {return new Size (100,23);}
-    		}
+		#region Public Methods
 
-		protected virtual bool RenderTransparent {
-			get { return render_transparent; }
-			set { render_transparent = value;}
-		}
-
-    		protected override ImeMode DefaultImeMode {
-    			get { return ImeMode.Disable;}    			
-    		}
-
-		#region  Methods		
-		
-
-    		public override string ToString()
-    		{
-			//FIXME: add name of lable, as well as text. would adding base.ToString work?
-    			return "Label: " + base.Text;
-    		}
-    		
-		protected override void Dispose(bool disposing)
-		{			
-			base.Dispose (disposing);
-		}
-
-    		
     		protected Rectangle CalcImageRenderBounds (Image image, Rectangle area, ContentAlignment img_align)
     		{
-    			Rectangle rcImageClip = area;	
+    			Rectangle rcImageClip = area;
 			rcImageClip.Inflate (-2,-2);
 
 			int X = area.X;
@@ -412,29 +392,37 @@ namespace System.Windows.Forms
 					img_align == ContentAlignment.MiddleRight) {
 				Y += (area.Height - image.Height) / 2;
 			}
-			
+
 			rcImageClip.X = X;
 			rcImageClip.Y = Y;
 			rcImageClip.Width = image.Width;
 			rcImageClip.Height = image.Height;
-			
+
 			return rcImageClip;
     		}
 
-      		
-      		protected  override AccessibleObject CreateAccessibilityInstance()
-      		{				
-			return base.CreateAccessibilityInstance();
-      		}
-
     		
-    		protected  void DrawImage (Graphics g, Image image,   Rectangle area, ContentAlignment img_align)
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return base.CreateAccessibilityInstance ();
+		}
+
+    		protected override void Dispose(bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
+    		protected void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
     		{
  			if (image == null || g == null)
 				return;
-				
-			Rectangle rcImageClip = CalcImageRenderBounds (image, area, img_align);		
-			g.DrawImage (image, rcImageClip.X, rcImageClip.Y, rcImageClip.Width, rcImageClip.Height);
+
+			Rectangle rcImageClip = CalcImageRenderBounds (image, area, img_align);
+
+			if (Enabled)
+				g.DrawImage (image, rcImageClip.X, rcImageClip.Y, rcImageClip.Width, rcImageClip.Height);
+			else
+				ControlPaint.DrawImageDisabled (g, image, rcImageClip.X, rcImageClip.Y, BackColor);
 		}
 
     		protected virtual void OnAutoSizeChanged (EventArgs e)
@@ -444,48 +432,14 @@ namespace System.Windows.Forms
     		}
 
     		protected override void OnEnabledChanged (EventArgs e)
-    		{				
+    		{
 			base.OnEnabledChanged (e);
     		}
 
     		protected override void OnFontChanged (EventArgs e)
-    		{			
-			Console.WriteLine ("OnFontChanged");
+    		{
 			base.OnFontChanged (e);
 			CalcPreferredHeight ();
-    		}
-    		
-    		private void CalcAutoSize ()
-    		{
-    			if (IsHandleCreated == false)
-    				return;    			   	
-    			
-    			SizeF size;    			
-    		 	size = DeviceContext.MeasureString (Text, Font, new SizeF (paint_area.Width,
-    		 		paint_area.Height), string_format);
-    		 	
-    		 	Width = Size.Width;
-    		 	Height = Size.Height;
-    		 	
-    		 	Invalidate ();
-    		 	
-    		 	Console.WriteLine ("CalcAutoSize () after " + Size);
-    		}
-
-    		internal void Draw ()
-		{
-			ThemeEngine.Current.DrawLabel (DeviceContext, paint_area, BorderStyle, Text, 
-				ForeColor, BackColor, Font, string_format, Enabled);
-				
-			DrawImage (DeviceContext, Image, paint_area, image_align);
-		}
-		
-		private void set_usemnemonic (bool use)
-    		{    			
-			if (use)
-				string_format.HotkeyPrefix = HotkeyPrefix.Show;
-			else
-				string_format.HotkeyPrefix = HotkeyPrefix.None;
     		}
 
 
@@ -494,9 +448,8 @@ namespace System.Windows.Forms
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			/* Copies memory drawing buffer to screen*/
-			UpdateArea ();
 			Draw ();
+			// TODO: Imagelist
 			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
 
 		}
@@ -516,7 +469,6 @@ namespace System.Windows.Forms
     		{
 			base.OnTextChanged (e);
 			CalcPreferredWidth ();
-			Refresh ();
     		}
 
     		protected override void OnVisibleChanged (EventArgs e)
@@ -524,52 +476,20 @@ namespace System.Windows.Forms
     			base.OnVisibleChanged (e);
     		}
 
-    		protected override bool ProcessMnemonic(char charCode)
+    		protected override bool ProcessMnemonic (char charCode)
     		{
     			return base.ProcessMnemonic (charCode);
     		}
-
-    		protected override void OnHandleCreated (EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			//Console.WriteLine ("OnHandleCreated");
-
-			UpdateArea ();
-			CreateBuffers (Width, Height);
-			
-			if (AutoSize)
-				CalcAutoSize ();
-		}
-
-		private void UpdateArea ()
-		{			
-			paint_area.X = 	paint_area.Y = 0;
-			paint_area.Width = Width;
-			paint_area.Height = Height;			
-		}
-
-
-		protected override void OnResize (EventArgs e)
-    		{
-    			//Console.WriteLine ("OnResize");
-    			base.OnResize (e);
-
-    			if (Width <= 0 || Height <= 0)
-    				return;
-
-    			UpdateArea ();
-
-			/* Area for double buffering */
-			CreateBuffers (Width, Height);
-    		}
-
-
 
     		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
     		{
     			base.SetBoundsCore (x, y, width, height, specified);
     		}
 
+    		public override string ToString()
+    		{
+    			return base.ToString();
+    		}
 
     		protected override void WndProc(ref Message m)
     		{
@@ -584,7 +504,86 @@ namespace System.Windows.Forms
 			}
     		}
 
-#endregion
+    		#endregion Public Methods
+
+    		#region Private Methods
+
+		private void CalcAutoSize ()
+    		{
+    			if (IsHandleCreated == false)
+    				return;
+
+    			CalcPreferredWidth ();
+    			CalcPreferredHeight ();
+
+    		 	Width =  PreferredWidth;
+    		 	Height =  PreferredHeight;
+
+    		 	Invalidate ();
+    		}
+
+    		private void CalcPreferredHeight ()
+		{
+			preferred_height = Font.Height;
+
+			switch (border_style) {
+			case BorderStyle.None:
+				preferred_height += 3;
+				break;
+			case BorderStyle.FixedSingle:
+			case BorderStyle.Fixed3D:
+				preferred_height += 6;
+				break;
+			default:
+				break;
+			}
+
+		}
+
+    		private void CalcPreferredWidth ()
+		{
+			SizeF size;
+    		 	size = DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format);
+    		 	preferred_width = (int) size.Width + 3;
+		}
+
+    		internal void Draw ()
+		{
+			paint_area.Width = Width;
+			paint_area.Height = Height;
+
+			ThemeEngine.Current.DrawLabel (DeviceContext, paint_area, BorderStyle, Text,
+				ForeColor, BackColor, Font, string_format, Enabled);
+
+			DrawImage (DeviceContext, Image, paint_area, image_align);
+		}
+
+    		private void OnHandleCreatedLB (Object o, EventArgs e)
+		{
+			CreateBuffers (Width, Height);
+
+			if (autosize)
+				CalcAutoSize ();
+		}
+
+		private void OnResizeLB (object o, EventArgs e)
+    		{
+    			if (Width <= 0 || Height <= 0)
+    				return;
+
+			CreateBuffers (Width, Height);
+    		}
+
+
+		private void SetUseMnemonic (bool use)
+    		{
+			if (use)
+				string_format.HotkeyPrefix = HotkeyPrefix.Show;
+			else
+				string_format.HotkeyPrefix = HotkeyPrefix.None;
+    		}
+
+		#endregion Private Methods
 
     	}
     }
