@@ -1,5 +1,9 @@
 2003-03-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Create method attributes
+
+2003-03-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Reference external assemblies.
 
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>

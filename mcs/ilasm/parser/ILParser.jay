@@ -701,27 +701,29 @@ methodAll		: methodHead methodDecls CLOSE_BRACE
 			;
 
 
-methAttr                : /* EMPTY */ 
-			| methAttr K_STATIC		{/* method.Attrs |=  MethodAttributes.Static; */}
-			| methAttr K_PUBLIC 		{/* method.Attrs |=  MethodAttributes.Public; */}
-			| methAttr K_PRIVATE		{/* method.Attrs &= ~MethodAttributes.Public; */}
-			| methAttr K_FAMILY		{/* method.Attrs |=  MethodAttributes.Family; */}
-			| methAttr K_FINAL		{/* method.Attrs |=  MethodAttributes.Final; */}
-			| methAttr K_SPECIALNAME	{/* method.Attrs |=  MethodAttributes.SpecialName; */}
-			| methAttr K_VIRTUAL		{/* method.Attrs |=  MethodAttributes.Virtual; */}
-			| methAttr K_ABSTRACT		{/* method.Attrs |=  MethodAttributes.Abstract; */}
-			| methAttr K_ASSEMBLY		{/* method.Attrs |=  MethodAttributes.Assembly; */}
-			| methAttr K_FAMANDASSEM	{/* method.Attrs |=  MethodAttributes.FamANDAssem; */}
-			| methAttr K_FAMORASSEM		{/* method.Attrs |=  MethodAttributes.FamORAssem; */}
+methAttr                : /* EMPTY */ 			{ $$ = MethAttr.Default; }
+			| methAttr K_STATIC		{ $$ = (MethAttr) $1 | MethAttr.Static; }
+			| methAttr K_PUBLIC 		{ $$ = (MethAttr) $1 | MethAttr.Public; }
+			| methAttr K_PRIVATE		{ $$ = (MethAttr) $1 | MethAttr.Private; }
+			| methAttr K_FAMILY		{ $$ = (MethAttr) $1 | MethAttr.Family; }
+			| methAttr K_FINAL		{ $$ = (MethAttr) $1 | MethAttr.Final; }
+			| methAttr K_SPECIALNAME	{ $$ = (MethAttr) $1 | MethAttr.SpecialName; }
+			| methAttr K_VIRTUAL		{ $$ = (MethAttr) $1 | MethAttr.Virtual; }
+			| methAttr K_ABSTRACT		{ $$ = (MethAttr) $1 | MethAttr.Abstract; }
+			| methAttr K_ASSEMBLY		{ $$ = (MethAttr) $1 | MethAttr.Assembly; }
+			| methAttr K_FAMANDASSEM	{ $$ = (MethAttr) $1 | MethAttr.FamAndAssem; }
+			| methAttr K_FAMORASSEM		{ $$ = (MethAttr) $1 | MethAttr.FamOrAssem; }
 			| methAttr K_COMPILERCONTROLLED	{/* FIXME */}
-			| methAttr K_HIDEBYSIG		{/* method.Attrs |=  MethodAttributes.HideBySig; */}
-			| methAttr K_NEWSLOT		{/* method.Attrs |=  MethodAttributes.NewSlot; */}
-			| methAttr K_RTSPECIALNAME /**/ {/* FIXME */}
-			| methAttr K_UNMANAGEDEXP	{/*method.Attrs |=  MethodAttributes.UnmanagedExport; */}
-			| methAttr K_REQSECOBJ		{/* method.Attrs |=  MethodAttributes.RequireSecObject; */}
-			| methAttr K_PINVOKEIMPL OPEN_PARENS compQstring K_AS compQstring pinvAttr CLOSE_PARENS	{/* FIXME */}
-			| methAttr K_PINVOKEIMPL OPEN_PARENS compQstring  pinvAttr CLOSE_PARENS			{/* FIXME */}
-			| methAttr K_PINVOKEIMPL OPEN_PARENS pinvAttr CLOSE_PARENS				{/* FIXME */}
+			| methAttr K_HIDEBYSIG		{ $$ = (MethAttr) $1 | MethAttr.HideBySig; }
+			| methAttr K_NEWSLOT		{ $$ = (MethAttr) $1 | MethAttr.NewSlot; }
+			| methAttr K_RTSPECIALNAME      { $$ = (MethAttr) $1 | MethAttr.RTSpecialName; }
+			| methAttr K_UNMANAGEDEXP	{/* FIXME */}
+			| methAttr K_REQSECOBJ		{ $$ = (MethAttr) $1 | MethAttr.RequireSecObject; }
+			/*
+			| methAttr K_PINVOKEIMPL OPEN_PARENS compQstring K_AS compQstring pinvAttr CLOSE_PARENS	{ }
+			| methAttr K_PINVOKEIMPL OPEN_PARENS compQstring  pinvAttr CLOSE_PARENS			{ }
+			| methAttr K_PINVOKEIMPL OPEN_PARENS pinvAttr CLOSE_PARENS				{ }
+			*/
 			;
 
 pinvAttr                : /* EMPTY */ 
