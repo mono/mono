@@ -72,13 +72,6 @@ namespace Mono.CSharp {
 			return ".";
 		}
 
-		static string TrimExt (string name)
-		{
-			int pos = name.LastIndexOf ('.');
-
-			return name.Substring (0, pos);
-		}
-
 		static public string FileName;
 
 		//

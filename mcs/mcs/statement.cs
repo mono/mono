@@ -642,7 +642,6 @@ namespace Mono.CSharp {
 
 	public class Goto : Statement {
 		string target;
-		Block block;
 		LabeledStatement label;
 		
 		public override bool Resolve (EmitContext ec)
@@ -661,9 +660,8 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public Goto (Block parent_block, string label, Location l)
+		public Goto (string label, Location l)
 		{
-			block = parent_block;
 			loc = l;
 			target = label;
 		}
@@ -2112,8 +2110,6 @@ namespace Mono.CSharp {
 
 		Hashtable capture_contexts;
 
-		static int did = 0;
-
 		//
 		// The parameters for the block.
 		//
@@ -2947,24 +2943,6 @@ namespace Mono.CSharp {
 			}
 
 			return null;
-		}
-
-		bool ResolveConstantSwitch (EmitContext ec)
-		{
-			object key = ((Constant) new_expr).GetValue ();
-			SwitchLabel label = (SwitchLabel) Elements [key];
-
-			if (label == null)
-				return true;
-
-			constant_section = FindSection (label);
-			if (constant_section == null)
-				return true;
-
-			if (constant_section.Block.Resolve (ec) != true)
-				return false;
-
-			return true;
 		}
 
 		public override bool Resolve (EmitContext ec)

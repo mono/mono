@@ -1045,15 +1045,6 @@ namespace Mono.CSharp {
 				}
 			}
 		}
-
-		object GetValue (EmitContext ec, Constant c, Type target)
-		{
-			if (Convert.ImplicitConversionExists (ec, c, target))
-				return c.GetValue ();
-
-			Convert.Error_CannotImplicitConversion (Location, c.Type, target);
-			return null;
-		}
 		
 		public MethodBuilder DefinePInvokeMethod (EmitContext ec, TypeBuilder builder, string name,
 							  MethodAttributes flags, Type ret_type, Type [] param_types)

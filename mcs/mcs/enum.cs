@@ -173,38 +173,6 @@ namespace Mono.CSharp {
 			ordered_enums.Add (name);
 			member_to_location.Add (name, loc);
 		}
-
-		//
-		// This is used by corlib compilation: we map from our
-		// type to a type that is consumable by the DefineField
-		//
-		Type MapToInternalType (Type t)
-		{
-			if (t == TypeManager.int32_type)
-				return typeof (int);
-			if (t == TypeManager.int64_type)
-				return typeof (long);
-			if (t == TypeManager.uint32_type)
-				return typeof (uint);
-			if (t == TypeManager.uint64_type)
-				return typeof (ulong);
-			if (t == TypeManager.float_type)
-				return typeof (float);
-			if (t == TypeManager.double_type)
-				return typeof (double);
-			if (t == TypeManager.byte_type)
-				return typeof (byte);
-			if (t == TypeManager.sbyte_type)
-				return typeof (sbyte);
-			if (t == TypeManager.char_type)
-				return typeof (char);
-			if (t == TypeManager.short_type)
-				return typeof (short);
-			if (t == TypeManager.ushort_type)
-				return typeof (ushort);
-
-			throw new Exception ();
-		}
 		
 		public override TypeBuilder DefineType ()
 		{
@@ -711,14 +679,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		/// <summary>
-		/// Returns full enum name.
-		/// </summary>
-		string GetEnumeratorName (string valueName)
-		{
-			return String.Concat (Name, ".", valueName);
-		}
-
 		//
 		// IMemberFinder
 		//

@@ -138,7 +138,6 @@ namespace Mono.CSharp {
 		//
 		TypeContainer container;
 		Type return_type;
-		Type [] param_types;
 		InternalParameters parameters;
 
 		protected enum State {
@@ -353,14 +352,13 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		public Iterator (TypeContainer container, string name, Type return_type,
-				 Type [] param_types, InternalParameters parameters,
+				 InternalParameters parameters,
 				 int modifiers, ToplevelBlock block, Location loc)
 			: base (container.NamespaceEntry, container, MakeProxyName (name),
 				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null, loc)
 		{
 			this.container = container;
 			this.return_type = return_type;
-			this.param_types = param_types;
 			this.parameters = parameters;
 			this.original_name = name;
 			this.original_block = block;
