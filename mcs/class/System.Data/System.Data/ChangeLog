@@ -1,3 +1,29 @@
+2004-04-28  Boris Kirzner <borisk@mainsoft.com>
+	* DataRow.cs :
+	  - Perfomance fixes: 
+		- Added using of list of autoIncrement columns
+		- SetColumnValue receives also DataColumn to avoid duplicate lookup in DatacolumnCollection
+	  - Fix in CheckNullConstraints
+	  - Fix in this[] and HasVersion() : when evaluating an expression deleted rows values can be accessed.
+	  - Fix in SetColumnValue() , added CanAccess() method to avoid case of accessing internal array values berore it actually allocated.
+	  - Added onColumnRemoved() method to threat column removal accurately.
+	
+	* DataRowCollection.cs :
+	  - Added using of DataRow._nullConstraintViolation (for perfomance fix in EndLoadData())
+	  - Added method onColumnRemoved() - calls each row's onColumnRemoved() (to ensure column removal is treated accurately)
+	
+	* DataTable.cs :
+	  - Call DataRowCollection.onColumnRemoved() in OnRemoveColumn() (to ensure column removal is treated accurately)
+	
+	* DataColumnCollection.cs :
+	  - Perfomance fixes :
+		- collection holds a list of its autoIncrement columns (avoids unnesessary lookup through whole collection)
+		- collection holds mapping from column names to DataColumn objects (avoids lookup through whole collection).
+		- automatic creation of column names rewrited (bug fixes + perfomance improvement)
+	
+	* DataColumn.cs :
+	  - Uses autoincrement list of a table
+
 2004-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataLoader.cs : Even when it should ignore schema, it was 

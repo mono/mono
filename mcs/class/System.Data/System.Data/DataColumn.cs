@@ -184,11 +184,19 @@ namespace System.Data {
 					//Make it an int
 					TypeCode typeCode = Type.GetTypeCode(_dataType);
 					if(typeCode != TypeCode.Int16 && 
-					   typeCode != TypeCode.Int32 && 
-					   typeCode != TypeCode.Int64)
+						typeCode != TypeCode.Int32 && 
+						typeCode != TypeCode.Int64)
 					{
 						_dataType = typeof(Int32); 
 					}
+
+					if (_table != null)
+						_table.Columns.UpdateAutoIncrement(this,true);
+				}
+				else
+				{
+					if (_table != null)
+						_table.Columns.UpdateAutoIncrement(this,false);
 				}
 				_autoIncrement = value;
 			}

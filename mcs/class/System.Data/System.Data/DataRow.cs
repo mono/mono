@@ -42,6 +42,7 @@ namespace System.Data {
 		private bool _hasParentCollection;
 		private bool _inChangingEvent;
 		private int _rowId;
+		internal bool _inExpressionEvaluation = false;
 
 		#endregion
 
@@ -75,11 +76,10 @@ namespace System.Data {
 			//on first creating a DataRow it is always detached.
 			rowState = DataRowState.Detached;
 			
-			foreach (DataColumn Col in _table.Columns) {
-				
-				if (Col.AutoIncrement) {
-					this [Col] = Col.AutoIncrementValue();
-				}
+			ArrayList aiColumns = _table.Columns.AutoIncrmentColumns;
+			foreach (string col in aiColumns) {
+				DataColumn dc = _table.Columns[col];
+				this [dc] = dc.AutoIncrementValue();
 			}
 			_table.Columns.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(CollectionChanged);
 		}
@@ -150,7 +150,7 @@ namespace System.Data {
 				
 				bool orginalEditing = editing;
 				if (!orginalEditing) BeginEdit ();
-				object v = SetColumnValue (value, columnIndex);
+				object v = SetColumnValue (value, column, columnIndex);
 				proposed[columnIndex] = v;
 				_table.ChangedDataColumn (this, column, v);
 				if (!orginalEditing) EndEdit ();
@@ -190,7 +190,7 @@ namespace System.Data {
 				if (columnIndex < 0 || columnIndex > _table.Columns.Count)
 					throw new IndexOutOfRangeException ();
 				// Accessing deleted rows
-				if (rowState == DataRowState.Deleted && version != DataRowVersion.Original)
+				if (!_inExpressionEvaluation && rowState == DataRowState.Deleted && version != DataRowVersion.Original)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
 				
 				DataColumn col = _table.Columns[columnIndex];
@@ -231,7 +231,7 @@ namespace System.Data {
 			_table.ChangingDataColumn (this, column, val);
 				
 			if (original == null) original = new object [_table.Columns.Count];
-			val = SetColumnValue (val, columnIndex);
+			val = SetColumnValue (val, column, columnIndex);
 			original[columnIndex] = val;
 			rowState = DataRowState.Modified;
 		}
@@ -266,7 +266,7 @@ namespace System.Data {
 					else
 						v = null;
 
-					newItems[i] = SetColumnValue (v, i);
+					newItems[i] = SetColumnValue (v, _table.Columns[i], i);
 				}
 
 				bool orginalEditing = editing;
@@ -276,24 +276,23 @@ namespace System.Data {
 			}
 		}
 
-		private object SetColumnValue (object v, int index) 
+		private object SetColumnValue (object v, DataColumn col, int index) 
 		{		
 			object newval = null;
-			DataColumn col = _table.Columns[index];
 			
 			if (_hasParentCollection && col.ReadOnly && v != this[index])
 				throw new ReadOnlyException ();
 
 			if (v == null)
 			{
-				if (col.DataType == typeof (Guid))
+				if (col.DataType.ToString().Equals("System.Guid"))
 	                                throw new ArgumentException("Cannot set column to be null, Please use DBNull instead");
 
 				if(col.DefaultValue != DBNull.Value) 
 				{
 					newval = col.DefaultValue;
 				}
-				else if(col.AutoIncrement == true) 
+				else if(col.AutoIncrement == true && CanAccess(index,DataRowVersion.Default)) 
 				{
 					newval = this [index];
 //					newval = col.AutoIncrementValue ();
@@ -404,9 +403,9 @@ namespace System.Data {
 				}
 
 				// The MaxLength property is ignored for non-text columns
-				if ((Type.GetTypeCode(vType) == TypeCode.String) && (this.Table.Columns[index].MaxLength != -1) && 
+				if ((Type.GetTypeCode(vType) == TypeCode.String) && (col.MaxLength != -1) && 
 					(this.Table.Columns[index].MaxLength < ((string)v).Length)) {
-					throw new ArgumentException("Cannot set column '" + this.Table.Columns[index].ColumnName + "' to '" + v + "'. The value violates the MaxLength limit of this column.");
+					throw new ArgumentException("Cannot set column '" + col.ColumnName + "' to '" + v + "'. The value violates the MaxLength limit of this column.");
 				}
 				newval = v;
 				if(col.AutoIncrement == true) {
@@ -564,7 +563,7 @@ namespace System.Data {
 				DetachRow();
 				break;
 			case DataRowState.Deleted:
-				throw new DeletedRowInaccessibleException ();			
+				break;		
 			default:
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
@@ -1056,17 +1055,17 @@ namespace System.Data {
 			switch (version)
 			{
 				case DataRowVersion.Default:
-					if (rowState == DataRowState.Deleted)
+					if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
 						return false;
 					if (rowState == DataRowState.Detached)
 						return proposed != null;
 					return true;
 				case DataRowVersion.Proposed:
-					if (rowState == DataRowState.Deleted)
+					if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
 						return false;
 					return (proposed != null);
 				case DataRowVersion.Current:
-					if (rowState == DataRowState.Deleted || rowState == DataRowState.Detached)
+					if ((rowState == DataRowState.Deleted && !_inExpressionEvaluation) || rowState == DataRowState.Detached)
 						return false;
 					return (current != null);
 				case DataRowVersion.Original:
@@ -1291,19 +1290,19 @@ namespace System.Data {
 					{
 						if (row.original == null)
 							row.original = new object[row.Table.Columns.Count];
-						row.original[index] = row.SetColumnValue(original[i], index);
+						row.original[index] = row.SetColumnValue(original[i], Table.Columns[index], index);
 					}
 					if (HasVersion(DataRowVersion.Current))
 					{
 						if (row.current == null)
 							row.current = new object[row.Table.Columns.Count];
-						row.current[index] = row.SetColumnValue(current[i], index);
+						row.current[index] = row.SetColumnValue(current[i], Table.Columns[index], index);
 					}
 					if (HasVersion(DataRowVersion.Proposed))
 					{
 						if (row.proposed == null)
 							row.proposed = new object[row.Table.Columns.Count];
-						row.proposed[index] = row.SetColumnValue(proposed[i], index);
+						row.proposed[index] = row.SetColumnValue(proposed[i], Table.Columns[index], index);
 					}
 					
 					//Saving the current value as the column value
@@ -1327,28 +1326,73 @@ namespace System.Data {
 			if (args.Action == System.ComponentModel.CollectionChangeAction.Add)
 			{
 				object[] tmp;
+				int index = this.Table.Columns.Count - 1;
 				if (current != null)
 				{
 					tmp = new object[current.Length + 1];
 					Array.Copy (current, tmp, current.Length);
-					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns.Count - 1);
+					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					current = tmp;
 				}
 				if (proposed != null)
 				{
 					tmp = new object[proposed.Length + 1];
 					Array.Copy (proposed, tmp, proposed.Length);
-					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns.Count - 1);
+					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					proposed = tmp;
 				}
 				if(original != null)
 				{
 					tmp = new object[original.Length + 1];
 					Array.Copy (original, tmp, original.Length);
-					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns.Count - 1);
+					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					original = tmp;
 				}
 
+			}
+		}
+
+		internal void onColumnRemoved(int columnIndex)
+		{
+			// when column removed we have to compress row values in the way 
+			// they will correspond to new column ordinals
+
+			object[] tmp;
+			if (current != null)
+			{
+				tmp = new object[current.Length - 1];
+				// copy values before removed column
+				if (columnIndex > 0)
+					Array.Copy (current, 0, tmp, 0, columnIndex);
+				// copy values after removed column
+				if(columnIndex < current.Length - 1)
+					Array.Copy(current, columnIndex + 1, tmp, columnIndex, current.Length - 1 - columnIndex);
+
+				current = tmp;
+			}
+			if (proposed != null)
+			{
+				tmp = new object[proposed.Length - 1];
+				// copy values before removed column
+				if (columnIndex > 0)
+					Array.Copy (proposed, 0, tmp, 0, columnIndex);
+				// copy values after removed column
+				if(columnIndex < proposed.Length - 1)
+					Array.Copy(proposed, columnIndex + 1, tmp, columnIndex, proposed.Length - 1 - columnIndex);
+
+				proposed = tmp;
+			}
+			if (original != null)
+			{
+				tmp = new object[original.Length - 1];
+				// copy values before removed column
+				if (columnIndex > 0)
+					Array.Copy (original, 0, tmp, 0, columnIndex);
+				// copy values after removed column
+				if(columnIndex < original.Length - 1)
+					Array.Copy(original, columnIndex + 1, tmp, columnIndex, original.Length - 1 - columnIndex);
+
+				original = tmp;
 			}
 		}
 
@@ -1387,14 +1431,56 @@ namespace System.Data {
 			}
 		}
 
+		// checks existance of value in version pecified
+		// note : this one relies on the same algorithm as this[int,DataRowVersion]
+		private bool CanAccess(int columnIndex, DataRowVersion version) 
+		{
+			if (columnIndex < 0 || columnIndex > _table.Columns.Count)
+				return false;
+			// Accessing deleted rows
+			if (rowState == DataRowState.Deleted && version != DataRowVersion.Original)
+				return false;
+
+			if (HasVersion(version))
+			{
+				object[] versionArr;
+				switch (version) 
+				{
+					case DataRowVersion.Default:
+						if (editing || rowState == DataRowState.Detached) {
+							versionArr = proposed;
+						}
+						else {
+							versionArr = current;
+						}
+						break;
+					case DataRowVersion.Proposed:
+						versionArr = proposed;
+						break;
+					case DataRowVersion.Current:
+						versionArr = current;
+						break;
+					case DataRowVersion.Original:
+						versionArr = original;
+						break;
+					default:
+						return false;
+				}
+
+				return (versionArr != null && columnIndex < versionArr.Length);
+			}
+			
+			return false;
+		}
+
 		internal void CheckNullConstraints()
 		{
 			if (_nullConstraintViolation) {
 				if (proposed != null) {
 					for (int i = 0; i < proposed.Length; i++) {
-						if (this[i] == DBNull.Value && !_table.Columns[i].AllowDBNull)
-							throw new NoNullAllowedException(_nullConstraintMessage);
-					}
+					if (this[i] == DBNull.Value && !_table.Columns[i].AllowDBNull)
+						throw new NoNullAllowedException(_nullConstraintMessage);
+				}
 				}
 				_nullConstraintViolation = false;
 			}

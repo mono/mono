@@ -21,6 +21,12 @@ namespace System.Data {
 	[DefaultEvent ("CollectionChanged")]
 	public class DataColumnCollection : InternalDataCollectionBase
 	{
+		//This hashtable maps between column name to DataColumn object.
+		private Hashtable columnFromName = new Hashtable();
+		//This ArrayList contains the auto-increment columns names
+		private ArrayList autoIncrement = new ArrayList();
+		//This holds the next index to use for default column name.
+		private int defaultColumnIndex = 1;
 		//table should be the DataTable this DataColumnCollection belongs to.
 		private DataTable parentTable = null;
 
@@ -48,6 +54,11 @@ namespace System.Data {
 		{
 			get
 			{
+				DataColumn dc = columnFromName[name] as DataColumn;
+				
+				if (dc != null)
+					return dc;
+
 				int tmp = IndexOf(name, true);
 				if (tmp == -1)
 					return null;
@@ -63,6 +74,14 @@ namespace System.Data {
 			get
 			{
 				return base.List;
+			}
+		}
+
+		internal ArrayList AutoIncrmentColumns 
+		{
+			get
+			{
+				return autoIncrement;
 			}
 		}
 
@@ -90,20 +109,63 @@ namespace System.Data {
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 			
 			column.SetTable(parentTable);
+			RegisterName(defaultName,column);
 			base.List.Add(column);
 			
+			if (column.AutoIncrement)
+				autoIncrement.Add(defaultName);
+
 			column.SetOrdinal(Count - 1);
 			OnCollectionChanged(e);
 			return column;
 		}
 
+		private void RegisterName(string name, DataColumn column)
+		{
+			if (columnFromName.Contains(name))
+				throw new DuplicateNameException("A DataColumn named '" + name + "' already belongs to this DataTable.");
+
+			columnFromName[name] = column;
+
+			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex + 1))
+			{
+				do
+				{
+					defaultColumnIndex++;
+				}
+				while (Contains(MakeName(defaultColumnIndex + 1)));
+			}
+		}
+
+		private void UnregisterName(string name)
+		{
+			if (columnFromName.Contains(name))
+				columnFromName.Remove(name);
+
+			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex - 1))
+			{
+				do
+				{
+					defaultColumnIndex--;
+				}
+				while (!Contains(MakeName(defaultColumnIndex - 1)) && defaultColumnIndex > 1);
+			}
+		}
+
 		private string GetNextDefaultColumnName ()
 		{
-			string defColumnName = "Column1";
-			for (int index = 2; Contains (defColumnName); ++index) {
-				defColumnName = "Column" + index;
+			string defColumnName = MakeName(defaultColumnIndex);
+			for (int index = defaultColumnIndex + 1; Contains(defColumnName); ++index) {
+				defColumnName = MakeName(index);
+				defaultColumnIndex++;
 			}
+			defaultColumnIndex++;
 			return defColumnName;
+		}
+
+		private string MakeName(int index)
+		{
+			return String.Concat("Column", index.ToString());
 		}
 
 		/// <summary>
@@ -121,15 +183,9 @@ namespace System.Data {
 			{
 				column.ColumnName = GetNextDefaultColumnName ();
 			}
-			int tmp = IndexOf(column.ColumnName);
-			// if we found a column with same name we have to check
-			// that it is the same case.
-			// indexof can return a table with different case letters.
-			if (tmp != -1)
-			{
-				if(column.ColumnName == this[tmp].ColumnName)
-					throw new DuplicateNameException("A DataColumn named '" + column.ColumnName + "' already belongs to this DataTable.");
-			}
+
+//			if (Contains(column.ColumnName))
+//				throw new DuplicateNameException("A DataColumn named '" + column.ColumnName + "' already belongs to this DataTable.");
 
 			if (column.Table != null)
 				throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to another DataTable.");
@@ -137,6 +193,7 @@ namespace System.Data {
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 
 			column.SetTable (parentTable);
+			RegisterName(column.ColumnName, column);
 			int ordinal = base.List.Add(column);
 			column.SetOrdinal (ordinal);
 
@@ -146,6 +203,8 @@ namespace System.Data {
 					column.Table.Rows [i] [ordinal] = value;
 			}
 
+			if (column.AutoIncrement)
+				autoIncrement.Add(column.ColumnName);
 			OnCollectionChanged (e);
 		}
 
@@ -158,7 +217,7 @@ namespace System.Data {
 		{
 			if (columnName == null || columnName == String.Empty)
 			{
-				columnName = GetNextDefaultColumnName ();
+				columnName = GetNextDefaultColumnName();
 			}
 			
 			DataColumn column = new DataColumn(columnName);
@@ -342,7 +401,9 @@ namespace System.Data {
 				}
 
 			}
-					
+			
+			columnFromName.Clear();
+			autoIncrement.Clear();
 			base.List.Clear();
 			OnCollectionChanged(e);
 			return;
@@ -355,6 +416,9 @@ namespace System.Data {
 		/// <returns>true if a column exists with this name; otherwise, false.</returns>
 		public bool Contains(string name)
 		{
+			if (columnFromName.Contains(name))
+				return true;
+
 			return (IndexOf(name, false) != -1);
 		}
 
@@ -410,7 +474,10 @@ namespace System.Data {
 		/// <param name="column">The DataColumn to remove.</param>
 		public void Remove(DataColumn column)
 		{
-			if (IndexOf (column) == -1)
+			if (column == null)
+				throw new ArgumentNullException ("column", "'column' argument cannot be null.");
+
+			if (!Contains(column.ColumnName))
 				throw new ArgumentException ("Cannot remove a column that doesn't belong to this table.");
 
 			//TODO: can remove first with exceptions
@@ -418,6 +485,7 @@ namespace System.Data {
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
 			
 			int ordinal = column.Ordinal;
+			UnregisterName(column.ColumnName);
 			base.List.Remove(column);
 			
 			//Update the ordinals
@@ -426,6 +494,12 @@ namespace System.Data {
 				this[i].SetOrdinal( i );
 			}
 			
+			if(parentTable != null)
+				parentTable.OnRemoveColumn(column);
+
+			if (column.AutoIncrement)
+				autoIncrement.Remove(column.ColumnName);
+
 			OnCollectionChanged(e);
 			return;
 		}
@@ -439,9 +513,9 @@ namespace System.Data {
 			DataColumn column = this[name];
 			
 			if (column == null)
-				throw new ArgumentException ("Column '" + name + "' does not belong to table test_table.");
+				throw new ArgumentException ("Column '" + name + "' does not belong to table " + parentTable == null ? "" : parentTable.TableName + ".");
 
-			Remove( column );
+			Remove(column);
 		}
 
 		/// <summary>
@@ -454,7 +528,7 @@ namespace System.Data {
 				throw new IndexOutOfRangeException ("Cannot find column " + index + ".");
 
 			DataColumn column = this[index];
-			Remove( column );
+			Remove(column);
 		}
 
 
@@ -463,13 +537,26 @@ namespace System.Data {
 		/// </summary>
 		private bool CaseSensitiveContains(string columnName)
 		{
-			
 			DataColumn column = this[columnName];
 			
 			if (column != null)
-				return string.Compare (column.ColumnName, columnName, false) == 0; 
+				return string.Compare(column.ColumnName, columnName, false) == 0; 
 
 			return false;
+		}
+
+		internal void UpdateAutoIncrement(DataColumn col,bool isAutoIncrement)
+		{
+			if (isAutoIncrement)
+			{
+				if (!autoIncrement.Contains(col.ColumnName))
+					autoIncrement.Add(col.ColumnName);
+			}
+			else
+			{
+				if (autoIncrement.Contains(col.ColumnName))
+					autoIncrement.Remove(col.ColumnName);
+			}
 		}
 
 		private int IndexOf (string name, bool error)

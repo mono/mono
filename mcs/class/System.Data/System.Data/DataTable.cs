@@ -1440,6 +1440,7 @@ namespace System.Data {
 			//	{
 			//		RemoveColumn(this, e);
 			//	}
+			this.Rows.onColumnRemoved(column.Ordinal);
 		}
 
 		/// <summary>

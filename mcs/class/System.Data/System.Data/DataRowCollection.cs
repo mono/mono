@@ -316,6 +316,7 @@ namespace System.Data
 		internal void ValidateDataRowInternal(DataRow row)
 		{
 			//first check for null violations.
+			row._nullConstraintViolation = true;
 			row.CheckNullConstraints();
 			// This validates constraints in the specific order : 
 			// first unique/primary keys first, then Foreignkeys, etc
@@ -356,6 +357,13 @@ namespace System.Data
 
 			foreach(Constraint constraint in uniqueConstraintsDone) {
 				constraint.RollbackAssert(row);
+			}
+		}
+
+		internal void onColumnRemoved(int columnIndex)
+		{
+			foreach(DataRow row in List) {
+				row.onColumnRemoved(columnIndex);
 			}
 		}
 	}
