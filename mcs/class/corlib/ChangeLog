@@ -1,3 +1,16 @@
+2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added new files for NET_2_0 profile: 
+		System.Security/HostProtectionException.cs
+		System.Security/HostSecurityManager.cs
+		System.Security/HostSecurityManagerFlags.cs
+		System.Security/SecurityContext.cs
+		System.Security/SecurityContextSwitcher.cs
+		System.Security.Permissions/HostProtectionResource.cs
+		System.Threading/AsyncFlowControl.cs
+		System.Threading/CompressedStackSwitcher.cs
+		System.Threading/ContextCallback.cs
+
 2004-07-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added new files for NET_2_0 profile: 

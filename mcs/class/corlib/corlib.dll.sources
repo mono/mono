@@ -809,6 +809,9 @@ System.Runtime.Serialization.Formatters.Binary/ObjectWriter.cs
 System.Runtime.Serialization.Formatters.Binary/MessageFormatter.cs
 System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission.cs
+System.Security/HostProtectionException.cs
+System.Security/HostSecurityManager.cs
+System.Security/HostSecurityManagerFlags.cs
 System.Security/IEvidenceFactory.cs
 System.Security/IPermission.cs
 System.Security/ISecurityEncodable.cs
@@ -817,6 +820,8 @@ System.Security/IStackWalk.cs
 System.Security/NamedPermissionSet.cs
 System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
+System.Security/SecurityContext.cs
+System.Security/SecurityContextSwitcher.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
@@ -922,6 +927,7 @@ System.Security.Permissions/FileDialogPermissionAttribute.cs
 System.Security.Permissions/FileIOPermission.cs
 System.Security.Permissions/FileIOPermissionAccess.cs
 System.Security.Permissions/FileIOPermissionAttribute.cs
+System.Security.Permissions/HostProtectionResource.cs
 System.Security.Permissions/IBuiltInPermission.cs
 System.Security.Permissions/IsolatedStorageContainment.cs
 System.Security.Permissions/IsolatedStorageFilePermission.cs 
@@ -1025,8 +1031,11 @@ System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
 System.Text/UTF8Encoding.cs
 System.Threading/ApartmentState.cs
+System.Threading/AsyncFlowControl.cs
 System.Threading/AutoResetEvent.cs
 System.Threading/CompressedStack.cs
+System.Threading/CompressedStackSwitcher.cs
+System.Threading/ContextCallback.cs
 System.Threading/Interlocked.cs
 System.Threading/IOCompletionCallback.cs
 System.Threading/LockCookie.cs
