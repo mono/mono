@@ -1,3 +1,10 @@
+2004-04-15  Dick Porter  <dick@ximian.com>
+
+	* io-private.h:
+	* io.c: Rewrite FindFirstFile and FindNextFile using scandir(3)
+	and fnmatch(3) instead of glob(3).  glob() can't cope with being
+	given filenames containing metachars.  This fixes bug 40557.
+
 2004-04-14  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* security.c: #warning is a GCC-ism
