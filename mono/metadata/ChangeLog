@@ -1,3 +1,9 @@
+
+Tue Jul 16 11:27:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, loader.c: added mono_field_from_token().
+	* verify.c: first cut of type checking code.
+
 2002-07-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): support valuetypes
