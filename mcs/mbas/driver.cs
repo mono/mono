@@ -716,6 +716,46 @@ namespace Mono.Languages
 			return true;
 		}
 		
+		void FixEntryPoint()
+		{
+			if (target == Target.Exe || target == Target.WinExe)
+			{
+				MethodInfo ep = RootContext.EntryPoint;
+			
+				if (ep == null)
+				{
+					// If we don't have a valid entry point yet
+					// AND if System.Windows.Forms is included
+					// among the dependencies, we have to build
+					// a new entry point on-the-fly. Otherwise we
+					// won't be able to compile SWF code out of the box.
+
+					if (references.Contains ("System.Windows.Forms")) 
+					{
+						Type t = TypeManager.LookupType(RootContext.RootNamespace + "." + RootContext.MainClass);
+						if (t != null) 
+						{
+							TypeBuilder tb = t as TypeBuilder;
+							MethodBuilder mb = tb.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, 
+								typeof(void), new Type[0]);
+
+							Type SWFA = TypeManager.LookupType("System.Windows.Forms.Application");
+							Type SWFF = TypeManager.LookupType("System.Windows.Forms.Form");
+							Type[] args = new Type[1];
+							args[0] = SWFF;
+							MethodInfo mi = SWFA.GetMethod("Run", args);
+							ILGenerator ig = mb.GetILGenerator();
+							ig.Emit (OpCodes.Newobj, t.FullName);
+							ig.Emit (OpCodes.Call,mi);
+							ig.Emit (OpCodes.Ret);
+
+							RootContext.EntryPoint = mb as MethodInfo;
+						}
+					}
+				}
+			}
+		}
+
 		bool GenerateAssembly()
 		{
 			//
@@ -723,8 +763,11 @@ namespace Mono.Languages
 			//
 			if (timestamps)
 				ShowTime ("Emitting code");
+			
+			
 
 			RootContext.EmitCode();
+			FixEntryPoint();
 			if (Report.Errors > 0)
 				return false;
 
