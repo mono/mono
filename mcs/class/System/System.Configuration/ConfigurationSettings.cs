@@ -126,6 +126,7 @@ namespace System.Configuration
 		/// <param name="xmlDoc">An xml Configuration Document.</param>
 		/// <param name="sectionName">The name of the configuration section that configuration settings are read from.</param>
 		/// <returns>The name of the Handler Object for this configuration section, including the name if its Assembly.</returns>
+		[MonoTODO]
 		private static string GetSectionHanderType(XmlDocument xmlDoc, string sectionName)
 		{
 			//TODO: This method does not account for sectionGroups yet.

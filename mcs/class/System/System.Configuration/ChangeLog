@@ -1,3 +1,10 @@
+2002-01-06  Ravi Pratap  <ravi@ximian.com>
+
+	* ConfigurationSettings.cs, IgnoreSectionHandler.cs : MonoTODO decoration
+
+	* SingleTagSectionHandler.cs, DictionarySectionHandler.cs, 
+	NameValueSectionHandler.cs : Ditto.
+
 2001-08-28  Christopher Podurgiel <cpodurgiel@msn.com>
 	* IConfigurationSectionHandler.cs: Added reference to System.Xml.
 	
