@@ -1,3 +1,7 @@
+Thu Jul 31 15:16:26 EDT 2003 Mark Crichton <crichton@gimp.org>
+
+	* mini-sparc.c: More opcodes implemented.
+
 Wed Jul 30 22:31:02 EDT 2003 Mark Crichton <crichton@gimp.org>
 
 	* inssel-sparc.brg: Add some needed rules.  Direct
