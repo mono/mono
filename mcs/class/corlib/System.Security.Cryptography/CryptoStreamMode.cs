@@ -9,9 +9,7 @@
 
 namespace System.Security.Cryptography {
 
-	/// <summary>
-	/// FIXME (the comment): Whether the crypto-stream is in read mode or write mode?
-	/// </summary>
+	[Serializable]
 	public enum CryptoStreamMode {
 		Read,
 		Write

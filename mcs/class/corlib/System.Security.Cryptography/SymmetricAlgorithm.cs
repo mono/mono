@@ -27,6 +27,8 @@ namespace System.Security.Cryptography {
 		private int BlockSizeByte;
 		private byte[] temp;
 		private byte[] temp2;
+		private byte[] workBuff;
+		private byte[] workout;
 		private int FeedBackByte;
 		private int FeedBackIter;
 		private bool m_disposed = false;
@@ -36,11 +38,15 @@ namespace System.Security.Cryptography {
 			algo = symmAlgo;
 			encrypt = encryption;
 			BlockSizeByte = (algo.BlockSize >> 3);
+			// mode buffers
 			temp = new byte [BlockSizeByte];
 			Array.Copy (rgbIV, 0, temp, 0, BlockSizeByte);
 			temp2 = new byte [BlockSizeByte];
 			FeedBackByte = (algo.FeedbackSize >> 3);
 			FeedBackIter = (int) BlockSizeByte / FeedBackByte;
+			// transform buffers
+			workBuff = new byte [BlockSizeByte];
+			workout =  new byte [BlockSizeByte];
 		}
 
 		~SymmetricTransform () 
@@ -71,7 +77,7 @@ namespace System.Security.Cryptography {
 		}
 
 		public virtual bool CanTransformMultipleBlocks {
-			get { return false; }
+			get { return true; }
 		}
 
 		public bool CanReuseTransform {
@@ -174,34 +180,114 @@ namespace System.Security.Cryptography {
 			throw new NotImplementedException ("CTS not yet supported");
 		}
 
+		// this method may get called MANY times so this is the one to optimize
 		public virtual int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset) 
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("Object is disposed");
 
-			// if ((inputCount & (BlockSizeByte-1)) != 0) didn't work for Rijndael block = 192
-			if ((inputCount % BlockSizeByte) != 0)
-				throw new CryptographicException ("Invalid input block size.");
-
 			if (outputOffset + inputCount > outputBuffer.Length)
 				throw new CryptographicException ("Insufficient output buffer size.");
 
-			int step = InputBlockSize;
 			int offs = inputOffset;
-			int full = inputCount / step;
+			int full;
 
-			byte [] workBuff = new byte [step];
-			byte[] workout =  new byte [step];
+			// this way we don't do a modulo every time we're called
+			// and we may save a division
+			if (inputCount != BlockSizeByte) {
+				if ((inputCount % BlockSizeByte) != 0)
+					throw new CryptographicException ("Invalid input block size.");
 
+				full = inputCount / BlockSizeByte;
+			}
+			else
+				full = 1;
+
+			int total = 0;
 			for (int i = 0; i < full; i++) {
-				Array.Copy (inputBuffer, offs, workBuff, 0, step);
+				Array.Copy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
 				Transform (workBuff, workout);
-				Array.Copy (workout, 0, outputBuffer, outputOffset, step);
-				offs += step;
-				outputOffset += step;
+				Array.Copy (workout, 0, outputBuffer, outputOffset, BlockSizeByte);
+				offs += BlockSizeByte;
+				outputOffset += BlockSizeByte;
+				total += BlockSizeByte;
 			}
 
-			return (full * step);
+			return total;
+		}
+
+		private byte[] FinalEncrypt (byte [] inputBuffer, int inputOffset, int inputCount) 
+		{
+			// are there still full block to process ?
+			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
+			int rem = inputCount - full;
+			int total = full;
+
+			// we need to add an extra block if...
+			// a. the last block isn't complate (partial);
+			// b. the last block is complete but we use padding
+			if ((rem > 0) || (algo.Padding != PaddingMode.None))
+				total += BlockSizeByte;
+			byte[] res = new byte [total];
+
+			// process all blocks except the last (final) block
+			while (total > BlockSizeByte) {
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				inputOffset += BlockSizeByte;
+				total -= BlockSizeByte;
+			}
+
+			// now we only have a single last block to encrypt
+			int padding = BlockSizeByte - rem;
+			switch (algo.Padding) {
+				case PaddingMode.None:
+					break;
+				case PaddingMode.PKCS7:
+					for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);) 
+						res [i] = (byte) padding;
+					break;
+				case PaddingMode.Zeros:
+					for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);)
+						res [i] = 0;
+					break;
+			}
+			Array.Copy (inputBuffer, inputOffset, res, full, rem);
+
+			// the last padded block will be transformed in-place
+			TransformBlock (res, full, BlockSizeByte, res, full);
+			return res;
+		}
+
+		private byte[] FinalDecrypt (byte [] inputBuffer, int inputOffset, int inputCount) 
+		{
+			if ((inputCount % BlockSizeByte) > 0)
+				throw new CryptographicException ("Invalid input block size.");
+
+			int total = inputCount;
+			byte[] res = new byte [total];
+			while (inputCount > 0) {
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				inputOffset += BlockSizeByte;
+				inputCount -= BlockSizeByte;
+			}
+
+			switch (algo.Padding) {
+				case PaddingMode.None:
+					break;
+				case PaddingMode.PKCS7:
+					total -= res [total - 1];
+					break;
+				case PaddingMode.Zeros:
+					// TODO
+					break;
+			}
+
+			// return output without padding
+			byte[] data = new byte [total];
+			Array.Copy (res, 0, data, 0, total);
+			// zeroize decrypted data (copy with padding)
+			Array.Clear (res, 0, res.Length);
+			return data;
 		}
 
 		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount) 
@@ -209,59 +295,11 @@ namespace System.Security.Cryptography {
 			if (m_disposed)
 				throw new ObjectDisposedException ("Object is disposed");
 
-			int num = (inputCount + BlockSizeByte) & (~(BlockSizeByte-1));
-			byte [] res = new byte [num];
-			//int full = (num - BlockSizeByte); // didn't work for bs 192
-			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
-
-			// are there still full block to process ?
-			if (full > 0)
-				TransformBlock (inputBuffer, inputOffset, full, res, 0);
-
-			//int rem = inputCount & (BlockSizeByte-1);
-			int rem = inputCount - full; 
-
-			// is there a partial block to pad ?
-			if (rem > 0) {
-				if (encrypt) {
-					int padding = BlockSizeByte - (inputCount % BlockSizeByte);
-					switch (algo.Padding) {
-					case PaddingMode.None:
-						break;
-					case PaddingMode.PKCS7:
-						for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);) 
-							res [i] = (byte) padding;
-						break;
-					case PaddingMode.Zeros:
-						for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);)
-							res [i] = 0;
-						break;
-					}
-
-					Array.Copy (inputBuffer, inputOffset + full, res, full, rem);
-
-					// the last padded block will be transformed in-place
-					TransformBlock (res, full, BlockSizeByte, res, full);
-				}
-				else {
-					switch (algo.Padding) {
-					case PaddingMode.None:
-						break;
-					case PaddingMode.PKCS7:
-						byte padding = res [inputCount - 1];
-						for (int i = 0; i < padding; i++) {
-							if (res [inputCount - 1 - i] == padding)
-								res[inputCount - 1 - i] = 0x00;
-						}
-						break;
-					case PaddingMode.Zeros:
-						break;
-					}
-				}
-			}
-			return res;
+			if (encrypt)
+				return FinalEncrypt (inputBuffer, inputOffset, inputCount);
+			else
+				return FinalDecrypt (inputBuffer, inputOffset, inputCount);
 		}
-
 	}
 
 	/// <summary>

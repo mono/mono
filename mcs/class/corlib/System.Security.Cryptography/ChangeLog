@@ -1,3 +1,12 @@
+2002-12-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStream.cs: Implemented core. Not sure about many details - 
+	but it run the samples now (#30256).
+	* CryptoStreamMode.cs: Added [Serializable] to enum declaration.
+	* SymmetricAlgorithm.cs: Made some changes required for CryptoStream 
+	and to match more closely MS implementation. Also added little
+	optimizations in TransformBlock.
+
 2002-12-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoTools.cs: New. Shared classes for cryptography. Now

@@ -1,9 +1,9 @@
 //
 // System.Security.Cryptography CryptoStream.cs
 //
-// Author:
-//   Thomas Neidhart (tome@sbox.tugraz.at)
-//   Sebastien Pouliot (spouliot@motus.com)
+// Authors:
+//	Thomas Neidhart (tome@sbox.tugraz.at)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
@@ -17,12 +17,21 @@ public class CryptoStream : Stream {
 	private Stream _stream;
 	private ICryptoTransform _transform;
 	private CryptoStreamMode _mode;
+	private byte[] work;
+	private int workPos;
+	private bool disposed;
 	
-	public CryptoStream(Stream stream, ICryptoTransform transform, CryptoStreamMode mode) 
+	public CryptoStream (Stream stream, ICryptoTransform transform, CryptoStreamMode mode)
 	{
 		_stream = stream;
 		_transform = transform;
 		_mode = mode;
+		disposed = false;
+		if (mode == CryptoStreamMode.Read)
+			work = new byte [transform.InputBlockSize];
+		else if (mode == CryptoStreamMode.Write)
+			work = new byte [transform.OutputBlockSize];
+		workPos = 0;
 	}
 
 	~CryptoStream () 
@@ -44,16 +53,16 @@ public class CryptoStream : Stream {
 	
 	public override long Length {
 		get {
-			throw new NotSupportedException("Length property not supported by CryptoStream");
+			throw new NotSupportedException ("Length property not supported by CryptoStream");
 		}
 	}
 
 	public override long Position {
 		get {
-			throw new NotSupportedException("Position property not supported by CryptoStream");
+			throw new NotSupportedException ("Position property not supported by CryptoStream");
 		}
 		set {
-			throw new NotSupportedException("Position property not supported by CryptoStream");
+			throw new NotSupportedException ("Position property not supported by CryptoStream");
 		}
 	}
 
@@ -62,19 +71,18 @@ public class CryptoStream : Stream {
 		Dispose (true);
 	}
 
-	[MonoTODO("Limited support for HMACSHA1")]
 	public override void Close () 
 	{
 		if (_mode != CryptoStreamMode.Write)
 			throw new NotSupportedException ();
-		// TODO: limited implemention for HMACSHA1
-		byte[] buffer = new byte [0];
-		_transform.TransformFinalBlock (buffer, 0, 0);
-		if (_stream != null)
-			_stream.Close();
+
+		byte[] finalBuffer = _transform.TransformFinalBlock (work, 0, workPos);
+		if (_stream != null) {
+			_stream.Write (finalBuffer, 0, finalBuffer.Length);
+			_stream.Close ();
+		}
 	}
 
-	[MonoTODO]
 	public override int Read (byte[] buffer, int offset, int count)
 	{
 		if (_mode != CryptoStreamMode.Read)
@@ -83,11 +91,31 @@ public class CryptoStream : Stream {
 			throw new ArgumentOutOfRangeException ();
 		if (offset + count > buffer.Length)
 			throw new ArgumentException ();
-		// TODO: implement
-		return 0;
+		// reached end of stream ?
+		if (_stream.Position == _stream.Length)
+			return 0;
+
+		int result = 0;
+		int bufferPos = offset;
+		while (count > 0) {
+			int len = Math.Min (work.Length - workPos, count);
+			_stream.Read (work, workPos, len);
+			workPos += len;
+			count -= len;
+			if (_stream.Position == _stream.Length) {
+				byte[] input = _transform.TransformFinalBlock (work, 0, work.Length);
+				Array.Copy (input, 0, buffer, bufferPos, input.Length);
+				result += input.Length;
+				break;
+			} else if (workPos == work.Length) {
+				workPos = 0;
+				result += _transform.TransformBlock (work, 0, work.Length, buffer, bufferPos);
+			}
+			bufferPos += len;
+		}
+		return result;
 	}
 
-	[MonoTODO("Limited support for HMACSHA1")]
 	public override void Write (byte[] buffer, int offset, int count)
 	{
 		if (_mode != CryptoStreamMode.Write)
@@ -96,25 +124,41 @@ public class CryptoStream : Stream {
 			throw new ArgumentOutOfRangeException ();
 		if (offset + count > buffer.Length)
 			throw new ArgumentException ();
-		// TODO: limited implemention for HMACSHA1
-		byte[] output = new byte [count];
-		_transform.TransformBlock (buffer, offset, count, output, 0);
+
+		int bufferPos = offset;
+		while (count > 0) {
+			int len = Math.Min (work.Length - workPos, count);
+			Array.Copy (buffer, bufferPos, work, workPos, len);
+			bufferPos += len;
+			workPos += len;
+			count -= len;
+			if (workPos == work.Length) {
+				workPos = 0;
+				byte[] output = new byte[_transform.OutputBlockSize];
+				_transform.TransformBlock (work, 0, work.Length, output, 0);
+				_stream.Write (output, 0, output.Length);
+			}
+		}
 	}
 
-	[MonoTODO]
 	public override void Flush ()
 	{
 		if (_mode != CryptoStreamMode.Write)
 			throw new NotSupportedException ("cannot flush a non-writeable CryptoStream");
-		// TODO: implement
+
+		if (_stream != null)
+			_stream.Flush ();
 	}
 
-	[MonoTODO]
 	public void FlushFinalBlock ()
 	{
 		if (_mode != CryptoStreamMode.Write)
 			throw new NotSupportedException ("cannot flush a non-writeable CryptoStream");
-		// TODO: implement
+
+		if (_stream != null) {
+			_stream.Flush ();
+			Close ();
+		}
 	}
 
 	public override long Seek (long offset, SeekOrigin origin)
@@ -130,6 +174,10 @@ public class CryptoStream : Stream {
 
 	protected virtual void Dispose (bool disposing) 
 	{
+		if (!disposed) {
+			if (_stream != null)
+				_stream.Close ();
+		}
 	}
 	
 } // CryptoStream
