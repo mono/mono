@@ -1,4 +1,5 @@
 Mono.Math/ArithmeticBigTest.cs
+Mono.Math/BigIntegerTest.cs
 Mono.Math/BigIntegerSetTest.cs
 Mono.Math/BitwiseTest.cs
 Mono.Math/GcdBigTest.cs

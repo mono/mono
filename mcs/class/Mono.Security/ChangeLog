@@ -1,3 +1,7 @@
+2004-10-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security_test.dll.sources: Added more unit tests BigInteger.
+
 2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security.dll.sources: Added support for SHA224 hash algorithm
