@@ -54,20 +54,20 @@ namespace System.Security.Permissions {
 		{
 			if (blob == null)
 				throw new ArgumentNullException ("blob");
-			if ((name != null) && (name.Length == 0))
-				throw new ArgumentException ("name");
-	
+
+			Name = name;
 			publickey = blob;
-			this.name = name;
 			assemblyVersion = version;
 		}
 	
 		public string Name { 
 			get { return name; }
 			set { 
+#if NET_2_0
 				if ((value != null) && (value.Length == 0))
 					throw new ArgumentException ("name");
-				name = value; 
+#endif
+				name = value;
 			}
 		}
 	
@@ -159,8 +159,12 @@ namespace System.Security.Permissions {
 				return Copy ();
 
 			if (!publickey.Equals (snip.publickey)) {
+#if NET_2_0
 				string msg = Locale.GetText ("Permissions have different public keys.");
 				throw new ArgumentException (msg, "target");
+#else
+				return null;
+#endif
 			}
 
 			string n = name;
@@ -168,8 +172,12 @@ namespace System.Security.Permissions {
 				n = snip.name;
 			}
 			else if ((snip.name != null) && (snip.name.Length > 0) && (n != snip.name)) {
+#if NET_2_0
 				string msg = String.Format (Locale.GetText ("Name mismatch: '{0}' versus '{1}'"), n, snip.Name);
 				throw new ArgumentException (msg, "target");
+#else
+				return null;
+#endif
 			}
 
 			Version v = assemblyVersion;
@@ -177,8 +185,12 @@ namespace System.Security.Permissions {
 				v = snip.assemblyVersion;
 			}
 			else if ((snip.assemblyVersion != null) && (v != snip.assemblyVersion)) {
+#if NET_2_0
 				string msg = String.Format (Locale.GetText ("Version mismatch: '{0}' versus '{1}'"), v, snip.assemblyVersion);
 				throw new ArgumentException (msg, "target");
+#else
+				return null;
+#endif
 			}
 
 			return new StrongNameIdentityPermission (publickey, n, v);

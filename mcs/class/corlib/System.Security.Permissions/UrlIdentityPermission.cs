@@ -133,9 +133,12 @@ namespace System.Security.Permissions {
 				return Copy ();
 			if (IsEmpty ())
 				return uip.Copy ();
-
+#if NET_2_0
 			throw new ArgumentException (Locale.GetText (
 				"Cannot union two different urls."), "target");
+#else
+			return null;
+#endif
 		}
 
 		// IBuiltInPermission
