@@ -1,3 +1,10 @@
+2004-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* regex.cs: in Replace, when count is negative, replacement continues
+	to the end of the string.
+
+	Fixes bug #68398. Patch by Jon Larimer.
+
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* RegexRunner.cs: fixed case mismatch of methods
