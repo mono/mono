@@ -980,6 +980,7 @@ System.Threading/AutoResetEvent.cs
 System.Threading/Interlocked.cs
 System.Threading/IOCompletionCallback.cs
 System.Threading/LockCookie.cs
+System.Threading/LockQueue.cs
 System.Threading/ManualResetEvent.cs
 System.Threading/Monitor.cs
 System.Threading/Mutex.cs

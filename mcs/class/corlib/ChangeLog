@@ -1,3 +1,7 @@
+2004-02-20  Jackson Harper  <jackson@ximian.com>
+
+	* corlib.dll.sources: Add LockQueue.cs to build.
+	
 2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib_test.dll.sources : Added CharCategoryTest.cs
