@@ -1,4 +1,8 @@
 
+Thu Mar 28 16:54:51 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: spring warning cleanup.
+
 Thu Mar 28 12:03:28 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: check obj address in stfld.
