@@ -1,3 +1,8 @@
+2005-02-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Array.cs (Array.Swapper) [!BOOTSTRAP_WITH_OLDLIB]: Make nested.
+	See #72015.
+
 2005-02-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* Version.cs (CompareTo, Equals): Make sure the versions for

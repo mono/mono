@@ -41,8 +41,6 @@ using System.Collections.Generic;
 #endif
 namespace System
 {
-	/* delegate used to swap array elements, keep defined outside Array */
-	delegate void Swapper (int i, int j);
 
 	[Serializable]
 	[MonoTODO ("We are doing way to many double/triple exception checks for the overloaded functions")]
@@ -848,6 +846,11 @@ namespace System
 
 			return array.GetLowerBound (0) - 1;
 		}
+
+#if !BOOTSTRAP_WITH_OLDLIB && !NET_2_0
+		/* delegate used to swap array elements */
+		delegate void Swapper (int i, int j);
+#endif
 
 		static Swapper get_swapper (Array array)
 		{
@@ -1733,5 +1736,10 @@ namespace System
 		}
 	}
 
+#endif
+
+#if BOOTSTRAP_WITH_OLDLIB || NET_2_0
+	/* delegate used to swap array elements, keep defined outside Array */
+	delegate void Swapper (int i, int j);
 #endif
 }
