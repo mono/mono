@@ -25,6 +25,8 @@ namespace System.Threading
 		private ThreadState state = ThreadState.Unstarted;
 		private object abort_exc;
 		internal object abort_state;
+		/* thread_id is only accessed from unmanaged code */
+		private int thread_id;
 		
 		[MonoTODO]
 		public static Context CurrentContext {
