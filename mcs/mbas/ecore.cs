@@ -811,7 +811,7 @@ namespace Mono.MonoBASIC {
 			if (target_type == TypeManager.bool_type) {
 
 				if (expr_type == TypeManager.decimal_type) {
-					return RTConversionExpression (ec, "DecimalType.FromBoolean" , expr, loc);
+					return RTConversionExpression (ec, "System.Convert",".ToBoolean" , expr, loc);
 				}
 
 				if ((expr_type != TypeManager.char_type) && 
