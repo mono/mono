@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.12  2004/09/23 19:08:59  jackson
+// Temp build fixage
+//
 // Revision 1.11  2004/09/22 20:09:44  pbartok
 // - Added Form.ControllCollection class
 // - Added handling for Form owners: Owner, OwnedForms, AddOwnedForm,
@@ -359,7 +362,7 @@ namespace System.Windows.Forms {
 		}
 
 		public DialogResult ShowDialog(IWin32Window owner) {
-			return ShowDialog(Control.ControlNativeWindow.ControlFromHandle(owner.Handle));
+			return ShowDialog(Control.FromHandle(owner.Handle));
 		}
 
 		#endregion	// Public Instance Methods
