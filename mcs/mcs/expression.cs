@@ -431,13 +431,15 @@ namespace Mono.CSharp {
 				}
 
 				IVariable variable = Expr as IVariable;
-				if (!ec.InFixedInitializer && ((variable == null) || !variable.VerifyFixed (false))) {
+				bool is_fixed = variable != null && variable.VerifyFixed (false);
+
+				if (!ec.InFixedInitializer && !is_fixed) {
 					Error (212, "You can only take the address of an unfixed expression inside " +
 					       "of a fixed statement initializer");
 					return null;
 				}
 
-				if (ec.InFixedInitializer && ((variable != null) && variable.VerifyFixed (false))) {
+				if (ec.InFixedInitializer && is_fixed) {
 					Error (213, "You can not fix an already fixed expression");
 					return null;
 				}
@@ -659,7 +661,7 @@ namespace Mono.CSharp {
 	// after semantic analysis (this is so we can take the address
 	// of an indirection).
 	//
-	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
+	public class Indirection : Expression, IMemoryLocation, IAssignMethod, IVariable {
 		Expression expr;
 		LocalTemporary temporary;
 		bool prepared;
@@ -733,6 +735,21 @@ namespace Mono.CSharp {
 		{
 			return "*(" + expr + ")";
 		}
+
+		#region IVariable Members
+
+		public VariableInfo VariableInfo {
+			get {
+				return null;
+			}
+		}
+
+		public bool VerifyFixed (bool is_expression)
+		{
+			return true;
+		}
+
+		#endregion
 	}
 	
 	/// <summary>
@@ -3413,17 +3430,26 @@ namespace Mono.CSharp {
 				//
 				left.Emit (ec);
 				ig.Emit (OpCodes.Conv_I);
-				right.Emit (ec);
-				if (size != 1){
-					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, element);
-					else 
-						IntLiteral.EmitInt (ig, size);
-					if (rtype == TypeManager.int64_type)
-						ig.Emit (OpCodes.Conv_I8);
-					else if (rtype == TypeManager.uint64_type)
-						ig.Emit (OpCodes.Conv_U8);
-					ig.Emit (OpCodes.Mul);
+
+				Constant right_const = right as Constant;
+				if (right_const != null && size != 0) {
+					Expression ex = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size), right_const, loc);
+					if (ex == null)
+						return;
+					ex.Emit (ec);
+				} else {
+					right.Emit (ec);
+					if (size != 1){
+						if (size == 0)
+							ig.Emit (OpCodes.Sizeof, element);
+						else 
+							IntLiteral.EmitInt (ig, size);
+						if (rtype == TypeManager.int64_type)
+							ig.Emit (OpCodes.Conv_I8);
+						else if (rtype == TypeManager.uint64_type)
+							ig.Emit (OpCodes.Conv_U8);
+						ig.Emit (OpCodes.Mul);
+					}
 				}
 				
 				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
