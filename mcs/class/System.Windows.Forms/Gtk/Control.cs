@@ -58,8 +58,21 @@ namespace System.Windows.Forms {
 				  // Or .. we remove the label and replace it with a Container which
 				  // we fill with the added Controls .. (question: how do I remove the
 				  // label and/or get the Gtk.Widget inside the button ?)
+				//
+				// Phillip : Here is some code that will remove the label normlly
+				// Gtk.Button mybut = new Gtk.Button("Test"); 
+				// GLib.List mylist = new GLib.List((IntPtr) 0, typeof (Gtk.Widget));
+				// mylist = mybutton.Children;
+				// foreach (Gtk.Widget awidget in mylist){mybut.Remove(awidget);}
+				//
+				// You can then add in the container with Add()
+				// We will also have to to create a way to add widgets to a
+ 				//GroupBox 
 
 					Gtk.Button gtkbutton = (Gtk.Button)this.owner.widget;
+					GLib.List mylist = new GLib.List((IntPtr) 0, typeof (Gtk.Widget));
+					mylist = gtkbutton.Children;
+					foreach (Gtk.Widget awidget in mylist){gtkbutton.Remove(awidget);}
 					gtkbutton.Add (value.widget);
 					list.Add (value);
 				} 

@@ -64,7 +64,7 @@ namespace demo2
 			this.statusBar3.TabIndex = 0;
 			this.statusBar3.Text = "statusBar3";
 
-			button1.Location = new Point(150, 28);
+			button1.Location = new Point(100, 28);
 			button1.Name = "button1";
 			button1.Size = new Size(128, 44);
 			button1.Text = "Color";
@@ -72,14 +72,7 @@ namespace demo2
 
 		 	button1.Enabled = true;
 
-
 			button2.Location = new Point(100, 80);
-			button2.Name = "button2";
-			button2.Size = new Size(128, 44);
-			button2.Text = "Add to ComboBox";
-			button2.Click += new EventHandler(this.button2_Click);    
-
-			button2.Location = new Point(150, 80);
 			button2.Name = "button2";
 			button2.Size = new Size(128, 44);
 			button2.Text = "Add to ComboBox";
@@ -144,12 +137,9 @@ namespace demo2
 				combo1.Items.Add("Joel");
 				lb.Items.Add("MyItems");
 			}
-			combo1.EndUpdate();	
-
-			for (int i = 1; i < 5; i++) {combo1.Items.Add("Joel");}
-			combo1.EndUpdate();	
-
+			combo1.EndUpdate();
   		}
+
 		private void  menuItem2_Click (object sender, EventArgs e){
 			MessageBox.Show("You clicked Exit");
 		}

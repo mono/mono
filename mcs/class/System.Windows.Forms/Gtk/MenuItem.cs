@@ -69,7 +69,6 @@ namespace System.Windows.Forms{
 				file_item = new Gtk.MenuItem(text);	
 				ConnectToClick();
 				file_item.Show();
-				Console.WriteLine(text);
 			}
 			else{
 			CreateCheckMenu();	
@@ -81,10 +80,12 @@ namespace System.Windows.Forms{
 				return this.shortcut;
 			}
 			set{
-				//if (this.shortcut != value) {
-					this.shortcut = value;
-					ShortcutHelper.AddShortcutToWidget (file_item, new Gtk.AccelGroup(), this.shortcut, "activate");
-				//}
+				this.shortcut = value;
+					
+				ShortcutHelper.AddShortcutToWidget (file_item, new Gtk.AccelGroup(), this.shortcut, "activate");
+				ConnectToClick();
+
+		
 			}
 		}
 		
