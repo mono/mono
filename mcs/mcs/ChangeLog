@@ -1,3 +1,10 @@
+2003-04-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* statement.cs: Apply the same optimization as MS: skip the 
+	GetEnumerator returning an IEnumerator, and use the one returning a 
+	CharEnumerator instead. This allows us to avoid the try-finally block 
+	and the boxing.
+
 2003-03-31  Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* cs-parser.jay: Attributes cannot be applied to
