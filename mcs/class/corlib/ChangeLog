@@ -1,3 +1,7 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added DESCryptoServiceProviderTest.cs.
+
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Added System.Reflection.Emit/MethodRental.cs.
