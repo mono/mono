@@ -8,85 +8,110 @@
 // (C) 2002/3 Ximian, Inc
 //
 using System;
+using System.Drawing;
 
 namespace System.Drawing.Drawing2D
 {
-	public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable
-	{
-		GraphicsPath path;
-		
-		// Constructors
-		public GraphicsPathIterator (GraphicsPath path)
+        public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable
+        {
+                PointF [] _points;
+                byte [] _types;
+                int _count;
+                int _current;
+                
+                // Constructors
+                public GraphicsPathIterator (GraphicsPath path)
                 {
-			this.path = path;
-		}
+                        this._points = path.PathPoints;
+                        this._types = path.PathTypes;
+                        this._count = path.PointCount;
+                        this._current = 0;
+                }
 
-		//Public Properites
-		public int Count {
-			get {
-                                int count;
+                // Public Properites
+                public int Count {
+                        get {
+                                return _count;
+                        }
+                }
 
-                                Status status = GDIPlus.GdipGetPointCount (path.nativePath, out count);
-                                GDIPlus.CheckStatus (status);                      	
+                public int SubpathCount {
+                        get {
+                                int count = 0;
 
+                                foreach (byte b in _types)
+                                        if (b == (byte) PathPointType.Start)
+                                                count++;
+                                
                                 return count;
-			}
-		}
+                        }
+                }
 
-		[MonoTODO]
-		public int SubpathCount {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+                // Public Methods.
+                public int CopyData (ref PointF [] points, ref byte [] types, int startIndex, int endIndex)
+                {
+                        for (int i = 0, j = startIndex; j < endIndex; i++, j++) {
+                                points [i] = _points [j];
+                                types [i] = _types [j];
+                        }
 
-		//Public Methods.
-		public int CopyData( ref PointF [] points, ref byte [] types, int startIndex, int endIndex){
-			throw new NotImplementedException ();
-		}
+                        return endIndex - startIndex;
+                }
 
-		public void Dispose(){
-		}
+                public void Dispose ()
+                {
+                }
 
-		[MonoTODO]
-		public int Enumerate(ref PointF [] points, ref byte [] types){
-			throw new NotImplementedException ();
-		}
+                public int Enumerate (ref PointF [] points, ref byte [] types)
+                {
+                        points = _points;
+                        types = _types;
 
-		[MonoTODO]
-		public bool HasCurve(){
-			throw new NotImplementedException ();
-		}
+                        return _count;
+                }
 
-		[MonoTODO]
-		public int NextMarker(GraphicsPath path){
-			throw new NotImplementedException ();
-		}
+                public bool HasCurve ()
+                {
+                        foreach (byte b in _types)
+                                if (b == (byte) PathPointType.Bezier)
+                                        return true;
 
-		[MonoTODO]
-		public int NextMarker(out int startIndex, out int endIndex){
-			throw new NotImplementedException ();
-		}
+                        return false;
+                }
 
-		[MonoTODO]
-		public int NextPathType(out byte pathType, out int startIndex, out int endIndex){
-			throw new NotImplementedException ();
-		}
+                [MonoTODO]
+                public int NextMarker (GraphicsPath path)
+                {
+                        throw new NotImplementedException ();
+                }
 
-		[MonoTODO]
-		public int NextSubpath(GraphicsPath path, out bool isClosed){
-			throw new NotImplementedException ();
-		}
+                [MonoTODO]
+                public int NextMarker (out int startIndex, out int endIndex)
+                {
+                        throw new NotImplementedException ();
+                }
 
-		[MonoTODO]
-		public int NextSubpath(out int startIndex, out int endIndex, out bool isClosed){
-			throw new NotImplementedException ();
-		}
+                [MonoTODO]
+                public int NextPathType (out byte pathType, out int startIndex, out int endIndex)
+                {
+                        throw new NotImplementedException ();
+                }
 
-		[MonoTODO]
-		public void Rewind()
-		{
-		}
+                [MonoTODO]
+                public int NextSubpath (GraphicsPath path, out bool isClosed)
+                {
+                        throw new NotImplementedException ();
+                }
 
-	}
+                [MonoTODO]
+                public int NextSubpath (out int startIndex, out int endIndex, out bool isClosed)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public void Rewind ()
+                {
+                        _current = 0;
+                }
+        }
 }

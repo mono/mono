@@ -1,3 +1,12 @@
+2004-05-17  Duncan Mak  <duncan@ximian.com>
+
+	* GraphicsPathIterator.cs: Untabify and fixed coding style.
+	(GraphicsPathIterator): Store the path count, path points and path
+	type arrays instead of calling unmanaged functions in GDI+ each
+	time to get to get the path data.
+	(CopyData, Enumerate, HasCurve, Rewind, SubpathCount):
+	Implemented.
+
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* GraphicsPath.cs: renamed SetMarker to SetMarkers, to fix
