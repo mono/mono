@@ -2,5 +2,7 @@
 
 	* ChangeLog: Add the change log to this directory
 
-	* System.build: Add dependancy on linux target to test target. Need to have the dll before we can test it, right?  Plus is encourages other to try 'make test'.
+	* System.build: Add dependancy on linux target to test target. Need to 
+	have the dll before we can test it, right?  Plus it encourages others 
+	to try 'make test'.
 
