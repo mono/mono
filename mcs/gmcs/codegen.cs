@@ -1041,7 +1041,7 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return null;
 
-			EmitContext temp_ec = new EmitContext (new RootTypes (), Mono.CSharp.Location.Null, null, null, 0, false);
+			EmitContext temp_ec = new EmitContext (RootContext.Tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
 			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
 			if (a != null) {
 				a.Resolve (temp_ec);

@@ -1179,9 +1179,16 @@ namespace Mono.CSharp {
 
 		protected override Type CheckAttributeType (EmitContext ec)
 		{
-			NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
-			if (old == null || old.NS == null || old.NS == Namespace.Root) 
+			// RootContext.Tree.Types has a single NamespaceEntry which gets overwritten
+			// each time a new file is parsed.  However, we need to use the NamespaceEntry
+			// in effect where the attribute was used.  Since code elsewhere cannot assume
+			// that the NamespaceEntry is right, just overwrite it.
+			//
+			// FIXME: Check every place the NamespaceEntry of RootContext.Tree.Types is used
+			//        to ensure the right one is used.
+			if (ec.DeclSpace == RootContext.Tree.Types)
 				ec.DeclSpace.NamespaceEntry = ns;
+
 			return base.CheckAttributeType (ec);
 		}
 	}
