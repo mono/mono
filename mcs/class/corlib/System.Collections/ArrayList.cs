@@ -27,24 +27,24 @@ namespace System.Collections {
 			//Emulate MS.NET behavior. Throw RankException when passed a
 			// multi-dimensional Array.
 			Array arr = c as Array;
-			if (null != arr && arr.Rank > 1){
-				throw new RankException();
-			}
+			if (null != arr && arr.Rank > 1)
+				throw new RankException ();
 
-
-			dataArray = new object [c.Count];
-			this.capacity = c.Count;
-			foreach (object o in c) {
+			this.capacity = (c.Count == 0) ? defaultCapacity : c.Count;
+			dataArray = new object [capacity];
+			foreach (object o in c) 
 				Add (o);
-			}
 		}
 
 		public ArrayList (int capacity) {
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity", capacity, "Value must be greater than or equal to zero.");
 
-			dataArray = new object[capacity];
-			this.capacity = capacity;
+			if (capacity > 0)
+				this.capacity = capacity;
+			// else if capacity == 0 then use defaultCapacity
+
+			dataArray = new object[this.capacity];
 		}
 
 		private ArrayList (object[] dataArray, int count, int capacity,
@@ -162,17 +162,16 @@ namespace System.Collections {
 		}
 
 		private void setSize (int newSize) {
-			if (newSize == capacity) {
+			if (newSize == capacity) 
 				return;
-			}
+			
+			capacity = (newSize == 0) ? defaultCapacity : newSize;
 
 			// note that this assumes that we've already sanity-checked
 			// the new size
 			object[] newDataArray = new object[newSize];
 			copyDataArray (newDataArray);
 			dataArray = newDataArray;
-
-			capacity = newSize;
 		}
 
 		// note that this DOES NOT update count
@@ -350,7 +349,6 @@ namespace System.Collections {
 				throw new NotSupportedException();
 
 			count = 0;
-			setSize(capacity);
 			version++;
 		}
 
@@ -683,10 +681,7 @@ namespace System.Collections {
 			if (IsReadOnly || IsFixedSize)
 				throw new NotSupportedException ();
 			
-			if (count == 0)
-				setSize(defaultCapacity);
-			else
-				setSize(count);
+			setSize(count);
 
 			version++;
 		}

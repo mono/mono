@@ -1,3 +1,8 @@
+2002-05-21  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* ArrayList.cs: Fixed bug where a capacity of 0 could be reached, 
+	thereby causing problems when trying to add elements.
+
 2002-05-06  Duncan Mak  <duncan@ximian.com>
 
 	* Queue.cs (TrimToSize): Implemented.

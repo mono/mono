@@ -81,11 +81,20 @@ public class ArrayListTest : TestCase {
 	}
 
 	public void TestCapacity() {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 1; i < 100; i++) {
 			ArrayList al1 = new ArrayList(i);
 			AssertEquals("Bad capacity of " + i,
 				     i, al1.Capacity);
 		}
+		{
+			ArrayList al1 = new ArrayList(0);
+			// LAMESPEC: 
+			// AssertEquals("Bad capacity when set to 0",
+			//	     16, al1.Capacity);
+			al1.Add ("?");			
+			AssertEquals("Bad capacity when set to 0",
+				     16, al1.Capacity);
+		}		
 		{
 			ArrayList al1 = new ArrayList();
 			AssertEquals("Bad default capacity",
@@ -233,6 +242,13 @@ public class ArrayListTest : TestCase {
 				
 			}
 		}
+		{
+			string [] strArray = new string [] {};
+			ArrayList al1 = new ArrayList (strArray);
+			al1.Add ("Hi!");
+			al1.Add ("Hi!");
+			AssertEquals ("add failed", 2, al1.Count);
+		}
 	}
 	
 	public void TestAddRange() {
@@ -379,9 +395,12 @@ public class ArrayListTest : TestCase {
 			ArrayList al1 = new ArrayList(i1);
 			AssertEquals("should have elements",
 				     i1.Length, al1.Count);
+			int capacity = al1.Capacity;
 			al1.Clear();
 			AssertEquals("should be empty again",
 				     0, al1.Count);
+			AssertEquals("capacity shouldn't have changed",
+				     capacity, al1.Capacity);
 		}
 	}
 
