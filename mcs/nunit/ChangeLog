@@ -1,3 +1,8 @@
+2002-03-06  Nick Drochak  <ndrochak@gol.com>
+
+	* nunit.build: Exclude obsolete class from build. Probably should
+	remove from cvs.
+
 2002-02-27  Martin Baulig  <martin@gnome.org>
 
 	Imported NUnit 1.11.

@@ -9,6 +9,7 @@
 		<csc target="library" output="NUnitCore.dll" debug="${debug}">
 			<sources basedir="src/NUnitCore">
 				<includes name="*.cs"/>
+				<excludes name="SimpleTestCollector.cs"/>
 			</sources>
 		</csc>
 
@@ -17,6 +18,7 @@
 				<includes name="src/NUnitCore/*.cs"/>
 				<includes name="RunTests.cs"/>
 				<excludes name="src/NUnitCore/IFailureDetailView.cs"/>
+				<excludes name="src/NUnitCore/SimpleTestCollector.cs"/>
 			</sources>
 		</csc>
 
