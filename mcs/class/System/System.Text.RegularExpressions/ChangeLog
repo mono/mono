@@ -1,5 +1,11 @@
 2004-06-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* syntax.cs: re-applied my patch from 2004-05-27 plus a fix which is
+	emitting a Category.All if both a category and its negated value are
+	present.
+
+2004-06-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* syntax.cs: reverting my previous patch. It causes bigger problems.
 
 2004-05-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
