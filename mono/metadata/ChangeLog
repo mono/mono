@@ -1,5 +1,22 @@
 2004-02-08  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_Type_BindGenericParameters): Just call
+	mono_type_get_object(), this is now creating a `MonoGenericInst'
+	for MONO_TYPE_GENERICINST.
+	(ves_icall_MonoGenericInst_GetParentType): Likewise.
+	(ves_icall_MonoGenericInst_GetInterfaces): Likewise.
+
+	* reflection.c (mono_type_get_object): Return a `MonoGenericInst'
+	instead instead of a `MonoType' for MONO_TYPE_GENERICINST.
+	(inflated_method_get_object): Added `MonoClass *refclass' argument.
+	(mono_reflection_inflate_method_or_ctor): Correctly set declaring
+	and reflected type.
+
+	* reflection.h (MonoReflectionInflatedMethod): Removed
+	`declaring_type' and `reflected_type'.
+
+2004-02-08  Martin Baulig  <martin@ximian.com>
+
 	* class.h (MonoGenericInst): Added `MonoType *parent' and
 	`MonoType **ifaces'.
 
