@@ -1,3 +1,23 @@
+2002-01-02  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation.num_automatic_initializers): Keep track
+	of the number of initializers that require the InitializeArray method.
+
+	(CheckIndices): Store the Expression in all cases - not the plain value. Also
+	update the above field where necessary.
+
+	(MakeByteBlob): Update accordingly.
+
+	(DoEmit): Call EmitStaticInitializers only if the number of initializers is 
+	greater than 2.
+
+	(EmitDynamicInitializers): Update in accordance with the new optimization.
+
+	(ArrayAccess.EmitStoreOpcode): Include char type along with short and ushort - the
+	same OpCode applies.
+
+	* cs-parser.jay : Fix some glaring errors I introduced.
+
 2002-01-01  Ravi Pratap  <ravi@ximian.com> 
 
 	* parameters.cs (AddVariable, AddConstant): Pass in current_local_parameters

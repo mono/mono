@@ -2948,11 +2948,7 @@ foreach_statement
 		LocalVariableReference v;
 		Location l = lexer.Location;
 
-		if (!foreach_block.AddVariable ((string) $3, (string) $4, current_local_parameters, l))
-			Report.Error (128, l, 
-				      "A local variable `" + (string) $4 + "' is already" +
-				      "defined in this scope");
-		
+		foreach_block.AddVariable ((string) $3, (string) $4, current_local_parameters, l);
 		v = new LocalVariableReference (foreach_block, (string) $4, l);
 
 		current_block.AddStatement (foreach_block);

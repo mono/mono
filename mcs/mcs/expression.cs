@@ -3131,7 +3131,8 @@ namespace Mono.CSharp {
 							chose_params_expanded, loc);
 
 				if (x != 1) {
- 					Console.WriteLine (candidate + "  " + method);
+					Console.WriteLine ("Candidate : " + candidate);
+					Console.WriteLine ("Best : " + method);
  					Report.Error (
  						121, loc,
  						"Ambiguous call when selecting function due to implicit casts");
@@ -3610,6 +3611,12 @@ namespace Mono.CSharp {
 
 		Hashtable Bounds;
 
+		//
+		// The number of array initializers that we can handle
+		// via the InitializeArray method - through EmitStaticInitializers
+		//
+		int num_automatic_initializers;
+		
 		public ArrayCreation (string requested_type, ArrayList exprs,
 				      string rank, ArrayList initializers, Location l)
 		{
@@ -3719,9 +3726,10 @@ namespace Mono.CSharp {
 
 					if (conv is StringConstant)
 						ArrayData.Add (conv);
-					else if (conv is Constant)
-						ArrayData.Add (((Constant) conv).GetValue ());
-					else
+					else if (conv is Constant) {
+						ArrayData.Add (conv);
+						num_automatic_initializers++;
+					} else
 						ArrayData.Add (conv);
 				}
 			}
@@ -3938,7 +3946,14 @@ namespace Mono.CSharp {
 
 				if (v is EnumConstant)
 					v = ((EnumConstant) v).Child;
-
+				
+				if (v is Constant && !(v is StringConstant))
+					v = ((Constant) v).GetValue ();
+				else {
+					idx += factor;
+					continue;
+				}
+				
 				if (underlying_type == TypeManager.int64_type){
 					if (!(v is Expression)){
 						long val = (long) v;
@@ -4116,7 +4131,7 @@ namespace Mono.CSharp {
 					// Basically we do this for string literals and
 					// other non-literal expressions
 					//
-					if (e is StringConstant || !(e is Constant)) {
+					if (e is StringConstant || !(e is Constant) || num_automatic_initializers <= 2) {
 
 						ig.Emit (OpCodes.Ldloc, temp);
 
@@ -4174,8 +4189,10 @@ namespace Mono.CSharp {
 				bool dynamic_initializers = true;
 
 				if (underlying_type != TypeManager.string_type &&
-				    underlying_type != TypeManager.object_type)
-					EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
+				    underlying_type != TypeManager.object_type) {
+					if (num_automatic_initializers > 2)
+						EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
+				}
 				
 				if (dynamic_initializers)
 					EmitDynamicInitializers (ec, !is_statement);
@@ -5070,7 +5087,7 @@ namespace Mono.CSharp {
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
 				ig.Emit (OpCodes.Stelem_I1);
-			else if (t == TypeManager.short_type || t == TypeManager.ushort_type)
+			else if (t == TypeManager.short_type || t == TypeManager.ushort_type || t == TypeManager.char_type)
 				ig.Emit (OpCodes.Stelem_I2);
 			else if (t == TypeManager.int32_type || t == TypeManager.uint32_type)
 				ig.Emit (OpCodes.Stelem_I4);
