@@ -1,3 +1,7 @@
+2003-12-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.Xml_test.dll.sources : patch by David Sheldon. Added XmlSchemaLengthFacetTests.cs.
+
 2003-11-25  Tim Coleman <tim@timcoleman.com>
 	* System.Xml.dll.sources: added XmlSchemaBuiltInType.cs
 

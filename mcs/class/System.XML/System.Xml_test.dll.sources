@@ -27,6 +27,7 @@ System.Xml/XmlWriterTests.cs
 System.Xml/XsdParticleValidationTests.cs
 System.Xml/XsdValidatingReaderTests.cs
 System.Xml.Schema/XmlSchemaTests.cs
+System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Serialization/XmlSerializerTests.cs
 System.Xml.Serialization/XmlSerializerTestClasses.cs
 System.Xml.XPath/SelectNodesTests.cs
