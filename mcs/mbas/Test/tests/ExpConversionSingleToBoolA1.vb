@@ -1,6 +1,6 @@
 Module ExpConversionDoubletoBool
 	Sub Main()
-		Dim a As Long = -4.940656E-12
+		Dim a As Single = -4.940656E-12
 		Dim b as Boolean
 		b = CBool(a)
 		if b <> True

@@ -1,6 +1,6 @@
 Module ExpConversionInttoBool
 	Sub Main()
-		Dim a As Int = -4
+		Dim a As Integer = -4
 		Dim b as Boolean
 		b = CBool(a)
 		if b <> True

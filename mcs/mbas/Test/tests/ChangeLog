@@ -1,3 +1,8 @@
+2005-01-29  Satya Sudha K <ksathyasudha@novell.com>
+	* Made some trivial corrections to some test cases
+	* Added Tests for Implicit and Explicit String conversions 
+		- contributed by Sudharsan V <vsudharsan@novell.com>
+
 2005-01-28  Satya Sudha K <ksathyasudha@novell.com>
 
 	* Added testcases for implicit and explicit numeric conversions
