@@ -91,26 +91,17 @@ namespace Mono.Xml.Native
 		{
 			this.isDocumentEntity = docent;
 			// Use XmlResolver to resolve external entity.
-#if true
+#if true // #if REMOVE_IT_AFTER_URI_IMPLEMENTED
 			if (resolver == null)
 				resolver = new XmlUrlResolver ();
-			Uri uri = resolver.ResolveUri (baseURI == null ? null : new Uri (baseURI), url);
+			Uri uri = resolver.ResolveUri (
+				baseURI == null || baseURI == String.Empty ?
+                                null : new Uri (baseURI), url);
 			Stream s = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
-
+#else
+			Stream s = new FileStream (url, FileMode.Open, FileAccess.Read);
+#endif
 			Initialize (s);
-#else
-#if false
-			System.Net.WebClient wc = new System.Net.WebClient ();
-			try {
-				UriBuilder ub = new UriBuilder (url);
-				Initialize (new MemoryStream (wc.DownloadData (ub.ToString ())));
-			} catch (UriFormatException ex) {
-				Initialize (new FileStream (url, FileMode.Open, FileAccess.Read));
-			}
-#else
-			Initialize (new FileStream (url, FileMode.Open, FileAccess.Read));
-#endif
-#endif
 		}
 
 		public XmlInputStream (Stream stream)
