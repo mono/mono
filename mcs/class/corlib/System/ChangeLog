@@ -1,3 +1,7 @@
+2003-12-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Environment.cs: Bump version number.
+
 2003-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DateTime.cs: don't bail out with that year out of range error on
