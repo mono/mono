@@ -3198,7 +3198,7 @@ statement_expression_list
 	: statement_expression	
 	  {
 		// CHANGE: was `null'
-		Block b = new Block (current_block, true);   
+		Block b = new Block (current_block, Block.Flags.Implicit);   
 
 		b.AddStatement ((Statement) $1);
 		$$ = b;
@@ -3221,7 +3221,7 @@ foreach_statement
 	  {
 		oob_stack.Push (current_block);
 
-		Block foreach_block = new Block (current_block, true);
+		Block foreach_block = new Block (current_block, Block.Flags.Implicit);
 		LocalVariableReference v = null;
 		Location l = lexer.Location;
 		VariableInfo vi;
@@ -3493,7 +3493,7 @@ fixed_statement
 	  type fixed_pointer_declarators 
 	  CLOSE_PARENS 
 	  {
-		Block assign_block = new Block (current_block, true);
+		Block assign_block = new Block (current_block, Block.Flags.Implicit);
 		ArrayList list = (ArrayList) $4;
 		Expression type = (Expression) $3;
 		Location l = lexer.Location;
@@ -3824,7 +3824,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	// int j = 1;  int k = j + 1;
 	//
 	if (current_block.Used) {
-		implicit_block = new Block (current_block, true, loc, Location.Null);
+		implicit_block = new Block (current_block, Block.Flags.Implicit, loc, Location.Null);
 		implicit_block.AddChildVariableNames (current_block);
 	} else
 		implicit_block = current_block;
@@ -3872,7 +3872,7 @@ Block declare_local_constant (Expression type, VariableDeclaration decl)
 	Block implicit_block;
 
 	if (current_block.Used)
-		implicit_block = new Block (current_block, true);
+		implicit_block = new Block (current_block, Block.Flags.Implicit);
 	else
 		implicit_block = current_block;
 

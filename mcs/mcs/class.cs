@@ -2510,7 +2510,7 @@ namespace Mono.CSharp {
 			Expression parent_constructor_group;
 			Type t;
 
-			ec.CurrentBlock = new Block (null, true, parameters);
+			ec.CurrentBlock = new Block (null, Block.Flags.Implicit, parameters);
 
 			if (argument_list != null){
 				foreach (Argument a in argument_list){

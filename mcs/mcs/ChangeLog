@@ -1,3 +1,19 @@
+2003-04-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Block): replace Implicit bool, for a generic
+	flags.   
+	New flag: `Unchecked'.  This is used during the EmitMeta phase
+	(which is out-of-line with the regular Resolve/Emit process for a
+	statement, as this is done ahead of time, but still gets a chance
+	to call constant resolve).
+	
+	(Block.Flags): new enum for adding a new flag.
+
+	(Block.EmitMeta): track the state of unchecked.
+	
+	(Unchecked): Set the "UnChecked" flags on any blocks we enclose,
+	to enable constant resolution to work there as well.
+
 2003-04-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (ienumerable_type): Also look up

@@ -2537,9 +2537,30 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class Block : Statement {
 		public readonly Block     Parent;
-		public readonly bool      Implicit;
 		public readonly Location  StartLocation;
 		public Location           EndLocation = Location.Null;
+
+		[Flags]
+		public enum Flags : byte {
+			Implicit  = 1,
+			Unchecked = 2
+		}
+		Flags flags;
+
+		public bool Implicit {
+			get {
+				return (flags & Flags.Implicit) != 0;
+			}
+		}
+
+		public bool Unchecked {
+			get {
+				return (flags & Flags.Unchecked) != 0;
+			}
+			set {
+				flags |= Flags.Unchecked;
+			}
+		}
 
 		//
 		// The statements in this block
@@ -2576,38 +2597,37 @@ namespace Mono.CSharp {
 		int this_id;
 		
 		public Block (Block parent)
-			: this (parent, false, Location.Null, Location.Null)
+			: this (parent, (Flags) 0, Location.Null, Location.Null)
 		{ }
 
-		public Block (Block parent, bool implicit_block)
-			: this (parent, implicit_block, Location.Null, Location.Null)
+		public Block (Block parent, Flags flags)
+			: this (parent, flags, Location.Null, Location.Null)
 		{ }
 
-		public Block (Block parent, bool implicit_block, Parameters parameters)
-			: this (parent, implicit_block, parameters, Location.Null, Location.Null)
+		public Block (Block parent, Flags flags, Parameters parameters)
+			: this (parent, flags, parameters, Location.Null, Location.Null)
 		{ }
 
 		public Block (Block parent, Location start, Location end)
-			: this (parent, false, start, end)
+			: this (parent, (Flags) 0, start, end)
 		{ }
 
 		public Block (Block parent, Parameters parameters, Location start, Location end)
-			: this (parent, false, parameters, start, end)
+			: this (parent, (Flags) 0, parameters, start, end)
 		{ }
 
-		public Block (Block parent, bool implicit_block, Location start, Location end)
-			: this (parent, implicit_block, Parameters.EmptyReadOnlyParameters,
-				start, end)
+		public Block (Block parent, Flags flags, Location start, Location end)
+			: this (parent, flags, Parameters.EmptyReadOnlyParameters, start, end)
 		{ }
 
-		public Block (Block parent, bool implicit_block, Parameters parameters,
+		public Block (Block parent, Flags flags, Parameters parameters,
 			      Location start, Location end)
 		{
 			if (parent != null)
 				parent.AddChild (this);
 			
 			this.Parent = parent;
-			this.Implicit = implicit_block;
+			this.flags = flags;
 			this.parameters = parameters;
 			this.StartLocation = start;
 			this.EndLocation = end;
@@ -2981,6 +3001,8 @@ namespace Mono.CSharp {
 			if (!variables_initialized)
 				UpdateVariableInfo (ec);
 
+			bool old_check_state = ec.ConstantCheckState;
+			ec.ConstantCheckState = (flags & Flags.Unchecked) == 0;
 			//
 			// Process this block variables
 			//
@@ -3028,6 +3050,7 @@ namespace Mono.CSharp {
 					constants.Add (name, e);
 				}
 			}
+			ec.ConstantCheckState = old_check_state;
 
 			//
 			// Now, handle the children
@@ -4064,13 +4087,14 @@ namespace Mono.CSharp {
 		public Unchecked (Block b)
 		{
 			Block = b;
+			b.Unchecked = true;
 		}
 
 		public override bool Resolve (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
 			bool previous_state_const = ec.ConstantCheckState;
-			
+
 			ec.CheckState = false;
 			ec.ConstantCheckState = false;
 			bool ret = Block.Resolve (ec);
@@ -4102,6 +4126,7 @@ namespace Mono.CSharp {
 		public Checked (Block b)
 		{
 			Block = b;
+			b.Unchecked = false;
 		}
 
 		public override bool Resolve (EmitContext ec)
