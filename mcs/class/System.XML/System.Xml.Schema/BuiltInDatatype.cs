@@ -1154,7 +1154,7 @@ namespace Mono.Xml.Schema
 		}
 											
 		protected static bool isData(char octect) {
-			return (decodeTable[octect] != Byte.MaxValue);
+			return ((octect <= 'z') && (decodeTable[octect] != Byte.MaxValue));
 		}
 
 
