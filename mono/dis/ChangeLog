@@ -1,3 +1,11 @@
+2003-11-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* main.c: Add disassembly of module, moduleref and file tables.
+
+	* get.h get.c: Add support for modulerefs.
+
+	* dump.c: Avoid crash on empty assembly table.
+
 2003-10-22 Jackson Harper <jackson@ximian.com>
 
 	* main.c: Use escaped names for method, and type names. Initialize
