@@ -23,5 +23,27 @@ namespace Microsoft.JScript {
 		// with their declarations
 		//
 		internal abstract bool Resolve (IdentificationTable context);
+
+		private bool InLoop {
+			get {
+				if (parent == null)
+					return false;
+				else if (parent is DoWhile || parent is While || parent is For || parent is ForIn)
+					return true;
+				else
+					return parent.InLoop;
+			}
+		}
+		
+		private bool InSwitch {
+			get {
+				if (parent == null)
+					return false;
+				else if (parent is Switch)
+					return true;
+				else
+					return parent.InSwitch;
+			}
+		}
 	}
 }
