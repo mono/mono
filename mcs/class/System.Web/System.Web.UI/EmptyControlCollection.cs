@@ -13,7 +13,7 @@ namespace System.Web.UI {
 	public class EmptyControlCollection : ControlCollection
 	{
 		public EmptyControlCollection (Control owner)
-			: base (owner)
+			: base (owner, true)
 		{
 		}
 		

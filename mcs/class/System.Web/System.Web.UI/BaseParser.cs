@@ -108,6 +108,8 @@ namespace System.Web.UI
 
 				return baseVDir;
 			}
+
+			set { baseVDir = value; }
 		}
 	}
 }

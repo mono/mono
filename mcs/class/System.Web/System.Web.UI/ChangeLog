@@ -1,3 +1,14 @@
+2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlCollection.cs:
+	* EmptyControlCollection.cs: create a minimum ArrayList for this.
+
+	* BaseParser.cs: added setter for BaseVirtualDir.
+
+	* Page.cs: fixed message when restoring view state fails.
+	* UserControlParser.cs: set the BaseVirtualDirectory to handle the case
+	when a relative path to the control is given. Fixes bug #47685.
+
 2003-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: when we load the viewstate for a control that has children

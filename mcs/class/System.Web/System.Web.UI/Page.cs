@@ -727,7 +727,7 @@ public class Page : TemplateControl, IHttpHandler
 		try { 
 			_savedViewState = fmt.Deserialize (view_state);
 		} catch (Exception e) {
-			throw new HttpException ("Error restoring page viewstate.\n{0}", e);
+			throw new HttpException ("Error restoring page viewstate.\n", e);
 		}
 
 		return _savedViewState;

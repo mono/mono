@@ -13,7 +13,7 @@ namespace System.Web.UI {
 
 	public class ControlCollection : ICollection, IEnumerable
 	{
-		ArrayList list = new ArrayList ();
+		ArrayList list;
 		Control owner;
 		
 		public ControlCollection (Control owner)
@@ -21,6 +21,16 @@ namespace System.Web.UI {
 			if (owner == null)
 				throw new ArgumentException ();
 
+			list = new ArrayList ();
+			this.owner = owner;
+		}
+
+		internal ControlCollection (Control owner, bool shortList)
+		{
+			if (owner == null)
+				throw new ArgumentException ();
+
+			list = new ArrayList (shortList ? 1 : 0);
 			this.owner = owner;
 		}
 
