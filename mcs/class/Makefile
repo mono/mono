@@ -12,6 +12,7 @@ SUBDIRS = \
 	I18N				\
 	System				\
 	System.XML			\
+	System				\
 	System.Drawing			\
 	System.EnterpriseServices	\
 	Mono.Security			\

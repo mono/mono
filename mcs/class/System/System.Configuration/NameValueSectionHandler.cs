@@ -7,8 +7,10 @@
 // (C) Chris Podurgiel
 //
 using System;
-using System.Xml;
 using System.Collections.Specialized;
+#if (XML_DEP)
+using System.Xml;
+#endif
 
 namespace System.Configuration
 {
@@ -17,6 +19,7 @@ namespace System.Configuration
 	/// </summary>
 	public class NameValueSectionHandler : IConfigurationSectionHandler
 	{
+#if (XML_DEP)
 		/// <summary>
 		///		Creates a new configuration handler and adds the specified configuration object to the collection.
 		/// </summary>
@@ -29,7 +32,7 @@ namespace System.Configuration
 			return ConfigHelper.GetNameValueCollection (parent as NameValueCollection, section,
 								    KeyAttributeName, ValueAttributeName);
 		}
-
+#endif
 		/// <summary>
 		/// Gets the name of the key attribute tag. This property is overidden by derived classes to change 
 		/// the name of the key attribute tag. The default is "key".

@@ -9,12 +9,15 @@
 
 using System.Collections;
 using System.Configuration;
+#if (XML_DEP)
 using System.Xml;
+#endif
 
 namespace System.Net.Configuration
 {
 	class NetConfigurationHandler : IConfigurationSectionHandler
 	{
+#if (XML_DEP)
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
 			NetConfig config = new NetConfig();
@@ -28,5 +31,6 @@ namespace System.Net.Configuration
 
 			return config;
 		}
+#endif
 	}
 }

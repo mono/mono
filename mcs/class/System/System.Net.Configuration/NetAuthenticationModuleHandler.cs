@@ -9,12 +9,15 @@
 
 using System.Collections;
 using System.Configuration;
+#if (XML_DEP)
 using System.Xml;
+#endif
 
 namespace System.Net.Configuration
 {
 	class NetAuthenticationModuleHandler : IConfigurationSectionHandler
 	{
+#if (XML_DEP)
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
 			if (section.Attributes != null && section.Attributes.Count != 0)
@@ -71,6 +74,7 @@ namespace System.Net.Configuration
 
 			return module;
 		}
+#endif
 	}
 }
 

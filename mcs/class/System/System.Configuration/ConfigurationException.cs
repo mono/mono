@@ -8,9 +8,12 @@
 //
 
 using System;
-using System.Xml;
 using System.Globalization;
 using System.Runtime.Serialization;
+
+#if (XML_DEP)
+using System.Xml;
+#endif
 
 namespace System.Configuration 
 {
@@ -52,6 +55,7 @@ namespace System.Configuration
 			bareMessage = message;
 		}
 
+#if (XML_DEP)
 		public ConfigurationException (string message, XmlNode node)
 			: base (message)
 		{
@@ -67,7 +71,7 @@ namespace System.Configuration
 			line = GetXmlNodeLineNumber (node);
 			bareMessage = message;
 		}
-
+#endif
 		public ConfigurationException (string message, string filename, int line)
 			: base (message)
 		{
@@ -115,6 +119,7 @@ namespace System.Configuration
 		//
 		// Methods
 		//
+#if (XML_DEP)
 		public static string GetXmlNodeFilename (XmlNode node)
 		{
 			if (!(node is IConfigXmlNode))
@@ -130,7 +135,7 @@ namespace System.Configuration
 
 			return ((IConfigXmlNode) node).LineNumber;
 		}
-
+#endif
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

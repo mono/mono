@@ -10,12 +10,15 @@
 using System;
 using System.Collections.Specialized;
 using System.IO;
+#if (XML_DEP)
 using System.Xml;
+#endif
 
 namespace System.Configuration
 {
 	public class NameValueFileSectionHandler : IConfigurationSectionHandler
 	{
+#if (XML_DEP)
 		public object Create (object parent, object configContext, XmlNode section)
 		{
 			XmlNode file = null;
@@ -48,6 +51,7 @@ namespace System.Configuration
 
 			return pairs;
 		}
+#endif
 	}
 }
 

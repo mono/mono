@@ -9,6 +9,8 @@
 
 using System;
 using System.IO;
+
+#if (XML_DEP)
 using System.Xml;
 
 namespace System.Configuration
@@ -232,3 +234,4 @@ namespace System.Configuration
 	}
 }
 
+#endif

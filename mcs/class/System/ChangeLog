@@ -1,3 +1,8 @@
+2004-02-04  Marek Safar <marek.safar@seznam.cz>
+
+	* Makefile: Build System.dll in two steps. Because of the circular
+        dependency with System.XML.dll.
+
 2004-01-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System_test.dll.sources : Added CodeGeneratorIdentifierTest.cs

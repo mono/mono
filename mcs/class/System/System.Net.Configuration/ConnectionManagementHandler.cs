@@ -9,7 +9,9 @@
 
 using System.Collections;
 using System.Configuration;
+#if (XML_DEP)
 using System.Xml;
+#endif
 
 namespace System.Net.Configuration
 {
@@ -67,6 +69,7 @@ namespace System.Net.Configuration
 
 	class ConnectionManagementHandler : IConfigurationSectionHandler
 	{
+#if (XML_DEP)
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
 			ConnectionManagementData cmd = new ConnectionManagementData (parent);
@@ -118,6 +121,7 @@ namespace System.Net.Configuration
 
 			return cmd;
 		}
+#endif
 	}
 
 	internal class HandlersUtil
@@ -125,7 +129,7 @@ namespace System.Net.Configuration
 		private HandlersUtil ()
 		{
 		}
-
+#if (XML_DEP)
 		static internal string ExtractAttributeValue (string attKey, XmlNode node)
 		{
 			return ExtractAttributeValue (attKey, node, false);
@@ -162,6 +166,7 @@ namespace System.Net.Configuration
 				msg = msg + " (node name: " + node.Name + ") ";
 			throw new ConfigurationException (msg, node);
 		}
+#endif
 	}
 }
 

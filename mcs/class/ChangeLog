@@ -1,3 +1,8 @@
+2004-02-04  Marek Safar <marek.safar@seznam.cz>
+
+	* Makefile: Build System.dll in two steps. Because of the circular
+        dependency with System.XML.dll.
+
 2004-01-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: disabled Mono.Posix for other platforms than linux until

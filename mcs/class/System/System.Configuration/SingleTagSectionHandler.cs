@@ -8,9 +8,10 @@
 //
 
 using System;
-using System.Xml;
 using System.Collections;
-
+#if (XML_DEP)
+using System.Xml;
+#endif
 
 namespace System.Configuration
 {
@@ -19,6 +20,7 @@ namespace System.Configuration
 	/// </summary>
 	public class SingleTagSectionHandler : IConfigurationSectionHandler
 	{
+#if (XML_DEP)
 		/// <summary>
 		///		Returns a collection of configuration section values.
 		/// </summary>
@@ -52,5 +54,6 @@ namespace System.Configuration
 			
 			return settingsCollection;
 		}
+#endif
 	}
 }

@@ -9,12 +9,15 @@
 
 using System.Collections;
 using System.Configuration;
+#if (XML_DEP)
 using System.Xml;
+#endif
 
 namespace System.Net.Configuration
 {
 	class DefaultProxyHandler : IConfigurationSectionHandler
 	{
+#if (XML_DEP)
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
 			IWebProxy result = parent as IWebProxy;
@@ -129,6 +132,7 @@ namespace System.Net.Configuration
 
 			proxy.BypassList = (string []) bypass.ToArray (typeof (string));
 		}
+#endif
 	}
 }
 

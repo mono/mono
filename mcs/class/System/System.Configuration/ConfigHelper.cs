@@ -9,7 +9,9 @@
 
 using System.Collections;
 using System.Collections.Specialized;
+#if (XML_DEP)
 using System.Xml;
+#endif
 
 namespace System.Configuration
 {
@@ -67,7 +69,7 @@ namespace System.Configuration
 					return collection;
 			}
 		}
-		
+#if (XML_DEP)
 		internal static IDictionary GetDictionary (IDictionary prev,
 							   XmlNode region,
 							   string nameAtt,
@@ -179,6 +181,7 @@ namespace System.Configuration
 
 			return result;
 		}
+#endif
 	}
 
 }

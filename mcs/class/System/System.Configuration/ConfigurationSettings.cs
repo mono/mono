@@ -16,8 +16,10 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Runtime.CompilerServices;
+#if (XML_DEP)
 using System.Xml;
 using System.Xml.XPath;
+#endif
 
 namespace System.Configuration
 {
@@ -256,7 +258,7 @@ namespace System.Configuration
 			this.fileName = fileName;
 			if (fileName == null || !File.Exists (fileName))
 				return false;
-
+#if (XML_DEP)
 			XmlTextReader reader = null;
 
 			try {
@@ -272,7 +274,7 @@ namespace System.Configuration
 				if (reader != null)
 					reader.Close();
 			}
-
+#endif
 			return true;
 		}
 
@@ -312,7 +314,7 @@ namespace System.Configuration
 
 			return o;
 		}
-
+#if (XML_DEP)
 		XmlDocument GetInnerDoc (XmlDocument doc, int i, string [] sectionPath)
 		{
 			if (++i >= sectionPath.Length)
@@ -348,7 +350,7 @@ namespace System.Configuration
 			doc.Load (new StringReader (outerxml));
 			return GetInnerDoc (doc, 0, sectionPath);
 		}
-		
+                
 		object GetConfigInternal (string sectionName)
 		{
 			object handler = GetHandler (sectionName);
@@ -366,7 +368,12 @@ namespace System.Configuration
 			
 			return iconf.Create (parentConfig, fileName, doc.DocumentElement);
 		}
-
+#else
+		object GetConfigInternal (string sectionName)
+                {
+                    return null;
+                }
+#endif
 		public object GetConfig (string sectionName)
 		{
                         object config = this.FileCache [sectionName];
@@ -396,7 +403,7 @@ namespace System.Configuration
 
 			return null;
 		}
-		
+#if (XML_DEP)
 		private void InitRead (XmlTextReader reader)
 		{
 			reader.MoveToContent ();
@@ -616,6 +623,7 @@ namespace System.Configuration
 		{
 			throw new ConfigurationException (text, fileName, reader.LineNumber);
 		}
+#endif
 	}
 }
 
