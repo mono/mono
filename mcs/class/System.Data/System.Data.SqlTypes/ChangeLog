@@ -1,5 +1,10 @@
 2004-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SqlDecimal.cs : Fixed AdjustScale(). When reducing digits, scale
+	  parameter was incorrect.
+
+2004-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SqlDecimal.cs :
 	  - .ctor(double) initializes the precision as 17. If not sufficient,
 	    it calls AdjustScale(), and if too much then it calls Round().

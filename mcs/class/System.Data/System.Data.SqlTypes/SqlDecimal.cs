@@ -215,6 +215,7 @@ namespace System.Data.SqlTypes
 				throw new SqlNullValueException ();
 
 			int [] data;
+			byte newScale;
 			if (digits > 0) {
 			        prec = (byte)(prec + digits);
 				decimal d = n.Value;
@@ -223,17 +224,17 @@ namespace System.Data.SqlTypes
 						d *= 10;
 				data = Decimal.GetBits (d);
 				data [3] = 0;
+				newScale = (byte) (n.scale + digits);
 			} else {
 				if (fRound)
 					n = Round (n, digits + n.scale);
 				else
 					n = Truncate (n, digits + n.scale);
 				data = n.Data;
+				newScale = n.scale;
 			}
 
-			return new SqlDecimal (prec, 
-					       (byte)(n.Scale + digits), 
-					       n.IsPositive, data);
+			return new SqlDecimal (prec, newScale, n.positive, data);
 		}
 
 		public static SqlDecimal Ceiling (SqlDecimal n)
