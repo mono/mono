@@ -12,64 +12,50 @@
 
 namespace System.Diagnostics
 {
-        public abstract class Switch
-        {
-	            private string desc = "";
-                private string display_name = "";
-                private int iSwitch;
+	public abstract class Switch
+	{
+		private string desc = "";
+		private string display_name = "";
+		private int iSwitch;
 
-                // ================= Constructors ===================
-                protected Switch(string displayName, string description)
-                {
-                        display_name = displayName;
-                        desc = description;
-                }
+		// ================= Constructors ===================
+		protected Switch(string displayName, string description)
+		{
+			display_name = displayName;
+			desc = description;
+		}
 
-                ~Switch()
-                {
-                }
+		~Switch()
+		{
+		}
 
-                // ================ Instance Methods ================
+		// ================ Instance Methods ================
 
-                // ==================== Properties ==================
+		// ==================== Properties ==================
 
-                public string Description
-                {
-                        get
-                        {
-                                return desc;
-                        }
-                }
+		public string Description {
+			get {return desc;}
+		}
 
-                public string DisplayName
-                {
-                        get
-                        {
-                                return display_name;
-                        }
-                }
+		public string DisplayName {
+			get {return display_name;}
+		}
 
-                protected int SwitchSetting
-                {
-                        get
-                        {
-                                return iSwitch;
-                        }
-                        set
-                        {
-							if(iSwitch != value) 
-							{
-								iSwitch = value;
-								OnSwitchSettingChanged();
-							}
-						}
+		protected int SwitchSetting {
+			get {return iSwitch;}
+			set {
+				if(iSwitch != value) {
+					iSwitch = value;
+					OnSwitchSettingChanged();
 				}
+			}
+		}
 
 		[MonoTODO]
 		protected virtual void OnSwitchSettingChanged()
 		{
 			// TODO: implement me
 		}
-        }
+	}
 }
 
