@@ -240,11 +240,12 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
 		public ImageList SmallImageList {
+			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
+			[MonoTODO]
 			set {
 				//FIXME:
 			}
@@ -895,11 +896,12 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			[MonoTODO]
 			object IList.this[int index]{
+				[MonoTODO]
 				get{
 					throw new NotImplementedException ();
 				}
+				[MonoTODO]
 				set{
 					//FIXME:
 				}
@@ -1240,11 +1242,12 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			[MonoTODO]
 			object IList.this[int index]{
+				[MonoTODO]
 				get{
 					throw new NotImplementedException ();
 				}
+				[MonoTODO]
 				set{
 					//FIXME:
 				}
