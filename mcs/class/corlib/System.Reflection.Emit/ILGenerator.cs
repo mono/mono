@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
@@ -123,6 +124,7 @@ namespace System.Reflection.Emit {
 		private ModuleBuilder module;
 		private AssemblyBuilder abuilder;
 		private ISymbolWriter sym_writer;
+		private Stack scopes;
 		private int cur_block;
 		private int open_blocks;
 
@@ -137,6 +139,7 @@ namespace System.Reflection.Emit {
 			label_to_addr = new int [16];
 			fixups = new LabelFixup [16];
 			token_fixups = new ILTokenInfo [16];
+			scopes = new Stack ();
 			num_token_fixups = 0;
 			if (mb is MethodBuilder) {
 				module = (ModuleBuilder)((MethodBuilder)mb).TypeBuilder.Module;
@@ -296,7 +299,8 @@ namespace System.Reflection.Emit {
 			//throw new NotImplementedException ();
 		}
 		public virtual void BeginScope () {
-			throw new NotImplementedException ();
+			if (sym_writer != null)
+				scopes.Push (sym_writer.OpenScope (code_len));
 		}
 		public virtual LocalBuilder DeclareLocal (Type localType) {
 			LocalBuilder res = new LocalBuilder (sym_writer, localType);
@@ -490,7 +494,10 @@ namespace System.Reflection.Emit {
 			//throw new NotImplementedException ();
 		}
 		public virtual void EndScope () {
-			throw new NotImplementedException ();
+			if (sym_writer != null) {
+				sym_writer.CloseScope (code_len);
+				scopes.Pop ();
+			}
 		}
 		public virtual void MarkLabel (Label loc) {
 			if (loc.label < 0 || loc.label >= num_labels)
