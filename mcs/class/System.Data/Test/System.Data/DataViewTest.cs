@@ -73,11 +73,11 @@ namespace MonoTests.System.Data
 				}
 				dataTable.AcceptChanges ();
 				dataView = new DataView (dataTable);
-				dataView.ListChanged += new System.ComponentModel.ListChangedEventHandler (OnListChanged);
+				dataView.ListChanged += new ListChangedEventHandler (OnListChanged);
 				listChangedArgs = null;
 			}
 			
-			protected void OnListChanged (object sender, System.ComponentModel.ListChangedEventArgs args)
+			protected void OnListChanged (object sender, ListChangedEventArgs args)
 			{
 				listChangedArgs = args;
 				// for debugging

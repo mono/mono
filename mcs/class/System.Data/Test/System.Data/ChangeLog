@@ -1,3 +1,6 @@
+2004-08-24  Nick Drochak <ndrochak@ieee.org>
+	* DataViewTest.cs : Fixed compile with csc
+
 2004-08-18 Umadevi S <sumadevi@novell.com>
 	* DataViewTest.cs : Revamped to get Event handling tested
 	Thanks to Punit Todi for his contribution towards the test cases
