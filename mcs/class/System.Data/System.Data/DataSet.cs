@@ -1481,6 +1481,22 @@ namespace System.Data {
 				
 				if (rel.ParentKeyConstraint == null || rel.ChildKeyConstraint == null)
 					continue;
+
+				bool isHidden = false;
+				foreach (DataColumn col in rel.ParentColumns) {
+					if (col.ColumnMapping == MappingType.Hidden) {
+						isHidden = true;
+						break;
+					}
+				}
+				foreach (DataColumn col in rel.ChildColumns) {
+					if (col.ColumnMapping == MappingType.Hidden) {
+						isHidden = true;
+						break;
+					}
+				}
+				if (isHidden)
+					continue;
 				
 				ArrayList attrs = new ArrayList ();
 				XmlAttribute attrib;
@@ -1531,6 +1547,8 @@ namespace System.Data {
 			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
 			elem.SchemaType = complex;
 
+			XmlSchemaObjectCollection schemaAttributes = null;
+
 			//TODO - what about the simple content?
 			if (simple != null) {
 				// add simpleContent
@@ -1552,9 +1570,9 @@ namespace System.Data {
 				XmlSchemaSimpleContentExtension extension = new XmlSchemaSimpleContentExtension();
 				simpleContent.Content = extension;
 				extension.BaseTypeName = MapType (simple.DataType);
-			
-			}
-			else {
+				schemaAttributes = extension.Attributes;
+			} else {
+				schemaAttributes = complex.Attributes;
 				//A sequence of element types or a simple content node
 				//<xs:sequence>
 				XmlSchemaSequence seq = new XmlSchemaSequence ();
@@ -1649,7 +1667,7 @@ namespace System.Data {
 					schemaToAdd.Namespaces.Add (prefix, col.Namespace);
 				}
 				att.SchemaTypeName = MapType (col.DataType);
-				complex.Attributes.Add (att);
+				schemaAttributes.Add (att);
 			}
 
 			return elem;

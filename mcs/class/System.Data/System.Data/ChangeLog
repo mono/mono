@@ -1,5 +1,13 @@
 2004-05-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSet.cs : 
+	  In WriteXmlSchema(), when complex type contains simple type content
+	  attributes must not added to XmlSchemaComplexType directly. It
+	  causes schema compilation error.
+	  DataRelation should not be output when related columns are hidden.
+
+2004-05-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDataInferenceReader.cs : Added. It does InferXmlSchema() (it is
 	  also expected to do ReadXml(), but I will remove that feature and
 	  support column reordering).
