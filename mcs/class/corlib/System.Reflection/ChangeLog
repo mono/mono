@@ -1,3 +1,8 @@
+2005-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Implemented EscapedCodeBase using the copy of 
+	System.Uri (System.dll) located in Mono.Security.Uri. Fix bug #73663.
+
 2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoMethod.cs: Promote a LinkDemand (if present) to a full Demand 
