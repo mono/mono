@@ -303,6 +303,7 @@ class AspGenerator
 	Element current;
 	ScriptStatus sstatus = ScriptStatus.Close;
 	string waitClosing;
+	ArrayList dependencies;
 
 	HttpContext context;
 
@@ -393,6 +394,10 @@ class AspGenerator
 		}
 	}
 	
+	public ArrayList Dependencies {
+		get { return dependencies; }
+	}
+	
 	internal HttpContext Context {
 		get { return context; }
 		set { context = value; }
@@ -437,6 +442,9 @@ class AspGenerator
 
 	private void Init ()
 	{
+		dependencies = new ArrayList ();
+		dependencies.Add (fullPath);
+
 		controls = new ControlStack ();
 		controls.Push (typeof (System.Web.UI.Control), "Root", null, ChildrenKind.CONTROLS, null);
 		prolog = new StringBuilder ();
@@ -571,8 +579,10 @@ class AspGenerator
 				Console.WriteLine ("ASP.NET Warning: error was: {0}", e.Message);
 			}
 
-			if (type != null)
+			if (type != null) {
+				dependencies.Add (dllPath);
 				return type;
+			}
 		}
 
 		return null;
@@ -653,11 +663,13 @@ class AspGenerator
 								att.ToString ());
 
 			AddUsing (name_space);
-			string dll = privateBinPath + Path.DirectorySeparatorChar + assembly_name + ".dll";
+			string dll = Path.Combine (privateBinPath, assembly_name + ".dll");
 			// Hack: it should use assembly.load semantics...
 			// may be when we don't run mcs as a external program...
 			if (!File.Exists (dll))
 				dll = assembly_name;
+			else
+				dependencies.Add (dll);
 
 			Foundry.RegisterFoundry (tag_prefix, dll, name_space);
 			AddReference (dll);
@@ -2017,7 +2029,7 @@ class AspGenerator
 		public string assemblyName;
 	}
 
-	private static UserControlData GenerateUserControl (string src, HttpContext context)
+	private UserControlData GenerateUserControl (string src, HttpContext context)
 	{
 		UserControlData data = new UserControlData ();
 		data.result = UserControlResult.OK;
@@ -2031,6 +2043,9 @@ class AspGenerator
 		
 		data.className = t.Name;
 		data.assemblyName = compiler.TargetFile;
+		dependencies.Add (src);
+		foreach (string s in compiler.Dependencies)
+			dependencies.Add (s);
 		
 		return data;
 	}

@@ -1,3 +1,13 @@
+2003-03-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs:
+	* BaseCompiler.cs:
+	* CachingCompiler.cs:
+	* CompilationResult.cs:
+	* GlobalAsaxCompiler.cs:
+	* PageCompiler.cs:
+	* UserControlCompiler.cs: recompile the page if dependencies change.
+
 2003-02-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: corrected typo and wrong fix.

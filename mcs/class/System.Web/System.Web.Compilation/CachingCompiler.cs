@@ -20,17 +20,30 @@ namespace System.Web.Compilation
 	internal class CompilationCacheItem
 	{
 		CompilationResult result;
-		DateTime time;
+		DateTime reference;
+		bool invalidated;
 
-		public CompilationCacheItem (CompilationResult result, DateTime time)
+		public CompilationCacheItem (CompilationResult result)
 		{
 			this.result = result;
-			this.time = time;
+			this.reference = File.GetLastWriteTime (result.OutputFile);
 		}
 
-		public bool CheckDependencies (string [] newDependencies, DateTime time)
+		public bool CheckDependencies ()
 		{
-			// FIXME
+			if (invalidated || result.Dependencies == null)
+				return false;
+
+			if (!File.Exists (result.OutputFile))
+				return false;
+
+			foreach (string s in result.Dependencies) {
+				if (!File.Exists (s) || File.GetLastWriteTime (s) > reference) {
+					invalidated = true;
+					return false;
+				}
+			}
+			
 			return true;
 		}
 
@@ -89,7 +102,10 @@ namespace System.Web.Compilation
 				throw new ArgumentNullException ("key");
 
 			CompilationCacheItem item = cache [key];
-			return item;
+			if (item != null && item.CheckDependencies ())
+				return item;
+
+			return null;
 		}
 
 		static object compilationLock = new object ();
@@ -103,23 +119,19 @@ namespace System.Web.Compilation
 
 			item = GetCached (key);
 			if (item != null) {
-				if (item.CheckDependencies (compiler.Dependencies, DateTime.Now) == true) {
-					result.CopyFrom (item.Result);
-					return true;
-				}
+				result.CopyFrom (item.Result);
+				return true;
 			}
 			
 			lock (compilationLock) {
 				item = GetCached (key);
 				if (item != null) {
-					if (item.CheckDependencies (compiler.Dependencies, DateTime.Now) == true) {
-						result.CopyFrom (item.Result);
-						return true;
-					}
+					result.CopyFrom (item.Result);
+					return true;
 				}
 
 				RealCompile (result);
-				cache [key] = new CompilationCacheItem (result, DateTime.Now);
+				cache [key] = new CompilationCacheItem (result);
 			}
 
 			return (result.ExitCode == 0);

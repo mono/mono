@@ -35,7 +35,8 @@ namespace System.Web.Compilation
 			result.Options = options;
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
-				
+			
+			result.Dependencies = dependencies;
 			Assembly assembly = Assembly.LoadFrom (result.OutputFile);
 			Type [] types = assembly.GetTypes ();
 			foreach (Type t in types) {
@@ -84,6 +85,7 @@ namespace System.Web.Compilation
 			generator.ProcessElements ();
 			string generated = generator.GetCode ().ReadToEnd ();
 			options = generator.Options;
+			dependencies = generator.Dependencies;
 
 			//FIXME: should get Tmp dir for this application
 			string csName = Path.GetTempFileName () + ".cs";

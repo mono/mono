@@ -19,6 +19,7 @@ namespace System.Web.Compilation
 		string outputFile;
 		object data;
 		Hashtable options;
+		ArrayList dependencies;
 		
 		public CompilationResult ()
 		{
@@ -70,6 +71,11 @@ namespace System.Web.Compilation
 		public Hashtable Options {
 			get { return options; }
 			set { options = value; }
+		}
+
+		public ArrayList Dependencies {
+			get { return dependencies; }
+			set { dependencies = value; }
 		}
 
 		public override string ToString ()

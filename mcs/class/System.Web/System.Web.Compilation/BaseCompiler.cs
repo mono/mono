@@ -21,6 +21,7 @@ namespace System.Web.Compilation
 		static Random rnd = new Random ((int) DateTime.Now.Ticks);
 		string randomName;
 		protected Hashtable options;
+		protected ArrayList dependencies;
 
 		protected BaseCompiler ()
 		{
@@ -45,8 +46,19 @@ namespace System.Web.Compilation
 
 		public virtual string [] Dependencies {
 			get {
-				return null;
+				if (dependencies == null)
+					return new string [0];
+
+				return (string []) dependencies.ToArray (typeof (string));
 			}
+		}
+
+		public virtual void AddDependency (string filename)
+		{
+			if (dependencies == null)
+				dependencies = new ArrayList ();
+
+			dependencies.Add (filename);
 		}
 		
 		public virtual string CompilerOptions {

@@ -36,6 +36,7 @@ namespace System.Web.Compilation
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
 			
+			result.Dependencies = dependencies;
 			if (result.Data is Type) {
 				targetFile = result.OutputFile;
 				return (Type) result.Data;
@@ -101,6 +102,7 @@ namespace System.Web.Compilation
 			generator.ProcessElements ();
 			userControlParser.Text = generator.GetCode ().ReadToEnd ();
 			options = generator.Options;
+			dependencies = generator.Dependencies;
 
 			//FIXME: should get Tmp dir for this application
 			string csName = Path.GetTempFileName () + ".cs";

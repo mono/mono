@@ -36,6 +36,7 @@ namespace System.Web.Compilation
 			if (compiler.Compile (result) == false)
 				throw new CompilationException (result);
 			
+			result.Dependencies = dependencies;
 			if (result.Data is Type)
 				return (Type) result.Data;
 
@@ -87,6 +88,7 @@ namespace System.Web.Compilation
 			generator.BaseType = pageParser.BaseType.ToString ();
 			generator.ProcessElements ();
 			pageParser.Text = generator.GetCode ().ReadToEnd ();
+			dependencies = generator.Dependencies;
 			options = generator.Options;
 
 			//FIXME: should get Tmp dir for this application
