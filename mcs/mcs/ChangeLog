@@ -1,3 +1,32 @@
+2005-03-16  Raja R Harinath  <rharinath@novell.com>
+
+	Remove TypeManager.LookupType and TypeManager.LookupTypeDirect.
+	Refactor to avoid traversing the list of assemblies, and to avoid
+	string concatenation.
+	* typemanager.cs (guid_attr_type): Remove.
+	(negative_hits, pointers, references): Remove hashes.
+	(type_hash): New.
+	(GetConstructedType): New.  Uses type_hash to handle constructed
+	types (arrays, references, pointers).
+	(GetReferenceType, GetPointerType): Use it.
+	(GetNestedType): New.  Uses type_hash to handle nested types of
+	reflected types.
+	(LookupType, LookupTypeDirect): Remove.
+	(CoreLookupType): Inline parts of old LookupTypeDirect code.  Use
+	'types' hash and LookupTypeReflection directly.
+	(params_string, params_object): Use GetConstructedType.
+	* namespace.cs (Namespace.cached_types): New.  Cache of reflected
+	top-level types.
+	(Namespace.Lookup): Use cached_types.
+	(NamespaceEntry.LookupNamespaceOrType): Inline the functionality
+	provided by old TypeManager.LookupType.
+	* rootcontext.cs (MakeFQN): Remove.
+	* decl.cs (DeclSpace.MakeFQN): Likewise.
+	(DeclSpace.LookupType): Use TypeManager.GetNestedType.
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Use
+	TypeManager.GetConstructedType.
+	* tree.cs (decl_ns_hash, LookupByNamespace): Remove.
+	
 2005-03-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (TypeContainer.CircularDepException) New nested

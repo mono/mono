@@ -26,6 +26,7 @@ namespace Mono.CSharp {
 		ArrayList entries;
 		Hashtable namespaces;
 		Hashtable defined_names;
+		Hashtable cached_types;
 
 		public static Namespace Root;
 
@@ -66,6 +67,7 @@ namespace Mono.CSharp {
 			entries = new ArrayList ();
 			namespaces = new Hashtable ();
 			defined_names = new Hashtable ();
+			cached_types = new Hashtable ();
 
 			all_namespaces.Add (this);
 			if (namespaces_map.Contains (fullname))
@@ -121,40 +123,40 @@ namespace Mono.CSharp {
 
 		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
 		{
-			IAlias o = (IAlias) defined_names [name];
-
-			Type t;
-			DeclSpace tdecl = o as DeclSpace;
-			if (tdecl != null) {
-				//
-				// Note that this is not:
-				//
-				//   t = tdecl.DefineType ()
-				//
-				// This is to make it somewhat more useful when a DefineType
-				// fails due to problems in nested types (more useful in the sense
-				// of fewer misleading error messages)
-				//
-				tdecl.DefineType ();
-				t = tdecl.TypeBuilder;
-
-				if (t == null)
-					return null;
-
-				if ((ds == null) || ds.CheckAccessLevel (t))
-					return new TypeExpression (t, Location.Null);
-			}
-
 			Namespace ns = GetNamespace (name, false);
 			if (ns != null)
 				return ns;
 
-			// We are sure that 'name' is a simple name (no dots).
-			t = TypeManager.LookupTypeDirect (DeclSpace.MakeFQN (fullname, name));
-			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
+			TypeExpr te;
+			if (cached_types.Contains (name)) {
+				te = (TypeExpr) cached_types [name];
+			} else {
+				Type t;
+				DeclSpace tdecl = defined_names [name] as DeclSpace;
+				if (tdecl != null) {
+					//
+					// Note that this is not:
+					//
+					//   t = tdecl.DefineType ()
+					//
+					// This is to make it somewhat more useful when a DefineType
+					// fails due to problems in nested types (more useful in the sense
+					// of fewer misleading error messages)
+					//
+					tdecl.DefineType ();
+					t = tdecl.TypeBuilder;
+				} else {
+					string lookup = this == Namespace.Root ? name : FullName + "." + name;
+					t = TypeManager.LookupTypeReflection (lookup);
+				}
+				te = t == null ? null : new TypeExpression (t, Location.Null);
+				cached_types [name] = te;
+			}
+
+			if (te != null && ds != null && !ds.CheckAccessLevel (te.Type))
 				return null;
 
-			return new TypeExpression (t, Location.Null);
+			return te;
 		}
 
 		public void AddNamespaceEntry (NamespaceEntry entry)
@@ -453,6 +455,8 @@ namespace Mono.CSharp {
 			return entry == null ? null : entry.Resolve ();
 		}
 
+		static readonly char [] dot_array = { '.' };
+
 		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
 		{
 			FullNamedExpression resolved = null;
@@ -473,15 +477,29 @@ namespace Mono.CSharp {
 			if (resolved == null || rest == null)
 				return resolved;
 
-			Namespace ns = resolved as Namespace;
-			if (ns != null)
-				return ns.Lookup (ds, rest, loc);
+			// Now handle the rest of the the name.
+			string [] elements = rest.Split (dot_array);
+			int count = elements.Length;
+			int i = 0;
+			while (i < count && resolved != null && resolved is Namespace) {
+				Namespace ns = resolved as Namespace;
+				resolved = ns.Lookup (ds, elements [i++], loc);
+			}
 
-			Type nested = TypeManager.LookupType (resolved.FullName + "." + rest);
-			if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
-				return null;
+			if (resolved == null || resolved is Namespace)
+				return resolved;
 
-			return new TypeExpression (nested, Location.Null);
+			Type t = ((TypeExpr) resolved).Type;
+			
+			while (t != null) {
+				if (ds != null && !ds.CheckAccessLevel (t))
+					break;
+				if (i == count)
+					return new TypeExpression (t, Location.Null);
+				t = TypeManager.GetNestedType (t, elements [i++]);
+			}
+
+			return null;
 		}
 
 		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
