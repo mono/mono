@@ -1,3 +1,7 @@
+2003-04-03 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* CrossContextChannel.cs: Improved support for OneWay and Async messages.
+	
 2003-03-20 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Context.cs: Implemented support for dynamic properties and dynamic message sinks.
