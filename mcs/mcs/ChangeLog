@@ -1,3 +1,7 @@
+2002-07-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Report ok when we display the help only.
+
 2002-07-06  Andrew Birkett  <adb@tardis.ed.ac.uk>
 
 	* cs-tokenizer.cs (xtoken): Improve handling of string literals.

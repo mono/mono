@@ -543,7 +543,7 @@ namespace Mono.CSharp
 					case "/?": case "/h": case "/help":
 					case "--help":
 						Usage ();
-						return false;
+						return true;
 
 					case "--define":
 						if ((i + 1) >= argc){
