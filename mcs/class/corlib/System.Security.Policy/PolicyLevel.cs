@@ -59,6 +59,12 @@ namespace System.Security.Policy {
                         named_permission_sets = new ArrayList ();
                 }
 
+		internal PolicyLevel (string label, string filename)
+			: this (label)
+                {
+			LoadFromFile (filename);
+		}
+
 		internal void LoadFromFile (string filename) 
 		{
 			if (!File.Exists (filename))

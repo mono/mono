@@ -43,6 +43,7 @@ namespace System.Security.Policy {
 
 		private CodeGroupGrantScope _scope = CodeGroupGrantScope.Assembly;
 		private Hashtable _rules = new Hashtable ();
+		private int _hashcode;
 #endif
 
 		public NetCodeGroup (IMembershipCondition condition) 
@@ -129,11 +130,66 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		private bool Equals (CodeConnectAccess[] rules1, CodeConnectAccess[] rules2)
+		{
+			for (int i=0; i < rules1.Length; i++) {
+				bool found = false;
+				for (int j=0; j < rules2.Length; j++) {
+					if (rules1 [i].Equals (rules2 [j])) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+			return true;
+		}
+
+		public override bool Equals (object o)
+		{
+			if (!base.Equals (o))
+				return false;
+			NetCodeGroup ncg = (o as NetCodeGroup);
+			if (ncg == null) 
+				return false;
+	
+			// check rules
+			foreach (DictionaryEntry de in _rules) {
+				bool found = false;
+				CodeConnectAccess[] ccas = (CodeConnectAccess[]) ncg._rules [de.Key];
+				if (ccas != null)
+					found = Equals ((CodeConnectAccess[]) de.Value, ccas);
+				else
+					found = (de.Value == null);
+
+				if (!found)
+					return false;
+			}
+			return true;
+		}
+
 		public DictionaryEntry[] GetConnectAccessRules ()
 		{
 			DictionaryEntry[] result = new DictionaryEntry [_rules.Count];
 			_rules.CopyTo (result, 0);
 			return result;
+		}
+
+		public override int GetHashCode ()
+		{
+			if (_hashcode == 0) {
+				_hashcode = base.GetHashCode ();
+				foreach (DictionaryEntry de in _rules) {
+					CodeConnectAccess[] ccas = (CodeConnectAccess[]) de.Value;
+					if (ccas != null) {
+						foreach (CodeConnectAccess cca in ccas) {
+							_hashcode ^= cca.GetHashCode ();
+						}
+					}
+				}
+			}
+			return _hashcode;
 		}
 #endif
 
