@@ -1,3 +1,11 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Added a reference to Mono.Security because we'll require
+	many class from it for the NET_2_0 profile - but it would be better
+	not to have the dependency for NET_1_1.
+	* System.Security.dll.sources: Added a lot of existing classes (from
+	1.2 documentation) that	were never compiled.
+
 2004-03-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Security.dll.sources: Added internal class Manifest.
