@@ -22,7 +22,7 @@ ifdef SECOND_PASS
 	include ../../build/library.make
 else
 all-local:
-	@if ! test -f ../lib/$(CYCLIC_DEP) ; then \
+	@if test ! -f ../lib/$(CYCLIC_DEP) ; then \
 	    echo "Creating temporary $(LIBRARY) without $(CYCLIC_DEP) reference." ; \
 	    $(MAKE) SECOND_PASS=yes || exit 1 ; \
 	    rm -f '$(depsdir)/$(LIBRARY).stamp'; \
