@@ -5,7 +5,7 @@ EXTRA_DIST =  config.in \
 	     DefaultWsdlHelpGenerator.aspx \
 	     browscap.ini.gz
 
-mono_DATA =  config.in \
+mono_DATA =  config \
 	     machine.config \
 	     DefaultWsdlHelpGenerator.aspx \
 	     browscap.ini
