@@ -525,7 +525,7 @@ namespace Mono.CSharp {
 			for (i = 0; i < top; i++){
 				Type type = pending_implementations [i].type;
 				int j = 0;
-				
+
 				foreach (MethodInfo mi in pending_implementations [i].methods){
 					if (mi == null)
 						continue;
@@ -548,8 +548,11 @@ namespace Mono.CSharp {
 						
 						if (pending_implementations [i].found [j]) {
 							string[] methodLabel = TypeManager.CSharpSignature (mi).Split ('.');
-							Report.Error (536, container.Location, "'{0}' does not implement interface member '{1}'. '{2}.{3}' is either static, not public, or has the wrong return type",
-								container.Name, TypeManager.CSharpSignature (mi), container.Name, methodLabel[methodLabel.Length - 1]);
+							Report.Error (536, container.Location,
+								      "'{0}' does not implement interface member '{1}'. '{2}.{3}' " +
+								      "is either static, not public, or has the wrong return type",
+								      container.Name, TypeManager.CSharpSignature (mi),
+								      container.Name, methodLabel[methodLabel.Length - 1]);
 						}
 						else { 
 							Report.Error (535, container.Location, "'{0}' does not implement interface member '{1}'",

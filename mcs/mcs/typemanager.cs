@@ -1974,7 +1974,7 @@ public class TypeManager {
 	public static Type[] ExpandInterfaces (EmitContext ec, TypeExpr [] base_interfaces)
 	{
 		ArrayList new_ifaces = new ArrayList ();
-		
+
 		foreach (TypeExpr iface in base_interfaces){
 			Type itype = iface.ResolveType (ec);
 			if (itype == null)
