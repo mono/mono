@@ -1,3 +1,7 @@
+2001-11-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_metadata_init): create a trampoline for all
+	virtual functions instead of actually compiling them.
 
 Fri Nov 2 19:37:51 CET 2001 Paolo Molaro <lupus@ximian.com>
 
