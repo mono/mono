@@ -64,6 +64,10 @@ Generate debugging information.
 .I \-debug-
 Do not generate debugging information.
 .TP
+.I \-\-expect-error X L
+The compiler will expect the code to generate an error 
+named `X' in line `L'.  This is only used by the test suite.
+.TP 
 .I \-\-fatal 
 This is used for debugging the compiler.  This makes the error emission
 generate an exception that can be caught by a debugger.
@@ -98,10 +102,6 @@ Names the output file to be generated.
 .I \-\-parse
 Used for benchmarking.  The compiler will only parse its input files.
 .TP
-.I \-\-probe X L
-Probes for the code to generate an error named `X' in line `L'.  This
-is only used by the test suite.
-.TP 
 .I /resource:RESOURCE
 Embeds to the given resource file.
 .TP
