@@ -1623,7 +1623,7 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public readonly Attributes OptAttributes;
 
-		public bool IsPinvoke = false;
+		public bool IsPInvoke = false;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -1875,6 +1875,7 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
+			Attribute dllimport_attr = null;
 			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
 				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
 				 	if (asec.Attributes == null)
@@ -1883,7 +1884,8 @@ namespace Mono.CSharp {
 					foreach (Attribute a in asec.Attributes)
 						if (a.Name.IndexOf ("DllImport") != -1) {
 							flags |= MethodAttributes.PinvokeImpl;
-							IsPinvoke = true;
+							IsPInvoke = true;
+							dllimport_attr = a;
 						}
 				
 				}
@@ -1892,12 +1894,22 @@ namespace Mono.CSharp {
 			//
 			// Finally, define the method
 			//
-			
-			MethodBuilder = parent.TypeBuilder.DefineMethod (
-				Name, flags,
-				GetCallingConvention (parent is Class),
-				ret_type, parameters);
 
+			if (IsPInvoke) {
+
+				EmitContext ec = new EmitContext (parent, Location, null, GetReturnType (parent), ModFlags);
+				
+				MethodBuilder = dllimport_attr.DefinePInvokeMethod (ec, parent.TypeBuilder,
+										    Name, flags, ret_type, parameters);
+			} else
+				MethodBuilder = parent.TypeBuilder.DefineMethod (
+								      Name, flags,
+								      GetCallingConvention (parent is Class),
+								      ret_type, parameters);
+
+			if (MethodBuilder == null)
+				return null;
+			
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
@@ -1962,7 +1974,7 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (TypeContainer parent)
 		{
-			if (IsPinvoke)
+			if (IsPInvoke)
 				return;
 			
 			ILGenerator ig = MethodBuilder.GetILGenerator ();

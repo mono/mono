@@ -1,5 +1,13 @@
 2001-12-04  Ravi Pratap  <ravi@ximian.com>
 
+	* class.cs (Method::Define): Handle PInvoke methods specially
+	by using DefinePInvokeMethod instead of the usual one.
+
+	* attribute.cs (DefinePInvokeMethod): Implement as this is what is called
+	above to do the task of extracting information and defining the method.
+	
+2001-12-04  Ravi Pratap  <ravi@ximian.com>
+
 	* expression.cs (ArrayCreation::EmitStaticInitializers): Get rid
 	of the condition for string type.
 

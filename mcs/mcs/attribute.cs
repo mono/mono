@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Mono.CSharp {
@@ -376,6 +377,56 @@ namespace Mono.CSharp {
 
 			return false;
 		}
+
+		public MethodBuilder DefinePInvokeMethod (EmitContext ec, TypeBuilder builder, string name,
+							  MethodAttributes flags, Type ret_type, Type [] param_types)
+		{
+			//
+			// We extract from the attribute the information we need from the attribute
+			//
+
+			if (Arguments == null) {
+				Console.WriteLine ("Internal error : this is not supposed to happen !");
+				return null;
+			}
+			
+			ArrayList named_args = new ArrayList ();
+			
+			ArrayList pos_args = (ArrayList) Arguments [0];
+			if (Arguments.Count > 1)
+				named_args = (ArrayList) Arguments [1];
+			
+
+			string dll_name = null;
+			
+			Argument tmp = (Argument) pos_args [0];
+
+			if (!tmp.Resolve (ec, Location))
+				return null;
+			
+			Expression exp = Expression.Reduce (ec, tmp.Expr);
+			
+			if (exp is Literal)
+				dll_name = (string) ((Literal) exp).GetValue ();
+			else { 
+				error182 ();
+				return null;
+			}
+
+			// FIXME : We need to process CallingConvention and other named
+			// args but for now, we ignore them.
+			
+			MethodBuilder mb = builder.DefinePInvokeMethod (
+								   name, dll_name, flags,
+								   CallingConventions.Standard,
+								   ret_type,
+								   param_types,
+								   CallingConvention.StdCall,
+								   CharSet.Auto); 
+			
+			return mb;
+		}
+		
 	}
 	
 	public class AttributeSection {
