@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
+Assembly/Locale.cs
 System.Drawing/Bitmap.cs
 System.Drawing/Brush.cs
 System.Drawing/Brushes.cs
@@ -38,6 +39,7 @@ System.Drawing/SizeConverter.cs
 System.Drawing/Size.cs
 System.Drawing/SizeF.cs
 System.Drawing/SolidBrush.cs
+System.Drawing/SRDescriptionAttribute.cs
 System.Drawing/StringAligment.cs
 System.Drawing/StringDigitSubstitute.cs
 System.Drawing/StringFormat.cs
