@@ -1,3 +1,17 @@
+2002-07-10  Tim Coleman <tim@timcoleman.com>
+	* OleDbCommandBuilder.cs: Added new methods, properties
+	* OleDbConnection.cs: Modified constructor
+	* OleDbError.cs: Added stubbs
+	* OleDbException.cs: Added stubbs
+	* OleDbInfoMessageEventArgs.cs: Added stubbs
+	* OleDbInfoMessageEventHandler.cs: style change
+	* OleDbParameter.cs: Added conversion from type to OleDbType
+	* OleDbPermission.cs: Added stubbs
+	* OleDbSchemaGuid.cs: Added stubbs
+	* OleDbTransaction.cs: New constructors, changes to methods to
+		support transaction nesting
+	* libgda.cs: Added my name to this file
+
 2002-07-09  Tim Coleman <tim@timcoleman.com>
 	* OleDbCommand.cs: Style changes, added new methods
 	* OleDbConnection.cs: Style changes, added new methods

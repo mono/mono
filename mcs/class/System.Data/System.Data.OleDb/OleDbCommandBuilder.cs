@@ -3,8 +3,10 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.ComponentModel;
@@ -18,25 +20,88 @@ namespace System.Data.OleDb
 	/// </summary>
 	public sealed class OleDbCommandBuilder : Component
 	{
-		private OleDbDataAdapter m_adapter = null;
+		#region Fields
+
+		OleDbDataAdapter adapter;
+		string quotePrefix;
+		string quoteSuffix;
+
+		#endregion // Fields
+
+		#region Constructors
 		
 		public OleDbCommandBuilder ()
 		{
+			adapter = null;
+			quotePrefix = String.Empty;
+			quoteSuffix = String.Empty;
 		}
 
-		public OleDbCommandBuilder (OleDbDataAdapter adapter) : this ()
+		public OleDbCommandBuilder (OleDbDataAdapter adapter) 
+			: this ()
 		{
-			m_adapter = adapter;
+			this.adapter = adapter;
 		}
 
-		public OleDbDataAdapter DataAdapter
-		{
-			get {
-				return m_adapter;
-			}
-			set {
-				m_adapter = value;
-			}
+		#endregion // Constructors
+
+		#region Properties
+
+		public OleDbDataAdapter DataAdapter {
+			get { return adapter; }
+			set { adapter = value; }
 		}
+
+		public string QuotePrefix {
+			get { return quotePrefix; }
+			set { quotePrefix = value; }
+		}
+
+		public string QuoteSuffix {
+			get { return quoteSuffix; }
+			set { quoteSuffix = value; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
+		[MonoTODO]
+		public static void DeriveParameters (OleDbCommand command) 
+		{
+			throw new NotImplementedException ();		
+		}
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing) 
+		{
+			throw new NotImplementedException ();		
+		}
+
+		[MonoTODO]
+		public OleDbCommand GetDeleteCommand ()
+		{
+			throw new NotImplementedException ();		
+		}
+
+		[MonoTODO]
+		public OleDbCommand GetInsertCommand ()
+		{
+			throw new NotImplementedException ();		
+		}
+
+		[MonoTODO]
+		public OleDbCommand GetUpdatetCommand ()
+		{
+			throw new NotImplementedException ();		
+		}
+
+		[MonoTODO]
+		public void RefreshSchema ()
+		{
+			throw new NotImplementedException ();		
+		}
+
+		#endregion // Methods
 	}
 }

@@ -13,7 +13,5 @@ using System.Data.Common;
 namespace System.Data.OleDb
 {
 	[Serializable]
-	public delegate void OleDbInfoMessageEventHandler (
-		object sender,
-		OleDbInfoMessageEventArgs e);
+	public delegate void OleDbInfoMessageEventHandler (object sender, OleDbInfoMessageEventArgs e);
 }

@@ -20,11 +20,10 @@ namespace System.Data.OleDb
 		#region Fields
 
 		string connectionString;
-		int connectionTimeout = 15;
+		int connectionTimeout;
 		OleDbDataReader dataReader;
 		bool dataReaderOpen;
-
-		IntPtr gdaConnection = IntPtr.Zero;
+		IntPtr gdaConnection;
 
 		#endregion
 
@@ -32,6 +31,8 @@ namespace System.Data.OleDb
 		
 		public OleDbConnection ()
 		{
+			gdaConnection = IntPtr.Zero;
+			connectionTimeout = 15;
 		}
 
 		public OleDbConnection (string connectionString) 

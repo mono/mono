@@ -9,6 +9,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System;
 using System.Data;
 using System.Data.Common;
 
@@ -30,6 +31,8 @@ namespace System.Data.OleDb
 		OleDbType oleDbType;
 		DbType dbType;
 
+		IntPtr gdaParameter;
+
 		#endregion
 
 		#region Constructors
@@ -43,6 +46,7 @@ namespace System.Data.OleDb
 			precision = 0;
 			scale = 0;
 			sourceColumn = String.Empty;
+			gdaParameter = IntPtr.Zero;
 		}
 
 		public OleDbParameter (string name, object value) 
@@ -50,13 +54,14 @@ namespace System.Data.OleDb
 		{
 			this.name = name;
 			this.value = value;
+			OleDbType = GetOleDbType (value);
 		}
 
 		public OleDbParameter (string name, OleDbType dataType) 
 			: this ()
 		{
 			this.name = name;
-			this.oleDbType = dataType;
+			OleDbType = dataType;
 		}
 
 		public OleDbParameter (string name, OleDbType dataType, int size)
@@ -144,10 +149,18 @@ namespace System.Data.OleDb
 		
 		public object Value {
 			get { return value; }
-			set { value = value; }
+			set { this.value = value; }
 		}
 
 		#endregion // Properties
+
+		#region Internal Properties
+
+		internal IntPtr GdaParameter {
+			get { return gdaParameter; }
+		}
+
+		#endregion // Internal Properties
 
 		#region Methods
 
@@ -296,6 +309,55 @@ namespace System.Data.OleDb
 				return DbType.String;
 			}
 			return DbType.Object;
+		}
+
+		private OleDbType GetOleDbType (object value)
+		{
+			if (value is Guid) return OleDbType.Guid;
+			if (value is TimeSpan) return OleDbType.DBTime;
+
+			switch (Type.GetTypeCode (value.GetType ())) {
+			case TypeCode.Boolean :
+				return OleDbType.Boolean;
+			case TypeCode.Byte :
+				if (value.GetType().IsArray) 
+					return OleDbType.Binary;
+				else 
+					return OleDbType.UnsignedTinyInt;
+			case TypeCode.Char :
+				return OleDbType.Char;
+			case TypeCode.DateTime :
+				return OleDbType.Date;
+			case TypeCode.DBNull :
+				return OleDbType.Empty;
+			case TypeCode.Decimal :
+				return OleDbType.Decimal;
+			case TypeCode.Double :
+				return OleDbType.Double;
+			case TypeCode.Empty :
+				return OleDbType.Empty;
+			case TypeCode.Int16 :
+				return OleDbType.SmallInt;
+			case TypeCode.Int32 :
+				return OleDbType.Integer;
+			case TypeCode.Int64 :
+				return OleDbType.BigInt;
+			case TypeCode.SByte :
+				return OleDbType.TinyInt;
+			case TypeCode.String :
+				return OleDbType.VarChar;
+			case TypeCode.Single :
+				return OleDbType.Single;
+			case TypeCode.UInt64 :
+				return OleDbType.UnsignedBigInt;
+			case TypeCode.UInt32 :
+				return OleDbType.UnsignedInt;
+			case TypeCode.UInt16 :
+				return OleDbType.UnsignedSmallInt;
+			case TypeCode.Object :
+				return OleDbType.Variant;
+			}
+			return OleDbType.IUnknown;
 		}
 
 		#endregion

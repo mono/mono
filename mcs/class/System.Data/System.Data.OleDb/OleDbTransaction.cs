@@ -16,27 +16,42 @@ namespace System.Data.OleDb
 {
 	public sealed class OleDbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
 	{
-
 		#region Fields
 
-		OleDbConnection connection = null;
-		IsolationLevel isolationLevel = IsolationLevel.ReadCommitted;
+		OleDbConnection connection;
+		IsolationLevel isolationLevel;
+		IntPtr gdaTransaction;
+		int depth;
 
 		#endregion // Fields
 
 		#region Constructors
-		
-		internal OleDbTransaction (OleDbConnection connection)
+
+		internal OleDbTransaction (OleDbConnection connection, int depth)
 		{
 			this.connection = connection;
-			libgda.gda_connection_begin_transaction (connection.GdaConnection, IntPtr.Zero);
+			isolationLevel = IsolationLevel.ReadCommitted;
+
+			gdaTransaction = libgda.gda_transaction_new (depth.ToString ());
+			libgda.gda_connection_begin_transaction (connection.GdaConnection, gdaTransaction);
 		}
 
-		internal OleDbTransaction (OleDbConnection connection, IsolationLevel isolevel) 
-			: this (connection)
+		internal OleDbTransaction (OleDbConnection connection)
+			: this (connection, 1)
+		{
+		}
+
+		internal OleDbTransaction (OleDbConnection connection, int depth, IsolationLevel isolevel) 
+			: this (connection, depth)
 		{
 			isolationLevel = isolevel;
 		}
+
+		internal OleDbTransaction (OleDbConnection connection, IsolationLevel isolevel) 
+			: this (connection, 1, isolevel)
+		{
+		}
+
 
 		#endregion // Constructors
 
@@ -46,33 +61,31 @@ namespace System.Data.OleDb
 			get { return connection; }
 		}
 
-		public IsolationLevel IsolationLevel
-		{
+		public IsolationLevel IsolationLevel {
 			get { return isolationLevel; }
 		}
 
 		IDbConnection IDbTransaction.Connection {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return connection; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		public OleDbTransaction Begin ()
+		public OleDbTransaction Begin () 
 		{
-			return new OleDbTransaction (connection);
+			return new OleDbTransaction (connection, depth + 1);
 		}
 
-		public OleDbTransaction Begin (IsolationLevel isolevel)
+		public OleDbTransaction Begin (IsolationLevel isolevel) 
 		{
-			return new OleDbTransaction (connection, isolevel);
+			return new OleDbTransaction (connection, depth + 1, isolevel);
 		}
 
 		public void Commit ()
 		{
-			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection, IntPtr.Zero))
+			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection, gdaTransaction))
 				throw new InvalidOperationException ();
 		}
 
@@ -89,7 +102,7 @@ namespace System.Data.OleDb
 
 		public void Rollback ()
 	        {
-			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection, IntPtr.Zero))
+			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection, gdaTransaction))
 				throw new InvalidOperationException ();
 		}
 
