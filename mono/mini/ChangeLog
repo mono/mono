@@ -1,3 +1,7 @@
+2005-03-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (INST_IGNORES_CFLAGS): Add more instructions.
+
 2005-03-04  Neale Ferguson <NealeFerguson@earthlink.net>
 
 	* inssel-s390.brg, mini-s390.c: Add support for passing/returning small
