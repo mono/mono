@@ -1,3 +1,7 @@
+2005-01-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (compile_all_methods_thread_main): Compile the methods
+	without invoking cctors.
 
 Fri Jan 28 18:28:26 CET 2005 Paolo Molaro <lupus@ximian.com>
 
