@@ -1460,6 +1460,7 @@ namespace Mono.CSharp {
 		public bool MethodModifiersValid (int flags, string n, Location loc)
 		{
 			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
+			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
 			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 			bool ok = true;
 			string name = MakeName (n);
@@ -1477,8 +1478,8 @@ namespace Mono.CSharp {
 			}
 
 			if (this is Struct){
-				if ((flags & vao) != 0){
-					Modifiers.Error_InvalidModifier (loc, "virtual, abstract, or override");
+				if ((flags & va) != 0){
+					Modifiers.Error_InvalidModifier (loc, "virtual or abstract");
 					ok = false;
 				}
 			}

@@ -1,3 +1,9 @@
+2002-07-03  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (TypeContainer.MethodModifiersValid): Allow override
+	modifiers in method declarations in structs.  Otherwise, you won't
+	be able to override things like Object.Equals().
+
 2002-07-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method, Property, Indexer): Do not allow the public
