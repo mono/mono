@@ -15,7 +15,7 @@ Test cases listed by Category:
 
 * Indexers and Properties
 
-  test-148.cs test-166.cs test-206.cs test-208.cs
+  test-148.cs test-166.cs test-206.cs test-208.cs test-209.cs
 
 * Events and Delegates
 
@@ -338,6 +338,12 @@ test-208.cs
 -----------
 
 Indexers; bug #46788.
+
+test-209.cs
+-----------
+
+Embedded assignments; while fixing a bug and making a mistake, I discovered some
+problems during class libs compilation.  Let's just add a testcase for them here.
 
 verify-1.cs
 -----------
