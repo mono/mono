@@ -227,6 +227,8 @@ namespace System.Web.UI.WebControls
 
 		public virtual void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
+                        if (ItemStyleInternal != null)
+				cell.ApplyStyle (ItemStyleInternal);
 			switch(itemType)
 			{
 				case ListItemType.Header : InitializeCellHeader(cell, columnIndex);
