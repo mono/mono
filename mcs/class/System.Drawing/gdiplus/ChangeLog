@@ -12,7 +12,8 @@
 
 2004-01-20  Ravindra <rkumar@novell.com>
 
-	* pen.c: Fixed bug #52811.
+	* pen.c (GdipGetPenTransform): Fixed function signature, this
+	fixes bug #52811.
 
 2004-01-19  Duncan Mak  <duncan@ximian.com>
 
