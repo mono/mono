@@ -773,14 +773,9 @@ namespace System.Text.RegularExpressions.Syntax {
 
 			// initialize pos/neg category arrays
 
-			Array cat_values = Enum.GetValues (typeof (Category));
-			int cat_size = (int)(Category)cat_values.GetValue (cat_values.Length - 1) + 1;
-			pos_cats = new bool[cat_size];
-			neg_cats = new bool[cat_size];
-			for (int i = 0; i < cat_size; ++ i) {
-				pos_cats[i] = false;
-				neg_cats[i] = false;
-			}
+			int cat_size = (int) Category.LastValue;
+			pos_cats = new BitArray (cat_size);
+			neg_cats = new BitArray (cat_size);
 		}
 
 		public CharacterClass (Category cat, bool negate) : this (false, false) {
@@ -801,15 +796,8 @@ namespace System.Text.RegularExpressions.Syntax {
 			int n = (int)cat;
 			
 			if (negate) {
-				if (pos_cats[n])
-					pos_cats[n] = false;
-
 				neg_cats[n] = true;
-			}
-			else {
-				if (neg_cats[n])
-					neg_cats[n] = false;
-
+			} else {
 				pos_cats[n] = true;
 			}
 		}
@@ -938,7 +926,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		private static Interval upper_case_characters = new Interval ((char)65, (char)90);
  		private const int distance_between_upper_and_lower_case = 32;
 		private bool negate, ignore;
-		private bool[] pos_cats, neg_cats;
+		private BitArray pos_cats, neg_cats;
 		private IntervalCollection intervals;
 	}
 

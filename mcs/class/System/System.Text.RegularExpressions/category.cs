@@ -174,7 +174,9 @@ namespace System.Text.RegularExpressions {
 		UnicodeMathematicalAlphanumericSymbols,
 		UnicodeCJKUnifiedIdeographsExtensionB,
 		UnicodeCJKCompatibilityIdeographsSupplement,
-		UnicodeTags
+		UnicodeTags,
+
+		LastValue // Keep this with the higher value in the enumeration
 	}
 
 	class CategoryUtils {
