@@ -1,3 +1,9 @@
+
+Tue Oct 21 12:01:14 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: some ppc inline asm fixes (incorrect use of labels, 
+	incorrect register constraints, incorrect clobber lists).
+
 2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* Makefile.am hppa_atomic.s: add HP 64bit
