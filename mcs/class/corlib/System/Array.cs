@@ -474,7 +474,7 @@ namespace System
 			int low = low0;
 			int high = high0;
 			
-			if (keys.Rank > 1 || items.Rank > 1)
+			if (keys.Rank > 1 || (items != null && items.Rank > 1))
 				throw new RankException ();
 
 			if (low >= high)

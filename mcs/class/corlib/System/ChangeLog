@@ -1,4 +1,9 @@
 
+Fri Dec 21 15:14:52 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: fix null ref in sort code.
+	* UInt64.cs: add bare-bones parse.
+
 Thu Dec 20 15:29:52 CET 2001 Paolo Molaro <lupus@ximian.com>
 	
 	* Byte.cs: removed use of Regexes.

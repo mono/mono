@@ -67,8 +67,15 @@ namespace System {
 
 		public static ulong Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			throw new NotImplementedException ();
+			ulong val = 0;
+			int j;
+			for (j = 0; j < s.Length; ++j) {
+				if (s [j] >= '0' && s [j] <= '9')
+					val = val * 10 + s [j] - '0';
+				else
+					break;
+			}
+			return val;
 		}
 
 		public override string ToString ()
