@@ -1,3 +1,15 @@
+2004-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MethodData.Emit): Instead of checking the name of the
+	method to determine if its a destructor, create a new derived
+	class from Method called Destructor, and test for that.  
+
+	* cs-parser.jay: Create a Destructor object instead of a Method.  
+
+	Based on a fix from Benjamin Jemlich (pcgod@gmx.net)
+
+	Fixes: 52933
+	
 2004-01-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Perform an implicit

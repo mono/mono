@@ -3438,7 +3438,7 @@ namespace Mono.CSharp {
 			//
 			// FIXME: This code generates buggy code
 			//
-			if (member.Name == "Finalize" && ReturnType == TypeManager.void_type)
+			if (member is Destructor)
 				EmitDestructor (ec, block);
 			else {
 				SymbolWriter sw = CodeGen.SymbolWriter;
@@ -3494,6 +3494,15 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class Destructor : Method {
+
+		public Destructor (DeclSpace ds, Expression return_type, int mod, string name,
+				   Parameters parameters, Attributes attrs, Location l)
+			: base (ds, return_type, mod, name, parameters, attrs, l)
+		{ }
+
+	}
+	
 	abstract public class MemberBase : MemberCore {
 		public Expression Type;
 		public readonly Attributes OptAttributes;

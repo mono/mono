@@ -1592,7 +1592,7 @@ destructor_declaration
                                 }
                         }
                         
-			Method d = new Method (
+			Method d = new Destructor (
 				current_container, TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
