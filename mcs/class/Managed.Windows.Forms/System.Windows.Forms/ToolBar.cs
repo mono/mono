@@ -28,13 +28,17 @@
 //   - Hilighting a button in flat appearance, when mouse moves over
 //   - RightToLeft
 //   - DropDown ContextMenu
+//   - Tooltip
 //
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.4  2004/08/21 01:52:08  ravindra
+// Improvments in mouse event handling in the ToolBar control.
+//
 // Revision 1.3  2004/08/17 02:00:54  ravindra
 // Added attributes.
 //
@@ -77,6 +81,7 @@ namespace System.Windows.Forms
 		private bool wrappable;        // flag to make the toolbar wrappable
 		private bool recalculate;      // flag to make sure that we calculate the toolbar before drawing
 		private bool redraw;           // flag to force redrawing the control
+		private ToolBarButton currentButton; // the highlighted button
 		#endregion Instance Variables
 
 		#region Events
@@ -305,7 +310,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		/* NYI in Control.cs.
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override RightToLeft RightToLeft {
@@ -319,7 +323,6 @@ namespace System.Windows.Forms
 					RightToLeftChanged (this, new EventArgs ());
 			}
 		}
-		*/
 
 		[DefaultValue (false)]
 		[Localizable (true)]
@@ -445,9 +448,11 @@ namespace System.Windows.Forms
 					e.Button.Pushed = true;
 				else
 					e.Button.Pushed = false;
-
-				Invalidate (e.Button.Rectangle);
 			}
+			e.Button.Pressed = false;
+
+			Redraw (false);
+			Invalidate (e.Button.Rectangle);
 
 			if (ButtonClick != null)
 				ButtonClick (this, e);
@@ -457,7 +462,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnButtonDropDown (ToolBarButtonClickEventArgs e) 
 		{
-			//if (e.Button.Style == ToolBarButtonStyle.DropDown)
+			// if (e.Button.DropDownMenu == null) return;
+			// TODO: Display the dropdown menu
 
 			if (ButtonDropDown != null)
 				ButtonDropDown (this, e);
@@ -482,11 +488,13 @@ namespace System.Windows.Forms
 			base.OnMouseDown (me);
 
 			if (! this.Enabled) return;
-			Point hit = new Point (me.X - Location.X, me.Y - Location.Y);
+
+			Point hit = new Point (me.X, me.Y);
+
 			// draw the pushed button
 			foreach (ToolBarButton button in buttons) {
 				if (button.Rectangle.Contains (hit) && button.Enabled) {
-					button.Pushed = true;
+					button.Pressed = true;
 					Redraw (false);
 					Invalidate (button.Rectangle);
 					break;
@@ -499,35 +507,71 @@ namespace System.Windows.Forms
 			base.OnMouseUp (me);
 
 			if (! this.Enabled) return;
-			Point hit = new Point (me.X - Location.X, me.Y - Location.Y);
+
+			Point hit = new Point (me.X, me.Y);
+
 			// draw the normal button
 			foreach (ToolBarButton button in buttons) {
 				if (button.Rectangle.Contains (hit) && button.Enabled) {
-					button.Pushed = false;
-					Redraw (false);
-					Invalidate (button.Rectangle);
-					return;
+					if (button.Pressed)
+						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
+					else {
+						button.Pressed = false;
+						Redraw (false);
+						Invalidate (button.Rectangle);
+					}
+					break;
 				}
 			}
 		}
 
-		protected override void OnMouseEnter (EventArgs e)
-		{
-			base.OnMouseEnter (e);
-
-			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
-			// TODO:
-			// draw the transparent rectangle with single line border around the flat button
-      		}
-				
 		protected override void OnMouseLeave (EventArgs e)
 		{
 			base.OnMouseLeave (e);
 
 			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
-			// TODO:
-			// draw the normal flat button 
-    		}
+
+			if (currentButton != null) {
+				currentButton.Hilight = false;
+				Redraw (false);
+				Invalidate (currentButton.Rectangle);
+				currentButton = null;
+			}
+		}
+
+		protected override void OnMouseMove (MouseEventArgs me)
+		{
+			base.OnMouseMove (me);
+
+			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
+
+			Point hit = new Point (me.X, me.Y);
+
+			if (currentButton != null && currentButton.Rectangle.Contains (hit)) {
+				if (currentButton.Hilight)
+					return;
+				currentButton.Hilight = true;
+				Redraw (false);
+				Invalidate (currentButton.Rectangle);
+			}
+			else {
+				foreach (ToolBarButton button in buttons) {
+					if (button.Rectangle.Contains (hit) && button.Enabled) {
+						currentButton = button;
+						if (currentButton.Hilight)
+							break;
+						currentButton.Hilight = true;
+						Redraw (false);
+						Invalidate (currentButton.Rectangle);
+					}
+					else if (button.Hilight) {
+						button.Hilight = false;
+						Redraw (false);
+						Invalidate (button.Rectangle);
+					}
+				}
+			}
+		}
 
 		protected override void OnPaint (PaintEventArgs pe)
 		{

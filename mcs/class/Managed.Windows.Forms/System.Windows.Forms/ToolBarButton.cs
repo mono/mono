@@ -26,12 +26,15 @@
 //	Ravindra (rkumar@novell.com)
 //
 // TODO:
-//	- DropDownMenu
-//      - Adding a button to two toolbars
+//     - DropDownMenu
+//     - Adding a button to two toolbars
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.3  2004/08/21 01:52:08  ravindra
+// Improvments in mouse event handling in the ToolBar control.
+//
 // Revision 1.2  2004/08/17 02:00:54  ravindra
 // Added attributes.
 //
@@ -70,6 +73,7 @@ namespace System.Windows.Forms
 		private Point location = new Point (0, 0);
 		private bool wrapper = false;
 		private bool hilight = false;
+		private bool pressed = false; // this is to check for mouse down on a button
 		#endregion
 
 		#region constructors
@@ -82,16 +86,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region internal properties
-		internal Point Location {
-			get { return location; }
-			set { location = value; }
-		}
-
-		internal bool Wrapper {
-			get { return wrapper; }
-			set { wrapper = value; }
-		}
-
 		internal bool Hilight {
 			get { return hilight; }
 			set {
@@ -100,6 +94,21 @@ namespace System.Windows.Forms
 				else
 					hilight = false;	
 			}
+		}
+
+		internal Point Location {
+			get { return location; }
+			set { location = value; }
+		}
+
+		internal bool Pressed {
+			get { return pressed; }
+			set { pressed = value; }
+		}
+
+		internal bool Wrapper {
+			get { return wrapper; }
+			set { wrapper = value; }
 		}
 		#endregion internal properties
 

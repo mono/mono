@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.25 $
+// $Revision: 1.26 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.26  2004/08/21 01:52:08  ravindra
+// Improvments in mouse event handling in the ToolBar control.
+//
 // Revision 1.25  2004/08/20 00:12:51  jordi
 // fixes methods signature
 //
@@ -1651,7 +1654,7 @@ namespace System.Windows.Forms
 		public  override void DrawToolBar (Graphics dc, ToolBar control, StringFormat format)
 		{
 			Rectangle paint_area = control.ClientRectangle;
-			dc.FillRectangle (br_buttonface, paint_area);
+			dc.FillRectangle (SystemBrushes.Control, paint_area);
 			DrawBorderStyle (dc, paint_area, control.BorderStyle);
 			bool flat = (control.Appearance == ToolBarAppearance.Flat);
 
@@ -1707,20 +1710,20 @@ namespace System.Windows.Forms
 					}
 					/* Draw the button frame, only if it is not a separator */
 					if (flat) { 
-						if (button.Pushed)
+						if (button.Pushed || button.Pressed)
 							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter,
 										   Border3DSide.All);
 						else if (button.Hilight) {
-							dc.DrawRectangle (pen_buttonhilight, buttonArea);
+							dc.DrawRectangle (pen_buttontext, buttonArea);
 							if (! ddRect.IsEmpty) {
-								dc.DrawLine (pen_buttonhilight, ddRect.X, ddRect.Y, ddRect.X, 
+								dc.DrawLine (pen_buttontext, ddRect.X, ddRect.Y, ddRect.X, 
 									     ddRect.Y + ddRect.Height);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
 						}
 					}
 					else { // normal toolbar
-						if (button.Pushed) {
+						if (button.Pushed || button.Pressed) {
 							ControlPaint.DrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
 										   Border3DSide.All);
 							if (! ddRect.IsEmpty) {
@@ -1839,6 +1842,8 @@ namespace System.Windows.Forms
 				}
 
 				else {
+					dc.FillRectangle (SystemBrushes.Control, toggleArea);
+					//dc.FillRectangle (new SolidBrush (Color.FromArgb(255, 180, 190, 214)), toggleArea);
 					if (! imgRect.IsEmpty) {
 						if (button.Enabled && image != null)
 							button.Parent.ImageList.Draw (dc, imgRect.X, imgRect.Y, imgRect.Width,
