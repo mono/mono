@@ -1,3 +1,9 @@
+2004-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: check if the error returned in Exists is different
+	from 'path not found' and throw the appropiate exception in that case.
+	See #55160.
+
 2004-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoIO.cs: added case for ERROR_FILENAME_EXCED_RANGE.

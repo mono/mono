@@ -364,7 +364,11 @@ namespace System.IO
 				throw new ArgumentException ("Pattern contains invalid characters", "pattern");
 			}
 
-			if (!Directory.Exists (wildpath)) {
+			MonoIOError error;
+			if (!MonoIO.ExistsDirectory (wildpath, out error)) {
+				if (error != MonoIOError.ERROR_PATH_NOT_FOUND)
+					throw MonoIO.GetException (wildpath, error);
+
 				if (wildpath.IndexOfAny (SearchPattern.WildcardChars) == -1)
 					throw new DirectoryNotFoundException ("Directory '" + wildpath + "' not found.");
 
@@ -376,8 +380,6 @@ namespace System.IO
 
 			search = new SearchPattern (Path.GetFileName (wild));
 
-			MonoIOError error;
-			
 			find = MonoIO.FindFirstFile (Path.Combine (wildpath , "*"), out stat, out error);
 			if (find == MonoIO.InvalidHandle) {
 				switch (error) {
