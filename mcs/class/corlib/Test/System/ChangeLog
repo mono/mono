@@ -1,3 +1,8 @@
+2004-01-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DateTimeTest.cs: Added a new unit test (X509Certificate) to better
+	detect regressions in DateTime. See bugzilla entry #53461.
+
 2004-01-27  Nick Drochak <ndrochak@gol.com>
 
 	* AppDomainSetupTest.cs: When I run this on .NET the AppBase uses the

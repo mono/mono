@@ -644,6 +644,15 @@ public class DateTimeTest : Assertion
 	{
 		AssertEquals ("#01", "9999", DateTime.MaxValue.Year.ToString ());
 	}
+
+	[Test]
+	public void X509Certificate () 
+	{
+		// if this test fails then *ALL* or *MOST* X509Certificate tests will also fails
+		AssertEquals ("yyyyMMddHHmmssZ", "03/12/1996 13:38:47", DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null).ToString ());
+		// technically this is invalid (PKIX) because of the missing seconds but it exists so...
+		AssertEquals ("yyMMddHHmmZ", "02/23/1996 14:15:00", DateTime.ParseExact ("9602231915Z", "yyMMddHHmmZ", null).ToString ());
+	}
 }
 
 }
