@@ -9,10 +9,11 @@
 //
 
 using System;
-using System.Xml.XPath;
+using System.Collections;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Xml.XPath;
 
 using BF = System.Reflection.BindingFlags;
 
@@ -199,7 +200,7 @@ namespace System.Xml.Xsl
 			}
 		}
 
-		IntPtr ApplyStylesheet (IntPtr doc, string[] argArr, System.Collections.Hashtable extobjects)
+		IntPtr ApplyStylesheet (IntPtr doc, string[] argArr, Hashtable extobjects)
 		{
 			if (stylesheet == IntPtr.Zero)
 				throw new XmlException ("No style sheet!");
@@ -234,7 +235,7 @@ namespace System.Xml.Xsl
 							methods = type.GetMethods();
 						}
 
-						System.Collections.Hashtable alreadyadded = new	System.Collections.Hashtable();
+						Hashtable alreadyadded = new Hashtable ();
 						foreach (System.Reflection.MethodInfo mi in methods) {
 							if (alreadyadded.ContainsKey(mi.Name)) continue; // don't add twice
 							alreadyadded[mi.Name] = 1;
@@ -292,7 +293,7 @@ namespace System.Xml.Xsl
 			return result.ReadToEnd ();
 		}
 
-		string ApplyStylesheetAndGetString (IntPtr doc, string[] argArr, System.Collections.Hashtable extobjects)
+		string ApplyStylesheetAndGetString (IntPtr doc, string[] argArr, Hashtable extobjects)
 		{
 			IntPtr xmlOutput = ApplyStylesheet (doc, argArr, extobjects);
 			string strOutput = GetStringFromDocument (xmlOutput);
@@ -319,7 +320,9 @@ namespace System.Xml.Xsl
 		{
 			IntPtr xmlInput = GetDocumentFromNavigator (input);
 			string[] argArr = null;
+			Hashtable extensionObjects = null;
 			if (args != null) {
+				extensionObjects = args.extensionObjects;
 				argArr = new string[args.parameters.Count * 2 + 1];
 				int index = 0;
 				foreach (object key in args.parameters.Keys) {
@@ -334,7 +337,7 @@ namespace System.Xml.Xsl
 				}
 				argArr[index] = null;
 			}
-			string xslOutputString = ApplyStylesheetAndGetString (xmlInput, argArr, args.extensionObjects);
+			string xslOutputString = ApplyStylesheetAndGetString (xmlInput, argArr, extensionObjects);
 			xmlFreeDoc (xmlInput);
 			Cleanup ();
 
@@ -391,7 +394,9 @@ namespace System.Xml.Xsl
 
 			IntPtr inputDoc = GetDocumentFromNavigator (input);
 			string[] argArr = null;
+			Hashtable extensionObjects = null;
                         if (args != null) {
+				extensionObjects = args.extensionObjects;
 				argArr = new string[args.parameters.Count * 2 + 1];
 				int index = 0;
 				foreach (object key in args.parameters.Keys) {
@@ -406,7 +411,7 @@ namespace System.Xml.Xsl
 				}
 				argArr[index] = null;
 			}
-			string transform = ApplyStylesheetAndGetString (inputDoc, argArr, args.extensionObjects);
+			string transform = ApplyStylesheetAndGetString (inputDoc, argArr, extensionObjects);
 			xmlFreeDoc (inputDoc);
 			Cleanup ();
 			output.Write (transform);
