@@ -183,10 +183,6 @@ namespace System.Reflection.Emit {
 			return DefineNestedType (name, attr, parent, null);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packsize, int typesize) {
-			return DefineNestedType (name, attr, parent, null);
-		}
-
 		public ConstructorBuilder DefineConstructor( MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
 			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes);
 			if (ctors != null) {
