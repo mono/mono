@@ -218,5 +218,49 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			object o = transform.GetOutput (doc.GetType ());
 		}
+
+		[Test]
+		public void TransformSimple ()
+		{
+			XmlDsigXPathTransform t = new XmlDsigXPathTransform ();
+			XmlDocument xpdoc = new XmlDocument ();
+			string ns = "http://www.w3.org/2000/09/xmldsig#";
+			string xpath = "<XPath xmlns='" + ns + "' xmlns:x='urn:foo'>*|@*|namespace::*</XPath>"; // not absolute path.. so @* and namespace::* does not make sense.
+			xpdoc.LoadXml (xpath);
+			t.LoadInnerXml (xpdoc.ChildNodes);
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
+			t.LoadInput (doc);
+			XmlNodeList nl = (XmlNodeList) t.GetOutput ();
+			AssertEquals (XmlNodeType.Document, nl [0].NodeType);
+			AssertEquals (XmlNodeType.Element, nl [1].NodeType);
+			AssertEquals ("element", nl [1].LocalName);
+			AssertEquals (XmlNodeType.Element, nl [2].NodeType);
+			AssertEquals ("foo", nl [2].LocalName);
+			AssertEquals (XmlNodeType.Element, nl [3].NodeType);
+			AssertEquals ("bar", nl [3].LocalName);
+			// MS.NET bug - ms.net returns ns node even when the
+			// current node is ns node (it is like returning
+			// attribute from attribute nodes).
+//			AssertEquals (XmlNodeType.Attribute, nl [4].NodeType);
+//			AssertEquals ("xmlns", nl [4].LocalName);
+		}
+
+		[Test]
+		[Ignore ("MS.NET looks incorrect, or something incorrect in this test code")]
+		public void FunctionHere ()
+		{
+			XmlDsigXPathTransform t = new XmlDsigXPathTransform ();
+			XmlDocument xpdoc = new XmlDocument ();
+			string ns = "http://www.w3.org/2000/09/xmldsig#";
+			string xpath = "<XPath xmlns='" + ns + "' xmlns:x='urn:foo'>here()</XPath>";
+			xpdoc.LoadXml (xpath);
+			t.LoadInnerXml (xpdoc.ChildNodes);
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
+			t.LoadInput (doc);
+			XmlNodeList nl = (XmlNodeList) t.GetOutput ();
+			AssertEquals (0, nl.Count);
+		}
 	}
 }

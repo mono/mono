@@ -1,3 +1,8 @@
+2004-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigXPathTransformTest.cs : added TransformSimple() and
+	  FunctionHere() [commented].
+
 2004-03-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigC14NWithCommentsTransformTest,cs : world.txt causes FileShare
