@@ -1,5 +1,6 @@
 2005-01-13  Raja R Harinath  <rharinath@novell.com>
 
+	* test-335.cs: New test, from #58126.
 	* Makefile (TEST_EXCLUDES_win32): Add test-74.  See #71200.
 	* harness.mk: Fix indentation.
 	* test-332.cs: Update with more issues.

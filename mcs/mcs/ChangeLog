@@ -1,5 +1,13 @@
 2005-01-13  Raja R Harinath  <rharinath@novell.com>
 
+	Fix test-335.cs (bug #58126).
+	* cs-parser.jay (argument): Split out non-expression parts of the
+	rule into 'non_simple_argument'.
+	(invocation_expression): Support parenthesized invocations with
+	multiple arguments, and with single non-simple arguments.
+
+2005-01-13  Raja R Harinath  <rharinath@novell.com>
+
 	* cs-tokenizer.cs (xtoken): Reset 'comments_seen' in a couple more
 	places.
 
