@@ -113,8 +113,7 @@ namespace Mono.CSharp {
 			//
 			
 			TypeBuilder current_type = ec.TypeContainer.TypeBuilder;
-			TypeBuilder type_host = (Scope == null ) // || Scope.ScopeTypeBuilder == null)
-				? current_type : Scope.ScopeTypeBuilder;
+			TypeBuilder type_host = Scope == null ? current_type : Scope.ScopeTypeBuilder;
 
 			if (current_type == null)
 				throw new Exception ("The current_type is null");
@@ -123,9 +122,8 @@ namespace Mono.CSharp {
 				throw new Exception ("Type host is null");
 			
 			if (current_type == type_host && ec.IsStatic){
-				if (ec.IsStatic){
+				if (ec.IsStatic)
 					method_modifiers |= Modifiers.STATIC;
-				}
 				current_type = null;
 			} 
 
@@ -135,6 +133,7 @@ namespace Mono.CSharp {
 				method_modifiers, false, new MemberName ("<#AnonymousMethod>" + anonymous_method_count++),
 				Parameters, null, loc);
 			method.Block = Block;
+
 			
 			//
 			// Swap the TypeBuilder while we define the method, then restore
@@ -166,10 +165,17 @@ namespace Mono.CSharp {
 
 			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (ec, delegate_type, loc);
 			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
-			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
+			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
+			//
+			// If implicit parameters are set, then we must check for out in the parameters
+			// and flag it accordingly.
+			//
+			bool out_invalid_check = false;
+			
 			if (Parameters == null){
 				int i, j;
+				out_invalid_check = true;
 				
 				//
 				// We provide a set of inaccessible parameters
@@ -219,16 +225,6 @@ namespace Mono.CSharp {
 			
 			for (int i = 0; i < amp.Count; i++){
 				Parameter.Modifier amp_mod = amp.ParameterModifier (i);
-
-				if ((amp_mod & (Parameter.Modifier.OUT | Parameter.Modifier.REF)) != 0){
-					if (!probe){
-						Error_ParameterMismatch (delegate_type);
-						Report.Error (1677, loc, "Parameter '{0}' should not be declared with the '{1}' keyword", 
-							i+1, amp.ModifierDesc (i));
-					}
-					return null;
-				}
-
 				if (amp_mod != invoke_pd.ParameterModifier (i)){
 					if (!probe){
 						Report.Error (1676, loc, 
@@ -244,6 +240,14 @@ namespace Mono.CSharp {
 								      "Signature mismatch in parameter {0}: need `{1}' got `{2}'", i + 1,
 								      TypeManager.CSharpName (invoke_pd.ParameterType (i)),
 								      TypeManager.CSharpName (amp.ParameterType (i)));
+						Error_ParameterMismatch (delegate_type);
+					}
+					return null;
+				}
+				
+				if (out_invalid_check && (invoke_pd.ParameterModifier (i) & Parameter.Modifier.OUT) != 0){
+					if (!probe){
+						Report.Error (1676, loc,"Parameter {0} must include the `out' modifier ", i+1);
 						Error_ParameterMismatch (delegate_type);
 					}
 					return null;
@@ -271,14 +275,13 @@ namespace Mono.CSharp {
 				ec.TypeContainer, ec.DeclSpace, loc, null,
 				invoke_mb.ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
-				(ec.InUnsafe ? Modifiers.UNSAFE : 0) |
-				(ec.IsStatic ? Modifiers.STATIC : 0),
+				(ec.InUnsafe ? Modifiers.UNSAFE : 0),
 				/* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
 			ContainerAnonymousMethod = ec.CurrentAnonymousMethod;
 			ContainingBlock = ec.CurrentBlock;
-
+		
 			if (aec.ResolveTopBlock (ec, Block, amp, loc, out unreachable))
 				return new AnonymousDelegate (this, delegate_type, loc).Resolve (ec);
 
@@ -305,7 +308,8 @@ namespace Mono.CSharp {
 			// Adjust based on the computed state of the
 			// method from CreateMethodHost
 			
-			aec.MethodIsStatic = (method_modifiers & Modifiers.STATIC) != 0;
+			if ((method_modifiers & Modifiers.STATIC) != 0)
+				aec.IsStatic = true;
 			
 			aec.EmitMeta (Block, amp);
 			aec.EmitResolvedTopBlock (Block, unreachable);
@@ -556,7 +560,7 @@ namespace Mono.CSharp {
 
 		public void CloseTypes ()
 		{
-			RootContext.RegisterCompilerGeneratedType (ScopeTypeBuilder);
+			RootContext.RegisterHelperClass (ScopeTypeBuilder);
 			foreach (ScopeInfo si in children)
 				si.CloseTypes ();
 		}
@@ -653,7 +657,7 @@ namespace Mono.CSharp {
 	public class CaptureContext {
 		public static int count;
 		public int cc_id;
-		public Location loc;
+		Location loc;
 		
 		//
 		// Points to the toplevel block that owns this CaptureContext
@@ -661,7 +665,6 @@ namespace Mono.CSharp {
 		ToplevelBlock toplevel_owner;
 		Hashtable scopes = new Hashtable ();
 		bool have_captured_vars = false;
-		bool referenced_this = false;
 		ScopeInfo topmost = null;
 
 		//
@@ -906,14 +909,7 @@ namespace Mono.CSharp {
 			else
 				captured_fields [fe] = fe;
 		}
-
-		public void CaptureThis ()
-		{
-			CaptureContext parent = ParentCaptureContext;
-			if (parent != null)
-				parent.CaptureThis ();
-			referenced_this = true;
-		}
+		
 
 		public bool HaveCapturedVariables {
 			get {
@@ -952,15 +948,15 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public void EmitAnonymousHelperClasses (EmitContext ec)
+		public void EmitHelperClasses (EmitContext ec)
 		{
 			if (topmost != null){
-				topmost.NeedThis = HaveCapturedFields || referenced_this;
+				topmost.NeedThis = HaveCapturedFields;
 				topmost.EmitScopeType (ec);
 			} 
 		}
 
-		public void CloseAnonymousHelperClasses ()
+		public void CloseHelperClasses ()
 		{
 			if (topmost != null)
 				topmost.CloseTypes ();

@@ -1634,7 +1634,7 @@ namespace Mono.CSharp
 				if (s [0] == '&'){
 					if (len > 2 && s [1] == '&'){
 						s = s.Substring (2);
-						return (va & pp_and (ref s));
+						return (va & pp_eq (ref s));
 					} else {
 						Error_InvalidDirective ();
 						return false;
@@ -2301,7 +2301,7 @@ namespace Mono.CSharp
 				} else if (is_identifier_start_character ((char) c)){
 					return consume_identifier (c, true);
 				} else {
-					Report.Error (1646, Location, "Keyword, identifier, or string expected after verbatim specifier: @");
+					Report.Error (1033, Location, "'@' must be followed by string constant or identifier");
 				}
 			}
 

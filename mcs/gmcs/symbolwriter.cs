@@ -66,18 +66,6 @@ namespace Mono.CSharp {
 			DefineLocalVariable (name, signature);
 		}
 
-		public int OpenScope (ILGenerator ig)
-		{
-			int offset = get_il_offset_func (ig);
-			return OpenScope (offset);
-		}
-
-		public void CloseScope (ILGenerator ig)
-		{
-			int offset = get_il_offset_func (ig);
-			CloseScope (offset);
-		}
-
 		public void MarkSequencePoint (ILGenerator ig, int row, int column)
 		{
 			int offset = get_il_offset_func (ig);

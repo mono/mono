@@ -299,7 +299,7 @@ namespace Mono.CSharp {
 
 		public virtual Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return null;
+			return DoResolve (ec);
 		}
 
 		//
@@ -451,16 +451,16 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public Expression ResolveLValue (EmitContext ec, Expression right_side)
 		{
-			int errors = Report.Errors;
 			Expression e = DoResolveLValue (ec, right_side);
 
-			if (e == null) {
-				if (errors == Report.Errors)
-					Report.Error (131, Location, "The left-hand side of an assignment or mutating operation must be a variable, property or indexer");
-				return null;
-			}
-
 			if (e != null){
+				if (e is SimpleName){
+					SimpleName s = (SimpleName) e;
+					MemberLookupFailed (ec, null, ec.ContainerType, s.Name,
+							    ec.DeclSpace.Name, loc);
+					return null;
+				}
+
 				if (e.eclass == ExprClass.Invalid)
 					throw new Exception ("Expression " + e +
 							     " ExprClass is Invalid after resolve");
@@ -709,15 +709,15 @@ namespace Mono.CSharp {
 
 			if (e == null && errors == Report.Errors)
 				// No errors were reported by MemberLookup, but there was an error.
-				MemberLookupFailed (ec, qualifier_type, queried_type, name, null, true, loc);
+				MemberLookupFailed (ec, qualifier_type, queried_type, name,
+						    null, loc);
 
 			return e;
 		}
 
 		public static void MemberLookupFailed (EmitContext ec, Type qualifier_type,
 						       Type queried_type, string name,
-						       string class_name, bool complain_if_none_found, 
-						       Location loc)
+						       string class_name, Location loc)
 		{
 			if (almostMatchedMembers.Count != 0) {
 				if (qualifier_type == null) {
@@ -765,9 +765,6 @@ namespace Mono.CSharp {
 								    BindingFlags.NonPublic, name, null);
 
 			if (mi == null) {
-				if (!complain_if_none_found)
-					return;
-
 				if (class_name != null)
 					Report.Error (103, loc, "The name `" + name + "' could not be " +
 						      "found in `" + class_name + "'");
@@ -947,7 +944,7 @@ namespace Mono.CSharp {
 				sb.Append (valid [i]);
 			}
 
-			Report.Error (119, loc, "Expression denotes a `" + ExprClassName () + "' where " +
+			Error (119, "Expression denotes a `" + ExprClassName () + "' where " +
 			       "a `" + sb.ToString () + "' was expected");
 		}
 		
@@ -1447,7 +1444,6 @@ namespace Mono.CSharp {
 		public EmptyCast (Expression child, Type return_type)
 		{
 			eclass = child.eclass;
-			loc = child.Location;
 			type = return_type;
 			this.child = child;
 		}
@@ -1501,12 +1497,6 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
-		}
-
-		public override bool IsDefaultValue {
-			get {
-				throw new NotImplementedException ();
-			}
 		}
 
 		public override bool IsNegative {
@@ -1645,13 +1635,7 @@ namespace Mono.CSharp {
 		{
 			return Child.ConvertToInt ();
 		}
-
-		public override bool IsDefaultValue {
-			get {
-				return Child.IsDefaultValue;
-			}
-		}
-
+		
 		public override bool IsZeroInteger {
 			get { return Child.IsZeroInteger; }
 		}
@@ -2099,7 +2083,7 @@ namespace Mono.CSharp {
 			int errors = Report.Errors;
 			dt = ec.ResolvingTypeTree 
 				? ds.FindType (loc, Name)
-				: ds.LookupType (Name, loc, /*silent=*/ true, /*ignore_cs0104=*/ false);
+				: ds.LookupType (Name, true, loc);
 			if (Report.Errors != errors)
 				return null;
 
@@ -2216,7 +2200,7 @@ namespace Mono.CSharp {
 					almostMatchedMembers = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				MemberLookupFailed (ec, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, true, loc);
+				MemberLookupFailed (ec, null, almost_matched_type, ((SimpleName) this).Name, ec.DeclSpace.Name, loc);
 				return null;
 			}
 
@@ -2294,11 +2278,6 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
-		{
-			return this;
-		}
-
 		public abstract string FullName {
 			get;
 		}
@@ -2450,8 +2429,7 @@ namespace Mono.CSharp {
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null) {
-				FullNamedExpression t = ec.DeclSpace.LookupType (
-					name, Location.Null, /*silent=*/ false, /*ignore_cs0104=*/ false);
+				FullNamedExpression t = ec.DeclSpace.LookupType (name, false, Location.Null);
 				if (t == null)
 					return null;
 				if (!(t is TypeExpr))
@@ -3050,15 +3028,7 @@ namespace Mono.CSharp {
 				if (is_volatile)
 					ig.Emit (OpCodes.Volatile);
 
-				IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
-				if (ff != null)
-				{
-					ig.Emit (OpCodes.Ldflda, FieldInfo);
-					ig.Emit (OpCodes.Ldflda, ff.Element);
-				}
-				else {
-					ig.Emit (OpCodes.Ldfld, FieldInfo);
-				}
+				ig.Emit (OpCodes.Ldfld, FieldInfo);
 			}
 
 			if (leave_copy) {
@@ -3422,11 +3392,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (PropertyInfo.PropertyType.IsPointer && !ec.InUnsafe){
-				UnsafeError (loc);
-				return null;
-			}
-
 			return this;
 		}
 
@@ -3677,11 +3642,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}
-
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
-		{
-			return DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

@@ -90,11 +90,6 @@ namespace Mono.CSharp {
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel) |
 				TypeAttributes.Class | TypeAttributes.Sealed;
 
-			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
-				TypeExpr expr = new TypeLookupExpression ("System.MulticastDelegate");
-				TypeManager.multicast_delegate_type = expr.ResolveType (ec);
-			}
-
 			if (TypeManager.multicast_delegate_type == null)
 				Report.Error (-100, Location, "Internal error: delegate used before " +
 					      "System.MulticastDelegate is resolved.  This can only " +
@@ -159,14 +154,12 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes mattr;
 			int i;
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.DefineType (ec);
 			}
-
-			if (ec == null)
-				throw new InternalErrorException ("Define called before DefineType?");
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
@@ -251,11 +244,6 @@ namespace Mono.CSharp {
 
 			if (ret_type.IsPointer && !UnsafeOK (Parent))
 				return false;
-
-			if (RootContext.StdLib && (ret_type == TypeManager.arg_iterator_type || ret_type == TypeManager.typed_reference_type)) {
-				Method.Error1599 (Location, ret_type);
-				return false;
-			}
 
 			//
 			// We don't have to check any others because they are all
@@ -476,17 +464,19 @@ namespace Mono.CSharp {
 				return null;
 
 			MethodBase invoke_mb = mg.Methods [0];
-			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
+			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
 			if (!mg.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (ec, invoke_pd, ref mb))
 				return null;
 
-			ParameterData pd = TypeManager.GetParameterData (mb);
-			if (invoke_pd.Count != pd.Count)
+			ParameterData pd = Invocation.GetParameterData (mb);
+			int pd_count = pd.Count;
+
+			if (invoke_pd.Count != pd_count)
 				return null;
 
-			for (int i = pd.Count; i > 0; ) {
+			for (int i = pd_count; i > 0; ) {
 				i--;
 
 				Type invoke_pd_type = invoke_pd.ParameterType (i);
@@ -542,38 +532,51 @@ namespace Mono.CSharp {
 			Expression ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
 
-			MethodGroupExpr me = ml as MethodGroupExpr;
-			if (me == null) {
+			if (!(ml is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error: could not find Invoke method!" + delegate_type);
 				return false;
 			}
 			
-			MethodBase mb = me.Methods [0];
-			ParameterData pd = TypeManager.GetParameterData (mb);
+			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
+			ParameterData pd = Invocation.GetParameterData (mb);
 
 			int pd_count = pd.Count;
 
 			bool params_method = (pd_count != 0) &&
 				(pd.ParameterModifier (pd_count - 1) == Parameter.Modifier.PARAMS);
 
-			bool is_params_applicable = false;
-			bool is_applicable = Invocation.IsApplicable (ec, me, args, arg_count, ref mb);
-
-			if (!is_applicable && params_method &&
-			    Invocation.IsParamsMethodApplicable (ec, me, args, arg_count, ref mb))
-				is_applicable = is_params_applicable = true;
-
-			if (!is_applicable && !params_method && arg_count != pd_count) {
+			if (!params_method && pd_count != arg_count) {
 				Report.Error (1593, loc,
 					      "Delegate '{0}' does not take {1} arguments",
 					      delegate_type.ToString (), arg_count);
 				return false;
 			}
 
-			return Invocation.VerifyArgumentsCompat (
-					ec, args, arg_count, mb, 
-					is_params_applicable || (!is_applicable && params_method),
+			//
+			// Consider the case:
+			//   delegate void FOO(param object[] args);
+			//   FOO f = new FOO(...);
+			//   f(new object[] {1, 2, 3});
+			//
+			// This should be treated like f(1,2,3).  This is done by ignoring the 
+			// 'param' modifier for that invocation.  If that fails, then the
+			// 'param' modifier is considered.
+			//
+			// One issue is that 'VerifyArgumentsCompat' modifies the elements of
+			// the 'args' array.  However, the modifications appear idempotent.
+			// Normal 'Invocation's also have the same behaviour, implicitly.
+			//
+
+			bool ans = false;
+			if (arg_count == pd_count)
+				ans = Invocation.VerifyArgumentsCompat (
+					ec, args, arg_count, mb, false,
 					delegate_type, false, loc);
+			if (!ans && params_method)
+				ans = Invocation.VerifyArgumentsCompat (
+					ec, args, arg_count, mb, true,
+					delegate_type, false, loc);
+			return ans;
 		}
 		
 		/// <summary>
@@ -591,7 +594,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
-			ParameterData pd = TypeManager.GetParameterData (mb);
+			ParameterData pd = Invocation.GetParameterData (mb);
 
 			Expression probe_ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
@@ -602,7 +605,7 @@ namespace Mono.CSharp {
 			}
 			
 			MethodBase probe_mb = ((MethodGroupExpr) probe_ml).Methods [0];
-			ParameterData probe_pd = TypeManager.GetParameterData (probe_mb);
+			ParameterData probe_pd = Invocation.GetParameterData (probe_mb);
 			
 			if (((MethodInfo) mb).ReturnType != ((MethodInfo) probe_mb).ReturnType)
 				return false;
@@ -754,7 +757,7 @@ namespace Mono.CSharp {
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
 			MethodBase method = ((MethodGroupExpr) invoke_method).Methods [0];
-			ParameterData param = TypeManager.GetParameterData (method);
+			ParameterData param = Invocation.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
 			if (!mg.HasTypeArguments &&
@@ -800,32 +803,33 @@ namespace Mono.CSharp {
 
 		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
 		{
-			foreach (MethodInfo mi in mg.Methods){
-				delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
-				
-				if (delegate_method != null)
-					break;
-			}
-			
-			if (delegate_method == null) {
-				Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
-				return null;
-			}
-			
-			//
-			// Check safe/unsafe of the delegate
-			//
-			if (!ec.InUnsafe){
-				ParameterData param = TypeManager.GetParameterData (delegate_method);
-				int count = param.Count;
-				
-				for (int i = 0; i < count; i++){
-					if (param.ParameterType (i).IsPointer){
-						Expression.UnsafeError (loc);
-						return null;
+				foreach (MethodInfo mi in mg.Methods){
+					delegate_method = Delegate.VerifyMethod (
+						ec, type, mi, loc);
+
+					if (delegate_method != null)
+						break;
+				}
+					
+				if (delegate_method == null) {
+					Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
+					return null;
+				}
+
+				//
+				// Check safe/unsafe of the delegate
+				//
+				if (!ec.InUnsafe){
+					ParameterData param = Invocation.GetParameterData (delegate_method);
+					int count = param.Count;
+					
+					for (int i = 0; i < count; i++){
+						if (param.ParameterType (i).IsPointer){
+							Expression.UnsafeError (loc);
+							return null;
+						}
 					}
 				}
-			}
 						
 			//TODO: implement caching when performance will be low
 			IMethodData md = TypeManager.GetMethod (delegate_method);
@@ -1011,7 +1015,7 @@ namespace Mono.CSharp {
 						return null;
 				}
 			}
-
+			
 			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
 				return null;
 

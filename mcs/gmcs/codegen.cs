@@ -292,16 +292,6 @@ namespace Mono.CSharp {
 		public bool IsStatic;
 
 		/// <summary>
-		///   Whether the actual created method is static or instance method.
-		///   Althoug the method might be declared as `static', if an anonymous
-		///   method is involved, we might turn this into an instance method.
-		///
-		///   So this reflects the low-level staticness of the method, while
-		///   IsStatic represents the semantic, high-level staticness.
-		/// </summary>
-		public bool MethodIsStatic;
-
-		/// <summary>
 		///   Whether we are emitting a field initializer
 		/// </summary>
 		public bool IsFieldInitializer;
@@ -433,6 +423,7 @@ namespace Mono.CSharp {
 		}
 		
 		Phase current_phase;
+		
 		FlowBranching current_flow_branching;
 		
 		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
@@ -449,7 +440,6 @@ namespace Mono.CSharp {
 				throw new Exception ("FUCK");
 			
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
-			MethodIsStatic = IsStatic;
 			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
 			RemapToProxy = InIterator;
 			ReturnType = return_type;
@@ -570,14 +560,9 @@ namespace Mono.CSharp {
 
 		public void CaptureParameter (string name, Type t, int idx)
 		{
+			
 			capture_context.AddParameter (this, CurrentAnonymousMethod, name, t, idx);
 		}
-
-		public void CaptureThis ()
-		{
-			capture_context.CaptureThis ();
-		}
-		
 		
 		//
 		// Use to register a field as captured
@@ -639,7 +624,7 @@ namespace Mono.CSharp {
 		public void EmitMeta (ToplevelBlock b, InternalParameters ip)
 		{
 			if (capture_context != null)
-				capture_context.EmitAnonymousHelperClasses (this);
+				capture_context.EmitHelperClasses (this);
 			b.EmitMeta (this);
 
 			if (HasReturnLabel)
@@ -783,7 +768,7 @@ namespace Mono.CSharp {
 			// Close pending helper classes if we are the toplevel
 			//
 			if (capture_context != null && capture_context.ParentToplevel == null)
-				capture_context.CloseAnonymousHelperClasses ();
+				capture_context.CloseHelperClasses ();
 		}
 
 		/// <summary>
@@ -807,22 +792,6 @@ namespace Mono.CSharp {
 				return;
 
 			CodeGen.SymbolWriter.DefineLocalVariable (name, builder);
-		}
-
-		public void BeginScope ()
-		{
-			ig.BeginScope();
-
-			if (CodeGen.SymbolWriter != null)
-				CodeGen.SymbolWriter.OpenScope(ig);
-		}
-
-		public void EndScope ()
-		{
-			ig.EndScope();
-
-			if (CodeGen.SymbolWriter != null)
-				CodeGen.SymbolWriter.CloseScope(ig);
 		}
 
 		/// <summary>

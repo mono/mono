@@ -72,9 +72,6 @@ namespace Mono.CSharp {
 		public AttributeTargets Target;
 
 		public readonly string    Name;
-		public readonly Expression LeftExpr;
-		public readonly string Identifier;
-
 		public readonly ArrayList Arguments;
 
 		public readonly Location Location;
@@ -83,9 +80,15 @@ namespace Mono.CSharp {
 		
 		bool resolve_error;
 
-		public AttributeUsageAttribute UsageAttribute;
-		public static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
+		// Is non-null if type is AttributeUsageAttribute
+		AttributeUsageAttribute usage_attribute;
 
+		public AttributeUsageAttribute UsageAttribute {
+			get {
+				return usage_attribute;
+			}
+		}
+		
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
@@ -99,11 +102,9 @@ namespace Mono.CSharp {
 
 		static PtrHashtable usage_attr_cache = new PtrHashtable ();
 		
-		public Attribute (string target, Expression left_expr, string identifier, ArrayList args, Location loc)
+		public Attribute (string target, string name, ArrayList args, Location loc)
 		{
-			LeftExpr = left_expr;
-			Identifier = identifier;
-			Name = LeftExpr == null ? identifier : LeftExpr + "." + identifier;
+			Name = name;
 			Arguments = args;
 			Location = loc;
 			ExplicitTarget = target;
@@ -113,7 +114,7 @@ namespace Mono.CSharp {
 		{
 			Report.Error (617, Location, "Invalid attribute argument: '{0}'.  Argument must be fields " +
 				      "fields which are not readonly, static or const;  or read-write instance properties.",
-				      name);
+				      Name);
 		}
 
 		static void Error_AttributeArgumentNotValid (string extra, Location loc)
@@ -154,49 +155,26 @@ namespace Mono.CSharp {
                                       "Could not find a constructor for this argument list.");
 		}
 
-		void ResolvePossibleAttributeTypes (EmitContext ec, out Type t1, out Type t2)
-		{
-			t1 = null;
-			t2 = null;
-
-			FullNamedExpression n1 = null;
-			FullNamedExpression n2 = null;
-			string IdentifierAttribute = Identifier + "Attribute";
-			if (LeftExpr == null) {
-				n1 = new SimpleName (Identifier, Location).ResolveAsTypeStep (ec);
-
-				// FIXME: Shouldn't do this for quoted attributes: [@A]
-				n2 = new SimpleName (IdentifierAttribute, Location).ResolveAsTypeStep (ec);
-			} else {
-				FullNamedExpression l = LeftExpr.ResolveAsTypeStep (ec);
-				if (l == null) {
-					Report.Error (246, Location, "Couldn't find namespace or type '{0}'", LeftExpr);
-					return;
-				}
-				n1 = new MemberAccess (l, Identifier, Location).ResolveNamespaceOrType (ec, true);
-
-				// FIXME: Shouldn't do this for quoted attributes: [X.@A]
-				n2 = new MemberAccess (l, IdentifierAttribute, Location).ResolveNamespaceOrType (ec, true);
-			}
-
-			TypeExpr te1 = n1 == null ? null : n1 as TypeExpr;
-			TypeExpr te2 = n2 == null ? null : n2 as TypeExpr;			
-
-			if (te1 != null)
-				t1 = te1.ResolveType (ec);
-			if (te2 != null)
-				t2 = te2.ResolveType (ec);
-		}
-
 		/// <summary>
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
                 /// </summary>
-		Type CheckAttributeType (EmitContext ec)
+		protected virtual Type CheckAttributeType (EmitContext ec)
 		{
-			Type t1, t2;
-			ResolvePossibleAttributeTypes (ec, out t1, out t2);
-
 			string NameAttribute = Name + "Attribute";
+			FullNamedExpression n1 = ec.ResolvingTypeTree
+				? ec.DeclSpace.FindType (Location, Name)
+				: ec.DeclSpace.LookupType (Name, true, Location);
+
+			// FIXME: Shouldn't do this for quoted attributes: [@A]
+			FullNamedExpression n2 = ec.ResolvingTypeTree
+				? ec.DeclSpace.FindType (Location, NameAttribute)
+				: ec.DeclSpace.LookupType (NameAttribute, true, Location);
+
+			TypeExpr e1 = n1 == null ? null : n1 as TypeExpr;
+			TypeExpr e2 = n2 == null ? null : n2 as TypeExpr;			
+
+			Type t1 = e1 == null ? null : e1.ResolveType (ec);
+			Type t2 = e2 == null ? null : e2.ResolveType (ec);
 
 			String err0616 = null;
 			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
@@ -232,9 +210,9 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public virtual Type ResolveType (EmitContext ec)
+		public Type ResolveType (EmitContext ec)
 		{
-			if (Type == null && !resolve_error)
+			if (Type == null)
 				Type = CheckAttributeType (ec);
 			return Type;
 		}
@@ -302,9 +280,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		// Cache for parameter-less attributes
-		static PtrHashtable att_cache = new PtrHashtable ();
-
 		public virtual CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			if (resolve_error)
@@ -312,23 +287,23 @@ namespace Mono.CSharp {
 
 			resolve_error = true;
 
-			if (Type == null)
-				Type = CheckAttributeType (ec);
+			Type oldType = Type;
+			
+			// Sanity check.
+			Type = CheckAttributeType (ec);
 
-			if (Type == null)
+			if (oldType == null && Type == null)
 				return null;
+			if (oldType != null && oldType != Type){
+				Report.Error (-27, Location,
+					      "Attribute {0} resolved to different types at different times: {1} vs. {2}",
+					      Name, oldType, Type);
+				return null;
+			}
 
 			if (Type.IsAbstract) {
 				Report.Error (653, Location, "Cannot apply attribute class '{0}' because it is abstract", Name);
 				return null;
-			}
-
-			if (Arguments == null) {
-				object o = att_cache [Type];
-				if (o != null) {
-					resolve_error = false;
-					return (CustomAttributeBuilder)o;
-				}
 			}
 
 			bool MethodImplAttr = false;
@@ -396,7 +371,7 @@ namespace Mono.CSharp {
 							Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
 							return null;
 						}
-						UsageAttribute = new AttributeUsageAttribute ((AttributeTargets)val);
+						usage_attribute = new AttributeUsageAttribute ((AttributeTargets)val);
 					} else if (MethodImplAttr) {
 						this.ImplOptions = (MethodImplOptions) val;
 					} else if (GuidAttr){
@@ -493,13 +468,13 @@ namespace Mono.CSharp {
 
 					object value;
 					if (!GetAttributeArgumentExpression (e, Location, pi.PropertyType, out value))
-						return null;
-
-					if (UsageAttribute != null) {
-						if (member_name == "AllowMultiple")
-							UsageAttribute.AllowMultiple = (bool) value;
+								return null;
+						
+						if (usage_attribute != null) {
+							if (member_name == "AllowMultiple")
+							usage_attribute.AllowMultiple = (bool) value;
 							if (member_name == "Inherited")
-							UsageAttribute.Inherited = (bool) value;
+							usage_attribute.Inherited = (bool) value;
 					}
 					
 					prop_values.Add (value);
@@ -547,7 +522,7 @@ namespace Mono.CSharp {
 			// of type object
 			//
 
-			ParameterData pd = TypeManager.GetParameterData (constructor);
+			ParameterData pd = Invocation.GetParameterData (constructor);
 
 			int last_real_param = pd.Count;
 			if (pd.HasParams) {
@@ -567,16 +542,6 @@ namespace Mono.CSharp {
 				if (a.Expr is NullLiteral && pd.ParameterType (j) == TypeManager.object_type) {
 					Error_AttributeArgumentNotValid (Location);
 					return null;
-				}
-
-				object value = pos_values [j];
-				if (value != null && a.Type != value.GetType () && a.Type.IsPrimitive) {
-					bool fail;
-					pos_values [j] = TypeManager.ChangeType (value, a.Type, out fail);
-					if (fail) {
-						// TODO: Can failed ?
-						throw new NotImplementedException ();
-					}
 				}
 
 				if (j < last_real_param)
@@ -618,13 +583,9 @@ namespace Mono.CSharp {
 						prop_info_arr, prop_values_arr,
 						field_info_arr, field_values_arr);
 				}
-				else {
+				else
 					cb = new CustomAttributeBuilder (
 						(ConstructorInfo) constructor, pos_values);
-
-					if (pos_values.Length == 0)
-						att_cache.Add (Type, cb);
-				}
 			} catch (Exception e) {
 				//
 				// Sample:
@@ -636,10 +597,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			if (!usage_attr) {
-				UsageAttribute = DefaultUsageAttribute;
-			}
-
 			resolve_error = false;
 			return cb;
 		}
@@ -650,7 +607,7 @@ namespace Mono.CSharp {
 		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = UsageAttribute.ValidOn;
+			AttributeTargets targets = GetAttributeUsage ().ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
@@ -701,7 +658,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns AttributeUsage attribute for this type
 		/// </summary>
-		public AttributeUsageAttribute GetAttributeUsage (EmitContext ec)
+		public AttributeUsageAttribute GetAttributeUsage ()
 		{
 			AttributeUsageAttribute ua = usage_attr_cache [Type] as AttributeUsageAttribute;
 			if (ua != null)
@@ -715,10 +672,8 @@ namespace Mono.CSharp {
 				usage_attr_cache.Add (Type, ua);
 				return ua;
 			}
-
-			ua = attr_class.ResolveAttributeUsage (ec);
-			usage_attr_cache.Add (Type, ua);
-			return ua;
+		
+			return attr_class.AttributeUsage;
 		}
 
 		/// <summary>
@@ -762,10 +717,10 @@ namespace Mono.CSharp {
 				Resolve (ec);
 
 			// Some error occurred
-			if (resolve_error)
+			if (pos_values == null)
 				return null;
 
-			if (pos_values == null || pos_values.Length == 0)
+			if (pos_values.Length == 0)
 				return new ObsoleteAttribute ();
 
 			if (pos_values.Length == 1)
@@ -994,7 +949,7 @@ namespace Mono.CSharp {
 			if (cb == null)
 				return;
 
-			AttributeUsageAttribute usage_attr = GetAttributeUsage (ec);
+			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & Target) == 0) {
 				Report.Error (592, Location, "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.", Name, GetValidTargets ());
 				return;
@@ -1236,46 +1191,52 @@ namespace Mono.CSharp {
 	{
 		public readonly NamespaceEntry ns;
 
-		public GlobalAttribute (TypeContainer container, string target, 
-					Expression left_expr, string identifier, ArrayList args, Location loc):
-			base (target, left_expr, identifier, args, loc)
+		public GlobalAttribute (TypeContainer container, string target, string name, ArrayList args, Location loc):
+			base (target, name, args, loc)
 		{
 			ns = container.NamespaceEntry;
 		}
 
-		void Enter ()
+		protected override Type CheckAttributeType (EmitContext ec)
 		{
 			// RootContext.Tree.Types has a single NamespaceEntry which gets overwritten
 			// each time a new file is parsed.  However, we need to use the NamespaceEntry
 			// in effect where the attribute was used.  Since code elsewhere cannot assume
 			// that the NamespaceEntry is right, just overwrite it.
 			//
-			// Precondition: RootContext.Tree.Types == null
+			// Precondition: RootContext.Tree.Types == null || RootContext.Tree.Types == ns.
+			//               The second case happens when we are recursively invoked from inside Emit.
 
-			if (RootContext.Tree.Types.NamespaceEntry != null)
-				throw new InternalErrorException (Location + " non-null NamespaceEntry");
+			NamespaceEntry old = null;
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null && old != ns)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
 
-			RootContext.Tree.Types.NamespaceEntry = ns;
-		}
+			Type retval = base.CheckAttributeType (ec);
 
-		void Leave ()
-		{
-			RootContext.Tree.Types.NamespaceEntry = null;
-		}
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = old;
 
-		public override Type ResolveType (EmitContext ec)
-		{
-			Enter ();
-			Type retval = base.ResolveType (ec);
-			Leave ();
 			return retval;
 		}
 
 		public override CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			Enter ();
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
+
 			CustomAttributeBuilder retval = base.Resolve (ec);
-			Leave ();
+
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = null;
+
 			return retval;
 		}
 	}
@@ -1388,10 +1349,6 @@ namespace Mono.CSharp {
 		static PtrHashtable analyzed_types_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_method_excluded = new PtrHashtable ();
-		static PtrHashtable fixed_buffer_cache = new PtrHashtable ();
-
-		static object TRUE = new object ();
-		static object FALSE = new object ();
 
 		private AttributeTester ()
 		{
@@ -1484,35 +1441,10 @@ namespace Mono.CSharp {
 			}
 			analyzed_types.Add (type, result ? TRUE : FALSE);
 			return result;
-		}        
-        
-		/// <summary>
-		/// Returns IFixedBuffer implementation if field is fixed buffer else null.
-		/// </summary>
-		public static IFixedBuffer GetFixedBuffer (FieldInfo fi)
-		{
-			FieldBase fb = TypeManager.GetField (fi);
-			if (fb != null) {
-				return fb as IFixedBuffer;
-			}
+		}                
 
-			object o = fixed_buffer_cache [fi];
-			if (o == null) {
-				if (System.Attribute.GetCustomAttribute (fi, TypeManager.fixed_buffer_attr_type) == null) {
-					fixed_buffer_cache.Add (fi, FALSE);
-					return null;
-				}
-				
-				IFixedBuffer iff = new FixedFieldExternal (fi);
-				fixed_buffer_cache.Add (fi, iff);
-				return iff;
-			}
-
-			if (o == FALSE)
-				return null;
-
-			return (IFixedBuffer)o;
-		}
+		static object TRUE = new object ();
+		static object FALSE = new object ();
 
 		public static void VerifyModulesClsCompliance ()
 		{

@@ -530,8 +530,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (expr != null)
-				expr = expr.ResolveStatement (ec);
+			expr = expr.ResolveStatement (ec);
 			return expr != null;
 		}
 		
@@ -647,7 +646,6 @@ namespace Mono.CSharp {
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			label.AddReference ();
 
 			return true;
 		}
@@ -720,6 +718,8 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentBranching.Label (vectors);
 
+			referenced = true;
+
 			return true;
 		}
 
@@ -731,11 +731,6 @@ namespace Mono.CSharp {
 			}
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
-		}
-
-		public void AddReference ()
-		{
-			referenced = true;
 		}
 	}
 	
@@ -2072,7 +2067,7 @@ namespace Mono.CSharp {
 
 			if (emit_debug_info) {
 				if (is_lexical_block)
-					ec.BeginScope ();
+					ec.ig.BeginScope ();
 
 				if (variables != null) {
 					foreach (DictionaryEntry de in variables) {
@@ -2092,7 +2087,7 @@ namespace Mono.CSharp {
 			ec.Mark (EndLocation, true); 
 
 			if (emit_debug_info && is_lexical_block)
-				ec.EndScope ();
+				ec.ig.EndScope ();
 
 			ec.CurrentBlock = prev_block;
 		}
@@ -3313,81 +3308,15 @@ namespace Mono.CSharp {
 		ArrayList declarators;
 		Statement statement;
 		Type expr_type;
-		Emitter[] data;
+		FixedData[] data;
 		bool has_ret;
 
-		abstract class Emitter
-		{
-			protected LocalInfo vi;
-			protected Expression converted;
-
-			protected Emitter (Expression expr, LocalInfo li)
-			{
-				converted = expr;
-				vi = li;
-			}
-
-			public abstract void Emit (EmitContext ec);
-			public abstract void EmitExit (ILGenerator ig);
-		}
-
-		class ExpressionEmitter: Emitter {
-			public ExpressionEmitter (Expression converted, LocalInfo li) :
-				base (converted, li)
-			{
-			}
-
-			public override void Emit (EmitContext ec) {
-				//
-				// Store pointer in pinned location
-				//
-				converted.Emit (ec);
-				ec.ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-			}
-
-			public override void EmitExit (ILGenerator ig)
-			{
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Conv_U);
-				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-			}
-		}
-
-		class StringEmitter: Emitter {
-			LocalBuilder pinned_string;
-			Location loc;
-
-			public StringEmitter (Expression expr, LocalInfo li, Location loc):
-				base (expr, li)
-			{
-				this.loc = loc;
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-				pinned_string = TypeManager.DeclareLocalPinned (ig, TypeManager.string_type);
-					
-				converted.Emit (ec);
-				ig.Emit (OpCodes.Stloc, pinned_string);
-
-				Expression sptr = new StringPtr (pinned_string, loc);
-				converted = Convert.ImplicitConversionRequired (
-					ec, sptr, vi.VariableType, loc);
-					
-				if (converted == null)
-					return;
-
-				converted.Emit (ec);
-				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-			}
-
-			public override void EmitExit(ILGenerator ig)
-			{
-				ig.Emit (OpCodes.Ldnull);
-				ig.Emit (OpCodes.Stloc, pinned_string);
-			}
-		}
+		struct FixedData {
+			public bool is_object;
+			public LocalInfo vi;
+			public Expression expr;
+			public Expression converted;
+		}			
 
 		public Fixed (Expression type, ArrayList decls, Statement stmt, Location l)
 		{
@@ -3417,7 +3346,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			data = new Emitter [declarators.Count];
+			data = new FixedData [declarators.Count];
 
 			if (!expr_type.IsPointer){
 				Report.Error (209, loc, "Variables in a fixed statement must be pointers");
@@ -3474,7 +3403,10 @@ namespace Mono.CSharp {
 					if (!TypeManager.VerifyUnManaged (child.Type, loc))
 						return false;
 
-					data [i] = new ExpressionEmitter (e, vi);
+					data [i].is_object = true;
+					data [i].expr = e;
+					data [i].converted = null;
+					data [i].vi = vi;
 					i++;
 
 					continue;
@@ -3502,14 +3434,17 @@ namespace Mono.CSharp {
 					// and T* is implicitly convertible to the
 					// pointer type given in the fixed statement.
 					//
-					ArrayPtr array_ptr = new ArrayPtr (e, array_type, loc);
+					ArrayPtr array_ptr = new ArrayPtr (e, loc);
 					
 					Expression converted = Convert.ImplicitConversionRequired (
 						ec, array_ptr, vi.VariableType, loc);
 					if (converted == null)
 						return false;
 
-					data [i] = new ExpressionEmitter (converted, vi);
+					data [i].is_object = false;
+					data [i].expr = e;
+					data [i].converted = converted;
+					data [i].vi = vi;
 					i++;
 
 					continue;
@@ -3519,28 +3454,12 @@ namespace Mono.CSharp {
 				// Case 3: string
 				//
 				if (e.Type == TypeManager.string_type){
-					data [i] = new StringEmitter (e, vi, loc);
+					data [i].is_object = false;
+					data [i].expr = e;
+					data [i].converted = null;
+					data [i].vi = vi;
 					i++;
 					continue;
-				}
-
-				// Case 4: fixed buffer
-				FieldExpr fe = e as FieldExpr;
-				if (fe != null) {
-					IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
-					if (ff != null) {
-						Expression fixed_buffer_ptr = new FixedBufferPtr (fe, ff.ElementType, loc);
-					
-						Expression converted = Convert.ImplicitConversionRequired (
-							ec, fixed_buffer_ptr, vi.VariableType, loc);
-						if (converted == null)
-							return false;
-
-						data [i] = new ExpressionEmitter (converted, vi);
-						i++;
-
-						continue;
-					}
 				}
 
 				//
@@ -3572,8 +3491,60 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+
+			LocalBuilder [] clear_list = new LocalBuilder [data.Length];
+			
 			for (int i = 0; i < data.Length; i++) {
-				data [i].Emit (ec);
+				LocalInfo vi = data [i].vi;
+
+				//
+				// Case 1: & object.
+				//
+				if (data [i].is_object) {
+					//
+					// Store pointer in pinned location
+					//
+					data [i].expr.Emit (ec);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+					clear_list [i] = vi.LocalBuilder;
+					continue;
+				}
+
+				//
+				// Case 2: Array
+				//
+				if (data [i].expr.Type.IsArray){
+					//
+					// Store pointer in pinned location
+					//
+					data [i].converted.Emit (ec);
+					
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+					clear_list [i] = vi.LocalBuilder;
+					continue;
+				}
+
+				//
+				// Case 3: string
+				//
+				if (data [i].expr.Type == TypeManager.string_type){
+					LocalBuilder pinned_string = TypeManager.DeclareLocalPinned (ig, TypeManager.string_type);
+					clear_list [i] = pinned_string;
+					
+					data [i].expr.Emit (ec);
+					ig.Emit (OpCodes.Stloc, pinned_string);
+
+					Expression sptr = new StringPtr (pinned_string, loc);
+					Expression converted = Convert.ImplicitConversionRequired (
+						ec, sptr, vi.VariableType, loc);
+					
+					if (converted == null)
+						continue;
+
+					converted.Emit (ec);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+				}
 			}
 
 			statement.Emit (ec);
@@ -3581,13 +3552,18 @@ namespace Mono.CSharp {
 			if (has_ret)
 				return;
 
-			ILGenerator ig = ec.ig;
-
 			//
 			// Clear the pinned variable
 			//
 			for (int i = 0; i < data.Length; i++) {
-				data [i].EmitExit (ig);
+				if (data [i].is_object || data [i].expr.Type.IsArray) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_U);
+					ig.Emit (OpCodes.Stloc, clear_list [i]);
+				} else if (data [i].expr.Type == TypeManager.string_type){
+					ig.Emit (OpCodes.Ldnull);
+					ig.Emit (OpCodes.Stloc, clear_list [i]);
+				}
 			}
 		}
 	}

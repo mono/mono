@@ -102,8 +102,8 @@ namespace Mono.CSharp {
 				
 				mi = TypeContainer.FindMembers (
 					current_type, MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.NonPublic |
-					BindingFlags.Instance | BindingFlags.DeclaredOnly,
+					BindingFlags.Public | BindingFlags.Instance |
+					BindingFlags.DeclaredOnly,
 					virtual_method_filter, null);
 
 				if (current_type == TypeManager.object_type)
@@ -175,13 +175,7 @@ namespace Mono.CSharp {
 				
 				int j = 0;
 				foreach (MethodInfo m in mi){
-					Type [] types;
-					
-					// If there is a previous error, just ignore
-					if (m == null)
-						types = TypeManager.NoTypes;
-					else
-						types = TypeManager.GetArgumentTypes (m);
+					Type [] types = TypeManager.GetArgumentTypes (m);
 					
 					pending_implementations [i].args [j] = types;
 					j++;
@@ -473,7 +467,7 @@ namespace Mono.CSharp {
 				CallingConventions.Standard | CallingConventions.HasThis,
 				base_method.ReturnType, args);
 
-			ParameterData pd = TypeManager.GetParameterData (iface_method);
+			ParameterData pd = Invocation.GetParameterData (iface_method);
 			proxy.DefineParameter (0, ParameterAttributes.None, "");
 			for (int i = 0; i < pd.Count; i++) {
 				string name = pd.ParameterName (i);

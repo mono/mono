@@ -416,6 +416,11 @@ namespace Mono.CSharp {
 				return this;
 
 			case Operator.AddressOf:
+				if (Expr.eclass != ExprClass.Variable){
+					Error (211, "Cannot take the address of non-variables");
+					return null;
+				}
+				
 				if (!ec.InUnsafe) {
 					UnsafeError (loc); 
 					return null;
@@ -426,15 +431,13 @@ namespace Mono.CSharp {
 				}
 
 				IVariable variable = Expr as IVariable;
-				bool is_fixed = variable != null && variable.VerifyFixed (false);
-
-				if (!ec.InFixedInitializer && !is_fixed) {
+				if (!ec.InFixedInitializer && ((variable == null) || !variable.VerifyFixed (false))) {
 					Error (212, "You can only take the address of an unfixed expression inside " +
 					       "of a fixed statement initializer");
 					return null;
 				}
 
-				if (ec.InFixedInitializer && is_fixed) {
+				if (ec.InFixedInitializer && ((variable != null) && variable.VerifyFixed (false))) {
 					Error (213, "You can not fix an already fixed expression");
 					return null;
 				}
@@ -570,14 +573,8 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (Oper == Operator.AddressOf) {
-				Expr = Expr.DoResolveLValue (ec, new EmptyExpression ());
-
-				if (Expr == null || Expr.eclass != ExprClass.Variable){
-					Error (211, "Cannot take the address of non-variables");
-					return null;
-				}
-			}
+			if (Oper == Operator.AddressOf)
+				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
 			else
 				Expr = Expr.Resolve (ec);
 			
@@ -594,8 +591,10 @@ namespace Mono.CSharp {
 		public override Expression DoResolveLValue (EmitContext ec, Expression right)
 		{
 			if (Oper == Operator.Indirection)
-				return DoResolve (ec);
+				return base.DoResolveLValue (ec, right);
 
+			Error (131, "The left-hand side of an assignment must be a " +
+			       "variable, property or indexer");
 			return null;
 		}
 
@@ -662,7 +661,7 @@ namespace Mono.CSharp {
 	// after semantic analysis (this is so we can take the address
 	// of an indirection).
 	//
-	public class Indirection : Expression, IMemoryLocation, IAssignMethod, IVariable {
+	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
 		Expression expr;
 		LocalTemporary temporary;
 		bool prepared;
@@ -670,7 +669,7 @@ namespace Mono.CSharp {
 		public Indirection (Expression expr, Location l)
 		{
 			this.expr = expr;
-			type = TypeManager.HasElementType (expr.Type) ? TypeManager.GetElementType (expr.Type) : expr.Type;
+			this.type = TypeManager.GetElementType (expr.Type);
 			eclass = ExprClass.Variable;
 			loc = l;
 		}
@@ -724,11 +723,6 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
-		{
-			return DoResolve (ec);
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -741,21 +735,6 @@ namespace Mono.CSharp {
 		{
 			return "*(" + expr + ")";
 		}
-
-		#region IVariable Members
-
-		public VariableInfo VariableInfo {
-			get {
-				return null;
-			}
-		}
-
-		public bool VerifyFixed (bool is_expression)
-		{
-			return true;
-		}
-
-		#endregion
 	}
 	
 	/// <summary>
@@ -858,15 +837,16 @@ namespace Mono.CSharp {
 
 			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 
+			if (mg == null && expr_type.BaseType != null)
+				mg = MemberLookup (ec, expr_type.BaseType, op_name,
+						   MemberTypes.Method, AllBindingFlags, loc);
+			
 			if (mg != null) {
 				method = StaticCallExpr.MakeSimpleCall (
 					ec, (MethodGroupExpr) mg, expr, loc);
 
 				type = method.Type;
-			} else if (!IsIncrementableNumber (expr_type)) {
-				Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
-				       TypeManager.CSharpName (expr_type) + "'");
-				   return null;
+				return this;
 			}
 
 			//
@@ -877,20 +857,35 @@ namespace Mono.CSharp {
 			type = expr_type;
 			if (expr.eclass == ExprClass.Variable){
 				LocalVariableReference var = expr as LocalVariableReference;
-				if ((var != null) && var.IsReadOnly) {
+				if ((var != null) && var.IsReadOnly)
 					Error (1604, "cannot assign to `" + var.Name + "' because it is readonly");
-					return null;
+				if (IsIncrementableNumber (expr_type) ||
+				    expr_type == TypeManager.decimal_type){
+					return this;
 				}
-			} else if (expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess){
-				expr = expr.ResolveLValue (ec, this);
+			} else if (expr.eclass == ExprClass.IndexerAccess){
+				IndexerAccess ia = (IndexerAccess) expr;
+				
+				expr = ia.ResolveLValue (ec, this);
 				if (expr == null)
 					return null;
+
+				return this;
+			} else if (expr.eclass == ExprClass.PropertyAccess){
+				PropertyExpr pe = (PropertyExpr) expr;
+
+				if (pe.VerifyAssignable ())
+					return this;
+
+				return null;
 			} else {
 				expr.Error_UnexpectedKind ("variable, indexer or property access", loc);
 				return null;
 			}
 
-			return this;
+			Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
+			       TypeManager.CSharpName (expr_type) + "'");
+			return null;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1792,26 +1787,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
-		{
-			expr = expr.DoResolveLValue (ec, right_side);
-			if (expr == null)
-				return null;
-
-			return ResolveRest (ec);
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
 
-			return ResolveRest (ec);
-		}
-
-		Expression ResolveRest (EmitContext ec)
-		{
 			TypeExpr target = target_type.ResolveAsTypeTerminal (ec);
 			if (target == null)
 				return null;
@@ -1841,7 +1822,7 @@ namespace Mono.CSharp {
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
 			return expr;
 		}
-		
+
 		public override void Emit (EmitContext ec)
 		{
 			//
@@ -3384,14 +3365,8 @@ namespace Mono.CSharp {
 			method = Invocation.OverloadResolve (
 				ec, (MethodGroupExpr) operator_group, arguments, false, loc)
 				as MethodInfo;
-			if (method == null) {
+			if ((method == null) || (method.ReturnType != type)) {
 				Error19 ();
-				return null;
-			}
-
-			if (method.ReturnType != type) {
-				Report.Error (217, loc, "In order to be applicable as a short circuit operator a user-defined logical operator ('{0}') " +
-						"must have the same return type as the type of its 2 parameters", TypeManager.CSharpSignature (method));
 				return null;
 			}
 
@@ -3457,12 +3432,7 @@ namespace Mono.CSharp {
 		{
 			Type op_type = left.Type;
 			ILGenerator ig = ec.ig;
-			
-			// It must be either array or fixed buffer
-			Type element = TypeManager.HasElementType (op_type) ?
-				element = TypeManager.GetElementType (op_type) :
-				element = AttributeTester.GetFixedBuffer (((FieldExpr)left).FieldInfo).ElementType;
-
+			Type element = TypeManager.GetElementType (op_type);
 			int size = GetTypeSize (element);
 			Type rtype = right.Type;
 			
@@ -3488,26 +3458,17 @@ namespace Mono.CSharp {
 				//
 				left.Emit (ec);
 				ig.Emit (OpCodes.Conv_I);
-
-				Constant right_const = right as Constant;
-				if (right_const != null && size != 0) {
-					Expression ex = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size), right_const, loc);
-					if (ex == null)
-						return;
-					ex.Emit (ec);
-				} else {
-					right.Emit (ec);
-					if (size != 1){
-						if (size == 0)
-							ig.Emit (OpCodes.Sizeof, element);
-						else 
-							IntLiteral.EmitInt (ig, size);
-						if (rtype == TypeManager.int64_type)
-							ig.Emit (OpCodes.Conv_I8);
-						else if (rtype == TypeManager.uint64_type)
-							ig.Emit (OpCodes.Conv_U8);
-						ig.Emit (OpCodes.Mul);
-					}
+				right.Emit (ec);
+				if (size != 1){
+					if (size == 0)
+						ig.Emit (OpCodes.Sizeof, element);
+					else 
+						IntLiteral.EmitInt (ig, size);
+					if (rtype == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_I8);
+					else if (rtype == TypeManager.uint64_type)
+						ig.Emit (OpCodes.Conv_U8);
+					ig.Emit (OpCodes.Mul);
 				}
 				
 				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
@@ -4020,9 +3981,8 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			if (!ec.MethodIsStatic)
+			if (!ec.IsStatic)
 				arg_idx++;
-			
 
 			EmitLdArg (ig, arg_idx);
 
@@ -4046,7 +4006,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			if (!ec.MethodIsStatic)
+			if (!ec.IsStatic)
 				arg_idx++;
 
 			EmitLdArg (ig, arg_idx);
@@ -4084,7 +4044,7 @@ namespace Mono.CSharp {
 			
 			prepared = prepare_for_load;
 			
-			if (!ec.MethodIsStatic)
+			if (!ec.IsStatic)
 				arg_idx++;
 
 			if (is_ref && !prepared)
@@ -4122,7 +4082,7 @@ namespace Mono.CSharp {
 			
 			int arg_idx = idx;
 
-			if (!ec.MethodIsStatic)
+			if (!ec.IsStatic)
 				arg_idx++;
 
 			if (is_ref){
@@ -4214,11 +4174,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		void Error_LValueRequired (Location loc)
-		{
-			Report.Error (1510, loc, "An lvalue is required as an argument to out or ref");
-		}
-
 		public bool Resolve (EmitContext ec, Location loc)
 		{
 			if (ArgType == AType.Ref) {
@@ -4236,45 +4191,14 @@ namespace Mono.CSharp {
 						return false;
 					}
 				}
-				Expr = Expr.DoResolveLValue (ec, Expr);
-				if (Expr == null)
-					Error_LValueRequired (loc);
-			} else if (ArgType == AType.Out) {
-				Expr = Expr.DoResolveLValue (ec, EmptyExpression.Null);
-				if (Expr == null)
-					Error_LValueRequired (loc);
-			}
+				Expr = Expr.ResolveLValue (ec, Expr);
+			} else if (ArgType == AType.Out)
+				Expr = Expr.ResolveLValue (ec, EmptyExpression.Null);
 			else
 				Expr = Expr.Resolve (ec);
 
 			if (Expr == null)
 				return false;
-
-			if (Expr is IMemberExpr) {
-				IMemberExpr me = Expr as IMemberExpr;
-
-				//
-				// This can happen with the following code:
-				//
-				//   class X {}
-				//   class Y {
-				//     public Y (X x) {}
-			        //   }
-				//   class Z : Y {
-				//     X X;
-				//     public Z () : base (X) {}
-				//   }
-				//
-				// SimpleNameResolve is conservative about flagging the X as
-				// an error since it has identical name and type.  However,
-				// because there's no MemberAccess, that is not really justified.
-				// It is still simpler to fix it here, rather than in SimpleNameResolve.
-				//
-				if (me.IsInstance && me.InstanceExpression == null) {
-					SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
-					return false;
-				}
-			}
 
 			if (ArgType == AType.Expression)
 				return true;
@@ -4309,7 +4233,9 @@ namespace Mono.CSharp {
 						"A property or indexer can not be passed as an out or ref " +
 						"parameter");
 				} else {
-					Error_LValueRequired (loc);
+					Report.Error (
+						1510, loc,
+						"An lvalue is required as an argument to out or ref");
 				}
 				return false;
 			}
@@ -4364,6 +4290,13 @@ namespace Mono.CSharp {
 		Expression expr;
 		MethodBase method = null;
 		
+		static Hashtable method_parameter_cache;
+
+		static Invocation ()
+		{
+			method_parameter_cache = new PtrHashtable ();
+		}
+			
 		//
 		// arguments is an ArrayList, but we do not want to typecast,
 		// as it might be null.
@@ -4381,6 +4314,31 @@ namespace Mono.CSharp {
 		public Expression Expr {
 			get {
 				return expr;
+			}
+		}
+
+		/// <summary>
+		///   Returns the Parameters (a ParameterData interface) for the
+		///   Method `mb'
+		/// </summary>
+		public static ParameterData GetParameterData (MethodBase mb)
+		{
+			object pd = method_parameter_cache [mb];
+			object ip;
+			
+			if (pd != null)
+				return (ParameterData) pd;
+
+			ip = TypeManager.LookupParametersByBuilder (mb);
+			if (ip != null){
+				method_parameter_cache [mb] = ip;
+
+				return (ParameterData) ip;
+			} else {
+				ReflectionParameters rp = new ReflectionParameters (mb);
+				method_parameter_cache [mb] = rp;
+
+				return (ParameterData) rp;
 			}
 		}
 
@@ -4499,11 +4457,43 @@ namespace Mono.CSharp {
 					   MethodBase candidate, bool candidate_params,
 					   MethodBase best, bool best_params, Location loc)
 		{
-			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
-			ParameterData best_pd = TypeManager.GetParameterData (best);
+			ParameterData candidate_pd = GetParameterData (candidate);
+			ParameterData best_pd = GetParameterData (best);
 		
+			int cand_count = candidate_pd.Count;
+
+			//
+			// If there is no best method, than this one
+			// is better, however, if we already found a
+			// best method, we cant tell. This happens
+			// if we have:
+			// 
+			//	interface IFoo {
+			//		void DoIt ();
+			//	}
+			//	
+			//	interface IBar {
+			//		void DoIt ();
+			//	}
+			//	
+			//	interface IFooBar : IFoo, IBar {}
+			//
+			// We cant tell if IFoo.DoIt is better than IBar.DoIt
+			//
+			// However, we have to consider that
+			// Trim (); is better than Trim (params char[] chars);
+                        //
+			if (cand_count == 0 && argument_count == 0)
+				return !candidate_params && best_params;
+
+			if ((candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS) &&
+			    (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.ARGLIST))
+				if (cand_count != argument_count)
+					return false;
+
 			bool better_at_least_one = false;
-			bool same = true;
+			bool is_equal = true;
+
 			for (int j = 0; j < argument_count; ++j) {
 				Argument a = (Argument) args [j];
 
@@ -4518,10 +4508,9 @@ namespace Mono.CSharp {
 					if (best_params)
 						bt = TypeManager.GetElementType (bt);
 
-				if (ct.Equals (bt))
-					continue;
+				if (!ct.Equals (bt))
+					is_equal = false;
 
-				same = false;
 				Type better = BetterConversion (ec, a, ct, bt, loc);
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
@@ -4534,62 +4523,28 @@ namespace Mono.CSharp {
 					better_at_least_one = true;
 			}
 
-			if (better_at_least_one)
-				return true;
-
-			if (!same)
-				return false;
+                        //
+                        // If a method (in the normal form) with the
+                        // same signature as the expanded form of the
+                        // current best params method already exists,
+                        // the expanded form is not applicable so we
+                        // force it to select the candidate
+                        //
+                        if (!candidate_params && best_params && cand_count == argument_count)
+                                return true;
 
 			//
 			// If two methods have equal parameter types, but
 			// only one of them is generic, the non-generic one wins.
 			//
-			if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
-				return true;
-			else if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
-				return false;
-
-			//
-			// This handles the case
-			//
-			//   Add (float f1, float f2, float f3);
-			//   Add (params decimal [] foo);
-			//
-			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
-			// first candidate would've chosen as better.
-			//
-			//
-			// This handles the following cases:
-			//
-			//   Trim () is better than Trim (params char[] chars)
-			//   Concat (string s1, string s2, string s3) is better than
-			//     Concat (string s1, params string [] srest)
-			//
-                        return !candidate_params && best_params;
-		}
-
-		static bool IsOverride (MethodBase cand_method, MethodBase base_method)
-		{
-			if (!IsAncestralType (base_method.DeclaringType, cand_method.DeclaringType))
-				return false;
-
-			ParameterData cand_pd = TypeManager.GetParameterData (cand_method);
-			ParameterData base_pd = TypeManager.GetParameterData (base_method);
-		
-			if (cand_pd.Count != base_pd.Count)
-				return false;
-
-			for (int j = 0; j < cand_pd.Count; ++j) {
-				Parameter.Modifier cm = cand_pd.ParameterModifier (j);
-				Parameter.Modifier bm = base_pd.ParameterModifier (j);
-				Type ct = TypeManager.TypeToCoreType (cand_pd.ParameterType (j));
-				Type bt = TypeManager.TypeToCoreType (base_pd.ParameterType (j));
-
-				if (cm != bm || ct != bt)
+			if (is_equal) {
+				if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
+					return true;
+				else if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
 					return false;
 			}
 
-			return true;
+			return better_at_least_one;
 		}
 
 		public static string FullMethodDesc (MethodBase mb)
@@ -4608,7 +4563,7 @@ namespace Mono.CSharp {
 			sb.Append (".");
 			sb.Append (mb.Name);
 			
-			ParameterData pd = TypeManager.GetParameterData (mb);
+			ParameterData pd = GetParameterData (mb);
 
 			int count = pd.Count;
 			sb.Append (" (");
@@ -4670,9 +4625,9 @@ namespace Mono.CSharp {
 			return union;
 		}
 
-		public static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
-							     ArrayList arguments, int arg_count,
-							     ref MethodBase candidate)
+		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
+						      ArrayList arguments, int arg_count,
+						      ref MethodBase candidate)
 		{
 			return IsParamsMethodApplicable (
 				ec, me, arguments, arg_count, false, ref candidate) ||
@@ -4702,7 +4657,7 @@ namespace Mono.CSharp {
 						      int arg_count, MethodBase candidate,
 						      bool do_varargs)
 		{
-			ParameterData pd = TypeManager.GetParameterData (candidate);
+			ParameterData pd = GetParameterData (candidate);
 			
 			int pd_count = pd.Count;
 
@@ -4782,9 +4737,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
-						 ArrayList arguments, int arg_count,
-						 ref MethodBase candidate)
+		static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
+					  ArrayList arguments, int arg_count,
+					  ref MethodBase candidate)
 		{
 			if (!me.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (ec, arguments, ref candidate))
@@ -4800,7 +4755,7 @@ namespace Mono.CSharp {
 		static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
 					  MethodBase candidate)
 		{
-			ParameterData pd = TypeManager.GetParameterData (candidate);
+			ParameterData pd = GetParameterData (candidate);
 
 			if (arg_count != pd.Count)
 				return false;
@@ -4873,7 +4828,6 @@ namespace Mono.CSharp {
 			Type applicable_type = null;
 			int arg_count = 0;
 			ArrayList candidates = new ArrayList ();
-			ArrayList candidate_overrides = new ArrayList ();
 
                         //
                         // Used to keep a map between the candidate
@@ -4911,20 +4865,6 @@ namespace Mono.CSharp {
 					continue;
 
 				//
-				// Methods marked 'override' don't take part in 'applicable_type'
-				// computation, nor in the actual overload resolution.
-				// However, they still need to be emitted instead of a base virtual method.
-				// We avoid doing the 'applicable' test here, since it'll anyway be applied
-				// to the base virtual function, and IsOverride is much faster than IsApplicable.
-				//
-				if (!me.IsBase &&
-				    methods [i].IsVirtual &&
-				    (methods [i].Attributes & MethodAttributes.NewSlot) == 0) {
-					candidate_overrides.Add (methods [i]);
-					continue;
-				}
-
-				//
 				// Check if candidate is applicable (section 14.4.2.1)
 				//   Is candidate applicable in normal form?
 				//
@@ -4958,14 +4898,14 @@ namespace Mono.CSharp {
 
 			int candidate_top = candidates.Count;
 
-			if (applicable_type == null) {
+			if (candidate_top == 0) {
 				//
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
 				//
 				for (int i = 0; i < methods.Length; ++i) {
 					MethodBase c = (MethodBase) methods [i];
-					ParameterData pd = TypeManager.GetParameterData (c);
+					ParameterData pd = GetParameterData (c);
 
 					if (pd.Count != arg_count)
 						continue;
@@ -4985,7 +4925,7 @@ namespace Mono.CSharp {
                                         
 					for (int i = 0; i < methods.Length; ++i) {
 						MethodBase c = methods [i];
-						ParameterData pd = TypeManager.GetParameterData (c);
+						ParameterData pd = GetParameterData (c);
 
 						if (pd.Count != arg_count)
 							continue;
@@ -5031,12 +4971,11 @@ namespace Mono.CSharp {
 					int j = finalized; // where to put the next finalized candidate
 					int k = finalized; // where to put the next undiscarded candidate
 					for (int i = finalized; i < candidate_top; ++i) {
-						MethodBase candidate = (MethodBase) candidates [i];
-						Type decl_type = candidate.DeclaringType;
+						Type decl_type = ((MethodBase) candidates[i]).DeclaringType;
 
 						if (decl_type == applicable_type) {
-							candidates [k++] = candidates [j];
-							candidates [j++] = candidates [i];
+							candidates[k++] = candidates[j];
+							candidates[j++] = candidates[i];
 							continue;
 						}
 
@@ -5047,7 +4986,7 @@ namespace Mono.CSharp {
 						    IsAncestralType (decl_type, next_applicable_type))
 							continue;
 
-						candidates [k++] = candidates [i];
+						candidates[k++] = candidates[i];
 
 						if (next_applicable_type == null ||
 						    IsAncestralType (next_applicable_type, decl_type))
@@ -5064,14 +5003,10 @@ namespace Mono.CSharp {
                         // Now we actually find the best method
                         //
 
-			method = (MethodBase) candidates [0];
+			method = (MethodBase) candidates[0];
 			method_params = candidate_to_form != null && candidate_to_form.Contains (method);
 			for (int ix = 1; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
-
-				if (candidate == method)
-					continue;
-
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 
 				if (BetterFunction (ec, Arguments, arg_count, 
@@ -5107,20 +5042,6 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (method);
 				Report.Error (121, loc, "Ambiguous call when selecting function due to implicit casts");					
 				return null;
-			}
-
-			//
-			// If the method is a virtual function, pick an override closer to the LHS type.
-			//
-			if (!me.IsBase && method.IsVirtual) {
-				if ((method.Attributes & MethodAttributes.NewSlot) != MethodAttributes.NewSlot)
-					throw new InternalErrorException (
-						"Should not happen.  An 'override' method took part in overload resolution: " + method);
-								    
-				foreach (MethodBase candidate in candidate_overrides) {
-					if (IsOverride (candidate, method))
-						method = candidate;
-				}
 			}
 
 			//
@@ -5172,7 +5093,7 @@ namespace Mono.CSharp {
 							  Type delegate_type, bool may_fail,
 							  Location loc)
 		{
-			ParameterData pd = TypeManager.GetParameterData (method);
+			ParameterData pd = GetParameterData (method);
 			int pd_count = pd.Count;
 			
 			for (int j = 0; j < arg_count; j++) {
@@ -5415,7 +5336,7 @@ namespace Mono.CSharp {
 		{
 			ParameterData pd;
 			if (mb != null)
-				pd = TypeManager.GetParameterData (mb);
+				pd = GetParameterData (mb);
 			else
 				pd = null;
 			
@@ -5485,7 +5406,7 @@ namespace Mono.CSharp {
 		static Type[] GetVarargsTypes (EmitContext ec, MethodBase mb,
 					       ArrayList arguments)
 		{
-			ParameterData pd = TypeManager.GetParameterData (mb);
+			ParameterData pd = GetParameterData (mb);
 
 			if (arguments == null)
 				return new Type [0];
@@ -5893,42 +5814,6 @@ namespace Mono.CSharp {
 //			value_target = MyEmptyExpression;
 		}
 
-
-		/// <summary>
-		/// Converts complex core type syntax like 'new int ()' to simple constant
-		/// </summary>
-		Expression Constantify (Type t)
-		{
-			if (t == TypeManager.int32_type)
-				return new IntConstant (0);
-			if (t == TypeManager.uint32_type)
-				return new UIntConstant (0);
-			if (t == TypeManager.int64_type)
-				return new LongConstant (0);
-			if (t == TypeManager.uint64_type)
-				return new ULongConstant (0);
-			if (t == TypeManager.float_type)
-				return new FloatConstant (0);
-			if (t == TypeManager.double_type)
-				return new DoubleConstant (0);
-			if (t == TypeManager.short_type)
-				return new ShortConstant (0);
-			if (t == TypeManager.ushort_type)
-				return new UShortConstant (0);
-			if (t == TypeManager.sbyte_type)
-				return new SByteConstant (0);
-			if (t == TypeManager.byte_type)
-				return new ByteConstant (0);
-			if (t == TypeManager.char_type)
-				return new CharConstant ('\0');
-			if (t == TypeManager.bool_type)
-				return new BoolConstant (false);
-			if (t == TypeManager.decimal_type)
-				return new DecimalConstant (0);
-
-			return null;
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -5948,12 +5833,6 @@ namespace Mono.CSharp {
 			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
-
-			if (Arguments == null) {
-				Expression c = Constantify (type);
-				if (c != null)
-					return c;
-			}
 			
 			type = texpr.Type;
 			if (type == null)
@@ -6045,7 +5924,7 @@ namespace Mono.CSharp {
 
 			if (method == null) {
 				if (almostMatchedMembers.Count != 0) {
-					MemberLookupFailed (ec, type, type, ".ctor", null, true, loc);
+					MemberLookupFailed (ec, type, type, ".ctor", null, loc);
 					return null;
 				}
 
@@ -7008,9 +6887,6 @@ namespace Mono.CSharp {
 			if ((block != null) && (block.ThisVariable != null))
 				variable_info = block.ThisVariable.VariableInfo;
 
-			if (ec.CurrentAnonymousMethod != null)
-				ec.CaptureThis ();
-			
 			return true;
 		}
 
@@ -7364,7 +7240,7 @@ namespace Mono.CSharp {
 			if (sn == null || left == null || left.Type.Name != sn.Name)
 				return false;
 
-			return ec.DeclSpace.LookupType (sn.Name, loc, /*silent=*/ true, /*ignore_cs0104*/ true) != null;
+			return ec.DeclSpace.LookupType (sn.Name, true, loc) != null;
 		}
 		
 		// TODO: possible optimalization
@@ -7407,15 +7283,7 @@ namespace Mono.CSharp {
 
 						object real_value = ((Constant) c.Expr).GetValue ();
 
-						Expression exp = Constantify (real_value, t);
-
-						if (left_is_explicit && !left_is_type && !IdenticalNameAndTypeName (ec, left_original, left, loc)) {
-							Report.SymbolRelatedToPreviousError (c);
-							error176 (loc, c.GetSignatureForError ());
-							return null;
-						}
-					
-						return exp;
+						return Constantify (real_value, t);
 					}
 				}
 
@@ -7670,7 +7538,8 @@ namespace Mono.CSharp {
 					ec, expr_type, expr_type, lookup_id, loc);
 			}
 			if (member_lookup == null) {
-				MemberLookupFailed (ec, expr_type, expr_type, Identifier, null, true, loc);
+				MemberLookupFailed (
+					ec, expr_type, expr_type, Identifier, null, loc);
 				return null;
 			}
 
@@ -7738,11 +7607,6 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
-			return ResolveNamespaceOrType (ec, false);
-		}
-
-		public FullNamedExpression ResolveNamespaceOrType (EmitContext ec, bool silent)
-		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
 
 			if (new_expr == null)
@@ -7755,7 +7619,7 @@ namespace Mono.CSharp {
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
-				if (!silent && retval == null)
+				if (retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
 				return retval;
 			}
@@ -7772,14 +7636,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Expression member_lookup = MemberLookup (ec, expr_type, expr_type, Identifier, loc);
+			Expression member_lookup;
+			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, lookup_id, loc);
 			if (member_lookup == null) {
-				int errors = Report.Errors;
-				MemberLookupFailed (ec, expr_type, expr_type, Identifier, null, false, loc);
-
-				if (!silent && errors == Report.Errors)
-					Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
-						      Identifier, new_expr.FullName);
+				Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
+					      Identifier, new_expr.FullName);
 				return null;
 			}
 
@@ -7967,8 +7828,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		Expression MakePointerAccess (EmitContext ec, Type t)
+		Expression MakePointerAccess (EmitContext ec)
 		{
+			Type t = Expr.Type;
+
 			if (t == TypeManager.void_ptr_type){
 				Error (242, "The array index operation is not valid for void pointers");
 				return null;
@@ -8005,17 +7868,10 @@ namespace Mono.CSharp {
 			
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).Resolve (ec);
-			if (t.IsPointer)
-				return MakePointerAccess (ec, Expr.Type);
-
-			FieldExpr fe = Expr as FieldExpr;
-			if (fe != null) {
-				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
-				if (ff != null) {
-					return MakePointerAccess (ec, ff.ElementType);
-				}
-			}
-			return (new IndexerAccess (this, loc)).Resolve (ec);
+			else if (t.IsPointer)
+				return MakePointerAccess (ec);
+			else
+				return (new IndexerAccess (this, loc)).Resolve (ec);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -8026,24 +7882,10 @@ namespace Mono.CSharp {
 			Type t = Expr.Type;
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).ResolveLValue (ec, right_side);
-
-			if (t.IsPointer)
-				return MakePointerAccess (ec, Expr.Type);
-
-			FieldExpr fe = Expr as FieldExpr;
-			if (fe != null) {
-				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
-				if (ff != null) {
-// TODO: not sure whether it is correct
-//					if (!ec.InFixedInitializer) {
-//					if (!ec.InFixedInitializer) {
-//						Error (1666, "You cannot use fixed sized buffers contained in unfixed expressions. Try using the fixed statement.");
-//						return null;
-//					}
-					return MakePointerAccess (ec, ff.ElementType);
-				}
-			}
-			return (new IndexerAccess (this, loc)).ResolveLValue (ec, right_side);
+			else if (t.IsPointer)
+				return MakePointerAccess (ec);
+			else
+				return (new IndexerAccess (this, loc)).ResolveLValue (ec, right_side);
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -8069,11 +7911,6 @@ namespace Mono.CSharp {
 			ea = ea_data;
 			eclass = ExprClass.Variable;
 			loc = l;
-		}
-
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
-		{
-			return DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -8804,7 +8641,8 @@ namespace Mono.CSharp {
 						      member, AllMemberTypes, AllBindingFlags,
 						      loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec, base_type, base_type, member, null, true, loc);
+				MemberLookupFailed (
+					ec, base_type, base_type, member, null, loc);
 				return null;
 			}
 
@@ -9020,27 +8858,29 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			//
-			// ltype.Fullname is already fully qualified, so we can skip
-			// a lot of probes, and go directly to TypeManager.LookupType
-			//
-			string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
-			string cname = fname + dim;
-			type = TypeManager.LookupTypeDirect (cname);
-			if (type == null){
+			if (dim != "") {
 				//
-				// For arrays of enumerations we are having a problem
-				// with the direct lookup.  Need to investigate.
 				// ltype.Fullname is already fully qualified, so we can skip
 				// a lot of probes, and go directly to TypeManager.LookupType
 				//
-				// For now, fall back to the full lookup in that case.
-				//
-				FullNamedExpression e = ec.DeclSpace.LookupType (cname, loc, false, false);
-				if (e is TypeExpr)
-					type = ((TypeExpr) e).ResolveType (ec);
-				if (type == null)
-					return null;
+				string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
+				string cname = fname + dim;
+				type = TypeManager.LookupTypeDirect (cname);
+				if (type == null){
+					//
+					// For arrays of enumerations we are having a problem
+					// with the direct lookup.  Need to investigate.
+					//
+					// For now, fall back to the full lookup in that case.
+					//
+					FullNamedExpression e = ec.DeclSpace.LookupType (cname, false, loc);
+					if (e is TypeExpr)
+						type = ((TypeExpr) e).ResolveType (ec);
+					if (type == null)
+						return null;
+				}
+			} else {
+				type = ltype;
 			}
 
 			if (!ec.InUnsafe && type.IsPointer){
@@ -9071,21 +8911,31 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class FixedBufferPtr: Expression {
+	//
+	// This class is used to represent the address of an array, used
+	// only by the Fixed statement, this is like the C "&a [0]" construct.
+	//
+	public class ArrayPtr : Expression {
 		Expression array;
-
-		public FixedBufferPtr (Expression array, Type array_type, Location l)
+		
+		public ArrayPtr (Expression array, Location l)
 		{
+			Type array_type = TypeManager.GetElementType (array.Type);
+
 			this.array = array;
-			this.loc = l;
 
 			type = TypeManager.GetPointerType (array_type);
 			eclass = ExprClass.Value;
+			loc = l;
 		}
 
-		public override void Emit(EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			
 			array.Emit (ec);
+			IntLiteral.EmitInt (ig, 0);
+			ig.Emit (OpCodes.Ldelema, TypeManager.GetElementType (array.Type));
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -9094,31 +8944,6 @@ namespace Mono.CSharp {
 			// We are born fully resolved
 			//
 			return this;
-		}
-	}
-
-
-	//
-	// This class is used to represent the address of an array, used
-	// only by the Fixed statement, this generates "&a [0]" construct
-	// for fixed (char *pa = a)
-	//
-	public class ArrayPtr : FixedBufferPtr {
-		Type array_type;
-		
-		public ArrayPtr (Expression array, Type array_type, Location l):
-			base (array, array_type, l)
-		{
-			this.array_type = array_type;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			base.Emit (ec);
-			
-			ILGenerator ig = ec.ig;
-			IntLiteral.EmitInt (ig, 0);
-			ig.Emit (OpCodes.Ldelema, array_type);
 		}
 	}
 

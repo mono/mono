@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 
 			if (mb.Mono_IsInflatedMethod) {
 				MethodInfo generic = mb.GetGenericMethodDefinition ();
-				gpd = TypeManager.GetParameterData (generic);
+				gpd = Invocation.GetParameterData (generic);
 
 				last_arg_is_params = gpd.HasParams;
 				return;
@@ -252,12 +252,7 @@ namespace Mono.CSharp {
 			if (has_varargs && pos >= count)
 				return "__arglist";
 
-			Type t = ParameterType (pos);
-			return ModifierDesc (pos) + " " + TypeManager.CSharpName (t);
-		}
-
-		public string ModifierDesc (int pos)
-		{
+			string tmp = String.Empty;
 			Parameter p = GetParameter (pos);
 
 			//
@@ -265,13 +260,15 @@ namespace Mono.CSharp {
 			// extra flag ISBYREF will be set as well
 			//
 			if ((p.ModFlags & Parameter.Modifier.REF) != 0)
-				return "ref";
-			if ((p.ModFlags & Parameter.Modifier.OUT) != 0)
-				return "out";
-			if (p.ModFlags == Parameter.Modifier.PARAMS)
-				return "params";
+				tmp = "ref ";
+			else if ((p.ModFlags & Parameter.Modifier.OUT) != 0)
+				tmp = "out ";
+			else if (p.ModFlags == Parameter.Modifier.PARAMS)
+				tmp = "params ";
 
-			return "";
+			Type t = ParameterType (pos);
+
+			return tmp + TypeManager.CSharpName (t);
 		}
 
 		public Parameter.Modifier ParameterModifier (int pos)

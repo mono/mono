@@ -162,10 +162,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public abstract bool IsDefaultValue {
-			get;
-		}
-
 		public abstract bool IsNegative {
 			get;
 		}
@@ -209,12 +205,6 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return !Value;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return false;
@@ -281,12 +271,6 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return false;
@@ -382,12 +366,6 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return false;
@@ -457,12 +435,6 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return Value < 0;
@@ -527,12 +499,6 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
-		}
-
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
 		}
 		
 		public override bool IsZeroInteger {
@@ -601,12 +567,6 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return false;
@@ -735,12 +695,6 @@ namespace Mono.CSharp {
 		{
 			return this;
 		}
-
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
 		
 		public override bool IsNegative {
 			get {
@@ -808,12 +762,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return false;
@@ -895,12 +843,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return Value < 0;
@@ -969,12 +911,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return false;
@@ -1034,12 +970,6 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return null;
-		}
-
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
 		}
 
 		public override bool IsNegative {
@@ -1104,12 +1034,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return Value < 0;
@@ -1170,12 +1094,6 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}
 
-		public override bool IsDefaultValue {
-			get {
-				return Value == 0;
-			}
-		}
-
 		public override bool IsNegative {
 			get {
 				return Value < 0;
@@ -1210,12 +1128,6 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				ec.ig.Emit (OpCodes.Ldstr, Value);
-		}
-
-		public override bool IsDefaultValue {
-			get {
-				return Value == null;
-			}
 		}
 
 		public override bool IsNegative {

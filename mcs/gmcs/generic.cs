@@ -598,7 +598,7 @@ namespace Mono.CSharp {
 					mb = mb.GetGenericMethodDefinition ();
 
 				int pos = type.GenericParameterPosition;
-				ParameterData pd = TypeManager.GetParameterData (mb);
+				ParameterData pd = Invocation.GetParameterData (mb);
 				GenericConstraints temp_gc = pd.GenericConstraints (pos);
 				Type mparam = mb.GetGenericArguments () [pos];
 
@@ -2118,7 +2118,7 @@ namespace Mono.CSharp {
 			else
 				arg_count = arguments.Count;
 			
-			ParameterData pd = TypeManager.GetParameterData (method);
+			ParameterData pd = Invocation.GetParameterData (method);
 
 			int pd_count = pd.Count;
 
@@ -2207,7 +2207,7 @@ namespace Mono.CSharp {
 			else
 				arg_count = 0;
 
-			ParameterData pd = TypeManager.GetParameterData (method);
+			ParameterData pd = Invocation.GetParameterData (method);
 			if (arg_count != pd.Count)
 				return false;
 
@@ -2251,7 +2251,7 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsGenericMethod (method))
 				return true;
 
-			ParameterData pd = TypeManager.GetParameterData (method);
+			ParameterData pd = Invocation.GetParameterData (method);
 			if (apd.Count != pd.Count)
 				return false;
 

@@ -99,12 +99,6 @@ public partial class TypeManager {
 	static public Type field_offset_attribute_type;
 	static public Type security_attr_type;
 
-	/// 
-	/// .NET 2.0
-	///
-	static internal Type compiler_generated_attr_type;
-	static internal Type fixed_buffer_attr_type;
-
 	//
 	// An empty array of types
 	//
@@ -190,16 +184,10 @@ public partial class TypeManager {
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo void_decimal_ctor_int_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
+	static public ConstructorInfo invalid_operation_ctor;
 	static public ConstructorInfo default_member_ctor;
 	static public ConstructorInfo decimal_constant_attribute_ctor;
-	static internal ConstructorInfo struct_layout_attribute_ctor;
-
-	///
-	/// A new in C# 2.0
-	/// 
-	static internal CustomAttributeBuilder compiler_generated_attr;
-	static internal ConstructorInfo fixed_buffer_attr_ctor;
-
+	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
 	//   (either because it is the default or the user used the
@@ -254,9 +242,10 @@ public partial class TypeManager {
 	static Hashtable indexer_arguments;
 
 	// <remarks>
-	//   Maps a MethodBase to its ParameterData (either InternalParameters or ReflectionParameters)
+	//   Maybe `method_arguments' should be replaced and only
+	//   method_internal_params should be kept?
 	// <remarks>
-	static Hashtable method_params;
+	static Hashtable method_internal_params;
 
 	// <remarks>
 	//  Keeps track of methods
@@ -288,7 +277,7 @@ public partial class TypeManager {
 		builder_to_ifaces = null;
 		method_arguments = null;
 		indexer_arguments = null;
-		method_params = null;
+		method_internal_params = null;
 		builder_to_method = null;
 		
 		fields = null;
@@ -388,7 +377,7 @@ public partial class TypeManager {
 		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
-		method_params = new PtrHashtable ();
+		method_internal_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
@@ -948,7 +937,7 @@ public partial class TypeManager {
 
 		MethodBase mb = pb.GetSetMethod (true) != null ? pb.GetSetMethod (true) : pb.GetGetMethod (true);
 		string signature = GetFullNameSignature (mb);
-		string arg = GetParameterData (mb).ParameterDesc (0);
+		string arg = TypeManager.LookupParametersByBuilder (mb).ParameterDesc (0);
 		return String.Format ("{0}.this[{1}]", signature.Substring (0, signature.LastIndexOf ('.')), arg);
 	}
 
@@ -959,8 +948,15 @@ public partial class TypeManager {
         {
 		StringBuilder sig = new StringBuilder ("(");
 
-		ParameterData iparams = GetParameterData (mb);
+		//
+		// FIXME: We should really have a single function to do
+		// everything instead of the following 5 line pattern
+		//
+                ParameterData iparams = LookupParametersByBuilder (mb);
 
+		if (iparams == null)
+			iparams = new ReflectionParameters (mb);
+		
 		// Is property
 		if (mb.IsSpecialName && iparams.Count == 0 && !mb.IsConstructor)
 			return GetFullNameSignature (mb);
@@ -1176,11 +1172,6 @@ public partial class TypeManager {
 		InitGenericCoreTypes ();
 
 		//
-		// .NET 2.0
-		//
-		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
-		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices.FixedBufferAttribute");
-		//
 		// When compiling corlib, store the "real" types here.
 		//
 		if (!RootContext.StdLib) {
@@ -1392,25 +1383,23 @@ public partial class TypeManager {
 		//
 		// Attributes
 		//
-		cons_param_array_attribute = GetConstructor (param_array_type, void_arg);
-		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, void_arg);
-		default_member_ctor = GetConstructor (default_member_type, string_);
+		cons_param_array_attribute = GetConstructor (
+			param_array_type, void_arg);
 
-		Type[] short_arg = { short_type };
-		struct_layout_attribute_ctor = GetConstructor (struct_layout_attribute_type, short_arg);
+		unverifiable_code_ctor = GetConstructor (
+			unverifiable_code_type, void_arg);
 
 		decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
 			{ byte_type, byte_type, uint32_type, uint32_type, uint32_type } );
 
+		default_member_ctor = GetConstructor (default_member_type, string_);
 
 		//
-		// .NET 2.0 types
+		// InvalidOperationException
 		//
-		compiler_generated_attr = new CustomAttributeBuilder (
-			GetConstructor (compiler_generated_attr_type, void_arg), new object[0]);
+		invalid_operation_ctor = GetConstructor (
+			invalid_operation_exception_type, void_arg);
 
-		Type[] type_int_arg = { type_type, int32_type };
-		fixed_buffer_attr_ctor = GetConstructor (fixed_buffer_attr_type, type_int_arg);
 
 		// Object
 		object_ctor = GetConstructor (object_type, void_arg);
@@ -1503,7 +1492,7 @@ public partial class TypeManager {
 	///   to check base classes and interfaces anymore.
 	/// </summary>
 	private static MemberInfo [] MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-							       string name, out bool used_cache)
+							    string name, out bool used_cache)
 	{
 		MemberCache cache;
 
@@ -1824,14 +1813,6 @@ public partial class TypeManager {
         }
 
 	/// <summary>
-	/// This method is not implemented by MS runtime for dynamic types
-	/// </summary>
-	public static bool HasElementType (Type t)
-	{
-		return t.IsArray || t.IsPointer || t.IsByRef;
-	}
-
-	/// <summary>
 	///   Returns the User Defined Types
 	/// </summary>
 	public static ArrayList UserTypes {
@@ -1882,20 +1863,18 @@ public partial class TypeManager {
 			args = NoTypes;
 				
 		method_arguments.Add (mb, args);
-		method_params.Add (mb, ip);
+		method_internal_params.Add (mb, ip);
 	}
 	
-	static public ParameterData GetParameterData (MethodBase mb)
+	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
 	{
-		object pd = method_params [mb];
-		if (pd == null) {
-			if (mb is MethodBuilder || mb is ConstructorBuilder)
-				throw new InternalErrorException ("Argument for Method not registered" + mb);
-
-			method_params [mb] = pd = new ReflectionParameters (mb);
-		}
-
-		return (ParameterData) pd;
+		if (! (mb is ConstructorBuilder || mb is MethodBuilder))
+			return null;
+		
+		if (method_internal_params.Contains (mb))
+			return (InternalParameters) method_internal_params [mb];
+		else
+			throw new Exception ("Argument for Method not registered" + mb);
 	}
 
 	/// <summary>
@@ -1995,9 +1974,6 @@ public partial class TypeManager {
 	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
-		if (fb.DeclaringType.IsGenericInstance)
-			fb = fb.Mono_GetGenericFieldDefinition ();
-
 		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
 	
@@ -2104,7 +2080,7 @@ public partial class TypeManager {
 		if (tc.Fields == null)
 			return true;
 
-		foreach (FieldMember field in tc.Fields) {
+		foreach (Field field in tc.Fields) {
 			if (field.FieldBuilder == null || field.FieldBuilder.IsStatic)
 				continue;
 

@@ -1206,12 +1206,11 @@ namespace Mono.CSharp {
 		// Public function used to locate types, this can only
 		// be used after the ResolveTree function has been invoked.
 		//
-		// Set 'silent' to true if you want to suppress "type not found" errors.
-		// Set 'ignore_cs0104' to true if you want to ignore cs0104 errors.
-		//
 		// Returns: Type or null if they type can not be found.
 		//
-		public FullNamedExpression LookupType (string name, Location loc, bool silent, bool ignore_cs0104)
+		// Come to think of it, this should be a DeclSpace
+		//
+		public FullNamedExpression LookupType (string name, bool silent, Location loc)
 		{
 			FullNamedExpression e;
 
@@ -1262,7 +1261,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);
+				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc);
 				if (!silent || e != null)
 					Cache [name] = e;
 			}
@@ -1764,7 +1763,7 @@ namespace Mono.CSharp {
 			// If we have a base class (we have a base class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
 			if (Container.BaseCache != null)
-				member_hash = DeepCopy (Container.BaseCache.member_hash);
+				member_hash = SetupCache (Container.BaseCache);
 			else
 				member_hash = new Hashtable ();
 
@@ -1772,10 +1771,7 @@ namespace Mono.CSharp {
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
 			if (!(type is TypeBuilder) && !type.IsInterface && !type.IsGenericParameter) {
-				if (Container.BaseCache != null)
-					method_hash = DeepCopy (Container.BaseCache.method_hash);
-				else
-					method_hash = new Hashtable ();
+				method_hash = new Hashtable ();
 				AddMethods (type);
 			}
 
@@ -1802,26 +1798,20 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Return a a deep-copy of the hashtable @other.
+		///   Bootstrap this member cache by doing a deep-copy of our base.
 		/// </summary>
-		Hashtable DeepCopy (Hashtable other)
+		Hashtable SetupCache (MemberCache base_class)
 		{
 			Hashtable hash = new Hashtable ();
 
-			if (other == null)
+			if (base_class == null)
 				return hash;
 
-			IDictionaryEnumerator it = other.GetEnumerator ();
+			IDictionaryEnumerator it = base_class.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
-				ArrayList old_list = (ArrayList) it.Value;
-				ArrayList new_list = new ArrayList ();
-
-				foreach (CacheEntry entry in old_list)
-					new_list.Add (new CacheEntry (entry));
-
-				hash [it.Key] = new_list;
-			}
-
+				hash [it.Key] = ((ArrayList) it.Value).Clone ();
+			 }
+                                
 			return hash;
 		}
 
@@ -1923,16 +1913,7 @@ namespace Mono.CSharp {
 
 		void AddMethods (BindingFlags bf, Type type)
 		{
-			//
-			// Consider the case:
-			//
-			//   class X { public virtual int f() {} }
-			//   class Y : X {}
-			// 
-			// When processing 'Y', the method_cache will already have a copy of 'f', 
-			// with ReflectedType == X.  However, we want to ensure that its ReflectedType == Y
-			// 
-			MethodBase [] members = type.GetMethods (bf | BindingFlags.DeclaredOnly);
+			MemberInfo [] members = type.GetMethods (bf);
 
 			Array.Reverse (members);
 
@@ -2041,7 +2022,7 @@ namespace Mono.CSharp {
 			MaskType	= Constructor|Event|Field|Method|Property|NestedType
 		}
 
-		protected class CacheEntry {
+		protected struct CacheEntry {
 			public readonly IMemberContainer Container;
 			public readonly EntryType EntryType;
 			public readonly MemberInfo Member;
@@ -2052,13 +2033,6 @@ namespace Mono.CSharp {
 				this.Container = container;
 				this.Member = member;
 				this.EntryType = GetEntryType (mt, bf);
-			}
-
-			public CacheEntry (CacheEntry other)
-			{
-				this.Container = other.Container;
-				this.EntryType = other.EntryType & ~EntryType.Declared;
-				this.Member = other.Member;
 			}
 
 			public override string ToString ()
