@@ -105,7 +105,7 @@ namespace System
 				if (fragment == null)
 					fragment = String.Empty;
 				else if (fragment.Length > 0)
-					fragment = "#" + Uri.EscapeString (fragment, false, true, true).Replace ("%23", "#");
+					fragment = "#" + EncodeUtf8 (value.Replace ("%23", "#"));
 				query = String.Empty;				
 				modified = true;
 			}
@@ -131,15 +131,9 @@ namespace System
 			get { return path; }
 			set {
 				if (value == null || value.Length == 0) {
-					if ((scheme != Uri.UriSchemeMailto) &&
-					    (scheme != Uri.UriSchemeNews)) 
-						path = "/";					
+					path = "/";
 				} else {
 					path = Uri.EscapeString (value.Replace ('\\', '/'), false, true, true);
-					if ((scheme != Uri.UriSchemeMailto) &&
-					    (scheme != Uri.UriSchemeNews) &&
-					    path [0] != '/') 
-						path = "/" + path;					
 				}
 				modified = true;
 			}
@@ -148,14 +142,8 @@ namespace System
 		public int Port {
 			get { return port; }
 			set {
-				if (value == -1) {
-					port = -1;
-					return;
-				}
-				
-				// checks whether port number is valid
-				new System.Net.IPEndPoint (0, value);
-				
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value");
 				// apparently it is
 				port = value;
 				modified = true;
@@ -168,11 +156,10 @@ namespace System
 				// LAMESPEC: it doesn't say to always prepend a 
 				// question mark to the value.. it does say this 
 				// for fragment.
-				query = value;
-				if (query == null)
+				if (value == null)
 					query = String.Empty;
-				else if (query.Length > 0)
-					query = "?" + Uri.EscapeString (query, false, true, true);
+				else
+					query = "?" + EncodeUtf8 (value);
 				fragment = String.Empty;
 				modified = true;
 			}
@@ -195,24 +182,7 @@ namespace System
 			get {
 				if (!modified) 
 					return uri;
-
-				StringBuilder s = new StringBuilder ();
-				s.Append (scheme);
-				s.Append (Uri.GetSchemeDelimiter (scheme));
-				if (username.Length > 0) {
-					string userinfo = username;
-					if (password.Length > 0)
-						userinfo += ":" + password;
-					s.Append (userinfo).Append ('@');
-				}
-				s.Append (host);
-				if (port != -1)
-					s.Append (':').Append (port);
-				s.Append (path);
-				s.Append (query);
-				s.Append (fragment);
-				
-				uri = new Uri (s.ToString (), true);
+				uri = new Uri (ToString (), true);
 				modified = false;
 				return uri;
 			}
@@ -253,11 +223,27 @@ namespace System
 			}
 
 			builder.Append (host);
-			builder.Append (":" + port);
+			if (port > 0)
+				builder.Append (":" + port);
+
+			if (path != String.Empty)
+				builder.Append ('/');
 			builder.Append (path);
 			builder.Append (query);
 
 			return builder.ToString ();
+		}
+
+		private string EncodeUtf8 (string str)
+		{
+			byte [] data = Encoding.UTF8.GetBytes (str);
+			int len = data.Length;
+			char [] res = new char [len];
+
+			for (int i=0; i<len; i++)
+				res [i] = (char) data [i];
+
+			return new string (res);
 		}
 	} 
 } 

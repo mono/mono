@@ -1,3 +1,14 @@
+2004-02-06  Jackson Harper  <jackson@ximian.com>
+
+	* Uri.cs: Use UTF8 characters when escaping. Reduce paths. This
+	method is taken from System.Web.Utils.UrlUtils.
+	* UriBuilder.cs: Do not escape fragments or queries, but do a utf8
+	switch on them. Do not prepend a "/" to Paths. Do not use
+	IPEndPoint to determine if a port is valid, UriBuilder allows
+	ports to be any	positive integer, IPEndPoint does not. Use the
+	ToString () method for generate a uri in get_Uri. Only set the
+	port in ToString () if it is greater then 0.
+	
 2004-02-05  Jackson Harper  <jackson@ximian.com>
 
 	* UriBuilder.cs: Do not call Uri::ToString for uri builders

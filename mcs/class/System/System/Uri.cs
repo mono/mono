@@ -17,6 +17,7 @@
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Collections;
 
 // See RFC 2396 for more info on URI's.
 
@@ -697,10 +698,11 @@ namespace System
 			if (str == null)
 				return String.Empty;
 			
+			byte [] data = Encoding.UTF8.GetBytes (str.ToCharArray ());
 			StringBuilder s = new StringBuilder ();
-			int len = str.Length;	
+			int len = data.Length;	
 			for (int i = 0; i < len; i++) {
-				char c = str [i];
+				char c = (char) data [i];
 				// reserved    = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | ","
 				// mark        = "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
 				// control     = <US-ASCII coded characters 00-1F and 7F hexadecimal>
@@ -925,8 +927,42 @@ namespace System
 			} else if (scheme == UriSchemeFile) {
 				isUnc = true;
 			}
+
+			path = Reduce (path);
 		}
 
+		public static string Reduce (string path)
+		{
+			path = path.Replace ('\\','/');
+			string [] parts = path.Split ('/');
+			ArrayList result = new ArrayList ();
+
+			int end = parts.Length;
+			for (int i = 0; i < end; i++) {
+				string current = parts [i];
+				if (current == "" || current == "." )
+					continue;
+
+				if (current == "..") {
+					if (result.Count == 0) {
+						if (i == 1) // see bug 52599
+							continue;
+						throw new Exception ("Invalid path.");
+					}
+
+					result.RemoveAt (result.Count - 1);
+					continue;
+				}
+
+				result.Add (current);
+			}
+
+			if (result.Count == 0)
+				return "/";
+
+			result.Insert (0, "");
+			return String.Join ("/", (string []) result.ToArray (typeof (string)));
+		}
 				
 		private struct UriScheme 
 		{
