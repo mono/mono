@@ -378,7 +378,10 @@ namespace Mono.Xml.Xsl.Operations {
 				
 				public override void Format (StringBuilder b, int num)
 				{
-					if (num < 1 || num > 4999) b.Append (num);
+					if (num < 1 || num > 4999) {
+						b.Append (num);
+						return
+					}
 					
 					for (int i = 0; i < decValues.Length; i++) {
 						while (decValues [i] <= num) {
