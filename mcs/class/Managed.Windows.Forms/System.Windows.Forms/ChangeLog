@@ -1,3 +1,7 @@
+2005-02-11  Peter Bartok  <pbartok@novell.com>
+
+	* KeysConverter.cs: Implemented
+
 2005-02-11  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Menu.cs: fixes methods GetContextMenu, GetMainMenu, ToString
