@@ -242,8 +242,12 @@ namespace System.Web.UI
 
 			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
 			foreach (string dll in binDlls) {
-				Assembly assembly = Assembly.LoadFrom (dll);
-				AddAssembly (assembly, true);
+				try {
+					Assembly assembly = Assembly.LoadFrom (dll);
+					AddAssembly (assembly, true);
+				} catch (Exception e) {
+					throw new Exception ("Error while loading " + dll, e);
+				}
 			}
 		}
 
