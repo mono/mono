@@ -1,3 +1,7 @@
+2003-03-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Create TypeRefs instead of types, define methods.
+
 2003-03-09 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Set Call Conventions and Implementation Flags
