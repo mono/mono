@@ -242,12 +242,12 @@ namespace System {
 
 		public static bool operator== (Version v1, Version v2) 
 		{
-			return v1.Equals (v2);
+			return Equals (v1, v2);
 		}
 
 		public static bool operator!= (Version v1, Version v2)
 		{
-			return !v1.Equals (v2);
+			return !Equals (v1, v2);
 		}
 
 		public static bool operator> (Version v1, Version v2)

@@ -1,3 +1,13 @@
+2003-04-04  Dick Porter  <dick@ximian.com>
+
+	* Version.cs: Make operator== and operator!= cope with null
+	objects.  Didn't change operator<, operator<=, operator> or
+	operator>= because its not meaningful to use those to compare
+	against null, and throwing a NullReferenceException is probably
+	the best thing to do there anyway.
+
+	Fixes bug 40720.
+
 2003-04-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomain.cs: fixed InvalidCastException.
