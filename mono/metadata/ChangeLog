@@ -1,4 +1,8 @@
 
+Thu Feb 28 12:33:41 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c, marshal.h: start of marshaling interface.
+
 Wed Feb 27 22:15:17 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fix order in assembly qualified name icall.

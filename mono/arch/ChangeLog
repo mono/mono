@@ -1,3 +1,8 @@
+
+Thu Feb 28 12:34:21 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: start handling of more complex marshaling stuff.
+
 2002-02-25  Sergey Chaban  <serge@wildwestsoftware.com>
 
 	* arm: added ARM support code.
