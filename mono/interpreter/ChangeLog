@@ -1,3 +1,8 @@
+
+Thu Feb 28 19:18:59 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: add checks for more binary consistency.
+
 2002-02-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (interp_mono_runtime_invoke): use alloca instead of g_new0

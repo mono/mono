@@ -1,4 +1,12 @@
 
+Thu Feb 28 19:19:35 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: remove hacks for typebuilder. Added icall to create a
+	modified type from a tybebuilder.
+	* reflection.c: removed hacks for TypeBuilder. Create also a MonoImage
+	in mono_image_basic_init (). Added mono_reflection_setup_internal_class ()
+	to create a backing MonoClass for a TypeBuilder.
+
 Thu Feb 28 15:35:51 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h: more refactoring of class init.
