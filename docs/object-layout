@@ -1,0 +1,58 @@
+Object and VTable layout
+========================
+
+The first pointer inside an Object points to a MonoClass structure. Objects
+also contains a MonoThreadsSync structure which is used by the mono Thread
+implementation. 
+ 
+typedef struct {
+	MonoClass *class;
+	MonoThreadsSync synchronisation;
+	
+	/* object specific data goes here */
+} MonoObject;
+
+The MonoClass contains all Class infos, the VTable and a pointer to static
+class data.
+
+typedef struct {
+	/* various class infos */
+	MonoClass  *parent;
+	const char *name;
+	const char *name_space;
+
+	...
+
+	/* interface offset table */
+	gint  *interface_offsets;
+
+	gpointer data; /* a pointer to static data */
+
+	/* the variable sized vtable is included at the end */
+	gpointer vtable [vtable_size];
+} MonoClass;
+
+
+Calling virtual functions:
+==========================
+
+Each MonoMethod (if virtual) has an associated slot, which is an index into the
+VTable. So we can use the following code to compute the address of a virtual
+function: 
+ 
+method_addr = object->class->vtable [method->slot];
+
+
+Calling interface methods:
+==========================
+
+Each interface class is associated with an unique ID. The following code
+computes the address of an interface function:
+
+offset_into_vtable = object->class->interface_offsets [interface_id];
+method_addr = object->class->vtable [offset_into_vtable + method->slot];
+
+
+
+
+
