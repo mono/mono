@@ -1,5 +1,10 @@
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs: Track global token use, so we can properly flag
+	the use of #define/#undef after the first token has been seen.
+
+	Also, rename the reportXXXX to Error_DescriptiveName
+
 	* decl.cs (DeclSpace.IsTopLevel): Move property here from
 	TypeContainer, so that Enum and Interface can use this too.
 

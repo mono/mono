@@ -43,6 +43,13 @@ namespace Mono.CSharp
 		// Whether tokens have been seen on this line
 		//
 		bool tokens_seen = false;
+
+		//
+		// Whether a token has been seen on the file
+		// This is needed because `define' is not allowed to be used
+		// after a token has been seen.
+		//
+		bool any_token_seen = false;
 		
 		//
 		// Returns a verbose representation of the current location
@@ -996,7 +1003,7 @@ namespace Mono.CSharp
 					bool val = pp_expr (ref s);
 					if (s.Length > 0 && s [0] == ')')
 						return val;
-					report1517 ();
+					Error_InvalidDirective ();
 					return false;
 				}
 				
@@ -1019,7 +1026,7 @@ namespace Mono.CSharp
 					return vv;
 				}
 			}
-			report1517 ();
+			Error_InvalidDirective ();
 			return false;
 		}
 		
@@ -1031,7 +1038,7 @@ namespace Mono.CSharp
 			if (len > 0){
 				if (s [0] == '!'){
 					if (len > 1 && s [1] == '='){
-						report1517 ();
+						Error_InvalidDirective ();
 						return false;
 					}
 					s = s.Substring (1);
@@ -1039,7 +1046,7 @@ namespace Mono.CSharp
 				} else
 					return pp_primary (ref s);
 			} else {
-				report1517 ();
+				Error_InvalidDirective ();
 				return false;
 			}
 		}
@@ -1056,7 +1063,7 @@ namespace Mono.CSharp
 						s = s.Substring (2);
 						return va == pp_unary (ref s);
 					} else {
-						report1517 ();
+						Error_InvalidDirective ();
 						return false;
 					}
 				} else if (s [0] == '!' && len > 1 && s [1] == '='){
@@ -1083,7 +1090,7 @@ namespace Mono.CSharp
 						s = s.Substring (2);
 						return va && pp_eq (ref s);
 					} else {
-						report1517 ();
+						Error_InvalidDirective ();
 						return false;
 					}
 				} 
@@ -1106,11 +1113,11 @@ namespace Mono.CSharp
 						s = s.Substring (2);
 						return va || pp_and (ref s);
 					} else {
-						report1517 ();
+						Error_InvalidDirective ();
 						return false;
 					}
 				} else {
-					report1517 ();
+					Error_InvalidDirective ();
 					return false;
 				}
 			}
@@ -1125,16 +1132,23 @@ namespace Mono.CSharp
 			return v;
 		}
 		
-		void report1517 ()
+		void Error_InvalidDirective ()
 		{
 			Report.Error (1517, Location, "Invalid pre-processor directive");
 		}
 
-		void report1028 (string extra)
+		void Error_UnexpectedDirective (string extra)
 		{
 			Report.Error (
 				1028, Location,
 				"Unexpected processor directive (" + extra + ")");
+		}
+
+		void Error_TokensSeen ()
+		{
+			Report.Error (
+				1032, Location,
+				"Cannot define or undefine pre-processor symbols after a token in the file");
 		}
 		
 		//
@@ -1158,10 +1172,18 @@ namespace Mono.CSharp
 				return true;
 
 			case "define":
+				if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				}
 				PreProcessDefinition (true, arg);
 				return true;
 
 			case "undef":
+				if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				}
 				PreProcessDefinition (false, arg);
 				return true;
 
@@ -1182,7 +1204,7 @@ namespace Mono.CSharp
 				
 			case "if":
 				if (arg == ""){
-					report1517 ();
+					Error_InvalidDirective ();
 					return true;
 				}
 				bool taking = false;
@@ -1207,7 +1229,7 @@ namespace Mono.CSharp
 				
 			case "endif":
 				if (ifstack == null || ifstack.Count == 0){
-					report1028 ("no #if for this #endif");
+					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
 				} else {
 					ifstack.Pop ();
@@ -1225,13 +1247,13 @@ namespace Mono.CSharp
 
 			case "elif":
 				if (ifstack == null || ifstack.Count == 0){
-					report1028 ("no #if for this #elif");
+					Error_UnexpectedDirective ("no #if for this #elif");
 					return true;
 				} else {
 					int state = (int) ifstack.Peek ();
 
 					if ((state & ELSE_SEEN) != 0){
-						report1028 ("#elif not valid after #else");
+						Error_UnexpectedDirective ("#elif not valid after #else");
 						return true;
 					}
 
@@ -1256,7 +1278,7 @@ namespace Mono.CSharp
 					int state = (int) ifstack.Peek ();
 
 					if ((state & ELSE_SEEN) != 0){
-						report1028 ("#else within #else");
+						Error_UnexpectedDirective ("#else within #else");
 						return true;
 					}
 
@@ -1343,6 +1365,7 @@ namespace Mono.CSharp
 						line++;
 						ref_line++;
 						col = 0;
+						any_token_seen |= tokens_seen;
 						tokens_seen = false;
 						continue;
 					} else if (d == '*'){
@@ -1358,6 +1381,7 @@ namespace Mono.CSharp
 								line++;
 								ref_line++;
 								col = 0;
+								any_token_seen |= tokens_seen;
 								tokens_seen = false;
 							}
 						}
@@ -1393,6 +1417,7 @@ namespace Mono.CSharp
 						if (c == '#' && !skipping)
 							goto start_again;
 					}
+					any_token_seen |= tokens_seen;
 					tokens_seen = false;
 					if (c == -1)
 						Report.Error (1027, Location, "#endif expected");
@@ -1468,6 +1493,7 @@ namespace Mono.CSharp
 					line++;
 					ref_line++;
 					col = 0;
+					any_token_seen |= tokens_seen;
 					tokens_seen = false;
 					continue;
 				}
