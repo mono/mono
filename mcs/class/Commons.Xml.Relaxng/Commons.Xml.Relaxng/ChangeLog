@@ -1,3 +1,26 @@
+2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added 
+	  - RelaxngDatatype.cs
+	  - RelaxngDatatypeProvider.cs
+	  - RelaxngDefaultDatatypes.cs
+	  - RelaxngException.cs
+	  - RelaxngGrammar.cs
+	  - RelaxngMergedProvider.cs
+	  - RelaxngNameClass.cs
+	  - RelaxngPattern.cs
+	  - RelaxngPatternType.cs
+	  - XsdDatatypeProvider.cs
+	* Misc.cs,
+	  RelaxngReader.cs,
+	  RelaxngValidatingReader.cs : Radical design changes.
+
+	In short:
+	  - API redesign (renaming RngXxx to RelaxngXxx)
+	  - Strict grammar validation
+	  - Datatype support (XML Schema primitive datatypes)
+	  - Some derivative bugfixes such as list validation.
+
 2003-05-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* RelaxngReader.cs :

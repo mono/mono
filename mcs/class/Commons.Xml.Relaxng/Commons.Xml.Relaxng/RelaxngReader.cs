@@ -16,16 +16,16 @@ namespace Commons.Xml.Relaxng
 	public class RelaxngReader : XmlDefaultReader
 	{
 		// static members.
-		static RngPattern relaxngGrammar;
+		static RelaxngPattern relaxngGrammar;
 		static XmlReader relaxngXmlReader;
 		static RelaxngReader ()
 		{
 //			relaxngXmlReader = new XmlTextReader ("relaxng.rng");
-//			relaxngGrammar = RngPattern.Read (relaxngXmlReader);
+//			relaxngGrammar = RelaxngPattern.Read (relaxngXmlReader);
 		}
 
-		public static string RngNS = "http://relaxng.org/ns/structure/1.0";
-//		public static RngPattern RelaxngGrammar {
+		public static string RelaxngNS = "http://relaxng.org/ns/structure/1.0";
+//		public static RelaxngPattern RelaxngGrammar {
 //			get { return relaxngGrammar; }
 //		}
 
@@ -52,12 +52,24 @@ namespace Commons.Xml.Relaxng
 			MoveToContent ();
 		}
 
+		private void FillLocation (RelaxngElementBase el)
+		{
+			el.BaseUri = BaseURI;
+			IXmlLineInfo li = this as IXmlLineInfo;
+			el.LineNumber = li != null ? li.LineNumber : 0;
+			el.LinePosition = li != null ? li.LinePosition : 0;
+		}
+
 		// public
 		public override bool Read ()
 		{
 			bool skipRead = false;
 			bool b = false;
 			bool loop = true;
+			if (IsEmptyElement) { // this should be done here
+				nsStack.Pop ();
+				datatypeLibraryStack.Pop ();
+			}
 			do {
 				if (!skipRead)
 					b = Reader.Read ();
@@ -78,7 +90,7 @@ namespace Commons.Xml.Relaxng
 						loop = false;
 					break;
 				default:
-					if (NamespaceURI != RngNS) {
+					if (NamespaceURI != RelaxngNS) {
 						Reader.Skip ();
 						skipRead = true;
 					}
@@ -90,51 +102,42 @@ namespace Commons.Xml.Relaxng
 
 			switch (NodeType) {
 			case XmlNodeType.Element:
-				if (!IsEmptyElement) {
-					if (MoveToAttribute ("ns"))
-						nsStack.Push (Value.Trim ());
-					else
-						nsStack.Push (nsStack.Peek ());
+				if (MoveToAttribute ("ns"))
+					nsStack.Push (Value.Trim ());
+				else
+					nsStack.Push (nsStack.Peek ());
 
-					if (MoveToAttribute ("datatypeLibrary"))
-						datatypeLibraryStack.Push (Value.Trim ());
-					else
-						datatypeLibraryStack.Push (datatypeLibraryStack.Peek ());
-					MoveToElement ();
+				if (MoveToAttribute ("datatypeLibrary")) {
+					string uriString = Value.Trim ();
+					if (uriString.Length == 0)
+						datatypeLibraryStack.Push (String.Empty);
+					else {
+						try {
+							Uri uri = new Uri (uriString);
+							// MS.NET Uri is too lamespec
+							datatypeLibraryStack.Push (uri.ToString ());
+						} catch (UriFormatException ex) {
+							throw new RelaxngException (ex.Message, ex);
+						}
+					}
 				}
+				else
+					datatypeLibraryStack.Push (datatypeLibraryStack.Peek ());
+				MoveToElement ();
 				break;
+
 			case XmlNodeType.EndElement:
 				nsStack.Pop ();
 				datatypeLibraryStack.Pop ();
 				break;
 			}
+
 			return b;
 		}
 
-		/*
-		public override XmlNodeType MoveToContent ()
-		{
-			MoveToElement ();
-
-			switch (NodeType) {
-			case XmlNodeType.ProcessingInstruction:
-			case XmlNodeType.XmlDeclaration:
-			case XmlNodeType.DocumentType:
-			case XmlNodeType.Comment:
-			case XmlNodeType.Whitespace:
-			case XmlNodeType.SignificantWhitespace:
-				Read ();
-				break;
-			default:
-				break;
-			}
-			return NodeType;
-		}
-		*/
-
 		// Properties
 
-		public string NS {
+		public string ContextNamespace {
 			get { return nsStack.Peek () as string; }
 		}
 
@@ -145,30 +148,47 @@ namespace Commons.Xml.Relaxng
 		// Utility methods.
 		private void expect (string name)
 		{
-			if (NamespaceURI != RngGrammar.NamespaceURI)
-				throw new RngException (String.Format ("Invalid document: expected namespace {0} but found {1}", RngGrammar.NamespaceURI, NamespaceURI));
+			if (NamespaceURI != RelaxngGrammar.NamespaceURI)
+				throw new RelaxngException (String.Format ("Invalid document: expected namespace {0} but found {1}", RelaxngGrammar.NamespaceURI, NamespaceURI));
 			else if (LocalName != name)
-				throw new RngException (String.Format ("Invalid document: expected local name {0} but found {1}", name, LocalName));
+				throw new RelaxngException (String.Format ("Invalid document: expected local name {0} but found {1}", name, LocalName));
 		}
 
 		private void expectEnd (string name)
 		{
 			if (NodeType != XmlNodeType.EndElement)
-				throw new RngException (String.Format ("Expected EndElement but found {0}.", NodeType));
+				throw new RelaxngException (String.Format ("Expected EndElement but found {0}.", NodeType));
 			expect (name);
 
 			Read ();
 		}
 
 		// Other than name class and pattern.
-		public RngStart ReadStart ()
+		private RelaxngStart ReadStart ()
 		{
-			RngStart s = new RngStart ();
+			RelaxngStart s = new RelaxngStart ();
+			FillLocation (s);
 			expect ("start");
+
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (NamespaceURI != String.Empty)
+						continue;
+					switch (LocalName) {
+					case "datatypeLibrary":
+					case  "combine":
+						break;
+					default:
+						throw new RelaxngException ("Invalid attribute.");
+					}
+				} while (MoveToNextAttribute ());
+				MoveToElement ();
+			}
+
 			if (MoveToAttribute ("combine")) {
 				s.Combine = Value.Trim ();
 				if (s.Combine != "choice" && s.Combine != "interleave")
-					throw new RngException ("Invalid combine attribute: " + s.Combine);
+					throw new RelaxngException ("Invalid combine attribute: " + s.Combine);
 			}
 
 			MoveToElement ();
@@ -178,17 +198,27 @@ namespace Commons.Xml.Relaxng
 			return s;
 		}
 
+		private string GetNameAttribute ()
+		{
+			string name = GetSpaceStrippedAttribute ("name");
+			if (name == null)
+				throw new RelaxngException ("Required attribute name is not found.");
+			return XmlConvert.VerifyNCName (name);
+		}
+
 		private string GetSpaceStrippedAttribute (string name)
 		{
 			string v = GetAttribute (name);
 			return v != null ? v.Trim () : null;
 		}
 
-		public RngDefine ReadDefine ()
+		private RelaxngDefine ReadDefine ()
 		{
-			RngDefine def = new RngDefine ();
+			RelaxngDefine def = new RelaxngDefine ();
+			FillLocation (def);
 			expect ("define");
-			def.Name = GetSpaceStrippedAttribute ("name");
+			def.Name = GetNameAttribute ();
+			def.Combine = GetSpaceStrippedAttribute ("combine");
 
 			Read ();
 			while (NodeType == XmlNodeType.Element)
@@ -197,18 +227,19 @@ namespace Commons.Xml.Relaxng
 			return def;
 		}
 
-		public RngParam ReadParam ()
+		private RelaxngParam ReadParam ()
 		{
-			RngParam p = new RngParam ();
+			RelaxngParam p = new RelaxngParam ();
+			FillLocation (p);
 			expect ("param");
-			p.Name = GetSpaceStrippedAttribute ("name");
+			p.Name = GetNameAttribute ();
 			p.Value = ReadString ().Trim ();
 			expectEnd ("param");
 			return p;
 		}
 
 		// NameClass reader (only if it is element-style.)
-		public RngNameClass ReadNameClass ()
+		private RelaxngNameClass ReadNameClass ()
 		{
 			switch (LocalName) {
 			case "name":
@@ -220,20 +251,21 @@ namespace Commons.Xml.Relaxng
 			case "choice":
 				return ReadNameClassChoice ();
 			}
-			throw new RngException ("Invalid name class: " + LocalName);
+			throw new RelaxngException ("Invalid name class: " + LocalName);
 		}
 
-		public RngName ReadNameClassName ()
+		private RelaxngName ReadNameClassName ()
 		{
 			string name = ReadString ().Trim ();
-			RngName rName = resolvedName (name);
+			RelaxngName rName = resolvedName (name);
 			expectEnd ("name");
 			return rName;
 		}
 
-		public RngAnyName ReadNameClassAnyName ()
+		private RelaxngAnyName ReadNameClassAnyName ()
 		{
-			RngAnyName an = new RngAnyName ();
+			RelaxngAnyName an = new RelaxngAnyName ();
+			FillLocation (an);
 			if (!IsEmptyElement) {
 				Read ();
 				if (NodeType == XmlNodeType.EndElement) {
@@ -241,7 +273,8 @@ namespace Commons.Xml.Relaxng
 					// expect except
 					expect ("except");
 					Read ();
-					an.Except = new RngExceptNameClass ();
+					an.Except = new RelaxngExceptNameClass ();
+					FillLocation (an.Except);
 					while (NodeType == XmlNodeType.Element)
 						an.Except.Names.Add (
 							ReadNameClass ());
@@ -253,18 +286,20 @@ namespace Commons.Xml.Relaxng
 			return an;
 		}
 
-		public RngNsName ReadNameClassNsName ()
+		private RelaxngNsName ReadNameClassNsName ()
 		{
-			RngNsName nn = new RngNsName (this.NS);
+			RelaxngNsName nn = new RelaxngNsName ();
+			FillLocation (nn);
+			nn.Namespace = this.ContextNamespace;
 			if (!IsEmptyElement) {
 				Read ();
 				if (NodeType == XmlNodeType.EndElement) {
 				} else {
 					// expect except
 					expect ("except");
-					Read ();
-					nn.Except = new RngExceptNameClass ();
-					expectEnd ("except");
+//					Read ();
+					nn.Except = ReadNameClassExcept ();//new RelaxngExceptNameClass ();
+					FillLocation (nn.Except);
 				}
 				expectEnd ("nsName");
 			} else
@@ -272,34 +307,36 @@ namespace Commons.Xml.Relaxng
 			return nn;
 		}
 
-		public RngNameChoice ReadNameClassChoice ()
+		private RelaxngNameChoice ReadNameClassChoice ()
 		{
-			RngNameChoice nc = new RngNameChoice ();
+			RelaxngNameChoice nc = new RelaxngNameChoice ();
+			FillLocation (nc);
 			if (IsEmptyElement)
-				throw new RngException ("Name choice must have at least one name class.");
+				throw new RelaxngException ("Name choice must have at least one name class.");
 
 			Read ();
 			while (NodeType != XmlNodeType.EndElement) {
 				nc.Children.Add (ReadNameClass ());
 			}
 			if (nc.Children.Count == 0)
-				throw new RngException ("Name choice must have at least one name class.");
+				throw new RelaxngException ("Name choice must have at least one name class.");
 
 			expectEnd ("choice");
 			return nc;
 		}
 
-		public RngExceptNameClass ReadNameClassExcept ()
+		private RelaxngExceptNameClass ReadNameClassExcept ()
 		{
-			RngExceptNameClass x = new RngExceptNameClass ();
+			RelaxngExceptNameClass x = new RelaxngExceptNameClass ();
+			FillLocation (x);
 			if (IsEmptyElement)
-				throw new RngException ("Name choice must have at least one name class.");
+				throw new RelaxngException ("Name choice must have at least one name class.");
 
 			Read ();
 			while (NodeType != XmlNodeType.EndElement)
 				x.Names.Add (ReadNameClass ());
 			if (x.Names.Count == 0)
-				throw new RngException ("Name choice must have at least one name class.");
+				throw new RelaxngException ("Name choice must have at least one name class.");
 
 			expectEnd ("except");
 			return x;
@@ -307,7 +344,7 @@ namespace Commons.Xml.Relaxng
 
 		// Pattern reader
 
-		public RngPattern ReadPattern ()
+		internal RelaxngPattern ReadPattern ()
 		{
 			while (NodeType != XmlNodeType.Element)
 				if (!Read ())
@@ -353,43 +390,48 @@ namespace Commons.Xml.Relaxng
 			case "grammar":
 				return ReadGrammarPattern ();
 			}
-			throw new RngException ("Non-supported pattern specification: " + LocalName);
+			throw new RelaxngException ("Non-supported pattern specification: " + LocalName);
 		}
 
-		private void ReadPatterns (RngSingleContentPattern el)
+		private void ReadPatterns (RelaxngSingleContentPattern el)
 		{
 			do {
 				el.Patterns.Add (ReadPattern ());
 			} while (NodeType == XmlNodeType.Element);
 		}
 
-		private void ReadPatterns (RngBinaryContentPattern el)
+		private void ReadPatterns (RelaxngBinaryContentPattern el)
 		{
 			do {
 				el.Patterns.Add (ReadPattern ());
 			} while (NodeType == XmlNodeType.Element);
 		}
 
-		public RngExcept ReadPatternExcept ()
+		private RelaxngExcept ReadPatternExcept ()
 		{
-			RngExcept x = new RngExcept ();
+			RelaxngExcept x = new RelaxngExcept ();
+			FillLocation (x);
 			if (IsEmptyElement)
-				throw new RngException ("'except' must have at least one pattern.");
+				throw new RelaxngException ("'except' must have at least one pattern.");
 			Read ();
 			while (NodeType != XmlNodeType.EndElement)
 				x.Patterns.Add (ReadPattern ());
 			if (x.Patterns.Count == 0)
-				throw new RngException ("'except' must have at least one pattern.");
+				throw new RelaxngException ("'except' must have at least one pattern.");
 
 			expectEnd ("except");
 			return x;
 		}
 
-		public RngInclude ReadInclude ()
+		private RelaxngInclude ReadInclude ()
 		{
-			RngInclude i = new RngInclude ();
+			RelaxngInclude i = new RelaxngInclude ();
+			FillLocation (i);
 			expect ("include");
+			i.NSContext = ContextNamespace;
 			string href = GetSpaceStrippedAttribute ("href");
+			if (href == null)
+				throw new RelaxngException ("Required attribute href was not found.");
 			i.Href = Util.ResolveUri (BaseURI, href);
 			if (!IsEmptyElement) {
 				Read ();
@@ -418,18 +460,19 @@ namespace Commons.Xml.Relaxng
 					if (includes != null)
 						includes.Add (ReadInclude ());
 					else
-						throw new RngException ("Unexpected content: " + Name);
+						throw new RelaxngException ("Unexpected content: " + Name);
 					break;
 				default:
-					throw new RngException ("Unexpected content: " + Name);
+					throw new RelaxngException ("Unexpected content: " + Name);
 				}
 			}
 		}
 
-		public RngDiv ReadDiv (bool allowIncludes)
+		private RelaxngDiv ReadDiv (bool allowIncludes)
 		{
 			expect ("div");
-			RngDiv div = new RngDiv ();
+			RelaxngDiv div = new RelaxngDiv ();
+			FillLocation (div);
 			if (!IsEmptyElement) {
 				Read ();
 				readGrammarIncludeContent (div.Starts, div.Defines, div.Divs, div.Includes);
@@ -440,29 +483,47 @@ namespace Commons.Xml.Relaxng
 			return div;
 		}
 
-		private RngName resolvedName (string nameSpec)
+		private RelaxngName resolvedName (string nameSpec)
 		{
 			int colonAt = nameSpec.IndexOf (':');
 			string prefix = (colonAt < 0) ? "" : nameSpec.Substring (0, colonAt);
 			string local = (colonAt < 0) ? nameSpec : nameSpec.Substring (colonAt + 1, nameSpec.Length - colonAt - 1);
-			string uri = NS;
+			string uri = ContextNamespace;
 
 			if (prefix != "") {
 				uri = LookupNamespace (prefix);
 				if (uri == null)
-					throw new RngException ("Undeclared prefix in name component: " + nameSpec);
+					throw new RelaxngException ("Undeclared prefix in name component: " + nameSpec);
 			}
-			return new RngName (local, uri);
+			RelaxngName n = new RelaxngName (local, uri);
+			FillLocation (n);
+			return n;
 		}
 
-		public RngElement ReadElementPattern ()
+		private RelaxngElement ReadElementPattern ()
 		{
-			RngElement el = new RngElement ();
+			RelaxngElement el = new RelaxngElement ();
+			FillLocation (el);
+
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (NamespaceURI != String.Empty)
+						continue;
+					switch (LocalName) {
+					case "datatypeLibrary":
+					case  "name":
+					case "ns":
+						break;
+					default:
+						throw new RelaxngException ("Invalid attribute.");
+					}
+				} while (MoveToNextAttribute ());
+				MoveToElement ();
+			}
 
 			// try to get name from attribute.
-			if (MoveToAttribute ("name")) {
-				el.NameClass = resolvedName (Value.Trim ());
-			}
+			if (MoveToAttribute ("name"))
+				el.NameClass = resolvedName (XmlConvert.VerifyName (Value.Trim ()));
 			MoveToElement ();
 			Read ();
 
@@ -475,16 +536,47 @@ namespace Commons.Xml.Relaxng
 
 			expectEnd ("element");
 
+			if (el.NameClass == null)
+				throw new RelaxngException ("Name class was not specified.");
 			return el;
 		}
 
-		public RngAttribute ReadAttributePattern ()
+		private RelaxngAttribute ReadAttributePattern ()
 		{
-			RngAttribute attr = new RngAttribute ();
+			RelaxngAttribute attr = new RelaxngAttribute ();
+			FillLocation (attr);
+
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (NamespaceURI != String.Empty)
+						continue;
+					switch (LocalName) {
+					case "datatypeLibrary":
+					case  "name":
+					case "ns":
+						break;
+					default:
+						throw new RelaxngException ("Invalid attribute.");
+					}
+				} while (MoveToNextAttribute ());
+				MoveToElement ();
+			}
+
+			string ns = GetSpaceStrippedAttribute ("ns");
 
 			// try to get name from attribute.
-			if (MoveToAttribute ("name"))
-				attr.NameClass = resolvedName (Value.Trim ());
+			if (MoveToAttribute ("name")) {
+//				attr.NameClass = resolvedName (XmlConvert.VerifyName (Value.Trim ()), false);
+				RelaxngName nc = new RelaxngName ();
+				string name = XmlConvert.VerifyName (Value.Trim ());
+				if (name.IndexOf (':') > 0)
+					nc = resolvedName (name);
+				else {
+					nc.LocalName = name;
+					nc.Namespace = ns == null ? String.Empty : ns;
+				}
+				attr.NameClass = nc;
+			}
 
 			MoveToElement ();
 			if (!IsEmptyElement) {
@@ -499,12 +591,16 @@ namespace Commons.Xml.Relaxng
 				expectEnd ("attribute");
 			} else
 				Read ();
+
+			if (attr.NameClass == null)
+				throw new RelaxngException ("Name class was not specified.");
 			return attr;
 		}
 
-		public RngGrammar ReadGrammarPattern ()
+		private RelaxngGrammar ReadGrammarPattern ()
 		{
-			RngGrammar grammar = new RngGrammar ();
+			RelaxngGrammar grammar = new RelaxngGrammar ();
+			FillLocation (grammar);
 			Read ();
 			this.readGrammarIncludeContent (grammar.Starts, grammar.Defines, grammar.Divs, grammar.Includes);
 			expectEnd ("grammar");
@@ -512,11 +608,12 @@ namespace Commons.Xml.Relaxng
 			return grammar;
 		}
 
-		public RngRef ReadRefPattern ()
+		private RelaxngRef ReadRefPattern ()
 		{
-			RngRef r = new RngRef ();
+			RelaxngRef r = new RelaxngRef ();
+			FillLocation (r);
 			expect ("ref");
-			r.Name = GetSpaceStrippedAttribute ("name");
+			r.Name = GetNameAttribute ();
 			if (!IsEmptyElement) {
 				Read ();
 				expectEnd ("ref");
@@ -526,13 +623,16 @@ namespace Commons.Xml.Relaxng
 			return r;
 		}
 
-		public RngExternalRef ReadExternalRefPattern ()
+		private RelaxngExternalRef ReadExternalRefPattern ()
 		{
-			RngExternalRef r = new RngExternalRef ();
+			RelaxngExternalRef r = new RelaxngExternalRef ();
+			FillLocation (r);
 			expect ("externalRef");
 			string href = GetSpaceStrippedAttribute ("href");
+			if (href == null)
+				throw new RelaxngException ("Required attribute href was not found.");
 			r.Href = Util.ResolveUri (BaseURI, href);
-			r.NSContext = NS;
+			r.NSContext = ContextNamespace;
 			if (!IsEmptyElement) {
 				Read ();
 				expectEnd ("externalRef");
@@ -542,11 +642,12 @@ namespace Commons.Xml.Relaxng
 			return r;
 		}
 
-		public RngParentRef ReadParentRefPattern ()
+		private RelaxngParentRef ReadParentRefPattern ()
 		{
-			RngParentRef r = new RngParentRef ();
+			RelaxngParentRef r = new RelaxngParentRef ();
+			FillLocation (r);
 			expect ("parentRef");
-			r.Name = GetSpaceStrippedAttribute ("name");
+			r.Name = GetNameAttribute ();
 			if (!IsEmptyElement) {
 				Read ();
 				expectEnd ("parentRef");
@@ -556,9 +657,18 @@ namespace Commons.Xml.Relaxng
 			return r;
 		}
 
-		public RngEmpty ReadEmptyPattern ()
+		private RelaxngEmpty ReadEmptyPattern ()
 		{
 			expect ("empty");
+
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (NamespaceURI == String.Empty && LocalName != "datatypeLibrary")
+						throw new RelaxngException ("Invalid attribute.");
+				} while (MoveToNextAttribute ());
+				MoveToElement ();
+			}
+
 			if (!IsEmptyElement) {
 				Read ();
 				expectEnd ("empty");
@@ -566,12 +676,23 @@ namespace Commons.Xml.Relaxng
 			else
 				Read ();
 
-			return RngEmpty.Instance;
+			RelaxngEmpty empty = new RelaxngEmpty ();
+			FillLocation (empty);
+			return empty;
 		}
 
-		public RngText ReadTextPattern ()
+		private RelaxngText ReadTextPattern ()
 		{
 			expect ("text");
+
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (NamespaceURI == String.Empty && LocalName != "datatypeLibrary")
+						throw new RelaxngException ("Invalid attribute.");
+				} while (MoveToNextAttribute ());
+				MoveToElement ();
+			}
+
 			if (!IsEmptyElement) {
 				Read ();
 				expectEnd ("text");
@@ -579,16 +700,36 @@ namespace Commons.Xml.Relaxng
 			else
 				Read ();
 
-			return RngText.Instance;
+			RelaxngText t = new RelaxngText ();
+			FillLocation (t);
+			return t;
 		}
 
-		public RngData ReadDataPattern ()
+		private RelaxngData ReadDataPattern ()
 		{
-			RngData data = new RngData ();
+			RelaxngData data = new RelaxngData ();
+			FillLocation (data);
 
 			expect ("data");
 			data.Type = GetSpaceStrippedAttribute ("type");
+			if (data.Type == null)
+				throw new RelaxngException ("Attribute type is required.");
 			data.DatatypeLibrary = DatatypeLibrary;
+
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (NamespaceURI != String.Empty)
+						continue;
+					switch (LocalName) {
+					case "datatypeLibrary":
+					case "type":
+						break;
+					default:
+						throw new RelaxngException ("Invalid attribute.");
+					}
+				} while (MoveToNextAttribute ());
+				MoveToElement ();
+			}
 
 			if (!IsEmptyElement) {
 				Read ();
@@ -604,10 +745,28 @@ namespace Commons.Xml.Relaxng
 			return data;
 		}
 
-		public RngValue ReadValuePattern ()
+		private RelaxngValue ReadValuePattern ()
 		{
-			RngValue v = new RngValue ();
+			RelaxngValue v = new RelaxngValue ();
+			FillLocation (v);
 			expect ("value");
+
+			if (MoveToFirstAttribute ()) {
+				do {
+					if (NamespaceURI != String.Empty)
+						continue;
+					switch (LocalName) {
+					case "datatypeLibrary":
+					case "type":
+					case "ns":
+						break;
+					default:
+						throw new RelaxngException ("Invalid attribute.");
+					}
+				} while (MoveToNextAttribute ());
+				MoveToElement ();
+			}
+
 			if (MoveToAttribute ("type")) {
 				v.Type = Value.Trim ();
 				v.DatatypeLibrary = DatatypeLibrary;
@@ -615,17 +774,23 @@ namespace Commons.Xml.Relaxng
 				v.Type = "token";
 				v.DatatypeLibrary = "";
 			}
-			v.Namespace = GetSpaceStrippedAttribute ("ns");
+//			v.Namespace = GetSpaceStrippedAttribute ("ns");
 			MoveToElement ();
-			v.Value = ReadString ().Trim ();
-			expectEnd ("value");
+			if (IsEmptyElement) {
+				v.Value = String.Empty;
+				Read ();
+			} else {
+				v.Value = ReadString ();
+				expectEnd ("value");
+			}
 
 			return v;
 		}
 
-		public RngList ReadListPattern ()
+		private RelaxngList ReadListPattern ()
 		{
-			RngList list = new RngList ();
+			RelaxngList list = new RelaxngList ();
+			FillLocation (list);
 			expect ("list");
 			Read ();
 			ReadPatterns (list);
@@ -633,9 +798,10 @@ namespace Commons.Xml.Relaxng
 			return list;
 		}
 
-		public RngOneOrMore ReadOneOrMorePattern ()
+		private RelaxngOneOrMore ReadOneOrMorePattern ()
 		{
-			RngOneOrMore o = new RngOneOrMore ();
+			RelaxngOneOrMore o = new RelaxngOneOrMore ();
+			FillLocation (o);
 			expect ("oneOrMore");
 			Read ();
 			ReadPatterns (o);
@@ -643,9 +809,10 @@ namespace Commons.Xml.Relaxng
 			return o;
 		}
 
-		public RngZeroOrMore ReadZeroOrMorePattern ()
+		private RelaxngZeroOrMore ReadZeroOrMorePattern ()
 		{
-			RngZeroOrMore o = new RngZeroOrMore ();
+			RelaxngZeroOrMore o = new RelaxngZeroOrMore ();
+			FillLocation (o);
 			expect ("zeroOrMore");
 			Read ();
 			ReadPatterns (o);
@@ -653,9 +820,10 @@ namespace Commons.Xml.Relaxng
 			return o;
 		}
 
-		public RngOptional ReadOptionalPattern ()
+		private RelaxngOptional ReadOptionalPattern ()
 		{
-			RngOptional o = new RngOptional ();
+			RelaxngOptional o = new RelaxngOptional ();
+			FillLocation (o);
 			expect ("optional");
 			Read ();
 			ReadPatterns (o);
@@ -663,9 +831,10 @@ namespace Commons.Xml.Relaxng
 			return o;
 		}
 
-		public RngMixed ReadMixedPattern ()
+		private RelaxngMixed ReadMixedPattern ()
 		{
-			RngMixed o = new RngMixed ();
+			RelaxngMixed o = new RelaxngMixed ();
+			FillLocation (o);
 			expect ("mixed");
 			Read ();
 			ReadPatterns (o);
@@ -673,9 +842,10 @@ namespace Commons.Xml.Relaxng
 			return o;
 		}
 
-		public RngGroup ReadGroupPattern ()
+		private RelaxngGroup ReadGroupPattern ()
 		{
-			RngGroup g = new RngGroup ();
+			RelaxngGroup g = new RelaxngGroup ();
+			FillLocation (g);
 			expect ("group");
 			Read ();
 			ReadPatterns (g);
@@ -683,9 +853,10 @@ namespace Commons.Xml.Relaxng
 			return g;
 		}
 
-		public RngInterleave ReadInterleavePattern ()
+		private RelaxngInterleave ReadInterleavePattern ()
 		{
-			RngInterleave i = new RngInterleave ();
+			RelaxngInterleave i = new RelaxngInterleave ();
+			FillLocation (i);
 			expect ("interleave");
 			Read ();
 			ReadPatterns (i);
@@ -693,9 +864,10 @@ namespace Commons.Xml.Relaxng
 			return i;
 		}
 
-		public RngChoice ReadChoicePattern ()
+		private RelaxngChoice ReadChoicePattern ()
 		{
-			RngChoice c = new RngChoice ();
+			RelaxngChoice c = new RelaxngChoice ();
+			FillLocation (c);
 			expect ("choice");
 			Read ();
 			ReadPatterns (c);
@@ -703,7 +875,7 @@ namespace Commons.Xml.Relaxng
 			return c;
 		}
 
-		public RngNotAllowed ReadNotAllowedPattern ()
+		private RelaxngNotAllowed ReadNotAllowedPattern ()
 		{
 			expect ("notAllowed");
 			if (!IsEmptyElement) {
@@ -712,7 +884,9 @@ namespace Commons.Xml.Relaxng
 			}
 			else
 				Read ();
-			return RngNotAllowed.Instance;
+			RelaxngNotAllowed na = new RelaxngNotAllowed ();
+			FillLocation (na);
+			return na;
 		}
 	}
 }
