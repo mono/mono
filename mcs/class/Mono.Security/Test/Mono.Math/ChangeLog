@@ -1,3 +1,11 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GcdBigTest.cs: Ajusted to changes in assembly.
+	* ModInverseBigTest.cs: Ajusted to changes in assembly.
+	* PrimeGenerationTest.cs: Ajusted to changes in assembly.
+	* PrimeTestingTest.cs: Ajusted to changes in assembly.
+	* SearchGeneratorTest.cs: Ajusted to changes in assembly.
+
 2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrimeTestingTest.cs: Added well known (and tested) primes from 

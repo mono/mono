@@ -34,7 +34,7 @@ namespace MonoTests.Mono.Math {
 		[Test]
 		public void GeneratePrime ()
 		{
-			BigInteger r = BigInteger.NextHightestPrime (s);
+			BigInteger r = BigInteger.NextHighestPrime (s);
 			Expect (r, e);
 		}
 	}

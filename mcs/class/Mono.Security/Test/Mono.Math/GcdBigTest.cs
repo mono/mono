@@ -38,7 +38,7 @@ namespace MonoTests.Mono.Math {
 		[Test]
 		public void GcdPP()
 		{
-			Expect( A.gcd(B), aGcdB );
+			Expect (A.GCD (B), aGcdB);
 		}
 
 	}

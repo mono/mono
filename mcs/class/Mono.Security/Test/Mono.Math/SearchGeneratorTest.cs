@@ -38,7 +38,7 @@ namespace MonoTests.Mono.Math {
 			uint d = ctx.testData;
 
 			for (uint i = (uint)bits - 2; d > 0; i--, d >>= 1)
-				ret.setBit (i, (d&1) == 1);
+				ret.SetBit (i, (d&1) == 1);
 
 			return ret;
 			
@@ -52,7 +52,7 @@ namespace MonoTests.Mono.Math {
 
 		protected override bool IsPrimeAcceptable (BigInteger bi, object Context)
 		{
-			return bi.testBit (1);
+			return bi.TestBit (1);
 		}
 
 		[Test]
@@ -62,10 +62,10 @@ namespace MonoTests.Mono.Math {
 			for (int i = 0; i < 5; i++) {
 				ContextData ctx = new ContextData (128, (uint)r.Next (int.MinValue, int.MaxValue));
 				BigInteger p = GenerateNewPrime (128, ctx);
-				Assertion.Assert (p.testBit (1));
+				Assertion.Assert (p.TestBit (1));
 				uint d = ctx.testData;
 				for (uint j = 128 - 2; d > 0; j--, d >>= 1)
-					Assertion.AssertEquals ((d&1) == 1, p.testBit (j));
+					Assertion.AssertEquals ((d&1) == 1, p.TestBit (j));
 			}
 		}
 	}

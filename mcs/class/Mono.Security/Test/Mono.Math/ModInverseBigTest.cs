@@ -38,7 +38,7 @@ namespace MonoTests.Mono.Math {
 		[Test]
 		public void ModInvPP () 
 		{
-			Expect (A.modInverse (B), AmodinvB);
+			Expect (A.ModInverse (B), AmodinvB);
 		}
 	}
 	
