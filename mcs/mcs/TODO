@@ -5,6 +5,24 @@ Optimization ideas
 	internal members, and internal protected members;   We should trim
 	these out, as it shows up on the profile.
 
+	We create too many Arraylists;  When we know the size, we should create
+	an array;
+
+	During parsing we use arraylists to accumulate data, like this:
+
+		thing:
+		
+		thing_list
+			: thing { $$ =new ArrayList (); $$.Add ($1); }
+			| thing_list thing { ArrayList a = $1; a.Add ($2); $$ = a; }
+
+	We probably could start using "Pairs" there:
+
+		thing_list
+			: thing { $$ = new Pair ($1, null); }
+			| thing_list thing { Pair p = $1; $$ = new Pair ($2, $1); }
+
+
 Anonymous Methods
 -----------------
 
