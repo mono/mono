@@ -859,11 +859,10 @@ namespace System.Drawing
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+	
 		public void ExcludeClip (Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipSetClipRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Exclude);    
 		}
 
 		[MonoTODO]
@@ -925,10 +924,9 @@ namespace System.Drawing
 			GDIPlus.GdipFillEllipseI (nativeObject, brush.nativeObject, x, y, width, height);
 		}
 
-		[MonoTODO]
 		public void FillPath (Brush brush, GraphicsPath path)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPath(nativeObject, brush.NativeObject,  path.NativeObject);
 		}
 
 		public void FillPie (Brush brush, Rectangle rect, float startAngle, float sweepAngle)
@@ -1077,10 +1075,13 @@ namespace System.Drawing
 			return (IntPtr)hdc;
 		}
 
-		[MonoTODO]
+		
 		public Color GetNearestColor (Color color)
 		{
-			throw new NotImplementedException ();
+			int argb;
+			
+			GDIPlus.GdipGetNearestColor(nativeObject,  out  argb);			
+			return Color.FromArgb(argb);
 		}
 
 		[MonoTODO]
@@ -1088,65 +1089,74 @@ namespace System.Drawing
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public void IntersectClip (RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipSetClipRect(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Intersect);
 		}
 
-		[MonoTODO]
 		public void IntersectClip (Rectangle rect)
-		{
-			throw new NotImplementedException ();
+		{			
+			GDIPlus.GdipSetClipRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, CombineMode.Intersect);
+
 		}
 
-		[MonoTODO]
 		public bool IsVisible (Point point)
 		{
-			throw new NotImplementedException ();
+			bool bIsVisible = false;
+
+			GDIPlus.GdipIsVisiblePointI(nativeObject, point.X, point.Y, out bIsVisible);
+
+        	return bIsVisible;
 		}
 
-		[MonoTODO]
+		
 		public bool IsVisible (RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			bool bIsVisible = false;
+
+			GDIPlus.GdipIsVisibleRect(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, out bIsVisible);
+
+        	return bIsVisible;
 		}
 
-		[MonoTODO]
 		public bool IsVisible (PointF point)
 		{
-			throw new NotImplementedException ();
-		}
+			bool bIsVisible = false;
 
-		[MonoTODO]
+			GDIPlus.GdipIsVisiblePoint(nativeObject, point.X, point.Y, out bIsVisible);
+
+        	return bIsVisible;
+		}
+		
 		public bool IsVisible (Rectangle rect)
 		{
-			throw new NotImplementedException ();
-		}
+			bool bIsVisible = false;
 
-		[MonoTODO]
+			GDIPlus.GdipIsVisibleRectI(nativeObject, rect.X, rect.Y, rect.Width, rect.Height, out bIsVisible);
+
+        	return bIsVisible;
+		}
+		
 		public bool IsVisible (float x, float y)
 		{
-			throw new NotImplementedException ();
+			return IsVisible(new PointF(x,y));
 		}
-
-		[MonoTODO]
+		
 		public bool IsVisible (int x, int y)
 		{
-			throw new NotImplementedException ();
+			return IsVisible(new Point(x,y));
 		}
-
-		[MonoTODO]
+		
 		public bool IsVisible (float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+			return IsVisible(new RectangleF(x, y, width, height));
 		}
 
-		[MonoTODO]
+		
 		public bool IsVisible (int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			return IsVisible(new Rectangle(x, y, width, height));
 		}
 
 		[MonoTODO]
@@ -1206,8 +1216,7 @@ namespace System.Drawing
 		{
 			GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
 		}
-
-		[MonoTODO]
+		
 		public void ReleaseHdc (IntPtr hdc)
 		{
 			GDIPlus.GdipReleaseDC (nativeObject, hdc);
@@ -1326,28 +1335,36 @@ namespace System.Drawing
 			GDIPlus.GdipSetClipPath(nativeObject, path.NativeObject, combineMode);
 		}
 
-		[MonoTODO]
+		
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts)
 		{
-			throw new NotImplementedException ();
+			IntPtr ptrPt =  GDIPlus.FromPointToUnManagedMemory(pts);			
+            
+            Status status = GDIPlus.GdipTransformPoints(nativeObject, destSpace, srcSpace,  ptrPt, pts.Length); 				
+			
+			GDIPlus.FromUnManagedMemoryToPoint(ptrPt, pts);
 		}
 
-		[MonoTODO]
+				
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts)
-		{
-			throw new NotImplementedException ();
+		{						
+            IntPtr ptrPt =  GDIPlus.FromPointToUnManagedMemoryI(pts);			
+            
+            Status status = GDIPlus.GdipTransformPointsI(nativeObject, destSpace, srcSpace,  ptrPt, pts.Length); 				
+			
+			GDIPlus.FromUnManagedMemoryToPointI(ptrPt, pts);
 		}
 
-		[MonoTODO]
+		
 		public void TranslateClip (int dx, int dy)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipTranslateClipI(nativeObject,  dx,  dy);			
 		}
 
-		[MonoTODO]
+		
 		public void TranslateClip (float dx, float dy)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipTranslateClip(nativeObject,  dx,  dy);
 		}
 
 		public void TranslateTransform (float dx, float dy)
@@ -1355,10 +1372,9 @@ namespace System.Drawing
 			TranslateTransform (dx, dy, MatrixOrder.Prepend);
 		}
 
-		[MonoTODO]
+		
 		public void TranslateTransform (float dx, float dy, MatrixOrder order)
-		{
-			//transform.Translate(dx, dy, order);
+		{			
 			GDIPlus.GdipTranslateWorldTransform (nativeObject, dx, dy, order);
 		}
 
@@ -1373,47 +1389,62 @@ namespace System.Drawing
 
 		public RectangleF ClipBounds {
 			get {
-				throw new NotImplementedException ();
+					RectangleF	rect = new RectangleF();					
+					GDIPlus.GdipGetClipBounds(nativeObject, out rect);
+					return rect;
 			}
 		}
 
 		public CompositingMode CompositingMode {
 			get {
-				throw new NotImplementedException ();
+					CompositingMode mode;
+					GDIPlus.GdipGetCompositingMode(nativeObject, out mode);    
+					return mode;
 			}
 			set {
-				throw new NotImplementedException ();
+				
+					GDIPlus.GdipSetCompositingMode(nativeObject, value);    
 			}
 
 		}
 
 		public CompositingQuality CompositingQuality {
 			get {
-				throw new NotImplementedException ();
+					CompositingQuality quality;
+        			GDIPlus.GdipGetCompositingQuality(nativeObject, out quality);
+        			return quality;
 			}
 			set {
-				throw new NotImplementedException ();
+					GDIPlus.GdipSetCompositingQuality(nativeObject, value);            
 			}
 		}
 
 		public float DpiX {
 			get {
-				throw new NotImplementedException ();
+					float x;
+
+       				GDIPlus.GdipGetDpiX(nativeObject, out x);
+        			return x;
 			}
 		}
 
 		public float DpiY {
 			get {
-				throw new NotImplementedException ();
+					float y;
+
+       				GDIPlus.GdipGetDpiY(nativeObject, out y);
+        			return y;
 			}
 		}
 
 		public InterpolationMode InterpolationMode {
-			get {
-				throw new NotImplementedException ();
+			get {				
+					InterpolationMode imode = InterpolationMode.Invalid;
+        			GDIPlus.GdipGetInterpolationMode(nativeObject, out imode);
+        			return imode;
 			}
 			set {
-				throw new NotImplementedException ();
+					GDIPlus.GdipSetInterpolationMode(nativeObject, value);
 			}
 		}
 

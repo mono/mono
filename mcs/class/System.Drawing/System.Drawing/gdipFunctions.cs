@@ -33,6 +33,54 @@ namespace System.Drawing {
 			GdiplusStartupOutput output = GdiplusStartupOutput.MakeGdiplusStartupOutput();
 			GdiplusStartup (ref GdiPlusToken, ref input, ref output);
 		}
+		
+		// Copies a Ptr to an array of Points and releases the memory
+		static public void FromUnManagedMemoryToPointI(IntPtr prt, Point [] pts)
+		{						
+			int nPointSize = Marshal.SizeOf(pts[0]);
+			int pos = prt.ToInt32();
+			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
+				pts[i] = (Point) Marshal.PtrToStructure((IntPtr)pos, typeof(Point));
+			
+			Marshal.FreeHGlobal(prt);			
+		}
+		
+		// Copies an array of Points to unmanaged memory
+		static public IntPtr FromPointToUnManagedMemoryI(Point [] pts)
+		{
+			int nPointSize =  Marshal.SizeOf(pts[0]);
+			IntPtr dest = Marshal.AllocHGlobal(nPointSize* pts.Length);			
+			int pos = dest.ToInt32();
+						
+			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
+				Marshal.StructureToPtr(pts[i], (IntPtr)pos, false);	
+			
+			return dest;			
+		}
+		
+		// Copies a Ptr to an array of PointsF and releases the memory
+		static public void FromUnManagedMemoryToPoint(IntPtr prt, PointF [] pts)
+		{						
+			int nPointSize = Marshal.SizeOf(pts[0]);
+			int pos = prt.ToInt32();
+			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
+				pts[i] = (PointF) Marshal.PtrToStructure((IntPtr)pos, typeof(PointF));
+			
+			Marshal.FreeHGlobal(prt);			
+		}
+		
+		// Copies an array of Points to unmanaged memory
+		static public IntPtr FromPointToUnManagedMemory(PointF [] pts)
+		{
+			int nPointSize =  Marshal.SizeOf(pts[0]);
+			IntPtr dest = Marshal.AllocHGlobal(nPointSize* pts.Length);			
+			int pos = dest.ToInt32();
+						
+			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
+				Marshal.StructureToPtr(pts[i], (IntPtr)pos, false);	
+			
+			return dest;			
+		}
 
 		// Memory functions
 		[DllImport("gdiplus.dll")]
@@ -202,6 +250,58 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")] 	
 		internal static extern Status GdipFillPieI(IntPtr graphics, IntPtr brush, int x, int y,
              int width, int height, float startAngle, float sweepAngle);
+             
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipFillPath(IntPtr graphics, IntPtr brush, IntPtr path);
+		
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipGetNearestColor(IntPtr graphics,  out int argb);
+		
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipIsVisiblePoint(IntPtr graphics, float x, float y, out bool result);
+
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipIsVisiblePointI(IntPtr graphics, int x, int y, out bool result);
+
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipIsVisibleRect(IntPtr graphics, float x, float y,
+                           float width, float height, out bool result);
+
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipIsVisibleRectI(IntPtr graphics, int x, int y,
+                           int width, int height, out bool result);
+                           
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipTransformPoints(IntPtr graphics, CoordinateSpace destSpace,
+                             CoordinateSpace srcSpace, IntPtr points,  int count);
+
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipTransformPointsI(IntPtr graphics, CoordinateSpace destSpace,
+                             CoordinateSpace srcSpace, IntPtr points, int count);                           
+        
+        [DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipTranslateClip(IntPtr graphics, float dx, float dy);
+		[DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipTranslateClipI(IntPtr graphics, int dx, int dy);		
+		[DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipGetClipBounds(IntPtr graphics, out RectangleF rect);		
+		[DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipSetCompositingMode(IntPtr graphics, CompositingMode compositingMode);
+		[DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipGetCompositingMode(IntPtr graphics, out CompositingMode compositingMode);		
+		[DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipSetCompositingQuality(IntPtr graphics, CompositingQuality compositingQuality);
+		[DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipGetCompositingQuality(IntPtr graphics, out CompositingQuality compositingQuality);
+		[DllImport("gdiplus.dll")] 	                     
+		internal static extern Status GdipSetInterpolationMode(IntPtr graphics, InterpolationMode interpolationMode);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetInterpolationMode(IntPtr graphics, out InterpolationMode interpolationMode);		
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetDpiX(IntPtr graphics, out float dpi);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetDpiY(IntPtr graphics, out float dpi);
+
 		
 		// Pen functions
 		[DllImport("gdiplus.dll")]
