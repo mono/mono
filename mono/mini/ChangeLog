@@ -1,3 +1,8 @@
+2004-12-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c cpu-pentium.md mini.c: Load fp constants differently in 
+	the AOT case.
+
 2004-12-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (emit_method_info): Fix build.
