@@ -2,11 +2,12 @@
 // RSAManaged.cs - Implements the RSA algorithm.
 //
 // Authors:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //	Ben Maurer (bmaurer@users.sf.net)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
+// (C) 2004 Novell (http://www.novell.com)
 //
 // Key generation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
@@ -32,7 +33,7 @@ namespace Mono.Security.Cryptography {
 #else
 	public
 #endif
-	class RSAManaged	: RSA {
+	class RSAManaged : RSA {
 
 		private const int defaultKeySize = 1024;
 
@@ -214,12 +215,19 @@ namespace Mono.Security.Cryptography {
 			param.Exponent = e.getBytes ();
 			param.Modulus = n.getBytes ();
 			if (includePrivateParameters) {
+				// some parameters are required for exporting the private key
+				if ((d == null) || (p == null) || (q == null))
+					throw new CryptographicException ("Missing private key");
 				param.D = d.getBytes ();
-				param.DP = dp.getBytes ();
-				param.DQ = dq.getBytes ();
-				param.InverseQ = qInv.getBytes ();
 				param.P = p.getBytes ();
 				param.Q = q.getBytes ();
+				// but CRT parameters are optionals
+				if ((dp != null) && (dq != null) && (qInv != null)) {
+					// and we include them only if we have them all
+					param.DP = dp.getBytes ();
+					param.DQ = dq.getBytes ();
+					param.InverseQ = qInv.getBytes ();
+				}
 			}
 			return param;
 		}
