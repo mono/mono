@@ -72,8 +72,7 @@ namespace System.Windows.Forms {
 
 					if( flatStyle == FlatStyle.System) {
 						Win32.UpdateWindowStyle(Handle, (int)ButtonStyles.BS_OWNERDRAW, 0);
-					}
-					else {
+					} else {
 						Win32.UpdateWindowStyle(Handle, 0, (int)ButtonStyles.BS_OWNERDRAW);
 					}
 					Invalidate();
@@ -258,27 +257,46 @@ namespace System.Windows.Forms {
 			switch (m.Msg) {
 				case Msg.WM_COMMAND: {
 					switch(m.HiWordWParam) {
-						case (uint)ButtonNotification.BN_CLICKED:
+						case (uint)ButtonNotification.BN_CLICKED: {
+							OnClick(new ControlEventArgs(this));
+							Win32.SendMessage(Handle, Msg.WM_SETFOCUS, (int)Handle, 0);
+							CallControlWndProc(ref m);
+							break;
+						}
+
+						case (uint)ButtonNotification.BN_DOUBLECLICKED: {
 							OnClick(new ControlEventArgs(this));
 							CallControlWndProc(ref m);
 							break;
-						case (uint)ButtonNotification.BN_DOUBLECLICKED:
-							OnClick(new ControlEventArgs(this));
-							CallControlWndProc(ref m);
+						}
+
+						case (uint)ButtonNotification.BN_SETFOCUS: {
+							OnGotFocus(new ControlEventArgs(this));
 							break;
+						}
+
+						case (uint)ButtonNotification.BN_KILLFOCUS: {
+							OnLostFocus(new ControlEventArgs(this));
+							break;
+						}
+
 						default:
 							CallControlWndProc(ref m);
 							break;
 					}
 					break;
 				}
-				case Msg.WM_DRAWITEM:
+
+				case Msg.WM_DRAWITEM: {
 					m.Result = (IntPtr)1;
 					break;
-				case Msg.WM_PAINT:
-					PAINTSTRUCT	ps = new PAINTSTRUCT ();
-					IntPtr hdc = Win32.BeginPaint (Handle, ref ps);
-					Rectangle rc = new Rectangle ();
+				}
+
+				case Msg.WM_PAINT: {
+					PAINTSTRUCT		ps	= new PAINTSTRUCT ();
+					IntPtr			hdc = Win32.BeginPaint (Handle, ref ps);
+					Rectangle		rc = new Rectangle ();
+
 					rc.X = ps.rcPaint.left;
 					rc.Y = ps.rcPaint.top;
 					rc.Width = ps.rcPaint.right - ps.rcPaint.left;
@@ -288,9 +306,12 @@ namespace System.Windows.Forms {
 					paintEventArgs.Dispose ();
 					Win32.EndPaint (Handle, ref ps);
 					break;
-				default:
+				}
+
+				default: {
 					base.WndProc (ref m);
 					break;
+				}
 			}
 		}
 
