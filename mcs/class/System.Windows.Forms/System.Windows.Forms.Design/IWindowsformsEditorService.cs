@@ -1,11 +1,16 @@
-using System;
+//
+// System.Windows.Forms.Design.IWindowsFormsEditorService.cs
+// 
+// Author:
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 
 namespace System.Windows.Forms.Design
 {
-	/// <summary>
-	/// Summary description for IWindowsformsEditorService.
-	/// </summary>
-	public interface IWindowsformsEditorService
+	public interface IWindowsFormsEditorService
 	{
+		void CloseDropDown ();
+		void DropDownControl (Control control);
+		DialogResult ShowDialog (Form dialog);
 	}
 }

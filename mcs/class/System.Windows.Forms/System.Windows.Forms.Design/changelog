@@ -1,3 +1,8 @@
+2004-02-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IWindowsFormsEditorService.cs: Corrected casing,
+	  it is not yet corrected in the filename, implemented
+
 2003-08-30  Alexandre Pigolkine <pigolkine@gmx.de>
 	* ComponentEditor.cs
 	* IUIService.cs				stubs added 
