@@ -11,6 +11,13 @@ compiler, and a set of source files.  Extra options or arguments can
 be provided in a response file.  Response files are referenced by
 prepending the @ symbol to the response file name.
 .PP
+The Mono C# compiler accepts the same options than the Microsoft C#
+compiler does.  Those options can start with a slash or a dash
+(/checked is the same as -checked).  Additionally to this, the
+GNU-like options are supported, those begin with "--".  All
+MCS-specific flags which are not available in the Microsoft C#
+compiler are available only with the GNU-style options. 
+.PP
 C# source files must end with a ".cs" extension.  Compilation of C#
 source code requires all the files that make up a library, module or
 executable to be provided on the command line.  There is no support
@@ -29,16 +36,25 @@ Executables are not bound to a specific CPU or operating system.
 .I \-\-about
 Displays information about the Mono C# compiler
 .TP
-.I \-\-checked
+.I -checked, -checked+
 Sets the default compilation mode to `checked'.  This makes all
 the math operations checked (the default is unchecked).
 .TP
-.I \-\-define SYMBOL
-Defines a symbol named SYMBOL.  This can be tested in the source code
-by the pre-processor.
+.I -checked-
+Sets the default compilation mode to `unchecked'.  This makes all
+the math operations unchecked (this is the default).
 .TP
-.I \-\-debug or \-g
+.I \-define:SYMLIST, -d:SYMLIST
+Defines the symbol listed by the semi-colon separeted list SYMLIST
+SYMBOL.  This can be tested in the source code by the pre-processor,
+or can be used by methods that have been tagged with the Conditional
+attribute. 
+.TP
+.I \-debug, \-debug+, \-g
 Generate debugging information.  
+.TP
+.I \-debug-
+Do not generate debugging information.
 .TP
 .I \-\-fatal 
 This is used for debugging the compiler.  This makes the error emission
@@ -48,26 +64,28 @@ generate an exception that can be caught by a debugger.
 Generates a stack trace at the time the error is reported, useful for
 debugging the compiler.
 .TP
+.I -lib:PATHLIST
+Each path specified in the comma-separated list will direct the
+compiler to look for libraries in that specified path.
+.TP
 .I \-L PATH
 Directs the compiler to look for libraries in the specified path.
-Multiple paths can be provided.
+Multiple paths can be provided by using the option multiple times.
 .TP
-.I \-\-nostdlib
+.I \-nostdlib, -nostdlib+
 Use this flag if you want to compile the core library.  This makes the
 compiler load its internal types from the assembly being compiled.
 .TP
-.I \-\-noconfig
+.I \-noconfig, \-noconfig+
 Disables the default compiler configuration to be loaded.  The
 compiler by default has references to the system assemblies. 
 .TP
-.I \-\-nowarn XXX
-Makes the compiler ignore warning XXX.
+.I \-nowarn:WARNLIST
+Makes the compiler ignore warnings specified in the comma-separeted
+list WARNLIST>
 .TP
-.I \-o FNAME
+.I -out:FNAME, -o FNAME
 Names the output file to be generated.
-.TP
-.I \-\-optimize
-Turns on optimizations in the compiler.  
 .TP
 .I \-\-parse
 Used for benchmarking.  The compiler will only parse its input files.
@@ -76,21 +94,18 @@ Used for benchmarking.  The compiler will only parse its input files.
 Probes for the code to generate an error named `X' in line `L'.  This
 is only used by the test suite.
 .TP 
-.I /linkres:RESOURCE
+.I /linkresource:RESOURCE
 Links to the given resources
 .TP
-.I \-\-recurse PATTERN
+.I \-recurse:PATTERN, --recurse PATTERN
 Does recursive compilation using the specified pattern.  In Unix the
 shell will perform globbing, so you migth want to use it like this:
 .PP
 .nf
-		bash$ mcs --recurse '*.cs' 
+		bash$ mcs -recurse:'*.cs' 
 .fi
 .TP
-.I \-\-linkres FILE
-Links FILE as a resource of the resulting assembly.
-.TP
-.I \-\-target KIND
+.I \-target:KIND, \-t:KIND
 Used to specify the desired target.  The possible values are: exe,
 winexe, library and module.  
 .TP
@@ -98,17 +113,17 @@ winexe, library and module.
 Another debugging flag.  Used to display the times at various points
 in the compilation process.
 .TP
-.I \-\-unsafe
+.I \-unsafe, -unsafe+
 Enables compilation of unsafe code.
 .TP
-.I \-\-werror
+.I \-warnaserror, \-warnaserror+
 Treat warnings as errors.
 .TP
-.I \-\-wlevel LEVEL
+.I \-warn:LEVEL
 Sets the warning level.  0 is the lowest warning level, and 4 is the
 highest.  The default is 2.
 .TP
-.I \-r ASSEMBLY
+.I -r:ASSEMBLY, \-r ASSEMBLY
 Reference the named assembly.  Use this to use classes from the named
 assembly in your program.  The assembly will be loaded from either the
 system directory where all the assemblies live, or from the path
@@ -156,8 +171,8 @@ During compilation the MCS compiler defines the __MonoCS__ symbol,
 this can be used by pre-processor instructions to compile Mono C#
 compiler specific code.
 .SH AUTHORS
-The Mono C# Compiler was written by Miguel de Icaza and Ravi Pratap at
-Ximian. 
+The Mono C# Compiler was written by Miguel de Icaza, Ravi Pratap and
+Martin Baulig at Ximian.
 .PP
 .SH LICENSE
 The Mono Compiler Suite is released under the terms of the GNU GPL.
