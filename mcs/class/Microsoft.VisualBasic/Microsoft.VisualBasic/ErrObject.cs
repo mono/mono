@@ -2,27 +2,40 @@
 // ErrObject.cs
 //
 // Author:
-//   Chris J Breisch (cjbreisch@altavista.net)
+//   Chris J Breisch (cjbreisch@altavista.net) 
 //
 // (C) 2002 Chris J Breisch
 //
-namespace Microsoft.VisualBasic {
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
+
+using System;
+
+namespace Microsoft.VisualBasic 
+{
 	sealed public class ErrObject {
 		// Declarations
 		// Constructors
 		// Properties
-		public System.Int32 HelpContext { get {return 0;} set {} }
-		public System.Int32 LastDllError { get {return 0;} }
-		public System.Int32 Number { get {return 0;} set {} }
-		public System.Int32 Erl { get {return 0;} }
-		public System.String Source { get {return "";} set {} }
-		public System.String HelpFile { get {return "";} set {} }
-		public System.String Description { get {return "";} set {} }
+		[MonoTODO]
+		public System.Int32 HelpContext { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
+		[MonoTODO]
+		public System.Int32 LastDllError {  get { throw new NotImplementedException (); } }
+		[MonoTODO]
+		public System.Int32 Number {  get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
+		[MonoTODO]
+		public System.Int32 Erl {  get { throw new NotImplementedException (); } }
+		[MonoTODO]
+		public System.String Source {  get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
+		[MonoTODO]
+		public System.String HelpFile {  get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
+		[MonoTODO]
+		public System.String Description {  get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 		// Methods
-		public System.Exception GetException () { return null;}
-		public void Clear () { }
-		public void Raise (System.Int32 Number, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object Source, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object Description, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object HelpFile, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object HelpContext) { }
+		[MonoTODO]
+		public System.Exception GetException () { throw new NotImplementedException (); }
+		[MonoTODO]
+		public void Clear () { throw new NotImplementedException (); }
+		[MonoTODO]
+		public void Raise (System.Int32 Number, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object Source, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object Description, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object HelpFile, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(null)] System.Object HelpContext) { throw new NotImplementedException (); }
 		// Events
 	};
 }
