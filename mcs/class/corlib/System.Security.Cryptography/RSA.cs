@@ -135,8 +135,20 @@ namespace System.Security.Cryptography {
 				sb.Append (Convert.ToBase64String (rsaParams.Exponent));
 				sb.Append ("</Exponent>");
 
-				if (includePrivateParameters)
-				{
+				if (includePrivateParameters) {
+					// we want an ArgumentNullException is only the D is missing, but a
+					// CryptographicException if other parameters (CRT) are missings
+					if (rsaParams.D == null) {
+						string msg = Locale.GetText ("Missing D parameter for the private key.");
+						throw new ArgumentNullException (msg);
+					} else if ((rsaParams.P == null) || (rsaParams.Q == null) || (rsaParams.DP == null) ||
+						(rsaParams.DQ == null) || (rsaParams.InverseQ == null)) {
+						// note: we can import a private key, using FromXmlString,
+						// without the CRT parameters but we export it using ToXmlString!
+						string msg = Locale.GetText ("Missing some CRT parameters for the private key.");
+						throw new CryptographicException (msg);
+					}
+
 					sb.Append ("<P>");
 					sb.Append (Convert.ToBase64String (rsaParams.P));
 					sb.Append ("</P>");
