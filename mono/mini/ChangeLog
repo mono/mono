@@ -1,5 +1,15 @@
 2004-02-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mini_method_compile): Reenable global regalloc in methods
+	with exception handlers.
+
+	* linear-scan.c (mono_varlist_sort): Fix warning.
+
+	* linear-scan.c (mono_linear_scan): Fix computation of used_regs.
+
+	* mini-x86.c (mono_arch_regalloc_cost): Reenable precise computation of
+	regalloc costs.
+
 	* liveness.c: Make all variables uses in exception clauses volatile, to
 	prevent them from being allocated to registers. Fixes #42136.
 
