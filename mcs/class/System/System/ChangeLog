@@ -1,3 +1,7 @@
+2005-03-20 Joshua Tauberer <tauberer@for.net>
+
+	* Uri.cs: Some pedantic changes to the text of a few exceptions.
+
 2005-03-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Uri.cs: when unescaping in stages, handle the case when the next

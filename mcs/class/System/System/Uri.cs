@@ -947,12 +947,12 @@ namespace System
 				else if (uriString.StartsWith ("\\\\"))
 					ParseAsWindowsUNC (uriString);
 				else
-					throw new UriFormatException ("URI scheme was not recognized, nor input string is not recognized as an absolute file path.");
+					throw new UriFormatException ("URI scheme was not recognized, and input string was not recognized as an absolute file path.");
 				return;
 			}
 			else if (pos == 1) {
 				if (!Char.IsLetter (uriString [0]))
-					throw new UriFormatException ("URI scheme must start with alphabet character.");
+					throw new UriFormatException ("URI scheme must start with a letter.");
 				// This means 'a:' == windows full path.
 				ParseAsWindowsAbsoluteFilePath (uriString);
 				return;
@@ -962,7 +962,7 @@ namespace System
 			scheme = uriString.Substring (0, pos).ToLower (CultureInfo.InvariantCulture);
 			// Check scheme name characters as specified in RFC2396.
 			if (!Char.IsLetter (scheme [0]))
-					throw new UriFormatException ("URI scheme must start with alphabet character.");
+					throw new UriFormatException ("URI scheme must start with a letter.");
 			for (int i = 1; i < scheme.Length; i++) {
 				if (!Char.IsLetterOrDigit (scheme, i)) {
 					switch (scheme [i]) {
@@ -1044,7 +1044,7 @@ namespace System
 						port = (int) UInt32.Parse (portStr, CultureInfo.InvariantCulture);
 						uriString = uriString.Substring (0, pos);
 					} catch (Exception) {
-						throw new UriFormatException ("Invalid URI: invalid port number");
+						throw new UriFormatException ("Invalid URI: Invalid port number");
 					}
 				}
 			}
