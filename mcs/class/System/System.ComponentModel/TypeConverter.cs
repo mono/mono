@@ -219,6 +219,12 @@ namespace System.ComponentModel
 			return true;
 		}
 
+		protected PropertyDescriptorCollection SortProperties (PropertyDescriptorCollection props, string[] names)
+		{
+			props.Sort (names);
+			return props; 
+		}
+
 		public class StandardValuesCollection : ICollection, IEnumerable
 		{
 			private ICollection values;
@@ -291,6 +297,29 @@ namespace System.ComponentModel
 			public override bool IsReadOnly {
 				get { return Attributes.Contains (ReadOnlyAttribute.Yes); }
 			}
+
+			public override bool ShouldSerializeValue (object component)
+			{
+					return false; 
+			}
+
+			public override bool CanResetValue (object component)
+			{
+				DefaultValueAttribute Attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
+				if (Attrib == null) {
+					return false; 
+				}
+				return (Attrib.Value == GetValue (component)); 
+			}
+
+			public override void ResetValue (object component)
+			{
+				DefaultValueAttribute Attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
+				if (Attrib != null) {
+					SetValue (component, Attrib.Value); 
+				}
+ 
+			} 
 		}
 	}
 }

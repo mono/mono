@@ -290,22 +290,19 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public static EventDescriptorCollection GetEvents (object component)
 	{
-		throw new NotImplementedException ();
+		return GetEvents (component, false);
 	}
 
-	[MonoTODO]
 	public static EventDescriptorCollection GetEvents (Type componentType)
 	{
-		throw new NotImplementedException ();
+		return GetEvents (componentType, null);
 	}
 
-	[MonoTODO]
 	public static EventDescriptorCollection GetEvents (object component, Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
+		return GetEvents (component, attributes, false);
 	}
 
 	[MonoTODO]
@@ -335,34 +332,21 @@ public sealed class TypeDescriptor
 
 	public static PropertyDescriptorCollection GetProperties (Type componentType)
 	{
-		PropertyInfo [] props = componentType.GetProperties ();
-		DerivedPropertyDescriptor [] propsDescriptor = new DerivedPropertyDescriptor [props.Length];
-		int i = 0;
-		foreach (PropertyInfo prop in props) {
-			DerivedPropertyDescriptor propDescriptor = new DerivedPropertyDescriptor (prop.Name,
-												  null, 0);
-			propDescriptor.SetReadOnly (!prop.CanWrite);
-			propDescriptor.SetComponentType (componentType);
-			propDescriptor.SetPropertyType (prop.PropertyType);
-			propsDescriptor [i++] = propDescriptor;
-		}
-		
-		return new PropertyDescriptorCollection (propsDescriptor);
+		return GetProperties (componentType, null);
 	}
 
-	[MonoTODO]
 	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes)
 	{
-		Type type = component.GetType ();
-		if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type))
-			return ((ICustomTypeDescriptor) component).GetProperties (attributes);
-
-		throw new NotImplementedException ();
+		return GetProperties (component, attributes, false);
 	}
 
 	[MonoTODO]
 	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes, bool noCustomTypeDesc)
 	{
+		Type type = component.GetType ();
+		if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type))
+			return ((ICustomTypeDescriptor) component).GetProperties (attributes);
+
 		throw new NotImplementedException ();
 	}
 
@@ -380,15 +364,20 @@ public sealed class TypeDescriptor
 	public static PropertyDescriptorCollection GetProperties (Type componentType,
 								  Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
-	}
-
-	[MonoTODO]
-	public static PropertyDescriptorCollection GetProperties (Type componentType,
-								  Attribute [] attributes,
-								  bool noCustomTypeDesc)
-	{
-		throw new NotImplementedException ();
+		PropertyInfo [] props = componentType.GetProperties ();
+		DerivedPropertyDescriptor [] propsDescriptor = new DerivedPropertyDescriptor [props.Length];
+		int i = 0;
+		foreach (PropertyInfo prop in props) 
+		{
+			DerivedPropertyDescriptor propDescriptor = new DerivedPropertyDescriptor (prop.Name,
+				null, 0);
+			propDescriptor.SetReadOnly (!prop.CanWrite);
+			propDescriptor.SetComponentType (componentType);
+			propDescriptor.SetPropertyType (prop.PropertyType);
+			propsDescriptor [i++] = propDescriptor;
+		}
+		
+		return new PropertyDescriptorCollection (propsDescriptor);
 	}
 
 	[MonoTODO]
