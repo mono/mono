@@ -1,3 +1,8 @@
+2002-03-17  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile: Do not remove the NAnt.exe on a 'make clean'.  This would
+	prevent other cleans from happening that need nant.
+
 2002/03/15  Nick Drochak <ndrochak@gol.com>
 
 	* makefile: Compile a version of NAnt with Mono's libs.  It only does
