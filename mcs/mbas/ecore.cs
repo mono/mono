@@ -643,9 +643,9 @@ namespace Mono.CSharp {
 					117, loc, "`" + t + "' does not contain a definition " +
 					"for `" + name + "'");
 			} else {
-				Report.Error (
-					122, loc, "`" + t + "." + name +
-					"' is inaccessible due to its protection level");
+					Report.Error (
+						122, loc, "`" + t + "." + name +
+						"' is inaccessible due to its protection level");
 			}
 			
 			return null;
