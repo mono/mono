@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: InputLanguageChangingEventArgs.cs,v $
+// Revision 1.4  2004/08/11 22:28:02  pbartok
+// - Never check in before compiling. Fixes the last check-in
+//
 // Revision 1.3  2004/08/11 22:26:14  pbartok
 // - More signature fixes
 //
@@ -39,10 +42,12 @@
 
 // COMPLETE
 
+using System;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace System.Windows.Forms {
-	public class InputLanguageChangingEventArgs : CancelEventArgs {
+	public class InputLanguageChangingEventArgs : System.ComponentModel.CancelEventArgs {
 		private CultureInfo	culture;
 		private bool		system_charset;
 		private InputLanguage	input_language;
