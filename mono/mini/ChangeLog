@@ -1,5 +1,7 @@
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions.cs: Add test for constant folding && division by zero.
+
 	* driver.c mini.h mini.c mini-x86.c: Revert most of the previous patch
 	since driver.c is in libmono too, so the optimization was useless.
 
