@@ -1,3 +1,9 @@
+2001-10-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c (ctree_create_dup): really duplicate the tree.
+	attach the arguments to the CALL node. Added a new macro to
+	make argument order configurable (ARCH_ARGS_RIGHT_TO_LEFT).
+
 2001-10-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.brg: the burm based interpreter: added the file as example.
