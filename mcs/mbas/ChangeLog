@@ -1,8 +1,11 @@
+2002-06-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged typemanager.cs from mcs/mcs
+
 2002-06-10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged expression.cs and interface.cs from mcs/mcs
 
 2002-06-09  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-	* merged const.cs, enum.cs, expression.cs and  typemanager.cs from mcs/mcs
+	* merged const.cs, enum.cs, expression.cs and typemanager.cs from mcs/mcs
       * comments on module.cs
 
 2002-06-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
