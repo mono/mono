@@ -1,3 +1,7 @@
+2004-07-12  Duncan Mak  <duncan@ximian.com>
+
+	* KeyNotFoundException.cs: Added.
+
 2004-06-18  Ben Maurer  <bmaurer@ximian.com>
 
 	* Comparer.cs: v2 impl. Some workarounds for gmcs are enabled.
