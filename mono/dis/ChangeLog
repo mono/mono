@@ -1,5 +1,7 @@
 2003-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* main.c (dis_event_list): Same for event methods.
+
 	* get.c (dis_stringify_method_signature): New argument specifying
 	whenever to return a fully qualified method name.
 	* dump.c main.c: Updated to work with the new function.
