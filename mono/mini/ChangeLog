@@ -1,5 +1,11 @@
 2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* aot.c: set aot_verbose to 0, fixed format string that caused sigsegv,
+	use @function (as doesn't accept #function here) and check the return
+	value of system and stop if fails.
+
+2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* mini.c: set the timeout to 2s when calling mono_domain_finalize.
 
 2004-03-31  Zoltan Varga  <vargaz@freemail.hu>
