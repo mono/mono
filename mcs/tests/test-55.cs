@@ -1,5 +1,6 @@
 using c = System.Console;
 using s = System;
+using System2 = System;
 
 namespace A {
 	namespace B {
@@ -27,6 +28,9 @@ class App {
 	public static int Main () {
 		A.B.C.Hola ();
 		X.Y.Z.W.Ahoj ();
+
+		// Array declaration
+		System2.Net.IPAddress[] addresses2;
 
 		return 0;
 	}
