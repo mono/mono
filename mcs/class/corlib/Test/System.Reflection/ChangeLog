@@ -1,3 +1,8 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyAlgorithmIdAttributeTest.cs: Removed CLSCompliant(false) 
+	attribute as it wasn't required (and gives a compilation warning).
+
 2005-01-23  Nick Drochak  <ndrochak@ieee.org>
 
 	* ModuleTest.cs: Long path names gives Windows fits.

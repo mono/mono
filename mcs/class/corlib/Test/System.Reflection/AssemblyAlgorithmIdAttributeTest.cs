@@ -50,7 +50,6 @@ namespace MonoTests.System.Reflection {
 		}
 		
 		[Test]
-		[CLSCompliant (false)] // because we are using uint
 		public void AlgorithmIdTest()
 		{
 			AssertEquals ("#Testing AlgorithmId",
