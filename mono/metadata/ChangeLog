@@ -1,5 +1,14 @@
 2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* reflection.c (assembly_add_resource_manifest): New function to fill
+	the MANIFESTRESOURCE table.
+
+	* reflection.c (mono_image_build_metadata): Emit MANIFESTRESOURCE table.
+
+	* reflection.h: Update to changes in class layout.
+
 	* icall.c (ves_icall_System_Environment_get_HasShutdownStarted): 
 	Reenable call to mono_runtime_is_shutting_down ().
 
