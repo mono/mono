@@ -84,16 +84,14 @@ namespace Mono.PEToolkit {
 
 		public void Dump(TextWriter writer)
 		{
-			
 			writer.WriteLine(
 				"Machine ID      : {0}" + Environment.NewLine + 
 				"Sections        : {1}" + Environment.NewLine +
 				"Characteristics : {2}" + Environment.NewLine +
-				"timestamp       : {3}" + Environment.NewLine
+				"timestamp       : {3} ({4})" + Environment.NewLine
 				,machine, sections, (ushort)characteristics,
-				TimeStamp + " (" + tdStampRaw.ToString("X") + ")"
+				TimeStamp, tdStampRaw.ToString("X")
 			);
-		
 		}		
 
 		public override string ToString()
