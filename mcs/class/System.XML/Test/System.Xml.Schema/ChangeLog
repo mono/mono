@@ -1,3 +1,7 @@
+2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchemaTests.cs : rewrote TestRead() and added TestCompile().
+
 2003-04-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added this file as a new entry.
