@@ -1,3 +1,7 @@
+2002-02-03  Duncan Mak  <duncan@ximian.com>
+
+	* serialize.cs: Added namespace block.
+
 2002-2-1  Duncan Mak  <duncan@localhost.localdomain>
 
 	* serialize.cs: Added a new tool for serializing objects. It
