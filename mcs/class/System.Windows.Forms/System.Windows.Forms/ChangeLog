@@ -163,5 +163,9 @@ Checking in new System.Windows.forms classe for Paul Osman <paul.osmand@sympatic
 * NotifyIcon.cs
 Stubbed and commented out
 
+2002-5-10 Dennis Hayes
+* added IMessageFilter
+* Interfaces complete
+
 
 
