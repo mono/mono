@@ -211,6 +211,7 @@ namespace System.Reflection.Emit {
 			UnmanagedType subtype = (UnmanagedType)0x50; /* NATIVE_MAX */
 			int sizeConst = 0;
 			int sizeParamIndex = 0;
+			bool hasSize = false;
 			int value;
 			int utype; /* the (stupid) ctor takes a short or an enum ... */
 			Type marshalTypeRef = null;
@@ -247,11 +248,13 @@ namespace System.Reflection.Emit {
 					value |= ((int)data [pos++]) << 16;
 					value |= ((int)data [pos++]) << 24;
 					sizeConst = value;
+					hasSize = true;
 					break;
 				case "SizeSizeParamIndex":
 					value = (int)data [pos++];
 					value |= ((int)data [pos++]) << 8;
 					sizeParamIndex = value;
+					hasSize = true;
 					break;
 				case "MarshalTypeRef":
 				case "MarshalType":
@@ -274,7 +277,10 @@ namespace System.Reflection.Emit {
 
 			switch ((UnmanagedType)utype) {
 			case UnmanagedType.LPArray:
-				return UnmanagedMarshal.DefineLPArrayInternal (subtype, sizeConst, sizeParamIndex);
+				if (hasSize)
+					return UnmanagedMarshal.DefineLPArrayInternal (subtype, sizeConst, sizeParamIndex);
+				else
+					return UnmanagedMarshal.DefineLPArray (subtype);
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (subtype);
 			case UnmanagedType.ByValArray:

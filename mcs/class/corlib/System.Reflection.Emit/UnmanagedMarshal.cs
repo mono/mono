@@ -47,6 +47,7 @@ namespace System.Reflection.Emit {
 		string marshaltype;
 		Type marshaltyperef;
 		private int param_num;
+		private bool has_size;
 		
 		private UnmanagedMarshal (UnmanagedType maint, int cnt) {
 			count = cnt;
@@ -116,6 +117,7 @@ namespace System.Reflection.Emit {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.LPArray, elemType);
 			res.count = sizeConst;
 			res.param_num = sizeParamIndex;
+			res.has_size = true;
 
 			return res;
 		}
