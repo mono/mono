@@ -1,3 +1,6 @@
+2004-05-27  Boris Kirzner  <borisk@mainsoft.com>
+	* DataContainer.cs : Bug fixes in BitDataContainer.get_Item and StringDataContainer.SetValue .
+
 2004-05-20  Gert Driesen (drieseng@users.sourceforge.net)
 
         *  DbDataPermissionAttribute.cs: change AllowMultiple and

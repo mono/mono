@@ -761,7 +761,7 @@ namespace System.Data.Common
 						return DBNull.Value;
 					}
 					else {
-						return !isNull;
+						return _values[index];
 					}
 				}
 				set {
@@ -941,8 +941,13 @@ namespace System.Data.Common
 			
 			protected override void SetValue(int index, object value)
 			{
-				if ( value != null && value != DBNull.Value && !(value is string)) {
-					SetValue(index, Convert.ToString(value));
+				if ( value != null && value != DBNull.Value ) {
+					if ( value is string ) {
+						SetValue(index, (string) value);
+					}
+					else {
+						SetValue(index, Convert.ToString(value));
+					}
 					return;
 				}
 
