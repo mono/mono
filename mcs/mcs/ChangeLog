@@ -1,5 +1,11 @@
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Using.DoResolve): This is internally emitting a
+	try/finally clause, so we need to set ec.NeedExplicitReturn if we
+	do not always return.  Fixes #47681.
+
+2003-08-26  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberCore): Moved WarningNotHiding(),
 	Error_CannotChangeAccessModifiers() and CheckMethodAgainstBase()
 	into MemberBase.
