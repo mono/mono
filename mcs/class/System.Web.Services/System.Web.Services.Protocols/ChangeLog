@@ -1,3 +1,7 @@
+2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapDocumentationHandler.cs: Added support for DISCO file generation.
+
 2003-12-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpSimpleClientProtocol.cs: Do not encode the request url, since it is

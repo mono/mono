@@ -13,6 +13,7 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Web.Services.Description;
+using System.Web.Services.Discovery;
 using System.Web.Services.Configuration;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -41,7 +42,7 @@ namespace System.Web.Services.Protocols
 			if (req.QueryString.Count == 1)
 				key = req.QueryString.GetKey(0).ToLower();
 				
-			if (key == "wsdl" || key == "schema" || key == "code")
+			if (key == "wsdl" || key == "schema" || key == "code" || key == "disco")
 				return;
 				
 			string help = WSConfig.Instance.WsdlHelpPage;
@@ -90,6 +91,7 @@ namespace System.Web.Services.Protocols
 				if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
 				else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
 				else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
+				else if (key == "disco") GenerateDiscoDocument (context);
 				else throw new Exception ("This should never happen");
 			}
 		}
@@ -101,6 +103,18 @@ namespace System.Web.Services.Protocols
 			
 			context.Response.ContentType = "text/xml; charset=utf-8";
 			GetDescriptions() [di].Write (context.Response.OutputStream);
+		}
+		
+		void GenerateDiscoDocument (HttpContext context)
+		{
+			DiscoveryDocument doc = new DiscoveryDocument ();
+			ContractReference cref = new ContractReference ();
+			cref.Ref = _url + "?wsdl";
+			cref.DocRef = _url;
+			doc.References.Add (cref);
+
+			context.Response.ContentType = "text/xml; charset=utf-8";
+			doc.Write (context.Response.OutputStream);
 		}
 		
 		void GenerateSchema (HttpContext context, string schemaId)
