@@ -1,4 +1,8 @@
 
+Thu Dec 19 18:31:54 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: fix LDELEMA implementation here as well.
+
 Wed Dec 18 11:42:58 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* jit.c: handle CEE_CONV_OVF_U8_UN like CEE_CONV_OVF_I8_UN.
