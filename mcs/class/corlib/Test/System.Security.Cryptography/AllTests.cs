@@ -23,6 +23,7 @@ namespace MonoTests.System.Security.Cryptography {
                                 suite.AddTest(SymmetricAlgorithmTest.Suite);
 				suite.AddTest(AsymmetricAlgorithmTest.Suite); 
                         	suite.AddTest(RNGCryptoServiceProviderTest.Suite);
+				suite.AddTest(FromBase64TransformTest.Suite);
                                 return suite;
                         }
                 }
