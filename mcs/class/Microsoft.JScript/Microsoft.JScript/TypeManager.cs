@@ -17,20 +17,24 @@ namespace Microsoft.JScript {
 	internal class TypeManager {
 
 		static IdentificationTable infos;
+		static IdentificationTable locals;
 
 		static TypeManager ()
 		{
 			infos = new IdentificationTable ();
+			locals = new IdentificationTable ();
 		}
 
 		internal static void BeginScope ()
 		{
 			infos.BeginScope ();
+			locals.BeginScope ();
 		}
 
 		internal static void EndScope ()
 		{
 			infos.EndScope ();
+			locals.EndScope ();
 		}
 
 		internal static void Add (string name, object o)
@@ -38,9 +42,19 @@ namespace Microsoft.JScript {
 			infos.Enter (Symbol.CreateSymbol (name), o);
 		}
 
+		internal static void AddLocal (string name, object o)
+		{
+			locals.Enter (Symbol.CreateSymbol (name), o);
+		}
+
 		internal static object Get (string name)
 		{
 			return infos.Get (Symbol.CreateSymbol (name));
+		}
+
+		internal static object GetLocal (string name)
+		{
+			return locals.Get (Symbol.CreateSymbol (name));
 		}
 
 		internal static void Set (string name, object o)

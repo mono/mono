@@ -96,6 +96,8 @@ namespace Microsoft.JScript {
 			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, HandleReturnType,
 								  func_obj.params_types ());
 			MethodBuilder tmp = (MethodBuilder) TypeManager.Get (name);
+
+
 			if (tmp == null)
 				TypeManager.Add (name, method_builder);
 			else 
@@ -109,7 +111,7 @@ namespace Microsoft.JScript {
 						  FieldAttributes.Public | FieldAttributes.Static);
 			else {
 				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
-				TypeManager.Add (name, local_func);
+				TypeManager.AddLocal (name, local_func);
 			}
 			build_closure (ec, full_name);
 		}

@@ -997,7 +997,7 @@ namespace Microsoft.JScript {
 			else if (binding is FunctionDeclaration)
 				load_script_func (ec, (FunctionDeclaration) binding);
 			else if (binding == null) // it got referenced before was declared and initialized
-				Console.WriteLine ("Identifier.Emit, binding == null? {0}", binding == null);
+				Console.WriteLine ("id = {0}, Identifier.Emit, binding == null? {1}", name.Value, binding == null);
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
@@ -1038,12 +1038,21 @@ namespace Microsoft.JScript {
 
 		void load_script_func (EmitContext ec, FunctionDeclaration binding)
 		{
-			if (InFunction && (TypeManager.Get (binding.func_obj.name) != null))
-				ec.ig.Emit (OpCodes.Ldloc, (LocalBuilder) TypeManager.Get (binding.func_obj.name));
-			else {
-				TypeBuilder type = ec.type_builder;
-				FieldInfo method = type.GetField (binding.func_obj.name);
-				ec.ig.Emit (OpCodes.Ldsfld, method);
+			object bind = TypeManager.Get (binding.func_obj.name);
+						       
+			if (bind != null) {
+				if (bind is MethodBuilder) {
+					TypeBuilder type = ec.type_builder;
+					if (binding.InFunction) {
+						LocalBuilder local_meth = (LocalBuilder) TypeManager.GetLocal (binding.func_obj.name);
+						ec.ig.Emit (OpCodes.Ldloc, local_meth);
+					} else {
+						FieldInfo method = type.GetField (binding.func_obj.name);
+						ec.ig.Emit (OpCodes.Ldsfld, method);
+					}
+				} else if (bind is LocalBuilder)
+					ec.ig.Emit (OpCodes.Ldloc, (LocalBuilder) bind);
+				else throw new Exception ("load_script_func");
 			}
 		}
 
@@ -1549,6 +1558,9 @@ namespace Microsoft.JScript {
 					break;
 				case "Boolean":
 					type = typeof (BooleanConstructor);
+					break;
+				case "Function":
+					type = typeof (FunctionConstructor);
 					break;
 				}
 				if (type != null)

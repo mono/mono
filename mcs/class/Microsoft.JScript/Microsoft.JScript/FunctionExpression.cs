@@ -86,6 +86,8 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
+			TypeManager.BeginScope ();
+
 			string name = func_obj.name;
 			string full_name;
 			TypeBuilder type = ec.type_builder;
@@ -106,6 +108,11 @@ namespace Microsoft.JScript {
 			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, 
 									  HandleReturnType,
 									  func_obj.params_types ());
+			MethodBuilder tmp = (MethodBuilder) TypeManager.Get (name);
+			if (tmp == null)
+				TypeManager.Add (name, method_builder);
+			else 
+				TypeManager.Set (name, method_builder);
 			set_custom_attr (method_builder);
 			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
 							      method_builder.GetILGenerator ());
@@ -125,6 +132,8 @@ namespace Microsoft.JScript {
 			build_closure (ec, full_name);
 			func_obj.body.Emit (new_ec);
 			new_ec.ig.Emit (OpCodes.Ret);
+
+			TypeManager.EndScope ();
 		}
 
 		internal void build_closure (EmitContext ec, string full_name)

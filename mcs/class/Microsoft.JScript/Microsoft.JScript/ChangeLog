@@ -1,3 +1,16 @@
+2005-03-16  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* FunctionExpression.cs: Update to TypeManager new API.
+
+	* TypeManager.cs: Keep both MethodBuilder and LocalBuilder around.
+
+	* FunctionDeclaration.cs: In some contexts we need the
+	MethodBuilder and LocalBuilder, so we must keep both around.
+
+	* expression.cs: (load_script_func) Take care if bounded variable
+	was declared in a nested context. (emit_create_instance) Handle
+	the FunctionConstructor case.
+
 2005-02-28  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* ForIn.cs: Initial implementation of ForIn stm.
