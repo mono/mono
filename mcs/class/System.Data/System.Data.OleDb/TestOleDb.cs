@@ -14,6 +14,14 @@ namespace System.Data.OleDb.Test
 			m_cnc = new OleDbConnection ("PostgreSQL");
 			m_cnc.Open ();
 
+			Console.WriteLine ("Connected to:");
+			Console.WriteLine (" Data Source: " + m_cnc.DataSource);
+			Console.WriteLine (" Database: " + m_cnc.Database);
+			Console.WriteLine (" Connection string: " + m_cnc.ConnectionString);
+			Console.WriteLine (" Provider: " + m_cnc.Provider);
+			Console.WriteLine (" Server version:" + m_cnc.ServerVersion);
+
+			/* create temporary table */
 			Console.WriteLine ("Creating temporary table...");
 			cmd = new OleDbCommand ("CREATE TABLE mono_test_table ( " +
 						" name varchar(25), email varchar(50), date_entered timestamp)",

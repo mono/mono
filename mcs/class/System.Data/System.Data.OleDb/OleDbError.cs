@@ -16,26 +16,47 @@ namespace System.Data.OleDb
 {
 	public sealed class OleDbError
 	{
+		private string errorMessage;
+		private int nativeError;
+		private string errorSource;
+		private string sqlState;
+
+		#region Constructors
+
+		internal OleDbError (string msg, int code, string source, string sql)
+		{
+			errorMessage = msg;
+			nativeError = code;
+			errorSource = source;
+			sqlState = sql;
+		}
+		
+		#endregion // Constructors
+		
 		#region Properties
 
 		public string Message {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return errorMessage;
+			}
 		}
 
 		public int NativeError {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return nativeError;
+			}
 		}
 
 		public string Source {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return errorSource;
+			}
 		}
 
 		public string SqlState {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return sqlState;
+			}
 		}
 
 		#endregion

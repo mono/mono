@@ -156,7 +156,13 @@ namespace System.Data.OleDb
 
 		public void ChangeDatabase (string name)
 		{
-			// FIXME: see http://bugzilla.gnome.org/show_bug.cgi?id=83315
+			if (gdaConnection == IntPtr.Zero)
+				throw new ArgumentException ();
+			if (State != ConnectionState.Open)
+				throw new InvalidOperationException ();
+
+			if (!libgda.gda_connection_change_database (gdaConnection, name))
+				throw new OleDbException (this);
 		}
 
 		public void Close ()

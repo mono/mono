@@ -213,6 +213,9 @@ namespace System.Data.OleDb
 		public static extern string gda_connection_get_password (IntPtr cnc);
 
 		[DllImport("gda-2")]
+		public static extern bool gda_connection_change_database (IntPtr cnc, string name);
+		
+		[DllImport("gda-2")]
 		public static extern IntPtr gda_transaction_new (string name);
 
 		[DllImport("gda-2")]
@@ -240,6 +243,9 @@ namespace System.Data.OleDb
 		public static extern IntPtr gda_connection_execute_single_command (IntPtr cnc, IntPtr command, IntPtr parameterList);
 
 		[DllImport("gda-2")]
+		public static extern IntPtr gda_connection_get_errors (IntPtr cnc);
+
+		[DllImport("gda-2")]
 		public static extern IntPtr gda_command_new (string text, GdaCommandType type, GdaCommandOptions options);
 
 		[DllImport("gda-2")]
@@ -247,5 +253,18 @@ namespace System.Data.OleDb
 
 		[DllImport("gda-2")]
 		public static extern void gda_command_set_command_type (IntPtr cmd, GdaCommandType type);
+
+		[DllImport("gda-2")]
+		public static extern string gda_error_get_description (IntPtr error);
+
+		[DllImport("gda-2")]
+		public static extern long gda_error_get_number (IntPtr error);
+
+		[DllImport("gda-2")]
+		public static extern string gda_error_get_source (IntPtr error);
+		
+		[DllImport("gda-2")]
+		public static extern string gda_error_get_sqlstate (IntPtr error);
+		
 	}
 }

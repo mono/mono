@@ -26,25 +26,38 @@ namespace System.Data.OleDb
 		#region Properties 
 
 		public int Count {
-			get { return list.Count; }
+			get {
+				return list.Count;
+			}
 		}
 
 		public OleDbError this[int index] {
-			get { return (OleDbError) list[index]; }
+			get {
+				return (OleDbError) list[index];
+			}
 		}
 
 		object ICollection.SyncRoot {
-			get { return list.SyncRoot; }
+			get {
+				return list.SyncRoot;
+			}
 		}
 
 		bool ICollection.IsSynchronized {
-			get { return list.IsSynchronized;  }
+			get {
+				return list.IsSynchronized;
+			}
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
+		internal void Add (OleDbError error)
+		{
+			list.Add ((object) error);
+		}
+		
 		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
