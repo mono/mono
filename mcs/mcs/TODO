@@ -148,33 +148,6 @@ PENDING TASKS
   properties, operators and indexers (currently we only do this
   on methods).
 
-
-* Using Alias
-
-	Need to reset the aliases for each compilation unit, so an
-	alias defined in a file does not have any effect on another one:
-
-	File.cs
-	=======
-	namespace A {
-		using X = Blah;
-
-		class Z : X {           <-- This X is `Blah' 
-	}
-
-	File2.cs
-	namespace {
-		class Y : X {		<-- This X Is not `Blah' 
-		}
-	}
-
-	I think we can implement Aliases by having an `Alias' context in all
-	the toplevel TypeContainers of a compilation unit.  The children typecontainers
-	just chain to the parents to resolve the information.
-
-	The driver advances the Alias for each file compiled, so that each file
-	has its own alias set.
-
 * Handle volatile
 
 * Support Re-Throw exceptions:

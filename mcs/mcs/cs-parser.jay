@@ -280,7 +280,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		  // FIXME : Need to implement actual action.
+		  current_namespace.UsingAlias ((string) $2, (string) $4);
 	  }
 	;
 

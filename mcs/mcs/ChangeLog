@@ -1,3 +1,17 @@
+2001-12-09  Radek Doulik  <rodo@ximian.com>
+
+	* cs-parser.jay: remember alias in current namespace
+
+	* ecore.cs (SimpleName::DoResolve): use aliases for types or
+	namespaces
+
+	* class.cs (LookupAlias): lookup alias in my_namespace
+
+	* namespace.cs (UsingAlias): add alias, namespace_or_type pair to
+	aliases hashtable
+	(LookupAlias): lookup alias in this and if needed in parent
+	namespaces
+
 2001-12-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* support.cs: 

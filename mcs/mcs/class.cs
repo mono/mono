@@ -1072,11 +1072,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string LookupAlias (string name)
 		{
-			//
-			// Read the comments on `mcs/mcs/TODO' for details
-			//
-
-			return null;
+			if (my_namespace != null)
+				return my_namespace.LookupAlias (name);
+			else
+				return null;
 		}
 		
 		/// <summary>

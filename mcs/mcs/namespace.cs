@@ -18,6 +18,7 @@ namespace Mono.CSharp {
 		Namespace parent;
 		string name;
 		ArrayList using_clauses;
+		Hashtable aliases;
 		bool decl_found = false;
 		
 		/// <summary>
@@ -85,6 +86,25 @@ namespace Mono.CSharp {
 			get {
 				return using_clauses;
 			}
+		}
+
+		public void UsingAlias (string alias, string namespace_or_type) {
+			if (aliases == null)
+				aliases = new Hashtable ();
+			aliases [alias] = namespace_or_type;
+		}
+
+		public string LookupAlias (string alias) {
+			string value = null;
+
+			// System.Console.WriteLine ("Lookup " + alias + " in " + name);
+
+			if (aliases != null)
+				value = (string) (aliases [alias]);
+			if (value == null && Parent != null)
+				value = Parent.LookupAlias (alias);
+
+			return value;
 		}
 
 		/// <summary>

@@ -2456,12 +2456,13 @@ namespace Mono.CSharp {
 			// Stage 2: Lookup members
 			//
 			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, true, Location);
-			if (e == null){
+			if (e == null) {
 				//
 				// Stage 3: Lookup symbol in the various namespaces. 
 				// 
 				Type t;
-				
+				string alias_value;
+
 				if ((t = ec.TypeContainer.LookupType (Name, true)) != null)
 					return new TypeExpr (t);
 
@@ -2472,11 +2473,16 @@ namespace Mono.CSharp {
 				// Since we are cheating: we only do the Alias lookup for
 				// namespaces if the name does not include any dots in it
 				//
-				
-				// IMPLEMENT ME.  Read mcs/mcs/TODO for ideas, or rewrite
-				// using NamespaceExprs (dunno how that fixes the alias
-				// per-file though).
-				
+
+				if (Name.IndexOf ('.') == -1 && (alias_value = ec.TypeContainer.LookupAlias (Name)) != null) {
+					// System.Console.WriteLine (Name + " --> " + alias_value);
+					if ((t = ec.TypeContainer.LookupType (alias_value, true)) != null)
+						return new TypeExpr (t);
+
+					// we have alias value, but it isn't Type, so try if it's namespace
+					return new SimpleName (alias_value, Location);
+				}
+
 				// No match, maybe our parent can compose us
 				// into something meaningful.
 				//
