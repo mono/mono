@@ -1,3 +1,8 @@
+2002-11-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* reflection.c: Map PEFileKind to the value expected by the WinNT
+	image loader. 
+
 2002-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* rand.c: use /dev/urandom. If it fails to open, use the previous one.
