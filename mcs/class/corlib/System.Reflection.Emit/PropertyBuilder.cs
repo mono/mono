@@ -49,7 +49,7 @@ namespace System.Reflection.Emit {
 			get {return set_method != null;}
 		}
 		public override Type DeclaringType {
-			get {return null;}
+			get {return typeb;}
 		}
 		public override string Name {
 			get {return name;}
@@ -61,7 +61,7 @@ namespace System.Reflection.Emit {
 			get {return type;}
 		}
 		public override Type ReflectedType {
-			get {return null;}
+			get {return typeb;}
 		}
 		public void AddOtherMethod( MethodBuilder mdBuilder) {
 		}

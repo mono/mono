@@ -1,3 +1,9 @@
+
+Mon Jun 10 18:58:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* PropertyBuilder.cs: implemented ReflectedType and DeclaringType
+	properties.
+
 2002-06-07  Martin Baulig  <martin@gnome.org>
 
 	* TypeBuilder.cs (TypeBuilder): Added `PackingSize packing_size' and
