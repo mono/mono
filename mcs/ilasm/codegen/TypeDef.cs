@@ -229,8 +229,10 @@ namespace Mono.ILASM {
                                 methoddef.Define (code_gen, classdef);
                         }
 
-                        foreach (EventDef eventdef in event_list) {
-                                eventdef.Define (code_gen, classdef);
+                        if (event_list != null) {
+                                foreach (EventDef eventdef in event_list) {
+                                        eventdef.Define (code_gen, classdef);
+                                }
                         }
 
                         if (customattr_list != null) {

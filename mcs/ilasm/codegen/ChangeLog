@@ -1,5 +1,9 @@
 2003-06-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* TypeDef.cs: Fix silly null reference bug.
+		
+2003-06-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* EventDef.cs: New file - An event definition.
 	* FeatureAttr.cs: New file - Attributes for features (events and
 	properties)
