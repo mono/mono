@@ -1,5 +1,13 @@
 2004-10-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorReader.cs : It can reject attribute and namespace
+	  nodes as its input (It is used only for WriteNode(), InsertBefore()
+	  and so on, which are not intended to be used with attribute nodes).
+	  On Initial state, it was Element that should check IsEmptyElement,
+	  and Root should just go to the first child node.
+
+2004-10-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorReader.cs : When the reader's root node is not of type
 	  Root, it incorrectly skipped the node itself.
 

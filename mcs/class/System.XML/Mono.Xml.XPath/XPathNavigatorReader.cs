@@ -39,6 +39,13 @@ namespace Mono.Xml.XPath
 	{
 		public XPathNavigatorReader (XPathNavigator nav)
 		{
+			// It seems that this class have only to support linked
+			// node as its parameter
+			switch (nav.NodeType) {
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Namespace:
+				throw new InvalidOperationException (String.Format ("NodeType {0} is not supported to read as a subtree of an XPathNavigator.", nav.NodeType));
+			}
 			root = nav.Clone ();
 			current = nav.Clone ();
 		}
@@ -431,9 +438,17 @@ namespace Mono.Xml.XPath
 				return false;
 			case ReadState.Initial:
 				started = true;
-				if (current.NodeType != XPathNodeType.Root) {
+				switch (current.NodeType) {
+				case XPathNodeType.Root:
+					// recurse, but as Interactive
+					return Read ();
+				case XPathNodeType.Element:
 					if (current.IsEmptyElement)
 						nextIsEOF = true;
+					return true;
+				case XPathNodeType.Namespace:
+				case XPathNodeType.Attribute:
+					nextIsEOF = true;
 					return true;
 				}
 				break;
