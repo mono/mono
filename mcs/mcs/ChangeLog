@@ -1,3 +1,12 @@
+2002-10-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ArrayAccess.EmitAssign): Patch from
+	hwang_rob@yahoo.ca that fixes bug 31834.3
+
+2002-10-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Make the module extension .netmodule.
+
 2002-10-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Report an error if the resource file is not found

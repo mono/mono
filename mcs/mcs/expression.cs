@@ -6262,7 +6262,8 @@ namespace Mono.CSharp {
 			// pair
 			//
 			if (rank == 1){
-				if (t.IsSubclassOf (TypeManager.value_type) && (!TypeManager.IsBuiltinType (t) || t == TypeManager.decimal_type))
+				if (t == TypeManager.enum_type || t == TypeManager.decimal_type ||
+				    (t.IsSubclassOf (TypeManager.value_type) && !TypeManager.IsEnumType (t) && !TypeManager.IsBuiltinType (t)))
 					ig.Emit (OpCodes.Ldelema, t);
 			}
 			
