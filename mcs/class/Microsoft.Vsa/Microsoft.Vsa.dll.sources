@@ -10,3 +10,4 @@ Microsoft.Vsa/IVsaSite.cs
 Microsoft.Vsa/VsaError.cs
 Microsoft.Vsa/VsaItemFlag.cs
 Microsoft.Vsa/VsaItemType.cs
+Microsoft.Vsa/VsaException.cs
