@@ -1,5 +1,13 @@
 2003-01-16  Martin Baulig  <martin@ximian.com>
 
+	* jit.c (mono_runtime_install_handlers): Use SYS_sigaction() for
+	the mono_thread_get_abort_signal () - this is SIGUSR1 on FreeBSD
+	and the LinuxThreads port doesn't allow you to override the handler.
+	[FIXME: This avoids an assertion failure on startup, but there's
+	still an issue with thread termination.]
+
+2003-01-16  Martin Baulig  <martin@ximian.com>
+
 	* debug.c: Use the mono/io-layer functions here instead of gthread.
 
 2003-01-14  Dietmar Maurer  <dietmar@ximian.com>
