@@ -1662,11 +1662,11 @@ namespace Mono.CSharp {
 					}
 					
 					method = TypeManager.string_concat_object_object;
+					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
 					Arguments = new ArrayList ();
 					Arguments.Add (new Argument (left, Argument.AType.Expression));
 					Arguments.Add (new Argument (right, Argument.AType.Expression));
 
-					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
 					type = TypeManager.string_type;
 
 					return this;

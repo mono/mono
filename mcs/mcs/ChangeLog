@@ -1,3 +1,8 @@
+2002-02-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): In the object + string
+	case, I was missing a call to ConvertImplicit
+
 2002-02-25  Ravi Pratap  <ravi@ximian.com>
 
 	* parameter.cs (Parameter.ExternalType): Take in extra DeclSpace and

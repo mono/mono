@@ -538,11 +538,11 @@ namespace Mono.CSharp {
 				// 
 				if (expr_type.IsPointer)
 					return null;
-				
-				if (expr_type.IsClass)
-					return new EmptyCast (expr, target_type);
+
 				if (expr_type.IsValueType)
 					return new BoxedCast (expr);
+				if (expr_type.IsClass)
+					return new EmptyCast (expr, target_type);
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				return new EmptyCast (expr, target_type);
 			} else {
@@ -2473,7 +2473,9 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			Console.WriteLine ("Emitting boxed");
 			base.Emit (ec);
+			
 			ec.ig.Emit (OpCodes.Box, child.Type);
 		}
 	}
