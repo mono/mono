@@ -1,5 +1,10 @@
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdValidatingReader.cs : added ActualSchemaType to context type.
+	* XmlSchemaValidatingReader.cs : added SchemaInfo override.
+
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdParticleValidationState.cs :
 	  Removed some unused or unnecessary members. Readonlify some members.
 	  Added GetExpectedParticles(ArrayList) and overriden in all state

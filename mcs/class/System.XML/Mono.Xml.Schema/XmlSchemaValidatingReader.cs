@@ -449,6 +449,10 @@ namespace Mono.Xml.Schema
 			get { return reader.ReadState; }
 		}
 
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return xsinfo; }
+		}
+
 		public override string Value {
 			get {
 				if (currentDefaultAttribute < 0)

@@ -1722,6 +1722,21 @@ namespace Mono.Xml.Schema
 			}
 		}
 
+#if NET_2_0
+		public XmlSchemaType ActualSchemaType {
+			get {
+				object at = ActualType;
+				if (at == null)
+					return null;
+				XmlSchemaType st = at as XmlSchemaType;
+				if (st == null)
+					st = XmlSchemaType.GetBuiltInSimpleType (
+					((XmlSchemaDatatype) at).TypeCode);
+				return st;
+			}
+		}
+#endif
+
 		public bool IsInvalid {
 			get { return State == XsdValidationState.Invalid; }
 		}
