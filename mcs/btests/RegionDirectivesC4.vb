@@ -1,4 +1,4 @@
-'BC30217: String Constant expected
+'Line 5, BC30217: String Constant expected
 
 Imports System
 Module RegionDirectives

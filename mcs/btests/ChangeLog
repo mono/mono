@@ -1,4 +1,9 @@
 2004-08-04  Jambunathan K  <kjambunathan@novell.com>
+	* RegionDirectivesC5.vb: 
+	* ConditionalCompilation9.vb: 
+	* ConditionalCompilation10.vb: Removed all these redundant test 
+	  cases
+
 	* Test.Sources: Included the newly added pre-processor test cases
 
 2004-08-04 Sachin Kumar <skumar1@novell.com>
