@@ -11,6 +11,8 @@ PLATFORM_CORLIB = mscorlib.dll
 BOOTSTRAP_MCS = mcs
 RESGEN = monoresgen
 
+PLATFORM_PATH_SEPARATOR = :
+
 # Define this if this ever will work on Linux
 # PLATFORM_MAKE_CORLIB_CMP = yes
 

@@ -1,5 +1,13 @@
 2004-05-11  Jackson Harper  <jackson@ximian.com>
 
+	* platforms/linux.make:
+	* platforms/win32.make: Define a PLATFORM_PATH_SEPARATOR used for
+	separating paths in env vars. (ie MONO_PATH).
+	* profiles/net_2_0.make: Always use gmcs for building the 2.0
+	libraries. corlib is the first lib built and it will build gmcs.
+	
+2004-05-11  Jackson Harper  <jackson@ximian.com>
+
 	* library.make: Allow assembly names to be different then their
 	.sources file names.
 	
