@@ -877,6 +877,10 @@ namespace System {
 					else if (format[i] == '\\') {
 						sb.Append(format[++i]);
 					}
+					else if (format [i] == '%')
+						sb.Append (nfi.PercentSymbol);
+					else if (format [i] == '\u2030')
+						sb.Append (nfi.PerMilleSymbol);
 					else {
 						sb.Append(format[i]);
 					}
@@ -904,6 +908,10 @@ namespace System {
 						}
 					}
 				}
+				else if (format [i] == '%')
+					sb.Insert (0, nfi.PercentSymbol);
+				else if (format [i] == '\u2030')
+					sb.Insert (0, nfi.PerMilleSymbol);
 				else if (format[i] != ',') {
 					sb.Insert(0, format[i]);
 				}
@@ -931,7 +939,11 @@ namespace System {
 				mantissa /= 10;
 			}
 			for (int i = f.FirstFormatPos - 1; i >= 0; i--) {
-				if (format [i] != '.')
+				if (format [i] == '%')
+					sb.Insert (0, nfi.PercentSymbol);
+				else if (format [i] == '\u2030')
+					sb.Insert (0, nfi.PerMilleSymbol);
+				else if (format [i] != '.')
 					sb.Insert(0, format[i]);
 			}
 			return sb.ToString();

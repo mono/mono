@@ -1,5 +1,10 @@
 2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FloatingPointFormatter.cs : Recognize '%' and '\u2030' and replace
+	  them with matching NumberFormatInfo properties.
+
+2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Double.cs : Use IFormatProvider.GetFormat() instead of literal '-'.
 	* FloatingPointFormatter.cs :
 	  Use NumberFormatInfo.NegativeSign. This change saves many XSLT test
