@@ -1,4 +1,9 @@
 
+Tue Dec 7 10:14:25 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-x86.brg, inssel-ppc.brg: fix reference to register
+	in stmt: OP_OUTARG_VT (reg) (should fix bug #69785).
+
 Tue Dec 7 10:06:39 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: avoid calling ppc_patch in exception trampolines.
