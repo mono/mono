@@ -1,5 +1,8 @@
 2004-12-15  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs: Add more <stdio.h> wrappers, such as fread(3) and fwrite(3).
+	  These will be useful in implementing System.IO.Stream subclass for
+	  reading/writing to a FILE*.  Fix a typo in the realloc DllImport.
 	* Syscall.cs: Fix the sys_kill and sys_crypt declarations.
 	* CdeclFunction.cs: Document calling convention problems on AMD64.
 

@@ -29,6 +29,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using Mono.Unix;
 
 namespace Mono.Unix {
@@ -142,6 +143,71 @@ namespace Mono.Unix {
 			return (int) XPrintfFunctions.fprintf (_parameters);
 		}
 
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int fputc (int c, IntPtr stream);
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int fputs (string s, IntPtr stream);
+
+		// skip putc, as it may be a macro
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int putchar (int c);
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int puts (string s);
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int fgetc (IntPtr stream);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="fgetc")]
+		private static extern IntPtr sys_fgetc (StringBuilder sb, int size, IntPtr stream);
+
+		public static StringBuilder fgetc (StringBuilder sb, int size, IntPtr stream)
+		{
+			sys_fgetc (sb, size, stream);
+			return sb;
+		}
+
+		public static StringBuilder fgetc (StringBuilder sb, IntPtr stream)
+		{
+			sys_fgetc (sb, sb.Capacity, stream);
+			return sb;
+		}
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int getc (IntPtr stream);
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int getchar ();
+
+		// skip gets(3), it's evil.
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int ungetc (int c, IntPtr stream);
+
+		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fread")]
+		public static extern unsafe ulong fread (void* ptr, ulong size, ulong nmemb, IntPtr stream);
+
+		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fread")]
+		public static extern ulong fread ([Out] byte[] ptr, ulong size, ulong nmemb, IntPtr stream);
+
+		public static ulong fread (byte[] ptr, IntPtr stream)
+		{
+			return fread (ptr, 1, (ulong) ptr.Length, stream);
+		}
+
+		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fwrite")]
+		public static extern unsafe ulong fwrite (void* ptr, ulong size, ulong nmemb, IntPtr stream);
+
+		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fwrite")]
+		public static extern ulong fwrite (byte[] ptr, ulong size, ulong nmemb, IntPtr stream);
+
+		public static ulong fwrite (byte[] ptr, IntPtr stream)
+		{
+			return fwrite (ptr, 1, (ulong) ptr.Length, stream);
+		}
+
 		//
 		// <stdlib.h>
 		//
@@ -164,7 +230,7 @@ namespace Mono.Unix {
 
 		// realloc(3):
 		//    void *realloc(void *ptr, size_t size);
-		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Stdlib_calloc")]
+		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Stdlib_realloc")]
 		public static extern IntPtr realloc (IntPtr ptr, ulong size);
 
 		[DllImport (MPH, SetLastError=true)]
