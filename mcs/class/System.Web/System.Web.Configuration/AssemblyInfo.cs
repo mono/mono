@@ -42,6 +42,7 @@ namespace System.Web.Configuration
 		
 		static AssemblyInfo ()
 		{
+			properties = new ConfigurationPropertyCollection ();
 			assemblyProp = new NonEmptyStringConfigurationProperty ("assembly", null, ConfigurationPropertyFlags.IsKey);
 			properties.Add (assemblyProp);
 		}

@@ -61,6 +61,7 @@ namespace System.Web.Configuration
 			cookilessProp = new ConfigurationProperty ("cookiless", typeof(HttpCookieMode), HttpCookieMode.UseDeviceProfile);
 			domainProp = new ConfigurationProperty ("domain", typeof(string), null);
 			
+			properties = new ConfigurationPropertyCollection ();
 			properties.Add (enabledProp);
 			properties.Add (cookieNameProp);
 			properties.Add (cookieTimeoutProp);

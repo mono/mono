@@ -1,3 +1,11 @@
+2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AnonymousIdentificationSection.cs, AuthenticationSection.cs,
+	AssemblyInfo.cs: Initialize	property collection.
+	* SiteMapSection.cs, SiteMapHierarchicalDataSourceView.cs, 
+	SiteMapDataSource.cs: New file.
+	* SiteMapDataSourceView.cs: Minor fixes.
+
 2004-11-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AnonymousIdentificationSection.cs, InternalSection.cs,

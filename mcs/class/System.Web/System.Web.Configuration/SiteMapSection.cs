@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.AuthenticationSection
+// System.Web.Configuration.SiteMapSection.cs
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
@@ -32,49 +32,48 @@
 
 using System;
 using System.Configuration;
+using System.Web.Security;
 
 namespace System.Web.Configuration
 {
-	public class AuthenticationSection: ConfigurationSection
+	public class SiteMapSection: InternalSection
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty formsProp;
-		static ConfigurationProperty passportProp;
-		static ConfigurationProperty modeProp;
+		static ConfigurationProperty enabledProp;
+		static ConfigurationProperty defaultProviderProp;
+		static ConfigurationProperty providersProp;
 		
-		static AuthenticationSection ()
+		static SiteMapSection ()
 		{
 			properties = new ConfigurationPropertyCollection ();
-			formsProp = new ConfigurationProperty ("forms", typeof(FormsAuthenticationConfiguration), null);
-			passportProp = new ConfigurationProperty ("passport", typeof(PassportAuthentication), null);
-			modeProp = new ConfigurationProperty ("mode", typeof(AuthenticationMode), null);
-			properties.Add (formsProp);
-			properties.Add (passportProp);
-			properties.Add (modeProp);
+			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof(string), null);
+			providersProp = new ConfigurationProperty ("providers", typeof(ProviderSettingsCollection), null);
+			
+			properties.Add (enabledProp);
+			properties.Add (defaultProviderProp);
+			properties.Add (providersProp);
 		}
 		
-		public AuthenticationSection ()
-		{
+
+		public string DefaultProvider {
+			get { return (string) base [defaultProviderProp]; }
+			set { base [defaultProviderProp] = value; }
 		}
 		
-		public FormsAuthenticationConfiguration Forms {
-			get { return (FormsAuthenticationConfiguration) base [formsProp]; }
+		public bool Enabled {
+			get { return (bool) base [enabledProp]; }
+			set { base [enabledProp] = value; }
 		}
-		
-		public PassportAuthentication Passport {
-			get { return (PassportAuthentication) base [passportProp]; }
+
+		public ProviderSettingsCollection Providers {
+			get { return (ProviderSettingsCollection) base [providersProp]; }
+			set { base [providersProp] = value; }
 		}
-		
-		public AuthenticationMode Mode {
-			get { return (AuthenticationMode) base [modeProp]; }
-			set { base [modeProp] = value; }
-		}
-		
-/*		
+
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-*/
 	}
 }
 
