@@ -970,16 +970,16 @@ namespace System.Drawing
 		internal static extern Status GdipImageSelectActiveFrame (IntPtr image, ref Guid guidDimension, int frameIndex);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetPropertyItemSize ( IntPtr image, int propertyID, out uint propertySize );
+		internal static extern Status GdipGetPropertyItemSize (IntPtr image, int propertyID, out int propertySize);
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetPropertyItem ( IntPtr image, int propertyID, uint propertySize, out IntPtr buffer );
+		internal static extern Status GdipGetPropertyItem (IntPtr image, int propertyID, int propertySize, IntPtr buffer);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipRemovePropertyItem ( IntPtr image, int propertyId );
+		internal static extern Status GdipRemovePropertyItem (IntPtr image, int propertyId);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipSetPropertyItem ( IntPtr image, IntPtr propertyItem );
+		internal static extern Status GdipSetPropertyItem (IntPtr image, IntPtr propertyItem);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageThumbnail ( IntPtr image, uint width, uint height, out IntPtr thumbImage, IntPtr callback, IntPtr callBackData );

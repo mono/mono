@@ -264,10 +264,29 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		
 	}
 	
-	[MonoTODO]	
 	public PropertyItem GetPropertyItem(int propid)
 	{
-		throw new NotImplementedException ();
+		int propSize;
+		IntPtr property;
+		PropertyItem item = new PropertyItem ();
+		GdipPropertyItem gdipProperty = new GdipPropertyItem ();
+		Status status;
+			
+		status = GDIPlus.GdipGetPropertyItemSize (nativeObject, propid, 
+									out propSize);
+		GDIPlus.CheckStatus (status);
+
+		/* Get PropertyItem */
+		property = Marshal.AllocHGlobal (propSize);
+		status = GDIPlus.GdipGetPropertyItem (nativeObject, propid, propSize,  
+										property);
+		GDIPlus.CheckStatus (status);
+		gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure ((IntPtr)property, 
+								typeof (GdipPropertyItem));						
+		GdipPropertyItem.MarshalTo (gdipProperty, item);								
+		
+		Marshal.FreeHGlobal (property);
+		return item;
 	}
 	
 	public Image GetThumbnailImage(int thumbWidth, int thumbHeight, Image.GetThumbnailImageAbort callback, IntPtr callbackData)
@@ -412,10 +431,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return frameIndex;		
 	}
 	
-	[MonoTODO]	
 	public void SetPropertyItem(PropertyItem propitem)
 	{
-		throw new NotImplementedException ();
+		IntPtr property;
+		int size = Marshal.SizeOf (typeof(GdipPropertyItem));
+		property = Marshal.AllocHGlobal (size);
+
+		Marshal.StructureToPtr (propitem, property, true);
+		Status status = GDIPlus.GdipSetPropertyItem (nativeObject, property);
+		GDIPlus.CheckStatus (status);
 	}
 
 	// properties	
