@@ -34,10 +34,6 @@ guidelines are for the sake of consistency.
    A typical OnPaint will look like this:
 
       protected override void OnPaint(PaintEventArgs pevent) {
-         if (NeedRedraw) {
-            Redraw();
-         }
-
          pevent.Graphics.DrawImage(this.ImageBuffer, 
                                    pevent.ClipRectangle, 
                                    pevent.ClipRectangle, 
@@ -50,7 +46,7 @@ guidelines are for the sake of consistency.
       public Color RectColor {
          set {
             sb.Color = value;
-            NeedRedraw = true;
+            Redraw();
          }
       }
 	
@@ -59,9 +55,8 @@ guidelines are for the sake of consistency.
       }
 
 
-6. Minimize redraws as much as possible by setting a flag when a redraw
-   is required and calling the redraw code once when painting. (See #5
-   for sample code)
+6. Minimize redraws as much as possible by utilizing the clipRectangle 
+   when possible.
 
 7. Setting the size of a control raises a resize event even if the
    control size is same. Be careful is setting the size and it's better
