@@ -76,12 +76,6 @@ namespace System.Web {
 
 		static HttpRuntime ()
 		{
-			appPathDiscoveryStackWalk = null;
-			ctrlPrincipalStackWalk    = null;
-			sensitiveInfoStackWalk    = null;
-			unmgdCodeStackWalk        = null;
-			unrestrictedStackWalk     = null;
-         
 			_runtime = new HttpRuntime ();
 			_runtime.Init();
 		}
@@ -279,9 +273,9 @@ namespace System.Web {
 				if (!_firstRequestStarted) {
 					lock (this) {
 						if (!_firstRequestStarted) {
-							_firstRequestStarted = true;
 							_firstRequestStartTime = DateTime.Now;
 							OnFirstRequestStart(context);
+							_firstRequestStarted = true;
 						}						
 					}
 				}
@@ -343,7 +337,8 @@ namespace System.Web {
 			if (Request == null)
 				throw new ArgumentNullException ("Request");
 
-			if (!_runtime._firstRequestExecuted || _runtime.queueManager.CanExecuteRequest (false)) {
+			QueueManager mgr = _runtime.queueManager;
+			if (!_runtime._firstRequestExecuted || mgr == null || mgr.CanExecuteRequest (false)) {
 				_runtime.InternalExecuteRequest (Request);
 			} else {
 				_runtime.queueManager.Queue (Request);
@@ -507,7 +502,7 @@ namespace System.Web {
 
 		[MonoTODO ("GetResourceStringFromResourceManager (string)")]
 		private string GetResourceStringFromResourceManager (string key) {
-			return "String returned by HttpRuntime.GetResourceStringFromResourceManager";
+			return key;
 		}
 
 		#region Security Internal Methods (not impl)
