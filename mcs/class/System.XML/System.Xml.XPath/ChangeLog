@@ -1,3 +1,9 @@
+2003-12-16 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Iterator.cs : On its iteration, moving Current must not affect to
+	  MoveNext(). To assure this, Current must be a clone of navigator.
+	  Removed unused code.
+
 2003-12-07 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Tokenizer.cs : Removed some TODOs. (trivial ;-)

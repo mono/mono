@@ -3,8 +3,10 @@
 //
 // Author:
 //   Piers Haken (piersh@friskit.com)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002 Piers Haken
+// (C) 2003 Atsushi Enomoto
 //
 
 using System;
@@ -114,13 +116,14 @@ namespace System.Xml.XPath
 	{
 		protected readonly BaseIterator _iter;
 		protected readonly XPathNavigator _nav;
+		protected XPathNavigator _current;
 		protected int _pos;
 
 		public SimpleIterator (BaseIterator iter) : base (iter)
 		{
 			_iter = iter;
-			if (iter.Current != null)
-				_nav = iter.Current.Clone ();
+			_nav = iter.Current.Clone ();
+			_current = _nav.Clone ();
 		}
 		protected SimpleIterator (SimpleIterator other) : base (other)
 		{
@@ -129,13 +132,15 @@ namespace System.Xml.XPath
 			else
 				_nav = other._nav.Clone ();
 			_pos = other._pos;
+			_current = other._current.Clone ();
 		}
 		public SimpleIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nsm)
 		{
 			_nav = nav.Clone ();
+			_current = nav.Clone ();
 		}
 
-		public override XPathNavigator Current { get { return _nav; }}
+		public override XPathNavigator Current { get { return _current; }}
 		public override int CurrentPosition { get { return _pos; }}
 	}
 
@@ -150,6 +155,7 @@ namespace System.Xml.XPath
 			if (_pos == 0)
 			{
 				_pos = 1;
+				_current = _nav.Clone ();
 				return true;
 			}
 			return false;
@@ -207,6 +213,7 @@ namespace System.Xml.XPath
 			if (_pos == 0 && _nav.MoveToParent ())
 			{
 				_pos = 1;
+				_current = _nav.Clone ();
 				return true;
 			}
 			return false;
@@ -223,8 +230,10 @@ namespace System.Xml.XPath
 		public override bool MoveNext ()
 		{
 			bool fSuccess = (_pos == 0) ? _nav.MoveToFirstChild () : _nav.MoveToNext ();
-			if (fSuccess)
+			if (fSuccess) {
 				_pos ++;
+				_current = _nav.Clone ();
+			}
 			return fSuccess;
 		}
 
@@ -247,6 +256,7 @@ namespace System.Xml.XPath
 			if (_nav.MoveToNext ())
 			{
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			return false;
@@ -264,12 +274,14 @@ namespace System.Xml.XPath
 		public PrecedingSiblingIterator (BaseIterator iter) : base (iter)
 		{
 			startPosition = iter.Current.Clone ();
+			_current = startPosition.Clone ();
 		}
 		protected PrecedingSiblingIterator (PrecedingSiblingIterator other) : base (other) 
 		{
 			startPosition = other.startPosition;
 			started = other.started;
 			finished = other.finished;
+			_current = other._current.Clone ();
 		}
 
 		public override XPathNodeIterator Clone () { return new PrecedingSiblingIterator (this); }
@@ -290,6 +302,7 @@ namespace System.Xml.XPath
 				_nav.MoveToFirst ();
 				if (_nav.ComparePosition (startPosition) == XmlNodeOrder.Same) {
 					_pos++;
+					_current = _nav.Clone ();
 					return true;
 				}
 			} else {
@@ -304,6 +317,7 @@ namespace System.Xml.XPath
 				return false;
 			} else {
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 		}
@@ -324,6 +338,7 @@ namespace System.Xml.XPath
 		public AncestorIterator (BaseIterator iter) : base (iter)
 		{
 			startPosition = iter.Current.Clone ();
+			_current = startPosition.Clone ();
 		}
 		protected AncestorIterator (AncestorIterator other) : base (other)
 		{
@@ -332,6 +347,7 @@ namespace System.Xml.XPath
 			finished = other.finished;
 			positions = (ArrayList) other.positions.Clone ();
 			nextDepth = other.nextDepth;
+			_current = other._current.Clone ();
 		}
 		public override XPathNodeIterator Clone () { return new AncestorIterator (this); }
 		public override bool MoveNext ()
@@ -361,6 +377,7 @@ namespace System.Xml.XPath
 				if (startPosition.NodeType != XPathNodeType.Root) {
 					// First time it returns Root
 					_pos++;
+					_current = _nav.Clone ();
 					return true;
 				}
 			}
@@ -373,6 +390,7 @@ namespace System.Xml.XPath
 					_nav.MoveToNext ();
 				nextDepth++;
 				_pos++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			finished = true;
@@ -397,6 +415,7 @@ namespace System.Xml.XPath
 		public AncestorOrSelfIterator (BaseIterator iter) : base (iter)
 		{
 			startPosition = iter.Current.Clone ();
+			_current = startPosition.Clone ();
 		}
 		protected AncestorOrSelfIterator (AncestorOrSelfIterator other) : base (other) 
 		{
@@ -405,6 +424,7 @@ namespace System.Xml.XPath
 			finished = other.finished;
 			positions = (ArrayList) other.positions.Clone ();
 			nextDepth = other.nextDepth;
+			_current = other._current.Clone ();
 		}
 		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
 		public override bool MoveNext ()
@@ -429,12 +449,14 @@ namespace System.Xml.XPath
 				} while (ancestors.NodeType != XPathNodeType.Root);
 				positions.Reverse ();
 			}
-			if (initialIteration && startPosition.NodeType != XPathNodeType.Root)
+			if (initialIteration && startPosition.NodeType != XPathNodeType.Root) {
+				_current = _nav.Clone ();
 				return true;
-			else if (nextDepth + 1 == positions.Count) {
+			} else if (nextDepth + 1 == positions.Count) {
 				nextDepth++;
 				_pos++;
 				_nav.MoveTo (startPosition);
+				_current = _nav.Clone ();
 				return true;
 			}
 			else if (nextDepth < positions.Count) {
@@ -444,6 +466,7 @@ namespace System.Xml.XPath
 					_nav.MoveToNext ();
 				nextDepth++;
 				_pos++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			finished = true;
@@ -467,6 +490,7 @@ namespace System.Xml.XPath
 		protected DescendantIterator (DescendantIterator other) : base (other)
 		{
 			_depth = other._depth;
+			_current = other._current.Clone ();
 		}
 
 		public override XPathNodeIterator Clone () { return new DescendantIterator (this); }
@@ -480,6 +504,7 @@ namespace System.Xml.XPath
 			{
 				_depth ++;
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			while (_depth != 0)
@@ -487,6 +512,7 @@ namespace System.Xml.XPath
 				if (_nav.MoveToNext ())
 				{
 					_pos ++;
+					_current = _nav.Clone ();
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
@@ -510,6 +536,7 @@ namespace System.Xml.XPath
 		protected DescendantOrSelfIterator (DescendantOrSelfIterator other) : base (other)
 		{
 			_depth = other._depth;
+			_current = other._current.Clone ();
 		}
 
 		public override XPathNodeIterator Clone () { return new DescendantOrSelfIterator (this); }
@@ -523,12 +550,14 @@ namespace System.Xml.XPath
 			{
 				// self
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			while (_depth != 0)
@@ -536,6 +565,7 @@ namespace System.Xml.XPath
 				if (_nav.MoveToNext ())
 				{
 					_pos ++;
+					_current = _nav.Clone ();
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
@@ -564,11 +594,13 @@ namespace System.Xml.XPath
 				if (_nav.MoveToNext ())
 				{
 					_pos ++;
+					_current = _nav.Clone ();
 					return true;
 				} else {
 					while (_nav.MoveToParent ()) {
 						if (_nav.MoveToNext ()) {
 							_pos ++;
+							_current = _nav.Clone ();
 							return true;
 						}
 					}
@@ -579,6 +611,7 @@ namespace System.Xml.XPath
 				if (_nav.MoveToFirstChild ())
 				{
 					_pos ++;
+					_current = _nav.Clone ();
 					return true;
 				}
 				do
@@ -586,6 +619,7 @@ namespace System.Xml.XPath
 					if (_nav.MoveToNext ())
 					{
 						_pos ++;
+						_current = _nav.Clone ();
 						return true;
 					}
 				}
@@ -607,12 +641,14 @@ namespace System.Xml.XPath
 		public PrecedingIterator (BaseIterator iter) : base (iter) 
 		{
 			startPosition = iter.Current.Clone ();
+			_current = startPosition.Clone ();
 		}
 		protected PrecedingIterator (PrecedingIterator other) : base (other) 
 		{
 			startPosition = other.startPosition;
 			started = other.started;
 			finished = other.finished;
+			_current = other._current.Clone ();
 		}
 		public override XPathNodeIterator Clone () { return new PrecedingIterator (this); }
 		public override bool MoveNext ()
@@ -645,6 +681,7 @@ namespace System.Xml.XPath
 				return false;
 			} else {
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 		}
@@ -667,12 +704,14 @@ namespace System.Xml.XPath
 				if (_nav.MoveToFirstNamespace ())
 				{
 					_pos ++;
+					_current = _nav.Clone ();
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextNamespace ())
 			{
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			return false;
@@ -694,12 +733,14 @@ namespace System.Xml.XPath
 				if (_nav.MoveToFirstAttribute ())
 				{
 					_pos += 1;
+					_current = _nav.Clone ();
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextAttribute ())
 			{
 				_pos ++;
+				_current = _nav.Clone ();
 				return true;
 			}
 			return false;			
@@ -773,51 +814,6 @@ namespace System.Xml.XPath
 		public override bool RequireSorting { get { return _iter.RequireSorting; } }
 	}
 
-#if false
-	internal class SlashIterator : BaseIterator
-	{
-		protected BaseIterator _iterLeft;
-		protected BaseIterator _iterRight;
-		protected NodeSet _expr;
-		protected int _pos;
-
-		public SlashIterator (BaseIterator iter, NodeSet expr) : base (iter)
-		{
-			_iterLeft = iter;
-			_expr = expr;
-		}
-
-		protected SlashIterator (SlashIterator other) : base (other)
-		{
-			_iterLeft = (BaseIterator) other._iterLeft.Clone ();
-			if (other._iterRight != null)
-				_iterRight = (BaseIterator) other._iterRight.Clone ();
-			_expr = other._expr;
-			_pos = other._pos;
-		}
-		public override XPathNodeIterator Clone () { return new SlashIterator (this); }
-
-		public override bool MoveNext ()
-		{
-			while (_iterRight == null || !_iterRight.MoveNext ())
-			{
-				if (!_iterLeft.MoveNext ())
-					return false;
-				_iterRight = _expr.EvaluateNodeSet (_iterLeft);
-			}
-			_pos ++;
-			return true;
-		}
-		public override XPathNavigator Current { 
-			get { 
-				if (_iterRight == null) return null;
-				
-				return _iterRight.Current;
-			}
-		}
-		public override int CurrentPosition { get { return _pos; }}
-	}
-#else
 	internal class SlashIterator : BaseIterator
 	{
 		protected BaseIterator _iterLeft;
@@ -880,16 +876,6 @@ namespace System.Xml.XPath
 
 				return true;
 			} else {
-#if false
-				while (_iterRight == null || !_iterRight.MoveNext ())
-				{
-					if (!_iterLeft.MoveNext ())
-						return false;
-					_iterRight = _expr.EvaluateNodeSet (_iterLeft);
-				}
-				_pos ++;
-				return true;
-#else
 				if (_iterRight == null) { // First time
 					if (!_iterLeft.MoveNext ())
 						return false;
@@ -929,23 +915,6 @@ namespace System.Xml.XPath
 						loop = false;
 						if (_nextIterRight == null) {
 							bool noMoreNext = false;
-							/*
-							if (_iterList.Count > 0) {
-								int last = _iterList.Count -1;
-								BaseIterator tmpIter = _iterList.GetByIndex (last) as BaseIterator;
-								_iterList.RemoveAt (last);
-								switch (tmpIter.Current.ComparePosition (_iterRight.Current)) {
-								case XmlNodeOrder.Same:
-								case XmlNodeOrder.Before:
-									_iterList.Add (_iterRight, _iterRight);
-									_iterRight = tmpIter;
-									break;
-								default:
-									_iterList.Add (_iterRight, _iterRight);
-									break;
-								}
-							}
-							*/
 							while (_nextIterRight == null || !_nextIterRight.MoveNext ()) {
 								if(_iterLeft.MoveNext ())
 									_nextIterRight = _expr.EvaluateNodeSet (_iterLeft);
@@ -986,7 +955,6 @@ namespace System.Xml.XPath
 					_pos ++;
 					return true;
 				}
-#endif
 			}
 		}
 		private void CollectResults ()
@@ -1025,8 +993,6 @@ namespace System.Xml.XPath
 			}
 		}
 	}
-
-#endif
 
 	internal class PredicateIterator : BaseIterator
 	{
