@@ -18,18 +18,18 @@ namespace MonoTests.System.Diagnostics {
         ///   location inside it.
         /// </summary>
 	[TestFixture]
-	public class StackFrameTest1 : TestCase {
+	public class StackFrameTest1 : Assertion {
                 private StackFrame frame1;
                 private StackFrame frame2;
                 
 		[SetUp]
-                public void InitTest() {
+                public void SetUp () {
                         frame1 = new StackFrame("dir/someFile", 13, 45);
                         frame2 = new StackFrame("SomeFile2.cs", 24);
                 }
                 
 		[TearDown]
-                public void CleanupTest() {
+                public void TearDown () {
                         frame1 = null;
                         frame2 = null;
                 }
@@ -108,18 +108,20 @@ namespace MonoTests.System.Diagnostics {
         ///   debug information?
         /// </remarks>
 	[TestFixture]
-        public class StackFrameTest2 : TestCase {
+        public class StackFrameTest2 : Assertion {
                 private StackFrame frame1;
                 private StackFrame frame2;
                 private StackFrame frame3;
                 
-                protected override void SetUp() {
+		[SetUp]
+                public void SetUp() {
                         frame1 = new StackFrame();
                         frame2 = new StackFrame(true);
                         frame3 = new StackFrame(0);
                 }
                 
-                protected override void TearDown() {
+		[TearDown]
+                public void TearDown () {
                         frame1 = null;
                         frame2 = null;
                         frame3 = null;
@@ -148,7 +150,7 @@ namespace MonoTests.System.Diagnostics {
                                      frame1.GetFileLineNumber());
                                      
                         AssertEquals("Line number (2)",
-                                     116,
+                                     119,
                                      frame2.GetFileLineNumber());
                                      
                         AssertEquals("Line number (3)",
