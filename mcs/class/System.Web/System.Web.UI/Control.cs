@@ -725,11 +725,7 @@ namespace System.Web.UI
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
                 {
-			WebTrace.PushContext ("Control.AddParsedSubobject ()");
-			WebTrace.WriteLine ("Start");
                         _renderMethodDelegate = renderMethod;
-			WebTrace.WriteLine ("End");
-			WebTrace.PopContext ();
                 }
 
                 internal void LoadRecursive()

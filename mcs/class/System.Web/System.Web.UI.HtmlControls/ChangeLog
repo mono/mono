@@ -1,3 +1,7 @@
+2003-10-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs: render the onsubmit attribute.
+
 2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlGenericControl.cs: ConstructorNeedsTag defaults to false so we

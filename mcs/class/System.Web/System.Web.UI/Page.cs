@@ -59,6 +59,7 @@ public class Page : TemplateControl, IHttpHandler
 	Hashtable clientScriptBlocks;
 	Hashtable startupScriptBlocks;
 	Hashtable hiddenFields;
+	internal Hashtable submitStatements;
 	bool handleViewState;
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -694,7 +695,13 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterOnSubmitStatement (string key, string script)
 	{
-		throw new NotImplementedException ();
+		if (submitStatements == null)
+			submitStatements = new Hashtable ();
+
+		if (submitStatements.ContainsKey (key))
+			return;
+
+		submitStatements.Add (key, script);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]

@@ -4,7 +4,9 @@
 */
 
 using System;
+using System.Collections;
 using System.ComponentModel;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 
@@ -27,21 +29,27 @@ namespace System.Web.UI.HtmlControls{
 				writer.WriteAttribute ("enctype", Enctype);
 				Attributes.Remove ("enctype");
 			}
-				
 
-//			string clientOnSubmit = Page.ClientOnSubmitEvent;
-// 			if (clientOnSubmit != null && clientOnSubmit.Length > 0){
-// 				if (Attributes["onsubmit"] != null){
-// 					clientOnSubmit = String.Concat(clientOnSubmit,Attributes["onsubmit"]);
-// 					Attributes.Remove("onsubmit");
-// 				}
-// 				writer.WriteAttribute("language","javascript");
-// 				writer.WriteAttribute("onsubmit",clientOnSubmit);
-// 			}
-			if (ID == null){
-				writer.WriteAttribute("id",ClientID);
-			}
-			base.RenderAttributes(writer);
+			Hashtable onSubmit = Page.submitStatements;
+ 			if (onSubmit != null && onSubmit.Count > 0){
+				StringBuilder sb = new StringBuilder ();
+				string prev = Attributes ["onsubmit"];
+ 				if (prev != null){
+					sb.Append (prev);
+ 					Attributes.Remove ("onsubmit");
+ 				}
+
+				foreach (string s in onSubmit.Values)
+					sb.Append (s);
+
+ 				writer.WriteAttribute ("language", "javascript");
+ 				writer.WriteAttribute ("onsubmit", sb.ToString ());
+ 			}
+
+			if (ID == null)
+				writer.WriteAttribute ("id", ClientID);
+
+			base.RenderAttributes (writer);
 		}
 		
 		protected override void Render(HtmlTextWriter output){

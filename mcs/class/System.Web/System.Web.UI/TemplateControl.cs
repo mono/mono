@@ -91,9 +91,9 @@ namespace System.Web.UI {
 				ParameterInfo [] parms = method.GetParameters ();
 				int length = parms.Length;
 				bool noParams = (length == 0);
-				if ((!noParams && parms.Length != 2) ||
+				if (!noParams && (parms.Length != 2 ||
 				    parms [0].ParameterType != typeof (object) ||
-				    parms [1].ParameterType != typeof (EventArgs))
+				    parms [1].ParameterType != typeof (EventArgs)))
 				    continue;
 
 				string eventName = name.Substring (pos + 1);
@@ -237,7 +237,7 @@ namespace System.Web.UI {
 			public NoParamsInvoker (object o, string method)
 			{
 				 real = (NoParamsDelegate) Delegate.CreateDelegate (
-				 			typeof (NoParamsDelegate), this, method);
+				 			typeof (NoParamsDelegate), o, method);
 				 faked = new EventHandler (InvokeNoParams);
 			}
 
