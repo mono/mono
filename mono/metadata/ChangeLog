@@ -1,3 +1,16 @@
+2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
+	
+	* icall.c (ves_icall_MonoMethod_get_base_definition): Initialize
+	method->klass as well.
+
+	* class-internals.h (MonoCachedClassInfo): Add 'finalize_image' field.
+
+	* class.c (mono_class_init): Switch on lazy initialization of 
+	methods.
+
+	* class.c (mono_class_get_finalizer): Handle the case when the 
+	finalizer is inherited.
+
 2005-02-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* console-io.c: <curses.h> is needed by term.h on solaris.
