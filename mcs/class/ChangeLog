@@ -1,3 +1,8 @@
+2003-04-17  Nick Drochak  <ndrochak@gol.com>
+
+	* library.make: Only try to run the unit tests if there is a Test
+	directory.
+
 2003-04-11 Duncan Mak  <duncan@ximian.com>
         
         * Mono.Globalization/Data/*.xml: Check in XML files used in
