@@ -1,3 +1,4 @@
 Microsoft.CSharp/Compiler.cs
 Microsoft.CSharp/CompilerError.cs
+Microsoft.CSharp/ErrorLevel.cs
 Microsoft.CSharp/TODOAttribute.cs
