@@ -42,6 +42,7 @@ namespace Mono.MonoBASIC
 	{
 	
 
+
 		/// <summary>
 		///   Current block is used to add statements as we find
 		///   them.  
@@ -1959,6 +1960,16 @@ abstract_propery_declaration
  non_abstract_propery_declaration
 	  : PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  {
+		if ((current_modifiers & Modifiers.DEFAULT) > 0) {
+			if (current_container.IndexerName != null)
+				Report.Error (30359, 
+						lexer.Location,
+						"Type '" + current_container.Name +
+						"' cannot have more than one 'Default Property' ");
+						
+			current_container.IndexerName = (string) $2;
+		}		
+	  
 		get_implicit_value_parameter_type  = 
 			($5 == null) ? (($3 == null) ? 
 				TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;

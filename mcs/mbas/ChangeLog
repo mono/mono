@@ -1,4 +1,8 @@
 2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: A check which restrict declaring more than one property
+			as default within same class
+
+2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: -Mbas will emit DefaultMemberConstuctor attribute for the class
 		    which is having Default Property so that it can be recognized by
 		    other assemblies
