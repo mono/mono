@@ -26,10 +26,10 @@ namespace System.Reflection.Emit {
 		private string name;
 		private string dir;
 		private CustomAttributeBuilder[] cattrs;
-		private int[] table_indexes;
-		internal ArrayList methods;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
+		private int[] table_indexes;
+		internal ArrayList methods;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);

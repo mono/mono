@@ -165,11 +165,11 @@ namespace System.Reflection.Emit {
 		[MonoTODO]
 		public TypeBuilder DefineNestedType (string name) {
 			// FIXME: LAMESPEC: what other attributes should we use here as default?
-			return DefineNestedType (name, TypeAttributes.Public, typeof(object), null);
+			return DefineNestedType (name, TypeAttributes.Public, pmodule.assemblyb.corlib_object_type, null);
 		}
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr) {
-			return DefineNestedType (name, attr, typeof(object), null);
+			return DefineNestedType (name, attr, pmodule.assemblyb.corlib_object_type, null);
 		}
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent) {
@@ -573,7 +573,7 @@ namespace System.Reflection.Emit {
 		}
 		protected override bool IsValueTypeImpl () {
 			// test this one
-			return type_is_subtype_of (this, typeof (System.ValueType), false);
+			return type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false);
 		}
 		
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }

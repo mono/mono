@@ -1,3 +1,14 @@
+2002-07-03  Martin Baulig  <martin@gnome.org>
+
+	* AssemblyBuilder.cs (corlib_object_type, corlib_value_type): Moved
+	these fields up after the last entry in MonoReflectionAssemblyBuilder
+	in reflection.h.
+
+	* TypeBuilder.cs (IsValueTypeImpl): Use the AssemblyBuilder's
+	`corlib_value_type' instead of `typeof (System.ValueType)'.
+	(DefineNestedType): Use the AssemblyBuilder's `corlib_object_type'
+	instead of `typeof (object)'.
+
 2002-07-02  Martin Baulig  <martin@gnome.org>
 
 	* AssemblyBuilder.cs (corlib_object_type, corlib_value_type): New
