@@ -1,5 +1,10 @@
 2004-06-11  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs:
+	(MethodCore.VerifyClsCompliance): Added test for error CS3000.
+
+2004-06-11  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs (Attribute.Emit): Fixed error CS0579 reporting.
 
 2004-06-11  Martin Baulig  <martin@ximian.com>
@@ -38,7 +43,7 @@
 
 2004-06-08  Marek Safar  <marek.safar@seznam.cz>
 
-	* class:
+	* class.cs:
 	(Method.ApplyAttributeBuilder): Moved and added conditional
 	attribute error tests (CS0577, CS0578, CS0243, CS0582, CS0629).
 

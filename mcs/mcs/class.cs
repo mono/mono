@@ -2623,6 +2623,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (Parameters.HasArglist) {
+				// "Methods with variable arguments are not CLS-compliant"
+				Report.Error_T (3000, Location);
+			}
+
 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
 
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
