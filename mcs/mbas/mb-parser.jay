@@ -2,12 +2,14 @@
 //
 // Mono.MonoBASIC.Parser.cs (from .jay): The Parser for the MonoBASIC compiler
 //
-// Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
-//		   Anirban Bhattacharjee (banirban@novell.com)
+// Authors: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
+//		    Anirban Bhattacharjee (banirban@novell.com)
+//          Jambunathan (kjambunathan@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
-// Copyright (C) 2001 A Rafael D Teixeira
+// Copyright (C) 2001, 2002, 2003, 2004 A Rafael D Teixeira
+// Copyright (C) 2003, 2004 Novell
 //
 //
 
@@ -625,21 +627,14 @@ compilation_unit
 	: logical_end_of_line
 	  opt_option_directives
 	  opt_imports_directives 
-	  declarations 
+	  opt_global_attributes
+	  opt_declarations 
 	  EOF
 	  {
 		$$=$4;
 	  }
-	|logical_end_of_line
-	  opt_option_directives
-	  opt_imports_directives 
-	  opt_attributes
-	  EOF
-	  {
-		/* ????? */ ;
-	  }
 	;
-	  
+  	  
 opt_option_directives
 	: /* empty */
 	| option_directives
@@ -826,6 +821,84 @@ opt_params
 	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
 	;
 
+opt_global_attributes
+	: /* empty */
+	| global_attribute_sections 	
+	;
+	
+global_attribute_sections
+	: global_attribute_section	
+	  { 
+	  	$$ = null;
+		if ($1 != null) {
+			CodeGen.AddGlobalAttributes ((ArrayList) $1);
+		}
+	  }
+	| global_attribute_sections global_attribute_section	
+	  {
+	  	$$ = null;
+	  	if ($2 != null) {
+			CodeGen.AddGlobalAttributes ((ArrayList) $2);
+  		}	
+	  }
+	;
+
+global_attribute_section
+	: OP_LT global_attribute_list OP_GT end_of_stmt
+ 	  {
+		$$ = $2;
+ 	  }
+ 	; 
+
+global_attribute_list
+ 	: global_attribute 
+ 	  {
+ 	  	ArrayList attrs = null;
+ 	  	if ($1 != null) {
+	 		attrs = new ArrayList ();
+ 			attrs.Add ($1);
+  		}
+ 		$$ = attrs;
+ 	  }	
+ 	| global_attribute_list COMMA global_attribute
+ 	  {
+ 	  	ArrayList attrs = null;
+ 	  	if ($3 != null) {
+	 		attrs = ($1 == null) ? new ArrayList () : (ArrayList) $1;
+ 			attrs.Add ($3);
+  		}
+ 		$$ = attrs;
+ 	  }	
+ 	;
+
+global_attribute 
+ 	: global_attribute_target_specifier 
+	  {
+	   	$$ = lexer.Location;
+	  }
+	  COLON 
+	  namespace_or_type_name
+	  {
+		$$ = lexer.Location;
+	  }
+	  opt_attribute_arguments
+	  {
+	   	$$ = null;
+	   	string attribute_target = (string) $1;
+	   	if (attribute_target != "assembly" && attribute_target != "module") {
+			Report.Error (29999, lexer.Location, "`" + (string)$1 + "' is an invalid attribute modifier");
+			break;
+   		}
+		$$ = new Attribute (attribute_target, (string) $4, (ArrayList) $6, (Location)$5 );
+      }	
+ 	;
+
+global_attribute_target_specifier
+	: ASSEMBLY	{ $$ = "assembly"; }
+	| MODULE	{ $$ = "module"; }
+	| namespace_or_type_name
+	;
+
 opt_attributes
  	: /* empty */
  	| attribute_sections 	
@@ -839,24 +912,9 @@ attribute_sections
 	:  attribute_section	
 	  { 
 	  	$$ = $1;
-		if ($1 == null) {
-			expecting_local_attribs = false;
-			expecting_global_attribs = false;
-			break;
-		}
-		
-		if (expecting_local_attribs) {
-			local_attrib_section_added = true;
-			allow_global_attribs = false;
-
+		if ($1 != null) {
 			$$ = new Attributes ((ArrayList) $1);
 		}	
-
-		if (expecting_global_attribs)
-			CodeGen.AddGlobalAttributes ((ArrayList) $1);
-
-		expecting_local_attribs = false;
-		expecting_global_attribs = false;
 	  }
 	| attribute_sections  
 	   {
@@ -868,49 +926,19 @@ attribute_sections
 	  	if ($3 != null) {
 			ArrayList attrs = (ArrayList) $3;
 
-			if (expecting_local_attribs) {
-				if (local_attrib_section_added) {
-					expecting_local_attribs = false;
-					expecting_global_attribs = false;
-					Report.Error (30205, (Location) $2, "Multiple attribute sections may not be used; Coalesce multiple attribute sections in to a single attribute section");
-					break;
-				}
-
-				if ($1 == null)
-					$$ = new Attributes (attrs);
-				else 
-					((Attributes) $1).Add (attrs);
-
-				local_attrib_section_added = true;
-				allow_global_attribs = false;
-			}
-
-			if (expecting_global_attribs)
-				CodeGen.AddGlobalAttributes ((ArrayList) $3);
+			if ($1 == null)
+				$$ = new Attributes (attrs);
+			else 
+				((Attributes) $1).Add (attrs);
   		}	
-
-		expecting_local_attribs = false;
-		expecting_global_attribs = false;
 	  }
 	;
 
 attribute_section
-	: OP_LT attribute_list OP_GT opt_end_of_stmt
+	: OP_LT attribute_list OP_GT
  	  {
  	  	$$ = null;
 		if ($2 != null) {
-			if (expecting_global_attribs && !(bool) $4) {
-				Report.Error (30205, lexer.Location, "End of statement expected");
-				break;
-			}
-			
-			if (expecting_local_attribs)  {
-				if ((bool) $4) {
-					Report.Error (32035, lexer.Location, "Use a line continuation after the attribute specifier to apply it to the following statement.");
-					break;
-				}
-			}
-
 			$$ = $2;
 		}
  	  }
@@ -951,54 +979,9 @@ attribute
  	   }
  	   opt_attribute_arguments
  	   {
- 	   	$$ = null;
-		
- 	   	if (expecting_global_attribs)
-			Report.Error (32015, (Location) $2, "Expecting Assembly or Module attribute specifiers");
-		else {
-			expecting_local_attribs = true;
-	 		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $2);
-		}
+ 		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $2);
  	   }
-	  | attribute_target_specifier 
-	    {
-	    	$$ = lexer.Location;
-	    }
-	    COLON 
-	    namespace_or_type_name
-	   {
-		  $$ = lexer.Location;
-	   }
-	   opt_attribute_arguments
-	   {
-	   	$$ = null;
-
-	   	string attribute_target = (string) $1;
-	   	if (attribute_target != "assembly" && attribute_target != "module") {
-			Report.Error (29999, lexer.Location, "`" + (string)$1 + "' is an invalid attribute modifier");
-			break;
-   		}
-   		if (!allow_global_attribs) {
-			Report.Error (30637, (Location) $2, "Global attribute statements must precede any declarations in a file");
-			break;
-		}
-
-		if (expecting_local_attribs) {
-			Report.Error (30183, (Location) $2, "Global attributes cannot be combined with local attributes");
-			break;
-		}			
-
-		expecting_global_attribs = true;
-		$$ = new Attribute (attribute_target, (string) $4, (ArrayList) $6, (Location) $5);
-	    }	
  	;
-
-attribute_target_specifier
-	:  ASSEMBLY	{ $$ = "assembly"; }
-	| MODULE	{ $$ = "module"; }
-	| namespace_or_type_name
-	;
-	
 			
 opt_attribute_arguments
 	: /* empty */ 	{ $$ = null; }

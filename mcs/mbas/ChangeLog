@@ -1,3 +1,8 @@
+2004/10/22 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay : correcting global attributes handling, because it was 
+	   issuing wrong warnings for trivial files like testmbas/WriteOK.vb.
+	* Makefile : adding testmbas/AssemblyInfo.vb to some test compilations 
+
 2004-11-10  Jambunathan K  <kjambunathan@novell.com>
 	* attribute.cs: 1) Replaced the static method
 	Attribute.GetValidPlaces() with an equivalent instance method

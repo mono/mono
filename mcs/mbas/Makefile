@@ -23,10 +23,10 @@ mb-parser.cs: mb-parser.jay
 	$(topdir)/jay/jay -ctv <$(topdir)/jay/skeleton.cs $< >$@
 
 verbose: mbas.exe
-	$(TEST_RUNTIME) ./mbas.exe --verbosegetoptions --verbose --stacktrace /libpath:../class/lib/$(PROFILE) /r:Mono.GetOptions /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	$(TEST_RUNTIME) ./mbas.exe --verbosegetoptions --verbose --stacktrace /libpath:../class/lib/$(PROFILE) /r:Mono.GetOptions /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs testmbas/AssemblyInfo.vb 
 
 testmbas/WriteOK.exe: Makefile mbas.exe testmbas/*.vb testmbas/*.mbs
-	$(TEST_RUNTIME) ./mbas.exe --verbosegetoptions --stacktrace /libpath:../class/lib/$(PROFILE) --reference=Mono.GetOptions -r:System.Data,System.Messaging --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	$(TEST_RUNTIME) ./mbas.exe --verbosegetoptions --stacktrace /libpath:../class/lib/$(PROFILE) --reference=Mono.GetOptions -r:System.Data,System.Messaging --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs testmbas/AssemblyInfo.vb
 
 test-aspx: mbas.exe testmbas/aspx_temp.vb
 	$(TEST_RUNTIME) ./mbas.exe --stacktrace --verbosegetoptions /libpath:../class/lib/$(PROFILE) /target:library /r:"System.dll" /r:"System.Xml.dll" /r:"System.Data.dll" /r:"System.Web.dll" /r:"System.Web.Services.dll" /r:"System.Drawing.dll" -- testmbas/aspx_temp.vb
