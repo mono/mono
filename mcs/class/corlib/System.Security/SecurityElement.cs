@@ -68,10 +68,12 @@ namespace System.Security
 				while (e.MoveNext ()) {
 					string key = (string) e.Key;
 					string val = (string) e.Value;
-					if (IsValidAttributeName (key))		
+					if (!IsValidAttributeName (key))
 						throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + key);
-					if (IsValidAttributeValue (val))		
+
+					if (!IsValidAttributeValue (val))
 						throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + key);
+
 					result.Add (key, val);
 				}
 				attributes = result;
@@ -193,10 +195,10 @@ namespace System.Security
 						return false;
 			}
 			
-			if (this.children == null && other.children != null & other.children.Count != 0)
+			if (this.children == null && other.children != null && other.children.Count != 0)
 				return false;
 					
-			if (other.children == null && this.children != null & this.children.Count != 0)
+			if (other.children == null && this.children != null && this.children.Count != 0)
 				return false;
 				
 			if (this.children != null && other.children != null) {

@@ -1,3 +1,8 @@
+2002-06-05  Nick Drochak  <ndrochak@gol.com>
+
+	* SecurityElement.cs: Fixed couple of hard to spot typos which were
+	causing valid names and keys to be rejected.
+
 2002-04-28  Lawrence Pit <loz@cable.a2000.nl>
 
 	* CodeAccessPermission.cs : implemented ToString method
