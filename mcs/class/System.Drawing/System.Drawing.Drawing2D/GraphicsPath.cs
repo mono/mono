@@ -6,10 +6,8 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //   Jordi Mas i Hernandez (jordi@ximian.com)
+//   Ravindra (rkumar@novell.com)
 //
-// (C) 2004 Novell, Inc
-//
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -39,50 +37,66 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
-        public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable {
+	public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable
+	{
+		internal IntPtr nativePath = IntPtr.Zero;
 
-                internal IntPtr nativePath = IntPtr.Zero;
+		GraphicsPath (IntPtr ptr)
+		{
+			nativePath = ptr;
+		}
 
-                GraphicsPath (IntPtr ptr)
-                {
-                        nativePath = ptr;
-                }
-                           		
-                public GraphicsPath ()
-                {
+		public GraphicsPath ()
+		{
                         Status status = GDIPlus.GdipCreatePath (FillMode.Alternate, out nativePath);
                         GDIPlus.CheckStatus (status);
-                }
-                
-                public GraphicsPath (FillMode fillMode)
-                {
+		}
+
+		public GraphicsPath (FillMode fillMode)
+		{
                         Status status = GDIPlus.GdipCreatePath (fillMode, out nativePath);
                         GDIPlus.CheckStatus (status);
-                }
-                
-                public GraphicsPath (Point[] pts, byte[] types)
-                {
-                        Status status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, FillMode.Alternate, out nativePath);
-                        GDIPlus.CheckStatus (status);
-                }
-                
-                public GraphicsPath (PointF[] pts, byte[] types)
-                {
-                        Status status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, FillMode.Alternate, out nativePath);
-                        GDIPlus.CheckStatus (status);
-                }
-                
+		}
+
+		public GraphicsPath (Point[] pts, byte[] types)
+		{
+			Status status;
+			if (pts.Length != types.Length)
+				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
+
+			status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, FillMode.Alternate, out nativePath);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public GraphicsPath (PointF[] pts, byte[] types)
+		{
+			Status status;
+			if (pts.Length != types.Length)
+				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
+
+			status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, FillMode.Alternate, out nativePath);
+			GDIPlus.CheckStatus (status);
+		}
+
 		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode)
 		{
-                        Status status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, fillMode, out nativePath);
-                        GDIPlus.CheckStatus (status);
-                }
+			Status status;
+			if (pts.Length != types.Length)
+				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
+
+			status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, fillMode, out nativePath);
+			GDIPlus.CheckStatus (status);
+		}
 
 		public GraphicsPath (PointF[] pts, byte[] types, FillMode fillMode)
 		{
-                        Status status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, fillMode, out nativePath);
-                        GDIPlus.CheckStatus (status);
-                }
+			Status status;
+			if (pts.Length != types.Length)
+				throw new ArgumentException ("Invalid parameter passed. Number of points and types must be same.");
+
+			status = GDIPlus.GdipCreatePath2 (pts, types, pts.Length, fillMode, out nativePath);
+			GDIPlus.CheckStatus (status);
+		}
 	
                 public object Clone ()
                 {
@@ -105,10 +119,16 @@ namespace System.Drawing.Drawing2D
                         Dispose (false);
                 }
                 
-                void Dispose (bool disposing)
-                {
-		
-                }
+		void Dispose (bool disposing)
+		{
+			Status status;
+			if (nativePath != IntPtr.Zero) {
+				status = GDIPlus.GdipDeletePath (nativePath);
+				GDIPlus.CheckStatus (status);
+
+				nativePath = IntPtr.Zero;
+			}
+		}
 
 		public FillMode FillMode {
 			get {

@@ -1,3 +1,9 @@
+2004-07-21  Ravindra  <rkumar@novell.com>
+
+	* GraphicsPath.cs: Implemented Dispose method and added error
+	checking in constructors.
+	* GraphicsPathIterator.cs: Fixed CopyData and Enumerate methods.
+
 2004-07-16  Ravindra  <rkumar@novell.com>
 
 	* GraphicsPathIterator.cs: New implementation using GDI+ APIs.

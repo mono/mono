@@ -1254,9 +1254,9 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDeletePathIter (IntPtr iterator);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipPathIterCopyData (IntPtr iterator, out int resultCount, ref PointF [] points, ref byte [] types, int startIndex, int endIndex);
+		internal static extern Status GdipPathIterCopyData (IntPtr iterator, out int resultCount, PointF [] points, byte [] types, int startIndex, int endIndex);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipPathIterEnumerate (IntPtr iterator, out int resultCount, ref PointF [] points, ref byte [] types, int count);
+		internal static extern Status GdipPathIterEnumerate (IntPtr iterator, out int resultCount, PointF [] points, byte [] types, int count);
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipPathIterHasCurve (IntPtr iterator, out bool curve);
 		[DllImport("gdiplus.dll")]

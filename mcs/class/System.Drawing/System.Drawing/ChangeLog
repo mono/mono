@@ -1,3 +1,8 @@
+2004-07-21  Ravindra <rkumar@novell.com>
+
+	* gdipFunctions.cs: Corrected signatures of GdipPathIterCopyData and
+	GdipPathIterEnumerate P/Invoke functions for GraphicsPathIterator.
+
 2004-07-21 Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* Graphics.cs:	fixes MeasureCharacterRanges function. It was completely wrong. 

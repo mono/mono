@@ -102,7 +102,7 @@ namespace System.Drawing.Drawing2D
 			if (points.Length != types.Length)
 				throw new ArgumentException ("Invalid arguments passed. Both arrays should have the same length.");
 
-			status = GDIPlus.GdipPathIterCopyData (nativeObject, out resultCount, ref points, ref types, startIndex, endIndex);
+			status = GDIPlus.GdipPathIterCopyData (nativeObject, out resultCount, points, types, startIndex, endIndex);
 			GDIPlus.CheckStatus (status);
 
 			return resultCount;
@@ -128,7 +128,7 @@ namespace System.Drawing.Drawing2D
 			if (count != types.Length)
 				throw new ArgumentException ("Invalid arguments passed. Both arrays should have the same length.");
 
-			status = GDIPlus.GdipPathIterEnumerate (nativeObject, out resultCount, ref points, ref types, count);
+			status = GDIPlus.GdipPathIterEnumerate (nativeObject, out resultCount, points, types, count);
 			GDIPlus.CheckStatus (status);
 
 			return resultCount;
