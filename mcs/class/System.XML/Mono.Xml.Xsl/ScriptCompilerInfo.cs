@@ -70,10 +70,15 @@ namespace Mono.Xml.Xsl
 					filename = new Uri (scriptNode.BaseURI).LocalPath;
 			} catch (FormatException) {
 			}
+			if (filename == String.Empty)
+				filename = "__baseURI_not_supplied__";
 
 			// get source location
 			IXmlLineInfo li = scriptNode as IXmlLineInfo;
-			string lineInfoLine = li != null ? "\n#line " + li.LineNumber + " \"" + filename + "\"" : String.Empty;
+			string lineInfoLine = 
+				li != null && li.LineNumber > 0 ?
+				"\n#line " + li.LineNumber + " \"" + filename + "\"" :
+				String.Empty;
 
 			string source = SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", lineInfoLine + code);
 
@@ -141,8 +146,7 @@ namespace Mono.Xml.Xsl
 			foreach (CompilerError e in res.Errors) {
 				object [] parameters = new object [] {"\n",
 					e.FileName,
-					" line ",
-					e.Line,
+					e.Line > 0 ? " line " + e.Line : String.Empty,
 					e.IsWarning ? " WARNING: " : " ERROR: ",
 					e.ErrorNumber,
 					": ",

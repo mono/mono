@@ -1,5 +1,12 @@
 2004-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ScriptCompilerInfo.cs : #line directive now holds dummy filename
+	  when BaseURI for msxsl:script node is not available. This fixes
+	  bug #56070.
+	  Don't output line number in the error message, when it is 0.
+
+2004-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Compiler.cs : Supply NameTable to base ctor() of XPathNavigatorNsm.
 
 2004-03-22 Atsushi Enomoto <atsushi@ximian.com>
