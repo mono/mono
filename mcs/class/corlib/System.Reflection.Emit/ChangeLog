@@ -1,3 +1,6 @@
+2003-09-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs: Really fix #48695.
 
 Sat Sep 27 16:17:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

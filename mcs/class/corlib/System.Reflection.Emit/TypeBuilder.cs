@@ -338,10 +338,15 @@ namespace System.Reflection.Emit {
 		{
 			ConstructorBuilder cb = DefineConstructor (attributes, CallingConventions.Standard, null);
 
-			ConstructorInfo parent_constructor = null;
+			Type parent_type;
 
 			if (parent != null)
-				parent_constructor = parent.GetConstructor (
+				parent_type = parent;
+			else
+				parent_type = pmodule.assemblyb.corlib_object_type;
+
+			ConstructorInfo parent_constructor =
+				parent_type.GetConstructor (
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
 					null, Type.EmptyTypes, null);
 
