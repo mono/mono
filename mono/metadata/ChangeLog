@@ -1,3 +1,9 @@
+
+Mon Dec 22 18:37:02 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: small cleanup (class->fields [i] -> field).
+	* image.c: check address of metadata is valid.
+
 2003-12-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.h assembly.c (mono_assembly_loaded): New public function to
