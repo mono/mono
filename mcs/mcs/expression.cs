@@ -3509,6 +3509,9 @@ namespace Mono.CSharp {
 						return 0;
 					else if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
 						return 1;
+				} else if (p == TypeManager.int32_type){
+					if (value >= Int32.MinValue && value <= Int32.MaxValue)
+						return 1;
 				} else if (p == TypeManager.uint32_type){
 					//
 					// we can optimize this case: a positive int32
@@ -3525,6 +3528,8 @@ namespace Mono.CSharp {
 						return 0;
 					else if (value >= 0)
 						return 1;
+				} else if (p == TypeManager.int64_type){
+					return 1;
 				}
 			} else if (argument_type == TypeManager.int64_type && argument_expr is LongConstant){
 				LongConstant lc = (LongConstant) argument_expr;
@@ -3547,8 +3552,8 @@ namespace Mono.CSharp {
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
 			
-			if (StandardConversionExists (p_tmp, q) == true &&
-			    StandardConversionExists (q_tmp, p) == false)
+			if (ImplicitConversionExists (ec, p_tmp, q) == true &&
+			    ImplicitConversionExists (ec, q_tmp, p) == false)
 				return 1;
 
 			if (p == TypeManager.sbyte_type)

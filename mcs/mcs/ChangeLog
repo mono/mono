@@ -2,6 +2,8 @@
 
 	* expression.cs (Invocation.BetterConversion): Prefer int over
 	uint; short over ushort; long over ulong for integer literals.
+	Use ImplicitConversionExists instead of StandardConversionExists
+	since we also need to check for user-defined implicit conversions.
 	Fixes #34165.  Added test-173.cs.
 
 2002-11-16  Martin Baulig  <martin@ximian.com>
