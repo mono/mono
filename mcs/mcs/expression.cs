@@ -4854,10 +4854,10 @@ namespace Mono.CSharp {
 
 			if (underlying_type.IsEnum)
 				underlying_type = TypeManager.EnumToUnderlying (underlying_type);
-
+			
 			factor = GetTypeSize (underlying_type);
 			if (factor == 0)
-				throw new Exception ("Unrecognized type in MakeByteBlob: " + underlying_type);
+				throw new Exception ("unrecognized type in MakeByteBlob: " + underlying_type);
 
 			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;
@@ -4961,8 +4961,20 @@ namespace Mono.CSharp {
 						bool val = (bool) v;
 						data [idx] = (byte) (val ? 1 : 0);
 					}
+				} else if (underlying_type == TypeManager.decimal_type){
+					if (!(v is Expression)){
+						int [] bits = Decimal.GetBits ((decimal) v);
+						int p = idx;
+						
+						for (int j = 0; j < 4; j++){
+							data [p++] = (byte) (bits [j] & 0xff);
+							data [p++] = (byte) ((bits [j] >> 8) & 0xff);
+							data [p++] = (byte) ((bits [j] >> 16) & 0xff);
+							data [p++] = (byte) (bits [j] >> 24);
+						}
+					}
 				} else
-					throw new Exception ("Unrecognized type in MakeByteBlob");
+					throw new Exception ("Unrecognized type in MakeByteBlob: " + underlying_type);
 
                                 idx += factor;
 			}

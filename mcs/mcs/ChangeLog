@@ -1,10 +1,12 @@
 2002-09-18  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (Invocation.VerifyArgumentsCompat): Call
+	* expression.cs (MakeByteBlob): Handle Decimal blobs.
+
+	(Invocation.VerifyArgumentsCompat): Call
 	TypeManager.TypeToCoreType on the parameter_type.GetElementType.
 	I thought we were supposed to always call this, but there are a
 	few places in the code where we dont do it.
-	
+
 2002-09-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Add support in -linkres and -resource to specify the
