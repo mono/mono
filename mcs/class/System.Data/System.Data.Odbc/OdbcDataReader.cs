@@ -257,8 +257,6 @@ namespace System.Data.Odbc
 
 		public string GetName (int index)
 		{
-			if (currentRow == -1)
-				return null;
 			return GetColumn(index).ColumnName;
 		}
 

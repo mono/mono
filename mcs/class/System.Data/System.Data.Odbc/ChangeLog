@@ -1,3 +1,7 @@
+2004-06-09  Sureshkumar T (tsureshkumar@novell.com)
+        * OdbcDataReader.cs: Removed checking of currentRow in GetName
+          method
+
 2004-06-04  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OdbcPermission.cs: moved Obsolete attribute to correct
