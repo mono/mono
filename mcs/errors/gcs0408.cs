@@ -1,8 +1,16 @@
+// CS0408: `X<T>' cannot define overload members that may unify for some type parameter substitutions
+// Line: 9
 class X<T>
 {
-	void Foo (T t)
+	public void Foo (T t)
 	{ }
 
-	void Foo (int i)
+	public void Foo (int i)
+	{ }
+}
+
+class X
+{
+	static void Main ()
 	{ }
 }
