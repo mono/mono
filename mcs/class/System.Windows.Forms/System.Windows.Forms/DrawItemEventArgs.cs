@@ -83,43 +83,43 @@ namespace System.Windows.Forms {
 		public Color BackColor 
 		{
 			get { 
-					return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.Highlight : backColor; 
+				return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.Highlight : backColor; 
 			}
 		}
 
 		public Rectangle Bounds {
 			get { 
-					return bounds; 
+				return bounds; 
 			}
 		}
 
 		public Font Font {
 			get { 
-					return font; 
+				return font; 
 			}
 		}
 
 		public Color ForeColor {
 			get { 
-					return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.HighlightText : foreColor; 
+				return (DrawItemState.Selected == (state & DrawItemState.Selected)) ? SystemColors.HighlightText : foreColor; 
 			}
 		}
 
 		public Graphics Graphics {
 			get { 
-					return graphics; 
+				return graphics; 
 			}
 		}
 
 		public int Index {
 			get { 
-					return index; 
+				return index; 
 			}
 		}
 
 		public DrawItemState State {
 			get { 
-					return state; 
+				return state; 
 			}
 		}
 

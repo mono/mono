@@ -78,28 +78,25 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			Rectangle rectangle) {
-			//FIXME:
+		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle) {
+			DrawBorder3D(graphics, rectangle, Border3DStyle.Etched, Border3DSide.All);
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			Rectangle rectangle,
-			Border3DStyle Style) {
-			//FIXME:
-
+		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle, Border3DStyle Style) {
+			DrawBorder3D(graphics, rectangle, Style, Border3DSide.All);
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			Rectangle rectangle,
-			Border3DStyle Style,
-			Border3DSide Sides) {
-			//FIXME:
+		public static void DrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle Style, Border3DSide Sides) {
+			RECT rc = new RECT();
+			rc.left = rectangle.Left;
+			rc.top = rectangle.Top;
+			rc.right = rectangle.Right;
+			rc.bottom = rectangle.Bottom;
+			IntPtr hdc = graphics.GetHdc();
+			int res = Win32.DrawEdge( hdc, ref rc, Style, Sides);
+			graphics.ReleaseHdc(hdc);
 		}
 		
 		[MonoTODO]
@@ -115,54 +112,37 @@ namespace System.Windows.Forms {
 		//}
 		
 		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height) {
-			//FIXME:
+		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height) {
+			DrawBorder3D( graphics, new Rectangle(x, y, width, height));
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			Border3DStyle style) {
-			//FIXME:
+		public static void DrawBorder3D(Graphics graphics, int x, int y, int width, int height, Border3DStyle style) {
+			DrawBorder3D( graphics, new Rectangle(x, y, width, height), style);
 		}
 
 		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			Border3DStyle style,
-			Border3DSide sides) {
-			//FIXME:
+		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height,
+											Border3DStyle style,Border3DSide sides) {
+			DrawBorder3D( graphics, new Rectangle(x, y, width, height), style, sides);
 		}
 
 		[MonoTODO]
-		public static void DrawButton(
-			Graphics graphics,
-			Rectangle rectangle) {
-			//FIXME:
+		public static void DrawButton( Graphics graphics, Rectangle rectangle, ButtonState state) {
+			RECT rc = new RECT();
+			rc.left = rectangle.Left;
+			rc.top = rectangle.Top;
+			rc.right = rectangle.Right;
+			rc.bottom = rectangle.Bottom;
+			IntPtr hdc = graphics.GetHdc();
+			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, 
+				(uint)state | (uint)DrawFrameControl.DFCS_BUTTONPUSH);
+			graphics.ReleaseHdc(hdc);
 		}
 		
 		[MonoTODO]
-		public static void DrawButton(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			ButtonState state) {
-			//FIXME:
+		public static void DrawButton( Graphics graphics, int x, int y, int width, int height, ButtonState state) {
+			DrawButton( graphics, new Rectangle(x, y, width, height), state);
 		}
 		
 		[MonoTODO]

@@ -72,7 +72,8 @@ namespace System.Windows.Forms {
 				//			createParams.Parent = Parent.Handle;
 				createParams.Style = (int) (
 					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
+					WindowStyles.WS_VISIBLE |
+					WindowStyles.WS_CLIPSIBLINGS);
 				window.CreateHandle (createParams);
 				return createParams;
 			}		

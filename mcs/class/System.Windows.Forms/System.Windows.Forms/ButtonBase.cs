@@ -31,6 +31,8 @@ namespace System.Windows.Forms {
 		bool isDefault;
 		CreateParams createParams;
 		Label label;
+		protected StringAlignment	horizontalAlign;
+		protected StringAlignment	verticalAlign;
 //		
 //		// --- Constructor ---
 		protected ButtonBase() : base() 
@@ -40,6 +42,8 @@ namespace System.Windows.Forms {
 			imageAlign = ContentAlignment.MiddleCenter;
 			imageIndex = -1;
 			textAlign = ContentAlignment.MiddleCenter;
+			horizontalAlign = StringAlignment.Center;
+			verticalAlign = StringAlignment.Center;
 			imeMode = ImeMode.Inherit;
 			isDefault = false;
 		}
@@ -63,7 +67,10 @@ namespace System.Windows.Forms {
 		
 		public FlatStyle FlatStyle {
 			get { return flatStyle; }
-			set { flatStyle=value; }
+			set { 
+				flatStyle = value; 
+				Invalidate();
+			}
 		}
 		
 		public Image Image {
@@ -100,8 +107,41 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public virtual ContentAlignment TextAlign {
-			get { return label.TextAlign; }
-			set { label.TextAlign = value; }
+			get { 
+				return textAlign; 
+			}
+			set { 
+				textAlign = value;
+
+				if( textAlign == ContentAlignment.BottomCenter ||
+					textAlign == ContentAlignment.BottomLeft ||
+					textAlign == ContentAlignment.BottomRight) {
+					verticalAlign = StringAlignment.Far;
+				}
+				else if(textAlign == ContentAlignment.TopCenter ||
+					textAlign == ContentAlignment.TopLeft ||
+					textAlign == ContentAlignment.TopRight) {
+					verticalAlign = StringAlignment.Near;
+				}
+				else {
+					verticalAlign = StringAlignment.Center;
+				}
+
+				if( textAlign == ContentAlignment.BottomLeft ||
+					textAlign == ContentAlignment.MiddleLeft ||
+					textAlign == ContentAlignment.TopLeft) {
+					horizontalAlign = StringAlignment.Near;
+				}
+				else if(textAlign == ContentAlignment.BottomRight ||
+					textAlign == ContentAlignment.MiddleRight ||
+					textAlign == ContentAlignment.TopRight) {
+					horizontalAlign = StringAlignment.Far;
+				}
+				else {
+					horizontalAlign = StringAlignment.Center;
+				}
+				Invalidate();
+			}
 		}
 
 		/// --- Methods ---
@@ -190,15 +230,22 @@ namespace System.Windows.Forms {
 		
 		protected override void WndProc (ref Message m) 
 		{
-			base.WndProc (ref m);
-		}
-		
-		/// --- Internal implementation ---
-		internal override void OnWmCommand( uint wNotifyCode, uint wID, IntPtr wnd) {
-			if( wNotifyCode == (uint)ButtonNotification.BN_CLICKED) {
-				OnClick(new ControlEventArgs(this));
+			switch (m.Msg) {
+				case Msg.WM_COMMAND: {
+					switch(m.HiWordWParam) {
+						case (uint)ButtonNotification.BN_CLICKED:
+							OnClick(new ControlEventArgs(this));
+							CallControlWndProc(ref m);
+							break;
+					}
+					break;
+				}
+				default:
+					base.WndProc (ref m);
+					break;
 			}
-    	}
+		}
+
 
 		/// --- ButtonBase.ButtonBaseAccessibleObject ---
 		/// the class is not stubbed, cause it's only used for .NET framework

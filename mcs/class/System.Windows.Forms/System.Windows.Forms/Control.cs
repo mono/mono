@@ -12,6 +12,8 @@
     using System.ComponentModel;
     using System.Drawing;
     using System.Collections;
+	using System.Threading;
+	using System.Text;
     
     namespace System.Windows.Forms {
     
@@ -35,9 +37,10 @@
     
     			protected override void WndProc (ref Message m) {
 					Console.WriteLine ("Control WndProc Message HWnd {0}, Msg {1}", m.HWnd, m.Msg);
-    				base.WndProc (ref m);
-    
-     				control.WndProc (ref m);
+					// Do not call default WndProc here
+					// let the control decide what to do
+    				// base.WndProc (ref m);
+       				control.WndProc (ref m);
     			}
     		}
     		
@@ -77,6 +80,80 @@
     		string text;
     		bool visible;
 			object tag;
+
+			// BeginInvoke() etc. helpers
+			static int InvokeMessage = Win32.RegisterWindowMessage("mono_control_invoke_helper");
+
+			// CHECKME: This variable is used to determine whether current thread
+			// was used to create Control Handle. It take some space but saves a call
+			// to unmanaged code in ISynchronizeInvoke.IsInvokeRequired.
+			private int CreatorThreadId_ = 0; 
+
+			private Queue InvokeQueue_ = new Queue();
+
+			internal class ControlInvokeHelper : IAsyncResult {
+				private Delegate Method_ = null;
+				private object[] MethodArgs_ = null;
+				private object MethodResult_ = null;
+				private ManualResetEvent AsyncWaitHandle_ = new ManualResetEvent(false);
+				private bool CompletedSynchronously_ = false;
+				private bool IsCompleted_ = false;
+
+				public ControlInvokeHelper( Delegate method, object[] args) {
+					Method_ = method;
+					MethodArgs_ = args;
+				}
+
+				// IAsyncResult interface 
+				object IAsyncResult.AsyncState { 
+					get {
+						if( MethodArgs_ != null && MethodArgs_.Length != 0) {
+							return MethodArgs_[MethodArgs_.Length - 1];
+						}
+						return null;
+					}
+				}
+
+				WaitHandle IAsyncResult.AsyncWaitHandle { 
+					get {
+						return AsyncWaitHandle_;
+					}
+				}
+
+				bool IAsyncResult.CompletedSynchronously {
+					get {
+						return CompletedSynchronously_;
+					}
+				}
+
+				bool IAsyncResult.IsCompleted { 
+					get {
+						return IsCompleted_;
+					}
+				}
+
+				internal bool CompletedSynchronously {
+					set {
+						CompletedSynchronously_ = value;
+					}
+				}
+
+				internal object MethodResult {
+					get {
+						return MethodResult_;
+					}
+				}
+
+				internal void ExecuteMethod() {
+					object result = Method_.DynamicInvoke(MethodArgs_);
+					lock(this) {
+						MethodResult_ = result;
+						IsCompleted_ = true;
+					}
+					AsyncWaitHandle_.Set();
+				}
+			}
+
     		// --- Constructors ---
     
 	 		//Compact Framework //only Control()
@@ -90,7 +167,7 @@
     			accessibleRole = AccessibleRole.Default;
     			allowDrop = false;
     			anchor = AnchorStyles.Top | AnchorStyles.Left;
-    			//backColor = Control.DefaultBackColor;
+    			backColor = Control.DefaultBackColor;
     			backgroundImage = null;
     			bounds = new Rectangle();
     			// bindingContext = null;
@@ -99,7 +176,7 @@
     			dock = DockStyle.None;
     			enabled = true;
     			// font = Control.DefaultFont;
-    			// foreColor = Control.DefaultForeColor;
+    			foreColor = Control.DefaultForeColor;
     			imeMode = ImeMode.Inherit;
     			isAccessible = false;
     			// location = new Point (0,0); should be from OS
@@ -110,7 +187,8 @@
     			text = "";
     			visible = true;
     			parent = null;
-    			CreateHandle();//sets window handle. FIXME: No it does not
+				// Do not create Handle here, only in CreateHandle
+    			// CreateHandle();//sets window handle. FIXME: No it does not
     		}
     		
     		// according to docs, the constructors do not create 
@@ -225,23 +303,10 @@
 	  		//Compact Framework
     		public virtual Color BackColor {
     			get {
-    				if (IsHandleCreated) {
-    					IntPtr dc = Win32.GetDC (Handle);
-    					uint bgColor = Win32.GetBkColor (dc);
-    					Win32.ReleaseDC (Handle, dc);
-    					int r = (int) (bgColor & 0xFF);
-    					int g = (int) ((bgColor >> 8) & 0xFF);
-    					int b = (int) ((bgColor >> 16) & 0xFF);
-    					return Color.FromArgb (r, g, b);
-    				}  else return backColor;
+					return backColor;
     			}
     			set {
     				backColor = value;
-    				if (IsHandleCreated) {
-    					IntPtr dc = Win32.GetDC (Handle);
-    					Win32.SetBkColor (dc, (uint) value.ToArgb());
-    					Win32.ReleaseDC (Handle, dc);
-    				}
     			}
     		}
     		
@@ -483,6 +548,49 @@
     			}
     		}
     		
+			internal protected IntPtr ControlRealWndProc = IntPtr.Zero;
+			internal protected bool SubClassWndProc_ = false;
+
+			// This function lets Windows or/and default Windows control process message
+			// Classes have to call it if they do not handle message in WndProc or
+			// default handling is needed.
+			protected void CallControlWndProc( ref Message msg) {
+				if( ControlRealWndProc != IntPtr.Zero) {
+					msg.Result = (IntPtr)Win32.CallWindowProc(ControlRealWndProc, msg.HWnd, (int)msg.Msg, msg.WParam.ToInt32(), msg.LParam.ToInt32());
+				}
+				else {
+					DefWndProc(ref msg);
+				}
+			}
+
+			// Subclass only native Windows controls. Those classes have to set SubClassWndProc_ to true in contructor
+			private void SubclassWindow() {
+				if( IsHandleCreated && SubClassWndProc_) {
+					ControlRealWndProc = Win32.SetWindowLong( Handle, GetWindowLongFlag.GWL_WNDPROC, NativeWindow.GetWindowProc());
+				}
+			}
+
+			private void UnsubclassWindow() {
+				if( IsHandleCreated) {
+					Win32.SetWindowLong( Handle, GetWindowLongFlag.GWL_WNDPROC, ControlRealWndProc.ToInt32());
+				}
+			}
+
+			protected virtual void OnWmCommand (ref Message m) {
+				if( m.LParam.ToInt32() != 0) {
+					if( m.LParam != Handle) {
+						// Control notification
+						System.Console.WriteLine("Control notification Code {0} Id = Hwnd {1}", m.HiWordWParam, m.LParam.ToInt32());
+						Control.ReflectMessage(m.LParam, ref m);
+					}
+					else {
+						// Unhandled Control reflection
+						// Derived class didn't handle WM_COMMAND or called base.WndProc in WM_COMMAND handler
+						// CHECKME: Shall we notify user in debug build, throw an exception or just ignore this case ?
+					}
+				}
+			}
+
     		[MonoTODO]
     		public virtual Cursor Cursor {
     			get {
@@ -505,8 +613,8 @@
     		public static Color DefaultBackColor {
     			get {
     				// FIXME: use GetSystemMetrics?
-    				//return SystemColors.Control;
-    				throw new NotImplementedException ();
+    				return SystemColors.Control;
+    				//throw new NotImplementedException ();
     			}
     		}
     
@@ -583,21 +691,22 @@
   			//Compact Framework
     		public virtual Font Font {
 				get {
-					// FIXME: Now the font from Control and from class do not match.
-					// Check Handle for 0 and return DefaultFont ?
-					IntPtr hfont = (IntPtr)Win32.SendMessage(Handle, Msg.WM_GETFONT, 0, 0);
-					if( hfont != IntPtr.Zero) {
-						return Font.FromHfont(hfont);
+					Font result = font;
+					if( result == null) {
+						if( Parent != null) {
+							result = Parent.Font;
+						}
+						if( result == null) {
+							result = Control.DefaultFont;
+						}
 					}
-					return Control.DefaultFont;
-					//if(ReturnValue != 0)throw new Exception("Could not get Font",null);
-					//return Handle;
+					return result;
 				}
     			set {
 					font = value;
-					//throw new NotImplementedException ();
-					//uint ReturnValue = SendMessage(Handle, WM_SETFONT, value, (IntPtr)1 );
-					//if(ReturnValue != 0)throw new Exception("Could not set Font",null);
+					if( IsHandleCreated) {
+						Win32.SendMessage(Handle, Msg.WM_SETFONT, Font.ToHfont().ToInt32(), 1);
+					}
 				}
     		}
     		
@@ -758,20 +867,26 @@
     				//return FromHandle (parent);
     			}
     			set {
-    				Console.WriteLine ("setting parent");
-    				parent = value;
-    
-    				Console.WriteLine ("add ourself to the parents control");
-    				// add ourself to the parents control
-    				parent.Controls.Add (this);
-    
-    				Console.WriteLine ("SetParent");
-					if (IsHandleCreated) {
-						Console.WriteLine ("Handle created");
-						Win32.SetParent (Handle, value.Handle);
-					}
-					else {
-						CreateControl();
+					if( parent != value) {
+						Console.WriteLine ("setting parent");
+						parent = value;
+	    
+						Console.WriteLine ("add ourself to the parents control");
+						// add ourself to the parents control
+						parent.Controls.Add (this);
+	    
+						Console.WriteLine ("SetParent");
+						if (IsHandleCreated) {
+							Console.WriteLine ("Handle created");
+							Win32.SetParent (Handle, value.Handle);
+						}
+						/*
+						else if( parent.IsHandleCreated){
+							// CHECKME: Now control is responsible for creating his window
+							// when added to Form, may be things must be reversed.
+							CreateControl();
+						}
+						*/			
 					}
     			}
     		}
@@ -923,11 +1038,15 @@
  			//Compact Framework
     		public virtual string Text {
     			get {
+					// CHECKME: if we really need to provide back current text of real window
+					// or just our copy in text member.
     				if (IsHandleCreated) {
-    					String text = "";
-    					int length = Win32.GetWindowTextLengthA (Handle);
-    					Win32.GetWindowTextA (Handle, ref text, length);
-    					return text;
+						int len = Win32.GetWindowTextLengthA (Handle);
+						// FIXME: len is doubled due to some strange behaviour.(of GetWindowText function ?)
+						// instead of 10 characters we can get only 9, even if sb.Capacity is 10.
+						StringBuilder sb = new StringBuilder(len * 2 /*Win32.GetWindowTextLengthA (Handle)*/);
+    					Win32.GetWindowText (Handle, sb, sb.Capacity);
+    					return sb.ToString();
     				} 
 					else{
 						return text;
@@ -1027,6 +1146,7 @@
     		public void CreateControl () 
     		{
     			CreateHandle ();
+				OnCreateControl();
     		}
     
     		[MonoTODO]
@@ -1060,7 +1180,11 @@
 						if( controlsCollection[Handle] == null) {
 							controlsCollection.Add(Handle, this);
 						}
-						OnCreateControl();
+						SubclassWindow();
+
+						CreatorThreadId_ = Win32.GetCurrentThreadId();
+
+						OnHandleCreated (new EventArgs());
 					}
 				}
     		}
@@ -1173,9 +1297,7 @@
     		public void Invalidate () 
     		{
     			if (IsHandleCreated) {
-					//FIXME: 
-    				//RECT rect = (RECT) null;
-    				//InvalidateRect (Handle, ref rect, true);
+					Win32.InvalidateRect(Handle, IntPtr.Zero, 1);
     			}
     		}
     		
@@ -1411,16 +1533,12 @@
     		{
     			Console.WriteLine ("OnHandleCreated");
 
-				// FIXME: We can be here 2 times for Form
-				// this is not realistic.
-				/*
-				if( Handle != IntPtr.Zero) {
-					if( controlsCollection[Handle] == null) {
-						controlsCollection.Add(Handle, this);
-					}
-    			}
-    			*/
-    
+				//if( font != null) {
+				//	Win32.SendMessage( Handle, Msg.WM_SETFONT, font.ToHfont().ToInt32(), 0);
+				//}
+				Win32.SendMessage( Handle, Msg.WM_SETFONT, Font.ToHfont().ToInt32(), 0);
+				Win32.SetWindowText( Handle, text);
+
     			if (HandleCreated != null)
     				HandleCreated (this, e);
     
@@ -1821,28 +1939,13 @@
     			throw new NotImplementedException ();
     		}
     		
-			protected virtual bool ReflectMessageHelper( ref Message m) {
-				return false;
-			}
-
     		[MonoTODO]
-    		protected static bool ReflectMessage (IntPtr hWnd,
-    						      ref Message m) 
-    		{
+    		protected static bool ReflectMessage (IntPtr hWnd, ref Message m) {
 				bool result = false;
 				Control cntrl = Control.FromHandle( hWnd);
 				if( cntrl != null) {
-					result = cntrl.ReflectMessageHelper(ref m);
-					if( !result) {
-						switch (m.Msg) {
-							case Msg.WM_CTLCOLORLISTBOX:
-								Win32.SetTextColor( m.WParam, Win32.RGB(cntrl.ForeColor));
-								//Win32.SetBkColor( m.WParam, 0x00FF00);
-								//m.Result = Win32.GetStockObject(GSO_.LTGRAY_BRUSH);
-								result = true;
-								break;
-						}
-					}
+					cntrl.WndProc(ref m);
+					result = true;
 				}
 				return result;
 			}
@@ -2156,15 +2259,37 @@
 				// FIXME: Graphics does not have a public constructor, you must get one from .NET
     			//PaintEventArgs paintEventArgs = new PaintEventArgs (
     			//	new Graphics(), new Rectangle());
-    
+
+				if( (uint)m.Msg == Control.InvokeMessage) {
+					ControlInvokeHelper helper = null;
+					lock( InvokeQueue_.SyncRoot) {
+						if( InvokeQueue_.Count > 0) {
+							helper = (ControlInvokeHelper)InvokeQueue_.Dequeue();
+						}
+					}
+					if( helper != null) {
+						helper.ExecuteMethod();
+					}
+					return;
+				}
+				else if( m.Msg == Msg.WM_COMMAND) {
+					// Notification
+					m.Result = (IntPtr)1;
+					OnWmCommand (ref m);
+					if( m.Result != IntPtr.Zero) {
+						CallControlWndProc (ref m);
+					}
+					return;
+				}
+
     			switch (m.Msg) {
-    
-    			case Msg.WM_CREATE:
+       			case Msg.WM_CREATE:
     				Console.WriteLine ("WM_CREATE");
     				OnHandleCreated (eventArgs);
     				break;
     			case Msg.WM_LBUTTONDBLCLK:
     				OnDoubleClick (eventArgs);
+					CallControlWndProc(ref m);
     				break;
     				// OnDragDrop
     				// OnDragEnter
@@ -2173,99 +2298,152 @@
     				// OnQueryContinueDrag
     			case Msg.WM_ENABLE:
     				OnEnabledChanged (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_SETFOCUS:
     				OnEnter (eventArgs);
     				OnGotFocus (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_FONTCHANGE:
     				OnFontChanged (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_DESTROY:
     				OnHandleDestroyed (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_HELP:
     				// FIXME:
     				//OnHelpRequested (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_KEYDOWN:
     				// FIXME:
     				// OnKeyDown (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_CHAR:
     				// FIXME:
     				// OnKeyPress (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_KEYUP:
     				// FIXME:
     				// OnKeyUp (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_KILLFOCUS:
     				OnLeave (eventArgs);
     				OnLostFocus (eventArgs);
-    				break;
-    			case Msg.WM_LBUTTONDOWN:
-    				// FIXME:
-    				// OnMouseDown (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_MOUSEACTIVATE:
     				OnMouseEnter (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_MOUSEHOVER: // called by TrackMouseEvent
     				OnMouseHover (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_MOUSELEAVE: // called by TrackMouseEvent
     				OnMouseLeave (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_MOUSEMOVE:
     				// FIXME:
-    				// OnMouseMove (eventArgs);
-    				break;
-    			case Msg.WM_LBUTTONUP:
+    				//OnMouseMove (eventArgs);
+					CallControlWndProc(ref m);
+					break;
+				case Msg.WM_LBUTTONDOWN:
+					// FIXME:
+					//OnMouseDown (eventArgs);
+					CallControlWndProc(ref m);
+					break;
+				case Msg.WM_LBUTTONUP:
     				// FIXME:
-    				// OnMouseUp (eventArgs);
-    				break;
+    				//OnMouseUp (eventArgs);
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_MOUSEWHEEL:
     				// FIXME:
-    				// OnMouseWheel (eventArgs);
-    				break;
+    				//OnMouseWheel (eventArgs);
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_MOVE:
     				OnMove (eventArgs);
-    				break;
-    			case Msg.WM_NOTIFY:
-    				// FIXME: get NM_CLICKED msg from pnmh
-    				// OnClick (eventArgs);
-    				// OnNotifyMessage (eventArgs);
-    			case Msg.WM_PAINT:
-    				//OnPaint (paintEventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
+				case Msg.WM_NOTIFY:
+					// FIXME: get NM_CLICKED msg from pnmh
+					// OnClick (eventArgs);
+					//OnNotifyMessage (eventArgs);
+					CallControlWndProc(ref m);
+					break;
+				case Msg.WM_PAINT: 
+					if( ControlRealWndProc != IntPtr.Zero) {
+						CallControlWndProc(ref m);
+					}
+					else {
+						PAINTSTRUCT	ps = new PAINTSTRUCT();
+						IntPtr hdc = Win32.BeginPaint( Handle, ref ps);
+						Rectangle rc = new Rectangle();
+						rc.X = ps.rcPaint.left;
+						rc.Y = ps.rcPaint.top;
+						rc.Width = ps.rcPaint.right - ps.rcPaint.left;
+						rc.Height = ps.rcPaint.bottom - ps.rcPaint.top;
+						PaintEventArgs paintEventArgs = new PaintEventArgs( Graphics.FromHdc(hdc), rc);
+						OnPaint (paintEventArgs);
+						paintEventArgs.Dispose();
+						Win32.EndPaint(Handle, ref ps);
+					}
+					break;
     			case Msg.WM_SIZE:
     				OnResize (eventArgs);
     				OnSizeChanged (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_STYLECHANGED:
     				OnStyleChanged (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_SYSCOLORCHANGE:
     				OnSystemColorsChanged (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_SETTEXT:
     				OnTextChanged (eventArgs);
-    				break;
+					CallControlWndProc(ref m);
+					break;
     			case Msg.WM_SHOWWINDOW:
     				OnVisibleChanged (eventArgs);
-    				break;
-    // 			default:
-    // 				DefWndProc (ref m);
-    // 				break;
+					CallControlWndProc(ref m);
+					break;
+				case Msg.WM_CTLCOLORLISTBOX:
+					Win32.SetTextColor( m.WParam, Win32.RGB(ForeColor));
+					//Win32.SetBkColor( m.WParam, 0x00FF00);
+					//m.Result = Win32.GetStockObject(GSO_.LTGRAY_BRUSH);
+					break;
+				case Msg.WM_MEASUREITEM:
+					ReflectMessage( m.WParam, ref m);
+					break;
+				case Msg.WM_DRAWITEM:
+					Control.ReflectMessage( m.WParam, ref m);
+					break;
+				default:
+					CallControlWndProc(ref m);
+/*
+					if( ControlRealWndProc != IntPtr.Zero) {
+						CallControlWndProc(ref m);
+					}
+					else {
+						DefWndProc (ref m);
+					}
+*/					
+     				break;
     			}
     		}
     		
-    		/// --- Internal implementation ---
-    		internal virtual void OnWmCommand( uint wNotifyCode, uint wID, IntPtr wnd) {
-    		}
-    		
-    
     		/// --- Control: events ---
     		public event EventHandler BackColorChanged;
     		public event EventHandler BackgroundImageChanged;
@@ -2377,41 +2555,71 @@
     		/// --- ISynchronizeInvoke properties ---
     		[MonoTODO]
     		public bool InvokeRequired {
-    			get { throw new NotImplementedException (); }
+    			get { 
+					return CreatorThreadId_ != Win32.GetCurrentThreadId(); 
+				}
     		}
     		
+			private IAsyncResult DoInvoke( Delegate method, object[] args) {
+				IAsyncResult result = null;
+				ControlInvokeHelper helper = new ControlInvokeHelper(method, args);
+				if( InvokeRequired) {
+					lock( this) {
+						lock( InvokeQueue_.SyncRoot) {
+							InvokeQueue_.Enqueue(helper);
+						}
+						Win32.PostMessage(Handle, Control.InvokeMessage, 0, 0);
+						result = helper;
+					}
+				}
+				else {
+					helper.CompletedSynchronously = true;
+					helper.ExecuteMethod();
+					result = helper;
+				}
+				return result;
+			}
+
     		/// --- ISynchronizeInvoke methods ---
     		[MonoTODO]
     		public IAsyncResult BeginInvoke (Delegate method) 
     		{
-    			throw new NotImplementedException ();
+				return DoInvoke( method, null);
     		}
     		
     		[MonoTODO]
-    		public IAsyncResult BeginInvoke (Delegate method,
-    						 object[] args) 
+    		public IAsyncResult BeginInvoke (Delegate method, object[] args) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				return DoInvoke( method, args);
+			}
     		
     		[MonoTODO]
     		public object EndInvoke (IAsyncResult asyncResult) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				object result = null;
+				ControlInvokeHelper helper = asyncResult as ControlInvokeHelper;
+				if( helper != null) {
+					if( !asyncResult.CompletedSynchronously) {
+						asyncResult.AsyncWaitHandle.WaitOne();
+					}
+					result = helper.MethodResult;
+				}
+				return result;
+			}
     		
   		//Compact Framework
     		[MonoTODO]
     		public object Invoke (Delegate method) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				return Invoke( method, null);
+			}
     		
     		//[MonoTODO]
     		public object Invoke (Delegate method, object[] args) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				IAsyncResult result = BeginInvoke(method, args);
+				return EndInvoke(result);
+			}
     		
     		/// sub-class: Control.ControlAccessibleObject
     		/// <summary>
@@ -2562,15 +2770,17 @@
     		
     			public virtual void Add (Control value) 
     			{
-    				collection.Add (value);
-    			}
+					if( !Contains(value)) {
+						value.parent = owner;
+						collection.Add (value);
+					}
+				}
     			
     			public virtual void AddRange (Control[] controls) 
     			{
 					for(int i = 0; i < controls.Length; i++) {
-						controls[i].Parent = owner;
+						Add(controls[i]);
 					}
-    				//collection.AddRange (controls);
     			}
     			
     			public virtual void Clear () 

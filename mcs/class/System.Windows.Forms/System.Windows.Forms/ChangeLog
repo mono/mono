@@ -1,3 +1,49 @@
+ 2003-02-06  Alexandre Pigolkine <pigolkine@gmx.de>
+
+   * Button.cs             Painting code is implemented
+   * ButtonBase.cs         TextAlign property implemented, WM_COMMAND handling is modified
+   * ComboBox.cs           Initial implementation of ObjectCollection, properties and WM_COMMAND
+  
+   * Control.cs            Changes to WindProc of Control and ControlNativeWindow classes, 
+                           to some properties, window handle creation, ControlCollection
+                           Initial implementation windows control subclassing, message reflection, 
+                           ISynchrinizeInvoke interface.
+                          
+   * ControlPaint.cs       Initial implementation of DrawBorder3D and DrawButton
+  
+   * Form.cs               Modification to constructor, window handle creation, 
+                                       WM_COMMAND handling, WndProc
+                               
+   * ListBox.cs            Implementation of DrawMode.OwnerDrawFixed and OwnerDrawVariable
+   * Message.cs            WParam helpers added
+   * MessageBox.cs         By default MessageBox.Show(string) brings TASKMODAL message box
+   * NativeWindow.cs       Implemented OnThreadException
+   * PaintEventArgs.cs     Dispose() method
+   * ProgressBar.cs        Small modifications to implementation
+   * SystemInformation.cs  CaptionHeight implemented
+  
+   * CheckBox.cs           
+   * GroupBox.cs           
+   * Label.cs              
+   * Panel.cs
+   * TextBox.cs
+                           CreateParams property modified
+ 
+   * win32enums.cs         enums added
+   * win32functions.cs     functions added
+   * win32struct.cs        2 structs modified
+                         
+   * Application.cs    
+   * DrawItemEventArgs.cs
+                            line terminators fixed
+
+    The following samples from .Net SDK can run:
+    Samples\QuickStart\howto\samples\winforms\errorhandler\cs\
+    Samples\QuickStart\howto\samples\winforms\ownerdrawlistbox\cs\
+    Samples\QuickStart\howto\samples\winforms\threadmarshal\cs\
+    Samples\QuickStart\winforms\samples\accessible\cs\
+    Samples\QuickStart\winforms\samples\controlreference\buttonctl\cs\
+
   2003-31-1  John Sohn <jsohn@columbus.rr.com>
 	* makefile: cleaned and reduced dependencies to hard-coded paths
 	* monostub.c: updated for compliance with the latest Mono and WineLib

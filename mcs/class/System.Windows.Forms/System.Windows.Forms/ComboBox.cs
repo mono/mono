@@ -35,6 +35,8 @@ namespace System.Windows.Forms {
 		int selectedIndex;
 		object selectedItem;
 		int selecedStart;
+		private ComboBox.ObjectCollection Items_ = null;
+
 
 		bool updateing; // true when begin update has been called. do not paint when true;
 		// --- Constructor ---
@@ -54,7 +56,9 @@ namespace System.Windows.Forms {
 			sorted = false;
 			backgroundImage = null;
 			text = "";
-			
+			Items_ = new ComboBox.ObjectCollection(this);
+
+			SubClassWndProc_ = true;
 		}
 		
 		// --- Properties ---
@@ -89,24 +93,43 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				if( Parent != null) {
+					CreateParams createParams = new CreateParams ();
+					if( window == null) {
+						window = new ControlNativeWindow (this);
+					}
 
-				createParams.Caption = Text;
-				createParams.ClassName = "COMBOBOX";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
-				return createParams;
+					createParams.Caption = Text;
+					createParams.ClassName = "ComboBox";
+					createParams.X = Left;
+					createParams.Y = Top;
+					createParams.Width = Width;
+					// FIXME: Create combo box with 5 elements in drop down list box
+					createParams.Height = Height * 5;
+					createParams.ClassStyle = 0;
+					createParams.ExStyle = (int)WindowExStyles.WS_EX_RIGHTSCROLLBAR;
+					createParams.Param = 0;
+					createParams.Parent = Parent.Handle;
+					createParams.Style = (int) (
+						(int)WindowStyles.WS_CHILD | 
+						(int)WindowStyles.WS_VISIBLE |
+						(int)WindowStyles.WS_VSCROLL |
+						(int)WindowStyles.WS_CLIPSIBLINGS |
+						(int)ComboBoxStyles.CBS_HASSTRINGS);
+					switch(DropDownStyle) {
+						case ComboBoxStyle.Simple:
+							createParams.Style |= (int)ComboBoxStyles.CBS_SIMPLE;
+							break;
+						case ComboBoxStyle.DropDown:
+							createParams.Style |= (int)ComboBoxStyles.CBS_DROPDOWN;
+							break;
+						case ComboBoxStyle.DropDownList:
+							createParams.Style |= (int)ComboBoxStyles.CBS_DROPDOWNLIST;
+							break;
+					}
+					return createParams;
+				}
+				return null;
 			}		
 		}
 		
@@ -192,7 +215,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ComboBox.ObjectCollection Items {
 			get { 
-				throw new NotImplementedException (); 
+				return Items_; 
 			}
 		}
 		
@@ -226,17 +249,34 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override int SelectedIndex {
 			get {
-				throw new NotImplementedException ();
+				if( IsHandleCreated) {
+					return Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_GETCURSEL, 0, 0);
+				}
+				else {
+					return selectedIndex;
+				}
 			}
 			set {
-				//FIXME:
+				//FIXME: set exception parameters
+				if( value >= Items_.Count) {
+					throw new ArgumentOutOfRangeException();
+				}
+				selectedIndex = value;
+				if( IsHandleCreated) {
+					Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETCURSEL, selectedIndex, 0);
+				}
 			}
 		}
 		
 		[MonoTODO]
 		public object SelectedItem {
 			get {
-				throw new NotImplementedException ();
+				if( IsHandleCreated) {
+					return Items_[Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_GETCURSEL, 0, 0)];
+				}
+				else {
+					return Items_[selectedIndex];
+				}
 			}
 			set { 
 				//FIXME:
@@ -297,6 +337,20 @@ namespace System.Windows.Forms {
 		
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
+
+		internal void populateControl( ICollection items) {
+			if( IsHandleCreated && items != null) {
+				foreach( object obj in items) {
+					if( obj != null) {
+						Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_ADDSTRING, 0, obj.ToString());
+					}
+				}
+			}
+		}
+
+		protected override void OnCreateControl () {
+		}
+
 		[MonoTODO]
 		protected override void OnSelectedValueChanged(EventArgs e){ // .NET V1.1 Beta
 			//FIXME:
@@ -417,6 +471,8 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.OnHandleCreated(e);
+			populateControl(Items_);
+			Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETCURSEL, selectedIndex, 0);
 		}
 		
 		[MonoTODO]
@@ -456,8 +512,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnSelectedIndexChanged(EventArgs e) 
 		{
-			//FIXME:
-			base.OnSelectedIndexChanged(e);
+			if( SelectedIndexChanged != null) {
+				SelectedIndexChanged( this, e);
+			}
 		}
 		
 		[MonoTODO]
@@ -512,8 +569,20 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			//FIXME:
-			base.WndProc(ref m);
+			switch (m.Msg) {
+				case Msg.WM_COMMAND: 
+					switch(m.HiWordWParam) {
+						case (uint)ComboBoxNotification.CBN_SELCHANGE:
+							OnSelectedIndexChanged(new EventArgs());
+							m.Result = IntPtr.Zero;
+							CallControlWndProc(ref m);
+							break;
+					}
+					break;
+				default:
+					base.WndProc(ref m);
+					break;
+			}
 		}
 		
 	
@@ -552,50 +621,53 @@ namespace System.Windows.Forms {
 		/// </summary>
 		[MonoTODO]
 		public class ObjectCollection : IList, ICollection, IEnumerable {
+			private ArrayList collection_ = new ArrayList ();
+			private ComboBox owner_ = null;
 			
 			/// --- ObjectCollection.constructor ---
 			[MonoTODO]
-			public ObjectCollection (ComboBox owner) 
-			{
-				
+			public ObjectCollection (ComboBox owner) {
+				owner_ = owner;
 			}
 			
 			/// --- ObjectCollection Properties ---
 			[MonoTODO]
 			public int Count {
-				get { throw new NotImplementedException (); }
+				get { 
+					return collection_.Count;
+				}
 			}
 			
 			[MonoTODO]
 			public bool IsReadOnly {
-				get { throw new NotImplementedException (); }
+				get { 
+					return collection_.IsReadOnly;
+				}
 			}
 			
 			[MonoTODO]
-			public int this[int index] {
-				get { throw new NotImplementedException (); }
-				set { throw new NotImplementedException (); }
+			public object this[int index] {
+				get { return collection_[index]; }
+				set { collection_[index] = value; }
 			}
 
 			/// --- ICollection properties ---
 			bool IList.IsFixedSize {
-				[MonoTODO] get { throw new NotImplementedException (); }
+				[MonoTODO] get { return collection_.IsFixedSize; }
 			}
 			
 			object IList.this[int index] {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
-				[MonoTODO] set { throw new NotImplementedException (); }
+				get { return collection_[index]; }
+				set { collection_[index] = value; }
 			}
 	
 			object ICollection.SyncRoot {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
+				get { return collection_.SyncRoot; }
 			}
 	
 			bool ICollection.IsSynchronized {
 
-				[MonoTODO] get { throw new NotImplementedException (); }
+				[MonoTODO] get { return collection_.IsSynchronized; }
 			}
 			
 			/// --- methods ---
@@ -604,13 +676,16 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public int Add(object item) 
 			{
-				throw new NotImplementedException ();
+				int result = collection_.Add(item);
+				owner_.populateControl(new object[] {item});
+				return result;
 			}
 			
 			[MonoTODO]
 			public void AddRange(object[] items) 
 			{
-				throw new NotImplementedException ();
+				collection_.AddRange(items);
+				owner_.populateControl(items);
 			}
 			
 			[MonoTODO]
@@ -641,7 +716,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public IEnumerator GetEnumerator() 
 			{
-				throw new NotImplementedException ();
+				return collection_.GetEnumerator();
 			}
 			
 			[MonoTODO]
