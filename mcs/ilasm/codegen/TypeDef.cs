@@ -30,6 +30,7 @@ namespace Mono.ILASM {
                 private ArrayList event_list;
                 private ArrayList property_list;
                 private ArrayList typar_list;
+                private Hashtable constraint_table;
                 private TypeDef outer;
 
                 private EventDef current_event;
@@ -169,6 +170,14 @@ namespace Mono.ILASM {
                         typar_list.Add (id);
                 }
 
+                public void AddGenericConstraint (int index, ITypeRef constraint)
+                {
+                        if (constraint_table == null)
+                                constraint_table = new Hashtable ();
+
+                        constraint_table.Add (index, constraint);
+                }
+
                 public void Define (CodeGen code_gen)
                 {
                         if (is_defined)
@@ -213,8 +222,15 @@ namespace Mono.ILASM {
 
                         if (typar_list != null) {
                                 short index = 0;
-                                foreach (string id in typar_list)
-                                        classdef.AddGenericParameter (index++, id);
+                                foreach (string id in typar_list) {
+                                        if (constraint_table != null && constraint_table.Contains ((int) index)) {
+                                                ITypeRef constraint = (ITypeRef) constraint_table[(int) index];
+                                                constraint.Resolve (code_gen);
+                                                classdef.AddGenericParameter (index++, id, constraint.PeapiType);
+                                        } else {
+                                                classdef.AddGenericParameter (index++, id);
+                                        }
+                                }
                         }
 
                         is_intransit = false;

@@ -1,3 +1,7 @@
+2003-07-15 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeDef.cs: Allow adding and emitting generic type constraints.
+		
 2003-07-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* TypeDef.cs: Emit generic parameters.
