@@ -1,5 +1,9 @@
 2003-01-04  Ville Palo <vi64pa@koti.soon.fi>
 
+	* XmlSchemaMapper.cs: Added handling for Constraints, Attributes.
+	
+2003-01-04  Ville Palo <vi64pa@koti.soon.fi>
+
 	* DataColumn.cs: ExtendedProperties is by default !null-
 	
 2003-01-04  Ville Palo <vi64pa@koti.soon.fi>
