@@ -202,5 +202,20 @@ public class Wrapper {
 	[DllImport("monowrapper", EntryPoint="mono_wrapper_unlink", CharSet=CharSet.Ansi)]
 	public unsafe static extern int unlink (string path);
 
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_opendir", CharSet=CharSet.Ansi)]
+	public unsafe static extern IntPtr opendir (string path);
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_readdir", CharSet=CharSet.Ansi)]
+	public unsafe static extern string readdir (IntPtr dir);
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_closedir", CharSet=CharSet.Ansi)]
+	public unsafe static extern int closedir (IntPtr dir);
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_getenv", CharSet=CharSet.Ansi)]
+	public unsafe static extern IntPtr getenv (string variable);
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_environ", CharSet=CharSet.Ansi)]
+	public unsafe static extern IntPtr environ ();
+
 }
 }
