@@ -73,7 +73,7 @@
 		Rectangle oldBounds;
 
     		bool causesValidation;
-    		//ContextMenu contextMenu;
+    		ContextMenu contextMenu;
     		DockStyle dock;
     		bool enabled;
     		Font font;
@@ -198,7 +198,7 @@
 			oldBounds = new Rectangle();
     			// bindingContext = null;
     			causesValidation = true;
-    			// contextMenu = null;
+    			contextMenu = null;
     			dock = DockStyle.None;
     			enabled = true;
     			// font = Control.DefaultFont;
@@ -402,15 +402,20 @@
     		[MonoTODO]
     		public bool CanSelect {
     			get {
-    // 				if (ControlStyles.Selectable &&
-    // 				    isContainedInAnotherControl &&
-    // 				    parentIsVisiable && isVisialbe &&
-    // 				    parentIsEnabled && isEnabled) {
-    // 					return true;
-    // 				}
-    // 				return false;
-    
-    				throw new NotImplementedException ();
+				if ( !GetStyle ( ControlStyles.Selectable ) )
+					return false;
+
+				if ( Parent == null )
+					return false;
+
+				Control parent = Parent;
+				while ( parent != null ) {
+					if ( !parent.Visible || !parent.Enabled )
+						return false;
+					parent = parent.Parent;
+				}
+
+				return true;
     			}
     		}
     		
@@ -492,12 +497,13 @@
     		[MonoTODO]
     		public virtual ContextMenu ContextMenu {
     			get {
-    				//return contextMenu;
-    				throw new NotImplementedException ();
+  				return contextMenu;
     			}
     			set {
-    				//contextMenu=value;
-    				throw new NotImplementedException ();
+				if ( contextMenu != value ) {
+					contextMenu = value;
+					OnContextMenuChanged ( EventArgs.Empty );
+				}
     			}
     		}
     		
@@ -1576,7 +1582,10 @@
     		
     		protected virtual void OnDockChanged (EventArgs e)
     		{
-			PerformLayout ( this, "Dock" );
+			// changing this property does not affect the control directly
+			// so have its parent to calculate new layout
+			if ( Parent != null )
+				Parent.PerformLayout ( this, "Dock" );
     			if (DockChanged != null)
     				DockChanged (this, e);
     		}
@@ -2852,6 +2861,14 @@
 						m.Result = (IntPtr)1;
 					} else
 						CallControlWndProc( ref m );
+				break;
+				case Msg.WM_RBUTTONDOWN:
+					if ( contextMenu != null ) {
+						contextMenu.Show ( this, 
+							new Point ( Win32.HIGH_ORDER ( m.LParam.ToInt32() ),
+								    Win32.LOW_ORDER ( m.LParam.ToInt32() ) ) );
+					}
+					CallControlWndProc( ref m );
 				break;
 				default:
 					CallControlWndProc(ref m);

@@ -249,5 +249,19 @@ namespace System.Windows.Forms {
 				Marshal.FreeHGlobal ( ptr );
 			}
 		}
+
+		protected override void Dispose( bool disposing	)
+		{
+			lock ( this ) {
+				try {
+					if ( disposing ) {
+						tooltipWnd.DestroyHandle ( );
+					}
+				}
+				finally {
+					base.Dispose ( disposing ); 
+				}
+			}
+		}
 	}
 }

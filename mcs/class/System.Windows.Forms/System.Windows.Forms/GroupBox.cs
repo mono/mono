@@ -24,6 +24,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public GroupBox() {
 			SetStyle ( ControlStyles.UserPaint, true);
+			SetStyle ( ControlStyles.Selectable, false );
 			TabStop = false;
 			flatStyle = FlatStyle.Standard;
 		}

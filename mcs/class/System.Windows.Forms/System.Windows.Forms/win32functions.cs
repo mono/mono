@@ -528,6 +528,11 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr GetActiveWindow ( );
 		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern IntPtr GetForegroundWindow ( );
+
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern bool TrackPopupMenu( IntPtr hMenu, uint uFlags, int x, int y, int nReserved,
+								IntPtr hWnd, IntPtr prcRect );
+
 		#endregion
 
 		#region Shell32.dll functions

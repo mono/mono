@@ -29,6 +29,7 @@ namespace System.Windows.Forms {
 			autoCheck  = true;
 			checkAlign = ContentAlignment.MiddleLeft;
 			checked_   = false;
+			TextAlign  = ContentAlignment.MiddleLeft;			
 		}
 
 		public Appearance Appearance {

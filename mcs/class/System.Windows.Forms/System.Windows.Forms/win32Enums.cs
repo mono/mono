@@ -2859,4 +2859,21 @@ namespace System.Windows.Forms{
 		CDN_TYPECHANGE               = (CDN_FIRST - 0x0006),
 		CDN_INCLUDEITEM              = (CDN_FIRST - 0x0007)
 	}
+
+	[Flags]
+	internal enum TrackPopupMenuFlags : int {
+		TPM_LEFTBUTTON      = 0x0000,
+		TPM_RIGHTBUTTON     = 0x0002,
+		TPM_LEFTALIGN       = 0x0000,
+		TPM_CENTERALIGN     = 0x0004,
+		TPM_RIGHTALIGN      = 0x0008,
+		TPM_TOPALIGN        = 0x0000,
+		TPM_VCENTERALIGN    = 0x0010,
+		TPM_BOTTOMALIGN     = 0x0020,
+		TPM_HORIZONTAL      = 0x0000,
+		TPM_VERTICAL        = 0x0040,
+		TPM_NONOTIFY        = 0x0080,
+		TPM_RETURNCMD       = 0x0100,
+		TPM_RECURSE         = 0x0001
+	}
 }

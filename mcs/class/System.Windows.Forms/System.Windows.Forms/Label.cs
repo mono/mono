@@ -43,20 +43,9 @@
 				autoSize = false;
 				borderStyle = BorderStyle.None;
 				base.TabStop = false;
-				//Defaults not in the spec
-				Image backgroundImage;
-				Image image;
-				ContentAlignment imageAlign;
-				ImeMode defaultImeMode;
-				bool renderTransparent;
-				FlatStyle flatStyle;
-				int preferredHeight;
-				int preferredWidth;
-				bool tabStop;
-				ContentAlignment textAlign;
-				bool useMnemonic;
-
+				
 				SubClassWndProc_ = true;
+			SetStyle ( ControlStyles.Selectable, false );
     		}
     		
     		//

@@ -22,7 +22,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Splitter()
 		{
-			
+			SetStyle ( ControlStyles.Selectable, false );
 		}
 
 		//

@@ -16,7 +16,7 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	/// <summary>
-	/// Represents a Windows combo box control.
+	/// Represents a shortcut menu
 	/// </summary>
 
 	[MonoTODO]
@@ -24,12 +24,14 @@ namespace System.Windows.Forms {
 
 		// private fields
 		RightToLeft rightToLeft;
+		Control sourceControl;
 
 		// --- Constructor ---
 		[MonoTODO]
 		public ContextMenu() : base(null)
 		{
 			rightToLeft = RightToLeft.Inherit;
+			sourceControl = null;
 		}
 
 		[MonoTODO]
@@ -43,18 +45,28 @@ namespace System.Windows.Forms {
 			set { rightToLeft=value; }
 		}
 		
-		[MonoTODO]
 		public Control SourceControl {
-			get { throw new NotImplementedException (); }
+			get { return sourceControl; }
 		}
 		
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected internal virtual void OnPopup(EventArgs e);
 		[MonoTODO]
-		public void Show(Control control,Point pos) 
+		public void Show(Control control, Point pos) 
 		{
-			//FIXME:
+			if ( Handle == IntPtr.Zero )
+				return;
+
+			sourceControl = control;
+
+			POINT pt = new POINT ();
+			pt.x = pos.X;
+			pt.y = pos.Y;
+
+			Win32.ClientToScreen ( control.Handle, ref pt );
+			Win32.TrackPopupMenu (  Handle, ( uint ) ( TrackPopupMenuFlags.TPM_LEFTALIGN | TrackPopupMenuFlags.TPM_RIGHTBUTTON ),
+						pt.x, pt.y, 0, control.Handle , IntPtr.Zero );
 		}
 		
 		/// events

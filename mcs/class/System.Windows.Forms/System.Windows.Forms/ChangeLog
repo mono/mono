@@ -1,4 +1,18 @@
 2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* ContextMenu.cs : SourceControl, Show method
+	* Control.cs : ContextMenu, CanSelect, force parent to perform layout when Dock property changes
+	* GroupBox.cs
+	* Label.cs
+	* Panel.cs
+	* PictureBox.cs
+	* Splitter.cs
+	* ProgressBar.cs : remove Selectable style
+	* RadioButton.cs : set TextAlign to MiddleLeft by default
+	* tooltip.cs : override Dispose method
+	* win32Enums.cs
+	* win32functions.cs : flags and function for context menu
+
+2003-06-09 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Conrols.cs : Disposing property, Dispose method
 	* Cursor.cs  : Show, Hide, Copy cursor
 	* NativeWindow.cs : destructor

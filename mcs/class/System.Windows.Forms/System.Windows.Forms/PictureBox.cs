@@ -27,6 +27,7 @@ namespace System.Windows.Forms {
 			sizeMode = PictureBoxSizeMode.Normal;
 			borderStyle = BorderStyle.None;
 			SetStyle ( ControlStyles.UserPaint, true );
+			SetStyle ( ControlStyles.Selectable, false );
 		}
 
 		public BorderStyle BorderStyle {

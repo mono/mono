@@ -31,6 +31,7 @@ namespace System.Windows.Forms {
 		#region Constructor
 
 		public ProgressBar() {
+			SetStyle ( ControlStyles.Selectable, false );
 		}
 
 		#endregion
