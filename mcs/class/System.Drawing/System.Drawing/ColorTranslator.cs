@@ -17,7 +17,6 @@ namespace System.Drawing {
 		/// <param name="HtmlFromColor"></param>
 		/// <returns></returns>
 		public static Color FromHtml(string HtmlFromColor){
-			// TODO: 
 			// If first char is "#"
 				//convert "#RRGGBB" to int and use Color.FromARGB(int) to create color
 			// else //it is a color name
@@ -29,8 +28,43 @@ namespace System.Drawing {
 			// .NET colors, XWindows colors, and WWWC web colors 
 			// are (according to Charles Pretziod) base the same
 			//colors, so many shouold work if any do.
-			//return Color.FromKnownColor(HtmlFromColor);
-			return Color.Empty;
+			if (HtmlFromColor[0] != '#')
+			{
+				int length = HtmlFromColor.Length;
+				for (int i = length - 1; i >= 0; i--)
+				{
+					if (!Char.IsDigit (HtmlFromColor[i]))
+						break;
+					length--;
+				}
+				
+				return Color.FromName(HtmlFromColor.Substring (0, length));
+			}
+			
+			int pos = 0, index = 0;
+			int[] rgb = new int[] {0, 0, 0};
+			
+			string specifier = HtmlFromColor.Substring (1).ToLower ();
+			if (specifier.Length != 6)
+				return Color.Empty;
+				
+			foreach (char c in specifier)
+			{
+				rgb[index] *= 16;
+
+				if (Char.IsDigit (c))
+					rgb[index] += Int32.Parse (c.ToString ());
+				else if (c <= 'f' && c >= 'a')
+					rgb[index] += 10 + (c - 'a');
+				else
+					return Color.Empty;
+				
+				pos++;
+				if ((pos % 2) == 0)
+					index++;
+			}
+
+			return Color.FromArgb (rgb[0], rgb[1], rgb[2]);
 		}
 		
 		/// <summary>
