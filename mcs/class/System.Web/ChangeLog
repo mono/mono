@@ -1,4 +1,4 @@
-2002-07-24  Tim Coleman <tim@timcoleman.com>
+2002-08-05  Patrik Torstensson <ptorsten@hotmail.com>
 	* list: 
 		Add System.Web/ApplicationFactory.cs
 		Add System.Web/HttpAsyncResult.cs
