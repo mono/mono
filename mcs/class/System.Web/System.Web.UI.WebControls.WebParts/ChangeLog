@@ -1,3 +1,7 @@
+2004-09-28  Sanjay Gupta <gsanjay@novell.com>
+		
+	* WebPartVerb.cs: Initial implementation.
+
 2004-09-15  Gaurav Vaish <gaurav[dot]vaish[at]gmail[dot]com>
 
 	* Part.cs                    : Completed
