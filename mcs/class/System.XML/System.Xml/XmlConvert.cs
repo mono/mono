@@ -239,9 +239,14 @@ namespace System.Xml {
 
 		public static double ToDouble(string s)
 		{
-			if (s == null) {
+			if (s == null)
 				throw new ArgumentNullException();
-			}
+			if (s == "INF" || s == NumberFormatInfo.CurrentInfo.PositiveInfinitySymbol)
+				return Double.PositiveInfinity;
+			if (s == "-INF" || s == NumberFormatInfo.CurrentInfo.NegativeInfinitySymbol)
+				return Double.NegativeInfinity;
+			if (s == "NaN" || s == NumberFormatInfo.CurrentInfo.NaNSymbol)
+				return Double.NaN;
 			return Double.Parse (s, floatStyle);
 		}
 
@@ -273,9 +278,14 @@ namespace System.Xml {
 
 		public static float ToSingle(string s)
 		{
-			if (s == null) {
+			if (s == null)
 				throw new ArgumentNullException();
-			}
+			if (s == "INF" || s == NumberFormatInfo.CurrentInfo.PositiveInfinitySymbol)
+				return Single.PositiveInfinity;
+			if (s == "-INF" || s == NumberFormatInfo.CurrentInfo.NegativeInfinitySymbol)
+				return Single.NegativeInfinity;
+			if (s == "NaN" || s == NumberFormatInfo.CurrentInfo.NaNSymbol)
+				return Single.NaN;
 			return Single.Parse(s, floatStyle);
 		}
 
