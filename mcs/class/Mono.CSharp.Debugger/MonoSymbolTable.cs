@@ -103,7 +103,8 @@ namespace Mono.CSharp.Debugger
 		public uint SourceFileOffset;
 		public uint LineNumberTableOffset;
 		public uint StartRow;
-		public long Address;
+		public long StartAddress;
+		public long EndAddress;
 
 		public readonly string SourceFile;
 		public readonly LineNumberEntry[] LineNumbers;
@@ -114,7 +115,8 @@ namespace Mono.CSharp.Debugger
 			SourceFileOffset = reader.ReadUInt32 ();
 			LineNumberTableOffset = reader.ReadUInt32 ();
 			StartRow = reader.ReadUInt32 ();
-			Address = reader.ReadInt64 ();
+			StartAddress = reader.ReadInt64 ();
+			EndAddress = reader.ReadInt64 ();
 
 			long old_pos = reader.BaseStream.Position;
 			reader.BaseStream.Position = LineNumberTableOffset;
@@ -142,7 +144,8 @@ namespace Mono.CSharp.Debugger
 			this.SourceFileOffset = sf_offset;
 			this.LineNumberTableOffset = lnt_offset;
 			this.StartRow = row;
-			this.Address = 0;
+			this.StartAddress = 0;
+			this.EndAddress = 0;
 			this.SourceFile = null;
 			this.LineNumbers = new LineNumberEntry [0];
 		}
@@ -153,14 +156,15 @@ namespace Mono.CSharp.Debugger
 			bw.Write (SourceFileOffset);
 			bw.Write (LineNumberTableOffset);
 			bw.Write (StartRow);
-			bw.Write (Address);
+			bw.Write (StartAddress);
+			bw.Write (EndAddress);
 		}
 
 		public override string ToString ()
 		{
-			return String.Format ("[Method {0}:{1}:{2}:{3}:{4}]",
+			return String.Format ("[Method {0}:{1}:{2}:{3}:{4}:{5}]",
 					      Token, SourceFileOffset, LineNumberTableOffset,
-					      StartRow, Address);
+					      StartRow, StartAddress, EndAddress);
 		}
 	}
 }
