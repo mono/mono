@@ -1,3 +1,8 @@
+2004-02-11  Jackson Harper <jackson@ximian.com>
+
+	* TraceData.cs: Use ToString for cookie/header/var name values so
+	null is handled properly.
+	
 2004-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: ApplicationState is inited by the factory so,

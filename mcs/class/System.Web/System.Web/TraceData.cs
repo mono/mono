@@ -250,8 +250,8 @@ namespace System.Web {
 			
 			int pos = 0;
 			foreach (DataRow r in cookie_data.Rows) {
-				string name = (string) r ["Name"];
-				string value = (string) r ["Value"];
+				string name = r ["Name"].ToString ();
+				string value = r ["Value"].ToString ();
 				int length = name.Length + (value == null ? 0 : value.Length);
 				RenderAltRow (table, pos++, name, value, length.ToString ());
 			}
@@ -268,7 +268,7 @@ namespace System.Web {
 			
 			int pos = 0;
 			foreach (DataRow r in header_data.Rows)
-				RenderAltRow (table, pos++, (string) r ["Name"], (string) r ["Value"]);
+				RenderAltRow (table, pos++, r ["Name"].ToString (), r ["Value"].ToString ());
 			
 			table.RenderControl (output);
 		}
@@ -282,7 +282,7 @@ namespace System.Web {
 			
 			int pos = 0;
 			foreach (DataRow r in servervar_data.Rows)
-				RenderAltRow (table, pos++, (string) r ["Name"], (string) r ["Value"]);
+				RenderAltRow (table, pos++, r ["Name"].ToString (), r ["Value"].ToString ());
 			
 			table.RenderControl (output);
 		}
