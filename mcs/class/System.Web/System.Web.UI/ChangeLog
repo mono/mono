@@ -1,3 +1,7 @@
+2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlBuilderAttribute.cs: finished implementation.
+
 2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConstructorNeedsTagAttribute.cs: the default constructor sets the

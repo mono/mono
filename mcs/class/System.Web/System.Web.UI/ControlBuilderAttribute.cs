@@ -1,9 +1,11 @@
 //
 // System.Web.UI.ControlBuilderAttribute.cs
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+// 	Duncan Mak  (duncan@ximian.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com)
 
 using System;
 
@@ -13,7 +15,7 @@ namespace System.Web.UI {
 	public sealed class ControlBuilderAttribute : Attribute
 	{
 		Type builderType;
-		public static readonly ControlBuilderAttribute Default;
+		public static readonly ControlBuilderAttribute Default = new ControlBuilderAttribute (null);
 		
 		public ControlBuilderAttribute (Type builderType)
 		{
@@ -24,22 +26,21 @@ namespace System.Web.UI {
 			get { return builderType; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			return false;
+			if (!(obj is ControlBuilderAttribute))
+				return false
+			return ((ControlBuilderAttribute) obj).builderType == builderType);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 42;
+			base.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute ()
 		{
-			return false;
+			return Equals (Default);
 		}
 	}
 }
