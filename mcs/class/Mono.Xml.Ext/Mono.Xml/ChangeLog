@@ -1,0 +1,6 @@
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	InternalPool.cs,
+	XmlChar.cs,
+	XmlStoredResolver.cs: Initial Checkin.
+
