@@ -1,13 +1,14 @@
-// DataView.cs - Nunit Test Cases for for testing the DataView
+// DataViewTest.cs - Nunit Test Cases for for testing the DataView
 // class
 // Authors:
 //	Punit Kumar Todi ( punit_todi@da-iict.org )
 // 	Patrick Kalkman  kalkman@cistron.nl
 //      Umadevi S (sumadevi@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2003 Patrick Kalkman
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +36,7 @@ using NUnit.Framework;
 using System;
 using System.Data;
 using System.ComponentModel;
+using System.IO;
 
 namespace MonoTests.System.Data
 {
@@ -46,6 +48,7 @@ namespace MonoTests.System.Data
 		Random rndm;
 		int seed, rowCount;
 		ListChangedEventArgs listChangedArgs;
+		TextWriter eventWriter;
 
 		[SetUp]
 		public void GetReady ()
@@ -426,11 +429,192 @@ namespace MonoTests.System.Data
 
 		ListChangedEventArgs ListChangeArgOnSetItem;
 
-		public void OnChange (object o, ListChangedEventArgs e)
+		void OnChange (object o, ListChangedEventArgs e)
 		{
 			if (ListChangeArgOnSetItem != null)
 				throw new Exception ("The event is already fired.");
 			ListChangeArgOnSetItem = e;
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void CancelEditAndEvents ()
+		{
+			string reference = " =====ItemAdded:3 ------4 =====ItemAdded:3 =====ItemAdded:4 ------5 =====ItemAdded:4 =====ItemAdded:5 ------6 =====ItemDeleted:5 ------5 =====ItemAdded:5";
+
+			eventWriter = new StringWriter ();
+
+			DataTable dt = new DataTable ();
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Columns.Add ("col3");
+			dt.Rows.Add (new object [] {1,2,3});
+			dt.Rows.Add (new object [] {1,2,3});
+			dt.Rows.Add (new object [] {1,2,3});
+
+			DataView dv = new DataView (dt);
+			dv.ListChanged += new ListChangedEventHandler (ListChanged);
+			DataRowView a1 = dv.AddNew ();
+			eventWriter.Write (" ------" + dv.Count);
+			// I wonder why but MS fires another event here.
+			a1 = dv.AddNew ();
+			eventWriter.Write (" ------" + dv.Count);
+			// I wonder why but MS fires another event here.
+			DataRowView a2 = dv.AddNew ();
+			eventWriter.Write (" ------" + dv.Count);
+			a2.CancelEdit ();
+			eventWriter.Write (" ------" + dv.Count);
+			DataRowView a3 = dv.AddNew ();
+
+			AssertEquals (reference, eventWriter.ToString ());
+		}
+
+		private void ListChanged (object o, ListChangedEventArgs e)
+		{
+			eventWriter.Write (" =====" + e.ListChangedType + ":" + e.NewIndex);
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void ComplexEventSequence1 ()
+		{
+			string result = @"setting table...
+---- OnListChanged PropertyDescriptorChanged,0,0
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+table was set.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ col1 added.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ col2 added.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ col3 added.
+ uniq added.
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+ sort changed.
+---- OnListChanged PropertyDescriptorDeleted,0,0
+ col3 removed.
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+ rowfilter changed.
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+ rowstatefilter changed.
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+---- OnListChanged Reset,-1,-1
+ apply default sort changed.
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+ rowstatefilter changed.
+---- OnListChanged ItemAdded,0,-1
+ added row to Rows.
+---- OnListChanged ItemAdded,0,-1
+ added row to Rows.
+---- OnListChanged ItemAdded,0,-1
+ added row to Rows.
+---- OnListChanged ItemAdded,3,-1
+ AddNew() invoked.
+4
+---- OnListChanged ItemDeleted,3,-1
+---- OnListChanged ItemMoved,-2147483648,3
+ EndEdit() invoked.
+3
+---- OnListChanged ItemMoved,0,-2147483648
+ value changed to appear.
+4
+---- OnListChanged ItemMoved,3,0
+ value moved.
+4
+---- OnListChanged ItemMoved,1,3
+ value moved again.
+4
+---- OnListChanged PropertyDescriptorChanged,0,0
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+table changed.
+";
+
+			eventWriter = new StringWriter ();
+
+			DataTable dt = new DataTable ("table");
+			ComplexEventSequence1View dv =
+				new ComplexEventSequence1View (dt, eventWriter);
+			dt.Columns.Add ("col1");
+			eventWriter.WriteLine (" col1 added.");
+			dt.Columns.Add ("col2");
+			eventWriter.WriteLine (" col2 added.");
+			dt.Columns.Add ("col3");
+			eventWriter.WriteLine (" col3 added.");
+			dt.Constraints.Add (new UniqueConstraint (dt.Columns [0]));
+			eventWriter.WriteLine (" uniq added.");
+			dv.Sort = "col2";
+			eventWriter.WriteLine (" sort changed.");
+			dt.Columns.Remove ("col3");
+			eventWriter.WriteLine (" col3 removed.");
+			dv.RowFilter = "col1 <> 0";
+			eventWriter.WriteLine (" rowfilter changed.");
+			dv.RowStateFilter = DataViewRowState.Deleted;
+			eventWriter.WriteLine (" rowstatefilter changed.");
+			dv.ApplyDefaultSort = true;
+			eventWriter.WriteLine (" apply default sort changed.");
+			dv.RowStateFilter = DataViewRowState.CurrentRows;
+			eventWriter.WriteLine (" rowstatefilter changed.");
+			dt.Rows.Add (new object [] {1, 3});
+			eventWriter.WriteLine (" added row to Rows.");
+			dt.Rows.Add (new object [] {2, 2});
+			eventWriter.WriteLine (" added row to Rows.");
+			dt.Rows.Add (new object [] {3, 1});
+			eventWriter.WriteLine (" added row to Rows.");
+			DataRowView drv = dv.AddNew ();
+			eventWriter.WriteLine (" AddNew() invoked.");
+			eventWriter.WriteLine (dv.Count);
+			drv [0] = 0;
+			drv.EndEdit ();
+			eventWriter.WriteLine (" EndEdit() invoked.");
+			eventWriter.WriteLine (dv.Count);
+			dt.Rows [dt.Rows.Count - 1] [0] = 4;
+			eventWriter.WriteLine (" value changed to appear.");
+			eventWriter.WriteLine (dv.Count);
+			dt.Rows [dt.Rows.Count - 1] [1] = 4;
+			eventWriter.WriteLine (" value moved.");
+			eventWriter.WriteLine (dv.Count);
+			dt.Rows [dt.Rows.Count - 1] [1] = 1;
+			eventWriter.WriteLine (" value moved again.");
+			eventWriter.WriteLine (dv.Count);
+			dv.Table = new DataTable ("table2");
+			eventWriter.WriteLine ("table changed.");
+
+			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
+		}
+
+		public class ComplexEventSequence1View : DataView
+		{
+			TextWriter w;
+
+			public ComplexEventSequence1View (DataTable dt, 
+				TextWriter w) : base ()
+			{
+				this.w = w;
+				w.WriteLine ("setting table...");
+				Table = dt;
+				w.WriteLine ("table was set.");
+			}
+
+			protected override void OnListChanged (ListChangedEventArgs e)
+			{
+				if (w != null)
+					w.WriteLine ("---- OnListChanged " + e.ListChangedType + "," + e.NewIndex + "," + e.OldIndex);
+				base.OnListChanged (e);
+			}
+
+			protected override void UpdateIndex (bool force)
+			{
+				if (w != null)
+					w.WriteLine ("----- UpdateIndex : " + force);
+				base.UpdateIndex (force);
+			}
 		}
 	}
 }

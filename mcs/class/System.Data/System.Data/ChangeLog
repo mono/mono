@@ -1,5 +1,16 @@
 2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs :
+	  - Clear() should clear AddNew cache.
+	  - Open() invokes Reset().
+	  - ConstraintCollectionChanged() itself does not invoke OnListChanged().
+	  - Reset() does not Open, Close and Update Index.
+	  - UpdateIndex() can be invoked even if it has no table.
+	  - Reset event is invoked always after actual query to table.
+	  - set_Table should raise PropertyDescriptorChanged event.
+
+2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataView.cs : ColumnCollectionChanged() is the event invoker (i.e.
 	  when overriden, no column change events are fired).
 

@@ -99,7 +99,7 @@ namespace System.Data
 			this.RowFilter = RowFilter;
 			this.Sort = Sort;
 			rowState = RowState;
-			Open();
+			Open ();
 		}
 		#endregion // Constructors
 		#region PublicProperties
@@ -161,7 +161,6 @@ namespace System.Data
 					}
 				}
 				UpdateIndex (true);
-				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset,-1,-1));
 			}
 		}
 		// get the count of rows in the DataView after RowFilter 
@@ -212,7 +211,6 @@ namespace System.Data
 				}
 				rowFilter = value;
 				UpdateIndex (true);
-				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
 
@@ -226,7 +224,6 @@ namespace System.Data
 					return;
 				rowState = value;
 				UpdateIndex (true);
-				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
 
@@ -262,7 +259,6 @@ namespace System.Data
 					sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
 				UpdateIndex (true);
-				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
 
@@ -279,15 +275,15 @@ namespace System.Data
 				}
 
 				if (dataTable != null) {
-					UnregisterEventHandlers();
+					UnregisterEventHandlers ();
 				}
 
 				dataTable = value;
 
 				if (dataTable != null) {
 					RegisterEventHandlers();
+					OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged, 0, 0));
 					UpdateIndex (true);
-					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 				}
 			}
 		}
@@ -501,7 +497,9 @@ namespace System.Data
 		{
 			if (dataTable != null)
 				UnregisterEventHandlers ();
+			UpdateIndex (false);
 			rowViewPool.Clear ();
+			addNewCache.Clear ();
 			isOpen = false;
 		}
 
@@ -527,7 +525,7 @@ namespace System.Data
 				ListChanged (this, e);
 		}
 
-		protected void Open() 
+		protected void Open () 
 		{
 			// I wonder if this comment is still valid, but keep
 			// in the meantime.
@@ -551,9 +549,9 @@ namespace System.Data
 			//        Count, or other properties, then just use the
 			//        index cache.
 			if (dataTable != null) {
-				RegisterEventHandlers();
-				UpdateIndex (true);
+				RegisterEventHandlers ();
 			}
+			UpdateIndex (true);
 			isOpen = true;
 		}
 		
@@ -691,20 +689,13 @@ namespace System.Data
 			}
 
 			// UpdateIndex() is not invoked here.
-
-			/* ItemReset */
-			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset,-1,-1));
 		}
 
 		// internal use by Mono
-		protected void Reset() 
+		protected void Reset ()
 		{
-			// TODO: what really happens?
-			if (IsOpen)
-				Close ();
-			UpdateIndex (true);
-			Open ();
-			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1 ));
+			// TODO: what really happens? at least it does not Open, Close and Update Index.
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
 #if NET_2_0
@@ -737,6 +728,8 @@ namespace System.Data
 		// I assume this is what UpdateIndex is used for
 		protected virtual void UpdateIndex (bool force) 
 		{
+			if (dataTable == null || !force)
+				return;
 			DataRow[] rows = null;
 
 			// I guess, "force" parameter is used to indicate
@@ -765,6 +758,8 @@ namespace System.Data
 			}
 
 			rowViewPool = newPool;
+
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
 		[MonoTODO]

@@ -1,3 +1,8 @@
+2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataViewTest.cs : added practical event handling tests (though
+	  NotWorking since it is still not complete).
+
 2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableTest.cs : added RowChanging event test.
