@@ -1,3 +1,8 @@
+2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: reverted partially my previous patch until 
+	object.c:set_value handles enums correcly.
+
 2002-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
