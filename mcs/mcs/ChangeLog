@@ -1,5 +1,16 @@
 2004-02-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* assign.cs (Assign.DoResolve): When dealing with compound
+	assignments, there is a new rule in ECMA C# 2.4 (might have been
+	there before, but it is documented here) that states that in:
+
+	a op= b;
+
+	If b is of type int, and the `op' is a shift-operator, then the
+	above is evaluated as:
+
+	a = (int) a op b 
+
 	* expression.cs (Binary.ResolveOperator): Instead of testing for
 	int/uint/long/ulong, try to implicitly convert to any of those
 	types and use that in pointer arithmetic.
