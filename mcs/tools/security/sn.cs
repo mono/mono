@@ -382,15 +382,15 @@ namespace Mono.Tools {
 				case "-v":
 					filename = args [i++];
 					an = AssemblyName.GetAssemblyName (filename);
-					try {
-						byte[] akey = an.GetPublicKey ();
-						byte[] pkey = new byte [akey.Length - 12];
-						Buffer.BlockCopy (akey, 12, pkey, 0, pkey.Length);
-						sn = new StrongName (pkey);
-						Verify (filename, sn);
-					} catch {
+					byte[] akey = an.GetPublicKey ();
+					if(akey == null || akey.Length < 12) {
 						Console.WriteLine (filename + " is not a strongly named assembly");
+						break;
 					}
+					byte[] pkey = new byte [akey.Length - 12];
+					Buffer.BlockCopy (akey, 12, pkey, 0, pkey.Length);
+					sn = new StrongName (pkey);
+					Verify (filename, sn);
 					break;
 				case "-vf":
 					Console.WriteLine ("Unimplemented option");

@@ -1,5 +1,10 @@
 2003-11-10  Todd Berman  <tberman@gentoo.org>
 
+	* sn.cs: Wow, gonzalo is so super s-m-a-r-t, changing up last fix to
+	make it nice and pretty.
+
+2003-11-10  Todd Berman  <tberman@gentoo.org>
+
 	* sn.cs: No more OutOfMemoryExceptions if the GetPublicKey returns
 	a new byte[0].
 	
