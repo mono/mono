@@ -1,3 +1,8 @@
+2005-02-17  Raja R Harinath  <rharinath@novell.com>
+
+	* fixed-buffer-exe.cs: Rename from 'fixed-buffer.cs' to follow
+	naming conventions.
+
 2005-02-16  Marek Safar <marek.safar@seznam.cz>
 
 	* test-348.cs: New test.
