@@ -1,3 +1,7 @@
+2005-03-08  Marek Safar <marek.safar@seznam.cz>
+
+	* test-355.cs, test-356.cs: New tests.
+
 2005-03-07  Martin Baulig  <martin@ximian.com>
 
 	* gen-134.cs, gen-135.cs, gen-136.cs, gen-137.cs, gen-138.cs,
