@@ -2,6 +2,10 @@
 
 	* culture-info-tables.h: reflecting locale-builder updates.
 
+2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-tables.h: reflecting locale-builder updates.
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-tables.h: reflecting locale-builder updates.
