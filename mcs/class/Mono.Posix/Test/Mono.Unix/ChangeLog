@@ -1,3 +1,12 @@
+2005-02-09  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* StdlibTest.cs: Signal is currently ignored, but add Category(NotDotNet) so
+	  it isn't run even when we fix it.  .NET 1.1 doesn't marshal delegates
+	  properly for signal (different calling conventions).
+	  Add Category(NotDotNet) for Snprintf(), as MSVCRT.dll doesn't export it.
+	* UnixGroupTest.cs, UnixUserTest.cs: Don't run these under .NET, as Windows
+	  doesn't support the Syscall and related classes.
+
 2005-02-01  Raja R Harinath  <rharinath@novell.com>
 
 	* UnixUserTest.cs (UnixUserTest.ReentrantConstructors): Don't

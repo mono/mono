@@ -30,10 +30,21 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test, Ignore ("Sending Signals from inside Mono hangs the program")]
+#if !NET_2_0
+		// .NET 1.1 marshals delegates as Stdcall functions, while signal(3)
+		// expects a Cdecl function.  Result: stack corruption.
+		// DO NOT USE Stdlib.signal under .NET 1.1!
+		// .NET 2.0 allows us to specify how delegates should be marshaled, so
+		// this isn't an issue there.
+		[Category ("NotDotNet")]
+#endif
 		public void Signal ()
 		{
-			// Insert handler
 			SignalTest st = new SignalTest ();
+			// Make sure handler is JITed so we don't JIT from signal context
+			st.Handler (9);
+
+			// Insert handler
 			SignalHandler oh = Stdlib.signal (Signum.SIGUSR1, 
 					new SignalHandler (st.Handler));
 
@@ -58,6 +69,8 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		// MSVCRT.DLL doesn't export snprintf(3).
+		[Category ("NotDotNet")]
 		public void Snprintf ()
 		{
 			StringBuilder s = new StringBuilder (1000);

@@ -18,7 +18,7 @@ using Mono.Unix;
 
 namespace MonoTests.Mono.Unix {
 
-	[TestFixture]
+	[TestFixture, Category ("NotDotNet")]
 	public class UnixGroupTest
 	{
 		[Test]
