@@ -33,7 +33,7 @@ using System.Collections;
 using System.Text;
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class ASTList : AST {
 
@@ -48,6 +48,10 @@ namespace Microsoft.JScript.Tmp {
 		{
 			elems.Add (elem);
 			return this;
+		}
+
+		internal int Size {
+			get { return elems.Count; }
 		}
 
 		public override string ToString ()
