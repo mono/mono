@@ -349,7 +349,7 @@ namespace System.Windows.Forms {
     			get {
     				return allowDrop;
     			}
-    			set {
+    			set {		
     				allowDrop=value;
     			}
     		}
@@ -2962,8 +2962,8 @@ namespace System.Windows.Forms {
 				case Msg.WM_RBUTTONDOWN:
 					if (contextMenu != null){
 						contextMenu.Show (this, 
-							new Point (Win32.HIGH_ORDER (m.LParam.ToInt32 ()),
-								    Win32.LOW_ORDER (m.LParam.ToInt32 ())));
+							new Point (Win32.LOW_ORDER (m.LParam.ToInt32 ()),
+								    Win32.HIGH_ORDER (m.LParam.ToInt32 ())));
 					}
 					OnMouseDown ( Msg2MouseEventArgs( ref m ) );
 					CallControlWndProc (ref m);
