@@ -1,3 +1,8 @@
+2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomainSetup.cs: don't throw an exception if dynamic_base has not
+	been set. Just return null as MS. Fixes bug #58120.
+
 2004-05-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* Boolean.cs, Byte.cs, Char.cs, DBNull.cs, DateTime.cs,

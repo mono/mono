@@ -104,6 +104,9 @@ namespace System
 
 		public string DynamicBase {
 			get {
+				if (dynamic_base == null)
+					return null;
+
 				if (Path.IsPathRooted (dynamic_base))
 					return dynamic_base;
 
