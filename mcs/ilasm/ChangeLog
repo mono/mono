@@ -1,3 +1,7 @@
+2003-05-19 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Print error exception when compilation fails.
+		
 2003-05-18 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Return an error code if any errors occur during
