@@ -2710,6 +2710,12 @@ namespace Mono.MonoBASIC {
 			Initializer = init;
 		}
 
+		public Constructor (string name, int mod, Parameters args, ConstructorInitializer init, Location l)
+			: base (null, mod, AllowedModifiers, name, null, args, l)
+		{
+			Initializer = init;
+		}
+
 		//
 		// Returns true if this is a default constructor
 		//

@@ -1,4 +1,9 @@
 2004-07-09 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay:
+	* class.cs:
+		Default modifier for constructor is set to Public
+
+2004-07-09 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Parentheses in method declarations made optional incase of empty parameter list. Thus, a method "Sub s()" can also be declared as "Sub s"
 
 2004-07-07 Anirban Bhattacharjee <banirban@novell.com>
