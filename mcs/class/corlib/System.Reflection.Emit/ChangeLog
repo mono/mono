@@ -1,3 +1,8 @@
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilder.cs: Add internal BestFitMapping and 
+	ThrowOnUnmappableChar properties used by mcs.
+
 2005-03-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* ILGenerator.cs (DeclareLocal): Throw an exception for null argument.

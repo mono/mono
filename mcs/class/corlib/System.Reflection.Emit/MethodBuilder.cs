@@ -57,7 +57,7 @@ namespace System.Reflection.Emit {
 		private MethodInfo override_method;
 		private string pi_dll;
 		private string pi_entry;
-		private CharSet ncharset;
+		private CharSet ncharset; /* this also encodes set_last_error etc */
 		private CallingConvention native_cc;
 		private CallingConventions call_conv;
 		private bool init_locals = true;
@@ -137,6 +137,20 @@ namespace System.Reflection.Emit {
 		public string Signature {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		/* Used by mcs */
+		internal bool BestFitMapping {
+			set {
+				ncharset = (CharSet)(((int)ncharset & ~0x30) | (value ? 0x10 : 0x20));
+			}
+		}
+
+		/* Used by mcs */
+		internal bool ThrowOnUnmappableChar {
+			set {
+				ncharset = (CharSet)(((int)ncharset & ~0x3000) | (value ? 0x1000 : 0x2000));
 			}
 		}
 
