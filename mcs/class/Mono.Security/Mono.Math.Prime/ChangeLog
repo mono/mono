@@ -1,3 +1,7 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrimalityTests.cs: FxCop-ized. CLS compliance. Removed local RNG.
+
 2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConfidenceFactor.cs: New. Copied from corlib. Required for PKCS1 and

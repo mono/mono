@@ -8,11 +8,9 @@
 //
 
 using System;
-using System.Security.Cryptography;
 
 namespace Mono.Math.Prime {
 
-	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
@@ -20,7 +18,6 @@ namespace Mono.Math.Prime {
 #endif
 	delegate bool PrimalityTest (BigInteger bi, ConfidenceFactor confidence);
 
-	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
@@ -28,11 +25,15 @@ namespace Mono.Math.Prime {
 #endif
 	sealed class PrimalityTests {
 
+		private PrimalityTests ()
+		{
+		}
+
 		#region SPP Test
 		
 		private static int GetSPPRounds (BigInteger bi, ConfidenceFactor confidence)
 		{
-			int bc = bi.bitCount();
+			int bc = bi.BitCount();
 
 			int Rounds;
 
@@ -102,21 +103,20 @@ namespace Mono.Math.Prime {
 
 			BigInteger t = p_sub1 >> s;
 
-			int bits = bi.bitCount ();
+			int bits = bi.BitCount ();
 			BigInteger a = null;
-			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
 			BigInteger.ModulusRing mr = new BigInteger.ModulusRing (bi);
 
 			for (int round = 0; round < Rounds; round++) {
 				while (true) {		           // generate a < n
-					a = BigInteger.genRandom (bits, rng);
+					a = BigInteger.GenerateRandom (bits);
 
 					// make sure "a" is not 0
 					if (a > 1 && a < bi)
 						break;
 				}
 
-				if (a.gcd (bi) != 1) return false;
+				if (a.GCD (bi) != 1) return false;
 
 				BigInteger b = mr.Pow (a, t);
 
@@ -177,7 +177,6 @@ namespace Mono.Math.Prime {
 		}
 
 		#endregion
-
 
 		// TODO: Implement the Lucus test
 		// TODO: Implement other new primality tests
