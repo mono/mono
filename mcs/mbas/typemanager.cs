@@ -1541,10 +1541,10 @@ public class TypeManager {
 	public static Type [] ExpandInterfaces (Type [] base_interfaces)
 	{	
 		ArrayList new_ifaces = new ArrayList();
-		new_ifaces = ExpandAllInterfaces (base_interfaces, ref new_ifaces);
+		ExpandAllInterfaces (base_interfaces, ref new_ifaces);
 		Type [] ret = new Type [new_ifaces.Count];
 		new_ifaces.CopyTo (ret, 0);
-
+		
 		return ret;
 	}
 
@@ -1552,7 +1552,7 @@ public class TypeManager {
 	///   Recursively finds out each base interface in case  
 	///   of multiple inheritance
 	/// </summary>
-	public static ArrayList ExpandAllInterfaces 
+	public static void ExpandAllInterfaces 
 			(Type [] base_interfaces, ref ArrayList new_ifaces)
 	{
 		foreach (Type iface in base_interfaces) {
@@ -1566,8 +1566,6 @@ public class TypeManager {
 			if (implementing.Length != 0)
 				ExpandAllInterfaces (implementing, ref new_ifaces);
 		}
-
-		return new_ifaces;
 	}
 		
 	/// <summary>

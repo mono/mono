@@ -1,4 +1,7 @@
 2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
+	* typemanager.cs: Little correction in my last checked-in code - removed unnecessary return value from ExpandAllInterfaces function
+
+2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Trivial bug fixing to get test InterfaceB.vb going
 
 2004-08-13 Rob Tillie <Rob.Tillie@student.tul.edu>
