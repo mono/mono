@@ -1,5 +1,9 @@
 2004-04-26  Jackson Harper  <jackson@ximian.com>
 
+	* appdomain.c: Increment version number.
+	
+2004-04-26  Jackson Harper  <jackson@ximian.com>
+
 	* appdomain.c: Set assembly references public token value when
 	PublicKeyToken is specified, not the hash_value. Free public token
 	values when free assembly name data. Previously the public key
