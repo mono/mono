@@ -144,24 +144,30 @@ namespace Mono.Data.SybaseClient {
 		public bool GetBoolean (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is bool))
+			if (!(value is bool)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (bool) value;
 		}
 
 		public byte GetByte (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is byte))
+			if (!(value is byte)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (byte) value;
 		}
 
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is byte []))
+			if (!(value is byte [])) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((byte []) value).Length - dataIndex;
 		}
@@ -169,16 +175,20 @@ namespace Mono.Data.SybaseClient {
 		public char GetChar (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is char))
+			if (!(value is char)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (char) value;
 		}
 
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is char[]))
+			if (!(value is char[])) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((char []) value).Length - dataIndex;
 		}
@@ -197,24 +207,30 @@ namespace Mono.Data.SybaseClient {
 		public DateTime GetDateTime (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is DateTime))
+			if (!(value is DateTime)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (DateTime) value;
 		}
 
 		public decimal GetDecimal (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is decimal))
+			if (!(value is decimal)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (decimal) value;
 		}
 
 		public double GetDouble (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is double))
+			if (!(value is double)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (double) value;
 		}
 
@@ -226,40 +242,50 @@ namespace Mono.Data.SybaseClient {
 		public float GetFloat (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is float))
+			if (!(value is float)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (float) value;
 		}
 
 		public Guid GetGuid (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is Guid))
+			if (!(value is Guid)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (Guid) value;
 		}
 
 		public short GetInt16 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is short))
+			if (!(value is short)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (short) value;
 		}
 
 		public int GetInt32 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is int))
+			if (!(value is int)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (int) value;
 		}
 
 		public long GetInt64 (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is long))
+			if (!(value is long)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (long) value;
 		}
 
@@ -582,18 +608,18 @@ namespace Mono.Data.SybaseClient {
 
 			switch (type) {
 			case SybaseType.BigInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseInt64.Null;
 				return (SybaseInt64) ((long) value);
 			case SybaseType.Binary:
 			case SybaseType.Image:
 			case SybaseType.VarBinary:
 			case SybaseType.Timestamp:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseBinary.Null;
 				return (SybaseBinary) ((byte[]) value);
 			case SybaseType.Bit:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseBoolean.Null;
 				return (SybaseBoolean) ((bool) value);
 			case SybaseType.Char:
@@ -602,47 +628,47 @@ namespace Mono.Data.SybaseClient {
 			case SybaseType.NVarChar:
 			case SybaseType.Text:
 			case SybaseType.VarChar:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseString.Null;
 				return (SybaseString) ((string) value);
 			case SybaseType.DateTime:
 			case SybaseType.SmallDateTime:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseDateTime.Null;
 				return (SybaseDateTime) ((DateTime) value);
 			case SybaseType.Decimal:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseDecimal.Null;
 				if (value is TdsBigDecimal)
 					return SybaseDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
 				return (SybaseDecimal) ((decimal) value);
 			case SybaseType.Float:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseDouble.Null;
 				return (SybaseDouble) ((double) value);
 			case SybaseType.Int:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseInt32.Null;
 				return (SybaseInt32) ((int) value);
 			case SybaseType.Money:
 			case SybaseType.SmallMoney:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseMoney.Null;
 				return (SybaseMoney) ((decimal) value);
 			case SybaseType.Real:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseSingle.Null;
 				return (SybaseSingle) ((float) value);
 			case SybaseType.UniqueIdentifier:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseGuid.Null;
 				return (SybaseGuid) ((Guid) value);
 			case SybaseType.SmallInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseInt16.Null;
 				return (SybaseInt16) ((short) value);
 			case SybaseType.TinyInt:
-				if (value == null)
+				if (value == DBNull.Value)
 					return SybaseByte.Null;
 				return (SybaseByte) ((byte) value);
 			}
@@ -670,8 +696,10 @@ namespace Mono.Data.SybaseClient {
 		public string GetString (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is string))
+			if (!(value is string)) {
+				if (value is DBNull) throw new SybaseNullValueException ();
 				throw new InvalidCastException ();
+			}
 			return (string) value;
 		}
 
@@ -707,7 +735,7 @@ namespace Mono.Data.SybaseClient {
 
 		public bool IsDBNull (int i)
 		{
-			return GetValue (i) == null;
+			return GetValue (i) == DBNull.Value;
 		}
 
 		public bool NextResult ()

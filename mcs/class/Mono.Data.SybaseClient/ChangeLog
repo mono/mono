@@ -1,3 +1,10 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Mono.Data.SybaseClient/SybaseDataReader.cs: Null values are now 
+	  represented with DBNull instances. Deal with this.
+	* Mono.Data.SybaseTypes/SybaseNullValueException.cs: Use a more clarifying
+	  error message.
+
 2003-12-19  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.SybaseClient/SybasePermission.cs:
 		Change constructor.

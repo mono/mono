@@ -18,7 +18,7 @@ namespace Mono.Data.SybaseTypes {
 		#region Constructors
 
 		public SybaseNullValueException ()
-			: base (Locale.GetText ("The value property is null"))
+			: base (Locale.GetText ("Data is Null. This method or property cannot be called on Null values."))
 		{
 		}
 
