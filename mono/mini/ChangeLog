@@ -1,3 +1,7 @@
+2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (handle_stack_args): Avoid reusing variables for stack slots.
+	Fixes #58863.
 
 Tue May 25 14:33:56 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
