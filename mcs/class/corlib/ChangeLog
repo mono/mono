@@ -1,3 +1,8 @@
+2002-07-29  Martin Baulig  <martin@gnome.org>
+
+	* list: Removed, this isn't used anymore and people are already
+	getting confused which file to use.
+
 2002-07-24  Duncan Mak  <duncan@ximian.com>
 
 	* unix.args: Added files from Remoting.Lifetime and
