@@ -215,6 +215,7 @@ namespace Mono.CSharp
 				"   -warnaserror[+|-]  Treat warnings as errors\n" +
 				"   -warn:LEVEL        Sets warning level (the highest is 4, the default)\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" +
+				"   -2                 Enables experimental C# features\n" +
 				"\n" +
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
@@ -1068,6 +1069,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "/v2":
+			case "/2":
 				SetupV2 ();
 				return true;
 				

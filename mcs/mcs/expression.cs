@@ -3115,9 +3115,9 @@ namespace Mono.CSharp {
 				else
 					ig.Emit (OpCodes.Clt);
 				
-				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.Ldc_I4_0);
 				
-				opcode = OpCodes.Sub;
+				opcode = OpCodes.Ceq;
 				break;
 
 			case Operator.BitwiseOr:

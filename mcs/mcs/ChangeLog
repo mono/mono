@@ -1,5 +1,11 @@
 2003-10-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.Emit.GreatherThanOrEqual): Fix the code
+	generation for >=, as spotted by Paolo, bug 48679.  
+	Patch from David Waite.
+
+	* cs-tokenizer.cs: Add handling for #pragma.
+
 	* cs-parser.jay: Allow for both yield and yield return in the
 	syntax.  The anti-cobolization of C# fight will go on!
 
