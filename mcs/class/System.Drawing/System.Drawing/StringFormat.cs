@@ -16,7 +16,7 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for StringFormat.
 	/// </summary>
-	public sealed class StringFormat : IDisposable
+	public sealed class StringFormat : IDisposable, ICloneable
 	{
 		private static StringFormat genericDefault;
 		StringAlignment alignment;
@@ -121,6 +121,18 @@ namespace System.Drawing
 				}
 				return(genericDefault);
 			}
+		}
+
+		[MonoTODO("Just to return a valid result")]
+		public static StringFormat GenericTypographic {
+			get {
+				return GenericDefault;
+			}
+		}
+
+		[MonoTODO]
+		public object Clone () {
+			throw new NotImplementedException ();
 		}
 	}
 }

@@ -33,7 +33,19 @@ namespace System.Drawing {
 
 		public Font(Font original, FontStyle style)
 		{
-			throw new NotImplementedException();
+			_bold = original.Bold;
+			_fontFamily = original.FontFamily;
+			_gdiCharSet = original.GdiCharSet;
+			_gdiVerticalFont = original.GdiVerticalFont;
+			_height = original.Height;
+			_italic = original.Italic;
+			_name = original.Name;
+			_size = original.Size;
+			_sizeInPoints = original.SizeInPoints;
+			_strikeout = original.Strikeout;
+			_underline = original.Underline;
+			_unit = original.Unit;
+			_style = style;
 		}
 
 		public Font(FontFamily family, float emSize)
@@ -90,81 +102,94 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 		
+		private bool _bold;
 		public bool Bold {
 			get {
-				throw new NotImplementedException ();
+				return _bold;
 			}
 		}
 		
+		private FontFamily _fontFamily;
 		public FontFamily FontFamily {
 			get {
-				throw new NotImplementedException ();
+				return _fontFamily;
 			}
 		}
 		
+		private byte _gdiCharSet;
 		public byte GdiCharSet {
 			get {
-				throw new NotImplementedException ();
+				return _gdiCharSet;
 			}
 		}
 		
+		private bool _gdiVerticalFont;
 		public bool GdiVerticalFont {
 			get {
-				throw new NotImplementedException ();
+				return _gdiVerticalFont;
 			}
 		}
 		
+		private int _height;
 		public int Height {
 			get {
-				throw new NotImplementedException ();
+				return _height;
 			}
 		}
 
+		private bool _italic;
 		public bool Italic {
 			get {
-				throw new NotImplementedException ();
+				return _italic;
 			}
 		}
 
+		private string _name;
 		public string Name {
 			get {
-				throw new NotImplementedException ();
+				return _name;
 			}
 		}
 
+		private float _size;
 		public float Size {
 			get {
-				throw new NotImplementedException ();
+				return _size;
 			}
 		}
 
+		private float _sizeInPoints;
 		public float SizeInPoints {
 			get {
-				throw new NotImplementedException ();
+				return _sizeInPoints;
 			}
 		}
 
+		private bool _strikeout;
 		public bool Strikeout {
 			get {
-				throw new NotImplementedException ();
+				return _strikeout;
 			}
 		}
 		
+		private FontStyle _style;
 		public FontStyle Style {
 			get {
-				throw new NotImplementedException ();
+				return _style;
 			}
 		}
 
+		private bool _underline;
 		public bool Underline {
 			get {
-				throw new NotImplementedException ();
+				return _underline;
 			}
 		}
 
+		private GraphicsUnit _unit;
 		public GraphicsUnit Unit {
 			get {
-				throw new NotImplementedException ();
+				return _unit;
 			}
 		}
 	}

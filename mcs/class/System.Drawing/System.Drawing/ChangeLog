@@ -1,3 +1,9 @@
+2003-12-13  Todd Berman  <tberman@sevenl.net>
+
+	* Font.cs: Implementing a couple things for porting purposes
+	* SystemBrushes.cs: ^
+	* StringFormat.cs: ^^
+
 2003-11-28  Duncan Mak  <duncan@ximian.com>
 
 	* Pen.cs (CompoundArray): Hide this for now.

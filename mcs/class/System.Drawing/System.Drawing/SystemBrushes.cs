@@ -105,5 +105,11 @@ namespace System.Drawing
 				return new SolidBrush(SystemColors.WindowText);
 			}
 		}
+		[MonoTODO]
+		public static Brush InactiveBorder {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }
