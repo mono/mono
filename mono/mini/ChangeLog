@@ -1,3 +1,9 @@
+2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_patch_code): Allways create a trampoline for
+	jumps, since the method we are jumping to might be domain-specific.
+
+	* aot.c: Added support for MONO_PATCH_INFO_METHOD_JUMP.
 
 Tue Sep 23 10:50:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
