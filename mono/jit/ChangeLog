@@ -1,7 +1,7 @@
 2002-07-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack CEE_DIV): added fix from Zoltan Varga
-	(bug #25360)
+	(bug #27423)
 
 	* helpers.c (mono_map_ldind_type): added suggested changes from
 	Zoltan Varga (support MONO_TYPE_U), variou 64bit fixes
