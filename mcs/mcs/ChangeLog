@@ -1,3 +1,8 @@
+2003-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* typemanager.cs: fixes bug #45889 by only adding public types from
+	other assemblies to the list of known types.
+
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs (Attribute.Resolve): Add call to CheckAccessLevel
