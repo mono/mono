@@ -51,8 +51,9 @@ namespace System.Runtime.Remoting.Channels {
 		}
 		
 		[MonoTODO]
-		void ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, Stream requestStream,
-				     out ITransportHeaders responseHeaders, out Stream responseStream)
+		public ServerProcessing ProcessMessage (IServerChannelSinkStack sinkStack,
+							IMessage requestMsg, ITransportHeaders requestHeaders, Stream requestStream,
+							out IMessage responseMsg, out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
 			throw new NonImplementedException ();
 		}
