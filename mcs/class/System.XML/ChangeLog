@@ -1,3 +1,8 @@
+2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlParserInput.cs and DTDObjectModel.cs to list.unix and 
+	  Mono.System.Xml.csproj.
+
 2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlInputStream.cs to list.unix and Mono.System.Xml.csproj.

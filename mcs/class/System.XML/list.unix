@@ -1,4 +1,5 @@
 System.Xml/IHasXmlNode.cs
+System.Xml/DTDObjectModel.cs
 System.Xml/EntityHandling.cs
 System.Xml/Formatting.cs
 System.Xml/IXmlLineInfo.cs
@@ -58,6 +59,7 @@ System.Xml/XmlTextWriterOpenElement.cs
 System.Xml/XmlDocumentNavigator.cs
 System.Xml/XmlNodeArrayList.cs
 System.Xml/XmlInputStream.cs
+System.Xml/XmlParserInput.cs
 System.Xml.XPath/IXPathNavigable.cs
 System.Xml.XPath/XPathNavigator.cs
 System.Xml.XPath/XPathExpression.cs

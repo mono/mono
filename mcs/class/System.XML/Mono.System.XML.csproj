@@ -81,6 +81,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\DTDObjectModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\EntityHandling.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -307,6 +312,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlParserContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlParserInput.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
