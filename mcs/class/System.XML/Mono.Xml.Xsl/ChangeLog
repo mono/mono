@@ -1,5 +1,10 @@
 2003-08-21 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslTransformProcessor.cs: evaluate variables at beginning
+	when / is current node.
+
+2003-08-21 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs, XsltCompiledContext.cs, XslTransformProcessorcs:
 	Fix up namespace handeling
 

@@ -44,18 +44,25 @@ namespace Mono.Xml.Xsl {
 
 		public void Process (XPathNavigator root, Outputter outputtter, XsltArgumentList args, XmlResolver resolver)
 		{
-			if (args != null)
-				foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
-					if (v is XslGlobalParam) {
-						object p = args.GetParam(v.Name.Name, v.Name.Namespace);
-						if (p != null)
-							((XslGlobalParam)v).Override (this, p);
-					}
-				}
-			
 			this.args = args;
 			this.root = root;
 			this.resolver = resolver != null ? resolver : new XmlUrlResolver ();
+			
+			PushNodeset (root.Select ("."));
+			
+			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
+				if (args != null && v is XslGlobalParam) {
+					object p = args.GetParam(v.Name.Name, v.Name.Namespace);
+					if (p != null)
+						((XslGlobalParam)v).Override (this, p);
+					else
+						v.Evaluate (this);
+				}
+				v.Evaluate (this);
+			}
+			
+			PopNodeset ();
+			
 			this.PushOutput (outputtter);
 			this.ApplyTemplates (root.Select ("."), QName.Empty, null);
 			this.PopOutput ();
