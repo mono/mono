@@ -1,11 +1,12 @@
+//
 // System.IO.IsolatedStorage.IsolatedStorageFile
 //
-// Jonathan Pryor (jonpryor@vt.edu)
+// Authors
+// 	Jonathan Pryor (jonpryor@vt.edu)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Jonathan Pryor
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,112 +28,302 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
-using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
+using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Security.Policy;
+using System.Text;
 
-namespace System.IO.IsolatedStorage
-{
+using Mono.Security.Cryptography;
+
+namespace System.IO.IsolatedStorage {
+
 	// This is a terribly named class.  It doesn't actually represent a file as
 	// much as a directory
-	public sealed class IsolatedStorageFile : IsolatedStorage, IDisposable
-	{
-		private DirectoryInfo directory;
+	public sealed class IsolatedStorageFile : IsolatedStorage, IDisposable {
 
-		private IsolatedStorageFile (string directory)
-		{
-			this.directory = new DirectoryInfo (directory);
-			this.directory.Create ();
-		}
-
-		[CLSCompliant(false)]
-		public override ulong CurrentSize {
-			get {return IsolatedStorageInfo.GetDirectorySize(directory);}
-		}
-
-		[CLSCompliant(false)]
-		[MonoTODO ("The IsolatedStorage area should be limited, to prevent DOS attacks.  What's a reasonable size?")]
-		public override ulong MaximumSize {
-			get {return ulong.MaxValue;}
-		}
-
-		[MonoTODO ("Pay attention to scope")]
 		public static IEnumerator GetEnumerator (IsolatedStorageScope scope)
 		{
-			Array a = Directory.GetFileSystemEntries (IsolatedStorageInfo.GetIsolatedStorageDirectory());
-			return a.GetEnumerator ();
+			switch (scope) {
+			case IsolatedStorageScope.User:
+			case IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
+#if NET_2_0
+			case IsolatedStorageScope.Machine:
+#endif
+				break;
+			default:
+				string msg = Locale.GetText ("Invalid scope, only User, User|Roaming and Machine are valid");
+				throw new ArgumentException (msg);
+			}
+
+			return new IsolatedStorageFileEnumerator (scope, GetIsolatedStorageRoot (scope));
 		}
 
-		[MonoTODO ("Functional but missing CAS support")]
-		public static IsolatedStorageFile GetStore (
-			IsolatedStorageScope scope,
-			System.Security.Policy.Evidence domainEvidence,
-			Type domainEvidenceType,
-			System.Security.Policy.Evidence assemblyEvidence,
-			Type assemblyEvidenceType)
+		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope,
+			Evidence domainEvidence, Type domainEvidenceType,
+			Evidence assemblyEvidence, Type assemblyEvidenceType)
 		{
-			return GetStore (scope);
-		}
+			bool domain = ((scope & IsolatedStorageScope.Domain) != 0);
+			if (domain && (domainEvidence == null))
+				throw new ArgumentNullException ("domainEvidence");
 
-		[MonoTODO ("Functional but missing CAS support")]
-		public static IsolatedStorageFile GetStore (
-			IsolatedStorageScope scope,
-			object domainIdentity,
-			object assemblyIdentity)
-		{
-			return GetStore (scope);
-		}
+			bool assembly = ((scope & IsolatedStorageScope.Assembly) != 0);
+			if (assembly && (assemblyEvidence == null))
+				throw new ArgumentNullException ("assemblyEvidence");
 
-		[MonoTODO ("Functional but missing CAS support")]
-		public static IsolatedStorageFile GetStore (
-			IsolatedStorageScope scope,
-			Type domainEvidenceType,
-			Type assemblyEvidenceType)
-		{
-			return GetStore (scope);
-		}
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			if (domain) {
+				if (domainEvidenceType == null) {
+					storageFile._domainIdentity = GetDomainIdentityFromEvidence (domainEvidence);
+				} else {
+					storageFile._domainIdentity = GetTypeFromEvidence (domainEvidence, domainEvidenceType);
+				}
 
-		private static IsolatedStorageFile GetStore (IsolatedStorageScope scope)
-		{
-			string dir = GetScopeDirectory (scope);
+				if (storageFile._domainIdentity == null)
+					throw new IsolatedStorageException (Locale.GetText ("Couldn't find domain identity."));
+			}
 
-			IsolatedStorageFile storageFile = new IsolatedStorageFile (dir);
-			storageFile.InitStore (scope, (Type) null, (Type) null);
+			if (assembly) {
+				if (assemblyEvidenceType == null) {
+					storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (assemblyEvidence);
+				} else {
+					storageFile._assemblyIdentity = GetTypeFromEvidence (assemblyEvidence, assemblyEvidenceType);
+				}
+
+				if (storageFile._assemblyIdentity == null)
+					throw new IsolatedStorageException (Locale.GetText ("Couldn't find assembly identity."));
+			}
+
+			storageFile.PostInit ();
 			return storageFile;
 		}
 
-		private static string GetScopeDirectory (IsolatedStorageScope scope)
+		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, object domainIdentity, object assemblyIdentity)
 		{
-			string dir = "";
+			if (((scope & IsolatedStorageScope.Domain) != 0) &&  (domainIdentity == null))
+				throw new ArgumentNullException ("domainIdentity");
 
-			if ((scope & IsolatedStorageScope.Domain) != 0)
-				dir = IsolatedStorageInfo.CreateDomainFilename (
-					Assembly.GetEntryAssembly (),
-					AppDomain.CurrentDomain);
-			else
-				dir = IsolatedStorageInfo.CreateAssemblyFilename (
-					Assembly.GetEntryAssembly ());
-			return dir;
+			if (((scope & IsolatedStorageScope.Assembly) != 0) &&  (assemblyIdentity == null))
+				throw new ArgumentNullException ("assemblyIdentity");
+
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile._domainIdentity = domainIdentity;
+			storageFile._assemblyIdentity = assemblyIdentity;
+			storageFile.PostInit ();
+			return storageFile;
 		}
 
+		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, Type domainEvidenceType, Type assemblyEvidenceType)
+		{
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			if ((scope & IsolatedStorageScope.Domain) != 0) {
+				storageFile._domainIdentity = GetTypeFromEvidence (AppDomain.CurrentDomain.Evidence, domainEvidenceType);
+			}
+			if ((scope & IsolatedStorageScope.Assembly) != 0) {
+				storageFile._assemblyIdentity = GetTypeFromEvidence (Assembly.GetCallingAssembly ().Evidence, assemblyEvidenceType);
+			}
+			storageFile.PostInit ();
+			return storageFile;
+		}
+#if NET_2_0
+		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, object applicationIdentity)
+		{
+			if (applicationIdentity == null)
+				throw new ArgumentNullException ("applicationIdentity");
+
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile._applicationIdentity = applicationIdentity;
+			storageFile.PostInit ();
+			return storageFile;
+		}
+
+		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, Type applicationEvidenceType)
+		{
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile.InitStore (scope, applicationEvidenceType);
+			storageFile.PostInit ();
+			return storageFile;
+		}
+
+		public static IsolatedStorageFile GetMachineStoreForApplication ()
+		{
+			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Application;
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile.InitStore (scope, null);
+			storageFile.PostInit ();
+			return storageFile;
+		}
+
+		public static IsolatedStorageFile GetMachineStoreForAssembly ()
+		{
+			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Assembly;
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			storageFile.PostInit ();
+			return storageFile;
+		}
+
+		public static IsolatedStorageFile GetMachineStoreForDomain ()
+		{
+			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			storageFile.PostInit ();
+			return storageFile;
+		}
+
+		public static IsolatedStorageFile GetUserStoreForApplication ()
+		{
+			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Application;
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile.InitStore (scope, null);
+			storageFile.PostInit ();
+			return storageFile;
+		}
+#endif
 		public static IsolatedStorageFile GetUserStoreForAssembly ()
 		{
-			return GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Assembly);
+			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Assembly;
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			storageFile.PostInit ();
+			return storageFile;
 		}
 
 		public static IsolatedStorageFile GetUserStoreForDomain ()
 		{
-			return GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly);
+			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
+			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			storageFile.PostInit ();
+			return storageFile;
 		}
 
 		public static void Remove (IsolatedStorageScope scope)
 		{
-			string dir = GetScopeDirectory (scope);
+			string dir = GetIsolatedStorageRoot (scope);
 			Directory.Delete (dir, true);
 		}
+
+		// internal static stuff
+
+		// Security Note: We're using InternalGetFolderPath because 
+		// IsolatedStorage must be able to work even if we do not have
+		// FileIOPermission's PathDiscovery permissions
+		internal static string GetIsolatedStorageRoot (IsolatedStorageScope scope)
+		{
+			// IsolatedStorageScope mixes several flags into one.
+			// This first level deals with the root directory - it
+			// is decided based on User, User+Roaming or Machine
+			string root = null;
+
+			if ((scope & IsolatedStorageScope.User) != 0) {
+				if ((scope & IsolatedStorageScope.Roaming) != 0) {
+					root = Environment.InternalGetFolderPath (Environment.SpecialFolder.LocalApplicationData);
+				} else {
+					root = Environment.InternalGetFolderPath (Environment.SpecialFolder.ApplicationData);
+				}
+#if NET_2_0
+			} else if ((scope & IsolatedStorageScope.Machine) != 0) {
+				root = Environment.InternalGetFolderPath (Environment.SpecialFolder.CommonApplicationData);
+#endif
+			}
+
+			if (root == null) {
+				string msg = Locale.GetText ("Couldn't access storage location for '{0}'.");
+				throw new IsolatedStorageException (String.Format (msg, scope));
+			}
+
+			return Path.Combine (root, ".isolated-storage");
+		}
+
+		internal static ulong GetDirectorySize (DirectoryInfo di)
+		{
+			ulong size = 0;
+
+			foreach (FileInfo fi in di.GetFiles ())
+				size += (ulong) fi.Length;
+
+			foreach (DirectoryInfo d in di.GetDirectories ())
+				size += GetDirectorySize (d);
+
+			return size;
+		}
+
+		// non-static stuff
+
+		private DirectoryInfo directory;
+
+		private IsolatedStorageFile (IsolatedStorageScope scope)
+		{
+			storage_scope = scope;
+		}
+
+		internal IsolatedStorageFile (IsolatedStorageScope scope, string location)
+		{
+			storage_scope = scope;
+			directory = new DirectoryInfo (location);
+			if (!directory.Exists) {
+				string msg = Locale.GetText ("Invalid storage.");
+				throw new IsolatedStorageException (msg);
+			}
+			// load the identities
+		}
+
+		~IsolatedStorageFile ()
+		{
+		}
+
+		private void PostInit ()
+		{
+			string root = GetIsolatedStorageRoot (Scope);
+			string dir = null;
+#if NET_2_0
+			if (_applicationIdentity != null) {
+				dir = String.Format ("a{0}{1}", SeparatorInternal, GetNameFromIdentity (_applicationIdentity));
+			} else
+#endif
+			if (_domainIdentity != null) {
+				dir = String.Format ("d{0}{1}{0}{2}", SeparatorInternal,
+					GetNameFromIdentity (_domainIdentity), GetNameFromIdentity (_assemblyIdentity));
+			} else if (_assemblyIdentity != null) {
+				dir = String.Format ("d{0}none{0}{1}", SeparatorInternal, GetNameFromIdentity (_assemblyIdentity));
+			} else {
+				throw new IsolatedStorageException (Locale.GetText ("No code identity available."));
+			}
+
+			root = Path.Combine (root, dir);
+
+			// identities have been selected
+			directory = new DirectoryInfo (root);
+			if (!directory.Exists) {
+				directory.Create ();
+				SaveIdentities (root);
+			}
+		}
+
+		[CLSCompliant(false)]
+		public override ulong CurrentSize {
+			get { return GetDirectorySize (directory); }
+		}
+
+		[CLSCompliant(false)]
+		[MonoTODO ("Maximum size must be restricted by the security policy")]
+		public override ulong MaximumSize {
+			// return an ulong but default is signed long
+			get { return Int64.MaxValue; }
+		}
+
+		internal string Root {
+			get { return directory.FullName; }
+		}
+
+		// methods
 
 		public void Close ()
 		{
@@ -151,7 +342,7 @@ namespace System.IO.IsolatedStorage
 
 		public void DeleteFile (string file)
 		{
-			File.Delete (directory.Name + "/" + file);
+			File.Delete (Path.Combine (directory.FullName, file));
 		}
 
 		public void Dispose ()
@@ -183,15 +374,101 @@ namespace System.IO.IsolatedStorage
 			directory.Delete (true);
 		}
 
-		~IsolatedStorageFile ()
-		{
-		}
 
 		[MonoTODO ("Permissions are CAS related")]
 		protected override IsolatedStoragePermission GetPermission (PermissionSet ps)
 		{
 			throw new NotImplementedException ();
 		}
+
+		// internal stuff
+
+		private string GetNameFromIdentity (object identity)
+		{
+			// Note: Default evidences return an XML string with ToString
+			byte[] id = Encoding.UTF8.GetBytes (identity.ToString ());
+			SHA1 hash = SHA1.Create ();
+			// this create an unique name for an identity - bad identities like Url
+			// results in bad (i.e. changing) names.
+			byte[] full = hash.ComputeHash (id, 0, id.Length);
+			byte[] half = new byte [10];
+			Buffer.BlockCopy (full, 0, half, 0, half.Length);
+			return CryptoConvert.ToHex (half);
+		}
+
+		private static object GetTypeFromEvidence (Evidence e, Type t)
+		{
+			foreach (object o in e) {
+				if (o.GetType () == t)
+					return o;
+			}
+			return null;
+		}
+
+		private static object GetAssemblyIdentityFromEvidence (Evidence e)
+		{
+			// we prefer...
+			// a. a Publisher evidence
+			object identity = GetTypeFromEvidence (e, typeof (Publisher));
+			if (identity != null)
+				return identity;
+			// b. a StrongName evidence
+			identity = GetTypeFromEvidence (e, typeof (StrongName));
+			if (identity != null)
+				return identity;
+			// c. a Url evidence
+			return GetTypeFromEvidence (e, typeof (Url));
+		}
+
+		private static object GetDomainIdentityFromEvidence (Evidence e)
+		{
+			// we prefer...
+			// a. a ApplicationDirectory evidence
+			object identity = GetTypeFromEvidence (e, typeof (ApplicationDirectory));
+			if (identity != null)
+				return identity;
+			// b. a Url evidence
+			return GetTypeFromEvidence (e, typeof (Url));
+		}
+
+		[Serializable]
+		private struct Identities {
+			public object Application;
+			public object Assembly;
+			public object Domain;
+
+			public Identities (object application, object assembly, object domain)
+			{
+				Application = application;
+				Assembly = assembly;
+				Domain = domain;
+			}
+		}
+
+		private void LoadIdentities (string root)
+		{
+			if (!File.Exists (root + ".storage"))
+				throw new IsolatedStorageException (Locale.GetText ("Missing identities."));
+
+			using (FileStream fs = File.OpenRead (root + ".storage")) {
+				BinaryFormatter deformatter = new BinaryFormatter ();
+				Identities identities = (Identities) deformatter.Deserialize (fs);
+				fs.Close ();
+
+				_applicationIdentity = identities.Application;
+				_assemblyIdentity = identities.Assembly;
+				_domainIdentity = identities.Domain;
+			}
+		}
+
+		private void SaveIdentities (string root)
+		{
+			Identities identities = new Identities (_applicationIdentity, _assemblyIdentity, _domainIdentity);
+			using (FileStream fs = File.OpenWrite (root + ".storage")) {
+				BinaryFormatter formatter = new BinaryFormatter ();
+				formatter.Serialize (fs, identities);
+				fs.Close ();
+			}
+		}
 	}
 }
-

@@ -1,11 +1,10 @@
-// System.IO.IsolatedStorage.IsolatedStorageInfo.cs:
 //
-// Jonathan Pryor (jonpryor@vt.edu)
+// System.IO.IsolatedStorage.IsolatedStorageFileEnumerator
 //
-// (C) 2003 Jonathan Pryor
-
+// Author
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,46 +26,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.IO;
+using System.Collections;
 
 namespace System.IO.IsolatedStorage {
 
-	internal sealed class IsolatedStorageInfo {
-		
-		[MonoTODO("Unix Specific; generalize for Win32")]
-		internal static string GetIsolatedStorageDirectory ()
+	internal class IsolatedStorageFileEnumerator : IEnumerator {
+
+		private IsolatedStorageScope _scope;
+		private string[] _storages;
+		private int _pos;
+
+		public IsolatedStorageFileEnumerator (IsolatedStorageScope scope, string root)
 		{
-			string home = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-
-			if (home == null)
-				home = "~";
-
-			return home + "/.mono/isolated-storage";
+			_scope = scope;
+			// skip application-isolated storages
+			if (Directory.Exists (root))
+				_storages = Directory.GetDirectories (root, "d.*");
+			_pos = -1;
 		}
 
-		internal static string CreateAssemblyFilename (object assembly)
-		{
-                        return Path.Combine (GetIsolatedStorageDirectory (), assembly.ToString ());
+		public object Current {
+			get {
+				if ((_pos < 0) || (_storages == null) || (_pos >= _storages.Length))
+					return null;
+				// recreates a IsolatedStorageFile from the file
+				return new IsolatedStorageFile (_scope, _storages [_pos]);
+			}
 		}
 
-		internal static string CreateDomainFilename (object assembly, object domain)
+		public bool MoveNext ()
 		{
-			return Path.Combine (CreateAssemblyFilename (assembly), domain.ToString());
+			if (_storages == null)
+				return false;
+			return (++_pos < _storages.Length);
 		}
 
-		internal static ulong GetDirectorySize (DirectoryInfo di)
+		public void Reset ()
 		{
-			ulong size = 0;
-
-			foreach (FileInfo fi in di.GetFiles ())
-				size += (ulong) fi.Length;
-
-			foreach (DirectoryInfo d in di.GetDirectories())
-				size += GetDirectorySize (d);
-
-			return size;
+			_pos = -1;
 		}
 	}
 }
-

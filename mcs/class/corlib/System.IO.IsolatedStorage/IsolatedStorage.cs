@@ -1,12 +1,12 @@
 //
 // System.IO.IsolatedStorage.cs
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Authors:
+//	Duncan Mak (duncan@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc. http://www.ximian.com
-//
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,28 +28,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Security;
 using System.Globalization;
+using System.Reflection;
+using System.Security;
 using System.Security.Permissions;
+using System.Security.Policy;
 
-namespace System.IO.IsolatedStorage
-{
-	public abstract class IsolatedStorage : MarshalByRefObject
-	{
+namespace System.IO.IsolatedStorage {
+
+	public abstract class IsolatedStorage : MarshalByRefObject {
+
 		// Constructor
 		protected IsolatedStorage ()
 			: base ()
 		{
 		}
 
-                private IsolatedStorageScope storage_scope;
+                internal IsolatedStorageScope storage_scope;
+		internal object _assemblyIdentity;
+		internal object _domainIdentity;
+		internal object _applicationIdentity;
 
 		// Properties
-		[MonoTODO ("Code Identity is CAS related")]
-		public object AssemblyIdentity {
+
+#if NET_2_0
+		[MonoTODO ("requires manifest support")]
+		public object ApplicationIdentity {
+			[SecurityPermission (SecurityAction.Demand, ControlPolicy=true)]
 			get {
-				throw new NotImplementedException (
-					Locale.GetText ("CAS related")); 
+				if ((storage_scope & IsolatedStorageScope.Application) == 0) {
+					throw new InvalidOperationException (Locale.GetText ("Invalid Isolation Scope.")); 
+				}
+				if (_applicationIdentity == null)
+					throw new InvalidOperationException (Locale.GetText ("Identity unavailable.")); 
+
+				throw new NotImplementedException (Locale.GetText ("CAS related")); 
+			}
+		}
+#endif
+
+		public object AssemblyIdentity {
+			[SecurityPermission (SecurityAction.Demand, ControlPolicy=true)]
+			get {
+#if NET_2_0
+				if ((storage_scope & IsolatedStorageScope.Assembly) == 0) {
+					throw new InvalidOperationException (Locale.GetText ("Invalid Isolation Scope.")); 
+				}
+				if (_assemblyIdentity == null)
+					throw new InvalidOperationException (Locale.GetText ("Identity unavailable.")); 
+#endif
+				return _assemblyIdentity;
 			}
 		}
 
@@ -61,11 +89,15 @@ namespace System.IO.IsolatedStorage
 			}
 		}
 
-		[MonoTODO ("Code Identity is CAS related")]
 		public object DomainIdentity {
+			[SecurityPermission (SecurityAction.Demand, ControlPolicy=true)]
 			get {
-				throw new NotImplementedException (
-					Locale.GetText ("CAS related")); 
+				if ((storage_scope & IsolatedStorageScope.Domain) == 0) {
+					throw new InvalidOperationException (Locale.GetText ("Invalid Isolation Scope.")); 
+				}
+				if (_domainIdentity == null)
+					throw new InvalidOperationException (Locale.GetText ("Identity unavailable.")); 
+				return _domainIdentity;
 			}
 		}
 
@@ -92,16 +124,33 @@ namespace System.IO.IsolatedStorage
 		// Methods
 		protected abstract IsolatedStoragePermission GetPermission (PermissionSet ps);
 
-		[MonoTODO ("Evidences are CAS related")]
-		protected void InitStore (
-			IsolatedStorageScope scope, Type domainEvidenceType,
-			Type assemblyEvidenceType)
+		protected void InitStore (IsolatedStorageScope scope, Type domainEvidenceType, Type assemblyEvidenceType)
 		{
+			// I know it's useless - but it's tested as such...
+			switch (scope) {
+			case (IsolatedStorageScope.Assembly | IsolatedStorageScope.User):
+			case (IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Domain):
+				throw new NotImplementedException (scope.ToString ());
+			default:
+				// invalid (incomplete) scope
+				throw new ArgumentException (scope.ToString ());
+			}
+		}
+#if NET_2_0
+		[MonoTODO ("requires manifest support")]
+		protected void InitStore (IsolatedStorageScope scope, Type appEvidenceType)
+		{
+			if (AppDomain.CurrentDomain.ApplicationIdentity == null)
+				throw new IsolatedStorageException (Locale.GetText ("No ApplicationIdentity available for AppDomain."));
+
+			if (appEvidenceType == null) {
+				// TODO - Choose evidence
+			}
+
 			// no exception here because this can work without CAS
 			storage_scope = scope;
-
 		}
-
+#endif
 		public abstract void Remove ();
 	}
 }
