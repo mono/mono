@@ -1,3 +1,13 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryCas.cs: Added partial trust unit tests.
+	* DirectoryTest.cs: Added missing [Test] attribute to 
+	SetCreationTimeException1.
+	* FileStreamCas.cs: New. CAS unit tests for FileStream.
+	* PathCas.cs: New. CAS unit tests for Path.
+	* PathTest.cs: Splitted TestGetPathRoot test in two so the second part
+	could be re-used in partial trust tests.
+
 2005-03-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FileStreamTest.cs: Added tests for all FileMode when a directory

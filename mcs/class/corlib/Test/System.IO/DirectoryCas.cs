@@ -40,21 +40,90 @@ namespace MonoCasTests.System.IO {
 	[Category ("CAS")]
 	public class DirectoryCas {
 
+		private MonoTests.System.IO.DirectoryTest dt;
+		private string dir;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			// this occurs with a "clean" stack (full trust)
+			dt = new MonoTests.System.IO.DirectoryTest ();
+			dir = Path.Combine (Path.GetTempPath (), "MonoCasTests.System.IO");
+		}
+
 		[SetUp]
 		public void SetUp ()
 		{
 			if (!SecurityManager.SecurityEnabled)
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+			dt.SetUp ();
+		}
+
+		[TearDown]
+		public void TearDown () 
+		{
+			dt.TearDown ();
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown ()
+		{
+			if (Directory.Exists (dir))
+				Directory.Delete (dir, true);
 		}
 
 		private bool RunningOnWindows {
 			get { return ((int) Environment.OSVersion.Platform == 128); }
 		}
 
+		// Partial Trust Tests - i.e. call "normal" unit with reduced privileges
+
 		[Test]
-		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+		[FileIOPermission (SecurityAction.PermitOnly, Unrestricted = true)]
+		public void PartialTrust_PermitOnly_FileIOPermission ()
+		{
+			// test under limited permissions (only FileIOPermission)
+			dt.CreateDirectory ();
+			dt.Delete ();
+			dt.Exists ();
+			dt.Move ();
+			dt.LastAccessTime ();
+			dt.LastWriteTime ();
+			dt.GetDirectories ();
+			dt.GetFiles ();
+			dt.GetNoFiles ();
+		}
+
+		// test Demand by denying the required permissions
+
+		[Test]
+		[FileIOPermission (SecurityAction.Deny, Unrestricted = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void CreateDirectory ()
+		{
+			// FIXME: Change Deny to imperative when supported
+			Directory.CreateDirectory (dir);
+		}
+
+		[Test]
 		[ExpectedException (typeof (SecurityException))]
 		public void SetCurrentDirectory_DoesntExist ()
+		{
+			string cd = null;
+			try {
+				cd = Directory.GetCurrentDirectory ();
+				// this will change the current directory (to / or C:\) 
+				// and cause tests failures elsewhere...
+				SetCurrentDirectory_DoesntExist_Restricted ();
+			}
+			finally {
+				// ... unless we return to the original directory
+				Directory.SetCurrentDirectory (cd);
+			}
+		}
+
+		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+		private void SetCurrentDirectory_DoesntExist_Restricted ()
 		{
 			if (RunningOnWindows) {
 				Directory.SetCurrentDirectory ("C:\\D0ES-N0T-EX1ST\\");

@@ -479,8 +479,15 @@ namespace MonoTests.System.IO
 
 			string pathRoot = Path.GetPathRoot (current);
 			AssertEquals ("GetPathRoot #01", expected, pathRoot);
+		}
 
-			pathRoot = Path.GetPathRoot ("hola");
+		[Test]
+		public void TestGetPathRoot2 ()
+		{
+			// note: this method doesn't call Directory.GetCurrentDirectory so it can be
+			// reused for partial trust unit tests in PathCas.cs
+
+			string pathRoot = Path.GetPathRoot ("hola");
 			AssertEquals ("GetPathRoot #02", String.Empty, pathRoot);
 
 			pathRoot = Path.GetPathRoot (null);

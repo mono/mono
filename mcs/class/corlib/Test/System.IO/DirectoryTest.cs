@@ -970,7 +970,8 @@ public class DirectoryTest : Assertion {
 //		}
 //	}
 
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[Test]
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void SetCreationTimeException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
