@@ -1,3 +1,13 @@
+2002-04-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* message.c (arch_return_value): impl.
+	(arch_method_return_message_restore): consider delegate BeginInvoke
+
+	* jit.c: removed jit_exec_main()
+
+	* delegate.c (arch_begin_invoke): use the message builder to make
+	it architecture independent - still needs more cleanup.
+
 2002-04-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* delegate.c (mono_delegate_ctor): support for transparent proxy

@@ -1,3 +1,7 @@
+2002-04-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (interp_mono_runtime_invoke): handle more types,
+	removed runtime_exec_main
 
 Thu Apr 4 11:36:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
