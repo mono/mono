@@ -1,5 +1,9 @@
 2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* RadioButtonList.cs: fix for bug #48874 by Yaron Shkop.
+
+2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* RadioButtonList.cs: fix for bug #48870 by Yaron Shkop.
 
 2003-09-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>

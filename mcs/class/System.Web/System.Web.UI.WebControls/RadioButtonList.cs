@@ -173,18 +173,20 @@ namespace System.Web.UI.WebControls
 
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
-			string value = postCollection[postDataKey];
-			for(int i=0; i < Items.Count; i++)
-			{
-				if(Items[i].Value == value)
-				{
-					if(i != SelectedIndex)
-					{
-						SelectedIndex = i;
-					}
-					return true;
+			string value = postCollection [postDataKey];
+			int c = Items.Count;
+			for (int i = 0; i < c; i++) {
+				if (Items [i].Value != value)
+					continue;
+
+				if (i != SelectedIndex) {
+					SelectedIndex = i;
+					selectionIndexChanged = true;
 				}
+
+				return true;
 			}
+
 			return false;
 		}
 
