@@ -835,7 +835,7 @@ namespace System.Xml.XPath
 			if (_finished)
 				return false;
 			if (RequireSorting) {
-				if (_pos <= 0) {
+				if (_navStore == null) {
 					CollectResults ();
 					if (_navStore.Count == 0) {
 						_finished = true;
@@ -1041,6 +1041,7 @@ namespace System.Xml.XPath
 		public override bool RequireSorting { get { return true; } }
 	}
 
+	/*
 	internal class EnumeratorIterator : BaseIterator
 	{
 		protected IEnumerator _enum;
@@ -1084,7 +1085,7 @@ namespace System.Xml.XPath
 
 		public override bool RequireSorting { get { return _requireSorting; } }
 	}
-
+	*/
 
 	internal class ListIterator : BaseIterator
 	{

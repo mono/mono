@@ -1,3 +1,10 @@
+2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultContext.cs : Globalization.
+	* Iterator.cs : In SlashIterator.MoveNext() position might keep 0
+	  in case of empty list. Thus extraneous iteration might happened.
+	  Removed unused (and clone unsafe) EnumeratorIterator.
+
 2004-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathDocument.s : The previous patch is still incomplete to close.

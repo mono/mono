@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -419,10 +420,10 @@ namespace System.Xml.XPath
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("concat(");
 			for (int i = 0; i < rgs.Count - 1; i++) {
-				sb.Append (rgs [i].ToString ());
+				sb.AppendFormat (CultureInfo.InvariantCulture, "{0}", rgs [i].ToString ());
 				sb.Append (',');
 			}
-			sb.Append (rgs [rgs.Count - 1].ToString ());
+			sb.AppendFormat (CultureInfo.InvariantCulture, "{0}", rgs [rgs.Count - 1].ToString ());
 			sb.Append (')');
 			return sb.ToString ();
 		}
@@ -858,8 +859,8 @@ namespace System.Xml.XPath
 
 		public override object Evaluate (BaseIterator iter)
 		{
-			string lang = arg0.EvaluateString (iter).ToLower ();
-			string actualLang = iter.Current.XmlLang.ToLower ();
+			string lang = arg0.EvaluateString (iter).ToLower (CultureInfo.InvariantCulture);
+			string actualLang = iter.Current.XmlLang.ToLower (CultureInfo.InvariantCulture);
 			
 			return lang == actualLang || lang == (actualLang.Split ('-')[0]);
 		}
