@@ -28,3 +28,6 @@
 	* MeasureItemEventArgs :added stubbed classes. Commented out.
 	* IButtonControl.cs : Added interface.
 
+2002-4-23 Dennis Hayes <dennish@raytek.com>
+* added stubbed and commented out classes from F to G *
+
