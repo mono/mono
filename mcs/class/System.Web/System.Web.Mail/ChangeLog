@@ -1,3 +1,7 @@
+2005-01-28  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Base64AttachmentEncoder.cs: Fixed warning.
+
 2004-10-27  Sanjay Gupta <gsanjay@novell.com>
 	
 	* SmtpClient.cs: Fix for bug 68829.

@@ -51,7 +51,6 @@ namespace System.Web.Mail {
             byte[] cipherText = new byte[ base64.OutputBlockSize ];
 
             int readLength = 0;
-            int trLength = 0;
 	    int count = 0;
 	    byte[] newln = new byte[] { 13 , 10 }; //CR LF with mail
 
@@ -69,7 +68,7 @@ namespace System.Web.Mail {
                 // is less than the InputBlockSize then write the final block
                 if( readLength == plainText.Length ) {
                 
-                    trLength = base64.TransformBlock( plainText , 0 , 
+                    base64.TransformBlock( plainText , 0 , 
                                                       plainText.Length ,
                                                       cipherText , 0 );
                 		    
