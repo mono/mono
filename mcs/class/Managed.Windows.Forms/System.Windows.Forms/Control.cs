@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.34 $
+// $Revision: 1.35 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.35  2004/08/20 01:17:24  pbartok
+// - Added handling of WM_MOUSEHOVER
+// - Worked around 'bug' in Win32 WM_MOUSE_ENTER/WM_MOUSE_LEAVE driver code
+//
 // Revision 1.34  2004/08/19 23:09:22  pbartok
 // - Added Right property
 // - Added RightToLeft property
@@ -184,6 +188,7 @@ namespace System.Windows.Forms
 		// State
 		internal bool			has_focus;		// true if control has focus
 		internal bool			is_visible;		// true if control is visible
+		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
 		internal int			tab_index;		// position in tab order of siblings
 		internal bool			tab_stop = true;
@@ -495,6 +500,7 @@ namespace System.Windows.Forms
 			is_visible = true;
 			is_disposed = false;
 			is_enabled = true;
+			is_entered = false;
 			has_focus = false;
 			layout_suspended = 0;		
 			double_buffering = true;
@@ -1628,15 +1634,25 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_MOUSE_ENTER: {
+					if (is_entered) {
+						return;
+					}
+					is_entered = true;
 					OnMouseEnter(EventArgs.Empty);
 					break;
 				}
 
 				case Msg.WM_MOUSE_LEAVE: {
+					is_entered=false;
 					OnMouseLeave(EventArgs.Empty);
 					break;
 				}
 
+				case Msg.WM_MOUSEHOVER:	{
+					OnMouseHover(EventArgs.Empty);
+					break;
+				}
+			
 				case Msg.WM_SIZE: {					
 					if (GetStyle(ControlStyles.ResizeRedraw)) {
 						Invalidate();
