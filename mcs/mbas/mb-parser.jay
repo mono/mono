@@ -358,7 +358,7 @@ imports_directive
 imports_namespace_directive
 	: IMPORTS qualified_identifier EOL 
 	  {
-		current_namespace.Using ((string) $2);
+		current_namespace.Using ((string) $2, lexer.Location);
 	  }
 	;
 

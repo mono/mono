@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 		string name;
 		ArrayList using_clauses;
 		Hashtable aliases;
-		bool decl_found = false;
+		public bool DeclarationFound = false;
 		
 		/// <summary>
 		///   Constructor Takes the current namespace and the
@@ -58,22 +58,12 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   When a declaration is found in a namespace,
-		///   we call this function, to emit an error if the
-		///   program attempts to use a using clause afterwards
-		/// </summary>
-		public void DeclarationFound ()
-		{
-			decl_found = true;
-		}
-
-		/// <summary>
 		///   Records a new namespace for resolving name references
 		/// </summary>
-		public void Using (string ns)
+		public void Using (string ns, Location loc)
 		{
-			if (decl_found){
-				Report.Error (1529, "A using clause must precede all other namespace elements");
+			if (DeclarationFound){
+				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
 				return;
 			}
 

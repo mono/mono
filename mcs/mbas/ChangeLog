@@ -1,3 +1,6 @@
+2002-07-09  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged attribute.cs, ecore.cs, namespace.cs and statement.cs from mcs/mcs, to resync
+
 2002-07-06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged attribute.cs, class.cs, codegen.cs, ecore.cs, expression.cs, 
 	  modifiers.cs, namespace.cs, report.cs, rootcontext.cs, statement.cs and typemanager.cs from mcs/mcs, to resync

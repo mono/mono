@@ -744,8 +744,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (entry_point == null)
+				entry_point = name;
+			
 			MethodBuilder mb = builder.DefinePInvokeMethod (
-				name, dll_name, flags | MethodAttributes.HideBySig,
+				name, dll_name, entry_point, flags | MethodAttributes.HideBySig,
 				CallingConventions.Standard,
 				ret_type,
 				param_types,

@@ -757,7 +757,10 @@ namespace Mono.CSharp {
 			}
 
 			ec.Breaks = true;
-			ig.Emit (OpCodes.Br, ec.LoopEnd);
+			if (ec.InTry || ec.InCatch)
+				ig.Emit (OpCodes.Leave, ec.LoopEnd);
+			else
+				ig.Emit (OpCodes.Br, ec.LoopEnd);
 
 			return false;
 		}
@@ -2133,9 +2136,18 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			return Block.Resolve (ec);
+			bool previous_state = ec.CheckState;
+			bool previous_state_const = ec.ConstantCheckState;
+			
+			ec.CheckState = true;
+			ec.ConstantCheckState = true;
+			bool ret = Block.Resolve (ec);
+			ec.CheckState = previous_state;
+			ec.ConstantCheckState = previous_state_const;
+
+			return ret;
 		}
-		
+
 		public override bool Emit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;

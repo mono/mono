@@ -1574,8 +1574,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Performs the explicit numeric conversions
 		/// </summary>
-		static Expression ConvertNumericExplicit (EmitContext ec, Expression expr,
-							  Type target_type)
+		static Expression ConvertNumericExplicit (EmitContext ec, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -2790,8 +2789,8 @@ namespace Mono.CSharp {
 		public ConvCast (EmitContext ec, Expression child, Type return_type, Mode m)
 			: base (child, return_type)
 		{
-			mode = m;
 			checked_state = ec.CheckState;
+			mode = m;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -3728,7 +3727,10 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
-				InstanceExpression.Emit (ec);
+				if (InstanceExpression is IMemoryLocation)
+					((IMemoryLocation)InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
+				else
+					InstanceExpression.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
