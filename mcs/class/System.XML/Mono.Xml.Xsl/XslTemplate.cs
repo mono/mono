@@ -116,9 +116,11 @@ namespace Mono.Xml.Xsl {
 				sorted = true;
 			}
 			
-			foreach (TemplateWithPriority t in this.unnamedTemplates)
+			for (int i = 0; i < unnamedTemplates.Count; i++) {
+				TemplateWithPriority t = (TemplateWithPriority) unnamedTemplates [i];
 				if (t.Matches (node, p))
 					return t.Template;
+			}
 
 			return null;
 		}

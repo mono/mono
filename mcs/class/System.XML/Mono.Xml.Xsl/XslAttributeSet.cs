@@ -82,8 +82,8 @@ namespace Mono.Xml.Xsl {
 			p.SetBusy (this);
 			
 			if (usedAttributeSets != null) {
-				foreach (QName set in usedAttributeSets)
-				{
+				for (int i = 0; i < usedAttributeSets.Count; i++) {
+					QName set = (QName) usedAttributeSets [i];
 					XslAttributeSet s = p.ResolveAttributeSet (set);
 					if (s == null)
 						throw new XsltException ("Could not resolve attribute set", null, p.CurrentNode);
@@ -95,8 +95,8 @@ namespace Mono.Xml.Xsl {
 				}
 			}
 						
-			foreach (Operations.XslAttribute a in attributes)
-				a.Evaluate (p);
+			for (int i = 0; i < attributes.Count; i++)
+				((XslAttribute) attributes [i]).Evaluate (p);
 			
 			p.SetFree (this);
 		}

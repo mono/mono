@@ -184,8 +184,9 @@ namespace Mono.Xml.Xsl {
 			XmlQualifiedName qname = new XmlQualifiedName (localName, ns);
 			object o = spaceControls [qname];
 			if (o == null) {
-				foreach (XslStylesheet s in imports) {
-					o = s.SpaceControls [qname];
+
+				for (int i = 0; i < imports.Count; i++) {
+					o = ((XslStylesheet) imports [i]).SpaceControls [qname];
 					if (o != null)
 						break;
 				}
@@ -195,8 +196,8 @@ namespace Mono.Xml.Xsl {
 				qname = new XmlQualifiedName ("*", ns);
 				o = spaceControls [qname];
 				if (o == null) {
-					foreach (XslStylesheet s in imports) {
-						o = s.SpaceControls [qname];
+					for (int i = 0; i < imports.Count; i++) {
+						o = ((XslStylesheet) imports [i]).SpaceControls [qname];
 						if (o != null)
 							break;
 					}
@@ -207,8 +208,8 @@ namespace Mono.Xml.Xsl {
 				qname = new XmlQualifiedName ("*", String.Empty);
 				o = spaceControls [qname];
 				if (o == null) {
-					foreach (XslStylesheet s in imports) {
-						o = s.SpaceControls [qname];
+					for (int i = 0; i < imports.Count; i++) {
+						o = ((XslStylesheet) imports [i]).SpaceControls [qname];
 						if (o != null)
 							break;
 					}
@@ -255,8 +256,8 @@ namespace Mono.Xml.Xsl {
 
 			string result = namespaceAliases [prefix];
 			if (result == null) {
-				foreach (XslStylesheet s in imports) {
-					result = s.namespaceAliases [prefix];
+				for (int i = 0; i < imports.Count; i++) {
+					result = ((XslStylesheet) imports [i]).namespaceAliases [prefix];
 					if (result != null)
 						break;
 				}
