@@ -1544,13 +1544,13 @@
 	* AppDomain.cs: Make the SetDomain icalls private + call InternalInvoke
 	on MonoMethod instead of Invoke.
 
-2003-11-01  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-11-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DateTime.cs: Fixed Add* methods handling. Now it works properly
 	with extreme values (there is a bug with Overflow and Underflow in
 	long type).
 
-2003-10-31  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-10-31  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DateTime.cs: Fixed a few format bugs.
 
@@ -1580,7 +1580,7 @@
 
 	* AppDomain.cs: Add InternalInvokeInDomain[ByID] icalls.
 
-2003-10-24  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-10-24  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DateTime.cs: When handling '-' as a date separator, MS.NET uses
 	the same symbol in the parse (not DateTimeFormatInfo.DateSeparator).
@@ -1667,36 +1667,36 @@
 	* Math.cs (Abs): Fix double Locale.GetText bug reported by
 	davejp@volny.cz. This fixes #48788.
 
-2003-09-14  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-09-14  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Add the necessary castings to char
 	conversions.
 
-2003-09-13  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-09-13  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Make the method calls more functional
 	for protecting the values from different threads (make it more
 	thread safe).
 
-2003-09-13  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-09-13  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fix a bug with the negative value of
 	count parameter.
 
-2003-09-12  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-09-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Applied a lot of improvements in string
 	construction, make use of Append/Insert with the "count" parameter.
     Thanks to Ben Maurer.
 
-2003-09-10  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-09-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fix a bug with Custm Format.
 
 	* FloatingPointFormatter.cs: Fix a little bug I've introduced the
 	last change.
 
-2003-09-10  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-09-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DoubleFormatter.cs: A few optimizations. Now, only one object
 	is created to convert all double numbers.
@@ -1853,7 +1853,7 @@ Thu Jul 17 15:23:17 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Guid.cs: faster ToString ().
 
-2003-07-15  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-07-15  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Few changes for get working Rotor
 	tests.
@@ -1981,7 +1981,7 @@ Wed Jun 4 16:59:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Math.cs: Add the MS.NET 1.1 methods (BigMul, DivRem, DivRem).
 
-2003-05-21  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-05-21  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Take care with the explicit precision
 	and round the number to that precision.
@@ -2000,7 +2000,7 @@ Wed Jun 4 16:59:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* AppDomainSetup.cs: Added new field which is used to notify the
 	runtime that the search path has changed.
 
-2003-05-18  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-05-18  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fixed NullReferenceException bug I've
 	introduced the last change I've done.
@@ -2011,11 +2011,11 @@ Wed Jun 4 16:59:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	MonoTODO from SyncRoot (because fixed) and IsSynchronized (it was
 	behaving correctly).
 	
-2003-05-17  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-05-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fixed little format mismatches.
 
-2003-05-16  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-05-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fixed "-0" result emited.
 
@@ -2053,7 +2053,7 @@ Wed Jun 4 16:59:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* MulticastDelegate.cs (GetInvocationList): Avoid ArrayList 
 	construction if the delegate list only has one element.
 
-2003-05-01  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-05-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Environment.cs: Changed the method GetFolderPath because it must
 	return at least a directory name (not null).
@@ -2088,7 +2088,7 @@ Tue Apr 29 13:24:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* MonoType.cs:
 	(GetPropertyImpl): handle BindingFlags.IgnoreCase.
 
-2003-04-22  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-04-22  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Little fixes for get the same results
 	as MS.NET and show a message when something goes wrong with the
@@ -2193,7 +2193,7 @@ Tue Apr 29 13:24:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs: fixed bug #40123.
 
-2003-03-22  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-03-22  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fixed some bugs for get the same
 	results than MS.NET. Added simple error recovering, now ToString
@@ -2201,11 +2201,11 @@ Tue Apr 29 13:24:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	process of formatting. This make the library more robust while the
 	formatters are refined.
 
-2003-03-16  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-03-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Added support for group separators.
 
-2003-03-16  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-03-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Single.cs:
 	* Double.cs: Apply changes of .ToString methods.
@@ -2230,7 +2230,7 @@ Tue Apr 29 13:24:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	change, because it broke nunit.
 
 
-2003-03-04  Pedro Martnez Juli  <yoros@wanadoo.es>
+2003-03-04  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Double.cs: Changed ToString method. Added NumberFormatInfo support
 	with DoubleFormatter class.
@@ -2295,7 +2295,7 @@ Tue Apr 29 13:24:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* MonoCustomAttrs.cs: return the correct array type in the short case.
 	Fixes bug #37818.
 
-2003-02-08  Pedro Martenz Juli  <yoros@wanadoo.es>
+2003-02-08  Pedro Martíenz Juliá  <yoros@wanadoo.es>
 
 	* Math.cs: Fix a few methods (like Round) and add with comments the
 	new methods: BigMul and DivRem that were in ECMA specs.
