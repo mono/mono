@@ -36,10 +36,10 @@ namespace System.Data.SqlClient {
 		bool disposed = false;
 
 		// The set of SQL connection pools
-		static Hashtable SqlConnectionPools = new Hashtable ();
+		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds70);
 
 		// The current connection pool
-		SqlConnectionPool pool;
+		TdsConnectionPool pool;
 
 		// The connection string that identifies this connection
 		string connectionString = null;
@@ -269,8 +269,8 @@ namespace System.Data.SqlClient {
 				if(tds != null) tds.Disconnect ();
 
 			if(tds != null) {
-			tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
-			tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
+				tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
+				tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
 			}
 
 			ChangeState (ConnectionState.Closed);
@@ -352,14 +352,12 @@ namespace System.Data.SqlClient {
 					tds = new Tds70 (serverName, port, PacketSize, ConnectionTimeout);
 				}
 				else {
-					pool = (SqlConnectionPool) SqlConnectionPools [connectionString];
-					if (pool == null) {
-						if(!ParseDataSource (dataSource, out port, out serverName))
-							throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
-						pool = new SqlConnectionPool (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
-						SqlConnectionPools [connectionString] = pool;
-					}
-					tds = pool.AllocateConnection ();
+					if(!ParseDataSource (dataSource, out port, out serverName))
+						throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
+					
+ 					TdsConnectionInfo info = new TdsConnectionInfo (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+					pool = sqlConnectionPools.GetConnectionPool (connectionString, info);
+					tds = pool.GetConnection ();
 				}
 			}
 			catch (TdsTimeoutException e) {
@@ -368,9 +366,18 @@ namespace System.Data.SqlClient {
 
 			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);
 			tds.TdsInfoMessage += new TdsInternalInfoMessageEventHandler (MessageHandler);
-
-			if (!tds.IsConnected) 
-				tds.Connect (parms);
+				
+			if (!tds.IsConnected) {
+				try {
+					tds.Connect (parms);
+				}
+				catch {
+					if (pooling)
+						pool.ReleaseConnection (tds);
+					throw;
+				}
+			}
+						
 			/* Not sure ebout removing these 2 lines.
 			 * The command that gets to the sql server is just
 			 * 'sp_reset_connection' and it fails.

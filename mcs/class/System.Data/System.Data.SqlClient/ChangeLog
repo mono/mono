@@ -1,3 +1,7 @@
+2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SqlConnection.cs: Use connection pool implemented in Mono.Data.Tds.
+
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SqlDataReader.cs: Null values are now represented with DBNull instances.
