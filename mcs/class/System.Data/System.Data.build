@@ -19,7 +19,6 @@
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
-				<excludes name="System.Data.OleDb/*.cs"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
