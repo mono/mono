@@ -77,7 +77,7 @@ namespace System.Diagnostics
 		// may throw ArgumentNullException, InvalidOperationException
 		// (categoryName is ""), Win32Exception
 		[MonoTODO]
-		public bool CounterExists (string counterName, 
+		public static bool CounterExists (string counterName, 
 			string categoryName)
 		{
 			throw new NotImplementedException ();
@@ -86,7 +86,7 @@ namespace System.Diagnostics
 		// may throw ArgumentNullException, InvalidOperationException
 		// (categoryName is "", machine name is bad), Win32Exception
 		[MonoTODO]
-		public bool CounterExists (string counterName, 
+		public static bool CounterExists (string counterName, 
 			string categoryName,
 			string machineName)
 		{
@@ -169,14 +169,14 @@ namespace System.Diagnostics
 		}
 
 		[MonoTODO]
-		public bool InstanceExists (string instanceName, 
+		public static bool InstanceExists (string instanceName, 
 			string categoryName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public bool InstanceExists (string instanceName, 
+		public static bool InstanceExists (string instanceName, 
 			string categoryName,
 			string machineName)
 		{

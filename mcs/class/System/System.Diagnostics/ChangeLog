@@ -1,6 +1,10 @@
+2003-07-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* PerformanceCounterCategory.cs: Fixed signatures
+
 2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* PerformanceCounter: Implemented or implementation added
+	* PerformanceCounter.cs: Implemented or implementation added
 
 2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
