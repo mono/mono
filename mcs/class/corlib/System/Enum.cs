@@ -491,8 +491,17 @@ namespace System {
 
 			char formatChar = format [0];
 			if ((formatChar == 'G' || formatChar == 'g') && value.GetHashCode () != 0 &&
-				Attribute.IsDefined(enumType, typeof(FlagsAttribute)))
+				Attribute.IsDefined(enumType, typeof(FlagsAttribute))) {
+				string result = GetName (enumType, value);
+				if (result == null)
+					return value.ToString ();
+
 				formatChar = 'F';
+			}
+
+			if ((formatChar == 'F' || formatChar == 'f') && value.GetHashCode () == 0 &&
+			     vType != typeof (long) && vType != typeof (ulong))
+				formatChar = 'G';
 
 			string retVal = "";
 			switch (formatChar) {
@@ -522,6 +531,7 @@ namespace System {
 				MonoEnumInfo.GetInfo (enumType, out info);
 				// This is ugly, yes.  We need to handle the different integer
 				// types for enums.  If someone else has a better idea, be my guest.
+				bool first = true;
 				switch (((Enum)info.values.GetValue (0)).GetTypeCode()) {
 					case TypeCode.Byte:
 						byte byteFlag = (byte)value;
@@ -570,9 +580,10 @@ namespace System {
 					case TypeCode.Int64:
 						long Int64Flag = (long)value;
 						long Int64enumValue;
-						for (int i = info.values.Length-1; i>=0 && Int64Flag != 0; i--) {
+						for (int i = info.values.Length-1; i>=0 && (Int64Flag != 0 || first); i--) {
 							Int64enumValue = (long)info.values.GetValue (i);
 							if ((Int64enumValue & Int64Flag) == Int64enumValue){
+								first = false;
 								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 								Int64Flag -= Int64enumValue;
 							}
@@ -603,9 +614,10 @@ namespace System {
 					case TypeCode.UInt64:
 						UInt64 UInt64Flag = (UInt64)value;
 						UInt64 UInt64enumValue;
-						for (int i = info.values.Length-1; i>=0 && UInt64Flag != 0; i--) {
+						for (int i = info.values.Length-1; i>=0 && (UInt64Flag != 0 || first); i--) {
 							UInt64enumValue = (UInt64)info.values.GetValue (i);
 							if ((UInt64enumValue & UInt64Flag) == UInt64enumValue){
+								first = false;
 								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 								UInt64Flag -= UInt64enumValue;
 							}
