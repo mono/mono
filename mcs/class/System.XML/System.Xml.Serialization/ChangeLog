@@ -1,3 +1,8 @@
+2005-01-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlReflectionImporter.cs: Don't check the property type if it has
+	an [XmlIgnore] attribute. This fixes bug #71332.
+
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs,
