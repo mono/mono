@@ -320,7 +320,6 @@ public class Page : TemplateControl, IHttpHandler
 
 	#region Methods
 
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected IAsyncResult AspCompatBeginProcessRequest (HttpContext context,
 							     AsyncCallback cb, 
@@ -329,7 +328,6 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected void AspCompatEndProcessRequest (IAsyncResult result)
 	{
@@ -669,6 +667,9 @@ public class Page : TemplateControl, IHttpHandler
 		try {
 			InternalProcessRequest ();
 		} finally {
+			try {
+				UnloadRecursive (true);
+			} catch {}
 			Thread.CurrentThread.CurrentCulture = culture;
 			Thread.CurrentThread.CurrentUICulture = uiculture;
 		}
@@ -718,7 +719,6 @@ public class Page : TemplateControl, IHttpHandler
 		
 		RenderTrace (output);
 		_context = null;
-		UnloadRecursive (true);
 	}
 
 	private void RenderTrace (HtmlTextWriter output)

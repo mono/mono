@@ -1,3 +1,9 @@
+2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: removed a couple of MonoTODO on methods we're not gonna
+	implement. Applied patch from Jan Jaros (mono-bug@jerryweb.info) to
+	ensure that Unload event is raised. Fixes bug #52555.
+
 2004-01-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* KeyedList.cs: 'private' is not allowed on explicit interface 
