@@ -1,4 +1,8 @@
-2002-04-05  Christian Meyer  <Christian.Meye@cs.tum.edu>
+2002-04-05  Christian Meyer  <Christian.Meyer@cs.tum.edu>
+
+	* Uppercased several files.
+
+2002-04-05  Christian Meyer  <Christian.Meyer@cs.tum.edu>
 
 	* color.cs: Fixed a typo in GetSaturation ().
 
