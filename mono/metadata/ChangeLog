@@ -1,3 +1,8 @@
+2003-04-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (typebuilder_setup_fields): Initialize field.first and
+	field.last.
+
 2003-04-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* loader.c (mono_lookup_internal_call): Report the corlib that is
