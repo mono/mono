@@ -211,7 +211,7 @@ namespace System.Web.UI.HtmlControls{
 					//test if everything went fine
 					if( postedValueCount == SelectedIndices.Length){
 						for (int i = 0; i < postedValueCount; i++)
-							if(arr[i] == SelectedIndices[i])
+							if(arr[i] != SelectedIndices[i])
 								changed = true;
 					}
 					else
