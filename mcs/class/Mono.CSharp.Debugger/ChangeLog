@@ -1,8 +1,11 @@
 2002-03-20  Martin Baulig  <martin@gnome.org>
 
-	* README.relocation-table: Updated documentation.
+	* IAssemblerWriter.cs: New interface.
 
-	* MonoDwarfFileWriter.cs: Improved line number output.
+	* AssemblerWriterI386.cs: New class.
+
+	* MonoDwarfFileWriter.cs: Use the IAssemblerWriter interface to make this class
+	platform and assembler independent.
 
 2002-03-20  Martin Baulig  <martin@gnome.org>
 

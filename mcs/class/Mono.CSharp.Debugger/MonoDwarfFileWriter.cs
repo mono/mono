@@ -27,6 +27,7 @@ namespace Mono.CSharp.Debugger
 		protected ArrayList compile_units = new ArrayList ();
 		protected ArrayList line_number_engines = new ArrayList ();
 		protected StreamWriter writer = null;
+		protected IAssemblerWriter aw = null;
 		protected string symbol_file = null;
 
 		// Write a generic file which contains no machine dependant stuff but
@@ -40,6 +41,7 @@ namespace Mono.CSharp.Debugger
 		{
 			this.symbol_file = symbol_file;
 			this.writer = new StreamWriter (symbol_file);
+			this.aw = new AssemblerWriterI386 (this.writer);
 		}
 
 		// Writes the final dwarf file.
@@ -69,6 +71,12 @@ namespace Mono.CSharp.Debugger
 			line_number_engines.Add (line_number_engine);
 		}
 
+		public IAssemblerWriter AssemblerWriter {
+			get {
+				return aw;
+			}
+		}
+
 		// This string is written into the generated dwarf file to identify the
 		// producer and version number.
 		public string ProducerID {
@@ -96,6 +104,7 @@ namespace Mono.CSharp.Debugger
 		public class CompileUnit
 		{
 			protected DwarfFileWriter dw;
+			protected IAssemblerWriter aw;
 			protected string source_file;
 			protected ArrayList dies = new ArrayList ();
 
@@ -107,12 +116,13 @@ namespace Mono.CSharp.Debugger
 			public CompileUnit (DwarfFileWriter dw, string source_file, Die[] dies)
 			{
 				this.dw = dw;
+				this.aw = dw.AssemblerWriter;
 				this.source_file = source_file;
 				if (dies != null)
 					this.dies.AddRange (dies);
 
 				this.ReferenceIndex = ++next_ref_index;
-				this.ReferenceLabel = ".L_COMPILE_UNIT_" + this.ReferenceIndex;
+				this.ReferenceLabel = "COMPILE_UNIT_" + this.ReferenceIndex;
 
 				dw.AddCompileUnit (this);
 			}
@@ -155,31 +165,31 @@ namespace Mono.CSharp.Debugger
 			// Write the whole compile unit to the dwarf file.
 			public void Emit ()
 			{
-				int start_index, end_index;
+				object start_index, end_index;
 
 				dw.WriteSectionStart (Section.DEBUG_INFO);
 
-				dw.WriteLabel (ReferenceLabel);
+				aw.WriteLabel (ReferenceLabel);
 
-				start_index = dw.WriteAnonLabel ();
+				start_index = aw.WriteLabel ();
 
-				end_index = dw.WriteSectionSize ();
-				dw.WriteUInt16 (2);
-				dw.WriteOffset ("debug_abbrev_b");
+				end_index = aw.StartSubsectionWithSize ();
+				aw.WriteUInt16 (2);
+				aw.WriteAbsoluteOffset ("debug_abbrev_b");
 				if (dw.DoGeneric)
-					dw.WriteUInt8 (4);
+					aw.WriteUInt8 (4);
 				else {
 					dw.AddRelocEntry (RelocEntryType.TARGET_ADDRESS_SIZE);
-					dw.WriteUInt8 (4);
+					aw.WriteUInt8 (4);
 				}
 
 				if (dies != null)
 					foreach (Die die in dies)
 						die.Emit ();
 
-				dw.WriteAnonLabel (end_index);
+				aw.EndSubsection (end_index);
 
-				dw.WriteSectionEnd ();
+				aw.WriteSectionEnd ();
 			}
 		}
 
@@ -192,6 +202,7 @@ namespace Mono.CSharp.Debugger
 			public readonly int LineRange = 8;
 
 			protected DwarfFileWriter dw;
+			protected IAssemblerWriter aw;
 
 			public readonly int[] StandardOpcodeSizes = {
 				0, 0, 1, 1, 1, 1, 0, 0, 0, 0
@@ -265,8 +276,9 @@ namespace Mono.CSharp.Debugger
 			public LineNumberEngine (DwarfFileWriter writer)
 			{
 				this.dw = writer;
+				this.aw = writer.AssemblerWriter;
 				this.ReferenceIndex = ++next_ref_index;
-				this.ReferenceLabel = ".L_DEBUG_LINE_" + this.ReferenceIndex;
+				this.ReferenceLabel = "DEBUG_LINE_" + this.ReferenceIndex;
 
 				dw.AddLineNumberEngine (this);
 			}
@@ -301,8 +313,8 @@ namespace Mono.CSharp.Debugger
 
 			private void SetFile (ISourceFile source)
 			{
-				dw.WriteInt8 ((int) DW_LNS.LNS_set_file);
-				dw.WriteULeb128 (LookupSource (source));
+				aw.WriteInt8 ((int) DW_LNS.LNS_set_file);
+				aw.WriteULeb128 (LookupSource (source));
 			}
 
 			private int st_line = 1;
@@ -311,89 +323,89 @@ namespace Mono.CSharp.Debugger
 			private void SetLine (int line)
 			{
 				Console.WriteLine ("LINE: " + st_line + " -> " + line);
-				dw.WriteInt8 ((int) DW_LNS.LNS_advance_line);
-				dw.WriteSLeb128 (line - st_line);
+				aw.WriteInt8 ((int) DW_LNS.LNS_advance_line);
+				aw.WriteSLeb128 (line - st_line);
 				st_line = line;
 			}
 
 			private void SetAddress (int token, int address)
 			{
-				dw.WriteUInt8 (0);
-				int end_index = dw.WriteShortSectionSize ();
-				dw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
+				aw.WriteUInt8 (0);
+				object end_index = aw.StartSubsectionWithShortSize ();
+				aw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
 				dw.AddRelocEntry (RelocEntryType.IL_OFFSET, token, address);
-				dw.WriteAddress (0);
-				dw.WriteAnonLabel (end_index);
+				aw.WriteAddress (0);
+				aw.EndSubsection (end_index);
 				st_address = address;
 			}
 
 			private void SetStartAddress (int token)
 			{
-				dw.WriteUInt8 (0);
-				int end_index = dw.WriteShortSectionSize ();
-				dw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
+				aw.WriteUInt8 (0);
+				object end_index = aw.StartSubsectionWithShortSize ();
+				aw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
 				dw.AddRelocEntry (RelocEntryType.METHOD_START_ADDRESS, token);
-				dw.WriteAddress (0);
-				dw.WriteAnonLabel (end_index);
+				aw.WriteAddress (0);
+				aw.EndSubsection (end_index);
 			}
 
 			private void SetEndAddress (int token)
 			{
-				dw.WriteUInt8 (0);
-				int end_index = dw.WriteShortSectionSize ();
-				dw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
+				aw.WriteUInt8 (0);
+				object end_index = aw.StartSubsectionWithShortSize ();
+				aw.WriteUInt8 ((int) DW_LNE.LNE_set_address);
 				dw.AddRelocEntry (RelocEntryType.METHOD_END_ADDRESS, token);
-				dw.WriteAddress (0);
-				dw.WriteAnonLabel (end_index);
+				aw.WriteAddress (0);
+				aw.EndSubsection (end_index);
 			}
 
 			private void SetBasicBlock ()
 			{
-				dw.WriteUInt8 ((int) DW_LNS.LNS_set_basic_block);
+				aw.WriteUInt8 ((int) DW_LNS.LNS_set_basic_block);
 			}
 
 			private void EndSequence ()
 			{
-				dw.WriteUInt8 (0);
-				dw.WriteUInt8 (1);
-				dw.WriteUInt8 ((int) DW_LNE.LNE_end_sequence);
+				aw.WriteUInt8 (0);
+				aw.WriteUInt8 (1);
+				aw.WriteUInt8 ((int) DW_LNE.LNE_end_sequence);
 			}
 
 			private void Commit ()
 			{
-				dw.WriteUInt8 ((int) DW_LNS.LNS_copy);
+				aw.WriteUInt8 ((int) DW_LNS.LNS_copy);
 			}
 
 			public void Emit ()
 			{
 				dw.WriteSectionStart (Section.DEBUG_LINE);
-				dw.WriteLabel (ReferenceLabel);
-				int end_index = dw.WriteSectionSize ();
+				aw.WriteLabel (ReferenceLabel);
+				object end_index = aw.StartSubsectionWithSize ();
 
-				dw.WriteUInt16 (2);
-				int start_index = dw.WriteSectionSize ();
-				dw.WriteUInt8 (1);
-				dw.WriteUInt8 (1);
-				dw.WriteInt8 (LineBase);
-				dw.WriteUInt8 (LineRange);
-				dw.WriteUInt8 (StandardOpcodeSizes.Length);
+				aw.WriteUInt16 (2);
+				object start_index = aw.StartSubsectionWithSize ();
+				aw.WriteUInt8 (1);
+				aw.WriteUInt8 (1);
+				aw.WriteInt8 (LineBase);
+				aw.WriteUInt8 (LineRange);
+				aw.WriteUInt8 (StandardOpcodeSizes.Length);
 				for (int i = 1; i < StandardOpcodeSizes.Length; i++)
-					dw.WriteUInt8 (StandardOpcodeSizes [i]);
+					aw.WriteUInt8 (StandardOpcodeSizes [i]);
 
 				foreach (string directory in Directories)
-					dw.WriteString (directory);
-				dw.WriteUInt8 (0);					
+					aw.WriteString (directory);
+				aw.WriteUInt8 (0);					
 
 				foreach (ISourceFile source in Sources) {
-					dw.WriteString (source.FileName);
-					dw.WriteULeb128 (0);
-					dw.WriteULeb128 (0);
-					dw.WriteULeb128 (0);
+					aw.WriteString (source.FileName);
+					aw.WriteULeb128 (0);
+					aw.WriteULeb128 (0);
+					aw.WriteULeb128 (0);
 				}
 
-				dw.WriteUInt8 (0);
+				aw.WriteUInt8 (0);
 
-				dw.WriteAnonLabel (start_index);
+				aw.EndSubsection (start_index);
 
 				foreach (ISourceMethod method in Methods) {
 					SetFile (method.SourceFile);
@@ -423,8 +435,8 @@ namespace Mono.CSharp.Debugger
 					EndSequence ();
 				}
 
-				dw.WriteAnonLabel (end_index);
-				dw.WriteSectionEnd ();
+				aw.EndSubsection (end_index);
+				aw.WriteSectionEnd ();
 			}
 		}
 
@@ -470,6 +482,7 @@ namespace Mono.CSharp.Debugger
 		public abstract class Die
 		{
 			protected DwarfFileWriter dw;
+			protected IAssemblerWriter aw;
 			protected ArrayList child_dies = new ArrayList ();
 			public readonly Die Parent;
 
@@ -494,11 +507,12 @@ namespace Mono.CSharp.Debugger
 			public Die (DwarfFileWriter dw, Die parent, int abbrev_id)
 			{
 				this.dw = dw;
+				this.aw = dw.AssemblerWriter;
 				this.Parent = parent;
 				this.abbrev_id = abbrev_id;
 				this.abbrev_decl = GetAbbrevDeclaration (abbrev_id);
 				this.ReferenceIndex = ++next_ref_index;
-				this.ReferenceLabel = ".L_DIE_" + this.ReferenceIndex;
+				this.ReferenceLabel = "DIE_" + this.ReferenceIndex;
 
 				if (parent != null)
 					parent.AddChildDie (this);
@@ -535,16 +549,16 @@ namespace Mono.CSharp.Debugger
 			//
 			public virtual void Emit ()
 			{
-				dw.WriteLabel (ReferenceLabel);
+				aw.WriteLabel (ReferenceLabel);
 
-				dw.WriteULeb128 (abbrev_id);
+				aw.WriteULeb128 (abbrev_id);
 				DoEmit ();
 
 				if (abbrev_decl.HasChildren) {
 					foreach (Die child in child_dies)
 						child.Emit ();
 
-					dw.WriteUInt8 (0);
+					aw.WriteUInt8 (0);
 				}
 			}
 
@@ -652,16 +666,16 @@ namespace Mono.CSharp.Debugger
 					throw new ArgumentException ("Target die must be in the same "
 								     + "compile unit");
 
-				dw.WriteRelativeReference (CompileUnit.ReferenceLabel,
-							   target_die.ReferenceLabel);
+				aw.WriteRelativeOffset (CompileUnit.ReferenceLabel,
+							target_die.ReferenceLabel);
 			}
 
 			public override void DoEmit ()
 			{
-				dw.WriteString (CompileUnit.SourceFile);
-				dw.WriteString (CompileUnit.ProducerID);
-				dw.WriteUInt8 ((int) DW_LANG.LANG_C_sharp);
-				dw.WriteAbsoluteReference (LineNumberEngine.ReferenceLabel);
+				aw.WriteString (CompileUnit.SourceFile);
+				aw.WriteString (CompileUnit.ProducerID);
+				aw.WriteUInt8 ((int) DW_LANG.LANG_C_sharp);
+				aw.WriteAbsoluteOffset (LineNumberEngine.ReferenceLabel);
 			}
 		}
 
@@ -756,15 +770,15 @@ namespace Mono.CSharp.Debugger
 
 			public override void DoEmit ()
 			{
-				dw.WriteString (method.MethodInfo.Name);
-				dw.WriteFlag (true);
+				aw.WriteString (method.MethodInfo.Name);
+				aw.WriteUInt8 (true);
 				if (dw.DoGeneric)
-					dw.WriteFlag (true);
+					aw.WriteUInt8 (true);
 				else {
 					dw.AddRelocEntry (RelocEntryType.METHOD_START_ADDRESS, method.Token);
-					dw.WriteAddress (0);
+					aw.WriteAddress (0);
 					dw.AddRelocEntry (RelocEntryType.METHOD_END_ADDRESS, method.Token);
-					dw.WriteAddress (0);
+					aw.WriteAddress (0);
 				}
 				if (method.MethodInfo.ReturnType != typeof (void))
 					DieCompileUnit.WriteRelativeDieReference (retval_die);
@@ -817,59 +831,59 @@ namespace Mono.CSharp.Debugger
 			{
 				string name = type.Name;
 
-				dw.WriteString (name);
+				aw.WriteString (name);
 				switch (name) {
 				case "Void":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_address);
-					dw.WriteUInt8 (0);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_address);
+					aw.WriteUInt8 (0);
 					break;
 				case "Boolean":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_boolean);
-					dw.WriteUInt8 (1);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_boolean);
+					aw.WriteUInt8 (1);
 					break;
 				case "Char":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned_char);
-					dw.WriteUInt8 (2);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned_char);
+					aw.WriteUInt8 (2);
 					break;
 				case "SByte":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
-					dw.WriteUInt8 (1);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					aw.WriteUInt8 (1);
 					break;
 				case "Byte":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
-					dw.WriteUInt8 (1);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					aw.WriteUInt8 (1);
 					break;
 				case "Int16":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
-					dw.WriteUInt8 (2);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					aw.WriteUInt8 (2);
 					break;
 				case "UInt16":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
-					dw.WriteUInt8 (2);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					aw.WriteUInt8 (2);
 					break;
 				case "Int32":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
-					dw.WriteUInt8 (4);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					aw.WriteUInt8 (4);
 					break;
 				case "UInt32":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
-					dw.WriteUInt8 (4);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					aw.WriteUInt8 (4);
 					break;
 				case "Int64":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_signed);
-					dw.WriteUInt8 (8);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
+					aw.WriteUInt8 (8);
 					break;
 				case "UInt64":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
-					dw.WriteUInt8 (8);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
+					aw.WriteUInt8 (8);
 					break;
 				case "Single":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_float);
-					dw.WriteUInt8 (4);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_float);
+					aw.WriteUInt8 (4);
 					break;
 				case "Double":
-					dw.WriteUInt8 ((int) DW_ATE.ATE_float);
-					dw.WriteUInt8 (8);
+					aw.WriteUInt8 ((int) DW_ATE.ATE_float);
+					aw.WriteUInt8 (8);
 					break;
 				default:
 					throw new ArgumentException ("Not a base type: " + type);
@@ -1036,7 +1050,6 @@ namespace Mono.CSharp.Debugger
 			private int _original;
 		}
 
-		private int next_anon_label_idx = 0;
 		private Section current_section;
 		private ArrayList reloc_entries = new ArrayList ();
 
@@ -1058,15 +1071,6 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected int WriteAnonLabel ()
-		{
-			int index = ++next_anon_label_idx;
-
-			WriteAnonLabel (index);
-
-			return index;
-		}
-
 		protected void AddRelocEntry (RelocEntry entry)
 		{
 			reloc_entries.Add (entry);
@@ -1080,7 +1084,7 @@ namespace Mono.CSharp.Debugger
 
 		protected void AddRelocEntry (RelocEntryType type, int token, int original)
 		{
-			AddRelocEntry (type, token, original, current_section, WriteAnonLabel ());
+			AddRelocEntry (type, token, original, current_section, aw.WriteLabel ());
 		}
 
 		protected void AddRelocEntry (RelocEntryType type, int token)
@@ -1100,33 +1104,33 @@ namespace Mono.CSharp.Debugger
 		protected void WriteRelocEntries ()
 		{
 			WriteSectionStart (Section.MONO_RELOC_TABLE);
-			WriteUInt16 (reloc_table_version);
-			WriteUInt8 (0);
-			int end_index = WriteSectionSize ();
+			aw.WriteUInt16 (reloc_table_version);
+			aw.WriteUInt8 (0);
+			object end_index = aw.StartSubsectionWithSize ();
 
 			foreach (RelocEntry entry in reloc_entries) {
-				WriteUInt8 ((int) entry.RelocType);
-				int tmp_index = WriteSectionSize ();
+				aw.WriteUInt8 ((int) entry.RelocType);
+				object tmp_index = aw.StartSubsectionWithSize ();
 
-				WriteUInt8 ((int) entry.Section);
-				WriteAbsoluteReference (".L_" + entry.Index);
+				aw.WriteUInt8 ((int) entry.Section);
+				aw.WriteAbsoluteOffset (aw.GetLabelName (entry.Index));
 
 				switch (entry.RelocType) {
 				case RelocEntryType.METHOD_START_ADDRESS:
 				case RelocEntryType.METHOD_END_ADDRESS:
-					WriteUInt32 (entry.Token);
+					aw.WriteUInt32 (entry.Token);
 					break;
 				case RelocEntryType.IL_OFFSET:
-					WriteUInt32 (entry.Token);
-					WriteUInt32 (entry.Original);
+					aw.WriteUInt32 (entry.Token);
+					aw.WriteUInt32 (entry.Original);
 					break;
 				}
 
-				WriteAnonLabel (tmp_index);
+				aw.EndSubsection (tmp_index);
 			}
 
-			WriteAnonLabel (end_index);
-			WriteSectionEnd ();
+			aw.EndSubsection (end_index);
+			aw.WriteSectionEnd ();
 		}
 
 		//
@@ -1147,131 +1151,32 @@ namespace Mono.CSharp.Debugger
 
 		protected void WriteAbbrevDeclarations ()
 		{
-			WriteSectionStart (Section.DEBUG_ABBREV);
-			WriteLabel ("debug_abbrev_b");
+			aw.WriteSectionStart (GetSectionName (Section.DEBUG_ABBREV));
+			aw.WriteLabel ("debug_abbrev_b");
 
 			for (int index = 0; index < abbrev_declarations.Count; index++) {
 				AbbrevDeclaration decl = (AbbrevDeclaration) abbrev_declarations [index];
 
-				WriteULeb128 (index + 1);
-				WriteULeb128 ((int) decl.Tag);
-				WriteFlag (decl.HasChildren);
+				aw.WriteULeb128 (index + 1);
+				aw.WriteULeb128 ((int) decl.Tag);
+				aw.WriteUInt8 (decl.HasChildren);
 
-				foreach (AbbrevEntry entry in decl.Entries)
-					WritePair ((int) entry.Attribute, (int) entry.Form);
+				foreach (AbbrevEntry entry in decl.Entries) {
+					aw.WriteUInt8 ((int) entry.Attribute);
+					aw.WriteUInt8 ((int) entry.Form);
+				}
 
-				WritePair (0, 0);
+				aw.WriteUInt8 (0);
+				aw.WriteUInt8 (0);
 			}
 
-			WriteSectionEnd ();
-		}
-
-		protected void WriteAnonLabel (int index)
-		{
-			writer.WriteLine (".L_" + index + ":");
-		}
-
-		protected void WriteLabel (string label)
-		{
-			writer.WriteLine (label + ":");
-		}
-
-		protected int WriteSectionSize ()
-		{
-			int start_index = ++next_anon_label_idx;
-			int end_index = ++next_anon_label_idx;
-
-			writer.WriteLine ("\t.long\t\t.L_" + end_index + " - .L_" + start_index);
-			WriteAnonLabel (start_index);
-
-			return end_index;
-		}
-
-		protected int WriteShortSectionSize ()
-		{
-			int start_index = ++next_anon_label_idx;
-			int end_index = ++next_anon_label_idx;
-
-			writer.WriteLine ("\t.byte\t\t.L_" + end_index + " - .L_" + start_index);
-			WriteAnonLabel (start_index);
-
-			return end_index;
-		}
-
-		protected void WriteRelativeReference (string start_label, string end_label)
-		{
-			writer.WriteLine ("\t.long\t\t" + end_label + " - " + start_label);
-		}
-
-		protected void WriteAbsoluteReference (string label)
-		{
-			writer.WriteLine ("\t.long\t\t" + label);
+			aw.WriteSectionEnd ();
 		}
 
 		protected void WriteSectionStart (Section section)
 		{
-			writer.WriteLine ("\t.section\t." + GetSectionName (section));
+			aw.WriteSectionStart (GetSectionName (section));
 			current_section = section;
-		}
-
-		protected void WriteSectionEnd ()
-		{
-			writer.WriteLine ("\t.previous\n");
-		}
-
-		protected void WriteFlag (bool value)
-		{
-			writer.WriteLine ("\t.byte\t\t" + (value ? 1 : 0));
-		}
-
-		protected void WritePair (int key, int value)
-		{
-			writer.WriteLine ("\t.byte\t\t" + key + ", " + value);
-		}
-
-		protected void WriteUInt8 (int value)
-		{
-			writer.WriteLine ("\t.byte\t\t" + value);
-		}
-
-		protected void WriteInt8 (int value)
-		{
-			writer.WriteLine ("\t.byte\t\t" + value);
-		}
-
-		protected void WriteUInt16 (int value)
-		{
-			writer.WriteLine ("\t.2byte\t\t" + value);
-		}
-
-		protected void WriteUInt32 (int value)
-		{
-			writer.WriteLine ("\t.long\t\t" + value);
-		}
-
-		protected void WriteSLeb128 (int value)
-		{
-			writer.WriteLine ("\t.sleb128\t" + value);
-		}
-
-		protected void WriteULeb128 (int value)
-		{
-			writer.WriteLine ("\t.uleb128\t" + value);
-		}
-
-		protected void WriteOffset (string section)
-		{
-			writer.WriteLine ("\t.long\t\t" + section);
-		}
-
-		protected void WriteAddress (int value)
-		{
-			writer.WriteLine ("\t.long\t\t" + value);
-		}
-
-		protected void WriteString (string value)
-		{
-			writer.WriteLine ("\t.string\t\t\"" + value + "\"");
 		}
 	}
 }
