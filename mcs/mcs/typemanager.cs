@@ -1736,11 +1736,13 @@ public class TypeManager {
 
 	// This is a custom version of Convert.ChangeType() which works
 	// with the TypeBuilder defined types when compiling corlib.
-	public static object ChangeType (object value, Type conversionType)
+	public static object ChangeType (object value, Type conversionType, out bool error)
 	{
-		if (!(value is IConvertible))
-			throw new ArgumentException ();
-
+		if (!(value is IConvertible)){
+			error = true;
+			return null;
+		}
+		
 		IConvertible convertValue = (IConvertible) value;
 		CultureInfo ci = CultureInfo.CurrentCulture;
 		NumberFormatInfo provider = ci.NumberFormat;
@@ -1751,6 +1753,7 @@ public class TypeManager {
 		// the system type itself.  You cannot use Type.GetTypeCode()
 		// on such a type - it'd always return TypeCode.Object.
 		//
+		error = false;
 		if (conversionType.Equals (typeof (Boolean)))
 			return (object)(convertValue.ToBoolean (provider));
 		else if (conversionType.Equals (typeof (Byte)))
@@ -1784,7 +1787,8 @@ public class TypeManager {
 		else if (conversionType.Equals (typeof (Object)))
 			return (object)(value);
 		else 
-			throw new InvalidCastException ();
+			error = true;
+		return null;
 	}
 
 	//

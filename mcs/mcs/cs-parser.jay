@@ -3932,7 +3932,7 @@ public override void parse ()
 		// Please do not remove this, it is used during debugging
 		// of the grammar
 		//
-		Console.WriteLine (lexer.location + "  : Parsing error ");
+		Report.Error (-25, lexer.Location, ": Parsing error ");
 		Console.WriteLine (e);
 	}
 }

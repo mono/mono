@@ -157,9 +157,10 @@ namespace Mono.CSharp {
 			ConstantValue = ((Constant) Expr).GetValue ();
 
 			if (type != Expr.Type) {
-				try {
-					ConstantValue = TypeManager.ChangeType (ConstantValue, type);
-				} catch {
+				bool fail;
+				
+				ConstantValue = TypeManager.ChangeType (ConstantValue, type, out fail);
+				if (fail){
 					Expression.Error_CannotConvertImplicit (Location, Expr.Type, type);
 					return null;
 				}

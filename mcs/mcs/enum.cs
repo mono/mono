@@ -497,9 +497,9 @@ namespace Mono.CSharp {
 			
 			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, attr);
 
-			try {
-				default_value = TypeManager.ChangeType (default_value, UnderlyingType);
-			} catch {
+			bool fail;
+			default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
+			if (fail){
 				Error_ConstantValueCannotBeConverted (c, loc);
 				return null;
 			}
@@ -566,10 +566,10 @@ namespace Mono.CSharp {
 							      "fit in its type");
 						return false;
 					}
-					
-					try {
-						default_value = TypeManager.ChangeType (default_value, UnderlyingType);
-					} catch {
+
+					bool fail;
+					default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
+					if (fail){
 						Error_ConstantValueCannotBeConverted (default_value, loc);
 						return false;
 					}
