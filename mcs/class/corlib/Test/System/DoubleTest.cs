@@ -47,6 +47,22 @@ public class DoubleTest : TestCase
 
 	protected override void SetUp ()
 	{
+		string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+		string_values [0] = "1";
+		string_values [1] = sep + "1";
+		string_values [2] = "1" + sep + "1";
+		string_values [3] = "-12";
+		string_values [4] = "44" + sep + "444432";
+		string_values [5] = sep + "000021121";
+		string_values [6] = "   " + sep + "00001";
+		string_values [7] = "  " + sep + "223    ";
+		string_values [8] = "         -221" + sep + "3233";
+		string_values [9] = " 1" + sep + "7976931348623157e308 ";
+		string_values [10] = "+1" + sep + "7976931348623157E308";
+		string_values [11] = "-1" + sep + "7976931348623157e308";
+		string_values [12] = "4" + sep + "9406564584124650e-324";
+		string_values [13] = "6" + sep + "28318530717958647692528676655900577";
+		string_values [14] = "1e-05";
 	}
 
 	public void TestPublicFields ()
@@ -155,9 +171,10 @@ public class DoubleTest : TestCase
 			Assert("Parse should be a FormatException", typeof(FormatException) == e.GetType());
 		}		
 
+		string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
 		double ovf_plus = 0;
 		try {
-			ovf_plus = Double.Parse("1.79769313486232e308");
+			ovf_plus = Double.Parse("1" + sep + "79769313486232e308");
 			Fail("Parse should have raised an OverflowException +");
 		}
 		catch (Exception e) {
@@ -165,14 +182,12 @@ public class DoubleTest : TestCase
 		}		
 
 		try {
-			Double.Parse("-1.79769313486232e308");
+			Double.Parse("-1" + sep + "79769313486232e308");
 			Fail("Parse should have raised an OverflowException -");
 		}
 		catch (Exception e) {
 			AssertEquals("Should be an OverflowException -", typeof(OverflowException), e.GetType());
 		}		
-
-
 	}
 
 	public void TestToString() {

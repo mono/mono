@@ -29,7 +29,7 @@ public class ByteTest : TestCase
 	private string[] Results1_Nfi = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"255.00000",
+	private string[] Results2 = {	"",
 					"00255", "2.55000e+002", "255.00000",
 					"255", "255.00000", "25,500.00000 %", "000ff"};
 	private string[] Results2_Nfi = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"255.00000", 
@@ -40,11 +40,41 @@ public class ByteTest : TestCase
 	
 	public ByteTest() {}
 
-	protected override void SetUp() {
+	protected override void SetUp() 
+	{
 		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
+		string sep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
 		string csym = NumberFormatInfo.CurrentInfo.CurrencySymbol;
-		string csuffix = (cdd > 0 ? "." : "").PadRight(cdd + (cdd > 0 ? 1 : 0), '0');
-		Results1[0] = csym + "0" + csuffix;
+		string csuffix = (cdd > 0 ? sep : "").PadRight(cdd + (cdd > 0 ? 1 : 0), '0');
+		switch (NumberFormatInfo.CurrentInfo.CurrencyPositivePattern) {
+			case 0: // $n
+				Results1[0] = csym + "0" + csuffix;
+				Results2[0] = csym + "255" + sep + "00000";
+				break;
+			case 1: // n$
+				Results1[0] = "0" + csuffix + csym;
+				Results2[0] = "255" + sep + "00000" + csym;
+				break;
+			case 2: // $ n
+				Results1[0] = csym + " 0" + csuffix;
+				Results2[0] = csym + " 255" + sep + "00000";
+				break;
+			case 3: // n $
+				Results1[0] = "0" + csuffix + " " + csym;
+				Results2[0] = "255" + sep + "00000 " + csym;
+				break;
+		}
+		sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+		Results1[2] = "0" + sep + "000000e+000";
+		Results1[3] = "0" + sep + "00";
+		Results1[5] = "0" + sep + "00";
+		Results1[6] = "0" + sep + "00 %";
+		Results2[2] = "2" + sep + "55000e+002";
+		Results2[3] = "255" + sep + "00000";
+		Results2[3] = "255" + sep + "00000";
+		Results2[5] = "255" + sep + "00000";
+		string gsep = NumberFormatInfo.CurrentInfo.NumberGroupSeparator;
+		Results2[6] = "25" + gsep + "500" + sep + "00000 %";
 	}
 
         protected override void TearDown () {

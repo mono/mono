@@ -1,3 +1,13 @@
+2003-01-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ByteTest.cs: Updated Setup to support my Locale. Better but
+	probably still incomplete.
+	* DoubleTest.cs: Updated Setup to support my Locale. You can now
+	use a comma (or anything else) instead of a dot (.).
+	* ConvertTest.cs: Updated TestToDecimal and TestToDouble to 
+	support my Locale. You can now use a comma (or anything else) 
+	instead of a dot (.).
+
 2003-01-28  Nick Drochak <ndrochak@gol.com>
 
         * ArrayTest.cs: Avoid nulls in arrays. This crashes mono.

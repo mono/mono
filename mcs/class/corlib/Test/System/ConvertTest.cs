@@ -786,7 +786,8 @@ namespace MonoTests.System
 			AssertEquals("#H08", (decimal)tryInt64, Convert.ToDecimal(tryInt64));
 			AssertEquals("#H09", (decimal)trySByte, Convert.ToDecimal(trySByte));
 			AssertEquals("#H10", (decimal)tryFloat, Convert.ToDecimal(tryFloat));
-			AssertEquals("#H11", (decimal)23456.432, Convert.ToDecimal("23456.432"));
+			string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+			AssertEquals("#H11", (decimal)23456.432, Convert.ToDecimal("23456" + sep + "432"));
 			AssertEquals("#H12", (decimal)tryUI16, Convert.ToDecimal(tryUI16));
 			AssertEquals("#H13", (decimal)tryUI32, Convert.ToDecimal(tryUI32));
 			AssertEquals("#H14", (decimal)tryUI64, Convert.ToDecimal(tryUI64));
@@ -900,7 +901,8 @@ namespace MonoTests.System
 				iTest++;
 				AssertEquals("#I10", (double)tryFloat, Convert.ToDouble(tryFloat));
 				iTest++;
-				AssertEquals("#I11", (double)23456.432, Convert.ToDouble("23456.432"));
+				string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+				AssertEquals("#I11", (double)23456.432, Convert.ToDouble("23456" + sep + "432"));
 				iTest++;
 				AssertEquals("#I12", (double)tryUI16, Convert.ToDouble(tryUI16));
 				iTest++;
