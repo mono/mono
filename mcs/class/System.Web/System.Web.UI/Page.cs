@@ -723,10 +723,15 @@ public class Page : TemplateControl, IHttpHandler
 
 	private void RenderTrace (HtmlTextWriter output)
 	{
-		if (!Trace.IsEnabled)
+		TraceManager manager = HttpRuntime.TraceManager;
+		
+		if (!Trace.IsEnabled && !manager.Enabled)
 			return;
+		
 		Trace.SaveData ();
-		Trace.Render (output);
+		
+		if (Trace.IsEnabled || manager.PageOutput)
+			Trace.Render (output);
 	}
 	
 	internal void RaisePostBackEvents ()
