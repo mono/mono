@@ -88,6 +88,7 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// The socket that all network comms passes through
 		/// </summary>
+		[MonoTODO]
 		protected Socket Client
 		{
 			get { return client; }
@@ -265,6 +266,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		/// <param name="hostname">The hostname, e.g. www.myelin.co.nz</param>
 		/// <param name="port">The port, e.g. 80 for HTTP</param>
+		[MonoTODO]
 		public void Connect (string hostname, int port)
 		{
 			IPHostEntry host = Dns.GetHostByName(hostname);
