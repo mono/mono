@@ -83,6 +83,22 @@ namespace MonoTests.System.Runtime.Remoting
 			SynchronizationAttribute thisp = (SynchronizationAttribute) Thread.CurrentContext.GetProperty ("Synchronization");
 			return thisp.Locked;
 		}
+		
+		public bool CheckMonitorWait (bool exitContext)
+		{
+			lock (this)
+			{
+				return Monitor.Wait (this, 1000, exitContext);
+			}
+		}
+		
+		public void CheckMonitorPulse ()
+		{
+			lock (this)
+			{
+				Monitor.Pulse (this);
+			}
+		}
 	}
 
 	[Synchronization (SynchronizationAttribute.SUPPORTED)]
@@ -317,6 +333,34 @@ namespace MonoTests.System.Runtime.Remoting
 		void CallbackThread ()
 		{
 			otResult = notreentrant.TestCallback ();
+		}
+		
+		[Test]
+		public void TestMonitorWait ()
+		{
+			Thread tr = new Thread (new ThreadStart (DoMonitorPulse));
+			tr.Start ();
+			
+			bool r = sincob.CheckMonitorWait (true);
+			Assert ("Wait timeout", r);
+			
+			r = tr.Join (1000);
+			Assert ("Join timeout", r);
+			
+			tr = new Thread (new ThreadStart (DoMonitorPulse));
+			tr.Start ();
+			
+			r = sincob.CheckMonitorWait (false);
+			Assert ("Expected wait timeout", !r);
+			
+			r = tr.Join (1000);
+			Assert ("Join timeout 2", r);
+		}
+
+		void DoMonitorPulse ()
+		{
+			Thread.Sleep (100);
+			sincob.CheckMonitorPulse ();
 		}
 	}
 }

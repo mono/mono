@@ -1,3 +1,7 @@
+2004-04-06  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SynchronizationAttributeTest.cs: Added test for Monitor.Exit.
+
 2004-01-08  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* SynchronizationAttributeTest.cs: Improved test.
