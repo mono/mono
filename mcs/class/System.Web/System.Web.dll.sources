@@ -268,11 +268,13 @@ System.Web.UI.WebControls/Button.cs
 System.Web.UI.WebControls/ButtonColumn.cs
 System.Web.UI.WebControls/ButtonColumnType.cs
 System.Web.UI.WebControls/ButtonFieldBase.cs
+System.Web.UI.WebControls/ButtonField.cs
 System.Web.UI.WebControls/ButtonType.cs
 System.Web.UI.WebControls/Calendar.cs
 System.Web.UI.WebControls/CalendarDay.cs
 System.Web.UI.WebControls/CalendarSelectionMode.cs
 System.Web.UI.WebControls/CheckBox.cs
+System.Web.UI.WebControls/CheckBoxField.cs
 System.Web.UI.WebControls/CheckBoxList.cs
 System.Web.UI.WebControls/ChildTable.cs
 System.Web.UI.WebControls/CollectionDataSource.cs
@@ -300,6 +302,7 @@ System.Web.UI.WebControls/DataControlCellType.cs
 System.Web.UI.WebControls/DataControlField.cs
 System.Web.UI.WebControls/DataControlFieldCollection.cs
 System.Web.UI.WebControls/DataControlFieldCell.cs
+System.Web.UI.WebControls/DataControlFieldHeaderCell.cs
 System.Web.UI.WebControls/DataControlRowState.cs
 System.Web.UI.WebControls/DataControlRowType.cs
 System.Web.UI.WebControls/DataGrid.cs
@@ -407,6 +410,7 @@ System.Web.UI.WebControls/GridViewUpdatedEventHandler.cs
 System.Web.UI.WebControls/GridViewUpdateEventArgs.cs
 System.Web.UI.WebControls/GridViewUpdateEventHandler.cs
 System.Web.UI.WebControls/HierarchicalDataBoundControl.cs
+System.Web.UI.WebControls/HiddenField.cs
 System.Web.UI.WebControls/HorizontalAlign.cs
 System.Web.UI.WebControls/HorizontalAlignConverter.cs
 System.Web.UI.WebControls/HotSpotMode.cs
@@ -421,6 +425,7 @@ System.Web.UI.WebControls/IRepeatInfoUser.cs
 System.Web.UI.WebControls/Image.cs
 System.Web.UI.WebControls/ImageAlign.cs
 System.Web.UI.WebControls/ImageButton.cs
+System.Web.UI.WebControls/ImageField.cs
 System.Web.UI.WebControls/ImageFieldMode.cs
 System.Web.UI.WebControls/ImageMapEventArgs.cs
 System.Web.UI.WebControls/ImageMapEventHandler.cs
@@ -458,6 +463,7 @@ System.Web.UI.WebControls/MenuItemTemplateContainer.cs
 System.Web.UI.WebControls/MonthChangedEventArgs.cs
 System.Web.UI.WebControls/MonthChangedEventHandler.cs
 System.Web.UI.WebControls/MultiView.cs
+System.Web.UI.WebControls/ObjectDataSource.cs
 System.Web.UI.WebControls/ObjectDataSourceDisposingEventArgs.cs
 System.Web.UI.WebControls/ObjectDataSourceDisposingEventHandler.cs
 System.Web.UI.WebControls/ObjectDataSourceEventArgs.cs
@@ -468,6 +474,7 @@ System.Web.UI.WebControls/ObjectDataSourceSelectingEventArgs.cs
 System.Web.UI.WebControls/ObjectDataSourceSelectingEventHandler.cs
 System.Web.UI.WebControls/ObjectDataSourceStatusEventArgs.cs
 System.Web.UI.WebControls/ObjectDataSourceStatusEventHandler.cs
+System.Web.UI.WebControls/ObjectDataSourceView.cs
 System.Web.UI.WebControls/Orientation.cs
 System.Web.UI.WebControls/NextPrevFormat.cs
 System.Web.UI.WebControls/PagedDataSource.cs
@@ -535,6 +542,7 @@ System.Web.UI.WebControls/TableStyle.cs
 System.Web.UI.WebControls/TableViewMode.cs
 System.Web.UI.WebControls/TargetConverter.cs
 System.Web.UI.WebControls/TemplateColumn.cs
+System.Web.UI.WebControls/TemplateField.cs
 System.Web.UI.WebControls/TextAlign.cs
 System.Web.UI.WebControls/TextBox.cs
 System.Web.UI.WebControls/TextBoxControlBuilder.cs

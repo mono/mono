@@ -1,3 +1,15 @@
+2005-04-01  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/ButtonField.cs
+		System.Web.UI.WebControls/CheckBoxField.cs
+		System.Web.UI.WebControls/DataControlFieldHeaderCell.cs
+		System.Web.UI.WebControls/HiddenField.cs
+		System.Web.UI.WebControls/ImageField.cs
+		System.Web.UI.WebControls/ObjectDataSource.cs
+		System.Web.UI.WebControls/ObjectDataSourceView.cs
+		System.Web.UI.WebControls/TemplateField.cs
+
 2005-03-23  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:
@@ -447,7 +459,7 @@
 
 	* list: added Watcher.cs
 
-2003-03-31  Stefan Görling <stefan@gorling.se>
+2003-03-31  Stefan Grling <stefan@gorling.se>
 
 	* list: added new files to System.Web.SessionState
 
