@@ -18,6 +18,7 @@
 				<excludes name="System.Net/AuthenticationManager.cs"/>
 			</sources>
 		</csc>
+		<copy file="../lib/System.dll" tofile="Test/System.dll"/>
 		<nant basedir="Test" target="build"/>
 	</target>
 

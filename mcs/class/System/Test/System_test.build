@@ -18,8 +18,7 @@
 			</references>
 
 			<arg value="/noconfig"/>
-			<arg value="/r:..\..\lib\System.dll"/>
-			<arg value="/lib:..\..\lib"/>
+			<arg value="/r:.\System.dll"/>
 		</csc>
 	</target>
 
