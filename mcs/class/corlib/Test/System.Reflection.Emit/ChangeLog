@@ -1,3 +1,8 @@
+2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilderTest.cs: Added new tests to build strongnamed 
+	assemblies.
+
 2004-03-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilderTest.cs: Call GetCustomAttributes with false
