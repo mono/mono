@@ -1,3 +1,7 @@
+2004-01-12 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Color.cs: Keep KnownColors in an array so that we avoid ht lookup.
+
 2004-01-11  Daniel Morgan <danielmorgan@verizon.net>
 
 	* Graphics.cs: fix compile error on Windows builds for out 

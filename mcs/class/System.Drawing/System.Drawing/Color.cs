@@ -27,6 +27,8 @@ namespace System.Drawing
 	{
 		private static Hashtable namedColors;
 		private static Hashtable systemColors;
+		static Color [] knownColors;
+		
 		// Private transparancy (A) and R,G,B fields.
 		byte a;
 		byte r;
@@ -125,9 +127,10 @@ namespace System.Drawing
 
 		public static Color FromKnownColor (KnownColor knownColorToConvert)
 		{
-			Color c = FromName (knownColorToConvert.ToString ());
-			c.knownColor = knownColorToConvert;
-			return c;
+			if (knownColors == null)
+				FillColorNames ();
+			
+			return knownColors [(int) knownColorToConvert];
 		}
 
 		private static Hashtable GetColorHashtableFromType (Type type)
@@ -143,8 +146,12 @@ namespace System.Drawing
 				MethodInfo getget = prop.GetGetMethod ();
 				if (getget == null || getget.IsStatic == false)
 					continue;
-
-				colorHash.Add (prop.Name, prop.GetValue (null, null));
+				
+				object o = prop.GetValue (null, null);
+				colorHash.Add (prop.Name, o);
+				
+				Color c = (Color) o;
+				knownColors [(int) c.knownColor] = c;
 			}
 			return colorHash;
 		}
@@ -157,6 +164,8 @@ namespace System.Drawing
 			lock (creatingColorNames) {
 				if (systemColors != null)
 					return;
+				
+				knownColors = new Color [(int)KnownColor.YellowGreen + 1];
 				
 				Hashtable colorHash = GetColorHashtableFromType (typeof (Color));
 				namedColors = colorHash;
