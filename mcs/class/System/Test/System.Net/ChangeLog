@@ -1,3 +1,12 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DnsPermissionAttributeTest.cs: New. Unit tests for DnsPermissionAttr.
+	* DnsPermissionTest.cs: New. Unit tests for DnsPermission.
+	* SocketPermissionAttributeTest.cs: New. Unit tests for 
+	SocketPermissionAttribute.
+	* WebPermissionAttributeTest.cs: New. Unit tests for WebPermission
+	Attribute.
+
 2004-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* ServicePointManagerTest.cs: Use the nunit v2 paradigm, and stop this
