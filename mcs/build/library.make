@@ -80,6 +80,12 @@ ifeq ($(PROFILE), net_2_0)
 PACKAGE = 2.0
 endif
 
+ifeq ($(PLATFORM), win32)
+GACDIR = `cygpath -w $(DESTDIR)$(prefix)/lib`
+else
+GACDIR = $(DESTDIR)$(prefix)/lib`
+endif
+
 all-local: $(the_lib)
 
 install-local: $(the_lib) maybe-sign-lib
@@ -95,7 +101,7 @@ uninstall-local:
 else
 
 install-local: $(gacutil)
-	$(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
+	$(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
 	$(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)

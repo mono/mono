@@ -1,3 +1,7 @@
+2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* library.make : Added GACDIR. Use cygpath -w on windows.
+
 2004-06-14  Raja R Harinath  <rharinath@novell.com>
 
 	* platforms/linux.make (PLATFORM_CHANGE_SEPARATOR_CMD): Define to 'cat'.
