@@ -1,3 +1,8 @@
+2005-01-29  Peter Bartok  <pbartok@novell.com>
+
+	* HandleData.cs: Added method for altering invalid area
+	* TextBoxBase.cs: Implemented TextLength
+
 2005-01-28  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Improvement over last patch, not sending

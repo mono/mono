@@ -433,6 +433,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public virtual int TextLength {
+			get {
+				if (document == null || document.Root == null || document.Root.text == null) {
+					return 0;
+				}
+
+				if (!multiline) {
+					return document.Root.text.Length;
+				} else {
+					int	total;
+					int	i;
+
+					total = 0;
+					for (i = 1; i < document.Lines; i++) {
+						total += document.GetLine(i).text.Length + Environment.NewLine.Length;
+					}
+
+					return total;
+				}
+			}
+		}
 
 		public bool WordWrap {
 			get {
@@ -501,6 +522,7 @@ namespace System.Windows.Forms {
 			// FIXME
 			throw new NotImplementedException();
 		}
+
 
 		public void SelectAll() {
 			Line	last;

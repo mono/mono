@@ -86,6 +86,26 @@ namespace System.Windows.Forms {
 				return invalid;
 			}
 		}
+
+		public void ScrollInvalidArea (int x, int y) {
+			if (invalid == Rectangle.Empty) {
+				return;
+			}
+
+			invalid.X += x;
+			invalid.Y += y;
+
+			if (invalid.X < 0) {
+				invalid.Width += invalid.X;
+				invalid.X =0;
+			}
+
+			if (invalid.Y < 0) {
+				invalid.Height += invalid.Y;
+				invalid.Y =0;
+			}
+		}
+
 		public void AddToInvalidArea (int x, int y, int width, int height)
 		{
 			if (invalid == Rectangle.Empty) {
