@@ -1,3 +1,9 @@
+2004-03-24  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_get_class): New static method; if we're inside a
+	generic instance, inflate the class if neccessary.
+	(mono_method_to_ir): Use mini_get_class() instead of mono_class_get().
+
 2004-03-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* iltests.il: New regression test for #55976.
