@@ -25,4 +25,4 @@ endif
 
 profile-check:
 
-PROFILE_MCS_FLAGS = -d:GENERICS -d:NET_1_1 -d:NET_1_2 -2
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_1_2 -2
