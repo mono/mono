@@ -12,9 +12,11 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.ComponentModel;
 
 namespace System.Data.OleDb
 {
+	[TypeConverterAttribute (typeof (OleDbParameterConverter))]
 	public sealed class OleDbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
 		#region Fields
@@ -92,6 +94,10 @@ namespace System.Data.OleDb
 
 		#region Properties
 
+		[BrowsableAttribute (false)]
+		[DataSysDescriptionAttribute ("The parameter generic type")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public DbType DbType {
 			get { return dbType; }
 			set { 

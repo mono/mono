@@ -114,6 +114,13 @@ namespace System.Data.OleDb
 				return FieldCount > 0 ? -1 : total_rows;
 			}
 		}
+		
+		[MonoTODO]
+		public bool HasRows {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 
 		#endregion
 
@@ -174,6 +181,7 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 		
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public char GetChar (int ordinal)
 		{
 			IntPtr value;
