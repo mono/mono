@@ -1,3 +1,8 @@
+2004-11-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_string_to_ansibstr): Make g_error messages more
+	descriptive.
+
 2004-11-11  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_setup_vtable): In an explicit interface
