@@ -1,4 +1,8 @@
+2002-09-24  Nick Drochak <ndrochak@gol.com>
 
+	* icall.c (ves_icall_System_Enum_ToObject): validate the type parameter
+	before using it in case it is null.
+	
 Tue Sep 24 13:24:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c: allow custom modifiers in local var signatures
