@@ -1,0 +1,5 @@
+2004-11-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* Actually delete the files at the end, now that the debugging
+	phase is over.
+

@@ -193,12 +193,12 @@ class MakeBundle {
 		} finally {
 			if (!keeptemp){
 				if (object_out == null){
-					//File.Delete (temp_o);
+					File.Delete (temp_o);
 				}
 				if (!compile_only){
-					//File.Delete (temp_c);
+					File.Delete (temp_c);
 				}
-				//File.Delete (temp_s);
+				File.Delete (temp_s);
 			}
 		}
 	}
