@@ -1,3 +1,22 @@
+2004-11-24  Peter Bartok <pbartok@novell.com>
+
+	* XplatUI.cs (DispatchMessage): Switched to return IntPtr
+	* XplatUIDriver.cs (DispatchMessage): Switched to return IntPtr
+	* XplatUIX11.cs: 
+	  - CreatedKeyBoardMsg now updates keystate with Alt key
+	  - Added workaround for timer crash to CheckTimers, Jackson will
+	    develop a proper fix and check in later
+	  - Implemented DispatchMessage
+	  - Removed calling the native window proc from GetMessage (call
+	    now moved to DispatchMessage)
+
+	* KeyEventArgs.cs (Constructor): Now combines modifierkeys into
+	  the keydata (Fixes bug #69831)
+
+	* XplatUIWin32.cs:
+	  - (DispatchMessage): Switched to return IntPtr
+	  - Added DllImport for SetFocus
+
 2004-11-24  Ravindra <rkumar@novell.com>
 
 	* ThemeWin32Classic.cs: Fixed ListView border and checkbox
