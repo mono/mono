@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Text;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Configuration;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -177,6 +178,13 @@ namespace System.Web.UI
 				}
 			}
 
+			TraceConfig traceConfig = (TraceConfig) Context.GetConfig ("system.web/trace");
+			if (traceConfig != null) {
+				trace = traceConfig.Enabled;
+				if (trace)
+					haveTrace = true;
+			}
+
 			string tracestr = GetString (atts, "Trace", null);
 			if (tracestr != null) {
 				haveTrace = true;
@@ -196,6 +204,13 @@ namespace System.Web.UI
 				if (!valid || tracemode == TraceMode.Default)
 					ThrowParseException ("The 'tracemode' attribute is case sensitive and must be " +
 							"one of the following values: SortByTime, SortByCategory.");
+			}
+
+			if (traceConfig != null) {
+				if (traceConfig.LocalOnly && !Context.Request.IsLocal) {
+					haveTrace = false;
+					trace = false;
+				}
 			}
 			
 			errorPage = GetString (atts, "ErrorPage", null);
