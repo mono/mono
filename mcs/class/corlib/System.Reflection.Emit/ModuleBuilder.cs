@@ -198,6 +198,10 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		internal void RegisterTypeName (TypeBuilder tb, string name) {
+			name_cache.Add (name, tb);
+		}
+
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			return DefineType (name, attr, parent, interfaces, PackingSize.Unspecified, TypeBuilder.UnspecifiedTypeSize);
 		}
@@ -231,22 +235,20 @@ namespace System.Reflection.Emit {
 			return GetType (className, false, ignoreCase);
 		}
 
-		private TypeBuilder search_in_array (TypeBuilder[] arr, string className, bool ignoreCase) {
+		private TypeBuilder search_in_array (TypeBuilder[] arr, string className) {
 			int i;
-			if (arr == types && !ignoreCase)
-				return (TypeBuilder)name_cache [className];
 			for (i = 0; i < arr.Length; ++i) {
-				if (String.Compare (className, arr [i].FullName, ignoreCase) == 0) {
+				if (String.Compare (className, arr [i].FullName, true) == 0) {
 					return arr [i];
 				}
 			}
 			return null;
 		}
 
-		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, string className, bool ignoreCase) {
+		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, string className) {
 			int i;
 			for (i = 0; i < arr.Length; ++i) {
-				if (String.Compare (className, arr [i].Name, ignoreCase) == 0)
+				if (String.Compare (className, arr [i].Name, true) == 0)
 					return arr [i];
 			}
 			return null;
@@ -257,27 +259,27 @@ namespace System.Reflection.Emit {
 
 		static char[] type_modifiers = {'&', '[', '*'};
 
-		private TypeBuilder GetMaybeNested (TypeBuilder t, string className, bool ignoreCase) {
+		private TypeBuilder GetMaybeNested (TypeBuilder t, string className) {
 			int subt;
 			string pname, rname;
 
 			subt = className.IndexOf ('+');
 			if (subt < 0) {
 				if (t.subtypes != null)
-					return search_nested_in_array (t.subtypes, className, ignoreCase);
+					return search_nested_in_array (t.subtypes, className);
 				return null;
 			}
 			if (t.subtypes != null) {
 				pname = className.Substring (0, subt);
 				rname = className.Substring (subt + 1);
-				TypeBuilder result = search_nested_in_array (t.subtypes, pname, ignoreCase);
+				TypeBuilder result = search_nested_in_array (t.subtypes, pname);
 				if (result != null)
-					return GetMaybeNested (result, rname, ignoreCase);
+					return GetMaybeNested (result, rname);
 			}
 			return null;
 		}
 		
-		public override Type GetType( string className, bool throwOnError, bool ignoreCase) {
+		public override Type GetType (string className, bool throwOnError, bool ignoreCase) {
 			int subt;
 			string orig = className;
 			string modifiers;
@@ -292,18 +294,22 @@ namespace System.Reflection.Emit {
 				className = className.Substring (0, subt);
 			} else
 				modifiers = null;
-			
-			subt = className.IndexOf ('+');
-			if (subt < 0) {
-				if (types != null)
-					result = search_in_array (types, className, ignoreCase);
+
+			if (!ignoreCase) {
+				result =  name_cache [className] as TypeBuilder;
 			} else {
-				string pname, rname;
-				pname = className.Substring (0, subt);
-				rname = className.Substring (subt + 1);
-				result = search_in_array (types, pname, ignoreCase);
-				if (result != null)
-					result = GetMaybeNested (result, rname, ignoreCase);
+				subt = className.IndexOf ('+');
+				if (subt < 0) {
+					if (types != null)
+						result = search_in_array (types, className);
+				} else {
+					string pname, rname;
+					pname = className.Substring (0, subt);
+					rname = className.Substring (subt + 1);
+					result = search_in_array (types, pname);
+					if (result != null)
+						result = GetMaybeNested (result, rname);
+				}
 			}
 			if ((result == null) && throwOnError)
 				throw new TypeLoadException (orig);

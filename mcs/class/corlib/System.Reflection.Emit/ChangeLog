@@ -1,3 +1,8 @@
+
+Mon Jan 13 11:37:14 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs, ModuleBuilder.cs: better type name cache.
+
 2003-01-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ILGenerator.cs: Implemented EmitWriteLine(string).

@@ -197,6 +197,7 @@ namespace System.Reflection.Emit {
 			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize);
 			res.nesting_type = this;
 			res.fullname = res.GetFullName ();
+			pmodule.RegisterTypeName (res, res.fullname);
 			if (subtypes != null) {
 				TypeBuilder[] new_types = new TypeBuilder [subtypes.Length + 1];
 				System.Array.Copy (subtypes, new_types, subtypes.Length);
