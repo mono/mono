@@ -163,6 +163,15 @@ public class SortedListTest : Assertion {
 #endif
         }
 
+	[Test]
+	public void Capacity_BackTo0 () 
+	{
+		SortedList list = new SortedList (42);
+		AssertEquals ("42", 42, list.Capacity);
+		list.Capacity = 0;
+		AssertEquals ("0(16)", 16, list.Capacity);
+	}
+
         [Test]
         [ExpectedException (typeof (OutOfMemoryException))]
         [Ignore ("This is not implemented in the runtime yet")]

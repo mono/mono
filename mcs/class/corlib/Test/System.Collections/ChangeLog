@@ -6,7 +6,8 @@
 	MoveNext. Added case to ensure that MoveNext always return false 
 	(after the first time). Test for synchronized clones.
 	* SortedListTest.cs: Added cases for synchronized capacity and testing
-	the interface from the internal enumerator.
+	the interface from the internal enumerator. Test that setting Capacity
+	to zero return the capacity to it's initial default (16).
 
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
