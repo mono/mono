@@ -1,3 +1,5 @@
 *.dll
 *.pdb
 *.temp
+.makefrag
+.response
