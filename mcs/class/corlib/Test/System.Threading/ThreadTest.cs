@@ -189,7 +189,6 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestCtor1()
 		{			
 			C1Test test1 = new C1Test();
@@ -203,7 +202,6 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestStart()
 		{
 		{
@@ -247,7 +245,6 @@ namespace MonoTests.System.Threading {
 		}
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestApartment()
 		{
 			C2Test test1 = new C2Test();
@@ -260,7 +257,6 @@ namespace MonoTests.System.Threading {
 			AssertEquals("#21 Apartment State Changed when not needed",before,after);
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestApartmentState()
 		{
 			C2Test test1 = new C2Test();
@@ -273,7 +269,6 @@ namespace MonoTests.System.Threading {
 			AssertEquals("#31 Apartment State Changed when not needed: ",before,after);
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestPriority1()
 		{
 			C2Test test1 = new C2Test();
@@ -345,7 +340,6 @@ namespace MonoTests.System.Threading {
 		}
 
 
-		[Ignore("these tests fail randomly")]
 		public void TestName()
 		{
 			C2Test test1 = new C2Test();
@@ -396,7 +390,6 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestJoin1()
 		{
 			C1Test test1 = new C1Test();
@@ -420,7 +413,6 @@ namespace MonoTests.System.Threading {
 			}
 		}
 		
-		[Ignore("these tests fail randomly")]
 		public void TestThreadState()
 		{
 			//TODO: Test The rest of the possible transitions

@@ -1,3 +1,9 @@
+2004-05-01  Nick Drochak <ndrochak@gol.com>
+
+	* ThreadTest.cs: Un-ignore some tests that seem to run pretty well
+	now.  Getting one failure from these, but at least they run without
+	crasing, or trowing some nasty _wapi exception thingy.
+
 2004-04-27  Nick Drochak <ndrochak@ieee.org>
 
 	* ReaderWriterLockTest.cs: Remove compiler warnings.
