@@ -1,3 +1,8 @@
+2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-codeman.c (mono_code_manager_invalidate): On x86, fill the
+	memory with 0xcc (x86 break).
+
 2004-05-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* mono-sha1.c: MacOS X defines "LITTLE_ENDIAN", you are supposed
