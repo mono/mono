@@ -1,3 +1,13 @@
+2001-09-28  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Implemented AllocateDataSlot(),
+	AllocateNamedDataSlot(), FreeNamedDataSlot(), GetData(),
+	GetNamedDataSlot(), SetData(), IsBackground.  Reworked Thread()
+	and Start() to avoid a race condition. Added thread-safe state
+	changing private operations.
+
+	* Monitor.cs: Comment out the GetType() calls because it isn't implemented yet
+
 2001-09-25  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Implement Join and timed Join, set correct state

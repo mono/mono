@@ -1,3 +1,6 @@
+2001-09-28  Dick Porter  <dick@ximian.com>
+
+	* LocalDataStoreSlot.cs: Implemented
 
 Tue Sep 25 19:58:14 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

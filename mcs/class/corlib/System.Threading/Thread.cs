@@ -11,6 +11,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Security.Principal;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Collections;
 
 namespace System.Threading
 {
@@ -47,23 +48,52 @@ namespace System.Threading
 			}
 		}
 
+		// Registers a new LocalDataStoreSlot with a thread key.
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void DataSlot_register(LocalDataStoreSlot slot);
+		
 		public static LocalDataStoreSlot AllocateDataSlot() {
-			// FIXME
-			return(null);
+			LocalDataStoreSlot slot = new LocalDataStoreSlot();
+			
+			DataSlot_register(slot);
+			
+			return(slot);
 		}
 
+		// Stores a hash keyed by strings of LocalDataStoreSlot objects
+		static Hashtable datastorehash = Hashtable.Synchronized(new Hashtable());
+		
 		public static LocalDataStoreSlot AllocateNamedDataSlot(string name) {
-			// FIXME
-			return(null);
+			LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash[name];
+			if(slot!=null) {
+				// This exception isnt documented (of
+				// course) but .net throws it
+				throw new ArgumentException("Named data slot already added");
+			}
+			
+			slot = new LocalDataStoreSlot();
+
+			datastorehash.Add(name, slot);
+			
+			DataSlot_register(slot);
+			
+			return(slot);
 		}
 
 		public static void FreeNamedDataSlot(string name) {
-			// FIXME
+			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
+
+			if(slot!=null) {
+				// FIXME
+			}
 		}
 
+		// Retrieves an object from slot 'slot' in this thread
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static object DataSlot_retrieve(LocalDataStoreSlot slot);
+
 		public static object GetData(LocalDataStoreSlot slot) {
-			// FIXME
-			return(null);
+			return(DataSlot_retrieve(slot));
 		}
 
 		public static AppDomain GetDomain() {
@@ -77,16 +107,25 @@ namespace System.Threading
 		}
 
 		public static LocalDataStoreSlot GetNamedDataSlot(string name) {
-			// FIXME
-			return(null);
+			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
+
+			if(slot==null) {
+				slot=AllocateNamedDataSlot(name);
+			}
+			
+			return(slot);
 		}
 
 		public static void ResetAbort() {
 			// FIXME
 		}
 
+		// Stores 'data' into slot 'slot' in this thread
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void DataSlot_store(LocalDataStoreSlot slot, object data);
+		
 		public static void SetData(LocalDataStoreSlot slot, object data) {
-			// FIXME
+			DataSlot_store(slot, data);
 		}
 
 		// Returns milliseconds remaining (due to interrupted sleep)
@@ -107,9 +146,10 @@ namespace System.Threading
 			} else {
 				Thread thread=CurrentThread;
 				
-				thread.state |= ThreadState.WaitSleepJoin;
+				thread.set_state(ThreadState.WaitSleepJoin);
+				
 				int ms_remaining=Sleep_internal(millisecondsTimeout);
-				thread.state &= ~ThreadState.WaitSleepJoin;
+				thread.clr_state(ThreadState.WaitSleepJoin);
 
 				if(ms_remaining>0) {
 					throw new ThreadInterruptedException("Thread interrupted while sleeping");
@@ -129,9 +169,9 @@ namespace System.Threading
 			} else {
 				Thread thread=CurrentThread;
 				
-				thread.state |= ThreadState.WaitSleepJoin;
+				thread.set_state(ThreadState.WaitSleepJoin);
 				int ms_remaining=Sleep_internal(timeout.Milliseconds);
-				thread.state &= ~ThreadState.WaitSleepJoin;
+				thread.clr_state(ThreadState.WaitSleepJoin);
 				
 				if(ms_remaining>0) {
 					throw new ThreadInterruptedException("Thread interrupted while sleeping");
@@ -139,18 +179,24 @@ namespace System.Threading
 			}
 		}
 
-		private ThreadStart start_delegate=null;
-		
+		// stores a pthread_t, which is defined as unsigned long
+		// on my system.  I _think_ windows uses "unsigned int" for
+		// its thread handles, so that _should_ work too.
+		private UInt32 system_thread_handle;
+
+		// Returns the system thread handle
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern UInt32 Thread_internal(ThreadStart start);
+
 		public Thread(ThreadStart start) {
 			if(start==null) {
 				throw new ArgumentNullException("Null ThreadStart");
 			}
 
-			// Nothing actually happens here, the fun
-			// begins when Thread.Start() is called.  For
-			// now, just record what the ThreadStart
-			// delegate is.
-			start_delegate=start;
+			// This is a two-stage thread launch.  Thread_internal
+			// creates the new thread, but blocks it until
+			// Start() is called later.
+			system_thread_handle=Thread_internal(start);
 		}
 
 		public ApartmentState ApartmentState {
@@ -185,23 +231,35 @@ namespace System.Threading
 
 		public bool IsAlive {
 			get {
-				// LAMESPEC: is a Stopped thread dead?
-				if((state & ThreadState.Running) != 0 ||
-				   (state & ThreadState.Stopped) != 0) {
-					return(true);
-				} else {
+				// LAMESPEC: is a Stopped or Suspended
+				// thread dead?
+				ThreadState curstate=state;
+				
+				if((curstate & ThreadState.Aborted) != 0 ||
+				   (curstate & ThreadState.AbortRequested) != 0 ||
+				   (curstate & ThreadState.Unstarted) != 0) {
 					return(false);
+				} else {
+					return(true);
 				}
 			}
 		}
 
 		public bool IsBackground {
 			get {
-				// FIXME
-				return(false);
+				if((state & ThreadState.Background) != 0) {
+					return(true);
+				} else {
+					return(false);
+				}
 			}
 			
 			set {
+				if(value==true) {
+					set_state(ThreadState.Background);
+				} else {
+					clr_state(ThreadState.Background);
+				}
 			}
 		}
 
@@ -250,34 +308,34 @@ namespace System.Threading
 		// The current thread joins with 'this'. Set ms to 0 to block
 		// until this actually exits.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern /*bool*/ int Join_internal(int ms, UInt32 handle);
+		private extern /* FIXME waiting for impl in mono_create trampoline bool*/ int Join_internal(int ms, UInt32 handle);
 		
 		public void Join() {
-			if(state == ThreadState.Unstarted) {
+			if((state & ThreadState.Unstarted) != 0) {
 				throw new ThreadStateException("Thread has not been started");
 			}
 			
 			Thread thread=CurrentThread;
 				
-			thread.state |= ThreadState.WaitSleepJoin;
+			thread.set_state(ThreadState.WaitSleepJoin);
 			Join_internal(0, system_thread_handle);
-			thread.state &= ~ThreadState.WaitSleepJoin;
+			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 
 		public bool Join(int millisecondsTimeout) {
 			if(millisecondsTimeout<0) {
 				throw new ArgumentException("Timeout less than zero");
 			}
-			if(state == ThreadState.Unstarted) {
+			if((state & ThreadState.Unstarted) != 0) {
 				throw new ThreadStateException("Thread has not been started");
 			}
 
 			Thread thread=CurrentThread;
 				
-			thread.state |= ThreadState.WaitSleepJoin;
+			thread.set_state(ThreadState.WaitSleepJoin);
 			bool ret=(Join_internal(millisecondsTimeout,
 						system_thread_handle)==1);
-			thread.state &= ~ThreadState.WaitSleepJoin;
+			thread.clr_state(ThreadState.WaitSleepJoin);
 
 			return(ret);
 		}
@@ -287,16 +345,16 @@ namespace System.Threading
 			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
-			if(state == ThreadState.Unstarted) {
+			if((state & ThreadState.Unstarted) != 0) {
 				throw new ThreadStateException("Thread has not been started");
 			}
 
 			Thread thread=CurrentThread;
-				
-			thread.state |= ThreadState.WaitSleepJoin;
+
+			thread.set_state(ThreadState.WaitSleepJoin);
 			bool ret=(Join_internal(timeout.Milliseconds,
 						system_thread_handle)==1);
-			thread.state &= ~ThreadState.WaitSleepJoin;
+			thread.clr_state(ThreadState.WaitSleepJoin);
 
 			return(ret);
 		}
@@ -304,34 +362,48 @@ namespace System.Threading
 		public void Resume() {
 			// FIXME
 		}
-		
-		// stores a pthread_t, which is defined as unsigned long
-		// on my system.  I _think_ windows uses "unsigned int" for
-		// its thread handles, so that _should_ work too.
-		private UInt32 system_thread_handle;
 
-		// Returns the system thread handle
+		// Launches the thread
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern UInt32 Start_internal(ThreadStart start);
+		private extern void Start_internal(UInt32 handle);
 		
 		public void Start() {
-			if(state!=ThreadState.Unstarted) {
+			if((state & ThreadState.Unstarted) == 0) {
 				throw new ThreadStateException("Thread has already been started");
 			}
 
-			state=ThreadState.Running;
-			
-			// Don't rely on system_thread_handle being
-			// set before start_delegate runs!
-			system_thread_handle=Start_internal(start_delegate);
+			// Mark the thread state as Running (which is
+			// all bits cleared). Therefore just remove
+			// the Unstarted bit
+			clr_state(ThreadState.Unstarted);
+				
+			// Launch this thread
+			Start_internal(system_thread_handle);
 		}
 
 		public void Suspend() {
-			// FIXME
+			if((state & ThreadState.Unstarted) != 0 || !IsAlive) {
+				throw new ThreadStateException("Thread has not been started, or is dead");
+			}
+
+			set_state(ThreadState.SuspendRequested);
+			// FIXME - somehow let the interpreter know that
+			// this thread should now suspend
 		}
 
 		~Thread() {
 			// FIXME
+		}
+
+		private void set_state(ThreadState set) {
+			lock(this) {
+				state |= set;
+			}
+		}
+		private void clr_state(ThreadState clr) {
+			lock(this) {
+				state &= ~clr;
+			}
 		}
 	}
 }

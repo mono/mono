@@ -14,41 +14,41 @@ namespace System.Threading
 	{
 		public static void Enter(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
-			if(obj.GetType().IsValueType==true) {
-				throw new ArgumentException("Value type");
-			}
+			//if(obj.GetType().IsValueType==true) {
+			//	throw new ArgumentException("Value type");
+			//}
 			// FIXME
 		}
 
 		public static void Exit(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
-			if(obj.GetType().IsValueType==true) {
-				throw new ArgumentException("Value type");
-			}
+			//if(obj.GetType().IsValueType==true) {
+			//	throw new ArgumentException("Value type");
+			//}
 			// FIXME
 		}
 
 		public static void Pulse(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			// FIXME
 		}
 
 		public static void PulseAll(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			// FIXME
 		}
 
 		public static bool TryEnter(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			if(obj.GetType().IsValueType==true) {
 				throw new ArgumentException("Value type");
@@ -60,7 +60,7 @@ namespace System.Threading
 
 		public static bool TryEnter(object obj, int millisecondsTimeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			if(obj.GetType().IsValueType==true) {
 				throw new ArgumentException("Value type");
@@ -74,7 +74,7 @@ namespace System.Threading
 
 		public static bool TryEnter(object obj, TimeSpan timeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			if(obj.GetType().IsValueType==true) {
 				throw new ArgumentException("Value type");
@@ -89,7 +89,7 @@ namespace System.Threading
 
 		public static bool Wait(object obj) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			// FIXME
 			return(false);
@@ -97,7 +97,7 @@ namespace System.Threading
 
 		public static bool Wait(object obj, int millisecondsTimeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			// FIXME
 			return(false);
@@ -105,7 +105,7 @@ namespace System.Threading
 
 		public static bool Wait(object obj, TimeSpan timeout) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			// LAMESPEC: says to throw ArgumentException too
 			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
@@ -118,7 +118,7 @@ namespace System.Threading
 
 		public static bool Wait(object obj, int millisecondsTimeout, bool exitContext) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			// FIXME
 			return(false);
@@ -126,7 +126,7 @@ namespace System.Threading
 
 		public static bool Wait(object obj, TimeSpan timeout, bool exitContext) {
 			if(obj==null) {
-				throw new ArgumentNullException("obj");
+				throw new ArgumentNullException("Object is null");
 			}
 			// LAMESPEC: says to throw ArgumentException too
 			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
