@@ -1,3 +1,10 @@
+2002-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSASignatureDeformatter.cs: Fully implemented - however it 
+	requires a functionnal DSA implementation to work.
+	* DSASignatureFormatter.cs: Fully implemented - however it 
+	requires a functionnal DSA implementation to work.
+
 2002-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PasswordDeriveBytes.cs: New. PKCS#5 key derivation (PBKDF1) works up to
