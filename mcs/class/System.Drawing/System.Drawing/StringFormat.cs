@@ -219,11 +219,13 @@ namespace System.Drawing
                         int count = 0;
                         firstTabOffset = 0;
                         
-                        GDIPlus.GdipGetStringFormatTabStopCount(nativeStrFmt, out count);
-                        if (count==0) return null;
+                        GDIPlus.GdipGetStringFormatTabStopCount(nativeStrFmt, out count);                      
 
                         float[] tabStops = new float[count];                        
-                        GDIPlus.GdipGetStringFormatTabStops(nativeStrFmt, count, out firstTabOffset, out tabStops);
+                        
+                        if (count!=0)                        
+                        	GDIPlus.GdipGetStringFormatTabStops(nativeStrFmt, count, out firstTabOffset, tabStops);
+                        	
                         return tabStops;                        
                 }
 

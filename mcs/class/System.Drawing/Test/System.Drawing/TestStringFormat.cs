@@ -30,8 +30,7 @@ namespace MonoTests.System.Drawing{
 		public void TestSpecialConstructors() 
 		{				
 			StringFormat smf = StringFormat.GenericDefault;			
-			smf = StringFormat.GenericTypographic;								
-			
+			smf = StringFormat.GenericTypographic;											
 		}	
 		
 		[Test]
@@ -67,6 +66,26 @@ namespace MonoTests.System.Drawing{
 			smf.FormatFlags = StringFormatFlags.DisplayFormatControl;									
 			AssertEquals (StringFormatFlags.DisplayFormatControl, smf.FormatFlags);						 
 		}		
+		
+		[Test]
+		public void TabsStops() 
+		{				
+			StringFormat	smf = new StringFormat ();
+			
+			float firstTabOffset;			
+			float[] tabsSrc = {100, 200, 300, 400};
+			float[] tabStops;
+			
+			smf.SetTabStops(200, tabsSrc);
+			tabStops = smf.GetTabStops(out firstTabOffset);
+			
+			AssertEquals (200, firstTabOffset);						 
+			AssertEquals (tabsSrc.Length, tabStops.Length);						 
+			AssertEquals (tabsSrc[0], tabStops[0]);					
+			AssertEquals (tabsSrc[1], tabStops[1]);					
+			AssertEquals (tabsSrc[2], tabStops[2]);					
+			AssertEquals (tabsSrc[3], tabStops[3]);					
+		}	
 		
 	}
 }

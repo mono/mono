@@ -1037,7 +1037,7 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipGetStringFormatTabStopCount(IntPtr format, out int count);
                 [DllImport ("gdiplus.dll")]
-                internal static extern Status GdipGetStringFormatTabStops(IntPtr format, int count, out float firstTabOffset, out float[] tabStops);
+                internal static extern Status GdipGetStringFormatTabStops(IntPtr format, int count, out float firstTabOffset, [In, Out] float[] tabStops);
                 		
 		//ImageCodecInfo functions
 		[DllImport("gdiplus.dll")]
