@@ -770,7 +770,53 @@ namespace MonoTests.System.IO
 				File.Delete (path);
 		}
 			
-			
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Read_OffsetOverflow ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
+				stream.Read (new byte[0], Int32.MaxValue, 1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Read_CountOverflow ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
+				stream.Read (new byte[0], 1, Int32.MaxValue);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Write_OffsetOverflow ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+				stream.Write (new byte[0], Int32.MaxValue, 1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Write_CountOverflow ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+				stream.Write (new byte[0], 1, Int32.MaxValue);
+			}
+		}
         }
 }
 

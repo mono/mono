@@ -179,6 +179,21 @@ public class StringReaderTest : Assertion {
 		AssertEquals ("#01", 3, i);
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_IndexOverflow () 
+	{
+		StringReader sr = new StringReader ("Mono");
+		sr.Read (new char [4], Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_CountOverflow () 
+	{
+		StringReader sr = new StringReader ("Mono");
+		sr.Read (new char [4], 1, Int32.MaxValue);
+	}
 }
 
 }
