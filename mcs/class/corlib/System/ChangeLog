@@ -1,3 +1,7 @@
+2003-03-06  Nick Drochak  <ndrochak@gol.com>
+
+	* TimeSpan.cs (Negate): Throw exception when value is MinValue.
+
 2003-03-04  Dick Porter  <dick@ximian.com>
 
 	* Single.cs:

@@ -266,9 +266,9 @@ public struct TimeSpan :  IComparable  {
 
 	public TimeSpan Negate ()
 	{
-		checked {
-			return new TimeSpan (-_ticks);
-		}
+               if (_ticks == long.MinValue)
+                       throw new OverflowException ("This TimeSpan value is MinValue and cannot be negated.");
+               return new TimeSpan (-_ticks);
 	}
 
 	public static TimeSpan Parse (string s)
