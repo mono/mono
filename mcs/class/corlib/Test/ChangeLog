@@ -1,3 +1,11 @@
+2002/03/18  Nick Drochak <ndrochak@gol.com>
+
+	* corlib_test.build: disable running of NUnit tests against mono 
+	corlib.  There are so many icalls now, that these tests need
+	to be run inside mint and mono.  Will change this soon to run
+	the tests using both.  It still runs the tests against the mscorlib
+	to validate the tests themselves.
+
 2002/03/07  Nick Drochak <ndrochak@gol.com>
 
 	* corlib_test.build: resolve chicken and egg problem. Only build and 

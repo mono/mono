@@ -54,7 +54,7 @@
 
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/>
+<!--		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/> -->
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_reference.dll" failonerror="false"/>
 	</target>
 
