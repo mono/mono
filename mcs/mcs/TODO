@@ -30,6 +30,11 @@ AddressOf
 BUGS
 ----
 
+* readonly fields behave differently for "fetching" their addresses.
+
+	Look at DoubleConstant.AsString: a copy is made into a local
+	variable
+
 * Check for Final when overriding, if the parent is Final, then we cant
   allow an override.
 
