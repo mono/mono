@@ -13,11 +13,12 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting.Messaging {
 
-	public class MethodReturnMessageWrapper : IMethodReturnMessage, IMethodMessage, IMessage
+	public class MethodReturnMessageWrapper : InternalMessageWrapper, IMethodReturnMessage, IMethodMessage, IMessage
 	{
 
 		[MonoTODO]
 		public MethodReturnMessageWrapper (IMethodReturnMessage msg)
+			: base (msg)
 		{
 			throw new NotImplementedException ();
 		}

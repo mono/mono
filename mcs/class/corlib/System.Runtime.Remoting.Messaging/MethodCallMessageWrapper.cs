@@ -12,9 +12,10 @@ using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging {
 
-	public class MethodCallMessageWrapper : IMethodCallMessage, IMethodMessage, IMessage
+	public class MethodCallMessageWrapper : InternalMessageWrapper, IMethodCallMessage, IMethodMessage, IMessage
 	{
 		public MethodCallMessageWrapper (IMethodCallMessage msg)
+			: base (msg)
 		{
 			throw new NotImplementedException ();
 		}

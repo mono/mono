@@ -1,4 +1,10 @@
 2002-07-31  Duncan Mak  <duncan@ximian.com>
+	
+	* MethodCallMessageWrapper.cs:
+	* MethodReturnMessageWrapper.cs: Revert the last patch and made it
+	work. Thanks to Gonzalo for reminding me to chain the constructors.
+
+2002-07-31  Duncan Mak  <duncan@ximian.com>
 
 	* MethodCallMessageWrapper.cs:
 	* MethodReturnMessageWrapper.cs: Remove reference to
