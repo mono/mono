@@ -1,3 +1,8 @@
+2002-10-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (ves_array_element_address): added check for out of range index
+	(mono_analyze_stack): added fix for bug #31654
+
 2002-10-01  Martin Baulig  <martin@gnome.org>
 
 	* debug.c: Don't create an .il file for the dynamic symbol file.
