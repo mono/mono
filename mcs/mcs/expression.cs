@@ -2885,9 +2885,9 @@ namespace Mono.CSharp {
 				
 				x = BetterConversion (ec, a, ct, bt, loc);
 				y = BetterConversion (ec, a, bt, ct, loc);
-						      
+
 				if (x < y)
-					break;
+					return 0;
 				
 				rating1 += x;
 				rating2 += y;
@@ -3212,8 +3212,8 @@ namespace Mono.CSharp {
 							chose_params_expanded, loc);
 
 				if (x != 1) {
-					Console.WriteLine ("Candidate : " + FullMethodDesc (candidate));
-					Console.WriteLine ("Best : " + FullMethodDesc (method));
+					//Console.WriteLine ("Candidate : " + FullMethodDesc (candidate));
+					//Console.WriteLine ("Best : " + FullMethodDesc (method));
  					Report.Error (
  						121, loc,
  						"Ambiguous call when selecting function due to implicit casts");
