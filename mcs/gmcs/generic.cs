@@ -459,7 +459,10 @@ namespace Mono.CSharp {
 			foreach (Type iface in gc.InterfaceConstraints) {
 				bool ok = false;
 				foreach (Type check in InterfaceConstraints) {
-					if (iface.Equals (check)) {
+					if (iface.IsGenericParameter && check.IsGenericParameter) {
+						ok = true;
+						break;
+					} else if (iface.Equals (check)) {
 						ok = true;
 						break;
 					}

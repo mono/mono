@@ -1,5 +1,10 @@
 2004-10-12  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (Constraints.CheckInterfaceMethod): Do a more relaxed
+	checking for type parameter constraints.
+
+2004-10-12  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberCache.FindMemberToOverride): Use
 	TypeManager.IsEqual() to compare the parameters and Type.Equals()
 	to compare the invocationType.
