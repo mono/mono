@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.52 $
+// $Revision: 1.53 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.53  2004/11/02 02:47:55  jackson
+// New rendering and sizing code for tab controls
+//
 // Revision 1.52  2004/10/30 10:23:02  ravindra
 // Drawing ListView and some default values.
 //
@@ -1530,6 +1533,191 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion	// StatusBar
+
+                
+		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
+		{
+			// Do we need to fill the back color? It can't be changed...
+			dc.FillRectangle (GetControlBackBrush (tab.BackColor), area);
+
+			if (tab.Appearance == TabAppearance.Normal) {
+				Rectangle panel_rect = GetTabPanelRectExt (tab);
+
+				CPDrawBorder3D (dc, panel_rect, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top, ColorButtonFace);
+				CPDrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
+			}
+
+			for (int i = tab.TabPages.Count - 1; i >= 0; --i) {
+				if (i == tab.SelectedIndex)
+					continue;
+				Rectangle r = tab.GetTabRect (i);
+				DrawTab (dc, tab.TabPages [i], tab, r, false);
+			}
+
+			if (tab.SelectedIndex != -1) {
+				DrawTab (dc, tab.TabPages [tab.SelectedIndex], tab, tab.GetTabRect (tab.SelectedIndex), true);
+			}
+		}
+
+		public override Size TabControlDefaultItemSize {
+			get { return new Size (42, 21); }
+		}
+
+		public override Point TabControlDefaultPadding {
+			get { return new Point (6, 3); }
+		}
+
+		public override int TabControlMinimumTabWidth {
+			get { return 42; }
+		}
+
+		public override Rectangle GetTabControlDisplayRectangle (TabControl tab)
+		{
+			Rectangle ext = GetTabPanelRectExt (tab);
+			// Account for border size
+			return new Rectangle (ext.Left + 2, ext.Top + 1, ext.Width - 6, ext.Height - 4);
+		}
+
+		public override Size TabControlGetSpacing (TabControl tab) {
+			switch (tab.Appearance) {
+				case TabAppearance.Normal:
+					return new Size (1, -2);
+				case TabAppearance.Buttons:
+					return new Size (3, 3);
+				case TabAppearance.FlatButtons:
+					return new Size (9, 3);
+				default:
+					throw new Exception ("Invalid Appearance value: " + tab.Appearance);
+				}
+		}
+
+		private Rectangle GetTabPanelRectExt (TabControl tab)
+		{
+			// Offset the tab from the top corner
+			Rectangle res = new Rectangle (tab.ClientRectangle.X + 2,
+					tab.ClientRectangle.Y,
+					tab.ClientRectangle.Width - 2,
+					tab.ClientRectangle.Height - 1);
+
+			if (tab.TabCount == 0)
+				return res;
+
+			int spacing = TabControlGetSpacing (tab).Height;
+			int offset = (tab.ItemSize.Height + spacing) * tab.RowCount + 3;
+
+			switch (tab.Alignment) {
+			case TabAlignment.Left:
+				res.X += offset;
+				res.Width -= offset;
+				break;
+			case TabAlignment.Right:
+				res.Width -= offset;
+				break;
+			case TabAlignment.Top:
+				res.Y += offset;
+				res.Height -= offset;
+				break;
+			case TabAlignment.Bottom:
+				res.Height -= offset;
+				break;
+			}
+
+			return res;
+		}
+
+		private int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
+		{
+			int FlatButtonSpacing = 8;
+			int RoundCornerSize = 5;
+			Rectangle interior;
+			int res = bounds.Width;
+
+			// we can't fill the background right away because the bounds might be adjusted if the tab is selected
+
+			if (tab.Appearance == TabAppearance.Buttons || tab.Appearance == TabAppearance.FlatButtons) {
+
+				dc.FillRectangle (GetControlBackBrush (tab.BackColor), bounds);
+
+				// Separators
+				if (tab.Appearance == TabAppearance.FlatButtons) {
+					int width = bounds.Width;
+					bounds.Width += (FlatButtonSpacing - 2);
+					res = bounds.Width;
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Etched, Border3DSide.Right);
+					bounds.Width = width;
+				}
+
+				if (is_selected) {
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Sunken, Border3DSide.All);
+				} else if (tab.Appearance != TabAppearance.FlatButtons) {
+					CPDrawBorder3D (dc, bounds, Border3DStyle.Raised, Border3DSide.All);
+				}
+
+				interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4);
+			} else {
+				Pen light = ResPool.GetPen (ControlPaint.LightLight (tab.BackColor));
+
+				switch (tab.Alignment) {
+					
+				case TabAlignment.Top:
+
+
+					dc.FillRectangle (GetControlBackBrush (tab.BackColor), bounds);
+
+					dc.DrawLine (light, bounds.Left, bounds.Bottom, bounds.Left, bounds.Top + 3);
+					dc.DrawLine (light, bounds.Left, bounds.Top + 3, bounds.Left + 3, bounds.Top);
+					dc.DrawLine (light, bounds.Left + 3, bounds.Top, bounds.Right - 3, bounds.Top);
+
+					dc.DrawLine (SystemPens.ControlDark, bounds.Right - 1, bounds.Top + 1, bounds.Right - 1, bounds.Bottom);
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right - 1, bounds.Top + 2, bounds.Right, bounds.Top + 3);
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom);
+
+					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+
+					break;
+
+				case TabAlignment.Bottom:
+
+					dc.FillRectangle (GetControlBackBrush (tab.BackColor), bounds);
+
+					dc.DrawLine (light, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom - 3);
+					dc.DrawLine (light, bounds.Left, bounds.Bottom - 3, bounds.Left + 2, bounds.Bottom - 1);
+
+					dc.DrawLine (SystemPens.ControlDark, bounds.Left + 3, bounds.Bottom - 1, bounds.Right - 3, bounds.Bottom - 1);
+					dc.DrawLine (SystemPens.ControlDark, bounds.Right - 1, bounds.Bottom - 3, bounds.Right - 1, bounds.Top);
+
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Left + 3, bounds.Bottom, bounds.Right - 3, bounds.Bottom);
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right - 3, bounds.Bottom, bounds.Right, bounds.Bottom - 3);
+					dc.DrawLine (SystemPens.ControlDarkDark, bounds.Right, bounds.Bottom - 3, bounds.Right, bounds.Top);
+
+					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
+
+					break;
+
+				default:
+					throw new NotImplementedException ("Vertical tab drawing");
+				}
+			}
+
+			
+			if (page.Focused) {
+				using (Pen pen = new Pen (Color.Black, 1) ) {
+					pen.DashStyle = DashStyle.Dot;
+					dc.DrawRectangle (pen, interior);
+				}
+			}
+
+			if (page.Text != String.Empty) {
+				StringFormat string_format = new StringFormat ();
+				string_format.Alignment = StringAlignment.Center;
+				string_format.LineAlignment = StringAlignment.Center;
+				string_format.FormatFlags = StringFormatFlags.NoWrap;
+				interior.Y++;
+				dc.DrawString (page.Text, page.Font, new SolidBrush (SystemColors.ControlText), interior, string_format);
+			}
+
+			return res;
+		}
 
 		#region ToolBar
 		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) {

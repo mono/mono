@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.16  2004/11/02 02:47:55  jackson
+// New rendering and sizing code for tab controls
+//
 // Revision 1.15  2004/10/30 10:23:02  ravindra
 // Drawing ListView and some default values.
 //
@@ -388,6 +391,16 @@ namespace System.Windows.Forms
 		public abstract int StatusBarHorzGapWidth {get;}	// Gap between panels
 		public abstract Size StatusBarDefaultSize{get;}
 		#endregion	// StatusBar
+
+		#region TabControl
+		public abstract Size TabControlDefaultItemSize { get; }
+		public abstract Point TabControlDefaultPadding { get; }
+		public abstract int TabControlMinimumTabWidth { get; }
+
+		public abstract Rectangle GetTabControlDisplayRectangle (TabControl tab);
+		public abstract Size TabControlGetSpacing (TabControl tab);
+		public abstract void DrawTabControl (Graphics dc, Rectangle area, TabControl tab);
+		#endregion
 
 		#region	ToolBar
 		// Drawing
