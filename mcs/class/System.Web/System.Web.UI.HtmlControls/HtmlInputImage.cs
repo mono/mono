@@ -32,9 +32,8 @@ namespace System.Web.UI.HtmlControls{
 		protected override void RenderAttributes(HtmlTextWriter writer){
 			PreProcessRelativeReference(writer,"src");
 			if (Page != null && !CausesValidation){
-				System.Web.UI.Util.WriteOnClickAttribute(
+				WriteOnClickAttribute(
 				                           writer,
-				                           this,
 				                           false,
 				                           true,
 				                           CausesValidation == false? Page.Validators.Count > 0: false);
@@ -75,7 +74,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["align"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["align"] = AttributeToString(value);
@@ -86,7 +85,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["alt"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["alt"] = AttributeToString(value);
@@ -119,7 +118,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["src"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["src"] = AttributeToString(value);

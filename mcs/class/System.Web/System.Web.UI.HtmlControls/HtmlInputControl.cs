@@ -42,7 +42,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 		}
 		
@@ -52,7 +52,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["value"] = AttributeToString(value);

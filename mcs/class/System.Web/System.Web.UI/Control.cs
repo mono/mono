@@ -596,6 +596,12 @@ namespace System.Web.UI
                 	}
                 }
                 
+                [MonoTODO("To set a flag to prevent automatic generation of IDs")]
+                internal void PreventAutoID()
+                {
+                	throw new NotImplementedException();
+                }
+                
                 //TODO: I think there are some needed Interface implementations to do here.
                 //TODO: Find api for INamingContainer.
         }

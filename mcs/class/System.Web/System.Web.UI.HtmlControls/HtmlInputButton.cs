@@ -35,18 +35,16 @@ namespace System.Web.UI.HtmlControls{
 			}
 			if (Page != null){
 				if (ofTypeSubmit != true){
-					System.Web.UI.Util.WriteOnClickAttribute(
+					WriteOnClickAttribute(
 					                           writer,
-					                           this,
 					                           false,
 					                           true,
 					                           CausesValidation == false? Page.Validators.Count > 0: false);
 				}
 				else{
 					if (events != true && String.Compare(attrType,"button", true) != 0){
-						System.Web.UI.Util.WriteOnClickAttribute(
+						WriteOnClickAttribute(
 						                           writer,
-						                           this,
 						                           false,
 						                           true,
 						                           CausesValidation == false? Page.Validators.Count > 0: false);

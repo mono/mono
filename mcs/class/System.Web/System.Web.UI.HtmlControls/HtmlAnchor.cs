@@ -13,6 +13,10 @@ namespace System.Web.UI.HtmlControls{
 		
 		private static readonly object EventServerClick;
 		
+		static HtmlAnchor(){
+			EventServerClick = new Object();
+		}
+		
 		public HtmlAnchor(): base("a"){}
 		
 		protected virtual void OnServerClick(EventArgs e){
@@ -22,10 +26,10 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		protected new void RenderAttributes(HtmlTextWriter writer){
-			if ( (EventHandler) Events[EventServerClick] != null){
+			if ( Events[EventServerClick] != null){
 				Attributes.Remove("href");
-				RenderAttributes(writer);
-				writer.WriteAttribute(Page.GetPostBackClientHyperlink(this,""),"href");
+				base.RenderAttributes(writer);
+				writer.WriteAttribute("href", Page.GetPostBackClientHyperlink(this,String.Empty));
 			}
 			else{
 				PreProcessRelativeReference(writer,"href");
@@ -33,7 +37,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public void RaisePostBackEvent(string eventArgument){
+		void System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(string eventArgument){
 			OnServerClick(EventArgs.Empty);
 		}
 		
@@ -50,7 +54,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["href"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["href"] = AttributeToString(value);
@@ -61,7 +65,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["name"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["name"] = AttributeToString(value);
@@ -72,7 +76,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["target"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["target"] = AttributeToString(value);
@@ -83,7 +87,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["title"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["title"] = AttributeToString(value);

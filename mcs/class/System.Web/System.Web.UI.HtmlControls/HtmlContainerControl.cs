@@ -33,8 +33,8 @@
 		{
 			public abstract class HtmlContainerControl : HtmlControl{
 				
-				private string _innerHtml = "";
-				private string _innerText = "";
+				private string _innerHtml = String.Empty;
+				private string _innerText = String.Empty;
 				private bool _doText = false;
 				private bool _doChildren = true;
 				protected string _tagName;

@@ -13,8 +13,14 @@ namespace System.Web.UI.HtmlControls{
 		
 		private static readonly object EventServerClick;
 		
+		//Checked
+		static HtmlButton(){
+			EventServerClick = new Object();
+		}
+		//Checked
 		public HtmlButton(): base("button"){}
 		
+		//Checked
 		protected virtual void OnServerClick(EventArgs e){
 			EventHandler handler;
 			handler = (EventHandler) Events[EventServerClick];
@@ -25,9 +31,8 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected new void RenderAttributes(HtmlTextWriter writer){
 			if (Page != null && Events[EventServerClick] != null){
-				System.Web.UI.Util.WriteOnClickAttribute(
+				WriteOnClickAttribute(
 				                           writer,
-				                           this,
 				                           false,
 				                           true,
 				                           CausesValidation == false? Page.Validators.Count > 0: false);
@@ -35,7 +40,7 @@ namespace System.Web.UI.HtmlControls{
 			base.RenderAttributes(writer);
 		}
 		
-		public void RaisePostBackEvent(string eventArgument){
+		void System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(string eventArgument){
 			if (CausesValidation){
 				Page.Validate();
 			}

@@ -91,7 +91,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["name"] = AttributeToString(value);

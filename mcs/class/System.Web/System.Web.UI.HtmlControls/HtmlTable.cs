@@ -35,7 +35,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["align"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["align"] = AttributeToString(value);
@@ -46,7 +46,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["bgcolor"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["bgcolor"] = AttributeToString(value);
@@ -68,7 +68,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["bordercolor"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["bordercolor"] = AttributeToString(value);
@@ -101,7 +101,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["height"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["height"] = AttributeToString(value);
@@ -137,7 +137,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["width"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["width"] = AttributeToString(value);

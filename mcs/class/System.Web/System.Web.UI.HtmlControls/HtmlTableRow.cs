@@ -19,9 +19,8 @@ namespace System.Web.UI.HtmlControls{
 		protected override void RenderChildren(HtmlTextWriter writer){
 			writer.WriteLine();
 			writer.Indent = writer.Indent + 1;
-			//FIXME: base.RenderChildren();
+			this.RenderChildren(writer);
 			writer.Indent = writer.Indent - 1;
-			writer.WriteLine();
 		}
 		
 		protected new void RenderEndTag(HtmlTextWriter writer){
@@ -33,7 +32,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["align"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["align"] = AttributeToString(value);
@@ -44,7 +43,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["bgcolor"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["bgcolor"] = AttributeToString(value);
@@ -55,7 +54,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["bordercolor"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["bordercolor"] = AttributeToString(value);
@@ -73,7 +72,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["height"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["height"] = AttributeToString(value);
@@ -102,7 +101,7 @@ namespace System.Web.UI.HtmlControls{
 			get{
 				string attr = Attributes["valign"];
 				if (attr != null) return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["valign"] = AttributeToString(value);

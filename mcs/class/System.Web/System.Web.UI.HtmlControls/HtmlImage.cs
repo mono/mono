@@ -26,7 +26,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["align"] = AttributeToString(value);
@@ -39,7 +39,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["alt"] = AttributeToString(value);
@@ -65,7 +65,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["src"] = AttributeToString(value);

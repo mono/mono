@@ -25,10 +25,10 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		public void CopyTo(Array array, int index){
-			//FIXME: convert to foreach loop
-			IEnumerator i = GetEnumerator();
-			while(i.MoveNext()){
-				array.SetValue(i.Current, index++);
+			IEnumerator tablecell = this.GetEnumerator();
+			while(tablecell.MoveNext()){
+				index = index + 1;
+				array.SetValue(tablecell.Current, index);
 			}
 		}
 		

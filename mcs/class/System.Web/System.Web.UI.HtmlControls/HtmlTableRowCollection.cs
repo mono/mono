@@ -26,9 +26,11 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		public void CopyTo(Array array, int index){
-			//FIXME: foreach(IEnumerator i in GetEnumerator()){
-			//	array.SetValue(i, index+1);
-			//}
+			IEnumerator tablerow = this.GetEnumerator();
+			while (tablerow.MoveNext()){
+				index = index + 1;
+				array.SetValue(tablerow.Current, index);
+			}
 		}
 		
 		public IEnumerator GetEnumerator(){
@@ -74,10 +76,8 @@ namespace System.Web.UI.HtmlControls{
 		
 		public object SyncRoot {
 			get{
-				//LAMESPEC: what to return
-				return null;
+				return this;
 			}
-	}
-	}
-	// end of System.Web.UI.HtmlControls.HtmlTableRowCollection
+		}
+	}//System.Web.UI.HtmlControls.HtmlTableRowCollection
 }

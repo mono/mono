@@ -17,21 +17,25 @@ namespace System.Web.UI.HtmlControls{
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler{
 		
 		
-		private int _cachedSelectedIndex = -1;
+		private int _cachedSelectedIndex;
 		private object _dataSource;
 		private static readonly object EventServerChange;
 		private ListItemCollection _items;
 		
-		public HtmlSelect():base("select"){}
+		public HtmlSelect():base("select"){
+			_cachedSelectedIndex = -1;
+		}
 		
 		protected override void AddParsedSubObject(object obj){
-			ListItem li = obj as ListItem;
-			if (li != null) Items.Add(li);
-			else throw new HttpException("HtmlSelect cannot have children of Type " + obj.GetType().Name);
+			if (obj as ListItem != null) {
+				this.Items.Add((ListItem) obj);
+				return;
+			}
+			throw new HttpException("HtmlSelect cannot have children of Type " + obj.GetType().Name);
 		}
 		
 		protected virtual void ClearSelection(){
-			for (int i =0; i< Items.Count; i++){
+			for (int i =0; i<= Items.Count; i++){
 				Items[i].Selected = false;
 			}
 		}
@@ -52,7 +56,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected override void OnDataBinding(EventArgs e){
 			base.OnDataBinding(e);
-			IEnumerable resolvedDataSource = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
+			IEnumerable resolvedDataSource = System.Web.Utils.DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
 			if ( resolvedDataSource != null){
 				string text = DataTextField;
 				string value = DataValueField;
@@ -64,8 +68,9 @@ namespace System.Web.UI.HtmlControls{
 				bool valid = false;
 				if (text.Length >= 0 && value.Length >= 0)
 					valid = true;
-				foreach (IEnumerable current in resolvedDataSource.GetEnumerator()){
-					ListItem li = new ListItem();
+				ListItem li = new ListItem();
+				IEnumerator current = resolvedDataSource.GetEnumerator();
+				while(current.MoveNext()){
 					if (valid == true){
 						if (text.Length >= 0)
 							li.Text = DataBinder.GetPropertyValue(current, text, null);
@@ -73,11 +78,10 @@ namespace System.Web.UI.HtmlControls{
 							li.Value = DataBinder.GetPropertyValue(current, value, null);
 					}
 					else{
-						li.Value = current.ToString;
-						li.Text = current.ToString;
+						li.Value = li.Text = current.ToString();
 					}
-					Items.Add(li);
 				}
+				Items.Add(li);
 			}
 			if ( _cachedSelectedIndex != -1){
 				SelectedIndex = _cachedSelectedIndex;
@@ -138,7 +142,6 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		protected override object SaveViewState(){
-			//TODO: find some better names, out of inspiration
 			object itemsViewState = SaveViewState();
 			object third = null;
 			if (Events[EventServerChange] != null && !Disabled && Visible){
@@ -163,42 +166,41 @@ namespace System.Web.UI.HtmlControls{
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			//get the posted selectedIndices[]
-			string[] postedValues = postCollection.GetValues(postDataKey);
+			string[] postedValueColl = postCollection.GetValues(postDataKey);
 			bool valid = false;
-			if (postedValues != null){
-				//single selection
+			if (postedValueColl != null){
 				if (!Multiple){
-					int postedValue = Items.FindByValueInternal(postedValues[0]);
-					if (postedValue != 0){
+					//single selection
+					//int postedValue = Items.FindIndexByValue(postedValueColl[0]);
+					int postedValue = Items.IndexOf(Items.FindByValue(postedValueColl[0]));
+					if (postedValue != SelectedIndex){
 						//set the SelectedIndex
 						SelectedIndex = postedValue;
 						valid = true;
 					}
 				}
-				//multiple selection
 				else{
-					int postedValuesCount = postedValues.Length;
-					int[] arr= new int[postedValuesCount];
+					//multiple selection
+					int postedValueCount = postedValueColl.Length;
+					int[] arr= new int[postedValueCount];
 					//fill an array with the posted Values
-					for (int i = 0; i <= postedValuesCount; i++)
-						arr[i] = Items.FindByValueInternal(postedValues[i]);
+					for (int i = 0; i <= postedValueCount; i++)
+						arr[i] = Items.IndexOf(Items.FindByValue(postedValueColl[i]));
 					//test if everything went fine
-					if( postedValuesCount == SelectedIndices.Length)
-						for (int i = 0; i <= postedValuesCount; i++)
+					if( postedValueCount == SelectedIndices.Length)
+						for (int i = 0; i <= postedValueCount; i++)
 							if(arr[i] == SelectedIndices[i])
 								valid = true;
 					else
 						valid = true;
 					//commit the posted Values
-					if(valid == true)
+					if(valid)
 						Select(arr);
 				}
 			}
-			else{
-				if (SelectedIndex != -1){
-					SelectedIndex = -1;
-					valid = true;
-				}
+			else if (SelectedIndex != -1){
+				SelectedIndex = -1;
+				valid = true;
 			}
 			return valid;
 		}
@@ -207,8 +209,9 @@ namespace System.Web.UI.HtmlControls{
 			OnServerChange(EventArgs.Empty);
 		}
 		
-		protected override void TrackViewState(){
-			base.TrackViewState();
+		//starts tracking changes to the viewstate
+		protected internal virtual void TrackViewState(){
+			TrackViewState();
 			Items.TrackViewState();
 		}
 		
@@ -220,7 +223,7 @@ namespace System.Web.UI.HtmlControls{
 				Events.RemoveHandler(EventServerChange, value);
 			}
 		}
-
+		
 		public virtual string DataMember{
 			get{
 				object viewStateDataMember = ViewState["DataMember"];
@@ -228,7 +231,7 @@ namespace System.Web.UI.HtmlControls{
 				return String.Empty;
 			}
 			set{
-				Attributes["DataMember"] = AttributeToString(value);
+				Attributes["DataMember"] = HtmlControl.AttributeToString(value);
 			}
 		}
 		
@@ -327,25 +330,43 @@ namespace System.Web.UI.HtmlControls{
 				for (int i=0; i<=Items.Count; i++){
 					if (Items[i].Selected == true) return i;
 				}
-				if (Size<=1 && Multiple){
-					if(Items.Count >= 0) Items[0].Selected = true;
+				if (Size<=1 && !Multiple){
+					if(Items.Count > 0) Items[0].Selected = true;
 					return 0;
 				}
 				return -1;
 			}
 			set{
-				//TODO: check funtion
-				if(Items.Count != 0) _cachedSelectedIndex = value;
-				else if (value <=-1 || Items.Count < value) throw new ArgumentOutOfRangeException();
+				if(Items.Count == 0){
+					_cachedSelectedIndex = value;
+					return;
+				}
+				else if (value < -1 || value >= Items.Count) 
+					throw new ArgumentOutOfRangeException();
 				ClearSelection();
-				if (value >= 0) Items[value].Selected = true;
+				if (value >= 0) 
+					Items[value].Selected = true;
 			}
 		}
 		
 		protected virtual int[] SelectedIndices {
 			get{
-				//TODO: check function
-				return null;
+				int[] indices = new int[3];
+				int indicesCount = 0;
+				for(int i=0; i <= Items.Count; i++){
+					if(Items[i].Selected){
+						if( indicesCount == (int) indices.Length){
+							int[] temp = new int[indicesCount + indicesCount];
+							indices.CopyTo(temp,0);
+							indices = temp;
+						}
+						indicesCount++;
+						indices[indicesCount] = i;
+					}
+				}
+				int[] arr = new int[indicesCount];
+				System.Array.Copy(indices,0,arr,0,indicesCount);
+				return arr;
 			}
 		}
 		
@@ -371,11 +392,11 @@ namespace System.Web.UI.HtmlControls{
 				return String.Empty;
 			}
 			set{
-				int findValue = Items.FindByValueInternal(value);
+				int findValue = Items.IndexOf(Items.FindByValue(value));
 				if (findValue >= 0) SelectedIndex = findValue;
 			}
 		}
 		
-	} // class HtmlInputText
+	} // class HtmlSelect
 } // namespace System.Web.UI.HtmlControls
 

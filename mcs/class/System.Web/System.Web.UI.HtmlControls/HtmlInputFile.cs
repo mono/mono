@@ -29,7 +29,7 @@ namespace System.Web.UI.HtmlControls{
 				string attr = Attributes["accept"];
 				if (attr != null)
 					return attr;
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["accept"] = AttributeToString(value);

@@ -88,7 +88,6 @@ namespace System.Web.UI.HtmlControls{
 				return true;
 			}
 			return false;
-			
 		}
 		
 		protected new void RenderAttributes(HtmlTextWriter writer){

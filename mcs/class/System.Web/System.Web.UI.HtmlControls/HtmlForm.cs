@@ -50,8 +50,8 @@ namespace System.Web.UI.HtmlControls{
 				output.WriteLine("<IFRAME ID=_hifSmartNav NAME=_hifSmartNav STYLE=display:none ></IFRAME>");
 				
 				if (browserCap.MinorVersion < 0.5 && browserCap.MajorVersion != 5)
-					Page.RegisterClientScriptFileInternal("SmartNavIncludeScript","JScript","SmartNavIE5.js");
-				else if (Page.IsPostBack) Page.RegisterClientScriptFileInternal("SmartNavIncludeScript","JScript","SmartNav.js");
+					Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNavIE5.js");
+				else if (Page.IsPostBack) Page.RegisterClientScriptFile("SmartNavIncludeScript","JScript","SmartNav.js");
 				base.Render(output);
 			}
 		}
@@ -120,7 +120,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 			set{
 				Attributes["target"] = AttributeToString(value);
@@ -133,7 +133,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return "";
+				return String.Empty;
 			}
 		}
 		
