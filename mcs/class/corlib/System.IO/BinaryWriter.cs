@@ -7,17 +7,24 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 
 namespace System.IO {
 	[Serializable]
 	public class BinaryWriter : IDisposable {
+
+		// Null is a BinaryWriter with no backing store.
 		public static readonly BinaryWriter Null;
 
 		protected Stream OutStream;
-		Encoding m_encoding;
-		
-		protected BinaryWriter() {
-			m_encoding = Encoding.UTF8;
+		private Encoding m_encoding;
+		private byte [] buffer;
+
+		static BinaryWriter() {
+			Null = new BinaryWriter();
+		}
+
+		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8) {
 		}
 
 		public BinaryWriter(Stream output) : this(output, Encoding.UTF8) {
@@ -25,12 +32,13 @@ namespace System.IO {
 
 		public BinaryWriter(Stream output, Encoding encoding) {
 			if (output == null || encoding == null) 
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(Locale.GetText ("Output or Encoding is a null reference."));
 			if (!output.CanWrite)
-				throw new ArgumentException();
+				throw new ArgumentException(Locale.GetText ("Stream does not support writing or already closed."));
 
 			OutStream = output;
 			m_encoding = encoding;
+			buffer = new byte [16];
 		}
 
 		public virtual Stream BaseStream {
@@ -57,7 +65,8 @@ namespace System.IO {
 		}
 
 		public virtual void Write(bool value) {
-			OutStream.Write(BitConverter.GetBytes(value), 0, 1);
+			buffer [0] = (byte) (value ? 1 : 0);
+			OutStream.Write(buffer, 0, 1);
 		}
 
 		public virtual void Write(byte value) {
@@ -65,10 +74,14 @@ namespace System.IO {
 		}
 
 		public virtual void Write(byte[] value) {
+			if (value == null)
+				throw new ArgumentNullException(Locale.GetText ("Byte buffer is a null reference."));
 			OutStream.Write(value, 0, value.Length);
 		}
 
 		public virtual void Write(byte[] value, int offset, int length) {
+			if (value == null)
+				throw new ArgumentNullException(Locale.GetText ("Byte buffer is a null reference."));
 			OutStream.Write(value, offset, length);
 		}
 
@@ -80,23 +93,26 @@ namespace System.IO {
 		}
 		
 		public virtual void Write(char[] value) {
+			if (value == null)
+				throw new ArgumentNullException(Locale.GetText ("Chars is a null reference."));
 			byte[] enc = m_encoding.GetBytes(value, 0, value.Length);
 			OutStream.Write(enc, 0, enc.Length);
 		}
 
 		public virtual void Write(char[] value, int offset, int length) {
+			if (value == null)
+				throw new ArgumentNullException(Locale.GetText ("Chars is a null reference."));
 			byte[] enc = m_encoding.GetBytes(value, offset, length);
 			OutStream.Write(enc, 0, enc.Length);
 		}
 
 		unsafe public virtual void Write(decimal value) {
-			byte[] to_write = new byte[16];
 			byte* value_ptr = (byte *)&value;
 			for (int i = 0; i < 16; i++) {
-				to_write[i] = value_ptr[i];
+				buffer [i] = value_ptr [i];
 			}
 
-			OutStream.Write(to_write, 0, 16);
+			OutStream.Write(buffer, 0, 16);
 		}
 
 		public virtual void Write(double value) {
@@ -104,23 +120,29 @@ namespace System.IO {
 		}
 		
 		public virtual void Write(short value) {
-			OutStream.Write(BitConverter.GetBytes(value), 0, 2);
+			buffer [0] = (byte) value;
+			buffer [1] = (byte) (value >> 8);
+			OutStream.Write(buffer, 0, 2);
 		}
 		
 		public virtual void Write(int value) {
-			OutStream.Write(BitConverter.GetBytes(value), 0, 4);
+			buffer [0] = (byte) value;
+			buffer [1] = (byte) (value >> 8);
+			buffer [2] = (byte) (value >> 16);
+			buffer [3] = (byte) (value >> 24);
+			OutStream.Write(buffer, 0, 4);
 		}
 
 		public virtual void Write(long value) {
-			OutStream.Write(BitConverter.GetBytes(value), 0, 8);
+			for (int i = 0, sh = 0; i < 8; i++, sh += 8)
+				buffer [i] = (byte) (value >> sh);
+			OutStream.Write(buffer, 0, 8);
 		}
 
 		[CLSCompliant(false)]
-		unsafe public virtual void Write(sbyte value) {
-			byte[] to_write = new byte[1];
-
-			to_write[0] = *(byte *)&value;
-			OutStream.Write(to_write, 0, 1);
+		public virtual void Write(sbyte value) {
+			buffer [0] = (byte) value;
+			OutStream.Write(buffer, 0, 1);
 		}
 
 		public virtual void Write(float value) {
@@ -135,17 +157,25 @@ namespace System.IO {
 
 		[CLSCompliant(false)]
 		public virtual void Write(ushort value) {
-			OutStream.Write(BitConverter.GetBytes(value), 0, 2);
+			buffer [0] = (byte) value;
+			buffer [1] = (byte) (value >> 8);
+			OutStream.Write(buffer, 0, 2);
 		}
 
 		[CLSCompliant(false)]
 		public virtual void Write(uint value) {
-			OutStream.Write(BitConverter.GetBytes(value), 0, 4);
+			buffer [0] = (byte) value;
+			buffer [1] = (byte) (value >> 8);
+			buffer [2] = (byte) (value >> 16);
+			buffer [3] = (byte) (value >> 24);
+			OutStream.Write(buffer, 0, 4);
 		}
 
 		[CLSCompliant(false)]
 		public virtual void Write(ulong value) {
-			OutStream.Write(BitConverter.GetBytes(value), 0, 8);
+			for (int i = 0, sh = 0; i < 8; i++, sh += 8)
+				buffer [i] = (byte) (value >> sh);
+			OutStream.Write(buffer, 0, 8);
 		}
 
 		protected void Write7BitEncodedInt(int value) {

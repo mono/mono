@@ -7,6 +7,7 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 
 namespace System.IO {
 	public class BinaryReader : IDisposable {
@@ -24,13 +25,14 @@ namespace System.IO {
 
 		public BinaryReader(Stream input, Encoding encoding) {
 			if (input == null || encoding == null) 
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(Locale.GetText ("Input or Encoding is a null reference."));
 			if (!input.CanRead)
-				throw new ArgumentException();
+				throw new ArgumentException(Locale.GetText ("The stream doesn't support reading."));
 
 			m_stream = input;
 			m_encoding = encoding;
 			m_encoding_max_byte = m_encoding.GetMaxByteCount(1);
+			m_buffer = new byte [32];
 		}
 
 		public virtual Stream BaseStream {
@@ -153,7 +155,9 @@ namespace System.IO {
 				throw new EndOfStreamException();
 			}
 
-			bool ret = BitConverter.ToBoolean(m_buffer, m_buffer_pos);
+			// Return value:
+			//  true if the byte is non-zero; otherwise false.
+			bool ret = (m_buffer[m_buffer_pos] != 0);
 			ConsumeBuffered(1);
 			return ret;
 		}
@@ -240,18 +244,22 @@ namespace System.IO {
 				throw new EndOfStreamException();
 			}
 
-			short ret = BitConverter.ToInt16(m_buffer, m_buffer_pos);
+			short ret = (short) (m_buffer[m_buffer_pos] | (m_buffer[m_buffer_pos + 1] << 8));
 			ConsumeBuffered(2);
 			return ret;
 		}
 
 		public virtual int ReadInt32() {
-			if (!EnsureBuffered(1)) {
+			if (!EnsureBuffered(4)) {
 				throw new EndOfStreamException();
 			}
 
-			int ret = BitConverter.ToInt32(m_buffer, m_buffer_pos);
-			ConsumeBuffered(1);
+			int ret = (m_buffer[m_buffer_pos]             |
+			           (m_buffer[m_buffer_pos + 1] << 8)  |
+			           (m_buffer[m_buffer_pos + 2] << 16) |
+			           (m_buffer[m_buffer_pos + 3] << 24)
+			          );
+			ConsumeBuffered(4);
 			return ret;
 		}
 
@@ -260,9 +268,18 @@ namespace System.IO {
 				throw new EndOfStreamException();
 			}
 
-			long ret = BitConverter.ToInt64(m_buffer, m_buffer_pos);
+			uint ret_low  = (uint) (m_buffer[m_buffer_pos]            |
+			                       (m_buffer[m_buffer_pos + 1] << 8)  |
+			                       (m_buffer[m_buffer_pos + 2] << 16) |
+			                       (m_buffer[m_buffer_pos + 3] << 24)
+			                       );
+			uint ret_high = (uint) (m_buffer[m_buffer_pos + 4]        |
+			                       (m_buffer[m_buffer_pos + 5] << 8)  |
+			                       (m_buffer[m_buffer_pos + 6] << 16) |
+			                       (m_buffer[m_buffer_pos + 7] << 24)
+			                       );
 			ConsumeBuffered(8);
-			return ret;
+			return (long) ((((ulong) ret_high) << 32) | ret_low);
 		}
 
 		[CLSCompliant(false)]
@@ -307,7 +324,7 @@ namespace System.IO {
 				throw new EndOfStreamException();
 			}
 
-			ushort ret = BitConverter.ToUInt16(m_buffer, m_buffer_pos);
+			ushort ret = (ushort) (m_buffer[m_buffer_pos] | (m_buffer[m_buffer_pos + 1] << 8));
 			ConsumeBuffered(2);
 			return ret;
 		}
@@ -318,7 +335,11 @@ namespace System.IO {
 				throw new EndOfStreamException();
 			}
 
-			uint ret = BitConverter.ToUInt32(m_buffer, m_buffer_pos);
+			uint ret = (uint) (m_buffer[m_buffer_pos]            |
+			                  (m_buffer[m_buffer_pos + 1] << 8)  |
+			                  (m_buffer[m_buffer_pos + 2] << 16) |
+			                  (m_buffer[m_buffer_pos + 3] << 24)
+			                  );
 			ConsumeBuffered(4);
 			return ret;
 		}
@@ -329,24 +350,37 @@ namespace System.IO {
 				throw new EndOfStreamException();
 			}
 
-			ulong ret = BitConverter.ToUInt64(m_buffer, m_buffer_pos);
+			uint ret_low  = (uint) (m_buffer[m_buffer_pos]            |
+			                       (m_buffer[m_buffer_pos + 1] << 8)  |
+			                       (m_buffer[m_buffer_pos + 2] << 16) |
+			                       (m_buffer[m_buffer_pos + 3] << 24)
+			                       );
+			uint ret_high = (uint) (m_buffer[m_buffer_pos + 4]        |
+			                       (m_buffer[m_buffer_pos + 5] << 8)  |
+			                       (m_buffer[m_buffer_pos + 6] << 16) |
+			                       (m_buffer[m_buffer_pos + 7] << 24)
+			                       );
 			ConsumeBuffered(8);
-			return ret;
+			return (((ulong) ret_high) << 32) | ret_low;
 		}
 
 		
 		bool EnsureBuffered(int bytes) {
 			int needed = bytes - (m_buffer_used - m_buffer_pos);
-			if (needed <= 0)
+			if (needed < 0)
 				return true;
 
 			if (m_buffer_used + needed > m_buffer.Length) {
 				byte[] old_buffer = m_buffer;
 				m_buffer = new byte[m_buffer_used + needed];
 				Array.Copy(old_buffer, 0, m_buffer, 0, m_buffer_used);
+				m_buffer_pos = m_buffer_used;
 			}
 
-			m_buffer_used += m_stream.Read(m_buffer, m_buffer_used, needed);
+			int n = m_stream.Read(m_buffer, m_buffer_used, needed);
+			if (n == 0) return false;
+
+			m_buffer_used += n;
 
 			return (m_buffer_used >= m_buffer_pos + bytes);
 		}
@@ -354,9 +388,6 @@ namespace System.IO {
 
 		void ConsumeBuffered(int bytes) {
 			m_buffer_pos += bytes;
-			if (m_buffer_pos == m_buffer_used) {
-				m_buffer_pos = 0;
-			}
 		}
 	}
 }
