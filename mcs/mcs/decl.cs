@@ -109,22 +109,24 @@ namespace Mono.CSharp {
 
 			if (mb.IsVirtual || mb.IsAbstract){
 				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					if (Name != "Finalize" && (RootContext.WarningLevel >= 2)){
+					if (Name != "Finalize"){
 						Report.Warning (
-							114, Location, parent.MakeName (Name) + 
+							114, 2, Location, parent.MakeName (Name) + 
 							" hides inherited member `" + name +
 							"'.  To make the current member override that " +
 							"implementation, add the override keyword, " +
 							"otherwise use the new keyword");
+						ModFlags |= Modifiers.NEW;
 					}
 				}
 			} else {
 				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					if (Name != "Finalize" && (RootContext.WarningLevel >= 1)){
+					if (Name != "Finalize"){
 						Report.Warning (
-							108, Location, "The keyword new is required on " +
+							108, 1, Location, "The keyword new is required on " +
 							parent.MakeName (Name) + " because it hides " +
 							"inherited member `" + name + "'");
+						ModFlags |= Modifiers.NEW;
 					}
 				}
 			}

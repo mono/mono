@@ -123,6 +123,18 @@ namespace Mono.CSharp {
 			Warning (code, Location.Null, text);
 		}
 
+		static public void Warning (int code, int level, string text)
+		{
+			if (RootContext.WarningLevel >= level)
+				Warning (code, Location.Null, text);
+		}
+
+		static public void Warning (int code, int level, Location l, string text)
+		{
+			if (RootContext.WarningLevel >= level)
+				Warning (code, l, text);
+		}
+
 		static public void Error (int code, string text)
 		{
 			string msg = String.Format ("error CS{0:0000}: {1}", code, text);
