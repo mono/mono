@@ -1,3 +1,8 @@
+2003-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* File.cs: fix by Elan Feingold <efeingold@mn.rr.com> for
+	SetCreationTime, SetLastAccessTime and SetLastWriteTime.
+
 2003-02-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MemoryStream.cs:

@@ -268,7 +268,7 @@ namespace System.IO
 		{
 			MonoIOError error;
 			
-			if (!MonoIO.SetFileTime (path, creation_time.Ticks,
+			if (!MonoIO.SetFileTime (path, creation_time.ToFileTime(),
 						 -1, -1, out error)) {
 				throw MonoIO.GetException (path, error);
 			}
@@ -279,7 +279,7 @@ namespace System.IO
 			MonoIOError error;
 			
 			if (!MonoIO.SetFileTime (path, -1,
-						 last_access_time.Ticks, -1,
+						 last_access_time.ToFileTime(), -1,
 						 out error)) {
 				throw MonoIO.GetException (path, error);
 			}
@@ -291,7 +291,7 @@ namespace System.IO
 			MonoIOError error;
 			
 			if (!MonoIO.SetFileTime (path, -1, -1,
-						 last_write_time.Ticks,
+						 last_write_time.ToFileTime(),
 						 out error)) {
 				throw MonoIO.GetException (path, error);
 			}
