@@ -82,7 +82,7 @@ class MakeMap {
 			foreach (FieldInfo fi in t.GetFields ()){
 				if (!fi.IsLiteral)
 					continue;
-				sh.WriteLine ("#define {0}_{1} {1}", n, fi.Name);
+				sh.WriteLine ("#define {0}_{1} {2}", n, fi.Name, (int) fi.GetValue (null));
 			}
 			sh.WriteLine ();
 			
