@@ -1,3 +1,8 @@
+2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c: Use MONO_CLASSCONST instead of MONO_LDPTR in some places,
+	so methods containing these can be AOTed.
+
 2005-01-03  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (find_method): Removed the hack for generic instances.
