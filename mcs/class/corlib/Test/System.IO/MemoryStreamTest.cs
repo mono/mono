@@ -22,7 +22,7 @@ namespace MonoTests.System.IO
 		byte [] testStreamData;
 
 		[SetUp]
-		void SetUp ()
+		public void SetUp ()
 		{
 			testStreamData = new byte [100];
 
