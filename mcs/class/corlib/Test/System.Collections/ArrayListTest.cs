@@ -63,9 +63,8 @@ public class ArrayListTest : TestCase {
 			try {
 				Char[,] c1 = new Char[2,2];
 				ArrayList al1 = new ArrayList(c1);
-			} catch (Exception e) {
-				Fail ("Should not fail with multi-dimensional array in constructor. e=" 
-					+ e.ToString());
+				Fail ("Should fail with multi-dimensional array in constructor.");
+			} catch (RankException) {
 			}
 		}
 

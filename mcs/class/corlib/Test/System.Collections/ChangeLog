@@ -1,3 +1,8 @@
+2002-05-05  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayListTest.cs: Test for RankException when constructing from a 
+	multi-dimensional array. Confirmed behavior from MS.NET
+
 2002-05-01  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayListTest.cs (TestBinarySearch) : accomodate possible bug in
