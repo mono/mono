@@ -757,6 +757,9 @@ namespace System.Web.UI
 				foreach (Control c in _controls) {
 					c._page = Page;
 					c._namingContainer = namingContainer;
+					if (namingContainer != null && c._userId == null && c.autoID)
+						c._userId = namingContainer.GetDefaultName ();
+
 					c.InitRecursive (namingContainer);
 				}
 			}

@@ -1,3 +1,8 @@
+2003-02-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: when adding a control, assign default names to th
+	children that don't have one.
+
 2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWebHandlerParser.cs: modified to use the new parser interface.
