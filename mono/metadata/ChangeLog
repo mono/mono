@@ -1,5 +1,22 @@
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c: Add new icall for creating dynamic methods.
+
+	* loader.h debug-helpers.c: Add new wrapper type for dynamic methods.
+
+	* reflection.h (MonoReflectionDynamicMethod): Fix type of bool fields.
+
+	* reflection.c (mono_reflection_create_dynamic_method): New icall to
+	create a dynamic method.
+
+	* reflection.c (resolve_object): New helper function.
+
+	* reflection.c: Generalize ReflectionMethodBuilder and the functions
+	which manipulate it so they can also work on dynamic methods.
+
+	* reflection.c (reflection_method_builder_to_mono_method): Avoid 
+	creating the MonoReflectionMethodAux structure if it is not needed.
+	
 	* reflection.h verify.c: Update after changes to object layout.
 
 	* reflection.c (method_builder_encode_signature): Fix compilation on
