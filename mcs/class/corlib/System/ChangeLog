@@ -1,3 +1,7 @@
+2002-10-11  Tim Haynes <thaynes@openlinksw.com>
+
+	* Type.cs (GetConstructors): Use the correct flags.
+
 2002-10-09  Nick Drochak  <ndrochak@gol.com>
 
 	* IntegerFormatter.cs: Suppress insignificant leading zeros

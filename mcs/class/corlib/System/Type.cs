@@ -763,7 +763,7 @@ namespace System {
 
 		public ConstructorInfo[] GetConstructors ()
 		{
-			return GetConstructors (BindingFlags.Public | BindingFlags.NonPublic);
+			return GetConstructors (BindingFlags.Public | BindingFlags.Instance);
 		}
 		
 		public abstract ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
