@@ -11,9 +11,7 @@
 #include <string.h>
 #include <sys/poll.h>
 
-#include <mono/metadata/object.h>
-#include <mono/metadata/appdomain.h>
-#include <mono/metadata/exception.h>
+#include <glib.h>
 
 int
 open_serial (char* devfile)
@@ -57,7 +55,6 @@ read_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 	poll (&ufd, 1, timeout);
 
 	if ((ufd.revents & POLLIN) != POLLIN) {
-		mono_raise_exception (mono_get_exception_io ("ReadTimeout exceeded"));
 		return -1;
 	}
  
@@ -79,7 +76,6 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 	poll (&ufd, 1, timeout);
 
 	if ((ufd.revents & POLLOUT) != POLLOUT) {
-		mono_raise_exception (mono_get_exception_io ("WriteTimeout exceeded"));
 		return;
 	}
  
@@ -196,6 +192,19 @@ set_attributes (int fd, int baud_rate, int parity, int dataBits, int stopBits, i
 	return TRUE;
 }
 
+/*
+ * mono internals should not be used here.
+ * this serial stuff needs to be implemented with icalls.
+ * make this at least compile until the code is moved elsewhere
+ * defined(linux) is wrong, too
+ */
+void*
+list_serial_devices (void)
+{
+	return NULL;
+}
+
+#if 0
 MonoArray *
 list_serial_devices (void)
 {
@@ -230,3 +239,5 @@ list_serial_devices (void)
 
 	return array;
 }
+#endif
+
