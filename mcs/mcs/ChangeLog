@@ -1,3 +1,11 @@
+2004-11-03  Carlos Alberto Cortez <carlos@unixmexico.org>
+
+	* cs-parser.jay: Add support for handling accessor modifiers
+	* class: Add support port accessor modifiers and error checking,
+	define PropertyMethod.Define as virtual (not abstract anymore)
+	* ecore.cs: Add checking for proeprties access with access modifiers
+	* iterators.cs: Modify Accessor constructor call based in the modified
+	constructor
 2004-11-02  Ben Maurer  <bmaurer@ximian.com>
 
 	* expression.cs (StringConcat): Handle being called twice,
