@@ -1,3 +1,47 @@
+2002-07-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (MemberAccess.DoResolve): Do not reuse the field
+	`expr' for the temporary result, as that will fail if we do
+	multiple resolves on the same expression.
+
+2002-07-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (SimpleNameResolve): Use ec.DeclSpace instead of
+	ec.TypeContainer for looking up aliases. 
+
+	* class.cs (TypeContainer): Remove LookupAlias from here.
+
+	* decl.cs (DeclSpace); Move here.
+
+2002-07-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (FindMembers): Only call filter if the constructor
+	bulider is not null.
+
+	Also handle delegates in `NestedTypes' now.  Now we will perform
+	type lookups using the standard resolution process.  This also
+	fixes a bug.
+
+	* decl.cs (DeclSpace.ResolveType): New type resolution routine.
+	This uses Expressions (the limited kind that can be parsed by the
+	tree) instead of strings.
+
+	* expression.cs (ComposedCast.ToString): Implement, used to flag
+	errors since now we have to render expressions.
+
+	(ArrayCreation): Kill FormElementType.  Use ComposedCasts in
+	FormArrayType. 
+
+	* ecore.cs (SimpleName.ToString): ditto.
+
+	* cs-parser.jay: Instead of using strings to assemble types, use
+	Expressions to assemble the type (using SimpleName, ComposedCast,
+	MemberAccess).  This should fix the type lookups in declarations,
+	because we were using a different code path for this.
+
+	* statement.cs (Block.Resolve): Continue processing statements
+	even when there is an error.
+
 2002-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Event.Define): Also remove the `remove' method from

@@ -287,6 +287,13 @@ namespace Mono.CSharp {
 		public bool OnlyLookupTypes;
 
 		/// <summary>
+		///   Used to flag that it is ok to define types recursively, as the
+		///   expressions are being evaluated as part of the type lookup
+		///   during the type resolution process
+		/// </summary>
+		public bool ResolvingTypeTree;
+		
+		/// <summary>
 		///   Inside an enum definition, we do not resolve enumeration values
 		///   to their enumerations, but rather to the underlying type/value
 		///   This is so EnumVal + EnumValB can be evaluated.
@@ -310,8 +317,12 @@ namespace Mono.CSharp {
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
+			
+			if (parent != null){
+				// Can only be null for the ResolveType contexts.
 			ContainerType = parent.TypeBuilder;
 			InUnsafe = ((parent.ModFlags | code_flags) & Modifiers.UNSAFE) != 0;
+			}
 			OnlyLookupTypes = false;
 			loc = l;
 			

@@ -20,9 +20,9 @@ namespace Mono.CSharp {
 	///   Enumeration container
 	/// </summary>
 	public class Enum : DeclSpace {
-
 		ArrayList ordered_enums;
-		public readonly string BaseType;
+		
+		public Expression BaseType;
 		public Attributes  OptAttributes;
 		
 		public Type UnderlyingType;
@@ -44,7 +44,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (TypeContainer parent, string type, int mod_flags, string name, Attributes attrs, Location l)
+		public Enum (TypeContainer parent, Expression type, int mod_flags, string name, Attributes attrs, Location l)
 			: base (parent, name, l)
 		{
 			this.BaseType = type;
@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 
 			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
 
-			UnderlyingType = TypeManager.LookupType (BaseType);
+			UnderlyingType = ResolveType (BaseType, false, Location);
 
 			if (UnderlyingType != TypeManager.int32_type &&
 			    UnderlyingType != TypeManager.uint32_type &&

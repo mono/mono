@@ -924,12 +924,12 @@ namespace Mono.CSharp {
 	///   size. 
 	/// </remarks>
 	public abstract class Probe : Expression {
-		public readonly string ProbeType;
+		public readonly Expression ProbeType;
 		protected Expression expr;
 		protected Type probe_type;
 		protected Location loc;
 		
-		public Probe (Expression expr, string probe_type, Location l)
+		public Probe (Expression expr, Expression probe_type, Location l)
 		{
 			ProbeType = probe_type;
 			loc = l;
@@ -944,7 +944,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			probe_type = RootContext.LookupType (ec.DeclSpace, ProbeType, false, loc);
+			probe_type = ec.DeclSpace.ResolveType (ProbeType, false, loc);
 
 			if (probe_type == null)
 				return null;
@@ -959,7 +959,7 @@ namespace Mono.CSharp {
 	///   Implementation of the `is' operator.
 	/// </summary>
 	public class Is : Probe {
-		public Is (Expression expr, string probe_type, Location l)
+		public Is (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
 		{
 		}
@@ -1061,7 +1061,7 @@ namespace Mono.CSharp {
 	///   Implementation of the `as' operator.
 	/// </summary>
 	public class As : Probe {
-		public As (Expression expr, string probe_type, Location l)
+		public As (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
 		{
 		}
@@ -3971,7 +3971,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class New : ExpressionStatement {
 		public readonly ArrayList Arguments;
-		public readonly string    RequestedType;
+		public readonly Expression RequestedType;
 
 		Location loc;
 		MethodBase method = null;
@@ -3982,7 +3982,7 @@ namespace Mono.CSharp {
 		//
 		Expression value_target;
 		
-		public New (string requested_type, ArrayList arguments, Location l)
+		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
 			RequestedType = requested_type;
 			Arguments = arguments;
@@ -4028,7 +4028,7 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = RootContext.LookupType (ec.DeclSpace, RequestedType, false, loc);
+			type = ec.DeclSpace.ResolveType (RequestedType, false, loc);
 			
 			if (type == null)
 				return null;
@@ -4176,7 +4176,7 @@ namespace Mono.CSharp {
 	///   specified but where initialization data is mandatory.
 	/// </remarks>
 	public class ArrayCreation : ExpressionStatement {
-		string requested_type, rank;
+		Expression requested_base_type;
 		ArrayList initializers;
 		Location loc;
 
@@ -4196,7 +4196,9 @@ namespace Mono.CSharp {
 		bool is_one_dimensional = false;
 		bool is_builtin_type = false;
 		bool expect_initializers = false;
+		int num_arguments = 0;
 		int dimensions = 0;
+		string rank;
 
 		ArrayList array_data;
 
@@ -4208,38 +4210,39 @@ namespace Mono.CSharp {
 		//
 		int num_automatic_initializers;
 		
-		public ArrayCreation (string requested_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
+		public ArrayCreation (Expression requested_base_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
 		{
-			this.requested_type = requested_type;
+			this.requested_base_type = requested_base_type;
 			this.initializers = initializers;
 			this.rank = rank;
 			loc = l;
 
 			arguments = new ArrayList ();
 
-			foreach (Expression e in exprs)
+			foreach (Expression e in exprs) {
 				arguments.Add (new Argument (e, Argument.AType.Expression));
+				num_arguments++;
+			}
 		}
 
-		public ArrayCreation (string requested_type, string rank, ArrayList initializers, Location l)
+		public ArrayCreation (Expression requested_base_type, string rank, ArrayList initializers, Location l)
 		{
-			this.requested_type = requested_type;
+			this.requested_base_type = requested_base_type;
 			this.initializers = initializers;
+			this.rank = rank;
 			loc = l;
 
-			this.rank = rank.Substring (0, rank.LastIndexOf ("["));
-
-			string tmp = rank.Substring (rank.LastIndexOf ("["));
-
-			dimensions = tmp.Length - 1;
+			//this.rank = rank.Substring (0, rank.LastIndexOf ("["));
+			//
+			//string tmp = rank.Substring (rank.LastIndexOf ("["));
+			//
+			//dimensions = tmp.Length - 1;
 			expect_initializers = true;
 		}
 
-		public static string FormArrayType (string base_type, int idx_count, string rank)
+		public Expression FormArrayType (Expression base_type, int idx_count, string rank)
 		{
-			StringBuilder sb = new StringBuilder (base_type);
-
-			sb.Append (rank);
+			StringBuilder sb = new StringBuilder (rank);
 			
 			sb.Append ("[");
 			for (int i = 1; i < idx_count; i++)
@@ -4247,24 +4250,7 @@ namespace Mono.CSharp {
 			
 			sb.Append ("]");
 
-			return sb.ToString ();
-                }
-
-		public static string FormElementType (string base_type, int idx_count, string rank)
-		{
-			StringBuilder sb = new StringBuilder (base_type);
-			
-			sb.Append ("[");
-			for (int i = 1; i < idx_count; i++)
-				sb.Append (",");
-			
-			sb.Append ("]");
-			
-			sb.Append (rank);
-
-			string val = sb.ToString ();
-
-			return val.Substring (0, val.LastIndexOf ("["));
+			return new ComposedCast (base_type, sb.ToString (), loc);
 		}
 
 		void error178 ()
@@ -4351,7 +4337,7 @@ namespace Mono.CSharp {
 
 		}
 		
-		public bool ValidateInitializers (EmitContext ec)
+		public bool ValidateInitializers (EmitContext ec, Type array_type)
 		{
 			if (initializers == null) {
 				if (expect_initializers)
@@ -4360,9 +4346,6 @@ namespace Mono.CSharp {
 					return true;
 			}
 			
-			underlying_type = RootContext.LookupType (
-				ec.DeclSpace, requested_type, false, loc);
-
 			if (underlying_type == null)
 				return false;
 			
@@ -4397,15 +4380,106 @@ namespace Mono.CSharp {
 			}
 		}
 
+		void Error_NegativeArrayIndex ()
+		{
+			Report.Error (284, loc, "Can not create array with a negative size");
+		}
+		
+		//
+		// Converts `source' to an int, uint, long or ulong.
+		//
+		Expression ExpressionToArrayArgument (EmitContext ec, Expression source)
+		{
+			Expression target;
+			
+			bool old_checked = ec.CheckState;
+			ec.CheckState = true;
+			
+			target = ConvertImplicit (ec, source, TypeManager.int32_type, loc);
+			if (target == null){
+				target = ConvertImplicit (ec, source, TypeManager.uint32_type, loc);
+				if (target == null){
+					target = ConvertImplicit (ec, source, TypeManager.int64_type, loc);
+					if (target == null){
+						target = ConvertImplicit (ec, source, TypeManager.uint64_type, loc);
+						if (target == null)
+							Expression.Error_CannotConvertImplicit (loc, source.Type, TypeManager.int32_type);
+					}
+				}
+			} 
+			ec.CheckState = old_checked;
+
+			//
+			// Only positive constants are allowed at compile time
+			//
+			if (target is Constant){
+				if (target is IntConstant){
+					if (((IntConstant) target).Value < 0){
+						Error_NegativeArrayIndex ();
+						return null;
+					}
+				}
+
+				if (target is LongConstant){
+					if (((LongConstant) target).Value < 0){
+						Error_NegativeArrayIndex ();
+						return null;
+					}
+				}
+				
+			}
+
+			return target;
+		}
+
+		//
+		// Creates the type of the array
+		//
+		bool LookupType (EmitContext ec)
+		{
+			StringBuilder array_qualifier = new StringBuilder (rank);
+
+			//
+			// `In the first form allocates an array instace of the type that results
+			// from deleting each of the individual expression from the expression list'
+			//
+			if (num_arguments > 0) {
+				array_qualifier.Append ("[");
+				for (int i = num_arguments-1; i > 0; i--)
+					array_qualifier.Append (",");
+				array_qualifier.Append ("]");				
+			}
+
+			//
+			// Lookup the type
+			//
+			Expression array_type_expr;
+			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
+			type = ec.DeclSpace.ResolveType (array_type_expr, false, loc);
+
+			if (type == null)
+				return false;
+
+			underlying_type = type;
+			if (underlying_type.IsArray)
+				underlying_type = TypeManager.TypeToCoreType (underlying_type.GetElementType ());
+			dimensions = type.GetArrayRank ();
+
+			return true;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			int arg_count;
 
+			if (!LookupType (ec))
+				return null;
+			
 			//
 			// First step is to validate the initializers and fill
 			// in any missing bits
 			//
-			if (!ValidateInitializers (ec))
+			if (!ValidateInitializers (ec, type))
 				return null;
 
 			if (arguments == null)
@@ -4424,17 +4498,8 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			string array_type = FormArrayType (requested_type, arg_count, rank);
-			string element_type = FormElementType (requested_type, arg_count, rank);
+			array_element_type = TypeManager.TypeToCoreType (type.GetElementType ());
 
-			type = RootContext.LookupType (ec.DeclSpace, array_type, false, loc);
-			
-			array_element_type = RootContext.LookupType (
-				ec.DeclSpace, element_type, false, loc);
-			
-			if (type == null)
-				return null;
-			
 			if (arg_count == 1) {
 				is_one_dimensional = true;
 				eclass = ExprClass.Value;
@@ -4885,11 +4950,11 @@ namespace Mono.CSharp {
 	///   Implements the typeof operator
 	/// </summary>
 	public class TypeOf : Expression {
-		public readonly string QueriedType;
+		public readonly Expression QueriedType;
 		Type typearg;
 		Location loc;
 		
-		public TypeOf (string queried_type, Location l)
+		public TypeOf (Expression queried_type, Location l)
 		{
 			QueriedType = queried_type;
 			loc = l;
@@ -4897,8 +4962,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			typearg = RootContext.LookupType (
-				ec.DeclSpace, QueriedType, false, loc);
+			typearg = ec.DeclSpace.ResolveType (QueriedType, false, loc);
 
 			if (typearg == null)
 				return null;
@@ -4923,11 +4987,11 @@ namespace Mono.CSharp {
 	///   Implements the sizeof expression
 	/// </summary>
 	public class SizeOf : Expression {
-		public readonly string QueriedType;
+		public readonly Expression QueriedType;
 		Type type_queried;
 		Location loc;
 		
-		public SizeOf (string queried_type, Location l)
+		public SizeOf (Expression queried_type, Location l)
 		{
 			this.QueriedType = queried_type;
 			loc = l;
@@ -4935,8 +4999,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type_queried = RootContext.LookupType (
-				ec.DeclSpace, QueriedType, false, loc);
+			type_queried = ec.DeclSpace.ResolveType (QueriedType, false, loc);
 			if (type_queried == null)
 				return null;
 
@@ -5248,6 +5311,8 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (type != null)
+				throw new Exception ();
 			//
 			// We are the sole users of ResolveWithSimpleName (ie, the only
 			// ones that can cope with it)
@@ -5261,9 +5326,9 @@ namespace Mono.CSharp {
 			if (expr is SimpleName){
 				SimpleName child_expr = (SimpleName) expr;
 				
-				expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
+				Expression new_expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
-				return expr.ResolveWithSimpleName (ec);
+				return new_expr.ResolveWithSimpleName (ec);
 			}
 					
 			//
@@ -5322,6 +5387,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should not happen");
+		}
+
+		public override string ToString ()
+		{
+			return expr + "." + Identifier;
 		}
 	}
 
@@ -6228,9 +6298,15 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 
+			if (!ec.ResolvingTypeTree){
+				//
+				// If the above flag is set, this is being invoked from the ResolveType function.
+				// Upper layers take care of the type validity in this context.
+				//
 			if (!ec.InUnsafe && type.IsPointer){
 				UnsafeError (loc);
 				return null;
+			}
 			}
 			
 			eclass = ExprClass.Type;
@@ -6240,6 +6316,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("This should never be called");
+		}
+
+		public override string ToString ()
+		{
+			return left + dim;
 		}
 	}
 
@@ -6323,11 +6404,11 @@ namespace Mono.CSharp {
 	//
 	public class StackAlloc : Expression {
 		Type otype;
-		string t;
+		Expression t;
 		Expression count;
 		Location loc;
 		
-		public StackAlloc (string type, Expression count, Location l)
+		public StackAlloc (Expression type, Expression count, Location l)
 		{
 			t = type;
 			this.count = count;
@@ -6352,7 +6433,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			otype = RootContext.LookupType (ec.DeclSpace, t, false, loc);
+			otype = ec.DeclSpace.ResolveType (t, false, loc);
 
 			if (otype == null)
 				return null;

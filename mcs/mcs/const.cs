@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 	using System.Collections;
 
 	public class Const : MemberCore {
-		public readonly string ConstantType;
+		public Expression ConstantType;
 		public Expression Expr;
 		public Attributes  OptAttributes;
 		public FieldBuilder FieldBuilder;
@@ -40,7 +40,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (string constant_type, string name, Expression expr, int mod_flags,
+		public Const (Expression constant_type, string name, Expression expr, int mod_flags,
 			      Attributes attrs, Location loc)
 			: base (name, loc)
 		{
@@ -75,7 +75,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool Define (TypeContainer parent)
 		{
-			type = RootContext.LookupType (parent, ConstantType, true, Location);
+			type = parent.ResolveType (ConstantType, false, Location);
 
 			if (type == null)
 				return false;

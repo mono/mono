@@ -2,7 +2,7 @@
 //
 // cs-parser.jay: The Parser for the C# compiler
 //
-// Author: Miguel de Icaza (miguel@gnu.org)
+// Authors: Miguel de Icaza (miguel@gnu.org)
 //         Ravi Pratap     (ravi@ximian.com)
 //
 // Licensed under the terms of the GNU GPL
@@ -10,7 +10,6 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 // TODO:
-//
 //   (1) Figure out why error productions dont work.  `type-declaration' is a
 //       great spot to put an `error' because you can reproduce it with this input:
 //	 "public X { }"
@@ -56,7 +55,7 @@ namespace Mono.CSharp
 		//   value parameter that is passed to the "set" and "get"accesor
 		//   methods (properties and indexers).
 		// </summary>
-		string     implicit_value_parameter_type;
+		Expression implicit_value_parameter_type;
 		Parameters indexer_parameters;
 
 		// <summary>
@@ -696,7 +695,7 @@ constant_declaration
 			Location l = constant.Location;
 
 			Const c = new Const (
-				(string) $4, (string) constant.identifier, 
+				(Expression) $4, (string) constant.identifier, 
 				(Expression) constant.expression_or_array_initializer, (int) $2, 
 				(Attributes) $1, l);
 
@@ -734,7 +733,7 @@ field_declaration
 	  variable_declarators
 	  SEMICOLON
 	  { 
-		string type = (string) $3;
+		Expression type = (Expression) $3;
 		int mod = (int) $2;
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
@@ -786,7 +785,7 @@ variable_initializer
 	  }
 	| STACKALLOC type OPEN_BRACKET expression CLOSE_BRACKET
 	  {
-		$$ = new StackAlloc ((string) $2, (Expression) $4, lexer.Location);
+		$$ = new StackAlloc ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
 	;
 
@@ -845,7 +844,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ((string) $3, (int) $2, (string) $4, 
+		Method method = new Method ((Expression) $3, (int) $2, (string) $4, 
 					    (Parameters) $6, (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
@@ -858,7 +857,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ("System.Void", (int) $2, (string) $4, 
+		Method method = new Method (TypeManager.system_void_expr, (int) $2, (string) $4, 
 					    (Parameters) $6, (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
@@ -924,7 +923,7 @@ fixed_parameter
 	  type
 	  IDENTIFIER
 	  {
-		$$ = new Parameter ((string) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1);
+		$$ = new Parameter ((Expression) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1);
 	  }
 	;
 
@@ -941,7 +940,7 @@ parameter_modifier
 parameter_array
 	: opt_attributes PARAMS type IDENTIFIER
 	  { 
-		$$ = new Parameter ((string) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
+		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
 		note ("type must be a single-dimension array type"); 
 	  }
 	;
@@ -956,7 +955,7 @@ property_declaration
 	  type member_name
 	  OPEN_BRACE 
 	  {
-		implicit_value_parameter_type = (string) $3;
+		implicit_value_parameter_type = (Expression) $3;
 
 		lexer.PropertyParsing = true;
 
@@ -974,7 +973,7 @@ property_declaration
 		Accessor set_block = (Accessor) pair.Second;
 
 		Location loc = (Location) $6;
-		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
+		prop = new Property ((Expression) $3, (string) $4, (int) $2, get_block, set_block,
 				     (Attributes) $1, loc);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
@@ -1174,14 +1173,15 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ((string) $3, (string) $4, (bool) $2, 
+		$$ = new InterfaceMethod ((Expression) $3, (string) $4, (bool) $2, 
 					  (Parameters) $6, (Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes opt_new VOID IDENTIFIER 
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ("System.Void", (string) $4, (bool) $2, (Parameters) $6, 
+		$$ = new InterfaceMethod (
+			TypeManager.system_void_expr, (string) $4, (bool) $2, (Parameters) $6, 
 					  (Attributes) $1, lexer.Location);
 	  }
 	;
@@ -1198,7 +1198,7 @@ interface_property_declaration
 	  {
 	        int gs = (int) $7;
 
-		$$ = new InterfaceProperty ((string) $3, (string) $4, (bool) $2, 
+		$$ = new InterfaceProperty ((Expression) $3, (string) $4, (bool) $2, 
 					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1,
 					    lexer.Location);
 	  }
@@ -1216,7 +1216,7 @@ interface_accesors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new InterfaceEvent ((string) $4, (string) $5, (bool) $2, (Attributes) $1);
+		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1);
 	  }
 	;
 
@@ -1234,7 +1234,7 @@ interface_indexer_declaration
 	  	bool do_get = (a_flags & 1) == 1;
 		bool do_set = (a_flags & 2) == 2;
 
-		$$ = new InterfaceIndexer ((string) $3, (Parameters) $6, do_get, do_set,
+		$$ = new InterfaceIndexer ((Expression) $3, (Parameters) $6, do_get, do_set,
 					   (bool) $2, (Attributes) $1, lexer.Location);
 	  }
 	;
@@ -1273,11 +1273,11 @@ operator_declarator
 
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
+		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
 
 		current_local_parameters = new Parameters (pars, null, lexer.Location);
 
-		$$ = new OperatorDeclaration (op, (string) $1, (string) $5, (string) $6,
+		$$ = new OperatorDeclaration (op, (Expression) $1, (Expression) $5, (string) $6,
 					      null, null, lexer.Location);
 	}
 	| type OPERATOR overloadable_operator
@@ -1290,13 +1290,14 @@ operator_declarator
 
 	       Parameter [] pars = new Parameter [2];
 
-	       pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
-	       pars [1] = new Parameter ((string) $8, (string) $9, Parameter.Modifier.NONE, null);
+	       pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
+	       pars [1] = new Parameter ((Expression) $8, (string) $9, Parameter.Modifier.NONE, null);
 
 	       current_local_parameters = new Parameters (pars, null, lexer.Location);
 	       
-	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
-					     (string) $8, (string) $9, lexer.Location);
+	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (Expression) $1, 
+					     (Expression) $5, (string) $6,
+					     (Expression) $8, (string) $9, lexer.Location);
         }
 	| conversion_operator_declarator
 	;
@@ -1334,22 +1335,22 @@ conversion_operator_declarator
 	  {
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
+		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
 
 		current_local_parameters = new Parameters (pars, null, lexer.Location);  
 		  
-		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (string) $3, (string) $5, (string) $6,
+		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $5, (string) $6,
 					      null, null, lexer.Location);
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((string) $5, (string) $6, Parameter.Modifier.NONE, null);
+		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
 
 		current_local_parameters = new Parameters (pars, null, lexer.Location);  
 		  
-		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (string) $3, (string) $5, (string) $6,
+		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, (Expression) $5, (string) $6,
 					      null, null, lexer.Location);
 	  }
 	| IMPLICIT error 
@@ -1452,7 +1453,7 @@ destructor_declaration
 				m = Modifiers.PROTECTED | Modifiers.OVERRIDE;
 
 			Method d = new Method (
-				"System.Void", m, "Finalize", 
+				TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
 			d.Block = (Block) $6;
@@ -1468,7 +1469,7 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			Event e = new Event ((string) $4, var.identifier, 
+			Event e = new Event ((Expression) $4, var.identifier, 
 					     var.expression_or_array_initializer,
 					     (int) $2, null, null, (Attributes) $1, lexer.Location);
 
@@ -1481,7 +1482,7 @@ event_declaration
 	  EVENT type member_name
 	  OPEN_BRACE
 	  {
-		implicit_value_parameter_type = (string) $4;  
+		implicit_value_parameter_type = (Expression) $4;  
 		lexer.EventParsing = true;
 		oob_stack.Push (lexer.Location);
 	  }
@@ -1502,7 +1503,7 @@ event_declaration
 		if (pair.Second != null)
 			rem_accessor = (Accessor) pair.Second;
 		
-		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_accessor, rem_accessor,
+		Event e = new Event ((Expression) $4, (string) $5, null, (int) $2, add_accessor, rem_accessor,
 				     (Attributes) $1, loc);
 		
 		CheckDef (current_container.AddEvent (e), e.Name, loc);
@@ -1614,7 +1615,7 @@ indexer_declarator
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
 
-		$$ = new IndexerDeclaration ((string) $1, null, pars);
+		$$ = new IndexerDeclaration ((Expression) $1, null, pars);
 	  }
 	| type qualified_identifier DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
@@ -1623,7 +1624,7 @@ indexer_declarator
 		if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
-		$$ = new IndexerDeclaration ((string) $1, (string) $2, pars);
+		$$ = new IndexerDeclaration ((Expression) $1, (string) $2, pars);
 	  }
 	;
 
@@ -1638,7 +1639,7 @@ enum_declaration
 		Location enum_location = lexer.Location;
 
 		string full_name = MakeName ((string) $4);
-		Enum e = new Enum (current_container, (string) $5, (int) $2, full_name, 
+		Enum e = new Enum (current_container, (Expression) $5, (int) $2, full_name, 
 				   (Attributes) $1, enum_location);
 		
 		foreach (VariableDeclaration ev in (ArrayList) $6) {
@@ -1659,7 +1660,7 @@ enum_declaration
 	;
 
 opt_enum_base
-	: /* empty */		{ $$ = "System.Int32"; }
+	: /* empty */		{ $$ = TypeManager.system_int32_expr; }
 	| COLON type		{ $$ = $2;   }
 	;
 
@@ -1718,7 +1719,7 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
-		Delegate del = new Delegate (current_container, (string) $4, (int) $2, 
+		Delegate del = new Delegate (current_container, (Expression) $4, (int) $2, 
 		                             MakeName ((string) $5), (Parameters) $7, 
 					     (Attributes) $1, l);
 		  
@@ -1736,8 +1737,8 @@ delegate_declaration
 		Location l = lexer.Location;
 		Delegate del = new Delegate (
 			current_container,
-			"System.Void", (int) $2, MakeName ((string) $5), (Parameters) $7, 
-		        (Attributes) $1, l);
+			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
+			(Parameters) $7, (Attributes) $1, l);
 
 		del.Namespace = current_namespace;
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
@@ -1764,7 +1765,7 @@ type
 	           This does interfaces, delegates, struct_types, class_types, 
 	           parent classes, and more! 4.2 
 	         */
-		$$ = $1; 
+		$$ = DecomposeQI ((string) $1, lexer.Location);
 	  }
 	| builtin_types
 	| array_type
@@ -1780,19 +1781,16 @@ pointer_type
 		// can't perform checks during this phase - we do it during
 		// semantic analysis.
 		//
-		$$ = (string) $1 + "*";
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
 	  }
 	| VOID STAR
 	  {
-		$$ = "System.Void*";
+		$$ = new ComposedCast (TypeManager.system_void_expr, "*", lexer.Location);
 	  }
 	;
 
 non_expression_type
 	: builtin_types	
-	  {
-		$$ = new SimpleName ((string) $1, lexer.Location);
-	  }
 	| non_expression_type rank_specifier
 	  {
 		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
@@ -1833,26 +1831,26 @@ type_list
  * simple types, but we need this to reuse it easily in local_variable_type
  */
 builtin_types
-	: OBJECT	{ $$ = "System.Object"; }
-	| STRING	{ $$ = "System.String"; }
-	| BOOL		{ $$ = "System.Boolean"; }
-	| DECIMAL	{ $$ = "System.Decimal"; }
-	| FLOAT		{ $$ = "System.Single"; }
-	| DOUBLE	{ $$ = "System.Double"; }
+	: OBJECT	{ $$ = TypeManager.system_object_expr; }
+	| STRING	{ $$ = TypeManager.system_string_expr; }
+	| BOOL		{ $$ = TypeManager.system_boolean_expr; }
+	| DECIMAL	{ $$ = TypeManager.system_decimal_expr; }
+	| FLOAT		{ $$ = TypeManager.system_single_expr; }
+	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
 	| integral_type
 	;
 
 integral_type
-	: SBYTE		{ $$ = "System.SByte"; }
-	| BYTE		{ $$ = "System.Byte"; }
-	| SHORT		{ $$ = "System.Int16"; }
-	| USHORT	{ $$ = "System.UInt16"; }
-	| INT		{ $$ = "System.Int32"; }
-	| UINT		{ $$ = "System.UInt32"; }
-	| LONG		{ $$ = "System.Int64"; }
-	| ULONG		{ $$ = "System.UInt64"; }
-	| CHAR		{ $$ = "System.Char"; }
-	| VOID		{ $$ = "System.Void"; }
+	: SBYTE		{ $$ = TypeManager.system_sbyte_expr; }
+	| BYTE		{ $$ = TypeManager.system_byte_expr; }
+	| SHORT		{ $$ = TypeManager.system_int16_expr; }
+	| USHORT	{ $$ = TypeManager.system_uint16_expr; }
+	| INT		{ $$ = TypeManager.system_int32_expr; }
+	| UINT		{ $$ = TypeManager.system_uint32_expr; }
+	| LONG		{ $$ = TypeManager.system_int64_expr; }
+	| ULONG		{ $$ = TypeManager.system_uint64_expr; }
+	| CHAR		{ $$ = TypeManager.system_char_expr; }
+	| VOID		{ $$ = TypeManager.system_void_expr; }
 	;
 
 interface_type
@@ -1862,7 +1860,7 @@ interface_type
 array_type
 	: type rank_specifiers
 	  {
-		  $$ = (string) $1 + (string) $2;
+		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
 	;
 
@@ -1947,7 +1945,7 @@ member_access
 	  }
 	| predefined_type DOT IDENTIFIER
 	  {
-		$$ = new MemberAccess (new SimpleName ((string) $1, lexer.Location), (string) $3, lexer.Location);
+		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
 	  }
 	;
 
@@ -2091,7 +2089,7 @@ new_expression
 object_or_delegate_creation_expression
 	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new New ((string) $2, (ArrayList) $4, lexer.Location);
+		$$ = new New ((Expression) $2, (ArrayList) $4, lexer.Location);
 	  }
 	;
 
@@ -2100,11 +2098,11 @@ array_creation_expression
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, lexer.Location);
+		$$ = new ArrayCreation ((Expression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, lexer.Location);
 	  }
 	| NEW type rank_specifiers array_initializer
 	  {
-		$$ = new ArrayCreation ((string) $2, (string) $3, (ArrayList) $4, lexer.Location);
+		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, lexer.Location);
 	  }
 	| NEW type error 
 	  {
@@ -2204,16 +2202,13 @@ variable_initializer_list
 typeof_expression
 	: TYPEOF OPEN_PARENS type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((string) $3, lexer.Location);
+		$$ = new TypeOf ((Expression) $3, lexer.Location);
 	  }
 	;
 
 sizeof_expression
 	: SIZEOF OPEN_PARENS type CLOSE_PARENS { 
-		$$ = new SizeOf ((string) $3, lexer.Location);
-
-		note ("Verify type is unmanaged"); 
-		note ("if (5.8) builtin, yield constant expression");
+		$$ = new SizeOf ((Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2381,11 +2376,11 @@ relational_expression
 	  }
 	| relational_expression IS type
 	  {
-		$$ = new Is ((Expression) $1, (string) $3, lexer.Location);
+		$$ = new Is ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| relational_expression AS type
 	  {
-		$$ = new As ((Expression) $1, (string) $3, lexer.Location);
+		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2725,14 +2720,14 @@ declaration_statement
 	  {
 		DictionaryEntry de = (DictionaryEntry) $1;
 
-		$$ = declare_local_variables ((string) de.Key, (ArrayList) de.Value, lexer.Location);
+		$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
 	  }
 
 	| local_constant_declaration SEMICOLON
 	  {
 		DictionaryEntry de = (DictionaryEntry) $1;
 
-		$$ = declare_local_constant ((string) de.Key, (VariableDeclaration) de.Value);
+		$$ = declare_local_constant ((Expression) de.Key, (VariableDeclaration) de.Value);
 	  }
 	;
 
@@ -2765,18 +2760,24 @@ local_variable_type
 		if (!(expr is SimpleName || expr is MemberAccess)) {
 			Location l = lexer.Location;
 			Report.Error (-1, l, "Invalid Type definition");
-			$$ = "System.Object";
+			$$ = TypeManager.system_object_expr;
 		}
 		
 		//
 		// So we extract the string corresponding to the SimpleName
 		// or MemberAccess
 		// 
-		$$ = GetQualifiedIdentifier (expr) + (string) $2;
+		if ((string) $2 == "")
+			$$ = $1;
+		else
+			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
 	| builtin_types opt_rank_specifier
 	  {
-		  $$ = (string) $1 + (string) $2;
+		if ((string) $2 == "")
+			$$ = $1;
+		else
+			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
         ;
 
@@ -2790,19 +2791,19 @@ local_variable_pointer_type
 			$$ = "System.Object";
 		}
 		
-		$$ = GetQualifiedIdentifier (expr) + "*";
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
 	  }
         | builtin_types STAR
 	  {
-		$$ = (string) $1 + "*";
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);;
 	  }
         | VOID STAR
 	  {
-		$$ = "System.Void*";
+		$$ = new ComposedCast (TypeManager.system_void_expr, "*", lexer.Location);;
 	  }
 	| local_variable_pointer_type STAR
           {
-		$$ = (string) $1 + "*";
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
 	  }
         ;
 
@@ -2813,7 +2814,13 @@ local_variable_declaration
 	  }
         | local_variable_pointer_type opt_rank_specifier variable_declarators
 	{
-		$$ = new DictionaryEntry ((string) $1 + (string) $2, $3);
+		Expression t;
+
+		if ((string) $2 == "")
+			t = (Expression) $1;
+		else
+			t = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+		$$ = new DictionaryEntry (t, $3);
 	}
  	;
 
@@ -3024,7 +3031,7 @@ for_statement
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
 			
-			string type = (string) de.Key;
+			Expression type = (Expression) de.Key;
 			ArrayList var_declarators = (ArrayList) de.Value;
 
 			foreach (VariableDeclaration decl in var_declarators){
@@ -3044,13 +3051,8 @@ for_statement
 						expr = (Expression) decl.expression_or_array_initializer;
 						
 					} else {
-						
 						ArrayList init = (ArrayList) decl.expression_or_array_initializer;
-						
-						string base_type = type.Substring (0, type.IndexOf ("["));
-						string rank = type.Substring (type.IndexOf ("["));
-						
-						expr = new ArrayCreation (base_type, rank, init, decl.Location);
+						expr = new ArrayCreation (type, "", init, decl.Location);
 					}
 					
 					LocalVariableReference var;
@@ -3144,7 +3146,7 @@ foreach_statement
 		Location l = lexer.Location;
 		VariableInfo vi;
 
-		vi = foreach_block.AddVariable ((string) $3, (string) $4, current_local_parameters, l);
+		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, current_local_parameters, l);
 		vi.ReadOnly = true;
 		if (vi == null){
 			Report.Error (
@@ -3167,7 +3169,7 @@ foreach_statement
 
 		current_block = prev_block;
 
-		Foreach f = new Foreach ((string) $3, v, (Expression) $7, (Statement) $10, l);
+		Foreach f = new Foreach ((Expression) $3, v, (Expression) $7, (Statement) $10, l);
 		foreach_block.AddStatement (f);
 
 		$$ = foreach_block;
@@ -3301,11 +3303,12 @@ opt_identifier
 catch_clause 
 	: CATCH opt_catch_args 
 	{
-		string type = null, id = null;
+		Expression type = null;
+		string id = null;
 		
 		if ($2 != null) {
 			DictionaryEntry cc = (DictionaryEntry) $2;
-			type = (string) cc.Key;
+			type = (Expression) cc.Key;
 			id   = (string) cc.Value;
 
 			if (id != null){
@@ -3318,19 +3321,21 @@ catch_clause
 				current_block = new Block (current_block);
 				Block b = declare_local_variables (type, one, loc);
 				current_block = b;
-
-				
 			}
 		}
 	} block {
-		string type = null, id = null;
+		Expression type = null;
+		string id = null;
 
 		if ($2 != null){
 			DictionaryEntry cc = (DictionaryEntry) $2;
-			type = (string) cc.Key;
+			type = (Expression) cc.Key;
 			id   = (string) cc.Value;
 
 			if ($1 != null){
+				//
+				// FIXME: I can change this for an assignment.
+				//
 				while (current_block != (Block) $1)
 					current_block = current_block.Parent;
 			}
@@ -3386,7 +3391,7 @@ fixed_statement
 	  {
 		Block assign_block = new Block (current_block, true);
 		ArrayList list = (ArrayList) $4;
-		string type = (string) $3;
+		Expression type = (Expression) $3;
 		Location l = lexer.Location;
 		int top = list.Count;
 
@@ -3417,7 +3422,7 @@ fixed_statement
 		ArrayList list = (ArrayList) $4;
 		int top = list.Count;
 
-		$$ = new Fixed ((string) $3, (ArrayList) $4, (Statement) $7, l);
+		$$ = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
 	  }
 	;
 
@@ -3465,7 +3470,7 @@ using_statement
 			DictionaryEntry de = (DictionaryEntry) $3;
 			Location l = lexer.Location;
 
-			string type = (string) de.Key;
+			Expression type = (Expression) de.Key;
 			ArrayList var_declarators = (ArrayList) de.Value;
 
 			foreach (VariableDeclaration decl in var_declarators){
@@ -3485,15 +3490,10 @@ using_statement
 				Expression expr;
 				if (decl.expression_or_array_initializer is Expression){
 					expr = (Expression) decl.expression_or_array_initializer;
-					
 				} else {
-
 					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
 					
-					string base_type = type.Substring (0, type.IndexOf ("["));
-					string rank = type.Substring (type.IndexOf ("["));
-					
-					expr = new ArrayCreation (base_type, rank, init, decl.Location);
+					expr = new ArrayCreation (type, "", init, decl.Location);
 				}
 
 				LocalVariableReference var;
@@ -3559,11 +3559,11 @@ public class VariableDeclaration {
 // </summary>
 
 public class IndexerDeclaration {
-	public string type;
+	public Expression type;
 	public string interface_type;
 	public Parameters param_list;
 
-	public IndexerDeclaration (string type, string interface_type, Parameters param_list)
+	public IndexerDeclaration (Expression type, string interface_type, Parameters param_list)
 	{
 		this.type = type;
 		this.interface_type = interface_type;
@@ -3577,15 +3577,13 @@ public class IndexerDeclaration {
 
 public class OperatorDeclaration {
 	public Operator.OpType optype;
-	public string ret_type;
-	public string arg1type;
-	public string arg1name;
-	public string arg2type;
-	public string arg2name;
+	public Expression ret_type, arg1type, arg2type;
+	public string arg1name, arg2name;
 	public Location location;
 
-	public OperatorDeclaration (Operator.OpType op, string ret_type, string arg1type, string arg1name,
-				    string arg2type, string arg2name, Location location)
+	public OperatorDeclaration (Operator.OpType op, Expression ret_type, 
+				    Expression arg1type, string arg1name,
+				    Expression arg2type, string arg2name, Location location)
 	{
 		optype = op;
 		this.ret_type = ret_type;
@@ -3724,7 +3722,7 @@ string GetQualifiedIdentifier (Expression expr)
 	
 }
 
-Block declare_local_variables (string type, ArrayList variable_declarators, Location loc)
+Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
 {
 	Block implicit_block;
 	ArrayList inits = null;
@@ -3776,11 +3774,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators, Loca
 		} else {
 			ArrayList init = (ArrayList) decl.expression_or_array_initializer;
 			
-			string base_type = type.Substring (0, type.IndexOf ("["));
-			string rank = type.Substring (type.IndexOf ("["));
-
-			expr = new ArrayCreation (base_type, rank, init, decl.Location);
-			
+			expr = new ArrayCreation (type, "", init, decl.Location);
 		}
 
 		LocalVariableReference var;
@@ -3794,7 +3788,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators, Loca
 	return implicit_block;
 }
 
-Block declare_local_constant (string type, VariableDeclaration decl)
+Block declare_local_constant (Expression type, VariableDeclaration decl)
 {
 	Block implicit_block;
 

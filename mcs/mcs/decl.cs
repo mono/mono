@@ -294,6 +294,17 @@ namespace Mono.CSharp {
 			}
 		}
 
+		/// <summary>
+		///   Looks up the alias for the name
+		/// </summary>
+		public string LookupAlias (string name)
+		{
+			if (Namespace != null)
+				return Namespace.LookupAlias (name);
+			else
+				return null;
+		}
+		
 		// 
 		// root_types contains all the types.  All TopLevel types
 		// hence have a parent that points to `root_types', that is
@@ -355,6 +366,55 @@ namespace Mono.CSharp {
 			return prefix + name;
 		}
 
+		EmitContext type_resolve_ec;
+		EmitContext GetTypeResolveEmitContext (TypeContainer parent, Location loc)
+		{
+			type_resolve_ec = new EmitContext (parent, this, loc, null, null, ModFlags, false);
+			type_resolve_ec.ResolvingTypeTree = true;
+			type_resolve_ec.OnlyLookupTypes = true;
+
+			return type_resolve_ec;
+		}
+
+		// <summary>
+		//    Looks up the type, as parsed into the expression `e' 
+		// </summary>
+		public Type ResolveType (Expression e, bool silent, Location loc)
+		{
+			if (type_resolve_ec == null)
+				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
+			type_resolve_ec.loc = loc;
+			Expression d = e.Resolve (type_resolve_ec);
+			if (d == null || d.eclass != ExprClass.Type){
+				if (!silent){
+					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
+				}
+				return null;
+			}
+
+			return d.Type;
+		}
+
+		// <summary>
+		//    Resolves the expression `e' for a type, and will recursively define
+		//    types. 
+		// </summary>
+		public Expression ResolveTypeExpr (Expression e, bool silent, Location loc)
+		{
+			if (type_resolve_ec == null)
+				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
+
+			Expression d = e.Resolve (type_resolve_ec);
+			if (d == null || d.eclass != ExprClass.Type){
+				if (!silent){
+					Report.Error (246, loc, "Cannot find type `"+ e +"'");
+				}
+				return null;
+			}
+
+			return d;
+		}
+		
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;
@@ -477,7 +537,7 @@ namespace Mono.CSharp {
 				
 			}
 
-			Report.Error (246, Location, "Can not find type `"+name+"'");
+			//Report.Error (246, Location, "Can not find type `"+name+"'");
 			return null;
 		}
 	}

@@ -1,3 +1,16 @@
+TODO:
+
+	1. Create a "partial" emit context for each TypeContainer..
+
+	2. EmitContext should be partially constructed.  No IL Generator.
+
+	Optimize the internal type expressions in the parser (system_object, etc)
+	to be something other than DecomposeQI-based expressions.
+
+	interface_type review.
+
+	parameter_array, line 952: `note: must be a single dimension array type'.  Validate this
+
 Dead Code Elimination bugs:
 ---------------------------
 
@@ -17,6 +30,9 @@ readonly variables and ref/out
 	
 BUGS
 ----
+
+* We suck at reporting what turns out to be error -6.  Use the standard error message
+  instead.
 
 * Explicit indexer implementation is missing.
 

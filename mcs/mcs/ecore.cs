@@ -559,8 +559,7 @@ namespace Mono.CSharp {
 
 			args.Add (new Argument (expr, Argument.AType.Expression));
 
-			Expression ne = new New (target.FullName, args,
-						 new Location (-1));
+			Expression ne = new New (new TypeExpr (target), args, new Location (-1));
 
 			return ne.Resolve (ec);
 		}
@@ -3287,14 +3286,21 @@ namespace Mono.CSharp {
 				// namespaces if the name does not include any dots in it
 				//
 				
-				if (Name.IndexOf ('.') == -1 && (alias_value = ec.TypeContainer.LookupAlias (Name)) != null) {
-				// System.Console.WriteLine (Name + " --> " + alias_value);
+				alias_value = ec.DeclSpace.LookupAlias (Name);
+				
+				if (Name.IndexOf ('.') == -1 && alias_value != null) {
 					if ((t = RootContext.LookupType (ds, alias_value, true, Location))
 					    != null)
 						return new TypeExpr (t);
 					
 				// we have alias value, but it isn't Type, so try if it's namespace
 					return new SimpleName (alias_value, Location);
+				}
+				
+				if (ec.ResolvingTypeTree){
+					Type dt = ec.DeclSpace.FindType (Name);
+					if (dt != null)
+						return new TypeExpr (dt);
 				}
 				
 				// No match, maybe our parent can compose us
@@ -3463,6 +3469,11 @@ namespace Mono.CSharp {
 			       "' does not exist in the class `" +
 			       ec.DeclSpace.Name + "'");
 		}
+
+		public override string ToString ()
+		{
+			return Name;
+		}
 	}
 	
 	/// <summary>
@@ -3482,7 +3493,38 @@ namespace Mono.CSharp {
 
 		override public void Emit (EmitContext ec)
 		{
-			throw new Exception ("Implement me");
+			throw new Exception ("Should never be called");
+		}
+	}
+
+	/// <summary>
+	///   Used to create types from a fully qualified name.  These are just used
+	///   by the parser to setup the core types.  A TypeExpression is always
+	///   classified as a type.
+	/// </summary>
+	public class TypeExpression : TypeExpr {
+		string name;
+		
+		public TypeExpression (string name) : base (null)
+		{
+			this.name = name;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (type == null)
+				type = RootContext.LookupType (ec.DeclSpace, name, false, Location.Null);
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new Exception ("Should never be called");			
+		}
+
+		public override string ToString ()
+		{
+			return name;
 		}
 	}
 
@@ -3953,13 +3995,13 @@ namespace Mono.CSharp {
 				type = EventInfo.EventHandlerType;
 		}
 
-		override public Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			// We are born fully resolved
 			return this;
 		}
 
-		override public void Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should not happen I think");
 		}

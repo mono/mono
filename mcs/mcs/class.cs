@@ -522,9 +522,7 @@ namespace Mono.CSharp {
 				if (init is Expression)
 					e = (Expression) init;
 				else {
-					string base_type = f.Type.Substring (0, f.Type.IndexOf ("["));
-					string rank = f.Type.Substring (f.Type.IndexOf ("["));
-					e = new ArrayCreation (base_type, rank, (ArrayList)init, f.Location);
+					e = new ArrayCreation (f.Type, "", (ArrayList)init, f.Location);
 				}
 
 				Location l = f.Location;
@@ -634,13 +632,15 @@ namespace Mono.CSharp {
 			count = bases.Count;
 
 			if (is_class){
-				string name = (string) bases [0];
-				Type first = FindType (name);
+				Expression name = (Expression) bases [0];
+				name = ResolveTypeExpr (name, false, Location);
 
-				if (first == null){
+				if (name == null){
 					error = true;
 					return null;
 				}
+
+				Type first = name.Type;
 
 				if (first.IsClass){
 					parent = first;
@@ -657,8 +657,10 @@ namespace Mono.CSharp {
 			Type [] ifaces = new Type [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				string name = (string) bases [i];
-				Type t = FindType (name);
+				Expression name = (Expression) bases [i];
+				Expression resolved = ResolveTypeExpr (name, false, Location);
+				bases [i] = resolved;
+				Type t = resolved.Type;
 
 				if (t == null){
 					error = true;
@@ -1026,17 +1028,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Looks up the alias for the name
-		/// </summary>
-		public string LookupAlias (string name)
-		{
-			if (Namespace != null)
-				return Namespace.LookupAlias (name);
-			else
-				return null;
-		}
-		
-		/// <summary>
 		///   This function is based by a delegate to the FindMembers routine
 		/// </summary>
 		static bool AlwaysAccept (MemberInfo m, object filterCriteria)
@@ -1201,16 +1192,32 @@ namespace Mono.CSharp {
 			}
 			
 			if ((mt & MemberTypes.NestedType) != 0) {
+				if (types != null){
+					foreach (TypeContainer t in types) {
+						TypeBuilder tb = t.TypeBuilder;
 
-				if (Types != null)
-					foreach (TypeContainer t in Types)  
-						if (filter (t.TypeBuilder, criteria) == true)
-							members.Add (t.TypeBuilder);
+						if (tb != null && (filter (tb, criteria) == true))
+								members.Add (tb);
+					}
+				}
 
-				if (Enums != null)
-					foreach (Enum en in Enums)
-						if (filter (en.TypeBuilder, criteria) == true)
-							members.Add (en.TypeBuilder);
+				if (enums != null){
+					foreach (Enum en in enums){
+						TypeBuilder tb = en.TypeBuilder;
+
+						if (tb != null && (filter (tb, criteria) == true))
+							members.Add (tb);
+					}
+				}
+				
+				if (delegates != null){
+					foreach (Delegate d in delegates){
+						TypeBuilder tb = d.TypeBuilder;
+						
+						if (tb != null && (filter (tb, criteria) == true))
+							members.Add (tb);
+					}
+				}
 			}
 
 			if ((mt & MemberTypes.Constructor) != 0){
@@ -1228,6 +1235,7 @@ namespace Mono.CSharp {
 					ConstructorBuilder cb =
 						default_static_constructor.ConstructorBuilder;
 					
+					if (cb != null)
 					if (filter (cb, criteria) == true)
 						members.Add (cb);
 				}
@@ -1781,7 +1789,7 @@ namespace Mono.CSharp {
 	}
 	
 	public class Method : MethodCore {
-		public readonly string ReturnType;
+		public Expression ReturnType;
 		public MethodBuilder MethodBuilder;
 		public readonly Attributes OptAttributes;
 
@@ -1807,7 +1815,7 @@ namespace Mono.CSharp {
 		//
 		// return_type can be "null" for VOID values.
 		//
-		public Method (string return_type, int mod, string name, Parameters parameters,
+		public Method (Expression return_type, int mod, string name, Parameters parameters,
 			       Attributes attrs, Location l)
 			: base (name, parameters, l)
 		{
@@ -1826,8 +1834,7 @@ namespace Mono.CSharp {
 		public Type GetReturnType (TypeContainer parent)
 		{
 			if (type_return_type == null)
-				type_return_type = RootContext.LookupType (
-					parent, ReturnType, false, Location);
+				type_return_type = parent.ResolveType (ReturnType, false, Location);
 			
 			return type_return_type;
 		}
@@ -2464,7 +2471,7 @@ namespace Mono.CSharp {
 	// their common bits.  This is also used to flag usage of the field
 	//
 	abstract public class FieldBase : MemberCore {
-		public readonly string Type;
+		public Expression Type;
 		public readonly Object Initializer;
 		public readonly Attributes OptAttributes;
 		public FieldBuilder  FieldBuilder;
@@ -2476,7 +2483,7 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected FieldBase (string type, int mod, int allowed_mod, string name,
+		protected FieldBase (Expression type, int mod, int allowed_mod, string name,
 				     object init, Attributes attrs, Location loc)
 			: base (name, loc)
 		{
@@ -2505,7 +2512,7 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (string type, int mod, string name, Object expr_or_array_init,
+		public Field (Expression type, int mod, string name, Object expr_or_array_init,
 			      Attributes attrs, Location loc)
 			: base (type, mod, AllowedModifiers, name, expr_or_array_init, attrs, loc)
 		{
@@ -2513,7 +2520,7 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
-			Type t = RootContext.LookupType (parent, Type, false, Location);
+			Type t = parent.ResolveType (Type, false, Location);
 			
 			if (t == null)
 				return false;
@@ -2596,7 +2603,7 @@ namespace Mono.CSharp {
 	}
 			
 	public class Property : MemberCore {
-		public readonly string Type;
+		public Expression Type;
 		public Accessor Get, Set;
 		public PropertyBuilder PropertyBuilder;
 		public Attributes OptAttributes;
@@ -2627,7 +2634,7 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.VIRTUAL;
 
-		public Property (string type, string name, int mod_flags,
+		public Property (Expression type, string name, int mod_flags,
 				 Accessor get_block, Accessor set_block,
 				 Attributes attrs, Location loc)
 			: base (name, loc)
@@ -2866,7 +2873,7 @@ namespace Mono.CSharp {
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 
 			// Lookup Type, verify validity
-			PropertyType = RootContext.LookupType (parent, Type, false, Location);
+			PropertyType = parent.ResolveType (Type, false, Location);
 			if (PropertyType == null)
 				return false;
 
@@ -3143,7 +3150,7 @@ namespace Mono.CSharp {
 		Type EventType;
 		MethodBuilder AddBuilder, RemoveBuilder;
 		
-		public Event (string type, string name, Object init, int mod, Accessor add,
+		public Event (Expression type, string name, Object init, int mod, Accessor add,
 			      Accessor remove, Attributes attrs, Location loc)
 			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
 		{
@@ -3159,7 +3166,7 @@ namespace Mono.CSharp {
 			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
 
-			EventType = RootContext.LookupType (parent, Type, false, Location);
+			EventType = parent.ResolveType (Type, false, Location);
 			if (EventType == null)
 				return false;
 
@@ -3327,7 +3334,7 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.ABSTRACT;
 
-		public readonly string     Type;
+		public readonly Expression Type;
 		public readonly string     InterfaceType;
 		public readonly Parameters FormalParameters;
 		public readonly Accessor   Get, Set;
@@ -3340,7 +3347,7 @@ namespace Mono.CSharp {
 		
 		EmitContext ec;
 		
-		public Indexer (string type, string int_type, int flags, Parameters parms,
+		public Indexer (Expression type, string int_type, int flags, Parameters parms,
 				Accessor get_block, Accessor set_block, Attributes attrs, Location loc)
 			: base ("", loc)
 		{
@@ -3462,7 +3469,7 @@ namespace Mono.CSharp {
 				PropertyAttributes.SpecialName;
 			bool error = false;
 			
-			IndexerType = RootContext.LookupType (parent, Type, false, Location);
+			IndexerType = parent.ResolveType (Type, false, Location);
 			Type [] parameters = FormalParameters.GetParameterInfo (parent);
 
 			// Check if the return type and arguments were correct
@@ -3714,11 +3721,9 @@ namespace Mono.CSharp {
 		};
 
 		public readonly OpType OperatorType;
-		public readonly string ReturnType;
-		public readonly string FirstArgType;
-		public readonly string FirstArgName;
-		public readonly string SecondArgType;
-		public readonly string SecondArgName;
+		public readonly Expression ReturnType;
+		public readonly Expression FirstArgType, SecondArgType;
+		public readonly string FirstArgName, SecondArgName;
 		public readonly Block  Block;
 		public Attributes      OptAttributes;
 		public MethodBuilder   OperatorMethodBuilder;
@@ -3726,8 +3731,10 @@ namespace Mono.CSharp {
 		public string MethodName;
 		public Method OperatorMethod;
 
-		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
-				 string arg2type, string arg2name, Block block, Attributes attrs, Location loc)
+		public Operator (OpType type, Expression ret_type, int flags,
+				 Expression arg1type, string arg1name,
+				 Expression arg2type, string arg2name,
+				 Block block, Attributes attrs, Location loc)
 			: base ("", loc)
 		{
 			OperatorType = type;

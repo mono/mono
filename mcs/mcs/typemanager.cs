@@ -72,7 +72,26 @@ public class TypeManager {
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
 
+	//
+	// An empty array of types
+	//
 	static public Type [] NoTypes;
+
+
+	// 
+	// Expressions representing the internal types.  Used during declaration
+	// definition.
+	//
+	static public Expression system_object_expr, system_string_expr; 
+	static public Expression system_boolean_expr, system_decimal_expr;
+	static public Expression system_single_expr, system_double_expr;
+	static public Expression system_sbyte_expr, system_byte_expr;
+	static public Expression system_int16_expr, system_uint16_expr;
+	static public Expression system_int32_expr, system_uint32_expr;
+	static public Expression system_int64_expr, system_uint64_expr;
+	static public Expression system_char_expr, system_void_expr;
+	static public Expression system_asynccallback_expr;
+	static public Expression system_iasyncresult_expr;
 
 	//
 	// This is only used when compiling corlib
@@ -250,6 +269,32 @@ public class TypeManager {
 	// A delegate that points to the filter above.
 	static MemberFilter signature_filter;
 
+	//
+	// These are expressions that represent some of the internal data types, used
+	// elsewhere
+	//
+	static void InitExpressionTypes ()
+	{
+		system_object_expr  = new TypeExpression ("System.Object");
+		system_string_expr  = new TypeExpression ("System.String");
+		system_boolean_expr = new TypeExpression ("System.Boolean");
+		system_decimal_expr = new TypeExpression ("System.Decimal");
+		system_single_expr  = new TypeExpression ("System.Single");
+		system_double_expr  = new TypeExpression ("System.Double");
+		system_sbyte_expr   = new TypeExpression ("System.SByte");
+		system_byte_expr    = new TypeExpression ("System.Byte");
+		system_int16_expr   = new TypeExpression ("System.Int16");
+		system_uint16_expr  = new TypeExpression ("System.UInt16");
+		system_int32_expr   = new TypeExpression ("System.Int32");
+		system_uint32_expr  = new TypeExpression ("System.UInt32");
+		system_int64_expr   = new TypeExpression ("System.Int64");
+		system_uint64_expr  = new TypeExpression ("System.UInt64");
+		system_char_expr    = new TypeExpression ("System.Char");
+		system_void_expr    = new TypeExpression ("System.Void");
+		system_asynccallback_expr = new TypeExpression ("System.AsyncCallback");
+		system_iasyncresult_expr = new TypeExpression ("System.IAsyncResult");
+	}
+	
 	static TypeManager ()
 	{
 		assemblies = new Assembly [0];
@@ -271,6 +316,7 @@ public class TypeManager {
 		NoTypes = new Type [0];
 
 		signature_filter = new MemberFilter (SignatureFilter);
+		InitExpressionTypes ();
 	}
 
 	public static void AddUserType (string name, TypeBuilder t, Type [] ifaces)
@@ -656,6 +702,8 @@ public class TypeManager {
 				system_array_type, "CopyTo", system_array_int_arg);
 
 			Type [] system_type_type_arg = { system_type_type, system_type_type, system_type_type };
+
+			try {
 			system_void_set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
 				system_type_type_arg);
@@ -666,6 +714,9 @@ public class TypeManager {
 			args [2] = enum_type;
 
 			system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
+			} catch {
+				Console.WriteLine ("Corlib compilation is not supported in Microsoft.NET due to bugs in it");
+			}
 		}
 	}
 

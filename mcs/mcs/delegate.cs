@@ -21,7 +21,7 @@ namespace Mono.CSharp {
 	///   Holds Delegates
 	/// </summary>
 	public class Delegate : DeclSpace {
-		public readonly string ReturnType;
+ 		public Expression ReturnType;
 		public Parameters      Parameters;
 		public Attributes      OptAttributes;
 
@@ -44,7 +44,7 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
-		public Delegate (TypeContainer parent, string type, int mod_flags,
+ 		public Delegate (TypeContainer parent, Expression type, int mod_flags,
 				 string name, Parameters param_list,
 				 Attributes attrs, Location l)
 			: base (parent, name, l)
@@ -83,7 +83,7 @@ namespace Mono.CSharp {
 			return TypeBuilder;
 		}
 
-		public override bool Define (TypeContainer parent)
+ 		public override bool Define (TypeContainer container)
 		{
 			MethodAttributes mattr;
 			int i;
@@ -143,7 +143,8 @@ namespace Mono.CSharp {
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					return false;
 			
-  			ret_type = FindType (ReturnType);
+ 			ReturnType = ResolveTypeExpr (ReturnType, false, Location);
+   			ret_type = ReturnType.Type;
 			if (ret_type == null)
 				return false;
 
@@ -187,7 +188,7 @@ namespace Mono.CSharp {
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			TypeManager.RegisterMethod (InvokeBuilder,
-						    new InternalParameters (parent, Parameters),
+						    new InternalParameters (container, Parameters),
 						    param_types);
 
 			//
@@ -244,16 +245,18 @@ namespace Mono.CSharp {
 			if (Parameters.ArrayParameter != null)
 				async_params [n] = Parameters.ArrayParameter;
 			
-			async_params [params_num] = new Parameter ("System.AsyncCallback", "callback",
+			async_params [params_num] = new Parameter (
+				TypeManager.system_asynccallback_expr, "callback",
 								   Parameter.Modifier.NONE, null);
-			async_params [params_num + 1] = new Parameter ("System.Object", "object",
+			async_params [params_num + 1] = new Parameter (
+				TypeManager.system_object_expr, "object",
 								   Parameter.Modifier.NONE, null);
 
 			Parameters async_parameters = new Parameters (async_params, null, Location);
 			
 			async_parameters.ComputeAndDefineParameterTypes (this);
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
-						    new InternalParameters (parent, async_parameters),
+						    new InternalParameters (container, async_parameters),
 						    async_param_types);
 
 			//
@@ -272,13 +275,15 @@ namespace Mono.CSharp {
 			EndInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			Parameter [] end_params = new Parameter [1];
-			end_params [0] = new Parameter ("System.IAsyncResult", "result",
+			end_params [0] = new Parameter (
+				TypeManager.system_iasyncresult_expr, "result",
 							Parameter.Modifier.NONE, null);
 
-			TypeManager.RegisterMethod (EndInvokeBuilder,
-						    new InternalParameters (
-							    parent,
-							    new Parameters (end_params, null, Location)),
+			TypeManager.RegisterMethod (
+				EndInvokeBuilder, new InternalParameters (
+					container,
+					new Parameters (
+						end_params, null, Location)),
 						    end_param_types);
 
 			return true;
@@ -323,6 +328,9 @@ namespace Mono.CSharp {
 			}
 
 			if (mismatch) {
+				//
+				// FIXME: This error message is not very useful!
+				//
 				Report.Error (
 					123, loc, "Method '" + Invocation.FullMethodDesc (mb) +
 					"' does not match delegate '" +
@@ -336,6 +344,9 @@ namespace Mono.CSharp {
 				mismatch = true;
 
 			if (mismatch) {
+				//
+				// FIXME: This error message is not very useful!
+				//
 				Report.Error (123, loc, "Method '" + Invocation.FullMethodDesc (mb) +
 					      "' does not match delegate '" +
 					      FullDelegateDesc (delegate_type, invoke_mb, invoke_pd) + "'");
@@ -460,15 +471,19 @@ namespace Mono.CSharp {
 			ArrayList members = new ArrayList ();
 
 			if ((mt & MemberTypes.Method) != 0) {
+				if (ConstructorBuilder != null)
 				if (filter (ConstructorBuilder, criteria))
 					members.Add (ConstructorBuilder);
 
+				if (InvokeBuilder != null)
 				if (filter (InvokeBuilder, criteria))
 					members.Add (InvokeBuilder);
 
+				if (BeginInvokeBuilder != null)
 				if (filter (BeginInvokeBuilder, criteria))
 					members.Add (BeginInvokeBuilder);
 
+				if (EndInvokeBuilder != null)
 				if (filter (EndInvokeBuilder, criteria))
 					members.Add (EndInvokeBuilder);
 			}

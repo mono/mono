@@ -29,13 +29,13 @@ namespace Mono.CSharp {
 			PARAMS = 4,
 		}
 
-		public readonly string   TypeName;
-		public readonly string   Name;
+		public readonly Expression TypeName;
 		public readonly Modifier ModFlags;
 		public Attributes OptAttributes;
+		public readonly string Name;
 		public Type parameter_type;
 		
-		public Parameter (string type, string name, Modifier mod, Attributes attrs)
+		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
 		{
 			Name = name;
 			ModFlags = mod;
@@ -48,7 +48,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool Resolve (DeclSpace ds, Location l)
 		{
-			parameter_type = RootContext.LookupType (ds, TypeName, false, l);
+			parameter_type = ds.ResolveType (TypeName, false, l);
 			return parameter_type != null;
 		}
 
@@ -58,7 +58,8 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool ResolveAndDefine (DeclSpace ds)
 		{
-			parameter_type = ds.FindType (TypeName);
+			// FIXME: Should use something else instead of Location.Null
+			parameter_type = ds.ResolveType (TypeName, true, Location.Null);
 			return parameter_type != null;
 		}
 		

@@ -812,7 +812,7 @@ namespace Mono.CSharp {
 	}
 	
 	public class VariableInfo {
-		public readonly string Type;
+		public Expression Type;
 		public LocalBuilder LocalBuilder;
 		public Type VariableType;
 		public readonly Location Location;
@@ -821,7 +821,7 @@ namespace Mono.CSharp {
 		public bool Assigned;
 		public bool ReadOnly;
 		
-		public VariableInfo (string type, Location l)
+		public VariableInfo (Expression type, Location l)
 		{
 			Type = type;
 			LocalBuilder = null;
@@ -968,7 +968,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public VariableInfo AddVariable (string type, string name, Parameters pars, Location l)
+		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
@@ -991,7 +991,7 @@ namespace Mono.CSharp {
 			return vi;
 		}
 
-		public bool AddConstant (string type, string name, Expression value, Parameters pars, Location l)
+		public bool AddConstant (Expression type, string name, Expression value, Parameters pars, Location l)
 		{
 			if (AddVariable (type, name, pars, l) == null)
 				return false;
@@ -1026,7 +1026,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public string GetVariableType (string name)
+		public Expression GetVariableType (string name)
 		{
 			VariableInfo vi = GetVariableInfo (name);
 
@@ -1142,7 +1142,7 @@ namespace Mono.CSharp {
 					VariableInfo vi = (VariableInfo) de.Value;
 					Type t;
 
-					t = RootContext.LookupType (ds, vi.Type, false, vi.Location);
+					t = ds.ResolveType (vi.Type, false, vi.Location);
 					if (t == null)
 						continue;
 
@@ -1218,17 +1218,16 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
+			bool ok = true;
 
 			ec.CurrentBlock = this;
 			foreach (Statement s in statements){
-				if (s.Resolve (ec) == false){
-					ec.CurrentBlock = prev_block;
-					return false;
-				}
+				if (s.Resolve (ec) == false)
+					ok = false;
 			}
 
 			ec.CurrentBlock = prev_block;
-			return true;
+			return ok;
 		}
 		
 		public override bool Emit (EmitContext ec)
@@ -2214,11 +2213,11 @@ namespace Mono.CSharp {
 	// Fixed statement
 	//
 	public class Fixed : Statement {
-		string    type;
+		Expression type;
 		ArrayList declarators;
 		Statement statement;
 
-		public Fixed (string type, ArrayList decls, Statement stmt, Location l)
+		public Fixed (Expression type, ArrayList decls, Statement stmt, Location l)
 		{
 			this.type = type;
 			declarators = decls;
@@ -2236,7 +2235,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Type t;
 			
-			t = RootContext.LookupType (ec.DeclSpace, type, false, loc);
+			t = ec.DeclSpace.ResolveType (type, false, loc);
 			if (t == null)
 				return false;
 
@@ -2376,12 +2375,12 @@ namespace Mono.CSharp {
 	}
 	
 	public class Catch {
-		public readonly string Type;
+		public readonly Expression Type;
 		public readonly string Name;
 		public readonly Block  Block;
 		public readonly Location Location;
 		
-		public Catch (string type, string name, Block block, Location l)
+		public Catch (Expression type, string name, Block block, Location l)
 		{
 			Type = type;
 			Name = name;
@@ -2455,7 +2454,7 @@ namespace Mono.CSharp {
 			DeclSpace ds = ec.DeclSpace;
 
 			foreach (Catch c in Specific){
-				Type catch_type = RootContext.LookupType (ds, c.Type, false, c.Location);
+				Type catch_type = ds.ResolveType (c.Type, false, c.Location);
 				VariableInfo vi;
 				
 				if (catch_type == null)
@@ -2524,12 +2523,12 @@ namespace Mono.CSharp {
 		//
 		// Emits the code for the case of using using a local variable declaration.
 		//
-		bool EmitLocalVariableDecls (EmitContext ec, string type_name, ArrayList var_list)
+		bool EmitLocalVariableDecls (EmitContext ec, Expression expr_type, ArrayList var_list)
 		{
 			ILGenerator ig = ec.ig;
 			Expression [] converted_vars;
 			bool need_conv = false;
-			Type type = RootContext.LookupType (ec.DeclSpace, type_name, false, loc);
+			Type type = ec.DeclSpace.ResolveType (expr_type, false, loc);
 			int i = 0;
 
 			if (type == null)
@@ -2660,10 +2659,10 @@ namespace Mono.CSharp {
 		public override bool Emit (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry){
-				string t = (string) ((DictionaryEntry) expression_or_block).Key;
+				Expression expr_type = (Expression) ((DictionaryEntry) expression_or_block).Key;
 				ArrayList var_list = (ArrayList)((DictionaryEntry)expression_or_block).Value;
 
-				return EmitLocalVariableDecls (ec, t, var_list);
+				return EmitLocalVariableDecls (ec, expr_type, var_list);
 			} if (expression_or_block is Expression){
 				Expression e = (Expression) expression_or_block;
 
@@ -2681,12 +2680,12 @@ namespace Mono.CSharp {
 	///   Implementation of the foreach C# statement
 	/// </summary>
 	public class Foreach : Statement {
-		string type;
+		Expression type;
 		LocalVariableReference variable;
 		Expression expr;
 		Statement statement;
 		
-		public Foreach (string type, LocalVariableReference var, Expression expr,
+		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
 		{
 			this.type = type;
@@ -3147,7 +3146,7 @@ namespace Mono.CSharp {
 			Type var_type;
 			bool ret_val;
 			
-			var_type = RootContext.LookupType (ec.DeclSpace, type, false, loc);
+			var_type = ec.DeclSpace.ResolveType (type, false, loc);
 			if (var_type == null)
 				return false;
 			
