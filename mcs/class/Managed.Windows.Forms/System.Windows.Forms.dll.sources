@@ -207,6 +207,7 @@ System.Windows.Forms/PictureBox.cs
 System.Windows.Forms/PictureBoxSizeMode.cs
 System.Windows.Forms/ProgressBar.cs
 System.Windows.Forms/PropertyGrid.cs
+System.Windows.Forms/PropertyGridView.cs
 System.Windows.Forms/PropertySort.cs
 System.Windows.Forms/PropertyTabChangedEventArgs.cs
 System.Windows.Forms/PropertyTabChangedEventHandler.cs
@@ -298,15 +299,3 @@ System.Windows.Forms/XplatUIOSX.cs
 System.Windows.Forms/XplatUIStructs.cs
 System.Windows.Forms/XplatUIWin32.cs
 System.Windows.Forms/XplatUIX11.cs
-System.Windows.Forms/GridEntry.cs
-System.Windows.Forms/GridItem.cs
-System.Windows.Forms/GridItemCollection.cs
-System.Windows.Forms/GridItemType.cs
-System.Windows.Forms/PropertyGrid.cs
-System.Windows.Forms/PropertySort.cs
-System.Windows.Forms/PropertyTabChangedEventArgs.cs
-System.Windows.Forms/PropertyTabChangedEventHandler.cs
-System.Windows.Forms/PropertyValueChangedEventArgs.cs
-System.Windows.Forms/PropertyValueChangedEventHandler.cs
-System.Windows.Forms/SelectedGridItemChangedEventArgs.cs
-System.Windows.Forms/SelectedGridItemChangedEventHandler.cs
