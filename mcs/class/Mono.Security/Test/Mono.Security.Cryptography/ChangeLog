@@ -1,3 +1,8 @@
+2004-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistenceTest.cs: Fix two tests to work even if the user 
+	doesn't have access to the machine key store.
+
 2004-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SHA224Test.cs: Fix compilation error with NUnit 2.1.91 (CVS).

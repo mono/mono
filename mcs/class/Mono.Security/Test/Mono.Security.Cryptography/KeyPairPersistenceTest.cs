@@ -123,15 +123,20 @@ namespace MonoTests.Mono.Security.Cryptography {
 			CspParameters cp = new CspParameters (-6, "Provider", "Container");
 			cp.Flags = CspProviderFlags.UseMachineKeyStore;
 			KeyPairPersistence kpp = new KeyPairPersistence (cp, "<keypair/>");
-			kpp.Save ();
+			try {
+				kpp.Save ();
 
-			Assert ("Save-Exists", File.Exists (kpp.Filename));
-			KeyPairPersistence kpp2 = new KeyPairPersistence (cp);
-			Assert ("Load", kpp2.Load ());
+				Assert ("Save-Exists", File.Exists (kpp.Filename));
+				KeyPairPersistence kpp2 = new KeyPairPersistence (cp);
+				Assert ("Load", kpp2.Load ());
 
-			Compare (kpp, kpp2);
-			kpp.Remove ();
-			Assert ("Remove-!Exists", !File.Exists (kpp.Filename));
+				Compare (kpp, kpp2);
+				kpp.Remove ();
+				Assert ("Remove-!Exists", !File.Exists (kpp.Filename));
+			}
+			catch (UnauthorizedAccessException) {
+				// not everyone can write to the machine store
+			}
 		}
 
 		[Test]
@@ -140,15 +145,20 @@ namespace MonoTests.Mono.Security.Cryptography {
 			CspParameters cp = new CspParameters (-7, "Provider", "Container");
 			cp.Flags = CspProviderFlags.UseDefaultKeyContainer | CspProviderFlags.UseMachineKeyStore;
 			KeyPairPersistence kpp = new KeyPairPersistence (cp, "<keypair/>");
-			kpp.Save ();
+			try {
+				kpp.Save ();
 
-			Assert ("Save-Exists", File.Exists (kpp.Filename));
-			KeyPairPersistence kpp2 = new KeyPairPersistence (cp);
-			Assert ("Load", kpp2.Load ());
+				Assert ("Save-Exists", File.Exists (kpp.Filename));
+				KeyPairPersistence kpp2 = new KeyPairPersistence (cp);
+				Assert ("Load", kpp2.Load ());
 
-			Compare (kpp, kpp2);
-			kpp.Remove ();
-			Assert ("Remove-!Exists", !File.Exists (kpp.Filename));
+				Compare (kpp, kpp2);
+				kpp.Remove ();
+				Assert ("Remove-!Exists", !File.Exists (kpp.Filename));
+			}
+			catch (UnauthorizedAccessException) {
+				// not everyone can write to the machine store
+			}
 		}
 
 		[Test]
