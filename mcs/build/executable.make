@@ -19,7 +19,7 @@ pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 
 all-local: $(PROGRAM)
 
-install-local:
+install-local: $(PROGRAM)
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
 	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(prefix)/bin
 

@@ -1,3 +1,7 @@
+2003-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* executable.make: install-local depends on the program too.
+
 2003-07-25  Peter Williams <peter@newton.cx>
 
 	* rules.make (run-test): Make it depend on 'test-local'
