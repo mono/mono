@@ -78,7 +78,6 @@ namespace System.Data.SqlClient {
 			else {
 				eof = true;
 				localBuffer = "</results>";
-				return false;
 			}
 			return true;
 		}
@@ -91,6 +90,8 @@ namespace System.Data.SqlClient {
 				if (!moreResults)
 					return -1;
 			}
+			if (eof && position >= localBuffer.Length)
+				return -1;
 			return (int) localBuffer[position];
 		}
 			
@@ -98,6 +99,8 @@ namespace System.Data.SqlClient {
 		{
 			int result = Peek ();
 			position += 1;
+			if (!eof && position >= localBuffer.Length)
+				GetNextBuffer ();
 			return result;
 		}	
 

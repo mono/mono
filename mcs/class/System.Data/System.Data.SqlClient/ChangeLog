@@ -1,3 +1,11 @@
+2003-12-04  John Luke  <jluke@cfl.rr.com>
+
+	* SqlXmlTextReader.cs: applied patch from Chris Masters <neeeeeep@bigpond.com>
+	fix peek so it checks if it is at the end and also to make sure that if Read()
+	advances the position past the end of the localBuffer array, it makes
+	a call to GetNextBuffer(). fixes bug #40253 System.IndexOutOfRangeException when
+	using SqlCommand.ExecuteXmlReader()
+
 2003-11-20  Joerg Rosenkranz  <JoergR@voelcker.com>
 
 	* SqlConnection (SetDefaultConnectionParameters):
