@@ -2585,6 +2585,8 @@ public partial class TypeManager {
 			if (invocation_type == null)
 				return false;
 
+			Debug.Assert (IsNestedFamilyAccessible (invocation_type, m.DeclaringType));
+
 			if (is_static)
 				return true;
 			
