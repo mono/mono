@@ -29,7 +29,7 @@ namespace Mono.CSharp {
 		//
 		public static EmitContext ConstantEC = null;
 		
-		static void Error_CannotConvertType (Location loc, Type source, Type target)
+		static public void Error_CannotConvertType (Location loc, Type source, Type target)
 		{
 			Report.Error (30, loc, "Cannot convert type '" +
 				      TypeManager.CSharpName (source) + "' to '" +
