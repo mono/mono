@@ -1,3 +1,7 @@
+2002-04-06  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* cache.cs: Object methods should be overridden with "override".
+
 2002-04-04  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* RegexRunner.cs, RegexRunnerFactory.cs: MS support classes. Stubs

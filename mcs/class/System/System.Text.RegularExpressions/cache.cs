@@ -58,11 +58,11 @@ namespace System.Text.RegularExpressions {
 				this.options = options;
 			}
 			
-			public new int GetHashCode () {
+			public override int GetHashCode () {
 				return pattern.GetHashCode () ^ (int)options;
 			}
 
-			public new bool Equals (object o) {
+			public override bool Equals (object o) {
 				if (o == null || o.GetType () != this.GetType ())
 					return false;
 
@@ -70,7 +70,7 @@ namespace System.Text.RegularExpressions {
 				return options == k.options && pattern.Equals (k.pattern);
 			}
 
-			public new string ToString () {
+			public override string ToString () {
 				return "('" + pattern + "', [" + options + "])";
 			}
 		}
