@@ -133,14 +133,14 @@ namespace Mono.CSharp {
 				
 				// from any delegate type to System.Delegate
 				if ((expr_type == TypeManager.delegate_type || 
-				     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
+				     TypeManager.IsDelegateType (expr_type)) &&
 				    target_type == TypeManager.delegate_type)
 					return new EmptyCast (expr, target_type);
 					
 				// from any array-type or delegate type into System.ICloneable.
 				if (expr_type.IsArray ||
 				    expr_type == TypeManager.delegate_type ||
-				    expr_type.IsSubclassOf (TypeManager.delegate_type))
+				    TypeManager.IsDelegateType (expr_type))
 					if (target_type == TypeManager.icloneable_type)
 						return new EmptyCast (expr, target_type);
 
@@ -212,7 +212,7 @@ namespace Mono.CSharp {
 				
 				// from any delegate type to System.Delegate
 				if ((expr_type == TypeManager.delegate_type ||
-				     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
+				     TypeManager.IsDelegateType (expr_type)) &&
 				    target_type == TypeManager.delegate_type)
 					if (target_type.IsAssignableFrom (expr_type))
 						return true;
@@ -220,7 +220,7 @@ namespace Mono.CSharp {
 				// from any array-type or delegate type into System.ICloneable.
 				if (expr_type.IsArray ||
 				    expr_type == TypeManager.delegate_type ||
-				    expr_type.IsSubclassOf (TypeManager.delegate_type))
+				    TypeManager.IsDelegateType (expr_type))
 					if (target_type == TypeManager.icloneable_type)
 						return true;
 				
@@ -1486,7 +1486,7 @@ namespace Mono.CSharp {
 			// From System delegate to any delegate-type
 			//
 			if (source_type == TypeManager.delegate_type &&
-			    target_type.IsSubclassOf (TypeManager.delegate_type))
+			    TypeManager.IsDelegateType (target_type))
 				return true;
 
 			//
@@ -1596,7 +1596,7 @@ namespace Mono.CSharp {
 			// From System delegate to any delegate-type
 			//
 			if (source_type == TypeManager.delegate_type &&
-			    target_type.IsSubclassOf (TypeManager.delegate_type))
+			    TypeManager.IsDelegateType (target_type))
 				return new ClassCast (source, target_type);
 
 			//

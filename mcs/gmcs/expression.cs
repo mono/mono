@@ -2505,7 +2505,7 @@ namespace Mono.CSharp {
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
-				if (l.IsSubclassOf (TypeManager.delegate_type)){
+				if (TypeManager.IsDelegateType (l)){
 					if (right.eclass == ExprClass.MethodGroup && RootContext.V2){
 						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 						if (tmp == null)
@@ -2514,7 +2514,7 @@ namespace Mono.CSharp {
 						r = right.Type;
 					}
 				
-					if (r.IsSubclassOf (TypeManager.delegate_type)){
+					if (TypeManager.IsDelegateType (r)){
 					MethodInfo method;
 					ArrayList args = new ArrayList (2);
 					

@@ -1718,7 +1718,7 @@ public class TypeManager {
 
 	public static bool IsSubclassOf (Type type, Type parent)
 	{
-		if (type.IsGenericInstance)
+		if (type.IsGenericInstance && !parent.IsGenericInstance)
 			type = type.GetGenericTypeDefinition ();
 
 		return type.IsSubclassOf (parent);
