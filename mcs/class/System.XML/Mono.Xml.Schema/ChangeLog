@@ -1,0 +1,4 @@
+2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsdValidatingReader.cs,
+	  XsdParticleValidationState.cs : Initial checkin.
