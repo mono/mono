@@ -1,3 +1,8 @@
+2002-07-29  Peter Williams  <peterw@ximian.com>
+
+	* makefile.gnu: 'make install' wasn't actually working due to $@,
+	fix it.
+
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
 	* makefile.gnu: Don't force people to install.  The default must also
