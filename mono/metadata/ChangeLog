@@ -1,4 +1,11 @@
 
+Wed Aug 14 17:26:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, reflection.c, icall.c, object.c, reflection.h:
+	first chunk of code to create types at runtime. Code to
+	handle ReflectedType/DeclaringType. Make reflection handles
+	domain specific.
+
 Wed Aug 14 17:24:21 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: set correct name in arrays.
