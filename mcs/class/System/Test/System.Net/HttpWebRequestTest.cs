@@ -62,6 +62,31 @@ public class HttpWebRequestTest : Assertion
 		} catch (InvalidOperationException) {}
 	}
 
+        [Test]
+	[Category("InetAccess")] 
+	public void Cookies1 ()
+	{
+		// The purpose of this test is to ensure that the cookies we get from a request
+		// are stored in both, the CookieCollection in HttpWebResponse and the CookieContainer
+		// in HttpWebRequest.
+		// If this URL stops sending *one* and only one cookie, replace it.
+		string url = "http://www.elmundo.es";
+		CookieContainer cookies = new CookieContainer ();
+		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+		req.KeepAlive = false;
+		req.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv; 1.7.6) Gecko/20050317 Firefox/1.0.2";
+		req.CookieContainer = cookies;
+		Assertion.AssertEquals ("#01", 0, cookies.Count);
+		using (HttpWebResponse res = (HttpWebResponse) req.GetResponse()) {
+			CookieCollection coll = req.CookieContainer.GetCookies (new Uri (url));
+			Assertion.AssertEquals ("#02", 1, coll.Count);
+			Assertion.AssertEquals ("#03", 1, res.Cookies.Count);
+			Cookie one = coll [0];
+			Cookie two = res.Cookies [0];
+			Assertion.AssertEquals ("#04", true, object.ReferenceEquals (one, two));
+		}
+	}
+
 /* Unused code for now, but might be useful for debugging later
 
 	private void WriteHeaders (string label, WebHeaderCollection col) 

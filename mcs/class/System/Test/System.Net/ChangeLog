@@ -1,3 +1,7 @@
+2005-03-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequestTest.cs: added cookie handling test.
+
 2005-02-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* HttpWebRequestTest.cs ServicePointManagerTest.cs ServicePointTest.cs:
