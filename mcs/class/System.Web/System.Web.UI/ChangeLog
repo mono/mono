@@ -2,7 +2,7 @@
 
 	* PropertyConverter.cs    - Undocumented class. Completed.
 	* Utils.cs                - Undocumented, private class.
-				    Initital implementation
+				    Initial implementation
 
 2001-08-28  Bob Smith  <bob@thestuff.net>
         * Control.cs: Figured out some undocumented API.
