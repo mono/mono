@@ -1,5 +1,9 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
+	* HttpCachePolicy.cs: Expose duration and sliding properties.
+	
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
 	* HttpCachePolicy.cs: Add an event that is fired when the
 	cacheability is updated. The response uses this to determine
 	whether or not it needs to cache itself.

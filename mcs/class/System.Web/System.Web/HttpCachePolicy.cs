@@ -59,6 +59,7 @@ namespace System.Web {
 		TimeSpan proxyMaxAge;
 		ArrayList fields;
 		bool slidingExpiration;
+		int duration;
                 
 		#endregion
 
@@ -77,7 +78,16 @@ namespace System.Web {
                 internal DateTime Expires {
                         get { return expireDate; }
                 }
-                
+
+		internal int Duration {
+			get { return duration; }
+			set { duration = value; }
+		}
+
+		internal bool Sliding {
+			get { return slidingExpiration; }
+		}
+
 		#endregion // Properties
 
 		#region Methods
