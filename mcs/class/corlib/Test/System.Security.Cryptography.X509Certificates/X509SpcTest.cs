@@ -20,7 +20,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 	public class SoftwarePublisherCertificateTest : Assertion {
 
 		[TearDown]
-		void TearDown () 
+		public void TearDown () 
 		{
 			try {
 				File.Delete (Path.GetFullPath ("smallspc.exe"));

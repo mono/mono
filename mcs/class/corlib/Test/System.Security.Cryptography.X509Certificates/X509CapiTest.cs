@@ -56,7 +56,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		private CultureInfo oldcult;
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			// the current culture determines the result of formatting
 			oldcult = Thread.CurrentThread.CurrentCulture;
@@ -64,7 +64,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[TearDown]
-		void TearDown () 
+		public void TearDown () 
 		{
 			Thread.CurrentThread.CurrentCulture = oldcult;
 			File.Delete("temp.cer");
