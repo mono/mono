@@ -1,3 +1,8 @@
+2003-04-04  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DataRow.cs: AutoIncrement handling to Constructor
+	* DataRowCollection.cs: This doesnt need anymore AutoIncrements
+	
 2003-03-27  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataTable.cs: Some fixes to PrimaryKey etc...

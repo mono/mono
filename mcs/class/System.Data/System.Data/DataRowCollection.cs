@@ -58,7 +58,6 @@ namespace System.Data
 		/// </summary>
 		public void Add (DataRow row) 
 		{
-			//TODO: AutoIncrement
 			//TODO: validation
 			if (row == null)
 				throw new ArgumentNullException("row", "'row' argument cannot be null.");
@@ -66,13 +65,6 @@ namespace System.Data
 			if (list.IndexOf(row) != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
 				
-			foreach (DataColumn Col in row.Table.Columns) {
-
-				if (Col.AutoIncrement) {
-					row [Col] = Col.AutoIncrementValue();
-				}
-			}
-
 			list.Add (row);
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);

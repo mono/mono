@@ -64,6 +64,13 @@ namespace System.Data {
 
 			//on first creating a DataRow it is always detached.
 			rowState = DataRowState.Detached;
+
+			foreach (DataColumn Col in _table.Columns) {
+				
+				if (Col.AutoIncrement) {
+					this [Col] = Col.AutoIncrementValue();
+				}
+			}
 		}
 
 		#endregion
@@ -229,22 +236,9 @@ namespace System.Data {
 				if(col.DefaultValue != DBNull.Value) {
 					newval = col.DefaultValue;
 				}
-				else if(col.AutoIncrement == true) {
-					switch(col.DataType.ToString()) {
-					case "System.Int16":
-						newval = (short) col.AutoIncrementValue();
-						break;
-					case "System.Int32":
-						newval = (int) col.AutoIncrementValue();
-						break;
-					case "System.Int64":
-						newval = col.AutoIncrementValue();
-						break;
-					default:
-						newval = col.AutoIncrementValue();
-						break;
-					}
-				}
+ 				else if(col.AutoIncrement == true) {
+					newval = this [index];
+ 				}
 				else {
 					if (!col.AllowDBNull)
 						throw new NoNullAllowedException ();
@@ -254,10 +248,9 @@ namespace System.Data {
 			else if (v == DBNull.Value) {
 				if (!col.AllowDBNull)
 					throw new NoNullAllowedException ();
-				if (col.AutoIncrement == true) {
-					col.AutoIncrementValue();
+				else {
+					newval = DBNull.Value;
 				}
-				newval = DBNull.Value;
 			}
 			else {	
 				Type vType = v.GetType(); // data type of value
