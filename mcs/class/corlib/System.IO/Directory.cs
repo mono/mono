@@ -53,6 +53,7 @@ namespace System.IO
 			
 			if (pathcomponents.Length == 1){
 				tmpinfo = Directory.RealCreateDirectory(path);
+				return tmpinfo;
 			} 
 			else {
 				if ((path[0]== Path.DirectorySeparatorChar) ||
@@ -67,8 +68,8 @@ namespace System.IO
 					if (Environment.OSVersion.Platform == PlatformID.Unix) //Is Unix
 					{
 						StringBuilder pathsumm = new StringBuilder(path);
-						Directory.SetCurrentDirectory("/");
-						pathsumm.Remove(0,1);
+						Directory.SetCurrentDirectory ("/");
+						pathsumm.Remove (0,1);
 						tmpinfo = Directory.CreateDirectory(pathsumm.ToString());
 					}
 					else //We asume is Win*
@@ -89,11 +90,14 @@ namespace System.IO
 								StringBuilder pathsumm = new StringBuilder();	
 								Directory.SetCurrentDirectory(pathcomponents[0] + 
 											      "\\" + pathcomponents[1] +
-											      "\\" + pathcomponents[2]);
+											      "\\" + pathcomponents[2] +
+													"\\" + pathcomponents[3]);
 								pathcomponents[0] = ""; pathcomponents[1] = ""; pathcomponents[2] = "";
-								foreach(string dir in pathsumm.ToString())
+								pathcomponents[3] = "";
+								foreach(string dir in pathcomponents)
 								{
-									pathsumm.Append(dir + "\\");
+									if (dir != "")
+										pathsumm.Append(dir + "\\");
 								}		
 								Directory.CreateDirectory(pathsumm.ToString());
 							}

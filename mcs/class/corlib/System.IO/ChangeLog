@@ -1,3 +1,8 @@
+2002-12-16  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+	
+	* Directory.cs: Some fixes to SMB shares handling, and not compiling 
+	with csc, mcs compiles it correctly (mcs bug 35652)
+
 2002-12-14  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* Directory.cs: Some fixes related to correct some exceptions thrown
