@@ -100,6 +100,10 @@ namespace System.Data.OracleClient
 			get { return oci.ServiceContext; }
 		}
 
+		internal OciSessionHandle Session {
+			get { return oci.SessionHandle; }
+		}
+
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string DataSource {
@@ -250,6 +254,39 @@ namespace System.Data.OracleClient
 		public void EnlistDistributedTransaction (ITransaction distributedTransaction)
 		{
 			throw new NotImplementedException ();
+		}
+
+		// Get NLS_DATE_FORMAT string from Oracle server
+		internal string GetSessionDateFormat () 
+		{
+			// 23 is 22 plus 1 for NUL terminated character
+			// a DATE format has a max size of 22
+			return GetNlsInfo (Session, 23, OciNlsServiceType.DATEFORMAT);
+		}
+
+		// Get NLS Info
+		//
+		// handle = OciEnvironmentHandle or OciSessionHandle
+		// bufflen = Length of byte buffer to allocate to retrieve the NLS info
+		// item = OciNlsServiceType enum value
+		//
+		// if unsure how much you need, use OciNlsServiceType.MAXBUFSZ
+		internal string GetNlsInfo (OciHandle handle, uint bufflen, OciNlsServiceType item) 
+		{
+			byte[] buffer = new Byte[bufflen];
+
+			int st = OciCalls.OCINlsGetInfo (Session, ErrorHandle, 
+				ref buffer, bufflen, (ushort) item);
+
+			// Get length of returned string
+			int rsize = 0;
+			OciCalls.OCICharSetToUnicode (Environment, null, buffer, out rsize);
+			
+			// Get string
+			StringBuilder ret = new StringBuilder (rsize);
+			OciCalls.OCICharSetToUnicode (Environment, ret, buffer, out rsize);
+
+			return ret.ToString ();
 		}
 
 		public void Open () 

@@ -9,8 +9,10 @@
 //
 // Authors: 
 //    Tim Coleman <tim@timcoleman.com>
+//    Daniel Moragn <danielmorgan@verizon.net>
 //
 // Copyright (C) Tim Coleman , 2003
+// Copyright (C) Daniel Morgan, 2005
 //
 // Licensed under the MIT/X11 License.
 //
@@ -22,6 +24,7 @@ using System.Data;
 using System.Data.OracleClient.Oci;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Data.OracleClient {
 	[TypeConverter (typeof(OracleParameter.OracleParameterConverter))]
@@ -43,6 +46,7 @@ namespace System.Data.OracleClient {
 		int offset = 0;
 		bool sizeSet = false;
 		object value = null;
+		OciLobLocator lobLocator = null;  // only if Blob or Clob
 
 		OracleParameterCollection container = null;
 		OciBindHandle bindHandle;
@@ -195,7 +199,7 @@ namespace System.Data.OracleClient {
 				throw new Exception ("Size must be set.");
 		}
 
-		internal void Bind (OciStatementHandle statement, OracleConnection connection)
+		internal void Bind (OciStatementHandle statement, OracleConnection connection) 
 		{
 			if (bindHandle == null)
 				bindHandle = new OciBindHandle ((OciHandle) statement);
@@ -207,34 +211,110 @@ namespace System.Data.OracleClient {
 			if (!sizeSet)
 				size = InferSize ();
 
+			byte[] bytes = null;
 			int status = 0;
 			int indicator = 0;
 			OciDataType bindType = ociType;
 			IntPtr bindValue = IntPtr.Zero;
 			int bindSize = size;
 
-			if (value == DBNull.Value)
-				indicator = -1;
+			if (value == DBNull.Value) {
+				indicator = 0;
+				bindType = OciDataType.VarChar2;
+				bindSize = 0;
+			}
 			else {
-				bindType = OciDataType.VarChar2; // FIXME
-				bindValue = Marshal.StringToHGlobalAnsi (value.ToString ());
-				bindSize = value.ToString ().Length;
+				// TODO: do other data types and oracle data types
+				// such as, blobs, clobs, etc...  
+				// should I be using IConvertible to convert?
+				// blobs and clobs may need a OracleLob's OciLobLocator
+
+				if (oracleType == OracleType.DateTime) {
+					string oraDateFormat = connection.GetSessionDateFormat ();
+					string sysDateFormat = OracleDateTime.ConvertOracleDateFormatToSystemDateTime (oraDateFormat);
+
+					string sDate = "";
+					DateTime dt = DateTime.MinValue;
+					if (value is String) {
+						sDate = (string) value;
+						dt = DateTime.Parse (sDate);
+					}
+					else if (value is DateTime)
+						dt = (DateTime) value;
+					else if (value is OracleString) {
+						sDate = (string) value;
+						dt = DateTime.Parse (sDate);
+					}
+					else if (value is OracleDateTime) {
+						OracleDateTime odt = (OracleDateTime) value;
+						dt = (DateTime) odt.Value;
+					}
+					else
+						throw new NotImplementedException (); // ?
+
+					sDate = dt.ToString (sysDateFormat);
+					
+					bindType = OciDataType.VarChar2; 
+					bindValue = Marshal.StringToHGlobalAnsi (sDate);
+					bindSize = sDate.Length;
+				}
+				else if (oracleType == OracleType.Blob) {
+					// FIXME: BLOBs not working. do i need a lob locator?
+					bytes = (byte[]) value;
+					bindType = OciDataType.Long;
+					bindSize = bytes.Length;
+				}
+				else if (oracleType == OracleType.Clob) {
+					// FIXME: CLOBs not working. do i need a lob locator?
+					string v = "";
+					v = (string) value;
+
+					UnicodeEncoding encoding = new UnicodeEncoding ();
+					bytes = encoding.GetBytes (v);
+
+					bindType = OciDataType.Long;
+					bindSize = bytes.Length;
+				}
+				else {
+					bindValue = Marshal.StringToHGlobalAnsi (value.ToString ());
+					bindType = OciDataType.VarChar2;
+					bindSize = value.ToString ().Length;
+				}
 			}
 
-			status = OciCalls.OCIBindByName (statement,
-						out tmpHandle,
-						connection.ErrorHandle,
-						ParameterName,
-						ParameterName.Length,
-						bindValue,
-						bindSize,
-						bindType,
-						indicator,
-						IntPtr.Zero,
-						IntPtr.Zero,
-						0,
-						IntPtr.Zero,
-						0);
+			if (oracleType == OracleType.Blob || oracleType == OracleType.Clob) {
+				status = OciCalls.OCIBindByNameBytes (statement,
+					out tmpHandle,
+					connection.ErrorHandle,
+					ParameterName,
+					ParameterName.Length,
+					bytes,
+					bindSize,
+					bindType,
+					indicator,
+					IntPtr.Zero,
+					IntPtr.Zero,
+					0,
+					IntPtr.Zero,
+					0);
+			}
+			else {
+				status = OciCalls.OCIBindByName (statement,
+					out tmpHandle,
+					connection.ErrorHandle,
+					ParameterName,
+					ParameterName.Length,
+					bindValue,
+					bindSize,
+					bindType,
+					indicator,
+					IntPtr.Zero,
+					IntPtr.Zero,
+					0,
+					IntPtr.Zero,
+					0);
+			}
+
 
 			if (status != 0) {
 				OciErrorInfo info = connection.ErrorHandle.HandleError ();

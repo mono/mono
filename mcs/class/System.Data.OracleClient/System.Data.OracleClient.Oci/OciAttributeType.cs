@@ -65,6 +65,7 @@ namespace System.Data.OracleClient.Oci {
 		InV8Mode = 0x2c,
 		LobEmpty = 0x2d,
 		SessionLanguage = 0x2e,
+		DateFormat = 0x4b,
 
 		/* Attributes common to columns and stored procedures */
 		DataSize = 0x01,

@@ -49,7 +49,6 @@ namespace Test.OracleClient
 			}
 
 			OracleCommand cmd = null;
-			int rowsAffected = 0;
 
 			Console.WriteLine("  Creating table MONO_ORACLE_TEST...");
 			cmd = new OracleCommand();
@@ -78,7 +77,7 @@ namespace Test.OracleClient
 				" blob_null_value Blob " +
 				")";
 
-			rowsAffected = cmd.ExecuteNonQuery();
+			cmd.ExecuteNonQuery();
 
 			Console.WriteLine("  Begin Trans for table MONO_ORACLE_TEST...");
 			OracleTransaction trans = con.BeginTransaction ();
@@ -116,7 +115,7 @@ namespace Test.OracleClient
 				"  EMPTY_BLOB()" +
 				")";
 
-			rowsAffected = cmd.ExecuteNonQuery();
+			cmd.ExecuteNonQuery();
 
 			Console.WriteLine("  Select/Update CLOB columns on table MONO_ORACLE_TEST...");
 
@@ -436,40 +435,101 @@ namespace Test.OracleClient
 
 		public static void ParameterTest (OracleConnection connection)
 		{
-			OracleTransaction transaction = connection.BeginTransaction ();
-			OracleCommand insert = connection.CreateCommand ();
-			insert.Transaction = transaction;
+			Console.WriteLine("  Setting NLS_DATE_FORMAT...");
 
-			insert.CommandText = "INSERT INTO EMP (EMPNO, ENAME, JOB) VALUES (:P1, :P2, :P3)";
-			insert.Parameters.Add (":P1", 8888);
-			insert.Parameters.Add (":P2", "danmorg");
-			insert.Parameters.Add (":P3", "Monoist");
+			OracleCommand cmd2 = connection.CreateCommand();
+			cmd2.CommandText = "ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS'";
+		
+			cmd2.ExecuteNonQuery ();
 
-			Console.WriteLine ("  INSERTING DATA WITH PARAMETERS...");
-			Console.WriteLine ("  " +  insert.CommandText);
-			insert.Prepare ();
-			insert.ExecuteNonQuery ();
+			Console.WriteLine("  Drop table MONO_TEST_TABLE2...");
+			try {
+				cmd2.CommandText = "DROP TABLE MONO_TEST_TABLE7";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch(OracleException oe1) {
+				// ignore if table already exists
+			}
 
-			OracleCommand select = connection.CreateCommand ();
-			select.Transaction = transaction;
+			Console.WriteLine("  Create table MONO_TEST_TABLE7...");
 
-			select.CommandText = "SELECT ENAME, JOB FROM EMP WHERE EMPNO=:P1";
-			select.Parameters.Add (":P1", 8888);
+			cmd2.CommandText = "CREATE TABLE MONO_TEST_TABLE7(" +
+				" COL1 VARCHAR2(8) NOT NULL, " +
+				" COL2 VARCHAR2(32), " +
+				" COL3 NUMBER(18,2) NOT NULL, " +
+				" COL4 NUMBER(18,2), " +
+				" COL5 DATE NOT NULL, " +
+				" COL6 DATE, " +
+				" COL7 BLOB NOT NULL, " +
+				" COL8 BLOB, " +
+				" COL9 CLOB NOT NULL, " +
+				" COL10 CLOB " +
+				")";
+			cmd2.ExecuteNonQuery ();
 
-			Console.WriteLine ("  VERIFYING RESULTS ...");
+			Console.WriteLine("  COMMIT...");
+			cmd2.CommandText = "COMMIT";
+			cmd2.ExecuteNonQuery ();
 
-			OracleDataReader reader = select.ExecuteReader ();
-			if (!reader.Read ())
-				Console.WriteLine ("ERROR: RECORD NOT FOUND");
+			Console.WriteLine("  create insert command...");
 
-			Console.WriteLine ("  ENAME - SHOULD BE danmorg, is {0}", reader.GetValue (0));
-			Console.WriteLine ("  JOB - SHOULD BE Monoist, is {0}", reader.GetValue (1));
+			OracleTransaction trans = connection.BeginTransaction ();
+			OracleCommand cmd = connection.CreateCommand ();
+			cmd.Transaction = trans;
 
-			reader.Close ();
+			cmd.CommandText = "INSERT INTO MONO_TEST_TABLE7 " + 
+				"(COL1,COL2,COL3,COL4,COL5,COL6,COL7,COL8,COL9,COL10) " + 
+				"VALUES(:P1,:P2,:P3,:P4,:P5,:P6,:P7,:P8,:P9,:P10)";
+		
+			Console.WriteLine("  Add parameters...");
 
-			Console.WriteLine ("  ROLLBACK TRANSACTION...");
+			OracleParameter parm1 = cmd.Parameters.Add (":P1", OracleType.VarChar, 8);
+			OracleParameter parm2 = cmd.Parameters.Add (":P2", OracleType.VarChar, 32);
+		
+			OracleParameter parm3 = cmd.Parameters.Add (":P3", OracleType.Number);
+			OracleParameter parm4 = cmd.Parameters.Add (":P4", OracleType.Number);
+		
+			OracleParameter parm5 = cmd.Parameters.Add (":P5", OracleType.DateTime);
+			OracleParameter parm6 = cmd.Parameters.Add (":P6", OracleType.DateTime);
 
-			transaction.Rollback ();
+			// FIXME: fix BLOBs and CLOBs in OracleParameter
+
+			OracleParameter parm7 = cmd.Parameters.Add (":P7", OracleType.Blob);
+			OracleParameter parm8 = cmd.Parameters.Add (":P8", OracleType.Blob);
+
+			OracleParameter parm9 = cmd.Parameters.Add (":P9", OracleType.Clob);
+			OracleParameter parm10 = cmd.Parameters.Add (":P10", OracleType.Clob);
+
+			// TODO: implement out, return, and ref parameters
+
+			string s = "Mono";
+			decimal d = 123456789012345.678M;
+			DateTime dt = DateTime.Now;
+
+			string clob = "Clob";
+			byte[] blob = new byte[] { 0x31, 0x32, 0x33, 0x34, 0x35 };
+		
+			Console.WriteLine("  Set Values...");
+
+			parm1.Value = s;
+			parm2.Value = DBNull.Value;
+		
+			parm3.Value = d;
+			parm4.Value = DBNull.Value;
+		
+			parm5.Value = dt;
+			parm6.Value = DBNull.Value;
+		
+			parm7.Value = blob;
+			parm8.Value = DBNull.Value;
+
+			parm9.Value = clob;
+			parm10.Value = DBNull.Value;
+		
+			Console.WriteLine("  ExecuteNonQuery...");
+
+			cmd.ExecuteNonQuery ();
+			trans.Commit();
 		}
 
 		public static void CLOBTest (OracleConnection connection)
@@ -632,7 +692,7 @@ namespace Test.OracleClient
 			Console.WriteLine(msg);
 			if (msg.Equals(""))
 				Console.WriteLine("Waiting...  Press Enter to continue...");
-			string nothing = Console.ReadLine();
+			Console.ReadLine();
 		}
 
 		// use this function to read a byte array into a string
@@ -770,8 +830,6 @@ namespace Test.OracleClient
 
 		static void ShowConnectionProperties (OracleConnection con) 
 		{
-			IDbConnection dbcon = (IDbConnection) con;
-
 			try {
 				Console.WriteLine ("ServerVersion: " + con.ServerVersion);
 			} catch (System.InvalidOperationException ioe) {
@@ -915,6 +973,7 @@ namespace Test.OracleClient
 
 			Console.WriteLine ("Parameter Test BEGIN...");
                         ParameterTest(con1);
+			ReadSimpleTest(con1, "SELECT * FROM MONO_TEST_TABLE7");
 			Console.WriteLine ("Parameter Test END.");
 
 			Wait ("");

@@ -19,8 +19,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient.Oci {
-	internal abstract class OciHandle : IDisposable
-	{
+	internal abstract class OciHandle : IDisposable {
 		#region Fields
 
 		bool disposed = false;
@@ -32,15 +31,13 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciHandle (OciHandleType type, OciHandle parent, IntPtr newHandle)
-		{
+		public OciHandle (OciHandleType type, OciHandle parent, IntPtr newHandle) {
 			this.type = type;
 			this.parent = parent;
 			this.handle = newHandle;
 		}
 
-		~OciHandle ()
-		{
+		~OciHandle () {
 			Dispose (false);
 		}
 
@@ -64,8 +61,7 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		public OciHandle Allocate (OciHandleType type)
-		{
+		public OciHandle Allocate (OciHandleType type) {
 			int status = 0;
 			IntPtr newHandle = IntPtr.Zero;
 
@@ -106,8 +102,7 @@ namespace System.Data.OracleClient.Oci {
 			return null;
 		}
 
-		protected virtual void Dispose (bool disposing)
-		{
+		protected virtual void Dispose (bool disposing) {
 			if (!disposed) {
 				FreeHandle ();
 				if (disposing) {
@@ -117,52 +112,48 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		public void Dispose ()
-		{
+		public void Dispose () {
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
 
-		protected virtual void FreeHandle ()
-		{
+		protected virtual void FreeHandle () {
 			switch (type) {
-				case OciHandleType.Bind:
-				case OciHandleType.Define:
-					// Bind and Define handles are freed when Statement handle is disposed
-					break;
-				case OciHandleType.Environment:
-					if (handle != IntPtr.Zero) {
-						OciCalls.OCIHandleFree (handle, type);
-					}
-					break;
-				default:
-					if ( handle != IntPtr.Zero &&
-						 parent != null && 
-						 parent.Handle != IntPtr.Zero )	{
+			case OciHandleType.Bind:
+			case OciHandleType.Define:
+				// Bind and Define handles are freed when Statement handle is disposed
+				break;
+			case OciHandleType.Environment:
+				if (handle != IntPtr.Zero) {
+					OciCalls.OCIHandleFree (handle, type);
+				}
+				break;
+			default:
+				if ( handle != IntPtr.Zero &&
+					parent != null && 
+					parent.Handle != IntPtr.Zero )	{
 
-							OciCalls.OCIHandleFree (handle, type);
-					}
-					break;
+					OciCalls.OCIHandleFree (handle, type);
+				}
+				break;
 			}
 			handle = IntPtr.Zero;
 		}
 
-		public bool GetAttributeBool (OciAttributeType attrType, OciErrorHandle errorHandle)
-		{
+		public bool GetAttributeBool (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			return (GetAttributeInt32 (attrType, errorHandle) != 0);
 		}
 
-		public sbyte GetAttributeSByte (OciAttributeType attrType, OciErrorHandle errorHandle)
-		{
+		public sbyte GetAttributeSByte (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			sbyte output;
 
 			status = OciCalls.OCIAttrGetSByte (Handle,
-						HandleType,
-						out output,
-						IntPtr.Zero,
-						attrType,
-						errorHandle);
+				HandleType,
+				out output,
+				IntPtr.Zero,
+				attrType,
+				errorHandle);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();
@@ -172,17 +163,16 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public byte GetAttributeByte (OciAttributeType attrType, OciErrorHandle errorHandle)
-		{
+		public byte GetAttributeByte (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			byte output;
 
 			status = OciCalls.OCIAttrGetByte (Handle,
-						HandleType,
-						out output,
-						IntPtr.Zero,
-						attrType,
-						errorHandle);
+				HandleType,
+				out output,
+				IntPtr.Zero,
+				attrType,
+				errorHandle);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();
@@ -192,17 +182,16 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public ushort GetAttributeUInt16 (OciAttributeType attrType, OciErrorHandle errorHandle)
-		{
+		public ushort GetAttributeUInt16 (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			ushort output;
 
 			status = OciCalls.OCIAttrGetUInt16 (Handle,
-						HandleType,
-						out output,
-						IntPtr.Zero,
-						attrType,
-						errorHandle);
+				HandleType,
+				out output,
+				IntPtr.Zero,
+				attrType,
+				errorHandle);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();
@@ -212,17 +201,16 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public int GetAttributeInt32 (OciAttributeType attrType, OciErrorHandle errorHandle)
-		{
+		public int GetAttributeInt32 (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			int output;
 
 			status = OciCalls.OCIAttrGetInt32 (Handle,
-						HandleType,
-						out output,
-						IntPtr.Zero,
-						attrType,
-						errorHandle);
+				HandleType,
+				out output,
+				IntPtr.Zero,
+				attrType,
+				errorHandle);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();
@@ -232,16 +220,15 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public IntPtr GetAttributeIntPtr (OciAttributeType attrType, OciErrorHandle errorHandle)
-		{
+		public IntPtr GetAttributeIntPtr (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			IntPtr output = IntPtr.Zero;
 			status = OciCalls.OCIAttrGetIntPtr (Handle,
-						HandleType,
-						out output,
-						IntPtr.Zero,
-						attrType,
-						errorHandle);
+				HandleType,
+				out output,
+				IntPtr.Zero,
+				attrType,
+				errorHandle);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();
@@ -251,19 +238,18 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public string GetAttributeString (OciAttributeType attrType, OciErrorHandle errorHandle)
-		{
+		public string GetAttributeString (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			string output = String.Empty;
 			IntPtr outputPtr = IntPtr.Zero;
 			int outSize;
 			int status = 0;
 
 			status = OciCalls.OCIAttrGet (Handle,
-					HandleType,
-					out outputPtr,
-					out outSize,
-					attrType,
-					errorHandle);
+				HandleType,
+				out outputPtr,
+				out outSize,
+				attrType,
+				errorHandle);
 
 			if (status != 0) {
 				OciErrorInfo info = errorHandle.HandleError ();
@@ -277,6 +263,23 @@ namespace System.Data.OracleClient.Oci {
 			}
 
 			return output;
+		}
+
+		public void SetAttributeString (string attribute, OciAttributeType attrType, OciErrorHandle errorHandle) 
+		{
+			int status = 0;
+			
+			status = OciCalls.OCIAttrSetString (Handle,
+				HandleType,
+				attribute,
+				(uint) attribute.Length,
+				attrType,
+				errorHandle);
+
+			if (status != 0) {
+				OciErrorInfo info = errorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
 		}
 
 		public void SetHandle (IntPtr h)

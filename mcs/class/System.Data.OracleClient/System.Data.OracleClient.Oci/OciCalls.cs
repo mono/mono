@@ -70,7 +70,7 @@ namespace System.Data.OracleClient.Oci
 				uint bufsize,
 				[MarshalAs (UnmanagedType.U4)] OciHandleType type);
 
-			[DllImport ("oci")]
+			[DllImport ("oci", EntryPoint = "OCIBindByName")]
 			internal static extern int OCIBindByName (IntPtr stmtp,
 				out IntPtr bindpp,
 				IntPtr errhp,
@@ -85,6 +85,28 @@ namespace System.Data.OracleClient.Oci
 				uint maxarr_len,
 				IntPtr curelp,
 				uint mode);
+
+			[DllImport ("oci", EntryPoint = "OCIBindByName")]
+			internal static extern int OCIBindByNameBytes (IntPtr stmtp,
+				out IntPtr bindpp,
+				IntPtr errhp,
+				string placeholder,
+				int placeh_len,
+				byte[] valuep,
+				int value_sz,
+				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+				int indp,
+				IntPtr alenp,
+				IntPtr rcodep,
+				uint maxarr_len,
+				IntPtr curelp,
+				uint mode);
+
+			[DllImport ("oci")]
+			internal static extern int OCIDateTimeFromText (IntPtr hndl,
+				IntPtr errhp, [In][Out] byte[] date_str, uint dstr_length,
+				[In][Out] byte[] fmt, uint fmt_length,
+				[In][Out] byte[] lang_name, uint lang_length, IntPtr datetime);
 
 			[DllImport ("oci")]
 			internal static extern int OCIDefineByPos (IntPtr stmtp,
@@ -265,6 +287,13 @@ namespace System.Data.OracleClient.Oci
 				byte csfrm);
 
 			[DllImport ("oci")]
+			internal static extern int OCINlsGetInfo (IntPtr hndl, 
+				IntPtr errhp,
+				[In][Out] byte[] bufp,
+				uint buflen, 
+				ushort item);
+
+			[DllImport ("oci")]
 			internal static extern int OCIServerAttach (IntPtr srvhp,
 				IntPtr errhp,
 				string dblink,
@@ -420,6 +449,26 @@ namespace System.Data.OracleClient.Oci
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
 			return OciNativeCalls.OCIBindByName (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep, 
 				value_sz, dty, indp, alenp, rcodep, maxarr_len, curelp, mode);
+		}
+		internal static int OCIBindByNameBytes (IntPtr stmtp,
+			out IntPtr bindpp,
+			IntPtr errhp,
+			string placeholder,
+			int placeh_len,
+			byte[] valuep,
+			int value_sz,
+			[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+			int indp,
+			IntPtr alenp,
+			IntPtr rcodep,
+			uint maxarr_len,
+			IntPtr curelp,
+			uint mode) 
+		{
+			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
+			return OciNativeCalls.OCIBindByNameBytes (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep, 
+				value_sz, dty, indp, alenp, rcodep, maxarr_len, curelp, mode);
+
 		}
 
 		internal static int OCIDefineByPos (IntPtr stmtp,
@@ -671,6 +720,16 @@ namespace System.Data.OracleClient.Oci
 				piece, ctxp, cbfp, csid, csfrm);
 		}
 
+		internal static int OCINlsGetInfo (IntPtr hndl, 
+			IntPtr errhp,
+			ref byte[] bufp,
+			uint buflen, 
+			ushort item) 
+		{
+			Trace.WriteLineIf(traceOci, "OCINlsGetInfo", "OCI");
+			return OciNativeCalls.OCINlsGetInfo (hndl, errhp, bufp, buflen, item);
+		}
+
 		internal static int OCIServerAttach (IntPtr srvhp,
 			IntPtr errhp,
 			string dblink,
@@ -824,3 +883,4 @@ namespace System.Data.OracleClient.Oci
 		#endregion
 	}
 }
+

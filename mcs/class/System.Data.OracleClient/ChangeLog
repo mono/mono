@@ -1,3 +1,41 @@
+2005-02-20  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleDateTime.cs: modified -
+	added functions for converting the date format strings between
+	OracleDateTime and DateTime based on 
+	the NLS_DATE_FORMAT on the Oracle server
+	
+	* System.Data.OracleClient/OracleConnection.cs: implement
+	internal function GetNlsInfo to get NLS info from the Oracle server
+	for the session or environment.  Also, implemented function
+	GetSessionNlsDateFormat to get Oracle's NLS_DATE_FORMAT string
+	
+	* System.Data.OracleClient/OracleParameter.cs: for input parameters,
+	fixed setting the parameter value to DBNull.Value and fixed the
+	setting of a DateTime or OracleDateTime.  Tried to fix CLOBs/BLOBs, but
+	it is still a TODO.
+	
+	* Test/TestOracleClient.cs: updated the parameters test
+	
+	* System.Data.OracleClient.Oci/OciHandle.cs: implement
+	internal function SetAttributeString
+	
+	* System.Data.OracleClient.Oci/OciCalls.cs: add DllImport
+	OCIBindByNameBytes so byte array can be passed instead of IntPtr
+	for the value, add DllImport OCIDateTimeFromText, 
+	and added DllImport for OCINlsGetInfo to get NLS info, 
+	such as, NLS_DATE_FORMAT
+	
+	* System.Data.OracleClient.Oci/OciAttributeType.cs: added
+	attribute for date format (not used)
+	
+	* System.Data.OracleClient.Oci/OciNlsServiceType.cs: added new file
+	for an enum to hold NLS Service types which is to be used with GetNlsInfo()
+	in OracleConnection
+	
+	* System.Data.OracleClient.dll.sources: added OciNlsServiceType.cs to
+	the build
+	
 2005-02-07  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleDataReader.cs: add LONG 
@@ -8,7 +46,7 @@
 	for LAMESPEC about OCI
 
 	* Test/TestOracleClient.cs: add LONG to Oracle tests
-	
+		
 2005-01-09  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleCommand.cs: set Command
