@@ -212,7 +212,7 @@ namespace System.Net.Sockets
 					try {
 						result.Sock.Connect (result.EndPoint);
 					} catch (SocketException se) {
-						if (result.Sock.blocking || se.ErrorCode != 10035) {
+						if (result.Sock.blocking || se.ErrorCode != 10036) {
 							result.Complete (se);
 							return;
 						}

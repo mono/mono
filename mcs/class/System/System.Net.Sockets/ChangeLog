@@ -1,3 +1,8 @@
+2004-06-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: connect on non-blocking sockets returns EINPROGRESS. Fixes
+	bug #60811.
+
 2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: wrong error code in connect and accept. EWOULDBLOCK is
