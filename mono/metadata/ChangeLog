@@ -1,3 +1,7 @@
+2004-03-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exception.h exception.c: Add stack_overflow_exception.
+
 2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c:
