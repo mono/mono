@@ -405,8 +405,6 @@ namespace System.Reflection.Emit {
 
 		public ConstructorBuilder DefineDefaultConstructor (MethodAttributes attributes)
 		{
-			ConstructorBuilder cb = DefineConstructor (attributes, CallingConventions.Standard, new Type [0]);
-
 			Type parent_type;
 
 			if (parent != null)
@@ -418,12 +416,18 @@ namespace System.Reflection.Emit {
 				parent_type.GetConstructor (
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
 					null, Type.EmptyTypes, null);
-
-			ILGenerator ig = cb.GetILGenerator ();
-			if (parent_constructor != null){
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Call, parent_constructor);
+			if (parent_constructor == null) {
+				throw new NotSupportedException ("Parent does"
+					+ " not have a default constructor."
+					+ " The default constructor must be"
+					+ " explicitly defined.");
 			}
+
+			ConstructorBuilder cb = DefineConstructor (attributes, 
+				CallingConventions.Standard, new Type[0]);
+			ILGenerator ig = cb.GetILGenerator ();
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Call, parent_constructor);
 			ig.Emit (OpCodes.Ret);
 			return cb;
 		}
