@@ -1,3 +1,8 @@
+2002-05-15  Radek Doulik  <rodo@ximian.com>
+
+	* interp.c (ves_runtime_method): moved stackval_from_data call
+	inside #else branch, consulted on irc with lupus
+
 2002-05-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): use new mono_unhandled_exception()
