@@ -1137,18 +1137,7 @@ namespace System.Xml
 			currentAttributeValue = -1;
 		}
 
-		/*
 		private int PeekChar ()
-		{
-			return currentInput.PeekChar ();
-		}
-
-		private int ReadChar ()
-		{
-			return currentInput.ReadChar ();
-		}
-		*/
-		public int PeekChar ()
 		{
 			if (can_seek)
 				return reader.Peek ();
@@ -1164,7 +1153,7 @@ namespace System.Xml
 			return peek_char;
 		}
 
-		public int ReadChar ()
+		private int ReadChar ()
 		{
 			int ch;
 

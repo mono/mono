@@ -1,3 +1,14 @@
+2003-10-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDReader.cs,
+	  XmlConstructs.cs,
+	  XmlTextReader.cs,
+	  XmlWriter.cs : Fixed incorrect access modifier.
+	* XmlTextWriter.cs : Imported state variable from XmlWriter.
+	* DTDValidatingReader.cs : Removed extraneous MonoTODO.
+	* XmlConvert.cs : Implemented ToTimeSpan().
+	  Modified ToDateTime() to reuse the same array.
+
 2003-10-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlAttributeCollection.cs : Fixed synchronization stuff.

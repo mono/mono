@@ -10,7 +10,7 @@ namespace System.Xml
 	/// However, No surrogate support is included in this class.
 	/// This class is currently public. Make it internal after testing completes
 	/// </remarks>
-	public class XmlConstructs
+	internal class XmlConstructs
 	{
 		/** Character flags. */
 		internal static byte[] CHARS = new byte[1 << 16];

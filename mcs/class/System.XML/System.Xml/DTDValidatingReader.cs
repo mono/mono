@@ -564,7 +564,6 @@ namespace Mono.Xml
 
 		Stack attributeValueEntityStack = new Stack ();
 
-		[MonoTODO ("Resolve recursive attribute values.")]
 		private void ValidateAttributes (DTDAttListDeclaration decl)
 		{
 			while (reader.MoveToNextAttribute ()) {
@@ -592,7 +591,6 @@ namespace Mono.Xml
 								XmlSeverityType.Error);
 							hasError = true;
 						} else {
-//							valueBuilder.Append (edecl.EntityValue);
 							XmlTextReader etr = new XmlTextReader (edecl.EntityValue, XmlNodeType.Attribute, ParserContext);
 							attributeValueEntityStack.Push (targetReader);
 							targetReader = etr;

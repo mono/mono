@@ -14,13 +14,13 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
-using System.Xml.Schema;
 using Mono.Xml;
+using System.Xml.Schema;
 using Mono.Xml.Native;
 
 namespace System.Xml
 {
-	public class DTDReader //: IXmlLineInfo
+	internal class DTDReader //: IXmlLineInfo
 	{
 		private XmlParserInput currentInput;
 		private Stack parserInputStack;
@@ -536,7 +536,6 @@ namespace System.Xml
 					"Whitespace is required after name in DTD parameter entity declaration.");
 
 			if (PeekChar () == 'S' || PeekChar () == 'P') {
-//				throw new NotImplementedException ("External parameter entity reference is not implemented yet.");
 				// read publicId/systemId
 				ReadExternalID ();
 				decl.PublicId = cachedPublicId;

@@ -12,12 +12,91 @@
 using System;
 using System.Text;
 using System.Globalization;
+using System.Xml.Schema;
 
 namespace System.Xml {
 
 	public class XmlConvert {
 
-		static string encodedColon = "_x003A_";
+		static string encodedColon;
+		static string [] datetimeFormats;
+
+		static XmlConvert ()
+		{
+			encodedColon = "_x003A_";
+			datetimeFormats = new string[] {
+			  // dateTime
+			  "yyyy-MM-ddTHH:mm:ss",
+			  "yyyy-MM-ddTHH:mm:ss.f",
+			  "yyyy-MM-ddTHH:mm:ss.ff",
+			  "yyyy-MM-ddTHH:mm:ss.fff",
+			  "yyyy-MM-ddTHH:mm:ss.ffff",
+			  "yyyy-MM-ddTHH:mm:ss.fffff",
+			  "yyyy-MM-ddTHH:mm:ss.ffffff",
+			  "yyyy-MM-ddTHH:mm:ss.fffffff",
+			  "yyyy-MM-ddTHH:mm:sszzz",
+			  "yyyy-MM-ddTHH:mm:ss.fzzz",
+			  "yyyy-MM-ddTHH:mm:ss.ffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.fffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.ffffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.fffffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.ffffffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+			  "yyyy-MM-ddTHH:mm:ssZ",
+			  "yyyy-MM-ddTHH:mm:ss.fZ",
+			  "yyyy-MM-ddTHH:mm:ss.ffZ",
+			  "yyyy-MM-ddTHH:mm:ss.fffZ",
+			  "yyyy-MM-ddTHH:mm:ss.ffffZ",
+			  "yyyy-MM-ddTHH:mm:ss.fffffZ",
+			  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
+			  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
+			  // time
+			  "HH:mm:ss",
+			  "HH:mm:ss.f",
+			  "HH:mm:ss.ff",
+			  "HH:mm:ss.fff",
+			  "HH:mm:ss.ffff",
+			  "HH:mm:ss.fffff",
+			  "HH:mm:ss.ffffff",
+			  "HH:mm:ss.fffffff",
+			  "HH:mm:sszzz",
+			  "HH:mm:ss.fzzz",
+			  "HH:mm:ss.ffzzz",
+			  "HH:mm:ss.fffzzz",
+			  "HH:mm:ss.ffffzzz",
+			  "HH:mm:ss.fffffzzz",
+			  "HH:mm:ss.ffffffzzz",
+			  "HH:mm:ss.fffffffzzz",
+			  "HH:mm:ssZ",
+			  "HH:mm:ss.fZ",
+			  "HH:mm:ss.ffZ",
+			  "HH:mm:ss.fffZ",
+			  "HH:mm:ss.ffffZ",
+			  "HH:mm:ss.fffffZ",
+			  "HH:mm:ss.ffffffZ",
+			  "HH:mm:ss.fffffffZ",
+			  // date
+			  "yyyy-MM-dd",
+			  "yyyy-MM-ddzzz",
+			  "yyyy-MM-ddZ",
+			  // gYearMonth
+			  "yyyy-MM",
+			  "yyyy-MMzzz",
+			  "yyyy-MMZ",
+			  // gYear
+			  "yyyy",
+			  "yyyyzzz",
+			  "yyyyZ",
+			  // gMonthDay
+			  "--MM-dd",
+			  "--MM-ddzzz",
+			  "--MM-ddZ",
+			  // gDay
+			  "---dd",
+			  "---ddzzz",
+			  "---ddZ",
+			};
+		}
 
 		public XmlConvert()
 		{}
@@ -131,78 +210,7 @@ namespace System.Xml {
 
 		public static DateTime ToDateTime(string s)
 		{
-			return ToDateTime(s, new string[] {
-			  // dateTime
-			  "yyyy-MM-ddTHH:mm:ss",
-			  "yyyy-MM-ddTHH:mm:ss.f",
-			  "yyyy-MM-ddTHH:mm:ss.ff",
-			  "yyyy-MM-ddTHH:mm:ss.fff",
-			  "yyyy-MM-ddTHH:mm:ss.ffff",
-			  "yyyy-MM-ddTHH:mm:ss.fffff",
-			  "yyyy-MM-ddTHH:mm:ss.ffffff",
-			  "yyyy-MM-ddTHH:mm:ss.fffffff",
-			  "yyyy-MM-ddTHH:mm:sszzz",
-			  "yyyy-MM-ddTHH:mm:ss.fzzz",
-			  "yyyy-MM-ddTHH:mm:ss.ffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.fffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.ffffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.fffffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.ffffffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.fffffffzzz",
-			  "yyyy-MM-ddTHH:mm:ssZ",
-			  "yyyy-MM-ddTHH:mm:ss.fZ",
-			  "yyyy-MM-ddTHH:mm:ss.ffZ",
-			  "yyyy-MM-ddTHH:mm:ss.fffZ",
-			  "yyyy-MM-ddTHH:mm:ss.ffffZ",
-			  "yyyy-MM-ddTHH:mm:ss.fffffZ",
-			  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
-			  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
-			  // time
-			  "HH:mm:ss",
-			  "HH:mm:ss.f",
-			  "HH:mm:ss.ff",
-			  "HH:mm:ss.fff",
-			  "HH:mm:ss.ffff",
-			  "HH:mm:ss.fffff",
-			  "HH:mm:ss.ffffff",
-			  "HH:mm:ss.fffffff",
-			  "HH:mm:sszzz",
-			  "HH:mm:ss.fzzz",
-			  "HH:mm:ss.ffzzz",
-			  "HH:mm:ss.fffzzz",
-			  "HH:mm:ss.ffffzzz",
-			  "HH:mm:ss.fffffzzz",
-			  "HH:mm:ss.ffffffzzz",
-			  "HH:mm:ss.fffffffzzz",
-			  "HH:mm:ssZ",
-			  "HH:mm:ss.fZ",
-			  "HH:mm:ss.ffZ",
-			  "HH:mm:ss.fffZ",
-			  "HH:mm:ss.ffffZ",
-			  "HH:mm:ss.fffffZ",
-			  "HH:mm:ss.ffffffZ",
-			  "HH:mm:ss.fffffffZ",
-			  // date
-			  "yyyy-MM-dd",
-			  "yyyy-MM-ddzzz",
-			  "yyyy-MM-ddZ",
-			  // gYearMonth
-			  "yyyy-MM",
-			  "yyyy-MMzzz",
-			  "yyyy-MMZ",
-			  // gYear
-			  "yyyy",
-			  "yyyyzzz",
-			  "yyyyZ",
-			  // gMonthDay
-			  "--MM-dd",
-			  "--MM-ddzzz",
-			  "--MM-ddZ",
-			  // gDay
-			  "---dd",
-			  "---ddzzz",
-			  "---ddZ",
-			});
+			return ToDateTime(s, datetimeFormats);
 		}
 		
 		public static DateTime ToDateTime(string s, string format)
@@ -221,7 +229,7 @@ namespace System.Xml {
 		
 		public static Decimal ToDecimal(string s)
 		{
-			return Decimal.Parse(s, CultureInfo.InvariantCulture);
+			return Decimal.Parse(s, NumberFormatInfo.InvariantInfo);
 		}
 		
 		public static double ToDouble(string s)
@@ -379,10 +387,96 @@ namespace System.Xml {
 			return value.ToString(format, CultureInfo.InvariantCulture);
 		}
 
-		[MonoTODO]
 		public static TimeSpan ToTimeSpan(string s)
 		{
-			return TimeSpan.Parse(s); // FIXME: Should Parse according to XML Schema spec
+			if (s.Length == 0)
+				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+
+			int start = 0;
+			if (s [0] == '-')
+				start = 1;
+			bool minusValue = (start == 1);
+
+			if (s [start] != 'P')
+				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+			start++;
+
+			int parseStep = 0;
+			int days = 0;
+			bool isTime = false;
+			int hours = 0;
+			int minutes = 0;
+			int seconds = 0;
+
+			bool error = false;
+
+			int i = start;
+			while (i < s.Length) {
+				if (s [i] == 'T') {
+					isTime = true;
+					parseStep = 4;
+					i++;
+					start = i;
+					continue;
+				}
+				for (; i < s.Length; i++) {
+					if (!Char.IsDigit (s [i]))
+						break;
+				}
+				int value = int.Parse (s.Substring (start, i - start));
+				switch (s [i]) {
+				case 'Y':
+					days += value * 365;
+					if (parseStep > 0)
+						error = true;
+					else
+						parseStep = 1;
+					break;
+				case 'M':
+					if (parseStep < 2) {
+						days += 365 * (value / 12) + 30 * (value % 12);
+						parseStep = 2;
+					} else if (isTime && parseStep < 6) {
+						minutes = value;
+						parseStep = 6;
+					}
+					else
+						error = true;
+					break;
+				case 'D':
+					days += value;
+					if (parseStep > 2)
+						error = true;
+					else
+						parseStep = 3;
+					break;
+				case 'H':
+					hours = value;
+					if (!isTime || parseStep > 4)
+						error = true;
+					else
+						parseStep = 5;
+					break;
+				case 'S':
+					seconds = value;
+					if (!isTime || parseStep > 6)
+						error = true;
+					else
+						parseStep = 7;
+					break;
+				default:
+					error = true;
+					break;
+				}
+				if (error)
+					break;
+				++i;
+				start = i;
+			}
+			if (error)
+				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds);
+			return minusValue ? -ts : ts;
 		}
 
 		[CLSCompliant (false)]

@@ -21,6 +21,7 @@ namespace System.Xml
 		#region Fields
 		const string XmlnsNamespace = "http://www.w3.org/2000/xmlns/";
 
+		WriteState ws = WriteState.Start;
 		TextWriter w;
 		bool nullEncoding = false;
 		bool openWriter = true;

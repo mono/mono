@@ -15,12 +15,6 @@ namespace System.Xml
 {
 	public abstract class XmlWriter
 	{
-		#region Fields
-
-		protected WriteState ws = WriteState.Start;
-
-		#endregion
-
 		#region Constructors
 
 		protected XmlWriter () { }
