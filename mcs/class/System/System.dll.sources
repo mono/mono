@@ -510,3 +510,6 @@ System/Uri.cs
 System/UriFormatException.cs
 System/UriHostNameType.cs
 System/UriPartial.cs
+System.Configuration.Provider/IProvider.cs
+System.Configuration.Provider/NotSupportedByProviderException.cs
+System.Configuration.Provider/ProviderCollection.cs
