@@ -1,3 +1,7 @@
+2003-03-21  Martin Willemoes Hansen <mwh@sysrq.dk>
+	
+	* unix.args: Added System.Runtime.Remoting.Channels/IChannelReceiverHook.cs
+
 2003-03-21  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* unix.args: Added System.Runtime.Remoting.Activation/AppDomainLevelActivator.cs

@@ -517,6 +517,7 @@ System.Runtime.Remoting.Channels/ClientChannelSinkStack.cs
 System.Runtime.Remoting.Channels/IChannel.cs
 System.Runtime.Remoting.Channels/IChannelDataStore.cs
 System.Runtime.Remoting.Channels/IChannelReceiver.cs
+System.Runtime.Remoting.Channels/IChannelReceiverHook.cs
 System.Runtime.Remoting.Channels/IChannelSender.cs
 System.Runtime.Remoting.Channels/IChannelSinkBase.cs
 System.Runtime.Remoting.Channels/IClientChannelSink.cs
