@@ -17,3 +17,4 @@ Path.cs
 File.cs
 IOException.cs
 StreamWriter.cs
+StreamReader.cs

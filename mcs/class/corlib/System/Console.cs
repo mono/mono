@@ -21,8 +21,7 @@ namespace System {
 		{
 			stderr = new StreamWriter (OpenStandardError ());
 			stdout = new StreamWriter (OpenStandardOutput ());
-
-			// fixme: stdin
+			stdin  = new StreamReader (OpenStandardInput ());
 		}
 		
 		public static TextWriter Error
@@ -295,5 +294,15 @@ namespace System {
 			stdout.WriteLine();
 		}
 
+		public static int Read ()
+		{
+			return stdin.Read ();
+		}
+		
+		public static string ReadLine ()
+		{
+			return stdin.ReadLine ();
+		}
+		
 	}
 }

@@ -1,5 +1,9 @@
 2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
+	* TextReader.cs: implemented the Read method
+
+	* StreamReader.cs: impl. stubs
+
 	* StreamWriter.cs: impl.
 
 	* TextWriter.cs: implemented Write and WriteLine methods

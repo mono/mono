@@ -1,6 +1,7 @@
 2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Console.cs: impl. (write only)
+	implemented the stdin stuff
 
 	* Int32.cs: impl. real op_Equal
 

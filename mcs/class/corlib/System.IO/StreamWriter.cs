@@ -1,5 +1,5 @@
 //
-// System.Int32.cs
+// System.IO.StreamWriter.cs
 //
 // Author:
 //   Dietmar Maurer (dietmar@ximian.com)
@@ -10,6 +10,7 @@
 using System.Text;
 
 namespace System.IO {
+	
         public class StreamWriter : TextWriter {
 
 		private Encoding internalEncoding;
