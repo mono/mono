@@ -110,7 +110,7 @@ namespace Mono.Xml.XPath2
 			defaultFunctions.Add (FromName ("reverse", "FnReverse"));
 			defaultFunctions.Add (FromName ("subsequence", "FnSubsequence"));
 			defaultFunctions.Add (FromName ("unordered", "FnUnordered"));
-			defaultFunctions.Add (FromName ("zero-or-more", "FnZeroOrMore"));
+			defaultFunctions.Add (FromName ("zero-or-one", "FnZeroOrOne"));
 			defaultFunctions.Add (FromName ("one-or-more", "FnOneOrMore"));
 			defaultFunctions.Add (FromName ("exactly-one", "FnExactlyOne"));
 			defaultFunctions.Add (FromName ("deep-equal", "FnDeepEqual"));

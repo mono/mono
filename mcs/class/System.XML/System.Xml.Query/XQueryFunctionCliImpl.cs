@@ -500,16 +500,21 @@ namespace Mono.Xml.XPath2
 
 		// FIXME: add a bunch of annoying datetime functions
 
-		[MonoTODO]
-		public static object FnResolveQName ()
+		public static object FnResolveQName (string qname, XPathNavigator element)
 		{
-			throw new NotImplementedException ();
+			if (qname == null)
+				return null;
+
+			int index = qname.IndexOf (':');
+			string prefix = (index < 0) ? "" : qname.Substring (index);
+			return new XmlQualifiedName (
+				element.LookupNamespace (prefix),
+				index < 0 ? qname : qname.Substring (index + 1));
 		}
 
-		[MonoTODO]
-		public static object FnExpandQName ()
+		public static object FnExpandQName (string ns, string local)
 		{
-			throw new NotImplementedException ();
+			return new XmlQualifiedName (local, ns);
 		}
 
 		public static string FnLocalNameFromQName (XmlQualifiedName name)
@@ -631,47 +636,55 @@ namespace Mono.Xml.XPath2
 			return !e.GetEnumerator ().MoveNext ();
 		}
 
-		public static object FnExists (XPathSequence e)
+		public static bool FnExists (XPathSequence e)
 		{
 			if (e is XPathEmptySequence)
 				return false;
-			return e.GetEnumerator ().MoveNext ();
+			return e.MoveNext ();
 		}
 
-		[MonoTODO]
-		public static object FnDistinctValues (XQueryContext ctx, XPathSequence items)
+		public static XPathSequence FnDistinctValues (XQueryContext ctx, XPathSequence items)
 		{
-			throw new NotImplementedException ();
+			return FnDistinctValuesImpl (ctx, items, ctx.DefaultCollation);
 		}
 
-		[MonoTODO]
-		public static object FnDistinctValues (XQueryContext ctx, XPathSequence items, string collation)
+		public static XPathSequence FnDistinctValues (XQueryContext ctx, XPathSequence items, string collation)
 		{
-			throw new NotImplementedException ();
+			return FnDistinctValuesImpl (ctx, items, ctx.GetCulture (collation));
 		}
 
-		[MonoTODO]
+		private static XPathSequence FnDistinctValuesImpl (XQueryContext ctx, XPathSequence items, CultureInfo collation)
+		{
+			return new DistinctValueIterator (ctx, items, collation);
+		}
+
 		public static XPathSequence FnInsertBefore (XPathSequence target, int position, XPathSequence inserts)
 		{
-			throw new NotImplementedException ();
+			if (position < 1)
+				position = 1;
+			return new InsertingIterator (target, position, inserts);
 		}
 
-		[MonoTODO]
 		public static XPathSequence FnRemove (XPathSequence target, int position)
 		{
-			throw new NotImplementedException ();
+			if (position < 1)
+				return target;
+			return new RemovalIterator (target, position);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("optimize")]
 		public static XPathSequence FnReverse (XPathSequence arg)
 		{
-			throw new NotImplementedException ();
+			ArrayList al = new ArrayList ();
+			while (arg.MoveNext ())
+				al.Add (arg.Current);
+			al.Reverse ();
+			return new ListIterator (arg.Context, al);
 		}
 
-		[MonoTODO]
 		public static object FnSubsequence (XPathSequence sourceSeq, double startingLoc)
 		{
-			throw new NotImplementedException ();
+			return FnSubsequence (sourceSeq, startingLoc, double.MaxValue);
 		}
 
 		[MonoTODO]
@@ -687,34 +700,94 @@ namespace Mono.Xml.XPath2
 			return e;
 		}
 
-		[MonoTODO]
-		public static object FnZeroOrMore (XPathSequence e)
+		public static XPathItem FnZeroOrOne (XPathSequence e)
 		{
-			throw new NotImplementedException ();
+			if (!e.MoveNext ())
+				return null;
+			XPathItem item = e.Current;
+			if (e.MoveNext ())
+				throw new XmlQueryException ("zero-or-one() function detected that the argument sequence contains two or more items.");
+			return item;
 		}
 
-		[MonoTODO]
 		public static object FnOneOrMore (XPathSequence e)
 		{
-			throw new NotImplementedException ();
+			if (!e.Clone ().MoveNext ())
+				throw new XmlQueryException ("one-or-more() function detected that the argument sequence contains no items.");
+			return e;
 		}
 
-		[MonoTODO]
-		public static object FnExactlyOne (XPathSequence e)
+		public static XPathItem FnExactlyOne (XPathSequence e)
 		{
-			throw new NotImplementedException ();
+			if (!e.MoveNext ())
+				throw new XmlQueryException ("exactly-one() function detected that the argument sequence contains no items.");
+			XPathItem item = e.Current;
+			if (e.MoveNext ())
+				throw new XmlQueryException ("exactly-one() function detected that the argument sequence contains two or more items.");
+			return item;
 		}
 
-		[MonoTODO]
 		public static object FnDeepEqual (XQueryContext ctx, XPathSequence p1, XPathSequence p2)
 		{
-			throw new NotImplementedException ();
+			return FnDeepEqualImpl (p1, p2, ctx.DefaultCollation);
 		}
 
-		[MonoTODO]
 		public static object FnDeepEqual (XQueryContext ctx, XPathSequence p1, XPathSequence p2, string collation)
 		{
-			throw new NotImplementedException ();
+			return FnDeepEqualImpl (p1, p2, ctx.GetCulture (collation));
+		}
+
+		public static bool FnDeepEqualImpl (XPathSequence p1, XPathSequence p2, CultureInfo collation)
+		{
+			// FIXME: use collation
+			while (p1.MoveNext ()) {
+				if (!p2.MoveNext ())
+					return false;
+				if (!FnDeepEqualItem (p1.Current, p2.Current, collation))
+					return false;
+			}
+			if (p2.MoveNext ())
+				return false;
+			return true;
+		}
+
+		// FIXME: Actually ValueEQ() should consider collation.
+		[MonoTODO]
+		private static bool FnDeepEqualItem (XPathItem i1, XPathItem i2, CultureInfo collation)
+		{
+			XPathAtomicValue av1 = i1 as XPathAtomicValue;
+			XPathAtomicValue av2 = i1 as XPathAtomicValue;
+			if (av1 != null && av2 != null) {
+				try {
+					return XQueryComparisonOperator.ValueEQ (av1, av2);
+				} catch (XmlQueryException) {
+					// not-allowed comparison never raises
+					// an error here, just return false.
+					return false;
+				}
+			}
+			else if (av1 != null || av2 != null)
+				return false;
+
+			XPathNavigator n1 = i1 as XPathNavigator;
+			XPathNavigator n2 = i2 as XPathNavigator;
+			if (n1.NodeType != n2.NodeType)
+				return false;
+			switch (n1.NodeType) {
+			case XPathNodeType.Root:
+				throw new NotImplementedException ();
+			case XPathNodeType.Element:
+				throw new NotImplementedException ();
+			case XPathNodeType.Attribute:
+				return n1.Name == n2.Name && n1.TypedValue == n2.TypedValue;
+			case XPathNodeType.ProcessingInstruction:
+			case XPathNodeType.Namespace:
+				return n1.Name == n2.Name && n1.Value == n2.Value;
+			case XPathNodeType.Text:
+			case XPathNodeType.Comment:
+				return n1.Value == n2.Value;
+			}
+			return false;
 		}
 
 		public static int FnCount (XPathSequence e)
@@ -726,6 +799,53 @@ namespace Mono.Xml.XPath2
 
 		[MonoTODO]
 		public static object FnAvg (XPathSequence e)
+		{
+			if (!e.MoveNext ())
+				return null;
+			switch (e.Current.XmlType.TypeCode) {
+			case XmlTypeCode.DayTimeDuration:
+				return FnAvgDayTimeDuration (e);
+			case XmlTypeCode.YearMonthDuration:
+				return FnAvgYearMonthDuration (e);
+			case XmlTypeCode.Decimal:
+				return FnAvgDecimal (e);
+			case XmlTypeCode.Integer:
+				return FnAvgInteger (e);
+			case XmlTypeCode.Float:
+				return FnAvgFloat (e);
+			case XmlTypeCode.UntypedAtomic:
+			case XmlTypeCode.Double:
+				return FnAvgDouble (e);
+			}
+			throw new XmlQueryException ("avg() function detected that the sequence contains an item whose type is neither of dayTimeDuration, yearMonthDuration, decimal, integer, float, double, nor untypedAtomic.");
+		}
+
+		private static TimeSpan FnAvgDayTimeDuration (XPathSequence e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		private static TimeSpan FnAvgYearMonthDuration (XPathSequence e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		private static TimeSpan FnAvgDecimal (XPathSequence e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		private static TimeSpan FnAvgInteger (XPathSequence e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		private static TimeSpan FnAvgFloat (XPathSequence e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		private static TimeSpan FnAvgDouble (XPathSequence e)
 		{
 			throw new NotImplementedException ();
 		}

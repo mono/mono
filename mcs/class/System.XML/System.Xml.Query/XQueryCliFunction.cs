@@ -87,19 +87,20 @@ namespace Mono.Xml.XPath2
 				if (cliReturnType == null)
 					cliReturnType = mi.ReturnType;
 				else if (mi.ReturnType != cliReturnType)
-					throw new ArgumentException (String.Format ("Argument methodList have different return types. Method name is {0}.", mi.Name));
+					throw new ArgumentException (String.Format ("Every XQuery functions which share the same name must have the same return type. Method name is {0}.", mi.Name));
 				ParameterInfo [] prms = mi.GetParameters ();
 
 				int args = prms.Length;
 
 				// Whether it takes "current context" or not.
 				Type t = args > 0 ? prms [0].ParameterType : null;
-				bool ctxSeq = mi.GetCustomAttributes (typeof (XQueryFunctionContextAttribute), false).Length > 0;
+				bool ctxSeq = mi.GetCustomAttributes (typeof (XQueryFunctionContextAttribute), true).Length > 0;
 				bool hasContextArg = ctxSeq || t == typeof (XQueryContext);
 				if (hasContextArg)
 					args--;
 				if (methods [args] != null)
 					throw new ArgumentException (String.Format ("XQuery does not allow functions that accepts such methods that have the same number of parameters in different types. Method name is {0}", mi.Name));
+if (mi.Name == "FnDistinctValues")
 				methods.Add (args, mi);
 				if (args < minArgs || minArgs < 0)
 					minArgs = args;
@@ -170,16 +171,6 @@ namespace Mono.Xml.XPath2
 			if (e != null)
 				SecurityManager.ResolvePolicy (e).Demand ();
 
-			// If native parameter type is XPathSequence and the actual values are not, adjust them
-			for (int i = 0; i < args.Length; i++) {
-				if (prms [i].ParameterType == typeof (XPathSequence) && !(args [i] is XPathSequence)) {
-					XPathItem item = args [i] as XPathItem;
-					if (item == null)
-						item = new XPathAtomicValue (prms [i], XmlSchemaType.GetBuiltInType (XPathAtomicValue.XmlTypeCodeFromRuntimeType (prms [i].ParameterType, true)));
-					args [i] = new SingleItemIterator (item, current.Context);
-				}
-			}
-
 			Type t = prms.Length > 0 ? prms [0].ParameterType : null;
 			bool ctxSeq = mi.GetCustomAttributes (
 				typeof (XQueryFunctionContextAttribute),
@@ -194,6 +185,23 @@ namespace Mono.Xml.XPath2
 				pl.Insert (0, current);
 				args = pl.ToArray ();
 			}
+
+			if (args.Length != prms.Length)
+				throw new XmlQueryException (String.Format ("Argument numbers were different. Signature requires {0} while actual call was {1}.", prms.Length, args.Length));
+
+			// If native parameter type is XPathSequence and the actual values are not, adjust them
+			for (int i = 0; i < args.Length; i++) {
+				if (prms [i].ParameterType == typeof (XPathSequence) && !(args [i] is XPathSequence)) {
+					XPathItem item = args [i] as XPathItem;
+					if (item == null)
+						item = args [i] == null ? null : new XPathAtomicValue (args [i], XmlSchemaType.GetBuiltInType (XPathAtomicValue.XmlTypeCodeFromRuntimeType (prms [i].ParameterType, true)));
+					if (item == null)
+						args [i] = new XPathEmptySequence (current.Context);
+					else
+						args [i] = new SingleItemIterator (item, current.Context);
+				}
+			}
+
 			return mi.Invoke (null, args);
 		}
 	}

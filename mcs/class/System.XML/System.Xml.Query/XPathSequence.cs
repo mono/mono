@@ -30,6 +30,7 @@
 #if NET_2_0
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Query;
@@ -1543,8 +1544,8 @@ namespace Mono.Xml.XPath2
 	{
 		IList list;
 
-		public ListIterator (XPathSequence iter, IList list)
-			: base (iter.Context)
+		public ListIterator (XQueryContext ctx, IList list)
+			: base (ctx)
 		{
 			if (list is ICloneable)
 				this.list = list;
@@ -1605,6 +1606,173 @@ namespace Mono.Xml.XPath2
 
 		public override XPathItem CurrentCore {
 			get { return (XPathItem) list.Current; }
+		}
+	}
+
+	internal abstract class WrapperIterator : XPathSequence
+	{
+		XPathSequence source;
+
+		public WrapperIterator (XPathSequence source)
+			: base (source.Context)
+		{
+			this.source = source;
+		}
+
+		protected WrapperIterator (WrapperIterator other, bool flag)
+			: base (other)
+		{
+			source = other.source.Clone ();
+		}
+
+		public XPathSequence Source {
+			get { return source; }
+		}
+
+		public override XPathItem CurrentCore {
+			get { return source.Current; }
+		}
+	}
+
+	internal class RemovalIterator : WrapperIterator
+	{
+		int position;
+
+		public RemovalIterator (XPathSequence source, int position)
+			: base (source)
+		{
+			this.position = position;
+		}
+
+		protected RemovalIterator (RemovalIterator other)
+			: base (other, true)
+		{
+			position = other.position;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new RemovalIterator (this);
+		}
+
+		protected override bool MoveNextCore ()
+		{
+			if (!Source.MoveNext ())
+				return false;
+			else if (Source.Position == position) // skip target
+				return Source.MoveNext ();
+			else
+				return true;
+		}
+	}
+
+	internal class InsertingIterator : WrapperIterator
+	{
+		int position;
+		XPathSequence inserts;
+		bool sourceFinished;
+		bool insertsFinished;
+		XPathSequence currentSequence;
+
+		public InsertingIterator (XPathSequence target, int position, XPathSequence inserts)
+			: base (target)
+		{
+			this.position = position;
+			this.inserts = inserts;
+			currentSequence = target;
+		}
+
+		protected InsertingIterator (InsertingIterator other)
+			: base (other)
+		{
+			position = other.position;
+			inserts = other.inserts.Clone ();
+			sourceFinished = other.sourceFinished;
+			insertsFinished = other.insertsFinished;
+			currentSequence = 
+				other.inserts == other.currentSequence ?
+				inserts : Source;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new InsertingIterator (this);
+		}
+
+		protected override bool MoveNextCore ()
+		{
+			if (insertsFinished && sourceFinished)
+				return false;
+			if (sourceFinished) { // position >= source.Count
+				currentSequence = inserts;
+				if (inserts.MoveNext ())
+					return true;
+				insertsFinished = true;
+				return false;
+			}
+			else if (insertsFinished) { // after insertion
+				if (Source.MoveNext ())
+					return true;
+				sourceFinished = true;
+				return false;
+			}
+			else if (Position >= position - 1) {
+				currentSequence = inserts;
+				if (inserts.MoveNext ())
+					return true;
+				currentSequence = Source;
+				insertsFinished = true;
+			}
+			if (Source.MoveNext ())
+				return true;
+			sourceFinished = true;
+			return MoveNextCore ();
+		}
+
+		public override XPathItem CurrentCore {
+			get { return currentSequence.Current; }
+		}
+	}
+
+	internal class DistinctValueIterator : XPathSequence
+	{
+		XPathSequence items;
+		CultureInfo collation;
+		Hashtable table = new Hashtable ();
+
+		public DistinctValueIterator (XQueryContext ctx, XPathSequence items, CultureInfo collation)
+			: base (ctx)
+		{
+			this.items = items;
+			this.collation = collation;
+		}
+
+		protected DistinctValueIterator (DistinctValueIterator other)
+			: base (other)
+		{
+			items = other.items.Clone ();
+			collation = other.collation;
+			table = (Hashtable) other.table.Clone ();
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new DistinctValueIterator (this);
+		}
+
+		protected override bool MoveNextCore ()
+		{
+			if (!items.MoveNext ())
+				return false;
+			// FIXME: use collations
+			// FIXME: check if it really works (esp. Uri et.al)
+			if (table.Contains (items.Current.TypedValue))
+				return MoveNextCore ();
+			return true;
+		}
+
+		public override XPathItem CurrentCore {
+			get { return items.Current; }
 		}
 	}
 }

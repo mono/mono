@@ -1,3 +1,17 @@
+2004-10-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathSequence.cs :
+	  missed last checkin.
+	  Added WrapperIterator, RemovalIterator for fn:remove(),
+	  InsertingIterator for fn:insertBefore() and DistinctValueIterator
+	  for fn:distinct-values().
+	* XQueryCliFunction.cs :
+	  Improved error message. Handle null argument as empty sequence.
+	* XQueryFunction.cs :
+	  Fixed incorrect function name fn:zero-or-more -> fn:zero-or-one.
+	* XQueryFunctionCliImpl.cs :
+	  Implemented some functions. Fixed some function signatures.
+
 2004-10-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPath2Expression.cs, XPathSequence.cs :
