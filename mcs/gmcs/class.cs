@@ -5836,7 +5836,7 @@ namespace Mono.CSharp {
 
 			protected override MethodInfo DelegateMethodInfo {
 				get {
-					return TypeManager.delegate_remove_delegate_delegate;
+					return TypeManager.delegate_combine_delegate_delegate;
 				}
 			}
 
@@ -5862,7 +5862,7 @@ namespace Mono.CSharp {
 
 			protected override MethodInfo DelegateMethodInfo {
 				get {
-					return TypeManager.delegate_combine_delegate_delegate;
+					return TypeManager.delegate_remove_delegate_delegate;
 				}
 			}
 
