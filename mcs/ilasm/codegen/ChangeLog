@@ -1,3 +1,9 @@
+2004-03-28  Jackson Harper  <jackson@ximian.com>
+
+	* PeapiTypeRef.cs: Check for null bounds in bound arrays. Patch by
+	Vladimir Vukicevic.
+	* ModifiablyType.cs: Set names properly for bound arrays.
+	
 2004-02-18  Jackson Harper <jackson@ximian.com>
 
 	* ExternTypeRefInst.cs: New file - represents an instance of an

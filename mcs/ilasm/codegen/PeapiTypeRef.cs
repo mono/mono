@@ -72,19 +72,21 @@ namespace Mono.ILASM {
                         // TODO: There should probably be an error reported if
                         // something like [3...,3...5] is done
                         for (int i=0; i<dimen; i++) {
-                                DictionaryEntry bound = (DictionaryEntry) bound_list[i];
-
-                                if (bound.Key != TypeRef.Ellipsis && prev_lower_set) {
-                                        lower_array[i] = (int) bound.Key;
-                                        lower_set = true;
-                                } else {
-                                        prev_lower_set = false;
-                                }
-                                if (bound.Value != TypeRef.Ellipsis && prev_size_set) {
-                                        size_array[i] = (int) bound.Value;
-                                        size_set = true;
-                                } else {
-                                        prev_size_set = false;
+                                if (bound_list [i] != null) {
+                                        DictionaryEntry bound = (DictionaryEntry) bound_list[i];
+                                        
+                                        if (bound.Key != TypeRef.Ellipsis && prev_lower_set) {
+                                                lower_array[i] = (int) bound.Key;
+                                                lower_set = true;
+                                        } else {
+                                                prev_lower_set = false;
+                                        }
+                                        if (bound.Value != TypeRef.Ellipsis && prev_size_set) {
+                                                size_array[i] = (int) bound.Value;
+                                                size_set = true;
+                                        } else {
+                                                prev_size_set = false;
+                                        }
                                 }
                         }
                         if (lower_set && size_set) {

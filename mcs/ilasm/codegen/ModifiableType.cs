@@ -74,7 +74,18 @@ namespace Mono.ILASM {
                         conversion_list.Add (ConversionMethod.MakeBoundArray);
                         conversion_list.Add (bounds);
                         is_array = true;
-                        SigMod += "[,]"; // TODO: Check spec on this
+                        SigMod += "[";
+                        for (int i=0; i<bounds.Count; i++) {
+                                DictionaryEntry e = (DictionaryEntry) bounds [i];
+                                if (e.Key != TypeRef.Ellipsis)
+                                        SigMod += e.Key;
+                                SigMod += "...";
+                                if (e.Value != TypeRef.Ellipsis)
+                                        SigMod += e.Value;
+                                if (i + 1 < bounds.Count)
+                                        SigMod += ", ";
+                        }
+                        SigMod += "]";
                 }
 
                 public void MakeManagedPointer ()
