@@ -1,3 +1,14 @@
+2003-06-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* .cvsignore: Ignore generated files (remove with make clean).
+	* CertificateFormatter.cs: Commented 2 lines as it didn't compile
+	with MCS (but did compile with CSC).
+	* gcertview.cs: Change app.ico (non-existing) to mono.bmp (16x16).
+	* gcertview.exe.config: New. Configuration file for gcertview (same
+	as certview.exe.config except it reference gcertview.exe instead of 
+	certview.exe).
+	* makefile: Updated for linux by Ben Maurer.
+
 2003-06-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CertificateViewer.cs: New. SFW-based certificate viewer.

@@ -20,7 +20,6 @@ gcertview.exe: gcertview.cs CertificateFormatter.cs X509ExtensionsHandler.cs ../
 	cp ../AssemblyInfo.cs AssemblyInfo.cs
 	cp ../../../class/lib/Mono.Security.dll Mono.Security.dll
 	$(CSC) $(CSCFLAGS) $(LNXFLAGS) gcertview.cs CertificateFormatter.cs X509ExtensionsHandler.cs AssemblyInfo.cs
-	cp certview.exe.config gcertview.exe.config
 	rm AssemblyInfo.cs 
 
 clean:
