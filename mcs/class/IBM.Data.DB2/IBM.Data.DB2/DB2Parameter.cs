@@ -58,6 +58,17 @@ namespace IBM.Data.DB2
 			this.Size = size;
 			this.SourceColumn = sourceColumn;
 		}
+		
+		//only for testing purposes!!! 
+		public DB2Parameter(string name, short type, int size, string sourceColumn)
+		{
+			direction = ParameterDirection.Input;
+			sourceVersion = DataRowVersion.Current;
+			this.ParameterName = name;
+			this.db2DataType = type;
+			this.Size = size;
+			this.SourceColumn = sourceColumn;
+		}
 
 		public DB2Parameter(string parameterName, object value)
 		{
@@ -436,15 +447,20 @@ namespace IBM.Data.DB2
 			}
 			if((direction == ParameterDirection.Input) || (direction == ParameterDirection.InputOutput))
 			{
+				
 				switch (db2DataType) 
 				{
+					
 					case DB2Constants.SQL_WCHAR:
 						string tmpString = Convert.ToString(Value);
 						inLength =  tmpString.Length;
 						if((Size > 0) && (inLength > Size))
 							inLength = Size;
+						
+						
 						Marshal.Copy(tmpString.ToCharArray(), 0, internalBuffer, inLength);
 						inLength *= 2;
+						
 						db2LastUsedDataType = DB2Constants.SQL_VARGRAPHIC;
 						db2CType = DB2Constants.SQL_C_WCHAR;
 						break;
@@ -453,28 +469,34 @@ namespace IBM.Data.DB2
 						inLength = tmpBytes.Length;
 						if((Size > 0) && (inLength > Size))
 							inLength = Size;
+						
 						Marshal.Copy(tmpBytes, 0, internalBuffer, inLength);
 						db2CType = DB2Constants.SQL_TYPE_BINARY;
 						break;
 					case DB2Constants.SQL_BIT:
 					case DB2Constants.SQL_UTINYINT:
 					case DB2Constants.SQL_SMALLINT:
+						
 						Marshal.WriteInt16(internalBuffer, Convert.ToInt16(Value));
 						db2CType = DB2Constants.SQL_C_SSHORT;
 						break;
 					case DB2Constants.SQL_INTEGER:
+						
 						Marshal.WriteInt32(internalBuffer, Convert.ToInt32(Value));
 						db2CType = DB2Constants.SQL_C_SLONG;
 						break;
 					case DB2Constants.SQL_BIGINT:
+						
 						Marshal.WriteInt64(internalBuffer, Convert.ToInt64(Value));
 						db2CType = DB2Constants.SQL_C_SBIGINT;
 						break;
 					case DB2Constants.SQL_REAL:
+						
 						Marshal.StructureToPtr((float)Convert.ToDouble(Value), internalBuffer, false);
 						db2CType = DB2Constants.SQL_C_TYPE_REAL;
 						break;
 					case DB2Constants.SQL_DOUBLE:
+						
 						Marshal.StructureToPtr(Convert.ToDouble(Value), internalBuffer, false);
 						db2CType = DB2Constants.SQL_C_DOUBLE;
 						break;
@@ -482,6 +504,7 @@ namespace IBM.Data.DB2
 						byte[] tmpDecimalData = System.Text.Encoding.UTF8.GetBytes(
 							Convert.ToDecimal(Value).ToString(System.Globalization.CultureInfo.InvariantCulture));
 						inLength =  Math.Min(tmpDecimalData.Length, requiredMemory);
+						
 						Marshal.Copy(tmpDecimalData, 0, internalBuffer, inLength);
 						db2LastUsedDataType = DB2Constants.SQL_VARCHAR;
 						db2CType = DB2Constants.SQL_C_CHAR;

@@ -418,6 +418,7 @@ namespace IBM.Data.DB2
 			}
 			if(previousBehavior != behavior)
 			{
+				
 				if(((previousBehavior ^ behavior) & CommandBehavior.SchemaOnly) != 0)
 				{
 					sqlRet = DB2CLIWrapper.SQLSetStmtAttr(hwndStmt, DB2Constants.SQL_ATTR_DEFERRED_PREPARE, 
@@ -427,6 +428,7 @@ namespace IBM.Data.DB2
 
 					previousBehavior = (previousBehavior & ~CommandBehavior.SchemaOnly) | (behavior & CommandBehavior.SchemaOnly);
 				}
+				
 				if(((previousBehavior ^ behavior) & CommandBehavior.SingleRow) != 0)
 				{
 					sqlRet = DB2CLIWrapper.SQLSetStmtAttr(hwndStmt, DB2Constants.SQL_ATTR_MAX_ROWS, 
@@ -449,7 +451,7 @@ namespace IBM.Data.DB2
 				DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_DBC, db2Conn.DBHandle, "Error setting isolation level.", db2Conn);
 			}
 
-
+			
 			if ((commandText == null) ||(commandText.Length == 0))
 				throw new InvalidOperationException("Command string is empty");
 				
@@ -460,6 +462,7 @@ namespace IBM.Data.DB2
 			//            {
 			//                Prepare();
 			//            }
+			
 			if((behavior & CommandBehavior.SchemaOnly) != 0)
 			{
 				if(!prepared)
@@ -474,6 +477,7 @@ namespace IBM.Data.DB2
 					Marshal.FreeHGlobal(statementParametersMemory);
 					statementParametersMemory = IntPtr.Zero;
 				}
+				
 				if(parameters.Count > 0)
 				{
 					statementParametersMemorySize = 0;
@@ -485,16 +489,22 @@ namespace IBM.Data.DB2
 					}
 					statementParametersMemory = Marshal.AllocHGlobal(statementParametersMemorySize);
 					int offset = 0;
+					
 					for(int i = 0; i < parameters.Count; i++) 
 					{
 						DB2Parameter param = parameters[i];
-						param.internalBuffer = new IntPtr(statementParametersMemory.ToInt64() + offset);
+						//param.internalBuffer = new IntPtr(statementParametersMemory.ToInt64() + offset);
+						int memSize = statementParametersMemory.ToInt32() + offset;
+						param.internalBuffer = Marshal.AllocHGlobal(memSize);
 						offset += param.requiredMemory;
-						param.internalLengthBuffer = new IntPtr(statementParametersMemory.ToInt64() + offset);
+						//param.internalLengthBuffer = new IntPtr(statementParametersMemory.ToInt32() + offset);
+						param.internalLengthBuffer = Marshal.AllocHGlobal(4);
 						offset += 8;
+						
 						sqlRet = param.Bind(this.hwndStmt, (short)(i + 1));
 						DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_STMT, hwndStmt, "Error binding parameter in DB2Command: ", db2Conn);
 					}
+					
 				}
 				if (prepared)
 				{
