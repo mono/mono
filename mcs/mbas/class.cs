@@ -2286,8 +2286,20 @@ namespace Mono.MonoBASIC {
 						pb = mb.DefineParameter (
 							i + 1, p [i].Attributes, p [i].Name);
 
-					if (p [i].ParameterInitializer != null)
-						pb.SetConstant (((Constant) p [i].ParameterInitializer).GetValue());
+					if (p [i].ParameterInitializer != null)	{
+						if (p [i].ParameterInitializer is MemberAccess) {
+							MemberAccess ma = p [i].ParameterInitializer as MemberAccess;
+
+							Expression const_ex = ma.Resolve(ec);
+							if (const_ex is EnumConstant)
+								pb.SetConstant (((EnumConstant) const_ex).Child.GetValue());
+							else
+								Report.Error(-1,
+									"Internal error - Non supported argument type in optional parameter");
+						}
+						else
+							pb.SetConstant (((Constant) p [i].ParameterInitializer).GetValue());
+					}
 
 					Attributes attr = p [i].OptAttributes;
 					if (attr != null)
