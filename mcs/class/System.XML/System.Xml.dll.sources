@@ -16,6 +16,7 @@ Mono.Xml.XPath/KeyPattern.cs
 Mono.Xml.XPath/LocationPathPattern.cs
 Mono.Xml.XPath/Pattern.cs
 Mono.Xml.XPath/UnionPattern.cs
+Mono.Xml.XPath/XPathNavigatorReader.cs
 Mono.Xml.Xsl.Operations/XslApplyImports.cs
 Mono.Xml.Xsl.Operations/XslApplyTemplates.cs
 Mono.Xml.Xsl.Operations/XslAttribute.cs
@@ -62,6 +63,7 @@ Mono.Xml.Xsl/XsltCompiledContext.cs
 Mono.Xml.Xsl/XslFunctions.cs
 Mono.Xml/IHasXmlParserContext.cs
 Mono.Xml/IHasXmlSchemaInfo.cs
+Mono.Xml/XmlFilterReader.cs
 Mono.Xml/XmlNodeWriter.cs
 System.Xml/ConformanceLevel.cs
 System.Xml/DTDAutomata.cs
@@ -357,10 +359,8 @@ System.Xml.Serialization/XmlTypeMapMemberNamespaces.cs
 System.Xml.Serialization/XmlTypeMapping.cs
 System.Xml.Serialization/XmlElementEventHandler.cs
 System.Xml.Serialization/XmlNodeEventHandler.cs
-System.Xml.Query/IXmlCompilerInclude.cs
 System.Xml.Query/QueryEventArgs.cs
 System.Xml.Query/QueryEventHandler.cs
-System.Xml.Query/XmlCommand.cs
 System.Xml.Query/XmlArgumentList.cs
 System.Xml.Query/XmlQueryCompileException.cs
 System.Xml.Query/XmlQueryException.cs
