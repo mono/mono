@@ -1,3 +1,14 @@
+2003-08-02 Jackson Harper <jackson@latitudegeo.com>
+
+	* IMethodRef.cs: Method refs should expose their call conv. This is
+	needed so the call conv can be modified for the newobj operation which
+	is implicitly instance.
+	* ExternMethodRef.cs: Expose call conv. Don't resolve vararg methods
+	more then once.
+	* GlobalMethodRef.cs: Expose call conv
+	* TypeSpecMethodRef.cs: Expose call conv
+	* MethodInstr.cs: For newobj operations set the call conv to instance
+
 2003-07-31 Jackson Harper <jackson@latitudegeo.com>
 
 	* MethodDef.cs: Allow 0 offsets for labels, and make sure to only

@@ -40,6 +40,11 @@ namespace Mono.ILASM {
                         get { return peapi_method; }
                 }
 
+		public PEAPI.CallConv CallConv {
+			get { return call_conv; }
+			set { call_conv = value; }
+		}
+
                 public void Resolve (CodeGen code_gen)
                 {
 			if (is_resolved)
@@ -79,6 +84,7 @@ namespace Mono.ILASM {
                                                 ret_type.PeapiType, param_list);
                         }
 
+			Console.WriteLine ("Adding call conv:   " + call_conv);
                         peapi_method.AddCallConv (call_conv);
 
 			is_resolved = true;
@@ -86,6 +92,9 @@ namespace Mono.ILASM {
 
                 protected void ResolveVararg (CodeGen code_gen)
                 {
+			if (is_resolved)
+				return;
+
                         ArrayList param_list = new ArrayList ();
                         ArrayList opt_list = new ArrayList ();
                         bool in_opt = false;
@@ -132,8 +141,9 @@ namespace Mono.ILASM {
                         }
 
 
-
                         peapi_method.AddCallConv (call_conv);
+			
+			is_resolved = true;
                 }
         }
 

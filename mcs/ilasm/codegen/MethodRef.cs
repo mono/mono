@@ -39,6 +39,11 @@ namespace Mono.ILASM {
                         get { return peapi_method; }
                 }
 
+		public PEAPI.CallConv CallConv {
+			get { return call_conv; }
+			set { call_conv = value; }
+		}
+
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)

@@ -22,6 +22,9 @@ namespace Mono.ILASM {
                 {
                         this.op = op;
                         this.operand = operand;
+			
+			if (op == PEAPI.MethodOp.newobj)
+				operand.CallConv |= PEAPI.CallConv.Instance;
                 }
 
                 public void Emit (CodeGen code_gen, MethodDef meth, 
