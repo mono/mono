@@ -78,7 +78,7 @@ namespace System {
 
 		// Fields
 		public static readonly object DBNull = System.DBNull.Value;
-		public static ToBase64Transform toBase64Transform = new ToBase64Transform();
+		static ToBase64Transform toBase64Transform = new ToBase64Transform();
 	
 		private Convert () {}
 
