@@ -2668,7 +2668,8 @@ namespace Mono.CSharp {
 						Location loc)
 		{
 			PartialContainer pc;
-			DeclSpace ds = (DeclSpace) RootContext.Tree.Decls [name];
+			string full_name = name.GetName (true);
+			DeclSpace ds = (DeclSpace) RootContext.Tree.Decls [full_name];
 			if (ds != null) {
 				pc = ds as PartialContainer;
 
@@ -2703,7 +2704,7 @@ namespace Mono.CSharp {
 			}
 
 			pc = new PartialContainer (ns, parent, name, mod_flags, kind, loc);
-			RootContext.Tree.RecordDecl (name.GetName (true), pc);
+			RootContext.Tree.RecordDecl (full_name, pc);
 			parent.AddType (pc);
 			pc.Register ();
 			return pc;

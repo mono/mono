@@ -49,7 +49,7 @@ namespace Mono.CSharp
 		
 		public void RecordDecl (string name, DeclSpace ds)
 		{
-				DeclSpace other = (DeclSpace) decls [name];
+			DeclSpace other = (DeclSpace) decls [name];
 			if (other != null){
 				PartialContainer other_pc = other as PartialContainer;
 				if ((ds is TypeContainer) && (other_pc != null)) {
