@@ -1,4 +1,8 @@
 
+2003-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* reflection.c: fixed attribute reading.
+
 2003-01-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
