@@ -384,11 +384,15 @@ System.Diagnostics/TraceLevel.cs
 System.Diagnostics/TraceListenerCollection.cs
 System.Diagnostics/TraceListener.cs
 System.Diagnostics/TraceSwitch.cs
+System.IO/DefaultWatcher.cs
 System.IO/ErrorEventArgs.cs
 System.IO/ErrorEventHandler.cs
+System.IO/FAMWatcher.cs
+System.IO/FileAction.cs
 System.IO/FileSystemEventArgs.cs
 System.IO/FileSystemEventHandler.cs
 System.IO/FileSystemWatcher.cs
+System.IO/IFileWatcher.cs
 System.IO/InternalBufferOverflowException.cs
 System.IO/IODescriptionAttribute.cs
 System.IO/MonoIO.cs
@@ -396,8 +400,10 @@ System.IO/MonoIOError.cs
 System.IO/NotifyFilters.cs
 System.IO/RenamedEventArgs.cs
 System.IO/RenamedEventHandler.cs
+System.IO/SearchPattern.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
+System.IO/WindowsWatcher.cs
 System.Net/AuthenticationManager.cs
 System.Net/Authorization.cs
 System.Net/BasicClient.cs

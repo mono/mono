@@ -1,0 +1,4 @@
+2004-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileSystemWatcherTest.cs: new test.
+

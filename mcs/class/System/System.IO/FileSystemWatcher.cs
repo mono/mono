@@ -7,10 +7,13 @@
 //
 // Copyright (C) Tim Coleman, 2002 
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace System.IO {
@@ -25,8 +28,13 @@ namespace System.IO {
 		int internalBufferSize;
 		NotifyFilters notifyFilter;
 		string path;
-		ISite site;
+		string fullpath;
 		ISynchronizeInvoke synchronizingObject;
+		bool disposed;
+		WaitForChangedResult lastData;
+		bool waiting;
+		SearchPattern2 pattern;
+		static IFileWatcher watcher;
 
 		#endregion // Fields
 
@@ -40,10 +48,11 @@ namespace System.IO {
 			this.includeSubdirectories = false;
 			this.internalBufferSize = 8192;
 			this.path = "";
+			InitWatcher ();
 		}
 
 		public FileSystemWatcher (string path)
-			: this (path, String.Empty)
+			: this (path, "*.*")
 		{
 		}
 
@@ -68,17 +77,78 @@ namespace System.IO {
 			this.notifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 			this.path = path;
 			this.synchronizingObject = null;
+			InitWatcher ();
+		}
+
+		void InitWatcher ()
+		{
+			lock (typeof (FileSystemWatcher)) {
+				if (watcher != null)
+					return;
+
+				int mode = InternalSupportsFSW ();
+				bool ok = false;
+				if (mode == 2)
+					ok = FAMWatcher.GetInstance (out watcher);
+				else if (mode == 1)
+					ok = WindowsWatcher.GetInstance (out watcher);
+
+				if (mode == 0 || !ok)
+					DefaultWatcher.GetInstance (out watcher);
+			}
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
+		/* If this is enabled, we Pulse this instance */
+		internal bool Waiting {
+			get { return waiting; }
+			set { waiting = value; }
+		}
+
+		internal SearchPattern2 Pattern {
+			get {
+				if (pattern == null) {
+					string f = Filter;
+					if (f == "*.*" && !(watcher.GetType () == typeof (WindowsWatcher)))
+						f = "*";
+
+					pattern = new SearchPattern2 (f);
+				}
+				return pattern;
+			}
+		}
+
+		internal string FullPath {
+			get {
+				if (fullpath == null) {
+					if (path == null || path == "")
+						fullpath = Environment.CurrentDirectory;
+					else
+						fullpath = System.IO.Path.GetFullPath (path);
+				}
+
+				return fullpath;
+			}
+		}
+
 		[DefaultValue(false)]
 		[IODescription("Flag to indicate if this instance is active")]
 		public bool EnableRaisingEvents {
 			get { return enableRaisingEvents; }
-			set { enableRaisingEvents = value; }
+			set {
+				if (value == enableRaisingEvents)
+					return; // Do nothing
+
+				enableRaisingEvents = value;
+				if (value) {
+					Start ();
+				} else {
+					Stop ();
+				}
+			}
 		}
 
 		[DefaultValue("*.*")]
@@ -88,9 +158,13 @@ namespace System.IO {
 		public string Filter {
 			get { return filter; }
 			set {
-				filter = value;
-				if (filter == null || filter == "")
-					filter = "*.*";
+				if (value == null || value == "")
+					value = "*.*";
+
+				if (filter != value) {
+					filter = value;
+					pattern = null;
+				}
 			}
 		}
 
@@ -98,22 +172,51 @@ namespace System.IO {
 		[IODescription("Flag to indicate we want to watch subdirectories")]
 		public bool IncludeSubdirectories {
 			get { return includeSubdirectories; }
-			set { includeSubdirectories = value; }
+			set {
+				if (includeSubdirectories == value)
+					return;
+
+				includeSubdirectories = value;
+				if (value && enableRaisingEvents) {
+					Stop ();
+					Start ();
+				}
+			}
 		}
 
 		[Browsable(false)]
 		[DefaultValue(8192)]
 		public int InternalBufferSize {
 			get { return internalBufferSize; }
-			set { internalBufferSize = value; }
+			set {
+				if (internalBufferSize == value)
+					return;
+
+				if (value < 4196)
+					value = 4196;
+
+				internalBufferSize = value;
+				if (enableRaisingEvents) {
+					Stop ();
+					Start ();
+				}
+			}
 		}
 
 		[DefaultValue(NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite)]
 		[IODescription("Flag to indicate which change event we want to monitor")]
 		public NotifyFilters NotifyFilter {
 			get { return notifyFilter; }
-			[MonoTODO ("Perform validation.")]
-			set { notifyFilter = value; }
+			set {
+				if (notifyFilter == value)
+					return;
+					
+				notifyFilter = value;
+				if (enableRaisingEvents) {
+					Stop ();
+					Start ();
+				}
+			}
 		}
 
 		[DefaultValue("")]
@@ -124,13 +227,15 @@ namespace System.IO {
 		public string Path {
 			get { return path; }
 			set {
+				if (path == value)
+					return;
+
 				bool exists = false;
 				Exception exc = null;
 
 				try {
 					exists = Directory.Exists (value);
 				} catch (Exception e) {
-					exists = false;
 					exc = e;
 				}
 
@@ -141,13 +246,18 @@ namespace System.IO {
 					throw new ArgumentException ("Directory does not exists", "value");
 
 				path = value;
+				fullpath = null;
+				if (enableRaisingEvents) {
+					Stop ();
+					Start ();
+				}
 			}
 		}
 
 		[Browsable(false)]
 		public override ISite Site {
-			get { return site; }
-			set { site = value; }
+			get { return base.Site; }
+			set { base.Site = value; }
 		}
 
 		[DefaultValue(null)]
@@ -167,12 +277,12 @@ namespace System.IO {
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {
-				// 
+				Stop ();
 			}
+			disposed = true;
 			base.Dispose (disposing);
 		}
 
@@ -227,12 +337,83 @@ namespace System.IO {
 			return WaitForChanged (changeType, Timeout.Infinite);
 		}
 
-		[MonoTODO]
 		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType, int timeout)
 		{
-			throw new NotImplementedException (); 
+			WaitForChangedResult result = new WaitForChangedResult ();
+			bool prevEnabled = EnableRaisingEvents;
+			if (!prevEnabled)
+				EnableRaisingEvents = true;
+
+			bool gotData;
+			lock (this) {
+				waiting = true;
+				gotData = Monitor.Wait (this, timeout);
+				if (gotData)
+					result = this.lastData;
+			}
+
+			EnableRaisingEvents = prevEnabled;
+			if (!gotData)
+				result.TimedOut = true;
+
+			return result;
 		}
 
+		internal void DispatchEvents (FileAction act, string filename, ref RenamedEventArgs renamed)
+		{
+			if (waiting) {
+				lastData = new WaitForChangedResult ();
+			}
+
+			switch (act) {
+			case FileAction.Added:
+				lastData.Name = filename;
+				lastData.ChangeType = WatcherChangeTypes.Created;
+				OnCreated (new FileSystemEventArgs (WatcherChangeTypes.Created, path, filename));
+				break;
+			case FileAction.Removed:
+				lastData.Name = filename;
+				lastData.ChangeType = WatcherChangeTypes.Deleted;
+				OnDeleted (new FileSystemEventArgs (WatcherChangeTypes.Deleted, path, filename));
+				break;
+			case FileAction.Modified:
+				lastData.Name = filename;
+				lastData.ChangeType = WatcherChangeTypes.Changed;
+				OnChanged (new FileSystemEventArgs (WatcherChangeTypes.Changed, path, filename));
+				break;
+			case FileAction.RenamedOldName:
+				if (renamed != null) {
+					OnRenamed (renamed);
+				}
+				lastData.OldName = filename;
+				lastData.ChangeType = WatcherChangeTypes.Renamed;
+				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, null, filename);
+				break;
+			case FileAction.RenamedNewName:
+				lastData.Name = filename;
+				lastData.ChangeType = WatcherChangeTypes.Renamed;
+				if (renamed != null) {
+					renamed.SetName (filename);
+				} else {
+					renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, filename, null);
+				}
+				OnRenamed (renamed);
+				renamed = null;
+				break;
+			default:
+				break;
+			}
+		}
+
+		void Start ()
+		{
+			watcher.StartDispatching (this);
+		}
+
+		void Stop ()
+		{
+			watcher.StopDispatching (this);
+		}
 		#endregion // Methods
 
 		#region Events and Delegates
@@ -254,5 +435,27 @@ namespace System.IO {
 		public event RenamedEventHandler Renamed;
 
 		#endregion // Events and Delegates
+
+		/* 0 -> not supported	*/
+		/* 1 -> windows		*/
+		/* 2 -> FAM		*/
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int InternalSupportsFSW ();
+		
+		/*[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern IntPtr InternalOpenDirectory (string path, IntPtr reserved);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern IntPtr InternalCloseDirectory (IntPtr handle);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern bool InternalReadDirectoryChanges (IntPtr handle,
+								 byte [] buffer,
+								 bool includeSubdirectories,
+								 NotifyFilters notifyFilter,
+								 out NativeOverlapped overlap,
+								 OverlappedHandler overlappedCallback);
+
+		*/
 	}
 }

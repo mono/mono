@@ -1,6 +1,22 @@
+2004-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultWatcher.cs: stub for the default watcher.
+	* WindowsWatcher.cs: stub for the windows watcher.
+	
+	* FAMWatcher.cs: FAM watcher.
+	
+	* FileAction.cs: enum with event types.
+	
+	* FileSystemEventArgs.cs: added SetName property.
+	* FileSystemWatcher.cs: added support for the 3 watchers.
+
+	* IFileWatcher.cs: interface implemented by the watchers. 
+	* SearchPattern.cs: copied from corlib.
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* FileSystemWatcher.cs: Reworked attributes based on the new Consts scheme
+	* FileSystemWatcher.cs: Reworked attributes based on the new Consts
+	scheme
 
 2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 

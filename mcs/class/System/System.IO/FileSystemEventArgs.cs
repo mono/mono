@@ -29,6 +29,10 @@ namespace System.IO {
 			this.name = name;
 		}
 		
+		internal void SetName (string name)
+		{
+			this.name = name;
+		}
 		#endregion // Constructors
 
 		#region Properties
