@@ -391,7 +391,7 @@ namespace System.Reflection.Emit {
 				data = customBuilder.Data;
 				pos = 2;
 				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
-				version = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				version = create_assembly_version (CustomAttributeBuilder.string_from_bytes (data, pos, len));
 				return;
 			} else if (attrname == "System.Reflection.AssemblyKeyFileAttribute") {
 				data = customBuilder.Data;
@@ -527,9 +527,39 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		// Same as in Mono.Security/Mono>Security.Cryptography/CryptoConvert.cs
+		private String create_assembly_version (String version) {
+			String[] parts = version.Split ('.');
+			int[] ver = new int [4] { 0, 0, 0, 0 };
 
+			if ((parts.Length < 0) || (parts.Length > 4))
+				throw new ArgumentException ("The version specified '" + version + "' is invalid");
 
+			for (int i = 0; i < parts.Length; ++i) {
+				if (parts [i] == "*") {
+					DateTime now = DateTime.Now;
 
+					if (i == 2) {
+						ver [2] = (now - new DateTime (2000, 1, 1)).Days;
+						if (parts.Length == 3)
+							ver [3] = (now.Second + (now.Minute * 60) + (now.Hour * 3600)) / 2;
+					}
+					else
+						if (i == 3)
+							ver [3] = (now.Second + (now.Minute * 60) + (now.Hour * 3600)) / 2;
+					else
+						throw new ArgumentException ("The version specified '" + version + "' is invalid");
+				}
+				else {
+					try {
+						ver [i] = Int32.Parse (parts [i]);
+					}
+					catch (FormatException) {
+						throw new ArgumentException ("The version specified '" + version + "' is invalid");
+					}
+				}
+			}
+
+			return ver [0] + "." + ver [1] + "." + ver [2] + "." + ver [3];
+		}
 	}
 }
