@@ -107,7 +107,6 @@ System.Drawing.Drawing2D/TODOAttribute.cs
 System.Drawing.Drawing2D/WarpMode.cs
 System.Drawing.Drawing2D/WrapMode.cs
 System.Drawing.Imaging/BitmapData.cs
-System.Drawing.Imaging/BmpCodec.cs
 System.Drawing.Imaging/ColorAdjustType.cs
 System.Drawing.Imaging/ColorChannelFlag.cs
 System.Drawing.Imaging/ColorMap.cs
@@ -130,7 +129,6 @@ System.Drawing.Imaging/ImageCodecInfo.cs
 System.Drawing.Imaging/ImageFlags.cs
 System.Drawing.Imaging/ImageFormat.cs
 System.Drawing.Imaging/ImageLockMode.cs
-System.Drawing.Imaging/JPEGCodec.cs
 System.Drawing.Imaging/Metafile.cs
 System.Drawing.Imaging/MetafileFrameUnit.cs
 System.Drawing.Imaging/MetafileHeader.cs
@@ -139,7 +137,6 @@ System.Drawing.Imaging/MetaHeader.cs
 System.Drawing.Imaging/PaletteFlags.cs
 System.Drawing.Imaging/PixelFormat.cs
 System.Drawing.Imaging/PlayRecordCallback.cs
-System.Drawing.Imaging/PNGCodec.cs
 System.Drawing.Imaging/PropertyItem.cs
 System.Drawing.Imaging/WmfPlaceableFileHeader.cs
 System.Drawing.Printing/Duplex.cs
