@@ -1,4 +1,9 @@
 
+Wed Apr 24 18:43:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: register the object for finalization if needed.
+	Allocate one more char in the string for the terminating 0 char.
+
 Wed Apr 24 18:22:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h, image.c: check if a type implemenst a destructor.
