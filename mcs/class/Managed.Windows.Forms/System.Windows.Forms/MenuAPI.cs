@@ -39,6 +39,7 @@ namespace System.Windows.Forms
 	{
 		static StringFormat string_format_text = new StringFormat ();
 		static StringFormat string_format_shortcut = new StringFormat ();
+		static StringFormat string_format_menubar_text = new StringFormat ();
 		static ArrayList menu_list = new ArrayList ();
 		static Font MENU_FONT = new Font (FontFamily.GenericSansSerif, 8.25f);
 		static int POPUP_ARROW_WITDH;
@@ -52,22 +53,27 @@ namespace System.Windows.Forms
     		const int SM_CYARROWCHECK = 16;		// Height of the arrow
     		const int SM_CYMENU = 18;		// Minimum height of a menu
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
+    		const int MENU_BAR_ITEMS_SPACE = 12;	// Space between menu bar items
 
 		public class MENU
 		{
 			public MF		Flags;		// Menu flags (MF_POPUP, MF_SYSMENU)
-			public int		Width;		// Width of the whole menu 
-			public int		Height;		// Height of the whole menu 
-			public PopUpWindow	Wnd;
+			public int		Width;		// Width of the whole menu
+			public int		Height;		// Height of the whole menu
+			public Control		Wnd;		// In a Popup menu is the PopupWindow and in a MenuBar the Form
 			public ArrayList	items;		// Array of menu items
 			public int		FocusedItem;	// Currently focused item
 			public IntPtr		hParent;
+
+			public MENUITEM		SelectedItem;	// Currently focused item
 
 			public MENU ()
 			{
 				Wnd = null;
 				hParent = IntPtr.Zero;
 				items = new ArrayList ();
+				Flags = MF.MF_INSERT;
+				Width = Height = FocusedItem = 0;
 			}
 		}
 
@@ -94,7 +100,14 @@ namespace System.Windows.Forms
 		public class TRACKER
 		{
 		    	public 	IntPtr	hCurrentMenu;
-		    	public	IntPtr	hTopMenu;		    	
+		    	public	IntPtr	hTopMenu;
+		    	public 	bool menubar;
+
+		    	public TRACKER ()
+			{
+				hCurrentMenu = hTopMenu = IntPtr.Zero;
+				menubar = false;
+			}
 
 		};
 
@@ -106,6 +119,12 @@ namespace System.Windows.Forms
 				Console.WriteLine ("idx:{0} {1} {2}", i, ((MENUITEM)list[i]).item, ((MENUITEM)list[i]).item.Separator);
 
 			Console.WriteLine ("Menu items dump end --- ");
+		}
+
+		public enum MenuMouseEvent
+		{
+			Down,
+			Move,
 		}
 
 		internal enum MF
@@ -134,7 +153,8 @@ namespace System.Windows.Forms
 			MF_DEFAULT          = 0x1000,
 			MF_SYSMENU          = 0x2000,
 			MF_HELP             = 0x4000,
-			MF_RIGHTJUSTIFY     = 0x4000
+			MF_RIGHTJUSTIFY     = 0x4000,
+			MF_MENUBAR	    = 0x8000	// Internal
 		}
 				
 		static MenuAPI ()
@@ -143,11 +163,14 @@ namespace System.Windows.Forms
 			string_format_text.LineAlignment = StringAlignment.Center;
 			string_format_text.Alignment = StringAlignment.Near;
 			string_format_text.HotkeyPrefix = HotkeyPrefix.Show;
-			
+
 			string_format_shortcut.LineAlignment = StringAlignment.Center;
 			string_format_shortcut.Alignment = StringAlignment.Far;
 
-						
+			string_format_menubar_text.LineAlignment = StringAlignment.Center;
+			string_format_menubar_text.Alignment = StringAlignment.Center;
+			string_format_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;
+
 		}
 
 		static public IntPtr StoreMenuID (MENU menu)
@@ -160,9 +183,6 @@ namespace System.Windows.Forms
 		static public MENU GetMenuFromID (IntPtr ptr)
 		{
 			int id = (int)ptr;
-
-			//if (id == 0)
-			//	return null;
 
 			id = id - 1;
 			return (MENU) menu_list[id];
@@ -187,7 +207,7 @@ namespace System.Windows.Forms
 			ref IntPtr hSubMenu)
 		{
 			int id;
-			
+
 			if (fByPosition == false)
 				throw new NotImplementedException ();
 
@@ -211,14 +231,15 @@ namespace System.Windows.Forms
 			hSubMenu = menu_item.hSubMenu;
 
 			id = menu.items.Count;
-			menu.items.Insert (uItem, menu_item);			
+			menu.items.Insert (uItem, menu_item);
 
 			//Console.WriteLine ("InsertMenuItem {0} {1} {2}" + menu.items.Count,
 			//);
-			return id;			
+			return id;
 		}
 
-		static public bool TrackPopupMenu (IntPtr hMenu, int uFlags, int x,  int y,  int nReserved, Control hWnd)
+		// X and Y are screen coordinates
+		static public bool TrackPopupMenu (IntPtr hTopMenu, IntPtr hMenu, Point pnt,  bool menubar, Control Wnd)
 		{
 			Console.WriteLine ("TrackPopupMenu start");
 			MENU menu = GetMenuFromID (hMenu);
@@ -226,15 +247,15 @@ namespace System.Windows.Forms
 			PopUpWindow popup = new PopUpWindow (hMenu, tracker);
 			menu.Wnd = popup;
 			tracker.hCurrentMenu = hMenu;
-			tracker.hTopMenu = hMenu;
+			tracker.hTopMenu = hTopMenu;
+			tracker.menubar = menubar;
 
 			//Console.WriteLine ("TrackPopupMenu:Setting current to {0}", menu.hCurrent);
+			//Console.WriteLine ("menubar: path2 {0}" + pnt);
 
-			Point pnt;
-			pnt = popup.PointToClient (Control.MousePosition);
-			popup.Location = pnt;
+			popup.Location =  popup.PointToClient (pnt);
 			popup.ShowWindow ();
-			MenuAPI.DumpMenuItems (menu.items);
+			//MenuAPI.DumpMenuItems (menu.items);
 
 			MSG msg = new MSG();
 
@@ -253,9 +274,13 @@ namespace System.Windows.Forms
 			Menu drawing API
 		*/
 
-		static public void CalcItemSize (Graphics dc, MENUITEM item, int y)
+		static public void CalcItemSize (Graphics dc, MENUITEM item, int y, int x, bool menuBar)
 		{
 			item.rect.Y = y;
+			item.rect.X = x;
+			
+			if (item.item.Visible == false)
+				return;	
 
 			if (item.item.Separator == true) {
 				item.rect.Height = SEPARATOR_HEIGHT / 2;
@@ -265,24 +290,28 @@ namespace System.Windows.Forms
 
 			SizeF size;
 			size =  dc.MeasureString (item.item.Text, MENU_FONT);
-			item.rect.Width = (int) size.Width + 4;
+			item.rect.Width = (int) size.Width;
 			item.rect.Height = (int) size.Height;
 
-			if (item.item.Shortcut != Shortcut.None) {
-				item.xTab = SM_CXMENUCHECK + MENU_TAB_SPACE + (int) size.Width;
-				size =  dc.MeasureString ("\t" + item.item.GetShortCutText (), MENU_FONT);
-				item.rect.Width += MENU_TAB_SPACE + (int) size.Width;
-			}
+			if (!menuBar) {
 
-			item.rect.Width += SM_CXMENUCHECK * 2;
+				if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
+					item.xTab = SM_CXMENUCHECK + MENU_TAB_SPACE + (int) size.Width;
+					size =  dc.MeasureString (" " + item.item.GetShortCutText (), MENU_FONT);
+					item.rect.Width += MENU_TAB_SPACE + (int) size.Width;
+				}
+
+				item.rect.Width += 4 + (SM_CXMENUCHECK * 2);
+			}
+			else {
+				//item.rect.Width += MENU_BAR_ITEMS_SPACE;
+				x += item.rect.Width;
+			}
 
 			if (item.rect.Height < SM_CYMENU - 1)
 				item.rect.Height = SM_CYMENU - 1;
 
-			//if (item.item.IsPopup)
-	    		//	item.rect.Width += arrow_bitmap_width;
-
-			Console.WriteLine ("CalcItemSize " + item.rect);
+			//Console.WriteLine ("CalcItemSize " + item.rect);
 		}
 
 
@@ -293,9 +322,9 @@ namespace System.Windows.Forms
 			int i, n, y, max;
 
 			MENU menu = GetMenuFromID (hMenu);
+			menu.Height = 0;
 
 			while (start < menu.items.Count) {
-
 				y = 2;
 				max = 0;
 				for (i = start; i < menu.items.Count; i++) {
@@ -304,9 +333,8 @@ namespace System.Windows.Forms
 					if ((i != start) && (item.item.Break || item.item.BarBreak))
 						break;
 
-					CalcItemSize (dc, item, y);
+					CalcItemSize (dc, item, y, x, false);
 					y += item.rect.Height;
-					item.rect.X = x;
 
 					if (item.rect.Width > max)
 						max = item.rect.Width;
@@ -315,7 +343,7 @@ namespace System.Windows.Forms
 				// Reemplace the -1 by the menu width (separators)
 				for (n = start; n < i; n++, start++) {
 					MENUITEM item = (MENUITEM) menu.items[n];
-					item.rect.Width = max; //-4
+					item.rect.Width = max;
 				}
 
 				if (y > menu.Height)
@@ -336,24 +364,33 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("CalcPopupMenuSize {0} {1}", menu.Width, menu.Height);
 		}
 
-		static public void DrawMenuItem (Graphics dc, MENUITEM item, int menu_height)
+		static public void DrawMenuItem (Graphics dc, MENUITEM item, int menu_height, bool menuBar)
 		{
-			//Console.WriteLine ("Draw item {0} {1}", item.item.Text,
-			//	item.item.Separator);
+			StringFormat string_format;
+			
+			if (item.item.Visible == false)
+				return;	
 
+			if (menuBar)
+				string_format = string_format_menubar_text;
+			else
+				string_format = string_format_text;
 
 			if (item.item.Separator == true) {
-				// TODO: ControlPaint.DrawBorder3D (dc, item.rect,
-				//	Border3DStyle.Etched, BF_TOP);
 
-				dc.FillRectangle (new SolidBrush (Color.Black),
-					item.rect.X, item.rect.Y, item.rect.Width, item.rect.Height);
+				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+					item.rect.X, item.rect.Y, item.rect.X + item.rect.Width, item.rect.Y);
+
+				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					item.rect.X, item.rect.Y + 1, item.rect.X + item.rect.Width, item.rect.Y + 1);
 
 				return;
-			}			
-			
+			}
+
 			Rectangle rect_text = item.rect;
-			rect_text.X += SM_CXMENUCHECK;
+
+			if (!menuBar)
+				rect_text.X += SM_CXMENUCHECK;
 
 			if (item.item.BarBreak) { /* Draw vertical break bar*/
 
@@ -362,34 +399,36 @@ namespace System.Windows.Forms
 	        		rect.Width = 3;
 	        		rect.Height = menu_height - 6;
 
-				//TODO: ControlPaint.DrawBorder3D (dc, item.rect,
-				//	Border3DStyle.Etched, BF_TOP);
+				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
 
-				dc.FillRectangle (new SolidBrush (Color.Black),
-					rect);
+				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
+
 			}
 
+			//Console.WriteLine ("!{0}, {1}, {2}", item.item.Text, item.rect, rect_text);
 
 			if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE) {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorHilight), item.rect);
+					(ThemeEngine.Current.ColorHilight), item.rect);				
 			}
 
 			if (item.item.Enabled) {
-				
+
 				Color color_text;
-				
-				if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE) 
+
+				if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE)					
 					color_text = ThemeEngine.Current.ColorHilightText;
 				else
-					color_text = ThemeEngine.Current.ColorMenuText;	
-				
+					color_text = ThemeEngine.Current.ColorMenuText;
 
-				dc.DrawString (item.item.Text, MENU_FONT,						
+
+				dc.DrawString (item.item.Text, MENU_FONT,
 					ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
-					rect_text, string_format_text);
+					rect_text, string_format);
 
-				if (item.item.Shortcut != Shortcut.None) {
+				if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
 
 					string str = item.item.GetShortCutText ();
 					Rectangle rect = rect_text;
@@ -397,33 +436,33 @@ namespace System.Windows.Forms
 					rect.Width -= item.xTab;
 
 					dc.DrawString (str, MENU_FONT, ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
-						rect, string_format_shortcut);			
+						rect, string_format_shortcut);
 
 				}
 			}
 			else {
 				ControlPaint.DrawStringDisabled (dc,
 					item.item.Text, MENU_FONT, Color.Black, rect_text,
-					string_format_text);
+					string_format);
 			}
 
 			/* Draw arrow */
-			if (item.item.IsPopup) {
+			if (menuBar == false && item.item.IsPopup) {
 
 				Bitmap	bmp = new Bitmap (SM_CXARROWCHECK, SM_CYARROWCHECK);
 				Graphics gr = Graphics.FromImage (bmp);
 				Rectangle rect_arrow = new Rectangle (0, 0, SM_CXARROWCHECK, SM_CYARROWCHECK);
 				ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
 				bmp.MakeTransparent ();
-				dc.DrawImage (bmp, item.rect.X + item.rect.Width - SM_CXARROWCHECK, 
+				dc.DrawImage (bmp, item.rect.X + item.rect.Width - SM_CXARROWCHECK,
 					item.rect.Y + ((item.rect.Height - SM_CYARROWCHECK) /2));
-					
+
 				gr.Dispose ();
 				bmp.Dispose ();
 			}
 
 			/* Draw checked or radio */
-			if (item.item.Checked) {
+			if (menuBar == false && item.item.Checked) {
 
 				Rectangle area = item.rect;
 				Bitmap	bmp = new Bitmap (SM_CXMENUCHECK, SM_CYMENUCHECK);
@@ -436,8 +475,7 @@ namespace System.Windows.Forms
 					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Checkmark);
 
 				bmp.MakeTransparent ();
-				dc.DrawImage (bmp, area.X + 4, 
-					item.rect.Y + ((item.rect.Height -  SM_CYMENUCHECK) /2));
+				dc.DrawImage (bmp, area.X, item.rect.Y + (item.rect.Height /2)); //aki
 
 				gr.Dispose ();
 				bmp.Dispose ();
@@ -450,10 +488,66 @@ namespace System.Windows.Forms
 			MENU menu = GetMenuFromID (hMenu);
 
 			for (int i = 0; i < menu.items.Count; i++) {
-				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height);
+				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, false);
 			}
 		}
 
+		// Updats the menu rect
+		static public void MenuBarCalcSize (Graphics dc, IntPtr hMenu, Rectangle rect)
+		{
+			int x = 3;
+			int i, y;
+
+			MENU menu = GetMenuFromID (hMenu);
+			MENUITEM item;
+
+			x = rect.X;
+			y = rect.Height + 1;
+			menu.Width = 0;
+
+			i = 0;
+			while (i < menu.items.Count) {
+
+				item = (MENUITEM) menu.items[i];
+				CalcItemSize (dc, item, y, x, true);
+				i = i + 1;
+				x += item.rect.Width;
+				item.fState |= MF.MF_MENUBAR;
+
+				if (item.rect.Height > menu.Height)
+					menu.Height = item.rect.Height;
+
+				//Console.WriteLine ("MenuBarCalcSize {0} {1}", item.item.Text, item.rect.X);
+			}
+
+			menu.Width = x;
+
+			//Console.WriteLine ("CalcPopupMenuSize {0} {1}", menu.Width, menu.Height);
+		}
+
+		// Draws a menu bar in a Window
+		static public void DrawMenuBar (Graphics dc, IntPtr hMenu, Rectangle rect)
+		{
+			MENU menu = GetMenuFromID (hMenu);
+			Rectangle rect_menu = new Rectangle ();
+
+			if (menu.Height == 0)
+				MenuBarCalcSize (dc, hMenu, rect_menu);
+
+			rect.Height = menu.Height;
+			rect.Width = menu.Width;
+
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				(ThemeEngine.Current.ColorMenu), rect);
+
+			for (int i = 0; i < menu.items.Count; i++) {
+				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, true);
+			}
+		}
+
+		/*
+			Menu handeling API
+		*/
 		static public MENUITEM FindItemByCoords (IntPtr hMenu, Point pt, ref int pos)
 		{
 			MENU menu = GetMenuFromID (hMenu);
@@ -472,12 +566,12 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		static public void SelectItem (TRACKER tracker, IntPtr hMenu, MENUITEM item, int pos)
+		static public void SelectItem (TRACKER tracker, IntPtr hMenu, MENUITEM item, int pos, bool execute)
 		{
 			MENU menu = GetMenuFromID (hMenu);
 
 			//Console.WriteLine ("Current: {0} select {1}", menu_parent.hCurrent, hMenu);
-			//if (menu_parent != null)
+			MENUITEM highlight_item = null;
 
 			/* Already selected */
 			for (int i = 0; i < menu.items.Count; i++) {
@@ -486,10 +580,12 @@ namespace System.Windows.Forms
 				if ((it.fState & MF.MF_HILITE) == MF.MF_HILITE) {
 					if (item.rect == it.rect)
 						return;
+
+					highlight_item = item;
 				}
 			}
 
-			Console.WriteLine ("SelectItem:Current is {0} {1}", tracker.hCurrentMenu, hMenu);
+			//Console.WriteLine ("SelectItem:Current is {0} {1}", tracker.hCurrentMenu, hMenu);
 
 			if (tracker.hCurrentMenu != hMenu) {
 				Console.WriteLine ("Changing current menu!");
@@ -512,7 +608,8 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("SelectItem {0} {1} {2} {3}", item.item.Text, item.fState,
 			//	((MENUITEM)(menu.items[pos])).fState, pos);
 
-			ExecFocusedItem (tracker, hMenu, item);
+			if (execute)
+				ExecFocusedItem (tracker, hMenu, item);
 		}
 
 		/*
@@ -536,9 +633,12 @@ namespace System.Windows.Forms
 			if (menu.Wnd != null) /* Already showing */
 				return;
 
+			if (item.item.Enabled == false)
+				return;
+
 			MENU menu_parent = GetMenuFromID (hParent);
 			PopUpWindow popup = new PopUpWindow (hMenu, tracker);
-			menu_parent.Wnd.LostFocus ();
+			((PopUpWindow)menu_parent.Wnd).LostFocus ();
 			menu.Wnd = popup;
 			tracker.hCurrentMenu = hMenu;
 
@@ -573,7 +673,7 @@ namespace System.Windows.Forms
 					if (sub_menu.Wnd != null) {
 						Console.WriteLine ("Hiding!");
 						HideSubPopups (item.hSubMenu);
-						sub_menu.Wnd.UnShow ();
+						((PopUpWindow)sub_menu.Wnd).Destroy ();
 						sub_menu.Wnd = null;
 					}
 				}
@@ -587,9 +687,10 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < menu.items.Count; i++) {
 				item = (MENUITEM) menu.items[i];
+				//Console.WriteLine ("Destroy item: "+ item.item.Text + " pop:" + item.item.IsPopup);
 				if (item.item.IsPopup) {
 					MENU sub_menu = GetMenuFromID (item.hSubMenu);
-					if (sub_menu.Wnd != null) {
+					if (sub_menu != null && sub_menu.Wnd != null) {
 						// TODO: Remove from list
 						HideSubPopups (item.hSubMenu);
 						DestroyMenu (item.hSubMenu);
@@ -597,9 +698,94 @@ namespace System.Windows.Forms
 				}
 			}
 
+			Console.WriteLine ("Menu.Wnd1: " + menu);
+			Console.WriteLine ("Menu.Wnd2: " + menu.Wnd);
 			// TODO: Remove from list
-			menu.Wnd.UnShow ();
-			menu.Wnd = null;
+
+			// Do not destroy the window of a Menubar
+			if (menu.Wnd != null && ((menu.Flags & MF.MF_POPUP) ==  MF.MF_POPUP)) {
+				((PopUpWindow)menu.Wnd).Destroy ();
+				menu.Wnd = null;
+			}
+		}
+
+		static public void SetMenuBarWindow (IntPtr hMenu, Control wnd)
+		{
+			MENU menu = GetMenuFromID (hMenu);
+			menu.Wnd = wnd;
+		}
+
+		static TRACKER tracker = new TRACKER ();
+		//static Control mywnd  = null;
+
+		// Function that process all menubar mouse events
+		static public void TrackBarMouseEvent (IntPtr hMenu, Control wnd, MouseEventArgs e, MenuMouseEvent eventype)
+		{
+			MENU menu = GetMenuFromID (hMenu);
+			int pos = 0;
+			Point pnt;
+
+			//if (mywnd == null)
+			//	mywnd = wnd;
+
+			switch (eventype) {
+				case MenuMouseEvent.Down: {
+
+					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu,
+						new Point (e.X, e.Y), ref pos);
+
+					//Console.WriteLine ("menubar: {0} {1}",item.rect.X,
+					//	item.rect.Y + item.rect.Height + 1);
+
+					if (item != null) {
+
+						MenuAPI.SelectItem (tracker, hMenu, item, pos, false);
+						tracker.hCurrentMenu = hMenu;
+
+						pnt = new Point (item.rect.X, item.rect.Y + item.rect.Height);
+						pnt = wnd.PointToScreen (pnt);
+
+						menu.SelectedItem = item;
+						wnd.Refresh ();
+						MenuAPI.TrackPopupMenu (hMenu, item.hSubMenu, pnt, true, null);
+					}
+					break;
+				}
+
+				case MenuMouseEvent.Move: { //aki
+
+					if (tracker.hCurrentMenu != IntPtr.Zero) {
+
+						Point p;
+						p = new Point (e.X, e.Y);
+						p = wnd.PointToScreen (p);
+						p = menu.Wnd.PointToClient (p);
+
+						MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, p, ref pos);
+
+						if (item != null && menu.SelectedItem != item) {
+							//Console.WriteLine ("Changing from MenuMouseEvent.Move {0} {1} {2} {3}",
+							//	hMenu, item.item.Text, tracker.hCurrentMenu, hMenu);
+
+							menu.SelectedItem = item;
+
+							pnt = new Point (item.rect.X, item.rect.Y + item.rect.Height);
+							pnt = menu.Wnd.PointToScreen (pnt);
+							MenuAPI.SelectItem (tracker, hMenu, item, pos, false);
+
+							MenuAPI.DestroyMenu (tracker.hCurrentMenu);
+							tracker.hCurrentMenu = hMenu;
+
+							menu.Wnd.Refresh ();
+							MenuAPI.TrackPopupMenu (hMenu, item.hSubMenu, pnt, true, null);
+						}
+					}
+					break;
+				}
+
+				default:
+					break;
+			}
 		}
 	}
 
@@ -640,10 +826,10 @@ namespace System.Windows.Forms
 			Show ();
 		}
 
-		public void UnShow ()
+		public void Destroy ()
 		{
 			Capture = false;
-			Hide ();
+			DestroyHandle ();
 		}
 
 		public void LostFocus ()
@@ -676,7 +862,6 @@ namespace System.Windows.Forms
     				Capture = false;
     				Hide ();
     			}
-
 		}
 
 		private void OnMouseUpPUW (object sender, MouseEventArgs e)
@@ -703,8 +888,23 @@ namespace System.Windows.Forms
 			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y), ref pos);
 
 			if (item != null) {
-				MenuAPI.SelectItem (tracker, hMenu, item, pos);
+
+				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
+				MenuAPI.SelectItem (tracker, hMenu, item, pos, true);
 				Refresh ();
+			} else {
+
+				if (tracker.menubar) {
+					//Console.WriteLine ("MenuBar tracker move " + e.Y);
+					//MenuAPI.TrackBarMouseEvent (tracker.hTopMenu,
+					//	this, e, MenuAPI.MenuMouseEvent.Move);
+
+					Point pnt = PointToClient (MousePosition);
+
+					MenuAPI.TrackBarMouseEvent (tracker.hTopMenu,
+						this, new MouseEventArgs(e.Button, e.Clicks, pnt.X, pnt.Y, e.Delta),
+						MenuAPI.MenuMouseEvent.Move); //aku
+				}
 			}
 		}
 
@@ -730,8 +930,24 @@ namespace System.Windows.Forms
 			DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 				(ThemeEngine.Current.ColorMenu), ClientRectangle);
 
-			DeviceContext.DrawRectangle (ThemeEngine.Current.ResPool.GetPen
-				(ThemeEngine.Current.ColorHilightText), rect);
+			/* Draw menu borders */
+			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
+				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
+
+			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
+				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
+
+			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
+
+			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
+				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
+
+			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
+
+			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
+				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
 
 			MenuAPI.DrawPopupMenu  (DeviceContext, hMenu);
 		}

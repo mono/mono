@@ -60,8 +60,8 @@ namespace System.Windows.Forms
 		}
 		
 		protected override IntPtr CreateMenuHandle ()
-		{
-			throw new NotImplementedException ();
+		{				
+			return MenuAPI.CreateMenu ();						
 		}
 
 		protected void Dispose (bool disposing)
@@ -71,7 +71,7 @@ namespace System.Windows.Forms
 
 		public Form GetForm ()
 		{
-			throw new NotImplementedException ();
+			return form;
 		}
 
 		public override string ToString ()
@@ -81,10 +81,26 @@ namespace System.Windows.Forms
 
 		#endregion Public Methods
 		
+		#region Private Methods
+		
 		internal void SetForm (Form form)
 		{
 			this.form = form;
+			MenuAPI.SetMenuBarWindow (Handle, form);
 		}
+		
+		/* Mouse events from the form */
+		internal void OnMouseDown (Form window, MouseEventArgs e)
+		{			
+			MenuAPI.TrackBarMouseEvent (Handle, window, e, MenuAPI.MenuMouseEvent.Down);
+		}
+		
+		internal void OnMouseMove (Form window, MouseEventArgs e)
+		{
+			MenuAPI.TrackBarMouseEvent (Handle, window, e, MenuAPI.MenuMouseEvent.Move);
+		}
+		
+		#endregion Private Methods
 	}
 }
 

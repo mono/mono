@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.17  2004/10/15 12:43:19  jordi
+// menu work, mainmenu, subitems, etc
+//
 // Revision 1.16  2004/10/14 06:17:58  ravindra
 // Fixed class signature. ShowDialog (Control) is not a public method.
 //
@@ -150,10 +153,36 @@ namespace System.Windows.Forms {
 			start_position = FormStartPosition.WindowsDefaultLocation;
 			key_preview = false;
 			menu = null;
+			
+			MouseDown += new MouseEventHandler (OnMouseDownForm); 
+			MouseMove += new MouseEventHandler (OnMouseMoveForm); 
+
 		}
 		#endregion	// Public Constructor & Destructor
 
 		#region Private and Internal Methods
+		
+		private void OnMouseDownForm (object sender, MouseEventArgs e)
+		{			
+			if (menu != null)
+				menu.OnMouseDown (this, e);
+		}
+		
+		private void OnMouseMoveForm (object sender, MouseEventArgs e)
+		{			
+			if (menu != null)
+				menu.OnMouseMove (this, e);
+		}
+		
+		
+		private void OnDrawMenu (Graphics dc)
+		{
+			if (menu != null) {								
+				Rectangle rect = new Rectangle (0,0, Width, 0);			
+				MenuAPI.DrawMenuBar (dc, menu.Handle, rect);
+			}			
+		}
+		
 		private DialogResult ShowDialog(Control owner) {
 			if (is_modal) {
 				return DialogResult.None;
@@ -389,7 +418,14 @@ namespace System.Windows.Forms {
 			get {
 				return new Size (250, 250);
 			}
-		}
+		}		
+		
+		protected override void OnPaint (PaintEventArgs pevent)
+		{
+			base.OnPaint (pevent);
+			OnDrawMenu (pevent.Graphics);		
+		}		
+		
 		#endregion	// Protected Instance Properties
 
 

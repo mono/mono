@@ -23,69 +23,10 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-
-
-// NOT COMPLETE
-
-using System;
-using System.Drawing;
+// COMPLETE
 
 namespace System.Windows.Forms
 {
-	public class ContextMenu : Menu
-	{
-		private RightToLeft right_to_left;
-		private Control	src_control;
-
-		#region Events
-		public event EventHandler Popup;
-		#endregion Events
-
-		public ContextMenu () : base (null)
-		{
-			right_to_left = RightToLeft.Inherit;
-		}
-
-		public ContextMenu (MenuItem[] items) : base (items)
-		{
-			right_to_left = RightToLeft.Inherit;
-		}
-		 
-		#region Public Properties
-		public virtual RightToLeft RightToLeft {
-			get { return right_to_left; }
-			set { right_to_left = value; }
-		}
-
-		public Control SourceControl {
-			get { return src_control; }
-		}
-
-		#endregion Public Properties
-
-		#region Public Methods
-				
-		protected internal virtual void OnPopup (EventArgs e)
-		{
-			if (Popup != null)
-				Popup (this, e);
-		}
-		
-		public void Show (Control control, Point pos)
-		{
-			if (control == null)
-				throw new ArgumentException ();
-
-			src_control = control;
-
-			OnPopup (EventArgs.Empty);			
-			MenuAPI.TrackPopupMenu (Handle, Handle,	Control.MousePosition, false, control);
-		}
-
-		#endregion Public Methods
-
-
-	}
+	[Serializable]
+	public delegate void DrawItemEventHandler (object sender, DrawItemEventArgs e);
 }
-
-

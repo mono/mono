@@ -47,6 +47,8 @@ namespace System.Windows.Forms
 		private int index;
 		private bool mdilist;
 		private bool defaut_item;
+		private bool visible;
+		private bool ownerdraw;
 
 		public MenuItem (): base (null)
 		{
@@ -84,8 +86,10 @@ namespace System.Windows.Forms
 			: base (items)
 		{
 			CommonConstructor (text);
-			shortcut = Shortcut.None;
-			throw new NotImplementedException ();
+			shortcut = shortcut;
+			Click += onClick;
+			Popup += onPopup;
+			Select += onSelect;
 		}
 
 		private void CommonConstructor (string text)
@@ -97,6 +101,8 @@ namespace System.Windows.Forms
 			radiocheck = false;
 			enabled = true;
 			showshortcut = true;
+			visible = true;
+			ownerdraw = false;
 			index = -1;
 			mnemonic = '\0';
 
@@ -105,7 +111,7 @@ namespace System.Windows.Forms
 
 		#region Events		
 		public event EventHandler Click;		
-		//public event DrawItemEventHandler DrawItem;			
+		public event DrawItemEventHandler DrawItem;			
 		public event MeasureItemEventHandler MeasureItem;
 		public event EventHandler Popup;		
 		public event EventHandler Select;
@@ -187,10 +193,8 @@ namespace System.Windows.Forms
 		}
 		
 		public bool OwnerDraw {
-			get {
-				throw new NotImplementedException ();
-			}
-			set{
+			get { return ownerdraw; }			
+			set{				
 				throw new NotImplementedException ();
 			}
 		}
@@ -235,12 +239,8 @@ namespace System.Windows.Forms
 		}
 		
 		public bool Visible {
-			get {
-				throw new NotImplementedException ();
-			}
-			set{
-				throw new NotImplementedException ();
-			}
+			get { return visible;}
+			set { visible = value; }
 		}
 
 		#endregion Public Properties
@@ -473,7 +473,21 @@ namespace System.Windows.Forms
 				case Shortcut.CtrlR:	
 					return GetShortCutTextCtrl () + "+R";
 				case Shortcut.CtrlS:
-					return GetShortCutTextCtrl () + "+S";				
+					return GetShortCutTextCtrl () + "+S";									
+				case Shortcut.CtrlT:
+					return GetShortCutTextCtrl () + "+T";
+				case Shortcut.CtrlU:
+					return GetShortCutTextCtrl () + "+U";
+				case Shortcut.CtrlV:
+					return GetShortCutTextCtrl () + "+V";				
+				case Shortcut.CtrlW:
+					return GetShortCutTextCtrl () + "+W";
+				case Shortcut.CtrlX:
+					return GetShortCutTextCtrl () + "+X";				
+				case Shortcut.CtrlY:
+					return GetShortCutTextCtrl () + "+Y";				
+				case Shortcut.CtrlZ:
+					return GetShortCutTextCtrl () + "+Z";				
 				default:
 					return "";
 			}
