@@ -30,7 +30,7 @@ public class HttpWebRequestTest : Assertion
 		AssertEquals ("req Header 2", "MonoClient v1.0", req.Headers.Get (0));
 
 		HttpWebResponse res = (HttpWebResponse) req.GetResponse ();
-		AssertEquals ("res:HttpStatusCode: ", "OK", res.StatusCode);
+		AssertEquals ("res:HttpStatusCode: ", "OK", res.StatusCode.ToString ());
 		AssertEquals ("res:HttpStatusDescription: ", "OK", res.StatusDescription);
 		
 		AssertEquals ("res Header 1", "text/html", res.Headers.Get ("Content-Type"));
