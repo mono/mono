@@ -1,5 +1,10 @@
 2003-12-10  Jackson Harper <jackson@ximian.com>
 
+	* ModifiableType.cs: Allow the conversion list to be got/set.
+	* ExternTypeRef.cs: Add a Clone method. Remove table modification.
+	
+2003-12-10  Jackson Harper <jackson@ximian.com>
+
 	* ExternTable.cs: Add methods to update a types name.
 	* ExternTypeRef.cs: When a types name is modified update it in the
 	table.

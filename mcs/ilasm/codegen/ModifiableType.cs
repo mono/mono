@@ -39,6 +39,11 @@ namespace Mono.ILASM {
                         set;
                 }
 
+                protected ArrayList ConversionList {
+                        get { return conversion_list; }
+                        set { conversion_list = value; }
+                }
+                
                 public bool IsPinned {
                         get { return is_pinned; }
                 }

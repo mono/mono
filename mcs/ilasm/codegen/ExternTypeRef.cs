@@ -45,6 +45,20 @@ namespace Mono.ILASM {
                         is_resolved = false;
                 }
 
+                private ExternTypeRef (string assembly_name, string full_name,
+                                bool is_valuetype, ExternTable extern_table,
+                                ArrayList conv_list) : this (assembly_name, full_name,
+                                                is_valuetype, extern_table)
+                {
+                        ConversionList = conv_list;
+                }
+                
+                public ExternTypeRef Clone ()
+                {
+                        return new ExternTypeRef (assembly_name, FullName, is_valuetype,
+                                        extern_table, (ArrayList) ConversionList.Clone ());
+                }
+                
                 public PEAPI.Type PeapiType {
                         get { return type; }
                 }
@@ -60,13 +74,7 @@ namespace Mono.ILASM {
 
                 public override string SigMod {
                         get { return sig_mod; }
-                        set {
-                                string old_name = FullName;
-                                sig_mod = value;
-                                string new_name = FullName;
-                                if (old_name != new_name)
-                                        extern_table.ModifyTypeRefName (assembly_name, old_name, new_name);
-                        }
+                        set { sig_mod = value; }
                 }
 
                 public void Resolve (CodeGen code_gen)
