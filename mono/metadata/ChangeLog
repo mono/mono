@@ -1,5 +1,7 @@
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h verify.c: Update after changes to object layout.
+
 	* reflection.c (method_builder_encode_signature): Fix compilation on
 	gcc 2.95.x.
 
