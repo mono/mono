@@ -124,7 +124,7 @@ namespace System.Xml.XPath
 				throw new ArgumentNullException ("value");
 			if (xmlType == null)
 				throw new ArgumentNullException ("xmlType");
-			xmlTypeCode = XmlTypeCode.None;
+			xmlTypeCode = xmlType.TypeCode;
 			objectValue = value;
 			schemaType = xmlType;
 		}
@@ -212,15 +212,14 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		// This method works like ValueAsString, thus datetime values
-		// fails to be converted.
+		// This method works like ValueAsString.
 		public override string Value {
 			get {
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
 					return XQueryConvert.BooleanToString (booleanValue);
-//				case XmlTypeCode.DateTime:
-//					return XQueryConvert.DateTimeToString (dateTimeValue);
+				case XmlTypeCode.DateTime:
+					return XQueryConvert.DateTimeToString (dateTimeValue);
 				case XmlTypeCode.Decimal:
 					return XQueryConvert.DecimalToString (decimalValue);
 				case XmlTypeCode.Double:
@@ -233,9 +232,13 @@ namespace System.Xml.XPath
 					return XQueryConvert.FloatToString (floatValue);
 				case XmlTypeCode.String:
 					return stringValue;
+
+				// FIXME: more check
+				case XmlTypeCode.AnyAtomicType:
+					return objectValue.ToString ();
 				}
 
-				throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", schemaType, XmlTypeCode.String));
+				throw new InvalidOperationException (String.Format ("Conversion from {0} ({1}) to {2} is not supported", schemaType.QualifiedName, xmlTypeCode, XmlTypeCode.String));
 			}
 		}
 

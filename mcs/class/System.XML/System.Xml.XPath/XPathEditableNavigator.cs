@@ -252,22 +252,8 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public override string InnerXml {
-			get {
-				XmlReader r = ReadSubtree ();
-				r.Read (); // start
-				// skip the element itself (or will reach to 
-				// EOF if other than element) unless writing
-				// doc itself
-				int depth = r.Depth;
-				if (NodeType != XPathNodeType.Root)
-					r.Read ();
-				StringWriter sw = new StringWriter ();
-				XmlWriter xtw = XmlWriter.Create (sw);
-				while (!r.EOF && r.Depth > depth)
-					xtw.WriteNode (r, false);
-				return sw.ToString ();
-			}
+		// It seems like setter is virtual but getter is overriden.
+		public virtual new string InnerXml {
 			set {
 				DeleteChildren ();
 				if (NodeType == XPathNodeType.Attribute) {
@@ -302,13 +288,8 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public override string OuterXml {
-			get {
-				StringWriter sw = new StringWriter ();
-				XmlWriter xw = XmlWriter.Create (sw);
-				WriteSubtree (xw);
-				return sw.ToString ();
-			}
+		// It seems like setter is virtual but getter is overriden.
+		public virtual new string OuterXml {
 			set {
 				if (NodeType == XPathNodeType.Root) {
 					InnerXml = value;

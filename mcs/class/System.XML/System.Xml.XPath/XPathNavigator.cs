@@ -776,7 +776,21 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public virtual string InnerXml {
-			get { throw new NotImplementedException (); }
+			get {
+				XmlReader r = ReadSubtree ();
+				r.Read (); // start
+				// skip the element itself (or will reach to 
+				// EOF if other than element) unless writing
+				// doc itself
+				int depth = r.Depth;
+				if (NodeType != XPathNodeType.Root)
+					r.Read ();
+				StringWriter sw = new StringWriter ();
+				XmlWriter xtw = XmlWriter.Create (sw);
+				while (!r.EOF && r.Depth > depth)
+					xtw.WriteNode (r, false);
+				return sw.ToString ();
+			}
 		}
 
 		[MonoTODO]

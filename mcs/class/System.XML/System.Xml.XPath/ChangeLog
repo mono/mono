@@ -1,3 +1,12 @@
+2004-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathAtomicValue.cs : DateTime should be convertible to string.
+	  Use schemaType's TypeCode for .ctor() that takes object.
+	* XPathNavigator.cs : copied get_InnerXml from XPathEditableNavigator.
+	* XPathEditableNavigator.cs : set_InnerXml should be different (new)
+	  property from get_InnerXml. Removed get_InnerXml and get_OuterXml 
+	  overrides.
+
 2004-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathAtomicValue.cs, XPathNavigator.cs : Eliminate MS.Internal.Xml.*.
