@@ -1,3 +1,11 @@
+2004-07-08  Jackson Harper  <jackson@ximian.com>
+
+	* CodeGen.cs: Add assembly custom attributes to the pe file.
+	* CustomAttr.cs: Custom attributes are now added through the
+	pefile, this ensures that they get emitted properly.
+	* ExternTable.cs: Allow adding custom attributes to assembly
+	refs.
+	
 2004-06-26  Jackson Harper  <jackson@ximian.com>
 
 	* TypeDef.cs: Preserve the order of fields in a class. Then after

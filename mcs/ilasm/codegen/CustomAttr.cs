@@ -27,8 +27,7 @@ namespace Mono.ILASM {
                 public void AddTo (CodeGen code_gen, PEAPI.MetaDataElement elem)
                 {
                         method_ref.Resolve (code_gen);
-
-                        elem.AddCustomAttribute (method_ref.PeapiMethod, data);
+                        code_gen.PEFile.AddCustomAttribute (method_ref.PeapiMethod, data, elem);
                 }
 
         }

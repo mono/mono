@@ -312,6 +312,11 @@ namespace Mono.ILASM {
                                         typedef.DefineContents (this);
                                 }
 
+                                if (assembly_custom_attributes != null) {
+                                        foreach (CustomAttr cattr in assembly_custom_attributes)
+                                                cattr.AddTo (this, pefile.GetThisAssembly ());
+                                }
+
                                 if (sub_system != -1)
                                         pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
                                 if (cor_flags != -1)

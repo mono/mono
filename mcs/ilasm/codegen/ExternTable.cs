@@ -105,6 +105,8 @@ namespace Mono.ILASM {
                 private string locale;
                 private byte [] hash;
 
+                private ArrayList cattrs_list;
+
                 public ExternAssembly (string name, AssemblyName asmb_name) : base (name)
                 {
                         this.name = name;
@@ -124,6 +126,12 @@ namespace Mono.ILASM {
                                 AssemblyRef.AddCulture (locale);
                         if (hash != null)
                                 AssemblyRef.AddHash (hash);
+
+                        if (cattrs_list != null) {
+                                foreach (CustomAttr cattr in cattrs_list)
+                                        cattr.AddTo (code_gen, AssemblyRef);
+                        }
+
                         class_table = new Hashtable ();
                 }
 
@@ -158,6 +166,13 @@ namespace Mono.ILASM {
                 public void SetHash (byte [] hash)
                 {
                         this.hash = hash;
+                }
+
+                public void AddCustomAttribute (CustomAttr cattr)
+                {
+                        if (cattrs_list == null)
+                                cattrs_list = new ArrayList ();
+                        cattrs_list.Add (cattr);
                 }
         }
 
