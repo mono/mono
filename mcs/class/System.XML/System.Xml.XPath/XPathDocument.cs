@@ -51,12 +51,14 @@ namespace System.Xml.XPath
 
 		public XPathDocument (string uri, XmlSpace space)
 		{
-			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (uri));
+			XmlValidatingReader vr = null;
 			try {
+				vr = new XmlValidatingReader (new XmlTextReader (uri));
 				vr.ValidationType = ValidationType.None;
 				Initialize (vr, space);
 			} finally {
-				vr.Close ();
+				if (vr != null)
+					vr.Close ();
 			}
 		}
 

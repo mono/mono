@@ -1,3 +1,7 @@
+2004-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathDocument.s : The previous patch is still incomplete to close.
+
 2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathDocument.cs : close self-opened XmlTextReader in .ctor().
