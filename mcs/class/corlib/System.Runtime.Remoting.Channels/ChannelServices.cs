@@ -336,17 +336,24 @@ namespace System.Runtime.Remoting.Channels
 		public static IMessage SyncDispatchMessage (IMessage msg)
 		{
 			IMessage ret = CheckIncomingMessage (msg);
-			if (ret != null) return ret;
-			return _crossContextSink.SyncProcessMessage (msg);
+			if (ret != null) return CheckReturnMessage (msg, ret);
+			ret = _crossContextSink.SyncProcessMessage (msg);
+			return CheckReturnMessage (msg, ret);
 		}
 
 		public static IMessageCtrl AsyncDispatchMessage (IMessage msg, IMessageSink replySink)
 		{
 			IMessage ret = CheckIncomingMessage (msg);
 			if (ret != null) {
-				replySink.SyncProcessMessage (ret);
+				replySink.SyncProcessMessage (CheckReturnMessage (msg, ret));
 				return null;
 			}
+			
+#if NET_1_1
+			if (RemotingConfiguration.CustomErrorsEnabled (IsLocalCall (msg)))
+				replySink = new ExceptionFilterSink (msg, replySink);
+#endif
+			
 			return _crossContextSink.AsyncProcessMessage (msg, replySink);		
 		}
 		
@@ -360,6 +367,34 @@ namespace System.Runtime.Remoting.Channels
 
 			RemotingServices.SetMessageTargetIdentity (msg, identity);
 			return null;
+		}
+
+		internal static IMessage CheckReturnMessage (IMessage callMsg, IMessage retMsg)
+		{
+#if NET_1_1
+			IMethodReturnMessage ret = retMsg as IMethodReturnMessage;
+			if (ret != null && ret.Exception != null)
+			{
+				if (RemotingConfiguration.CustomErrorsEnabled (IsLocalCall (callMsg)))
+				{
+					Exception ex = new Exception ("Server encountered an internal error. For more information, turn off customErrors in the server's .config file.");
+					retMsg = new MethodResponse (ex, (IMethodCallMessage)callMsg);
+				}
+			}
+#endif
+			return retMsg;
+		}
+		
+		static bool IsLocalCall (IMessage callMsg)
+		{
+			return true;
+			
+/*			How can I know if a call is local?!?
+			
+			object isLocal = callMsg.Properties ["__isLocalCall"];
+			if (isLocal == null) return false;
+			return (bool)isLocal;
+*/
 		}
 
 		public static void UnregisterChannel (IChannel chnl)
@@ -398,6 +433,33 @@ namespace System.Runtime.Remoting.Channels
 			}
 			
 			return  list.ToArray ();
+		}
+	}
+	
+	public class ExceptionFilterSink: IMessageSink
+	{
+		IMessageSink _next;
+		IMessage _call;
+		
+		public ExceptionFilterSink (IMessage call, IMessageSink next)
+		{
+			_call = call;
+			_next = next;
+		}
+		
+		public IMessage SyncProcessMessage (IMessage msg)
+		{
+			return _next.SyncProcessMessage (ChannelServices.CheckReturnMessage (_call, msg));
+		}
+
+		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
+		{
+			throw new InvalidOperationException();
+		}
+
+		public IMessageSink NextSink 
+		{ 
+			get { return _next; }
 		}
 	}
 }
