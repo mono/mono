@@ -524,8 +524,12 @@ namespace Mono.CSharp
 			
 			if (c != -1)
 				number_builder.Append ((char) c);
-			
-			while ((d = peekChar ()) != -1){
+
+			//
+			// We use peekChar2, because decimal_digits needs to do a 
+			// 2-character look-ahead (5.ToString for example).
+			//
+			while ((d = peekChar2 ()) != -1){
 				if (d >= '0' && d <= '9'){
 					number_builder.Append ((char) d);
 					getChar ();
@@ -903,6 +907,13 @@ namespace Mono.CSharp
 			return putback_char;
 		}
 
+		int peekChar2 ()
+		{
+			if (putback_char != -1)
+				return putback_char;
+			return reader.Peek ();
+		}
+		
 		void putback (int c)
 		{
 			if (putback_char != -1){

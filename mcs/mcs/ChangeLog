@@ -1,5 +1,8 @@
 2002-12-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs: Small fix, because decimal_digits is used in a
+	context where we need a 2-character lookahead.
+
 	* pending.cs (PendingImplementation): Rework so we can keep track
 	of interface types all the time, and flag those which were
 	implemented by parents as optional.
