@@ -1,3 +1,8 @@
+2003-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: apply header style in RenderHeader. Fixes bug #49144.
+	Patch by Yaron Shkop.
+
 2003-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: applied patch from Yaron Shkop (yaronsh@mainsoft.com)

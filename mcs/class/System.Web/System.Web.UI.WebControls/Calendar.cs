@@ -1003,6 +1003,7 @@ namespace System.Web.UI.WebControls
 
 			TableCell dayHeaderCell = new TableCell ();
 			dayHeaderCell.HorizontalAlign = HorizontalAlign.Center;
+			dayHeaderCell.ApplyStyle (dayHeaderStyle);
 
 			int dayOfWeek = (int) globCal.GetDayOfWeek (firstDay);
 			DateTimeFormatInfo currDTInfo = DateTimeFormatInfo.CurrentInfo;
