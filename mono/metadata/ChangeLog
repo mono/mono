@@ -1,3 +1,8 @@
+2004-08-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* gc.c: actually enable paolo's patch to make GC warnings
+	use the trace api.
+
 2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
  
  	* metadata.c (mono_metadata_parse_type): Alloc pinned, byref and
