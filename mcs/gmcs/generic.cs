@@ -327,6 +327,12 @@ namespace Mono.CSharp {
 			full_name = name + "<" + args.ToString () + ">";
 		}
 
+		public ConstructedType (Type t, TypeParameter[] type_params, Location l)
+			: this (t.Name, type_params, l)
+		{
+			gt = t.GetGenericTypeDefinition ();
+		}
+
 		protected bool CheckConstraints (int index)
 		{
 			Type atype = args.Arguments [index];

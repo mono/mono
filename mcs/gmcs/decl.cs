@@ -11,6 +11,7 @@
 //
 
 using System;
+using System.Text;
 using System.Collections;
 using System.Reflection.Emit;
 using System.Reflection;
@@ -122,10 +123,21 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Hashtable defined_names;
 
+		bool is_generic;
+
 		//
 		// Whether we are Generic
 		//
-		public bool IsGeneric;
+		public bool IsGeneric {
+			get {
+				if (is_generic)
+					return true;
+				else if (parent != null)
+					return parent.IsGeneric;
+				else
+					return false;
+			}
+		}
 
 		TypeContainer parent;
 
@@ -347,21 +359,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public Type ResolveType (Expression e, bool silent, Location loc)
 		{
-			if (type_resolve_ec == null)
-				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
-			type_resolve_ec.loc = loc;
-			type_resolve_ec.ContainerType = TypeBuilder;
-
-			int errors = Report.Errors;
-			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
-
-			if (d == null || d.eclass != ExprClass.Type){
-				if (!silent && errors == Report.Errors){
-					Console.WriteLine ("Type is: " + e.GetType().ToString ());
-					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
-				}
-				return null;
-			}
+			TypeExpr d = ResolveTypeExpr (e, silent, loc);
 
 			if (!d.CheckAccessLevel (this)) {
 				Report.	Error (122, loc,  "`" + d.Name + "' " +
@@ -369,7 +367,19 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return d.ResolveType (type_resolve_ec);
+			Type t = d.ResolveType (type_resolve_ec);
+			if (t == null)
+				return null;
+
+			TypeContainer tc = TypeManager.LookupTypeContainer (t);
+			if ((tc != null) && tc.IsGeneric) {
+				ConstructedType ctype = new ConstructedType (
+					t, tc.TypeParameters, loc);
+
+				t = ctype.ResolveType (type_resolve_ec);
+			}
+
+			return t;
 		}
 
 		// <summary>
@@ -786,6 +796,78 @@ namespace Mono.CSharp {
 		// Extensions for generics
 		//
 		TypeParameter[] type_params;
+		TypeParameter[] type_param_list;
+
+		protected string GetInstantiationName ()
+		{
+			StringBuilder sb = new StringBuilder (Name);
+			sb.Append ("<");
+			for (int i = 0; i < type_param_list.Length; i++) {
+				if (i > 0)
+					sb.Append (",");
+				sb.Append (type_param_list [i].Name);
+			}
+			sb.Append (">");
+			return sb.ToString ();
+		}
+
+		int check_type_parameter (int start, string name)
+		{
+			for (int i = 0; i < start; i++) {
+				TypeParameter param = type_params [i];
+
+				if (param.Name != name)
+					continue;
+
+				if (RootContext.WarningLevel >= 3)
+					Report.Warning (
+						693, Location,
+						"Type parameter `{0}' has same name " +
+						"as type parameter from outer type `{1}'",
+						name, parent.GetInstantiationName ());
+
+				return i;
+			}
+
+			return -1;
+		}
+
+		TypeParameter[] initialize_type_params ()
+		{
+			if (type_param_list != null)
+				return type_param_list;
+
+			DeclSpace the_parent = parent;
+			if (this is GenericMethod)
+				the_parent = the_parent.Parent;
+
+			int start = 0;
+			TypeParameter[] parent_params = null;
+			if ((the_parent != null) && the_parent.IsGeneric) {
+				parent_params = the_parent.initialize_type_params ();
+				start = parent_params != null ? parent_params.Length : 0;
+			}
+
+			ArrayList list = new ArrayList ();
+			if (parent_params != null)
+				list.AddRange (parent_params);
+
+			int count = type_params != null ? type_params.Length : 0;
+			for (int i = 0; i < count; i++) {
+				TypeParameter param = type_params [i];
+
+				int old_pos = check_type_parameter (start, param.Name);
+				if (old_pos >= 0)
+					list [old_pos] = param;
+				else
+					list.Add (param);
+			}
+
+			type_param_list = new TypeParameter [list.Count];
+			list.CopyTo (type_param_list, 0);
+
+			return type_param_list;
+		}
 
 		///
 		/// Called by the parser to configure the type_parameter_list for this
@@ -798,8 +880,8 @@ namespace Mono.CSharp {
 			//
 			// Mark this type as Generic
 			//
-			IsGeneric = true;
-			
+			is_generic = true;
+
 			//
 			// Register all the names
 			//
@@ -831,13 +913,18 @@ namespace Mono.CSharp {
 
 		public TypeParameter[] TypeParameters {
 			get {
-				return type_params;
+				if (!IsGeneric)
+					throw new InvalidOperationException ();
+				if (type_param_list == null)
+					initialize_type_params ();
+
+				return type_param_list;
 			}
 		}
 
 		public TypeParameterExpr LookupGeneric (string name, Location loc)
 		{
-			if (TypeParameters != null) {
+			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters) {
 					if (type_param.Name != name)
 						continue;
