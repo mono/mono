@@ -1,3 +1,11 @@
+2004-05-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: new signature for Process_Start.
+
+	* process.[ch]: new signature for Process_Start. If we're on windows
+	and UseShellExecute is false, we have to search for the program by
+	ourselves if we don't get a full path.
+
 2004-05-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Fix up custom 
