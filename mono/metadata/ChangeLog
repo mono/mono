@@ -1,3 +1,7 @@
+2003-01-03  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h: Increment MONO_SYMBOL_FILE_DYNAMIC_VERSION.
+
 2002-12-31  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c: Completely rewrote the type section.
