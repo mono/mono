@@ -298,12 +298,42 @@ public class X
         }
 
 	// from bug #30487.
-	static int foo() {
+	static int test20 () {
 		try {
 			return 0;
 		}
 		catch (Exception) {
 			throw;
 		}
+	}
+
+	// from bug #31546
+	static int test21 () {
+		int res;
+
+		try {
+			res = 4;
+			return 3;
+		} catch (DivideByZeroException) {
+			res = 33;
+		} finally {
+			// Do nothing
+		}
+
+		return res;
+	}
+
+	// the same, but without the finally block.
+	static int test22 () {
+		int res;
+
+		try {
+			res = 4;
+			return 3;
+		} catch (DivideByZeroException) {
+			res = 33;
+		}
+
+		return res;
 	}
 }
