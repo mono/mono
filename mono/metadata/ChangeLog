@@ -1,3 +1,19 @@
+2002-11-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: implemented InitAppDomainSetup. Delayed
+	AppDomain.SetupInformation until mono_runtime_exec_main, where we get
+	the entry_assembly.
+
+	* assembly.c: base_dir is now an absolute path ending with
+	G_DIR_SEPARATOR.
+
+	* icall.c: modified get_location according to the above changes.
+
+	* object.c: init AppDomain.SetupInformation for the default domain after
+	we have the entry assembly.
+
+	* domain.c: when unloading a domain, setup = NULL.
+
 2002-11-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (emit_ptr_to_str_conv): try to fix bug 29548
