@@ -1,3 +1,9 @@
+2005-03-23  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Control.cs: Added a new internal property: HasRenderMethodDelegate.
+	* HtmlTextWriterAttribute.cs: Replaced wrong enum value.
+	* HtmlTextWriter.cs: Register new ASP.NET 2.0 attributes
+
 2005-03-16  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ClientScriptManager.cs: Fix build.

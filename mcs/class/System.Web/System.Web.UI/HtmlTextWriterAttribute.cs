@@ -73,7 +73,7 @@ namespace System.Web.UI{
 #if NET_2_0
 		Abbr = 40,
 		AutoComplete = 41,
-		Category = 42,
+		Axis = 42,
 		Content = 43,
 		Coords = 44,
 		DesignerRegion = 45,

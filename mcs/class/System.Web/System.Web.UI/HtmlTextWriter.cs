@@ -136,9 +136,13 @@ static HtmlTextWriter(){
 	HtmlTextWriter.RegisterTag("wbr", HtmlTextWriterTag.Wbr, TagType.NonClosing);
 	HtmlTextWriter.RegisterTag("xml", HtmlTextWriterTag.Xml, TagType.Other);
 
-	HtmlTextWriter._attrKeyLookupTable = new Hashtable(40,CaseInsensitiveHashCodeProvider.Default,
-							   CaseInsensitiveComparer.Default);
+#if NET_2_0
+	HtmlTextWriter._attrNameLookupArray = new AttributeInformation[54];
+#else
 	HtmlTextWriter._attrNameLookupArray = new AttributeInformation[40];
+#endif
+	HtmlTextWriter._attrKeyLookupTable = new Hashtable (HtmlTextWriter._attrNameLookupArray.Length, 
+								CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 	HtmlTextWriter.RegisterAttribute("accesskey", HtmlTextWriterAttribute.Accesskey, true);
 	HtmlTextWriter.RegisterAttribute("align", HtmlTextWriterAttribute.Align, false);
 	HtmlTextWriter.RegisterAttribute("alt", HtmlTextWriterAttribute.Alt, true);
@@ -179,6 +183,22 @@ static HtmlTextWriter(){
 	HtmlTextWriter.RegisterAttribute("value", HtmlTextWriterAttribute.Value, true);
 	HtmlTextWriter.RegisterAttribute("width", HtmlTextWriterAttribute.Width, false);
 	HtmlTextWriter.RegisterAttribute("wrap", HtmlTextWriterAttribute.Wrap, false);
+#if NET_2_0
+	HtmlTextWriter.RegisterAttribute("abbr", HtmlTextWriterAttribute.Abbr, false);
+	HtmlTextWriter.RegisterAttribute("autocomplete", HtmlTextWriterAttribute.AutoComplete, false);
+	HtmlTextWriter.RegisterAttribute("axis", HtmlTextWriterAttribute.Axis, false);
+	HtmlTextWriter.RegisterAttribute("content", HtmlTextWriterAttribute.Content, false);
+	HtmlTextWriter.RegisterAttribute("coords", HtmlTextWriterAttribute.Coords, false);
+	HtmlTextWriter.RegisterAttribute("_designerRegion", HtmlTextWriterAttribute.DesignerRegion, false);
+	HtmlTextWriter.RegisterAttribute("dir", HtmlTextWriterAttribute.Dir, false);
+	HtmlTextWriter.RegisterAttribute("headers", HtmlTextWriterAttribute.Headers, false);
+	HtmlTextWriter.RegisterAttribute("longdesc", HtmlTextWriterAttribute.Longdesc, false);
+	HtmlTextWriter.RegisterAttribute("rel", HtmlTextWriterAttribute.Rel, false);
+	HtmlTextWriter.RegisterAttribute("scope", HtmlTextWriterAttribute.Scope, false);
+	HtmlTextWriter.RegisterAttribute("shape", HtmlTextWriterAttribute.Shape, false);
+	HtmlTextWriter.RegisterAttribute("usemap", HtmlTextWriterAttribute.Usemap, false);
+	HtmlTextWriter.RegisterAttribute("vcard_name", HtmlTextWriterAttribute.VCardName, false);
+#endif
 
 #if NET_2_0
 	HtmlTextWriter._styleNameLookupArray = new String[42];

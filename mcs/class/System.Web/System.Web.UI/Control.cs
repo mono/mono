@@ -839,6 +839,10 @@ namespace System.Web.UI
 			HttpResponse resp = Context.Response;
 			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
 		}
+		
+		internal bool HasRenderMethodDelegate () {
+			return _renderMethodDelegate != null;
+		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
