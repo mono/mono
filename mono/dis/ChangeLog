@@ -1,4 +1,8 @@
 
+Tue Feb 19 20:20:15 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: the prolog is before each arg in the custom attribute blob.
+
 Mon Feb 18 15:48:38 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* get.c: include last param.

@@ -1,3 +1,8 @@
+
+Tue Feb 19 20:19:38 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: avoid pointer arthmetric (pointed out by Serge).
+
 2002-02-17  Radek Doulik  <rodo@ximian.com>
 
 	* ppc/tramp.c: fixed minimal stack size, fixed string parameters,
