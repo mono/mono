@@ -1,3 +1,7 @@
+2001-11-12  Ravi Pratap  <ravi@ximian.com>
+
+	* test-39.cs : Update to test named arguments too.
+
 2001-11-11  Ravi Pratap  <ravi@ximian.com>
 
 	* test-40.cs : Update to be a little more useful.
