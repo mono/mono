@@ -621,6 +621,9 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Type MonoDebugger_GetType (Assembly assembly, int token);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern string MonoDebugger_CheckRuntimeVersion (string filename);
+
 #if NET_2_0
 		[MonoTODO]
 		[ComVisible (false)]

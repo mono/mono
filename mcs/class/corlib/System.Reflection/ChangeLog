@@ -1,3 +1,7 @@
+2004-09-21  Martin Baulig  <martin@ximian.com>
+
+	* Assembly.cs (MonoDebugger_CheckRuntimeVersion): New internal method.
+
 2004-09-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs: Implement 2.0 reflection properties.
