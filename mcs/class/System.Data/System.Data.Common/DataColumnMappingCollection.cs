@@ -7,6 +7,9 @@
 // (C) Ximian, Inc
 //
 
+using System;
+using System.Data;
+
 namespace System.Data.Common
 {
 	/// <summary>
@@ -16,7 +19,7 @@ namespace System.Data.Common
 		MarshalByRefObject, IColumnMappingCollection, IList,
 		ICollection, IEnumerable
 	{
-		private DataColumnMapping[] mappings;
+		private DataColumnMapping[] mappings = null;
 		private int size = 0;
 		
 		public DataColumnMappingCollection () {
@@ -55,7 +58,7 @@ namespace System.Data.Common
 
 		public bool Contains (object obj) {
 			for (int i = 0; i < size; i++) {
-				if (obj.Equals (mappings[i])
+				if (obj.Equals (mappings[i]))
 				    return true;
 			}
 

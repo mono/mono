@@ -39,11 +39,14 @@ namespace System.Data.Common
 
 		public abstract int Update (DataSet dataSet);
 
-		protected virtual DataAdapter CloneInternals ();
+		protected virtual DataAdapter CloneInternals () {
+		}
 
-		protected virtual DataTableMappingCollection CreateTableMappings ();
+		protected virtual DataTableMappingCollection CreateTableMappings () {
+		}
 
-		protected virtual bool ShouldSerializeTableMappings ();
+		protected virtual bool ShouldSerializeTableMappings () {
+		}
 		
 		public bool AcceptChangesDuringFill {
 			get {
@@ -53,7 +56,7 @@ namespace System.Data.Common
 				acceptChangesDuringFill = value;
 			}
 		}
-		
+
 		public bool ContinueUpdateOnError {
 			get {
 				return continueUpdateOnError;

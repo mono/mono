@@ -1,3 +1,22 @@
+2002-04-17  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data/DataRow.cs: new skeletons.
+
+	* System.Data.Common/DataAdapter.cs:
+	* System.Data.Common/DataColumnMapping.cs:
+	* System.Data.Common/DataColumnMappingCollection.cs:
+	* System.Data.Common/DataTableMapping.cs:
+	* System.Data.Common/DataTableMappingCollection.cs:
+	* System.Data.Common/DbDataAdapter.cs:
+	* System.Data.Common/RowUpdatedEventArgs.cs:
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+	* System.Data.SqlClient/SqlInfoMessageEventArgs.cs: compilation
+	fixes for Linux.
+
+	* System.Data.Common/DbDataRecord.cs:
+	* System.Data.Common/DbEnumerator.cs: removed MS implementation
+	internal classes.
+
 2002-04-17  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test/TestSqlInsert.cs: modified - do

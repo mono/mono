@@ -2,7 +2,7 @@
 // System.Data.SqlClient.SqlCommand.cs
 //
 // Author:
-//   Rodrigo Moya (rdorigo@ximian.com)
+//   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //
 // (C) Ximian, Inc 2002

@@ -20,13 +20,13 @@ namespace System.Data.Common
 		private string dsColumn;
 		
 		public DataColumnMapping () {
-			this.srcColumn = null;
-			this.dsColumn = null;
+			srcColumn = null;
+			dsColumn = null;
 		}
 
 		public DataColumnMapping(string sc, string dc) {
-			this.srcColumn = sc;
-			this.dsColumn = dc;
+			srcColumn = sc;
+			dsColumn = dc;
 		}
 
 		[MonoTODO]

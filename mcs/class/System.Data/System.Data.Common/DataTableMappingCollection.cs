@@ -22,12 +22,12 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public int Add(object) {
+		public int Add (object obj) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTableMapping Add(string, string) {
+		public DataTableMapping Add (string a, string b) {
 			throw new NotImplementedException ();
 		}
 

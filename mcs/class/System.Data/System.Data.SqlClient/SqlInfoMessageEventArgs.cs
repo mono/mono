@@ -34,7 +34,8 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		public override string ToString();
-		// representation of InfoMessage event
+		public override string ToString() {
+			// representation of InfoMessage event
+		}
 	}
 }

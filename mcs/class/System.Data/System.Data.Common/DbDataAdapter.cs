@@ -14,7 +14,7 @@ namespace System.Data.Common
 	/// </summary>
 	public abstract class DbDataAdapter : DataAdapter, ICloneable
 	{
-		public const string DefaultSourceTableName;
+		public const string DefaultSourceTableName = "default";
 
 		[MonoTODO]
 		protected DbDataAdapter() {
@@ -22,67 +22,85 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public override int Fill(DataSet) {
+		public override int Fill (DataSet ds) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Fill(DataTable) {
+		public int Fill (DataTable dt) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Fill(DataSet, string) {
+		public int Fill (DataSet ds, string s) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual int Fill(DataTable, IDataReader) {
+		protected virtual int Fill (DataTable dt, IDataReader idr) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual int Fill(DataTable, IDbCommand, CommandBehavior) {
+		protected virtual int Fill (DataTable dt,
+					    IDbCommand idc,
+					    CommandBehavior behavior) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Fill(DataSet, int, int, string) {
+		public int Fill (DataSet ds, int i, int j, string s) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual int Fill(DataSet, string, IDataReader, int, int) {
+		protected virtual int Fill (DataSet ds,
+					    string s,
+					    IDataReader idr,
+					    int i,
+					    int j) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual int Fill(DataSet, int, int, string, IDbCommand, CommandBehavior) {
+		protected virtual int Fill (DataSet ds,
+					    int i,
+					    int j,
+					    string s,
+					    IDbCommand idc,
+					    CommandBehavior behavior) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override DataTable[] FillSchema(DataSet, SchemaType) {
+		public override DataTable[] FillSchema (DataSet ds, SchemaType type) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTable FillSchema(DataTable, SchemaType) {
+		public DataTable FillSchema (DataTable dt, SchemaType type) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTable[] FillSchema(DataSet, SchemaType, string) {
+		public DataTable[] FillSchema (DataSet ds, SchemaType type, string s) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual DataTable FillSchema(DataTable, SchemaType, IDbCommand, CommandBehavior) {
+		protected virtual DataTable FillSchema (DataTable dt,
+							SchemaType type,
+							IDbCommand idc,
+							CommandBehavior behavior) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual DataTable[] FillSchema(DataSet, SchemaType, IDbCommand, string, CommandBehavior) {
+		protected virtual DataTable[] FillSchema (DataSet ds,
+							  SchemaType type,
+							  IDbCommand idc,
+							  string s,
+							  CommandBehavior behavior) {
 			throw new NotImplementedException ();
 		}
 
@@ -92,27 +110,27 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public int Update(DataRow[]) {
+		public int Update (DataRow[] row) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override int Update(DataSet) {
+		public override int Update (DataSet ds) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Update(DataTable) {
+		public int Update (DataTable dt) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual int Update(DataRow[], DataTableMapping) {
+		protected virtual int Update (DataRow[] row, DataTableMapping dtm) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Update(DataSet, string) {
+		public int Update (DataSet ds, string s) {
 			throw new NotImplementedException ();
 		}
 

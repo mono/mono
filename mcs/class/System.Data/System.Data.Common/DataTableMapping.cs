@@ -7,6 +7,8 @@
 // (C) Ximian, Inc
 //
 
+using System.Data;
+
 namespace System.Data.Common
 {
 	/// <summary>
@@ -20,12 +22,12 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		public DataTableMapping(string, string) {
+		public DataTableMapping (string a, string b) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTableMapping(string, string, DataColumnMapping[]) {
+		public DataTableMapping(string a, string b, DataColumnMapping[] c) {
 			throw new NotImplementedException ();
 		}
 

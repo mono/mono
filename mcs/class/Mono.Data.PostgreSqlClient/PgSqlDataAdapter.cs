@@ -71,50 +71,43 @@ namespace System.Data.SqlClient
 		#region Methods
 
 		[MonoTODO]
-		public override int Fill(DataSet dataSet)
-		{
+		public override int Fill(DataSet dataSet) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Fill(DataTable dataTable)
-		{
+		public int Fill(DataTable dataTable) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Fill(DataSet dataSet, string srcTable)
-		{
+		public int Fill(DataSet dataSet, string srcTable) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual int Fill(DataTable dataTable,	
-					IDataReader dataReader)
-		{
+					IDataReader dataReader) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual int Fill(DataTable dataTable,
 					IDbCommand command, 
-					CommandBehavior behavior)
-		{
+					CommandBehavior behavior) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public int Fill(DataSet dataSet, int startRecord,
-				int maxRecords,	string srcTable)
-		{
+				int maxRecords,	string srcTable) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual int Fill(DataSet dataSet,
 			string srcTable, IDataReader dataReader,
-			int startRecord, int maxRecords)
-		{
+			int startRecord, int maxRecords) {
 			throw new NotImplementedException ();
 		}
 
@@ -122,83 +115,71 @@ namespace System.Data.SqlClient
 		protected virtual int Fill(DataSet dataSet,
 			int startRecord, int maxRecords,
 			string srcTable, IDbCommand command,
-			CommandBehavior behavior)
-		{
+			CommandBehavior behavior) {
 
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public override DataTable[] FillSchema(DataSet dataSet,
-				SchemaType schemaType)
-		{
+				SchemaType schemaType) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public DataTable FillSchema(DataTable dataTable,
-			SchemaType schemaType)
-		{
+			SchemaType schemaType) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public DataTable[] FillSchema(DataSet dataSet,
-			SchemaType schemaType, string srcTable)
-		{
+			SchemaType schemaType, string srcTable) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual DataTable FillSchema(DataTable dataTable,
 			SchemaType schemaType, IDbCommand command,
-			CommandBehavior behavior)
-		{
+			CommandBehavior behavior) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual DataTable[] FillSchema(DataSet dataSet,
 			SchemaType schemaType, IDbCommand command,
-			string srcTable, CommandBehavior behavior)
-		{
+			string srcTable, CommandBehavior behavior) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override IDataParameter[] GetFillParameters() 
-		{
+		public override IDataParameter[] GetFillParameters() {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Update(DataRow[] dataRows
-		{
+		public int Update(DataRow[] dataRows) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override int Update(DataSet dataSet)
-		{
+		public override int Update(DataSet dataSet) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Update(DataTable dataTable)
-		{
+		public int Update(DataTable dataTable) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual int Update(DataRow[] dataRows,
-			DataTableMapping tableMapping)
-		{
+					     DataTableMapping tableMapping) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Update(DataSet dataSet, string srcTable)
-		{
+		public int Update(DataSet dataSet, string srcTable) {
 			throw new NotImplementedException ();
 		}
 
@@ -207,8 +188,7 @@ namespace System.Data.SqlClient
 			DataRow dataRow,
 			IDbCommand command,
 			StatementType statementType,
-			DataTableMapping tableMapping) 
-		{
+			DataTableMapping tableMapping) {
 			throw new NotImplementedException ();
 		}
 
@@ -217,24 +197,20 @@ namespace System.Data.SqlClient
 			DataRow dataRow,
 			IDbCommand command,
 			StatementType statementType,
-			DataTableMapping tableMapping) 
-		{
+			DataTableMapping tableMapping) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual void OnFillError(FillErrorEventArgs value) 
-		{
+		protected virtual void OnFillError(FillErrorEventArgs value) {
 			throw new NotImplementedException ();
 		}
 
-		protected override void OnRowUpdated(RowUpdatedEventArgs value) 
-		{
+		protected override void OnRowUpdated(RowUpdatedEventArgs value) {
 			throw new NotImplementedException ();
 		}
 
-		protected override void OnRowUpdating(RowUpdatingEventArgs value) 
-		{
+		protected override void OnRowUpdating(RowUpdatingEventArgs value) {
 			throw new NotImplementedException ();
 		}
 
