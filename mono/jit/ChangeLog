@@ -1,5 +1,10 @@
 2003-02-02  Martin Baulig  <martin@ximian.com>
 
+	* debug.c (mono_debug_add_wrapper): Lookup the wrapper method in a
+	hash table; we need to provide the correct code_size.
+
+2003-02-02  Martin Baulig  <martin@ximian.com>
+
 	* jit.c (mono_jit_compile_method): Call mono_debug_add_wrapper()
 	to add the interncall to the symbol file.
 
