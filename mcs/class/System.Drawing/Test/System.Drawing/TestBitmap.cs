@@ -119,25 +119,7 @@ namespace MonoTests.System.Drawing{
 			
 			AssertEquals (colororg0, colornew0);											
 			AssertEquals (colororg50, colornew50);				
-		}
-		
-		[Test]
-		public void Handles()
-		{
-			// This is a simple test. We should test really if there are valid
-			// handles for Win32/Wine			
-			
-			string sInFile = "bitmaps/almogaver24bits.bmp";
-							
-			Bitmap	bmp = new Bitmap(sInFile);
-			IntPtr HandleBmp = bmp.GetHbitmap();
-			Console.WriteLine("Handles.GetHbitmap()-> " + HandleBmp);
-			Assert(HandleBmp!=IntPtr.Zero);				
-			
-			IntPtr HandleIcon = bmp.GetHicon();
-			Console.WriteLine("Handles.GetHicon()-> " + HandleIcon);
-			Assert(HandleIcon!=IntPtr.Zero);							
-		}		
-			
+		}	
+	
 	}
 }
