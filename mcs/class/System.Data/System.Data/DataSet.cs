@@ -388,6 +388,92 @@ namespace System.Data {
 			DoReadXmlSchema( reader );
 		}
 
+		public XmlReadMode ReadXml (Stream stream)
+		{
+			return ReadXml (new XmlTextReader (stream));
+		}
+
+		public XmlReadMode ReadXml (string str)
+		{
+			return ReadXml (new XmlTextReader (str));
+		}
+
+		public XmlReadMode ReadXml (TextReader reader)
+		{
+			return ReadXml (new XmlTextReader (reader));
+		}
+
+		[MonoTODO]
+		public XmlReadMode ReadXml (XmlReader r)
+		{
+			// FIXME: somekinda exception?
+			if (!r.Read ())
+				return XmlReadMode.Auto; // FIXME
+
+			/*\
+			 *  If document is diffgram we will use diffgram
+			\*/
+			if (r.LocalName == "diffgram")
+				ReadXml (r, XmlReadMode.DiffGram);
+
+			/*\
+			 *  If we already have a schema, or the document 
+			 *  contains an in-line schema, sets XmlReadMode to ReadSchema.
+		        \*/
+
+			// FIXME: is this always true: "if we have tables we have to have schema also"
+			if (Tables.Count > 0)				
+				ReadXml (r, XmlReadMode.ReadSchema);
+
+			/*\
+			 *  If we dont have a schema yet and document 
+			 *  contains no inline-schema  mode is XmlReadMode.InferSchema
+			\*/
+
+			ReadXml (r, XmlReadMode.InferSchema);
+
+
+			return XmlReadMode.Auto;
+		}
+
+		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)
+		{
+			return ReadXml (new XmlTextReader (stream), mode);
+		}
+
+		public XmlReadMode ReadXml (string str, XmlReadMode mode)
+		{
+			return ReadXml (new XmlTextReader (str), mode);
+		}
+
+		public XmlReadMode ReadXml (TextReader reader, XmlReadMode mode)
+		{
+			return ReadXml (new XmlTextReader (reader), mode);
+		}
+
+		[MonoTODO]
+		public XmlReadMode ReadXml (XmlReader reader, XmlReadMode mode)
+		{
+			XmlReadMode readMode = XmlReadMode.Auto;
+
+			switch (mode) {
+
+			        case XmlReadMode.DiffGram:
+					break;
+				case XmlReadMode.ReadSchema:
+					break;
+			        case XmlReadMode.InferSchema:
+					readMode = XmlReadMode.InferSchema;
+					ReadXmlInferSchemaMode (reader);
+				       
+					break;
+			        default:
+					break;
+			}
+
+			return readMode;
+		}
+
 		#endregion // Public Methods
 
 		#region Public Events
@@ -438,6 +524,76 @@ namespace System.Data {
 		}
 		#endregion
 		
+		#region Private ReadXml-methods
+
+		[MonoTODO]
+		private void ReadXmlInferSchemaMode (XmlReader reader)
+		{
+			// root element is DataSets name
+			reader.MoveToContent ();
+
+			dataSetName = reader.LocalName;
+
+			// And now comes tables
+			while (reader.Read ()) {
+
+				// skip possible inline-schema
+				if (String.Compare (reader.LocalName, "schema", true) == 0) {
+					while (reader.Read () && (reader.NodeType != XmlNodeType.EndElement 
+								  || String.Compare (reader.LocalName, "schema", true) != 0));
+				}
+
+
+				if (reader.NodeType == XmlNodeType.Element) {
+					
+					string datatablename = reader.LocalName;
+					bool addTable = true;
+					DataTable table;
+
+					if (!Tables.Contains (datatablename)) {
+						table = new DataTable (reader.LocalName);
+					}
+					else {
+						table = Tables [datatablename];
+						addTable = false;
+					}
+
+					Hashtable rowValue = new Hashtable ();
+
+					while (reader.Read () && (reader.NodeType != XmlNodeType.EndElement 
+								  || reader.LocalName != datatablename))
+					{
+						if (reader.NodeType == XmlNodeType.Element) {
+
+							string dataColumnName = reader.LocalName;
+							if (addTable)
+								table.Columns.Add (dataColumnName);
+
+							// FIXME: exception?
+							if (!reader.Read ())
+								return;
+
+							rowValue.Add (dataColumnName, reader.Value);
+						}
+					}
+					
+					DataRow row = table.NewRow ();
+					
+					IDictionaryEnumerator enumerator = rowValue.GetEnumerator ();
+					while (enumerator.MoveNext ()) {
+						row [enumerator.Key.ToString ()] = enumerator.Value.ToString ();
+					}
+
+					table.Rows.Add (row);
+					
+					if (addTable)
+						Tables.Add (table);
+				}
+			}			
+		}
+
+		#endregion // Private ReadXml-methods
+
 		#region Private Xml Serialisation
 	
 		private void WriteTable( XmlWriter writer, DataTable table, XmlWriteMode mode )

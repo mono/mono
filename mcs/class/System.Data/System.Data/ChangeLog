@@ -1,3 +1,7 @@
+2002-12-18  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataSet.cs: Started to implement ReadXml-methods.
+	
 2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataSet.cs: implemented DefaultViewManager and GetList.
