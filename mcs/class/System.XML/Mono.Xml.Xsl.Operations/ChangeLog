@@ -1,3 +1,7 @@
+2004-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslVariable.cs : Local param might be overriden by XsltArgumentList.
+
 2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslElement.cs : warning removal.

@@ -115,6 +115,14 @@ namespace Mono.Xml.Xsl.Operations {
 		}
 		
 		public QName Name { get { return name; }}
+
+		internal XPathExpression Select {
+			get { return select; }
+		}
+
+		internal XslOperation Content {
+			get { return content; }
+		}
 	}
 	
 	internal abstract class XslGeneralVariable : XslCompiledElement, IXsltContextVariable {
@@ -223,10 +231,21 @@ namespace Mono.Xml.Xsl.Operations {
 		public XslLocalParam (Compiler c) : base (c) {}
 		
 		public override void Evaluate (XslTransformProcessor p)
-		{		
+		{
 			if (p.GetStackItem (slot) != null)
 				return; // evaluated already
-				
+
+			if (p.Arguments != null &&
+				var.Select == null &&
+				var.Content == null) {
+				object val = p.Arguments.GetParam (Name.Name,
+					Name.Namespace);
+				if (val != null) {
+					Override (p, val);
+					return;
+				}
+			}
+
 			base.Evaluate (p);
 		}
 		
