@@ -1,3 +1,8 @@
+2003-10-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* DataGrid.cs: A few typos kept us from viewing datagrids
+	that were based on customized collections.
+
 2003-10-24 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* DataGridCommandEventArgs.cs: typo, cmdSrc was becoming origionalArgs.

@@ -1429,6 +1429,7 @@ namespace System.Web.UI.WebControls
 				BoundColumn b_col;
 				if(props == null)
 				{
+					object fitem = null;
 					prop_type   = null;
 					PropertyInfo prop_item =  source.DataSource.GetType().GetProperty("Item",
 					          BindingFlags.Instance | BindingFlags.Static |
@@ -1439,9 +1440,9 @@ namespace System.Web.UI.WebControls
 					{
 						prop_type = prop_item.PropertyType;
 					}
-					if(prop_type != null && prop_type == typeof(object))
+					if(prop_type == null || prop_type == typeof(object))
 					{
-						object fitem = null;
+						
 						IEnumerator en = source.GetEnumerator();
 						if(en.MoveNext())
 							fitem = en.Current;
@@ -1450,26 +1451,27 @@ namespace System.Web.UI.WebControls
 							prop_type = fitem.GetType();
 						}
 						StoreEnumerator(en, fitem);
-						if(fitem != null && fitem is ICustomTypeDescriptor)
+					}
+					
+					if(fitem != null && fitem is ICustomTypeDescriptor)
+					{
+						props = TypeDescriptor.GetProperties(fitem);
+					} else if(prop_type != null) {
+						if(IsBindableType(prop_type))
 						{
-							props = TypeDescriptor.GetProperties(fitem);
-						} else if(prop_type != null)
+							b_col = new BoundColumn();
+							// b_col.TrackViewState();
+							b_col.HeaderText = "Item";
+							b_col.SortExpression = "Item";
+							b_col.DataField  = BoundColumn.thisExpr;
+							b_col.SetOwner(this);
+							retVal.Add(b_col);
+						} else
 						{
-							if(IsBindableType(prop_type))
-							{
-								b_col = new BoundColumn();
-								// b_col.TrackViewState();
-								b_col.HeaderText = "Item";
-								b_col.SortExpression = "Item";
-								b_col.DataField  = BoundColumn.thisExpr;
-								b_col.SetOwner(this);
-								retVal.Add(b_col);
-							} else
-							{
-								props = TypeDescriptor.GetProperties(prop_type);
-							}
+							props = TypeDescriptor.GetProperties(prop_type);
 						}
 					}
+					
 				}
 				if(props != null && props.Count > 0)
 				{
