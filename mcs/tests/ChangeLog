@@ -1,3 +1,7 @@
+2005-02-18  Marek Safar <marek.safar@seznam.cz>
+
+	* test-349.cs: New test.
+
 2005-02-18  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (TEST_HARNESS_EXTRAS): Add test-74.cs.
