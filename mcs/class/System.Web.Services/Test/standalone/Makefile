@@ -25,7 +25,7 @@ tests: proxies
 
 update:
 	mono --debug wstest.exe ur http://www.xmethods.net/default.disco wsdl.ignore
-	mono --debug wstest.exe ur http://localhost:8080/xsp.disco
+	mono --debug wstest.exe ur http://localhost:8080/xsp.vsdisco
 
 gen:
 	mono --debug wstest.exe gp

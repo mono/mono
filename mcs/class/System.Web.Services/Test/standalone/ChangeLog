@@ -1,6 +1,7 @@
 2003-12-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* wstest.cs: Changed default directory for client tests. Added some tests.
+	* Makefile: Use xsp.vsdisco instead of xsp.disco.
 
 2003-12-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
