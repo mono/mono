@@ -1,3 +1,12 @@
+2004-11-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* reflection.c: When writing a PE file, don't create a huge
+	buffer in memory. Just write the arrays we have to the file.
+	This reduces memory usage.
+
+	* metadata-internals.h: MonoDynamicStream pefile is no longer used
+	globally.
+
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_init): Don't setup `class->parent' for
