@@ -358,23 +358,38 @@ public abstract class Encoding
 
 		// We have no idea how to handle this code page.
 		throw new NotSupportedException
-			(String.Format (_("NotSupp_CodePage"), codePage.ToString ()));
+			(String.Format ("CodePage {0} not supported", codePage.ToString ()));
 	}
 
 #if !ECMA_COMPAT
 
 	// Table of builtin web encoding names and the corresponding code pages.
-	private static readonly String[] encodingNames =
-		{"ascii", "us-ascii", "utf-7", "utf-8", "utf-16",
-		 "unicodeFFFE", "iso-8859-1"};
-	private static readonly int[] encodingCodePages =
-		{ASCIIEncoding.ASCII_CODE_PAGE,
-		 ASCIIEncoding.ASCII_CODE_PAGE,
-		 UTF7Encoding.UTF7_CODE_PAGE,
-		 UTF8Encoding.UTF8_CODE_PAGE,
-		 UnicodeEncoding.UNICODE_CODE_PAGE,
-		 UnicodeEncoding.BIG_UNICODE_CODE_PAGE,
-		 Latin1Encoding.ISOLATIN_CODE_PAGE};
+	private static readonly object[] encodings =
+		{
+			ASCIIEncoding.ASCII_CODE_PAGE,
+			"ascii", "us_ascii", "us", "ansi_x3.4_1968",
+			"ansi_x3.4_1986", "cp367", "csascii", "ibm367",
+			"iso_ir_6", "iso646_us", "iso_646.irv:1991",
+
+			UTF7Encoding.UTF7_CODE_PAGE,
+			"utf_7", "csunicode11utf7", "unicode_1_1_utf_7",
+			"unicode_2_0_utf_7", "x_unicode_1_1_utf_7",
+			"x_unicode_2_0_utf_7",
+			
+			UTF8Encoding.UTF8_CODE_PAGE,
+			"utf_8", "unicode_1_1_utf_8", "unicode_2_0_utf_8",
+			"x_unicode_1_1_utf_8", "x_unicode_2_0_utf_8",
+
+			UnicodeEncoding.UNICODE_CODE_PAGE,
+			"utf_16", "UTF_16LE", "ucs_2", "unicode",
+			"iso_10646_ucs2",
+
+			UnicodeEncoding.BIG_UNICODE_CODE_PAGE,
+			"unicodefffe", "utf_16be",
+
+			Latin1Encoding.ISOLATIN_CODE_PAGE,
+			"iso_8859_1",
+		};
 
 	// Get an encoding object for a specific web encoding name.
 	public static Encoding GetEncoding (String name)
@@ -384,13 +399,20 @@ public abstract class Encoding
 			throw new ArgumentNullException ("name");
 		}
 
+		string converted = name.ToLower (CultureInfo.InvariantCulture).Replace ('-', '_');
+		
 		// Search the table for a name match.
-		int posn;
-		for (posn = 0; posn < encodingNames.Length; ++posn) {
-			if (String.Compare(name, encodingNames[posn], true,
-							  CultureInfo.InvariantCulture) == 0) {
-				return GetEncoding (encodingCodePages[posn]);
+		int code = 0;
+		for (int i = 0; i < encodings.Length; ++i) {
+			object o = encodings [i];
+			
+			if (o is int){
+				code = (int) o;
+				continue;
 			}
+			
+			if (converted == ((string)encodings [i]))
+				return GetEncoding (code);
 		}
 
 		// Try to obtain a web encoding handler from the I18N handler.
@@ -400,9 +422,8 @@ public abstract class Encoding
 		}
 
 		// Build a web encoding class name.
-		String encName = "System.Text.ENC" +
-						 name.ToLower (CultureInfo.InvariantCulture)
-						 	.Replace ('-', '_');
+		String encName = "System.Text.ENC" + converted;
+						 
 
 		// Look for a code page converter in this assembly.
 		Assembly assembly = Assembly.GetExecutingAssembly ();
@@ -419,7 +440,7 @@ public abstract class Encoding
 		}
 
 		// We have no idea how to handle this encoding name.
-		throw new NotSupportedException (String.Format (_("NotSupp_EncodingName"), name));
+		throw new NotSupportedException (String.Format ("Encoding name `{0}' not supported", name));
 	}
 
 #endif // !ECMA_COMPAT

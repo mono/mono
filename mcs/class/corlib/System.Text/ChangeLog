@@ -1,4 +1,11 @@
+2003-05-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* Encoding.cs (GetEncoding): Add all the aliases documented in the
+	framework.  We were missing a few.
+	
+	Reorganize the table.  Also, convert the input name into the
+	lower-case - to _ before we compare against our table.
+	
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs: fixed bug #41397.
