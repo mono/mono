@@ -99,7 +99,6 @@ System.Web.Mail/SmtpStream.cs
 System.Web.Mail/SmtpException.cs
 System.Web.Mail/SmtpResponse.cs
 System.Web.Mail/MailEncoder.cs
-System.Web.Mail/SmtpMessage.cs
 System.Web.Mail/MailAddress.cs
 System.Web.Mail/MailAddressCollection.cs
 System.Web.Mail/MailMessageWrapper.cs
