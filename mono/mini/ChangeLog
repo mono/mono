@@ -1,3 +1,8 @@
+2005-01-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (get_call_info): Add the get_call_info () code from the
+	amd64 port, not yet used.
+
 2005-01-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Disable inlining of ldfld wrappers with
