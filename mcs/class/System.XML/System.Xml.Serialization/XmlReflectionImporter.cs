@@ -204,7 +204,10 @@ namespace System.Xml.Serialization {
 			{
 				Type includedType = includes[n].Type;
 				if (!includedType.IsSubclassOf(type)) throw helper.CreateError (map, "Type '" + includedType.FullName + "' is not a subclass of '" + type.FullName + "'");
-				map.DerivedTypes.Add (ImportTypeMapping (includedType, root, defaultNamespace));
+
+				XmlTypeMapping derived = ImportTypeMapping (includedType, root, defaultNamespace);
+				map.DerivedTypes.Add (derived);
+				map.DerivedTypes.AddRange (derived.DerivedTypes);
 			}
 
 			if (type == typeof (object) && includedTypes != null)

@@ -1,3 +1,9 @@
+2003-06-31  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: Fixed so XmlIncludeAttribute and 
+	  SoapIncludeAttribute are now transitive (if class A includes class B, and B includes C, then 
+	  A includes C).
+
 2003-06-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs, XmlReflectionImporter.cs, XmlTypeMapping.cs: 
