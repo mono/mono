@@ -459,17 +459,17 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (NamespaceEntry curr_ns, string name, Location loc)
+		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
 		{
 			Type t;
 
 			//
 			// Try in the current namespace and all its implicit parents
 			//
-			for (NamespaceEntry ns = curr_ns; ns != null; ns = ns.ImplicitParent) {
+			for (NamespaceEntry ns = ds.Namespace; ns != null; ns = ns.ImplicitParent) {
 				t = TypeManager.LookupType (MakeFQN (ns.Name, name));
 				if (t != null) {
-					if (!TypeManager.IsAccessibleFrom (CodeGen.AssemblyBuilder, t))
+					if (!ds.CheckAccessLevel (t))
 						t = null;
 				}
 				if (t != null)
@@ -487,7 +487,7 @@ namespace Mono.CSharp {
 			//
 			// Try the aliases in the current namespace
 			//
-			string alias = curr_ns.LookupAlias (name);
+			string alias = ds.Namespace.LookupAlias (name);
 
 			if (alias != null) {
 				t = TypeManager.LookupType (alias);
@@ -499,13 +499,13 @@ namespace Mono.CSharp {
 					return t;
 			}
 			
-			for (NamespaceEntry ns = curr_ns; ns != null; ns = ns.Parent) {
+			for (NamespaceEntry ns = ds.Namespace; ns != null; ns = ns.Parent) {
 				//
 				// Look in the namespace ns
 				//
 				t = TypeManager.LookupType (MakeFQN (ns.Name, name));
 				if (t != null) {
-					if (!TypeManager.IsAccessibleFrom (CodeGen.AssemblyBuilder, t))
+					if (!ds.CheckAccessLevel (t))
 						t = null;
 				}
 				if (t != null)
@@ -520,13 +520,13 @@ namespace Mono.CSharp {
 					match = TypeManager.LookupType (full_name);
 					if (match != null){
 						if (t != null) {
-							if (TypeManager.IsAccessibleFrom (t, match)) {
+							if (ds.CheckAccessLevel (match)) {
 								DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
 								return null;
 							}
 							continue;
 						} else {
-							if (TypeManager.IsAccessibleFrom (CodeGen.AssemblyBuilder, match))
+							if (ds.CheckAccessLevel (match))
 								t = match;
 						}
 					}
@@ -594,7 +594,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds.Namespace, name, loc);
+				t = NamespaceLookup (ds, name, loc);
 				if (t != null){
 					ds.Cache [name] = t;
 					return t;

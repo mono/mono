@@ -659,8 +659,8 @@ namespace Mono.CSharp {
 			DeclSpace containing_ds = this;
 
 			while (containing_ds != null){
-				Type current_type = containing_ds.TypeBuilder;
-				Type container_type = current_type;
+				Type container_type = containing_ds.TypeBuilder;
+				Type current_type = container_type;
 
 				while (current_type != null) {
 					string pre = current_type.FullName;
@@ -669,7 +669,7 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 				
-					if ((t != null) && TypeManager.IsAccessibleFrom (container_type, t))
+					if ((t != null) && containing_ds.CheckAccessLevel (t))
 						return t;
 
 					current_type = current_type.BaseType;
@@ -724,7 +724,7 @@ namespace Mono.CSharp {
 
 					if (match != null){
 						if (t != null){
-							if (TypeManager.IsAccessibleFrom (t, match)) {
+							if (CheckAccessLevel (match)) {
 								Error_AmbiguousTypeReference (loc, name, t, match);
 								return null;
 							}

@@ -1,5 +1,14 @@
 2003-07-10  Martin Baulig  <martin@ximian.com>
 
+	* rootcontext.cs (RootContext.NamespaceLookup): Take a DeclSpace,
+	not a NamespaceEntry, so we can use DeclSpace.CheckAccessLevel().
+
+	* decl.cs (DeclSpace.FindType): Use DeclSpace.CheckAccessLevel().
+
+	* typemanager.cs (TypeManager.IsAccessibleFrom): Removed.
+
+2003-07-10  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (ArrayCreation): Don't use a byte blob for arrays
 	of decimal.  Fixes #42850.
 

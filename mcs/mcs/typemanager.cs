@@ -2056,55 +2056,6 @@ public class TypeManager {
 		return target_list;
 	}
 
-	public static bool IsAccessibleFrom (Type from, Type t)
-	{
-		if (IsAccessibleFrom (from.Assembly, t))
-			return true;
-
-		TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-
-		// Family and FamANDAssem require that we derive.
-		if ((ta == TypeAttributes.NestedFamily) || (ta == TypeAttributes.NestedFamANDAssem)){
-			return IsSubclassOrNestedChildOf (from, t);
-		}
-
-		if ((ta == TypeAttributes.NestedPublic) || (ta == TypeAttributes.NestedPrivate))
-			return IsNestedChildOf (t, from);
-
-		return false;
-	}
-
-	public static bool IsAccessibleFrom (Assembly assembly, Type t)
-	{
-		TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-
-		// Always succeed if we're public
-		if (ta == TypeAttributes.Public)
-			return true;
-
-		//
-		// FamAndAssem requires that we not only derivate, but we are on the
-		// same assembly.  
-		//
-		if (ta == TypeAttributes.NestedFamANDAssem){
-			if (assembly != t.Assembly)
-				return false;
-		}
-
-		// Assembly and FamORAssem succeed if we're in the same assembly.
-		if ((ta == TypeAttributes.NestedAssembly) || (ta == TypeAttributes.NestedFamORAssem) ||
-		    (ta == TypeAttributes.NotPublic)){
-			if (assembly == t.Assembly)
-				return true;
-		}
-
-		// We already know that we aren't in the same assembly.
-		if (ta == TypeAttributes.NestedAssembly)
-			return false;
-
-		return false;
-	}
-
 	[Flags]
 	public enum MethodFlags {
 		IsObsolete = 1,
