@@ -100,7 +100,7 @@ TEST_SOURCES_net_2_0 = \
 	        gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70 \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80 \
 	gen-81  gen-82  gen-83  gen-84  gen-85  gen-86  gen-87  gen-88  gen-89  gen-90 \
-	gen-91  gen-92  gen-93  gen-94          gen-96  gen-97  gen-98  gen-99
+	gen-91  gen-92  gen-93  gen-94          gen-96  gen-97  gen-98  gen-99  gen-100
 
 TEST_EXCLUDES_net_2_0 = test-55 test-289 gen-77
 
