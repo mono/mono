@@ -1504,9 +1504,8 @@ instr			: INSTR_NONE
 			| INSTR_VAR int32
 			| INSTR_I int32
                           {
-                           //     Console.WriteLine ((Int64) $2);
-                           //     codegen.CurrentMethodDef.AddInstr (new
-                           //             IntInstr ((IntOp) $1, (int) $2));
+                                codegen.CurrentMethodDef.AddInstr (new
+                                        IntInstr ((IntOp) $1, (int) $2));
                           }
 			| INSTR_I id /* Allow variable names */
 			| INSTR_I8 int64
@@ -1786,11 +1785,19 @@ comp_qstring		: QSTRING
 			;
 
 int32			: INT32
-			| INT64
+                        | INT64
+                          {
+                                Int64 int64 = (Int64) $1;
+
+                                if (int64 > Int32.MaxValue)
+                                        $$ = Int32.MaxValue;
+                                else if (int64 < Int32.MinValue)
+                                        $$ = Int32.MinValue;  
+                          }
 			;
 
-int64			: INT32
-			| INT64
+int64		        : INT64
+                        | INT32
 			;
 
 float64			: FLOAT64
