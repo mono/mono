@@ -1,5 +1,11 @@
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_native_wrapper): Add support for 
+	the SetLastError pinvoke attribute.
+
+	* marshal.c (mono_marshal_set_last_error): New helper function called
+	by the generated code.
+	
 	* marshal.c (mono_mb_emit_branch): New helper function.
 
 	* marshal.c (mono_mb_emit_exception): Added exception name parameter.
