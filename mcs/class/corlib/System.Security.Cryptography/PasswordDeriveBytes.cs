@@ -2,12 +2,14 @@
 // PasswordDeriveBytes.cs: Handles PKCS#5 key derivation using password
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace System.Security.Cryptography {
@@ -38,10 +40,10 @@ public class PasswordDeriveBytes : DeriveBytes {
 		Prepare (strPassword, rgbSalt, "SHA1", 1);
 	}
 
-	[MonoTODO("Integrate with CAPI on Windows. Linux?")]
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt, CspParameters cspParams) 
 	{
-		throw new NotSupportedException ("CspParameters not supported");
+		throw new NotSupportedException (
+			Locale.GetText ("CspParameters not supported by Mono"));
 	}
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
@@ -49,13 +51,12 @@ public class PasswordDeriveBytes : DeriveBytes {
 		Prepare (strPassword, rgbSalt, strHashName, iterations);
 	}
 
-	[MonoTODO("Integrate with CAPI on Windows. Linux?")]
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt, string strHashName, int iterations, CspParameters cspParams) 
 	{
-		throw new NotSupportedException ("CspParameters not supported");
+		throw new NotSupportedException (
+			Locale.GetText ("CspParameters not supported by Mono"));
 	}
 
-	[MonoTODO("Must release unmanaged resources on Windows (CAPI). Linux?")]
 	~PasswordDeriveBytes () 
 	{
 		// zeroize buffer
@@ -79,8 +80,10 @@ public class PasswordDeriveBytes : DeriveBytes {
 	public string HashName {
 		get { return HashNameValue; } 
 		set {
-			if (state != 0)
-				throw new CryptographicException ();
+			if (state != 0) {
+				throw new CryptographicException (
+					Locale.GetText ("Can't change this property at this stage"));
+			}
 			HashNameValue = value;
 		}
 	}
@@ -88,21 +91,23 @@ public class PasswordDeriveBytes : DeriveBytes {
 	public int IterationCount {
 		get { return IterationsValue; }
 		set {
-			if (state != 0)
-				throw new CryptographicException ();
+			if (state != 0) {
+				throw new CryptographicException (
+					Locale.GetText ("Can't change this property at this stage"));
+			}
 			IterationsValue = value;
 		}
 	}
 
-	// FIXME ??? Comments are here to simulate the strange behaviour that
-	// happens when we want to assign null to a salt ??? Do we want this
-	// "feature" in Mono ? Vote "yes" for compatibility or "no" for
-	// functionality!
 	public byte[] Salt {
 		get { return (byte[]) SaltValue.Clone ();  }
 		set {
-			if (state != 0)
-				throw new CryptographicException ();
+			if (state != 0) {
+				throw new CryptographicException (
+					Locale.GetText ("Can't change this property at this stage"));
+			}
+
+// For Fx 1.0/1.1 compatibility
 //			if (value != null)
 				SaltValue = (byte[]) value.Clone ();
 //			else
@@ -110,13 +115,14 @@ public class PasswordDeriveBytes : DeriveBytes {
 		}
 	}
 
-	// for compatibility with Microsoft CryptoAPI
-	[MonoTODO("Integrate with CAPI on Windows. Linux?")]
 	public byte[] CryptDeriveKey (string algname, string alghashname, int keySize, byte[] rgbIV) 
 	{
-		if (keySize > 128)
-			throw new CryptographicException ("Key Size can't be greater than 128 bits");
-		throw new NotSupportedException ("CspParameters not supported");
+		if (keySize > 128) {
+			throw new CryptographicException (
+				Locale.GetText ("Key Size can't be greater than 128 bits"));
+		}
+		throw new NotSupportedException (
+			Locale.GetText ("CspParameters not supported by Mono"));
 	}
 
 	// note: Key is returned - we can't zeroize it ourselve :-(
@@ -162,8 +168,10 @@ public class PasswordDeriveBytes : DeriveBytes {
 				// don't update output
 				output2 = hash.ComputeHash (output2);
 			}
-			else
-				throw new CryptographicException ("too long");
+			else {
+				throw new CryptographicException (
+					Locale.GetText ("too long"));
+			}
 
 			int l = Math.Min (cb - cpos, output2.Length);
 			Array.Copy (output2, position, result, cpos, l);

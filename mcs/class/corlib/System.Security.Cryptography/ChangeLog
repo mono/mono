@@ -1,5 +1,21 @@
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* HashAlgorithm.cs: Moved XML comments to monodoc. Added globalization
+	to exceptions.
+	* KeyedHashAlgorithm.cs: Added globalization to exceptions.
+	* KeySizes.cs: Moved XML comments to monodoc.
+	* MaskGenerationMethod.cs: Source clean up.
+	* MD5.cs: Moved XML comments to monodoc.
+	* MD5CryptoServiceProvider.cs: Removed CLSCompliance attributes from
+	private fields. Changed constants from enum to array. Zeroize data on
+	Dispose.
+	* PaddingMode.cs: Moved XML comments to monodoc.
+	* PasswordDeriveBytes.cs: Added globalization to exceptions. Removed 
+	TODO and documented as "not supported" in MonoDoc.
+	* RandomNumberGenerator.cs: Source clean up.
+
+2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* DSACryptoServiceProvider.cs: Added globalization to exceptions.
 	* HMACSHA1.cs: Cleanup.
 	* SHA1CryptoServiceProvider.cs: Removed unused private methods.

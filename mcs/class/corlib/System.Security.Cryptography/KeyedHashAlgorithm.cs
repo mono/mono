@@ -2,13 +2,14 @@
 // KeyedHashAlgorithm.cs: Handles keyed hash and MAC classes.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
-using System.Security.Cryptography;
+using System.Globalization;
 
 namespace System.Security.Cryptography {
 
@@ -32,8 +33,10 @@ public abstract class KeyedHashAlgorithm : HashAlgorithm {
 		}
 		set { 
 			// can't change the key during a hashing ops
-			if (State != 0)
-				throw new CryptographicException ();
+			if (State != 0) {
+				throw new CryptographicException (
+					Locale.GetText ("Key can't be changed at this state."));
+			}
 			// zeroize current key material for security
 			ZeroizeKey ();
 			// copy new key

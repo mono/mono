@@ -3,26 +3,23 @@
 //
 // Authors:
 //	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright 2001 by Matthew S. Ford.
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
-
 
 namespace System.Security.Cryptography {
 	
-	/// <summary>
-	/// How to pad the message processed by block ciphers when they don't come out to the being the size of the block.
-	/// </summary>
 	[Serializable]
 	public enum PaddingMode {
 		None = 0x1,
-		PKCS7,		// Each byte contains the value of the number of padding bytes.
-		Zeros,		// Append zeros to the message.
+		PKCS7,
+		Zeros,
 #if NET_2_0
-		ANSIX923,	//
-		ISO10126	//
+		ANSIX923,
+		ISO10126
 #endif
 	}
 }
