@@ -1,5 +1,14 @@
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* MethodDef.cs: New file - definition of a method.
+	* ParamDef.cs: New file - definition of a parameter to a method
+	* TypeDef.cs: Add method definitions, set intransit flag to false
+	before defining members, so a false circular reference is not
+	created.
+	* CodeGen.cs: Add methods to add method definitions
+
+2003-04-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* ExternTypeRef.cs: external types are classrefs
 		
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>

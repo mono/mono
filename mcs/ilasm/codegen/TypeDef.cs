@@ -24,6 +24,7 @@ namespace Mono.ILASM {
                 private ArrayList impl_list;
                 private PEAPI.ClassDef classdef;
                 private ArrayList field_list;
+                private ArrayList method_list;
 
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
                                 IClassRef parent, ArrayList impl_list, Location location)
@@ -34,6 +35,7 @@ namespace Mono.ILASM {
                         this.parent = parent;
                         this.impl_list = impl_list;
                         field_list = new ArrayList ();
+                        method_list = new ArrayList ();
                 }
 
                 public string FullName {
@@ -55,6 +57,11 @@ namespace Mono.ILASM {
                 public void AddFieldDef (FieldDef fielddef)
                 {
                         field_list.Add (fielddef);
+                }
+
+                public void AddMethodDef (MethodDef methoddef)
+                {
+                        method_list.Add (methoddef);
                 }
 
                 public void Define (CodeGen code_gen)
@@ -82,11 +89,16 @@ namespace Mono.ILASM {
                                                 name_space, name);
                         }
 
+                        is_intransit = false;
+
                         foreach (FieldDef fielddef in field_list) {
                                 fielddef.Define (code_gen, classdef);
                         }
 
-                        is_intransit = false;
+                        foreach (MethodDef methoddef in method_list) {
+                                methoddef.Define (code_gen, classdef);
+                        }
+
                 }
 
                 private string MakeFullName ()

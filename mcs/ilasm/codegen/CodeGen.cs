@@ -23,11 +23,13 @@ namespace Mono.ILASM {
 
                 private string current_namespace;
                 private TypeDef current_typedef;
+                private MethodDef current_methoddef;
                 private Stack typedef_stack;
 
                 private TypeManager type_manager;
                 private ExternTable extern_table;
                 private ArrayList global_field_list;
+                private ArrayList global_method_list;
 
                 public CodeGen (string output_file, bool is_dll, bool is_assembly)
                 {
@@ -36,6 +38,7 @@ namespace Mono.ILASM {
                         extern_table = new ExternTable (pefile);
                         typedef_stack = new Stack ();
                         global_field_list = new ArrayList ();
+                        global_method_list = new ArrayList ();
                 }
 
                 public PEFile PEFile {
@@ -49,7 +52,10 @@ namespace Mono.ILASM {
 
                 public TypeDef CurrentTypeDef {
                         get { return current_typedef; }
-                        set { current_typedef = value; }
+                }
+
+                public MethodDef CurrentMethoDef {
+                        get { return current_methoddef; }
                 }
 
                 public ExternTable ExternTable {
@@ -92,6 +98,22 @@ namespace Mono.ILASM {
                         }
                 }
 
+                public void BeginMethodDef (MethodDef methoddef)
+                {
+                        if (current_typedef != null) {
+                                current_typedef.AddMethodDef (methoddef);
+                        } else {
+                                global_method_list.Add (methoddef);
+                        }
+
+                        current_methoddef = methoddef;
+                }
+
+                public void EndMethodDef ()
+                {
+                        current_methoddef = null;
+                }
+
                 public void EndTypeDef ()
                 {
                         typedef_stack.Pop ();
@@ -104,6 +126,10 @@ namespace Mono.ILASM {
 
                         foreach (FieldDef fielddef in global_field_list) {
                                 fielddef.Define (this);
+                        }
+
+                        foreach (MethodDef methoddef in global_method_list) {
+                                methoddef.Define (this);
                         }
 
                         pefile.WritePEFile ();
