@@ -1,5 +1,18 @@
 2002-05-30  Martin Baulig  <martin@gnome.org>
 
+	* IMonoSymbolWriter (IMonoSymbolWriter): Added custom `Initialize' method.
+
+	* MonoSymbolWriter.cs (Initialize): The ISymbolWriter's `Initialize' method
+	is no longer supported and throws an exception.
+	(Initialize (string, string[])): New custom initialization function.
+
+	* MonoDwarfFileWriter.cs (DwarfFileWriter): Added `string[] args' argument
+	to the constructor to pass command line arguments.
+
+	* gdb-csharp-support.patch: Updated for GDB 5.2.
+
+2002-05-30  Martin Baulig  <martin@gnome.org>
+
 	* MonoSymbolWriter.cs (MonoSymbolWriter): The constructor now get's the
 	AssemblyBuilder's `methods' array as third argument.
 	(OpenMethod): Use this array to get the method builder rather than using an
@@ -8,7 +21,7 @@
 
 2002-05-25  Martin Baulig  <martin@gnome.org>
 
-	* DwarfFileWriter.cs: Finished the type rewrite, put back strings and arrays.
+	* MonoDwarfFileWriter.cs: Finished the type rewrite, put back strings and arrays.
 
 2002-05-24  Martin Baulig  <martin@gnome.org>
 

@@ -31,7 +31,7 @@ namespace Mono.CSharp.Debugger
 		protected IAssemblerWriter aw = null;
 		protected string symbol_file = null;
 
-		public bool timestamps = true;
+		public bool timestamps = false;
 		public bool use_gnu_extensions = false;
 
 		// Write a generic file which contains no machine dependant stuff but
@@ -49,8 +49,21 @@ namespace Mono.CSharp.Debugger
 		//
 		// DwarfFileWriter public interface
 		//
-		public DwarfFileWriter (string symbol_file)
+		public DwarfFileWriter (string symbol_file, string[] args)
 		{
+			foreach (string arg in args) {
+				if (arg.StartsWith ("output="))
+					symbol_file = arg.Substring (7);
+				else if (arg == "timestamp")
+					timestamps = true;
+				else if (arg == "gnu_extensions")
+					use_gnu_extensions = true;
+				else if (arg == "generic")
+					DoGeneric = true;
+				else
+					Console.WriteLine ("Symbol writer warning: Unknown argument: " + arg);
+			}
+
 			this.symbol_file = symbol_file;
 			this.writer = new StreamWriter (symbol_file, false, Encoding.ASCII);
 			this.aw = new AssemblerWriterI386 (this.writer);

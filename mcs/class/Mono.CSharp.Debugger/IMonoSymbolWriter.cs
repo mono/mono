@@ -27,6 +27,8 @@ namespace Mono.CSharp.Debugger
 		ISourceFile[] Sources {
 			get;
 		}
+
+		void Initialize (string filename, string[] args);
 	}
 
 	public interface ISourceFile

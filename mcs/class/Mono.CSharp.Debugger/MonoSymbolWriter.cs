@@ -460,7 +460,6 @@ namespace Mono.CSharp.Debugger
 	{
 		protected Assembly assembly;
 		protected ModuleBuilder module_builder;
-		protected string output_filename = null;
 		protected ArrayList locals = null;
 		protected ArrayList orphant_methods = null;
 		protected ArrayList methods = null;
@@ -611,9 +610,12 @@ namespace Mono.CSharp.Debugger
 
 		public void Initialize (IntPtr emitter, string filename, bool fFullBuild)
 		{
-			this.output_filename = filename;
+			throw new NotSupportedException ();
+		}
 
-			this.writer = new DwarfFileWriter (filename);
+		public void Initialize (string filename, string[] args)
+		{
+			this.writer = new DwarfFileWriter (filename, args);
 		}
 
 		public void OpenMethod (SymbolToken symbol_token)
