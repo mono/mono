@@ -595,13 +595,14 @@ namespace Mono.CSharp {
 			if ((resolved == null) || (resolved.Type == null)) {
 				Report.Error (246, loc,
 					      "The type or namespace name `{0}<...>' "+
-					      "could not be found", name);
+					      "could not be found", Basename);
 				return null;
 			}
 
 			t = resolved.Type;
 			if (t == null) {
-				Report.Error (246, loc, "Cannot find type `{0}'", full_name);
+				Report.Error (246, loc, "Cannot find type `{0}'<...>",
+					      Basename);
 				return null;
 			}
 
@@ -663,14 +664,7 @@ namespace Mono.CSharp {
 			else
 				current = new TypeExpression (ec.ContainerType, loc);
 
-			string basename;
-			int pos = name.LastIndexOf ('!');
-			if (pos >= 0)
-				basename = name.Substring (0, pos);
-			else
-				basename = name;
-
-			return new GenericMemberAccess (current, basename, args, loc);
+			return new GenericMemberAccess (current, Basename, args, loc);
 		}
 
 		public override bool CheckAccessLevel (DeclSpace ds)
@@ -719,6 +713,16 @@ namespace Mono.CSharp {
 				return false;
 
 			return type == cobj.type;
+		}
+
+		public string Basename {
+			get {
+				int pos = name.LastIndexOf ('!');
+				if (pos >= 0)
+					return name.Substring (0, pos);
+				else
+					return name;
+			}
 		}
 
 		public override string Name {
