@@ -16,10 +16,7 @@ namespace System.Net
 	{
 		// Constructors
 		
-		protected WebResponse ()
-		{
-			throw new NotSupportedException ();
-		}
+		protected WebResponse () { }
 		
 		protected WebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
