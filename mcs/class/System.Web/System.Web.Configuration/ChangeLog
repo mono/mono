@@ -1,3 +1,8 @@
+2004-06-07  Alon Gazit <along@mainsoft.com>
+
+	* HandlerFactoryConfiguration.cs: using cache to get performance improvement.
+	
+
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCapabilitiesBase.cs: set the useragent of the new

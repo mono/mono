@@ -15,6 +15,7 @@ namespace System.Web.Configuration
 	class HandlerFactoryConfiguration
 	{
 		ArrayList mappings;
+		Hashtable _cache;
 		int ownIndex;
 
 		public HandlerFactoryConfiguration () : this (null)
@@ -27,7 +28,8 @@ namespace System.Web.Configuration
 				mappings = new ArrayList (parent.mappings);
 			else
 				mappings = new ArrayList ();
-
+				
+			_cache = Hashtable.Synchronized(new Hashtable());
 			ownIndex = mappings.Count;
 		}
 
@@ -44,12 +46,15 @@ namespace System.Web.Configuration
 			
 			HandlerItem item = (HandlerItem) mappings [i];
 			mappings.RemoveAt (i);
+			if (_cache.ContainsKey(verb+"+"+path))
+				_cache.Remove(verb+"+"+path);
 			return item;
 		}
 
 		public void Clear ()
 		{
 			mappings.Clear ();
+			_cache.Clear();
 		}
 
 		public HandlerItem FindHandler (string verb, string path)
@@ -63,12 +68,19 @@ namespace System.Web.Configuration
 
 		int GetIndex (string verb, string path)
 		{
+			string cahceKey = verb+"+"+path;
+			object answer = _cache[cahceKey];
+			if (answer != null)
+				return (int)answer;
 			int end = mappings.Count;
 
 			for (int i = ownIndex; i < end; i++) {
 				HandlerItem item = (HandlerItem) mappings [i];
 				if (item.IsMatch (verb, path))
+				{
+					_cache[cahceKey] = i;
 					return i;
+				}
 			}
 
 			// parent mappings
@@ -76,9 +88,12 @@ namespace System.Web.Configuration
 			for (int i = 0; i < end; i++) {
 				HandlerItem item = (HandlerItem) mappings [i];
 				if (item.IsMatch (verb, path))
+				{
+					_cache[cahceKey] = i;
 					return i;
+				}
 			}
-
+			_cache[cahceKey] = -1;
 			return -1;
 		}
 	}
