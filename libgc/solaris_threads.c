@@ -624,6 +624,17 @@ GC_thread GC_lookup_thread(thread_t id)
     return(p);
 }
 
+int GC_thread_is_registered (void)
+{
+	void *ptr;
+
+	LOCK();
+	ptr = (void *)GC_lookup_thread(thr_self());
+	UNLOCK();
+
+	return ptr ? 1 : 0;
+}
+
 /* Solaris 2/Intel uses an initial stack size limit slightly bigger than the
    SPARC default of 8 MB.  Account for this to warn only if the user has
    raised the limit beyond the default.

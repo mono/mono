@@ -1,5 +1,8 @@
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* solaris_threads.c (GC_thread_is_registered): Add this for solaris
+	too.
+
 	* pthread_support.c (GC_thread_is_registered): Move this outside of
 	the #ifdef THREAD_LOCAL_ALLOC.
 
