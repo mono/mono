@@ -31,7 +31,7 @@ namespace System.Reflection.Emit {
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
 			guid = Guid.NewGuid().ToByteArray ();
-			table_idx = get_next_table_index (0x00, true);
+			table_idx = get_next_table_index (this, 0x00, true);
 			name_cache = new Hashtable ();
 
 			if (emitSymbolInfo)
@@ -51,12 +51,14 @@ namespace System.Reflection.Emit {
 			if (type == null)
 				return null;
 
-			Type[] arg_types = new Type [1];
-			arg_types [0] = typeof (string);
+			Type[] arg_types = new Type [2];
+			arg_types [0] = typeof (ModuleBuilder);
+			arg_types [1] = typeof (string);
 			ConstructorInfo constructor = type.GetConstructor (arg_types);
 
-			object[] args = new object [1];
-			args [0] = filename;
+			object[] args = new object [2];
+			args [0] = this;
+			args [1] = filename;
 
 			if (constructor == null)
 				return null;
@@ -184,8 +186,8 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		internal int get_next_table_index (int table, bool inc) {
-			return assemblyb.get_next_table_index (table, inc);
+		internal int get_next_table_index (object obj, int table, bool inc) {
+			return assemblyb.get_next_table_index (obj, table, inc);
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {

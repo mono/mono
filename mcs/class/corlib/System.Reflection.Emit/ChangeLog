@@ -1,3 +1,14 @@
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
+	* AssemblyBuilder.cs (methods): New field.
+	(get_next_table_index): Record all methods and constructors
+	(table 0x06) in the `methods' array.  This is read by the
+	Mono.CSharp.Debugger.MonoSymbolWriter::get_method interncall to
+	get the MethodBuilder / ConstructorBuilder back from the token.
+
+	* *Builder.cs (get_next_table_index): Added `object obj' argument.
+	(<constructors>): pass the this pointer to get_next_table_index ().
+
 2002-05-20  Martin Baulig  <martin@gnome.org>
 
 	* TypeBuilder.cs (DefineField): Call the new `create_internal_class'

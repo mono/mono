@@ -33,11 +33,11 @@ namespace System.Reflection.Emit {
 			attrs = eventAttrs;
 			type = eventType;
 			typeb = tb;
-			table_idx = get_next_table_index (0x14, true);
+			table_idx = get_next_table_index (this, 0x14, true);
 		}
 
-		internal int get_next_table_index (int table, bool inc) {
-			return typeb.get_next_table_index (table, inc);
+		internal int get_next_table_index (object obj, int table, bool inc) {
+			return typeb.get_next_table_index (obj, table, inc);
 		}
 
 		public void AddOtherMethod( MethodBuilder mdBuilder) {

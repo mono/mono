@@ -15,6 +15,7 @@ using System.Security.Policy;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Collections;
 
 namespace System.Reflection.Emit {
 
@@ -26,6 +27,7 @@ namespace System.Reflection.Emit {
 		private string dir;
 		private CustomAttributeBuilder[] cattrs;
 		private int[] table_indexes;
+		private ArrayList methods;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -33,10 +35,11 @@ namespace System.Reflection.Emit {
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access) {
 			name = n.Name;
 			dir = directory;
+			methods = new ArrayList ();
 			basic_init (this);
 		}
 
-		internal int get_next_table_index (int table, bool inc) {
+		internal int get_next_table_index (object obj, int table, bool inc) {
 			if (table_indexes == null) {
 				table_indexes = new int [64];
 				for (int i=0; i < 64; ++i)
@@ -45,8 +48,11 @@ namespace System.Reflection.Emit {
 				table_indexes [0x02] = 2;
 			}
 			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
-			if (inc)
+			if (inc) {
+				if (table == 0x06)
+					methods.Add (obj);
 				return table_indexes [table]++;
+			}
 			return table_indexes [table];
 		}
 

@@ -35,7 +35,7 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}
 			type = tb;
-			table_idx = get_next_table_index (0x06, true);
+			table_idx = get_next_table_index (this, 0x06, true);
 		}
 		
 		public bool InitLocals {
@@ -135,8 +135,8 @@ namespace System.Reflection.Emit {
 			if (ilgen != null)
 				ilgen.label_fixup ();
 		}
-		internal override int get_next_table_index (int table, bool inc) {
-			return type.get_next_table_index (table, inc);
+		internal override int get_next_table_index (object obj, int table, bool inc) {
+			return type.get_next_table_index (obj, table, inc);
 		}
 
 	}

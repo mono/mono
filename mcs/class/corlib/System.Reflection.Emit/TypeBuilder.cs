@@ -67,7 +67,7 @@ namespace System.Reflection.Emit {
 			}
 			pmodule = mb;
 			// skip .<Module> ?
-			table_idx = mb.get_next_table_index (0x02, true);
+			table_idx = mb.get_next_table_index (this, 0x02, true);
 			setup_internal_class (this);
 		}
 
@@ -683,8 +683,8 @@ namespace System.Reflection.Emit {
 		public void SetParent (Type parentType) {
 			parent = parentType;
 		}
-		internal int get_next_table_index (int table, bool inc) {
-			return pmodule.get_next_table_index (table, inc);
+		internal int get_next_table_index (object obj, int table, bool inc) {
+			return pmodule.get_next_table_index (obj, table, inc);
 		}
 
 	}

@@ -47,7 +47,7 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}
 			type = tb;
-			table_idx = get_next_table_index (0x06, true);
+			table_idx = get_next_table_index (this, 0x06, true);
 			//Console.WriteLine ("index for "+name+" set to "+table_idx.ToString());
 		}
 
@@ -150,8 +150,8 @@ namespace System.Reflection.Emit {
 		public void SetImplementationFlags( MethodImplAttributes attributes) {
 			iattrs = attributes;
 		}
-		internal override int get_next_table_index (int table, bool inc) {
-			return type.get_next_table_index (table, inc);
+		internal override int get_next_table_index (object obj, int table, bool inc) {
+			return type.get_next_table_index (obj, table, inc);
 		}
 
 		internal void set_override (MethodInfo mdecl) {

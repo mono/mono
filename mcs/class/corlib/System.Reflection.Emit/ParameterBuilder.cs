@@ -29,7 +29,7 @@ namespace System.Reflection.Emit {
 			position = pos;
 			attrs = attributes;
 			methodb = mb;
-			table_idx = mb.get_next_table_index (0x08, true);
+			table_idx = mb.get_next_table_index (this, 0x08, true);
 		}
 
 		public virtual int Attributes {
