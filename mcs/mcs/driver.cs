@@ -383,7 +383,7 @@ namespace Mono.CSharp
 			foreach (Assembly a in assemblies){
 				string codebase = a.CodeBase;
 				if (codebase.EndsWith ("corlib.dll")){
-					return codebase.Substring (0, codebase.LastIndexOf ("/"));
+					return codebase.Substring (0, codebase.LastIndexOf (System.IO.Path.DirectorySeparatorChar));
 				}
 			}
 
