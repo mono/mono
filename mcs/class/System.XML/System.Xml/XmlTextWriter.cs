@@ -82,7 +82,7 @@ namespace System.Xml
 
 		// XmlWriterSettings support
 		bool checkCharacters;
-		bool closeOutput;
+		bool closeOutput = true;
 		bool newLineOnAttributes;
 		string newLineChars;
 		bool outputXmlDeclaration;
