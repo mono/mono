@@ -1,5 +1,9 @@
 2003-05-23 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Remove top secret debugging code.
+		
+2003-05-23 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Implement label form structured exception handling.
 		
 2003-05-22 Jackson Harper <jackson@latitudegeo.com>
