@@ -13,6 +13,7 @@
 
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace System.Data.SqlTypes
 {
@@ -29,6 +30,10 @@ namespace System.Data.SqlTypes
 
 		private bool notNull;
 
+		// FIXME: locale id is not working yet
+		private int lcid;
+		private SqlCompareOptions compareOptions;
+
 		public static readonly int BinarySort = 0x8000;
 		public static readonly int IgnoreCase = 0x1;
 		public static readonly int IgnoreKanaType = 0x8;
@@ -44,55 +49,99 @@ namespace System.Data.SqlTypes
 		public SqlString (string data) 
 		{
 			this.value = data;
+			lcid = CultureInfo.CurrentCulture.LCID;
 			notNull = true;
+			this.compareOptions = SqlCompareOptions.None;
 		}
 
 		// init with a string data and locale id values.
-		[MonoTODO]
 		public SqlString (string data, int lcid) 
 		{
-			throw new NotImplementedException ();
+			this.value = data;
+			this.lcid = lcid;
+			notNull = true;
+			this.compareOptions = SqlCompareOptions.None;
 		}
 
 		// init with locale id, compare options, 
 		// and an array of bytes data
-		[MonoTODO]
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data) 
-		{
-			throw new NotImplementedException ();
-		}
+			: this (lcid, compareOptions, data, true) { }
 
 		// init with string data, locale id, and compare options
-		[MonoTODO]
 		public SqlString (string data, int lcid, SqlCompareOptions compareOptions) 
 		{
-			throw new NotImplementedException ();
+			this.value = data;
+			this.lcid = lcid;
+			this.compareOptions = compareOptions;
+			notNull = true;
 		}
 
 		// init with locale id, compare options, array of bytes data,
 		// and whether unicode is encoded or not
-		[MonoTODO]
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, bool fUnicode) 
 		{
-			throw new NotImplementedException ();
+			char [] chars;
+
+			if (fUnicode)
+				chars = new char [data.Length/2];
+			else
+				chars = new char [data.Length];
+			
+			int j = 0;
+			for (int i = 0; i < chars.Length; i++) {
+
+				if (fUnicode) {
+					chars [i] = (char)(data [j] << 16);
+					chars [i] += (char)data [j + 1];
+					j += 2;
+				} else {
+					chars [i] = (char)data[i];
+				}
+			}
+				
+			this.value = new String (chars);
+			this.lcid = lcid;
+			this.compareOptions = compareOptions;
+			notNull = true;
 		}
 
 		// init with locale id, compare options, array of bytes data,
 		// starting index in the byte array, 
 		// and number of bytes to copy
-		[MonoTODO]
-		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count) 
-		{
-			throw new NotImplementedException ();
-		}
+		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, 
+				  int index, int count) 
+			: this (lcid, compareOptions, data, index, count, true) { }
 
 		// init with locale id, compare options, array of bytes data,
 		// starting index in the byte array, number of byte to copy,
 		// and whether unicode is encoded or not
-		[MonoTODO]
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode) 
-		{
-			throw new NotImplementedException ();
+		{		       
+			char [] chars;
+
+			if (fUnicode)
+				chars = new char [(count - index) / 2];
+			else
+				chars = new char [count - index];
+			
+			int j = 0;
+			for (int i = index; i < chars.Length; i++) {
+				
+				if (fUnicode) {
+					chars [i] = (char)(data[j] << 16);
+					chars [i] += (char)data[j+1];
+					j += 2;
+				} else {
+					chars [i] = (char)data [j];
+					j++;
+				}
+			}
+
+			this.value = new String (chars);
+			this.lcid = lcid;
+			this.compareOptions = compareOptions;
+			notNull = true;
 		}
 
 		#endregion // Constructors
@@ -101,14 +150,14 @@ namespace System.Data.SqlTypes
 		#region Public Properties
 
 		public CompareInfo CompareInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
+			get { 
+				return new CultureInfo (lcid).CompareInfo;
 			}
 		}
 
 		public CultureInfo CultureInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
+			get { 
+				return new CultureInfo (lcid);
 			}
 		}
 
@@ -118,21 +167,21 @@ namespace System.Data.SqlTypes
 
 		// geographics location and language (locale id)
 		public int LCID {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
+			get { 
+				return lcid;
 			}
 		}
 	
 		public SqlCompareOptions SqlCompareOptions {
-			[MonoTODO]
-			get { throw new NotImplementedException ();
+			get { 
+				return compareOptions;
 			}
 		}
 
                 public string Value {
                         get {
                                 if (this.IsNull)
-                                        throw new SqlNullValueException ("The property contains Null.");
+                                        throw new SqlNullValueException (Locale.GetText ("The property contains Null."));
                                 else
                                         return value;
                         }
@@ -142,16 +191,28 @@ namespace System.Data.SqlTypes
 
 		#region Public Methods
 
-		[MonoTODO]
 		public SqlString Clone() 
 		{
-			throw new NotImplementedException ();
+			return new  SqlString (value, lcid, compareOptions);
 		}
 
-		[MonoTODO]
 		public static CompareOptions CompareOptionsFromSqlCompareOptions (SqlCompareOptions compareOptions) 
 		{
-			throw new NotImplementedException ();
+			CompareOptions options = CompareOptions.None;
+			
+			if ((compareOptions & SqlCompareOptions.IgnoreCase) != 0)
+				options |= CompareOptions.IgnoreCase;
+			if ((compareOptions & SqlCompareOptions.IgnoreKanaType) != 0)
+				options |= CompareOptions.IgnoreKanaType;
+			if ((compareOptions & SqlCompareOptions.IgnoreNonSpace) != 0)
+				options |= CompareOptions.IgnoreNonSpace;
+			if ((compareOptions & SqlCompareOptions.IgnoreWidth) != 0)
+				options |= CompareOptions.IgnoreWidth;
+			if ((compareOptions & SqlCompareOptions.BinarySort) != 0)
+				// FIXME: Exception string
+				throw new ArgumentOutOfRangeException (); 
+			
+			return options;		
 		}
 
 		// **********************************
@@ -192,22 +253,40 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode() 
 		{
-			throw new NotImplementedException ();
+			int result = 10;
+			for (int i = 0; i < value.Length; i++)
+				result = 91 * result + (int)(value [i] ^ (value [i] >> 32));
+						
+			result = 91 * result + lcid.GetHashCode ();
+			result = 91 * result + (int)compareOptions;
+
+			return result;
 		}
 
-		[MonoTODO]
 		public byte[] GetNonUnicodeBytes() 
 		{
-			throw new NotImplementedException ();
+			byte [] bytes = new byte [value.Length];
+
+			for (int i = 0; i < bytes.Length; i++) 
+				bytes [i] = (byte)value [i];
+
+			return bytes;
 		}
 
-		[MonoTODO]
 		public byte[] GetUnicodeBytes() 
 		{
-			throw new NotImplementedException ();
+			byte [] bytes = new byte [value.Length * 2];
+			
+			int j = 0;
+			for (int i = 0; i < value.Length; i++) {				
+				bytes [j] = (byte)(value [i] & 0x0000FFFF);
+				bytes [j + 1] = (byte)((value [i] & 0xFFFF0000) >> 16);
+				j += 2;
+			}
+			
+			return bytes;
 		}
 
 		public static SqlBoolean GreaterThan(SqlString x, SqlString y) 

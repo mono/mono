@@ -1,3 +1,7 @@
+2002-11-10  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlString.cs: Now all methods are implemented
+	
 2002-11-09  Tim Coleman <tim@timcoleman.com>
 	* list:
 	* System.Data/DataCategoryAttribute.cs:
