@@ -1,3 +1,15 @@
+2004-09-24  Martin Baulig  <martin@ximian.com>
+
+	* support.cs (GenericConstraints): Replaced `HasConstructor',
+	`IsReferenceType' and `IsValueType' with `Attributes'.
+	(ReflectionParameters.ReflectionConstraints): Removed the Create()
+	method and made the .ctor public.
+
+	* generic.cs (Constraints.Attributes): New public property.
+	(Constraints): Renamed `HasConstructor' -> `HasConstructorConstraint',
+	`IsReferenceType' -> `HasReferenceTypeConstraint' and
+	`IsValueType' -> `HasValueTypeConstraint'.
+
 2004-09-23  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Constraints): Reflect latest runtime changes.

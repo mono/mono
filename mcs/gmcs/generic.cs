@@ -62,7 +62,7 @@ namespace Mono.CSharp {
 			type_param_constraints = new ArrayList ();
 
 			foreach (object obj in constraints) {
-				if (HasConstructor) {
+				if (HasConstructorConstraint) {
 					Report.Error (401, loc,
 						      "The new() constraint must be last.");
 					return false;
@@ -72,7 +72,7 @@ namespace Mono.CSharp {
 					SpecialConstraint sc = (SpecialConstraint) obj;
 
 					if (sc == SpecialConstraint.Constructor) {
-						if (!IsValueType) {
+						if (!HasValueTypeConstraint) {
 							attrs |= GenericParameterAttributes.DefaultConstructorConstraint;
 							continue;
 						}
@@ -84,7 +84,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					if ((num_constraints > 0) || IsReferenceType || IsValueType) {
+					if ((num_constraints > 0) || HasReferenceTypeConstraint || HasValueTypeConstraint) {
 						Report.Error (449, loc,
 							      "The `class' or `struct' " +
 							      "constraint must be first");
@@ -113,7 +113,7 @@ namespace Mono.CSharp {
 						      "must come before any other constraints.",
 						      expr.Name, name);
 					return false;
-				} else if (IsReferenceType || IsValueType) {
+				} else if (HasReferenceTypeConstraint || HasValueTypeConstraint) {
 					Report.Error (450, loc, "`{0}': cannot specify both " +
 						      "a constraint class and the `class' " +
 						      "or `struct' constraint.", expr.Name);
@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 			if (constraints == null)
 				return true;
 
-			if (constraints.IsValueType) {
+			if (constraints.HasValueTypeConstraint) {
 				Report.Error (456, loc, "Type parameter `{0}' has " +
 					      "the `struct' constraint, so it cannot " +
 					      "be used as a constraint for `{1}'",
@@ -235,9 +235,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (IsReferenceType)
+			if (HasReferenceTypeConstraint)
 				class_constraint_type = TypeManager.object_type;
-			else if (IsValueType)
+			else if (HasValueTypeConstraint)
 				class_constraint_type = TypeManager.value_type;
 
 			return true;
@@ -259,7 +259,7 @@ namespace Mono.CSharp {
 			if (constraints == null)
 				return true;
 
-			if (IsValueType && constraints.HasClassConstraint) {
+			if (HasValueTypeConstraint && constraints.HasClassConstraint) {
 				Report.Error (455, loc, "Type parameter `{0}' inherits " +
 					      "conflicting constraints `{1}' and `{2}'",
 					      name, constraints.ClassConstraint,
@@ -299,15 +299,19 @@ namespace Mono.CSharp {
 			type.SetGenericParameterAttributes (attrs);
 		}
 
-		public bool HasConstructor {
+		public GenericParameterAttributes Attributes {
+			get { return attrs; }
+		}
+
+		public bool HasConstructorConstraint {
 			get { return (attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0; }
 		}
 
-		public bool IsReferenceType {
+		public bool HasReferenceTypeConstraint {
 			get { return (attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0; }
 		}
 
-		public bool IsValueType {
+		public bool HasValueTypeConstraint {
 			get { return (attrs & GenericParameterAttributes.ValueTypeConstraint) != 0; }
 		}
 
@@ -345,13 +349,7 @@ namespace Mono.CSharp {
 			if (!ResolveTypes (ec))
 				return false;
 
-			if (gc.HasConstructor != HasConstructor)
-				return false;
-			if (gc.IsReferenceType != IsReferenceType)
-				return false;
-			if (gc.IsValueType != IsValueType)
-				return false;
-			if (gc.HasClassConstraint != HasClassConstraint)
+			if (gc.Attributes != attrs)
 				return false;
 
 			if (HasClassConstraint && !gc.ClassConstraint.Equals (ClassConstraint))
@@ -409,7 +407,7 @@ namespace Mono.CSharp {
 		public bool HasConstructorConstraint {
 			get {
 				if (constraints != null)
-					return constraints.HasConstructor;
+					return constraints.HasConstructorConstraint;
 
 				return false;
 			}

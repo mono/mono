@@ -19,9 +19,7 @@ using System.Globalization;
 namespace Mono.CSharp {
 
 	public interface GenericConstraints {
-		bool HasConstructor { get; }
-		bool IsReferenceType { get; }
-		bool IsValueType { get; }
+		GenericParameterAttributes Attributes { get; }
 		bool HasClassConstraint { get; }
 		Type ClassConstraint { get; }
 		Type[] InterfaceConstraints { get; }
@@ -103,7 +101,7 @@ namespace Mono.CSharp {
 			if (type_params == null)
 				return null;
 
-			return ReflectionConstraints.Create (type_params [pos]);
+			return new ReflectionConstraints (type_params [pos]);
 		}
 
 		public string ParameterName (int pos)
@@ -172,54 +170,26 @@ namespace Mono.CSharp {
 
 		protected class ReflectionConstraints : GenericConstraints
 		{
-			bool has_ctor;
-			bool is_reference_type;
-			bool is_value_type;
+			GenericParameterAttributes attrs;
 			Type class_constraint;
 			Type[] iface_constraints;
 
-			protected ReflectionConstraints (bool has_ctor, Type class_constr,
-							 Type[] iface_constrs)
+			public ReflectionConstraints (Type t)
 			{
-				this.has_ctor = has_ctor;
-				this.class_constraint = class_constr;
-				this.iface_constraints = iface_constrs;
-
-				if (class_constraint != null) {
-					if (class_constraint == TypeManager.object_type)
-						is_reference_type = true;
-					else if (class_constraint == TypeManager.value_type)
-						is_value_type = true;
-				}
-			}
-
-			public static GenericConstraints Create (Type t)
-			{
-				Type class_constr = null;
-				Type[] iface_constrs = t.GetInterfaces ();
-				if (iface_constrs ==  null)
-					iface_constrs = Type.EmptyTypes;
+				iface_constraints = t.GetInterfaces ();
+				if (iface_constraints ==  null)
+					iface_constraints = Type.EmptyTypes;
 				if (t.BaseType != TypeManager.object_type)
-					class_constr = t.BaseType;
-
-				return new ReflectionConstraints (
-					false, class_constr, iface_constrs);
+					class_constraint = t.BaseType;
+				attrs = t.GenericParameterAttributes;
 			}
 
-			public bool HasConstructor {
-				get { return has_ctor; }
+			public GenericParameterAttributes Attributes {
+				get { return attrs; }
 			}
 
 			public bool HasClassConstraint {
 				get { return class_constraint != null; }
-			}
-
-			public bool IsReferenceType {
-				get { return is_reference_type; }
-			}
-
-			public bool IsValueType {
-				get { return is_value_type; }
 			}
 
 			public Type ClassConstraint {

@@ -3362,12 +3362,8 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (gc.HasConstructor != ogc.HasConstructor) {
-					error_425 (ot, t, name);
-					return false;
-				}
-
-				if (ogc.HasClassConstraint != gc.HasClassConstraint) {
+				if ((gc.Attributes != ogc.Attributes) ||
+				    (gc.HasClassConstraint != ogc.HasClassConstraint)) {
 					error_425 (ot, t, name);
 					return false;
 				}
