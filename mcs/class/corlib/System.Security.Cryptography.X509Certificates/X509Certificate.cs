@@ -2,12 +2,9 @@
 // X509Certificates.cs: Handles X.509 certificates.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -40,7 +37,7 @@ using Mono.Security;
 using Mono.Security.Authenticode;
 using Mono.Security.X509;
 
-#if !(NET_1_0 || NET_1_1)
+#if NET_2_0
 using System.Runtime.Serialization;
 #endif
 
@@ -53,11 +50,11 @@ namespace System.Security.Cryptography.X509Certificates {
 	// LAMESPEC: the MSDN docs always talks about X509v3 certificates
 	// and/or Authenticode certs. However this class works with older
 	// X509v1 certificates and non-authenticode (code signing) certs.
-#if (NET_1_0 || NET_1_1)
+#if NET_2_0
+	public class X509Certificate : IDeserializationCallback, ISerializable {
+#else
 	[Serializable]
 	public class X509Certificate {
-#else
-	public class X509Certificate : IDeserializationCallback, ISerializable {
 #endif
 		// typedef struct _CERT_CONTEXT {
                 //	DWORD                   dwCertEncodingType;
@@ -159,7 +156,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-#if !(NET_1_0 || NET_1_1)
+#if NET_2_0
 		public X509Certificate () {}
 
 		public X509Certificate (byte[] rawData, string password) {}
@@ -378,7 +375,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				return base.ToString ();
 		}
 
-#if !(NET_1_0 || NET_1_1)
+#if NET_2_0
 		public virtual byte[] Export (X509ContentType contentType)
 		{
 			return null;

@@ -1,3 +1,9 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Fixed NET_2_0 directives.
+	* X509ContentType.cs: New enum in Fx 2.0.
+	* X509KeyStorageFlags.cs: New flags in Fx 2.0.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Removed old (commented) Authenticode stuff.
