@@ -1,5 +1,9 @@
 2001-11-12  Dick Porter  <dick@ximian.com>
 
+	* critical-sections.c: Implement critical sections
+
+2001-11-12  Dick Porter  <dick@ximian.com>
+
 	* semaphores.c: Implement semaphores
 
 	* wait.c (wait_for_item): Maintain a wait count rather than count
