@@ -1,3 +1,9 @@
+2003-11-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Use is_identifier_start_character on the start
+	character of the define, and the is_identifier_part_character for
+	the rest of the string.
+
 2003-11-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (UnaryMutator.EmitCode): When I updated
