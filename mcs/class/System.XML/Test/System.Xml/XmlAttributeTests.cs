@@ -205,5 +205,58 @@ namespace MonoTests.System.Xml
 			xtw.Close ();
 			Assertion.AssertEquals ("<result attr=\"&ent;\" />", sw.ToString ());
 		}
+
+		[Test]
+		public void IdentityConstraints ()
+		{
+			string dtd = "<!DOCTYPE root [<!ELEMENT root (c)+><!ELEMENT c EMPTY><!ATTLIST c foo ID #IMPLIED bar CDATA #IMPLIED>]>";
+			string xml = dtd + "<root><c foo='id1' bar='1' /><c foo='id2' bar='2'/></root>";
+			XmlValidatingReader vr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			doc.Load (vr);
+			AssertNotNull (doc.GetElementById ("id1"));
+			AssertNotNull (doc.GetElementById ("id2"));
+			// MS.NET BUG: Later I try to append it to another element, but
+			// it should raise InvalidOperationException.
+			// (and if MS.NET conform to DOM 1.0, it should be XmlException.)
+//			XmlAttribute attr = doc.DocumentElement.FirstChild.Attributes [0];
+			XmlAttribute attr = doc.DocumentElement.FirstChild.Attributes.RemoveAt (0);
+			AssertEquals ("id1", attr.Value);
+
+			doc.DocumentElement.LastChild.Attributes.SetNamedItem (attr);
+			AssertNotNull (doc.GetElementById ("id1"));
+			XmlElement elem2 = doc.GetElementById ("id2");
+			// MS.NET BUG: it doesn't removes replaced attribute with SetNamedItem!
+//			AssertNull (elem2);
+//			AssertEquals ("2", elem2.GetAttribute ("bar"));
+//			elem2.RemoveAttribute ("foo");
+//			AssertEquals ("", elem2.GetAttribute ("foo"));
+
+			// MS.NET BUG: elem should be the element which has the attribute bar='1'!
+			XmlElement elem = doc.GetElementById ("id1");
+//			AssertEquals ("2", elem.GetAttribute ("bar"));
+
+			// Here, required attribute foo is no more required,
+			XmlElement elemNew = doc.CreateElement ("c");
+			doc.DocumentElement.AppendChild (elemNew);
+			// but once attribute is set, document recognizes this ID.
+			elemNew.SetAttribute ("foo", "id3");
+			AssertNotNull (doc.GetElementById ("id3"));
+			elemNew.RemoveAttribute ("foo");
+			AssertNull (doc.GetElementById ("id3"));
+
+			// MS.NET BUG: multiple IDs are allowed.
+			// In such case GetElementById fails.
+			elemNew.SetAttribute ("foo", "id2");
+
+			// While XmlValidatingReader validated ID cannot be removed.
+			// It is too curious for me.
+			elem.RemoveAttribute ("foo");
+
+			// Finally...
+			doc.RemoveAll ();
+			AssertNull (doc.GetElementById ("id1"));
+			AssertNull (doc.GetElementById ("id2"));
+			AssertNull (doc.GetElementById ("id3"));
+		}
 	}
 }

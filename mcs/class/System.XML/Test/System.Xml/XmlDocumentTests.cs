@@ -850,11 +850,9 @@ namespace MonoTests.System.Xml
 		public void DocumentWithDoctypeDecl ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			try {
-				doc.LoadXml ("<!DOCTYPE test><root />");
-			} catch (XmlException) {
-				Fail ("#DoctypeDecl.OnlyName");
-			}
+			// In fact it is invalid, but it doesn't fail with MS.NET 1.0.
+			doc.LoadXml ("<!DOCTYPE test><root />");
+			AssertNotNull (doc.DocumentType);
 #if NetworkEnabled
 			try 
 			{
@@ -905,7 +903,8 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void CreateAttribute () {
+		public void CreateAttribute ()
+		{
 			XmlDocument dom = new XmlDocument ();
 
 			// Check that null prefix and namespace are allowed and
@@ -913,6 +912,25 @@ namespace MonoTests.System.Xml
 			XmlAttribute attr = dom.CreateAttribute (null, "FOO", null);
 			AssertEquals (attr.Prefix, "");
 			AssertEquals (attr.NamespaceURI, "");
+		}
+
+		[Test]
+		public void DocumentTypeNodes ()
+		{
+			string entities = "<!ENTITY foo 'foo-ent'>";
+			string dtd = "<!DOCTYPE root [<!ELEMENT root (#PCDATA)*> " + entities + "]>";
+			string xml = dtd + "<root>&foo;</root>";
+			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			AssertNotNull (document.DocumentType);
+			AssertEquals (1, document.DocumentType.Entities.Count);
+
+			XmlEntity foo = document.DocumentType.Entities.GetNamedItem ("foo") as XmlEntity;
+			AssertNotNull (foo);
+			AssertNotNull (document.DocumentType.Entities.GetNamedItem ("foo", ""));
+			AssertEquals ("foo", foo.Name);
+			AssertNull (foo.Value);
+			AssertEquals ("foo-ent", foo.InnerText);
 		}
 
 //		[Test]  Comment out in the meantime.

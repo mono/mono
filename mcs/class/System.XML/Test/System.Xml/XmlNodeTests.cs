@@ -238,5 +238,17 @@ namespace MonoTests.System.Xml
 			AssertEquals (1, document.ChildNodes.Count);
 			Assert (inserted && removed && !changed);
 		}
+
+		[Test]
+		public void InnerText ()
+		{
+			document.LoadXml ("<root>This is <b>mixed</b> content. Also includes <![CDATA[CDATA section]]>.<!-- Should be ignored --></root>");
+			string total = "This is mixed content. Also includes CDATA section.";
+			XmlNode elemB = document.DocumentElement.ChildNodes [1];
+			AssertEquals ("mixed", elemB.FirstChild.InnerText);	// text node
+			AssertEquals ("mixed", elemB.InnerText);	// element b
+			AssertEquals (total, document.DocumentElement.InnerText);	// element root
+			AssertEquals (total, document.InnerText);	// whole document
+		}
 	}
 }

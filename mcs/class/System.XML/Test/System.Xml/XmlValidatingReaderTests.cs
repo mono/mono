@@ -293,9 +293,23 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void TestAttributes ()
 		{
-			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA #REQUIRED bar CDATA #IMPLIED>";
+			// simple content and attributes are required
+			string intSubset = "<!ELEMENT root (foo)><!ELEMENT foo EMPTY><!ATTLIST root foo CDATA #REQUIRED bar CDATA #IMPLIED>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml = dtd + "<root />";
+			string xml = dtd + "<root><foo/></root>";
+			dvr = PrepareXmlReader (xml);
+			dvr.ValidationType = ValidationType.DTD;
+			dvr.Read ();	// DTD
+			try {
+				dvr.Read ();	// missing attributes
+				Fail ("should be failed.");
+			} catch (XmlSchemaException ex) {
+			}
+
+			// empty element but attributes are required
+			intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA #REQUIRED bar CDATA #IMPLIED>";
+			dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			xml = dtd + "<root />";
 			dvr = PrepareXmlReader (xml);
 			dvr.ValidationType = ValidationType.DTD;
 			dvr.Read ();	// DTD
@@ -339,15 +353,25 @@ namespace MonoTests.System.Xml
 			dvr.Read ();
 			AssertEquals (XmlNodeType.Element, dvr.NodeType);
 			AssertEquals ("root", dvr.Name);
+			// foo
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
 			AssertEquals ("foo-def", dvr ["foo"]);
 			AssertNotNull (dvr ["bar"]);
 			AssertEquals ("foo-def", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("foo-def", dvr.Value);
+			// bar
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
 			AssertEquals ("foo-def", dvr ["foo"]);
 			AssertNotNull (dvr ["bar"]);
+			AssertEquals ("bar-def", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
 			AssertEquals ("bar-def", dvr.Value);
 
 			// ValidationType = None
@@ -358,17 +382,27 @@ namespace MonoTests.System.Xml
 			dvr.Read ();
 			AssertEquals (XmlNodeType.Element, dvr.NodeType);
 			AssertEquals ("root", dvr.Name);
+			// foo
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
 			AssertNotNull (dvr ["foo"]);
 			AssertNotNull (dvr ["bar"]);
 			AssertEquals ("foo-def", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("foo-def", dvr.Value);
+			// bar
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
 			AssertEquals ("bar-def", dvr.Value);
 			AssertNotNull (dvr ["foo"]);
 			AssertNotNull (dvr ["bar"]);
 			AssertEquals ("bar", dvr.Name);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("bar-def", dvr.Value);
 		}
 
 		[Test]
@@ -557,6 +591,47 @@ namespace MonoTests.System.Xml
 		private void OnInvalidityFound (object o, ValidationEventArgs e)
 		{
 			eventFired = true;
+		}
+
+		[Test]
+		public void TestIdentityConstraints ()
+		{
+			string intSubset = "<!ELEMENT root (c)+><!ELEMENT c EMPTY><!ATTLIST root foo ID #REQUIRED>";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root><c foo='val' /><c foo='val'></root>";
+			dvr = PrepareXmlReader (xml);
+			dvr.ValidationType = ValidationType.DTD;
+			dvr.Read ();	// DTD
+			try {
+				dvr.Read ();	// root misses attribute foo
+				Fail ();
+			} catch (XmlSchemaException) {
+			}
+
+			intSubset = "<!ELEMENT root (c)+><!ELEMENT c EMPTY><!ATTLIST c foo ID #REQUIRED bar IDREF #IMPLIED baz IDREFS #IMPLIED>";
+			dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			xml = dtd + "<root><c foo='val' /><c foo='val'></root>";
+			dvr = PrepareXmlReader (xml);
+			dvr.ValidationType = ValidationType.DTD;
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// c[1]
+			try {
+				dvr.Read ();	// c[2]
+				Fail ();
+			} catch (XmlSchemaException) {
+			}
+
+			xml = dtd + "<root><c foo='val' /><c baz='val val val 1 2 3'></root>";
+			dvr = PrepareXmlReader (xml);
+			dvr.Read ();	// DTD
+			dvr.Read ();	// root
+			dvr.Read ();	// c[1]
+			try {
+				dvr.Read ();	// c[2]
+				Fail ();
+			} catch (XmlSchemaException) {
+			}
 		}
 	}
 }

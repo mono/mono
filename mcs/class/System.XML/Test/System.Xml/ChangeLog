@@ -1,3 +1,13 @@
+2003-07-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttributeTests.cs : added IdentityConstraints().
+	* XmlDocumentTests.cs : added DocumentTypeNodes().
+	* XmlNodeTests.cs : added InnerText().
+	* XmlReaderCommonTests.cs : added XmlValidatingReader as one of the
+	  testing reader. Added IndexerAndAttributes().
+	* XmlValidatingReader.cs : modified TestAttributes() to have
+	  ReadAttributeValue() tests. Added TestIdentityConstraints()
+
 2003-07-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlConvertTests.cs,

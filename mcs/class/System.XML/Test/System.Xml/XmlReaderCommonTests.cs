@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 using NUnit.Framework;
 
@@ -131,20 +132,16 @@ namespace MonoTests.System.Xml
 		private void RunTest (string xml, TestMethod method)
 		{
 			xtr = new XmlTextReader (new StringReader (xml));
-			try {
-				method (xtr);
-			} catch (AssertionException ex) {
-				throw new AssertionException ("XmlTextReader failed:  " + ex.Message, ex);
-			}
+			method (xtr);
 
 			document.XmlResolver = null;
 			document.LoadXml (xml);
 			xnr = new XmlNodeReader (document);
-			try {
-				method (xnr);
-			} catch (AssertionException ex) {
-				throw new AssertionException ("XmlNodeReader failed:  " + ex.Message, ex);
-			}
+			method (xnr);
+
+			xtr = new XmlTextReader (new StringReader (xml));
+			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+			method (xvr);
 		}
 
 
@@ -1133,12 +1130,12 @@ namespace MonoTests.System.Xml
 			);
 
 			Assert (xmlReader.MoveToNextAttribute ());
-			Assert ("bar" == xmlReader.Name || "quux" == xmlReader.Name);
-			Assert ("baz" == xmlReader.Value || "quuux" == xmlReader.Value);
+			AssertEquals ("bar", xmlReader.Name);
+			AssertEquals ("baz", xmlReader.Value);
 
 			Assert (xmlReader.MoveToNextAttribute ());
-			Assert ("bar" == xmlReader.Name || "quux" == xmlReader.Name);
-			Assert ("baz" == xmlReader.Value || "quuux" == xmlReader.Value);
+			AssertEquals ("quux", xmlReader.Name);
+			AssertEquals ("quuux", xmlReader.Value);
 
 			Assert (!xmlReader.MoveToNextAttribute ());
 
@@ -1178,6 +1175,45 @@ namespace MonoTests.System.Xml
 			AssertEquals ("_2", xmlReader.Name);
 			Assert (xmlReader.MoveToNextAttribute ());
 			AssertEquals ("_3", xmlReader.Name);
+
+			Assert (!xmlReader.MoveToNextAttribute ());
+		}
+
+		[Test]
+		public void IndexerAndAttributes ()
+		{
+			string xml = @"<?xml version='1.0' standalone='no'?><foo _1='1' _2='2' _3='3' />";
+			RunTest (xml, new TestMethod (IndexerAndAttributes));
+		}
+
+		public void IndexerAndAttributes (XmlReader xmlReader)
+		{
+			Assert (xmlReader.Read ());
+			AssertEquals ("1.0", xmlReader ["version"]);
+			AssertEquals ("1.0", xmlReader.GetAttribute ("version"));
+			// XmlTextReader returns null, while XmlNodeReader returns "".
+			AssertEquals (null, xmlReader ["encoding"]);
+			AssertEquals (null, xmlReader.GetAttribute ("encoding"));
+			AssertEquals ("no", xmlReader ["standalone"]);
+			AssertEquals ("no", xmlReader.GetAttribute ("standalone"));
+			AssertEquals ("1.0", xmlReader [0]);
+			AssertEquals ("1.0", xmlReader.GetAttribute (0));
+			AssertEquals ("no", xmlReader [1]);
+			AssertEquals ("no", xmlReader.GetAttribute (1));
+
+			Assert (xmlReader.Read ());
+			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			AssertEquals ("1", xmlReader ["_1"]);
+
+			Assert (xmlReader.MoveToFirstAttribute ());
+			AssertEquals ("_1", xmlReader.Name);
+			AssertEquals ("1", xmlReader ["_1"]);
+			Assert (xmlReader.MoveToNextAttribute ());
+			AssertEquals ("_2", xmlReader.Name);
+			AssertEquals ("1", xmlReader ["_1"]);
+			Assert (xmlReader.MoveToNextAttribute ());
+			AssertEquals ("_3", xmlReader.Name);
+			AssertEquals ("1", xmlReader ["_1"]);
 
 			Assert (!xmlReader.MoveToNextAttribute ());
 		}
