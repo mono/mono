@@ -1,3 +1,8 @@
+2003-08-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* cpu-pentium.md (ldtoken): Change the length for mul.ovf.un from
+	12 to 16.  This fixes bug #47453.
+
 
 Thu Aug 7 15:59:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
