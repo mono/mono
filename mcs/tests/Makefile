@@ -83,7 +83,8 @@ TEST_SOURCES_common = \
 	a-capture1	a-capture7    a-nested-anon3    				\
 	a-capture2	a-capture8    a-nested-anon4  					\
 	a-capture3	a-capture9    a-nested-anon   	a-simple2			\
-	a-capture4	a-event       a-nested		a-simple
+	a-capture4	a-event       a-nested		a-simple			\
+	acc-modifiers	acc-modifiers2
 
 TEST_EXCLUDES_common = 
 
@@ -108,7 +109,7 @@ TEST_SOURCES_net_2_0 = \
 TEST_EXCLUDES_net_2_0 =
 
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
-	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
+	$(TEST_SOURCES_common) $(TEST_SOURCES_default) $(TEST_SOURCES_$(PLATFORM)))
 
 # These tests load User32.dll and/or Kernel32.dll
 TEST_SOURCES_win32 = test-67

@@ -1,3 +1,9 @@
+2004-11-30  Marek Safar <marek.safar@seznam.cz>
+
+	* Makefile: Add acc-modifiers tests.
+	Hardcode TEST_SOURCES_default to work also with my
+	custom profiles.
+
 2004-11-26  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Disable test-40.cs for gmcs.
