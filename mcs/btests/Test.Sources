@@ -13,6 +13,7 @@ Event_dll \
 #
 
 TEST_SOURCES = \
+NameSpaceTest\* \
 LabelA \
 LabelB \
 LabelC \
@@ -160,6 +161,27 @@ EventF \
 EventG \
 EventH \
 Event_exe \
+Arguments_ByValueA \
+Arguments_ByValueB \
+Arguments_ByValueC \
+Arguments_ByValueD \
+Arguments_ByReferenceA \
+Arguments_ByReferenceB \
+Arguments_ByReferenceC \
+Arguments_ByReferenceD \
+Function_ArguByValueA \
+Function_ArguByValueB \
+Function_ArguByValueC \
+Function_ArguByValueD \
+Function_ArguByReferenceA \
+Function_ArguByReferenceB \
+Function_ArguByReferenceC \
+Function_ArguByReferenceD \
+ParamArrayA \
+ParamArrayB \
+Function_ParamArrayA \
+Function_ParamArrayB \
+Function_ParamArrayc \
 AssignmentOperators \
 RelationalOperators \
 RelationalOperatorsA \
@@ -365,6 +387,11 @@ PropertyC10 \
 PropertyC11 \
 DelegateC1 \
 DelegateC2 \
+ParamArrayC2 \
+Function_ParamArrayC1 \
+Function_ParamArrayC2 \
+Function_ParamArrayC3 \
+Function_ParamArrayC4 \
 ConcatenationOperatorC1 \
 LogicalOperatorsC1 \
 LogicalOperatorsC2 \

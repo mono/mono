@@ -1,3 +1,33 @@
+2004-08-26 Anirban Bhattacharjee <banirban@novell.com>
+	Following tests are submtted by Manish Sinha <manishkumarsinha@sify.com>
+	* Arguments_ByValueA:
+	* Arguments_ByValueB:
+	* Arguments_ByValueC:
+	* Arguments_ByValueD:
+	* Arguments_ByReferenceA:
+	* Arguments_ByReferenceB:
+	* Arguments_ByReferenceC:
+	* Arguments_ByReferenceD:
+	* Function_ArguByValueA:
+	* Function_ArguByValueB:
+	* Function_ArguByValueC:
+	* Function_ArguByValueD:
+	* Function_ArguByReferenceA:
+	* Function_ArguByReferenceB:
+	* Function_ArguByReferenceC:
+	* Function_ArguByReferenceD:
+	* ParamArrayA:
+	* ParamArrayB:
+	* Function_ParamArrayA:
+	* Function_ParamArrayB:
+	* Function_ParamArrayc:
+	* ParamArrayC2:
+	* Function_ParamArrayC1:
+	* Function_ParamArrayC2:
+	* Function_ParamArrayC3:
+	* Function_ParamArrayC4i:
+	* Test.Sources: Included new test
+
 2004-08-25 Sachin Kumar <skumar1@novell.com>
 	* ConditionalStatementsC.vb: 
 		Added small test for nested Select Case Statement 
