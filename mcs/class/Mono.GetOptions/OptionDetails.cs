@@ -72,9 +72,21 @@ namespace Mono.GetOptions
 		{
 			string optionHelp;
 			// TODO: Yet not that good
+			string shortPrefix;
+			string longPrefix;
+			if(this.OptionBundle.ParsingMode == Mono.GetOptions.OptionsParsingMode.Windows)
+			{
+				shortPrefix = "/";
+				longPrefix = "/";
+			} 
+			else 
+			{
+				shortPrefix = "-";
+				longPrefix = "--";
+			}
 			optionHelp = "  ";
-			optionHelp += (this.ShortForm != ' ') ? "-"+this.ShortForm+" " : "   ";
-			optionHelp += (this.LongForm != string.Empty && this.LongForm != null) ? "--"+this.LongForm : "";
+			optionHelp += (this.ShortForm != ' ') ? shortPrefix+this.ShortForm+" " : "   ";
+			optionHelp += (this.LongForm != string.Empty && this.LongForm != null) ? longPrefix+this.LongForm : "";
 			if (NeedsParameter)
 			{
 				if (this.LongForm != string.Empty && this.LongForm != null)
