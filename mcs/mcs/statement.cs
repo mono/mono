@@ -675,6 +675,7 @@ namespace Mono.CSharp {
 		bool defined;
 		bool referenced;
 		Label label;
+		ILGenerator ig;
 
 		FlowBranching.UsageVector vectors;
 		
@@ -687,6 +688,7 @@ namespace Mono.CSharp {
 		{
 			if (defined)
 				return label;
+			ig = ec.ig;
 			label = ec.ig.DefineLabel ();
 			defined = true;
 
@@ -723,6 +725,10 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			if (ig != null && ig != ec.ig) {
+				Report.Error (1632, "Control cannot leave body of anonymous method");
+				return;
+			}
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
 		}

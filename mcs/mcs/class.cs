@@ -970,7 +970,7 @@ namespace Mono.CSharp {
 			base_class = null;
 
 			int count = Bases.Count;
-			int start, i, j;
+			int start = 0, i, j;
 
 			if (Kind == Kind.Class){
 				TypeExpr name = ResolveBaseTypeExpr (
@@ -981,14 +981,12 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (name.IsClass){
+				if (!name.IsInterface) {
+					// base_class could be a class, struct, enum, delegate.
+					// This is validated in GetClassBases.
 					base_class = name;
 					start = 1;
-				} else {
-					start = 0;
 				}
-			} else {
-				start = 0;
 			}
 
 			TypeExpr [] ifaces = new TypeExpr [count-start];
@@ -1081,18 +1079,16 @@ namespace Mono.CSharp {
 			for (i = 0; i < count; i++) {
 				TypeExpr iface = (TypeExpr) ifaces [i];
 
-				if ((Kind != Kind.Class) && !iface.IsInterface){
-					string what = Kind == Kind.Struct ?
-						"Struct" : "Interface";
-
-					Report.Error (527, Location,
-						      "In {0} `{1}', type `{2}' is not "+
-						      "an interface", what, Name, iface.Name);
+				if (!iface.IsInterface) {
 					error = true;
-					return null;
-				}
-				if (iface.IsClass) {
-					if (base_class != null)
+					if (Kind != Kind.Class) {
+						string what = Kind == Kind.Struct ? "Struct" : "Interface";
+						
+						Report.Error (527, Location,
+							      "In {0} `{1}', type `{2}' is not "+
+							      "an interface", what, Name, iface.Name);
+					}
+					else if (base_class != null)
 						Report.Error (1721, Location,
 							      "In Class `{0}', `{1}' is not an interface, and a base class has already been defined",
 							      Name, iface.Name);
@@ -1101,8 +1097,7 @@ namespace Mono.CSharp {
 							      "In Class `{0}', `{1}' is not " +
 							      "an interface, a base class must be listed first", Name, iface.Name);
 					}
-					error = true;
-					return null;
+					continue;
 				}
 
 				for (int x = 0; x < i; x++) {
@@ -1111,18 +1106,22 @@ namespace Mono.CSharp {
 							      "`{0}' is already listed in " +
 							      "interface list", iface.Name);
 						error = true;
-						return null;
 					}
 				}
 
 				if ((Kind == Kind.Interface) &&
-				    !iface.AsAccessible (Parent, ModFlags))
+				    !iface.AsAccessible (Parent, ModFlags)) {
 					Report.Error (61, Location,
 						      "Inconsistent accessibility: base " +
 						      "interface `{0}' is less accessible " +
 						      "than interface `{1}'", iface.Name,
 						      Name);
+					error = true;
+				}
 			}
+
+			if (error)
+				return null;
 
 			return ifaces;
 		}
