@@ -1,3 +1,8 @@
+2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* EvidenceTest.cs: Upgraded tests to NUnit2. Added new tests.
+	* StrongNameTest.cs: Class now inherits from Assertion.
+
 2004-01-01  Nick Drochak  <ndrochak@gol.com>
 
 	* PermissionRequestEvidenceTest.cs: New File
