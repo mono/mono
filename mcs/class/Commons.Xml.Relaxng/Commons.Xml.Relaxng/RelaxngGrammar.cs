@@ -91,6 +91,20 @@ namespace Commons.Xml.Relaxng
 			get { return divs; }
 		}
 
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "grammar", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngStart start in Starts)
+				start.Write (writer);
+			foreach (RelaxngDefine define in Defines)
+				define.Write (writer);
+			foreach (RelaxngInclude include in Includes)
+				include.Write (writer);
+			foreach (RelaxngDiv div in Divs)
+				div.Write (writer);
+			writer.WriteEndElement ();
+		}
+
 		internal Hashtable IncludedUris {
 			get { return includedUris; }
 		}

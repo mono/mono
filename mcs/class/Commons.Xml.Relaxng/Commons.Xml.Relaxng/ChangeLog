@@ -1,3 +1,9 @@
+2004-03-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngGrammar.cs,
+	  RelaxngNameClass.cs,
+	  RelaxngPattern.cs : Added Write() support.
+
 2004-02-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngReader.cs : ReadPattern() should be public.

@@ -41,6 +41,8 @@ namespace Commons.Xml.Relaxng
 			get { return baseUri; }
 			set { baseUri = value; }
 		}
+
+		public abstract void Write (XmlWriter write);
 	}
 
 	public abstract class RelaxngSingleContentPattern : RelaxngPattern
@@ -138,6 +140,15 @@ namespace Commons.Xml.Relaxng
 			set { p = value; }
 		}
 
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "start", RelaxngGrammar.NamespaceURI);
+			if (combine != null)
+				writer.WriteAttributeString ("combine", combine);
+			p.Write (writer);
+			writer.WriteEndElement ();
+		}
+
 		internal RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			return p.Compile (grammar);
@@ -150,6 +161,10 @@ namespace Commons.Xml.Relaxng
 		private RelaxngPatternList patterns = new RelaxngPatternList ();
 		string combine;
 
+		public RelaxngDefine ()
+		{
+		}
+
 		public RelaxngPatternList Patterns {
 			get { return patterns; }
 		}
@@ -157,6 +172,27 @@ namespace Commons.Xml.Relaxng
 		public string Combine {
 			get { return combine; }
 			set { combine = value; }
+		}
+
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "define", RelaxngGrammar.NamespaceURI);
+			writer.WriteAttributeString ("name", name);
+			if (combine != null)
+				writer.WriteAttributeString ("combine", combine);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
+		}
+
+		internal RdpPattern Compile (RelaxngGrammar grammar)
+		{
+			return makeSingle (grammar);
 		}
 
 		private RdpPattern makeSingle (RelaxngGrammar g)
@@ -172,20 +208,6 @@ namespace Commons.Xml.Relaxng
 					((RelaxngPattern) patterns [i]).Compile (g));
 			}
 			return p;
-		}
-
-		public RelaxngDefine ()
-		{
-		}
-
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-
-		internal RdpPattern Compile (RelaxngGrammar grammar)
-		{
-			return makeSingle (grammar);
 		}
 	}
 
@@ -221,6 +243,19 @@ namespace Commons.Xml.Relaxng
 		public string NSContext {
 			get { return ns; }
 			set { ns = value; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "include", RelaxngGrammar.NamespaceURI);
+			writer.WriteAttributeString ("href", href);
+			foreach (RelaxngStart start in Starts)
+				start.Write (writer);
+			foreach (RelaxngDefine define in Defines)
+				define.Write (writer);
+			foreach (RelaxngDiv div in Divs)
+				div.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		// compile into div
@@ -315,6 +350,20 @@ namespace Commons.Xml.Relaxng
 
 		public IList Divs {
 			get { return divs; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "div", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngStart start in Starts)
+				start.Write (writer);
+			foreach (RelaxngDefine define in Defines)
+				define.Write (writer);
+			foreach (RelaxngInclude include in Includes)
+				include.Write (writer);
+			foreach (RelaxngDiv div in Divs)
+				div.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		internal void Compile (RelaxngGrammar grammar)
@@ -420,6 +469,11 @@ namespace Commons.Xml.Relaxng
 			set { this.List [i] = value; }
 		}
 
+		public void Insert (int pos, RelaxngPattern p)
+		{
+			List.Insert (pos, p);
+		}
+
 		public void Remove (RelaxngPattern p)
 		{
 			List.Remove (p);
@@ -435,6 +489,12 @@ namespace Commons.Xml.Relaxng
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.NotAllowed; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "notAllowed", RelaxngGrammar.NamespaceURI);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -458,6 +518,12 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Empty; }
 		}
 
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "empty", RelaxngGrammar.NamespaceURI);
+			writer.WriteEndElement ();
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			return RdpEmpty.Instance;
@@ -477,6 +543,12 @@ namespace Commons.Xml.Relaxng
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Text; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "text", RelaxngGrammar.NamespaceURI);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -524,6 +596,33 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Data; }
 		}
 
+		public RelaxngParamList ParamList {
+			get { return paramList; }
+		}
+
+		public RelaxngExcept Except {
+			get { return except; }
+			set { except = value; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "data", RelaxngGrammar.NamespaceURI);
+			if (DatatypeLibrary != null && DatatypeLibrary != String.Empty)
+				writer.WriteAttributeString ("xmlns", "data", "http://www.w3.org/2000/xmlns/", DatatypeLibrary);
+			writer.WriteStartAttribute ("type", String.Empty);
+			writer.WriteQualifiedName (Type, DatatypeLibrary);
+			writer.WriteEndAttribute ();
+
+			foreach (RelaxngParam p in ParamList)
+				p.Write (writer);
+
+			if (Except != null)
+				Except.Write (writer);
+
+			writer.WriteEndElement ();
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 //			RdpParamList rdpl = new RdpParamList ();
@@ -546,15 +645,6 @@ namespace Commons.Xml.Relaxng
 				return new RdpData (new RdpDatatype (DatatypeLibrary, Type, ParamList, grammar.Provider));
 		}
 
-		public RelaxngParamList ParamList {
-			get { return paramList; }
-		}
-
-		public RelaxngExcept Except {
-			get { return except; }
-			set { except = value; }
-		}
-
 		internal override void CheckConstraints () 
 		{
 			CheckDatatypeName ();
@@ -569,16 +659,30 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Value; }
 		}
 
+		public string Value {
+			get { return value; }
+			set { this.value = value; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "value", RelaxngGrammar.NamespaceURI);
+			if (Type != null) {
+				writer.WriteStartAttribute ("type", String.Empty);
+				if (DatatypeLibrary != null && DatatypeLibrary != String.Empty)
+					writer.WriteAttributeString ("xmlns", "data", "http://www.w3.org/2000/xmlns/", DatatypeLibrary);
+				writer.WriteQualifiedName (Type, DatatypeLibrary);
+				writer.WriteEndAttribute ();
+			}
+			writer.WriteString (Value);
+			writer.WriteEndElement ();
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
 			return new RdpValue (new RdpDatatype (DatatypeLibrary,
 				Type, null, grammar.Provider), value);
-		}
-
-		public string Value {
-			get { return value; }
-			set { this.value = value; }
 		}
 
 		internal override void CheckConstraints () 
@@ -589,14 +693,20 @@ namespace Commons.Xml.Relaxng
 
 	public class RelaxngList : RelaxngSingleContentPattern
 	{
-		IList patterns = new ArrayList ();
-
 		internal RelaxngList ()
 		{
 		}
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.List; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "list", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -615,7 +725,6 @@ namespace Commons.Xml.Relaxng
 	public class RelaxngElement : RelaxngSingleContentPattern
 	{
 		RelaxngNameClass nc;
-		ArrayList patterns = new ArrayList ();
 
 		public RelaxngElement ()
 		{
@@ -628,6 +737,15 @@ namespace Commons.Xml.Relaxng
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Element; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "element", RelaxngGrammar.NamespaceURI);
+			nc.Write (writer);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -654,8 +772,27 @@ namespace Commons.Xml.Relaxng
 		{
 		}
 
+		public RelaxngPattern Pattern {
+			get { return p; }
+			set { p = value; }
+		}
+
+		public RelaxngNameClass NameClass {
+			get { return nc; }
+			set { nc = value; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Attribute; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "attribute", RelaxngGrammar.NamespaceURI);
+			nc.Write (writer);
+			if (p != null)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		private void checkInvalidAttrNameClass (RdpNameClass nc)
@@ -701,16 +838,6 @@ namespace Commons.Xml.Relaxng
 				(p != null) ?
 					p.Compile (grammar) :
 					RdpText.Instance);
-		}
-
-		public RelaxngPattern Pattern {
-			get { return p; }
-			set { p = value; }
-		}
-
-		public RelaxngNameClass NameClass {
-			get { return nc; }
-			set { nc = value; }
 		}
 
 		internal override void CheckConstraints () 
@@ -806,8 +933,20 @@ namespace Commons.Xml.Relaxng
 		{
 		}
 
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Ref; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "ref", RelaxngGrammar.NamespaceURI);
+			writer.WriteAttributeString ("name", name);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -815,11 +954,6 @@ namespace Commons.Xml.Relaxng
 			// Important!! This compile method only generates stub.
 			IsCompiled = false;
 			return new RdpUnresolvedRef (name, grammar);
-		}
-
-		public string Name {
-			get { return name; }
-			set { name = value; }
 		}
 
 		internal override void CheckConstraints () 
@@ -836,19 +970,26 @@ namespace Commons.Xml.Relaxng
 		{
 		}
 
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.ParentRef; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "parentRef", RelaxngGrammar.NamespaceURI);
+			writer.WriteAttributeString ("name", name);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = false;
 			return new RdpUnresolvedRef (name, grammar.ParentGrammar);
-		}
-
-		public string Name {
-			get { return name; }
-			set { name = value; }
 		}
 
 		internal override void CheckConstraints () 
@@ -866,8 +1007,25 @@ namespace Commons.Xml.Relaxng
 		{
 		}
 
+		public string Href {
+			get { return href; }
+			set { href = value; }
+		}
+
+		public string NSContext {
+			get { return ns; }
+			set { ns = value; }
+		}
+
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.ExternalRef; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "externalRef", RelaxngGrammar.NamespaceURI);
+			writer.WriteAttributeString ("href", Href);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -887,16 +1045,6 @@ namespace Commons.Xml.Relaxng
 			return ret;
 		}
 
-		public string Href {
-			get { return href; }
-			set { href = value; }
-		}
-
-		public string NSContext {
-			get { return ns; }
-			set { ns = value; }
-		}
-
 		internal override void CheckConstraints () 
 		{
 			// nothing to check
@@ -911,6 +1059,14 @@ namespace Commons.Xml.Relaxng
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.OneOrMore; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "oneOrMore", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -928,6 +1084,14 @@ namespace Commons.Xml.Relaxng
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.ZeroOrMore; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "zeroOrMore", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -949,6 +1113,14 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Optional; }
 		}
 
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "optional", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -965,6 +1137,14 @@ namespace Commons.Xml.Relaxng
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Mixed; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "mixed", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -984,6 +1164,14 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Choice; }
 		}
 
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "choice", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -1001,6 +1189,14 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Group; }
 		}
 
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "group", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
+		}
+
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -1016,6 +1212,14 @@ namespace Commons.Xml.Relaxng
 
 		public override RelaxngPatternType PatternType {
 			get { return RelaxngPatternType.Interleave; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "interleave", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
@@ -1050,6 +1254,14 @@ namespace Commons.Xml.Relaxng
 			set { this.value = value; }
 		}
 
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "param", RelaxngGrammar.NamespaceURI);
+			writer.WriteAttributeString ("name", name);
+			writer.WriteString (Value);
+			writer.WriteEndElement ();
+		}
+
 		internal RdpParam Compile (RelaxngGrammar grammar)
 		{
 			IsCompiled = true;
@@ -1073,6 +1285,11 @@ namespace Commons.Xml.Relaxng
 			set { this.List [i] = value; }
 		}
 
+		public void Insert (int pos, RelaxngParam p)
+		{
+			List.Insert (pos, p);
+		}
+
 		public void Remove (RelaxngParam p)
 		{
 			List.Remove (p);
@@ -1089,6 +1306,14 @@ namespace Commons.Xml.Relaxng
 
 		public RelaxngPatternList Patterns {
 			get { return patterns; }
+		}
+
+		public override void Write (XmlWriter writer)
+		{
+			writer.WriteStartElement ("", "except", RelaxngGrammar.NamespaceURI);
+			foreach (RelaxngPattern p in Patterns)
+				p.Write (writer);
+			writer.WriteEndElement ();
 		}
 	}
 
