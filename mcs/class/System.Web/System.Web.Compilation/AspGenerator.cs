@@ -1486,10 +1486,12 @@ class AspGenerator
 		NewControlFunction (component.TagID, component.ControlID, component_type,
 				    component.ChildrenKind, component.DefaultPropertyName); 
 
-		if (component_type.IsSubclassOf (typeof (System.Web.UI.UserControl)))
+		if (component_type == typeof (UserControl) ||
+		    component_type.IsSubclassOf (typeof (System.Web.UI.UserControl)))
 			current_function.Append ("\t\t\t__ctrl.InitializeAsUserControl (Page);\n");
 
-		if (component_type.IsSubclassOf (typeof (System.Web.UI.Control)))
+		if (component_type == typeof (Control) ||
+		    component_type.IsSubclassOf (typeof (System.Web.UI.Control)))
 			current_function.AppendFormat ("\t\t\t__ctrl.ID = \"{0}\";\n", component.ControlID);
 
 		AddCodeForAttributes (component.ComponentType, component.Attributes);

@@ -1,3 +1,7 @@
+2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: fixed a couple of thinkos related to IsSubclassOf.
+
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspElements.cs: attributes without value lacked a space afterwards.
