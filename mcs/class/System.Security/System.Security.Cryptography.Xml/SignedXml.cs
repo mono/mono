@@ -24,6 +24,7 @@ namespace System.Security.Cryptography.Xml {
 		private string keyName;
 		private XmlDocument envdoc;
 		private IEnumerator pkEnumerator;
+		private XmlElement signatureElement;
 
 		public SignedXml () 
 		{
@@ -200,9 +201,13 @@ namespace System.Security.Cryptography.Xml {
 			if (t == null)
 				throw new CryptographicException ("Unknown Canonicalization Method {0}", signature.SignedInfo.CanonicalizationMethod);
 
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (signature.SignedInfo.GetXml ().OuterXml);
-			return ApplyTransform (t, doc); 
+			if (signatureElement != null) {
+				// TODO - check signature.SignedInfo.Id
+				XmlNodeList xnl = signatureElement.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI);
+				t.LoadInput (xnl);
+			}
+			// C14N and C14NWithComments always return a Stream in GetOutput
+			return (Stream) t.GetOutput ();
 		}
 
 		private byte[] Hash (string hashAlgorithm) 
@@ -420,6 +425,10 @@ namespace System.Security.Cryptography.Xml {
 
 		public void LoadXml (XmlElement value) 
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			signatureElement = value;
 			signature.LoadXml (value);
 		}
 
