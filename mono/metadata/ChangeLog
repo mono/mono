@@ -1,3 +1,7 @@
+2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: mark threadpool threads as background.
+
 2003-10-03  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* decimal.c - define DECINLINE to nothing if not using GCC
