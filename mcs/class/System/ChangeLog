@@ -1,3 +1,13 @@
+2004-12-21  Chris Toshok  <toshok@ximian.com>
+
+	* System.dll.sources: add System.IO.Ports/*.
+
+	* System.IO.Ports/SerialPort.cs,
+	System.IO.Ports/SerialReceivedEventArgs.cs,
+	System.IO.Ports/SerialPinChangedEventArgs.cs,
+	System.IO.Ports/SerialErrorEventArgs.cs: initial import of the
+	System.IO.Ports stuff.
+
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System_test.dll.sources: added CookieContainerTest.cs.

@@ -461,6 +461,10 @@ System.IO/WindowsWatcher.cs
 System.IO.Compression/CompressionMode.cs
 System.IO.Compression/DeflateStream.cs
 System.IO.Compression/GzipStream.cs
+System.IO.Ports/SerialErrorEventArgs.cs
+System.IO.Ports/SerialPinChangedEventArgs.cs
+System.IO.Ports/SerialPort.cs
+System.IO.Ports/SerialReceivedEventArgs.cs
 System.Net/AuthenticationManager.cs
 System.Net/Authorization.cs
 System.Net/BasicClient.cs
