@@ -221,5 +221,127 @@ namespace MonoTests.Mono.Security.Cryptography {
 			AssertEquals ("KeySize", 128, rc4.KeySize);
 			AssertEquals ("IV.Length", 0, rc4.IV.Length);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformBlock_InputBuffer_Null () 
+		{
+			byte[] output = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (null, 0, 1, output, 0); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformBlock_InputOffset_Negative () 
+		{
+			byte[] input = new byte [1];
+			byte[] output = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (input, -1, 1, output, 0); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformBlock_InputOffset_Overflow () 
+		{
+			byte[] input = new byte [1];
+			byte[] output = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (input, Int32.MaxValue, 1, output, 0); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformBlock_InputCount_Negative () 
+		{
+			byte[] input = new byte [1];
+			byte[] output = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (input, 0, -1, output, 0); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformBlock_InputCount_Overflow () 
+		{
+			byte[] input = new byte [1];
+			byte[] output = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (input, 1, Int32.MaxValue, output, 0); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformBlock_OutputBuffer_Null () 
+		{
+			byte[] input = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (input, 0, 1, null, 0); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformBlock_OutputOffset_Negative () 
+		{
+			byte[] input = new byte [1];
+			byte[] output = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (input, 0, 1, output, -1); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformBlock_OutputOffset_Overflow () 
+		{
+			byte[] input = new byte [1];
+			byte[] output = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformBlock (input, 0, 1, output, Int32.MaxValue); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformFinalBlock_InputBuffer_Null () 
+		{
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformFinalBlock (null, 0, 1); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformFinalBlock_InputOffset_Negative () 
+		{
+			byte[] input = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformFinalBlock (input, -1, 1); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformFinalBlock_InputOffset_Overflow () 
+		{
+			byte[] input = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformFinalBlock (input, Int32.MaxValue, 1); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformFinalBlock_InputCount_Negative () 
+		{
+			byte[] input = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformFinalBlock (input, 0, -1); 
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformFinalBlock_InputCount_Overflow () 
+		{
+			byte[] input = new byte [1];
+			ARC4Managed rc4 = new ARC4Managed ();
+			rc4.TransformFinalBlock (input, 1, Int32.MaxValue); 
+		}
 	}
 }
