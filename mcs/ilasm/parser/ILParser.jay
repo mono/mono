@@ -25,6 +25,7 @@ namespace Mono.ILASM {
                 private string pinvoke_meth;
                 private PEAPI.PInvokeAttr pinvoke_attr;
                 private ILTokenizer tokenizer;
+		static int yacc_verbose_flag;
                                 
 		public ILParser (CodeGen codegen, ILTokenizer tokenizer)
                 {
