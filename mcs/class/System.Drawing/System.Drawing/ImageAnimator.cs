@@ -33,18 +33,65 @@
 using System;
 using System.Drawing.Imaging;
 using System.Threading;
+using System.Collections;
 
 namespace System.Drawing
 {
+	//AnimateEventArgs class
+	class AnimateEventArgs : EventArgs 
+	{  
+		private int frameCount;
+		private int activeFrameCount = 0;
+		private Thread thread;
+      
+		//Constructor.
+		//
+		public AnimateEventArgs(Image img)
+		{
+			Guid[] dimensionList = img.FrameDimensionsList;
+			int length = dimensionList.Length;
+			for (int i=0; i<length; i++) {
+				if (dimensionList [i].Equals(FrameDimension.Time.Guid))
+					this.frameCount = img.GetFrameCount (FrameDimension.Time);
+			}			
+		}
+      
+		public int FrameCount {     
+			get { 
+				return frameCount;
+			}      
+		}
+      
+		public int ActiveFrameCount {
+			get {
+				return activeFrameCount;
+			}
+
+			set {
+				activeFrameCount = value;
+			}
+		}
+
+		public Thread RunThread{
+			get {
+				return thread;
+			}
+
+			set {
+				thread = value;
+			}
+		}
+	}
+
 	/// <summary>
 	/// Summary description for ImageAnimator.
 	/// </summary>
+	/// 
+	
 	public sealed class ImageAnimator
 	{
-		static private bool isAnimating = false;
-		static private Thread thread;
-		static private int activeFrame;
-
+		static Hashtable ht = new Hashtable (); 
+		
 		private ImageAnimator ()
 		{
 			//
@@ -56,23 +103,17 @@ namespace System.Drawing
 		{
 			if (img == null)
 				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");
-
-			if (!isAnimating) {
-				int frameCount = img.GetFrameCount (FrameDimension.Time);
-				if (frameCount>1){
-					isAnimating = true;
-					//Start a new thread for looping within multiple frames of the image
-					WorkerThread WT = new WorkerThread(img, new ActiveFrameCountCallBack(ResultCallback));
-					ThreadStart TS = new ThreadStart(WT.LoopHandler);	
-					thread = new Thread(TS);
-					//Console.WriteLine ("Starting Thread");
-					//MessageBox.Show ("Starting Thread");
-					thread.Start();					
-				}
-							
+			
+			if (!ht.ContainsKey (img)) {
+				AnimateEventArgs evtArgs = new AnimateEventArgs (img);
+				WorkerThread WT = new WorkerThread(onFrameChangeHandler, evtArgs);
+				ThreadStart TS = new ThreadStart(WT.LoopHandler);	
+				Thread thread = new Thread(TS);
+				evtArgs.RunThread = thread;
+				ht.Add (img, evtArgs);
+				
+				thread.Start();				
 			}
-			//Console.WriteLine ("Started Thread");
-			//MessageBox.Show ("Started Thread");
 		}
 
 		public static bool CanAnimate (Image img)
@@ -89,99 +130,78 @@ namespace System.Drawing
 			//with parameter FrameDimension.Time
 			Guid[] dimensionList = img.FrameDimensionsList;
 			int length = dimensionList.Length;
-			for (int i=0; i<length; i++){
-				if (dimensionList [i].Equals(FrameDimension.Time.Guid)){
-					int frameCount = img.GetFrameCount (FrameDimension.Time);
+			int frameCount;
+			for (int i=0; i<length; i++) 
+			{
+				if (dimensionList [i].Equals(FrameDimension.Time.Guid)) 
+				{
+					frameCount = img.GetFrameCount (FrameDimension.Time);
 					if (frameCount > 1)
 						return true;
 				}
 			}			
 
-			return false; 
+			return false; 		
 		}
 
 		public static void StopAnimate (Image img, EventHandler onFrameChangeHandler)
 		{
 			if (img == null)
-				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");
-			//Console.WriteLine ("Stopping animation");
-			//MessageBox.Show ("Stopping animation");
-			if (isAnimating) {
-				isAnimating = false;
-				thread.Abort ();
-				//Thread.CurrentThread.Join ();
-				//Console.WriteLine ("Thread Joined");
-				//MessageBox.Show ("Thread Joined");
-			}
-			
+				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");			
+
+			if (ht.ContainsKey (img)) {
+				AnimateEventArgs evtArgs = (AnimateEventArgs) ht [img];
+				evtArgs.RunThread.Abort ();
+				ht.Remove (img);
+			}				
 		}
 
-		[MonoTODO ("Implement")]
 		public static void UpdateFrames ()
 		{
-			throw new NotImplementedException (); 
+			foreach (Image img in ht.Keys) {
+				UpdateFrames (img);
+			}
 		}
 		
-		[MonoTODO ("Implement")]
 		public static void UpdateFrames (Image img)
 		{
-			/* Not sure as to what else needs to be done here.
-			  I have updated the frame thats what i can think of
-			  It surely requires something else also, as my application
-			  shows only a static image */
+			if (img == null)
+				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");
 
-			throw new NotImplementedException();
-		}	
-
-		// The callback method must match the signature of the
-		// callback delegate.
-		//
-		static void ResultCallback(int activeFrameCount) 
-		{
-			activeFrame = activeFrameCount;
+			if (ht.ContainsKey (img)){
+				//Need a way to get the delay during animation
+				AnimateEventArgs evtArgs = (AnimateEventArgs) ht [img];
+				if (evtArgs.ActiveFrameCount < evtArgs.FrameCount-1){
+					evtArgs.ActiveFrameCount ++;
+					img.SelectActiveFrame (FrameDimension.Time, evtArgs.ActiveFrameCount);
+				} 
+				else
+					evtArgs.ActiveFrameCount = 0;
+				ht [img] = evtArgs;
+			}			
 		}
-
 	}
-
-	// Delegate that defines the signature for the callback method.
-	//
-	delegate void ActiveFrameCountCallBack(int lineCount);
 
 	class WorkerThread
 	{
-		private Image image;
-		private int activeFrameCount;
-		private int frameCount;
-		private ActiveFrameCountCallBack afc;
+		private EventHandler frameChangeHandler;
+		private AnimateEventArgs animateEventArgs;
 				
-		public WorkerThread(Image img, ActiveFrameCountCallBack afCount)
+		public WorkerThread(EventHandler frmChgHandler, AnimateEventArgs aniEvtArgs)
 		{
-			//Console.WriteLine ("Worker Thread Constructor");
-			//MessageBox.Show ("Worker Thread Constructor");
-			image = img;			
-			frameCount = img.GetFrameCount (FrameDimension.Time);
-			afc = afCount;
+			frameChangeHandler = frmChgHandler;
+			animateEventArgs = aniEvtArgs;
 		}
     
 		public void LoopHandler()
 		{
 			try
 			{
-				//Console.WriteLine ("Came in loop handler");
-				//MessageBox.Show ("Came in loop handler");
-				while (true)
-				{
+				while (true) {
 					//Need a way to get the delay during animation
 					Thread.Sleep (100);
-					activeFrameCount++;
-					if (activeFrameCount > frameCount)
-						activeFrameCount = 0;
-					if (afc != null)
-						afc (activeFrameCount);
-
-				}
-				//Console.WriteLine ("Exiting loop handler");
-				//MessageBox.Show ("Exiting loop handler");
+					frameChangeHandler (null, animateEventArgs);
+				}				
 			}
 			catch(ThreadAbortException)
 			{ 
@@ -192,7 +212,6 @@ namespace System.Drawing
 			{
 				throw er;
 			}
-
 		}
 	}
 }
