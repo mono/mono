@@ -1269,12 +1269,18 @@ namespace System.Windows.Forms{
 			IntPtr hOldFont = new IntPtr ( 0 );
 			IntPtr hFont = new IntPtr ( Win32.SendMessage ( hWnd, (int)Msg.WM_GETFONT, 0, 0 ) );
 			IntPtr hDC   = Win32.GetWindowDC ( hWnd );
+#if ToHfontIsWorking
 			if ( hFont != IntPtr.Zero )
 				hOldFont = Win32.SelectObject ( hDC, hFont );
+#else
+			Console.WriteLine("GetTextExtent ToHfont() hack active");
+#endif
 			SIZE size = new SIZE();
 			Win32.GetTextExtentPoint32 ( hDC, text, text.Length, ref size);
+#if ToHfontIsWorking
 			if ( hOldFont != IntPtr.Zero )
 				Win32.SelectObject ( hDC, hOldFont );
+#endif
 			Win32.ReleaseDC ( hWnd, hDC );
 			return size;
 		}
@@ -1296,7 +1302,7 @@ namespace System.Windows.Forms{
 		}
 
 		// FIXME - should not use absolute path
-		[DllImport ("/usr/local/lib/wine/mono-winelib.exe.so", EntryPoint="WineLoadLibrary")]
+		[DllImport ("/usr/local/lib/wine/wine-sharedlib.exe.so", EntryPoint="WineLoadLibrary")]
 		extern static void WineLoadLibrary(string s);
 
 		static string[] WinColors = 	{

@@ -1,3 +1,7 @@
+2004-03-03 Peter Dennis Bartok <pbartok@novell.com>
+	* Form.cs: Changed initialization code to match improved (generalized) Wine patch
+	* win32functions.cs: Changed name of wine shared library
+
 2004-02-26 Peter Dennis Bartok <pbartok@novell.com>
 	* Form.cs: Added initialization code for new Wine patch
 	* win32functions.cs: Removed initializion code for the old Wine patch and for monostub

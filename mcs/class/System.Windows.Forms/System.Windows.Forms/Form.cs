@@ -107,11 +107,11 @@
     		
 			// Initialization for Wine
 			// FIXME - Should not use absolute path
-			[DllImport ("/usr/local/lib/wine/mono-winelib.exe.so", EntryPoint="MonoWineInit")]
-			extern static int MonoWineInit();
+			[DllImport ("/usr/local/lib/wine/wine-sharedlib.exe.so", EntryPoint="SharedWineInit")]
+			extern static int SharedWineInit();
 
 			static Form () {
-				MonoWineInit();
+				SharedWineInit();
 			}
     		
 			//  --- Public Properties
