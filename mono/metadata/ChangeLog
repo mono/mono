@@ -1,3 +1,12 @@
+2003-02-08  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* icall.c: Added "System.Math::Floor", "System.Math::Round" and
+	"System.Math::Round2".
+	* sysmath.h: Added Floor, Round and Round2 definitions.
+	* sysmath.c: Modified certain functions that were not 100% compliant
+	with MS.NET (math precision) and added the implementation of Floor,
+	Round and Round2.
+
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c (mono_debug_symfile_add_method): Ignore interncalls.
