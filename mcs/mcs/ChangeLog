@@ -1,3 +1,24 @@
+2002-10-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (PropertyExpr): Do not use PropertyInfo.CanRead,
+	CanWrite, because those refer to this particular instance of the
+	property, and do not take into account the fact that we can
+	override single members of a property.
+
+	Constructor requires an EmitContext.  The resolution process does
+	not happen here, but we need to compute the accessors before,
+	because the resolution does not always happen for properties.
+	
+	* typemanager.cs (RealMemberLookup): Set private_ok if we are a
+	subclass, before we did not update this flag, but we did update
+	bindingflags. 
+
+	(GetAccessors): Drop this routine, as it did not work in the
+	presence of partially overwritten set/get methods. 
+
+	Notice that this broke the cs1540 detection, but that will require
+	more thinking. 
+	
 2002-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* class.cs:
