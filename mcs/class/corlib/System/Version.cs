@@ -33,7 +33,12 @@
 namespace System
 {
 	[Serializable]
-	public sealed class Version : ICloneable, IComparable
+	public sealed class Version : ICloneable,
+#if NET_2_0
+		IComparable, IComparable<Version>
+#else
+		IComparable
+#endif
 	{
 
 		int _Major, _Minor, _Build, _Revision;
@@ -206,6 +211,43 @@ namespace System
 				return true;
 			return false;
 		}
+
+#if NET_2_0
+		public int CompareTo (Version v)
+		{
+			if (this._Major > v._Major)
+				return 1;
+			else if (this._Major < v._Major)
+				return -1;
+
+			if (this._Minor > v._Minor)
+				return 1;
+			else if (this._Minor < v._Minor)
+				return -1;
+
+			if (this._Build > v._Build)
+				return 1;
+			else if (this._Build < v._Build)
+				return -1;
+
+			if (this._Revision > v._Revision)
+				return 1;
+			else if (this._Revision < v._Revision)
+				return -1;
+
+			return 0;
+		}
+
+		public bool Equals (Version x)
+		{
+			if ((x._Major == _Major) &&
+			    (x._Minor == _Minor) &&
+			    (x._Build == _Build) &&
+			    (x._Revision == _Revision))
+				return true;
+			return false;
+		}
+#endif
 
 		public override int GetHashCode ()
 		{

@@ -40,7 +40,12 @@ namespace System
 {
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	public struct Guid  : IFormattable, IComparable
+	public struct Guid  : IFormattable,
+#if NET_2_0
+		IComparable, IComparable<Guid>
+#else
+		IComparable
+#endif
 	{
 		private int _a; //_timeLow;
 		private short _b; //_timeMid;
@@ -390,6 +395,51 @@ namespace System
 				return false;
 			}
 		}
+
+#if NET_2_0
+		public int CompareTo (Guid v)
+		{
+			if (_a != v._a) {
+				return Compare (_a, v._a);
+			}
+			else if (_b != v._b) {
+				return Compare (_b, v._b);
+			}
+			else if (_c != v._c) {
+				return Compare (_c, v._c);
+			}
+			else if (_d != v._d) {
+				return Compare (_d, v._d);
+			}
+			else if (_e != v._e) {
+				return Compare (_e, v._e);
+			}
+			else if (_f != v._f) {
+				return Compare (_f, v._f);
+			}
+			else if (_g != v._g) {
+				return Compare (_g, v._g);
+			}
+			else if (_h != v._h) {
+				return Compare (_h, v._h);
+			}
+			else if (_i != v._i) {
+				return Compare (_i, v._i);
+			}
+			else if (_j != v._j) {
+				return Compare (_j, v._j);
+			}
+			else if (_k != v._k) {
+				return Compare (_k, v._k);
+			}
+			return 0;
+		}
+
+		public bool Equals (Guid value)
+		{
+			return CompareTo (value) == 0;
+		}
+#endif
 
 		public override int GetHashCode ()
 		{

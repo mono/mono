@@ -47,7 +47,12 @@ namespace System
 	/// 
 	[Serializable]
 	[StructLayout (LayoutKind.Auto)]
-	public struct DateTime : IComparable, IFormattable, IConvertible
+	public struct DateTime : IFormattable, IConvertible,
+#if NET_2_0
+		IComparable, IComparable<DateTime>
+#else
+		IComparable
+#endif
 	{
 		private TimeSpan ticks;
 
@@ -510,6 +515,18 @@ namespace System
 
 			return Compare (this, (DateTime) v);
 		}
+
+#if NET_2_0
+		public int CompareTo (DateTime value)
+		{
+			return Compare (this, value);
+		}
+
+		public bool Equals (DateTime value)
+		{
+			return value.ticks == ticks;
+		}
+#endif
 
 		public static int DaysInMonth (int year, int month)
 		{

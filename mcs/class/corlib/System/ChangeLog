@@ -1,3 +1,7 @@
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
+	* DateTime.cs, TimeSpan.cs, Guid.cs, Version.cs: Implement IComparable<T>.
+
 2004-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Environment.cs : GacPath on windows is based on mscorlib.dll, and

@@ -35,7 +35,12 @@ using System.Text;
 namespace System
 {
 	[Serializable]
-	public struct TimeSpan : IComparable
+	public struct TimeSpan :
+#if NET_2_0
+		IComparable, IComparable<TimeSpan>
+#else
+		IComparable
+#endif
 	{
 		public static readonly TimeSpan MaxValue = new TimeSpan (long.MaxValue);
 		public static readonly TimeSpan MinValue = new TimeSpan (long.MinValue);
@@ -215,6 +220,18 @@ namespace System
 
 			return Compare (this, (TimeSpan) value);
 		}
+
+#if NET_2_0
+		public int CompareTo (TimeSpan value)
+		{
+			return Compare (this, value);
+		}
+
+		public bool Equals (TimeSpan value)
+		{
+			return value._ticks == _ticks;
+		}
+#endif
 
 		public TimeSpan Duration ()
 		{
