@@ -253,20 +253,20 @@ namespace Mono.Unix {
 		//
 		// One of these
 		//
-		O_RDONLY    = 0,
-		O_WRONLY    = 1,
-		O_RDWR      = 2,
+		O_RDONLY    = 0x00000000,
+		O_WRONLY    = 0x00000001,
+		O_RDWR      = 0x00000002,
 
 		//
 		// Or-ed with zero or more of these
 		//
-		O_CREAT     = 4,
-		O_EXCL      = 8,
-		O_NOCTTY    = 16,
-		O_TRUNC     = 32,
-		O_APPEND    = 64,
-		O_NONBLOCK  = 128,
-		O_SYNC      = 256,
+		O_CREAT     = 0x00000040,
+		O_EXCL      = 0x00000080,
+		O_NOCTTY    = 0x00000100,
+		O_TRUNC     = 0x00000200,
+		O_APPEND    = 0x00000400,
+		O_NONBLOCK  = 0x00000800,
+		O_SYNC      = 0x00001000,
 
 		//
 		// These are non-Posix.  Using them will result in errors/exceptions on
@@ -278,11 +278,11 @@ namespace Mono.Unix {
 		// converted on the target platform.)
 		//
 		
-		O_NOFOLLOW  = 512,
-		O_DIRECTORY = 1024,
-		O_DIRECT    = 2048,
-		O_ASYNC     = 4096,
-		O_LARGEFILE = 8192
+		O_NOFOLLOW  = 0x00020000,
+		O_DIRECTORY = 0x00010000,
+		O_DIRECT    = 0x00004000,
+		O_ASYNC     = 0x00002000,
+		O_LARGEFILE = 0x00008000
 	}
 	
 	// mode_t

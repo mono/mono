@@ -88,8 +88,10 @@ class MakeMap {
 				continue;
 
 			string fn = t.FullName.Replace (".", "_");
+			fn = fn.Replace ("Mono_Unix", "Mono_Posix");
 			string ns = t.Namespace.Replace (".", "_");
-      string etype = GetNativeType (t);
+			ns = ns.Replace ("Mono_Unix", "Mono_Posix");
+			string etype = GetNativeType (t);
 
 			TypeHandler (t, ns, fn, etype, bits);
 		}

@@ -1,5 +1,11 @@
 2005-01-13  Jonathan Pryor <jonpryor@vt.edu>
 
+	* make-map.cs: libMonoPosixHelper exports Mono_Posix prefixes, not Mono_Unix
+	  prefixes, so change the type and namespace to generate compatible code.
+	* Syscall.cs: Change OpenFlags values so they match the Linux values.
+
+2005-01-13  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: Use Stdlib.LIBC instead of "libc".
 	* StdioFileStream.cs: Add FilePosition property (not that I expect anyone to
 	  use it) and Rewind() method.
