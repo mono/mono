@@ -6,6 +6,7 @@
 // (C) 2001-2002 Nick Drochak
 
 using System;
+using System.IO;
 
 namespace Mono.Util.CorCompare {
 
@@ -22,22 +23,47 @@ namespace Mono.Util.CorCompare {
 		public static void Main(string[] args) {
 			// make sure we were called with the proper usage
 			if (args.Length < 1) {
-				Console.WriteLine("Usage: CorCompare [-t][-n][-x outfile] assembly_to_compare");
+				Console.WriteLine("Usage: CorCompare [-t][-n][-x outfile][-ms assembly][-f friendly_name] assembly_to_compare");
 				return;
 			}
 
-			ToDoAssembly td = new ToDoAssembly(args[args.Length-1], "corlib");
+			bool fList = false;
+			string strXML = null;
+			string strMono = args [args.Length - 1];
+			string strMS = null;
+			string strFriendly = null;
 
 			for (int i = 0; i < args.Length-1; i++) {
 				if (args [i] == "-t") {
-					Console.WriteLine(td.CreateClassListReport());
+					fList = true;
 				}
 				if (args [i] == "-n") {
 				}
 				if (args [i] == "-x") {
-                    td.CreateXMLReport(args[++i]);
+					strXML = args [++i];
+				}
+				if (args [i] == "-ms") {
+					strMS = args [++i];
+				}
+				if (args [i] == "-f") {
+					strFriendly = args [++i];
 				}
 			}
+
+			if (strMS == null)
+				strMS = Path.GetFileNameWithoutExtension (strMono);
+
+			if (strFriendly == null)
+				strFriendly = strMS;
+
+			ToDoAssembly td = new ToDoAssembly(strMono, strFriendly, strMS);
+
+			if (fList)
+				Console.WriteLine(td.CreateClassListReport());
+
+			if (strXML != null)
+				td.CreateXMLReport(strXML);
+
 		}
 	}
 }

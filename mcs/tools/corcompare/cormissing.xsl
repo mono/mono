@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-	<xsl:output method="html" indent="no"/>
+<!--	<xsl:output method="html" indent="no"/>-->
+	<xsl:output method="xml"/>
 	<xsl:strip-space elements="*"/>
 
 	<xsl:template match="/">
@@ -56,7 +57,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="assemblies/assembly">
+	<xsl:template match="assemblies/assembly[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">y</xsl:with-param>
@@ -73,7 +74,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="namespaces/namespace">
+	<xsl:template match="namespaces/namespace[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">n</xsl:with-param>
@@ -103,7 +104,7 @@
 
 
 	<!-- class -->
-	<xsl:template match="classes/class">
+	<xsl:template match="classes/class[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">c</xsl:with-param>
@@ -115,7 +116,7 @@
 
 
 	<!-- struct -->
-	<xsl:template match="classes/struct">
+	<xsl:template match="classes/struct[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">s</xsl:with-param>
@@ -126,7 +127,7 @@
 
 
 	<!-- interface -->
-	<xsl:template match="classes/interface">
+	<xsl:template match="classes/interface[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">i</xsl:with-param>
@@ -137,7 +138,7 @@
 
 
 	<!-- delegate -->
-	<xsl:template match="classes/delegate">
+	<xsl:template match="classes/delegate[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">d</xsl:with-param>
@@ -148,7 +149,7 @@
 
 
 	<!-- enumeration -->
-	<xsl:template match="classes/enum">
+	<xsl:template match="classes/enum[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">en</xsl:with-param>
@@ -165,7 +166,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="methods/method">
+	<xsl:template match="methods/method[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">m</xsl:with-param>
@@ -182,7 +183,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="properties/property">
+	<xsl:template match="properties/property[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">p</xsl:with-param>
@@ -199,7 +200,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="events/event">
+	<xsl:template match="events/event[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">e</xsl:with-param>
@@ -216,7 +217,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="constructors/constructor">
+	<xsl:template match="constructors/constructor[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">x</xsl:with-param>
@@ -234,10 +235,44 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="fields/field">
+	<xsl:template match="fields/field[@status != 'complete']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">f</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
+	</xsl:template>
+
+	<!-- accessor -->
+	<xsl:template match="property/accessors">
+		<xsl:apply-templates select="method">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="property[@status != 'complete']/accessors/method">
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">o</xsl:with-param>
+				<xsl:with-param name="image">m</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
+	</xsl:template>
+
+
+	<!-- attribute -->
+	<xsl:template match="attributes">
+		<xsl:apply-templates select="attribute">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="attributes/attribute[@status != 'complete']">
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">r</xsl:with-param>
 			</xsl:call-template>
 			<xsl:apply-templates/>
 		</DIV>
@@ -281,19 +316,19 @@
 	</xsl:template>
 
 	<xsl:template name="status">
-		<xsl:if test="@complete and @complete!=0">
+		<xsl:if test="@complete and @complete != 0">
 			<SPAN class="st">
 				<img src="cm/sc.gif"/>:
 				<xsl:value-of select="@complete"/>%
 			</SPAN>
 		</xsl:if>
-		<xsl:if test="@todo and @todo!=0">
+		<xsl:if test="@todo and @todo != 0">
 			<SPAN class="st">
 				<img src="cm/st.gif"/>:
 				<xsl:value-of select="@todo"/>
 			</SPAN>
 		</xsl:if>
-		<xsl:if test="@missing and @missing!=0">
+		<xsl:if test="@missing and @missing != 0">
 			<SPAN class="st">
 				<img src="cm/sm.gif"/>:
 				<xsl:value-of select="@missing"/>
@@ -303,10 +338,10 @@
 
 	<xsl:template name="toggle">
 		<xsl:choose>
-			<xsl:when test="./node() and local-name() != 'assembly'">
+			<xsl:when test=".//*[@status and @status != 'complete'] and local-name() != 'assembly'">
 				<IMG src="cm/tp.gif" class="t"/>
 			</xsl:when>
-			<xsl:when test="./node()">
+			<xsl:when test=".//*[@status and @status != 'complete']">
 				<IMG src="cm/tm.gif" class="t"/>
 			</xsl:when>
 			<xsl:otherwise>

@@ -21,11 +21,11 @@ namespace Mono.Util.CorCompare {
 	class MissingMethod : MissingMember 
 	{
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingMethod (MemberInfo info) : base (info) {}
+		public MissingMethod (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
 
 		public override string Name {
 			get {
-				string s = mInfo.ToString();
+				string s = Info.ToString();
 				int index = s.IndexOf(' ');
 				return s.Substring(index + 1);
 			}
@@ -37,4 +37,5 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 	}
+
 }

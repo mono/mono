@@ -19,7 +19,7 @@ namespace Mono.Util.CorCompare {
 	/// </remarks>
 	class MissingEvent : MissingMember {
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingEvent (MemberInfo info) : base (info) {}
+		public MissingEvent (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
 
 		public override string Type {
 			get {
@@ -27,4 +27,5 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 	}
+
 }

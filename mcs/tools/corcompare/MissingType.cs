@@ -17,7 +17,7 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class MissingType
+	class MissingType : MissingBase
 	{
 		// e.g. <class name="System.Byte" status="missing"/>
 		protected Type theType;
@@ -26,7 +26,7 @@ namespace Mono.Util.CorCompare {
 			theType = t;
 		}
 
-		public override bool Equals(object o) 
+		public override bool Equals(object o)
 		{
 			if (o is MissingType) 
 			{
@@ -40,29 +40,28 @@ namespace Mono.Util.CorCompare {
 			return theType.GetHashCode();
 		}
 
-		public string Name 
+		public override string Name 
 		{
-			get 
+			get { return theType.Name; }
+		}
+
+		public override string Type
+		{
+			get
 			{
-				return theType.Name;
+				if (theType.IsEnum)
+					return "enum";
+				else if (theType.IsInterface)
+					return "interface";
+				else if (IsDelegate)
+					return "delegate";
+				else if (theType.IsValueType)
+					return "struct";
+				else
+					return "class";
 			}
 		}
 
-		public string NameSpace 
-		{
-			get 
-			{
-				return theType.Namespace;
-			}
-		}
-
-		public virtual string Status 
-		{
-			get 
-			{
-				return "missing";
-			}
-		}
 		public bool IsDelegate
 		{
 			get
@@ -79,24 +78,10 @@ namespace Mono.Util.CorCompare {
 				return false;
 			}
 		}
-		public virtual XmlElement CreateXML (XmlDocument doc)
+
+		public virtual CompletionInfo Analyze ()
 		{
-			XmlElement eltClass;
-			if (theType.IsEnum)
-				eltClass = doc.CreateElement ("enum");
-			else if (theType.IsInterface)
-				eltClass = doc.CreateElement ("interface");
-			else if (IsDelegate)
-				eltClass = doc.CreateElement ("delegate");
-			else if (theType.IsValueType)
-				eltClass = doc.CreateElement ("struct");
-			else
-				eltClass = doc.CreateElement ("class");
-
-			eltClass.SetAttribute ("name", Name);
-			eltClass.SetAttribute ("status", Status);
-
-			return eltClass;
+			return new CompletionInfo ();
 		}
 	}
 }

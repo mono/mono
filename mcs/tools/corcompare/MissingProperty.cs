@@ -8,6 +8,7 @@
 using System;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 
 namespace Mono.Util.CorCompare {
 
@@ -21,30 +22,76 @@ namespace Mono.Util.CorCompare {
 	class MissingProperty : MissingMember 
 	{
 		// e.g. <property name="Length" status="missing"/>
-		public MissingProperty (MemberInfo info) : base (info) {}
+		public MissingProperty (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
 
-		public override string Name {
-			get {
-				StringBuilder retVal = new StringBuilder(mInfo.Name + "{");
-				if (this.NeedsGet) {
-					retVal.Append(" get;");
-				}
-				if (this.NeedsSet) {
-					retVal.Append(" set;");
-				}
+		public override string Type 
+		{
+			get { return "property"; }
+		}
 
-				retVal.Append(" }");
-				return retVal.ToString();
+		MissingMethod mmGet;
+		MissingMethod mmSet;
+
+		/// <summary>
+		/// a place holder for the method used to get the value of this property
+		/// </summary>
+		public virtual MissingMethod GetMethod
+		{
+			get { return mmGet; }
+			set
+			{
+				mmGet = value;
+				if (mInfoMono != null &&
+					mmGet != null &&
+					mmGet.Completion != CompletionTypes.Complete)
+				{
+					completion = CompletionTypes.Todo;
+				}
 			}
 		}
 
-		public override string Type {
-			get {
-				return "property";
+		/// <summary>
+		/// a place holder for the method used to set the value of this property
+		/// </summary>
+		public virtual MissingMethod SetMethod
+		{
+			get { return mmSet; }
+			set
+			{
+				mmSet = value;
+				if (mInfoMono != null &&
+					mmSet != null &&
+					mmSet.Completion != CompletionTypes.Complete)
+				{
+					completion = CompletionTypes.Todo;
+				}
 			}
 		}
 
-		public bool NeedsGet = false;
-		public bool NeedsSet = false;
+		public override XmlElement CreateXML (XmlDocument doc)
+		{
+			XmlElement eltProperty = base.CreateXML (doc);
+
+			if (mInfoMono != null)	// missing
+			{
+				if (mmGet != null || mmSet != null)
+				{
+					XmlElement eltAccessors = doc.CreateElement ("accessors");
+					eltProperty.AppendChild (eltAccessors);
+
+					if (mmGet != null)
+					{
+						XmlElement eltGet = mmGet.CreateXML (doc);
+						eltAccessors.AppendChild (eltGet);
+					}
+					if (mmSet != null)
+					{
+						XmlElement eltSet = mmSet.CreateXML (doc);
+						eltAccessors.AppendChild (eltSet);
+					}
+				}
+			}
+			return eltProperty;
+		}
 	}
 }

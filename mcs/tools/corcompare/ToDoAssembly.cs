@@ -21,85 +21,113 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class ToDoAssembly
+	class ToDoAssembly : MissingBase
 	{
 		// these types are in mono corlib, but not in the dll we are going to examine.
 		static string[] ghostTypes = {"System.Object", "System.ValueType", "System.Delegate", "System.Enum"};
 		ArrayList MissingTypes = new ArrayList();
-		string assemblyToCompare;
+		string assemblyToCompare, assemblyToCompareWith;
 		bool analyzed = false;
-		ArrayList todoNameSpaces = new ArrayList();
+		ArrayList rgNamespaces = new ArrayList();
 		string name;
 
-		public ToDoAssembly(string fileName, string friendlyName)
+		CompletionInfo ci;
+
+		public ToDoAssembly(string fileName, string friendlyName, string strMSName)
 		{
 			assemblyToCompare = fileName;
 			name = friendlyName;
+			assemblyToCompareWith = strMSName;
 		}
 
-		public string Name {
+		public override string Name {
 			get {
 				return name;
 			}
 		}
 
-		public int MissingCount {
-			get {
-				int sum = 0;
-				foreach(ToDoNameSpace ns in todoNameSpaces) {
-					sum += ns.MissingCount;
-				}
-				return sum;
-			}
-		}
-
-		public int ToDoCount {
-			get {
-				int sum = 0;
-				foreach(ToDoNameSpace ns in todoNameSpaces) {
-					sum += ns.ToDoCount;
-				}
-				return sum;
-			}
-		}
-
-		public int ReferenceTypeCount {
-			get {
-				int sum = 0;
-				foreach(ToDoNameSpace ns in todoNameSpaces) {
-					sum += ns.ReferenceTypeCount;
-				}
-				return sum;
-			}
-		}
-
-		bool Analyze()
+		public override string Type
 		{
-			if (analyzed) return true;
+			get { return "assembly"; }
+		}
+
+		public override CompletionTypes Completion
+		{
+			get { return CompletionTypes.Todo; }
+		}
+
+		public CompletionInfo Analyze ()
+		{
+			if (analyzed)
+				return ci;
 
 			Type[] mscorlibTypes = GetReferenceTypes();
 			if (mscorlibTypes == null)
-			{
-				Console.WriteLine("Could not find corlib file: {0}", assemblyToCompare);
-				return false;
-			}
+				throw new Exception ("Could not find corlib file: " + name);
 
 			Type[] monocorlibTypes = GetMonoTypes();
+			if (monocorlibTypes == null)
+				throw new Exception ("Failed to load Mono assembly: " + assemblyToCompare);
 
-			foreach(string ns in ToDoNameSpace.GetNamespaces(monocorlibTypes)) {
-				todoNameSpaces.Add(new ToDoNameSpace(ns, monocorlibTypes, mscorlibTypes));
+			ArrayList rgNamespacesMono = ToDoNameSpace.GetNamespaces(monocorlibTypes);
+			if (rgNamespacesMono == null)
+				throw new Exception ("Failed to get namespaces from Mono assembly: " + assemblyToCompare);
+
+			foreach(string ns in rgNamespacesMono) {
+				if (ns != null && ns.Length != 0)
+				{
+					ToDoNameSpace tdns = new ToDoNameSpace(ns, mscorlibTypes, monocorlibTypes);
+					rgNamespaces.Add (tdns);
+					CompletionInfo ciNS = tdns.Analyze ();
+					ci.cComplete += ciNS.cComplete;
+					ci.cMissing += ciNS.cMissing;
+					ci.cTodo += ciNS.cTodo;
+				}
+			}
+
+			ArrayList rgNamespacesMS = ToDoNameSpace.GetNamespaces(mscorlibTypes);
+			if (rgNamespacesMS == null)
+				throw new Exception ("Failed to get namespaces from Microsoft assembly: " + assemblyToCompareWith);
+
+			foreach (string nsMS in rgNamespacesMS)
+			{
+				if (nsMS != null && nsMS.Length != 0)
+				{
+					bool fMissing = true;
+					foreach (string nsMono in rgNamespacesMono)
+					{
+						if (nsMono == nsMS)
+						{
+							fMissing = false;
+							break;
+						}
+					}
+					if (fMissing && !nsMS.StartsWith ("Microsoft."))
+					{
+						MissingNameSpace mns = new MissingNameSpace (nsMS, mscorlibTypes);
+						rgNamespaces.Add (mns);
+					}
+				}
 			}
 
 			analyzed = true;
-			return true;
+			return ci;
 		}
 
 		public Type[] GetReferenceTypes()
 		{
-			// get the types in the corlib we are running with
-			Assembly msAsmbl = Assembly.GetAssembly(typeof (System.Object));
-			Type[] mscorlibTypes = msAsmbl.GetTypes();
-			return mscorlibTypes;
+			try
+			{
+				// get the types in the corlib we are running with
+				//Assembly msAsmbl = Assembly.GetAssembly(typeof (System.Object));
+				Assembly assembly = Assembly.Load (assemblyToCompareWith);
+				Type[] mscorlibTypes = assembly.GetTypes();
+				return mscorlibTypes;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
 
 		public Type[] GetMonoTypes()
@@ -121,13 +149,14 @@ namespace Mono.Util.CorCompare {
 		}
 
 		public string CreateClassListReport() {
-			if (!Analyze() || todoNameSpaces.Count == 0) return "";
+			Analyze ();	// TODO: catch exception
+			if (rgNamespaces.Count == 0) return "";
 
 			StringBuilder output = new StringBuilder();
-			foreach (ToDoNameSpace ns in todoNameSpaces)
+			foreach (MissingNameSpace ns in rgNamespaces)
 			{
 				string[] missingTypes = ns.MissingTypeNames(true);
-				if (missingTypes.Length > 0) {
+				if (missingTypes != null && missingTypes.Length > 0) {
 					string joinedNames = String.Join("\n", missingTypes);
 					output.Append(joinedNames + "\n");
 				}
@@ -135,20 +164,17 @@ namespace Mono.Util.CorCompare {
 			return output.ToString();
 		}
 
-		public XmlElement CreateXML (XmlDocument doc)
+		public override XmlElement CreateXML (XmlDocument doc)
 		{
-			XmlElement assemblyElem = doc.CreateElement("assembly");
-			assemblyElem.SetAttribute("name", this.Name);
-			assemblyElem.SetAttribute("missing", this.MissingCount.ToString());
-			assemblyElem.SetAttribute("todo", this.ToDoCount.ToString());
-			assemblyElem.SetAttribute("complete", (100 - 100 * (this.MissingCount + this.ToDoCount) / this.ReferenceTypeCount).ToString());
+			XmlElement assemblyElem = base.CreateXML (doc);
+			ci.SetAttributes (assemblyElem);
 
-			if (todoNameSpaces.Count > 0)
+			if (rgNamespaces.Count > 0)
 			{
 				XmlElement eltNamespaces = doc.CreateElement ("namespaces");
 				assemblyElem.AppendChild (eltNamespaces);
 
-				foreach (ToDoNameSpace ns in todoNameSpaces)
+				foreach (MissingNameSpace ns in rgNamespaces)
 				{
 					XmlElement eltNameSpace = ns.CreateXML (doc);
 					if (eltNameSpace != null)
@@ -159,15 +185,18 @@ namespace Mono.Util.CorCompare {
 		}
 
 		public void CreateXMLReport(string filename) {
-			bool analyzedOK = Analyze();
+			Analyze();	// TODO: catch exception
 
 			XmlDocument outDoc;
 			outDoc = new XmlDocument();
 			outDoc.AppendChild(outDoc.CreateXmlDeclaration("1.0", null, null));
+
 			XmlElement assembliesElem = outDoc.CreateElement("assemblies");
 			outDoc.AppendChild(assembliesElem);
+
 			XmlElement assemblyElem = CreateXML (outDoc);
 			assembliesElem.AppendChild(assemblyElem);
+
 			outDoc.Save(filename);
 		}
 	}

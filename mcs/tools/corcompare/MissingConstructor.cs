@@ -17,18 +17,9 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/24/2002 10:43:57 PM
 	/// </remarks>
-	class MissingConstructor : MissingMember {
+	class MissingConstructor : MissingMethod {
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingConstructor (MemberInfo info) : base (info) {}
-
-		public override string Name {
-			get {
-				//return mInfo.Name;
-				string s = mInfo.ToString();
-				int index = s.IndexOf(' ');
-				return s.Substring(index + 1);
-			}
-		}
+		public MissingConstructor (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
 
 		public override string Type {
 			get {

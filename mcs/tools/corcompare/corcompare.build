@@ -2,7 +2,7 @@
 
 <project name="CorCompare" default="linux">
 	<target name="linux">
-		<csc target="exe" output="./CorCompare.exe">
+		<csc target="exe" output="./CorCompare.exe" debug="true">
 			<sources>
 				<includes name="*.cs" />
 			</sources>

@@ -14,6 +14,8 @@ namespace Mono.Util.CorCompare {
 
 		string Status { get; }
 
+		CompletionTypes Completion { get; }
+
 		string Type { get; }
 
 		XmlElement CreateXML (XmlDocument doc);

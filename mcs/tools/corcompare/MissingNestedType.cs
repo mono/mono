@@ -19,7 +19,7 @@ namespace Mono.Util.CorCompare {
 	/// </remarks>
 	class MissingNestedType : MissingMember {
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingNestedType (MemberInfo info) : base (info) {}
+		public MissingNestedType (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
 
 		public override string Type {
 			get {

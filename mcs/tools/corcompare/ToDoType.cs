@@ -19,246 +19,253 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class ToDoType : MissingType 
+	class ToDoType : MissingType
 	{
 		// e.g. <class name="System.Array" status="todo" missing="5" todo="6" complete="45">
-		
-		ArrayList missingMethodList = new ArrayList();
-		public ArrayList MissingMethods {
-			get {
-				return missingMethodList;
-			}
+		Type tMono;
+		ArrayList rgAttributes = new ArrayList ();
+		ArrayList rgMethods = new ArrayList ();
+		ArrayList rgProperties = new ArrayList ();
+		ArrayList rgEvents = new ArrayList ();
+		ArrayList rgFields = new ArrayList ();
+		ArrayList rgConstructors = new ArrayList ();
+		ArrayList rgNestedTypes = new ArrayList ();
+		CompletionInfo ci;
+		CompletionInfo ciAttributes = new CompletionInfo ();
+		CompletionInfo ciMethods = new CompletionInfo ();
+		CompletionInfo ciProperties = new CompletionInfo ();
+		CompletionInfo ciEvents = new CompletionInfo ();
+		CompletionInfo ciFields = new CompletionInfo ();
+		CompletionInfo ciConstructors = new CompletionInfo ();
+		CompletionInfo ciNestedTypes = new CompletionInfo ();
+
+		public ToDoType (Type t, Type _tMono) : base(t) 
+		{
+			tMono = _tMono;
 		}
 
-		ArrayList todoMethodList = new ArrayList();
-		public ArrayList ToDoMethods {
-			get {
-				return todoMethodList;
-			}
+		public override CompletionTypes Completion 
+		{
+			get { return CompletionTypes.Todo; }
 		}
 
-		ArrayList missingPropertyList = new ArrayList();
-		public ArrayList MissingProperties {
-			get {
-				return missingPropertyList;
-			}
-		}
-
-		ArrayList todoPropertyList = new ArrayList();
-		public ArrayList ToDoProperties {
-			get {
-				return todoPropertyList;
-			}
-		}
-
-		ArrayList missingEventList = new ArrayList();
-		public ArrayList MissingEvents {
-			get {
-				return missingEventList;
-			}
-		}
-
-		ArrayList todoEventList = new ArrayList();
-		public ArrayList ToDoEvents {
-			get {
-				return todoEventList;
-			}
-		}
-
-		ArrayList missingFieldList = new ArrayList();
-		public ArrayList MissingFields {
-			get {
-				return missingFieldList;
-			}
-		}
-
-		ArrayList todoFieldList = new ArrayList();
-		public ArrayList ToDoFields {
-			get {
-				return todoFieldList;
-			}
-		}
-
-		ArrayList missingConstructorList = new ArrayList();
-		public ArrayList MissingConstructors {
-			get {
-				return missingConstructorList;
-			}
-		}
-
-		ArrayList todoConstructorList = new ArrayList();
-		public ArrayList ToDoConstructors {
-			get {
-				return todoConstructorList;
-			}
-		}
-
-		ArrayList missingNestedTypeList = new ArrayList();
-		public ArrayList MissingNestedTypes {
-			get {
-				return missingNestedTypeList;
-			}
-		}
-
-		ArrayList todoNestedTypeList = new ArrayList();
-		public ArrayList ToDoNestedTypes {
-			get {
-				return todoNestedTypeList;
-			}
-		}
-
-		public ToDoType(Type t) : base(t) {
-		}
-
-		public int MissingCount {
-			get {
-				return missingMethodList.Count + missingPropertyList.Count;
-			}
-		}
-
-		public int ToDoCount {
-			get {
-				return todoMethodList.Count + todoPropertyList.Count;
-			}
-		}
-		
-		public static int IndexOf(Type t, ArrayList todoTypes) {
-			for(int index = 0; index < todoTypes.Count; index++) {
-				if (((ToDoType)todoTypes[index]).Name == t.Name) {
-					return index;
-				}
-			}
-			return -1;
-		}
-
-		public override string Status {
-			get {
-				return "todo";
-			}
-		}
-
-		public void AddToDoMember(Type t, MemberInfo info){
-			switch (info.MemberType){
+		public void AddMember (MemberInfo infoMono, MemberInfo infoMS)
+		{
+			MemberTypes mt = (infoMono != null) ? infoMono.MemberType : infoMS.MemberType;
+			MissingMember mm;
+			switch (mt)
+			{
 				case MemberTypes.Method:
-					todoMethodList.Add(new ToDoMethod(info));
+					mm = new MissingMethod (infoMono, infoMS);
+					mm.Analyze ();
+					ciMethods.Add (mm.Completion);
+					rgMethods.Add (mm);
 					break;
 				case MemberTypes.Property:
-					todoPropertyList.Add(new ToDoProperty(info));
+					mm = new MissingProperty (infoMono, infoMS);
+					mm.Analyze ();
+					ciProperties.Add (mm.Completion);
+					rgProperties.Add (mm);
 					break;
 				case MemberTypes.Event:
-					todoEventList.Add(new ToDoEvent(info));
+					mm = new MissingEvent (infoMono, infoMS);
+					mm.Analyze ();
+					ciEvents.Add (mm.Completion);
+					rgEvents.Add (mm);
 					break;
 				case MemberTypes.Field:
-					todoFieldList.Add(new ToDoField(info));
+					mm = new MissingField (infoMono, infoMS);
+					mm.Analyze ();
+					ciFields.Add (mm.Completion);
+					rgFields.Add (mm);
 					break;
 				case MemberTypes.Constructor:
-					todoConstructorList.Add(new ToDoConstructor(info));
+					mm = new MissingConstructor (infoMono, infoMS);
+					mm.Analyze ();
+					ciConstructors.Add (mm.Completion);
+					rgConstructors.Add (mm);
 					break;
 				case MemberTypes.NestedType:
-					todoNestedTypeList.Add(new ToDoNestedType(info));
+					mm = new MissingNestedType (infoMono, infoMS);
+					mm.Analyze ();
+					ciNestedTypes.Add (mm.Completion);
+					rgNestedTypes.Add (mm);
 					break;
 				default:
-					throw new Exception("Didn't code todo member type: " + info.MemberType.ToString());
-			}
-		}
-
-		public void AddMissingMember(MemberInfo info){
-			switch (info.MemberType){
-				case MemberTypes.Method:
-					missingMethodList.Add(new MissingMethod(info));
-					break;
-				case MemberTypes.Property:
-					missingPropertyList.Add(new MissingProperty(info));
-					break;
-				case MemberTypes.Event:
-					missingEventList.Add(new MissingEvent(info));
-					break;
-				case MemberTypes.Field:
-					missingFieldList.Add(new MissingField(info));
-					break;
-				case MemberTypes.Constructor:
-					missingConstructorList.Add(new MissingConstructor(info));
-					break;
-				case MemberTypes.NestedType:
-					missingNestedTypeList.Add(new MissingNestedType(info));
-					break;
-				default:
-					throw new Exception("Didn't code missing member type: " + info.MemberType.ToString());
+					throw new Exception ("Unexpected MemberType: " + mt.ToString());
 			}
 		}
 		public override XmlElement CreateXML (XmlDocument doc)
 		{
 			XmlElement eltClass = base.CreateXML (doc);
-			eltClass.SetAttribute ("missing", MissingCount.ToString());
-			eltClass.SetAttribute ("todo", ToDoCount.ToString());
+			ci.SetAttributes (eltClass);
 
 			XmlElement eltMember;
-			eltMember = CreateMemberCollectionElement ("methods", MissingMethods, ToDoMethods, doc);
-			if (eltMember != null) 
-			{
-				eltClass.AppendChild (eltMember);
-			}
 
-			eltMember = CreateMemberCollectionElement ("properties", MissingProperties, ToDoProperties, doc);
+			eltMember = MissingBase.CreateMemberCollectionElement ("attributes", rgAttributes, ciAttributes, doc);
 			if (eltMember != null) 
-			{
 				eltClass.AppendChild (eltMember);
-			}
 
-			eltMember = CreateMemberCollectionElement ("events", MissingEvents, ToDoEvents, doc);
+			eltMember = MissingBase.CreateMemberCollectionElement ("methods", rgMethods, ciMethods, doc);
 			if (eltMember != null) 
-			{
 				eltClass.AppendChild (eltMember);
-			}
 
-			eltMember = CreateMemberCollectionElement ("fields", MissingFields, ToDoFields, doc);
+			eltMember = MissingBase.CreateMemberCollectionElement ("properties", rgProperties, ciProperties, doc);
 			if (eltMember != null) 
-			{
 				eltClass.AppendChild (eltMember);
-			}
 
-			eltMember = CreateMemberCollectionElement ("constructors", MissingConstructors, ToDoConstructors, doc);
+			eltMember = MissingBase.CreateMemberCollectionElement ("events", rgEvents, ciEvents, doc);
 			if (eltMember != null) 
-			{
 				eltClass.AppendChild (eltMember);
-			}
 
-			eltMember = CreateMemberCollectionElement ("nestedTypes", MissingNestedTypes, ToDoNestedTypes, doc);
+			eltMember = MissingBase.CreateMemberCollectionElement ("fields", rgFields, ciFields, doc);
 			if (eltMember != null) 
-			{
 				eltClass.AppendChild (eltMember);
-			}
+
+			eltMember = MissingBase.CreateMemberCollectionElement ("constructors", rgConstructors, ciConstructors, doc);
+			if (eltMember != null) 
+				eltClass.AppendChild (eltMember);
+
+			eltMember = MissingBase.CreateMemberCollectionElement ("nestedTypes", rgNestedTypes, ciNestedTypes, doc);
+			if (eltMember != null) 
+				eltClass.AppendChild (eltMember);
+
 			return eltClass;
 		}
 
-		static XmlElement CreateMemberCollectionElement (string name, ArrayList missingList, ArrayList todoList, XmlDocument doc) 
+		public override CompletionInfo Analyze ()
 		{
-			XmlElement element = null;
-			if (missingList.Count > 0 || todoList.Count > 0)
+			Hashtable htMono = new Hashtable ();
+			if (tMono != null)
 			{
-				element = doc.CreateElement(name);
-				if (missingList.Count > 0) 
+				foreach (MemberInfo miMono in tMono.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public))
 				{
-					foreach (IMissingMember missing in missingList) 
-						element.AppendChild (missing.CreateXML (doc));
+					if (tMono == miMono.DeclaringType)
+					{
+						string strName = miMono.ToString ();
+						htMono.Add (strName, miMono);
+					}
 				}
-				if (todoList.Count > 0) 
-				{
-					foreach (IMissingMember missing in todoList) 
-						element.AppendChild (missing.CreateXML (doc));
-				}
-				element.SetAttribute ("missing", missingList.Count.ToString());
-				element.SetAttribute ("todo", todoList.Count.ToString());
 			}
-			return element;
+			if (theType != null)
+			{
+				foreach (MemberInfo miMS in theType.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public))
+				{
+					if (miMS != null && miMS.DeclaringType == theType)
+					{
+						string strName = miMS.ToString ();
+						MemberInfo miMono = (MemberInfo) htMono [strName];
+
+						if (miMono == null)
+						{
+							if (IsVisible (miMS))
+							{
+								AddMember (null, miMS);
+							}
+						}
+						else
+						{
+							if (miMono.MemberType == miMS.MemberType)
+							{
+								htMono.Remove (strName);
+								AddMember (miMono, miMS);
+							}
+							else
+							{
+								Console.WriteLine ("WARNING!!! MemberType mismatch on "+miMS.DeclaringType.FullName + "." + miMS.Name + " [is '" + miMono.MemberType.ToString () + "', should be '" + miMS.MemberType.ToString ()+"']");
+							}
+						}
+					}
+				}
+			}
+			foreach (MemberInfo miMono in htMono.Values)
+			{
+				AddMember (miMono, null);
+			}
+
+			// sort out the properties
+			foreach (MissingProperty property in rgProperties)
+			{
+				MemberInfo infoBest = property.BestInfo;
+				if (infoBest is PropertyInfo)
+				{
+					PropertyInfo pi = (PropertyInfo) property.BestInfo;
+					MethodInfo miGet = pi.GetGetMethod ();
+					MethodInfo miSet = pi.GetSetMethod ();
+
+					MissingMethod mmGet = FindMethod (miGet);
+					MissingMethod mmSet = FindMethod (miSet);
+					
+					if (mmGet != null)
+					{
+						ciMethods.Sub (mmGet.Completion);
+						rgMethods.Remove (mmGet);
+						property.GetMethod = mmGet;
+					}
+					if (mmSet != null)
+					{
+						ciMethods.Sub (mmSet.Completion);
+						rgMethods.Remove (mmSet);
+						property.SetMethod = mmSet;
+					}
+				}
+				else
+				{
+					// TODO: handle the mistmatch case.
+				}
+			}
+
+			// compare the attributes
+			rgAttributes = new ArrayList ();
+			ciAttributes = MissingAttribute.AnalyzeAttributes (
+				(tMono   == null) ? null :   tMono.GetCustomAttributes (false),
+				(theType == null) ? null : theType.GetCustomAttributes (false),
+				rgAttributes);
+
+			// sum up the sub-sections
+			ci = new CompletionInfo ();
+			ci.Add (ciAttributes);
+			ci.Add (ciMethods);
+			ci.Add (ciProperties);
+			ci.Add (ciEvents);
+			ci.Add (ciFields);
+			ci.Add (ciConstructors);
+			ci.Add (ciNestedTypes);
+
+			return ci;
 		}
 
-		static XmlElement CreateMissingElement(IMissingMember member, XmlDocument doc) 
+		MissingMethod FindMethod (MethodInfo mi)
 		{
-			XmlElement missingElement  = doc.CreateElement(member.Type);
-			missingElement.SetAttribute("name", (member.Name));
-			missingElement.SetAttribute("status", (member.Status));
-			return missingElement;
+			if (mi != null)
+			{
+				string strName = mi.Name;
+				foreach (MissingMethod method in rgMethods)
+				{
+					if (strName == method.Info.Name)
+						return method;
+				}
+			}
+			return null;
+		}
+
+		static bool IsVisible (MemberInfo mi)
+		{
+			switch (mi.MemberType)
+			{
+				case MemberTypes.Constructor:
+				case MemberTypes.Method:
+					return !((MethodBase) mi).IsPrivate;
+				case MemberTypes.Field:
+					return !((FieldInfo) mi).IsPrivate;
+				case MemberTypes.NestedType:
+					return !((Type) mi).IsNestedPrivate;
+				case MemberTypes.Event:
+				case MemberTypes.Property:
+					return true;
+				default:
+					throw new Exception ("Missing handler for MemberType: "+mi.MemberType.ToString ());
+			}
 		}
 	}
 }
