@@ -419,7 +419,7 @@ namespace CIR {
 					
 				// from any array-type or delegate type into System.ICloneable.
 				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
-					if (target_type == TypeManager.cloneable_interface)
+					if (target_type == TypeManager.icloneable_type)
 						throw new Exception ("Implement conversion to System.ICloneable");
 				
 				// from the null type to any reference-type.
@@ -771,7 +771,7 @@ namespace CIR {
 					
 				// from any array-type or delegate type into System.ICloneable.
 				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
-					if (target_type == TypeManager.cloneable_interface)
+					if (target_type == TypeManager.icloneable_type)
 						return true;
 				
 				// from the null type to any reference-type.
@@ -1315,7 +1315,7 @@ namespace CIR {
 		//   Implements Explicit Reference conversions
 		// </summary>
 		static Expression ConvertReferenceExplicit (TypeContainer tc, Expression expr,
-							  Type target_type)
+							    Type target_type)
 		{
 			Type expr_type = expr.Type;
 			bool target_is_value_type = target_type.IsValueType;
@@ -1324,7 +1324,7 @@ namespace CIR {
 			// From object to any reference type
 			//
 			if (expr_type == TypeManager.object_type && !target_is_value_type)
-				return new ClassCast (expr, expr_type);
+				return new ClassCast (expr, target_type);
 
 			return null;
 		}
@@ -3065,13 +3065,8 @@ namespace CIR {
 			}
 		}
 
-		public void Store (EmitContext ec)
+		public static void Store (ILGenerator ig, int idx)
 		{
-			ILGenerator ig = ec.ig;
-			VariableInfo vi = VariableInfo;
-			int idx = vi.Idx;
-
-			vi.Assigned = true;
 			switch (idx){
 			case 0:
 				ig.Emit (OpCodes.Stloc_0);
@@ -3096,6 +3091,20 @@ namespace CIR {
 					ig.Emit (OpCodes.Stloc, idx);
 				break;
 			}
+		}
+		
+		public void Store (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			VariableInfo vi = VariableInfo;
+
+			vi.Assigned = true;
+
+			// Funny seems the above generates optimal code for us, but
+			// seems to take too long to generate what we need.
+			// ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+			Store (ig, vi.Idx);
 		}
 
 		public void AddressOf (EmitContext ec)
@@ -4399,6 +4408,32 @@ namespace CIR {
 		}
 	}
 
+	// <summary>
+	//   This class exists solely to pass the Type around and to be a dummy
+	//   that can be passed to the conversion functions (this is used by
+	//   foreach implementation to typecast the object return value from
+	//   get_Current into the proper type.  All code has been generated and
+	//   we only care about the side effect conversions to be performed
+	// </summary>
+	
+	public class EmptyExpression : Expression {
+		public EmptyExpression ()
+		{
+			type = TypeManager.object_type;
+			eclass = ExprClass.Value;
+		}
+
+		public override Expression DoResolve (TypeContainer tc)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// nothing, as we only exist to not do anything.
+		}
+	}
+	
 	public class UserCast : Expression {
 		MethodBase method;
 		Expression source;

@@ -102,6 +102,43 @@ namespace CIR {
 			current_block = null;
 		}
 
+		static bool GetEnumeratorFilter (MemberInfo m, object criteria)
+		{
+			if (m == null)
+				return false;
+
+			if (!(m is MethodInfo))
+				return false;
+
+			if (m.Name != "GetEnumerator")
+				return false;
+
+			MethodInfo mi = (MethodInfo) m;
+
+			if (mi.ReturnType != TypeManager.ienumerator_type)
+				return false;
+
+			Type [] args = TypeManager.GetArgumentTypes (mi);
+			if (args == null)
+				return true;
+
+			if (args.Length == 0)
+				return true;
+
+			return false;
+		}
+
+		// <summary>
+		//   This filter is used to find the GetEnumerator method
+		//   on which IEnumerator operates
+		// </summary>
+		static MemberFilter FilterEnumerator;
+		
+		static EmitContext ()
+		{
+			FilterEnumerator = new MemberFilter (GetEnumeratorFilter);
+		}
+		
 		public bool ConvertTo (Type target, Type source, bool verbose)
 		{
 			if (target == source)
@@ -219,24 +256,140 @@ namespace CIR {
 			ig.MarkLabel (exit);
 		}
 
-		bool ProbeCollectionType (Type t)
+		void error1579 (Location l, Type t)
 		{
+			Report.Error (1579, l,
+				      "foreach statement cannot operate on variables of type `" +
+				      t.FullName + "' because that class does not provide a " +
+				      " GetEnumerator method or it is inaccessible");
+		}
 			
-			return true;
+		MethodInfo ProbeCollectionType (Foreach f, Type t)
+		{
+			MemberInfo [] mi;
+
+			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
+							BindingFlags.Public,
+							FilterEnumerator, null);
+
+			if (mi == null){
+				error1579 (f.Location, t);
+				return null;
+			}
+
+			if (mi.Length == 0){
+				error1579 (f.Location, t);
+				return null;
+			}
+
+			return (MethodInfo) mi [0];
 		}
 		
 		void EmitForeach (Foreach f)
 		{
 			Expression e = f.Expr;
-
+			MethodInfo get_enum;
+			LocalBuilder enumerator, disposable;
+			Type var_type;
+			
 			e = e.Resolve (parent);
 			if (e == null)
 				return;
 
-			if (!ProbeCollectionType (e.Type))
+			var_type = parent.LookupType (f.Type, false);
+			if (var_type == null)
 				return;
+			
+			//
+			// We need an instance variable.  Not sure this is the best
+			// way of doing this.
+			//
+			// FIXME: When we implement propertyaccess, will those turn
+			// out to return values in ExprClass?  I think they should.
+			//
+			if (!(e.ExprClass == ExprClass.Variable || e.ExprClass == ExprClass.Value)){
+				error1579 (f.Location, e.Type);
+				return;
+			}
+			
+			if ((get_enum = ProbeCollectionType (f, e.Type)) == null)
+				return;
+
+			Expression empty = new EmptyExpression ();
+			Expression conv;
+
+			conv = Expression.ConvertExplicit (parent, empty, var_type, f.Location);
+			if (conv == null)
+				return;
+			
+			enumerator = ig.DeclareLocal (TypeManager.ienumerator_type);
+			disposable = ig.DeclareLocal (TypeManager.idisposable_type);
+			
+			//
+			// Instantiate the enumerator
+
+			Label end = ig.DefineLabel ();
+			Label end_try = ig.DefineLabel ();
+			Label loop = ig.DefineLabel ();
+
+			//
+			// FIXME: This code does not work for cases like:
+			// foreach (int a in ValueTypeVariable){
+			// }
+			//
+			// The code should emit an ldarga instruction
+			// for the ValueTypeVariable rather than a ldarg
+			//
+			if (e.Type.IsValueType){
+				ig.Emit (OpCodes.Call, get_enum);
+			} else {
+				e.Emit (this);
+				ig.Emit (OpCodes.Callvirt, get_enum);
+			}
+			ig.Emit (OpCodes.Stloc, enumerator);
+
+			//
+			// Protect the code in a try/finalize block, so that
+			// if the beast implement IDisposable, we get rid of it
+			//
+			Label l = ig.BeginExceptionBlock ();
+			ig.MarkLabel (loop);
+			ig.Emit (OpCodes.Ldloc, enumerator);
+			ig.Emit (OpCodes.Callvirt, TypeManager.bool_movenext_void);
+			ig.Emit (OpCodes.Brfalse, end_try);
+			ig.Emit (OpCodes.Ldloc, enumerator);
+			ig.Emit (OpCodes.Callvirt, TypeManager.object_getcurrent_void);
+			conv.Emit (this);
+			f.Variable.Store (this);
+			EmitStatement (f.Statement);
+			ig.Emit (OpCodes.Br, loop);
+			ig.MarkLabel (end_try);
+
+			// The runtime provides this for us.
+			// ig.Emit (OpCodes.Leave, end);
+
+			//
+			// Now the finally block
+			//
+			Label end_finally = ig.DefineLabel ();
+			
+			ig.BeginFinallyBlock ();
+			ig.Emit (OpCodes.Ldloc, enumerator);
+			ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+			ig.Emit (OpCodes.Stloc, disposable);
+			ig.Emit (OpCodes.Ldloc, disposable);
+			ig.Emit (OpCodes.Brfalse, end_finally);
+			ig.Emit (OpCodes.Ldloc, disposable);
+			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+			ig.MarkLabel (end_finally);
+
+			// The runtime generates this anyways.
+			// ig.Emit (OpCodes.Endfinally);
+
+			ig.EndExceptionBlock ();
+			ig.MarkLabel (end);
 		}
-		
+
 		void EmitReturn (Return s)
 		{
 			Expression ret_expr = s.Expr;
@@ -258,7 +411,6 @@ namespace CIR {
 			EmitBlock (s.Block);
 			CheckState = previous_state;
 		}
-
 
 		void EmitUnChecked (Unchecked s)
 		{
@@ -317,7 +469,9 @@ namespace CIR {
 				EmitStatementExpression ((StatementExpression) s);
 			else if (s is Foreach)
 				EmitForeach ((Foreach) s);
-			else {
+			else if (s is EmptyStatement) {
+
+			} else {
 				Console.WriteLine ("Unhandled Statement type: " +
 						   s.GetType ().ToString ());
 			}

@@ -39,12 +39,17 @@ public class TypeManager {
 	static public Type enumeration_type;
 	static public Type array_type;
 	static public Type runtime_handle_type;
-	static public Type cloneable_interface;
+	static public Type icloneable_type;
 	static public Type type_type;
+	static public Type ienumerator_type;
+	static public Type idisposable_type;
 	
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_object_object;
 	static public MethodInfo system_type_get_type_from_handle;
+	static public MethodInfo object_getcurrent_void;
+	static public MethodInfo bool_movenext_void;
+	static public MethodInfo void_dispose_void;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -256,16 +261,19 @@ public class TypeManager {
 		array_type    = CoreLookupType ("System.Array");
 		void_type     = CoreLookupType ("System.Void");
 		type_type     = CoreLookupType ("System.Type");
-		runtime_handle_type = CoreLookupType ("System.RuntimeTypeHandle");
 		
-		cloneable_interface = CoreLookupType ("System.ICloneable");
-
+		runtime_handle_type = CoreLookupType ("System.RuntimeTypeHandle");
+		ienumerator_type    = CoreLookupType ("System.Collections.IEnumerator");
+		icloneable_type     = CoreLookupType ("System.ICloneable");
+		idisposable_type    = CoreLookupType ("System.IDisposable");
+		
 		//
 		// Now load the default methods that we use.
 		//
 		Type [] string_string = { string_type, string_type };
 		Type [] object_object = { object_type, object_type };
 		Type [] runtime_type_handle = { runtime_handle_type };
+		Type [] void_arg = {  };
 		
 		string_concat_string_string = GetMethod (
 			string_type, "Concat", string_string);
@@ -273,6 +281,12 @@ public class TypeManager {
 			string_type, "Concat", object_object);
 		system_type_get_type_from_handle = GetMethod (
 			type_type, "GetTypeFromHandle", runtime_type_handle);
+		object_getcurrent_void = GetMethod (
+			ienumerator_type, "get_Current", void_arg);
+		bool_movenext_void = GetMethod (
+			ienumerator_type, "MoveNext", void_arg);
+		void_dispose_void = GetMethod (
+			idisposable_type, "Dispose", void_arg);
 	}
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)

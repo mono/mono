@@ -92,3 +92,23 @@
 	Where B is a class defined in the source code, my guess is that
 	the look for ".ctor" fails
 
+* Foreach on structure returns does not work
+
+	I am generating invalid code instead of calling ldarga for the
+	structure, I am calling ldarg:
+
+	struct X {
+		public IEnumerator GetEnumerator ();
+	}
+
+	X x;
+
+	foreach (object a in x){
+		...
+	}
+
+	I need to get the address of that bad boy
+
+* Work todo:
+
+	Understand how methods are invoked on structs

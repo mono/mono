@@ -442,10 +442,12 @@ namespace CIR {
 
 			type_container_resolve_order.Add (tc);
 
-			tb = mb.DefineType (name,
-					    tc.TypeAttr | TypeAttributes.Class,
-					    parent,
-					    ifaces);
+			tb = mb.DefineType (
+				name,
+				tc.TypeAttr | TypeAttributes.Class,
+				parent,
+				ifaces);
+			
 			tc.TypeBuilder = tb;
 
 			TypeManager.AddUserType (name, tb, tc);

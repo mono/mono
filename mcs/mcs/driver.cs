@@ -234,7 +234,7 @@ namespace CIR
 							continue;
 						}
 						
-						if (arg == "-o"){
+						if (arg == "-o" || arg == "--output"){
 							try {
 								output_file = args [++i];
 							} catch (Exception){

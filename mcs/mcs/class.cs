@@ -608,6 +608,14 @@ namespace CIR {
 			if (Fields != null){
 				foreach (Field f in Fields)
 					f.Define (this);
+			} else if (this is Struct){
+				//
+				// FIXME: Add a dummy field, because it is currently
+				// not possible with the reflection API to tell the size
+				// of a structure
+				//
+				TypeBuilder.DefineField ("Dummy", TypeManager.sbyte_type,
+							 FieldAttributes.Static | FieldAttributes.Private);
 			}
 
 			if (this is Class){

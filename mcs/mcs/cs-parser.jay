@@ -2640,10 +2640,21 @@ statement_expression_list
 	;
 
 foreach_statement
-	: FOREACH OPEN_PARENS type IDENTIFIER IN expression CLOSE_PARENS 
+	: FOREACH OPEN_PARENS type IDENTIFIER IN 
+	  { 
+		$1 = lexer.Location;
+	  } 
+	  expression CLOSE_PARENS 
 	  embedded_statement
 	  {
-		$$ = new Foreach ((string) $3, (string) $4, (Expression) $6, (Statement) $8);
+		Block foreach_block = new Block (current_block, true);
+		LocalVariableReference v;
+
+		foreach_block.AddVariable ((string) $3, (string) $4, (Location) $1);
+		v = new LocalVariableReference (foreach_block, (string) $4);
+		foreach_block.AddStatement (new Foreach ((string) $3, v, (Expression) $7, 
+					    (Statement) $9, (Location) $1));
+		$$ = foreach_block;
 	  }
 	;
 

@@ -690,16 +690,19 @@ namespace CIR {
 
 	public class Foreach : Statement {
 		public readonly string Type;
-		public readonly string Identifier;
+		public readonly LocalVariableReference Variable;
 		public readonly Expression Expr;
 		public readonly Statement Statement;
-
-		public Foreach (string type, string identifier, Expression expr, Statement stmt)
+		public readonly Location Location;
+		
+		public Foreach (string type, LocalVariableReference var, Expression expr,
+				Statement stmt, Location l)
 		{
 			Type = type;
-			Identifier = identifier;
+			Variable = var;
 			Expr = expr;
 			Statement = stmt;
+			Location = l;
 		}
 	}
 }
