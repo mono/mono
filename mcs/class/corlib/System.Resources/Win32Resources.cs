@@ -616,7 +616,8 @@ internal class Win32ResFileReader {
 				/* EOF */
 				break;
 
-			int header_size = read_int32 ();
+			//int header_size = 
+			read_int32 ();
 			NameOrId type = read_ordinal ();
 			NameOrId name = read_ordinal ();
 

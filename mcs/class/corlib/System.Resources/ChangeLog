@@ -1,3 +1,7 @@
+2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Win32Resources.cs: Fix warning.
+
 2004-12-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* ResourceManager.cs (InternalResourceManager): on msft, they
