@@ -1,4 +1,9 @@
 
+Wed Aug 22 16:22:22 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c: add a newline after branch instructions. Move
+	end of exception handler code at the end.
+
 Tue Aug 21 18:51:05 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c: correctly print the label for multi-byte opcodes.
