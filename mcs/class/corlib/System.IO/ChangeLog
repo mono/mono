@@ -1,3 +1,8 @@
+2003-01-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Directory.cs (GetFileSystemEntries): moved error handling to the
+	correct instance of GetFileSystemEntries so all callers can enjoy it.
+
 2003-01-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* File.cs: add error handling to Get...Time methods.

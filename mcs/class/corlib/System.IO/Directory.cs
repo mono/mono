@@ -287,13 +287,6 @@ namespace System.IO
 
 		public static string [] GetFileSystemEntries (string path, string pattern)
 		{
-			if (path == null)
-				throw new ArgumentNullException ();
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-			if (path == "")
-				throw new ArgumentException ("The Path do not have a valid format");
-
 			return GetFileSystemEntries (path, pattern, 0, 0);
 		}
 		
@@ -361,9 +354,14 @@ namespace System.IO
 			MonoIOStat stat;
 			IntPtr find;
 
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
-				throw new ArgumentException ("Path contains invalid characters.");
-			}
+			if (path == null)
+				throw new ArgumentNullException ();
+
+			if (path == "")
+				throw new ArgumentException ("The Path do not have a valid format");
+
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid characters");
 
 			if (!Directory.Exists (path)) {
 				throw new DirectoryNotFoundException ("Directory '" + path + "' not found.");
